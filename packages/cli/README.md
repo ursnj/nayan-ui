@@ -77,4 +77,4 @@ npx nayan validate robots -i ./robots.txt
 
 ## Contributing
 
-Submit issues and pull requests on [GitHub](https://github.com/ursnj/nayan).
+Submit issues and pull requests on [GitHub](https://github.com/ursnj/nayan-ui).

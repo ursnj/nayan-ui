@@ -41,7 +41,7 @@ const HeaderMenu = () => {
         </li>
       </ul>
       <div className="w-full md:w-auto form-inline md:text-center md:justify-center items-center mt-3 md:mt-0">
-        <Link to="https://www.github.com/ursnj/nayan" target="_blank" className="mr-5" title="Nayan UI Github" aria-label="Nayan UI Github">
+        <Link to="https://www.github.com/ursnj/nayan-ui" target="_blank" className="mr-5" title="Nayan UI Github" aria-label="Nayan UI Github">
           <Github className="w-6 h-6 text-text inline" />
         </Link>
         <span tabIndex={0} className="text cursor-pointer" onClick={toggleTheme} title="Theme Switch">

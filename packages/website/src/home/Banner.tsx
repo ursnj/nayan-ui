@@ -145,7 +145,7 @@ const Banner = () => {
             {/* GitHub Link */}
             <div className="animate-fade-in-up delay-1200">
               <a
-                href="https://github.com/ursnj/nayan"
+                href="https://github.com/ursnj/nayan-ui"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center space-x-2 text-muted-foreground hover:text-primary transition-colors group">

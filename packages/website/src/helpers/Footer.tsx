@@ -19,7 +19,7 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <NLink
-                href="https://github.com/ursnj/nayan"
+                href="https://github.com/ursnj/nayan-ui"
                 className="text-muted hover:text-primary transition-colors duration-200"
                 target="_blank"
                 rel="noopener noreferrer">
@@ -69,14 +69,14 @@ const Footer = () => {
                 Component Tags
               </NLink>
               <NLink
-                href="https://github.com/ursnj/nayan/issues"
+                href="https://github.com/ursnj/nayan-ui/issues"
                 className="block text-muted hover:text-primary transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">
                 Report Issues
               </NLink>
               <NLink
-                href="https://github.com/ursnj/nayan/discussions"
+                href="https://github.com/ursnj/nayan-ui/discussions"
                 className="block text-muted hover:text-primary transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">
@@ -90,7 +90,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-text">Community</h3>
             <div className="space-y-2">
               <NLink
-                href="https://github.com/ursnj/nayan"
+                href="https://github.com/ursnj/nayan-ui"
                 className="block text-muted hover:text-primary transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">
@@ -129,7 +129,7 @@ const Footer = () => {
             <div className="text-sm text-muted">© {currentYear} Nayan UI. All rights reserved.</div>
             <div className="flex items-center space-x-4 text-sm text-muted">
               <NLink
-                href="https://github.com/ursnj/nayan/blob/main/LICENSE"
+                href="https://github.com/ursnj/nayan-ui/blob/main/LICENSE"
                 className="hover:text-primary transition-colors duration-200"
                 target="_blank"
                 rel="noopener noreferrer">
@@ -137,7 +137,7 @@ const Footer = () => {
               </NLink>
               <span>•</span>
               <NLink
-                href="https://github.com/ursnj/nayan/releases"
+                href="https://github.com/ursnj/nayan-ui/releases"
                 className="hover:text-primary transition-colors duration-200"
                 target="_blank"
                 rel="noopener noreferrer">

@@ -32,11 +32,11 @@ const Meta = (props: Props) => {
     description:
       'Enterprise-grade UI component library for React and React Native applications with TypeScript-first development and Tailwind CSS integration.',
     foundingDate: '2024',
-    sameAs: ['https://github.com/ursnj/nayan', 'https://www.npmjs.com/org/nayan-ui'],
+    sameAs: ['https://github.com/ursnj/nayan-ui', 'https://www.npmjs.com/org/nayan-ui'],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'technical support',
-      url: 'https://github.com/ursnj/nayan/issues'
+      url: 'https://github.com/ursnj/nayan-ui/issues'
     }
   };
 

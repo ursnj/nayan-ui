@@ -218,7 +218,7 @@ const Contributions = () => {
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <Github className="w-5 h-5" />
-                    <a href="https://github.com/ursnj/nayan" className="text-primary hover:underline">
+                    <a href="https://github.com/ursnj/nayan-ui" className="text-primary hover:underline">
                       GitHub Repository
                     </a>
                   </div>
@@ -249,13 +249,13 @@ const Contributions = () => {
               Join our growing community of developers and help make Nayan UI better for everyone!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <NButton onClick={() => window.open('https://github.com/ursnj/nayan', '_blank')} className="flex items-center gap-2">
+              <NButton onClick={() => window.open('https://github.com/ursnj/nayan-ui', '_blank')} className="flex items-center gap-2">
                 <Github className="w-4 h-4" />
                 View on GitHub
               </NButton>
               <NButton
                 isOutline={true}
-                onClick={() => window.open('https://github.com/ursnj/nayan/issues', '_blank')}
+                onClick={() => window.open('https://github.com/ursnj/nayan-ui/issues', '_blank')}
                 className="flex items-center gap-2">
                 <Bug className="w-4 h-4" />
                 Report Issues

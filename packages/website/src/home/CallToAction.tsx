@@ -191,7 +191,7 @@ const CallToAction = () => {
             </NButton>
           </Link>
 
-          <a href="https://github.com/ursnj/nayan" target="_blank" rel="noopener noreferrer" className="inline-block w-full sm:w-auto">
+          <a href="https://github.com/ursnj/nayan-ui" target="_blank" rel="noopener noreferrer" className="inline-block w-full sm:w-auto">
             <NButton
               isOutline={true}
               className="border-muted-foreground text-muted-foreground hover:bg-muted-foreground hover:text-background px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transform hover:scale-105 transition-all duration-300 w-full sm:w-auto">

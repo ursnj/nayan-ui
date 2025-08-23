@@ -4,7 +4,7 @@ React Native Component Library for smooth and faster mobile application developm
 
 [![npm version](https://badge.fury.io/js/@nayan-ui%2Freact-native.svg)](https://badge.fury.io/js/@nayan-ui%2Freact-native)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
-[![License](https://img.shields.io/npm/l/@nayan-ui/react-native.svg)](https://github.com/ursnj/nayan/blob/main/LICENSE)
+[![License](https://img.shields.io/npm/l/@nayan-ui/react-native.svg)](https://github.com/ursnj/nayan-ui/blob/main/LICENSE)
 
 ---
 

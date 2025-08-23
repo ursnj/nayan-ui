@@ -3,7 +3,7 @@
   "private": false,
   "sideEffects": false,
   "description": "Reusable Component Library for ReactJS.",
-  "version": "2.0.0-beta.9",
+  "version": "1.0.0-beta.11",
   "type": "module",
   "source": "./src/index.ts",
   "main": "./dist/index.umd.js",
@@ -75,7 +75,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ursnj/nayan"
+    "url": "https://github.com/ursnj/nayan-ui"
   },
   "keywords": [
     "react-js",
@@ -94,7 +94,7 @@
     "url": "https://www.ursnj.com"
   },
   "bugs": {
-    "url": "https://github.com/ursnj/nayan/issues"
+    "url": "https://github.com/ursnj/nayan-ui/issues"
   },
   "license": "MIT"
 }

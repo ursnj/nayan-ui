@@ -1,6 +1,6 @@
 {
   "name": "@nayan-ui/react-native",
-  "version": "1.0.0-beta.10",
+  "version": "1.0.0-beta.11",
   "description": "React Native Component Library for smooth and faster mobile application development.",
   "source": "./src/index.tsx",
   "main": "./dist/commonjs/index.js",
@@ -36,13 +36,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ursnj/nayan.git",
+    "url": "git+https://github.com/ursnj/nayan-ui.git",
     "directory": "packages/react-native"
   },
   "author": "ursnj <niranjan.devasani@gmail.com> (https://github.com/ursnj)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ursnj/nayan/issues"
+    "url": "https://github.com/ursnj/nayan-ui/issues"
   },
   "homepage": "https://www.nayanui.com",
   "publishConfig": {

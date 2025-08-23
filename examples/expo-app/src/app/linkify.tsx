@@ -22,7 +22,7 @@ const Component = () => {
         <NLinkify>
           <NText className="mb-4">
             Visit our website at https://www.nayanui.com for comprehensive documentation and examples. You can also check out our GitHub repository at
-            github.com/nayan-ui/nayan for source code.
+            github.com/ursnj/nayan-ui for source code.
           </NText>
         </NLinkify>
 
@@ -59,7 +59,7 @@ const Component = () => {
 
       <NCard className="p-4 mb-6">
         <NLinkify onPress={handleLinkPress}>
-          <NText className="mb-4">Custom URL handler: Visit https://www.nayanui.com or https://github.com/nayan-ui</NText>
+          <NText className="mb-4">Custom URL handler: Visit https://www.nayanui.com or https://github.com/ursnj/nayan-ui</NText>
         </NLinkify>
 
         <NLinkify onPress={(url, text) => handleEmailPress(url.replace('mailto:', ''))}>
@@ -83,7 +83,7 @@ const Component = () => {
         <NLinkify>
           <NText className="mb-4">
             Development resources:
-            {'\n'}• GitHub: github.com/nayan-ui/nayan
+            {'\n'}• GitHub: github.com/ursnj/nayan-ui
             {'\n'}• NPM: npmjs.com/package/@nayan-ui/react-native
             {'\n'}• Docs: docs.nayanui.com
           </NText>
@@ -181,7 +181,7 @@ const Component = () => {
           <NLinkify>
             <NText className="text-sm">
               Nayan UI is a comprehensive React Native component library. Download it from npmjs.com/package/@nayan-ui/react-native or visit our
-              GitHub repository at github.com/nayan-ui/nayan. For questions, email support@nayanui.com.
+              GitHub repository at github.com/ursnj/nayan-ui. For questions, email support@nayanui.com.
             </NText>
           </NLinkify>
         </View>

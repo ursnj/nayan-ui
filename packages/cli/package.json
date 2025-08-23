@@ -1,6 +1,6 @@
 {
   "name": "@nayan-ui/cli",
-  "version": "1.0.0-beta.4",
+  "version": "1.0.0-beta.11",
   "private": false,
   "sideEffects": false,
   "description": "Command Line Tool for Nayan UI.",
@@ -48,10 +48,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ursnj/nayan"
+    "url": "https://github.com/ursnj/nayan-ui"
   },
   "bugs": {
-    "url": "https://github.com/ursnj/nayan/issues"
+    "url": "https://github.com/ursnj/nayan-ui/issues"
   },
   "keywords": [
     "Sitemap Generator",

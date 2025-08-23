@@ -41,7 +41,7 @@ const DevtoolsMain = () => {
                 Install CLI
               </NLink>
               <NLink
-                href="https://github.com/ursnj/nayan"
+                href="https://github.com/ursnj/nayan-ui"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center px-6 py-3 border border-border text-text rounded-lg hover:bg-border/50 transition-colors font-semibold">
