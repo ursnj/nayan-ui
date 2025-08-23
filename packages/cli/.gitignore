@@ -1,0 +1,7 @@
+.idea/
+node_modules/
+dist
+sitemap.xml
+index.html
+robots.txt
+icons

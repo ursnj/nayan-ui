@@ -1,0 +1,13 @@
+# Versioning and metadata
+.git
+.gitignore
+.dockerignore
+
+# Build dependencies
+coverage
+
+# Files not required for production
+.idea
+.github
+.husky
+README.md

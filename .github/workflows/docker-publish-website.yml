@@ -1,0 +1,16 @@
+name: Publish website docker images
+on: [workflow_dispatch]
+
+jobs:
+  publish_images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Build & Publish Image
+        working-directory: ./
+        run: |
+          docker login -u ursnj -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          docker build --no-cache -f packages/website/Dockerfile -t ursnj/nayanui:latest .
+          docker push ursnj/nayanui:latest

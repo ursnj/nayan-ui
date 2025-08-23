@@ -1,0 +1,283 @@
+# Nayan UI - Component Library Documentation
+
+## Project Overview
+Nayan UI is a comprehensive, enterprise-grade UI component library for React and React Native applications. It provides 30+ high-quality, reusable components with TypeScript-first development, advanced theming, and cross-platform compatibility.
+
+**Website**: https://www.nayanui.com
+**Repository**: https://github.com/ursnj/nayan
+**License**: ISC
+
+## Architecture
+- **Monorepo Structure**: Yarn workspaces with packages in `packages/` directory
+- **Packages**:
+  - `@nayan-ui/react` - React components with Tailwind CSS
+  - `@nayan-ui/react-native` - React Native components with NativeWind
+  - `@nayan-ui/cli` - Command line tools for SEO (sitemap, robots.txt)
+  - `@nayan-ui/website` - Documentation website (this site)
+
+## Technology Stack
+- **Frontend**: React 19, TypeScript, Tailwind CSS, Vite
+- **React Native**: React Native 0.80+, NativeWind, Expo SDK 53+
+- **Build Tools**: Vite, react-native-builder-bob, TypeScript
+- **Styling**: Tailwind CSS, tailwindcss-animate, CSS variables for theming
+- **Icons**: Lucide React (React), Lucide React Native (React Native)
+- **Development**: Yarn workspaces, Husky, Prettier, ESR server-side rendering
+
+## Component Categories
+
+### Form Controls
+- **NButton**: Multiple variants (default, destructive, outline, secondary, ghost, link), sizes, loading states, icons
+- **NInput**: Text inputs with validation states, icons, helper text, various input types
+- **NTextarea**: Multi-line text input with character limits, auto-resize, validation
+- **NCheckbox**: Single and group checkboxes with custom styling
+- **NRadioGroup**: Radio button groups with horizontal/vertical layouts
+- **NSwitch**: Toggle switches with sizes and custom styling
+- **NSelect**: Single/multi-select dropdowns with search, creation, loading states
+- **NSlider**: Range sliders with marks, vertical orientation, custom styling
+- **NDatePicker**: Date/time/datetime picker with custom icons (React Native only)
+- **NColorPicker**: Color selection component (React Native only)
+
+### Layout & Navigation
+- **NCard**: Content containers with headers, footers, custom styling
+- **NAccordion**: Collapsible content sections with single/multiple expansion
+- **NDivider**: Horizontal/vertical separators with custom styling
+- **NTabs**: Tabbed interfaces with icons, vertical layout, full-width options
+- **NSheet**: Bottom sheets and side panels with different sizes
+- **NDialog**: Modal dialogs with various sizes and content types
+- **NMenu**: Context menus and dropdown menus with nested items, separators
+
+### Feedback & Display
+- **NAlert**: Notification alerts with types (success, error, warning, info), actions, dismissible
+- **NToast**: Toast notifications with different types, actions, positioning
+- **NProgress**: Progress bars with labels, animations, custom styling
+- **NBadge**: Status badges with colors, sizes, notification dots
+- **NLoading**: Loading spinners with sizes, colors, contextual usage
+- **NSkeleton**: Loading placeholders for content (lines, avatars, cards)
+- **NTooltip**: Hover tooltips with positioning and custom content
+
+### Data Display
+- **NTable**: Data tables with sorting, pagination, custom cell renderers
+- **NInfiniteScroll**: Infinite scrolling lists with pull-to-refresh
+
+### Utility & Navigation
+- **NLink**: Navigation links with external/internal routing, accessibility
+- **NLinkify**: Automatic URL/email detection and linking in text
+- **NPopover**: Floating content containers with positioning
+- **NConfirmAlert**: Confirmation dialogs for destructive actions
+
+### Theming & Customization
+- **NTheme**: Theme provider with light/dark mode support
+- **NThemeToggle**: Theme switching component (React Native only)
+
+## Key Features
+
+### Design System
+- **Enterprise-class UI**: Professional design with consistent spacing, typography, colors
+- **TypeScript-first**: Full type safety with comprehensive interfaces
+- **Accessibility**: WCAG compliance with proper ARIA labels, keyboard navigation
+- **Responsive**: Mobile-first design with responsive breakpoints
+- **Dark Mode**: Built-in dark mode support with smooth transitions
+
+### Customization
+- **Tailwind CSS Integration**: Full utility class support for styling
+- **CSS Variables**: Theme customization through CSS custom properties
+- **Component Variants**: Multiple style variants for different use cases
+- **Custom Icons**: Support for Lucide, Expo, and custom icon components
+- **Flexible Styling**: className props on all components for custom styling
+
+### Performance
+- **60fps Performance**: Optimized for smooth animations and interactions
+- **Tree Shaking**: Only import components you use
+- **Bundle Size**: Minimal bundle impact with efficient code splitting
+- **React.memo**: Performance optimization to prevent unnecessary re-renders
+
+## Installation & Setup
+
+### React Package
+```bash
+npm install @nayan-ui/react
+# or
+yarn add @nayan-ui/react
+```
+
+**Peer Dependencies**: react, react-dom, tailwindcss
+
+### React Native Package
+```bash
+npm install @nayan-ui/react-native
+# or
+yarn add @nayan-ui/react-native
+```
+
+**Peer Dependencies**: react, react-native, nativewind, tailwindcss
+
+### CLI Tools
+```bash
+npm install -g @nayan-ui/cli
+# Usage: nayan create sitemap, nayan validate robots
+```
+
+## Theme Configuration
+
+### React Theme Setup
+```typescript
+import { NTheme, THEMES } from '@nayan-ui/react';
+
+const themeColors = {
+  light: {
+    primary: '#3b82f6',
+    background: '#ffffff',
+    foreground: '#0f172a'
+  },
+  dark: {
+    primary: '#60a5fa',
+    background: '#0f172a',
+    foreground: '#f8fafc'
+  }
+};
+
+function App() {
+  return (
+    <NTheme theme={THEMES.light} themeColors={themeColors}>
+      {/* Your app content */}
+    </NTheme>
+  );
+}
+```
+
+### React Native Theme Setup
+```typescript
+import { NTheme, THEMES, useNTheme } from '@nayan-ui/react-native';
+
+export default function App() {
+  const { theme } = useNTheme();
+  
+  return (
+    <NTheme theme={theme || THEMES.light} themeColors={themeColors}>
+      {/* Your app content */}
+    </NTheme>
+  );
+}
+```
+
+## Development Workflow
+
+### Local Development
+```bash
+# Start website with hot reload
+yarn start:website:watch
+
+# Build packages
+yarn build:react
+yarn build:react-native
+
+# Clean all dependencies
+yarn clean
+```
+
+### Website Structure
+- **src/react/components/**: React component examples and documentation
+- **src/react-native/components/**: React Native component examples
+- **src/home/**: Homepage content and navigation
+- **src/services/**: Utility functions and helpers
+- **public/**: Static assets and sitemap
+
+## Component Usage Patterns
+
+### Basic Component Usage
+```typescript
+import { NButton, NInput, NCard } from '@nayan-ui/react';
+
+function MyComponent() {
+  return (
+    <NCard>
+      <NInput placeholder="Enter text" />
+      <NButton variant="default" size="md">
+        Submit
+      </NButton>
+    </NCard>
+  );
+}
+```
+
+### Advanced Theming
+```typescript
+import { NButton } from '@nayan-ui/react';
+
+function CustomButton() {
+  return (
+    <NButton 
+      variant="outline"
+      className="bg-gradient-to-r from-blue-500 to-purple-600 text-white border-none"
+    >
+      Custom Styled Button
+    </NButton>
+  );
+}
+```
+
+### Form Integration
+```typescript
+import { useForm } from 'react-hook-form';
+import { NFormInput, NButton } from '@nayan-ui/react';
+
+function ContactForm() {
+  const { control, handleSubmit } = useForm();
+  
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <NFormInput
+        control={control}
+        name="email"
+        label="Email"
+        rules={{ required: 'Email is required' }}
+      />
+      <NButton type="submit">Submit</NButton>
+    </form>
+  );
+}
+```
+
+## Best Practices
+
+### Component Design
+- Use semantic HTML elements for accessibility
+- Provide proper ARIA labels and descriptions
+- Support keyboard navigation
+- Include loading and error states
+- Use consistent spacing and typography
+
+### Performance
+- Use React.memo for expensive components
+- Implement proper key props for lists
+- Avoid inline object creation in render methods
+- Use useCallback and useMemo for expensive computations
+
+### Styling
+- Use Tailwind utility classes for consistent styling
+- Leverage CSS variables for theme customization
+- Provide className props for component customization
+- Use responsive design principles
+
+## Browser & Platform Support
+
+### React
+- **Browsers**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+- **Node.js**: 16.0+
+- **React**: 18.0+
+
+### React Native
+- **iOS**: 11.0+
+- **Android**: API 21+ (Android 5.0)
+- **React Native**: 0.70+
+- **Expo**: SDK 47+
+
+## Contributing
+The project follows standard open-source contribution guidelines with Prettier formatting, Husky pre-commit hooks, and comprehensive TypeScript typing. All components include extensive examples and documentation.
+
+## SEO & Performance
+- Server-side rendering with Express
+- Automatic sitemap generation
+- Optimized bundle sizes
+- Progressive enhancement
+- Semantic HTML structure

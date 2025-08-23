@@ -1,0 +1,16 @@
+# Allow all AI crawlers (LLMs) to access content
+User-agent: GPTBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Default rules for all crawlers
+User-agent: *
+Disallow: /cgi-bin/
+
+# Sitemap
+Sitemap: https://www.nayanui.com/sitemap.xml

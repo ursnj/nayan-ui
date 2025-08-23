@@ -1,0 +1,44 @@
+{
+  "name": "@nayan-ui/root",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": []
+  },
+  "version": "1.0.0",
+  "description": "Reusable Component Libraries for React and React Native.",
+  "scripts": {
+    "prepare": "husky install",
+    "format": "prettier --write .",
+    "clean": "rimraf packages/*/node_modules packages/*/dist examples/*/node_modules examples/*/dist node_modules",
+    "build:cli": "yarn workspace @nayan-ui/cli build",
+    "watch:react": "yarn workspace @nayan-ui/react dev",
+    "build:react": "yarn workspace @nayan-ui/react build",
+    "build:react-native": "yarn workspace @nayan-ui/react-native build",
+    "start:website:watch": "concurrently \"yarn watch:react\" \"yarn workspace @nayan-ui/website start\"",
+    "start:website": "yarn build:react && yarn workspace @nayan-ui/website start",
+    "build:website": "yarn build:react && yarn workspace @nayan-ui/website build",
+    "sitemap:website": "yarn workspace @nayan-ui/website sitemap"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "concurrently": "^9.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "prettier": "^3.6.2",
+    "rimraf": "^6.0.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx,css,md,json}": [
+      "prettier --write ."
+    ]
+  },
+  "license": "ISC"
+}
