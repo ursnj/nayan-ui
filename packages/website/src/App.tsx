@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { NTheme, THEMES, useLocalStorage } from '@nayan-ui/react';
 import Contributions from './contributions/Contributions';
@@ -15,7 +14,6 @@ import RNButton from './react-native/components/Button';
 import RNButtonGroup from './react-native/components/ButtonGroup';
 import RNCard from './react-native/components/Card';
 import RNCheckbox from './react-native/components/Checkbox';
-import RNComponents from './react-native/components/Components';
 import RNConfirmAlert from './react-native/components/ConfirmAlert';
 import RNDialog from './react-native/components/Dialog';
 import RNDivider from './react-native/components/Divider';
@@ -75,24 +73,6 @@ import TagsDetails from './tags/TagsDetails';
 
 const App = () => {
   const [theme] = useLocalStorage('THEME', THEMES.LIGHT);
-
-  useEffect(() => {
-    // Initialize Microsoft Clarity with direct script tag
-    if (typeof window !== 'undefined') {
-      (function (c, l, a, r, i, t, y) {
-        c[a] =
-          c[a] ||
-          function () {
-            (c[a].q = c[a].q || []).push(arguments);
-          };
-        t = l.createElement(r);
-        t.async = 1;
-        t.src = 'https://www.clarity.ms/tag/' + i;
-        y = l.getElementsByTagName(r)[0];
-        y.parentNode.insertBefore(t, y);
-      })(window, document, 'clarity', 'script', 'sz9iu23mcr');
-    }
-  }, []);
 
   return (
     <NTheme theme={theme}>
