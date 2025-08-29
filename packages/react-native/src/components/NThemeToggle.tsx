@@ -31,7 +31,7 @@ export const NThemeToggle = React.memo<NThemeToggleProps>(({ size = 30, strokeWi
   return (
     <Pressable onPress={toggleTheme} {...props}>
       {React.cloneElement(currentIcon, {
-        className: cn('text-primary', className)
+        className: cn('text-text', className)
       })}
     </Pressable>
   );

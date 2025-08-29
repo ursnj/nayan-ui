@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NText } from '@/components/NText';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -56,7 +56,11 @@ export const NSelect = React.memo<NSelectProps>(
             <SelectValue className="text-text text-sm native:text-lg" placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent insets={contentInsets} className={cn('w-full bg-card border-border shadow', inputClassName)}>
-            <View className="max-h-[250px] overflow-scroll">
+            <ScrollView 
+              className="max-h-[250px]"
+              showsVerticalScrollIndicator={true}
+              nestedScrollEnabled={true}
+            >
               <SelectGroup>
                 {selectLabel && <SelectLabel className="text-text">{selectLabel}</SelectLabel>}
                 {items.map(item => (
@@ -65,7 +69,7 @@ export const NSelect = React.memo<NSelectProps>(
                   </SelectItem>
                 ))}
               </SelectGroup>
-            </View>
+            </ScrollView>
           </SelectContent>
         </Select>
       </View>
