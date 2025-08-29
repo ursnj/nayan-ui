@@ -60,6 +60,9 @@ export const NSelect = React.memo<NSelectProps>(
               className="max-h-[250px]"
               showsVerticalScrollIndicator={true}
               nestedScrollEnabled={true}
+              persistentScrollbar={true}
+              indicatorStyle="black"
+              scrollIndicatorInsets={{ right: 1 }}
             >
               <SelectGroup>
                 {selectLabel && <SelectLabel className="text-text">{selectLabel}</SelectLabel>}
