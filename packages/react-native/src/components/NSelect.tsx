@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { FlatList, View } from 'react-native';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NText } from '@/components/NText';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -54,20 +54,11 @@ export const NSelect = React.memo<NSelectProps>(
             <SelectValue className="text-text text-sm native:text-lg" placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent insets={contentInsets} className={cn('w-full bg-card border-border shadow', inputClassName)}>
-            <View style={{ maxHeight: 250 }}>
-              <FlatList
-                data={items}
-                keyExtractor={(item) => item.value}
-                showsVerticalScrollIndicator={true}
-                nestedScrollEnabled={true}
-                keyboardShouldPersistTaps="handled"
-                renderItem={({ item }) => (
-                  <SelectItem className="text-text" key={item.value} label={item.label} value={item.value}>
-                    {item.label}
-                  </SelectItem>
-                )}
-              />
-            </View>
+            {items.map(item => (
+              <SelectItem className="text-text" key={item.value} label={item.label} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </View>
