@@ -56,11 +56,11 @@ export const NSelect = React.memo<NSelectProps>(
             <SelectValue className="text-text text-sm native:text-lg" placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent insets={contentInsets} className={cn('w-full bg-card border-border shadow', inputClassName)}>
-            <View style={{ maxHeight: 500 }}>
+            <View style={{ maxHeight: 550 }}>
               <ScrollView
                 showsVerticalScrollIndicator={true}
                 nestedScrollEnabled={true}
-                persistentScrollbar={true}
+                persistentScrollbar={false}
                 indicatorStyle="black"
                 scrollIndicatorInsets={{ right: 1 }}
                 keyboardShouldPersistTaps="handled"
