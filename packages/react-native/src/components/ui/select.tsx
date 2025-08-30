@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import * as SelectPrimitive from '@rn-primitives/select';
 import { Check } from '@/lib/icons/Check';
 import { ChevronDown } from '@/lib/icons/ChevronDown';
@@ -71,7 +70,7 @@ const SelectContent: React.ForwardRefExoticComponent<
     return (
       <SelectPrimitive.Portal hostName={portalHost}>
         <SelectPrimitive.Overlay style={Platform.OS !== 'web' ? StyleSheet.absoluteFill : undefined}>
-          <Animated.View className="z-50" entering={FadeIn} exiting={FadeOut}>
+          <View className="z-50">
             <SelectPrimitive.Content
               ref={ref}
               className={cn(
@@ -93,7 +92,7 @@ const SelectContent: React.ForwardRefExoticComponent<
               </SelectPrimitive.Viewport>
               <SelectScrollDownButton />
             </SelectPrimitive.Content>
-          </Animated.View>
+          </View>
         </SelectPrimitive.Overlay>
       </SelectPrimitive.Portal>
     );
