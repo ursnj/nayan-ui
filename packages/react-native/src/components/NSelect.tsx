@@ -57,12 +57,13 @@ export const NSelect = React.memo<NSelectProps>(
           </SelectTrigger>
           <SelectContent insets={contentInsets} className={cn('w-full bg-card border-border shadow', inputClassName)}>
             <ScrollView 
-              className="max-h-[250px]"
+              style={{ maxHeight: 250 }}
               showsVerticalScrollIndicator={true}
               nestedScrollEnabled={true}
               persistentScrollbar={true}
               indicatorStyle="black"
               scrollIndicatorInsets={{ right: 1 }}
+              contentContainerStyle={{ flexGrow: 1 }}
             >
               <SelectGroup>
                 {selectLabel && <SelectLabel className="text-text">{selectLabel}</SelectLabel>}
