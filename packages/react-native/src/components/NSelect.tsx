@@ -56,24 +56,26 @@ export const NSelect = React.memo<NSelectProps>(
             <SelectValue className="text-text text-sm native:text-lg" placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent insets={contentInsets} className={cn('w-full bg-card border-border shadow', inputClassName)}>
-            <ScrollView 
-              style={{ maxHeight: 250 }}
-              showsVerticalScrollIndicator={true}
-              nestedScrollEnabled={true}
-              persistentScrollbar={true}
-              indicatorStyle="black"
-              scrollIndicatorInsets={{ right: 1 }}
-              contentContainerStyle={{ flexGrow: 1 }}
-            >
-              <SelectGroup>
-                {selectLabel && <SelectLabel className="text-text">{selectLabel}</SelectLabel>}
-                {items.map(item => (
-                  <SelectItem className="text-text" key={item.value} label={item.label} value={item.value}>
-                    {item.label}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </ScrollView>
+            <View style={{ maxHeight: 250 }}>
+              <ScrollView 
+                showsVerticalScrollIndicator={true}
+                nestedScrollEnabled={true}
+                persistentScrollbar={true}
+                indicatorStyle="black"
+                scrollIndicatorInsets={{ right: 1 }}
+                keyboardShouldPersistTaps="handled"
+                scrollEventThrottle={1}
+              >
+                <SelectGroup>
+                  {selectLabel && <SelectLabel className="text-text">{selectLabel}</SelectLabel>}
+                  {items.map(item => (
+                    <SelectItem className="text-text" key={item.value} label={item.label} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </ScrollView>
+            </View>
           </SelectContent>
         </Select>
       </View>
