@@ -24,7 +24,7 @@ export const NThemeToggle = React.memo<NThemeToggleProps>(({ size = 30, strokeWi
   const toggleTheme = useCallback(() => {
     const newTheme = isDarkMode ? THEMES.light : THEMES.dark;
     setTheme(newTheme);
-    setAndroidNavigationBar(newTheme, themeColors);
+    setAndroidNavigationBar(newTheme);
     onThemeChange && onThemeChange(newTheme);
   }, [isDarkMode, setTheme, themeColors, onThemeChange]);
 

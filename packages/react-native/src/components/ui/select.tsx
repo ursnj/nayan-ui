@@ -70,7 +70,10 @@ const SelectContent: React.ForwardRefExoticComponent<
 
     return (
       <SelectPrimitive.Portal hostName={portalHost}>
-        <SelectPrimitive.Overlay style={Platform.OS !== 'web' ? StyleSheet.absoluteFill : undefined}>
+        <SelectPrimitive.Overlay 
+          style={Platform.OS !== 'web' ? StyleSheet.absoluteFill : undefined}
+          pointerEvents="box-none"
+        >
           <Animated.View className="z-50" entering={FadeIn} exiting={FadeOut}>
             <SelectPrimitive.Content
               ref={ref}

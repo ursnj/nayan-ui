@@ -42,12 +42,12 @@ export const NTheme = React.memo<NThemeProps>(({ children, theme: rawTheme, them
     const finalTheme = rawTheme ?? theme ?? THEMES.light;
     setTheme(finalTheme as any);
     setThemeColors(themeColors);
-    setAndroidNavigationBar(finalTheme, themeColors);
+    setAndroidNavigationBar(finalTheme);
   }, [rawTheme, theme, themeColors]);
 
   useEffect(() => {
     if (theme) {
-      setAndroidNavigationBar(theme, themeColors);
+      setAndroidNavigationBar(theme);
     }
   }, [theme, themeColors]);
 
