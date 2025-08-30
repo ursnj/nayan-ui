@@ -1,6 +1,6 @@
 {
   "name": "@nayan-ui/react-native",
-  "version": "1.0.0-beta.20",
+  "version": "1.0.0-beta.21",
   "description": "React Native Component Library for smooth and faster mobile application development.",
   "source": "./src/index.tsx",
   "main": "./dist/commonjs/index.js",

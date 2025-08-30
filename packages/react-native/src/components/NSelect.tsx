@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NText } from '@/components/NText';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 
 export interface SelectOption {
@@ -12,6 +12,7 @@ export interface SelectOption {
 
 export interface NSelectProps {
   label?: string;
+  selectLabel?: string;
   placeholder?: string;
   disabled?: boolean;
   value: SelectOption;
@@ -25,6 +26,7 @@ export interface NSelectProps {
 export const NSelect = React.memo<NSelectProps>(
   ({
     label = '',
+    selectLabel = '',
     placeholder = '',
     disabled = false,
     value,
@@ -54,11 +56,26 @@ export const NSelect = React.memo<NSelectProps>(
             <SelectValue className="text-text text-sm native:text-lg" placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent insets={contentInsets} className={cn('w-full bg-card border-border shadow', inputClassName)}>
-            {items.map(item => (
-              <SelectItem className="text-text" key={item.value} label={item.label} value={item.value}>
-                {item.label}
-              </SelectItem>
-            ))}
+            <View style={{ maxHeight: 400 }}>
+              <ScrollView
+                showsVerticalScrollIndicator={true}
+                nestedScrollEnabled={true}
+                persistentScrollbar={true}
+                indicatorStyle="black"
+                scrollIndicatorInsets={{ right: 1 }}
+                keyboardShouldPersistTaps="handled"
+                scrollEventThrottle={1}
+              >
+                <SelectGroup>
+                  {selectLabel && <SelectLabel className="text-text">{selectLabel}</SelectLabel>}
+                  {items.map(item => (
+                    <SelectItem className="text-text" key={item.value} label={item.label} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </ScrollView>
+            </View>
           </SelectContent>
         </Select>
       </View>
