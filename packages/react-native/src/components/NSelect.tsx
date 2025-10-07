@@ -64,8 +64,7 @@ export const NSelect = React.memo<NSelectProps>(
                 indicatorStyle="black"
                 scrollIndicatorInsets={{ right: 1 }}
                 keyboardShouldPersistTaps="handled"
-                scrollEventThrottle={1}
-              >
+                scrollEventThrottle={1}>
                 <SelectGroup>
                   {selectLabel && <SelectLabel className="text-text">{selectLabel}</SelectLabel>}
                   {items.map(item => (
