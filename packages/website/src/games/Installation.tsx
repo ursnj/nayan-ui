@@ -10,6 +10,7 @@ import {
   simpleUsageCode
 } from '@/services/GamesCodeBlocks';
 import { getMenuItem } from '@/services/Utils';
+import Code from '../helpers/Code';
 import Meta from '../helpers/Meta';
 import Sidebar from '../helpers/Sidebar';
 
@@ -33,21 +34,15 @@ const GamesInstallation = () => {
         </h2>
         <div className="space-y-4">
           <div className="bg-background rounded-lg p-4">
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
-              <code>{installCode}</code>
-            </pre>
+            <Code language="bash" code={installCode} />
             <p className="text-muted text-sm mt-2 text-center">or</p>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto mt-2">
-              <code>{installYarnCode}</code>
-            </pre>
+            <Code language="bash" code={installYarnCode} />
           </div>
 
           <div className="bg-background rounded-lg p-4">
             <h3 className="text-lg font-semibold text-text mb-3">Peer Dependencies</h3>
             <p className="text-muted text-sm mb-3">This library requires the following peer dependencies to be installed in your project:</p>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
-              <code>{peerDepsCode}</code>
-            </pre>
+            <Code language="bash" code={peerDepsCode} />
           </div>
 
           <div className="bg-background rounded-lg p-4">
@@ -113,9 +108,7 @@ const GamesInstallation = () => {
           <div className="bg-background rounded-lg p-4">
             <h3 className="text-lg font-semibold text-text mb-3">Simple Implementation</h3>
             <p className="text-muted text-sm mb-3">For basic usage without settings persistence:</p>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
-              <code>{simpleUsageCode}</code>
-            </pre>
+            <Code code={simpleUsageCode} />
           </div>
 
           <div className="bg-background rounded-lg p-4">
@@ -123,25 +116,19 @@ const GamesInstallation = () => {
             <p className="text-muted text-sm mb-3">
               All games use the same props pattern for consistency. Here's a complete example with settings persistence and navigation integration:
             </p>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
-              <code>{advancedUsageCode}</code>
-            </pre>
+            <Code code={advancedUsageCode} />
           </div>
 
           <div className="bg-background rounded-lg p-4">
             <h3 className="text-lg font-semibold text-text mb-3">Available Games</h3>
             <p className="text-muted text-sm mb-3">All games use the same props interface:</p>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
-              <code>{availableGamesCode}</code>
-            </pre>
+            <Code code={availableGamesCode} />
           </div>
 
           <div className="bg-background rounded-lg p-4">
             <h3 className="text-lg font-semibold text-text mb-3">Game Settings & Configuration</h3>
             <p className="text-muted text-sm mb-3">All games use the unified GameSettings interface:</p>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
-              <code>{gameSettingsInterfaceCode}</code>
-            </pre>
+            <Code code={gameSettingsInterfaceCode} />
           </div>
 
           <div className="bg-background rounded-lg p-4">

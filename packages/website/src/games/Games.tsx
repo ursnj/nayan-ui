@@ -8,7 +8,7 @@ const games = [
   {
     name: 'Fruit Ninja',
     emoji: '🍎',
-    image: 'https://cdn.worklage.com/playtura/screenshots/fruit-ninja.png',
+    image: '/games-screenshots/fruit-ninja.jpg',
     description: 'Slice flying fruits with finger swipes - avoid the bombs!',
     details: [
       'Fixed 60-second gameplay sessions',
@@ -19,7 +19,7 @@ const games = [
   {
     name: 'Candy Crush',
     emoji: '🍬',
-    image: 'https://cdn.worklage.com/playtura/screenshots/candy-crush.png',
+    image: '/games-screenshots/candy-crush.jpg',
     description: 'Match colorful candies in this puzzle game',
     details: [
       'Match-3 puzzle with colorful candies',
@@ -31,7 +31,7 @@ const games = [
   {
     name: 'Flappy Bird',
     emoji: '🐦',
-    image: 'https://cdn.worklage.com/playtura/screenshots/flappy-bird.png',
+    image: '/games-screenshots/flappy-bird.jpg',
     description: 'Navigate bird through pipes with precise timing',
     details: [
       'Classic tap-to-flap mechanics with gravity physics',
@@ -43,7 +43,7 @@ const games = [
   {
     name: 'Colors Sort',
     emoji: '🎨',
-    image: 'https://cdn.worklage.com/playtura/screenshots/colors-sort.png',
+    image: '/games-screenshots/colors-sort.jpg',
     description: 'Sort colored liquids into matching tubes',
     details: [
       'Sort colored liquids into matching tubes',
@@ -55,7 +55,7 @@ const games = [
   {
     name: 'Dino Jump',
     emoji: '🦖',
-    image: 'https://cdn.worklage.com/playtura/screenshots/dino-jump.png',
+    image: '/games-screenshots/dino-jump.jpg',
     description: 'Chrome offline dino game - jump to avoid obstacles!',
     details: [
       'Endless runner with tap-to-jump mechanics',
@@ -68,7 +68,7 @@ const games = [
   {
     name: 'Popit Fidget',
     emoji: '🫧',
-    image: 'https://cdn.worklage.com/playtura/screenshots/popit-fidget.png',
+    image: '/games-screenshots/popit-fidget.jpg',
     description: 'Pop satisfying bubbles in this relaxing fidget toy game',
     details: [
       'Relaxing bubble popping with satisfying sound effects',
@@ -79,7 +79,7 @@ const games = [
   {
     name: 'Whack A Mole',
     emoji: '🐱',
-    image: 'https://cdn.worklage.com/playtura/screenshots/whack-a-mole.png',
+    image: '/games-screenshots/whack-a-mole.jpg',
     description: 'Whack cute cats popping from holes - fast reflexes needed!',
     details: [
       'Cat spawn intervals: easy 2000ms, medium 1500ms, hard 1000ms',
@@ -90,7 +90,7 @@ const games = [
   {
     name: 'Balloon Blaster',
     emoji: '🎈',
-    image: 'https://cdn.worklage.com/playtura/screenshots/balloon-blaster.png',
+    image: '/games-screenshots/balloon-blaster.jpg',
     description: 'Pop rising balloons before they escape - quick taps win!',
     details: [
       'Fixed 60-second gameplay sessions',
@@ -101,7 +101,7 @@ const games = [
   {
     name: 'Space Fighter',
     emoji: '🚀',
-    image: 'https://cdn.worklage.com/playtura/screenshots/space-fighter.png',
+    image: '/games-screenshots/space-fighter.jpg',
     description: 'Pilot spaceship through asteroid fields in endless space',
     details: [
       'Horizontal drag controls with smooth spacecraft movement',
@@ -114,7 +114,7 @@ const games = [
   {
     name: 'Maze Runner',
     emoji: '🧩',
-    image: 'https://cdn.worklage.com/playtura/screenshots/maze-runner.png',
+    image: '/games-screenshots/maze-runner.jpg',
     description: 'Navigate ball through mazes using tilt and physics controls',
     details: [
       'Grid sizes: easy 8x8, medium 10x10, hard 12x12',
@@ -127,7 +127,7 @@ const games = [
   {
     name: 'Sliding Numbers',
     emoji: '🔢',
-    image: 'https://cdn.worklage.com/playtura/screenshots/sliding-numbers.png',
+    image: '/games-screenshots/sliding-numbers.jpg',
     description: 'Solve the classic 15-puzzle with numbers',
     details: [
       'Classic 15-puzzle with numbered tiles',
@@ -139,7 +139,7 @@ const games = [
   {
     name: '2048 Game',
     emoji: '🎮',
-    image: 'https://cdn.worklage.com/playtura/screenshots/game-2048.png',
+    image: '/games-screenshots/game-2048.jpg',
     description: 'Merge tiles to reach 2048 and beyond',
     details: [
       'Swipe to merge tiles with same numbers',
@@ -151,7 +151,7 @@ const games = [
   {
     name: 'Fruit Merger',
     emoji: '🍉',
-    image: 'https://cdn.worklage.com/playtura/screenshots/fruit-merger.png',
+    image: '/games-screenshots/fruit-merger.jpg',
     description: 'Merge fruits to create bigger ones',
     details: [
       'Merge fruits to create bigger ones (watermelon evolution)',
@@ -163,7 +163,7 @@ const games = [
   {
     name: 'Snake & Eggs',
     emoji: '🐍',
-    image: 'https://cdn.worklage.com/playtura/screenshots/snake.png',
+    image: '/games-screenshots/snake.jpg',
     description: 'Classic snake game with modern touch controls',
     details: [
       'Classic snake gameplay with modern touch controls',

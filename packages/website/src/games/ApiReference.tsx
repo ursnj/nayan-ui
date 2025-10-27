@@ -8,6 +8,7 @@ import {
   typescriptTypesCode
 } from '@/services/GamesCodeBlocks';
 import { getMenuItem } from '@/services/Utils';
+import Code from '../helpers/Code';
 import Meta from '../helpers/Meta';
 import Sidebar from '../helpers/Sidebar';
 
@@ -32,48 +33,36 @@ const GamesApiReference = () => {
         <div className="space-y-6">
           <div className="bg-background rounded-lg p-4">
             <h3 className="text-lg font-semibold text-text mb-3">Exported Constants & Types</h3>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
-              <code>{exportedConstantsCode}</code>
-            </pre>
+            <Code code={exportedConstantsCode} />
           </div>
 
           <div className="bg-background rounded-lg p-4">
             <h3 className="text-lg font-semibold text-text mb-3">GAME_IDS Enum</h3>
             <p className="text-muted text-sm mb-3">All available game identifiers:</p>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
-              <code>{gameIdsEnumCode}</code>
-            </pre>
+            <Code code={gameIdsEnumCode} />
           </div>
 
           <div className="bg-background rounded-lg p-4">
             <h3 className="text-lg font-semibold text-text mb-3">DEFAULT_GAME_SETTINGS</h3>
             <p className="text-muted text-sm mb-3">Default configuration for all games:</p>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
-              <code>{defaultGameSettingsCode}</code>
-            </pre>
+            <Code code={defaultGameSettingsCode} />
           </div>
 
           <div className="bg-background rounded-lg p-4">
             <h3 className="text-lg font-semibold text-text mb-3">GAMES_LIST</h3>
             <p className="text-muted text-sm mb-3">Array of all game definitions with metadata:</p>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
-              <code>{gamesListCode}</code>
-            </pre>
+            <Code code={gamesListCode} />
           </div>
 
           <div className="bg-background rounded-lg p-4">
             <h3 className="text-lg font-semibold text-text mb-3">GAMES_MAPPING</h3>
             <p className="text-muted text-sm mb-3">Object mapping game IDs to their components:</p>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
-              <code>{gamesMappingCode}</code>
-            </pre>
+            <Code code={gamesMappingCode} />
           </div>
 
           <div className="bg-background rounded-lg p-4">
             <h3 className="text-lg font-semibold text-text mb-3">TypeScript Types</h3>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
-              <code>{typescriptTypesCode}</code>
-            </pre>
+            <Code code={typescriptTypesCode} />
           </div>
         </div>
       </div>
