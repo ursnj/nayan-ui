@@ -1,18 +1,8 @@
 {
   "expo": {
     "scheme": "acme",
-    "plugins": [
-      [
-        "expo-router",
-        {
-          "origin": false
-        }
-      ]
-    ],
+    "plugins": ["expo-router"],
     "name": "react-native-games",
-    "slug": "react-native-games",
-    "experiments": {
-      "tsconfigPaths": true
-    }
+    "slug": "react-native-games"
   }
 }
