@@ -1,4 +1,4 @@
-import { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SplashScreen, Stack } from 'expo-router';
@@ -6,7 +6,7 @@ import { SplashScreen, Stack } from 'expo-router';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  useLayoutEffect(() => {
+  useEffect(() => {
     SplashScreen.hideAsync();
   }, []);
 
