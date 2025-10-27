@@ -5,7 +5,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
-import { StorageService } from '../services/StorageService';
 
 export default function GameScreen() {
   const headerHeight = useHeaderHeight();
@@ -20,14 +19,12 @@ export default function GameScreen() {
 
   // Get or initialize settings for this game
   const [settings, setSettings] = useState<GameSettings>(() => {
-    const stored = gameId ? StorageService.get(gameId) : null;
-    return stored || { ...DEFAULT_GAME_SETTINGS, offset: headerHeight };
+    return { ...DEFAULT_GAME_SETTINGS, offset: headerHeight };
   });
 
   const handleSettingsChange = useCallback((newSettings: GameSettings) => {
     if (gameId) {
       setSettings(newSettings);
-      StorageService.set(gameId, newSettings);
     }
   }, []);
 
