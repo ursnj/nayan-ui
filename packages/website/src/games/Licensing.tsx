@@ -167,16 +167,6 @@ const GamesLicensing = () => {
           </li>
         </ul>
       </div>
-
-      {/* Footer */}
-      <div className="text-center py-8">
-        <p className="text-muted">
-          Made with ❤️ by{' '}
-          <NLink href="https://github.com/ursnj" target="_blank" className="text-primary hover:underline font-semibold">
-            Niranjan Devasani
-          </NLink>
-        </p>
-      </div>
     </Sidebar>
   );
 };
