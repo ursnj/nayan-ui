@@ -23,7 +23,9 @@ export const GameItem: React.FC<GameItemProps> = ({ game }) => {
 
   return (
     <TouchableOpacity style={styles.container} onPress={() => navigateToGame(game.id)} activeOpacity={0.8}>
-      <Image source={{ uri: `${CONFIG.APP_URL}/games-screenshots/${game.id}.jpg` }} style={styles.image} resizeMode="cover" />
+      <View style={styles.imageContainer}>
+        <Image source={{ uri: `${CONFIG.APP_URL}/games-screenshots/${game.id}.jpg` }} style={styles.image} resizeMode="cover" />
+      </View>
       <View style={styles.content}>
         <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>
           {game.title}
@@ -57,20 +59,27 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8
   },
-  image: {
+  imageContainer: {
     width: '100%',
-    height: 280
+    paddingBottom: '164%'
+  },
+  image: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
   },
   content: {
     padding: 10
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 4
   },
   description: {
-    fontSize: 16,
+    fontSize: 15,
     lineHeight: 24,
     marginBottom: 8
   },
