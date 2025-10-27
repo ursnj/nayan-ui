@@ -312,14 +312,14 @@ const GamesMain = () => {
       </div>
 
       {/* Available Games Section */}
-      <div className="bg-card border border-border rounded-lg p-8 mb-8">
+      <div className="mb-8">
         <h2 className="text-2xl font-bold text-text mb-6 flex items-center">
           <span className="mr-3">🎯</span>
           Available Games
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {games.map((game, index) => (
-            <div key={index} className="bg-background border border-border rounded-lg p-6 flex flex-col">
+            <div key={index} className="bg-card border border-border rounded-lg p-6 flex flex-col hover:shadow-lg transition-shadow">
               <div className="flex items-center justify-center mb-4">
                 <img src={game.image} alt={game.name} className="w-full h-auto rounded-lg" loading="lazy" />
               </div>
