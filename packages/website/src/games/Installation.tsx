@@ -27,25 +27,21 @@ const GamesInstallation = () => {
       />
 
       {/* Installation Section */}
-      <div className="bg-card border border-border rounded-lg p-8 mb-8">
-        <h2 className="text-2xl font-bold text-text mb-6 flex items-center">
-          <span className="mr-3">📦</span>
-          Installation
-        </h2>
+      <div className="mb-8">
         <div className="space-y-4">
-          <div className="bg-background rounded-lg p-4">
+          <div className="mb-4">
             <Code language="bash" code={installCode} />
             <p className="text-muted text-sm mt-2 text-center">or</p>
             <Code language="bash" code={installYarnCode} />
           </div>
 
-          <div className="bg-background rounded-lg p-4">
+          <div className="mb-4">
             <h3 className="text-lg font-semibold text-text mb-3">Peer Dependencies</h3>
             <p className="text-muted text-sm mb-3">This library requires the following peer dependencies to be installed in your project:</p>
             <Code language="bash" code={peerDepsCode} />
           </div>
 
-          <div className="bg-background rounded-lg p-4">
+          <div className="mb-4">
             <h3 className="text-lg font-semibold text-text mb-3">Platform Setup</h3>
             <p className="text-muted text-sm mb-3">Follow the installation guides for each peer dependency:</p>
             <ul className="text-muted text-sm space-y-2">
@@ -99,19 +95,19 @@ const GamesInstallation = () => {
       </div>
 
       {/* Usage Section */}
-      <div className="bg-card border border-border rounded-lg p-8 mb-8">
+      <div className="mb-8">
         <h2 className="text-2xl font-bold text-text mb-6 flex items-center">
           <span className="mr-3">🚀</span>
           Usage
         </h2>
         <div className="space-y-6">
-          <div className="bg-background rounded-lg p-4">
+          <div className="mb-6">
             <h3 className="text-lg font-semibold text-text mb-3">Simple Implementation</h3>
             <p className="text-muted text-sm mb-3">For basic usage without settings persistence:</p>
             <Code code={simpleUsageCode} />
           </div>
 
-          <div className="bg-background rounded-lg p-4">
+          <div className="mb-6">
             <h3 className="text-lg font-semibold text-text mb-3">Advanced Implementation Example</h3>
             <p className="text-muted text-sm mb-3">
               All games use the same props pattern for consistency. Here's a complete example with settings persistence and navigation integration:
@@ -119,19 +115,19 @@ const GamesInstallation = () => {
             <Code code={advancedUsageCode} />
           </div>
 
-          <div className="bg-background rounded-lg p-4">
+          <div className="mb-6">
             <h3 className="text-lg font-semibold text-text mb-3">Available Games</h3>
             <p className="text-muted text-sm mb-3">All games use the same props interface:</p>
             <Code code={availableGamesCode} />
           </div>
 
-          <div className="bg-background rounded-lg p-4">
+          <div className="mb-6">
             <h3 className="text-lg font-semibold text-text mb-3">Game Settings & Configuration</h3>
             <p className="text-muted text-sm mb-3">All games use the unified GameSettings interface:</p>
             <Code code={gameSettingsInterfaceCode} />
           </div>
 
-          <div className="bg-background rounded-lg p-4">
+          <div className="mb-6">
             <h3 className="text-lg font-semibold text-text mb-3">Game Settings</h3>
             <p className="text-muted text-sm mb-3">Each game includes built-in settings screens with a unified, simplified interface:</p>
             <ul className="text-muted text-sm space-y-2">

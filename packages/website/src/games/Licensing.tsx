@@ -17,17 +17,13 @@ const GamesLicensing = () => {
       />
 
       {/* License Section */}
-      <div className="bg-card border border-border rounded-lg p-8 mb-8">
-        <h2 className="text-2xl font-bold text-text mb-6 flex items-center">
-          <span className="mr-3">📄</span>
-          License
-        </h2>
+      <div className="mb-8">
         <div className="space-y-6">
           <p className="text-muted">
             This library is available under a <strong>dual licensing model</strong>:
           </p>
 
-          <div className="bg-background rounded-lg p-6 border-l-4 border-green-500">
+          <div className="bg-card border-t border-r border-b border-border border-l-4 border-l-green-500 rounded-lg p-6">
             <h3 className="text-xl font-semibold text-text mb-3 flex items-center">
               <span className="mr-2">🆓</span>
               Non-Commercial License (Free)
@@ -48,7 +44,7 @@ const GamesLicensing = () => {
             </ul>
           </div>
 
-          <div className="bg-background rounded-lg p-6 border-l-4 border-blue-500">
+          <div className="bg-card border-t border-r border-b border-border border-l-4 border-l-blue-500 rounded-lg p-6">
             <h3 className="text-xl font-semibold text-text mb-3 flex items-center">
               <span className="mr-2">💼</span>
               Commercial License (Paid)
@@ -95,7 +91,7 @@ const GamesLicensing = () => {
       </div>
 
       {/* Acknowledgments Section */}
-      <div className="bg-card border border-border rounded-lg p-8 mb-8">
+      <div className="mb-8">
         <h2 className="text-2xl font-bold text-text mb-6 flex items-center">
           <span className="mr-3">🙏</span>
           Acknowledgments
@@ -142,7 +138,7 @@ const GamesLicensing = () => {
       </div>
 
       {/* Support Section */}
-      <div className="bg-card border border-border rounded-lg p-8 mb-8">
+      <div className="mb-8">
         <h2 className="text-2xl font-bold text-text mb-6 flex items-center">
           <span className="mr-3">📞</span>
           Support
