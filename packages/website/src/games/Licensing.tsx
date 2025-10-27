@@ -91,14 +91,6 @@ const GamesLicensing = () => {
               </p>
             </div>
           </div>
-
-          <p className="text-muted text-sm">
-            See the complete{' '}
-            <NLink href="https://github.com/ursnj/nayan-ui/blob/main/LICENSE" target="_blank" className="text-primary hover:underline">
-              LICENSE
-            </NLink>{' '}
-            file for detailed terms and definitions.
-          </p>
         </div>
       </div>
 

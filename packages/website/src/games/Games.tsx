@@ -317,24 +317,22 @@ const GamesMain = () => {
           <span className="mr-3">🎯</span>
           Available Games
         </h2>
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {games.map((game, index) => (
-            <div key={index} className="bg-background border border-border rounded-lg p-6 flex flex-col md:flex-row gap-6">
-              <div className="flex-shrink-0">
-                <img src={game.image} alt={game.name} className="w-32 h-32 rounded-lg object-cover" loading="lazy" />
+            <div key={index} className="bg-background border border-border rounded-lg p-6 flex flex-col">
+              <div className="flex items-center justify-center mb-4">
+                <img src={game.image} alt={game.name} className="w-full h-auto rounded-lg" loading="lazy" />
               </div>
-              <div className="flex-1">
-                <h3 className="text-xl font-semibold text-text mb-2 flex items-center">
-                  <span className="mr-2">{game.emoji}</span>
-                  {game.name}
-                </h3>
-                <p className="text-muted mb-3">{game.description}</p>
-                <ul className="text-muted text-sm space-y-1">
-                  {game.details.map((detail, idx) => (
-                    <li key={idx}>• {detail}</li>
-                  ))}
-                </ul>
-              </div>
+              <h3 className="text-lg font-semibold text-text mb-2 flex items-center">
+                <span className="mr-2">{game.emoji}</span>
+                {game.name}
+              </h3>
+              <p className="text-muted text-sm mb-3">{game.description}</p>
+              <ul className="text-muted text-xs space-y-1">
+                {game.details.slice(0, 3).map((detail, idx) => (
+                  <li key={idx}>• {detail}</li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
