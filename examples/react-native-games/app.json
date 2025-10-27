@@ -1,8 +1,0 @@
-{
-  "expo": {
-    "scheme": "acme",
-    "plugins": ["expo-router"],
-    "name": "react-native-games",
-    "slug": "react-native-games"
-  }
-}
