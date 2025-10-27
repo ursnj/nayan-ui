@@ -11,6 +11,7 @@ import {
   Download,
   EllipsisVertical,
   FileCode,
+  FileText,
   GalleryVertical,
   Gamepad2,
   Grid3x3,
@@ -867,5 +868,11 @@ export const gamesSidebarItems = [
     description: 'Complete API documentation for all exported constants and types',
     link: '/games/api-reference',
     icon: BookOpen
+  },
+  {
+    title: 'Licensing',
+    description: 'License information, commercial usage, and acknowledgments',
+    link: '/games/licensing',
+    icon: FileText
   }
 ];
