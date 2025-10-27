@@ -1,15 +1,18 @@
 import {
   AppWindow,
   Badge,
+  BookOpen,
   Bot,
   CircleAlert,
   CircleCheck,
   CircleDot,
   Columns3,
   CreditCard,
+  Download,
   EllipsisVertical,
   FileCode,
   GalleryVertical,
+  Gamepad2,
   Grid3x3,
   HandCoins,
   Link,
@@ -163,6 +166,9 @@ export const getSidebarItems = (path: string) => {
   }
   if (path.startsWith('/devtools')) {
     return devtoolsSidebarItems;
+  }
+  if (path.startsWith('/games')) {
+    return gamesSidebarItems;
   }
   return reactSidebarItems;
 };
@@ -839,5 +845,27 @@ export const devtoolsSidebarItems = [
     description: 'Create and validate robots.txt files for search engine crawling control',
     link: '/devtools/robots',
     icon: Bot
+  }
+];
+
+export const gamesSidebarItems = [
+  { title: 'Get Started', description: '', link: '', isHeading: true },
+  {
+    title: 'Overview',
+    description: 'Collection of classic games for React Native applications',
+    link: '/games',
+    icon: Gamepad2
+  },
+  {
+    title: 'Installation',
+    description: 'Installation guide and setup instructions for react-native-games',
+    link: '/games/installation',
+    icon: Download
+  },
+  {
+    title: 'API Reference',
+    description: 'Complete API documentation for all exported constants and types',
+    link: '/games/api-reference',
+    icon: BookOpen
   }
 ];

@@ -4,6 +4,9 @@ import Contributions from './contributions/Contributions';
 import Devtools from './devtools/Devtools';
 import RobotsPage from './devtools/RobotsPage';
 import SitemapPage from './devtools/SitemapPage';
+import GamesApiReference from './games/ApiReference';
+import Games from './games/Games';
+import GamesInstallation from './games/Installation';
 import Wrapper from './helpers/Wrapper';
 import Home from './home/Home';
 // React Native imports
@@ -86,6 +89,12 @@ const App = () => {
             <Route index element={<Devtools />} />
             <Route path="sitemap" element={<SitemapPage />} />
             <Route path="robots" element={<RobotsPage />} />
+          </Route>
+
+          <Route path="/games">
+            <Route index element={<Games />} />
+            <Route path="installation" element={<GamesInstallation />} />
+            <Route path="api-reference" element={<GamesApiReference />} />
           </Route>
           <Route path="/react">
             <Route index element={<Components />} />
