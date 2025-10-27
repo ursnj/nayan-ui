@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
@@ -22,25 +22,83 @@ export const GameItem: React.FC<GameItemProps> = ({ game }) => {
   };
 
   return (
-    <TouchableOpacity
-      className="flex-1 rounded-lg m-1.5 overflow-hidden bg-card border border-border elevation-12"
-      onPress={() => navigateToGame(game.id)}
-      activeOpacity={0.8}>
-      <Image source={{ uri: `${CONFIG.APP_URL}/games-screenshots/${game.id}.jpg` }} className="aspect-square" resizeMode="cover" />
-      <View className="p-2.5">
-        <Text className="text-lg font-bold text-text mb-0" numberOfLines={1}>
+    <TouchableOpacity style={styles.container} onPress={() => navigateToGame(game.id)} activeOpacity={0.8}>
+      <Image source={{ uri: `${CONFIG.APP_URL}/games-screenshots/${game.id}.jpg` }} style={styles.image} resizeMode="cover" />
+      <View style={styles.content}>
+        <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>
           {game.title}
         </Text>
-        <Text className="text-base text-text leading-relaxed mb-2" numberOfLines={3}>
+        <Text style={[styles.description, { color: colors.text }]} numberOfLines={3}>
           {game.description}
         </Text>
-        <View className="rounded-xl py-3 px-5 bg-border border border-border items-center justify-center shadow-button elevation-6">
-          <View className="flex-row items-center justify-center">
-            <Ionicons name="game-controller" size={18} color={colors.text} className="mr-2" />
-            <Text className="text-text text-base font-semibold">Play Now</Text>
+        <View style={styles.button}>
+          <View style={styles.buttonContent}>
+            <Ionicons name="game-controller" size={18} color={colors.text} style={styles.icon} />
+            <Text style={[styles.buttonText, { color: colors.text }]}>Play Now</Text>
           </View>
         </View>
       </View>
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    borderRadius: 8,
+    margin: 6,
+    overflow: 'hidden',
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    elevation: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8
+  },
+  image: {
+    width: '100%',
+    aspectRatio: 1
+  },
+  content: {
+    padding: 10
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 4
+  },
+  description: {
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 8
+  },
+  button: {
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    backgroundColor: '#e0e0e0',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  icon: {
+    marginRight: 8
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: '600'
+  }
+});

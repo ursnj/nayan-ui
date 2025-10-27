@@ -1,5 +1,5 @@
 import { useCallback, useLayoutEffect, useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { DEFAULT_GAME_SETTINGS, GAMES_LIST, GAMES_MAPPING, GAME_IDS, type GameSettings } from 'react-native-games';
 import { Ionicons } from '@expo/vector-icons';
 import { useHeaderHeight } from '@react-navigation/elements';
@@ -43,7 +43,7 @@ export default function GameScreen() {
       headerTintColor: '#ffffff',
       headerStyle: { backgroundColor: 'rgba(0,0,0,0.2)' },
       headerRight: () => (
-        <TouchableOpacity onPressIn={handleToggleSettingsModal} className="p-2 z-10">
+        <TouchableOpacity onPressIn={handleToggleSettingsModal} style={styles.settingsButton}>
           <Ionicons name="settings-outline" size={24} color="#fff" />
         </TouchableOpacity>
       )
@@ -55,8 +55,19 @@ export default function GameScreen() {
   }
 
   return (
-    <View className="flex-1 bg-background">
+    <View style={styles.container}>
       <GameComponent settings={settings} onSettingsChange={handleSettingsChange} />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5'
+  },
+  settingsButton: {
+    padding: 8,
+    zIndex: 10
+  }
+});
