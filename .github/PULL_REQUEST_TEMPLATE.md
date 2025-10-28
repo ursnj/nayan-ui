@@ -1,8 +1,14 @@
+## Package
+
+- [ ] Nayan UI CLI
+- [ ] Nayan UI Games
+- [ ] Nayan UI Website
+- [ ] Nayan UI React JS
+- [ ] Nayan UI React Native
+
 ## Description
 
-## Related Issue
-
-Fixes # [ISSUE_NUMBER]
+A clear and concise description of the issue or feature request.
 
 ## Type of Change
 
