@@ -11,7 +11,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <img src="/logo.webp" alt="Nayan UI Logo" className="w-10 h-10" loading="lazy" />
+              <img src="/logo.webp" fetchPriority="high" alt="Nayan UI Logo" className="w-10 h-10" loading="lazy" />
               <span className="text-xl font-bold text-text">Nayan UI</span>
             </div>
             <p className="text-muted text-sm leading-relaxed">
