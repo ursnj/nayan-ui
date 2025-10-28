@@ -1,3 +1,5 @@
+# Bug Report
+
 ## Package
 
 - [ ] Nayan UI CLI
