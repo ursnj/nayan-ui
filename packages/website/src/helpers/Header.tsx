@@ -35,6 +35,11 @@ const HeaderMenu = () => {
           </NavLink>
         </li>
         <li className="w-full md:w-auto">
+          <NavLink className="text-base font-medium text-text px-3 py-3 block md:inline" to="/games">
+            Games
+          </NavLink>
+        </li>
+        <li className="w-full md:w-auto">
           <NavLink className="text-base font-medium text-text px-3 py-3 block md:inline" to="/contributions">
             Contributions
           </NavLink>
@@ -90,7 +95,15 @@ const Header = () => {
         </NSheet>
         <nav className="flex flex-row py-2.5 justify-between items-center">
           <Link to="/">
-            <img src="/logo.webp" className="d-inline-block align-top main-logo mr-6" alt="Nayan UI Logo" loading="lazy" width={50} height={50} />
+            <img
+              src="/logo.webp"
+              fetchPriority="high"
+              className="d-inline-block align-top main-logo mr-6"
+              alt="Nayan UI Logo"
+              loading="lazy"
+              width={50}
+              height={50}
+            />
           </Link>
           <div className="block md:hidden p-2" onClick={() => setMenu(true)}>
             <AlignJustify className="w-6 h-6 text-text" />
