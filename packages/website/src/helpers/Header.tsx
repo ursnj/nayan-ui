@@ -15,32 +15,32 @@ const HeaderMenu = () => {
     <div className="w-full flex flex-col md:flex-row justify-between items-center">
       <ul className="w-full md:w-auto flex flex-col md:flex-row items-center">
         <li className="w-full md:w-auto">
-          <NavLink className="text-base font-medium text-text px-3 py-3 block md:inline" to="/">
+          <NavLink className="text-base font-medium text-text px-5 py-3 block md:inline" to="/">
             Home
           </NavLink>
         </li>
         <li className="w-full md:w-auto">
-          <NavLink className="text-base font-medium text-text px-3 py-3 block md:inline" to="/react/installation">
+          <NavLink className="text-base font-medium text-text px-5 py-3 block md:inline" to="/react/installation">
             React JS
           </NavLink>
         </li>
         <li className="w-full md:w-auto">
-          <NavLink className="text-base font-medium text-text px-3 py-3 block md:inline" to="/react-native/installation">
+          <NavLink className="text-base font-medium text-text px-5 py-3 block md:inline" to="/react-native/installation">
             React Native
           </NavLink>
         </li>
         <li className="w-full md:w-auto">
-          <NavLink className="text-base font-medium text-text px-3 py-3 block md:inline" to="/devtools">
-            Devtools
-          </NavLink>
-        </li>
-        <li className="w-full md:w-auto">
-          <NavLink className="text-base font-medium text-text px-3 py-3 block md:inline" to="/games">
+          <NavLink className="text-base font-medium text-text px-5 py-3 block md:inline" to="/games">
             Games
           </NavLink>
         </li>
         <li className="w-full md:w-auto">
-          <NavLink className="text-base font-medium text-text px-3 py-3 block md:inline" to="/contributions">
+          <NavLink className="text-base font-medium text-text px-5 py-3 block md:inline" to="/devtools">
+            Devtools
+          </NavLink>
+        </li>
+        <li className="w-full md:w-auto">
+          <NavLink className="text-base font-medium text-text px-5 py-3 block md:inline" to="/contributions">
             Contributions
           </NavLink>
         </li>
