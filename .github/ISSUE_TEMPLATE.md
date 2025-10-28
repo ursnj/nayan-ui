@@ -1,17 +1,10 @@
----
-name: Nayan UI Issue
-about: Report a bug or request a feature
-title: ''
-labels: ''
-assignees: ''
----
-
 ## Package
 
 - [ ] Nayan UI CLI
-- [ ] Nayan React JS
-- [ ] Nayan React Native
+- [ ] Nayan UI Games
 - [ ] Nayan UI Website
+- [ ] Nayan UI React JS
+- [ ] Nayan UI React Native
 
 ## Description
 
