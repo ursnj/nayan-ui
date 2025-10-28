@@ -10,8 +10,8 @@
 
 ## Description
 
-- A clear and concise description of the issue or feature request.
+A clear and concise description of the issue or feature request.
 
 ## Steps to Reproduce
 
-- Clear reproduction steps.
+Clear reproduction steps.
