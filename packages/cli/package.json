@@ -1,14 +1,14 @@
 {
   "name": "@nayan-ui/cli",
-  "version": "1.0.0-beta.11",
+  "version": "1.0.0-beta.12",
   "private": false,
   "sideEffects": false,
   "description": "Command Line Tool for Nayan UI.",
   "type": "module",
   "main": "./dist/index.js",
-  "homepage": "https://www.nayanui.com",
   "bin": {
-    "nayan": "./dist/index.js"
+    "nayan": "./dist/index.js",
+    "nayan-ui": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc && chmod +x ./dist/index.js"
