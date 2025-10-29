@@ -1,3 +1,6 @@
+/**
+ * Create Commands - Generate sitemaps and robots.txt files
+ */
 import { Command } from 'commander';
 import { generateRobots } from '../services/robots.js';
 import { generateSitemap } from '../services/sitemaps.js';
@@ -34,7 +37,7 @@ export function registerCreateCommands(program: Command) {
 
   create
     .command('robots')
-    .description('Create robots.txt for your website.')
+    .description('Create robots.txt for your website')
     .option('-a, --allowed <path>', 'Allowed paths for the robots.txt', validateOutput)
     .option('-d, --disallowed <path>', 'Disallowed paths for the robots.txt', validateOutput)
     .option('-s, --sitemap <path>', 'Sitemap url for the robots.txt', validateWebsite)
