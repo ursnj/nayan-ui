@@ -1,6 +1,7 @@
 #!/usr/bin/env node --no-warnings
 import { Command } from 'commander';
 import packageJSON from '../package.json' with { type: 'json' };
+import { createNewProject, interactiveNewProject } from './new.js';
 import { generateRobots, validateRobots } from './robots.js';
 import { generateSitemap, validateSitemap } from './sitemaps.js';
 import { validateChangefreq, validateDepth, validateOutput, validateWebsite } from './utils.js';
@@ -17,12 +18,27 @@ program
     this.help();
   });
 
+program
+  .command('new [project-name]')
+  .description('Create a new project from a template')
+  .option('-t, --template <template>', 'Template to use (expo, games, vite)')
+  .action(async (projectName?: string, options?: { template?: string }) => {
+    // If no project name is provided, use interactive mode
+    if (!projectName) {
+      await interactiveNewProject();
+    } else {
+      // If project name is provided, use non-interactive mode
+      await createNewProject(projectName, options?.template);
+    }
+  });
+
 const create = program
   .command('create')
   .description('Create Dev Tools')
   .action(function (this: Command) {
     this.help();
   });
+
 const validate = program
   .command('validate')
   .description('Validate Dev Tools')
