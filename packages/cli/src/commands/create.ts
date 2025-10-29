@@ -1,7 +1,7 @@
 import { Command } from 'commander';
-import { generateRobots } from './robots.js';
-import { generateSitemap } from './sitemaps.js';
-import { validateChangefreq, validateDepth, validateOutput, validateWebsite } from './utils.js';
+import { generateRobots } from '../services/robots.js';
+import { generateSitemap } from '../services/sitemaps.js';
+import { validateChangefreq, validateDepth, validateOutput, validateWebsite } from '../utils.js';
 
 export function registerCreateCommands(program: Command) {
   const create = program

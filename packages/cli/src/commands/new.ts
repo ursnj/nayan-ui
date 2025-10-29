@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { createNewProject, interactiveNewProject } from './projects.js';
+import { createNewProject, interactiveNewProject } from '../services/projects.js';
 
 export function registerNewCommand(program: Command) {
   program
