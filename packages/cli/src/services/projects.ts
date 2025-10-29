@@ -1,3 +1,7 @@
+/**
+ * Project Service - Handles project creation from templates
+ * Supports interactive prompts and template downloading from GitHub
+ */
 import { exec } from 'child_process';
 import fs from 'fs';
 import ora from 'ora';
@@ -22,6 +26,9 @@ const TEMPLATE_DESCRIPTIONS: Record<string, string> = {
 
 const GITHUB_REPO = 'https://github.com/ursnj/nayan-ui';
 
+/**
+ * Display available templates with descriptions
+ */
 export function showTemplates() {
   console.log('\nAvailable templates:\n');
   TEMPLATES.forEach(template => {
@@ -33,6 +40,10 @@ export function showTemplates() {
   console.log('  nayan new my-app -t expo\n');
 }
 
+/**
+ * Interactive mode for creating a new project
+ * Prompts user for project name and template selection
+ */
 export async function interactiveNewProject() {
   console.log('\n🚀 Create a new Nayan UI project\n');
 
@@ -77,11 +88,15 @@ export async function interactiveNewProject() {
   }
 }
 
+/**
+ * Create a new project from a template
+ * @param projectName - Name of the project to create
+ * @param template - Template to use (expo, games, vite)
+ */
 export async function createNewProject(projectName: string, template?: string) {
   const spinner = ora('Creating new project...').start();
 
   try {
-    // Check if template is provided
     if (!template) {
       spinner.stop();
       console.log('\n❌ Error: Template is required\n');
@@ -89,7 +104,6 @@ export async function createNewProject(projectName: string, template?: string) {
       process.exit(1);
     }
 
-    // Validate template
     if (!TEMPLATES.includes(template as Template)) {
       spinner.fail(`Invalid template: ${template}`);
       console.log('');
@@ -97,28 +111,22 @@ export async function createNewProject(projectName: string, template?: string) {
       process.exit(1);
     }
 
-    // Create target directory
     const targetDir = path.resolve(process.cwd(), projectName);
 
-    // Check if target directory already exists
     if (fs.existsSync(targetDir)) {
       spinner.fail(`Directory already exists: ${projectName}`);
       process.exit(1);
     }
 
-    // Create the target directory
     fs.mkdirSync(targetDir, { recursive: true });
 
-    // Check if git is available and use degit for faster cloning
     spinner.text = `Downloading ${template} template...`;
 
     try {
-      // Try to use degit first (faster)
       await execAsync(`npx degit ${GITHUB_REPO}/examples/${template} ${targetDir}`, {
         cwd: process.cwd()
       });
     } catch (error) {
-      // Fallback to git clone if degit fails
       spinner.text = `Cloning ${template} template...`;
       const tempDir = path.join(process.cwd(), `.temp-${Date.now()}`);
 
@@ -126,14 +134,10 @@ export async function createNewProject(projectName: string, template?: string) {
         await execAsync(`git clone --depth 1 --filter=blob:none --sparse ${GITHUB_REPO} ${tempDir}`);
         await execAsync(`git sparse-checkout set examples/${template}`, { cwd: tempDir });
 
-        // Copy the template to target directory
         const templateSource = path.join(tempDir, 'examples', template);
         copyDirectory(templateSource, targetDir);
-
-        // Clean up temp directory
         fs.rmSync(tempDir, { recursive: true, force: true });
       } catch (gitError) {
-        // If both methods fail, try local fallback
         const localExamplesDir = path.resolve(__dirname, '../../../examples');
         const localTemplateDir = path.join(localExamplesDir, template);
 
@@ -158,18 +162,18 @@ export async function createNewProject(projectName: string, template?: string) {
   }
 }
 
+/**
+ * Recursively copy directory contents
+ * Skips node_modules, .git, dist, and build directories
+ */
 function copyDirectory(src: string, dest: string) {
-  // Create destination directory
   fs.mkdirSync(dest, { recursive: true });
-
-  // Read all files and directories in source
   const entries = fs.readdirSync(src, { withFileTypes: true });
 
   for (const entry of entries) {
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);
 
-    // Skip node_modules, .git, and other common directories
     if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === 'dist' || entry.name === 'build') {
       continue;
     }
