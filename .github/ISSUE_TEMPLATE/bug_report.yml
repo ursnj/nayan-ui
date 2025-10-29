@@ -1,0 +1,22 @@
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+body:
+  - type: checkboxes
+    attributes:
+      label: "Package"
+      description: Select the package this issue is related to
+      options:
+        - label: Nayan UI CLI
+        - label: Nayan UI Games
+        - label: Nayan UI Website
+        - label: Nayan UI React JS
+        - label: Nayan UI React Native
+  - type: textarea
+    attributes:
+      label: Description
+      description: A clear and concise description of the issue or feature request
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: Clear reproduction steps
