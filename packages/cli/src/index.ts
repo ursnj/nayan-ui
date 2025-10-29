@@ -1,11 +1,11 @@
 #!/usr/bin/env node --no-warnings
 import { Command } from 'commander';
 import packageJSON from '../package.json' with { type: 'json' };
-import { registerCreateCommands } from './create.js';
-import { registerNewCommand } from './new.js';
-import { generateRobots, validateRobots } from './robots.js';
-import { generateSitemap, validateSitemap } from './sitemaps.js';
-import { registerValidateCommands } from './validate.js';
+import { registerCreateCommands } from './commands/create.js';
+import { registerNewCommand } from './commands/new.js';
+import { registerValidateCommands } from './commands/validate.js';
+import { generateRobots, validateRobots } from './services/robots.js';
+import { generateSitemap, validateSitemap } from './services/sitemaps.js';
 
 const { name, version, description } = packageJSON;
 

@@ -1,7 +1,7 @@
 import { Command } from 'commander';
-import { validateRobots } from './robots.js';
-import { validateSitemap } from './sitemaps.js';
-import { validateOutput } from './utils.js';
+import { validateRobots } from '../services/robots.js';
+import { validateSitemap } from '../services/sitemaps.js';
+import { validateOutput } from '../utils.js';
 
 export function registerValidateCommands(program: Command) {
   const validate = program
