@@ -1,10 +1,10 @@
 name: Pull Request
 description: Submit a pull request
-title: "[PR]: "
+title: '[PR]: '
 body:
   - type: checkboxes
     attributes:
-      label: "Package"
+      label: 'Package'
       description: Select the package this PR is related to
       options:
         - label: Nayan UI CLI
@@ -18,14 +18,14 @@ body:
       description: A clear and concise description of the changes
   - type: checkboxes
     attributes:
-      label: "Type of Change"
+      label: 'Type of Change'
       options:
         - label: Bug fix
         - label: New feature
         - label: Documentation update
   - type: checkboxes
     attributes:
-      label: "Checklist"
+      label: 'Checklist'
       options:
         - label: I have tested the code and confirmed it works as expected.
         - label: I have added necessary documentation (if applicable).
