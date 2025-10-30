@@ -11,20 +11,21 @@ import { fileURLToPath } from 'url';
 import { promisify } from 'util';
 
 const execAsync = promisify(exec);
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const TEMPLATES = ['expo', 'games', 'vite'] as const;
 type Template = (typeof TEMPLATES)[number];
 
-const TEMPLATE_DESCRIPTIONS: Record<string, string> = {
+const TEMPLATE_DESCRIPTIONS: Record<Template, string> = {
   expo: 'React Native Application with Expo & Nayan UI',
   games: 'React Native Games example project',
   vite: 'React Application with Vite and Nayan UI'
 };
 
 const GITHUB_REPO = 'https://github.com/ursnj/nayan-ui';
+const EXCLUDED_DIRS = ['node_modules', '.git', 'dist', 'build'] as const;
+const PROJECT_NAME_REGEX = /^[a-zA-Z0-9-_]+$/;
 
 /**
  * Display available templates with descriptions
@@ -55,7 +56,7 @@ export async function interactiveNewProject() {
         message: 'What is your project name?',
         validate: (value: string) => {
           if (!value) return 'Project name is required';
-          if (!/^[a-zA-Z0-9-_]+$/.test(value)) {
+          if (!PROJECT_NAME_REGEX.test(value)) {
             return 'Project name can only contain letters, numbers, hyphens, and underscores';
           }
           if (fs.existsSync(path.resolve(process.cwd(), value))) {
@@ -164,19 +165,19 @@ export async function createNewProject(projectName: string, template?: string) {
 
 /**
  * Recursively copy directory contents
- * Skips node_modules, .git, dist, and build directories
+ * Skips excluded directories (node_modules, .git, dist, build)
  */
 function copyDirectory(src: string, dest: string) {
   fs.mkdirSync(dest, { recursive: true });
   const entries = fs.readdirSync(src, { withFileTypes: true });
 
   for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-
-    if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === 'dist' || entry.name === 'build') {
+    if (EXCLUDED_DIRS.includes(entry.name as any)) {
       continue;
     }
+
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
 
     if (entry.isDirectory()) {
       copyDirectory(srcPath, destPath);

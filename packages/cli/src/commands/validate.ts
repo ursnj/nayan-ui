@@ -6,6 +6,11 @@ import { validateRobots } from '../services/robots.js';
 import { validateSitemap } from '../services/sitemaps.js';
 import { validateOutput } from '../services/utils.js';
 
+const DEFAULT_VALUES = {
+  SITEMAP_INPUT: './sitemap.xml',
+  ROBOTS_INPUT: './robots.txt'
+} as const;
+
 export function registerValidateCommands(program: Command) {
   const validate = program
     .command('validate')
@@ -17,22 +22,18 @@ export function registerValidateCommands(program: Command) {
   validate
     .command('sitemap')
     .description('Validate an existing sitemap')
-    .option('-i, --input <path>', 'Input path for the sitemap.xml', validateOutput)
-    .option('-ir, --isremote <path>', 'Set to true if sitemap is hosted remotely', validateOutput)
+    .option('-i, --input <path>', 'Input path or URL to sitemap.xml', validateOutput)
+    .option('-ir, --isremote', 'Specify if sitemap is hosted remotely')
     .action(options => {
-      const input = options.input || './sitemap.xml';
-      const isRemote = options.isremote || false;
-      validateSitemap(input, isRemote);
+      validateSitemap(options.input || DEFAULT_VALUES.SITEMAP_INPUT, Boolean(options.isremote));
     });
 
   validate
     .command('robots')
     .description('Validate robots.txt for your website')
-    .option('-i, --input <path>', 'Input path for the robots.txt', validateOutput)
-    .option('-ir, --isremote <path>', 'Set to true if robots.txt is hosted remotely', validateOutput)
+    .option('-i, --input <path>', 'Input path or URL to robots.txt', validateOutput)
+    .option('-ir, --isremote', 'Specify if robots.txt is hosted remotely')
     .action(options => {
-      const input = options.input || './robots.txt';
-      const isRemote = options.isremote || false;
-      validateRobots(input, isRemote);
+      validateRobots(options.input || DEFAULT_VALUES.ROBOTS_INPUT, Boolean(options.isremote));
     });
 }
