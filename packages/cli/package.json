@@ -1,6 +1,6 @@
 {
   "name": "@nayan-ui/cli",
-  "version": "1.0.0-beta.15",
+  "version": "1.0.0",
   "private": false,
   "sideEffects": false,
   "description": "Command Line Tool for Nayan UI.",
@@ -56,6 +56,12 @@
     "url": "https://github.com/ursnj/nayan-ui/issues"
   },
   "keywords": [
+    "Nayan UI for Vite JS",
+    "Nayan UI for Expo",
+    "Nayan UI for React",
+    "Nayan UI for React Native",
+    "Nayan UI for Games",
+    "Nayan UI CLI",
     "Sitemap Generator",
     "Sitemap Validator",
     "Free Sitemap Generator",
