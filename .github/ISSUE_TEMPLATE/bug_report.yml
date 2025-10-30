@@ -1,10 +1,10 @@
 name: Bug Report
 description: File a bug report
-title: "[Bug]: "
+title: '[Bug]: '
 body:
   - type: checkboxes
     attributes:
-      label: "Package"
+      label: 'Package'
       description: Select the package this issue is related to
       options:
         - label: Nayan UI CLI
