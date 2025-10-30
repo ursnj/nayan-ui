@@ -1,23 +1,83 @@
 # Nayan UI CLI
 
-Generate and validate sitemaps and robots.txt files for better SEO optimization.
+Command Line Interface for Nayan UI - Create projects, generate sitemaps, and manage robots.txt files.
+
+## Features
+
+- 🚀 **Project Creation** - Create new projects from nayan-ui templates (Expo, Vite, Games)
+- 🗺️ **Sitemap Generation** - Automatically crawl and generate XML sitemaps
+- 🤖 **Robots.txt Management** - Generate and validate robots.txt files
+- ✅ **Validation Tools** - Validate sitemaps and robots.txt files
 
 ## Installation
+
+### Global Installation
 
 ```bash
 npm install -g @nayan-ui/cli
 ```
 
+### Using npx (No Installation Required)
+
+```bash
+npx @nayan-ui/cli [command]
+# or
+npx @nayan-ui/cli@latest [command]
+```
+
+### Available Commands
+
+```bash
+nayan --help              # Show all commands
+nayan new                 # Create a new project (interactive)
+nayan create              # Generate sitemaps or robots.txt
+nayan validate            # Validate sitemaps or robots.txt
+```
+
 ## Usage
+
+### Create New Project
+
+#### Interactive Mode (Recommended)
+
+```bash
+npx @nayan-ui/cli new
+# or
+nayan new
+```
+
+This will prompt you to:
+
+1. Enter your project name
+2. Select a template (expo, games, vite)
+
+#### Non-Interactive Mode
+
+```bash
+npx @nayan-ui/cli new my-app -t expo
+# or
+nayan new my-app -t vite
+```
+
+#### Available Templates
+
+| Template | Description                                   |
+| -------- | --------------------------------------------- |
+| expo     | React Native Application with Expo & Nayan UI |
+| games    | React Native Games example project            |
+| vite     | React Application with Vite and Nayan UI      |
 
 ### Generate Sitemap
 
 ```bash
 # Basic usage
-npx nayan create sitemap -w https://example.com
+npx @nayan-ui/cli create sitemap -w https://example.com
 
 # With options
-npx nayan create sitemap -w https://example.com -d 10 -f daily -o ./sitemap.xml
+npx @nayan-ui/cli create sitemap -w https://example.com -d 10 -f daily -o ./sitemap.xml
+
+# If installed globally
+nayan create sitemap -w https://example.com
 ```
 
 #### Parameters
@@ -34,10 +94,13 @@ npx nayan create sitemap -w https://example.com -d 10 -f daily -o ./sitemap.xml
 
 ```bash
 # Local file
-npx nayan validate sitemap -i ./sitemap.xml
+npx @nayan-ui/cli validate sitemap -i ./sitemap.xml
 
 # Remote URL
-npx nayan validate sitemap -i https://example.com/sitemap.xml --isremote true
+npx @nayan-ui/cli validate sitemap -i https://example.com/sitemap.xml --isremote
+
+# If installed globally
+nayan validate sitemap -i ./sitemap.xml
 ```
 
 #### Parameters
@@ -50,7 +113,14 @@ npx nayan validate sitemap -i https://example.com/sitemap.xml --isremote true
 ### Generate Robots.txt
 
 ```bash
-npx nayan create robots -a /home,/about -d /admin -s https://example.com/sitemap.xml -o ./robots.txt
+# Basic usage
+npx @nayan-ui/cli create robots -d /admin -s https://example.com/sitemap.xml
+
+# With allowed and disallowed paths
+npx @nayan-ui/cli create robots -a /home,/about -d /admin -s https://example.com/sitemap.xml -o ./robots.txt
+
+# If installed globally
+nayan create robots -d /admin -s https://example.com/sitemap.xml
 ```
 
 #### Parameters
@@ -65,7 +135,14 @@ npx nayan create robots -a /home,/about -d /admin -s https://example.com/sitemap
 ### Validate Robots.txt
 
 ```bash
-npx nayan validate robots -i ./robots.txt
+# Local file
+npx @nayan-ui/cli validate robots -i ./robots.txt
+
+# Remote URL
+npx @nayan-ui/cli validate robots -i https://example.com/robots.txt --isremote
+
+# If installed globally
+nayan validate robots -i ./robots.txt
 ```
 
 #### Parameters
@@ -75,6 +152,20 @@ npx nayan validate robots -i ./robots.txt
 | Input Robots.txt | --input / -i     | ./robots.txt | Path to robots.txt file or URL       |
 | Is Remote        | --isremote / -ir | false        | Set to true if input is a remote URL |
 
+## Requirements
+
+- Node.js >= 18
+
+## License
+
+MIT
+
 ## Contributing
 
 Submit issues and pull requests on [GitHub](https://github.com/ursnj/nayan-ui).
+
+## Support
+
+- 📖 [Documentation](https://www.nayanui.com/cli)
+- 🐛 [Report Issues](https://github.com/ursnj/nayan-ui/issues)
+- 💬 [Discussions](https://github.com/ursnj/nayan-ui/discussions)
