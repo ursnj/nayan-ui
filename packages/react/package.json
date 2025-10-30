@@ -2,7 +2,7 @@
   "name": "@nayan-ui/react",
   "private": false,
   "sideEffects": false,
-  "description": "Reusable Component Library for ReactJS.",
+  "description": "React Component Library for smooth and faster web application development.",
   "version": "1.0.0",
   "type": "module",
   "source": "./src/index.ts",
