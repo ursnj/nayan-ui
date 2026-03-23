@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NCard, NPress, NText, NToast } from '@nayan-ui/react-native';
+import { NCard, NPress, NText, useNToast } from '@nayan-ui/react-native';
 import { Bell, Bookmark, Heart, Pause, Play, Search, Settings, Share2, Star, User, Volume2, VolumeX } from 'lucide-react-native';
 
 const Component = () => {
+  const toast = useNToast();
   const [isLiked, setIsLiked] = useState(false);
   const [isStarred, setIsStarred] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -21,13 +22,13 @@ const Component = () => {
   const handlePress = (action: string) => {
     setPressCount(prev => prev + 1);
     addToHistory(`Press: ${action}`);
-    NToast.success(action);
+    toast.success(action);
   };
 
   const handleLongPress = (action: string) => {
     setLongPressCount(prev => prev + 1);
     addToHistory(`Long Press: ${action}`);
-    NToast.info(`Long press: ${action}`);
+    toast.info(`Long press: ${action}`);
   };
 
   return (

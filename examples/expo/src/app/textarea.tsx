@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NText, NTextarea, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NText, NTextarea, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   // Basic textarea states
   const [basicText, setBasicText] = useState('');
   const [description, setDescription] = useState('');
@@ -90,7 +91,7 @@ LIMIT 10;`);
     if (text.length <= CHARACTER_LIMITS.limited) {
       setLimitedText(text);
     } else {
-      NToast.warning(`Character limit exceeded! Maximum ${CHARACTER_LIMITS.limited} characters allowed.`);
+      toast.warning(`Character limit exceeded! Maximum ${CHARACTER_LIMITS.limited} characters allowed.`);
     }
   };
 
@@ -98,7 +99,7 @@ LIMIT 10;`);
     if (text.length <= CHARACTER_LIMITS.tweet) {
       setTweetText(text);
     } else {
-      NToast.warning(`Tweet too long! Maximum ${CHARACTER_LIMITS.tweet} characters allowed.`);
+      toast.warning(`Tweet too long! Maximum ${CHARACTER_LIMITS.tweet} characters allowed.`);
     }
   };
 
@@ -106,7 +107,7 @@ LIMIT 10;`);
     if (text.length <= CHARACTER_LIMITS.bio) {
       setBioText(text);
     } else {
-      NToast.warning(`Bio too long! Maximum ${CHARACTER_LIMITS.bio} characters allowed.`);
+      toast.warning(`Bio too long! Maximum ${CHARACTER_LIMITS.bio} characters allowed.`);
     }
   };
 
@@ -143,7 +144,7 @@ LIMIT 10;`);
     setBioText('');
     setValidatedText('');
     setErrorText('');
-    NToast.success('All textareas cleared');
+    toast.success('All textareas cleared');
   };
 
   const saveAllContent = () => {
@@ -155,7 +156,7 @@ LIMIT 10;`);
       validated: { validatedText, successText }
     };
     console.log('All content saved:', allContent);
-    NToast.success('All content saved successfully!');
+    toast.success('All content saved successfully!');
   };
 
   const getCharacterCountColor = (current: number, limit: number) => {
@@ -177,7 +178,7 @@ LIMIT 10;`);
           onChangeText={text => {
             setBasicText(text);
             if (text.length > 50) {
-              NToast.info('Getting lengthy! Consider breaking into paragraphs.');
+              toast.info('Getting lengthy! Consider breaking into paragraphs.');
             }
           }}
         />
@@ -241,10 +242,10 @@ LIMIT 10;`);
           className="mt-4 bg-blue-500 border-blue-500"
           onPress={() => {
             if (contactForm.subject && contactForm.message) {
-              NToast.success('Contact form submitted!');
+              toast.success('Contact form submitted!');
               setContactForm({ subject: '', message: '', details: '' });
             } else {
-              NToast.warning('Please fill in subject and message');
+              toast.warning('Please fill in subject and message');
             }
           }}>
           Submit Contact Form
@@ -293,9 +294,9 @@ LIMIT 10;`);
             className="flex-1 bg-green-500 border-green-500"
             onPress={() => {
               if (blogPost.title && blogPost.content) {
-                NToast.success('Blog post saved as draft!');
+                toast.success('Blog post saved as draft!');
               } else {
-                NToast.warning('Please add title and content');
+                toast.warning('Please add title and content');
               }
             }}>
             Save Draft
@@ -341,10 +342,10 @@ LIMIT 10;`);
           className="mt-4 bg-yellow-500 border-yellow-500"
           onPress={() => {
             if (productReview.summary && productReview.experience) {
-              NToast.success('Product review submitted!');
+              toast.success('Product review submitted!');
               setProductReview({ summary: '', pros: '', cons: '', experience: '' });
             } else {
-              NToast.warning('Please add summary and overall experience');
+              toast.warning('Please add summary and overall experience');
             }
           }}>
           Submit Review

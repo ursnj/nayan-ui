@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NAccordion, NButton, NText, NToast } from '@nayan-ui/react-native';
+import { NAccordion, NButton, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   const [customItems, setCustomItems] = useState([
     {
       id: 'custom-1',
@@ -107,13 +108,13 @@ const Component = () => {
       disabled: false
     };
     setCustomItems(prev => [...prev, newItem]);
-    NToast.success('New item added!');
+    toast.success('New item added!');
   };
 
   const removeLastItem = () => {
     if (customItems.length > 0) {
       setCustomItems(prev => prev.slice(0, -1));
-      NToast.info('Last item removed!');
+      toast.info('Last item removed!');
     }
   };
 

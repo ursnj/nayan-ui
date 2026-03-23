@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   const [selectedText, setSelectedText] = useState('');
   const [showMore, setShowMore] = useState(false);
 
@@ -11,7 +12,7 @@ const Component = () => {
 
   const handleTextPress = (text: string) => {
     setSelectedText(text);
-    NToast.success(`Selected: ${text}`);
+    toast.success(`Selected: ${text}`);
   };
 
   return (
@@ -157,7 +158,7 @@ const Component = () => {
           {/* Long Press Text */}
           <View>
             <NText className="text-muted text-sm mb-2">Long Press Text</NText>
-            <NText className="text-purple-600 font-medium" onLongPress={() => NToast.info('Long press detected!')}>
+            <NText className="text-purple-600 font-medium" onLongPress={() => toast.info('Long press detected!')}>
               Long press this text for action
             </NText>
           </View>

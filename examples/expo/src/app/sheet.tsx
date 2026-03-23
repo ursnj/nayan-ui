@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NInput, NSelect, NSheet, NSwitch, NText, NToast, SelectOption } from '@nayan-ui/react-native';
+import { NButton, NCard, NInput, NSelect, NSheet, NSwitch, NText, SelectOption, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   // Sheet refs
   const basicSheetRef = useRef<any>(null);
   const formSheetRef = useRef<any>(null);
@@ -71,58 +72,58 @@ const Component = () => {
 
   const addSheetAction = (action: string) => {
     setSheetActions(prev => [...prev.slice(-9), `${new Date().toLocaleTimeString()}: ${action}`]);
-    NToast.info(action);
+    toast.info(action);
   };
 
   const handleProfileSave = () => {
     addSheetAction('Profile updated successfully');
     profileSheetRef.current?.dismiss();
-    NToast.success('Profile saved!');
+    toast.success('Profile saved!');
   };
 
   const handleContactSubmit = () => {
     if (!contactForm.name || !contactForm.email || !contactForm.message) {
-      NToast.error('Please fill in all required fields');
+      toast.error('Please fill in all required fields');
       return;
     }
     addSheetAction(`Contact form submitted by ${contactForm.name}`);
     setContactForm({ name: '', email: '', subject: '', message: '' });
     formSheetRef.current?.dismiss();
-    NToast.success('Message sent successfully!');
+    toast.success('Message sent successfully!');
   };
 
   const handleSettingsSave = () => {
     addSheetAction('Settings saved successfully');
     settingsSheetRef.current?.dismiss();
-    NToast.success('Settings updated!');
+    toast.success('Settings updated!');
   };
 
   const handleFilterApply = () => {
     addSheetAction(`Filters applied: ${filterSettings.category.label}, ${filterSettings.sortBy.label}`);
     filterSheetRef.current?.dismiss();
-    NToast.success('Filters applied!');
+    toast.success('Filters applied!');
   };
 
   const handleActionSelection = (action: string) => {
     addSheetAction(`Action selected: ${action}`);
     actionSheetRef.current?.dismiss();
-    NToast.success(`${action} completed!`);
+    toast.success(`${action} completed!`);
   };
 
   const handleConfirmAction = (confirmed: boolean) => {
     if (confirmed) {
       addSheetAction('Dangerous action confirmed');
-      NToast.success('Action completed!');
+      toast.success('Action completed!');
     } else {
       addSheetAction('Dangerous action cancelled');
-      NToast.info('Action cancelled');
+      toast.info('Action cancelled');
     }
     confirmSheetRef.current?.dismiss();
   };
 
   const clearAllActions = () => {
     setSheetActions([]);
-    NToast.success('All actions cleared');
+    toast.success('All actions cleared');
   };
 
   return (
@@ -527,7 +528,7 @@ const Component = () => {
               onPress={() => {
                 addSheetAction('Premium upgrade initiated');
                 customSheetRef.current?.dismiss();
-                NToast.success('Redirecting to upgrade...');
+                toast.success('Redirecting to upgrade...');
               }}>
               Upgrade Now
             </NButton>
@@ -578,7 +579,7 @@ const Component = () => {
               filterSettings
             };
             console.log('All sheet data:', allData);
-            NToast.success('Sheet data saved!');
+            toast.success('Sheet data saved!');
           }}>
           Save Data
         </NButton>

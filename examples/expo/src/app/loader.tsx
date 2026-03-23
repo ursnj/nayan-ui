@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NLoading, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NLoading, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isFormLoading, setIsFormLoading] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
@@ -14,7 +15,7 @@ const Component = () => {
     setIsFormLoading(true);
     await new Promise(resolve => setTimeout(resolve, 3000));
     setIsFormLoading(false);
-    NToast.success('Form submitted successfully!');
+    toast.success('Form submitted successfully!');
   };
 
   // Simulate data fetching
@@ -22,7 +23,7 @@ const Component = () => {
     setIsDataLoading(true);
     await new Promise(resolve => setTimeout(resolve, 2500));
     setIsDataLoading(false);
-    NToast.info('Data loaded successfully!');
+    toast.info('Data loaded successfully!');
   };
 
   // Simulate button action
@@ -30,7 +31,7 @@ const Component = () => {
     setIsButtonLoading(true);
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsButtonLoading(false);
-    NToast.success('Action completed!');
+    toast.success('Action completed!');
   };
 
   // Simulate progress loading
@@ -40,7 +41,7 @@ const Component = () => {
       setProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
-          NToast.success('Progress completed!');
+          toast.success('Progress completed!');
           return 100;
         }
         return prev + 10;

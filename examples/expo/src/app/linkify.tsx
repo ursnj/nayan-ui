@@ -1,15 +1,16 @@
 import { Alert, ScrollView, View } from 'react-native';
-import { NCard, NLinkify, NText, NToast } from '@nayan-ui/react-native';
+import { NCard, NLinkify, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   const handleLinkPress = (url: string, text: string) => {
-    NToast.info(`Link pressed: ${text} (${url})`);
+    toast.info(`Link pressed: ${text} (${url})`);
   };
 
   const handleEmailPress = (email: string) => {
     Alert.alert('Email Action', `Would you like to send an email to ${email}?`, [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Send Email', onPress: () => NToast.success(`Opening email client for ${email}`) }
+      { text: 'Send Email', onPress: () => toast.success(`Opening email client for ${email}`) }
     ]);
   };
 

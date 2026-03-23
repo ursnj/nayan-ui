@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NMenu, NMenuItem, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NMenu, NMenuItem, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   // Menu interaction tracking
   const [menuActions, setMenuActions] = useState<string[]>([]);
   const [userProfile, setUserProfile] = useState({
@@ -22,7 +23,7 @@ const Component = () => {
 
   const addMenuAction = (action: string) => {
     setMenuActions(prev => [...prev.slice(-9), `${new Date().toLocaleTimeString()}: ${action}`]);
-    NToast.info(action);
+    toast.info(action);
   };
 
   const addFileAction = (action: string) => {
@@ -116,7 +117,7 @@ const Component = () => {
     setMenuActions([]);
     setFileActions([]);
     setProjectActions([]);
-    NToast.success('All actions cleared');
+    toast.success('All actions cleared');
   };
 
   return (
@@ -323,7 +324,7 @@ const Component = () => {
               projectStatus
             };
             console.log('All menu data:', allData);
-            NToast.success('Menu data saved!');
+            toast.success('Menu data saved!');
           }}>
           Save Data
         </NButton>

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NInput, NSwitch, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NInput, NSwitch, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   // Toast interaction tracking
   const [toastActions, setToastActions] = useState<string[]>([]);
   const [toastSettings, setToastSettings] = useState({
@@ -23,134 +24,134 @@ const Component = () => {
   };
 
   const showBasicToasts = () => {
-    NToast.success('Success! Operation completed successfully');
+    toast.success('Success! Operation completed successfully');
     addToastAction('Success toast shown');
 
     setTimeout(() => {
-      NToast.error('Error! Something went wrong');
+      toast.error('Error! Something went wrong');
       addToastAction('Error toast shown');
     }, 1000);
 
     setTimeout(() => {
-      NToast.warning('Warning! Please check your settings');
+      toast.warning('Warning! Please check your settings');
       addToastAction('Warning toast shown');
     }, 2000);
 
     setTimeout(() => {
-      NToast.info('Info: New update available');
+      toast.info('Info: New update available');
       addToastAction('Info toast shown');
     }, 3000);
   };
 
   const showActionToasts = () => {
-    NToast.success('File saved successfully!');
+    toast.success('File saved successfully!');
     addToastAction('Save action toast');
 
     setTimeout(() => {
-      NToast.info('Download started in background');
+      toast.info('Download started in background');
       addToastAction('Download action toast');
     }, 1000);
 
     setTimeout(() => {
-      NToast.warning('Upload failed - Retry?');
+      toast.warning('Upload failed - Retry?');
       addToastAction('Upload retry toast');
     }, 2000);
   };
 
   const showSystemToasts = () => {
     if (isOnline) {
-      NToast.success('Connected to internet');
+      toast.success('Connected to internet');
       addToastAction('Network connected toast');
     } else {
-      NToast.error('No internet connection');
+      toast.error('No internet connection');
       addToastAction('Network disconnected toast');
     }
 
     setTimeout(() => {
       if (batteryLevel < 20) {
-        NToast.warning(`Battery low: ${batteryLevel}%`);
+        toast.warning(`Battery low: ${batteryLevel}%`);
         addToastAction('Low battery toast');
       } else {
-        NToast.info(`Battery level: ${batteryLevel}%`);
+        toast.info(`Battery level: ${batteryLevel}%`);
         addToastAction('Battery status toast');
       }
     }, 1000);
 
     setTimeout(() => {
-      NToast.info('Volume set to 75%');
+      toast.info('Volume set to 75%');
       addToastAction('Volume change toast');
     }, 2000);
   };
 
   const showEcommerceToasts = () => {
-    NToast.success('Item added to cart!');
+    toast.success('Item added to cart!');
     setCartItems(prev => prev + 1);
     addToastAction('Add to cart toast');
 
     setTimeout(() => {
-      NToast.info('Payment processing...');
+      toast.info('Payment processing...');
       addToastAction('Payment processing toast');
     }, 1000);
 
     setTimeout(() => {
-      NToast.success('Payment successful! Order confirmed');
+      toast.success('Payment successful! Order confirmed');
       addToastAction('Payment success toast');
     }, 3000);
 
     setTimeout(() => {
-      NToast.info('Item added to wishlist ');
+      toast.info('Item added to wishlist ');
       addToastAction('Wishlist toast');
     }, 4000);
   };
 
   const showUserInteractionToasts = () => {
-    NToast.success('Post liked! ');
+    toast.success('Post liked! ');
     addToastAction('Like action toast');
 
     setTimeout(() => {
-      NToast.info(`Now following ${userName}`);
+      toast.info(`Now following ${userName}`);
       addToastAction('Follow action toast');
     }, 1000);
 
     setTimeout(() => {
-      NToast.success('Rating submitted: ');
+      toast.success('Rating submitted: ');
       addToastAction('Rating toast');
     }, 2000);
 
     setTimeout(() => {
-      NToast.info('Comment posted successfully');
+      toast.info('Comment posted successfully');
       addToastAction('Comment toast');
     }, 3000);
   };
 
   const showSpecialToasts = () => {
-    NToast.success(`Welcome back, ${userName}! `);
+    toast.success(`Welcome back, ${userName}! `);
     addToastAction('Welcome toast');
 
     setTimeout(() => {
-      NToast.success('Achievement unlocked: First Login! ');
+      toast.success('Achievement unlocked: First Login! ');
       addToastAction('Achievement toast');
     }, 1500);
 
     setTimeout(() => {
-      NToast.info(' 50% off premium features!');
+      toast.info(' 50% off premium features!');
       addToastAction('Promotion toast');
     }, 3000);
   };
 
   const showThemeToasts = () => {
-    NToast.info('Switched to dark mode ');
+    toast.info('Switched to dark mode ');
     addToastAction('Dark theme toast');
 
     setTimeout(() => {
-      NToast.info('Switched to light mode ');
+      toast.info('Switched to light mode ');
       addToastAction('Light theme toast');
     }, 2000);
   };
 
   const clearAllActions = () => {
     setToastActions([]);
-    NToast.success('All actions cleared');
+    toast.success('All actions cleared');
   };
 
   return (
@@ -162,7 +163,7 @@ const Component = () => {
           <NButton
             className="bg-green-500 border-green-500"
             onPress={() => {
-              NToast.success('Success! Operation completed');
+              toast.success('Success! Operation completed');
               addToastAction('Success toast');
             }}>
             Success
@@ -171,7 +172,7 @@ const Component = () => {
           <NButton
             className="bg-red-500 border-red-500"
             onPress={() => {
-              NToast.error('Error! Something went wrong');
+              toast.error('Error! Something went wrong');
               addToastAction('Error toast');
             }}>
             Error
@@ -180,7 +181,7 @@ const Component = () => {
           <NButton
             className="bg-yellow-500 border-yellow-500"
             onPress={() => {
-              NToast.warning('Warning! Check your settings');
+              toast.warning('Warning! Check your settings');
               addToastAction('Warning toast');
             }}>
             Warning
@@ -189,7 +190,7 @@ const Component = () => {
           <NButton
             className="bg-blue-500 border-blue-500"
             onPress={() => {
-              NToast.info('Info: Update available');
+              toast.info('Info: Update available');
               addToastAction('Info toast');
             }}>
             Info
@@ -208,7 +209,7 @@ const Component = () => {
           <NButton
             className="bg-green-600 border-green-600"
             onPress={() => {
-              NToast.success('Document saved successfully!');
+              toast.success('Document saved successfully!');
               addToastAction('Save action');
             }}>
             Save
@@ -217,7 +218,7 @@ const Component = () => {
           <NButton
             className="bg-red-600 border-red-600"
             onPress={() => {
-              NToast.success('Item deleted successfully');
+              toast.success('Item deleted successfully');
               addToastAction('Delete action');
             }}>
             Delete
@@ -226,10 +227,10 @@ const Component = () => {
           <NButton
             className="bg-blue-600 border-blue-600"
             onPress={() => {
-              NToast.info('Download started...');
+              toast.info('Download started...');
               addToastAction('Download action');
               setTimeout(() => {
-                NToast.success('Download completed!');
+                toast.success('Download completed!');
                 addToastAction('Download completed');
               }, 3000);
             }}>
@@ -239,10 +240,10 @@ const Component = () => {
           <NButton
             className="bg-orange-600 border-orange-600"
             onPress={() => {
-              NToast.info('Uploading file...');
+              toast.info('Uploading file...');
               addToastAction('Upload started');
               setTimeout(() => {
-                NToast.success('Upload successful!');
+                toast.success('Upload successful!');
                 addToastAction('Upload completed');
               }, 2500);
             }}>
@@ -270,7 +271,7 @@ const Component = () => {
           <NButton
             className="bg-teal-500 border-teal-500"
             onPress={() => {
-              NToast.info(`Network: ${isOnline ? 'Connected' : 'Disconnected'}`);
+              toast.info(`Network: ${isOnline ? 'Connected' : 'Disconnected'}`);
               addToastAction('Network status toast');
             }}>
             Network
@@ -279,7 +280,7 @@ const Component = () => {
           <NButton
             className="bg-yellow-600 border-yellow-600"
             onPress={() => {
-              NToast.warning(`Battery: ${batteryLevel}%`);
+              toast.warning(`Battery: ${batteryLevel}%`);
               addToastAction('Battery status toast');
             }}>
             Battery
@@ -288,7 +289,7 @@ const Component = () => {
           <NButton
             className="bg-gray-600 border-gray-600"
             onPress={() => {
-              NToast.info('Volume adjusted to 75%');
+              toast.info('Volume adjusted to 75%');
               addToastAction('Volume change toast');
             }}>
             Volume
@@ -311,7 +312,7 @@ const Component = () => {
           <NButton
             className="bg-green-700 border-green-700"
             onPress={() => {
-              NToast.success('Added to cart! ');
+              toast.success('Added to cart! ');
               setCartItems(prev => prev + 1);
               addToastAction('Add to cart');
             }}>
@@ -321,10 +322,10 @@ const Component = () => {
           <NButton
             className="bg-blue-700 border-blue-700"
             onPress={() => {
-              NToast.info('Processing payment...');
+              toast.info('Processing payment...');
               addToastAction('Payment processing');
               setTimeout(() => {
-                NToast.success('Payment successful! ');
+                toast.success('Payment successful! ');
                 addToastAction('Payment success');
               }, 2000);
             }}>
@@ -334,7 +335,7 @@ const Component = () => {
           <NButton
             className="bg-pink-500 border-pink-500"
             onPress={() => {
-              NToast.success('Added to wishlist ');
+              toast.success('Added to wishlist ');
               addToastAction('Add to wishlist');
             }}>
             Wishlist
@@ -357,7 +358,7 @@ const Component = () => {
           <NButton
             className="bg-red-400 border-red-400"
             onPress={() => {
-              NToast.success('Post liked! ');
+              toast.success('Post liked! ');
               addToastAction('Like action');
             }}>
             Like
@@ -366,7 +367,7 @@ const Component = () => {
           <NButton
             className="bg-blue-400 border-blue-400"
             onPress={() => {
-              NToast.info(`Following ${userName} `);
+              toast.info(`Following ${userName} `);
               addToastAction('Follow action');
             }}>
             Follow
@@ -375,7 +376,7 @@ const Component = () => {
           <NButton
             className="bg-yellow-400 border-yellow-400"
             onPress={() => {
-              NToast.success('Rating: ');
+              toast.success('Rating: ');
               addToastAction('Rating submitted');
             }}>
             Rate
@@ -394,7 +395,7 @@ const Component = () => {
           <NButton
             className="bg-green-400 border-green-400"
             onPress={() => {
-              NToast.success(`Welcome back, ${userName}! `);
+              toast.success(`Welcome back, ${userName}! `);
               addToastAction('Welcome message');
             }}>
             Welcome
@@ -403,7 +404,7 @@ const Component = () => {
           <NButton
             className="bg-amber-500 border-amber-500"
             onPress={() => {
-              NToast.success('Achievement unlocked! ');
+              toast.success('Achievement unlocked! ');
               addToastAction('Achievement unlocked');
             }}>
             Achievement
@@ -412,7 +413,7 @@ const Component = () => {
           <NButton
             className="bg-rose-500 border-rose-500"
             onPress={() => {
-              NToast.info(' 50% off premium features!');
+              toast.info(' 50% off premium features!');
               addToastAction('Promotion shown');
             }}>
             Promotion
@@ -432,7 +433,7 @@ const Component = () => {
             className="bg-gray-800 border-gray-800"
             textClassName="text-white"
             onPress={() => {
-              NToast.info('Dark mode enabled ');
+              toast.info('Dark mode enabled ');
               addToastAction('Dark mode enabled');
             }}>
             Dark Mode
@@ -442,7 +443,7 @@ const Component = () => {
             className="bg-yellow-300 border-yellow-300"
             textClassName="text-gray-800"
             onPress={() => {
-              NToast.info('Light mode enabled ');
+              toast.info('Light mode enabled ');
               addToastAction('Light mode enabled');
             }}>
             Light Mode
@@ -471,7 +472,7 @@ const Component = () => {
               batteryLevel
             };
             console.log('All toast data:', allData);
-            NToast.success('Toast data saved!');
+            toast.success('Toast data saved!');
           }}>
           Save Data
         </NButton>

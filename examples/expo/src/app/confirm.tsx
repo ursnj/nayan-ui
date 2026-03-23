@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NConfirm, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NConfirm, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   const [isLoading, setIsLoading] = useState(false);
   const [userCount, setUserCount] = useState(1247);
   const [fileCount, setFileCount] = useState(23);
@@ -14,7 +15,7 @@ const Component = () => {
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsLoading(false);
     setUserCount(prev => prev - 1);
-    NToast.success('User deleted successfully!');
+    toast.success('User deleted successfully!');
   };
 
   const handleBulkDelete = async () => {
@@ -22,23 +23,23 @@ const Component = () => {
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsLoading(false);
     setFileCount(0);
-    NToast.success('All files deleted!');
+    toast.success('All files deleted!');
   };
 
   const handleLogout = () => {
-    NToast.info('Logged out successfully!');
+    toast.info('Logged out successfully!');
   };
 
   const handleSaveChanges = () => {
-    NToast.success('Changes saved successfully!');
+    toast.success('Changes saved successfully!');
   };
 
   const handleResetSettings = () => {
-    NToast.success('Settings reset to defaults!');
+    toast.success('Settings reset to defaults!');
   };
 
   const handleCancelSubscription = () => {
-    NToast.success('Subscription cancelled!');
+    toast.success('Subscription cancelled!');
   };
 
   return (
@@ -54,7 +55,7 @@ const Component = () => {
             <NConfirm
               title="Are you sure?"
               description="This action cannot be undone."
-              onResult={result => NToast.info(result ? 'Confirmed' : 'Cancelled')}>
+              onResult={result => toast.info(result ? 'Confirmed' : 'Cancelled')}>
               <NButton className="bg-blue-500 border-blue-500">
                 <NText className="text-white">Simple Confirm</NText>
               </NButton>
@@ -67,7 +68,7 @@ const Component = () => {
             <NConfirm
               title="Delete Item?"
               description="This item will be permanently deleted and cannot be recovered."
-              onResult={result => result && NToast.success('Item deleted!')}>
+              onResult={result => result && toast.success('Item deleted!')}>
               <NButton className="bg-red-500 border-red-500">
                 <NText className="text-white">Delete Item</NText>
               </NButton>
@@ -103,7 +104,7 @@ const Component = () => {
             <NConfirm
               title="Delete Account?"
               description="⚠️ WARNING: This action is irreversible! All your data, settings, and content will be permanently lost. Are you absolutely sure you want to delete your account?"
-              onResult={result => result && NToast.error('Account deletion initiated!')}>
+              onResult={result => result && toast.error('Account deletion initiated!')}>
               <NButton className="bg-red-600 border-red-600">
                 <NText className="text-white text-sm">Delete Account</NText>
               </NButton>
@@ -222,7 +223,7 @@ const Component = () => {
             <NConfirm
               title="Downgrade Plan?"
               description="You'll be switched to the Basic plan immediately. Some premium features will be disabled, but your data will remain safe."
-              onResult={result => result && NToast.success('Plan downgraded!')}>
+              onResult={result => result && toast.success('Plan downgraded!')}>
               <NButton className="bg-blue-600 border-blue-600 w-full">
                 <NText className="text-white">Downgrade Plan</NText>
               </NButton>
@@ -244,7 +245,7 @@ const Component = () => {
             <NConfirm
               title="✅ Publish Content?"
               description="Your content is ready to be published and will be visible to all users immediately."
-              onResult={result => result && NToast.success('Content published!')}>
+              onResult={result => result && toast.success('Content published!')}>
               <NButton className="bg-green-500 border-green-500">
                 <NText className="text-white text-sm">Publish</NText>
               </NButton>
@@ -257,7 +258,7 @@ const Component = () => {
             <NConfirm
               title="⚠️ Overwrite File?"
               description="A file with this name already exists. Overwriting will replace the existing file permanently."
-              onResult={result => result && NToast.warning('File overwritten!')}>
+              onResult={result => result && toast.warning('File overwritten!')}>
               <NButton className="bg-orange-500 border-orange-500">
                 <NText className="text-white text-sm">Overwrite</NText>
               </NButton>
@@ -270,7 +271,7 @@ const Component = () => {
             <NConfirm
               title="ℹ️ Download Report?"
               description="The report will be downloaded to your device. This may take a few moments depending on your connection."
-              onResult={result => result && NToast.info('Download started!')}>
+              onResult={result => result && toast.info('Download started!')}>
               <NButton className="bg-blue-500 border-blue-500">
                 <NText className="text-white text-sm">Download</NText>
               </NButton>
@@ -283,7 +284,7 @@ const Component = () => {
             <NConfirm
               title="🚨 Force Stop Process?"
               description="This will forcefully terminate the running process. Any unsaved work will be lost and the process may become corrupted."
-              onResult={result => result && NToast.error('Process terminated!')}>
+              onResult={result => result && toast.error('Process terminated!')}>
               <NButton className="bg-red-500 border-red-500">
                 <NText className="text-white text-sm">Force Stop</NText>
               </NButton>
@@ -308,10 +309,10 @@ const Component = () => {
               onResult={async result => {
                 if (result) {
                   setIsLoading(true);
-                  NToast.info('Processing deletion...');
+                  toast.info('Processing deletion...');
                   await new Promise(resolve => setTimeout(resolve, 2000));
                   setIsLoading(false);
-                  NToast.success('Item deleted successfully!');
+                  toast.success('Item deleted successfully!');
                 }
               }}>
               <NButton className="bg-red-500 border-red-500" disabled={isLoading}>

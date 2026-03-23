@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NSwitch, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NSwitch, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   const [basicSwitch, setBasicSwitch] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
@@ -31,12 +32,12 @@ const Component = () => {
 
   const updatePrivacySetting = (key: string, value: boolean) => {
     setPrivacySettings(prev => ({ ...prev, [key]: value }));
-    NToast.info(`Privacy setting updated: ${key}`);
+    toast.info(`Privacy setting updated: ${key}`);
   };
 
   const updateAccessibilitySetting = (key: string, value: boolean) => {
     setAccessibilitySettings(prev => ({ ...prev, [key]: value }));
-    NToast.info(`Accessibility setting updated: ${key}`);
+    toast.info(`Accessibility setting updated: ${key}`);
   };
 
   const resetAllSettings = () => {
@@ -62,7 +63,7 @@ const Component = () => {
       reduceMotion: false,
       screenReader: false
     });
-    NToast.success('All settings reset to default');
+    toast.success('All settings reset to default');
   };
 
   return (
@@ -79,7 +80,7 @@ const Component = () => {
           checked={notificationsEnabled}
           onChange={checked => {
             setNotificationsEnabled(checked);
-            NToast.success(checked ? 'Notifications enabled' : 'Notifications disabled');
+            toast.success(checked ? 'Notifications enabled' : 'Notifications disabled');
           }}
         />
         <NSwitch
@@ -87,7 +88,7 @@ const Component = () => {
           checked={darkMode}
           onChange={checked => {
             setDarkMode(checked);
-            NToast.info(checked ? 'Dark mode enabled' : 'Light mode enabled');
+            toast.info(checked ? 'Dark mode enabled' : 'Light mode enabled');
           }}
         />
         <NSwitch
@@ -95,7 +96,7 @@ const Component = () => {
           checked={locationServices}
           onChange={checked => {
             setLocationServices(checked);
-            NToast.warning(checked ? 'Location access granted' : 'Location access denied');
+            toast.warning(checked ? 'Location access granted' : 'Location access denied');
           }}
         />
         <NSwitch label="Auto-Save Documents" checked={autoSave} onChange={setAutoSave} />
@@ -109,7 +110,7 @@ const Component = () => {
           checked={biometricAuth}
           onChange={checked => {
             setBiometricAuth(checked);
-            NToast.success(checked ? 'Biometric auth enabled' : 'Biometric auth disabled');
+            toast.success(checked ? 'Biometric auth enabled' : 'Biometric auth disabled');
           }}
         />
         <NSwitch label="Data Synchronization" checked={dataSync} onChange={setDataSync} />
@@ -120,7 +121,7 @@ const Component = () => {
             setOfflineMode(checked);
             if (checked) {
               setDataSync(false); // Auto-disable sync when offline
-              NToast.info('Offline mode enabled, sync disabled');
+              toast.info('Offline mode enabled, sync disabled');
             }
           }}
         />
@@ -180,7 +181,7 @@ const Component = () => {
           checked={analyticsEnabled}
           onChange={checked => {
             setAnalyticsEnabled(checked);
-            NToast.info(checked ? 'Analytics enabled' : 'Analytics disabled');
+            toast.info(checked ? 'Analytics enabled' : 'Analytics disabled');
           }}
         />
         <NSwitch
@@ -188,7 +189,7 @@ const Component = () => {
           checked={marketingEmails}
           onChange={checked => {
             setMarketingEmails(checked);
-            NToast.info(checked ? 'Marketing emails enabled' : 'Marketing emails disabled');
+            toast.info(checked ? 'Marketing emails enabled' : 'Marketing emails disabled');
           }}
         />
       </NCard>
@@ -261,7 +262,7 @@ const Component = () => {
         <NButton className="flex-1 bg-red-500 border-red-500" onPress={resetAllSettings}>
           Reset All Settings
         </NButton>
-        <NButton className="flex-1 bg-green-500 border-green-500" onPress={() => NToast.success('Settings saved successfully!')}>
+        <NButton className="flex-1 bg-green-500 border-green-500" onPress={() => toast.success('Settings saved successfully!')}>
           Save Changes
         </NButton>
       </View>

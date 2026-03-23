@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NProgress, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NProgress, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   // Basic progress states
   const [basicProgress, setBasicProgress] = useState(25);
   const [downloadProgress, setDownloadProgress] = useState(0);
@@ -77,14 +78,14 @@ const Component = () => {
 
   const simulateDownload = () => {
     setDownloadProgress(0);
-    NToast.info('Download started...');
+    toast.info('Download started...');
 
     const interval = setInterval(() => {
       setDownloadProgress(prev => {
         const newProgress = prev + Math.random() * 15;
         if (newProgress >= 100) {
           clearInterval(interval);
-          NToast.success('Download completed!');
+          toast.success('Download completed!');
           return 100;
         }
         return newProgress;
@@ -94,14 +95,14 @@ const Component = () => {
 
   const simulateUpload = () => {
     setUploadProgress(0);
-    NToast.info('Upload started...');
+    toast.info('Upload started...');
 
     const interval = setInterval(() => {
       setUploadProgress(prev => {
         const newProgress = prev + Math.random() * 12;
         if (newProgress >= 100) {
           clearInterval(interval);
-          NToast.success('Upload completed!');
+          toast.success('Upload completed!');
           return 100;
         }
         return newProgress;
@@ -111,7 +112,7 @@ const Component = () => {
 
   const simulateInstallation = () => {
     setInstallProgress(0);
-    NToast.info('Installation started...');
+    toast.info('Installation started...');
 
     const phases = [
       { name: 'Downloading packages...', duration: 2000, progress: 30 },
@@ -125,7 +126,7 @@ const Component = () => {
     const runPhase = () => {
       if (currentPhase < phases.length) {
         const phase = phases[currentPhase];
-        NToast.info(phase.name);
+        toast.info(phase.name);
 
         setTimeout(() => {
           setInstallProgress(phase.progress);
@@ -133,7 +134,7 @@ const Component = () => {
           if (currentPhase < phases.length) {
             runPhase();
           } else {
-            NToast.success('Installation completed!');
+            toast.success('Installation completed!');
           }
         }, phase.duration);
       }
@@ -147,7 +148,7 @@ const Component = () => {
 
     setIsAnimating(true);
     setAnimatedProgress(0);
-    NToast.info('Animation started...');
+    toast.info('Animation started...');
 
     const interval = setInterval(() => {
       setAnimatedProgress(prev => {
@@ -155,7 +156,7 @@ const Component = () => {
         if (newProgress >= 100) {
           clearInterval(interval);
           setIsAnimating(false);
-          NToast.success('Animation completed!');
+          toast.success('Animation completed!');
           return 100;
         }
         return newProgress;
@@ -165,14 +166,14 @@ const Component = () => {
 
   const simulateFileOperation = (operation: string) => {
     setFileOperations(prev => ({ ...prev, [operation]: 0 }));
-    NToast.info(`${operation} started...`);
+    toast.info(`${operation} started...`);
 
     const interval = setInterval(() => {
       setFileOperations(prev => {
         const newProgress = prev[operation] + Math.random() * 8;
         if (newProgress >= 100) {
           clearInterval(interval);
-          NToast.success(`${operation} completed!`);
+          toast.success(`${operation} completed!`);
           return { ...prev, [operation]: 100 };
         }
         return { ...prev, [operation]: newProgress };
@@ -182,12 +183,12 @@ const Component = () => {
 
   const updateSkill = (skill: string, value: number) => {
     setSkills(prev => ({ ...prev, [skill]: value }));
-    NToast.info(`${skill} skill updated to ${value}%`);
+    toast.info(`${skill} skill updated to ${value}%`);
   };
 
   const updateProjectTask = (task: string, value: number) => {
     setProjectTasks(prev => ({ ...prev, [task]: value }));
-    NToast.info(`${task} progress updated to ${value}%`);
+    toast.info(`${task} progress updated to ${value}%`);
   };
 
   const resetAllProgress = () => {
@@ -198,7 +199,7 @@ const Component = () => {
     setLoadingProgress(0);
     setAnimatedProgress(0);
     setFileOperations({ backup: 0, sync: 0, compression: 0, extraction: 0 });
-    NToast.success('All progress reset');
+    toast.success('All progress reset');
   };
 
   const getProgressColor = (value: number) => {
@@ -501,7 +502,7 @@ const Component = () => {
               fileOps: fileOperations
             };
             console.log('All progress data:', allProgress);
-            NToast.success('Progress data saved!');
+            toast.success('Progress data saved!');
           }}>
           Save Progress
         </NButton>

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Image, ScrollView, View } from 'react-native';
-import { NButton, NCard, NInput, NPopover, NSwitch, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NInput, NPopover, NSwitch, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   // User profile state
   const [userProfile, setUserProfile] = useState({
     name: 'John Doe',
@@ -32,28 +33,28 @@ const Component = () => {
   });
 
   const handleProfileUpdate = () => {
-    NToast.success('Profile updated successfully!');
+    toast.success('Profile updated successfully!');
   };
 
   const handleSettingsSave = () => {
-    NToast.success('Settings saved!');
+    toast.success('Settings saved!');
   };
 
   const handleFormSubmit = () => {
     if (formData.title.trim()) {
-      NToast.success(`Task "${formData.title}" created!`);
+      toast.success(`Task "${formData.title}" created!`);
       setFormData({ title: '', description: '', priority: 'medium' });
     } else {
-      NToast.error('Please enter a task title');
+      toast.error('Please enter a task title');
     }
   };
 
   const handleFeedbackSubmit = () => {
     if (feedback.rating > 0) {
-      NToast.success('Thank you for your feedback!');
+      toast.success('Thank you for your feedback!');
       setFeedback({ rating: 0, comment: '' });
     } else {
-      NToast.error('Please select a rating');
+      toast.error('Please select a rating');
     }
   };
 
@@ -80,10 +81,10 @@ const Component = () => {
               <NText className="text-text font-bold mb-2">📱 Mobile App</NText>
               <NText className="text-muted text-sm mb-3">Our mobile app is now available for download on both iOS and Android platforms.</NText>
               <View className="flex-row gap-2">
-                <NButton className="flex-1 bg-blue-600 border-blue-600" onPress={() => NToast.info('Opening App Store...')}>
+                <NButton className="flex-1 bg-blue-600 border-blue-600" onPress={() => toast.info('Opening App Store...')}>
                   <NText className="text-white text-xs">iOS</NText>
                 </NButton>
-                <NButton className="flex-1 bg-green-600 border-green-600" onPress={() => NToast.info('Opening Play Store...')}>
+                <NButton className="flex-1 bg-green-600 border-green-600" onPress={() => toast.info('Opening Play Store...')}>
                   <NText className="text-white text-xs">Android</NText>
                 </NButton>
               </View>
@@ -138,7 +139,7 @@ const Component = () => {
                 <NButton className="flex-1 bg-indigo-600 border-indigo-600" onPress={handleProfileUpdate}>
                   <NText className="text-white text-sm">Update</NText>
                 </NButton>
-                <NButton className="flex-1 bg-gray-500 border-gray-500" onPress={() => NToast.info('Profile cancelled')}>
+                <NButton className="flex-1 bg-gray-500 border-gray-500" onPress={() => toast.info('Profile cancelled')}>
                   <NText className="text-white text-sm">Cancel</NText>
                 </NButton>
               </View>
@@ -247,7 +248,7 @@ const Component = () => {
                 <NText className="text-sm text-muted">• Use tags for better organization</NText>
               </View>
               <View className="mt-4 pt-3 border-t border-gray-200">
-                <NButton className="w-full bg-blue-600 border-blue-600" onPress={() => NToast.info('Opening help center...')}>
+                <NButton className="w-full bg-blue-600 border-blue-600" onPress={() => toast.info('Opening help center...')}>
                   <NText className="text-white text-sm">View Full Guide</NText>
                 </NButton>
               </View>
@@ -305,7 +306,7 @@ const Component = () => {
                 </View>
               </View>
               <View className="mt-4 pt-3 border-t border-gray-200">
-                <NButton className="w-full bg-purple-600 border-purple-600" onPress={() => NToast.info('Opening notifications...')}>
+                <NButton className="w-full bg-purple-600 border-purple-600" onPress={() => toast.info('Opening notifications...')}>
                   <NText className="text-white text-sm">View All</NText>
                 </NButton>
               </View>
@@ -368,7 +369,7 @@ const Component = () => {
             <View className="p-4 w-64 max-w-sm">
               <NText className="text-purple-800 font-bold mb-2">🎨 Custom Design</NText>
               <NText className="text-purple-700 text-sm mb-3">This popover uses custom gradient styling and themed colors.</NText>
-              <NButton className="w-full bg-purple-600 border-purple-600" onPress={() => NToast.success('Styled action!')}>
+              <NButton className="w-full bg-purple-600 border-purple-600" onPress={() => toast.success('Styled action!')}>
                 <NText className="text-white text-sm">Action Button</NText>
               </NButton>
             </View>
@@ -380,7 +381,7 @@ const Component = () => {
             <View className="p-4 w-64 max-w-sm">
               <NText className="text-gray-100 font-bold mb-2">🌙 Dark Mode</NText>
               <NText className="text-gray-300 text-sm mb-3">Dark themed popover with custom styling and colors.</NText>
-              <NButton className="w-full bg-gray-600 border-gray-600" onPress={() => NToast.info('Dark action!')}>
+              <NButton className="w-full bg-gray-600 border-gray-600" onPress={() => toast.info('Dark action!')}>
                 <NText className="text-white text-sm">Dark Action</NText>
               </NButton>
             </View>
@@ -390,7 +391,7 @@ const Component = () => {
             <View className="p-3">
               <NText className="text-text font-semibold text-sm mb-2">Quick Info</NText>
               <NText className="text-muted text-xs mb-3">Compact popover design</NText>
-              <NButton className="w-full bg-yellow-500 border-yellow-500" onPress={() => NToast.info('Compact action!')}>
+              <NButton className="w-full bg-yellow-500 border-yellow-500" onPress={() => toast.info('Compact action!')}>
                 <NText className="text-black text-xs">Go</NText>
               </NButton>
             </View>
@@ -440,10 +441,10 @@ const Component = () => {
                 <NText className="text-text font-semibold mb-2">Card Details</NText>
                 <NText className="text-muted text-sm mb-3">Cards can be interactive triggers for detailed information.</NText>
                 <View className="flex-row gap-2">
-                  <NButton className="flex-1 bg-green-600 border-green-600" onPress={() => NToast.success('Action 1')}>
+                  <NButton className="flex-1 bg-green-600 border-green-600" onPress={() => toast.success('Action 1')}>
                     <NText className="text-white text-xs">Action 1</NText>
                   </NButton>
-                  <NButton className="flex-1 bg-blue-600 border-blue-600" onPress={() => NToast.info('Action 2')}>
+                  <NButton className="flex-1 bg-blue-600 border-blue-600" onPress={() => toast.info('Action 2')}>
                     <NText className="text-white text-xs">Action 2</NText>
                   </NButton>
                 </View>

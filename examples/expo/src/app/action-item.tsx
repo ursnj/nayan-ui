@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { NActionItem, NCard, NText, NToast, useNTheme } from '@nayan-ui/react-native';
+import { NActionItem, NCard, NText, useNTheme, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   const { colors } = useNTheme();
   const [actionHistory, setActionHistory] = useState<Array<{ action: string; timestamp: string }>>([]);
   const [notificationCount, setNotificationCount] = useState(3);
@@ -19,38 +20,38 @@ const Component = () => {
   const handleNotificationPress = () => {
     setNotificationCount(0);
     addToHistory('Viewed notifications');
-    NToast.success('All notifications marked as read');
+    toast.success('All notifications marked as read');
   };
 
   const handleSettingsPress = () => {
     addToHistory('Opened settings');
-    NToast.info('Opening settings...');
+    toast.info('Opening settings...');
   };
 
   const handleProfilePress = () => {
     addToHistory('Viewed profile');
-    NToast.info('Opening profile...');
+    toast.info('Opening profile...');
   };
 
   const handleLocationToggle = () => {
     const newState = !isLocationEnabled;
     setIsLocationEnabled(newState);
     addToHistory(`Location ${newState ? 'enabled' : 'disabled'}`);
-    NToast.success(`Location ${newState ? 'enabled' : 'disabled'}`);
+    toast.success(`Location ${newState ? 'enabled' : 'disabled'}`);
   };
 
   const handleThemeToggle = () => {
     const newState = !isDarkMode;
     setIsDarkMode(newState);
     addToHistory(`Switched to ${newState ? 'dark' : 'light'} mode`);
-    NToast.success(`${newState ? 'Dark' : 'Light'} mode activated`);
+    toast.success(`${newState ? 'Dark' : 'Light'} mode activated`);
   };
 
   const handleConnectionToggle = () => {
     const newState = !isOnline;
     setIsOnline(newState);
     addToHistory(`${newState ? 'Connected' : 'Disconnected'}`);
-    NToast.success(newState ? 'Connected to network' : 'Disconnected from network');
+    toast.success(newState ? 'Connected to network' : 'Disconnected from network');
   };
 
   const resetAll = () => {
@@ -59,7 +60,7 @@ const Component = () => {
     setIsOnline(true);
     setIsDarkMode(false);
     setIsLocationEnabled(false);
-    NToast.success('All settings reset');
+    toast.success('All settings reset');
   };
 
   return (
@@ -75,7 +76,7 @@ const Component = () => {
           icon={<Ionicons name="flag" size={20} color={colors.primary} />}
           onPress={() => {
             addToHistory('Basic action triggered');
-            NToast.success('Default action executed');
+            toast.success('Default action executed');
           }}
         />
 
@@ -88,7 +89,7 @@ const Component = () => {
           icon={<Ionicons name="checkmark-circle" size={20} color="#16a34a" />}
           onPress={() => {
             addToHistory('Success action triggered');
-            NToast.success('Success action completed');
+            toast.success('Success action completed');
           }}
         />
 
@@ -101,7 +102,7 @@ const Component = () => {
           icon={<Ionicons name="trash" size={20} color="#dc2626" />}
           onPress={() => {
             addToHistory('Delete action triggered');
-            NToast.error('Delete action executed');
+            toast.error('Delete action executed');
           }}
         />
       </NCard>
@@ -125,7 +126,7 @@ const Component = () => {
           icon={<Ionicons name="create" size={20} color={colors.primary} />}
           onPress={() => {
             addToHistory('Profile edit started');
-            NToast.info('Opening profile editor...');
+            toast.info('Opening profile editor...');
           }}
         />
 
@@ -163,7 +164,7 @@ const Component = () => {
           icon={<Ionicons name="chatbubbles" size={20} color={colors.primary} />}
           onPress={() => {
             addToHistory('Messages opened');
-            NToast.info('Opening messages...');
+            toast.info('Opening messages...');
           }}
         />
 
@@ -174,7 +175,7 @@ const Component = () => {
           icon={<Ionicons name="mail" size={20} color={colors.primary} />}
           onPress={() => {
             addToHistory('Email opened');
-            NToast.info('Opening email...');
+            toast.info('Opening email...');
           }}
         />
       </NCard>
@@ -219,7 +220,7 @@ const Component = () => {
           icon={<Ionicons name="camera" size={20} color={colors.primary} />}
           onPress={() => {
             addToHistory('Photo upload started');
-            NToast.info('Opening camera...');
+            toast.info('Opening camera...');
           }}
         />
 
@@ -230,7 +231,7 @@ const Component = () => {
           icon={<Ionicons name="download" size={20} color={colors.primary} />}
           onPress={() => {
             addToHistory('File download started');
-            NToast.info('Starting download...');
+            toast.info('Starting download...');
           }}
         />
 
@@ -241,7 +242,7 @@ const Component = () => {
           icon={<Ionicons name="share" size={20} color={colors.primary} />}
           onPress={() => {
             addToHistory('Share dialog opened');
-            NToast.info('Opening share options...');
+            toast.info('Opening share options...');
           }}
         />
       </NCard>
@@ -258,11 +259,11 @@ const Component = () => {
           icon={<Ionicons name="flash" size={20} color={colors.primary} />}
           onPress={() => {
             addToHistory('Quick action (tap)');
-            NToast.success('Quick action executed');
+            toast.success('Quick action executed');
           }}
           onLongPress={() => {
             addToHistory('Quick action (long press)');
-            NToast.info('Long press menu opened');
+            toast.info('Long press menu opened');
           }}
         />
 
@@ -273,11 +274,11 @@ const Component = () => {
           icon={<Ionicons name="ellipsis-horizontal" size={20} color={colors.primary} />}
           onPress={() => {
             addToHistory('Item selected (tap)');
-            NToast.success('Item selected');
+            toast.success('Item selected');
           }}
           onLongPress={() => {
             addToHistory('Context menu (long press)');
-            NToast.info('Context menu opened');
+            toast.info('Context menu opened');
           }}
         />
       </NCard>
@@ -296,7 +297,7 @@ const Component = () => {
           disabled={true}
           onPress={() => {
             // This won't be called due to disabled state
-            NToast.info('Feature requires premium subscription');
+            toast.info('Feature requires premium subscription');
           }}
         />
 
@@ -310,7 +311,7 @@ const Component = () => {
           disabled={true}
           onPress={() => {
             // This won't be called due to disabled state
-            NToast.info('Feature coming soon');
+            toast.info('Feature coming soon');
           }}
         />
       </NCard>

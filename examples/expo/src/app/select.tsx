@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NSelect, NText, NToast, SelectOption } from '@nayan-ui/react-native';
+import { NButton, NCard, NSelect, NText, SelectOption, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   // Basic select state
   const [selectedCountry, setSelectedCountry] = useState<SelectOption>({ label: '', value: '' });
   const [selectedLanguage, setSelectedLanguage] = useState<SelectOption>({ label: 'English', value: 'en' });
@@ -156,22 +157,22 @@ const Component = () => {
 
   const handleCountryChange = (value: SelectOption) => {
     setSelectedCountry(value);
-    NToast.info(`Country selected: ${value.label}`);
+    toast.info(`Country selected: ${value.label}`);
   };
 
   const handleLanguageChange = (value: SelectOption) => {
     setSelectedLanguage(value);
-    NToast.success(`Language changed to: ${value.label}`);
+    toast.success(`Language changed to: ${value.label}`);
   };
 
   const handleThemeChange = (value: SelectOption) => {
     setSelectedTheme(value);
-    NToast.info(`Theme changed to: ${value.label}`);
+    toast.info(`Theme changed to: ${value.label}`);
   };
 
   const updateUserProfile = (field: string, value: SelectOption) => {
     setUserProfile(prev => ({ ...prev, [field]: value }));
-    NToast.info(`Profile updated: ${field}`);
+    toast.info(`Profile updated: ${field}`);
   };
 
   const resetSelections = () => {
@@ -190,7 +191,7 @@ const Component = () => {
       occupation: { label: '', value: '' },
       experience: { label: '', value: '' }
     });
-    NToast.success('All selections reset');
+    toast.success('All selections reset');
   };
 
   const saveSettings = () => {
@@ -206,7 +207,7 @@ const Component = () => {
       profile: userProfile
     };
     console.log('Settings saved:', settings);
-    NToast.success('Settings saved successfully!');
+    toast.success('Settings saved successfully!');
   };
 
   return (
@@ -237,7 +238,7 @@ const Component = () => {
           items={timeZones}
           onChange={value => {
             setSelectedTimeZone(value);
-            NToast.info(`Time zone set to: ${value.label}`);
+            toast.info(`Time zone set to: ${value.label}`);
           }}
         />
       </NCard>
@@ -252,7 +253,7 @@ const Component = () => {
           items={categories}
           onChange={value => {
             setSelectedCategory(value);
-            NToast.info(`Category: ${value.label}`);
+            toast.info(`Category: ${value.label}`);
           }}
         />
         <NSelect
@@ -263,7 +264,7 @@ const Component = () => {
           onChange={value => {
             setSelectedPriority(value);
             const color = value.value === 'critical' ? 'error' : value.value === 'high' ? 'warning' : 'info';
-            NToast.info(`Priority set to: ${value.label}`);
+            toast.info(`Priority set to: ${value.label}`);
           }}
         />
         <NSelect
@@ -273,7 +274,7 @@ const Component = () => {
           items={statuses}
           onChange={value => {
             setSelectedStatus(value);
-            NToast.success(`Status updated: ${value.label}`);
+            toast.success(`Status updated: ${value.label}`);
           }}
         />
       </NCard>

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NInput, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NInput, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   const [basicInput, setBasicInput] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,18 +20,18 @@ const Component = () => {
 
   const handleSubmit = () => {
     if (!basicInput.trim()) {
-      NToast.error('Name is required');
+      toast.error('Name is required');
       return;
     }
     if (!validateEmail(email)) {
-      NToast.error('Please enter a valid email');
+      toast.error('Please enter a valid email');
       return;
     }
     if (password.length < 6) {
-      NToast.error('Password must be at least 6 characters');
+      toast.error('Password must be at least 6 characters');
       return;
     }
-    NToast.success('Form submitted successfully!');
+    toast.success('Form submitted successfully!');
   };
 
   return (
@@ -184,7 +185,7 @@ const Component = () => {
             setNumber('');
             setSearch('');
             setUrl('');
-            NToast.info('Form cleared');
+            toast.info('Form cleared');
           }}>
           Clear All
         </NButton>

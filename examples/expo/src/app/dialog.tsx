@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NDialog, NInput, NSelect, NSwitch, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NDialog, NInput, NSelect, NSwitch, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   // Dialog interaction tracking
   const [dialogActions, setDialogActions] = useState<string[]>([]);
 
@@ -42,32 +43,32 @@ const Component = () => {
 
   const addDialogAction = (action: string) => {
     setDialogActions(prev => [...prev.slice(-9), `${new Date().toLocaleTimeString()}: ${action}`]);
-    NToast.info(action);
+    toast.info(action);
   };
 
   const handleProfileSave = () => {
     addDialogAction('Profile updated successfully');
-    NToast.success('Profile saved!');
+    toast.success('Profile saved!');
   };
 
   const handleContactSubmit = () => {
     if (!contactForm.name || !contactForm.email || !contactForm.message) {
-      NToast.error('Please fill in all required fields');
+      toast.error('Please fill in all required fields');
       return;
     }
     addDialogAction(`Contact form submitted by ${contactForm.name}`);
     setContactForm({ name: '', email: '', subject: '', message: '' });
-    NToast.success('Message sent successfully!');
+    toast.success('Message sent successfully!');
   };
 
   const handleSettingsSave = () => {
     addDialogAction('Settings saved successfully');
-    NToast.success('Settings updated!');
+    toast.success('Settings updated!');
   };
 
   const handlePaymentSubmit = () => {
     if (!paymentForm.cardNumber || !paymentForm.expiryDate || !paymentForm.cvv) {
-      NToast.error('Please fill in all payment details');
+      toast.error('Please fill in all payment details');
       return;
     }
     addDialogAction('Payment processed successfully');
@@ -78,22 +79,22 @@ const Component = () => {
       cardholderName: '',
       billingAddress: ''
     });
-    NToast.success('Payment completed!');
+    toast.success('Payment completed!');
   };
 
   const handleDeleteConfirm = () => {
     addDialogAction('Item deleted permanently');
-    NToast.success('Item deleted successfully');
+    toast.success('Item deleted successfully');
   };
 
   const handleLogoutConfirm = () => {
     addDialogAction('User logged out');
-    NToast.info('Logged out successfully');
+    toast.info('Logged out successfully');
   };
 
   const clearAllActions = () => {
     setDialogActions([]);
-    NToast.success('All actions cleared');
+    toast.success('All actions cleared');
   };
 
   return (
@@ -481,7 +482,7 @@ const Component = () => {
               paymentForm
             };
             console.log('All dialog data:', allData);
-            NToast.success('Dialog data saved!');
+            toast.success('Dialog data saved!');
           }}>
           Save Data
         </NButton>

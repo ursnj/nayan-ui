@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NAlert, NButton, NText, NToast } from '@nayan-ui/react-native';
+import { NAlert, NButton, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   const [showDismissible, setShowDismissible] = useState(true);
   const [showSuccess, setShowSuccess] = useState(true);
   const [showWarning, setShowWarning] = useState(true);
@@ -182,14 +183,14 @@ const Component = () => {
               className="flex-1 bg-green-500 border-green-500"
               onPress={() => {
                 setShowDismissible(false);
-                NToast.success('Welcome alert dismissed!');
+                toast.success('Welcome alert dismissed!');
               }}>
               Got it, thanks!
             </NButton>
             <NButton
               className="flex-1 bg-transparent border-green-500"
               textClassName="text-green-600"
-              onPress={() => NToast.info('Learn more clicked!')}>
+              onPress={() => toast.info('Learn more clicked!')}>
               Learn More
             </NButton>
           </View>

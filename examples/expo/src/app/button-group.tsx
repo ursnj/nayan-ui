@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButtonGroup, NCard, NText, NToast } from '@nayan-ui/react-native';
+import { NButtonGroup, NCard, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   // Basic business type selection
   const businessTypes = [
     { label: 'Startup', value: 'startup' },
@@ -81,19 +82,19 @@ const Component = () => {
   const handleBusinessChange = (value: string) => {
     setSelectedBusiness(value);
     addToHistory(`Business type: ${businessTypes.find(b => b.value === value)?.label}`);
-    NToast.success(`Selected ${businessTypes.find(b => b.value === value)?.label} business type`);
+    toast.success(`Selected ${businessTypes.find(b => b.value === value)?.label} business type`);
   };
 
   const handlePlanChange = (value: string) => {
     setSelectedPlan(value);
     addToHistory(`Plan: ${planOptions.find(p => p.value === value)?.label}`);
-    NToast.success(`Switched to ${planOptions.find(p => p.value === value)?.label} plan`);
+    toast.success(`Switched to ${planOptions.find(p => p.value === value)?.label} plan`);
   };
 
   const handleViewChange = (value: string) => {
     setSelectedView(value);
     addToHistory(`View mode: ${viewModes.find(v => v.value === value)?.label}`);
-    NToast.info(`Changed to ${viewModes.find(v => v.value === value)?.label} view`);
+    toast.info(`Changed to ${viewModes.find(v => v.value === value)?.label} view`);
   };
 
   const resetAll = () => {
@@ -106,7 +107,7 @@ const Component = () => {
     setSelectedSize(sizeOptions[2].value);
     setSelectedTheme(themes[0].value);
     setSelectionHistory([]);
-    NToast.success('All selections reset to defaults');
+    toast.success('All selections reset to defaults');
   };
 
   return (
@@ -142,7 +143,7 @@ const Component = () => {
           onChange={value => {
             setSelectedPeriod(value);
             addToHistory(`Time period: ${timePeriods.find(t => t.value === value)?.label}`);
-            NToast.info(`Showing ${timePeriods.find(t => t.value === value)?.label.toLowerCase()} analytics`);
+            toast.info(`Showing ${timePeriods.find(t => t.value === value)?.label.toLowerCase()} analytics`);
           }}
           label="Select time period"
         />
@@ -159,11 +160,11 @@ const Component = () => {
             addToHistory(`Priority: ${priorities.find(p => p.value === value)?.label}`);
             const priority = priorities.find(p => p.value === value)?.label;
             if (priority === 'Critical') {
-              NToast.error(`Set to ${priority} priority`);
+              toast.error(`Set to ${priority} priority`);
             } else if (priority === 'High') {
-              NToast.warning(`Set to ${priority} priority`);
+              toast.warning(`Set to ${priority} priority`);
             } else {
-              NToast.success(`Set to ${priority} priority`);
+              toast.success(`Set to ${priority} priority`);
             }
           }}
           label="Task priority level"
@@ -203,7 +204,7 @@ const Component = () => {
           onChange={value => {
             setSelectedStatus(value);
             addToHistory(`Status: ${statusOptions.find(s => s.value === value)?.label}`);
-            NToast.info(`Status changed to ${statusOptions.find(s => s.value === value)?.label}`);
+            toast.info(`Status changed to ${statusOptions.find(s => s.value === value)?.label}`);
           }}
           label="Content status"
         />
@@ -218,7 +219,7 @@ const Component = () => {
           onChange={value => {
             setSelectedSize(value);
             addToHistory(`Size: ${sizeOptions.find(s => s.value === value)?.label}`);
-            NToast.success(`Size changed to ${sizeOptions.find(s => s.value === value)?.label}`);
+            toast.success(`Size changed to ${sizeOptions.find(s => s.value === value)?.label}`);
           }}
           label="Select size"
         />
@@ -233,7 +234,7 @@ const Component = () => {
           onChange={value => {
             setSelectedTheme(value);
             addToHistory(`Theme: ${themes.find(t => t.value === value)?.label}`);
-            NToast.success(`Theme set to ${themes.find(t => t.value === value)?.label}`);
+            toast.success(`Theme set to ${themes.find(t => t.value === value)?.label}`);
           }}
           label="Choose theme"
         />

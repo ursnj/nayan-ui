@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NCheck, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NCheck, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   // Basic checkbox states
   const [basicChecked, setBasicChecked] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
@@ -75,27 +76,27 @@ const Component = () => {
 
   const updateFeature = (key: string, value: boolean) => {
     setFeatures(prev => ({ ...prev, [key]: value }));
-    NToast.info(`Feature ${key}: ${value ? 'enabled' : 'disabled'}`);
+    toast.info(`Feature ${key}: ${value ? 'enabled' : 'disabled'}`);
   };
 
   const updateNotification = (key: string, value: boolean) => {
     setNotifications(prev => ({ ...prev, [key]: value }));
-    NToast.info(`${key} notifications: ${value ? 'enabled' : 'disabled'}`);
+    toast.info(`${key} notifications: ${value ? 'enabled' : 'disabled'}`);
   };
 
   const updatePrivacy = (key: string, value: boolean) => {
     setPrivacy(prev => ({ ...prev, [key]: value }));
-    NToast.warning(`Privacy setting ${key}: ${value ? 'allowed' : 'denied'}`);
+    toast.warning(`Privacy setting ${key}: ${value ? 'allowed' : 'denied'}`);
   };
 
   const updateTask = (key: string, value: boolean) => {
     setTasks(prev => ({ ...prev, [key]: value }));
-    NToast.success(`Task ${key}: ${value ? 'completed' : 'pending'}`);
+    toast.success(`Task ${key}: ${value ? 'completed' : 'pending'}`);
   };
 
   const updateShoppingItem = (key: string, value: boolean) => {
     setShoppingList(prev => ({ ...prev, [key]: value }));
-    NToast.info(`${key}: ${value ? 'added to cart' : 'removed from cart'}`);
+    toast.info(`${key}: ${value ? 'added to cart' : 'removed from cart'}`);
   };
 
   const resetAllCheckboxes = () => {
@@ -157,19 +158,19 @@ const Component = () => {
       pasta: false,
       yogurt: false
     });
-    NToast.success('All checkboxes reset');
+    toast.success('All checkboxes reset');
   };
 
   const selectAllFeatures = () => {
     const allSelected = Object.keys(features).reduce((acc, key) => ({ ...acc, [key]: true }), {} as typeof features);
     setFeatures(allSelected);
-    NToast.success('All features enabled');
+    toast.success('All features enabled');
   };
 
   const selectAllTasks = () => {
     const allSelected = Object.keys(tasks).reduce((acc, key) => ({ ...acc, [key]: true }), {} as typeof tasks);
     setTasks(allSelected);
-    NToast.success('All tasks marked as completed');
+    toast.success('All tasks marked as completed');
   };
 
   const calculateProgress = (items: Record<string, boolean>) => {
@@ -188,7 +189,7 @@ const Component = () => {
           checked={basicChecked}
           onChange={checked => {
             setBasicChecked(checked);
-            NToast.info(`Basic checkbox: ${checked ? 'checked' : 'unchecked'}`);
+            toast.info(`Basic checkbox: ${checked ? 'checked' : 'unchecked'}`);
           }}
         />
       </NCard>
@@ -201,7 +202,7 @@ const Component = () => {
           checked={agreeTerms}
           onChange={checked => {
             setAgreeTerms(checked);
-            NToast.success(checked ? 'Terms accepted' : 'Terms declined');
+            toast.success(checked ? 'Terms accepted' : 'Terms declined');
           }}
         />
         <NCheck label="Subscribe to newsletter for updates" checked={subscribeNewsletter} onChange={setSubscribeNewsletter} />
@@ -212,7 +213,7 @@ const Component = () => {
           checked={acceptCookies}
           onChange={checked => {
             setAcceptCookies(checked);
-            NToast.info(checked ? 'Cookies accepted' : 'Cookies declined');
+            toast.info(checked ? 'Cookies accepted' : 'Cookies declined');
           }}
         />
       </NCard>
@@ -382,7 +383,7 @@ const Component = () => {
               shoppingList
             };
             console.log('All checkbox data:', allData);
-            NToast.success('Settings saved successfully!');
+            toast.success('Settings saved successfully!');
           }}>
           Save All
         </NButton>

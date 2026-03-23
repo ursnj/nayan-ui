@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Image, ScrollView, View } from 'react-native';
-import { NButton, NCard, NPress, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NPress, NText, useNToast } from '@nayan-ui/react-native';
 import { Calendar, ChevronRight, Heart, MapPin, MessageCircle, Settings, Share, Star, User } from 'lucide-react-native';
 
 const Component = () => {
+  const toast = useNToast();
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [rating, setRating] = useState(4);
@@ -32,7 +33,7 @@ const Component = () => {
               <NText className="text-sm text-muted ml-1">San Francisco, CA</NText>
             </View>
           </View>
-          <NButton className="bg-blue-500 border-blue-500 px-4 py-2" onPress={() => NToast.success('Following John!')}>
+          <NButton className="bg-blue-500 border-blue-500 px-4 py-2" onPress={() => toast.success('Following John!')}>
             Follow
           </NButton>
         </View>
@@ -57,7 +58,7 @@ const Component = () => {
         <NText className="text-muted mb-4">Premium wireless headphones with noise cancellation and 30-hour battery life.</NText>
         <View className="flex-row items-center justify-between">
           <NText className="text-2xl font-bold text-primary">$199.99</NText>
-          <NButton className="bg-primary border-primary" onPress={() => NToast.success('Added to cart!')}>
+          <NButton className="bg-primary border-primary" onPress={() => toast.success('Added to cart!')}>
             Add to Cart
           </NButton>
         </View>
@@ -87,16 +88,16 @@ const Component = () => {
             className="flex-row items-center"
             onPress={() => {
               setLiked(!liked);
-              NToast.success(liked ? 'Unliked' : 'Liked!');
+              toast.success(liked ? 'Unliked' : 'Liked!');
             }}>
             <Heart size={20} color={liked ? '#ef4444' : '#666'} fill={liked ? '#ef4444' : 'none'} />
             <NText className="ml-2 text-muted">24</NText>
           </NPress>
-          <NPress className="flex-row items-center" onPress={() => NToast.info('Opening comments')}>
+          <NPress className="flex-row items-center" onPress={() => toast.info('Opening comments')}>
             <MessageCircle size={20} color="#666" />
             <NText className="ml-2 text-muted">8</NText>
           </NPress>
-          <NPress className="flex-row items-center" onPress={() => NToast.info('Sharing post')}>
+          <NPress className="flex-row items-center" onPress={() => toast.info('Sharing post')}>
             <Share size={20} color="#666" />
             <NText className="ml-2 text-muted">Share</NText>
           </NPress>
@@ -124,10 +125,10 @@ const Component = () => {
           techniques.
         </NText>
         <View className="flex-row gap-2">
-          <NButton className="flex-1 bg-red-500 border-red-500" onPress={() => NToast.success('Registered for event!')}>
+          <NButton className="flex-1 bg-red-500 border-red-500" onPress={() => toast.success('Registered for event!')}>
             Register
           </NButton>
-          <NButton className="flex-1 bg-transparent border-border" textClassName="text-text" onPress={() => NToast.info('Event details opened')}>
+          <NButton className="flex-1 bg-transparent border-border" textClassName="text-text" onPress={() => toast.info('Event details opened')}>
             Learn More
           </NButton>
         </View>
@@ -158,7 +159,7 @@ const Component = () => {
       <NCard className="mb-6">
         <NText className="text-lg font-bold text-text mb-4">Account Settings</NText>
 
-        <NPress className="flex-row items-center justify-between py-3 border-b border-border" onPress={() => NToast.info('Profile settings')}>
+        <NPress className="flex-row items-center justify-between py-3 border-b border-border" onPress={() => toast.info('Profile settings')}>
           <View className="flex-row items-center">
             <User size={20} color="#666" />
             <NText className="ml-3 text-text">Profile Information</NText>
@@ -166,7 +167,7 @@ const Component = () => {
           <ChevronRight size={20} color="#666" />
         </NPress>
 
-        <NPress className="flex-row items-center justify-between py-3 border-b border-border" onPress={() => NToast.info('Privacy settings')}>
+        <NPress className="flex-row items-center justify-between py-3 border-b border-border" onPress={() => toast.info('Privacy settings')}>
           <View className="flex-row items-center">
             <Settings size={20} color="#666" />
             <NText className="ml-3 text-text">Privacy & Security</NText>
@@ -174,7 +175,7 @@ const Component = () => {
           <ChevronRight size={20} color="#666" />
         </NPress>
 
-        <NPress className="flex-row items-center justify-between py-3" onPress={() => NToast.info('Notification settings')}>
+        <NPress className="flex-row items-center justify-between py-3" onPress={() => toast.info('Notification settings')}>
           <View className="flex-row items-center">
             <MessageCircle size={20} color="#666" />
             <NText className="ml-3 text-text">Notifications</NText>
@@ -195,7 +196,7 @@ const Component = () => {
         <NButton
           className="bg-white border-white self-start"
           textClassName="text-blue-600 font-semibold"
-          onPress={() => NToast.info('Upgrade to premium')}>
+          onPress={() => toast.info('Upgrade to premium')}>
           Upgrade Now
         </NButton>
       </NCard>
@@ -206,7 +207,7 @@ const Component = () => {
         <NText className="text-gray-300 mb-4">
           This card demonstrates how components look in dark mode. Perfect for night-time usage or users who prefer dark themes.
         </NText>
-        <NButton className="bg-blue-600 border-blue-600" onPress={() => NToast.info('Dark mode action')}>
+        <NButton className="bg-blue-600 border-blue-600" onPress={() => toast.info('Dark mode action')}>
           Action
         </NButton>
       </NCard>

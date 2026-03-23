@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NRadio, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NRadio, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   // Basic radio states
   const [selectedSize, setSelectedSize] = useState('medium');
   const [selectedColor, setSelectedColor] = useState('blue');
@@ -139,18 +140,18 @@ const Component = () => {
 
   const handleSizeChange = (value: string) => {
     setSelectedSize(value);
-    NToast.info(`Size selected: ${value}`);
+    toast.info(`Size selected: ${value}`);
   };
 
   const handlePlanChange = (value: string) => {
     setSelectedPlan(value);
     const planName = planOptions.find(p => p.value === value)?.label;
-    NToast.success(`Plan selected: ${planName}`);
+    toast.success(`Plan selected: ${planName}`);
   };
 
   const updateSurveyData = (field: string, value: string) => {
     setSurveyData(prev => ({ ...prev, [field]: value }));
-    NToast.info(`Survey updated: ${field}`);
+    toast.info(`Survey updated: ${field}`);
   };
 
   const resetAllSelections = () => {
@@ -171,16 +172,16 @@ const Component = () => {
       improvement: '',
       experience: ''
     });
-    NToast.success('All selections reset');
+    toast.success('All selections reset');
   };
 
   const submitSurvey = () => {
     const allAnswered = Object.values(surveyData).every(value => value !== '');
     if (allAnswered) {
-      NToast.success('Survey submitted successfully!');
+      toast.success('Survey submitted successfully!');
       console.log('Survey data:', surveyData);
     } else {
-      NToast.warning('Please answer all survey questions');
+      toast.warning('Please answer all survey questions');
     }
   };
 
@@ -201,7 +202,7 @@ const Component = () => {
           items={colorOptions}
           onChange={value => {
             setSelectedColor(value);
-            NToast.info(`Color changed to: ${value}`);
+            toast.info(`Color changed to: ${value}`);
           }}
           radioGroupClassName="flex-col gap-2"
         />
@@ -227,7 +228,7 @@ const Component = () => {
           items={paymentOptions}
           onChange={value => {
             setSelectedPayment(value);
-            NToast.success(`Payment method: ${value}`);
+            toast.success(`Payment method: ${value}`);
           }}
           radioGroupClassName="flex-col gap-2"
         />
@@ -242,7 +243,7 @@ const Component = () => {
           items={themeOptions}
           onChange={value => {
             setSelectedTheme(value);
-            NToast.info(`Theme: ${value}`);
+            toast.info(`Theme: ${value}`);
           }}
           className="mb-4"
         />
@@ -259,7 +260,7 @@ const Component = () => {
           items={privacyOptions}
           onChange={value => {
             setSelectedPrivacy(value);
-            NToast.info(`Privacy set to: ${value}`);
+            toast.info(`Privacy set to: ${value}`);
           }}
           radioGroupClassName="flex-col gap-2"
         />
@@ -274,7 +275,7 @@ const Component = () => {
           items={deliveryOptions}
           onChange={value => {
             setSelectedDelivery(value);
-            NToast.success(`Delivery option: ${value}`);
+            toast.success(`Delivery option: ${value}`);
           }}
           radioGroupClassName="flex-col gap-3"
         />
@@ -401,7 +402,7 @@ const Component = () => {
               survey: surveyData
             };
             console.log('All selections:', selections);
-            NToast.success('Selections saved!');
+            toast.success('Selections saved!');
           }}>
           Save All
         </NButton>

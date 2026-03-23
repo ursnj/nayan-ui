@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NSkeleton, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NSkeleton, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   // Loading states for different sections
   const [loadingStates, setLoadingStates] = useState({
     profile: true,
@@ -40,7 +41,7 @@ const Component = () => {
       const action = newState[section] ? 'started' : 'completed';
       const timestamp = new Date().toLocaleTimeString();
       setLoadingHistory(prev => [...prev.slice(-9), `${timestamp}: ${section} loading ${action}`]);
-      NToast.info(`${section.charAt(0).toUpperCase() + section.slice(1)} loading ${action}`);
+      toast.info(`${section.charAt(0).toUpperCase() + section.slice(1)} loading ${action}`);
       return newState;
     });
   };
@@ -57,7 +58,7 @@ const Component = () => {
       settings: true
     });
     setLoadingHistory([]);
-    NToast.success('All loading states reset!');
+    toast.success('All loading states reset!');
   };
 
   const loadingCount = Object.values(loadingStates).filter(Boolean).length;

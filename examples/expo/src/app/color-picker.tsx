@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NColorPicker, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NColorPicker, NText, useNToast } from '@nayan-ui/react-native';
 
 const Component = () => {
+  const toast = useNToast();
   // Basic color states
   const [primaryColor, setPrimaryColor] = useState('#3b82f6');
   const [secondaryColor, setSecondaryColor] = useState('#10b981');
@@ -49,17 +50,17 @@ const Component = () => {
 
   const handleThemeColorChange = (key: string, color: string) => {
     setThemeColors(prev => ({ ...prev, [key]: color }));
-    NToast.success(`${key} color updated!`);
+    toast.success(`${key} color updated!`);
   };
 
   const handleBrandColorChange = (key: string, color: string) => {
     setBrandColors(prev => ({ ...prev, [key]: color }));
-    NToast.success(`${key} color updated!`);
+    toast.success(`${key} color updated!`);
   };
 
   const handleUIColorChange = (key: string, color: string) => {
     setUiColors(prev => ({ ...prev, [key]: color }));
-    NToast.success(`${key} color updated!`);
+    toast.success(`${key} color updated!`);
   };
 
   const applyPreset = (presetName: string, colors: string[]) => {
@@ -71,7 +72,7 @@ const Component = () => {
       error: colors[2],
       info: colors[5]
     });
-    NToast.success(`${presetName} preset applied!`);
+    toast.success(`${presetName} preset applied!`);
   };
 
   const resetColors = () => {
@@ -87,7 +88,7 @@ const Component = () => {
       error: '#ef4444',
       info: '#3b82f6'
     });
-    NToast.success('Colors reset to defaults!');
+    toast.success('Colors reset to defaults!');
   };
 
   return (
@@ -273,7 +274,7 @@ const Component = () => {
 
       {/* Action Buttons */}
       <View className="flex-row gap-3 mb-4">
-        <NButton className="flex-1 bg-green-500 border-green-500" onPress={() => NToast.success('Colors saved!')}>
+        <NButton className="flex-1 bg-green-500 border-green-500" onPress={() => toast.success('Colors saved!')}>
           <NText className="text-white">Save Colors</NText>
         </NButton>
         <NButton className="flex-1 bg-gray-500 border-gray-500" onPress={resetColors}>
