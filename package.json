@@ -3,9 +3,29 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/*",
+      "examples/expo"
     ],
-    "nohoist": []
+    "nohoist": [
+      "**/react-native",
+      "**/react-native/**",
+      "**/expo",
+      "**/expo/**",
+      "**/react-native-reanimated",
+      "**/react-native-reanimated/**",
+      "**/react-native-gesture-handler",
+      "**/react-native-gesture-handler/**",
+      "**/react-native-worklets",
+      "**/react-native-worklets/**",
+      "**/react-native-safe-area-context",
+      "**/react-native-safe-area-context/**",
+      "**/react-native-svg",
+      "**/react-native-svg/**",
+      "**/expo-navigation-bar",
+      "**/expo-navigation-bar/**",
+      "**/@react-native-community/datetimepicker",
+      "**/@react-native-community/datetimepicker/**"
+    ]
   },
   "version": "1.0.0",
   "description": "Reusable Component Libraries for React and React Native.",
@@ -17,6 +37,7 @@
     "watch:react": "yarn workspace @nayan-ui/react dev",
     "build:react": "yarn workspace @nayan-ui/react build",
     "build:react-native": "yarn workspace @nayan-ui/react-native build",
+    "start:expo": "yarn workspace expo-app start",
     "start:website:watch": "concurrently \"yarn watch:react\" \"yarn workspace @nayan-ui/website start\"",
     "start:website": "yarn build:react && yarn workspace @nayan-ui/website start",
     "build:website": "yarn build:react && yarn workspace @nayan-ui/website build",
