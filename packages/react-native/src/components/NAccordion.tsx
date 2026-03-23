@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import { NText } from '@/components/NText';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Text } from 'react-native';
+import { Accordion } from 'heroui-native';
 import { cn } from '@/lib/utils';
 
 export interface AccordionItemData {
@@ -13,7 +13,7 @@ export interface AccordionItemData {
 export interface NAccordionProps {
   items: AccordionItemData[];
   multiple?: boolean;
-  defaultValue?: string[];
+  defaultExpandedKeys?: string[];
   className?: string;
   itemClassName?: string;
   titleClassName?: string;
@@ -21,7 +21,7 @@ export interface NAccordionProps {
 }
 
 export const NAccordion = React.memo<NAccordionProps>(
-  ({ items, multiple = false, defaultValue, className, itemClassName, titleClassName, contentClassName }) => {
+  ({ items, multiple = false, defaultExpandedKeys, className, itemClassName, titleClassName, contentClassName }) => {
     const processedItems = useMemo(
       () =>
         items.map((item, index) => ({
@@ -31,34 +31,18 @@ export const NAccordion = React.memo<NAccordionProps>(
       [items]
     );
 
-    const accordionProps = useMemo(
-      () => ({
-        className: cn('w-full', className),
-        ...(multiple
-          ? {
-              type: 'multiple' as const,
-              defaultValue: defaultValue || []
-            }
-          : {
-              type: 'single' as const,
-              collapsible: true,
-              defaultValue: defaultValue?.[0]
-            })
-      }),
-      [multiple, defaultValue, className]
-    );
-
     return (
-      <Accordion {...accordionProps}>
+      <Accordion selectionMode={multiple ? 'multiple' : 'single'} defaultExpandedKeys={defaultExpandedKeys} className={cn('w-full', className)}>
         {processedItems.map(item => (
-          <AccordionItem key={item.id} value={item.id} disabled={item.disabled} className={itemClassName}>
-            <AccordionTrigger className="px-4 py-3">
-              <NText className={cn('text-lg font-medium', titleClassName)}>{item.title}</NText>
-            </AccordionTrigger>
-            <AccordionContent className="px-4 pb-3">
-              <NText className={cn('text-muted', contentClassName)}>{item.content}</NText>
-            </AccordionContent>
-          </AccordionItem>
+          <Accordion.Item key={item.id} id={item.id} isDisabled={item.disabled} className={cn(itemClassName)}>
+            <Accordion.Trigger className="px-4 py-3">
+              <Text className={cn('text-lg font-medium text-foreground', titleClassName)}>{item.title}</Text>
+              <Accordion.Indicator />
+            </Accordion.Trigger>
+            <Accordion.Content className="px-4 pb-3">
+              <Text className={cn('text-muted', contentClassName)}>{item.content}</Text>
+            </Accordion.Content>
+          </Accordion.Item>
         ))}
       </Accordion>
     );

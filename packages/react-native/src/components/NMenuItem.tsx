@@ -1,21 +1,20 @@
 import React, { useMemo } from 'react';
-import { DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut } from '@/components/ui/dropdown-menu';
+import { View } from 'react-native';
+import { Menu, Separator } from 'heroui-native';
 import { cn } from '@/lib/utils';
-import { NText } from './NText';
 
 export interface NMenuItemProps {
   title: string;
-  shortcut?: string;
+  description?: string;
   icon?: React.ComponentType<any> | React.ReactElement;
   onPress: () => void;
   hasSeparator?: boolean;
   className?: string;
   textClassName?: string;
-  shortcutClassName?: string;
 }
 
 export const NMenuItem = React.memo<NMenuItemProps>(
-  ({ title, shortcut = '', hasSeparator = false, icon, className = '', textClassName = '', shortcutClassName = '', onPress }) => {
+  ({ title, description, hasSeparator = false, icon, className = '', textClassName = '', onPress }) => {
     const menuIcon = useMemo(() => {
       if (!icon) return null;
 
@@ -29,12 +28,14 @@ export const NMenuItem = React.memo<NMenuItemProps>(
 
     return (
       <>
-        <DropdownMenuItem className={className} onPress={onPress}>
-          {menuIcon && <span className="mr-2">{menuIcon}</span>}
-          <NText className={textClassName}>{title}</NText>
-          {shortcut && <DropdownMenuShortcut className={cn('text-muted', shortcutClassName)}>{shortcut}</DropdownMenuShortcut>}
-        </DropdownMenuItem>
-        {hasSeparator && <DropdownMenuSeparator />}
+        <Menu.Item className={cn(className)} onPress={onPress}>
+          {menuIcon}
+          <View className="flex-1">
+            <Menu.ItemTitle className={cn(textClassName)}>{title}</Menu.ItemTitle>
+            {description && <Menu.ItemDescription>{description}</Menu.ItemDescription>}
+          </View>
+        </Menu.Item>
+        {hasSeparator && <Separator />}
       </>
     );
   }

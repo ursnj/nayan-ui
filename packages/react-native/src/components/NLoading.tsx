@@ -1,21 +1,17 @@
 import React from 'react';
-import { ActivityIndicator, View } from 'react-native';
-import { useNTheme } from '@/hooks/useNTheme';
+import { View } from 'react-native';
+import { Spinner } from 'heroui-native';
 import { cn } from '@/lib/utils';
 
 export interface NLoadingProps {
-  color?: string;
   className?: string;
-  size?: number | 'small' | 'large';
+  size?: 'sm' | 'md' | 'lg';
 }
 
-export const NLoading = React.memo<NLoadingProps>(({ className = '', size = 'large', color }) => {
-  const { colors } = useNTheme();
-  const loadingColor = color || colors.primary;
-
+export const NLoading = React.memo<NLoadingProps>(({ className = '', size = 'lg' }) => {
   return (
     <View className={cn('flex-1 justify-center items-center', className)}>
-      <ActivityIndicator animating={true} size={size as any} color={loadingColor} />
+      <Spinner size={size} />
     </View>
   );
 });

@@ -1,5 +1,5 @@
 module.exports = {
-  presets: [['module:react-native-builder-bob/babel-preset', { jsxImportSource: 'nativewind', modules: 'commonjs' }], 'nativewind/babel'],
+  presets: [['module:react-native-builder-bob/babel-preset', { modules: 'commonjs' }]],
   plugins: [
     [
       'module-resolver',

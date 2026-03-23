@@ -1,7 +1,7 @@
 import React from 'react';
 import { type TextInputProps, View } from 'react-native';
+import { Input } from 'heroui-native';
 import { NText } from '@/components/NText';
-import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 
 export interface NTextareaProps extends TextInputProps {
@@ -20,14 +20,15 @@ export const NTextarea = React.memo<NTextareaProps>(
     return (
       <View className={cn('flex-1 mb-3', className)}>
         {label && <NText className={cn('mb-1', labelClassName)}>{label}</NText>}
-        <Textarea
+        <Input
           value={value}
           editable={!disabled}
           placeholder={placeholder}
           onChangeText={onChangeText}
-          placeholderClassName="text-muted"
+          multiline
           textAlignVertical="top"
-          className={cn('text-text text-base border border-border bg-card', inputClassName)}
+          numberOfLines={4}
+          className={cn('min-h-[100px]', inputClassName)}
           {...props}
         />
       </View>

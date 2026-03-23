@@ -1,17 +1,19 @@
 import React from 'react';
-import { View, type ViewProps } from 'react-native';
+import { Card } from 'heroui-native';
 import { cn } from '@/lib/utils';
 
-export interface NCardProps extends ViewProps {
+export interface NCardProps {
   children?: React.ReactNode;
   className?: string;
+  bodyClassName?: string;
+  [key: string]: any;
 }
 
-export const NCard = React.memo<NCardProps>(({ children, className, ...props }) => {
+export const NCard = React.memo<NCardProps>(({ children, className, bodyClassName, ...props }) => {
   return (
-    <View className={cn('bg-card border border-border rounded-lg p-4', className)} {...props}>
-      {children}
-    </View>
+    <Card className={cn(className)} {...props}>
+      <Card.Body className={cn(bodyClassName)}>{children}</Card.Body>
+    </Card>
   );
 });
 

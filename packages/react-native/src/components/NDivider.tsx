@@ -1,5 +1,5 @@
 import React from 'react';
-import { Separator } from '@/components/ui/separator';
+import { Separator } from 'heroui-native';
 import { cn } from '@/lib/utils';
 
 export interface NDividerProps {
@@ -8,7 +8,7 @@ export interface NDividerProps {
 }
 
 export const NDivider = React.memo<NDividerProps>(({ orientation = 'horizontal', className }) => {
-  return <Separator className={cn('bg-border', className)} orientation={orientation as any} />;
+  return <Separator className={cn(className)} orientation={orientation} />;
 });
 
 NDivider.displayName = 'NDivider';

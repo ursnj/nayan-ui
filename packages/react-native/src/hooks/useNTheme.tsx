@@ -1,24 +1,43 @@
-import { useState } from 'react';
-import { useTheme } from '@react-navigation/native';
-import { useColorScheme as useNativewindColorScheme } from 'nativewind';
+import { useCallback } from 'react';
+import { useThemeColor } from 'heroui-native';
+import { Uniwind, useUniwind } from 'uniwind';
 import { THEMES } from '@/lib/utils';
 
 export function useNTheme() {
-  const theme: any = useTheme();
-  const [themeColors, setColors] = useState(null);
-  const { colorScheme, setColorScheme, toggleColorScheme } = useNativewindColorScheme();
+  const { theme } = useUniwind();
 
-  const setThemeColors = (colors: any) => {
-    setColors(colors);
-  };
+  const [accent, background, surface, foreground, muted, separator] = useThemeColor([
+    'accent',
+    'background',
+    'surface',
+    'foreground',
+    'muted',
+    'separator'
+  ]);
+
+  const isDarkMode = theme === THEMES.dark;
+
+  const setTheme = useCallback((newTheme: string) => {
+    Uniwind.setTheme(newTheme as any);
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    Uniwind.setTheme(isDarkMode ? 'light' : 'dark');
+  }, [isDarkMode]);
 
   return {
-    themeColors,
-    setThemeColors,
-    theme: colorScheme,
-    colors: theme.colors,
-    setTheme: setColorScheme,
-    toggleTheme: toggleColorScheme,
-    isDarkMode: colorScheme === THEMES.dark
+    theme,
+    isDarkMode,
+    setTheme,
+    toggleTheme,
+    colors: {
+      primary: accent,
+      background,
+      card: surface,
+      text: foreground,
+      muted,
+      border: separator,
+      notification: surface
+    }
   };
 }

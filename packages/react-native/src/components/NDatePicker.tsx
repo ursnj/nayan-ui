@@ -79,9 +79,9 @@ export const NDatePicker = React.memo<NDatePickerProps>(
           return icon;
         }
         const IconComponent = icon as React.ComponentType<any>;
-        return <IconComponent strokeWidth={1} className={cn('w-5 h-5 text-text', inputIconClassName)} />;
+        return <IconComponent strokeWidth={1} className={cn('w-5 h-5 text-foreground', inputIconClassName)} />;
       }
-      return <Calendar strokeWidth={1} className={cn('w-5 h-5 text-text', inputIconClassName)} />;
+      return <Calendar strokeWidth={1} className={cn('w-5 h-5 text-foreground', inputIconClassName)} />;
     }, [icon, inputIconClassName]);
 
     return (
@@ -99,7 +99,7 @@ export const NDatePicker = React.memo<NDatePickerProps>(
         <NPress
           onPress={showDatePicker}
           className={cn(
-            'flex-row justify-between items-center bg-card border border-border rounded px-3 py-2.5',
+            'flex-row justify-between items-center bg-surface border border-separator rounded px-3 py-2.5',
             disabled && 'opacity-50',
             inputClassName
           )}>

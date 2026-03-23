@@ -9,7 +9,7 @@ export interface NTextProps extends TextProps {
 
 export const NText = React.memo<NTextProps>(({ children, className, ...props }) => {
   return (
-    <Text className={cn('text-text text-base leading-relaxed', className)} {...props}>
+    <Text className={cn('text-foreground text-base leading-relaxed', className)} {...props}>
       {children}
     </Text>
   );

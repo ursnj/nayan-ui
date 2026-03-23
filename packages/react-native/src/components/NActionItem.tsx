@@ -31,7 +31,7 @@ export const NActionItem = React.memo<NActionItemProps>(
 
     return (
       <NPress
-        className={cn('flex-row items-center px-3 py-2 bg-card', disabled && 'opacity-50', className)}
+        className={cn('flex-row items-center px-3 py-2 bg-surface', disabled && 'opacity-50', className)}
         onPress={onPress}
         onLongPress={onLongPress}
         disabled={disabled}>

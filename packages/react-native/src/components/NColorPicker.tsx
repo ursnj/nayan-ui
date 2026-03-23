@@ -23,7 +23,7 @@ export const NColorPicker = React.memo<NColorPickerProps>(
         <NPopover
           trigger={
             <Pressable
-              className={cn('w-7 h-7 rounded border border-border', disabled && 'opacity-70', triggerClassName)}
+              className={cn('w-7 h-7 rounded border border-separator', disabled && 'opacity-70', triggerClassName)}
               style={{ backgroundColor: value }}
               disabled={disabled}
             />

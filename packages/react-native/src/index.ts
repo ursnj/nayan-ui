@@ -42,3 +42,7 @@ export * from './lib/icons/iconWithClassName';
 export * from './lib/icons/MoonStar';
 export * from './lib/icons/Sun';
 export * from './lib/utils';
+
+// Re-export heroui-native utilities
+export { cn, useThemeColor } from 'heroui-native';
+export { Uniwind, useUniwind } from 'uniwind';

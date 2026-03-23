@@ -1,7 +1,6 @@
-import React, { useMemo } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { NText } from '@/components/NText';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import React from 'react';
+import { Text } from 'react-native';
+import { Popover } from 'heroui-native';
 import { cn } from '@/lib/utils';
 
 export interface NTooltipProps {
@@ -9,28 +8,21 @@ export interface NTooltipProps {
   message: string;
   className?: string;
   textClassName?: string;
+  placement?: 'top' | 'bottom' | 'left' | 'right';
 }
 
-export const NTooltip = React.memo<NTooltipProps>(({ children, message, className, textClassName }) => {
-  const insets = useSafeAreaInsets();
-
-  const contentInsets = useMemo(
-    () => ({
-      top: insets.top,
-      bottom: insets.bottom,
-      left: 12,
-      right: 12
-    }),
-    [insets.top, insets.bottom]
-  );
-
+export const NTooltip = React.memo<NTooltipProps>(({ children, message, className, textClassName, placement = 'top' }) => {
   return (
-    <Tooltip delayDuration={150}>
-      <TooltipTrigger>{children}</TooltipTrigger>
-      <TooltipContent insets={contentInsets} className={cn('bg-card border border-border max-w-[250px]', className)}>
-        <NText className={textClassName}>{message}</NText>
-      </TooltipContent>
-    </Tooltip>
+    <Popover>
+      <Popover.Trigger>{children}</Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Overlay />
+        <Popover.Content placement={placement} className={cn('max-w-[250px]', className)}>
+          <Popover.Arrow />
+          <Popover.Description className={cn(textClassName)}>{message}</Popover.Description>
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover>
   );
 });
 

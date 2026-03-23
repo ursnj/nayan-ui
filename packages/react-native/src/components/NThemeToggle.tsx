@@ -14,7 +14,7 @@ export interface NThemeToggleProps extends Omit<PressableProps, 'onPress'> {
 }
 
 export const NThemeToggle = React.memo<NThemeToggleProps>(({ size = 30, strokeWidth = 1.25, className = '', onThemeChange, ...props }) => {
-  const { isDarkMode, setTheme, themeColors } = useNTheme();
+  const { isDarkMode, setTheme } = useNTheme();
 
   const currentIcon = useMemo(() => {
     const IconComponent = isDarkMode ? MoonStar : Sun;
@@ -26,12 +26,12 @@ export const NThemeToggle = React.memo<NThemeToggleProps>(({ size = 30, strokeWi
     setTheme(newTheme);
     setAndroidNavigationBar(newTheme);
     onThemeChange && onThemeChange(newTheme);
-  }, [isDarkMode, setTheme, themeColors, onThemeChange]);
+  }, [isDarkMode, setTheme, onThemeChange]);
 
   return (
     <Pressable onPress={toggleTheme} {...props}>
       {React.cloneElement(currentIcon, {
-        className: cn('text-text', className)
+        className: cn('text-foreground', className)
       })}
     </Pressable>
   );

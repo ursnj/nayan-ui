@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { BottomSheetBackdrop, type BottomSheetBackdropProps, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { useNTheme } from '@/hooks/useNTheme';
+import { useThemeColor } from 'heroui-native';
 
 export interface NSheetProps {
   sheetRef: React.RefObject<BottomSheetModal>;
@@ -9,7 +9,7 @@ export interface NSheetProps {
 }
 
 export const NSheet = React.memo<NSheetProps>(({ sheetRef, children, snapPoints = null }) => {
-  const { colors } = useNTheme();
+  const [surface, muted] = useThemeColor(['surface', 'muted']);
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -25,10 +25,10 @@ export const NSheet = React.memo<NSheetProps>(({ sheetRef, children, snapPoints 
       enableDismissOnClose={true}
       backdropComponent={renderBackdrop}
       {...(snapPoints && { snapPoints, enableDynamicSizing: false })}
-      backgroundStyle={{ backgroundColor: colors.card }}
-      handleIndicatorStyle={{ backgroundColor: colors.muted }}
+      backgroundStyle={{ backgroundColor: surface }}
+      handleIndicatorStyle={{ backgroundColor: muted }}
       handleStyle={{
-        backgroundColor: colors.card,
+        backgroundColor: surface,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10
       }}>

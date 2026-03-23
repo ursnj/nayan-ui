@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog } from 'heroui-native';
 import { cn } from '@/lib/utils';
 
 export interface NDialogProps {
@@ -13,20 +13,20 @@ export interface NDialogProps {
   contentClassName?: string;
 }
 
-export const NDialog = React.memo<NDialogProps>(
-  ({ children, trigger, title, className = '', headerClassName = '', headerTitleClassName = '', contentClassName = '' }) => {
-    return (
-      <Dialog>
-        <DialogTrigger asChild>{trigger}</DialogTrigger>
-        <DialogContent className={cn('border-border rounded p-0 min-w-[320px] sm:max-w-[425px]', className)}>
-          <DialogHeader className={cn('px-3 py-2', headerClassName)}>
-            <DialogTitle className={cn('text-text', headerTitleClassName)}>{title}</DialogTitle>
-          </DialogHeader>
+export const NDialog = React.memo<NDialogProps>(({ children, trigger, title, className = '', headerTitleClassName = '', contentClassName = '' }) => {
+  return (
+    <Dialog>
+      <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay />
+        <Dialog.Content className={cn('min-w-[320px]', className)}>
+          <Dialog.Close />
+          <Dialog.Title className={cn(headerTitleClassName)}>{title}</Dialog.Title>
           <View className={contentClassName}>{children}</View>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-);
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog>
+  );
+});
 
 NDialog.displayName = 'NDialog';

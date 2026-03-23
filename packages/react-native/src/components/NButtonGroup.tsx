@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
+import { Button } from 'heroui-native';
 import { NText } from '@/components/NText';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 export interface ButtonGroupItem {
@@ -49,17 +49,17 @@ export const NButtonGroup = React.memo<NButtonGroupProps>(
             return (
               <Button
                 key={item.value}
-                disabled={isDisabled}
+                isDisabled={isDisabled}
                 onPress={() => onChange(item.value)}
+                variant={isSelected ? 'primary' : 'ghost'}
                 className={cn(
-                  'rounded-none border-r border-border flex-row items-center justify-center',
+                  'rounded-none border-r border-separator',
                   index === 0 && 'rounded-l',
                   index === items.length - 1 && 'rounded-r border-r-0',
-                  isSelected ? 'bg-primary' : 'bg-card',
                   buttonClassName
                 )}>
-                {buttonIcon && <View className="mr-1">{buttonIcon}</View>}
-                <NText className={cn('font-medium', isSelected ? 'text-primary-foreground' : 'text-foreground')}>{item.label}</NText>
+                {buttonIcon}
+                <Button.Label>{item.label}</Button.Label>
               </Button>
             );
           })}

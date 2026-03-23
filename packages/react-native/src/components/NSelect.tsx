@@ -1,8 +1,7 @@
-import React, { useMemo } from 'react';
-import { ScrollView, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import React from 'react';
+import { View } from 'react-native';
+import { Select } from 'heroui-native';
 import { NText } from '@/components/NText';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 
 export interface SelectOption {
@@ -21,6 +20,7 @@ export interface NSelectProps {
   className?: string;
   labelClassName?: string;
   inputClassName?: string;
+  presentation?: 'popover' | 'bottom-sheet' | 'dialog';
 }
 
 export const NSelect = React.memo<NSelectProps>(
@@ -34,48 +34,35 @@ export const NSelect = React.memo<NSelectProps>(
     onChange,
     className = '',
     labelClassName = '',
-    inputClassName = ''
+    inputClassName = '',
+    presentation = 'popover'
   }) => {
-    const insets = useSafeAreaInsets();
-
-    const contentInsets = useMemo(
-      () => ({
-        top: insets.top,
-        bottom: insets.bottom,
-        left: 12,
-        right: 12
-      }),
-      [insets.top, insets.bottom]
-    );
-
     return (
       <View className={cn('flex-1 mb-3', className)}>
         {label && <NText className={cn('mb-1', labelClassName)}>{label}</NText>}
-        <Select defaultValue={value} onValueChange={onChange} disabled={disabled}>
-          <SelectTrigger className={cn('w-full bg-card border-border', disabled && 'opacity-70')} disabled={disabled}>
-            <SelectValue className="text-text text-sm native:text-lg" placeholder={placeholder} />
-          </SelectTrigger>
-          <SelectContent insets={contentInsets} className={cn('w-full bg-card border-border shadow', inputClassName)}>
-            <View style={{ maxHeight: 550 }}>
-              <ScrollView
-                showsVerticalScrollIndicator={true}
-                nestedScrollEnabled={true}
-                persistentScrollbar={false}
-                indicatorStyle="black"
-                scrollIndicatorInsets={{ right: 1 }}
-                keyboardShouldPersistTaps="handled"
-                scrollEventThrottle={1}>
-                <SelectGroup>
-                  {selectLabel && <SelectLabel className="text-text">{selectLabel}</SelectLabel>}
-                  {items.map(item => (
-                    <SelectItem className="text-text" key={item.value} label={item.label} value={item.value}>
-                      {item.label}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </ScrollView>
-            </View>
-          </SelectContent>
+        <Select
+          defaultSelectedKey={value?.value}
+          onSelectionChange={key => {
+            const selected = items.find(item => item.value === key);
+            if (selected) onChange(selected);
+          }}
+          isDisabled={disabled}>
+          <Select.Trigger className={cn(disabled && 'opacity-70')}>
+            <Select.Value placeholder={placeholder} />
+            <Select.TriggerIndicator />
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Overlay />
+            <Select.Content presentation={presentation} className={cn(inputClassName)}>
+              {selectLabel && <Select.ListLabel>{selectLabel}</Select.ListLabel>}
+              {items.map(item => (
+                <Select.Item key={item.value} id={item.value} value={item.value} label={item.label}>
+                  <Select.ItemLabel />
+                  <Select.ItemIndicator />
+                </Select.Item>
+              ))}
+            </Select.Content>
+          </Select.Portal>
         </Select>
       </View>
     );

@@ -1,16 +1,6 @@
-import React from 'react';
-import { NText } from '@/components/NText';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from '@/components/ui/alert-dialog';
+import React, { useCallback, useState } from 'react';
+import { View } from 'react-native';
+import { Button, Dialog } from 'heroui-native';
 import { cn } from '@/lib/utils';
 
 export interface NConfirmProps {
@@ -41,24 +31,35 @@ export const NConfirm = React.memo<NConfirmProps>(
     confirmClassName = '',
     cancelClassName = ''
   }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleResult = useCallback(
+      (result: boolean) => {
+        setIsOpen(false);
+        onResult(result);
+      },
+      [onResult]
+    );
+
     return (
-      <AlertDialog>
-        <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-        <AlertDialogContent className={cn('bg-card p-3 min-w-[320px]', className)}>
-          <AlertDialogHeader>
-            <AlertDialogTitle className={cn('text-text', titleClassName)}>{title}</AlertDialogTitle>
-            <AlertDialogDescription className={cn('text-text', descriptionClassName)}>{description}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex-row">
-            <AlertDialogAction onPress={() => onResult(true)}>
-              <NText className={cn('text-white', confirmClassName)}>{confirmText}</NText>
-            </AlertDialogAction>
-            <AlertDialogCancel className="border-muted bg-border" onPress={() => onResult(false)}>
-              <NText className={cn('text-text', cancelClassName)}>{cancelText}</NText>
-            </AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <Dialog isOpen={isOpen} onOpenChange={setIsOpen}>
+        <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+        <Dialog.Portal>
+          <Dialog.Overlay />
+          <Dialog.Content className={cn('min-w-[320px]', className)}>
+            <Dialog.Title className={cn(titleClassName)}>{title}</Dialog.Title>
+            <Dialog.Description className={cn(descriptionClassName)}>{description}</Dialog.Description>
+            <View className="flex-row justify-end gap-3 mt-4">
+              <Button variant="ghost" onPress={() => handleResult(false)}>
+                <Button.Label className={cn(cancelClassName)}>{cancelText}</Button.Label>
+              </Button>
+              <Button variant="primary" onPress={() => handleResult(true)}>
+                <Button.Label className={cn(confirmClassName)}>{confirmText}</Button.Label>
+              </Button>
+            </View>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog>
     );
   }
 );

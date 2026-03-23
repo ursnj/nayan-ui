@@ -1,11 +1,11 @@
 import React, { type ReactNode, useCallback, useEffect, useState } from 'react';
 import { Linking, Platform, Text, type TextProps, type TextStyle, View, type ViewProps } from 'react-native';
+import { useThemeColor } from 'heroui-native';
 // @ts-ignore
 import linkifyIt from 'linkify-it';
 // @ts-ignore
 import mdurl from 'mdurl';
 import { NText } from '@/components/NText';
-import { useNTheme } from '@/hooks/useNTheme';
 
 const defaultLinkify = linkifyIt();
 const { OS } = Platform;
@@ -23,8 +23,8 @@ export interface LinkifyProps extends ViewProps {
 
 const Linkify = React.memo<LinkifyProps>(
   ({ children, style, linkify: customLinkify, linkStyle, linkText, onPress, onLongPress, injectViewProps = () => ({}), ...viewProps }) => {
-    const { colors } = useNTheme();
-    const defaultLinkStyle = { color: colors.primary };
+    const [accent] = useThemeColor(['accent']);
+    const defaultLinkStyle = { color: accent };
 
     const [linkifyInstance, setLinkifyInstance] = useState(() => customLinkify || defaultLinkify);
 

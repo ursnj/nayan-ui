@@ -1,7 +1,7 @@
 import React from 'react';
 import { type TextInputProps, View } from 'react-native';
+import { Input } from 'heroui-native';
 import { NText } from '@/components/NText';
-import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 export interface NInputProps extends TextInputProps {
@@ -35,7 +35,7 @@ export const NInput = React.memo<NInputProps>(
           editable={!disabled}
           placeholder={placeholder}
           onChangeText={onChangeText}
-          className={cn('text-text text-base border border-border bg-card', inputClassName)}
+          className={cn(inputClassName)}
           {...remaining}
         />
       </View>
