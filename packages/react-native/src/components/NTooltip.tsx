@@ -1,5 +1,4 @@
 import React from 'react';
-import { Text } from 'react-native';
 import { Popover } from 'heroui-native';
 import { cn } from '@/lib/utils';
 
@@ -13,11 +12,11 @@ export interface NTooltipProps {
 
 export const NTooltip = React.memo<NTooltipProps>(({ children, message, className, textClassName, placement = 'top' }) => {
   return (
-    <Popover>
+    <Popover presentation="popover">
       <Popover.Trigger>{children}</Popover.Trigger>
       <Popover.Portal>
         <Popover.Overlay />
-        <Popover.Content placement={placement} className={cn('max-w-[250px]', className)}>
+        <Popover.Content presentation="popover" placement={placement} className={cn('max-w-[250px]', className)}>
           <Popover.Arrow />
           <Popover.Description className={cn(textClassName)}>{message}</Popover.Description>
         </Popover.Content>

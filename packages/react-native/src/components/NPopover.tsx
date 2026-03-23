@@ -11,11 +11,11 @@ export interface NPopoverProps {
 
 export const NPopover = React.memo<NPopoverProps>(({ trigger, children, className = '', placement = 'bottom' }) => {
   return (
-    <Popover>
+    <Popover presentation="popover">
       <Popover.Trigger asChild>{trigger}</Popover.Trigger>
       <Popover.Portal>
         <Popover.Overlay />
-        <Popover.Content placement={placement} className={cn(className)}>
+        <Popover.Content presentation="popover" placement={placement} className={cn(className)}>
           {children}
         </Popover.Content>
       </Popover.Portal>

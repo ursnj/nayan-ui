@@ -28,7 +28,7 @@ export const NSwitch = React.memo<NSwitchProps>(
             {label}
           </Label>
         )}
-        <Switch isDisabled={disabled} isSelected={checked} onChange={handleToggle} className={cn(inputClassName)} />
+        <Switch isDisabled={disabled} isSelected={checked} onSelectedChange={handleToggle} className={cn(inputClassName)} />
       </View>
     );
   }

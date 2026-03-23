@@ -41,12 +41,12 @@ export const NSelect = React.memo<NSelectProps>(
       <View className={cn('flex-1 mb-3', className)}>
         {label && <NText className={cn('mb-1', labelClassName)}>{label}</NText>}
         <Select
-          defaultSelectedKey={value?.value}
-          onSelectionChange={key => {
-            const selected = items.find(item => item.value === key);
-            if (selected) onChange(selected);
+          defaultValue={value}
+          onValueChange={(val: any) => {
+            if (val) onChange(val);
           }}
-          isDisabled={disabled}>
+          isDisabled={disabled}
+          presentation={presentation}>
           <Select.Trigger className={cn(disabled && 'opacity-70')}>
             <Select.Value placeholder={placeholder} />
             <Select.TriggerIndicator />

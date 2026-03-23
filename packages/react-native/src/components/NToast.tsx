@@ -59,6 +59,6 @@ export function useNToast() {
       });
     },
 
-    hide: () => toast.hideAll()
+    hide: () => toast.hide('all')
   };
 }

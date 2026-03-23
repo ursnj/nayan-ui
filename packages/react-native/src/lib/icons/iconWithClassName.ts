@@ -1,8 +1,6 @@
 import type { LucideIcon } from 'lucide-react-native';
-import { remapProps } from 'uniwind';
+import { withUniwind } from 'uniwind';
 
 export function iconWithClassName(icon: LucideIcon) {
-  remapProps(icon as any, {
-    className: 'style'
-  });
+  return withUniwind(icon as any);
 }
