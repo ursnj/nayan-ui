@@ -5,7 +5,10 @@ node_modules/
 
 # Expo
 .expo/
+.vscode/
 dist/
+android/
+ios/
 web-build/
 expo-env.d.ts
 
