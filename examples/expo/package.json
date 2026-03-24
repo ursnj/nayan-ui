@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.2.8",
-    "@nayan-ui/react-native": "1.0.0",
+    "@nayan-ui/react-native": "*",
     "@react-native-community/datetimepicker": "8.6.0",
     "@react-navigation/native": "^7.1.6",
     "date-fns": "^4.1.0",
