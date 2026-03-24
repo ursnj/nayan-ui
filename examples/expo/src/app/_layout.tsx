@@ -1,14 +1,12 @@
 import 'react-native-reanimated';
-import { NTheme, THEMES, useNTheme } from '@nayan-ui/react-native';
+import { NTheme, THEMES } from '@nayan-ui/react-native';
 import { Stack } from 'expo-router';
 import '../../global.css';
 import { components } from '../constants';
 
 const RootLayout = () => {
-  const { theme } = useNTheme();
-
   return (
-    <NTheme theme={theme || THEMES.light}>
+    <NTheme theme={THEMES.light}>
       <Stack>
         <Stack.Screen name="index" options={{ title: 'React Native Nayan' }} />
         {components.map((component: any) => (

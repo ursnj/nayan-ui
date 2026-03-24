@@ -30,7 +30,13 @@
       "**/@react-native-community/*",
       "**/@react-native-community/**",
       "**/@react-native/*",
-      "**/@react-native/**"
+      "**/@react-native/**",
+      "**/tailwindcss",
+      "**/tailwindcss/**",
+      "**/uniwind",
+      "**/uniwind/**",
+      "**/heroui-native",
+      "**/heroui-native/**"
     ]
   },
   "version": "1.0.0",

@@ -14,7 +14,7 @@
     "sitemap": "npx nayan create sitemap -w http://localhost:7100 -r https://www.nayanui.com -o ./public/sitemap.xml"
   },
   "dependencies": {
-    "@nayan-ui/react": "workspace:*",
+    "@nayan-ui/react": "*",
     "compression": "^1.8.1",
     "express": "^4.21.2",
     "react": "^19.1.0",
