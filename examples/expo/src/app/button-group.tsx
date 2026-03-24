@@ -111,7 +111,7 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 p-4 bg-background">
+    <ScrollView className="flex-1 p-4 bg-surface">
       {/* Basic Business Type Selection */}
       <NCard className="p-4 mb-6">
         <NText className="text-lg font-semibold mb-3">Basic Selection</NText>

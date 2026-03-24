@@ -50,9 +50,9 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Loaders */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Loaders</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Loaders</NText>
 
       <NCard className="p-4 mb-6">
         <View className="items-center mb-4">
@@ -72,7 +72,7 @@ const Component = () => {
       </NCard>
 
       {/* Colored Loaders */}
-      <NText className="text-xl font-bold mb-3 text-text">Colored Loaders</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Colored Loaders</NText>
 
       <NCard className="p-4 mb-6">
         <View className="flex-row justify-around items-center mb-4">
@@ -96,7 +96,7 @@ const Component = () => {
       </NCard>
 
       {/* Inline Loaders */}
-      <NText className="text-xl font-bold mb-3 text-text">Inline Loaders</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Inline Loaders</NText>
 
       <NCard className="p-4 mb-6">
         <View className="flex-row items-center mb-3">
@@ -116,7 +116,7 @@ const Component = () => {
       </NCard>
 
       {/* Loading States */}
-      <NText className="text-xl font-bold mb-3 text-text">Interactive Loading States</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Interactive Loading States</NText>
 
       <NCard className="p-4 mb-6">
         <View className="mb-4">
@@ -151,7 +151,7 @@ const Component = () => {
       </NCard>
 
       {/* Overlay Loaders */}
-      <NText className="text-xl font-bold mb-3 text-text">Overlay Loaders</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Overlay Loaders</NText>
 
       <NCard className="p-4 mb-6">
         <View className="mb-4">
@@ -161,7 +161,7 @@ const Component = () => {
             <NText className="text-sm text-muted-foreground">Click the button below to see the overlay effect.</NText>
 
             {isLoading && (
-              <View className="absolute inset-0 bg-background/80 rounded-lg flex items-center justify-center">
+              <View className="absolute inset-0 bg-surface/80 rounded-lg flex items-center justify-center">
                 <View className="items-center">
                   <NLoading />
                   <NText className="mt-2 text-sm">Loading...</NText>
@@ -183,7 +183,7 @@ const Component = () => {
       </NCard>
 
       {/* Progress Simulation */}
-      <NText className="text-xl font-bold mb-3 text-text">Progress Loading</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Progress Loading</NText>
 
       <NCard className="p-4 mb-6">
         <View className="items-center">
@@ -206,7 +206,7 @@ const Component = () => {
       </NCard>
 
       {/* Card Loading States */}
-      <NText className="text-xl font-bold mb-3 text-text">Card Loading States</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Card Loading States</NText>
 
       <NCard className="p-4 mb-6">
         <View className="mb-4">
@@ -251,7 +251,7 @@ const Component = () => {
       </NCard>
 
       {/* Different Loading Messages */}
-      <NText className="text-xl font-bold mb-3 text-text">Loading Messages</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Loading Messages</NText>
 
       <NCard className="p-4 mb-6">
         <View className="space-y-4">

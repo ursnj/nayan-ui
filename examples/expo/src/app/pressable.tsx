@@ -32,7 +32,7 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background">
+    <ScrollView className="flex-1 bg-surface">
       <View className="p-4 space-y-6">
         {/* Basic Pressable Buttons */}
         <NCard className="p-4">

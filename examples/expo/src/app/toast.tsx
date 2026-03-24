@@ -155,9 +155,9 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Toast Types */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Toast Types</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Toast Types</NText>
       <NCard className="mb-6">
         <View className="flex-row gap-2 flex-wrap mb-4">
           <NButton
@@ -203,7 +203,7 @@ const Component = () => {
       </NCard>
 
       {/* Action-Based Toasts */}
-      <NText className="text-xl font-bold mb-3 text-text">Action-Based Toasts</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Action-Based Toasts</NText>
       <NCard className="mb-6">
         <View className="flex-row gap-2 flex-wrap mb-4">
           <NButton
@@ -257,11 +257,11 @@ const Component = () => {
       </NCard>
 
       {/* System Notification Toasts */}
-      <NText className="text-xl font-bold mb-3 text-text">System Notifications</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">System Notifications</NText>
       <NCard className="mb-6">
         <View className="mb-4">
           <View className="flex-row items-center justify-between mb-2">
-            <NText className="text-text">Network Status</NText>
+            <NText className="text-foreground">Network Status</NText>
             <NSwitch checked={isOnline} onChange={setIsOnline} />
           </View>
           <NText className="text-sm text-muted mb-3">Status: {isOnline ? ' Online' : ' Offline'}</NText>
@@ -302,10 +302,10 @@ const Component = () => {
       </NCard>
 
       {/* E-commerce Toasts */}
-      <NText className="text-xl font-bold mb-3 text-text">E-commerce Toasts</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">E-commerce Toasts</NText>
       <NCard className="mb-6">
         <View className="mb-4">
-          <NText className="text-text mb-2">Cart Items: {cartItems}</NText>
+          <NText className="text-foreground mb-2">Cart Items: {cartItems}</NText>
         </View>
 
         <View className="flex-row gap-2 flex-wrap mb-4">
@@ -348,7 +348,7 @@ const Component = () => {
       </NCard>
 
       {/* User Interaction Toasts */}
-      <NText className="text-xl font-bold mb-3 text-text">User Interactions</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">User Interactions</NText>
       <NCard className="mb-6">
         <View className="mb-4">
           <NInput label="User Name" value={userName} onChangeText={setUserName} className="mb-2" />
@@ -389,7 +389,7 @@ const Component = () => {
       </NCard>
 
       {/* Special Occasion Toasts */}
-      <NText className="text-xl font-bold mb-3 text-text">Special Occasions</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Special Occasions</NText>
       <NCard className="mb-6">
         <View className="flex-row gap-2 flex-wrap mb-4">
           <NButton
@@ -426,7 +426,7 @@ const Component = () => {
       </NCard>
 
       {/* Theme Toggle Toasts */}
-      <NText className="text-xl font-bold mb-3 text-text">Theme Toggle</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Theme Toggle</NText>
       <NCard className="mb-6">
         <View className="flex-row gap-2 flex-wrap mb-4">
           <NButton
@@ -480,7 +480,7 @@ const Component = () => {
 
       {/* Toast Activity Log */}
       <NCard className="mt-6">
-        <NText className="text-lg font-bold text-text mb-3">Toast Activity Log</NText>
+        <NText className="text-lg font-bold text-foreground mb-3">Toast Activity Log</NText>
         {toastActions.length === 0 ? (
           <NText className="text-muted text-sm">No toast actions yet. Try showing toasts above!</NText>
         ) : (
@@ -496,7 +496,7 @@ const Component = () => {
 
       {/* Toast Statistics */}
       <NCard className="mt-4">
-        <NText className="text-lg font-bold text-text mb-3">Toast Statistics</NText>
+        <NText className="text-lg font-bold text-foreground mb-3">Toast Statistics</NText>
         <View className="space-y-2">
           <NText className="text-sm text-muted">Total Toasts Shown: {toastActions.length}</NText>
           <NText className="text-sm text-muted">Current User: {userName}</NText>

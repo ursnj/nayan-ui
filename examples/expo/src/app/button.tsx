@@ -16,9 +16,9 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Buttons */}
-      <NText className="text-lg font-semibold mb-3 text-text">Basic Buttons</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Basic Buttons</NText>
       <View className="flex-row flex-wrap gap-2 mb-6">
         <NButton onPress={() => toast.info('Primary button pressed')}>Primary</NButton>
         <NButton
@@ -27,13 +27,13 @@ const Component = () => {
           onPress={() => toast.info('Secondary button pressed')}>
           Secondary
         </NButton>
-        <NButton className="bg-transparent border-border" textClassName="text-text" onPress={() => toast.info('Outline button pressed')}>
+        <NButton className="bg-transparent border-separator" textClassName="text-foreground" onPress={() => toast.info('Outline button pressed')}>
           Outline
         </NButton>
       </View>
 
       {/* Buttons with Icons */}
-      <NText className="text-lg font-semibold mb-3 text-text">Buttons with Icons</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Buttons with Icons</NText>
       <View className="flex-row flex-wrap gap-2 mb-6">
         <NButton
           icon={Heart}
@@ -56,7 +56,7 @@ const Component = () => {
       </View>
 
       {/* Button States */}
-      <NText className="text-lg font-semibold mb-3 text-text">Button States</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Button States</NText>
       <View className="flex-row flex-wrap gap-2 mb-6">
         <NButton disabled>Disabled</NButton>
         <NButton onPress={handleAsyncAction} disabled={loading} className={loading ? 'opacity-70' : undefined}>
@@ -71,7 +71,7 @@ const Component = () => {
       </View>
 
       {/* Different Sizes */}
-      <NText className="text-lg font-semibold mb-3 text-text">Different Sizes</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Different Sizes</NText>
       <View className="gap-2 mb-6">
         <NButton className="px-3 py-2" textClassName="text-sm" onPress={() => toast.info('Small button')}>
           Small Button
@@ -83,7 +83,7 @@ const Component = () => {
       </View>
 
       {/* Action Buttons */}
-      <NText className="text-lg font-semibold mb-3 text-text">Action Buttons</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Action Buttons</NText>
       <View className="flex-row flex-wrap gap-2 mb-6">
         <NButton icon={Edit} className="bg-blue-500 border-blue-500" onPress={() => toast.info('Edit mode activated')}>
           Edit
@@ -97,7 +97,7 @@ const Component = () => {
       </View>
 
       {/* Contact Buttons */}
-      <NText className="text-lg font-semibold mb-3 text-text">Contact Actions</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Contact Actions</NText>
       <View className="flex-row flex-wrap gap-2 mb-6">
         <NButton icon={Mail} className="bg-indigo-500 border-indigo-500" onPress={() => toast.info('Opening email...')}>
           Email
@@ -111,7 +111,7 @@ const Component = () => {
       </View>
 
       {/* Custom Styled Buttons */}
-      <NText className="text-lg font-semibold mb-3 text-text">Custom Styled</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Custom Styled</NText>
       <View className="gap-2 mb-6">
         <NButton
           className="bg-gradient-to-r from-purple-500 to-pink-500 border-0 rounded-full"
@@ -134,7 +134,7 @@ const Component = () => {
       </View>
 
       {/* Full Width Button */}
-      <NText className="text-lg font-semibold mb-3 text-text">Full Width</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Full Width</NText>
       <NButton className="w-full mb-4" onPress={() => toast.success('Full width button pressed!')}>
         Full Width Button
       </NButton>

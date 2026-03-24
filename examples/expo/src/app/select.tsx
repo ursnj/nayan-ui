@@ -211,15 +211,15 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Select */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Select</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Select</NText>
       <NCard className="mb-6">
         <NSelect label="Select Country" placeholder="Choose a country" value={selectedCountry} items={countries} onChange={handleCountryChange} />
       </NCard>
 
       {/* App Settings */}
-      <NText className="text-xl font-bold mb-3 text-text">App Settings</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">App Settings</NText>
       <NCard className="mb-6">
         <NSelect
           label="Language"
@@ -244,7 +244,7 @@ const Component = () => {
       </NCard>
 
       {/* Project Management */}
-      <NText className="text-xl font-bold mb-3 text-text">Project Settings</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Project Settings</NText>
       <NCard className="mb-6">
         <NSelect
           label="Category"
@@ -280,7 +280,7 @@ const Component = () => {
       </NCard>
 
       {/* User Profile Form */}
-      <NText className="text-xl font-bold mb-3 text-text">User Profile</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">User Profile</NText>
       <NCard className="mb-6">
         <NSelect
           label="Country"
@@ -322,7 +322,7 @@ const Component = () => {
       </NCard>
 
       {/* Disabled Select */}
-      <NText className="text-xl font-bold mb-3 text-text">Disabled Select</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Disabled Select</NText>
       <NCard className="mb-6">
         <NSelect
           label="Premium Features (Upgrade Required)"
@@ -340,7 +340,7 @@ const Component = () => {
       </NCard>
 
       {/* Custom Styled Select */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Styled</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Styled</NText>
       <NCard className="mb-6">
         <NSelect
           label="Custom Select"
@@ -363,7 +363,7 @@ const Component = () => {
       </NCard>
 
       {/* Multiple Selects with Dependencies */}
-      <NText className="text-xl font-bold mb-3 text-text">Dependent Selects</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Dependent Selects</NText>
       <NCard className="mb-6">
         <NSelect
           label="Select Country First"
@@ -420,7 +420,7 @@ const Component = () => {
 
       {/* Selection Summary */}
       <NCard className="mt-6">
-        <NText className="text-lg font-bold text-text mb-3">Current Selections</NText>
+        <NText className="text-lg font-bold text-foreground mb-3">Current Selections</NText>
         <View className="space-y-2">
           <NText className="text-sm text-muted">Country: {selectedCountry.label || 'Not selected'}</NText>
           <NText className="text-sm text-muted">Language: {selectedLanguage.label}</NText>
@@ -435,7 +435,7 @@ const Component = () => {
 
       {/* Profile Summary */}
       <NCard className="mt-4">
-        <NText className="text-lg font-bold text-text mb-3">Profile Information</NText>
+        <NText className="text-lg font-bold text-foreground mb-3">Profile Information</NText>
         <View className="space-y-2">
           <NText className="text-sm text-muted">
             Location: {[userProfile.city.label, userProfile.state.label, userProfile.country.label].filter(Boolean).join(', ') || 'Not specified'}

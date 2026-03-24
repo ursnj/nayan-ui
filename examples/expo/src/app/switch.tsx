@@ -67,13 +67,13 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Switch */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Switch</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Switch</NText>
       <NSwitch label="Enable Feature" checked={basicSwitch} onChange={setBasicSwitch} className="mb-6" />
 
       {/* App Settings */}
-      <NText className="text-xl font-bold mb-3 text-text">App Settings</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">App Settings</NText>
       <NCard className="mb-6">
         <NSwitch
           label="Push Notifications"
@@ -103,7 +103,7 @@ const Component = () => {
       </NCard>
 
       {/* Security Settings */}
-      <NText className="text-xl font-bold mb-3 text-text">Security Settings</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Security Settings</NText>
       <NCard className="mb-6">
         <NSwitch
           label="Biometric Authentication"
@@ -128,7 +128,7 @@ const Component = () => {
       </NCard>
 
       {/* Privacy Settings */}
-      <NText className="text-xl font-bold mb-3 text-text">Privacy Settings</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Privacy Settings</NText>
       <NCard className="mb-6">
         <NSwitch label="Share Usage Data" checked={privacySettings.shareData} onChange={checked => updatePrivacySetting('shareData', checked)} />
         <NSwitch
@@ -149,7 +149,7 @@ const Component = () => {
       </NCard>
 
       {/* Accessibility Settings */}
-      <NText className="text-xl font-bold mb-3 text-text">Accessibility Settings</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Accessibility Settings</NText>
       <NCard className="mb-6">
         <NSwitch
           label="High Contrast Mode"
@@ -174,7 +174,7 @@ const Component = () => {
       </NCard>
 
       {/* Communication Preferences */}
-      <NText className="text-xl font-bold mb-3 text-text">Communication</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Communication</NText>
       <NCard className="mb-6">
         <NSwitch
           label="Analytics & Performance"
@@ -195,14 +195,14 @@ const Component = () => {
       </NCard>
 
       {/* Disabled Switch */}
-      <NText className="text-xl font-bold mb-3 text-text">Disabled Switch</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Disabled Switch</NText>
       <NCard className="mb-6">
         <NSwitch label="Premium Feature (Upgrade Required)" checked={false} onChange={() => {}} disabled={true} />
         <NText className="text-sm text-muted mt-2 ml-4">This feature requires a premium subscription to enable.</NText>
       </NCard>
 
       {/* Custom Styled Switches */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Styled</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Styled</NText>
       <NCard className="mb-6">
         <NSwitch
           label="Custom Colors"
@@ -216,7 +216,7 @@ const Component = () => {
       </NCard>
 
       {/* Switch with Description */}
-      <NText className="text-xl font-bold mb-3 text-text">Switch with Description</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Switch with Description</NText>
       <NCard className="mb-6">
         <View>
           <NSwitch label="Two-Factor Authentication" checked={biometricAuth} onChange={setBiometricAuth} className="mb-2" />
@@ -234,7 +234,7 @@ const Component = () => {
       </NCard>
 
       {/* Switch Groups with Dependency */}
-      <NText className="text-xl font-bold mb-3 text-text">Dependent Settings</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Dependent Settings</NText>
       <NCard className="mb-6">
         <NSwitch
           label="Enable Notifications"
@@ -269,7 +269,7 @@ const Component = () => {
 
       {/* Settings Summary */}
       <NCard className="mt-6">
-        <NText className="text-lg font-bold text-text mb-3">Settings Summary</NText>
+        <NText className="text-lg font-bold text-foreground mb-3">Settings Summary</NText>
         <NText className="text-sm text-muted leading-relaxed">
           Active Settings:{' '}
           {[

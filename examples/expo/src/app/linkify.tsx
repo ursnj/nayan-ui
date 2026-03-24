@@ -15,9 +15,9 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic URL and Email Detection */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic URL and Email Detection</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic URL and Email Detection</NText>
 
       <NCard className="p-4 mb-6">
         <NLinkify>
@@ -39,7 +39,7 @@ const Component = () => {
       </NCard>
 
       {/* Custom Link Styling */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Link Styling</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Link Styling</NText>
 
       <NCard className="p-4 mb-6">
         <NLinkify linkStyle={{ color: '#3b82f6', textDecorationLine: 'underline', fontWeight: 'bold' }}>
@@ -56,7 +56,7 @@ const Component = () => {
       </NCard>
 
       {/* Custom Link Handlers */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Link Handlers</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Link Handlers</NText>
 
       <NCard className="p-4 mb-6">
         <NLinkify onPress={handleLinkPress}>
@@ -69,7 +69,7 @@ const Component = () => {
       </NCard>
 
       {/* Social Media Links */}
-      <NText className="text-xl font-bold mb-3 text-text">Social Media and Various URLs</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Social Media and Various URLs</NText>
 
       <NCard className="p-4 mb-6">
         <NLinkify>
@@ -96,7 +96,7 @@ const Component = () => {
       </NCard>
 
       {/* Complex Text with Multiple Links */}
-      <NText className="text-xl font-bold mb-3 text-text">Complex Text with Multiple Links</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Complex Text with Multiple Links</NText>
 
       <NCard className="p-4 mb-6">
         <NLinkify>
@@ -113,7 +113,7 @@ const Component = () => {
       </NCard>
 
       {/* Email Variations */}
-      <NText className="text-xl font-bold mb-3 text-text">Email Address Variations</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Email Address Variations</NText>
 
       <NCard className="p-4 mb-6">
         <NLinkify>
@@ -132,7 +132,7 @@ const Component = () => {
       </NCard>
 
       {/* URL Variations */}
-      <NText className="text-xl font-bold mb-3 text-text">URL Variations and Formats</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">URL Variations and Formats</NText>
 
       <NCard className="p-4 mb-6">
         <NLinkify>
@@ -161,7 +161,7 @@ const Component = () => {
       </NCard>
 
       {/* Real-world Use Cases */}
-      <NText className="text-xl font-bold mb-3 text-text">Real-world Use Cases</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Real-world Use Cases</NText>
 
       <NCard className="p-4 mb-6">
         <View className="mb-4">

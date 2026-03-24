@@ -98,14 +98,14 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Dialogs */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Dialogs</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Dialogs</NText>
       <NCard className="mb-6">
         <View className="flex-row gap-3 flex-wrap">
           <NDialog trigger={<NButton className="bg-blue-500 border-blue-500">Simple Dialog</NButton>} title="Welcome">
             <View className="p-4">
-              <NText className="text-text mb-4">Welcome to our application! This is a simple dialog with basic content.</NText>
+              <NText className="text-foreground mb-4">Welcome to our application! This is a simple dialog with basic content.</NText>
               <NButton className="bg-blue-500 border-blue-500" onPress={() => addDialogAction('Welcome dialog acknowledged')}>
                 Got it!
               </NButton>
@@ -114,7 +114,7 @@ const Component = () => {
 
           <NDialog trigger={<NButton className="bg-green-500 border-green-500">Info Dialog</NButton>} title="Information">
             <View className="p-4">
-              <NText className="text-text mb-2 font-semibold">App Version: 2.1.0</NText>
+              <NText className="text-foreground mb-2 font-semibold">App Version: 2.1.0</NText>
               <NText className="text-muted text-sm mb-4">
                 • New features added{'\n'}• Bug fixes and improvements{'\n'}• Enhanced user experience{'\n'}• Better performance
               </NText>
@@ -148,7 +148,7 @@ const Component = () => {
       </NCard>
 
       {/* Form Dialogs */}
-      <NText className="text-xl font-bold mb-3 text-text">Form Dialogs</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Form Dialogs</NText>
       <NCard className="mb-6">
         <View className="flex-row gap-3 flex-wrap">
           <NDialog
@@ -171,12 +171,12 @@ const Component = () => {
               <NInput label="Bio" value={userProfile.bio} onChangeText={text => setUserProfile(prev => ({ ...prev, bio: text }))} className="mb-4" />
 
               <View className="flex-row items-center justify-between mb-3">
-                <NText className="text-text">Enable Notifications</NText>
+                <NText className="text-foreground">Enable Notifications</NText>
                 <NSwitch value={userProfile.notifications} onValueChange={value => setUserProfile(prev => ({ ...prev, notifications: value }))} />
               </View>
 
               <View className="flex-row items-center justify-between mb-4">
-                <NText className="text-text">Dark Mode</NText>
+                <NText className="text-foreground">Dark Mode</NText>
                 <NSwitch value={userProfile.darkMode} onValueChange={value => setUserProfile(prev => ({ ...prev, darkMode: value }))} />
               </View>
 
@@ -287,12 +287,12 @@ const Component = () => {
       </NCard>
 
       {/* Confirmation Dialogs */}
-      <NText className="text-xl font-bold mb-3 text-text">Confirmation Dialogs</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Confirmation Dialogs</NText>
       <NCard className="mb-6">
         <View className="flex-row gap-3 flex-wrap">
           <NDialog trigger={<NButton className="bg-red-500 border-red-500">Delete Item</NButton>} title="🗑️ Confirm Delete">
             <View className="p-4">
-              <NText className="text-text mb-4">Are you sure you want to delete this item? This action cannot be undone.</NText>
+              <NText className="text-foreground mb-4">Are you sure you want to delete this item? This action cannot be undone.</NText>
               <View className="flex-row gap-2">
                 <NButton className="flex-1 bg-red-500 border-red-500" onPress={handleDeleteConfirm}>
                   Delete
@@ -306,7 +306,7 @@ const Component = () => {
 
           <NDialog trigger={<NButton className="bg-yellow-500 border-yellow-500">Sign Out</NButton>} title="Sign Out">
             <View className="p-4">
-              <NText className="text-text mb-4">Are you sure you want to sign out? You'll need to sign in again to access your account.</NText>
+              <NText className="text-foreground mb-4">Are you sure you want to sign out? You'll need to sign in again to access your account.</NText>
               <View className="flex-row gap-2">
                 <NButton className="flex-1 bg-yellow-500 border-yellow-500" onPress={handleLogoutConfirm}>
                   Sign Out
@@ -320,7 +320,7 @@ const Component = () => {
 
           <NDialog trigger={<NButton className="bg-blue-600 border-blue-600">Save Changes</NButton>} title="💾 Save Changes">
             <View className="p-4">
-              <NText className="text-text mb-4">You have unsaved changes. Would you like to save them before continuing?</NText>
+              <NText className="text-foreground mb-4">You have unsaved changes. Would you like to save them before continuing?</NText>
               <View className="flex-row gap-2">
                 <NButton className="flex-1 bg-blue-600 border-blue-600" onPress={() => addDialogAction('Changes saved')}>
                   Save
@@ -338,7 +338,7 @@ const Component = () => {
       </NCard>
 
       {/* Settings Dialog */}
-      <NText className="text-xl font-bold mb-3 text-text">Settings Dialog</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Settings Dialog</NText>
       <NCard className="mb-6">
         <NDialog
           trigger={<NButton className="bg-gray-600 border-gray-600">App Settings</NButton>}
@@ -346,17 +346,17 @@ const Component = () => {
           className="sm:max-w-[500px]">
           <View className="p-4">
             <View className="flex-row items-center justify-between mb-3">
-              <NText className="text-text">Auto Save</NText>
+              <NText className="text-foreground">Auto Save</NText>
               <NSwitch value={settingsForm.autoSave} onValueChange={value => setSettingsForm(prev => ({ ...prev, autoSave: value }))} />
             </View>
 
             <View className="flex-row items-center justify-between mb-3">
-              <NText className="text-text">Sync Data</NText>
+              <NText className="text-foreground">Sync Data</NText>
               <NSwitch value={settingsForm.syncData} onValueChange={value => setSettingsForm(prev => ({ ...prev, syncData: value }))} />
             </View>
 
             <View className="flex-row items-center justify-between mb-4">
-              <NText className="text-text">Show Tips</NText>
+              <NText className="text-foreground">Show Tips</NText>
               <NSwitch value={settingsForm.showTips} onValueChange={value => setSettingsForm(prev => ({ ...prev, showTips: value }))} />
             </View>
 
@@ -397,7 +397,7 @@ const Component = () => {
       </NCard>
 
       {/* Custom Styled Dialogs */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Styled Dialogs</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Styled Dialogs</NText>
       <NCard className="mb-6">
         <View className="flex-row gap-3 flex-wrap">
           <NDialog
@@ -490,7 +490,7 @@ const Component = () => {
 
       {/* Dialog Activity Log */}
       <NCard className="mt-6">
-        <NText className="text-lg font-bold text-text mb-3">Dialog Activity Log</NText>
+        <NText className="text-lg font-bold text-foreground mb-3">Dialog Activity Log</NText>
         {dialogActions.length === 0 ? (
           <NText className="text-muted text-sm">No dialog actions yet. Try interacting with dialogs above!</NText>
         ) : (
@@ -506,7 +506,7 @@ const Component = () => {
 
       {/* Current Form States */}
       <NCard className="mt-4">
-        <NText className="text-lg font-bold text-text mb-3">Current Form States</NText>
+        <NText className="text-lg font-bold text-foreground mb-3">Current Form States</NText>
         <View className="space-y-2">
           <NText className="text-sm text-muted">
             Profile: {userProfile.name} ({userProfile.email})

@@ -63,22 +63,22 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Popovers */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Popovers</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Popovers</NText>
 
       <NCard className="p-4 mb-6">
         <View className="flex-row gap-3 flex-wrap">
           <NPopover trigger={<NButton className="bg-blue-500 border-blue-500">Simple Popover</NButton>}>
             <View className="p-4 w-64 max-w-sm">
-              <NText className="text-text font-semibold mb-2">Information</NText>
+              <NText className="text-foreground font-semibold mb-2">Information</NText>
               <NText className="text-muted text-sm">This is a simple popover with basic text content.</NText>
             </View>
           </NPopover>
 
           <NPopover trigger={<NButton className="bg-green-500 border-green-500">Rich Content</NButton>}>
             <View className="p-4 w-72 max-w-sm">
-              <NText className="text-text font-bold mb-2">📱 Mobile App</NText>
+              <NText className="text-foreground font-bold mb-2">📱 Mobile App</NText>
               <NText className="text-muted text-sm mb-3">Our mobile app is now available for download on both iOS and Android platforms.</NText>
               <View className="flex-row gap-2">
                 <NButton className="flex-1 bg-blue-600 border-blue-600" onPress={() => toast.info('Opening App Store...')}>
@@ -96,7 +96,7 @@ const Component = () => {
               <View className="w-full h-24 bg-gray-200 rounded-lg mb-3 items-center justify-center">
                 <NText className="text-gray-500">📸 Image</NText>
               </View>
-              <NText className="text-text font-semibold mb-1">Product Preview</NText>
+              <NText className="text-foreground font-semibold mb-1">Product Preview</NText>
               <NText className="text-muted text-sm">Check out our latest features and updates.</NText>
             </View>
           </NPopover>
@@ -104,7 +104,7 @@ const Component = () => {
       </NCard>
 
       {/* Interactive Popovers */}
-      <NText className="text-xl font-bold mb-3 text-text">Interactive Popovers</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Interactive Popovers</NText>
 
       <NCard className="p-4 mb-6">
         <View className="flex-row gap-3 flex-wrap">
@@ -116,7 +116,7 @@ const Component = () => {
                   <NText className="text-indigo-600 font-bold text-lg">JD</NText>
                 </View>
                 <View className="flex-1">
-                  <NText className="text-text font-semibold">{userProfile.name}</NText>
+                  <NText className="text-foreground font-semibold">{userProfile.name}</NText>
                   <NText className="text-muted text-sm">{userProfile.email}</NText>
                 </View>
               </View>
@@ -149,7 +149,7 @@ const Component = () => {
           {/* Settings Popover */}
           <NPopover trigger={<NButton className="bg-orange-500 border-orange-500">Settings</NButton>}>
             <View className="p-4 w-72 max-w-sm">
-              <NText className="text-text font-bold mb-4">⚙️ App Settings</NText>
+              <NText className="text-foreground font-bold mb-4">⚙️ App Settings</NText>
 
               <NSwitch
                 label="Auto Save"
@@ -166,7 +166,7 @@ const Component = () => {
               />
 
               <View className="mb-4">
-                <NText className="text-text font-medium mb-2">Language</NText>
+                <NText className="text-foreground font-medium mb-2">Language</NText>
                 <View className="flex-row gap-2">
                   {['English', 'Spanish', 'French'].map(lang => (
                     <NButton
@@ -188,7 +188,7 @@ const Component = () => {
           {/* Quick Form Popover */}
           <NPopover trigger={<NButton className="bg-teal-500 border-teal-500">Quick Task</NButton>}>
             <View className="p-4 w-80 max-w-sm">
-              <NText className="text-text font-bold mb-4">✅ Create Task</NText>
+              <NText className="text-foreground font-bold mb-4">✅ Create Task</NText>
 
               <NInput
                 label="Task Title"
@@ -208,7 +208,7 @@ const Component = () => {
               />
 
               <View className="mb-4">
-                <NText className="text-text font-medium mb-2">Priority</NText>
+                <NText className="text-foreground font-medium mb-2">Priority</NText>
                 <View className="flex-row gap-2">
                   {[
                     { key: 'low', label: 'Low', color: 'bg-green-500' },
@@ -234,13 +234,13 @@ const Component = () => {
       </NCard>
 
       {/* Information Popovers */}
-      <NText className="text-xl font-bold mb-3 text-text">Information Popovers</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Information Popovers</NText>
 
       <NCard className="p-4 mb-6">
         <View className="flex-row gap-3 flex-wrap">
           <NPopover trigger={<NButton className="bg-blue-500 border-blue-500">Help & Tips</NButton>}>
             <View className="p-4 w-72 max-w-sm">
-              <NText className="text-text font-bold mb-3">💡 Quick Tips</NText>
+              <NText className="text-foreground font-bold mb-3">💡 Quick Tips</NText>
               <View className="space-y-2">
                 <NText className="text-sm text-muted">• Use keyboard shortcuts to work faster</NText>
                 <NText className="text-sm text-muted">• Save your work frequently</NText>
@@ -257,19 +257,19 @@ const Component = () => {
 
           <NPopover trigger={<NButton className="bg-green-500 border-green-500">Statistics</NButton>}>
             <View className="p-4 w-64 max-w-sm">
-              <NText className="text-text font-bold mb-3">📊 Your Stats</NText>
+              <NText className="text-foreground font-bold mb-3">📊 Your Stats</NText>
               <View className="space-y-3">
                 <View className="flex-row justify-between">
                   <NText className="text-muted">Tasks Completed</NText>
-                  <NText className="text-text font-semibold">24</NText>
+                  <NText className="text-foreground font-semibold">24</NText>
                 </View>
                 <View className="flex-row justify-between">
                   <NText className="text-muted">Projects Active</NText>
-                  <NText className="text-text font-semibold">3</NText>
+                  <NText className="text-foreground font-semibold">3</NText>
                 </View>
                 <View className="flex-row justify-between">
                   <NText className="text-muted">Team Members</NText>
-                  <NText className="text-text font-semibold">8</NText>
+                  <NText className="text-foreground font-semibold">8</NText>
                 </View>
                 <View className="flex-row justify-between">
                   <NText className="text-muted">Success Rate</NText>
@@ -281,26 +281,26 @@ const Component = () => {
 
           <NPopover trigger={<NButton className="bg-purple-500 border-purple-500">Notifications</NButton>}>
             <View className="p-4 w-80 max-w-sm">
-              <NText className="text-text font-bold mb-3">🔔 Recent Activity</NText>
+              <NText className="text-foreground font-bold mb-3">🔔 Recent Activity</NText>
               <View className="space-y-3">
                 <View className="flex-row">
                   <View className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3" />
                   <View className="flex-1">
-                    <NText className="text-text text-sm font-medium">New message from Sarah</NText>
+                    <NText className="text-foreground text-sm font-medium">New message from Sarah</NText>
                     <NText className="text-muted text-xs">2 minutes ago</NText>
                   </View>
                 </View>
                 <View className="flex-row">
                   <View className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3" />
                   <View className="flex-1">
-                    <NText className="text-text text-sm font-medium">Task completed</NText>
+                    <NText className="text-foreground text-sm font-medium">Task completed</NText>
                     <NText className="text-muted text-xs">1 hour ago</NText>
                   </View>
                 </View>
                 <View className="flex-row">
                   <View className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3" />
                   <View className="flex-1">
-                    <NText className="text-text text-sm font-medium">Meeting reminder</NText>
+                    <NText className="text-foreground text-sm font-medium">Meeting reminder</NText>
                     <NText className="text-muted text-xs">3 hours ago</NText>
                   </View>
                 </View>
@@ -316,15 +316,15 @@ const Component = () => {
       </NCard>
 
       {/* Feedback Popover */}
-      <NText className="text-xl font-bold mb-3 text-text">Feedback Popover</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Feedback Popover</NText>
 
       <NCard className="p-4 mb-6">
         <NPopover trigger={<NButton className="bg-pink-500 border-pink-500">Give Feedback</NButton>}>
           <View className="p-4 w-80 max-w-sm">
-            <NText className="text-text font-bold mb-4">⭐ Rate Your Experience</NText>
+            <NText className="text-foreground font-bold mb-4">⭐ Rate Your Experience</NText>
 
             <View className="mb-4">
-              <NText className="text-text font-medium mb-2">How was your experience?</NText>
+              <NText className="text-foreground font-medium mb-2">How was your experience?</NText>
               <View className="flex-row justify-center gap-2">
                 {[1, 2, 3, 4, 5].map(star => (
                   <NButton
@@ -359,7 +359,7 @@ const Component = () => {
       </NCard>
 
       {/* Custom Styled Popovers */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Styled Popovers</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Styled Popovers</NText>
 
       <NCard className="p-4 mb-6">
         <View className="flex-row gap-3 flex-wrap">
@@ -389,7 +389,7 @@ const Component = () => {
 
           <NPopover trigger={<NButton className="bg-yellow-400 border-yellow-400 text-black">Compact</NButton>} className="w-48 max-w-xs">
             <View className="p-3">
-              <NText className="text-text font-semibold text-sm mb-2">Quick Info</NText>
+              <NText className="text-foreground font-semibold text-sm mb-2">Quick Info</NText>
               <NText className="text-muted text-xs mb-3">Compact popover design</NText>
               <NButton className="w-full bg-yellow-500 border-yellow-500" onPress={() => toast.info('Compact action!')}>
                 <NText className="text-black text-xs">Go</NText>
@@ -400,22 +400,22 @@ const Component = () => {
       </NCard>
 
       {/* Different Trigger Types */}
-      <NText className="text-xl font-bold mb-3 text-text">Different Trigger Types</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Different Trigger Types</NText>
 
       <NCard className="p-4 mb-6">
         <View className="space-y-4">
           <View className="flex-row items-center gap-3">
-            <NText className="text-text font-medium">Text Trigger:</NText>
+            <NText className="text-foreground font-medium">Text Trigger:</NText>
             <NPopover trigger={<NText className="text-blue-600 underline">Click here for info</NText>}>
               <View className="p-3 w-56 max-w-xs">
-                <NText className="text-text font-semibold mb-1">Text Trigger</NText>
+                <NText className="text-foreground font-semibold mb-1">Text Trigger</NText>
                 <NText className="text-muted text-sm">You can use any text as a popover trigger.</NText>
               </View>
             </NPopover>
           </View>
 
           <View className="flex-row items-center gap-3">
-            <NText className="text-text font-medium">Icon Trigger:</NText>
+            <NText className="text-foreground font-medium">Icon Trigger:</NText>
             <NPopover
               trigger={
                 <View className="w-8 h-8 bg-blue-100 rounded-full items-center justify-center">
@@ -423,14 +423,14 @@ const Component = () => {
                 </View>
               }>
               <View className="p-3 w-56 max-w-xs">
-                <NText className="text-text font-semibold mb-1">Icon Trigger</NText>
+                <NText className="text-foreground font-semibold mb-1">Icon Trigger</NText>
                 <NText className="text-muted text-sm">Icons make great popover triggers for help and info.</NText>
               </View>
             </NPopover>
           </View>
 
           <View className="flex-row items-center gap-3">
-            <NText className="text-text font-medium">Card Trigger:</NText>
+            <NText className="text-foreground font-medium">Card Trigger:</NText>
             <NPopover
               trigger={
                 <View className="bg-green-100 p-3 rounded-lg border border-green-200">
@@ -438,7 +438,7 @@ const Component = () => {
                 </View>
               }>
               <View className="p-4 w-64 max-w-sm">
-                <NText className="text-text font-semibold mb-2">Card Details</NText>
+                <NText className="text-foreground font-semibold mb-2">Card Details</NText>
                 <NText className="text-muted text-sm mb-3">Cards can be interactive triggers for detailed information.</NText>
                 <View className="flex-row gap-2">
                   <NButton className="flex-1 bg-green-600 border-green-600" onPress={() => toast.success('Action 1')}>

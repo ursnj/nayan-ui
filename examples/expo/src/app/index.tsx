@@ -18,7 +18,7 @@ export default function Home() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-1.5 pb-10">
+    <ScrollView className="flex-1 bg-surface p-1.5 pb-10">
       <Stack.Screen
         options={{
           headerRight: () => (
@@ -31,7 +31,7 @@ export default function Home() {
 
       {/* Header */}
       <View className="mb-6 mt-2">
-        <NText className="text-3xl font-bold text-text mb-2">Nayan UI</NText>
+        <NText className="text-3xl font-bold text-foreground mb-2">Nayan UI</NText>
         <NText className="text-lg text-muted">React Native Component Library</NText>
         <NText className="text-sm text-muted mt-1">Explore {components.length} beautifully crafted components</NText>
       </View>
@@ -45,8 +45,8 @@ export default function Home() {
             description={component.description}
             icon={getIcon(component.icon)}
             onPress={() => router.navigate({ pathname: component.name })}
-            className="bg-card border border-border rounded-lg mb-1"
-            titleClassName="text-lg font-semibold text-text"
+            className="bg-surface border border-separator rounded-lg mb-1"
+            titleClassName="text-lg font-semibold text-foreground"
             descriptionClassName="text-sm text-muted leading-5 mt-1"
           />
         ))}

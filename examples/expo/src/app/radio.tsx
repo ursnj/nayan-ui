@@ -186,15 +186,15 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Radio */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Radio Buttons</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Radio Buttons</NText>
       <NCard className="mb-6">
         <NRadio label="Select Size" value={selectedSize} items={sizeOptions} onChange={handleSizeChange} />
       </NCard>
 
       {/* Color Selection */}
-      <NText className="text-xl font-bold mb-3 text-text">Color Selection</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Color Selection</NText>
       <NCard className="mb-6">
         <NRadio
           label="Choose Color"
@@ -209,7 +209,7 @@ const Component = () => {
       </NCard>
 
       {/* Subscription Plans */}
-      <NText className="text-xl font-bold mb-3 text-text">Subscription Plans</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Subscription Plans</NText>
       <NCard className="mb-6">
         <NRadio label="Choose Your Plan" value={selectedPlan} items={planOptions} onChange={handlePlanChange} radioGroupClassName="flex-col gap-3" />
         {selectedPlan && (
@@ -220,7 +220,7 @@ const Component = () => {
       </NCard>
 
       {/* Payment Methods */}
-      <NText className="text-xl font-bold mb-3 text-text">Payment Method</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Payment Method</NText>
       <NCard className="mb-6">
         <NRadio
           label="Select Payment Method"
@@ -235,7 +235,7 @@ const Component = () => {
       </NCard>
 
       {/* App Preferences */}
-      <NText className="text-xl font-bold mb-3 text-text">App Preferences</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">App Preferences</NText>
       <NCard className="mb-6">
         <NRadio
           label="Theme Preference"
@@ -252,7 +252,7 @@ const Component = () => {
       </NCard>
 
       {/* Privacy Settings */}
-      <NText className="text-xl font-bold mb-3 text-text">Privacy Settings</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Privacy Settings</NText>
       <NCard className="mb-6">
         <NRadio
           label="Profile Visibility"
@@ -267,7 +267,7 @@ const Component = () => {
       </NCard>
 
       {/* Delivery Options */}
-      <NText className="text-xl font-bold mb-3 text-text">Delivery Options</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Delivery Options</NText>
       <NCard className="mb-6">
         <NRadio
           label="Choose Delivery Speed"
@@ -282,7 +282,7 @@ const Component = () => {
       </NCard>
 
       {/* Support Preferences */}
-      <NText className="text-xl font-bold mb-3 text-text">Support Preferences</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Support Preferences</NText>
       <NCard className="mb-6">
         <NRadio
           label="Preferred Support Channel"
@@ -294,7 +294,7 @@ const Component = () => {
       </NCard>
 
       {/* Disabled Radio */}
-      <NText className="text-xl font-bold mb-3 text-text">Disabled Radio</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Disabled Radio</NText>
       <NCard className="mb-6">
         <NRadio
           label="Premium Features (Upgrade Required)"
@@ -311,7 +311,7 @@ const Component = () => {
       </NCard>
 
       {/* Custom Styled Radio */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Styled</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Styled</NText>
       <NCard className="mb-6">
         <NRadio
           label="Custom Colors"
@@ -333,7 +333,7 @@ const Component = () => {
       </NCard>
 
       {/* Survey Form */}
-      <NText className="text-xl font-bold mb-3 text-text">Customer Survey</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Customer Survey</NText>
       <NCard className="mb-6">
         <NRadio
           label="1. How satisfied are you with our service?"
@@ -410,7 +410,7 @@ const Component = () => {
 
       {/* Selection Summary */}
       <NCard className="mt-6">
-        <NText className="text-lg font-bold text-text mb-3">Current Selections</NText>
+        <NText className="text-lg font-bold text-foreground mb-3">Current Selections</NText>
         <View className="space-y-1">
           <NText className="text-sm text-muted">Size: {selectedSize}</NText>
           <NText className="text-sm text-muted">Color: {selectedColor}</NText>
@@ -427,7 +427,7 @@ const Component = () => {
 
       {/* Survey Progress */}
       <NCard className="mt-4">
-        <NText className="text-lg font-bold text-text mb-3">Survey Progress</NText>
+        <NText className="text-lg font-bold text-foreground mb-3">Survey Progress</NText>
         <View className="space-y-1">
           <NText className="text-sm text-muted">Completed: {Object.values(surveyData).filter(v => v !== '').length}/5 questions</NText>
           <NText className="text-sm text-muted">Progress: {Math.round((Object.values(surveyData).filter(v => v !== '').length / 5) * 100)}%</NText>

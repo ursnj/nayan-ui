@@ -10,23 +10,23 @@ const Component = () => {
   const [rating, setRating] = useState(4);
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Card */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Card</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Card</NText>
       <NCard className="mb-6">
-        <NText className="text-lg font-semibold mb-2 text-text">Simple Card</NText>
+        <NText className="text-lg font-semibold mb-2 text-foreground">Simple Card</NText>
         <NText className="text-muted">This is a basic card with some text content. Cards are great for grouping related information.</NText>
       </NCard>
 
       {/* Profile Card */}
-      <NText className="text-xl font-bold mb-3 text-text">Profile Card</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Profile Card</NText>
       <NCard className="mb-6">
         <View className="flex-row items-center mb-4">
           <View className="w-16 h-16 bg-blue-500 rounded-full items-center justify-center mr-4">
             <User size={32} color="white" />
           </View>
           <View className="flex-1">
-            <NText className="text-lg font-bold text-text">John Doe</NText>
+            <NText className="text-lg font-bold text-foreground">John Doe</NText>
             <NText className="text-muted">Software Developer</NText>
             <View className="flex-row items-center mt-1">
               <MapPin size={14} color="#666" />
@@ -43,12 +43,12 @@ const Component = () => {
       </NCard>
 
       {/* Product Card */}
-      <NText className="text-xl font-bold mb-3 text-text">Product Card</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Product Card</NText>
       <NCard className="mb-6">
         <View className="w-full h-40 bg-gray-200 rounded-lg mb-4 items-center justify-center">
           <NText className="text-gray-500">Product Image</NText>
         </View>
-        <NText className="text-lg font-bold text-text mb-2">Wireless Headphones</NText>
+        <NText className="text-lg font-bold text-foreground mb-2">Wireless Headphones</NText>
         <View className="flex-row items-center mb-2">
           {[1, 2, 3, 4, 5].map(star => (
             <Star key={star} size={16} color={star <= rating ? '#fbbf24' : '#d1d5db'} fill={star <= rating ? '#fbbf24' : 'none'} />
@@ -65,25 +65,25 @@ const Component = () => {
       </NCard>
 
       {/* Social Media Card */}
-      <NText className="text-xl font-bold mb-3 text-text">Social Media Post</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Social Media Post</NText>
       <NCard className="mb-6">
         <View className="flex-row items-center mb-3">
           <View className="w-10 h-10 bg-green-500 rounded-full items-center justify-center mr-3">
             <User size={20} color="white" />
           </View>
           <View className="flex-1">
-            <NText className="font-semibold text-text">Sarah Wilson</NText>
+            <NText className="font-semibold text-foreground">Sarah Wilson</NText>
             <NText className="text-sm text-muted">2 hours ago</NText>
           </View>
         </View>
-        <NText className="text-text mb-4">
+        <NText className="text-foreground mb-4">
           Just finished an amazing hike in the mountains! The view was absolutely breathtaking. Nature never fails to inspire me. 🏔️ #hiking #nature
           #adventure
         </NText>
         <View className="w-full h-48 bg-green-100 rounded-lg mb-4 items-center justify-center">
           <NText className="text-green-600">Mountain View Photo</NText>
         </View>
-        <View className="flex-row items-center justify-between border-t border-border pt-3">
+        <View className="flex-row items-center justify-between border-t border-separator pt-3">
           <NPress
             className="flex-row items-center"
             onPress={() => {
@@ -105,14 +105,14 @@ const Component = () => {
       </NCard>
 
       {/* Event Card */}
-      <NText className="text-xl font-bold mb-3 text-text">Event Card</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Event Card</NText>
       <NCard className="mb-6">
         <View className="flex-row mb-4">
           <View className="w-16 h-16 bg-red-500 rounded-lg items-center justify-center mr-4">
             <Calendar size={24} color="white" />
           </View>
           <View className="flex-1">
-            <NText className="text-lg font-bold text-text">React Native Conference</NText>
+            <NText className="text-lg font-bold text-foreground">React Native Conference</NText>
             <NText className="text-muted">March 15, 2024 • 9:00 AM</NText>
             <View className="flex-row items-center mt-1">
               <MapPin size={14} color="#666" />
@@ -128,16 +128,19 @@ const Component = () => {
           <NButton className="flex-1 bg-red-500 border-red-500" onPress={() => toast.success('Registered for event!')}>
             Register
           </NButton>
-          <NButton className="flex-1 bg-transparent border-border" textClassName="text-text" onPress={() => toast.info('Event details opened')}>
+          <NButton
+            className="flex-1 bg-transparent border-separator"
+            textClassName="text-foreground"
+            onPress={() => toast.info('Event details opened')}>
             Learn More
           </NButton>
         </View>
       </NCard>
 
       {/* Stats Card */}
-      <NText className="text-xl font-bold mb-3 text-text">Statistics Card</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Statistics Card</NText>
       <NCard className="mb-6">
-        <NText className="text-lg font-bold text-text mb-4">App Performance</NText>
+        <NText className="text-lg font-bold text-foreground mb-4">App Performance</NText>
         <View className="flex-row justify-between">
           <View className="items-center flex-1">
             <NText className="text-2xl font-bold text-blue-500">1.2K</NText>
@@ -155,22 +158,22 @@ const Component = () => {
       </NCard>
 
       {/* Settings Card */}
-      <NText className="text-xl font-bold mb-3 text-text">Settings Card</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Settings Card</NText>
       <NCard className="mb-6">
-        <NText className="text-lg font-bold text-text mb-4">Account Settings</NText>
+        <NText className="text-lg font-bold text-foreground mb-4">Account Settings</NText>
 
-        <NPress className="flex-row items-center justify-between py-3 border-b border-border" onPress={() => toast.info('Profile settings')}>
+        <NPress className="flex-row items-center justify-between py-3 border-b border-separator" onPress={() => toast.info('Profile settings')}>
           <View className="flex-row items-center">
             <User size={20} color="#666" />
-            <NText className="ml-3 text-text">Profile Information</NText>
+            <NText className="ml-3 text-foreground">Profile Information</NText>
           </View>
           <ChevronRight size={20} color="#666" />
         </NPress>
 
-        <NPress className="flex-row items-center justify-between py-3 border-b border-border" onPress={() => toast.info('Privacy settings')}>
+        <NPress className="flex-row items-center justify-between py-3 border-b border-separator" onPress={() => toast.info('Privacy settings')}>
           <View className="flex-row items-center">
             <Settings size={20} color="#666" />
-            <NText className="ml-3 text-text">Privacy & Security</NText>
+            <NText className="ml-3 text-foreground">Privacy & Security</NText>
           </View>
           <ChevronRight size={20} color="#666" />
         </NPress>
@@ -178,14 +181,14 @@ const Component = () => {
         <NPress className="flex-row items-center justify-between py-3" onPress={() => toast.info('Notification settings')}>
           <View className="flex-row items-center">
             <MessageCircle size={20} color="#666" />
-            <NText className="ml-3 text-text">Notifications</NText>
+            <NText className="ml-3 text-foreground">Notifications</NText>
           </View>
           <ChevronRight size={20} color="#666" />
         </NPress>
       </NCard>
 
       {/* Custom Styled Cards */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Styled Cards</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Styled Cards</NText>
 
       {/* Gradient Card */}
       <NCard className="mb-4 bg-gradient-to-r from-blue-500 to-purple-600 border-0">
@@ -214,7 +217,7 @@ const Component = () => {
 
       {/* Minimal Card */}
       <NCard className="mb-6 border-0 shadow-none bg-transparent">
-        <NText className="text-lg font-bold text-text mb-2">Minimal Card</NText>
+        <NText className="text-lg font-bold text-foreground mb-2">Minimal Card</NText>
         <NText className="text-muted">Sometimes less is more. This card has no border or shadow for a clean, minimal appearance.</NText>
       </NCard>
 

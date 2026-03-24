@@ -65,9 +65,9 @@ const Component = () => {
   const completedCount = 8 - loadingCount;
 
   return (
-    <ScrollView className="flex-1 bg-background">
+    <ScrollView className="flex-1 bg-surface">
       <View className="p-4">
-        <NText className="text-2xl font-bold text-text mb-2">Skeleton Loading Examples</NText>
+        <NText className="text-2xl font-bold text-foreground mb-2">Skeleton Loading Examples</NText>
         <NText className="text-muted mb-4">Comprehensive skeleton patterns for different content types</NText>
 
         {/* Loading Statistics */}
@@ -86,7 +86,7 @@ const Component = () => {
 
         {/* Basic Skeleton Shapes */}
         <NCard className="mb-6 p-4">
-          <NText className="text-lg font-semibold text-text mb-4">Basic Skeleton Shapes</NText>
+          <NText className="text-lg font-semibold text-foreground mb-4">Basic Skeleton Shapes</NText>
           <View className="gap-3">
             {/* Lines */}
             <View>
@@ -121,7 +121,7 @@ const Component = () => {
         {/* User Profile Loading */}
         <NCard className="mb-6 p-4">
           <View className="flex-row justify-between items-center mb-4">
-            <NText className="text-lg font-semibold text-text">User Profile Loading</NText>
+            <NText className="text-lg font-semibold text-foreground">User Profile Loading</NText>
             <NButton onPress={() => toggleLoading('profile')} className="px-3 py-2 rounded-md border border-gray-300 bg-white">
               {loadingStates.profile ? 'Complete' : 'Start'} Loading
             </NButton>
@@ -143,9 +143,11 @@ const Component = () => {
                 <NText className="text-white font-bold text-xl">JD</NText>
               </View>
               <View className="flex-1">
-                <NText className="text-lg font-bold text-text">John Doe</NText>
+                <NText className="text-lg font-bold text-foreground">John Doe</NText>
                 <NText className="text-muted">Software Engineer</NText>
-                <NText className="text-text mt-1">Passionate developer with 5+ years of experience in React Native and mobile development.</NText>
+                <NText className="text-foreground mt-1">
+                  Passionate developer with 5+ years of experience in React Native and mobile development.
+                </NText>
                 <NText className="text-blue-600 mt-1">📍 San Francisco, CA</NText>
               </View>
             </View>
@@ -155,7 +157,7 @@ const Component = () => {
         {/* Message List Loading */}
         <NCard className="mb-6 p-4">
           <View className="flex-row justify-between items-center mb-4">
-            <NText className="text-lg font-semibold text-text">Message List Loading</NText>
+            <NText className="text-lg font-semibold text-foreground">Message List Loading</NText>
             <NButton onPress={() => toggleLoading('messages')} className="px-3 py-2 rounded-md border border-gray-300 bg-white">
               {loadingStates.messages ? 'Complete' : 'Start'} Loading
             </NButton>
@@ -190,10 +192,10 @@ const Component = () => {
                   </View>
                   <View className="flex-1">
                     <View className="flex-row justify-between mb-1">
-                      <NText className="font-semibold text-text">{msg.name}</NText>
+                      <NText className="font-semibold text-foreground">{msg.name}</NText>
                       <NText className="text-xs text-muted">{msg.time}</NText>
                     </View>
-                    <NText className="text-text">{msg.message}</NText>
+                    <NText className="text-foreground">{msg.message}</NText>
                   </View>
                 </View>
               ))}
@@ -204,7 +206,7 @@ const Component = () => {
         {/* Media Grid Loading */}
         <NCard className="mb-6 p-4">
           <View className="flex-row justify-between items-center mb-4">
-            <NText className="text-lg font-semibold text-text">Media Grid Loading</NText>
+            <NText className="text-lg font-semibold text-foreground">Media Grid Loading</NText>
             <NButton onPress={() => toggleLoading('media')} className="px-3 py-2 rounded-md border border-gray-300 bg-white">
               {loadingStates.media ? 'Complete' : 'Start'} Loading
             </NButton>
@@ -231,7 +233,7 @@ const Component = () => {
         {/* Article Content Loading */}
         <NCard className="mb-6 p-4">
           <View className="flex-row justify-between items-center mb-4">
-            <NText className="text-lg font-semibold text-text">Article Content Loading</NText>
+            <NText className="text-lg font-semibold text-foreground">Article Content Loading</NText>
             <NButton onPress={() => toggleLoading('articles')} className="px-3 py-2 rounded-md border border-gray-300 bg-white">
               {loadingStates.articles ? 'Complete' : 'Start'} Loading
             </NButton>
@@ -252,16 +254,16 @@ const Component = () => {
             </View>
           ) : (
             <View>
-              <NText className="text-xl font-bold text-text mb-3">Understanding React Native Performance</NText>
+              <NText className="text-xl font-bold text-foreground mb-3">Understanding React Native Performance</NText>
               <View className="w-full h-32 rounded-lg bg-orange-500 items-center justify-center mb-3">
                 <NText className="text-white text-lg">📱</NText>
                 <NText className="text-white">Article Image</NText>
               </View>
-              <NText className="text-text mb-2">
+              <NText className="text-foreground mb-2">
                 React Native offers excellent performance when optimized correctly. This article covers best practices for building smooth, responsive
                 mobile applications.
               </NText>
-              <NText className="text-text mb-3">Key topics include component optimization, memory management, and rendering performance.</NText>
+              <NText className="text-foreground mb-3">Key topics include component optimization, memory management, and rendering performance.</NText>
               <View className="flex-row gap-2">
                 <View className="px-3 py-1 bg-blue-100 rounded-full">
                   <NText className="text-blue-800 text-xs">React Native</NText>
@@ -280,7 +282,7 @@ const Component = () => {
         {/* Dashboard Stats Loading */}
         <NCard className="mb-6 p-4">
           <View className="flex-row justify-between items-center mb-4">
-            <NText className="text-lg font-semibold text-text">Dashboard Stats Loading</NText>
+            <NText className="text-lg font-semibold text-foreground">Dashboard Stats Loading</NText>
             <NButton onPress={() => toggleLoading('dashboard')} className="px-3 py-2 rounded-md border border-gray-300 bg-white">
               {loadingStates.dashboard ? 'Complete' : 'Start'} Loading
             </NButton>
@@ -289,12 +291,12 @@ const Component = () => {
           {loadingStates.dashboard ? (
             <View className="gap-4">
               <View className="flex-row gap-4">
-                <View className="flex-1 p-4 border border-border rounded-lg">
+                <View className="flex-1 p-4 border border-separator rounded-lg">
                   <NSkeleton className="w-8 h-8 rounded mb-2" />
                   <NSkeleton className="w-16 h-6 mb-1" />
                   <NSkeleton className="w-12 h-4" />
                 </View>
-                <View className="flex-1 p-4 border border-border rounded-lg">
+                <View className="flex-1 p-4 border border-separator rounded-lg">
                   <NSkeleton className="w-8 h-8 rounded mb-2" />
                   <NSkeleton className="w-16 h-6 mb-1" />
                   <NSkeleton className="w-12 h-4" />
@@ -305,12 +307,12 @@ const Component = () => {
           ) : (
             <View className="gap-4">
               <View className="flex-row gap-4">
-                <View className="flex-1 p-4 border border-border rounded-lg bg-blue-50">
+                <View className="flex-1 p-4 border border-separator rounded-lg bg-blue-50">
                   <NText className="text-2xl mb-1">📊</NText>
                   <NText className="text-xl font-bold text-blue-800">1,234</NText>
                   <NText className="text-sm text-blue-600">Total Users</NText>
                 </View>
-                <View className="flex-1 p-4 border border-border rounded-lg bg-green-50">
+                <View className="flex-1 p-4 border border-separator rounded-lg bg-green-50">
                   <NText className="text-2xl mb-1">💰</NText>
                   <NText className="text-xl font-bold text-green-800">$45.6K</NText>
                   <NText className="text-sm text-green-600">Revenue</NText>
@@ -327,7 +329,7 @@ const Component = () => {
         {/* Product Cards Loading */}
         <NCard className="mb-6 p-4">
           <View className="flex-row justify-between items-center mb-4">
-            <NText className="text-lg font-semibold text-text">Product Cards Loading</NText>
+            <NText className="text-lg font-semibold text-foreground">Product Cards Loading</NText>
             <NButton onPress={() => toggleLoading('products')} className="px-3 py-2 rounded-md border border-gray-300 bg-white">
               {loadingStates.products ? 'Complete' : 'Start'} Loading
             </NButton>
@@ -336,7 +338,7 @@ const Component = () => {
           {loadingStates.products ? (
             <View className="gap-4">
               {[1, 2].map(i => (
-                <View key={i} className="border border-border rounded-lg p-4">
+                <View key={i} className="border border-separator rounded-lg p-4">
                   <NSkeleton className="w-full h-32 rounded-lg mb-3" />
                   <NSkeleton className="w-3/4 h-5 mb-2" />
                   <NSkeleton className="w-1/2 h-4 mb-2" />
@@ -353,11 +355,11 @@ const Component = () => {
                 { name: 'Wireless Headphones', price: '$99.99', image: '🎧' },
                 { name: 'Smart Watch', price: '$299.99', image: '⌚' }
               ].map((product, i) => (
-                <View key={i} className="border border-border rounded-lg p-4">
+                <View key={i} className="border border-separator rounded-lg p-4">
                   <View className="w-full h-32 rounded-lg bg-indigo-500 items-center justify-center mb-3">
                     <NText className="text-4xl">{product.image}</NText>
                   </View>
-                  <NText className="text-lg font-semibold text-text mb-1">{product.name}</NText>
+                  <NText className="text-lg font-semibold text-foreground mb-1">{product.name}</NText>
                   <NText className="text-muted mb-2">High-quality product with excellent reviews</NText>
                   <View className="flex-row justify-between items-center">
                     <NText className="text-xl font-bold text-green-600">{product.price}</NText>
@@ -374,7 +376,7 @@ const Component = () => {
         {/* Social Feed Loading */}
         <NCard className="mb-6 p-4">
           <View className="flex-row justify-between items-center mb-4">
-            <NText className="text-lg font-semibold text-text">Social Feed Loading</NText>
+            <NText className="text-lg font-semibold text-foreground">Social Feed Loading</NText>
             <NButton onPress={() => toggleLoading('social')} className="px-3 py-2 rounded-md border border-gray-300 bg-white">
               {loadingStates.social ? 'Complete' : 'Start'} Loading
             </NButton>
@@ -383,7 +385,7 @@ const Component = () => {
           {loadingStates.social ? (
             <View className="gap-4">
               {[1, 2].map(i => (
-                <View key={i} className="border border-border rounded-lg p-4">
+                <View key={i} className="border border-separator rounded-lg p-4">
                   <View className="flex-row items-center gap-3 mb-3">
                     <NSkeleton className="w-10 h-10 rounded-full" />
                     <View className="flex-1">
@@ -420,17 +422,17 @@ const Component = () => {
                   image: '💻'
                 }
               ].map((post, i) => (
-                <View key={i} className="border border-border rounded-lg p-4">
+                <View key={i} className="border border-separator rounded-lg p-4">
                   <View className="flex-row items-center gap-3 mb-3">
                     <View className="w-10 h-10 rounded-full bg-pink-500 items-center justify-center">
                       <NText className="text-white font-bold text-xs">{post.avatar}</NText>
                     </View>
                     <View className="flex-1">
-                      <NText className="font-semibold text-text">{post.user}</NText>
+                      <NText className="font-semibold text-foreground">{post.user}</NText>
                       <NText className="text-xs text-muted">{post.time}</NText>
                     </View>
                   </View>
-                  <NText className="text-text mb-3">{post.content}</NText>
+                  <NText className="text-foreground mb-3">{post.content}</NText>
                   <View className="w-full h-40 rounded-lg bg-teal-500 items-center justify-center mb-3">
                     <NText className="text-6xl">{post.image}</NText>
                   </View>
@@ -454,7 +456,7 @@ const Component = () => {
         {/* Settings Panel Loading */}
         <NCard className="mb-6 p-4">
           <View className="flex-row justify-between items-center mb-4">
-            <NText className="text-lg font-semibold text-text">Settings Panel Loading</NText>
+            <NText className="text-lg font-semibold text-foreground">Settings Panel Loading</NText>
             <NButton onPress={() => toggleLoading('settings')} className="px-3 py-2 rounded-md border border-gray-300 bg-white">
               {loadingStates.settings ? 'Complete' : 'Start'} Loading
             </NButton>
@@ -463,7 +465,7 @@ const Component = () => {
           {loadingStates.settings ? (
             <View className="gap-4">
               {[1, 2, 3, 4].map(i => (
-                <View key={i} className="flex-row items-center justify-between py-3 border-b border-border">
+                <View key={i} className="flex-row items-center justify-between py-3 border-b border-separator">
                   <View className="flex-row items-center gap-3">
                     <NSkeleton className="w-6 h-6 rounded" />
                     <View>
@@ -483,11 +485,11 @@ const Component = () => {
                 { icon: '🔒', title: 'Privacy', desc: 'Data and privacy settings', enabled: true },
                 { icon: '🌐', title: 'Language', desc: 'App language preferences', enabled: false }
               ].map((setting, i) => (
-                <View key={i} className="flex-row items-center justify-between py-3 border-b border-border">
+                <View key={i} className="flex-row items-center justify-between py-3 border-b border-separator">
                   <View className="flex-row items-center gap-3">
                     <NText className="text-xl">{setting.icon}</NText>
                     <View>
-                      <NText className="font-semibold text-text">{setting.title}</NText>
+                      <NText className="font-semibold text-foreground">{setting.title}</NText>
                       <NText className="text-sm text-muted">{setting.desc}</NText>
                     </View>
                   </View>

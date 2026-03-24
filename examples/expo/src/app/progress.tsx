@@ -219,9 +219,9 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Progress */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Progress</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Progress</NText>
       <NCard className="mb-6">
         <NProgress value={basicProgress} className="mb-3" />
         <NText className="text-sm text-muted mb-3">Progress: {Math.round(basicProgress)}%</NText>
@@ -236,11 +236,11 @@ const Component = () => {
       </NCard>
 
       {/* File Operations */}
-      <NText className="text-xl font-bold mb-3 text-text">File Operations</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">File Operations</NText>
       <NCard className="mb-6">
         <View className="mb-4">
           <View className="flex-row justify-between items-center mb-2">
-            <NText className="text-text font-medium">Download</NText>
+            <NText className="text-foreground font-medium">Download</NText>
             <NText className="text-sm text-muted">{Math.round(downloadProgress)}%</NText>
           </View>
           <NProgress value={downloadProgress} indicatorClassName="bg-blue-500" />
@@ -251,7 +251,7 @@ const Component = () => {
 
         <View className="mb-4">
           <View className="flex-row justify-between items-center mb-2">
-            <NText className="text-text font-medium">Upload</NText>
+            <NText className="text-foreground font-medium">Upload</NText>
             <NText className="text-sm text-muted">{Math.round(uploadProgress)}%</NText>
           </View>
           <NProgress value={uploadProgress} indicatorClassName="bg-green-500" />
@@ -262,7 +262,7 @@ const Component = () => {
 
         <View className="mb-4">
           <View className="flex-row justify-between items-center mb-2">
-            <NText className="text-text font-medium">Installation</NText>
+            <NText className="text-foreground font-medium">Installation</NText>
             <NText className="text-sm text-muted">{Math.round(installProgress)}%</NText>
           </View>
           <NProgress value={installProgress} indicatorClassName="bg-purple-500" />
@@ -273,11 +273,11 @@ const Component = () => {
       </NCard>
 
       {/* System Monitoring */}
-      <NText className="text-xl font-bold mb-3 text-text">System Monitoring</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">System Monitoring</NText>
       <NCard className="mb-6">
         <View className="mb-3">
           <View className="flex-row justify-between items-center mb-1">
-            <NText className="text-text font-medium">CPU Usage</NText>
+            <NText className="text-foreground font-medium">CPU Usage</NText>
             <NText className="text-sm text-muted">{Math.round(systemStats.cpu)}%</NText>
           </View>
           <NProgress
@@ -288,7 +288,7 @@ const Component = () => {
 
         <View className="mb-3">
           <View className="flex-row justify-between items-center mb-1">
-            <NText className="text-text font-medium">Memory Usage</NText>
+            <NText className="text-foreground font-medium">Memory Usage</NText>
             <NText className="text-sm text-muted">{Math.round(systemStats.memory)}%</NText>
           </View>
           <NProgress
@@ -299,7 +299,7 @@ const Component = () => {
 
         <View className="mb-3">
           <View className="flex-row justify-between items-center mb-1">
-            <NText className="text-text font-medium">Disk Usage</NText>
+            <NText className="text-foreground font-medium">Disk Usage</NText>
             <NText className="text-sm text-muted">{Math.round(systemStats.disk)}%</NText>
           </View>
           <NProgress
@@ -310,7 +310,7 @@ const Component = () => {
 
         <View className="mb-3">
           <View className="flex-row justify-between items-center mb-1">
-            <NText className="text-text font-medium">Network Activity</NText>
+            <NText className="text-foreground font-medium">Network Activity</NText>
             <NText className="text-sm text-muted">{Math.round(systemStats.network)}%</NText>
           </View>
           <NProgress value={systemStats.network} indicatorClassName="bg-cyan-500" />
@@ -318,7 +318,7 @@ const Component = () => {
 
         <View>
           <View className="flex-row justify-between items-center mb-1">
-            <NText className="text-text font-medium">Battery Level</NText>
+            <NText className="text-foreground font-medium">Battery Level</NText>
             <NText className="text-sm text-muted">{Math.round(systemStats.battery)}%</NText>
           </View>
           <NProgress
@@ -329,12 +329,12 @@ const Component = () => {
       </NCard>
 
       {/* Skills & Ratings */}
-      <NText className="text-xl font-bold mb-3 text-text">Skills & Expertise</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Skills & Expertise</NText>
       <NCard className="mb-6">
         {Object.entries(skills).map(([skill, value]) => (
           <View key={skill} className="mb-3">
             <View className="flex-row justify-between items-center mb-1">
-              <NText className="text-text font-medium capitalize">{skill}</NText>
+              <NText className="text-foreground font-medium capitalize">{skill}</NText>
               <NText className="text-sm text-muted">
                 {value}% - {getProgressLabel(value)}
               </NText>
@@ -353,12 +353,12 @@ const Component = () => {
       </NCard>
 
       {/* Project Progress */}
-      <NText className="text-xl font-bold mb-3 text-text">Project Progress</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Project Progress</NText>
       <NCard className="mb-6">
         {Object.entries(projectTasks).map(([task, value]) => (
           <View key={task} className="mb-3">
             <View className="flex-row justify-between items-center mb-1">
-              <NText className="text-text font-medium capitalize">{task}</NText>
+              <NText className="text-foreground font-medium capitalize">{task}</NText>
               <NText className="text-sm text-muted">{value}%</NText>
             </View>
             <NProgress value={value} indicatorClassName={value === 100 ? 'bg-green-500' : value >= 50 ? 'bg-blue-500' : 'bg-gray-400'} />
@@ -381,11 +381,11 @@ const Component = () => {
       </NCard>
 
       {/* Health & Fitness */}
-      <NText className="text-xl font-bold mb-3 text-text">Health & Fitness</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Health & Fitness</NText>
       <NCard className="mb-6">
         <View className="mb-3">
           <View className="flex-row justify-between items-center mb-1">
-            <NText className="text-text font-medium">🚶 Daily Steps</NText>
+            <NText className="text-foreground font-medium">🚶 Daily Steps</NText>
             <NText className="text-sm text-muted">6,500 / 10,000</NText>
           </View>
           <NProgress value={healthMetrics.steps} indicatorClassName="bg-green-500" />
@@ -393,7 +393,7 @@ const Component = () => {
 
         <View className="mb-3">
           <View className="flex-row justify-between items-center mb-1">
-            <NText className="text-text font-medium">💧 Water Intake</NText>
+            <NText className="text-foreground font-medium">💧 Water Intake</NText>
             <NText className="text-sm text-muted">4 / 10 glasses</NText>
           </View>
           <NProgress value={healthMetrics.water} indicatorClassName="bg-blue-500" />
@@ -401,7 +401,7 @@ const Component = () => {
 
         <View className="mb-3">
           <View className="flex-row justify-between items-center mb-1">
-            <NText className="text-text font-medium">😴 Sleep Quality</NText>
+            <NText className="text-foreground font-medium">😴 Sleep Quality</NText>
             <NText className="text-sm text-muted">7 / 8 hours</NText>
           </View>
           <NProgress value={healthMetrics.sleep} indicatorClassName="bg-purple-500" />
@@ -409,7 +409,7 @@ const Component = () => {
 
         <View className="mb-3">
           <View className="flex-row justify-between items-center mb-1">
-            <NText className="text-text font-medium">🔥 Calories Burned</NText>
+            <NText className="text-foreground font-medium">🔥 Calories Burned</NText>
             <NText className="text-sm text-muted">1,100 / 2,000</NText>
           </View>
           <NProgress value={healthMetrics.calories} indicatorClassName="bg-orange-500" />
@@ -417,7 +417,7 @@ const Component = () => {
 
         <View>
           <View className="flex-row justify-between items-center mb-1">
-            <NText className="text-text font-medium">💪 Exercise Time</NText>
+            <NText className="text-foreground font-medium">💪 Exercise Time</NText>
             <NText className="text-sm text-muted">30 / 60 minutes</NText>
           </View>
           <NProgress value={healthMetrics.exercise} indicatorClassName="bg-red-500" />
@@ -425,11 +425,11 @@ const Component = () => {
       </NCard>
 
       {/* Animated Progress */}
-      <NText className="text-xl font-bold mb-3 text-text">Animated Progress</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Animated Progress</NText>
       <NCard className="mb-6">
         <View className="mb-3">
           <View className="flex-row justify-between items-center mb-2">
-            <NText className="text-text font-medium">Smooth Animation</NText>
+            <NText className="text-foreground font-medium">Smooth Animation</NText>
             <NText className="text-sm text-muted">{Math.round(animatedProgress)}%</NText>
           </View>
           <NProgress value={animatedProgress} indicatorClassName="bg-gradient-to-r from-blue-500 to-purple-500" />
@@ -440,12 +440,12 @@ const Component = () => {
       </NCard>
 
       {/* File Operations Progress */}
-      <NText className="text-xl font-bold mb-3 text-text">Advanced File Operations</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Advanced File Operations</NText>
       <NCard className="mb-6">
         {Object.entries(fileOperations).map(([operation, progress]) => (
           <View key={operation} className="mb-3">
             <View className="flex-row justify-between items-center mb-1">
-              <NText className="text-text font-medium capitalize">{operation}</NText>
+              <NText className="text-foreground font-medium capitalize">{operation}</NText>
               <NText className="text-sm text-muted">{Math.round(progress)}%</NText>
             </View>
             <NProgress value={progress} indicatorClassName="bg-indigo-500" />
@@ -457,25 +457,25 @@ const Component = () => {
       </NCard>
 
       {/* Custom Styled Progress */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Styled Progress</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Styled Progress</NText>
       <NCard className="mb-6">
         <View className="mb-4">
-          <NText className="text-text font-medium mb-2">Large Progress Bar</NText>
+          <NText className="text-foreground font-medium mb-2">Large Progress Bar</NText>
           <NProgress value={75} className="h-6 rounded-full" indicatorClassName="bg-gradient-to-r from-green-400 to-blue-500 rounded-full" />
         </View>
 
         <View className="mb-4">
-          <NText className="text-text font-medium mb-2">Thin Progress Bar</NText>
+          <NText className="text-foreground font-medium mb-2">Thin Progress Bar</NText>
           <NProgress value={60} className="h-1" indicatorClassName="bg-red-500" />
         </View>
 
         <View className="mb-4">
-          <NText className="text-text font-medium mb-2">Rounded Progress Bar</NText>
+          <NText className="text-foreground font-medium mb-2">Rounded Progress Bar</NText>
           <NProgress value={85} className="h-4 rounded-full bg-gray-200" indicatorClassName="bg-yellow-500 rounded-full" />
         </View>
 
         <View>
-          <NText className="text-text font-medium mb-2">Multi-color Progress</NText>
+          <NText className="text-foreground font-medium mb-2">Multi-color Progress</NText>
           <NProgress
             value={90}
             className="h-5 rounded-lg"
@@ -510,7 +510,7 @@ const Component = () => {
 
       {/* Progress Summary */}
       <NCard className="mt-6">
-        <NText className="text-lg font-bold text-text mb-3">Progress Summary</NText>
+        <NText className="text-lg font-bold text-foreground mb-3">Progress Summary</NText>
         <View className="space-y-2">
           <NText className="text-sm text-muted">
             Average Skill Level: {Math.round(Object.values(skills).reduce((a, b) => a + b, 0) / Object.values(skills).length)}%

@@ -43,15 +43,15 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Confirm Examples */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Confirm Dialogs</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Confirm Dialogs</NText>
 
       <NCard className="p-4 mb-6">
         <View className="space-y-4">
           {/* Simple Confirmation */}
           <View>
-            <NText className="text-text font-semibold mb-2">Simple Confirmation</NText>
+            <NText className="text-foreground font-semibold mb-2">Simple Confirmation</NText>
             <NConfirm
               title="Are you sure?"
               description="This action cannot be undone."
@@ -64,7 +64,7 @@ const Component = () => {
 
           {/* Delete Confirmation */}
           <View>
-            <NText className="text-text font-semibold mb-2">Delete Confirmation</NText>
+            <NText className="text-foreground font-semibold mb-2">Delete Confirmation</NText>
             <NConfirm
               title="Delete Item?"
               description="This item will be permanently deleted and cannot be recovered."
@@ -77,7 +77,7 @@ const Component = () => {
 
           {/* Save Confirmation */}
           <View>
-            <NText className="text-text font-semibold mb-2">Save Confirmation</NText>
+            <NText className="text-foreground font-semibold mb-2">Save Confirmation</NText>
             <NConfirm
               title="Save Changes?"
               description="Your changes will be saved and applied immediately."
@@ -91,10 +91,10 @@ const Component = () => {
       </NCard>
 
       {/* Critical Actions */}
-      <NText className="text-xl font-bold mb-3 text-text">Critical Actions</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Critical Actions</NText>
 
       <NCard className="p-4 mb-6">
-        <NText className="text-text font-semibold mb-4">⚠️ High-Risk Operations</NText>
+        <NText className="text-foreground font-semibold mb-4">⚠️ High-Risk Operations</NText>
 
         <View className="space-y-4">
           {/* Account Deletion */}
@@ -142,16 +142,16 @@ const Component = () => {
       </NCard>
 
       {/* User Management */}
-      <NText className="text-xl font-bold mb-3 text-text">User Management</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">User Management</NText>
 
       <NCard className="p-4 mb-6">
-        <NText className="text-text font-semibold mb-4">👥 User Operations</NText>
+        <NText className="text-foreground font-semibold mb-4">👥 User Operations</NText>
 
         <View className="space-y-4">
           {/* Remove User */}
           <View className="flex-row items-center justify-between p-3 rounded-lg border border-gray-200">
             <View className="flex-1">
-              <NText className="text-text font-medium">Remove User</NText>
+              <NText className="text-foreground font-medium">Remove User</NText>
               <NText className="text-muted text-sm">Total users: {userCount}</NText>
             </View>
             <NConfirm
@@ -167,7 +167,7 @@ const Component = () => {
           {/* Logout */}
           <View className="flex-row items-center justify-between p-3 rounded-lg border border-gray-200">
             <View className="flex-1">
-              <NText className="text-text font-medium">Logout</NText>
+              <NText className="text-foreground font-medium">Logout</NText>
               <NText className="text-muted text-sm">End your current session</NText>
             </View>
             <NConfirm
@@ -183,10 +183,10 @@ const Component = () => {
       </NCard>
 
       {/* Subscription Management */}
-      <NText className="text-xl font-bold mb-3 text-text">Subscription Management</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Subscription Management</NText>
 
       <NCard className="p-4 mb-6">
-        <NText className="text-text font-semibold mb-4">💳 Billing Operations</NText>
+        <NText className="text-foreground font-semibold mb-4">💳 Billing Operations</NText>
 
         <View className="space-y-4">
           {/* Cancel Subscription */}
@@ -233,15 +233,15 @@ const Component = () => {
       </NCard>
 
       {/* Custom Styled Confirms */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Styled Confirms</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Styled Confirms</NText>
 
       <NCard className="p-4 mb-6">
-        <NText className="text-text font-semibold mb-4">🎨 Styled Confirmations</NText>
+        <NText className="text-foreground font-semibold mb-4">🎨 Styled Confirmations</NText>
 
         <View className="space-y-4">
           {/* Success Style */}
           <View className="flex-row items-center gap-3">
-            <NText className="text-text font-medium flex-1">Success Confirmation:</NText>
+            <NText className="text-foreground font-medium flex-1">Success Confirmation:</NText>
             <NConfirm
               title="✅ Publish Content?"
               description="Your content is ready to be published and will be visible to all users immediately."
@@ -254,7 +254,7 @@ const Component = () => {
 
           {/* Warning Style */}
           <View className="flex-row items-center gap-3">
-            <NText className="text-text font-medium flex-1">Warning Confirmation:</NText>
+            <NText className="text-foreground font-medium flex-1">Warning Confirmation:</NText>
             <NConfirm
               title="⚠️ Overwrite File?"
               description="A file with this name already exists. Overwriting will replace the existing file permanently."
@@ -267,7 +267,7 @@ const Component = () => {
 
           {/* Info Style */}
           <View className="flex-row items-center gap-3">
-            <NText className="text-text font-medium flex-1">Info Confirmation:</NText>
+            <NText className="text-foreground font-medium flex-1">Info Confirmation:</NText>
             <NConfirm
               title="ℹ️ Download Report?"
               description="The report will be downloaded to your device. This may take a few moments depending on your connection."
@@ -280,7 +280,7 @@ const Component = () => {
 
           {/* Error Style */}
           <View className="flex-row items-center gap-3">
-            <NText className="text-text font-medium flex-1">Error Confirmation:</NText>
+            <NText className="text-foreground font-medium flex-1">Error Confirmation:</NText>
             <NConfirm
               title="🚨 Force Stop Process?"
               description="This will forcefully terminate the running process. Any unsaved work will be lost and the process may become corrupted."
@@ -294,14 +294,14 @@ const Component = () => {
       </NCard>
 
       {/* Loading States */}
-      <NText className="text-xl font-bold mb-3 text-text">Async Operations</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Async Operations</NText>
 
       <NCard className="p-4 mb-6">
-        <NText className="text-text font-semibold mb-4">⏳ Operations with Loading States</NText>
+        <NText className="text-foreground font-semibold mb-4">⏳ Operations with Loading States</NText>
 
         <View className="space-y-4">
           <View className="p-3 rounded-lg border border-gray-200">
-            <NText className="text-text font-medium mb-2">Async Delete Operation</NText>
+            <NText className="text-foreground font-medium mb-2">Async Delete Operation</NText>
             <NText className="text-muted text-sm mb-3">This operation includes a loading state during processing.</NText>
             <NConfirm
               title="Delete with Processing?"

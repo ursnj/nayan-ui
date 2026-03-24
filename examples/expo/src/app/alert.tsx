@@ -10,9 +10,9 @@ const Component = () => {
   const [showError, setShowError] = useState(true);
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Alert */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Alert</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Alert</NText>
       <NAlert
         title="Information"
         description="This is a basic alert with a title and description. It provides important information to the user."
@@ -20,11 +20,11 @@ const Component = () => {
       />
 
       {/* Alert without Title */}
-      <NText className="text-xl font-bold mb-3 text-text">Alert without Title</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Alert without Title</NText>
       <NAlert description="This alert doesn't have a title, just a description. Sometimes a simple message is all you need." className="mb-6" />
 
       {/* Success Alert */}
-      <NText className="text-xl font-bold mb-3 text-text">Success Alert</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Success Alert</NText>
       {showSuccess && (
         <View className="mb-4">
           <NAlert
@@ -47,7 +47,7 @@ const Component = () => {
       )}
 
       {/* Warning Alert */}
-      <NText className="text-xl font-bold mb-3 text-text">Warning Alert</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Warning Alert</NText>
       {showWarning && (
         <View className="mb-4">
           <NAlert
@@ -70,7 +70,7 @@ const Component = () => {
       )}
 
       {/* Error Alert */}
-      <NText className="text-xl font-bold mb-3 text-text">Error Alert</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Error Alert</NText>
       {showError && (
         <View className="mb-4">
           <NAlert
@@ -93,7 +93,7 @@ const Component = () => {
       )}
 
       {/* Info Alert */}
-      <NText className="text-xl font-bold mb-3 text-text">Info Alert</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Info Alert</NText>
       <NAlert
         title="Did you know?"
         description="You can customize the appearance of alerts by using different className props for the container, title, description, and even the icon."
@@ -104,7 +104,7 @@ const Component = () => {
       />
 
       {/* Custom Styled Alerts */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Styled Alerts</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Styled Alerts</NText>
 
       {/* Gradient Alert */}
       <NAlert
@@ -137,7 +137,7 @@ const Component = () => {
       />
 
       {/* System Alerts */}
-      <NText className="text-xl font-bold mb-3 text-text">System Alerts</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">System Alerts</NText>
 
       <NAlert
         title="Maintenance Notice"
@@ -167,7 +167,7 @@ const Component = () => {
       />
 
       {/* Interactive Dismissible Alert */}
-      <NText className="text-xl font-bold mb-3 text-text">Interactive Alert</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Interactive Alert</NText>
       {showDismissible ? (
         <View className="mb-4">
           <NAlert
@@ -202,7 +202,7 @@ const Component = () => {
       )}
 
       {/* Long Content Alert */}
-      <NText className="text-xl font-bold mb-3 text-text">Long Content Alert</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Long Content Alert</NText>
       <NAlert
         title="Terms and Conditions Update"
         description="We have updated our Terms and Conditions to provide better clarity on data usage, privacy policies, and user rights. The changes include new sections on data retention, third-party integrations, and user consent mechanisms. Please review the updated terms to understand how these changes may affect your use of our services. By continuing to use our application, you acknowledge that you have read and agree to the updated terms."

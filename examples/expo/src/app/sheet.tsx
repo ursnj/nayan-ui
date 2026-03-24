@@ -127,9 +127,9 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Sheets */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Sheets</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Sheets</NText>
       <NCard className="mb-6">
         <View className="flex-row gap-3 flex-wrap">
           <NButton
@@ -162,7 +162,7 @@ const Component = () => {
       </NCard>
 
       {/* Action & Settings Sheets */}
-      <NText className="text-xl font-bold mb-3 text-text">Action & Settings Sheets</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Action & Settings Sheets</NText>
       <NCard className="mb-6">
         <View className="flex-row gap-3 flex-wrap">
           <NButton
@@ -195,7 +195,7 @@ const Component = () => {
       </NCard>
 
       {/* Custom & Confirmation Sheets */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom & Confirmation Sheets</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom & Confirmation Sheets</NText>
       <NCard className="mb-6">
         <View className="flex-row gap-3 flex-wrap">
           <NButton
@@ -221,7 +221,7 @@ const Component = () => {
       {/* Basic Sheet */}
       <NSheet sheetRef={basicSheetRef} snapPoints={['50%']}>
         <View className="p-4">
-          <NText className="text-xl font-bold text-text mb-4">Welcome!</NText>
+          <NText className="text-xl font-bold text-foreground mb-4">Welcome!</NText>
           <NText className="text-muted mb-4">This is a basic bottom sheet with simple content. You can swipe down or tap outside to close it.</NText>
           <View className="flex-row gap-2">
             <NButton
@@ -248,7 +248,7 @@ const Component = () => {
       <NSheet sheetRef={profileSheetRef} snapPoints={['70%']}>
         <ScrollView className="flex-1">
           <View className="p-4">
-            <NText className="text-xl font-bold text-text mb-4">Edit Profile</NText>
+            <NText className="text-xl font-bold text-foreground mb-4">Edit Profile</NText>
 
             <NInput
               label="Full Name"
@@ -267,12 +267,12 @@ const Component = () => {
             <NInput label="Bio" value={userProfile.bio} onChangeText={text => setUserProfile(prev => ({ ...prev, bio: text }))} className="mb-4" />
 
             <View className="flex-row items-center justify-between mb-3">
-              <NText className="text-text">Enable Notifications</NText>
+              <NText className="text-foreground">Enable Notifications</NText>
               <NSwitch checked={userProfile.notifications} onChange={value => setUserProfile(prev => ({ ...prev, notifications: value }))} />
             </View>
 
             <View className="flex-row items-center justify-between mb-4">
-              <NText className="text-text">Dark Mode</NText>
+              <NText className="text-foreground">Dark Mode</NText>
               <NSwitch checked={userProfile.darkMode} onChange={value => setUserProfile(prev => ({ ...prev, darkMode: value }))} />
             </View>
 
@@ -297,7 +297,7 @@ const Component = () => {
       <NSheet sheetRef={formSheetRef} snapPoints={['80%']}>
         <ScrollView className="flex-1">
           <View className="p-4">
-            <NText className="text-xl font-bold text-text mb-4">Contact Support</NText>
+            <NText className="text-xl font-bold text-foreground mb-4">Contact Support</NText>
 
             <NInput
               label="Your Name *"
@@ -347,7 +347,7 @@ const Component = () => {
       {/* Action Sheet */}
       <NSheet sheetRef={actionSheetRef} snapPoints={['40%']}>
         <View className="p-4">
-          <NText className="text-xl font-bold text-text mb-4">Choose Action</NText>
+          <NText className="text-xl font-bold text-foreground mb-4">Choose Action</NText>
 
           <View className="space-y-2">
             <NButton className="w-full bg-blue-500 border-blue-500 mb-2" onPress={() => handleActionSelection('Share')}>
@@ -382,20 +382,20 @@ const Component = () => {
       <NSheet sheetRef={settingsSheetRef} snapPoints={['60%']}>
         <ScrollView className="flex-1">
           <View className="p-4">
-            <NText className="text-xl font-bold text-text mb-4">App Settings</NText>
+            <NText className="text-xl font-bold text-foreground mb-4">App Settings</NText>
 
             <View className="flex-row items-center justify-between mb-3">
-              <NText className="text-text">Auto Save</NText>
+              <NText className="text-foreground">Auto Save</NText>
               <NSwitch checked={appSettings.autoSave} onChange={value => setAppSettings(prev => ({ ...prev, autoSave: value }))} />
             </View>
 
             <View className="flex-row items-center justify-between mb-3">
-              <NText className="text-text">Sync Data</NText>
+              <NText className="text-foreground">Sync Data</NText>
               <NSwitch checked={appSettings.syncData} onChange={value => setAppSettings(prev => ({ ...prev, syncData: value }))} />
             </View>
 
             <View className="flex-row items-center justify-between mb-4">
-              <NText className="text-text">Show Tips</NText>
+              <NText className="text-foreground">Show Tips</NText>
               <NSwitch checked={appSettings.showTips} onChange={value => setAppSettings(prev => ({ ...prev, showTips: value }))} />
             </View>
 
@@ -444,7 +444,7 @@ const Component = () => {
       {/* Filter Sheet */}
       <NSheet sheetRef={filterSheetRef} snapPoints={['50%']}>
         <View className="p-4">
-          <NText className="text-xl font-bold text-text mb-4">Filter Options</NText>
+          <NText className="text-xl font-bold text-foreground mb-4">Filter Options</NText>
 
           <NSelect
             label="Category"
@@ -486,7 +486,7 @@ const Component = () => {
           />
 
           <View className="flex-row items-center justify-between mb-4">
-            <NText className="text-text">Show Completed</NText>
+            <NText className="text-foreground">Show Completed</NText>
             <NSwitch checked={filterSettings.showCompleted} onChange={value => setFilterSettings(prev => ({ ...prev, showCompleted: value }))} />
           </View>
 
@@ -548,7 +548,7 @@ const Component = () => {
       <NSheet sheetRef={confirmSheetRef} snapPoints={['35%']}>
         <View className="p-4">
           <NText className="text-xl font-bold text-red-600 mb-4">⚠️ Confirm Action</NText>
-          <NText className="text-text mb-4">
+          <NText className="text-foreground mb-4">
             Are you sure you want to delete all data? This action cannot be undone and will permanently remove all your information.
           </NText>
 
@@ -587,7 +587,7 @@ const Component = () => {
 
       {/* Sheet Activity Log */}
       <NCard className="mt-6">
-        <NText className="text-lg font-bold text-text mb-3">Sheet Activity Log</NText>
+        <NText className="text-lg font-bold text-foreground mb-3">Sheet Activity Log</NText>
         {sheetActions.length === 0 ? (
           <NText className="text-muted text-sm">No sheet actions yet. Try opening sheets above!</NText>
         ) : (
@@ -603,7 +603,7 @@ const Component = () => {
 
       {/* Current Form States */}
       <NCard className="mt-4">
-        <NText className="text-lg font-bold text-text mb-3">Current Form States</NText>
+        <NText className="text-lg font-bold text-foreground mb-3">Current Form States</NText>
         <View className="space-y-2">
           <NText className="text-sm text-muted">
             Profile: {userProfile.name} ({userProfile.email})

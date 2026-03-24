@@ -180,9 +180,9 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Checkbox */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Checkbox</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Checkbox</NText>
       <NCard className="mb-6">
         <NCheck
           label="Basic Checkbox"
@@ -195,7 +195,7 @@ const Component = () => {
       </NCard>
 
       {/* Terms and Agreements */}
-      <NText className="text-xl font-bold mb-3 text-text">Terms & Agreements</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Terms & Agreements</NText>
       <NCard className="mb-6">
         <NCheck
           label="I agree to the Terms and Conditions"
@@ -219,10 +219,10 @@ const Component = () => {
       </NCard>
 
       {/* Feature Toggles */}
-      <NText className="text-xl font-bold mb-3 text-text">Feature Settings</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Feature Settings</NText>
       <NCard className="mb-6">
         <View className="flex-row justify-between items-center mb-3">
-          <NText className="text-lg font-semibold text-text">App Features</NText>
+          <NText className="text-lg font-semibold text-foreground">App Features</NText>
           <NButton className="px-3 py-1 bg-blue-500 border-blue-500" onPress={selectAllFeatures}>
             Enable All
           </NButton>
@@ -238,7 +238,7 @@ const Component = () => {
       </NCard>
 
       {/* Notification Preferences */}
-      <NText className="text-xl font-bold mb-3 text-text">Notification Preferences</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Notification Preferences</NText>
       <NCard className="mb-6">
         <NCheck label="Email Notifications" checked={notifications.email} onChange={checked => updateNotification('email', checked)} />
         <NCheck label="Push Notifications" checked={notifications.push} onChange={checked => updateNotification('push', checked)} />
@@ -251,7 +251,7 @@ const Component = () => {
       </NCard>
 
       {/* Privacy Settings */}
-      <NText className="text-xl font-bold mb-3 text-text">Privacy & Permissions</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Privacy & Permissions</NText>
       <NCard className="mb-6">
         <NCheck label="Share Usage Data" checked={privacy.shareData} onChange={checked => updatePrivacy('shareData', checked)} />
         <NCheck label="Track Activity" checked={privacy.trackActivity} onChange={checked => updatePrivacy('trackActivity', checked)} />
@@ -268,10 +268,10 @@ const Component = () => {
       </NCard>
 
       {/* Task Checklist */}
-      <NText className="text-xl font-bold mb-3 text-text">Onboarding Tasks</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Onboarding Tasks</NText>
       <NCard className="mb-6">
         <View className="flex-row justify-between items-center mb-3">
-          <NText className="text-lg font-semibold text-text">Progress: {calculateProgress(tasks)}% Complete</NText>
+          <NText className="text-lg font-semibold text-foreground">Progress: {calculateProgress(tasks)}% Complete</NText>
           <NButton className="px-3 py-1 bg-green-500 border-green-500" onPress={selectAllTasks}>
             Complete All
           </NButton>
@@ -327,10 +327,10 @@ const Component = () => {
       </NCard>
 
       {/* Shopping List */}
-      <NText className="text-xl font-bold mb-3 text-text">Shopping List</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Shopping List</NText>
       <NCard className="mb-6">
         <View className="flex-row justify-between items-center mb-3">
-          <NText className="text-lg font-semibold text-text">Items: {Object.values(shoppingList).filter(Boolean).length}/10 selected</NText>
+          <NText className="text-lg font-semibold text-foreground">Items: {Object.values(shoppingList).filter(Boolean).length}/10 selected</NText>
         </View>
         <NCheck label="🥛 Milk" checked={shoppingList.milk} onChange={checked => updateShoppingItem('milk', checked)} />
         <NCheck label="🍞 Bread" checked={shoppingList.bread} onChange={checked => updateShoppingItem('bread', checked)} />
@@ -345,7 +345,7 @@ const Component = () => {
       </NCard>
 
       {/* Disabled Checkbox */}
-      <NText className="text-xl font-bold mb-3 text-text">Disabled Checkbox</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Disabled Checkbox</NText>
       <NCard className="mb-6">
         <NCheck label="Premium Feature (Upgrade Required)" checked={false} onChange={() => {}} disabled={true} />
         <NCheck label="Enterprise Feature (Contact Sales)" checked={false} onChange={() => {}} disabled={true} />
@@ -353,7 +353,7 @@ const Component = () => {
       </NCard>
 
       {/* Custom Styled Checkbox */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Styled</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Styled</NText>
       <NCard className="mb-6">
         <NCheck label="Custom Purple Checkbox" checked={basicChecked} onChange={setBasicChecked} labelClassName="text-purple-600 font-semibold" />
         <NCheck
@@ -392,29 +392,29 @@ const Component = () => {
       {/* Summary Cards */}
       <View className="mt-6 space-y-4">
         <NCard>
-          <NText className="text-lg font-bold text-text mb-2">Features Summary</NText>
+          <NText className="text-lg font-bold text-foreground mb-2">Features Summary</NText>
           <NText className="text-sm text-muted">Enabled: {Object.values(features).filter(Boolean).length}/8 features</NText>
         </NCard>
 
         <NCard>
-          <NText className="text-lg font-bold text-text mb-2">Notifications Summary</NText>
+          <NText className="text-lg font-bold text-foreground mb-2">Notifications Summary</NText>
           <NText className="text-sm text-muted">Active: {Object.values(notifications).filter(Boolean).length}/8 notification types</NText>
         </NCard>
 
         <NCard>
-          <NText className="text-lg font-bold text-text mb-2">Privacy Summary</NText>
+          <NText className="text-lg font-bold text-foreground mb-2">Privacy Summary</NText>
           <NText className="text-sm text-muted">Permissions granted: {Object.values(privacy).filter(Boolean).length}/8 permissions</NText>
         </NCard>
 
         <NCard>
-          <NText className="text-lg font-bold text-text mb-2">Tasks Summary</NText>
+          <NText className="text-lg font-bold text-foreground mb-2">Tasks Summary</NText>
           <NText className="text-sm text-muted">
             Completed: {Object.values(tasks).filter(Boolean).length}/8 tasks ({calculateProgress(tasks)}%)
           </NText>
         </NCard>
 
         <NCard>
-          <NText className="text-lg font-bold text-text mb-2">Shopping Summary</NText>
+          <NText className="text-lg font-bold text-foreground mb-2">Shopping Summary</NText>
           <NText className="text-sm text-muted">Selected: {Object.values(shoppingList).filter(Boolean).length}/10 items</NText>
         </NCard>
       </View>

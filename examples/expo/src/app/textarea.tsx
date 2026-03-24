@@ -167,9 +167,9 @@ LIMIT 10;`);
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Textarea */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Textarea</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Textarea</NText>
       <NCard className="mb-6">
         <NTextarea
           label="Basic Textarea"
@@ -185,7 +185,7 @@ LIMIT 10;`);
       </NCard>
 
       {/* Different Sizes */}
-      <NText className="text-xl font-bold mb-3 text-text">Different Sizes</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Different Sizes</NText>
       <NCard className="mb-6">
         <NTextarea
           label="Small Textarea"
@@ -213,7 +213,7 @@ LIMIT 10;`);
       </NCard>
 
       {/* Contact Form */}
-      <NText className="text-xl font-bold mb-3 text-text">Contact Form</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Contact Form</NText>
       <NCard className="mb-6">
         <NTextarea
           label="Subject"
@@ -253,7 +253,7 @@ LIMIT 10;`);
       </NCard>
 
       {/* Blog Post Editor */}
-      <NText className="text-xl font-bold mb-3 text-text">Blog Post Editor</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Blog Post Editor</NText>
       <NCard className="mb-6">
         <NTextarea
           label="Post Title"
@@ -305,7 +305,7 @@ LIMIT 10;`);
       </NCard>
 
       {/* Product Review */}
-      <NText className="text-xl font-bold mb-3 text-text">Product Review</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Product Review</NText>
       <NCard className="mb-6">
         <NTextarea
           label="Review Summary"
@@ -353,7 +353,7 @@ LIMIT 10;`);
       </NCard>
 
       {/* Character Limits */}
-      <NText className="text-xl font-bold mb-3 text-text">Character Limits</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Character Limits</NText>
       <NCard className="mb-6">
         <View className="mb-4">
           <NTextarea
@@ -396,7 +396,7 @@ LIMIT 10;`);
       </NCard>
 
       {/* Code Input */}
-      <NText className="text-xl font-bold mb-3 text-text">Code & Technical Content</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Code & Technical Content</NText>
       <NCard className="mb-6">
         <NTextarea
           label="JavaScript Code"
@@ -424,7 +424,7 @@ LIMIT 10;`);
       </NCard>
 
       {/* Validation States */}
-      <NText className="text-xl font-bold mb-3 text-text">Validation States</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Validation States</NText>
       <NCard className="mb-6">
         <View className="mb-4">
           <NTextarea
@@ -462,7 +462,7 @@ LIMIT 10;`);
       </NCard>
 
       {/* Disabled Textarea */}
-      <NText className="text-xl font-bold mb-3 text-text">Disabled Textarea</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Disabled Textarea</NText>
       <NCard className="mb-6">
         <NTextarea
           label="Read-only Content"
@@ -476,7 +476,7 @@ LIMIT 10;`);
       </NCard>
 
       {/* Custom Styled */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Styled</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Styled</NText>
       <NCard className="mb-6">
         <NTextarea
           label="Custom Purple Theme"
@@ -518,7 +518,7 @@ LIMIT 10;`);
 
       {/* Content Summary */}
       <NCard className="mt-6">
-        <NText className="text-lg font-bold text-text mb-3">Content Summary</NText>
+        <NText className="text-lg font-bold text-foreground mb-3">Content Summary</NText>
         <View className="space-y-2">
           <NText className="text-sm text-muted">
             Basic fields filled: {[basicText, description, feedback, notes, message, review, comment, bio].filter(Boolean).length}/8

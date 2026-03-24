@@ -21,14 +21,14 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background">
+    <ScrollView className="flex-1 bg-surface">
       <View className="p-4">
         {/* Header */}
-        <NText className="text-2xl font-bold mb-2 text-text">Tooltip Examples</NText>
+        <NText className="text-2xl font-bold mb-2 text-foreground">Tooltip Examples</NText>
         <NText className="text-muted mb-6">Interactive tooltip demonstrations with various styles and use cases</NText>
 
         {/* Basic Tooltips */}
-        <NText className="text-xl font-bold mb-3 text-text">Basic Tooltips</NText>
+        <NText className="text-xl font-bold mb-3 text-foreground">Basic Tooltips</NText>
         <NCard className="mb-6">
           <View className="flex-row flex-wrap gap-4 justify-center">
             <NTooltip message="This is a simple tooltip">
@@ -52,7 +52,7 @@ const Component = () => {
         </NCard>
 
         {/* Icon Tooltips */}
-        <NText className="text-xl font-bold mb-3 text-text">Icon Tooltips</NText>
+        <NText className="text-xl font-bold mb-3 text-foreground">Icon Tooltips</NText>
         <NCard className="mb-6">
           <View className="flex-row flex-wrap gap-4 justify-center">
             <NTooltip message="Get help and support">
@@ -82,11 +82,11 @@ const Component = () => {
         </NCard>
 
         {/* Interactive Elements with Tooltips */}
-        <NText className="text-xl font-bold mb-3 text-text">Interactive Elements</NText>
+        <NText className="text-xl font-bold mb-3 text-foreground">Interactive Elements</NText>
         <NCard className="mb-6">
           <View className="space-y-4">
             <View className="flex-row items-center justify-between">
-              <NText className="text-text">Actions</NText>
+              <NText className="text-foreground">Actions</NText>
               <View className="flex-row gap-3">
                 <NTooltip message="Add to favorites">
                   <View className="p-2 bg-red-100 rounded" onTouchEnd={() => addTooltipAction('Favorite action')}>
@@ -109,7 +109,7 @@ const Component = () => {
             </View>
 
             <View className="flex-row items-center justify-between">
-              <NText className="text-text">File Operations</NText>
+              <NText className="text-foreground">File Operations</NText>
               <View className="flex-row gap-3">
                 <NTooltip message="Download file">
                   <View className="p-2 bg-green-100 rounded" onTouchEnd={() => addTooltipAction('Download action')}>
@@ -134,7 +134,7 @@ const Component = () => {
         </NCard>
 
         {/* Custom Styled Tooltips */}
-        <NText className="text-xl font-bold mb-3 text-text">Custom Styled Tooltips</NText>
+        <NText className="text-xl font-bold mb-3 text-foreground">Custom Styled Tooltips</NText>
         <NCard className="mb-6">
           <View className="flex-row flex-wrap gap-4 justify-center">
             <NTooltip message="Success tooltip with custom styling" className="bg-green-500">
@@ -158,11 +158,11 @@ const Component = () => {
         </NCard>
 
         {/* Form Field Tooltips */}
-        <NText className="text-xl font-bold mb-3 text-text">Form Field Tooltips</NText>
+        <NText className="text-xl font-bold mb-3 text-foreground">Form Field Tooltips</NText>
         <NCard className="mb-6">
           <View className="space-y-4">
             <View className="flex-row items-center">
-              <NText className="text-text flex-1">Username</NText>
+              <NText className="text-foreground flex-1">Username</NText>
               <NTooltip message="Enter your unique username (3-20 characters)">
                 <View className="ml-2 p-1" onTouchEnd={() => addTooltipAction('Username help')}>
                   <HelpCircle size={16} color="#6b7280" />
@@ -171,7 +171,7 @@ const Component = () => {
             </View>
 
             <View className="flex-row items-center">
-              <NText className="text-text flex-1">Password</NText>
+              <NText className="text-foreground flex-1">Password</NText>
               <NTooltip message="Password must be at least 8 characters with uppercase, lowercase, and numbers">
                 <View className="ml-2 p-1" onTouchEnd={() => addTooltipAction('Password help')}>
                   <HelpCircle size={16} color="#6b7280" />
@@ -180,7 +180,7 @@ const Component = () => {
             </View>
 
             <View className="flex-row items-center">
-              <NText className="text-text flex-1">Email Notifications</NText>
+              <NText className="text-foreground flex-1">Email Notifications</NText>
               <NTooltip message="Choose how often you want to receive email updates">
                 <View className="ml-2 p-1" onTouchEnd={() => addTooltipAction('Email help')}>
                   <Info size={16} color="#3b82f6" />
@@ -191,7 +191,7 @@ const Component = () => {
         </NCard>
 
         {/* Contextual Tooltips */}
-        <NText className="text-xl font-bold mb-3 text-text">Contextual Tooltips</NText>
+        <NText className="text-xl font-bold mb-3 text-foreground">Contextual Tooltips</NText>
         <NCard className="mb-6">
           <View className="space-y-4">
             <View className="bg-blue-50 p-4 rounded-lg">
@@ -221,18 +221,18 @@ const Component = () => {
         </NCard>
 
         {/* Tooltip Statistics */}
-        <NText className="text-xl font-bold mb-3 text-text">Tooltip Statistics</NText>
+        <NText className="text-xl font-bold mb-3 text-foreground">Tooltip Statistics</NText>
         <NCard className="mb-6">
           <View className="space-y-3">
             <View className="flex-row justify-between">
               <NText className="text-muted">Total Tooltip Interactions:</NText>
-              <NText className="font-semibold text-text">{tooltipCount}</NText>
+              <NText className="font-semibold text-foreground">{tooltipCount}</NText>
             </View>
 
             {tooltipHistory.length > 0 && (
               <>
-                <View className="border-t border-border pt-3">
-                  <NText className="font-semibold text-text mb-2">Recent Interactions:</NText>
+                <View className="border-t border-separator pt-3">
+                  <NText className="font-semibold text-foreground mb-2">Recent Interactions:</NText>
                   {tooltipHistory.map((item, index) => (
                     <View key={index} className="flex-row justify-between py-1">
                       <NText className="text-sm text-muted flex-1">{item.message}</NText>
@@ -246,7 +246,7 @@ const Component = () => {
         </NCard>
 
         {/* Best Practices */}
-        <NText className="text-xl font-bold mb-3 text-text">Best Practices</NText>
+        <NText className="text-xl font-bold mb-3 text-foreground">Best Practices</NText>
         <NCard>
           <View className="space-y-3">
             <View>

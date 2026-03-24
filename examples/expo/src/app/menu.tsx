@@ -121,9 +121,9 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Menu */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Menu</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Menu</NText>
       <NCard className="mb-6">
         <View className="flex-row gap-3 flex-wrap">
           <NMenu trigger={<NButton className="bg-blue-500 border-blue-500">Basic Menu</NButton>} title="Actions">
@@ -143,11 +143,11 @@ const Component = () => {
       </NCard>
 
       {/* User Profile Menu */}
-      <NText className="text-xl font-bold mb-3 text-text">User Profile Menu</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">User Profile Menu</NText>
       <NCard className="mb-6">
         <View className="flex-row items-center justify-between mb-3">
           <View>
-            <NText className="text-text font-semibold">{userProfile.name}</NText>
+            <NText className="text-foreground font-semibold">{userProfile.name}</NText>
             <NText className="text-sm text-muted capitalize">Status: {userProfile.status}</NText>
           </View>
           <NMenu trigger={<NButton className="bg-purple-500 border-purple-500">Profile Menu</NButton>} title="Profile Options">
@@ -171,7 +171,7 @@ const Component = () => {
       </NCard>
 
       {/* File Context Menu */}
-      <NText className="text-xl font-bold mb-3 text-text">File Context Menu</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">File Context Menu</NText>
       <NCard className="mb-6">
         <View className="flex-row items-center justify-between mb-3">
           <View className="flex-row items-center">
@@ -179,7 +179,7 @@ const Component = () => {
               <NText className="text-red-600 font-bold">PDF</NText>
             </View>
             <View>
-              <NText className="text-text font-medium">{selectedFile}</NText>
+              <NText className="text-foreground font-medium">{selectedFile}</NText>
               <NText className="text-sm text-muted">2.4 MB • Modified today</NText>
             </View>
           </View>
@@ -208,11 +208,11 @@ const Component = () => {
       </NCard>
 
       {/* Project Management Menu */}
-      <NText className="text-xl font-bold mb-3 text-text">Project Management</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Project Management</NText>
       <NCard className="mb-6">
         <View className="flex-row items-center justify-between mb-3">
           <View>
-            <NText className="text-text font-semibold">Mobile App Project</NText>
+            <NText className="text-foreground font-semibold">Mobile App Project</NText>
             <NText className="text-sm text-muted capitalize">Status: {projectStatus.replace('-', ' ')}</NText>
           </View>
           <NMenu trigger={<NButton className="bg-indigo-500 border-indigo-500">Project Menu</NButton>} title="Project Actions">
@@ -244,7 +244,7 @@ const Component = () => {
       </NCard>
 
       {/* Navigation Menu */}
-      <NText className="text-xl font-bold mb-3 text-text">Navigation Menu</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Navigation Menu</NText>
       <NCard className="mb-6">
         <View className="flex-row gap-2 flex-wrap">
           <NMenu trigger={<NButton className="bg-teal-500 border-teal-500">Main Menu</NButton>} title="Navigation">
@@ -276,7 +276,7 @@ const Component = () => {
       </NCard>
 
       {/* Custom Styled Menus */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Styled Menus</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Styled Menus</NText>
       <NCard className="mb-6">
         <View className="flex-row gap-2 flex-wrap">
           <NMenu
@@ -332,7 +332,7 @@ const Component = () => {
 
       {/* Menu Activity Log */}
       <NCard className="mt-6">
-        <NText className="text-lg font-bold text-text mb-3">Menu Activity Log</NText>
+        <NText className="text-lg font-bold text-foreground mb-3">Menu Activity Log</NText>
         {menuActions.length === 0 ? (
           <NText className="text-muted text-sm">No menu actions yet. Try clicking on menu items above!</NText>
         ) : (
@@ -348,7 +348,7 @@ const Component = () => {
 
       {/* Statistics Summary */}
       <NCard className="mt-4">
-        <NText className="text-lg font-bold text-text mb-3">Menu Statistics</NText>
+        <NText className="text-lg font-bold text-foreground mb-3">Menu Statistics</NText>
         <View className="space-y-2">
           <NText className="text-sm text-muted">Total Actions: {menuActions.length}</NText>
           <NText className="text-sm text-muted">File Actions: {fileActions.length}</NText>

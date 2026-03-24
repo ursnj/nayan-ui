@@ -64,13 +64,13 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 p-4 bg-background">
+    <ScrollView className="flex-1 p-4 bg-surface">
       {/* Basic Action Items */}
       <NCard className="p-4 mb-6">
         <NText className="text-lg font-semibold mb-3">Basic Action Items</NText>
 
         <NActionItem
-          className="rounded-lg border border-border mb-3 bg-card"
+          className="rounded-lg border border-separator mb-3 bg-surface"
           name="Default Action Item"
           description="Simple action item with icon and description"
           icon={<Ionicons name="flag" size={20} color={colors.primary} />}
@@ -112,7 +112,7 @@ const Component = () => {
         <NText className="text-lg font-semibold mb-3">User Profile Actions</NText>
 
         <NActionItem
-          className="rounded-lg border border-border mb-3 bg-card"
+          className="rounded-lg border border-separator mb-3 bg-surface"
           name="View Profile"
           description="See your profile details and statistics"
           icon={<Ionicons name="person" size={20} color={colors.primary} />}
@@ -120,7 +120,7 @@ const Component = () => {
         />
 
         <NActionItem
-          className="rounded-lg border border-border mb-3 bg-card"
+          className="rounded-lg border border-separator mb-3 bg-surface"
           name="Edit Profile"
           description="Update your personal information"
           icon={<Ionicons name="create" size={20} color={colors.primary} />}
@@ -131,7 +131,7 @@ const Component = () => {
         />
 
         <NActionItem
-          className="rounded-lg border border-border bg-card"
+          className="rounded-lg border border-separator bg-surface"
           name="Account Settings"
           description="Manage your account preferences"
           icon={<Ionicons name="settings" size={20} color={colors.primary} />}
@@ -144,7 +144,7 @@ const Component = () => {
         <NText className="text-lg font-semibold mb-3">Notifications & Communication</NText>
 
         <NActionItem
-          className="rounded-lg border border-border mb-3 bg-card"
+          className="rounded-lg border border-separator mb-3 bg-surface"
           name={`Notifications ${notificationCount > 0 ? `(${notificationCount})` : ''}`}
           description={notificationCount > 0 ? `You have ${notificationCount} unread notifications` : 'No new notifications'}
           icon={
@@ -158,7 +158,7 @@ const Component = () => {
         />
 
         <NActionItem
-          className="rounded-lg border border-border mb-3 bg-card"
+          className="rounded-lg border border-separator mb-3 bg-surface"
           name="Messages"
           description="View your recent messages and conversations"
           icon={<Ionicons name="chatbubbles" size={20} color={colors.primary} />}
@@ -169,7 +169,7 @@ const Component = () => {
         />
 
         <NActionItem
-          className="rounded-lg border border-border bg-card"
+          className="rounded-lg border border-separator bg-surface"
           name="Email"
           description="Check your email inbox"
           icon={<Ionicons name="mail" size={20} color={colors.primary} />}
@@ -185,7 +185,7 @@ const Component = () => {
         <NText className="text-lg font-semibold mb-3">System Controls</NText>
 
         <NActionItem
-          className="rounded-lg border border-border mb-3 bg-card"
+          className="rounded-lg border border-separator mb-3 bg-surface"
           name={`Network Status: ${isOnline ? 'Online' : 'Offline'}`}
           description={isOnline ? 'Connected to network' : 'No network connection'}
           icon={<Ionicons name={isOnline ? 'wifi' : 'wifi-outline'} size={20} color={isOnline ? '#16a34a' : '#dc2626'} />}
@@ -193,7 +193,7 @@ const Component = () => {
         />
 
         <NActionItem
-          className="rounded-lg border border-border mb-3 bg-card"
+          className="rounded-lg border border-separator mb-3 bg-surface"
           name={`Theme: ${isDarkMode ? 'Dark Mode' : 'Light Mode'}`}
           description={`Currently using ${isDarkMode ? 'dark' : 'light'} theme`}
           icon={<Ionicons name={isDarkMode ? 'moon' : 'sunny'} size={20} color={colors.primary} />}
@@ -201,7 +201,7 @@ const Component = () => {
         />
 
         <NActionItem
-          className="rounded-lg border border-border bg-card"
+          className="rounded-lg border border-separator bg-surface"
           name={`Location: ${isLocationEnabled ? 'Enabled' : 'Disabled'}`}
           description={isLocationEnabled ? 'Location services are active' : 'Location services are off'}
           icon={<Ionicons name={isLocationEnabled ? 'location' : 'location-outline'} size={20} color={isLocationEnabled ? '#16a34a' : '#6b7280'} />}
@@ -214,7 +214,7 @@ const Component = () => {
         <NText className="text-lg font-semibold mb-3">File & Media Actions</NText>
 
         <NActionItem
-          className="rounded-lg border border-border mb-3 bg-card"
+          className="rounded-lg border border-separator mb-3 bg-surface"
           name="Upload Photo"
           description="Add photos from your gallery"
           icon={<Ionicons name="camera" size={20} color={colors.primary} />}
@@ -225,7 +225,7 @@ const Component = () => {
         />
 
         <NActionItem
-          className="rounded-lg border border-border mb-3 bg-card"
+          className="rounded-lg border border-separator mb-3 bg-surface"
           name="Download Files"
           description="Download your recent files"
           icon={<Ionicons name="download" size={20} color={colors.primary} />}
@@ -236,7 +236,7 @@ const Component = () => {
         />
 
         <NActionItem
-          className="rounded-lg border border-border bg-card"
+          className="rounded-lg border border-separator bg-surface"
           name="Share Content"
           description="Share files and media with others"
           icon={<Ionicons name="share" size={20} color={colors.primary} />}
@@ -253,7 +253,7 @@ const Component = () => {
         <NText className="text-sm text-muted-foreground mb-3">These items support both tap and long press</NText>
 
         <NActionItem
-          className="rounded-lg border border-border mb-3 bg-card"
+          className="rounded-lg border border-separator mb-3 bg-surface"
           name="Quick Action"
           description="Tap for quick action, long press for menu"
           icon={<Ionicons name="flash" size={20} color={colors.primary} />}
@@ -268,7 +268,7 @@ const Component = () => {
         />
 
         <NActionItem
-          className="rounded-lg border border-border bg-card"
+          className="rounded-lg border border-separator bg-surface"
           name="Context Menu"
           description="Tap to select, long press for context menu"
           icon={<Ionicons name="ellipsis-horizontal" size={20} color={colors.primary} />}
@@ -288,7 +288,7 @@ const Component = () => {
         <NText className="text-lg font-semibold mb-3">Disabled Actions</NText>
 
         <NActionItem
-          className="rounded-lg border border-border mb-3 bg-muted opacity-50"
+          className="rounded-lg border border-separator mb-3 bg-muted opacity-50"
           titleClassName="text-muted-foreground"
           descriptionClassName="text-muted-foreground"
           name="Premium Feature"
@@ -302,7 +302,7 @@ const Component = () => {
         />
 
         <NActionItem
-          className="rounded-lg border border-border bg-muted opacity-50"
+          className="rounded-lg border border-separator bg-muted opacity-50"
           titleClassName="text-muted-foreground"
           descriptionClassName="text-muted-foreground"
           name="Coming Soon"

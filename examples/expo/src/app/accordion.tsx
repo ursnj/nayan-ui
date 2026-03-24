@@ -119,46 +119,46 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Single Accordion */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic FAQ (Single)</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic FAQ (Single)</NText>
       <NText className="text-sm text-muted mb-4">Only one item can be expanded at a time</NText>
       <NAccordion
         items={faqItems}
         multiple={false}
         className="mb-6"
-        itemClassName="border border-border rounded-lg mb-2 bg-card"
-        titleClassName="text-text font-semibold"
+        itemClassName="border border-separator rounded-lg mb-2 bg-surface"
+        titleClassName="text-foreground font-semibold"
         contentClassName="text-muted leading-relaxed"
       />
 
       {/* Multiple Accordion */}
-      <NText className="text-xl font-bold mb-3 text-text">Product Features (Multiple)</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Product Features (Multiple)</NText>
       <NText className="text-sm text-muted mb-4">Multiple items can be expanded simultaneously</NText>
       <NAccordion
         items={featureItems}
         multiple={true}
         defaultValue={['feature-1', 'feature-2']}
         className="mb-6"
-        itemClassName="border border-border rounded-lg mb-2 bg-card shadow-sm"
-        titleClassName="text-text font-semibold"
+        itemClassName="border border-separator rounded-lg mb-2 bg-surface shadow-sm"
+        titleClassName="text-foreground font-semibold"
         contentClassName="text-muted leading-relaxed"
       />
 
       {/* Accordion with Disabled Items */}
-      <NText className="text-xl font-bold mb-3 text-text">Settings (With Disabled Items)</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Settings (With Disabled Items)</NText>
       <NText className="text-sm text-muted mb-4">Some items are disabled and cannot be expanded</NText>
       <NAccordion
         items={settingsItems}
         multiple={false}
         className="mb-6"
-        itemClassName="border border-border rounded-lg mb-2 bg-card"
-        titleClassName="text-text font-semibold"
+        itemClassName="border border-separator rounded-lg mb-2 bg-surface"
+        titleClassName="text-foreground font-semibold"
         contentClassName="text-muted leading-relaxed"
       />
 
       {/* Custom Styled Accordion */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Styled</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Styled</NText>
       <NText className="text-sm text-muted mb-4">Accordion with custom colors and styling</NText>
       <NAccordion
         items={[
@@ -182,7 +182,7 @@ const Component = () => {
       />
 
       {/* Dynamic Accordion */}
-      <NText className="text-xl font-bold mb-3 text-text">Dynamic Accordion</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Dynamic Accordion</NText>
       <NText className="text-sm text-muted mb-4">Add, remove, and toggle items dynamically</NText>
 
       <View className="flex-row flex-wrap gap-2 mb-4">
@@ -209,13 +209,13 @@ const Component = () => {
         items={customItems}
         multiple={true}
         className="mb-6"
-        itemClassName="border border-border rounded-lg mb-2 bg-card"
-        titleClassName="text-text font-semibold"
+        itemClassName="border border-separator rounded-lg mb-2 bg-surface"
+        titleClassName="text-foreground font-semibold"
         contentClassName="text-muted leading-relaxed"
       />
 
       {/* Minimal Accordion */}
-      <NText className="text-xl font-bold mb-3 text-text">Minimal Style</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Minimal Style</NText>
       <NText className="text-sm text-muted mb-4">Clean, minimal accordion without borders</NText>
       <NAccordion
         items={[
@@ -232,8 +232,8 @@ const Component = () => {
         ]}
         multiple={false}
         className="mb-6"
-        itemClassName="border-b border-border py-2"
-        titleClassName="text-text font-medium"
+        itemClassName="border-b border-separator py-2"
+        titleClassName="text-foreground font-medium"
         contentClassName="text-muted"
       />
 

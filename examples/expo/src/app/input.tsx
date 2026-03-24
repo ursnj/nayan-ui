@@ -35,13 +35,13 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Input */}
-      <NText className="text-lg font-semibold mb-3 text-text">Basic Input</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Basic Input</NText>
       <NInput label="Full Name" value={basicInput} onChangeText={setBasicInput} placeholder="Enter your full name" className="mb-4" />
 
       {/* Email Input */}
-      <NText className="text-lg font-semibold mb-3 text-text">Email Input</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Email Input</NText>
       <NInput
         label="Email Address"
         value={email}
@@ -56,7 +56,7 @@ const Component = () => {
       {!validateEmail(email) && email.length > 0 && <NText className="text-red-500 text-sm mb-4 -mt-2">Please enter a valid email address</NText>}
 
       {/* Password Input */}
-      <NText className="text-lg font-semibold mb-3 text-text">Password Input</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Password Input</NText>
       <View className="mb-4">
         <NInput
           label="Password"
@@ -76,7 +76,7 @@ const Component = () => {
       </View>
 
       {/* Phone Input */}
-      <NText className="text-lg font-semibold mb-3 text-text">Phone Input</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Phone Input</NText>
       <NInput
         label="Phone Number"
         value={phone}
@@ -88,11 +88,11 @@ const Component = () => {
       />
 
       {/* Number Input */}
-      <NText className="text-lg font-semibold mb-3 text-text">Number Input</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Number Input</NText>
       <NInput label="Age" value={number} onChangeText={setNumber} placeholder="Enter your age" keyboardType="numeric" className="mb-4" />
 
       {/* URL Input */}
-      <NText className="text-lg font-semibold mb-3 text-text">URL Input</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">URL Input</NText>
       <NInput
         label="Website"
         value={url}
@@ -105,11 +105,11 @@ const Component = () => {
       />
 
       {/* Search Input */}
-      <NText className="text-lg font-semibold mb-3 text-text">Search Input</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Search Input</NText>
       <NInput label="Search" value={search} onChangeText={setSearch} placeholder="Search for anything..." returnKeyType="search" className="mb-4" />
 
       {/* Multiline Input */}
-      <NText className="text-lg font-semibold mb-3 text-text">Multiline Input</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Multiline Input</NText>
       <NInput
         label="Comments"
         value={multiline}
@@ -122,11 +122,11 @@ const Component = () => {
       />
 
       {/* Disabled Input */}
-      <NText className="text-lg font-semibold mb-3 text-text">Disabled Input</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Disabled Input</NText>
       <NInput label="Disabled Field" value="This field is disabled" onChangeText={() => {}} disabled className="mb-4" />
 
       {/* Custom Styled Input */}
-      <NText className="text-lg font-semibold mb-3 text-text">Custom Styled</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Custom Styled</NText>
       <NInput
         label="Custom Input"
         value={basicInput}
@@ -138,7 +138,7 @@ const Component = () => {
       />
 
       {/* Input with Character Count */}
-      <NText className="text-lg font-semibold mb-3 text-text">Input with Character Limit</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Input with Character Limit</NText>
       <View className="mb-4">
         <NInput
           label="Bio (Max 100 characters)"
@@ -157,13 +157,13 @@ const Component = () => {
       </View>
 
       {/* Required Fields */}
-      <NText className="text-lg font-semibold mb-3 text-text">Required Fields</NText>
+      <NText className="text-lg font-semibold mb-3 text-foreground">Required Fields</NText>
       <NInput
         label="Required Field *"
         value={basicInput}
         onChangeText={setBasicInput}
         placeholder="This field is required"
-        labelClassName="text-text"
+        labelClassName="text-foreground"
         inputClassName={!basicInput.trim() ? 'border-red-300' : 'border-green-500'}
         className="mb-4"
       />
@@ -174,8 +174,8 @@ const Component = () => {
           Submit Form
         </NButton>
         <NButton
-          className="flex-1 bg-transparent border-border"
-          textClassName="text-text"
+          className="flex-1 bg-transparent border-separator"
+          textClassName="text-foreground"
           onPress={() => {
             setBasicInput('');
             setEmail('');

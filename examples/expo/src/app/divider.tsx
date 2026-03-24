@@ -3,9 +3,9 @@ import { NButton, NCard, NDivider, NText } from '@nayan-ui/react-native';
 
 const Component = () => {
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Horizontal Dividers */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Horizontal Dividers</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Horizontal Dividers</NText>
 
       <NCard className="p-4 mb-6">
         <NText className="mb-3">Default horizontal divider</NText>
@@ -20,7 +20,7 @@ const Component = () => {
       </NCard>
 
       {/* Vertical Dividers */}
-      <NText className="text-xl font-bold mb-3 text-text">Vertical Dividers</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Vertical Dividers</NText>
 
       <NCard className="p-4 mb-6">
         <NText className="mb-3">Inline text with vertical dividers:</NText>
@@ -42,7 +42,7 @@ const Component = () => {
       </NCard>
 
       {/* Custom Styled Dividers */}
-      <NText className="text-xl font-bold mb-3 text-text">Custom Styled Dividers</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Custom Styled Dividers</NText>
 
       <NCard className="p-4 mb-6">
         <NText className="mb-3">Colored dividers:</NText>
@@ -57,7 +57,7 @@ const Component = () => {
       </NCard>
 
       {/* Section Separators */}
-      <NText className="text-xl font-bold mb-3 text-text">Section Separators</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Section Separators</NText>
 
       <NCard className="p-4 mb-6">
         <View>
@@ -77,7 +77,7 @@ const Component = () => {
       </NCard>
 
       {/* List Item Separators */}
-      <NText className="text-xl font-bold mb-3 text-text">List Item Separators</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">List Item Separators</NText>
 
       <NCard className="p-4 mb-6">
         <View>
@@ -103,7 +103,7 @@ const Component = () => {
       </NCard>
 
       {/* Complex Layouts */}
-      <NText className="text-xl font-bold mb-3 text-text">Complex Layouts</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Complex Layouts</NText>
 
       <NCard className="p-4 mb-6">
         <View className="flex-row">
@@ -132,7 +132,7 @@ const Component = () => {
       </NCard>
 
       {/* Card Separators */}
-      <NText className="text-xl font-bold mb-3 text-text">Card Content Separators</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Card Content Separators</NText>
 
       <NCard className="p-4 mb-6">
         <View>
@@ -154,7 +154,7 @@ const Component = () => {
       </NCard>
 
       {/* Spacing Variations */}
-      <NText className="text-xl font-bold mb-3 text-text">Spacing Variations</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Spacing Variations</NText>
 
       <NCard className="p-4 mb-6">
         <NText>Tight spacing</NText>
@@ -175,7 +175,7 @@ const Component = () => {
       </NCard>
 
       {/* Dashboard Layout */}
-      <NText className="text-xl font-bold mb-3 text-text">Dashboard Layout Example</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Dashboard Layout Example</NText>
 
       <NCard className="p-4 mb-6">
         <View>

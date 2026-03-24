@@ -92,9 +92,9 @@ const Component = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView className="flex-1 bg-surface p-4">
       {/* Basic Color Pickers */}
-      <NText className="text-xl font-bold mb-3 text-text">Basic Color Pickers</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Basic Color Pickers</NText>
 
       <NCard className="p-4 mb-6">
         <View className="space-y-4">
@@ -109,7 +109,7 @@ const Component = () => {
 
         {/* Color Preview */}
         <View className="mt-4 p-4 rounded-lg border border-gray-200">
-          <NText className="text-text font-semibold mb-3">Color Preview</NText>
+          <NText className="text-foreground font-semibold mb-3">Color Preview</NText>
           <View className="flex-row gap-2 flex-wrap">
             <View className="items-center">
               <View className="w-12 h-12 rounded-lg border border-gray-300" style={{ backgroundColor: primaryColor }} />
@@ -132,10 +132,10 @@ const Component = () => {
       </NCard>
 
       {/* Theme Colors */}
-      <NText className="text-xl font-bold mb-3 text-text">Theme Colors</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Theme Colors</NText>
 
       <NCard className="p-4 mb-6">
-        <NText className="text-text font-semibold mb-4">🎨 Application Theme</NText>
+        <NText className="text-foreground font-semibold mb-4">🎨 Application Theme</NText>
 
         <View className="space-y-3">
           {Object.entries(themeColors).map(([key, color]) => (
@@ -166,10 +166,10 @@ const Component = () => {
       </NCard>
 
       {/* Brand Colors */}
-      <NText className="text-xl font-bold mb-3 text-text">Brand Colors</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Brand Colors</NText>
 
       <NCard className="p-4 mb-6">
-        <NText className="text-text font-semibold mb-4">🏢 Brand Identity</NText>
+        <NText className="text-foreground font-semibold mb-4">🏢 Brand Identity</NText>
 
         <View className="space-y-3">
           {Object.entries(brandColors).map(([key, color]) => (
@@ -185,12 +185,12 @@ const Component = () => {
 
         {/* Brand Preview */}
         <View className="mt-4 p-4 rounded-lg border border-gray-200">
-          <NText className="text-text font-semibold mb-3">Brand Color Palette</NText>
+          <NText className="text-foreground font-semibold mb-3">Brand Color Palette</NText>
           <View className="flex-row gap-3 flex-wrap">
             {Object.entries(brandColors).map(([key, color]) => (
               <View key={key} className="items-center">
                 <View className="w-14 h-14 rounded-lg shadow-sm" style={{ backgroundColor: color }} />
-                <NText className="text-xs mt-2 capitalize font-medium text-text">{key}</NText>
+                <NText className="text-xs mt-2 capitalize font-medium text-foreground">{key}</NText>
                 <NText className="text-xs text-muted">{color}</NText>
               </View>
             ))}
@@ -199,10 +199,10 @@ const Component = () => {
       </NCard>
 
       {/* UI Customization */}
-      <NText className="text-xl font-bold mb-3 text-text">UI Customization</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">UI Customization</NText>
 
       <NCard className="p-4 mb-6">
-        <NText className="text-text font-semibold mb-4">⚙️ Interface Colors</NText>
+        <NText className="text-foreground font-semibold mb-4">⚙️ Interface Colors</NText>
 
         <View className="space-y-3">
           {Object.entries(uiColors).map(([key, color]) => (
@@ -235,16 +235,16 @@ const Component = () => {
       </NCard>
 
       {/* Color Presets */}
-      <NText className="text-xl font-bold mb-3 text-text">Color Presets</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Color Presets</NText>
 
       <NCard className="p-4 mb-6">
-        <NText className="text-text font-semibold mb-4">🎭 Quick Color Schemes</NText>
+        <NText className="text-foreground font-semibold mb-4">🎭 Quick Color Schemes</NText>
 
         <View className="space-y-4">
           {Object.entries(colorPresets).map(([presetName, colors]) => (
             <View key={presetName} className="p-3 rounded-lg border border-gray-200">
               <View className="flex-row items-center justify-between mb-3">
-                <NText className="text-text font-medium capitalize">{presetName} Palette</NText>
+                <NText className="text-foreground font-medium capitalize">{presetName} Palette</NText>
                 <NButton className="bg-blue-500 border-blue-500 px-3 py-1" onPress={() => applyPreset(presetName, colors)}>
                   <NText className="text-white text-xs">Apply</NText>
                 </NButton>
@@ -260,10 +260,10 @@ const Component = () => {
       </NCard>
 
       {/* Disabled State Example */}
-      <NText className="text-xl font-bold mb-3 text-text">Disabled State</NText>
+      <NText className="text-xl font-bold mb-3 text-foreground">Disabled State</NText>
 
       <NCard className="p-4 mb-6">
-        <NText className="text-text font-semibold mb-4">🚫 Disabled Color Picker</NText>
+        <NText className="text-foreground font-semibold mb-4">🚫 Disabled Color Picker</NText>
 
         <NColorPicker label="Disabled Color Picker" value="#cccccc" onChange={() => {}} disabled={true} className="mb-3" />
 
