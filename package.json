@@ -9,8 +9,6 @@
     "nohoist": [
       "**/react-native",
       "**/react-native/**",
-      "**/expo",
-      "**/expo/**",
       "**/react-native-reanimated",
       "**/react-native-reanimated/**",
       "**/react-native-gesture-handler",
@@ -21,10 +19,18 @@
       "**/react-native-safe-area-context/**",
       "**/react-native-svg",
       "**/react-native-svg/**",
-      "**/expo-navigation-bar",
-      "**/expo-navigation-bar/**",
-      "**/@react-native-community/datetimepicker",
-      "**/@react-native-community/datetimepicker/**"
+      "**/react-native-screens",
+      "**/react-native-screens/**",
+      "**/expo",
+      "**/expo/**",
+      "**/expo-*",
+      "**/expo-*/**",
+      "**/@expo/*",
+      "**/@expo/**",
+      "**/@react-native-community/*",
+      "**/@react-native-community/**",
+      "**/@react-native/*",
+      "**/@react-native/**"
     ]
   },
   "version": "1.0.0",

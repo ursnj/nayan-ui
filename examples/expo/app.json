@@ -7,7 +7,6 @@
     "icon": "./src/assets/images/icon.png",
     "scheme": "nayanui",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.nayanui.expoapp"
@@ -17,7 +16,6 @@
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
       "package": "com.nayanui.expoapp"
     },
     "web": {
