@@ -1,4 +1,3 @@
-const { hairlineWidth } = require('nativewind/theme');
 const colors = require('tailwindcss/colors');
 
 /** @type {import('tailwindcss').Config} */
@@ -7,10 +6,10 @@ module.exports = {
   content: [
     './src/**/*.{js,jsx,ts,tsx}',
     '../src/**/*.{js,jsx,ts,tsx}',
-    '../node_modules/@nayan-ui/react-native/dist/**/*.{js,jsx,ts,tsx}',
-    '../node_modules/heroui-native/lib/**/*.{js,jsx,ts,tsx}'
+    './node_modules/@nayan-ui/react-native/src/**/*.{js,jsx,ts,tsx}',
+    './node_modules/@nayan-ui/react-native/dist/**/*.{js,jsx,ts,tsx}',
+    './node_modules/heroui-native/lib/**/*.{js,jsx,ts,tsx}'
   ],
-  presets: [require('nativewind/preset')],
   theme: {
     colors: {
       ...colors,
@@ -23,7 +22,7 @@ module.exports = {
     },
     extend: {
       borderWidth: {
-        hairline: hairlineWidth()
+        hairline: 0.5
       },
       keyframes: {
         'accordion-down': {
