@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
+import { Popover } from 'heroui-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NText } from '@/components/NText';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
 export interface NTooltipProps {
@@ -25,12 +25,12 @@ export const NTooltip = React.memo<NTooltipProps>(({ children, message, classNam
   );
 
   return (
-    <Tooltip delayDuration={150}>
-      <TooltipTrigger>{children}</TooltipTrigger>
-      <TooltipContent insets={contentInsets} className={cn('bg-card border border-border max-w-[250px]', className)}>
+    <Popover>
+      <Popover.Trigger>{children}</Popover.Trigger>
+      <Popover.Content presentation="popover" insets={contentInsets} className={cn('bg-card border border-border max-w-[250px]', className)}>
         <NText className={textClassName}>{message}</NText>
-      </TooltipContent>
-    </Tooltip>
+      </Popover.Content>
+    </Popover>
   );
 });
 

@@ -1,16 +1,7 @@
 import React from 'react';
+import { Dialog } from 'heroui-native';
+import { View } from 'react-native';
 import { NText } from '@/components/NText';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
 
 export interface NConfirmProps {
@@ -42,23 +33,23 @@ export const NConfirm = React.memo<NConfirmProps>(
     cancelClassName = ''
   }) => {
     return (
-      <AlertDialog>
-        <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-        <AlertDialogContent className={cn('bg-card p-3 min-w-[320px]', className)}>
-          <AlertDialogHeader>
-            <AlertDialogTitle className={cn('text-text', titleClassName)}>{title}</AlertDialogTitle>
-            <AlertDialogDescription className={cn('text-text', descriptionClassName)}>{description}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex-row">
-            <AlertDialogAction onPress={() => onResult(true)}>
-              <NText className={cn('text-white', confirmClassName)}>{confirmText}</NText>
-            </AlertDialogAction>
-            <AlertDialogCancel className="border-muted bg-border" onPress={() => onResult(false)}>
-              <NText className={cn('text-text', cancelClassName)}>{cancelText}</NText>
-            </AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <Dialog>
+        <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+        <Dialog.Content className={cn('bg-card p-3 min-w-[320px] border border-border rounded-lg', className)}>
+          <View className="flex flex-col gap-2">
+            <NText className={cn('text-text text-lg native:text-xl font-semibold', titleClassName)}>{title}</NText>
+            <NText className={cn('text-text text-sm native:text-base', descriptionClassName)}>{description}</NText>
+          </View>
+          <View className="flex-row justify-end gap-2 mt-4">
+            <Dialog.Close className={cn('px-4 py-2 rounded-md bg-primary border border-primary', confirmClassName)} onPress={() => onResult(true)}>
+              <NText className="text-white">{confirmText}</NText>
+            </Dialog.Close>
+            <Dialog.Close className={cn('px-4 py-2 rounded-md bg-border border border-muted', cancelClassName)} onPress={() => onResult(false)}>
+              <NText className="text-text">{cancelText}</NText>
+            </Dialog.Close>
+          </View>
+        </Dialog.Content>
+      </Dialog>
     );
   }
 );

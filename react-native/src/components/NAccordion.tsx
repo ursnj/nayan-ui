@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
+import { Accordion } from 'heroui-native';
 import { NText } from '@/components/NText';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { cn } from '@/lib/utils';
 
 export interface AccordionItemData {
@@ -36,12 +36,12 @@ export const NAccordion = React.memo<NAccordionProps>(
         className: cn('w-full', className),
         ...(multiple
           ? {
-              type: 'multiple' as const,
+              selectionMode: 'multiple' as const,
               defaultValue: defaultValue || []
             }
           : {
-              type: 'single' as const,
-              collapsible: true,
+              selectionMode: 'single' as const,
+              isCollapsible: true,
               defaultValue: defaultValue?.[0]
             })
       }),
@@ -51,14 +51,14 @@ export const NAccordion = React.memo<NAccordionProps>(
     return (
       <Accordion {...accordionProps}>
         {processedItems.map(item => (
-          <AccordionItem key={item.id} value={item.id} disabled={item.disabled} className={itemClassName}>
-            <AccordionTrigger className="px-4 py-3">
+          <Accordion.Item key={item.id} value={item.id!} isDisabled={item.disabled} className={itemClassName}>
+            <Accordion.Trigger className="px-4 py-3">
               <NText className={cn('text-lg font-medium', titleClassName)}>{item.title}</NText>
-            </AccordionTrigger>
-            <AccordionContent className="px-4 pb-3">
+            </Accordion.Trigger>
+            <Accordion.Content className="px-4 pb-3">
               <NText className={cn('text-muted', contentClassName)}>{item.content}</NText>
-            </AccordionContent>
-          </AccordionItem>
+            </Accordion.Content>
+          </Accordion.Item>
         ))}
       </Accordion>
     );

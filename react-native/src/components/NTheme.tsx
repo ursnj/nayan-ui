@@ -4,9 +4,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { ThemeProvider } from '@react-navigation/native';
-import { PortalHost } from '@rn-primitives/portal';
+import { PortalHost } from 'heroui-native';
 import { StatusBar } from 'expo-status-bar';
-import { vars } from 'nativewind';
 import { useNTheme } from '@/hooks/useNTheme';
 import { setAndroidNavigationBar } from '@/lib/android-navigation-bar';
 import { THEMES } from '@/lib/utils';
@@ -53,7 +52,7 @@ export const NTheme = React.memo<NThemeProps>(({ children, theme: rawTheme, them
 
   const themeVars = useMemo(
     () => ({
-      light: vars({
+      light: {
         '--color-primary': themeColors.light.colors.primary,
         '--color-background': themeColors.light.colors.background,
         '--color-card': themeColors.light.colors.card,
@@ -61,8 +60,8 @@ export const NTheme = React.memo<NThemeProps>(({ children, theme: rawTheme, them
         '--color-muted': themeColors.light.colors.muted,
         '--color-border': themeColors.light.colors.border,
         '--color-notification': themeColors.light.colors.notification
-      }),
-      dark: vars({
+      } as any,
+      dark: {
         '--color-primary': themeColors.dark.colors.primary,
         '--color-background': themeColors.dark.colors.background,
         '--color-card': themeColors.dark.colors.card,
@@ -70,7 +69,7 @@ export const NTheme = React.memo<NThemeProps>(({ children, theme: rawTheme, them
         '--color-muted': themeColors.dark.colors.muted,
         '--color-border': themeColors.dark.colors.border,
         '--color-notification': themeColors.dark.colors.notification
-      })
+      } as any
     }),
     [themeColors]
   );

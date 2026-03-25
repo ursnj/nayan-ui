@@ -1,5 +1,6 @@
 import React from 'react';
-import { Progress } from '@/components/ui/progress';
+import { View } from 'react-native';
+import { cn } from '@/lib/utils';
 
 export interface NProgressProps {
   value: number;
@@ -8,8 +9,12 @@ export interface NProgressProps {
 }
 
 export const NProgress = React.memo<NProgressProps>(({ value, className = '', indicatorClassName = '' }) => {
+  const safeValue = Math.max(0, Math.min(100, value));
+
   return (
-    <Progress value={value} indicatorClassName={`bg-primary ${indicatorClassName}`} className={`w-full bg-card border border-border ${className}`} />
+    <View className={cn('w-full h-4 overflow-hidden rounded-full bg-card border border-border', className)}>
+      <View className={cn('h-full bg-primary', indicatorClassName)} style={{ width: `${safeValue}%` }} />
+    </View>
   );
 });
 

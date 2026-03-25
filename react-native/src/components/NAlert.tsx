@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert as HeroAlert } from 'heroui-native';
 import { AlertCircle } from '@/lib/icons/AlertCircle';
 import { cn } from '@/lib/utils';
 
@@ -14,10 +14,15 @@ export interface NAlertProps {
 
 export const NAlert = React.memo<NAlertProps>(({ title, description, className, titleClassName, descriptionClassName, iconClassName }) => {
   return (
-    <Alert icon={AlertCircle} className={cn('w-full bg-card border-border shadow-none rounded', className)} iconClassName={iconClassName}>
-      {title && <AlertTitle className={cn('text-text font-medium mb-1', titleClassName)}>{title}</AlertTitle>}
-      <AlertDescription className={cn('text-text text-sm', descriptionClassName)}>{description}</AlertDescription>
-    </Alert>
+    <HeroAlert className={cn('w-full bg-card border-border shadow-none rounded', className)}>
+      <HeroAlert.Indicator className={iconClassName}>
+        <AlertCircle size={18} className="text-text" />
+      </HeroAlert.Indicator>
+      <HeroAlert.Content>
+        {title && <HeroAlert.Title className={cn('text-text font-medium mb-1', titleClassName)}>{title}</HeroAlert.Title>}
+        <HeroAlert.Description className={cn('text-text text-sm', descriptionClassName)}>{description}</HeroAlert.Description>
+      </HeroAlert.Content>
+    </HeroAlert>
   );
 });
 

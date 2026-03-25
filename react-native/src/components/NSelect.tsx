@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
+import { Select } from 'heroui-native';
 import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NText } from '@/components/NText';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 
 export interface SelectOption {
@@ -51,11 +51,11 @@ export const NSelect = React.memo<NSelectProps>(
     return (
       <View className={cn('flex-1 mb-3', className)}>
         {label && <NText className={cn('mb-1', labelClassName)}>{label}</NText>}
-        <Select defaultValue={value} onValueChange={onChange} disabled={disabled}>
-          <SelectTrigger className={cn('w-full bg-card border-border', disabled && 'opacity-70')} disabled={disabled}>
-            <SelectValue className="text-text text-sm native:text-lg" placeholder={placeholder} />
-          </SelectTrigger>
-          <SelectContent insets={contentInsets} className={cn('w-full bg-card border-border shadow', inputClassName)}>
+        <Select defaultValue={value} onValueChange={onChange} isDisabled={disabled}>
+          <Select.Trigger className={cn('w-full bg-card border border-border', disabled && 'opacity-70')} isDisabled={disabled}>
+            <Select.Value className="text-text text-sm native:text-lg" placeholder={placeholder} />
+          </Select.Trigger>
+          <Select.Content presentation="popover" insets={contentInsets} className={cn('w-full bg-card border-border shadow', inputClassName)}>
             <View style={{ maxHeight: 550 }}>
               <ScrollView
                 showsVerticalScrollIndicator={true}
@@ -65,17 +65,17 @@ export const NSelect = React.memo<NSelectProps>(
                 scrollIndicatorInsets={{ right: 1 }}
                 keyboardShouldPersistTaps="handled"
                 scrollEventThrottle={1}>
-                <SelectGroup>
-                  {selectLabel && <SelectLabel className="text-text">{selectLabel}</SelectLabel>}
+                <View>
+                  {selectLabel && <Select.ListLabel className="text-text">{selectLabel}</Select.ListLabel>}
                   {items.map(item => (
-                    <SelectItem className="text-text" key={item.value} label={item.label} value={item.value}>
+                    <Select.Item className="text-text" key={item.value} label={item.label} value={item.value}>
                       {item.label}
-                    </SelectItem>
+                    </Select.Item>
                   ))}
-                </SelectGroup>
+                </View>
               </ScrollView>
             </View>
-          </SelectContent>
+          </Select.Content>
         </Select>
       </View>
     );

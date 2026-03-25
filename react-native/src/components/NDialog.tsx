@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog } from 'heroui-native';
+import { NText } from '@/components/NText';
 import { cn } from '@/lib/utils';
 
 export interface NDialogProps {
@@ -17,13 +18,13 @@ export const NDialog = React.memo<NDialogProps>(
   ({ children, trigger, title, className = '', headerClassName = '', headerTitleClassName = '', contentClassName = '' }) => {
     return (
       <Dialog>
-        <DialogTrigger asChild>{trigger}</DialogTrigger>
-        <DialogContent className={cn('border-border rounded p-0 min-w-[320px] sm:max-w-[425px]', className)}>
-          <DialogHeader className={cn('px-3 py-2', headerClassName)}>
-            <DialogTitle className={cn('text-text', headerTitleClassName)}>{title}</DialogTitle>
-          </DialogHeader>
+        <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
+        <Dialog.Content className={cn('border border-border rounded p-0 min-w-[320px] sm:max-w-[425px] bg-card', className)}>
+          <View className={cn('px-3 py-2', headerClassName)}>
+            <NText className={cn('text-text text-lg native:text-xl font-semibold', headerTitleClassName)}>{title}</NText>
+          </View>
           <View className={contentClassName}>{children}</View>
-        </DialogContent>
+        </Dialog.Content>
       </Dialog>
     );
   }

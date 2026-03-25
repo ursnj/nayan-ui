@@ -1,7 +1,6 @@
 import React from 'react';
+import { Label, Switch } from 'heroui-native';
 import { View } from 'react-native';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
 
 export interface NSwitchProps {
@@ -30,10 +29,10 @@ export const NSwitch = React.memo<NSwitchProps>(
           </Label>
         )}
         <Switch
-          disabled={disabled}
+          isDisabled={disabled}
           className={cn(`${checked ? 'bg-primary' : 'bg-muted opacity-80'} border-border`, inputClassName)}
-          checked={checked}
-          onCheckedChange={handleToggle}
+          isSelected={checked}
+          onSelectedChange={(next: boolean) => !disabled && onChange(next)}
           nativeID={'switch-' + label}
         />
       </View>

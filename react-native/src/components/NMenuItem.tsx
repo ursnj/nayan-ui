@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut } from '@/components/ui/dropdown-menu';
+import { Menu, Separator } from 'heroui-native';
+import { View } from 'react-native';
 import { cn } from '@/lib/utils';
 import { NText } from './NText';
 
@@ -29,12 +30,12 @@ export const NMenuItem = React.memo<NMenuItemProps>(
 
     return (
       <>
-        <DropdownMenuItem className={className} onPress={onPress}>
-          {menuIcon && <span className="mr-2">{menuIcon}</span>}
+        <Menu.Item className={className} onPress={onPress}>
+          {menuIcon && <View className="mr-2">{menuIcon}</View>}
           <NText className={textClassName}>{title}</NText>
-          {shortcut && <DropdownMenuShortcut className={cn('text-muted', shortcutClassName)}>{shortcut}</DropdownMenuShortcut>}
-        </DropdownMenuItem>
-        {hasSeparator && <DropdownMenuSeparator />}
+          {shortcut && <NText className={cn('text-muted ml-auto text-xs native:text-sm', shortcutClassName)}>{shortcut}</NText>}
+        </Menu.Item>
+        {hasSeparator && <Separator className="my-1 bg-border" />}
       </>
     );
   }

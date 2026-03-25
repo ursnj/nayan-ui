@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
+import { Popover } from 'heroui-native';
 import { Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 
 export interface NPopoverProps {
@@ -28,10 +28,14 @@ export const NPopover = React.memo<NPopoverProps>(({ trigger, children, classNam
 
   return (
     <Popover>
-      <PopoverTrigger asChild>{trigger}</PopoverTrigger>
-      <PopoverContent side={popoverSide} insets={contentInsets} className={cn('w-80 bg-card p-0 shadow-sm', className)}>
+      <Popover.Trigger asChild>{trigger}</Popover.Trigger>
+      <Popover.Content
+        presentation="popover"
+        placement={popoverSide}
+        insets={contentInsets}
+        className={cn('w-80 bg-card p-0 shadow-sm border border-border rounded-md', className)}>
         {children}
-      </PopoverContent>
+      </Popover.Content>
     </Popover>
   );
 });

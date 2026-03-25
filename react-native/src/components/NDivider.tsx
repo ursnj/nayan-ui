@@ -1,5 +1,5 @@
 import React from 'react';
-import { Separator } from '@/components/ui/separator';
+import { Separator } from 'heroui-native';
 import { cn } from '@/lib/utils';
 
 export interface NDividerProps {

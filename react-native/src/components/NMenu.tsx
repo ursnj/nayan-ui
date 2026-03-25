@@ -1,6 +1,6 @@
 import React, { type ReactNode, useMemo } from 'react';
+import { Menu, Separator } from 'heroui-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 
 export interface NMenuProps {
@@ -25,18 +25,18 @@ export const NMenu = React.memo<NMenuProps>(({ children, trigger, title = '', cl
   );
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger>{trigger}</DropdownMenuTrigger>
-      <DropdownMenuContent insets={contentInsets} className={cn('w-64 native:w-64 bg-card', className)}>
+    <Menu>
+      <Menu.Trigger>{trigger}</Menu.Trigger>
+      <Menu.Content presentation="popover" insets={contentInsets} className={cn('w-64 native:w-64 bg-card border border-border rounded-md', className)}>
         {title && (
           <>
-            <DropdownMenuLabel className={cn('text-text', titleClassName)}>{title}</DropdownMenuLabel>
-            <DropdownMenuSeparator />
+            <Menu.Label className={cn('text-text', titleClassName)}>{title}</Menu.Label>
+            <Separator className="my-1 bg-border" />
           </>
         )}
         {children}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </Menu.Content>
+    </Menu>
   );
 });
 
