@@ -24,6 +24,7 @@ yarn
 The [example app](/example/) demonstrates usage of the library. You need to run it to test any changes you make.
 
 It is configured to use the local version of the library, so any changes you make to the library's source code will be reflected in the example app. Changes to the library's JavaScript code will be reflected in the example app without a rebuild, but native code changes will require a rebuild of the example app.
+The example app uses Expo Continuous Native Generation (CNG), so native `ios/` and `android/` folders in `example/` are generated and should not be committed.
 
 You can use various commands from the root directory to work with the project.
 
@@ -43,6 +44,12 @@ To run the example app on iOS:
 
 ```sh
 yarn example ios
+```
+
+To regenerate native projects from app config (for example after changing Expo plugins or native settings):
+
+```sh
+yarn example prebuild
 ```
 
 To confirm that the app is running with the new architecture, you can check the Metro logs for a message like this:
@@ -120,6 +127,7 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn example start`: start the Metro server for the example app.
 - `yarn example android`: run the example app on Android.
 - `yarn example ios`: run the example app on iOS.
+- `yarn example prebuild`: regenerate native iOS and Android projects from Expo config.
 
 ### Sending a pull request
 

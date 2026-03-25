@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import { HeroUINativeProvider, NButton } from '@nayan-ui/react-native-heroui';
+import { HeroUINativeProvider, NButton } from '@nayan-ui/react-native';
 import { View } from 'react-native';
 import '../global.css';
 

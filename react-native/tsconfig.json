@@ -3,7 +3,7 @@
     "rootDir": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@nayan-ui/react-native-heroui": ["./src/index"]
+      "@nayan-ui/react-native": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

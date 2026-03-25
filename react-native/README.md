@@ -1,31 +1,33 @@
-# @nayan-ui/react-native-heroui
+# @nayan-ui/react-native
 
 React Native component library generated with `create-react-native-library`, configured for `heroui-native` + `uniwind`, and migrated with all components from `packages/react-native`.
 
 ## Installation
 
 ```sh
-npm install @nayan-ui/react-native-heroui heroui-native uniwind tailwindcss
+npm install @nayan-ui/react-native
 ```
 
 Install required peer dependencies in your app:
 
 ```sh
-npm install react-native-gesture-handler react-native-reanimated react-native-safe-area-context react-native-svg react-native-screens react-native-worklets
+npm install react react-native heroui-native nativewind uniwind tailwindcss @react-navigation/native react-native-gesture-handler react-native-reanimated react-native-safe-area-context react-native-svg react-native-screens react-native-worklets
 ```
+
+Also install any additional peers required by the specific components you use (for example: `@gorhom/bottom-sheet`, `@rn-primitives/*`, `expo-status-bar`, `expo-navigation-bar`, `lucide-react-native`, `react-native-modal-datetime-picker`, `react-native-toast-message`, `react-native-wheel-color-picker`).
 
 ## Styling Setup
 
 Import the bundled style entry once in your app:
 
 ```ts
-import '@nayan-ui/react-native-heroui/styles';
+import '@nayan-ui/react-native/styles';
 ```
 
 ## Usage
 
 ```tsx
-import { HeroUINativeProvider, NButton } from '@nayan-ui/react-native-heroui';
+import { HeroUINativeProvider, NButton } from '@nayan-ui/react-native';
 
 export function App() {
   return (
