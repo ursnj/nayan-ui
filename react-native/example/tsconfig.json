@@ -1,0 +1,7 @@
+{
+  "extends": "../tsconfig",
+  "compilerOptions": {
+    "types": ["uniwind/types"]
+  },
+  "include": ["**/*.ts", "**/*.tsx", "../nativewind-env.d.ts"]
+}
