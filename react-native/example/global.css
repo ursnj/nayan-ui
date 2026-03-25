@@ -4,3 +4,114 @@
 
 @source '../node_modules/heroui-native/lib';
 @source '../src';
+
+@layer theme {
+  :root {
+    @variant light {
+      --background: hsl(216 20% 95%);
+      --foreground: hsl(0 0% 2%);
+
+      --surface: hsl(0 0% 100%);
+      --surface-foreground: var(--foreground);
+      --surface-secondary: color-mix(in oklab, var(--surface) 92%, var(--foreground) 8%);
+      --surface-secondary-foreground: var(--foreground);
+      --surface-tertiary: color-mix(in oklab, var(--surface) 86%, var(--foreground) 14%);
+      --surface-tertiary-foreground: var(--foreground);
+
+      --overlay: var(--surface);
+      --overlay-foreground: var(--foreground);
+
+      --muted: hsl(0 0% 50%);
+
+      --default: color-mix(in oklab, var(--surface) 88%, var(--foreground) 12%);
+      --default-foreground: var(--foreground);
+
+      --accent: hsl(215 100% 45%);
+      --accent-foreground: white;
+
+      --field-background: var(--surface);
+      --field-foreground: var(--foreground);
+      --field-placeholder: var(--muted);
+      --field-border: hsl(0 0% 88%);
+
+      --success: var(--accent);
+      --success-foreground: var(--foreground);
+      --warning: var(--accent);
+      --warning-foreground: var(--foreground);
+      --danger: var(--accent);
+      --danger-foreground: white;
+
+      --segment: var(--surface);
+      --segment-foreground: var(--foreground);
+
+      --border: hsl(0 0% 88%);
+      --separator: color-mix(in oklab, var(--border) 75%, var(--foreground) 25%);
+      --focus: var(--accent);
+      --link: var(--accent);
+    }
+
+    @variant dark {
+      --background: hsl(0 0% 12%);
+      --foreground: hsl(0 0% 96%);
+
+      --surface: hsl(0 0% 21%);
+      --surface-foreground: var(--foreground);
+      --surface-secondary: color-mix(in oklab, var(--surface) 78%, var(--foreground) 22%);
+      --surface-secondary-foreground: var(--foreground);
+      --surface-tertiary: color-mix(in oklab, var(--surface) 68%, var(--foreground) 32%);
+      --surface-tertiary-foreground: var(--foreground);
+
+      --overlay: var(--surface);
+      --overlay-foreground: var(--foreground);
+
+      --muted: hsl(0 0% 69%);
+
+      --default: color-mix(in oklab, var(--surface) 72%, var(--foreground) 28%);
+      --default-foreground: var(--foreground);
+
+      --accent: hsl(209 100% 58%);
+      --accent-foreground: white;
+
+      --field-background: var(--surface);
+      --field-foreground: var(--foreground);
+      --field-placeholder: var(--muted);
+      --field-border: hsl(0 0% 31%);
+
+      --success: var(--accent);
+      --success-foreground: var(--foreground);
+      --warning: var(--accent);
+      --warning-foreground: var(--foreground);
+      --danger: var(--accent);
+      --danger-foreground: white;
+
+      --segment: var(--surface);
+      --segment-foreground: var(--foreground);
+
+      --border: hsl(0 0% 31%);
+      --separator: color-mix(in oklab, var(--border) 75%, var(--foreground) 25%);
+      --focus: var(--accent);
+      --link: var(--accent);
+    }
+  }
+}
+
+@theme inline static {
+  /* Aliases used by @nayan-ui/react-native utility classes */
+  --color-background: var(--background);
+  --color-border: var(--border);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--surface-foreground);
+  --color-muted: var(--muted);
+  --color-popover: var(--overlay);
+  --color-popover-foreground: var(--overlay-foreground);
+  --color-text: var(--foreground);
+  --color-input: var(--field-background);
+  --color-ring: var(--focus);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--accent-foreground);
+  --color-secondary: var(--default);
+  --color-secondary-foreground: var(--default-foreground);
+  --color-destructive: var(--danger);
+  --color-destructive-foreground: var(--danger-foreground);
+  --color-muted-foreground: var(--muted);
+}
