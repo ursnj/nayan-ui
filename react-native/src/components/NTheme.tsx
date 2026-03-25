@@ -4,7 +4,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { ThemeProvider } from '@react-navigation/native';
-import { PortalHost } from 'heroui-native';
+import { PortalHost, ToastProvider } from 'heroui-native';
 import { StatusBar } from 'expo-status-bar';
 import { useNTheme } from '@/hooks/useNTheme';
 import { setAndroidNavigationBar } from '@/lib/android-navigation-bar';
@@ -82,9 +82,11 @@ export const NTheme = React.memo<NThemeProps>(({ children, theme: rawTheme, them
         <StatusBar style={isDarkMode ? THEMES.light : THEMES.dark} />
         <GestureHandlerRootView className="flex-1">
           <SafeAreaProvider>
-            <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
-            <PortalHost />
-            <NToast />
+            <ToastProvider>
+              <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+              <PortalHost />
+              <NToast />
+            </ToastProvider>
           </SafeAreaProvider>
         </GestureHandlerRootView>
       </View>

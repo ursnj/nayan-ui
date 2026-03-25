@@ -1,215 +1,125 @@
-import React, { useMemo } from 'react';
-import Toast, { BaseToast, ErrorToast, type ToastConfig, type ToastShowParams } from 'react-native-toast-message';
-import { useNTheme } from '@/hooks/useNTheme';
+import React, { useEffect } from 'react';
+import { useToast, type ToastManager, type ToastShowConfig } from 'heroui-native';
 
 export interface NToastConfig {
-  config?: ToastConfig;
+  config?: unknown;
   successIcon?: React.ComponentType<any> | React.ReactElement;
   errorIcon?: React.ComponentType<any> | React.ReactElement;
   infoIcon?: React.ComponentType<any> | React.ReactElement;
   warningIcon?: React.ComponentType<any> | React.ReactElement;
 }
 
-export interface NToastShowOptions extends Omit<ToastShowParams, 'type'> {
+export interface NToastShowOptions {
   type?: 'success' | 'error' | 'info' | 'warning';
   message: string;
   title?: string;
   icon?: React.ComponentType<any> | React.ReactElement;
+  id?: string;
+  position?: 'top' | 'bottom';
+  duration?: number | 'persistent';
+  autoHide?: boolean;
+  actionLabel?: string;
+  onActionPress?: ToastShowConfig['onActionPress'];
+  onShow?: () => void;
+  onHide?: () => void;
 }
 
 export interface NToastMethods {
   show: (options: NToastShowOptions) => void;
-  hide: () => void;
+  hide: (ids?: string | string[] | 'all') => void;
   success: (message: string, title?: string) => void;
   error: (message: string, title?: string) => void;
   info: (message: string, title?: string) => void;
   warning: (message: string, title?: string) => void;
 }
 
-const createToastConfig = (colors: any, icons: Partial<NToastConfig> = {}): ToastConfig => ({
-  success: (props: any) => {
-    const IconComponent = icons.successIcon;
-    const iconElement = IconComponent ? (
-      React.isValidElement(IconComponent) ? (
-        IconComponent
-      ) : (
-        <IconComponent size={20} color={colors.primary} />
-      )
-    ) : null;
-
-    return (
-      <BaseToast
-        {...props}
-        style={{ borderLeftColor: colors.primary }}
-        contentContainerStyle={{
-          paddingHorizontal: 10,
-          backgroundColor: colors.card,
-          borderWidth: 1,
-          borderColor: colors.border
-        }}
-        text2NumberOfLines={2}
-        text1Style={{ height: 0 }}
-        text2Style={{
-          marginTop: -3,
-          fontSize: 16,
-          lineHeight: 25,
-          color: colors.text
-        }}
-        renderLeadingIcon={() => iconElement}
-      />
-    );
-  },
-  error: (props: any) => {
-    const IconComponent = icons.errorIcon;
-    const iconElement = IconComponent ? React.isValidElement(IconComponent) ? IconComponent : <IconComponent size={20} color="red" /> : null;
-
-    return (
-      <ErrorToast
-        {...props}
-        style={{ borderLeftColor: 'red' }}
-        contentContainerStyle={{
-          paddingHorizontal: 10,
-          backgroundColor: colors.card,
-          borderWidth: 1,
-          borderColor: colors.border
-        }}
-        text2NumberOfLines={2}
-        text1Style={{ height: 0 }}
-        text2Style={{
-          marginTop: -3,
-          fontSize: 16,
-          lineHeight: 25,
-          color: colors.text
-        }}
-        renderLeadingIcon={() => iconElement}
-      />
-    );
-  },
-  info: (props: any) => {
-    const IconComponent = icons.infoIcon;
-    const iconElement = IconComponent ? (
-      React.isValidElement(IconComponent) ? (
-        IconComponent
-      ) : (
-        <IconComponent size={20} color={colors.primary} />
-      )
-    ) : null;
-
-    return (
-      <BaseToast
-        {...props}
-        style={{ borderLeftColor: colors.primary }}
-        contentContainerStyle={{
-          paddingHorizontal: 10,
-          backgroundColor: colors.card,
-          borderWidth: 1,
-          borderColor: colors.border
-        }}
-        text2NumberOfLines={2}
-        text1Style={{ height: 0 }}
-        text2Style={{
-          marginTop: -3,
-          fontSize: 16,
-          lineHeight: 25,
-          color: colors.text
-        }}
-        renderLeadingIcon={() => iconElement}
-      />
-    );
-  },
-  warning: (props: any) => {
-    const IconComponent = icons.warningIcon;
-    const iconElement = IconComponent ? React.isValidElement(IconComponent) ? IconComponent : <IconComponent size={20} color="orange" /> : null;
-
-    return (
-      <BaseToast
-        {...props}
-        style={{ borderLeftColor: 'orange' }}
-        contentContainerStyle={{
-          paddingHorizontal: 10,
-          backgroundColor: colors.card,
-          borderWidth: 1,
-          borderColor: colors.border
-        }}
-        text2NumberOfLines={2}
-        text1Style={{ height: 0 }}
-        text2Style={{
-          marginTop: -3,
-          fontSize: 16,
-          lineHeight: 25,
-          color: colors.text
-        }}
-        renderLeadingIcon={() => iconElement}
-      />
-    );
-  }
-});
-
 const NToastComponent = React.memo<NToastConfig>(({ config, successIcon, errorIcon, infoIcon, warningIcon }) => {
-  const { colors } = useNTheme();
+  const { toast } = useToast();
 
-  const toastConfig = useMemo(
-    () => config || createToastConfig(colors, { successIcon, errorIcon, infoIcon, warningIcon }),
-    [colors, config, successIcon, errorIcon, infoIcon, warningIcon]
-  );
+  useEffect(() => {
+    toastManager = toast;
+    defaultShowConfig = typeof config === 'object' && config ? (config as Partial<ToastShowConfig>) : {};
+    defaultIcons = { successIcon, errorIcon, infoIcon, warningIcon };
 
-  return <Toast config={toastConfig} />;
+    return () => {
+      if (toastManager === toast) {
+        toastManager = null;
+      }
+    };
+  }, [toast, successIcon, errorIcon, infoIcon, warningIcon]);
+
+  return null;
 });
 
 NToastComponent.displayName = 'NToast';
 
+let toastManager: ToastManager | null = null;
+let defaultShowConfig: Partial<ToastShowConfig> = {};
+let defaultIcons: Partial<NToastConfig> = {};
+
+const resolveIcon = (icon?: React.ComponentType<any> | React.ReactElement): React.ReactNode => {
+  if (!icon) return undefined;
+  if (React.isValidElement(icon)) return icon;
+  const IconComponent = icon;
+  return <IconComponent size={20} />;
+};
+
+const toVariant = (type: NonNullable<NToastShowOptions['type']>): ToastShowConfig['variant'] => {
+  switch (type) {
+    case 'success':
+      return 'success';
+    case 'error':
+      return 'danger';
+    case 'warning':
+      return 'warning';
+    case 'info':
+    default:
+      return 'accent';
+  }
+};
+
 const toastMethods: NToastMethods = {
-  show: ({ message, title, type = 'success', icon, ...options }: NToastShowOptions) => {
-    Toast.show({
-      type,
-      text1: title,
-      text2: message,
-      position: 'bottom',
-      bottomOffset: 50,
-      ...options
+  show: ({ message, title, type = 'success', icon, position = 'bottom', duration, autoHide, id, actionLabel, onActionPress, onShow, onHide }: NToastShowOptions) => {
+    if (!toastManager) return;
+
+    const defaultIcon = type === 'success' ? defaultIcons.successIcon : type === 'error' ? defaultIcons.errorIcon : type === 'warning' ? defaultIcons.warningIcon : defaultIcons.infoIcon;
+    const resolvedDuration = autoHide === false ? 'persistent' : duration;
+
+    toastManager.show({
+      ...defaultShowConfig,
+      id,
+      placement: position,
+      variant: toVariant(type),
+      label: title ?? message,
+      description: title ? message : undefined,
+      icon: resolveIcon(icon ?? defaultIcon),
+      duration: resolvedDuration,
+      actionLabel,
+      onActionPress,
+      onShow,
+      onHide
     });
   },
 
-  hide: () => Toast.hide(),
+  hide: ids => {
+    if (!toastManager) return;
+    toastManager.hide(ids);
+  },
 
   success: (message: string, title?: string) => {
-    Toast.show({
-      type: 'success',
-      text1: title,
-      text2: message,
-      position: 'bottom',
-      bottomOffset: 50
-    });
+    toastMethods.show({ type: 'success', message, title });
   },
 
   error: (message: string, title?: string) => {
-    Toast.show({
-      type: 'error',
-      text1: title,
-      text2: message,
-      position: 'bottom',
-      bottomOffset: 50
-    });
+    toastMethods.show({ type: 'error', message, title });
   },
 
   info: (message: string, title?: string) => {
-    Toast.show({
-      type: 'info',
-      text1: title,
-      text2: message,
-      position: 'bottom',
-      bottomOffset: 50
-    });
+    toastMethods.show({ type: 'info', message, title });
   },
 
   warning: (message: string, title?: string) => {
-    Toast.show({
-      type: 'warning',
-      text1: title,
-      text2: message,
-      position: 'bottom',
-      bottomOffset: 50
-    });
+    toastMethods.show({ type: 'warning', message, title });
   }
 };
 
