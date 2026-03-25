@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "nayanui.reactnative.example"
+      "bundleIdentifier": "com.nayanui.reactnative"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +23,7 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "package": "nayanui.reactnative.example"
+      "package": "com.nayanui.reactnative"
     },
     "web": {
       "favicon": "./assets/favicon.png"
