@@ -1,7 +1,7 @@
 {
   "name": "@nayan-ui/react-native-example",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start --host localhost",
     "start:dev-client": "expo start --dev-client --host localhost",
@@ -13,7 +13,9 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/log-box": "^55.0.7",
     "@expo/metro-runtime": "~55.0.6",
+    "@expo/vector-icons": "^14.1.0",
     "@gorhom/bottom-sheet": "^5.2.8",
     "@nayan-ui/react-native": "*",
     "@react-native-community/datetimepicker": "^8.3.0",
@@ -35,7 +37,11 @@
     "@rn-primitives/tooltip": "^1.2.0",
     "@rn-primitives/types": "^1.2.0",
     "expo": "~55.0.8",
+    "expo-constants": "~55.0.9",
+    "expo-font": "~55.0.4",
+    "expo-linking": "~55.0.8",
     "expo-navigation-bar": "^4.2.4",
+    "expo-router": "~55.0.7",
     "expo-status-bar": "~55.0.4",
     "heroui-native": "^1.0.0",
     "lucide-react-native": "^0.525.0",
@@ -60,6 +66,8 @@
   },
   "private": true,
   "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@types/babel__core": "^7",
     "react-native-builder-bob": "^0.40.18",
     "react-native-monorepo-config": "^0.3.3"
   }

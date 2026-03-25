@@ -2,7 +2,9 @@
 @import 'uniwind';
 @import 'heroui-native/styles';
 
+@source './src';
 @source '../node_modules/heroui-native/lib';
+@source '../node_modules/@nayan-ui/react-native/dist';
 @source '../src';
 
 @layer theme {

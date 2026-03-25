@@ -1,11 +1,12 @@
 {
   "expo": {
-    "name": "ReactNativeHeroui Example",
+    "name": "React Native Example",
     "slug": "@nayan-ui/react-native-example",
     "version": "1.0.0",
     "orientation": "portrait",
+    "scheme": "nayanui",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -13,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "nayanui.reactnativeheroui.example"
+      "bundleIdentifier": "nayanui.reactnative.example"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,10 +23,17 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "package": "nayanui.reactnativeheroui.example"
+      "package": "nayanui.reactnative.example"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true
     }
   }
 }

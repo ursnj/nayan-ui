@@ -1,7 +1,25 @@
 {
   "extends": "../tsconfig",
   "compilerOptions": {
-    "types": ["uniwind/types"]
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noUncheckedIndexedAccess": false,
+    "verbatimModuleSyntax": false,
+    "types": [
+      "uniwind/types"
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
   },
-  "include": ["**/*.ts", "**/*.tsx", "../nativewind-env.d.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "../nativewind-env.d.ts",
+    "expo-env.d.ts"
+  ]
 }
