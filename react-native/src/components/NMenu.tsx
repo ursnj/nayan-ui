@@ -1,7 +1,7 @@
 import React, { type ReactNode, useMemo } from 'react';
 import { Menu, Separator } from 'heroui-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { cn } from '@/lib/utils';
+import { cn } from '../lib/utils';
 
 export interface NMenuProps {
   children?: ReactNode;

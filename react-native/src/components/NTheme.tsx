@@ -1,14 +1,15 @@
 import React, { useEffect, useMemo } from 'react';
-import { View } from 'react-native';
+import { View } from 'uniwind/components';
+
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { ThemeProvider } from '@react-navigation/native';
-import { PortalHost, ToastProvider } from 'heroui-native';
+import { HeroUINativeProvider } from 'heroui-native';
 import { StatusBar } from 'expo-status-bar';
-import { useNTheme } from '@/hooks/useNTheme';
-import { setAndroidNavigationBar } from '@/lib/android-navigation-bar';
-import { THEMES } from '@/lib/utils';
+import { useNTheme } from '../hooks/useNTheme';
+import { setAndroidNavigationBar } from '../lib/android-navigation-bar';
+import { THEMES } from '../lib/utils';
 import { NToast } from './NToast';
 
 interface RNTheme extends ReactNavigation.Theme {
@@ -82,11 +83,10 @@ export const NTheme = React.memo<NThemeProps>(({ children, theme: rawTheme, them
         <StatusBar style={isDarkMode ? THEMES.light : THEMES.dark} />
         <GestureHandlerRootView className="flex-1">
           <SafeAreaProvider>
-            <ToastProvider>
+            <HeroUINativeProvider>
               <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
-              <PortalHost />
               <NToast />
-            </ToastProvider>
+            </HeroUINativeProvider>
           </SafeAreaProvider>
         </GestureHandlerRootView>
       </View>

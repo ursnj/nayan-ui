@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
 import { Button } from 'heroui-native';
-import { View } from 'react-native';
-import { NText } from '@/components/NText';
-import { cn } from '@/lib/utils';
+import { View } from 'uniwind/components';
+
+import { NText } from './NText';
+import { cn } from '../lib/utils';
 
 export interface ButtonGroupItem {
   label: string;

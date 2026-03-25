@@ -1,6 +1,7 @@
 import React from 'react';
-import { Text, type TextProps } from 'react-native';
-import { cn } from '@/lib/utils';
+import { type TextProps } from 'react-native';
+import { cn } from '../lib/utils';
+import { Text } from 'uniwind/components';
 
 export interface NTextProps extends TextProps {
   className?: string;

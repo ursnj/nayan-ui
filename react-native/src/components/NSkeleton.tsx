@@ -1,6 +1,6 @@
 import React from 'react';
 import { Skeleton } from 'heroui-native';
-import { cn } from '@/lib/utils';
+import { cn } from '../lib/utils';
 
 export interface NSkeletonProps {
   className?: string;

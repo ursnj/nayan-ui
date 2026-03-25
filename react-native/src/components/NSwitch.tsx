@@ -1,7 +1,8 @@
 import React from 'react';
 import { Label, Switch } from 'heroui-native';
-import { View } from 'react-native';
-import { cn } from '@/lib/utils';
+import { View } from 'uniwind/components';
+
+import { cn } from '../lib/utils';
 
 export interface NSwitchProps {
   label?: string;

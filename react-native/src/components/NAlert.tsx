@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert as HeroAlert } from 'heroui-native';
-import { AlertCircle } from '@/lib/icons/AlertCircle';
-import { cn } from '@/lib/utils';
+import { AlertCircle } from '../lib/icons/AlertCircle';
+import { cn } from '../lib/utils';
 
 export interface NAlertProps {
   title?: string;

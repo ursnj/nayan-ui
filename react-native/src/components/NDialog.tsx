@@ -1,8 +1,9 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View } from 'uniwind/components';
+
 import { Dialog } from 'heroui-native';
-import { NText } from '@/components/NText';
-import { cn } from '@/lib/utils';
+import { NText } from './NText';
+import { cn } from '../lib/utils';
 
 export interface NDialogProps {
   children?: React.ReactNode;

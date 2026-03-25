@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react';
 import { Select } from 'heroui-native';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'uniwind/components';
+
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { NText } from '@/components/NText';
-import { cn } from '@/lib/utils';
+import { NText } from './NText';
+import { cn } from '../lib/utils';
 
 export interface SelectOption {
   label: string;

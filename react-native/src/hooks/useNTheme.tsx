@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTheme } from '@react-navigation/native';
 import { Uniwind, useUniwind } from 'uniwind';
-import { THEMES } from '@/lib/utils';
+import { THEMES } from '../lib/utils';
 
 export function useNTheme() {
   const theme: any = useTheme();

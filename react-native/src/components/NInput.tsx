@@ -1,8 +1,9 @@
 import React from 'react';
 import { Input } from 'heroui-native';
-import { type TextInputProps, View } from 'react-native';
-import { NText } from '@/components/NText';
-import { cn } from '@/lib/utils';
+import { type TextInputProps } from 'react-native';
+import { NText } from './NText';
+import { cn } from '../lib/utils';
+import { View } from 'uniwind/components';
 
 export interface NInputProps extends TextInputProps {
   value: string;

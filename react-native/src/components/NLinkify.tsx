@@ -1,11 +1,12 @@
 import React, { type ReactNode, useCallback, useEffect, useState } from 'react';
-import { Linking, Platform, Text, type TextProps, type TextStyle, View, type ViewProps } from 'react-native';
+import { Linking, Platform, type TextProps, type TextStyle, type ViewProps } from 'react-native';
+import { Text, View } from 'uniwind/components';
 // @ts-ignore
 import linkifyIt from 'linkify-it';
 // @ts-ignore
 import mdurl from 'mdurl';
-import { NText } from '@/components/NText';
-import { useNTheme } from '@/hooks/useNTheme';
+import { NText } from './NText';
+import { useNTheme } from '../hooks/useNTheme';
 
 const defaultLinkify = linkifyIt();
 const { OS } = Platform;

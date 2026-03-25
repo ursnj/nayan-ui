@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { Popover } from 'heroui-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { NText } from '@/components/NText';
-import { cn } from '@/lib/utils';
+import { NText } from './NText';
+import { cn } from '../lib/utils';
 
 export interface NTooltipProps {
   children: React.ReactNode;

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Popover } from 'heroui-native';
 import { Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { cn } from '@/lib/utils';
+import { cn } from '../lib/utils';
 
 export interface NPopoverProps {
   trigger?: React.ReactNode;

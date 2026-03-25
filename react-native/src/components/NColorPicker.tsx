@@ -1,9 +1,10 @@
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, View } from 'uniwind/components';
+
 import ColorPicker from 'react-native-wheel-color-picker';
-import { NPopover } from '@/components/NPopover';
-import { NText } from '@/components/NText';
-import { cn } from '@/lib/utils';
+import { NPopover } from './NPopover';
+import { NText } from './NText';
+import { cn } from '../lib/utils';
 
 export interface NColorPickerProps {
   value: string;

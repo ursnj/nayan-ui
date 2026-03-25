@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, type ViewProps } from 'react-native';
-import { cn } from '@/lib/utils';
+import { type ViewProps } from 'react-native';
+import { cn } from '../lib/utils';
+import { View } from 'uniwind/components';
 
 export interface NCardProps extends ViewProps {
   children?: React.ReactNode;

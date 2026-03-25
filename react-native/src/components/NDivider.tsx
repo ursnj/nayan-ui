@@ -1,6 +1,6 @@
 import React from 'react';
 import { Separator } from 'heroui-native';
-import { cn } from '@/lib/utils';
+import { cn } from '../lib/utils';
 
 export interface NDividerProps {
   className?: string;

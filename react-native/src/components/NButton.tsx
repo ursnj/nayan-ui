@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react';
 import { type PressableProps } from 'react-native';
-import { View } from 'react-native';
-import { NPress } from '@/components/NPress';
-import { NText } from '@/components/NText';
-import { cn } from '@/lib/utils';
+import { View } from 'uniwind/components';
+
+import { NPress } from './NPress';
+import { NText } from './NText';
+import { cn } from '../lib/utils';
 
 export interface NButtonProps extends PressableProps {
   children: React.ReactNode;

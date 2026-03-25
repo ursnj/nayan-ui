@@ -1,12 +1,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { View } from 'react-native';
+import { View } from 'uniwind/components';
+
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { format } from 'date-fns';
-import { NPress } from '@/components/NPress';
-import { NText } from '@/components/NText';
-import { useNTheme } from '@/hooks/useNTheme';
-import { Calendar } from '@/lib/icons/Calender';
-import { cn } from '@/lib/utils';
+import { NPress } from './NPress';
+import { NText } from './NText';
+import { useNTheme } from '../hooks/useNTheme';
+import { Calendar } from '../lib/icons/Calender';
+import { cn } from '../lib/utils';
 
 export interface NDatePickerProps {
   value: Date;

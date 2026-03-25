@@ -1,10 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
-import { Pressable, type PressableProps } from 'react-native';
-import { useNTheme } from '@/hooks/useNTheme';
-import { setAndroidNavigationBar } from '@/lib/android-navigation-bar';
-import { MoonStar } from '@/lib/icons/MoonStar';
-import { Sun } from '@/lib/icons/Sun';
-import { THEMES, cn } from '@/lib/utils';
+import { type PressableProps } from 'react-native';
+import { useNTheme } from '../hooks/useNTheme';
+import { setAndroidNavigationBar } from '../lib/android-navigation-bar';
+import { MoonStar } from '../lib/icons/MoonStar';
+import { Sun } from '../lib/icons/Sun';
+import { THEMES, cn } from '../lib/utils';
+import { Pressable } from 'uniwind/components';
 
 export interface NThemeToggleProps extends Omit<PressableProps, 'onPress'> {
   size?: number;

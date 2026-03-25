@@ -1,7 +1,8 @@
 import React from 'react';
-import { ActivityIndicator, View } from 'react-native';
-import { useNTheme } from '@/hooks/useNTheme';
-import { cn } from '@/lib/utils';
+import { ActivityIndicator, View } from 'uniwind/components';
+
+import { useNTheme } from '../hooks/useNTheme';
+import { cn } from '../lib/utils';
 
 export interface NLoadingProps {
   color?: string;

@@ -1,6 +1,7 @@
 import React from 'react';
-import { View } from 'react-native';
-import { cn } from '@/lib/utils';
+import { View } from 'uniwind/components';
+
+import { cn } from '../lib/utils';
 
 export interface NProgressProps {
   value: number;

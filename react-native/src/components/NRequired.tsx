@@ -1,6 +1,6 @@
 import React from 'react';
-import { NText } from '@/components/NText';
-import { cn } from '@/lib/utils';
+import { NText } from './NText';
+import { cn } from '../lib/utils';
 
 export interface NRequiredProps {
   className?: string;
