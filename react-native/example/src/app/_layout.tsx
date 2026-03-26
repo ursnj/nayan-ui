@@ -1,15 +1,13 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
-import { NTheme, THEMES, useNTheme } from '@nayan-ui/react-native';
+import { NTheme } from '@nayan-ui/react-native';
 import { Stack } from 'expo-router';
 import '../../global.css';
 import { components, themeColors } from '../constants';
 
 const RootLayout = () => {
-  const { theme } = useNTheme();
-
   return (
-    <NTheme theme={theme || THEMES.light} themeColors={themeColors}>
+    <NTheme themeColors={themeColors}>
       <Stack>
         <Stack.Screen name="index" options={{ title: 'React Native Nayan' }} />
         {components.map((component: any) => (

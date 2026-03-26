@@ -11,6 +11,6 @@ const config = withMetroConfig(getDefaultConfig(__dirname), {
 });
 
 module.exports = withUniwindConfig(config, {
-  cssEntryFile: './global.css',
-  dtsFile: './src/uniwind-types.d.ts'
+  cssEntryFile: path.resolve(__dirname, 'global.css'),
+  dtsFile: path.resolve(__dirname, 'src/uniwind-types.d.ts')
 });

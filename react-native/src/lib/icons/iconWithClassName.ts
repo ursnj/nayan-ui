@@ -1,17 +1,9 @@
 import type { LucideIcon } from 'lucide-react-native';
-import { cssInterop } from 'nativewind';
+import { withUniwind } from 'uniwind';
 
-export function iconWithClassName(icon: LucideIcon) {
-  cssInterop(
-    icon as any,
-    {
-      className: {
-        target: 'style',
-        nativeStyleToProp: {
-          color: true,
-          opacity: true
-        }
-      }
-    } as any
-  );
+export function iconWithClassName<T extends LucideIcon>(icon: T): T {
+  return withUniwind(icon as any, {
+    color: { fromClassName: 'className', styleProperty: 'color' },
+    opacity: { fromClassName: 'className', styleProperty: 'opacity' }
+  }) as T;
 }

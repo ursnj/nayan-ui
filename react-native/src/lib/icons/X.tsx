@@ -1,5 +1,5 @@
 import { X } from 'lucide-react-native';
 import { iconWithClassName } from './iconWithClassName';
 
-iconWithClassName(X);
-export { X };
+const StyledX = iconWithClassName(X);
+export { StyledX as X };

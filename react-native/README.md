@@ -11,10 +11,10 @@ npm install @nayan-ui/react-native
 Install required peer dependencies in your app:
 
 ```sh
-npm install react react-native heroui-native nativewind uniwind tailwindcss @react-navigation/native react-native-gesture-handler react-native-reanimated react-native-safe-area-context react-native-svg react-native-screens react-native-worklets
+npm install react react-native heroui-native uniwind tailwindcss @react-navigation/native react-native-gesture-handler react-native-reanimated react-native-safe-area-context react-native-svg react-native-screens react-native-worklets
 ```
 
-Also install any additional peers required by the specific components you use (for example: `@gorhom/bottom-sheet`, `heroui-native`, `expo-status-bar`, `expo-navigation-bar`, `lucide-react-native`, `react-native-modal-datetime-picker`, `react-native-toast-message`, `react-native-wheel-color-picker`).
+Also install any additional peers required by the specific components you use (for example: `@gorhom/bottom-sheet`, `heroui-native`, `expo-status-bar`, `expo-navigation-bar`, `lucide-react-native`, `react-native-modal-datetime-picker`, `react-native-wheel-color-picker`).
 
 ## Styling Setup
 

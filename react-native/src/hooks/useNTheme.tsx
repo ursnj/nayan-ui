@@ -1,10 +1,15 @@
 import { useState } from 'react';
-import { useTheme } from '@react-navigation/native';
+import { DefaultTheme, useTheme } from '@react-navigation/native';
 import { Uniwind, useUniwind } from 'uniwind';
 import { THEMES } from '../lib/utils';
 
 export function useNTheme() {
-  const theme: any = useTheme();
+  let navigationTheme: any = DefaultTheme;
+  try {
+    navigationTheme = useTheme();
+  } catch {
+    navigationTheme = DefaultTheme;
+  }
   const [themeColors, setColors] = useState(null);
   const { theme: currentTheme } = useUniwind();
 
@@ -24,7 +29,7 @@ export function useNTheme() {
     themeColors,
     setThemeColors,
     theme: currentTheme,
-    colors: theme.colors,
+    colors: navigationTheme.colors,
     setTheme,
     toggleTheme,
     isDarkMode: currentTheme === THEMES.dark
