@@ -1304,10 +1304,10 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.10.tgz#a2a1e3812d14525f725d011a73eceb41fef5bc1c"
   integrity sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==
 
-"@gorhom/bottom-sheet@^5.2.6":
-  version "5.2.6"
-  resolved "https://registry.yarnpkg.com/@gorhom/bottom-sheet/-/bottom-sheet-5.2.6.tgz#5f2045f6ca965383afe39f7dfa3afad1502b7467"
-  integrity sha512-vmruJxdiUGDg+ZYcDmS30XDhq/h/+QkINOI5LY/uGjx8cPGwgJW0H6AB902gNTKtccbiKe/rr94EwdmIEz+LAQ==
+"@gorhom/bottom-sheet@^5.2.8":
+  version "5.2.8"
+  resolved "https://registry.yarnpkg.com/@gorhom/bottom-sheet/-/bottom-sheet-5.2.8.tgz#25e49122c30ffe83d3813b3bcf3dec39f3359aeb"
+  integrity sha512-+N27SMpbBxXZQ/IA2nlEV6RGxL/qSFHKfdFKcygvW+HqPG5jVNb1OqehLQsGfBP+Up42i0gW5ppI+DhpB7UCzA==
   dependencies:
     "@gorhom/portal" "1.0.14"
     invariant "^2.2.4"

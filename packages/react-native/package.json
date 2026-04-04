@@ -1,6 +1,6 @@
 {
   "name": "@nayan-ui/react-native",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React Native Component Library for smooth and faster mobile application development.",
   "source": "./src/index.tsx",
   "main": "./dist/commonjs/index.js",
@@ -49,7 +49,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "@gorhom/bottom-sheet": "^5.2.6",
+    "@gorhom/bottom-sheet": "^5.2.8",
     "@rn-primitives/accordion": "^1.2.0",
     "@rn-primitives/alert-dialog": "^1.2.0",
     "@rn-primitives/checkbox": "^1.2.0",
