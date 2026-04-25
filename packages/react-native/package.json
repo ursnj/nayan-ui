@@ -1,6 +1,6 @@
 {
   "name": "@nayan-ui/react-native",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "React Native Component Library for smooth and faster mobile application development.",
   "source": "./src/index.tsx",
   "main": "./dist/commonjs/index.js",
@@ -69,7 +69,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "expo-status-bar": "^2.2.3",
+    "expo-status-bar": "^55.0.5",
     "linkify-it": "^5.0.0",
     "lucide-react-native": "^0.525.0",
     "mdurl": "^2.0.0",
