@@ -12,8 +12,11 @@ module.exports = function (api) {
             '@/': path.resolve(__dirname, '../../packages/react-native/src/')
           }
         }
-      ],
-      'react-native-reanimated/plugin'
+      ]
+      // Note: do NOT add 'react-native-reanimated/plugin' here.
+      // babel-preset-expo automatically includes it (and the worklets plugin)
+      // when react-native-reanimated is installed. Adding it manually causes
+      // double-transformation of worklets and a SIGABRT crash on the UI runtime.
     ]
   };
 };

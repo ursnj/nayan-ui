@@ -2,19 +2,19 @@
   "name": "@nayan-ui/react-native",
   "version": "1.0.2",
   "description": "React Native Component Library for smooth and faster mobile application development.",
-  "source": "./src/index.tsx",
+  "source": "./src/index.ts",
   "main": "./dist/commonjs/index.js",
   "module": "./dist/module/index.js",
   "types": "./dist/typescript/commonjs/src/index.d.ts",
   "exports": {
     ".": {
       "import": {
-        "development": "./src/index.tsx",
+        "development": "./src/index.ts",
         "types": "./dist/typescript/commonjs/src/index.d.ts",
         "default": "./dist/module/index.js"
       },
       "require": {
-        "development": "./src/index.tsx",
+        "development": "./src/index.ts",
         "types": "./dist/typescript/commonjs/src/index.d.ts",
         "default": "./dist/commonjs/index.js"
       }
@@ -67,13 +67,13 @@
     "babel-plugin-module-resolver": "^5.0.2",
     "expo-navigation-bar": "~55.0.9",
     "react": "19.2.0",
-    "react-native": "0.83.2",
+    "react-native": "0.83.6",
     "react-native-builder-bob": "^0.40.13",
     "react-native-gesture-handler": "~2.30.0",
     "react-native-reanimated": "4.2.1",
     "react-native-safe-area-context": "~5.6.2",
     "react-native-svg": "15.15.3",
-    "react-native-worklets": "0.7.2",
+    "react-native-worklets": "0.7.4",
     "typescript": "^5.8.3",
     "uniwind": "latest"
   },
