@@ -34,8 +34,6 @@ const screens = [
   { href: '/tabs', label: 'NTabs' },
   { href: '/tag-group', label: 'NTagGroup' },
   { href: '/text', label: 'NText' },
-  { href: '/textarea', label: 'NTextarea' },
-  { href: '/text-field', label: 'NTextField' },
   { href: '/theme', label: 'NTheme & NThemeToggle' },
   { href: '/toast', label: 'NToast (useNToast)' },
   { href: '/tooltip', label: 'NTooltip' },

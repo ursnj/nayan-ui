@@ -1,31 +1,42 @@
 import React from 'react';
-import { View } from 'react-native';
-import { Input, type InputProps } from 'heroui-native';
-import { NText } from './NText';
+import { TextField, Label, Input, TextArea, Description, FieldError, type TextFieldRootProps, type InputProps, type TextAreaProps } from 'heroui-native';
 import { cn } from '../helpers/utils';
 
-export interface NInputProps extends InputProps {
+export interface NInputProps extends Omit<TextFieldRootProps, 'children'> {
   label?: string;
+  description?: string;
+  errorMessage?: string;
+  multiline?: boolean;
+  inputProps?: InputProps;
+  textAreaProps?: TextAreaProps;
   containerClassName?: string;
   labelClassName?: string;
+  descriptionClassName?: string;
+  errorClassName?: string;
 }
 
 export const NInput = React.memo<NInputProps>(
   ({
-    label = '',
-    containerClassName = '',
-    labelClassName = '',
-    className = '',
+    label,
+    description,
+    errorMessage,
+    multiline = false,
+    inputProps,
+    textAreaProps,
+    className,
+    containerClassName,
+    labelClassName,
+    descriptionClassName,
+    errorClassName,
     ...props
   }) => {
     return (
-      <View className={cn('flex mb-3', containerClassName)}>
-        {label && <NText className={cn('mb-1', labelClassName)}>{label}</NText>}
-        <Input
-          className={cn(className)}
-          {...props}
-        />
-      </View>
+      <TextField className={cn('mb-3', containerClassName)} {...props}>
+        {label && <Label className={cn(labelClassName)}>{label}</Label>}
+        {multiline ? <TextArea className={cn(className)} {...textAreaProps} /> : <Input className={cn(className)} {...inputProps} />}
+        {description && <Description className={cn(descriptionClassName)}>{description}</Description>}
+        {errorMessage && <FieldError className={cn(errorClassName)}>{errorMessage}</FieldError>}
+      </TextField>
     );
   }
 );

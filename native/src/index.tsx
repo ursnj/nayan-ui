@@ -33,8 +33,6 @@ export * from './components/NSwitch';
 export * from './components/NTabs';
 export * from './components/NTagGroup';
 export * from './components/NText';
-export * from './components/NTextarea';
-export * from './components/NTextField';
 export * from './components/NTheme';
 export * from './components/NThemeToggle';
 export * from './components/NToast';
