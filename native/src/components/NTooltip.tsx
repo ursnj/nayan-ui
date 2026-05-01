@@ -14,7 +14,7 @@ export const NTooltip = React.memo<NTooltipProps>(({ children, message, classNam
   return (
     <Popover>
       <Popover.Trigger>{children}</Popover.Trigger>
-      <Popover.Content presentation="popover" className={cn('max-w-[250px] p-2', className)}>
+      <Popover.Content presentation="popover" className={cn('max-w-[250px] p-2 bg-surface', className)}>
         <NText className={cn('text-sm', textClassName)}>{message}</NText>
       </Popover.Content>
     </Popover>

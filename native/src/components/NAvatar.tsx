@@ -16,7 +16,7 @@ export const NAvatar = React.memo<NAvatarProps>(
     return (
       <Avatar alt={alt} className={cn(className)} {...props}>
         {src && <Avatar.Image source={{ uri: src }} className={cn(imageClassName)} />}
-        <Avatar.Fallback delayMs={fallbackDelayMs} className={cn(fallbackClassName)}>
+        <Avatar.Fallback delayMs={fallbackDelayMs} className={cn('bg-surface', fallbackClassName)}>
           {fallback}
         </Avatar.Fallback>
       </Avatar>
