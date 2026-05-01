@@ -7,7 +7,9 @@ export interface NConfirmProps {
   title: string;
   description: string;
   onResult: (result: boolean) => void;
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  isOpen?: boolean;
+  onOpenChange?: (isOpen: boolean) => void;
   confirmText?: string;
   cancelText?: string;
   className?: string;
@@ -23,6 +25,8 @@ export const NConfirm = React.memo<NConfirmProps>(
     description,
     children,
     onResult,
+    isOpen,
+    onOpenChange,
     confirmText = 'Ok',
     cancelText = 'Cancel',
     className = '',
@@ -32,8 +36,8 @@ export const NConfirm = React.memo<NConfirmProps>(
     cancelClassName = '',
   }) => {
     return (
-      <Dialog>
-        <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+      <Dialog isOpen={isOpen} onOpenChange={onOpenChange}>
+        {children && <Dialog.Trigger asChild>{children}</Dialog.Trigger>}
         <Dialog.Content className={cn('p-3 min-w-[320px]', className)}>
           <Dialog.Title className={cn(titleClassName)}>{title}</Dialog.Title>
           <Dialog.Description className={cn('text-muted text-sm', descriptionClassName)}>{description}</Dialog.Description>

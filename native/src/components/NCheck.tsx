@@ -1,31 +1,31 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Checkbox, Label } from 'heroui-native';
+import { Checkbox, Label, type CheckboxProps } from 'heroui-native';
 import { cn } from '../lib/utils';
 
-export interface NCheckProps {
-  checked: boolean;
-  disabled?: boolean;
+export interface NCheckProps extends Omit<CheckboxProps, 'children'> {
   label: string;
-  onChange: (checked: boolean) => void;
-  className?: string;
+  containerClassName?: string;
   labelClassName?: string;
 }
 
-export const NCheck = React.memo<NCheckProps>(({ checked = false, disabled = false, label = '', onChange, className, labelClassName }) => {
-  return (
-    <View className={cn('flex-row items-center mb-3', className)}>
-      <Checkbox isSelected={checked} isDisabled={disabled} onSelectedChange={onChange} />
-      {label && (
-        <Label
-          className={cn('pl-3 text-foreground text-base', disabled && 'opacity-70', labelClassName)}
-          nativeID={'check-' + label}
-          onPress={() => !disabled && onChange(!checked)}>
-          {label}
-        </Label>
-      )}
-    </View>
-  );
-});
+export const NCheck = React.memo<NCheckProps>(
+  ({ label = '', isSelected = false, isDisabled = false, onSelectedChange, containerClassName, labelClassName, ...props }) => {
+    return (
+      <View className={cn('flex-row items-center mb-3', containerClassName)}>
+        <Checkbox isSelected={isSelected} isDisabled={isDisabled} onSelectedChange={onSelectedChange} {...props} />
+        {label && (
+          <Label
+            isDisabled={isDisabled}
+            className={cn('pl-3 text-foreground text-base', isDisabled && 'opacity-70', labelClassName)}
+            nativeID={'check-' + label}
+            onPress={() => !isDisabled && onSelectedChange?.(!isSelected)}>
+            {label}
+          </Label>
+        )}
+      </View>
+    );
+  }
+);
 
 NCheck.displayName = 'NCheck';

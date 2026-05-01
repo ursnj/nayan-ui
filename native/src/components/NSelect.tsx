@@ -13,13 +13,13 @@ export interface NSelectProps {
   label?: string;
   selectLabel?: string;
   placeholder?: string;
-  disabled?: boolean;
-  value: SelectOption;
+  isDisabled?: boolean;
+  defaultValue?: SelectOption;
   items: SelectOption[];
-  onChange: (value: any) => void;
-  className?: string;
+  onValueChange: (value: any) => void;
+  containerClassName?: string;
   labelClassName?: string;
-  inputClassName?: string;
+  triggerClassName?: string;
 }
 
 export const NSelect = React.memo<NSelectProps>(
@@ -27,19 +27,19 @@ export const NSelect = React.memo<NSelectProps>(
     label = '',
     selectLabel = '',
     placeholder = '',
-    disabled = false,
-    value,
+    isDisabled = false,
+    defaultValue,
     items,
-    onChange,
-    className = '',
+    onValueChange,
+    containerClassName = '',
     labelClassName = '',
-    inputClassName = '',
+    triggerClassName = '',
   }) => {
     return (
-      <View className={cn('flex-1 mb-3', className)}>
+      <View className={cn('flex-1 mb-3', containerClassName)}>
         {label && <NText className={cn('mb-1', labelClassName)}>{label}</NText>}
-        <Select defaultValue={value} onValueChange={onChange} isDisabled={disabled}>
-          <Select.Trigger className={cn('w-full', disabled && 'opacity-70', inputClassName)} isDisabled={disabled}>
+        <Select defaultValue={defaultValue} onValueChange={onValueChange} isDisabled={isDisabled}>
+          <Select.Trigger className={cn('w-full', isDisabled && 'opacity-70', triggerClassName)} isDisabled={isDisabled}>
             <Select.Value placeholder={placeholder} />
           </Select.Trigger>
           <Select.Content presentation="popover">

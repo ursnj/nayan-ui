@@ -1,17 +1,16 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Spinner } from 'heroui-native';
+import { Spinner, type SpinnerProps } from 'heroui-native';
 import { cn } from '../lib/utils';
 
-export interface NLoadingProps {
-  className?: string;
-  size?: 'sm' | 'md' | 'lg';
+export interface NLoadingProps extends Omit<SpinnerProps, 'children'> {
+  containerClassName?: string;
 }
 
-export const NLoading = React.memo<NLoadingProps>(({ className = '', size = 'md' }) => {
+export const NLoading = React.memo<NLoadingProps>(({ containerClassName = '', ...props }) => {
   return (
-    <View className={cn('flex-1 justify-center items-center', className)}>
-      <Spinner size={size} />
+    <View className={cn('flex-1 justify-center items-center', containerClassName)}>
+      <Spinner {...props} />
     </View>
   );
 });

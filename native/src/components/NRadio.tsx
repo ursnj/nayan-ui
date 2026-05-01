@@ -9,25 +9,24 @@ export interface RadioItem {
   value: string;
 }
 
-export interface RadioGroupItemProps {
-  disabled?: boolean;
+interface RadioGroupItemInternalProps {
+  isDisabled?: boolean;
   item: RadioItem;
   onLabelPress: (value: string) => void;
   radioItemClassName?: string;
-  radioClassName?: string;
   radioLabelClassName?: string;
 }
 
-const RadioGroupItemWithLabel = React.memo<RadioGroupItemProps>(
-  ({ disabled, item, onLabelPress, radioItemClassName = '', radioLabelClassName = '' }) => {
+const RadioGroupItemWithLabel = React.memo<RadioGroupItemInternalProps>(
+  ({ isDisabled, item, onLabelPress, radioItemClassName = '', radioLabelClassName = '' }) => {
     return (
       <View className={cn('flex-row gap-2 items-center', radioItemClassName)}>
-        <RadioGroup.Item isDisabled={disabled} value={item.value} />
+        <RadioGroup.Item isDisabled={isDisabled} value={item.value} />
         <Label
-          isDisabled={disabled}
-          className={cn('text-foreground text-lg', disabled && 'opacity-70', radioLabelClassName)}
+          isDisabled={isDisabled}
+          className={cn('text-foreground text-lg', isDisabled && 'opacity-70', radioLabelClassName)}
           nativeID={`label-for-${item.value}`}
-          onPress={() => !disabled && onLabelPress(item.value)}>
+          onPress={() => !isDisabled && onLabelPress(item.value)}>
           {item.label}
         </Label>
       </View>
@@ -39,15 +38,14 @@ RadioGroupItemWithLabel.displayName = 'RadioGroupItemWithLabel';
 
 export interface NRadioProps {
   label?: string;
-  disabled?: boolean;
+  isDisabled?: boolean;
   value: string;
   items: RadioItem[];
-  onChange: (value: string) => void;
-  className?: string;
+  onValueChange: (value: string) => void;
+  containerClassName?: string;
   labelClassName?: string;
   radioGroupClassName?: string;
   radioItemClassName?: string;
-  radioClassName?: string;
   radioLabelClassName?: string;
 }
 
@@ -56,27 +54,25 @@ export const NRadio = React.memo<NRadioProps>(
     label,
     value,
     items,
-    disabled = false,
-    onChange,
-    className = '',
+    isDisabled = false,
+    onValueChange,
+    containerClassName = '',
     labelClassName = '',
     radioGroupClassName = '',
     radioItemClassName,
-    radioClassName,
     radioLabelClassName,
   }) => {
     return (
-      <View className={cn('flex-1 mb-3', className)}>
+      <View className={cn('flex-1 mb-3', containerClassName)}>
         {label && <NText className={cn('mb-2', labelClassName)}>{label}</NText>}
-        <RadioGroup value={value} onValueChange={onChange} isDisabled={disabled} className={cn('gap-3 flex-row flex-wrap', radioGroupClassName)}>
+        <RadioGroup value={value} onValueChange={onValueChange} isDisabled={isDisabled} className={cn('gap-3 flex-row flex-wrap', radioGroupClassName)}>
           {items.map((item) => (
             <RadioGroupItemWithLabel
               key={item.value}
-              disabled={disabled}
+              isDisabled={isDisabled}
               item={item}
-              onLabelPress={onChange}
+              onLabelPress={onValueChange}
               radioItemClassName={radioItemClassName}
-              radioClassName={radioClassName}
               radioLabelClassName={radioLabelClassName}
             />
           ))}
