@@ -86,6 +86,7 @@
     "typescript": "^6.0.2"
   },
   "peerDependencies": {
+    "heroui-native": ">=1.0.0",
     "react": "*",
     "react-native": "*"
   },
