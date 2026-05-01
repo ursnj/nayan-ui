@@ -1,7 +1,7 @@
 {
   "name": "react-native-example",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start --clear",
     "prebuild": "npx expo prebuild --clean",
@@ -15,7 +15,11 @@
   "dependencies": {
     "@expo/metro-runtime": "~55.0.10",
     "expo": "~55.0.19",
+    "expo-constants": "^55.0.15",
     "expo-dev-client": "~55.0.12",
+    "expo-linking": "^55.0.14",
+    "expo-router": "^55.0.13",
+    "expo-screens": "^0.0.0",
     "expo-status-bar": "~55.0.5",
     "heroui-native": "^1.0.2",
     "react": "19.2.0",
@@ -24,6 +28,7 @@
     "react-native-gesture-handler": "^2.28.0",
     "react-native-reanimated": "^4.1.1",
     "react-native-safe-area-context": "^5.6.0",
+    "react-native-screens": "^4.24.0",
     "react-native-svg": "^15.12.1",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "~0.8.0",
