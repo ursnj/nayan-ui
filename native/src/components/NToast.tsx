@@ -1,4 +1,4 @@
-import { Toast, useToast } from 'heroui-native';
+import { useToast } from 'heroui-native';
 
 export interface NToastShowOptions {
   type?: 'success' | 'error' | 'info' | 'warning';
@@ -35,5 +35,3 @@ export function useNToast(): NToastMethods {
     },
   };
 }
-
-export { Toast as NToast };

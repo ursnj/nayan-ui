@@ -3,5 +3,5 @@
   "compilerOptions": {
     // Avoid expo-cli auto-generating a tsconfig
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/uniwind-types.d.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/uniwind-types.d.ts", "app/**/*.ts", "app/**/*.tsx"]
 }
