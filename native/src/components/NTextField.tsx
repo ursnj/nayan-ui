@@ -1,6 +1,6 @@
 import React from 'react';
 import { TextField, Label, Input, Description, FieldError, type TextFieldRootProps, type InputProps } from 'heroui-native';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NTextFieldProps extends TextFieldRootProps {
   label?: string;

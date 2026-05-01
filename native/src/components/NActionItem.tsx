@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { View } from 'react-native';
 import { NPress } from './NPress';
 import { NText } from './NText';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NActionItemProps {
   name: string;

@@ -57,6 +57,7 @@
     "react": "*",
     "react-native": "*",
     "react-native-gesture-handler": "*",
+    "react-native-svg": "*",
     "uniwind": ">=1.6.0"
   },
   "workspaces": [

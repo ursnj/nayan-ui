@@ -1,6 +1,6 @@
 import React from 'react';
 import { Slider, type SliderProps } from 'heroui-native';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NSliderProps extends SliderProps {
   showOutput?: boolean;

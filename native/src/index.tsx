@@ -44,5 +44,6 @@ export * from './components/NTooltip';
 export * from './hooks/useNKeyboard';
 export * from './hooks/useNTheme';
 
-// Lib
-export * from './lib/utils';
+// Helpers
+export * from './helpers/icons';
+export * from './helpers/utils';

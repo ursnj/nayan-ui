@@ -1,6 +1,6 @@
 import React, { type ReactNode } from 'react';
 import { Menu, Separator } from 'heroui-native';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NMenuProps {
   children?: ReactNode;

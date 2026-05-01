@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Checkbox, Label, type CheckboxProps } from 'heroui-native';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NCheckProps extends Omit<CheckboxProps, 'children'> {
   label: string;
@@ -12,7 +12,7 @@ export interface NCheckProps extends Omit<CheckboxProps, 'children'> {
 export const NCheck = React.memo<NCheckProps>(
   ({ label = '', isSelected = false, isDisabled = false, onSelectedChange, containerClassName, labelClassName, ...props }) => {
     return (
-      <View className={cn('flex-row items-center mb-3', containerClassName)}>
+      <View className={cn('flex-row items-center gap-2 mb-3', containerClassName)}>
         <Checkbox isSelected={isSelected} isDisabled={isDisabled} onSelectedChange={onSelectedChange} {...props} />
         {label && (
           <Label

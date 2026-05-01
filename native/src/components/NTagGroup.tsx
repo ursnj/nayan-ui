@@ -1,6 +1,6 @@
 import React from 'react';
 import { TagGroup, type TagGroupProps } from 'heroui-native';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface TagItem {
   label: string;

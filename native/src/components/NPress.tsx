@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, type PressableProps } from 'react-native';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NPressProps extends PressableProps {
   children: React.ReactNode;

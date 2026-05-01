@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, type AlertRootProps } from 'heroui-native';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NAlertProps extends AlertRootProps {
   title?: string;

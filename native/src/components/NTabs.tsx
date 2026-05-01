@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Tabs, type TabsProps } from 'heroui-native';
 import { NText } from './NText';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface TabItem {
   label: string;

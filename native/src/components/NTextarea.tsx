@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { TextArea, type TextAreaProps } from 'heroui-native';
 import { NText } from './NText';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NTextareaProps extends TextAreaProps {
   label?: string;
