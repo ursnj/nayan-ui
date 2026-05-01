@@ -12,8 +12,9 @@ export interface NThemeToggleProps extends Omit<PressableProps, 'onPress'> {
   children?: React.ReactNode;
 }
 
-export const NThemeToggle = React.memo<NThemeToggleProps>(({ className = '', size = 22, color = '#fff', onThemeChange, children, ...props }) => {
-  const { isDarkMode, setTheme } = useNTheme();
+export const NThemeToggle = React.memo<NThemeToggleProps>(({ className = '', size = 22, color, onThemeChange, children, ...props }) => {
+  const { isDarkMode, setTheme, colors } = useNTheme();
+  const iconColor = color || colors.foreground;
 
   const toggleTheme = useCallback(() => {
     const newTheme = isDarkMode ? THEMES.light : THEMES.dark;
@@ -23,7 +24,7 @@ export const NThemeToggle = React.memo<NThemeToggleProps>(({ className = '', siz
 
   return (
     <Pressable onPress={toggleTheme} className={className} {...props}>
-      {children || (isDarkMode ? <SunIcon size={size} color={color} /> : <MoonIcon size={size} color={color} />)}
+      {children || (isDarkMode ? <SunIcon size={size} color={iconColor} /> : <MoonIcon size={size} color={iconColor} />)}
     </Pressable>
   );
 });
