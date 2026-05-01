@@ -4,11 +4,11 @@ import { Button, type ButtonRootProps, type ButtonVariant, type ButtonSize } fro
 export type NButtonVariant = ButtonVariant;
 export type NButtonSize = ButtonSize;
 
-export interface NButtonProps extends ButtonRootProps {
+export type NButtonProps = ButtonRootProps & {
   variant?: NButtonVariant;
   size?: NButtonSize;
   children: React.ReactNode;
-}
+};
 
 export function NButton({
   variant = 'primary',
