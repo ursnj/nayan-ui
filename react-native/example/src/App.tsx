@@ -1,20 +1,18 @@
-import { Text, View, StyleSheet } from 'react-native';
-import { multiply } from '@nayan-ui/react-native';
+import './global.css';
 
-const result = multiply(3, 7);
+import { HeroUINativeProvider } from 'heroui-native';
+import { Button } from 'heroui-native';
+import { View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <HeroUINativeProvider>
+        <View className="flex-1 justify-center items-center bg-background">
+          <Button onPress={() => console.log('Pressed!')}>Get Started</Button>
+        </View>
+      </HeroUINativeProvider>
+    </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
