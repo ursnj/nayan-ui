@@ -1,6 +1,6 @@
 import React from 'react';
 import { BottomSheet } from 'heroui-native';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NSheetProps {
   isOpen?: boolean;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Dialog } from 'heroui-native';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NDialogProps {
   children?: React.ReactNode;

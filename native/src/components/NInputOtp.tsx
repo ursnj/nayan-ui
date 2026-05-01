@@ -1,6 +1,6 @@
 import React from 'react';
 import { InputOTP, type InputOTPRootProps } from 'heroui-native';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NInputOtpProps extends InputOTPRootProps {
   slotVariant?: 'primary' | 'secondary';

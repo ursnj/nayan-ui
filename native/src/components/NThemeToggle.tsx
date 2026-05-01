@@ -1,15 +1,18 @@
 import React, { useCallback } from 'react';
 import { Pressable, type PressableProps } from 'react-native';
+import { SunIcon, MoonIcon } from '../helpers/icons';
 import { useNTheme } from '../hooks/useNTheme';
-import { THEMES } from '../lib/utils';
+import { THEMES } from '../helpers/utils';
 
 export interface NThemeToggleProps extends Omit<PressableProps, 'onPress'> {
   className?: string;
+  size?: number;
+  color?: string;
   onThemeChange?: (theme: string) => void;
   children?: React.ReactNode;
 }
 
-export const NThemeToggle = React.memo<NThemeToggleProps>(({ className = '', onThemeChange, children, ...props }) => {
+export const NThemeToggle = React.memo<NThemeToggleProps>(({ className = '', size = 22, color = '#fff', onThemeChange, children, ...props }) => {
   const { isDarkMode, setTheme } = useNTheme();
 
   const toggleTheme = useCallback(() => {
@@ -20,7 +23,7 @@ export const NThemeToggle = React.memo<NThemeToggleProps>(({ className = '', onT
 
   return (
     <Pressable onPress={toggleTheme} className={className} {...props}>
-      {children}
+      {children || (isDarkMode ? <SunIcon size={size} color={color} /> : <MoonIcon size={size} color={color} />)}
     </Pressable>
   );
 });

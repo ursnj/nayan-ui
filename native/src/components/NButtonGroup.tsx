@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { View } from 'react-native';
 import { Button } from 'heroui-native';
 import { NText } from './NText';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface ButtonGroupItem {
   label: string;
@@ -52,10 +52,15 @@ export const NButtonGroup = React.memo<NButtonGroupProps>(
                 isDisabled={itemDisabled}
                 onPress={() => onValueChange(item.value)}
                 variant={isSelected ? 'primary' : 'secondary'}
+                style={{
+                  borderTopLeftRadius: index === 0 ? 8 : 0,
+                  borderBottomLeftRadius: index === 0 ? 8 : 0,
+                  borderTopRightRadius: index === items.length - 1 ? 8 : 0,
+                  borderBottomRightRadius: index === items.length - 1 ? 8 : 0,
+                }}
                 className={cn(
-                  'rounded-none border-r border-border',
-                  index === 0 && 'rounded-l',
-                  index === items.length - 1 && 'rounded-r border-r-0',
+                  'border-r border-border',
+                  index === items.length - 1 && 'border-r-0',
                   buttonClassName
                 )}>
                 {buttonIcon && <View className="mr-1">{buttonIcon}</View>}

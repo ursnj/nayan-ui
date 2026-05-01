@@ -1,6 +1,6 @@
 import React from 'react';
 import { Popover } from 'heroui-native';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export type NPopoverPlacement = 'top' | 'bottom' | 'left' | 'right';
 

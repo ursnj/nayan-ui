@@ -1,6 +1,6 @@
 import React from 'react';
 import { LinkButton, type LinkButtonProps } from 'heroui-native';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NLinkButtonProps extends LinkButtonProps {
   children: React.ReactNode;

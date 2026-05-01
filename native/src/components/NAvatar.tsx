@@ -1,6 +1,6 @@
 import React from 'react';
 import { Avatar, type AvatarRootProps } from 'heroui-native';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NAvatarProps extends Omit<AvatarRootProps, 'alt'> {
   src?: string;

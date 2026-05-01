@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, type TextProps } from 'react-native';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NTextProps extends TextProps {
   className?: string;

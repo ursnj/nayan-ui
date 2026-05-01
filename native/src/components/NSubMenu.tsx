@@ -1,6 +1,6 @@
 import React from 'react';
 import { SubMenu, type SubMenuRootProps } from 'heroui-native';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NSubMenuProps extends SubMenuRootProps {
   label: string;

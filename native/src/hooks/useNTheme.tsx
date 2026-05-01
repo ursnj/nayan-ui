@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useUniwind, Uniwind } from 'uniwind';
 import { useThemeColor } from 'heroui-native';
-import { THEMES } from '../lib/utils';
+import { THEMES } from '../helpers/utils';
 
 export function useNTheme() {
   const { theme } = useUniwind();

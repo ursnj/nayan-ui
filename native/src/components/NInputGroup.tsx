@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { InputGroup, type InputGroupProps, type InputProps } from 'heroui-native';
 import { NText } from './NText';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export interface NInputGroupProps extends InputGroupProps {
   label?: string;

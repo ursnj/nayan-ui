@@ -1,6 +1,6 @@
-import { Link } from 'expo-router';
+import { Link, Stack } from 'expo-router';
 import { ScrollView, View } from 'react-native';
-import { NText, NPress } from '@nayan-ui/react-native';
+import { NText, NPress, NThemeToggle } from '@nayan-ui/react-native';
 
 const screens = [
   { href: '/accordion', label: 'NAccordion' },
@@ -43,9 +43,15 @@ const screens = [
 
 export default function Index() {
   return (
-    <ScrollView className="flex-1 bg-background">
-      <View className="p-4 gap-2">
-        <NText className="text-2xl font-bold mb-4">Components</NText>
+    <>
+      <Stack.Screen
+        options={{
+          title: 'Nayan UI',
+          headerRight: () => <NThemeToggle className="px-3" />,
+        }}
+      />
+      <ScrollView className="flex-1 bg-background">
+        <View className="p-4 gap-2">
         {screens.map((s) => (
           <Link key={s.href} href={s.href} asChild>
             <NPress className="p-4 bg-surface rounded-lg">
@@ -53,7 +59,8 @@ export default function Index() {
             </NPress>
           </Link>
         ))}
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </>
   );
 }
