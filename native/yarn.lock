@@ -2270,6 +2270,7 @@ __metadata:
     react: "*"
     react-native: "*"
     react-native-gesture-handler: "*"
+    react-native-svg: "*"
     uniwind: ">=1.6.0"
   languageName: unknown
   linkType: soft
@@ -7454,6 +7455,7 @@ __metadata:
   resolution: "react-native-example@workspace:example"
   dependencies:
     "@expo/metro-runtime": "npm:~55.0.10"
+    "@expo/vector-icons": "npm:^15.0.2"
     expo: "npm:~55.0.19"
     expo-constants: "npm:^55.0.15"
     expo-dev-client: "npm:~55.0.12"
