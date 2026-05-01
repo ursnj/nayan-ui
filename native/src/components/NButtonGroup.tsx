@@ -60,6 +60,7 @@ export const NButtonGroup = React.memo<NButtonGroupProps>(
                 }}
                 className={cn(
                   'border-r border-border',
+                  !isSelected && 'bg-surface',
                   index === items.length - 1 && 'border-r-0',
                   buttonClassName
                 )}>

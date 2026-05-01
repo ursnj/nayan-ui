@@ -15,7 +15,7 @@ export const NSlider = React.memo<NSliderProps>(
     return (
       <Slider className={cn('w-full', className)} {...props}>
         {showOutput && <Slider.Output className={cn(outputClassName)} />}
-        <Slider.Track className={cn(trackClassName)}>
+        <Slider.Track className={cn('bg-surface', trackClassName)}>
           <Slider.Fill className={cn(fillClassName)} />
           <Slider.Thumb className={cn(thumbClassName)} />
         </Slider.Track>

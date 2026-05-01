@@ -38,7 +38,7 @@ export const NConfirm = React.memo<NConfirmProps>(
     return (
       <Dialog isOpen={isOpen} onOpenChange={onOpenChange}>
         {children && <Dialog.Trigger asChild>{children}</Dialog.Trigger>}
-        <Dialog.Content className={cn('p-3 min-w-[320px]', className)}>
+        <Dialog.Content className={cn('p-3 min-w-[320px] bg-surface', className)}>
           <Dialog.Title className={cn(titleClassName)}>{title}</Dialog.Title>
           <Dialog.Description className={cn('text-muted text-sm', descriptionClassName)}>{description}</Dialog.Description>
           <View className="flex-row gap-3 justify-end mt-4">

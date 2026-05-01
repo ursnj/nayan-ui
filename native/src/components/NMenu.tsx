@@ -14,7 +14,7 @@ export const NMenu = React.memo<NMenuProps>(({ children, trigger, title = '', cl
   return (
     <Menu>
       <Menu.Trigger>{trigger}</Menu.Trigger>
-      <Menu.Content presentation="popover" className={cn('w-64', className)}>
+      <Menu.Content presentation="popover" className={cn('w-64 bg-surface', className)}>
         {title && (
           <>
             <Menu.Label className={cn(titleClassName)}>{title}</Menu.Label>

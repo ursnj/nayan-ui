@@ -20,7 +20,7 @@ export const NSheet = React.memo<NSheetProps>(
     return (
       <BottomSheet isOpen={isOpen} isDefaultOpen={isDefaultOpen} onOpenChange={onOpenChange}>
         {trigger && <BottomSheet.Trigger asChild>{trigger}</BottomSheet.Trigger>}
-        <BottomSheet.Content className={cn('flex-1', className)}>
+        <BottomSheet.Content className={cn('flex-1 bg-surface', className)}>
           {title && <BottomSheet.Title className={titleClassName}>{title}</BottomSheet.Title>}
           {description && <BottomSheet.Description className={descriptionClassName}>{description}</BottomSheet.Description>}
           {children}
