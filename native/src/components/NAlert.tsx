@@ -1,20 +1,22 @@
 import React from 'react';
-import { Alert } from 'heroui-native';
+import { Alert, type AlertRootProps } from 'heroui-native';
 import { cn } from '../lib/utils';
 
-export interface NAlertProps {
+export interface NAlertProps extends AlertRootProps {
   title?: string;
   description: string;
-  className?: string;
   titleClassName?: string;
   descriptionClassName?: string;
 }
 
-export const NAlert = React.memo<NAlertProps>(({ title, description, className, titleClassName, descriptionClassName }) => {
+export const NAlert = React.memo<NAlertProps>(({ title, description, className, titleClassName, descriptionClassName, ...props }) => {
   return (
-    <Alert className={cn('w-full', className)}>
-      {title && <Alert.Title className={cn('font-medium mb-1', titleClassName)}>{title}</Alert.Title>}
-      <Alert.Description className={cn('text-sm', descriptionClassName)}>{description}</Alert.Description>
+    <Alert className={cn('w-full', className)} {...props}>
+      <Alert.Indicator />
+      <Alert.Content>
+        {title && <Alert.Title className={cn('font-medium mb-1', titleClassName)}>{title}</Alert.Title>}
+        <Alert.Description className={cn('text-sm', descriptionClassName)}>{description}</Alert.Description>
+      </Alert.Content>
     </Alert>
   );
 });

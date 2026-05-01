@@ -1,39 +1,36 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Switch, Label } from 'heroui-native';
+import { Switch, Label, type SwitchProps } from 'heroui-native';
 import { cn } from '../lib/utils';
 
-export interface NSwitchProps {
+export interface NSwitchProps extends Omit<SwitchProps, 'children'> {
   label?: string;
-  checked: boolean;
-  className?: string;
+  containerClassName?: string;
   labelClassName?: string;
-  inputClassName?: string;
-  disabled?: boolean;
-  onChange: (checked: boolean) => void;
 }
 
 export const NSwitch = React.memo<NSwitchProps>(
-  ({ label, className = '', labelClassName = '', inputClassName = '', disabled = false, onChange, checked = false }) => {
+  ({ label, containerClassName = '', labelClassName = '', className = '', isDisabled = false, isSelected = false, onSelectedChange, ...props }) => {
     const handleToggle = () => {
-      if (!disabled) {
-        onChange(!checked);
+      if (!isDisabled) {
+        onSelectedChange?.(!isSelected);
       }
     };
 
     return (
-      <View className={cn('w-full flex-row items-center justify-between mb-3', className)}>
+      <View className={cn('w-full flex-row items-center justify-between mb-3', containerClassName)}>
         {label && (
           <Label className={cn('flex-1 text-foreground text-base pr-3', labelClassName)} nativeID={'switch-' + label} onPress={handleToggle}>
             {label}
           </Label>
         )}
         <Switch
-          isDisabled={disabled}
-          className={cn(inputClassName)}
-          isSelected={checked}
+          isDisabled={isDisabled}
+          isSelected={isSelected}
           onSelectedChange={handleToggle}
+          className={cn(className)}
           nativeID={'switch-' + label}
+          {...props}
         />
       </View>
     );

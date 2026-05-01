@@ -1,13 +1,11 @@
 import React from 'react';
-import { Skeleton } from 'heroui-native';
+import { Skeleton, type SkeletonProps } from 'heroui-native';
 import { cn } from '../lib/utils';
 
-export interface NSkeletonProps {
-  className?: string;
-}
+export interface NSkeletonProps extends SkeletonProps {}
 
-export const NSkeleton = React.memo<NSkeletonProps>(({ className }) => {
-  return <Skeleton className={cn('bg-default', className)} />;
+export const NSkeleton = React.memo<NSkeletonProps>(({ className, ...props }) => {
+  return <Skeleton className={cn('bg-default', className)} {...props} />;
 });
 
 NSkeleton.displayName = 'NSkeleton';

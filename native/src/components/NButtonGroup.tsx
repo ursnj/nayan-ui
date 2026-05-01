@@ -8,22 +8,22 @@ export interface ButtonGroupItem {
   label: string;
   value: string;
   icon?: React.ComponentType<any> | React.ReactElement;
-  disabled?: boolean;
+  isDisabled?: boolean;
 }
 
 export interface NButtonGroupProps {
   items: ButtonGroupItem[];
   value: string;
-  onChange: (value: string) => void;
+  onValueChange: (value: string) => void;
   label?: string;
-  disabled?: boolean;
+  isDisabled?: boolean;
   className?: string;
   buttonClassName?: string;
   labelClassName?: string;
 }
 
 export const NButtonGroup = React.memo<NButtonGroupProps>(
-  ({ items, value, onChange, label, disabled = false, className, buttonClassName, labelClassName }) => {
+  ({ items, value, onValueChange, label, isDisabled = false, className, buttonClassName, labelClassName }) => {
     const renderIcon = useMemo(() => {
       return (icon: React.ComponentType<any> | React.ReactElement | undefined) => {
         if (!icon) return null;
@@ -43,14 +43,14 @@ export const NButtonGroup = React.memo<NButtonGroupProps>(
         <View className={cn('flex-row rounded overflow-hidden', className)}>
           {items.map((item, index) => {
             const isSelected = item.value === value;
-            const isDisabled = disabled || item.disabled;
+            const itemDisabled = isDisabled || item.isDisabled;
             const buttonIcon = renderIcon(item.icon);
 
             return (
               <Button
                 key={item.value}
-                isDisabled={isDisabled}
-                onPress={() => onChange(item.value)}
+                isDisabled={itemDisabled}
+                onPress={() => onValueChange(item.value)}
                 variant={isSelected ? 'primary' : 'secondary'}
                 className={cn(
                   'rounded-none border-r border-border',
