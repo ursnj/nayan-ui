@@ -4,7 +4,7 @@ import { cn } from '../lib/utils';
 
 export interface NAlertProps extends AlertRootProps {
   title?: string;
-  description: string;
+  description?: string;
   titleClassName?: string;
   descriptionClassName?: string;
 }
@@ -15,7 +15,7 @@ export const NAlert = React.memo<NAlertProps>(({ title, description, className, 
       <Alert.Indicator />
       <Alert.Content>
         {title && <Alert.Title className={cn('font-medium mb-1', titleClassName)}>{title}</Alert.Title>}
-        <Alert.Description className={cn('text-sm', descriptionClassName)}>{description}</Alert.Description>
+        {description && <Alert.Description className={cn('text-sm', descriptionClassName)}>{description}</Alert.Description>}
       </Alert.Content>
     </Alert>
   );
