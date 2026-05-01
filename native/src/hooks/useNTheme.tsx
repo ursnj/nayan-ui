@@ -36,5 +36,11 @@ export function useNTheme() {
       muted,
       border,
     },
+    headerConfig: {
+      headerStyle: { backgroundColor: surface },
+      headerTintColor: foreground,
+      headerShadowVisible: true,
+      headerBackButtonDisplayMode: 'minimal' as const,
+    },
   };
 }
