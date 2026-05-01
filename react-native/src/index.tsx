@@ -1,1 +1,2 @@
-export { multiply } from './multiply';
+export { NButton } from './NButton';
+export type { NButtonProps, NButtonVariant, NButtonSize } from './NButton';
