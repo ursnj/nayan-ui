@@ -51,9 +51,12 @@
     "typescript": "^6.0.2"
   },
   "peerDependencies": {
+    "expo-status-bar": "*",
     "heroui-native": ">=1.0.0",
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "react-native-gesture-handler": "*",
+    "uniwind": ">=1.6.0"
   },
   "workspaces": [
     "example"
