@@ -24,7 +24,7 @@ const RadioGroupItemWithLabel = React.memo<RadioGroupItemProps>(
       <View className={cn('flex-row gap-2 items-center', radioItemClassName)}>
         <RadioGroup.Item isDisabled={disabled} value={item.value} />
         <Label
-          disabled={disabled}
+          isDisabled={disabled}
           className={cn('text-foreground text-lg', disabled && 'opacity-70', radioLabelClassName)}
           nativeID={`label-for-${item.value}`}
           onPress={() => !disabled && onLabelPress(item.value)}>

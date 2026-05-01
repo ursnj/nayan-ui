@@ -2252,14 +2252,19 @@ __metadata:
     "@react-native/babel-preset": "npm:0.85.0"
     "@types/react": "npm:^19.2.0"
     del-cli: "npm:^7.0.0"
+    heroui-native: "npm:^1.0.2"
     react: "npm:19.2.0"
     react-native: "npm:0.83.6"
     react-native-builder-bob: "npm:^0.41.0"
     typescript: "npm:^6.0.2"
+    uniwind: "npm:^1.6.3"
   peerDependencies:
+    expo-status-bar: "*"
     heroui-native: ">=1.0.0"
     react: "*"
     react-native: "*"
+    react-native-gesture-handler: "*"
+    uniwind: ">=1.6.0"
   languageName: unknown
   linkType: soft
 

@@ -25,7 +25,6 @@ export const NTextarea = React.memo<NTextareaProps>(
           editable={!disabled}
           placeholder={placeholder}
           onChangeText={onChangeText}
-          textAlignVertical="top"
           className={cn(inputClassName)}
           {...props}
         />

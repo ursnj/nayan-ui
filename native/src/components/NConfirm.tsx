@@ -1,7 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Dialog, Button } from 'heroui-native';
-import { NText } from './NText';
 import { cn } from '../lib/utils';
 
 export interface NConfirmProps {

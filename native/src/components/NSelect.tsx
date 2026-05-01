@@ -42,7 +42,7 @@ export const NSelect = React.memo<NSelectProps>(
           <Select.Trigger className={cn('w-full', disabled && 'opacity-70', inputClassName)} isDisabled={disabled}>
             <Select.Value placeholder={placeholder} />
           </Select.Trigger>
-          <Select.Content>
+          <Select.Content presentation="popover">
             {selectLabel && <Select.ListLabel>{selectLabel}</Select.ListLabel>}
             {items.map((item) => (
               <Select.Item key={item.value} label={item.label} value={item.value}>
