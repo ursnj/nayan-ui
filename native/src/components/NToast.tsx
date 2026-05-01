@@ -15,23 +15,23 @@ export interface NToastMethods {
 }
 
 export function useNToast(): NToastMethods {
-  const toast = useToast();
+  const { toast } = useToast();
 
   return {
     show: ({ message, title, type = 'success' }: NToastShowOptions) => {
-      toast.show({ title: title || '', description: message, variant: type === 'error' ? 'danger' : 'default' });
+      toast.show({ label: title || '', description: message, variant: type === 'error' ? 'danger' : 'default' });
     },
     success: (message: string, title?: string) => {
-      toast.show({ title: title || 'Success', description: message, variant: 'default' });
+      toast.show({ label: title || 'Success', description: message, variant: 'default' });
     },
     error: (message: string, title?: string) => {
-      toast.show({ title: title || 'Error', description: message, variant: 'danger' });
+      toast.show({ label: title || 'Error', description: message, variant: 'danger' });
     },
     info: (message: string, title?: string) => {
-      toast.show({ title: title || 'Info', description: message, variant: 'default' });
+      toast.show({ label: title || 'Info', description: message, variant: 'default' });
     },
     warning: (message: string, title?: string) => {
-      toast.show({ title: title || 'Warning', description: message, variant: 'default' });
+      toast.show({ label: title || 'Warning', description: message, variant: 'default' });
     },
   };
 }

@@ -45,13 +45,14 @@
     "@react-native/babel-preset": "0.85.0",
     "@types/react": "^19.2.0",
     "del-cli": "^7.0.0",
+    "heroui-native": "^1.0.2",
     "react": "19.2.0",
     "react-native": "0.83.6",
     "react-native-builder-bob": "^0.41.0",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.2",
+    "uniwind": "^1.6.3"
   },
   "peerDependencies": {
-    "expo-status-bar": "*",
     "heroui-native": ">=1.0.0",
     "react": "*",
     "react-native": "*",

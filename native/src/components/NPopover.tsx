@@ -13,7 +13,7 @@ export const NPopover = React.memo<NPopoverProps>(({ trigger, children, classNam
   return (
     <Popover>
       <Popover.Trigger asChild>{trigger}</Popover.Trigger>
-      <Popover.Content side={side} className={cn('w-80 p-0', className)}>
+      <Popover.Content presentation="popover" placement={side} className={cn('w-80 p-0', className)}>
         {children}
       </Popover.Content>
     </Popover>
