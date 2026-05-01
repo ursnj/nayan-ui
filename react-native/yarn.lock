@@ -3201,6 +3201,7 @@ __metadata:
     turbo: "npm:^2.8.21"
     typescript: "npm:^6.0.2"
   peerDependencies:
+    heroui-native: ">=1.0.0"
     react: "*"
     react-native: "*"
   languageName: unknown
