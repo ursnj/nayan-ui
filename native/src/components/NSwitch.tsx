@@ -28,7 +28,7 @@ export const NSwitch = React.memo<NSwitchProps>(
           isDisabled={isDisabled}
           isSelected={isSelected}
           onSelectedChange={handleToggle}
-          className={cn(!isSelected && 'bg-surface', className)}
+          className={cn(className)}
           nativeID={'switch-' + label}
           {...props}
         />
