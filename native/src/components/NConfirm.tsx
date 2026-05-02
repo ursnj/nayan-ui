@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { View } from 'react-native';
-import { Dialog, Button } from 'heroui-native';
+import { Button } from 'heroui-native';
 import { cn } from '../helpers/utils';
+import { NDialog } from './NDialog';
 
 export interface NConfirmProps {
   title: string;
@@ -25,32 +26,48 @@ export const NConfirm = React.memo<NConfirmProps>(
     description,
     children,
     onResult,
-    isOpen,
-    onOpenChange,
+    isOpen: isOpenProp,
+    onOpenChange: onOpenChangeProp,
     confirmText = 'Ok',
     cancelText = 'Cancel',
     className = '',
     titleClassName = '',
-    descriptionClassName = '',
     confirmClassName = '',
     cancelClassName = '',
   }) => {
+    const [internalOpen, setInternalOpen] = useState(false);
+    const isControlled = isOpenProp !== undefined;
+    const isOpen = isControlled ? isOpenProp : internalOpen;
+
+    const onOpenChange = useCallback((open: boolean) => {
+      if (!isControlled) setInternalOpen(open);
+      onOpenChangeProp?.(open);
+    }, [isControlled, onOpenChangeProp]);
+
+    const handleResult = useCallback((result: boolean) => {
+      onOpenChange(false);
+      onResult(result);
+    }, [onOpenChange, onResult]);
+
     return (
-      <Dialog isOpen={isOpen} onOpenChange={onOpenChange}>
-        {children && <Dialog.Trigger asChild>{children}</Dialog.Trigger>}
-        <Dialog.Content className={cn('p-3 min-w-[320px] bg-surface', className)}>
-          <Dialog.Title className={cn(titleClassName)}>{title}</Dialog.Title>
-          <Dialog.Description className={cn('text-muted text-sm', descriptionClassName)}>{description}</Dialog.Description>
-          <View className="flex-row gap-3 justify-end mt-4">
-            <Button variant="primary" onPress={() => onResult(true)} className={cn(confirmClassName)}>
-              {confirmText}
-            </Button>
-            <Button variant="secondary" onPress={() => onResult(false)} className={cn(cancelClassName)}>
-              {cancelText}
-            </Button>
-          </View>
-        </Dialog.Content>
-      </Dialog>
+      <NDialog
+        title={title}
+        description={description}
+        trigger={children}
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        className={cn('p-3', className)}
+        titleClassName={titleClassName}
+        contentClassName="px-3 pb-3">
+        <View className="flex-row gap-3 justify-end mt-4">
+          <Button variant="primary" onPress={() => handleResult(true)} className={cn(confirmClassName)}>
+            {confirmText}
+          </Button>
+          <Button variant="secondary" onPress={() => handleResult(false)} className={cn(cancelClassName)}>
+            {cancelText}
+          </Button>
+        </View>
+      </NDialog>
     );
   }
 );
