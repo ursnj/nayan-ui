@@ -28,7 +28,7 @@ export const NConfirm = React.memo<NConfirmProps>(
     onResult,
     isOpen: isOpenProp,
     onOpenChange: onOpenChangeProp,
-    confirmText = 'Ok',
+    confirmText = 'Confirm',
     cancelText = 'Cancel',
     className = '',
     titleClassName = '',
@@ -60,11 +60,11 @@ export const NConfirm = React.memo<NConfirmProps>(
         titleClassName={titleClassName}
         contentClassName="px-3 pb-3">
         <View className="flex-row gap-3 justify-end mt-4">
-          <Button variant="primary" onPress={() => handleResult(true)} className={cn(confirmClassName)}>
-            {confirmText}
-          </Button>
           <Button variant="secondary" onPress={() => handleResult(false)} className={cn(cancelClassName)}>
             {cancelText}
+          </Button>
+          <Button variant="primary" onPress={() => handleResult(true)} className={cn(confirmClassName)}>
+            {confirmText}
           </Button>
         </View>
       </NDialog>

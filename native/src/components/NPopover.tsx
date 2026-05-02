@@ -17,7 +17,7 @@ export const NPopover = React.memo<NPopoverProps>(({ trigger, children, isOpen, 
   return (
     <Popover isOpen={isOpen} onOpenChange={onOpenChange}>
       <Popover.Trigger asChild>{trigger}</Popover.Trigger>
-      <Popover.Content presentation="popover" placement={placement} className={cn('w-80 p-0 bg-surface', className)}>
+      <Popover.Content presentation="popover" placement={placement} className={cn('w-80 p-0', className)}>
         {children}
       </Popover.Content>
     </Popover>
