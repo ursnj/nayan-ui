@@ -11,7 +11,7 @@ export interface NAlertProps extends AlertRootProps {
 
 export const NAlert = React.memo<NAlertProps>(({ title, description, className, titleClassName, descriptionClassName, ...props }) => {
   return (
-    <Alert className={cn('w-full bg-surface', className)} {...props}>
+    <Alert className={cn('w-full bg-surface px-4 py-3', className)} {...props}>
       <Alert.Indicator />
       <Alert.Content>
         {title && <Alert.Title className={cn('font-medium mb-1', titleClassName)}>{title}</Alert.Title>}
