@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Switch, Label, type SwitchProps } from 'heroui-native';
+import { Label, Switch, type SwitchProps } from 'heroui-native';
 import { cn } from '../helpers/utils';
 
 export interface NSwitchProps extends Omit<SwitchProps, 'children'> {

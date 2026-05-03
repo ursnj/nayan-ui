@@ -33,21 +33,27 @@ export const NConfirm = React.memo<NConfirmProps>(
     className = '',
     titleClassName = '',
     confirmClassName = '',
-    cancelClassName = '',
+    cancelClassName = ''
   }) => {
     const [internalOpen, setInternalOpen] = useState(false);
     const isControlled = isOpenProp !== undefined;
     const isOpen = isControlled ? isOpenProp : internalOpen;
 
-    const onOpenChange = useCallback((open: boolean) => {
-      if (!isControlled) setInternalOpen(open);
-      onOpenChangeProp?.(open);
-    }, [isControlled, onOpenChangeProp]);
+    const onOpenChange = useCallback(
+      (open: boolean) => {
+        if (!isControlled) setInternalOpen(open);
+        onOpenChangeProp?.(open);
+      },
+      [isControlled, onOpenChangeProp]
+    );
 
-    const handleResult = useCallback((result: boolean) => {
-      onOpenChange(false);
-      onResult(result);
-    }, [onOpenChange, onResult]);
+    const handleResult = useCallback(
+      (result: boolean) => {
+        onOpenChange(false);
+        onResult(result);
+      },
+      [onOpenChange, onResult]
+    );
 
     return (
       <NDialog

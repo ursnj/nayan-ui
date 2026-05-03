@@ -12,12 +12,20 @@ export default function LinkButtonScreen() {
           <NLinkButton onPress={() => {}}>Learn more</NLinkButton>
 
           <NText className="text-lg font-bold">Sizes</NText>
-          <NLinkButton size="sm" onPress={() => {}}>Small link</NLinkButton>
-          <NLinkButton size="md" onPress={() => {}}>Medium link</NLinkButton>
-          <NLinkButton size="lg" onPress={() => {}}>Large link</NLinkButton>
+          <NLinkButton size="sm" onPress={() => {}}>
+            Small link
+          </NLinkButton>
+          <NLinkButton size="md" onPress={() => {}}>
+            Medium link
+          </NLinkButton>
+          <NLinkButton size="lg" onPress={() => {}}>
+            Large link
+          </NLinkButton>
 
           <NText className="text-lg font-bold">Disabled</NText>
-          <NLinkButton isDisabled onPress={() => {}}>Disabled link</NLinkButton>
+          <NLinkButton isDisabled onPress={() => {}}>
+            Disabled link
+          </NLinkButton>
         </View>
       </ScrollView>
     </>

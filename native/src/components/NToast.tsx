@@ -32,6 +32,6 @@ export function useNToast(): NToastMethods {
     },
     warning: (message: string, title?: string) => {
       toast.show({ label: title || 'Warning', description: message, variant: 'default' });
-    },
+    }
   };
 }

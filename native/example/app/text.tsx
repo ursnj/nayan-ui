@@ -35,8 +35,8 @@ export default function TextScreen() {
 
           <NText className="text-lg font-bold">Wrapping</NText>
           <NText>
-            This is a long paragraph of text that demonstrates how NText handles wrapping across
-            multiple lines. It should flow naturally within the container.
+            This is a long paragraph of text that demonstrates how NText handles wrapping across multiple lines. It should flow naturally within the
+            container.
           </NText>
         </View>
       </ScrollView>

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { useUniwind, Uniwind } from 'uniwind';
 import { useThemeColor } from 'heroui-native';
+import { Uniwind, useUniwind } from 'uniwind';
 import { THEMES } from '../helpers/utils';
 
 export function useNTheme() {
@@ -11,7 +11,7 @@ export function useNTheme() {
     'surface',
     'foreground',
     'muted',
-    'border',
+    'border'
   ]);
 
   const setTheme = useCallback((newTheme: string) => {
@@ -34,13 +34,13 @@ export function useNTheme() {
       surface,
       foreground,
       muted,
-      border,
+      border
     },
     headerConfig: {
       headerStyle: { backgroundColor: surface },
       headerTintColor: foreground,
       headerShadowVisible: true,
-      headerBackButtonDisplayMode: 'minimal' as const,
-    },
+      headerBackButtonDisplayMode: 'minimal' as const
+    }
   };
 }

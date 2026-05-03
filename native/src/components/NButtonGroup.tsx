@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
 import { Button } from 'heroui-native';
-import { NText } from './NText';
 import { cn } from '../helpers/utils';
+import { NText } from './NText';
 
 export interface ButtonGroupItem {
   label: string;
@@ -56,14 +56,9 @@ export const NButtonGroup = React.memo<NButtonGroupProps>(
                   borderTopLeftRadius: index === 0 ? 8 : 0,
                   borderBottomLeftRadius: index === 0 ? 8 : 0,
                   borderTopRightRadius: index === items.length - 1 ? 8 : 0,
-                  borderBottomRightRadius: index === items.length - 1 ? 8 : 0,
+                  borderBottomRightRadius: index === items.length - 1 ? 8 : 0
                 }}
-                className={cn(
-                  'border-r border-border',
-                  !isSelected && 'bg-surface',
-                  index === items.length - 1 && 'border-r-0',
-                  buttonClassName
-                )}>
+                className={cn('border-r border-border', !isSelected && 'bg-surface', index === items.length - 1 && 'border-r-0', buttonClassName)}>
                 {buttonIcon && <View className="mr-1">{buttonIcon}</View>}
                 <Button.Label>{item.label}</Button.Label>
               </Button>

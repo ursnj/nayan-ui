@@ -17,7 +17,7 @@ export default function ButtonGroupScreen() {
             items={[
               { label: 'Left', value: 'left' },
               { label: 'Center', value: 'center' },
-              { label: 'Right', value: 'right' },
+              { label: 'Right', value: 'right' }
             ]}
             value={align}
             onValueChange={setAlign}
@@ -30,7 +30,7 @@ export default function ButtonGroupScreen() {
               { label: 'S', value: 'sm' },
               { label: 'M', value: 'md' },
               { label: 'L', value: 'lg' },
-              { label: 'XL', value: 'xl' },
+              { label: 'XL', value: 'xl' }
             ]}
             value={size}
             onValueChange={setSize}
@@ -41,7 +41,7 @@ export default function ButtonGroupScreen() {
             isDisabled
             items={[
               { label: 'A', value: 'a' },
-              { label: 'B', value: 'b' },
+              { label: 'B', value: 'b' }
             ]}
             value="a"
             onValueChange={() => {}}

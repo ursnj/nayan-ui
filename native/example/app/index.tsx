@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
-import { Link, Stack } from 'expo-router';
 import { FlatList } from 'react-native';
-import { NText, NPress, NThemeToggle } from '@nayan-ui/react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { NPress, NText, NThemeToggle } from '@nayan-ui/react-native';
+import { Link, Stack } from 'expo-router';
 
 type IoniconsName = keyof typeof Ionicons.glyphMap;
 
@@ -47,32 +47,39 @@ const screens: ScreenItem[] = [
   { href: '/text', label: 'Text', description: 'Styled text component', icon: 'text-outline' },
   { href: '/theme', label: 'Theme', description: 'Theme toggle controls', icon: 'color-palette-outline' },
   { href: '/toast', label: 'Toast', description: 'Toast notifications', icon: 'notifications-outline' },
-  { href: '/tooltip', label: 'Tooltip', description: 'Hover/press tooltips', icon: 'information-circle-outline' },
+  { href: '/tooltip', label: 'Tooltip', description: 'Hover/press tooltips', icon: 'information-circle-outline' }
 ];
 
 export default function Index() {
-  const renderItem = useCallback(({ item }: { item: ScreenItem }) => (
-    <Link href={item.href as any} asChild>
-      <NPress className="flex-1 m-1.5 p-3 bg-surface rounded-xl items-center">
-        <Ionicons name={item.icon} size={28} color="#a1a1aa" />
-        <NText className="text-sm font-semibold mt-2 text-center" numberOfLines={1}>{item.label}</NText>
-        <NText className="text-xs text-muted text-center mt-0.5" numberOfLines={2}>{item.description}</NText>
-      </NPress>
-    </Link>
-  ), []);
+  const renderItem = useCallback(
+    ({ item }: { item: ScreenItem }) => (
+      <Link href={item.href as any} asChild>
+        <NPress className="flex-1 m-1.5 p-3 bg-surface rounded-xl items-center">
+          <Ionicons name={item.icon} size={28} color="#a1a1aa" />
+          <NText className="text-sm font-semibold mt-2 text-center" numberOfLines={1}>
+            {item.label}
+          </NText>
+          <NText className="text-xs text-muted text-center mt-0.5" numberOfLines={2}>
+            {item.description}
+          </NText>
+        </NPress>
+      </Link>
+    ),
+    []
+  );
 
   return (
     <>
       <Stack.Screen
         options={{
           title: 'Nayan UI',
-          headerRight: () => <NThemeToggle className="px-3" />,
+          headerRight: () => <NThemeToggle className="px-3" />
         }}
       />
       <FlatList
         data={screens}
         renderItem={renderItem}
-        keyExtractor={(item) => item.href}
+        keyExtractor={item => item.href}
         numColumns={2}
         contentContainerClassName="p-2 bg-background"
         className="flex-1 bg-background"

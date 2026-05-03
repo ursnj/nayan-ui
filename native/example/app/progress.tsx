@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { NProgress, NText } from '@nayan-ui/react-native';
 import { Stack } from 'expo-router';
@@ -8,7 +8,7 @@ export default function ProgressScreen() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setValue((v) => (v >= 100 ? 0 : v + 5));
+      setValue(v => (v >= 100 ? 0 : v + 5));
     }, 300);
     return () => clearInterval(timer);
   }, []);

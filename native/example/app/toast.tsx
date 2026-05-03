@@ -12,9 +12,15 @@ export default function ToastScreen() {
         <View className="p-4 gap-4">
           <NText className="text-lg font-bold">Shorthand methods</NText>
           <NButton onPress={() => toast.success('Changes saved successfully!')}>Success</NButton>
-          <NButton variant="danger" onPress={() => toast.error('Something went wrong.')}>Error</NButton>
-          <NButton variant="outline" onPress={() => toast.info('New update available.')}>Info</NButton>
-          <NButton variant="ghost" onPress={() => toast.warning('Low disk space.')}>Warning</NButton>
+          <NButton variant="danger" onPress={() => toast.error('Something went wrong.')}>
+            Error
+          </NButton>
+          <NButton variant="outline" onPress={() => toast.info('New update available.')}>
+            Info
+          </NButton>
+          <NButton variant="ghost" onPress={() => toast.warning('Low disk space.')}>
+            Warning
+          </NButton>
 
           <NText className="text-lg font-bold">With custom title</NText>
           <NButton variant="outline" onPress={() => toast.success('Your profile has been updated.', 'Profile')}>
@@ -25,9 +31,7 @@ export default function ToastScreen() {
           </NButton>
 
           <NText className="text-lg font-bold">Generic show()</NText>
-          <NButton
-            variant="outline"
-            onPress={() => toast.show({ type: 'info', title: 'Custom', message: 'Using toast.show() directly.' })}>
+          <NButton variant="outline" onPress={() => toast.show({ type: 'info', title: 'Custom', message: 'Using toast.show() directly.' })}>
             toast.show()
           </NButton>
         </View>

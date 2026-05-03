@@ -1,8 +1,8 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Select } from 'heroui-native';
-import { NText } from './NText';
 import { cn } from '../helpers/utils';
+import { NText } from './NText';
 
 export interface SelectOption {
   label: string;
@@ -33,7 +33,7 @@ export const NSelect = React.memo<NSelectProps>(
     onValueChange,
     containerClassName = '',
     labelClassName = '',
-    triggerClassName = '',
+    triggerClassName = ''
   }) => {
     return (
       <View className={cn('flex-1 mb-3', containerClassName)}>
@@ -47,7 +47,7 @@ export const NSelect = React.memo<NSelectProps>(
             <Select.Overlay />
             <Select.Content presentation="popover" width="trigger">
               {selectLabel && <Select.ListLabel>{selectLabel}</Select.ListLabel>}
-              {items.map((item) => (
+              {items.map(item => (
                 <Select.Item key={item.value} label={item.label} value={item.value} />
               ))}
             </Select.Content>

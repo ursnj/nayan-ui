@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
 import { useThemeColor } from 'heroui-native';
-import { NPress } from './NPress';
-import { NText } from './NText';
 import { ChevronForwardIcon } from '../helpers/icons';
 import { cn } from '../helpers/utils';
+import { NPress } from './NPress';
+import { NText } from './NText';
 
 export interface NActionItemProps {
   name: string;

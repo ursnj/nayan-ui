@@ -9,9 +9,7 @@ export interface NThemeProps {
 export const NTheme = React.memo<NThemeProps>(({ children }) => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <HeroUINativeProvider>
-        {children}
-      </HeroUINativeProvider>
+      <HeroUINativeProvider>{children}</HeroUINativeProvider>
     </GestureHandlerRootView>
   );
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Popover } from 'heroui-native';
-import { NText } from './NText';
 import { cn } from '../helpers/utils';
+import { NText } from './NText';
 
 export interface NTooltipProps {
   children: React.ReactNode;

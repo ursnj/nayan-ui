@@ -28,9 +28,6 @@
       "favicon": "./assets/favicon.png"
     },
     "scheme": "nayan-ui-example",
-    "plugins": [
-      "expo-dev-client",
-      "expo-router"
-    ]
+    "plugins": ["expo-dev-client", "expo-router"]
   }
 }

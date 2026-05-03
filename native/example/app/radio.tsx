@@ -21,7 +21,7 @@ export default function RadioScreen() {
               { label: 'Apple', value: 'apple' },
               { label: 'Banana', value: 'banana' },
               { label: 'Cherry', value: 'cherry' },
-              { label: 'Date', value: 'date' },
+              { label: 'Date', value: 'date' }
             ]}
           />
           <NText>Selected: {fruit}</NText>
@@ -34,7 +34,7 @@ export default function RadioScreen() {
             items={[
               { label: 'Small', value: 'sm' },
               { label: 'Medium', value: 'md' },
-              { label: 'Large', value: 'lg' },
+              { label: 'Large', value: 'lg' }
             ]}
           />
 
@@ -45,7 +45,7 @@ export default function RadioScreen() {
             onValueChange={() => {}}
             items={[
               { label: 'Option A', value: 'a' },
-              { label: 'Option B', value: 'b' },
+              { label: 'Option B', value: 'b' }
             ]}
           />
         </View>
