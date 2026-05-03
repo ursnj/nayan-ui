@@ -24,9 +24,9 @@ export const NDialog = React.memo<NDialogProps>(
         {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
         <Dialog.Portal>
           <Dialog.Overlay />
-          <Dialog.Content isSwipeable={isSwipeable} className={cn('rounded-lg min-w-[320px] sm:max-w-[425px] bg-surface', className)}>
-            <Dialog.Title className={cn('px-3 pt-3', titleClassName)}>{title}</Dialog.Title>
-            {description && <Dialog.Description className="px-3 text-muted">{description}</Dialog.Description>}
+          <Dialog.Content isSwipeable={isSwipeable} className={cn('rounded-xl min-w-[320px] sm:max-w-[425px] bg-surface px-4 py-3', className)}>
+            <Dialog.Title className={cn(titleClassName)}>{title}</Dialog.Title>
+            {description && <Dialog.Description className="text-muted">{description}</Dialog.Description>}
             <View className={contentClassName}>{children}</View>
           </Dialog.Content>
         </Dialog.Portal>
