@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { RadioGroup, Label } from 'heroui-native';
+import { RadioGroup, Radio, Label } from 'heroui-native';
 import { NText } from './NText';
 import { cn } from '../helpers/utils';
 
@@ -9,44 +9,15 @@ export interface RadioItem {
   value: string;
 }
 
-interface RadioGroupItemInternalProps {
-  isDisabled?: boolean;
-  item: RadioItem;
-  onLabelPress: (value: string) => void;
-  radioItemClassName?: string;
-  radioLabelClassName?: string;
-}
-
-const RadioGroupItemWithLabel = React.memo<RadioGroupItemInternalProps>(
-  ({ isDisabled, item, onLabelPress, radioItemClassName = '', radioLabelClassName = '' }) => {
-    return (
-      <View className={cn('flex-row gap-2 items-center', radioItemClassName)}>
-        <RadioGroup.Item isDisabled={isDisabled} value={item.value} />
-        <Label
-          isDisabled={isDisabled}
-          className={cn('text-foreground text-lg', isDisabled && 'opacity-70', radioLabelClassName)}
-          nativeID={`label-for-${item.value}`}
-          onPress={() => !isDisabled && onLabelPress(item.value)}>
-          {item.label}
-        </Label>
-      </View>
-    );
-  }
-);
-
-RadioGroupItemWithLabel.displayName = 'RadioGroupItemWithLabel';
-
 export interface NRadioProps {
   label?: string;
   isDisabled?: boolean;
   value: string;
   items: RadioItem[];
   onValueChange: (value: string) => void;
-  containerClassName?: string;
+  className?: string;
   labelClassName?: string;
-  radioGroupClassName?: string;
-  radioItemClassName?: string;
-  radioLabelClassName?: string;
+  itemClassName?: string;
 }
 
 export const NRadio = React.memo<NRadioProps>(
@@ -56,25 +27,19 @@ export const NRadio = React.memo<NRadioProps>(
     items,
     isDisabled = false,
     onValueChange,
-    containerClassName = '',
+    className = '',
     labelClassName = '',
-    radioGroupClassName = '',
-    radioItemClassName,
-    radioLabelClassName,
+    itemClassName = '',
   }) => {
     return (
-      <View className={cn('flex-1 mb-3', containerClassName)}>
-        {label && <NText className={cn('mb-2', labelClassName)}>{label}</NText>}
-        <RadioGroup value={value} onValueChange={onValueChange} isDisabled={isDisabled} className={cn('gap-3 flex-row flex-wrap', radioGroupClassName)}>
+      <View className={cn('w-full', className)}>
+        {label && <NText className={cn('mb-2 font-medium', labelClassName)}>{label}</NText>}
+        <RadioGroup value={value} onValueChange={onValueChange} isDisabled={isDisabled} className="gap-3">
           {items.map((item) => (
-            <RadioGroupItemWithLabel
-              key={item.value}
-              isDisabled={isDisabled}
-              item={item}
-              onLabelPress={onValueChange}
-              radioItemClassName={radioItemClassName}
-              radioLabelClassName={radioLabelClassName}
-            />
+            <RadioGroup.Item key={item.value} value={item.value} className={cn('bg-surface px-4 py-3 rounded-xl', itemClassName)}>
+              <Label>{item.label}</Label>
+              <Radio variant="secondary" />
+            </RadioGroup.Item>
           ))}
         </RadioGroup>
       </View>

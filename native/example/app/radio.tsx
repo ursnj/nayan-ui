@@ -26,16 +26,15 @@ export default function RadioScreen() {
           />
           <NText>Selected: {fruit}</NText>
 
-          <NText className="text-lg font-bold">Horizontal</NText>
+          <NText className="text-lg font-bold">Size selection</NText>
           <NRadio
             label="Size"
             value={size}
             onValueChange={setSize}
-            radioGroupClassName="flex-row gap-4"
             items={[
-              { label: 'S', value: 'sm' },
-              { label: 'M', value: 'md' },
-              { label: 'L', value: 'lg' },
+              { label: 'Small', value: 'sm' },
+              { label: 'Medium', value: 'md' },
+              { label: 'Large', value: 'lg' },
             ]}
           />
 
