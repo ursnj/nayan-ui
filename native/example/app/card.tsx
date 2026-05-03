@@ -1,5 +1,5 @@
 import { ScrollView, View } from 'react-native';
-import { NCard, NText, NButton } from '@nayan-ui/react-native';
+import { NButton, NCard, NText } from '@nayan-ui/react-native';
 import { Stack } from 'expo-router';
 
 export default function CardScreen() {
@@ -30,7 +30,9 @@ export default function CardScreen() {
           <NCard>
             <NText className="font-bold text-lg">Upgrade Plan</NText>
             <NText className="text-muted mt-1">Get more features with Pro.</NText>
-            <NButton className="mt-3" size="sm" onPress={() => {}}>Upgrade</NButton>
+            <NButton className="mt-3" size="sm" onPress={() => {}}>
+              Upgrade
+            </NButton>
           </NCard>
         </View>
       </ScrollView>

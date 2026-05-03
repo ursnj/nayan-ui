@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NDialog, NButton, NText } from '@nayan-ui/react-native';
+import { NButton, NDialog, NText } from '@nayan-ui/react-native';
 import { Stack } from 'expo-router';
 
 export default function DialogScreen() {
@@ -23,7 +23,9 @@ export default function DialogScreen() {
           <NDialog title="Controlled Dialog" isOpen={open} onOpenChange={setOpen}>
             <View className="p-4">
               <NText>Controlled via isOpen / onOpenChange.</NText>
-              <NButton className="mt-3" variant="outline" onPress={() => setOpen(false)}>Close</NButton>
+              <NButton className="mt-3" variant="outline" onPress={() => setOpen(false)}>
+                Close
+              </NButton>
             </View>
           </NDialog>
 

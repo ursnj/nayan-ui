@@ -27,13 +27,7 @@ export default function InputScreen() {
           <NInput label="Bio" multiline description="Tell us about yourself." />
 
           <NText className="text-lg font-bold">All combined</NText>
-          <NInput
-            label="Phone"
-            description="Include country code."
-            isRequired
-            isInvalid
-            errorMessage="Invalid phone number."
-          />
+          <NInput label="Phone" description="Include country code." isRequired isInvalid errorMessage="Invalid phone number." />
         </View>
       </ScrollView>
     </>

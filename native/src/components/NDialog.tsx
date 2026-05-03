@@ -18,7 +18,19 @@ export interface NDialogProps {
 }
 
 export const NDialog = React.memo<NDialogProps>(
-  ({ children, trigger, title, description, isOpen, isDefaultOpen, onOpenChange, isSwipeable, className = '', titleClassName = '', contentClassName = '' }) => {
+  ({
+    children,
+    trigger,
+    title,
+    description,
+    isOpen,
+    isDefaultOpen,
+    onOpenChange,
+    isSwipeable,
+    className = '',
+    titleClassName = '',
+    contentClassName = ''
+  }) => {
     return (
       <Dialog isOpen={isOpen} isDefaultOpen={isDefaultOpen} onOpenChange={onOpenChange}>
         {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}

@@ -1,6 +1,6 @@
 import { ScrollView, View } from 'react-native';
-import { NMenu, NMenuItem, NButton, NText } from '@nayan-ui/react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { NButton, NMenu, NMenuItem, NText } from '@nayan-ui/react-native';
 import { Stack } from 'expo-router';
 
 export default function MenuScreen() {

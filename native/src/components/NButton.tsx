@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
-import { Button, type ButtonRootProps, type ButtonVariant, type ButtonSize } from 'heroui-native';
+import { Button, type ButtonRootProps, type ButtonSize, type ButtonVariant } from 'heroui-native';
 import { cn } from '../helpers/utils';
 
 export type NButtonVariant = ButtonVariant;

@@ -1,5 +1,5 @@
 import { ScrollView, View } from 'react-native';
-import { NThemeToggle, NButton, NText, useNTheme } from '@nayan-ui/react-native';
+import { NButton, NText, NThemeToggle, useNTheme } from '@nayan-ui/react-native';
 import { Stack } from 'expo-router';
 
 function ThemeInfo() {
@@ -7,15 +7,23 @@ function ThemeInfo() {
 
   return (
     <View className="gap-3">
-      <NText>Current theme: <NText className="font-bold">{theme}</NText></NText>
+      <NText>
+        Current theme: <NText className="font-bold">{theme}</NText>
+      </NText>
 
       <NText className="text-lg font-bold">useNTheme — toggleTheme</NText>
-      <NButton variant="outline" onPress={toggleTheme}>Toggle Theme</NButton>
+      <NButton variant="outline" onPress={toggleTheme}>
+        Toggle Theme
+      </NButton>
 
       <NText className="text-lg font-bold">useNTheme — setTheme</NText>
       <View className="flex-row gap-2">
-        <NButton size="sm" onPress={() => setTheme('light')}>Light</NButton>
-        <NButton size="sm" onPress={() => setTheme('dark')}>Dark</NButton>
+        <NButton size="sm" onPress={() => setTheme('light')}>
+          Light
+        </NButton>
+        <NButton size="sm" onPress={() => setTheme('dark')}>
+          Dark
+        </NButton>
       </View>
     </View>
   );

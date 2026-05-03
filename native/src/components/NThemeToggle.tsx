@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import { Pressable, type PressableProps } from 'react-native';
-import { SunIcon, MoonIcon } from '../helpers/icons';
-import { useNTheme } from '../hooks/useNTheme';
+import { MoonIcon, SunIcon } from '../helpers/icons';
 import { THEMES } from '../helpers/utils';
+import { useNTheme } from '../hooks/useNTheme';
 
 export interface NThemeToggleProps extends Omit<PressableProps, 'onPress'> {
   className?: string;

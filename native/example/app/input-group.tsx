@@ -15,11 +15,7 @@ export default function InputGroupScreen() {
           <NInputGroup label="Email" suffix={<NText className="text-muted px-3">@gmail.com</NText>} />
 
           <NText className="text-lg font-bold">Prefix + suffix</NText>
-          <NInputGroup
-            label="Price"
-            prefix={<NText className="text-muted px-3">$</NText>}
-            suffix={<NText className="text-muted px-3">USD</NText>}
-          />
+          <NInputGroup label="Price" prefix={<NText className="text-muted px-3">$</NText>} suffix={<NText className="text-muted px-3">USD</NText>} />
 
           <NText className="text-lg font-bold">Disabled</NText>
           <NInputGroup label="Locked" isDisabled prefix={<NText className="text-muted px-3">#</NText>} />

@@ -13,7 +13,7 @@ export default function AccordionScreen() {
             items={[
               { title: 'What is React Native?', content: 'A framework for building native apps using React.' },
               { title: 'What is Expo?', content: 'A set of tools for building React Native apps faster.' },
-              { title: 'What is HeroUI?', content: 'A component library for React Native.' },
+              { title: 'What is HeroUI?', content: 'A component library for React Native.' }
             ]}
           />
 
@@ -23,7 +23,7 @@ export default function AccordionScreen() {
             items={[
               { title: 'Item A', content: 'Content A' },
               { title: 'Item B', content: 'Content B' },
-              { title: 'Item C', content: 'Content C' },
+              { title: 'Item C', content: 'Content C' }
             ]}
           />
 
@@ -31,7 +31,7 @@ export default function AccordionScreen() {
           <NAccordion
             items={[
               { title: 'Enabled', content: 'You can expand this.' },
-              { title: 'Disabled', content: 'Cannot expand.', isDisabled: true },
+              { title: 'Disabled', content: 'Cannot expand.', isDisabled: true }
             ]}
           />
 
@@ -40,7 +40,7 @@ export default function AccordionScreen() {
             variant="surface"
             items={[
               { title: 'Surface A', content: 'Content in surface variant.' },
-              { title: 'Surface B', content: 'Another surface item.' },
+              { title: 'Surface B', content: 'Another surface item.' }
             ]}
           />
         </View>

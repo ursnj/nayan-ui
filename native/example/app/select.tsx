@@ -20,7 +20,7 @@ export default function SelectScreen() {
               { label: 'USA', value: 'us' },
               { label: 'UK', value: 'uk' },
               { label: 'Germany', value: 'de' },
-              { label: 'Japan', value: 'jp' },
+              { label: 'Japan', value: 'jp' }
             ]}
             onValueChange={setCountry}
           />
@@ -33,18 +33,13 @@ export default function SelectScreen() {
             items={[
               { label: 'English', value: 'en' },
               { label: 'Spanish', value: 'es' },
-              { label: 'French', value: 'fr' },
+              { label: 'French', value: 'fr' }
             ]}
             onValueChange={() => {}}
           />
 
           <NText className="text-lg font-bold">Disabled</NText>
-          <NSelect
-            label="Locked"
-            isDisabled
-            items={[{ label: 'Only option', value: 'only' }]}
-            onValueChange={() => {}}
-          />
+          <NSelect label="Locked" isDisabled items={[{ label: 'Only option', value: 'only' }]} onValueChange={() => {}} />
         </View>
       </ScrollView>
     </>

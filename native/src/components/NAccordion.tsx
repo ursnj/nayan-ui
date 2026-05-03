@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Accordion } from 'heroui-native';
-import { NText } from './NText';
 import { cn } from '../helpers/utils';
+import { NText } from './NText';
 
 export interface AccordionItemData {
   id?: string;
@@ -25,12 +25,24 @@ export interface NAccordionProps {
 }
 
 export const NAccordion = React.memo<NAccordionProps>(
-  ({ items, selectionMode = 'single', defaultValue, variant, hideSeparator, isCollapsible, isDisabled, className, itemClassName, titleClassName, contentClassName }) => {
+  ({
+    items,
+    selectionMode = 'single',
+    defaultValue,
+    variant,
+    hideSeparator,
+    isCollapsible,
+    isDisabled,
+    className,
+    itemClassName,
+    titleClassName,
+    contentClassName
+  }) => {
     const processedItems = useMemo(
       () =>
         items.map((item, index) => ({
           ...item,
-          id: item.id || `item-${index}`,
+          id: item.id || `item-${index}`
         })),
       [items]
     );
@@ -44,7 +56,7 @@ export const NAccordion = React.memo<NAccordionProps>(
         hideSeparator={hideSeparator}
         isCollapsible={isCollapsible}
         isDisabled={isDisabled}>
-        {processedItems.map((item) => (
+        {processedItems.map(item => (
           <Accordion.Item key={item.id} value={item.id} isDisabled={item.isDisabled} className={itemClassName}>
             <Accordion.Trigger className="px-4 py-3">
               <NText className={cn('text-lg font-medium', titleClassName)}>{item.title}</NText>

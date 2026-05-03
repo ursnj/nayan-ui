@@ -3,12 +3,12 @@ import { Keyboard, type KeyboardEvent } from 'react-native';
 
 const EVENT_TYPE = {
   didShow: { show: 'keyboardDidShow', hide: 'keyboardDidHide' },
-  willShow: { show: 'keyboardWillShow', hide: 'keyboardWillHide' },
+  willShow: { show: 'keyboardWillShow', hide: 'keyboardWillHide' }
 } as const;
 
 export function useNKeyboard(
   { eventType = 'didShow' }: { eventType?: keyof typeof EVENT_TYPE } = {
-    eventType: 'didShow',
+    eventType: 'didShow'
   }
 ) {
   const [isKeyboardVisible, setKeyboardVisible] = React.useState(false);
@@ -38,6 +38,6 @@ export function useNKeyboard(
   return {
     isKeyboardVisible,
     keyboardHeight,
-    dismissKeyboard,
+    dismissKeyboard
   };
 }

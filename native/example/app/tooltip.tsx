@@ -1,5 +1,5 @@
 import { ScrollView, View } from 'react-native';
-import { NTooltip, NButton, NText } from '@nayan-ui/react-native';
+import { NButton, NText, NTooltip } from '@nayan-ui/react-native';
 import { Stack } from 'expo-router';
 
 export default function TooltipScreen() {

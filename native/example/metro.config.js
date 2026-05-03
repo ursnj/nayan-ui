@@ -13,10 +13,10 @@ const root = path.resolve(__dirname, '..');
  */
 const config = withMetroConfig(getDefaultConfig(__dirname), {
   root,
-  dirname: __dirname,
+  dirname: __dirname
 });
 
 module.exports = withUniwindConfig(config, {
   cssEntryFile: './src/global.css',
-  dtsFile: './src/uniwind-types.d.ts',
+  dtsFile: './src/uniwind-types.d.ts'
 });

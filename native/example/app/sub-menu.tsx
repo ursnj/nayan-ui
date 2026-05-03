@@ -1,5 +1,5 @@
 import { ScrollView, View } from 'react-native';
-import { NMenu, NMenuItem, NSubMenu, NButton, NText } from '@nayan-ui/react-native';
+import { NButton, NMenu, NMenuItem, NSubMenu, NText } from '@nayan-ui/react-native';
 import { Stack } from 'expo-router';
 
 export default function SubMenuScreen() {

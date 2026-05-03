@@ -15,7 +15,9 @@ export default function SwitchScreen() {
           <NText className="text-lg font-bold">Basic</NText>
           <NSwitch label="Wi-Fi" isSelected={wifi} onSelectedChange={setWifi} />
           <NSwitch label="Bluetooth" isSelected={bluetooth} onSelectedChange={setBluetooth} />
-          <NText className="text-muted">Wi-Fi: {wifi ? 'On' : 'Off'}, Bluetooth: {bluetooth ? 'On' : 'Off'}</NText>
+          <NText className="text-muted">
+            Wi-Fi: {wifi ? 'On' : 'Off'}, Bluetooth: {bluetooth ? 'On' : 'Off'}
+          </NText>
 
           <NText className="text-lg font-bold">Disabled</NText>
           <NSwitch label="Disabled on" isSelected isDisabled onSelectedChange={() => {}} />

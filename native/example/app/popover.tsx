@@ -1,5 +1,5 @@
 import { ScrollView, View } from 'react-native';
-import { NPopover, NButton, NText } from '@nayan-ui/react-native';
+import { NButton, NPopover, NText } from '@nayan-ui/react-native';
 import { Stack } from 'expo-router';
 
 export default function PopoverScreen() {
@@ -41,7 +41,9 @@ export default function PopoverScreen() {
             <View className="p-3 gap-2">
               <NText className="font-bold">User Info</NText>
               <NText className="text-muted">john@example.com</NText>
-              <NButton size="sm" onPress={() => {}}>View Profile</NButton>
+              <NButton size="sm" onPress={() => {}}>
+                View Profile
+              </NButton>
             </View>
           </NPopover>
         </View>

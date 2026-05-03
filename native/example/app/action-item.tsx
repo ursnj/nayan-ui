@@ -1,6 +1,6 @@
 import { ScrollView, View } from 'react-native';
-import { NActionItem, NText, NDivider } from '@nayan-ui/react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { NActionItem, NDivider, NText } from '@nayan-ui/react-native';
 import { Stack } from 'expo-router';
 
 export default function ActionItemScreen() {
@@ -17,10 +17,21 @@ export default function ActionItemScreen() {
           <NActionItem name="Notifications" icon={<Ionicons name="notifications-outline" size={20} />} onPress={() => {}} />
 
           <NText className="text-lg font-bold mt-4 mb-2">Disabled</NText>
-          <NActionItem name="Locked" description="You don't have access" icon={<Ionicons name="lock-closed-outline" size={20} />} isDisabled onPress={() => {}} />
+          <NActionItem
+            name="Locked"
+            description="You don't have access"
+            icon={<Ionicons name="lock-closed-outline" size={20} />}
+            isDisabled
+            onPress={() => {}}
+          />
 
           <NText className="text-lg font-bold mt-4 mb-2">Long press</NText>
-          <NActionItem name="Hold me" description="Supports onLongPress" icon={<Ionicons name="hand-left-outline" size={20} />} onLongPress={() => {}} />
+          <NActionItem
+            name="Hold me"
+            description="Supports onLongPress"
+            icon={<Ionicons name="hand-left-outline" size={20} />}
+            onLongPress={() => {}}
+          />
         </View>
       </ScrollView>
     </>

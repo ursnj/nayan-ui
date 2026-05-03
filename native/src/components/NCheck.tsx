@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Checkbox, Label, type CheckboxProps } from 'heroui-native';
+import { Checkbox, type CheckboxProps, Label } from 'heroui-native';
 import { cn } from '../helpers/utils';
 
 export interface NCheckProps extends Omit<CheckboxProps, 'children'> {

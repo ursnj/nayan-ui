@@ -15,7 +15,7 @@ export default function TagGroupScreen() {
               { label: 'React', value: 'react' },
               { label: 'Vue', value: 'vue' },
               { label: 'Angular', value: 'angular' },
-              { label: 'Svelte', value: 'svelte' },
+              { label: 'Svelte', value: 'svelte' }
             ]}
           />
 
@@ -26,7 +26,7 @@ export default function TagGroupScreen() {
               { label: 'TypeScript', value: 'ts' },
               { label: 'JavaScript', value: 'js' },
               { label: 'Python', value: 'py' },
-              { label: 'Rust', value: 'rs' },
+              { label: 'Rust', value: 'rs' }
             ]}
           />
 
@@ -36,7 +36,7 @@ export default function TagGroupScreen() {
             size="sm"
             items={[
               { label: 'Tag A', value: 'a' },
-              { label: 'Tag B', value: 'b' },
+              { label: 'Tag B', value: 'b' }
             ]}
           />
           <NText className="text-muted">Large</NText>
@@ -44,7 +44,7 @@ export default function TagGroupScreen() {
             size="lg"
             items={[
               { label: 'Tag A', value: 'a' },
-              { label: 'Tag B', value: 'b' },
+              { label: 'Tag B', value: 'b' }
             ]}
           />
 
@@ -54,7 +54,7 @@ export default function TagGroupScreen() {
             items={[
               { label: 'One', value: '1' },
               { label: 'Two', value: '2' },
-              { label: 'Three', value: '3' },
+              { label: 'Three', value: '3' }
             ]}
           />
 
@@ -62,7 +62,7 @@ export default function TagGroupScreen() {
           <NTagGroup
             items={[
               { label: 'Enabled', value: 'e' },
-              { label: 'Disabled', value: 'd', isDisabled: true },
+              { label: 'Disabled', value: 'd', isDisabled: true }
             ]}
           />
         </View>
