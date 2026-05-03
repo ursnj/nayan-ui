@@ -1,0 +1,28 @@
+diff --git a/node_modules/react-native-reanimated/lib/module/css/component/AnimatedComponent.js b/node_modules/react-native-reanimated/lib/module/css/component/AnimatedComponent.js
+index 2259797..9fe7b43 100644
+--- a/node_modules/react-native-reanimated/lib/module/css/component/AnimatedComponent.js
++++ b/node_modules/react-native-reanimated/lib/module/css/component/AnimatedComponent.js
+@@ -52,7 +52,7 @@ export default class AnimatedComponent extends Component {
+           (render function returns null). Example: 
+           svg Stop: https://github.com/react-native-svg/react-native-svg/blob/develop/src/elements/Stop.tsx
+         */
+-        throw new ReanimatedError('Cannot find host instance for this component. Maybe it renders nothing?');
++        return { viewTag: -1, shadowNodeWrapper: null, reactViewName: undefined };
+       }
+       const viewInfo = getViewInfo(hostInstance);
+       viewTag = viewInfo.viewTag ?? -1;
+diff --git a/node_modules/react-native-reanimated/src/css/component/AnimatedComponent.tsx b/node_modules/react-native-reanimated/src/css/component/AnimatedComponent.tsx
+index d738ca0..d2b1e37 100644
+--- a/node_modules/react-native-reanimated/src/css/component/AnimatedComponent.tsx
++++ b/node_modules/react-native-reanimated/src/css/component/AnimatedComponent.tsx
+@@ -87,9 +87,7 @@ export default class AnimatedComponent<
+           (render function returns null). Example: 
+           svg Stop: https://github.com/react-native-svg/react-native-svg/blob/develop/src/elements/Stop.tsx
+         */
+-        throw new ReanimatedError(
+-          'Cannot find host instance for this component. Maybe it renders nothing?'
+-        );
++        return { viewTag: -1, shadowNodeWrapper: null, reactViewName: undefined } as ViewInfo;
+       }
+ 
+       const viewInfo = getViewInfo(hostInstance);
