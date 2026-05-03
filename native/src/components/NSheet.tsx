@@ -22,7 +22,7 @@ export const NSheet = React.memo<NSheetProps>(
         {trigger && <BottomSheet.Trigger asChild>{trigger}</BottomSheet.Trigger>}
         <BottomSheet.Portal>
           <BottomSheet.Overlay />
-          <BottomSheet.Content className={cn('flex-1 bg-surface', className)}>
+          <BottomSheet.Content className={cn('flex-1 bg-surface', className)} contentContainerClassName="p-0">
             {title && <BottomSheet.Title className={titleClassName}>{title}</BottomSheet.Title>}
             {description && <BottomSheet.Description className={descriptionClassName}>{description}</BottomSheet.Description>}
             {children}
