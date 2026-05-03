@@ -10,9 +10,9 @@ export default function MenuScreen() {
         <View className="p-4 gap-4">
           <NText className="text-lg font-bold">Basic menu</NText>
           <NMenu trigger={<NButton variant="outline">Open Menu</NButton>} title="Actions">
-            <NMenuItem title="Edit" onPress={() => {}} />
-            <NMenuItem title="Duplicate" onPress={() => {}} />
-            <NMenuItem title="Archive" onPress={() => {}} />
+            <NMenuItem title="Edit" onPress={() => console.log('Edit')} />
+            <NMenuItem title="Duplicate" onPress={() => console.log('Duplicate')} />
+            <NMenuItem title="Archive" onPress={() => console.log('Archive')} />
           </NMenu>
 
           <NText className="text-lg font-bold">With separators</NText>

@@ -13,10 +13,13 @@ export interface NTooltipProps {
 export const NTooltip = React.memo<NTooltipProps>(({ children, message, className, textClassName }) => {
   return (
     <Popover>
-      <Popover.Trigger>{children}</Popover.Trigger>
-      <Popover.Content presentation="popover" className={cn('max-w-[250px] p-2', className)}>
-        <NText className={cn('text-sm', textClassName)}>{message}</NText>
-      </Popover.Content>
+      <Popover.Trigger asChild>{children}</Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Overlay />
+        <Popover.Content presentation="popover" className={cn('max-w-[250px] p-2', className)}>
+          <NText className={cn('text-sm', textClassName)}>{message}</NText>
+        </Popover.Content>
+      </Popover.Portal>
     </Popover>
   );
 });

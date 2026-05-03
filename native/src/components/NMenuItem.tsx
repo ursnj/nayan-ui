@@ -12,12 +12,12 @@ export interface NMenuItemProps {
   isDisabled?: boolean;
   hasSeparator?: boolean;
   className?: string;
-  textClassName?: string;
+  titleClassName?: string;
   shortcutClassName?: string;
 }
 
 export const NMenuItem = React.memo<NMenuItemProps>(
-  ({ title, shortcut = '', hasSeparator = false, icon, isDisabled, className = '', textClassName = '', shortcutClassName = '', onPress }) => {
+  ({ title, shortcut = '', hasSeparator = false, icon, isDisabled, className = '', titleClassName = '', shortcutClassName = '', onPress }) => {
     const menuIcon = useMemo(() => {
       if (!icon) return null;
 
@@ -33,8 +33,8 @@ export const NMenuItem = React.memo<NMenuItemProps>(
       <>
         <Menu.Item className={className} onPress={onPress} isDisabled={isDisabled}>
           {menuIcon && <View className="mr-2">{menuIcon}</View>}
-          <NText className={textClassName}>{title}</NText>
-          {shortcut && <NText className={cn('text-muted ml-auto', shortcutClassName)}>{shortcut}</NText>}
+          <Menu.ItemTitle className={titleClassName}>{title}</Menu.ItemTitle>
+          {shortcut && <NText className={cn('text-muted-foreground text-xs ml-auto', shortcutClassName)}>{shortcut}</NText>}
         </Menu.Item>
         {hasSeparator && <Separator />}
       </>

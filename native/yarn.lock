@@ -2304,7 +2304,11 @@ __metadata:
     react: "*"
     react-native: "*"
     react-native-gesture-handler: "*"
+    react-native-reanimated: "*"
+    react-native-safe-area-context: "*"
+    react-native-screens: "*"
     react-native-svg: "*"
+    react-native-worklets: "*"
     uniwind: ">=1.6.0"
   languageName: unknown
   linkType: soft
