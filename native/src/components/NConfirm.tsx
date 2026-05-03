@@ -56,9 +56,9 @@ export const NConfirm = React.memo<NConfirmProps>(
         trigger={children}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        className={cn('p-3', className)}
+        className={cn(className)}
         titleClassName={titleClassName}
-        contentClassName="px-3 pb-3">
+        contentClassName="">
         <View className="flex-row gap-3 justify-end mt-4">
           <Button variant="secondary" onPress={() => handleResult(false)} className={cn(cancelClassName)}>
             {cancelText}
