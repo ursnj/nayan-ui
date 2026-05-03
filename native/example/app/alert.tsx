@@ -32,6 +32,11 @@ export default function AlertScreen() {
             title="Important"
             description="This is a much longer description that wraps across multiple lines to show how the alert handles longer content gracefully."
           />
+
+          <NText className="text-lg font-bold">With close button</NText>
+          <NAlert status="accent" title="Dismissible" description="Tap the close button to dismiss." onClose={() => console.log('closed')} />
+          <NAlert status="success" title="Upload complete" description="Your file has been uploaded." onClose={() => console.log('closed')} />
+          <NAlert status="warning" title="Low storage" description="You are running low on storage." onClose={() => console.log('closed')} />
         </View>
       </ScrollView>
     </>
