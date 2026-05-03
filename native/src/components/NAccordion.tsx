@@ -48,6 +48,7 @@ export const NAccordion = React.memo<NAccordionProps>(
           <Accordion.Item key={item.id} value={item.id} isDisabled={item.isDisabled} className={itemClassName}>
             <Accordion.Trigger className="px-4 py-3">
               <NText className={cn('text-lg font-medium', titleClassName)}>{item.title}</NText>
+              <Accordion.Indicator />
             </Accordion.Trigger>
             <Accordion.Content className="px-4 pb-3">
               <NText className={cn('text-muted', contentClassName)}>{item.content}</NText>
