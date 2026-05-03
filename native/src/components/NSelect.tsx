@@ -42,14 +42,17 @@ export const NSelect = React.memo<NSelectProps>(
           <Select.Trigger className={cn('w-full', isDisabled && 'opacity-70', triggerClassName)} isDisabled={isDisabled}>
             <Select.Value placeholder={placeholder} />
           </Select.Trigger>
-          <Select.Content presentation="popover">
-            {selectLabel && <Select.ListLabel>{selectLabel}</Select.ListLabel>}
-            {items.map((item) => (
-              <Select.Item key={item.value} label={item.label} value={item.value}>
-                {item.label}
-              </Select.Item>
-            ))}
-          </Select.Content>
+          <Select.Portal>
+            <Select.Overlay />
+            <Select.Content presentation="popover">
+              {selectLabel && <Select.ListLabel>{selectLabel}</Select.ListLabel>}
+              {items.map((item) => (
+                <Select.Item key={item.value} label={item.label} value={item.value}>
+                  {item.label}
+                </Select.Item>
+              ))}
+            </Select.Content>
+          </Select.Portal>
         </Select>
       </View>
     );

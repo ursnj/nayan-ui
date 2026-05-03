@@ -6,23 +6,27 @@ export interface NMenuProps {
   children?: ReactNode;
   trigger: ReactNode;
   title?: string;
+  width?: number;
   className?: string;
   titleClassName?: string;
 }
 
-export const NMenu = React.memo<NMenuProps>(({ children, trigger, title = '', className = '', titleClassName = '' }) => {
+export const NMenu = React.memo<NMenuProps>(({ children, trigger, title = '', width = 220, className = '', titleClassName = '' }) => {
   return (
     <Menu>
-      <Menu.Trigger>{trigger}</Menu.Trigger>
-      <Menu.Content presentation="popover" className={cn('w-64', className)}>
-        {title && (
-          <>
-            <Menu.Label className={cn(titleClassName)}>{title}</Menu.Label>
-            <Separator />
-          </>
-        )}
-        {children}
-      </Menu.Content>
+      <Menu.Trigger asChild>{trigger}</Menu.Trigger>
+      <Menu.Portal>
+        <Menu.Overlay />
+        <Menu.Content presentation="popover" width={width} className={cn(className)}>
+          {title && (
+            <>
+              <Menu.Label className={cn(titleClassName)}>{title}</Menu.Label>
+              <Separator />
+            </>
+          )}
+          {children}
+        </Menu.Content>
+      </Menu.Portal>
     </Menu>
   );
 });
