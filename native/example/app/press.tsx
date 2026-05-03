@@ -25,6 +25,21 @@ export default function PressScreen() {
           <NPress className="p-4 bg-surface rounded-lg" onLongPress={() => setCount(0)}>
             <NText>Long press to reset counter</NText>
           </NPress>
+
+          <NText className="text-lg font-bold">With feedback</NText>
+          <NPress feedback className="p-4 bg-surface rounded-lg" onPress={() => setCount(count + 1)}>
+            <NText>Tap with highlight & ripple feedback</NText>
+          </NPress>
+
+          <NText className="text-lg font-bold">Styled with feedback</NText>
+          <NPress feedback className="p-6 bg-accent rounded-xl items-center" onPress={() => {}}>
+            <NText className="text-white font-bold text-lg">Animated press area</NText>
+          </NPress>
+
+          <NText className="text-lg font-bold">Feedback with long press</NText>
+          <NPress feedback className="p-4 bg-surface rounded-lg" onLongPress={() => setCount(0)}>
+            <NText>Long press to reset counter</NText>
+          </NPress>
         </View>
       </ScrollView>
     </>

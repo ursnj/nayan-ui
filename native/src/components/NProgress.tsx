@@ -9,9 +9,11 @@ export interface NProgressProps {
 }
 
 export const NProgress = React.memo<NProgressProps>(({ value, className = '', indicatorClassName = '' }) => {
+  const clampedValue = Math.min(100, Math.max(0, value));
+
   return (
-    <View className={cn('w-full h-2 bg-surface rounded-full overflow-hidden', className)}>
-      <View className={cn('h-full bg-accent rounded-full', indicatorClassName)} style={{ width: `${Math.min(100, Math.max(0, value))}%` }} />
+    <View className={cn('w-full bg-surface rounded-full overflow-hidden', className)} style={{ height: 8 }}>
+      <View className={cn('w-full bg-accent rounded-full', indicatorClassName)} style={{ height: 8, width: `${clampedValue}%` }} />
     </View>
   );
 });
