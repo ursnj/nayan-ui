@@ -40,7 +40,7 @@ export const NButtonGroup = React.memo<NButtonGroupProps>(
     return (
       <View className="w-full">
         {label && <NText className={cn('mb-2 font-medium', labelClassName)}>{label}</NText>}
-        <View className={cn('flex-row rounded overflow-hidden', className)}>
+        <View className={cn('flex-row rounded-lg overflow-hidden', className)}>
           {items.map((item, index) => {
             const isSelected = item.value === value;
             const itemDisabled = isDisabled || item.isDisabled;
