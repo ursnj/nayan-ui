@@ -36,7 +36,7 @@ export const NActionItem = React.memo<NActionItemProps>(
     return (
       <NPress
         feedback
-        className={cn('flex-row items-center px-3 py-2 bg-surface rounded-xl', isDisabled && 'opacity-50', className)}
+        className={cn('flex-row items-center px-4 py-3 bg-surface rounded-xl', isDisabled && 'opacity-50', className)}
         onPress={onPress}
         onLongPress={onLongPress}
         disabled={isDisabled}>
