@@ -1,13 +1,16 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
+import { useThemeColor } from 'heroui-native';
 import { NPress } from './NPress';
 import { NText } from './NText';
+import { ChevronForwardIcon } from '../helpers/icons';
 import { cn } from '../helpers/utils';
 
 export interface NActionItemProps {
   name: string;
   description?: string;
   icon?: React.ComponentType<any> | React.ReactElement;
+  showArrow?: boolean;
   isDisabled?: boolean;
   className?: string;
   titleClassName?: string;
@@ -17,7 +20,8 @@ export interface NActionItemProps {
 }
 
 export const NActionItem = React.memo<NActionItemProps>(
-  ({ name, description, icon, isDisabled = false, className, titleClassName, descriptionClassName, onPress, onLongPress }) => {
+  ({ name, description, icon, showArrow = true, isDisabled = false, className, titleClassName, descriptionClassName, onPress, onLongPress }) => {
+    const mutedColor = useThemeColor('muted');
     const actionIcon = useMemo(() => {
       if (!icon) return null;
 
@@ -31,7 +35,8 @@ export const NActionItem = React.memo<NActionItemProps>(
 
     return (
       <NPress
-        className={cn('flex-row items-center px-3 py-2 bg-surface', isDisabled && 'opacity-50', className)}
+        feedback
+        className={cn('flex-row items-center px-3 py-2 bg-surface rounded-xl', isDisabled && 'opacity-50', className)}
         onPress={onPress}
         onLongPress={onLongPress}
         disabled={isDisabled}>
@@ -40,6 +45,7 @@ export const NActionItem = React.memo<NActionItemProps>(
           <NText className={cn('font-medium', titleClassName)}>{name}</NText>
           {description && <NText className={cn('text-sm text-muted mt-0.5', descriptionClassName)}>{description}</NText>}
         </View>
+        {showArrow && <ChevronForwardIcon size={16} color={mutedColor} />}
       </NPress>
     );
   }
