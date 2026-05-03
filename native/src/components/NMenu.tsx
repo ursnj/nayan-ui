@@ -1,4 +1,5 @@
 import React, { type ReactNode } from 'react';
+import { View } from 'react-native';
 import { Menu, Separator } from 'heroui-native';
 import { cn } from '../helpers/utils';
 
@@ -20,7 +21,9 @@ export const NMenu = React.memo<NMenuProps>(({ children, trigger, title = '', wi
         <Menu.Content presentation="popover" width={width} className={cn(className)}>
           {title && (
             <>
-              <Menu.Label className={cn(titleClassName)}>{title}</Menu.Label>
+              <View className="mb-2">
+                <Menu.Label className={cn(titleClassName)}>{title}</Menu.Label>
+              </View>
               <Separator />
             </>
           )}
