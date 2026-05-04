@@ -1,7 +1,8 @@
 import React, { type ReactNode } from 'react';
 import { View } from 'react-native';
-import { Menu, Separator } from 'heroui-native';
+import { Menu, Separator, SubMenu, type SubMenuRootProps } from 'heroui-native';
 import { cn } from '../helpers/utils';
+import { NText } from './NText';
 
 export interface NMenuProps {
   children?: ReactNode;
@@ -35,3 +36,32 @@ export const NMenu = React.memo<NMenuProps>(({ children, trigger, title = '', wi
 });
 
 NMenu.displayName = 'NMenu';
+
+export interface NSubMenuProps extends SubMenuRootProps {
+  label: string;
+  icon?: React.ComponentType<any> | React.ReactElement;
+  triggerClassName?: string;
+  contentClassName?: string;
+}
+
+export const NSubMenu = React.memo<NSubMenuProps>(({ label, icon, children, className, triggerClassName, contentClassName, ...props }) => {
+  const menuIcon = React.useMemo(() => {
+    if (!icon) return null;
+    if (React.isValidElement(icon)) return icon;
+    const IconComponent = icon as React.ComponentType<any>;
+    return <IconComponent size={16} />;
+  }, [icon]);
+
+  return (
+    <SubMenu className={cn(className)} {...props}>
+      <SubMenu.Trigger className={cn(triggerClassName)}>
+        {menuIcon && <View className="mr-2">{menuIcon}</View>}
+        <NText className="flex-1">{label}</NText>
+        <SubMenu.TriggerIndicator />
+      </SubMenu.Trigger>
+      <SubMenu.Content className={cn(contentClassName)}>{children}</SubMenu.Content>
+    </SubMenu>
+  );
+});
+
+NSubMenu.displayName = 'NSubMenu';
