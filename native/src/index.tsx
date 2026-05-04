@@ -28,7 +28,7 @@ export * from './components/NSheet';
 export * from './components/NSkeleton';
 export * from './components/NSkeletonGroup';
 export * from './components/NSlider';
-export * from './components/NSubMenu';
+
 export * from './components/NSwitch';
 export * from './components/NTabs';
 export * from './components/NTagGroup';

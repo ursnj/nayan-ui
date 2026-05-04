@@ -40,7 +40,6 @@ const screens: ScreenItem[] = [
   { href: '/sheet', label: 'Sheet', description: 'Bottom sheet overlays', icon: 'layers-outline' },
   { href: '/skeleton', label: 'Skeleton', description: 'Loading placeholders', icon: 'square-outline' },
   { href: '/slider', label: 'Slider', description: 'Range slider control', icon: 'options-outline' },
-  { href: '/sub-menu', label: 'Sub Menu', description: 'Nested menu items', icon: 'git-branch-outline' },
   { href: '/switch', label: 'Switch', description: 'Toggle switch control', icon: 'toggle-outline' },
   { href: '/tabs', label: 'Tabs', description: 'Tabbed content views', icon: 'albums-outline' },
   { href: '/tag-group', label: 'Tag Group', description: 'Selectable tag chips', icon: 'pricetags-outline' },
