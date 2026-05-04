@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View } from 'react-native';
-import { Label, Switch, type SwitchProps } from 'heroui-native';
+import { Label, Switch, type SwitchProps, useThemeColor } from 'heroui-native';
 import { cn } from '../helpers/utils';
 
 export interface NSwitchProps extends Omit<SwitchProps, 'children'> {
@@ -10,7 +10,24 @@ export interface NSwitchProps extends Omit<SwitchProps, 'children'> {
 }
 
 export const NSwitch = React.memo<NSwitchProps>(
-  ({ label, containerClassName = '', labelClassName = '', className = '', isDisabled = false, isSelected = false, onSelectedChange, ...props }) => {
+  ({ label, containerClassName = '', labelClassName = '', className = '', isDisabled = false, isSelected = false, onSelectedChange, animation, ...props }) => {
+    const [surface, accent] = useThemeColor(['surface', 'accent']);
+
+    const switchAnimation = useMemo(
+      () =>
+        animation ?? {
+          backgroundColor: { value: [surface, accent] as [string, string] },
+        },
+      [animation, surface, accent]
+    );
+
+    const thumbAnimation = useMemo(
+      () => ({
+        backgroundColor: { value: [accent, surface] as [string, string] },
+      }),
+      [accent, surface]
+    );
+
     const handleToggle = () => {
       if (!isDisabled) {
         onSelectedChange?.(!isSelected);
@@ -30,8 +47,11 @@ export const NSwitch = React.memo<NSwitchProps>(
           onSelectedChange={handleToggle}
           className={cn(className)}
           nativeID={'switch-' + label}
+          animation={switchAnimation}
           {...props}
-        />
+        >
+          <Switch.Thumb animation={thumbAnimation} />
+        </Switch>
       </View>
     );
   }
