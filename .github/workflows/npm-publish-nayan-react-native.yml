@@ -22,8 +22,7 @@ jobs:
         run: yarn native:build
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_PUBLISH }}" > ~/.npmrc
+          npm publish --access public
         working-directory: ./packages/native
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH }}
-          NPM_CONFIG_REGISTRY: https://registry.npmjs.org/
