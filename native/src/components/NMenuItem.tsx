@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
-import { Menu, Separator, cn } from 'heroui-native';
+import { Menu, Separator, cn, useThemeColor } from 'heroui-native';
 import { NText } from './NText';
 
 export interface NMenuItemProps {
@@ -17,23 +17,24 @@ export interface NMenuItemProps {
 
 export const NMenuItem = React.memo<NMenuItemProps>(
   ({ title, shortcut = '', hasSeparator = false, icon, isDisabled, className = '', titleClassName = '', shortcutClassName = '', onPress }) => {
+    const foregroundColor = useThemeColor('foreground');
     const menuIcon = useMemo(() => {
       if (!icon) return null;
 
       if (React.isValidElement(icon)) {
-        return icon;
+        return React.cloneElement(icon as React.ReactElement<any>, { color: (icon as React.ReactElement<any>).props.color ?? foregroundColor });
       }
 
       const IconComponent = icon as React.ComponentType<any>;
-      return <IconComponent size={16} />;
-    }, [icon]);
+      return <IconComponent size={16} color={foregroundColor} />;
+    }, [icon, foregroundColor]);
 
     return (
       <>
         <Menu.Item className={className} onPress={onPress} isDisabled={isDisabled}>
           {menuIcon && <View className="mr-2">{menuIcon}</View>}
           <Menu.ItemTitle className={titleClassName}>{title}</Menu.ItemTitle>
-          {shortcut && <NText className={cn('text-muted-foreground text-xs ml-auto', shortcutClassName)}>{shortcut}</NText>}
+          {shortcut && <NText className={cn('text-muted text-xs ml-auto', shortcutClassName)}>{shortcut}</NText>}
         </Menu.Item>
         {hasSeparator && <Separator />}
       </>

@@ -29,7 +29,6 @@ const screens: ScreenItem[] = [
   { href: '/input', label: 'Input', description: 'Text input fields', icon: 'create-outline' },
   { href: '/input-group', label: 'Input Group', description: 'Input with prefix/suffix', icon: 'at-outline' },
   { href: '/input-otp', label: 'Input OTP', description: 'One-time password input', icon: 'keypad-outline' },
-  { href: '/link-button', label: 'Link Button', description: 'Ghost-style link buttons', icon: 'link-outline' },
   { href: '/loading', label: 'Loading', description: 'Loading spinners', icon: 'sync-outline' },
   { href: '/menu', label: 'Menu', description: 'Dropdown menu actions', icon: 'menu-outline' },
   { href: '/popover', label: 'Popover', description: 'Floating popover content', icon: 'chatbubble-outline' },

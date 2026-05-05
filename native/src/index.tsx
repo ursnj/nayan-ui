@@ -14,7 +14,6 @@ export * from './components/NDivider';
 export * from './components/NInput';
 export * from './components/NInputGroup';
 export * from './components/NInputOtp';
-export * from './components/NLinkButton';
 export * from './components/NLoading';
 export * from './components/NMenu';
 export * from './components/NMenuItem';
