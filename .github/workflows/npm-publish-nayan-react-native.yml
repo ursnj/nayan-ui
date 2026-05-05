@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./packages/react-native
+        working-directory: ./packages/native
     steps:
       - uses: actions/checkout@v4
 
@@ -18,7 +18,8 @@ jobs:
           always-auth: true
 
       - name: Install dependencies (workspace root)
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
+        working-directory: .
 
       - name: Build nayan (react-native) package
         run: yarn build
