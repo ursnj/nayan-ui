@@ -4,8 +4,10 @@ import { RadioItem } from './Types';
 import { Label } from './ui/label';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 
-export interface NRadioGroupProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof RadioGroup>, 'onValueChange' | 'value' | 'defaultValue' | 'onChange'> {
+export interface NRadioGroupProps extends Omit<
+  React.ComponentPropsWithoutRef<typeof RadioGroup>,
+  'onValueChange' | 'value' | 'defaultValue' | 'onChange'
+> {
   orientation?: 'horizontal' | 'vertical';
   items: RadioItem[];
   className?: string;
