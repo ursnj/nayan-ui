@@ -22,7 +22,7 @@ jobs:
         working-directory: .
 
       - name: Install dependencies (workspace root)
-        run: yarn install --immutable
+        run: yarn install
         working-directory: .
 
       - name: Build nayan (react-native) package
