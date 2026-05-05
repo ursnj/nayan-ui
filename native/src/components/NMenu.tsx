@@ -1,7 +1,6 @@
 import React, { type ReactNode } from 'react';
 import { View } from 'react-native';
-import { Menu, Separator, SubMenu, type SubMenuRootProps } from 'heroui-native';
-import { cn } from '../helpers/utils';
+import { Menu, Separator, SubMenu, type SubMenuRootProps, cn } from 'heroui-native';
 import { NText } from './NText';
 
 export interface NMenuProps {

@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
-import { Button } from 'heroui-native';
-import { cn } from '../helpers/utils';
+import { Button, cn } from 'heroui-native';
 import { NText } from './NText';
 
 export interface ButtonGroupItem {

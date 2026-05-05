@@ -8,9 +8,9 @@ import {
   TextArea,
   type TextAreaProps,
   TextField,
-  type TextFieldRootProps
+  type TextFieldRootProps,
+  cn
 } from 'heroui-native';
-import { cn } from '../helpers/utils';
 
 export interface NInputProps extends Omit<TextFieldRootProps, 'children'> {
   label?: string;

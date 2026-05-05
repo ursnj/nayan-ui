@@ -1,6 +1,5 @@
 import React from 'react';
-import { Skeleton, type SkeletonProps } from 'heroui-native';
-import { cn } from '../helpers/utils';
+import { Skeleton, type SkeletonProps, cn } from 'heroui-native';
 
 export interface NSkeletonProps extends SkeletonProps {}
 

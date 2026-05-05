@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '../helpers/utils';
+import { cn } from 'heroui-native';
 import { NText } from './NText';
 
 export interface NRequiredProps {

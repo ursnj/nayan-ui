@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
-import { Menu, Separator } from 'heroui-native';
-import { cn } from '../helpers/utils';
+import { Menu, Separator, cn } from 'heroui-native';
 import { NText } from './NText';
 
 export interface NMenuItemProps {

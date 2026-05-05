@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
-import { Accordion } from 'heroui-native';
-import { cn } from '../helpers/utils';
+import { Accordion, cn } from 'heroui-native';
 import { NText } from './NText';
 
 export interface AccordionItemData {

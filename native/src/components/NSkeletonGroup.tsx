@@ -1,6 +1,5 @@
 import React from 'react';
-import { SkeletonGroup, type SkeletonGroupRootProps } from 'heroui-native';
-import { cn } from '../helpers/utils';
+import { SkeletonGroup, type SkeletonGroupRootProps, cn } from 'heroui-native';
 
 export interface NSkeletonGroupProps extends SkeletonGroupRootProps {}
 
