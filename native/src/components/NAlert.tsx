@@ -1,7 +1,6 @@
 import React from 'react';
-import { Alert, type AlertRootProps, useThemeColor } from 'heroui-native';
+import { Alert, type AlertRootProps, cn, useThemeColor } from 'heroui-native';
 import { CloseIcon } from '../helpers/icons';
-import { cn } from '../helpers/utils';
 import { NPress } from './NPress';
 
 export interface NAlertProps extends AlertRootProps {

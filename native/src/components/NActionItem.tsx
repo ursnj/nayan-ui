@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
-import { useThemeColor } from 'heroui-native';
+import { cn, useThemeColor } from 'heroui-native';
 import { ChevronForwardIcon } from '../helpers/icons';
-import { cn } from '../helpers/utils';
 import { NPress } from './NPress';
 import { NText } from './NText';
 

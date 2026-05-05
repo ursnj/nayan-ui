@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Tabs, type TabsProps } from 'heroui-native';
-import { cn } from '../helpers/utils';
+import { Tabs, type TabsProps, cn } from 'heroui-native';
 import { NText } from './NText';
 
 export interface TabItem {

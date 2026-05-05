@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { cn } from '../helpers/utils';
+import { cn } from 'heroui-native';
 
 export interface NProgressProps {
   value: number;

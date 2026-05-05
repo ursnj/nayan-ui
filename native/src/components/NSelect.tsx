@@ -1,7 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Select } from 'heroui-native';
-import { cn } from '../helpers/utils';
+import { Select, cn } from 'heroui-native';
 import { NText } from './NText';
 
 export interface SelectOption {

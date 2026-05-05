@@ -1,6 +1,5 @@
 import React from 'react';
-import { Card, type CardRootProps } from 'heroui-native';
-import { cn } from '../helpers/utils';
+import { Card, type CardRootProps, cn } from 'heroui-native';
 
 export interface NCardProps extends CardRootProps {}
 

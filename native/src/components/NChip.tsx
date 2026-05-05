@@ -1,6 +1,5 @@
 import React from 'react';
-import { Chip, type ChipProps } from 'heroui-native';
-import { cn } from '../helpers/utils';
+import { Chip, type ChipProps, cn } from 'heroui-native';
 
 export interface NChipProps extends ChipProps {}
 

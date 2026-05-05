@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, type TextProps } from 'react-native';
-import { cn } from '../helpers/utils';
+import { cn } from 'heroui-native';
 
 export interface NTextProps extends TextProps {
   className?: string;

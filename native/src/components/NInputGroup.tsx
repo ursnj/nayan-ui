@@ -1,7 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { InputGroup, type InputGroupProps, type InputProps } from 'heroui-native';
-import { cn } from '../helpers/utils';
+import { InputGroup, type InputGroupProps, type InputProps, cn } from 'heroui-native';
 import { NText } from './NText';
 
 export interface NInputGroupProps extends InputGroupProps {

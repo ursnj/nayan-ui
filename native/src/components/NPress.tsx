@@ -1,7 +1,6 @@
 import React from 'react';
 import { Pressable, type PressableProps } from 'react-native';
-import { PressableFeedback } from 'heroui-native';
-import { cn } from '../helpers/utils';
+import { PressableFeedback, cn } from 'heroui-native';
 
 export interface NPressProps extends PressableProps {
   children: React.ReactNode;
