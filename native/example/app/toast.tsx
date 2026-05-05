@@ -30,6 +30,34 @@ export default function ToastScreen() {
             Error with title
           </NButton>
 
+          <NText className="text-lg font-bold">With action button</NText>
+          <NButton
+            variant="outline"
+            onPress={() =>
+              toast.show({
+                type: 'success',
+                title: 'Item deleted',
+                message: 'The item has been moved to trash.',
+                actionLabel: 'Undo',
+                onActionPress: () => toast.info('Undo successful!')
+              })
+            }>
+            With Action
+          </NButton>
+          <NButton
+            variant="outline"
+            onPress={() =>
+              toast.show({
+                type: 'warning',
+                title: 'Session expiring',
+                message: 'Your session will expire in 5 minutes.',
+                actionLabel: 'Extend',
+                onActionPress: () => toast.success('Session extended!')
+              })
+            }>
+            Warning with Action
+          </NButton>
+
           <NText className="text-lg font-bold">Generic show()</NText>
           <NButton variant="outline" onPress={() => toast.show({ type: 'info', title: 'Custom', message: 'Using toast.show() directly.' })}>
             toast.show()
