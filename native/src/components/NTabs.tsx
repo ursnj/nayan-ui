@@ -35,12 +35,12 @@ export const NTabs = React.memo<NTabsProps>(
     return (
       <Tabs className={cn('w-full', className)} value={activeValue} onValueChange={handleChange} {...props}>
         <Tabs.List className={cn(listClassName)}>
+          <Tabs.Indicator />
           {items.map(item => (
             <Tabs.Trigger key={item.value} value={item.value} isDisabled={item.isDisabled} className={cn(triggerClassName)}>
               <Tabs.Label>{item.label}</Tabs.Label>
             </Tabs.Trigger>
           ))}
-          <Tabs.Indicator />
         </Tabs.List>
         {items.map(item => (
           <Tabs.Content key={item.value} value={item.value} className={cn('mt-3', contentClassName)}>
