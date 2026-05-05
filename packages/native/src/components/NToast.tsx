@@ -31,9 +31,7 @@ export function useNToast(): NToastMethods {
   const { toast } = useToast();
   const [successColor, dangerColor, foregroundColor, warningColor] = useThemeColor(['success', 'danger', 'foreground', 'warning']);
 
-  const wrapIcon = (icon: React.ReactNode): React.ReactNode => (
-    <View style={{ marginTop: 4 }}>{icon}</View>
-  );
+  const wrapIcon = (icon: React.ReactNode): React.ReactNode => <View style={{ marginTop: 4 }}>{icon}</View>;
 
   const getIcon = (type: string): React.ReactNode => {
     switch (type) {
@@ -58,7 +56,12 @@ export function useNToast(): NToastMethods {
         variant: VARIANT_MAP[type] ?? 'default',
         icon: icon ?? getIcon(type),
         actionLabel,
-        onActionPress: onActionPress ? ({ hide }) => { onActionPress(); hide('all'); } : undefined
+        onActionPress: onActionPress
+          ? ({ hide }) => {
+              onActionPress();
+              hide('all');
+            }
+          : undefined
       });
     },
     success: (message: string, title?: string, icon?: React.ReactNode) => {
