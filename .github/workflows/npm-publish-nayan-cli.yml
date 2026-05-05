@@ -19,6 +19,7 @@ jobs:
 
       - name: Enable Corepack
         run: corepack enable
+        working-directory: .
 
       - name: Install dependencies (workspace root)
         run: yarn install --immutable
