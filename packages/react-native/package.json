@@ -1,5 +1,5 @@
 {
-  "name": "@nayan-ui/react-native",
+  "name": "@nayan-ui/react-native-legacy",
   "version": "1.0.2",
   "description": "React Native Component Library for smooth and faster mobile application development.",
   "source": "./src/index.tsx",
