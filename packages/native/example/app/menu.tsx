@@ -52,7 +52,6 @@ export default function MenuScreen() {
             <NMenuItem title="Copy" icon={<Ionicons name="copy-outline" size={16} />} shortcut="⌘C" onPress={() => {}} />
             <NMenuItem title="Paste" icon={<Ionicons name="clipboard-outline" size={16} />} shortcut="⌘V" onPress={() => {}} />
           </NMenu>
-
         </View>
       </ScrollView>
     </>
