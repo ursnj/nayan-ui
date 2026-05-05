@@ -17,6 +17,9 @@ jobs:
           registry-url: 'https://registry.npmjs.org/'
           always-auth: true
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Install dependencies (workspace root)
         run: yarn install --immutable
         working-directory: .
