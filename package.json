@@ -1,26 +1,28 @@
 {
   "name": "@nayan-ui/root",
   "private": true,
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ],
-    "nohoist": []
-  },
+  "workspaces": [
+    "packages/*",
+    "packages/native/example"
+  ],
   "version": "1.0.0",
   "description": "Reusable Component Libraries for React and React Native.",
   "scripts": {
     "prepare": "husky install",
     "format": "prettier --write .",
-    "clean": "rimraf packages/*/node_modules packages/*/dist examples/*/node_modules examples/*/dist node_modules",
-    "build:cli": "yarn workspace @nayan-ui/cli build",
-    "watch:react": "yarn workspace @nayan-ui/react dev",
-    "build:react": "yarn workspace @nayan-ui/react build",
-    "build:react-native": "yarn workspace @nayan-ui/react-native build",
-    "start:website:watch": "concurrently \"yarn watch:react\" \"yarn workspace @nayan-ui/website start\"",
-    "start:website": "yarn build:react && yarn workspace @nayan-ui/website start",
-    "build:website": "yarn build:react && yarn workspace @nayan-ui/website build",
-    "sitemap:website": "yarn workspace @nayan-ui/website sitemap"
+    "clean": "rimraf packages/*/node_modules packages/*/dist packages/*/lib node_modules",
+    "cli:build": "yarn workspace @nayan-ui/cli build",
+    "react:dev": "yarn workspace @nayan-ui/react dev",
+    "react:build": "yarn workspace @nayan-ui/react build",
+    "native:build": "yarn workspace @nayan-ui/react-native build",
+    "native:typecheck": "yarn workspace @nayan-ui/react-native typecheck",
+    "native:clean": "yarn workspace @nayan-ui/react-native clean",
+    "native:example": "yarn workspace @nayan-ui/react-native example",
+    "website:start": "yarn react:build && yarn workspace @nayan-ui/website start",
+    "website:start:watch": "concurrently \"yarn react:dev\" \"yarn workspace @nayan-ui/website start\"",
+    "website:build": "yarn react:build && yarn workspace @nayan-ui/website build",
+    "website:preview": "yarn workspace @nayan-ui/website preview",
+    "website:sitemap": "yarn workspace @nayan-ui/website sitemap"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
@@ -41,5 +43,5 @@
     ]
   },
   "license": "ISC",
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  "packageManager": "yarn@4.11.0"
 }

@@ -1,0 +1,90 @@
+{
+  "name": "@nayan-ui/react-native",
+  "version": "0.1.0",
+  "description": "Component library for React Native.",
+  "main": "./lib/module/index.js",
+  "types": "./lib/typescript/src/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.tsx",
+      "types": "./lib/typescript/src/index.d.ts",
+      "default": "./lib/module/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "lib",
+    "!**/.*"
+  ],
+  "scripts": {
+    "example": "yarn workspace react-native-example",
+    "clean": "del-cli lib",
+    "build": "bob build",
+    "typecheck": "tsc"
+  },
+  "keywords": [
+    "react-native",
+    "ios",
+    "android"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ursnj/nayan-ui.git"
+  },
+  "author": "ursnj <niranjan.devasani@gmail.com> (https://github.com/ursnj)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ursnj/nayan-ui/issues"
+  },
+  "homepage": "https://github.com/ursnj/nayan-ui#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "@react-native/babel-preset": "0.85.0",
+    "@types/react": "^19.2.0",
+    "del-cli": "^7.0.0",
+    "expo-router": "^55.0.13",
+    "heroui-native": "^1.0.2",
+    "react": "19.2.0",
+    "react-native": "0.83.6",
+    "react-native-builder-bob": "^0.41.0",
+    "typescript": "^6.0.2",
+    "uniwind": "^1.6.3"
+  },
+  "peerDependencies": {
+    "heroui-native": ">=1.0.0",
+    "react": "*",
+    "react-native": "*",
+    "react-native-gesture-handler": "*",
+    "react-native-reanimated": "*",
+    "react-native-safe-area-context": "*",
+    "react-native-screens": "*",
+    "react-native-svg": "*",
+    "react-native-worklets": "*",
+    "uniwind": ">=1.6.0"
+  },
+  "workspaces": [
+    "example"
+  ],
+  "packageManager": "yarn@4.11.0",
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      [
+        "module",
+        {
+          "esm": true
+        }
+      ],
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  }
+}

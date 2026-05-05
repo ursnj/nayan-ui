@@ -1,6 +1,5 @@
 {
   "name": "@nayan-ui/react",
-  "private": false,
   "sideEffects": false,
   "description": "React Component Library for smooth and faster web application development.",
   "version": "1.0.0",
