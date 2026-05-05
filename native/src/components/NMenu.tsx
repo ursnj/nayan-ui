@@ -1,6 +1,6 @@
 import React, { type ReactNode } from 'react';
 import { View } from 'react-native';
-import { Menu, Separator, SubMenu, type SubMenuRootProps, cn } from 'heroui-native';
+import { Menu, Separator, SubMenu, type SubMenuRootProps, cn, useThemeColor } from 'heroui-native';
 import { NText } from './NText';
 
 export interface NMenuProps {
@@ -44,12 +44,15 @@ export interface NSubMenuProps extends SubMenuRootProps {
 }
 
 export const NSubMenu = React.memo<NSubMenuProps>(({ label, icon, children, className, triggerClassName, contentClassName, ...props }) => {
+  const foregroundColor = useThemeColor('foreground');
   const menuIcon = React.useMemo(() => {
     if (!icon) return null;
-    if (React.isValidElement(icon)) return icon;
+    if (React.isValidElement(icon)) {
+      return React.cloneElement(icon as React.ReactElement<any>, { color: (icon as React.ReactElement<any>).props.color ?? foregroundColor });
+    }
     const IconComponent = icon as React.ComponentType<any>;
-    return <IconComponent size={16} />;
-  }, [icon]);
+    return <IconComponent size={16} color={foregroundColor} />;
+  }, [icon, foregroundColor]);
 
   return (
     <SubMenu className={cn(className)} {...props}>
