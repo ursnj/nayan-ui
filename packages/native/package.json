@@ -1,6 +1,6 @@
 {
   "name": "@nayan-ui/react-native",
-  "version": "0.1.0",
+  "version": "2.0.0-beta.1",
   "description": "Component library for React Native.",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
