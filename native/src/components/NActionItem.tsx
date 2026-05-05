@@ -20,17 +20,17 @@ export interface NActionItemProps {
 
 export const NActionItem = React.memo<NActionItemProps>(
   ({ name, description, icon, showArrow = true, isDisabled = false, className, titleClassName, descriptionClassName, onPress, onLongPress }) => {
-    const mutedColor = useThemeColor('muted');
+    const [mutedColor, foregroundColor] = useThemeColor(['muted', 'foreground']);
     const actionIcon = useMemo(() => {
       if (!icon) return null;
 
       if (React.isValidElement(icon)) {
-        return icon;
+        return React.cloneElement(icon as React.ReactElement<any>, { color: (icon as React.ReactElement<any>).props.color ?? foregroundColor });
       }
 
       const IconComponent = icon as React.ComponentType<any>;
-      return <IconComponent />;
-    }, [icon]);
+      return <IconComponent color={foregroundColor} />;
+    }, [icon, foregroundColor]);
 
     return (
       <NPress
