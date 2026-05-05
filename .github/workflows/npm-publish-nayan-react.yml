@@ -18,7 +18,8 @@ jobs:
           always-auth: true
 
       - name: Install dependencies (workspace root)
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
+        working-directory: .
 
       - name: Build nayan (react) package
         run: yarn build
