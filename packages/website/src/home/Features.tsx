@@ -42,7 +42,7 @@ const Features = () => {
         icon: Smartphone,
         color: 'from-blue-500 to-cyan-500',
         bgColor: 'bg-blue-50',
-        features: ['Shared API', 'Platform Optimized', 'Consistent UX', 'Single Codebase']
+        features: ['Shared API', 'Platform Optimized', 'HeroUI Native', 'Uniwind Styling']
       },
       {
         title: 'Developer Experience',
@@ -376,7 +376,9 @@ const Features = () => {
                   </div>
                   <div className="text-center sm:text-left">
                     <h4 className="font-bold text-sm sm:text-base">React Native</h4>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Native mobile apps for iOS and Android platforms</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      Native mobile apps for iOS and Android, powered by HeroUI Native & Uniwind
+                    </p>
                   </div>
                 </div>
               </div>

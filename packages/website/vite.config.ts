@@ -71,7 +71,8 @@ export default defineConfig({
     }
   },
   resolve: {
-    alias: [{ find: '@', replacement: path.resolve(__dirname, './src') }]
+    alias: [{ find: '@', replacement: path.resolve(__dirname, './src') }],
+    dedupe: ['react', 'react-dom']
   },
   esbuild: {
     // Exclude examples directory from esbuild processing to avoid TypeScript config issues
