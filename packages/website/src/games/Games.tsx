@@ -4,173 +4,309 @@ import { getMenuItem } from '@/services/Utils';
 import Meta from '../helpers/Meta';
 import Sidebar from '../helpers/Sidebar';
 
+const categoryColors: Record<string, string> = {
+  Puzzle: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+  Action: 'bg-red-500/10 text-red-500 border-red-500/20',
+  Arcade: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
+  Strategy: 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+};
+
 const games = [
+  {
+    name: 'Block Blast',
+    emoji: '🧱',
+    category: 'Puzzle',
+    image: '/games/block-blast.png',
+    description: 'Place blocks on grid to clear lines - strategic puzzle challenge!',
+    features: ['Grid-based strategy', 'Line clearing combos', 'Progressive difficulty']
+  },
+  {
+    name: 'Connect Em All',
+    emoji: '🔗',
+    category: 'Puzzle',
+    image: '/games/connect-em-all.png',
+    description: 'Connect matching colored dots to score points!',
+    features: ['Color matching logic', 'Path drawing mechanics', 'Increasing complexity']
+  },
+  {
+    name: 'Bubble Shooter',
+    emoji: '🫧',
+    category: 'Puzzle',
+    image: '/games/bubble-shooter.png',
+    description: 'Match 3+ bubbles of the same color - classic puzzle fun!',
+    features: ['Aim and shoot bubbles', 'Chain reaction combos', 'Classic match-3 gameplay']
+  },
+  {
+    name: 'Tile Home',
+    emoji: '🀄',
+    category: 'Puzzle',
+    image: '/games/tile-home.png',
+    description: 'Match 3 tiles of the same type - classic mahjong-style puzzle!',
+    features: ['Mahjong-style matching', 'Tile stacking layers', 'Memory and speed challenge']
+  },
   {
     name: 'Fruit Ninja',
     emoji: '🍎',
-    image: '/games-screenshots/fruit-ninja.jpg',
-    description: 'Slice flying fruits with finger swipes - avoid the bombs!',
-    details: [
-      'Fixed 60-second gameplay sessions',
-      'Physics-based slicing with particle effects and combo system',
-      'Difficulty affects fruit spawn rate and bomb frequency'
-    ]
-  },
-  {
-    name: 'Candy Crush',
-    emoji: '🍬',
-    image: '/games-screenshots/candy-crush.jpg',
-    description: 'Match colorful candies in this puzzle game',
-    details: [
-      'Match-3 puzzle with colorful candies',
-      'Create special candies with 4+ matches',
-      'Cascading combos and satisfying animations',
-      'Difficulty affects level objectives and move limits'
-    ]
-  },
-  {
-    name: 'Flappy Bird',
-    emoji: '🐦',
-    image: '/games-screenshots/flappy-bird.jpg',
-    description: 'Navigate bird through pipes with precise timing',
-    details: [
-      'Classic tap-to-flap mechanics with gravity physics',
-      'Navigate through pipes with pixel-perfect collision',
-      'Progressive difficulty with increasing pipe speed',
-      'Difficulty affects pipe gap size and spawn frequency'
-    ]
-  },
-  {
-    name: 'Colors Sort',
-    emoji: '🎨',
-    image: '/games-screenshots/colors-sort.jpg',
-    description: 'Sort colored liquids into matching tubes',
-    details: [
-      'Sort colored liquids into matching tubes',
-      'Logic puzzle with increasing complexity',
-      'Satisfying pour animations and sound effects',
-      'Difficulty affects number of tubes and colors'
-    ]
-  },
-  {
-    name: 'Dino Jump',
-    emoji: '🦖',
-    image: '/games-screenshots/dino-jump.jpg',
-    description: 'Chrome offline dino game - jump to avoid obstacles!',
-    details: [
-      'Endless runner with tap-to-jump mechanics',
-      'Collect stars for extra lives (max 3 lives)',
-      'Game durations: easy 2 mins, medium 3 mins, hard 5 mins',
-      'Dynamic ground height based on device offset (150px or 250px)',
-      'Difficulty affects obstacle spawn rate and game speed'
-    ]
-  },
-  {
-    name: 'Popit Fidget',
-    emoji: '🫧',
-    image: '/games-screenshots/popit-fidget.jpg',
-    description: 'Pop satisfying bubbles in this relaxing fidget toy game',
-    details: [
-      'Relaxing bubble popping with satisfying sound effects',
-      'Different bubble shapes and colors for variety',
-      'Difficulty affects bubble responsiveness and patterns'
-    ]
-  },
-  {
-    name: 'Whack A Mole',
-    emoji: '🐱',
-    image: '/games-screenshots/whack-a-mole.jpg',
-    description: 'Whack cute cats popping from holes - fast reflexes needed!',
-    details: [
-      'Cat spawn intervals: easy 2000ms, medium 1500ms, hard 1000ms',
-      'Cat visible duration: easy 2500ms, medium 2000ms, hard 1500ms',
-      'Grid sizes: easy/medium 3x3, hard 4x4'
-    ]
-  },
-  {
-    name: 'Balloon Blaster',
-    emoji: '🎈',
-    image: '/games-screenshots/balloon-blaster.jpg',
-    description: 'Pop rising balloons before they escape - quick taps win!',
-    details: [
-      'Fixed 60-second gameplay sessions',
-      'Balloon spawn interval: 1200ms, rise speed: 0.08',
-      'Physics-based balloon movement with particle effects'
-    ]
-  },
-  {
-    name: 'Space Fighter',
-    emoji: '🚀',
-    image: '/games-screenshots/space-fighter.jpg',
-    description: 'Pilot spaceship through asteroid fields in endless space',
-    details: [
-      'Horizontal drag controls with smooth spacecraft movement',
-      'Dynamic spacecraft positioning based on device offset',
-      'Progressive difficulty with asteroid spawn intervals',
-      '1-second collision immunity after each hit',
-      'Difficulty affects asteroid speed and spawn frequency'
-    ]
-  },
-  {
-    name: 'Maze Runner',
-    emoji: '🧩',
-    image: '/games-screenshots/maze-runner.jpg',
-    description: 'Navigate ball through mazes using tilt and physics controls',
-    details: [
-      'Grid sizes: easy 8x8, medium 10x10, hard 12x12',
-      'Procedurally generated mazes with intelligent pathfinding',
-      'Game over modal only appears on maze completion (not on stop)',
-      'White time display for better visibility',
-      'Difficulty affects maze complexity and time limits'
-    ]
-  },
-  {
-    name: 'Sliding Numbers',
-    emoji: '🔢',
-    image: '/games-screenshots/sliding-numbers.jpg',
-    description: 'Solve the classic 15-puzzle with numbers',
-    details: [
-      'Classic 15-puzzle with numbered tiles',
-      'Grid sizes: easy 3x3, medium 4x4, hard 5x5',
-      'Timer challenge to solve as fast as possible',
-      'Smooth tile sliding animations'
-    ]
-  },
-  {
-    name: '2048 Game',
-    emoji: '🎮',
-    image: '/games-screenshots/game-2048.jpg',
-    description: 'Merge tiles to reach 2048 and beyond',
-    details: [
-      'Swipe to merge tiles with same numbers',
-      'Reach 2048 tile to win, continue for higher scores',
-      'Undo moves feature for strategic gameplay',
-      'Difficulty affects starting tile values and spawn rate'
-    ]
+    category: 'Action',
+    image: '/games/fruit-ninja.png',
+    description: 'Slice flying fruits with finger swipes and combos - avoid the bombs!',
+    features: ['Physics-based slicing', 'Combo system & particles', 'Bomb avoidance mechanics']
   },
   {
     name: 'Fruit Merger',
     emoji: '🍉',
-    image: '/games-screenshots/fruit-merger.jpg',
-    description: 'Merge fruits to create bigger ones',
-    details: [
-      'Merge fruits to create bigger ones (watermelon evolution)',
-      'Physics-based dropping and merging mechanics',
-      'Combo system for multiple merges',
-      'Difficulty affects merge requirements and spawn rate'
-    ]
+    category: 'Puzzle',
+    image: '/games/fruit-merger.png',
+    description: 'Drop and merge fruits to create bigger ones - reach the watermelon!',
+    features: ['Physics-based merging', 'Watermelon evolution chain', 'Strategic drop placement']
   },
   {
-    name: 'Snake & Eggs',
+    name: 'Flappy Bird',
+    emoji: '🐦',
+    category: 'Arcade',
+    image: '/games/flappy-bird.png',
+    description: 'Tap to flap and navigate through pipes - classic arcade challenge!',
+    features: ['Tap-to-flap gravity physics', 'Pixel-perfect collision', 'Increasing pipe speed']
+  },
+  {
+    name: 'Dino Jump',
+    emoji: '🦖',
+    category: 'Arcade',
+    image: '/games/dino-jump.png',
+    description: 'Jump over obstacles and collect stars for lives - endless runner!',
+    features: ['Endless runner mechanics', 'Star collection for lives', 'Dynamic obstacle spawning']
+  },
+  {
+    name: 'Dots and Boxes',
+    emoji: '⬜',
+    category: 'Strategy',
+    image: '/games/dots-and-boxes.png',
+    description: 'Connect dots to complete boxes - classic strategy game vs AI!',
+    features: ['Play against smart AI', 'Turn-based strategy', 'Grid-based territory control']
+  },
+  {
+    name: 'Candy Crush',
+    emoji: '🍬',
+    category: 'Puzzle',
+    image: '/games/candy-crush.png',
+    description: 'Match colorful candies in rows to score points - sweet puzzle fun!',
+    features: ['Match-3 mechanics', 'Special candy creation', 'Cascading combo chains']
+  },
+  {
+    name: 'Whack A Mole',
+    emoji: '🐱',
+    category: 'Arcade',
+    image: '/games/whack-a-mole.png',
+    description: 'Whack cute cats popping from holes - test your lightning reflexes!',
+    features: ['Reflex-based tapping', 'Adaptive spawn timing', 'Scalable grid sizes']
+  },
+  {
+    name: 'Pac-Man',
+    emoji: '👾',
+    category: 'Arcade',
+    image: '/games/pac-man.png',
+    description: 'Classic arcade game - eat dots, avoid ghosts, and clear the maze!',
+    features: ['Maze navigation', 'Ghost AI behavior', 'Power-up pellets']
+  },
+  {
+    name: 'Colors Sort',
+    emoji: '🎨',
+    category: 'Puzzle',
+    image: '/games/colors-sort.png',
+    description: 'Sort colored liquids into matching tubes - challenging logic puzzle!',
+    features: ['Liquid pouring physics', 'Logic-based sorting', 'Satisfying animations']
+  },
+  {
+    name: 'Popit Fidget',
+    emoji: '🫧',
+    category: 'Arcade',
+    image: '/games/popit-fidget.png',
+    description: 'Pop satisfying bubbles in this relaxing fidget toy simulation game!',
+    features: ['Satisfying haptic feedback', 'Multiple bubble shapes', 'Relaxing gameplay']
+  },
+  {
+    name: 'Balloon Blaster',
+    emoji: '🎈',
+    category: 'Arcade',
+    image: '/games/balloon-blaster.png',
+    description: 'Pop rising balloons before they escape - quick taps and swipes win!',
+    features: ['Timed 60s sessions', 'Physics-based balloons', 'Particle pop effects']
+  },
+  {
+    name: 'Space Fighter',
+    emoji: '🚀',
+    category: 'Action',
+    image: '/games/space-fighter.png',
+    description: 'Pilot your spaceship through asteroid fields - endless space survival!',
+    features: ['Drag controls', 'Asteroid dodge mechanics', 'Collision immunity system']
+  },
+  {
+    name: 'Word Search',
+    emoji: '🔤',
+    category: 'Puzzle',
+    image: '/games/word-search.png',
+    description: 'Find hidden words in the grid - swipe to select letters!',
+    features: ['Swipe letter selection', 'Multiple word categories', 'Timed word discovery']
+  },
+  {
+    name: 'Number Search',
+    emoji: '🔢',
+    category: 'Puzzle',
+    image: '/games/number-search.png',
+    description: 'Find hidden numbers in the grid - swipe to select digits!',
+    features: ['Digit pattern finding', 'Swipe selection', 'Progressive grid sizes']
+  },
+  {
+    name: 'Tank 1990',
+    emoji: '🪖',
+    category: 'Arcade',
+    image: '/games/tank-1990.png',
+    description: 'Classic tank battle - destroy enemies and defend your base!',
+    features: ['Destructible terrain', 'Enemy AI patterns', 'Base defense strategy']
+  },
+  {
+    name: 'Nuts and Bolts',
+    emoji: '🔩',
+    category: 'Puzzle',
+    image: '/games/nuts-and-bolts.png',
+    description: 'Unscrew bolts and remove planks to solve puzzles!',
+    features: ['Physics-based mechanics', 'Plank removal logic', 'Increasing complexity']
+  },
+  {
+    name: 'Ludo King',
+    emoji: '🎲',
+    category: 'Strategy',
+    image: '/games/ludo-king.png',
+    description: 'Classic board game - roll dice and race your tokens home!',
+    features: ['Dice rolling mechanics', 'Token race strategy', 'Play against AI']
+  },
+  {
+    name: 'Spider Solitaire',
+    emoji: '🃏',
+    category: 'Puzzle',
+    image: '/games/spider-solitaire.png',
+    description: 'Classic Spider Solitaire - build sequences and clear the tableau!',
+    features: ['Card sequence building', 'Multiple suit difficulty', 'Undo move support']
+  },
+  {
+    name: 'Maze Runner',
+    emoji: '🧩',
+    category: 'Puzzle',
+    image: '/games/maze-runner.png',
+    description: 'Navigate ball through procedural mazes - tilt and physics controls!',
+    features: ['Procedural maze generation', 'Tilt & physics controls', 'Scalable grid sizes']
+  },
+  {
+    name: 'Tic Tac Toe',
+    emoji: '❌',
+    category: 'Strategy',
+    image: '/games/tic-tac-toe.png',
+    description: 'Classic X and O game - play against a smart robot!',
+    features: ['Smart AI opponent', 'Minimax algorithm', 'Quick casual matches']
+  },
+  {
+    name: 'Car Racing',
+    emoji: '🏎️',
+    category: 'Action',
+    image: '/games/car-racing.png',
+    description: 'Dodge traffic and race through lanes - test your reflexes!',
+    features: ['Lane-based dodging', 'Traffic obstacle system', 'Increasing speed ramps']
+  },
+  {
+    name: 'Bike Racing',
+    emoji: '🏍️',
+    category: 'Action',
+    image: '/games/bike-racing.png',
+    description: 'Race on bikes through traffic - faster and more challenging!',
+    features: ['High-speed racing', 'Dense traffic patterns', 'Quick reflex gameplay']
+  },
+  {
+    name: 'Sliding Numbers',
+    emoji: '🔢',
+    category: 'Puzzle',
+    image: '/games/sliding-numbers.png',
+    description: 'Slide numbered tiles to solve puzzles - classic sliding puzzle game!',
+    features: ['Classic 15-puzzle', 'Multiple grid sizes', 'Timer challenge mode']
+  },
+  {
+    name: '2048',
+    emoji: '🎮',
+    category: 'Puzzle',
+    image: '/games/game-2048.png',
+    description: 'Merge matching tiles to reach 2048 and beyond - addictive puzzle!',
+    features: ['Swipe to merge tiles', 'Undo moves feature', 'Score chasing beyond 2048']
+  },
+  {
+    name: 'Snake 3D',
     emoji: '🐍',
-    image: '/games-screenshots/snake.jpg',
-    description: 'Classic snake game with modern touch controls',
-    details: [
-      'Classic snake gameplay with modern touch controls',
-      'Swipe or tap to change direction',
-      'Grow by eating food, avoid walls and yourself',
-      'Difficulty affects snake speed and grid size'
-    ]
+    category: 'Arcade',
+    image: '/games/snake-3d.png',
+    description: 'Eat eggs to grow longer and avoid walls - classic snake gameplay!',
+    features: ['Touch/swipe controls', 'Growing snake mechanics', 'Wall collision avoidance']
+  },
+  {
+    name: 'Perfect Circle',
+    emoji: '⭕',
+    category: 'Action',
+    image: '/games/perfect-circle.png',
+    description: 'Draw the most perfect circle you can - test your precision!',
+    features: ['Precision drawing', 'Accuracy scoring', 'Finger tracking physics']
+  },
+  {
+    name: 'Sudoku',
+    emoji: '🔟',
+    category: 'Puzzle',
+    image: '/games/sudoku.png',
+    description: 'Fill the 9x9 grid with numbers 1-9 with no repeats in rows or columns!',
+    features: ['Classic 9x9 grid logic', 'Multiple difficulty levels', 'Error validation']
+  },
+  {
+    name: 'Block Breaker',
+    emoji: '🧱',
+    category: 'Arcade',
+    image: '/games/block-breaker.png',
+    description: 'Break all the bricks with a bouncing ball and paddle - arcade action fun!',
+    features: ['Ball physics bouncing', 'Paddle control mechanics', 'Brick pattern levels']
+  },
+  {
+    name: 'Knife Hit',
+    emoji: '🔪',
+    category: 'Action',
+    image: '/games/knife-hit.png',
+    description: "Throw knives at the spinning log — don't hit another knife or apple!",
+    features: ['Timing-based throws', 'Spinning log physics', 'Apple bonus targets']
+  },
+  {
+    name: 'Color Switch',
+    emoji: '🌈',
+    category: 'Arcade',
+    image: '/games/color-switch.png',
+    description: 'Jump through matching color obstacles — time your taps to survive!',
+    features: ['Color matching gates', 'Timing-based taps', 'Rotating obstacle patterns']
+  },
+  {
+    name: 'Stack Tower',
+    emoji: '🏗️',
+    category: 'Arcade',
+    image: '/games/stack-tower.png',
+    description: 'Stack sliding blocks perfectly to build the tallest tower you can!',
+    features: ['Precision block stacking', 'Sliding alignment timing', 'Tower height challenge']
+  },
+  {
+    name: 'Mine Sweeper',
+    emoji: '💣',
+    category: 'Puzzle',
+    image: '/games/mine-sweeper.png',
+    description: 'Reveal all safe cells on the grid without hitting a hidden mine!',
+    features: ['Classic grid logic', 'Number hint system', 'Flag marking strategy']
+  },
+  {
+    name: 'Pipe Connect',
+    emoji: '🔧',
+    category: 'Puzzle',
+    image: '/games/pipe-connect.png',
+    description: 'Rotate pipes to connect the water flow from source to sink in time!',
+    features: ['Pipe rotation mechanics', 'Flow path logic', 'Timed puzzle solving']
   }
 ];
 
@@ -181,9 +317,9 @@ const GamesMain = () => {
   return (
     <Sidebar title={component?.title || 'Games'}>
       <Meta
-        title="React Native Games - High-performance games for React Native"
-        description="A collection of high-performance games for React Native projects. Built with Skia, Reanimated, and TypeScript for smooth 60fps gameplay across iOS, Android, and Web."
-        keywords="react native games, mobile games, skia games, react native skia, fruit ninja, candy crush, flappy bird, 2048, snake game, react native reanimated"
+        title="React Native Games - 50+ High-performance games for React Native"
+        description="50+ high-performance games for React Native projects. Built with Skia, Reanimated, and TypeScript for smooth 60fps gameplay across iOS, Android, and Web. Powering Playtura."
+        keywords="react native games, mobile games, skia games, react native skia, playtura, block blast, bubble shooter, candy crush, flappy bird, 2048, pac-man, ludo, sudoku, react native reanimated"
       />
 
       {/* Header Section */}
@@ -197,8 +333,8 @@ const GamesMain = () => {
               <h1 className="text-4xl md:text-5xl font-bold text-text">react-native-games</h1>
             </div>
             <p className="text-xl text-muted leading-relaxed mb-8">
-              A collection of high-performance games for your React Native projects. Built with modern React Native technologies including Skia,
-              Reanimated, Gesture Handler and TypeScript for smooth 60fps gameplay across iOS, Android, and Web platforms.
+              50+ high-performance games for your React Native projects. Built with modern React Native technologies including Skia, Reanimated,
+              Gesture Handler and TypeScript for smooth 60fps gameplay across iOS, Android, and Web platforms.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <NLink
@@ -315,24 +451,40 @@ const GamesMain = () => {
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-text mb-6 flex items-center">
           <span className="mr-3">🎯</span>
-          Available Games
+          All {games.length} Games
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {games.map((game, index) => (
-            <div key={index} className="bg-card border border-border rounded-lg p-6 flex flex-col hover:shadow-lg transition-shadow">
-              <div className="flex items-center justify-center mb-4">
-                <img src={game.image} alt={game.name} className="w-full h-auto rounded-lg" loading="lazy" />
+            <div
+              key={index}
+              className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/40 hover:shadow-xl transition-all duration-300">
+              <div className="relative overflow-hidden">
+                <img
+                  src={game.image}
+                  alt={game.name}
+                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                />
+                <div className="absolute top-3 right-3">
+                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${categoryColors[game.category]}`}>{game.category}</span>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 pt-8">
+                  <h3 className="text-lg font-bold text-white flex items-center">
+                    <span className="mr-2 text-xl">{game.emoji}</span>
+                    {game.name}
+                  </h3>
+                </div>
               </div>
-              <h3 className="text-lg font-semibold text-text mb-2 flex items-center">
-                <span className="mr-2">{game.emoji}</span>
-                {game.name}
-              </h3>
-              <p className="text-muted text-sm mb-3">{game.description}</p>
-              <ul className="text-muted text-xs space-y-1">
-                {game.details.slice(0, 3).map((detail, idx) => (
-                  <li key={idx}>• {detail}</li>
-                ))}
-              </ul>
+              <div className="p-4">
+                <p className="text-muted text-sm mb-3 leading-relaxed">{game.description}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {game.features.map((feature, idx) => (
+                    <span key={idx} className="text-[11px] font-medium bg-border/50 text-muted px-2 py-0.5 rounded-md">
+                      {feature}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
           ))}
         </div>
