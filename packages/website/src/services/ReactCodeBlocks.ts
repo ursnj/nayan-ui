@@ -1,6 +1,6 @@
 export const installCode = `npm install @nayan-ui/react`;
 export const rnInstallCode = `npm install @nayan-ui/react-native`;
-export const rnPeerDepsCode = `npm install @react-native-community/datetimepicker @react-navigation/native expo-navigation-bar react-native-reanimated react-native-gesture-handler react-native-safe-area-context react-native-svg`;
+export const rnPeerDepsCode = `npm install react-native-reanimated react-native-gesture-handler react-native-safe-area-context react-native-screens react-native-svg react-native-worklets`;
 
 export const tailwindCode = `module.exports = {
   darkMode: ['class'],
@@ -24,46 +24,9 @@ export const tailwindCode = `module.exports = {
   plugins: [require('tailwindcss-animate')]
 };`;
 
-export const rnTailwindCode = `const { hairlineWidth } = require('nativewind/theme');
-const colors = require('tailwindcss/colors');
-
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  darkMode: 'class',
-  content: ['./src/**/*.{js,jsx,ts,tsx}', './node_modules/@nayan-ui/react-native/**/*.{js,jsx,ts,tsx}'],
-  presets: [require('nativewind/preset')],
-  theme: {
-    colors: {
-      ...colors,
-      primary: 'var(--color-primary)',
-      card: 'var(--color-card)',
-      text: 'var(--color-text)',
-      muted: 'var(--color-muted)',
-      border: 'var(--color-border)',
-      background: 'var(--color-background)'
-    },
-    extend: {
-      borderWidth: {
-        hairline: hairlineWidth()
-      },
-      keyframes: {
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' }
-        },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' }
-        }
-      },
-      animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out'
-      }
-    }
-  },
-  plugins: []
-};`;
+export const rnTailwindCode = `// No tailwind.config.js needed!
+// Uniwind + HeroUI Native handle styling automatically.
+// Just create a global.css file:`;
 
 export const cssCode = `@import '@nayan-ui/react/dist/style.css';
 
@@ -104,34 +67,9 @@ export const cssCode = `@import '@nayan-ui/react/dist/style.css';
   }
 }`;
 
-export const rnCssCode = `import { DarkTheme, DefaultTheme } from '@react-navigation/native';
-
-export const themeColors = {
-  light: {
-    ...DefaultTheme,
-    colors: {
-      primary: 'hsl(215 100% 45%)',
-      background: 'hsl(216 20% 95%)',
-      card: 'hsl(0 0% 100%)',
-      text: 'hsl(0 0% 2%)',
-      muted: 'hsl(0 0% 50%)',
-      border: 'hsl(0 0% 88%)',
-      notification: 'hsl(0 0% 100%)'
-    }
-  },
-  dark: {
-    ...DarkTheme,
-    colors: {
-      primary: 'hsl(209 100% 58%)',
-      background: 'hsl(0 0% 12%)',
-      card: 'hsl(0 0% 21%)',
-      text: 'hsl(0 0% 96%)',
-      muted: 'hsl(0 0% 69%)',
-      border: 'hsl(0 0% 31%)',
-      notification: 'hsl(0 0% 21%)'
-    }
-  }
-};`;
+export const rnCssCode = `@import 'tailwindcss';
+@import 'uniwind';
+@import 'heroui-native/styles';`;
 
 export const appCode = `import { useState } from 'react';
 import { NTheme, THEMES, useLocalStorage } from '@nayan-ui/react';
@@ -153,22 +91,19 @@ const App = () => {
 export default App;`;
 
 export const rnAppCode = `import { View } from 'react-native';
-import { NButton, NTheme, THEMES, useNTheme } from '@nayan-ui/react-native';
-import 'react-native-reanimated';
-import '../global.css';
-import { themeColors } from './constants';
+import { NButton, NTheme, NThemeToggle, useNTheme } from '@nayan-ui/react-native';
+import './global.css';
 
 export default function App() {
-  const { theme, isDarkMode, setTheme } = useNTheme();
-
-  const toggleTheme = () => {
-    setTheme(isDarkMode ? THEMES.light : THEMES.dark);
-  };
+  const { isDarkMode } = useNTheme();
 
   return (
-    <NTheme theme={theme || THEMES.light} themeColors={themeColors}>
+    <NTheme>
       <View className="flex-1 justify-center items-center bg-background">
-        <NButton onPress={toggleTheme}>{isDarkMode ? 'Switch to Light' : 'Switch to Dark'}</NButton>
+        <NThemeToggle />
+        <NButton onPress={() => console.log('Pressed!')}>
+          {isDarkMode ? 'Dark Mode' : 'Light Mode'}
+        </NButton>
       </View>
     </NTheme>
   );
