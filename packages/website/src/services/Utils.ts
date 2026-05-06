@@ -103,6 +103,47 @@ import {
   tooltipCode
 } from '@/services/ReactCodeBlocks';
 import {
+  accordionAttributes as rnAccordionAttributes,
+  actionItemAttributes as rnActionItemAttributes,
+  alertAttributes as rnAlertAttributes,
+  avatarAttributes as rnAvatarAttributes,
+  buttonAttributes as rnButtonAttributes,
+  buttonGroupAttributes as rnButtonGroupAttributes,
+  cardAttributes as rnCardAttributes,
+  checkAttributes as rnCheckAttributes,
+  chipAttributes as rnChipAttributes,
+  confirmAlertAttributes as rnConfirmAlertAttributes,
+  confirmAttributes as rnConfirmAttributes,
+  dialogAttributes as rnDialogAttributes,
+  dividerAttributes as rnDividerAttributes,
+  inputAttributes as rnInputAttributes,
+  inputGroupAttributes as rnInputGroupAttributes,
+  inputOtpAttributes as rnInputOtpAttributes,
+  linkButtonAttributes as rnLinkButtonAttributes,
+  loadingAttributes as rnLoadingAttributes,
+  menuAttributes as rnMenuAttributes,
+  menuItemAttributes as rnMenuItemAttributes,
+  popoverAttributes as rnPopoverAttributes,
+  pressAttributes as rnPressAttributes,
+  progressAttributes as rnProgressAttributes,
+  radioAttributes as rnRadioAttributes,
+  selectAttributes as rnSelectAttributes,
+  sheetAttributes as rnSheetAttributes,
+  skeletonAttributes as rnSkeletonAttributes,
+  skeletonGroupAttributes as rnSkeletonGroupAttributes,
+  sliderAttributes as rnSliderAttributes,
+  subMenuAttributes as rnSubMenuAttributes,
+  switchAttributes as rnSwitchAttributes,
+  tabsAttributes as rnTabsAttributes,
+  tagGroupAttributes as rnTagGroupAttributes,
+  textAttributes as rnTextAttributes,
+  textareaAttributes as rnTextareaAttributes,
+  themeAttributes as rnThemeAttributes,
+  themeToggleAttributes as rnThemeToggleAttributes,
+  toastAttributes as rnToastAttributes,
+  tooltipAttributes as rnTooltipAttributes
+} from '@/services/ReactNativeAttributes';
+import {
   accordionTags,
   alertTags,
   badgeTags,
@@ -570,253 +611,262 @@ export const reactNativeSidebarItems = [
   {
     title: 'Accordion',
     description:
-      'An Accordion component is a UI element that allows users to expand and collapse sections of content. It is commonly used to organize information in a compact and accessible manner, displaying only the headers by default and revealing the associated content when clicked. This helps improve the readability of complex or lengthy information by reducing clutter on the page.',
+      'An Accordion component allows users to expand and collapse sections of content, organizing information compactly. Built on top of heroui-native Accordion.',
     link: '/react-native/accordion',
-    attributes: accordionAttributes,
+    attributes: rnAccordionAttributes,
     code: accordionCode,
     tags: rnAccordionTags,
     icon: ListCollapse,
-    component: () => import('../../../../examples/expo-app/src/app/accordion.tsx?raw'),
+    component: () => import('../../../native/src/components/NAccordion.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Alert',
     description:
-      "An Alert component is a UI element used to display important messages or notifications to users. It can convey different types of information such as success, warning, error, or informational messages, typically styled with distinct colors and icons to highlight the message's significance. Alerts are often used to grab the user's attention and provide immediate feedback on actions or events.",
+      'An Alert component displays important messages or notifications to users with different severity levels. Built on top of heroui-native.',
     link: '/react-native/alert',
-    attributes: alertAttributes,
+    attributes: rnAlertAttributes,
     code: alertCode,
     tags: rnAlertTags,
     icon: CircleAlert,
-    component: () => import('../../../../examples/expo-app/src/app/alert.tsx?raw'),
+    component: () => import('../../../native/src/components/NAlert.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Button',
     description:
-      'A Button component is a fundamental UI element that allows users to trigger actions or events, such as submitting a form, opening a dialog, or navigating to another page. Buttons are interactive and typically styled to stand out, making it easy for users to identify and interact with them. They can come in various types, such as primary, secondary, or disabled, depending on their purpose or state.',
+      'A Button component triggers actions or events. Built on top of heroui-native Button with support for variants, sizes, colors, and loading states.',
     link: '/react-native/button',
-    attributes: buttonAttributes,
+    attributes: rnButtonAttributes,
     code: buttonCode,
     tags: rnButtonTags,
     icon: Square,
-    component: () => import('../../../../examples/expo-app/src/app/button.tsx?raw'),
+    component: () => import('../../../native/src/components/NButton.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Button Group',
-    description:
-      'A Button Group component is a UI element that groups multiple buttons together, allowing users to select from a set of related actions or options. It helps organize buttons in a compact, cohesive layout, typically displayed in a horizontal or vertical row. Button Groups are useful for actions that are closely related or mutually exclusive, providing a clean and structured way to present multiple controls.',
+    description: 'A Button Group component groups multiple buttons together for selecting from a set of related actions or options.',
     link: '/react-native/button-group',
-    attributes: buttonGroupAttributes,
+    attributes: rnButtonGroupAttributes,
     code: buttonGroupCode,
     tags: rnButtonGroupTags,
     icon: Columns3,
-    component: () => import('../../../../examples/expo-app/src/app/button-group.tsx?raw'),
+    component: () => import('../../../native/src/components/NButtonGroup.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Card',
-    description:
-      'A Card component is a versatile UI element used to display content in a structured and visually appealing way. It typically contains related information, such as text, images, buttons, and other elements, within a bordered or shadowed container. Cards are often used for presenting individual items, like products, articles, or profiles, making the content easy to scan and interact with.',
+    description: 'A Card component displays content in a structured container. Built on top of heroui-native Card.',
     link: '/react-native/card',
-    attributes: cardAttributes,
+    attributes: rnCardAttributes,
     code: cardCode,
     tags: rnCardTags,
     icon: CreditCard,
-    component: () => import('../../../../examples/expo-app/src/app/card.tsx?raw'),
+    component: () => import('../../../native/src/components/NCard.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Checkbox',
     description:
-      'A Checkbox component is a UI element that allows users to select or deselect one or more options from a list. It typically appears as a small square that can be checked (ticked) or unchecked. Checkboxes are often used in forms, settings, or filters where multiple selections are needed, and they provide a clear, binary choice for users.',
+      'A Checkbox component allows users to select or deselect options. Built on top of heroui-native Checkbox with isSelected/onSelectedChange API.',
     link: '/react-native/checkbox',
-    attributes: checkboxAttributes,
+    attributes: rnCheckAttributes,
     code: checkBoxCode,
     tags: rnCheckboxTags,
     icon: SquareCheck,
-    component: () => import('../../../../examples/expo-app/src/app/checkbox.tsx?raw'),
+    component: () => import('../../../native/src/components/NCheck.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Dialog',
-    description:
-      'A Dialog component is a UI element that displays a pop-up window over the main content to capture user attention or request input. It is often used for tasks like confirmations, alerts, forms, or other interactions that require user feedback before proceeding. Dialogs can include buttons like "OK" or "Cancel" to confirm or dismiss actions, and typically block interaction with the underlying content until closed.',
+    description: 'A Dialog component displays a pop-up window for capturing user attention or input. Built on top of heroui-native Dialog.',
     link: '/react-native/dialog',
-    attributes: dialogAttributes,
+    attributes: rnDialogAttributes,
     code: dialogCode,
     tags: rnDialogTags,
     icon: MessageSquare,
-    component: () => import('../../../../examples/expo-app/src/app/dialog.tsx?raw'),
+    component: () => import('../../../native/src/components/NDialog.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Divider',
-    description:
-      'A Divider component is a simple UI element used to separate content within a layout, creating visual distinction between sections. It helps enhance the organization and readability of the interface by providing clear boundaries between different elements, such as text blocks, images, or other components. Dividers can be styled in various ways (solid, dashed, or dotted) and can vary in thickness and color to match the overall design of the application.',
+    description: 'A Divider component separates content within a layout. Built on top of heroui-native Separator.',
     link: '/react-native/divider',
-    attributes: dividerAttributes,
+    attributes: rnDividerAttributes,
     code: dividerCode,
     tags: rnDividerTags,
     icon: Slash,
-    component: () => import('../../../../examples/expo-app/src/app/divider.tsx?raw'),
+    component: () => import('../../../native/src/components/NDivider.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Input',
-    description:
-      'An Input component is a user interface element that allows users to enter data, such as text, numbers, or selections. It typically includes various types, such as text fields, checkboxes, radio buttons, and dropdowns, providing flexibility for different data types. Input components are essential for forms and interactive applications, enabling users to submit information effectively and efficiently.',
+    description: 'An Input component allows users to enter text data. Built on top of heroui-native Input.',
     link: '/react-native/input',
-    attributes: inputAttributes,
+    attributes: rnInputAttributes,
     code: inputCode,
     tags: rnInputTags,
     icon: TextCursorInput,
-    component: () => import('../../../../examples/expo-app/src/app/input.tsx?raw'),
+    component: () => import('../../../native/src/components/NInput.tsx?raw'),
     isComponent: true
   },
   {
-    title: 'Linkify',
-    description:
-      'A Linkify component is a UI tool that automatically detects and converts plain text URLs within a content area into clickable hyperlinks. This enhances user experience by allowing easy access to external resources without the need for manual formatting. Linkify typically recognizes various URL formats and ensures that they are presented in a visually distinct manner, making navigation seamless and intuitive.',
-    link: '/react-native/linkify',
-    attributes: linkAttributes,
-    code: linkifyCode,
-    tags: rnLinkifyTags,
-    icon: SquareArrowOutUpRight,
-    component: () => import('../../../../examples/expo-app/src/app/linkify.tsx?raw'),
+    title: 'Loading',
+    description: 'A Loading component displays a spinner indicator while content is being loaded. Built on top of heroui-native Spinner.',
+    link: '/react-native/loading',
+    attributes: rnLoadingAttributes,
+    code: loadingCode,
+    tags: rnAccordionTags,
+    icon: Loader,
+    component: () => import('../../../native/src/components/NLoading.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Dropdown Menu',
-    description:
-      'A Dropdown Menu component is a UI element that allows users to select an option from a list that appears when the user clicks or hovers over a button or link. This component helps save space on the interface by displaying additional options only when needed. Dropdown menus are commonly used for navigation, settings, or forms, enabling users to choose from multiple choices in a clean and organized manner.',
+    description: 'A Dropdown Menu component displays a list of options when triggered. Built on top of heroui-native Menu.',
     link: '/react-native/menu',
-    attributes: menuAttributes,
+    attributes: rnMenuAttributes,
     code: menuCode,
     tags: rnMenuTags,
     icon: EllipsisVertical,
-    component: () => import('../../../../examples/expo-app/src/app/menu.tsx?raw'),
+    component: () => import('../../../native/src/components/NMenu.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Popover',
-    description:
-      'A Popover component is a UI element that displays additional information or actions when users interact with a specific trigger, such as a button or link. It typically appears as a small overlay or tooltip that provides context, tips, or options without navigating away from the current page. Popovers enhance user experience by offering relevant content in a concise format while maintaining focus on the main interface.',
+    description: 'A Popover component displays additional information in a floating overlay. Built on top of heroui-native Popover.',
     link: '/react-native/popover',
-    attributes: popoverAttributes,
+    attributes: rnPopoverAttributes,
     code: popoverCode,
     tags: rnPopoverTags,
     icon: PictureInPicture2,
-    component: () => import('../../../../examples/expo-app/src/app/popover.tsx?raw'),
+    component: () => import('../../../native/src/components/NPopover.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Progress',
-    description:
-      'A Progress component visually indicates the completion status of a task or process. It typically consists of a progress bar that fills up as the task progresses, providing users with a clear and immediate understanding of how much of the task is completed and how much remains. This component is commonly used in forms, uploads, downloads, and loading states to enhance user experience by managing expectations and keeping users informed.',
+    description: 'A Progress component visually indicates the completion status of a task. Built on top of heroui-native Progress.',
     link: '/react-native/progress',
-    attributes: progressAttributes,
+    attributes: rnProgressAttributes,
     code: progressCode,
     tags: rnProgressTags,
     icon: RectangleEllipsis,
-    component: () => import('../../../../examples/expo-app/src/app/progress.tsx?raw'),
+    component: () => import('../../../native/src/components/NProgress.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Radio Group',
     description:
-      'A Radio Group component is a UI element that allows users to select one option from a set of mutually exclusive choices. It typically consists of multiple radio buttons, where only one button can be selected at a time. Radio groups are commonly used in forms to gather user preferences, ensuring a clear and organized way to present options for selection. They enhance user experience by providing a straightforward interface for making single-choice decisions.',
+      'A Radio Group component allows users to select one option from a set of mutually exclusive choices. Built on top of heroui-native RadioGroup.',
     link: '/react-native/radio-group',
-    attributes: radioGroupAttributes,
+    attributes: rnRadioAttributes,
     code: radioGroupCode,
     tags: rnRadioTags,
     icon: CircleDot,
-    component: () => import('../../../../examples/expo-app/src/app/radio.tsx?raw'),
+    component: () => import('../../../native/src/components/NRadio.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Select',
-    description:
-      'A Select or ComboBox component is a UI element that allows users to choose one or more options from a dropdown list. It typically displays a default value or prompt, and when clicked, it expands to show a list of available choices. Users can either select an option from the list or, in the case of a ComboBox, input custom values. This component is ideal for conserving space in forms and making it easy for users to make selections quickly.',
+    description: 'A Select component allows users to choose from a dropdown list. Built on top of heroui-native Select.',
     link: '/react-native/select',
-    attributes: selectAttributes,
+    attributes: rnSelectAttributes,
     code: selectCode,
     tags: rnSelectTags,
     icon: SquareMousePointer,
-    component: () => import('../../../../examples/expo-app/src/app/select.tsx?raw'),
+    component: () => import('../../../native/src/components/NSelect.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Sheet',
-    description:
-      'A Sheet component is a UI element that presents content in a sliding panel, often overlaying the main application interface. It is typically used for displaying additional information, forms, or actions without navigating away from the current view. Sheets can be swiped or tapped to expand or collapse, providing a clean and efficient way to manage user interactions and maintain focus on the main content.',
+    description: 'A Sheet component presents content in a sliding bottom panel. Built on top of heroui-native Sheet.',
     link: '/react-native/sheet',
-    attributes: sheetAttributes,
+    attributes: rnSheetAttributes,
     code: sheetCode,
     tags: rnSheetTags,
     icon: StickyNote,
-    component: () => import('../../../../examples/expo-app/src/app/sheet.tsx?raw'),
+    component: () => import('../../../native/src/components/NSheet.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Skeleton',
     description:
-      'A Skeleton component is a placeholder UI element that represents the layout of content before it loads. It typically features a grey or light-colored shape mimicking the structure of the actual content (such as text blocks, images, or buttons) to indicate that loading is in progress. Skeleton components enhance user experience by providing a visual cue that content is being fetched, reducing perceived loading times and preventing layout shifts.',
+      'A Skeleton component is a placeholder UI element that represents the layout of content before it loads. Built on top of heroui-native Skeleton.',
     link: '/react-native/skeleton',
-    attributes: skeletonAttributes,
+    attributes: rnSkeletonAttributes,
     code: skeletonCode,
     tags: rnSkeletonTags,
     icon: TextSelect,
-    component: () => import('../../../../examples/expo-app/src/app/skeleton.tsx?raw'),
+    component: () => import('../../../native/src/components/NSkeleton.tsx?raw'),
+    isComponent: true
+  },
+  {
+    title: 'Slider',
+    description:
+      'A Slider component allows users to select a value from a range by dragging a thumb along a track. Built on top of heroui-native Slider.',
+    link: '/react-native/slider',
+    attributes: rnSliderAttributes,
+    code: sliderCode,
+    tags: rnAccordionTags,
+    icon: SlidersHorizontal,
+    component: () => import('../../../native/src/components/NSlider.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Switch',
-    description:
-      'A Switch component is a UI element that allows users to toggle between two states, typically representing an on/off or enabled/disabled choice. It is visually represented as a sliding toggle or checkbox and provides immediate feedback when the user interacts with it. Switch components are commonly used for settings, preferences, and feature activations in applications, enhancing user experience by simplifying the selection process.',
+    description: 'A Switch component allows users to toggle between two states. Built on top of heroui-native Switch.',
     link: '/react-native/switch',
-    attributes: switchAttributes,
+    attributes: rnSwitchAttributes,
     code: switchCode,
     tags: rnSwitchTags,
     icon: ToggleRight,
-    component: () => import('../../../../examples/expo-app/src/app/switch.tsx?raw'),
+    component: () => import('../../../native/src/components/NSwitch.tsx?raw'),
+    isComponent: true
+  },
+  {
+    title: 'Tabs',
+    description:
+      'A Tabs component allows users to switch between different views or sections. Built on top of heroui-native Tabs with items-based API.',
+    link: '/react-native/tabs',
+    attributes: rnTabsAttributes,
+    code: tabsCode,
+    tags: rnAccordionTags,
+    icon: AppWindow,
+    component: () => import('../../../native/src/components/NTabs.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Textarea',
-    description:
-      'A Textarea component is an input field that allows users to enter multi-line text. It provides a larger area for text input compared to a standard text input field, making it ideal for comments, feedback, or any scenario where users need to provide detailed information. Textareas can be resized, styled, and configured to support features like character limits, placeholders, and auto-resizing to enhance user experience.',
+    description: 'A Textarea component allows users to enter multi-line text. Built on top of heroui-native.',
     link: '/react-native/textarea',
-    attributes: textareaAttributes,
+    attributes: rnTextareaAttributes,
     code: textareaCode,
     tags: rnTextareaTags,
     icon: TextCursorInput,
-    component: () => import('../../../../examples/expo-app/src/app/textarea.tsx?raw'),
+    component: () => import('../../../native/src/components/NTextarea.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Toast',
-    description:
-      'A Toast component is a transient notification that appears on the screen to provide feedback or information to users without interrupting their workflow. Typically displayed at the top or bottom of the screen, toasts are brief messages that automatically disappear after a short duration. They are commonly used to inform users about actions such as successful submissions, updates, or alerts, enhancing the overall user experience with minimal disruption.',
+    description: 'A Toast component displays transient notifications. Uses heroui-native useToast hook for showing toast messages.',
     link: '/react-native/toast',
-    attributes: toastAttributes,
+    attributes: rnToastAttributes,
     code: toastCode,
     tags: rnToastTags,
     icon: MessageSquareText,
-    component: () => import('../../../../examples/expo-app/src/app/toast.tsx?raw'),
+    component: () => import('../../../native/src/components/NToast.tsx?raw'),
     isComponent: true
   },
   {
     title: 'Tooltip',
-    description:
-      'A Tooltip component is a small, informative pop-up that appears when a user hovers over or focuses on an element, such as a button or icon. It provides additional context or explanations about that element without cluttering the interface. Tooltips enhance user experience by offering helpful hints, instructions, or details, ensuring that information is accessible without overwhelming the layout.',
+    description: 'A Tooltip component displays informative pop-ups when hovering or focusing on an element. Built on top of heroui-native Tooltip.',
     link: '/react-native/tooltip',
-    attributes: tooltipAttributes,
+    attributes: rnTooltipAttributes,
     code: tooltipCode,
     tags: rnTooltipTags,
     icon: MessageSquareDot,
-    component: () => import('../../../../examples/expo-app/src/app/tooltip.tsx?raw'),
+    component: () => import('../../../native/src/components/NTooltip.tsx?raw'),
     isComponent: true
   }
 ];

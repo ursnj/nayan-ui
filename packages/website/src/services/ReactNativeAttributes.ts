@@ -319,9 +319,7 @@ export const textareaAttributes = [
 ];
 
 export const themeAttributes = [
-  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Content to be themed.' },
-  { name: 'theme', type: 'string', default: 'Required', details: 'Theme name to apply.' },
-  { name: 'themeColors', type: 'ThemeConfig', default: 'Required', details: 'Theme configuration object.' }
+  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Content to be themed. Wrapped in HeroUINativeProvider.' }
 ];
 
 export const themeToggleAttributes = [
@@ -370,22 +368,96 @@ export const confirmAttributes = [
   { name: 'cancelClassName', type: 'string', default: "' '", details: 'You can customise cancel button by passing tailwind classes.' }
 ];
 
-export const datePickerAttributes = [
-  { name: 'value', type: 'Date', default: 'Required', details: 'Current date value.' },
-  { name: 'label', type: 'string', default: 'Optional', details: 'Label for the date picker.' },
-  { name: 'isDarkMode', type: 'boolean', default: 'Optional', details: 'Whether to use dark mode styling for the picker modal.' },
-  { name: 'disabled', type: 'boolean', default: 'false', details: 'Whether the date picker is disabled.' },
-  { name: 'type', type: "'date' | 'time' | 'datetime'", default: "'date'", details: 'Type of date picker (date, time, or datetime).' },
-  { name: 'onChange', type: '(date: Date) => void', default: 'Required', details: 'Callback when date changes.' },
-  {
-    name: 'icon',
-    type: 'React.ComponentType<any> | React.ReactElement',
-    default: 'Optional',
-    details: 'Custom icon component or element to display.'
-  },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise container by passing tailwind classes.' },
-  { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise label by passing tailwind classes.' },
-  { name: 'inputClassName', type: 'string', default: "' '", details: 'You can customise input container by passing tailwind classes.' },
-  { name: 'inputTextClassName', type: 'string', default: "' '", details: 'You can customise input text by passing tailwind classes.' },
-  { name: 'inputIconClassName', type: 'string', default: "' '", details: 'You can customise input icon by passing tailwind classes.' }
+export const avatarAttributes = [
+  { name: 'src', type: 'string', default: 'Optional', details: 'Image URL for the avatar.' },
+  { name: 'alt', type: 'string', default: "'Avatar'", details: 'Alt text for the avatar image.' },
+  { name: 'fallback', type: 'string', default: 'Optional', details: 'Fallback text when image is not available.' },
+  { name: 'fallbackDelayMs', type: 'number', default: '0', details: 'Delay in milliseconds before showing fallback.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'Size of the avatar.' },
+  { name: 'variant', type: 'string', default: 'Optional', details: 'Avatar variant style.' },
+  { name: 'color', type: 'string', default: 'Optional', details: 'Avatar color theme.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'imageClassName', type: 'string', default: "' '", details: 'You can customise image by passing tailwind classes.' },
+  { name: 'fallbackClassName', type: 'string', default: "' '", details: 'You can customise fallback by passing tailwind classes.' }
+];
+
+export const chipAttributes = [
+  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Chip label content.' },
+  { name: 'variant', type: 'string', default: 'Optional', details: 'Chip variant style.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'Size of the chip.' },
+  { name: 'color', type: 'string', default: 'Optional', details: 'Chip color theme.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
+];
+
+export const inputOtpAttributes = [
+  { name: 'maxLength', type: 'number', default: 'Required', details: 'Maximum number of OTP digits.' },
+  { name: 'value', type: 'string', default: 'Optional', details: 'Current OTP value.' },
+  { name: 'onChange', type: '(value: string) => void', default: 'Optional', details: 'Callback when OTP value changes.' },
+  { name: 'slotVariant', type: "'primary' | 'secondary'", default: "'primary'", details: 'Variant style for OTP slots.' },
+  { name: 'containerClassName', type: 'string', default: "' '", details: 'You can customise container by passing tailwind classes.' },
+  { name: 'groupClassName', type: 'string', default: "' '", details: 'You can customise group by passing tailwind classes.' },
+  { name: 'slotClassName', type: 'string', default: "' '", details: 'You can customise slots by passing tailwind classes.' }
+];
+
+export const tabsAttributes = [
+  { name: 'items', type: 'TabItem[]', default: 'Required', details: 'Array of tab items with label, value, and optional content.' },
+  { name: 'value', type: 'string', default: 'Optional', details: 'Controlled active tab value.' },
+  { name: 'defaultValue', type: 'string', default: 'Optional', details: 'Default active tab value.' },
+  { name: 'onValueChange', type: '(value: string) => void', default: 'Optional', details: 'Callback when active tab changes.' },
+  { name: 'variant', type: 'string', default: 'Optional', details: 'Tabs variant style.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'listClassName', type: 'string', default: "' '", details: 'You can customise tab list by passing tailwind classes.' },
+  { name: 'triggerClassName', type: 'string', default: "' '", details: 'You can customise tab triggers by passing tailwind classes.' },
+  { name: 'contentClassName', type: 'string', default: "' '", details: 'You can customise tab content by passing tailwind classes.' }
+];
+
+export const sliderAttributes = [
+  { name: 'value', type: 'number', default: 'Optional', details: 'Controlled slider value.' },
+  { name: 'defaultValue', type: 'number', default: 'Optional', details: 'Default slider value.' },
+  { name: 'onChange', type: '(value: number) => void', default: 'Optional', details: 'Callback when slider value changes.' },
+  { name: 'minValue', type: 'number', default: '0', details: 'Minimum value of the slider.' },
+  { name: 'maxValue', type: 'number', default: '100', details: 'Maximum value of the slider.' },
+  { name: 'step', type: 'number', default: '1', details: 'Step increment of the slider.' },
+  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the slider is disabled.' },
+  { name: 'showOutput', type: 'boolean', default: 'false', details: 'Whether to show the current value output.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'trackClassName', type: 'string', default: "' '", details: 'You can customise track by passing tailwind classes.' },
+  { name: 'fillClassName', type: 'string', default: "' '", details: 'You can customise fill by passing tailwind classes.' },
+  { name: 'thumbClassName', type: 'string', default: "' '", details: 'You can customise thumb by passing tailwind classes.' }
+];
+
+export const tagGroupAttributes = [
+  { name: 'items', type: 'TagItem[]', default: 'Required', details: 'Array of tag items with label and value.' },
+  { name: 'selectionMode', type: "'single' | 'multiple'", default: 'Optional', details: 'Tag selection mode.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'Size of the tags.' },
+  { name: 'variant', type: 'string', default: 'Optional', details: 'Tag variant style.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'listClassName', type: 'string', default: "' '", details: 'You can customise tag list by passing tailwind classes.' },
+  { name: 'itemClassName', type: 'string', default: "' '", details: 'You can customise individual tags by passing tailwind classes.' }
+];
+
+export const inputGroupAttributes = [
+  { name: 'prefix', type: 'React.ReactNode', default: 'Optional', details: 'Prefix element for the input group.' },
+  { name: 'suffix', type: 'React.ReactNode', default: 'Optional', details: 'Suffix element for the input group.' },
+  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the input group is disabled.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
+];
+
+export const skeletonGroupAttributes = [
+  { name: 'isLoading', type: 'boolean', default: 'true', details: 'Whether the skeleton is in loading state.' },
+  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Content to show when not loading.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
+];
+
+export const linkButtonAttributes = [
+  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Link button content.' },
+  { name: 'onPress', type: '() => void', default: 'Optional', details: 'Callback when link button is pressed.' },
+  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the link button is disabled.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
+];
+
+export const subMenuAttributes = [
+  { name: 'label', type: 'string', default: 'Required', details: 'Label for the submenu trigger.' },
+  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Submenu content (NMenuItem items).' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
 ];
