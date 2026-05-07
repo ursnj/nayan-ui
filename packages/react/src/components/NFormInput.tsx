@@ -1,10 +1,9 @@
 import React, { memo } from 'react';
 import { Control, Controller, FieldError, FieldValues, RegisterOptions } from 'react-hook-form';
+import { Input, Label } from '@heroui/react';
 import { cn } from '../lib/utils';
-import { Input, InputProps } from './ui/input';
-import { Label } from './ui/label';
 
-export interface NFormInputProps<TFieldValues extends FieldValues = FieldValues> extends Omit<InputProps, 'name'> {
+export interface NFormInputProps<TFieldValues extends FieldValues = FieldValues> extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'name'> {
   id?: string;
   type?: string;
   label?: string;

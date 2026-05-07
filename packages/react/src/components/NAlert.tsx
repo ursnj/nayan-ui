@@ -2,7 +2,6 @@ import React, { memo } from 'react';
 import { AlertTriangle, BadgeAlert, CheckCircle2, Info, X, XCircle } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { AlertTypes } from './Types';
-import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
 const iconsMapping = {
   [AlertTypes.DEFAULT]: <BadgeAlert className="h-4 w-4" />,
@@ -60,22 +59,17 @@ const NAlertComponent: React.FC<NAlertProps> = memo(
     ...rest
   }) => {
     return (
-      <Alert
+      <div
         role={role}
         tabIndex={0}
         aria-live={role === 'alert' ? 'assertive' : 'polite'}
-        className={cn(
-          `nyn-alert ${type.toLowerCase()} [&:has(svg)]:pl-10 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-3 [&>svg]:top-3 [&>svg]:nyn-text rounded p-3 ${classesMapping[type]}`,
-          className
-        )}
+        className={cn(`nyn-alert ${type.toLowerCase()} relative flex items-start rounded p-3 ${classesMapping[type]}`, className)}
         {...rest}>
-        {icon !== undefined ? icon : iconsMapping[type]}
+        <div className="mr-3 mt-0.5 shrink-0">{icon !== undefined ? icon : iconsMapping[type]}</div>
         <div className="flex items-start justify-between w-full">
           <div className="flex-1">
-            <AlertTitle className={cn('nyn-alert-title font-semibold', titleClassName)}>{title ?? titleMapping[type]}</AlertTitle>
-            {(message || children) && (
-              <AlertDescription className={cn('nyn-alert-message', messageClassName)}>{message || children}</AlertDescription>
-            )}
+            <div className={cn('nyn-alert-title font-semibold', titleClassName)}>{title ?? titleMapping[type]}</div>
+            {(message || children) && <div className={cn('nyn-alert-message', messageClassName)}>{message || children}</div>}
           </div>
           {(onClose || actions) && (
             <div className="flex items-center ml-3">
@@ -88,7 +82,7 @@ const NAlertComponent: React.FC<NAlertProps> = memo(
             </div>
           )}
         </div>
-      </Alert>
+      </div>
     );
   }
 );

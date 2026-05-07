@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { cn } from '../lib/utils';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 
 // Generic column definition with flexible accessor and custom cell/header renderers
 export interface NTableColumn<T> {
@@ -56,51 +55,60 @@ export const NTable = React.memo(
     const memoData = useMemo(() => data, [data]);
 
     return (
-      <Table className={cn('border border-border bg-card rounded', className)} role="table" aria-label={caption || 'Data table'} {...tableProps}>
-        {caption && <TableCaption className={captionClassName}>{caption}</TableCaption>}
-        <TableHeader className={cn('[&_tr]:border-0 border-border', headerClassName)}>
-          <TableRow className={headerRowClassName} role="row">
+      <table
+        className={cn('border border-border bg-card rounded w-full', className)}
+        role="table"
+        aria-label={caption || 'Data table'}
+        {...tableProps}>
+        {caption && <caption className={captionClassName}>{caption}</caption>}
+        <thead className={cn('[&_tr]:border-0 border-border', headerClassName)}>
+          <tr className={headerRowClassName} role="row">
             {memoColumns.map((col, colIndex) => (
-              <TableHead
+              <th
                 key={col.name}
-                className={cn('px-3 py-3 h-auto border-b border-border', headerCellClassName, col.headerClassName, col.className)}
+                className={cn(
+                  'px-3 py-3 h-auto border-b border-border text-left text-sm font-medium',
+                  headerCellClassName,
+                  col.headerClassName,
+                  col.className
+                )}
                 scope="col"
                 aria-label={col.ariaLabel || (typeof col.title === 'string' ? col.title : undefined)}
                 role="columnheader">
                 {col.renderHeader ? col.renderHeader(col, colIndex) : col.title}
-              </TableHead>
+              </th>
             ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody className={bodyClassName}>
+          </tr>
+        </thead>
+        <tbody className={bodyClassName}>
           {memoData.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={memoColumns.length} className={cn('text-center', bodyCellClassName)}>
+            <tr>
+              <td colSpan={memoColumns.length} className={cn('text-center px-3 py-3', bodyCellClassName)}>
                 No data
-              </TableCell>
-            </TableRow>
+              </td>
+            </tr>
           ) : (
             memoData.map((row, rowIndex) => (
-              <TableRow
+              <tr
                 key={rowIndex}
                 className={cn('[&_tr]:border-0 border-border', bodyRowClassName)}
                 role="row"
                 {...(rowProps ? rowProps(row, rowIndex) : {})}>
                 {memoColumns.map((col, colIndex) => (
-                  <TableCell
+                  <td
                     key={col.name}
-                    className={cn('px-3 py-3 border-b border-border', bodyCellClassName, col.cellClassName, col.className)}
+                    className={cn('px-3 py-3 border-b border-border text-sm', bodyCellClassName, col.cellClassName, col.className)}
                     role="cell"
                     aria-label={col.ariaLabel || (typeof col.title === 'string' ? col.title : undefined)}
                     {...(cellProps ? cellProps(row, col, rowIndex, colIndex) : {})}>
                     {col.renderCell ? col.renderCell(row, col, rowIndex, colIndex) : row[col.name]}
-                  </TableCell>
+                  </td>
                 ))}
-              </TableRow>
+              </tr>
             ))
           )}
-        </TableBody>
-      </Table>
+        </tbody>
+      </table>
     );
   }
 );

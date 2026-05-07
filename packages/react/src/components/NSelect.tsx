@@ -1,10 +1,10 @@
 import React, { memo, useCallback, useId } from 'react';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
+import { Label } from '@heroui/react';
 import { cn } from '../lib/utils';
 import { ReactSelectOption } from './Types';
 import { reactSelectCustomClassNames, reactSelectTheme } from './Utils';
-import { Label } from './ui/label';
 
 export interface NSelectProps<OptionType = ReactSelectOption, IsMulti extends boolean = false> {
   isMulti?: IsMulti;

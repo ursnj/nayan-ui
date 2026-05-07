@@ -1,7 +1,7 @@
 import React, { ReactNode, memo } from 'react';
+import { Drawer } from '@heroui/react';
 import { cn } from '../lib/utils';
 import { SheetSize } from './Types';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from './ui/sheet';
 
 const sizeMapping: Record<SheetSize, string> = {
   [SheetSize.XS]: 'md:max-w-sm',
@@ -20,12 +20,12 @@ export interface NSheetProps {
   contentClassName?: string;
   children: ReactNode;
   onCloseSheet?: () => void;
-  header?: ReactNode; // custom header
-  footer?: ReactNode; // optional footer
+  header?: ReactNode;
+  footer?: ReactNode;
   'aria-label'?: string;
   'aria-labelledby'?: string;
   role?: string;
-  [key: string]: any; // for extra props
+  [key: string]: any;
 }
 
 export const NSheet: React.FC<NSheetProps> = memo(
@@ -47,27 +47,31 @@ export const NSheet: React.FC<NSheetProps> = memo(
     ...rest
   }) => {
     return (
-      <Sheet open={isOpen} onOpenChange={onCloseSheet}>
-        <SheetContent
-          className={cn(
-            'nyn-sheet p-0 gap-0 border-0 border-l border-border bg-card text-white overflow-hidden w-full',
-            sizeMapping[size],
-            className
-          )}
-          aria-label={ariaLabel}
-          aria-labelledby={ariaLabelledBy}
-          role={role}
-          aria-modal="true"
-          {...rest}>
-          {header || (
-            <SheetHeader className={cn('nyn-sheet-header px-3 py-2.5 bg-primary text-white', headerClassName)}>
-              {title && <SheetTitle className={cn('nyn-sheet-title text-base font-normal', titleClassName)}>{title}</SheetTitle>}
-            </SheetHeader>
-          )}
-          <div className={cn('nyn-sheet-content text-text h-[calc(100vh_-_44px)] overflow-y-auto', contentClassName)}>{children}</div>
-          {footer && <div className="nyn-sheet-footer">{footer}</div>}
-        </SheetContent>
-      </Sheet>
+      <Drawer>
+        <Drawer.Backdrop
+          isOpen={isOpen}
+          onOpenChange={open => {
+            if (!open && onCloseSheet) onCloseSheet();
+          }}
+          isDismissable>
+          <Drawer.Content placement="right" className={cn('nyn-sheet w-full', sizeMapping[size])}>
+            <Drawer.Dialog
+              className={cn('nyn-sheet-dialog p-0 border-0 border-l border-border bg-card text-white overflow-hidden h-full', className)}
+              aria-label={ariaLabel}
+              role={role as 'dialog' | 'alertdialog'}>
+              {header || (
+                <Drawer.Header className={cn('nyn-sheet-header px-3 py-2.5 bg-primary text-white', headerClassName)}>
+                  {title && <span className={cn('nyn-sheet-title text-base font-normal', titleClassName)}>{title}</span>}
+                </Drawer.Header>
+              )}
+              <Drawer.Body className={cn('nyn-sheet-content text-text h-[calc(100vh_-_44px)] overflow-y-auto', contentClassName)}>
+                {children}
+              </Drawer.Body>
+              {footer && <Drawer.Footer className="nyn-sheet-footer">{footer}</Drawer.Footer>}
+            </Drawer.Dialog>
+          </Drawer.Content>
+        </Drawer.Backdrop>
+      </Drawer>
     );
   }
 );

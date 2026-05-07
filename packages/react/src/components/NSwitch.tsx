@@ -1,9 +1,8 @@
 import React, { useId } from 'react';
+import { Label, Switch } from '@heroui/react';
 import { cn } from '../lib/utils';
-import { Label } from './ui/label';
-import { Switch } from './ui/switch';
 
-export interface NSwitchProps extends Omit<React.ComponentPropsWithoutRef<typeof Switch>, 'checked' | 'onCheckedChange' | 'onChange' | 'id'> {
+export interface NSwitchProps {
   enabled?: boolean;
   defaultChecked?: boolean;
   label?: React.ReactNode;
@@ -11,6 +10,7 @@ export interface NSwitchProps extends Omit<React.ComponentPropsWithoutRef<typeof
   labelClassName?: string;
   switchClassName?: string;
   onChange?: (checked: boolean) => void;
+  disabled?: boolean;
   id?: string;
 }
 
@@ -21,22 +21,13 @@ export const NSwitch: React.FC<NSwitchProps> = React.memo(
 
     return (
       <div className={cn('flex items-center justify-between', className)}>
-        {label && (
-          <Label htmlFor={switchId} className={cn('nyn-switch-label text-text leading-relaxed pr-3', labelClassName)}>
-            {label}
-          </Label>
-        )}
+        {label && <Label className={cn('nyn-switch-label text-text leading-relaxed pr-3', labelClassName)}>{label}</Label>}
         <Switch
-          id={switchId}
-          checked={enabled}
-          defaultChecked={defaultChecked}
-          disabled={disabled}
-          onCheckedChange={onChange}
-          className={cn(
-            'nyn-switch data-[state=checked]:border-primary data-[state=unchecked]:border-border data-[state=checked]:bg-primary data-[state=unchecked]:bg-border',
-            switchClassName
-          )}
-          aria-checked={enabled}
+          isSelected={enabled}
+          defaultSelected={defaultChecked}
+          isDisabled={disabled}
+          onChange={onChange}
+          className={cn('nyn-switch', switchClassName)}
         />
       </div>
     );

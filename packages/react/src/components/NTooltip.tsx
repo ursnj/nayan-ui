@@ -1,6 +1,6 @@
 import React, { ReactNode, forwardRef, memo } from 'react';
+import { Tooltip } from '@heroui/react';
 import { cn } from '../lib/utils';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 export interface NTooltipProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Tooltip message or node */
@@ -48,23 +48,17 @@ export const NTooltip: React.FC<NTooltipProps> = memo(
       },
       ref
     ) => {
-      // If message is not a string, use ariaLabel for accessibility
-      const ariaProps = typeof message === 'string' ? { 'aria-label': message } : ariaLabel ? { 'aria-label': ariaLabel } : {};
-
       return (
-        <Tooltip delayDuration={delayShow} {...rest}>
-          <TooltipTrigger className={triggerClassName} aria-describedby={id} {...triggerProps}>
+        <Tooltip>
+          <Tooltip.Trigger className={triggerClassName} aria-describedby={id} {...triggerProps}>
             {children}
-          </TooltipTrigger>
-          <TooltipContent
+          </Tooltip.Trigger>
+          <Tooltip.Content
             id={id}
             className={cn('nyn-tooltip text-text border border-border rounded bg-card p-2 max-w-xs', className)}
-            ref={ref}
-            data-placement={placement}
-            {...ariaProps}
             {...contentProps}>
             {message}
-          </TooltipContent>
+          </Tooltip.Content>
         </Tooltip>
       );
     }

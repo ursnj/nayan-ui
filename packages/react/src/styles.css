@@ -122,29 +122,3 @@
     transform: translate(0px, 0px) scale(1);
   }
 }
-
-.animation-accordion-down {
-  animation: accordion-down 0.2s ease-out !important;
-}
-
-@keyframes accordion-down {
-  from {
-    height: 0;
-  }
-  to {
-    height: var(--radix-accordion-content-height);
-  }
-}
-
-.animation-accordion-up {
-  animation: accordion-up 0.2s ease-out !important;
-}
-
-@keyframes accordion-up {
-  from {
-    height: var(--radix-accordion-content-height);
-  }
-  to {
-    height: 0;
-  }
-}

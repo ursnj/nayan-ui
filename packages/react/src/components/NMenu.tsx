@@ -1,8 +1,8 @@
-import React, { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
+import { Popover } from '@heroui/react';
 import { cn } from '../lib/utils';
 import { NDivider } from './NDivider';
 import { MenuSize } from './Types';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuLabel, DropdownMenuTrigger } from './ui/dropdown-menu';
 
 export const menuSizeMapping = {
   [MenuSize.XS]: 'w-[80px]',
@@ -36,24 +36,20 @@ export const NMenu: React.FC<NMenuProps> = React.memo(
     align = 'end'
   }) => {
     return (
-      <DropdownMenu>
-        <DropdownMenuTrigger className={cn('nyn-menu-trigger', triggerClassName)} aria-haspopup="menu">
+      <Popover>
+        <Popover.Trigger className={cn('nyn-menu-trigger', triggerClassName)} aria-haspopup="menu">
           {trigger}
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          side={side}
-          align={align}
-          className={cn('nyn-menu-content rounded bg-card border border-border shadow-lg', menuSizeMapping[size], className)}
-          role="menu">
+        </Popover.Trigger>
+        <Popover.Content className={cn('nyn-menu-content rounded bg-card border border-border shadow-lg p-1', menuSizeMapping[size], className)}>
           {title && (
             <>
-              <DropdownMenuLabel className={cn('text-text', titleClassName)}>{title}</DropdownMenuLabel>
+              <div className={cn('text-text px-2 py-1.5 text-sm font-semibold', titleClassName)}>{title}</div>
               <NDivider />
             </>
           )}
-          <DropdownMenuGroup>{children}</DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          <div role="group">{children}</div>
+        </Popover.Content>
+      </Popover>
     );
   }
 );

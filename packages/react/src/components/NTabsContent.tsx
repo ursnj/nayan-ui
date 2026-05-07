@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 import { cn } from '../lib/utils';
-import { TabsContent } from './ui/tabs';
 
 export interface NTabsContentProps {
   item: string;
@@ -9,9 +8,9 @@ export interface NTabsContentProps {
 }
 
 export const NTabsContent = ({ item, className = '', children }: NTabsContentProps) => (
-  <TabsContent value={item} className={cn('nyn-tab-content', className)}>
+  <div role="tabpanel" data-value={item} className={cn('nyn-tab-content', className)}>
     {children}
-  </TabsContent>
+  </div>
 );
 
 NTabsContent.displayName = 'NTabsContent';
