@@ -13,11 +13,7 @@ export const NLinkify = React.memo((props: NLinkifyProps) => {
   return (
     <Linkify
       componentDecorator={(decoratedHref: string, decoratedText: string, key: string) => (
-        <Link
-          className={cn('nyn-linkify text-accent hover:text-accent/80 transition-colors', props.className)}
-          target="_blank"
-          href={decoratedHref}
-          key={key}>
+        <Link className={cn('nyn-linkify', props.className)} target="_blank" href={decoratedHref} key={key}>
           {decoratedText}
         </Link>
       )}>

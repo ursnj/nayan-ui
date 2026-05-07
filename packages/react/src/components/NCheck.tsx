@@ -16,9 +16,9 @@ export interface NCheckProps {
 const NCheckComponent: React.FC<NCheckProps> = memo(
   ({ id = 'check', className = '', checkClassName = '', labelClassName = '', checked, disabled = false, onChange, children, ...rest }) => {
     return (
-      <div className={cn('flex space-x-2 mb-3', className)}>
-        <Checkbox isSelected={checked} isDisabled={disabled} onChange={onChange} className={cn('nyn-check', checkClassName)} {...(rest as any)} />
-        <Label className={cn('-mt-1 text-foreground', labelClassName)}>{children}</Label>
+      <div className={cn('flex items-center gap-2', className)}>
+        <Checkbox isSelected={checked} isDisabled={disabled} onChange={onChange} className={cn(checkClassName)} {...(rest as any)} />
+        <Label className={cn(labelClassName)}>{children}</Label>
       </div>
     );
   }

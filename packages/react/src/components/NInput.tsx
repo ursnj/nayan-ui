@@ -56,15 +56,8 @@ export const NInput = React.memo(
           isReadOnly={isReadOnly}
           isInvalid={!!error}
           className={cn('nyn-input-block mb-3', wrapperClassName, className)}>
-          {label && <Label className={cn('nyn-input-label text-foreground text-sm font-medium mb-1.5', labelClassName)}>{label}</Label>}
-          <Input
-            ref={ref}
-            placeholder={placeholder}
-            value={value}
-            defaultValue={defaultValue}
-            onChange={onChange}
-            className={cn('nyn-input bg-surface text-foreground border border-default rounded px-3 py-2 placeholder:text-muted', inputClassName)}
-          />
+          {label && <Label className={cn(labelClassName)}>{label}</Label>}
+          <Input ref={ref} placeholder={placeholder} value={value} defaultValue={defaultValue} onChange={onChange} className={cn(inputClassName)} />
           {helperText && <Description>{helperText}</Description>}
           {error && <FieldError>{error}</FieldError>}
         </TextField>

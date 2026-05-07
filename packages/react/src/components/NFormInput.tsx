@@ -43,15 +43,8 @@ const NFormInputComponent = <TFieldValues extends FieldValues = FieldValues>({
           isRequired={!!rules?.required}
           isInvalid={!!error}
           className={cn('nyn-form-input-block', className)}>
-          {label && <Label className={cn('nyn-form-input-label text-foreground text-sm font-medium mb-1.5', labelClassName)}>{label}</Label>}
-          <Input
-            ref={ref}
-            placeholder={placeholder}
-            value={value ?? ''}
-            onChange={onChange}
-            onBlur={onBlur}
-            className={cn('nyn-form-input bg-surface text-foreground border border-default rounded px-3 py-2 placeholder:text-muted', inputClassName)}
-          />
+          {label && <Label className={cn(labelClassName)}>{label}</Label>}
+          <Input ref={ref} placeholder={placeholder} value={value ?? ''} onChange={onChange} onBlur={onBlur} className={cn(inputClassName)} />
           {error && <FieldError>{error.message}</FieldError>}
         </TextField>
       )}
