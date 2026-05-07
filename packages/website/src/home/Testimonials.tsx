@@ -113,7 +113,7 @@ const Testimonials = () => {
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-          <NBadge className={`bg-accent/10 text-accent mb-4 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <NBadge color="accent" className={`mb-4 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
             <Heart className="w-3 h-3 mr-1" />
             Testimonials
           </NBadge>

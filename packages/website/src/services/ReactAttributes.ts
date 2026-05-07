@@ -42,8 +42,11 @@ export const alertAttributes = [
 
 export const badgeAttributes = [
   { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'You can pass badge content as children.' },
-  { name: 'className', type: 'string', default: "' '", details: 'Style the badge with Tailwind classes for size, color, etc.' },
-  { name: 'role', type: 'string', default: 'Optional', details: 'ARIA role for accessibility.' }
+  { name: 'color', type: "'default' | 'accent' | 'success' | 'warning' | 'danger'", default: "'default'", details: 'Badge color theme.' },
+  { name: 'variant', type: "'primary' | 'secondary' | 'soft'", default: "'soft'", details: 'Badge visual variant.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'Badge size.' },
+  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' },
+  { name: 'role', type: 'string', default: "'status'", details: 'ARIA role for accessibility.' }
 ];
 
 export const buttonAttributes = [

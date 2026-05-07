@@ -190,7 +190,7 @@ const Features = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16">
-          <NBadge className={`bg-accent/10 text-accent mb-4 ${isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0'}`}>
+          <NBadge color="accent" className={`mb-4 ${isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0'}`}>
             <Sparkles className="w-3 h-3 mr-1" />
             Features
           </NBadge>
@@ -336,7 +336,9 @@ const Features = () => {
                   <div className="flex-1 space-y-1 sm:space-y-2">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-1 sm:space-y-0">
                       <h4 className="text-sm sm:text-base lg:text-lg font-semibold group-hover:text-accent transition-colors">{feature.title}</h4>
-                      <NBadge className="text-xs bg-muted text-muted self-start sm:self-auto">{feature.category}</NBadge>
+                      <NBadge color="default" size="sm" className="self-start sm:self-auto">
+                        {feature.category}
+                      </NBadge>
                     </div>
 
                     <p className="text-xs sm:text-sm text-muted leading-relaxed">{feature.text}</p>
