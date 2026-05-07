@@ -13,18 +13,18 @@ export interface NDividerProps {
 const NDividerComponent: React.FC<NDividerProps> = memo(
   ({ className = '', orientation = 'horizontal', children, childrenClassName = '', separatorClassName = '', ...rest }) => {
     if (children && orientation === 'vertical') {
-      return <Separator orientation={orientation} className={cn('bg-default', separatorClassName)} {...(rest as any)} />;
+      return <Separator orientation={orientation} className={cn(separatorClassName)} {...(rest as any)} />;
     }
     if (children && orientation === 'horizontal') {
       return (
         <div className={cn('flex items-center', className)}>
-          <Separator orientation="horizontal" className={cn('flex-1 h-px', separatorClassName)} {...(rest as any)} />
-          <span className={cn('mx-2 text-muted text-xs whitespace-nowrap', childrenClassName)}>{children}</span>
-          <Separator orientation="horizontal" className={cn('flex-1 h-px', separatorClassName)} {...(rest as any)} />
+          <Separator orientation="horizontal" className={cn('flex-1', separatorClassName)} {...(rest as any)} />
+          <span className={cn('mx-2 whitespace-nowrap', childrenClassName)}>{children}</span>
+          <Separator orientation="horizontal" className={cn('flex-1', separatorClassName)} {...(rest as any)} />
         </div>
       );
     }
-    return <Separator orientation={orientation} className={cn('bg-default', separatorClassName || className)} {...(rest as any)} />;
+    return <Separator orientation={orientation} className={cn(separatorClassName || className)} {...(rest as any)} />;
   }
 );
 
