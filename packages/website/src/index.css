@@ -1,69 +1,176 @@
+@import 'tailwindcss';
+@import '@heroui/styles';
 @import '@nayan-ui/react/styles.css';
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-@layer base {
-  :root {
-    --COLOR_PRIMARY: #005ee6;
-    --COLOR_PRIMARY_DARK: #0043a3;
-    --COLOR_PRIMARY_LIGHT: #0069ff;
-    --COLOR_BACKGROUND: #f0f2f5;
-    --COLOR_CARD: #ffffff;
-    --COLOR_TEXT: #050505;
-    --COLOR_MUTED: 'gray';
-    --COLOR_BORDER: #e0e0e0;
-    --COLOR_SHADOW: #d3d3d3;
-    --COLOR_OVERLAY: rgba(255, 255, 255, 0.7);
+@source '../../react/src';
+
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  --background: hsl(214 45% 95%);
+  --foreground: hsl(222 47% 11%);
+
+  --surface: hsl(0 0% 100%);
+  --surface-foreground: hsl(222 47% 11%);
+  --surface-secondary: hsl(214 40% 96%);
+  --surface-secondary-foreground: hsl(222 47% 11%);
+  --surface-tertiary: hsl(214 35% 93%);
+  --surface-tertiary-foreground: hsl(222 47% 11%);
+
+  --overlay: hsl(0 0% 100%);
+  --overlay-foreground: hsl(222 47% 11%);
+
+  --muted: hsl(215 16% 47%);
+
+  --default: hsl(214 35% 90%);
+  --default-foreground: hsl(222 47% 11%);
+
+  --accent: hsl(217 91% 50%);
+  --accent-foreground: hsl(0 0% 100%);
+
+  --field-background: hsl(0 0% 100%);
+  --field-foreground: hsl(222 47% 11%);
+  --field-placeholder: hsl(215 16% 47%);
+
+  --success: hsl(142 71% 45%);
+  --success-foreground: hsl(222 47% 11%);
+
+  --warning: hsl(38 92% 50%);
+  --warning-foreground: hsl(222 47% 11%);
+
+  --danger: hsl(0 84% 60%);
+  --danger-foreground: hsl(0 0% 100%);
+
+  --border: hsl(214 35% 86%);
+  --separator: hsl(214 25% 76%);
+  --focus: hsl(217 91% 50%);
+  --link: hsl(222 47% 11%);
+
+  --segment: hsl(0 0% 100%);
+  --segment-foreground: hsl(222 47% 11%);
+
+  --COLOR_SHADOW: #d3d3d3;
+  --COLOR_OVERLAY: rgba(255, 255, 255, 0.7);
+}
+
+.dark,
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --background: hsl(222 47% 11%);
+  --foreground: hsl(210 40% 98%);
+
+  --surface: hsl(217 33% 22%);
+  --surface-foreground: hsl(210 40% 98%);
+  --surface-secondary: hsl(217 30% 26%);
+  --surface-secondary-foreground: hsl(210 40% 98%);
+  --surface-tertiary: hsl(217 28% 30%);
+  --surface-tertiary-foreground: hsl(210 40% 98%);
+
+  --overlay: hsl(217 33% 22%);
+  --overlay-foreground: hsl(210 40% 98%);
+
+  --muted: hsl(215 20% 65%);
+
+  --default: hsl(217 33% 26%);
+  --default-foreground: hsl(210 40% 98%);
+
+  --accent: hsl(217 91% 60%);
+  --accent-foreground: hsl(210 40% 98%);
+
+  --field-background: hsl(217 33% 22%);
+  --field-foreground: hsl(210 40% 98%);
+  --field-placeholder: hsl(215 20% 65%);
+
+  --success: hsl(142 71% 45%);
+  --success-foreground: hsl(222 47% 11%);
+
+  --warning: hsl(38 92% 55%);
+  --warning-foreground: hsl(222 47% 11%);
+
+  --danger: hsl(0 72% 51%);
+  --danger-foreground: hsl(210 40% 98%);
+
+  --border: hsl(217 33% 28%);
+  --separator: hsl(217 25% 38%);
+  --focus: hsl(217 91% 60%);
+  --link: hsl(210 40% 98%);
+
+  --segment: hsl(217 28% 34%);
+  --segment-foreground: hsl(210 40% 98%);
+
+  --COLOR_SHADOW: #cbcbcb;
+  --COLOR_OVERLAY: rgba(0, 0, 0, 0.7);
+}
+
+@theme inline {
+  --color-primary: var(--accent);
+  --color-primary-light: var(--accent);
+  --color-primary-dark: var(--accent);
+  --color-text: var(--foreground);
+  --color-card: var(--surface);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-shadow: var(--COLOR_SHADOW);
+  --color-overlay: var(--COLOR_OVERLAY);
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-size: 1rem;
+  font-family: arial, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  padding: 0 10px;
+}
+
+a.active {
+  color: var(--accent) !important;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
-
-  [data-theme='dark'] {
-    --COLOR_PRIMARY: #2997ff;
-    --COLOR_PRIMARY_DARK: #0a84ff;
-    --COLOR_PRIMARY_LIGHT: #7dc1ff;
-    --COLOR_BACKGROUND: #1f1f1f;
-    --COLOR_CARD: #353535;
-    --COLOR_TEXT: #f5f5f5;
-    --COLOR_MUTED: #afafaf;
-    --COLOR_BORDER: #4f4f4f;
-    --COLOR_SHADOW: #cbcbcb;
-    --COLOR_OVERLAY: rgba(0, 0, 0, 0.7);
-  }
-
-  body {
-    color: var(--COLOR_TEXT) !important;
-    background: var(--COLOR_BACKGROUND) !important;
-    font-size: 1rem !important;
-    font-family: arial, sans-serif !important;
-    overflow-x: hidden !important;
-    -webkit-font-smoothing: antialiased !important;
-    -moz-osx-font-smoothing: grayscale !important;
-  }
-
-  .container {
-    padding: 0 10px;
-  }
-
-  a.active {
-    color: var(--COLOR_PRIMARY) !important;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@layer utilities {
-  /* Animation keyframes */
-  @keyframes fade-in-up {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+@utility animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out forwards;
+}
 
-  /* Animation utility classes */
-  .animate-fade-in-up {
-    animation: fade-in-up 0.8s ease-out forwards;
+@keyframes accordion-down {
+  from {
+    height: 0;
   }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@utility animate-accordion-down {
+  animation: accordion-down 0.2s ease-out;
+}
+
+@utility animate-accordion-up {
+  animation: accordion-up 0.2s ease-out;
 }

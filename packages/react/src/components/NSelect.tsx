@@ -85,7 +85,7 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
   return (
     <div className={cn('nyn-select-block mb-3', className)}>
       {label && (
-        <Label htmlFor={selectId} className={cn('nyn-select-label block pb-2 text-text', labelClassName)}>
+        <Label htmlFor={selectId} className={cn('nyn-select-label block pb-2 text-foreground', labelClassName)}>
           {label}
         </Label>
       )}

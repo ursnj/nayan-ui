@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { Tabs } from '@heroui/react';
 import { cn } from '../lib/utils';
 
 export interface NTabsContentProps {
@@ -8,9 +9,9 @@ export interface NTabsContentProps {
 }
 
 export const NTabsContent = ({ item, className = '', children }: NTabsContentProps) => (
-  <div role="tabpanel" data-value={item} className={cn('nyn-tab-content', className)}>
+  <Tabs.Panel id={item} className={cn('nyn-tab-content', className)}>
     {children}
-  </div>
+  </Tabs.Panel>
 );
 
 NTabsContent.displayName = 'NTabsContent';

@@ -21,7 +21,7 @@ export const NSwitch: React.FC<NSwitchProps> = React.memo(
 
     return (
       <div className={cn('flex items-center justify-between', className)}>
-        {label && <Label className={cn('nyn-switch-label text-text leading-relaxed pr-3', labelClassName)}>{label}</Label>}
+        {label && <Label className={cn('nyn-switch-label text-foreground leading-relaxed pr-3', labelClassName)}>{label}</Label>}
         <Switch
           isSelected={enabled}
           defaultSelected={defaultChecked}

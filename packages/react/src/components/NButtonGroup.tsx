@@ -52,8 +52,8 @@ function NButtonGroupComponent<T = string>({
             onPress={() => onChange(item)}
             className={cn(
               `nyn-button-group-item ${
-                isSelected ? 'bg-primary text-white' : 'bg-card text-text'
-              } hover:bg-primary hover:text-white border border-border first:border-r-0 last:border-l-0 first:rounded-l-lg rounded-none last:rounded-r-lg px-3 py-2 h-auto mx-0 outline-none focus:shadow-outline`,
+                isSelected ? 'bg-accent text-accent-foreground' : 'bg-surface text-foreground'
+              } hover:bg-accent hover:text-accent-foreground border border-default first:border-r-0 last:border-l-0 first:rounded-l-lg rounded-none last:rounded-r-lg px-3 py-2 h-auto mx-0 outline-none focus:shadow-outline`,
               buttonClassName
             )}>
             {String(item)}
