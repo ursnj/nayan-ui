@@ -103,53 +103,36 @@ const Alert = () => {
 
 export default Alert;`;
 
-export const badgeCode = `import { NBadge, BadgeSize } from '@nayan-ui/react';
+export const badgeCode = `import { NBadge } from '@nayan-ui/react';
 
 const Badge = () => {
   return (
-    <div>
-      <NBadge size={BadgeSize.XS} className="text-foreground bg-surface border border-default mr-2">Sample</NBadge>
-      <NBadge size={BadgeSize.XS} className="text-blue-700 bg-blue-300 mr-2">Sample</NBadge>
-      <NBadge size={BadgeSize.SM} className="text-green-700 bg-green-300 mr-2">Sample</NBadge>
-      <NBadge size={BadgeSize.MD} className="text-yellow-700 bg-yellow-300 mr-2">Sample</NBadge>
-      <NBadge size={BadgeSize.LG} className="text-red-700 bg-red-300 mr-2">Sample</NBadge>
+    <div className="flex flex-wrap gap-2">
+      <NBadge className="text-foreground bg-surface border border-default">Default</NBadge>
+      <NBadge className="text-blue-700 bg-blue-100">Info</NBadge>
+      <NBadge className="text-green-700 bg-green-100">Success</NBadge>
+      <NBadge className="text-yellow-700 bg-yellow-100">Warning</NBadge>
+      <NBadge className="text-red-700 bg-red-100">Error</NBadge>
     </div>
   );
 };
 
 export default Badge;`;
 
-export const buttonCode = `import { NButton, ButtonSize } from '@nayan-ui/react';
+export const buttonCode = `import { NButton } from '@nayan-ui/react';
 
 const Button = () => {
   return (
-    <div>
-      <NButton size={ButtonSize.XS} disabled className="text-foreground bg-surface border border-default mr-2">
-        Button
-      </NButton>
-      <NButton type="submit" size={ButtonSize.XS} onClick={() => console.log('Button clicked')} className="text-white bg-blue-500 hover:bg-blue-600 border border-blue-600 mr-2">
-        Button
-      </NButton>
-      <NButton type="reset" size={ButtonSize.SM} onClick={() => console.log('Button clicked')} className="text-white bg-green-500 hover:bg-green-600 border border-green-600 mr-2">
-        Button
-      </NButton>
-      <NButton size={ButtonSize.MD} isLoading={true} onClick={() => console.log('Button clicked')} className="text-white bg-yellow-500 hover:bg-yellow-600 border border-yellow-600 mr-2">
-        Button
-      </NButton>
-      <NButton size={ButtonSize.LG} onClick={() => console.log('Button clicked')} className="mr-2">
-        Button
-      </NButton>
-      <NButton size={ButtonSize.LG} isOutline={true} onClick={() => console.log('Button clicked')} className="mr-2">
-        Button
-      </NButton>
-      <NButton size={ButtonSize.LG} onClick={() => console.log('Button clicked')} className="text-white bg-purple-500 hover:bg-purple-600 border border-purple-600 rounded-full mr-2">
-        Button
-      </NButton>
+    <div className="flex flex-wrap gap-2">
+      <NButton onClick={() => console.log('clicked')}>Primary</NButton>
+      <NButton isOutline={true}>Outline</NButton>
+      <NButton isLoading={true}>Loading</NButton>
+      <NButton disabled>Disabled</NButton>
     </div>
   );
 };
 
-export default Button`;
+export default Button;`;
 
 export const buttonGroupCode = `import { useState } from 'react';
 import { NButtonGroup } from '@nayan-ui/react';
@@ -640,19 +623,14 @@ const Textarea = () => {
 
 export default Textarea;`;
 
-export const toastCode = `import { useToast } from '@nayan-ui/react';
+export const toastCode = `import { NButton, useNToast } from '@nayan-ui/react';
 
 const Toast = () => {
-  const toast = useToast();
+  const toast = useNToast();
   return (
-    <div>
-      <NButton onClick={() => toast('Simple Toaster!')}>
-        Show Simple Toast
-      </NButton>
-      <NButton className="ml-5" onClick={() => toast('Toaster Description!', 'Toaster Title')}>
-        Show Toast with Title
-      </NButton>
-    </div>
+    <NButton onClick={() => toast('This is a toast notification!', 'Success')}>
+      Show Toast
+    </NButton>
   );
 };
 
