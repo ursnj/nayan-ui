@@ -1,8 +1,9 @@
 import React, { ElementType, ReactNode, isValidElement } from 'react';
+import { Dropdown, Kbd, Label, Separator } from '@heroui/react';
 import { cn } from '../lib/utils';
-import { NDivider } from './NDivider';
 
-export interface NMenuItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
+export interface NMenuItemProps {
+  id?: string;
   title: ReactNode;
   shortcut?: string;
   icon?: ElementType | ReactNode;
@@ -12,20 +13,22 @@ export interface NMenuItemProps extends Omit<React.HTMLAttributes<HTMLDivElement
   titleClassName?: string;
   shortcutClassName?: string;
   disabled?: boolean;
+  onAction?: () => void;
 }
 
 export const NMenuItem: React.FC<NMenuItemProps> = React.memo(
   ({
+    id,
     title,
     shortcut = '',
     separator = false,
     className = '',
-    titleClassName = '',
     iconClassName = '',
+    titleClassName = '',
     shortcutClassName = '',
     icon,
     disabled = false,
-    ...rest
+    onAction
   }) => {
     let IconElem: ReactNode = null;
     if (icon) {
@@ -39,21 +42,20 @@ export const NMenuItem: React.FC<NMenuItemProps> = React.memo(
     }
     return (
       <>
-        <div
-          role="menuitem"
-          tabIndex={disabled ? -1 : 0}
-          aria-disabled={disabled}
-          className={cn(
-            'nyn-menu-item flex items-center text-text hover:bg-border focus:bg-border active:bg-border cursor-pointer py-2 px-2 text-sm rounded',
-            disabled && 'opacity-50 pointer-events-none',
-            className
-          )}
-          {...rest}>
+        <Dropdown.Item
+          id={id}
+          textValue={typeof title === 'string' ? title : undefined}
+          className={cn('nyn-menu-item', className)}
+          onAction={onAction}>
           {IconElem}
-          <span className={titleClassName}>{title}</span>
-          {shortcut && <span className={cn('ml-auto text-xs text-muted', shortcutClassName)}>{shortcut}</span>}
-        </div>
-        {separator && <NDivider />}
+          <Label className={cn(titleClassName)}>{title}</Label>
+          {shortcut && (
+            <Kbd slot="keyboard" className={cn(shortcutClassName)}>
+              {shortcut}
+            </Kbd>
+          )}
+        </Dropdown.Item>
+        {separator && <Separator />}
       </>
     );
   }

@@ -43,18 +43,18 @@ const NConfirmAlertComponent: React.FC<NConfirmAlertProps> = memo(
             if (!open) onClose();
           }}>
           <Modal.Container size="sm">
-            <Modal.Dialog className={cn('nyn-confirm-alert border border-border bg-card p-3', className)} role="alertdialog">
+            <Modal.Dialog className={cn('nyn-confirm-alert border border-default bg-surface p-3', className)} role="alertdialog">
               <Modal.Header>
-                <span className={cn('nyn-confirm-alert-title text-text', titleClassName)}>{title}</span>
+                <span className={cn('nyn-confirm-alert-title text-foreground', titleClassName)}>{title}</span>
               </Modal.Header>
               <Modal.Body>
-                <p className={cn('nyn-confirm-alert-message text-text', messageClassName)}>{message}</p>
+                <p className={cn('nyn-confirm-alert-message text-foreground', messageClassName)}>{message}</p>
                 {children}
               </Modal.Body>
               <Modal.Footer className="flex justify-end gap-2">
                 <Button
                   variant="secondary"
-                  className={cn('text-text bg-border border border-border', cancelClassName)}
+                  className={cn('text-foreground bg-default border border-default', cancelClassName)}
                   onPress={() => {
                     onResult(false);
                     onClose();
@@ -63,7 +63,7 @@ const NConfirmAlertComponent: React.FC<NConfirmAlertProps> = memo(
                 </Button>
                 <Button
                   variant="primary"
-                  className={cn('text-white bg-primary border border-primary', confirmClassName)}
+                  className={cn('text-accent-foreground bg-accent border border-accent', confirmClassName)}
                   onPress={() => {
                     onResult(true);
                     onClose();

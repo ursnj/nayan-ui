@@ -44,7 +44,7 @@ export const NPopover = memo(
     return (
       <Popover>
         <Popover.Trigger>{triggerNode}</Popover.Trigger>
-        <Popover.Content className={cn('nyn-popover-content rounded bg-card border border-border shadow-lg p-0', sizeMapping[size], className)}>
+        <Popover.Content className={cn('nyn-popover-content rounded bg-surface border border-default shadow-lg p-0', sizeMapping[size], className)}>
           {children}
         </Popover.Content>
       </Popover>

@@ -25,6 +25,8 @@ export const NTheme = React.memo(({ children, theme = null, onThemeChange, ...ma
     if (typeof window !== 'undefined') {
       window.document.documentElement.style.colorScheme = finalTheme;
       window.document.documentElement.setAttribute('data-theme', finalTheme);
+      window.document.documentElement.classList.remove('light', 'dark');
+      window.document.documentElement.classList.add(finalTheme);
       window.document.documentElement.setAttribute('lang', 'en');
     }
     if (onThemeChange) onThemeChange(finalTheme);

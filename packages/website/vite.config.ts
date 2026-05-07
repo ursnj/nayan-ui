@@ -1,4 +1,5 @@
 /** @type {import('vite').UserConfig} */
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react-swc';
 import fs from 'fs';
 import path from 'path';
@@ -64,7 +65,7 @@ export default defineConfig({
       }
     }
   },
-  plugins: [rawImportPlugin(), react()],
+  plugins: [rawImportPlugin(), tailwindcss(), react()],
   optimizeDeps: {
     esbuildOptions: {
       define: { global: 'globalThis' }

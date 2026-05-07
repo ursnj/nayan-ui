@@ -13,7 +13,7 @@ export interface NDividerProps {
 const NDividerComponent: React.FC<NDividerProps> = memo(
   ({ className = '', orientation = 'horizontal', children, childrenClassName = '', separatorClassName = '', ...rest }) => {
     if (children && orientation === 'vertical') {
-      return <Separator orientation={orientation} className={cn('bg-border', separatorClassName)} {...(rest as any)} />;
+      return <Separator orientation={orientation} className={cn('bg-default', separatorClassName)} {...(rest as any)} />;
     }
     if (children && orientation === 'horizontal') {
       return (
@@ -24,7 +24,7 @@ const NDividerComponent: React.FC<NDividerProps> = memo(
         </div>
       );
     }
-    return <Separator orientation={orientation} className={cn('bg-border', separatorClassName || className)} {...(rest as any)} />;
+    return <Separator orientation={orientation} className={cn('bg-default', separatorClassName || className)} {...(rest as any)} />;
   }
 );
 

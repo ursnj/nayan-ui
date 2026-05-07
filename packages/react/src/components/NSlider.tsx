@@ -60,7 +60,7 @@ export const NSlider: React.FC<NSliderProps> = React.memo(
 
     return (
       <div className={cn('nyn-slider-block mb-3', className)} {...rest}>
-        {label && <Label className={cn('nyn-slider-label block pb-4 text-text', labelClassName)}>{label}</Label>}
+        {label && <Label className={cn('nyn-slider-label block pb-4 text-foreground', labelClassName)}>{label}</Label>}
         <Slider
           value={internalValue}
           defaultValue={defaultValue}

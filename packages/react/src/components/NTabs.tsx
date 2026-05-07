@@ -1,65 +1,56 @@
-import React, { ReactNode, memo, useCallback } from 'react';
+import React, { Key, ReactNode, memo } from 'react';
+import { Tabs } from '@heroui/react';
 import { cn } from '../lib/utils';
 
 export interface NTabsProps {
-  isFull?: boolean;
   items: string[];
   children: ReactNode;
   selected: string;
   className?: string;
-  itemClassName?: string;
-  activeItemClassName?: string;
+  listClassName?: string;
+  tabClassName?: string;
+  variant?: 'primary' | 'secondary';
+  orientation?: 'horizontal' | 'vertical';
   onChange: (selected: string) => void;
   ariaLabel?: string;
-  id?: string;
 }
 
 export const NTabs = memo((props: NTabsProps) => {
   const {
-    isFull = false,
     items,
     selected,
     children,
     className = '',
-    itemClassName = '',
-    activeItemClassName = '',
+    listClassName = '',
+    tabClassName = '',
+    variant = 'primary',
+    orientation = 'horizontal',
     onChange,
-    ariaLabel,
-    id = 'tabs'
+    ariaLabel
   } = props;
 
-  const isActive = useCallback((tab: string) => selected === tab, [selected]);
+  const handleSelectionChange = (key: Key) => {
+    onChange(String(key));
+  };
 
   return (
-    <div className="w-full">
-      <div
-        id={id}
-        role="tablist"
-        aria-label={ariaLabel}
-        className={cn(
-          `nyn-tabs bg-transparent border-0 border-b border-border p-0 rounded-none ${
-            isFull ? 'grid grid-flow-col justify-stretch' : 'flex flex-row justify-start'
-          }`,
-          className
-        )}>
-        {items.map(item => (
-          <button
-            key={item}
-            type="button"
-            role="tab"
-            aria-selected={isActive(item)}
-            tabIndex={isActive(item) ? 0 : -1}
-            onClick={() => onChange(item)}
-            className={cn(
-              'px-4 py-2 h-full border-0 border-b-4 transition-colors',
-              isActive(item) ? `text-primary border-primary ${activeItemClassName}` : `text-text border-transparent ${itemClassName}`
-            )}>
-            {item}
-          </button>
-        ))}
-      </div>
+    <Tabs
+      selectedKey={selected}
+      onSelectionChange={handleSelectionChange}
+      variant={variant}
+      orientation={orientation}
+      className={cn('nyn-tabs w-full', className)}>
+      <Tabs.ListContainer>
+        <Tabs.List aria-label={ariaLabel} className={cn(listClassName)}>
+          {items.map(item => (
+            <Tabs.Tab key={item} id={item} className={cn(tabClassName)}>
+              {item}
+            </Tabs.Tab>
+          ))}
+        </Tabs.List>
+      </Tabs.ListContainer>
       {children}
-    </div>
+    </Tabs>
   );
 });
 

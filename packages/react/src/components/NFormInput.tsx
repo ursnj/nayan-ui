@@ -1,9 +1,9 @@
 import React, { memo } from 'react';
-import { Control, Controller, FieldError, FieldValues, RegisterOptions } from 'react-hook-form';
-import { Input, Label } from '@heroui/react';
+import { Control, Controller, FieldValues, FieldError as RHFFieldError, RegisterOptions } from 'react-hook-form';
+import { FieldError, Input, Label, TextField } from '@heroui/react';
 import { cn } from '../lib/utils';
 
-export interface NFormInputProps<TFieldValues extends FieldValues = FieldValues> extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'name'> {
+export interface NFormInputProps<TFieldValues extends FieldValues = FieldValues> {
   id?: string;
   type?: string;
   label?: string;
@@ -14,7 +14,7 @@ export interface NFormInputProps<TFieldValues extends FieldValues = FieldValues>
   control: Control<TFieldValues>;
   rules?: RegisterOptions;
   name: string;
-  error?: FieldError;
+  error?: RHFFieldError;
 }
 
 const NFormInputComponent = <TFieldValues extends FieldValues = FieldValues>({
@@ -28,43 +28,32 @@ const NFormInputComponent = <TFieldValues extends FieldValues = FieldValues>({
   placeholder = '',
   className = '',
   labelClassName = '',
-  inputClassName = '',
-  ...remaining
+  inputClassName = ''
 }: NFormInputProps<TFieldValues>) => {
-  const describedBy = error ? `${id}-error` : undefined;
-
   return (
     <Controller
       control={control}
       name={name as any}
       rules={rules as any}
       render={({ field: { onChange, value, onBlur, ref } }) => (
-        <div className={cn('nyn-form-input-block', className)}>
-          {label && (
-            <Label htmlFor={id} className={cn('nyn-form-input-label block pb-2 text-text', labelClassName)}>
-              {label}
-            </Label>
-          )}
+        <TextField
+          id={id}
+          name={name}
+          type={type}
+          isRequired={!!rules?.required}
+          isInvalid={!!error}
+          className={cn('nyn-form-input-block', className)}>
+          {label && <Label className={cn('nyn-form-input-label', labelClassName)}>{label}</Label>}
           <Input
-            id={id}
-            type={type}
+            ref={ref}
+            placeholder={placeholder}
+            value={value ?? ''}
             onChange={onChange}
             onBlur={onBlur}
-            ref={ref}
-            value={value ?? ''}
-            placeholder={placeholder}
-            aria-invalid={!!error}
-            aria-describedby={describedBy}
-            aria-required={!!rules?.required}
-            className={cn('nyn-form-input w-full rounded bg-card border border-border text-text px-3 py-2', inputClassName)}
-            {...remaining}
+            className={cn('nyn-form-input', inputClassName)}
           />
-          {error && (
-            <div id={describedBy} role="alert" className="nyn-form-input-error text-xs text-red-600 mt-1">
-              {error.message}
-            </div>
-          )}
-        </div>
+          {error && <FieldError>{error.message}</FieldError>}
+        </TextField>
       )}
     />
   );

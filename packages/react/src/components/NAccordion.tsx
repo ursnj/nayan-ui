@@ -25,9 +25,9 @@ function NAccordionComponent<T = AccordionListItem>({
       {items.map((item, index) => {
         const key = item.id || `item-${index}`;
         return (
-          <Accordion.Item key={key} id={key} className={cn('nyn-accordion border border-border px-3 bg-card rounded mb-2.5', itemClassName)}>
-            <Accordion.Trigger className={cn('nyn-accordion-title text-text', triggerClassName)}>{item.title}</Accordion.Trigger>
-            <Accordion.Panel className={cn('nyn-accordion-message text-text', contentClassName)}>{item.message}</Accordion.Panel>
+          <Accordion.Item key={key} id={key} className={cn('nyn-accordion border border-default px-3 bg-surface rounded mb-2.5', itemClassName)}>
+            <Accordion.Trigger className={cn('nyn-accordion-title text-foreground', triggerClassName)}>{item.title}</Accordion.Trigger>
+            <Accordion.Panel className={cn('nyn-accordion-message text-foreground', contentClassName)}>{item.message}</Accordion.Panel>
           </Accordion.Item>
         );
       })}

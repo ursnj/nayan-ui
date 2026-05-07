@@ -14,6 +14,7 @@
     "sitemap": "npx nayan create sitemap -w http://localhost:7100 -r https://www.nayanui.com -o ./public/sitemap.xml"
   },
   "dependencies": {
+    "@heroui/styles": "^3.0.0",
     "@nayan-ui/react": "workspace:*",
     "compression": "^1.8.1",
     "express": "^4.21.2",
@@ -27,12 +28,11 @@
     "serve-static": "^2.2.0"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.1.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react-swc": "^3.11.0",
-    "autoprefixer": "^10.4.21",
-    "tailwindcss": "^3.4.17",
-    "tailwindcss-animate": "^1.0.7",
+    "tailwindcss": "^4.1.0",
     "typescript": "^5.8.3",
     "vite": "^7.0.5"
   },
