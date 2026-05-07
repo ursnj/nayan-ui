@@ -38,34 +38,34 @@ const Loading = () => {
     <ComponentWrapper>
       {/* Basic Loading States */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Loading States</h2>
-        <p className="text-muted-foreground mb-4">Simple loading spinners in different sizes and colors.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Loading States</h2>
+        <p className="text-muted mb-4">Simple loading spinners in different sizes and colors.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <NCard className="p-6 text-center">
             <h3 className="font-medium mb-4">Small Loading</h3>
             <NLoading size="sm" />
-            <p className="text-sm text-muted-foreground mt-2">size="sm"</p>
+            <p className="text-sm text-muted mt-2">size="sm"</p>
           </NCard>
 
           <NCard className="p-6 text-center">
             <h3 className="font-medium mb-4">Medium Loading (Default)</h3>
             <NLoading />
-            <p className="text-sm text-muted-foreground mt-2">Default size</p>
+            <p className="text-sm text-muted mt-2">Default size</p>
           </NCard>
 
           <NCard className="p-6 text-center">
             <h3 className="font-medium mb-4">Large Loading</h3>
             <NLoading size="lg" />
-            <p className="text-sm text-muted-foreground mt-2">size="lg"</p>
+            <p className="text-sm text-muted mt-2">size="lg"</p>
           </NCard>
         </div>
       </div>
 
       {/* Custom Styled Loading */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Styled Loading</h2>
-        <p className="text-muted-foreground mb-4">Loading spinners with custom colors and styling.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Styled Loading</h2>
+        <p className="text-muted mb-4">Loading spinners with custom colors and styling.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <NCard className="p-4 text-center">
@@ -92,8 +92,8 @@ const Loading = () => {
 
       {/* Loading with Text */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Loading with Text</h2>
-        <p className="text-muted-foreground mb-4">Loading indicators combined with descriptive text.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Loading with Text</h2>
+        <p className="text-muted mb-4">Loading indicators combined with descriptive text.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NCard className="p-6">
@@ -106,7 +106,7 @@ const Loading = () => {
           <NCard className="p-6">
             <div className="text-center">
               <NLoading className="mb-3" />
-              <p className="text-sm text-muted-foreground">Please wait while we process your request</p>
+              <p className="text-sm text-muted">Please wait while we process your request</p>
             </div>
           </NCard>
 
@@ -115,7 +115,7 @@ const Loading = () => {
               <NLoading className="text-purple-500" />
               <div className="text-center">
                 <p className="font-medium">Uploading files</p>
-                <p className="text-sm text-muted-foreground">This may take a few moments</p>
+                <p className="text-sm text-muted">This may take a few moments</p>
               </div>
             </div>
           </NCard>
@@ -125,7 +125,7 @@ const Loading = () => {
               <NLoading size="sm" className="mt-1" />
               <div>
                 <p className="font-medium">Synchronizing data</p>
-                <p className="text-sm text-muted-foreground">Connecting to server and updating records</p>
+                <p className="text-sm text-muted">Connecting to server and updating records</p>
               </div>
             </div>
           </NCard>
@@ -134,8 +134,8 @@ const Loading = () => {
 
       {/* Button Loading States */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Button Loading States</h2>
-        <p className="text-muted-foreground mb-4">Interactive buttons with loading states and actions.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Button Loading States</h2>
+        <p className="text-muted mb-4">Interactive buttons with loading states and actions.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <NButton onClick={() => simulateAction(setIsLoading)} disabled={isLoading} className="flex items-center justify-center space-x-2">
@@ -208,8 +208,8 @@ const Loading = () => {
 
       {/* Progress Loading */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Progress Loading</h2>
-        <p className="text-muted-foreground mb-4">Loading indicators with progress tracking.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Progress Loading</h2>
+        <p className="text-muted mb-4">Loading indicators with progress tracking.</p>
 
         <div className="space-y-6">
           <NCard className="p-6">
@@ -236,7 +236,7 @@ const Loading = () => {
                 </div>
 
                 {uploadProgress < 100 && (
-                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                  <div className="flex items-center space-x-2 text-sm text-muted">
                     <NLoading size="sm" />
                     <span>Processing... Please don't close this window</span>
                   </div>
@@ -258,8 +258,8 @@ const Loading = () => {
 
       {/* Contextual Loading */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Contextual Loading</h2>
-        <p className="text-muted-foreground mb-4">Loading states in different contexts and layouts.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Contextual Loading</h2>
+        <p className="text-muted mb-4">Loading states in different contexts and layouts.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Table Loading */}
@@ -267,7 +267,7 @@ const Loading = () => {
             <h3 className="font-medium mb-4">Table Loading</h3>
             <div className="border rounded-lg overflow-hidden">
               <table className="w-full">
-                <thead className="bg-card">
+                <thead className="bg-surface">
                   <tr>
                     <th className="px-4 py-2 text-left text-sm font-medium">Name</th>
                     <th className="px-4 py-2 text-left text-sm font-medium">Status</th>
@@ -278,7 +278,7 @@ const Loading = () => {
                     <td colSpan={2} className="px-4 py-8">
                       <div className="flex flex-col items-center space-y-2">
                         <NLoading />
-                        <span className="text-sm text-muted-foreground">Loading data...</span>
+                        <span className="text-sm text-muted">Loading data...</span>
                       </div>
                     </td>
                   </tr>
@@ -302,7 +302,7 @@ const Loading = () => {
               <div className="flex items-center justify-center py-4">
                 <div className="flex items-center space-x-2">
                   <NLoading size="sm" />
-                  <span className="text-sm text-muted-foreground">Loading content...</span>
+                  <span className="text-sm text-muted">Loading content...</span>
                 </div>
               </div>
             </div>
@@ -357,7 +357,7 @@ const Loading = () => {
             <h3 className="font-medium mb-4">Dashboard Widget</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Total Sales</span>
+                <span className="text-sm text-muted">Total Sales</span>
                 <div className="flex items-center space-x-2">
                   <NLoading size="sm" />
                   <span className="text-sm">Updating...</span>
@@ -367,18 +367,18 @@ const Loading = () => {
               <div className="h-24 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center">
                 <div className="text-center">
                   <NLoading className="mb-2" />
-                  <p className="text-xs text-muted-foreground">Loading chart data</p>
+                  <p className="text-xs text-muted">Loading chart data</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 text-center">
                 <div>
                   <div className="text-lg font-bold">---</div>
-                  <div className="text-xs text-muted-foreground">Orders</div>
+                  <div className="text-xs text-muted">Orders</div>
                 </div>
                 <div>
                   <div className="text-lg font-bold">---</div>
-                  <div className="text-xs text-muted-foreground">Revenue</div>
+                  <div className="text-xs text-muted">Revenue</div>
                 </div>
               </div>
             </div>
@@ -388,13 +388,13 @@ const Loading = () => {
 
       {/* Full Page Loading */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Full Page Loading</h2>
-        <p className="text-muted-foreground mb-4">Loading overlays and full-screen loading states.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Full Page Loading</h2>
+        <p className="text-muted mb-4">Loading overlays and full-screen loading states.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NCard className="p-6 relative min-h-[200px]">
             <h3 className="font-medium mb-4">Overlay Loading</h3>
-            <p className="text-sm text-muted-foreground mb-4">This simulates a loading overlay that appears over content while processing.</p>
+            <p className="text-sm text-muted mb-4">This simulates a loading overlay that appears over content while processing.</p>
 
             <NButton onClick={() => simulateAction(setIsLoading, 3000)} disabled={isLoading}>
               Trigger Overlay
@@ -405,7 +405,7 @@ const Loading = () => {
                 <div className="text-center">
                   <NLoading size="lg" className="mb-3" />
                   <p className="text-sm font-medium">Processing request...</p>
-                  <p className="text-xs text-muted-foreground">Please wait</p>
+                  <p className="text-xs text-muted">Please wait</p>
                 </div>
               </div>
             )}
@@ -413,12 +413,12 @@ const Loading = () => {
 
           <NCard className="p-6">
             <h3 className="font-medium mb-4">Modal Loading</h3>
-            <p className="text-sm text-muted-foreground mb-4">Loading state within modal dialogs and popups.</p>
+            <p className="text-sm text-muted mb-4">Loading state within modal dialogs and popups.</p>
 
             <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
               <NLoading className="mb-3" />
               <p className="text-sm font-medium">Loading modal content</p>
-              <p className="text-xs text-muted-foreground">Fetching data from server</p>
+              <p className="text-xs text-muted">Fetching data from server</p>
             </div>
           </NCard>
         </div>
@@ -426,8 +426,8 @@ const Loading = () => {
 
       {/* Custom Loading Animations */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Loading Patterns</h2>
-        <p className="text-muted-foreground mb-4">Creative loading patterns and animations.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Loading Patterns</h2>
+        <p className="text-muted mb-4">Creative loading patterns and animations.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <NCard className="p-6 text-center">
@@ -455,8 +455,8 @@ const Loading = () => {
 
       {/* Loading Best Practices */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Loading Best Practices</h2>
-        <p className="text-muted-foreground mb-4">Guidelines for effective loading state implementation.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Loading Best Practices</h2>
+        <p className="text-muted mb-4">Guidelines for effective loading state implementation.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NCard className="p-4 border-green-200 bg-green-50 dark:bg-green-900/20">
@@ -487,14 +487,14 @@ const Loading = () => {
 
       {/* Loading State Summary */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Loading State Summary</h2>
-        <p className="text-muted-foreground mb-4">Current status of all interactive loading examples.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Loading State Summary</h2>
+        <p className="text-muted mb-4">Current status of all interactive loading examples.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <NCard className="p-4 text-center">
             <h3 className="font-medium mb-2">General Loading</h3>
             <div className={`text-2xl font-bold mb-1 ${isLoading ? 'text-blue-600' : 'text-gray-400'}`}>{isLoading ? <NLoading /> : '●'}</div>
-            <p className="text-sm text-muted-foreground">{isLoading ? 'Active' : 'Idle'}</p>
+            <p className="text-sm text-muted">{isLoading ? 'Active' : 'Idle'}</p>
           </NCard>
 
           <NCard className="p-4 text-center">
@@ -502,19 +502,19 @@ const Loading = () => {
             <div className={`text-2xl font-bold mb-1 ${searchLoading ? 'text-purple-600' : 'text-gray-400'}`}>
               {searchLoading ? <NLoading /> : '●'}
             </div>
-            <p className="text-sm text-muted-foreground">{searchLoading ? 'Searching' : 'Ready'}</p>
+            <p className="text-sm text-muted">{searchLoading ? 'Searching' : 'Ready'}</p>
           </NCard>
 
           <NCard className="p-4 text-center">
             <h3 className="font-medium mb-2">Save Action</h3>
             <div className={`text-2xl font-bold mb-1 ${saveLoading ? 'text-green-600' : 'text-gray-400'}`}>{saveLoading ? <NLoading /> : '●'}</div>
-            <p className="text-sm text-muted-foreground">{saveLoading ? 'Saving' : 'Ready'}</p>
+            <p className="text-sm text-muted">{saveLoading ? 'Saving' : 'Ready'}</p>
           </NCard>
 
           <NCard className="p-4 text-center">
             <h3 className="font-medium mb-2">Upload Progress</h3>
             <div className="text-2xl font-bold mb-1 text-blue-600">{uploadProgress}%</div>
-            <p className="text-sm text-muted-foreground">{uploadProgress === 0 ? 'Ready' : uploadProgress === 100 ? 'Complete' : 'Uploading'}</p>
+            <p className="text-sm text-muted">{uploadProgress === 0 ? 'Ready' : uploadProgress === 100 ? 'Complete' : 'Uploading'}</p>
           </NCard>
         </div>
       </div>

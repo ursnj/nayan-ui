@@ -31,17 +31,15 @@ const Dialog = () => {
     <ComponentWrapper>
       {/* Basic Dialog */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Dialog</h2>
-        <p className="text-muted-foreground mb-4">Simple dialog with default size and basic content.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Dialog</h2>
+        <p className="text-muted mb-4">Simple dialog with default size and basic content.</p>
 
         <div className="space-y-4">
           <NButton onClick={() => setBasicDialog(true)}>Open Basic Dialog</NButton>
 
           <NDialog isOpen={basicDialog} onClose={() => setBasicDialog(false)} title="Basic Dialog" size={DialogSize.MD}>
             <div className="p-6">
-              <p className="text-muted-foreground mb-4">
-                This is a basic dialog with simple content. It demonstrates the default styling and behavior.
-              </p>
+              <p className="text-muted mb-4">This is a basic dialog with simple content. It demonstrates the default styling and behavior.</p>
               <div className="flex justify-end space-x-2">
                 <NButton isOutline onClick={() => setBasicDialog(false)}>
                   Cancel
@@ -55,8 +53,8 @@ const Dialog = () => {
 
       {/* Dialog Sizes */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Dialog Sizes</h2>
-        <p className="text-muted-foreground mb-4">Different dialog sizes for various content types.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Dialog Sizes</h2>
+        <p className="text-muted mb-4">Different dialog sizes for various content types.</p>
 
         <div className="flex flex-wrap gap-3">
           <NButton onClick={() => setSmallDialog(true)}>Small Dialog</NButton>
@@ -70,7 +68,7 @@ const Dialog = () => {
           {/* Small Dialog */}
           <NDialog isOpen={smallDialog} onClose={() => setSmallDialog(false)} title="Small Dialog" size={DialogSize.SM}>
             <div className="p-4">
-              <p className="text-sm text-muted-foreground mb-3">This is a small dialog perfect for simple confirmations.</p>
+              <p className="text-sm text-muted mb-3">This is a small dialog perfect for simple confirmations.</p>
               <div className="flex justify-end space-x-2">
                 <NButton className="text-xs px-3 py-1" onClick={() => setSmallDialog(false)}>
                   Close
@@ -82,15 +80,15 @@ const Dialog = () => {
           {/* Large Dialog */}
           <NDialog isOpen={largeDialog} onClose={() => setLargeDialog(false)} title="Large Dialog" size={DialogSize.LG}>
             <div className="p-6">
-              <p className="text-muted-foreground mb-4">This is a large dialog suitable for complex forms, detailed information, or rich content.</p>
+              <p className="text-muted mb-4">This is a large dialog suitable for complex forms, detailed information, or rich content.</p>
               <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="p-4 bg-card rounded">
+                <div className="p-4 bg-surface rounded">
                   <h3 className="font-medium mb-2">Feature 1</h3>
-                  <p className="text-sm text-muted-foreground">Description of feature 1</p>
+                  <p className="text-sm text-muted">Description of feature 1</p>
                 </div>
-                <div className="p-4 bg-card rounded">
+                <div className="p-4 bg-surface rounded">
                   <h3 className="font-medium mb-2">Feature 2</h3>
-                  <p className="text-sm text-muted-foreground">Description of feature 2</p>
+                  <p className="text-sm text-muted">Description of feature 2</p>
                 </div>
               </div>
               <div className="flex justify-end space-x-2">
@@ -106,14 +104,14 @@ const Dialog = () => {
           <NDialog isOpen={fullDialog} onClose={() => setFullDialog(false)} title="Full Screen Dialog" size={DialogSize.FULL}>
             <div className="p-6 h-full flex flex-col">
               <div className="flex-1">
-                <p className="text-muted-foreground mb-6">
+                <p className="text-muted mb-6">
                   This is a full-screen dialog that takes up the entire viewport. Perfect for complex workflows or detailed content.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                   {[1, 2, 3, 4, 5, 6].map(item => (
                     <div key={item} className="p-4 border rounded-lg">
                       <h3 className="font-medium mb-2">Section {item}</h3>
-                      <p className="text-sm text-muted-foreground">Content for section {item} with detailed information and options.</p>
+                      <p className="text-sm text-muted">Content for section {item} with detailed information and options.</p>
                     </div>
                   ))}
                 </div>
@@ -131,8 +129,8 @@ const Dialog = () => {
 
       {/* Settings Dialog */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Settings Dialog</h2>
-        <p className="text-muted-foreground mb-4">Complex dialog with multiple sections and form controls.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Settings Dialog</h2>
+        <p className="text-muted mb-4">Complex dialog with multiple sections and form controls.</p>
 
         <div className="space-y-4">
           <NButton onClick={() => setSettingsDialog(true)} className="flex items-center space-x-2">
@@ -206,8 +204,8 @@ const Dialog = () => {
 
       {/* Profile Dialog */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Profile Dialog</h2>
-        <p className="text-muted-foreground mb-4">User profile information dialog with avatar and details.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Profile Dialog</h2>
+        <p className="text-muted mb-4">User profile information dialog with avatar and details.</p>
 
         <div className="space-y-4">
           <NButton onClick={() => setProfileDialog(true)} className="flex items-center space-x-2">
@@ -221,8 +219,8 @@ const Dialog = () => {
                 <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white text-xl font-bold">JD</div>
                 <div>
                   <h3 className="text-lg font-semibold">John Doe</h3>
-                  <p className="text-muted-foreground">john.doe@example.com</p>
-                  <p className="text-sm text-muted-foreground">Member since March 2023</p>
+                  <p className="text-muted">john.doe@example.com</p>
+                  <p className="text-sm text-muted">Member since March 2023</p>
                 </div>
               </div>
 
@@ -261,8 +259,8 @@ const Dialog = () => {
 
       {/* Payment Dialog */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Payment Dialog</h2>
-        <p className="text-muted-foreground mb-4">Payment confirmation dialog with success state.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Payment Dialog</h2>
+        <p className="text-muted mb-4">Payment confirmation dialog with success state.</p>
 
         <div className="space-y-4">
           <NButton onClick={() => setPaymentDialog(true)} className="bg-green-600 hover:bg-green-700 flex items-center space-x-2">
@@ -277,11 +275,11 @@ const Dialog = () => {
               </div>
 
               <h3 className="text-lg font-semibold mb-2">Payment Successful!</h3>
-              <p className="text-muted-foreground mb-4">
+              <p className="text-muted mb-4">
                 Your payment has been successfully processed. We've sent you an email with all of the details of your order.
               </p>
 
-              <div className="bg-card rounded-lg p-4 mb-4">
+              <div className="bg-surface rounded-lg p-4 mb-4">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm">Order ID:</span>
                   <span className="text-sm font-mono">#ORD-12345</span>
@@ -306,8 +304,8 @@ const Dialog = () => {
 
       {/* Form Dialog */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Form Dialog</h2>
-        <p className="text-muted-foreground mb-4">Dialog containing a form with validation and submission.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Form Dialog</h2>
+        <p className="text-muted mb-4">Dialog containing a form with validation and submission.</p>
 
         <div className="space-y-4">
           <NButton onClick={() => setFormDialog(true)}>Open Contact Form</NButton>
@@ -365,8 +363,8 @@ const Dialog = () => {
 
       {/* Custom Styled Dialog */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Styled Dialog</h2>
-        <p className="text-muted-foreground mb-4">Dialog with custom styling and colors.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Styled Dialog</h2>
+        <p className="text-muted mb-4">Dialog with custom styling and colors.</p>
 
         <div className="space-y-4">
           <NButton
@@ -390,7 +388,7 @@ const Dialog = () => {
                 </div>
 
                 <h3 className="text-lg font-semibold mb-2">Need Help?</h3>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-muted mb-4">
                   This is a custom-styled dialog with gradient colors and special styling. It demonstrates how you can customize the appearance of
                   dialogs.
                 </p>
@@ -413,8 +411,8 @@ const Dialog = () => {
 
       {/* Multiple Dialogs Demo */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Multiple Dialogs Demo</h2>
-        <p className="text-muted-foreground mb-4">Quick access to all dialog examples.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Multiple Dialogs Demo</h2>
+        <p className="text-muted mb-4">Quick access to all dialog examples.</p>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           <NButton onClick={() => setBasicDialog(true)} className="text-sm">

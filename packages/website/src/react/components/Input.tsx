@@ -49,8 +49,8 @@ const Input = () => {
     <ComponentWrapper>
       {/* Basic Inputs */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Inputs</h2>
-        <p className="text-muted-foreground mb-4">Simple input fields with labels and placeholders.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Inputs</h2>
+        <p className="text-muted mb-4">Simple input fields with labels and placeholders.</p>
 
         <div className="space-y-4 max-w-md">
           <NInput
@@ -63,7 +63,7 @@ const Input = () => {
 
           <NInput id="full-name" label="Full Name" placeholder="Enter your full name" value={fullName} onChange={e => setFullName(e.target.value)} />
 
-          <NInput id="readonly-input" label="Read-only Input" value="This field is read-only" readOnly inputClassName="bg-card" />
+          <NInput id="readonly-input" label="Read-only Input" value="This field is read-only" readOnly inputClassName="bg-surface" />
 
           <NInput id="disabled-input" label="Disabled Input" placeholder="This input is disabled" disabled />
         </div>
@@ -71,8 +71,8 @@ const Input = () => {
 
       {/* Input Types */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Input Types</h2>
-        <p className="text-muted-foreground mb-4">Different input types for various data formats.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Input Types</h2>
+        <p className="text-muted mb-4">Different input types for various data formats.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
           <NInput
@@ -147,8 +147,8 @@ const Input = () => {
 
       {/* Input with Icons */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Inputs with Icons</h2>
-        <p className="text-muted-foreground mb-4">Enhanced inputs with icon elements for better UX.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Inputs with Icons</h2>
+        <p className="text-muted mb-4">Enhanced inputs with icon elements for better UX.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
           <div className="relative">
@@ -161,7 +161,7 @@ const Input = () => {
               onChange={e => setSearchQuery(e.target.value)}
               inputClassName="pl-10"
             />
-            <Search className="absolute left-3 top-9 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-9 w-4 h-4 text-muted" />
           </div>
 
           <div className="relative">
@@ -175,7 +175,7 @@ const Input = () => {
               inputClassName="pl-10"
               error={errors.email}
             />
-            <Mail className="absolute left-3 top-9 w-4 h-4 text-muted-foreground" />
+            <Mail className="absolute left-3 top-9 w-4 h-4 text-muted" />
           </div>
 
           <div className="relative">
@@ -189,18 +189,15 @@ const Input = () => {
               inputClassName="pl-10 pr-10"
               error={errors.password}
             />
-            <Lock className="absolute left-3 top-9 w-4 h-4 text-muted-foreground" />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-9 text-muted-foreground hover:text-text">
+            <Lock className="absolute left-3 top-9 w-4 h-4 text-muted" />
+            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-9 text-muted hover:text-foreground">
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
 
           <div className="relative">
             <NInput id="user-with-icon" label="Username" placeholder="Enter username" inputClassName="pl-10" />
-            <User className="absolute left-3 top-9 w-4 h-4 text-muted-foreground" />
+            <User className="absolute left-3 top-9 w-4 h-4 text-muted" />
           </div>
 
           <div className="relative">
@@ -213,7 +210,7 @@ const Input = () => {
               onChange={e => setPhoneNumber(e.target.value)}
               inputClassName="pl-10"
             />
-            <Phone className="absolute left-3 top-9 w-4 h-4 text-muted-foreground" />
+            <Phone className="absolute left-3 top-9 w-4 h-4 text-muted" />
           </div>
 
           <div className="relative">
@@ -228,15 +225,15 @@ const Input = () => {
               min="0"
               step="0.01"
             />
-            <DollarSign className="absolute left-3 top-9 w-4 h-4 text-muted-foreground" />
+            <DollarSign className="absolute left-3 top-9 w-4 h-4 text-muted" />
           </div>
         </div>
       </div>
 
       {/* Input States */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Input States</h2>
-        <p className="text-muted-foreground mb-4">Different states and validation examples.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Input States</h2>
+        <p className="text-muted mb-4">Different states and validation examples.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
           <NInput id="normal-state" label="Normal State" placeholder="This is a normal input" />
@@ -280,7 +277,7 @@ const Input = () => {
             label="Loading State"
             placeholder="Checking availability..."
             disabled
-            inputClassName="bg-card"
+            inputClassName="bg-surface"
             helperText="Validating input..."
           />
         </div>
@@ -288,8 +285,8 @@ const Input = () => {
 
       {/* Input Sizes */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Input Sizes</h2>
-        <p className="text-muted-foreground mb-4">Different input sizes for various use cases.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Input Sizes</h2>
+        <p className="text-muted mb-4">Different input sizes for various use cases.</p>
 
         <div className="space-y-4 max-w-md">
           <NInput id="small-input" label="Small Input" placeholder="Small size input" inputClassName="h-8 text-sm px-2" labelClassName="text-sm" />
@@ -302,8 +299,8 @@ const Input = () => {
 
       {/* Custom Styled Inputs */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Styled Inputs</h2>
-        <p className="text-muted-foreground mb-4">Inputs with custom styling and themes.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Styled Inputs</h2>
+        <p className="text-muted mb-4">Inputs with custom styling and themes.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
           <NInput id="rounded-input" label="Rounded Input" placeholder="Fully rounded input" inputClassName="rounded-full px-4" />
@@ -349,8 +346,8 @@ const Input = () => {
 
       {/* Form Integration */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Form Integration</h2>
-        <p className="text-muted-foreground mb-4">Inputs integrated within a complete form.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Form Integration</h2>
+        <p className="text-muted mb-4">Inputs integrated within a complete form.</p>
 
         <form className="max-w-md mx-auto p-6 border rounded-lg space-y-4">
           <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
@@ -401,8 +398,8 @@ const Input = () => {
 
       {/* Input with Helper Text */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Helper Text and Validation</h2>
-        <p className="text-muted-foreground mb-4">Inputs with helpful guidance and validation messages.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Helper Text and Validation</h2>
+        <p className="text-muted mb-4">Inputs with helpful guidance and validation messages.</p>
 
         <div className="space-y-4 max-w-md">
           <NInput
@@ -434,8 +431,8 @@ const Input = () => {
 
       {/* Real-time Validation */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Real-time Validation</h2>
-        <p className="text-muted-foreground mb-4">Inputs with live validation feedback.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Real-time Validation</h2>
+        <p className="text-muted mb-4">Inputs with live validation feedback.</p>
 
         <div className="space-y-4 max-w-md">
           <NInput
@@ -460,7 +457,7 @@ const Input = () => {
             helperText={!errors.password && password.length >= 8 ? 'Password strength: Good' : ''}
           />
 
-          <div className="p-4 bg-card rounded-lg">
+          <div className="p-4 bg-surface rounded-lg">
             <h4 className="font-medium mb-2">Current Values:</h4>
             <div className="text-sm space-y-1">
               <p>

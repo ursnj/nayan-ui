@@ -2,69 +2,27 @@ export const installCode = `npm install @nayan-ui/react`;
 export const rnInstallCode = `npm install @nayan-ui/react-native`;
 export const rnPeerDepsCode = `npm install react-native-reanimated react-native-gesture-handler react-native-safe-area-context react-native-screens react-native-svg react-native-worklets`;
 
-export const tailwindCode = `module.exports = {
-  darkMode: ['class'],
-  content: ['./src/**/*.{ts,tsx}', './index.html', './node_modules/@nayan-ui/react/dist/index.es.js'], // Check node_modules path properly
-  theme: {
-    extend: {
-      colors: {
-        primary: 'var(--COLOR_PRIMARY)',
-        'primary-light': 'var(--COLOR_PRIMARY_LIGHT)',
-        'primary-dark': 'var(--COLOR_PRIMARY_DARK)',
-        background: 'var(--COLOR_BACKGROUND)',
-        text: 'var(--COLOR_TEXT)',
-        muted: 'var(--COLOR_MUTED)',
-        border: 'var(--COLOR_BORDER)',
-        card: 'var(--COLOR_CARD)',
-        shadow: 'var(--COLOR_SHADOW)',
-        overlay: 'var(--COLOR_OVERLAY)'
-      }
-    }
-  },
-  plugins: [require('tailwindcss-animate')]
-};`;
+export const tailwindCode = `// No tailwind.config.js needed with Tailwind v4!
+// HeroUI styles handle theming automatically.
+// Use @tailwindcss/vite plugin in vite.config.ts:
+
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+  plugins: [tailwindcss(), react()],
+});`;
 
 export const rnTailwindCode = `// No tailwind.config.js needed!
 // Uniwind + HeroUI Native handle styling automatically.
 // Just create a global.css file:`;
 
-export const cssCode = `@import '@nayan-ui/react/dist/style.css';
+export const cssCode = `@import 'tailwindcss';
+@import '@heroui/styles';
+@import '@nayan-ui/react/styles.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  :root {
-    --COLOR_PRIMARY: #005ee6;
-    --COLOR_PRIMARY_DARK: #0043a3;
-    --COLOR_PRIMARY_LIGHT: #0069ff;
-    --COLOR_BACKGROUND: #f0f2f5;
-    --COLOR_CARD: #ffffff;
-    --COLOR_TEXT: #050505;
-    --COLOR_MUTED: 'gray';
-    --COLOR_BORDER: #e0e0e0;
-    --COLOR_SHADOW: #d3d3d3;
-    --COLOR_OVERLAY: rgba(255, 255, 255, .7);
-  }
-
-  [data-theme='dark'] {
-    --COLOR_PRIMARY: #2997ff;
-    --COLOR_PRIMARY_DARK: #0a84ff;
-    --COLOR_PRIMARY_LIGHT: #7dc1ff;
-    --COLOR_BACKGROUND: #1f1f1f;
-    --COLOR_CARD: #353535;
-    --COLOR_TEXT: #f5f5f5;
-    --COLOR_MUTED: #afafaf;
-    --COLOR_BORDER: #4f4f4f;
-    --COLOR_SHADOW: #cbcbcb;
-    --COLOR_OVERLAY: rgba(0, 0, 0, .7);
-  }
-
-  body {
-    color: var(--COLOR_TEXT) !important;
-    background-color: var(--COLOR_BACKGROUND) !important;
-  }
+body {
+  color: var(--foreground);
+  background: var(--background);
 }`;
 
 export const rnCssCode = `@import 'tailwindcss';
@@ -119,9 +77,9 @@ const Accordion = () => {
 
   return (
     <div>
-      <h1 className="text-text mb-3 text-lg">Single:</h1>
+      <h1 className="text-foreground mb-3 text-lg">Single:</h1>
       <NAccordion type={AccordionTypes.SINGLE} items={items} />
-      <h1 className="text-text mb-3 mt-5 text-lg">Multiple:</h1>
+      <h1 className="text-foreground mb-3 mt-5 text-lg">Multiple:</h1>
       <NAccordion type={AccordionTypes.MULTIPLE} items={items} />
     </div>
   );
@@ -150,7 +108,7 @@ export const badgeCode = `import { NBadge, BadgeSize } from '@nayan-ui/react';
 const Badge = () => {
   return (
     <div>
-      <NBadge size={BadgeSize.XS} className="text-text bg-card border border-border mr-2">Sample</NBadge>
+      <NBadge size={BadgeSize.XS} className="text-foreground bg-surface border border-default mr-2">Sample</NBadge>
       <NBadge size={BadgeSize.XS} className="text-blue-700 bg-blue-300 mr-2">Sample</NBadge>
       <NBadge size={BadgeSize.SM} className="text-green-700 bg-green-300 mr-2">Sample</NBadge>
       <NBadge size={BadgeSize.MD} className="text-yellow-700 bg-yellow-300 mr-2">Sample</NBadge>
@@ -166,7 +124,7 @@ export const buttonCode = `import { NButton, ButtonSize } from '@nayan-ui/react'
 const Button = () => {
   return (
     <div>
-      <NButton size={ButtonSize.XS} disabled className="text-text bg-card border border-border mr-2">
+      <NButton size={ButtonSize.XS} disabled className="text-foreground bg-surface border border-default mr-2">
         Button
       </NButton>
       <NButton type="submit" size={ButtonSize.XS} onClick={() => console.log('Button clicked')} className="text-white bg-blue-500 hover:bg-blue-600 border border-blue-600 mr-2">
@@ -301,11 +259,11 @@ export const dividerCode = `import { NDivider } from '@nayan-ui/react';
 const Divider = () => {
   return (
     <div>
-      <h1 className="text-text mb-3 text-lg">Horizontal:</h1>
+      <h1 className="text-foreground mb-3 text-lg">Horizontal:</h1>
       <NDivider orientation="horizontal" className="my-3" />
-      <h1 className="text-text mb-3 text-lg">Horizontal with Text:</h1>
+      <h1 className="text-foreground mb-3 text-lg">Horizontal with Text:</h1>
       <NDivider orientation="horizontal" className="h-5">OR</NDivider>
-      <h1 className="text-text mb-3 text-lg">Vertical:</h1>
+      <h1 className="text-foreground mb-3 text-lg">Vertical:</h1>
       <NDivider orientation="vertical" className="h-5" />
     </div>
   );
@@ -445,7 +403,7 @@ export default Linkify;`;
 export const loadingCode = `import { NLoading } from '@nayan-ui/react';
 
 const Loading = () => {
-  return <NLoading className="text-primary" />
+  return <NLoading className="text-accent" />
 };
 
 export default Loading;`;
@@ -475,7 +433,7 @@ const Popover = () => {
   return (
     <NPopover size={PopoverSize.MD} trigger={<NButton>Show Popover</NButton>}>
       <div className="overflow-hidden p-3">
-        <div className="text-sm font-medium text-text">Documentation</div>
+        <div className="text-sm font-medium text-foreground">Documentation</div>
         <div className="text-sm text-muted">Start integrating products and tools</div>
       </div>
     </NPopover>
@@ -506,10 +464,10 @@ const RadioGroupExample = () => {
 
   return (
     <div>
-      <h1 className="text-text mb-3 text-base">Horizontal:</h1>
+      <h1 className="text-foreground mb-3 text-base">Horizontal:</h1>
       <NRadioGroup items={items} selected={selected} setSelected={setSelected} />
       <div className="mt-5" />
-      <h1 className="text-text mb-3 text-base">Vertical:</h1>
+      <h1 className="text-foreground mb-3 text-base">Vertical:</h1>
       <NRadioGroup orientation="vertical" items={items} selected={selected} setSelected={setSelected} />
     </div>
   );
@@ -605,7 +563,7 @@ export default Switch;`;
 export const tableCode = `import { NTable } from '@nayan-ui/react';
 
 const CustomComponent = ({row, col, ...remaining}: any) => {
-  return <div className="text-primary">Oops</div>;
+  return <div className="text-accent">Oops</div>;
 };
 
 const Table = () => {
@@ -622,7 +580,7 @@ const Table = () => {
     { invoice: '10002', status: 'In progress', method: 'Net Banking', amount: '$500' }
   ];
 
-  return <NTable className="bg-card" caption="Invoice table" columnDef={columnDef} data={data} />;
+  return <NTable className="bg-surface" caption="Invoice table" columnDef={columnDef} data={data} />;
 };
 
 export default Table;`;
@@ -637,21 +595,21 @@ const Tabs = () => {
 
   return (
     <div>
-      <h1 className="text-text mb-3 text-lg text-left">Tabs:</h1>
+      <h1 className="text-foreground mb-3 text-lg text-left">Tabs:</h1>
       <NTabs items={items} selected={selected} onChange={setSelected}>
-        <NTabsContent item={items[0]} className="px-3 py-2 text-text">
+        <NTabsContent item={items[0]} className="px-3 py-2 text-foreground">
           Content 1
         </NTabsContent>
-        <NTabsContent item={items[1]} className="px-3 py-2 text-text">
+        <NTabsContent item={items[1]} className="px-3 py-2 text-foreground">
           Content 2
         </NTabsContent>
       </NTabs>
-      <h1 className="text-text mb-3 mt-5 text-lg text-left">Full Width:</h1>
+      <h1 className="text-foreground mb-3 mt-5 text-lg text-left">Full Width:</h1>
       <NTabs isFull={true} items={items} selected={selected} onChange={setSelected}>
-        <NTabsContent item={items[0]} className="px-3 py-2 text-text">
+        <NTabsContent item={items[0]} className="px-3 py-2 text-foreground">
           Content 3
         </NTabsContent>
-        <NTabsContent item={items[1]} className="px-3 py-2 text-text">
+        <NTabsContent item={items[1]} className="px-3 py-2 text-foreground">
           Content 4
         </NTabsContent>
       </NTabs>

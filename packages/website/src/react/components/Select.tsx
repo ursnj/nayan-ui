@@ -178,8 +178,8 @@ const Select = () => {
     <ComponentWrapper>
       {/* Basic Select Examples */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Select Examples</h2>
-        <p className="text-muted-foreground mb-4">Simple select components with single and multiple selection.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Select Examples</h2>
+        <p className="text-muted mb-4">Simple select components with single and multiple selection.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
@@ -196,7 +196,7 @@ const Select = () => {
                 handleSelectionChange('Single Select', value);
               }}
             />
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-muted mt-2">
               Selected: <span className="font-medium">{singleSelect?.label || 'None'}</span>
             </p>
           </div>
@@ -216,7 +216,7 @@ const Select = () => {
                 handleSelectionChange('Multi Select', values);
               }}
             />
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-muted mt-2">
               Selected: <span className="font-medium">{multiSelect.length > 0 ? multiSelect.map(item => item.label).join(', ') : 'None'}</span>
             </p>
           </div>
@@ -225,8 +225,8 @@ const Select = () => {
 
       {/* Creatable Select */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Creatable Select</h2>
-        <p className="text-muted-foreground mb-4">Select component that allows creating new options on the fly.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Creatable Select</h2>
+        <p className="text-muted mb-4">Select component that allows creating new options on the fly.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
@@ -255,7 +255,7 @@ const Select = () => {
                 handleSelectionChange('Tags Select', values);
               }}
             />
-            <p className="text-sm text-muted-foreground mt-2">Type and press Enter to create new tags</p>
+            <p className="text-sm text-muted mt-2">Type and press Enter to create new tags</p>
           </div>
 
           <div>
@@ -282,7 +282,7 @@ const Select = () => {
                 handleSelectionChange('Creatable Select', value);
               }}
             />
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-muted mt-2">
               Selected: <span className="font-medium">{creatableSelect?.label || 'None'}</span>
             </p>
           </div>
@@ -291,8 +291,8 @@ const Select = () => {
 
       {/* Select with Loading State */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Select with Loading State</h2>
-        <p className="text-muted-foreground mb-4">Select component with loading state simulation.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Select with Loading State</h2>
+        <p className="text-muted mb-4">Select component with loading state simulation.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <NCard className="p-4">
@@ -336,7 +336,7 @@ const Select = () => {
                 handleSelectionChange('Skills', values);
               }}
             />
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-muted mt-2">
               {skillsSelect.length} skill{skillsSelect.length !== 1 ? 's' : ''} selected
             </p>
           </NCard>
@@ -345,8 +345,8 @@ const Select = () => {
 
       {/* Disabled Select */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Disabled Select</h2>
-        <p className="text-muted-foreground mb-4">Select components in disabled state.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Disabled Select</h2>
+        <p className="text-muted mb-4">Select components in disabled state.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
@@ -359,7 +359,7 @@ const Select = () => {
               options={departmentOptions}
               onChangeOptions={() => {}}
             />
-            <p className="text-sm text-muted-foreground mt-2">This select is disabled with a pre-selected value</p>
+            <p className="text-sm text-muted mt-2">This select is disabled with a pre-selected value</p>
           </div>
 
           <div>
@@ -372,15 +372,15 @@ const Select = () => {
               options={priorityOptions}
               onChangeOptions={() => {}}
             />
-            <p className="text-sm text-muted-foreground mt-2">This select is disabled without any value</p>
+            <p className="text-sm text-muted mt-2">This select is disabled without any value</p>
           </div>
         </div>
       </div>
 
       {/* Grouped Options */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Grouped Options</h2>
-        <p className="text-muted-foreground mb-4">Select with organized option groups.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Grouped Options</h2>
+        <p className="text-muted mb-4">Select with organized option groups.</p>
 
         <NCard className="p-4">
           <h3 className="font-medium mb-4 flex items-center space-x-2">
@@ -399,14 +399,14 @@ const Select = () => {
               handleSelectionChange('Tech Stack', values);
             }}
           />
-          <p className="text-sm text-muted-foreground mt-2">Options are grouped by category for better organization</p>
+          <p className="text-sm text-muted mt-2">Options are grouped by category for better organization</p>
         </NCard>
       </div>
 
       {/* Profile Form Example */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Profile Form Example</h2>
-        <p className="text-muted-foreground mb-4">Multiple select components in a form context.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Profile Form Example</h2>
+        <p className="text-muted mb-4">Multiple select components in a form context.</p>
 
         <NCard className="p-6">
           <h3 className="font-medium mb-6">Complete Your Profile</h3>
@@ -478,19 +478,19 @@ const Select = () => {
             <h4 className="font-medium mb-3">Profile Summary</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-muted-foreground">Country:</span>
+                <span className="text-muted">Country:</span>
                 <span className="ml-2 font-medium">{profileData.country?.label || 'Not selected'}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Experience:</span>
+                <span className="text-muted">Experience:</span>
                 <span className="ml-2 font-medium">{profileData.experience?.label || 'Not selected'}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Skills:</span>
+                <span className="text-muted">Skills:</span>
                 <span className="ml-2 font-medium">{profileData.skills.length > 0 ? `${profileData.skills.length} selected` : 'None'}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Interests:</span>
+                <span className="text-muted">Interests:</span>
                 <span className="ml-2 font-medium">{profileData.interests.length > 0 ? `${profileData.interests.length} selected` : 'None'}</span>
               </div>
             </div>
@@ -500,11 +500,11 @@ const Select = () => {
 
       {/* Custom Styled Selects */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Styled Selects</h2>
-        <p className="text-muted-foreground mb-4">Select components with custom styling and themes.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Styled Selects</h2>
+        <p className="text-muted mb-4">Select components with custom styling and themes.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <NCard className="p-4 border-blue-200 bg-card">
+          <NCard className="p-4 border-blue-200 bg-surface">
             <h3 className="font-medium mb-4 text-blue-800 dark:text-blue-200">Project Priority</h3>
             <NSelect
               label="Set Priority Level"
@@ -539,8 +539,8 @@ const Select = () => {
 
       {/* Select Best Practices */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Select Best Practices</h2>
-        <p className="text-muted-foreground mb-4">Guidelines for effective select component implementation.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Select Best Practices</h2>
+        <p className="text-muted mb-4">Guidelines for effective select component implementation.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NCard className="p-4 border-green-200 bg-green-50 dark:bg-green-900/20">
@@ -573,8 +573,8 @@ const Select = () => {
 
       {/* Selection Summary */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Selection Summary</h2>
-        <p className="text-muted-foreground mb-4">Track all select interactions and current selections.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Selection Summary</h2>
+        <p className="text-muted mb-4">Track all select interactions and current selections.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <NCard className="p-4">
@@ -585,12 +585,12 @@ const Select = () => {
                   .slice(-10)
                   .reverse()
                   .map((selection, index) => (
-                    <div key={index} className="text-sm p-2 bg-card rounded">
+                    <div key={index} className="text-sm p-2 bg-surface rounded">
                       {selection}
                     </div>
                   ))
               ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">No selections made yet. Try selecting options above.</p>
+                <p className="text-sm text-muted text-center py-4">No selections made yet. Try selecting options above.</p>
               )}
             </div>
           </NCard>
@@ -599,30 +599,30 @@ const Select = () => {
             <h3 className="font-medium mb-3">Current State Overview</h3>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Single Select:</span>
+                <span className="text-muted">Single Select:</span>
                 <span className="font-medium">{singleSelect?.label || 'None'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Multi Select:</span>
+                <span className="text-muted">Multi Select:</span>
                 <span className="font-medium">{multiSelect.length} items</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Tags:</span>
+                <span className="text-muted">Tags:</span>
                 <span className="font-medium">{tagsSelect.length} tags</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Skills:</span>
+                <span className="text-muted">Skills:</span>
                 <span className="font-medium">{skillsSelect.length} skills</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Profile Complete:</span>
+                <span className="text-muted">Profile Complete:</span>
                 <span className="font-medium">
                   {[profileData.country, profileData.experience].filter(Boolean).length + profileData.skills.length + profileData.interests.length}/4
                   fields
                 </span>
               </div>
               <div className="pt-2 border-t">
-                <div className="text-xs text-muted-foreground">Total interactions: {selectionHistory.length}</div>
+                <div className="text-xs text-muted">Total interactions: {selectionHistory.length}</div>
               </div>
             </div>
           </NCard>
@@ -631,7 +631,7 @@ const Select = () => {
 
       {/* Technical Note */}
       <div className="mb-8">
-        <NCard className="p-4 border-blue-200 bg-card">
+        <NCard className="p-4 border-blue-200 bg-surface">
           <div className="flex items-start space-x-3">
             <Settings className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
             <div>

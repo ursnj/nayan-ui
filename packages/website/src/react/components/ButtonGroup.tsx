@@ -28,14 +28,14 @@ const ButtonGroup = () => {
     <ComponentWrapper>
       {/* Basic Button Group */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Button Group</h2>
-        <p className="text-muted-foreground mb-4">Simple button group with string items and selection state.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Button Group</h2>
+        <p className="text-muted mb-4">Simple button group with string items and selection state.</p>
 
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-2">Choose your plan:</label>
             <NButtonGroup items={planItems} selected={selectedPlan} onChange={setSelectedPlan} ariaLabel="Select subscription plan" />
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-muted mt-2">
               Selected: <strong>{selectedPlan}</strong>
             </p>
           </div>
@@ -44,8 +44,8 @@ const ButtonGroup = () => {
 
       {/* Button Group Sizes */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Different Sizes</h2>
-        <p className="text-muted-foreground mb-4">Button groups with different button sizes using custom styling.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Different Sizes</h2>
+        <p className="text-muted mb-4">Button groups with different button sizes using custom styling.</p>
 
         <div className="space-y-6">
           <div>
@@ -74,8 +74,8 @@ const ButtonGroup = () => {
 
       {/* Custom Styled Button Group */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Styling</h2>
-        <p className="text-muted-foreground mb-4">Button groups with custom colors and styling.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Styling</h2>
+        <p className="text-muted mb-4">Button groups with custom colors and styling.</p>
 
         <div className="space-y-6">
           <div>
@@ -105,8 +105,8 @@ const ButtonGroup = () => {
 
       {/* Number-based Button Group */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Number-based Selection</h2>
-        <p className="text-muted-foreground mb-4">Button group with numeric values for ratings or quantities.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Number-based Selection</h2>
+        <p className="text-muted mb-4">Button group with numeric values for ratings or quantities.</p>
 
         <div>
           <label className="block text-sm font-medium mb-2">Rate this item:</label>
@@ -117,7 +117,7 @@ const ButtonGroup = () => {
             buttonClassName="w-12 h-12 rounded-full data-[state=active]:bg-yellow-400 data-[state=active]:text-black"
             ariaLabel="Rate from 1 to 5 stars"
           />
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className="text-sm text-muted mt-2">
             Rating: <strong>{selectedRating}/5 stars</strong>
           </p>
         </div>
@@ -125,8 +125,8 @@ const ButtonGroup = () => {
 
       {/* Disabled Button Group */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Disabled State</h2>
-        <p className="text-muted-foreground mb-4">Button group in disabled state.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Disabled State</h2>
+        <p className="text-muted mb-4">Button group in disabled state.</p>
 
         <div>
           <label className="block text-sm font-medium mb-2 opacity-50">Filter options (disabled):</label>
@@ -137,14 +137,14 @@ const ButtonGroup = () => {
             disabled={true}
             ariaLabel="Filter options (disabled)"
           />
-          <p className="text-sm text-muted-foreground mt-2 opacity-50">This button group is disabled and cannot be interacted with.</p>
+          <p className="text-sm text-muted mt-2 opacity-50">This button group is disabled and cannot be interacted with.</p>
         </div>
       </div>
 
       {/* Vertical Button Group */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Vertical Layout</h2>
-        <p className="text-muted-foreground mb-4">Button group arranged vertically using custom styling.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Vertical Layout</h2>
+        <p className="text-muted mb-4">Button group arranged vertically using custom styling.</p>
 
         <div>
           <label className="block text-sm font-medium mb-2">Navigation menu:</label>
@@ -161,8 +161,8 @@ const ButtonGroup = () => {
 
       {/* Compact Button Group */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Compact Style</h2>
-        <p className="text-muted-foreground mb-4">Minimal spacing and compact design for tight layouts.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Compact Style</h2>
+        <p className="text-muted mb-4">Minimal spacing and compact design for tight layouts.</p>
 
         <div className="space-y-4">
           <div>
@@ -191,8 +191,8 @@ const ButtonGroup = () => {
 
       {/* Interactive Examples */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Interactive Examples</h2>
-        <p className="text-muted-foreground mb-4">Button groups with real-world interactions and feedback.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Interactive Examples</h2>
+        <p className="text-muted mb-4">Button groups with real-world interactions and feedback.</p>
 
         <div className="space-y-6">
           <div className="p-4 border rounded-lg">
@@ -226,8 +226,8 @@ const ButtonGroup = () => {
 
       {/* Accessibility Example */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Accessibility</h2>
-        <p className="text-muted-foreground mb-4">Button group with proper ARIA labels and keyboard navigation.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Accessibility</h2>
+        <p className="text-muted mb-4">Button group with proper ARIA labels and keyboard navigation.</p>
 
         <div>
           <label className="block text-sm font-medium mb-2">Sort order (use arrow keys to navigate):</label>
@@ -240,9 +240,7 @@ const ButtonGroup = () => {
             ariaLabel="Sort order selection - use arrow keys to navigate between options"
             className="focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 rounded-lg"
           />
-          <p className="text-xs text-muted-foreground mt-2">
-            This button group supports keyboard navigation with arrow keys and has proper ARIA labeling.
-          </p>
+          <p className="text-xs text-muted mt-2">This button group supports keyboard navigation with arrow keys and has proper ARIA labeling.</p>
         </div>
       </div>
     </ComponentWrapper>

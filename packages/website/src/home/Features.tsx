@@ -183,24 +183,24 @@ const Features = () => {
     <section ref={sectionRef} className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-card/30 to-background">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/3 left-1/4 w-48 sm:w-80 h-48 sm:h-80 bg-primary/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/3 left-1/4 w-48 sm:w-80 h-48 sm:h-80 bg-accent/5 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/3 w-64 sm:w-96 h-64 sm:h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse [animation-delay:3s]"></div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16">
-          <NBadge className={`bg-primary/10 text-primary mb-4 ${isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0'}`}>
+          <NBadge className={`bg-accent/10 text-accent mb-4 ${isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0'}`}>
             <Sparkles className="w-3 h-3 mr-1" />
             Features
           </NBadge>
           <h2
             className={`text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.2s]' : 'opacity-0'}`}>
             Everything You Need to
-            <span className="block bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">Build Amazing Apps</span>
+            <span className="block bg-gradient-to-r from-accent to-purple-600 bg-clip-text text-transparent">Build Amazing Apps</span>
           </h2>
           <p
-            className={`text-base sm:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.4s]' : 'opacity-0'}`}>
+            className={`text-base sm:text-lg lg:text-xl text-muted max-w-3xl mx-auto px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.4s]' : 'opacity-0'}`}>
             Discover the power of unified development. Build once, deploy everywhere with components designed for modern React and React Native
             applications.
           </p>
@@ -226,18 +226,16 @@ const Features = () => {
                       })()}
                       <div>
                         <h4 className="text-lg sm:text-xl lg:text-2xl font-bold mb-1 sm:mb-2">{mainFeatures[currentFeature].title}</h4>
-                        <p className="text-sm sm:text-base text-muted-foreground">{mainFeatures[currentFeature].subtitle}</p>
+                        <p className="text-sm sm:text-base text-muted">{mainFeatures[currentFeature].subtitle}</p>
                       </div>
                     </div>
 
-                    <p className="text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed">
-                      {mainFeatures[currentFeature].description}
-                    </p>
+                    <p className="text-sm sm:text-base lg:text-lg text-muted leading-relaxed">{mainFeatures[currentFeature].description}</p>
 
                     <div className="grid grid-cols-2 gap-2 sm:gap-3">
                       {mainFeatures[currentFeature].features.map((item, idx) => (
                         <div key={idx} className="flex items-center space-x-2">
-                          <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0"></div>
+                          <div className="w-1.5 h-1.5 bg-accent rounded-full flex-shrink-0"></div>
                           <span className="text-xs sm:text-sm">{item}</span>
                         </div>
                       ))}
@@ -264,7 +262,7 @@ const Features = () => {
                           </div>
 
                           {/* Floating Elements - Hidden on mobile */}
-                          <div className="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 w-4 sm:w-6 lg:w-8 h-4 sm:h-6 lg:h-8 bg-primary rounded-full animate-bounce hidden sm:block"></div>
+                          <div className="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 w-4 sm:w-6 lg:w-8 h-4 sm:h-6 lg:h-8 bg-accent rounded-full animate-bounce hidden sm:block"></div>
                           <div className="absolute -bottom-2 sm:-bottom-4 -left-2 sm:-left-4 w-3 sm:w-4 lg:w-6 h-3 sm:h-4 lg:h-6 bg-purple-500 rounded-full animate-ping hidden sm:block"></div>
                         </div>
                       );
@@ -278,7 +276,7 @@ const Features = () => {
             <div className="flex justify-center items-center space-x-4 mt-6 sm:mt-8">
               <button
                 onClick={prevFeature}
-                className="w-8 sm:w-10 h-8 sm:h-10 bg-primary/10 hover:bg-primary hover:text-primary-foreground rounded-full flex items-center justify-center transition-all">
+                className="w-8 sm:w-10 h-8 sm:h-10 bg-accent/10 hover:bg-accent hover:text-accent-foreground rounded-full flex items-center justify-center transition-all">
                 <ArrowLeft className="w-4 sm:w-5 h-4 sm:h-5" />
               </button>
 
@@ -295,7 +293,7 @@ const Features = () => {
                       setCurrentFeature(index);
                     }}
                     className={`w-2 sm:w-3 h-2 sm:h-3 rounded-full transition-all ${
-                      index === currentFeature ? 'bg-primary w-6 sm:w-8' : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
+                      index === currentFeature ? 'bg-accent w-6 sm:w-8' : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
                     }`}
                   />
                 ))}
@@ -303,7 +301,7 @@ const Features = () => {
 
               <button
                 onClick={nextFeature}
-                className="w-8 sm:w-10 h-8 sm:h-10 bg-primary/10 hover:bg-primary hover:text-primary-foreground rounded-full flex items-center justify-center transition-all">
+                className="w-8 sm:w-10 h-8 sm:h-10 bg-accent/10 hover:bg-accent hover:text-accent-foreground rounded-full flex items-center justify-center transition-all">
                 <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5" />
               </button>
             </div>
@@ -318,7 +316,7 @@ const Features = () => {
               Complete Feature Set
             </h3>
             <p
-              className={`text-sm sm:text-base lg:text-lg text-muted-foreground px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:1s]' : 'opacity-0'}`}>
+              className={`text-sm sm:text-base lg:text-lg text-muted px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:1s]' : 'opacity-0'}`}>
               Everything you need for modern application development
             </p>
           </div>
@@ -331,19 +329,19 @@ const Features = () => {
                   isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0'
                 } ${index < 3 ? '[animation-delay:1.4s]' : index < 6 ? '[animation-delay:1.5s]' : '[animation-delay:1.6s]'}`}>
                 <div className="flex items-start space-x-3 sm:space-x-4">
-                  <div className="w-10 sm:w-12 h-10 sm:h-12 bg-primary/10 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
-                    <feature.icon className="w-5 sm:w-6 h-5 sm:h-6 text-primary" />
+                  <div className="w-10 sm:w-12 h-10 sm:h-12 bg-accent/10 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:bg-accent/20 transition-colors flex-shrink-0">
+                    <feature.icon className="w-5 sm:w-6 h-5 sm:h-6 text-accent" />
                   </div>
 
                   <div className="flex-1 space-y-1 sm:space-y-2">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-1 sm:space-y-0">
-                      <h4 className="text-sm sm:text-base lg:text-lg font-semibold group-hover:text-primary transition-colors">{feature.title}</h4>
-                      <NBadge className="text-xs bg-muted text-muted-foreground self-start sm:self-auto">{feature.category}</NBadge>
+                      <h4 className="text-sm sm:text-base lg:text-lg font-semibold group-hover:text-accent transition-colors">{feature.title}</h4>
+                      <NBadge className="text-xs bg-muted text-muted self-start sm:self-auto">{feature.category}</NBadge>
                     </div>
 
-                    <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{feature.text}</p>
+                    <p className="text-xs sm:text-sm text-muted leading-relaxed">{feature.text}</p>
 
-                    <div className="flex items-center text-primary text-xs sm:text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center text-accent text-xs sm:text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                       Learn more
                       <ArrowRight className="w-3 sm:w-4 h-3 sm:h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                     </div>
@@ -357,7 +355,7 @@ const Features = () => {
         {/* Platform Support */}
         <div className="mt-16 sm:mt-20">
           <NCard
-            className={`p-6 sm:p-8 bg-gradient-to-br from-primary/5 to-purple-500/5 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:1.8s]' : 'opacity-0'}`}>
+            className={`p-6 sm:p-8 bg-gradient-to-br from-accent/5 to-purple-500/5 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:1.8s]' : 'opacity-0'}`}>
             <div className="text-center">
               <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Cross-Platform Excellence</h3>
               <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
@@ -367,7 +365,7 @@ const Features = () => {
                   </div>
                   <div className="text-center sm:text-left">
                     <h4 className="font-bold text-sm sm:text-base">React Web</h4>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Modern web applications with server-side rendering support</p>
+                    <p className="text-xs sm:text-sm text-muted">Modern web applications with server-side rendering support</p>
                   </div>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-3 sm:space-y-0 sm:space-x-4">
@@ -376,9 +374,7 @@ const Features = () => {
                   </div>
                   <div className="text-center sm:text-left">
                     <h4 className="font-bold text-sm sm:text-base">React Native</h4>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      Native mobile apps for iOS and Android, powered by HeroUI Native & Uniwind
-                    </p>
+                    <p className="text-xs sm:text-sm text-muted">Native mobile apps for iOS and Android, powered by HeroUI Native & Uniwind</p>
                   </div>
                 </div>
               </div>
@@ -387,7 +383,7 @@ const Features = () => {
         </div>
 
         {/* Floating Animation Elements - Hidden on mobile */}
-        <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-primary/30 rounded-full animate-ping [animation-delay:1s] hidden sm:block"></div>
+        <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-accent/30 rounded-full animate-ping [animation-delay:1s] hidden sm:block"></div>
         <div className="absolute bottom-1/3 left-1/4 w-1 h-1 bg-purple-500/30 rounded-full animate-bounce [animation-delay:2s] hidden sm:block"></div>
         <div className="absolute bottom-1/4 left-1/3 w-1 h-1 bg-blue-500/30 rounded-full animate-bounce [animation-delay:4s] hidden sm:block"></div>
       </div>

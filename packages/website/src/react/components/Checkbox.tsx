@@ -36,8 +36,8 @@ const Checkbox = () => {
     <ComponentWrapper>
       {/* Basic Checkboxes */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Checkboxes</h2>
-        <p className="text-muted-foreground mb-4">Simple checkbox with different states and labels.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Checkboxes</h2>
+        <p className="text-muted mb-4">Simple checkbox with different states and labels.</p>
 
         <div className="space-y-4">
           <NCheck checked={basicChecked} onChange={setBasicChecked}>
@@ -64,8 +64,8 @@ const Checkbox = () => {
 
       {/* Terms and Conditions */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Terms and Conditions</h2>
-        <p className="text-muted-foreground mb-4">Checkbox with links and rich content in labels.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Terms and Conditions</h2>
+        <p className="text-muted mb-4">Checkbox with links and rich content in labels.</p>
 
         <div className="space-y-4">
           <NCheck checked={termsAccepted} onChange={setTermsAccepted}>
@@ -85,8 +85,8 @@ const Checkbox = () => {
 
       {/* Notification Settings */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Notification Settings</h2>
-        <p className="text-muted-foreground mb-4">Group of related checkboxes for settings configuration.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Notification Settings</h2>
+        <p className="text-muted mb-4">Group of related checkboxes for settings configuration.</p>
 
         <div className="space-y-4">
           <div>
@@ -106,8 +106,8 @@ const Checkbox = () => {
             </div>
           </div>
 
-          <div className="mt-4 p-3 bg-card rounded-md">
-            <p className="text-sm text-muted-foreground">
+          <div className="mt-4 p-3 bg-surface rounded-md">
+            <p className="text-sm text-muted">
               Current settings:{' '}
               {Object.entries(notifications)
                 .filter(([_, value]) => value)
@@ -120,15 +120,15 @@ const Checkbox = () => {
 
       {/* Feature Toggles */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Feature Toggles</h2>
-        <p className="text-muted-foreground mb-4">Checkboxes for enabling/disabling application features.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Feature Toggles</h2>
+        <p className="text-muted mb-4">Checkboxes for enabling/disabling application features.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-3">
             <NCheck checked={features.darkMode} onChange={() => handleFeatureChange('darkMode')}>
               <div className="flex items-center space-x-2">
                 <span>Dark mode</span>
-                <span className="text-xs text-muted-foreground">(Beta)</span>
+                <span className="text-xs text-muted">(Beta)</span>
               </div>
             </NCheck>
 
@@ -145,7 +145,7 @@ const Checkbox = () => {
             <NCheck checked={features.analytics} onChange={() => handleFeatureChange('analytics')}>
               <div>
                 <div>Usage analytics</div>
-                <div className="text-xs text-muted-foreground">Help us improve the app</div>
+                <div className="text-xs text-muted">Help us improve the app</div>
               </div>
             </NCheck>
           </div>
@@ -154,8 +154,8 @@ const Checkbox = () => {
 
       {/* Custom Styled Checkboxes */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Styled Checkboxes</h2>
-        <p className="text-muted-foreground mb-4">Checkboxes with custom styling and colors.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Styled Checkboxes</h2>
+        <p className="text-muted mb-4">Checkboxes with custom styling and colors.</p>
 
         <div className="space-y-4">
           <NCheck checked={true} onChange={() => {}} checkClassName="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500">
@@ -184,8 +184,8 @@ const Checkbox = () => {
 
       {/* Checkbox Lists */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Checkbox Lists</h2>
-        <p className="text-muted-foreground mb-4">Lists of checkboxes for multiple selections.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Checkbox Lists</h2>
+        <p className="text-muted mb-4">Lists of checkboxes for multiple selections.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -214,8 +214,8 @@ const Checkbox = () => {
 
       {/* Form Integration */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Form Integration</h2>
-        <p className="text-muted-foreground mb-4">Checkboxes integrated within forms with validation.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Form Integration</h2>
+        <p className="text-muted mb-4">Checkboxes integrated within forms with validation.</p>
 
         <form className="space-y-4 p-4 border rounded-lg">
           <div>
@@ -255,8 +255,8 @@ const Checkbox = () => {
 
       {/* Accessibility Example */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Accessibility</h2>
-        <p className="text-muted-foreground mb-4">Checkboxes with proper ARIA attributes and keyboard support.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Accessibility</h2>
+        <p className="text-muted mb-4">Checkboxes with proper ARIA attributes and keyboard support.</p>
 
         <div className="space-y-4">
           <fieldset className="border rounded-lg p-4">
@@ -276,7 +276,7 @@ const Checkbox = () => {
             </div>
           </fieldset>
 
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-muted">
             <p>• Use Tab to navigate between checkboxes</p>
             <p>• Use Space to toggle checkbox state</p>
             <p>• Screen readers will announce checkbox labels and states</p>
@@ -286,8 +286,8 @@ const Checkbox = () => {
 
       {/* Interactive Demo */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Interactive Demo</h2>
-        <p className="text-muted-foreground mb-4">Real-time checkbox interactions with state display.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Interactive Demo</h2>
+        <p className="text-muted mb-4">Real-time checkbox interactions with state display.</p>
 
         <div className="p-4 border rounded-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

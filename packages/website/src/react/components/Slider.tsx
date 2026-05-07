@@ -77,8 +77,8 @@ const Slider = () => {
     <ComponentWrapper>
       {/* Basic Slider Examples */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Slider Examples</h2>
-        <p className="text-muted-foreground mb-4">Simple slider components with different configurations.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Slider Examples</h2>
+        <p className="text-muted mb-4">Simple slider components with different configurations.</p>
 
         <div className="space-y-6">
           <div>
@@ -93,7 +93,7 @@ const Slider = () => {
                 handleSliderChange('Basic Slider', value);
               }}
             />
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-muted mt-2">
               Current value: <span className="font-medium">{basicValue}</span>
             </p>
           </div>
@@ -129,7 +129,7 @@ const Slider = () => {
                 />
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-muted mt-2">
               Range:{' '}
               <span className="font-medium">
                 {rangeValue[0]} - {rangeValue[1]}
@@ -149,7 +149,7 @@ const Slider = () => {
                 handleSliderChange('Step Slider', value);
               }}
             />
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-muted mt-2">
               Current value: <span className="font-medium">{stepValue}</span>
             </p>
           </div>
@@ -158,8 +158,8 @@ const Slider = () => {
 
       {/* Themed Sliders */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Themed Sliders</h2>
-        <p className="text-muted-foreground mb-4">Sliders with icons and contextual styling.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Themed Sliders</h2>
+        <p className="text-muted mb-4">Sliders with icons and contextual styling.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NCard className="p-4">
@@ -178,7 +178,7 @@ const Slider = () => {
                   handleSliderChange('Volume', value);
                 }}
               />
-              <div className="flex justify-between text-sm text-muted-foreground">
+              <div className="flex justify-between text-sm text-muted">
                 <span>Mute</span>
                 <span className="font-medium">{volumeValue}%</span>
                 <span>Max</span>
@@ -202,7 +202,7 @@ const Slider = () => {
                   handleSliderChange('Brightness', value);
                 }}
               />
-              <div className="flex justify-between text-sm text-muted-foreground">
+              <div className="flex justify-between text-sm text-muted">
                 <span>Dark</span>
                 <span className="font-medium">{brightnessValue}%</span>
                 <span>Bright</span>
@@ -227,7 +227,7 @@ const Slider = () => {
                   handleSliderChange('Temperature', value);
                 }}
               />
-              <div className="flex justify-between text-sm text-muted-foreground">
+              <div className="flex justify-between text-sm text-muted">
                 <span>16°C</span>
                 <span className="font-medium">{temperatureValue}°C</span>
                 <span>30°C</span>
@@ -252,7 +252,7 @@ const Slider = () => {
                   handleSliderChange('Quality Rating', value);
                 }}
               />
-              <div className="flex justify-between text-sm text-muted-foreground">
+              <div className="flex justify-between text-sm text-muted">
                 <span>Poor</span>
                 <div className="flex items-center space-x-1">
                   <span className="font-medium">{qualityValue}</span>
@@ -271,8 +271,8 @@ const Slider = () => {
 
       {/* Audio Settings Panel */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Audio Settings Panel</h2>
-        <p className="text-muted-foreground mb-4">Multiple sliders for audio configuration.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Audio Settings Panel</h2>
+        <p className="text-muted mb-4">Multiple sliders for audio configuration.</p>
 
         <NCard className="p-6">
           <div className="flex items-center space-x-3 mb-6">
@@ -285,7 +285,7 @@ const Slider = () => {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium">Master Volume</label>
-                  <span className="text-sm text-muted-foreground">{audioSettings.volume}%</span>
+                  <span className="text-sm text-muted">{audioSettings.volume}%</span>
                 </div>
                 <NSlider
                   label=""
@@ -302,7 +302,7 @@ const Slider = () => {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium">Bass</label>
-                  <span className="text-sm text-muted-foreground">{audioSettings.bass}%</span>
+                  <span className="text-sm text-muted">{audioSettings.bass}%</span>
                 </div>
                 <NSlider
                   label=""
@@ -321,7 +321,7 @@ const Slider = () => {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium">Treble</label>
-                  <span className="text-sm text-muted-foreground">{audioSettings.treble}%</span>
+                  <span className="text-sm text-muted">{audioSettings.treble}%</span>
                 </div>
                 <NSlider
                   label=""
@@ -338,7 +338,7 @@ const Slider = () => {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium">Balance</label>
-                  <span className="text-sm text-muted-foreground">{audioSettings.balance < 50 ? 'L' : audioSettings.balance > 50 ? 'R' : 'C'}</span>
+                  <span className="text-sm text-muted">{audioSettings.balance < 50 ? 'L' : audioSettings.balance > 50 ? 'R' : 'C'}</span>
                 </div>
                 <NSlider
                   label=""
@@ -350,7 +350,7 @@ const Slider = () => {
                     handleSliderChange('Balance', value);
                   }}
                 />
-                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                <div className="flex justify-between text-xs text-muted mt-1">
                   <span>Left</span>
                   <span>Center</span>
                   <span>Right</span>
@@ -363,8 +363,8 @@ const Slider = () => {
 
       {/* Display Settings Panel */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Display Settings Panel</h2>
-        <p className="text-muted-foreground mb-4">Visual settings with real-time preview.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Display Settings Panel</h2>
+        <p className="text-muted mb-4">Visual settings with real-time preview.</p>
 
         <NCard className="p-6">
           <div className="flex items-center space-x-3 mb-6">
@@ -377,7 +377,7 @@ const Slider = () => {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium">Brightness</label>
-                  <span className="text-sm text-muted-foreground">{displaySettings.brightness}%</span>
+                  <span className="text-sm text-muted">{displaySettings.brightness}%</span>
                 </div>
                 <NSlider
                   label=""
@@ -394,7 +394,7 @@ const Slider = () => {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium">Contrast</label>
-                  <span className="text-sm text-muted-foreground">{displaySettings.contrast}%</span>
+                  <span className="text-sm text-muted">{displaySettings.contrast}%</span>
                 </div>
                 <NSlider
                   label=""
@@ -411,7 +411,7 @@ const Slider = () => {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium">Saturation</label>
-                  <span className="text-sm text-muted-foreground">{displaySettings.saturation}%</span>
+                  <span className="text-sm text-muted">{displaySettings.saturation}%</span>
                 </div>
                 <NSlider
                   label=""
@@ -428,7 +428,7 @@ const Slider = () => {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium">Hue</label>
-                  <span className="text-sm text-muted-foreground">{displaySettings.hue}°</span>
+                  <span className="text-sm text-muted">{displaySettings.hue}°</span>
                 </div>
                 <NSlider
                   label=""
@@ -459,19 +459,19 @@ const Slider = () => {
 
       {/* Disabled Slider */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Disabled Slider</h2>
-        <p className="text-muted-foreground mb-4">Slider in disabled state.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Disabled Slider</h2>
+        <p className="text-muted mb-4">Slider in disabled state.</p>
 
         <NCard className="p-4">
           <NSlider label="Disabled Slider" defaultValue={30} max={100} step={1} disabled={true} onChange={() => {}} />
-          <p className="text-sm text-muted-foreground mt-2">This slider is disabled and cannot be interacted with.</p>
+          <p className="text-sm text-muted mt-2">This slider is disabled and cannot be interacted with.</p>
         </NCard>
       </div>
 
       {/* Vertical Sliders */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Vertical Sliders</h2>
-        <p className="text-muted-foreground mb-4">Sliders with vertical orientation.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Vertical Sliders</h2>
+        <p className="text-muted mb-4">Sliders with vertical orientation.</p>
 
         <NCard className="p-6">
           <h3 className="font-medium mb-4">Equalizer</h3>
@@ -487,8 +487,8 @@ const Slider = () => {
                   className="h-32 w-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 slider-vertical"
                   style={{ writingMode: 'bt-lr', WebkitAppearance: 'slider-vertical' }}
                 />
-                <span className="text-xs text-muted-foreground">{value}</span>
-                <span className="text-xs text-muted-foreground">{index * 2 + 1}kHz</span>
+                <span className="text-xs text-muted">{value}</span>
+                <span className="text-xs text-muted">{index * 2 + 1}kHz</span>
               </div>
             ))}
           </div>
@@ -497,8 +497,8 @@ const Slider = () => {
 
       {/* Slider Best Practices */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Slider Best Practices</h2>
-        <p className="text-muted-foreground mb-4">Guidelines for effective slider implementation.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Slider Best Practices</h2>
+        <p className="text-muted mb-4">Guidelines for effective slider implementation.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NCard className="p-4 border-green-200 bg-green-50 dark:bg-green-900/20">
@@ -531,37 +531,37 @@ const Slider = () => {
 
       {/* Slider Values Summary */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Slider Values Summary</h2>
-        <p className="text-muted-foreground mb-4">Current values and interaction history.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Slider Values Summary</h2>
+        <p className="text-muted mb-4">Current values and interaction history.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <NCard className="p-4">
             <h3 className="font-medium mb-3">Current Values</h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Basic Slider:</span>
+                <span className="text-muted">Basic Slider:</span>
                 <span className="font-medium">{basicValue}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Range:</span>
+                <span className="text-muted">Range:</span>
                 <span className="font-medium">
                   {rangeValue[0]} - {rangeValue[1]}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Volume:</span>
+                <span className="text-muted">Volume:</span>
                 <span className="font-medium">{volumeValue}%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Brightness:</span>
+                <span className="text-muted">Brightness:</span>
                 <span className="font-medium">{brightnessValue}%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Temperature:</span>
+                <span className="text-muted">Temperature:</span>
                 <span className="font-medium">{temperatureValue}°C</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Quality:</span>
+                <span className="text-muted">Quality:</span>
                 <span className="font-medium">{qualityValue}/10</span>
               </div>
             </div>
@@ -581,16 +581,16 @@ const Slider = () => {
                   .slice(-10)
                   .reverse()
                   .map((change, index) => (
-                    <div key={index} className="text-sm p-2 bg-card rounded">
+                    <div key={index} className="text-sm p-2 bg-surface rounded">
                       {change}
                     </div>
                   ))
               ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">No changes yet. Try adjusting some sliders above.</p>
+                <p className="text-sm text-muted text-center py-4">No changes yet. Try adjusting some sliders above.</p>
               )}
             </div>
 
-            <div className="mt-4 pt-4 border-t text-xs text-muted-foreground">Total interactions: {sliderHistory.length}</div>
+            <div className="mt-4 pt-4 border-t text-xs text-muted">Total interactions: {sliderHistory.length}</div>
           </NCard>
         </div>
       </div>

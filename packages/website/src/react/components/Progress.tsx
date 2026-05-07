@@ -112,8 +112,8 @@ const Progress = () => {
     <ComponentWrapper>
       {/* Basic Progress */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Progress</h2>
-        <p className="text-muted-foreground mb-4">Simple progress bars with different values and labels.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Progress</h2>
+        <p className="text-muted mb-4">Simple progress bars with different values and labels.</p>
 
         <div className="space-y-6">
           <div>
@@ -154,8 +154,8 @@ const Progress = () => {
 
       {/* File Operations Progress */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">File Operations Progress</h2>
-        <p className="text-muted-foreground mb-4">Progress bars for download and upload operations.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">File Operations Progress</h2>
+        <p className="text-muted mb-4">Progress bars for download and upload operations.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NCard className="p-4">
@@ -177,7 +177,7 @@ const Progress = () => {
                 showLabel={true}
               />
 
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <div className="flex items-center justify-between text-sm text-muted">
                 <span>{isDownloading ? 'Downloading file...' : downloadProgress === 100 ? 'Download finished' : 'Click to start download'}</span>
                 {isDownloading && <span>{Math.round(downloadProgress)}%</span>}
               </div>
@@ -202,7 +202,7 @@ const Progress = () => {
                 showLabel={true}
               />
 
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <div className="flex items-center justify-between text-sm text-muted">
                 <span>{isUploading ? 'Uploading file...' : uploadProgress === 100 ? 'Upload finished' : 'Click to start upload'}</span>
                 {isUploading && <span>{Math.round(uploadProgress)}%</span>}
               </div>
@@ -218,8 +218,8 @@ const Progress = () => {
 
       {/* Animated Progress */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Animated Progress</h2>
-        <p className="text-muted-foreground mb-4">Progress bars with smooth animations and transitions.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Animated Progress</h2>
+        <p className="text-muted mb-4">Progress bars with smooth animations and transitions.</p>
 
         <div className="space-y-6">
           <NCard className="p-4">
@@ -228,7 +228,7 @@ const Progress = () => {
               <NProgress value={animatedProgress} label={`Processing... ${Math.round(animatedProgress)}%`} showLabel={true} />
 
               <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-muted">
                   {isAnimating ? 'Animation in progress...' : animatedProgress === 100 ? 'Animation complete!' : 'Click to start animation'}
                 </div>
                 <div className="flex space-x-2">
@@ -249,8 +249,8 @@ const Progress = () => {
 
       {/* System Status Progress */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">System Status Progress</h2>
-        <p className="text-muted-foreground mb-4">Progress bars showing system resource usage and status.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">System Status Progress</h2>
+        <p className="text-muted mb-4">Progress bars showing system resource usage and status.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <NCard className="p-4">
@@ -259,7 +259,7 @@ const Progress = () => {
               <span className="font-medium">CPU Usage</span>
             </div>
             <NProgress value={systemStats.cpu} label={`${Math.round(systemStats.cpu)}%`} showLabel={true} />
-            <div className="text-xs text-muted-foreground mt-1">{systemStats.cpu < 50 ? 'Normal' : systemStats.cpu < 80 ? 'High' : 'Critical'}</div>
+            <div className="text-xs text-muted mt-1">{systemStats.cpu < 50 ? 'Normal' : systemStats.cpu < 80 ? 'High' : 'Critical'}</div>
           </NCard>
 
           <NCard className="p-4">
@@ -268,7 +268,7 @@ const Progress = () => {
               <span className="font-medium">Memory</span>
             </div>
             <NProgress value={systemStats.memory} label={`${Math.round(systemStats.memory)}%`} showLabel={true} />
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="text-xs text-muted mt-1">
               {systemStats.memory < 60 ? 'Available' : systemStats.memory < 85 ? 'Moderate' : 'High Usage'}
             </div>
           </NCard>
@@ -279,7 +279,7 @@ const Progress = () => {
               <span className="font-medium">Disk Space</span>
             </div>
             <NProgress value={systemStats.disk} label={`${Math.round(systemStats.disk)}%`} showLabel={true} />
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="text-xs text-muted mt-1">
               {systemStats.disk < 70 ? 'Plenty of space' : systemStats.disk < 90 ? 'Getting full' : 'Almost full'}
             </div>
           </NCard>
@@ -290,9 +290,7 @@ const Progress = () => {
               <span className="font-medium">Battery</span>
             </div>
             <NProgress value={systemStats.battery} label={`${Math.round(systemStats.battery)}%`} showLabel={true} />
-            <div className="text-xs text-muted-foreground mt-1">
-              {systemStats.battery > 50 ? 'Good' : systemStats.battery > 20 ? 'Low' : 'Critical'}
-            </div>
+            <div className="text-xs text-muted mt-1">{systemStats.battery > 50 ? 'Good' : systemStats.battery > 20 ? 'Low' : 'Critical'}</div>
           </NCard>
 
           <NCard className="p-4">
@@ -301,9 +299,7 @@ const Progress = () => {
               <span className="font-medium">Network</span>
             </div>
             <NProgress value={systemStats.network} label={`${Math.round(systemStats.network)}%`} showLabel={true} />
-            <div className="text-xs text-muted-foreground mt-1">
-              {systemStats.network > 80 ? 'Excellent' : systemStats.network > 50 ? 'Good' : 'Poor'}
-            </div>
+            <div className="text-xs text-muted mt-1">{systemStats.network > 80 ? 'Excellent' : systemStats.network > 50 ? 'Good' : 'Poor'}</div>
           </NCard>
 
           <NCard className="p-4">
@@ -316,15 +312,15 @@ const Progress = () => {
               label={`${Math.round((systemStats.cpu + systemStats.memory + systemStats.network) / 3)}%`}
               showLabel={true}
             />
-            <div className="text-xs text-muted-foreground mt-1">Overall system performance</div>
+            <div className="text-xs text-muted mt-1">Overall system performance</div>
           </NCard>
         </div>
       </div>
 
       {/* Progress with Status */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Progress with Status</h2>
-        <p className="text-muted-foreground mb-4">Progress bars with status indicators and contextual information.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Progress with Status</h2>
+        <p className="text-muted mb-4">Progress bars with status indicators and contextual information.</p>
 
         <div className="space-y-4">
           <NCard className="p-4">
@@ -375,8 +371,8 @@ const Progress = () => {
 
       {/* Skills/Rating Progress */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Skills & Ratings Progress</h2>
-        <p className="text-muted-foreground mb-4">Progress bars representing skills, ratings, and achievements.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Skills & Ratings Progress</h2>
+        <p className="text-muted mb-4">Progress bars representing skills, ratings, and achievements.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NCard className="p-4">
@@ -385,7 +381,7 @@ const Progress = () => {
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm">React</span>
-                  <span className="text-sm text-muted-foreground">Expert</span>
+                  <span className="text-sm text-muted">Expert</span>
                 </div>
                 <NProgress value={90} />
               </div>
@@ -393,7 +389,7 @@ const Progress = () => {
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm">TypeScript</span>
-                  <span className="text-sm text-muted-foreground">Advanced</span>
+                  <span className="text-sm text-muted">Advanced</span>
                 </div>
                 <NProgress value={80} />
               </div>
@@ -401,7 +397,7 @@ const Progress = () => {
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm">Node.js</span>
-                  <span className="text-sm text-muted-foreground">Intermediate</span>
+                  <span className="text-sm text-muted">Intermediate</span>
                 </div>
                 <NProgress value={65} />
               </div>
@@ -409,7 +405,7 @@ const Progress = () => {
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm">Python</span>
-                  <span className="text-sm text-muted-foreground">Beginner</span>
+                  <span className="text-sm text-muted">Beginner</span>
                 </div>
                 <NProgress value={35} />
               </div>
@@ -425,7 +421,7 @@ const Progress = () => {
                     <Star className="w-4 h-4 text-yellow-500" />
                     <span className="text-sm">5-Star Reviews</span>
                   </div>
-                  <span className="text-sm text-muted-foreground">47/50</span>
+                  <span className="text-sm text-muted">47/50</span>
                 </div>
                 <NProgress value={94} />
               </div>
@@ -436,7 +432,7 @@ const Progress = () => {
                     <Heart className="w-4 h-4 text-red-500" />
                     <span className="text-sm">Customer Satisfaction</span>
                   </div>
-                  <span className="text-sm text-muted-foreground">88%</span>
+                  <span className="text-sm text-muted">88%</span>
                 </div>
                 <NProgress value={88} />
               </div>
@@ -447,7 +443,7 @@ const Progress = () => {
                     <Trophy className="w-4 h-4 text-gold-500" />
                     <span className="text-sm">Project Completion</span>
                   </div>
-                  <span className="text-sm text-muted-foreground">23/25</span>
+                  <span className="text-sm text-muted">23/25</span>
                 </div>
                 <NProgress value={92} />
               </div>
@@ -458,7 +454,7 @@ const Progress = () => {
                     <TrendingUp className="w-4 h-4 text-green-500" />
                     <span className="text-sm">Growth Target</span>
                   </div>
-                  <span className="text-sm text-muted-foreground">72%</span>
+                  <span className="text-sm text-muted">72%</span>
                 </div>
                 <NProgress value={72} />
               </div>
@@ -469,8 +465,8 @@ const Progress = () => {
 
       {/* Progress Best Practices */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Progress Best Practices</h2>
-        <p className="text-muted-foreground mb-4">Guidelines for effective progress bar implementation.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Progress Best Practices</h2>
+        <p className="text-muted mb-4">Guidelines for effective progress bar implementation.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NCard className="p-4 border-green-200 bg-green-50 dark:bg-green-900/20">
@@ -503,32 +499,32 @@ const Progress = () => {
 
       {/* Progress Summary */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Progress Summary</h2>
-        <p className="text-muted-foreground mb-4">Current status of all progress examples.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Progress Summary</h2>
+        <p className="text-muted mb-4">Current status of all progress examples.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <NCard className="p-4 text-center">
             <h3 className="font-medium mb-2">Basic Progress</h3>
             <div className="text-2xl font-bold text-blue-600 mb-1">{Math.round(basicProgress)}%</div>
-            <p className="text-sm text-muted-foreground">Interactive demo</p>
+            <p className="text-sm text-muted">Interactive demo</p>
           </NCard>
 
           <NCard className="p-4 text-center">
             <h3 className="font-medium mb-2">Download</h3>
             <div className="text-2xl font-bold text-green-600 mb-1">{Math.round(downloadProgress)}%</div>
-            <p className="text-sm text-muted-foreground">{isDownloading ? 'In progress' : downloadProgress === 100 ? 'Complete' : 'Ready'}</p>
+            <p className="text-sm text-muted">{isDownloading ? 'In progress' : downloadProgress === 100 ? 'Complete' : 'Ready'}</p>
           </NCard>
 
           <NCard className="p-4 text-center">
             <h3 className="font-medium mb-2">Upload</h3>
             <div className="text-2xl font-bold text-purple-600 mb-1">{Math.round(uploadProgress)}%</div>
-            <p className="text-sm text-muted-foreground">{isUploading ? 'In progress' : uploadProgress === 100 ? 'Complete' : 'Ready'}</p>
+            <p className="text-sm text-muted">{isUploading ? 'In progress' : uploadProgress === 100 ? 'Complete' : 'Ready'}</p>
           </NCard>
 
           <NCard className="p-4 text-center">
             <h3 className="font-medium mb-2">Animation</h3>
             <div className="text-2xl font-bold text-orange-600 mb-1">{Math.round(animatedProgress)}%</div>
-            <p className="text-sm text-muted-foreground">{isAnimating ? 'Animating' : animatedProgress === 100 ? 'Complete' : 'Ready'}</p>
+            <p className="text-sm text-muted">{isAnimating ? 'Animating' : animatedProgress === 100 ? 'Complete' : 'Ready'}</p>
           </NCard>
         </div>
 

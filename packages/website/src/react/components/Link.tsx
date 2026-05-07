@@ -27,8 +27,8 @@ const Link = () => {
     <ComponentWrapper>
       {/* Basic Links */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Links</h2>
-        <p className="text-muted-foreground mb-4">Simple anchor links and clickable elements.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Links</h2>
+        <p className="text-muted mb-4">Simple anchor links and clickable elements.</p>
 
         <div className="space-y-4">
           <div>
@@ -86,8 +86,8 @@ const Link = () => {
 
       {/* Clickable Elements */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Clickable Elements</h2>
-        <p className="text-muted-foreground mb-4">Links that act as buttons with onClick handlers.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Clickable Elements</h2>
+        <p className="text-muted mb-4">Links that act as buttons with onClick handlers.</p>
 
         <div className="space-y-4">
           <div>
@@ -118,7 +118,7 @@ const Link = () => {
 
           <div>
             <h3 className="font-medium mb-2">Action Results</h3>
-            <div className="p-3 bg-card rounded-lg text-sm">
+            <div className="p-3 bg-surface rounded-lg text-sm">
               <p>
                 <strong>Click Count:</strong> {clickCount}
               </p>
@@ -132,8 +132,8 @@ const Link = () => {
 
       {/* Links with Icons */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Links with Icons</h2>
-        <p className="text-muted-foreground mb-4">Enhanced links with icon elements for better visual appeal.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Links with Icons</h2>
+        <p className="text-muted mb-4">Enhanced links with icon elements for better visual appeal.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -196,8 +196,8 @@ const Link = () => {
 
       {/* Navigation Links */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Navigation Links</h2>
-        <p className="text-muted-foreground mb-4">Links styled for navigation menus and breadcrumbs.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Navigation Links</h2>
+        <p className="text-muted mb-4">Links styled for navigation menus and breadcrumbs.</p>
 
         <div className="space-y-6">
           <div>
@@ -266,8 +266,8 @@ const Link = () => {
 
       {/* Link Styles */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Link Styles</h2>
-        <p className="text-muted-foreground mb-4">Different visual styles for various use cases.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Link Styles</h2>
+        <p className="text-muted mb-4">Different visual styles for various use cases.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -345,13 +345,13 @@ const Link = () => {
 
       {/* Accessibility Features */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Accessibility Features</h2>
-        <p className="text-muted-foreground mb-4">Links with proper accessibility attributes and keyboard support.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Accessibility Features</h2>
+        <p className="text-muted mb-4">Links with proper accessibility attributes and keyboard support.</p>
 
         <div className="space-y-4">
           <div>
             <h3 className="font-medium mb-2">Keyboard Navigation</h3>
-            <p className="text-sm text-muted-foreground mb-3">All links are keyboard accessible. Use Tab to navigate and Enter/Space to activate.</p>
+            <p className="text-sm text-muted mb-3">All links are keyboard accessible. Use Tab to navigate and Enter/Space to activate.</p>
             <div className="space-y-2">
               <div>
                 <NLink
@@ -381,7 +381,7 @@ const Link = () => {
                 <NLink href="/download/file.pdf" aria-describedby="pdf-description" className="text-blue-600 hover:text-blue-800 underline">
                   Download PDF Report
                 </NLink>
-                <p id="pdf-description" className="text-xs text-muted-foreground mt-1">
+                <p id="pdf-description" className="text-xs text-muted mt-1">
                   PDF file, 2.5 MB
                 </p>
               </div>
@@ -405,8 +405,8 @@ const Link = () => {
 
       {/* Interactive Demo */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Interactive Demo</h2>
-        <p className="text-muted-foreground mb-4">Try different link interactions and see the results.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Interactive Demo</h2>
+        <p className="text-muted mb-4">Try different link interactions and see the results.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -453,7 +453,7 @@ const Link = () => {
 
           <div>
             <h3 className="font-medium mb-3">Action Results</h3>
-            <div className="p-4 bg-card rounded-lg">
+            <div className="p-4 bg-surface rounded-lg">
               <div className="space-y-2 text-sm">
                 <div>
                   <strong>Total Clicks:</strong> {clickCount}

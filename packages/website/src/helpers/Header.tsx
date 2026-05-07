@@ -15,43 +15,43 @@ const HeaderMenu = () => {
     <div className="w-full flex flex-col md:flex-row justify-between items-center">
       <ul className="w-full md:w-auto flex flex-col md:flex-row items-center">
         <li className="w-full md:w-auto">
-          <NavLink className="text-base font-medium text-text px-5 py-3 block md:inline" to="/">
+          <NavLink className="text-base font-medium text-foreground px-5 py-3 block md:inline" to="/">
             Home
           </NavLink>
         </li>
         <li className="w-full md:w-auto">
-          <NavLink className="text-base font-medium text-text px-5 py-3 block md:inline" to="/react/installation">
+          <NavLink className="text-base font-medium text-foreground px-5 py-3 block md:inline" to="/react/installation">
             React JS
           </NavLink>
         </li>
         <li className="w-full md:w-auto">
-          <NavLink className="text-base font-medium text-text px-5 py-3 block md:inline" to="/react-native/installation">
+          <NavLink className="text-base font-medium text-foreground px-5 py-3 block md:inline" to="/react-native/installation">
             React Native
           </NavLink>
         </li>
         <li className="w-full md:w-auto">
-          <NavLink className="text-base font-medium text-text px-5 py-3 block md:inline" to="/games">
+          <NavLink className="text-base font-medium text-foreground px-5 py-3 block md:inline" to="/games">
             Games
           </NavLink>
         </li>
         <li className="w-full md:w-auto">
-          <NavLink className="text-base font-medium text-text px-5 py-3 block md:inline" to="/devtools">
+          <NavLink className="text-base font-medium text-foreground px-5 py-3 block md:inline" to="/devtools">
             Devtools
           </NavLink>
         </li>
         <li className="w-full md:w-auto">
-          <NavLink className="text-base font-medium text-text px-5 py-3 block md:inline" to="/contributions">
+          <NavLink className="text-base font-medium text-foreground px-5 py-3 block md:inline" to="/contributions">
             Contributions
           </NavLink>
         </li>
       </ul>
       <div className="w-full md:w-auto form-inline md:text-center md:justify-center items-center mt-3 md:mt-0">
         <Link to="https://www.github.com/ursnj/nayan-ui" target="_blank" className="mr-5" title="Nayan UI Github" aria-label="Nayan UI Github">
-          <Github className="w-6 h-6 text-text inline" />
+          <Github className="w-6 h-6 text-foreground inline" />
         </Link>
         <span tabIndex={0} className="text cursor-pointer" onClick={toggleTheme} title="Theme Switch">
-          {theme !== THEMES.DARK && <MoonStar className="w-6 h-6 text-text inline" />}
-          {theme === THEMES.DARK && <Sun className="w-6 h-6 text-text inline" />}
+          {theme !== THEMES.DARK && <MoonStar className="w-6 h-6 text-foreground inline" />}
+          {theme === THEMES.DARK && <Sun className="w-6 h-6 text-foreground inline" />}
         </span>
       </div>
 
@@ -62,7 +62,7 @@ const HeaderMenu = () => {
             <div key={item.link}>
               {!item.isHeading && (
                 <Link to={item.link}>
-                  <div className="rounded cursor-pointer hover:bg-border p-1.5 px-3 flex items-center">
+                  <div className="rounded cursor-pointer hover:bg-default p-1.5 px-3 flex items-center">
                     <Icon className="w-4 h-4 inline mr-3" />
                     <span>{item.title}</span>
                   </div>
@@ -88,7 +88,7 @@ const Header = () => {
   }, [location.pathname]);
 
   return (
-    <header className="bg-card fixed top-0 left-0 right-0 z-40 shadow">
+    <header className="bg-surface fixed top-0 left-0 right-0 z-40 shadow">
       <div className="container mx-auto">
         <NSheet isOpen={menu} title="Nayan UI" onCloseSheet={() => setMenu(false)}>
           <HeaderMenu />
@@ -106,7 +106,7 @@ const Header = () => {
             />
           </Link>
           <div className="block md:hidden p-2" onClick={() => setMenu(true)}>
-            <AlignJustify className="w-6 h-6 text-text" />
+            <AlignJustify className="w-6 h-6 text-foreground" />
           </div>
           <div className="w-full hidden md:block">
             <HeaderMenu />
