@@ -1,6 +1,5 @@
 import React, { ReactNode, memo, useCallback } from 'react';
 import { cn } from '../lib/utils';
-import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
 
 export interface NTabsProps {
   isFull?: boolean;
@@ -32,34 +31,35 @@ export const NTabs = memo((props: NTabsProps) => {
   const isActive = useCallback((tab: string) => selected === tab, [selected]);
 
   return (
-    <Tabs defaultValue={selected} value={selected} onValueChange={onChange} className="w-full">
-      <TabsList
+    <div className="w-full">
+      <div
         id={id}
         role="tablist"
         aria-label={ariaLabel}
         className={cn(
           `nyn-tabs bg-transparent border-0 border-b border-border p-0 rounded-none ${
             isFull ? 'grid grid-flow-col justify-stretch' : 'flex flex-row justify-start'
-          } ${className}`
+          }`,
+          className
         )}>
         {items.map(item => (
-          <TabsTrigger
+          <button
             key={item}
-            value={item}
+            type="button"
             role="tab"
             aria-selected={isActive(item)}
             tabIndex={isActive(item) ? 0 : -1}
+            onClick={() => onChange(item)}
             className={cn(
-              `h-full border-0 border-b-4 ${
-                isActive(item) ? 'text-primary border-primary ' + activeItemClassName : 'text-text border-transparent ' + itemClassName
-              }`
+              'px-4 py-2 h-full border-0 border-b-4 transition-colors',
+              isActive(item) ? `text-primary border-primary ${activeItemClassName}` : `text-text border-transparent ${itemClassName}`
             )}>
             {item}
-          </TabsTrigger>
+          </button>
         ))}
-      </TabsList>
+      </div>
       {children}
-    </Tabs>
+    </div>
   );
 });
 

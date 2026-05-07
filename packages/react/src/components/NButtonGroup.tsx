@@ -1,6 +1,6 @@
 import React, { KeyboardEvent, memo, useRef } from 'react';
+import { Button } from '@heroui/react';
 import { cn } from '../lib/utils';
-import { Button } from './ui/button';
 
 export interface NButtonGroupProps<T = string> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   className?: string;
@@ -46,14 +46,10 @@ function NButtonGroupComponent<T = string>({
         return (
           <Button
             key={key}
-            ref={el => {
-              buttonRefs.current[idx] = el;
-            }}
             type="button"
-            disabled={disabled}
+            isDisabled={disabled}
             aria-pressed={isSelected}
-            tabIndex={isSelected ? 0 : -1}
-            onClick={() => onChange(item)}
+            onPress={() => onChange(item)}
             className={cn(
               `nyn-button-group-item ${
                 isSelected ? 'bg-primary text-white' : 'bg-card text-text'

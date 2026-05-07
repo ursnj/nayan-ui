@@ -1,8 +1,7 @@
 import React, { HTMLAttributes, ReactNode, useEffect, useMemo } from 'react';
+import { Toast } from '@heroui/react';
 import { useLocalStorage } from './NLocalStorage';
 import { THEMES } from './Types';
-import { Toaster } from './ui/toaster';
-import { TooltipProvider } from './ui/tooltip';
 
 export type ThemeType = keyof typeof THEMES | (typeof THEMES)[keyof typeof THEMES] | null;
 
@@ -17,7 +16,6 @@ export const NTheme = React.memo(({ children, theme = null, onThemeChange, ...ma
 
   const finalTheme = useMemo(() => {
     if (theme === THEMES.LIGHT || theme === THEMES.DARK) return theme;
-    // SSR-safe check for window and matchMedia
     const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     return !theme && !prefersDark ? THEMES.LIGHT : theme || THEMES.DARK;
   }, [theme]);
@@ -33,14 +31,12 @@ export const NTheme = React.memo(({ children, theme = null, onThemeChange, ...ma
   }, [finalTheme, setTheme, onThemeChange]);
 
   return (
-    <TooltipProvider>
-      <>
-        <main role="main" tabIndex={-1} {...mainProps}>
-          {children}
-        </main>
-        <Toaster />
-      </>
-    </TooltipProvider>
+    <>
+      <main role="main" tabIndex={-1} {...mainProps}>
+        {children}
+      </main>
+      <Toast.Provider />
+    </>
   );
 });
 

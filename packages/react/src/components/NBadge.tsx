@@ -1,6 +1,6 @@
 import React, { ReactNode, memo } from 'react';
+import { Badge } from '@heroui/react';
 import { cn } from '../lib/utils';
-import { Badge } from './ui/badge';
 
 export interface NBadgeProps extends React.HTMLAttributes<HTMLElement> {
   children: ReactNode;
@@ -10,11 +10,7 @@ export interface NBadgeProps extends React.HTMLAttributes<HTMLElement> {
 
 const NBadgeComponent: React.FC<NBadgeProps> = memo(({ className = '', children, role = 'status', ...rest }) => {
   return (
-    <Badge
-      role={role}
-      aria-live={role === 'status' ? 'polite' : undefined}
-      className={cn(`nyn-badge rounded-full font-normal px-2 py-0.5 text-sm`, className)}
-      {...rest}>
+    <Badge className={cn('nyn-badge rounded-full font-normal px-2 py-0.5 text-sm', className)} {...(rest as any)}>
       {children}
     </Badge>
   );

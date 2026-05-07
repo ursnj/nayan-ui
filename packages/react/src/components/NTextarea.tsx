@@ -1,7 +1,6 @@
 import React, { ReactNode, forwardRef, memo, useId } from 'react';
+import { Label, TextArea } from '@heroui/react';
 import { cn } from '../lib/utils';
-import { Label } from './ui/label';
-import { Textarea } from './ui/textarea';
 
 export interface NTextareaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> {
   id?: string;
@@ -32,7 +31,7 @@ export const NTextarea = memo(
               )}
             </Label>
           )}
-          <Textarea
+          <TextArea
             id={textareaId}
             ref={ref}
             className={cn('nyn-textarea w-full rounded bg-card border border-border text-text px-3 py-2', textareaClassName)}
