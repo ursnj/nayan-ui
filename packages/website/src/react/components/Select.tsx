@@ -9,11 +9,11 @@ const options = [
 ];
 
 const Select = () => {
-  const [selected, setSelected] = useState(options[0]);
+  const [selected, setSelected] = useState<{ value: string; label: string } | null>(options[0]);
 
   return (
     <ComponentWrapper>
-      <NSelect label="Business Type" placeholder="Select plan" options={options} value={selected} onChange={setSelected} />
+      <NSelect label="Business Type" placeholder="Select plan" options={options} value={selected} onChange={val => setSelected(val)} />
     </ComponentWrapper>
   );
 };

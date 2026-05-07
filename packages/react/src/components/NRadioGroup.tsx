@@ -38,7 +38,9 @@ export const NRadioGroup = memo(
     const groupId = id || useId();
     return (
       <div className={cn('nyn-radio-block mb-3', className)} ref={ref}>
-        {label && showLabel && <Label className={cn('nyn-radio-label block pb-2 text-foreground', labelClassName)}>{label}</Label>}
+        {label && showLabel && (
+          <Label className={cn('nyn-radio-label block pb-2 text-foreground text-sm font-medium', labelClassName)}>{label}</Label>
+        )}
         <RadioGroup
           orientation={orientation}
           value={value}

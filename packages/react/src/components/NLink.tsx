@@ -15,7 +15,13 @@ export interface NLinkProps {
 const NLinkComponent: React.FC<NLinkProps> = memo(
   ({ href, target = '_blank', rel = 'noopener noreferrer', isDisabled = false, className = '', children, onPress }) => {
     return (
-      <Link href={href} target={target} rel={rel} isDisabled={isDisabled} onPress={onPress} className={cn('nyn-link', className)}>
+      <Link
+        href={href}
+        target={target}
+        rel={rel}
+        isDisabled={isDisabled}
+        onPress={onPress}
+        className={cn('nyn-link text-accent hover:text-accent/80 transition-colors', className)}>
         {children}
       </Link>
     );

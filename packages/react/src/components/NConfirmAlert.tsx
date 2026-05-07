@@ -43,18 +43,18 @@ const NConfirmAlertComponent: React.FC<NConfirmAlertProps> = memo(
             if (!open) onClose();
           }}>
           <Modal.Container size="sm">
-            <Modal.Dialog className={cn('nyn-confirm-alert border border-default bg-surface p-3', className)} role="alertdialog">
+            <Modal.Dialog className={cn('nyn-confirm-alert border border-default bg-surface p-4 rounded', className)} role="alertdialog">
               <Modal.Header>
-                <span className={cn('nyn-confirm-alert-title text-foreground', titleClassName)}>{title}</span>
+                <span className={cn('nyn-confirm-alert-title text-foreground text-lg font-semibold', titleClassName)}>{title}</span>
               </Modal.Header>
               <Modal.Body>
-                <p className={cn('nyn-confirm-alert-message text-foreground', messageClassName)}>{message}</p>
+                <p className={cn('nyn-confirm-alert-message text-muted text-sm mt-2', messageClassName)}>{message}</p>
                 {children}
               </Modal.Body>
-              <Modal.Footer className="flex justify-end gap-2">
+              <Modal.Footer className="flex justify-end gap-2 mt-4">
                 <Button
                   variant="secondary"
-                  className={cn('text-foreground bg-default border border-default', cancelClassName)}
+                  className={cn('text-foreground bg-surface border border-default rounded px-3 py-2 text-sm hover:bg-default/50', cancelClassName)}
                   onPress={() => {
                     onResult(false);
                     onClose();
@@ -63,7 +63,7 @@ const NConfirmAlertComponent: React.FC<NConfirmAlertProps> = memo(
                 </Button>
                 <Button
                   variant="primary"
-                  className={cn('text-accent-foreground bg-accent border border-accent', confirmClassName)}
+                  className={cn('text-accent-foreground bg-accent rounded px-3 py-2 text-sm hover:bg-accent/90', confirmClassName)}
                   onPress={() => {
                     onResult(true);
                     onClose();

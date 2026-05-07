@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { NTextarea } from '@nayan-ui/react';
 import ComponentWrapper from '../../helpers/ComponentWrapper';
 
@@ -7,7 +7,12 @@ const Textarea = () => {
 
   return (
     <ComponentWrapper>
-      <NTextarea label="Message" placeholder="Type your message here..." value={value} onChange={e => setValue(e.target.value)} />
+      <NTextarea
+        label="Message"
+        placeholder="Type your message here..."
+        value={value}
+        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setValue(e.target.value)}
+      />
     </ComponentWrapper>
   );
 };

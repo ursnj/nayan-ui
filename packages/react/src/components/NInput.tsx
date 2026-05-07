@@ -14,6 +14,7 @@ export interface NInputProps {
   isDisabled?: boolean;
   isReadOnly?: boolean;
   className?: string;
+  wrapperClassName?: string;
   labelClassName?: string;
   inputClassName?: string;
   error?: ReactNode;
@@ -36,6 +37,7 @@ export const NInput = React.memo(
         isDisabled = false,
         isReadOnly = false,
         className = '',
+        wrapperClassName = '',
         labelClassName = '',
         inputClassName = '',
         error,
@@ -53,15 +55,15 @@ export const NInput = React.memo(
           isDisabled={isDisabled}
           isReadOnly={isReadOnly}
           isInvalid={!!error}
-          className={cn('nyn-input-block mb-3', className)}>
-          {label && <Label className={cn('nyn-input-label', labelClassName)}>{label}</Label>}
+          className={cn('nyn-input-block mb-3', wrapperClassName, className)}>
+          {label && <Label className={cn('nyn-input-label text-foreground text-sm font-medium mb-1.5', labelClassName)}>{label}</Label>}
           <Input
             ref={ref}
             placeholder={placeholder}
             value={value}
             defaultValue={defaultValue}
             onChange={onChange}
-            className={cn('nyn-input', inputClassName)}
+            className={cn('nyn-input bg-surface text-foreground border border-default rounded px-3 py-2 placeholder:text-muted', inputClassName)}
           />
           {helperText && <Description>{helperText}</Description>}
           {error && <FieldError>{error}</FieldError>}

@@ -56,7 +56,7 @@ export const NSheet: React.FC<NSheetProps> = memo(
           isDismissable>
           <Drawer.Content placement="right" className={cn('nyn-sheet w-full', sizeMapping[size])}>
             <Drawer.Dialog
-              className={cn('nyn-sheet-dialog p-0 border-0 border-l border-default bg-surface text-white overflow-hidden h-full', className)}
+              className={cn('nyn-sheet-dialog p-0 border-0 border-l border-default bg-surface text-foreground overflow-hidden h-full', className)}
               aria-label={ariaLabel}
               role={role as 'dialog' | 'alertdialog'}>
               {header || (
