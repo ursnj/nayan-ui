@@ -51,20 +51,12 @@ const NDialogComponent: React.FC<NDialogProps> = memo(
           }}
           isDismissable>
           <Modal.Container size={sizeMapping[size]}>
-            <Modal.Dialog
-              className={cn(
-                'nyn-dialog p-0 border border-default bg-surface text-foreground rounded overflow-hidden',
-                maxWidthMapping[size],
-                className
-              )}>
-              <Modal.Header className={cn('nyn-dialog-header px-3 py-2.5 bg-accent text-accent-foreground', headerClassName)}>
-                <span className={cn('nyn-dialog-title text-base font-normal', titleClassName)}>{title}</span>
+            <Modal.Dialog className={cn('nyn-dialog', maxWidthMapping[size], className)}>
+              <Modal.Header className={cn(headerClassName)}>
+                <span className={cn(titleClassName)}>{title}</span>
               </Modal.Header>
               <Modal.Body
-                className={cn(
-                  'nyn-dialog-content text-foreground p-3 h-[calc(100vh_-_140px)] sm:h-auto sm:min-h-[100px] sm:max-h-[calc(100vh_-_75px)] overflow-y-auto',
-                  contentClassName
-                )}>
+                className={cn('h-[calc(100vh_-_140px)] sm:h-auto sm:min-h-[100px] sm:max-h-[calc(100vh_-_75px)] overflow-y-auto', contentClassName)}>
                 {children}
               </Modal.Body>
             </Modal.Dialog>

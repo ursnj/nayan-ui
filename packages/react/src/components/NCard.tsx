@@ -10,7 +10,7 @@ export interface NCardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const NCardComponent: React.FC<NCardProps> = memo(({ className = '', variant = 'default', children, ...rest }) => {
   return (
-    <Card variant={variant} className={cn('nyn-card bg-surface border border-default rounded-lg', className)} {...(rest as any)}>
+    <Card variant={variant} className={cn('nyn-card', className)} {...(rest as any)}>
       {children}
     </Card>
   );

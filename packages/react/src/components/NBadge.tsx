@@ -10,7 +10,7 @@ export interface NBadgeProps extends React.HTMLAttributes<HTMLElement> {
 
 const NBadgeComponent: React.FC<NBadgeProps> = memo(({ className = '', children, role = 'status', ...rest }) => {
   return (
-    <Badge className={cn('nyn-badge rounded-full font-normal px-2 py-0.5 text-sm bg-default text-foreground', className)} {...(rest as any)}>
+    <Badge className={cn('nyn-badge', className)} {...(rest as any)}>
       {children}
     </Badge>
   );

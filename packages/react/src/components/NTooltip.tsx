@@ -53,10 +53,7 @@ export const NTooltip: React.FC<NTooltipProps> = memo(
           <Tooltip.Trigger className={triggerClassName} aria-describedby={id} {...triggerProps}>
             {children}
           </Tooltip.Trigger>
-          <Tooltip.Content
-            id={id}
-            className={cn('nyn-tooltip text-foreground border border-default rounded bg-surface p-2 max-w-xs', className)}
-            {...contentProps}>
+          <Tooltip.Content id={id} className={cn('nyn-tooltip', className)} {...contentProps}>
             {message}
           </Tooltip.Content>
         </Tooltip>

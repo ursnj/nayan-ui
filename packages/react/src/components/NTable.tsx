@@ -47,15 +47,12 @@ export const NTable = React.memo(
     const memoData = useMemo(() => data, [data]);
 
     return (
-      <Table variant={variant} className={cn('nyn-table border border-default rounded overflow-hidden', className)}>
+      <Table variant={variant} className={cn('nyn-table', className)}>
         <Table.ScrollContainer>
           <Table.Content aria-label={caption || 'Data table'}>
-            <Table.Header className={cn('bg-surface-secondary', headerClassName)}>
+            <Table.Header className={cn(headerClassName)}>
               {memoColumns.map((col, colIndex) => (
-                <Table.Column
-                  key={col.name}
-                  id={col.name}
-                  className={cn('text-foreground text-sm font-medium px-3 py-2', headerCellClassName, col.headerClassName, col.className)}>
+                <Table.Column key={col.name} id={col.name} className={cn(headerCellClassName, col.headerClassName, col.className)}>
                   {col.renderHeader ? col.renderHeader(col, colIndex) : col.title}
                 </Table.Column>
               ))}
@@ -63,13 +60,11 @@ export const NTable = React.memo(
             <Table.Body
               className={cn(bodyClassName)}
               items={memoData.map((row, idx) => ({ ...row, _idx: idx }))}
-              renderEmptyState={() => <span className="text-muted text-sm p-3">No data</span>}>
+              renderEmptyState={() => <span>No data</span>}>
               {(item: T & { _idx: number }) => (
-                <Table.Row id={item._idx} className={cn('border-t border-default hover:bg-default/30 transition-colors', bodyRowClassName)}>
+                <Table.Row id={item._idx} className={cn(bodyRowClassName)}>
                   {memoColumns.map((col, colIndex) => (
-                    <Table.Cell
-                      key={col.name}
-                      className={cn('text-foreground text-sm px-3 py-2', bodyCellClassName, col.cellClassName, col.className)}>
+                    <Table.Cell key={col.name} className={cn(bodyCellClassName, col.cellClassName, col.className)}>
                       {col.renderCell ? col.renderCell(item, col, item._idx, colIndex) : item[col.name]}
                     </Table.Cell>
                   ))}

@@ -17,7 +17,7 @@ export const NMenuNested: React.FC<NMenuNestedProps> = React.memo(({ trigger, ch
         <Dropdown.SubmenuIndicator />
       </Dropdown.Item>
       <Dropdown.Popover>
-        <Dropdown.Menu className={cn('nyn-menu-nested-content bg-surface border border-default rounded p-1', className)}>{children}</Dropdown.Menu>
+        <Dropdown.Menu className={cn('nyn-menu-nested-content', className)}>{children}</Dropdown.Menu>
       </Dropdown.Popover>
     </Dropdown.SubmenuTrigger>
   );

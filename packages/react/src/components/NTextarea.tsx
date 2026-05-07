@@ -51,17 +51,14 @@ export const NTextarea = memo(
           isReadOnly={isReadOnly}
           isInvalid={!!error}
           className={cn('nyn-textarea-block', className)}>
-          {label && <Label className={cn('nyn-textarea-label text-foreground text-sm font-medium mb-1.5', labelClassName)}>{label}</Label>}
+          {label && <Label className={cn(labelClassName)}>{label}</Label>}
           <TextArea
             ref={ref}
             placeholder={placeholder}
             value={value}
             defaultValue={defaultValue}
             onChange={onChange}
-            className={cn(
-              'nyn-textarea bg-surface text-foreground border border-default rounded px-3 py-2 placeholder:text-muted',
-              textareaClassName
-            )}
+            className={cn(textareaClassName)}
           />
           {helperText && <Description>{helperText}</Description>}
           {error && <FieldError>{error}</FieldError>}

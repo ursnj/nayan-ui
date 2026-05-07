@@ -55,18 +55,11 @@ export const NSheet: React.FC<NSheetProps> = memo(
           }}
           isDismissable>
           <Drawer.Content placement="right" className={cn('nyn-sheet w-full', sizeMapping[size])}>
-            <Drawer.Dialog
-              className={cn('nyn-sheet-dialog p-0 border-0 border-l border-default bg-surface text-foreground overflow-hidden h-full', className)}
-              aria-label={ariaLabel}
-              role={role as 'dialog' | 'alertdialog'}>
+            <Drawer.Dialog className={cn('nyn-sheet-dialog h-full', className)} aria-label={ariaLabel} role={role as 'dialog' | 'alertdialog'}>
               {header || (
-                <Drawer.Header className={cn('nyn-sheet-header px-3 py-2.5 bg-accent text-accent-foreground', headerClassName)}>
-                  {title && <span className={cn('nyn-sheet-title text-base font-normal', titleClassName)}>{title}</span>}
-                </Drawer.Header>
+                <Drawer.Header className={cn(headerClassName)}>{title && <span className={cn(titleClassName)}>{title}</span>}</Drawer.Header>
               )}
-              <Drawer.Body className={cn('nyn-sheet-content text-foreground h-[calc(100vh_-_44px)] overflow-y-auto', contentClassName)}>
-                {children}
-              </Drawer.Body>
+              <Drawer.Body className={cn('h-[calc(100vh_-_44px)] overflow-y-auto', contentClassName)}>{children}</Drawer.Body>
               {footer && <Drawer.Footer className="nyn-sheet-footer">{footer}</Drawer.Footer>}
             </Drawer.Dialog>
           </Drawer.Content>
