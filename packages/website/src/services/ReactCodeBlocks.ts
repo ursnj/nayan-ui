@@ -158,12 +158,21 @@ export const checkBoxCode = `import { useState } from 'react';
 import { NCheck, NLink } from '@nayan-ui/react';
 
 const Checkbox = () => {
-  const [checked, setChecked] = useState(true);
+  const [notifications, setNotifications] = useState(true);
+  const [terms, setTerms] = useState(false);
 
   return (
-    <NCheck checked={checked} disabled={false} onChange={checked => setChecked(checked)}>
-      Sample label for checkbox. accept <NLink> terms</NLink>
-    </NCheck>
+    <div className="space-y-3">
+      <NCheck checked={notifications} onChange={setNotifications}>
+        Enable email notifications
+      </NCheck>
+      <NCheck checked={terms} onChange={setTerms}>
+        I agree to the <NLink href="#">Terms of Service</NLink>
+      </NCheck>
+      <NCheck checked={false} disabled onChange={() => {}}>
+        This option is disabled
+      </NCheck>
+    </div>
   );
 };
 

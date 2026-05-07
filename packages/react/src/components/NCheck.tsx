@@ -1,5 +1,5 @@
 import React, { ReactNode, memo } from 'react';
-import { Checkbox, Label } from '@heroui/react';
+import { Checkbox } from '@heroui/react';
 import { cn } from '../lib/utils';
 
 export interface NCheckProps {
@@ -16,10 +16,12 @@ export interface NCheckProps {
 const NCheckComponent: React.FC<NCheckProps> = memo(
   ({ id = 'check', className = '', checkClassName = '', labelClassName = '', checked, disabled = false, onChange, children, ...rest }) => {
     return (
-      <div className={cn('flex items-center gap-2', className)}>
-        <Checkbox isSelected={checked} isDisabled={disabled} onChange={onChange} className={cn(checkClassName)} {...(rest as any)} />
-        <Label className={cn(labelClassName)}>{children}</Label>
-      </div>
+      <Checkbox isSelected={checked} isDisabled={disabled} onChange={onChange} className={cn('nyn-check', className)} {...(rest as any)}>
+        <Checkbox.Control className={cn(checkClassName)}>
+          <Checkbox.Indicator />
+        </Checkbox.Control>
+        <Checkbox.Content className={cn('inline', labelClassName)}>{children}</Checkbox.Content>
+      </Checkbox>
     );
   }
 );
