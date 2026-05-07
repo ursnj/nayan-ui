@@ -79,11 +79,11 @@ export const badgeCode = `import { NBadge } from '@nayan-ui/react';
 const Badge = () => {
   return (
     <div className="flex flex-wrap gap-2">
-      <NBadge className="text-foreground bg-surface border border-default">Default</NBadge>
-      <NBadge className="text-blue-700 bg-blue-100">Info</NBadge>
-      <NBadge className="text-green-700 bg-green-100">Success</NBadge>
-      <NBadge className="text-yellow-700 bg-yellow-100">Warning</NBadge>
-      <NBadge className="text-red-700 bg-red-100">Error</NBadge>
+      <NBadge color="default">Default</NBadge>
+      <NBadge color="accent">Accent</NBadge>
+      <NBadge color="success">Success</NBadge>
+      <NBadge color="warning">Warning</NBadge>
+      <NBadge color="danger">Danger</NBadge>
     </div>
   );
 };

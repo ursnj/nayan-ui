@@ -80,11 +80,11 @@ const Banner = () => {
           <div className="space-y-6 sm:space-y-8 text-center lg:text-left">
             {/* Badge */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-2 sm:space-y-0 sm:space-x-2 animate-fade-in-up delay-200">
-              <NBadge className="bg-accent/10 text-accent border-accent/20 px-3 py-1">
+              <NBadge color="accent" className="px-3 py-1">
                 <Sparkles className="w-3 h-3 mr-1" />
                 New v2.0 Released
               </NBadge>
-              <NBadge className="bg-green-100 text-green-800 border-green-200 px-3 py-1">
+              <NBadge color="success" className="px-3 py-1">
                 <Heart className="w-3 h-3 mr-1" />
                 Open Source
               </NBadge>
