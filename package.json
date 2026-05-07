@@ -19,7 +19,7 @@
     "native:clean": "yarn workspace @nayan-ui/react-native clean",
     "native:example": "yarn workspace @nayan-ui/react-native example",
     "website:start": "yarn react:build && yarn workspace @nayan-ui/website start",
-    "website:start:watch": "concurrently \"yarn react:dev\" \"yarn workspace @nayan-ui/website start\"",
+    "website:dev": "concurrently \"yarn react:dev\" \"yarn workspace @nayan-ui/website start\"",
     "website:build": "yarn react:build && yarn workspace @nayan-ui/website build",
     "website:preview": "yarn workspace @nayan-ui/website preview",
     "website:sitemap": "yarn workspace @nayan-ui/website sitemap"
