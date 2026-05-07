@@ -1,64 +1,22 @@
 export const installCode = `npm install @nayan-ui/react`;
 
-export const tailwindCode = `module.exports = {
-  darkMode: ['class'],
-  content: ['./src/**/*.{ts,tsx}', './index.html', './node_modules/@nayan-ui/react/dist/index.es.js'], // Check node_modules path properly
-  theme: {
-    extend: {
-      colors: {
-        primary: 'var(--COLOR_PRIMARY)',
-        'primary-light': 'var(--COLOR_PRIMARY_LIGHT)',
-        'primary-dark': 'var(--COLOR_PRIMARY_DARK)',
-        background: 'var(--COLOR_BACKGROUND)',
-        text: 'var(--COLOR_TEXT)',
-        muted: 'var(--COLOR_MUTED)',
-        border: 'var(--COLOR_BORDER)',
-        card: 'var(--COLOR_CARD)',
-        shadow: 'var(--COLOR_SHADOW)',
-        overlay: 'var(--COLOR_OVERLAY)'
-      }
-    }
-  },
-  plugins: [require('tailwindcss-animate')]
-};`;
+export const tailwindCode = `// No tailwind.config.js needed with Tailwind v4!
+// HeroUI styles handle theming automatically.
+// Use @tailwindcss/vite plugin in vite.config.ts:
 
-export const cssCode = `@import '@nayan-ui/react/dist/style.css';
+import tailwindcss from '@tailwindcss/vite';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+export default defineConfig({
+  plugins: [tailwindcss(), react()],
+});`;
 
-@layer base {
-  :root {
-    --COLOR_PRIMARY: #005ee6;
-    --COLOR_PRIMARY_DARK: #0043a3;
-    --COLOR_PRIMARY_LIGHT: #0069ff;
-    --COLOR_BACKGROUND: #f0f2f5;
-    --COLOR_CARD: #ffffff;
-    --COLOR_TEXT: #050505;
-    --COLOR_MUTED: 'gray';
-    --COLOR_BORDER: #e0e0e0;
-    --COLOR_SHADOW: #d3d3d3;
-    --COLOR_OVERLAY: rgba(255, 255, 255, .7);
-  }
+export const cssCode = `@import 'tailwindcss';
+@import '@heroui/styles';
+@import '@nayan-ui/react/styles.css';
 
-  [data-theme='dark'] {
-    --COLOR_PRIMARY: #2997ff;
-    --COLOR_PRIMARY_DARK: #0a84ff;
-    --COLOR_PRIMARY_LIGHT: #7dc1ff;
-    --COLOR_BACKGROUND: #1f1f1f;
-    --COLOR_CARD: #353535;
-    --COLOR_TEXT: #f5f5f5;
-    --COLOR_MUTED: #afafaf;
-    --COLOR_BORDER: #4f4f4f;
-    --COLOR_SHADOW: #cbcbcb;
-    --COLOR_OVERLAY: rgba(0, 0, 0, .7);
-  }
-
-  body {
-    color: var(--COLOR_TEXT) !important;
-    background-color: var(--COLOR_BACKGROUND) !important;
-  }
+body {
+  color: var(--foreground);
+  background: var(--background);
 }`;
 
 export const appCode = `import { useState } from 'react';
@@ -116,53 +74,36 @@ const Alert = () => {
 
 export default Alert;`;
 
-export const badgeCode = `import { NBadge, BadgeSize } from '@nayan-ui/react';
+export const badgeCode = `import { NBadge } from '@nayan-ui/react';
 
 const Badge = () => {
   return (
-    <div>
-      <NBadge size={BadgeSize.XS} className="text-foreground bg-surface border border-default mr-2">Sample</NBadge>
-      <NBadge size={BadgeSize.XS} className="text-blue-700 bg-blue-300 mr-2">Sample</NBadge>
-      <NBadge size={BadgeSize.SM} className="text-green-700 bg-green-300 mr-2">Sample</NBadge>
-      <NBadge size={BadgeSize.MD} className="text-yellow-700 bg-yellow-300 mr-2">Sample</NBadge>
-      <NBadge size={BadgeSize.LG} className="text-red-700 bg-red-300 mr-2">Sample</NBadge>
+    <div className="flex flex-wrap gap-2">
+      <NBadge className="text-foreground bg-surface border border-default">Default</NBadge>
+      <NBadge className="text-blue-700 bg-blue-100">Info</NBadge>
+      <NBadge className="text-green-700 bg-green-100">Success</NBadge>
+      <NBadge className="text-yellow-700 bg-yellow-100">Warning</NBadge>
+      <NBadge className="text-red-700 bg-red-100">Error</NBadge>
     </div>
   );
 };
 
 export default Badge;`;
 
-export const buttonCode = `import { NButton, ButtonSize } from '@nayan-ui/react';
+export const buttonCode = `import { NButton } from '@nayan-ui/react';
 
 const Button = () => {
   return (
-    <div>
-      <NButton size={ButtonSize.XS} disabled className="text-foreground bg-surface border border-default mr-2">
-        Button
-      </NButton>
-      <NButton type="submit" size={ButtonSize.XS} onClick={() => console.log('Button clicked')} className="text-white bg-blue-500 hover:bg-blue-600 border border-blue-600 mr-2">
-        Button
-      </NButton>
-      <NButton type="reset" size={ButtonSize.SM} onClick={() => console.log('Button clicked')} className="text-white bg-green-500 hover:bg-green-600 border border-green-600 mr-2">
-        Button
-      </NButton>
-      <NButton size={ButtonSize.MD} isLoading={true} onClick={() => console.log('Button clicked')} className="text-white bg-yellow-500 hover:bg-yellow-600 border border-yellow-600 mr-2">
-        Button
-      </NButton>
-      <NButton size={ButtonSize.LG} onClick={() => console.log('Button clicked')} className="mr-2">
-        Button
-      </NButton>
-      <NButton size={ButtonSize.LG} isOutline={true} onClick={() => console.log('Button clicked')} className="mr-2">
-        Button
-      </NButton>
-      <NButton size={ButtonSize.LG} onClick={() => console.log('Button clicked')} className="text-white bg-purple-500 hover:bg-purple-600 border border-purple-600 rounded-full mr-2">
-        Button
-      </NButton>
+    <div className="flex flex-wrap gap-2">
+      <NButton onClick={() => console.log('clicked')}>Primary</NButton>
+      <NButton isOutline={true}>Outline</NButton>
+      <NButton isLoading={true}>Loading</NButton>
+      <NButton disabled>Disabled</NButton>
     </div>
   );
 };
 
-export default Button`;
+export default Button;`;
 
 export const buttonGroupCode = `import { useState } from 'react';
 import { NButtonGroup } from '@nayan-ui/react';
@@ -651,19 +592,14 @@ const Textarea = () => {
 
 export default Textarea;`;
 
-export const toastCode = `import { useToast } from '@nayan-ui/react';
+export const toastCode = `import { NButton, useNToast } from '@nayan-ui/react';
 
 const Toast = () => {
-  const toast = useToast();
+  const toast = useNToast();
   return (
-    <div>
-      <NButton onClick={() => toast('Simple Toaster!')}>
-        Show Simple Toast
-      </NButton>
-      <NButton className="ml-5" onClick={() => toast('Toaster Description!', 'Toaster Title')}>
-        Show Toast with Title
-      </NButton>
-    </div>
+    <NButton onClick={() => toast('This is a toast notification!', 'Success')}>
+      Show Toast
+    </NButton>
   );
 };
 

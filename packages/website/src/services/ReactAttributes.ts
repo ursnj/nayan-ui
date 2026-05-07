@@ -41,14 +41,13 @@ export const alertAttributes = [
 ];
 
 export const badgeAttributes = [
-  { name: 'size', type: 'BadgeSize', default: 'BadgeSize.SM', details: 'You can pass size of the badge.' },
   { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'You can pass badge content as children.' },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'className', type: 'string', default: "' '", details: 'Style the badge with Tailwind classes for size, color, etc.' },
   { name: 'role', type: 'string', default: 'Optional', details: 'ARIA role for accessibility.' }
 ];
 
 export const buttonAttributes = [
-  { name: 'size', type: 'ButtonSize', default: 'ButtonSize.MD', details: 'You can pass size of the button.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'Disables the button.' },
   { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
   { name: 'isOutline', type: 'boolean', default: 'false', details: 'You can pass this to create outline button.' },
   { name: 'isLoading', type: 'boolean', default: 'false', details: 'You can pass this to show loading indication.' },

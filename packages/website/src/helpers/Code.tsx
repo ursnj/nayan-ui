@@ -24,8 +24,8 @@ const Code = (props: Props) => {
           width: '100%',
           maxWidth: '100%',
           borderRadius: '4px',
-          border: '1px solid var(--COLOR_BORDER)',
-          backgroundColor: 'var(--COLOR_CARD)',
+          border: '1px solid var(--border)',
+          backgroundColor: 'var(--surface)',
           padding: '8px'
         }}
       />

@@ -165,17 +165,17 @@ export const reactSelectTheme = (theme: any) => ({
   borderRadius: 4,
   colors: {
     ...theme.colors,
-    neutral0: 'var(--COLOR_BACKGROUND)',
-    neutral10: 'var(--COLOR_BORDER)',
-    neutral5: 'var(--COLOR_BACKGROUND)',
-    neutral20: 'var(--COLOR_BORDER)',
-    neutral80: 'var(--COLOR_TEXT)',
+    neutral0: 'var(--background)',
+    neutral10: 'var(--border)',
+    neutral5: 'var(--background)',
+    neutral20: 'var(--border)',
+    neutral80: 'var(--foreground)',
     primary25: 'gray',
-    primary: 'var(--COLOR_PRIMARY)'
+    primary: 'var(--accent)'
   }
 });
 
 export const reactSelectCustomClassNames = {
-  control: (state: any) => 'flex h-10 w-full rounded bg-card border border-border focus:border-border text-text',
-  menu: (state: any) => 'w-full rounded bg-card border border-border focus:border-border'
+  control: (state: any) => 'flex h-10 w-full rounded bg-surface border border-default focus:border-default text-foreground',
+  menu: (state: any) => 'w-full rounded bg-surface border border-default focus:border-default'
 } as any;
