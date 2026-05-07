@@ -259,7 +259,7 @@ const Table = () => {
           <h3 className="text-lg font-semibold mb-4">Basic Table</h3>
           <p className="text-gray-600 mb-4">Simple table with basic columns and data display for invoices and transactions.</p>
           <div className="bg-white rounded-lg border">
-            <NTable className="bg-card" caption="Basic invoice table" columns={basicColumns} data={basicData} />
+            <NTable className="bg-surface" caption="Basic invoice table" columns={basicColumns} data={basicData} />
           </div>
         </section>
 
@@ -268,7 +268,7 @@ const Table = () => {
           <h3 className="text-lg font-semibold mb-4">Enhanced Table with Custom Components</h3>
           <p className="text-gray-600 mb-4">Table with custom cell renderers including status badges and action buttons for better interactivity.</p>
           <div className="bg-white rounded-lg border">
-            <NTable className="bg-card" caption="Enhanced invoice table with custom components" columns={enhancedColumns} data={enhancedData} />
+            <NTable className="bg-surface" caption="Enhanced invoice table with custom components" columns={enhancedColumns} data={enhancedData} />
           </div>
         </section>
 
@@ -277,7 +277,7 @@ const Table = () => {
           <h3 className="text-lg font-semibold mb-4">User Management Table</h3>
           <p className="text-gray-600 mb-4">Comprehensive user management table with avatars, roles, and status indicators.</p>
           <div className="bg-white rounded-lg border">
-            <NTable className="bg-card" caption="User management table" columns={userColumns} data={userData} />
+            <NTable className="bg-surface" caption="User management table" columns={userColumns} data={userData} />
           </div>
         </section>
 
@@ -286,7 +286,7 @@ const Table = () => {
           <h3 className="text-lg font-semibold mb-4">Product Catalog Table</h3>
           <p className="text-gray-600 mb-4">Product listing table with ratings, pricing, and inventory management features.</p>
           <div className="bg-white rounded-lg border">
-            <NTable className="bg-card" caption="Product catalog table" columns={productColumns} data={productData} />
+            <NTable className="bg-surface" caption="Product catalog table" columns={productColumns} data={productData} />
           </div>
         </section>
 
@@ -295,7 +295,7 @@ const Table = () => {
           <h3 className="text-lg font-semibold mb-4">Project Progress Table</h3>
           <p className="text-gray-600 mb-4">Project management table with progress bars, deadlines, and team information.</p>
           <div className="bg-white rounded-lg border">
-            <NTable className="bg-card" caption="Project progress table" columns={projectColumns} data={projectData} />
+            <NTable className="bg-surface" caption="Project progress table" columns={projectColumns} data={projectData} />
           </div>
         </section>
 
@@ -304,7 +304,7 @@ const Table = () => {
           <h3 className="text-lg font-semibold mb-4">Compact Table</h3>
           <p className="text-gray-600 mb-4">Compact table design for displaying essential information in limited space.</p>
           <div className="bg-white rounded-lg border">
-            <NTable className="bg-card text-sm" caption="Compact user table" columns={compactColumns} data={compactData} />
+            <NTable className="bg-surface text-sm" caption="Compact user table" columns={compactColumns} data={compactData} />
           </div>
         </section>
 
@@ -314,7 +314,7 @@ const Table = () => {
           <p className="text-gray-600 mb-4">Table with alternating row colors for better readability and visual separation.</p>
           <div className="bg-white rounded-lg border">
             <NTable
-              className="bg-card [&_tbody_tr:nth-child(even)]:bg-gray-50"
+              className="bg-surface [&_tbody_tr:nth-child(even)]:bg-gray-50"
               caption="Striped table for better readability"
               columns={basicColumns}
               data={basicData}
@@ -328,7 +328,7 @@ const Table = () => {
           <p className="text-gray-600 mb-4">Table with responsive design that adapts to different screen sizes with horizontal scrolling.</p>
           <div className="bg-white rounded-lg border overflow-x-auto">
             <NTable
-              className="bg-card min-w-[600px]"
+              className="bg-surface min-w-[600px]"
               caption="Responsive table with horizontal scroll"
               columns={enhancedColumns}
               data={enhancedData}

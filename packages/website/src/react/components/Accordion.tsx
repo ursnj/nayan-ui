@@ -26,22 +26,22 @@ const Accordion = () => {
     <ComponentWrapper>
       {/* Basic Single Mode */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Single Mode</h2>
-        <p className="text-muted-foreground mb-4">Only one accordion item can be open at a time.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Single Mode</h2>
+        <p className="text-muted mb-4">Only one accordion item can be open at a time.</p>
         <NAccordion type={AccordionTypes.SINGLE} items={basicItems} />
       </div>
 
       {/* Multiple Mode */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Multiple Mode</h2>
-        <p className="text-muted-foreground mb-4">Multiple accordion items can be open simultaneously.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Multiple Mode</h2>
+        <p className="text-muted mb-4">Multiple accordion items can be open simultaneously.</p>
         <NAccordion type={AccordionTypes.MULTIPLE} items={basicItems} />
       </div>
 
       {/* Custom Styling */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Styling</h2>
-        <p className="text-muted-foreground mb-4">Customize appearance with className props for different parts.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Styling</h2>
+        <p className="text-muted mb-4">Customize appearance with className props for different parts.</p>
         <NAccordion
           type={AccordionTypes.SINGLE}
           items={customItems}
@@ -54,8 +54,8 @@ const Accordion = () => {
 
       {/* With Custom IDs */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">With Custom IDs</h2>
-        <p className="text-muted-foreground mb-4">Items with custom IDs for better control and accessibility.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">With Custom IDs</h2>
+        <p className="text-muted mb-4">Items with custom IDs for better control and accessibility.</p>
         <NAccordion
           type={AccordionTypes.MULTIPLE}
           items={[
@@ -68,8 +68,8 @@ const Accordion = () => {
 
       {/* Minimal Example */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Minimal Example</h2>
-        <p className="text-muted-foreground mb-4">Simplest accordion with just the required props.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Minimal Example</h2>
+        <p className="text-muted mb-4">Simplest accordion with just the required props.</p>
         <NAccordion items={[{ title: 'Simple Item', message: 'This is a minimal accordion example.' }]} />
       </div>
     </ComponentWrapper>

@@ -88,8 +88,8 @@ const FormInput = () => {
     <ComponentWrapper>
       {/* Basic Form Input */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Form Input</h2>
-        <p className="text-muted-foreground mb-4">Simple form with React Hook Form integration.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Form Input</h2>
+        <p className="text-muted mb-4">Simple form with React Hook Form integration.</p>
 
         <form onSubmit={basicForm.handleSubmit(onBasicSubmit)} className="max-w-md space-y-4">
           <NFormInput
@@ -125,10 +125,7 @@ const FormInput = () => {
                 }
               }}
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-9 text-muted-foreground hover:text-text">
+            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-9 text-muted hover:text-foreground">
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
@@ -150,7 +147,7 @@ const FormInput = () => {
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-9 text-muted-foreground hover:text-text">
+              className="absolute right-3 top-9 text-muted hover:text-foreground">
               {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
@@ -170,8 +167,8 @@ const FormInput = () => {
 
       {/* Profile Form with Icons */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Profile Form with Icons</h2>
-        <p className="text-muted-foreground mb-4">Comprehensive profile form with icon integration.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Profile Form with Icons</h2>
+        <p className="text-muted mb-4">Comprehensive profile form with icon integration.</p>
 
         <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="max-w-2xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -185,7 +182,7 @@ const FormInput = () => {
                 inputClassName="pl-10"
                 rules={{ required: 'First name is required' }}
               />
-              <User className="absolute left-3 top-9 w-4 h-4 text-muted-foreground" />
+              <User className="absolute left-3 top-9 w-4 h-4 text-muted" />
             </div>
 
             <div className="relative">
@@ -198,7 +195,7 @@ const FormInput = () => {
                 inputClassName="pl-10"
                 rules={{ required: 'Last name is required' }}
               />
-              <User className="absolute left-3 top-9 w-4 h-4 text-muted-foreground" />
+              <User className="absolute left-3 top-9 w-4 h-4 text-muted" />
             </div>
           </div>
 
@@ -220,7 +217,7 @@ const FormInput = () => {
                   }
                 }}
               />
-              <Mail className="absolute left-3 top-9 w-4 h-4 text-muted-foreground" />
+              <Mail className="absolute left-3 top-9 w-4 h-4 text-muted" />
             </div>
 
             <div className="relative">
@@ -233,7 +230,7 @@ const FormInput = () => {
                 error={profileForm.formState.errors.phone}
                 inputClassName="pl-10"
               />
-              <Phone className="absolute left-3 top-9 w-4 h-4 text-muted-foreground" />
+              <Phone className="absolute left-3 top-9 w-4 h-4 text-muted" />
             </div>
           </div>
 
@@ -247,7 +244,7 @@ const FormInput = () => {
                 error={profileForm.formState.errors.company}
                 inputClassName="pl-10"
               />
-              <Building className="absolute left-3 top-9 w-4 h-4 text-muted-foreground" />
+              <Building className="absolute left-3 top-9 w-4 h-4 text-muted" />
             </div>
 
             <NFormInput
@@ -292,7 +289,7 @@ const FormInput = () => {
           </div>
 
           {submissionResults.profile && (
-            <div className="mt-4 p-4 bg-card border border-blue-200 dark:border-blue-800 rounded-lg">
+            <div className="mt-4 p-4 bg-surface border border-blue-200 dark:border-blue-800 rounded-lg">
               <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2">Profile Updated!</h4>
               <pre className="text-sm text-blue-700 dark:text-blue-300 max-h-40 overflow-y-auto">
                 {JSON.stringify(submissionResults.profile, null, 2)}
@@ -304,8 +301,8 @@ const FormInput = () => {
 
       {/* Advanced Validation */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Advanced Validation</h2>
-        <p className="text-muted-foreground mb-4">Form with complex validation rules and real-time feedback.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Advanced Validation</h2>
+        <p className="text-muted mb-4">Form with complex validation rules and real-time feedback.</p>
 
         <form onSubmit={validationForm.handleSubmit(onValidationSubmit)} className="max-w-md space-y-4">
           <NFormInput
@@ -432,8 +429,8 @@ const FormInput = () => {
 
       {/* Custom Controller Usage */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Controller Usage</h2>
-        <p className="text-muted-foreground mb-4">Using Controller component for more control over form inputs.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Controller Usage</h2>
+        <p className="text-muted mb-4">Using Controller component for more control over form inputs.</p>
 
         <form className="max-w-md space-y-4">
           <Controller
@@ -471,7 +468,7 @@ const FormInput = () => {
                   error={fieldState.error}
                   inputClassName="pl-10"
                 />
-                <Mail className="absolute left-3 top-9 w-4 h-4 text-muted-foreground" />
+                <Mail className="absolute left-3 top-9 w-4 h-4 text-muted" />
               </div>
             )}
           />
@@ -480,8 +477,8 @@ const FormInput = () => {
 
       {/* Form States Demo */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Form States</h2>
-        <p className="text-muted-foreground mb-4">Different form states and their visual representations.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Form States</h2>
+        <p className="text-muted mb-4">Different form states and their visual representations.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
           <div>
@@ -517,7 +514,7 @@ const FormInput = () => {
               label="Disabled Input"
               placeholder="This input is disabled"
               disabled
-              inputClassName="bg-card"
+              inputClassName="bg-surface"
             />
           </div>
 
@@ -529,7 +526,7 @@ const FormInput = () => {
               label="Loading Input"
               placeholder="Checking availability..."
               disabled
-              inputClassName="bg-card"
+              inputClassName="bg-surface"
               helperText="⏳ Validating input..."
             />
           </div>
@@ -538,11 +535,11 @@ const FormInput = () => {
 
       {/* Form Summary */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Form State Summary</h2>
-        <p className="text-muted-foreground mb-4">Live summary of all form states and validation status.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Form State Summary</h2>
+        <p className="text-muted mb-4">Live summary of all form states and validation status.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="p-4 bg-card rounded-lg">
+          <div className="p-4 bg-surface rounded-lg">
             <h4 className="font-medium mb-2">Basic Form</h4>
             <div className="text-sm space-y-1">
               <p>
@@ -557,7 +554,7 @@ const FormInput = () => {
             </div>
           </div>
 
-          <div className="p-4 bg-card rounded-lg">
+          <div className="p-4 bg-surface rounded-lg">
             <h4 className="font-medium mb-2">Profile Form</h4>
             <div className="text-sm space-y-1">
               <p>
@@ -572,7 +569,7 @@ const FormInput = () => {
             </div>
           </div>
 
-          <div className="p-4 bg-card rounded-lg">
+          <div className="p-4 bg-surface rounded-lg">
             <h4 className="font-medium mb-2">Validation Form</h4>
             <div className="text-sm space-y-1">
               <p>

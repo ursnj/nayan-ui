@@ -76,11 +76,11 @@ const CallToAction = () => {
     <section ref={sectionRef} className="relative py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-card/30 to-background overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/3 w-64 sm:w-96 h-64 sm:h-96 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/4 left-1/3 w-64 sm:w-96 h-64 sm:h-96 bg-accent/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/3 w-48 sm:w-80 h-48 sm:h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse [animation-delay:2s]"></div>
 
         {/* Floating Elements - Hidden on mobile */}
-        <div className="absolute top-20 right-4 sm:right-20 w-3 sm:w-4 h-3 sm:h-4 bg-primary rounded-full animate-bounce hidden sm:block"></div>
+        <div className="absolute top-20 right-4 sm:right-20 w-3 sm:w-4 h-3 sm:h-4 bg-accent rounded-full animate-bounce hidden sm:block"></div>
         <div className="absolute bottom-32 left-4 sm:left-16 w-2 sm:w-3 h-2 sm:h-3 bg-purple-500 rounded-full animate-ping hidden sm:block"></div>
         <div className="absolute top-1/2 right-8 w-1 sm:w-2 h-1 sm:h-2 bg-blue-500 rounded-full animate-pulse hidden sm:block"></div>
       </div>
@@ -88,7 +88,7 @@ const CallToAction = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16">
-          <NBadge className={`bg-primary/10 text-primary mb-4 ${isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0'}`}>
+          <NBadge className={`bg-accent/10 text-accent mb-4 ${isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0'}`}>
             <Rocket className="w-3 h-3 mr-1" />
             Ready to Start
           </NBadge>
@@ -96,11 +96,11 @@ const CallToAction = () => {
           <h2
             className={`text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 sm:mb-8 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.2s]' : 'opacity-0'}`}>
             Choose Your
-            <span className="block bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent">Platform</span>
+            <span className="block bg-gradient-to-r from-accent via-purple-600 to-pink-600 bg-clip-text text-transparent">Platform</span>
           </h2>
 
           <p
-            className={`text-base sm:text-lg lg:text-xl xl:text-2xl text-muted-foreground max-w-4xl mx-auto mb-8 sm:mb-12 px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.4s]' : 'opacity-0'}`}>
+            className={`text-base sm:text-lg lg:text-xl xl:text-2xl text-muted max-w-4xl mx-auto mb-8 sm:mb-12 px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.4s]' : 'opacity-0'}`}>
             Whether you're building for web or mobile, our component library provides everything you need to create beautiful, accessible, and
             performant applications.
           </p>
@@ -109,8 +109,8 @@ const CallToAction = () => {
           <div
             className={`flex flex-wrap justify-center gap-2 sm:gap-4 mb-8 sm:mb-12 px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.6s]' : 'opacity-0'}`}>
             {features.map((feature, index) => (
-              <div key={index} className="flex items-center space-x-1 sm:space-x-2 bg-card px-2 sm:px-4 py-1 sm:py-2 rounded-full shadow-sm">
-                <feature.icon className="w-3 sm:w-4 h-3 sm:h-4 text-primary flex-shrink-0" />
+              <div key={index} className="flex items-center space-x-1 sm:space-x-2 bg-surface px-2 sm:px-4 py-1 sm:py-2 rounded-full shadow-sm">
+                <feature.icon className="w-3 sm:w-4 h-3 sm:h-4 text-accent flex-shrink-0" />
                 <span className="text-xs sm:text-sm font-medium">{feature.name}</span>
               </div>
             ))}
@@ -133,11 +133,11 @@ const CallToAction = () => {
 
                 <div>
                   <h4 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">{platform.title}</h4>
-                  <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 px-2 sm:px-0">{platform.description}</p>
+                  <p className="text-sm sm:text-base text-muted mb-4 sm:mb-6 px-2 sm:px-0">{platform.description}</p>
                 </div>
 
                 <Link to={platform.link} className="block">
-                  <NButton className="bg-primary hover:bg-primary/90 text-primary-foreground w-full py-2 sm:py-3 text-sm sm:text-base">
+                  <NButton className="bg-accent hover:bg-accent/90 text-accent-foreground w-full py-2 sm:py-3 text-sm sm:text-base">
                     Explore Components
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </NButton>
@@ -161,11 +161,11 @@ const CallToAction = () => {
               <div
                 key={index}
                 className={`text-center p-3 sm:p-6 ${isVisible ? `animate-fade-in-up opacity-100 [animation-delay:${2 + index * 0.1}s]` : 'opacity-0'}`}>
-                <div className="w-12 sm:w-16 h-12 sm:h-16 bg-primary/10 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                  <benefit.icon className="w-6 sm:w-8 h-6 sm:h-8 text-primary" />
+                <div className="w-12 sm:w-16 h-12 sm:h-16 bg-accent/10 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                  <benefit.icon className="w-6 sm:w-8 h-6 sm:h-8 text-accent" />
                 </div>
                 <h4 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2">{benefit.title}</h4>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{benefit.description}</p>
+                <p className="text-xs sm:text-sm text-muted leading-relaxed">{benefit.description}</p>
               </div>
             ))}
           </div>
@@ -175,7 +175,7 @@ const CallToAction = () => {
         <div
           className={`flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-12 sm:mb-16 px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:2.4s]' : 'opacity-0'}`}>
           <Link to="/react/components" className="w-full sm:w-auto">
-            <NButton className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto">
+            <NButton className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto">
               <Code className="w-4 sm:w-5 h-4 sm:h-5 mr-2" />
               React Components
               <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 ml-2" />
@@ -185,7 +185,7 @@ const CallToAction = () => {
           <Link to="/react-native/components" className="w-full sm:w-auto">
             <NButton
               isOutline={true}
-              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transform hover:scale-105 transition-all duration-300 w-full sm:w-auto">
+              className="border-accent text-accent hover:bg-accent hover:text-accent-foreground px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transform hover:scale-105 transition-all duration-300 w-full sm:w-auto">
               <Smartphone className="w-4 sm:w-5 h-4 sm:h-5 mr-2" />
               React Native Components
             </NButton>
@@ -194,7 +194,7 @@ const CallToAction = () => {
           <a href="https://github.com/ursnj/nayan-ui" target="_blank" rel="noopener noreferrer" className="inline-block w-full sm:w-auto">
             <NButton
               isOutline={true}
-              className="border-muted-foreground text-muted-foreground hover:bg-muted-foreground hover:text-background px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transform hover:scale-105 transition-all duration-300 w-full sm:w-auto">
+              className="border-muted-foreground text-muted hover:bg-muted-foreground hover:text-background px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transform hover:scale-105 transition-all duration-300 w-full sm:w-auto">
               <Github className="w-4 sm:w-5 h-4 sm:h-5 mr-2" />
               Star on GitHub
             </NButton>
@@ -204,9 +204,9 @@ const CallToAction = () => {
         {/* Newsletter Signup */}
         <NCard className={`p-6 sm:p-8 lg:p-12 text-center ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:2.6s]' : 'opacity-0'}`}>
           <div className="max-w-2xl mx-auto">
-            <Sparkles className="w-10 sm:w-12 h-10 sm:h-12 text-primary mx-auto mb-4 sm:mb-6" />
+            <Sparkles className="w-10 sm:w-12 h-10 sm:h-12 text-accent mx-auto mb-4 sm:mb-6" />
             <h3 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">Stay Updated</h3>
-            <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 px-4 sm:px-0">
+            <p className="text-sm sm:text-base text-muted mb-6 sm:mb-8 px-4 sm:px-0">
               Get notified about new components, updates, and best practices for React and React Native development. Join our newsletter for exclusive
               content and early access to new features.
             </p>
@@ -221,19 +221,19 @@ const CallToAction = () => {
                 onChange={e => setEmail(e.target.value)}
                 className="flex-1"
               />
-              <NButton className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 sm:px-6 py-2 whitespace-nowrap">
+              <NButton className="bg-accent hover:bg-accent/90 text-accent-foreground px-4 sm:px-6 py-2 whitespace-nowrap">
                 Subscribe
                 <ArrowRight className="w-4 h-4 ml-2" />
               </NButton>
             </div>
 
-            <p className="text-xs sm:text-sm text-muted-foreground mt-3 sm:mt-4">No spam, unsubscribe at any time. We respect your privacy.</p>
+            <p className="text-xs sm:text-sm text-muted mt-3 sm:mt-4">No spam, unsubscribe at any time. We respect your privacy.</p>
           </div>
         </NCard>
 
         {/* Final Message */}
         <div className={`text-center mt-12 sm:mt-16 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:2.8s]' : 'opacity-0'}`}>
-          <p className="text-base sm:text-lg text-muted-foreground">Ready to elevate your development experience?</p>
+          <p className="text-base sm:text-lg text-muted">Ready to elevate your development experience?</p>
           <p className="text-xl sm:text-2xl font-bold mt-2">Let's build something amazing together! 🚀</p>
         </div>
       </div>

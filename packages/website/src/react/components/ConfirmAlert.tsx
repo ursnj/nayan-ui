@@ -24,13 +24,13 @@ const ConfirmAlert = () => {
     <ComponentWrapper>
       {/* Basic Confirm Alert */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Confirm Alert</h2>
-        <p className="text-muted-foreground mb-4">Simple confirmation dialog with default styling.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Confirm Alert</h2>
+        <p className="text-muted mb-4">Simple confirmation dialog with default styling.</p>
 
         <div className="space-y-4">
           <div className="flex items-center space-x-4">
             <NButton onClick={() => setBasicAlert(true)}>Show Basic Alert</NButton>
-            {lastResult && <span className="text-sm text-muted-foreground">Last action: {lastResult}</span>}
+            {lastResult && <span className="text-sm text-muted">Last action: {lastResult}</span>}
           </div>
 
           <NConfirmAlert
@@ -45,8 +45,8 @@ const ConfirmAlert = () => {
 
       {/* Delete Confirmation */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Delete Confirmation</h2>
-        <p className="text-muted-foreground mb-4">Destructive action confirmation with custom styling.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Delete Confirmation</h2>
+        <p className="text-muted mb-4">Destructive action confirmation with custom styling.</p>
 
         <div className="space-y-4">
           <NButton onClick={() => setDeleteAlert(true)} className="bg-red-600 hover:bg-red-700 flex items-center space-x-2">
@@ -69,8 +69,8 @@ const ConfirmAlert = () => {
 
       {/* Logout Confirmation */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Logout Confirmation</h2>
-        <p className="text-muted-foreground mb-4">Session termination confirmation.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Logout Confirmation</h2>
+        <p className="text-muted mb-4">Session termination confirmation.</p>
 
         <div className="space-y-4">
           <NButton onClick={() => setLogoutAlert(true)} className="bg-orange-500 hover:bg-orange-600 flex items-center space-x-2">
@@ -93,8 +93,8 @@ const ConfirmAlert = () => {
 
       {/* Save Changes Confirmation */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Save Changes Confirmation</h2>
-        <p className="text-muted-foreground mb-4">Confirmation for saving important changes.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Save Changes Confirmation</h2>
+        <p className="text-muted mb-4">Confirmation for saving important changes.</p>
 
         <div className="space-y-4">
           <NButton onClick={() => setSaveAlert(true)} className="bg-green-600 hover:bg-green-700 flex items-center space-x-2">
@@ -118,8 +118,8 @@ const ConfirmAlert = () => {
 
       {/* Download Confirmation */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Download Confirmation</h2>
-        <p className="text-muted-foreground mb-4">Confirmation before starting a download.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Download Confirmation</h2>
+        <p className="text-muted mb-4">Confirmation before starting a download.</p>
 
         <div className="space-y-4">
           <NButton onClick={() => setDownloadAlert(true)} className="bg-blue-600 hover:bg-blue-700 flex items-center space-x-2">
@@ -142,8 +142,8 @@ const ConfirmAlert = () => {
 
       {/* Reset Settings Confirmation */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Reset Settings Confirmation</h2>
-        <p className="text-muted-foreground mb-4">Confirmation for resetting application settings.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Reset Settings Confirmation</h2>
+        <p className="text-muted mb-4">Confirmation for resetting application settings.</p>
 
         <div className="space-y-4">
           <NButton onClick={() => setResetAlert(true)} className="bg-yellow-600 hover:bg-yellow-700 flex items-center space-x-2">
@@ -166,8 +166,8 @@ const ConfirmAlert = () => {
 
       {/* Danger Alert */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Danger Alert</h2>
-        <p className="text-muted-foreground mb-4">High-risk action confirmation with warning styling.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Danger Alert</h2>
+        <p className="text-muted mb-4">High-risk action confirmation with warning styling.</p>
 
         <div className="space-y-4">
           <NButton onClick={() => setDangerAlert(true)} className="bg-red-600 hover:bg-red-700 flex items-center space-x-2">
@@ -192,8 +192,8 @@ const ConfirmAlert = () => {
 
       {/* Custom Styled Alert */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Styled Alert</h2>
-        <p className="text-muted-foreground mb-4">Confirmation dialog with custom styling and colors.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Styled Alert</h2>
+        <p className="text-muted mb-4">Confirmation dialog with custom styling and colors.</p>
 
         <div className="space-y-4">
           <NButton
@@ -221,8 +221,8 @@ const ConfirmAlert = () => {
 
       {/* Multiple Actions Demo */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Multiple Actions Demo</h2>
-        <p className="text-muted-foreground mb-4">Demonstrate multiple confirmation dialogs in sequence.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Multiple Actions Demo</h2>
+        <p className="text-muted mb-4">Demonstrate multiple confirmation dialogs in sequence.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <NButton onClick={() => setBasicAlert(true)} className="flex items-center justify-center space-x-2">
@@ -259,10 +259,10 @@ const ConfirmAlert = () => {
 
       {/* Result Display */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Action Results</h2>
-        <p className="text-muted-foreground mb-4">Live display of confirmation dialog results.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Action Results</h2>
+        <p className="text-muted mb-4">Live display of confirmation dialog results.</p>
 
-        <div className="p-4 bg-card rounded-lg">
+        <div className="p-4 bg-surface rounded-lg">
           <div className="text-sm">
             <strong>Last Action Result:</strong>
             <div className="mt-2 p-2 bg-white dark:bg-gray-700 rounded border">{lastResult || 'No actions performed yet'}</div>
@@ -272,13 +272,13 @@ const ConfirmAlert = () => {
 
       {/* Usage Guidelines */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Usage Guidelines</h2>
-        <p className="text-muted-foreground mb-4">Best practices for using confirmation dialogs.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Usage Guidelines</h2>
+        <p className="text-muted mb-4">Best practices for using confirmation dialogs.</p>
 
         <div className="space-y-4 text-sm">
           <div className="p-4 border rounded-lg">
             <h3 className="font-medium mb-2">When to use confirmation dialogs:</h3>
-            <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+            <ul className="list-disc list-inside space-y-1 text-muted">
               <li>Destructive actions (delete, reset, clear)</li>
               <li>Actions that cannot be undone</li>
               <li>Actions with significant consequences</li>
@@ -289,7 +289,7 @@ const ConfirmAlert = () => {
 
           <div className="p-4 border rounded-lg">
             <h3 className="font-medium mb-2">Best practices:</h3>
-            <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+            <ul className="list-disc list-inside space-y-1 text-muted">
               <li>Use clear, specific titles and messages</li>
               <li>Make button labels action-oriented</li>
               <li>Use appropriate colors for different action types</li>

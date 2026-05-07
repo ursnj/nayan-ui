@@ -12,7 +12,7 @@ const TagsList = (props: Props) => {
       <div className="flex flex-row flex-wrap items-center">
         {props.tags.map(tag => (
           <Link to={`/${props.type}/tags/${tag.sku}`} key={tag.sku} className="mr-3 mb-3 rounded-full">
-            <NBadge className="text-text bg-card border border-border py-1">{tag.text}</NBadge>
+            <NBadge className="text-foreground bg-surface border border-default py-1">{tag.text}</NBadge>
           </Link>
         ))}
       </div>

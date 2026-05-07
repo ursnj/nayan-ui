@@ -19,7 +19,7 @@ const TagDetails = () => {
         <Link to={component.link} key={component.link}>
           <NCard className="p-3 h-full">
             <div className="flex flex-row items-center mb-1">
-              <Icon className="w-4 h-4 inline mr-3 text-primary" />
+              <Icon className="w-4 h-4 inline mr-3 text-accent" />
               <div className="text-base font-medium">{component.title}</div>
             </div>
             <div className="text-sm line-clamp-5">{component.description}</div>

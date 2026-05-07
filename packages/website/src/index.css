@@ -49,9 +49,6 @@
 
   --segment: hsl(0 0% 100%);
   --segment-foreground: hsl(222 47% 11%);
-
-  --COLOR_SHADOW: #d3d3d3;
-  --COLOR_OVERLAY: rgba(255, 255, 255, 0.7);
 }
 
 .dark,
@@ -99,21 +96,6 @@
 
   --segment: hsl(217 28% 34%);
   --segment-foreground: hsl(210 40% 98%);
-
-  --COLOR_SHADOW: #cbcbcb;
-  --COLOR_OVERLAY: rgba(0, 0, 0, 0.7);
-}
-
-@theme inline {
-  --color-primary: var(--accent);
-  --color-primary-light: var(--accent);
-  --color-primary-dark: var(--accent);
-  --color-text: var(--foreground);
-  --color-card: var(--surface);
-  --color-border: var(--border);
-  --color-muted: var(--muted);
-  --color-shadow: var(--COLOR_SHADOW);
-  --color-overlay: var(--COLOR_OVERLAY);
 }
 
 body {

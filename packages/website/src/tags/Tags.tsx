@@ -23,7 +23,7 @@ const Tags = () => {
           <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
             <span className="text-white font-bold text-sm">R</span>
           </div>
-          <h2 className="text-2xl font-bold text-text">React Components</h2>
+          <h2 className="text-2xl font-bold text-foreground">React Components</h2>
         </div>
         <div className="mb-6 text-muted leading-relaxed">
           React components for web applications with modern design patterns and accessibility features.
@@ -31,7 +31,7 @@ const Tags = () => {
         {reactComponents.map((component: any) => (
           <div key={`react-${component.title}`} className="mb-8">
             <div className="flex flex-row justify-between items-center mb-3 py-2">
-              <h3 className="text-lg font-semibold text-text">{component.title}</h3>
+              <h3 className="text-lg font-semibold text-foreground">{component.title}</h3>
             </div>
             <div className="mb-4 leading-relaxed text-sm text-muted">{component.description}</div>
             <TagsList type="react" tags={component.tags || []} />
@@ -45,7 +45,7 @@ const Tags = () => {
           <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mr-3">
             <span className="text-white font-bold text-sm">RN</span>
           </div>
-          <h2 className="text-2xl font-bold text-text">React Native Components</h2>
+          <h2 className="text-2xl font-bold text-foreground">React Native Components</h2>
         </div>
         <div className="mb-6 text-muted leading-relaxed">
           React Native components for mobile applications with native performance and cross-platform compatibility.
@@ -53,7 +53,7 @@ const Tags = () => {
         {reactNativeComponents.map((component: any) => (
           <div key={`react-native-${component.title}`} className="mb-8">
             <div className="flex flex-row justify-between items-center mb-3 py-2">
-              <h3 className="text-lg font-semibold text-text">{component.title}</h3>
+              <h3 className="text-lg font-semibold text-foreground">{component.title}</h3>
             </div>
             <div className="mb-4 leading-relaxed text-sm text-muted">{component.description}</div>
             <TagsList type="react-native" tags={component.tags || []} />

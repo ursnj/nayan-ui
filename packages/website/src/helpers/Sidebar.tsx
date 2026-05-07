@@ -22,7 +22,7 @@ const Sidebar = (props: Props) => {
                 <div key={item.link}>
                   {!item.isHeading && (
                     <NavLink to={item.link}>
-                      <div className="cursor-pointer hover:bg-border p-2.5 px-3 flex items-center">
+                      <div className="cursor-pointer hover:bg-default p-2.5 px-3 flex items-center">
                         <Icon className="w-4 h-4 inline mr-3" />
                         <span>{item.title}</span>
                       </div>

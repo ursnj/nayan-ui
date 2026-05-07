@@ -240,8 +240,8 @@ const InfiniteScroll = () => {
     <ComponentWrapper>
       {/* Basic Infinite Scroll */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Infinite Scroll</h2>
-        <p className="text-muted-foreground mb-4">Simple infinite scroll with basic items and loading state.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Infinite Scroll</h2>
+        <p className="text-muted mb-4">Simple infinite scroll with basic items and loading state.</p>
 
         <div className="max-w-md mx-auto border rounded-lg p-4 max-h-96 overflow-hidden">
           <NInfiniteScroll
@@ -255,7 +255,7 @@ const InfiniteScroll = () => {
             dataLength={basicItems.length}
             scrollThreshold={0.95}>
             {basicItems.map((item, index) => (
-              <NCard key={index} className="p-4 mb-3 bg-card">
+              <NCard key={index} className="p-4 mb-3 bg-surface">
                 <div className="flex items-center justify-between">
                   <span className="font-medium">Item {item}</span>
                   <NBadge className="bg-blue-100 text-blue-800">#{item}</NBadge>
@@ -264,7 +264,7 @@ const InfiniteScroll = () => {
             ))}
           </NInfiniteScroll>
 
-          <div className="mt-4 text-center text-sm text-muted-foreground">
+          <div className="mt-4 text-center text-sm text-muted">
             <p>Loaded: {basicItems.length} items</p>
             <p>Has more: {basicItems.length < 50 ? 'Yes' : 'No'}</p>
           </div>
@@ -273,8 +273,8 @@ const InfiniteScroll = () => {
 
       {/* Social Media Feed */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Social Media Feed</h2>
-        <p className="text-muted-foreground mb-4">Infinite scroll for social media posts with rich content.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Social Media Feed</h2>
+        <p className="text-muted mb-4">Infinite scroll for social media posts with rich content.</p>
 
         <div className="max-w-2xl mx-auto border rounded-lg max-h-96 overflow-hidden">
           <NInfiniteScroll
@@ -283,7 +283,7 @@ const InfiniteScroll = () => {
             loader={
               <div className="text-center py-6">
                 <NLoading />
-                <p className="text-sm text-muted-foreground mt-2">Loading more posts...</p>
+                <p className="text-sm text-muted mt-2">Loading more posts...</p>
               </div>
             }
             dataLength={posts.length}
@@ -298,21 +298,21 @@ const InfiniteScroll = () => {
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
                       <h3 className="font-semibold">{post.author}</h3>
-                      <span className="text-sm text-muted-foreground">•</span>
-                      <span className="text-sm text-muted-foreground flex items-center gap-1">
+                      <span className="text-sm text-muted">•</span>
+                      <span className="text-sm text-muted flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
                         {post.date}
                       </span>
                       <div className="flex items-center gap-1">
                         {getPostIcon(post.type)}
-                        <span className="text-xs text-muted-foreground capitalize">{post.type}</span>
+                        <span className="text-xs text-muted capitalize">{post.type}</span>
                       </div>
                     </div>
 
                     <h4 className="font-medium mb-2">{post.title}</h4>
-                    <p className="text-muted-foreground mb-4">{post.content}</p>
+                    <p className="text-muted mb-4">{post.content}</p>
 
-                    <div className="flex items-center space-x-6 text-sm text-muted-foreground">
+                    <div className="flex items-center space-x-6 text-sm text-muted">
                       <button className="flex items-center space-x-1 hover:text-red-500">
                         <Heart className="w-4 h-4" />
                         <span>{post.likes}</span>
@@ -336,8 +336,8 @@ const InfiniteScroll = () => {
 
       {/* Product Catalog */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Product Catalog</h2>
-        <p className="text-muted-foreground mb-4">E-commerce style infinite scroll for product listings.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Product Catalog</h2>
+        <p className="text-muted mb-4">E-commerce style infinite scroll for product listings.</p>
 
         <div className="max-w-4xl mx-auto border rounded-lg max-h-96 overflow-hidden">
           <NInfiniteScroll
@@ -346,7 +346,7 @@ const InfiniteScroll = () => {
             loader={
               <div className="text-center py-6">
                 <NLoading />
-                <p className="text-sm text-muted-foreground mt-2">Loading more products...</p>
+                <p className="text-sm text-muted mt-2">Loading more products...</p>
               </div>
             }
             dataLength={products.length}
@@ -369,7 +369,7 @@ const InfiniteScroll = () => {
                           <Star key={i} className={`w-3 h-3 ${i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
                         ))}
                       </div>
-                      <span className="text-sm text-muted-foreground">({product.rating})</span>
+                      <span className="text-sm text-muted">({product.rating})</span>
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -386,8 +386,8 @@ const InfiniteScroll = () => {
 
       {/* Notifications List */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Notifications List</h2>
-        <p className="text-muted-foreground mb-4">Infinite scroll for notifications with different types and states.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Notifications List</h2>
+        <p className="text-muted mb-4">Infinite scroll for notifications with different types and states.</p>
 
         <div className="max-w-lg mx-auto border rounded-lg max-h-80 overflow-hidden">
           <NInfiniteScroll
@@ -396,13 +396,13 @@ const InfiniteScroll = () => {
             loader={
               <div className="text-center py-4">
                 <NLoading size="sm" />
-                <p className="text-xs text-muted-foreground mt-1">Loading notifications...</p>
+                <p className="text-xs text-muted mt-1">Loading notifications...</p>
               </div>
             }
             dataLength={notifications.length}
             scrollThreshold={0.9}>
             {notifications.map(notification => (
-              <div key={notification.id} className={`p-4 border-b border-gray-200 dark:border-gray-700 ${!notification.read ? 'bg-card' : ''}`}>
+              <div key={notification.id} className={`p-4 border-b border-gray-200 dark:border-gray-700 ${!notification.read ? 'bg-surface' : ''}`}>
                 <div className="flex items-start space-x-3">
                   <div
                     className={`w-2 h-2 rounded-full mt-2 ${
@@ -419,7 +419,7 @@ const InfiniteScroll = () => {
                   <div className="flex-1">
                     <p className="text-sm">{notification.message}</p>
                     <div className="flex items-center justify-between mt-1">
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <span className="text-xs text-muted flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {notification.timestamp}
                       </span>
@@ -437,8 +437,8 @@ const InfiniteScroll = () => {
 
       {/* Custom Loading States */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Loading States</h2>
-        <p className="text-muted-foreground mb-4">Infinite scroll with custom loading animations and states.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Loading States</h2>
+        <p className="text-muted mb-4">Infinite scroll with custom loading animations and states.</p>
 
         <div className="max-w-md mx-auto border rounded-lg p-4 max-h-96 overflow-hidden">
           <NInfiniteScroll
@@ -451,7 +451,7 @@ const InfiniteScroll = () => {
                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
-                <p className="text-sm text-muted-foreground">Loading awesome content...</p>
+                <p className="text-sm text-muted">Loading awesome content...</p>
                 <div className="mt-2 w-32 h-1 bg-gray-200 rounded-full mx-auto overflow-hidden">
                   <div className="h-full bg-blue-500 rounded-full animate-pulse" style={{ width: '60%' }} />
                 </div>
@@ -466,7 +466,7 @@ const InfiniteScroll = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold">Custom Item {item}</h3>
-                    <p className="text-sm text-muted-foreground">Enhanced content with custom styling</p>
+                    <p className="text-sm text-muted">Enhanced content with custom styling</p>
                   </div>
                   <div className="flex items-center space-x-2">
                     <NBadge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">#{item}</NBadge>
@@ -477,7 +477,7 @@ const InfiniteScroll = () => {
             ))}
           </NInfiniteScroll>
 
-          <div className="mt-4 p-3 bg-card rounded-lg">
+          <div className="mt-4 p-3 bg-surface rounded-lg">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="font-medium">Items Loaded:</span>
@@ -500,14 +500,14 @@ const InfiniteScroll = () => {
 
       {/* Summary */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Infinite Scroll Summary</h2>
-        <p className="text-muted-foreground mb-4">Overview of all infinite scroll implementations and their current states.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Infinite Scroll Summary</h2>
+        <p className="text-muted mb-4">Overview of all infinite scroll implementations and their current states.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <NCard className="p-4 text-center">
             <h3 className="font-semibold mb-2">Basic Items</h3>
             <div className="text-2xl font-bold text-blue-600 mb-1">{basicItems.length}</div>
-            <p className="text-sm text-muted-foreground">Simple items loaded</p>
+            <p className="text-sm text-muted">Simple items loaded</p>
             <div className="mt-2">
               <NBadge className={basicFetching ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}>
                 {basicFetching ? 'Loading...' : 'Ready'}
@@ -518,7 +518,7 @@ const InfiniteScroll = () => {
           <NCard className="p-4 text-center">
             <h3 className="font-semibold mb-2">Social Posts</h3>
             <div className="text-2xl font-bold text-purple-600 mb-1">{posts.length}</div>
-            <p className="text-sm text-muted-foreground">Posts in feed</p>
+            <p className="text-sm text-muted">Posts in feed</p>
             <div className="mt-2">
               <NBadge className={postsFetching ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}>
                 {postsFetching ? 'Loading...' : 'Ready'}
@@ -529,7 +529,7 @@ const InfiniteScroll = () => {
           <NCard className="p-4 text-center">
             <h3 className="font-semibold mb-2">Products</h3>
             <div className="text-2xl font-bold text-green-600 mb-1">{products.length}</div>
-            <p className="text-sm text-muted-foreground">Products listed</p>
+            <p className="text-sm text-muted">Products listed</p>
             <div className="mt-2">
               <NBadge className={productsFetching ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}>
                 {productsFetching ? 'Loading...' : 'Ready'}
@@ -540,7 +540,7 @@ const InfiniteScroll = () => {
           <NCard className="p-4 text-center">
             <h3 className="font-semibold mb-2">Notifications</h3>
             <div className="text-2xl font-bold text-red-600 mb-1">{notifications.length}</div>
-            <p className="text-sm text-muted-foreground">Notifications shown</p>
+            <p className="text-sm text-muted">Notifications shown</p>
             <div className="mt-2">
               <NBadge className={notificationsFetching ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}>
                 {notificationsFetching ? 'Loading...' : 'Ready'}

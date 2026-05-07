@@ -9,7 +9,7 @@ const FeaturesItem = (props: Props) => {
   return (
     <div className="col-span-1 justify-center">
       <div className="text-base text mb-2 flex">
-        <span className="mr-3 text-primary">
+        <span className="mr-3 text-accent">
           <Icon size="1.3em" />
         </span>
         <span className="font-medium">{props.title}</span>

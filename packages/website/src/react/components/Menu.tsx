@@ -49,8 +49,8 @@ const Menu = () => {
     <ComponentWrapper>
       {/* Basic Menu */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Menu</h2>
-        <p className="text-muted-foreground mb-4">Simple menu with basic items and actions.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Menu</h2>
+        <p className="text-muted mb-4">Simple menu with basic items and actions.</p>
 
         <div className="flex flex-wrap gap-4">
           <NMenu
@@ -77,8 +77,8 @@ const Menu = () => {
 
       {/* Menu Sizes */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Menu Sizes</h2>
-        <p className="text-muted-foreground mb-4">Menus in different sizes for various contexts.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Menu Sizes</h2>
+        <p className="text-muted mb-4">Menus in different sizes for various contexts.</p>
 
         <div className="flex flex-wrap gap-4">
           <NMenu align="start" title="Small Menu" size={MenuSize.SM} trigger={<NButton className="text-sm px-3 py-1">Small Menu</NButton>}>
@@ -104,8 +104,8 @@ const Menu = () => {
 
       {/* Nested Menus */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Nested Menus</h2>
-        <p className="text-muted-foreground mb-4">Multi-level menus with nested submenus.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Nested Menus</h2>
+        <p className="text-muted mb-4">Multi-level menus with nested submenus.</p>
 
         <div className="flex flex-wrap gap-4">
           <NMenu
@@ -156,8 +156,8 @@ const Menu = () => {
 
       {/* Menu Alignment */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Menu Alignment</h2>
-        <p className="text-muted-foreground mb-4">Menus with different alignment options.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Menu Alignment</h2>
+        <p className="text-muted mb-4">Menus with different alignment options.</p>
 
         <div className="flex flex-wrap gap-4 justify-center">
           <NMenu align="start" title="Left Aligned" trigger={<NButton>Left Align</NButton>}>
@@ -182,8 +182,8 @@ const Menu = () => {
 
       {/* Context Menus */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Context Menus</h2>
-        <p className="text-muted-foreground mb-4">Contextual menus for different scenarios and use cases.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Context Menus</h2>
+        <p className="text-muted mb-4">Contextual menus for different scenarios and use cases.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Table Row Context Menu */}
@@ -256,7 +256,7 @@ const Menu = () => {
                   <NMenuItem title="Archive" icon={Archive} separator={true} onClick={() => handleMenuAction('Archive - Project Alpha')} />
                 </NMenu>
               </div>
-              <p className="text-sm text-muted-foreground">Active project with 5 tasks</p>
+              <p className="text-sm text-muted">Active project with 5 tasks</p>
             </div>
           </NCard>
         </div>
@@ -264,8 +264,8 @@ const Menu = () => {
 
       {/* Custom Styled Menus */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Styled Menus</h2>
-        <p className="text-muted-foreground mb-4">Menus with custom styling and appearances.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Styled Menus</h2>
+        <p className="text-muted mb-4">Menus with custom styling and appearances.</p>
 
         <div className="flex flex-wrap gap-4">
           <NMenu
@@ -320,8 +320,8 @@ const Menu = () => {
 
       {/* Menu with Separators */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Menu with Separators</h2>
-        <p className="text-muted-foreground mb-4">Organized menus using separators to group related items.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Menu with Separators</h2>
+        <p className="text-muted mb-4">Organized menus using separators to group related items.</p>
 
         <div className="flex flex-wrap gap-4">
           <NMenu
@@ -352,20 +352,20 @@ const Menu = () => {
 
       {/* Interactive Menu Demo */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Interactive Menu Demo</h2>
-        <p className="text-muted-foreground mb-4">Try the menus above and see the actions logged below.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Interactive Menu Demo</h2>
+        <p className="text-muted mb-4">Try the menus above and see the actions logged below.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <NCard className="p-4">
             <h3 className="font-medium mb-3">Last Action</h3>
-            <div className="p-3 bg-card rounded text-center">
+            <div className="p-3 bg-surface rounded text-center">
               {selectedAction ? (
                 <div>
                   <p className="font-medium text-blue-600">{selectedAction}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Action triggered</p>
+                  <p className="text-xs text-muted mt-1">Action triggered</p>
                 </div>
               ) : (
-                <p className="text-muted-foreground">No action selected yet</p>
+                <p className="text-muted">No action selected yet</p>
               )}
             </div>
           </NCard>
@@ -378,12 +378,12 @@ const Menu = () => {
                   .slice(-5)
                   .reverse()
                   .map((action, index) => (
-                    <div key={index} className="text-xs p-2 bg-card rounded">
+                    <div key={index} className="text-xs p-2 bg-surface rounded">
                       {action}
                     </div>
                   ))
               ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">No actions yet</p>
+                <p className="text-sm text-muted text-center py-4">No actions yet</p>
               )}
             </div>
           </NCard>
@@ -392,8 +392,8 @@ const Menu = () => {
 
       {/* Menu Best Practices */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Menu Best Practices</h2>
-        <p className="text-muted-foreground mb-4">Guidelines for effective menu design and implementation.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Menu Best Practices</h2>
+        <p className="text-muted mb-4">Guidelines for effective menu design and implementation.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NCard className="p-4 border-green-200 bg-green-50 dark:bg-green-900/20">
@@ -426,26 +426,26 @@ const Menu = () => {
 
       {/* Menu State Summary */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Menu State Summary</h2>
-        <p className="text-muted-foreground mb-4">Current state of interactive menu examples.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Menu State Summary</h2>
+        <p className="text-muted mb-4">Current state of interactive menu examples.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <NCard className="p-4 text-center">
             <h3 className="font-medium mb-2">Total Actions</h3>
             <div className="text-2xl font-bold text-blue-600 mb-1">{menuActions.length}</div>
-            <p className="text-sm text-muted-foreground">Menu interactions</p>
+            <p className="text-sm text-muted">Menu interactions</p>
           </NCard>
 
           <NCard className="p-4 text-center">
             <h3 className="font-medium mb-2">Last Action</h3>
             <div className="text-sm font-medium mb-1 truncate">{selectedAction || 'None'}</div>
-            <p className="text-sm text-muted-foreground">Most recent</p>
+            <p className="text-sm text-muted">Most recent</p>
           </NCard>
 
           <NCard className="p-4 text-center">
             <h3 className="font-medium mb-2">Favorites</h3>
             <div className="text-2xl font-bold text-yellow-600 mb-1">{favoriteItems.length}</div>
-            <p className="text-sm text-muted-foreground">Starred items</p>
+            <p className="text-sm text-muted">Starred items</p>
           </NCard>
         </div>
       </div>

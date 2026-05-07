@@ -78,8 +78,8 @@ const Sheet = () => {
     <ComponentWrapper>
       {/* Basic Sheet Examples */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Sheet Examples</h2>
-        <p className="text-muted-foreground mb-4">Simple sheet components with different content types.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Sheet Examples</h2>
+        <p className="text-muted mb-4">Simple sheet components with different content types.</p>
 
         <div className="flex flex-wrap gap-3">
           <NButton
@@ -100,14 +100,14 @@ const Sheet = () => {
             handleSheetAction('Closed Basic Sheet');
           }}>
           <div className="p-4 space-y-4">
-            <p className="text-muted-foreground">
+            <p className="text-muted">
               This is a basic sheet component. Sheets are slide-out panels that can contain any content and are perfect for forms, settings, or
               additional information without leaving the current page.
             </p>
 
-            <div className="bg-card p-4 rounded-lg">
+            <div className="bg-surface p-4 rounded-lg">
               <h4 className="font-medium mb-2">Sheet Features:</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
+              <ul className="text-sm text-muted space-y-1">
                 <li>• Slides in from the right side</li>
                 <li>• Overlay background with click-to-close</li>
                 <li>• Customizable sizes and titles</li>
@@ -139,8 +139,8 @@ const Sheet = () => {
 
       {/* Sheet Sizes */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Sheet Sizes</h2>
-        <p className="text-muted-foreground mb-4">Different sheet sizes for various content needs.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Sheet Sizes</h2>
+        <p className="text-muted mb-4">Different sheet sizes for various content needs.</p>
 
         <div className="flex flex-wrap gap-3">
           <NButton
@@ -183,7 +183,7 @@ const Sheet = () => {
             handleSheetAction('Closed Small Sheet');
           }}>
           <div className="p-4">
-            <p className="text-muted-foreground mb-4">Small sheets are perfect for quick actions, notifications, or simple forms.</p>
+            <p className="text-muted mb-4">Small sheets are perfect for quick actions, notifications, or simple forms.</p>
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
                 <Check className="w-4 h-4 text-green-500" />
@@ -207,7 +207,7 @@ const Sheet = () => {
             handleSheetAction('Closed Medium Sheet');
           }}>
           <div className="p-4 space-y-4">
-            <p className="text-muted-foreground">Medium sheets provide more space for detailed content, forms, or lists.</p>
+            <p className="text-muted">Medium sheets provide more space for detailed content, forms, or lists.</p>
 
             <div className="grid grid-cols-2 gap-4">
               <NCard className="p-3">
@@ -216,7 +216,7 @@ const Sheet = () => {
                   <span className="font-medium">Downloads</span>
                 </div>
                 <p className="text-2xl font-bold">1,234</p>
-                <p className="text-sm text-muted-foreground">This month</p>
+                <p className="text-sm text-muted">This month</p>
               </NCard>
 
               <NCard className="p-3">
@@ -225,7 +225,7 @@ const Sheet = () => {
                   <span className="font-medium">Uploads</span>
                 </div>
                 <p className="text-2xl font-bold">567</p>
-                <p className="text-sm text-muted-foreground">This month</p>
+                <p className="text-sm text-muted">This month</p>
               </NCard>
             </div>
           </div>
@@ -241,7 +241,7 @@ const Sheet = () => {
             handleSheetAction('Closed Large Sheet');
           }}>
           <div className="p-4 space-y-6">
-            <p className="text-muted-foreground">Large sheets are ideal for complex forms, detailed views, or multi-step processes.</p>
+            <p className="text-muted">Large sheets are ideal for complex forms, detailed views, or multi-step processes.</p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[1, 2, 3, 4, 5, 6].map(item => (
@@ -252,7 +252,7 @@ const Sheet = () => {
                     </div>
                     <div>
                       <h4 className="font-medium">Item {item}</h4>
-                      <p className="text-sm text-muted-foreground">Description for item {item}</p>
+                      <p className="text-sm text-muted">Description for item {item}</p>
                     </div>
                   </div>
                 </NCard>
@@ -271,7 +271,7 @@ const Sheet = () => {
             handleSheetAction('Closed Full Sheet');
           }}>
           <div className="p-4 space-y-6">
-            <p className="text-muted-foreground">
+            <p className="text-muted">
               Full width sheets take up the entire viewport width, perfect for complex dashboards or detailed editing interfaces.
             </p>
 
@@ -283,7 +283,7 @@ const Sheet = () => {
                       <h4 className="font-medium">Section {i + 1}</h4>
                       <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     </div>
-                    <p className="text-sm text-muted-foreground">This is a content section with various information and controls.</p>
+                    <p className="text-sm text-muted">This is a content section with various information and controls.</p>
                     <div className="flex space-x-2">
                       <NButton size="sm" isOutline>
                         Edit
@@ -302,8 +302,8 @@ const Sheet = () => {
 
       {/* Settings Sheet */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Settings Sheet</h2>
-        <p className="text-muted-foreground mb-4">Sheet with form controls for application settings.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Settings Sheet</h2>
+        <p className="text-muted mb-4">Sheet with form controls for application settings.</p>
 
         <NButton
           onClick={() => {
@@ -404,8 +404,8 @@ const Sheet = () => {
 
       {/* Profile Sheet */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Profile Sheet</h2>
-        <p className="text-muted-foreground mb-4">Sheet for editing user profile information.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Profile Sheet</h2>
+        <p className="text-muted mb-4">Sheet for editing user profile information.</p>
 
         <NButton
           onClick={() => {
@@ -431,7 +431,7 @@ const Sheet = () => {
               </div>
               <div>
                 <h3 className="font-medium">{profileData.name}</h3>
-                <p className="text-sm text-muted-foreground">{profileData.email}</p>
+                <p className="text-sm text-muted">{profileData.email}</p>
               </div>
             </div>
 
@@ -499,8 +499,8 @@ const Sheet = () => {
 
       {/* Action Sheet */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Action Sheet</h2>
-        <p className="text-muted-foreground mb-4">Sheet with action buttons for quick operations.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Action Sheet</h2>
+        <p className="text-muted mb-4">Sheet with action buttons for quick operations.</p>
 
         <NButton
           onClick={() => {
@@ -581,13 +581,11 @@ const Sheet = () => {
               </div>
               <div>
                 <h3 className="font-medium">Delete Item</h3>
-                <p className="text-sm text-muted-foreground">This action cannot be undone.</p>
+                <p className="text-sm text-muted">This action cannot be undone.</p>
               </div>
             </div>
 
-            <p className="text-sm text-muted-foreground">
-              Are you sure you want to delete this item? All associated data will be permanently removed.
-            </p>
+            <p className="text-sm text-muted">Are you sure you want to delete this item? All associated data will be permanently removed.</p>
 
             <div className="flex justify-end space-x-2 pt-4">
               <NButton
@@ -613,8 +611,8 @@ const Sheet = () => {
 
       {/* Sheet Best Practices */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Sheet Best Practices</h2>
-        <p className="text-muted-foreground mb-4">Guidelines for effective sheet implementation.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Sheet Best Practices</h2>
+        <p className="text-muted mb-4">Guidelines for effective sheet implementation.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NCard className="p-4 border-green-200 bg-green-50 dark:bg-green-900/20">
@@ -647,8 +645,8 @@ const Sheet = () => {
 
       {/* Sheet Activity Summary */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Sheet Activity Summary</h2>
-        <p className="text-muted-foreground mb-4">Track all sheet interactions and actions.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Sheet Activity Summary</h2>
+        <p className="text-muted mb-4">Track all sheet interactions and actions.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <NCard className="p-4">
@@ -659,12 +657,12 @@ const Sheet = () => {
                   .slice(-10)
                   .reverse()
                   .map((action, index) => (
-                    <div key={index} className="text-sm p-2 bg-card rounded">
+                    <div key={index} className="text-sm p-2 bg-surface rounded">
                       {action}
                     </div>
                   ))
               ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">No sheet actions yet. Try opening some sheets above.</p>
+                <p className="text-sm text-muted text-center py-4">No sheet actions yet. Try opening some sheets above.</p>
               )}
             </div>
           </NCard>
@@ -673,27 +671,27 @@ const Sheet = () => {
             <h3 className="font-medium mb-3">Current Sheet States</h3>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Basic Sheet:</span>
+                <span className="text-muted">Basic Sheet:</span>
                 <span className={`font-medium ${basicSheet ? 'text-green-600' : 'text-gray-500'}`}>{basicSheet ? 'Open' : 'Closed'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Settings Sheet:</span>
+                <span className="text-muted">Settings Sheet:</span>
                 <span className={`font-medium ${settingsSheet ? 'text-green-600' : 'text-gray-500'}`}>{settingsSheet ? 'Open' : 'Closed'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Profile Sheet:</span>
+                <span className="text-muted">Profile Sheet:</span>
                 <span className={`font-medium ${profileSheet ? 'text-green-600' : 'text-gray-500'}`}>{profileSheet ? 'Open' : 'Closed'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Action Sheet:</span>
+                <span className="text-muted">Action Sheet:</span>
                 <span className={`font-medium ${actionSheet ? 'text-green-600' : 'text-gray-500'}`}>{actionSheet ? 'Open' : 'Closed'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Confirm Sheet:</span>
+                <span className="text-muted">Confirm Sheet:</span>
                 <span className={`font-medium ${confirmSheet ? 'text-green-600' : 'text-gray-500'}`}>{confirmSheet ? 'Open' : 'Closed'}</span>
               </div>
               <div className="pt-2 border-t">
-                <div className="text-xs text-muted-foreground">Total actions: {sheetHistory.length}</div>
+                <div className="text-xs text-muted">Total actions: {sheetHistory.length}</div>
               </div>
             </div>
           </NCard>

@@ -115,8 +115,8 @@ const RadioGroup = () => {
     <ComponentWrapper>
       {/* Basic Radio Groups */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Radio Groups</h2>
-        <p className="text-muted-foreground mb-4">Simple radio groups with horizontal and vertical orientations.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Radio Groups</h2>
+        <p className="text-muted mb-4">Simple radio groups with horizontal and vertical orientations.</p>
 
         <div className="space-y-6">
           <div>
@@ -129,7 +129,7 @@ const RadioGroup = () => {
                 handleSelectionChange('Basic Horizontal', basicItems.find(item => item.value === value)?.label || value);
               }}
             />
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-muted mt-2">
               Selected: <span className="font-medium">{basicItems.find(item => item.value === basicSelection)?.label}</span>
             </p>
           </div>
@@ -145,7 +145,7 @@ const RadioGroup = () => {
                 handleSelectionChange('Basic Vertical', basicItems.find(item => item.value === value)?.label || value);
               }}
             />
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-muted mt-2">
               Selected: <span className="font-medium">{basicItems.find(item => item.value === orientationSelection)?.label}</span>
             </p>
           </div>
@@ -154,8 +154,8 @@ const RadioGroup = () => {
 
       {/* Radio Groups with Descriptions */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Radio Groups with Descriptions</h2>
-        <p className="text-muted-foreground mb-4">Radio groups with additional descriptive text for each option.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Radio Groups with Descriptions</h2>
+        <p className="text-muted mb-4">Radio groups with additional descriptive text for each option.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <NCard className="p-4">
@@ -194,8 +194,8 @@ const RadioGroup = () => {
 
       {/* Settings Radio Groups */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Settings Radio Groups</h2>
-        <p className="text-muted-foreground mb-4">Radio groups commonly used in settings and preferences.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Settings Radio Groups</h2>
+        <p className="text-muted mb-4">Radio groups commonly used in settings and preferences.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <NCard className="p-4">
@@ -234,8 +234,8 @@ const RadioGroup = () => {
 
       {/* Device Selection */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Device Selection</h2>
-        <p className="text-muted-foreground mb-4">Radio group for selecting device types with icons and descriptions.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Device Selection</h2>
+        <p className="text-muted mb-4">Radio group for selecting device types with icons and descriptions.</p>
 
         <NCard className="p-4">
           <h3 className="font-medium mb-4 flex items-center space-x-2">
@@ -252,20 +252,20 @@ const RadioGroup = () => {
             }}
           />
 
-          <div className="mt-4 p-3 bg-card rounded">
+          <div className="mt-4 p-3 bg-surface rounded">
             <div className="flex items-center space-x-2 text-sm">
-              <span className="text-muted-foreground">Selected device:</span>
+              <span className="text-muted">Selected device:</span>
               <span className="font-medium">{deviceItems.find(item => item.value === deviceType)?.label}</span>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">{deviceItems.find(item => item.value === deviceType)?.description}</p>
+            <p className="text-xs text-muted mt-1">{deviceItems.find(item => item.value === deviceType)?.description}</p>
           </div>
         </NCard>
       </div>
 
       {/* Survey Form */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Survey Form</h2>
-        <p className="text-muted-foreground mb-4">Multiple radio groups in a survey format.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Survey Form</h2>
+        <p className="text-muted mb-4">Multiple radio groups in a survey format.</p>
 
         <NCard className="p-6">
           <h3 className="font-medium mb-6">Customer Satisfaction Survey</h3>
@@ -313,15 +313,15 @@ const RadioGroup = () => {
               <h4 className="font-medium mb-2">Survey Summary</h4>
               <div className="text-sm space-y-1">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Satisfaction:</span>
+                  <span className="text-muted">Satisfaction:</span>
                   <span className="font-medium">{satisfactionItems.find(item => item.value === surveyAnswers.satisfaction)?.label}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Recommendation:</span>
+                  <span className="text-muted">Recommendation:</span>
                   <span className="font-medium">{recommendationItems.find(item => item.value === surveyAnswers.recommendation)?.label}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Usage Frequency:</span>
+                  <span className="text-muted">Usage Frequency:</span>
                   <span className="font-medium">{frequencyItems.find(item => item.value === surveyAnswers.frequency)?.label}</span>
                 </div>
               </div>
@@ -332,11 +332,11 @@ const RadioGroup = () => {
 
       {/* Custom Styled Radio Groups */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Styled Radio Groups</h2>
-        <p className="text-muted-foreground mb-4">Radio groups with custom styling and visual enhancements.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Styled Radio Groups</h2>
+        <p className="text-muted mb-4">Radio groups with custom styling and visual enhancements.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <NCard className="p-4 border-blue-200 bg-card">
+          <NCard className="p-4 border-blue-200 bg-surface">
             <h3 className="font-medium mb-4 text-blue-800 dark:text-blue-200">Priority Level</h3>
             <NRadioGroup
               orientation="vertical"
@@ -370,8 +370,8 @@ const RadioGroup = () => {
 
       {/* Radio Group Best Practices */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Radio Group Best Practices</h2>
-        <p className="text-muted-foreground mb-4">Guidelines for effective radio group implementation.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Radio Group Best Practices</h2>
+        <p className="text-muted mb-4">Guidelines for effective radio group implementation.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NCard className="p-4 border-green-200 bg-green-50 dark:bg-green-900/20">
@@ -404,8 +404,8 @@ const RadioGroup = () => {
 
       {/* Selection History */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Selection History</h2>
-        <p className="text-muted-foreground mb-4">Track all radio group selections made above.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Selection History</h2>
+        <p className="text-muted mb-4">Track all radio group selections made above.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <NCard className="p-4">
@@ -416,12 +416,12 @@ const RadioGroup = () => {
                   .slice(-10)
                   .reverse()
                   .map((selection, index) => (
-                    <div key={index} className="text-sm p-2 bg-card rounded">
+                    <div key={index} className="text-sm p-2 bg-surface rounded">
                       {selection}
                     </div>
                   ))
               ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">No selections made yet. Try selecting options above.</p>
+                <p className="text-sm text-muted text-center py-4">No selections made yet. Try selecting options above.</p>
               )}
             </div>
           </NCard>
@@ -430,27 +430,27 @@ const RadioGroup = () => {
             <h3 className="font-medium mb-3">Current Selections Summary</h3>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Basic Horizontal:</span>
+                <span className="text-muted">Basic Horizontal:</span>
                 <span className="font-medium">{basicItems.find(item => item.value === basicSelection)?.label}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Payment Method:</span>
+                <span className="text-muted">Payment Method:</span>
                 <span className="font-medium">{paymentItems.find(item => item.value === paymentMethod)?.label}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Delivery Option:</span>
+                <span className="text-muted">Delivery Option:</span>
                 <span className="font-medium">{deliveryItems.find(item => item.value === deliveryOption)?.label}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Theme:</span>
+                <span className="text-muted">Theme:</span>
                 <span className="font-medium">{themeItems.find(item => item.value === themePreference)?.label}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Device:</span>
+                <span className="text-muted">Device:</span>
                 <span className="font-medium">{deviceItems.find(item => item.value === deviceType)?.label}</span>
               </div>
               <div className="pt-2 border-t">
-                <div className="text-xs text-muted-foreground">Total selections: {selectionHistory.length}</div>
+                <div className="text-xs text-muted">Total selections: {selectionHistory.length}</div>
               </div>
             </div>
           </NCard>

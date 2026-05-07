@@ -10,8 +10,8 @@ const Alert = () => {
     <ComponentWrapper>
       {/* Basic Alert Types */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Alert Types</h2>
-        <p className="text-muted-foreground mb-4">Different alert types for various contexts.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Alert Types</h2>
+        <p className="text-muted mb-4">Different alert types for various contexts.</p>
 
         <div className="space-y-3">
           <NAlert type={AlertTypes.DEFAULT} message="This is a default alert message." />
@@ -28,8 +28,8 @@ const Alert = () => {
 
       {/* Alerts with Titles */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Alerts with Titles</h2>
-        <p className="text-muted-foreground mb-4">Add titles to provide more context.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Alerts with Titles</h2>
+        <p className="text-muted mb-4">Add titles to provide more context.</p>
 
         <div className="space-y-3">
           <NAlert type={AlertTypes.INFO} title="Information" message="Here's some important information you should know about." />
@@ -44,8 +44,8 @@ const Alert = () => {
 
       {/* Dismissible Alerts */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Dismissible Alerts</h2>
-        <p className="text-muted-foreground mb-4">Alerts that can be closed by users.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Dismissible Alerts</h2>
+        <p className="text-muted mb-4">Alerts that can be closed by users.</p>
 
         <div className="space-y-3">
           {showDismissible && (
@@ -60,7 +60,7 @@ const Alert = () => {
           <NAlert type={AlertTypes.WARNING} message="This alert can also be dismissed." onClose={() => alert('Alert dismissed!')} />
 
           {!showDismissible && (
-            <button onClick={() => setShowDismissible(true)} className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90">
+            <button onClick={() => setShowDismissible(true)} className="px-4 py-2 bg-accent text-accent-foreground rounded hover:bg-accent/90">
               Show Dismissible Alert Again
             </button>
           )}
@@ -69,8 +69,8 @@ const Alert = () => {
 
       {/* Custom Icons */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Icons</h2>
-        <p className="text-muted-foreground mb-4">Override default icons with custom ones.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Icons</h2>
+        <p className="text-muted mb-4">Override default icons with custom ones.</p>
 
         <div className="space-y-3">
           <NAlert type={AlertTypes.INFO} icon={<Info className="h-4 w-4" />} message="Custom info icon alert." />
@@ -86,8 +86,8 @@ const Alert = () => {
 
       {/* Custom Actions */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Alerts with Actions</h2>
-        <p className="text-muted-foreground mb-4">Add custom action buttons to alerts.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Alerts with Actions</h2>
+        <p className="text-muted mb-4">Add custom action buttons to alerts.</p>
 
         <div className="space-y-3">
           <NAlert
@@ -96,8 +96,8 @@ const Alert = () => {
             message="A new version of the application is available."
             actions={
               <div className="flex gap-2 mt-2">
-                <button className="px-3 py-1 bg-primary text-primary-foreground text-sm rounded hover:bg-primary/90">Update Now</button>
-                <button className="px-3 py-1 bg-secondary text-secondary-foreground text-sm rounded hover:bg-secondary/90">Later</button>
+                <button className="px-3 py-1 bg-accent text-accent-foreground text-sm rounded hover:bg-accent/90">Update Now</button>
+                <button className="px-3 py-1 bg-default text-default-foreground text-sm rounded hover:bg-default/90">Later</button>
               </div>
             }
           />
@@ -106,19 +106,15 @@ const Alert = () => {
             type={AlertTypes.ERROR}
             title="Connection Failed"
             message="Unable to connect to the server."
-            actions={
-              <button className="px-3 py-1 bg-destructive text-destructive-foreground text-sm rounded hover:bg-destructive/90 mt-2">
-                Retry Connection
-              </button>
-            }
+            actions={<button className="px-3 py-1 bg-danger text-danger-foreground text-sm rounded hover:bg-danger/90 mt-2">Retry Connection</button>}
           />
         </div>
       </div>
 
       {/* Custom Styling */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Styling</h2>
-        <p className="text-muted-foreground mb-4">Customize appearance with className props.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Styling</h2>
+        <p className="text-muted mb-4">Customize appearance with className props.</p>
 
         <div className="space-y-3">
           <NAlert
@@ -141,8 +137,8 @@ const Alert = () => {
 
       {/* Using Children Instead of Message */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Rich Content</h2>
-        <p className="text-muted-foreground mb-4">Use children prop for rich content instead of simple message.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Rich Content</h2>
+        <p className="text-muted mb-4">Use children prop for rich content instead of simple message.</p>
 
         <div className="space-y-3">
           <NAlert type={AlertTypes.INFO} title="Rich Content Alert">
@@ -155,7 +151,7 @@ const Alert = () => {
               </ul>
               <p className="mt-2 text-sm">
                 Learn more in our{' '}
-                <a href="#" className="text-primary underline">
+                <a href="#" className="text-accent underline">
                   documentation
                 </a>
                 .
@@ -167,8 +163,8 @@ const Alert = () => {
 
       {/* Accessibility Features */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Accessibility</h2>
-        <p className="text-muted-foreground mb-4">Alerts with proper ARIA roles and labels.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Accessibility</h2>
+        <p className="text-muted mb-4">Alerts with proper ARIA roles and labels.</p>
 
         <div className="space-y-3">
           <NAlert type={AlertTypes.ERROR} title="Critical Error" message="This is a critical error that requires immediate attention." role="alert" />

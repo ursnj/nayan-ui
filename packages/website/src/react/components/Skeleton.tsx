@@ -58,8 +58,8 @@ const Skeleton = () => {
     <ComponentWrapper>
       {/* Basic Skeleton Examples */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Skeleton Examples</h2>
-        <p className="text-muted-foreground mb-4">Simple skeleton components for different content types.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Skeleton Examples</h2>
+        <p className="text-muted mb-4">Simple skeleton components for different content types.</p>
 
         <div className="space-y-6">
           <div>
@@ -97,8 +97,8 @@ const Skeleton = () => {
 
       {/* Card Skeleton Layouts */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Card Skeleton Layouts</h2>
-        <p className="text-muted-foreground mb-4">Skeleton layouts for different card types.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Card Skeleton Layouts</h2>
+        <p className="text-muted mb-4">Skeleton layouts for different card types.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Profile Card Skeleton */}
@@ -153,8 +153,8 @@ const Skeleton = () => {
 
       {/* Interactive Loading Demo */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Interactive Loading Demo</h2>
-        <p className="text-muted-foreground mb-4">Toggle between skeleton and loaded states.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Interactive Loading Demo</h2>
+        <p className="text-muted mb-4">Toggle between skeleton and loaded states.</p>
 
         <div className="space-y-4">
           <div className="flex space-x-2">
@@ -181,8 +181,8 @@ const Skeleton = () => {
                 </div>
                 <div>
                   <h4 className="font-medium">John Doe</h4>
-                  <p className="text-sm text-muted-foreground">Software Engineer</p>
-                  <p className="text-sm text-muted-foreground">San Francisco, CA</p>
+                  <p className="text-sm text-muted">Software Engineer</p>
+                  <p className="text-sm text-muted">San Francisco, CA</p>
                 </div>
               </div>
             )}
@@ -192,8 +192,8 @@ const Skeleton = () => {
 
       {/* List Skeleton */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">List Skeleton</h2>
-        <p className="text-muted-foreground mb-4">Skeleton for list items and feeds.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">List Skeleton</h2>
+        <p className="text-muted mb-4">Skeleton for list items and feeds.</p>
 
         <NCard className="p-4">
           <h3 className="font-medium mb-4">Recent Activity</h3>
@@ -222,9 +222,9 @@ const Skeleton = () => {
                     </div>
                     <div className="flex-1">
                       <p className="text-sm">{item.text}</p>
-                      <p className="text-xs text-muted-foreground">{item.time}</p>
+                      <p className="text-xs text-muted">{item.time}</p>
                     </div>
-                    <span className="text-xs text-muted-foreground bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">New</span>
+                    <span className="text-xs text-muted bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">New</span>
                   </div>
                 ))}
           </div>
@@ -233,8 +233,8 @@ const Skeleton = () => {
 
       {/* Table Skeleton */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Table Skeleton</h2>
-        <p className="text-muted-foreground mb-4">Skeleton for data tables and structured content.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Table Skeleton</h2>
+        <p className="text-muted mb-4">Skeleton for data tables and structured content.</p>
 
         <NCard className="p-4">
           <h3 className="font-medium mb-4">User Management</h3>
@@ -288,7 +288,7 @@ const Skeleton = () => {
                             <span className="text-sm">{user.name}</span>
                           </div>
                         </td>
-                        <td className="py-3 text-sm text-muted-foreground">{user.email}</td>
+                        <td className="py-3 text-sm text-muted">{user.email}</td>
                         <td className="py-3 text-sm">{user.role}</td>
                         <td className="py-3">
                           <span
@@ -313,8 +313,8 @@ const Skeleton = () => {
 
       {/* Dashboard Skeleton */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Dashboard Skeleton</h2>
-        <p className="text-muted-foreground mb-4">Complex skeleton layout for dashboard interfaces.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Dashboard Skeleton</h2>
+        <p className="text-muted mb-4">Complex skeleton layout for dashboard interfaces.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {dashboardLoading
@@ -339,7 +339,7 @@ const Skeleton = () => {
                 <NCard key={i} className="p-4">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">{stat.title}</span>
+                      <span className="text-sm text-muted">{stat.title}</span>
                       <stat.icon className={`w-4 h-4 ${stat.color}`} />
                     </div>
                     <div className="text-2xl font-bold">{stat.value}</div>
@@ -365,15 +365,15 @@ const Skeleton = () => {
               <div className="space-y-4">
                 <div>
                   <p className="text-sm">New user registration spike detected</p>
-                  <p className="text-xs text-muted-foreground">2 minutes ago</p>
+                  <p className="text-xs text-muted">2 minutes ago</p>
                 </div>
                 <div>
                   <p className="text-sm">Payment gateway updated successfully</p>
-                  <p className="text-xs text-muted-foreground">15 minutes ago</p>
+                  <p className="text-xs text-muted">15 minutes ago</p>
                 </div>
                 <div>
                   <p className="text-sm">Database backup completed</p>
-                  <p className="text-xs text-muted-foreground">1 hour ago</p>
+                  <p className="text-xs text-muted">1 hour ago</p>
                 </div>
               </div>
             )}
@@ -411,8 +411,8 @@ const Skeleton = () => {
 
       {/* Skeleton Best Practices */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Skeleton Best Practices</h2>
-        <p className="text-muted-foreground mb-4">Guidelines for effective skeleton implementation.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Skeleton Best Practices</h2>
+        <p className="text-muted mb-4">Guidelines for effective skeleton implementation.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NCard className="p-4 border-green-200 bg-green-50 dark:bg-green-900/20">
@@ -445,35 +445,35 @@ const Skeleton = () => {
 
       {/* Loading States Summary */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Loading States Summary</h2>
-        <p className="text-muted-foreground mb-4">Current loading states across all examples.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Loading States Summary</h2>
+        <p className="text-muted mb-4">Current loading states across all examples.</p>
 
         <NCard className="p-4">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
             <div className="text-center">
               <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${isLoading ? 'bg-orange-500' : 'bg-green-500'}`}></div>
               <div className="font-medium">Profile</div>
-              <div className="text-muted-foreground">{isLoading ? 'Loading' : 'Loaded'}</div>
+              <div className="text-muted">{isLoading ? 'Loading' : 'Loaded'}</div>
             </div>
             <div className="text-center">
               <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${cardLoading ? 'bg-orange-500' : 'bg-green-500'}`}></div>
               <div className="font-medium">Cards</div>
-              <div className="text-muted-foreground">{cardLoading ? 'Loading' : 'Loaded'}</div>
+              <div className="text-muted">{cardLoading ? 'Loading' : 'Loaded'}</div>
             </div>
             <div className="text-center">
               <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${listLoading ? 'bg-orange-500' : 'bg-green-500'}`}></div>
               <div className="font-medium">List</div>
-              <div className="text-muted-foreground">{listLoading ? 'Loading' : 'Loaded'}</div>
+              <div className="text-muted">{listLoading ? 'Loading' : 'Loaded'}</div>
             </div>
             <div className="text-center">
               <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${tableLoading ? 'bg-orange-500' : 'bg-green-500'}`}></div>
               <div className="font-medium">Table</div>
-              <div className="text-muted-foreground">{tableLoading ? 'Loading' : 'Loaded'}</div>
+              <div className="text-muted">{tableLoading ? 'Loading' : 'Loaded'}</div>
             </div>
             <div className="text-center">
               <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${dashboardLoading ? 'bg-orange-500' : 'bg-green-500'}`}></div>
               <div className="font-medium">Dashboard</div>
-              <div className="text-muted-foreground">{dashboardLoading ? 'Loading' : 'Loaded'}</div>
+              <div className="text-muted">{dashboardLoading ? 'Loading' : 'Loaded'}</div>
             </div>
           </div>
         </NCard>

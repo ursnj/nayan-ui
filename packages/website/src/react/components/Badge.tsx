@@ -7,8 +7,8 @@ const Badge = () => {
     <ComponentWrapper>
       {/* Basic Badges */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Badges</h2>
-        <p className="text-muted-foreground mb-4">Simple badges with different colors and styles.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Badges</h2>
+        <p className="text-muted mb-4">Simple badges with different colors and styles.</p>
 
         <div className="flex flex-wrap gap-2">
           <NBadge className="bg-gray-100 text-gray-800 border border-gray-300">Default</NBadge>
@@ -21,8 +21,8 @@ const Badge = () => {
 
       {/* Solid Badges */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Solid Badges</h2>
-        <p className="text-muted-foreground mb-4">Badges with solid background colors.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Solid Badges</h2>
+        <p className="text-muted mb-4">Badges with solid background colors.</p>
 
         <div className="flex flex-wrap gap-2">
           <NBadge className="bg-gray-600 text-white">Default</NBadge>
@@ -36,8 +36,8 @@ const Badge = () => {
 
       {/* Badge Sizes */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Badge Sizes</h2>
-        <p className="text-muted-foreground mb-4">Different sizes for various use cases.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Badge Sizes</h2>
+        <p className="text-muted mb-4">Different sizes for various use cases.</p>
 
         <div className="flex flex-wrap items-center gap-3">
           <NBadge className="bg-blue-100 text-blue-800 text-xs px-1.5 py-0.5">Small</NBadge>
@@ -49,8 +49,8 @@ const Badge = () => {
 
       {/* Badges with Icons */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Badges with Icons</h2>
-        <p className="text-muted-foreground mb-4">Add icons to provide more context.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Badges with Icons</h2>
+        <p className="text-muted mb-4">Add icons to provide more context.</p>
 
         <div className="flex flex-wrap gap-2">
           <NBadge className="bg-blue-100 text-blue-800 border border-blue-300 flex items-center gap-1">
@@ -77,8 +77,8 @@ const Badge = () => {
 
       {/* Notification Badges */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Notification Badges</h2>
-        <p className="text-muted-foreground mb-4">Small badges for counts and notifications.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Notification Badges</h2>
+        <p className="text-muted mb-4">Small badges for counts and notifications.</p>
 
         <div className="flex flex-wrap items-center gap-4">
           <div className="relative">
@@ -104,27 +104,27 @@ const Badge = () => {
 
       {/* Status Badges */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Status Badges</h2>
-        <p className="text-muted-foreground mb-4">Indicate status or state with colored badges.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Status Badges</h2>
+        <p className="text-muted mb-4">Indicate status or state with colored badges.</p>
 
         <div className="space-y-3">
           <div className="flex items-center gap-3">
-            <span className="text-text">Order Status:</span>
+            <span className="text-foreground">Order Status:</span>
             <NBadge className="bg-green-100 text-green-800 border border-green-300">Completed</NBadge>
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-text">Payment:</span>
+            <span className="text-foreground">Payment:</span>
             <NBadge className="bg-yellow-100 text-yellow-800 border border-yellow-300">Pending</NBadge>
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-text">Subscription:</span>
+            <span className="text-foreground">Subscription:</span>
             <NBadge className="bg-blue-100 text-blue-800 border border-blue-300">Active</NBadge>
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-text">Account:</span>
+            <span className="text-foreground">Account:</span>
             <NBadge className="bg-red-100 text-red-800 border border-red-300">Suspended</NBadge>
           </div>
         </div>
@@ -132,8 +132,8 @@ const Badge = () => {
 
       {/* Interactive Badges */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Interactive Badges</h2>
-        <p className="text-muted-foreground mb-4">Badges that respond to user interaction.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Interactive Badges</h2>
+        <p className="text-muted mb-4">Badges that respond to user interaction.</p>
 
         <div className="flex flex-wrap gap-2">
           <NBadge
@@ -159,8 +159,8 @@ const Badge = () => {
 
       {/* Custom Shapes */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Shapes</h2>
-        <p className="text-muted-foreground mb-4">Badges with different shapes and borders.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Shapes</h2>
+        <p className="text-muted mb-4">Badges with different shapes and borders.</p>
 
         <div className="flex flex-wrap gap-2">
           <NBadge className="bg-blue-100 text-blue-800 border border-blue-300 rounded-none">Square</NBadge>
@@ -175,8 +175,8 @@ const Badge = () => {
 
       {/* Accessibility Example */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Accessibility</h2>
-        <p className="text-muted-foreground mb-4">Badges with proper ARIA attributes for screen readers.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Accessibility</h2>
+        <p className="text-muted mb-4">Badges with proper ARIA attributes for screen readers.</p>
 
         <div className="flex flex-wrap gap-2">
           <NBadge className="bg-red-100 text-red-800 border border-red-300 flex items-center gap-1" role="status" aria-label="Critical alert">

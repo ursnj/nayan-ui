@@ -7,8 +7,8 @@ const Divider = () => {
     <ComponentWrapper>
       {/* Basic Horizontal Dividers */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Horizontal Dividers</h2>
-        <p className="text-muted-foreground mb-4">Simple horizontal dividers to separate content sections.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Horizontal Dividers</h2>
+        <p className="text-muted mb-4">Simple horizontal dividers to separate content sections.</p>
 
         <div className="space-y-6">
           <div>
@@ -19,18 +19,18 @@ const Divider = () => {
 
           <div>
             <h3 className="font-medium mb-2">Section 1</h3>
-            <p className="text-sm text-muted-foreground mb-4">This is the first section with some content to demonstrate the divider.</p>
+            <p className="text-sm text-muted mb-4">This is the first section with some content to demonstrate the divider.</p>
             <NDivider orientation="horizontal" className="my-4" />
             <h3 className="font-medium mb-2">Section 2</h3>
-            <p className="text-sm text-muted-foreground">This is the second section separated by a horizontal divider.</p>
+            <p className="text-sm text-muted">This is the second section separated by a horizontal divider.</p>
           </div>
         </div>
       </div>
 
       {/* Horizontal Dividers with Text */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Dividers with Text</h2>
-        <p className="text-muted-foreground mb-4">Dividers with text labels for better context.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Dividers with Text</h2>
+        <p className="text-muted mb-4">Dividers with text labels for better context.</p>
 
         <div className="space-y-6">
           <div>
@@ -43,16 +43,16 @@ const Divider = () => {
           </div>
 
           <div>
-            <div className="p-4 bg-card rounded mb-4">
+            <div className="p-4 bg-surface rounded mb-4">
               <h3 className="font-medium">Free Plan</h3>
-              <p className="text-sm text-muted-foreground">Basic features included</p>
+              <p className="text-sm text-muted">Basic features included</p>
             </div>
             <NDivider orientation="horizontal" className="my-4">
               UPGRADE
             </NDivider>
-            <div className="p-4 bg-card rounded">
+            <div className="p-4 bg-surface rounded">
               <h3 className="font-medium">Pro Plan</h3>
-              <p className="text-sm text-muted-foreground">All features included</p>
+              <p className="text-sm text-muted">All features included</p>
             </div>
           </div>
 
@@ -80,8 +80,8 @@ const Divider = () => {
 
       {/* Vertical Dividers */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Vertical Dividers</h2>
-        <p className="text-muted-foreground mb-4">Vertical dividers for inline content separation.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Vertical Dividers</h2>
+        <p className="text-muted mb-4">Vertical dividers for inline content separation.</p>
 
         <div className="space-y-6">
           <div className="flex items-center space-x-4">
@@ -100,7 +100,7 @@ const Divider = () => {
             <button className="px-3 py-1 text-sm text-red-600">Delete</button>
           </div>
 
-          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+          <div className="flex items-center space-x-4 text-sm text-muted">
             <span>Published: March 15, 2024</span>
             <NDivider orientation="vertical" className="h-4" />
             <span>Author: John Doe</span>
@@ -112,8 +112,8 @@ const Divider = () => {
 
       {/* Custom Styled Dividers */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Styled Dividers</h2>
-        <p className="text-muted-foreground mb-4">Dividers with custom colors and styling.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Styled Dividers</h2>
+        <p className="text-muted mb-4">Dividers with custom colors and styling.</p>
 
         <div className="space-y-6">
           <div>
@@ -156,8 +156,8 @@ const Divider = () => {
 
       {/* Dividers with Icons */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Dividers with Icons</h2>
-        <p className="text-muted-foreground mb-4">Dividers enhanced with icons for visual appeal.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Dividers with Icons</h2>
+        <p className="text-muted mb-4">Dividers enhanced with icons for visual appeal.</p>
 
         <div className="space-y-6">
           <div>
@@ -172,21 +172,21 @@ const Divider = () => {
               </div>
             </NDivider>
             <div className="text-center">
-              <p className="text-sm text-muted-foreground">Amazing product! Highly recommended.</p>
+              <p className="text-sm text-muted">Amazing product! Highly recommended.</p>
             </div>
           </div>
 
           <div>
             <div className="p-4 border rounded mb-4">
               <h3 className="font-medium">Favorite Items</h3>
-              <p className="text-sm text-muted-foreground">Items you've marked as favorites</p>
+              <p className="text-sm text-muted">Items you've marked as favorites</p>
             </div>
             <NDivider orientation="horizontal" className="my-4">
               <Heart className="w-4 h-4 text-red-500" />
             </NDivider>
             <div className="p-4 border rounded">
               <h3 className="font-medium">Wishlist</h3>
-              <p className="text-sm text-muted-foreground">Items you want to buy later</p>
+              <p className="text-sm text-muted">Items you want to buy later</p>
             </div>
           </div>
 
@@ -208,8 +208,8 @@ const Divider = () => {
 
       {/* Form Section Dividers */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Form Section Dividers</h2>
-        <p className="text-muted-foreground mb-4">Dividers to organize form sections clearly.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Form Section Dividers</h2>
+        <p className="text-muted mb-4">Dividers to organize form sections clearly.</p>
 
         <div className="max-w-md mx-auto p-6 border rounded-lg">
           <h3 className="text-lg font-semibold mb-4">User Registration</h3>
@@ -263,8 +263,8 @@ const Divider = () => {
 
       {/* Navigation Dividers */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Navigation Dividers</h2>
-        <p className="text-muted-foreground mb-4">Dividers in navigation menus and breadcrumbs.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Navigation Dividers</h2>
+        <p className="text-muted mb-4">Dividers in navigation menus and breadcrumbs.</p>
 
         <div className="space-y-6">
           <div className="flex items-center space-x-2 text-sm">
@@ -280,10 +280,10 @@ const Divider = () => {
               Electronics
             </a>
             <NDivider orientation="vertical" className="h-4" />
-            <span className="text-muted-foreground">Smartphones</span>
+            <span className="text-muted">Smartphones</span>
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-card rounded">
+          <div className="flex items-center justify-between p-4 bg-surface rounded">
             <div className="flex items-center space-x-4">
               <span className="font-medium">Dashboard</span>
               <NDivider orientation="vertical" className="h-5" />
@@ -310,17 +310,17 @@ const Divider = () => {
 
       {/* Content Layout Dividers */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Content Layout Dividers</h2>
-        <p className="text-muted-foreground mb-4">Dividers for organizing complex content layouts.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Content Layout Dividers</h2>
+        <p className="text-muted mb-4">Dividers for organizing complex content layouts.</p>
 
         <div className="space-y-6">
           <div className="border rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">Article Title</h3>
-              <span className="text-sm text-muted-foreground">March 15, 2024</span>
+              <span className="text-sm text-muted">March 15, 2024</span>
             </div>
 
-            <p className="text-muted-foreground mb-4">This is the article excerpt that gives readers a preview of the content...</p>
+            <p className="text-muted mb-4">This is the article excerpt that gives readers a preview of the content...</p>
 
             <NDivider orientation="horizontal" className="my-4" />
 
@@ -333,12 +333,12 @@ const Divider = () => {
                 <span>Technology</span>
               </div>
               <div className="flex items-center space-x-2">
-                <button className="flex items-center space-x-1 text-muted-foreground hover:text-red-500">
+                <button className="flex items-center space-x-1 text-muted hover:text-red-500">
                   <Heart className="w-4 h-4" />
                   <span>24</span>
                 </button>
                 <NDivider orientation="vertical" className="h-4" />
-                <button className="text-muted-foreground hover:text-blue-500">Share</button>
+                <button className="text-muted hover:text-blue-500">Share</button>
               </div>
             </div>
           </div>
@@ -346,9 +346,9 @@ const Divider = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="md:col-span-2">
               <h3 className="font-semibold mb-2">Main Content</h3>
-              <p className="text-sm text-muted-foreground mb-4">This is the main content area with detailed information and primary content.</p>
+              <p className="text-sm text-muted mb-4">This is the main content area with detailed information and primary content.</p>
               <NDivider orientation="horizontal" className="my-4" />
-              <p className="text-sm text-muted-foreground">Additional content continues here with more detailed information.</p>
+              <p className="text-sm text-muted">Additional content continues here with more detailed information.</p>
             </div>
 
             <div className="md:block hidden">
@@ -361,15 +361,15 @@ const Divider = () => {
             <div>
               <h3 className="font-semibold mb-2">Sidebar</h3>
               <div className="space-y-3">
-                <div className="p-3 bg-card rounded">
+                <div className="p-3 bg-surface rounded">
                   <h4 className="text-sm font-medium">Related Article 1</h4>
                 </div>
                 <NDivider orientation="horizontal" />
-                <div className="p-3 bg-card rounded">
+                <div className="p-3 bg-surface rounded">
                   <h4 className="text-sm font-medium">Related Article 2</h4>
                 </div>
                 <NDivider orientation="horizontal" />
-                <div className="p-3 bg-card rounded">
+                <div className="p-3 bg-surface rounded">
                   <h4 className="text-sm font-medium">Related Article 3</h4>
                 </div>
               </div>
@@ -380,29 +380,29 @@ const Divider = () => {
 
       {/* Spacing Examples */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Spacing Examples</h2>
-        <p className="text-muted-foreground mb-4">Different spacing options for dividers.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Spacing Examples</h2>
+        <p className="text-muted mb-4">Different spacing options for dividers.</p>
 
         <div className="space-y-8">
           <div>
             <h3 className="text-sm font-medium mb-2">Tight spacing</h3>
-            <p className="text-sm text-muted-foreground">Content above</p>
+            <p className="text-sm text-muted">Content above</p>
             <NDivider orientation="horizontal" className="my-1" />
-            <p className="text-sm text-muted-foreground">Content below</p>
+            <p className="text-sm text-muted">Content below</p>
           </div>
 
           <div>
             <h3 className="text-sm font-medium mb-2">Normal spacing</h3>
-            <p className="text-sm text-muted-foreground">Content above</p>
+            <p className="text-sm text-muted">Content above</p>
             <NDivider orientation="horizontal" className="my-4" />
-            <p className="text-sm text-muted-foreground">Content below</p>
+            <p className="text-sm text-muted">Content below</p>
           </div>
 
           <div>
             <h3 className="text-sm font-medium mb-2">Loose spacing</h3>
-            <p className="text-sm text-muted-foreground">Content above</p>
+            <p className="text-sm text-muted">Content above</p>
             <NDivider orientation="horizontal" className="my-8" />
-            <p className="text-sm text-muted-foreground">Content below</p>
+            <p className="text-sm text-muted">Content below</p>
           </div>
         </div>
       </div>

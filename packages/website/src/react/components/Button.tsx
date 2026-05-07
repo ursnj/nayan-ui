@@ -15,8 +15,8 @@ const Button = () => {
     <ComponentWrapper>
       {/* Basic Buttons */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Basic Buttons</h2>
-        <p className="text-muted-foreground mb-4">Standard button styles with different visual treatments.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Basic Buttons</h2>
+        <p className="text-muted mb-4">Standard button styles with different visual treatments.</p>
 
         <div className="flex flex-wrap gap-3">
           <NButton onClick={() => alert('Primary clicked!')}>Primary Button</NButton>
@@ -25,11 +25,11 @@ const Button = () => {
             Outline Button
           </NButton>
 
-          <NButton className="bg-secondary text-secondary-foreground hover:bg-secondary/80" onClick={() => alert('Secondary clicked!')}>
+          <NButton className="bg-default text-default-foreground hover:bg-default/80" onClick={() => alert('Secondary clicked!')}>
             Secondary Button
           </NButton>
 
-          <NButton className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => alert('Destructive clicked!')}>
+          <NButton className="bg-danger text-danger-foreground hover:bg-danger/90" onClick={() => alert('Destructive clicked!')}>
             Destructive Button
           </NButton>
         </div>
@@ -37,8 +37,8 @@ const Button = () => {
 
       {/* Button States */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Button States</h2>
-        <p className="text-muted-foreground mb-4">Different states including disabled and loading.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Button States</h2>
+        <p className="text-muted mb-4">Different states including disabled and loading.</p>
 
         <div className="flex flex-wrap gap-3">
           <NButton onClick={() => alert('Normal clicked!')}>Normal</NButton>
@@ -57,8 +57,8 @@ const Button = () => {
 
       {/* Button Sizes */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Button Sizes</h2>
-        <p className="text-muted-foreground mb-4">Different sizes using className customization.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Button Sizes</h2>
+        <p className="text-muted mb-4">Different sizes using className customization.</p>
 
         <div className="flex flex-wrap items-center gap-3">
           <NButton className="px-2 py-1 text-xs h-auto">Small</NButton>
@@ -73,8 +73,8 @@ const Button = () => {
 
       {/* Buttons with Icons */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Buttons with Icons</h2>
-        <p className="text-muted-foreground mb-4">Add icons to provide visual context.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Buttons with Icons</h2>
+        <p className="text-muted mb-4">Add icons to provide visual context.</p>
 
         <div className="flex flex-wrap gap-3">
           <NButton className="flex items-center gap-2" onClick={() => alert('Download started!')}>
@@ -101,8 +101,8 @@ const Button = () => {
 
       {/* Icon Only Buttons */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Icon Only Buttons</h2>
-        <p className="text-muted-foreground mb-4">Compact buttons with only icons.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Icon Only Buttons</h2>
+        <p className="text-muted mb-4">Compact buttons with only icons.</p>
 
         <div className="flex flex-wrap gap-3">
           <NButton className="w-10 h-10 p-0 flex items-center justify-center" onClick={() => alert('Liked!')} aria-label="Like">
@@ -128,8 +128,8 @@ const Button = () => {
 
       {/* Button Shapes */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Button Shapes</h2>
-        <p className="text-muted-foreground mb-4">Different border radius and shapes.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Button Shapes</h2>
+        <p className="text-muted mb-4">Different border radius and shapes.</p>
 
         <div className="flex flex-wrap gap-3">
           <NButton className="rounded-none">Square</NButton>
@@ -146,8 +146,8 @@ const Button = () => {
 
       {/* Form Buttons */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Form Buttons</h2>
-        <p className="text-muted-foreground mb-4">Buttons with different form types and behaviors.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Form Buttons</h2>
+        <p className="text-muted mb-4">Buttons with different form types and behaviors.</p>
 
         <div className="space-y-4">
           <form
@@ -171,8 +171,8 @@ const Button = () => {
 
       {/* Loading States */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Loading States</h2>
-        <p className="text-muted-foreground mb-4">Different loading scenarios with custom text.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Loading States</h2>
+        <p className="text-muted mb-4">Different loading scenarios with custom text.</p>
 
         <div className="flex flex-wrap gap-3">
           <NButton isLoading={true} loadingText="Saving...">
@@ -195,8 +195,8 @@ const Button = () => {
 
       {/* Custom Styled Buttons */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Custom Styled Buttons</h2>
-        <p className="text-muted-foreground mb-4">Buttons with custom colors and effects.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Custom Styled Buttons</h2>
+        <p className="text-muted mb-4">Buttons with custom colors and effects.</p>
 
         <div className="flex flex-wrap gap-3">
           <NButton className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-none">
@@ -215,8 +215,8 @@ const Button = () => {
 
       {/* Button Groups */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Button Groups</h2>
-        <p className="text-muted-foreground mb-4">Related buttons grouped together.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Button Groups</h2>
+        <p className="text-muted mb-4">Related buttons grouped together.</p>
 
         <div className="space-y-4">
           <div className="flex">
@@ -244,8 +244,8 @@ const Button = () => {
 
       {/* Accessibility Example */}
       <div className="mb-8">
-        <h2 className="text-text mb-3 text-xl font-semibold">Accessibility</h2>
-        <p className="text-muted-foreground mb-4">Buttons with proper ARIA attributes and labels.</p>
+        <h2 className="text-foreground mb-3 text-xl font-semibold">Accessibility</h2>
+        <p className="text-muted mb-4">Buttons with proper ARIA attributes and labels.</p>
 
         <div className="flex flex-wrap gap-3">
           <NButton aria-label="Close dialog" className="w-8 h-8 p-0 flex items-center justify-center">
@@ -256,7 +256,7 @@ const Button = () => {
             <Download className="w-4 h-4" />
             Save Document
           </NButton>
-          <div id="save-help" className="text-xs text-muted-foreground">
+          <div id="save-help" className="text-xs text-muted">
             Saves the current document to your device
           </div>
 
