@@ -64,7 +64,7 @@ const NPaginationComponent: React.FC<NPaginationProps> = memo(
     return (
       <Pagination size={size} className={cn('nyn-pagination', className)}>
         {showSummary && (
-          <Pagination.Summary className="text-sm text-muted">{summaryText || `Page ${currentPage} of ${totalPages}`}</Pagination.Summary>
+          <Pagination.Summary className="text-sm text-muted font-medium">{summaryText || `Page ${currentPage} of ${totalPages}`}</Pagination.Summary>
         )}
         <Pagination.Content className={cn(contentClassName)}>
           <Pagination.Item>

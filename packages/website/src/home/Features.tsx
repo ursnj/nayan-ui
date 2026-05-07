@@ -31,7 +31,7 @@ const Features = () => {
   const [currentFeature, setCurrentFeature] = useState(0);
   const [isPausedByUser, setIsPausedByUser] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
-  const resumeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const mainFeatures = useMemo(
     () => [
@@ -115,7 +115,7 @@ const Features = () => {
   const prevFeature = () => {
     console.log('Previous clicked, current:', currentFeature);
     setIsPausedByUser(true);
-    clearTimeout(resumeTimeoutRef.current);
+    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
     resumeTimeoutRef.current = setTimeout(() => {
       setIsPausedByUser(false);
     }, 8000);
@@ -129,7 +129,7 @@ const Features = () => {
   const nextFeature = () => {
     console.log('Next clicked, current:', currentFeature);
     setIsPausedByUser(true);
-    clearTimeout(resumeTimeoutRef.current);
+    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
     resumeTimeoutRef.current = setTimeout(() => {
       setIsPausedByUser(false);
     }, 8000);
@@ -286,7 +286,7 @@ const Features = () => {
                     key={index}
                     onClick={() => {
                       setIsPausedByUser(true);
-                      clearTimeout(resumeTimeoutRef.current);
+                      if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
                       resumeTimeoutRef.current = setTimeout(() => {
                         setIsPausedByUser(false);
                       }, 8000);

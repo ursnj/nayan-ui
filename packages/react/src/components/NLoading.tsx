@@ -12,8 +12,8 @@ export interface NLoadingProps extends React.HTMLAttributes<HTMLDivElement> {
 export const NLoading = React.memo(
   ({ className = '', size = 'md', color = 'current', 'aria-label': ariaLabel = 'Loading', ...rest }: NLoadingProps) => {
     return (
-      <div className="p-3">
-        <Spinner size={size} color={color} className={cn('nyn-loading', className)} aria-label={ariaLabel} />
+      <div className="p-3 flex items-center justify-center">
+        <Spinner size={size} color={color} className={cn('nyn-loading text-accent', className)} aria-label={ariaLabel} />
       </div>
     );
   }

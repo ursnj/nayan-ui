@@ -45,7 +45,7 @@ export const NMenuItem: React.FC<NMenuItemProps> = React.memo(
         <Dropdown.Item
           id={id}
           textValue={typeof title === 'string' ? title : undefined}
-          className={cn('nyn-menu-item', className)}
+          className={cn('nyn-menu-item text-foreground hover:bg-default/50 rounded px-2 py-1.5 cursor-pointer', className)}
           onAction={onAction}>
           {IconElem}
           <Label className={cn(titleClassName)}>{title}</Label>

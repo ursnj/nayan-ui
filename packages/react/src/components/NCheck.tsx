@@ -18,7 +18,7 @@ const NCheckComponent: React.FC<NCheckProps> = memo(
     return (
       <div className={cn('flex space-x-2 mb-3', className)}>
         <Checkbox isSelected={checked} isDisabled={disabled} onChange={onChange} className={cn('nyn-check', checkClassName)} {...(rest as any)} />
-        <Label className={cn('-mt-1', labelClassName)}>{children}</Label>
+        <Label className={cn('-mt-1 text-foreground', labelClassName)}>{children}</Label>
       </div>
     );
   }

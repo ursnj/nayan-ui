@@ -27,7 +27,7 @@ export const NMenu: React.FC<NMenuProps> = React.memo(
       <Dropdown>
         <Dropdown.Trigger className={cn('nyn-menu-trigger', triggerClassName)}>{trigger}</Dropdown.Trigger>
         <Dropdown.Popover placement={placement} className={cn(menuSizeMapping[size])}>
-          <Dropdown.Menu className={cn('nyn-menu-content', className)}>
+          <Dropdown.Menu className={cn('nyn-menu-content bg-surface border border-default rounded p-1', className)}>
             {title && (
               <>
                 <Header className={cn(titleClassName)}>{title}</Header>

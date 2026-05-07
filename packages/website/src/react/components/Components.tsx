@@ -15,7 +15,7 @@ const Components = () => {
       <div className="mb-5 leading-relaxed">{component.description}</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
         {sidebarItems
-          .filter(item => item.isComponent)
+          .filter((item: any) => item.isComponent)
           .map(item => {
             const Icon = item.icon as any;
             return (

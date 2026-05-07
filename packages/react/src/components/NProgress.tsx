@@ -20,7 +20,7 @@ export const NProgress = memo(
             {label}: {clampedValue}%
           </span>
         )}
-        <ProgressBar value={clampedValue} aria-label={label} className={cn('nyn-progress rounded', className)} {...(rest as any)} />
+        <ProgressBar value={clampedValue} aria-label={label} className={cn('nyn-progress rounded bg-default', className)} {...(rest as any)} />
       </div>
     );
   })
