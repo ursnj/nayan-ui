@@ -54,6 +54,7 @@ const NDialogComponent: React.FC<NDialogProps> = memo(
             <Modal.Dialog className={cn('nyn-dialog', maxWidthMapping[size], className)}>
               <Modal.Header className={cn(headerClassName)}>
                 <span className={cn(titleClassName)}>{title}</span>
+                <Modal.CloseTrigger />
               </Modal.Header>
               <Modal.Body
                 className={cn('h-[calc(100vh_-_140px)] sm:h-auto sm:min-h-[100px] sm:max-h-[calc(100vh_-_75px)] overflow-y-auto', contentClassName)}>
