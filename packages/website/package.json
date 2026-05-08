@@ -14,7 +14,6 @@
     "sitemap": "npx nayan create sitemap -w http://localhost:7100 -r https://www.nayanui.com -o ./public/sitemap.xml"
   },
   "dependencies": {
-    "@heroui/styles": "^3.0.0",
     "@nayan-ui/react": "workspace:*",
     "compression": "^1.8.1",
     "express": "^4.21.2",

@@ -16,9 +16,7 @@ export const rnTailwindCode = `// No tailwind.config.js needed!
 // Uniwind + HeroUI Native handle styling automatically.
 // Just create a global.css file:`;
 
-export const cssCode = `@import 'tailwindcss';
-@import '@heroui/styles';
-@import '@nayan-ui/react/styles.css';
+export const cssCode = `@import '@nayan-ui/react/styles.css';
 
 body {
   color: var(--foreground);

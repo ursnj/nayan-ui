@@ -3134,7 +3134,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nayan-ui/website-next@workspace:packages/website-next"
   dependencies:
-    "@heroui/styles": "npm:^3.0.0"
     "@nayan-ui/react": "workspace:*"
     "@tailwindcss/postcss": "npm:^4"
     "@types/node": "npm:^20"
@@ -3142,9 +3141,9 @@ __metadata:
     "@types/react-dom": "npm:^19"
     lucide-react: "npm:^0.525.0"
     next: "npm:16.2.6"
+    prism-react-renderer: "npm:^2.4.1"
     react: "npm:^19.1.0"
     react-aria-components: "npm:^1.17.0"
-    react-code-blocks: "npm:^0.1.6"
     react-dom: "npm:^19.1.0"
     react-hook-form: "npm:^7.75.0"
     tailwindcss: "npm:^4"
@@ -3156,7 +3155,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nayan-ui/website@workspace:packages/website"
   dependencies:
-    "@heroui/styles": "npm:^3.0.0"
     "@nayan-ui/react": "workspace:*"
     "@tailwindcss/vite": "npm:^4.1.0"
     "@types/react": "npm:^19.1.8"
@@ -5155,6 +5153,13 @@ __metadata:
   version: 4.0.2
   resolution: "@types/parse-json@npm:4.0.2"
   checksum: 10c0/b1b863ac34a2c2172fbe0807a1ec4d5cb684e48d422d15ec95980b81475fac4fdb3768a8b13eef39130203a7c04340fc167bae057c7ebcafd7dec9fe6c36aeb1
+  languageName: node
+  linkType: hard
+
+"@types/prismjs@npm:^1.26.0":
+  version: 1.26.6
+  resolution: "@types/prismjs@npm:1.26.6"
+  checksum: 10c0/152a27500cb32b114edfb77f9d0dccd03bebc84828d1e92abacaf212b22d3ccdde041ce421dd58b6ec8461bbec7cd76ed5ee773cae4be7ca36a6dd4ddcf0f9e7
   languageName: node
   linkType: hard
 
@@ -10409,6 +10414,18 @@ __metadata:
     ansi-styles: "npm:^5.0.0"
     react-is: "npm:^18.0.0"
   checksum: 10c0/edc5ff89f51916f036c62ed433506b55446ff739358de77207e63e88a28ca2894caac6e73dcb68166a606e51c8087d32d400473e6a9fdd2dbe743f46c9c0276f
+  languageName: node
+  linkType: hard
+
+"prism-react-renderer@npm:^2.4.1":
+  version: 2.4.1
+  resolution: "prism-react-renderer@npm:2.4.1"
+  dependencies:
+    "@types/prismjs": "npm:^1.26.0"
+    clsx: "npm:^2.0.0"
+  peerDependencies:
+    react: ">=16.0.0"
+  checksum: 10c0/ebbe8feb975224344bbdd046b3a937d121592dbe4b8f22ba0be31f5af37b9a8219f441138ef6cab1c5b96f2aa6b529015200959f7e5e85b60ca69c81d35edcd4
   languageName: node
   linkType: hard
 
