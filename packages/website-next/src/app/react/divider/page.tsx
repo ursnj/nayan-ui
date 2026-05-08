@@ -1,7 +1,17 @@
+import JsonLd from '@/helpers/JsonLd';
 import Divider from '@/react/components/Divider';
+import { buildComponentPageSeo } from '@/services/seoHelpers';
 
 export const dynamic = 'force-dynamic';
 
+const { metadata: pageMetadata, schemas } = buildComponentPageSeo('/react/divider', 'react');
+export const metadata = pageMetadata;
+
 export default function DividerPage() {
-  return <Divider />;
+  return (
+    <>
+      <JsonLd data={schemas} />
+      <Divider />
+    </>
+  );
 }
