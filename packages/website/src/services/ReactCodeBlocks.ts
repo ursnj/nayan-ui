@@ -673,7 +673,7 @@ export default Autocomplete;`;
 export const datePickerCode = `import { NDatePicker } from '@nayan-ui/react';
 
 const DatePicker = () => {
-  return <NDatePicker aria-label="Select a date" />;
+  return <NDatePicker label="Date of birth" helperText="Select your date of birth" />;
 };
 
 export default DatePicker;`;

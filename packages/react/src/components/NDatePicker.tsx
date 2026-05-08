@@ -1,18 +1,22 @@
-import React, { memo } from 'react';
-import { Calendar, DateField, DatePicker } from '@heroui/react';
+import React, { ReactNode, memo } from 'react';
+import { Calendar, DateField, DatePicker, Description, FieldError, Label } from '@heroui/react';
 import { cn } from '../lib/utils';
 
 export interface NDatePickerProps {
   value?: any;
   defaultValue?: any;
   onChange?: (value: any) => void;
-  label?: string;
+  label?: ReactNode;
   isDisabled?: boolean;
   isInvalid?: boolean;
   minValue?: any;
   maxValue?: any;
   granularity?: 'day' | 'hour' | 'minute' | 'second';
   className?: string;
+  wrapperClassName?: string;
+  labelClassName?: string;
+  error?: ReactNode;
+  helperText?: ReactNode;
   'aria-label'?: string;
 }
 
@@ -28,6 +32,10 @@ const NDatePickerComponent: React.FC<NDatePickerProps> = memo(
     maxValue,
     granularity = 'day',
     className = '',
+    wrapperClassName = '',
+    labelClassName = '',
+    error,
+    helperText,
     'aria-label': ariaLabel = 'Date'
   }) => {
     return (
@@ -36,24 +44,23 @@ const NDatePickerComponent: React.FC<NDatePickerProps> = memo(
         defaultValue={defaultValue}
         onChange={onChange}
         isDisabled={isDisabled}
-        isInvalid={isInvalid}
+        isInvalid={!!error || isInvalid}
         minValue={minValue}
         maxValue={maxValue}
         granularity={granularity}
-        className={cn('nyn-date-picker', className)}
+        className={cn('nyn-date-picker mb-3 w-full', wrapperClassName, className)}
         aria-label={ariaLabel}>
-        <DateField>
-          <DateField.Group>
-            <DateField.InputContainer>
-              <DateField.Input>{(segment: any) => <DateField.Segment segment={segment} />}</DateField.Input>
-            </DateField.InputContainer>
-            <DateField.Suffix>
-              <DatePicker.Trigger>
-                <DatePicker.TriggerIndicator />
-              </DatePicker.Trigger>
-            </DateField.Suffix>
-          </DateField.Group>
-        </DateField>
+        {label && <Label className={cn(labelClassName)}>{label}</Label>}
+        <DateField.Group>
+          <DateField.Input>{(segment: any) => <DateField.Segment segment={segment} />}</DateField.Input>
+          <DateField.Suffix>
+            <DatePicker.Trigger>
+              <DatePicker.TriggerIndicator />
+            </DatePicker.Trigger>
+          </DateField.Suffix>
+        </DateField.Group>
+        {helperText && <Description>{helperText}</Description>}
+        {error && <FieldError>{error}</FieldError>}
         <DatePicker.Popover>
           <Calendar>
             <Calendar.Header>

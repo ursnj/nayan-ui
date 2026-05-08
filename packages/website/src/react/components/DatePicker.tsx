@@ -4,8 +4,8 @@ import ComponentWrapper from '../../helpers/ComponentWrapper';
 const DatePicker = () => {
   return (
     <ComponentWrapper>
-      <div className="space-y-4 max-w-sm">
-        <NDatePicker aria-label="Select a date" />
+      <div className="w-full">
+        <NDatePicker label="Date of birth" helperText="Select your date of birth" />
       </div>
     </ComponentWrapper>
   );
