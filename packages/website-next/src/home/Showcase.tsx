@@ -1,151 +1,158 @@
 'use client';
 
-import { NCard } from '@nayan-ui/react';
-import { Monitor, Smartphone } from 'lucide-react';
-
-const tagColors = [
-  'bg-blue-500/12 text-blue-700 dark:text-blue-300 border border-blue-500/20',
-  'bg-purple-500/12 text-purple-700 dark:text-purple-300 border border-purple-500/20',
-  'bg-pink-500/12 text-pink-700 dark:text-pink-300 border border-pink-500/20',
-  'bg-indigo-500/12 text-indigo-700 dark:text-indigo-300 border border-indigo-500/20',
-  'bg-cyan-500/12 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20',
-  'bg-violet-500/12 text-violet-700 dark:text-violet-300 border border-violet-500/20',
-  'bg-sky-500/12 text-sky-700 dark:text-sky-300 border border-sky-500/20',
-  'bg-fuchsia-500/12 text-fuchsia-700 dark:text-fuchsia-300 border border-fuchsia-500/20'
-];
-
-const greenTagColors = [
-  'bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20',
-  'bg-teal-500/12 text-teal-700 dark:text-teal-300 border border-teal-500/20',
-  'bg-green-500/12 text-green-700 dark:text-green-300 border border-green-500/20',
-  'bg-lime-500/12 text-lime-700 dark:text-lime-300 border border-lime-500/20',
-  'bg-cyan-500/12 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20',
-  'bg-sky-500/12 text-sky-700 dark:text-sky-300 border border-sky-500/20',
-  'bg-teal-500/12 text-teal-700 dark:text-teal-300 border border-teal-500/20',
-  'bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20'
-];
+import { NButton, NCard } from '@nayan-ui/react';
+import { ArrowRight, Code, Eye, Shield, Smartphone, Star, Users, Zap } from 'lucide-react';
+import Link from 'next/link';
 
 const Showcase = () => {
-  const reactComponents = [
-    'Accordion',
-    'Alert',
-    'Badge',
-    'Button',
-    'Card',
-    'Checkbox',
-    'Chip',
-    'Confirm Alert',
-    'Dialog',
-    'Divider',
-    'Form Input',
-    'Infinite Scroll',
-    'Input',
-    'Link',
-    'Loading',
-    'Menu',
-    'Meter',
-    'Number Field',
-    'Popover',
-    'Progress',
-    'Radio Group',
-    'Search Field',
-    'Select',
-    'Sheet',
-    'Skeleton',
-    'Slider',
-    'Switch',
-    'Table',
-    'Tabs',
-    'Tag Group',
-    'Textarea',
-    'Toast',
-    'Tooltip'
-  ];
-
-  const reactNativeComponents = [
-    'Accordion',
-    'Action Item',
-    'Alert',
-    'Avatar',
-    'Button',
-    'Button Group',
-    'Card',
-    'Checkbox',
-    'Chip',
-    'Confirm',
-    'Dialog',
-    'Divider',
-    'Input',
-    'Input Group',
-    'Input OTP',
-    'Loading',
-    'Menu',
-    'Popover',
-    'Progress',
-    'Radio',
-    'Select',
-    'Sheet',
-    'Skeleton',
-    'Slider',
-    'Switch',
-    'Tabs',
-    'Tag Group',
-    'Text',
-    'Textarea',
-    'Text Field',
-    'Toast',
-    'Tooltip'
+  const benefits = [
+    {
+      icon: Code,
+      title: 'Developer Experience',
+      description: 'TypeScript support, comprehensive documentation, and intuitive APIs.',
+      gradient: 'from-blue-500 to-indigo-500',
+      shadow: 'shadow-blue-500/20'
+    },
+    {
+      icon: Smartphone,
+      title: 'Cross-Platform',
+      description: 'Same components work seamlessly across web and mobile platforms.',
+      gradient: 'from-emerald-500 to-teal-500',
+      shadow: 'shadow-emerald-500/20'
+    },
+    {
+      icon: Shield,
+      title: 'Accessibility First',
+      description: 'WCAG compliant with proper ARIA attributes and keyboard navigation.',
+      gradient: 'from-purple-500 to-violet-500',
+      shadow: 'shadow-purple-500/20'
+    },
+    {
+      icon: Zap,
+      title: 'Performance Optimized',
+      description: 'Tree-shakable, lightweight components optimized for production use.',
+      gradient: 'from-amber-500 to-orange-500',
+      shadow: 'shadow-amber-500/20'
+    }
   ];
 
   return (
     <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-purple-600/5 via-transparent to-blue-600/5" />
+      <div className="absolute top-1/4 right-1/3 w-72 h-72 bg-blue-500/8 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-purple-500/8 rounded-full blur-3xl" />
+
       <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 lg:mb-16 max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12 lg:mb-16 max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-purple-500/15 to-pink-500/15 border border-purple-500/20 text-purple-600 dark:text-purple-400 text-xs font-medium mb-5">
+            <Eye className="w-3.5 h-3.5" />
+            Showcase
+          </div>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">
-            Available <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Components</span>
+            Comprehensive <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Component Library</span>
           </h2>
-          <p className="text-base sm:text-lg text-muted">A growing library of production-ready components for both platforms.</p>
+          <p className="text-base sm:text-lg text-muted">
+            Discover our extensive collection of components designed for modern React and React Native development. Crafted with performance,
+            accessibility, and developer experience in mind.
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          <NCard className="p-6 border-blue-500/10">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-md shadow-blue-500/20">
-                <Monitor className="w-4.5 h-4.5 text-white" />
+        {/* Benefits Grid */}
+        <div className="grid sm:grid-cols-2 gap-5 max-w-4xl mx-auto mb-14">
+          {benefits.map((benefit, index) => (
+            <NCard key={index} className="p-5 group hover:shadow-xl transition-all duration-300">
+              <div className="flex items-start gap-4">
+                <div
+                  className={`w-11 h-11 bg-gradient-to-br ${benefit.gradient} rounded-xl flex items-center justify-center shrink-0 shadow-lg ${benefit.shadow} group-hover:scale-110 transition-transform`}>
+                  <benefit.icon className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold mb-1 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                    {benefit.title}
+                  </h4>
+                  <p className="text-xs sm:text-sm text-muted leading-relaxed">{benefit.description}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold">@nayan-ui/react</h3>
-                <p className="text-xs text-muted">{reactComponents.length} components for web</p>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {reactComponents.map((name, i) => (
-                <span key={name} className={`px-2.5 py-1 text-xs rounded-md font-medium ${tagColors[i % tagColors.length]}`}>
-                  {name}
-                </span>
-              ))}
-            </div>
-          </NCard>
+            </NCard>
+          ))}
+        </div>
 
-          <NCard className="p-6 border-emerald-500/10">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center shadow-md shadow-emerald-500/20">
-                <Smartphone className="w-4.5 h-4.5 text-white" />
+        {/* Platform Stats Card */}
+        <div className="relative max-w-4xl mx-auto rounded-2xl bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-pink-600/10 border border-purple-500/15 p-8 sm:p-10 mb-14">
+          <div className="absolute inset-0 rounded-2xl bg-surface/60 backdrop-blur-sm" />
+          <div className="relative text-center">
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                  <Code className="w-4 h-4 text-white" />
+                </div>
+                <span className="font-semibold text-sm">React</span>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold">@nayan-ui/react-native</h3>
-                <p className="text-xs text-muted">{reactNativeComponents.length} components for mobile</p>
+              <span className="text-2xl text-muted/40 font-light">+</span>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
+                  <Smartphone className="w-4 h-4 text-white" />
+                </div>
+                <span className="font-semibold text-sm">React Native</span>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {reactNativeComponents.map((name, i) => (
-                <span key={name} className={`px-2.5 py-1 text-xs rounded-md font-medium ${greenTagColors[i % greenTagColors.length]}`}>
-                  {name}
-                </span>
-              ))}
+
+            <h3 className="text-xl sm:text-2xl font-bold mb-3">
+              One Library, <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Two Platforms</span>
+            </h3>
+            <p className="text-sm text-muted max-w-xl mx-auto mb-8">
+              Build consistent user experiences everywhere — same familiar API, same design language, across web and mobile.
+            </p>
+
+            <div className="flex flex-wrap justify-center gap-8 sm:gap-12">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-lg shadow-blue-500/20">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-2xl font-bold">50+</div>
+                <div className="text-xs text-muted">Components</div>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-lg shadow-emerald-500/20">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-2xl font-bold">100%</div>
+                <div className="text-xs text-muted">Accessible</div>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-lg shadow-purple-500/20">
+                  <Star className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-2xl font-bold">TS</div>
+                <div className="text-xs text-muted">TypeScript</div>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-lg shadow-amber-500/20">
+                  <Zap className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-2xl font-bold">Fast</div>
+                <div className="text-xs text-muted">Lightweight</div>
+              </div>
             </div>
-          </NCard>
+          </div>
+        </div>
+
+        {/* CTAs */}
+        <div className="flex flex-col sm:flex-row justify-center gap-3">
+          <Link href="/react/components">
+            <NButton className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2.5 font-semibold w-full sm:w-auto shadow-lg shadow-blue-500/20">
+              <Eye className="w-4 h-4 mr-2" />
+              Explore React Components
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </NButton>
+          </Link>
+          <Link href="/react-native/components">
+            <NButton isOutline className="px-6 py-2.5 font-semibold w-full sm:w-auto">
+              <Smartphone className="w-4 h-4 mr-2" />
+              Explore React Native
+            </NButton>
+          </Link>
         </div>
       </div>
     </section>
