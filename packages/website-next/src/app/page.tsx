@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Home from '@/home/Home';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Modern React & React Native Component Library',
   description:

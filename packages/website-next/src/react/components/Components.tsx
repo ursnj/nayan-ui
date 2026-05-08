@@ -8,12 +8,12 @@ import { getMenuItem, getSidebarItems } from '@/services/Utils';
 
 const Components = () => {
   const pathname = usePathname();
-  const component: any = getMenuItem(pathname);
+  const component: any = getMenuItem(pathname) || getMenuItem(pathname + '/components');
   const sidebarItems = getSidebarItems(pathname);
 
   return (
-    <Sidebar title={component.title}>
-      <div className="mb-5 leading-relaxed">{component.description}</div>
+    <Sidebar title={component?.title || 'Components'}>
+      <div className="mb-5 leading-relaxed">{component?.description}</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
         {sidebarItems
           .filter((item: any) => item.isComponent)
