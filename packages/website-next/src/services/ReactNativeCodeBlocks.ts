@@ -10,9 +10,7 @@ export default defineConfig({
   plugins: [tailwindcss(), react()],
 });`;
 
-export const cssCode = `@import 'tailwindcss';
-@import '@heroui/styles';
-@import '@nayan-ui/react/styles.css';
+export const cssCode = `@import '@nayan-ui/react/styles.css';
 
 body {
   color: var(--foreground);
