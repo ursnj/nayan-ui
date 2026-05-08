@@ -1,31 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import { NBadge, NButton, NCard } from '@nayan-ui/react';
 import { ArrowRight, Code, Download, Eye, Heart, Layout, Palette, Settings, Shield, Smartphone, Sparkles, Star, Users, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 const Showcase = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
   const developmentBenefits = [
     {
       icon: Code,
@@ -50,27 +29,25 @@ const Showcase = () => {
   ];
 
   return (
-    <section ref={sectionRef} className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-background to-card/30">
+    <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-background to-card/30">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 right-1/3 w-48 sm:w-72 h-48 sm:h-72 bg-accent/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/3 left-1/4 w-64 sm:w-80 h-64 sm:h-80 bg-purple-500/5 rounded-full blur-3xl animate-pulse [animation-delay:2s]"></div>
+        <div className="absolute top-1/4 right-1/3 w-48 sm:w-72 h-48 sm:h-72 bg-accent/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/3 left-1/4 w-64 sm:w-80 h-64 sm:h-80 bg-purple-500/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16">
-          <NBadge color="accent" className={`mb-4 ${isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0'}`}>
+          <NBadge color="accent" className="mb-4">
             <Eye className="w-3 h-3 mr-1" />
             Showcase
           </NBadge>
-          <h2
-            className={`text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.2s]' : 'opacity-0'}`}>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
             Comprehensive
             <span className="block bg-gradient-to-r from-accent to-purple-600 bg-clip-text text-transparent">Component Library</span>
           </h2>
-          <p
-            className={`text-base sm:text-lg lg:text-xl text-muted max-w-3xl mx-auto px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.4s]' : 'opacity-0'}`}>
+          <p className="text-base sm:text-lg lg:text-xl text-muted max-w-3xl mx-auto px-4 sm:px-0">
             Discover our extensive collection of components designed for modern React and React Native development. Each component is crafted with
             performance, accessibility, and developer experience in mind.
           </p>
@@ -79,23 +56,15 @@ const Showcase = () => {
         {/* Development Benefits */}
         <div className="space-y-8 sm:space-y-12">
           <div className="text-center">
-            <h3
-              className={`text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.8s]' : 'opacity-0'}`}>
-              Why Choose Modern Components?
-            </h3>
-            <p
-              className={`text-sm sm:text-base lg:text-lg text-muted px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:1s]' : 'opacity-0'}`}>
+            <h3 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">Why Choose Modern Components?</h3>
+            <p className="text-sm sm:text-base lg:text-lg text-muted px-4 sm:px-0">
               Built for developers who value quality, performance, and great user experience
             </p>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
             {developmentBenefits.map((benefit, index) => (
-              <NCard
-                key={index}
-                className={`p-4 sm:p-6 group hover:shadow-lg transition-all duration-300 ${
-                  isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0'
-                } ${index === 0 ? '[animation-delay:1.2s]' : index === 1 ? '[animation-delay:1.3s]' : index === 2 ? '[animation-delay:1.4s]' : '[animation-delay:1.5s]'}`}>
+              <NCard key={index} className="p-4 sm:p-6 group hover:shadow-lg transition-all duration-300">
                 <div className="flex items-start space-x-3 sm:space-x-4">
                   <div className="w-10 sm:w-12 h-10 sm:h-12 bg-accent/10 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
                     <benefit.icon className="w-5 sm:w-6 h-5 sm:h-6 text-accent" />
@@ -114,8 +83,7 @@ const Showcase = () => {
 
         {/* Platform Support */}
         <div className="mt-16 sm:mt-20">
-          <NCard
-            className={`p-6 sm:p-8 bg-gradient-to-br from-accent/5 to-purple-500/5 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:2s]' : 'opacity-0'}`}>
+          <NCard className="p-6 sm:p-8 bg-gradient-to-br from-accent/5 to-purple-500/5">
             <div className="text-center">
               <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 mb-4 sm:mb-6">
                 <div className="flex items-center space-x-2">
@@ -159,7 +127,7 @@ const Showcase = () => {
         </div>
 
         {/* Call to Action */}
-        <div className={`text-center mt-12 sm:mt-16 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:2.2s]' : 'opacity-0'}`}>
+        <div className="text-center mt-12 sm:mt-16">
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
             <Link href="/react/components" className="w-full sm:w-auto">
               <NButton className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 sm:px-8 py-3 text-sm sm:text-base font-semibold w-full sm:w-auto">
@@ -180,8 +148,8 @@ const Showcase = () => {
         </div>
 
         {/* Floating Animation Elements - Hidden on mobile */}
-        <div className="absolute top-1/3 right-1/4 w-2 h-2 bg-accent/20 rounded-full animate-ping [animation-delay:1s] hidden sm:block"></div>
-        <div className="absolute bottom-1/4 left-1/3 w-1 h-1 bg-purple-500/30 rounded-full animate-bounce [animation-delay:3s] hidden sm:block"></div>
+        <div className="absolute top-1/3 right-1/4 w-2 h-2 bg-accent/20 rounded-full hidden sm:block"></div>
+        <div className="absolute bottom-1/4 left-1/3 w-1 h-1 bg-purple-500/30 rounded-full hidden sm:block"></div>
       </div>
     </section>
   );

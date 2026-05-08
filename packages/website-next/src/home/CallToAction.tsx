@@ -1,31 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { NBadge, NButton, NCard, NInput } from '@nayan-ui/react';
 import { ArrowRight, BookOpen, Code, Github, Palette, Rocket, Shield, Smartphone, Sparkles, Star, Users, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 const CallToAction = () => {
-  const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState('');
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
 
   const features = [
     { icon: Zap, name: '50+ Components' },
@@ -75,41 +56,38 @@ const CallToAction = () => {
   ];
 
   return (
-    <section ref={sectionRef} className="relative py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-card/30 to-background overflow-hidden">
+    <section className="relative py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-card/30 to-background overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/3 w-64 sm:w-96 h-64 sm:h-96 bg-accent/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/3 w-48 sm:w-80 h-48 sm:h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse [animation-delay:2s]"></div>
+        <div className="absolute top-1/4 left-1/3 w-64 sm:w-96 h-64 sm:h-96 bg-accent/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-48 sm:w-80 h-48 sm:h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
 
         {/* Floating Elements - Hidden on mobile */}
-        <div className="absolute top-20 right-4 sm:right-20 w-3 sm:w-4 h-3 sm:h-4 bg-accent rounded-full animate-bounce hidden sm:block"></div>
-        <div className="absolute bottom-32 left-4 sm:left-16 w-2 sm:w-3 h-2 sm:h-3 bg-purple-500 rounded-full animate-ping hidden sm:block"></div>
-        <div className="absolute top-1/2 right-8 w-1 sm:w-2 h-1 sm:h-2 bg-blue-500 rounded-full animate-pulse hidden sm:block"></div>
+        <div className="absolute top-20 right-4 sm:right-20 w-3 sm:w-4 h-3 sm:h-4 bg-accent rounded-full hidden sm:block"></div>
+        <div className="absolute bottom-32 left-4 sm:left-16 w-2 sm:w-3 h-2 sm:h-3 bg-purple-500 rounded-full hidden sm:block"></div>
+        <div className="absolute top-1/2 right-8 w-1 sm:w-2 h-1 sm:h-2 bg-blue-500 rounded-full hidden sm:block"></div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16">
-          <NBadge color="accent" className={`mb-4 ${isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0'}`}>
+          <NBadge color="accent" className="mb-4">
             <Rocket className="w-3 h-3 mr-1" />
             Ready to Start
           </NBadge>
 
-          <h2
-            className={`text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 sm:mb-8 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.2s]' : 'opacity-0'}`}>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 sm:mb-8">
             Choose Your
             <span className="block bg-gradient-to-r from-accent via-purple-600 to-pink-600 bg-clip-text text-transparent">Platform</span>
           </h2>
 
-          <p
-            className={`text-base sm:text-lg lg:text-xl xl:text-2xl text-muted max-w-4xl mx-auto mb-8 sm:mb-12 px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.4s]' : 'opacity-0'}`}>
+          <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-muted max-w-4xl mx-auto mb-8 sm:mb-12 px-4 sm:px-0">
             Whether you're building for web or mobile, our component library provides everything you need to create beautiful, accessible, and
             performant applications.
           </p>
 
           {/* Feature Pills */}
-          <div
-            className={`flex flex-wrap justify-center gap-2 sm:gap-4 mb-8 sm:mb-12 px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.6s]' : 'opacity-0'}`}>
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-8 sm:mb-12 px-4 sm:px-0">
             {features.map((feature, index) => (
               <div key={index} className="flex items-center space-x-1 sm:space-x-2 bg-surface px-2 sm:px-4 py-1 sm:py-2 rounded-full shadow-sm">
                 <feature.icon className="w-3 sm:w-4 h-3 sm:h-4 text-accent flex-shrink-0" />
@@ -122,11 +100,7 @@ const CallToAction = () => {
         {/* Platform Selection */}
         <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16">
           {platforms.map((platform, index) => (
-            <NCard
-              key={index}
-              className={`p-6 sm:p-8 text-center group hover:shadow-xl transition-all duration-500 transform hover:scale-105 ${
-                isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0'
-              } ${index === 0 ? '[animation-delay:1.2s]' : '[animation-delay:1.4s]'}`}>
+            <NCard key={index} className="p-6 sm:p-8 text-center group hover:shadow-xl transition-all duration-500 transform hover:scale-105">
               <div className="space-y-4 sm:space-y-6">
                 <div
                   className={`w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br ${platform.color} rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform`}>
@@ -152,17 +126,12 @@ const CallToAction = () => {
         {/* Benefits Grid */}
         <div className="mb-12 sm:mb-16">
           <div className="text-center mb-8 sm:mb-12">
-            <h3
-              className={`text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:1.6s]' : 'opacity-0'}`}>
-              Why Choose Our Components?
-            </h3>
+            <h3 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">Why Choose Our Components?</h3>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
             {benefits.map((benefit, index) => (
-              <div
-                key={index}
-                className={`text-center p-3 sm:p-6 ${isVisible ? `animate-fade-in-up opacity-100 [animation-delay:${2 + index * 0.1}s]` : 'opacity-0'}`}>
+              <div key={index} className="text-center p-3 sm:p-6">
                 <div className="w-12 sm:w-16 h-12 sm:h-16 bg-accent/10 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
                   <benefit.icon className="w-6 sm:w-8 h-6 sm:h-8 text-accent" />
                 </div>
@@ -174,8 +143,7 @@ const CallToAction = () => {
         </div>
 
         {/* Action Buttons */}
-        <div
-          className={`flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-12 sm:mb-16 px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:2.4s]' : 'opacity-0'}`}>
+        <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-12 sm:mb-16 px-4 sm:px-0">
           <Link href="/react/components" className="w-full sm:w-auto">
             <NButton className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto">
               <Code className="w-4 sm:w-5 h-4 sm:h-5 mr-2" />
@@ -204,7 +172,7 @@ const CallToAction = () => {
         </div>
 
         {/* Newsletter Signup */}
-        <NCard className={`p-6 sm:p-8 lg:p-12 text-center ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:2.6s]' : 'opacity-0'}`}>
+        <NCard className="p-6 sm:p-8 lg:p-12 text-center">
           <div className="max-w-2xl mx-auto">
             <Sparkles className="w-10 sm:w-12 h-10 sm:h-12 text-accent mx-auto mb-4 sm:mb-6" />
             <h3 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">Stay Updated</h3>
@@ -234,7 +202,7 @@ const CallToAction = () => {
         </NCard>
 
         {/* Final Message */}
-        <div className={`text-center mt-12 sm:mt-16 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:2.8s]' : 'opacity-0'}`}>
+        <div className="text-center mt-12 sm:mt-16">
           <p className="text-base sm:text-lg text-muted">Ready to elevate your development experience?</p>
           <p className="text-xl sm:text-2xl font-bold mt-2">Let's build something amazing together! 🚀</p>
         </div>

@@ -106,24 +106,22 @@ const Testimonials = () => {
     <section ref={sectionRef} className="py-20 bg-gradient-to-b from-card/30 to-background relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-accent/3 rounded-full blur-3xl animate-pulse"></div>
-        <div
-          className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-purple-500/3 rounded-full blur-3xl animate-pulse"
-          style={{ animationDelay: '3s' }}></div>
+        <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-accent/3 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-purple-500/3 rounded-full blur-3xl" style={{ animationDelay: '3s' }}></div>
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-          <NBadge color="accent" className={`mb-4 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <NBadge color="accent" className={`mb-4 `}>
             <Heart className="w-3 h-3 mr-1" />
             Testimonials
           </NBadge>
-          <h2 className={`text-4xl lg:text-5xl font-bold mb-6 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`} style={{ animationDelay: '0.2s' }}>
+          <h2 className={`text-4xl lg:text-5xl font-bold mb-6 `} style={{ animationDelay: '0.2s' }}>
             Loved by
             <span className="block bg-gradient-to-r from-accent to-purple-600 bg-clip-text text-transparent">Developers Worldwide</span>
           </h2>
-          <p className={`text-xl text-muted max-w-3xl mx-auto ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`} style={{ animationDelay: '0.4s' }}>
+          <p className={`text-xl text-muted max-w-3xl mx-auto `} style={{ animationDelay: '0.4s' }}>
             Join thousands of developers and companies who trust modern component libraries to build their React and React Native applications. Here's
             what they have to say.
           </p>
@@ -132,10 +130,7 @@ const Testimonials = () => {
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {stats.map((stat, index) => (
-            <div
-              key={index}
-              className={`text-center ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
-              style={{ animationDelay: `${0.6 + index * 0.1}s` }}>
+            <div key={index} className={`text-center `} style={{ animationDelay: `${0.6 + index * 0.1}s` }}>
               <div className="text-4xl font-bold text-accent mb-2">{stat.number}</div>
               <div className="text-muted font-medium">{stat.label}</div>
             </div>
@@ -144,9 +139,7 @@ const Testimonials = () => {
 
         {/* Main Testimonial */}
         <div className="relative mb-16">
-          <NCard
-            className={`p-8 lg:p-12 shadow-2xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
-            style={{ animationDelay: '1s' }}>
+          <NCard className={`p-8 lg:p-12 shadow-2xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm `} style={{ animationDelay: '1s' }}>
             <div className="relative">
               {/* Quote Icon */}
               <div className="absolute -top-4 -left-4 w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center">
@@ -223,7 +216,7 @@ const Testimonials = () => {
               key={index}
               className={`p-6 group hover:shadow-xl transition-all duration-500 transform hover:scale-105 cursor-pointer ${
                 index === currentTestimonial ? 'ring-2 ring-accent' : ''
-              } ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
+              } `}
               style={{ animationDelay: `${1.4 + index * 0.1}s` }}
               onClick={() => setCurrentTestimonial(index)}>
               <div className="space-y-4">
@@ -263,7 +256,7 @@ const Testimonials = () => {
 
         {/* Community Section */}
         <div className="mt-20 text-center">
-          <div className={`${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`} style={{ animationDelay: '2s' }}>
+          <div className={``} style={{ animationDelay: '2s' }}>
             <h3 className="text-2xl font-bold mb-4">Join Our Growing Community</h3>
             <p className="text-muted mb-8 max-w-2xl mx-auto">Connect with other developers, share your projects, and get help from the community.</p>
 

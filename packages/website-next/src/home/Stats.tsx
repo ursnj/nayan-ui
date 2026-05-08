@@ -146,12 +146,7 @@ const Stats = () => {
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
           {stats.map((stat, index) => (
-            <NCard
-              key={index}
-              className={`p-6 text-center transform transition-all duration-500 hover:scale-105 hover:shadow-xl ${
-                isVisible ? 'animate-fade-in-up' : 'opacity-0'
-              }`}
-              style={{ animationDelay: `${index * 0.2}s` }}>
+            <NCard key={index} className="p-6 text-center transform transition-all duration-500 hover:scale-105 hover:shadow-xl">
               <div className={`w-16 h-16 ${stat.bgColor} rounded-full flex items-center justify-center mx-auto mb-4`}>
                 <stat.icon className={`w-8 h-8 ${stat.color}`} />
               </div>
@@ -170,22 +165,17 @@ const Stats = () => {
 
         {/* Features Grid */}
         <div className="text-center mb-12">
-          <h2 className={`text-4xl font-bold mb-4 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`} style={{ animationDelay: '0.8s' }}>
+          <h2 className={`text-4xl font-bold mb-4 `} style={{ animationDelay: '0.8s' }}>
             Why Choose Nayan UI?
           </h2>
-          <p className={`text-xl text-muted max-w-3xl mx-auto ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`} style={{ animationDelay: '1s' }}>
+          <p className={`text-xl text-muted max-w-3xl mx-auto `} style={{ animationDelay: '1s' }}>
             Built by developers, for developers. Every component is crafted with attention to detail and best practices.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => (
-            <NCard
-              key={index}
-              className={`p-6 text-center group hover:shadow-lg transition-all duration-300 transform hover:scale-105 ${
-                isVisible ? 'animate-fade-in-up' : 'opacity-0'
-              }`}
-              style={{ animationDelay: `${1.2 + index * 0.1}s` }}>
+            <NCard key={index} className="p-6 text-center group hover:shadow-lg transition-all duration-300 transform hover:scale-105">
               <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-accent/20 transition-colors">
                 <feature.icon className="w-6 h-6 text-accent" />
               </div>
@@ -198,9 +188,9 @@ const Stats = () => {
 
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-accent/20 rounded-full animate-ping" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute top-3/4 right-1/4 w-3 h-3 bg-purple-500/20 rounded-full animate-pulse" style={{ animationDelay: '3s' }}></div>
-          <div className="absolute bottom-1/4 left-1/3 w-1 h-1 bg-blue-500/30 rounded-full animate-bounce" style={{ animationDelay: '4s' }}></div>
+          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-accent/20 rounded-full" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-3/4 right-1/4 w-3 h-3 bg-purple-500/20 rounded-full" style={{ animationDelay: '3s' }}></div>
+          <div className="absolute bottom-1/4 left-1/3 w-1 h-1 bg-blue-500/30 rounded-full" style={{ animationDelay: '4s' }}></div>
         </div>
       </div>
     </section>
