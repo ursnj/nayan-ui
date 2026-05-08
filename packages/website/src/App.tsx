@@ -42,6 +42,7 @@ import RNTooltip from './react-native/components/Tooltip';
 import RNInstallation from './react-native/installation/Installation';
 import Accordion from './react/components/Accordion';
 import Alert from './react/components/Alert';
+import Autocomplete from './react/components/Autocomplete';
 import Badge from './react/components/Badge';
 import Button from './react/components/Button';
 import ButtonGroup from './react/components/ButtonGroup';
@@ -49,6 +50,7 @@ import Card from './react/components/Card';
 import Checkbox from './react/components/Checkbox';
 import Components from './react/components/Components';
 import ConfirmAlert from './react/components/ConfirmAlert';
+import DatePicker from './react/components/DatePicker';
 import Dialog from './react/components/Dialog';
 import Divider from './react/components/Divider';
 import FormInput from './react/components/FormInput';
@@ -58,9 +60,12 @@ import Link from './react/components/Link';
 import Linkify from './react/components/Linkify';
 import Loading from './react/components/Loading';
 import Menu from './react/components/Menu';
+import Meter from './react/components/Meter';
+import NumberField from './react/components/NumberField';
 import Popover from './react/components/Popover';
 import Progress from './react/components/Progress';
 import RadioGroup from './react/components/RadioGroup';
+import SearchField from './react/components/SearchField';
 import Select from './react/components/Select';
 import Sheet from './react/components/Sheet';
 import Skeleton from './react/components/Skeleton';
@@ -68,6 +73,7 @@ import Slider from './react/components/Slider';
 import Switch from './react/components/Switch';
 import Table from './react/components/Table';
 import Tabs from './react/components/Tabs';
+import TagGroup from './react/components/TagGroup';
 import Textarea from './react/components/Textarea';
 import Toast from './react/components/Toast';
 import Tooltip from './react/components/Tooltip';
@@ -104,12 +110,14 @@ const App = () => {
             <Route path="installation" element={<Installation />} />
             <Route path="accordion" element={<Accordion />} />
             <Route path="alert" element={<Alert />} />
+            <Route path="autocomplete" element={<Autocomplete />} />
             <Route path="badge" element={<Badge />} />
             <Route path="button" element={<Button />} />
             <Route path="button-group" element={<ButtonGroup />} />
             <Route path="card" element={<Card />} />
             <Route path="checkbox" element={<Checkbox />} />
             <Route path="confirm-alert" element={<ConfirmAlert />} />
+            <Route path="date-picker" element={<DatePicker />} />
             <Route path="dialog" element={<Dialog />} />
             <Route path="divider" element={<Divider />} />
             <Route path="infinite-scroll" element={<InfiniteScroll />} />
@@ -119,15 +127,19 @@ const App = () => {
             <Route path="linkify" element={<Linkify />} />
             <Route path="loading" element={<Loading />} />
             <Route path="menu" element={<Menu />} />
+            <Route path="meter" element={<Meter />} />
+            <Route path="number-field" element={<NumberField />} />
             <Route path="popover" element={<Popover />} />
             <Route path="progress" element={<Progress />} />
             <Route path="radio-group" element={<RadioGroup />} />
+            <Route path="search-field" element={<SearchField />} />
             <Route path="select" element={<Select />} />
             <Route path="sheet" element={<Sheet />} />
             <Route path="skeleton" element={<Skeleton />} />
             <Route path="slider" element={<Slider />} />
             <Route path="switch" element={<Switch />} />
             <Route path="table" element={<Table />} />
+            <Route path="tag-group" element={<TagGroup />} />
             <Route path="tabs" element={<Tabs />} />
             <Route path="textarea" element={<Textarea />} />
             <Route path="toast" element={<Toast />} />

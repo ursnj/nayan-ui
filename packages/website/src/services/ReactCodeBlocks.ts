@@ -645,6 +645,113 @@ const Toast = () => {
 
 export default Toast;`;
 
+export const autocompleteCode = `import { useState } from 'react';
+import { NAutocomplete } from '@nayan-ui/react';
+
+const items = [
+  { id: 'react', label: 'React' },
+  { id: 'vue', label: 'Vue' },
+  { id: 'angular', label: 'Angular' },
+  { id: 'svelte', label: 'Svelte' }
+];
+
+const Autocomplete = () => {
+  const [selected, setSelected] = useState(null);
+
+  return (
+    <NAutocomplete
+      items={items}
+      placeholder="Select a framework..."
+      selectedKey={selected}
+      onSelectionChange={setSelected}
+    />
+  );
+};
+
+export default Autocomplete;`;
+
+export const datePickerCode = `import { NDatePicker } from '@nayan-ui/react';
+
+const DatePicker = () => {
+  return <NDatePicker aria-label="Select a date" />;
+};
+
+export default DatePicker;`;
+
+export const numberFieldCode = `import { useState } from 'react';
+import { NNumberField } from '@nayan-ui/react';
+
+const NumberField = () => {
+  const [value, setValue] = useState(1);
+
+  return (
+    <NNumberField
+      value={value}
+      onChange={setValue}
+      minValue={0}
+      maxValue={100}
+      aria-label="Quantity"
+    />
+  );
+};
+
+export default NumberField;`;
+
+export const meterCode = `import { NMeter } from '@nayan-ui/react';
+
+const Meter = () => {
+  return (
+    <div className="space-y-4">
+      <NMeter value={30} color="accent" label="Storage: 30%" />
+      <NMeter value={80} color="warning" label="Memory: 80%" />
+      <NMeter value={95} color="danger" label="CPU: 95%" />
+    </div>
+  );
+};
+
+export default Meter;`;
+
+export const tagGroupCode = `import { useState } from 'react';
+import { NTagGroup } from '@nayan-ui/react';
+
+const items = [
+  { id: 'react', label: 'React' },
+  { id: 'vue', label: 'Vue' },
+  { id: 'angular', label: 'Angular' }
+];
+
+const TagGroup = () => {
+  const [selected, setSelected] = useState(new Set(['react']));
+
+  return (
+    <NTagGroup
+      items={items}
+      selectionMode="multiple"
+      selectedKeys={selected}
+      onSelectionChange={setSelected}
+    />
+  );
+};
+
+export default TagGroup;`;
+
+export const searchFieldCode = `import { useState } from 'react';
+import { NSearchField } from '@nayan-ui/react';
+
+const SearchField = () => {
+  const [query, setQuery] = useState('');
+
+  return (
+    <NSearchField
+      value={query}
+      onChange={setQuery}
+      placeholder="Search components..."
+    />
+  );
+};
+
+export default SearchField;`;
+
 export const tooltipCode = `import { NTooltip, NButton } from '@nayan-ui/react';
 
 const Tooltip = () => {

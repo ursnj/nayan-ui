@@ -819,6 +819,60 @@ export const tooltipTags = [
   { sku: 'react-tooltip-implementation', text: 'Implementing Tooltip in React' }
 ];
 
+export const autocompleteTags = [
+  { sku: 'react-autocomplete', text: 'React Autocomplete' },
+  { sku: 'react-search-autocomplete', text: 'React Search Autocomplete' },
+  { sku: 'react-combobox', text: 'React Combobox' },
+  { sku: 'react-typeahead', text: 'React Typeahead' },
+  { sku: 'react-autocomplete-component', text: 'React Autocomplete Component' },
+  { sku: 'react-select-search', text: 'React Select Search' }
+];
+
+export const datePickerTags = [
+  { sku: 'react-date-picker', text: 'React Date Picker' },
+  { sku: 'react-datepicker', text: 'React DatePicker' },
+  { sku: 'react-calendar', text: 'React Calendar' },
+  { sku: 'react-date-selector', text: 'React Date Selector' },
+  { sku: 'react-date-input', text: 'React Date Input' },
+  { sku: 'react-date-picker-component', text: 'React Date Picker Component' }
+];
+
+export const numberFieldTags = [
+  { sku: 'react-number-input', text: 'React Number Input' },
+  { sku: 'react-number-field', text: 'React Number Field' },
+  { sku: 'react-numeric-input', text: 'React Numeric Input' },
+  { sku: 'react-stepper-input', text: 'React Stepper Input' },
+  { sku: 'react-increment-decrement', text: 'React Increment Decrement' },
+  { sku: 'react-number-spinner', text: 'React Number Spinner' }
+];
+
+export const meterTags = [
+  { sku: 'react-meter', text: 'React Meter' },
+  { sku: 'react-gauge', text: 'React Gauge' },
+  { sku: 'react-meter-component', text: 'React Meter Component' },
+  { sku: 'react-progress-meter', text: 'React Progress Meter' },
+  { sku: 'react-level-indicator', text: 'React Level Indicator' },
+  { sku: 'react-usage-meter', text: 'React Usage Meter' }
+];
+
+export const tagGroupTags = [
+  { sku: 'react-tag-group', text: 'React Tag Group' },
+  { sku: 'react-tags', text: 'React Tags' },
+  { sku: 'react-tag-list', text: 'React Tag List' },
+  { sku: 'react-chip-group', text: 'React Chip Group' },
+  { sku: 'react-removable-tags', text: 'React Removable Tags' },
+  { sku: 'react-tag-selector', text: 'React Tag Selector' }
+];
+
+export const searchFieldTags = [
+  { sku: 'react-search-field', text: 'React Search Field' },
+  { sku: 'react-search-input', text: 'React Search Input' },
+  { sku: 'react-search-bar', text: 'React Search Bar' },
+  { sku: 'react-search-component', text: 'React Search Component' },
+  { sku: 'react-clearable-search', text: 'React Clearable Search' },
+  { sku: 'react-search-box', text: 'React Search Box' }
+];
+
 // React Native Tags
 // Additional comprehensive SEO tags for React Native components
 export const rnAccordionTags = [

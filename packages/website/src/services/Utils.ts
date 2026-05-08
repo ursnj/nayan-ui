@@ -3,6 +3,7 @@ import {
   Badge,
   BookOpen,
   Bot,
+  CalendarDays,
   CircleAlert,
   CircleCheck,
   CircleDot,
@@ -14,11 +15,14 @@ import {
   FileText,
   GalleryVertical,
   Gamepad2,
+  Gauge,
   Grid3x3,
   HandCoins,
+  Hash,
   Link,
   Link2,
   ListCollapse,
+  ListFilter,
   Loader,
   Map,
   MessageSquare,
@@ -27,6 +31,7 @@ import {
   MessageSquareWarning,
   PictureInPicture2,
   RectangleEllipsis,
+  Search,
   Settings,
   Slash,
   SlidersHorizontal,
@@ -43,12 +48,14 @@ import {
 import {
   accordionAttributes,
   alertAttributes,
+  autocompleteAttributes,
   badgeAttributes,
   buttonAttributes,
   buttonGroupAttributes,
   cardAttributes,
   checkboxAttributes,
   confirmAlertAttributes,
+  datePickerAttributes,
   dialogAttributes,
   dividerAttributes,
   infiniteScrollAttributes,
@@ -56,9 +63,12 @@ import {
   linkAttributes,
   loadingAttributes,
   menuAttributes,
+  meterAttributes,
+  numberFieldAttributes,
   popoverAttributes,
   progressAttributes,
   radioGroupAttributes,
+  searchFieldAttributes,
   selectAttributes,
   sheetAttributes,
   skeletonAttributes,
@@ -66,6 +76,7 @@ import {
   switchAttributes,
   tableAttributes,
   tabsAttributes,
+  tagGroupAttributes,
   textareaAttributes,
   toastAttributes,
   tooltipAttributes
@@ -73,12 +84,14 @@ import {
 import {
   accordionCode,
   alertCode,
+  autocompleteCode,
   badgeCode,
   buttonCode,
   buttonGroupCode,
   cardCode,
   checkBoxCode,
   confirmAlertCode,
+  datePickerCode,
   dialogCode,
   dividerCode,
   infiniteScrollCode,
@@ -88,9 +101,12 @@ import {
   linkifyCode,
   loadingCode,
   menuCode,
+  meterCode,
+  numberFieldCode,
   popoverCode,
   progressCode,
   radioGroupCode,
+  searchFieldCode,
   selectCode,
   sheetCode,
   skeletonCode,
@@ -98,6 +114,7 @@ import {
   switchCode,
   tableCode,
   tabsCode,
+  tagGroupCode,
   textareaCode,
   toastCode,
   tooltipCode
@@ -130,12 +147,14 @@ import {
 import {
   accordionTags,
   alertTags,
+  autocompleteTags,
   badgeTags,
   buttonGroupTags,
   buttonTags,
   cardTags,
   checkboxTags,
   confirmAlertTags,
+  datePickerTags,
   dialogTags,
   dividerTags,
   infiniteScrollTags,
@@ -144,6 +163,8 @@ import {
   linkifyTags,
   loadingTags,
   menuTags,
+  meterTags,
+  numberFieldTags,
   popoverTags,
   progressTags,
   radioGroupTags,
@@ -167,6 +188,7 @@ import {
   rnTextareaTags,
   rnToastTags,
   rnTooltipTags,
+  searchFieldTags,
   selectTags,
   seoMasterTags,
   sheetTags,
@@ -175,6 +197,7 @@ import {
   switchTags,
   tableTags,
   tabsTags,
+  tagGroupTags,
   textareaTags,
   toastTags,
   tooltipTags
@@ -242,6 +265,18 @@ export const reactSidebarItems = [
     tags: alertTags,
     icon: CircleAlert,
     component: () => import('../react/components/Alert.tsx?raw'),
+    isComponent: true
+  },
+  {
+    title: 'Autocomplete',
+    description:
+      'An Autocomplete component is a UI element that combines a text input with a dropdown list of suggestions, allowing users to quickly find and select from a set of options. It provides real-time filtering as users type, enhancing the search and selection experience.',
+    link: '/react/autocomplete',
+    attributes: autocompleteAttributes,
+    code: autocompleteCode,
+    tags: autocompleteTags,
+    icon: ListFilter,
+    component: () => import('../react/components/Autocomplete.tsx?raw'),
     isComponent: true
   },
   {
@@ -314,6 +349,18 @@ export const reactSidebarItems = [
     tags: confirmAlertTags,
     icon: MessageSquareWarning,
     component: () => import('../react/components/ConfirmAlert.tsx?raw'),
+    isComponent: true
+  },
+  {
+    title: 'Date Picker',
+    description:
+      'A Date Picker component is a UI element that allows users to select a date from a calendar popup. It provides an intuitive interface for choosing dates with support for date ranges, min/max constraints, and various granularity levels.',
+    link: '/react/date-picker',
+    attributes: datePickerAttributes,
+    code: datePickerCode,
+    tags: datePickerTags,
+    icon: CalendarDays,
+    component: () => import('../react/components/DatePicker.tsx?raw'),
     isComponent: true
   },
   {
@@ -424,6 +471,30 @@ export const reactSidebarItems = [
     isComponent: true
   },
   {
+    title: 'Meter',
+    description:
+      'A Meter component is a UI element that visually represents a scalar measurement within a known range, such as disk usage, battery level, or CPU load. It provides an at-a-glance indicator of how a value compares to its min and max thresholds.',
+    link: '/react/meter',
+    attributes: meterAttributes,
+    code: meterCode,
+    tags: meterTags,
+    icon: Gauge,
+    component: () => import('../react/components/Meter.tsx?raw'),
+    isComponent: true
+  },
+  {
+    title: 'Number Field',
+    description:
+      'A Number Field component is a UI element that allows users to enter and adjust numeric values using increment and decrement buttons or direct input. It supports features like min/max constraints, step values, and number formatting.',
+    link: '/react/number-field',
+    attributes: numberFieldAttributes,
+    code: numberFieldCode,
+    tags: numberFieldTags,
+    icon: Hash,
+    component: () => import('../react/components/NumberField.tsx?raw'),
+    isComponent: true
+  },
+  {
     title: 'Popover',
     description:
       'A Popover component is a UI element that displays additional information or actions when users interact with a specific trigger, such as a button or link. It typically appears as a small overlay or tooltip that provides context, tips, or options without navigating away from the current page. Popovers enhance user experience by offering relevant content in a concise format while maintaining focus on the main interface.',
@@ -469,6 +540,18 @@ export const reactSidebarItems = [
     tags: selectTags,
     icon: SquareMousePointer,
     component: () => import('../react/components/Select.tsx?raw'),
+    isComponent: true
+  },
+  {
+    title: 'Search Field',
+    description:
+      'A Search Field component is a UI element that provides a text input specifically designed for search functionality. It includes a built-in search icon and clear button, allowing users to quickly enter, modify, and clear search queries.',
+    link: '/react/search-field',
+    attributes: searchFieldAttributes,
+    code: searchFieldCode,
+    tags: searchFieldTags,
+    icon: Search,
+    component: () => import('../react/components/SearchField.tsx?raw'),
     isComponent: true
   },
   {
@@ -529,6 +612,18 @@ export const reactSidebarItems = [
     tags: tableTags,
     icon: Grid3x3,
     component: () => import('../react/components/Table.tsx?raw'),
+    isComponent: true
+  },
+  {
+    title: 'Tag Group',
+    description:
+      'A Tag Group component is a UI element that displays a collection of tags or labels, allowing users to select, filter, or remove tags. It supports multiple selection modes and removable tags, making it ideal for categorization, filtering, and labeling interfaces.',
+    link: '/react/tag-group',
+    attributes: tagGroupAttributes,
+    code: tagGroupCode,
+    tags: tagGroupTags,
+    icon: Badge,
+    component: () => import('../react/components/TagGroup.tsx?raw'),
     isComponent: true
   },
   {
