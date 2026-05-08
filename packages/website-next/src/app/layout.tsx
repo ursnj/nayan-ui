@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ThemeProvider>
           <Header />
-          <main className="mt-[58px]">{children}</main>
+          <main className="mt-[60px]">{children}</main>
           <Footer />
         </ThemeProvider>
       </body>

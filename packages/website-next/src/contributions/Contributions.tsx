@@ -2,12 +2,11 @@
 
 import { AlertTypes, NAlert, NBadge, NButton, NCard } from '@nayan-ui/react';
 import { BookOpen, Bug, Code, GitPullRequest, Github, Heart, Lightbulb, Users } from 'lucide-react';
-import Footer from '@/helpers/Footer';
 
 const Contributions = () => {
   return (
     <>
-      <div className="contributions container mx-auto pt-8 mb-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="space-y-8">
           {/* Hero Section */}
           <NCard className="text-center py-8">
@@ -239,7 +238,7 @@ const Contributions = () => {
           </div>
 
           {/* Call to Action */}
-          <NCard className="text-center py-8 mb-8">
+          <NCard className="text-center py-8">
             <h2 className="text-2xl font-bold text-foreground mb-4">Ready to Contribute?</h2>
             <p className="text-muted mb-6 max-w-2xl mx-auto">Join our growing community of developers and help make Nayan UI better for everyone!</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
