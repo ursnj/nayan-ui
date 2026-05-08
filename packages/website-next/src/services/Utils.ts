@@ -252,7 +252,6 @@ export const reactSidebarItems = [
     code: accordionCode,
     tags: accordionTags,
     icon: ListCollapse,
-    component: () => import('../react/components/Accordion.tsx?raw'),
     isComponent: true
   },
   {
@@ -264,7 +263,6 @@ export const reactSidebarItems = [
     code: alertCode,
     tags: alertTags,
     icon: CircleAlert,
-    component: () => import('../react/components/Alert.tsx?raw'),
     isComponent: true
   },
   {
@@ -276,7 +274,6 @@ export const reactSidebarItems = [
     code: autocompleteCode,
     tags: autocompleteTags,
     icon: ListFilter,
-    component: () => import('../react/components/Autocomplete.tsx?raw'),
     isComponent: true
   },
   {
@@ -288,7 +285,6 @@ export const reactSidebarItems = [
     code: badgeCode,
     tags: badgeTags,
     icon: Badge,
-    component: () => import('../react/components/Badge.tsx?raw'),
     isComponent: true
   },
   {
@@ -300,7 +296,6 @@ export const reactSidebarItems = [
     code: buttonCode,
     tags: buttonTags,
     icon: Square,
-    component: () => import('../react/components/Button.tsx?raw'),
     isComponent: true
   },
   {
@@ -312,7 +307,6 @@ export const reactSidebarItems = [
     code: buttonGroupCode,
     tags: buttonGroupTags,
     icon: Columns3,
-    component: () => import('../react/components/ButtonGroup.tsx?raw'),
     isComponent: true
   },
   {
@@ -324,7 +318,6 @@ export const reactSidebarItems = [
     code: cardCode,
     tags: cardTags,
     icon: CreditCard,
-    component: () => import('../react/components/Card.tsx?raw'),
     isComponent: true
   },
   {
@@ -336,7 +329,6 @@ export const reactSidebarItems = [
     code: checkBoxCode,
     tags: checkboxTags,
     icon: SquareCheck,
-    component: () => import('../react/components/Checkbox.tsx?raw'),
     isComponent: true
   },
   {
@@ -348,7 +340,6 @@ export const reactSidebarItems = [
     code: confirmAlertCode,
     tags: confirmAlertTags,
     icon: MessageSquareWarning,
-    component: () => import('../react/components/ConfirmAlert.tsx?raw'),
     isComponent: true
   },
   {
@@ -360,7 +351,6 @@ export const reactSidebarItems = [
     code: datePickerCode,
     tags: datePickerTags,
     icon: CalendarDays,
-    component: () => import('../react/components/DatePicker.tsx?raw'),
     isComponent: true
   },
   {
@@ -372,7 +362,6 @@ export const reactSidebarItems = [
     code: dialogCode,
     tags: dialogTags,
     icon: MessageSquare,
-    component: () => import('../react/components/Dialog.tsx?raw'),
     isComponent: true
   },
   {
@@ -384,7 +373,6 @@ export const reactSidebarItems = [
     code: dividerCode,
     tags: dividerTags,
     icon: Slash,
-    component: () => import('../react/components/Divider.tsx?raw'),
     isComponent: true
   },
   {
@@ -396,7 +384,6 @@ export const reactSidebarItems = [
     code: infiniteScrollCode,
     tags: infiniteScrollTags,
     icon: GalleryVertical,
-    component: () => import('../react/components/InfiniteScroll.tsx?raw'),
     isComponent: true
   },
   {
@@ -408,7 +395,6 @@ export const reactSidebarItems = [
     code: inputCode,
     tags: inputTags,
     icon: TextCursorInput,
-    component: () => import('../react/components/Input.tsx?raw'),
     isComponent: true
   },
   // {
@@ -431,7 +417,6 @@ export const reactSidebarItems = [
     code: linkCode,
     tags: linkTags,
     icon: Link,
-    component: () => import('../react/components/Link.tsx?raw'),
     isComponent: true
   },
   {
@@ -443,7 +428,6 @@ export const reactSidebarItems = [
     code: linkifyCode,
     tags: linkifyTags,
     icon: SquareArrowOutUpRight,
-    component: () => import('../react/components/Linkify.tsx?raw'),
     isComponent: true
   },
   {
@@ -455,7 +439,6 @@ export const reactSidebarItems = [
     code: loadingCode,
     tags: loadingTags,
     icon: Loader,
-    component: () => import('../react/components/Loading.tsx?raw'),
     isComponent: true
   },
   {
@@ -467,7 +450,6 @@ export const reactSidebarItems = [
     code: menuCode,
     tags: menuTags,
     icon: EllipsisVertical,
-    component: () => import('../react/components/Menu.tsx?raw'),
     isComponent: true
   },
   {
@@ -479,7 +461,6 @@ export const reactSidebarItems = [
     code: meterCode,
     tags: meterTags,
     icon: Gauge,
-    component: () => import('../react/components/Meter.tsx?raw'),
     isComponent: true
   },
   {
@@ -491,7 +472,6 @@ export const reactSidebarItems = [
     code: numberFieldCode,
     tags: numberFieldTags,
     icon: Hash,
-    component: () => import('../react/components/NumberField.tsx?raw'),
     isComponent: true
   },
   {
@@ -503,7 +483,6 @@ export const reactSidebarItems = [
     code: popoverCode,
     tags: popoverTags,
     icon: PictureInPicture2,
-    component: () => import('../react/components/Popover.tsx?raw'),
     isComponent: true
   },
   {
@@ -515,7 +494,6 @@ export const reactSidebarItems = [
     code: progressCode,
     tags: progressTags,
     icon: RectangleEllipsis,
-    component: () => import('../react/components/Progress.tsx?raw'),
     isComponent: true
   },
   {
@@ -527,7 +505,6 @@ export const reactSidebarItems = [
     code: radioGroupCode,
     tags: radioGroupTags,
     icon: CircleDot,
-    component: () => import('../react/components/RadioGroup.tsx?raw'),
     isComponent: true
   },
   {
@@ -539,7 +516,6 @@ export const reactSidebarItems = [
     code: selectCode,
     tags: selectTags,
     icon: SquareMousePointer,
-    component: () => import('../react/components/Select.tsx?raw'),
     isComponent: true
   },
   {
@@ -551,7 +527,6 @@ export const reactSidebarItems = [
     code: searchFieldCode,
     tags: searchFieldTags,
     icon: Search,
-    component: () => import('../react/components/SearchField.tsx?raw'),
     isComponent: true
   },
   {
@@ -563,7 +538,6 @@ export const reactSidebarItems = [
     code: sheetCode,
     tags: sheetTags,
     icon: StickyNote,
-    component: () => import('../react/components/Sheet.tsx?raw'),
     isComponent: true
   },
   {
@@ -575,7 +549,6 @@ export const reactSidebarItems = [
     code: skeletonCode,
     tags: skeletonTags,
     icon: TextSelect,
-    component: () => import('../react/components/Skeleton.tsx?raw'),
     isComponent: true
   },
   {
@@ -587,7 +560,6 @@ export const reactSidebarItems = [
     code: sliderCode,
     tags: sliderTags,
     icon: SlidersHorizontal,
-    component: () => import('../react/components/Slider.tsx?raw'),
     isComponent: true
   },
   {
@@ -599,7 +571,6 @@ export const reactSidebarItems = [
     code: switchCode,
     tags: switchTags,
     icon: ToggleRight,
-    component: () => import('../react/components/Switch.tsx?raw'),
     isComponent: true
   },
   {
@@ -611,7 +582,6 @@ export const reactSidebarItems = [
     code: tableCode,
     tags: tableTags,
     icon: Grid3x3,
-    component: () => import('../react/components/Table.tsx?raw'),
     isComponent: true
   },
   {
@@ -623,7 +593,6 @@ export const reactSidebarItems = [
     code: tagGroupCode,
     tags: tagGroupTags,
     icon: Badge,
-    component: () => import('../react/components/TagGroup.tsx?raw'),
     isComponent: true
   },
   {
@@ -635,7 +604,6 @@ export const reactSidebarItems = [
     code: tabsCode,
     tags: tabsTags,
     icon: AppWindow,
-    component: () => import('../react/components/Tabs.tsx?raw'),
     isComponent: true
   },
   {
@@ -647,7 +615,6 @@ export const reactSidebarItems = [
     code: textareaCode,
     tags: textareaTags,
     icon: TextCursorInput,
-    component: () => import('../react/components/Textarea.tsx?raw'),
     isComponent: true
   },
   {
@@ -659,7 +626,6 @@ export const reactSidebarItems = [
     code: toastCode,
     tags: toastTags,
     icon: MessageSquareText,
-    component: () => import('../react/components/Toast.tsx?raw'),
     isComponent: true
   },
   {
@@ -671,7 +637,6 @@ export const reactSidebarItems = [
     code: tooltipCode,
     tags: tooltipTags,
     icon: MessageSquareDot,
-    component: () => import('../react/components/Tooltip.tsx?raw'),
     isComponent: true
   }
 ];
@@ -695,7 +660,6 @@ export const reactNativeSidebarItems = [
     code: accordionCode,
     tags: rnAccordionTags,
     icon: ListCollapse,
-    component: () => import('../../../native/src/components/NAccordion.tsx?raw'),
     isComponent: true
   },
   {
@@ -707,7 +671,6 @@ export const reactNativeSidebarItems = [
     code: alertCode,
     tags: rnAlertTags,
     icon: CircleAlert,
-    component: () => import('../../../native/src/components/NAlert.tsx?raw'),
     isComponent: true
   },
   {
@@ -719,7 +682,6 @@ export const reactNativeSidebarItems = [
     code: buttonCode,
     tags: rnButtonTags,
     icon: Square,
-    component: () => import('../../../native/src/components/NButton.tsx?raw'),
     isComponent: true
   },
   {
@@ -730,7 +692,6 @@ export const reactNativeSidebarItems = [
     code: buttonGroupCode,
     tags: rnButtonGroupTags,
     icon: Columns3,
-    component: () => import('../../../native/src/components/NButtonGroup.tsx?raw'),
     isComponent: true
   },
   {
@@ -741,7 +702,6 @@ export const reactNativeSidebarItems = [
     code: cardCode,
     tags: rnCardTags,
     icon: CreditCard,
-    component: () => import('../../../native/src/components/NCard.tsx?raw'),
     isComponent: true
   },
   {
@@ -753,7 +713,6 @@ export const reactNativeSidebarItems = [
     code: checkBoxCode,
     tags: rnCheckboxTags,
     icon: SquareCheck,
-    component: () => import('../../../native/src/components/NCheck.tsx?raw'),
     isComponent: true
   },
   {
@@ -764,7 +723,6 @@ export const reactNativeSidebarItems = [
     code: dialogCode,
     tags: rnDialogTags,
     icon: MessageSquare,
-    component: () => import('../../../native/src/components/NDialog.tsx?raw'),
     isComponent: true
   },
   {
@@ -775,7 +733,6 @@ export const reactNativeSidebarItems = [
     code: dividerCode,
     tags: rnDividerTags,
     icon: Slash,
-    component: () => import('../../../native/src/components/NDivider.tsx?raw'),
     isComponent: true
   },
   {
@@ -786,7 +743,6 @@ export const reactNativeSidebarItems = [
     code: inputCode,
     tags: rnInputTags,
     icon: TextCursorInput,
-    component: () => import('../../../native/src/components/NInput.tsx?raw'),
     isComponent: true
   },
   {
@@ -797,7 +753,6 @@ export const reactNativeSidebarItems = [
     code: loadingCode,
     tags: rnAccordionTags,
     icon: Loader,
-    component: () => import('../../../native/src/components/NLoading.tsx?raw'),
     isComponent: true
   },
   {
@@ -808,7 +763,6 @@ export const reactNativeSidebarItems = [
     code: menuCode,
     tags: rnMenuTags,
     icon: EllipsisVertical,
-    component: () => import('../../../native/src/components/NMenu.tsx?raw'),
     isComponent: true
   },
   {
@@ -819,7 +773,6 @@ export const reactNativeSidebarItems = [
     code: popoverCode,
     tags: rnPopoverTags,
     icon: PictureInPicture2,
-    component: () => import('../../../native/src/components/NPopover.tsx?raw'),
     isComponent: true
   },
   {
@@ -830,7 +783,6 @@ export const reactNativeSidebarItems = [
     code: progressCode,
     tags: rnProgressTags,
     icon: RectangleEllipsis,
-    component: () => import('../../../native/src/components/NProgress.tsx?raw'),
     isComponent: true
   },
   {
@@ -842,7 +794,6 @@ export const reactNativeSidebarItems = [
     code: radioGroupCode,
     tags: rnRadioTags,
     icon: CircleDot,
-    component: () => import('../../../native/src/components/NRadio.tsx?raw'),
     isComponent: true
   },
   {
@@ -853,7 +804,6 @@ export const reactNativeSidebarItems = [
     code: selectCode,
     tags: rnSelectTags,
     icon: SquareMousePointer,
-    component: () => import('../../../native/src/components/NSelect.tsx?raw'),
     isComponent: true
   },
   {
@@ -864,7 +814,6 @@ export const reactNativeSidebarItems = [
     code: sheetCode,
     tags: rnSheetTags,
     icon: StickyNote,
-    component: () => import('../../../native/src/components/NSheet.tsx?raw'),
     isComponent: true
   },
   {
@@ -876,7 +825,6 @@ export const reactNativeSidebarItems = [
     code: skeletonCode,
     tags: rnSkeletonTags,
     icon: TextSelect,
-    component: () => import('../../../native/src/components/NSkeleton.tsx?raw'),
     isComponent: true
   },
   {
@@ -888,7 +836,6 @@ export const reactNativeSidebarItems = [
     code: sliderCode,
     tags: rnAccordionTags,
     icon: SlidersHorizontal,
-    component: () => import('../../../native/src/components/NSlider.tsx?raw'),
     isComponent: true
   },
   {
@@ -899,7 +846,6 @@ export const reactNativeSidebarItems = [
     code: switchCode,
     tags: rnSwitchTags,
     icon: ToggleRight,
-    component: () => import('../../../native/src/components/NSwitch.tsx?raw'),
     isComponent: true
   },
   {
@@ -911,7 +857,6 @@ export const reactNativeSidebarItems = [
     code: tabsCode,
     tags: rnAccordionTags,
     icon: AppWindow,
-    component: () => import('../../../native/src/components/NTabs.tsx?raw'),
     isComponent: true
   },
   {
@@ -922,7 +867,6 @@ export const reactNativeSidebarItems = [
     code: textareaCode,
     tags: rnTextareaTags,
     icon: TextCursorInput,
-    component: () => import('../../../native/src/components/NInput.tsx?raw'),
     isComponent: true
   },
   {
@@ -933,7 +877,6 @@ export const reactNativeSidebarItems = [
     code: toastCode,
     tags: rnToastTags,
     icon: MessageSquareText,
-    component: () => import('../../../native/src/components/NToast.tsx?raw'),
     isComponent: true
   },
   {
@@ -944,7 +887,6 @@ export const reactNativeSidebarItems = [
     code: tooltipCode,
     tags: rnTooltipTags,
     icon: MessageSquareDot,
-    component: () => import('../../../native/src/components/NTooltip.tsx?raw'),
     isComponent: true
   }
 ];

@@ -11,12 +11,6 @@ const GamesLicensing = () => {
 
   return (
     <Sidebar title={component?.title || 'Licensing'}>
-      <Meta
-        title="Licensing - React Native Games"
-        description="Licensing information for react-native-games library including free non-commercial and paid commercial licenses."
-        keywords="react native games license, commercial license, free license, dual licensing"
-      />
-
       {/* License Section */}
       <div className="mb-8">
         <div className="space-y-6">

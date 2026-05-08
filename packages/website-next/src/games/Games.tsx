@@ -354,12 +354,6 @@ const GamesMain = () => {
 
   return (
     <Sidebar title={component?.title || 'Games'}>
-      <Meta
-        title="React Native Games - 50+ High-performance games for React Native"
-        description="50+ high-performance games for React Native projects. Built with Skia, Reanimated, and TypeScript for smooth 60fps gameplay across iOS, Android, and Web. Powering Playtura."
-        keywords="react native games, mobile games, skia games, react native skia, playtura, block blast, bubble shooter, candy crush, flappy bird, 2048, pac-man, ludo, sudoku, react native reanimated"
-      />
-
       {/* Header Section */}
       <div className="bg-surface border border-default rounded-lg mb-8">
         <div className="px-6 py-12">

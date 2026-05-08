@@ -19,12 +19,6 @@ const GamesApiReference = () => {
 
   return (
     <Sidebar title={component?.title || 'API Reference'}>
-      <Meta
-        title="API Reference - React Native Games"
-        description="Complete API reference for react-native-games library including exported constants, types, and components."
-        keywords="react native games api, game ids, game settings, typescript types"
-      />
-
       {/* API Reference Section */}
       <div className="mb-8">
         <div className="space-y-6">

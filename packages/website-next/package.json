@@ -13,6 +13,7 @@
     "lucide-react": "^0.525.0",
     "next": "16.2.6",
     "react": "^19.1.0",
+    "react-aria-components": "^1.17.0",
     "react-code-blocks": "^0.1.6",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.75.0"

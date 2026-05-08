@@ -3130,6 +3130,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@nayan-ui/website-next@workspace:packages/website-next":
+  version: 0.0.0-use.local
+  resolution: "@nayan-ui/website-next@workspace:packages/website-next"
+  dependencies:
+    "@heroui/styles": "npm:^3.0.0"
+    "@nayan-ui/react": "workspace:*"
+    "@tailwindcss/postcss": "npm:^4"
+    "@types/node": "npm:^20"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    lucide-react: "npm:^0.525.0"
+    next: "npm:16.2.6"
+    react: "npm:^19.1.0"
+    react-aria-components: "npm:^1.17.0"
+    react-code-blocks: "npm:^0.1.6"
+    react-dom: "npm:^19.1.0"
+    react-hook-form: "npm:^7.75.0"
+    tailwindcss: "npm:^4"
+    typescript: "npm:^5"
+  languageName: unknown
+  linkType: soft
+
 "@nayan-ui/website@workspace:packages/website":
   version: 0.0.0-use.local
   resolution: "@nayan-ui/website@workspace:packages/website"
@@ -10565,7 +10587,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-aria-components@npm:1.17.0":
+"react-aria-components@npm:1.17.0, react-aria-components@npm:^1.17.0":
   version: 1.17.0
   resolution: "react-aria-components@npm:1.17.0"
   dependencies:
@@ -10634,17 +10656,6 @@ __metadata:
   peerDependencies:
     react: ^19.2.0
   checksum: 10c0/fa2cae05248d01288e91523b590ce4e7635b1e13f1344e225f850d722a8da037bf0782f63b1c1d46353334e0c696909b82e582f8cad607948fde6f7646cc18d9
-  languageName: node
-  linkType: hard
-
-"react-dom@npm:19.2.4":
-  version: 19.2.4
-  resolution: "react-dom@npm:19.2.4"
-  dependencies:
-    scheduler: "npm:^0.27.0"
-  peerDependencies:
-    react: ^19.2.4
-  checksum: 10c0/f0c63f1794dedb154136d4d0f59af00b41907f4859571c155940296808f4b94bf9c0c20633db75b5b2112ec13d8d7dd4f9bf57362ed48782f317b11d05a44f35
   languageName: node
   linkType: hard
 
@@ -11130,13 +11141,6 @@ __metadata:
   version: 19.2.0
   resolution: "react@npm:19.2.0"
   checksum: 10c0/1b6d64eacb9324725bfe1e7860cb7a6b8a34bc89a482920765ebff5c10578eb487e6b46b2f0df263bd27a25edbdae2c45e5ea5d81ae61404301c1a7192c38330
-  languageName: node
-  linkType: hard
-
-"react@npm:19.2.4":
-  version: 19.2.4
-  resolution: "react@npm:19.2.4"
-  checksum: 10c0/cd2c9ff67a720799cc3b38a516009986f7fc4cb8d3e15716c6211cf098d1357ee3e348ab05ad0600042bbb0fd888530ba92e329198c92eafa0994f5213396596
   languageName: node
   linkType: hard
 
@@ -12763,22 +12767,6 @@ __metadata:
   checksum: 10c0/5612d5f3e54760a797052eb4927f0ddc01383550f542ccd33d5238cfd65aeed392a45ad38364970d0a0f4fea32e1f4d231b3d8dac4a3bdd385e5cf802ae097db
   languageName: node
   linkType: hard
-
-"website-next@workspace:packages/website-next":
-  version: 0.0.0-use.local
-  resolution: "website-next@workspace:packages/website-next"
-  dependencies:
-    "@tailwindcss/postcss": "npm:^4"
-    "@types/node": "npm:^20"
-    "@types/react": "npm:^19"
-    "@types/react-dom": "npm:^19"
-    next: "npm:16.2.6"
-    react: "npm:19.2.4"
-    react-dom: "npm:19.2.4"
-    tailwindcss: "npm:^4"
-    typescript: "npm:^5"
-  languageName: unknown
-  linkType: soft
 
 "whatwg-encoding@npm:^3.1.1":
   version: 3.1.1
