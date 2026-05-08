@@ -357,17 +357,17 @@ const GamesMain = () => {
       {/* Header Section */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-600/10 via-pink-600/10 to-amber-600/10 border border-purple-500/15 mb-8">
         <div className="absolute inset-0 bg-surface/50 backdrop-blur-sm rounded-2xl" />
-        <div className="relative px-6 py-12">
+        <div className="relative px-4 sm:px-6 py-8 sm:py-12">
           <div className="text-center max-w-4xl mx-auto">
             <div className="flex items-center justify-center mb-6">
               <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mr-4 shadow-lg shadow-purple-500/20">
                 <span className="text-white font-bold text-2xl">🎮</span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold">
-                <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 bg-clip-text text-transparent">react-native-games</span>
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold">
+                <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 bg-clip-text text-transparent break-words">react-native-games</span>
               </h1>
             </div>
-            <p className="text-xl text-muted leading-relaxed mb-8">
+            <p className="text-base sm:text-xl text-muted leading-relaxed mb-6 sm:mb-8">
               50+ high-performance games for your React Native projects. Built with modern React Native technologies including Skia, Reanimated,
               Gesture Handler and TypeScript for smooth 60fps gameplay across iOS, Android, and Web platforms.
             </p>
@@ -398,7 +398,7 @@ const GamesMain = () => {
       </div>
 
       {/* Key Features Grid */}
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
         <div className="bg-surface border border-default rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
             <span className="w-8 h-8 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">🚀</span>
@@ -487,7 +487,7 @@ const GamesMain = () => {
         <h2 className="text-2xl font-bold mb-6">
           <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">🎯 All {games.length} Games</span>
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {games.map((game, index) => (
             <div
               key={index}
