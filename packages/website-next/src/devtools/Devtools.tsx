@@ -11,12 +11,6 @@ const DevtoolsMain = () => {
 
   return (
     <Sidebar title={component?.title || 'Devtools'}>
-      <Meta
-        title="Devtools - Command line tools for Nayan UI"
-        description="Powerful command line tools for Nayan UI development including sitemap generation, robots.txt creation, and more developer utilities."
-        keywords="sitemap generator, Sitemap validator, free sitemap generator, create XML sitemap, SEO sitemap tool, generate sitemap, XML sitemap, website SEO tool, robots.txt generator, robots.txt validator, meta tags generator, meta tags validator, favicon generator"
-      />
-
       {/* Header Section */}
       <div className="bg-surface border border-default rounded-lg mb-8">
         <div className="px-6 py-12">

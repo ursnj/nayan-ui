@@ -1,3 +1,5 @@
+'use client';
+
 import { AlertTypes, NAlert, NBadge, NButton, NCard } from '@nayan-ui/react';
 import { BookOpen, Bug, Code, GitPullRequest, Github, Heart, Lightbulb, Users } from 'lucide-react';
 import Footer from '@/helpers/Footer';
@@ -6,11 +8,6 @@ const Contributions = () => {
   return (
     <>
       <div className="contributions container mx-auto pt-8 mb-8">
-        <Meta
-          title="Contributing to Nayan UI"
-          description="Learn how to contribute to Nayan UI, an open source React and React Native component library. Guidelines for bug reports, feature requests, and code contributions."
-        />
-
         <div className="space-y-8">
           {/* Hero Section */}
           <NCard className="text-center py-8">

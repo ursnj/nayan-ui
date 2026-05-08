@@ -21,12 +21,6 @@ const GamesInstallation = () => {
 
   return (
     <Sidebar title={component?.title || 'Installation'}>
-      <Meta
-        title="Installation - React Native Games"
-        description="Installation guide for react-native-games library including peer dependencies and platform setup."
-        keywords="react native games installation, setup, peer dependencies"
-      />
-
       {/* Installation Section */}
       <div className="mb-8">
         <div className="space-y-4">
