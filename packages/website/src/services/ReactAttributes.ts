@@ -449,3 +449,80 @@ export const tooltipAttributes = [
   { name: 'triggerProps', type: 'React.HTMLAttributes<HTMLElement>', default: 'Optional', details: 'Props for trigger element.' },
   { name: 'contentProps', type: 'React.HTMLAttributes<HTMLDivElement>', default: 'Optional', details: 'Props for content element.' }
 ];
+
+export const autocompleteAttributes = [
+  { name: 'items', type: 'NAutocompleteItem[]', default: 'Required', details: 'List of items with id and label.' },
+  { name: 'placeholder', type: 'string', default: "'Search...'", details: 'Placeholder text.' },
+  { name: 'selectedKey', type: 'string', default: 'Optional', details: 'Currently selected item key.' },
+  { name: 'onSelectionChange', type: '(key: string | null) => void', default: 'Optional', details: 'Callback when selection changes.' },
+  { name: 'onClear', type: '() => void', default: 'Optional', details: 'Callback when input is cleared.' },
+  { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'Visual variant.' },
+  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Disables the autocomplete.' },
+  { name: 'isInvalid', type: 'boolean', default: 'false', details: 'Marks as invalid.' },
+  { name: 'fullWidth', type: 'boolean', default: 'false', details: 'Full width mode.' },
+  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' }
+];
+
+export const datePickerAttributes = [
+  { name: 'value', type: 'DateValue', default: 'Optional', details: 'Controlled date value.' },
+  { name: 'defaultValue', type: 'DateValue', default: 'Optional', details: 'Default date value.' },
+  { name: 'onChange', type: '(value: DateValue) => void', default: 'Optional', details: 'Callback when date changes.' },
+  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Disables the date picker.' },
+  { name: 'isInvalid', type: 'boolean', default: 'false', details: 'Marks as invalid.' },
+  { name: 'minValue', type: 'DateValue', default: 'Optional', details: 'Minimum selectable date.' },
+  { name: 'maxValue', type: 'DateValue', default: 'Optional', details: 'Maximum selectable date.' },
+  { name: 'granularity', type: "'day' | 'hour' | 'minute' | 'second'", default: "'day'", details: 'Date granularity.' },
+  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' }
+];
+
+export const numberFieldAttributes = [
+  { name: 'value', type: 'number', default: 'Optional', details: 'Controlled value.' },
+  { name: 'defaultValue', type: 'number', default: 'Optional', details: 'Default value.' },
+  { name: 'onChange', type: '(value: number) => void', default: 'Optional', details: 'Callback when value changes.' },
+  { name: 'minValue', type: 'number', default: 'Optional', details: 'Minimum value.' },
+  { name: 'maxValue', type: 'number', default: 'Optional', details: 'Maximum value.' },
+  { name: 'step', type: 'number', default: '1', details: 'Step increment.' },
+  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Disables the field.' },
+  { name: 'isInvalid', type: 'boolean', default: 'false', details: 'Marks as invalid.' },
+  { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'Visual variant.' },
+  { name: 'fullWidth', type: 'boolean', default: 'false', details: 'Full width mode.' },
+  { name: 'formatOptions', type: 'Intl.NumberFormatOptions', default: 'Optional', details: 'Number format options (currency, percent, etc).' },
+  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' }
+];
+
+export const meterAttributes = [
+  { name: 'value', type: 'number', default: 'Required', details: 'Current meter value.' },
+  { name: 'minValue', type: 'number', default: '0', details: 'Minimum value.' },
+  { name: 'maxValue', type: 'number', default: '100', details: 'Maximum value.' },
+  { name: 'label', type: 'string', default: 'Optional', details: 'Label shown in output.' },
+  { name: 'showOutput', type: 'boolean', default: 'true', details: 'Show output label.' },
+  { name: 'color', type: "'default' | 'accent' | 'success' | 'warning' | 'danger'", default: "'accent'", details: 'Meter color.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'Meter size.' },
+  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' }
+];
+
+export const tagGroupAttributes = [
+  { name: 'items', type: 'NTagItem[]', default: 'Required', details: 'List of tag items with id and label.' },
+  { name: 'selectionMode', type: "'none' | 'single' | 'multiple'", default: "'none'", details: 'Selection mode.' },
+  { name: 'selectedKeys', type: 'Iterable<string>', default: 'Optional', details: 'Selected tag keys.' },
+  { name: 'onSelectionChange', type: '(keys: Selection) => void', default: 'Optional', details: 'Callback when selection changes.' },
+  { name: 'onRemove', type: '(keys: Set<string>) => void', default: 'Optional', details: 'Callback when tags are removed.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'Tag size.' },
+  { name: 'variant', type: "'default' | 'surface'", default: "'default'", details: 'Tag variant.' },
+  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Disables the tag group.' },
+  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' }
+];
+
+export const searchFieldAttributes = [
+  { name: 'value', type: 'string', default: 'Optional', details: 'Controlled value.' },
+  { name: 'defaultValue', type: 'string', default: 'Optional', details: 'Default value.' },
+  { name: 'onChange', type: '(value: string) => void', default: 'Optional', details: 'Callback when value changes.' },
+  { name: 'onSubmit', type: '(value: string) => void', default: 'Optional', details: 'Callback on submit.' },
+  { name: 'onClear', type: '() => void', default: 'Optional', details: 'Callback when cleared.' },
+  { name: 'placeholder', type: 'string', default: "'Search...'", details: 'Placeholder text.' },
+  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Disables the search field.' },
+  { name: 'isInvalid', type: 'boolean', default: 'false', details: 'Marks as invalid.' },
+  { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'Visual variant.' },
+  { name: 'fullWidth', type: 'boolean', default: 'false', details: 'Full width mode.' },
+  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' }
+];
