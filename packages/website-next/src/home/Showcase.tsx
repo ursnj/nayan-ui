@@ -99,10 +99,10 @@ const Showcase = () => {
             </div>
 
             <h3 className="text-xl sm:text-2xl font-bold mb-3">
-              One Library, <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Two Platforms</span>
+              Two Libraries, <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">One Design Language</span>
             </h3>
             <p className="text-sm text-muted max-w-xl mx-auto mb-8">
-              Build consistent user experiences everywhere — same familiar API, same design language, across web and mobile.
+              Separate packages for React and React Native — each optimized for its platform, sharing a consistent API and design language.
             </p>
 
             <div className="flex flex-wrap justify-center gap-8 sm:gap-12">
