@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+// useRef still needed for resumeTimeoutRef
 import { NBadge, NCard } from '@nayan-ui/react';
 import {
   Accessibility,
@@ -29,10 +30,8 @@ import {
 } from 'lucide-react';
 
 const Features = () => {
-  const [isVisible, setIsVisible] = useState(false);
   const [currentFeature, setCurrentFeature] = useState(0);
   const [isPausedByUser, setIsPausedByUser] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
   const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const mainFeatures = useMemo(
@@ -76,23 +75,6 @@ const Features = () => {
     ],
     []
   );
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
 
   // Auto-play functionality
   useEffect(() => {
@@ -182,27 +164,25 @@ const Features = () => {
   ];
 
   return (
-    <section ref={sectionRef} className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-card/30 to-background">
+    <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-card/30 to-background">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/3 left-1/4 w-48 sm:w-80 h-48 sm:h-80 bg-accent/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/3 w-64 sm:w-96 h-64 sm:h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse [animation-delay:3s]"></div>
+        <div className="absolute top-1/3 left-1/4 w-48 sm:w-80 h-48 sm:h-80 bg-accent/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-64 sm:w-96 h-64 sm:h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16">
-          <NBadge color="accent" className={`mb-4 ${isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0'}`}>
+          <NBadge color="accent" className="mb-4">
             <Sparkles className="w-3 h-3 mr-1" />
             Features
           </NBadge>
-          <h2
-            className={`text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.2s]' : 'opacity-0'}`}>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
             Everything You Need to
             <span className="block bg-gradient-to-r from-accent to-purple-600 bg-clip-text text-transparent">Build Amazing Apps</span>
           </h2>
-          <p
-            className={`text-base sm:text-lg lg:text-xl text-muted max-w-3xl mx-auto px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.4s]' : 'opacity-0'}`}>
+          <p className="text-base sm:text-lg lg:text-xl text-muted max-w-3xl mx-auto px-4 sm:px-0">
             Discover the power of unified development. Build once, deploy everywhere with components designed for modern React and React Native
             applications.
           </p>
@@ -210,7 +190,7 @@ const Features = () => {
 
         {/* Main Features Carousel */}
         <div className="mb-16 sm:mb-20">
-          <div className={`relative ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.6s]' : 'opacity-0'}`}>
+          <div className="relative">
             {/* Only render the current feature */}
             <div className="transition-all duration-500 opacity-100 transform translate-y-0">
               <NCard className="p-4 sm:p-6 lg:p-8 xl:p-12 shadow-2xl border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
@@ -257,15 +237,14 @@ const Features = () => {
                               {[1, 2, 3, 4].map(item => (
                                 <div
                                   key={item}
-                                  className="w-8 sm:w-12 lg:w-16 h-8 sm:h-12 lg:h-16 bg-white/80 rounded-lg sm:rounded-xl shadow-lg animate-pulse"
-                                  style={{ animationDelay: `${item * 0.2}s` }}></div>
+                                  className="w-8 sm:w-12 lg:w-16 h-8 sm:h-12 lg:h-16 bg-white/80 rounded-lg sm:rounded-xl shadow-lg"></div>
                               ))}
                             </div>
                           </div>
 
                           {/* Floating Elements - Hidden on mobile */}
-                          <div className="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 w-4 sm:w-6 lg:w-8 h-4 sm:h-6 lg:h-8 bg-accent rounded-full animate-bounce hidden sm:block"></div>
-                          <div className="absolute -bottom-2 sm:-bottom-4 -left-2 sm:-left-4 w-3 sm:w-4 lg:w-6 h-3 sm:h-4 lg:h-6 bg-purple-500 rounded-full animate-ping hidden sm:block"></div>
+                          <div className="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 w-4 sm:w-6 lg:w-8 h-4 sm:h-6 lg:h-8 bg-accent rounded-full hidden sm:block"></div>
+                          <div className="absolute -bottom-2 sm:-bottom-4 -left-2 sm:-left-4 w-3 sm:w-4 lg:w-6 h-3 sm:h-4 lg:h-6 bg-purple-500 rounded-full hidden sm:block"></div>
                         </div>
                       );
                     })()}
@@ -313,23 +292,15 @@ const Features = () => {
         {/* All Features Grid */}
         <div className="space-y-8 sm:space-y-12">
           <div className="text-center">
-            <h3
-              className={`text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.8s]' : 'opacity-0'}`}>
-              Complete Feature Set
-            </h3>
-            <p
-              className={`text-sm sm:text-base lg:text-lg text-muted px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:1s]' : 'opacity-0'}`}>
-              Everything you need for modern application development
-            </p>
+            <h3 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">Complete Feature Set</h3>
+            <p className="text-sm sm:text-base lg:text-lg text-muted px-4 sm:px-0">Everything you need for modern application development</p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {allFeatures.map((feature, index) => (
               <NCard
                 key={index}
-                className={`p-4 sm:p-6 group hover:shadow-xl transition-all duration-500 transform hover:scale-105 cursor-pointer border-l-4 border-l-transparent hover:border-l-primary ${
-                  isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0'
-                } ${index < 3 ? '[animation-delay:1.4s]' : index < 6 ? '[animation-delay:1.5s]' : '[animation-delay:1.6s]'}`}>
+                className="p-4 sm:p-6 group hover:shadow-xl transition-all duration-500 transform hover:scale-105 cursor-pointer border-l-4 border-l-transparent hover:border-l-primary">
                 <div className="flex items-start space-x-3 sm:space-x-4">
                   <div className="w-10 sm:w-12 h-10 sm:h-12 bg-accent/10 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:bg-accent/20 transition-colors flex-shrink-0">
                     <feature.icon className="w-5 sm:w-6 h-5 sm:h-6 text-accent" />
@@ -358,8 +329,7 @@ const Features = () => {
 
         {/* Platform Support */}
         <div className="mt-16 sm:mt-20">
-          <NCard
-            className={`p-6 sm:p-8 bg-gradient-to-br from-accent/5 to-purple-500/5 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:1.8s]' : 'opacity-0'}`}>
+          <NCard className="p-6 sm:p-8 bg-gradient-to-br from-accent/5 to-purple-500/5">
             <div className="text-center">
               <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Cross-Platform Excellence</h3>
               <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
@@ -387,9 +357,9 @@ const Features = () => {
         </div>
 
         {/* Floating Animation Elements - Hidden on mobile */}
-        <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-accent/30 rounded-full animate-ping [animation-delay:1s] hidden sm:block"></div>
-        <div className="absolute bottom-1/3 left-1/4 w-1 h-1 bg-purple-500/30 rounded-full animate-bounce [animation-delay:2s] hidden sm:block"></div>
-        <div className="absolute bottom-1/4 left-1/3 w-1 h-1 bg-blue-500/30 rounded-full animate-bounce [animation-delay:4s] hidden sm:block"></div>
+        <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-accent/30 rounded-full hidden sm:block"></div>
+        <div className="absolute bottom-1/3 left-1/4 w-1 h-1 bg-purple-500/30 rounded-full hidden sm:block"></div>
+        <div className="absolute bottom-1/4 left-1/3 w-1 h-1 bg-blue-500/30 rounded-full hidden sm:block"></div>
       </div>
     </section>
   );

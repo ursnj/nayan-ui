@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { NBadge, NButton, NCard } from '@nayan-ui/react';
 import {
   ArrowRight,
@@ -25,40 +25,9 @@ import {
 import Link from 'next/link';
 
 const Banner = () => {
-  const [isVisible, setIsVisible] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
-  const [progress, setProgress] = useState(65);
+  const [progress] = useState(65);
   const [isLoading, setIsLoading] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  // Simulate loading animation
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress(prev => {
-        const newProgress = prev + Math.random() * 10;
-        return newProgress > 100 ? 20 : newProgress;
-      });
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   const handleButtonClick = () => {
     setIsLoading(true);
@@ -66,14 +35,12 @@ const Banner = () => {
   };
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background to-accent/5">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background to-accent/5">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 right-1/4 w-48 sm:w-72 h-48 sm:h-72 bg-accent/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 left-1/4 w-32 sm:w-64 h-32 sm:h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse [animation-delay:2s]"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 sm:w-[600px] h-96 sm:h-[600px] bg-gradient-to-r from-accent/5 to-purple-500/5 rounded-full blur-3xl animate-spin [animation-duration:20s]"></div>
+        <div className="absolute top-1/4 right-1/4 w-48 sm:w-72 h-48 sm:h-72 bg-accent/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 left-1/4 w-32 sm:w-64 h-32 sm:h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 sm:w-[600px] h-96 sm:h-[600px] bg-gradient-to-r from-accent/5 to-purple-500/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -81,7 +48,7 @@ const Banner = () => {
           {/* Left Content */}
           <div className="space-y-6 sm:space-y-8 text-center lg:text-left">
             {/* Badge */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-2 sm:space-y-0 sm:space-x-2 animate-fade-in-up delay-200">
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-2 sm:space-y-0 sm:space-x-2">
               <NBadge color="accent" className="px-3 py-1">
                 <Sparkles className="w-3 h-3 mr-1" />
                 New v2.0 Released
@@ -93,7 +60,7 @@ const Banner = () => {
             </div>
 
             {/* Main Heading */}
-            <div className={`space-y-4 sm:space-y-6 ${isVisible ? 'animate-fade-in-up opacity-100 delay-400' : 'opacity-0'}`}>
+            <div className="space-y-4 sm:space-y-6">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight">
                 Build Beautiful
                 <span className="block bg-gradient-to-r from-accent via-purple-600 to-pink-600 bg-clip-text text-transparent">
@@ -107,8 +74,7 @@ const Banner = () => {
             </div>
 
             {/* Stats */}
-            <div
-              className={`flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-8 ${isVisible ? 'animate-fade-in-up opacity-100 delay-600' : 'opacity-0'}`}>
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-8">
               <div className="flex items-center space-x-2">
                 <Star className="w-4 sm:w-5 h-4 sm:h-5 text-yellow-500" />
                 <span className="text-sm sm:text-base font-semibold">50+ Components</span>
@@ -124,11 +90,10 @@ const Banner = () => {
             </div>
 
             {/* CTA Buttons */}
-            <div
-              className={`flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start ${isVisible ? 'animate-fade-in-up opacity-100 delay-800' : 'opacity-0'}`}>
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
               <Link href="/react/components" className="w-full sm:w-auto">
                 <NButton className="group bg-accent hover:bg-accent/90 text-accent-foreground px-6 sm:px-8 py-3 text-base sm:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full sm:w-auto">
-                  <Rocket className="w-4 sm:w-5 h-4 sm:h-5 mr-2 group-hover:animate-pulse" />
+                  <Rocket className="w-4 sm:w-5 h-4 sm:h-5 mr-2" />
                   Get Started
                   <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </NButton>
@@ -145,13 +110,13 @@ const Banner = () => {
             </div>
 
             {/* GitHub Link */}
-            <div className="animate-fade-in-up delay-1200">
+            <div>
               <a
                 href="https://github.com/ursnj/nayan-ui"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center space-x-2 text-muted hover:text-accent transition-colors group">
-                <Github className="w-4 sm:w-5 h-4 sm:h-5 group-hover:animate-pulse" />
+                <Github className="w-4 sm:w-5 h-4 sm:h-5" />
                 <span className="text-sm sm:text-base">Star us on GitHub</span>
                 <ArrowRight className="w-3 sm:w-4 h-3 sm:h-4 group-hover:translate-x-1 transition-transform" />
               </a>
@@ -159,8 +124,7 @@ const Banner = () => {
           </div>
 
           {/* Right Content - Enhanced Interactive Demo */}
-          <div
-            className={`relative ${isVisible ? 'animate-fade-in-up opacity-100 delay-1000' : 'opacity-0'} mt-8 lg:mt-0 flex justify-center lg:justify-end`}>
+          <div className="relative mt-8 lg:mt-0 flex justify-center lg:justify-end">
             <div className="relative w-full max-w-md lg:max-w-lg space-y-4">
               {/* Main Demo Card */}
               <NCard className="p-4 sm:p-6 shadow-2xl bg-gradient-to-br from-card to-card/80 backdrop-blur-sm border-0 relative z-10">
@@ -306,10 +270,7 @@ const Banner = () => {
                   { icon: Zap, label: 'Fast', color: 'bg-yellow-500' },
                   { icon: Shield, label: 'Secure', color: 'bg-green-500' }
                 ].map((feature, index) => (
-                  <div
-                    key={feature.label}
-                    className={`flex items-center space-x-1 px-2 py-1 rounded-full text-white text-xs ${feature.color} animate-fade-in-up`}
-                    style={{ animationDelay: `${1.2 + index * 0.1}s` }}>
+                  <div key={feature.label} className={`flex items-center space-x-1 px-2 py-1 rounded-full text-white text-xs ${feature.color}`}>
                     <feature.icon className="w-3 h-3" />
                     <span>{feature.label}</span>
                   </div>
@@ -317,10 +278,10 @@ const Banner = () => {
               </div>
 
               {/* Floating Elements */}
-              <div className="absolute -top-4 -right-4 w-6 sm:w-8 h-6 sm:h-8 bg-accent rounded-full animate-bounce hidden lg:block"></div>
-              <div className="absolute -bottom-4 -left-4 w-4 sm:w-6 h-4 sm:h-6 bg-purple-500 rounded-full animate-ping hidden lg:block"></div>
-              <div className="absolute top-1/2 -right-8 w-3 h-3 bg-pink-500 rounded-full animate-pulse hidden lg:block"></div>
-              <div className="absolute bottom-1/4 -left-8 w-2 h-2 bg-blue-500 rounded-full animate-bounce hidden lg:block"></div>
+              <div className="absolute -top-4 -right-4 w-6 sm:w-8 h-6 sm:h-8 bg-accent rounded-full hidden lg:block"></div>
+              <div className="absolute -bottom-4 -left-4 w-4 sm:w-6 h-4 sm:h-6 bg-purple-500 rounded-full hidden lg:block"></div>
+              <div className="absolute top-1/2 -right-8 w-3 h-3 bg-pink-500 rounded-full hidden lg:block"></div>
+              <div className="absolute bottom-1/4 -left-8 w-2 h-2 bg-blue-500 rounded-full hidden lg:block"></div>
             </div>
           </div>
         </div>
