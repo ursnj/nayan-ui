@@ -91,9 +91,8 @@ const GamesInstallation = () => {
 
       {/* Usage Section */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center">
-          <span className="mr-3">🚀</span>
-          Usage
+        <h2 className="text-2xl font-bold mb-6">
+          <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">🚀 Usage</span>
         </h2>
         <div className="space-y-6">
           <div className="mb-6">

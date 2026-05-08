@@ -26,7 +26,7 @@ const Sidebar = (props: Props) => {
                   {!item.isHeading && (
                     <Link href={item.link}>
                       <div
-                        className={`cursor-pointer hover:bg-default rounded-lg p-2 px-3 flex items-center text-sm ${pathname === item.link ? 'text-accent bg-accent/5 font-medium' : ''}`}>
+                        className={`cursor-pointer hover:bg-default rounded-lg p-2 px-3 flex items-center text-sm transition-colors ${pathname === item.link ? 'text-blue-600 dark:text-blue-400 bg-gradient-to-r from-blue-500/10 to-purple-500/10 font-medium border-l-2 border-blue-500' : ''}`}>
                         <Icon className="w-4 h-4 inline mr-3" />
                         <span>{item.title}</span>
                       </div>
@@ -39,7 +39,11 @@ const Sidebar = (props: Props) => {
           </div>
         </div>
         <div className="content col-span-12 sm:col-span-8 md:col-span-9 lg:col-span-9">
-          {props.title && <h1 className="text-2xl font-bold mb-6">{props.title}</h1>}
+          {props.title && (
+            <h1 className="text-2xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">{props.title}</span>
+            </h1>
+          )}
           <div>{props.children}</div>
         </div>
       </div>

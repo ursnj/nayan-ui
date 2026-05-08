@@ -19,10 +19,10 @@ const Tags = () => {
       {/* React Components Section */}
       <div className="mb-12">
         <div className="flex items-center mb-6">
-          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mr-3 shadow-md shadow-blue-500/20">
             <span className="text-white font-bold text-sm">R</span>
           </div>
-          <h2 className="text-2xl font-bold text-foreground">React Components</h2>
+          <h2 className="text-2xl font-bold"><span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">React Components</span></h2>
         </div>
         <div className="mb-6 text-muted leading-relaxed">
           React components for web applications with modern design patterns and accessibility features.
@@ -41,10 +41,10 @@ const Tags = () => {
       {/* React Native Components Section */}
       <div className="mb-12">
         <div className="flex items-center mb-6">
-          <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mr-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center mr-3 shadow-md shadow-emerald-500/20">
             <span className="text-white font-bold text-sm">RN</span>
           </div>
-          <h2 className="text-2xl font-bold text-foreground">React Native Components</h2>
+          <h2 className="text-2xl font-bold"><span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">React Native Components</span></h2>
         </div>
         <div className="mb-6 text-muted leading-relaxed">
           React Native components for mobile applications with native performance and cross-platform compatibility.
