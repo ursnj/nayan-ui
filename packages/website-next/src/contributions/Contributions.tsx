@@ -9,16 +9,16 @@ const Contributions = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="space-y-8">
           {/* Hero Section */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-pink-600/10 via-purple-600/10 to-blue-600/10 border border-purple-500/15 text-center py-10 px-6">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-pink-600/10 via-purple-600/10 to-blue-600/10 border border-purple-500/15 text-center py-8 sm:py-10 px-4 sm:px-6">
             <div className="absolute inset-0 bg-surface/50 backdrop-blur-sm rounded-2xl" />
             <div className="relative">
               <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-pink-500/20">
                 <Heart className="w-7 h-7 text-white" />
               </div>
-              <h1 className="text-3xl font-bold mb-3">
+              <h1 className="text-2xl sm:text-3xl font-bold mb-3">
                 <span className="bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">Open Source Contributions</span>
               </h1>
-              <p className="text-lg text-muted max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg text-muted max-w-2xl mx-auto">
                 Nayan UI is an open source project and we welcome contributions from the community. Whether you're fixing bugs, adding features, or
                 improving documentation, every contribution matters!
               </p>
@@ -26,7 +26,7 @@ const Contributions = () => {
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             <NCard className="p-5 text-center">
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-md shadow-blue-500/20">
                 <Github className="w-5 h-5 text-white" />
@@ -60,7 +60,7 @@ const Contributions = () => {
           {/* Ways to Contribute */}
           <div>
             <h2 className="text-2xl font-bold mb-6"><span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Ways to Contribute</span></h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               <NCard className="p-6 hover:shadow-xl transition-all duration-300 group">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-rose-500 rounded-xl flex items-center justify-center shadow-md shadow-red-500/20 group-hover:scale-110 transition-transform">
@@ -147,7 +147,7 @@ const Contributions = () => {
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">Clone & Setup</h3>
                     <p className="text-muted mb-2">Clone your fork and install dependencies:</p>
-                    <div className="bg-background p-3 rounded-md font-mono text-sm">
+                    <div className="bg-background p-3 rounded-md font-mono text-sm overflow-x-auto">
                       git clone https://github.com/your-username/nayan.git
                       <br />
                       cd nayan
@@ -162,7 +162,7 @@ const Contributions = () => {
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">Create a Branch</h3>
                     <p className="text-muted mb-2">Create a new branch for your changes:</p>
-                    <div className="bg-background p-3 rounded-md font-mono text-sm">git checkout -b feature/your-feature-name</div>
+                    <div className="bg-background p-3 rounded-md font-mono text-sm overflow-x-auto">git checkout -b feature/your-feature-name</div>
                   </div>
                 </div>
 
@@ -197,9 +197,9 @@ const Contributions = () => {
                 </div>
               </NAlert>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <NCard className="p-6">
-                  <h3 className="text-lg font-semibold text-foreground mb-4">Component Guidelines</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <NCard className="p-4 sm:p-6">
+                  <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Component Guidelines</h3>
                   <ul className="space-y-2 text-muted">
                     <li>• Follow the existing component structure and naming conventions</li>
                     <li>• Include TypeScript types for all props and interfaces</li>
@@ -211,8 +211,8 @@ const Contributions = () => {
                   </ul>
                 </NCard>
 
-                <NCard className="p-6">
-                  <h3 className="text-lg font-semibold text-foreground mb-4">Pull Request Guidelines</h3>
+                <NCard className="p-4 sm:p-6">
+                  <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Pull Request Guidelines</h3>
                   <ul className="space-y-2 text-muted">
                     <li>• Provide a clear and descriptive title</li>
                     <li>• Include a detailed description of changes</li>
@@ -230,9 +230,9 @@ const Contributions = () => {
           {/* Community & Support */}
           <div>
             <h2 className="text-2xl font-bold mb-6"><span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Community & Support</span></h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <NCard className="p-6">
-                <h3 className="text-lg font-semibold text-foreground mb-4">Join Our Community</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              <NCard className="p-4 sm:p-6">
+                <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Join Our Community</h3>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <Github className="w-5 h-5" />
@@ -247,8 +247,8 @@ const Contributions = () => {
                 </div>
               </NCard>
 
-              <NCard className="p-6">
-                <h3 className="text-lg font-semibold text-foreground mb-4">Recognition</h3>
+              <NCard className="p-4 sm:p-6">
+                <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Recognition</h3>
                 <p className="text-muted mb-4">We value every contribution! Contributors are recognized in:</p>
                 <ul className="space-y-1 text-muted text-sm">
                   <li>• GitHub contributors list</li>
@@ -261,7 +261,7 @@ const Contributions = () => {
           </div>
 
           {/* Call to Action */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-center py-10 px-6 shadow-2xl shadow-purple-500/20">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-center py-8 sm:py-10 px-4 sm:px-6 shadow-2xl shadow-purple-500/20">
             <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
             <div className="relative">

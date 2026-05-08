@@ -14,17 +14,17 @@ const DevtoolsMain = () => {
       {/* Header Section */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-cyan-600/10 border border-blue-500/15 mb-8">
         <div className="absolute inset-0 bg-surface/50 backdrop-blur-sm rounded-2xl" />
-        <div className="relative px-6 py-12">
+        <div className="relative px-4 sm:px-6 py-8 sm:py-12">
           <div className="text-center max-w-4xl mx-auto">
             <div className="flex items-center justify-center mb-6">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mr-4 shadow-lg shadow-blue-500/20">
                 <span className="text-white font-bold text-2xl">CLI</span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold">
                 <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">Devtools</span>
               </h1>
             </div>
-            <p className="text-xl text-muted leading-relaxed mb-8">
+            <p className="text-base sm:text-xl text-muted leading-relaxed mb-6 sm:mb-8">
               Powerful command line tools and developer utilities for building better web applications with Nayan UI.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -54,7 +54,7 @@ const DevtoolsMain = () => {
       </div>
 
       {/* Quick Navigation Cards */}
-      <div className="grid md:grid-cols-2 gap-6 mb-12">
+      <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-12">
         <NLink href="/devtools/sitemap" className="group">
           <div className="bg-surface border border-default rounded-xl p-6 hover:border-emerald-500/30 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center mb-4">
@@ -95,8 +95,8 @@ const DevtoolsMain = () => {
       </div>
 
       {/* Overview Content */}
-      <div className="bg-surface border border-default rounded-xl p-8 mb-8">
-        <h2 className="text-2xl font-bold mb-6"><span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Getting Started</span></h2>
+      <div className="bg-surface border border-default rounded-xl p-4 sm:p-6 lg:p-8 mb-8">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6"><span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Getting Started</span></h2>
         <div className="prose prose-gray max-w-none">
           <p className="text-muted mb-4">
             The Nayan UI CLI provides a comprehensive set of tools for web developers to enhance their development workflow and improve their
@@ -104,11 +104,11 @@ const DevtoolsMain = () => {
           </p>
           <div className="bg-background rounded-lg p-4 mb-6">
             <h3 className="text-lg font-semibold text-foreground mb-2">Installation</h3>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono">
+            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
               <code>npm install -g @nayan-ui/cli</code>
             </pre>
           </div>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <h3 className="text-lg font-semibold text-foreground mb-3">Quick Commands</h3>
               <div className="space-y-2">
@@ -144,9 +144,9 @@ const DevtoolsMain = () => {
       </div>
 
       {/* Features Section */}
-      <div className="bg-surface border border-default rounded-xl p-8 mb-8">
-        <h2 className="text-2xl font-bold mb-6"><span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">✨ Features</span></h2>
-        <div className="grid md:grid-cols-2 gap-6">
+      <div className="bg-surface border border-default rounded-xl p-4 sm:p-6 lg:p-8 mb-8">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6"><span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">✨ Features</span></h2>
+        <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
           <div className="space-y-4">
             <div className="flex items-start">
               <span className="text-2xl mr-3">⌨️</span>
