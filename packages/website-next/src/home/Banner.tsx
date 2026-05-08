@@ -1,288 +1,186 @@
 'use client';
 
 import { useState } from 'react';
-import { NBadge, NButton, NCard } from '@nayan-ui/react';
-import {
-  ArrowRight,
-  Bell,
-  Calendar,
-  Check,
-  Code,
-  Github,
-  Heart,
-  Mail,
-  Palette,
-  Rocket,
-  Search,
-  Settings,
-  Shield,
-  Sparkles,
-  Star,
-  User,
-  Users,
-  Zap
-} from 'lucide-react';
+import { NBadge, NButton, NCard, NChip, NDivider, NInput, NProgress, NSelect } from '@nayan-ui/react';
+import { ArrowRight, Code, Github, Heart, Palette, Rocket, Shield, Sparkles, Star, Users, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 const Banner = () => {
   const [activeTab, setActiveTab] = useState(0);
-  const [progress] = useState(65);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleButtonClick = () => {
-    setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 1500);
-  };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background to-accent/5">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 right-1/4 w-48 sm:w-72 h-48 sm:h-72 bg-accent/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 left-1/4 w-32 sm:w-64 h-32 sm:h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 sm:w-[600px] h-96 sm:h-[600px] bg-gradient-to-r from-accent/5 to-purple-500/5 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center min-h-[600px]">
+    <section className="relative overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Left Content */}
-          <div className="space-y-6 sm:space-y-8 text-center lg:text-left">
-            {/* Badge */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-2 sm:space-y-0 sm:space-x-2">
-              <NBadge color="accent" className="px-3 py-1">
-                <Sparkles className="w-3 h-3 mr-1" />
-                New v2.0 Released
+          <div className="space-y-8 text-center lg:text-left">
+            <div className="flex items-center justify-center lg:justify-start gap-2">
+              <NBadge color="accent">
+                <Sparkles className="w-3 h-3 mr-1.5" />
+                v2.0 Released
               </NBadge>
-              <NBadge color="success" className="px-3 py-1">
-                <Heart className="w-3 h-3 mr-1" />
+              <NBadge color="success">
+                <Heart className="w-3 h-3 mr-1.5" />
                 Open Source
               </NBadge>
             </div>
 
-            {/* Main Heading */}
-            <div className="space-y-4 sm:space-y-6">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight">
+            <div className="space-y-4">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight tracking-tight">
                 Build Beautiful
-                <span className="block bg-gradient-to-r from-accent via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  React & React Native Components
-                </span>
+                <span className="block bg-gradient-to-r from-accent to-purple-600 bg-clip-text text-transparent">React & React Native</span>
+                Components
               </h1>
-              <p className="text-base sm:text-lg lg:text-xl text-muted max-w-2xl mx-auto lg:mx-0 px-4 sm:px-0">
-                A comprehensive component library for React and React Native applications. Build faster, ship sooner, and create amazing user
-                experiences with our production-ready components.
+              <p className="text-base sm:text-lg text-muted max-w-xl mx-auto lg:mx-0">
+                A production-ready component library for web and mobile. Ship faster with 50+ accessible, customizable components.
               </p>
             </div>
 
-            {/* Stats */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-8">
-              <div className="flex items-center space-x-2">
-                <Star className="w-4 sm:w-5 h-4 sm:h-5 text-yellow-500" />
-                <span className="text-sm sm:text-base font-semibold">50+ Components</span>
+            <div className="flex items-center justify-center lg:justify-start gap-6 text-sm">
+              <div className="flex items-center gap-1.5">
+                <Star className="w-4 h-4 text-yellow-500" />
+                <span className="font-medium">50+ Components</span>
               </div>
-              <div className="flex items-center space-x-2">
-                <Users className="w-4 sm:w-5 h-4 sm:h-5 text-blue-500" />
-                <span className="text-sm sm:text-base font-semibold">TypeScript Ready</span>
+              <div className="flex items-center gap-1.5">
+                <Shield className="w-4 h-4 text-blue-500" />
+                <span className="font-medium">TypeScript</span>
               </div>
-              <div className="flex items-center space-x-2">
-                <Palette className="w-4 sm:w-5 h-4 sm:h-5 text-purple-500" />
-                <span className="text-sm sm:text-base font-semibold">Fully Customizable</span>
+              <div className="flex items-center gap-1.5">
+                <Palette className="w-4 h-4 text-purple-500" />
+                <span className="font-medium">Themeable</span>
               </div>
             </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
-              <Link href="/react/components" className="w-full sm:w-auto">
-                <NButton className="group bg-accent hover:bg-accent/90 text-accent-foreground px-6 sm:px-8 py-3 text-base sm:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full sm:w-auto">
-                  <Rocket className="w-4 sm:w-5 h-4 sm:h-5 mr-2" />
+            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+              <Link href="/react/components">
+                <NButton className="group bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 font-semibold w-full sm:w-auto">
+                  <Rocket className="w-4 h-4 mr-2" />
                   Get Started
-                  <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
                 </NButton>
               </Link>
-
-              <Link href="/react-native/components" className="w-full sm:w-auto">
-                <NButton
-                  isOutline={true}
-                  className="border-accent text-accent hover:bg-accent hover:text-accent-foreground px-6 sm:px-8 py-3 text-base sm:text-lg font-semibold transition-all duration-300 w-full sm:w-auto">
-                  <Code className="w-4 sm:w-5 h-4 sm:h-5 mr-2" />
+              <Link href="/react-native/components">
+                <NButton isOutline className="w-full sm:w-auto px-6 py-2.5 font-semibold">
+                  <Code className="w-4 h-4 mr-2" />
                   View Components
                 </NButton>
               </Link>
             </div>
 
-            {/* GitHub Link */}
-            <div>
-              <a
-                href="https://github.com/ursnj/nayan-ui"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center space-x-2 text-muted hover:text-accent transition-colors group">
-                <Github className="w-4 sm:w-5 h-4 sm:h-5" />
-                <span className="text-sm sm:text-base">Star us on GitHub</span>
-                <ArrowRight className="w-3 sm:w-4 h-3 sm:h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
-            </div>
+            <a
+              href="https://github.com/ursnj/nayan-ui"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors">
+              <Github className="w-4 h-4" />
+              Star us on GitHub
+              <ArrowRight className="w-3 h-3" />
+            </a>
           </div>
 
-          {/* Right Content - Enhanced Interactive Demo */}
-          <div className="relative mt-8 lg:mt-0 flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-md lg:max-w-lg space-y-4">
-              {/* Main Demo Card */}
-              <NCard className="p-4 sm:p-6 shadow-2xl bg-gradient-to-br from-card to-card/80 backdrop-blur-sm border-0 relative z-10">
-                <div className="space-y-4">
-                  {/* Demo Header */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                      <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    </div>
-                    <div className="text-xs sm:text-sm text-muted">Live Demo</div>
+          {/* Right Content - Interactive Demo */}
+          <div className="hidden lg:block">
+            <NCard className="p-6 shadow-xl">
+              <div className="space-y-5">
+                {/* Window Chrome */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                    <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                    <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
+                  <span className="text-xs text-muted font-mono">preview.tsx</span>
+                </div>
 
-                  {/* Tab Navigation */}
-                  <div className="flex space-x-1 bg-background/50 rounded-lg p-1">
-                    {['Buttons', 'Forms', 'Cards'].map((tab, index) => (
-                      <button
-                        key={tab}
-                        onClick={() => setActiveTab(index)}
-                        className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-all ${
-                          activeTab === index ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted hover:text-foreground'
-                        }`}>
-                        {tab}
-                      </button>
-                    ))}
-                  </div>
+                <NDivider />
 
-                  {/* Tab Content */}
-                  <div className="space-y-3">
-                    {activeTab === 0 && (
-                      <>
-                        <NButton
-                          onClick={handleButtonClick}
-                          className="w-full bg-accent hover:bg-accent/90 text-accent-foreground transition-all duration-300 transform hover:scale-[1.02]">
-                          {isLoading ? (
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                          ) : (
-                            <Zap className="w-4 h-4 mr-2" />
-                          )}
-                          {isLoading ? 'Loading...' : 'Interactive Button'}
+                {/* Tab Navigation */}
+                <div className="flex gap-1 bg-background rounded-lg p-1">
+                  {['Buttons', 'Forms', 'Cards'].map((tab, index) => (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveTab(index)}
+                      className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                        activeTab === index ? 'bg-accent text-accent-foreground' : 'text-muted hover:text-foreground'
+                      }`}>
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Tab Content */}
+                <div className="space-y-3 min-h-[180px]">
+                  {activeTab === 0 && (
+                    <div className="space-y-3">
+                      <NButton className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
+                        <Zap className="w-4 h-4 mr-2" />
+                        Primary Action
+                      </NButton>
+                      <div className="grid grid-cols-2 gap-2">
+                        <NButton isOutline className="text-sm">
+                          <Shield className="w-3 h-3 mr-1.5" />
+                          Outline
                         </NButton>
+                        <NButton isOutline className="text-sm">
+                          <Star className="w-3 h-3 mr-1.5" />
+                          Secondary
+                        </NButton>
+                      </div>
+                      <div className="flex gap-2">
+                        <NChip color="accent" size="sm">
+                          React
+                        </NChip>
+                        <NChip color="success" size="sm">
+                          Native
+                        </NChip>
+                        <NChip color="warning" size="sm">
+                          TypeScript
+                        </NChip>
+                      </div>
+                    </div>
+                  )}
 
-                        <div className="grid grid-cols-2 gap-2">
-                          <NButton
-                            isOutline={true}
-                            className="border-accent text-accent hover:bg-accent hover:text-white transition-all duration-300 text-sm">
-                            <Check className="w-3 h-3 mr-1" />
-                            Success
-                          </NButton>
-                          <NButton className="bg-red-500 hover:bg-red-600 text-white transition-all duration-300 text-sm">
-                            <Shield className="w-3 h-3 mr-1" />
-                            Danger
-                          </NButton>
+                  {activeTab === 1 && (
+                    <div className="space-y-3">
+                      <NInput placeholder="Search components..." />
+                      <NSelect
+                        value={null}
+                        options={[
+                          { label: 'React', value: 'react' },
+                          { label: 'React Native', value: 'react-native' }
+                        ]}
+                        placeholder="Choose framework"
+                      />
+                      <div className="flex items-center gap-2 text-sm text-muted">
+                        <input type="checkbox" id="demo-dark" className="rounded" />
+                        <label htmlFor="demo-dark">Enable dark mode</label>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeTab === 2 && (
+                    <div className="space-y-3">
+                      <NCard variant="secondary" className="p-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4 text-accent" />
+                            <span className="text-sm font-medium">Team Plan</span>
+                          </div>
+                          <NBadge color="success">Active</NBadge>
                         </div>
-                      </>
-                    )}
-
-                    {activeTab === 1 && (
-                      <>
-                        <div className="space-y-3">
-                          <div className="relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted" />
-                            <input
-                              type="text"
-                              placeholder="Search components..."
-                              className="w-full pl-10 pr-4 py-2 bg-background border border-default rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
-                            />
-                          </div>
-
-                          <div className="flex items-center space-x-2">
-                            <input type="checkbox" id="demo-check" className="rounded" />
-                            <label htmlFor="demo-check" className="text-sm">
-                              Enable notifications
-                            </label>
-                          </div>
-
-                          <select className="w-full px-3 py-2 bg-background border border-default rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50">
-                            <option>Choose framework</option>
-                            <option>React</option>
-                            <option>React Native</option>
-                          </select>
+                      </NCard>
+                      <NCard variant="secondary" className="p-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">Components</span>
+                          <span className="text-xs text-muted">50+ available</span>
                         </div>
-                      </>
-                    )}
-
-                    {activeTab === 2 && (
-                      <>
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
-                            <div className="flex items-center space-x-2">
-                              <User className="w-4 h-4 text-accent" />
-                              <span className="text-sm font-medium">Profile</span>
-                            </div>
-                            <Settings className="w-4 h-4 text-muted" />
-                          </div>
-
-                          <div className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
-                            <div className="flex items-center space-x-2">
-                              <Bell className="w-4 h-4 text-yellow-500" />
-                              <span className="text-sm font-medium">Notifications</span>
-                            </div>
-                            <div className="w-8 h-4 bg-accent rounded-full relative">
-                              <div className="w-3 h-3 bg-white rounded-full absolute right-0.5 top-0.5 transition-transform"></div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
-                            <div className="flex items-center space-x-2">
-                              <Calendar className="w-4 h-4 text-blue-500" />
-                              <span className="text-sm font-medium">Schedule</span>
-                            </div>
-                            <span className="text-xs text-muted">Today</span>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
+                        <NProgress value={75} className="mt-2" />
+                      </NCard>
+                    </div>
+                  )}
                 </div>
-              </NCard>
-
-              {/* Progress Card */}
-              <NCard className="p-4 sm:p-6 shadow-2xl bg-gradient-to-br from-card to-card/80 backdrop-blur-sm border-0 relative z-10">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Component Library</span>
-                    <span className="text-xs text-muted">{Math.round(progress)}%</span>
-                  </div>
-                  <div className="h-2 bg-background/30 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-accent to-purple-500 rounded-full transition-all duration-1000 ease-out"
-                      style={{ width: `${progress}%` }}></div>
-                  </div>
-                  <div className="text-xs text-muted">Building amazing components...</div>
-                </div>
-              </NCard>
-
-              {/* Feature Pills */}
-              <div className="flex flex-wrap gap-2">
-                {[
-                  { icon: Code, label: 'TypeScript', color: 'bg-blue-500' },
-                  { icon: Palette, label: 'Theming', color: 'bg-purple-500' },
-                  { icon: Zap, label: 'Fast', color: 'bg-yellow-500' },
-                  { icon: Shield, label: 'Secure', color: 'bg-green-500' }
-                ].map((feature, index) => (
-                  <div key={feature.label} className={`flex items-center space-x-1 px-2 py-1 rounded-full text-white text-xs ${feature.color}`}>
-                    <feature.icon className="w-3 h-3" />
-                    <span>{feature.label}</span>
-                  </div>
-                ))}
               </div>
-
-              {/* Floating Elements */}
-              <div className="absolute -top-4 -right-4 w-6 sm:w-8 h-6 sm:h-8 bg-accent rounded-full hidden lg:block"></div>
-              <div className="absolute -bottom-4 -left-4 w-4 sm:w-6 h-4 sm:h-6 bg-purple-500 rounded-full hidden lg:block"></div>
-              <div className="absolute top-1/2 -right-8 w-3 h-3 bg-pink-500 rounded-full hidden lg:block"></div>
-              <div className="absolute bottom-1/4 -left-8 w-2 h-2 bg-blue-500 rounded-full hidden lg:block"></div>
-            </div>
+            </NCard>
           </div>
         </div>
       </div>

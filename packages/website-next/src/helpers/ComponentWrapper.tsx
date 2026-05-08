@@ -20,7 +20,7 @@ const ComponentWrapper = (props: Props) => {
 
   return (
     <Sidebar title={component.title}>
-      <div className="mb-5">{component.description}</div>
+      <p className="text-muted mb-6">{component.description}</p>
 
       <SubHeader title="Demo">{children}</SubHeader>
 

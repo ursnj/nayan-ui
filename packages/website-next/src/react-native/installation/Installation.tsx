@@ -8,24 +8,24 @@ import { rnAppCode, rnCssCode, rnInstallCode, rnPeerDepsCode } from '@/services/
 const Installation = () => {
   return (
     <Sidebar title="Installation">
-      <div className="mb-5">
+      <p className="text-muted mb-4">
         This library requires <NLink href="https://uniwind.dev/docs/installation">Uniwind</NLink> to be set up in your project. Follow the{' '}
         <NLink href="https://uniwind.dev/docs/installation">Uniwind installation guide</NLink> to configure it before proceeding.
-      </div>
-      <div className="mb-5">Install the library.</div>
+      </p>
+      <p className="text-muted mb-4">Install the library.</p>
       <Code language="bash" code={rnInstallCode} />
-      <div className="mb-5">Install peer dependencies (most Expo projects already include these).</div>
+      <p className="text-muted mb-4">Install peer dependencies (most Expo projects already include these).</p>
       <Code language="bash" code={rnPeerDepsCode} />
-      <h1 className="text-xl mb-5"># Configuration</h1>
-      <div className="mb-5">
+      <h2 className="text-xl font-semibold mb-4"># Configuration</h2>
+      <p className="text-muted mb-4">
         Create a <code>global.css</code> file in your project with the following imports:
-      </div>
+      </p>
       <Code language="css" code={rnCssCode} />
-      <div className="mb-5">Import this CSS file in your app entry point.</div>
-      <h1 className="text-xl mb-5"># Usage</h1>
-      <div className="mb-5">
+      <p className="text-muted mb-4">Import this CSS file in your app entry point.</p>
+      <h2 className="text-xl font-semibold mb-4"># Usage</h2>
+      <p className="text-muted mb-4">
         Wrap your app with the <code>NTheme</code> provider:
-      </div>
+      </p>
       <Code code={rnAppCode} />
     </Sidebar>
   );

@@ -7,8 +7,8 @@ interface Props {
 
 const SubHeader = (props: Props) => {
   return (
-    <div className="mb-5">
-      <div className="text-lg mb-5"># {props.title}</div>
+    <div className="mb-6">
+      <h2 className="text-lg font-semibold mb-4 text-foreground"># {props.title}</h2>
       <div className="leading-relaxed">{props.children}</div>
     </div>
   );
