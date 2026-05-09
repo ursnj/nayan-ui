@@ -17,14 +17,14 @@
       "default": "./dist/index.es.js"
     },
     "./styles.css": {
-      "import": "./src/heroui-styles.css",
-      "require": "./src/heroui-styles.css",
-      "default": "./src/heroui-styles.css"
+      "import": "./src/styles.css",
+      "require": "./src/styles.css",
+      "default": "./src/styles.css"
     }
   },
   "files": [
     "dist",
-    "src/heroui-styles.css"
+    "src/styles.css"
   ],
   "publishConfig": {
     "access": "public"
