@@ -1,143 +1,86 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { NBadge, NButton, NCard, NInput } from '@nayan-ui/react';
-import { ArrowRight, BookOpen, Code, Github, Palette, Rocket, Shield, Smartphone, Sparkles, Star, Users, Zap } from 'lucide-react';
+'use client';
+
+import { NButton, NCard } from '@nayan-ui/react';
+import { ArrowRight, Code, Github, Rocket, Smartphone, Sparkles, Star, Terminal, Users, Zap } from 'lucide-react';
+import Link from 'next/link';
 
 const CallToAction = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [email, setEmail] = useState('');
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  const features = [
-    { icon: Zap, name: '50+ Components' },
-    { icon: Star, name: 'TypeScript Support' },
-    { icon: Users, name: 'React & React Native' },
-    { icon: Sparkles, name: 'Production Ready' }
-  ];
-
   const platforms = [
     {
       title: 'React Development',
-      description: 'Build modern web applications with our React components',
+      description: 'Build modern web applications with 30+ React components powered by HeroUI and Tailwind CSS.',
       icon: Code,
-      color: 'from-blue-500 to-cyan-500',
+      gradient: 'from-blue-500 to-cyan-500',
+      shadow: 'shadow-blue-500/25',
+      borderHover: 'hover:border-blue-500/30',
       link: '/react/components'
     },
     {
       title: 'React Native Development',
-      description: 'Create native mobile apps with our React Native components',
+      description: 'Create native mobile apps with 30+ React Native components powered by HeroUI Native.',
       icon: Smartphone,
-      color: 'from-green-500 to-emerald-500',
+      gradient: 'from-emerald-500 to-teal-500',
+      shadow: 'shadow-emerald-500/25',
+      borderHover: 'hover:border-emerald-500/30',
       link: '/react-native/components'
     }
   ];
 
-  const benefits = [
-    {
-      icon: Shield,
-      title: 'Accessibility First',
-      description: 'WCAG compliant components with proper ARIA attributes'
-    },
-    {
-      icon: Palette,
-      title: 'Customizable Design',
-      description: 'Flexible theming system to match your brand identity'
-    },
-    {
-      icon: Zap,
-      title: 'Performance Optimized',
-      description: 'Tree-shakable components optimized for production'
-    },
-    {
-      icon: Star,
-      title: 'Developer Experience',
-      description: 'TypeScript support with comprehensive documentation'
-    }
-  ];
-
   return (
-    <section ref={sectionRef} className="relative py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-card/30 to-background overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/3 w-64 sm:w-96 h-64 sm:h-96 bg-accent/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/3 w-48 sm:w-80 h-48 sm:h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse [animation-delay:2s]"></div>
+    <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-600/3 to-purple-600/5" />
 
-        {/* Floating Elements - Hidden on mobile */}
-        <div className="absolute top-20 right-4 sm:right-20 w-3 sm:w-4 h-3 sm:h-4 bg-accent rounded-full animate-bounce hidden sm:block"></div>
-        <div className="absolute bottom-32 left-4 sm:left-16 w-2 sm:w-3 h-2 sm:h-3 bg-purple-500 rounded-full animate-ping hidden sm:block"></div>
-        <div className="absolute top-1/2 right-8 w-1 sm:w-2 h-1 sm:h-2 bg-blue-500 rounded-full animate-pulse hidden sm:block"></div>
-      </div>
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
-        <div className="text-center mb-12 sm:mb-16">
-          <NBadge color="accent" className={`mb-4 ${isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0'}`}>
-            <Rocket className="w-3 h-3 mr-1" />
+      <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="text-center mb-12 lg:mb-14 max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-500/15 to-emerald-500/15 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-medium mb-5">
+            <Rocket className="w-3.5 h-3.5" />
             Ready to Start
-          </NBadge>
-
-          <h2
-            className={`text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 sm:mb-8 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.2s]' : 'opacity-0'}`}>
-            Choose Your
-            <span className="block bg-gradient-to-r from-accent via-purple-600 to-pink-600 bg-clip-text text-transparent">Platform</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">
+            Choose Your <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">Platform</span>
           </h2>
-
-          <p
-            className={`text-base sm:text-lg lg:text-xl xl:text-2xl text-muted max-w-4xl mx-auto mb-8 sm:mb-12 px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.4s]' : 'opacity-0'}`}>
+          <p className="text-base sm:text-lg text-muted">
             Whether you're building for web or mobile, our component library provides everything you need to create beautiful, accessible, and
             performant applications.
           </p>
-
-          {/* Feature Pills */}
-          <div
-            className={`flex flex-wrap justify-center gap-2 sm:gap-4 mb-8 sm:mb-12 px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:0.6s]' : 'opacity-0'}`}>
-            {features.map((feature, index) => (
-              <div key={index} className="flex items-center space-x-1 sm:space-x-2 bg-surface px-2 sm:px-4 py-1 sm:py-2 rounded-full shadow-sm">
-                <feature.icon className="w-3 sm:w-4 h-3 sm:h-4 text-accent flex-shrink-0" />
-                <span className="text-xs sm:text-sm font-medium">{feature.name}</span>
-              </div>
-            ))}
-          </div>
         </div>
 
-        {/* Platform Selection */}
-        <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16">
+        {/* Feature Pills */}
+        <div className="flex flex-wrap justify-center gap-2.5 mb-12">
+          {[
+            { icon: Zap, label: '50+ Components', gradient: 'from-amber-500 to-orange-500' },
+            { icon: Star, label: 'TypeScript Support', gradient: 'from-purple-500 to-pink-500' },
+            { icon: Users, label: 'React & React Native', gradient: 'from-blue-500 to-cyan-500' },
+            { icon: Sparkles, label: 'Production Ready', gradient: 'from-emerald-500 to-teal-500' }
+          ].map(pill => (
+            <span
+              key={pill.label}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r ${pill.gradient} text-white text-xs font-medium shadow-sm`}>
+              <pill.icon className="w-3.5 h-3.5" />
+              {pill.label}
+            </span>
+          ))}
+        </div>
+
+        {/* Platform Cards */}
+        <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto mb-14">
           {platforms.map((platform, index) => (
-            <NCard
-              key={index}
-              className={`p-6 sm:p-8 text-center group hover:shadow-xl transition-all duration-500 transform hover:scale-105 ${
-                isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0'
-              } ${index === 0 ? '[animation-delay:1.2s]' : '[animation-delay:1.4s]'}`}>
-              <div className="space-y-4 sm:space-y-6">
+            <NCard key={index} className={`p-6 sm:p-8 text-center group hover:shadow-2xl transition-all duration-300 ${platform.borderHover}`}>
+              <div className="space-y-5">
                 <div
-                  className={`w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br ${platform.color} rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform`}>
-                  <platform.icon className="w-8 sm:w-10 h-8 sm:h-10 text-white" />
+                  className={`w-16 h-16 bg-gradient-to-br ${platform.gradient} rounded-2xl flex items-center justify-center mx-auto ${platform.shadow} shadow-lg group-hover:scale-110 transition-transform`}>
+                  <platform.icon className="w-8 h-8 text-white" />
                 </div>
 
                 <div>
-                  <h4 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">{platform.title}</h4>
-                  <p className="text-sm sm:text-base text-muted mb-4 sm:mb-6 px-2 sm:px-0">{platform.description}</p>
+                  <h4 className="text-xl font-bold mb-2">{platform.title}</h4>
+                  <p className="text-sm text-muted leading-relaxed">{platform.description}</p>
                 </div>
 
-                <Link to={platform.link} className="block">
-                  <NButton className="bg-accent hover:bg-accent/90 text-accent-foreground w-full py-2 sm:py-3 text-sm sm:text-base">
+                <Link href={platform.link} className="block">
+                  <NButton
+                    className={`bg-gradient-to-r ${platform.gradient} text-white w-full py-2.5 font-semibold shadow-md ${platform.shadow} hover:shadow-lg transition-all`}>
                     Explore Components
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </NButton>
@@ -147,94 +90,47 @@ const CallToAction = () => {
           ))}
         </div>
 
-        {/* Benefits Grid */}
-        <div className="mb-12 sm:mb-16">
-          <div className="text-center mb-8 sm:mb-12">
-            <h3
-              className={`text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:1.6s]' : 'opacity-0'}`}>
-              Why Choose Our Components?
-            </h3>
-          </div>
+        {/* Gradient CTA Bar */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 p-8 sm:p-12 text-center shadow-2xl shadow-purple-500/20">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-            {benefits.map((benefit, index) => (
-              <div
-                key={index}
-                className={`text-center p-3 sm:p-6 ${isVisible ? `animate-fade-in-up opacity-100 [animation-delay:${2 + index * 0.1}s]` : 'opacity-0'}`}>
-                <div className="w-12 sm:w-16 h-12 sm:h-16 bg-accent/10 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                  <benefit.icon className="w-6 sm:w-8 h-6 sm:h-8 text-accent" />
-                </div>
-                <h4 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2">{benefit.title}</h4>
-                <p className="text-xs sm:text-sm text-muted leading-relaxed">{benefit.description}</p>
+          <div className="relative">
+            <h3 className="text-2xl sm:text-3xl font-bold mb-3 text-white">Get Started in Minutes</h3>
+            <p className="text-sm sm:text-base text-white/80 max-w-xl mx-auto mb-6">Install with a single command and start building immediately.</p>
+
+            {/* Install Command */}
+            <div className="max-w-sm mx-auto mb-6">
+              <div className="flex items-center gap-3 bg-black/20 backdrop-blur-sm rounded-lg px-4 py-2.5 font-mono text-sm border border-white/10">
+                <Terminal className="w-4 h-4 text-white/60 shrink-0" />
+                <code className="text-white">npm install @nayan-ui/react</code>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div
-          className={`flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-12 sm:mb-16 px-4 sm:px-0 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:2.4s]' : 'opacity-0'}`}>
-          <Link to="/react/components" className="w-full sm:w-auto">
-            <NButton className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto">
-              <Code className="w-4 sm:w-5 h-4 sm:h-5 mr-2" />
-              React Components
-              <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 ml-2" />
-            </NButton>
-          </Link>
-
-          <Link to="/react-native/components" className="w-full sm:w-auto">
-            <NButton
-              isOutline={true}
-              className="border-accent text-accent hover:bg-accent hover:text-accent-foreground px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transform hover:scale-105 transition-all duration-300 w-full sm:w-auto">
-              <Smartphone className="w-4 sm:w-5 h-4 sm:h-5 mr-2" />
-              React Native Components
-            </NButton>
-          </Link>
-
-          <a href="https://github.com/ursnj/nayan-ui" target="_blank" rel="noopener noreferrer" className="inline-block w-full sm:w-auto">
-            <NButton
-              isOutline={true}
-              className="border-muted-foreground text-muted hover:bg-muted-foreground hover:text-background px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transform hover:scale-105 transition-all duration-300 w-full sm:w-auto">
-              <Github className="w-4 sm:w-5 h-4 sm:h-5 mr-2" />
-              Star on GitHub
-            </NButton>
-          </a>
-        </div>
-
-        {/* Newsletter Signup */}
-        <NCard className={`p-6 sm:p-8 lg:p-12 text-center ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:2.6s]' : 'opacity-0'}`}>
-          <div className="max-w-2xl mx-auto">
-            <Sparkles className="w-10 sm:w-12 h-10 sm:h-12 text-accent mx-auto mb-4 sm:mb-6" />
-            <h3 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">Stay Updated</h3>
-            <p className="text-sm sm:text-base text-muted mb-6 sm:mb-8 px-4 sm:px-0">
-              Get notified about new components, updates, and best practices for React and React Native development. Join our newsletter for exclusive
-              content and early access to new features.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-md mx-auto">
-              <NInput
-                wrapperClassName="mb-0"
-                inputClassName="bg-background"
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                className="flex-1"
-              />
-              <NButton className="bg-accent hover:bg-accent/90 text-accent-foreground px-4 sm:px-6 py-2 whitespace-nowrap">
-                Subscribe
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </NButton>
             </div>
 
-            <p className="text-xs sm:text-sm text-muted mt-3 sm:mt-4">No spam, unsubscribe at any time. We respect your privacy.</p>
+            <div className="flex flex-col sm:flex-row justify-center gap-3">
+              <Link href="/react/installation">
+                <NButton className="bg-white hover:bg-white/90 text-purple-700 px-6 py-2.5 font-semibold w-full sm:w-auto shadow-lg">
+                  <Rocket className="w-4 h-4 mr-2" />
+                  Read the Docs
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </NButton>
+              </Link>
+              <a href="https://github.com/ursnj/nayan-ui" target="_blank" rel="noopener noreferrer">
+                <NButton className="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-6 py-2.5 font-semibold w-full sm:w-auto backdrop-blur-sm">
+                  <Github className="w-4 h-4 mr-2" />
+                  Star on GitHub
+                </NButton>
+              </a>
+            </div>
           </div>
-        </NCard>
+        </div>
 
-        {/* Final Message */}
-        <div className={`text-center mt-12 sm:mt-16 ${isVisible ? 'animate-fade-in-up opacity-100 [animation-delay:2.8s]' : 'opacity-0'}`}>
-          <p className="text-base sm:text-lg text-muted">Ready to elevate your development experience?</p>
-          <p className="text-xl sm:text-2xl font-bold mt-2">Let's build something amazing together! 🚀</p>
+        {/* Final tagline */}
+        <div className="text-center mt-12">
+          <p className="text-sm text-muted">Ready to elevate your development experience?</p>
+          <p className="text-lg font-bold mt-1 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Let's build something amazing together!
+          </p>
         </div>
       </div>
     </section>

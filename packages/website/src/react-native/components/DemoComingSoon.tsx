@@ -1,3 +1,5 @@
+'use client';
+
 import { NCard } from '@nayan-ui/react';
 
 interface DemoComingSoonProps {

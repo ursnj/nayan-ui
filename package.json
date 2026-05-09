@@ -18,11 +18,9 @@
     "native:typecheck": "yarn workspace @nayan-ui/react-native typecheck",
     "native:clean": "yarn workspace @nayan-ui/react-native clean",
     "native:example": "yarn workspace @nayan-ui/react-native example",
-    "website:start": "yarn react:build && yarn workspace @nayan-ui/website start",
-    "website:dev": "concurrently \"yarn react:dev\" \"yarn workspace @nayan-ui/website start\"",
+    "website:dev": "concurrently \"yarn react:dev\" \"yarn workspace @nayan-ui/website dev\"",
     "website:build": "yarn react:build && yarn workspace @nayan-ui/website build",
-    "website:preview": "yarn workspace @nayan-ui/website preview",
-    "website:sitemap": "yarn workspace @nayan-ui/website sitemap"
+    "website:start": "yarn workspace @nayan-ui/website start"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",

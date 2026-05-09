@@ -1,14 +1,15 @@
-import { useLocation } from 'react-router-dom';
+'use client';
+
 import { NLink } from '@nayan-ui/react';
+import { usePathname } from 'next/navigation';
+import Sidebar from '@/helpers/Sidebar';
 import { getMenuItem } from '@/services/Utils';
-import Meta from '../helpers/Meta';
-import Sidebar from '../helpers/Sidebar';
 
 const categoryColors: Record<string, string> = {
-  Puzzle: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-  Action: 'bg-red-500/10 text-red-500 border-red-500/20',
-  Arcade: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
-  Strategy: 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+  Puzzle: 'bg-blue-500/15 text-blue-600 dark:text-blue-300 border-blue-500/25',
+  Action: 'bg-red-500/15 text-red-600 dark:text-red-300 border-red-500/25',
+  Arcade: 'bg-purple-500/15 text-purple-600 dark:text-purple-300 border-purple-500/25',
+  Strategy: 'bg-amber-500/15 text-amber-600 dark:text-amber-300 border-amber-500/25'
 };
 
 const games = [
@@ -348,28 +349,27 @@ const games = [
 ];
 
 const GamesMain = () => {
-  const location = useLocation();
-  const component: any = getMenuItem(location.pathname);
+  const pathname = usePathname();
+  const component: any = getMenuItem(pathname);
 
   return (
     <Sidebar title={component?.title || 'Games'}>
-      <Meta
-        title="React Native Games - 50+ High-performance games for React Native"
-        description="50+ high-performance games for React Native projects. Built with Skia, Reanimated, and TypeScript for smooth 60fps gameplay across iOS, Android, and Web. Powering Playtura."
-        keywords="react native games, mobile games, skia games, react native skia, playtura, block blast, bubble shooter, candy crush, flappy bird, 2048, pac-man, ludo, sudoku, react native reanimated"
-      />
-
       {/* Header Section */}
-      <div className="bg-surface border border-default rounded-lg mb-8">
-        <div className="px-6 py-12">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-600/10 via-pink-600/10 to-amber-600/10 border border-purple-500/15 mb-8">
+        <div className="absolute inset-0 bg-surface/50 backdrop-blur-sm rounded-2xl" />
+        <div className="relative px-4 sm:px-6 py-8 sm:py-12">
           <div className="text-center max-w-4xl mx-auto">
             <div className="flex items-center justify-center mb-6">
-              <div className="w-16 h-16 bg-accent rounded-2xl flex items-center justify-center mr-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mr-4 shadow-lg shadow-purple-500/20">
                 <span className="text-white font-bold text-2xl">🎮</span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground">react-native-games</h1>
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold">
+                <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 bg-clip-text text-transparent break-words">
+                  react-native-games
+                </span>
+              </h1>
             </div>
-            <p className="text-xl text-muted leading-relaxed mb-8">
+            <p className="text-base sm:text-xl text-muted leading-relaxed mb-6 sm:mb-8">
               50+ high-performance games for your React Native projects. Built with modern React Native technologies including Skia, Reanimated,
               Gesture Handler and TypeScript for smooth 60fps gameplay across iOS, Android, and Web platforms.
             </p>
@@ -378,7 +378,7 @@ const GamesMain = () => {
                 href="https://www.npmjs.com/package/react-native-games"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors font-semibold">
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all font-semibold shadow-md shadow-purple-500/20">
                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331zM10.665 10H12v2.667h-1.335V10z" />
                 </svg>
@@ -400,10 +400,12 @@ const GamesMain = () => {
       </div>
 
       {/* Key Features Grid */}
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-surface border border-default rounded-lg p-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+        <div className="bg-surface border border-default rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
-            <span className="mr-2">🚀</span>
+            <span className="w-8 h-8 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">
+              🚀
+            </span>
             High Performance
           </h3>
           <ul className="text-muted text-sm space-y-1">
@@ -415,9 +417,11 @@ const GamesMain = () => {
           </ul>
         </div>
 
-        <div className="bg-surface border border-default rounded-lg p-6">
+        <div className="bg-surface border border-default rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
-            <span className="mr-2">📱</span>
+            <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">
+              📱
+            </span>
             Cross-Platform
           </h3>
           <ul className="text-muted text-sm space-y-1">
@@ -429,9 +433,11 @@ const GamesMain = () => {
           </ul>
         </div>
 
-        <div className="bg-surface border border-default rounded-lg p-6">
+        <div className="bg-surface border border-default rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
-            <span className="mr-2">🎵</span>
+            <span className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">
+              🎵
+            </span>
             Rich Audio & Haptics
           </h3>
           <ul className="text-muted text-sm space-y-1">
@@ -442,9 +448,11 @@ const GamesMain = () => {
           </ul>
         </div>
 
-        <div className="bg-surface border border-default rounded-lg p-6">
+        <div className="bg-surface border border-default rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
-            <span className="mr-2">🎯</span>
+            <span className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">
+              🎯
+            </span>
             Customizable
           </h3>
           <ul className="text-muted text-sm space-y-1">
@@ -455,9 +463,11 @@ const GamesMain = () => {
           </ul>
         </div>
 
-        <div className="bg-surface border border-default rounded-lg p-6">
+        <div className="bg-surface border border-default rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
-            <span className="mr-2">🎮</span>
+            <span className="w-8 h-8 bg-gradient-to-br from-purple-500 to-violet-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">
+              🎮
+            </span>
             Game Features
           </h3>
           <ul className="text-muted text-sm space-y-1">
@@ -469,9 +479,11 @@ const GamesMain = () => {
           </ul>
         </div>
 
-        <div className="bg-surface border border-default rounded-lg p-6">
+        <div className="bg-surface border border-default rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
-            <span className="mr-2">🛠️</span>
+            <span className="w-8 h-8 bg-gradient-to-br from-pink-500 to-rose-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">
+              🛠️
+            </span>
             Developer Friendly
           </h3>
           <ul className="text-muted text-sm space-y-1">
@@ -486,15 +498,14 @@ const GamesMain = () => {
 
       {/* Available Games Section */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center">
-          <span className="mr-3">🎯</span>
-          All {games.length} Games
+        <h2 className="text-2xl font-bold mb-6">
+          <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">🎯 All {games.length} Games</span>
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {games.map((game, index) => (
             <div
               key={index}
-              className="group bg-surface border border-default rounded-xl overflow-hidden hover:border-accent/40 hover:shadow-xl transition-all duration-300">
+              className="group bg-surface border border-default rounded-xl overflow-hidden hover:border-purple-500/30 hover:shadow-xl transition-all duration-300">
               <div className="relative overflow-hidden">
                 <img
                   src={game.image}

@@ -1,6 +1,8 @@
+'use client';
+
 import { useState } from 'react';
 import { DialogSize, NButton, NDialog } from '@nayan-ui/react';
-import ComponentWrapper from '../../helpers/ComponentWrapper';
+import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Dialog = () => {
   const [isOpen, setIsOpen] = useState(false);

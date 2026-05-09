@@ -1,6 +1,8 @@
+'use client';
+
 import { useState } from 'react';
 import { NNumberField } from '@nayan-ui/react';
-import ComponentWrapper from '../../helpers/ComponentWrapper';
+import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const NumberField = () => {
   const [quantity, setQuantity] = useState(1);

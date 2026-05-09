@@ -1,6 +1,8 @@
+'use client';
+
 import { useForm } from 'react-hook-form';
 import { NFormInput } from '@nayan-ui/react';
-import ComponentWrapper from '../../helpers/ComponentWrapper';
+import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const FormInput = () => {
   const { control } = useForm();
