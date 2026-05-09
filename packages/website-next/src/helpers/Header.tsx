@@ -113,7 +113,7 @@ const Header = () => {
         </NSheet>
         <nav className="flex flex-row py-2.5 justify-between items-center">
           <Link href="/">
-            <div className="flex items-center gap-3 shrink-0 mr-5">
+            <div className="flex items-center gap-3 shrink-0 mr-10">
               <img
                 src="/logo.webp"
                 fetchPriority="high"
