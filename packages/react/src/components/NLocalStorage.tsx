@@ -86,8 +86,10 @@ export function useLocalStorage<T>(key: string, defaultValue?: T, options?: Opti
             window.localStorage.setItem(key, serialized);
             rawValueRef.current = serialized;
           }
-          // Dispatch a custom event for in-tab sync
-          window.dispatchEvent(new CustomEvent('local-storage', { detail: { key } }));
+          // Dispatch a custom event for in-tab sync (deferred to avoid setState-during-render)
+          queueMicrotask(() => {
+            window.dispatchEvent(new CustomEvent('local-storage', { detail: { key } }));
+          });
         } catch (e) {
           logger(e);
         }

@@ -10,6 +10,11 @@ import { reactSidebarItems } from '@/services/Utils';
 const HeaderMenu = () => {
   const [theme, setTheme] = useLocalStorage('THEME', THEMES.LIGHT);
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const toggleTheme = () => {
     setTheme(theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK);
@@ -33,7 +38,7 @@ const HeaderMenu = () => {
         </li>
         <li className="w-full md:w-auto">
           <Link className={linkClass('/react/installation')} href="/react/installation">
-            React JS
+            React
           </Link>
         </li>
         <li className="w-full md:w-auto">
@@ -51,19 +56,20 @@ const HeaderMenu = () => {
             Devtools
           </Link>
         </li>
-        <li className="w-full md:w-auto">
-          <Link className={linkClass('/contributions')} href="/contributions">
-            Contributions
-          </Link>
-        </li>
       </ul>
       <div className="w-full md:w-auto flex items-center justify-center md:justify-end gap-4 mt-3 md:mt-0">
-        <Link href="https://www.github.com/ursnj/nayan-ui" target="_blank" title="Nayan UI Github" aria-label="Nayan UI Github" className="p-2 rounded-lg hover:bg-default/50 transition-colors">
+        <Link
+          href="https://www.github.com/ursnj/nayan-ui"
+          target="_blank"
+          title="Nayan UI Github"
+          aria-label="Nayan UI Github"
+          className="p-2 rounded-lg hover:bg-default/50 transition-colors">
           <Github className="w-5 h-5 text-foreground hover:text-purple-600 dark:hover:text-purple-400 transition-colors inline" />
         </Link>
         <span tabIndex={0} className="p-2 rounded-lg hover:bg-default/50 transition-colors cursor-pointer" onClick={toggleTheme} title="Theme Switch">
-          {theme !== THEMES.DARK && <MoonStar className="w-5 h-5 text-foreground hover:text-amber-500 transition-colors inline" />}
-          {theme === THEMES.DARK && <Sun className="w-5 h-5 text-foreground hover:text-amber-400 transition-colors inline" />}
+          {mounted && theme !== THEMES.DARK && <MoonStar className="w-5 h-5 text-foreground hover:text-amber-500 transition-colors inline" />}
+          {mounted && theme === THEMES.DARK && <Sun className="w-5 h-5 text-foreground hover:text-amber-400 transition-colors inline" />}
+          {!mounted && <span className="w-5 h-5 inline-block" />}
         </span>
       </div>
 
