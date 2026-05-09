@@ -68,7 +68,9 @@ const DevtoolsMain = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Sitemap Generator</h3>
+              <h3 className="text-lg font-semibold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                Sitemap Generator
+              </h3>
             </div>
             <p className="text-muted text-sm">Generate and validate XML sitemaps for better SEO optimization</p>
           </div>
@@ -87,7 +89,9 @@ const DevtoolsMain = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-foreground group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">Robots.txt Generator</h3>
+              <h3 className="text-lg font-semibold text-foreground group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                Robots.txt Generator
+              </h3>
             </div>
             <p className="text-muted text-sm">Create and validate robots.txt files for search engine crawling control</p>
           </div>
@@ -96,7 +100,9 @@ const DevtoolsMain = () => {
 
       {/* Overview Content */}
       <div className="bg-surface border border-default rounded-xl p-4 sm:p-6 lg:p-8 mb-8">
-        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6"><span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Getting Started</span></h2>
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
+          <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Getting Started</span>
+        </h2>
         <div className="prose prose-gray max-w-none">
           <p className="text-muted mb-4">
             The Nayan UI CLI provides a comprehensive set of tools for web developers to enhance their development workflow and improve their
@@ -132,11 +138,21 @@ const DevtoolsMain = () => {
                 Easily integrates into any framework with simple commands and works with all major search engines for seamless optimization.
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-500/12 text-blue-700 dark:text-blue-300 border border-blue-500/20">React</span>
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">Vue</span>
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-500/12 text-red-700 dark:text-red-300 border border-red-500/20">Angular</span>
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-purple-500/12 text-purple-700 dark:text-purple-300 border border-purple-500/20">Next.js</span>
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-cyan-500/12 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20">Nuxt</span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-500/12 text-blue-700 dark:text-blue-300 border border-blue-500/20">
+                  React
+                </span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+                  Vue
+                </span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-500/12 text-red-700 dark:text-red-300 border border-red-500/20">
+                  Angular
+                </span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-purple-500/12 text-purple-700 dark:text-purple-300 border border-purple-500/20">
+                  Next.js
+                </span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-cyan-500/12 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20">
+                  Nuxt
+                </span>
               </div>
             </div>
           </div>
@@ -145,7 +161,9 @@ const DevtoolsMain = () => {
 
       {/* Features Section */}
       <div className="bg-surface border border-default rounded-xl p-4 sm:p-6 lg:p-8 mb-8">
-        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6"><span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">✨ Features</span></h2>
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
+          <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">✨ Features</span>
+        </h2>
         <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
           <div className="space-y-4">
             <div className="flex items-start">

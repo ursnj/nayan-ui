@@ -16,7 +16,9 @@ const Contributions = () => {
                 <Heart className="w-7 h-7 text-white" />
               </div>
               <h1 className="text-2xl sm:text-3xl font-bold mb-3">
-                <span className="bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">Open Source Contributions</span>
+                <span className="bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+                  Open Source Contributions
+                </span>
               </h1>
               <p className="text-base sm:text-lg text-muted max-w-2xl mx-auto">
                 Nayan UI is an open source project and we welcome contributions from the community. Whether you're fixing bugs, adding features, or
@@ -59,7 +61,9 @@ const Contributions = () => {
 
           {/* Ways to Contribute */}
           <div>
-            <h2 className="text-2xl font-bold mb-6"><span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Ways to Contribute</span></h2>
+            <h2 className="text-2xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Ways to Contribute</span>
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               <NCard className="p-6 hover:shadow-xl transition-all duration-300 group">
                 <div className="flex items-center gap-3 mb-4">
@@ -69,7 +73,9 @@ const Contributions = () => {
                   <h3 className="text-lg font-semibold text-foreground">Report Bugs</h3>
                 </div>
                 <p className="text-muted mb-4">Found a bug? Help us improve by reporting issues with detailed reproduction steps.</p>
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-500/12 text-red-700 dark:text-red-300 border border-red-500/20">Good First Issue</span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-500/12 text-red-700 dark:text-red-300 border border-red-500/20">
+                  Good First Issue
+                </span>
               </NCard>
 
               <NCard className="p-6 hover:shadow-xl transition-all duration-300 group">
@@ -80,7 +86,9 @@ const Contributions = () => {
                   <h3 className="text-lg font-semibold text-foreground">Suggest Features</h3>
                 </div>
                 <p className="text-muted mb-4">Have an idea for a new component or feature? Share your suggestions with the community.</p>
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-amber-500/12 text-amber-700 dark:text-amber-300 border border-amber-500/20">Enhancement</span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-amber-500/12 text-amber-700 dark:text-amber-300 border border-amber-500/20">
+                  Enhancement
+                </span>
               </NCard>
 
               <NCard className="p-6 hover:shadow-xl transition-all duration-300 group">
@@ -91,7 +99,9 @@ const Contributions = () => {
                   <h3 className="text-lg font-semibold text-foreground">Write Code</h3>
                 </div>
                 <p className="text-muted mb-4">Contribute code by fixing bugs, implementing features, or improving existing components.</p>
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-500/12 text-blue-700 dark:text-blue-300 border border-blue-500/20">Code</span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-500/12 text-blue-700 dark:text-blue-300 border border-blue-500/20">
+                  Code
+                </span>
               </NCard>
 
               <NCard className="p-6 hover:shadow-xl transition-all duration-300 group">
@@ -102,7 +112,9 @@ const Contributions = () => {
                   <h3 className="text-lg font-semibold text-foreground">Improve Docs</h3>
                 </div>
                 <p className="text-muted mb-4">Help improve documentation, add examples, or fix typos to help other developers.</p>
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">Documentation</span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+                  Documentation
+                </span>
               </NCard>
 
               <NCard className="p-6 hover:shadow-xl transition-all duration-300 group">
@@ -113,7 +125,9 @@ const Contributions = () => {
                   <h3 className="text-lg font-semibold text-foreground">Help Others</h3>
                 </div>
                 <p className="text-muted mb-4">Answer questions, help with issues, and support fellow developers in the community.</p>
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-purple-500/12 text-purple-700 dark:text-purple-300 border border-purple-500/20">Community</span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-purple-500/12 text-purple-700 dark:text-purple-300 border border-purple-500/20">
+                  Community
+                </span>
               </NCard>
 
               <NCard className="p-6 hover:shadow-xl transition-all duration-300 group">
@@ -124,18 +138,24 @@ const Contributions = () => {
                   <h3 className="text-lg font-semibold text-foreground">Spread the Word</h3>
                 </div>
                 <p className="text-muted mb-4">Share Nayan UI with others, write blog posts, or create tutorials to grow our community.</p>
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-pink-500/12 text-pink-700 dark:text-pink-300 border border-pink-500/20">Advocacy</span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-pink-500/12 text-pink-700 dark:text-pink-300 border border-pink-500/20">
+                  Advocacy
+                </span>
               </NCard>
             </div>
           </div>
 
           {/* Getting Started */}
           <div>
-            <h2 className="text-2xl font-bold mb-6"><span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Getting Started</span></h2>
+            <h2 className="text-2xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Getting Started</span>
+            </h2>
             <NCard className="p-6">
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md shadow-blue-500/20">1</div>
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md shadow-blue-500/20">
+                    1
+                  </div>
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">Fork the Repository</h3>
                     <p className="text-muted">Start by forking the Nayan UI repository on GitHub to your own account.</p>
@@ -143,7 +163,9 @@ const Contributions = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-violet-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md shadow-purple-500/20">2</div>
+                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-violet-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md shadow-purple-500/20">
+                    2
+                  </div>
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">Clone & Setup</h3>
                     <p className="text-muted mb-2">Clone your fork and install dependencies:</p>
@@ -158,7 +180,9 @@ const Contributions = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-rose-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md shadow-pink-500/20">3</div>
+                  <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-rose-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md shadow-pink-500/20">
+                    3
+                  </div>
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">Create a Branch</h3>
                     <p className="text-muted mb-2">Create a new branch for your changes:</p>
@@ -167,7 +191,9 @@ const Contributions = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md shadow-emerald-500/20">4</div>
+                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md shadow-emerald-500/20">
+                    4
+                  </div>
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">Make Changes</h3>
                     <p className="text-muted">Make your changes, add tests if needed, and ensure everything works properly.</p>
@@ -175,7 +201,9 @@ const Contributions = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md shadow-amber-500/20">5</div>
+                  <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md shadow-amber-500/20">
+                    5
+                  </div>
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">Submit Pull Request</h3>
                     <p className="text-muted">Push your changes and create a pull request with a clear description of your changes.</p>
@@ -187,7 +215,9 @@ const Contributions = () => {
 
           {/* Development Guidelines */}
           <div>
-            <h2 className="text-2xl font-bold mb-6"><span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Development Guidelines</span></h2>
+            <h2 className="text-2xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Development Guidelines</span>
+            </h2>
             <div className="space-y-4">
               <NAlert type={AlertTypes.INFO}>
                 <div>
@@ -229,7 +259,9 @@ const Contributions = () => {
 
           {/* Community & Support */}
           <div>
-            <h2 className="text-2xl font-bold mb-6"><span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Community & Support</span></h2>
+            <h2 className="text-2xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Community & Support</span>
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <NCard className="p-4 sm:p-6">
                 <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Join Our Community</h3>
@@ -265,20 +297,24 @@ const Contributions = () => {
             <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
             <div className="relative">
-            <h2 className="text-2xl font-bold text-white mb-4">Ready to Contribute?</h2>
-            <p className="text-white/80 mb-6 max-w-2xl mx-auto">Join our growing community of developers and help make Nayan UI better for everyone!</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <NButton onClick={() => window.open('https://github.com/ursnj/nayan-ui', '_blank')} className="bg-white hover:bg-white/90 text-purple-700 px-6 py-2.5 font-semibold shadow-lg flex items-center gap-2">
-                <Github className="w-4 h-4" />
-                View on GitHub
-              </NButton>
-              <NButton
-                onClick={() => window.open('https://github.com/ursnj/nayan-ui/issues', '_blank')}
-                className="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-6 py-2.5 font-semibold backdrop-blur-sm flex items-center gap-2">
-                <Bug className="w-4 h-4" />
-                Report Issues
-              </NButton>
-            </div>
+              <h2 className="text-2xl font-bold text-white mb-4">Ready to Contribute?</h2>
+              <p className="text-white/80 mb-6 max-w-2xl mx-auto">
+                Join our growing community of developers and help make Nayan UI better for everyone!
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <NButton
+                  onClick={() => window.open('https://github.com/ursnj/nayan-ui', '_blank')}
+                  className="bg-white hover:bg-white/90 text-purple-700 px-6 py-2.5 font-semibold shadow-lg flex items-center gap-2">
+                  <Github className="w-4 h-4" />
+                  View on GitHub
+                </NButton>
+                <NButton
+                  onClick={() => window.open('https://github.com/ursnj/nayan-ui/issues', '_blank')}
+                  className="bg-white/15 hover:bg-white/25 text-white border border-white/20 px-6 py-2.5 font-semibold backdrop-blur-sm flex items-center gap-2">
+                  <Bug className="w-4 h-4" />
+                  Report Issues
+                </NButton>
+              </div>
             </div>
           </div>
         </div>
