@@ -1,6 +1,7 @@
 'use client';
 
-import { NCode } from '@nayan-ui/react';
+import { useState } from 'react';
+import { NCode, THEMES, useLocalStorage } from '@nayan-ui/react';
 
 interface Props {
   code: string;
@@ -8,9 +9,17 @@ interface Props {
   hasDemo?: boolean;
 }
 
-const Code = (props: Props) => {
-  const { code, language = 'tsx' } = props;
-  return <NCode code={code} language={language} className="mb-5" />;
+const Code = ({ code, language = 'tsx' }: Props) => {
+  const [theme] = useLocalStorage('THEME', THEMES.LIGHT);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async (text: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return <NCode code={code} language={language} theme={theme} copied={copied} onCopy={handleCopy} className="mb-5" />;
 };
 
 export default Code;

@@ -47,8 +47,14 @@ export const NSheet: React.FC<NSheetProps> = memo(
     ...rest
   }) => {
     return (
-      <Drawer isOpen={isOpen} onOpenChange={open => { if (!open && onCloseSheet) onCloseSheet(); }}>
-        <Drawer.Trigger className="hidden" aria-hidden="true"><span /></Drawer.Trigger>
+      <Drawer
+        isOpen={isOpen}
+        onOpenChange={open => {
+          if (!open && onCloseSheet) onCloseSheet();
+        }}>
+        <Drawer.Trigger className="hidden" aria-hidden="true">
+          <span />
+        </Drawer.Trigger>
         <Drawer.Backdrop isDismissable>
           <Drawer.Content placement="right" className={cn('nyn-sheet w-full', sizeMapping[size])}>
             <Drawer.Dialog className={cn('nyn-sheet-dialog h-full', className)} aria-label={ariaLabel} role={role as 'dialog' | 'alertdialog'}>
