@@ -55,7 +55,13 @@ const NAutocompleteComponent: React.FC<NAutocompleteProps> = memo(
         </Autocomplete.Trigger>
         <Autocomplete.Popover className={cn(popoverClassName)}>
           <Autocomplete.Filter>
-            <ListBox items={items}>{(item: NAutocompleteItem) => <ListBox.Item id={item.id} textValue={item.label}>{item.label}</ListBox.Item>}</ListBox>
+            <ListBox items={items}>
+              {(item: NAutocompleteItem) => (
+                <ListBox.Item id={item.id} textValue={item.label}>
+                  {item.label}
+                </ListBox.Item>
+              )}
+            </ListBox>
           </Autocomplete.Filter>
         </Autocomplete.Popover>
       </Autocomplete>
