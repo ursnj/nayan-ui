@@ -5,7 +5,9 @@ WORKDIR /app
 
 # Copy monorepo root files for workspace resolution
 COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn/releases ./.yarn/releases
+
+# Enable corepack so it picks up packageManager from package.json (yarn@4.11.0)
+RUN corepack enable && corepack prepare
 
 # Copy all workspace package.json files (Yarn 4 requires all to be present)
 COPY packages/cli/package.json ./packages/cli/package.json
