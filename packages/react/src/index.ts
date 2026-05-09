@@ -1,5 +1,3 @@
-import './styles.css';
-
 export * from './components/NAccordion';
 export * from './components/NAlert';
 export * from './components/NAutocomplete';
