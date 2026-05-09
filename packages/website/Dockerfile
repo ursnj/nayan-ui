@@ -19,6 +19,7 @@ RUN yarn install --immutable
 
 # Rebuild the source code only when needed
 FROM node:20.19-alpine AS builder
+RUN corepack enable && corepack prepare yarn@4.11.0
 WORKDIR /app
 COPY --from=deps /app ./
 COPY . .
