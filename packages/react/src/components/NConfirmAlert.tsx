@@ -1,17 +1,8 @@
 import React, { ReactNode, memo } from 'react';
+import { Button, Modal } from '@heroui/react';
 import { cn } from '../lib/utils';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from './ui/alert-dialog';
 
-export interface NConfirmAlertProps extends Omit<React.ComponentProps<typeof AlertDialog>, 'open' | 'onOpenChange'> {
+export interface NConfirmAlertProps {
   isOpen: boolean;
   message: string;
   title?: string;
@@ -45,23 +36,48 @@ const NConfirmAlertComponent: React.FC<NConfirmAlertProps> = memo(
     ...rest
   }) => {
     return (
-      <AlertDialog open={isOpen} onOpenChange={onClose} {...rest}>
-        <AlertDialogContent className={cn('nyn-confirm-alert border border-border bg-card p-3', className)}>
-          <AlertDialogHeader>
-            <AlertDialogTitle className={cn('nyn-confirm-alert-title text-text', titleClassName)}>{title}</AlertDialogTitle>
-            <AlertDialogDescription className={cn('nyn-confirm-alert-message text-text', messageClassName)}>{message}</AlertDialogDescription>
-          </AlertDialogHeader>
-          {children}
-          <AlertDialogFooter>
-            <AlertDialogCancel className={cn('text-text bg-border border border-border', cancelClassName)} onClick={() => onResult(false)}>
-              {cancelText}
-            </AlertDialogCancel>
-            <AlertDialogAction className={cn('text-white bg-primary border border-primary', confirmClassName)} onClick={() => onResult(true)}>
-              {confirmText}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={open => {
+          if (!open) onClose();
+        }}>
+        <Modal.Trigger className="hidden" aria-hidden="true">
+          <span />
+        </Modal.Trigger>
+        <Modal.Backdrop>
+          <Modal.Container size="sm">
+            <Modal.Dialog className={cn('nyn-confirm-alert', className)} role="alertdialog">
+              <Modal.Header>
+                <span className={cn(titleClassName)}>{title}</span>
+              </Modal.Header>
+              <Modal.Body>
+                <p className={cn(messageClassName)}>{message}</p>
+                {children}
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="secondary"
+                  className={cn(cancelClassName)}
+                  onPress={() => {
+                    onResult(false);
+                    onClose();
+                  }}>
+                  {cancelText}
+                </Button>
+                <Button
+                  variant="primary"
+                  className={cn(confirmClassName)}
+                  onPress={() => {
+                    onResult(true);
+                    onClose();
+                  }}>
+                  {confirmText}
+                </Button>
+              </Modal.Footer>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      </Modal>
     );
   }
 );

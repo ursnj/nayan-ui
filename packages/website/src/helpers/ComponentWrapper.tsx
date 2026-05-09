@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { getMenuItem } from '../services/Utils';
-import TagsList from '../tags/TagsList';
+'use client';
+
+import { usePathname } from 'next/navigation';
+import TagsList from '@/helpers/TagsList';
+import { getMenuItem } from '@/services/Utils';
 import Attributes from './Attributes';
 import Code from './Code';
-import Meta from './Meta';
 import Sidebar from './Sidebar';
 import SubHeader from './SubHeader';
 
@@ -14,26 +14,18 @@ interface Props {
 
 const ComponentWrapper = (props: Props) => {
   const { children } = props;
-  const [code, setCode] = useState('');
-  const location = useLocation();
-  const type = location.pathname.split('/')[1];
-  const component: any = getMenuItem(location.pathname);
-
-  useEffect(() => {
-    component.component().then((module: any) => {
-      setCode(module.default);
-    });
-  }, []);
+  const pathname = usePathname();
+  const type = pathname.split('/')[1];
+  const component: any = getMenuItem(pathname);
 
   return (
     <Sidebar title={component.title}>
-      <Meta title={component.title} description={component.description} />
-      <div className="mb-5">{component.description}</div>
+      <p className="text-muted mb-6">{component.description}</p>
 
       <SubHeader title="Demo">{children}</SubHeader>
 
       <SubHeader title="Usage">
-        <Code code={code} />
+        <Code code={component.code} />
       </SubHeader>
 
       <Attributes data={component.attributes} />

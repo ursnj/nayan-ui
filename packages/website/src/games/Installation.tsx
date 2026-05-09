@@ -1,5 +1,9 @@
-import { useLocation } from 'react-router-dom';
+'use client';
+
 import { NLink } from '@nayan-ui/react';
+import { usePathname } from 'next/navigation';
+import Code from '@/helpers/Code';
+import Sidebar from '@/helpers/Sidebar';
 import {
   advancedUsageCode,
   availableGamesCode,
@@ -10,22 +14,13 @@ import {
   simpleUsageCode
 } from '@/services/GamesCodeBlocks';
 import { getMenuItem } from '@/services/Utils';
-import Code from '../helpers/Code';
-import Meta from '../helpers/Meta';
-import Sidebar from '../helpers/Sidebar';
 
 const GamesInstallation = () => {
-  const location = useLocation();
-  const component: any = getMenuItem(location.pathname);
+  const pathname = usePathname();
+  const component: any = getMenuItem(pathname);
 
   return (
     <Sidebar title={component?.title || 'Installation'}>
-      <Meta
-        title="Installation - React Native Games"
-        description="Installation guide for react-native-games library including peer dependencies and platform setup."
-        keywords="react native games installation, setup, peer dependencies"
-      />
-
       {/* Installation Section */}
       <div className="mb-8">
         <div className="space-y-4">
@@ -36,13 +31,13 @@ const GamesInstallation = () => {
           </div>
 
           <div className="mb-4">
-            <h3 className="text-lg font-semibold text-text mb-3">Peer Dependencies</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-3">Peer Dependencies</h3>
             <p className="text-muted text-sm mb-3">This library requires the following peer dependencies to be installed in your project:</p>
             <Code language="bash" code={peerDepsCode} />
           </div>
 
           <div className="mb-4">
-            <h3 className="text-lg font-semibold text-text mb-3">Platform Setup</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-3">Platform Setup</h3>
             <p className="text-muted text-sm mb-3">Follow the installation guides for each peer dependency:</p>
             <ul className="text-muted text-sm space-y-2">
               <li>
@@ -50,7 +45,7 @@ const GamesInstallation = () => {
                 <NLink
                   href="https://shopify.github.io/react-native-skia/docs/getting-started/installation"
                   target="_blank"
-                  className="text-primary hover:underline">
+                  className="text-accent hover:underline">
                   @shopify/react-native-skia
                 </NLink>{' '}
                 - Graphics
@@ -60,7 +55,7 @@ const GamesInstallation = () => {
                 <NLink
                   href="https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started"
                   target="_blank"
-                  className="text-primary hover:underline">
+                  className="text-accent hover:underline">
                   react-native-reanimated
                 </NLink>{' '}
                 - Animations
@@ -70,21 +65,21 @@ const GamesInstallation = () => {
                 <NLink
                   href="https://docs.swmansion.com/react-native-gesture-handler/docs/fundamentals/installation"
                   target="_blank"
-                  className="text-primary hover:underline">
+                  className="text-accent hover:underline">
                   react-native-gesture-handler
                 </NLink>{' '}
                 - Gestures
               </li>
               <li>
                 •{' '}
-                <NLink href="https://docs.expo.dev/versions/latest/sdk/speech/" target="_blank" className="text-primary hover:underline">
+                <NLink href="https://docs.expo.dev/versions/latest/sdk/speech/" target="_blank" className="text-accent hover:underline">
                   expo-speech
                 </NLink>{' '}
                 - Sounds
               </li>
               <li>
                 •{' '}
-                <NLink href="https://docs.expo.dev/versions/latest/sdk/haptics/" target="_blank" className="text-primary hover:underline">
+                <NLink href="https://docs.expo.dev/versions/latest/sdk/haptics/" target="_blank" className="text-accent hover:underline">
                   expo-haptics
                 </NLink>{' '}
                 - Haptics
@@ -96,19 +91,18 @@ const GamesInstallation = () => {
 
       {/* Usage Section */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-text mb-6 flex items-center">
-          <span className="mr-3">🚀</span>
-          Usage
+        <h2 className="text-2xl font-bold mb-6">
+          <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">🚀 Usage</span>
         </h2>
         <div className="space-y-6">
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-text mb-3">Simple Implementation</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-3">Simple Implementation</h3>
             <p className="text-muted text-sm mb-3">For basic usage without settings persistence:</p>
             <Code code={simpleUsageCode} />
           </div>
 
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-text mb-3">Advanced Implementation Example</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-3">Advanced Implementation Example</h3>
             <p className="text-muted text-sm mb-3">
               All games use the same props pattern for consistency. Here's a complete example with settings persistence and navigation integration:
             </p>
@@ -116,19 +110,19 @@ const GamesInstallation = () => {
           </div>
 
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-text mb-3">Available Games</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-3">Available Games</h3>
             <p className="text-muted text-sm mb-3">All games use the same props interface:</p>
             <Code code={availableGamesCode} />
           </div>
 
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-text mb-3">Game Settings & Configuration</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-3">Game Settings & Configuration</h3>
             <p className="text-muted text-sm mb-3">All games use the unified GameSettings interface:</p>
             <Code code={gameSettingsInterfaceCode} />
           </div>
 
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-text mb-3">Game Settings</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-3">Game Settings</h3>
             <p className="text-muted text-sm mb-3">Each game includes built-in settings screens with a unified, simplified interface:</p>
             <ul className="text-muted text-sm space-y-2">
               <li>

@@ -1,5 +1,7 @@
-import { CodeBlock, dracula, github } from 'react-code-blocks';
-import { THEMES, useLocalStorage } from '@nayan-ui/react';
+'use client';
+
+import { useState } from 'react';
+import { NCode, THEMES, useLocalStorage } from '@nayan-ui/react';
 
 interface Props {
   code: string;
@@ -7,30 +9,17 @@ interface Props {
   hasDemo?: boolean;
 }
 
-const Code = (props: Props) => {
+const Code = ({ code, language = 'tsx' }: Props) => {
   const [theme] = useLocalStorage('THEME', THEMES.LIGHT);
-  const { code, language = 'tsx', hasDemo = false } = props;
+  const [copied, setCopied] = useState(false);
 
-  return (
-    <div className="mb-5">
-      <CodeBlock
-        theme={theme === THEMES.LIGHT ? github : dracula}
-        text={props.code}
-        language={language}
-        showLineNumbers={false}
-        customStyle={{
-          // maxHeight: '600px',
-          overflow: 'scroll',
-          width: '100%',
-          maxWidth: '100%',
-          borderRadius: '4px',
-          border: '1px solid var(--COLOR_BORDER)',
-          backgroundColor: 'var(--COLOR_CARD)',
-          padding: '8px'
-        }}
-      />
-    </div>
-  );
+  const handleCopy = async (text: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return <NCode code={code} language={language} theme={theme} copied={copied} onCopy={handleCopy} className="mb-5" />;
 };
 
 export default Code;
