@@ -3,10 +3,15 @@ FROM node:20.19-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Copy monorepo root files and all package.json files for workspace resolution
+# Copy monorepo root files for workspace resolution
 COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn ./.yarn
+COPY .yarn/releases ./.yarn/releases
+
+# Copy all workspace package.json files (Yarn 4 requires all to be present)
+COPY packages/cli/package.json ./packages/cli/package.json
 COPY packages/react/package.json ./packages/react/package.json
+COPY packages/native/package.json ./packages/native/package.json
+COPY packages/native/example/package.json ./packages/native/example/package.json
 COPY packages/website/package.json ./packages/website/package.json
 RUN yarn install --immutable
 
