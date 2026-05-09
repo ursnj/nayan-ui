@@ -52,7 +52,11 @@ export const NTable = React.memo(
           <Table.Content aria-label={caption || 'Data table'}>
             <Table.Header className={cn(headerClassName)}>
               {memoColumns.map((col, colIndex) => (
-                <Table.Column key={col.name} id={col.name} className={cn(headerCellClassName, col.headerClassName, col.className)}>
+                <Table.Column
+                  key={col.name}
+                  id={col.name}
+                  isRowHeader={colIndex === 0}
+                  className={cn(headerCellClassName, col.headerClassName, col.className)}>
                   {col.renderHeader ? col.renderHeader(col, colIndex) : col.title}
                 </Table.Column>
               ))}
