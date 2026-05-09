@@ -1,5 +1,5 @@
 import { NTable } from '@nayan-ui/react';
-import SubHeader from '../helpers/SubHeader';
+import SubHeader from '@/helpers/SubHeader';
 
 interface Props {
   title?: string;

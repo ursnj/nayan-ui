@@ -1,6 +1,8 @@
+'use client';
+
 import { useState } from 'react';
 import { NSwitch } from '@nayan-ui/react';
-import ComponentWrapper from '../../helpers/ComponentWrapper';
+import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Switch = () => {
   const [enabled, setEnabled] = useState(false);

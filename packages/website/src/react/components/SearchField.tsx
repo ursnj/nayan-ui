@@ -1,6 +1,8 @@
+'use client';
+
 import { useState } from 'react';
 import { NSearchField } from '@nayan-ui/react';
-import ComponentWrapper from '../../helpers/ComponentWrapper';
+import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const SearchField = () => {
   const [query, setQuery] = useState('');

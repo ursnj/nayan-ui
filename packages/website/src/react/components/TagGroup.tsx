@@ -1,7 +1,8 @@
+'use client';
+
 import { useState } from 'react';
-import type { Selection } from 'react-aria-components';
 import { NTagGroup } from '@nayan-ui/react';
-import ComponentWrapper from '../../helpers/ComponentWrapper';
+import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const items = [
   { id: 'react', label: 'React' },
@@ -12,7 +13,7 @@ const items = [
 ];
 
 const TagGroup = () => {
-  const [selected, setSelected] = useState<Selection>(new Set(['react']));
+  const [selected, setSelected] = useState<any>(new Set(['react']));
   const [removableItems, setRemovableItems] = useState(items);
 
   const handleRemove = (keys: Set<string>) => {

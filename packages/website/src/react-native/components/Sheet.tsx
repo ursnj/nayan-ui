@@ -1,4 +1,6 @@
-import ComponentWrapper from '../../helpers/ComponentWrapper';
+'use client';
+
+import ComponentWrapper from '@/helpers/ComponentWrapper';
 import DemoComingSoon from './DemoComingSoon';
 
 const Sheet = () => {

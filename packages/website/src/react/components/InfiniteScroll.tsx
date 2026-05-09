@@ -1,6 +1,8 @@
+'use client';
+
 import { useState } from 'react';
 import { NCard, NInfiniteScroll, NLoading } from '@nayan-ui/react';
-import ComponentWrapper from '../../helpers/ComponentWrapper';
+import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const InfiniteScroll = () => {
   const [items, setItems] = useState(new Array(20).fill(''));

@@ -1,21 +1,16 @@
-import { useLocation } from 'react-router-dom';
+'use client';
+
 import { NLink } from '@nayan-ui/react';
+import { usePathname } from 'next/navigation';
+import Sidebar from '@/helpers/Sidebar';
 import { getMenuItem } from '@/services/Utils';
-import Meta from '../helpers/Meta';
-import Sidebar from '../helpers/Sidebar';
 
 const GamesLicensing = () => {
-  const location = useLocation();
-  const component: any = getMenuItem(location.pathname);
+  const pathname = usePathname();
+  const component: any = getMenuItem(pathname);
 
   return (
     <Sidebar title={component?.title || 'Licensing'}>
-      <Meta
-        title="Licensing - React Native Games"
-        description="Licensing information for react-native-games library including free non-commercial and paid commercial licenses."
-        keywords="react native games license, commercial license, free license, dual licensing"
-      />
-
       {/* License Section */}
       <div className="mb-8">
         <div className="space-y-6">

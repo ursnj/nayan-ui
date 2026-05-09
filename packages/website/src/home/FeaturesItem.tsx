@@ -1,3 +1,5 @@
+'use client';
+
 interface Props {
   title: string;
   text: string;

@@ -1,6 +1,8 @@
+'use client';
+
 import { useState } from 'react';
 import { NCheck, NLink } from '@nayan-ui/react';
-import ComponentWrapper from '../../helpers/ComponentWrapper';
+import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Checkbox = () => {
   const [notifications, setNotifications] = useState(true);

@@ -1,4 +1,8 @@
-import { useLocation } from 'react-router-dom';
+'use client';
+
+import { usePathname } from 'next/navigation';
+import Code from '@/helpers/Code';
+import Sidebar from '@/helpers/Sidebar';
 import {
   defaultGameSettingsCode,
   exportedConstantsCode,
@@ -8,22 +12,13 @@ import {
   typescriptTypesCode
 } from '@/services/GamesCodeBlocks';
 import { getMenuItem } from '@/services/Utils';
-import Code from '../helpers/Code';
-import Meta from '../helpers/Meta';
-import Sidebar from '../helpers/Sidebar';
 
 const GamesApiReference = () => {
-  const location = useLocation();
-  const component: any = getMenuItem(location.pathname);
+  const pathname = usePathname();
+  const component: any = getMenuItem(pathname);
 
   return (
     <Sidebar title={component?.title || 'API Reference'}>
-      <Meta
-        title="API Reference - React Native Games"
-        description="Complete API reference for react-native-games library including exported constants, types, and components."
-        keywords="react native games api, game ids, game settings, typescript types"
-      />
-
       {/* API Reference Section */}
       <div className="mb-8">
         <div className="space-y-6">

@@ -1,32 +1,30 @@
-import { useLocation } from 'react-router-dom';
+'use client';
+
 import { NLink } from '@nayan-ui/react';
+import { usePathname } from 'next/navigation';
+import Sidebar from '@/helpers/Sidebar';
 import { getMenuItem } from '@/services/Utils';
-import Meta from '../helpers/Meta';
-import Sidebar from '../helpers/Sidebar';
 
 const DevtoolsMain = () => {
-  const location = useLocation();
-  const component: any = getMenuItem(location.pathname);
+  const pathname = usePathname();
+  const component: any = getMenuItem(pathname);
 
   return (
     <Sidebar title={component?.title || 'Devtools'}>
-      <Meta
-        title="Devtools - Command line tools for Nayan UI"
-        description="Powerful command line tools for Nayan UI development including sitemap generation, robots.txt creation, and more developer utilities."
-        keywords="sitemap generator, Sitemap validator, free sitemap generator, create XML sitemap, SEO sitemap tool, generate sitemap, XML sitemap, website SEO tool, robots.txt generator, robots.txt validator, meta tags generator, meta tags validator, favicon generator"
-      />
-
       {/* Header Section */}
-      <div className="bg-surface border border-default rounded-lg mb-8">
-        <div className="px-6 py-12">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-cyan-600/10 border border-blue-500/15 mb-8">
+        <div className="absolute inset-0 bg-surface/50 backdrop-blur-sm rounded-2xl" />
+        <div className="relative px-4 sm:px-6 py-8 sm:py-12">
           <div className="text-center max-w-4xl mx-auto">
             <div className="flex items-center justify-center mb-6">
-              <div className="w-16 h-16 bg-accent rounded-2xl flex items-center justify-center mr-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mr-4 shadow-lg shadow-blue-500/20">
                 <span className="text-white font-bold text-2xl">CLI</span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground">Devtools</h1>
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold">
+                <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">Devtools</span>
+              </h1>
             </div>
-            <p className="text-xl text-muted leading-relaxed mb-8">
+            <p className="text-base sm:text-xl text-muted leading-relaxed mb-6 sm:mb-8">
               Powerful command line tools and developer utilities for building better web applications with Nayan UI.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -34,7 +32,7 @@ const DevtoolsMain = () => {
                 href="https://www.npmjs.com/package/@nayan-ui/cli"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors font-semibold">
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all font-semibold shadow-md shadow-blue-500/20">
                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331zM10.665 10H12v2.667h-1.335V10z" />
                 </svg>
@@ -56,12 +54,12 @@ const DevtoolsMain = () => {
       </div>
 
       {/* Quick Navigation Cards */}
-      <div className="grid md:grid-cols-2 gap-6 mb-12">
+      <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-12">
         <NLink href="/devtools/sitemap" className="group">
-          <div className="bg-surface border border-default rounded-lg p-6 hover:border-accent/50 transition-colors">
+          <div className="bg-surface border border-default rounded-xl p-6 hover:border-emerald-500/30 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mr-4">
-                <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mr-4 shadow-md shadow-emerald-500/20 group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -70,17 +68,19 @@ const DevtoolsMain = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors">Sitemap Generator</h3>
+              <h3 className="text-lg font-semibold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                Sitemap Generator
+              </h3>
             </div>
             <p className="text-muted text-sm">Generate and validate XML sitemaps for better SEO optimization</p>
           </div>
         </NLink>
 
         <NLink href="/devtools/robots" className="group">
-          <div className="bg-surface border border-default rounded-lg p-6 hover:border-accent/50 transition-colors">
+          <div className="bg-surface border border-default rounded-xl p-6 hover:border-purple-500/30 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mr-4">
-                <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-violet-500 rounded-xl flex items-center justify-center mr-4 shadow-md shadow-purple-500/20 group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -89,7 +89,9 @@ const DevtoolsMain = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors">Robots.txt Generator</h3>
+              <h3 className="text-lg font-semibold text-foreground group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                Robots.txt Generator
+              </h3>
             </div>
             <p className="text-muted text-sm">Create and validate robots.txt files for search engine crawling control</p>
           </div>
@@ -97,8 +99,10 @@ const DevtoolsMain = () => {
       </div>
 
       {/* Overview Content */}
-      <div className="bg-surface border border-default rounded-lg p-8 mb-8">
-        <h2 className="text-2xl font-bold text-foreground mb-6">Getting Started</h2>
+      <div className="bg-surface border border-default rounded-xl p-4 sm:p-6 lg:p-8 mb-8">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
+          <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Getting Started</span>
+        </h2>
         <div className="prose prose-gray max-w-none">
           <p className="text-muted mb-4">
             The Nayan UI CLI provides a comprehensive set of tools for web developers to enhance their development workflow and improve their
@@ -106,11 +110,11 @@ const DevtoolsMain = () => {
           </p>
           <div className="bg-background rounded-lg p-4 mb-6">
             <h3 className="text-lg font-semibold text-foreground mb-2">Installation</h3>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono">
+            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
               <code>npm install -g @nayan-ui/cli</code>
             </pre>
           </div>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <h3 className="text-lg font-semibold text-foreground mb-3">Quick Commands</h3>
               <div className="space-y-2">
@@ -134,11 +138,21 @@ const DevtoolsMain = () => {
                 Easily integrates into any framework with simple commands and works with all major search engines for seamless optimization.
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 bg-accent/10 text-accent text-xs rounded">React</span>
-                <span className="px-2 py-1 bg-accent/10 text-accent text-xs rounded">Vue</span>
-                <span className="px-2 py-1 bg-accent/10 text-accent text-xs rounded">Angular</span>
-                <span className="px-2 py-1 bg-accent/10 text-accent text-xs rounded">Next.js</span>
-                <span className="px-2 py-1 bg-accent/10 text-accent text-xs rounded">Nuxt</span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-500/12 text-blue-700 dark:text-blue-300 border border-blue-500/20">
+                  React
+                </span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+                  Vue
+                </span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-500/12 text-red-700 dark:text-red-300 border border-red-500/20">
+                  Angular
+                </span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-purple-500/12 text-purple-700 dark:text-purple-300 border border-purple-500/20">
+                  Next.js
+                </span>
+                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-cyan-500/12 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20">
+                  Nuxt
+                </span>
               </div>
             </div>
           </div>
@@ -146,12 +160,11 @@ const DevtoolsMain = () => {
       </div>
 
       {/* Features Section */}
-      <div className="bg-surface border border-default rounded-lg p-8 mb-8">
-        <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center">
-          <span className="mr-3">✨</span>
-          Features
+      <div className="bg-surface border border-default rounded-xl p-4 sm:p-6 lg:p-8 mb-8">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
+          <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">✨ Features</span>
         </h2>
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
           <div className="space-y-4">
             <div className="flex items-start">
               <span className="text-2xl mr-3">⌨️</span>

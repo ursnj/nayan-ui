@@ -1,5 +1,5 @@
-import Code from '../helpers/Code';
-import { robotsCreateAttributes, robotsValidationAttributes } from '../services/CliAttributes';
+import Code from '@/helpers/Code';
+import { robotsCreateAttributes, robotsValidationAttributes } from '@/services/CliAttributes';
 import Attributes from './Attributes';
 
 const SEOSitemaps = () => {

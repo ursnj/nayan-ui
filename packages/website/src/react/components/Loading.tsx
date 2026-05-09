@@ -1,5 +1,7 @@
+'use client';
+
 import { NLoading } from '@nayan-ui/react';
-import ComponentWrapper from '../../helpers/ComponentWrapper';
+import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Loading = () => {
   return (

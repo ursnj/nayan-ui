@@ -1,6 +1,8 @@
+'use client';
+
 import { useState } from 'react';
 import { NRadioGroup } from '@nayan-ui/react';
-import ComponentWrapper from '../../helpers/ComponentWrapper';
+import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const items = [
   { label: 'Startup', value: 'startup' },
