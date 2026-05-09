@@ -1,7 +1,7 @@
 {
   "name": "@nayan-ui/react-native",
   "sideEffects": false,
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "description": "Component library for React Native.",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
@@ -42,9 +42,6 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "dependencies": {
-    "heroui-native": "^1.0.2"
-  },
   "devDependencies": {
     "@react-native/babel-preset": "0.85.0",
     "@types/react": "^19.2.0",
@@ -58,6 +55,7 @@
     "uniwind": "^1.6.3"
   },
   "peerDependencies": {
+    "heroui-native": ">=1.0.0",
     "react": "*",
     "react-native": "*",
     "react-native-gesture-handler": "*",
