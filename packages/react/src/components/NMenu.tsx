@@ -1,8 +1,7 @@
-import React, { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
+import { Dropdown, Header, Separator } from '@heroui/react';
 import { cn } from '../lib/utils';
-import { NDivider } from './NDivider';
 import { MenuSize } from './Types';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuLabel, DropdownMenuTrigger } from './ui/dropdown-menu';
 
 export const menuSizeMapping = {
   [MenuSize.XS]: 'w-[80px]',
@@ -14,8 +13,7 @@ export const menuSizeMapping = {
 export interface NMenuProps {
   size?: MenuSize;
   title?: ReactNode;
-  side?: 'top' | 'bottom' | 'right' | 'left';
-  align?: 'start' | 'end' | 'center';
+  placement?: 'top' | 'bottom' | 'right' | 'left';
   className?: string;
   triggerClassName?: string;
   titleClassName?: string;
@@ -24,36 +22,22 @@ export interface NMenuProps {
 }
 
 export const NMenu: React.FC<NMenuProps> = React.memo(
-  ({
-    trigger,
-    children,
-    className = '',
-    triggerClassName = '',
-    titleClassName = '',
-    title = '',
-    size = MenuSize.MD,
-    side = 'bottom',
-    align = 'end'
-  }) => {
+  ({ trigger, children, className = '', triggerClassName = '', titleClassName = '', title = '', size = MenuSize.MD, placement = 'bottom' }) => {
     return (
-      <DropdownMenu>
-        <DropdownMenuTrigger className={cn('nyn-menu-trigger', triggerClassName)} aria-haspopup="menu">
-          {trigger}
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          side={side}
-          align={align}
-          className={cn('nyn-menu-content rounded bg-card border border-border shadow-lg', menuSizeMapping[size], className)}
-          role="menu">
-          {title && (
-            <>
-              <DropdownMenuLabel className={cn('text-text', titleClassName)}>{title}</DropdownMenuLabel>
-              <NDivider />
-            </>
-          )}
-          <DropdownMenuGroup>{children}</DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Dropdown>
+        <Dropdown.Trigger className={cn('nyn-menu-trigger', triggerClassName)}>{trigger}</Dropdown.Trigger>
+        <Dropdown.Popover placement={placement} className={cn(menuSizeMapping[size])}>
+          <Dropdown.Menu className={cn('nyn-menu-content', className)}>
+            {title && (
+              <>
+                <Header className={cn(titleClassName)}>{title}</Header>
+                <Separator />
+              </>
+            )}
+            {children}
+          </Dropdown.Menu>
+        </Dropdown.Popover>
+      </Dropdown>
     );
   }
 );

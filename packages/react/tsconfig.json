@@ -13,11 +13,11 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "baseUrl": "."
+    "rootDir": "./src"
   },
   "include": ["src"],
   "exclude": ["dist", "node_modules"]

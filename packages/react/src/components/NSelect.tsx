@@ -1,10 +1,10 @@
 import React, { memo, useCallback, useId } from 'react';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
+import { Label } from '@heroui/react';
 import { cn } from '../lib/utils';
 import { ReactSelectOption } from './Types';
 import { reactSelectCustomClassNames, reactSelectTheme } from './Utils';
-import { Label } from './ui/label';
 
 export interface NSelectProps<OptionType = ReactSelectOption, IsMulti extends boolean = false> {
   isMulti?: IsMulti;
@@ -85,7 +85,7 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
   return (
     <div className={cn('nyn-select-block mb-3', className)}>
       {label && (
-        <Label htmlFor={selectId} className={cn('nyn-select-label block pb-2 text-text', labelClassName)}>
+        <Label htmlFor={selectId} className={cn(labelClassName)}>
           {label}
         </Label>
       )}

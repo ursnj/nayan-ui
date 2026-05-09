@@ -1,137 +1,31 @@
 export const installCode = `npm install @nayan-ui/react`;
 export const rnInstallCode = `npm install @nayan-ui/react-native`;
-export const rnPeerDepsCode = `npm install @react-native-community/datetimepicker @react-navigation/native expo-navigation-bar react-native-reanimated react-native-gesture-handler react-native-safe-area-context react-native-svg`;
+export const rnPeerDepsCode = `npm install react-native-reanimated react-native-gesture-handler react-native-safe-area-context react-native-screens react-native-svg react-native-worklets`;
 
-export const tailwindCode = `module.exports = {
-  darkMode: ['class'],
-  content: ['./src/**/*.{ts,tsx}', './index.html', './node_modules/@nayan-ui/react/dist/index.es.js'], // Check node_modules path properly
-  theme: {
-    extend: {
-      colors: {
-        primary: 'var(--COLOR_PRIMARY)',
-        'primary-light': 'var(--COLOR_PRIMARY_LIGHT)',
-        'primary-dark': 'var(--COLOR_PRIMARY_DARK)',
-        background: 'var(--COLOR_BACKGROUND)',
-        text: 'var(--COLOR_TEXT)',
-        muted: 'var(--COLOR_MUTED)',
-        border: 'var(--COLOR_BORDER)',
-        card: 'var(--COLOR_CARD)',
-        shadow: 'var(--COLOR_SHADOW)',
-        overlay: 'var(--COLOR_OVERLAY)'
-      }
-    }
-  },
-  plugins: [require('tailwindcss-animate')]
-};`;
+export const tailwindCode = `// No tailwind.config.js needed with Tailwind v4!
+// HeroUI styles handle theming automatically.
+// Use @tailwindcss/vite plugin in vite.config.ts:
 
-export const rnTailwindCode = `const { hairlineWidth } = require('nativewind/theme');
-const colors = require('tailwindcss/colors');
+import tailwindcss from '@tailwindcss/vite';
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  darkMode: 'class',
-  content: ['./src/**/*.{js,jsx,ts,tsx}', './node_modules/@nayan-ui/react-native/**/*.{js,jsx,ts,tsx}'],
-  presets: [require('nativewind/preset')],
-  theme: {
-    colors: {
-      ...colors,
-      primary: 'var(--color-primary)',
-      card: 'var(--color-card)',
-      text: 'var(--color-text)',
-      muted: 'var(--color-muted)',
-      border: 'var(--color-border)',
-      background: 'var(--color-background)'
-    },
-    extend: {
-      borderWidth: {
-        hairline: hairlineWidth()
-      },
-      keyframes: {
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' }
-        },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' }
-        }
-      },
-      animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out'
-      }
-    }
-  },
-  plugins: []
-};`;
+export default defineConfig({
+  plugins: [tailwindcss(), react()],
+});`;
 
-export const cssCode = `@import '@nayan-ui/react/dist/style.css';
+export const rnTailwindCode = `// No tailwind.config.js needed!
+// Uniwind + HeroUI Native handle styling automatically.
+// Just create a global.css file:`;
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+export const cssCode = `@import '@nayan-ui/react/styles.css';
 
-@layer base {
-  :root {
-    --COLOR_PRIMARY: #005ee6;
-    --COLOR_PRIMARY_DARK: #0043a3;
-    --COLOR_PRIMARY_LIGHT: #0069ff;
-    --COLOR_BACKGROUND: #f0f2f5;
-    --COLOR_CARD: #ffffff;
-    --COLOR_TEXT: #050505;
-    --COLOR_MUTED: 'gray';
-    --COLOR_BORDER: #e0e0e0;
-    --COLOR_SHADOW: #d3d3d3;
-    --COLOR_OVERLAY: rgba(255, 255, 255, .7);
-  }
-
-  [data-theme='dark'] {
-    --COLOR_PRIMARY: #2997ff;
-    --COLOR_PRIMARY_DARK: #0a84ff;
-    --COLOR_PRIMARY_LIGHT: #7dc1ff;
-    --COLOR_BACKGROUND: #1f1f1f;
-    --COLOR_CARD: #353535;
-    --COLOR_TEXT: #f5f5f5;
-    --COLOR_MUTED: #afafaf;
-    --COLOR_BORDER: #4f4f4f;
-    --COLOR_SHADOW: #cbcbcb;
-    --COLOR_OVERLAY: rgba(0, 0, 0, .7);
-  }
-
-  body {
-    color: var(--COLOR_TEXT) !important;
-    background-color: var(--COLOR_BACKGROUND) !important;
-  }
+body {
+  color: var(--foreground);
+  background: var(--background);
 }`;
 
-export const rnCssCode = `import { DarkTheme, DefaultTheme } from '@react-navigation/native';
-
-export const themeColors = {
-  light: {
-    ...DefaultTheme,
-    colors: {
-      primary: 'hsl(215 100% 45%)',
-      background: 'hsl(216 20% 95%)',
-      card: 'hsl(0 0% 100%)',
-      text: 'hsl(0 0% 2%)',
-      muted: 'hsl(0 0% 50%)',
-      border: 'hsl(0 0% 88%)',
-      notification: 'hsl(0 0% 100%)'
-    }
-  },
-  dark: {
-    ...DarkTheme,
-    colors: {
-      primary: 'hsl(209 100% 58%)',
-      background: 'hsl(0 0% 12%)',
-      card: 'hsl(0 0% 21%)',
-      text: 'hsl(0 0% 96%)',
-      muted: 'hsl(0 0% 69%)',
-      border: 'hsl(0 0% 31%)',
-      notification: 'hsl(0 0% 21%)'
-    }
-  }
-};`;
+export const rnCssCode = `@import 'tailwindcss';
+@import 'uniwind';
+@import 'heroui-native/styles';`;
 
 export const appCode = `import { useState } from 'react';
 import { NTheme, THEMES, useLocalStorage } from '@nayan-ui/react';
@@ -153,22 +47,19 @@ const App = () => {
 export default App;`;
 
 export const rnAppCode = `import { View } from 'react-native';
-import { NButton, NTheme, THEMES, useNTheme } from '@nayan-ui/react-native';
-import 'react-native-reanimated';
-import '../global.css';
-import { themeColors } from './constants';
+import { NButton, NTheme, NThemeToggle, useNTheme } from '@nayan-ui/react-native';
+import './global.css';
 
 export default function App() {
-  const { theme, isDarkMode, setTheme } = useNTheme();
-
-  const toggleTheme = () => {
-    setTheme(isDarkMode ? THEMES.light : THEMES.dark);
-  };
+  const { isDarkMode } = useNTheme();
 
   return (
-    <NTheme theme={theme || THEMES.light} themeColors={themeColors}>
+    <NTheme>
       <View className="flex-1 justify-center items-center bg-background">
-        <NButton onPress={toggleTheme}>{isDarkMode ? 'Switch to Light' : 'Switch to Dark'}</NButton>
+        <NThemeToggle />
+        <NButton onPress={() => console.log('Pressed!')}>
+          {isDarkMode ? 'Dark Mode' : 'Light Mode'}
+        </NButton>
       </View>
     </NTheme>
   );
@@ -184,9 +75,9 @@ const Accordion = () => {
 
   return (
     <div>
-      <h1 className="text-text mb-3 text-lg">Single:</h1>
+      <h1 className="text-foreground mb-3 text-lg">Single:</h1>
       <NAccordion type={AccordionTypes.SINGLE} items={items} />
-      <h1 className="text-text mb-3 mt-5 text-lg">Multiple:</h1>
+      <h1 className="text-foreground mb-3 mt-5 text-lg">Multiple:</h1>
       <NAccordion type={AccordionTypes.MULTIPLE} items={items} />
     </div>
   );
@@ -210,53 +101,36 @@ const Alert = () => {
 
 export default Alert;`;
 
-export const badgeCode = `import { NBadge, BadgeSize } from '@nayan-ui/react';
+export const badgeCode = `import { NBadge } from '@nayan-ui/react';
 
 const Badge = () => {
   return (
-    <div>
-      <NBadge size={BadgeSize.XS} className="text-text bg-card border border-border mr-2">Sample</NBadge>
-      <NBadge size={BadgeSize.XS} className="text-blue-700 bg-blue-300 mr-2">Sample</NBadge>
-      <NBadge size={BadgeSize.SM} className="text-green-700 bg-green-300 mr-2">Sample</NBadge>
-      <NBadge size={BadgeSize.MD} className="text-yellow-700 bg-yellow-300 mr-2">Sample</NBadge>
-      <NBadge size={BadgeSize.LG} className="text-red-700 bg-red-300 mr-2">Sample</NBadge>
+    <div className="flex flex-wrap gap-2">
+      <NBadge color="default">Default</NBadge>
+      <NBadge color="accent">Accent</NBadge>
+      <NBadge color="success">Success</NBadge>
+      <NBadge color="warning">Warning</NBadge>
+      <NBadge color="danger">Danger</NBadge>
     </div>
   );
 };
 
 export default Badge;`;
 
-export const buttonCode = `import { NButton, ButtonSize } from '@nayan-ui/react';
+export const buttonCode = `import { NButton } from '@nayan-ui/react';
 
 const Button = () => {
   return (
-    <div>
-      <NButton size={ButtonSize.XS} disabled className="text-text bg-card border border-border mr-2">
-        Button
-      </NButton>
-      <NButton type="submit" size={ButtonSize.XS} onClick={() => console.log('Button clicked')} className="text-white bg-blue-500 hover:bg-blue-600 border border-blue-600 mr-2">
-        Button
-      </NButton>
-      <NButton type="reset" size={ButtonSize.SM} onClick={() => console.log('Button clicked')} className="text-white bg-green-500 hover:bg-green-600 border border-green-600 mr-2">
-        Button
-      </NButton>
-      <NButton size={ButtonSize.MD} isLoading={true} onClick={() => console.log('Button clicked')} className="text-white bg-yellow-500 hover:bg-yellow-600 border border-yellow-600 mr-2">
-        Button
-      </NButton>
-      <NButton size={ButtonSize.LG} onClick={() => console.log('Button clicked')} className="mr-2">
-        Button
-      </NButton>
-      <NButton size={ButtonSize.LG} isOutline={true} onClick={() => console.log('Button clicked')} className="mr-2">
-        Button
-      </NButton>
-      <NButton size={ButtonSize.LG} onClick={() => console.log('Button clicked')} className="text-white bg-purple-500 hover:bg-purple-600 border border-purple-600 rounded-full mr-2">
-        Button
-      </NButton>
+    <div className="flex flex-wrap gap-2">
+      <NButton onClick={() => console.log('clicked')}>Primary</NButton>
+      <NButton isOutline={true}>Outline</NButton>
+      <NButton isLoading={true}>Loading</NButton>
+      <NButton disabled>Disabled</NButton>
     </div>
   );
 };
 
-export default Button`;
+export default Button;`;
 
 export const buttonGroupCode = `import { useState } from 'react';
 import { NButtonGroup } from '@nayan-ui/react';
@@ -282,12 +156,21 @@ export const checkBoxCode = `import { useState } from 'react';
 import { NCheck, NLink } from '@nayan-ui/react';
 
 const Checkbox = () => {
-  const [checked, setChecked] = useState(true);
+  const [notifications, setNotifications] = useState(true);
+  const [terms, setTerms] = useState(false);
 
   return (
-    <NCheck checked={checked} disabled={false} onChange={checked => setChecked(checked)}>
-      Sample label for checkbox. accept <NLink> terms</NLink>
-    </NCheck>
+    <div className="space-y-3">
+      <NCheck checked={notifications} onChange={setNotifications}>
+        Enable email notifications
+      </NCheck>
+      <NCheck checked={terms} onChange={setTerms}>
+        I agree to the <NLink href="#">Terms of Service</NLink>
+      </NCheck>
+      <NCheck checked={false} disabled onChange={() => {}}>
+        This option is disabled
+      </NCheck>
+    </div>
   );
 };
 
@@ -366,11 +249,11 @@ export const dividerCode = `import { NDivider } from '@nayan-ui/react';
 const Divider = () => {
   return (
     <div>
-      <h1 className="text-text mb-3 text-lg">Horizontal:</h1>
+      <h1 className="text-foreground mb-3 text-lg">Horizontal:</h1>
       <NDivider orientation="horizontal" className="my-3" />
-      <h1 className="text-text mb-3 text-lg">Horizontal with Text:</h1>
+      <h1 className="text-foreground mb-3 text-lg">Horizontal with Text:</h1>
       <NDivider orientation="horizontal" className="h-5">OR</NDivider>
-      <h1 className="text-text mb-3 text-lg">Vertical:</h1>
+      <h1 className="text-foreground mb-3 text-lg">Vertical:</h1>
       <NDivider orientation="vertical" className="h-5" />
     </div>
   );
@@ -510,7 +393,7 @@ export default Linkify;`;
 export const loadingCode = `import { NLoading } from '@nayan-ui/react';
 
 const Loading = () => {
-  return <NLoading className="text-primary" />
+  return <NLoading className="text-accent" />
 };
 
 export default Loading;`;
@@ -540,7 +423,7 @@ const Popover = () => {
   return (
     <NPopover size={PopoverSize.MD} trigger={<NButton>Show Popover</NButton>}>
       <div className="overflow-hidden p-3">
-        <div className="text-sm font-medium text-text">Documentation</div>
+        <div className="text-sm font-medium text-foreground">Documentation</div>
         <div className="text-sm text-muted">Start integrating products and tools</div>
       </div>
     </NPopover>
@@ -571,10 +454,10 @@ const RadioGroupExample = () => {
 
   return (
     <div>
-      <h1 className="text-text mb-3 text-base">Horizontal:</h1>
+      <h1 className="text-foreground mb-3 text-base">Horizontal:</h1>
       <NRadioGroup items={items} selected={selected} setSelected={setSelected} />
       <div className="mt-5" />
-      <h1 className="text-text mb-3 text-base">Vertical:</h1>
+      <h1 className="text-foreground mb-3 text-base">Vertical:</h1>
       <NRadioGroup orientation="vertical" items={items} selected={selected} setSelected={setSelected} />
     </div>
   );
@@ -670,7 +553,7 @@ export default Switch;`;
 export const tableCode = `import { NTable } from '@nayan-ui/react';
 
 const CustomComponent = ({row, col, ...remaining}: any) => {
-  return <div className="text-primary">Oops</div>;
+  return <div className="text-accent">Oops</div>;
 };
 
 const Table = () => {
@@ -687,7 +570,7 @@ const Table = () => {
     { invoice: '10002', status: 'In progress', method: 'Net Banking', amount: '$500' }
   ];
 
-  return <NTable className="bg-card" caption="Invoice table" columnDef={columnDef} data={data} />;
+  return <NTable className="bg-surface" caption="Invoice table" columnDef={columnDef} data={data} />;
 };
 
 export default Table;`;
@@ -702,21 +585,21 @@ const Tabs = () => {
 
   return (
     <div>
-      <h1 className="text-text mb-3 text-lg text-left">Tabs:</h1>
+      <h1 className="text-foreground mb-3 text-lg text-left">Tabs:</h1>
       <NTabs items={items} selected={selected} onChange={setSelected}>
-        <NTabsContent item={items[0]} className="px-3 py-2 text-text">
+        <NTabsContent item={items[0]} className="px-3 py-2 text-foreground">
           Content 1
         </NTabsContent>
-        <NTabsContent item={items[1]} className="px-3 py-2 text-text">
+        <NTabsContent item={items[1]} className="px-3 py-2 text-foreground">
           Content 2
         </NTabsContent>
       </NTabs>
-      <h1 className="text-text mb-3 mt-5 text-lg text-left">Full Width:</h1>
+      <h1 className="text-foreground mb-3 mt-5 text-lg text-left">Full Width:</h1>
       <NTabs isFull={true} items={items} selected={selected} onChange={setSelected}>
-        <NTabsContent item={items[0]} className="px-3 py-2 text-text">
+        <NTabsContent item={items[0]} className="px-3 py-2 text-foreground">
           Content 3
         </NTabsContent>
-        <NTabsContent item={items[1]} className="px-3 py-2 text-text">
+        <NTabsContent item={items[1]} className="px-3 py-2 text-foreground">
           Content 4
         </NTabsContent>
       </NTabs>
@@ -747,23 +630,125 @@ const Textarea = () => {
 
 export default Textarea;`;
 
-export const toastCode = `import { useToast } from '@nayan-ui/react';
+export const toastCode = `import { NButton, useNToast } from '@nayan-ui/react';
 
 const Toast = () => {
-  const toast = useToast();
+  const toast = useNToast();
   return (
-    <div>
-      <NButton onClick={() => toast('Simple Toaster!')}>
-        Show Simple Toast
-      </NButton>
-      <NButton className="ml-5" onClick={() => toast('Toaster Description!', 'Toaster Title')}>
-        Show Toast with Title
-      </NButton>
-    </div>
+    <NButton onClick={() => toast('This is a toast notification!', 'Success')}>
+      Show Toast
+    </NButton>
   );
 };
 
 export default Toast;`;
+
+export const autocompleteCode = `import { useState } from 'react';
+import { NAutocomplete } from '@nayan-ui/react';
+
+const items = [
+  { id: 'react', label: 'React' },
+  { id: 'vue', label: 'Vue' },
+  { id: 'angular', label: 'Angular' },
+  { id: 'svelte', label: 'Svelte' }
+];
+
+const Autocomplete = () => {
+  const [selected, setSelected] = useState(null);
+
+  return (
+    <NAutocomplete
+      items={items}
+      placeholder="Select a framework..."
+      selectedKey={selected}
+      onSelectionChange={setSelected}
+    />
+  );
+};
+
+export default Autocomplete;`;
+
+export const datePickerCode = `import { NDatePicker } from '@nayan-ui/react';
+
+const DatePicker = () => {
+  return <NDatePicker label="Date of birth" helperText="Select your date of birth" />;
+};
+
+export default DatePicker;`;
+
+export const numberFieldCode = `import { useState } from 'react';
+import { NNumberField } from '@nayan-ui/react';
+
+const NumberField = () => {
+  const [value, setValue] = useState(1);
+
+  return (
+    <NNumberField
+      value={value}
+      onChange={setValue}
+      minValue={0}
+      maxValue={100}
+      aria-label="Quantity"
+    />
+  );
+};
+
+export default NumberField;`;
+
+export const meterCode = `import { NMeter } from '@nayan-ui/react';
+
+const Meter = () => {
+  return (
+    <div className="space-y-4">
+      <NMeter value={30} color="accent" label="Storage: 30%" />
+      <NMeter value={80} color="warning" label="Memory: 80%" />
+      <NMeter value={95} color="danger" label="CPU: 95%" />
+    </div>
+  );
+};
+
+export default Meter;`;
+
+export const tagGroupCode = `import { useState } from 'react';
+import { NTagGroup } from '@nayan-ui/react';
+
+const items = [
+  { id: 'react', label: 'React' },
+  { id: 'vue', label: 'Vue' },
+  { id: 'angular', label: 'Angular' }
+];
+
+const TagGroup = () => {
+  const [selected, setSelected] = useState(new Set(['react']));
+
+  return (
+    <NTagGroup
+      items={items}
+      selectionMode="multiple"
+      selectedKeys={selected}
+      onSelectionChange={setSelected}
+    />
+  );
+};
+
+export default TagGroup;`;
+
+export const searchFieldCode = `import { useState } from 'react';
+import { NSearchField } from '@nayan-ui/react';
+
+const SearchField = () => {
+  const [query, setQuery] = useState('');
+
+  return (
+    <NSearchField
+      value={query}
+      onChange={setQuery}
+      placeholder="Search components..."
+    />
+  );
+};
+
+export default SearchField;`;
 
 export const tooltipCode = `import { NTooltip, NButton } from '@nayan-ui/react';
 

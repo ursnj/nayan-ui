@@ -1,7 +1,7 @@
 import React, { ReactElement, ReactNode, forwardRef, memo, useId } from 'react';
+import { Popover } from '@heroui/react';
 import { cn } from '../lib/utils';
 import { PopoverSize } from './Types';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 
 const sizeMapping = {
   [PopoverSize.XS]: 'w-[150px]',
@@ -36,7 +36,6 @@ export const NPopover = memo(
       popoverLabel
     } = props;
     const id = popoverId || useId();
-    // Accessibility: aria-controls, aria-haspopup, aria-label
     const triggerNode = React.cloneElement(trigger as any, {
       'aria-controls': id,
       'aria-haspopup': 'dialog',
@@ -44,18 +43,8 @@ export const NPopover = memo(
     });
     return (
       <Popover>
-        <PopoverTrigger>{triggerNode}</PopoverTrigger>
-        <PopoverContent
-          ref={ref}
-          id={id}
-          role="dialog"
-          aria-modal="false"
-          aria-label={popoverLabel}
-          side={side}
-          align={align}
-          className={cn('nyn-popover-content rounded bg-card border border-border shadow-lg p-0', sizeMapping[size], className)}>
-          {children}
-        </PopoverContent>
+        <Popover.Trigger>{triggerNode}</Popover.Trigger>
+        <Popover.Content className={cn('nyn-popover-content', sizeMapping[size], className)}>{children}</Popover.Content>
       </Popover>
     );
   })

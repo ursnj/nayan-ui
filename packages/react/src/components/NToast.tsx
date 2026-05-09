@@ -1,12 +1,19 @@
-import { toast, useToast as useToaster } from './ui/use-toast';
+import { toast } from '@heroui/react';
 
 export const useNToast = () => {
-  const { toast: toaster } = useToaster();
   return (description: string, title: string = '') => {
-    toaster(Object.assign({ description }, title && { title }));
+    if (title) {
+      toast(title, { description });
+    } else {
+      toast(description);
+    }
   };
 };
 
 export function showToast(description: string, title: string = '') {
-  toast(Object.assign({ description }, title && { title }));
+  if (title) {
+    toast(title, { description });
+  } else {
+    toast(description);
+  }
 }

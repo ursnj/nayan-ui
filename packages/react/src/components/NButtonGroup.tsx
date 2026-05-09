@@ -1,6 +1,7 @@
-import React, { KeyboardEvent, memo, useRef } from 'react';
+import React, { memo, useCallback } from 'react';
+import type { Selection } from 'react-aria-components';
+import { ToggleButton, ToggleButtonGroup } from '@heroui/react';
 import { cn } from '../lib/utils';
-import { Button } from './ui/button';
 
 export interface NButtonGroupProps<T = string> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   className?: string;
@@ -10,6 +11,7 @@ export interface NButtonGroupProps<T = string> extends Omit<React.HTMLAttributes
   disabled?: boolean;
   onChange: (selected: T) => void;
   ariaLabel?: string;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 function NButtonGroupComponent<T = string>({
@@ -20,51 +22,42 @@ function NButtonGroupComponent<T = string>({
   disabled = false,
   onChange,
   ariaLabel,
+  size = 'md',
   ...rest
 }: NButtonGroupProps<T>) {
-  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const selectedKeys = new Set([String(selected)]);
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
-    const idx = items.findIndex(item => item === selected);
-    let nextIdx = idx;
-    if (e.key === 'ArrowLeft') nextIdx = idx > 0 ? idx - 1 : items.length - 1;
-    if (e.key === 'ArrowRight') nextIdx = idx < items.length - 1 ? idx + 1 : 0;
-    if (nextIdx !== idx) {
-      onChange(items[nextIdx]);
-      setTimeout(() => {
-        buttonRefs.current[nextIdx]?.focus();
-      }, 0);
-    }
-  };
+  const handleSelectionChange = useCallback(
+    (keys: Selection) => {
+      if (keys === 'all') return;
+      const selectedKey = [...keys][0] as string;
+      if (selectedKey !== undefined) {
+        const item = items.find(i => String(i) === selectedKey);
+        if (item !== undefined) onChange(item);
+      }
+    },
+    [items, onChange]
+  );
 
   return (
-    <div className={cn('nyn-button-group rounded', className)} role="group" aria-label={ariaLabel} tabIndex={0} onKeyDown={handleKeyDown} {...rest}>
+    <ToggleButtonGroup
+      selectionMode="single"
+      selectedKeys={selectedKeys}
+      onSelectionChange={handleSelectionChange}
+      isDisabled={disabled}
+      size={size}
+      className={cn('nyn-button-group', className)}
+      aria-label={ariaLabel}
+      {...(rest as any)}>
       {items.map((item, idx) => {
-        const key = typeof item === 'string' ? item : idx;
-        const isSelected = item === selected;
+        const key = String(typeof item === 'string' ? item : idx);
         return (
-          <Button
-            key={key}
-            ref={el => {
-              buttonRefs.current[idx] = el;
-            }}
-            type="button"
-            disabled={disabled}
-            aria-pressed={isSelected}
-            tabIndex={isSelected ? 0 : -1}
-            onClick={() => onChange(item)}
-            className={cn(
-              `nyn-button-group-item ${
-                isSelected ? 'bg-primary text-white' : 'bg-card text-text'
-              } hover:bg-primary hover:text-white border border-border first:border-r-0 last:border-l-0 first:rounded-l-lg rounded-none last:rounded-r-lg px-3 py-2 h-auto mx-0 outline-none focus:shadow-outline`,
-              buttonClassName
-            )}>
+          <ToggleButton key={key} id={key} className={cn('nyn-button-group-item', buttonClassName)}>
             {String(item)}
-          </Button>
+          </ToggleButton>
         );
       })}
-    </div>
+    </ToggleButtonGroup>
   );
 }
 

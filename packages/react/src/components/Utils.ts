@@ -165,17 +165,31 @@ export const reactSelectTheme = (theme: any) => ({
   borderRadius: 4,
   colors: {
     ...theme.colors,
-    neutral0: 'var(--COLOR_BACKGROUND)',
-    neutral10: 'var(--COLOR_BORDER)',
-    neutral5: 'var(--COLOR_BACKGROUND)',
-    neutral20: 'var(--COLOR_BORDER)',
-    neutral80: 'var(--COLOR_TEXT)',
-    primary25: 'gray',
-    primary: 'var(--COLOR_PRIMARY)'
+    neutral0: 'var(--surface)',
+    neutral5: 'var(--surface)',
+    neutral10: 'var(--default)',
+    neutral20: 'var(--default)',
+    neutral30: 'var(--default)',
+    neutral40: 'var(--muted)',
+    neutral50: 'var(--muted)',
+    neutral60: 'var(--foreground)',
+    neutral80: 'var(--foreground)',
+    primary: 'var(--accent)',
+    primary25: 'var(--default)',
+    primary50: 'var(--default)',
+    primary75: 'var(--accent)',
+    danger: 'var(--danger)',
+    dangerLight: 'var(--danger)'
   }
 });
 
 export const reactSelectCustomClassNames = {
-  control: (state: any) => 'flex h-10 w-full rounded bg-card border border-border focus:border-border text-text',
-  menu: (state: any) => 'w-full rounded bg-card border border-border focus:border-border'
+  control: (state: any) => 'flex h-10 w-full rounded bg-surface border border-default focus:border-accent text-foreground',
+  menu: (state: any) => 'w-full rounded bg-surface border border-default shadow-lg',
+  option: (state: any) => (state.isSelected ? 'bg-accent text-accent-foreground' : state.isFocused ? 'bg-default/50' : ''),
+  singleValue: (state: any) => 'text-foreground',
+  multiValue: (state: any) => 'bg-default rounded',
+  multiValueLabel: (state: any) => 'text-foreground',
+  placeholder: (state: any) => 'text-muted',
+  input: (state: any) => 'text-foreground'
 } as any;

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useId, useState } from 'react';
+import { Label, Slider } from '@heroui/react';
 import { cn } from '../lib/utils';
-import { Label } from './ui/label';
-import { Slider } from './ui/slider';
 
 export interface NSliderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   label?: React.ReactNode;
@@ -44,46 +43,35 @@ export const NSlider: React.FC<NSliderProps> = React.memo(
   }) => {
     const generatedId = useId();
     const sliderId = id || `nyn-slider-${generatedId}`;
-    const [internalValue, setInternalValue] = useState<number[]>([typeof value === 'number' ? value : defaultValue]);
+    const [internalValue, setInternalValue] = useState<number>(typeof value === 'number' ? value : defaultValue);
 
-    // Sync internal value with controlled value
     useEffect(() => {
-      if (typeof value === 'number') setInternalValue([value]);
+      if (typeof value === 'number') setInternalValue(value);
     }, [value]);
 
-    const handleValueChange = useCallback((v: number[]) => {
-      setInternalValue(v);
-    }, []);
-
-    const handleValueCommit = useCallback(
-      (v: number[]) => {
-        if (onChange) onChange(v[0]);
+    const handleChange = useCallback(
+      (v: number | number[]) => {
+        const val = Array.isArray(v) ? v[0] : v;
+        setInternalValue(val);
+        if (onChange) onChange(val);
       },
       [onChange]
     );
 
     return (
       <div className={cn('nyn-slider-block mb-3', className)} {...rest}>
-        {label && (
-          <Label htmlFor={sliderId} className={cn('nyn-slider-label block pb-4 text-text', labelClassName)}>
-            {label}
-          </Label>
-        )}
+        {label && <Label className={cn(labelClassName)}>{label}</Label>}
         <Slider
-          id={sliderId}
           value={internalValue}
-          defaultValue={[defaultValue]}
-          min={min}
-          max={max}
+          defaultValue={defaultValue}
+          minValue={min}
+          maxValue={max}
           step={step}
-          disabled={disabled}
+          isDisabled={disabled}
           orientation={orientation}
-          onValueChange={handleValueChange}
-          onValueCommit={handleValueCommit}
-          className={cn('nyn-slider bg-border rounded', sliderClassName)}
+          onChange={handleChange as any}
+          className={cn('nyn-slider rounded', sliderClassName)}
           aria-label={ariaLabel}
-          aria-labelledby={ariaLabelledBy}
-          aria-valuetext={ariaValueText}
         />
       </div>
     );

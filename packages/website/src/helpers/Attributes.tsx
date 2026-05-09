@@ -1,3 +1,5 @@
+'use client';
+
 import { NTable } from '@nayan-ui/react';
 import SubHeader from './SubHeader';
 
