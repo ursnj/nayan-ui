@@ -43,13 +43,9 @@ const NDialogComponent: React.FC<NDialogProps> = memo(
     ...rest
   }) => {
     return (
-      <Modal>
-        <Modal.Backdrop
-          isOpen={isOpen}
-          onOpenChange={open => {
-            if (!open) onClose();
-          }}
-          isDismissable>
+      <Modal isOpen={isOpen} onOpenChange={open => { if (!open) onClose(); }}>
+        <Modal.Trigger className="hidden" aria-hidden="true"><span /></Modal.Trigger>
+        <Modal.Backdrop isDismissable>
           <Modal.Container size={sizeMapping[size]}>
             <Modal.Dialog className={cn('nyn-dialog', maxWidthMapping[size], className)}>
               <Modal.Header className={cn(headerClassName)}>

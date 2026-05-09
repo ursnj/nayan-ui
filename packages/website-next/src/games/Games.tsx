@@ -364,7 +364,9 @@ const GamesMain = () => {
                 <span className="text-white font-bold text-2xl">🎮</span>
               </div>
               <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold">
-                <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 bg-clip-text text-transparent break-words">react-native-games</span>
+                <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 bg-clip-text text-transparent break-words">
+                  react-native-games
+                </span>
               </h1>
             </div>
             <p className="text-base sm:text-xl text-muted leading-relaxed mb-6 sm:mb-8">
@@ -401,7 +403,9 @@ const GamesMain = () => {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
         <div className="bg-surface border border-default rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
-            <span className="w-8 h-8 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">🚀</span>
+            <span className="w-8 h-8 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">
+              🚀
+            </span>
             High Performance
           </h3>
           <ul className="text-muted text-sm space-y-1">
@@ -415,7 +419,9 @@ const GamesMain = () => {
 
         <div className="bg-surface border border-default rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
-            <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">📱</span>
+            <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">
+              📱
+            </span>
             Cross-Platform
           </h3>
           <ul className="text-muted text-sm space-y-1">
@@ -429,7 +435,9 @@ const GamesMain = () => {
 
         <div className="bg-surface border border-default rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
-            <span className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">🎵</span>
+            <span className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">
+              🎵
+            </span>
             Rich Audio & Haptics
           </h3>
           <ul className="text-muted text-sm space-y-1">
@@ -442,7 +450,9 @@ const GamesMain = () => {
 
         <div className="bg-surface border border-default rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
-            <span className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">🎯</span>
+            <span className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">
+              🎯
+            </span>
             Customizable
           </h3>
           <ul className="text-muted text-sm space-y-1">
@@ -455,7 +465,9 @@ const GamesMain = () => {
 
         <div className="bg-surface border border-default rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
-            <span className="w-8 h-8 bg-gradient-to-br from-purple-500 to-violet-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">🎮</span>
+            <span className="w-8 h-8 bg-gradient-to-br from-purple-500 to-violet-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">
+              🎮
+            </span>
             Game Features
           </h3>
           <ul className="text-muted text-sm space-y-1">
@@ -469,7 +481,9 @@ const GamesMain = () => {
 
         <div className="bg-surface border border-default rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
-            <span className="w-8 h-8 bg-gradient-to-br from-pink-500 to-rose-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">🛠️</span>
+            <span className="w-8 h-8 bg-gradient-to-br from-pink-500 to-rose-500 rounded-lg flex items-center justify-center mr-2 text-sm shadow-sm group-hover:scale-110 transition-transform">
+              🛠️
+            </span>
             Developer Friendly
           </h3>
           <ul className="text-muted text-sm space-y-1">

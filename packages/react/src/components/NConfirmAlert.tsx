@@ -36,12 +36,9 @@ const NConfirmAlertComponent: React.FC<NConfirmAlertProps> = memo(
     ...rest
   }) => {
     return (
-      <Modal>
-        <Modal.Backdrop
-          isOpen={isOpen}
-          onOpenChange={open => {
-            if (!open) onClose();
-          }}>
+      <Modal isOpen={isOpen} onOpenChange={open => { if (!open) onClose(); }}>
+        <Modal.Trigger className="hidden" aria-hidden="true"><span /></Modal.Trigger>
+        <Modal.Backdrop>
           <Modal.Container size="sm">
             <Modal.Dialog className={cn('nyn-confirm-alert', className)} role="alertdialog">
               <Modal.Header>

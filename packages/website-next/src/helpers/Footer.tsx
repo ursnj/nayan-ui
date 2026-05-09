@@ -15,7 +15,9 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
               <img src="/logo.webp" fetchPriority="high" alt="Nayan UI Logo" className="w-10 h-10" loading="lazy" />
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">Nayan UI</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Nayan UI
+              </span>
             </div>
             <p className="text-muted text-sm leading-relaxed">
               Beautiful, accessible, and customizable React & React Native components built with modern design principles.
@@ -44,18 +46,28 @@ const Footer = () => {
 
           {/* Documentation Links */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground"><span className="text-blue-600 dark:text-blue-400">Documentation</span></h3>
+            <h3 className="text-lg font-semibold text-foreground">
+              <span className="text-blue-600 dark:text-blue-400">Documentation</span>
+            </h3>
             <div className="space-y-2">
-              <NLink href="/react/installation" className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
+              <NLink
+                href="/react/installation"
+                className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
                 React Installation
               </NLink>
-              <NLink href="/react-native/installation" className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
+              <NLink
+                href="/react-native/installation"
+                className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
                 React Native Installation
               </NLink>
-              <NLink href="/react/components" className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
+              <NLink
+                href="/react/components"
+                className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
                 React Components
               </NLink>
-              <NLink href="/react-native/components" className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
+              <NLink
+                href="/react-native/components"
+                className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
                 React Native Components
               </NLink>
             </div>
@@ -63,12 +75,18 @@ const Footer = () => {
 
           {/* Resources */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground"><span className="text-purple-600 dark:text-purple-400">Resources</span></h3>
+            <h3 className="text-lg font-semibold text-foreground">
+              <span className="text-purple-600 dark:text-purple-400">Resources</span>
+            </h3>
             <div className="space-y-2">
-              <NLink href="/contributions" className="block text-muted hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 text-sm">
+              <NLink
+                href="/contributions"
+                className="block text-muted hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 text-sm">
                 Contributing
               </NLink>
-              <NLink href="/tags" className="block text-muted hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 text-sm">
+              <NLink
+                href="/tags"
+                className="block text-muted hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 text-sm">
                 Component Tags
               </NLink>
               <NLink
@@ -90,7 +108,9 @@ const Footer = () => {
 
           {/* Community */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground"><span className="text-pink-600 dark:text-pink-400">Community</span></h3>
+            <h3 className="text-lg font-semibold text-foreground">
+              <span className="text-pink-600 dark:text-pink-400">Community</span>
+            </h3>
             <div className="space-y-2">
               <NLink
                 href="https://github.com/ursnj/nayan-ui"
