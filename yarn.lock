@@ -2380,7 +2380,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@heroui/styles@npm:3.0.4, @heroui/styles@npm:^3.0.4":
+"@heroui/styles@npm:3.0.4":
   version: 3.0.4
   resolution: "@heroui/styles@npm:3.0.4"
   dependencies:
@@ -2902,18 +2902,14 @@ __metadata:
   resolution: "@nayan-ui/react@workspace:packages/react"
   dependencies:
     "@heroui/react": "npm:^3.0.4"
-    "@heroui/styles": "npm:^3.0.4"
     "@types/node": "npm:^25.6.2"
     "@types/react": "npm:^19.2.14"
     "@types/react-dom": "npm:^19.2.3"
-    clsx: "npm:^2.1.1"
     prism-react-renderer: "npm:^2.4.1"
     react: "npm:^19.2.6"
-    react-aria-components: "npm:^1.17.0"
     react-dom: "npm:^19.2.6"
     react-linkify: "npm:^1.0.0-alpha"
     react-select: "npm:^5.10.2"
-    tailwind-merge: "npm:^3.5.0"
     tailwindcss: "npm:^4.3.0"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.0.11"
@@ -5655,7 +5651,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^2.0.0, clsx@npm:^2.1.1":
+"clsx@npm:^2.0.0":
   version: 2.1.1
   resolution: "clsx@npm:2.1.1"
   checksum: 10c0/c4c8eb865f8c82baab07e71bfa8897c73454881c4f99d6bc81585aecd7c441746c1399d08363dc096c550cceaf97bd4ce1e8854e1771e9998d9f94c4fe075839
@@ -9604,7 +9600,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-aria-components@npm:1.17.0, react-aria-components@npm:^1.17.0":
+"react-aria-components@npm:1.17.0":
   version: 1.17.0
   resolution: "react-aria-components@npm:1.17.0"
   dependencies:
@@ -10936,7 +10932,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwind-merge@npm:^3.4.0, tailwind-merge@npm:^3.5.0":
+"tailwind-merge@npm:^3.4.0":
   version: 3.5.0
   resolution: "tailwind-merge@npm:3.5.0"
   checksum: 10c0/4dc588f5b5296ba3f38e1ebb41f02b6d24a8c5bb45e44b33748c118fb4b5767dd0efc464431ca3e75404056b618b5f67bec3708158baa65fed8a2fc9201e0c53
