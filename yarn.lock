@@ -2885,6 +2885,7 @@ __metadata:
     typescript: "npm:^6.0.2"
     uniwind: "npm:^1.6.3"
   peerDependencies:
+    heroui-native: ">=1.0.0"
     react: "*"
     react-native: "*"
     react-native-gesture-handler: "*"
