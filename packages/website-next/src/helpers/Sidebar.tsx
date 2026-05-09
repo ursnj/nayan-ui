@@ -19,10 +19,10 @@ const Sidebar = (props: Props) => {
       <div className="grid grid-cols-12 gap-4 sm:gap-6">
         <div className="hidden md:block col-span-12 md:col-span-3">
           <div className="sticky top-[70px] h-[calc(100vh-82px)] overflow-y-auto pr-2">
-            {sidebarItems.map(item => {
+            {sidebarItems.map((item, index) => {
               const Icon = item.icon as any;
               return (
-                <div key={item.link}>
+                <div key={item.link || `heading-${index}`}>
                   {!item.isHeading && (
                     <Link href={item.link}>
                       <div
