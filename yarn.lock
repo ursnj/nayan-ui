@@ -2344,6 +2344,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gorhom/bottom-sheet@npm:^5.2.8":
+  version: 5.2.14
+  resolution: "@gorhom/bottom-sheet@npm:5.2.14"
+  dependencies:
+    "@gorhom/portal": "npm:1.0.14"
+    invariant: "npm:^2.2.4"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-native": "*"
+    react: "*"
+    react-native: "*"
+    react-native-gesture-handler: ">=2.16.1"
+    react-native-reanimated: "*"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-native":
+      optional: true
+  checksum: 10c0/744c718aaa4e66989043378932ea31d8ff510cff289b5561115530ff49218af080d28dbe409191b33ab7d87b1cfab4e7c16cfb0015cf2b6917b26c61f033bc05
+  languageName: node
+  linkType: hard
+
 "@gorhom/portal@npm:1.0.14":
   version: 1.0.14
   resolution: "@gorhom/portal@npm:1.0.14"
@@ -2874,10 +2896,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nayan-ui/react-native@workspace:packages/native"
   dependencies:
+    "@gorhom/bottom-sheet": "npm:^5.2.8"
     "@react-native/babel-preset": "npm:0.85.0"
     "@types/react": "npm:^19.2.0"
     del-cli: "npm:^7.0.0"
-    expo-router: "npm:^55.0.13"
     heroui-native: "npm:^1.0.2"
     react: "npm:19.2.0"
     react-native: "npm:0.83.6"
@@ -2885,13 +2907,10 @@ __metadata:
     typescript: "npm:^6.0.2"
     uniwind: "npm:^1.6.3"
   peerDependencies:
-    heroui-native: ">=1.0.0"
     react: "*"
     react-native: "*"
     react-native-gesture-handler: "*"
     react-native-reanimated: "*"
-    react-native-safe-area-context: "*"
-    react-native-screens: "*"
     react-native-svg: "*"
     react-native-worklets: "*"
     uniwind: ">=1.6.0"

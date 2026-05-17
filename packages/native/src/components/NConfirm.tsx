@@ -1,7 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import { View } from 'react-native';
-import { Button, cn } from 'heroui-native';
+import { cn } from 'heroui-native';
 import { NDialog } from './NDialog';
+import { NPress } from './NPress';
+import { NText } from './NText';
 
 export interface NConfirmProps {
   title: string;
@@ -61,16 +63,16 @@ export const NConfirm = React.memo<NConfirmProps>(
         trigger={children}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        className={cn(className)}
+        className={cn('min-w-[320px] sm:max-w-[425px]', className)}
         titleClassName={titleClassName}
         contentClassName="">
-        <View className="flex-row gap-3 justify-end mt-4">
-          <Button variant="secondary" onPress={() => handleResult(false)} className={cn(cancelClassName)}>
-            {cancelText}
-          </Button>
-          <Button variant="primary" onPress={() => handleResult(true)} className={cn(confirmClassName)}>
-            {confirmText}
-          </Button>
+        <View className="mt-4 flex-row justify-end gap-3">
+          <NPress onPress={() => handleResult(false)} className={cn('rounded-lg border border-border bg-surface px-4 py-2', cancelClassName)}>
+            <NText className="text-base font-medium">{cancelText}</NText>
+          </NPress>
+          <NPress onPress={() => handleResult(true)} className={cn('rounded-lg bg-accent px-4 py-2', confirmClassName)}>
+            <NText className="text-base font-medium text-white">{confirmText}</NText>
+          </NPress>
         </View>
       </NDialog>
     );

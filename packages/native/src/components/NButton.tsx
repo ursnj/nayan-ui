@@ -8,9 +8,10 @@ export type NButtonSize = ButtonSize;
 export type NButtonProps = ButtonRootProps & {
   children: React.ReactNode;
   icon?: React.ComponentType<any> | React.ReactElement;
+  iconSize?: number;
 };
 
-export const NButton = React.memo<NButtonProps>(({ children, icon, variant = 'primary', size = 'md', className, ...props }) => {
+export const NButton = React.memo<NButtonProps>(({ children, icon, iconSize = 16, variant = 'primary', size = 'md', className, ...props }) => {
   const buttonIcon = useMemo(() => {
     if (!icon) return null;
 
@@ -19,7 +20,7 @@ export const NButton = React.memo<NButtonProps>(({ children, icon, variant = 'pr
     }
 
     const IconComponent = icon as React.ComponentType<any>;
-    return <IconComponent size={16} />;
+    return <IconComponent size={iconSize} />;
   }, [icon]);
 
   return (
