@@ -10,6 +10,7 @@ export interface NActionItemProps {
   description?: string;
   icon?: React.ComponentType<any> | React.ReactElement;
   showArrow?: boolean;
+  feedback?: boolean;
   isDisabled?: boolean;
   className?: string;
   titleClassName?: string;
@@ -19,7 +20,19 @@ export interface NActionItemProps {
 }
 
 export const NActionItem = React.memo<NActionItemProps>(
-  ({ name, description, icon, showArrow = true, isDisabled = false, className, titleClassName, descriptionClassName, onPress, onLongPress }) => {
+  ({
+    name,
+    description,
+    icon,
+    showArrow = true,
+    feedback = false,
+    isDisabled = false,
+    className,
+    titleClassName,
+    descriptionClassName,
+    onPress,
+    onLongPress
+  }) => {
     const [mutedColor, foregroundColor] = useThemeColor(['muted', 'foreground']);
     const actionIcon = useMemo(() => {
       if (!icon) return null;
@@ -34,7 +47,7 @@ export const NActionItem = React.memo<NActionItemProps>(
 
     return (
       <NPress
-        feedback
+        feedback={feedback}
         className={cn('flex-row items-center px-4 py-3 bg-surface rounded-xl', isDisabled && 'opacity-50', className)}
         onPress={onPress}
         onLongPress={onLongPress}

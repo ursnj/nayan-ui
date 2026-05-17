@@ -149,3 +149,24 @@ export const EyeOffIcon = React.memo<NIconProps>(({ size = 22, color = '#fff' })
   </Svg>
 ));
 EyeOffIcon.displayName = 'EyeOffIcon';
+
+export const CalendarIcon = React.memo<NIconProps>(({ size = 22, color = '#fff' }) => (
+  <Svg width={size} height={size} viewBox="0 0 512 512" fill="none">
+    <Path
+      d="M400,64H112a48,48,0,0,0-48,48V400a48,48,0,0,0,48,48H400a48,48,0,0,0,48-48V112A48,48,0,0,0,400,64Z"
+      stroke={color}
+      strokeLinejoin="round"
+      strokeWidth={32}
+    />
+    <Line x1="176" y1="16" x2="176" y2="96" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeWidth={32} />
+    <Line x1="336" y1="16" x2="336" y2="96" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeWidth={32} />
+    <Line x1="64" y1="192" x2="448" y2="192" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeWidth={32} />
+    <Line x1="176" y1="272" x2="176" y2="272" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeWidth={32} />
+    <Line x1="256" y1="272" x2="256" y2="272" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeWidth={32} />
+    <Line x1="336" y1="272" x2="336" y2="272" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeWidth={32} />
+    <Line x1="176" y1="352" x2="176" y2="352" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeWidth={32} />
+    <Line x1="256" y1="352" x2="256" y2="352" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeWidth={32} />
+    <Line x1="336" y1="352" x2="336" y2="352" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeWidth={32} />
+  </Svg>
+));
+CalendarIcon.displayName = 'CalendarIcon';

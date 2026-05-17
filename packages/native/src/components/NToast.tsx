@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import { useThemeColor, useToast } from 'heroui-native';
 import { AlertCircleIcon, CheckmarkIcon, InformationCircleIcon } from '../helpers/icons';
@@ -27,6 +27,28 @@ const VARIANT_MAP: Record<string, 'default' | 'success' | 'warning' | 'danger'> 
   warning: 'warning'
 };
 
+// --- Imperative service ---
+let _registeredMethods: NToastMethods | null = null;
+
+const _pending: (() => void)[] = [];
+
+function _invoke(fn: (methods: NToastMethods) => void) {
+  if (_registeredMethods) {
+    fn(_registeredMethods);
+  } else {
+    _pending.push(() => fn(_registeredMethods!));
+  }
+}
+
+export const NToast = {
+  show: (options: NToastShowOptions) => _invoke(m => m.show(options)),
+  success: (message: string, title?: string, icon?: React.ReactNode) => _invoke(m => m.success(message, title, icon)),
+  error: (message: string, title?: string, icon?: React.ReactNode) => _invoke(m => m.error(message, title, icon)),
+  info: (message: string, title?: string, icon?: React.ReactNode) => _invoke(m => m.info(message, title, icon)),
+  warning: (message: string, title?: string, icon?: React.ReactNode) => _invoke(m => m.warning(message, title, icon))
+};
+
+// --- Hook ---
 export function useNToast(): NToastMethods {
   const { toast } = useToast();
   const [successColor, dangerColor, foregroundColor, warningColor] = useThemeColor(['success', 'danger', 'foreground', 'warning']);
@@ -48,7 +70,7 @@ export function useNToast(): NToastMethods {
     }
   };
 
-  return {
+  const methods: NToastMethods = {
     show: ({ message, title, type = 'success', icon, actionLabel, onActionPress }: NToastShowOptions) => {
       toast.show({
         label: title || '',
@@ -77,4 +99,24 @@ export function useNToast(): NToastMethods {
       toast.show({ label: title || 'Warning', description: message, variant: 'warning', icon: icon ?? getIcon('warning') });
     }
   };
+
+  const methodsRef = useRef(methods);
+  methodsRef.current = methods;
+
+  useEffect(() => {
+    _registeredMethods = {
+      show: (...args) => methodsRef.current.show(...args),
+      success: (...args) => methodsRef.current.success(...args),
+      error: (...args) => methodsRef.current.error(...args),
+      info: (...args) => methodsRef.current.info(...args),
+      warning: (...args) => methodsRef.current.warning(...args)
+    };
+    _pending.forEach(fn => fn());
+    _pending.length = 0;
+    return () => {
+      _registeredMethods = null;
+    };
+  }, []);
+
+  return methods;
 }

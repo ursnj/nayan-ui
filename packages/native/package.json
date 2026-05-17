@@ -1,7 +1,7 @@
 {
   "name": "@nayan-ui/react-native",
   "sideEffects": false,
-  "version": "2.0.0-beta.2",
+  "version": "2.0.0-beta.3",
   "description": "Component library for React Native.",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
@@ -11,6 +11,7 @@
       "types": "./lib/typescript/src/index.d.ts",
       "default": "./lib/module/index.js"
     },
+    "./styles": "./src/styles/index.css",
     "./package.json": "./package.json"
   },
   "files": [
@@ -42,11 +43,14 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
+  "dependencies": {
+    "@gorhom/bottom-sheet": "^5.2.8",
+    "heroui-native": ">=1.0.0"
+  },
   "devDependencies": {
     "@react-native/babel-preset": "0.85.0",
     "@types/react": "^19.2.0",
     "del-cli": "^7.0.0",
-    "expo-router": "^55.0.13",
     "heroui-native": "^1.0.2",
     "react": "19.2.0",
     "react-native": "0.83.6",
@@ -55,16 +59,19 @@
     "uniwind": "^1.6.3"
   },
   "peerDependencies": {
-    "heroui-native": ">=1.0.0",
+    "@react-native-community/datetimepicker": "*",
     "react": "*",
     "react-native": "*",
     "react-native-gesture-handler": "*",
     "react-native-reanimated": "*",
-    "react-native-safe-area-context": "*",
-    "react-native-screens": "*",
     "react-native-svg": "*",
     "react-native-worklets": "*",
     "uniwind": ">=1.6.0"
+  },
+  "peerDependenciesMeta": {
+    "@react-native-community/datetimepicker": {
+      "optional": true
+    }
   },
   "workspaces": [
     "example"
