@@ -2897,6 +2897,7 @@ __metadata:
   resolution: "@nayan-ui/react-native@workspace:packages/native"
   dependencies:
     "@gorhom/bottom-sheet": "npm:^5.2.8"
+    "@react-native-community/datetimepicker": "npm:^9.1.0"
     "@react-native/babel-preset": "npm:0.85.0"
     "@types/react": "npm:^19.2.0"
     del-cli: "npm:^7.0.0"
@@ -2907,6 +2908,7 @@ __metadata:
     typescript: "npm:^6.0.2"
     uniwind: "npm:^1.6.3"
   peerDependencies:
+    "@react-native-community/datetimepicker": "*"
     react: "*"
     react-native: "*"
     react-native-gesture-handler: "*"
@@ -2914,6 +2916,9 @@ __metadata:
     react-native-svg: "*"
     react-native-worklets: "*"
     uniwind: ">=1.6.0"
+  peerDependenciesMeta:
+    "@react-native-community/datetimepicker":
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -3577,6 +3582,25 @@ __metadata:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   checksum: 10c0/8b519c13e457402ee69f6b5b91503ffd708db2290f9eb7bd842ea9fb66e6ece4c573c3d9121da6c47fca4f0a89b4cd21650e9d11af0b3ab48c71072d1d1ec17f
+  languageName: node
+  linkType: hard
+
+"@react-native-community/datetimepicker@npm:^9.1.0":
+  version: 9.1.0
+  resolution: "@react-native-community/datetimepicker@npm:9.1.0"
+  dependencies:
+    invariant: "npm:^2.2.4"
+  peerDependencies:
+    expo: ">=52.0.0"
+    react: "*"
+    react-native: "*"
+    react-native-windows: "*"
+  peerDependenciesMeta:
+    expo:
+      optional: true
+    react-native-windows:
+      optional: true
+  checksum: 10c0/3f31baec58c1245204a9b4057809027019aa1abb4b8caea4cb4d44ab70f5a97dfe5114a8aa315299aa47ad31971059181c355aa056d9c3a14b7892582da9f4cb
   languageName: node
   linkType: hard
 
