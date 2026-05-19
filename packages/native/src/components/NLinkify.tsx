@@ -5,6 +5,7 @@ import { cn, useThemeColor } from 'heroui-native';
 export interface NLinkifyProps {
   children: React.ReactNode;
   className?: string;
+  numberOfLines?: number;
   linkStyle?: StyleProp<TextStyle>;
   onPress?: (url: string, text: string) => void;
 }
@@ -40,7 +41,7 @@ function getHref(part: { type: 'text' | 'url' | 'email'; value: string }): strin
   return `https://${part.value}`;
 }
 
-export const NLinkify = React.memo<NLinkifyProps>(({ children, className, linkStyle, onPress }) => {
+export const NLinkify = React.memo<NLinkifyProps>(({ children, className, numberOfLines, linkStyle, onPress }) => {
   const [accentColor] = useThemeColor(['accent']);
 
   const defaultLinkStyle = useMemo<TextStyle>(() => ({ color: accentColor, textDecorationLine: 'underline' as const }), [accentColor]);
@@ -86,7 +87,11 @@ export const NLinkify = React.memo<NLinkifyProps>(({ children, className, linkSt
 
   const rendered = Array.isArray(children) ? children.map((child, i) => renderNode(child, `root-${i}`)) : renderNode(children, 'root');
 
-  return <Text className={cn(className)}>{rendered}</Text>;
+  return (
+    <Text className={cn(className)} numberOfLines={numberOfLines}>
+      {rendered}
+    </Text>
+  );
 });
 
 NLinkify.displayName = 'NLinkify';
