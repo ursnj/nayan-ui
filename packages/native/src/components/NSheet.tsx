@@ -23,8 +23,8 @@ export const NSheet = React.memo<NSheetProps>(
         <BottomSheet.Portal>
           <BottomSheet.Overlay style={{ backgroundColor: 'rgba(0,0,0,0.5)' }} />
           <BottomSheet.Content
-            className={cn('flex-1 rounded-t-2xl bg-surface', className)}
-            backgroundClassName="rounded-t-2xl bg-surface"
+            className={cn('flex-1 rounded-t-xl bg-surface', className)}
+            backgroundClassName="rounded-t-xl bg-surface"
             contentContainerClassName="px-3 py-0"
             snapPoints={snapPoints}
             enableDynamicSizing={!snapPoints}>

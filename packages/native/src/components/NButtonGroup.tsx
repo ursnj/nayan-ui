@@ -39,7 +39,7 @@ export const NButtonGroup = React.memo<NButtonGroupProps>(
     return (
       <View className="w-full">
         {label && <NText className={cn('mb-2 font-medium', labelClassName)}>{label}</NText>}
-        <View className={cn('flex-row rounded-lg overflow-hidden', className)}>
+        <View className={cn('flex-row rounded-xl overflow-hidden', className)}>
           {items.map((item, index) => {
             const isSelected = item.value === value;
             const itemDisabled = isDisabled || item.isDisabled;
@@ -52,10 +52,10 @@ export const NButtonGroup = React.memo<NButtonGroupProps>(
                 onPress={() => onValueChange(item.value)}
                 variant={isSelected ? 'primary' : 'secondary'}
                 style={{
-                  borderTopLeftRadius: index === 0 ? 8 : 0,
-                  borderBottomLeftRadius: index === 0 ? 8 : 0,
-                  borderTopRightRadius: index === items.length - 1 ? 8 : 0,
-                  borderBottomRightRadius: index === items.length - 1 ? 8 : 0
+                  borderTopLeftRadius: index === 0 ? 12 : 0,
+                  borderBottomLeftRadius: index === 0 ? 12 : 0,
+                  borderTopRightRadius: index === items.length - 1 ? 12 : 0,
+                  borderBottomRightRadius: index === items.length - 1 ? 12 : 0
                 }}
                 className={cn('border-r border-border', !isSelected && 'bg-surface', index === items.length - 1 && 'border-r-0', buttonClassName)}>
                 {buttonIcon && <View className="mr-1">{buttonIcon}</View>}
