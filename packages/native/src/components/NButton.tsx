@@ -21,10 +21,10 @@ export const NButton = React.memo<NButtonProps>(({ children, icon, iconSize = 16
 
     const IconComponent = icon as React.ComponentType<any>;
     return <IconComponent size={iconSize} />;
-  }, [icon]);
+  }, [icon, iconSize]);
 
   return (
-    <Button variant={variant} size={size} className={cn(className)} {...props}>
+    <Button variant={variant} size={size} className={cn('rounded-xl', className)} {...props}>
       {buttonIcon && <View className="mr-2">{buttonIcon}</View>}
       <Button.Label>{children}</Button.Label>
     </Button>

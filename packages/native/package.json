@@ -1,7 +1,7 @@
 {
   "name": "@nayan-ui/react-native",
   "sideEffects": false,
-  "version": "2.0.0-beta.3",
+  "version": "2.0.0-beta.4",
   "description": "Component library for React Native.",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.2.8",
-    "heroui-native": ">=1.0.0"
+    "heroui-native": "^1.0.3"
   },
   "devDependencies": {
     "@react-native-community/datetimepicker": "^9.1.0",

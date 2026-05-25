@@ -57,9 +57,9 @@ export const NInput = React.memo<NInputProps>(
       <TextField className={cn('mb-3', containerClassName)} {...props}>
         {label && <Label className={cn(labelClassName)}>{label}</Label>}
         {multiline ? (
-          <TextArea className={cn('text-[16px]', className)} {...sharedInputProps} {...textAreaProps} />
+          <TextArea className={cn('text-[16px] rounded-xl py-3', className)} {...sharedInputProps} {...textAreaProps} />
         ) : (
-          <Input className={cn('text-[16px]', className)} {...sharedInputProps} {...inputProps} />
+          <Input className={cn('text-[16px] rounded-xl', className)} {...sharedInputProps} {...inputProps} />
         )}
         {description && <Description className={cn(descriptionClassName)}>{description}</Description>}
         {errorMessage && <FieldError className={cn(errorClassName)}>{errorMessage}</FieldError>}

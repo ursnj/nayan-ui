@@ -33,6 +33,7 @@ export const NConfirm = React.memo<NConfirmProps>(
     cancelText = 'Cancel',
     className = '',
     titleClassName = '',
+    descriptionClassName = '',
     confirmClassName = '',
     cancelClassName = ''
   }) => {
@@ -65,12 +66,13 @@ export const NConfirm = React.memo<NConfirmProps>(
         onOpenChange={onOpenChange}
         className={cn('min-w-[320px] sm:max-w-[425px]', className)}
         titleClassName={titleClassName}
+        descriptionClassName={descriptionClassName}
         contentClassName="">
         <View className="mt-4 flex-row justify-end gap-3">
-          <NPress onPress={() => handleResult(false)} className={cn('rounded-lg border border-border bg-surface px-4 py-2', cancelClassName)}>
+          <NPress onPress={() => handleResult(false)} className={cn('rounded-xl border border-border bg-surface px-4 py-2', cancelClassName)}>
             <NText className="text-base font-medium">{cancelText}</NText>
           </NPress>
-          <NPress onPress={() => handleResult(true)} className={cn('rounded-lg bg-accent px-4 py-2', confirmClassName)}>
+          <NPress onPress={() => handleResult(true)} className={cn('rounded-xl bg-accent px-4 py-2', confirmClassName)}>
             <NText className="text-base font-medium text-white">{confirmText}</NText>
           </NPress>
         </View>
