@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 export const metadata = buildPageMetadata({
   title: 'Installation - React Native Components',
   description:
-    'Install and configure @nayan-ui/react-native in your project. Setup guide for HeroUI Native, Uniwind, and theme configuration for iOS and Android.',
+    'Install and configure @nayan-ui/native in your project. Setup guide for HeroUI Native, Uniwind, and theme configuration for iOS and Android.',
   path: '/react-native/installation',
   keywords: 'nayan ui react native installation, react native component setup, heroui native setup, uniwind configuration'
 });
@@ -20,7 +20,7 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: 'Installation - React Native Components',
-    description: 'Install and configure @nayan-ui/react-native in your project.',
+    description: 'Install and configure @nayan-ui/native in your project.',
     url: `${SITE_URL}/react-native/installation`
   })
 ];

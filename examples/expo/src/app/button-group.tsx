@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButtonGroup, NCard, NText, NToast } from '@nayan-ui/react-native';
+import { NButtonGroup, NCard, NText, NToast } from '@nayan-ui/native';
 
 const Component = () => {
   // Basic business type selection

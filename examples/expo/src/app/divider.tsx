@@ -1,5 +1,5 @@
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NDivider, NText } from '@nayan-ui/react-native';
+import { NButton, NCard, NDivider, NText } from '@nayan-ui/native';
 
 const Component = () => {
   return (

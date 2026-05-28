@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NDialog, NText } from '@nayan-ui/react-native';
+import { NButton, NDialog, NText } from '@nayan-ui/native';
 import { Stack } from 'expo-router';
 
 export default function DialogScreen() {

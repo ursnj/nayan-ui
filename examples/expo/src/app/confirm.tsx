@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NConfirm, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NConfirm, NText, NToast } from '@nayan-ui/native';
 
 const Component = () => {
   const [isLoading, setIsLoading] = useState(false);

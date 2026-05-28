@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { NPress, NText, NThemeToggle } from '@nayan-ui/react-native';
+import { NPress, NText, NThemeToggle } from '@nayan-ui/native';
 import { Link, Stack } from 'expo-router';
 
 type IoniconsName = keyof typeof Ionicons.glyphMap;

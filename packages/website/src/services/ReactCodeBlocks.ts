@@ -1,5 +1,5 @@
 export const installCode = `npm install @nayan-ui/react`;
-export const rnInstallCode = `npm install @nayan-ui/react-native`;
+export const rnInstallCode = `npm install @nayan-ui/native`;
 export const rnPeerDepsCode = `npm install react-native-reanimated react-native-gesture-handler react-native-safe-area-context react-native-screens react-native-svg react-native-worklets`;
 
 export const tailwindCode = `// No tailwind.config.js needed with Tailwind v4!
@@ -47,7 +47,7 @@ const App = () => {
 export default App;`;
 
 export const rnAppCode = `import { View } from 'react-native';
-import { NButton, NTheme, NThemeToggle, useNTheme } from '@nayan-ui/react-native';
+import { NButton, NTheme, NThemeToggle, useNTheme } from '@nayan-ui/native';
 import './global.css';
 
 export default function App() {

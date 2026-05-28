@@ -1,5 +1,5 @@
 import { Alert, ScrollView, View } from 'react-native';
-import { NCard, NLinkify, NText, NToast } from '@nayan-ui/react-native';
+import { NCard, NLinkify, NText, NToast } from '@nayan-ui/native';
 
 const Component = () => {
   const handleLinkPress = (url: string, text: string) => {
@@ -84,7 +84,7 @@ const Component = () => {
           <NText className="mb-4">
             Development resources:
             {'\n'}• GitHub: github.com/ursnj/nayan-ui
-            {'\n'}• NPM: npmjs.com/package/@nayan-ui/react-native
+            {'\n'}• NPM: npmjs.com/package/@nayan-ui/native
             {'\n'}• Docs: docs.nayanui.com
           </NText>
         </NLinkify>
@@ -180,8 +180,8 @@ const Component = () => {
           <NText className="font-semibold mb-2">📱 App Description</NText>
           <NLinkify>
             <NText className="text-sm">
-              Nayan UI is a comprehensive React Native component library. Download it from npmjs.com/package/@nayan-ui/react-native or visit our
-              GitHub repository at github.com/ursnj/nayan-ui. For questions, email support@nayanui.com.
+              Nayan UI is a comprehensive React Native component library. Download it from npmjs.com/package/@nayan-ui/native or visit our GitHub
+              repository at github.com/ursnj/nayan-ui. For questions, email support@nayanui.com.
             </NText>
           </NLinkify>
         </View>

@@ -134,7 +134,7 @@ const Footer = () => {
                 NPM Package (React)
               </NLink>
               <NLink
-                href="https://www.npmjs.com/package/@nayan-ui/react-native"
+                href="https://www.npmjs.com/package/@nayan-ui/native"
                 className="block text-muted hover:text-pink-600 dark:hover:text-pink-400 transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">

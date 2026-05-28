@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NDialog, NInput, NSelect, NSwitch, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NDialog, NInput, NSelect, NSwitch, NText, NToast } from '@nayan-ui/native';
 
 const Component = () => {
   // Dialog interaction tracking

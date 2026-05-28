@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NAlert, NButton, NText, NToast } from '@nayan-ui/react-native';
+import { NAlert, NButton, NText, NToast } from '@nayan-ui/native';
 
 const Component = () => {
   const [showDismissible, setShowDismissible] = useState(true);

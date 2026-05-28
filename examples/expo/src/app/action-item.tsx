@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { NActionItem, NCard, NText, NToast, useNTheme } from '@nayan-ui/react-native';
+import { NActionItem, NCard, NText, NToast, useNTheme } from '@nayan-ui/native';
 
 const Component = () => {
   const { colors } = useNTheme();

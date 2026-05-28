@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View } from 'react-native';
-import { NDatePicker } from '@nayan-ui/react-native';
+import { NDatePicker } from '@nayan-ui/native';
 
 const Component = () => {
   const [date, setDate] = useState(new Date());

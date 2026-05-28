@@ -1,5 +1,5 @@
 import 'react-native-reanimated';
-import { NTheme, THEMES, useNTheme } from '@nayan-ui/react-native';
+import { NTheme, THEMES, useNTheme } from '@nayan-ui/native';
 import { Stack } from 'expo-router';
 import '../../global.css';
 import { components, themeColors } from '../constants';

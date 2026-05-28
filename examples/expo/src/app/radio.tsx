@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NRadio, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NRadio, NText, NToast } from '@nayan-ui/native';
 
 const Component = () => {
   // Basic radio states

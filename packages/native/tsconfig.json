@@ -3,7 +3,7 @@
     "rootDir": ".",
     "types": ["uniwind/types"],
     "paths": {
-      "@nayan-ui/react-native": ["./src/index"]
+      "@nayan-ui/native": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

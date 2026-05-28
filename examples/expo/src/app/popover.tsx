@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Image, ScrollView, View } from 'react-native';
-import { NButton, NCard, NInput, NPopover, NSwitch, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NCard, NInput, NPopover, NSwitch, NText, NToast } from '@nayan-ui/native';
 
 const Component = () => {
   // User profile state

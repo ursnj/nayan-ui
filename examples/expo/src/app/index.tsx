@@ -1,5 +1,5 @@
 import { ScrollView, View } from 'react-native';
-import { NActionItem, NPress, NText, NThemeToggle, THEMES, useNTheme } from '@nayan-ui/react-native';
+import { NActionItem, NPress, NText, NThemeToggle, THEMES, useNTheme } from '@nayan-ui/native';
 import { Stack, useRouter } from 'expo-router';
 import * as Icons from 'lucide-react-native';
 import { components } from '../constants';
