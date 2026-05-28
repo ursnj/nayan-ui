@@ -2901,7 +2901,7 @@ __metadata:
     "@react-native/babel-preset": "npm:0.85.3"
     "@types/react": "npm:^19.2.15"
     del-cli: "npm:^7.0.0"
-    heroui-native: "npm:^1.0.3"
+    heroui-native: "npm:^1.0.4"
     react: "npm:19.2.6"
     react-native: "npm:0.85.3"
     react-native-builder-bob: "npm:^0.41.0"
@@ -7441,11 +7441,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"heroui-native@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "heroui-native@npm:1.0.3"
+"heroui-native@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "heroui-native@npm:1.0.4"
   peerDependencies:
-    "@gorhom/bottom-sheet": ^5.2.8
+    "@gorhom/bottom-sheet": ^5.2.9
     react: ">=19.0.0"
     react-native: ">=0.81.0"
     react-native-gesture-handler: ^2.28.0
@@ -7461,7 +7461,7 @@ __metadata:
       optional: true
     react-native-screens:
       optional: true
-  checksum: 10c0/257c91c36faae5a9993f78ca0c8903f499351d844b434e519e97c79629a9969e64c1489f54cb127bbb0e22fb949c12808256cedbe1b84c85bde36bbadbff17e0
+  checksum: 10c0/c4fbefe530824cc40ed9a74d8db2f1c2e84ffe05826f19a6fcb2e3d3feea21d92377e103372813a765f5d163f5673b479f8bc72a7f3e8777f7b3088093b38759
   languageName: node
   linkType: hard
 
