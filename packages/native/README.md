@@ -4,7 +4,7 @@ Component library for React Native, powered by [HeroUI Native](https://heroui.co
 
 [![npm version](https://badge.fury.io/js/@nayan-ui%2Freact-native.svg)](https://badge.fury.io/js/@nayan-ui%2Freact-native)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
-[![License](https://img.shields.io/npm/l/@nayan-ui/react-native.svg)](https://github.com/ursnj/nayan-ui/blob/main/LICENSE)
+[![License](https://img.shields.io/npm/l/@nayan-ui/native.svg)](https://github.com/ursnj/nayan-ui/blob/main/LICENSE)
 
 ---
 
@@ -26,7 +26,7 @@ This library requires [Uniwind](https://uniwind.dev) to be set up in your projec
 ## Installation
 
 ```bash
-npm install @nayan-ui/react-native
+npm install @nayan-ui/native
 ```
 
 ### Peer Dependencies
@@ -61,7 +61,7 @@ Wrap your app with the `NTheme` provider:
 
 ```tsx
 import { View } from 'react-native';
-import { NButton, NTheme, useNTheme } from '@nayan-ui/react-native';
+import { NButton, NTheme, useNTheme } from '@nayan-ui/native';
 import './global.css';
 
 export default function App() {

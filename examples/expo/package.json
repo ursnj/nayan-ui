@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
-    "@nayan-ui/react-native": "^1.0.0-beta.10",
+    "@nayan-ui/native": "^1.0.0-beta.10",
     "@react-native-community/datetimepicker": "8.4.1",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NText, NToast } from '@nayan-ui/react-native';
+import { NButton, NText, NToast } from '@nayan-ui/native';
 import { Download, Edit, Heart, Mail, Phone, Plus, Save, Settings, Share, Trash2 } from 'lucide-react-native';
 
 const Component = () => {

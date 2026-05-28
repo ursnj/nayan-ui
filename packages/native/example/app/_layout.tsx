@@ -1,5 +1,5 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useNTheme } from '@nayan-ui/react-native';
+import { useNTheme } from '@nayan-ui/native';
 import { Stack } from 'expo-router';
 import { HeroUINativeProvider } from 'heroui-native';
 import '../src/global.css';

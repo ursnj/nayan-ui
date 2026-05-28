@@ -2892,9 +2892,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nayan-ui/react-native@workspace:packages/native":
+"@nayan-ui/native@workspace:packages/native":
   version: 0.0.0-use.local
-  resolution: "@nayan-ui/react-native@workspace:packages/native"
+  resolution: "@nayan-ui/native@workspace:packages/native"
   dependencies:
     "@gorhom/bottom-sheet": "npm:^5.2.8"
     "@react-native-community/datetimepicker": "npm:^9.1.0"

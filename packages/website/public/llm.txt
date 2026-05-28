@@ -11,7 +11,7 @@ Nayan UI is a comprehensive, enterprise-grade UI component library for React and
 - **Monorepo Structure**: Yarn workspaces with packages in `packages/` directory
 - **Packages**:
   - `@nayan-ui/react` - React components with Tailwind CSS
-  - `@nayan-ui/react-native` - React Native components with NativeWind
+  - `@nayan-ui/native` - React Native components with NativeWind
   - `@nayan-ui/cli` - Command line tools for SEO (sitemap, robots.txt)
   - `@nayan-ui/website` - Documentation website (this site)
 
@@ -104,9 +104,9 @@ yarn add @nayan-ui/react
 
 ### React Native Package
 ```bash
-npm install @nayan-ui/react-native
+npm install @nayan-ui/native
 # or
-yarn add @nayan-ui/react-native
+yarn add @nayan-ui/native
 ```
 
 **Peer Dependencies**: react, react-native, nativewind, tailwindcss
@@ -147,7 +147,7 @@ function App() {
 
 ### React Native Theme Setup
 ```typescript
-import { NTheme, THEMES, useNTheme } from '@nayan-ui/react-native';
+import { NTheme, THEMES, useNTheme } from '@nayan-ui/native';
 
 export default function App() {
   const { theme } = useNTheme();

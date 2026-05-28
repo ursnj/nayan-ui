@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NSelect, NText, NToast, SelectOption } from '@nayan-ui/react-native';
+import { NButton, NCard, NSelect, NText, NToast, SelectOption } from '@nayan-ui/native';
 
 const Component = () => {
   // Basic select state

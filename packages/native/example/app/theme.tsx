@@ -1,5 +1,5 @@
 import { ScrollView, View } from 'react-native';
-import { NButton, NText, NThemeToggle, useNTheme } from '@nayan-ui/react-native';
+import { NButton, NText, NThemeToggle, useNTheme } from '@nayan-ui/native';
 import { Stack } from 'expo-router';
 
 function ThemeInfo() {

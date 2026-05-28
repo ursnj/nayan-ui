@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NProgress, NText } from '@nayan-ui/react-native';
+import { NProgress, NText } from '@nayan-ui/native';
 import { Stack } from 'expo-router';
 
 export default function ProgressScreen() {

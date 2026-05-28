@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NInput, NSelect, NSheet, NSwitch, NText, NToast, SelectOption } from '@nayan-ui/react-native';
+import { NButton, NCard, NInput, NSelect, NSheet, NSwitch, NText, NToast, SelectOption } from '@nayan-ui/native';
 
 const Component = () => {
   // Sheet refs

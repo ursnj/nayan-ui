@@ -1,6 +1,6 @@
 import { ScrollView, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { NActionItem, NDivider, NText } from '@nayan-ui/react-native';
+import { NActionItem, NDivider, NText } from '@nayan-ui/native';
 import { Stack } from 'expo-router';
 
 export default function ActionItemScreen() {

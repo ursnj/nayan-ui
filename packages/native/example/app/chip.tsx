@@ -1,5 +1,5 @@
 import { ScrollView, View } from 'react-native';
-import { NChip, NText } from '@nayan-ui/react-native';
+import { NChip, NText } from '@nayan-ui/native';
 import { Stack } from 'expo-router';
 
 export default function ChipScreen() {

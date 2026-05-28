@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { NButton, NCard, NText, NTooltip } from '@nayan-ui/react-native';
+import { NButton, NCard, NText, NTooltip } from '@nayan-ui/native';
 import { Bell, Download, Heart, HelpCircle, Info, Lock, Settings, Share, Star, User } from 'lucide-react-native';
 
 const Component = () => {
