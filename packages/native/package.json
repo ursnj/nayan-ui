@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.2.8",
-    "heroui-native": "^1.0.3"
+    "heroui-native": "^1.0.4"
   },
   "devDependencies": {
     "@react-native-community/datetimepicker": "^9.1.0",
