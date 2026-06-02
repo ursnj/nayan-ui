@@ -1,6 +1,5 @@
-import { useEffect } from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
+import { useEffect } from 'react';
 import { NTheme, useNTheme } from '@nayan-ui/native';
 import { SplashScreen, Stack } from 'expo-router';
 import '../../global.css';
@@ -8,15 +7,22 @@ import '../../global.css';
 SplashScreen.preventAutoHideAsync();
 
 function RootNav() {
-  const { headerConfig } = useNTheme();
+  const { colors } = useNTheme();
+
+  const blurHeaderConfig = {
+    headerStyle: { backgroundColor: colors.surface },
+    headerShadowVisible: false,
+    headerTintColor: colors.foreground,
+    headerBackButtonDisplayMode: 'minimal' as const
+  };
 
   useEffect(() => {
     SplashScreen.hideAsync();
   }, []);
 
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ title: 'Games', ...headerConfig }} />
+    <Stack screenOptions={blurHeaderConfig}>
+      <Stack.Screen name="index" options={{ title: 'Games' }} />
       <Stack.Screen name="[id]" options={{ title: 'Game' }} />
     </Stack>
   );
@@ -24,8 +30,8 @@ function RootNav() {
 
 export default function RootLayout() {
   return (
-      <NTheme>
-        <RootNav />
-      </NTheme>
+    <NTheme>
+      <RootNav />
+    </NTheme>
   );
 }
