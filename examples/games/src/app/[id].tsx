@@ -3,14 +3,11 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { DEFAULT_GAME_SETTINGS, GAMES_LIST, GAMES_MAPPING, GAME_IDS, type GameSettings } from '@nayan-ui/games';
-import { useNTheme } from '@nayan-ui/native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 
 export default function GameScreen() {
   const { top } = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { colors } = useNTheme();
-
   const gameId = Object.values(GAME_IDS).includes(id as any) ? id : null;
   const GameComponent = gameId ? GAMES_MAPPING[gameId] : null;
   const gameTitle = GAMES_LIST.find(g => g.id === gameId)?.title || 'Game';
@@ -48,7 +45,7 @@ export default function GameScreen() {
           )
         }}
       />
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View className="flex-1 bg-background">
         <GameComponent settings={settings} onSettingsChange={handleSettingsChange} />
       </View>
     </>
@@ -56,6 +53,5 @@ export default function GameScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
   settingsButton: { padding: 8, zIndex: 10 }
 });
