@@ -59,6 +59,8 @@ export function useLocalStorage<T>(key: string, defaultValue?: T, options?: Opti
       if (e.detail?.key !== key) return;
       try {
         const newRaw = window.localStorage.getItem(key);
+        if (newRaw === rawValueRef.current) return;
+        rawValueRef.current = newRaw;
         setValue(newRaw ? parser(newRaw) : defaultValue);
       } catch (e) {
         logger(e);
