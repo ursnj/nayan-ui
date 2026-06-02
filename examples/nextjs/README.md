@@ -37,7 +37,7 @@ export default nextConfig;
 ```css
 @import '@nayan-ui/react/styles.css';
 
-@source '../../../../node_modules/@nayan-ui/react/dist';
+@source '../node_modules/@nayan-ui/react/dist';
 
 :root,
 [data-theme='light'] {
@@ -114,7 +114,6 @@ export default nextConfig;
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -128,15 +127,17 @@ body {
 
 import { NButton, NTheme, THEMES, useLocalStorage } from '@nayan-ui/react';
 
+// src/app/page.tsx
+
+// src/app/page.tsx
+
 export default function Home() {
   const [theme, setTheme] = useLocalStorage('THEME', THEMES.LIGHT);
 
   return (
     <NTheme theme={theme}>
       <div className="min-h-screen flex items-center justify-center bg-background gap-4">
-        <NButton onClick={() => setTheme(theme === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT)}>
-          Toggle Theme
-        </NButton>
+        <NButton onClick={() => setTheme(theme === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT)}>Toggle Theme</NButton>
       </div>
     </NTheme>
   );
