@@ -33,6 +33,12 @@ yarn-error.*
 # local env files
 .env*.local
 
+# lock files
+package-lock.json
+
+# generated
+uniwind-types.d.ts
+
 # typescript
 *.tsbuildinfo
 
