@@ -30,11 +30,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  resolve: {
-    dedupe: ['react', 'react-dom'],
-    conditions: ['import', 'module', 'browser', 'default']
-  }
+  plugins: [react(), tailwindcss()]
 });
 ```
 
@@ -120,7 +116,13 @@ export default defineConfig({
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -137,9 +139,7 @@ function App() {
   return (
     <NTheme theme={theme}>
       <div className="min-h-screen flex items-center justify-center bg-background gap-4">
-        <NButton onClick={() => setTheme(theme === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT)}>
-          Toggle Theme
-        </NButton>
+        <NButton onClick={() => setTheme(theme === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT)}>Toggle Theme</NButton>
       </div>
     </NTheme>
   );
