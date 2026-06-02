@@ -1,69 +1,85 @@
-# React + TypeScript + Vite
+# Nayan UI — Vite Example
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + Vite + Tailwind CSS v4 project using `@nayan-ui/react`.
 
-Currently, two official plugins are available:
+Scaffolded with `npm create vite@latest` (react-ts template), then configured with Nayan UI.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Quick Start
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname
-      }
-      // other options...
-    }
-  }
-]);
+```bash
+npx @nayan-ui/cli new my-app -t vite
+cd my-app
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Manual Setup
 
-```js
-// eslint.config.js
-import reactDom from 'eslint-plugin-react-dom';
-import reactX from 'eslint-plugin-react-x';
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname
-      }
-      // other options...
-    }
-  }
-]);
+```bash
+npm create vite@latest my-app -- --template react-ts
+cd my-app
+npm install @nayan-ui/react
+npm install -D @tailwindcss/vite tailwindcss
 ```
+
+### 1. Add Tailwind plugin to `vite.config.ts`
+
+```ts
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    dedupe: ['react', 'react-dom']
+  }
+});
+```
+
+### 2. Configure `src/index.css`
+
+```css
+@import '@nayan-ui/react/styles.css';
+@source '../../node_modules/@nayan-ui/react/dist';
+
+:root,
+[data-theme='light'] {
+  /* light tokens */
+}
+.dark,
+[data-theme='dark'] {
+  /* dark tokens */
+}
+```
+
+See `src/index.css` for the full token list.
+
+### 3. Use components in `src/App.tsx`
+
+```tsx
+import { NButton, NTheme, THEMES, useLocalStorage } from '@nayan-ui/react';
+
+function App() {
+  const [theme, setTheme] = useLocalStorage('THEME', THEMES.LIGHT);
+
+  return (
+    <NTheme theme={theme}>
+      <NButton onClick={() => setTheme(theme === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT)}>Toggle Theme</NButton>
+    </NTheme>
+  );
+}
+```
+
+## Scripts
+
+- **`npm run dev`** — Start dev server
+- **`npm run build`** — Type-check and build for production
+- **`npm run preview`** — Preview production build
+
+## Learn More
+
+- [Nayan UI Documentation](https://www.nayanui.com)
+- [HeroUI](https://heroui.com)
+- [Tailwind CSS v4](https://tailwindcss.com)
+- [Vite](https://vite.dev)

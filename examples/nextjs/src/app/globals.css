@@ -1,6 +1,6 @@
 @import '@nayan-ui/react/styles.css';
 
-@source '../../node_modules/@nayan-ui/react/dist';
+@source '../../../../node_modules/@nayan-ui/react/dist';
 
 :root,
 [data-theme='light'] {
@@ -75,7 +75,6 @@
 }
 
 body {
-  margin: 0;
   color: var(--foreground);
   background: var(--background);
   font-family:
