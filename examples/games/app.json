@@ -8,7 +8,8 @@
     "scheme": "nayanui-games",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nayanui.games"
     },
     "android": {
       "adaptiveIcon": {
@@ -16,7 +17,8 @@
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+      },
+      "package": "com.nayanui.games"
     },
     "web": {
       "output": "static",

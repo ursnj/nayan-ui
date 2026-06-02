@@ -1,22 +1,23 @@
-import { useCallback, useLayoutEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { DEFAULT_GAME_SETTINGS, GAMES_LIST, GAMES_MAPPING, GAME_IDS, type GameSettings } from 'react-native-games';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useHeaderHeight } from '@react-navigation/elements';
-import { useNavigation } from '@react-navigation/native';
-import { useLocalSearchParams } from 'expo-router';
+import { DEFAULT_GAME_SETTINGS, GAMES_LIST, GAMES_MAPPING, GAME_IDS, type GameSettings } from '@nayan-ui/games';
+import { useNTheme } from '@nayan-ui/native';
+import { Stack, useLocalSearchParams } from 'expo-router';
 
 export default function GameScreen() {
-  const headerHeight = useHeaderHeight();
+  const { top } = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const navigation = useNavigation();
+  const { colors } = useNTheme();
 
   const gameId = Object.values(GAME_IDS).includes(id as any) ? id : null;
   const GameComponent = gameId ? GAMES_MAPPING[gameId] : null;
+  const gameTitle = GAMES_LIST.find(g => g.id === gameId)?.title || 'Game';
 
   const [settings, setSettings] = useState<GameSettings>(() => ({
     ...DEFAULT_GAME_SETTINGS,
-    offset: headerHeight
+    offset: top + 56
   }));
 
   const handleSettingsChange = useCallback(
@@ -30,30 +31,31 @@ export default function GameScreen() {
     setSettings(prev => ({ ...prev, isVisible: !prev.isVisible }));
   }, []);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: GAMES_LIST.find(g => g.id === gameId)?.title || 'Game',
-      headerTransparent: true,
-      headerTintColor: '#ffffff',
-      headerStyle: { backgroundColor: 'rgba(0,0,0,0.2)' },
-      headerRight: () => (
-        <TouchableOpacity onPressIn={handleToggleSettingsModal} style={styles.settingsButton}>
-          <Ionicons name="settings-outline" size={24} color="#fff" />
-        </TouchableOpacity>
-      )
-    });
-  }, [navigation, handleToggleSettingsModal, gameId]);
-
   if (!gameId || !GameComponent) return null;
 
   return (
-    <View style={styles.container}>
-      <GameComponent settings={settings} onSettingsChange={handleSettingsChange} />
-    </View>
+    <>
+      <Stack.Screen
+        options={{
+          title: gameTitle,
+          headerTransparent: true,
+          headerTintColor: '#ffffff',
+          headerStyle: { backgroundColor: 'rgba(0,0,0,0.2)' },
+          headerRight: () => (
+            <TouchableOpacity onPressIn={handleToggleSettingsModal} style={styles.settingsButton}>
+              <Ionicons name="settings-outline" size={24} color="#fff" />
+            </TouchableOpacity>
+          )
+        }}
+      />
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <GameComponent settings={settings} onSettingsChange={handleSettingsChange} />
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+  container: { flex: 1 },
   settingsButton: { padding: 8, zIndex: 10 }
 });
