@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@nayan-ui/react": "^2.0.0-beta.10",
+    "@nayan-ui/react": "^2.0.0-beta.11",
     "next": "16.2.7",
     "react": "19.2.4",
     "react-dom": "19.2.4"
