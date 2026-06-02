@@ -11,31 +11,25 @@ export default function GameScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const navigation = useNavigation();
 
-  // Validate game ID
   const gameId = Object.values(GAME_IDS).includes(id as any) ? id : null;
-
-  // Get the game component
   const GameComponent = gameId ? GAMES_MAPPING[gameId] : null;
 
-  // Get or initialize settings for this game
-  const [settings, setSettings] = useState<GameSettings>(() => {
-    return { ...DEFAULT_GAME_SETTINGS, offset: headerHeight };
-  });
+  const [settings, setSettings] = useState<GameSettings>(() => ({
+    ...DEFAULT_GAME_SETTINGS,
+    offset: headerHeight
+  }));
 
-  const handleSettingsChange = useCallback((newSettings: GameSettings) => {
-    if (gameId) {
-      setSettings(newSettings);
-    }
-  }, []);
+  const handleSettingsChange = useCallback(
+    (newSettings: GameSettings) => {
+      if (gameId) setSettings(newSettings);
+    },
+    [gameId]
+  );
 
   const handleToggleSettingsModal = useCallback(() => {
-    setSettings(prev => ({
-      ...prev,
-      isVisible: !prev.isVisible
-    }));
+    setSettings(prev => ({ ...prev, isVisible: !prev.isVisible }));
   }, []);
 
-  // Update header with settings button
   useLayoutEffect(() => {
     navigation.setOptions({
       title: GAMES_LIST.find(g => g.id === gameId)?.title || 'Game',
@@ -48,11 +42,9 @@ export default function GameScreen() {
         </TouchableOpacity>
       )
     });
-  }, [navigation, handleToggleSettingsModal]);
+  }, [navigation, handleToggleSettingsModal, gameId]);
 
-  if (!gameId || !GameComponent) {
-    return null;
-  }
+  if (!gameId || !GameComponent) return null;
 
   return (
     <View style={styles.container}>
@@ -62,12 +54,6 @@ export default function GameScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5'
-  },
-  settingsButton: {
-    padding: 8,
-    zIndex: 10
-  }
+  container: { flex: 1, backgroundColor: '#f5f5f5' },
+  settingsButton: { padding: 8, zIndex: 10 }
 });

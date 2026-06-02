@@ -1,6 +1,6 @@
 import { NButton, NTheme, THEMES, useLocalStorage } from '@nayan-ui/react';
 
-export default function App() {
+function App() {
   const [theme, setTheme] = useLocalStorage('THEME', THEMES.LIGHT);
 
   const toggleTheme = () => {
@@ -9,12 +9,14 @@ export default function App() {
 
   return (
     <NTheme theme={theme}>
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background">
-        <img src="https://www.nayanui.com/logo.webp" fetchPriority="high" alt="Nayan UI" className="w-32 h-auto mb-8" />
-        <h1 className="mb-5 text-3xl">Nayan UI</h1>
-        <p className="mb-8">Best Component Library for React & React Native.</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">
+        <img src="https://www.nayanui.com/logo.webp" fetchPriority="high" alt="Nayan UI" className="w-32 h-auto" />
+        <h1 className="text-3xl font-bold text-foreground">Nayan UI</h1>
+        <p className="text-muted">Best Component Library for React & React Native.</p>
         <NButton onClick={toggleTheme}>{theme === THEMES.DARK ? 'Switch to Light' : 'Switch to Dark'}</NButton>
       </div>
     </NTheme>
   );
 }
+
+export default App;
