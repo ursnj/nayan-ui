@@ -11,7 +11,9 @@ export default function Home() {
       <NText className="text-muted text-center">React Native Component Library powered by HeroUI Native & Uniwind</NText>
       <View className="flex-row gap-3">
         <NButton onPress={() => setTheme(isDarkMode ? THEMES.light : THEMES.dark)}>{isDarkMode ? 'Switch to Light' : 'Switch to Dark'}</NButton>
-        <NButton variant="outline" onPress={() => Linking.openURL('https://www.nayanui.com')}>Documentation</NButton>
+        <NButton variant="outline" onPress={() => Linking.openURL('https://www.nayanui.com')}>
+          Documentation
+        </NButton>
       </View>
     </View>
   );

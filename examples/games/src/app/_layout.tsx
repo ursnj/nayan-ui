@@ -24,10 +24,8 @@ function RootNav() {
 
 export default function RootLayout() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
       <NTheme>
         <RootNav />
       </NTheme>
-    </GestureHandlerRootView>
   );
 }
