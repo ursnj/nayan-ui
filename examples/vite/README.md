@@ -32,7 +32,8 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
-    dedupe: ['react', 'react-dom']
+    dedupe: ['react', 'react-dom'],
+    conditions: ['import', 'module', 'browser', 'default']
   }
 });
 ```
