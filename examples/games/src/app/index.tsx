@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 
 type GameItem = (typeof GAMES_LIST)[0];
 
-const APP_URL = 'https://www.nayanui.com';
+const BASE_URL = 'https://www.nayanui.com';
 
 const getColumnCount = () => {
   const width = Dimensions.get('window').width;
@@ -25,7 +25,7 @@ export default function HomeScreen() {
   const renderGameCard = ({ item: game }: { item: GameItem }) => (
     <TouchableOpacity className="flex-1 rounded-lg m-1 overflow-hidden bg-surface border border-border" onPress={() => router.push(`/${game.id}`)} activeOpacity={0.8}>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: `${APP_URL}/games-screenshots/${game.id}.jpg` }} style={styles.image} resizeMode="cover" />
+        <Image source={{ uri: `${BASE_URL}/games/${game.id}.png` }} style={styles.image} resizeMode="cover" />
       </View>
       <View className="p-2.5">
         <NText className="text-base font-bold text-foreground" numberOfLines={1}>
@@ -57,6 +57,6 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   list: { padding: 5, paddingBottom: 40 },
-  imageContainer: { width: '100%', paddingBottom: '164%' },
+  imageContainer: { width: '100%', paddingBottom: '100%' },
   image: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }
 });
