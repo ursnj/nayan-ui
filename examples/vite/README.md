@@ -42,19 +42,89 @@ export default defineConfig({
 
 ```css
 @import '@nayan-ui/react/styles.css';
+
 @source '../../node_modules/@nayan-ui/react/dist';
 
 :root,
 [data-theme='light'] {
-  /* light tokens */
+  color-scheme: light;
+
+  --background: hsl(214 45% 95%);
+  --foreground: hsl(222 47% 11%);
+  --surface: hsl(0 0% 100%);
+  --surface-foreground: hsl(222 47% 11%);
+  --surface-secondary: hsl(214 40% 96%);
+  --surface-secondary-foreground: hsl(222 47% 11%);
+  --surface-tertiary: hsl(214 35% 93%);
+  --surface-tertiary-foreground: hsl(222 47% 11%);
+  --overlay: hsl(0 0% 100%);
+  --overlay-foreground: hsl(222 47% 11%);
+  --muted: hsl(215 16% 47%);
+  --default: hsl(214 35% 90%);
+  --default-foreground: hsl(222 47% 11%);
+  --accent: hsl(217 91% 50%);
+  --accent-foreground: hsl(0 0% 100%);
+  --field-background: hsl(0 0% 100%);
+  --field-foreground: hsl(222 47% 11%);
+  --field-placeholder: hsl(215 16% 47%);
+  --success: hsl(142 71% 45%);
+  --success-foreground: hsl(222 47% 11%);
+  --warning: hsl(38 92% 50%);
+  --warning-foreground: hsl(222 47% 11%);
+  --danger: hsl(0 84% 60%);
+  --danger-foreground: hsl(0 0% 100%);
+  --border: hsl(214 35% 86%);
+  --separator: hsl(214 25% 76%);
+  --focus: hsl(217 91% 50%);
+  --link: hsl(222 47% 11%);
+  --segment: hsl(0 0% 100%);
+  --segment-foreground: hsl(222 47% 11%);
 }
+
 .dark,
 [data-theme='dark'] {
-  /* dark tokens */
+  color-scheme: dark;
+
+  --background: hsl(222 47% 11%);
+  --foreground: hsl(210 40% 98%);
+  --surface: hsl(217 33% 22%);
+  --surface-foreground: hsl(210 40% 98%);
+  --surface-secondary: hsl(217 30% 26%);
+  --surface-secondary-foreground: hsl(210 40% 98%);
+  --surface-tertiary: hsl(217 28% 30%);
+  --surface-tertiary-foreground: hsl(210 40% 98%);
+  --overlay: hsl(217 33% 22%);
+  --overlay-foreground: hsl(210 40% 98%);
+  --muted: hsl(215 20% 65%);
+  --default: hsl(217 33% 26%);
+  --default-foreground: hsl(210 40% 98%);
+  --accent: hsl(217 91% 60%);
+  --accent-foreground: hsl(210 40% 98%);
+  --field-background: hsl(217 33% 22%);
+  --field-foreground: hsl(210 40% 98%);
+  --field-placeholder: hsl(215 20% 65%);
+  --success: hsl(142 71% 45%);
+  --success-foreground: hsl(222 47% 11%);
+  --warning: hsl(38 92% 55%);
+  --warning-foreground: hsl(222 47% 11%);
+  --danger: hsl(0 72% 51%);
+  --danger-foreground: hsl(210 40% 98%);
+  --border: hsl(217 33% 28%);
+  --separator: hsl(217 25% 38%);
+  --focus: hsl(217 91% 60%);
+  --link: hsl(210 40% 98%);
+  --segment: hsl(217 28% 34%);
+  --segment-foreground: hsl(210 40% 98%);
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 ```
-
-See `src/index.css` for the full token list.
 
 ### 3. Use components in `src/App.tsx`
 
@@ -66,7 +136,11 @@ function App() {
 
   return (
     <NTheme theme={theme}>
-      <NButton onClick={() => setTheme(theme === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT)}>Toggle Theme</NButton>
+      <div className="min-h-screen flex items-center justify-center bg-background gap-4">
+        <NButton onClick={() => setTheme(theme === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT)}>
+          Toggle Theme
+        </NButton>
+      </div>
     </NTheme>
   );
 }
