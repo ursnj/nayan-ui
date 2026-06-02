@@ -9,7 +9,7 @@ export function registerNewCommand(program: Command) {
   program
     .command('new [project-name]')
     .description('Create a new project from a template')
-    .option('-t, --template <template>', 'Template to use (expo, games, vite)')
+    .option('-t, --template <template>', 'Template to use (expo, games, nextjs, vite)')
     .action(async (projectName?: string, options?: { template?: string }) => {
       if (!projectName) {
         await interactiveNewProject();
