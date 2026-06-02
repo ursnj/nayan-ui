@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@nayan-ui/react": "^2.0.0-beta.10",
+    "@nayan-ui/react": "^2.0.0-beta.11",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   },
