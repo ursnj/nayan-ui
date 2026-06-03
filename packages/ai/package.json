@@ -1,0 +1,53 @@
+{
+  "name": "@nayan-ui/ai",
+  "version": "1.0.0-beta.5",
+  "description": "AI powered code reviewer using Codex & Claude Code agents",
+  "main": "dist/index.js",
+  "bin": {
+    "nayan-ai": "dist/cli.js"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ursnj/nayan-ui.git",
+    "directory": "packages/ai"
+  },
+  "keywords": [
+    "ai-code-review",
+    "github-code-review",
+    "pull-request-review",
+    "codex-code-review",
+    "claude-code-review",
+    "code-review-cli",
+    "code-analysis",
+    "static-analysis",
+    "security-review",
+    "automated-review"
+  ],
+  "author": "Niranjan Devasani",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ursnj/nayan-ui/issues"
+  },
+  "homepage": "https://github.com/ursnj/nayan-ui/tree/main/packages/ai#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "commander": "^14.0.2",
+    "ora": "^9.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.1.0",
+    "typescript": "^5.9.3"
+  }
+}
