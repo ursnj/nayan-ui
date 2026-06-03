@@ -28,10 +28,10 @@ npx @nayan-ui/cli@latest [command]
 ### Available Commands
 
 ```bash
-nayan --help              # Show all commands
-nayan new                 # Create a new project (interactive)
-nayan create              # Generate sitemaps or robots.txt
-nayan validate            # Validate sitemaps or robots.txt
+nayan-ui --help              # Show all commands
+nayan-ui new                 # Create a new project (interactive)
+nayan-ui create              # Generate sitemaps or robots.txt
+nayan-ui validate            # Validate sitemaps or robots.txt
 ```
 
 ## Usage
@@ -43,7 +43,7 @@ nayan validate            # Validate sitemaps or robots.txt
 ```bash
 npx @nayan-ui/cli new
 # or
-nayan new
+nayan-ui new
 ```
 
 This will prompt you to:
@@ -56,7 +56,7 @@ This will prompt you to:
 ```bash
 npx @nayan-ui/cli new my-app -t expo
 # or
-nayan new my-app -t vite
+nayan-ui new my-app -t vite
 ```
 
 #### Available Templates
@@ -78,7 +78,7 @@ npx @nayan-ui/cli create sitemap -w https://example.com
 npx @nayan-ui/cli create sitemap -w https://example.com -d 10 -f daily -o ./sitemap.xml
 
 # If installed globally
-nayan create sitemap -w https://example.com
+nayan-ui create sitemap -w https://example.com
 ```
 
 #### Parameters
@@ -101,7 +101,7 @@ npx @nayan-ui/cli validate sitemap -i ./sitemap.xml
 npx @nayan-ui/cli validate sitemap -i https://example.com/sitemap.xml --isremote
 
 # If installed globally
-nayan validate sitemap -i ./sitemap.xml
+nayan-ui validate sitemap -i ./sitemap.xml
 ```
 
 #### Parameters
@@ -121,7 +121,7 @@ npx @nayan-ui/cli create robots -d /admin -s https://example.com/sitemap.xml
 npx @nayan-ui/cli create robots -a /home,/about -d /admin -s https://example.com/sitemap.xml -o ./robots.txt
 
 # If installed globally
-nayan create robots -d /admin -s https://example.com/sitemap.xml
+nayan-ui create robots -d /admin -s https://example.com/sitemap.xml
 ```
 
 #### Parameters
@@ -143,7 +143,7 @@ npx @nayan-ui/cli validate robots -i ./robots.txt
 npx @nayan-ui/cli validate robots -i https://example.com/robots.txt --isremote
 
 # If installed globally
-nayan validate robots -i ./robots.txt
+nayan-ui validate robots -i ./robots.txt
 ```
 
 #### Parameters
@@ -167,6 +167,6 @@ Submit issues and pull requests on [GitHub](https://github.com/ursnj/nayan-ui).
 
 ## Support
 
-- 📖 [Documentation](https://www.nayanui.com/cli)
+- 📖 [Documentation](https://www.nayanui.com/devtools)
 - 🐛 [Report Issues](https://github.com/ursnj/nayan-ui/issues)
 - 💬 [Discussions](https://github.com/ursnj/nayan-ui/discussions)
