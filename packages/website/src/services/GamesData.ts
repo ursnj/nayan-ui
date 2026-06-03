@@ -97,7 +97,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['puzzle', 'colors', 'paths', 'logic', 'brain'],
-    relatedGames: ['colors-sort', 'pipe-connect', 'maze-runner']
+    relatedGames: ['colors-sort', 'pipe-connect', 'maze-runner', 'block-blast']
   },
   'bubble-shooter': {
     id: 'bubble-shooter',
@@ -138,7 +138,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Easy to Medium',
     ageRating: 'Everyone',
     tags: ['puzzle', 'bubble', 'match-3', 'casual', 'relaxing'],
-    relatedGames: ['candy-crush', 'block-blast', 'colors-sort']
+    relatedGames: ['candy-crush', 'block-blast', 'colors-sort', 'fruit-merger']
   },
   'tile-home': {
     id: 'tile-home',
@@ -179,7 +179,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['puzzle', 'mahjong', 'matching', 'tiles', 'timed'],
-    relatedGames: ['candy-crush', 'block-blast', 'connect-em-all']
+    relatedGames: ['candy-crush', 'block-blast', 'connect-em-all', 'mine-sweeper']
   },
   'fruit-ninja': {
     id: 'fruit-ninja',
@@ -220,7 +220,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['action', 'arcade', 'reflex', 'fruit', 'slicing'],
-    relatedGames: ['balloon-blaster', 'whack-a-mole', 'knife-hit']
+    relatedGames: ['balloon-blaster', 'whack-a-mole', 'knife-hit', 'perfect-circle']
   },
   'fruit-merger': {
     id: 'fruit-merger',
@@ -261,7 +261,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['puzzle', 'merging', 'physics', 'fruit', 'casual'],
-    relatedGames: ['game-2048', 'block-blast', 'candy-crush']
+    relatedGames: ['game-2048', 'block-blast', 'candy-crush', 'sliding-numbers']
   },
   'flappy-bird': {
     id: 'flappy-bird',
@@ -302,7 +302,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Hard',
     ageRating: 'Everyone',
     tags: ['arcade', 'flappy', 'reflex', 'challenging', 'retro'],
-    relatedGames: ['dino-jump', 'color-switch', 'stack-tower']
+    relatedGames: ['dino-jump', 'color-switch', 'stack-tower', 'snake-3d']
   },
   'dino-jump': {
     id: 'dino-jump',
@@ -343,7 +343,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['arcade', 'runner', 'dinosaur', 'jumping', 'endless'],
-    relatedGames: ['flappy-bird', 'car-racing', 'bike-racing']
+    relatedGames: ['flappy-bird', 'car-racing', 'bike-racing', 'snake-3d']
   },
   'dots-and-boxes': {
     id: 'dots-and-boxes',
@@ -384,7 +384,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['strategy', 'AI', 'turn-based', 'territory', 'classic'],
-    relatedGames: ['tic-tac-toe', 'ludo-king', 'sudoku']
+    relatedGames: ['tic-tac-toe', 'ludo-king', 'sudoku', 'mine-sweeper']
   },
   'candy-crush': {
     id: 'candy-crush',
@@ -425,7 +425,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Easy to Hard',
     ageRating: 'Everyone',
     tags: ['puzzle', 'match-3', 'candy', 'casual', 'colorful'],
-    relatedGames: ['bubble-shooter', 'block-blast', 'tile-home']
+    relatedGames: ['bubble-shooter', 'block-blast', 'tile-home', 'colors-sort']
   },
   'whack-a-mole': {
     id: 'whack-a-mole',
@@ -466,7 +466,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['arcade', 'reflex', 'whack-a-mole', 'cats', 'fast-paced'],
-    relatedGames: ['balloon-blaster', 'fruit-ninja', 'popit-fidget']
+    relatedGames: ['balloon-blaster', 'fruit-ninja', 'popit-fidget', 'pac-man']
   },
   'pac-man': {
     id: 'pac-man',
@@ -507,7 +507,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['arcade', 'maze', 'ghosts', 'power-ups', 'classic'],
-    relatedGames: ['snake-3d', 'dino-jump', 'tank-1990']
+    relatedGames: ['snake-3d', 'dino-jump', 'tank-1990', 'block-breaker']
   },
   'colors-sort': {
     id: 'colors-sort',
@@ -548,7 +548,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium to Hard',
     ageRating: 'Everyone',
     tags: ['puzzle', 'logic', 'sorting', 'brain-teaser', 'strategy'],
-    relatedGames: ['block-blast', 'candy-crush', 'pipe-connect']
+    relatedGames: ['block-blast', 'candy-crush', 'pipe-connect', 'connect-em-all']
   },
   'popit-fidget': {
     id: 'popit-fidget',
@@ -589,7 +589,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Easy',
     ageRating: 'Everyone',
     tags: ['arcade', 'relaxing', 'fidget', 'stress-relief', 'casual'],
-    relatedGames: ['balloon-blaster', 'whack-a-mole', 'bubble-shooter']
+    relatedGames: ['balloon-blaster', 'whack-a-mole', 'bubble-shooter', 'candy-crush']
   },
   'balloon-blaster': {
     id: 'balloon-blaster',
@@ -630,7 +630,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Easy to Medium',
     ageRating: 'Everyone',
     tags: ['arcade', 'balloon', 'popping', 'casual', 'colorful'],
-    relatedGames: ['whack-a-mole', 'fruit-ninja', 'popit-fidget']
+    relatedGames: ['whack-a-mole', 'fruit-ninja', 'popit-fidget', 'color-switch']
   },
   'space-fighter': {
     id: 'space-fighter',
@@ -671,7 +671,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium to Hard',
     ageRating: 'Everyone',
     tags: ['action', 'space', 'shooter', 'arcade', 'survival'],
-    relatedGames: ['car-racing', 'bike-racing', 'tank-1990']
+    relatedGames: ['car-racing', 'bike-racing', 'tank-1990', 'flappy-bird']
   },
   'word-search': {
     id: 'word-search',
@@ -712,7 +712,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Easy to Medium',
     ageRating: 'Everyone',
     tags: ['puzzle', 'words', 'swipe', 'vocabulary', 'timed'],
-    relatedGames: ['number-search', 'sudoku', 'sliding-numbers']
+    relatedGames: ['number-search', 'sudoku', 'sliding-numbers', 'maze-runner']
   },
   'number-search': {
     id: 'number-search',
@@ -753,7 +753,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['puzzle', 'numbers', 'swipe', 'patterns', 'observation'],
-    relatedGames: ['word-search', 'sudoku', 'sliding-numbers']
+    relatedGames: ['word-search', 'sudoku', 'sliding-numbers', 'block-blast']
   },
   'tank-1990': {
     id: 'tank-1990',
@@ -794,7 +794,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['arcade', 'battle', 'tanks', 'defense', 'retro'],
-    relatedGames: ['space-fighter', 'pac-man', 'car-racing']
+    relatedGames: ['space-fighter', 'pac-man', 'car-racing', 'snake-3d']
   },
   'nuts-and-bolts': {
     id: 'nuts-and-bolts',
@@ -835,7 +835,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium to Hard',
     ageRating: 'Everyone',
     tags: ['puzzle', 'physics', 'bolts', 'mechanics', 'logic'],
-    relatedGames: ['pipe-connect', 'colors-sort', 'block-blast']
+    relatedGames: ['pipe-connect', 'colors-sort', 'block-blast', 'sliding-numbers']
   },
   'ludo-king': {
     id: 'ludo-king',
@@ -876,7 +876,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Easy to Medium',
     ageRating: 'Everyone',
     tags: ['strategy', 'board', 'dice', 'tokens', 'classic'],
-    relatedGames: ['dots-and-boxes', 'tic-tac-toe', 'spider-solitaire']
+    relatedGames: ['dots-and-boxes', 'tic-tac-toe', 'spider-solitaire', 'sudoku']
   },
   'spider-solitaire': {
     id: 'spider-solitaire',
@@ -917,7 +917,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium to Hard',
     ageRating: 'Everyone',
     tags: ['puzzle', 'cards', 'solitaire', 'sequences', 'classic'],
-    relatedGames: ['sudoku', 'mine-sweeper', 'ludo-king']
+    relatedGames: ['sudoku', 'mine-sweeper', 'ludo-king', 'dots-and-boxes']
   },
   'maze-runner': {
     id: 'maze-runner',
@@ -958,7 +958,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['puzzle', 'maze', 'physics', 'strategy', 'navigation'],
-    relatedGames: ['pipe-connect', 'sliding-numbers', 'connect-em-all']
+    relatedGames: ['pipe-connect', 'sliding-numbers', 'connect-em-all', 'sudoku']
   },
   'tic-tac-toe': {
     id: 'tic-tac-toe',
@@ -999,7 +999,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Easy',
     ageRating: 'Everyone',
     tags: ['strategy', 'AI', 'classic', 'quick', 'logic'],
-    relatedGames: ['dots-and-boxes', 'ludo-king', 'sudoku']
+    relatedGames: ['dots-and-boxes', 'ludo-king', 'sudoku', 'spider-solitaire']
   },
   'car-racing': {
     id: 'car-racing',
@@ -1040,7 +1040,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['racing', 'action', 'cars', 'traffic', 'endless'],
-    relatedGames: ['bike-racing', 'space-fighter', 'dino-jump']
+    relatedGames: ['bike-racing', 'space-fighter', 'dino-jump', 'flappy-bird']
   },
   'bike-racing': {
     id: 'bike-racing',
@@ -1081,7 +1081,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Hard',
     ageRating: 'Everyone',
     tags: ['racing', 'action', 'motorcycle', 'traffic', 'fast-paced'],
-    relatedGames: ['car-racing', 'space-fighter', 'dino-jump']
+    relatedGames: ['car-racing', 'space-fighter', 'dino-jump', 'flappy-bird']
   },
   'sliding-numbers': {
     id: 'sliding-numbers',
@@ -1122,7 +1122,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium to Hard',
     ageRating: 'Everyone',
     tags: ['puzzle', 'sliding', 'numbers', 'logic', 'brain-teaser'],
-    relatedGames: ['game-2048', 'sudoku', 'maze-runner']
+    relatedGames: ['game-2048', 'sudoku', 'maze-runner', 'block-blast']
   },
   'game-2048': {
     id: 'game-2048',
@@ -1163,7 +1163,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium to Hard',
     ageRating: 'Everyone',
     tags: ['puzzle', '2048', 'merging', 'strategy', 'addictive'],
-    relatedGames: ['sliding-numbers', 'block-blast', 'fruit-merger']
+    relatedGames: ['sliding-numbers', 'block-blast', 'fruit-merger', 'colors-sort']
   },
   'snake-3d': {
     id: 'snake-3d',
@@ -1204,7 +1204,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['arcade', 'snake', 'classic', 'retro', 'endless'],
-    relatedGames: ['pac-man', 'dino-jump', 'flappy-bird']
+    relatedGames: ['pac-man', 'dino-jump', 'flappy-bird', 'tank-1990']
   },
   'perfect-circle': {
     id: 'perfect-circle',
@@ -1245,7 +1245,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Hard',
     ageRating: 'Everyone',
     tags: ['action', 'skill', 'precision', 'drawing', 'challenge'],
-    relatedGames: ['knife-hit', 'stack-tower', 'color-switch']
+    relatedGames: ['knife-hit', 'stack-tower', 'color-switch', 'fruit-ninja']
   },
   sudoku: {
     id: 'sudoku',
@@ -1286,7 +1286,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['puzzle', 'numbers', 'logic', 'brain-teaser', 'classic'],
-    relatedGames: ['mine-sweeper', 'sliding-numbers', 'word-search']
+    relatedGames: ['mine-sweeper', 'sliding-numbers', 'word-search', 'game-2048']
   },
   'block-breaker': {
     id: 'block-breaker',
@@ -1327,7 +1327,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['arcade', 'classic', 'brick-breaker', 'action', 'reflexes'],
-    relatedGames: ['pac-man', 'flappy-bird', 'stack-tower']
+    relatedGames: ['pac-man', 'flappy-bird', 'stack-tower', 'snake-3d']
   },
   'knife-hit': {
     id: 'knife-hit',
@@ -1368,7 +1368,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['action', 'timing', 'precision', 'addictive', 'casual'],
-    relatedGames: ['fruit-ninja', 'perfect-circle', 'color-switch']
+    relatedGames: ['fruit-ninja', 'perfect-circle', 'color-switch', 'stack-tower']
   },
   'color-switch': {
     id: 'color-switch',
@@ -1409,7 +1409,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Hard',
     ageRating: 'Everyone',
     tags: ['arcade', 'color', 'timing', 'reflexes', 'addictive'],
-    relatedGames: ['flappy-bird', 'stack-tower', 'perfect-circle']
+    relatedGames: ['flappy-bird', 'stack-tower', 'perfect-circle', 'knife-hit']
   },
   'stack-tower': {
     id: 'stack-tower',
@@ -1450,7 +1450,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['arcade', 'stacking', 'timing', 'precision', 'addictive'],
-    relatedGames: ['color-switch', 'flappy-bird', 'block-breaker']
+    relatedGames: ['color-switch', 'flappy-bird', 'block-breaker', 'balloon-blaster']
   },
   'mine-sweeper': {
     id: 'mine-sweeper',
@@ -1491,7 +1491,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['puzzle', 'logic', 'classic', 'brain-teaser', 'strategy'],
-    relatedGames: ['sudoku', 'spider-solitaire', 'dots-and-boxes']
+    relatedGames: ['sudoku', 'spider-solitaire', 'dots-and-boxes', 'pipe-connect']
   },
   'pipe-connect': {
     id: 'pipe-connect',
@@ -1532,7 +1532,7 @@ export const gamesData: Record<string, GameData> = {
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['puzzle', 'logic', 'pipe', 'spatial', 'brain-teaser'],
-    relatedGames: ['maze-runner', 'colors-sort', 'nuts-and-bolts']
+    relatedGames: ['maze-runner', 'colors-sort', 'nuts-and-bolts', 'connect-em-all']
   }
 };
 

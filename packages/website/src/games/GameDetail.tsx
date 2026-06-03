@@ -138,7 +138,7 @@ const GameDetail = ({ slug }: Props) => {
         <section className="mb-8">
           <h2 className="text-xl font-bold text-foreground mb-4">You Might Also Like</h2>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            {game.relatedGames.map(relatedId => {
+            {game.relatedGames.slice(0, 4).map(relatedId => {
               const relatedGame = gamesData[relatedId];
               if (!relatedGame) return null;
               return (
