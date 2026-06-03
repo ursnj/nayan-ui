@@ -33,8 +33,10 @@ import {
   RectangleEllipsis,
   Search,
   Settings,
+  ShieldCheck,
   Slash,
   SlidersHorizontal,
+  Sparkles,
   Square,
   SquareArrowOutUpRight,
   SquareCheck,
@@ -916,6 +918,24 @@ export const devtoolsSidebarItems = [
     description: 'Create and validate robots.txt files for search engine crawling control',
     link: '/devtools/robots',
     icon: Bot
+  },
+  {
+    title: 'AI Tools',
+    description: 'AI-powered developer tools for code review and security scanning',
+    link: '',
+    isHeading: true
+  },
+  {
+    title: 'AI Code Reviewer',
+    description: 'AI-powered GitHub PR review using Codex & Claude Code',
+    link: '/devtools/ai-code-reviewer',
+    icon: Sparkles
+  },
+  {
+    title: 'AI Code Scanner',
+    description: 'Scan repositories for package vulnerabilities with auto-fix',
+    link: '/devtools/ai-code-scanner',
+    icon: ShieldCheck
   }
 ];
 

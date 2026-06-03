@@ -11,6 +11,7 @@
     "prepare": "husky install",
     "format": "prettier --write .",
     "clean": "rimraf packages/*/node_modules packages/*/dist packages/*/lib node_modules",
+    "ai:build": "yarn workspace @nayan-ui/ai build",
     "cli:build": "yarn workspace @nayan-ui/cli build",
     "react:dev": "yarn workspace @nayan-ui/react dev",
     "react:build": "yarn workspace @nayan-ui/react build",

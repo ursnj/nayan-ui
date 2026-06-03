@@ -25,7 +25,7 @@ const DevtoolsMain = () => {
               </h1>
             </div>
             <p className="text-base sm:text-xl text-muted leading-relaxed mb-6 sm:mb-8">
-              Powerful command line tools and developer utilities for building better web applications with Nayan UI.
+              Powerful command line tools, AI-powered code review, and developer utilities for building better web applications with Nayan UI.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <NLink
@@ -37,6 +37,16 @@ const DevtoolsMain = () => {
                   <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331zM10.665 10H12v2.667h-1.335V10z" />
                 </svg>
                 Install CLI
+              </NLink>
+              <NLink
+                href="https://www.npmjs.com/package/@nayan-ui/ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-amber-500 to-rose-500 text-white rounded-lg hover:from-amber-600 hover:to-rose-600 transition-all font-semibold shadow-md shadow-amber-500/20">
+                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331zM10.665 10H12v2.667h-1.335V10z" />
+                </svg>
+                Install AI
               </NLink>
               <NLink
                 href="https://github.com/ursnj/nayan-ui"
@@ -96,125 +106,201 @@ const DevtoolsMain = () => {
             <p className="text-muted text-sm">Create and validate robots.txt files for search engine crawling control</p>
           </div>
         </NLink>
+
+        <NLink href="/devtools/ai-code-reviewer" className="group">
+          <div className="bg-surface border border-default rounded-xl p-6 hover:border-amber-500/30 hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center mr-4 shadow-md shadow-amber-500/20 group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-foreground group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                AI Code Reviewer
+              </h3>
+            </div>
+            <p className="text-muted text-sm">AI-powered GitHub PR review using Codex & Claude Code</p>
+          </div>
+        </NLink>
+
+        <NLink href="/devtools/ai-code-scanner" className="group">
+          <div className="bg-surface border border-default rounded-xl p-6 hover:border-rose-500/30 hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-rose-500 to-red-500 rounded-xl flex items-center justify-center mr-4 shadow-md shadow-rose-500/20 group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-foreground group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
+                AI Code Scanner
+              </h3>
+            </div>
+            <p className="text-muted text-sm">Scan repositories for package vulnerabilities with auto-fix PR creation</p>
+          </div>
+        </NLink>
       </div>
 
-      {/* Overview Content */}
+      {/* @nayan-ui/cli Section */}
       <div className="bg-surface border border-default rounded-xl p-4 sm:p-6 lg:p-8 mb-8">
         <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
-          <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Getting Started</span>
+          <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">@nayan-ui/cli</span>
         </h2>
-        <div className="prose prose-gray max-w-none">
-          <p className="text-muted mb-4">
-            The Nayan UI CLI lets you scaffold new projects from templates, generate XML sitemaps by crawling your website, and create or validate
-            robots.txt files.
-          </p>
-          <div className="bg-background rounded-lg p-4 mb-6">
-            <h3 className="text-lg font-semibold text-foreground mb-2">Installation</h3>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
-              <code>npm install -g @nayan-ui/cli</code>
-            </pre>
-            <p className="text-muted text-sm mt-2">Or use directly with npx (no install required):</p>
-            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto mt-2">
-              <code>npx @nayan-ui/cli [command]</code>
-            </pre>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-            <div>
-              <h3 className="text-lg font-semibold text-foreground mb-3">Quick Commands</h3>
-              <div className="space-y-2">
-                <div className="bg-muted/20 rounded p-2 text-sm font-mono">
-                  <code>nayan-ui new</code>
-                </div>
-                <div className="bg-muted/20 rounded p-2 text-sm font-mono">
-                  <code>nayan-ui new my-app -t expo</code>
-                </div>
-                <div className="bg-muted/20 rounded p-2 text-sm font-mono">
-                  <code>nayan-ui create sitemap -w https://example.com</code>
-                </div>
-                <div className="bg-muted/20 rounded p-2 text-sm font-mono">
-                  <code>nayan-ui create robots -d /admin</code>
-                </div>
-                <div className="bg-muted/20 rounded p-2 text-sm font-mono">
-                  <code>nayan-ui validate sitemap -i ./sitemap.xml</code>
-                </div>
-                <div className="bg-muted/20 rounded p-2 text-sm font-mono">
-                  <code>nayan-ui validate robots -i ./robots.txt</code>
-                </div>
+        <p className="text-muted mb-4">
+          Scaffold new projects from templates, generate XML sitemaps by crawling your website, and create or validate robots.txt files.
+        </p>
+        <div className="bg-background rounded-lg p-4 mb-6">
+          <h3 className="text-lg font-semibold text-foreground mb-2">Installation</h3>
+          <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
+            <code>npm install -g @nayan-ui/cli</code>
+          </pre>
+          <p className="text-muted text-sm mt-2">Or use directly with npx:</p>
+          <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto mt-2">
+            <code>npx @nayan-ui/cli [command]</code>
+          </pre>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
+          <div>
+            <h3 className="text-lg font-semibold text-foreground mb-3">Quick Commands</h3>
+            <div className="space-y-2">
+              <div className="bg-muted/20 rounded p-2 text-sm font-mono">
+                <code>nayan-ui new</code>
+              </div>
+              <div className="bg-muted/20 rounded p-2 text-sm font-mono">
+                <code>nayan-ui new my-app -t expo</code>
+              </div>
+              <div className="bg-muted/20 rounded p-2 text-sm font-mono">
+                <code>nayan-ui create sitemap -w https://example.com</code>
+              </div>
+              <div className="bg-muted/20 rounded p-2 text-sm font-mono">
+                <code>nayan-ui create robots -d /admin</code>
+              </div>
+              <div className="bg-muted/20 rounded p-2 text-sm font-mono">
+                <code>nayan-ui validate sitemap -i ./sitemap.xml</code>
+              </div>
+              <div className="bg-muted/20 rounded p-2 text-sm font-mono">
+                <code>nayan-ui validate robots -i ./robots.txt</code>
               </div>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-foreground mb-3">Available Templates</h3>
-              <p className="text-muted text-sm mb-3">
-                Create new projects instantly with <code className="text-foreground">nayan-ui new</code>. Choose from these templates:
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-500/12 text-blue-700 dark:text-blue-300 border border-blue-500/20">
-                  Expo
-                </span>
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
-                  Games
-                </span>
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-purple-500/12 text-purple-700 dark:text-purple-300 border border-purple-500/20">
-                  Next.js
-                </span>
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-cyan-500/12 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20">
-                  Vite
-                </span>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-foreground mb-3">Features</h3>
+            <div className="space-y-3">
+              <div className="flex items-start">
+                <span className="text-lg mr-2">🚀</span>
+                <div>
+                  <h4 className="font-semibold text-sm">Project Scaffolding</h4>
+                  <p className="text-muted text-xs">Create projects from Expo, Games, Next.js, and Vite templates.</p>
+                </div>
+              </div>
+              <div className="flex items-start">
+                <span className="text-lg mr-2">🗺️</span>
+                <div>
+                  <h4 className="font-semibold text-sm">Sitemap Generation & Validation</h4>
+                  <p className="text-muted text-xs">Crawl websites to generate XML sitemaps, or validate existing ones.</p>
+                </div>
+              </div>
+              <div className="flex items-start">
+                <span className="text-lg mr-2">🤖</span>
+                <div>
+                  <h4 className="font-semibold text-sm">Robots.txt Generation & Validation</h4>
+                  <p className="text-muted text-xs">Create and validate robots.txt files for crawler control.</p>
+                </div>
+              </div>
+              <div className="flex items-start">
+                <span className="text-lg mr-2">⌨️</span>
+                <div>
+                  <h4 className="font-semibold text-sm">Interactive & Non-Interactive</h4>
+                  <p className="text-muted text-xs">Use interactive prompts or pass flags for CI/CD automation.</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Features Section */}
+      {/* @nayan-ui/ai Section */}
       <div className="bg-surface border border-default rounded-xl p-4 sm:p-6 lg:p-8 mb-8">
         <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
-          <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">✨ Features</span>
+          <span className="bg-gradient-to-r from-amber-600 to-rose-600 bg-clip-text text-transparent">@nayan-ui/ai</span>
         </h2>
+        <p className="text-muted mb-4">
+          AI-powered developer tools that use Codex or Claude Code agents to review GitHub Pull Requests and scan repositories for security
+          vulnerabilities with auto-fix capabilities.
+        </p>
+        <div className="bg-background rounded-lg p-4 mb-6">
+          <h3 className="text-lg font-semibold text-foreground mb-2">Installation</h3>
+          <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
+            <code>npm install -g @nayan-ui/ai</code>
+          </pre>
+          <p className="text-muted text-sm mt-2">Or use directly with npx:</p>
+          <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto mt-2">
+            <code>npx @nayan-ui/ai [command]</code>
+          </pre>
+        </div>
         <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-          <div className="space-y-4">
-            <div className="flex items-start">
-              <span className="text-2xl mr-3">🚀</span>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1">Project Scaffolding</h3>
-                <p className="text-muted text-sm">Create new projects from Expo, Games, Next.js, and Vite templates with a single command.</p>
+          <div>
+            <h3 className="text-lg font-semibold text-foreground mb-3">Quick Commands</h3>
+            <div className="space-y-2">
+              <div className="bg-muted/20 rounded p-2 text-sm font-mono">
+                <code>nayan-ai review {'<pr-url>'} -t ghp_xxx</code>
               </div>
-            </div>
-            <div className="flex items-start">
-              <span className="text-2xl mr-3">🗺️</span>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1">Sitemap Generation</h3>
-                <p className="text-muted text-sm">Crawl your website and generate XML sitemaps with configurable depth and change frequency.</p>
+              <div className="bg-muted/20 rounded p-2 text-sm font-mono">
+                <code>nayan-ai review {'<pr-url>'} -t ghp_xxx --dry</code>
               </div>
-            </div>
-            <div className="flex items-start">
-              <span className="text-2xl mr-3">🤖</span>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1">Robots.txt Generation</h3>
-                <p className="text-muted text-sm">Generate robots.txt files with allowed/disallowed paths and sitemap references.</p>
+              <div className="bg-muted/20 rounded p-2 text-sm font-mono">
+                <code>nayan-ai review {'<pr-url>'} -t ghp_xxx --inline</code>
+              </div>
+              <div className="bg-muted/20 rounded p-2 text-sm font-mono">
+                <code>nayan-ai scan {'<repo-url>'} -t ghp_xxx</code>
+              </div>
+              <div className="bg-muted/20 rounded p-2 text-sm font-mono">
+                <code>nayan-ai scan {'<repo-url>'} -t ghp_xxx --fix</code>
+              </div>
+              <div className="bg-muted/20 rounded p-2 text-sm font-mono">
+                <code>nayan-ai scan {'<repo-url>'} -t ghp_xxx --llm claude</code>
               </div>
             </div>
           </div>
-          <div className="space-y-4">
-            <div className="flex items-start">
-              <span className="text-2xl mr-3">✅</span>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1">Sitemap Validation</h3>
-                <p className="text-muted text-sm">Validate local or remote sitemaps for correct XML structure, URLs, and priority values.</p>
+          <div>
+            <h3 className="text-lg font-semibold text-foreground mb-3">Features</h3>
+            <div className="space-y-3">
+              <div className="flex items-start">
+                <span className="text-lg mr-2">🐛</span>
+                <div>
+                  <h4 className="font-semibold text-sm">AI Code Review</h4>
+                  <p className="text-muted text-xs">Deep PR analysis for bugs, security issues, performance, and test coverage.</p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start">
-              <span className="text-2xl mr-3">🛡</span>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1">Robots.txt Validation</h3>
-                <p className="text-muted text-sm">Validate local or remote robots.txt files for required directives like User-agent and Sitemap.</p>
+              <div className="flex items-start">
+                <span className="text-lg mr-2">🛡️</span>
+                <div>
+                  <h4 className="font-semibold text-sm">Vulnerability Scanning</h4>
+                  <p className="text-muted text-xs">Scan repos for package vulnerabilities across npm, Python, Go, Rust, and more.</p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start">
-              <span className="text-2xl mr-3">⌨️</span>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1">Interactive & Non-Interactive</h3>
-                <p className="text-muted text-sm">Use interactive prompts or pass flags directly for CI/CD automation.</p>
+              <div className="flex items-start">
+                <span className="text-lg mr-2">🔧</span>
+                <div>
+                  <h4 className="font-semibold text-sm">Auto-Fix & PR Creation</h4>
+                  <p className="text-muted text-xs">Automatically fix vulnerabilities and create PRs with detailed descriptions.</p>
+                </div>
+              </div>
+              <div className="flex items-start">
+                <span className="text-lg mr-2">🤖</span>
+                <div>
+                  <h4 className="font-semibold text-sm">Codex & Claude Code</h4>
+                  <p className="text-muted text-xs">Choose between Codex (default) or Claude Code as the AI provider.</p>
+                </div>
               </div>
             </div>
           </div>
