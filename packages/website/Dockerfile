@@ -10,6 +10,7 @@ COPY package.json yarn.lock .yarnrc.yml ./
 RUN corepack enable && corepack prepare
 
 # Copy all workspace package.json files (Yarn 4 requires all to be present)
+COPY packages/ai/package.json ./packages/ai/package.json
 COPY packages/cli/package.json ./packages/cli/package.json
 COPY packages/react/package.json ./packages/react/package.json
 COPY packages/native/package.json ./packages/native/package.json
