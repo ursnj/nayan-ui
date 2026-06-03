@@ -6,9 +6,9 @@ export const dynamic = 'force-dynamic';
 
 export const metadata = buildPageMetadata({
   title: 'Developer Tools',
-  description: 'Nayan UI developer tools and CLI utilities. Generate sitemaps, robots.txt files, and more for web development and SEO optimization.',
+  description: 'Nayan UI developer tools, CLI utilities, and AI-powered code analysis. Generate sitemaps, robots.txt files, review PRs with AI, and scan for vulnerabilities.',
   path: '/devtools',
-  keywords: 'nayan ui devtools, sitemap generator, robots.txt generator, seo tools, web development utilities'
+  keywords: 'nayan ui devtools, sitemap generator, robots.txt generator, seo tools, ai code review, vulnerability scanner, nayan ai'
 });
 
 const schemas = [

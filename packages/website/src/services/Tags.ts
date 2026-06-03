@@ -1484,3 +1484,27 @@ export const robotsTags = [
   { sku: 'crawler-permissions', text: 'Crawler Permissions' },
   { sku: 'robots-cli', text: 'Robots CLI' }
 ];
+
+export const aiReviewTags = [
+  { sku: 'ai-code-review', text: 'AI Code Review' },
+  { sku: 'pull-request-review', text: 'Pull Request Review' },
+  { sku: 'codex-cli', text: 'Codex CLI' },
+  { sku: 'claude-code', text: 'Claude Code' },
+  { sku: 'automated-review', text: 'Automated Review' },
+  { sku: 'github-pr-review', text: 'GitHub PR Review' },
+  { sku: 'code-analysis', text: 'Code Analysis' },
+  { sku: 'bug-detection', text: 'Bug Detection' },
+  { sku: 'nayan-ai', text: 'Nayan AI' }
+];
+
+export const aiScannerTags = [
+  { sku: 'vulnerability-scanner', text: 'Vulnerability Scanner' },
+  { sku: 'security-scanning', text: 'Security Scanning' },
+  { sku: 'dependency-audit', text: 'Dependency Audit' },
+  { sku: 'codex-cli', text: 'Codex CLI' },
+  { sku: 'claude-code', text: 'Claude Code' },
+  { sku: 'auto-fix', text: 'Auto Fix' },
+  { sku: 'npm-audit', text: 'npm Audit' },
+  { sku: 'cve-detection', text: 'CVE Detection' },
+  { sku: 'nayan-ai', text: 'Nayan AI' }
+];
