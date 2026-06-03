@@ -1,6 +1,6 @@
 {
   "name": "@nayan-ui/ai",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0",
   "description": "AI powered code reviewer using Codex & Claude Code agents",
   "main": "dist/index.js",
   "bin": {
