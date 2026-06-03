@@ -148,6 +148,8 @@ import {
 } from '@/services/ReactNativeAttributes';
 import {
   accordionTags,
+  aiReviewTags,
+  aiScannerTags,
   alertTags,
   autocompleteTags,
   badgeTags,
@@ -190,10 +192,12 @@ import {
   rnTextareaTags,
   rnToastTags,
   rnTooltipTags,
+  robotsTags,
   searchFieldTags,
   selectTags,
   seoMasterTags,
   sheetTags,
+  sitemapTags,
   skeletonTags,
   sliderTags,
   switchTags,
@@ -911,12 +915,14 @@ export const devtoolsSidebarItems = [
     title: 'Sitemap Generator',
     description: 'Generate and validate XML sitemaps for better SEO optimization',
     link: '/devtools/sitemap',
+    tags: sitemapTags,
     icon: Map
   },
   {
     title: 'Robots.txt Generator',
     description: 'Create and validate robots.txt files for search engine crawling control',
     link: '/devtools/robots',
+    tags: robotsTags,
     icon: Bot
   },
   {
@@ -929,12 +935,14 @@ export const devtoolsSidebarItems = [
     title: 'AI Code Reviewer',
     description: 'AI-powered GitHub PR review using Codex & Claude Code',
     link: '/devtools/ai-code-reviewer',
+    tags: aiReviewTags,
     icon: Sparkles
   },
   {
     title: 'AI Code Scanner',
     description: 'Scan repositories for package vulnerabilities with auto-fix',
     link: '/devtools/ai-code-scanner',
+    tags: aiScannerTags,
     icon: ShieldCheck
   }
 ];
