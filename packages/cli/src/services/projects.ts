@@ -14,13 +14,21 @@ const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const TEMPLATES = ['expo', 'games', 'vite'] as const;
+const TEMPLATES = ['expo', 'games', 'nextjs', 'vite'] as const;
 type Template = (typeof TEMPLATES)[number];
 
 const TEMPLATE_DESCRIPTIONS: Record<Template, string> = {
   expo: 'React Native Application with Expo & Nayan UI',
-  games: 'React Native Games example project',
-  vite: 'React Application with Vite and Nayan UI'
+  games: 'React Native Games with Expo & Nayan UI',
+  nextjs: 'React Application with Next.js & Nayan UI',
+  vite: 'React Application with Vite & Nayan UI'
+};
+
+const TEMPLATE_NEXT_STEPS: Record<Template, string[]> = {
+  expo: ['npm install', 'npx expo start --clear'],
+  games: ['npm install', 'npx expo prebuild --clean', 'npx expo run:ios'],
+  nextjs: ['npm install', 'npm run dev'],
+  vite: ['npm install', 'npm run dev']
 };
 
 const GITHUB_REPO = 'https://github.com/ursnj/nayan-ui';
@@ -36,9 +44,9 @@ export function showTemplates() {
     console.log(`  ${template.padEnd(10)} - ${TEMPLATE_DESCRIPTIONS[template]}`);
   });
   console.log('\nUsage:');
-  console.log('  nayan new <project-name> -t <template>\n');
+  console.log('  nayan-ui new <project-name> -t <template>\n');
   console.log('Example:');
-  console.log('  nayan new my-app -t expo\n');
+  console.log('  nayan-ui new my-app -t expo\n');
 }
 
 /**
@@ -152,10 +160,10 @@ export async function createNewProject(projectName: string, template?: string) {
     }
 
     spinner.succeed(`Project created successfully!`);
+    const steps = TEMPLATE_NEXT_STEPS[template as Template] || ['npm install', 'npm start'];
     console.log(`\nNext steps:`);
     console.log(`  cd ${projectName}`);
-    console.log(`  npm install`);
-    console.log(`  npm start`);
+    steps.forEach(step => console.log(`  ${step}`));
   } catch (error) {
     spinner.fail('Failed to create project');
     console.error(error);

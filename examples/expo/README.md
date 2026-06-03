@@ -1,50 +1,111 @@
-# Welcome to your Expo app 👋
+# Nayan UI — Expo Example
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native project using Expo SDK 56 + Uniwind + HeroUI Native + `@nayan-ui/native`.
 
-## Get started
+Scaffolded with `npx create-expo-app@latest` (blank-typescript template), then configured with Nayan UI.
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Quick Start
 
 ```bash
-npm run reset-project
+npx @nayan-ui/cli new my-app -t expo
+cd my-app
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Manual Setup
 
-## Learn more
+```bash
+npx create-expo-app@latest my-app --template blank-typescript
+cd my-app
+npm install @nayan-ui/native uniwind heroui-native @gorhom/bottom-sheet
+npm install react-native-reanimated react-native-gesture-handler react-native-svg react-native-worklets
+npm install expo-router expo-linking expo-constants expo-splash-screen react-native-safe-area-context react-native-screens
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### 1. Configure `metro.config.js`
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```js
+const { getDefaultConfig } = require('@expo/metro-config');
+const { withUniwindConfig } = require('uniwind/metro');
 
-## Join the community
+const config = getDefaultConfig(__dirname);
 
-Join our community of developers creating universal apps.
+module.exports = withUniwindConfig(config, {
+  cssEntryFile: './global.css'
+});
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 2. Create `global.css`
+
+```css
+@import 'tailwindcss';
+@import 'uniwind';
+@import 'heroui-native/styles';
+
+@source './node_modules/heroui-native/lib';
+@source './node_modules/@nayan-ui/native/src';
+@source './src';
+
+@layer theme {
+  :root {
+    @variant light {
+      /* light tokens */
+    }
+    @variant dark {
+      /* dark tokens */
+    }
+  }
+}
+```
+
+See `global.css` for the full token list.
+
+### 3. Import CSS and wrap with NTheme
+
+```tsx
+import 'react-native-reanimated';
+import { NTheme } from '@nayan-ui/native';
+import { Stack } from 'expo-router';
+import '../global.css';
+
+export default function RootLayout() {
+  return (
+    <NTheme>
+      <Stack />
+    </NTheme>
+  );
+}
+```
+
+### 4. Use components
+
+```tsx
+import { View } from 'react-native';
+import { NButton, NText, NThemeToggle, THEMES, useNTheme } from '@nayan-ui/native';
+
+export default function Home() {
+  const { isDarkMode, setTheme } = useNTheme();
+
+  return (
+    <View className="flex-1 items-center justify-center bg-background gap-4">
+      <NText className="text-3xl font-bold text-foreground">Nayan UI</NText>
+      <NButton onPress={() => setTheme(isDarkMode ? THEMES.light : THEMES.dark)}>Toggle Theme</NButton>
+      <NThemeToggle />
+    </View>
+  );
+}
+```
+
+## Scripts
+
+- **`npx expo start`** — Start Expo dev server
+- **`npx expo run:ios`** — Run on iOS simulator
+- **`npx expo run:android`** — Run on Android emulator
+
+## Learn More
+
+- [Nayan UI Documentation](https://www.nayanui.com)
+- [HeroUI Native](https://heroui-native.com)
+- [Uniwind](https://uniwind.dev)
+- [Expo](https://expo.dev)

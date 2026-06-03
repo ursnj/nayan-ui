@@ -6,7 +6,6 @@
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
-    "nayan": "./dist/index.js",
     "nayan-ui": "./dist/index.js"
   },
   "scripts": {

@@ -33,8 +33,10 @@ import {
   RectangleEllipsis,
   Search,
   Settings,
+  ShieldCheck,
   Slash,
   SlidersHorizontal,
+  Sparkles,
   Square,
   SquareArrowOutUpRight,
   SquareCheck,
@@ -146,6 +148,8 @@ import {
 } from '@/services/ReactNativeAttributes';
 import {
   accordionTags,
+  aiReviewTags,
+  aiScannerTags,
   alertTags,
   autocompleteTags,
   badgeTags,
@@ -188,10 +192,12 @@ import {
   rnTextareaTags,
   rnToastTags,
   rnTooltipTags,
+  robotsTags,
   searchFieldTags,
   selectTags,
   seoMasterTags,
   sheetTags,
+  sitemapTags,
   skeletonTags,
   sliderTags,
   switchTags,
@@ -909,13 +915,35 @@ export const devtoolsSidebarItems = [
     title: 'Sitemap Generator',
     description: 'Generate and validate XML sitemaps for better SEO optimization',
     link: '/devtools/sitemap',
+    tags: sitemapTags,
     icon: Map
   },
   {
     title: 'Robots.txt Generator',
     description: 'Create and validate robots.txt files for search engine crawling control',
     link: '/devtools/robots',
+    tags: robotsTags,
     icon: Bot
+  },
+  {
+    title: 'AI Tools',
+    description: 'AI-powered developer tools for code review and security scanning',
+    link: '',
+    isHeading: true
+  },
+  {
+    title: 'AI Code Reviewer',
+    description: 'AI-powered GitHub PR review using Codex & Claude Code',
+    link: '/devtools/ai-code-reviewer',
+    tags: aiReviewTags,
+    icon: Sparkles
+  },
+  {
+    title: 'AI Code Scanner',
+    description: 'Scan repositories for package vulnerabilities with auto-fix',
+    link: '/devtools/ai-code-scanner',
+    tags: aiScannerTags,
+    icon: ShieldCheck
   }
 ];
 
@@ -944,5 +972,43 @@ export const gamesSidebarItems = [
     description: 'License information, commercial usage, and acknowledgments',
     link: '/games/licensing',
     icon: FileText
-  }
+  },
+  { title: 'Games', description: '', link: '', isHeading: true },
+  { title: 'Block Blast', description: 'Strategic block placement puzzle', link: '/games/block-blast', icon: Gamepad2 },
+  { title: 'Connect Em All', description: 'Connect matching colored dots', link: '/games/connect-em-all', icon: Gamepad2 },
+  { title: 'Bubble Shooter', description: 'Classic bubble matching puzzle', link: '/games/bubble-shooter', icon: Gamepad2 },
+  { title: 'Tile Home', description: 'Mahjong-style tile matching', link: '/games/tile-home', icon: Gamepad2 },
+  { title: 'Fruit Ninja', description: 'Slice flying fruits action', link: '/games/fruit-ninja', icon: Gamepad2 },
+  { title: 'Fruit Merger', description: 'Physics-based fruit merging', link: '/games/fruit-merger', icon: Gamepad2 },
+  { title: 'Flappy Bird', description: 'Classic pipe navigation', link: '/games/flappy-bird', icon: Gamepad2 },
+  { title: 'Dino Jump', description: 'Endless dinosaur runner', link: '/games/dino-jump', icon: Gamepad2 },
+  { title: 'Dots and Boxes', description: 'Strategy territory game', link: '/games/dots-and-boxes', icon: Gamepad2 },
+  { title: 'Candy Crush', description: 'Match-3 candy puzzle', link: '/games/candy-crush', icon: Gamepad2 },
+  { title: 'Whack A Mole', description: 'Fast-paced reflex game', link: '/games/whack-a-mole', icon: Gamepad2 },
+  { title: 'Pac-Man', description: 'Classic maze arcade', link: '/games/pac-man', icon: Gamepad2 },
+  { title: 'Colors Sort', description: 'Color sorting logic puzzle', link: '/games/colors-sort', icon: Gamepad2 },
+  { title: 'Popit Fidget', description: 'Relaxing bubble popping', link: '/games/popit-fidget', icon: Gamepad2 },
+  { title: 'Balloon Blaster', description: 'Pop rising balloons', link: '/games/balloon-blaster', icon: Gamepad2 },
+  { title: 'Space Fighter', description: 'Space survival action', link: '/games/space-fighter', icon: Gamepad2 },
+  { title: 'Word Search', description: 'Find hidden words puzzle', link: '/games/word-search', icon: Gamepad2 },
+  { title: 'Number Search', description: 'Find number sequences', link: '/games/number-search', icon: Gamepad2 },
+  { title: 'Tank 1990', description: 'Classic tank battle', link: '/games/tank-1990', icon: Gamepad2 },
+  { title: 'Nuts and Bolts', description: 'Physics bolt puzzle', link: '/games/nuts-and-bolts', icon: Gamepad2 },
+  { title: 'Ludo King', description: 'Classic board game', link: '/games/ludo-king', icon: Gamepad2 },
+  { title: 'Spider Solitaire', description: 'Classic card game', link: '/games/spider-solitaire', icon: Gamepad2 },
+  { title: 'Maze Runner', description: 'Procedural maze puzzle', link: '/games/maze-runner', icon: Gamepad2 },
+  { title: 'Tic Tac Toe', description: 'Classic X and O strategy', link: '/games/tic-tac-toe', icon: Gamepad2 },
+  { title: 'Car Racing', description: 'Traffic dodging racer', link: '/games/car-racing', icon: Gamepad2 },
+  { title: 'Bike Racing', description: 'High-speed motorcycle racing', link: '/games/bike-racing', icon: Gamepad2 },
+  { title: 'Sliding Numbers', description: 'Classic sliding tile puzzle', link: '/games/sliding-numbers', icon: Gamepad2 },
+  { title: '2048', description: 'Addictive number merging', link: '/games/game-2048', icon: Gamepad2 },
+  { title: 'Snake 3D', description: 'Classic snake gameplay', link: '/games/snake-3d', icon: Gamepad2 },
+  { title: 'Perfect Circle', description: 'Precision drawing challenge', link: '/games/perfect-circle', icon: Gamepad2 },
+  { title: 'Sudoku', description: 'Classic number logic puzzle', link: '/games/sudoku', icon: Gamepad2 },
+  { title: 'Block Breaker', description: 'Brick-breaking arcade', link: '/games/block-breaker', icon: Gamepad2 },
+  { title: 'Knife Hit', description: 'Knife throwing precision', link: '/games/knife-hit', icon: Gamepad2 },
+  { title: 'Color Switch', description: 'Color matching arcade', link: '/games/color-switch', icon: Gamepad2 },
+  { title: 'Stack Tower', description: 'Precision block stacking', link: '/games/stack-tower', icon: Gamepad2 },
+  { title: 'Mine Sweeper', description: 'Classic logic deduction', link: '/games/mine-sweeper', icon: Gamepad2 },
+  { title: 'Pipe Connect', description: 'Pipe rotation puzzle', link: '/games/pipe-connect', icon: Gamepad2 }
 ];
