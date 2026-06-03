@@ -1,21 +1,37 @@
-import { useEffect } from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
+import { useEffect } from 'react';
+import { NTheme, useNTheme } from '@nayan-ui/native';
 import { SplashScreen, Stack } from 'expo-router';
+import '../../global.css';
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+function RootNav() {
+  const { colors } = useNTheme();
+
+  const blurHeaderConfig = {
+    headerStyle: { backgroundColor: colors.surface },
+    headerShadowVisible: false,
+    headerTintColor: colors.foreground,
+    headerBackButtonDisplayMode: 'minimal' as const
+  };
+
   useEffect(() => {
     SplashScreen.hideAsync();
   }, []);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <Stack>
-        <Stack.Screen name="index" options={{ title: 'Home' }} />
-        <Stack.Screen name="[id]" options={{ title: 'Game' }} />
-      </Stack>
-    </GestureHandlerRootView>
+    <Stack screenOptions={blurHeaderConfig}>
+      <Stack.Screen name="index" options={{ title: 'Games' }} />
+      <Stack.Screen name="[id]" options={{ title: 'Game' }} />
+    </Stack>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <NTheme>
+      <RootNav />
+    </NTheme>
   );
 }

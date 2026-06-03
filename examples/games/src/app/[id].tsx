@@ -1,73 +1,72 @@
 import { useCallback, useLayoutEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { DEFAULT_GAME_SETTINGS, GAMES_LIST, GAMES_MAPPING, GAME_IDS, type GameSettings } from 'react-native-games';
+import { Platform, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useHeaderHeight } from '@react-navigation/elements';
-import { useNavigation } from '@react-navigation/native';
-import { useLocalSearchParams } from 'expo-router';
+import { DEFAULT_GAME_SETTINGS, GAMES_LIST, GAMES_MAPPING, GAME_IDS, type GameSettings } from '@nayan-ui/games';
+import { NPress } from '@nayan-ui/native';
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 
 export default function GameScreen() {
-  const headerHeight = useHeaderHeight();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const router = useRouter();
+  const { id } = useLocalSearchParams<{ id: string }>();
 
-  // Validate game ID
   const gameId = Object.values(GAME_IDS).includes(id as any) ? id : null;
-
-  // Get the game component
   const GameComponent = gameId ? GAMES_MAPPING[gameId] : null;
+  const gameTitle = GAMES_LIST.find(g => g.id === gameId)?.title || 'Game';
+  const headerHeight = insets.top + (Platform.OS === 'ios' ? 37 : 56);
 
-  // Get or initialize settings for this game
-  const [settings, setSettings] = useState<GameSettings>(() => {
-    return { ...DEFAULT_GAME_SETTINGS, offset: headerHeight };
-  });
+  const [settings, setSettings] = useState<GameSettings>(() => ({
+    ...DEFAULT_GAME_SETTINGS,
+    offset: headerHeight
+  }));
 
-  const handleSettingsChange = useCallback((newSettings: GameSettings) => {
-    if (gameId) {
-      setSettings(newSettings);
-    }
-  }, []);
+  const handleSettingsChange = useCallback(
+    (newSettings: GameSettings) => {
+      if (gameId) setSettings(newSettings);
+    },
+    [gameId]
+  );
 
   const handleToggleSettingsModal = useCallback(() => {
-    setSettings(prev => ({
-      ...prev,
-      isVisible: !prev.isVisible
-    }));
+    setSettings(prev => ({ ...prev, isVisible: !prev.isVisible }));
   }, []);
 
-  // Update header with settings button
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: GAMES_LIST.find(g => g.id === gameId)?.title || 'Game',
+      headerTitle: () => (
+        <View className={`${Platform.OS === 'ios' ? 'mr-10' : ''} flex-1 items-center justify-center`}>
+          <Text className="text-lg font-semibold text-white" numberOfLines={1}>
+            {gameTitle}
+          </Text>
+        </View>
+      ),
       headerTransparent: true,
       headerTintColor: '#ffffff',
-      headerStyle: { backgroundColor: 'rgba(0,0,0,0.2)' },
+      headerBackTitleVisible: false,
+      headerShadowVisible: false,
+      headerBlurEffect: undefined,
+      headerStyle: { backgroundColor: 'transparent' },
+      headerBackground: () => <View style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.2)' }} />,
+      headerLeft: () => (
+        <NPress onPressIn={() => router.back()} className="z-10 flex items-center justify-center h-10 w-10 rounded-full">
+          <Ionicons name="chevron-back" size={30} color="#ffffff" />
+        </NPress>
+      ),
       headerRight: () => (
-        <TouchableOpacity onPressIn={handleToggleSettingsModal} style={styles.settingsButton}>
-          <Ionicons name="settings-outline" size={24} color="#fff" />
-        </TouchableOpacity>
+        <NPress onPressIn={handleToggleSettingsModal} className="z-10 flex items-center justify-center h-10 w-10 rounded-full">
+          <Ionicons name="settings-outline" size={24} color="#ffffff" />
+        </NPress>
       )
     });
-  }, [navigation, handleToggleSettingsModal]);
+  }, [navigation, handleToggleSettingsModal, gameTitle, router]);
 
-  if (!gameId || !GameComponent) {
-    return null;
-  }
+  if (!gameId || !GameComponent) return null;
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-background">
       <GameComponent settings={settings} onSettingsChange={handleSettingsChange} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5'
-  },
-  settingsButton: {
-    padding: 8,
-    zIndex: 10
-  }
-});

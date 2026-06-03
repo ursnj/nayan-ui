@@ -1,50 +1,52 @@
-# Welcome to your Expo app 👋
+# Nayan UI — Games Example
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native games showcase using Expo + [react-native-games](https://www.npmjs.com/package/react-native-games).
 
-## Get started
+Scaffolded with `npx create-expo-app@latest` (blank-typescript template), then configured with react-native-games.
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Quick Start
 
 ```bash
-npm run reset-project
+npx @nayan-ui/cli new my-app -t games
+cd my-app
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Manual Setup
 
-## Learn more
+```bash
+npx create-expo-app@latest my-games-app --template blank-typescript
+cd my-games-app
+npm install react-native-games @shopify/react-native-skia react-native-reanimated react-native-gesture-handler react-native-worklets expo-haptics expo-speech expo-router
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## How It Works
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- **Home screen** displays a grid of available games from `GAMES_LIST`
+- **Game screen** renders the selected game via `GAMES_MAPPING[gameId]`
+- Each game has a **settings modal** accessible from the header
+- Games use **React Native Skia** for high-performance 2D rendering
 
-## Join the community
+## Project Structure
 
-Join our community of developers creating universal apps.
+```
+src/
+  app/
+    _layout.tsx     — Root layout with GestureHandler and navigation
+    index.tsx       — Game grid listing
+    [id].tsx        — Dynamic game screen
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Scripts
+
+- **`npx expo start`** — Start Expo dev server
+- **`npx expo run:ios`** — Run on iOS simulator
+- **`npx expo run:android`** — Run on Android emulator
+
+## Learn More
+
+- [Nayan UI Documentation](https://www.nayanui.com)
+- [react-native-games](https://www.npmjs.com/package/react-native-games)
+- [React Native Skia](https://shopify.github.io/react-native-skia/)
+- [Expo](https://expo.dev)
