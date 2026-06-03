@@ -44,9 +44,9 @@ export function showTemplates() {
     console.log(`  ${template.padEnd(10)} - ${TEMPLATE_DESCRIPTIONS[template]}`);
   });
   console.log('\nUsage:');
-  console.log('  nayan new <project-name> -t <template>\n');
+  console.log('  nayan-ui new <project-name> -t <template>\n');
   console.log('Example:');
-  console.log('  nayan new my-app -t expo\n');
+  console.log('  nayan-ui new my-app -t expo\n');
 }
 
 /**

@@ -105,13 +105,17 @@ const DevtoolsMain = () => {
         </h2>
         <div className="prose prose-gray max-w-none">
           <p className="text-muted mb-4">
-            The Nayan UI CLI provides a comprehensive set of tools for web developers to enhance their development workflow and improve their
-            website's SEO performance.
+            The Nayan UI CLI lets you scaffold new projects from templates, generate XML sitemaps by crawling your website, and create or validate
+            robots.txt files.
           </p>
           <div className="bg-background rounded-lg p-4 mb-6">
             <h3 className="text-lg font-semibold text-foreground mb-2">Installation</h3>
             <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto">
               <code>npm install -g @nayan-ui/cli</code>
+            </pre>
+            <p className="text-muted text-sm mt-2">Or use directly with npx (no install required):</p>
+            <pre className="bg-muted/20 rounded p-3 text-sm font-mono overflow-x-auto mt-2">
+              <code>npx @nayan-ui/cli [command]</code>
             </pre>
           </div>
           <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
@@ -119,39 +123,42 @@ const DevtoolsMain = () => {
               <h3 className="text-lg font-semibold text-foreground mb-3">Quick Commands</h3>
               <div className="space-y-2">
                 <div className="bg-muted/20 rounded p-2 text-sm font-mono">
-                  <code>nayan create sitemap</code>
+                  <code>nayan-ui new</code>
                 </div>
                 <div className="bg-muted/20 rounded p-2 text-sm font-mono">
-                  <code>nayan create robots</code>
+                  <code>nayan-ui new my-app -t expo</code>
                 </div>
                 <div className="bg-muted/20 rounded p-2 text-sm font-mono">
-                  <code>nayan validate sitemap</code>
+                  <code>nayan-ui create sitemap -w https://example.com</code>
                 </div>
                 <div className="bg-muted/20 rounded p-2 text-sm font-mono">
-                  <code>nayan validate robots</code>
+                  <code>nayan-ui create robots -d /admin</code>
+                </div>
+                <div className="bg-muted/20 rounded p-2 text-sm font-mono">
+                  <code>nayan-ui validate sitemap -i ./sitemap.xml</code>
+                </div>
+                <div className="bg-muted/20 rounded p-2 text-sm font-mono">
+                  <code>nayan-ui validate robots -i ./robots.txt</code>
                 </div>
               </div>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-foreground mb-3">Framework Integration</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-3">Available Templates</h3>
               <p className="text-muted text-sm mb-3">
-                Easily integrates into any framework with simple commands and works with all major search engines for seamless optimization.
+                Create new projects instantly with <code className="text-foreground">nayan-ui new</code>. Choose from these templates:
               </p>
               <div className="flex flex-wrap gap-2">
                 <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-500/12 text-blue-700 dark:text-blue-300 border border-blue-500/20">
-                  React
+                  Expo
                 </span>
                 <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
-                  Vue
-                </span>
-                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-500/12 text-red-700 dark:text-red-300 border border-red-500/20">
-                  Angular
+                  Games
                 </span>
                 <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-purple-500/12 text-purple-700 dark:text-purple-300 border border-purple-500/20">
                   Next.js
                 </span>
                 <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-cyan-500/12 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20">
-                  Nuxt
+                  Vite
                 </span>
               </div>
             </div>
@@ -167,54 +174,47 @@ const DevtoolsMain = () => {
         <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
           <div className="space-y-4">
             <div className="flex items-start">
-              <span className="text-2xl mr-3">⌨️</span>
+              <span className="text-2xl mr-3">🚀</span>
               <div>
-                <h3 className="font-semibold text-foreground mb-1">Framework-Agnostic Integration</h3>
-                <p className="text-muted text-sm">Easily integrates into any framework with simple commands.</p>
+                <h3 className="font-semibold text-foreground mb-1">Project Scaffolding</h3>
+                <p className="text-muted text-sm">Create new projects from Expo, Games, Next.js, and Vite templates with a single command.</p>
               </div>
             </div>
             <div className="flex items-start">
-              <span className="text-2xl mr-3">🌈</span>
+              <span className="text-2xl mr-3">🗺️</span>
               <div>
-                <h3 className="font-semibold text-foreground mb-1">Automatic Sitemap Generation</h3>
-                <p className="text-muted text-sm">Creates sitemaps with domain-specific crawling.</p>
+                <h3 className="font-semibold text-foreground mb-1">Sitemap Generation</h3>
+                <p className="text-muted text-sm">Crawl your website and generate XML sitemaps with configurable depth and change frequency.</p>
               </div>
             </div>
             <div className="flex items-start">
-              <span className="text-2xl mr-3">🛡</span>
+              <span className="text-2xl mr-3">🤖</span>
               <div>
-                <h3 className="font-semibold text-foreground mb-1">Customizable Robots.txt Creation</h3>
-                <p className="text-muted text-sm">Generate a fully customizable robots.txt file.</p>
-              </div>
-            </div>
-            <div className="flex items-start">
-              <span className="text-2xl mr-3">🌍</span>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1">Image Asset Creation</h3>
-                <p className="text-muted text-sm">Automatically create all the necessary image assets for your website.</p>
+                <h3 className="font-semibold text-foreground mb-1">Robots.txt Generation</h3>
+                <p className="text-muted text-sm">Generate robots.txt files with allowed/disallowed paths and sitemap references.</p>
               </div>
             </div>
           </div>
           <div className="space-y-4">
             <div className="flex items-start">
-              <span className="text-2xl mr-3">📦</span>
+              <span className="text-2xl mr-3">✅</span>
               <div>
-                <h3 className="font-semibold text-foreground mb-1">SEO-Optimized Metadata Generation</h3>
-                <p className="text-muted text-sm">Generate metadata to boost your website's SEO.</p>
+                <h3 className="font-semibold text-foreground mb-1">Sitemap Validation</h3>
+                <p className="text-muted text-sm">Validate local or remote sitemaps for correct XML structure, URLs, and priority values.</p>
               </div>
             </div>
             <div className="flex items-start">
-              <span className="text-2xl mr-3">⚙️</span>
+              <span className="text-2xl mr-3">🛡</span>
               <div>
-                <h3 className="font-semibold text-foreground mb-1">Search Engine Integration</h3>
-                <p className="text-muted text-sm">Works with all major search engines for seamless optimization.</p>
+                <h3 className="font-semibold text-foreground mb-1">Robots.txt Validation</h3>
+                <p className="text-muted text-sm">Validate local or remote robots.txt files for required directives like User-agent and Sitemap.</p>
               </div>
             </div>
             <div className="flex items-start">
-              <span className="text-2xl mr-3">🎨</span>
+              <span className="text-2xl mr-3">⌨️</span>
               <div>
-                <h3 className="font-semibold text-foreground mb-1">SEO Resource Validation</h3>
-                <p className="text-muted text-sm">Validate key SEO elements like sitemaps, robots.txt, metadata, and other assets.</p>
+                <h3 className="font-semibold text-foreground mb-1">Interactive & Non-Interactive</h3>
+                <p className="text-muted text-sm">Use interactive prompts or pass flags directly for CI/CD automation.</p>
               </div>
             </div>
           </div>
