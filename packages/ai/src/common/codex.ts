@@ -1,34 +1,22 @@
 import { spawn } from 'child_process';
+import { type CodexEvent, processCodexEvent, resetLogState } from './logs.js';
 import type { CodeIssue } from './types.js';
-import { processCodexEvent, resetLogState, type CodexEvent } from './logs.js';
 
 export interface CodexOptions {
   verbose?: boolean;
 }
 
-export const analyzeWithCodex = async (
-  repoPath: string,
-  prompt: string,
-  options: CodexOptions
-): Promise<CodeIssue[]> => {
+export const analyzeWithCodex = async (repoPath: string, prompt: string, options: CodexOptions): Promise<CodeIssue[]> => {
   const response = await runCodexExec(repoPath, prompt, options);
   return parseCodexResponse(response);
 };
 
-export const analyzeWithCodexRaw = async (
-  repoPath: string,
-  prompt: string,
-  options: CodexOptions
-): Promise<any> => {
+export const analyzeWithCodexRaw = async (repoPath: string, prompt: string, options: CodexOptions): Promise<any> => {
   const response = await runCodexExec(repoPath, prompt, options);
   return parseCodexResponseRaw(response);
 };
 
-const runCodexExec = (
-  repoPath: string,
-  prompt: string,
-  options: CodexOptions
-): Promise<string> =>
+const runCodexExec = (repoPath: string, prompt: string, options: CodexOptions): Promise<string> =>
   new Promise((resolve, reject) => {
     const args = ['@openai/codex', 'exec', '--json', '--full-auto', prompt];
 
@@ -45,31 +33,34 @@ const runCodexExec = (
 
     resetLogState();
 
-    child.stdout.on('data', (data) => {
+    child.stdout.on('data', data => {
       const chunk = data.toString();
       stdout += chunk;
 
-      chunk.split('\n').filter(Boolean).forEach((line: string) => {
-        try {
-          const event: CodexEvent = JSON.parse(line);
-          if (options.verbose) {
-            console.log(JSON.stringify(event, null, 2));
-          } else {
-            processCodexEvent(event);
+      chunk
+        .split('\n')
+        .filter(Boolean)
+        .forEach((line: string) => {
+          try {
+            const event: CodexEvent = JSON.parse(line);
+            if (options.verbose) {
+              console.log(JSON.stringify(event, null, 2));
+            } else {
+              processCodexEvent(event);
+            }
+          } catch {
+            // Not JSON
           }
-        } catch {
-          // Not JSON
-        }
-      });
+        });
     });
 
-    child.stderr.on('data', (data) => {
+    child.stderr.on('data', data => {
       const chunk = data.toString();
       stderr += chunk;
       if (options.verbose) process.stderr.write(chunk);
     });
 
-    child.on('close', (code) => {
+    child.on('close', code => {
       console.log(`\n[Codex] Completed in ${((Date.now() - startTime) / 1000).toFixed(1)}s`);
 
       if (code !== 0) {
@@ -79,7 +70,7 @@ const runCodexExec = (
       resolve(stdout);
     });
 
-    child.on('error', (err) => {
+    child.on('error', err => {
       if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
         reject(new Error('npx not found. Install Node.js/npm (Node 18+) to run nayan-ai.'));
         return;
@@ -101,7 +92,7 @@ const mapIssue = (item: any): CodeIssue & Record<string, any> => ({
   title: item.title,
   description: item.description,
   fixedIn: item.fixedIn,
-  cve: item.cve,
+  cve: item.cve
 });
 
 const extractItems = (json: any): any[] => {
@@ -120,19 +111,21 @@ const parseCodexResponse = (response: string): CodeIssue[] => {
       const event = JSON.parse(line);
       if (event.type === 'item.completed' && event.item?.type === 'agent_message' && event.item.text) {
         const text = event.item.text;
-        
+
         // Try to parse the text as JSON directly
         try {
           const parsed = JSON.parse(text);
-          
+
           // Check if this is a fix response (has fixes or updatedManifest)
           if (parsed.fixes || parsed.updatedManifest) {
-            return [{ 
-              ...mapIssue({ message: 'Fix response' }), 
-              _rawFixData: parsed 
-            } as any];
+            return [
+              {
+                ...mapIssue({ message: 'Fix response' }),
+                _rawFixData: parsed
+              } as any
+            ];
           }
-          
+
           const items = extractItems(parsed);
           if (items.length > 0) {
             return items.filter((item: any) => item.message || item.package || item.title).map(mapIssue);
@@ -193,10 +186,12 @@ const parseCodexResponse = (response: string): CodeIssue[] => {
     try {
       const parsed = JSON.parse(fixMatch[0]);
       if (parsed.fixes || parsed.updatedManifest) {
-        return [{ 
-          ...mapIssue({ message: 'Fix response' }), 
-          _rawFixData: parsed 
-        } as any];
+        return [
+          {
+            ...mapIssue({ message: 'Fix response' }),
+            _rawFixData: parsed
+          } as any
+        ];
       }
     } catch {
       // ignore

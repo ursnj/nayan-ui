@@ -1,18 +1,15 @@
-import type { Vulnerability, ProjectType } from '../common/types.js';
+import type { ProjectType, Vulnerability } from '../common/types.js';
 
-export const getScanPrompt = (
-  projectType: string, 
-  manifestContent: string,
-  nativeVulns: Vulnerability[] = []
-): string => {
-  const nativeVulnSection = nativeVulns.length > 0 
-    ? `
+export const getScanPrompt = (projectType: string, manifestContent: string, nativeVulns: Vulnerability[] = []): string => {
+  const nativeVulnSection =
+    nativeVulns.length > 0
+      ? `
 CONFIRMED VULNERABILITIES (MUST INCLUDE ALL):
 ${nativeVulns.map(v => `- ${v.package}@${v.version}: ${v.title}${v.cve ? ` [${v.cve}]` : ''}${v.fixedIn ? ` (fix: ${v.fixedIn})` : ''} [SEVERITY: ${v.severity}]`).join('\n')}
 
 You MUST include ALL the above in your response. Then find additional CVEs.
 `
-    : '';
+      : '';
 
   return `
 You are a security vulnerability scanner. Analyze EVERY package in the manifest and check for known CVEs.
@@ -80,11 +77,7 @@ IMPORTANT:
 `;
 };
 
-export const getFixPrompt = (
-  projectType: ProjectType,
-  manifestContent: string,
-  vulnerabilities: Vulnerability[]
-): string => {
+export const getFixPrompt = (projectType: ProjectType, manifestContent: string, vulnerabilities: Vulnerability[]): string => {
   const vulnList = vulnerabilities
     .map(v => `- ${v.package}@${v.version}: ${v.title}${v.fixedIn ? ` (fix: ${v.fixedIn})` : ''}${v.cve ? ` [${v.cve}]` : ''}`)
     .join('\n');
@@ -147,12 +140,7 @@ IMPORTANT:
 `;
 };
 
-export const getCodeFixPrompt = (
-  projectType: ProjectType,
-  filePath: string,
-  fileContent: string,
-  vulnerability: Vulnerability
-): string => `
+export const getCodeFixPrompt = (projectType: ProjectType, filePath: string, fileContent: string, vulnerability: Vulnerability): string => `
 You are a security expert fixing a vulnerability in code.
 
 File: ${filePath}

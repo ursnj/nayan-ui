@@ -11,7 +11,7 @@ export {
   postReview,
   postComment,
   type GitHubConfig,
-  type ClonedRepo,
+  type ClonedRepo
 } from './common/github.js';
 export { analyzeWithCodex } from './common/codex.js';
 export { analyzeWithClaude } from './common/claude.js';

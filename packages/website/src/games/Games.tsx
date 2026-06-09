@@ -1,11 +1,11 @@
 'use client';
 
-import Link from 'next/link';
 import { NLink } from '@nayan-ui/react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Sidebar from '@/helpers/Sidebar';
-import { getMenuItem } from '@/services/Utils';
 import { GAMES_LIST } from '@/services/GamesData';
+import { getMenuItem } from '@/services/Utils';
 
 const categoryColors: Record<string, string> = {
   Puzzle: 'bg-blue-500/15 text-blue-600 dark:text-blue-300 border-blue-500/25',

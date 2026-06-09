@@ -1,9 +1,9 @@
 'use client';
 
+import { Award, Check, Lightbulb } from 'lucide-react';
 import Link from 'next/link';
 import Sidebar from '@/helpers/Sidebar';
-import { gamesData, type GameData } from '@/services/GamesData';
-import { Check, Lightbulb, Award } from 'lucide-react';
+import { type GameData, gamesData } from '@/services/GamesData';
 
 const categoryColors: Record<string, string> = {
   Puzzle: 'bg-blue-500/15 text-blue-600 dark:text-blue-300 border-blue-500/25',
@@ -90,7 +90,14 @@ const GameDetail = ({ slug }: Props) => {
               <li key={index} className="flex gap-3">
                 <span
                   className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${
-                    ['bg-blue-500 text-white', 'bg-purple-500 text-white', 'bg-pink-500 text-white', 'bg-amber-500 text-white', 'bg-emerald-500 text-white', 'bg-red-500 text-white'][index % 6]
+                    [
+                      'bg-blue-500 text-white',
+                      'bg-purple-500 text-white',
+                      'bg-pink-500 text-white',
+                      'bg-amber-500 text-white',
+                      'bg-emerald-500 text-white',
+                      'bg-red-500 text-white'
+                    ][index % 6]
                   }`}>
                   {index + 1}
                 </span>

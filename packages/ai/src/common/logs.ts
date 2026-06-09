@@ -22,7 +22,7 @@ interface LogState {
 
 let state: LogState = {
   seenFiles: new Set(),
-  spinner: null,
+  spinner: null
 };
 
 export const resetLogState = (): void => {
@@ -71,11 +71,7 @@ const wrapText = (text: string, maxWidth: number): string[] => {
 const extractFilePath = (cmd: string): string | null => {
   if (cmd.includes('git ')) return null;
 
-  const patterns = [
-    /sed\s+-n\s+'[^']+'\s+([^\s|]+\.[a-z]{1,4})/i,
-    /nl\s+-ba\s+([^\s|]+\.[a-z]{1,4})/i,
-    /cat\s+([^\s|]+\.[a-z]{1,4})/i,
-  ];
+  const patterns = [/sed\s+-n\s+'[^']+'\s+([^\s|]+\.[a-z]{1,4})/i, /nl\s+-ba\s+([^\s|]+\.[a-z]{1,4})/i, /cat\s+([^\s|]+\.[a-z]{1,4})/i];
 
   for (const pattern of patterns) {
     const match = cmd.match(pattern);

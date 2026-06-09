@@ -1,15 +1,15 @@
 import chalk from 'chalk';
-import ora from 'ora';
 import { execSync } from 'child_process';
 import * as fs from 'fs';
+import ora from 'ora';
 import * as path from 'path';
-import type { ScanOptions, DetectedProject, ProjectType, Vulnerability, ProjectScanResult } from '../common/types.js';
-import { cloneRepoForScan, parseRepoReference } from '../common/github.js';
-import { analyzeWithCodex } from '../common/codex.js';
 import { analyzeWithClaude } from '../common/claude.js';
-import { getScanPrompt } from './prompt.js';
+import { analyzeWithCodex } from '../common/codex.js';
+import { cloneRepoForScan, parseRepoReference } from '../common/github.js';
+import type { DetectedProject, ProjectScanResult, ProjectType, ScanOptions, Vulnerability } from '../common/types.js';
 import { VALID_LLM_PROVIDERS, checkLLMAvailability } from '../common/utils.js';
-import { fixVulnerabilities, runFixWorkflow, type FixResult } from './fixer.js';
+import { type FixResult, fixVulnerabilities, runFixWorkflow } from './fixer.js';
+import { getScanPrompt } from './prompt.js';
 
 const PROJECT_MARKERS: Record<ProjectType, { manifest: string; lockFiles: string[] }> = {
   npm: { manifest: 'package.json', lockFiles: ['package-lock.json', 'yarn.lock', 'pnpm-lock.yaml', 'bun.lockb'] },
@@ -20,7 +20,7 @@ const PROJECT_MARKERS: Record<ProjectType, { manifest: string; lockFiles: string
   php: { manifest: 'composer.json', lockFiles: ['composer.lock'] },
   java: { manifest: 'pom.xml', lockFiles: [] },
   dotnet: { manifest: '*.csproj', lockFiles: ['packages.lock.json'] },
-  scala: { manifest: 'build.sbt', lockFiles: [] },
+  scala: { manifest: 'build.sbt', lockFiles: [] }
 };
 
 export const scanCommand = async (repoUrl: string, options: ScanOptions): Promise<void> => {
@@ -49,9 +49,9 @@ export const scanCommand = async (repoUrl: string, options: ScanOptions): Promis
     spinner.succeed('Repository cloned');
 
     const targetPath = repo.path;
-    
+
     let projects: DetectedProject[];
-    
+
     try {
       if (options.paths) {
         // User specified paths to scan for projects
@@ -91,7 +91,7 @@ export const scanCommand = async (repoUrl: string, options: ScanOptions): Promis
           // Native scanner is the ONLY source of truth for CVE detection
           // AI is only used for generating fixes, not finding vulnerabilities
           const nativeResult = await scanProjectNative(project);
-          
+
           // Handle scan result - could be vulnerabilities or an error message
           if ('error' in nativeResult) {
             spinner.warn(`Native scan incomplete for ${project.type} (${relativePath})`);
@@ -102,18 +102,18 @@ export const scanCommand = async (repoUrl: string, options: ScanOptions): Promis
             results.push({
               projectPath: project.path,
               projectType: project.type,
-              vulnerabilities: [],
+              vulnerabilities: []
             });
             continue;
           }
-          
+
           const nativeVulns = nativeResult;
           spinner.succeed(`Native scan complete for ${project.type} (${relativePath}) - ${nativeVulns.length} vulnerabilities`);
 
           results.push({
             projectPath: project.path,
             projectType: project.type,
-            vulnerabilities: nativeVulns,
+            vulnerabilities: nativeVulns
           });
 
           if (nativeVulns.length === 0) {
@@ -160,10 +160,10 @@ export const scanCommand = async (repoUrl: string, options: ScanOptions): Promis
           if (fixResult) {
             fixResults.push(fixResult);
             console.log(chalk.green(`  ✔ Generated ${fixResult.fixes.length} fixes`));
-            
+
             // Show fix details in summary
             printFixSummary(fixResult);
-            
+
             if (fixResult.breakingChanges.length > 0) {
               console.log(chalk.yellow(`\n    ⚠ Potential breaking changes:`));
               fixResult.breakingChanges.forEach(c => console.log(chalk.yellow(`      - ${c}`)));
@@ -191,25 +191,25 @@ export const scanCommand = async (repoUrl: string, options: ScanOptions): Promis
     console.error(chalk.red('\nError:'), error instanceof Error ? error.message : String(error));
     process.exit(1);
   }
-}
+};
 
 function detectProjects(rootPath: string, maxDepth: number = 5): DetectedProject[] {
   const projects: DetectedProject[] = [];
   const workspaceRoots = new Set<string>(); // Track monorepo roots to avoid duplicates
-  
+
   // First, detect yarn/npm workspaces and pnpm workspaces at root
   const rootLockFile = findRootLockFile(rootPath);
-  
+
   function scan(dir: string, depth: number): void {
     if (depth > maxDepth) return;
-    
+
     try {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
-      
+
       // Check for project markers in current directory
       for (const [type, markers] of Object.entries(PROJECT_MARKERS) as [ProjectType, { manifest: string; lockFiles: string[] }][]) {
         const manifestPattern = markers.manifest;
-        
+
         let hasManifest = false;
         if (manifestPattern.includes('*')) {
           // Glob pattern (e.g., *.csproj)
@@ -218,18 +218,16 @@ function detectProjects(rootPath: string, maxDepth: number = 5): DetectedProject
         } else {
           hasManifest = entries.some(e => e.isFile() && e.name === manifestPattern);
         }
-        
+
         if (hasManifest) {
           // For npm projects, check if this is a workspace package
-          let lockFile = markers.lockFiles.find(lf => 
-            entries.some(e => e.isFile() && e.name === lf)
-          );
-          
+          let lockFile = markers.lockFiles.find(lf => entries.some(e => e.isFile() && e.name === lf));
+
           // If no local lock file but we have a root lock file (monorepo), use that
           if (!lockFile && type === 'npm' && rootLockFile) {
             lockFile = path.basename(rootLockFile);
           }
-          
+
           // Check if this is a monorepo root with workspaces
           if (type === 'npm') {
             const pkgJsonPath = path.join(dir, 'package.json');
@@ -245,16 +243,21 @@ function detectProjects(rootPath: string, maxDepth: number = 5): DetectedProject
               }
             }
           }
-          
+
           projects.push({
             path: dir,
             type,
-            lockFile: lockFile ? (path.isAbsolute(lockFile) ? lockFile : path.join(dir, lockFile)) : 
-                      (rootLockFile && type === 'npm' ? rootLockFile : undefined),
+            lockFile: lockFile
+              ? path.isAbsolute(lockFile)
+                ? lockFile
+                : path.join(dir, lockFile)
+              : rootLockFile && type === 'npm'
+                ? rootLockFile
+                : undefined
           });
         }
       }
-      
+
       // Recurse into subdirectories (skip node_modules, vendor, etc.)
       const skipDirs = ['node_modules', 'vendor', '.git', 'dist', 'build', '__pycache__', 'venv', '.venv', 'target'];
       for (const entry of entries) {
@@ -266,7 +269,7 @@ function detectProjects(rootPath: string, maxDepth: number = 5): DetectedProject
       // Permission denied or other error, skip
     }
   }
-  
+
   scan(rootPath, 0);
   return projects;
 }
@@ -285,16 +288,16 @@ function findRootLockFile(rootPath: string): string | undefined {
 
 function detectProjectType(projectPath: string): DetectedProject | null {
   if (!fs.existsSync(projectPath)) return null;
-  
+
   const stat = fs.statSync(projectPath);
   const dir = stat.isDirectory() ? projectPath : path.dirname(projectPath);
-  
+
   try {
     const entries = fs.readdirSync(dir);
-    
+
     for (const [type, markers] of Object.entries(PROJECT_MARKERS) as [ProjectType, { manifest: string; lockFiles: string[] }][]) {
       const manifestPattern = markers.manifest;
-      
+
       let hasManifest = false;
       if (manifestPattern.includes('*')) {
         const ext = manifestPattern.replace('*', '');
@@ -302,20 +305,20 @@ function detectProjectType(projectPath: string): DetectedProject | null {
       } else {
         hasManifest = entries.includes(manifestPattern);
       }
-      
+
       if (hasManifest) {
         const lockFile = markers.lockFiles.find(lf => entries.includes(lf));
         return {
           path: dir,
           type,
-          lockFile: lockFile ? path.join(dir, lockFile) : undefined,
+          lockFile: lockFile ? path.join(dir, lockFile) : undefined
         };
       }
     }
   } catch {
     // Permission denied or other error
   }
-  
+
   return null;
 }
 
@@ -323,16 +326,26 @@ type ScanResult = Vulnerability[] | { error: string; suggestion?: string };
 
 const scanProjectNative = async (project: DetectedProject): Promise<ScanResult> => {
   switch (project.type) {
-    case 'npm': return scanNpm(project.path);
-    case 'python': return scanPython(project.path);
-    case 'go': return scanGo(project.path);
-    case 'rust': return scanRust(project.path);
-    case 'ruby': return scanRuby(project.path);
-    case 'php': return scanPhp(project.path);
-    case 'java': return await scanJava(project.path);
-    case 'dotnet': return scanDotnet(project.path);
-    case 'scala': return await scanScala(project.path);
-    default: return [];
+    case 'npm':
+      return scanNpm(project.path);
+    case 'python':
+      return scanPython(project.path);
+    case 'go':
+      return scanGo(project.path);
+    case 'rust':
+      return scanRust(project.path);
+    case 'ruby':
+      return scanRuby(project.path);
+    case 'php':
+      return scanPhp(project.path);
+    case 'java':
+      return await scanJava(project.path);
+    case 'dotnet':
+      return scanDotnet(project.path);
+    case 'scala':
+      return await scanScala(project.path);
+    default:
+      return [];
   }
 };
 
@@ -346,11 +359,11 @@ const getManifestContent = (project: DetectedProject): string => {
     php: 'composer.json',
     java: 'pom.xml',
     dotnet: '*.csproj',
-    scala: 'build.sbt',
+    scala: 'build.sbt'
   };
 
   const manifestName = manifestFiles[project.type];
-  
+
   if (manifestName.includes('*')) {
     const ext = manifestName.replace('*', '');
     const files = fs.readdirSync(project.path);
@@ -373,11 +386,7 @@ const getManifestContent = (project: DetectedProject): string => {
   return '';
 };
 
-const scanProjectWithAI = async (
-  project: DetectedProject,
-  options: ScanOptions,
-  nativeVulns: Vulnerability[] = []
-): Promise<Vulnerability[]> => {
+const scanProjectWithAI = async (project: DetectedProject, options: ScanOptions, nativeVulns: Vulnerability[] = []): Promise<Vulnerability[]> => {
   const manifestContent = getManifestContent(project);
   if (!manifestContent) return [];
 
@@ -385,9 +394,8 @@ const scanProjectWithAI = async (
   const llmOptions = { verbose: options.verbose };
 
   try {
-    const issues = options.llm === 'claude'
-      ? await analyzeWithClaude(project.path, prompt, llmOptions)
-      : await analyzeWithCodex(project.path, prompt, llmOptions);
+    const issues =
+      options.llm === 'claude' ? await analyzeWithClaude(project.path, prompt, llmOptions) : await analyzeWithCodex(project.path, prompt, llmOptions);
 
     return issues
       .filter((issue: any) => issue.package || issue.filename)
@@ -398,7 +406,7 @@ const scanProjectWithAI = async (
         title: issue.title || issue.message || 'AI-detected vulnerability',
         description: issue.description || issue.suggestion,
         fixedIn: issue.fixedIn,
-        cve: issue.cve,
+        cve: issue.cve
       }));
   } catch (error) {
     console.log(chalk.gray(`    AI analysis failed: ${error instanceof Error ? error.message : String(error)}`));
@@ -406,10 +414,7 @@ const scanProjectWithAI = async (
   }
 };
 
-const mergeVulnerabilities = (
-  native: Vulnerability[],
-  ai: Vulnerability[]
-): Vulnerability[] => {
+const mergeVulnerabilities = (native: Vulnerability[], ai: Vulnerability[]): Vulnerability[] => {
   const seen = new Set(native.map(v => `${v.package}@${v.version}`));
   const unique = ai.filter(v => !seen.has(`${v.package}@${v.version}`));
   return [...native, ...unique];
@@ -437,7 +442,7 @@ function scanNpm(projectPath: string): ScanResult {
     const lockPath = path.join(projectPath, 'package-lock.json');
     const yarnLockPath = path.join(projectPath, 'yarn.lock');
     const pnpmLockPath = path.join(projectPath, 'pnpm-lock.yaml');
-    
+
     // Also check parent directories for monorepo lock files
     let rootLockPath: string | undefined;
     let rootDir: string | undefined;
@@ -445,7 +450,7 @@ function scanNpm(projectPath: string): ScanResult {
     for (let i = 0; i < 5; i++) {
       const parentDir = path.dirname(searchDir);
       if (parentDir === searchDir) break;
-      
+
       for (const lockFile of ['yarn.lock', 'package-lock.json', 'pnpm-lock.yaml']) {
         const parentLock = path.join(parentDir, lockFile);
         if (fs.existsSync(parentLock)) {
@@ -457,9 +462,9 @@ function scanNpm(projectPath: string): ScanResult {
       if (rootLockPath) break;
       searchDir = parentDir;
     }
-    
+
     const hasLocalLock = fs.existsSync(lockPath) || fs.existsSync(yarnLockPath) || fs.existsSync(pnpmLockPath);
-    
+
     if (!hasLocalLock && !rootLockPath) {
       return {
         error: 'No lock file found (package-lock.json, yarn.lock, or pnpm-lock.yaml)',
@@ -470,11 +475,15 @@ function scanNpm(projectPath: string): ScanResult {
     // Determine which audit command to use based on lock file type
     let auditCmd = 'npm audit --json 2>&1 || true';
     let auditCwd = projectPath;
-    
-    const effectiveLockPath = hasLocalLock ? 
-      (fs.existsSync(yarnLockPath) ? yarnLockPath : fs.existsSync(pnpmLockPath) ? pnpmLockPath : lockPath) :
-      rootLockPath;
-    
+
+    const effectiveLockPath = hasLocalLock
+      ? fs.existsSync(yarnLockPath)
+        ? yarnLockPath
+        : fs.existsSync(pnpmLockPath)
+          ? pnpmLockPath
+          : lockPath
+      : rootLockPath;
+
     if (effectiveLockPath?.endsWith('yarn.lock')) {
       // Use yarn npm audit for yarn workspaces (yarn v2+/berry)
       // Or yarn audit for yarn v1 - try both
@@ -491,13 +500,13 @@ function scanNpm(projectPath: string): ScanResult {
     const result = execSync(auditCmd, {
       cwd: auditCwd,
       encoding: 'utf-8',
-      maxBuffer: 10 * 1024 * 1024,
+      maxBuffer: 10 * 1024 * 1024
     });
-    
+
     // Parse result - handle both npm and yarn audit formats
     const vulnerabilities: Vulnerability[] = [];
     const seenPackages = new Set<string>();
-    
+
     // Yarn audit outputs newline-delimited JSON
     if (auditCmd.includes('yarn')) {
       const lines = result.split('\n').filter(Boolean);
@@ -508,17 +517,15 @@ function scanNpm(projectPath: string): ScanResult {
             const adv = entry.data.advisory;
             const pkg = adv.module_name;
             if (seenPackages.has(pkg)) continue;
-            
+
             // Filter: only include if this package is a dependency of the scanned project
             // Check both direct dep and if it's in the resolution path for this project
             const resolutionPath = entry.data.resolution?.path || '';
-            const isRelevant = projectDeps.size === 0 || 
-              projectDeps.has(pkg) || 
-              [...projectDeps].some(dep => resolutionPath.includes(dep));
-            
+            const isRelevant = projectDeps.size === 0 || projectDeps.has(pkg) || [...projectDeps].some(dep => resolutionPath.includes(dep));
+
             if (!isRelevant) continue;
             seenPackages.add(pkg);
-            
+
             vulnerabilities.push({
               package: pkg,
               version: entry.data.resolution?.path?.split('>').pop() || adv.vulnerable_versions || 'unknown',
@@ -526,7 +533,7 @@ function scanNpm(projectPath: string): ScanResult {
               title: adv.title || 'Vulnerability found',
               description: adv.url,
               fixedIn: adv.patched_versions?.replace(/[>=<]/g, ''),
-              cve: adv.cves?.[0] || adv.url?.match(/CVE-\d{4}-\d+/)?.[0],
+              cve: adv.cves?.[0] || adv.url?.match(/CVE-\d{4}-\d+/)?.[0]
             });
           }
         } catch {
@@ -535,7 +542,7 @@ function scanNpm(projectPath: string): ScanResult {
       }
       return vulnerabilities;
     }
-    
+
     // npm audit format
     let audit: any = {};
     try {
@@ -544,23 +551,22 @@ function scanNpm(projectPath: string): ScanResult {
       // npm audit may return non-JSON on error
       return [];
     }
-    
+
     if (audit.vulnerabilities) {
       for (const [pkg, data] of Object.entries(audit.vulnerabilities) as [string, any][]) {
         // Skip if we've already processed this package
         if (seenPackages.has(pkg)) continue;
-        
+
         // Filter: only include if this package is a dependency of the scanned project
         // or if it's a transitive dependency of one of the project's deps
-        const isRelevant = projectDeps.size === 0 || 
-          projectDeps.has(pkg) || 
-          (Array.isArray(data.via) && data.via.some((v: any) => 
-            typeof v === 'string' ? projectDeps.has(v) : projectDeps.has(v?.name)
-          ));
-        
+        const isRelevant =
+          projectDeps.size === 0 ||
+          projectDeps.has(pkg) ||
+          (Array.isArray(data.via) && data.via.some((v: any) => (typeof v === 'string' ? projectDeps.has(v) : projectDeps.has(v?.name))));
+
         if (!isRelevant) continue;
         seenPackages.add(pkg);
-        
+
         const via = data.via?.[0];
         // Extract CVE from via object - only use name if it looks like a CVE ID
         let cve: string | undefined;
@@ -574,22 +580,22 @@ function scanNpm(projectPath: string): ScanResult {
             cve = match ? match[0] : undefined;
           }
         }
-        
+
         // Get the actual installed version from nodes if available
         const installedVersion = audit.metadata?.dependencies?.[pkg]?.version || data.range || 'unknown';
-        
+
         vulnerabilities.push({
           package: pkg,
           version: installedVersion,
           severity: mapSeverity(data.severity),
-          title: typeof via === 'object' ? (via.title || 'Vulnerability found') : (via || 'Vulnerability found'),
+          title: typeof via === 'object' ? via.title || 'Vulnerability found' : via || 'Vulnerability found',
           description: typeof via === 'object' ? via.url : undefined,
           fixedIn: data.fixAvailable?.version,
-          cve: cve,
+          cve: cve
         });
       }
     }
-    
+
     return vulnerabilities;
   } catch {
     return [];
@@ -602,11 +608,11 @@ function scanPython(projectPath: string): ScanResult {
     const result = execSync('pip-audit --format json 2>/dev/null || python -m pip_audit --format json 2>/dev/null || true', {
       cwd: projectPath,
       encoding: 'utf-8',
-      maxBuffer: 10 * 1024 * 1024,
+      maxBuffer: 10 * 1024 * 1024
     });
-    
+
     if (!result.trim()) return [];
-    
+
     const audit = JSON.parse(result);
     return audit.map((v: any) => ({
       package: v.name,
@@ -615,7 +621,7 @@ function scanPython(projectPath: string): ScanResult {
       title: v.vulns?.[0]?.id || 'Vulnerability found',
       description: v.vulns?.[0]?.description,
       fixedIn: v.vulns?.[0]?.fix_versions?.[0],
-      cve: v.vulns?.[0]?.id,
+      cve: v.vulns?.[0]?.id
     }));
   } catch {
     return [];
@@ -627,14 +633,14 @@ function scanGo(projectPath: string): ScanResult {
     const result = execSync('govulncheck -json ./... 2>/dev/null || true', {
       cwd: projectPath,
       encoding: 'utf-8',
-      maxBuffer: 10 * 1024 * 1024,
+      maxBuffer: 10 * 1024 * 1024
     });
-    
+
     if (!result.trim()) return [];
-    
+
     const vulnerabilities: Vulnerability[] = [];
     const lines = result.split('\n').filter(l => l.trim());
-    
+
     for (const line of lines) {
       try {
         const entry = JSON.parse(line);
@@ -645,14 +651,14 @@ function scanGo(projectPath: string): ScanResult {
             severity: mapSeverity('high'),
             title: entry.vulnerability.id || 'Vulnerability found',
             description: entry.vulnerability.details,
-            cve: entry.vulnerability.id,
+            cve: entry.vulnerability.id
           });
         }
       } catch {
         // Skip non-JSON lines
       }
     }
-    
+
     return vulnerabilities;
   } catch {
     return [];
@@ -664,14 +670,14 @@ function scanRust(projectPath: string): ScanResult {
     const result = execSync('cargo audit --json 2>/dev/null || true', {
       cwd: projectPath,
       encoding: 'utf-8',
-      maxBuffer: 10 * 1024 * 1024,
+      maxBuffer: 10 * 1024 * 1024
     });
-    
+
     if (!result.trim()) return [];
-    
+
     const audit = JSON.parse(result);
     const vulnerabilities: Vulnerability[] = [];
-    
+
     if (audit.vulnerabilities?.list) {
       for (const v of audit.vulnerabilities.list) {
         vulnerabilities.push({
@@ -681,11 +687,11 @@ function scanRust(projectPath: string): ScanResult {
           title: v.advisory?.title || 'Vulnerability found',
           description: v.advisory?.description,
           fixedIn: v.versions?.patched?.[0],
-          cve: v.advisory?.id,
+          cve: v.advisory?.id
         });
       }
     }
-    
+
     return vulnerabilities;
   } catch {
     return [];
@@ -697,11 +703,11 @@ function scanRuby(projectPath: string): ScanResult {
     const result = execSync('bundle audit check --format json 2>/dev/null || true', {
       cwd: projectPath,
       encoding: 'utf-8',
-      maxBuffer: 10 * 1024 * 1024,
+      maxBuffer: 10 * 1024 * 1024
     });
-    
+
     if (!result.trim()) return [];
-    
+
     const audit = JSON.parse(result);
     return (audit.results || []).map((v: any) => ({
       package: v.gem?.name || 'unknown',
@@ -710,7 +716,7 @@ function scanRuby(projectPath: string): ScanResult {
       title: v.advisory?.title || 'Vulnerability found',
       description: v.advisory?.description,
       fixedIn: v.advisory?.patched_versions?.[0],
-      cve: v.advisory?.cve,
+      cve: v.advisory?.cve
     }));
   } catch {
     return [];
@@ -722,14 +728,14 @@ function scanPhp(projectPath: string): ScanResult {
     const result = execSync('composer audit --format json 2>/dev/null || true', {
       cwd: projectPath,
       encoding: 'utf-8',
-      maxBuffer: 10 * 1024 * 1024,
+      maxBuffer: 10 * 1024 * 1024
     });
-    
+
     if (!result.trim()) return [];
-    
+
     const audit = JSON.parse(result);
     const vulnerabilities: Vulnerability[] = [];
-    
+
     if (audit.advisories) {
       for (const [pkg, advisories] of Object.entries(audit.advisories) as [string, any[]][]) {
         for (const adv of advisories) {
@@ -739,12 +745,12 @@ function scanPhp(projectPath: string): ScanResult {
             severity: mapSeverity('high'),
             title: adv.title || 'Vulnerability found',
             description: adv.link,
-            cve: adv.cve,
+            cve: adv.cve
           });
         }
       }
     }
-    
+
     return vulnerabilities;
   } catch {
     return [];
@@ -764,12 +770,12 @@ async function scanJava(projectPath: string): Promise<ScanResult> {
 
     // First check if there's an existing dependency-check report
     const reportPath = path.join(projectPath, 'target', 'dependency-check-report.json');
-    
+
     // Check if report already exists (from previous build)
     if (fs.existsSync(reportPath)) {
       const report = JSON.parse(fs.readFileSync(reportPath, 'utf-8'));
       const vulnerabilities: Vulnerability[] = [];
-      
+
       for (const dep of report.dependencies || []) {
         for (const vuln of dep.vulnerabilities || []) {
           vulnerabilities.push({
@@ -778,11 +784,11 @@ async function scanJava(projectPath: string): Promise<ScanResult> {
             severity: mapSeverity(vuln.severity?.toLowerCase() || 'medium'),
             title: vuln.name || 'Vulnerability found',
             description: vuln.description,
-            cve: vuln.name,
+            cve: vuln.name
           });
         }
       }
-      
+
       if (vulnerabilities.length > 0) {
         return vulnerabilities;
       }
@@ -790,7 +796,7 @@ async function scanJava(projectPath: string): Promise<ScanResult> {
 
     // Run OWASP dependency-check
     console.log(chalk.gray('    Running OWASP dependency-check (this may take a few minutes on first run)...'));
-    
+
     let mvnError: string | undefined;
     try {
       execSync('mvn org.owasp:dependency-check-maven:check -Dformat=JSON -DfailOnError=false -DautoUpdate=true', {
@@ -798,7 +804,7 @@ async function scanJava(projectPath: string): Promise<ScanResult> {
         encoding: 'utf-8',
         maxBuffer: 50 * 1024 * 1024,
         timeout: 900000, // 15 minutes for first-time NVD download
-        stdio: ['pipe', 'pipe', 'pipe'],
+        stdio: ['pipe', 'pipe', 'pipe']
       });
     } catch (e: any) {
       mvnError = e.stderr || e.stdout || e.message || String(e);
@@ -811,11 +817,11 @@ async function scanJava(projectPath: string): Promise<ScanResult> {
       }
       // Continue anyway - report might still have been generated
     }
-    
+
     if (fs.existsSync(reportPath)) {
       const report = JSON.parse(fs.readFileSync(reportPath, 'utf-8'));
       const vulnerabilities: Vulnerability[] = [];
-      
+
       for (const dep of report.dependencies || []) {
         for (const vuln of dep.vulnerabilities || []) {
           vulnerabilities.push({
@@ -824,22 +830,22 @@ async function scanJava(projectPath: string): Promise<ScanResult> {
             severity: mapSeverity(vuln.severity?.toLowerCase() || 'medium'),
             title: vuln.name || 'Vulnerability found',
             description: vuln.description,
-            cve: vuln.name,
+            cve: vuln.name
           });
         }
       }
-      
+
       return vulnerabilities;
     }
-    
+
     // Maven failed - try parsing pom.xml directly and check OSV database
     console.log(chalk.gray('    Maven failed, trying direct pom.xml analysis...'));
-    
+
     const pomVulns = await scanPomXmlWithOSV(pomPath);
     if (pomVulns.length > 0) {
       return pomVulns;
     }
-    
+
     // No vulnerabilities found via OSV
     if (mvnError && mvnError.includes('Could not resolve dependencies')) {
       return {
@@ -847,7 +853,7 @@ async function scanJava(projectPath: string): Promise<ScanResult> {
         suggestion: 'Configure Maven settings.xml with your internal repository credentials, or run OWASP dependency-check locally'
       };
     }
-    
+
     return [];
   } catch (e) {
     return {
@@ -862,57 +868,59 @@ async function scanPomXmlWithOSV(pomPath: string): Promise<Vulnerability[]> {
   try {
     const pomContent = fs.readFileSync(pomPath, 'utf-8');
     const vulnerabilities: Vulnerability[] = [];
-    
+
     // Extract dependencies from pom.xml using regex (simple parsing)
     const dependencyRegex = /<dependency>\s*<groupId>([^<]+)<\/groupId>\s*<artifactId>([^<]+)<\/artifactId>\s*(?:<version>([^<]+)<\/version>)?/g;
     const dependencies: { groupId: string; artifactId: string; version: string }[] = [];
-    
+
     let match;
     while ((match = dependencyRegex.exec(pomContent)) !== null) {
       dependencies.push({
         groupId: match[1].trim(),
         artifactId: match[2].trim(),
-        version: match[3]?.trim() || 'unknown',
+        version: match[3]?.trim() || 'unknown'
       });
     }
-    
+
     if (dependencies.length === 0) {
       return [];
     }
-    
+
     console.log(chalk.gray(`    Found ${dependencies.length} dependencies in pom.xml, checking OSV database...`));
-    
+
     // Query OSV API for each dependency (batch query)
     // OSV API: https://api.osv.dev/v1/querybatch
-    const queries = dependencies.map(dep => ({
-      package: {
-        name: `${dep.groupId}:${dep.artifactId}`,
-        ecosystem: 'Maven',
-      },
-      version: dep.version !== 'unknown' ? dep.version : undefined,
-    })).filter(q => q.version);
-    
+    const queries = dependencies
+      .map(dep => ({
+        package: {
+          name: `${dep.groupId}:${dep.artifactId}`,
+          ecosystem: 'Maven'
+        },
+        version: dep.version !== 'unknown' ? dep.version : undefined
+      }))
+      .filter(q => q.version);
+
     if (queries.length === 0) {
       return [];
     }
-    
+
     try {
       const response = await fetch('https://api.osv.dev/v1/querybatch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ queries }),
+        body: JSON.stringify({ queries })
       });
-      
+
       if (!response.ok) {
         return [];
       }
-      
-      const data = await response.json() as { results: Array<{ vulns?: Array<any> }> };
-      
+
+      const data = (await response.json()) as { results: Array<{ vulns?: Array<any> }> };
+
       for (let i = 0; i < data.results.length; i++) {
         const result = data.results[i];
         const dep = dependencies[i];
-        
+
         if (result.vulns && result.vulns.length > 0) {
           for (const vuln of result.vulns) {
             vulnerabilities.push({
@@ -922,7 +930,7 @@ async function scanPomXmlWithOSV(pomPath: string): Promise<Vulnerability[]> {
               title: vuln.summary || vuln.id || 'Vulnerability found',
               description: vuln.details?.slice(0, 200),
               cve: vuln.aliases?.find((a: string) => a.startsWith('CVE-')) || vuln.id,
-              fixedIn: vuln.affected?.[0]?.ranges?.[0]?.events?.find((e: any) => e.fixed)?.fixed,
+              fixedIn: vuln.affected?.[0]?.ranges?.[0]?.events?.find((e: any) => e.fixed)?.fixed
             });
           }
         }
@@ -930,7 +938,7 @@ async function scanPomXmlWithOSV(pomPath: string): Promise<Vulnerability[]> {
     } catch {
       // OSV API failed, return empty
     }
-    
+
     return vulnerabilities;
   } catch {
     return [];
@@ -958,14 +966,14 @@ function scanDotnet(projectPath: string): ScanResult {
     const result = execSync('dotnet list package --vulnerable --format json 2>/dev/null || true', {
       cwd: projectPath,
       encoding: 'utf-8',
-      maxBuffer: 10 * 1024 * 1024,
+      maxBuffer: 10 * 1024 * 1024
     });
-    
+
     if (!result.trim()) return [];
-    
+
     const audit = JSON.parse(result);
     const vulnerabilities: Vulnerability[] = [];
-    
+
     for (const project of audit.projects || []) {
       for (const framework of project.frameworks || []) {
         for (const pkg of framework.topLevelPackages || []) {
@@ -975,13 +983,13 @@ function scanDotnet(projectPath: string): ScanResult {
               version: pkg.resolvedVersion || 'unknown',
               severity: mapSeverity(vuln.severity?.toLowerCase() || 'medium'),
               title: vuln.advisoryurl || 'Vulnerability found',
-              description: vuln.advisoryurl,
+              description: vuln.advisoryurl
             });
           }
         }
       }
     }
-    
+
     return vulnerabilities;
   } catch {
     return [];
@@ -1001,53 +1009,53 @@ async function scanScala(projectPath: string): Promise<ScanResult> {
 
     const buildSbtContent = fs.readFileSync(buildSbtPath, 'utf-8');
     const vulnerabilities: Vulnerability[] = [];
-    
+
     // Extract dependencies from build.sbt
     // Common patterns: "org" %% "artifact" % "version" or "org" % "artifact" % "version"
     const dependencyRegex = /"([^"]+)"\s*%%?\s*"([^"]+)"\s*%\s*"([^"]+)"/g;
     const dependencies: { groupId: string; artifactId: string; version: string }[] = [];
-    
+
     let match;
     while ((match = dependencyRegex.exec(buildSbtContent)) !== null) {
       dependencies.push({
         groupId: match[1].trim(),
         artifactId: match[2].trim(),
-        version: match[3].trim(),
+        version: match[3].trim()
       });
     }
-    
+
     if (dependencies.length === 0) {
       return [];
     }
-    
+
     console.log(chalk.gray(`    Found ${dependencies.length} dependencies in build.sbt, checking OSV database...`));
-    
+
     // Query OSV API for each dependency (batch query)
     const queries = dependencies.map(dep => ({
       package: {
         name: `${dep.groupId}:${dep.artifactId}`,
-        ecosystem: 'Maven', // Scala uses Maven ecosystem for OSV
+        ecosystem: 'Maven' // Scala uses Maven ecosystem for OSV
       },
-      version: dep.version,
+      version: dep.version
     }));
-    
+
     try {
       const response = await fetch('https://api.osv.dev/v1/querybatch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ queries }),
+        body: JSON.stringify({ queries })
       });
-      
+
       if (!response.ok) {
         return [];
       }
-      
-      const data = await response.json() as { results: Array<{ vulns?: Array<any> }> };
-      
+
+      const data = (await response.json()) as { results: Array<{ vulns?: Array<any> }> };
+
       for (let i = 0; i < data.results.length; i++) {
         const result = data.results[i];
         const dep = dependencies[i];
-        
+
         if (result.vulns && result.vulns.length > 0) {
           for (const vuln of result.vulns) {
             vulnerabilities.push({
@@ -1057,7 +1065,7 @@ async function scanScala(projectPath: string): Promise<ScanResult> {
               title: vuln.summary || vuln.id || 'Vulnerability found',
               description: vuln.details?.slice(0, 200),
               cve: vuln.aliases?.find((a: string) => a.startsWith('CVE-')) || vuln.id,
-              fixedIn: vuln.affected?.[0]?.ranges?.[0]?.events?.find((e: any) => e.fixed)?.fixed,
+              fixedIn: vuln.affected?.[0]?.ranges?.[0]?.events?.find((e: any) => e.fixed)?.fixed
             });
           }
         }
@@ -1065,7 +1073,7 @@ async function scanScala(projectPath: string): Promise<ScanResult> {
     } catch {
       // OSV API failed
     }
-    
+
     return vulnerabilities;
   } catch (e) {
     return {
@@ -1103,7 +1111,7 @@ const printScanResults = (results: ProjectScanResult[], rootPath: string): void 
       critical: result.vulnerabilities.filter(v => v.severity === 'critical'),
       high: result.vulnerabilities.filter(v => v.severity === 'high'),
       medium: result.vulnerabilities.filter(v => v.severity === 'medium'),
-      low: result.vulnerabilities.filter(v => v.severity === 'low'),
+      low: result.vulnerabilities.filter(v => v.severity === 'low')
     };
 
     if (bySeverity.critical.length > 0) {
@@ -1126,7 +1134,6 @@ const printScanResults = (results: ProjectScanResult[], rootPath: string): void 
       bySeverity.low.forEach(printVulnerability);
     }
   }
-
 };
 
 const printVulnerability = (vuln: Vulnerability): void => {
@@ -1146,7 +1153,7 @@ const printVulnerability = (vuln: Vulnerability): void => {
 
 const printFixSummary = (fixResult: FixResult): void => {
   console.log(chalk.bold(`\n    📝 ${fixResult.summary}`));
-  
+
   if (fixResult.fixes.length === 0) {
     console.log(chalk.gray('      No specific fixes generated'));
     return;
@@ -1155,12 +1162,8 @@ const printFixSummary = (fixResult: FixResult): void => {
   console.log();
   for (const fix of fixResult.fixes) {
     const icon = fix.type === 'update' ? '⬆️' : fix.type === 'remove' ? '🗑️' : '➕';
-    const change = fix.type === 'update' 
-      ? `${fix.from} → ${fix.to}`
-      : fix.type === 'add' 
-        ? fix.version 
-        : 'removed';
-    
+    const change = fix.type === 'update' ? `${fix.from} → ${fix.to}` : fix.type === 'add' ? fix.version : 'removed';
+
     console.log(`      ${icon} ${chalk.bold(fix.package)}: ${chalk.cyan(change)}`);
     console.log(chalk.gray(`         ${fix.reason}`));
   }

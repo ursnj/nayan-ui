@@ -23,7 +23,10 @@ export default function HomeScreen() {
   const colCount = getColumnCount();
 
   const renderGameCard = ({ item: game }: { item: GameItem }) => (
-    <TouchableOpacity className="flex-1 rounded-lg m-1 overflow-hidden bg-surface border border-border" onPress={() => router.push(`/${game.id}`)} activeOpacity={0.8}>
+    <TouchableOpacity
+      className="flex-1 rounded-lg m-1 overflow-hidden bg-surface border border-border"
+      onPress={() => router.push(`/${game.id}`)}
+      activeOpacity={0.8}>
       <View style={styles.imageContainer}>
         <Image source={{ uri: `${BASE_URL}/games/${game.id}.png` }} style={styles.image} resizeMode="cover" />
       </View>
