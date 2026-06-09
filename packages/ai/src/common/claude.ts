@@ -1,34 +1,22 @@
+import chalk from 'chalk';
 import { spawn } from 'child_process';
 import type { CodeIssue } from './types.js';
-import chalk from 'chalk';
 
 export interface ClaudeOptions {
   verbose?: boolean;
 }
 
-export const analyzeWithClaude = async (
-  repoPath: string,
-  prompt: string,
-  options: ClaudeOptions
-): Promise<CodeIssue[]> => {
+export const analyzeWithClaude = async (repoPath: string, prompt: string, options: ClaudeOptions): Promise<CodeIssue[]> => {
   const response = await runClaudeExec(repoPath, prompt, options);
   return parseClaudeResponse(response);
 };
 
-export const analyzeWithClaudeRaw = async (
-  repoPath: string,
-  prompt: string,
-  options: ClaudeOptions
-): Promise<any> => {
+export const analyzeWithClaudeRaw = async (repoPath: string, prompt: string, options: ClaudeOptions): Promise<any> => {
   const response = await runClaudeExec(repoPath, prompt, options);
   return parseClaudeResponseRaw(response);
 };
 
-const runClaudeExec = (
-  repoPath: string,
-  prompt: string,
-  options: ClaudeOptions
-): Promise<string> =>
+const runClaudeExec = (repoPath: string, prompt: string, options: ClaudeOptions): Promise<string> =>
   new Promise((resolve, reject) => {
     const args = ['-p', '--output-format', 'json', prompt];
 
@@ -43,7 +31,7 @@ const runClaudeExec = (
     let stdout = '';
     let stderr = '';
 
-    child.stdout.on('data', (data) => {
+    child.stdout.on('data', data => {
       const chunk = data.toString();
       stdout += chunk;
       if (options.verbose) {
@@ -53,13 +41,13 @@ const runClaudeExec = (
       }
     });
 
-    child.stderr.on('data', (data) => {
+    child.stderr.on('data', data => {
       const chunk = data.toString();
       stderr += chunk;
       if (options.verbose) process.stderr.write(chunk);
     });
 
-    child.on('close', (code) => {
+    child.on('close', code => {
       if (!options.verbose) console.log();
       console.log(`\n[Claude] Completed in ${((Date.now() - startTime) / 1000).toFixed(1)}s`);
 
@@ -70,7 +58,7 @@ const runClaudeExec = (
       resolve(stdout);
     });
 
-    child.on('error', (err) => {
+    child.on('error', err => {
       if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
         reject(new Error('claude CLI not found. Install Claude Code CLI first: https://code.claude.com'));
         return;
@@ -92,7 +80,7 @@ const mapIssue = (item: any): CodeIssue & Record<string, any> => ({
   title: item.title,
   description: item.description,
   fixedIn: item.fixedIn,
-  cve: item.cve,
+  cve: item.cve
 });
 
 const extractItems = (json: any): any[] => {
@@ -104,7 +92,7 @@ const extractItems = (json: any): any[] => {
 const extractFixData = (text: string): any | null => {
   const fixMatch = text.match(/\{[\s\S]*"(?:fixes|updatedManifest)"[\s\S]*\}/);
   if (!fixMatch) return null;
-  
+
   try {
     const parsed = JSON.parse(fixMatch[0]);
     if (parsed.fixes || parsed.updatedManifest) return parsed;
@@ -118,15 +106,17 @@ const extractIssuesFromText = (text: string): CodeIssue[] | null => {
   // First check for fix response
   const fixData = extractFixData(text);
   if (fixData) {
-    return [{ 
-      ...mapIssue({ message: 'Fix response' }), 
-      _rawFixData: fixData 
-    } as any];
+    return [
+      {
+        ...mapIssue({ message: 'Fix response' }),
+        _rawFixData: fixData
+      } as any
+    ];
   }
 
   const jsonMatch = text.match(/\{\s*"(?:issues|vulnerabilities)"\s*:\s*\[[\s\S]*?\]\s*\}/);
   if (!jsonMatch) return null;
-  
+
   try {
     const parsed = JSON.parse(jsonMatch[0]);
     const items = extractItems(parsed);
@@ -143,16 +133,18 @@ const parseClaudeResponse = (response: string): CodeIssue[] => {
   try {
     const parsed = JSON.parse(response);
     const text = parsed.result || parsed.text || response;
-    
+
     // Check for fix response first
     const fixData = extractFixData(typeof text === 'string' ? text : JSON.stringify(text));
     if (fixData) {
-      return [{ 
-        ...mapIssue({ message: 'Fix response' }), 
-        _rawFixData: fixData 
-      } as any];
+      return [
+        {
+          ...mapIssue({ message: 'Fix response' }),
+          _rawFixData: fixData
+        } as any
+      ];
     }
-    
+
     const issues = extractIssuesFromText(text);
     if (issues) return issues;
   } catch {
@@ -174,7 +166,7 @@ const parseClaudeResponseRaw = (response: string): any => {
   try {
     const parsed = JSON.parse(response);
     const text = parsed.result || parsed.text || response;
-    
+
     // Try to parse the text as JSON
     if (typeof text === 'string') {
       try {
@@ -187,7 +179,7 @@ const parseClaudeResponseRaw = (response: string): any => {
         }
       }
     }
-    
+
     // If parsed already has the structure we need
     if (parsed.fixes || parsed.updatedManifest) {
       return parsed;

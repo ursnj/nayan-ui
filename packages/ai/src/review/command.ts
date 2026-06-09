@@ -1,21 +1,21 @@
 import chalk from 'chalk';
 import ora from 'ora';
+import { analyzeWithClaude } from '../common/claude.js';
+import { analyzeWithCodex } from '../common/codex.js';
 import {
-  parseFiles,
-  parsePRReference,
+  type GitHubConfig,
   cloneRepo,
   getPullRequest,
   getPullRequestFiles,
-  postReview,
+  parseFiles,
+  parsePRReference,
   postComment,
-  type GitHubConfig,
+  postReview
 } from '../common/github.js';
-import { issuesToReviewComments, generateSummary } from './analyzer.js';
-import { analyzeWithCodex } from '../common/codex.js';
-import { analyzeWithClaude } from '../common/claude.js';
-import { getReviewPrompt } from './prompt.js';
-import type { ReviewOptions, CodeIssue } from '../common/types.js';
+import type { CodeIssue, ReviewOptions } from '../common/types.js';
 import { VALID_LLM_PROVIDERS, checkLLMAvailability } from '../common/utils.js';
+import { generateSummary, issuesToReviewComments } from './analyzer.js';
+import { getReviewPrompt } from './prompt.js';
 
 export const reviewCommand = async (prUrl: string, options: ReviewOptions): Promise<void> => {
   try {
@@ -60,9 +60,8 @@ export const reviewCommand = async (prUrl: string, options: ReviewOptions): Prom
       const prompt = getReviewPrompt('origin/main');
       const llmOptions = { verbose: options.verbose };
 
-      issues = options.llm === 'claude'
-        ? await analyzeWithClaude(repo.path, prompt, llmOptions)
-        : await analyzeWithCodex(repo.path, prompt, llmOptions);
+      issues =
+        options.llm === 'claude' ? await analyzeWithClaude(repo.path, prompt, llmOptions) : await analyzeWithCodex(repo.path, prompt, llmOptions);
 
       console.log(chalk.green(`\n✔ Analysis complete: ${issues.length} issues found`));
     } finally {
@@ -101,8 +100,7 @@ export const reviewCommand = async (prUrl: string, options: ReviewOptions): Prom
   }
 };
 
-const getIssueIcon = (category: string): string =>
-  category === 'functionality' ? '🐛' : category === 'readability' ? '📖' : '⚡';
+const getIssueIcon = (category: string): string => (category === 'functionality' ? '🐛' : category === 'readability' ? '📖' : '⚡');
 
 const printIssue = (issue: CodeIssue, colorFn: (s: string) => string): void => {
   console.log(colorFn(`    ${getIssueIcon(issue.category)} ${issue.filename}:${issue.line}`));
@@ -116,22 +114,22 @@ const printIssuesSummary = (issues: CodeIssue[]): void => {
     return;
   }
 
-  const errors = issues.filter((i) => i.severity === 'error');
-  const warnings = issues.filter((i) => i.severity === 'warning');
-  const infos = issues.filter((i) => i.severity === 'info');
+  const errors = issues.filter(i => i.severity === 'error');
+  const warnings = issues.filter(i => i.severity === 'warning');
+  const infos = issues.filter(i => i.severity === 'info');
 
   if (errors.length > 0) {
     console.log(chalk.red.bold(`\n  🔴 Errors (${errors.length}):`));
-    errors.forEach((issue) => printIssue(issue, chalk.red));
+    errors.forEach(issue => printIssue(issue, chalk.red));
   }
 
   if (warnings.length > 0) {
     console.log(chalk.yellow.bold(`\n  🟡 Warnings (${warnings.length}):`));
-    warnings.forEach((issue) => printIssue(issue, chalk.yellow));
+    warnings.forEach(issue => printIssue(issue, chalk.yellow));
   }
 
   if (infos.length > 0) {
     console.log(chalk.blue.bold(`\n  🔵 Info (${infos.length}):`));
-    infos.forEach((issue) => printIssue(issue, chalk.blue));
+    infos.forEach(issue => printIssue(issue, chalk.blue));
   }
 };

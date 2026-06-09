@@ -1,5 +1,5 @@
-import 'react-native-reanimated';
 import { useEffect } from 'react';
+import 'react-native-reanimated';
 import { NTheme, useNTheme } from '@nayan-ui/native';
 import { SplashScreen, Stack } from 'expo-router';
 import '../../global.css';

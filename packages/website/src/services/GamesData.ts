@@ -129,12 +129,7 @@ export const gamesData: Record<string, GameData> = {
       'Plan several moves ahead',
       'Save special bubbles for challenging situations'
     ],
-    benefits: [
-      'Improves aim and precision',
-      'Enhances strategic planning',
-      'Provides relaxing gameplay',
-      'Develops color pattern recognition'
-    ],
+    benefits: ['Improves aim and precision', 'Enhances strategic planning', 'Provides relaxing gameplay', 'Develops color pattern recognition'],
     difficulty: 'Easy to Medium',
     ageRating: 'Everyone',
     tags: ['puzzle', 'bubble', 'match-3', 'casual', 'relaxing'],
@@ -252,12 +247,7 @@ export const gamesData: Record<string, GameData> = {
       "Don't let fruits pile up unevenly",
       'Use physics to your advantage'
     ],
-    benefits: [
-      'Develops strategic thinking',
-      'Enhances spatial awareness',
-      'Provides relaxing casual gameplay',
-      'Improves planning skills'
-    ],
+    benefits: ['Develops strategic thinking', 'Enhances spatial awareness', 'Provides relaxing casual gameplay', 'Improves planning skills'],
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['puzzle', 'merging', 'physics', 'fruit', 'casual'],
@@ -375,12 +365,7 @@ export const gamesData: Record<string, GameData> = {
       'Think several moves ahead',
       'Learn to sacrifice small chains for bigger ones'
     ],
-    benefits: [
-      'Enhances strategic thinking',
-      'Improves planning and foresight',
-      'Develops competitive skills',
-      'Provides classic board game fun'
-    ],
+    benefits: ['Enhances strategic thinking', 'Improves planning and foresight', 'Develops competitive skills', 'Provides classic board game fun'],
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['strategy', 'AI', 'turn-based', 'territory', 'classic'],
@@ -393,7 +378,7 @@ export const gamesData: Record<string, GameData> = {
     category: 'Puzzle',
     description: 'Match colorful candies in rows to score points - sweet puzzle fun!',
     longDescription:
-      "Candy Crush is a delightful match-3 puzzle game filled with colorful candies and sweet challenges. Swap adjacent candies to create matches of three or more, triggering satisfying cascades and special candy combinations. The game features strategic depth and vibrant graphics that provide hours of entertainment.",
+      'Candy Crush is a delightful match-3 puzzle game filled with colorful candies and sweet challenges. Swap adjacent candies to create matches of three or more, triggering satisfying cascades and special candy combinations. The game features strategic depth and vibrant graphics that provide hours of entertainment.',
     features: [
       'Classic match-3 gameplay',
       'Special candy power-ups',
@@ -416,12 +401,7 @@ export const gamesData: Record<string, GameData> = {
       'Focus on level objectives, not just high scores',
       'Match candies at the bottom to create cascades'
     ],
-    benefits: [
-      'Improves pattern recognition',
-      'Enhances strategic planning',
-      'Provides satisfying puzzle solving',
-      'Develops color awareness'
-    ],
+    benefits: ['Improves pattern recognition', 'Enhances strategic planning', 'Provides satisfying puzzle solving', 'Develops color awareness'],
     difficulty: 'Easy to Hard',
     ageRating: 'Everyone',
     tags: ['puzzle', 'match-3', 'candy', 'casual', 'colorful'],
@@ -492,18 +472,13 @@ export const gamesData: Record<string, GameData> = {
       'Eat fruit for bonus points'
     ],
     tips: [
-      'Learn each ghost\'s behavior pattern',
+      "Learn each ghost's behavior pattern",
       'Use power pellets strategically',
       'Plan escape routes before entering tight areas',
       'Clear dots near ghosts while powered up',
       'Learn the safe zones in the maze'
     ],
-    benefits: [
-      'Improves spatial navigation',
-      'Enhances strategic planning',
-      'Develops quick decision-making',
-      'Provides classic arcade nostalgia'
-    ],
+    benefits: ['Improves spatial navigation', 'Enhances strategic planning', 'Develops quick decision-making', 'Provides classic arcade nostalgia'],
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['arcade', 'maze', 'ghosts', 'power-ups', 'classic'],
@@ -516,7 +491,7 @@ export const gamesData: Record<string, GameData> = {
     category: 'Puzzle',
     description: 'Sort colored liquids into matching tubes - challenging logic puzzle!',
     longDescription:
-      "Colors Sort is a captivating logic puzzle game that challenges your problem-solving skills. Pour colored liquids between tubes to sort them by color, with each tube eventually containing only one color. The game starts simple but quickly becomes a brain-teasing challenge as more colors and tubes are introduced.",
+      'Colors Sort is a captivating logic puzzle game that challenges your problem-solving skills. Pour colored liquids between tubes to sort them by color, with each tube eventually containing only one color. The game starts simple but quickly becomes a brain-teasing challenge as more colors and tubes are introduced.',
     features: [
       'Satisfying liquid pouring mechanics',
       'Beautiful color gradients',
@@ -539,12 +514,7 @@ export const gamesData: Record<string, GameData> = {
       'Use the undo button to try different strategies',
       "Don't rush - take time to think"
     ],
-    benefits: [
-      'Enhances logical reasoning',
-      'Improves problem-solving skills',
-      'Develops planning abilities',
-      'Provides relaxing brain training'
-    ],
+    benefits: ['Enhances logical reasoning', 'Improves problem-solving skills', 'Develops planning abilities', 'Provides relaxing brain training'],
     difficulty: 'Medium to Hard',
     ageRating: 'Everyone',
     tags: ['puzzle', 'logic', 'sorting', 'brain-teaser', 'strategy'],
@@ -557,7 +527,7 @@ export const gamesData: Record<string, GameData> = {
     category: 'Arcade',
     description: 'Pop satisfying bubbles in this relaxing fidget toy simulation!',
     longDescription:
-      "Popit Fidget brings the satisfying sensation of popping bubble wrap to your device. This relaxing game simulates the popular fidget toy, offering a stress-relieving experience with colorful bubble grids. Pop bubbles in various patterns and shapes while enjoying the soothing sounds and visual feedback.",
+      'Popit Fidget brings the satisfying sensation of popping bubble wrap to your device. This relaxing game simulates the popular fidget toy, offering a stress-relieving experience with colorful bubble grids. Pop bubbles in various patterns and shapes while enjoying the soothing sounds and visual feedback.',
     features: [
       'Realistic bubble popping simulation',
       'Multiple colorful designs and shapes',
@@ -580,12 +550,7 @@ export const gamesData: Record<string, GameData> = {
       'Experiment with different popping sequences',
       'Play with sound on for full sensory experience'
     ],
-    benefits: [
-      'Provides stress relief and relaxation',
-      'Offers satisfying sensory feedback',
-      'Perfect for short breaks',
-      'Suitable for all ages'
-    ],
+    benefits: ['Provides stress relief and relaxation', 'Offers satisfying sensory feedback', 'Perfect for short breaks', 'Suitable for all ages'],
     difficulty: 'Easy',
     ageRating: 'Everyone',
     tags: ['arcade', 'relaxing', 'fidget', 'stress-relief', 'casual'],
@@ -621,12 +586,7 @@ export const gamesData: Record<string, GameData> = {
       'Build combos for bonus points',
       'Stay calm during intense moments'
     ],
-    benefits: [
-      'Improves reflexes and speed',
-      'Enhances hand-eye coordination',
-      'Provides exciting arcade action',
-      'Develops quick decision-making'
-    ],
+    benefits: ['Improves reflexes and speed', 'Enhances hand-eye coordination', 'Provides exciting arcade action', 'Develops quick decision-making'],
     difficulty: 'Easy to Medium',
     ageRating: 'Everyone',
     tags: ['arcade', 'balloon', 'popping', 'casual', 'colorful'],
@@ -662,12 +622,7 @@ export const gamesData: Record<string, GameData> = {
       'Use the edges of the screen strategically',
       'Stay focused during intense sections'
     ],
-    benefits: [
-      'Improves reflexes and reaction time',
-      'Enhances spatial awareness',
-      'Provides thrilling gameplay',
-      'Develops focus under pressure'
-    ],
+    benefits: ['Improves reflexes and reaction time', 'Enhances spatial awareness', 'Provides thrilling gameplay', 'Develops focus under pressure'],
     difficulty: 'Medium to Hard',
     ageRating: 'Everyone',
     tags: ['action', 'space', 'shooter', 'arcade', 'survival'],
@@ -703,12 +658,7 @@ export const gamesData: Record<string, GameData> = {
       'Cross off found words to narrow your search',
       'Practice improves your scanning speed'
     ],
-    benefits: [
-      'Builds vocabulary',
-      'Improves pattern recognition',
-      'Enhances concentration',
-      'Provides educational entertainment'
-    ],
+    benefits: ['Builds vocabulary', 'Improves pattern recognition', 'Enhances concentration', 'Provides educational entertainment'],
     difficulty: 'Easy to Medium',
     ageRating: 'Everyone',
     tags: ['puzzle', 'words', 'swipe', 'vocabulary', 'timed'],
@@ -744,12 +694,7 @@ export const gamesData: Record<string, GameData> = {
       'Mark found sequences mentally',
       'Practice improves observation speed'
     ],
-    benefits: [
-      'Enhances observation skills',
-      'Improves number recognition',
-      'Develops concentration',
-      'Provides brain training'
-    ],
+    benefits: ['Enhances observation skills', 'Improves number recognition', 'Develops concentration', 'Provides brain training'],
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['puzzle', 'numbers', 'swipe', 'patterns', 'observation'],
@@ -785,12 +730,7 @@ export const gamesData: Record<string, GameData> = {
       'Learn enemy movement patterns',
       'Upgrade your tank when possible'
     ],
-    benefits: [
-      'Enhances strategic thinking',
-      'Improves reaction time',
-      'Develops tactical planning',
-      'Provides classic retro gaming'
-    ],
+    benefits: ['Enhances strategic thinking', 'Improves reaction time', 'Develops tactical planning', 'Provides classic retro gaming'],
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['arcade', 'battle', 'tanks', 'defense', 'retro'],
@@ -867,12 +807,7 @@ export const gamesData: Record<string, GameData> = {
       'Be strategic about which token to move',
       'Balance offense and defense'
     ],
-    benefits: [
-      'Develops strategic thinking',
-      'Improves decision-making',
-      'Provides classic board game fun',
-      'Enhances probability understanding'
-    ],
+    benefits: ['Develops strategic thinking', 'Improves decision-making', 'Provides classic board game fun', 'Enhances probability understanding'],
     difficulty: 'Easy to Medium',
     ageRating: 'Everyone',
     tags: ['strategy', 'board', 'dice', 'tokens', 'classic'],
@@ -908,12 +843,7 @@ export const gamesData: Record<string, GameData> = {
       'Plan several moves ahead',
       'Use undo wisely for strategic play'
     ],
-    benefits: [
-      'Enhances strategic planning',
-      'Improves organizational skills',
-      'Develops patience',
-      'Provides classic card game enjoyment'
-    ],
+    benefits: ['Enhances strategic planning', 'Improves organizational skills', 'Develops patience', 'Provides classic card game enjoyment'],
     difficulty: 'Medium to Hard',
     ageRating: 'Everyone',
     tags: ['puzzle', 'cards', 'solitaire', 'sequences', 'classic'],
@@ -949,12 +879,7 @@ export const gamesData: Record<string, GameData> = {
       'Use walls to slow down when needed',
       'Practice makes perfect with tilt controls'
     ],
-    benefits: [
-      'Improves spatial navigation',
-      'Enhances problem-solving skills',
-      'Develops motor control',
-      'Provides satisfying puzzle completion'
-    ],
+    benefits: ['Improves spatial navigation', 'Enhances problem-solving skills', 'Develops motor control', 'Provides satisfying puzzle completion'],
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['puzzle', 'maze', 'physics', 'strategy', 'navigation'],
@@ -990,12 +915,7 @@ export const gamesData: Record<string, GameData> = {
       'Block opponent forks early',
       'The first player has an advantage - use it wisely'
     ],
-    benefits: [
-      'Develops strategic thinking',
-      'Improves pattern recognition',
-      'Enhances logical reasoning',
-      'Provides quick mental exercise'
-    ],
+    benefits: ['Develops strategic thinking', 'Improves pattern recognition', 'Enhances logical reasoning', 'Provides quick mental exercise'],
     difficulty: 'Easy',
     ageRating: 'Everyone',
     tags: ['strategy', 'AI', 'classic', 'quick', 'logic'],
@@ -1113,12 +1033,7 @@ export const gamesData: Record<string, GameData> = {
       "Don't undo too much - learn from mistakes",
       'Start with smaller grids to learn patterns'
     ],
-    benefits: [
-      'Improves logical thinking',
-      'Enhances spatial reasoning',
-      'Develops problem-solving skills',
-      'Provides classic puzzle challenge'
-    ],
+    benefits: ['Improves logical thinking', 'Enhances spatial reasoning', 'Develops problem-solving skills', 'Provides classic puzzle challenge'],
     difficulty: 'Medium to Hard',
     ageRating: 'Everyone',
     tags: ['puzzle', 'sliding', 'numbers', 'logic', 'brain-teaser'],
@@ -1154,12 +1069,7 @@ export const gamesData: Record<string, GameData> = {
       'Plan moves to avoid filling the board',
       'Focus on creating large merges'
     ],
-    benefits: [
-      'Enhances strategic thinking',
-      'Improves mathematical intuition',
-      'Develops planning skills',
-      'Provides addictive brain training'
-    ],
+    benefits: ['Enhances strategic thinking', 'Improves mathematical intuition', 'Develops planning skills', 'Provides addictive brain training'],
     difficulty: 'Medium to Hard',
     ageRating: 'Everyone',
     tags: ['puzzle', '2048', 'merging', 'strategy', 'addictive'],
@@ -1172,7 +1082,7 @@ export const gamesData: Record<string, GameData> = {
     category: 'Arcade',
     description: 'Eat eggs to grow longer and avoid walls - classic snake gameplay!',
     longDescription:
-      "Snake 3D is a modern take on the classic snake game. Control a snake that grows longer each time it eats an egg. Navigate the playing field, collect eggs, and avoid crashing into walls or your own tail. Smooth controls and progressive difficulty make it easy to pick up but challenging to master.",
+      'Snake 3D is a modern take on the classic snake game. Control a snake that grows longer each time it eats an egg. Navigate the playing field, collect eggs, and avoid crashing into walls or your own tail. Smooth controls and progressive difficulty make it easy to pick up but challenging to master.',
     features: [
       'Classic snake gameplay',
       'Smooth, responsive controls',
@@ -1195,12 +1105,7 @@ export const gamesData: Record<string, GameData> = {
       'Maintain steady movements',
       'Practice makes perfect'
     ],
-    benefits: [
-      'Improves spatial planning',
-      'Enhances reaction time',
-      'Develops forward thinking',
-      'Provides classic arcade fun'
-    ],
+    benefits: ['Improves spatial planning', 'Enhances reaction time', 'Develops forward thinking', 'Provides classic arcade fun'],
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['arcade', 'snake', 'classic', 'retro', 'endless'],
@@ -1213,7 +1118,7 @@ export const gamesData: Record<string, GameData> = {
     category: 'Action',
     description: 'Draw the most perfect circle you can - test your precision!',
     longDescription:
-      "Perfect Circle is a unique skill-based game that challenges you to draw the most perfect circle possible. Trace a circle and receive a score based on how close you came to perfection. The game tests your hand-eye coordination, steady hand control, and precision.",
+      'Perfect Circle is a unique skill-based game that challenges you to draw the most perfect circle possible. Trace a circle and receive a score based on how close you came to perfection. The game tests your hand-eye coordination, steady hand control, and precision.',
     features: [
       'Precision drawing challenge',
       'Accuracy scoring system',
@@ -1236,12 +1141,7 @@ export const gamesData: Record<string, GameData> = {
       'Stay relaxed - tension affects accuracy',
       'Find your optimal drawing speed'
     ],
-    benefits: [
-      'Develops fine motor control',
-      'Enhances hand-eye coordination',
-      'Provides unique challenge',
-      'Improves precision and patience'
-    ],
+    benefits: ['Develops fine motor control', 'Enhances hand-eye coordination', 'Provides unique challenge', 'Improves precision and patience'],
     difficulty: 'Hard',
     ageRating: 'Everyone',
     tags: ['action', 'skill', 'precision', 'drawing', 'challenge'],
@@ -1318,12 +1218,7 @@ export const gamesData: Record<string, GameData> = {
       'Multi-ball power-ups are the most valuable',
       'Be patient with the last few bricks'
     ],
-    benefits: [
-      'Improves hand-eye coordination',
-      'Enhances reflexes and reaction time',
-      'Provides satisfying arcade fun',
-      'Boosts spatial awareness'
-    ],
+    benefits: ['Improves hand-eye coordination', 'Enhances reflexes and reaction time', 'Provides satisfying arcade fun', 'Boosts spatial awareness'],
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['arcade', 'classic', 'brick-breaker', 'action', 'reflexes'],
@@ -1377,7 +1272,7 @@ export const gamesData: Record<string, GameData> = {
     category: 'Arcade',
     description: 'Jump through matching color obstacles - time your taps to survive!',
     longDescription:
-      "Color Switch is a fast-paced arcade game where you control a colored ball that must pass through obstacles matching its color. Tap to jump and time your moves perfectly to pass through the correct color segments of rotating obstacles.",
+      'Color Switch is a fast-paced arcade game where you control a colored ball that must pass through obstacles matching its color. Tap to jump and time your moves perfectly to pass through the correct color segments of rotating obstacles.',
     features: [
       'One-tap jump mechanics with color matching',
       'Rotating color obstacles',
@@ -1441,12 +1336,7 @@ export const gamesData: Record<string, GameData> = {
       'Stay calm as the tower gets taller',
       'Develop a consistent rhythm'
     ],
-    benefits: [
-      'Improves timing and precision',
-      'Enhances focus and concentration',
-      'Provides satisfying gameplay',
-      'Develops hand-eye coordination'
-    ],
+    benefits: ['Improves timing and precision', 'Enhances focus and concentration', 'Provides satisfying gameplay', 'Develops hand-eye coordination'],
     difficulty: 'Medium',
     ageRating: 'Everyone',
     tags: ['arcade', 'stacking', 'timing', 'precision', 'addictive'],

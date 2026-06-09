@@ -2,7 +2,7 @@ import { spawn } from 'child_process';
 import { mkdtemp, rm } from 'fs/promises';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import type { PRInfo, PullRequest, PullRequestFile, FileChange, ReviewComment, RepoInfo } from './types.js';
+import type { FileChange, PRInfo, PullRequest, PullRequestFile, RepoInfo, ReviewComment } from './types.js';
 
 export interface ClonedRepo {
   path: string;
@@ -14,23 +14,18 @@ export interface GitHubConfig {
   githubUrl?: string;
 }
 
-const getApiBase = (githubUrl?: string): string =>
-  githubUrl ? `${githubUrl.replace(/\/$/, '')}/api/v3` : 'https://api.github.com';
+const getApiBase = (githubUrl?: string): string => (githubUrl ? `${githubUrl.replace(/\/$/, '')}/api/v3` : 'https://api.github.com');
 
-const githubFetch = async <T>(
-  config: GitHubConfig,
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<T> => {
+const githubFetch = async <T>(config: GitHubConfig, endpoint: string, options: RequestInit = {}): Promise<T> => {
   const url = `${getApiBase(config.githubUrl)}${endpoint}`;
   const response = await fetch(url, {
     ...options,
     headers: {
-      'Accept': 'application/vnd.github.v3+json',
-      'Authorization': `Bearer ${config.token}`,
+      Accept: 'application/vnd.github.v3+json',
+      Authorization: `Bearer ${config.token}`,
       'User-Agent': 'nayan-ai',
-      ...options.headers,
-    },
+      ...options.headers
+    }
   });
 
   if (!response.ok) {
@@ -47,13 +42,7 @@ export const getPullRequest = (config: GitHubConfig, pr: PRInfo): Promise<PullRe
 export const getPullRequestFiles = (config: GitHubConfig, pr: PRInfo): Promise<PullRequestFile[]> =>
   githubFetch<PullRequestFile[]>(config, `/repos/${pr.owner}/${pr.repo}/pulls/${pr.number}/files?per_page=100`);
 
-export const postReview = async (
-  config: GitHubConfig,
-  pr: PRInfo,
-  commitId: string,
-  body: string,
-  comments: ReviewComment[]
-): Promise<void> => {
+export const postReview = async (config: GitHubConfig, pr: PRInfo, commitId: string, body: string, comments: ReviewComment[]): Promise<void> => {
   await githubFetch(config, `/repos/${pr.owner}/${pr.repo}/pulls/${pr.number}/reviews`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -61,29 +50,25 @@ export const postReview = async (
       commit_id: commitId,
       body,
       event: 'COMMENT',
-      comments,
-    }),
+      comments
+    })
   });
 };
 
-export const postComment = async (
-  config: GitHubConfig,
-  pr: PRInfo,
-  body: string
-): Promise<void> => {
+export const postComment = async (config: GitHubConfig, pr: PRInfo, body: string): Promise<void> => {
   await githubFetch(config, `/repos/${pr.owner}/${pr.repo}/issues/${pr.number}/comments`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ body }),
+    body: JSON.stringify({ body })
   });
 };
 
 export const parseFiles = (files: PullRequestFile[]): FileChange[] =>
   files
     .filter((f): f is PullRequestFile & { patch: string } => !!f.patch)
-    .map((f) => ({
+    .map(f => ({
       filename: f.filename,
-      patch: f.patch,
+      patch: f.patch
     }));
 
 export const parsePRReference = (input: string): PRInfo & { githubUrl?: string } => {
@@ -95,7 +80,7 @@ export const parsePRReference = (input: string): PRInfo & { githubUrl?: string }
       owner: urlMatch[2],
       repo: urlMatch[3],
       number: parseInt(urlMatch[4], 10),
-      githubUrl: isEnterprise ? baseUrl : undefined,
+      githubUrl: isEnterprise ? baseUrl : undefined
     };
   }
 
@@ -104,15 +89,11 @@ export const parsePRReference = (input: string): PRInfo & { githubUrl?: string }
     return {
       owner: shortMatch[1],
       repo: shortMatch[2],
-      number: parseInt(shortMatch[3], 10),
+      number: parseInt(shortMatch[3], 10)
     };
   }
 
-  throw new Error(
-    'Invalid PR reference. Use:\n' +
-    '  - https://github.com/owner/repo/pull/123\n' +
-    '  - owner/repo#123'
-  );
+  throw new Error('Invalid PR reference. Use:\n' + '  - https://github.com/owner/repo/pull/123\n' + '  - owner/repo#123');
 };
 
 export const parseRepoReference = (input: string): RepoInfo => {
@@ -123,7 +104,7 @@ export const parseRepoReference = (input: string): RepoInfo => {
     return {
       owner: urlMatch[2],
       repo: urlMatch[3],
-      githubUrl: isEnterprise ? baseUrl : undefined,
+      githubUrl: isEnterprise ? baseUrl : undefined
     };
   }
 
@@ -131,22 +112,14 @@ export const parseRepoReference = (input: string): RepoInfo => {
   if (shortMatch) {
     return {
       owner: shortMatch[1],
-      repo: shortMatch[2],
+      repo: shortMatch[2]
     };
   }
 
-  throw new Error(
-    'Invalid repo reference. Use:\n' +
-    '  - https://github.com/owner/repo\n' +
-    '  - owner/repo'
-  );
+  throw new Error('Invalid repo reference. Use:\n' + '  - https://github.com/owner/repo\n' + '  - owner/repo');
 };
 
-export const cloneRepo = async (
-  prInfo: PRInfo,
-  token: string,
-  githubUrl?: string
-): Promise<ClonedRepo> => {
+export const cloneRepo = async (prInfo: PRInfo, token: string, githubUrl?: string): Promise<ClonedRepo> => {
   const tempDir = await mkdtemp(join(tmpdir(), 'nayan-ai-'));
   const baseUrl = githubUrl?.replace(/\/$/, '') || 'https://github.com';
   const cloneUrl = `https://${token}@${baseUrl.replace(/^https?:\/\//, '')}/${prInfo.owner}/${prInfo.repo}.git`;
@@ -164,14 +137,11 @@ export const cloneRepo = async (
       } catch {
         // ignore
       }
-    },
+    }
   };
 };
 
-export const cloneRepoForScan = async (
-  repoInfo: RepoInfo,
-  token: string
-): Promise<ClonedRepo> => {
+export const cloneRepoForScan = async (repoInfo: RepoInfo, token: string): Promise<ClonedRepo> => {
   const tempDir = await mkdtemp(join(tmpdir(), 'nayan-ai-scan-'));
   const baseUrl = repoInfo.githubUrl?.replace(/\/$/, '') || 'https://github.com';
   const cloneUrl = `https://${token}@${baseUrl.replace(/^https?:\/\//, '')}/${repoInfo.owner}/${repoInfo.repo}.git`;
@@ -186,12 +156,11 @@ export const cloneRepoForScan = async (
       } catch {
         // ignore
       }
-    },
+    }
   };
 };
 
-export const getGitDiff = (repoPath: string): Promise<string> =>
-  runGit(['diff', 'origin/main...HEAD', '--unified=3'], repoPath);
+export const getGitDiff = (repoPath: string): Promise<string> => runGit(['diff', 'origin/main...HEAD', '--unified=3'], repoPath);
 
 export const getChangedFiles = async (repoPath: string): Promise<string[]> => {
   const output = await runGit(['diff', 'origin/main...HEAD', '--name-only'], repoPath);
@@ -204,10 +173,14 @@ const runGit = (args: string[], cwd?: string): Promise<string> =>
     let stdout = '';
     let stderr = '';
 
-    child.stdout.on('data', (data) => { stdout += data.toString(); });
-    child.stderr.on('data', (data) => { stderr += data.toString(); });
+    child.stdout.on('data', data => {
+      stdout += data.toString();
+    });
+    child.stderr.on('data', data => {
+      stderr += data.toString();
+    });
 
-    child.on('close', (code) => {
+    child.on('close', code => {
       if (code !== 0) {
         reject(new Error(`git ${args[0]} failed: ${stderr || stdout || 'Unknown error'}`));
         return;

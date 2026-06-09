@@ -1,10 +1,10 @@
 import type { CodeIssue, ReviewComment } from '../common/types.js';
 
 export function issuesToReviewComments(issues: CodeIssue[]): ReviewComment[] {
-  return issues.map((issue) => {
+  return issues.map(issue => {
     const severityIcon = issue.severity === 'error' ? '🔴' : issue.severity === 'warning' ? '🟡' : '🔵';
     const categoryIcon = issue.category === 'functionality' ? '🐛' : issue.category === 'readability' ? '📖' : '⚡';
-    
+
     let body = `${severityIcon} **${categoryIcon} ${capitalize(issue.category)}**\n\n${issue.message}`;
     if (issue.suggestion) {
       body += `\n\n💡 **Suggestion:** ${issue.suggestion}`;
@@ -14,7 +14,7 @@ export function issuesToReviewComments(issues: CodeIssue[]): ReviewComment[] {
       path: issue.filename,
       line: issue.line,
       side: 'RIGHT' as const,
-      body,
+      body
     };
   });
 }
@@ -25,9 +25,9 @@ export function generateSummary(issues: CodeIssue[]): string {
   }
 
   const bySeverity = {
-    error: issues.filter((i) => i.severity === 'error'),
-    warning: issues.filter((i) => i.severity === 'warning'),
-    info: issues.filter((i) => i.severity === 'info'),
+    error: issues.filter(i => i.severity === 'error'),
+    warning: issues.filter(i => i.severity === 'warning'),
+    info: issues.filter(i => i.severity === 'info')
   };
 
   let summary = `## 🤖 AI Code Review Complete\n\nFound **${issues.length}** issue(s) in this PR.\n\n`;
@@ -35,7 +35,7 @@ export function generateSummary(issues: CodeIssue[]): string {
   // Group issues by severity and list them
   if (bySeverity.error.length > 0) {
     summary += `### 🔴 Errors (${bySeverity.error.length})\n\n`;
-    bySeverity.error.forEach((issue) => {
+    bySeverity.error.forEach(issue => {
       const icon = issue.category === 'functionality' ? '🐛' : issue.category === 'readability' ? '📖' : '⚡';
       summary += `- ${icon} **\`${issue.filename}:${issue.line}\`**\n  ${issue.message}`;
       if (issue.suggestion) {
@@ -47,7 +47,7 @@ export function generateSummary(issues: CodeIssue[]): string {
 
   if (bySeverity.warning.length > 0) {
     summary += `### 🟡 Warnings (${bySeverity.warning.length})\n\n`;
-    bySeverity.warning.forEach((issue) => {
+    bySeverity.warning.forEach(issue => {
       const icon = issue.category === 'functionality' ? '🐛' : issue.category === 'readability' ? '📖' : '⚡';
       summary += `- ${icon} **\`${issue.filename}:${issue.line}\`**\n  ${issue.message}`;
       if (issue.suggestion) {
@@ -59,7 +59,7 @@ export function generateSummary(issues: CodeIssue[]): string {
 
   if (bySeverity.info.length > 0) {
     summary += `### 🔵 Info (${bySeverity.info.length})\n\n`;
-    bySeverity.info.forEach((issue) => {
+    bySeverity.info.forEach(issue => {
       const icon = issue.category === 'functionality' ? '🐛' : issue.category === 'readability' ? '📖' : '⚡';
       summary += `- ${icon} **\`${issue.filename}:${issue.line}\`**\n  ${issue.message}`;
       if (issue.suggestion) {

@@ -5,6 +5,7 @@ A CLI tool that uses [Codex](https://github.com/openai/codex) or [Claude Code](h
 ## Features
 
 ### PR Review
+
 - **🤖 Agentic Review**: Uses Codex CLI or Claude Code CLI's intelligent coding agents for deep code analysis
 - **🐛 Bug Detection**: Finds logic errors, null pointer issues, race conditions, and edge cases
 - **🔐 Security Analysis**: Detects SQL injection, XSS, hardcoded secrets, and auth issues
@@ -15,6 +16,7 @@ A CLI tool that uses [Codex](https://github.com/openai/codex) or [Claude Code](h
 - **📊 Summary Report**: Provides an overview of all issues found
 
 ### Vulnerability Scanning
+
 - **🔍 Multi-Language Support**: Scans npm, Python, Go, Rust, Ruby, PHP, Java, and .NET projects
 - **🤖 AI-Powered Analysis**: Uses Codex or Claude to detect vulnerabilities beyond native tools
 - **📋 CVE Tracking**: Lists all CVE identifiers found in dependencies
@@ -22,6 +24,7 @@ A CLI tool that uses [Codex](https://github.com/openai/codex) or [Claude Code](h
 - **🎯 Context-Aware Severity**: Adjusts severity based on project type (bundled vs server-side)
 
 ### General
+
 - **🖥️ Local Execution**: Run from your terminal, no GitHub Actions / Jenkins required
 - **🏢 Enterprise Support**: Works with GitHub Enterprise Server (auto-detected)
 - **🔒 Private Repos**: Full support for private repositories
@@ -58,11 +61,11 @@ nayan-ai review https://github.com/owner/repo/pull/123 --token ghp_xxx
 
 #### Review Options
 
-| Option | Description |
-|--------|-------------|
-| `-t, --token` | GitHub personal access token (required) |
-| `-l, --llm` | LLM provider: `codex` (default) or `claude` |
-| `-d, --dry` | Analyze without posting comments to GitHub |
+| Option         | Description                                      |
+| -------------- | ------------------------------------------------ |
+| `-t, --token`  | GitHub personal access token (required)          |
+| `-l, --llm`    | LLM provider: `codex` (default) or `claude`      |
+| `-d, --dry`    | Analyze without posting comments to GitHub       |
 | `-i, --inline` | Post inline comments on files instead of summary |
 
 ### Scan Command
@@ -85,17 +88,18 @@ nayan-ai scan https://github.com/owner/repo --token ghp_xxx --fix --branch nayan
 
 #### Scan Options
 
-| Option | Description |
-|--------|-------------|
-| `-t, --token` | GitHub personal access token (required) |
-| `-l, --llm` | LLM provider: `codex` (default) or `claude` |
-| `-p, --paths` | Comma-separated list of paths to scan for projects |
-| `-f, --fix` | Auto-fix vulnerabilities and create a PR |
+| Option         | Description                                                             |
+| -------------- | ----------------------------------------------------------------------- |
+| `-t, --token`  | GitHub personal access token (required)                                 |
+| `-l, --llm`    | LLM provider: `codex` (default) or `claude`                             |
+| `-p, --paths`  | Comma-separated list of paths to scan for projects                      |
+| `-f, --fix`    | Auto-fix vulnerabilities and create a PR                                |
 | `-b, --branch` | Branch name for fix PR (default: `nayan-ai/security-fixes-<timestamp>`) |
 
 #### Scan Output
 
 The scan provides:
+
 - **Per-project vulnerabilities** grouped by severity (Critical, High, Medium, Low)
 - **CVE identifiers** for each vulnerability
 - **Suggested fixes** with package version updates
@@ -104,6 +108,7 @@ The scan provides:
 #### Auto-Fix Workflow
 
 When using `--fix`, Nayan AI will:
+
 1. Analyze vulnerabilities and generate fixes using AI
 2. Create a new branch with the fixes
 3. Update manifest files (package.json, requirements.txt, etc.)
@@ -112,16 +117,16 @@ When using `--fix`, Nayan AI will:
 
 #### Supported Project Types
 
-| Type | Manifest | Lock Files | Native Scanner |
-|------|----------|------------|----------------|
-| **npm** | package.json | package-lock.json, yarn.lock, pnpm-lock.yaml | `npm audit` |
-| **Python** | requirements.txt | Pipfile.lock, poetry.lock | `pip-audit` |
-| **Go** | go.mod | go.sum | `govulncheck` |
-| **Rust** | Cargo.toml | Cargo.lock | `cargo audit` |
-| **Ruby** | Gemfile | Gemfile.lock | `bundle audit` |
-| **PHP** | composer.json | composer.lock | `composer audit` |
-| **Java** | pom.xml | - | `mvn dependency-check` |
-| **.NET** | *.csproj | packages.lock.json | `dotnet list --vulnerable` |
+| Type       | Manifest         | Lock Files                                   | Native Scanner             |
+| ---------- | ---------------- | -------------------------------------------- | -------------------------- |
+| **npm**    | package.json     | package-lock.json, yarn.lock, pnpm-lock.yaml | `npm audit`                |
+| **Python** | requirements.txt | Pipfile.lock, poetry.lock                    | `pip-audit`                |
+| **Go**     | go.mod           | go.sum                                       | `govulncheck`              |
+| **Rust**   | Cargo.toml       | Cargo.lock                                   | `cargo audit`              |
+| **Ruby**   | Gemfile          | Gemfile.lock                                 | `bundle audit`             |
+| **PHP**    | composer.json    | composer.lock                                | `composer audit`           |
+| **Java**   | pom.xml          | -                                            | `mvn dependency-check`     |
+| **.NET**   | \*.csproj        | packages.lock.json                           | `dotnet list --vulnerable` |
 
 #### Context-Aware Severity
 

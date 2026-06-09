@@ -6,7 +6,8 @@ export const dynamic = 'force-dynamic';
 
 export const metadata = buildPageMetadata({
   title: 'AI Code Scanner',
-  description: 'AI-powered vulnerability scanning for GitHub repositories. Supports npm, Python, Go, Rust, Ruby, PHP, Java, .NET, and Scala with auto-fix PR creation.',
+  description:
+    'AI-powered vulnerability scanning for GitHub repositories. Supports npm, Python, Go, Rust, Ruby, PHP, Java, .NET, and Scala with auto-fix PR creation.',
   path: '/devtools/ai-code-scanner',
   keywords: 'vulnerability scanner, security scanning, nayan ai, codex, claude code, npm audit, auto fix, dependency scanning'
 });

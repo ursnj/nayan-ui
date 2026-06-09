@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import GameDetail from '@/games/GameDetail';
 import JsonLd from '@/helpers/JsonLd';
-import { SITE_URL, SITE_NAME, buildBreadcrumbSchema } from '@/services/seo';
 import { gamesData } from '@/services/GamesData';
+import { SITE_NAME, SITE_URL, buildBreadcrumbSchema } from '@/services/seo';
 
 export const dynamic = 'force-dynamic';
 
