@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export const metadata = buildPageMetadata({
   title: 'Games Installation',
-  description: 'Installation guide and setup instructions for react-native-games. Learn how to add classic games to your React Native app.',
+  description: 'Installation guide and setup instructions for @nayan-ui/games. Learn how to add classic games to your React Native app.',
   path: '/games/installation',
   keywords: 'react native games installation, mobile game setup, react native game library setup'
 });
@@ -19,7 +19,7 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: 'Games Installation',
-    description: 'Installation guide and setup instructions for react-native-games.',
+    description: 'Installation guide and setup instructions for @nayan-ui/games.',
     url: `${SITE_URL}/games/installation`
   })
 ];

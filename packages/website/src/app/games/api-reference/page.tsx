@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export const metadata = buildPageMetadata({
   title: 'Games API Reference',
-  description: 'Complete API documentation for react-native-games. All exported constants, types, and configuration options.',
+  description: 'Complete API documentation for @nayan-ui/games. All exported constants, types, and configuration options.',
   path: '/games/api-reference',
   keywords: 'react native games api, game api reference, react native games documentation'
 });
@@ -19,7 +19,7 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: 'Games API Reference',
-    description: 'Complete API documentation for react-native-games.',
+    description: 'Complete API documentation for @nayan-ui/games.',
     url: `${SITE_URL}/games/api-reference`
   })
 ];

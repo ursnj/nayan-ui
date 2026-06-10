@@ -31,7 +31,7 @@ const GamesMain = () => {
               </div>
               <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold">
                 <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 bg-clip-text text-transparent break-words">
-                  react-native-games
+                  @nayan-ui/games
                 </span>
               </h1>
             </div>
@@ -41,7 +41,7 @@ const GamesMain = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <NLink
-                href="https://www.npmjs.com/package/react-native-games"
+                href="https://www.npmjs.com/package/@nayan-ui/games"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all font-semibold shadow-md shadow-purple-500/20">

@@ -75,7 +75,7 @@ const GamesLicensing = () => {
               <p className="text-muted text-sm">
                 📧 Email:{' '}
                 <NLink
-                  href="mailto:niranjan.devasani@gmail.com?subject=React%20Native%20Games%20-%20Commercial%20License%20Request"
+                  href="mailto:niranjan.devasani@gmail.com?subject=%40nayan-ui%2Fgames%20-%20Commercial%20License%20Request"
                   className="text-accent hover:underline">
                   niranjan.devasani@gmail.com
                 </NLink>

@@ -1,13 +1,13 @@
 // Installation code blocks
-export const installCode = `npm install react-native-games`;
-export const installYarnCode = `yarn add react-native-games`;
+export const installCode = `npm install @nayan-ui/games`;
+export const installYarnCode = `yarn add @nayan-ui/games`;
 
 export const peerDepsCode = `npm install @shopify/react-native-skia react-native-reanimated react-native-gesture-handler react-native-worklets expo-speech expo-haptics`;
 
 // Usage code blocks
 export const simpleUsageCode = `import React, { useState } from 'react';
 import { View } from 'react-native';
-import { DEFAULT_GAME_SETTINGS, FruitNinja } from 'react-native-games';
+import { DEFAULT_GAME_SETTINGS, FruitNinja } from '@nayan-ui/games';
 
 export default function GameScreen() {
   const [settings, setSettings] = useState(DEFAULT_GAME_SETTINGS);
@@ -23,7 +23,7 @@ export const advancedUsageCode = `import { View, TouchableOpacity } from 'react-
 import { useState, useLayoutEffect } from 'react';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { DEFAULT_GAME_SETTINGS, GAME_IDS, type GameSettings, FruitNinja } from 'react-native-games';
+import { DEFAULT_GAME_SETTINGS, GAME_IDS, type GameSettings, FruitNinja } from '@nayan-ui/games';
 import { StorageService } from '../services/StorageService';
 
 export default function FruitNinjaScreen() {
@@ -60,21 +60,44 @@ export default function FruitNinjaScreen() {
 
 export const availableGamesCode = `// Import any game you want
 import {
-  FruitNinja,
-  CandyCrush,
-  FlappyBird,
-  ColorsSort,
-  DinoJump,
-  PopitFidget,
-  WhackAMole,
   BalloonBlaster,
-  SpaceFighter,
-  MazeRunner,
-  SlidingNumbers,
-  Game2048,
+  BikeRacing,
+  BlockBlast,
+  BlockBreaker,
+  BubbleShooter,
+  CandyCrush,
+  CarRacing,
+  ColorSwitch,
+  ColorsSort,
+  ConnectEmAll,
+  DinoJump,
+  DotsAndBoxes,
+  FlappyBird,
   FruitMerger,
-  Snake
-} from 'react-native-games';
+  FruitNinja,
+  Game2048,
+  KnifeHit,
+  LudoKing,
+  MazeRunner,
+  MineSweeper,
+  NumberSearch,
+  NutsAndBolts,
+  PacMan,
+  PerfectCircle,
+  PipeConnect,
+  PopitFidget,
+  SlidingNumbers,
+  Snake3D,
+  SpaceFighter,
+  SpiderSolitaire,
+  StackTower,
+  Sudoku,
+  Tank1990,
+  TicTacToe,
+  TileHome,
+  WhackAMole,
+  WordSearch
+} from '@nayan-ui/games';
 
 // All games accept the same props:
 <GameComponent
@@ -84,17 +107,18 @@ import {
 
 export const gameSettingsInterfaceCode = `interface GameSettings {
   isVisible: boolean;        // Settings modal visibility
-  difficulty: 'easy' | 'medium' | 'hard';
   enableSounds: boolean;     // Audio feedback
   enableHaptics: boolean;    // Haptic feedback
+  enableMusic: boolean;      // Background music
+  offset?: number;           // Top offset for notch/status bar
 }
 
 // Default settings for all games
 const DEFAULT_GAME_SETTINGS = {
   isVisible: false,
-  difficulty: 'medium',
   enableSounds: true,
   enableHaptics: true,
+  enableMusic: true,
   offset: 0,
 };`;
 
@@ -117,42 +141,60 @@ export const exportedConstantsCode = `import {
   type GameComponent,
 
   // All Game Components
-  FruitNinja,
-  CandyCrush,
-  FlappyBird,
-  ColorsSort,
-  DinoJump,
-  PopitFidget,
-  WhackAMole,
-  BalloonBlaster,
-  SpaceFighter,
-  MazeRunner,
-  SlidingNumbers,
-  Game2048,
-  FruitMerger,
-  Snake
-} from 'react-native-games';`;
+  BalloonBlaster, BikeRacing, BlockBlast, BlockBreaker,
+  BubbleShooter, CandyCrush, CarRacing, ColorSwitch,
+  ColorsSort, ConnectEmAll, DinoJump, DotsAndBoxes,
+  FlappyBird, FruitMerger, FruitNinja, Game2048,
+  KnifeHit, LudoKing, MazeRunner, MineSweeper,
+  NumberSearch, NutsAndBolts, PacMan, PerfectCircle,
+  PipeConnect, PopitFidget, SlidingNumbers, Snake3D,
+  SpaceFighter, SpiderSolitaire, StackTower, Sudoku,
+  Tank1990, TicTacToe, TileHome, WhackAMole, WordSearch
+} from '@nayan-ui/games';`;
 
-export const gameIdsEnumCode = `GAME_IDS.FRUIT_NINJA      // 'fruit-ninja'
-GAME_IDS.CANDY_CRUSH      // 'candy-crush'
-GAME_IDS.FLAPPY_BIRD      // 'flappy-bird'
-GAME_IDS.COLORS_SORT      // 'colors-sort'
-GAME_IDS.DINO_JUMP        // 'dino-jump'
-GAME_IDS.POPIT_FIDGET     // 'popit-fidget'
-GAME_IDS.WHACK_A_MOLE     // 'whack-a-mole'
-GAME_IDS.BALLOON_BLASTER  // 'balloon-blaster'
-GAME_IDS.SPACE_FIGHTER    // 'space-fighter'
-GAME_IDS.MAZE_RUNNER      // 'maze-runner'
-GAME_IDS.SLIDING_NUMBERS  // 'sliding-numbers'
-GAME_IDS.GAME_2048        // 'game-2048'
-GAME_IDS.FRUIT_MERGER     // 'fruit-merger'
-GAME_IDS.SNAKE            // 'snake'`;
+export const gameIdsEnumCode = `GAME_IDS.BALLOON_BLASTER   // 'balloon-blaster'
+GAME_IDS.BIKE_RACING       // 'bike-racing'
+GAME_IDS.BLOCK_BLAST       // 'block-blast'
+GAME_IDS.BLOCK_BREAKER     // 'block-breaker'
+GAME_IDS.BUBBLE_SHOOTER    // 'bubble-shooter'
+GAME_IDS.CANDY_CRUSH       // 'candy-crush'
+GAME_IDS.CAR_RACING        // 'car-racing'
+GAME_IDS.COLOR_SWITCH      // 'color-switch'
+GAME_IDS.COLORS_SORT       // 'colors-sort'
+GAME_IDS.CONNECT_EM_ALL    // 'connect-em-all'
+GAME_IDS.DINO_JUMP         // 'dino-jump'
+GAME_IDS.DOTS_AND_BOXES    // 'dots-and-boxes'
+GAME_IDS.FLAPPY_BIRD       // 'flappy-bird'
+GAME_IDS.FRUIT_MERGER      // 'fruit-merger'
+GAME_IDS.FRUIT_NINJA       // 'fruit-ninja'
+GAME_IDS.GAME_2048         // 'game-2048'
+GAME_IDS.KNIFE_HIT         // 'knife-hit'
+GAME_IDS.LUDO_KING         // 'ludo-king'
+GAME_IDS.MAZE_RUNNER       // 'maze-runner'
+GAME_IDS.MINE_SWEEPER      // 'mine-sweeper'
+GAME_IDS.NUMBER_SEARCH     // 'number-search'
+GAME_IDS.NUTS_AND_BOLTS    // 'nuts-and-bolts'
+GAME_IDS.PAC_MAN           // 'pac-man'
+GAME_IDS.PERFECT_CIRCLE    // 'perfect-circle'
+GAME_IDS.PIPE_CONNECT      // 'pipe-connect'
+GAME_IDS.POPIT_FIDGET      // 'popit-fidget'
+GAME_IDS.SLIDING_NUMBERS   // 'sliding-numbers'
+GAME_IDS.SNAKE_3D          // 'snake-3d'
+GAME_IDS.SPACE_FIGHTER     // 'space-fighter'
+GAME_IDS.SPIDER_SOLITAIRE  // 'spider-solitaire'
+GAME_IDS.STACK_TOWER       // 'stack-tower'
+GAME_IDS.SUDOKU            // 'sudoku'
+GAME_IDS.TANK_1990         // 'tank-1990'
+GAME_IDS.TIC_TAC_TOE       // 'tic-tac-toe'
+GAME_IDS.TILE_HOME         // 'tile-home'
+GAME_IDS.WHACK_A_MOLE      // 'whack-a-mole'
+GAME_IDS.WORD_SEARCH       // 'word-search'`;
 
 export const defaultGameSettingsCode = `const DEFAULT_GAME_SETTINGS = {
   isVisible: false,      // Settings modal visibility
-  difficulty: 'medium',  // Game difficulty level
   enableSounds: true,    // Audio feedback enabled
   enableHaptics: true,   // Haptic feedback enabled
+  enableMusic: true,     // Background music enabled
   offset: 0,            // Top offset for notch/status bar
 };
 
@@ -182,14 +224,26 @@ const GameComponent = GAMES_MAPPING[GAME_IDS.FRUIT_NINJA];
 export const typescriptTypesCode = `// Game settings interface
 interface GameSettings {
   isVisible: boolean;        // Settings modal visibility
-  difficulty: 'easy' | 'medium' | 'hard';
   enableSounds: boolean;     // Audio feedback
   enableHaptics: boolean;    // Haptic feedback
+  enableMusic: boolean;      // Background music
   offset?: number;           // Optional padding from top (default: 0)
+}
+
+// Game completion metrics
+interface GameCompletionMetrics {
+  status: 'win' | 'lose' | 'cancel';
+  score: string;
+  additionalData?: Record<string, any>;
 }
 
 // Game component props
 interface GameProps {
-  settings?: GameSettings;
+  settings: GameSettings;
   onSettingsChange?: (settings: GameSettings) => void;
+  onEndGame?: (metrics: GameCompletionMetrics) => void;
+  onReplayGame?: () => void;
+  onShare?: () => void;
+  onShowLeaderboard?: () => void;
+  bannerAd?: ReactNode;
 }`;
