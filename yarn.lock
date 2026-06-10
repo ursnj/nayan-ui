@@ -2920,6 +2920,8 @@ __metadata:
     react-native-builder-bob: "npm:^0.41.0"
     react-native-gesture-handler: "npm:^2.28.0"
     react-native-svg: "npm:^15.12.1"
+    tailwind-merge: "npm:^3.4.0"
+    tailwind-variants: "npm:^3.2.2"
     typescript: "npm:^6.0.2"
     uniwind: "npm:^1.7.0"
   peerDependencies:
@@ -10235,6 +10237,7 @@ __metadata:
     "@expo/metro-runtime": "npm:~55.0.10"
     "@expo/vector-icons": "npm:^15.0.2"
     "@gorhom/bottom-sheet": "npm:^5.2.13"
+    "@react-native-community/datetimepicker": "npm:^9.1.0"
     expo: "npm:~55.0.19"
     expo-constants: "npm:^55.0.15"
     expo-dev-client: "npm:~55.0.12"
@@ -10254,8 +10257,6 @@ __metadata:
     react-native-svg: "npm:^15.12.1"
     react-native-web: "npm:~0.21.0"
     react-native-worklets: "npm:~0.8.0"
-    tailwind-merge: "npm:^3.4.0"
-    tailwind-variants: "npm:^3.2.2"
     tailwindcss: "npm:^4.0.0"
     uniwind: "npm:^1.7.0"
   languageName: unknown

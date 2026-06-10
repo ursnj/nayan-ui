@@ -24,6 +24,7 @@ const screens: ScreenItem[] = [
   { href: '/check', label: 'Check', description: 'Checkbox with label', icon: 'checkbox-outline' },
   { href: '/chip', label: 'Chip', description: 'Compact info badges', icon: 'pricetag-outline' },
   { href: '/confirm', label: 'Confirm', description: 'Confirmation dialogs', icon: 'help-circle-outline' },
+  { href: '/date-picker', label: 'Date Picker', description: 'Date and time picker', icon: 'calendar-outline' },
   { href: '/dialog', label: 'Dialog', description: 'Modal dialog overlays', icon: 'chatbox-outline' },
   { href: '/divider', label: 'Divider', description: 'Content separators', icon: 'remove-outline' },
   { href: '/input', label: 'Input', description: 'Text input fields', icon: 'create-outline' },
