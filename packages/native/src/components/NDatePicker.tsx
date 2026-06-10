@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import { Platform, Pressable, View } from 'react-native';
 import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { cn } from 'heroui-native';
+import { cn, useThemeColor } from 'heroui-native';
 import { useNTheme } from '../hooks/useNTheme';
+import { CalendarIcon } from '../helpers/icons';
 import { NText } from './NText';
 
 export interface NDatePickerProps {
@@ -20,7 +21,8 @@ export interface NDatePickerProps {
 
 export const NDatePicker = React.memo<NDatePickerProps>(
   ({ value, onChange, label, mode = 'date', display = 'default', minimumDate, maximumDate, disabled = false, className, labelClassName }) => {
-    const { isDarkMode, colors } = useNTheme();
+    const { isDarkMode } = useNTheme();
+    const [mutedColor] = useThemeColor(['muted']);
     const [showPicker, setShowPicker] = useState(false);
 
     const handleChange = useCallback(
@@ -31,44 +33,33 @@ export const NDatePicker = React.memo<NDatePickerProps>(
       [onChange]
     );
 
-    const isAndroid = Platform.OS === 'android';
+    const displayText = mode === 'time' ? value.toLocaleTimeString() : value.toLocaleDateString();
 
     return (
-      <View className={cn('mb-3', className)}>
-        {label && <NText className={cn('mb-2 text-sm font-medium', labelClassName)}>{label}</NText>}
-        {isAndroid ? (
-          <>
-            <Pressable
-              onPress={() => !disabled && setShowPicker(true)}
-              style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 8, padding: 12, opacity: disabled ? 0.5 : 1 }}>
-              <NText>{mode === 'time' ? value.toLocaleTimeString() : value.toLocaleDateString()}</NText>
-            </Pressable>
-            {showPicker && (
-              <DateTimePicker
-                value={value}
-                mode={mode}
-                display={display}
-                minimumDate={minimumDate}
-                maximumDate={maximumDate}
-                disabled={disabled}
-                themeVariant={isDarkMode ? 'dark' : 'light'}
-                onChange={handleChange}
-              />
-            )}
-          </>
-        ) : (
-          <View style={{ marginLeft: -15 }}>
-            <DateTimePicker
-              value={value}
-              mode={mode}
-              display={display}
-              minimumDate={minimumDate}
-              maximumDate={maximumDate}
-              disabled={disabled}
-              themeVariant={isDarkMode ? 'dark' : 'light'}
-              onChange={handleChange}
-            />
+      <View className={cn('mb-3 gap-1.5', className)}>
+        {label && <NText className={cn('px-1.5 text-base font-medium text-foreground', labelClassName)}>{label}</NText>}
+        <Pressable
+          onPress={() => !disabled && setShowPicker(true)}
+          className={cn(
+            'min-h-12 justify-center rounded-2xl border-[1.5px] border-field-border bg-field px-3 ios:shadow-field android:shadow-sm',
+            disabled && 'opacity-50'
+          )}>
+          <View className="flex-row items-center justify-between">
+            <NText className="text-[16px]">{displayText}</NText>
+            <CalendarIcon size={18} color={mutedColor} />
           </View>
+        </Pressable>
+        {showPicker && (
+          <DateTimePicker
+            value={value}
+            mode={mode}
+            display={display}
+            minimumDate={minimumDate}
+            maximumDate={maximumDate}
+            disabled={disabled}
+            themeVariant={isDarkMode ? 'dark' : 'light'}
+            onChange={handleChange}
+          />
         )}
       </View>
     );

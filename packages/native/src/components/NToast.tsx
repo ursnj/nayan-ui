@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
-import { useThemeColor, useToast } from 'heroui-native';
+import { Toast, useThemeColor, useToast } from 'heroui-native';
 import { AlertCircleIcon, CheckmarkIcon, InformationCircleIcon } from '../helpers/icons';
 
 export interface NToastShowOptions {
@@ -26,6 +26,8 @@ const VARIANT_MAP: Record<string, 'default' | 'success' | 'warning' | 'danger'> 
   info: 'default',
   warning: 'warning'
 };
+
+const TOAST_CLASSNAME = 'flex-row gap-3 border border-border ios:shadow-field android:shadow-md';
 
 // --- Imperative service ---
 let _registeredMethods: NToastMethods | null = null;
@@ -70,33 +72,60 @@ export function useNToast(): NToastMethods {
     }
   };
 
+  const createToastComponent = (
+    variant: 'default' | 'success' | 'warning' | 'danger',
+    label: string,
+    description: string,
+    icon: React.ReactNode,
+    actionLabel?: string,
+    onActionPress?: () => void
+  ) => {
+    return (props: any) => (
+      <Toast {...props} variant={variant} className={TOAST_CLASSNAME}>
+        {icon && <View>{icon}</View>}
+        <View className="flex-1">
+          {label ? <Toast.Title>{label}</Toast.Title> : null}
+          {description ? <Toast.Description>{description}</Toast.Description> : null}
+        </View>
+        {actionLabel && (
+          <Toast.Action
+            onPress={() => {
+              onActionPress?.();
+              props.hide?.('all');
+            }}>
+            {actionLabel}
+          </Toast.Action>
+        )}
+      </Toast>
+    );
+  };
+
   const methods: NToastMethods = {
     show: ({ message, title, type = 'success', icon, actionLabel, onActionPress }: NToastShowOptions) => {
+      const variant = VARIANT_MAP[type] ?? 'default';
       toast.show({
-        label: title || '',
-        description: message,
-        variant: VARIANT_MAP[type] ?? 'default',
-        icon: icon ?? getIcon(type),
-        actionLabel,
-        onActionPress: onActionPress
-          ? ({ hide }) => {
-              onActionPress();
-              hide('all');
-            }
-          : undefined
+        component: createToastComponent(variant, title || '', message, icon ?? getIcon(type), actionLabel, onActionPress)
       });
     },
     success: (message: string, title?: string, icon?: React.ReactNode) => {
-      toast.show({ label: title || 'Success', description: message, variant: 'success', icon: icon ?? getIcon('success') });
+      toast.show({
+        component: createToastComponent('success', title || 'Success', message, icon ?? getIcon('success'))
+      });
     },
     error: (message: string, title?: string, icon?: React.ReactNode) => {
-      toast.show({ label: title || 'Error', description: message, variant: 'danger', icon: icon ?? getIcon('error') });
+      toast.show({
+        component: createToastComponent('danger', title || 'Error', message, icon ?? getIcon('error'))
+      });
     },
     info: (message: string, title?: string, icon?: React.ReactNode) => {
-      toast.show({ label: title || 'Info', description: message, variant: 'default', icon: icon ?? getIcon('info') });
+      toast.show({
+        component: createToastComponent('default', title || 'Info', message, icon ?? getIcon('info'))
+      });
     },
     warning: (message: string, title?: string, icon?: React.ReactNode) => {
-      toast.show({ label: title || 'Warning', description: message, variant: 'warning', icon: icon ?? getIcon('warning') });
+      toast.show({
+        component: createToastComponent('warning', title || 'Warning', message, icon ?? getIcon('warning'))
+      });
     }
   };
 
