@@ -60,6 +60,7 @@ export default function FruitNinjaScreen() {
 
 export const availableGamesCode = `// Import any game you want
 import {
+  Arrows,
   BalloonBlaster,
   BikeRacing,
   BlockBlast,
@@ -72,6 +73,7 @@ import {
   ConnectEmAll,
   DinoJump,
   DotsAndBoxes,
+  FindDifferentNumber,
   FlappyBird,
   FruitMerger,
   FruitNinja,
@@ -88,6 +90,7 @@ import {
   PopitFidget,
   SlidingNumbers,
   Snake3D,
+  SnakesAndLadders,
   SpaceFighter,
   SpiderSolitaire,
   StackTower,
@@ -141,18 +144,19 @@ export const exportedConstantsCode = `import {
   type GameComponent,
 
   // All Game Components
-  BalloonBlaster, BikeRacing, BlockBlast, BlockBreaker,
+  Arrows, BalloonBlaster, BikeRacing, BlockBlast, BlockBreaker,
   BubbleShooter, CandyCrush, CarRacing, ColorSwitch,
   ColorsSort, ConnectEmAll, DinoJump, DotsAndBoxes,
-  FlappyBird, FruitMerger, FruitNinja, Game2048,
-  KnifeHit, LudoKing, MazeRunner, MineSweeper,
+  FindDifferentNumber, FlappyBird, FruitMerger, FruitNinja,
+  Game2048, KnifeHit, LudoKing, MazeRunner, MineSweeper,
   NumberSearch, NutsAndBolts, PacMan, PerfectCircle,
   PipeConnect, PopitFidget, SlidingNumbers, Snake3D,
-  SpaceFighter, SpiderSolitaire, StackTower, Sudoku,
-  Tank1990, TicTacToe, TileHome, WhackAMole, WordSearch
+  SnakesAndLadders, SpaceFighter, SpiderSolitaire, StackTower,
+  Sudoku, Tank1990, TicTacToe, TileHome, WhackAMole, WordSearch
 } from '@nayan-ui/games';`;
 
-export const gameIdsEnumCode = `GAME_IDS.BALLOON_BLASTER   // 'balloon-blaster'
+export const gameIdsEnumCode = `GAME_IDS.ARROWS            // 'arrows'
+GAME_IDS.BALLOON_BLASTER   // 'balloon-blaster'
 GAME_IDS.BIKE_RACING       // 'bike-racing'
 GAME_IDS.BLOCK_BLAST       // 'block-blast'
 GAME_IDS.BLOCK_BREAKER     // 'block-breaker'
@@ -164,6 +168,7 @@ GAME_IDS.COLORS_SORT       // 'colors-sort'
 GAME_IDS.CONNECT_EM_ALL    // 'connect-em-all'
 GAME_IDS.DINO_JUMP         // 'dino-jump'
 GAME_IDS.DOTS_AND_BOXES    // 'dots-and-boxes'
+GAME_IDS.FIND_DIFFERENT_NUMBER // 'find-different-number'
 GAME_IDS.FLAPPY_BIRD       // 'flappy-bird'
 GAME_IDS.FRUIT_MERGER      // 'fruit-merger'
 GAME_IDS.FRUIT_NINJA       // 'fruit-ninja'
@@ -180,6 +185,7 @@ GAME_IDS.PIPE_CONNECT      // 'pipe-connect'
 GAME_IDS.POPIT_FIDGET      // 'popit-fidget'
 GAME_IDS.SLIDING_NUMBERS   // 'sliding-numbers'
 GAME_IDS.SNAKE_3D          // 'snake-3d'
+GAME_IDS.SNAKES_AND_LADDERS // 'snakes-and-ladders'
 GAME_IDS.SPACE_FIGHTER     // 'space-fighter'
 GAME_IDS.SPIDER_SOLITAIRE  // 'spider-solitaire'
 GAME_IDS.STACK_TOWER       // 'stack-tower'

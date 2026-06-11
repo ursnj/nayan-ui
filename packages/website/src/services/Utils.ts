@@ -1010,5 +1010,8 @@ export const gamesSidebarItems = [
   { title: 'Color Switch', description: 'Color matching arcade', link: '/games/color-switch', icon: Gamepad2 },
   { title: 'Stack Tower', description: 'Precision block stacking', link: '/games/stack-tower', icon: Gamepad2 },
   { title: 'Mine Sweeper', description: 'Classic logic deduction', link: '/games/mine-sweeper', icon: Gamepad2 },
+  { title: 'Snakes and Ladders', description: 'Classic dice board game', link: '/games/snakes-and-ladders', icon: Gamepad2 },
+  { title: 'Find Different Number', description: 'Spot the odd number', link: '/games/find-different-number', icon: Gamepad2 },
+  { title: 'Arrows', description: 'Clear arrows off the board', link: '/games/arrows', icon: Gamepad2 },
   { title: 'Pipe Connect', description: 'Pipe rotation puzzle', link: '/games/pipe-connect', icon: Gamepad2 }
 ];
