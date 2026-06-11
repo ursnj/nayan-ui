@@ -165,7 +165,7 @@ const GamesMain = () => {
       {/* Available Games Section */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-6">
-          <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">🎯 All {GAMES_LIST.length} Games</span>
+          <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">🎯 All 50+ Games</span>
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {GAMES_LIST.map(game => (
