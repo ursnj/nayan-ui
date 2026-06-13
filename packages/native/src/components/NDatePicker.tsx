@@ -20,40 +20,44 @@ export interface NDatePickerProps {
 }
 
 export const NDatePicker = React.memo<NDatePickerProps>(
-  ({ value, onChange, label, mode = 'date', display = 'default', minimumDate, maximumDate, disabled = false, className, labelClassName }) => {
+  ({ value, onChange, label, mode = 'date', display, minimumDate, maximumDate, disabled = false, className, labelClassName }) => {
     const { isDarkMode } = useNTheme();
     const [mutedColor] = useThemeColor(['muted']);
-    const [showPicker, setShowPicker] = useState(false);
+    const [showPicker, setShowPicker] = useState(Platform.OS === 'ios');
+    const isIOS = Platform.OS === 'ios';
 
     const handleChange = useCallback(
       (_: DateTimePickerEvent, date?: Date) => {
-        if (Platform.OS === 'android') setShowPicker(false);
+        if (!isIOS) setShowPicker(false);
         if (date) onChange(date);
       },
-      [onChange]
+      [onChange, isIOS]
     );
 
     const displayText = mode === 'time' ? value.toLocaleTimeString() : value.toLocaleDateString();
+    const resolvedDisplay = display ?? (isIOS ? 'inline' : 'default');
 
     return (
       <View className={cn('mb-3 gap-1.5', className)}>
         {label && <NText className={cn('px-1.5 text-base font-medium text-foreground', labelClassName)}>{label}</NText>}
-        <Pressable
-          onPress={() => !disabled && setShowPicker(true)}
-          className={cn(
-            'min-h-12 justify-center rounded-2xl border-[1.5px] border-field-border bg-field px-3 ios:shadow-field android:shadow-sm',
-            disabled && 'opacity-50'
-          )}>
-          <View className="flex-row items-center justify-between">
-            <NText className="text-[16px]">{displayText}</NText>
-            <CalendarIcon size={18} color={mutedColor} />
-          </View>
-        </Pressable>
+        {!isIOS && (
+          <Pressable
+            onPress={() => !disabled && setShowPicker(true)}
+            className={cn(
+              'min-h-12 justify-center rounded-2xl border-[1.5px] border-field-border bg-field px-3 android:shadow-sm',
+              disabled && 'opacity-50'
+            )}>
+            <View className="flex-row items-center justify-between">
+              <NText className="text-[16px]">{displayText}</NText>
+              <CalendarIcon size={18} color={mutedColor} />
+            </View>
+          </Pressable>
+        )}
         {showPicker && (
           <DateTimePicker
             value={value}
             mode={mode}
-            display={display}
+            display={resolvedDisplay}
             minimumDate={minimumDate}
             maximumDate={maximumDate}
             disabled={disabled}
