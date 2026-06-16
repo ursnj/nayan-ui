@@ -23,8 +23,8 @@ export const NDatePicker = React.memo<NDatePickerProps>(
   ({ value, onChange, label, mode = 'date', display, minimumDate, maximumDate, disabled = false, className, labelClassName }) => {
     const { isDarkMode } = useNTheme();
     const [mutedColor] = useThemeColor(['muted']);
-    const [showPicker, setShowPicker] = useState(Platform.OS === 'ios');
     const isIOS = Platform.OS === 'ios';
+    const [showPicker, setShowPicker] = useState(isIOS);
 
     const handleChange = useCallback(
       (_: DateTimePickerEvent, date?: Date) => {
@@ -35,7 +35,7 @@ export const NDatePicker = React.memo<NDatePickerProps>(
     );
 
     const displayText = mode === 'time' ? value.toLocaleTimeString() : value.toLocaleDateString();
-    const resolvedDisplay = display ?? (isIOS ? 'inline' : 'default');
+    const resolvedDisplay = display ?? (isIOS ? 'compact' : 'default');
 
     return (
       <View className={cn('mb-3 gap-1.5', className)}>
@@ -44,7 +44,7 @@ export const NDatePicker = React.memo<NDatePickerProps>(
           <Pressable
             onPress={() => !disabled && setShowPicker(true)}
             className={cn(
-              'min-h-12 justify-center rounded-2xl border-[1.5px] border-field-border bg-field px-3 android:shadow-sm',
+              'min-h-12 justify-center rounded-2xl border-[1.5px] border-field-border bg-field px-3',
               disabled && 'opacity-50'
             )}>
             <View className="flex-row items-center justify-between">
