@@ -49,12 +49,7 @@ export const NRadioGroup = memo(
           {...(rest as any)}>
           {items.map((item, index) => (
             <Radio key={item.value} value={item.value} className={cn(radioClassName, itemClassName)}>
-              <Radio.Content>
-                <Radio.Control>
-                  <Radio.Indicator />
-                </Radio.Control>
-                {item.label}
-              </Radio.Content>
+              {item.label}
             </Radio>
           ))}
         </RadioGroup>
