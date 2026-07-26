@@ -17,10 +17,12 @@ const NCheckComponent: React.FC<NCheckProps> = memo(
   ({ id = 'check', className = '', checkClassName = '', labelClassName = '', checked, disabled = false, onChange, children, ...rest }) => {
     return (
       <Checkbox isSelected={checked} isDisabled={disabled} onChange={onChange} className={cn('nyn-check', className)} {...(rest as any)}>
-        <Checkbox.Control className={cn(checkClassName)}>
-          <Checkbox.Indicator />
-        </Checkbox.Control>
-        <Checkbox.Content className={cn('inline', labelClassName)}>{children}</Checkbox.Content>
+        <Checkbox.Content className={cn('inline', labelClassName)}>
+          <Checkbox.Control className={cn(checkClassName)}>
+            <Checkbox.Indicator />
+          </Checkbox.Control>
+          {children}
+        </Checkbox.Content>
       </Checkbox>
     );
   }
