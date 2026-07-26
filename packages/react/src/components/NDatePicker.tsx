@@ -7,7 +7,7 @@ export interface NDatePickerProps {
   defaultValue?: any;
   onChange?: (value: any) => void;
   label?: ReactNode;
-  isDisabled?: boolean;
+  disabled?: boolean;
   isInvalid?: boolean;
   minValue?: any;
   maxValue?: any;
@@ -26,7 +26,7 @@ const NDatePickerComponent: React.FC<NDatePickerProps> = memo(
     defaultValue,
     onChange,
     label,
-    isDisabled = false,
+    disabled = false,
     isInvalid = false,
     minValue,
     maxValue,
@@ -43,7 +43,7 @@ const NDatePickerComponent: React.FC<NDatePickerProps> = memo(
         value={value}
         defaultValue={defaultValue}
         onChange={onChange}
-        isDisabled={isDisabled}
+        isDisabled={disabled}
         isInvalid={!!error || isInvalid}
         minValue={minValue}
         maxValue={maxValue}

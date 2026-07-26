@@ -10,14 +10,14 @@ export interface NBreadcrumbItem {
 export interface NBreadcrumbsProps {
   items: NBreadcrumbItem[];
   separator?: React.ReactNode;
-  isDisabled?: boolean;
+  disabled?: boolean;
   className?: string;
   itemClassName?: string;
 }
 
-const NBreadcrumbsComponent: React.FC<NBreadcrumbsProps> = memo(({ items, separator, isDisabled = false, className = '', itemClassName = '' }) => {
+const NBreadcrumbsComponent: React.FC<NBreadcrumbsProps> = memo(({ items, separator, disabled = false, className = '', itemClassName = '' }) => {
   return (
-    <Breadcrumbs separator={separator} isDisabled={isDisabled} className={cn('nyn-breadcrumbs', className)}>
+    <Breadcrumbs separator={separator} isDisabled={disabled} className={cn('nyn-breadcrumbs', className)}>
       {items.map((item, index) => (
         <Breadcrumbs.Item key={index} href={item.href} className={cn(itemClassName)}>
           {item.label}

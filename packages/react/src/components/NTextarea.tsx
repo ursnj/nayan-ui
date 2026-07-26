@@ -10,7 +10,7 @@ export interface NTextareaProps {
   value?: string;
   defaultValue?: string;
   isRequired?: boolean;
-  isDisabled?: boolean;
+  disabled?: boolean;
   isReadOnly?: boolean;
   className?: string;
   labelClassName?: string;
@@ -31,7 +31,7 @@ export const NTextarea = memo(
         value,
         defaultValue,
         isRequired = false,
-        isDisabled = false,
+        disabled = false,
         isReadOnly = false,
         className = '',
         labelClassName = '',
@@ -47,7 +47,7 @@ export const NTextarea = memo(
           id={id}
           name={name}
           isRequired={isRequired}
-          isDisabled={isDisabled}
+          isDisabled={disabled}
           isReadOnly={isReadOnly}
           isInvalid={!!error}
           className={cn('nyn-textarea-block', className)}>

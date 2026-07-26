@@ -14,7 +14,7 @@ export interface NAutocompleteProps {
   onSelectionChange?: (key: string | null) => void;
   onClear?: () => void;
   variant?: 'primary' | 'secondary';
-  isDisabled?: boolean;
+  disabled?: boolean;
   isInvalid?: boolean;
   fullWidth?: boolean;
   className?: string;
@@ -30,7 +30,7 @@ const NAutocompleteComponent: React.FC<NAutocompleteProps> = memo(
     onSelectionChange,
     onClear,
     variant = 'primary',
-    isDisabled = false,
+    disabled = false,
     isInvalid = false,
     fullWidth = false,
     className = '',
@@ -44,7 +44,7 @@ const NAutocompleteComponent: React.FC<NAutocompleteProps> = memo(
         onSelectionChange={key => onSelectionChange?.(key as string | null)}
         onClear={onClear}
         variant={variant}
-        isDisabled={isDisabled}
+        isDisabled={disabled}
         isInvalid={isInvalid}
         fullWidth={fullWidth}
         className={cn('nyn-autocomplete', className)}

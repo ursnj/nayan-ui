@@ -483,7 +483,7 @@ const Select = () => {
       placeholder="Select something..."
       isClearable={true}
       isSearchable={true}
-      isDisabled={false}
+      disabled={false}
       value={selected}
       options={items}
       onCreateOptions={value => console.log(value)}

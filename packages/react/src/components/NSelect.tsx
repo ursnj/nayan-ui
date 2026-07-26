@@ -14,7 +14,7 @@ export interface NSelectProps<OptionType = ReactSelectOption, IsMulti extends bo
   isCreatable?: boolean;
   isClearable?: boolean;
   isSearchable?: boolean;
-  isDisabled?: boolean;
+  disabled?: boolean;
   className?: string;
   labelClassName?: string;
   selectClassName?: string;
@@ -44,7 +44,7 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
     placeholder = 'Select...',
     isSearchable = false,
     isClearable = false,
-    isDisabled = false,
+    disabled = false,
     className = '',
     labelClassName = '',
     selectClassName = '',
@@ -94,7 +94,7 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
         name={name}
         isMulti={isMulti}
         isLoading={isLoading}
-        isDisabled={isDisabled}
+        isDisabled={disabled}
         isClearable={isClearable}
         isSearchable={isSearchable}
         className={cn('nyn-select', selectClassName)}
