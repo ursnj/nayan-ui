@@ -11,7 +11,7 @@ export interface NInputProps {
   value?: string;
   defaultValue?: string;
   isRequired?: boolean;
-  isDisabled?: boolean;
+  disabled?: boolean;
   isReadOnly?: boolean;
   className?: string;
   wrapperClassName?: string;
@@ -34,7 +34,7 @@ export const NInput = React.memo(
         value,
         defaultValue,
         isRequired = false,
-        isDisabled = false,
+        disabled = false,
         isReadOnly = false,
         className = '',
         wrapperClassName = '',
@@ -52,7 +52,7 @@ export const NInput = React.memo(
           name={name}
           type={type}
           isRequired={isRequired}
-          isDisabled={isDisabled}
+          isDisabled={disabled}
           isReadOnly={isReadOnly}
           isInvalid={!!error}
           className={cn('nyn-input-block mb-3', wrapperClassName, className)}>

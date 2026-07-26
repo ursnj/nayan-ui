@@ -10,7 +10,7 @@ export interface NNumberFieldProps {
   maxValue?: number;
   step?: number;
   label?: string;
-  isDisabled?: boolean;
+  disabled?: boolean;
   isInvalid?: boolean;
   variant?: 'primary' | 'secondary';
   fullWidth?: boolean;
@@ -28,7 +28,7 @@ const NNumberFieldComponent: React.FC<NNumberFieldProps> = memo(
     maxValue,
     step = 1,
     label,
-    isDisabled = false,
+    disabled = false,
     isInvalid = false,
     variant = 'primary',
     fullWidth = false,
@@ -44,7 +44,7 @@ const NNumberFieldComponent: React.FC<NNumberFieldProps> = memo(
         minValue={minValue}
         maxValue={maxValue}
         step={step}
-        isDisabled={isDisabled}
+        isDisabled={disabled}
         isInvalid={isInvalid}
         variant={variant}
         fullWidth={fullWidth}

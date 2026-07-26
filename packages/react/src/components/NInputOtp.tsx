@@ -8,7 +8,7 @@ export interface NInputOtpProps {
   onChange?: (value: string) => void;
   onComplete?: (value: string) => void;
   variant?: 'primary' | 'secondary';
-  isDisabled?: boolean;
+  disabled?: boolean;
   isInvalid?: boolean;
   pattern?: string;
   className?: string;
@@ -23,7 +23,7 @@ const NInputOtpComponent: React.FC<NInputOtpProps> = memo(
     onChange,
     onComplete,
     variant = 'primary',
-    isDisabled = false,
+    disabled = false,
     isInvalid = false,
     pattern,
     className = '',
@@ -39,7 +39,7 @@ const NInputOtpComponent: React.FC<NInputOtpProps> = memo(
         onChange={onChange}
         onComplete={onComplete}
         variant={variant}
-        isDisabled={isDisabled}
+        isDisabled={disabled}
         isInvalid={isInvalid}
         pattern={pattern}
         className={cn('nyn-input-otp', className)}>

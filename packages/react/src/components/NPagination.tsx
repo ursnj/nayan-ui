@@ -7,7 +7,7 @@ export interface NPaginationProps {
   currentPage: number;
   onChange: (page: number) => void;
   size?: 'sm' | 'md' | 'lg';
-  isDisabled?: boolean;
+  disabled?: boolean;
   showSummary?: boolean;
   summaryText?: string;
   siblingCount?: number;
@@ -23,7 +23,7 @@ const NPaginationComponent: React.FC<NPaginationProps> = memo(
     currentPage,
     onChange,
     size = 'md',
-    isDisabled = false,
+    disabled = false,
     showSummary = false,
     summaryText,
     siblingCount = 1,
@@ -68,7 +68,7 @@ const NPaginationComponent: React.FC<NPaginationProps> = memo(
         )}
         <Pagination.Content className={cn(contentClassName)}>
           <Pagination.Item>
-            <Pagination.Previous isDisabled={isDisabled || currentPage <= 1} onPress={handlePrevious}>
+            <Pagination.Previous isDisabled={disabled || currentPage <= 1} onPress={handlePrevious}>
               <Pagination.PreviousIcon />
               <span>Previous</span>
             </Pagination.Previous>
@@ -82,7 +82,7 @@ const NPaginationComponent: React.FC<NPaginationProps> = memo(
               <Pagination.Item key={page}>
                 <Pagination.Link
                   isActive={page === currentPage}
-                  isDisabled={isDisabled}
+                  isDisabled={disabled}
                   onPress={() => onChange(page)}
                   className={cn(linkClassName, page === currentPage && activeLinkClassName)}>
                   {page}
@@ -91,7 +91,7 @@ const NPaginationComponent: React.FC<NPaginationProps> = memo(
             )
           )}
           <Pagination.Item>
-            <Pagination.Next isDisabled={isDisabled || currentPage >= totalPages} onPress={handleNext}>
+            <Pagination.Next isDisabled={disabled || currentPage >= totalPages} onPress={handleNext}>
               <span>Next</span>
               <Pagination.NextIcon />
             </Pagination.Next>
