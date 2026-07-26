@@ -1,5 +1,5 @@
 import React, { useId } from 'react';
-import { Switch } from '@heroui/react';
+import { Label, Switch } from '@heroui/react';
 import { cn } from '../lib/utils';
 
 export interface NSwitchProps {
@@ -20,19 +20,16 @@ export const NSwitch: React.FC<NSwitchProps> = React.memo(
     const switchId = id || `nyn-switch-${generatedId}`;
 
     return (
-      <Switch
-        isSelected={enabled}
-        defaultSelected={defaultChecked}
-        isDisabled={disabled}
-        onChange={onChange}
-        className={cn('nyn-switch', className)}>
-        <Switch.Content className={cn(switchClassName)}>
-          <Switch.Control>
-            <Switch.Thumb />
-          </Switch.Control>
-          {label && <span className={cn(labelClassName)}>{label}</span>}
-        </Switch.Content>
-      </Switch>
+      <div className={cn('flex items-center justify-between', className)}>
+        {label && <Label className={cn(labelClassName)}>{label}</Label>}
+        <Switch
+          isSelected={enabled}
+          defaultSelected={defaultChecked}
+          isDisabled={disabled}
+          onChange={onChange}
+          className={cn('nyn-switch', switchClassName)}
+        />
+      </div>
     );
   }
 );

@@ -59,24 +59,21 @@ export const NSlider: React.FC<NSliderProps> = React.memo(
     );
 
     return (
-      <Slider
-        value={internalValue}
-        defaultValue={defaultValue}
-        minValue={min}
-        maxValue={max}
-        step={step}
-        isDisabled={disabled}
-        orientation={orientation}
-        onChange={handleChange as any}
-        className={cn('nyn-slider mb-3', sliderClassName, className)}
-        aria-label={ariaLabel}
-        {...rest}>
+      <div className={cn('nyn-slider-block mb-3', className)} {...rest}>
         {label && <Label className={cn(labelClassName)}>{label}</Label>}
-        <Slider.Track>
-          <Slider.Fill />
-          <Slider.Thumb />
-        </Slider.Track>
-      </Slider>
+        <Slider
+          value={internalValue}
+          defaultValue={defaultValue}
+          minValue={min}
+          maxValue={max}
+          step={step}
+          isDisabled={disabled}
+          orientation={orientation}
+          onChange={handleChange as any}
+          className={cn('nyn-slider rounded', sliderClassName)}
+          aria-label={ariaLabel}
+        />
+      </div>
     );
   }
 );
