@@ -450,15 +450,15 @@ const items = [
 ];
 
 const RadioGroupExample = () => {
-  const [selected, setSelected] = useState(items[0].value);
+  const [value, setValue] = useState(items[0].value);
 
   return (
     <div>
       <h1 className="text-foreground mb-3 text-base">Horizontal:</h1>
-      <NRadioGroup items={items} selected={selected} setSelected={setSelected} />
+      <NRadioGroup label="Plan" items={items} value={value} onChange={setValue} />
       <div className="mt-5" />
       <h1 className="text-foreground mb-3 text-base">Vertical:</h1>
-      <NRadioGroup orientation="vertical" items={items} selected={selected} setSelected={setSelected} />
+      <NRadioGroup orientation="vertical" label="Plan" items={items} value={value} onChange={setValue} />
     </div>
   );
 };
