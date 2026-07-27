@@ -1,9 +1,9 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { Accordion } from '@heroui/react';
 import { cn } from '../lib/utils';
 import { AccordionListItem, AccordionTypes } from './Types';
 
-export interface NAccordionProps<T = AccordionListItem> {
+export interface NAccordionProps<T extends AccordionListItem = AccordionListItem> {
   className?: string;
   itemClassName?: string;
   triggerClassName?: string;
@@ -11,10 +11,10 @@ export interface NAccordionProps<T = AccordionListItem> {
   indicatorClassName?: string;
   variant?: 'default' | 'surface';
   type?: AccordionTypes;
-  items: { id?: string; title: string; message: string }[];
+  items: T[];
 }
 
-function NAccordionComponent<T = AccordionListItem>({
+function NAccordionComponent<T extends AccordionListItem = AccordionListItem>({
   type = AccordionTypes.SINGLE,
   items,
   className = '',
@@ -29,7 +29,7 @@ function NAccordionComponent<T = AccordionListItem>({
       {items.map((item, index) => {
         const key = item.id || `item-${index}`;
         return (
-          <Accordion.Item key={key} id={key} className={cn(itemClassName)}>
+          <Accordion.Item key={key} id={key} isDisabled={item.disabled} className={cn(itemClassName)}>
             <Accordion.Heading>
               <Accordion.Trigger className={cn(triggerClassName)}>
                 {item.title}

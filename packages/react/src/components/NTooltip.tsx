@@ -49,11 +49,18 @@ export const NTooltip: React.FC<NTooltipProps> = memo(
       ref
     ) => {
       return (
-        <Tooltip>
-          <Tooltip.Trigger className={triggerClassName} aria-describedby={id} {...triggerProps}>
+        <Tooltip delay={delayShow} closeDelay={delayHide}>
+          <Tooltip.Trigger {...triggerProps} className={cn(triggerClassName, triggerProps.className)} aria-describedby={id}>
             {children}
           </Tooltip.Trigger>
-          <Tooltip.Content id={id} className={cn('nyn-tooltip', className)} {...contentProps}>
+          <Tooltip.Content
+            ref={ref}
+            id={id}
+            placement={placement}
+            aria-label={ariaLabel}
+            {...rest}
+            {...contentProps}
+            className={cn('nyn-tooltip', className, contentProps.className)}>
             {message}
           </Tooltip.Content>
         </Tooltip>

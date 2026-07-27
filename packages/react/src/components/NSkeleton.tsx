@@ -10,7 +10,16 @@ export interface NSkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const NSkeleton: React.FC<NSkeletonProps> = React.memo(
   ({ className = '', role = 'status', 'aria-busy': ariaBusy = true, 'aria-live': ariaLive = 'polite', ...rest }) => {
-    return <Skeleton className={cn('nyn-skeleton', className)} {...(rest as any)} />;
+    return (
+      <Skeleton
+        className={cn('nyn-skeleton', className)}
+        role={role}
+        aria-busy={ariaBusy}
+        aria-live={ariaLive}
+        aria-label={rest['aria-label'] || 'Loading content'}
+        {...(rest as any)}
+      />
+    );
   }
 );
 

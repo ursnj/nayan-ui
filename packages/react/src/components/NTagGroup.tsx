@@ -48,9 +48,9 @@ const NTagGroupComponent: React.FC<NTagGroupProps> = memo(
         aria-label={ariaLabel}>
         <TagGroup.List items={items}>
           {(item: NTagItem) => (
-            <Tag id={item.id} textValue={item.label} className={cn(tagClassName)}>
+            <Tag id={item.id} textValue={item.label} isDisabled={disabled} className={cn(tagClassName)}>
               {item.label}
-              {onRemove && <Tag.RemoveButton />}
+              {onRemove && <Tag.RemoveButton isDisabled={disabled} />}
             </Tag>
           )}
         </TagGroup.List>

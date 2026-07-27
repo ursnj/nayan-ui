@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Autocomplete, ListBox } from '@heroui/react';
+import { Autocomplete, ListBox, SearchField, useFilter } from '@heroui/react';
 import { cn } from '../lib/utils';
 
 export interface NAutocompleteItem {
@@ -37,6 +37,8 @@ const NAutocompleteComponent: React.FC<NAutocompleteProps> = memo(
     popoverClassName = '',
     'aria-label': ariaLabel = 'Search'
   }) => {
+    const { contains } = useFilter({ sensitivity: 'base' });
+
     return (
       <Autocomplete
         placeholder={placeholder}
@@ -51,10 +53,18 @@ const NAutocompleteComponent: React.FC<NAutocompleteProps> = memo(
         aria-label={ariaLabel}>
         <Autocomplete.Trigger>
           <Autocomplete.Value />
+          {onClear && <Autocomplete.ClearButton />}
           <Autocomplete.Indicator />
         </Autocomplete.Trigger>
         <Autocomplete.Popover className={cn(popoverClassName)}>
-          <Autocomplete.Filter>
+          <Autocomplete.Filter filter={contains}>
+            <SearchField aria-label={`${ariaLabel} filter`}>
+              <SearchField.Group>
+                <SearchField.SearchIcon />
+                <SearchField.Input placeholder={placeholder} />
+                <SearchField.ClearButton />
+              </SearchField.Group>
+            </SearchField>
             <ListBox items={items}>
               {(item: NAutocompleteItem) => (
                 <ListBox.Item id={item.id} textValue={item.label}>

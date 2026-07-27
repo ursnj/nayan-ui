@@ -15,9 +15,10 @@ export const NTheme = React.memo(({ children, theme = null, onThemeChange, ...ma
   const [_, setTheme] = useLocalStorage('THEME', '');
 
   const finalTheme = useMemo(() => {
-    if (theme === THEMES.LIGHT || theme === THEMES.DARK) return theme;
+    const normalizedTheme = typeof theme === 'string' ? theme.toLowerCase() : theme;
+    if (normalizedTheme === THEMES.LIGHT || normalizedTheme === THEMES.DARK) return normalizedTheme;
     const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    return !theme && !prefersDark ? THEMES.LIGHT : theme || THEMES.DARK;
+    return !normalizedTheme && !prefersDark ? THEMES.LIGHT : THEMES.DARK;
   }, [theme]);
 
   useEffect(() => {
@@ -27,7 +28,6 @@ export const NTheme = React.memo(({ children, theme = null, onThemeChange, ...ma
       window.document.documentElement.setAttribute('data-theme', finalTheme);
       window.document.documentElement.classList.remove('light', 'dark');
       window.document.documentElement.classList.add(finalTheme);
-      window.document.documentElement.setAttribute('lang', 'en');
     }
     if (onThemeChange) onThemeChange(finalTheme);
   }, [finalTheme, setTheme, onThemeChange]);

@@ -1,6 +1,8 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { InputOTP } from '@heroui/react';
 import { cn } from '../lib/utils';
+
+const EMPTY_SEPARATOR_INDICES: number[] = [];
 
 export interface NInputOtpProps {
   maxLength: number;
@@ -14,6 +16,7 @@ export interface NInputOtpProps {
   className?: string;
   slotClassName?: string;
   separatorIndices?: number[];
+  'aria-label'?: string;
 }
 
 const NInputOtpComponent: React.FC<NInputOtpProps> = memo(
@@ -28,9 +31,10 @@ const NInputOtpComponent: React.FC<NInputOtpProps> = memo(
     pattern,
     className = '',
     slotClassName = '',
-    separatorIndices = []
+    separatorIndices = EMPTY_SEPARATOR_INDICES,
+    'aria-label': ariaLabel = 'One-time password'
   }) => {
-    const separatorSet = new Set(separatorIndices);
+    const separatorSet = useMemo(() => new Set(separatorIndices), [separatorIndices]);
 
     return (
       <InputOTP
@@ -42,6 +46,7 @@ const NInputOtpComponent: React.FC<NInputOtpProps> = memo(
         isDisabled={disabled}
         isInvalid={isInvalid}
         pattern={pattern}
+        aria-label={ariaLabel}
         className={cn('nyn-input-otp', className)}>
         <InputOTP.Group>
           {Array.from({ length: maxLength }, (_, i) => (

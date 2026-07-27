@@ -29,7 +29,7 @@ const NToggleButtonComponent: React.FC<NToggleButtonProps> = memo(
     return (
       <ToggleButton
         isSelected={isSelected}
-        defaultSelected={defaultSelected}
+        defaultSelected={isSelected === undefined ? defaultSelected : undefined}
         isDisabled={disabled}
         isIconOnly={isIconOnly}
         variant={variant}

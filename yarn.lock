@@ -3015,12 +3015,15 @@ __metadata:
     "@types/node": "npm:^26.1.1"
     "@types/react": "npm:^19.2.17"
     "@types/react-dom": "npm:^19.2.3"
+    clsx: "npm:^2.1.1"
     prism-react-renderer: "npm:^2.4.1"
     react: "npm:^19.2.8"
+    react-aria-components: "npm:^1.17.0"
     react-dom: "npm:^19.2.8"
     react-linkify: "npm:^1.0.0-alpha"
     react-select: "npm:^5.10.2"
     rimraf: "npm:^6.1.3"
+    tailwind-merge: "npm:^3.4.0"
     tailwindcss: "npm:^4.3.3"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.1.5"
@@ -5951,7 +5954,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^2.0.0":
+"clsx@npm:^2.0.0, clsx@npm:^2.1.1":
   version: 2.1.1
   resolution: "clsx@npm:2.1.1"
   checksum: 10c0/c4c8eb865f8c82baab07e71bfa8897c73454881c4f99d6bc81585aecd7c441746c1399d08363dc096c550cceaf97bd4ce1e8854e1771e9998d9f94c4fe075839
@@ -10210,7 +10213,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-aria-components@npm:^1.19.0":
+"react-aria-components@npm:^1.17.0, react-aria-components@npm:^1.19.0":
   version: 1.19.0
   resolution: "react-aria-components@npm:1.19.0"
   dependencies:

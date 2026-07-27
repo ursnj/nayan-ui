@@ -12,7 +12,7 @@ const sizeMapping: Record<SheetSize, string> = {
 
 export interface NSheetProps {
   isOpen: boolean;
-  title?: string;
+  title?: ReactNode;
   size?: SheetSize;
   className?: string;
   headerClassName?: string;
@@ -20,6 +20,7 @@ export interface NSheetProps {
   contentClassName?: string;
   children: ReactNode;
   onCloseSheet?: () => void;
+  onClose?: () => void;
   header?: ReactNode;
   footer?: ReactNode;
   'aria-label'?: string;
@@ -39,6 +40,7 @@ export const NSheet: React.FC<NSheetProps> = memo(
     children,
     size = SheetSize.XS,
     onCloseSheet,
+    onClose,
     header,
     footer,
     'aria-label': ariaLabel,
@@ -50,16 +52,24 @@ export const NSheet: React.FC<NSheetProps> = memo(
       <Drawer
         isOpen={isOpen}
         onOpenChange={open => {
-          if (!open && onCloseSheet) onCloseSheet();
+          if (!open) (onCloseSheet || onClose)?.();
         }}>
         <Drawer.Trigger className="hidden" aria-hidden="true">
           <span />
         </Drawer.Trigger>
         <Drawer.Backdrop isDismissable>
           <Drawer.Content placement="right" className={cn('nyn-sheet w-full', sizeMapping[size])}>
-            <Drawer.Dialog className={cn('nyn-sheet-dialog h-full', className)} aria-label={ariaLabel} role={role as 'dialog' | 'alertdialog'}>
+            <Drawer.Dialog
+              className={cn('nyn-sheet-dialog h-full', className)}
+              aria-label={ariaLabel || (!title && !ariaLabelledBy ? 'Dialog' : undefined)}
+              aria-labelledby={ariaLabelledBy}
+              role={role as 'dialog' | 'alertdialog'}
+              {...rest}>
               {header || (
-                <Drawer.Header className={cn(headerClassName)}>{title && <span className={cn(titleClassName)}>{title}</span>}</Drawer.Header>
+                <Drawer.Header className={cn(headerClassName)}>
+                  {title && <Drawer.Heading className={cn(titleClassName)}>{title}</Drawer.Heading>}
+                  <Drawer.CloseTrigger aria-label="Close dialog" />
+                </Drawer.Header>
               )}
               <Drawer.Body className={cn('h-[calc(100vh_-_44px)] overflow-y-auto', contentClassName)}>{children}</Drawer.Body>
               {footer && <Drawer.Footer className="nyn-sheet-footer">{footer}</Drawer.Footer>}
