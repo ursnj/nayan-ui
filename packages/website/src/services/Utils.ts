@@ -22,7 +22,6 @@ import {
   Link,
   Link2,
   ListCollapse,
-  ListFilter,
   Loader,
   Map,
   MessageSquare,
@@ -50,7 +49,6 @@ import {
 import {
   accordionAttributes,
   alertAttributes,
-  autocompleteAttributes,
   badgeAttributes,
   buttonAttributes,
   buttonGroupAttributes,
@@ -86,7 +84,6 @@ import {
 import {
   accordionCode,
   alertCode,
-  autocompleteCode,
   badgeCode,
   buttonCode,
   buttonGroupCode,
@@ -151,7 +148,6 @@ import {
   aiReviewTags,
   aiScannerTags,
   alertTags,
-  autocompleteTags,
   badgeTags,
   buttonGroupTags,
   buttonTags,
@@ -269,17 +265,6 @@ export const reactSidebarItems = [
     code: alertCode,
     tags: alertTags,
     icon: CircleAlert,
-    isComponent: true
-  },
-  {
-    title: 'Autocomplete',
-    description:
-      'An Autocomplete component is a UI element that combines a text input with a dropdown list of suggestions, allowing users to quickly find and select from a set of options. It provides real-time filtering as users type, enhancing the search and selection experience.',
-    link: '/react/autocomplete',
-    attributes: autocompleteAttributes,
-    code: autocompleteCode,
-    tags: autocompleteTags,
-    icon: ListFilter,
     isComponent: true
   },
   {
