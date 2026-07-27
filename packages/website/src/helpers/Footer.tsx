@@ -7,7 +7,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-surface/80 backdrop-blur-md border-t border-default mt-12 relative">
-      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-brand-gradient opacity-60" />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
@@ -15,9 +15,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
               <img src="/logo.webp" fetchPriority="high" alt="Nayan UI Logo" className="w-10 h-10" loading="lazy" />
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Nayan UI
-              </span>
+              <span className="text-xl font-bold text-gradient">Nayan UI</span>
             </div>
             <p className="text-muted text-sm leading-relaxed">
               Beautiful, accessible, and customizable React & React Native components built with modern design principles.
@@ -25,7 +23,7 @@ const Footer = () => {
             <div className="flex space-x-4">
               <NLink
                 href="https://github.com/ursnj/nayan-ui"
-                className="text-muted hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200"
+                className="text-muted hover:text-accent transition-colors duration-200"
                 target="_blank"
                 rel="noopener noreferrer">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -34,7 +32,7 @@ const Footer = () => {
               </NLink>
               <NLink
                 href="https://www.npmjs.com/package/@nayan-ui/react"
-                className="text-muted hover:text-red-500 dark:hover:text-red-400 transition-colors duration-200"
+                className="text-muted hover:text-accent transition-colors duration-200"
                 target="_blank"
                 rel="noopener noreferrer">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -47,27 +45,27 @@ const Footer = () => {
           {/* Documentation Links */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">
-              <span className="text-blue-600 dark:text-blue-400">Documentation</span>
+              <span className="text-accent">Documentation</span>
             </h3>
             <div className="space-y-2">
               <NLink
                 href="/react/installation"
-                className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
+                className="block text-muted hover:text-accent transition-colors duration-200 text-sm">
                 React Installation
               </NLink>
               <NLink
                 href="/react-native/installation"
-                className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
+                className="block text-muted hover:text-accent transition-colors duration-200 text-sm">
                 React Native Installation
               </NLink>
               <NLink
                 href="/react/components"
-                className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
+                className="block text-muted hover:text-accent transition-colors duration-200 text-sm">
                 React Components
               </NLink>
               <NLink
                 href="/react-native/components"
-                className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
+                className="block text-muted hover:text-accent transition-colors duration-200 text-sm">
                 React Native Components
               </NLink>
             </div>
@@ -76,29 +74,29 @@ const Footer = () => {
           {/* Resources */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">
-              <span className="text-purple-600 dark:text-purple-400">Resources</span>
+              <span className="text-accent">Resources</span>
             </h3>
             <div className="space-y-2">
               <NLink
                 href="/contributions"
-                className="block text-muted hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 text-sm">
+                className="block text-muted hover:text-accent transition-colors duration-200 text-sm">
                 Contributing
               </NLink>
               <NLink
                 href="/tags"
-                className="block text-muted hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 text-sm">
+                className="block text-muted hover:text-accent transition-colors duration-200 text-sm">
                 Component Tags
               </NLink>
               <NLink
                 href="https://github.com/ursnj/nayan-ui/issues"
-                className="block text-muted hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 text-sm"
+                className="block text-muted hover:text-accent transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">
                 Report Issues
               </NLink>
               <NLink
                 href="https://github.com/ursnj/nayan-ui/discussions"
-                className="block text-muted hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 text-sm"
+                className="block text-muted hover:text-accent transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">
                 Discussions
@@ -109,33 +107,33 @@ const Footer = () => {
           {/* Community */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">
-              <span className="text-pink-600 dark:text-pink-400">Community</span>
+              <span className="text-accent">Community</span>
             </h3>
             <div className="space-y-2">
               <NLink
                 href="https://github.com/ursnj/nayan-ui"
-                className="block text-muted hover:text-pink-600 dark:hover:text-pink-400 transition-colors duration-200 text-sm"
+                className="block text-muted hover:text-accent transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">
                 GitHub Repository
               </NLink>
               <NLink
                 href="https://www.npmjs.com/package/@nayan-ui/cli"
-                className="block text-muted hover:text-pink-600 dark:hover:text-pink-400 transition-colors duration-200 text-sm"
+                className="block text-muted hover:text-accent transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">
                 NPM Package (Cli)
               </NLink>
               <NLink
                 href="https://www.npmjs.com/package/@nayan-ui/react"
-                className="block text-muted hover:text-pink-600 dark:hover:text-pink-400 transition-colors duration-200 text-sm"
+                className="block text-muted hover:text-accent transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">
                 NPM Package (React)
               </NLink>
               <NLink
                 href="https://www.npmjs.com/package/@nayan-ui/native"
-                className="block text-muted hover:text-pink-600 dark:hover:text-pink-400 transition-colors duration-200 text-sm"
+                className="block text-muted hover:text-accent transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">
                 NPM Package (React Native)

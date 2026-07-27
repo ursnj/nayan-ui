@@ -26,7 +26,7 @@ const Sidebar = (props: Props) => {
                   {!item.isHeading && (
                     <Link href={item.link}>
                       <div
-                        className={`cursor-pointer hover:bg-default rounded-lg p-2 px-3 flex items-center text-sm transition-colors ${pathname === item.link ? 'text-blue-600 dark:text-blue-400 bg-gradient-to-r from-blue-500/10 to-purple-500/10 font-medium border-l-2 border-blue-500' : ''}`}>
+                        className={`cursor-pointer rounded-lg p-2 px-3 flex items-center text-sm transition-colors ${pathname === item.link ? 'text-accent bg-accent/10 font-medium border-l-2 border-accent' : 'hover:bg-default hover:text-accent'}`}>
                         <Icon className="w-4 h-4 inline mr-3 shrink-0" />
                         <span className="truncate">{item.title}</span>
                       </div>
@@ -41,7 +41,7 @@ const Sidebar = (props: Props) => {
         <div className="content flex-1 min-w-0">
           {props.title && (
             <h1 className="text-2xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">{props.title}</span>
+              <span className="text-gradient">{props.title}</span>
             </h1>
           )}
           <div>{props.children}</div>
