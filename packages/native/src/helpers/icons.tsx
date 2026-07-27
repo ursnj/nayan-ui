@@ -6,6 +6,27 @@ export interface NIconProps {
   color?: string;
 }
 
+export type NIcon = React.ComponentType<any> | React.ReactElement;
+
+/**
+ * Normalizes an `icon` prop (either a component type or a pre-built element) into a
+ * renderable element with a consistent default size, optionally injecting a theme color.
+ * Shared across NButton, NActionItem, NButtonGroup, NMenuItem and NSubMenu so icon
+ * look & feel (size/color handling) stays standardized across the library.
+ */
+export const resolveIcon = (icon: NIcon | undefined, options: { size?: number; color?: string } = {}): React.ReactElement | null => {
+  if (!icon) return null;
+  const { size = 16, color } = options;
+
+  if (React.isValidElement(icon)) {
+    const element = icon as React.ReactElement<any>;
+    return color != null ? React.cloneElement(element, { color: element.props.color ?? color }) : element;
+  }
+
+  const IconComponent = icon as React.ComponentType<any>;
+  return color != null ? <IconComponent size={size} color={color} /> : <IconComponent size={size} />;
+};
+
 export const SunIcon = React.memo<NIconProps>(({ size = 22, color = '#fff' }) => (
   <Svg width={size} height={size} viewBox="0 0 512 512" fill="none">
     <Circle cx="256" cy="256" r="80" stroke={color} strokeLinecap="round" strokeMiterlimit={10} strokeWidth={32} />
