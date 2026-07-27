@@ -34,9 +34,12 @@
   },
   "dependencies": {
     "@heroui/react": "^3.2.2",
+    "clsx": "^2.1.1",
     "prism-react-renderer": "^2.4.1",
+    "react-aria-components": "^1.17.0",
     "react-linkify": "^1.0.0-alpha",
-    "react-select": "^5.10.2"
+    "react-select": "^5.10.2",
+    "tailwind-merge": "^3.4.0"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

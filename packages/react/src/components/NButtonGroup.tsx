@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import React, { ReactNode, memo, useCallback, useMemo } from 'react';
 import type { Selection } from 'react-aria-components';
 import { ToggleButton, ToggleButtonGroup } from '@heroui/react';
 import { cn } from '../lib/utils';
@@ -10,6 +10,8 @@ export interface NButtonGroupProps<T = string> extends Omit<React.HTMLAttributes
   selected: T;
   disabled?: boolean;
   onChange: (selected: T) => void;
+  getKey?: (item: T, index: number) => React.Key;
+  renderItem?: (item: T, index: number) => ReactNode;
   ariaLabel?: string;
   size?: 'sm' | 'md' | 'lg';
 }
@@ -21,22 +23,37 @@ function NButtonGroupComponent<T = string>({
   selected,
   disabled = false,
   onChange,
-  ariaLabel,
+  getKey,
+  renderItem,
+  ariaLabel = 'Options',
   size = 'md',
   ...rest
 }: NButtonGroupProps<T>) {
-  const selectedKeys = new Set([String(selected)]);
+  const itemKeys = useMemo(
+    () => items.map((item, index) => String(getKey ? getKey(item, index) : typeof item === 'string' || typeof item === 'number' ? item : index)),
+    [getKey, items]
+  );
+  const selectedIndex = items.findIndex(item => Object.is(item, selected));
+  const selectedKey =
+    selectedIndex >= 0
+      ? itemKeys[selectedIndex]
+      : getKey
+        ? String(getKey(selected, -1))
+        : typeof selected === 'string' || typeof selected === 'number'
+          ? String(selected)
+          : undefined;
+  const selectedKeys = useMemo(() => new Set(selectedKey === undefined ? [] : [selectedKey]), [selectedKey]);
 
   const handleSelectionChange = useCallback(
     (keys: Selection) => {
       if (keys === 'all') return;
       const selectedKey = [...keys][0] as string;
       if (selectedKey !== undefined) {
-        const item = items.find(i => String(i) === selectedKey);
+        const item = items[itemKeys.indexOf(selectedKey)];
         if (item !== undefined) onChange(item);
       }
     },
-    [items, onChange]
+    [itemKeys, items, onChange]
   );
 
   return (
@@ -50,10 +67,10 @@ function NButtonGroupComponent<T = string>({
       aria-label={ariaLabel}
       {...(rest as any)}>
       {items.map((item, idx) => {
-        const key = String(typeof item === 'string' ? item : idx);
+        const key = itemKeys[idx];
         return (
           <ToggleButton key={key} id={key} className={cn('nyn-button-group-item', buttonClassName)}>
-            {String(item)}
+            {renderItem ? renderItem(item, idx) : String(item)}
           </ToggleButton>
         );
       })}

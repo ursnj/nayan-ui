@@ -32,8 +32,7 @@ const NConfirmAlertComponent: React.FC<NConfirmAlertProps> = memo(
     cancelText = 'Cancel',
     onResult,
     onClose,
-    children,
-    ...rest
+    children
   }) => {
     return (
       <Modal
@@ -48,7 +47,7 @@ const NConfirmAlertComponent: React.FC<NConfirmAlertProps> = memo(
           <Modal.Container size="sm">
             <Modal.Dialog className={cn('nyn-confirm-alert', className)} role="alertdialog">
               <Modal.Header>
-                <span className={cn(titleClassName)}>{title}</span>
+                <Modal.Heading className={cn(titleClassName)}>{title}</Modal.Heading>
               </Modal.Header>
               <Modal.Body>
                 <p className={cn(messageClassName)}>{message}</p>

@@ -1,25 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-// Utility for SSR-safe window check
-declare const window: any;
 const isWindowDefined = () => typeof window !== 'undefined';
 
-// Types for serializer, parser, logger, and setter
-type Serializer<T> = (object: T | undefined) => string;
-type Parser<T> = (val: string) => T | undefined;
-type Setter<T> = React.Dispatch<React.SetStateAction<T | undefined>>;
+export type LocalStorageSerializer<T> = (object: T | undefined) => string;
+export type LocalStorageParser<T> = (val: string) => T | undefined;
+export type LocalStorageSetter<T> = React.Dispatch<React.SetStateAction<T | undefined>>;
 
-type Options<T> = Partial<{
-  serializer: Serializer<T>;
-  parser: Parser<T>;
-  logger: (error: any) => void;
+export type UseLocalStorageOptions<T> = Partial<{
+  serializer: LocalStorageSerializer<T>;
+  parser: LocalStorageParser<T>;
+  logger: (error: unknown) => void;
   syncData: boolean;
 }>;
 
 // Named export for the hook
-export function useLocalStorage<T>(key: string, defaultValue?: T, options?: Options<T>): [T | undefined, Setter<T>] {
-  const serializer = options?.serializer ?? (JSON.stringify as Serializer<T>);
-  const parser = options?.parser ?? (JSON.parse as Parser<T>);
+export function useLocalStorage<T>(key: string, defaultValue?: T, options?: UseLocalStorageOptions<T>): [T | undefined, LocalStorageSetter<T>] {
+  const serializer = options?.serializer ?? (JSON.stringify as LocalStorageSerializer<T>);
+  const parser = options?.parser ?? (JSON.parse as LocalStorageParser<T>);
   const logger = options?.logger ?? console.error;
   const syncData = options?.syncData ?? true;
 
@@ -28,6 +25,7 @@ export function useLocalStorage<T>(key: string, defaultValue?: T, options?: Opti
   const parserRef = useRef(parser);
   const loggerRef = useRef(logger);
   const defaultValueRef = useRef(defaultValue);
+  const keyRef = useRef(key);
   serializerRef.current = serializer;
   parserRef.current = parser;
   loggerRef.current = logger;
@@ -45,6 +43,18 @@ export function useLocalStorage<T>(key: string, defaultValue?: T, options?: Opti
     }
   });
 
+  useEffect(() => {
+    if (!isWindowDefined() || keyRef.current === key) return;
+    keyRef.current = key;
+    try {
+      const raw = window.localStorage.getItem(key);
+      setValue(raw !== null ? parserRef.current(raw) : defaultValueRef.current);
+    } catch (error) {
+      loggerRef.current(error);
+      setValue(defaultValueRef.current);
+    }
+  }, [key]);
+
   // Cross-tab sync via native storage event
   useEffect(() => {
     if (!isWindowDefined() || !syncData) return;
@@ -61,7 +71,7 @@ export function useLocalStorage<T>(key: string, defaultValue?: T, options?: Opti
   }, [key, syncData]);
 
   // Setter: update state and localStorage
-  const setLocalStorageValue = useCallback<Setter<T>>(
+  const setLocalStorageValue = useCallback<LocalStorageSetter<T>>(
     val => {
       setValue(prev => {
         const resolved = typeof val === 'function' ? (val as any)(prev) : val;

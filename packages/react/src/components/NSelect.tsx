@@ -28,6 +28,7 @@ export interface NSelectProps<OptionType = ReactSelectOption, IsMulti extends bo
   inputId?: string;
   name?: string;
   menuPortalTarget?: HTMLElement;
+  'aria-label'?: string;
   [key: string]: any; // for additional react-select props
 }
 
@@ -56,6 +57,7 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
     inputId,
     name,
     menuPortalTarget,
+    'aria-label': ariaLabel,
     ...rest
   } = props;
   const generatedId = useId();
@@ -64,13 +66,13 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
   // Accept both onChange and onChangeOptions for compatibility
   const handleChange = useCallback(
     (selected: any) => {
-      if (props.onChangeOptions) {
-        props.onChangeOptions(selected);
+      if (onChangeOptions) {
+        onChangeOptions(selected);
       } else if (onChange) {
         onChange(selected);
       }
     },
-    [onChange, props]
+    [onChange, onChangeOptions]
   );
 
   const handleCreate = useCallback(
@@ -108,8 +110,8 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
         onChange={handleChange}
         onCreateOption={isCreatable ? handleCreate : undefined}
         theme={reactSelectTheme}
-        aria-label={label}
-        menuPortalTarget={typeof window !== 'undefined' ? menuPortalTarget || document.body : undefined}
+        aria-label={ariaLabel || label || 'Select'}
+        menuPortalTarget={menuPortalTarget}
         {...rest}
       />
     </div>

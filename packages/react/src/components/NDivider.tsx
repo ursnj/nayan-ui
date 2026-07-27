@@ -12,10 +12,10 @@ export interface NDividerProps {
 
 const NDividerComponent: React.FC<NDividerProps> = memo(
   ({ className = '', orientation = 'horizontal', children, childrenClassName = '', separatorClassName = '', ...rest }) => {
-    if (children && orientation === 'vertical') {
-      return <Separator orientation={orientation} className={cn(separatorClassName)} {...(rest as any)} />;
+    if (children != null && orientation === 'vertical') {
+      return <Separator orientation={orientation} className={cn(className, separatorClassName)} {...(rest as any)} />;
     }
-    if (children && orientation === 'horizontal') {
+    if (children != null && orientation === 'horizontal') {
       return (
         <div className={cn('flex items-center', className)}>
           <Separator orientation="horizontal" className={cn('flex-1', separatorClassName)} {...(rest as any)} />

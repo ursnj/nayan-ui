@@ -54,8 +54,10 @@ export enum AccordionTypes {
 }
 
 export interface AccordionListItem {
-  title: string;
-  message: string;
+  id?: string;
+  title: ReactNode;
+  message: ReactNode;
+  disabled?: boolean;
 }
 
 export interface RadioItem {
