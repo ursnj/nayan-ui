@@ -450,19 +450,6 @@ export const tooltipAttributes = [
   { name: 'contentProps', type: 'React.HTMLAttributes<HTMLDivElement>', default: 'Optional', details: 'Props for content element.' }
 ];
 
-export const autocompleteAttributes = [
-  { name: 'items', type: 'NAutocompleteItem[]', default: 'Required', details: 'List of items with id and label.' },
-  { name: 'placeholder', type: 'string', default: "'Search...'", details: 'Placeholder text.' },
-  { name: 'selectedKey', type: 'string', default: 'Optional', details: 'Currently selected item key.' },
-  { name: 'onSelectionChange', type: '(key: string | null) => void', default: 'Optional', details: 'Callback when selection changes.' },
-  { name: 'onClear', type: '() => void', default: 'Optional', details: 'Callback when input is cleared.' },
-  { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'Visual variant.' },
-  { name: 'disabled', type: 'boolean', default: 'false', details: 'Disables the autocomplete.' },
-  { name: 'isInvalid', type: 'boolean', default: 'false', details: 'Marks as invalid.' },
-  { name: 'fullWidth', type: 'boolean', default: 'false', details: 'Full width mode.' },
-  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' }
-];
-
 export const datePickerAttributes = [
   { name: 'value', type: 'DateValue', default: 'Optional', details: 'Controlled date value.' },
   { name: 'defaultValue', type: 'DateValue', default: 'Optional', details: 'Default date value.' },

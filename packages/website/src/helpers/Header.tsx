@@ -17,7 +17,7 @@ const HeaderMenu = () => {
   }, []);
 
   const toggleTheme = () => {
-    setTheme(theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK);
+    setTheme(currentTheme => (currentTheme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK));
   };
 
   const isActive = (path: string) => {
@@ -66,11 +66,17 @@ const HeaderMenu = () => {
           className="p-2 rounded-lg hover:bg-default/50 transition-colors">
           <Github className="w-5 h-5 text-foreground hover:text-purple-600 dark:hover:text-purple-400 transition-colors inline" />
         </Link>
-        <span tabIndex={0} className="p-2 rounded-lg hover:bg-default/50 transition-colors cursor-pointer" onClick={toggleTheme} title="Theme Switch">
+        <button
+          type="button"
+          className="p-2 rounded-lg hover:bg-default/50 transition-colors cursor-pointer"
+          onClick={toggleTheme}
+          aria-label={theme === THEMES.DARK ? 'Switch to light theme' : 'Switch to dark theme'}
+          aria-pressed={theme === THEMES.DARK}
+          title={theme === THEMES.DARK ? 'Switch to light theme' : 'Switch to dark theme'}>
           {mounted && theme !== THEMES.DARK && <MoonStar className="w-5 h-5 text-foreground hover:text-amber-500 transition-colors inline" />}
           {mounted && theme === THEMES.DARK && <Sun className="w-5 h-5 text-foreground hover:text-amber-400 transition-colors inline" />}
           {!mounted && <span className="w-5 h-5 inline-block" />}
-        </span>
+        </button>
       </div>
 
       <div className="w-full block md:hidden mt-4 mb-4">

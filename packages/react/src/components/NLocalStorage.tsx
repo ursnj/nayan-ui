@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const isWindowDefined = () => typeof window !== 'undefined';
+const LOCAL_STORAGE_CHANGE_EVENT = 'nayan-ui:local-storage-change';
+
+interface LocalStorageChangeDetail {
+  key: string;
+  newValue: string | null;
+  source: symbol;
+}
 
 export type LocalStorageSerializer<T> = (object: T | undefined) => string;
 export type LocalStorageParser<T> = (val: string) => T | undefined;
@@ -26,6 +33,7 @@ export function useLocalStorage<T>(key: string, defaultValue?: T, options?: UseL
   const loggerRef = useRef(logger);
   const defaultValueRef = useRef(defaultValue);
   const keyRef = useRef(key);
+  const sourceRef = useRef(Symbol(key));
   serializerRef.current = serializer;
   parserRef.current = parser;
   loggerRef.current = logger;
@@ -42,51 +50,77 @@ export function useLocalStorage<T>(key: string, defaultValue?: T, options?: UseL
       return defaultValue;
     }
   });
+  const valueRef = useRef(value);
+  valueRef.current = value;
+
+  const applyStoredValue = useCallback((raw: string | null) => {
+    try {
+      const nextValue = raw !== null ? parserRef.current(raw) : defaultValueRef.current;
+      valueRef.current = nextValue;
+      setValue(nextValue);
+    } catch (error) {
+      loggerRef.current(error);
+    }
+  }, []);
 
   useEffect(() => {
     if (!isWindowDefined() || keyRef.current === key) return;
     keyRef.current = key;
     try {
-      const raw = window.localStorage.getItem(key);
-      setValue(raw !== null ? parserRef.current(raw) : defaultValueRef.current);
+      applyStoredValue(window.localStorage.getItem(key));
     } catch (error) {
       loggerRef.current(error);
+      valueRef.current = defaultValueRef.current;
       setValue(defaultValueRef.current);
     }
-  }, [key]);
+  }, [applyStoredValue, key]);
 
-  // Cross-tab sync via native storage event
+  // Keep hook instances synchronized across tabs and within the current document.
   useEffect(() => {
     if (!isWindowDefined() || !syncData) return;
     const handleStorage = (e: StorageEvent) => {
       if (e.key !== key) return;
-      try {
-        setValue(e.newValue !== null ? parserRef.current(e.newValue) : defaultValueRef.current);
-      } catch (err) {
-        loggerRef.current(err);
-      }
+      applyStoredValue(e.newValue);
     };
+    const handleLocalStorageChange = (event: Event) => {
+      const detail = (event as CustomEvent<LocalStorageChangeDetail>).detail;
+      if (!detail) return;
+      const { key: changedKey, newValue, source } = detail;
+      if (changedKey !== key || source === sourceRef.current) return;
+      applyStoredValue(newValue);
+    };
+
     window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
-  }, [key, syncData]);
+    window.addEventListener(LOCAL_STORAGE_CHANGE_EVENT, handleLocalStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener(LOCAL_STORAGE_CHANGE_EVENT, handleLocalStorageChange);
+    };
+  }, [applyStoredValue, key, syncData]);
 
   // Setter: update state and localStorage
   const setLocalStorageValue = useCallback<LocalStorageSetter<T>>(
     val => {
-      setValue(prev => {
-        const resolved = typeof val === 'function' ? (val as any)(prev) : val;
-        if (!isWindowDefined()) return resolved;
-        try {
-          if (resolved === undefined) {
-            window.localStorage.removeItem(key);
-          } else {
-            window.localStorage.setItem(key, serializerRef.current(resolved));
-          }
-        } catch (e) {
-          loggerRef.current(e);
+      const resolved = typeof val === 'function' ? (val as (previous: T | undefined) => T | undefined)(valueRef.current) : val;
+      valueRef.current = resolved;
+      setValue(resolved);
+
+      if (!isWindowDefined()) return;
+      try {
+        const serialized = resolved === undefined ? null : serializerRef.current(resolved);
+        if (serialized === null) {
+          window.localStorage.removeItem(key);
+        } else {
+          window.localStorage.setItem(key, serialized);
         }
-        return resolved;
-      });
+        window.dispatchEvent(
+          new CustomEvent<LocalStorageChangeDetail>(LOCAL_STORAGE_CHANGE_EVENT, {
+            detail: { key, newValue: serialized, source: sourceRef.current }
+          })
+        );
+      } catch (error) {
+        loggerRef.current(error);
+      }
     },
     [key]
   );
