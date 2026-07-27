@@ -21,7 +21,7 @@ const NLinkComponent: React.FC<NLinkProps> = memo(({ href, target, rel, disabled
       rel={safeRel}
       isDisabled={disabled}
       onPress={onPress}
-      className={cn('nyn-link text-accent', className)}
+      className={cn('nyn-link !text-accent', className)}
       {...(rest as any)}>
       {children}
     </Link>
