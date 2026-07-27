@@ -46,7 +46,7 @@ const NCheckComponent: React.FC<NCheckProps> = memo(
         onChange={onChange}
         className={cn('nyn-check', className)}
         {...(rest as any)}>
-        <Checkbox.Content className={cn('inline', labelClassName)}>
+        <Checkbox.Content className={cn(labelClassName)}>
           <Checkbox.Control className={cn(checkClassName)}>
             <Checkbox.Indicator />
           </Checkbox.Control>
