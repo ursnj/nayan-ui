@@ -1,12 +1,13 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import { Button, cn } from 'heroui-native';
+import { type NIcon, resolveIcon } from '../helpers/icons';
 import { NText } from './NText';
 
 export interface ButtonGroupItem {
   label: string;
   value: string;
-  icon?: React.ComponentType<any> | React.ReactElement;
+  icon?: NIcon;
   isDisabled?: boolean;
 }
 
@@ -23,19 +24,6 @@ export interface NButtonGroupProps {
 
 export const NButtonGroup = React.memo<NButtonGroupProps>(
   ({ items, value, onValueChange, label, isDisabled = false, className, buttonClassName, labelClassName }) => {
-    const renderIcon = useMemo(() => {
-      return (icon: React.ComponentType<any> | React.ReactElement | undefined) => {
-        if (!icon) return null;
-
-        if (React.isValidElement(icon)) {
-          return icon;
-        }
-
-        const IconComponent = icon as React.ComponentType<any>;
-        return <IconComponent size={16} />;
-      };
-    }, []);
-
     return (
       <View className="w-full">
         {label && <NText className={cn('mb-2 font-medium', labelClassName)}>{label}</NText>}
@@ -43,7 +31,7 @@ export const NButtonGroup = React.memo<NButtonGroupProps>(
           {items.map((item, index) => {
             const isSelected = item.value === value;
             const itemDisabled = isDisabled || item.isDisabled;
-            const buttonIcon = renderIcon(item.icon);
+            const buttonIcon = resolveIcon(item.icon, { size: 16 });
 
             return (
               <Button
