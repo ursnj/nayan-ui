@@ -45,7 +45,7 @@ const NConfirmAlertComponent: React.FC<NConfirmAlertProps> = memo(
         </Modal.Trigger>
         <Modal.Backdrop>
           <Modal.Container size="sm">
-            <Modal.Dialog className={cn('nyn-confirm-alert', className)} role="alertdialog">
+            <Modal.Dialog className={cn('nyn-confirm-alert p-4', className)} role="alertdialog">
               <Modal.Header>
                 <Modal.Heading className={cn(titleClassName)}>{title}</Modal.Heading>
               </Modal.Header>

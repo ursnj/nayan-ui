@@ -42,7 +42,7 @@ const NDialogComponent: React.FC<NDialogProps> = memo(
         </Modal.Trigger>
         <Modal.Backdrop isDismissable>
           <Modal.Container size={sizeMapping[size]}>
-            <Modal.Dialog className={cn('nyn-dialog', maxWidthMapping[size], className)}>
+            <Modal.Dialog className={cn('nyn-dialog p-4', maxWidthMapping[size], className)}>
               <Modal.Header className={cn(headerClassName)}>
                 <Modal.Heading className={cn(titleClassName)}>{title}</Modal.Heading>
                 <Modal.CloseTrigger aria-label="Close dialog" />

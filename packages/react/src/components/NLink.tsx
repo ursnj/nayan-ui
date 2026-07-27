@@ -15,7 +15,14 @@ export interface NLinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorEl
 const NLinkComponent: React.FC<NLinkProps> = memo(({ href, target, rel, disabled = false, className = '', children, onPress, ...rest }) => {
   const safeRel = rel ?? (target === '_blank' ? 'noopener noreferrer' : undefined);
   return (
-    <Link href={href} target={target} rel={safeRel} isDisabled={disabled} onPress={onPress} className={cn('nyn-link', className)} {...(rest as any)}>
+    <Link
+      href={href}
+      target={target}
+      rel={safeRel}
+      isDisabled={disabled}
+      onPress={onPress}
+      className={cn('nyn-link text-accent', className)}
+      {...(rest as any)}>
       {children}
     </Link>
   );
