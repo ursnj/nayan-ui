@@ -23,7 +23,7 @@ const Footer = () => {
             <div className="flex space-x-4">
               <NLink
                 href="https://github.com/ursnj/nayan-ui"
-                className="text-muted hover:text-accent transition-colors duration-200"
+                className="!text-muted hover:!text-accent transition-colors duration-200"
                 target="_blank"
                 rel="noopener noreferrer">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -32,7 +32,7 @@ const Footer = () => {
               </NLink>
               <NLink
                 href="https://www.npmjs.com/package/@nayan-ui/react"
-                className="text-muted hover:text-accent transition-colors duration-200"
+                className="!text-muted hover:!text-accent transition-colors duration-200"
                 target="_blank"
                 rel="noopener noreferrer">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -50,22 +50,22 @@ const Footer = () => {
             <div className="space-y-2">
               <NLink
                 href="/react/installation"
-                className="block text-muted hover:text-accent transition-colors duration-200 text-sm">
+                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
                 React Installation
               </NLink>
               <NLink
                 href="/react-native/installation"
-                className="block text-muted hover:text-accent transition-colors duration-200 text-sm">
+                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
                 React Native Installation
               </NLink>
               <NLink
                 href="/react/components"
-                className="block text-muted hover:text-accent transition-colors duration-200 text-sm">
+                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
                 React Components
               </NLink>
               <NLink
                 href="/react-native/components"
-                className="block text-muted hover:text-accent transition-colors duration-200 text-sm">
+                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
                 React Native Components
               </NLink>
             </div>
@@ -79,24 +79,24 @@ const Footer = () => {
             <div className="space-y-2">
               <NLink
                 href="/contributions"
-                className="block text-muted hover:text-accent transition-colors duration-200 text-sm">
+                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
                 Contributing
               </NLink>
               <NLink
                 href="/tags"
-                className="block text-muted hover:text-accent transition-colors duration-200 text-sm">
+                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
                 Component Tags
               </NLink>
               <NLink
                 href="https://github.com/ursnj/nayan-ui/issues"
-                className="block text-muted hover:text-accent transition-colors duration-200 text-sm"
+                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">
                 Report Issues
               </NLink>
               <NLink
                 href="https://github.com/ursnj/nayan-ui/discussions"
-                className="block text-muted hover:text-accent transition-colors duration-200 text-sm"
+                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">
                 Discussions
@@ -112,28 +112,28 @@ const Footer = () => {
             <div className="space-y-2">
               <NLink
                 href="https://github.com/ursnj/nayan-ui"
-                className="block text-muted hover:text-accent transition-colors duration-200 text-sm"
+                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">
                 GitHub Repository
               </NLink>
               <NLink
                 href="https://www.npmjs.com/package/@nayan-ui/cli"
-                className="block text-muted hover:text-accent transition-colors duration-200 text-sm"
+                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">
                 NPM Package (Cli)
               </NLink>
               <NLink
                 href="https://www.npmjs.com/package/@nayan-ui/react"
-                className="block text-muted hover:text-accent transition-colors duration-200 text-sm"
+                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">
                 NPM Package (React)
               </NLink>
               <NLink
                 href="https://www.npmjs.com/package/@nayan-ui/native"
-                className="block text-muted hover:text-accent transition-colors duration-200 text-sm"
+                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm"
                 target="_blank"
                 rel="noopener noreferrer">
                 NPM Package (React Native)
@@ -151,7 +151,7 @@ const Footer = () => {
             <div className="flex items-center space-x-4 text-sm text-muted">
               <NLink
                 href="https://github.com/ursnj/nayan-ui/blob/main/LICENSE"
-                className="hover:text-accent transition-colors duration-200"
+                className="!text-muted hover:!text-accent transition-colors duration-200"
                 target="_blank"
                 rel="noopener noreferrer">
                 MIT License
@@ -159,7 +159,7 @@ const Footer = () => {
               <span>•</span>
               <NLink
                 href="https://github.com/ursnj/nayan-ui/releases"
-                className="hover:text-accent transition-colors duration-200"
+                className="!text-muted hover:!text-accent transition-colors duration-200"
                 target="_blank"
                 rel="noopener noreferrer">
                 Changelog
