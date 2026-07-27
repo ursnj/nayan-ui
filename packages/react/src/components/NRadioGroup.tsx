@@ -57,7 +57,7 @@ export const NRadioGroup = memo(
           onChange={onChange}
           aria-label={ariaLabel || (!showLabel ? label : undefined) || (!label ? 'Options' : undefined)}
           aria-labelledby={ariaLabelledBy || (label && showLabel ? labelId : undefined)}
-          className={cn(orientation === 'horizontal' ? 'flex flex-row flex-wrap gap-3' : 'flex flex-col gap-2')}
+          className={cn(orientation === 'horizontal' ? 'flex flex-row flex-wrap gap-3' : 'flex flex-col gap-1')}
           {...(rest as any)}>
           {items.map(item => (
             <Radio key={item.value} value={item.value} className={cn(radioClassName, itemClassName)}>

@@ -15,7 +15,11 @@ const RadioGroup = () => {
 
   return (
     <ComponentWrapper>
+      <h1 className="text-foreground mb-3 text-base">Horizontal:</h1>
       <NRadioGroup label="Plan" items={items} value={value} onChange={setValue} />
+      <div className="mt-5" />
+      <h1 className="text-foreground mb-3 text-base">Vertical:</h1>
+      <NRadioGroup orientation="vertical" label="Plan" items={items} value={value} onChange={setValue} />
     </ComponentWrapper>
   );
 };

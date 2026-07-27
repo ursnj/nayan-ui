@@ -4,10 +4,10 @@ import { cn } from '../lib/utils';
 import { SheetSize } from './Types';
 
 const sizeMapping: Record<SheetSize, string> = {
-  [SheetSize.XS]: 'md:max-w-sm',
-  [SheetSize.SM]: 'md:max-w-lg',
-  [SheetSize.MD]: 'md:max-w-2xl',
-  [SheetSize.LG]: 'md:max-w-4xl'
+  [SheetSize.XS]: '!max-w-sm',
+  [SheetSize.SM]: '!max-w-lg',
+  [SheetSize.MD]: '!max-w-2xl',
+  [SheetSize.LG]: '!max-w-4xl'
 };
 
 export interface NSheetProps {
@@ -58,9 +58,9 @@ export const NSheet: React.FC<NSheetProps> = memo(
           <span />
         </Drawer.Trigger>
         <Drawer.Backdrop isDismissable>
-          <Drawer.Content placement="right" className={cn('nyn-sheet w-full', sizeMapping[size])}>
+          <Drawer.Content placement="right" className={cn('nyn-sheet w-full p-4')}>
             <Drawer.Dialog
-              className={cn('nyn-sheet-dialog h-full', className)}
+              className={cn('nyn-sheet-dialog h-full !w-full', sizeMapping[size], className)}
               aria-label={ariaLabel || (!title && !ariaLabelledBy ? 'Dialog' : undefined)}
               aria-labelledby={ariaLabelledBy}
               role={role as 'dialog' | 'alertdialog'}
