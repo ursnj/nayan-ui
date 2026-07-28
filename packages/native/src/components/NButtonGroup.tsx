@@ -39,13 +39,13 @@ export const NButtonGroup = React.memo<NButtonGroupProps>(
                 isDisabled={itemDisabled}
                 onPress={() => onValueChange(item.value)}
                 variant={isSelected ? 'primary' : 'secondary'}
-                style={{
-                  borderTopLeftRadius: index === 0 ? 12 : 0,
-                  borderBottomLeftRadius: index === 0 ? 12 : 0,
-                  borderTopRightRadius: index === items.length - 1 ? 12 : 0,
-                  borderBottomRightRadius: index === items.length - 1 ? 12 : 0
-                }}
-                className={cn('border-r border-border', !isSelected && 'bg-surface', index === items.length - 1 && 'border-r-0', buttonClassName)}>
+                className={cn(
+                  'rounded-none border-r border-border',
+                  !isSelected && 'bg-surface',
+                  index === 0 && 'rounded-l-xl',
+                  index === items.length - 1 && 'rounded-r-xl border-r-0',
+                  buttonClassName
+                )}>
                 {buttonIcon && <View className="mr-1">{buttonIcon}</View>}
                 <Button.Label>{item.label}</Button.Label>
               </Button>

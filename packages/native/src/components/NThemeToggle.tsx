@@ -23,7 +23,12 @@ export const NThemeToggle = React.memo<NThemeToggleProps>(({ className = '', siz
   }, [isDarkMode, setTheme, onThemeChange]);
 
   return (
-    <Pressable onPress={toggleTheme} className={className} {...props}>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={isDarkMode ? 'Switch to light theme' : 'Switch to dark theme'}
+      onPress={toggleTheme}
+      className={className}
+      {...props}>
       {children || (isDarkMode ? <SunIcon size={size} color={iconColor} /> : <MoonIcon size={size} color={iconColor} />)}
     </Pressable>
   );
