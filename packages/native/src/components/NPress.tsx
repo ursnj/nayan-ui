@@ -11,7 +11,7 @@ export interface NPressProps extends PressableProps {
 export const NPress = React.memo<NPressProps>(({ children, feedback = false, className = '', ...props }) => {
   if (feedback) {
     return (
-      <PressableFeedback className={cn(className)} {...props}>
+      <PressableFeedback accessibilityRole="button" className={cn(className)} {...props}>
         <PressableFeedback.Highlight />
         <PressableFeedback.Ripple />
         {children}
@@ -20,7 +20,7 @@ export const NPress = React.memo<NPressProps>(({ children, feedback = false, cla
   }
 
   return (
-    <Pressable className={cn('active:opacity-80', className)} {...props}>
+    <Pressable accessibilityRole="button" className={cn('active:opacity-80', className)} {...props}>
       {children}
     </Pressable>
   );
