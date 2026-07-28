@@ -16,7 +16,7 @@ export interface NTagGroupProps {
   onRemove?: (keys: Set<string>) => void;
   size?: 'sm' | 'md' | 'lg';
   variant?: 'default' | 'surface';
-  isDisabled?: boolean;
+  disabled?: boolean;
   className?: string;
   tagClassName?: string;
   'aria-label'?: string;
@@ -31,7 +31,7 @@ const NTagGroupComponent: React.FC<NTagGroupProps> = memo(
     onRemove,
     size = 'md',
     variant = 'default',
-    isDisabled = false,
+    disabled = false,
     className = '',
     tagClassName = '',
     'aria-label': ariaLabel = 'Tags'
@@ -48,9 +48,9 @@ const NTagGroupComponent: React.FC<NTagGroupProps> = memo(
         aria-label={ariaLabel}>
         <TagGroup.List items={items}>
           {(item: NTagItem) => (
-            <Tag id={item.id} textValue={item.label} className={cn(tagClassName)}>
+            <Tag id={item.id} textValue={item.label} isDisabled={disabled} className={cn(tagClassName)}>
               {item.label}
-              {onRemove && <Tag.RemoveButton />}
+              {onRemove && <Tag.RemoveButton isDisabled={disabled} />}
             </Tag>
           )}
         </TagGroup.List>

@@ -26,16 +26,21 @@ const NMeterComponent: React.FC<NMeterProps> = memo(
     className = '',
     'aria-label': ariaLabel = 'Meter'
   }) => {
+    const lowerBound = Math.min(minValue, maxValue);
+    const upperBound = Math.max(minValue, maxValue);
+    const clampedValue = Math.min(upperBound, Math.max(lowerBound, value));
+    const percentage = upperBound === lowerBound ? 0 : Math.round(((clampedValue - lowerBound) / (upperBound - lowerBound)) * 100);
+
     return (
       <Meter
-        value={value}
-        minValue={minValue}
-        maxValue={maxValue}
+        value={clampedValue}
+        minValue={lowerBound}
+        maxValue={upperBound}
         color={color}
         size={size}
         className={cn('nyn-meter', className)}
         aria-label={ariaLabel}>
-        {showOutput && <Meter.Output>{label || `${value}%`}</Meter.Output>}
+        {showOutput && <Meter.Output>{label || `${percentage}%`}</Meter.Output>}
         <Meter.Track>
           <Meter.Fill />
         </Meter.Track>

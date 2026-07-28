@@ -293,7 +293,7 @@ export const selectAttributes = [
   { name: 'isCreatable', type: 'boolean', default: 'false', details: 'Whether new options can be created.' },
   { name: 'isClearable', type: 'boolean', default: 'false', details: 'Whether the selection can be cleared.' },
   { name: 'isSearchable', type: 'boolean', default: 'true', details: 'Whether the select is searchable.' },
-  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the select is disabled.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'Whether the select is disabled.' },
   { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
   { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
   { name: 'selectClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
@@ -450,25 +450,12 @@ export const tooltipAttributes = [
   { name: 'contentProps', type: 'React.HTMLAttributes<HTMLDivElement>', default: 'Optional', details: 'Props for content element.' }
 ];
 
-export const autocompleteAttributes = [
-  { name: 'items', type: 'NAutocompleteItem[]', default: 'Required', details: 'List of items with id and label.' },
-  { name: 'placeholder', type: 'string', default: "'Search...'", details: 'Placeholder text.' },
-  { name: 'selectedKey', type: 'string', default: 'Optional', details: 'Currently selected item key.' },
-  { name: 'onSelectionChange', type: '(key: string | null) => void', default: 'Optional', details: 'Callback when selection changes.' },
-  { name: 'onClear', type: '() => void', default: 'Optional', details: 'Callback when input is cleared.' },
-  { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'Visual variant.' },
-  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Disables the autocomplete.' },
-  { name: 'isInvalid', type: 'boolean', default: 'false', details: 'Marks as invalid.' },
-  { name: 'fullWidth', type: 'boolean', default: 'false', details: 'Full width mode.' },
-  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' }
-];
-
 export const datePickerAttributes = [
   { name: 'value', type: 'DateValue', default: 'Optional', details: 'Controlled date value.' },
   { name: 'defaultValue', type: 'DateValue', default: 'Optional', details: 'Default date value.' },
   { name: 'onChange', type: '(value: DateValue) => void', default: 'Optional', details: 'Callback when date changes.' },
   { name: 'label', type: 'React.ReactNode', default: 'Optional', details: 'Label for the date picker.' },
-  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Disables the date picker.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'Disables the date picker.' },
   { name: 'isInvalid', type: 'boolean', default: 'false', details: 'Marks as invalid.' },
   { name: 'minValue', type: 'DateValue', default: 'Optional', details: 'Minimum selectable date.' },
   { name: 'maxValue', type: 'DateValue', default: 'Optional', details: 'Maximum selectable date.' },
@@ -487,7 +474,7 @@ export const numberFieldAttributes = [
   { name: 'minValue', type: 'number', default: 'Optional', details: 'Minimum value.' },
   { name: 'maxValue', type: 'number', default: 'Optional', details: 'Maximum value.' },
   { name: 'step', type: 'number', default: '1', details: 'Step increment.' },
-  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Disables the field.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'Disables the field.' },
   { name: 'isInvalid', type: 'boolean', default: 'false', details: 'Marks as invalid.' },
   { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'Visual variant.' },
   { name: 'fullWidth', type: 'boolean', default: 'false', details: 'Full width mode.' },
@@ -514,7 +501,7 @@ export const tagGroupAttributes = [
   { name: 'onRemove', type: '(keys: Set<string>) => void', default: 'Optional', details: 'Callback when tags are removed.' },
   { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'Tag size.' },
   { name: 'variant', type: "'default' | 'surface'", default: "'default'", details: 'Tag variant.' },
-  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Disables the tag group.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'Disables the tag group.' },
   { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' }
 ];
 
@@ -525,7 +512,7 @@ export const searchFieldAttributes = [
   { name: 'onSubmit', type: '(value: string) => void', default: 'Optional', details: 'Callback on submit.' },
   { name: 'onClear', type: '() => void', default: 'Optional', details: 'Callback when cleared.' },
   { name: 'placeholder', type: 'string', default: "'Search...'", details: 'Placeholder text.' },
-  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Disables the search field.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'Disables the search field.' },
   { name: 'isInvalid', type: 'boolean', default: 'false', details: 'Marks as invalid.' },
   { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'Visual variant.' },
   { name: 'fullWidth', type: 'boolean', default: 'false', details: 'Full width mode.' },

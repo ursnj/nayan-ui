@@ -16,8 +16,8 @@ const Sidebar = (props: Props) => {
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <div className="grid grid-cols-12 gap-4 sm:gap-6">
-        <div className="hidden md:block col-span-12 md:col-span-3">
+      <div className="flex gap-4 sm:gap-6">
+        <div className="hidden md:block w-64 shrink-0">
           <div className="sticky top-[70px] h-[calc(100vh-82px)] overflow-y-auto pr-2">
             {sidebarItems.map((item, index) => {
               const Icon = item.icon as any;
@@ -26,7 +26,7 @@ const Sidebar = (props: Props) => {
                   {!item.isHeading && (
                     <Link href={item.link}>
                       <div
-                        className={`cursor-pointer hover:bg-default rounded-lg p-2 px-3 flex items-center text-sm transition-colors ${pathname === item.link ? 'text-blue-600 dark:text-blue-400 bg-gradient-to-r from-blue-500/10 to-purple-500/10 font-medium border-l-2 border-blue-500' : ''}`}>
+                        className={`cursor-pointer rounded-lg p-2 px-3 flex items-center text-sm transition-colors ${pathname === item.link ? 'text-accent bg-accent/10 font-medium border-l-2 border-accent' : 'hover:bg-default hover:text-accent'}`}>
                         <Icon className="w-4 h-4 inline mr-3 shrink-0" />
                         <span className="truncate">{item.title}</span>
                       </div>
@@ -38,10 +38,10 @@ const Sidebar = (props: Props) => {
             })}
           </div>
         </div>
-        <div className="content col-span-12 md:col-span-9">
+        <div className="content flex-1 min-w-0">
           {props.title && (
             <h1 className="text-2xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">{props.title}</span>
+              <span className="text-gradient">{props.title}</span>
             </h1>
           )}
           <div>{props.children}</div>

@@ -70,7 +70,7 @@ export const throttle = (
   }
 
   // Function to cancel next exec
-  function cancel(options: any) {
+  function cancel(options: { upcomingOnly?: boolean } = {}) {
     const { upcomingOnly = false } = options || {};
     clearExistingTimeout();
     cancelled = !upcomingOnly;
@@ -184,12 +184,12 @@ export const reactSelectTheme = (theme: any) => ({
 });
 
 export const reactSelectCustomClassNames = {
-  control: (state: any) => 'flex h-10 w-full rounded bg-surface border border-default focus:border-accent text-foreground',
-  menu: (state: any) => 'w-full rounded bg-surface border border-default shadow-lg',
+  control: (_state: any) => 'flex h-10 w-full rounded bg-surface border border-default focus:border-accent text-foreground',
+  menu: (_state: any) => 'w-full rounded bg-surface border border-default shadow-lg',
   option: (state: any) => (state.isSelected ? 'bg-accent text-accent-foreground' : state.isFocused ? 'bg-default/50' : ''),
-  singleValue: (state: any) => 'text-foreground',
-  multiValue: (state: any) => 'bg-default rounded',
-  multiValueLabel: (state: any) => 'text-foreground',
-  placeholder: (state: any) => 'text-muted',
-  input: (state: any) => 'text-foreground'
+  singleValue: (_state: any) => 'text-foreground',
+  multiValue: (_state: any) => 'bg-default rounded',
+  multiValueLabel: (_state: any) => 'text-foreground',
+  placeholder: (_state: any) => 'text-muted',
+  input: (_state: any) => 'text-foreground'
 } as any;

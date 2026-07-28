@@ -1,27 +1,19 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
 import { Button, type ButtonRootProps, type ButtonSize, type ButtonVariant, cn } from 'heroui-native';
+import { type NIcon, resolveIcon } from '../helpers/icons';
 
 export type NButtonVariant = ButtonVariant;
 export type NButtonSize = ButtonSize;
 
 export type NButtonProps = ButtonRootProps & {
   children: React.ReactNode;
-  icon?: React.ComponentType<any> | React.ReactElement;
+  icon?: NIcon;
   iconSize?: number;
 };
 
 export const NButton = React.memo<NButtonProps>(({ children, icon, iconSize = 16, variant = 'primary', size = 'md', className, ...props }) => {
-  const buttonIcon = useMemo(() => {
-    if (!icon) return null;
-
-    if (React.isValidElement(icon)) {
-      return icon;
-    }
-
-    const IconComponent = icon as React.ComponentType<any>;
-    return <IconComponent size={iconSize} />;
-  }, [icon, iconSize]);
+  const buttonIcon = useMemo(() => resolveIcon(icon, { size: iconSize }), [icon, iconSize]);
 
   return (
     <Button variant={variant} size={size} className={cn('rounded-xl', className)} {...props}>

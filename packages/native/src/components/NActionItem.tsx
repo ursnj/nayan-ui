@@ -1,14 +1,14 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
 import { cn, useThemeColor } from 'heroui-native';
-import { ChevronForwardIcon } from '../helpers/icons';
+import { ChevronForwardIcon, type NIcon, resolveIcon } from '../helpers/icons';
 import { NPress } from './NPress';
 import { NText } from './NText';
 
 export interface NActionItemProps {
   name: string;
   description?: string;
-  icon?: React.ComponentType<any> | React.ReactElement;
+  icon?: NIcon;
   showArrow?: boolean;
   feedback?: boolean;
   isDisabled?: boolean;
@@ -34,16 +34,7 @@ export const NActionItem = React.memo<NActionItemProps>(
     onLongPress
   }) => {
     const [mutedColor, foregroundColor] = useThemeColor(['muted', 'foreground']);
-    const actionIcon = useMemo(() => {
-      if (!icon) return null;
-
-      if (React.isValidElement(icon)) {
-        return React.cloneElement(icon as React.ReactElement<any>, { color: (icon as React.ReactElement<any>).props.color ?? foregroundColor });
-      }
-
-      const IconComponent = icon as React.ComponentType<any>;
-      return <IconComponent color={foregroundColor} />;
-    }, [icon, foregroundColor]);
+    const actionIcon = useMemo(() => resolveIcon(icon, { color: foregroundColor }), [icon, foregroundColor]);
 
     return (
       <NPress

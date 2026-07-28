@@ -8,7 +8,6 @@ export interface NBadgeProps extends React.HTMLAttributes<HTMLElement> {
   color?: 'default' | 'accent' | 'success' | 'warning' | 'danger';
   variant?: 'primary' | 'secondary' | 'soft';
   size?: 'sm' | 'md' | 'lg';
-  role?: string;
 }
 
 const NBadgeComponent: React.FC<NBadgeProps> = memo(
@@ -18,6 +17,7 @@ const NBadgeComponent: React.FC<NBadgeProps> = memo(
         color={color}
         variant={variant}
         size={size}
+        role={role}
         className={cn('nyn-badge relative static translate-0 px-2.5 py-0.5', className)}
         {...(rest as any)}>
         <Badge.Label>{children}</Badge.Label>

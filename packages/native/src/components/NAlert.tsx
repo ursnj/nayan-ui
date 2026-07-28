@@ -22,7 +22,7 @@ export const NAlert = React.memo<NAlertProps>(({ title, description, onClose, cl
         {description && <Alert.Description className={cn('text-sm', descriptionClassName)}>{description}</Alert.Description>}
       </Alert.Content>
       {onClose && (
-        <NPress onPress={onClose} hitSlop={8}>
+        <NPress onPress={onClose} hitSlop={8} accessibilityLabel="Close" className="active:opacity-60">
           <CloseIcon size={18} color={mutedColor} />
         </NPress>
       )}

@@ -1,6 +1,5 @@
 export * from './components/NAccordion';
 export * from './components/NAlert';
-export * from './components/NAutocomplete';
 export * from './components/NAvatar';
 export * from './components/NBadge';
 export * from './components/NBreadcrumbs';

@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { NumberField } from '@heroui/react';
+import { Label, NumberField } from '@heroui/react';
 import { cn } from '../lib/utils';
 
 export interface NNumberFieldProps {
@@ -10,7 +10,7 @@ export interface NNumberFieldProps {
   maxValue?: number;
   step?: number;
   label?: string;
-  isDisabled?: boolean;
+  disabled?: boolean;
   isInvalid?: boolean;
   variant?: 'primary' | 'secondary';
   fullWidth?: boolean;
@@ -28,13 +28,13 @@ const NNumberFieldComponent: React.FC<NNumberFieldProps> = memo(
     maxValue,
     step = 1,
     label,
-    isDisabled = false,
+    disabled = false,
     isInvalid = false,
     variant = 'primary',
     fullWidth = false,
     formatOptions,
     className = '',
-    'aria-label': ariaLabel = 'Number'
+    'aria-label': ariaLabel
   }) => {
     return (
       <NumberField
@@ -44,13 +44,14 @@ const NNumberFieldComponent: React.FC<NNumberFieldProps> = memo(
         minValue={minValue}
         maxValue={maxValue}
         step={step}
-        isDisabled={isDisabled}
+        isDisabled={disabled}
         isInvalid={isInvalid}
         variant={variant}
         fullWidth={fullWidth}
         formatOptions={formatOptions}
         className={cn('nyn-number-field', className)}
-        aria-label={ariaLabel}>
+        aria-label={ariaLabel || (!label ? 'Number' : undefined)}>
+        {label && <Label>{label}</Label>}
         <NumberField.Group>
           <NumberField.DecrementButton>-</NumberField.DecrementButton>
           <NumberField.Input />

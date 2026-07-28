@@ -160,7 +160,7 @@ export default function App() {
 
 ## Components
 
-NAccordion, NAlert, NAutocomplete, NAvatar, NBadge, NBreadcrumbs, NButton, NButtonGroup, NCard, NCheck, NChip, NCode, NConfirmAlert, NDatePicker, NDialog, NDivider, NInfiniteScroll, NInput, NInputOtp, NKbd, NLink, NLinkify, NLoading, NMenu, NMenuNested, NMenuItem, NMeter, NNumberField, NPagination, NPopover, NProgress, NRadioGroup, NSearchField, NSelect, NSheet, NSkeleton, NSlider, NSwitch, NTable, NTabs, NTabsContent, NTagGroup, NTextarea, NTheme, NToast, NToggleButton, NTooltip
+NAccordion, NAlert, NAvatar, NBadge, NBreadcrumbs, NButton, NButtonGroup, NCard, NCheck, NChip, NCode, NConfirmAlert, NDatePicker, NDialog, NDivider, NInfiniteScroll, NInput, NInputOtp, NKbd, NLink, NLinkify, NLoading, NMenu, NMenuNested, NMenuItem, NMeter, NNumberField, NPagination, NPopover, NProgress, NRadioGroup, NSearchField, NSelect, NSheet, NSkeleton, NSlider, NSwitch, NTable, NTabs, NTabsContent, NTagGroup, NTextarea, NTheme, NToast, NToggleButton, NTooltip
 
 ## Documentation
 

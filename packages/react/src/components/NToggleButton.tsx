@@ -6,7 +6,7 @@ export interface NToggleButtonProps {
   children: ReactNode;
   isSelected?: boolean;
   defaultSelected?: boolean;
-  isDisabled?: boolean;
+  disabled?: boolean;
   isIconOnly?: boolean;
   variant?: 'default' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
@@ -19,7 +19,7 @@ const NToggleButtonComponent: React.FC<NToggleButtonProps> = memo(
     children,
     isSelected,
     defaultSelected = false,
-    isDisabled = false,
+    disabled = false,
     isIconOnly = false,
     variant = 'default',
     size = 'md',
@@ -29,8 +29,8 @@ const NToggleButtonComponent: React.FC<NToggleButtonProps> = memo(
     return (
       <ToggleButton
         isSelected={isSelected}
-        defaultSelected={defaultSelected}
-        isDisabled={isDisabled}
+        defaultSelected={isSelected === undefined ? defaultSelected : undefined}
+        isDisabled={disabled}
         isIconOnly={isIconOnly}
         variant={variant}
         size={size}

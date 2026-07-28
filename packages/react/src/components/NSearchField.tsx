@@ -9,7 +9,7 @@ export interface NSearchFieldProps {
   onSubmit?: (value: string) => void;
   onClear?: () => void;
   placeholder?: string;
-  isDisabled?: boolean;
+  disabled?: boolean;
   isInvalid?: boolean;
   variant?: 'primary' | 'secondary';
   fullWidth?: boolean;
@@ -25,7 +25,7 @@ const NSearchFieldComponent: React.FC<NSearchFieldProps> = memo(
     onSubmit,
     onClear,
     placeholder = 'Search...',
-    isDisabled = false,
+    disabled = false,
     isInvalid = false,
     variant = 'primary',
     fullWidth = false,
@@ -39,7 +39,7 @@ const NSearchFieldComponent: React.FC<NSearchFieldProps> = memo(
         onChange={onChange}
         onSubmit={onSubmit}
         onClear={onClear}
-        isDisabled={isDisabled}
+        isDisabled={disabled}
         isInvalid={isInvalid}
         variant={variant}
         fullWidth={fullWidth}
