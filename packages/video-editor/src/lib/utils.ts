@@ -9,16 +9,33 @@ export const clamp = (value: number, min: number, max: number) => Math.min(max, 
 export const cn = (...parts: (string | false | null | undefined)[]) => parts.filter(Boolean).join(' ');
 
 /** `1:23.4` — the timeline ruler / playhead readout. */
+/**
+ * `mm:ss:ff` with frames, `mm:ss.t` without.
+ *
+ * The frame number is derived from a whole-frame count rather than from the
+ * fractional second. Doing it the other way — `floor((us / US % 1) * fps)` —
+ * reads a frame low wherever the stored microseconds fall just short of the
+ * true boundary, which is most of them: frame 2 at 24fps is 83333µs, and
+ * `0.083333 * 24` is `1.999992`, so it displayed frame 1. At 24fps that was
+ * roughly every third frame, and it meant the readout did not name the frame
+ * the playhead was actually on.
+ *
+ * The epsilon absorbs that rounding. It is a ten-thousandth of a frame — a
+ * few microseconds — so it can only affect an instant already indivisibly
+ * close to the boundary.
+ */
 export const formatTimecode = (us: number, showFrames = false, fps = 30) => {
-  const total = Math.max(0, us) / US;
-  const minutes = Math.floor(total / 60);
-  const seconds = Math.floor(total % 60);
   const pad = (n: number) => String(n).padStart(2, '0');
+
   if (showFrames) {
-    const frames = Math.floor((total % 1) * fps);
-    return `${pad(minutes)}:${pad(seconds)}:${pad(frames)}`;
+    const rate = Math.max(1, fps);
+    const totalFrames = Math.floor(Math.max(0, us / US) * rate + 1e-4);
+    const seconds = Math.floor(totalFrames / rate);
+    return `${pad(Math.floor(seconds / 60))}:${pad(seconds % 60)}:${pad(totalFrames % rate)}`;
   }
-  return `${pad(minutes)}:${pad(seconds)}.${Math.floor((total % 1) * 10)}`;
+
+  const total = Math.max(0, us) / US;
+  return `${pad(Math.floor(total / 60))}:${pad(Math.floor(total % 60))}.${Math.min(9, Math.floor((total % 1) * 10 + 1e-4))}`;
 };
 
 export const formatDuration = (us: number) => {
