@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" />
+
+    <title>Nayan Editor — Free Online Video Editor, No Upload</title>
+    <meta
+      name="description"
+      content="Edit video free in your browser. Multi-track timeline, 16 colour filters, 18 transitions, keyframes, green screen and titles. Exports MP4, MOV, MKV and WebM. Nothing is uploaded — no account, no watermark." />
+    <meta name="author" content="Nayan UI" />
+
+    <!--
+      This document is the application shell: its body is an empty root div
+      until React runs, so there is nothing here for a crawler to read. The
+      page that describes the editor is /video-editor, and the canonical
+      points there so the two URLs do not compete for the same terms and any
+      ranking signal earned by a shared /editor link accrues to the page that
+      can actually answer the query.
+    -->
+    <link rel="canonical" href="https://www.nayanui.com/video-editor" />
+
+    <!-- Shared links should still preview as the editor, not as a blank page. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nayan UI" />
+    <meta property="og:title" content="Nayan Editor — Free Online Video Editor" />
+    <meta
+      property="og:description"
+      content="A full-featured video editor that runs entirely in your browser. Multi-track timeline, filters, transitions, green screen and MP4 export — nothing is uploaded." />
+    <meta property="og:url" content="https://www.nayanui.com/editor" />
+    <meta property="og:image" content="https://www.nayanui.com/banner.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Nayan Editor — Free Online Video Editor" />
+    <meta
+      name="twitter:description"
+      content="A full-featured video editor that runs entirely in your browser. Multi-track timeline, filters, transitions, green screen and MP4 export — nothing is uploaded." />
+    <meta name="twitter:image" content="https://www.nayanui.com/banner.png" />
+
+    <!--
+      Declared so the browser paints the correct ground before any CSS
+      arrives — without it a dark-theme user gets a white flash on load. The
+      values match `--background` in index.css for each theme.
+    -->
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="hsl(220 16% 89%)" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="hsl(226 22% 6%)" media="(prefers-color-scheme: dark)" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Nayan Editor",
+        "applicationCategory": "MultimediaApplication",
+        "applicationSubCategory": "Video Editor",
+        "operatingSystem": "Web Browser",
+        "browserRequirements": "Requires WebCodecs and a window at least 1024px wide. Chrome/Edge 94+, Safari 16.4+.",
+        "url": "https://www.nayanui.com/editor",
+        "description": "A free, full-featured video editor that runs entirely in the browser. Multi-track timeline, keyframe animation, green screen, 16 colour filters, 18 transitions and MP4 export using WebCodecs.",
+        "isAccessibleForFree": true,
+        "license": "https://opensource.org/licenses/MIT",
+        "author": { "@type": "Organization", "name": "Nayan UI", "url": "https://www.nayanui.com" },
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "mainEntityOfPage": "https://www.nayanui.com/video-editor"
+      }
+    </script>
+
+    <!--
+      Microsoft Clarity, the same project as the rest of nayanui.com.
+
+      Clarity records session replays, so everything below carries
+      `data-clarity-mask`: project names, clip and media filenames and the
+      contents of text clips. The editor's promise is that your work stays on
+      your machine, and a replay that shipped the name of the file you were
+      cutting would break it even though the media itself never moves.
+    -->
+    <script type="text/javascript">
+      (function (c, l, a, r, i, t, y) {
+        c[a] =
+          c[a] ||
+          function () {
+            (c[a].q = c[a].q || []).push(arguments);
+          };
+        t = l.createElement(r);
+        t.async = 1;
+        t.src = 'https://www.clarity.ms/tag/' + i;
+        y = l.getElementsByTagName(r)[0];
+        y.parentNode.insertBefore(t, y);
+      })(window, document, 'clarity', 'script', 'sz9iu23mcr');
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <div style="max-width: 34rem; margin: 15vh auto; padding: 0 1.5rem; font: 16px/1.6 system-ui, sans-serif; text-align: center">
+        <h1 style="font-size: 1.25rem; margin-bottom: 0.5rem">Nayan Editor needs JavaScript</h1>
+        <p>
+          The editor decodes, composites and encodes video on your own machine, so it cannot run without it. Enable JavaScript and reload, or
+          <a href="https://www.nayanui.com/video-editor">read what it does first</a>.
+        </p>
+      </div>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

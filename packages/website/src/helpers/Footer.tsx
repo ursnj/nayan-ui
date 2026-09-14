@@ -70,6 +70,11 @@ const Footer = () => {
                 className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
                 React Native Components
               </NLink>
+              <NLink
+                href="/video-editor"
+                className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
+                Video Editor
+              </NLink>
             </div>
           </div>
 
