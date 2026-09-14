@@ -11,6 +11,12 @@ import { SequentialVideoReader } from './frameReader';
  * descriptions of each asset.
  */
 interface AssetResources {
+  /**
+   * The file the asset came from, kept so a project can be bundled with its
+   * media. Holding a `File` costs nothing — it is a handle to bytes the
+   * browser already has on disk, not a copy in memory.
+   */
+  file: File;
   input: Input | null;
   videoTrack: InputVideoTrack | null;
   audioTrack: InputAudioTrack | null;
@@ -40,8 +46,15 @@ const kindForFile = (file: File): AssetKind => {
  * Probes a file and registers everything needed to play it back. Throws
  * `UnsupportedMediaError` when neither mediabunny nor the browser can read it.
  */
-export const loadAsset = async (file: File): Promise<MediaAsset> => {
-  const id = uid('asset');
+/**
+ * Probes a file and registers everything needed to play it back.
+ *
+ * `preferredId` exists for reopening a bundled project: clips reference their
+ * asset by id, so restoring media under a freshly minted id would leave every
+ * clip pointing at nothing.
+ */
+export const loadAsset = async (file: File, preferredId?: string): Promise<MediaAsset> => {
+  const id = preferredId ?? uid('asset');
   const objectUrl = URL.createObjectURL(file);
   const declaredKind = kindForFile(file);
 
@@ -52,6 +65,7 @@ export const loadAsset = async (file: File): Promise<MediaAsset> => {
       throw new UnsupportedMediaError(`${file.name} is not a readable image`);
     }
     resources.set(id, {
+      file,
       input: null,
       videoTrack: null,
       audioTrack: null,
@@ -66,6 +80,7 @@ export const loadAsset = async (file: File): Promise<MediaAsset> => {
       id,
       kind: 'image',
       name: file.name,
+      type: file.type,
       size: file.size,
       url: objectUrl,
       // Stills have no intrinsic length; 5s matches what CapCut drops in.
@@ -118,6 +133,7 @@ export const loadAsset = async (file: File): Promise<MediaAsset> => {
   }
 
   resources.set(id, {
+    file,
     input,
     videoTrack: decodableVideo,
     audioTrack: decodableAudio,
@@ -133,6 +149,7 @@ export const loadAsset = async (file: File): Promise<MediaAsset> => {
     id,
     kind,
     name: file.name,
+    type: file.type,
     size: file.size,
     url: objectUrl,
     durationUs: Math.max(0, Math.round(durationSeconds * US)),
@@ -316,6 +333,9 @@ export const releaseAsset = async (assetId: string) => {
   entry.input?.dispose();
   URL.revokeObjectURL(entry.objectUrl);
 };
+
+/** The file an asset was imported from, for writing it into a project bundle. */
+export const getAssetFile = (assetId: string): File | null => resources.get(assetId)?.file ?? null;
 
 export const getVideoTrack = (assetId: string): InputVideoTrack | null => resources.get(assetId)?.videoTrack ?? null;
 

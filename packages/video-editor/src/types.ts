@@ -17,6 +17,9 @@ export interface MediaAsset {
   id: string;
   kind: AssetKind;
   name: string;
+  /** MIME type of the source file. Needed to rebuild it from a bundle — the
+   *  kind is inferred from it, so losing it misclassifies the asset. */
+  type: string;
   size: number;
   url: string;
   durationUs: number;

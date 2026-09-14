@@ -2,9 +2,9 @@ import { useRef, useState } from 'react';
 import { NButton, NConfirmAlert, NDialog, NInput, showToast } from '@nayan-ui/react';
 import { DialogSize } from '@nayan-ui/react';
 import { Clapperboard, Download, FileDown, FilePlus2, FileUp, Moon, Redo2, Settings, Sun, Undo2 } from 'lucide-react';
+import { BUNDLE_EXTENSION, BundleError, readBundle, writeBundle } from '../../lib/projectBundle';
 import { download } from '../../lib/utils';
 import { readEditorState, serialiseProject, useEditor } from '../../store/editor';
-import type { ProjectFile } from '../../store/editor';
 import { IconButton, NumberField, SelectField } from '../controls';
 
 const RESOLUTIONS = [
@@ -61,20 +61,35 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
     setConfirmNew(true);
   };
 
-  const saveProject = () => {
-    const data = serialiseProject(readEditorState());
-    download(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }), `${project.name || 'project'}.nayaneditor.json`);
-    showToast('Media files are referenced by name — re-import them after opening.', 'Project saved');
+  const [busy, setBusy] = useState<'save' | 'open' | null>(null);
+
+  const saveProject = async () => {
+    setBusy('save');
+    try {
+      const bundle = await writeBundle(serialiseProject(readEditorState()));
+      download(bundle, `${project.name || 'project'}.${BUNDLE_EXTENSION}`);
+      showToast('The project and all its media are inside one file.', 'Project saved');
+    } catch (error) {
+      showToast(error instanceof BundleError ? error.message : 'The project could not be saved.', 'Save failed');
+    } finally {
+      setBusy(null);
+    }
   };
 
   const openProject = async (file: File) => {
+    setBusy('open');
     try {
-      const data = JSON.parse(await file.text()) as ProjectFile;
-      if (data.version !== 1 || !Array.isArray(data.clips)) throw new Error('Unrecognised project file');
-      loadProject(data);
-      showToast('Re-import the original media to relink the clips.', 'Project opened');
-    } catch {
-      showToast('That file is not a Nayan Editor project.', 'Could not open');
+      const { project: data, assets, missing } = await readBundle(file);
+      loadProject(data, assets);
+      if (missing.length > 0) {
+        showToast(`Could not restore: ${missing.join(', ')}. Those clips will be empty.`, 'Opened with missing media');
+      } else {
+        showToast(`${assets.length} media file${assets.length === 1 ? '' : 's'} restored.`, 'Project opened');
+      }
+    } catch (error) {
+      showToast(error instanceof BundleError ? error.message : 'That file is not a Nayan Editor project.', 'Could not open');
+    } finally {
+      setBusy(null);
     }
   };
 
@@ -101,16 +116,16 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
         <IconButton label="New project" onClick={startNewProject}>
           <FilePlus2 className="h-4 w-4" />
         </IconButton>
-        <IconButton label="Open project" onClick={() => fileRef.current?.click()}>
+        <IconButton label="Open project" onClick={() => fileRef.current?.click()} disabled={busy !== null}>
           <FileUp className="h-4 w-4" />
         </IconButton>
-        <IconButton label="Save project" onClick={saveProject}>
+        <IconButton label={busy === 'save' ? 'Bundling media…' : 'Save project'} onClick={() => void saveProject()} disabled={busy !== null}>
           <FileDown className="h-4 w-4" />
         </IconButton>
         <input
           ref={fileRef}
           type="file"
-          accept="application/json,.json"
+          accept={`.${BUNDLE_EXTENSION},application/zip`}
           className="hidden"
           onChange={event => {
             const file = event.target.files?.[0];

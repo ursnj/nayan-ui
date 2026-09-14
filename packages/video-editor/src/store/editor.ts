@@ -88,7 +88,7 @@ interface EditorState extends Snapshot {
   setInPoint: (timeUs: number | null) => void;
   setOutPoint: (timeUs: number | null) => void;
 
-  loadProject: (data: ProjectFile) => void;
+  loadProject: (data: ProjectFile, assets?: MediaAsset[]) => void;
   resetProject: () => void;
 
   undo: () => void;
@@ -141,8 +141,12 @@ export interface ProjectFile {
   project: ProjectSettings;
   tracks: Track[];
   clips: Clip[];
-  /** Assets are referenced by name/size — the files themselves can't be serialised. */
-  assetRefs: { id: string; name: string; size: number; kind: string }[];
+  /**
+   * Where each asset's file sits inside the bundle. The id is the important
+   * part: clips reference their media by it, so restoring under a different
+   * one would leave every clip pointing at nothing.
+   */
+  assetRefs: { id: string; name: string; size: number; kind: string; entry: string; type: string }[];
 }
 
 /*
@@ -697,7 +701,7 @@ export const useEditor = create<EditorState>((set, get) => {
     setInPoint: timeUs => set({ inPointUs: timeUs }),
     setOutPoint: timeUs => set({ outPointUs: timeUs }),
 
-    loadProject: data => {
+    loadProject: (data, assets) => {
       // Every clip id is about to be replaced, so the decoders keyed to the
       // old ones would sit in the pool until eviction pushed them out.
       void releaseAllReaders();
@@ -705,6 +709,9 @@ export const useEditor = create<EditorState>((set, get) => {
         project: normaliseProject(data.project),
         tracks: data.tracks,
         clips: (data.clips ?? []).map(normaliseClip),
+        // Only replace the library when the caller brought media with it; a
+        // bare project file leaves whatever is already imported alone.
+        assets: assets ?? state.assets,
         selectedClipIds: [],
         playheadUs: 0,
         past: [...state.past, snapshotOf(state)].slice(-MAX_HISTORY),
@@ -772,5 +779,21 @@ export const serialiseProject = (state: EditorState): ProjectFile => ({
   project: state.project,
   tracks: state.tracks,
   clips: state.clips,
-  assetRefs: state.assets.map(asset => ({ id: asset.id, name: asset.name, size: asset.size, kind: asset.kind }))
+  assetRefs: state.assets.map(asset => ({
+    id: asset.id,
+    name: asset.name,
+    size: asset.size,
+    kind: asset.kind,
+    entry: bundleEntryFor(asset.id, asset.name),
+    type: asset.type
+  }))
 });
+
+/**
+ * Path an asset takes inside a bundle.
+ *
+ * Prefixed with the id because two imports can share a filename, and stripped
+ * of anything that would make the archive awkward to unzip by hand — the
+ * bundle is an ordinary zip, and someone will open it in Finder.
+ */
+export const bundleEntryFor = (assetId: string, name: string) => `media/${assetId}-${name.replace(/[/\\:*?"<>|]+/g, '_')}`;
