@@ -5,7 +5,7 @@ import { Clapperboard, Download, FileDown, FilePlus2, FileUp, Moon, Redo2, Setti
 import { download } from '../../lib/utils';
 import { readEditorState, serialiseProject, useEditor } from '../../store/editor';
 import type { ProjectFile } from '../../store/editor';
-import { ColorField, IconButton, NumberField, SelectField } from '../controls';
+import { IconButton, NumberField, SelectField } from '../controls';
 
 const RESOLUTIONS = [
   { value: '3840x2160', label: '4K — 3840 × 2160' },
@@ -157,7 +157,10 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
             <NumberField label="Width" value={project.width} min={16} max={7680} step={2} onChange={width => updateProject({ width })} />
             <NumberField label="Height" value={project.height} min={16} max={4320} step={2} onChange={height => updateProject({ height })} />
           </div>
-          <ColorField label="Background" value={project.backgroundColor} onChange={backgroundColor => updateProject({ backgroundColor })} />
+          {/* The background lives in its own panel now — a colour field here
+              would be a second place to set the same thing, and the two would
+              drift apart the moment the background stopped being a colour. */}
+          <p className="pt-1 text-[11px] text-muted">Background is set in the Background panel, on the left.</p>
         </div>
       </NDialog>
     </header>

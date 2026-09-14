@@ -2,7 +2,7 @@ import { animatedValue } from '../lib/keyframes';
 import { clamp } from '../lib/utils';
 import { getImageBitmap, getReader } from '../media/library';
 import { TEXT_LINE_HEIGHT, US, clipEndUs, isMediaClip, isTextClip, sourceTimeUs } from '../types';
-import type { Clip, ColorAdjust, MediaClip, ProjectSettings, TextClip, Track, Transform } from '../types';
+import type { Background, Clip, ColorAdjust, MediaClip, ProjectSettings, TextClip, Track, Transform } from '../types';
 import { blurOnlyFilter, canvasFilterString, exportProcessor, needsPixelProcessing, previewProcessor } from './glProcessor';
 import { transitionStateAt } from './transitions';
 import type { LayerTransitionState } from './transitions';
@@ -31,14 +31,7 @@ export interface RenderOptions {
 export const renderScene = async (context: Context2D, scene: Scene, timeUs: number, options: RenderOptions) => {
   const { project } = scene;
 
-  context.save();
-  context.setTransform(1, 0, 0, 1, 0, 0);
-  context.globalAlpha = 1;
-  context.globalCompositeOperation = 'source-over';
-  context.filter = 'none';
-  context.fillStyle = project.backgroundColor;
-  context.fillRect(0, 0, project.width, project.height);
-  context.restore();
+  await drawBackground(context, scene, timeUs, options);
 
   for (const layer of visibleLayers(scene, timeUs)) {
     const transition = layer.transitionIn;
@@ -377,6 +370,175 @@ const applyTransform = (context: Context2D, transform: Transform, project: Proje
   const flipX = transform.flipH ? -1 : 1;
   const flipY = transform.flipV ? -1 : 1;
   context.scale(transform.scale * flipX * extraScale, transform.scale * flipY * extraScale);
+};
+
+/* ------------------------------------------------------------------ *
+ * Background
+ * ------------------------------------------------------------------ */
+
+/**
+ * Blur radius, in pixels, that the reduced backdrop surface is sized around.
+ *
+ * A 48px blur across a full 1080p frame is tens of milliseconds every frame,
+ * which playback cannot afford. Downscaling first buys most of it: blurring by
+ * r/k on a surface scaled by k and then scaling back up is the same blur for
+ * k² fewer pixels.
+ *
+ * The reduction is derived from the requested radius rather than fixed, so a
+ * heavy blur gets a big saving while a light one is barely reduced at all — a
+ * fixed surface would quietly destroy detail the user asked to keep.
+ */
+const BACKDROP_TARGET_RADIUS = 4;
+
+/** Below this the blur is doing nothing worth a second surface. */
+const BACKDROP_DIRECT_RADIUS = 2;
+
+const drawBackground = async (context: Context2D, scene: Scene, timeUs: number, options: RenderOptions) => {
+  const { project } = scene;
+  const background = project.background;
+
+  context.save();
+  context.setTransform(1, 0, 0, 1, 0, 0);
+  context.globalAlpha = 1;
+  context.globalCompositeOperation = 'source-over';
+  context.filter = 'none';
+
+  // Always lay the solid colour down first: it is the base every other kind
+  // sits on, and the only thing standing between a missing asset and a frame
+  // of whatever the canvas happened to hold last.
+  context.fillStyle = background.color;
+  context.fillRect(0, 0, project.width, project.height);
+
+  if (background.kind === 'linear-gradient' || background.kind === 'radial-gradient') {
+    context.fillStyle = buildGradient(context, background, project);
+    context.fillRect(0, 0, project.width, project.height);
+  } else if (background.kind === 'image' || background.kind === 'blur') {
+    const source = background.kind === 'image' ? resolveBackgroundImage(background) : await resolveBackdropClip(scene, timeUs, options);
+    if (source) drawBackdrop(context, source, background, project, options);
+  }
+
+  context.restore();
+};
+
+const buildGradient = (context: Context2D, background: Background, project: ProjectSettings) => {
+  if (background.kind === 'radial-gradient') {
+    const gradient = context.createRadialGradient(
+      project.width / 2,
+      project.height / 2,
+      0,
+      project.width / 2,
+      project.height / 2,
+      Math.hypot(project.width, project.height) / 2
+    );
+    gradient.addColorStop(0, background.from);
+    gradient.addColorStop(1, background.to);
+    return gradient;
+  }
+
+  // Angle is measured clockwise from straight up, the way every design tool
+  // states it; canvas wants two endpoints, so project the angle onto a line
+  // through the centre long enough to span the frame.
+  const radians = ((background.angle - 90) * Math.PI) / 180;
+  const reach = (Math.abs(Math.cos(radians)) * project.width + Math.abs(Math.sin(radians)) * project.height) / 2;
+  const dx = Math.cos(radians) * reach;
+  const dy = Math.sin(radians) * reach;
+  const gradient = context.createLinearGradient(
+    project.width / 2 - dx,
+    project.height / 2 - dy,
+    project.width / 2 + dx,
+    project.height / 2 + dy
+  );
+  gradient.addColorStop(0, background.from);
+  gradient.addColorStop(1, background.to);
+  return gradient;
+};
+
+const resolveBackgroundImage = (background: Background): ResolvedSource | null => {
+  if (!background.assetId) return null;
+  const bitmap = getImageBitmap(background.assetId);
+  if (!bitmap) return null;
+  return { source: bitmap, sourceWidth: bitmap.width, sourceHeight: bitmap.height };
+};
+
+/** The frontmost picture on screen — what a blurred backdrop is made from. */
+const resolveBackdropClip = async (scene: Scene, timeUs: number, options: RenderOptions): Promise<ResolvedSource | null> => {
+  const layers = visibleLayers(scene, timeUs);
+  for (let index = layers.length - 1; index >= 0; index--) {
+    const clip = layers[index];
+    if (!isMediaClip(clip) || clip.kind === 'audio') continue;
+    // Re-reading the same instant is cheap: the reader already holds this
+    // sample, so this costs a blit rather than a decode.
+    return clip.kind === 'image' ? resolveImageSource(clip) : await resolveVideoSource(clip, timeUs, options);
+  }
+  return null;
+};
+
+/** Cover-fits a picture over the whole frame, defocused and dimmed. */
+const drawBackdrop = (
+  context: Context2D,
+  resolved: ResolvedSource,
+  background: Background,
+  project: ProjectSettings,
+  options: RenderOptions
+) => {
+  // The radius is stated at 1080p so a project looks the same at 720p and 4K.
+  const radius = Math.max(0, background.blur) * (project.height / 1080);
+  const zoom = Math.max(1, background.scale);
+
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = 'high';
+
+  /** Fills `target` with the source, cropped to cover and zoomed. */
+  const paint = (target: Context2D, width: number, height: number) => {
+    const cover = coverRect(resolved.sourceWidth, resolved.sourceHeight, width, height);
+    target.drawImage(
+      resolved.source,
+      (width - cover.width * zoom) / 2,
+      (height - cover.height * zoom) / 2,
+      cover.width * zoom,
+      cover.height * zoom
+    );
+  };
+
+  try {
+    if (radius < BACKDROP_DIRECT_RADIUS) {
+      // Sharp, or near enough. A reduced surface here would throw away detail
+      // the user explicitly asked to keep by turning the blur down.
+      context.filter = radius > 0.1 ? `blur(${radius.toFixed(2)}px)` : 'none';
+      paint(context, project.width, project.height);
+      context.filter = 'none';
+    } else {
+      const ratio = Math.min(1, BACKDROP_TARGET_RADIUS / radius);
+      const width = Math.max(1, Math.round(project.width * ratio));
+      const height = Math.max(1, Math.round(project.height * ratio));
+      const surface = getScratch(`${options.target}:backdrop`, width, height);
+      if (!surface) return;
+
+      surface.context.imageSmoothingEnabled = true;
+      surface.context.imageSmoothingQuality = 'high';
+      surface.context.filter = `blur(${(radius * ratio).toFixed(2)}px)`;
+      paint(surface.context, width, height);
+      context.drawImage(surface.canvas, 0, 0, project.width, project.height);
+    }
+  } catch {
+    // A closed VideoFrame; leave the solid base showing for this frame.
+    context.filter = 'none';
+    return;
+  }
+
+  if (background.dim > 0) {
+    context.globalAlpha = Math.min(1, background.dim);
+    context.fillStyle = background.color;
+    context.fillRect(0, 0, project.width, project.height);
+    context.globalAlpha = 1;
+  }
+};
+
+/** Cover-fit: the box is filled completely, overflowing if aspect ratios differ. */
+export const coverRect = (sourceWidth: number, sourceHeight: number, boxWidth: number, boxHeight: number) => {
+  if (!sourceWidth || !sourceHeight) return { width: boxWidth, height: boxHeight };
+  const scale = Math.max(boxWidth / sourceWidth, boxHeight / sourceHeight);
+  return { width: sourceWidth * scale, height: sourceHeight * scale };
 };
 
 /** Contain-fit: the whole frame is visible, letterboxed if aspect ratios differ. */

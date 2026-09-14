@@ -285,12 +285,81 @@ export interface Marker {
   color: string;
 }
 
+/* ------------------------------------------------------------------ *
+ * Background
+ * ------------------------------------------------------------------ */
+
+export type BackgroundKind = 'solid' | 'linear-gradient' | 'radial-gradient' | 'image' | 'blur';
+
+/**
+ * What fills the frame behind every layer.
+ *
+ * This matters most when the footage does not match the output shape — a
+ * landscape clip in a vertical project — where the alternative is black bars.
+ * `blur` is the answer people actually reach for there: the clip itself,
+ * scaled to cover and defocused, so the bars become part of the picture.
+ *
+ * One flat record rather than a discriminated union, because the panel lets
+ * you switch kinds back and forth and a union would discard the settings of
+ * whichever kind you just left.
+ */
+export interface Background {
+  kind: BackgroundKind;
+  /** The solid fill, and the base painted under every other kind. */
+  color: string;
+  /** Gradient stops. */
+  from: string;
+  to: string;
+  /** Degrees clockwise from vertical. Linear gradients only. */
+  angle: number;
+  /** Which imported image to use, for `image`. */
+  assetId: string | null;
+  /** 0..1 — how far the picture is dimmed towards `color`. */
+  dim: number;
+  /** Defocus in pixels at 1080p, for `blur` and `image`. */
+  blur: number;
+  /** Zoom on top of cover-fit; a little hides the soft edge of a heavy blur. */
+  scale: number;
+}
+
+export const DEFAULT_BACKGROUND: Background = {
+  kind: 'solid',
+  color: '#000000',
+  from: '#1e3a8a',
+  to: '#9333ea',
+  angle: 135,
+  assetId: null,
+  dim: 0.25,
+  blur: 48,
+  scale: 1.15
+};
+
+export const BACKGROUND_LABELS: Record<BackgroundKind, string> = {
+  solid: 'Solid',
+  'linear-gradient': 'Linear',
+  'radial-gradient': 'Radial',
+  image: 'Image',
+  blur: 'Blurred clip'
+};
+
+/** Ready-made gradients, so a decent backdrop is one click rather than two pickers. */
+export const GRADIENT_PRESETS: { name: string; from: string; to: string; angle: number }[] = [
+  { name: 'Midnight', from: '#0f2027', to: '#2c5364', angle: 135 },
+  { name: 'Ember', from: '#f12711', to: '#f5af19', angle: 135 },
+  { name: 'Violet', from: '#1e3a8a', to: '#9333ea', angle: 135 },
+  { name: 'Mint', from: '#134e5e', to: '#71b280', angle: 135 },
+  { name: 'Rose', from: '#ee9ca7', to: '#ffdde1', angle: 135 },
+  { name: 'Slate', from: '#232526', to: '#414345', angle: 180 },
+  { name: 'Sunset', from: '#ff512f', to: '#dd2476', angle: 90 },
+  { name: 'Ocean', from: '#2193b0', to: '#6dd5ed', angle: 135 }
+];
+
 export interface ProjectSettings {
   name: string;
   width: number;
   height: number;
   fps: number;
-  backgroundColor: string;
+  background: Background;
 }
 
 export interface ExportSettings {

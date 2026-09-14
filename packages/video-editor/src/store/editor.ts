@@ -3,7 +3,7 @@ import { makeMediaClip, makeTextClip, makeTrack } from '../lib/factories';
 import { removeKeyAt, scaleAnimations, shiftAnimations, splitAnimations, upsertKey } from '../lib/keyframes';
 import { clamp, uid } from '../lib/utils';
 import { releaseAllReaders, releaseAsset, releaseReader } from '../media/library';
-import { US, clipEndUs, isMediaClip } from '../types';
+import { DEFAULT_BACKGROUND, DEFAULT_CHROMA, DEFAULT_COLOR, DEFAULT_CROP, DEFAULT_TRANSFORM, US, clipEndUs, isMediaClip } from '../types';
 import type { Clip, Marker, MediaAsset, ProjectSettings, TextClip, Track, TrackKind, TransitionKind } from '../types';
 
 /** Nothing shorter than this can be created by trimming or splitting. */
@@ -17,7 +17,7 @@ const DEFAULT_PROJECT: ProjectSettings = {
   width: 1920,
   height: 1080,
   fps: 30,
-  backgroundColor: '#000000'
+  background: { ...DEFAULT_BACKGROUND }
 };
 
 /** The undoable slice of state. Playhead, zoom and tool are deliberately excluded. */
@@ -156,6 +156,44 @@ export interface ProjectFile {
   /** Assets are referenced by name/size — the files themselves can't be serialised. */
   assetRefs: { id: string; name: string; size: number; kind: string }[];
 }
+
+/*
+ * Project files are plain JSON written by an earlier build, so nothing
+ * guarantees they carry the fields the current model expects. A missing one is
+ * not a cosmetic problem: `project.background` undefined throws on every
+ * frame, and a `colorAdjust` short of a dial feeds `undefined` to a shader
+ * uniform, which renders as garbage rather than as an error.
+ *
+ * So the file is filled out against current defaults on the way in. The
+ * version number is deliberately not bumped for this — every older file stays
+ * readable, which is the whole point.
+ */
+
+/** An older file's project settings, before the background became a record. */
+type LegacyProject = ProjectSettings & { backgroundColor?: string };
+
+const normaliseProject = (project: ProjectSettings): ProjectSettings => {
+  const legacy = project as LegacyProject;
+  return {
+    ...project,
+    background: project.background
+      ? { ...DEFAULT_BACKGROUND, ...project.background }
+      : // Pre-background files carried a single colour; keep it as the solid fill.
+        { ...DEFAULT_BACKGROUND, color: legacy.backgroundColor ?? DEFAULT_BACKGROUND.color }
+  };
+};
+
+const normaliseClip = (clip: Clip): Clip => {
+  const base = {
+    ...clip,
+    transform: { ...DEFAULT_TRANSFORM, ...clip.transform },
+    crop: { ...DEFAULT_CROP, ...clip.crop },
+    colorAdjust: { ...DEFAULT_COLOR, ...clip.colorAdjust },
+    animations: clip.animations ?? {},
+    filter: clip.filter ?? null
+  };
+  return isMediaClip(base) ? { ...base, chromaKey: { ...DEFAULT_CHROMA, ...base.chromaKey } } : base;
+};
 
 export const useEditor = create<EditorState>((set, get) => {
   /**
@@ -692,9 +730,9 @@ export const useEditor = create<EditorState>((set, get) => {
       // old ones would sit in the pool until eviction pushed them out.
       void releaseAllReaders();
       set(state => ({
-        project: data.project,
+        project: normaliseProject(data.project),
         tracks: data.tracks,
-        clips: data.clips,
+        clips: (data.clips ?? []).map(normaliseClip),
         markers: data.markers ?? [],
         selectedClipIds: [],
         playheadUs: 0,
