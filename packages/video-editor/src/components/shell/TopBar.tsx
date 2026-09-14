@@ -106,13 +106,18 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onResetPreferences }: T
 
       {/* The one elastic item in the bar: everything else is a fixed control,
           so the project name is what gives when the window narrows. */}
-      <NInput
-        value={project.name}
-        onChange={event => updateProject({ name: event.target.value })}
-        wrapperClassName="mb-0 w-56 min-w-24 shrink"
-        inputClassName="h-8 text-sm"
-        aria-label="Project name"
-      />
+      {/* The mask sits on the wrapper: NInput does not forward unknown props,
+          so the attribute would never reach the DOM from the component. The
+          div takes over as the elastic flex item so the sizing is unchanged. */}
+      <div data-clarity-mask="true" className="w-56 min-w-24 shrink">
+        <NInput
+          value={project.name}
+          onChange={event => updateProject({ name: event.target.value })}
+          wrapperClassName="mb-0 w-full"
+          inputClassName="h-8 text-sm"
+          aria-label="Project name"
+        />
+      </div>
 
       <div className="ml-2 flex shrink-0 items-center gap-0.5">
         <IconButton label="New project" onClick={startNewProject}>

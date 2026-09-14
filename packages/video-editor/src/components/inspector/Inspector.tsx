@@ -116,7 +116,7 @@ const ClipHeader = ({ clip }: { clip: Clip }) => (
   <div className="border-b border-border px-3 py-2.5">
     <div className="flex items-center gap-2">
       <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: clip.color }} />
-      <p className="min-w-0 flex-1 truncate text-xs font-medium text-foreground" title={clip.name}>
+      <p data-clarity-mask="true" className="min-w-0 flex-1 truncate text-xs font-medium text-foreground" title={clip.name}>
         {clip.name}
       </p>
       <span className="shrink-0 rounded bg-surface-secondary px-1.5 py-0.5 text-[10px] capitalize text-muted">{clip.kind}</span>

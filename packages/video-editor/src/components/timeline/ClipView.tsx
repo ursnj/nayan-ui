@@ -87,7 +87,9 @@ export const ClipView = memo(
               width < 44 && 'hidden'
             )}>
             <ClipIcon clip={clip} />
-            <span className="truncate text-[10px] font-medium text-white drop-shadow">{clip.name}</span>
+            <span data-clarity-mask="true" className="truncate text-[10px] font-medium text-white drop-shadow">
+              {clip.name}
+            </span>
             {clip.groupId && <Link2 className="h-3 w-3 shrink-0 text-white/70" />}
             {clip.locked && <Lock className="h-3 w-3 shrink-0 text-white/70" />}
             {isMediaClip(clip) && clip.kind !== 'image' && (clip.muted || clip.volume === 0) && (

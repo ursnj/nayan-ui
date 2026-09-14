@@ -314,14 +314,19 @@ export const TextField = ({
   multiline?: boolean;
 }) =>
   multiline ? (
-    <NTextarea
-      label={label}
-      value={value}
-      placeholder={placeholder}
-      onChange={event => onChange(event.target.value)}
-      className="mb-2"
-      textareaClassName="min-h-20 text-xs"
-    />
+    // Wrapped rather than masked directly: NTextarea does not forward
+    // unknown props. Captions are the user's own words and a session replay
+    // must not carry them off the machine.
+    <div data-clarity-mask="true">
+      <NTextarea
+        label={label}
+        value={value}
+        placeholder={placeholder}
+        onChange={event => onChange(event.target.value)}
+        className="mb-2"
+        textareaClassName="min-h-20 text-xs"
+      />
+    </div>
   ) : (
     <NInput
       label={label}
