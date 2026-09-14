@@ -262,6 +262,10 @@ export const Timeline = () => {
                 <div
                   style={{ width: contentWidth, height: ROW_HEIGHT }}
                   className={cn('relative border-b border-border', track.locked && 'opacity-60')}
+                  onPointerDown={event => {
+                    // Only when the lane itself was hit — clip presses bubble here.
+                    if (event.target === event.currentTarget) selectClip(null);
+                  }}
                   onDragOver={event => {
                     if (!event.dataTransfer.types.includes(ASSET_MIME)) return;
                     event.preventDefault();

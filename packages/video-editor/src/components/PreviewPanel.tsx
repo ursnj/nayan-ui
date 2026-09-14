@@ -19,6 +19,8 @@ export const PreviewPanel = () => {
 
   useEffect(() => {
     player.attach(canvasRef.current);
+    // Detach but don't dispose: the player is a page-lifetime singleton, and
+    // tearing down its AudioContext on a StrictMode remount would be wasteful.
     return () => player.attach(null);
   }, []);
 
@@ -29,8 +31,6 @@ export const PreviewPanel = () => {
   useEffect(() => {
     player.refresh();
   }, [clips, tracks, project]);
-
-  useEffect(() => () => player.dispose(), []);
 
   return (
     <section className="flex min-w-0 flex-1 flex-col bg-background">
