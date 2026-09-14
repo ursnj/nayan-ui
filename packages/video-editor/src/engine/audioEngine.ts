@@ -153,7 +153,6 @@ const reversedBuffer = (buffer: AudioBuffer): AudioBuffer => {
 export class AudioEngine {
   private context: AudioContext | null = null;
   private master: GainNode | null = null;
-  private analyser: AnalyserNode | null = null;
   private active: AudioBufferSourceNode[] = [];
   /** Bumped on every start/stop so a slow decode can't schedule into a stale run. */
   private generation = 0;
@@ -165,10 +164,7 @@ export class AudioEngine {
       this.context = new AudioContext();
       this.master = this.context.createGain();
       this.master.gain.value = this.volume;
-      this.analyser = this.context.createAnalyser();
-      this.analyser.fftSize = 1024;
-      this.master.connect(this.analyser);
-      this.analyser.connect(this.context.destination);
+      this.master.connect(this.context.destination);
     }
     if (this.context.state === 'suspended') await this.context.resume();
     return this.context;
@@ -181,19 +177,6 @@ export class AudioEngine {
   setVolume(volume: number) {
     this.volume = Math.max(0, Math.min(1, volume));
     if (this.master) this.master.gain.value = this.volume;
-  }
-
-  /** Peak level 0–1 for the meter, or 0 when nothing is playing. */
-  peakLevel(): number {
-    if (!this.analyser) return 0;
-    const data = new Float32Array(this.analyser.fftSize);
-    this.analyser.getFloatTimeDomainData(data);
-    let peak = 0;
-    for (const sample of data) {
-      const value = Math.abs(sample);
-      if (value > peak) peak = value;
-    }
-    return Math.min(1, peak);
   }
 
   /**
@@ -240,7 +223,6 @@ export class AudioEngine {
     void this.context?.close();
     this.context = null;
     this.master = null;
-    this.analyser = null;
   }
 
   private stopSources() {

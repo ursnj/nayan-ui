@@ -587,13 +587,13 @@ interface ToolbarProps {
 const TimelineToolbar = (props: ToolbarProps) => (
   <div className="flex shrink-0 items-center gap-1.5 border-b border-border bg-editor-panel px-2 py-1.5">
     {/*
-      * A one-option control, and deliberately so. With the razor gone Select
-      * is the only mode there is, but it still earns its place by naming what
-      * a click on a clip does. It is rendered permanently active rather than
-      * read from the store: a `tool` field with a single possible value would
-      * be state that can never change, and the last thing this needed was a
-      * mode nobody can leave.
-      */}
+     * A one-option control, and deliberately so. With the razor gone Select
+     * is the only mode there is, but it still earns its place by naming what
+     * a click on a clip does. It is rendered permanently active rather than
+     * read from the store: a `tool` field with a single possible value would
+     * be state that can never change, and the last thing this needed was a
+     * mode nobody can leave.
+     */}
     <SegmentedControl
       value="select"
       onChange={() => undefined}
