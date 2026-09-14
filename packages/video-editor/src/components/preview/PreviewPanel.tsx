@@ -146,7 +146,8 @@ export const PreviewPanel = () => {
           ref={frameRef}
           className="checkerboard relative max-h-full max-w-full overflow-hidden"
           style={{ aspectRatio: `${project.width} / ${project.height}` }}>
-          <canvas ref={canvasRef} width={project.width} height={project.height} className="block h-full w-full" />
+          {/* The frame itself: masked so a replay never carries the footage. */}
+          <canvas ref={canvasRef} width={project.width} height={project.height} data-clarity-mask="true" className="block h-full w-full" />
 
           {showSafeZones && (
             <div className="pointer-events-none absolute inset-0">

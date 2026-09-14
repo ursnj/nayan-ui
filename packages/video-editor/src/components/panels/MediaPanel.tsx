@@ -175,6 +175,7 @@ const AssetCard = ({ asset, onAdd, onRemove }: { asset: MediaAsset; onAdd: () =>
           if (event.key === 'Enter') onAdd();
         }}
         title={asset.name}
+        data-clarity-mask="true"
         className="group relative cursor-grab overflow-hidden rounded-lg border border-border bg-surface-secondary transition-all hover:border-accent hover:elevate active:cursor-grabbing">
         <div className="checkerboard relative aspect-video w-full overflow-hidden bg-surface-tertiary">
           {asset.thumbnail ? (
