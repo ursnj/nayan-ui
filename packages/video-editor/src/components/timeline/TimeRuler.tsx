@@ -23,8 +23,20 @@ export const TimeRuler = ({ width, pxPerSec, onScrub }: TimeRulerProps) => {
   const removeMarker = useEditor(state => state.removeMarker);
 
   const interval = pickTickInterval(pxPerSec);
-  const totalSeconds = width / pxPerSec;
-  const tickCount = Math.ceil(totalSeconds / interval) + 1;
+  const tickSpacing = interval * pxPerSec;
+  /*
+   * Ticks land at 0, interval, 2*interval … up to and including the last one
+   * that still fits.
+   *
+   * Rounding *up* here — as this did — puts the final tick past the right
+   * edge, and its timecode label past that again. They are absolutely
+   * positioned in a container with no overflow rule, so they do not merely
+   * draw outside the ruler: they enlarge the timeline's scrollable area, and
+   * the scroll they add is empty by construction.
+   */
+  const tickCount = Math.floor(width / tickSpacing) + 1;
+  /** Rough width of a timecode; a label nearer the edge than this would spill. */
+  const labelWidth = 44;
 
   const rangeLeft = ((inPointUs ?? 0) / US) * pxPerSec;
   const rangeRight = outPointUs !== null ? (outPointUs / US) * pxPerSec : width;
@@ -36,7 +48,7 @@ export const TimeRuler = ({ width, pxPerSec, onScrub }: TimeRulerProps) => {
         role="presentation"
         onPointerDown={onScrub}
         style={{ height: RULER_HEIGHT }}
-        className="relative cursor-ew-resize border-b border-border bg-editor-ruler">
+        className="relative cursor-ew-resize overflow-hidden border-b border-border bg-editor-ruler">
         {hasRange && (
           <div
             className="absolute inset-y-0 border-x-2 border-accent bg-accent/15"
@@ -50,24 +62,28 @@ export const TimeRuler = ({ width, pxPerSec, onScrub }: TimeRulerProps) => {
           return (
             <div key={index} className="pointer-events-none absolute top-0 h-full" style={{ left }}>
               <div className="h-2.5 w-px bg-separator" />
-              <span className="absolute left-1 top-1.5 whitespace-nowrap font-mono text-[10px] tabular-nums text-muted">
-                {formatTimecode(seconds * US)}
-              </span>
+              {/* Drop the label rather than let it run off the end half-drawn. */}
+              {left + labelWidth <= width && (
+                <span className="absolute left-1 top-1.5 whitespace-nowrap font-mono text-[10px] tabular-nums text-muted">
+                  {formatTimecode(seconds * US)}
+                </span>
+              )}
             </div>
           );
         })}
 
         {/* Half-interval minor ticks for finer visual reference. */}
-        {Array.from({ length: tickCount }, (_, index) => (
-          <div
-            key={`minor-${index}`}
-            className="pointer-events-none absolute top-0 h-1.5 w-px bg-separator/50"
-            style={{ left: (index + 0.5) * interval * pxPerSec }}
-          />
-        ))}
+        {Array.from({ length: tickCount }, (_, index) => (index + 0.5) * tickSpacing)
+          .filter(left => left <= width)
+          .map(left => (
+            <div key={`minor-${left}`} className="pointer-events-none absolute top-0 h-1.5 w-px bg-separator/50" style={{ left }} />
+          ))}
       </div>
 
-      <div style={{ height: MARKER_LANE_HEIGHT }} className="relative border-b border-border bg-editor-chrome">
+      {/* Clipped for the same reason as the ruler: a marker's flag is centred
+          on its time and its label runs to the right, so one near either end
+          would otherwise stretch the timeline's scroll. */}
+      <div style={{ height: MARKER_LANE_HEIGHT }} className="relative overflow-hidden border-b border-border bg-editor-chrome">
         {markers.map(marker => (
           <button
             key={marker.id}

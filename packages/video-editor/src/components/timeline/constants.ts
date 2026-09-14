@@ -16,7 +16,13 @@ export const MAX_ROW_HEIGHT = 160;
 export const TRIM_HANDLE_WIDTH = 9;
 /** Snap radius, in px — converted to time using the current zoom. */
 export const SNAP_RADIUS_PX = 9;
-/** Trailing empty space after the last clip so it can always be dragged later. */
+/**
+ * Trailing empty space after the last clip so it can always be dragged later.
+ *
+ * Only reserved once the project is already wider than the lanes — see
+ * `contentWidth` in Timeline.tsx. Adding it unconditionally puts a scrollbar
+ * on every project and leaves the far end of the scroll blank.
+ */
 export const TAIL_PADDING_PX = 320;
 /** Clips further than this outside the viewport aren't rendered at all. */
 export const VIRTUALISE_OVERSCAN_PX = 400;
