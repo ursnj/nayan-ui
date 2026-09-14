@@ -15,17 +15,20 @@ interface ClipViewProps {
   rowHeight: number;
   selected: boolean;
   trackLocked: boolean;
-  onSelect: (additive: boolean) => void;
-  onMoveStart: (event: React.PointerEvent) => void;
-  onTrimStart: (event: React.PointerEvent, edge: TrimEdge) => void;
-  onContextMenu: (event: React.MouseEvent) => void;
+  onSelect: (clip: Clip, additive: boolean) => void;
+  onMoveStart: (clip: Clip, event: React.PointerEvent) => void;
+  onTrimStart: (clip: Clip, event: React.PointerEvent, edge: TrimEdge) => void;
+  onContextMenu: (clip: Clip, event: React.MouseEvent) => void;
 }
 
 /**
  * A single clip on the timeline.
  *
  * Memoised on its own props: a timeline can hold hundreds of these, and a
- * playhead tick or a drag on one clip must not re-render the rest.
+ * drag on one clip must not re-render the rest. That only works because every
+ * callback below is a stable reference from the parent and receives the clip
+ * as an argument — passing `() => onSelect(clip)` from the parent would mint a
+ * new function per clip per render and defeat the memo entirely.
  */
 export const ClipView = memo(
   ({ clip, pxPerSec, rowHeight, selected, trackLocked, onSelect, onMoveStart, onTrimStart, onContextMenu }: ClipViewProps) => {
@@ -42,14 +45,14 @@ export const ClipView = memo(
         aria-pressed={selected}
         onPointerDown={event => {
           if (event.button !== 0) return;
-          onSelect(event.shiftKey || event.metaKey || event.ctrlKey);
-          if (!locked) onMoveStart(event);
+          onSelect(clip, event.shiftKey || event.metaKey || event.ctrlKey);
+          if (!locked) onMoveStart(clip, event);
         }}
-        onContextMenu={onContextMenu}
+        onContextMenu={event => onContextMenu(clip, event)}
         onKeyDown={event => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
-            onSelect(event.shiftKey);
+            onSelect(clip, event.shiftKey);
           }
         }}
         data-clip-id={clip.id}
@@ -109,8 +112,8 @@ export const ClipView = memo(
 
         {!locked && (
           <>
-            <TrimHandle side="start" onPointerDown={event => onTrimStart(event, 'start')} />
-            <TrimHandle side="end" onPointerDown={event => onTrimStart(event, 'end')} />
+            <TrimHandle side="start" onPointerDown={event => onTrimStart(clip, event, 'start')} />
+            <TrimHandle side="end" onPointerDown={event => onTrimStart(clip, event, 'end')} />
           </>
         )}
       </div>

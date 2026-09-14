@@ -39,9 +39,11 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
       const up = () => {
         window.removeEventListener('pointermove', move);
         window.removeEventListener('pointerup', up);
+        window.removeEventListener('pointercancel', up);
       };
       window.addEventListener('pointermove', move);
       window.addEventListener('pointerup', up);
+      window.addEventListener('pointercancel', up);
     },
     [onUpdate, track.height]
   );

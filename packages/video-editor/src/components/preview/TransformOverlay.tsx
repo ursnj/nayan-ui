@@ -70,15 +70,20 @@ export const TransformOverlay = ({ clip, project, displayWidth, displayHeight }:
         writeBox(drag.startClip, drag.startBox, next, updateClip);
       };
 
+      // `pointercancel` matters as much as `pointerup` here: this drag opened an
+      // interaction, and an interrupted pointer that never ends it leaves the
+      // flag set — after which every later edit silently stops recording undo.
       const up = () => {
         window.removeEventListener('pointermove', move);
         window.removeEventListener('pointerup', up);
+        window.removeEventListener('pointercancel', up);
         dragRef.current = null;
         readEditorState().endInteraction();
       };
 
       window.addEventListener('pointermove', move);
       window.addEventListener('pointerup', up);
+      window.addEventListener('pointercancel', up);
     },
     [clip.id, displayHeight, displayWidth, project, updateClip]
   );

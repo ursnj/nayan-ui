@@ -113,6 +113,9 @@ export const splitAnimations = (animations: Animations, localUs: number): { left
   const right: Animations = {};
 
   for (const [path, keys] of Object.entries(animations)) {
+    // Empty tracks shouldn't exist — the store deletes a path once its last
+    // key goes — but `keys[0].value` below would throw if one ever did.
+    if (keys.length === 0) continue;
     const leftKeys = keys.filter(key => key.atUs <= localUs);
     const rightKeys = keys.filter(key => key.atUs > localUs).map(key => ({ ...key, atUs: key.atUs - localUs }));
 

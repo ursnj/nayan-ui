@@ -166,11 +166,28 @@ export const generateThumbnail = async (assetId: string, timeUs = 0): Promise<st
 };
 
 /**
+ * Filmstrip work is serialised.
+ *
+ * Every visible clip asks for one as it mounts, and each request builds its
+ * own `CanvasSink` — which means its own decoder. A timeline with a dozen
+ * clips would start a dozen hardware decoders at once and stall playback.
+ * One at a time is plenty: these are debounced, cached and purely decorative.
+ */
+let filmstripQueue: Promise<unknown> = Promise.resolve();
+
+/**
  * Evenly spaced stills along a clip, drawn behind the clip body in the timeline.
  * Uses `canvasesAtTimestamps`, which decodes each packet at most once for
  * monotonically increasing timestamps.
  */
-export const generateFilmstrip = async (assetId: string, fromUs: number, toUs: number, count: number): Promise<string[]> => {
+export const generateFilmstrip = (assetId: string, fromUs: number, toUs: number, count: number): Promise<string[]> => {
+  const run = filmstripQueue.then(() => buildFilmstrip(assetId, fromUs, toUs, count));
+  // Keep the chain alive even if one strip fails.
+  filmstripQueue = run.catch(() => undefined);
+  return run;
+};
+
+const buildFilmstrip = async (assetId: string, fromUs: number, toUs: number, count: number): Promise<string[]> => {
   const entry = resources.get(assetId);
   if (!entry) return [];
   if (entry.bitmap) {

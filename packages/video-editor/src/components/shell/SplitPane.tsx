@@ -54,12 +54,14 @@ export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start
       const up = () => {
         window.removeEventListener('pointermove', move);
         window.removeEventListener('pointerup', up);
+        window.removeEventListener('pointercancel', up);
         setDragging(false);
         onResize(latest);
       };
 
       window.addEventListener('pointermove', move);
       window.addEventListener('pointerup', up);
+      window.addEventListener('pointercancel', up);
     },
     [anchor, horizontal, max, min, measuredRef, onResize, size]
   );

@@ -5,6 +5,21 @@ import type { MediaClip } from '../../types';
 
 /** Filmstrips are expensive to build, so keep them across mounts and re-renders. */
 const filmstripCache = new Map<string, string[]>();
+/**
+ * Each entry is up to 24 JPEG data URLs, and trimming or zooming a clip mints
+ * a fresh key every time — left uncapped this grows for the whole session.
+ */
+const FILMSTRIP_CACHE_LIMIT = 180;
+
+const rememberStrip = (key: string, frames: string[]) => {
+  filmstripCache.set(key, frames);
+  // Map iterates in insertion order, so the front is the least recently added.
+  while (filmstripCache.size > FILMSTRIP_CACHE_LIMIT) {
+    const oldest = filmstripCache.keys().next().value;
+    if (oldest === undefined) break;
+    filmstripCache.delete(oldest);
+  }
+};
 
 /**
  * Evenly spaced stills across the clip's visible source range.
@@ -30,7 +45,7 @@ export const useFilmstrip = (clip: MediaClip, widthPx: number): string[] => {
     const timer = window.setTimeout(async () => {
       const strip = await generateFilmstrip(clip.assetId, clip.inUs, sourceEndUs, count);
       if (cancelled || strip.length === 0) return;
-      filmstripCache.set(key, strip);
+      rememberStrip(key, strip);
       setGenerated({ key, frames: strip });
     }, 300);
 
