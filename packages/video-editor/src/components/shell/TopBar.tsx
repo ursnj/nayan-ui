@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { NButton, NConfirmAlert, NDialog, NInput, showToast } from '@nayan-ui/react';
 import { DialogSize } from '@nayan-ui/react';
-import { Clapperboard, Download, FileDown, FilePlus2, FileUp, Moon, Redo2, Settings, Sun, Undo2 } from 'lucide-react';
+import { Clapperboard, Download, FileDown, FilePlus2, FileUp, Moon, Redo2, RotateCcw, Settings, Sun, Undo2 } from 'lucide-react';
 import { BUNDLE_EXTENSION, BundleError, readBundle, writeBundle } from '../../lib/projectBundle';
 import { download } from '../../lib/utils';
 import { readEditorState, serialiseProject, useEditor } from '../../store/editor';
@@ -30,9 +30,11 @@ interface TopBarProps {
   theme: string;
   onToggleTheme: () => void;
   onExport: () => void;
+  /** Restores panel sizes and theme — the settings kept in local storage. */
+  onResetPreferences: () => void;
 }
 
-export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
+export const TopBar = ({ theme, onToggleTheme, onExport, onResetPreferences }: TopBarProps) => {
   const project = useEditor(state => state.project);
   const updateProject = useEditor(state => state.updateProject);
   const loadProject = useEditor(state => state.loadProject);
@@ -209,6 +211,21 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
               would be a second place to set the same thing, and the two would
               drift apart the moment the background stopped being a colour. */}
           <p className="pt-1 text-[11px] text-muted">Background is set in the Background panel, on the left.</p>
+
+          {/* Below the rule is editor state, not project state: it follows the
+              browser rather than the file, which is why it needs its own way
+              back to the defaults. */}
+          <div className="mt-3 border-t border-border pt-3">
+            <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted">Editor</p>
+            <p className="mb-2 text-[11px] leading-relaxed text-muted">
+              Panel sizes and the light/dark choice are remembered in this browser, not in the project. Resetting them leaves your timeline and
+              media untouched.
+            </p>
+            <NButton isOutline onClick={onResetPreferences} className="h-7 px-2 text-[11px]">
+              <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
+              Reset layout and theme
+            </NButton>
+          </div>
         </div>
       </NDialog>
     </header>
