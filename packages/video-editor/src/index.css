@@ -1,0 +1,282 @@
+@import '@nayan-ui/react/styles.css';
+
+@source '../../node_modules/@nayan-ui/react/dist';
+
+/*
+ * Editing tools live under the eye for hours, so the palette is built for a
+ * dim room: near-neutral greys carrying a trace of blue, low-chroma surfaces
+ * that never compete with the footage, and saturation spent only on the few
+ * things that must be found instantly — the playhead, the selection, the
+ * record-red of an active export.
+ */
+
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  --background: hsl(220 16% 89%);
+  --foreground: hsl(222 30% 12%);
+  --surface: hsl(0 0% 100%);
+  --surface-foreground: hsl(222 30% 12%);
+  --surface-secondary: hsl(220 22% 97%);
+  --surface-secondary-foreground: hsl(222 30% 12%);
+  --surface-tertiary: hsl(220 18% 92%);
+  --surface-tertiary-foreground: hsl(222 30% 12%);
+  --overlay: hsl(0 0% 100%);
+  --overlay-foreground: hsl(222 30% 12%);
+  --muted: hsl(220 10% 46%);
+  --default: hsl(220 18% 90%);
+  --default-foreground: hsl(222 30% 12%);
+  --accent: hsl(243 75% 59%);
+  --accent-foreground: hsl(0 0% 100%);
+  --field-background: hsl(220 22% 97%);
+  --field-foreground: hsl(222 30% 12%);
+  --field-placeholder: hsl(220 10% 55%);
+  --success: hsl(160 84% 39%);
+  --success-foreground: hsl(0 0% 100%);
+  --warning: hsl(35 92% 50%);
+  --warning-foreground: hsl(222 30% 12%);
+  --danger: hsl(0 84% 60%);
+  --danger-foreground: hsl(0 0% 100%);
+  --border: hsl(220 14% 84%);
+  --separator: hsl(220 14% 80%);
+  --focus: hsl(243 75% 59%);
+  --link: hsl(243 75% 59%);
+  --segment: hsl(0 0% 100%);
+  --segment-foreground: hsl(222 30% 12%);
+
+  /* Editor-specific */
+  --editor-chrome: hsl(220 22% 97%);
+  --editor-panel: hsl(0 0% 100%);
+  --editor-track: hsl(220 20% 95%);
+  --editor-track-alt: hsl(220 18% 92%);
+  --editor-ruler: hsl(220 20% 96%);
+  --playhead: hsl(0 84% 55%);
+  --elevation: 0 1px 2px hsl(220 20% 20% / 0.06), 0 4px 16px hsl(220 20% 20% / 0.06);
+  --elevation-lg: 0 2px 4px hsl(220 20% 20% / 0.08), 0 12px 40px hsl(220 20% 20% / 0.14);
+}
+
+.dark,
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  /*
+   * Four depths, measured rather than eyeballed (WCAG ratios in brackets):
+   *
+   *    6%  the void behind everything — the gutter between islands
+   *   11%  wells: inputs, and the video stage
+   *   16%  an island's body
+   *   21%  raised chrome inside an island — toolbars, headers, ruler [1.18]
+   *
+   * The earlier scale sat 3–5 points lower across the board with chrome only
+   * 1.13 from the panel, which is why it read as one flat dull sheet. Text was
+   * the bigger problem: secondary labels are 10–11px throughout, and at 5.8
+   * against the panel they were legible on paper and mushy in practice. Muted
+   * is now 7.66 [AAA at this size], separators 2.38, borders 1.70.
+   *
+   * The neutrals stay near-grey on purpose — a colour cast in the chrome
+   * skews how you judge the footage — so the vibrancy lives in the accent and
+   * the semantic colours instead.
+   */
+  --background: hsl(226 22% 6%);
+  --foreground: hsl(220 26% 98%);
+  --surface: hsl(224 14% 16%);
+  --surface-foreground: hsl(220 26% 98%);
+  --surface-secondary: hsl(224 13% 20%);
+  --surface-secondary-foreground: hsl(220 26% 98%);
+  --surface-tertiary: hsl(224 12% 25%);
+  --surface-tertiary-foreground: hsl(220 26% 98%);
+  --overlay: hsl(224 14% 20%);
+  --overlay-foreground: hsl(220 26% 98%);
+  --muted: hsl(222 15% 74%);
+  --default: hsl(224 14% 26%);
+  --default-foreground: hsl(220 26% 98%);
+  --accent: hsl(245 92% 70%);
+  --accent-foreground: hsl(0 0% 100%);
+  /* Inputs recede rather than rise, so they read as wells in the panel. */
+  --field-background: hsl(226 18% 11%);
+  --field-foreground: hsl(220 26% 98%);
+  --field-placeholder: hsl(222 12% 60%);
+  --success: hsl(158 75% 52%);
+  --success-foreground: hsl(226 22% 6%);
+  --warning: hsl(38 98% 62%);
+  --warning-foreground: hsl(226 22% 6%);
+  --danger: hsl(0 84% 66%);
+  --danger-foreground: hsl(226 22% 6%);
+  /* Lifted so an island's edge still reads against a near-black gutter. */
+  --border: hsl(224 14% 31%);
+  --separator: hsl(224 14% 40%);
+  --focus: hsl(245 92% 70%);
+  --link: hsl(245 95% 78%);
+  --segment: hsl(224 14% 27%);
+  --segment-foreground: hsl(220 26% 98%);
+
+  --editor-chrome: hsl(224 13% 21%);
+  --editor-panel: hsl(224 14% 16%);
+  /*
+   * Lanes sit below the panel so the track area reads as a well, with the
+   * sticky header column and ruler above it at chrome level. The gap between
+   * the two lane tones is the row striping and is meant to be faint.
+   */
+  --editor-track: hsl(226 16% 13%);
+  --editor-track-alt: hsl(226 16% 15%);
+  --editor-ruler: hsl(224 13% 21%);
+  --playhead: hsl(0 90% 65%);
+  --elevation: 0 1px 2px hsl(0 0% 0% / 0.5), 0 4px 16px hsl(0 0% 0% / 0.4);
+  --elevation-lg: 0 2px 4px hsl(0 0% 0% / 0.6), 0 16px 48px hsl(0 0% 0% / 0.6);
+}
+
+@theme inline {
+  --color-editor-chrome: var(--editor-chrome);
+  --color-editor-panel: var(--editor-panel);
+  /*
+   * The video stage matches the rail and the panel chrome rather than having
+   * a tone of its own. Aliasing the token instead of defining it per theme
+   * means the two can never drift apart in one mode and not the other.
+   */
+  --color-editor-canvas: var(--editor-chrome);
+  --color-editor-track: var(--editor-track);
+  --color-editor-track-alt: var(--editor-track-alt);
+  --color-editor-ruler: var(--editor-ruler);
+  --color-playhead: var(--playhead);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--foreground);
+  background: var(--background);
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'tnum';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* A timeline is a dragging surface; accidental text selection ruins it. */
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+input,
+textarea,
+[contenteditable] {
+  user-select: text;
+}
+
+/* Slim scrollbars so panels don't lose width to chrome. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--separator) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--separator);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+@utility panel {
+  background: var(--editor-panel);
+  border-color: var(--border);
+}
+
+/*
+ * Each region of the editor sits on its own raised card with the app
+ * background showing through between them. The gutter does the separating, so
+ * the borders can stay quiet and the eye groups by shape rather than by line.
+ *
+ * `overflow: hidden` keeps scrolling content inside the radius. It doesn't trap
+ * the context menu or command palette — both are `position: fixed`, and no
+ * island establishes a containing block for them.
+ */
+@utility island {
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--editor-panel);
+  box-shadow: var(--elevation);
+}
+
+@utility elevate {
+  box-shadow: var(--elevation);
+}
+
+@utility elevate-lg {
+  box-shadow: var(--elevation-lg);
+}
+
+/* The checkerboard behind the preview, so transparency reads as transparency. */
+@utility checkerboard {
+  background-image:
+    linear-gradient(45deg, hsl(0 0% 50% / 0.18) 25%, transparent 25%), linear-gradient(-45deg, hsl(0 0% 50% / 0.18) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, hsl(0 0% 50% / 0.18) 75%), linear-gradient(-45deg, transparent 75%, hsl(0 0% 50% / 0.18) 75%);
+  background-size: 16px 16px;
+  background-position:
+    0 0,
+    0 8px,
+    8px -8px,
+    -8px 0;
+}
+
+/*
+ * Timeline clips are re-rendered on every drag frame. Promoting them to their
+ * own layer keeps a long timeline from repainting as a whole while one clip
+ * moves.
+ */
+@utility gpu-layer {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+@keyframes editor-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility animate-in {
+  animation: editor-fade-in 140ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

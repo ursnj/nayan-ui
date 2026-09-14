@@ -16,6 +16,7 @@ COPY packages/react/package.json ./packages/react/package.json
 COPY packages/native/package.json ./packages/native/package.json
 COPY packages/native/example/package.json ./packages/native/example/package.json
 COPY packages/website/package.json ./packages/website/package.json
+COPY packages/video-editor/package.json ./packages/video-editor/package.json
 RUN yarn install --immutable
 
 # Rebuild the source code only when needed
@@ -29,6 +30,11 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 # Build React package first (required for website build)
 RUN yarn workspace @nayan-ui/react build
+
+# The video editor is a static bundle that writes into the site's public/
+# folder, so it has to exist before Next collects its static output. Shipping
+# it this way keeps everything in one image at nayanui.com/editor.
+RUN yarn workspace @nayan-ui/video-editor build
 
 # Build website (Next.js)
 RUN yarn workspace @nayan-ui/website build
