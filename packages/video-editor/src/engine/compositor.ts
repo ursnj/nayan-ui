@@ -1,3 +1,4 @@
+import { reportOnce } from '../lib/diagnostics';
 import { animatedValue } from '../lib/keyframes';
 import { clamp } from '../lib/utils';
 import { getImageBitmap, getReader } from '../media/library';
@@ -255,8 +256,11 @@ const resolveVideoSource = async (clip: MediaClip, timeUs: number, options: Rend
   if (!surface) return null;
   try {
     sample.draw(surface.context as CanvasRenderingContext2D, 0, 0, sourceWidth, sourceHeight);
-  } catch {
-    // The sample can be invalidated by a concurrent seek; skip this frame.
+  } catch (error) {
+    // A sample invalidated by a concurrent seek is normal and the next frame
+    // recovers. A *closed* one never recovers, and silently dropping the layer
+    // leaves a preview that is empty for no visible reason — so say it once.
+    reportOnce('video frame', error);
     return null;
   }
   return { source: surface.canvas, sourceWidth, sourceHeight };
@@ -357,8 +361,9 @@ const compose = (
 
   try {
     context.drawImage(image, sx, sy, sw, sh, -box.width / 2, -box.height / 2, box.width, box.height);
-  } catch {
+  } catch (error) {
     // A closed VideoFrame or a zero-sized surface; drop the frame.
+    reportOnce('layer draw', error);
   }
   context.restore();
 };

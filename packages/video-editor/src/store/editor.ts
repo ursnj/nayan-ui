@@ -9,9 +9,6 @@ import type { Clip, MediaAsset, ProjectSettings, TextClip, Track, TrackKind, Tra
 /** Nothing shorter than this can be created by trimming or splitting. */
 export const MIN_CLIP_US = 100_000;
 
-/** Select for everything, razor for cutting. */
-export type ToolMode = 'select' | 'razor';
-
 const DEFAULT_PROJECT: ProjectSettings = {
   name: 'Untitled project',
   width: 1920,
@@ -20,7 +17,7 @@ const DEFAULT_PROJECT: ProjectSettings = {
   background: { ...DEFAULT_BACKGROUND }
 };
 
-/** The undoable slice of state. Playhead, zoom and tool are deliberately excluded. */
+/** The undoable slice of state. Playhead and zoom are deliberately excluded. */
 interface Snapshot {
   project: ProjectSettings;
   tracks: Track[];
@@ -35,7 +32,6 @@ interface EditorState extends Snapshot {
   pxPerSec: number;
   snapEnabled: boolean;
   rippleEnabled: boolean;
-  tool: ToolMode;
   /** Export/preview range, set with I and O. */
   inPointUs: number | null;
   outPointUs: number | null;
@@ -58,7 +54,7 @@ interface EditorState extends Snapshot {
   updateSelectedClips: (patch: Partial<Clip>) => void;
   moveClips: (moves: { clipId: string; startUs: number; trackId: string }[]) => void;
   setClipEdge: (clipId: string, edge: 'start' | 'end', timeUs: number) => void;
-  splitAt: (timeUs: number, clipId?: string) => void;
+  splitAt: (timeUs: number) => void;
   duplicateSelection: () => void;
   deleteSelection: (ripple?: boolean) => void;
   copySelection: () => void;
@@ -89,7 +85,6 @@ interface EditorState extends Snapshot {
   setZoom: (pxPerSec: number) => void;
   toggleSnap: () => void;
   toggleRipple: () => void;
-  setTool: (tool: ToolMode) => void;
   setInPoint: (timeUs: number | null) => void;
   setOutPoint: (timeUs: number | null) => void;
 
@@ -243,7 +238,6 @@ export const useEditor = create<EditorState>((set, get) => {
     pxPerSec: 60,
     snapEnabled: true,
     rippleEnabled: false,
-    tool: 'select',
     inPointUs: null,
     outPointUs: null,
     clipboard: [],
@@ -374,14 +368,13 @@ export const useEditor = create<EditorState>((set, get) => {
         return { clips: state.clips.map(entry => (entry.id === clipId ? updated : entry)) };
       }),
 
-    splitAt: (timeUs, clipId) =>
+    splitAt: timeUs =>
       commit(state => {
         const at = Math.round(timeUs);
+        // Cut every clip the playhead crosses: the selected ones, or all of
+        // them across every track when nothing is selected.
         const targets = state.clips.filter(clip => {
           if (clip.locked) return false;
-          if (clipId) return clip.id === clipId;
-          // No explicit target: cut everything the playhead crosses on
-          // selected clips, or on every track when nothing is selected.
           if (state.selectedClipIds.length > 0 && !state.selectedClipIds.includes(clip.id)) return false;
           return true;
         });
@@ -701,7 +694,6 @@ export const useEditor = create<EditorState>((set, get) => {
     setZoom: pxPerSec => set({ pxPerSec: clamp(pxPerSec, 2, 800) }),
     toggleSnap: () => set(state => ({ snapEnabled: !state.snapEnabled })),
     toggleRipple: () => set(state => ({ rippleEnabled: !state.rippleEnabled })),
-    setTool: tool => set({ tool }),
     setInPoint: timeUs => set({ inPointUs: timeUs }),
     setOutPoint: timeUs => set({ outPointUs: timeUs }),
 

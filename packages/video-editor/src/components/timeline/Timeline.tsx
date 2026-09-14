@@ -1,10 +1,9 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { NButton } from '@nayan-ui/react';
-import { Copy, Film, Group, Link2, Lock, Magnet, MousePointer2, Music, Plus, Scissors, Split, Trash2, Ungroup, ZoomIn, ZoomOut } from 'lucide-react';
+import { Copy, Film, Group, Link2, Lock, Magnet, MousePointer2, Music, Plus, Split, Trash2, Ungroup, ZoomIn, ZoomOut } from 'lucide-react';
 import { player, seekTo } from '../../engine/playerInstance';
 import { clamp, cn } from '../../lib/utils';
 import { readEditorState, timelineDurationUs, useEditor } from '../../store/editor';
-import type { ToolMode } from '../../store/editor';
 import { US, clipEndUs } from '../../types';
 import type { Clip, Track } from '../../types';
 import { IconButton, SegmentedControl } from '../controls';
@@ -47,7 +46,6 @@ export const Timeline = () => {
   const pxPerSec = useEditor(state => state.pxPerSec);
   const snapEnabled = useEditor(state => state.snapEnabled);
   const rippleEnabled = useEditor(state => state.rippleEnabled);
-  const tool = useEditor(state => state.tool);
   const selectedClipIds = useEditor(state => state.selectedClipIds);
   const durationUs = useEditor(state => timelineDurationUs(state.clips));
 
@@ -66,7 +64,6 @@ export const Timeline = () => {
   const setZoom = useEditor(state => state.setZoom);
   const toggleSnap = useEditor(state => state.toggleSnap);
   const toggleRipple = useEditor(state => state.toggleRipple);
-  const setTool = useEditor(state => state.setTool);
   const copySelection = useEditor(state => state.copySelection);
   const detachAudio = useEditor(state => state.detachAudio);
 
@@ -341,18 +338,6 @@ export const Timeline = () => {
     [beginDrag, timeAt]
   );
 
-  const onClipPointerDown = useCallback(
-    (clip: Clip, event: React.PointerEvent) => {
-      const state = readEditorState();
-      if (state.tool === 'razor') {
-        splitAt(timeAt(event.clientX), clip.id);
-        return;
-      }
-      startMoveDrag(clip, event);
-    },
-    [splitAt, startMoveDrag, timeAt]
-  );
-
   const openClipMenu = useCallback(
     (clip: Clip, event: React.MouseEvent) => {
       event.preventDefault();
@@ -474,8 +459,6 @@ export const Timeline = () => {
   return (
     <section className="island flex h-full min-h-0 flex-col">
       <TimelineToolbar
-        tool={tool}
-        setTool={setTool}
         snapEnabled={snapEnabled}
         rippleEnabled={rippleEnabled}
         toggleSnap={toggleSnap}
@@ -539,7 +522,7 @@ export const Timeline = () => {
               onUpdateTrack={patch => updateTrack(track.id, patch)}
               onRemoveTrack={() => removeTrack(track.id)}
               onSelectClip={handleSelectClip}
-              onClipPointerDown={onClipPointerDown}
+              onClipPointerDown={startMoveDrag}
               onTrimStart={handleTrimStart}
               onClipContextMenu={openClipMenu}
               onDropAsset={handleDropAsset}
@@ -586,8 +569,6 @@ export const Timeline = () => {
  * ------------------------------------------------------------------ */
 
 interface ToolbarProps {
-  tool: ToolMode;
-  setTool: (tool: ToolMode) => void;
   snapEnabled: boolean;
   rippleEnabled: boolean;
   toggleSnap: () => void;
@@ -605,14 +586,19 @@ interface ToolbarProps {
 
 const TimelineToolbar = (props: ToolbarProps) => (
   <div className="flex shrink-0 items-center gap-1.5 border-b border-border bg-editor-panel px-2 py-1.5">
-    <SegmentedControl<ToolMode>
-      value={props.tool}
-      onChange={props.setTool}
-      className="w-20"
-      options={[
-        { value: 'select', label: <MousePointer2 className="h-3.5 w-3.5" />, title: 'Select' },
-        { value: 'razor', label: <Scissors className="h-3.5 w-3.5" />, title: 'Razor' }
-      ]}
+    {/*
+      * A one-option control, and deliberately so. With the razor gone Select
+      * is the only mode there is, but it still earns its place by naming what
+      * a click on a clip does. It is rendered permanently active rather than
+      * read from the store: a `tool` field with a single possible value would
+      * be state that can never change, and the last thing this needed was a
+      * mode nobody can leave.
+      */}
+    <SegmentedControl
+      value="select"
+      onChange={() => undefined}
+      className="w-10"
+      options={[{ value: 'select', label: <MousePointer2 className="h-3.5 w-3.5" />, title: 'Select' }]}
     />
 
     <span className="mx-0.5 h-4 w-px bg-separator" />
