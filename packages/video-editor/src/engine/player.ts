@@ -1,3 +1,4 @@
+import { reportOnce } from '../lib/diagnostics';
 import { US } from '../types';
 import { AudioEngine } from './audioEngine';
 import { renderScene } from './compositor';
@@ -186,8 +187,13 @@ export class Player {
       const renderTime = end > 0 ? Math.min(timeUs, end - 1) : timeUs;
 
       await renderScene(context, scene, renderTime, { target: 'preview' });
-    } catch {
-      // A disposed reader or closed sample; the next frame will recover.
+    } catch (error) {
+      // Usually a disposed reader or a closed sample mid-seek, and the next
+      // frame recovers. But the background has already been painted by the
+      // time anything here throws, so a *persistent* failure looks exactly
+      // like an empty preview with no error at all — which is unreadable.
+      // Reported once per distinct cause so playback can't flood the console.
+      reportOnce('render', error);
     } finally {
       this.rendering = false;
     }

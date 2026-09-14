@@ -77,29 +77,26 @@ export class SequentialVideoReader {
     }
   }
 
+  /*
+   * Releases the current sample *before* tearing the iterator down, and never
+   * holds one across that teardown.
+   *
+   * An earlier version kept the last frame when the new iterator yielded
+   * nothing, so that seeking into a transition could not blank the outgoing
+   * layer. That is unsafe: closing the iterator invalidates the samples it
+   * produced, so the frame being held was already dead, and drawing it throws
+   * — which `resolveVideoSource` turns into a silently missing layer. Every
+   * play and seek comes through here, so the rare transition case is not worth
+   * risking the common one.
+   */
   private async restart(seconds: number) {
-    const previous = this.iterator;
-    this.iterator = null;
-    if (previous) await previous.return().catch(() => undefined);
+    await this.closeIterator();
     if (this.disposed) return;
-
     // `samples(t)` yields the sample *covering* t first, so this lands exactly
     // on the frame that should be on screen.
-    const iterator = this.sink.samples(Math.max(0, seconds));
-    const first = await iterator.next();
-
-    if (first.done || !first.value) {
-      // Nothing covers that instant — it is past the end of the track. Hold
-      // the frame we already have instead of blanking: a transition reads the
-      // outgoing clip *past* its own out point, and seeking into the middle of
-      // one would otherwise drop that layer for the rest of the blend.
-      await iterator.return().catch(() => undefined);
-      return;
-    }
-
-    this.current?.close();
-    this.current = first.value;
-    this.iterator = iterator;
+    this.iterator = this.sink.samples(Math.max(0, seconds));
+    const first = await this.iterator.next();
+    this.current = first.done ? null : first.value;
   }
 
   private async closeIterator() {
