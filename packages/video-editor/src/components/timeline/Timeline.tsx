@@ -539,7 +539,7 @@ export const Timeline = () => {
           <div className="sticky top-0 z-30 flex">
             <div
               style={{ width: HEADER_WIDTH, height: HEAD_HEIGHT }}
-              className="sticky left-0 z-40 shrink-0 border-b border-r border-border bg-editor-chrome"
+              className="sticky left-0 z-40 shrink-0 border-b border-r border-border bg-editor-panel"
             />
             <TimeRuler width={contentWidth} pxPerSec={pxPerSec} onScrub={event => beginDrag({ kind: 'scrub' }, event)} />
           </div>
@@ -624,7 +624,7 @@ interface ToolbarProps {
 }
 
 const TimelineToolbar = (props: ToolbarProps) => (
-  <div className="flex shrink-0 items-center gap-1.5 border-b border-border bg-editor-chrome px-2 py-1.5">
+  <div className="flex shrink-0 items-center gap-1.5 border-b border-border bg-editor-panel px-2 py-1.5">
     <SegmentedControl<ToolMode>
       value={props.tool}
       onChange={props.setTool}

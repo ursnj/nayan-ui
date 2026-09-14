@@ -52,7 +52,7 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
   return (
     <div
       style={{ width: HEADER_WIDTH, height: track.height }}
-      className="group/header sticky left-0 z-20 flex shrink-0 flex-col justify-center gap-1 overflow-hidden border-b border-r border-border bg-editor-chrome px-2 py-1">
+      className="group/header sticky left-0 z-20 flex shrink-0 flex-col justify-center gap-1 overflow-hidden border-b border-r border-border bg-editor-panel px-2 py-1">
       <div className="flex h-5 items-center gap-1">
         <Icon className={cn('h-3.5 w-3.5 shrink-0', track.hidden ? 'text-muted/50' : 'text-muted')} />
         <NInput

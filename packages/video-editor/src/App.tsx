@@ -4,8 +4,10 @@ import { ExportDialog } from './components/ExportDialog';
 import { Inspector } from './components/inspector/Inspector';
 import { LeftRail } from './components/panels/LeftRail';
 import { PreviewPanel } from './components/preview/PreviewPanel';
+import { SmallScreenNotice } from './components/shell/SmallScreenNotice';
 import { SplitPane } from './components/shell/SplitPane';
 import { TopBar } from './components/shell/TopBar';
+import { useHasRoom } from './lib/viewport';
 import { Timeline } from './components/timeline/Timeline';
 
 /** WebCodecs is the whole premise, so say so plainly rather than failing oddly. */
@@ -22,12 +24,24 @@ function App() {
   const [libraryWidth, setLibraryWidth] = useLocalStorage('EDITOR_LIBRARY_W', 320);
   const [inspectorWidth, setInspectorWidth] = useLocalStorage('EDITOR_INSPECTOR_W', 300);
   const [timelineHeight, setTimelineHeight] = useLocalStorage('EDITOR_TIMELINE_H', 300);
+  const hasRoom = useHasRoom();
 
   useEffect(() => {
     if (!hasWebCodecs) {
       showToast('This browser has no WebCodecs support. Try a recent Chrome, Edge or Safari.', 'Unsupported browser');
     }
   }, []);
+
+  // After every hook, so the rules of hooks hold on both branches. The store
+  // and the media library are module-scoped, so a window dragged narrow and
+  // back finds the project exactly as it was.
+  if (!hasRoom) {
+    return (
+      <NTheme theme={theme} className="h-full">
+        <SmallScreenNotice />
+      </NTheme>
+    );
+  }
 
   return (
     <NTheme theme={theme} className="h-full">
