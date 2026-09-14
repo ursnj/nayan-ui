@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { NDialog, showToast } from '@nayan-ui/react';
 import { DialogSize } from '@nayan-ui/react';
-import { Clapperboard, Command, Download, FileDown, FilePlus2, FileUp, Keyboard, Moon, Redo2, Settings, Sun, Undo2 } from 'lucide-react';
+import { Clapperboard, Download, FileDown, FilePlus2, FileUp, Moon, Redo2, Settings, Sun, Undo2 } from 'lucide-react';
 import { download } from '../../lib/utils';
 import { readEditorState, serialiseProject, useEditor } from '../../store/editor';
 import type { ProjectFile } from '../../store/editor';
@@ -30,11 +30,9 @@ interface TopBarProps {
   theme: string;
   onToggleTheme: () => void;
   onExport: () => void;
-  onShowShortcuts: () => void;
-  onShowCommands: () => void;
 }
 
-export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onShowCommands }: TopBarProps) => {
+export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
   const project = useEditor(state => state.project);
   const updateProject = useEditor(state => state.updateProject);
   const loadProject = useEditor(state => state.loadProject);
@@ -66,7 +64,7 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onShow
   };
 
   return (
-    <header className="flex items-center gap-2 border-b border-border bg-editor-chrome px-3 py-2">
+    <header className="island flex shrink-0 items-center gap-2 px-3 py-2">
       <div className="flex items-center gap-2">
         <Clapperboard className="h-5 w-5 text-accent" />
         <span className="text-sm font-semibold tracking-tight text-foreground">Nayan Cut</span>
@@ -105,10 +103,10 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onShow
       </div>
 
       <div className="ml-auto flex items-center gap-1">
-        <IconButton label="Undo (⌘Z)" onClick={undo} disabled={!canUndo}>
+        <IconButton label="Undo" onClick={undo} disabled={!canUndo}>
           <Undo2 className="h-4 w-4" />
         </IconButton>
-        <IconButton label="Redo (⇧⌘Z)" onClick={redo} disabled={!canRedo}>
+        <IconButton label="Redo" onClick={redo} disabled={!canRedo}>
           <Redo2 className="h-4 w-4" />
         </IconButton>
 
@@ -122,12 +120,6 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onShow
           {project.width} × {project.height} · {project.fps}fps
         </button>
 
-        <IconButton label="Command palette (⌘K)" onClick={onShowCommands}>
-          <Command className="h-4 w-4" />
-        </IconButton>
-        <IconButton label="Keyboard shortcuts (?)" onClick={onShowShortcuts}>
-          <Keyboard className="h-4 w-4" />
-        </IconButton>
         <IconButton label={theme === 'dark' ? 'Light theme' : 'Dark theme'} onClick={onToggleTheme}>
           {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </IconButton>

@@ -2,7 +2,7 @@ import { useCallback, useRef } from 'react';
 import { containRect } from '../../engine/compositor';
 import { clamp } from '../../lib/utils';
 import { readEditorState, useEditor } from '../../store/editor';
-import { isMediaClip, isTextClip, TEXT_LINE_HEIGHT } from '../../types';
+import { TEXT_LINE_HEIGHT, isMediaClip, isTextClip } from '../../types';
 import type { Clip, MediaAsset, ProjectSettings } from '../../types';
 
 /**
@@ -152,7 +152,6 @@ const readBox = (clip: Clip, project: ProjectSettings, assets: MediaAsset[]): Bo
     return { x: clip.x, y: clip.y, width, height, rotation: clip.transform.rotation };
   }
 
-
   if (isMediaClip(clip)) {
     if (clip.kind === 'audio') return null;
     const asset = assets.find(entry => entry.id === clip.assetId);
@@ -185,7 +184,6 @@ const writeBox = (startClip: Clip, startBox: Box, box: Box, updateClip: (id: str
     } as Partial<Clip>);
     return;
   }
-
 
   updateClip(startClip.id, {
     transform: {

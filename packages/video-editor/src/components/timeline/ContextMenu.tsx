@@ -3,7 +3,6 @@ import { cn } from '../../lib/utils';
 
 export interface MenuItem {
   label: string;
-  shortcut?: string;
   icon?: React.ReactNode;
   danger?: boolean;
   disabled?: boolean;
@@ -83,7 +82,6 @@ export const ContextMenu = ({ x, y, items, onClose }: ContextMenuProps) => {
             )}>
             {item.icon && <span className="shrink-0 opacity-70">{item.icon}</span>}
             <span className="flex-1">{item.label}</span>
-            {item.shortcut && <span className="shrink-0 font-mono text-[10px] text-muted">{item.shortcut}</span>}
           </button>
         </div>
       ))}

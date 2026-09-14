@@ -83,8 +83,21 @@ export const Timeline = () => {
   const copySelection = useEditor(state => state.copySelection);
   const detachAudio = useEditor(state => state.detachAudio);
 
-  // Always leave room after the last clip so it can be dragged further out.
-  const contentWidth = Math.max(1200, (durationUs / US) * pxPerSec + TAIL_PADDING_PX);
+  /*
+   * The lanes are explicitly sized, so this has to cover the panel as well as
+   * the project: whichever is wider wins. Falling back to a fixed width would
+   * leave bare background to the right of the tracks on a wide window, and
+   * sizing purely to the content would do the same for a short project.
+   *
+   * `viewport.width` is the scroll container's clientWidth, which includes the
+   * sticky header column — hence subtracting it here.
+   */
+  const contentWidth = Math.max(
+    viewport.width - HEADER_WIDTH,
+    (durationUs / US) * pxPerSec + TAIL_PADDING_PX,
+    // Before the first measurement lands, something sane to render into.
+    400
+  );
 
   /** Cumulative row offsets, so hit-testing works with per-track heights. */
   const rowOffsets = useMemo(() => {
@@ -209,7 +222,6 @@ export const Timeline = () => {
         return;
       }
 
-
       // Move: the grabbed clip leads, everything else in the selection follows
       // by the same delta so the group keeps its shape.
       const proposedStart = Math.max(0, timeAt(event.clientX) - drag.grabOffsetUs);
@@ -311,12 +323,11 @@ export const Timeline = () => {
         items: [
           {
             label: 'Split at playhead',
-            shortcut: 'S',
             icon: <Split className="h-3.5 w-3.5" />,
             onSelect: () => splitAt(readEditorState().playheadUs)
           },
-          { label: 'Duplicate', shortcut: '⌘D', icon: <Copy className="h-3.5 w-3.5" />, onSelect: duplicateSelection },
-          { label: 'Copy', shortcut: '⌘C', onSelect: copySelection },
+          { label: 'Duplicate', icon: <Copy className="h-3.5 w-3.5" />, onSelect: duplicateSelection },
+          { label: 'Copy', onSelect: copySelection },
           {
             label: clip.locked ? 'Unlock clip' : 'Lock clip',
             icon: <Lock className="h-3.5 w-3.5" />,
@@ -333,13 +344,12 @@ export const Timeline = () => {
           },
           {
             label: 'Delete',
-            shortcut: '⌫',
             icon: <Trash2 className="h-3.5 w-3.5" />,
             danger: true,
             separatorBefore: true,
             onSelect: () => deleteSelection()
           },
-          { label: 'Ripple delete', shortcut: '⇧⌫', danger: true, onSelect: () => deleteSelection(true) }
+          { label: 'Ripple delete', danger: true, onSelect: () => deleteSelection(true) }
         ]
       });
     },
@@ -358,7 +368,14 @@ export const Timeline = () => {
   useLayoutEffect(() => {
     const element = scrollRef.current;
     if (!element) return;
-    const update = () => setViewport({ left: element.scrollLeft, width: element.clientWidth });
+    // Returning the previous object lets React bail out: this fires on every
+    // scroll event, and the width only actually changes on a resize.
+    const update = () =>
+      setViewport(previous =>
+        previous.left === element.scrollLeft && previous.width === element.clientWidth
+          ? previous
+          : { left: element.scrollLeft, width: element.clientWidth }
+      );
     update();
     element.addEventListener('scroll', update, { passive: true });
     const observer = new ResizeObserver(update);
@@ -401,7 +418,7 @@ export const Timeline = () => {
   const audioTrackCount = tracks.filter(track => track.kind === 'audio').length;
 
   return (
-    <section className="flex h-full min-h-0 flex-col bg-editor-panel">
+    <section className="island flex h-full min-h-0 flex-col">
       <TimelineToolbar
         tool={tool}
         setTool={setTool}
@@ -508,29 +525,29 @@ interface ToolbarProps {
 }
 
 const TimelineToolbar = (props: ToolbarProps) => (
-  <div className="flex items-center gap-1.5 border-y border-border bg-editor-chrome px-2 py-1.5">
+  <div className="flex shrink-0 items-center gap-1.5 border-b border-border bg-editor-chrome px-2 py-1.5">
     <SegmentedControl<ToolMode>
       value={props.tool}
       onChange={props.setTool}
       className="w-20"
       options={[
-        { value: 'select', label: <MousePointer2 className="h-3.5 w-3.5" />, title: 'Select (V)' },
-        { value: 'razor', label: <Scissors className="h-3.5 w-3.5" />, title: 'Razor (C)' }
+        { value: 'select', label: <MousePointer2 className="h-3.5 w-3.5" />, title: 'Select' },
+        { value: 'razor', label: <Scissors className="h-3.5 w-3.5" />, title: 'Razor' }
       ]}
     />
 
     <span className="mx-0.5 h-4 w-px bg-separator" />
 
-    <IconButton label="Split at playhead (S)" onClick={props.onSplit}>
+    <IconButton label="Split at playhead" onClick={props.onSplit}>
       <Split className="h-4 w-4" />
     </IconButton>
-    <IconButton label="Duplicate (⌘D)" onClick={props.onDuplicate} disabled={!props.hasSelection}>
+    <IconButton label="Duplicate" onClick={props.onDuplicate} disabled={!props.hasSelection}>
       <Copy className="h-4 w-4" />
     </IconButton>
-    <IconButton label="Delete (⌫)" onClick={props.onDelete} disabled={!props.hasSelection} danger>
+    <IconButton label="Delete" onClick={props.onDelete} disabled={!props.hasSelection} danger>
       <Trash2 className="h-4 w-4" />
     </IconButton>
-    <IconButton label="Add marker (M)" onClick={props.onMarker}>
+    <IconButton label="Add marker" onClick={props.onMarker}>
       <Bookmark className="h-4 w-4" />
     </IconButton>
 
@@ -566,10 +583,10 @@ const TimelineToolbar = (props: ToolbarProps) => (
         className="rounded-md px-2 py-1 text-[11px] text-muted transition-colors hover:bg-default hover:text-foreground">
         Fit
       </button>
-      <IconButton label="Zoom out (−)" onClick={props.onZoomOut}>
+      <IconButton label="Zoom out" onClick={props.onZoomOut}>
         <ZoomOut className="h-4 w-4" />
       </IconButton>
-      <IconButton label="Zoom in (+)" onClick={props.onZoomIn}>
+      <IconButton label="Zoom in" onClick={props.onZoomIn}>
         <ZoomIn className="h-4 w-4" />
       </IconButton>
     </div>

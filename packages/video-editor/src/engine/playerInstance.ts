@@ -1,5 +1,5 @@
 import { readEditorState, timelineDurationUs, useEditor } from '../store/editor';
-import { US, clipEndUs } from '../types';
+import { US } from '../types';
 import { Player } from './player';
 
 /**
@@ -25,8 +25,6 @@ export const player = new Player({
   onTime: timeUs => useEditor.setState({ playheadUs: timeUs }),
   onEnded: () => useEditor.setState({ isPlaying: false })
 });
-
-export const totalDurationUs = () => timelineDurationUs(readEditorState().clips);
 
 export const togglePlayback = async () => {
   const state = readEditorState();
@@ -59,23 +57,4 @@ export const stepFrames = (frames: number) => {
   const state = readEditorState();
   const frameUs = US / Math.max(1, state.project.fps);
   seekTo(Math.round((state.playheadUs + frames * frameUs) / frameUs) * frameUs);
-};
-
-/** Jumps to the next or previous clip edge — the workhorse of trimming. */
-export const jumpToEdge = (direction: -1 | 1) => {
-  const state = readEditorState();
-  const edges = new Set<number>([0]);
-  for (const clip of state.clips) {
-    edges.add(clip.startUs);
-    edges.add(clipEndUs(clip));
-  }
-  for (const marker of state.markers) edges.add(marker.atUs);
-
-  const sorted = [...edges].sort((a, b) => a - b);
-  const current = state.playheadUs;
-  const tolerance = US / (state.project.fps * 2);
-
-  const target = direction > 0 ? sorted.find(edge => edge > current + tolerance) : [...sorted].reverse().find(edge => edge < current - tolerance);
-
-  if (target !== undefined) seekTo(target);
 };

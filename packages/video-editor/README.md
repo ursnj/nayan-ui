@@ -43,10 +43,13 @@ edit-to-edit navigation.
 **Export** — 1080p / 720p / vertical / square presets or a custom size, MP4 or
 WebM, quality choice, optional in/out range, live fps and ETA, cancellation.
 
-**Shell** — resizable panels that remember their size, a ⌘K command palette, a
-shortcuts reference, light and dark themes, project save/open as JSON.
+**Shell** — each region sits on its own island with the background showing
+through between them; the gutters double as resize handles and remember their
+size. Light and dark themes, and project save/open as JSON.
 
-Press `?` in the app for the full shortcut list.
+Everything is driven by the toolbars, the inspector and right-click menus —
+there are no keyboard shortcuts. The one modifier gesture is ⌘/Ctrl-scroll to
+zoom the timeline around the pointer.
 
 ## How it works
 
