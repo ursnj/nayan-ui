@@ -8,6 +8,8 @@ export interface PlayerCallbacks {
   getScene: () => Scene;
   /** Timeline length; playback stops here. */
   getDurationUs: () => number;
+  /** Where a loop restarts — the in point, or the top of the timeline. */
+  getLoopStartUs: () => number;
   onTime: (timeUs: number) => void;
   onEnded: () => void;
 }
@@ -30,6 +32,7 @@ export class Player {
   private rafId = 0;
   private playing = false;
   private rendering = false;
+  private looping = false;
   /** Timeline position when the current run started. */
   private originUs = 0;
   /** Audio-clock time matching `originUs`, or null when running off wall clock. */
@@ -50,6 +53,10 @@ export class Player {
 
   get isPlaying() {
     return this.playing;
+  }
+
+  setLoop(loop: boolean) {
+    this.looping = loop;
   }
 
   async play(fromUs: number) {
@@ -126,6 +133,18 @@ export class Player {
 
     if (timeUs >= duration) {
       this.pause();
+
+      if (this.looping) {
+        // Restart here rather than through React. Going out to the store and
+        // back would fire a seek and a play concurrently, and the two async
+        // renders race — which is what made looping flash blank.
+        const from = this.callbacks.getLoopStartUs();
+        this.currentUs = from;
+        this.callbacks.onTime(from);
+        void this.play(from);
+        return;
+      }
+
       this.currentUs = duration;
       this.callbacks.onTime(duration);
       void this.renderAt(duration);
@@ -151,7 +170,22 @@ export class Player {
         canvas.width = scene.project.width;
         canvas.height = scene.project.height;
       }
-      await renderScene(context, scene, timeUs, { target: 'preview' });
+
+      /*
+       * Clip ranges are half-open — a clip is visible for `[start, end)` — so
+       * rendering the instant at the very end of the timeline composites
+       * nothing and clears the canvas to the background. Hold the final frame
+       * instead, which is what reaching the end of playback should look like.
+       *
+       * The clamp uses the clips' own extent rather than `getDurationUs()`,
+       * because that returns the out point when a range is marked and would
+       * then freeze the picture for any scrub past it.
+       */
+      let end = 0;
+      for (const clip of scene.clips) end = Math.max(end, clip.startUs + clip.durationUs);
+      const renderTime = end > 0 ? Math.min(timeUs, end - 1) : timeUs;
+
+      await renderScene(context, scene, renderTime, { target: 'preview' });
     } catch {
       // A disposed reader or closed sample; the next frame will recover.
     } finally {

@@ -14,7 +14,7 @@
 [data-theme='light'] {
   color-scheme: light;
 
-  --background: hsl(220 20% 94%);
+  --background: hsl(220 16% 89%);
   --foreground: hsl(222 30% 12%);
   --surface: hsl(0 0% 100%);
   --surface-foreground: hsl(222 30% 12%);
@@ -38,7 +38,7 @@
   --warning-foreground: hsl(222 30% 12%);
   --danger: hsl(0 84% 60%);
   --danger-foreground: hsl(0 0% 100%);
-  --border: hsl(220 16% 86%);
+  --border: hsl(220 14% 84%);
   --separator: hsl(220 14% 80%);
   --focus: hsl(243 75% 59%);
   --link: hsl(243 75% 59%);
@@ -48,7 +48,7 @@
   /* Editor-specific */
   --editor-chrome: hsl(220 22% 97%);
   --editor-panel: hsl(0 0% 100%);
-  --editor-canvas: hsl(220 16% 88%);
+  --editor-canvas: hsl(220 13% 83%);
   --editor-track: hsl(220 20% 95%);
   --editor-track-alt: hsl(220 18% 92%);
   --editor-ruler: hsl(220 20% 96%);
@@ -61,46 +61,76 @@
 [data-theme='dark'] {
   color-scheme: dark;
 
-  --background: hsl(222 18% 8%);
-  --foreground: hsl(220 20% 96%);
-  --surface: hsl(222 16% 12%);
-  --surface-foreground: hsl(220 20% 96%);
-  --surface-secondary: hsl(222 15% 15%);
-  --surface-secondary-foreground: hsl(220 20% 96%);
-  --surface-tertiary: hsl(222 14% 19%);
-  --surface-tertiary-foreground: hsl(220 20% 96%);
-  --overlay: hsl(222 16% 14%);
-  --overlay-foreground: hsl(220 20% 96%);
-  --muted: hsl(220 10% 60%);
-  --default: hsl(222 14% 20%);
-  --default-foreground: hsl(220 20% 96%);
-  --accent: hsl(243 80% 67%);
+  /*
+   * Four depths, measured rather than eyeballed (WCAG ratios in brackets):
+   *
+   *    6%  the void behind everything — the gutter between islands
+   *   11%  wells: inputs, and the video stage
+   *   16%  an island's body
+   *   21%  raised chrome inside an island — toolbars, headers, ruler [1.18]
+   *
+   * The earlier scale sat 3–5 points lower across the board with chrome only
+   * 1.13 from the panel, which is why it read as one flat dull sheet. Text was
+   * the bigger problem: secondary labels are 10–11px throughout, and at 5.8
+   * against the panel they were legible on paper and mushy in practice. Muted
+   * is now 7.66 [AAA at this size], separators 2.38, borders 1.70.
+   *
+   * The neutrals stay near-grey on purpose — a colour cast in the chrome
+   * skews how you judge the footage — so the vibrancy lives in the accent and
+   * the semantic colours instead.
+   */
+  --background: hsl(226 22% 6%);
+  --foreground: hsl(220 26% 98%);
+  --surface: hsl(224 14% 16%);
+  --surface-foreground: hsl(220 26% 98%);
+  --surface-secondary: hsl(224 13% 20%);
+  --surface-secondary-foreground: hsl(220 26% 98%);
+  --surface-tertiary: hsl(224 12% 25%);
+  --surface-tertiary-foreground: hsl(220 26% 98%);
+  --overlay: hsl(224 14% 20%);
+  --overlay-foreground: hsl(220 26% 98%);
+  --muted: hsl(222 15% 74%);
+  --default: hsl(224 14% 26%);
+  --default-foreground: hsl(220 26% 98%);
+  --accent: hsl(245 92% 70%);
   --accent-foreground: hsl(0 0% 100%);
-  --field-background: hsl(222 16% 16%);
-  --field-foreground: hsl(220 20% 96%);
-  --field-placeholder: hsl(220 10% 52%);
-  --success: hsl(158 70% 47%);
-  --success-foreground: hsl(222 18% 8%);
-  --warning: hsl(38 95% 58%);
-  --warning-foreground: hsl(222 18% 8%);
-  --danger: hsl(0 76% 60%);
-  --danger-foreground: hsl(0 0% 100%);
-  --border: hsl(222 12% 22%);
-  --separator: hsl(222 12% 28%);
-  --focus: hsl(243 80% 67%);
-  --link: hsl(243 80% 72%);
-  --segment: hsl(222 14% 22%);
-  --segment-foreground: hsl(220 20% 96%);
+  /* Inputs recede rather than rise, so they read as wells in the panel. */
+  --field-background: hsl(226 18% 11%);
+  --field-foreground: hsl(220 26% 98%);
+  --field-placeholder: hsl(222 12% 60%);
+  --success: hsl(158 75% 52%);
+  --success-foreground: hsl(226 22% 6%);
+  --warning: hsl(38 98% 62%);
+  --warning-foreground: hsl(226 22% 6%);
+  --danger: hsl(0 84% 66%);
+  --danger-foreground: hsl(226 22% 6%);
+  /* Lifted so an island's edge still reads against a near-black gutter. */
+  --border: hsl(224 14% 31%);
+  --separator: hsl(224 14% 40%);
+  --focus: hsl(245 92% 70%);
+  --link: hsl(245 95% 78%);
+  --segment: hsl(224 14% 27%);
+  --segment-foreground: hsl(220 26% 98%);
 
-  --editor-chrome: hsl(222 17% 10%);
-  --editor-panel: hsl(222 16% 12%);
-  --editor-canvas: hsl(222 20% 5%);
-  --editor-track: hsl(222 15% 14%);
-  --editor-track-alt: hsl(222 15% 16%);
-  --editor-ruler: hsl(222 16% 13%);
-  --playhead: hsl(0 84% 62%);
-  --elevation: 0 1px 2px hsl(0 0% 0% / 0.4), 0 4px 16px hsl(0 0% 0% / 0.3);
-  --elevation-lg: 0 2px 4px hsl(0 0% 0% / 0.5), 0 16px 48px hsl(0 0% 0% / 0.55);
+  --editor-chrome: hsl(224 13% 21%);
+  --editor-panel: hsl(224 14% 16%);
+  /*
+   * The video stage is recessed inside the preview island, but stays lighter
+   * than the gutter — otherwise that island would sink into the background
+   * while every other one floats.
+   */
+  --editor-canvas: hsl(226 18% 10%);
+  /*
+   * Lanes sit below the panel so the track area reads as a well, with the
+   * sticky header column and ruler above it at chrome level. The gap between
+   * the two lane tones is the row striping and is meant to be faint.
+   */
+  --editor-track: hsl(226 16% 13%);
+  --editor-track-alt: hsl(226 16% 15%);
+  --editor-ruler: hsl(224 13% 21%);
+  --playhead: hsl(0 90% 65%);
+  --elevation: 0 1px 2px hsl(0 0% 0% / 0.5), 0 4px 16px hsl(0 0% 0% / 0.4);
+  --elevation-lg: 0 2px 4px hsl(0 0% 0% / 0.6), 0 16px 48px hsl(0 0% 0% / 0.6);
 }
 
 @theme inline {

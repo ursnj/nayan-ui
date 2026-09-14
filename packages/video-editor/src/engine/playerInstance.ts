@@ -20,6 +20,7 @@ export const player = new Player({
     // Playback stops at the out point when a range is marked.
     return state.outPointUs ?? timelineDurationUs(state.clips);
   },
+  getLoopStartUs: () => readEditorState().inPointUs ?? 0,
   // Written straight to the store rather than through an action: this fires
   // every animation frame and must not create an undo entry.
   onTime: timeUs => useEditor.setState({ playheadUs: timeUs }),
