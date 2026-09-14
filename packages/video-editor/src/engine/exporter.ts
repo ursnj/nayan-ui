@@ -222,29 +222,34 @@ export const exportProject = async (
       audioSource.close();
     }
 
-    const frameCount = videoSource ? Math.max(1, Math.ceil(durationSeconds * settings.fps)) : 0;
-    const began = performance.now();
+    // Guarded once rather than per iteration: `videoSource` is null only for
+    // an audio-only bounce, and testing it inside the condition was there to
+    // narrow the type, not because it can change.
+    if (videoSource) {
+      const frameCount = Math.max(1, Math.ceil(durationSeconds * settings.fps));
+      const began = performance.now();
 
-    for (let frame = 0; frame < frameCount && videoSource; frame++) {
-      throwIfCanceled();
-      // Scene time includes the range offset; output time always starts at 0.
-      const sceneTimeUs = startUs + (frame / settings.fps) * US;
-      await renderScene(context, exportScene, sceneTimeUs, { target: 'export' });
-      await videoSource.add(frame / settings.fps, 1 / settings.fps);
+      for (let frame = 0; frame < frameCount; frame++) {
+        throwIfCanceled();
+        // Scene time includes the range offset; output time always starts at 0.
+        const sceneTimeUs = startUs + (frame / settings.fps) * US;
+        await renderScene(context, exportScene, sceneTimeUs, { target: 'export' });
+        await videoSource.add(frame / settings.fps, 1 / settings.fps);
 
-      const done = frame + 1;
-      const elapsed = (performance.now() - began) / 1000;
-      const rate = elapsed > 0.5 ? done / elapsed : undefined;
-      onProgress({
-        stage: 'video',
-        // Video occupies 10%–95% of the reported progress.
-        progress: 0.1 + (done / frameCount) * 0.85,
-        message: `Encoding frame ${done} of ${frameCount}`,
-        fps: rate,
-        etaSeconds: rate ? (frameCount - done) / rate : undefined
-      });
+        const done = frame + 1;
+        const elapsed = (performance.now() - began) / 1000;
+        const rate = elapsed > 0.5 ? done / elapsed : undefined;
+        onProgress({
+          stage: 'video',
+          // Video occupies 10%-95% of the reported progress.
+          progress: 0.1 + (done / frameCount) * 0.85,
+          message: `Encoding frame ${done} of ${frameCount}`,
+          fps: rate,
+          etaSeconds: rate ? (frameCount - done) / rate : undefined
+        });
+      }
+      videoSource.close();
     }
-    videoSource?.close();
 
     onProgress({ stage: 'finalizing', progress: 0.96, message: 'Writing file…' });
     await output.finalize();

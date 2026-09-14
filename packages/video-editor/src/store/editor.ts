@@ -134,7 +134,7 @@ const overlaps = (clip: Clip, startUs: number, endUs: number) => clip.startUs < 
  */
 const findFreeTrack = (tracks: Track[], clips: Clip[], kind: TrackKind, startUs: number, durationUs: number): Track | null => {
   const endUs = startUs + durationUs;
-  const candidates = tracks.filter(track => track.kind === kind && !track.locked).reverse();
+  const candidates = tracks.filter(track => track.kind === kind && !track.locked).toReversed();
   for (const track of candidates) {
     const busy = clips.some(clip => clip.trackId === track.id && overlaps(clip, startUs, endUs));
     if (!busy) return track;
@@ -204,6 +204,22 @@ const normaliseClip = (clip: Clip): Clip => {
   return isMediaClip(base) ? { ...base, chromaKey: { ...DEFAULT_CHROMA, ...base.chromaKey } } : base;
 };
 
+/**
+ * Resolves a clip selection to include everything grouped with it.
+ *
+ * Pure, so it lives outside the store factory rather than being rebuilt as
+ * part of every store instance.
+ */
+const expandGroups = (clips: Clip[], ids: string[]): string[] => {
+  const groups = new Set(clips.filter(clip => ids.includes(clip.id) && clip.groupId).map(clip => clip.groupId));
+  if (groups.size === 0) return ids;
+  const expanded = new Set(ids);
+  for (const clip of clips) {
+    if (clip.groupId && groups.has(clip.groupId)) expanded.add(clip.id);
+  }
+  return [...expanded];
+};
+
 export const useEditor = create<EditorState>((set, get) => {
   /**
    * Wraps a mutation so it becomes one undo step. During a drag the snapshot is
@@ -217,17 +233,6 @@ export const useEditor = create<EditorState>((set, get) => {
       if (state.interacting) return patch;
       return { ...patch, past: [...state.past, snapshotOf(state)].slice(-MAX_HISTORY), future: [] };
     });
-
-  /** Resolves a clip plus everything grouped with it. */
-  const expandGroups = (clips: Clip[], ids: string[]): string[] => {
-    const groups = new Set(clips.filter(clip => ids.includes(clip.id) && clip.groupId).map(clip => clip.groupId));
-    if (groups.size === 0) return ids;
-    const expanded = new Set(ids);
-    for (const clip of clips) {
-      if (clip.groupId && groups.has(clip.groupId)) expanded.add(clip.id);
-    }
-    return [...expanded];
-  };
 
   /** Places a freshly created clip, adding a track if every candidate is busy. */
   const placeClip = (state: EditorState, kind: TrackKind, startUs: number, durationUs: number, preferredTrackId?: string) => {

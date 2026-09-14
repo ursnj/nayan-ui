@@ -68,6 +68,7 @@ export const BackgroundPanel = () => {
                 key={preset.name}
                 type="button"
                 title={preset.name}
+                aria-label={`${preset.name} gradient`}
                 onClick={() => set({ from: preset.from, to: preset.to, angle: preset.angle })}
                 className={cn(
                   'h-9 rounded-md border transition-colors',

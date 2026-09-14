@@ -799,15 +799,15 @@ const Playhead = ({
 
   return (
     /*
-      * Above the ruler, not below it.
-      *
-      * The ruler row is `sticky top-0 z-30` and the grab handle lives in the
-      * top 24px, so at z-25 the handle was painted underneath it and the
-      * ruler took every pointer event aimed at it. Clicking there still
-      * scrubbed — via the ruler's own handler — which made the handle look
-      * like it worked while being entirely unreachable. Still below the
-      * sticky track-header column at z-40, which must stay on top.
-      */
+     * Above the ruler, not below it.
+     *
+     * The ruler row is `sticky top-0 z-30` and the grab handle lives in the
+     * top 24px, so at z-25 the handle was painted underneath it and the
+     * ruler took every pointer event aimed at it. Clicking there still
+     * scrubbed — via the ruler's own handler — which made the handle look
+     * like it worked while being entirely unreachable. Still below the
+     * sticky track-header column at z-40, which must stay on top.
+     */
     <div className="pointer-events-none absolute top-0 z-[35]" style={{ height, transform: `translateX(${left}px)`, willChange: 'transform' }}>
       {/*
         The line stays transparent to the pointer: it crosses every clip, and

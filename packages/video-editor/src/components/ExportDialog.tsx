@@ -96,11 +96,12 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
 
   useEffect(() => {
     let cancelled = false;
-    void Promise.all(EXPORT_FORMATS.map(async option => [option.id, await isFormatSupported(option, evenWidth, evenHeight)] as const)).then(
-      entries => {
-        if (!cancelled) setSupported(Object.fromEntries(entries));
-      }
-    );
+    void (async () => {
+      const entries = await Promise.all(
+        EXPORT_FORMATS.map(async option => [option.id, await isFormatSupported(option, evenWidth, evenHeight)] as const)
+      );
+      if (!cancelled) setSupported(Object.fromEntries(entries));
+    })();
     return () => {
       cancelled = true;
     };

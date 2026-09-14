@@ -69,9 +69,10 @@ export const useWaveform = (assetId: string, enabled: boolean): Float32Array | n
   useEffect(() => {
     if (!enabled || peaks) return;
     let cancelled = false;
-    void getAudioBuffer(assetId).then(() => {
+    void (async () => {
+      await getAudioBuffer(assetId);
       if (!cancelled) setPeaks(getPeaks(assetId));
-    });
+    })();
     return () => {
       cancelled = true;
     };
