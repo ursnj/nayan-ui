@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { clamp, cn } from '../../lib/utils';
 
+/** Width of the divider strip, in px — `w-2` / `h-2` below. */
+const GUTTER = 8;
+
 interface SplitPaneProps {
   /** `vertical` splits top/bottom; `horizontal` splits left/right. */
   direction: 'horizontal' | 'vertical';
@@ -11,6 +14,11 @@ interface SplitPaneProps {
   onResize: (size: number) => void;
   /** Which side the handle sizes — `end` means the *second* pane is measured. */
   anchor?: 'start' | 'end';
+  /**
+   * Space the *other* pane must keep. The measured pane never grows past what
+   * this leaves, however large the stored size is.
+   */
+  minOther?: number;
   children: [React.ReactNode, React.ReactNode];
   className?: string;
 }
@@ -22,14 +30,37 @@ interface SplitPaneProps {
  * final value into React state on release, so resizing a panel doesn't
  * re-render the timeline or restart the preview on every pointer move.
  */
-export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start', children, className }: SplitPaneProps) => {
+export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start', minOther = 0, children, className }: SplitPaneProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const firstRef = useRef<HTMLDivElement>(null);
   const secondRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
+  const [extent, setExtent] = useState(0);
   const horizontal = direction === 'horizontal';
 
   const measuredRef = anchor === 'start' ? firstRef : secondRef;
+
+  // Both panes are `flex-shrink: 0`, so nothing gives if they don't fit — the
+  // container simply overflows and the far pane is clipped by the app's own
+  // `overflow-hidden`. The sizes come from localStorage, so a layout dragged
+  // wide on a large monitor arrives pre-broken on a smaller one.
+  useEffect(() => {
+    const element = containerRef.current;
+    if (!element) return;
+    const update = () => setExtent(horizontal ? element.clientWidth : element.clientHeight);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [horizontal]);
+
+  /*
+   * The stored size is clamped for layout but never written back: shrinking
+   * the window should not destroy a preference the user set on a bigger one,
+   * so widening it again restores exactly what they had.
+   */
+  const ceiling = extent > 0 ? Math.max(min, extent - GUTTER - minOther) : max;
+  const effective = clamp(size, min, Math.min(max, ceiling));
 
   const onPointerDown = useCallback(
     (event: React.PointerEvent) => {
@@ -41,12 +72,15 @@ export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start
       if (!container || !pane) return;
 
       const rect = container.getBoundingClientRect();
-      let latest = size;
+      let latest = effective;
 
       const move = (moveEvent: PointerEvent) => {
         const position = horizontal ? moveEvent.clientX - rect.left : moveEvent.clientY - rect.top;
         const total = horizontal ? rect.width : rect.height;
-        latest = clamp(anchor === 'start' ? position : total - position, min, max);
+        // The same ceiling the layout uses, so a drag can't push the other
+        // pane below its minimum either.
+        const limit = Math.min(max, Math.max(min, total - GUTTER - minOther));
+        latest = clamp(anchor === 'start' ? position : total - position, min, limit);
         // Bypass React while dragging — this fires at pointer rate.
         pane.style.flexBasis = `${latest}px`;
       };
@@ -63,14 +97,14 @@ export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start
       window.addEventListener('pointerup', up);
       window.addEventListener('pointercancel', up);
     },
-    [anchor, horizontal, max, min, measuredRef, onResize, size]
+    [anchor, effective, horizontal, max, min, minOther, measuredRef, onResize]
   );
 
   // Keep the DOM in step when the size changes from outside a drag.
   useEffect(() => {
     const pane = measuredRef.current;
-    if (pane && !dragging) pane.style.flexBasis = `${size}px`;
-  }, [size, dragging, measuredRef]);
+    if (pane && !dragging) pane.style.flexBasis = `${effective}px`;
+  }, [effective, dragging, measuredRef]);
 
   return (
     <div ref={containerRef} className={cn('flex min-h-0 min-w-0', horizontal ? 'flex-row' : 'flex-col', className)}>
@@ -83,7 +117,7 @@ export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start
       <div
         ref={firstRef}
         className="flex min-h-0 min-w-0 flex-col"
-        style={anchor === 'start' ? { flexBasis: size, flexGrow: 0, flexShrink: 0 } : { flexBasis: 'auto', flexGrow: 1, flexShrink: 1 }}>
+        style={anchor === 'start' ? { flexBasis: effective, flexGrow: 0, flexShrink: 0 } : { flexBasis: 'auto', flexGrow: 1, flexShrink: 1 }}>
         {children[0]}
       </div>
 
@@ -100,10 +134,13 @@ export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start
         onPointerDown={onPointerDown}
         onKeyDown={event => {
           const step = event.shiftKey ? 48 : 12;
-          if (horizontal && event.key === 'ArrowLeft') onResize(clamp(size - step, min, max));
-          if (horizontal && event.key === 'ArrowRight') onResize(clamp(size + step, min, max));
-          if (!horizontal && event.key === 'ArrowUp') onResize(clamp(size - step, min, max));
-          if (!horizontal && event.key === 'ArrowDown') onResize(clamp(size + step, min, max));
+          // Stepped from `effective`, not the stored size: otherwise one press
+          // on a narrow window jumps back to a value that no longer fits.
+          const nudge = (delta: number) => onResize(clamp(effective + delta, min, Math.min(max, ceiling)));
+          if (horizontal && event.key === 'ArrowLeft') nudge(-step);
+          if (horizontal && event.key === 'ArrowRight') nudge(step);
+          if (!horizontal && event.key === 'ArrowUp') nudge(-step);
+          if (!horizontal && event.key === 'ArrowDown') nudge(step);
         }}
         className={cn(
           'group flex shrink-0 items-center justify-center focus-visible:outline-none',
@@ -121,7 +158,7 @@ export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start
       <div
         ref={secondRef}
         className="flex min-h-0 min-w-0 flex-col"
-        style={anchor === 'end' ? { flexBasis: size, flexGrow: 0, flexShrink: 0 } : { flexBasis: 'auto', flexGrow: 1, flexShrink: 1 }}>
+        style={anchor === 'end' ? { flexBasis: effective, flexGrow: 0, flexShrink: 0 } : { flexBasis: 'auto', flexGrow: 1, flexShrink: 1 }}>
         {children[1]}
       </div>
     </div>

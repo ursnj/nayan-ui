@@ -42,8 +42,11 @@ export const BackgroundPanel = () => {
             type="button"
             onClick={() => set({ kind })}
             aria-pressed={background.kind === kind}
+            title={BACKGROUND_LABELS[kind]}
             className={cn(
-              'rounded-md border px-1.5 py-1.5 text-[10px] transition-colors',
+              // Truncated rather than wrapped: the library can be dragged down
+              // to 220px, which leaves these cells about 44px wide.
+              'truncate rounded-md border px-1.5 py-1.5 text-[10px] transition-colors',
               background.kind === kind ? 'border-accent bg-accent/10 text-accent' : 'border-border text-muted hover:border-separator hover:text-foreground'
             )}>
             {BACKGROUND_LABELS[kind]}
@@ -220,8 +223,10 @@ export const TransitionsPanel = () => {
                 'overflow-hidden rounded-lg border transition-all hover:elevate',
                 active ? 'border-accent ring-1 ring-accent' : 'border-border hover:border-accent'
               )}>
-              <span className="block h-10 w-full" style={{ background: TRANSITION_PREVIEW_GRADIENT[kind] }} />
-              <span className="block px-1.5 py-1 text-[10px] text-foreground">{TRANSITION_LABELS[kind]}</span>
+              <span className="block h-10 w-full" style={{ background: TRANSITION_PREVIEW_GRADIENT[kind] }} aria-hidden />
+              <span title={TRANSITION_LABELS[kind]} className="block truncate px-1.5 py-1 text-[10px] text-foreground">
+                {TRANSITION_LABELS[kind]}
+              </span>
             </button>
           );
         })}

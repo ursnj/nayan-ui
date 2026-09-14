@@ -65,22 +65,24 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
 
   return (
     <header className="island flex shrink-0 items-center gap-2 px-3 py-2">
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2">
         <Clapperboard className="h-5 w-5 text-accent" />
-        <span className="text-sm font-semibold tracking-tight text-foreground">Nayan Editor</span>
+        <span className="hidden whitespace-nowrap text-sm font-semibold tracking-tight text-foreground lg:inline">Nayan Editor</span>
       </div>
 
-      <span className="mx-1 h-5 w-px bg-separator" />
+      <span className="mx-1 h-5 w-px shrink-0 bg-separator" />
 
+      {/* The one elastic item in the bar: everything else is a fixed control,
+          so the project name is what gives when the window narrows. */}
       <NInput
         value={project.name}
         onChange={event => updateProject({ name: event.target.value })}
-        wrapperClassName="mb-0 w-56"
+        wrapperClassName="mb-0 w-56 min-w-24 shrink"
         inputClassName="h-8 text-sm"
         aria-label="Project name"
       />
 
-      <div className="ml-2 flex items-center gap-0.5">
+      <div className="ml-2 flex shrink-0 items-center gap-0.5">
         <IconButton label="New project" onClick={resetProject}>
           <FilePlus2 className="h-4 w-4" />
         </IconButton>
@@ -103,7 +105,7 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
         />
       </div>
 
-      <div className="ml-auto flex items-center gap-1">
+      <div className="ml-auto flex shrink-0 items-center gap-1">
         <IconButton label="Undo" onClick={undo} disabled={!canUndo}>
           <Undo2 className="h-4 w-4" />
         </IconButton>
@@ -113,9 +115,13 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
 
         <span className="mx-1 h-5 w-px bg-separator" />
 
-        <NButton isOutline onClick={() => setSettingsOpen(true)} className="h-7 px-2 text-[11px]">
-          <Settings className="mr-1.5 h-3.5 w-3.5" />
-          {project.width} × {project.height} · {project.fps}fps
+        <NButton isOutline onClick={() => setSettingsOpen(true)} aria-label="Project settings" className="h-7 whitespace-nowrap px-2 text-[11px]">
+          <Settings className="h-3.5 w-3.5 xl:mr-1.5" />
+          {/* 4K at 23.976fps is the longest this gets; below xl it is the icon
+              alone rather than a string that squeezes out the export button. */}
+          <span className="hidden xl:inline">
+            {project.width} × {project.height} · {project.fps}fps
+          </span>
         </NButton>
 
         <IconButton label={theme === 'dark' ? 'Light theme' : 'Dark theme'} onClick={onToggleTheme}>
