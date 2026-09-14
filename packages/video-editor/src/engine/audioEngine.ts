@@ -53,19 +53,36 @@ export const scheduleClipAudio = (
   const volume = clip.volume;
   const parameter = gain.gain;
 
-  if (clip.fadeInUs > 0) {
-    parameter.setValueAtTime(0, Math.max(0, atTime(clip.startUs)));
-    parameter.linearRampToValueAtTime(volume, Math.max(0, atTime(clip.startUs + clip.fadeInUs)));
-  } else {
-    parameter.setValueAtTime(volume, Math.max(0, atTime(clip.startUs)));
-  }
-  if (clip.fadeOutUs > 0) {
-    parameter.setValueAtTime(volume, Math.max(0, atTime(endUs - clip.fadeOutUs)));
-    parameter.linearRampToValueAtTime(0, Math.max(0, atTime(endUs)));
-  }
+  if (clip.fadeInUs > 0) rampSegment(parameter, atTime(clip.startUs), 0, atTime(clip.startUs + clip.fadeInUs), volume);
+  else parameter.setValueAtTime(volume, Math.max(0, atTime(clip.startUs)));
+
+  if (clip.fadeOutUs > 0) rampSegment(parameter, atTime(endUs - clip.fadeOutUs), volume, atTime(endUs), 0);
 
   source.start(Math.max(context.currentTime, atTime(entryUs)), offsetSeconds, sourceSeconds);
   return source;
+};
+
+/**
+ * Schedules one linear gain segment.
+ *
+ * Web Audio rejects negative times, so a seek that lands part-way through a
+ * fade can't simply schedule the ramp's true start. Instead the ramp is
+ * restarted from the value it would already have reached, which preserves the
+ * slope rather than flattening it against t=0.
+ */
+const rampSegment = (parameter: AudioParam, fromTime: number, fromValue: number, toTime: number, toValue: number) => {
+  if (toTime <= 0) {
+    // The whole ramp is behind us; jump straight to its end value.
+    parameter.setValueAtTime(toValue, 0);
+    return;
+  }
+  if (fromTime >= 0) {
+    parameter.setValueAtTime(fromValue, fromTime);
+  } else {
+    const progress = -fromTime / (toTime - fromTime);
+    parameter.setValueAtTime(fromValue + (toValue - fromValue) * progress, 0);
+  }
+  parameter.linearRampToValueAtTime(toValue, toTime);
 };
 
 /**
@@ -117,22 +134,27 @@ export class AudioEngine {
     this.stopSources();
     const generation = ++this.generation;
 
-    // Small lead-in so decoding/scheduling work can't cause a late first note.
+    // Decode everything *before* fixing the time base. The first play of a clip
+    // can take seconds to decode, and an origin captured beforehand would
+    // already be in the past by the time playback starts — the video loop would
+    // then jump forward by exactly that decode time.
+    const decoded = await Promise.all(audibleClips(clips, tracks, fromUs).map(async clip => ({ clip, buffer: await getAudioBuffer(clip.assetId) })));
+
+    // A seek or stop happened while we were decoding.
+    if (generation !== this.generation || !this.master) return context.currentTime;
+
+    // Small lead-in so the scheduling work below can't cause a late first note.
     const originTime = context.currentTime + 0.06;
 
-    await Promise.all(
-      audibleClips(clips, tracks, fromUs).map(async clip => {
-        const buffer = await getAudioBuffer(clip.assetId);
-        // A seek or stop happened while this was decoding.
-        if (!buffer || generation !== this.generation || !this.master) return;
-        const source = scheduleClipAudio(context, this.master, clip, buffer, fromUs, originTime);
-        if (!source) return;
-        source.onended = () => {
-          this.active = this.active.filter(node => node !== source);
-        };
-        this.active.push(source);
-      })
-    );
+    for (const { clip, buffer } of decoded) {
+      if (!buffer) continue;
+      const source = scheduleClipAudio(context, this.master, clip, buffer, fromUs, originTime);
+      if (!source) continue;
+      source.onended = () => {
+        this.active = this.active.filter(node => node !== source);
+      };
+      this.active.push(source);
+    }
 
     return originTime;
   }

@@ -1,160 +1,84 @@
-# Nayan UI — Vite Example
+# Nayan Cut — browser video editor
 
-A React + Vite + Tailwind CSS v4 project using `@nayan-ui/react`.
-
-Scaffolded with `npm create vite@latest` (react-ts template), then configured with Nayan UI.
-
-## Quick Start
-
-```bash
-npx @nayan-ui/cli new my-app -t vite
-cd my-app
-npm install
-npm run dev
-```
-
-## Manual Setup
+A CapCut-style non-linear video editor that runs entirely in the browser. No
+uploads, no server, no WASM build of FFmpeg — decoding, compositing and encoding
+all happen on the client through **WebCodecs**, with the UI built from
+[`@nayan-ui/react`](https://www.nayanui.com).
 
 ```bash
-npm create vite@latest my-app -- --template react-ts
-cd my-app
-npm install @nayan-ui/react
-npm install -D @tailwindcss/vite tailwindcss
+yarn editor:dev     # from the repo root
 ```
 
-### 1. Add Tailwind plugin to `vite.config.ts`
+Then open the printed URL. Requires a browser with WebCodecs (Chrome/Edge 94+,
+Safari 16.4+).
 
-```ts
-import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+## What it does
 
-export default defineConfig({
-  plugins: [react(), tailwindcss()]
-});
+- **Import** video, audio and images by drag-and-drop or file picker
+- **Timeline** with multiple video and audio tracks, drag to move, edge-drag to
+  trim, split at the playhead, duplicate, snapping, zoom, per-track
+  mute/hide/lock, filmstrip and waveform previews
+- **Preview** on a canvas driven by the audio clock, with frame stepping and
+  transport controls
+- **Properties** per clip: speed, volume, opacity, fades, position/scale/
+  rotation/flip, colour filters with presets, and full text styling
+- **Text overlays** with font, size, colour, outline, alignment and position
+- **Export** to MP4 with a choice of resolution and quality, progress reporting
+  and cancellation
+
+Keyboard: `Space` play/pause · `S` split · `⌫` delete · `←`/`→` frame step
+(`⇧` for 10) · `Home`/`End` · `⌘Z`/`⇧⌘Z` undo/redo · `⌘D` duplicate ·
+`⌘E` export · `Esc` deselect.
+
+## How it works
+
+[Mediabunny](https://mediabunny.dev) handles containers and wraps WebCodecs;
+everything above that is in this package.
+
+```
+src/
+  types.ts              Domain model. All times are microseconds — the unit
+                        WebCodecs uses, so nothing is lost at the encode edge.
+  store/editor.ts       Zustand store: clips, tracks, selection, undo/redo.
+  media/
+    library.ts          Import, probe, thumbnails, filmstrips, PCM + waveform
+                        peaks. Owns everything non-serialisable, keyed by asset.
+    frameReader.ts      Sequential frame access for the render loop.
+  engine/
+    compositor.ts       Draws the timeline at one instant onto a canvas.
+    audioEngine.ts      Schedules clip audio on a Web Audio graph.
+    player.ts           The preview loop.
+    exporter.ts         Renders every frame and muxes an MP4.
+  components/           UI, built from @nayan-ui/react.
 ```
 
-### 2. Configure `src/index.css`
+Three decisions carry most of the weight:
 
-```css
-@import '@nayan-ui/react/styles.css';
+**One compositor for preview and export.** `renderScene` takes a canvas context,
+the scene and a timestamp. The preview points it at a visible `<canvas>`; the
+exporter points it at an `OffscreenCanvas` at output resolution. Because clip
+positions and font sizes are stored as fractions of the frame, the same scene
+renders correctly at any resolution — so what you see really is what you get.
 
-@source '../../node_modules/@nayan-ui/react/dist';
+**Sequential frame reads, not random seeks.** Mediabunny's `getSample()` spins
+up a decoder and replays the GOP on every call, which is right for a one-off
+thumbnail and far too slow at 30fps. `SequentialVideoReader` instead keeps a
+`sink.samples()` iterator open and walks it forward, only re-seeking when the
+playhead jumps more than a second. Readers are keyed per clip, not per asset, so
+two clips showing different parts of one file don't fight over one decoder.
 
-:root,
-[data-theme='light'] {
-  color-scheme: light;
+**The audio clock drives playback.** Each clip is scheduled as a single
+`AudioBufferSourceNode` when playback starts, so the browser mixes it
+sample-accurately with no per-frame work; the render loop then reads its time
+from that same clock instead of `performance.now()`, which is what keeps picture
+and sound from drifting. Export reuses the identical scheduling code against an
+`OfflineAudioContext`.
 
-  --background: hsl(214 45% 95%);
-  --foreground: hsl(222 47% 11%);
-  --surface: hsl(0 0% 100%);
-  --surface-foreground: hsl(222 47% 11%);
-  --surface-secondary: hsl(214 40% 96%);
-  --surface-secondary-foreground: hsl(222 47% 11%);
-  --surface-tertiary: hsl(214 35% 93%);
-  --surface-tertiary-foreground: hsl(222 47% 11%);
-  --overlay: hsl(0 0% 100%);
-  --overlay-foreground: hsl(222 47% 11%);
-  --muted: hsl(215 16% 47%);
-  --default: hsl(214 35% 90%);
-  --default-foreground: hsl(222 47% 11%);
-  --accent: hsl(217 91% 50%);
-  --accent-foreground: hsl(0 0% 100%);
-  --field-background: hsl(0 0% 100%);
-  --field-foreground: hsl(222 47% 11%);
-  --field-placeholder: hsl(215 16% 47%);
-  --success: hsl(142 71% 45%);
-  --success-foreground: hsl(222 47% 11%);
-  --warning: hsl(38 92% 50%);
-  --warning-foreground: hsl(222 47% 11%);
-  --danger: hsl(0 84% 60%);
-  --danger-foreground: hsl(0 0% 100%);
-  --border: hsl(214 35% 86%);
-  --separator: hsl(214 25% 76%);
-  --focus: hsl(217 91% 50%);
-  --link: hsl(222 47% 11%);
-  --segment: hsl(0 0% 100%);
-  --segment-foreground: hsl(222 47% 11%);
-}
+## Limits
 
-.dark,
-[data-theme='dark'] {
-  color-scheme: dark;
-
-  --background: hsl(222 47% 11%);
-  --foreground: hsl(210 40% 98%);
-  --surface: hsl(217 33% 22%);
-  --surface-foreground: hsl(210 40% 98%);
-  --surface-secondary: hsl(217 30% 26%);
-  --surface-secondary-foreground: hsl(210 40% 98%);
-  --surface-tertiary: hsl(217 28% 30%);
-  --surface-tertiary-foreground: hsl(210 40% 98%);
-  --overlay: hsl(217 33% 22%);
-  --overlay-foreground: hsl(210 40% 98%);
-  --muted: hsl(215 20% 65%);
-  --default: hsl(217 33% 26%);
-  --default-foreground: hsl(210 40% 98%);
-  --accent: hsl(217 91% 60%);
-  --accent-foreground: hsl(210 40% 98%);
-  --field-background: hsl(217 33% 22%);
-  --field-foreground: hsl(210 40% 98%);
-  --field-placeholder: hsl(215 20% 65%);
-  --success: hsl(142 71% 45%);
-  --success-foreground: hsl(222 47% 11%);
-  --warning: hsl(38 92% 55%);
-  --warning-foreground: hsl(222 47% 11%);
-  --danger: hsl(0 72% 51%);
-  --danger-foreground: hsl(210 40% 98%);
-  --border: hsl(217 33% 28%);
-  --separator: hsl(217 25% 38%);
-  --focus: hsl(217 91% 60%);
-  --link: hsl(210 40% 98%);
-  --segment: hsl(217 28% 34%);
-  --segment-foreground: hsl(210 40% 98%);
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-```
-
-### 3. Use components in `src/App.tsx`
-
-```tsx
-import { NButton, NTheme, THEMES, useLocalStorage } from '@nayan-ui/react';
-
-function App() {
-  const [theme, setTheme] = useLocalStorage('THEME', THEMES.LIGHT);
-
-  return (
-    <NTheme theme={theme}>
-      <div className="min-h-screen flex items-center justify-center bg-background gap-4">
-        <NButton onClick={() => setTheme(theme === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT)}>Toggle Theme</NButton>
-      </div>
-    </NTheme>
-  );
-}
-```
-
-## Scripts
-
-- **`npm run dev`** — Start dev server
-- **`npm run build`** — Type-check and build for production
-- **`npm run preview`** — Preview production build
-
-## Learn More
-
-- [Nayan UI Documentation](https://www.nayanui.com)
-- [HeroUI](https://heroui.com)
-- [Tailwind CSS v4](https://tailwindcss.com)
-- [Vite](https://vite.dev)
+- Export re-encodes the whole timeline; there's no smart passthrough of
+  untouched segments.
+- Decoded audio is held in memory for waveforms and playback, so very long
+  sources are memory-hungry.
+- Projects live in memory only — reloading the page starts over.
+- Transitions are per-clip fades rather than cross-clip transitions.
