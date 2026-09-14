@@ -113,8 +113,15 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
   const rangeStart = useRange ? (inPointUs ?? 0) : 0;
   const rangeEnd = useRange ? (outPointUs ?? durationUs) : durationUs;
   const spanUs = Math.max(0, rangeEnd - rangeStart);
-  // An audio-only bounce carries no video bitrate; WAV is uncompressed PCM.
+  /*
+   * Bitrate x duration is a budget, not a prediction. WebCodecs encodes at a
+   * variable bitrate by default and treats the figure below as a target, so
+   * anything that compresses well — a still, a title card, a locked-off shot —
+   * finishes far under it. Uncompressed PCM is the one case that lands on the
+   * number exactly, which is why WAV is measured rather than estimated.
+   */
   const audioBytesPerSecond = format.id === 'wav' ? MIX_SAMPLE_RATE * 2 * 2 : 192_000 / 8;
+  const exactSize = format.id === 'wav';
   const estimatedBytes = audioOnly ? audioBytesPerSecond * (spanUs / US) : ((bitrate + (includeAudio ? 192_000 : 0)) / 8) * (spanUs / US);
 
   const runExport = async () => {
@@ -219,8 +226,13 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
         <Row label="Output" value={audioOnly ? `${format.label} · audio only` : `${evenWidth} × ${evenHeight} · ${fps} fps`} />
         <Row label="Duration" value={`${(spanUs / US).toFixed(1)}s`} />
         {!audioOnly && <Row label="Bitrate" value={`${(bitrate / 1_000_000).toFixed(1)} Mbps`} />}
-        <Row label="Estimated size" value={`~${formatBytes(estimatedBytes)}`} />
+        <Row label={exactSize ? 'Size' : 'Size budget'} value={`${exactSize ? '' : 'up to '}${formatBytes(estimatedBytes)}`} />
       </dl>
+      {!exactSize && (
+        <p className="-mt-1 px-3 text-[10px] leading-relaxed text-muted">
+          Variable bitrate — simple footage finishes well under the budget. Stills and titles can come out a hundred times smaller.
+        </p>
+      )}
 
       {progress && (
         <div>
