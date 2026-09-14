@@ -1,5 +1,6 @@
 import { CLIP_COLORS, DEFAULT_CHROMA, DEFAULT_COLOR, DEFAULT_CROP, DEFAULT_TRANSFORM, US } from '../types';
 import type { MediaAsset, MediaClip, TextClip, Track, TrackKind } from '../types';
+import { MIN_ROW_HEIGHT } from '../components/timeline/constants';
 import { uid } from './utils';
 
 let colorCursor = 0;
@@ -63,7 +64,15 @@ export const makeTrack = (kind: TrackKind, index: number): Track => ({
   muted: false,
   hidden: false,
   locked: false,
-  height: kind === 'video' ? 68 : 56,
+  /*
+   * Each kind gets exactly what it needs and no padding beyond it.
+   *
+   * Audio sits at the header's own minimum — a waveform reads fine in the
+   * 44px of clip body that leaves. Video needs more: the clip's label bar
+   * eats the top ~16px, so 64 leaves a ~40px-tall filmstrip frame, which is
+   * about the least that stays recognisable.
+   */
+  height: kind === 'video' ? 64 : MIN_ROW_HEIGHT,
   volume: 1
 });
 

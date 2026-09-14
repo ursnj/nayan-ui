@@ -50,6 +50,7 @@ const HEAD_HEIGHT = RULER_HEIGHT + MARKER_LANE_HEIGHT;
 export const Timeline = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<DragState | null>(null);
+  const snapGuideRef = useRef<HTMLDivElement>(null);
   const [marquee, setMarquee] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
   const [menu, setMenu] = useState<{ x: number; y: number; items: MenuItem[] } | null>(null);
   const [viewport, setViewport] = useState({ left: 0, width: 0 });
@@ -146,19 +147,25 @@ export const Timeline = () => {
     [rowOffsets]
   );
 
-  /** Snaps to zero, the playhead, markers and every other clip edge in range. */
-  const snapTime = useCallback((timeUs: number, excludeIds: Set<string>) => {
+  /**
+   * Snaps to zero, the playhead, markers and every other clip edge in range.
+   * Reports whether it actually caught, so the drag can show a guide — without
+   * that feedback there's no way to tell an aligned edit from a near miss.
+   */
+  const snapTime = useCallback((timeUs: number, excludeIds: Set<string>): { timeUs: number; snapped: boolean } => {
     const state = readEditorState();
-    if (!state.snapEnabled) return timeUs;
+    if (!state.snapEnabled) return { timeUs, snapped: false };
 
     const threshold = (SNAP_RADIUS_PX / state.pxPerSec) * US;
     let best = timeUs;
     let bestDelta = threshold;
+    let snapped = false;
     const consider = (candidate: number) => {
       const delta = Math.abs(candidate - timeUs);
       if (delta < bestDelta) {
         bestDelta = delta;
         best = candidate;
+        snapped = true;
       }
     };
 
@@ -172,7 +179,23 @@ export const Timeline = () => {
       consider(clip.startUs);
       consider(clipEndUs(clip));
     }
-    return best;
+    return { timeUs: best, snapped };
+  }, []);
+
+  /**
+   * Moves the snap guide by writing to the DOM directly. This fires on every
+   * pointer move, and routing it through state would re-render the whole
+   * timeline for a one-pixel line.
+   */
+  const showSnapGuide = useCallback((timeUs: number | null) => {
+    const element = snapGuideRef.current;
+    if (!element) return;
+    if (timeUs === null) {
+      element.style.opacity = '0';
+      return;
+    }
+    element.style.opacity = '1';
+    element.style.transform = `translateX(${HEADER_WIDTH + (timeUs / US) * readEditorState().pxPerSec}px)`;
   }, []);
 
   const handleDragMove = useCallback(
@@ -217,8 +240,9 @@ export const Timeline = () => {
       if (!clip) return;
 
       if (drag.kind === 'trim') {
-        const others = new Set([clip.id]);
-        state.setClipEdge(clip.id, drag.edge, snapTime(timeAt(event.clientX), others));
+        const snap = snapTime(timeAt(event.clientX), new Set([clip.id]));
+        state.setClipEdge(clip.id, drag.edge, snap.timeUs);
+        showSnapGuide(snap.snapped ? snap.timeUs : null);
         return;
       }
 
@@ -227,8 +251,13 @@ export const Timeline = () => {
       const proposedStart = Math.max(0, timeAt(event.clientX) - drag.grabOffsetUs);
       const moving = new Set(drag.originStarts.keys());
       const startSnap = snapTime(proposedStart, moving);
-      const endSnap = snapTime(proposedStart + clip.durationUs, moving) - clip.durationUs;
-      const leadStart = Math.abs(startSnap - proposedStart) <= Math.abs(endSnap - proposedStart) ? startSnap : endSnap;
+      const endSnap = snapTime(proposedStart + clip.durationUs, moving);
+      // Whichever edge lands closer to a guide wins.
+      const endAsStart = endSnap.timeUs - clip.durationUs;
+      const useStart = Math.abs(startSnap.timeUs - proposedStart) <= Math.abs(endAsStart - proposedStart);
+      const leadStart = useStart ? startSnap.timeUs : endAsStart;
+      const caught = useStart ? startSnap : endSnap;
+      showSnapGuide(caught.snapped ? caught.timeUs : null);
 
       const leadOrigin = drag.originStarts.get(clip.id);
       if (!leadOrigin) return;
@@ -253,7 +282,7 @@ export const Timeline = () => {
 
       state.moveClips(moves);
     },
-    [rowOffsets, setSelection, snapTime, timeAt, trackIndexAt]
+    [rowOffsets, setSelection, showSnapGuide, snapTime, timeAt, trackIndexAt]
   );
 
   const beginDrag = useCallback(
@@ -270,6 +299,7 @@ export const Timeline = () => {
         window.removeEventListener('pointercancel', onUp);
         dragRef.current = null;
         setMarquee(null);
+        showSnapGuide(null);
         readEditorState().endInteraction();
         player.refresh();
       };
@@ -279,7 +309,7 @@ export const Timeline = () => {
       window.addEventListener('pointercancel', onUp);
       handleDragMove(event);
     },
-    [handleDragMove]
+    [handleDragMove, showSnapGuide]
   );
 
   /** Captures where every selected clip started, so a group drag stays rigid. */
@@ -485,12 +515,30 @@ export const Timeline = () => {
             />
           ))}
 
+          {clips.length === 0 && (
+            <div
+              className="pointer-events-none absolute z-10 flex items-center justify-center"
+              style={{ left: HEADER_WIDTH, top: HEAD_HEIGHT, width: Math.max(0, viewport.width - HEADER_WIDTH), height: tracksHeight }}>
+              <p className="rounded-lg border border-dashed border-separator px-4 py-3 text-xs text-muted">
+                Drag media here from the panel on the left
+              </p>
+            </div>
+          )}
+
           {marquee && (
             <div
               className="pointer-events-none absolute z-40 rounded-sm border border-accent bg-accent/15"
               style={{ left: marquee.left, top: marquee.top, width: marquee.width, height: marquee.height }}
             />
           )}
+
+          {/* Sits above the clips but below the playhead. */}
+          <div
+            ref={snapGuideRef}
+            aria-hidden="true"
+            className="pointer-events-none absolute left-0 top-0 z-[26] w-px bg-accent opacity-0"
+            style={{ height: HEAD_HEIGHT + tracksHeight }}
+          />
 
           <Playhead scrollRef={scrollRef} height={HEAD_HEIGHT + tracksHeight} />
         </div>

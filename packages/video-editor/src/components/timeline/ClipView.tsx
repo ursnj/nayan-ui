@@ -76,7 +76,13 @@ export const ClipView = memo(
             />
           )}
 
-          <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center gap-1 truncate bg-gradient-to-b from-black/60 to-transparent px-1.5 py-0.5">
+          {/* Below ~44px the label is unreadable and only adds noise, so the
+              colour spine and filmstrip carry the identification instead. */}
+          <div
+            className={cn(
+              'pointer-events-none absolute inset-x-0 top-0 flex items-center gap-1 truncate bg-gradient-to-b from-black/60 to-transparent px-1.5 py-0.5',
+              width < 44 && 'hidden'
+            )}>
             <ClipIcon clip={clip} />
             <span className="truncate text-[10px] font-medium text-white drop-shadow">{clip.name}</span>
             {clip.groupId && <Link2 className="h-3 w-3 shrink-0 text-white/70" />}

@@ -75,9 +75,14 @@ export const TimeRuler = ({ width, pxPerSec, onScrub }: TimeRulerProps) => {
             title={marker.label ? `${marker.label} — double-click to remove` : 'Marker — double-click to remove'}
             aria-label={marker.label || 'Marker'}
             onDoubleClick={() => removeMarker(marker.id)}
-            style={{ left: (marker.atUs / US) * pxPerSec, borderTopColor: marker.color }}
-            className="absolute top-0 h-0 w-0 -translate-x-1/2 border-x-[5px] border-t-[9px] border-x-transparent transition-transform hover:scale-125"
-          />
+            style={{ left: (marker.atUs / US) * pxPerSec }}
+            className="group absolute top-0 flex h-full w-4 -translate-x-1/2 items-start justify-center">
+            {/* The flag stays small; the button around it is the hit target. */}
+            <span
+              style={{ borderTopColor: marker.color }}
+              className="h-0 w-0 border-x-[6px] border-t-[11px] border-x-transparent transition-transform group-hover:scale-125"
+            />
+          </button>
         ))}
         {markers.map(marker =>
           marker.label ? (
