@@ -24,9 +24,9 @@ export const cn = (...parts: (string | false | null | undefined)[]) => parts.fil
  * few microseconds — so it can only affect an instant already indivisibly
  * close to the boundary.
  */
-export const formatTimecode = (us: number, showFrames = false, fps = 30) => {
-  const pad = (n: number) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 
+export const formatTimecode = (us: number, showFrames = false, fps = 30) => {
   if (showFrames) {
     const rate = Math.max(1, fps);
     const totalFrames = Math.floor(Math.max(0, us / US) * rate + 1e-4);

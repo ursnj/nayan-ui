@@ -1,6 +1,6 @@
 import { cn, pickTickInterval } from '../../lib/utils';
-import { US } from '../../types';
 import { useEditor } from '../../store/editor';
+import { US } from '../../types';
 import { RULER_HEIGHT } from './constants';
 
 interface TimeRulerProps {
@@ -25,8 +25,9 @@ interface TimeRulerProps {
  * for 0.25 and `.7` for 0.75. Below a second the fraction is shown exactly;
  * at or above one, it is left off.
  */
+const pad = (value: number) => String(value).padStart(2, '0');
+
 const rulerLabel = (seconds: number, interval: number) => {
-  const pad = (value: number) => String(value).padStart(2, '0');
   const minutes = Math.floor(seconds / 60);
   const rest = seconds - minutes * 60;
   if (interval >= 1) return `${pad(minutes)}:${pad(Math.round(rest))}`;

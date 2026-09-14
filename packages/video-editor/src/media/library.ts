@@ -323,7 +323,7 @@ export const getAudioBuffer = async (assetId: string): Promise<AudioBuffer | nul
 export const getPeaks = (assetId: string): Float32Array | null => resources.get(assetId)?.peaks ?? null;
 
 export const releaseAsset = async (assetId: string) => {
-  for (const [clipId, entry] of [...readers]) {
+  for (const [clipId, entry] of readers) {
     if (entry.assetId === assetId) await releaseReader(clipId);
   }
   const entry = resources.get(assetId);
@@ -412,7 +412,7 @@ const bitmapToDataUrl = async (bitmap: ImageBitmap): Promise<string | null> => {
 const blobToDataUrl = (blob: Blob) =>
   new Promise<string | null>(resolve => {
     const reader = new FileReader();
-    reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : null);
-    reader.onerror = () => resolve(null);
+    reader.addEventListener('load', () => resolve(typeof reader.result === 'string' ? reader.result : null), { once: true });
+    reader.addEventListener('error', () => resolve(null), { once: true });
     reader.readAsDataURL(blob);
   });

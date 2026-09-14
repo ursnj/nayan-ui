@@ -204,9 +204,9 @@ export class AudioEngine {
       if (!buffer) continue;
       const source = scheduleClipAudio(context, this.master, clip, buffer, fromUs, originTime, trackVolumes.get(clip.trackId) ?? 1);
       if (!source) continue;
-      source.onended = () => {
+      source.addEventListener('ended', () => {
         this.active = this.active.filter(node => node !== source);
-      };
+      });
       this.active.push(source);
     }
 
@@ -228,7 +228,6 @@ export class AudioEngine {
   private stopSources() {
     for (const source of this.active) {
       try {
-        source.onended = null;
         source.stop();
         source.disconnect();
       } catch {

@@ -218,8 +218,8 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onResetPreferences }: T
           <div className="mt-3 border-t border-border pt-3">
             <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted">Editor</p>
             <p className="mb-2 text-[11px] leading-relaxed text-muted">
-              Panel sizes and the light/dark choice are remembered in this browser, not in the project. Resetting them leaves your timeline and
-              media untouched.
+              Panel sizes and the light/dark choice are remembered in this browser, not in the project. Resetting them leaves your timeline and media
+              untouched.
             </p>
             <NButton isOutline onClick={onResetPreferences} className="h-7 px-2 text-[11px]">
               <RotateCcw className="mr-1.5 h-3.5 w-3.5" />

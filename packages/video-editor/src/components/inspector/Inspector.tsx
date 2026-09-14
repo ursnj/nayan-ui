@@ -345,6 +345,9 @@ const FilterSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   );
 };
 
+/** -100..100 sliders that read as a direction rather than a percentage. */
+const signed = (value: number) => (value === 0 ? 'Off' : value > 0 ? `+${value}` : String(value));
+
 const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   const color = clip.colorAdjust;
   // A hand edit means the grade is no longer the preset, so drop the record.
@@ -361,8 +364,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   const blurKey = useKeyframeState(clip, 'color.blur');
 
   /** -100..100 sliders that read as a direction rather than a percentage. */
-  const signed = (value: number) => (value === 0 ? 'Off' : value > 0 ? `+${value}` : String(value));
-
   return (
     <>
       <Section
