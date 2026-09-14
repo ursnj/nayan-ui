@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { NSlider, NTooltip } from '@nayan-ui/react';
+import { NButton, NMeter, NSlider, NTooltip } from '@nayan-ui/react';
 import {
   Camera,
   ChevronLeft,
@@ -17,7 +17,7 @@ import {
   VolumeX
 } from 'lucide-react';
 import { pausePlayback, player, seekTo, stepFrames, togglePlayback } from '../../engine/playerInstance';
-import { cn, download, formatTimecode } from '../../lib/utils';
+import { download, formatTimecode } from '../../lib/utils';
 import { primarySelectedClip, timelineDurationUs, useEditor } from '../../store/editor';
 import { IconButton } from '../controls';
 import { TransformOverlay } from './TransformOverlay';
@@ -158,17 +158,13 @@ export const PreviewPanel = () => {
         </IconButton>
 
         <NTooltip message={isPlaying ? 'Pause' : 'Play'}>
-          <button
-            type="button"
+          <NButton
             onClick={() => void togglePlayback()}
             disabled={durationUs === 0}
             aria-label={isPlaying ? 'Pause' : 'Play'}
-            className={cn(
-              'mx-1 flex h-8 w-8 items-center justify-center rounded-full transition-colors',
-              durationUs === 0 ? 'cursor-not-allowed bg-default text-muted opacity-50' : 'bg-accent text-accent-foreground hover:opacity-90'
-            )}>
+            className="mx-1 h-8 w-8 rounded-full px-0">
             {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="ml-0.5 h-4 w-4" />}
-          </button>
+          </NButton>
         </NTooltip>
 
         <IconButton label="Next frame" onClick={() => stepFrames(1)}>
@@ -247,22 +243,14 @@ const LiveMeter = () => {
   return <MeterBars level={level} />;
 };
 
-const MeterBars = ({ level }: { level: number }) => {
-  return (
-    <div className="flex h-4 w-14 items-end gap-px" aria-hidden="true">
-      {Array.from({ length: 12 }, (_, index) => {
-        const threshold = (index + 1) / 12;
-        const lit = level >= threshold;
-        return (
-          <span
-            key={index}
-            className={cn(
-              'h-full flex-1 rounded-[1px] transition-colors',
-              !lit ? 'bg-default' : threshold > 0.9 ? 'bg-danger' : threshold > 0.75 ? 'bg-warning' : 'bg-success'
-            )}
-          />
-        );
-      })}
-    </div>
-  );
-};
+const MeterBars = ({ level }: { level: number }) => (
+  <NMeter
+    value={Math.round(level * 100)}
+    size="sm"
+    showOutput={false}
+    // Warn as the signal approaches clipping.
+    color={level > 0.9 ? 'danger' : level > 0.75 ? 'warning' : 'success'}
+    className="w-16"
+    aria-label="Output level"
+  />
+);

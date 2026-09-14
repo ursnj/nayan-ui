@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { cn } from '../../lib/utils';
 
 export interface MenuItem {
@@ -20,8 +21,13 @@ interface ContextMenuProps {
 /**
  * Right-click menu for the timeline.
  *
- * Positioned in viewport coordinates and flipped when it would overflow, so it
- * stays usable for clips near the bottom or right edge of the window.
+ * Rendered through a portal into `document.body`. It is positioned in viewport
+ * coordinates, and `position: fixed` silently becomes relative to an ancestor
+ * the moment one of them has a transform, filter or `will-change` — which the
+ * timeline does have, on every clip. The portal takes that whole class of
+ * problem off the table, along with the panels' `overflow: hidden`.
+ *
+ * It flips when it would overflow, so it stays usable near the window edges.
  */
 export const ContextMenu = ({ x, y, items, onClose }: ContextMenuProps) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -57,7 +63,9 @@ export const ContextMenu = ({ x, y, items, onClose }: ContextMenuProps) => {
     };
   }, [onClose]);
 
-  return (
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <div
       ref={ref}
       role="menu"
@@ -85,6 +93,7 @@ export const ContextMenu = ({ x, y, items, onClose }: ContextMenuProps) => {
           </button>
         </div>
       ))}
-    </div>
+    </div>,
+    document.body
   );
 };

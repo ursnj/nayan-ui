@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { NLoading, showToast } from '@nayan-ui/react';
-import { Film, Image as ImageIcon, Music, Plus, Search, Trash2, Upload } from 'lucide-react';
-import { cn, formatBytes, formatDuration } from '../../lib/utils';
+import { NButton, NButtonGroup, NLoading, NSearchField, showToast } from '@nayan-ui/react';
+import { Film, Image as ImageIcon, Music, Plus, Trash2, Upload } from 'lucide-react';
+import { formatBytes, formatDuration } from '../../lib/utils';
 import { UnsupportedMediaError, generateThumbnail, loadAsset } from '../../media/library';
 import { useEditor } from '../../store/editor';
 import type { MediaAsset } from '../../types';
@@ -75,36 +75,30 @@ export const MediaPanel = () => {
         void importFiles(event.dataTransfer.files);
       }}>
       <div className="flex items-center gap-1.5 px-3 pb-2 pt-3">
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" />
-          <input
-            type="text"
-            value={query}
-            onChange={event => setQuery(event.target.value)}
-            placeholder="Search media"
-            aria-label="Search media"
-            className="w-full rounded-md border border-border bg-field-background py-1.5 pl-7 pr-2 text-xs text-field-foreground outline-none transition-colors focus:border-accent placeholder:text-field-placeholder"
-          />
-        </div>
+        <NSearchField
+          value={query}
+          onChange={setQuery}
+          onClear={() => setQuery('')}
+          placeholder="Search media"
+          fullWidth
+          className="flex-1"
+          aria-label="Search media"
+        />
         <IconButton label="Import files" onClick={() => inputRef.current?.click()}>
           <Upload className="h-4 w-4" />
         </IconButton>
       </div>
 
-      <div className="flex gap-1 px-3 pb-2">
-        {(['all', 'video', 'audio', 'image'] as Filter[]).map(option => (
-          <button
-            key={option}
-            type="button"
-            onClick={() => setFilter(option)}
-            aria-pressed={filter === option}
-            className={cn(
-              'rounded-full px-2.5 py-1 text-[11px] capitalize transition-colors',
-              filter === option ? 'bg-accent/20 text-accent' : 'text-muted hover:bg-default hover:text-foreground'
-            )}>
-            {option}
-          </button>
-        ))}
+      <div className="px-3 pb-2">
+        {/* NButtonGroup renders plain labels, which is exactly what these are. */}
+        <NButtonGroup<Filter>
+          items={['all', 'video', 'audio', 'image']}
+          selected={filter}
+          size="sm"
+          onChange={setFilter}
+          buttonClassName="capitalize text-[11px]"
+          ariaLabel="Filter media by kind"
+        />
       </div>
 
       <input
@@ -185,20 +179,12 @@ const AssetCard = ({ asset, onAdd, onRemove }: { asset: MediaAsset; onAdd: () =>
           </span>
 
           <div className="absolute inset-0 flex items-center justify-center gap-1 bg-black/55 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-            <button
-              type="button"
-              onClick={onAdd}
-              aria-label={`Add ${asset.name} to timeline`}
-              className="rounded-md bg-white/15 p-1.5 text-white backdrop-blur transition-colors hover:bg-accent">
+            <NButton onClick={onAdd} aria-label={`Add ${asset.name} to timeline`} className="h-8 w-8 px-0">
               <Plus className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={onRemove}
-              aria-label={`Remove ${asset.name}`}
-              className="rounded-md bg-white/15 p-1.5 text-white backdrop-blur transition-colors hover:bg-danger">
+            </NButton>
+            <NButton isOutline onClick={onRemove} aria-label={`Remove ${asset.name}`} className="h-8 w-8 border-white/40 px-0 text-white">
               <Trash2 className="h-4 w-4" />
-            </button>
+            </NButton>
           </div>
         </div>
 

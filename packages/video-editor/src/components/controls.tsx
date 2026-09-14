@@ -1,8 +1,20 @@
 import { useCallback, useState } from 'react';
-import { NSlider, NTooltip } from '@nayan-ui/react';
+import { NInput, NNumberField, NSelect, NSlider, NTextarea, NToggleButton, NTooltip } from '@nayan-ui/react';
 import { ChevronDown, Diamond, RotateCcw } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useEditor } from '../store/editor';
+
+/*
+ * Every control in the editor is built from @nayan-ui/react so the app and the
+ * rest of the site stay visually consistent.
+ *
+ * Two things are deliberately not library components:
+ *
+ *  - `Section`, because NAccordion is data-driven (`items: {title, message}`)
+ *    and can't host arbitrary children like a slider stack.
+ *  - the colour swatch in `ColorField`, because the library has no colour
+ *    picker; the hex field beside it is an NInput.
+ */
 
 /* ------------------------------------------------------------------ *
  * Layout
@@ -29,15 +41,9 @@ export const Section = ({ title, icon, defaultOpen = true, onReset, children }: 
           <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">{title}</span>
         </button>
         {onReset && (
-          <NTooltip message={`Reset ${title.toLowerCase()}`}>
-            <button
-              type="button"
-              onClick={onReset}
-              aria-label={`Reset ${title}`}
-              className="rounded p-1 text-muted transition-colors hover:bg-default hover:text-foreground">
-              <RotateCcw className="h-3 w-3" />
-            </button>
-          </NTooltip>
+          <IconButton label={`Reset ${title.toLowerCase()}`} onClick={onReset}>
+            <RotateCcw className="h-3 w-3" />
+          </IconButton>
         )}
       </div>
       {open && <div className="px-3 pb-3">{children}</div>}
@@ -49,6 +55,114 @@ export const FieldRow = ({ label, children }: { label: string; children: React.R
   <div className="mb-2 flex items-center justify-between gap-2">
     <span className="shrink-0 text-[11px] text-muted">{label}</span>
     <div className="min-w-0 flex-1">{children}</div>
+  </div>
+);
+
+export const EmptyState = ({ icon, title, hint }: { icon: React.ReactNode; title: string; hint?: string }) => (
+  <div className="flex flex-col items-center justify-center gap-2 px-6 py-12 text-center">
+    <div className="text-muted/50">{icon}</div>
+    <p className="text-xs font-medium text-foreground">{title}</p>
+    {hint && <p className="text-[11px] leading-relaxed text-muted">{hint}</p>}
+  </div>
+);
+
+/* ------------------------------------------------------------------ *
+ * Buttons
+ * ------------------------------------------------------------------ */
+
+/**
+ * The single icon-button primitive, built on NToggleButton's ghost variant —
+ * the library's borderless icon button.
+ *
+ * Note that action buttons (split, delete, zoom…) go through the same control,
+ * so they carry `aria-pressed="false"`. That's slightly misleading for a
+ * non-toggle, but the alternative was a second, differently-styled primitive
+ * for half the toolbar.
+ */
+export const IconButton = ({
+  label,
+  onClick,
+  active = false,
+  disabled,
+  danger,
+  children,
+  className
+}: {
+  label: string;
+  onClick: () => void;
+  active?: boolean;
+  disabled?: boolean;
+  /** Tints the hover state for destructive actions. */
+  danger?: boolean;
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <NTooltip message={label}>
+    <NToggleButton
+      isSelected={active}
+      isDisabled={disabled}
+      isIconOnly
+      variant="ghost"
+      size="sm"
+      onChange={onClick}
+      className={cn('h-7 w-7 shrink-0', danger && 'hover:bg-danger hover:text-danger-foreground', className)}>
+      {children}
+    </NToggleButton>
+  </NTooltip>
+);
+
+export const ToggleChip = ({
+  active,
+  onClick,
+  label,
+  children,
+  className
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <NTooltip message={label}>
+    <NToggleButton isSelected={active} variant="default" size="sm" onChange={onClick} className={cn('text-[11px]', className)}>
+      {children}
+    </NToggleButton>
+  </NTooltip>
+);
+
+/**
+ * Segmented control.
+ *
+ * NButtonGroup would be the natural fit, but it renders `String(item)` and so
+ * can't show icons — which is what every segment in this editor is. Composing
+ * NToggleButtons keeps the library's look without that limitation.
+ */
+export const SegmentedControl = <T extends string>({
+  value,
+  options,
+  onChange,
+  className
+}: {
+  value: T;
+  options: { value: T; label: React.ReactNode; title: string }[];
+  onChange: (value: T) => void;
+  className?: string;
+}) => (
+  <div className={cn('flex gap-0.5 rounded-md bg-surface-secondary p-0.5', className)} role="group">
+    {options.map(option => (
+      <NTooltip key={option.value} message={option.title}>
+        <NToggleButton
+          isSelected={value === option.value}
+          isIconOnly
+          variant="ghost"
+          size="sm"
+          onChange={() => onChange(option.value)}
+          className="h-6 flex-1">
+          {option.label}
+        </NToggleButton>
+      </NTooltip>
+    ))}
   </div>
 );
 
@@ -95,7 +209,7 @@ export const KeyframeButton = ({ clipId, path, value, animated, active }: Keyfra
 };
 
 /* ------------------------------------------------------------------ *
- * Slider
+ * Fields
  * ------------------------------------------------------------------ */
 
 interface SliderFieldProps {
@@ -156,68 +270,12 @@ export const SliderField = ({ label, value, min, max, step = 1, format, onChange
   );
 };
 
-/* ------------------------------------------------------------------ *
- * Inputs
- * ------------------------------------------------------------------ */
-
-export const ColorField = ({
-  label,
-  value,
-  onChange,
-  allowAlpha
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  allowAlpha?: boolean;
-}) => {
-  // <input type="color"> can't express alpha, so rgba() values are shown as
-  // their opaque equivalent and the transparency toggle lives elsewhere.
-  const swatch = value.startsWith('rgba') || value === 'transparent' ? '#000000' : value;
-  return (
-    <div className="mb-2">
-      <span className="mb-1 block text-[11px] text-muted">{label}</span>
-      <div className="flex items-center gap-1.5">
-        <input
-          type="color"
-          value={swatch}
-          onChange={event => onChange(event.target.value)}
-          aria-label={label}
-          className="h-7 w-9 shrink-0 cursor-pointer rounded border border-border bg-transparent p-0.5"
-        />
-        <input
-          type="text"
-          value={value}
-          onChange={event => onChange(event.target.value)}
-          aria-label={`${label} value`}
-          spellCheck={false}
-          className="min-w-0 flex-1 rounded border border-border bg-field-background px-2 py-1 font-mono text-[11px] text-field-foreground outline-none focus:border-accent"
-        />
-        {allowAlpha && (
-          <NTooltip message="Transparent">
-            <button
-              type="button"
-              onClick={() => onChange('transparent')}
-              aria-label="Set transparent"
-              className={cn(
-                'checkerboard h-7 w-7 shrink-0 rounded border transition-colors',
-                value === 'transparent' ? 'border-accent' : 'border-border'
-              )}
-            />
-          </NTooltip>
-        )}
-      </div>
-    </div>
-  );
-};
-
 export const NumberField = ({
   label,
   value,
   min,
   max,
   step = 1,
-  suffix,
   onChange
 }: {
   label: string;
@@ -225,27 +283,19 @@ export const NumberField = ({
   min?: number;
   max?: number;
   step?: number;
-  suffix?: string;
   onChange: (value: number) => void;
 }) => (
-  <label className="mb-2 flex items-center gap-2">
-    <span className="flex-1 text-[11px] text-muted">{label}</span>
-    <span className="flex items-center gap-1">
-      <input
-        type="number"
-        value={value}
-        min={min}
-        max={max}
-        step={step}
-        onChange={event => {
-          const next = Number(event.target.value);
-          if (!Number.isNaN(next)) onChange(next);
-        }}
-        className="w-20 rounded border border-border bg-field-background px-2 py-1 text-right font-mono text-[11px] tabular-nums text-field-foreground outline-none focus:border-accent"
-      />
-      {suffix && <span className="w-4 text-[10px] text-muted">{suffix}</span>}
-    </span>
-  </label>
+  <NNumberField
+    label={label}
+    value={value}
+    minValue={min}
+    maxValue={max}
+    step={step}
+    onChange={onChange}
+    fullWidth
+    className="mb-2"
+    aria-label={label}
+  />
 );
 
 export const TextField = ({
@@ -260,172 +310,102 @@ export const TextField = ({
   placeholder?: string;
   onChange: (value: string) => void;
   multiline?: boolean;
-}) => {
-  const shared =
-    'w-full rounded border border-border bg-field-background px-2 py-1.5 text-xs text-field-foreground outline-none transition-colors focus:border-accent placeholder:text-field-placeholder';
-  return (
-    <div className="mb-2">
-      {label && <span className="mb-1 block text-[11px] text-muted">{label}</span>}
-      {multiline ? (
-        <textarea
-          value={value}
-          placeholder={placeholder}
-          onChange={event => onChange(event.target.value)}
-          aria-label={label}
-          rows={3}
-          className={cn(shared, 'resize-y')}
-        />
-      ) : (
-        <input
-          type="text"
-          value={value}
-          placeholder={placeholder}
-          onChange={event => onChange(event.target.value)}
-          aria-label={label}
-          className={shared}
-        />
-      )}
-    </div>
+}) =>
+  multiline ? (
+    <NTextarea
+      label={label}
+      value={value}
+      placeholder={placeholder}
+      onChange={event => onChange(event.target.value)}
+      className="mb-2"
+      textareaClassName="min-h-20 text-xs"
+    />
+  ) : (
+    <NInput
+      label={label}
+      value={value}
+      placeholder={placeholder}
+      onChange={event => onChange(event.target.value)}
+      wrapperClassName="mb-2"
+      inputClassName="text-xs"
+    />
   );
-};
 
-/* ------------------------------------------------------------------ *
- * Buttons
- * ------------------------------------------------------------------ */
-
-export const ToggleChip = ({
-  active,
-  onClick,
-  label,
-  children,
-  className
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-  children: React.ReactNode;
-  className?: string;
-}) => (
-  <NTooltip message={label}>
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      aria-pressed={active}
-      className={cn(
-        'flex items-center justify-center rounded-md border px-2 py-1.5 text-[11px] transition-colors',
-        active ? 'border-accent bg-accent/15 text-accent' : 'border-border text-muted hover:border-separator hover:text-foreground',
-        className
-      )}>
-      {children}
-    </button>
-  </NTooltip>
-);
-
-/** Compact icon button used across toolbars. */
-export const IconButton = ({
-  label,
-  onClick,
-  active,
-  disabled,
-  danger,
-  children,
-  className
-}: {
-  label: string;
-  onClick: () => void;
-  active?: boolean;
-  disabled?: boolean;
-  danger?: boolean;
-  children: React.ReactNode;
-  className?: string;
-}) => (
-  <NTooltip message={label}>
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      aria-label={label}
-      aria-pressed={active}
-      className={cn(
-        'flex h-7 w-7 items-center justify-center rounded-md transition-colors',
-        disabled && 'cursor-not-allowed opacity-35',
-        !disabled && active && 'bg-accent/20 text-accent',
-        !disabled && !active && !danger && 'text-muted hover:bg-default hover:text-foreground',
-        !disabled && danger && 'text-muted hover:bg-danger hover:text-danger-foreground',
-        className
-      )}>
-      {children}
-    </button>
-  </NTooltip>
-);
-
-/** Segmented control — used for alignment, tools and blend groups. */
-export const SegmentedControl = <T extends string>({
-  value,
-  options,
-  onChange,
-  className
-}: {
-  value: T;
-  options: { value: T; label: React.ReactNode; title: string }[];
-  onChange: (value: T) => void;
-  className?: string;
-}) => (
-  <div className={cn('flex gap-0.5 rounded-md bg-surface-secondary p-0.5', className)} role="group">
-    {options.map(option => (
-      <NTooltip key={option.value} message={option.title}>
-        <button
-          type="button"
-          onClick={() => onChange(option.value)}
-          aria-label={option.title}
-          aria-pressed={value === option.value}
-          className={cn(
-            'flex flex-1 items-center justify-center rounded px-2 py-1 text-[11px] transition-colors',
-            value === option.value ? 'bg-surface text-foreground elevate' : 'text-muted hover:text-foreground'
-          )}>
-          {option.label}
-        </button>
-      </NTooltip>
-    ))}
-  </div>
-);
-
-/** Native select styled to match the rest of the inspector. */
+/**
+ * Wraps NSelect so callers can keep passing plain values rather than the
+ * `{label, value}` objects react-select expects. NSelect also portals its menu
+ * to the body, which matters here — the panels clip their overflow.
+ */
 export const SelectField = <T extends string>({
   label,
   value,
   options,
-  onChange
+  onChange,
+  disabled
 }: {
   label?: string;
   value: T;
   options: { value: T; label: string }[];
   onChange: (value: T) => void;
+  disabled?: boolean;
 }) => (
-  <div className="mb-2">
-    {label && <span className="mb-1 block text-[11px] text-muted">{label}</span>}
-    <div className="relative">
-      <select
-        value={value}
-        onChange={event => onChange(event.target.value as T)}
-        aria-label={label}
-        className="w-full appearance-none rounded border border-border bg-field-background py-1.5 pl-2 pr-7 text-xs text-field-foreground outline-none transition-colors focus:border-accent">
-        {options.map(option => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" />
-    </div>
-  </div>
+  <NSelect
+    label={label}
+    value={options.find(option => option.value === value) ?? null}
+    options={options}
+    isDisabled={disabled}
+    isSearchable={false}
+    className="mb-2"
+    onChange={option => option && onChange(option.value as T)}
+  />
 );
 
-export const EmptyState = ({ icon, title, hint }: { icon: React.ReactNode; title: string; hint?: string }) => (
-  <div className="flex flex-col items-center justify-center gap-2 px-6 py-12 text-center">
-    <div className="text-muted/50">{icon}</div>
-    <p className="text-xs font-medium text-foreground">{title}</p>
-    {hint && <p className="text-[11px] leading-relaxed text-muted">{hint}</p>}
-  </div>
-);
+export const ColorField = ({
+  label,
+  value,
+  onChange,
+  allowAlpha
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  allowAlpha?: boolean;
+}) => {
+  // <input type="color"> can't express alpha, so rgba() values show as their
+  // opaque equivalent and transparency is a separate toggle.
+  const swatch = value.startsWith('rgba') || value === 'transparent' ? '#000000' : value;
+  return (
+    <div className="mb-2">
+      <span className="mb-1 block text-[11px] text-muted">{label}</span>
+      <div className="flex items-center gap-1.5">
+        <input
+          type="color"
+          value={swatch}
+          onChange={event => onChange(event.target.value)}
+          aria-label={label}
+          className="h-8 w-9 shrink-0 cursor-pointer rounded border border-border bg-transparent p-0.5"
+        />
+        <NInput
+          value={value}
+          onChange={event => onChange(event.target.value)}
+          label={undefined}
+          wrapperClassName="mb-0 flex-1 min-w-0"
+          inputClassName="font-mono text-[11px]"
+        />
+        {allowAlpha && (
+          <NTooltip message="Transparent">
+            <button
+              type="button"
+              onClick={() => onChange('transparent')}
+              aria-label="Set transparent"
+              className={cn(
+                'checkerboard h-8 w-8 shrink-0 rounded border transition-colors',
+                value === 'transparent' ? 'border-accent' : 'border-border'
+              )}
+            />
+          </NTooltip>
+        )}
+      </div>
+    </div>
+  );
+};

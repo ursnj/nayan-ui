@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { NToggleButton } from '@nayan-ui/react';
 import {
   AlignCenter,
   AlignLeft,
@@ -13,7 +14,7 @@ import {
   Volume2,
   Wand2
 } from 'lucide-react';
-import { cn, formatTimecode } from '../../lib/utils';
+import { formatTimecode } from '../../lib/utils';
 import { primarySelectedClip, useEditor } from '../../store/editor';
 import {
   COLOR_PRESETS,
@@ -165,23 +166,20 @@ const BasicsSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           <FieldRow label="Speed">
             <div className="flex gap-1">
               {SPEEDS.map(speed => (
-                <button
+                <NToggleButton
                   key={speed}
-                  type="button"
-                  onClick={() =>
+                  isSelected={media.speed === speed}
+                  size="sm"
+                  className="flex-1 px-1 text-[10px]"
+                  onChange={() =>
                     patch({
                       speed,
                       // Hold the same source range: faster playback, shorter clip.
                       durationUs: Math.max(100_000, Math.round((media.durationUs * media.speed) / speed))
                     } as Partial<Clip>)
-                  }
-                  aria-pressed={media.speed === speed}
-                  className={cn(
-                    'flex-1 rounded border px-1 py-1 text-[10px] transition-colors',
-                    media.speed === speed ? 'border-accent bg-accent/15 text-accent' : 'border-border text-muted hover:text-foreground'
-                  )}>
+                  }>
                   {speed}×
-                </button>
+                </NToggleButton>
               ))}
             </div>
           </FieldRow>
