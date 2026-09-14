@@ -68,6 +68,3 @@ export const download = (blob: Blob, filename: string) => {
   // Give the browser a moment to start the download before dropping the URL.
   setTimeout(() => URL.revokeObjectURL(url), 10_000);
 };
-
-/** Yields to the event loop so long encode/decode loops don't freeze the UI. */
-export const nextTick = () => new Promise<void>(resolve => setTimeout(resolve, 0));

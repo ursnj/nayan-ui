@@ -337,10 +337,6 @@ export const releaseAsset = async (assetId: string) => {
 /** The file an asset was imported from, for writing it into a project bundle. */
 export const getAssetFile = (assetId: string): File | null => resources.get(assetId)?.file ?? null;
 
-export const getVideoTrack = (assetId: string): InputVideoTrack | null => resources.get(assetId)?.videoTrack ?? null;
-
-export const getAudioTrack = (assetId: string): InputAudioTrack | null => resources.get(assetId)?.audioTrack ?? null;
-
 const decodeFullAudio = async (track: InputAudioTrack): Promise<AudioBuffer | null> => {
   const sink = new AudioBufferSink(track);
   const chunks: { buffer: AudioBuffer; timestamp: number }[] = [];

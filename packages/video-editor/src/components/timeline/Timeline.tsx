@@ -702,7 +702,9 @@ const TrackRow = memo(
   }: TrackRowProps) => {
     // Only render what's near the viewport — a long project can hold hundreds of
     // clips, and off-screen ones cost layout for nothing.
-    const trackClips = clips.filter(clip => clip.trackId === track.id && clip.startUs < visibleRange.endUs && clipEndUs(clip) > visibleRange.startUs);
+    // `clips` arrives already bucketed to this track, so only the viewport
+    // test is left to do.
+    const trackClips = clips.filter(clip => clip.startUs < visibleRange.endUs && clipEndUs(clip) > visibleRange.startUs);
 
     return (
       <div className="flex">

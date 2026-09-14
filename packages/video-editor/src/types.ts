@@ -202,8 +202,6 @@ export const TRANSITION_LABELS: Record<TransitionKind, string> = {
  * Clips
  * ------------------------------------------------------------------ */
 
-export type ClipKind = 'video' | 'audio' | 'image' | 'text';
-
 interface ClipCommon {
   id: string;
   trackId: string;
@@ -376,8 +374,6 @@ export interface ExportSettings {
 export const isMediaClip = (clip: Clip): clip is MediaClip => clip.kind !== 'text';
 export const isTextClip = (clip: Clip): clip is TextClip => clip.kind === 'text';
 
-/** Clips that put pixels on screen. */
-export const isVisualClip = (clip: Clip) => clip.kind !== 'audio';
 /** Clips that can produce sound. */
 export const isAudibleKind = (clip: Clip) => clip.kind === 'video' || clip.kind === 'audio';
 
