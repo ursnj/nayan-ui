@@ -4,17 +4,20 @@ import {
   AlignCenter,
   AlignLeft,
   AlignRight,
+  Aperture,
   Crop as CropIcon,
   FlipHorizontal,
   FlipVertical,
   Layers,
   Move,
   Palette,
+  Sparkles,
+  Sun,
   Type as TypeIcon,
   Volume2,
   Wand2
 } from 'lucide-react';
-import { formatTimecode } from '../../lib/utils';
+import { cn, formatTimecode } from '../../lib/utils';
 import { primarySelectedClip, useEditor } from '../../store/editor';
 import {
   COLOR_PRESETS,
@@ -23,11 +26,12 @@ import {
   DEFAULT_TRANSFORM,
   TRANSITION_LABELS,
   US,
+  blendColor,
   clipEndUs,
   isMediaClip,
   isTextClip
 } from '../../types';
-import type { Clip, MediaClip, TextAlign, TextAnimation, TextClip, TransitionKind } from '../../types';
+import type { Clip, ColorPreset, MediaClip, TextAlign, TextAnimation, TextClip, TransitionKind } from '../../types';
 import { ColorField, EmptyState, FieldRow, Section, SegmentedControl, SelectField, SliderField, TextField, ToggleChip } from '../controls';
 
 const SPEEDS = [0.5, 1, 1.5, 2];
@@ -70,6 +74,7 @@ export const Inspector = () => {
           {clip.kind !== 'audio' && (
             <>
               <TransformSection clip={clip} patch={patch} />
+              <FilterSection clip={clip} patch={patch} />
               <ColorSection clip={clip} patch={patch} />
               <CropSection clip={clip} patch={patch} />
             </>
@@ -263,83 +268,274 @@ const TransformSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   );
 };
 
+/**
+ * The look shelf.
+ *
+ * Applying a preset overwrites the grade outright and records which look it
+ * was, so the strength slider below can keep re-deriving it. Any hand edit in
+ * the Colour section clears that record, because the grade is no longer the
+ * preset and pretending otherwise would let the strength slider silently
+ * discard the user's work.
+ */
+const FilterSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
+  const active = clip.filter;
+
+  const applyPreset = (preset: ColorPreset) => {
+    if (preset.name === 'None') {
+      patch({ colorAdjust: { ...DEFAULT_COLOR }, filter: null } as Partial<Clip>);
+      return;
+    }
+    // Always full strength on pick, the way a filter shelf behaves everywhere
+    // else: the tile chooses the look, the slider below adjusts it. Carrying a
+    // previous strength over would make re-picking a look at 0% do nothing.
+    patch({ colorAdjust: { ...preset.color }, filter: { name: preset.name, intensity: 1 } } as Partial<Clip>);
+  };
+
+  const setIntensity = (intensity: number) => {
+    const preset = COLOR_PRESETS.find(option => option.name === active?.name);
+    if (!preset) return;
+    patch({ colorAdjust: blendColor(preset.color, intensity), filter: { name: preset.name, intensity } } as Partial<Clip>);
+  };
+
+  return (
+    <Section title="Filters" icon={<Sparkles className="h-3.5 w-3.5 text-muted" />}>
+      <div className="mb-2 grid grid-cols-4 gap-1.5">
+        {COLOR_PRESETS.map(preset => {
+          const selected = preset.name === 'None' ? active === null : active?.name === preset.name;
+          return (
+            <button
+              key={preset.name}
+              type="button"
+              onClick={() => applyPreset(preset)}
+              aria-pressed={selected}
+              title={preset.name}
+              className={cn(
+                'group overflow-hidden rounded-md border transition-colors',
+                selected ? 'border-accent' : 'border-border hover:border-separator'
+              )}>
+              <span
+                className="block h-7 w-full"
+                style={{ background: `linear-gradient(135deg, ${preset.swatch[0]}, ${preset.swatch[1]})` }}
+                aria-hidden
+              />
+              <span
+                className={cn(
+                  'block truncate px-1 py-0.5 text-[9px] leading-tight transition-colors',
+                  selected ? 'text-accent' : 'text-muted group-hover:text-foreground'
+                )}>
+                {preset.name}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {active && (
+        <SliderField
+          label="Strength"
+          value={Math.round(active.intensity * 100)}
+          min={0}
+          max={100}
+          format={value => `${value}%`}
+          onChange={value => setIntensity(value / 100)}
+          resetTo={100}
+        />
+      )}
+    </Section>
+  );
+};
+
 const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   const color = clip.colorAdjust;
-  const set = (changes: Partial<typeof color>) => patch({ colorAdjust: { ...color, ...changes } } as Partial<Clip>);
+  // A hand edit means the grade is no longer the preset, so drop the record.
+  const set = (changes: Partial<typeof color>) => patch({ colorAdjust: { ...color, ...changes }, filter: null } as Partial<Clip>);
 
   const brightnessKey = useKeyframeState(clip, 'color.brightness');
   const contrastKey = useKeyframeState(clip, 'color.contrast');
   const saturationKey = useKeyframeState(clip, 'color.saturation');
+  const vibranceKey = useKeyframeState(clip, 'color.vibrance');
+  const temperatureKey = useKeyframeState(clip, 'color.temperature');
+  const highlightsKey = useKeyframeState(clip, 'color.highlights');
+  const shadowsKey = useKeyframeState(clip, 'color.shadows');
+  const vignetteKey = useKeyframeState(clip, 'color.vignette');
   const blurKey = useKeyframeState(clip, 'color.blur');
 
-  return (
-    <Section
-      title="Colour"
-      icon={<Palette className="h-3.5 w-3.5 text-muted" />}
-      onReset={() => patch({ colorAdjust: { ...DEFAULT_COLOR } } as Partial<Clip>)}>
-      <div className="mb-3 flex flex-wrap gap-1">
-        {COLOR_PRESETS.map(preset => (
-          <button
-            key={preset.name}
-            type="button"
-            onClick={() => patch({ colorAdjust: { ...preset.color } } as Partial<Clip>)}
-            className="rounded-full border border-border px-2 py-0.5 text-[10px] text-muted transition-colors hover:border-accent hover:text-foreground">
-            {preset.name}
-          </button>
-        ))}
-      </div>
+  /** -100..100 sliders that read as a direction rather than a percentage. */
+  const signed = (value: number) => (value === 0 ? 'Off' : value > 0 ? `+${value}` : String(value));
 
-      <SliderField
-        label="Brightness"
-        value={Math.round(color.brightness * 100)}
-        min={20}
-        max={200}
-        format={value => `${value}%`}
-        onChange={value => set({ brightness: value / 100 })}
-        keyframe={brightnessKey}
-        resetTo={100}
-      />
-      <SliderField
-        label="Contrast"
-        value={Math.round(color.contrast * 100)}
-        min={0}
-        max={200}
-        format={value => `${value}%`}
-        onChange={value => set({ contrast: value / 100 })}
-        keyframe={contrastKey}
-        resetTo={100}
-      />
-      <SliderField
-        label="Saturation"
-        value={Math.round(color.saturation * 100)}
-        min={0}
-        max={300}
-        format={value => `${value}%`}
-        onChange={value => set({ saturation: value / 100 })}
-        keyframe={saturationKey}
-        resetTo={100}
-      />
-      <SliderField
-        label="Temperature"
-        value={Math.round(color.temperature * 100)}
-        min={-100}
-        max={100}
-        format={value => (value === 0 ? 'Neutral' : value < 0 ? `${-value} cool` : `${value} warm`)}
-        onChange={value => set({ temperature: value / 100 })}
-        resetTo={0}
-      />
-      <SliderField
-        label="Blur"
-        value={color.blur}
-        min={0}
-        max={30}
-        step={0.5}
-        format={value => `${value}px`}
-        onChange={blur => set({ blur })}
-        keyframe={blurKey}
-        resetTo={0}
-      />
-    </Section>
+  return (
+    <>
+      <Section
+        title="Light"
+        icon={<Sun className="h-3.5 w-3.5 text-muted" />}
+        onReset={() =>
+          patch({
+            colorAdjust: { ...color, brightness: 1, contrast: 1, highlights: 0, shadows: 0, fade: 0 },
+            filter: null
+          } as Partial<Clip>)
+        }>
+        <SliderField
+          label="Brightness"
+          value={Math.round(color.brightness * 100)}
+          min={20}
+          max={200}
+          format={value => `${value}%`}
+          onChange={value => set({ brightness: value / 100 })}
+          keyframe={brightnessKey}
+          resetTo={100}
+        />
+        <SliderField
+          label="Contrast"
+          value={Math.round(color.contrast * 100)}
+          min={0}
+          max={200}
+          format={value => `${value}%`}
+          onChange={value => set({ contrast: value / 100 })}
+          keyframe={contrastKey}
+          resetTo={100}
+        />
+        <SliderField
+          label="Highlights"
+          value={Math.round(color.highlights * 100)}
+          min={-100}
+          max={100}
+          format={signed}
+          onChange={value => set({ highlights: value / 100 })}
+          keyframe={highlightsKey}
+          resetTo={0}
+        />
+        <SliderField
+          label="Shadows"
+          value={Math.round(color.shadows * 100)}
+          min={-100}
+          max={100}
+          format={signed}
+          onChange={value => set({ shadows: value / 100 })}
+          keyframe={shadowsKey}
+          resetTo={0}
+        />
+        <SliderField
+          label="Fade"
+          value={Math.round(color.fade * 100)}
+          min={0}
+          max={100}
+          format={value => (value === 0 ? 'Off' : `${value}%`)}
+          onChange={value => set({ fade: value / 100 })}
+          resetTo={0}
+        />
+      </Section>
+
+      <Section
+        title="Colour"
+        icon={<Palette className="h-3.5 w-3.5 text-muted" />}
+        onReset={() =>
+          patch({
+            colorAdjust: { ...color, saturation: 1, vibrance: 0, temperature: 0, tint: 0, splitTone: 0, grayscale: 0 },
+            filter: null
+          } as Partial<Clip>)
+        }>
+        <SliderField
+          label="Saturation"
+          value={Math.round(color.saturation * 100)}
+          min={0}
+          max={300}
+          format={value => `${value}%`}
+          onChange={value => set({ saturation: value / 100 })}
+          keyframe={saturationKey}
+          resetTo={100}
+        />
+        <SliderField
+          label="Vibrance"
+          value={Math.round(color.vibrance * 100)}
+          min={-100}
+          max={100}
+          format={signed}
+          onChange={value => set({ vibrance: value / 100 })}
+          keyframe={vibranceKey}
+          resetTo={0}
+        />
+        <SliderField
+          label="Temperature"
+          value={Math.round(color.temperature * 100)}
+          min={-100}
+          max={100}
+          format={value => (value === 0 ? 'Neutral' : value < 0 ? `${-value} cool` : `${value} warm`)}
+          onChange={value => set({ temperature: value / 100 })}
+          keyframe={temperatureKey}
+          resetTo={0}
+        />
+        <SliderField
+          label="Tint"
+          value={Math.round(color.tint * 100)}
+          min={-100}
+          max={100}
+          format={value => (value === 0 ? 'Neutral' : value < 0 ? `${-value} green` : `${value} magenta`)}
+          onChange={value => set({ tint: value / 100 })}
+          resetTo={0}
+        />
+        <SliderField
+          label="Split tone"
+          value={Math.round(color.splitTone * 100)}
+          min={0}
+          max={100}
+          format={value => (value === 0 ? 'Off' : `${value}%`)}
+          onChange={value => set({ splitTone: value / 100 })}
+          resetTo={0}
+        />
+        {color.splitTone > 0 && (
+          <div className="grid grid-cols-2 gap-2">
+            <ColorField label="Shadows" value={color.shadowTint} onChange={shadowTint => set({ shadowTint })} />
+            <ColorField label="Highlights" value={color.highlightTint} onChange={highlightTint => set({ highlightTint })} />
+          </div>
+        )}
+      </Section>
+
+      <Section
+        title="Texture"
+        icon={<Aperture className="h-3.5 w-3.5 text-muted" />}
+        defaultOpen={false}
+        onReset={() => patch({ colorAdjust: { ...color, sharpen: 0, vignette: 0, grain: 0, blur: 0 }, filter: null } as Partial<Clip>)}>
+        <SliderField
+          label="Sharpen"
+          value={Math.round(color.sharpen * 100)}
+          min={0}
+          max={100}
+          format={value => (value === 0 ? 'Off' : `${value}%`)}
+          onChange={value => set({ sharpen: value / 100 })}
+          resetTo={0}
+        />
+        <SliderField
+          label="Vignette"
+          value={Math.round(color.vignette * 100)}
+          min={0}
+          max={100}
+          format={value => (value === 0 ? 'Off' : `${value}%`)}
+          onChange={value => set({ vignette: value / 100 })}
+          keyframe={vignetteKey}
+          resetTo={0}
+        />
+        <SliderField
+          label="Grain"
+          value={Math.round(color.grain * 100)}
+          min={0}
+          max={100}
+          format={value => (value === 0 ? 'Off' : `${value}%`)}
+          onChange={value => set({ grain: value / 100 })}
+          resetTo={0}
+        />
+        <SliderField
+          label="Blur"
+          value={color.blur}
+          min={0}
+          max={30}
+          step={0.5}
+          format={value => `${value}px`}
+          onChange={blur => set({ blur })}
+          keyframe={blurKey}
+          resetTo={0}
+        />
+      </Section>
+    </>
   );
 };
 

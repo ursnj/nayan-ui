@@ -78,13 +78,28 @@ export class SequentialVideoReader {
   }
 
   private async restart(seconds: number) {
-    await this.closeIterator();
+    const previous = this.iterator;
+    this.iterator = null;
+    if (previous) await previous.return().catch(() => undefined);
     if (this.disposed) return;
+
     // `samples(t)` yields the sample *covering* t first, so this lands exactly
     // on the frame that should be on screen.
-    this.iterator = this.sink.samples(Math.max(0, seconds));
-    const first = await this.iterator.next();
-    this.current = first.done ? null : first.value;
+    const iterator = this.sink.samples(Math.max(0, seconds));
+    const first = await iterator.next();
+
+    if (first.done || !first.value) {
+      // Nothing covers that instant — it is past the end of the track. Hold
+      // the frame we already have instead of blanking: a transition reads the
+      // outgoing clip *past* its own out point, and seeking into the middle of
+      // one would otherwise drop that layer for the rest of the blend.
+      await iterator.return().catch(() => undefined);
+      return;
+    }
+
+    this.current?.close();
+    this.current = first.value;
+    this.iterator = iterator;
   }
 
   private async closeIterator() {
