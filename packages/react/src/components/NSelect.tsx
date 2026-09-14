@@ -63,16 +63,18 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
   const generatedId = useId();
   const selectId = inputId || `nyn-select-${generatedId}`;
 
-  // Accept both onChange and onChangeOptions for compatibility
+  // Accept both onChange and onChangeOptions for compatibility. Read the
+  // destructured values rather than `props`, so the callback doesn't depend on
+  // the whole props object changing identity every render.
   const handleChange = useCallback(
     (selected: any) => {
-      if (props.onChangeOptions) {
-        props.onChangeOptions(selected);
+      if (onChangeOptions) {
+        onChangeOptions(selected);
       } else if (onChange) {
         onChange(selected);
       }
     },
-    [onChange, props]
+    [onChange, onChangeOptions]
   );
 
   const handleCreate = useCallback(
@@ -85,13 +87,20 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
   const SelectComponent = isCreatable ? CreatableSelect : Select;
 
   /*
-   * The menu is rendered into a portal so it can escape panels that clip
-   * their overflow — but react-select gives that portal `z-index: 1`, which
-   * puts it *behind* dialogs, sheets and any raised surface. Lift it, while
-   * still letting a caller override the whole thing.
+   * The menu needs to escape ancestors that clip their overflow, and the
+   * obvious way to do that — portalling to `document.body` — quietly breaks
+   * the select inside a dialog or sheet: those trap focus and treat any press
+   * outside their own DOM subtree as a dismiss, so clicking an option closes
+   * the overlay instead of picking the value.
+   *
+   * `menuPosition="fixed"` gets the same overflow escape while keeping the
+   * menu where it was rendered, so it stays inside the overlay. A caller that
+   * really wants a portal can still pass `menuPortalTarget`; the z-index
+   * override is here for them, because react-select portals at `z-index: 1`.
    */
   const mergedStyles = {
     menuPortal: (base: Record<string, unknown>) => ({ ...base, zIndex: 9999 }),
+    menu: (base: Record<string, unknown>) => ({ ...base, zIndex: 50 }),
     ...styles
   };
 
@@ -123,7 +132,9 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
         theme={reactSelectTheme}
         styles={mergedStyles as any}
         aria-label={label}
-        menuPortalTarget={typeof window !== 'undefined' ? menuPortalTarget || document.body : undefined}
+        menuPosition="fixed"
+        menuShouldScrollIntoView={false}
+        menuPortalTarget={menuPortalTarget}
         {...rest}
       />
     </div>

@@ -2,14 +2,25 @@ import { useEffect, useRef, useState } from 'react';
 import { NButton, NDialog, NLink, NProgress, showToast } from '@nayan-ui/react';
 import { DialogSize } from '@nayan-ui/react';
 import { CheckCircle2, Download, X } from 'lucide-react';
-import { EXPORT_PRESETS, ExportCanceledError, exportProject, suggestBitrate } from '../engine/exporter';
-import type { ExportContainer, ExportPreset, ExportProgress } from '../engine/exporter';
+import {
+  EXPORT_FORMATS,
+  EXPORT_PRESETS,
+  ExportCanceledError,
+  exportProject,
+  findFormat,
+  isFormatSupported,
+  suggestBitrate
+} from '../engine/exporter';
+import type { ExportPreset, ExportProgress } from '../engine/exporter';
 import { pausePlayback, player } from '../engine/playerInstance';
 import { cn, download, formatBytes } from '../lib/utils';
 import { readEditorState, timelineDurationUs, useEditor } from '../store/editor';
 import { US } from '../types';
 import type { ExportSettings } from '../types';
 import { SelectField, ToggleChip } from './controls';
+
+/** Matches the exporter's mix rate, for the WAV size estimate. */
+const MIX_SAMPLE_RATE = 48_000;
 
 interface ExportDialogProps {
   isOpen: boolean;
@@ -43,13 +54,16 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
   const [width, setWidth] = useState(project.width);
   const [height, setHeight] = useState(project.height);
   const [fps, setFps] = useState(project.fps);
-  const [container, setContainer] = useState<ExportContainer>('mp4');
+  const [formatId, setFormatId] = useState('mp4');
+  /** Probed on open so a container only offers itself if it can actually encode here. */
+  const [supported, setSupported] = useState<Record<string, boolean>>({});
   const [quality, setQuality] = useState('1.2');
   const [includeAudio, setIncludeAudio] = useState(true);
   const [useRange, setUseRange] = useState(inPointUs !== null || outPointUs !== null);
   const [progress, setProgress] = useState<ExportProgress | null>(null);
   const [result, setResult] = useState<{ blob: Blob; filename: string } | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+
 
   // Closing the dialog cancels any run still in flight.
   useEffect(
@@ -65,14 +79,14 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
    * the real width/height let them disagree: the dialog opened showing 1080p
    * selected while a vertical project would actually export 1080x1920.
    */
-  const activePreset =
-    EXPORT_PRESETS.find(option => option.width === width && option.height === height && option.fps === fps && option.container === container) ?? null;
+  const activePreset = EXPORT_PRESETS.find(option => option.width === width && option.height === height && option.fps === fps) ?? null;
+  const format = findFormat(formatId);
+  const audioOnly = format.kind === 'audio';
 
   const applyPreset = (next: ExportPreset) => {
     setWidth(next.width);
     setHeight(next.height);
     setFps(next.fps);
-    setContainer(next.container);
     setQuality(String(next.qualityScale));
   };
 
@@ -81,10 +95,27 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
   const evenHeight = Math.max(2, Math.round(height / 2) * 2);
   const bitrate = Math.round(suggestBitrate(evenWidth, evenHeight, fps) * Number(quality));
 
+  useEffect(() => {
+    let cancelled = false;
+    void Promise.all(EXPORT_FORMATS.map(async option => [option.id, await isFormatSupported(option, evenWidth, evenHeight)] as const)).then(
+      entries => {
+        if (!cancelled) setSupported(Object.fromEntries(entries));
+      }
+    );
+    return () => {
+      cancelled = true;
+    };
+    // Probed once for the size the dialog opened at; re-probing per keystroke
+    // would spin up encoders on every change for no practical benefit.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const rangeStart = useRange ? (inPointUs ?? 0) : 0;
   const rangeEnd = useRange ? (outPointUs ?? durationUs) : durationUs;
   const spanUs = Math.max(0, rangeEnd - rangeStart);
-  const estimatedBytes = ((bitrate + (includeAudio ? 128_000 : 0)) / 8) * (spanUs / US);
+  // An audio-only bounce carries no video bitrate; WAV is uncompressed PCM.
+  const audioBytesPerSecond = format.id === 'wav' ? MIX_SAMPLE_RATE * 2 * 2 : 192_000 / 8;
+  const estimatedBytes = audioOnly ? audioBytesPerSecond * (spanUs / US) : ((bitrate + (includeAudio ? 192_000 : 0)) / 8) * (spanUs / US);
 
   const runExport = async () => {
     const state = readEditorState();
@@ -114,9 +145,9 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
         timelineDurationUs(state.clips),
         setProgress,
         controller.signal,
-        container
+        formatId
       );
-      const filename = `${state.project.name.replace(/[^\w\-. ]+/g, '_') || 'export'}.${container}`;
+      const filename = `${state.project.name.replace(/[^\w\-. ]+/g, '_') || 'export'}.${format.extension}`;
       setResult({ blob, filename });
       // Hand the file over immediately; the dialog keeps a link for a second go.
       download(blob, filename);
@@ -136,53 +167,58 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <div className="space-y-3">
-      <div>
-        <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted">Preset</span>
-        <div className="grid grid-cols-2 gap-1.5">
-          {EXPORT_PRESETS.map(option => (
-            <button
-              key={option.name}
-              type="button"
-              disabled={running}
-              onClick={() => applyPreset(option)}
-              aria-pressed={activePreset?.name === option.name}
-              className={cn(
-                'rounded-lg border px-2 py-1.5 text-left transition-colors disabled:opacity-50',
-                activePreset?.name === option.name ? 'border-accent bg-accent/10' : 'border-border hover:border-separator'
-              )}>
-              <span className="block text-[11px] font-medium text-foreground">{option.name}</span>
-              <span className="block text-[10px] text-muted">{option.description}</span>
-            </button>
-          ))}
+      {!audioOnly && (
+        <div>
+          <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted">Preset</span>
+          <div className="grid grid-cols-2 gap-1.5">
+            {EXPORT_PRESETS.map(option => (
+              <button
+                key={option.name}
+                type="button"
+                disabled={running}
+                onClick={() => applyPreset(option)}
+                aria-pressed={activePreset?.name === option.name}
+                className={cn(
+                  'rounded-lg border px-2 py-1.5 text-left transition-colors disabled:opacity-50',
+                  activePreset?.name === option.name ? 'border-accent bg-accent/10' : 'border-border hover:border-separator'
+                )}>
+                <span className="block text-[11px] font-medium text-foreground">{option.name}</span>
+                <span className="block text-[10px] text-muted">{option.description}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="grid grid-cols-2 gap-2">
         <SelectField label="Quality" value={quality} options={QUALITY_OPTIONS} onChange={setQuality} />
         <SelectField
           label="Format"
-          value={container}
-          options={[
-            { value: 'mp4' as const, label: 'MP4 (H.264)' },
-            { value: 'webm' as const, label: 'WebM (VP9)' }
-          ]}
-          onChange={setContainer}
+          value={formatId}
+          options={EXPORT_FORMATS.filter(option => supported[option.id] !== false).map(option => ({
+            value: option.id,
+            label: `${option.label} — ${option.detail}`
+          }))}
+          disabled={running}
+          onChange={setFormatId}
         />
       </div>
 
       <div className="flex gap-1.5">
-        <ToggleChip active={includeAudio} onClick={() => setIncludeAudio(value => !value)} label="Include the audio mix" className="flex-1">
-          {includeAudio ? 'Audio on' : 'Audio off'}
-        </ToggleChip>
+        {!audioOnly && (
+          <ToggleChip active={includeAudio} onClick={() => setIncludeAudio(value => !value)} label="Include the audio mix" className="flex-1">
+            {includeAudio ? 'Audio on' : 'Audio off'}
+          </ToggleChip>
+        )}
         <ToggleChip active={useRange} onClick={() => setUseRange(value => !value)} label="Export only the marked in/out range" className="flex-1">
           {useRange ? 'In/out range' : 'Whole timeline'}
         </ToggleChip>
       </div>
 
       <dl className="rounded-lg bg-surface-secondary px-3 py-2 text-xs">
-        <Row label="Output" value={`${evenWidth} × ${evenHeight} · ${fps} fps`} />
+        <Row label="Output" value={audioOnly ? `${format.label} · audio only` : `${evenWidth} × ${evenHeight} · ${fps} fps`} />
         <Row label="Duration" value={`${(spanUs / US).toFixed(1)}s`} />
-        <Row label="Bitrate" value={`${(bitrate / 1_000_000).toFixed(1)} Mbps`} />
+        {!audioOnly && <Row label="Bitrate" value={`${(bitrate / 1_000_000).toFixed(1)} Mbps`} />}
         <Row label="Estimated size" value={`~${formatBytes(estimatedBytes)}`} />
       </dl>
 

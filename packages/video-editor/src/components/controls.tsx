@@ -105,6 +105,7 @@ export const IconButton = ({
       variant="ghost"
       size="sm"
       onChange={onClick}
+      aria-label={label}
       className={cn('h-7 w-7 shrink-0', danger && 'hover:bg-danger hover:text-danger-foreground', className)}>
       {children}
     </NToggleButton>
@@ -125,7 +126,7 @@ export const ToggleChip = ({
   className?: string;
 }) => (
   <NTooltip message={label}>
-    <NToggleButton isSelected={active} variant="default" size="sm" onChange={onClick} className={cn('text-[11px]', className)}>
+    <NToggleButton isSelected={active} variant="default" size="sm" onChange={onClick} aria-label={label} className={cn('text-[11px]', className)}>
       {children}
     </NToggleButton>
   </NTooltip>
@@ -158,6 +159,7 @@ export const SegmentedControl = <T extends string>({
           variant="ghost"
           size="sm"
           onChange={() => onChange(option.value)}
+          aria-label={option.title}
           className="h-6 flex-1">
           {option.label}
         </NToggleButton>
@@ -333,8 +335,9 @@ export const TextField = ({
 
 /**
  * Wraps NSelect so callers can keep passing plain values rather than the
- * `{label, value}` objects react-select expects. NSelect also portals its menu
- * to the body, which matters here — the panels clip their overflow.
+ * `{label, value}` objects react-select expects. NSelect positions its menu
+ * `fixed`, which matters here twice over — the panels clip their overflow, and
+ * four of these live inside dialogs that swallow presses landing outside them.
  */
 export const SelectField = <T extends string>({
   label,
