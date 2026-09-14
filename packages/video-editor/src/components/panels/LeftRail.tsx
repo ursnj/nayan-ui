@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { NTooltip } from '@nayan-ui/react';
 import { Blend, FolderOpen, Image as ImageIcon, Sparkles, Type } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { BackgroundPanel, EffectsPanel, TextPanel, TransitionsPanel } from './LibraryPanels';
@@ -28,22 +27,23 @@ export const LeftRail = () => {
   return (
     <div className="island flex h-full min-h-0">
       <nav aria-label="Editor panels" className="flex w-14 shrink-0 flex-col gap-1 border-r border-border bg-editor-chrome py-2">
+        {/* No tooltips here: each tab already carries its name underneath the
+            icon, and a tooltip would only repeat it. The visible text is also
+            the accessible name, so nothing is lost by dropping it. */}
         {TABS.map(tab => (
-          <NTooltip key={tab.id} message={tab.label} placement="right">
-            <button
-              type="button"
-              onClick={() => setActive(tab.id)}
-              aria-label={tab.label}
-              aria-current={active === tab.id}
-              className={cn(
-                'relative mx-auto flex h-11 w-11 flex-col items-center justify-center gap-0.5 rounded-lg transition-colors',
-                active === tab.id ? 'bg-accent/15 text-accent' : 'text-muted hover:bg-default hover:text-foreground'
-              )}>
-              {active === tab.id && <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r bg-accent" />}
-              {tab.icon}
-              <span className="text-[9px] leading-none">{tab.label}</span>
-            </button>
-          </NTooltip>
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActive(tab.id)}
+            aria-current={active === tab.id}
+            className={cn(
+              'relative mx-auto flex h-11 w-11 flex-col items-center justify-center gap-0.5 rounded-lg transition-colors',
+              active === tab.id ? 'bg-accent/15 text-accent' : 'text-muted hover:bg-default hover:text-foreground'
+            )}>
+            {active === tab.id && <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r bg-accent" />}
+            {tab.icon}
+            <span className="text-[9px] leading-none">{tab.label}</span>
+          </button>
         ))}
       </nav>
 
