@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   Bookmark,
   Copy,
@@ -45,6 +45,8 @@ type DragState =
   | { kind: 'trim'; clipId: string; edge: TrimEdge };
 
 const ASSET_MIME = 'application/x-nayan-asset';
+/** Stable empty list, so a track with no clips doesn't break row memoisation. */
+const NO_CLIPS: Clip[] = [];
 const HEAD_HEIGHT = RULER_HEIGHT + MARKER_LANE_HEIGHT;
 
 export const Timeline = () => {
@@ -99,6 +101,21 @@ export const Timeline = () => {
     // Before the first measurement lands, something sane to render into.
     400
   );
+
+  /**
+   * Clips bucketed by track, built once per change instead of each row
+   * re-scanning the full list — that was O(tracks x clips) on every render,
+   * and every pointer move during a drag is a render.
+   */
+  const clipsByTrack = useMemo(() => {
+    const byTrack = new Map<string, Clip[]>();
+    for (const clip of clips) {
+      const list = byTrack.get(clip.trackId);
+      if (list) list.push(clip);
+      else byTrack.set(clip.trackId, [clip]);
+    }
+    return byTrack;
+  }, [clips]);
 
   /** Cumulative row offsets, so hit-testing works with per-track heights. */
   const rowOffsets = useMemo(() => {
@@ -386,6 +403,18 @@ export const Timeline = () => {
     [copySelection, deleteSelection, detachAudio, duplicateSelection, groupSelection, selectClip, splitAt, ungroupSelection, updateClip]
   );
 
+  /* Stable per-row handlers, so `memo` on ClipView and TrackRow actually holds. */
+  const handleSelectClip = useCallback((clip: Clip, additive: boolean) => selectClip(clip.id, additive), [selectClip]);
+  const handleTrimStart = useCallback(
+    (clip: Clip, event: React.PointerEvent, edge: TrimEdge) => beginDrag({ kind: 'trim', clipId: clip.id, edge }, event),
+    [beginDrag]
+  );
+  const handleDropAsset = useCallback(
+    (assetId: string, trackId: string, clientX: number) => addClipFromAsset(assetId, timeAt(clientX), trackId),
+    [addClipFromAsset, timeAt]
+  );
+  const handleLaneClick = useCallback(() => selectClip(null), [selectClip]);
+
   const zoomToFit = useCallback(() => {
     const element = scrollRef.current;
     const state = readEditorState();
@@ -498,7 +527,7 @@ export const Timeline = () => {
               key={track.id}
               track={track}
               index={index}
-              clips={clips}
+              clips={clipsByTrack.get(track.id) ?? NO_CLIPS}
               pxPerSec={pxPerSec}
               contentWidth={contentWidth}
               selectedClipIds={selectedClipIds}
@@ -506,12 +535,12 @@ export const Timeline = () => {
               canRemove={(track.kind === 'video' ? videoTrackCount : audioTrackCount) > 1}
               onUpdateTrack={patch => updateTrack(track.id, patch)}
               onRemoveTrack={() => removeTrack(track.id)}
-              onSelectClip={(clip, additive) => selectClip(clip.id, additive)}
+              onSelectClip={handleSelectClip}
               onClipPointerDown={onClipPointerDown}
-              onTrimStart={(clip, event, edge) => beginDrag({ kind: 'trim', clipId: clip.id, edge }, event)}
+              onTrimStart={handleTrimStart}
               onClipContextMenu={openClipMenu}
-              onDropAsset={(assetId, clientX) => addClipFromAsset(assetId, timeAt(clientX), track.id)}
-              onLaneClick={() => selectClip(null)}
+              onDropAsset={handleDropAsset}
+              onLaneClick={handleLaneClick}
             />
           ))}
 
@@ -540,7 +569,7 @@ export const Timeline = () => {
             style={{ height: HEAD_HEIGHT + tracksHeight }}
           />
 
-          <Playhead scrollRef={scrollRef} height={HEAD_HEIGHT + tracksHeight} />
+          <Playhead scrollRef={scrollRef} height={HEAD_HEIGHT + tracksHeight} viewportLeft={viewport.left} viewportWidth={viewport.width} />
         </div>
       </div>
 
@@ -660,75 +689,79 @@ interface TrackRowProps {
   onClipPointerDown: (clip: Clip, event: React.PointerEvent) => void;
   onTrimStart: (clip: Clip, event: React.PointerEvent, edge: TrimEdge) => void;
   onClipContextMenu: (clip: Clip, event: React.MouseEvent) => void;
-  onDropAsset: (assetId: string, clientX: number) => void;
+  onDropAsset: (assetId: string, trackId: string, clientX: number) => void;
   onLaneClick: () => void;
 }
 
-const TrackRow = ({
-  track,
-  index,
-  clips,
-  pxPerSec,
-  contentWidth,
-  selectedClipIds,
-  visibleRange,
-  canRemove,
-  onUpdateTrack,
-  onRemoveTrack,
-  onSelectClip,
-  onClipPointerDown,
-  onTrimStart,
-  onClipContextMenu,
-  onDropAsset,
-  onLaneClick
-}: TrackRowProps) => {
-  // Only render what's near the viewport — a long project can hold hundreds of
-  // clips, and off-screen ones cost layout for nothing.
-  const trackClips = clips.filter(clip => clip.trackId === track.id && clip.startUs < visibleRange.endUs && clipEndUs(clip) > visibleRange.startUs);
+const TrackRow = memo(
+  ({
+    track,
+    index,
+    clips,
+    pxPerSec,
+    contentWidth,
+    selectedClipIds,
+    visibleRange,
+    canRemove,
+    onUpdateTrack,
+    onRemoveTrack,
+    onSelectClip,
+    onClipPointerDown,
+    onTrimStart,
+    onClipContextMenu,
+    onDropAsset,
+    onLaneClick
+  }: TrackRowProps) => {
+    // Only render what's near the viewport — a long project can hold hundreds of
+    // clips, and off-screen ones cost layout for nothing.
+    const trackClips = clips.filter(clip => clip.trackId === track.id && clip.startUs < visibleRange.endUs && clipEndUs(clip) > visibleRange.startUs);
 
-  return (
-    <div className="flex">
-      <TrackHeader track={track} canRemove={canRemove} onUpdate={onUpdateTrack} onRemove={onRemoveTrack} />
-      <div
-        style={{ width: contentWidth, height: track.height }}
-        className={cn(
-          'relative border-b border-border',
-          index % 2 === 0 ? 'bg-editor-track' : 'bg-editor-track-alt',
-          track.locked && 'opacity-60',
-          track.hidden && 'opacity-40'
-        )}
-        onPointerDown={event => {
-          if (event.target === event.currentTarget) onLaneClick();
-        }}
-        onDragOver={event => {
-          if (!event.dataTransfer.types.includes(ASSET_MIME)) return;
-          event.preventDefault();
-          event.dataTransfer.dropEffect = 'copy';
-        }}
-        onDrop={event => {
-          const assetId = event.dataTransfer.getData(ASSET_MIME);
-          if (!assetId) return;
-          event.preventDefault();
-          onDropAsset(assetId, event.clientX);
-        }}>
-        {trackClips.map(clip => (
-          <ClipView
-            key={clip.id}
-            clip={clip}
-            pxPerSec={pxPerSec}
-            rowHeight={track.height}
-            selected={selectedClipIds.includes(clip.id)}
-            trackLocked={track.locked}
-            onSelect={additive => onSelectClip(clip, additive)}
-            onMoveStart={event => onClipPointerDown(clip, event)}
-            onTrimStart={(event, edge) => onTrimStart(clip, event, edge)}
-            onContextMenu={event => onClipContextMenu(clip, event)}
-          />
-        ))}
+    return (
+      <div className="flex">
+        <TrackHeader track={track} canRemove={canRemove} onUpdate={onUpdateTrack} onRemove={onRemoveTrack} />
+        <div
+          style={{ width: contentWidth, height: track.height }}
+          className={cn(
+            'relative border-b border-border',
+            index % 2 === 0 ? 'bg-editor-track' : 'bg-editor-track-alt',
+            track.locked && 'opacity-60',
+            track.hidden && 'opacity-40'
+          )}
+          onPointerDown={event => {
+            if (event.target === event.currentTarget) onLaneClick();
+          }}
+          onDragOver={event => {
+            if (!event.dataTransfer.types.includes(ASSET_MIME)) return;
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'copy';
+          }}
+          onDrop={event => {
+            const assetId = event.dataTransfer.getData(ASSET_MIME);
+            if (!assetId) return;
+            event.preventDefault();
+            onDropAsset(assetId, track.id, event.clientX);
+          }}>
+          {trackClips.map(clip => (
+            <ClipView
+              key={clip.id}
+              clip={clip}
+              pxPerSec={pxPerSec}
+              rowHeight={track.height}
+              selected={selectedClipIds.includes(clip.id)}
+              trackLocked={track.locked}
+              onSelect={onSelectClip}
+              onMoveStart={onClipPointerDown}
+              onTrimStart={onTrimStart}
+              onContextMenu={onClipContextMenu}
+            />
+          ))}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
+
+TrackRow.displayName = 'TrackRow';
 
 /* ------------------------------------------------------------------ *
  * Playhead
@@ -739,7 +772,17 @@ const TrackRow = ({
  * playback re-renders this marker instead of the entire timeline, and moves
  * with a transform so it never triggers layout.
  */
-const Playhead = ({ scrollRef, height }: { scrollRef: React.RefObject<HTMLDivElement | null>; height: number }) => {
+const Playhead = ({
+  scrollRef,
+  height,
+  viewportLeft,
+  viewportWidth
+}: {
+  scrollRef: React.RefObject<HTMLDivElement | null>;
+  height: number;
+  viewportLeft: number;
+  viewportWidth: number;
+}) => {
   const playheadUs = useEditor(state => state.playheadUs);
   const pxPerSec = useEditor(state => state.pxPerSec);
   const isPlaying = useEditor(state => state.isPlaying);
@@ -750,12 +793,15 @@ const Playhead = ({ scrollRef, height }: { scrollRef: React.RefObject<HTMLDivEle
     const element = scrollRef.current;
     if (!element) return;
     // Keep the playhead in view during playback, nudging rather than centring.
-    const visibleLeft = element.scrollLeft + HEADER_WIDTH;
-    const visibleRight = element.scrollLeft + element.clientWidth;
+    // The bounds come from the measured viewport rather than reading
+    // `scrollLeft` here: this effect runs on every animation frame, and a
+    // layout read that often forces a style recalc for nothing.
+    const visibleLeft = viewportLeft + HEADER_WIDTH;
+    const visibleRight = viewportLeft + viewportWidth;
     if (left < visibleLeft || left > visibleRight - 80) {
-      element.scrollLeft = Math.max(0, left - HEADER_WIDTH - element.clientWidth / 3);
+      element.scrollLeft = Math.max(0, left - HEADER_WIDTH - viewportWidth / 3);
     }
-  }, [left, isPlaying, scrollRef]);
+  }, [left, isPlaying, scrollRef, viewportLeft, viewportWidth]);
 
   return (
     <div className="pointer-events-none absolute top-0 z-[25]" style={{ height, transform: `translateX(${left}px)`, willChange: 'transform' }}>

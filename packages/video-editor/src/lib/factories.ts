@@ -1,6 +1,6 @@
+import { MIN_ROW_HEIGHT } from '../components/timeline/constants';
 import { CLIP_COLORS, DEFAULT_CHROMA, DEFAULT_COLOR, DEFAULT_CROP, DEFAULT_TRANSFORM, US } from '../types';
 import type { MediaAsset, MediaClip, TextClip, Track, TrackKind } from '../types';
-import { MIN_ROW_HEIGHT } from '../components/timeline/constants';
 import { uid } from './utils';
 
 let colorCursor = 0;

@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { makeMediaClip, makeTextClip, makeTrack } from '../lib/factories';
 import { removeKeyAt, scaleAnimations, shiftAnimations, splitAnimations, upsertKey } from '../lib/keyframes';
 import { clamp, uid } from '../lib/utils';
-import { releaseAsset, releaseReader } from '../media/library';
+import { releaseAllReaders, releaseAsset, releaseReader } from '../media/library';
 import { US, clipEndUs, isMediaClip } from '../types';
 import type { Clip, Marker, MediaAsset, ProjectSettings, TextClip, Track, TrackKind, TransitionKind } from '../types';
 
@@ -623,7 +623,17 @@ export const useEditor = create<EditorState>((set, get) => {
         return { tracks: insertTrack(state.tracks, makeTrack(kind, count)) };
       }),
 
-    updateTrack: (trackId, patch) => set(state => ({ tracks: state.tracks.map(track => (track.id === trackId ? { ...track, ...patch } : track)) })),
+    updateTrack: (trackId, patch) => {
+      const apply = (state: EditorState) => ({
+        tracks: state.tracks.map(track => (track.id === trackId ? { ...track, ...patch } : track))
+      });
+      // Height, level and name all change continuously — from a drag or a
+      // keystroke — and would flood the undo stack. The toggles are single
+      // decisions, so those get recorded.
+      const continuous = 'height' in patch || 'volume' in patch || 'name' in patch;
+      if (continuous) set(apply);
+      else commit(apply);
+    },
 
     removeTrack: trackId => {
       const doomed = get().clips.filter(clip => clip.trackId === trackId);
@@ -677,7 +687,10 @@ export const useEditor = create<EditorState>((set, get) => {
     setInPoint: timeUs => set({ inPointUs: timeUs }),
     setOutPoint: timeUs => set({ outPointUs: timeUs }),
 
-    loadProject: data =>
+    loadProject: data => {
+      // Every clip id is about to be replaced, so the decoders keyed to the
+      // old ones would sit in the pool until eviction pushed them out.
+      void releaseAllReaders();
       set(state => ({
         project: data.project,
         tracks: data.tracks,
@@ -687,9 +700,11 @@ export const useEditor = create<EditorState>((set, get) => {
         playheadUs: 0,
         past: [...state.past, snapshotOf(state)].slice(-MAX_HISTORY),
         future: []
-      })),
+      }));
+    },
 
-    resetProject: () =>
+    resetProject: () => {
+      void releaseAllReaders();
       set(state => ({
         project: DEFAULT_PROJECT,
         tracks: [makeTrack('video', 1), makeTrack('audio', 1)],
@@ -701,7 +716,8 @@ export const useEditor = create<EditorState>((set, get) => {
         outPointUs: null,
         past: [...state.past, snapshotOf(state)].slice(-MAX_HISTORY),
         future: []
-      })),
+      }));
+    },
 
     /* ---------------- history ---------------- */
 

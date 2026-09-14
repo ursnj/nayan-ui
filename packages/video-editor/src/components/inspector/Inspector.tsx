@@ -84,19 +84,26 @@ export const Inspector = () => {
 
 type Patch = (changes: Partial<Clip>) => void;
 
-/** Keyframe state for a property path at the current playhead. */
+/**
+ * Keyframe state for a property path at the current playhead.
+ *
+ * The selector returns the *boolean* rather than the playhead, so the section
+ * only re-renders when a key actually comes under the playhead. Selecting
+ * `playheadUs` here re-rendered the whole inspector — every section calls this
+ * hook — sixty times a second for the entire duration of playback.
+ */
 const useKeyframeState = (clip: Clip, path: string) => {
-  const playheadUs = useEditor(state => state.playheadUs);
-  const fps = useEditor(state => state.project.fps);
   const keys = clip.animations[path];
-  const localUs = playheadUs - clip.startUs;
-  const tolerance = US / (fps * 2);
-  return {
-    clipId: clip.id,
-    path,
-    animated: (keys?.length ?? 0) > 0,
-    active: keys?.some(key => Math.abs(key.atUs - localUs) <= tolerance) ?? false
-  };
+  const animated = (keys?.length ?? 0) > 0;
+
+  const active = useEditor(state => {
+    if (!keys || keys.length === 0) return false;
+    const localUs = state.playheadUs - clip.startUs;
+    const tolerance = US / (state.project.fps * 2);
+    return keys.some(key => Math.abs(key.atUs - localUs) <= tolerance);
+  });
+
+  return { clipId: clip.id, path, animated, active };
 };
 
 const ClipHeader = ({ clip }: { clip: Clip }) => (

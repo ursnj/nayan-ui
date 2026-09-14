@@ -40,7 +40,6 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
   const inPointUs = useEditor(state => state.inPointUs);
   const outPointUs = useEditor(state => state.outPointUs);
 
-  const [preset, setPreset] = useState<ExportPreset | null>(EXPORT_PRESETS[0]);
   const [width, setWidth] = useState(project.width);
   const [height, setHeight] = useState(project.height);
   const [fps, setFps] = useState(project.fps);
@@ -61,8 +60,15 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
     []
   );
 
+  /*
+   * The highlight is derived rather than stored. Tracking a `preset` alongside
+   * the real width/height let them disagree: the dialog opened showing 1080p
+   * selected while a vertical project would actually export 1080x1920.
+   */
+  const activePreset =
+    EXPORT_PRESETS.find(option => option.width === width && option.height === height && option.fps === fps && option.container === container) ?? null;
+
   const applyPreset = (next: ExportPreset) => {
-    setPreset(next);
     setWidth(next.width);
     setHeight(next.height);
     setFps(next.fps);
@@ -139,10 +145,10 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
               type="button"
               disabled={running}
               onClick={() => applyPreset(option)}
-              aria-pressed={preset?.name === option.name}
+              aria-pressed={activePreset?.name === option.name}
               className={cn(
                 'rounded-lg border px-2 py-1.5 text-left transition-colors disabled:opacity-50',
-                preset?.name === option.name ? 'border-accent bg-accent/10' : 'border-border hover:border-separator'
+                activePreset?.name === option.name ? 'border-accent bg-accent/10' : 'border-border hover:border-separator'
               )}>
               <span className="block text-[11px] font-medium text-foreground">{option.name}</span>
               <span className="block text-[10px] text-muted">{option.description}</span>

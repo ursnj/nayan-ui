@@ -82,7 +82,14 @@ const scheduleVolumeCurve = (
   atTime: (timelineUs: number) => number,
   trackVolume: number
 ) => {
-  const stepUs = 20_000; // 50 Hz is well below any audible stepping.
+  /*
+   * 50 Hz is well below any audible stepping, but a fixed step means a long
+   * clip mints an automation event every 20ms — a ten-minute clip would queue
+   * thirty thousand of them on the audio thread. Cap the total and let the
+   * step stretch instead; a volume envelope never needs that resolution.
+   */
+  const MAX_POINTS = 400;
+  const stepUs = Math.max(20_000, (endUs - entryUs) / MAX_POINTS);
   for (let t = entryUs; t <= endUs; t += stepUs) {
     const value = animatedValue(clip, 'volume', clip.volume, t) * trackVolume;
     const when = Math.max(0, atTime(t));

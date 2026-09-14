@@ -122,7 +122,16 @@ export const SliderField = ({ label, value, min, max, step = 1, format, onChange
 
   const onPointerDown = useCallback(() => {
     beginInteraction();
-    window.addEventListener('pointerup', () => endInteraction(), { once: true });
+    // Listen for cancel as well as up: a pointer that leaves the window or is
+    // interrupted never fires `pointerup`, which would strand the interaction
+    // flag and silently swallow the next undo entry.
+    const finish = () => {
+      endInteraction();
+      window.removeEventListener('pointerup', finish);
+      window.removeEventListener('pointercancel', finish);
+    };
+    window.addEventListener('pointerup', finish);
+    window.addEventListener('pointercancel', finish);
   }, [beginInteraction, endInteraction]);
 
   const display = format ? format(value) : String(Math.round(value * 100) / 100);

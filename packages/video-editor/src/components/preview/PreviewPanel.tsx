@@ -226,8 +226,13 @@ const LiveMeter = () => {
   const [level, setLevel] = useState(0);
 
   useEffect(() => {
-    let frame = requestAnimationFrame(function tick() {
-      setLevel(player.audio.peakLevel());
+    // A level meter reads fine at 20fps, and this is a React render each time.
+    let last = 0;
+    let frame = requestAnimationFrame(function tick(now: number) {
+      if (now - last >= 50) {
+        last = now;
+        setLevel(player.audio.peakLevel());
+      }
       frame = requestAnimationFrame(tick);
     });
     return () => cancelAnimationFrame(frame);
