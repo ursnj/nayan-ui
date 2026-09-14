@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { NButton, NDialog, NInput, showToast } from '@nayan-ui/react';
+import { NButton, NConfirmAlert, NDialog, NInput, showToast } from '@nayan-ui/react';
 import { DialogSize } from '@nayan-ui/react';
 import { Clapperboard, Download, FileDown, FilePlus2, FileUp, Moon, Redo2, Settings, Sun, Undo2 } from 'lucide-react';
 import { download } from '../../lib/utils';
@@ -44,7 +44,22 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
   const clipCount = useEditor(state => state.clips.length);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [confirmNew, setConfirmNew] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  /*
+   * Gated on clips, not on assets: `resetProject` empties the timeline and
+   * restores the project settings, but leaves the imported media alone — so
+   * with nothing on the timeline there is nothing to warn about, and a dialog
+   * in front of a no-op is just a click to dismiss.
+   */
+  const startNewProject = () => {
+    if (clipCount === 0) {
+      resetProject();
+      return;
+    }
+    setConfirmNew(true);
+  };
 
   const saveProject = () => {
     const data = serialiseProject(readEditorState());
@@ -83,7 +98,7 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
       />
 
       <div className="ml-2 flex shrink-0 items-center gap-0.5">
-        <IconButton label="New project" onClick={resetProject}>
+        <IconButton label="New project" onClick={startNewProject}>
           <FilePlus2 className="h-4 w-4" />
         </IconButton>
         <IconButton label="Open project" onClick={() => fileRef.current?.click()}>
@@ -133,6 +148,18 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
           Export
         </NButton>
       </div>
+
+      <NConfirmAlert
+        isOpen={confirmNew}
+        title="Start a new project?"
+        message="This clears the timeline and resets the project settings. Your imported media stays in the Media panel, and Undo will bring the edit back — but nothing is saved automatically, so export or save the project first if you want to keep it."
+        confirmText="Discard and start new"
+        cancelText="Keep editing"
+        onResult={confirmed => {
+          if (confirmed) resetProject();
+        }}
+        onClose={() => setConfirmNew(false)}
+      />
 
       <NDialog isOpen={settingsOpen} title="Project settings" size={DialogSize.SM} onClose={() => setSettingsOpen(false)}>
         <div className="space-y-1">
