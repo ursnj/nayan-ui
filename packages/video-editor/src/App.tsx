@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { NTheme, THEMES, showToast, useLocalStorage } from '@nayan-ui/react';
 import { ExportDialog } from './components/ExportDialog';
 import { Inspector } from './components/inspector/Inspector';
@@ -24,6 +24,17 @@ const hasWebCodecs = typeof window !== 'undefined' && 'VideoEncoder' in window &
  * At 1024px they leave exactly: 432 library + 320 preview + 240 inspector,
  * plus the app padding and two gutters.
  */
+/*
+ * Defaults for everything the editor remembers between visits.
+ *
+ * Named rather than inlined at the `useLocalStorage` call, so the reset in
+ * Project settings restores the same values the editor first opened with
+ * instead of a second set that can quietly drift from them.
+ */
+const DEFAULT_LIBRARY_WIDTH = 360;
+const DEFAULT_INSPECTOR_WIDTH = 300;
+const DEFAULT_TIMELINE_HEIGHT = 240;
+
 const LIBRARY_MIN = 220;
 const INSPECTOR_MIN = 240;
 const MIN_PREVIEW_WIDTH = 320;
@@ -39,10 +50,23 @@ function App() {
 
   const [exportOpen, setExportOpen] = useState(false);
 
-  const [libraryWidth, setLibraryWidth] = useLocalStorage('EDITOR_LIBRARY_W', 320);
-  const [inspectorWidth, setInspectorWidth] = useLocalStorage('EDITOR_INSPECTOR_W', 300);
-  const [timelineHeight, setTimelineHeight] = useLocalStorage('EDITOR_TIMELINE_H', 300);
+  const [libraryWidth, setLibraryWidth] = useLocalStorage('EDITOR_LIBRARY_W', DEFAULT_LIBRARY_WIDTH);
+  const [inspectorWidth, setInspectorWidth] = useLocalStorage('EDITOR_INSPECTOR_W', DEFAULT_INSPECTOR_WIDTH);
+  const [timelineHeight, setTimelineHeight] = useLocalStorage('EDITOR_TIMELINE_H', DEFAULT_TIMELINE_HEIGHT);
   const hasRoom = useHasRoom();
+
+  /*
+   * Writes the defaults back rather than clearing the keys: these values are
+   * React state as well as stored strings, so removing them would leave the
+   * running layout untouched until a reload.
+   */
+  const resetPreferences = useCallback(() => {
+    setLibraryWidth(DEFAULT_LIBRARY_WIDTH);
+    setInspectorWidth(DEFAULT_INSPECTOR_WIDTH);
+    setTimelineHeight(DEFAULT_TIMELINE_HEIGHT);
+    setTheme(THEMES.DARK);
+    showToast('Panel sizes and theme are back to how the editor ships.', 'Layout reset');
+  }, [setInspectorWidth, setLibraryWidth, setTheme, setTimelineHeight]);
 
   useEffect(() => {
     if (!hasWebCodecs) {
@@ -68,6 +92,7 @@ function App() {
           theme={theme}
           onToggleTheme={() => setTheme(theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK)}
           onExport={() => setExportOpen(true)}
+          onResetPreferences={resetPreferences}
         />
 
         {/* Stage over timeline, then library / preview / inspector across the stage. */}
