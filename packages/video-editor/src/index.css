@@ -48,7 +48,6 @@
   /* Editor-specific */
   --editor-chrome: hsl(220 22% 97%);
   --editor-panel: hsl(0 0% 100%);
-  --editor-canvas: hsl(220 13% 83%);
   --editor-track: hsl(220 20% 95%);
   --editor-track-alt: hsl(220 18% 92%);
   --editor-ruler: hsl(220 20% 96%);
@@ -115,12 +114,6 @@
   --editor-chrome: hsl(224 13% 21%);
   --editor-panel: hsl(224 14% 16%);
   /*
-   * The video stage is recessed inside the preview island, but stays lighter
-   * than the gutter — otherwise that island would sink into the background
-   * while every other one floats.
-   */
-  --editor-canvas: hsl(226 18% 10%);
-  /*
    * Lanes sit below the panel so the track area reads as a well, with the
    * sticky header column and ruler above it at chrome level. The gap between
    * the two lane tones is the row striping and is meant to be faint.
@@ -136,7 +129,12 @@
 @theme inline {
   --color-editor-chrome: var(--editor-chrome);
   --color-editor-panel: var(--editor-panel);
-  --color-editor-canvas: var(--editor-canvas);
+  /*
+   * The video stage matches the rail and the panel chrome rather than having
+   * a tone of its own. Aliasing the token instead of defining it per theme
+   * means the two can never drift apart in one mode and not the other.
+   */
+  --color-editor-canvas: var(--editor-chrome);
   --color-editor-track: var(--editor-track);
   --color-editor-track-alt: var(--editor-track-alt);
   --color-editor-ruler: var(--editor-ruler);

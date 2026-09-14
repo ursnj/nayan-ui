@@ -85,7 +85,7 @@ export const PreviewPanel = () => {
 
   return (
     <section className="island flex min-h-0 min-w-0 flex-1 flex-col">
-      <div className="flex items-center gap-1 border-b border-border bg-editor-chrome px-2 py-1">
+      <div className="flex items-center gap-1 border-b border-border bg-editor-panel px-2 py-1">
         <IconButton label="Transform handles" onClick={() => setShowOverlay(value => !value)} active={showOverlay}>
           <MousePointer2 className="h-4 w-4" />
         </IconButton>
@@ -149,7 +149,7 @@ export const PreviewPanel = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-1 border-t border-border bg-editor-chrome px-3 py-1.5">
+      <div className="flex items-center gap-1 border-t border-border bg-editor-panel px-3 py-1.5">
         <IconButton label="Jump to start" onClick={() => seekTo(0)}>
           <SkipBack className="h-4 w-4" />
         </IconButton>
