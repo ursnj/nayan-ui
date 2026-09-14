@@ -15,9 +15,19 @@ import {
 } from 'lucide-react';
 import { cn, formatTimecode } from '../../lib/utils';
 import { primarySelectedClip, useEditor } from '../../store/editor';
-import { clipEndUs, COLOR_PRESETS, DEFAULT_COLOR, DEFAULT_CROP, DEFAULT_TRANSFORM, isMediaClip, isTextClip, TRANSITION_LABELS, US } from '../../types';
+import {
+  COLOR_PRESETS,
+  DEFAULT_COLOR,
+  DEFAULT_CROP,
+  DEFAULT_TRANSFORM,
+  TRANSITION_LABELS,
+  US,
+  clipEndUs,
+  isMediaClip,
+  isTextClip
+} from '../../types';
 import type { Clip, MediaClip, TextAlign, TextAnimation, TextClip, TransitionKind } from '../../types';
-import { ColorField, EmptyState, FieldRow, SegmentedControl, SelectField, Section, SliderField, TextField, ToggleChip } from '../controls';
+import { ColorField, EmptyState, FieldRow, Section, SegmentedControl, SelectField, SliderField, TextField, ToggleChip } from '../controls';
 
 const SPEEDS = [0.5, 1, 1.5, 2];
 
@@ -43,7 +53,7 @@ export const Inspector = () => {
   );
 
   return (
-    <aside className="flex h-full min-h-0 flex-col bg-editor-panel">
+    <aside className="island flex h-full min-h-0 flex-col">
       <header className="flex items-center gap-2 border-b border-border px-3 py-2.5">
         <h2 className="flex-1 text-[11px] font-semibold uppercase tracking-wider text-muted">Properties</h2>
         {selectionCount > 1 && <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[10px] text-accent">{selectionCount} selected</span>}
@@ -168,7 +178,11 @@ const BasicsSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
               ))}
             </div>
           </FieldRow>
-          <ToggleChip active={media.reversed} onClick={() => patch({ reversed: !media.reversed } as Partial<Clip>)} label="Play backwards" className="w-full">
+          <ToggleChip
+            active={media.reversed}
+            onClick={() => patch({ reversed: !media.reversed } as Partial<Clip>)}
+            label="Play backwards"
+            className="w-full">
             Reverse
           </ToggleChip>
         </>
@@ -470,7 +484,12 @@ const TextSection = ({ clip, patch }: { clip: TextClip; patch: Patch }) => {
       </div>
 
       <ColorField label="Text colour" value={clip.textColor} onChange={textColor => patch({ textColor } as Partial<Clip>)} />
-      <ColorField label="Background" value={clip.backgroundColor} allowAlpha onChange={backgroundColor => patch({ backgroundColor } as Partial<Clip>)} />
+      <ColorField
+        label="Background"
+        value={clip.backgroundColor}
+        allowAlpha
+        onChange={backgroundColor => patch({ backgroundColor } as Partial<Clip>)}
+      />
 
       <SliderField
         label="Outline"
@@ -482,7 +501,9 @@ const TextSection = ({ clip, patch }: { clip: TextClip; patch: Patch }) => {
         onChange={strokeWidth => patch({ strokeWidth } as Partial<Clip>)}
         resetTo={0}
       />
-      {clip.strokeWidth > 0 && <ColorField label="Outline colour" value={clip.strokeColor} onChange={strokeColor => patch({ strokeColor } as Partial<Clip>)} />}
+      {clip.strokeWidth > 0 && (
+        <ColorField label="Outline colour" value={clip.strokeColor} onChange={strokeColor => patch({ strokeColor } as Partial<Clip>)} />
+      )}
 
       <SelectField
         label="Animation"

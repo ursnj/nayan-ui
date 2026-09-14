@@ -75,15 +75,21 @@ export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start
       {/*
         The wrappers are flex columns, not plain blocks: a block wrapper gives
         its child no height to resolve `flex-1` against, so a pane's content
-        sizes itself and spills over the divider into the pane below.
+        sizes itself and spills over the divider into the pane below. They
+        deliberately don't clip — that would cut off each island's shadow.
       */}
       <div
         ref={firstRef}
-        className="flex min-h-0 min-w-0 flex-col overflow-hidden"
+        className="flex min-h-0 min-w-0 flex-col"
         style={anchor === 'start' ? { flexBasis: size, flexGrow: 0, flexShrink: 0 } : { flexBasis: 'auto', flexGrow: 1, flexShrink: 1 }}>
         {children[0]}
       </div>
 
+      {/*
+        The divider *is* the gutter between two islands, so it needs no line of
+        its own — it's a transparent strip that shows a grab pill on hover.
+        That also makes it comfortably large to hit, which a 1px rule never is.
+      */}
       <div
         role="separator"
         aria-orientation={horizontal ? 'vertical' : 'horizontal'}
@@ -98,23 +104,21 @@ export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start
           if (!horizontal && event.key === 'ArrowDown') onResize(clamp(size + step, min, max));
         }}
         className={cn(
-          'group relative shrink-0 bg-border transition-colors focus-visible:outline-none',
-          horizontal ? 'w-px cursor-col-resize' : 'h-px cursor-row-resize',
-          dragging && 'bg-accent'
+          'group flex shrink-0 items-center justify-center focus-visible:outline-none',
+          horizontal ? 'w-2 cursor-col-resize' : 'h-2 cursor-row-resize'
         )}>
-        {/* A 1px divider is impossible to grab, so widen the hit area invisibly. */}
         <span
           className={cn(
-            'absolute z-30 group-hover:bg-accent/40 group-focus-visible:bg-accent',
-            horizontal ? '-inset-x-1.5 inset-y-0' : '-inset-y-1.5 inset-x-0',
-            dragging && 'bg-accent/40'
+            'rounded-full transition-colors',
+            horizontal ? 'h-10 w-1' : 'h-1 w-10',
+            dragging ? 'bg-accent' : 'bg-transparent group-hover:bg-separator group-focus-visible:bg-accent'
           )}
         />
       </div>
 
       <div
         ref={secondRef}
-        className="flex min-h-0 min-w-0 flex-col overflow-hidden"
+        className="flex min-h-0 min-w-0 flex-col"
         style={anchor === 'end' ? { flexBasis: size, flexGrow: 0, flexShrink: 0 } : { flexBasis: 'auto', flexGrow: 1, flexShrink: 1 }}>
         {children[1]}
       </div>

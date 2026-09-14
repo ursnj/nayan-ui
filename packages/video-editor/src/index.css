@@ -181,6 +181,23 @@ textarea,
   border-color: var(--border);
 }
 
+/*
+ * Each region of the editor sits on its own raised card with the app
+ * background showing through between them. The gutter does the separating, so
+ * the borders can stay quiet and the eye groups by shape rather than by line.
+ *
+ * `overflow: hidden` keeps scrolling content inside the radius. It doesn't trap
+ * the context menu or command palette — both are `position: fixed`, and no
+ * island establishes a containing block for them.
+ */
+@utility island {
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--editor-panel);
+  box-shadow: var(--elevation);
+}
+
 @utility elevate {
   box-shadow: var(--elevation);
 }

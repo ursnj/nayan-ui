@@ -25,7 +25,7 @@ export const LeftRail = () => {
   const [active, setActive] = useState<PanelId>('media');
 
   return (
-    <div className="flex h-full min-h-0">
+    <div className="island flex h-full min-h-0">
       <nav aria-label="Editor panels" className="flex w-14 shrink-0 flex-col gap-1 border-r border-border bg-editor-chrome py-2">
         {TABS.map(tab => (
           <NTooltip key={tab.id} message={tab.label} placement="right">

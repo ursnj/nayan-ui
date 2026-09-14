@@ -16,7 +16,7 @@ import {
   Volume2,
   VolumeX
 } from 'lucide-react';
-import { jumpToEdge, pausePlayback, player, seekTo, stepFrames, togglePlayback } from '../../engine/playerInstance';
+import { pausePlayback, player, seekTo, stepFrames, togglePlayback } from '../../engine/playerInstance';
 import { cn, download, formatTimecode } from '../../lib/utils';
 import { primarySelectedClip, timelineDurationUs, useEditor } from '../../store/editor';
 import { IconButton } from '../controls';
@@ -88,7 +88,7 @@ export const PreviewPanel = () => {
   const overlayVisible = showOverlay && selected !== null && selected.kind !== 'audio' && displaySize.width > 0;
 
   return (
-    <section className="flex min-h-0 min-w-0 flex-1 flex-col bg-editor-canvas">
+    <section className="island flex min-h-0 min-w-0 flex-1 flex-col">
       <div className="flex items-center gap-1 border-b border-border bg-editor-chrome px-2 py-1">
         <IconButton label="Transform handles" onClick={() => setShowOverlay(value => !value)} active={showOverlay}>
           <MousePointer2 className="h-4 w-4" />
@@ -111,10 +111,10 @@ export const PreviewPanel = () => {
         </span>
       </div>
 
-      <div className="flex min-h-0 flex-1 items-center justify-center p-4">
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-editor-canvas p-4">
         <div
           ref={frameRef}
-          className="checkerboard relative max-h-full max-w-full overflow-hidden rounded-lg elevate-lg"
+          className="checkerboard relative max-h-full max-w-full overflow-hidden rounded-md elevate"
           style={{ aspectRatio: `${project.width} / ${project.height}` }}>
           <canvas ref={canvasRef} width={project.width} height={project.height} className="block h-full w-full" />
 
@@ -148,17 +148,14 @@ export const PreviewPanel = () => {
       </div>
 
       <div className="flex items-center gap-1 border-t border-border bg-editor-chrome px-3 py-1.5">
-        <IconButton label="Jump to start (Home)" onClick={() => seekTo(0)}>
+        <IconButton label="Jump to start" onClick={() => seekTo(0)}>
           <SkipBack className="h-4 w-4" />
         </IconButton>
-        <IconButton label="Previous edit (↑)" onClick={() => jumpToEdge(-1)}>
+        <IconButton label="Previous frame" onClick={() => stepFrames(-1)}>
           <ChevronLeft className="h-4 w-4" />
         </IconButton>
-        <IconButton label="Previous frame (←)" onClick={() => stepFrames(-1)}>
-          <ChevronLeft className="h-3.5 w-3.5" />
-        </IconButton>
 
-        <NTooltip message={isPlaying ? 'Pause (Space)' : 'Play (Space)'}>
+        <NTooltip message={isPlaying ? 'Pause' : 'Play'}>
           <button
             type="button"
             onClick={() => void togglePlayback()}
@@ -172,13 +169,10 @@ export const PreviewPanel = () => {
           </button>
         </NTooltip>
 
-        <IconButton label="Next frame (→)" onClick={() => stepFrames(1)}>
-          <ChevronRight className="h-3.5 w-3.5" />
-        </IconButton>
-        <IconButton label="Next edit (↓)" onClick={() => jumpToEdge(1)}>
+        <IconButton label="Next frame" onClick={() => stepFrames(1)}>
           <ChevronRight className="h-4 w-4" />
         </IconButton>
-        <IconButton label="Jump to end (End)" onClick={() => seekTo(durationUs)}>
+        <IconButton label="Jump to end" onClick={() => seekTo(durationUs)}>
           <SkipForward className="h-4 w-4" />
         </IconButton>
         <IconButton label="Loop playback" onClick={() => setLoop(value => !value)} active={loop}>

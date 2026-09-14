@@ -1,7 +1,7 @@
 import { animatedValue } from '../lib/keyframes';
 import { clamp } from '../lib/utils';
 import { getImageBitmap, getReader } from '../media/library';
-import { clipEndUs, isMediaClip, isTextClip, sourceTimeUs, TEXT_LINE_HEIGHT, US } from '../types';
+import { TEXT_LINE_HEIGHT, US, clipEndUs, isMediaClip, isTextClip, sourceTimeUs } from '../types';
 import type { Clip, ColorAdjust, MediaClip, ProjectSettings, TextClip, Track, Transform } from '../types';
 import { blurOnlyFilter, canvasFilterString, exportProcessor, needsPixelProcessing, previewProcessor } from './glProcessor';
 import { transitionStateAt } from './transitions';
@@ -236,12 +236,7 @@ const resolveImageSource = (clip: MediaClip): ResolvedSource | null => {
   return { source: bitmap, sourceWidth: bitmap.width, sourceHeight: bitmap.height };
 };
 
-const resolveVideoSource = async (
-  clip: MediaClip,
-  timeUs: number,
-  options: RenderOptions,
-  overrunUs?: number
-): Promise<ResolvedSource | null> => {
+const resolveVideoSource = async (clip: MediaClip, timeUs: number, options: RenderOptions, overrunUs?: number): Promise<ResolvedSource | null> => {
   const reader = getReader(clip.id, clip.assetId, options.target);
   if (!reader) return null;
   const sourceUs = overrunUs ?? sourceTimeUs(clip, timeUs);
@@ -277,8 +272,7 @@ const drawMediaLayer = async (
 ) => {
   if (clip.kind === 'audio') return;
 
-  const resolved =
-    clip.kind === 'image' ? resolveImageSource(clip) : await resolveVideoSource(clip, timeUs, options, override?.sourceOverrunUs);
+  const resolved = clip.kind === 'image' ? resolveImageSource(clip) : await resolveVideoSource(clip, timeUs, options, override?.sourceOverrunUs);
   if (!resolved) return;
 
   compose(context, resolved.source, clip, project, timeUs, options, override, alpha, resolved.sourceWidth, resolved.sourceHeight);
