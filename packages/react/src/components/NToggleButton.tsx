@@ -12,6 +12,12 @@ export interface NToggleButtonProps {
   size?: 'sm' | 'md' | 'lg';
   onChange?: (isSelected: boolean) => void;
   className?: string;
+  /**
+   * Required for an icon-only toggle — there is no visible text to name it,
+   * and without this assistive tech announces an unlabelled button.
+   */
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
 }
 
 const NToggleButtonComponent: React.FC<NToggleButtonProps> = memo(
@@ -24,7 +30,9 @@ const NToggleButtonComponent: React.FC<NToggleButtonProps> = memo(
     variant = 'default',
     size = 'md',
     onChange,
-    className = ''
+    className = '',
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy
   }) => {
     return (
       <ToggleButton
@@ -35,6 +43,8 @@ const NToggleButtonComponent: React.FC<NToggleButtonProps> = memo(
         variant={variant}
         size={size}
         onChange={onChange}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
         className={cn('nyn-toggle-button', className)}>
         {children}
       </ToggleButton>

@@ -14,6 +14,15 @@ import { defineConfig } from 'vite';
  */
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  optimizeDeps: {
+    /*
+     * @nayan-ui/react is a workspace package built into its own dist. Left to
+     * pre-bundle it, Vite caches a copy and keeps serving that after the
+     * library is rebuilt — so library fixes silently don't reach the dev
+     * server until someone clears .vite by hand.
+     */
+    exclude: ['@nayan-ui/react']
+  },
   base: '/editor/',
   build: {
     outDir: fileURLToPath(new URL('../website/public/editor', import.meta.url)),

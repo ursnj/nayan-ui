@@ -2,13 +2,18 @@ import {
   AudioBufferSource,
   BufferTarget,
   CanvasSource,
+  MkvOutputFormat,
+  MovOutputFormat,
   Mp4OutputFormat,
+  OggOutputFormat,
   Output,
   Quality,
+  WavOutputFormat,
   WebMOutputFormat,
   getFirstEncodableAudioCodec,
   getFirstEncodableVideoCodec
 } from 'mediabunny';
+import type { AudioCodec, OutputFormat, VideoCodec } from 'mediabunny';
 import { getAudioBuffer, releaseExportReaders } from '../media/library';
 import { US } from '../types';
 import type { ExportSettings } from '../types';
@@ -17,7 +22,6 @@ import { renderScene } from './compositor';
 import type { Scene } from './compositor';
 
 export type ExportStage = 'preparing' | 'audio' | 'video' | 'finalizing' | 'done';
-export type ExportContainer = 'mp4' | 'webm';
 
 export interface ExportProgress {
   stage: ExportStage;
@@ -36,10 +40,81 @@ export class ExportCanceledError extends Error {
   }
 }
 
-const VIDEO_CANDIDATES = ['avc', 'hevc', 'av1', 'vp9'] as const;
-const WEBM_VIDEO_CANDIDATES = ['vp9', 'av1', 'vp8'] as const;
-const AUDIO_CANDIDATES = ['aac', 'opus'] as const;
-const WEBM_AUDIO_CANDIDATES = ['opus'] as const;
+export interface ExportFormat {
+  id: string;
+  label: string;
+  detail: string;
+  extension: string;
+  /** `audio` formats hold no video track, for bouncing just the mix. */
+  kind: 'video' | 'audio';
+  create: () => OutputFormat;
+}
+
+/**
+ * Containers the muxer can write. Which codecs each can actually carry is
+ * asked of the format itself and intersected with what this browser can
+ * encode, rather than hard-coded — so a format only appears if it will work
+ * here, and adding one is a single entry.
+ */
+export const EXPORT_FORMATS: ExportFormat[] = [
+  {
+    id: 'mp4',
+    label: 'MP4',
+    detail: 'H.264 · plays everywhere',
+    extension: 'mp4',
+    kind: 'video',
+    create: () => new Mp4OutputFormat({ fastStart: 'in-memory' })
+  },
+  {
+    id: 'mov',
+    label: 'MOV',
+    detail: 'QuickTime · for Final Cut and Premiere',
+    extension: 'mov',
+    kind: 'video',
+    create: () => new MovOutputFormat({ fastStart: 'in-memory' })
+  },
+  { id: 'mkv', label: 'MKV', detail: 'Matroska · archival', extension: 'mkv', kind: 'video', create: () => new MkvOutputFormat() },
+  { id: 'webm', label: 'WebM', detail: 'VP9 · open web', extension: 'webm', kind: 'video', create: () => new WebMOutputFormat() },
+  {
+    id: 'm4a',
+    label: 'M4A',
+    detail: 'Audio only · AAC',
+    extension: 'm4a',
+    kind: 'audio',
+    create: () => new Mp4OutputFormat({ fastStart: 'in-memory' })
+  },
+  { id: 'wav', label: 'WAV', detail: 'Audio only · uncompressed', extension: 'wav', kind: 'audio', create: () => new WavOutputFormat() },
+  { id: 'ogg', label: 'OGG', detail: 'Audio only · Opus', extension: 'ogg', kind: 'audio', create: () => new OggOutputFormat() }
+];
+
+export const findFormat = (id: string) => EXPORT_FORMATS.find(format => format.id === id) ?? EXPORT_FORMATS[0];
+
+/**
+ * Preference order, narrowed to what a given container accepts. H.264 leads
+ * because it is the one codec that plays everywhere; PCM leads for audio only
+ * because it is the only one that needs no encoder at all.
+ */
+const VIDEO_PREFERENCE: VideoCodec[] = ['avc', 'vp9', 'av1', 'hevc', 'vp8'];
+const AUDIO_PREFERENCE: AudioCodec[] = ['aac', 'opus', 'pcm-s16', 'vorbis', 'flac'];
+
+const candidates = <T extends string>(preference: T[], supported: readonly string[]): T[] => preference.filter(codec => supported.includes(codec));
+
+/** Whether this browser can actually encode into the format at this size. */
+export const isFormatSupported = async (format: ExportFormat, width: number, height: number): Promise<boolean> => {
+  const container = format.create();
+  const audio = await getFirstEncodableAudioCodec(candidates(AUDIO_PREFERENCE, container.getSupportedAudioCodecs()), {
+    numberOfChannels: MIX_CHANNELS,
+    sampleRate: MIX_SAMPLE_RATE
+  }).catch(() => null);
+
+  if (format.kind === 'audio') return audio !== null;
+
+  const video = await getFirstEncodableVideoCodec(candidates(VIDEO_PREFERENCE, container.getSupportedVideoCodecs()), {
+    width,
+    height
+  }).catch(() => null);
+  return video !== null;
+};
 
 const MIX_SAMPLE_RATE = 48_000;
 const MIX_CHANNELS = 2;
@@ -60,8 +135,11 @@ export const exportProject = async (
   durationUs: number,
   onProgress: (progress: ExportProgress) => void,
   signal?: AbortSignal,
-  container: ExportContainer = 'mp4'
+  formatId = 'mp4'
 ): Promise<Blob> => {
+  const format = findFormat(formatId);
+  const container = format.create();
+  const videoOnlyAudioless = format.kind === 'audio';
   const throwIfCanceled = () => {
     if (signal?.aborted) throw new ExportCanceledError();
   };
@@ -76,45 +154,49 @@ export const exportProject = async (
   const durationSeconds = spanUs / US;
   if (durationSeconds <= 0) throw new Error('Nothing to export — the selected range is empty.');
 
+  // Codecs come from the container's own capability list intersected with
+  // what this browser can encode, so the same code serves every format.
   const videoQuality = new Quality({ bitrate: settings.bitrate });
-  const videoCandidates = container === 'webm' ? WEBM_VIDEO_CANDIDATES : VIDEO_CANDIDATES;
-  const videoCodec = await getFirstEncodableVideoCodec([...videoCandidates], {
-    width: settings.width,
-    height: settings.height,
-    quality: videoQuality
-  });
-  if (!videoCodec) throw new Error('This browser cannot encode video. Try a recent Chrome, Edge or Safari.');
+  let videoCodec: VideoCodec | null = null;
+  if (!videoOnlyAudioless) {
+    videoCodec = await getFirstEncodableVideoCodec(candidates(VIDEO_PREFERENCE, container.getSupportedVideoCodecs()), {
+      width: settings.width,
+      height: settings.height,
+      quality: videoQuality
+    });
+    if (!videoCodec) throw new Error(`This browser cannot encode video for ${format.label}. Try MP4, or a recent Chrome, Edge or Safari.`);
+  }
 
   // Mix audio up front: it's cheap relative to video and tells us whether an
   // audio track is needed before the output starts (tracks are immutable once
-  // `start()` is called).
+  // `start()` is called). An audio-only format always needs it.
   let mixedAudio: AudioBuffer | null = null;
-  if (settings.includeAudio) {
+  if (settings.includeAudio || videoOnlyAudioless) {
     onProgress({ stage: 'audio', progress: 0.02, message: 'Mixing audio…' });
     mixedAudio = await mixAudio(scene, startUs, spanUs);
     throwIfCanceled();
   }
+  if (videoOnlyAudioless && !mixedAudio) throw new Error('Nothing to export — the timeline has no audible clips.');
 
-  const audioCandidates = container === 'webm' ? WEBM_AUDIO_CANDIDATES : AUDIO_CANDIDATES;
   const audioCodec = mixedAudio
-    ? await getFirstEncodableAudioCodec([...audioCandidates], {
+    ? await getFirstEncodableAudioCodec(candidates(AUDIO_PREFERENCE, container.getSupportedAudioCodecs()), {
         numberOfChannels: MIX_CHANNELS,
         sampleRate: MIX_SAMPLE_RATE,
         quality: new Quality({ bitrate: settings.audioBitrate })
       })
     : null;
+  if (mixedAudio && !audioCodec && videoOnlyAudioless) {
+    throw new Error(`This browser cannot encode audio for ${format.label}.`);
+  }
 
-  const output = new Output({
-    format: container === 'webm' ? new WebMOutputFormat() : new Mp4OutputFormat({ fastStart: 'in-memory' }),
-    target: new BufferTarget()
-  });
+  const output = new Output({ format: container, target: new BufferTarget() });
 
   const canvas = new OffscreenCanvas(settings.width, settings.height);
   const context = canvas.getContext('2d', { alpha: false });
   if (!context) throw new Error('Could not create the export canvas.');
 
-  const videoSource = new CanvasSource(canvas, { codec: videoCodec, quality: videoQuality, keyFrameInterval: 2 });
-  output.addVideoTrack(videoSource, { frameRate: settings.fps });
+  const videoSource = videoCodec ? new CanvasSource(canvas, { codec: videoCodec, quality: videoQuality, keyFrameInterval: 2 }) : null;
+  if (videoSource) output.addVideoTrack(videoSource, { frameRate: settings.fps });
 
   const audioSource =
     mixedAudio && audioCodec ? new AudioBufferSource({ codec: audioCodec, quality: new Quality({ bitrate: settings.audioBitrate }) }) : null;
@@ -140,10 +222,10 @@ export const exportProject = async (
       audioSource.close();
     }
 
-    const frameCount = Math.max(1, Math.ceil(durationSeconds * settings.fps));
+    const frameCount = videoSource ? Math.max(1, Math.ceil(durationSeconds * settings.fps)) : 0;
     const began = performance.now();
 
-    for (let frame = 0; frame < frameCount; frame++) {
+    for (let frame = 0; frame < frameCount && videoSource; frame++) {
       throwIfCanceled();
       // Scene time includes the range offset; output time always starts at 0.
       const sceneTimeUs = startUs + (frame / settings.fps) * US;
@@ -162,7 +244,7 @@ export const exportProject = async (
         etaSeconds: rate ? (frameCount - done) / rate : undefined
       });
     }
-    videoSource.close();
+    videoSource?.close();
 
     onProgress({ stage: 'finalizing', progress: 0.96, message: 'Writing file…' });
     await output.finalize();
@@ -171,7 +253,7 @@ export const exportProject = async (
     if (!buffer) throw new Error('The muxer produced no output.');
 
     onProgress({ stage: 'done', progress: 1, message: 'Export complete' });
-    return new Blob([buffer], { type: container === 'webm' ? 'video/webm' : 'video/mp4' });
+    return new Blob([buffer], { type: container.mimeType });
   } catch (error) {
     if (output.state === 'started' || output.state === 'pending') await output.cancel().catch(() => undefined);
     throw error;
@@ -232,6 +314,7 @@ export const suggestBitrate = (width: number, height: number, fps: number) => {
   return Math.round(Math.min(60_000_000, Math.max(1_000_000, pixels * fps * perPixel)));
 };
 
+/** Size presets only — the container is chosen separately. */
 export interface ExportPreset {
   name: string;
   description: string;
@@ -239,13 +322,12 @@ export interface ExportPreset {
   height: number;
   fps: number;
   qualityScale: number;
-  container: ExportContainer;
 }
 
 /** Named targets, so nobody has to reason about bitrates to post a clip. */
 export const EXPORT_PRESETS: ExportPreset[] = [
-  { name: '1080p', description: '1920×1080 · MP4', width: 1920, height: 1080, fps: 30, qualityScale: 1.2, container: 'mp4' },
-  { name: '720p', description: '1280×720 · MP4', width: 1280, height: 720, fps: 30, qualityScale: 1, container: 'mp4' },
-  { name: 'Vertical', description: '1080×1920 · MP4', width: 1080, height: 1920, fps: 30, qualityScale: 1.1, container: 'mp4' },
-  { name: 'Square', description: '1080×1080 · MP4', width: 1080, height: 1080, fps: 30, qualityScale: 1.1, container: 'mp4' }
+  { name: '1080p', description: '1920×1080 · 30fps', width: 1920, height: 1080, fps: 30, qualityScale: 1.2 },
+  { name: '720p', description: '1280×720 · 30fps', width: 1280, height: 720, fps: 30, qualityScale: 1 },
+  { name: 'Vertical', description: '1080×1920 · 30fps', width: 1080, height: 1920, fps: 30, qualityScale: 1.1 },
+  { name: 'Square', description: '1080×1080 · 30fps', width: 1080, height: 1080, fps: 30, qualityScale: 1.1 }
 ];
