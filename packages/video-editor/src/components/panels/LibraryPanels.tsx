@@ -33,7 +33,9 @@ export const BackgroundPanel = () => {
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto p-3">
-      <p className="mb-2 text-[11px] text-muted">Fills the frame behind every clip — most visible where your footage does not match the output shape.</p>
+      <p className="mb-2 text-[11px] text-muted">
+        Fills the frame behind every clip — most visible where your footage does not match the output shape.
+      </p>
 
       <div className="mb-3 grid grid-cols-3 gap-1.5">
         {BACKGROUND_KINDS.map(kind => (
@@ -47,7 +49,9 @@ export const BackgroundPanel = () => {
               // Truncated rather than wrapped: the library can be dragged down
               // to 220px, which leaves these cells about 44px wide.
               'truncate rounded-md border px-1.5 py-1.5 text-[10px] transition-colors',
-              background.kind === kind ? 'border-accent bg-accent/10 text-accent' : 'border-border text-muted hover:border-separator hover:text-foreground'
+              background.kind === kind
+                ? 'border-accent bg-accent/10 text-accent'
+                : 'border-border text-muted hover:border-separator hover:text-foreground'
             )}>
             {BACKGROUND_LABELS[kind]}
           </button>
@@ -78,7 +82,15 @@ export const BackgroundPanel = () => {
             <ColorField label="To" value={background.to} onChange={to => set({ to })} />
           </div>
           {background.kind === 'linear-gradient' && (
-            <SliderField label="Angle" value={background.angle} min={0} max={360} format={value => `${value}°`} onChange={angle => set({ angle })} resetTo={135} />
+            <SliderField
+              label="Angle"
+              value={background.angle}
+              min={0}
+              max={360}
+              format={value => `${value}°`}
+              onChange={angle => set({ angle })}
+              resetTo={135}
+            />
           )}
         </>
       )}
@@ -117,7 +129,15 @@ export const BackgroundPanel = () => {
 
       {(background.kind === 'blur' || background.kind === 'image') && (
         <>
-          <SliderField label="Blur" value={background.blur} min={0} max={120} format={value => `${value}px`} onChange={blur => set({ blur })} resetTo={48} />
+          <SliderField
+            label="Blur"
+            value={background.blur}
+            min={0}
+            max={120}
+            format={value => `${value}px`}
+            onChange={blur => set({ blur })}
+            resetTo={48}
+          />
           <SliderField
             label="Zoom"
             value={Math.round(background.scale * 100)}

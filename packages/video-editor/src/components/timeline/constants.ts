@@ -2,8 +2,6 @@
 export const HEADER_WIDTH = 184;
 /** Height of the time ruler, in px. */
 export const RULER_HEIGHT = 30;
-/** Height of the marker lane below the ruler, in px. */
-export const MARKER_LANE_HEIGHT = 18;
 /**
  * The track header's two control rows come to exactly 52px:
  * `py-1 (8) + h-5 (20) + gap-1 (4) + h-5 (20)`. That is the floor — any less

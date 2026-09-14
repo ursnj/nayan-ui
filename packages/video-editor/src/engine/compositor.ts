@@ -442,12 +442,7 @@ const buildGradient = (context: Context2D, background: Background, project: Proj
   const reach = (Math.abs(Math.cos(radians)) * project.width + Math.abs(Math.sin(radians)) * project.height) / 2;
   const dx = Math.cos(radians) * reach;
   const dy = Math.sin(radians) * reach;
-  const gradient = context.createLinearGradient(
-    project.width / 2 - dx,
-    project.height / 2 - dy,
-    project.width / 2 + dx,
-    project.height / 2 + dy
-  );
+  const gradient = context.createLinearGradient(project.width / 2 - dx, project.height / 2 - dy, project.width / 2 + dx, project.height / 2 + dy);
   gradient.addColorStop(0, background.from);
   gradient.addColorStop(1, background.to);
   return gradient;
@@ -474,13 +469,7 @@ const resolveBackdropClip = async (scene: Scene, timeUs: number, options: Render
 };
 
 /** Cover-fits a picture over the whole frame, defocused and dimmed. */
-const drawBackdrop = (
-  context: Context2D,
-  resolved: ResolvedSource,
-  background: Background,
-  project: ProjectSettings,
-  options: RenderOptions
-) => {
+const drawBackdrop = (context: Context2D, resolved: ResolvedSource, background: Background, project: ProjectSettings, options: RenderOptions) => {
   // The radius is stated at 1080p so a project looks the same at 720p and 4K.
   const radius = Math.max(0, background.blur) * (project.height / 1080);
   const zoom = Math.max(1, background.scale);
@@ -491,13 +480,7 @@ const drawBackdrop = (
   /** Fills `target` with the source, cropped to cover and zoomed. */
   const paint = (target: Context2D, width: number, height: number) => {
     const cover = coverRect(resolved.sourceWidth, resolved.sourceHeight, width, height);
-    target.drawImage(
-      resolved.source,
-      (width - cover.width * zoom) / 2,
-      (height - cover.height * zoom) / 2,
-      cover.width * zoom,
-      cover.height * zoom
-    );
+    target.drawImage(resolved.source, (width - cover.width * zoom) / 2, (height - cover.height * zoom) / 2, cover.width * zoom, cover.height * zoom);
   };
 
   try {

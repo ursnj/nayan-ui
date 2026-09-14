@@ -7,8 +7,8 @@ import { PreviewPanel } from './components/preview/PreviewPanel';
 import { SmallScreenNotice } from './components/shell/SmallScreenNotice';
 import { SplitPane } from './components/shell/SplitPane';
 import { TopBar } from './components/shell/TopBar';
-import { useHasRoom } from './lib/viewport';
 import { Timeline } from './components/timeline/Timeline';
+import { useHasRoom } from './lib/viewport';
 
 /** WebCodecs is the whole premise, so say so plainly rather than failing oddly. */
 const hasWebCodecs = typeof window !== 'undefined' && 'VideoEncoder' in window && 'VideoDecoder' in window;

@@ -278,13 +278,6 @@ export interface Track {
   volume: number;
 }
 
-export interface Marker {
-  id: string;
-  atUs: number;
-  label: string;
-  color: string;
-}
-
 /* ------------------------------------------------------------------ *
  * Background
  * ------------------------------------------------------------------ */
@@ -468,7 +461,13 @@ export const COLOR_PRESETS: ColorPreset[] = [
   look('Matte Black', ['#232526', '#414345'], { fade: 0.35, contrast: 1.12, saturation: 0.7, splitTone: 0.3, shadowTint: '#1d2b3a' }),
   look('Mono', ['#ffffff', '#4b4b4b'], { grayscale: 1, contrast: 1.2 }),
   look('Noir', ['#0f0f0f', '#5a5a5a'], { grayscale: 1, contrast: 1.45, vignette: 0.45, grain: 0.22 }),
-  look('Teal & Orange', ['#0f3443', '#ff8c42'], { splitTone: 0.45, shadowTint: '#0e3a4a', highlightTint: '#ffb07c', contrast: 1.2, saturation: 0.95 }),
+  look('Teal & Orange', ['#0f3443', '#ff8c42'], {
+    splitTone: 0.45,
+    shadowTint: '#0e3a4a',
+    highlightTint: '#ffb07c',
+    contrast: 1.2,
+    saturation: 0.95
+  }),
   look('Vintage', ['#c79081', '#dfa579'], { temperature: 0.25, fade: 0.22, saturation: 0.8, vignette: 0.3, grain: 0.25 }),
   look('Dreamy', ['#e0c3fc', '#8ec5fc'], { blur: 1.5, brightness: 1.08, saturation: 1.15, fade: 0.15 }),
   look('Clarity', ['#e6f0f7', '#94b8d1'], { sharpen: 0.5, contrast: 1.12, vibrance: 0.25 }),

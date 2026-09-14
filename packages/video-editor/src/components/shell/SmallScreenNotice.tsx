@@ -36,8 +36,8 @@ export const SmallScreenNotice = () => {
         />
 
         <p className="mt-4 text-xs leading-relaxed text-muted">
-          The timeline, preview and inspector sit side by side, and there is no useful way to fold three columns into a phone. Nothing is lost — reopen
-          this page on a larger screen and pick up where you left off.
+          The timeline, preview and inspector sit side by side, and there is no useful way to fold three columns into a phone. Nothing is lost —
+          reopen this page on a larger screen and pick up where you left off.
         </p>
       </div>
     </div>
