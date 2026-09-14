@@ -4,9 +4,141 @@ import { TRANSITION_PREVIEW_GRADIENT } from '../../engine/transitions';
 import { TEXT_PRESETS } from '../../lib/factories';
 import { cn } from '../../lib/utils';
 import { useEditor } from '../../store/editor';
-import { COLOR_PRESETS, TRANSITION_LABELS } from '../../types';
-import type { TransitionKind } from '../../types';
-import { EmptyState } from '../controls';
+import { BACKGROUND_LABELS, COLOR_PRESETS, GRADIENT_PRESETS, TRANSITION_LABELS } from '../../types';
+import type { Background, BackgroundKind, TransitionKind } from '../../types';
+import { ColorField, EmptyState, SliderField } from '../controls';
+
+/* ------------------------------------------------------------------ *
+ * Background
+ * ------------------------------------------------------------------ */
+
+const BACKGROUND_KINDS = Object.keys(BACKGROUND_LABELS) as BackgroundKind[];
+
+/**
+ * What fills the frame behind the layers.
+ *
+ * The kinds share one record rather than a union, so switching between them
+ * and back keeps each one's settings — picking a gradient and changing your
+ * mind should not silently discard the image you had chosen.
+ */
+export const BackgroundPanel = () => {
+  const background = useEditor(state => state.project.background);
+  const assets = useEditor(state => state.assets);
+  const updateProject = useEditor(state => state.updateProject);
+
+  const set = (changes: Partial<Background>) => updateProject({ background: { ...background, ...changes } });
+
+  const images = assets.filter(asset => asset.kind === 'image');
+  const gradient = background.kind === 'linear-gradient' || background.kind === 'radial-gradient';
+
+  return (
+    <div className="min-h-0 flex-1 overflow-y-auto p-3">
+      <p className="mb-2 text-[11px] text-muted">Fills the frame behind every clip — most visible where your footage does not match the output shape.</p>
+
+      <div className="mb-3 grid grid-cols-3 gap-1.5">
+        {BACKGROUND_KINDS.map(kind => (
+          <button
+            key={kind}
+            type="button"
+            onClick={() => set({ kind })}
+            aria-pressed={background.kind === kind}
+            className={cn(
+              'rounded-md border px-1.5 py-1.5 text-[10px] transition-colors',
+              background.kind === kind ? 'border-accent bg-accent/10 text-accent' : 'border-border text-muted hover:border-separator hover:text-foreground'
+            )}>
+            {BACKGROUND_LABELS[kind]}
+          </button>
+        ))}
+      </div>
+
+      {background.kind === 'solid' && <ColorField label="Colour" value={background.color} onChange={color => set({ color })} />}
+
+      {gradient && (
+        <>
+          <div className="mb-2 grid grid-cols-4 gap-1.5">
+            {GRADIENT_PRESETS.map(preset => (
+              <button
+                key={preset.name}
+                type="button"
+                title={preset.name}
+                onClick={() => set({ from: preset.from, to: preset.to, angle: preset.angle })}
+                className={cn(
+                  'h-9 rounded-md border transition-colors',
+                  background.from === preset.from && background.to === preset.to ? 'border-accent' : 'border-border hover:border-separator'
+                )}
+                style={{ background: `linear-gradient(${preset.angle}deg, ${preset.from}, ${preset.to})` }}
+              />
+            ))}
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <ColorField label="From" value={background.from} onChange={from => set({ from })} />
+            <ColorField label="To" value={background.to} onChange={to => set({ to })} />
+          </div>
+          {background.kind === 'linear-gradient' && (
+            <SliderField label="Angle" value={background.angle} min={0} max={360} format={value => `${value}°`} onChange={angle => set({ angle })} resetTo={135} />
+          )}
+        </>
+      )}
+
+      {background.kind === 'image' &&
+        (images.length === 0 ? (
+          <p className="rounded-md border border-dashed border-border px-3 py-4 text-center text-[11px] text-muted">
+            Import an image in the Media panel to use it here.
+          </p>
+        ) : (
+          <div className="mb-2 grid grid-cols-3 gap-1.5">
+            {images.map(asset => (
+              <button
+                key={asset.id}
+                type="button"
+                title={asset.name}
+                onClick={() => set({ assetId: asset.id })}
+                aria-pressed={background.assetId === asset.id}
+                className={cn(
+                  'aspect-video overflow-hidden rounded-md border bg-surface-secondary transition-colors',
+                  background.assetId === asset.id ? 'border-accent' : 'border-border hover:border-separator'
+                )}>
+                {asset.thumbnail ? (
+                  <img src={asset.thumbnail} alt={asset.name} className="h-full w-full object-cover" />
+                ) : (
+                  <span className="flex h-full items-center justify-center text-[9px] text-muted">{asset.name}</span>
+                )}
+              </button>
+            ))}
+          </div>
+        ))}
+
+      {background.kind === 'blur' && (
+        <p className="mb-2 text-[11px] text-muted">Uses the frontmost clip at the playhead, scaled to fill and defocused.</p>
+      )}
+
+      {(background.kind === 'blur' || background.kind === 'image') && (
+        <>
+          <SliderField label="Blur" value={background.blur} min={0} max={120} format={value => `${value}px`} onChange={blur => set({ blur })} resetTo={48} />
+          <SliderField
+            label="Zoom"
+            value={Math.round(background.scale * 100)}
+            min={100}
+            max={200}
+            format={value => `${value}%`}
+            onChange={value => set({ scale: value / 100 })}
+            resetTo={115}
+          />
+          <SliderField
+            label="Dim"
+            value={Math.round(background.dim * 100)}
+            min={0}
+            max={100}
+            format={value => (value === 0 ? 'Off' : `${value}%`)}
+            onChange={value => set({ dim: value / 100 })}
+            resetTo={25}
+          />
+          <ColorField label="Dim colour" value={background.color} onChange={color => set({ color })} />
+        </>
+      )}
+    </div>
+  );
+};
 
 /* ------------------------------------------------------------------ *
  * Text

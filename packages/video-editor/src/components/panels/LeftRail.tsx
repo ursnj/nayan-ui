@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import { NTooltip } from '@nayan-ui/react';
-import { Blend, FolderOpen, Sparkles, Type } from 'lucide-react';
+import { Blend, FolderOpen, Image as ImageIcon, Sparkles, Type } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { EffectsPanel, TextPanel, TransitionsPanel } from './LibraryPanels';
+import { BackgroundPanel, EffectsPanel, TextPanel, TransitionsPanel } from './LibraryPanels';
 import { MediaPanel } from './MediaPanel';
 
-type PanelId = 'media' | 'text' | 'effects' | 'transitions';
+type PanelId = 'media' | 'text' | 'effects' | 'transitions' | 'background';
 
 const TABS: { id: PanelId; label: string; icon: React.ReactNode }[] = [
   { id: 'media', label: 'Media', icon: <FolderOpen className="h-[18px] w-[18px]" /> },
   { id: 'text', label: 'Text', icon: <Type className="h-[18px] w-[18px]" /> },
   { id: 'effects', label: 'Effects', icon: <Sparkles className="h-[18px] w-[18px]" /> },
-  { id: 'transitions', label: 'Transitions', icon: <Blend className="h-[18px] w-[18px]" /> }
+  { id: 'transitions', label: 'Transitions', icon: <Blend className="h-[18px] w-[18px]" /> },
+  { id: 'background', label: 'Background', icon: <ImageIcon className="h-[18px] w-[18px]" /> }
 ];
 
 /**
@@ -51,6 +52,7 @@ export const LeftRail = () => {
         {active === 'text' && <TextPanel />}
         {active === 'effects' && <EffectsPanel />}
         {active === 'transitions' && <TransitionsPanel />}
+        {active === 'background' && <BackgroundPanel />}
       </div>
     </div>
   );
