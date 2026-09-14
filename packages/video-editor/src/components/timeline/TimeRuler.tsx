@@ -1,7 +1,7 @@
 import { formatTimecode, pickTickInterval } from '../../lib/utils';
 import { useEditor } from '../../store/editor';
 import { US } from '../../types';
-import { MARKER_LANE_HEIGHT, RULER_HEIGHT } from './constants';
+import { RULER_HEIGHT } from './constants';
 
 interface TimeRulerProps {
   width: number;
@@ -10,17 +10,15 @@ interface TimeRulerProps {
 }
 
 /**
- * Time ruler, marker lane and the in/out range band.
+ * Time ruler and the in/out range band.
  *
  * Tick spacing adapts to zoom via `pickTickInterval`, which walks a 1/2/5
  * ladder until labels are at least 70px apart — so the ruler stays readable
  * from a whole-project overview down to single frames.
  */
 export const TimeRuler = ({ width, pxPerSec, onScrub }: TimeRulerProps) => {
-  const markers = useEditor(state => state.markers);
   const inPointUs = useEditor(state => state.inPointUs);
   const outPointUs = useEditor(state => state.outPointUs);
-  const removeMarker = useEditor(state => state.removeMarker);
 
   const interval = pickTickInterval(pxPerSec);
   const tickSpacing = interval * pxPerSec;
@@ -78,38 +76,6 @@ export const TimeRuler = ({ width, pxPerSec, onScrub }: TimeRulerProps) => {
           .map(left => (
             <div key={`minor-${left}`} className="pointer-events-none absolute top-0 h-1.5 w-px bg-separator/50" style={{ left }} />
           ))}
-      </div>
-
-      {/* Clipped for the same reason as the ruler: a marker's flag is centred
-          on its time and its label runs to the right, so one near either end
-          would otherwise stretch the timeline's scroll. */}
-      <div style={{ height: MARKER_LANE_HEIGHT }} className="relative overflow-hidden border-b border-border bg-editor-chrome">
-        {markers.map(marker => (
-          <button
-            key={marker.id}
-            type="button"
-            title={marker.label ? `${marker.label} — double-click to remove` : 'Marker — double-click to remove'}
-            aria-label={marker.label || 'Marker'}
-            onDoubleClick={() => removeMarker(marker.id)}
-            style={{ left: (marker.atUs / US) * pxPerSec }}
-            className="group absolute top-0 flex h-full w-4 -translate-x-1/2 items-start justify-center">
-            {/* The flag stays small; the button around it is the hit target. */}
-            <span
-              style={{ borderTopColor: marker.color }}
-              className="h-0 w-0 border-x-[6px] border-t-[11px] border-x-transparent transition-transform group-hover:scale-125"
-            />
-          </button>
-        ))}
-        {markers.map(marker =>
-          marker.label ? (
-            <span
-              key={`${marker.id}-label`}
-              style={{ left: (marker.atUs / US) * pxPerSec + 7 }}
-              className="pointer-events-none absolute top-0 whitespace-nowrap text-[9px] leading-[14px] text-muted">
-              {marker.label}
-            </span>
-          ) : null
-        )}
       </div>
     </div>
   );

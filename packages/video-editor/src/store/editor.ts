@@ -4,7 +4,7 @@ import { removeKeyAt, scaleAnimations, shiftAnimations, splitAnimations, upsertK
 import { clamp, uid } from '../lib/utils';
 import { releaseAllReaders, releaseAsset, releaseReader } from '../media/library';
 import { DEFAULT_BACKGROUND, DEFAULT_CHROMA, DEFAULT_COLOR, DEFAULT_CROP, DEFAULT_TRANSFORM, US, clipEndUs, isMediaClip } from '../types';
-import type { Clip, Marker, MediaAsset, ProjectSettings, TextClip, Track, TrackKind, TransitionKind } from '../types';
+import type { Clip, MediaAsset, ProjectSettings, TextClip, Track, TrackKind, TransitionKind } from '../types';
 
 /** Nothing shorter than this can be created by trimming or splitting. */
 export const MIN_CLIP_US = 100_000;
@@ -25,7 +25,6 @@ interface Snapshot {
   project: ProjectSettings;
   tracks: Track[];
   clips: Clip[];
-  markers: Marker[];
 }
 
 interface EditorState extends Snapshot {
@@ -84,10 +83,6 @@ interface EditorState extends Snapshot {
   removeTrack: (trackId: string) => void;
   reorderTrack: (trackId: string, direction: -1 | 1) => void;
 
-  addMarker: (atUs?: number) => void;
-  updateMarker: (markerId: string, patch: Partial<Marker>) => void;
-  removeMarker: (markerId: string) => void;
-
   updateProject: (patch: Partial<ProjectSettings>) => void;
   setPlayhead: (timeUs: number) => void;
   setPlaying: (playing: boolean) => void;
@@ -141,8 +136,7 @@ const insertTrack = (tracks: Track[], track: Track): Track[] => (track.kind === 
 const snapshotOf = (state: Snapshot): Snapshot => ({
   project: state.project,
   tracks: state.tracks,
-  clips: state.clips,
-  markers: state.markers
+  clips: state.clips
 });
 
 const MAX_HISTORY = 80;
@@ -152,7 +146,6 @@ export interface ProjectFile {
   project: ProjectSettings;
   tracks: Track[];
   clips: Clip[];
-  markers: Marker[];
   /** Assets are referenced by name/size — the files themselves can't be serialised. */
   assetRefs: { id: string; name: string; size: number; kind: string }[];
 }
@@ -243,7 +236,6 @@ export const useEditor = create<EditorState>((set, get) => {
     project: DEFAULT_PROJECT,
     tracks: INITIAL_TRACKS,
     clips: [],
-    markers: [],
     assets: [],
     selectedClipIds: [],
     playheadUs: 0,
@@ -701,18 +693,6 @@ export const useEditor = create<EditorState>((set, get) => {
         return { tracks };
       }),
 
-    /* ---------------- markers ---------------- */
-
-    addMarker: atUs =>
-      commit(state => ({
-        markers: [...state.markers, { id: uid('marker'), atUs: Math.max(0, Math.round(atUs ?? state.playheadUs)), label: '', color: '#f59e0b' }]
-      })),
-
-    updateMarker: (markerId, patch) =>
-      commit(state => ({ markers: state.markers.map(marker => (marker.id === markerId ? { ...marker, ...patch } : marker)) })),
-
-    removeMarker: markerId => commit(state => ({ markers: state.markers.filter(marker => marker.id !== markerId) })),
-
     /* ---------------- project ---------------- */
 
     updateProject: patch => commit(state => ({ project: { ...state.project, ...patch } })),
@@ -733,7 +713,6 @@ export const useEditor = create<EditorState>((set, get) => {
         project: normaliseProject(data.project),
         tracks: data.tracks,
         clips: (data.clips ?? []).map(normaliseClip),
-        markers: data.markers ?? [],
         selectedClipIds: [],
         playheadUs: 0,
         past: [...state.past, snapshotOf(state)].slice(-MAX_HISTORY),
@@ -747,7 +726,6 @@ export const useEditor = create<EditorState>((set, get) => {
         project: DEFAULT_PROJECT,
         tracks: [makeTrack('video', 1), makeTrack('audio', 1)],
         clips: [],
-        markers: [],
         selectedClipIds: [],
         playheadUs: 0,
         inPointUs: null,
@@ -802,6 +780,5 @@ export const serialiseProject = (state: EditorState): ProjectFile => ({
   project: state.project,
   tracks: state.tracks,
   clips: state.clips,
-  markers: state.markers,
   assetRefs: state.assets.map(asset => ({ id: asset.id, name: asset.name, size: asset.size, kind: asset.kind }))
 });

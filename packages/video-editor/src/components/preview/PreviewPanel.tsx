@@ -199,14 +199,7 @@ export const PreviewPanel = () => {
             {muted || volume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
           </IconButton>
           {/* Mute stays to the end; the slider is the first thing to go. */}
-          <NSlider
-            value={volume}
-            min={0}
-            max={100}
-            onChange={setVolume}
-            className="mb-0 hidden w-24 @[560px]:block"
-            aria-label="Preview volume"
-          />
+          <NSlider value={volume} min={0} max={100} onChange={setVolume} className="mb-0 hidden w-24 @[560px]:block" aria-label="Preview volume" />
           <span className="hidden @[680px]:contents">
             <IconButton
               label="Stop and rewind"

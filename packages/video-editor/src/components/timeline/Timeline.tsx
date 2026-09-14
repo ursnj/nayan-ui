@@ -1,23 +1,6 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { NButton } from '@nayan-ui/react';
-import {
-  Bookmark,
-  Copy,
-  Film,
-  Group,
-  Link2,
-  Lock,
-  Magnet,
-  MousePointer2,
-  Music,
-  Plus,
-  Scissors,
-  Split,
-  Trash2,
-  Ungroup,
-  ZoomIn,
-  ZoomOut
-} from 'lucide-react';
+import { Copy, Film, Group, Link2, Lock, Magnet, MousePointer2, Music, Plus, Scissors, Split, Trash2, Ungroup, ZoomIn, ZoomOut } from 'lucide-react';
 import { player, seekTo } from '../../engine/playerInstance';
 import { clamp, cn } from '../../lib/utils';
 import { readEditorState, timelineDurationUs, useEditor } from '../../store/editor';
@@ -31,7 +14,7 @@ import { ContextMenu } from './ContextMenu';
 import type { MenuItem } from './ContextMenu';
 import { TimeRuler } from './TimeRuler';
 import { TrackHeader } from './TrackHeader';
-import { HEADER_WIDTH, MARKER_LANE_HEIGHT, RULER_HEIGHT, SNAP_RADIUS_PX, TAIL_PADDING_PX, VIRTUALISE_OVERSCAN_PX } from './constants';
+import { HEADER_WIDTH, RULER_HEIGHT, SNAP_RADIUS_PX, TAIL_PADDING_PX, VIRTUALISE_OVERSCAN_PX } from './constants';
 
 type DragState =
   | { kind: 'scrub' }
@@ -48,7 +31,8 @@ type DragState =
 const ASSET_MIME = 'application/x-nayan-asset';
 /** Stable empty list, so a track with no clips doesn't break row memoisation. */
 const NO_CLIPS: Clip[] = [];
-const HEAD_HEIGHT = RULER_HEIGHT + MARKER_LANE_HEIGHT;
+/** The sticky head above the lanes is just the ruler. */
+const HEAD_HEIGHT = RULER_HEIGHT;
 
 export const Timeline = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -79,7 +63,6 @@ export const Timeline = () => {
   const removeTrack = useEditor(state => state.removeTrack);
   const updateClip = useEditor(state => state.updateClip);
   const addClipFromAsset = useEditor(state => state.addClipFromAsset);
-  const addMarker = useEditor(state => state.addMarker);
   const setZoom = useEditor(state => state.setZoom);
   const toggleSnap = useEditor(state => state.toggleSnap);
   const toggleRipple = useEditor(state => state.toggleRipple);
@@ -178,7 +161,7 @@ export const Timeline = () => {
   );
 
   /**
-   * Snaps to zero, the playhead, markers and every other clip edge in range.
+   * Snaps to zero, the playhead and every other clip edge in range.
    * Reports whether it actually caught, so the drag can show a guide — without
    * that feedback there's no way to tell an aligned edit from a near miss.
    */
@@ -203,7 +186,6 @@ export const Timeline = () => {
     consider(state.playheadUs);
     if (state.inPointUs !== null) consider(state.inPointUs);
     if (state.outPointUs !== null) consider(state.outPointUs);
-    for (const marker of state.markers) consider(marker.atUs);
     for (const clip of state.clips) {
       if (excludeIds.has(clip.id)) continue;
       consider(clip.startUs);
@@ -502,7 +484,6 @@ export const Timeline = () => {
         onSplit={() => splitAt(readEditorState().playheadUs)}
         onDuplicate={duplicateSelection}
         onDelete={() => deleteSelection()}
-        onMarker={() => addMarker()}
         onAddVideoTrack={() => addTrack('video')}
         onAddAudioTrack={() => addTrack('audio')}
         onZoomIn={() => setZoom(pxPerSec * 1.4)}
@@ -527,19 +508,19 @@ export const Timeline = () => {
           );
         }}>
         {/*
-          * `overflow-x: clip` rather than `hidden` on purpose: everything in
-          * here is sized to this width, so anything reaching past it is a bug
-          * — a tick, a marker label, a playhead handle — and each one would
-          * add empty scroll to the container above. `clip` contains that
-          * without establishing a scroll container of its own, so the sticky
-          * header column and ruler keep positioning against the real
-          * scrollport. `hidden` would take that over and break both.
-          */}
+         * `overflow-x: clip` rather than `hidden` on purpose: everything in
+         * here is sized to this width, so anything reaching past it is a bug
+         * — a tick, a playhead handle, an overlay — and each one would
+         * add empty scroll to the container above. `clip` contains that
+         * without establishing a scroll container of its own, so the sticky
+         * header column and ruler keep positioning against the real
+         * scrollport. `hidden` would take that over and break both.
+         */}
         <div className="relative [overflow-x:clip]" style={{ width: HEADER_WIDTH + contentWidth }}>
           <div className="sticky top-0 z-30 flex">
             <div
               style={{ width: HEADER_WIDTH, height: HEAD_HEIGHT }}
-              className="sticky left-0 z-40 shrink-0 border-b border-r border-border bg-editor-panel"
+              className="sticky left-0 z-40 shrink-0 border-b border-r border-border bg-editor-chrome"
             />
             <TimeRuler width={contentWidth} pxPerSec={pxPerSec} onScrub={event => beginDrag({ kind: 'scrub' }, event)} />
           </div>
@@ -615,7 +596,6 @@ interface ToolbarProps {
   onSplit: () => void;
   onDuplicate: () => void;
   onDelete: () => void;
-  onMarker: () => void;
   onAddVideoTrack: () => void;
   onAddAudioTrack: () => void;
   onZoomIn: () => void;
@@ -645,9 +625,6 @@ const TimelineToolbar = (props: ToolbarProps) => (
     </IconButton>
     <IconButton label="Delete" onClick={props.onDelete} disabled={!props.hasSelection} danger>
       <Trash2 className="h-4 w-4" />
-    </IconButton>
-    <IconButton label="Add marker" onClick={props.onMarker}>
-      <Bookmark className="h-4 w-4" />
     </IconButton>
 
     <span className="mx-0.5 h-4 w-px bg-separator" />
@@ -788,7 +765,7 @@ TrackRow.displayName = 'TrackRow';
 
 /**
  * Subscribes to `playheadUs` on its own so the per-frame time update during
- * playback re-renders this marker instead of the entire timeline, and moves
+ * playback re-renders this indicator instead of the entire timeline, and moves
  * with a transform so it never triggers layout.
  */
 const Playhead = ({
