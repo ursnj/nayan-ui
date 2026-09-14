@@ -11,8 +11,11 @@
   },
   "dependencies": {
     "@nayan-ui/react": "^2.0.0",
+    "lucide-react": "^1.45.0",
+    "mediabunny": "^1.56.2",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
