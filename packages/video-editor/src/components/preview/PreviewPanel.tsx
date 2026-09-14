@@ -56,14 +56,10 @@ export const PreviewPanel = () => {
     player.refresh();
   }, [clips, tracks, project]);
 
-  // Restart from the top when looping is on and playback reaches the end.
+  // The player owns the end-of-playback moment, so it owns looping too.
   useEffect(() => {
-    if (!loop || isPlaying || durationUs <= 0) return;
-    const state = useEditor.getState();
-    if (state.playheadUs < durationUs - 1000) return;
-    seekTo(0);
-    void togglePlayback();
-  }, [loop, isPlaying, durationUs]);
+    player.setLoop(loop);
+  }, [loop]);
 
   // The transform overlay works in CSS pixels, so it needs the rendered size.
   useLayoutEffect(() => {
