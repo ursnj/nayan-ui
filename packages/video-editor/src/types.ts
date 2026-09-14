@@ -76,20 +76,61 @@ export interface Crop {
 }
 
 /**
- * The colour controls that earn their place in a basic grade.
+ * The grade applied to a layer.
  *
- * `grayscale` has no slider of its own — it exists so the Mono preset has
- * something to set.
+ * Everything here is resolution-independent and neutral at its default, so a
+ * clip with an untouched `ColorAdjust` takes the cheap Canvas2D path and never
+ * reaches the shader.
+ *
+ * Split toning is the one pair that isn't a plain number: `shadowTint` and
+ * `highlightTint` name the two ends of the tone range and `splitTone` says how
+ * far to push towards them. It is the single biggest contributor to a "look",
+ * which is why the named filters lean on it.
  */
 export interface ColorAdjust {
+  /** Linear gain. 1 is neutral. */
   brightness: number;
   contrast: number;
   saturation: number;
-  /** -1 (cool) .. 1 (warm). Needs the shader; a channel offset, not a filter. */
+  /** Saturation that spares pixels which are already colourful — protects skin. */
+  vibrance: number;
+  /** -1 (cool) .. 1 (warm) — the blue/amber axis of white balance. */
   temperature: number;
+  /** -1 (green) .. 1 (magenta) — the other white-balance axis. */
+  tint: number;
+  /** -1 (recover) .. 1 (lift) — acts only on the top of the tone range. */
+  highlights: number;
+  /** -1 (crush) .. 1 (lift) — acts only on the bottom of the tone range. */
+  shadows: number;
+  /** 0..1 — milky lifted blacks, the matte-film look. */
+  fade: number;
+  /** 0..1 — darkened corners. */
+  vignette: number;
+  /** 0..1 — film grain. */
+  grain: number;
+  /** 0..1 — unsharp mask amount. */
+  sharpen: number;
+  /** Hex tints for the dark and bright ends of the range. */
+  shadowTint: string;
+  highlightTint: string;
+  /** 0..1 — how strongly the two tints are applied. */
+  splitTone: number;
   /** Pixels at 1080p; scaled with output height. */
   blur: number;
   grayscale: number;
+}
+
+/**
+ * A named look, and how far it has been dialled in.
+ *
+ * The rendered grade always lives in `ColorAdjust`; this only records where it
+ * came from, so the strength stays adjustable after the fact. Touching any
+ * slider by hand clears it, because the grade is then no longer that look.
+ */
+export interface FilterRef {
+  name: string;
+  /** 0..1 blend between neutral and the preset. */
+  intensity: number;
 }
 
 export interface ChromaKey {
@@ -108,7 +149,25 @@ export interface ChromaKey {
  * Transitions
  * ------------------------------------------------------------------ */
 
-export type TransitionKind = 'dissolve' | 'fade-to-black' | 'wipe-left' | 'wipe-right' | 'slide-left' | 'zoom-in';
+export type TransitionKind =
+  | 'dissolve'
+  | 'blur-dissolve'
+  | 'fade-to-black'
+  | 'fade-to-white'
+  | 'wipe-left'
+  | 'wipe-right'
+  | 'wipe-up'
+  | 'wipe-down'
+  | 'slide-left'
+  | 'slide-right'
+  | 'slide-up'
+  | 'slide-down'
+  | 'push-left'
+  | 'push-right'
+  | 'zoom-in'
+  | 'zoom-out'
+  | 'whip-pan'
+  | 'iris';
 
 export interface TransitionSpec {
   kind: TransitionKind;
@@ -117,11 +176,23 @@ export interface TransitionSpec {
 
 export const TRANSITION_LABELS: Record<TransitionKind, string> = {
   dissolve: 'Dissolve',
-  'fade-to-black': 'Fade to black',
+  'blur-dissolve': 'Blur dissolve',
+  'fade-to-black': 'Dip to black',
+  'fade-to-white': 'Dip to white',
   'wipe-left': 'Wipe left',
   'wipe-right': 'Wipe right',
-  'slide-left': 'Slide',
-  'zoom-in': 'Zoom'
+  'wipe-up': 'Wipe up',
+  'wipe-down': 'Wipe down',
+  'slide-left': 'Slide left',
+  'slide-right': 'Slide right',
+  'slide-up': 'Slide up',
+  'slide-down': 'Slide down',
+  'push-left': 'Push left',
+  'push-right': 'Push right',
+  'zoom-in': 'Zoom in',
+  'zoom-out': 'Zoom out',
+  'whip-pan': 'Whip pan',
+  iris: 'Iris'
 };
 
 /* ------------------------------------------------------------------ *
@@ -151,6 +222,8 @@ interface ClipCommon {
   transform: Transform;
   crop: Crop;
   colorAdjust: ColorAdjust;
+  /** Provenance of `colorAdjust` when it came from a named look. */
+  filter: FilterRef | null;
 }
 
 export interface MediaClip extends ClipCommon {
@@ -268,7 +341,18 @@ export const DEFAULT_COLOR: ColorAdjust = {
   brightness: 1,
   contrast: 1,
   saturation: 1,
+  vibrance: 0,
   temperature: 0,
+  tint: 0,
+  highlights: 0,
+  shadows: 0,
+  fade: 0,
+  vignette: 0,
+  grain: 0,
+  sharpen: 0,
+  shadowTint: '#2b4a6b',
+  highlightTint: '#ffc48a',
+  splitTone: 0,
   blur: 0,
   grayscale: 0
 };
@@ -283,13 +367,73 @@ export const DEFAULT_CHROMA: ChromaKey = {
 
 export const CLIP_COLORS = ['#6366f1', '#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#a855f7', '#ec4899', '#14b8a6'];
 
-export const COLOR_PRESETS: { name: string; color: ColorAdjust }[] = [
-  { name: 'None', color: DEFAULT_COLOR },
-  { name: 'Vivid', color: { ...DEFAULT_COLOR, saturation: 1.45, contrast: 1.15 } },
-  { name: 'Warm', color: { ...DEFAULT_COLOR, temperature: 0.35, saturation: 1.15 } },
-  { name: 'Cool', color: { ...DEFAULT_COLOR, temperature: -0.35, saturation: 1.1 } },
-  { name: 'Mono', color: { ...DEFAULT_COLOR, grayscale: 1, contrast: 1.15 } },
-  { name: 'Faded', color: { ...DEFAULT_COLOR, contrast: 0.82, brightness: 1.12, saturation: 0.75 } },
-  { name: 'Cinematic', color: { ...DEFAULT_COLOR, contrast: 1.25, saturation: 0.9, brightness: 0.95 } },
-  { name: 'Dreamy', color: { ...DEFAULT_COLOR, blur: 1.5, brightness: 1.1, saturation: 1.2 } }
+/**
+ * The filter shelf.
+ *
+ * Each look is a full `ColorAdjust`, so applying one is an assignment rather
+ * than a merge, and dialling its strength is a blend against `DEFAULT_COLOR`.
+ * `swatch` is the two-stop gradient the picker paints behind the name — a cheap
+ * stand-in for the real thing, since rendering sixteen live previews per frame
+ * would cost more than the preview itself.
+ */
+export interface ColorPreset {
+  name: string;
+  color: ColorAdjust;
+  swatch: [string, string];
+}
+
+const look = (name: string, swatch: [string, string], color: Partial<ColorAdjust>): ColorPreset => ({
+  name,
+  swatch,
+  color: { ...DEFAULT_COLOR, ...color }
+});
+
+export const COLOR_PRESETS: ColorPreset[] = [
+  look('None', ['#3f3f46', '#71717a'], {}),
+  look('Vivid', ['#ff5f6d', '#ffc371'], { saturation: 1.4, contrast: 1.15, vibrance: 0.2 }),
+  look('Punch', ['#f7971e', '#ffd200'], { contrast: 1.3, vibrance: 0.45, sharpen: 0.3, saturation: 1.1 }),
+  look('Warm Sun', ['#f6d365', '#fda085'], { temperature: 0.38, saturation: 1.12, highlights: -0.15 }),
+  look('Cool Steel', ['#4b6cb7', '#182848'], { temperature: -0.35, tint: -0.06, contrast: 1.1 }),
+  look('Golden Hour', ['#ff9966', '#ff5e62'], { temperature: 0.45, shadows: 0.12, splitTone: 0.35, highlightTint: '#ffb46b' }),
+  look('Faded Film', ['#d7cfc3', '#a89f91'], { fade: 0.28, contrast: 0.88, saturation: 0.82, grain: 0.18 }),
+  look('Matte Black', ['#232526', '#414345'], { fade: 0.35, contrast: 1.12, saturation: 0.7, splitTone: 0.3, shadowTint: '#1d2b3a' }),
+  look('Mono', ['#ffffff', '#4b4b4b'], { grayscale: 1, contrast: 1.2 }),
+  look('Noir', ['#0f0f0f', '#5a5a5a'], { grayscale: 1, contrast: 1.45, vignette: 0.45, grain: 0.22 }),
+  look('Teal & Orange', ['#0f3443', '#ff8c42'], { splitTone: 0.45, shadowTint: '#0e3a4a', highlightTint: '#ffb07c', contrast: 1.2, saturation: 0.95 }),
+  look('Vintage', ['#c79081', '#dfa579'], { temperature: 0.25, fade: 0.22, saturation: 0.8, vignette: 0.3, grain: 0.25 }),
+  look('Dreamy', ['#e0c3fc', '#8ec5fc'], { blur: 1.5, brightness: 1.08, saturation: 1.15, fade: 0.15 }),
+  look('Clarity', ['#e6f0f7', '#94b8d1'], { sharpen: 0.5, contrast: 1.12, vibrance: 0.25 }),
+  look('Bleach', ['#eaeaea', '#c9c9c9'], { saturation: 0.45, contrast: 1.3, brightness: 1.08 }),
+  look('Moody', ['#1f1c2c', '#928dab'], { shadows: -0.25, contrast: 1.18, saturation: 0.85, vignette: 0.35, splitTone: 0.25 })
 ];
+
+/**
+ * Blends a look towards neutral.
+ *
+ * Only the amounts interpolate; the two tint hexes are taken wholesale from
+ * the preset, because a `splitTone` of zero already means they have no effect
+ * and mixing hex values would just muddy the look on the way in.
+ */
+export const blendColor = (preset: ColorAdjust, intensity: number): ColorAdjust => {
+  const t = Math.max(0, Math.min(1, intensity));
+  const mix = (from: number, to: number) => from + (to - from) * t;
+  return {
+    brightness: mix(DEFAULT_COLOR.brightness, preset.brightness),
+    contrast: mix(DEFAULT_COLOR.contrast, preset.contrast),
+    saturation: mix(DEFAULT_COLOR.saturation, preset.saturation),
+    vibrance: mix(DEFAULT_COLOR.vibrance, preset.vibrance),
+    temperature: mix(DEFAULT_COLOR.temperature, preset.temperature),
+    tint: mix(DEFAULT_COLOR.tint, preset.tint),
+    highlights: mix(DEFAULT_COLOR.highlights, preset.highlights),
+    shadows: mix(DEFAULT_COLOR.shadows, preset.shadows),
+    fade: mix(DEFAULT_COLOR.fade, preset.fade),
+    vignette: mix(DEFAULT_COLOR.vignette, preset.vignette),
+    grain: mix(DEFAULT_COLOR.grain, preset.grain),
+    sharpen: mix(DEFAULT_COLOR.sharpen, preset.sharpen),
+    shadowTint: preset.shadowTint,
+    highlightTint: preset.highlightTint,
+    splitTone: mix(DEFAULT_COLOR.splitTone, preset.splitTone),
+    blur: mix(DEFAULT_COLOR.blur, preset.blur),
+    grayscale: mix(DEFAULT_COLOR.grayscale, preset.grayscale)
+  };
+};

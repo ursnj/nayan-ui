@@ -18,10 +18,20 @@ in vec2 aPosition;
 out vec2 vUv;
 void main() {
   // A single oversized triangle beats a quad: no diagonal seam, one less vertex.
-  vUv = (aPosition + 1.0) * 0.5;
+  //
+  // The V coordinate is inverted because the two conventions disagree: GL's
+  // framebuffer counts rows from the bottom, while a texture uploaded from a
+  // canvas has its first row — the top of the picture — at v = 0. Sampling
+  // straight through hands back a vertically flipped frame.
+  vUv = vec2((aPosition.x + 1.0) * 0.5, 1.0 - (aPosition.y + 1.0) * 0.5);
   gl_Position = vec4(aPosition, 0.0, 1.0);
 }`;
 
+/*
+ * The grade runs in the order a colourist would work: fix the picture, then
+ * balance it, then style it, then add texture. Reordering these changes the
+ * result, so the stages are commented rather than merely listed.
+ */
 const FRAGMENT_SHADER = `#version 300 es
 precision highp float;
 
@@ -29,12 +39,25 @@ in vec2 vUv;
 out vec4 fragColor;
 
 uniform sampler2D uTexture;
+uniform vec2 uTexel;
 
 uniform float uBrightness;
 uniform float uContrast;
 uniform float uSaturation;
+uniform float uVibrance;
 uniform float uTemperature;
+uniform float uTint;
+uniform float uHighlights;
+uniform float uShadows;
+uniform float uFade;
+uniform float uVignette;
+uniform float uGrain;
+uniform float uSharpen;
+uniform vec3 uShadowTint;
+uniform vec3 uHighlightTint;
+uniform float uSplitTone;
 uniform float uGrayscale;
+uniform float uSeed;
 
 uniform bool uChromaEnabled;
 uniform vec3 uKeyColor;
@@ -48,19 +71,38 @@ float luminance(vec3 color) {
   return dot(color, LUMA);
 }
 
-/** RGB → chrominance only; hue/saturation distance keys far better than RGB distance. */
+/** RGB -> chrominance only; hue/saturation distance keys far better than RGB distance. */
 vec2 toChroma(vec3 color) {
   float y = luminance(color);
   return vec2(color.b - y, color.r - y);
 }
 
+/** Cheap hash for grain. Deterministic per pixel per frame, no texture needed. */
+float hash(vec2 p) {
+  return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
 void main() {
   vec4 texel = texture(uTexture, vUv);
+
+  /* --- Texture: unsharp mask, before any colour work touches the edges --- */
+  if (uSharpen > 0.0) {
+    // Four-tap cross is enough for a preview-grade mask and costs a quarter of
+    // a full 3x3 kernel. Only the colour is sharpened — running the mask over
+    // alpha too would ring the edge of every matte and every glyph.
+    vec3 neighbours = texture(uTexture, vUv + vec2(uTexel.x, 0.0)).rgb
+                    + texture(uTexture, vUv - vec2(uTexel.x, 0.0)).rgb
+                    + texture(uTexture, vUv + vec2(0.0, uTexel.y)).rgb
+                    + texture(uTexture, vUv - vec2(0.0, uTexel.y)).rgb;
+    texel.rgb += (texel.rgb - neighbours * 0.25) * uSharpen * 1.5;
+  }
 
   // Work in straight alpha so colour maths isn't skewed by transparency.
   vec3 color = texel.a > 0.001 ? texel.rgb / texel.a : texel.rgb;
   float alpha = texel.a;
+  color = clamp(color, 0.0, 1.0);
 
+  /* --- Matte: pull the key before grading, so spill is judged on raw pixels --- */
   if (uChromaEnabled) {
     float keyDistance = length(toChroma(color) - toChroma(uKeyColor));
     float matte = smoothstep(uSimilarity, uSimilarity + max(uSmoothness, 0.001), keyDistance);
@@ -72,16 +114,81 @@ void main() {
     alpha *= matte;
   }
 
+  /* --- Exposure --- */
   color *= uBrightness;
+
+  /* --- Tone regions. Weighted by luma so each end moves without flattening
+         the other; squaring the weight keeps the midtones still. --- */
+  if (uHighlights != 0.0 || uShadows != 0.0) {
+    float y = luminance(color);
+    float highlightWeight = y * y;
+    float shadowWeight = (1.0 - y) * (1.0 - y);
+    color += uHighlights * highlightWeight * 0.5;
+    color += uShadows * shadowWeight * 0.5;
+  }
+
+  /* --- Contrast, pivoted on mid grey --- */
   color = (color - 0.5) * uContrast + 0.5;
 
+  /* --- White balance: amber/blue on one axis, magenta/green on the other --- */
   if (uTemperature != 0.0) {
     color.r += uTemperature * 0.12;
     color.b -= uTemperature * 0.12;
   }
+  if (uTint != 0.0) {
+    color.g -= uTint * 0.10;
+    color.r += uTint * 0.05;
+    color.b += uTint * 0.05;
+  }
+
+  // Exposure, tone and contrast can all push a channel outside [0,1]. Every
+  // stage below reads the channel values back — vibrance compares them, split
+  // tone assumes a soft-light range, grain weights by luma — so bring them
+  // back into range once here rather than letting each stage misbehave.
+  color = clamp(color, 0.0, 1.0);
+
+  /* --- Vibrance before saturation: it leans on the gap between a pixel's
+         strongest and weakest channel, which a global saturate would erase. --- */
+  if (uVibrance != 0.0) {
+    float mx = max(color.r, max(color.g, color.b));
+    float mn = min(color.r, min(color.g, color.b));
+    float chroma = mx - mn;
+    color = mix(vec3(luminance(color)), color, 1.0 + uVibrance * (1.0 - chroma));
+  }
 
   color = mix(vec3(luminance(color)), color, uSaturation);
+
+  /* --- Split tone: push the dark and bright ends towards their own hues --- */
+  if (uSplitTone > 0.0) {
+    float y = clamp(luminance(color), 0.0, 1.0);
+    vec3 tint = mix(uShadowTint, uHighlightTint, smoothstep(0.15, 0.85, y));
+    // Soft light keeps the tint from washing the picture out the way a
+    // straight mix would.
+    vec3 toned = color * (1.0 - 2.0 * (tint - 0.5) * color) + 2.0 * color * (tint - 0.5);
+    color = mix(color, toned, uSplitTone);
+  }
+
   if (uGrayscale > 0.0) color = mix(color, vec3(luminance(color)), uGrayscale);
+
+  /* --- Fade: lift the black point for the matte-film look --- */
+  if (uFade > 0.0) color = color * (1.0 - uFade * 0.45) + uFade * 0.22;
+
+  /* --- Vignette --- */
+  if (uVignette > 0.0) {
+    // smoothstep is undefined when edge0 >= edge1, so the falloff is built the
+    // right way round and inverted rather than passing reversed edges.
+    float falloff = 1.0 - smoothstep(0.25, 0.75, length(vUv - 0.5) * 1.4);
+    color *= mix(1.0, falloff, uVignette);
+  }
+
+  /* --- Grain last, so it isn't stretched by contrast or tinted --- */
+  if (uGrain > 0.0) {
+    float noise = hash(vUv * 1024.0 + uSeed) - 0.5;
+    // Grain reads strongest in the midtones and all but vanishes in clipped
+    // highlights, which is how film behaves.
+    float y = luminance(color);
+    color += noise * uGrain * 0.22 * (1.0 - abs(y * 2.0 - 1.0));
+  }
 
   color = clamp(color, 0.0, 1.0);
   // Back to premultiplied alpha for correct canvas compositing.
@@ -91,11 +198,33 @@ void main() {
 export interface PixelEffectParams {
   color: ColorAdjust;
   chromaKey: ChromaKey;
+  /** Varies the grain pattern between frames; static grain looks like dirt. */
+  seed: number;
 }
 
-/** True when a layer needs the shader rather than plain `ctx.filter`. */
-export const needsPixelProcessing = (params: { color: ColorAdjust; chromaKey?: ChromaKey }): boolean =>
-  (params.chromaKey?.enabled ?? false) || params.color.temperature !== 0;
+/**
+ * True when a layer needs the shader rather than plain `ctx.filter`.
+ *
+ * Canvas2D covers brightness, contrast, saturate, grayscale and blur, so a
+ * clip using only those stays on the cheap path. Everything below is either
+ * per-pixel or region-weighted and has no filter-function equivalent.
+ */
+export const needsPixelProcessing = (params: { color: ColorAdjust; chromaKey?: ChromaKey }): boolean => {
+  const { color } = params;
+  return (
+    (params.chromaKey?.enabled ?? false) ||
+    color.temperature !== 0 ||
+    color.tint !== 0 ||
+    color.vibrance !== 0 ||
+    color.highlights !== 0 ||
+    color.shadows !== 0 ||
+    color.fade > 0 ||
+    color.vignette > 0 ||
+    color.grain > 0 ||
+    color.sharpen > 0 ||
+    color.splitTone > 0
+  );
+};
 
 const hexToRgb = (hex: string): [number, number, number] => {
   const clean = hex.replace('#', '');
@@ -131,14 +260,26 @@ class GLProcessor {
         if (!gl) throw new Error('no webgl2');
         this.gl = gl;
         this.setup(gl);
-      } catch {
+      } catch (error) {
+        // Falling back to Canvas2D silently would leave every shader-only
+        // effect doing nothing with no way to tell why, so say so once.
+        console.error('[video-editor] GPU effects unavailable, falling back to Canvas2D:', error);
         this.failed = true;
         return null;
       }
     }
-    if (this.canvas && (this.canvas.width !== width || this.canvas.height !== height)) {
-      this.canvas.width = width;
-      this.canvas.height = height;
+    /*
+     * Grow only, never shrink.
+     *
+     * Resizing a WebGL canvas reallocates its drawing buffer. A transition
+     * runs two layers through here per frame, so a 1080p clip blending into a
+     * 720p one would reallocate twice on every frame of the blend. Keeping the
+     * surface at the high-water mark costs a little idle memory and removes
+     * the churn entirely; `process` renders into a sub-rectangle of it.
+     */
+    if (this.canvas && (this.canvas.width < width || this.canvas.height < height)) {
+      this.canvas.width = Math.max(this.canvas.width, width);
+      this.canvas.height = Math.max(this.canvas.height, height);
     }
     return this.gl;
   }
@@ -198,7 +339,12 @@ class GLProcessor {
     if (!gl || !this.program) return null;
 
     try {
-      gl.viewport(0, 0, width, height);
+      // The surface may be larger than this layer. GL counts rows from the
+      // bottom and the compositor reads back from the top-left, so the
+      // viewport is pushed up to land the render where Canvas2D will look for
+      // it: the rectangle (0, 0, width, height) in image coordinates.
+      const surfaceHeight = this.canvas?.height ?? height;
+      gl.viewport(0, surfaceHeight - height, width, height);
       gl.useProgram(this.program);
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, this.texture);
@@ -207,11 +353,29 @@ class GLProcessor {
 
       const { color, chromaKey } = params;
       gl.uniform1i(this.location('uTexture'), 0);
+      gl.uniform2f(this.location('uTexel'), 1 / Math.max(1, width), 1 / Math.max(1, height));
       gl.uniform1f(this.location('uBrightness'), color.brightness);
       gl.uniform1f(this.location('uContrast'), color.contrast);
       gl.uniform1f(this.location('uSaturation'), color.saturation);
+      gl.uniform1f(this.location('uVibrance'), color.vibrance);
       gl.uniform1f(this.location('uTemperature'), color.temperature);
+      gl.uniform1f(this.location('uTint'), color.tint);
+      gl.uniform1f(this.location('uHighlights'), color.highlights);
+      gl.uniform1f(this.location('uShadows'), color.shadows);
+      gl.uniform1f(this.location('uFade'), color.fade);
+      gl.uniform1f(this.location('uVignette'), color.vignette);
+      gl.uniform1f(this.location('uGrain'), color.grain);
+      gl.uniform1f(this.location('uSharpen'), color.sharpen);
+      gl.uniform1f(this.location('uSplitTone'), color.splitTone);
       gl.uniform1f(this.location('uGrayscale'), color.grayscale);
+      // Wrapped so the value stays small enough for `sin()` to keep its
+      // precision in the grain hash.
+      gl.uniform1f(this.location('uSeed'), (params.seed / 1000) % 1024);
+
+      const [sr, sg, sb] = hexToRgb(color.shadowTint);
+      gl.uniform3f(this.location('uShadowTint'), sr, sg, sb);
+      const [hr, hg, hb] = hexToRgb(color.highlightTint);
+      gl.uniform3f(this.location('uHighlightTint'), hr, hg, hb);
 
       gl.uniform1i(this.location('uChromaEnabled'), chromaKey.enabled ? 1 : 0);
       const [r, g, b] = hexToRgb(chromaKey.color);

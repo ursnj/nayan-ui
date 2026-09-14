@@ -23,7 +23,8 @@ const clipBase = (trackId: string, name: string, startUs: number, durationUs: nu
   locked: false,
   transform: { ...DEFAULT_TRANSFORM },
   crop: { ...DEFAULT_CROP },
-  colorAdjust: { ...DEFAULT_COLOR }
+  colorAdjust: { ...DEFAULT_COLOR },
+  filter: null
 });
 
 export const makeMediaClip = (asset: MediaAsset, trackId: string, startUs: number, durationUs: number): MediaClip => ({

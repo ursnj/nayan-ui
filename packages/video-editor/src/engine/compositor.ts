@@ -5,6 +5,7 @@ import { TEXT_LINE_HEIGHT, US, clipEndUs, isMediaClip, isTextClip, sourceTimeUs 
 import type { Clip, ColorAdjust, MediaClip, ProjectSettings, TextClip, Track, Transform } from '../types';
 import { blurOnlyFilter, canvasFilterString, exportProcessor, needsPixelProcessing, previewProcessor } from './glProcessor';
 import { transitionStateAt } from './transitions';
+import type { LayerTransitionState } from './transitions';
 
 export interface Scene {
   project: ProjectSettings;
@@ -55,21 +56,16 @@ export const renderScene = async (context: Context2D, scene: Scene, timeUs: numb
     const state = transitionStateAt(transition.kind, progress, project.width, project.height);
     const outgoing = previousClipOnTrack(scene, layer);
 
-    if (outgoing && state.outgoingAlpha > 0) {
+    if (outgoing && state.outgoing.alpha > 0) {
       // Keep reading the outgoing clip's source forward through the blend
       // rather than freezing its last frame, which looks broken over motion.
       await drawLayer(context, outgoing, project, Math.min(timeUs, clipEndUs(outgoing) - 1), options, {
-        alpha: state.outgoingAlpha,
+        ...state.outgoing,
         sourceOverrunUs: isMediaClip(outgoing) ? outgoing.inUs + (timeUs - outgoing.startUs) * outgoing.speed : undefined
       });
     }
 
-    await drawLayer(context, layer, project, timeUs, options, {
-      alpha: state.incomingAlpha,
-      clip: state.clip,
-      translate: state.translate,
-      scale: state.scale
-    });
+    await drawLayer(context, layer, project, timeUs, options, { ...state.incoming });
 
     if (state.overlay && state.overlay.alpha > 0) {
       context.save();
@@ -123,7 +119,13 @@ export const envelopeAt = (clip: Clip, timeUs: number): number => {
   return gain;
 };
 
-/** Resolves a clip's colour settings at an instant, applying any keyframes. */
+/**
+ * Resolves a clip's colour settings at an instant, applying any keyframes.
+ *
+ * Only the dials worth animating are looked up. The tint hexes and the
+ * texture amounts are deliberately static: ramping grain or a split tone
+ * reads as a glitch rather than a move.
+ */
 const colorAt = (clip: Clip, timeUs: number): ColorAdjust => {
   const base = clip.colorAdjust;
   if (Object.keys(clip.animations).length === 0) return base;
@@ -132,6 +134,11 @@ const colorAt = (clip: Clip, timeUs: number): ColorAdjust => {
     brightness: animatedValue(clip, 'color.brightness', base.brightness, timeUs),
     contrast: animatedValue(clip, 'color.contrast', base.contrast, timeUs),
     saturation: animatedValue(clip, 'color.saturation', base.saturation, timeUs),
+    vibrance: animatedValue(clip, 'color.vibrance', base.vibrance, timeUs),
+    temperature: animatedValue(clip, 'color.temperature', base.temperature, timeUs),
+    highlights: animatedValue(clip, 'color.highlights', base.highlights, timeUs),
+    shadows: animatedValue(clip, 'color.shadows', base.shadows, timeUs),
+    vignette: animatedValue(clip, 'color.vignette', base.vignette, timeUs),
     blur: animatedValue(clip, 'color.blur', base.blur, timeUs)
   };
 };
@@ -148,17 +155,13 @@ const transformAt = (clip: Clip, timeUs: number): Transform => {
   };
 };
 
-interface DrawOverride {
-  alpha: number;
+interface DrawOverride extends LayerTransitionState {
   /**
    * Source position to read instead of the one implied by the timeline. Used
    * by transitions, where the outgoing clip must keep playing past its own
    * out-point for the duration of the blend.
    */
   sourceOverrunUs?: number;
-  clip?: (context: Context2D, width: number, height: number) => void;
-  translate?: { x: number; y: number };
-  scale?: number;
 }
 
 /* ------------------------------------------------------------------ *
@@ -250,7 +253,12 @@ const resolveVideoSource = async (clip: MediaClip, timeUs: number, options: Rend
 
   // Blit through a scratch surface so mediabunny applies rotation and pixel
   // aspect ratio for us, and so the GPU pass has a plain texture source.
-  const surface = getScratch(`${options.target}:sample`, sourceWidth, sourceHeight);
+  //
+  // The key carries the dimensions because a transition draws two clips per
+  // frame: sharing one surface between a 1080p and a 720p layer would resize —
+  // and so reallocate and clear — it twice on every single frame of the blend,
+  // which is exactly when there is no headroom to spare.
+  const surface = getScratch(`${options.target}:sample:${sourceWidth}x${sourceHeight}`, sourceWidth, sourceHeight);
   if (!surface) return null;
   try {
     sample.draw(surface.context as CanvasRenderingContext2D, 0, 0, sourceWidth, sourceHeight);
@@ -307,7 +315,8 @@ const compose = (
     const processor = options.target === 'export' ? exportProcessor : previewProcessor;
     const processed = processor.process(source as TexImageSource, sourceWidth, sourceHeight, {
       color,
-      chromaKey: chromaKey ?? { enabled: false, color: '#000000', similarity: 0, smoothness: 0, spill: 0 }
+      chromaKey: chromaKey ?? { enabled: false, color: '#000000', similarity: 0, smoothness: 0, spill: 0 },
+      seed: timeUs
     });
     if (processed) {
       image = processed;
@@ -327,6 +336,19 @@ const compose = (
   const sy = sourceHeight * clamp(crop.top, 0, 0.98);
   const sw = Math.max(1, sourceWidth * (1 - clamp(crop.left + crop.right, 0, 0.99)));
   const sh = Math.max(1, sourceHeight * (1 - clamp(crop.top + crop.bottom, 0, 0.99)));
+
+  // A transition's blur rides on top of the grade's own. Two `blur()` functions
+  // in one filter chain compose, so it is appended rather than merged — and it
+  // is scaled with output height like every other blur, so a whip pan smears
+  // by the same amount at 720p and 4K.
+  // The epsilon is not cosmetic: a transition's blur curve lands on values
+  // like 7e-17 at its endpoints, which are invisible but truthy, and a
+  // `blur(0.00px)` in the filter chain still pushes the canvas onto its
+  // filtered draw path for the frame.
+  if (override?.blur && override.blur > 0.01) {
+    const radius = (override.blur * blurScale).toFixed(2);
+    filter = filter === 'none' ? `blur(${radius}px)` : `${filter} blur(${radius}px)`;
+  }
 
   const box = containRect(sw, sh, project.width, project.height);
   const transform = transformAt(clip, timeUs);

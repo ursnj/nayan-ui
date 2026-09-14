@@ -127,57 +127,37 @@ export const EffectsPanel = () => {
       <p className="mb-2 text-[11px] text-muted">
         Applying to {selected.length} clip{selected.length > 1 ? 's' : ''}. Fine-tune in the Colour section of the inspector.
       </p>
-      <div className="grid grid-cols-2 gap-2">
-        {COLOR_PRESETS.map(preset => (
-          <button
-            key={preset.name}
-            type="button"
-            onClick={() =>
-              updateSelectedClips({
-                // Presets are partial: merge onto the default so switching
-                // between looks never leaves a stray value behind.
-                colorAdjust: { ...COLOR_PRESETS[0].color, ...preset.color } as never
-              })
-            }
-            className="group overflow-hidden rounded-lg border border-border transition-all hover:border-accent hover:elevate">
-            <span
-              className="block h-12 w-full bg-gradient-to-br from-sky-400 via-fuchsia-500 to-amber-400"
-              style={{ filter: previewFilter(preset.name) }}
-            />
-            <span className="block px-1.5 py-1 text-[10px] text-foreground">{preset.name}</span>
-          </button>
-        ))}
+      <div className="grid grid-cols-3 gap-2">
+        {COLOR_PRESETS.map(preset => {
+          const none = preset.name === 'None';
+          return (
+            <button
+              key={preset.name}
+              type="button"
+              onClick={() =>
+                updateSelectedClips({
+                  // Presets are complete `ColorAdjust` values, so this is an
+                  // assignment rather than a merge — switching looks can never
+                  // leave a stray dial behind.
+                  colorAdjust: { ...preset.color } as never,
+                  // Record the look so the inspector's strength slider can
+                  // keep re-deriving it. Without this the panel and the
+                  // inspector would disagree about what is applied.
+                  filter: (none ? null : { name: preset.name, intensity: 1 }) as never
+                })
+              }
+              title={preset.name}
+              className="group overflow-hidden rounded-lg border border-border transition-all hover:border-accent hover:elevate">
+              <span
+                className="block h-12 w-full"
+                style={{ background: `linear-gradient(135deg, ${preset.swatch[0]}, ${preset.swatch[1]})` }}
+                aria-hidden
+              />
+              <span className="block truncate px-1.5 py-1 text-[10px] text-foreground">{preset.name}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
-};
-
-/** Cheap CSS approximation of each look, just for the swatch. */
-const previewFilter = (name: string) => {
-  switch (name) {
-    case 'Vivid':
-      return 'saturate(1.45) contrast(1.15)';
-    case 'Warm':
-      return 'sepia(0.25) saturate(1.2)';
-    case 'Cool':
-      return 'hue-rotate(-15deg) saturate(1.1)';
-    case 'Mono':
-      return 'grayscale(1) contrast(1.15)';
-    case 'Faded':
-      return 'contrast(0.8) brightness(1.15) saturate(0.75)';
-    case 'Teal & Orange':
-      return 'sepia(0.2) saturate(1.4) hue-rotate(-8deg)';
-    case 'Noir':
-      return 'grayscale(1) contrast(1.5) brightness(0.9)';
-    case 'Dreamy':
-      return 'blur(1px) brightness(1.12) saturate(1.2)';
-    case 'Cinematic':
-      return 'contrast(1.25) saturate(0.9) brightness(0.95)';
-    case 'Sepia':
-      return 'sepia(0.75)';
-    case 'Invert':
-      return 'invert(1)';
-    default:
-      return 'none';
-  }
 };
