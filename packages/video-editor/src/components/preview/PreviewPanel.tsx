@@ -84,7 +84,14 @@ export const PreviewPanel = () => {
   const overlayVisible = showOverlay && selected !== null && selected.kind !== 'audio' && displaySize.width > 0;
 
   return (
-    <section className="island flex min-h-0 min-w-0 flex-1 flex-col">
+    /*
+     * A container, not a media query: the transport has to fit the *pane*,
+     * which the user resizes independently of the window. Its full set of
+     * controls needs about 650px, and at 1024px the preview gets 372 — so the
+     * row sheds controls as it narrows, least useful first, keeping transport
+     * and the current time to the end.
+     */
+    <section className="island @container flex min-h-0 min-w-0 flex-1 flex-col">
       <div className="flex items-center gap-1 border-b border-border bg-editor-panel px-2 py-1">
         <IconButton label="Transform handles" onClick={() => setShowOverlay(value => !value)} active={showOverlay}>
           <MousePointer2 className="h-4 w-4" />
@@ -102,7 +109,7 @@ export const PreviewPanel = () => {
           <Camera className="h-4 w-4" />
         </IconButton>
 
-        <span className="ml-auto font-mono text-[10px] tabular-nums text-muted">
+        <span className="ml-auto hidden whitespace-nowrap font-mono text-[10px] tabular-nums text-muted @[420px]:inline">
           {project.width} × {project.height} · {project.fps}fps
         </span>
       </div>
@@ -150,9 +157,12 @@ export const PreviewPanel = () => {
       </div>
 
       <div className="flex items-center gap-1 border-t border-border bg-editor-panel px-3 py-1.5">
-        <IconButton label="Jump to start" onClick={() => seekTo(0)}>
-          <SkipBack className="h-4 w-4" />
-        </IconButton>
+        {/* `contents` so the wrapper vanishes from the flex row when shown. */}
+        <span className="hidden @[380px]:contents">
+          <IconButton label="Jump to start" onClick={() => seekTo(0)}>
+            <SkipBack className="h-4 w-4" />
+          </IconButton>
+        </span>
         <IconButton label="Previous frame" onClick={() => stepFrames(-1)}>
           <ChevronLeft className="h-4 w-4" />
         </IconButton>
@@ -170,29 +180,43 @@ export const PreviewPanel = () => {
         <IconButton label="Next frame" onClick={() => stepFrames(1)}>
           <ChevronRight className="h-4 w-4" />
         </IconButton>
-        <IconButton label="Jump to end" onClick={() => seekTo(durationUs)}>
-          <SkipForward className="h-4 w-4" />
-        </IconButton>
+        <span className="hidden @[380px]:contents">
+          <IconButton label="Jump to end" onClick={() => seekTo(durationUs)}>
+            <SkipForward className="h-4 w-4" />
+          </IconButton>
+        </span>
         <IconButton label="Loop playback" onClick={() => setLoop(value => !value)} active={loop}>
           <Repeat className="h-4 w-4" />
         </IconButton>
 
         <TimeReadout durationUs={durationUs} fps={project.fps} />
 
-        <div className="ml-auto flex items-center gap-2">
-          <AudioMeter />
+        <div className="ml-auto flex min-w-0 items-center gap-2">
+          <span className="hidden @[640px]:contents">
+            <AudioMeter />
+          </span>
           <IconButton label={muted ? 'Unmute' : 'Mute'} onClick={() => setMuted(value => !value)} active={muted}>
             {muted || volume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
           </IconButton>
-          <NSlider value={volume} min={0} max={100} onChange={setVolume} className="mb-0 w-24" aria-label="Preview volume" />
-          <IconButton
-            label="Stop and rewind"
-            onClick={() => {
-              pausePlayback();
-              seekTo(0);
-            }}>
-            <Maximize2 className="h-4 w-4 rotate-45" />
-          </IconButton>
+          {/* Mute stays to the end; the slider is the first thing to go. */}
+          <NSlider
+            value={volume}
+            min={0}
+            max={100}
+            onChange={setVolume}
+            className="mb-0 hidden w-24 @[560px]:block"
+            aria-label="Preview volume"
+          />
+          <span className="hidden @[680px]:contents">
+            <IconButton
+              label="Stop and rewind"
+              onClick={() => {
+                pausePlayback();
+                seekTo(0);
+              }}>
+              <Maximize2 className="h-4 w-4 rotate-45" />
+            </IconButton>
+          </span>
         </div>
       </div>
     </section>
@@ -206,10 +230,11 @@ export const PreviewPanel = () => {
 const TimeReadout = ({ durationUs, fps }: { durationUs: number; fps: number }) => {
   const playheadUs = useEditor(state => state.playheadUs);
   return (
-    <span className="ml-3 font-mono text-xs tabular-nums text-muted">
+    <span className="ml-3 shrink-0 whitespace-nowrap font-mono text-xs tabular-nums text-muted">
       <span className="text-foreground">{formatTimecode(playheadUs, true, fps)}</span>
-      <span className="mx-1 opacity-50">/</span>
-      {formatTimecode(durationUs, true, fps)}
+      {/* The duration is the half you can do without when space is short. */}
+      <span className="mx-1 hidden opacity-50 @[470px]:inline">/</span>
+      <span className="hidden @[470px]:inline">{formatTimecode(durationUs, true, fps)}</span>
     </span>
   );
 };
