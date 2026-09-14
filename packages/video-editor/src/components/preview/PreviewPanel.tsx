@@ -107,10 +107,16 @@ export const PreviewPanel = () => {
         </span>
       </div>
 
-      <div className="flex min-h-0 flex-1 items-center justify-center bg-editor-canvas p-4">
+      {/*
+        The stage runs edge to edge — no padding, no rounded corners and no
+        shadow on the frame itself, which would only be clipped by the island
+        now that the two touch. Whatever the project's aspect ratio doesn't
+        fill shows as the canvas colour either side of it.
+      */}
+      <div className="flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-editor-canvas">
         <div
           ref={frameRef}
-          className="checkerboard relative max-h-full max-w-full overflow-hidden rounded-md elevate"
+          className="checkerboard relative max-h-full max-w-full overflow-hidden"
           style={{ aspectRatio: `${project.width} / ${project.height}` }}>
           <canvas ref={canvasRef} width={project.width} height={project.height} className="block h-full w-full" />
 
