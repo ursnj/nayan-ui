@@ -10,9 +10,11 @@ import {
   Film,
   Gauge,
   Github,
+  Image as ImageIcon,
   Layers,
   Lock,
   MonitorPlay,
+  Package,
   Palette,
   Scissors,
   ShieldCheck,
@@ -22,6 +24,7 @@ import {
   Wand2,
   Zap
 } from 'lucide-react';
+import { FAQS } from './content';
 
 /** The running editor lives at this path, served as a static bundle. */
 const EDITOR_URL = '/editor';
@@ -58,7 +61,7 @@ const FEATURES = [
     accent: 'from-amber-500 to-orange-500',
     hover: 'hover:border-amber-500/30',
     text: 'group-hover:text-amber-600 dark:group-hover:text-amber-400',
-    body: 'Brightness, contrast, saturation, temperature and blur, with eight one-click looks — Vivid, Warm, Cool, Mono, Faded, Cinematic and Dreamy. Crop each clip independently.'
+    body: 'Sixteen one-click looks with a strength dial — Vivid, Punch, Golden Hour, Faded Film, Matte Black, Noir, Teal & Orange, Vintage and more. Underneath: exposure, contrast, highlights, shadows, fade, vibrance, temperature, tint, split toning, vignette, grain and sharpen.'
   },
   {
     icon: Type,
@@ -70,11 +73,11 @@ const FEATURES = [
   },
   {
     icon: Blend,
-    title: 'Transitions',
+    title: 'Eighteen transitions',
     accent: 'from-rose-500 to-pink-500',
     hover: 'hover:border-rose-500/30',
     text: 'group-hover:text-rose-600 dark:group-hover:text-rose-400',
-    body: 'Dissolve, fade to black, wipe left or right, slide and zoom. The outgoing clip keeps playing through the blend rather than freezing on its last frame.'
+    body: 'Dissolves, dips to black or white, wipes and slides on all four edges, pushes, cross-zooms, a blurred whip pan and an iris. Each is eased on a curve chosen for the move, and the outgoing clip keeps playing through the blend rather than freezing on its last frame.'
   },
   {
     icon: Volume2,
@@ -82,15 +85,31 @@ const FEATURES = [
     accent: 'from-lime-500 to-green-500',
     hover: 'hover:border-lime-500/30',
     text: 'group-hover:text-lime-600 dark:group-hover:text-lime-400',
-    body: 'Per-clip volume with keyframes, fades, speed and reverse, track faders and a live output meter. Detach audio from a video clip and the two stay linked.'
+    body: 'Per-clip volume with keyframes, fades, speed and reverse, plus track faders. Playback takes its time from the Web Audio clock rather than a wall timer, so picture and sound cannot drift apart. Detach audio from a video clip and the two stay linked.'
+  },
+  {
+    icon: ImageIcon,
+    title: 'Backgrounds',
+    accent: 'from-purple-500 to-indigo-500',
+    hover: 'hover:border-purple-500/30',
+    text: 'group-hover:text-purple-600 dark:group-hover:text-purple-400',
+    body: 'Fill the frame behind your clips with a colour, a linear or radial gradient, or one of your own images. Or use the shot itself, scaled to fill and defocused — the usual answer for landscape footage in a vertical edit.'
+  },
+  {
+    icon: Package,
+    title: 'Projects in a single file',
+    accent: 'from-teal-500 to-emerald-500',
+    hover: 'hover:border-teal-500/30',
+    text: 'group-hover:text-teal-600 dark:group-hover:text-teal-400',
+    body: 'Saving writes one .nayanproj file containing the timeline and every media file you imported. Open it on another machine and everything relinks — no hunting for the originals. It is an ordinary zip, so you can open it and take the media back out.'
   },
   {
     icon: Download,
-    title: 'Export to MP4 or WebM',
+    title: 'Seven export formats',
     accent: 'from-blue-500 to-indigo-500',
     hover: 'hover:border-blue-500/30',
     text: 'group-hover:text-blue-600 dark:group-hover:text-blue-400',
-    body: 'Presets for 1080p, 720p, vertical and square, or set your own. Pick a quality, export just the marked in/out range, watch the frames-per-second and time remaining, and cancel whenever you like.'
+    body: 'MP4, MOV, MKV and WebM for video; M4A, WAV and OGG to bounce just the audio. Each one is offered only if your browser can actually encode it. Presets for 1080p, 720p, vertical and square, live frames-per-second and time remaining, and cancel whenever you like.'
   }
 ];
 
@@ -103,8 +122,9 @@ const EDITING_OPERATIONS = [
   'Copy, cut and paste with the relative spacing preserved',
   'Group clips so they move and delete together',
   'Detach audio from a video clip, kept linked to its source',
-  'Snap to clip edges, markers, the playhead and the start',
-  'Markers, and an in/out range that also drives the export',
+  'Snap to clip edges, the playhead, the in/out points and the start',
+  'An in/out range that also drives the export',
+  'Drag the playhead, or type a timecode to jump to an exact frame',
   'Duplicate, lock, reorder tracks, undo and redo'
 ];
 
@@ -113,37 +133,11 @@ const PREVIEW_FEATURES = [
   'Frame-by-frame stepping and loop playback',
   'Broadcast safe zones and a rule-of-thirds grid',
   'Save the current frame as a PNG',
-  'Live audio level meter',
+  'Full-screen preview',
+  'Click the timecode and type to jump to a frame',
   'Filmstrip thumbnails and audio waveforms on every clip',
   'Resizable panels that remember their size',
   'Light and dark themes'
-];
-
-const FAQS = [
-  {
-    q: 'Are my files uploaded anywhere?',
-    a: 'No. There is no server, no account and no upload step. Your media is opened directly from disk, decoded in the browser, and the finished file is written back to your downloads folder. Nothing ever leaves the machine.'
-  },
-  {
-    q: 'Which browsers work?',
-    a: 'Anything with WebCodecs: Chrome and Edge 94 or newer, and Safari 16.4 or newer. WebGL2 powers the green screen and colour temperature, and quietly falls back to Canvas2D if it is unavailable.'
-  },
-  {
-    q: 'What formats can I import?',
-    a: 'MP4, MOV, WebM, MKV, MP3, WAV, OGG and the common image formats — essentially whatever your browser can decode. Export is MP4 (H.264) or WebM (VP9).'
-  },
-  {
-    q: 'Is there a watermark or a length limit?',
-    a: 'Neither. The only practical limits are your machine’s memory and how long you are willing to wait for the encode.'
-  },
-  {
-    q: 'Can I save a project and come back to it?',
-    a: 'Yes — projects save to a JSON file holding your whole timeline. Because browsers cannot hold onto file handles, you re-import the original media after opening a project and the clips relink to it.'
-  },
-  {
-    q: 'How fast is it?',
-    a: 'Decoding and encoding run on the same hardware blocks your browser uses to play video, so it is far quicker than a WASM build of FFmpeg. Export speed depends mostly on your resolution and the length of the timeline.'
-  }
 ];
 
 const VideoEditorMain = () => {
@@ -169,8 +163,8 @@ const VideoEditorMain = () => {
             </div>
 
             <p className="text-base sm:text-xl text-muted leading-relaxed mb-8 max-w-3xl mx-auto">
-              A free, full-featured video editor that runs in a browser tab. Multi-track timeline, keyframe animation, green screen, titles and
-              transitions — decoded, composited and encoded on your own machine with WebCodecs.
+              A free, full-featured video editor that runs in a browser tab. Multi-track timeline, keyframe animation, green screen, sixteen colour
+              filters, eighteen transitions and titles — decoded, composited and encoded on your own machine with WebCodecs.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -331,8 +325,8 @@ const VideoEditorMain = () => {
             <h3 className="text-base font-semibold text-foreground">Export</h3>
           </div>
           <p className="text-muted text-sm leading-relaxed">
-            MP4 with H.264, or WebM with VP9. Presets for 1080p, 720p, vertical 1080×1920 and square 1080×1080, plus your project&apos;s own size and
-            four quality levels.
+            MP4, MOV, MKV or WebM for video; M4A, WAV or OGG for audio alone. Presets for 1080p, 720p, vertical 1080×1920 and square 1080×1080, plus
+            your project&apos;s own size and four quality levels.
           </p>
         </div>
         <div className="bg-surface border border-default rounded-xl p-6">
@@ -341,8 +335,8 @@ const VideoEditorMain = () => {
             <h3 className="text-base font-semibold text-foreground">Requirements</h3>
           </div>
           <p className="text-muted text-sm leading-relaxed">
-            A browser with WebCodecs — Chrome or Edge 94+, Safari 16.4+. WebGL2 is used for the green screen and colour temperature and degrades
-            gracefully without it.
+            A browser with WebCodecs — Chrome or Edge 94+, Safari 16.4+ — and a window at least 1024px wide. WebGL2 drives the filters and green
+            screen, and degrades gracefully without it.
           </p>
         </div>
       </div>
