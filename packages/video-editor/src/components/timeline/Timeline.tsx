@@ -555,7 +555,13 @@ export const Timeline = () => {
             style={{ height: HEAD_HEIGHT + tracksHeight }}
           />
 
-          <Playhead scrollRef={scrollRef} height={HEAD_HEIGHT + tracksHeight} viewportLeft={viewport.left} viewportWidth={viewport.width} />
+          <Playhead
+            scrollRef={scrollRef}
+            height={HEAD_HEIGHT + tracksHeight}
+            viewportLeft={viewport.left}
+            viewportWidth={viewport.width}
+            onGrab={event => beginDrag({ kind: 'scrub' }, event)}
+          />
         </div>
       </div>
 
@@ -758,16 +764,20 @@ const Playhead = ({
   scrollRef,
   height,
   viewportLeft,
-  viewportWidth
+  viewportWidth,
+  onGrab
 }: {
   scrollRef: React.RefObject<HTMLDivElement | null>;
   height: number;
   viewportLeft: number;
   viewportWidth: number;
+  /** Starts a scrub, so the head can be dragged as well as the ruler clicked. */
+  onGrab: (event: React.PointerEvent) => void;
 }) => {
   const playheadUs = useEditor(state => state.playheadUs);
   const pxPerSec = useEditor(state => state.pxPerSec);
   const isPlaying = useEditor(state => state.isPlaying);
+  const [hovered, setHovered] = useState(false);
   const left = HEADER_WIDTH + (playheadUs / US) * pxPerSec;
 
   useEffect(() => {
@@ -786,9 +796,43 @@ const Playhead = ({
   }, [left, isPlaying, scrollRef, viewportLeft, viewportWidth]);
 
   return (
-    <div className="pointer-events-none absolute top-0 z-[25]" style={{ height, transform: `translateX(${left}px)`, willChange: 'transform' }}>
-      <div className="h-full w-px bg-playhead" />
-      <div className="absolute -left-[5px] top-0 h-3 w-2.5 rounded-b-sm bg-playhead" />
+    /*
+      * Above the ruler, not below it.
+      *
+      * The ruler row is `sticky top-0 z-30` and the grab handle lives in the
+      * top 24px, so at z-25 the handle was painted underneath it and the
+      * ruler took every pointer event aimed at it. Clicking there still
+      * scrubbed — via the ruler's own handler — which made the handle look
+      * like it worked while being entirely unreachable. Still below the
+      * sticky track-header column at z-40, which must stay on top.
+      */
+    <div className="pointer-events-none absolute top-0 z-[35]" style={{ height, transform: `translateX(${left}px)`, willChange: 'transform' }}>
+      {/*
+        The line stays transparent to the pointer: it crosses every clip, and
+        catching clicks along its length would make clips unselectable
+        wherever the playhead happens to be parked.
+
+        Its emphasis is driven by state rather than by `group-hover`, because
+        an element with `pointer-events: none` is excluded from hit testing
+        and so never matches `:hover` — the group on this wrapper could never
+        have fired, however the handle below was styled.
+      */}
+      <div className={cn('h-full bg-playhead transition-all', hovered ? 'w-0.5' : 'w-px')} />
+
+      {/*
+        The one part that takes pointer events. Its hit area is deliberately
+        larger than the marker it draws: the visible head is 10px wide, which
+        is hard to catch with a mouse and unusable with a trackpad.
+      */}
+      <button
+        type="button"
+        aria-label="Drag to move the playhead"
+        onPointerDown={onGrab}
+        onPointerEnter={() => setHovered(true)}
+        onPointerLeave={() => setHovered(false)}
+        className="pointer-events-auto absolute -left-[11px] -top-1 flex h-6 w-6 cursor-grab touch-none items-start justify-center active:cursor-grabbing">
+        <span className={cn('mt-1 h-3 w-2.5 rounded-b-sm bg-playhead transition-transform', hovered && 'scale-125')} />
+      </button>
     </div>
   );
 };
