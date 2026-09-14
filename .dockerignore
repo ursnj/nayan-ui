@@ -1,4 +1,10 @@
+# A bare `node_modules` only matches the root, so the workspace copies were
+# still being shipped into the build context.
 node_modules
+**/node_modules
+# Build output is produced inside the image; copying a local one in risks
+# baking a stale bundle.
+**/dist
 .git
 .gitignore
 README.md
@@ -22,3 +28,6 @@ yarn-error.log*
 examples/expo-app/node_modules
 examples/expo-app/.expo
 examples/expo-app/dist
+
+# Regenerated inside the image by the editor build
+packages/website/public/editor

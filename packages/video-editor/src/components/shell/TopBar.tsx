@@ -48,7 +48,7 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
 
   const saveProject = () => {
     const data = serialiseProject(readEditorState());
-    download(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }), `${project.name || 'project'}.nayancut.json`);
+    download(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }), `${project.name || 'project'}.nayaneditor.json`);
     showToast('Media files are referenced by name — re-import them after opening.', 'Project saved');
   };
 
@@ -59,7 +59,7 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
       loadProject(data);
       showToast('Re-import the original media to relink the clips.', 'Project opened');
     } catch {
-      showToast('That file is not a Nayan Cut project.', 'Could not open');
+      showToast('That file is not a Nayan Editor project.', 'Could not open');
     }
   };
 
@@ -67,7 +67,7 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
     <header className="island flex shrink-0 items-center gap-2 px-3 py-2">
       <div className="flex items-center gap-2">
         <Clapperboard className="h-5 w-5 text-accent" />
-        <span className="text-sm font-semibold tracking-tight text-foreground">Nayan Cut</span>
+        <span className="text-sm font-semibold tracking-tight text-foreground">Nayan Editor</span>
       </div>
 
       <span className="mx-1 h-5 w-px bg-separator" />

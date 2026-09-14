@@ -1,4 +1,4 @@
-# Nayan Cut — browser video editor
+# Nayan Editor — browser video editor
 
 A non-linear video editor that runs entirely in the browser. No uploads, no
 server, no WASM build of FFmpeg — decoding, compositing, GPU effects and
@@ -6,11 +6,27 @@ encoding all happen on the client through **WebCodecs**, with the UI built from
 [`@nayan-ui/react`](https://www.nayanui.com).
 
 ```bash
-yarn editor:dev     # from the repo root
+yarn editor:dev     # from the repo root, then open /editor on the printed port
 ```
 
 Requires a browser with WebCodecs (Chrome/Edge 94+, Safari 16.4+). WebGL2 is
 used for the effects pipeline and degrades to Canvas2D if unavailable.
+
+## Deployment
+
+The editor is not its own service. `yarn editor:build` writes a static bundle
+straight into `packages/website/public/editor`, which the Next.js site serves
+at **nayanui.com/editor** — so it rides along in the existing website image
+and needs no deployment of its own. `next.config.ts` carries a rewrite so the
+bare `/editor` route resolves to the bundle's entry point, and `vite.config.ts`
+sets `base: '/editor/'` so every asset URL carries the prefix.
+
+`yarn website:build` and the website Dockerfile both build the editor before
+the Next build, so the bundle is always present in the static output.
+
+Because the two now share an origin they also share `localStorage`. That is
+deliberate for the `THEME` key — the site and the editor stay on the same
+theme — and everything else the editor stores is prefixed `EDITOR_`.
 
 ## What it does
 
