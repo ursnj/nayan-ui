@@ -13,6 +13,14 @@ interface TrackHeaderProps {
   onRemove: () => void;
 }
 
+/**
+ * The controls for one track, in two rows that fit the shortest row height.
+ *
+ * The fader used to be hidden below 60px, which meant audio tracks — created
+ * at 56px, and the ones that most need a level control — never showed one.
+ * Laying the toggles and the fader out side by side instead of stacking them
+ * makes everything fit at every height, so nothing has to be conditional.
+ */
 export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeaderProps) => {
   const reorderTrack = useEditor(state => state.reorderTrack);
   const Icon = track.kind === 'video' ? Film : Music;
@@ -41,39 +49,41 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
   return (
     <div
       style={{ width: HEADER_WIDTH, height: track.height }}
-      className="sticky left-0 z-20 flex shrink-0 flex-col justify-center gap-1 border-b border-r border-border bg-editor-chrome px-2">
-      <div className="flex items-center gap-1.5">
-        <Icon className="h-3.5 w-3.5 shrink-0 text-muted" />
+      className="group/header sticky left-0 z-20 flex shrink-0 flex-col justify-center gap-1 overflow-hidden border-b border-r border-border bg-editor-chrome px-2 py-1">
+      <div className="flex h-5 items-center gap-1">
+        <Icon className={cn('h-3.5 w-3.5 shrink-0', track.hidden ? 'text-muted/50' : 'text-muted')} />
         <input
           value={track.name}
           onChange={event => onUpdate({ name: event.target.value })}
           aria-label={`${track.name} name`}
-          className="min-w-0 flex-1 truncate rounded border border-transparent bg-transparent px-1 py-0.5 text-xs font-medium text-foreground outline-none transition-colors hover:border-border focus:border-accent"
+          className="min-w-0 flex-1 truncate rounded border border-transparent bg-transparent px-1 py-0.5 text-xs font-medium text-foreground outline-none transition-colors hover:border-border focus:border-accent focus:bg-field-background"
         />
-        <div className="flex shrink-0 flex-col">
-          <button
-            type="button"
-            onClick={() => reorderTrack(track.id, -1)}
-            aria-label="Move track up"
-            className="text-muted transition-colors hover:text-foreground">
-            <ChevronUp className="h-3 w-3" />
-          </button>
-          <button
-            type="button"
-            onClick={() => reorderTrack(track.id, 1)}
-            aria-label="Move track down"
-            className="text-muted transition-colors hover:text-foreground">
-            <ChevronDown className="h-3 w-3" />
-          </button>
+        {/* Revealed on hover so the resting state stays quiet, but the width is
+            always reserved — otherwise the name would jump as you move around. */}
+        <div className="flex shrink-0 items-center opacity-0 transition-opacity group-hover/header:opacity-100 focus-within:opacity-100">
+          <IconButton label="Move track up" onClick={() => reorderTrack(track.id, -1)} className="h-5 w-5">
+            <ChevronUp className="h-3.5 w-3.5" />
+          </IconButton>
+          <IconButton label="Move track down" onClick={() => reorderTrack(track.id, 1)} className="h-5 w-5">
+            <ChevronDown className="h-3.5 w-3.5" />
+          </IconButton>
+          <IconButton
+            label={canRemove ? 'Delete track' : 'The last track of a kind cannot be deleted'}
+            onClick={onRemove}
+            disabled={!canRemove}
+            danger
+            className="h-5 w-5">
+            <Trash2 className="h-3.5 w-3.5" />
+          </IconButton>
         </div>
       </div>
 
-      <div className="flex items-center gap-0.5">
+      <div className="flex h-5 items-center gap-0.5">
         <IconButton
           label={track.muted ? 'Unmute track' : 'Mute track'}
           onClick={() => onUpdate({ muted: !track.muted })}
           active={track.muted}
-          className="h-6 w-6">
+          className="h-5 w-5">
           {track.muted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
         </IconButton>
 
@@ -82,7 +92,7 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
             label={track.hidden ? 'Show track' : 'Hide track'}
             onClick={() => onUpdate({ hidden: !track.hidden })}
             active={track.hidden}
-            className="h-6 w-6">
+            className="h-5 w-5">
             {track.hidden ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
           </IconButton>
         )}
@@ -91,19 +101,10 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
           label={track.locked ? 'Unlock track' : 'Lock track'}
           onClick={() => onUpdate({ locked: !track.locked })}
           active={track.locked}
-          className="h-6 w-6">
+          className="h-5 w-5">
           {track.locked ? <Lock className="h-3.5 w-3.5" /> : <LockOpen className="h-3.5 w-3.5" />}
         </IconButton>
 
-        {canRemove && (
-          <IconButton label="Delete track" onClick={onRemove} danger className="ml-auto h-6 w-6">
-            <Trash2 className="h-3.5 w-3.5" />
-          </IconButton>
-        )}
-      </div>
-
-      {/* Level fader, visible once the row is tall enough to hold it. */}
-      {track.height >= 60 && (
         <input
           type="range"
           min={0}
@@ -111,16 +112,21 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
           value={Math.round(track.volume * 100)}
           onChange={event => onUpdate({ volume: Number(event.target.value) / 100 })}
           aria-label={`${track.name} level`}
-          className={cn('h-1 w-full cursor-pointer appearance-none rounded bg-default accent-accent', track.muted && 'opacity-40')}
+          title={`Level ${Math.round(track.volume * 100)}%`}
+          className={cn(
+            'ml-1 h-1.5 min-w-0 flex-1 cursor-pointer rounded-full bg-default accent-accent',
+            track.muted && 'pointer-events-none opacity-40'
+          )}
         />
-      )}
+      </div>
 
       <div
         role="separator"
         aria-label="Resize track height"
         onPointerDown={onResizePointerDown}
-        className="absolute inset-x-0 bottom-0 h-1.5 cursor-row-resize hover:bg-accent/40"
-      />
+        className="absolute inset-x-0 bottom-0 flex h-1.5 cursor-row-resize items-end justify-center">
+        <span className="h-0.5 w-6 rounded-full bg-transparent transition-colors group-hover/header:bg-separator" />
+      </div>
     </div>
   );
 };
