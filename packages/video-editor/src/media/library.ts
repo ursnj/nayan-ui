@@ -198,14 +198,19 @@ export const generateFilmstrip = async (assetId: string, fromUs: number, toUs: n
  * A reader is bound to a clip rather than an asset: two clips showing different
  * parts of the same file would otherwise fight over one decoder and force a
  * re-seek every frame.
+ *
+ * `target` keeps preview and export on separate readers — an export walks the
+ * timeline from the start while the user may still be scrubbing, and sharing a
+ * reader would make each seek thrash the other.
  */
-export const getReader = (clipId: string, assetId: string): SequentialVideoReader | null => {
-  const existing = readers.get(clipId);
+export const getReader = (clipId: string, assetId: string, target: 'preview' | 'export' = 'preview'): SequentialVideoReader | null => {
+  const key = `${target}:${clipId}`;
+  const existing = readers.get(key);
   if (existing && existing.assetId === assetId) {
     existing.usedAt = performance.now();
     return existing.reader;
   }
-  if (existing) void releaseReader(clipId);
+  if (existing) void releaseReader(key);
 
   const sink = resources.get(assetId)?.videoSink;
   if (!sink) return null;
@@ -224,15 +229,26 @@ export const getReader = (clipId: string, assetId: string): SequentialVideoReade
   }
 
   const reader = new SequentialVideoReader(sink);
-  readers.set(clipId, { reader, assetId, usedAt: performance.now() });
+  readers.set(key, { reader, assetId, usedAt: performance.now() });
   return reader;
 };
 
-export const releaseReader = async (clipId: string) => {
-  const entry = readers.get(clipId);
-  if (!entry) return;
-  readers.delete(clipId);
-  await entry.reader.dispose();
+/** Accepts either a bare clip id (releases both targets) or a `target:clipId` key. */
+export const releaseReader = async (keyOrClipId: string) => {
+  const keys = keyOrClipId.includes(':') ? [keyOrClipId] : [`preview:${keyOrClipId}`, `export:${keyOrClipId}`];
+  await Promise.all(
+    keys.map(async key => {
+      const entry = readers.get(key);
+      if (!entry) return;
+      readers.delete(key);
+      await entry.reader.dispose();
+    })
+  );
+};
+
+/** Frees the decoders an export spun up, leaving the preview's alone. */
+export const releaseExportReaders = async () => {
+  await Promise.all([...readers.keys()].filter(key => key.startsWith('export:')).map(releaseReader));
 };
 
 export const releaseAllReaders = async () => {

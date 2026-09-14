@@ -1,4 +1,5 @@
 import { readEditorState, timelineDurationUs, useEditor } from '../store/editor';
+import { US, clipEndUs } from '../types';
 import { Player } from './player';
 
 /**
@@ -14,12 +15,18 @@ export const player = new Player({
     const state = readEditorState();
     return { project: state.project, tracks: state.tracks, clips: state.clips };
   },
-  getDurationUs: () => timelineDurationUs(readEditorState().clips),
+  getDurationUs: () => {
+    const state = readEditorState();
+    // Playback stops at the out point when a range is marked.
+    return state.outPointUs ?? timelineDurationUs(state.clips);
+  },
   // Written straight to the store rather than through an action: this fires
   // every animation frame and must not create an undo entry.
   onTime: timeUs => useEditor.setState({ playheadUs: timeUs }),
   onEnded: () => useEditor.setState({ isPlaying: false })
 });
+
+export const totalDurationUs = () => timelineDurationUs(readEditorState().clips);
 
 export const togglePlayback = async () => {
   const state = readEditorState();
@@ -30,7 +37,14 @@ export const togglePlayback = async () => {
   }
   if (timelineDurationUs(state.clips) <= 0) return;
   useEditor.setState({ isPlaying: true });
-  await player.play(state.playheadUs);
+  // Playing with a marked range starts from the in point when outside it.
+  const from = state.inPointUs !== null && state.playheadUs < state.inPointUs ? state.inPointUs : state.playheadUs;
+  await player.play(from);
+};
+
+export const pausePlayback = () => {
+  player.pause();
+  useEditor.setState({ isPlaying: false });
 };
 
 export const seekTo = (timeUs: number) => {
@@ -40,9 +54,28 @@ export const seekTo = (timeUs: number) => {
   void player.seek(clamped);
 };
 
-/** Steps one project frame; used by the arrow keys and the transport buttons. */
+/** Steps whole project frames; used by the arrow keys and transport buttons. */
 export const stepFrames = (frames: number) => {
   const state = readEditorState();
-  const frameUs = 1_000_000 / Math.max(1, state.project.fps);
-  seekTo(state.playheadUs + frames * frameUs);
+  const frameUs = US / Math.max(1, state.project.fps);
+  seekTo(Math.round((state.playheadUs + frames * frameUs) / frameUs) * frameUs);
+};
+
+/** Jumps to the next or previous clip edge — the workhorse of trimming. */
+export const jumpToEdge = (direction: -1 | 1) => {
+  const state = readEditorState();
+  const edges = new Set<number>([0]);
+  for (const clip of state.clips) {
+    edges.add(clip.startUs);
+    edges.add(clipEndUs(clip));
+  }
+  for (const marker of state.markers) edges.add(marker.atUs);
+
+  const sorted = [...edges].sort((a, b) => a - b);
+  const current = state.playheadUs;
+  const tolerance = US / (state.project.fps * 2);
+
+  const target = direction > 0 ? sorted.find(edge => edge > current + tolerance) : [...sorted].reverse().find(edge => edge < current - tolerance);
+
+  if (target !== undefined) seekTo(target);
 };

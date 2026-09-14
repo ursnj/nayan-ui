@@ -151,7 +151,7 @@ export class Player {
         canvas.width = scene.project.width;
         canvas.height = scene.project.height;
       }
-      await renderScene(context, scene, timeUs);
+      await renderScene(context, scene, timeUs, { target: 'preview' });
     } catch {
       // A disposed reader or closed sample; the next frame will recover.
     } finally {

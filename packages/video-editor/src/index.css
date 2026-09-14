@@ -2,76 +2,121 @@
 
 @source '../../node_modules/@nayan-ui/react/dist';
 
+/*
+ * Editing tools live under the eye for hours, so the palette is built for a
+ * dim room: near-neutral greys carrying a trace of blue, low-chroma surfaces
+ * that never compete with the footage, and saturation spent only on the few
+ * things that must be found instantly — the playhead, the selection, the
+ * record-red of an active export.
+ */
+
 :root,
 [data-theme='light'] {
   color-scheme: light;
 
-  --background: hsl(214 45% 95%);
-  --foreground: hsl(222 47% 11%);
+  --background: hsl(220 20% 94%);
+  --foreground: hsl(222 30% 12%);
   --surface: hsl(0 0% 100%);
-  --surface-foreground: hsl(222 47% 11%);
-  --surface-secondary: hsl(214 40% 96%);
-  --surface-secondary-foreground: hsl(222 47% 11%);
-  --surface-tertiary: hsl(214 35% 93%);
-  --surface-tertiary-foreground: hsl(222 47% 11%);
+  --surface-foreground: hsl(222 30% 12%);
+  --surface-secondary: hsl(220 22% 97%);
+  --surface-secondary-foreground: hsl(222 30% 12%);
+  --surface-tertiary: hsl(220 18% 92%);
+  --surface-tertiary-foreground: hsl(222 30% 12%);
   --overlay: hsl(0 0% 100%);
-  --overlay-foreground: hsl(222 47% 11%);
-  --muted: hsl(215 16% 47%);
-  --default: hsl(214 35% 90%);
-  --default-foreground: hsl(222 47% 11%);
-  --accent: hsl(217 91% 50%);
+  --overlay-foreground: hsl(222 30% 12%);
+  --muted: hsl(220 10% 46%);
+  --default: hsl(220 18% 90%);
+  --default-foreground: hsl(222 30% 12%);
+  --accent: hsl(243 75% 59%);
   --accent-foreground: hsl(0 0% 100%);
-  --field-background: hsl(0 0% 100%);
-  --field-foreground: hsl(222 47% 11%);
-  --field-placeholder: hsl(215 16% 47%);
-  --success: hsl(142 71% 45%);
-  --success-foreground: hsl(222 47% 11%);
-  --warning: hsl(38 92% 50%);
-  --warning-foreground: hsl(222 47% 11%);
+  --field-background: hsl(220 22% 97%);
+  --field-foreground: hsl(222 30% 12%);
+  --field-placeholder: hsl(220 10% 55%);
+  --success: hsl(160 84% 39%);
+  --success-foreground: hsl(0 0% 100%);
+  --warning: hsl(35 92% 50%);
+  --warning-foreground: hsl(222 30% 12%);
   --danger: hsl(0 84% 60%);
   --danger-foreground: hsl(0 0% 100%);
-  --border: hsl(214 35% 86%);
-  --separator: hsl(214 25% 76%);
-  --focus: hsl(217 91% 50%);
-  --link: hsl(222 47% 11%);
+  --border: hsl(220 16% 86%);
+  --separator: hsl(220 14% 80%);
+  --focus: hsl(243 75% 59%);
+  --link: hsl(243 75% 59%);
   --segment: hsl(0 0% 100%);
-  --segment-foreground: hsl(222 47% 11%);
+  --segment-foreground: hsl(222 30% 12%);
+
+  /* Editor-specific */
+  --editor-chrome: hsl(220 22% 97%);
+  --editor-panel: hsl(0 0% 100%);
+  --editor-canvas: hsl(220 16% 88%);
+  --editor-track: hsl(220 20% 95%);
+  --editor-track-alt: hsl(220 18% 92%);
+  --editor-ruler: hsl(220 20% 96%);
+  --playhead: hsl(0 84% 55%);
+  --elevation: 0 1px 2px hsl(220 20% 20% / 0.06), 0 4px 16px hsl(220 20% 20% / 0.06);
+  --elevation-lg: 0 2px 4px hsl(220 20% 20% / 0.08), 0 12px 40px hsl(220 20% 20% / 0.14);
 }
 
 .dark,
 [data-theme='dark'] {
   color-scheme: dark;
 
-  --background: hsl(222 47% 11%);
-  --foreground: hsl(210 40% 98%);
-  --surface: hsl(217 33% 22%);
-  --surface-foreground: hsl(210 40% 98%);
-  --surface-secondary: hsl(217 30% 26%);
-  --surface-secondary-foreground: hsl(210 40% 98%);
-  --surface-tertiary: hsl(217 28% 30%);
-  --surface-tertiary-foreground: hsl(210 40% 98%);
-  --overlay: hsl(217 33% 22%);
-  --overlay-foreground: hsl(210 40% 98%);
-  --muted: hsl(215 20% 65%);
-  --default: hsl(217 33% 26%);
-  --default-foreground: hsl(210 40% 98%);
-  --accent: hsl(217 91% 60%);
-  --accent-foreground: hsl(210 40% 98%);
-  --field-background: hsl(217 33% 22%);
-  --field-foreground: hsl(210 40% 98%);
-  --field-placeholder: hsl(215 20% 65%);
-  --success: hsl(142 71% 45%);
-  --success-foreground: hsl(222 47% 11%);
-  --warning: hsl(38 92% 55%);
-  --warning-foreground: hsl(222 47% 11%);
-  --danger: hsl(0 72% 51%);
-  --danger-foreground: hsl(210 40% 98%);
-  --border: hsl(217 33% 28%);
-  --separator: hsl(217 25% 38%);
-  --focus: hsl(217 91% 60%);
-  --link: hsl(210 40% 98%);
-  --segment: hsl(217 28% 34%);
-  --segment-foreground: hsl(210 40% 98%);
+  --background: hsl(222 18% 8%);
+  --foreground: hsl(220 20% 96%);
+  --surface: hsl(222 16% 12%);
+  --surface-foreground: hsl(220 20% 96%);
+  --surface-secondary: hsl(222 15% 15%);
+  --surface-secondary-foreground: hsl(220 20% 96%);
+  --surface-tertiary: hsl(222 14% 19%);
+  --surface-tertiary-foreground: hsl(220 20% 96%);
+  --overlay: hsl(222 16% 14%);
+  --overlay-foreground: hsl(220 20% 96%);
+  --muted: hsl(220 10% 60%);
+  --default: hsl(222 14% 20%);
+  --default-foreground: hsl(220 20% 96%);
+  --accent: hsl(243 80% 67%);
+  --accent-foreground: hsl(0 0% 100%);
+  --field-background: hsl(222 16% 16%);
+  --field-foreground: hsl(220 20% 96%);
+  --field-placeholder: hsl(220 10% 52%);
+  --success: hsl(158 70% 47%);
+  --success-foreground: hsl(222 18% 8%);
+  --warning: hsl(38 95% 58%);
+  --warning-foreground: hsl(222 18% 8%);
+  --danger: hsl(0 76% 60%);
+  --danger-foreground: hsl(0 0% 100%);
+  --border: hsl(222 12% 22%);
+  --separator: hsl(222 12% 28%);
+  --focus: hsl(243 80% 67%);
+  --link: hsl(243 80% 72%);
+  --segment: hsl(222 14% 22%);
+  --segment-foreground: hsl(220 20% 96%);
+
+  --editor-chrome: hsl(222 17% 10%);
+  --editor-panel: hsl(222 16% 12%);
+  --editor-canvas: hsl(222 20% 5%);
+  --editor-track: hsl(222 15% 14%);
+  --editor-track-alt: hsl(222 15% 16%);
+  --editor-ruler: hsl(222 16% 13%);
+  --playhead: hsl(0 84% 62%);
+  --elevation: 0 1px 2px hsl(0 0% 0% / 0.4), 0 4px 16px hsl(0 0% 0% / 0.3);
+  --elevation-lg: 0 2px 4px hsl(0 0% 0% / 0.5), 0 16px 48px hsl(0 0% 0% / 0.55);
+}
+
+@theme inline {
+  --color-editor-chrome: var(--editor-chrome);
+  --color-editor-panel: var(--editor-panel);
+  --color-editor-canvas: var(--editor-canvas);
+  --color-editor-track: var(--editor-track);
+  --color-editor-track-alt: var(--editor-track-alt);
+  --color-editor-ruler: var(--editor-ruler);
+  --color-playhead: var(--playhead);
+}
+
+html,
+body,
+#root {
+  height: 100%;
 }
 
 body {
@@ -79,12 +124,114 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family:
+    'Inter',
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',
     Roboto,
     sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'tnum';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* A timeline is a dragging surface; accidental text selection ruins it. */
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+input,
+textarea,
+[contenteditable] {
+  user-select: text;
+}
+
+/* Slim scrollbars so panels don't lose width to chrome. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--separator) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--separator);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+@utility panel {
+  background: var(--editor-panel);
+  border-color: var(--border);
+}
+
+@utility elevate {
+  box-shadow: var(--elevation);
+}
+
+@utility elevate-lg {
+  box-shadow: var(--elevation-lg);
+}
+
+/* The checkerboard behind the preview, so transparency reads as transparency. */
+@utility checkerboard {
+  background-image:
+    linear-gradient(45deg, hsl(0 0% 50% / 0.18) 25%, transparent 25%), linear-gradient(-45deg, hsl(0 0% 50% / 0.18) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, hsl(0 0% 50% / 0.18) 75%), linear-gradient(-45deg, transparent 75%, hsl(0 0% 50% / 0.18) 75%);
+  background-size: 16px 16px;
+  background-position:
+    0 0,
+    0 8px,
+    8px -8px,
+    -8px 0;
+}
+
+/*
+ * Timeline clips are re-rendered on every drag frame. Promoting them to their
+ * own layer keeps a long timeline from repainting as a whole while one clip
+ * moves.
+ */
+@utility gpu-layer {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+@keyframes editor-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility animate-in {
+  animation: editor-fade-in 140ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

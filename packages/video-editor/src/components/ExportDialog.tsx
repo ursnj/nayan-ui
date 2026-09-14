@@ -1,26 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { NButton, NDialog, NProgress, NSelect, NSwitch, showToast } from '@nayan-ui/react';
+import { NDialog, NProgress, showToast } from '@nayan-ui/react';
 import { DialogSize } from '@nayan-ui/react';
 import { CheckCircle2, Download, X } from 'lucide-react';
-import { ExportCanceledError, exportProject, suggestBitrate } from '../engine/exporter';
-import type { ExportProgress } from '../engine/exporter';
-import { player } from '../engine/playerInstance';
-import { download, formatBytes } from '../lib/utils';
+import { EXPORT_PRESETS, ExportCanceledError, exportProject, suggestBitrate } from '../engine/exporter';
+import type { ExportContainer, ExportPreset, ExportProgress } from '../engine/exporter';
+import { pausePlayback, player } from '../engine/playerInstance';
+import { cn, download, formatBytes } from '../lib/utils';
 import { readEditorState, timelineDurationUs, useEditor } from '../store/editor';
 import { US } from '../types';
 import type { ExportSettings } from '../types';
-
-const RESOLUTION_SCALES = [
-  { label: 'Project resolution', value: '1' },
-  { label: 'Half resolution', value: '0.5' },
-  { label: 'Quarter resolution', value: '0.25' }
-];
-
-const QUALITY_PRESETS = [
-  { label: 'High', value: '1.5' },
-  { label: 'Balanced', value: '1' },
-  { label: 'Small file', value: '0.6' }
-];
+import { SelectField, ToggleChip } from './controls';
 
 interface ExportDialogProps {
   isOpen: boolean;
@@ -38,22 +27,30 @@ export const ExportDialog = ({ isOpen, onClose }: ExportDialogProps) => (
   </NDialog>
 );
 
+const QUALITY_OPTIONS = [
+  { value: '1.6', label: 'Maximum' },
+  { value: '1.2', label: 'High' },
+  { value: '1', label: 'Balanced' },
+  { value: '0.7', label: 'Small file' }
+];
+
 const ExportForm = ({ onClose }: { onClose: () => void }) => {
   const project = useEditor(state => state.project);
   const durationUs = useEditor(state => timelineDurationUs(state.clips));
+  const inPointUs = useEditor(state => state.inPointUs);
+  const outPointUs = useEditor(state => state.outPointUs);
 
-  const [scale, setScale] = useState(RESOLUTION_SCALES[0]);
-  const [quality, setQuality] = useState(QUALITY_PRESETS[1]);
+  const [preset, setPreset] = useState<ExportPreset | null>(EXPORT_PRESETS[0]);
+  const [width, setWidth] = useState(project.width);
+  const [height, setHeight] = useState(project.height);
+  const [fps, setFps] = useState(project.fps);
+  const [container, setContainer] = useState<ExportContainer>('mp4');
+  const [quality, setQuality] = useState('1.2');
   const [includeAudio, setIncludeAudio] = useState(true);
+  const [useRange, setUseRange] = useState(inPointUs !== null || outPointUs !== null);
   const [progress, setProgress] = useState<ExportProgress | null>(null);
   const [result, setResult] = useState<{ blob: Blob; filename: string } | null>(null);
   const abortRef = useRef<AbortController | null>(null);
-
-  // Encoders want even dimensions; odd values fail on several codecs.
-  const width = Math.max(2, Math.round((project.width * Number(scale.value)) / 2) * 2);
-  const height = Math.max(2, Math.round((project.height * Number(scale.value)) / 2) * 2);
-  const bitrate = Math.round(suggestBitrate(width, height, project.fps) * Number(quality.value));
-  const estimatedBytes = ((bitrate + (includeAudio ? 128_000 : 0)) / 8) * (durationUs / US);
 
   // Closing the dialog cancels any run still in flight.
   useEffect(
@@ -64,12 +61,30 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
     []
   );
 
+  const applyPreset = (next: ExportPreset) => {
+    setPreset(next);
+    setWidth(next.width);
+    setHeight(next.height);
+    setFps(next.fps);
+    setContainer(next.container);
+    setQuality(String(next.qualityScale));
+  };
+
+  // Encoders want even dimensions; odd values fail on several codecs.
+  const evenWidth = Math.max(2, Math.round(width / 2) * 2);
+  const evenHeight = Math.max(2, Math.round(height / 2) * 2);
+  const bitrate = Math.round(suggestBitrate(evenWidth, evenHeight, fps) * Number(quality));
+
+  const rangeStart = useRange ? (inPointUs ?? 0) : 0;
+  const rangeEnd = useRange ? (outPointUs ?? durationUs) : durationUs;
+  const spanUs = Math.max(0, rangeEnd - rangeStart);
+  const estimatedBytes = ((bitrate + (includeAudio ? 128_000 : 0)) / 8) * (spanUs / US);
+
   const runExport = async () => {
     const state = readEditorState();
-    if (timelineDurationUs(state.clips) <= 0) return;
+    if (spanUs <= 0) return;
 
-    player.pause();
-    useEditor.setState({ isPlaying: false });
+    pausePlayback();
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -77,12 +92,13 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
     setProgress({ stage: 'preparing', progress: 0, message: 'Starting…' });
 
     const settings: ExportSettings = {
-      width,
-      height,
-      fps: project.fps,
+      width: evenWidth,
+      height: evenHeight,
+      fps,
       bitrate,
-      audioBitrate: 128_000,
-      includeAudio
+      audioBitrate: 192_000,
+      includeAudio,
+      rangeUs: useRange ? { startUs: rangeStart, endUs: rangeEnd } : null
     };
 
     try {
@@ -91,19 +107,18 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
         settings,
         timelineDurationUs(state.clips),
         setProgress,
-        controller.signal
+        controller.signal,
+        container
       );
-      const filename = `${state.project.name.replace(/[^\w\-. ]+/g, '_') || 'export'}.mp4`;
+      const filename = `${state.project.name.replace(/[^\w\-. ]+/g, '_') || 'export'}.${container}`;
       setResult({ blob, filename });
       // Hand the file over immediately; the dialog keeps a link for a second go.
       download(blob, filename);
     } catch (error) {
-      if (error instanceof ExportCanceledError) {
-        setProgress(null);
-      } else {
+      if (!(error instanceof ExportCanceledError)) {
         showToast(error instanceof Error ? error.message : 'Export failed', 'Export failed');
-        setProgress(null);
       }
+      setProgress(null);
     } finally {
       abortRef.current = null;
       // Decoders were driven hard during export; drop back to a clean frame.
@@ -114,31 +129,77 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
   const running = progress !== null && progress.stage !== 'done';
 
   return (
-    <div className="space-y-1">
-      <NSelect label="Resolution" value={scale} options={RESOLUTION_SCALES} isDisabled={running} onChange={option => option && setScale(option)} />
-      <NSelect label="Quality" value={quality} options={QUALITY_PRESETS} isDisabled={running} onChange={option => option && setQuality(option)} />
-      <NSwitch label="Include audio" enabled={includeAudio} disabled={running} onChange={setIncludeAudio} className="py-2" />
+    <div className="space-y-3">
+      <div>
+        <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted">Preset</span>
+        <div className="grid grid-cols-2 gap-1.5">
+          {EXPORT_PRESETS.map(option => (
+            <button
+              key={option.name}
+              type="button"
+              disabled={running}
+              onClick={() => applyPreset(option)}
+              aria-pressed={preset?.name === option.name}
+              className={cn(
+                'rounded-lg border px-2 py-1.5 text-left transition-colors disabled:opacity-50',
+                preset?.name === option.name ? 'border-accent bg-accent/10' : 'border-border hover:border-separator'
+              )}>
+              <span className="block text-[11px] font-medium text-foreground">{option.name}</span>
+              <span className="block text-[10px] text-muted">{option.description}</span>
+            </button>
+          ))}
+        </div>
+      </div>
 
-      <dl className="rounded-md bg-surface-secondary px-3 py-2 text-xs">
-        <Row label="Output" value={`${width} × ${height} · ${project.fps} fps`} />
-        <Row label="Duration" value={`${(durationUs / US).toFixed(1)}s`} />
+      <div className="grid grid-cols-2 gap-2">
+        <SelectField label="Quality" value={quality} options={QUALITY_OPTIONS} onChange={setQuality} />
+        <SelectField
+          label="Format"
+          value={container}
+          options={[
+            { value: 'mp4' as const, label: 'MP4 (H.264)' },
+            { value: 'webm' as const, label: 'WebM (VP9)' }
+          ]}
+          onChange={setContainer}
+        />
+      </div>
+
+      <div className="flex gap-1.5">
+        <ToggleChip active={includeAudio} onClick={() => setIncludeAudio(value => !value)} label="Include the audio mix" className="flex-1">
+          {includeAudio ? 'Audio on' : 'Audio off'}
+        </ToggleChip>
+        <ToggleChip active={useRange} onClick={() => setUseRange(value => !value)} label="Export only the marked in/out range" className="flex-1">
+          {useRange ? 'In/out range' : 'Whole timeline'}
+        </ToggleChip>
+      </div>
+
+      <dl className="rounded-lg bg-surface-secondary px-3 py-2 text-xs">
+        <Row label="Output" value={`${evenWidth} × ${evenHeight} · ${fps} fps`} />
+        <Row label="Duration" value={`${(spanUs / US).toFixed(1)}s`} />
+        <Row label="Bitrate" value={`${(bitrate / 1_000_000).toFixed(1)} Mbps`} />
         <Row label="Estimated size" value={`~${formatBytes(estimatedBytes)}`} />
       </dl>
 
       {progress && (
-        <div className="pt-2">
+        <div>
           <div className="mb-1 flex items-center justify-between text-xs">
-            <span className="text-muted">{progress.message}</span>
-            <span className="font-mono tabular-nums text-foreground">{Math.round(progress.progress * 100)}%</span>
+            <span className="truncate text-muted">{progress.message}</span>
+            <span className="shrink-0 font-mono tabular-nums text-foreground">{Math.round(progress.progress * 100)}%</span>
           </div>
           <NProgress value={progress.progress * 100} label="Export progress" showLabel />
+          {progress.fps !== undefined && (
+            <p className="mt-1 text-[10px] tabular-nums text-muted">
+              {progress.fps.toFixed(1)} fps
+              {progress.etaSeconds !== undefined && progress.etaSeconds > 1 && ` · about ${formatEta(progress.etaSeconds)} left`}
+            </p>
+          )}
         </div>
       )}
 
       {result && (
-        <div className="flex items-center gap-2 rounded-md border border-success bg-success/10 px-3 py-2 text-xs text-foreground">
+        <div className="flex items-center gap-2 rounded-lg border border-success bg-success/10 px-3 py-2 text-xs text-foreground">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
-          <span className="flex-1 truncate">
+          <span className="min-w-0 flex-1 truncate">
             {result.filename} · {formatBytes(result.blob.size)}
           </span>
           <button type="button" onClick={() => download(result.blob, result.filename)} className="shrink-0 font-medium text-accent hover:underline">
@@ -147,27 +208,39 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
         </div>
       )}
 
-      <div className="flex justify-end gap-2 pt-3">
+      <div className="flex justify-end gap-2 pt-1">
         {running ? (
-          <NButton isOutline onClick={() => abortRef.current?.abort()}>
-            <X className="mr-1.5 h-4 w-4" />
+          <button
+            type="button"
+            onClick={() => abortRef.current?.abort()}
+            className="flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs text-foreground transition-colors hover:border-danger hover:text-danger">
+            <X className="h-4 w-4" />
             Cancel
-          </NButton>
+          </button>
         ) : (
           <>
-            <NButton isOutline onClick={onClose}>
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-md border border-border px-3 py-1.5 text-xs text-muted transition-colors hover:text-foreground">
               Close
-            </NButton>
-            <NButton onClick={() => void runExport()} disabled={durationUs <= 0}>
-              <Download className="mr-1.5 h-4 w-4" />
-              {result ? 'Export again' : 'Export MP4'}
-            </NButton>
+            </button>
+            <button
+              type="button"
+              onClick={() => void runExport()}
+              disabled={spanUs <= 0}
+              className="flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40">
+              <Download className="h-4 w-4" />
+              {result ? 'Export again' : 'Export'}
+            </button>
           </>
         )}
       </div>
     </div>
   );
 };
+
+const formatEta = (seconds: number) => (seconds < 60 ? `${Math.ceil(seconds)}s` : `${Math.floor(seconds / 60)}m ${Math.ceil(seconds % 60)}s`);
 
 const Row = ({ label, value }: { label: string; value: string }) => (
   <div className="flex justify-between py-0.5">

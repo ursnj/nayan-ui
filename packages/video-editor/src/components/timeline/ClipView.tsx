@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react';
-import { Music, Type, VolumeX } from 'lucide-react';
+import { memo, useEffect, useRef } from 'react';
+import { Diamond, Link2, Lock, Music, Type, VolumeX } from 'lucide-react';
+import { allKeyTimes } from '../../lib/keyframes';
 import { cn } from '../../lib/utils';
-import { US, isTextClip } from '../../types';
+import { TRANSITION_LABELS, US, isMediaClip, isTextClip } from '../../types';
 import type { Clip, MediaClip } from '../../types';
 import { TRIM_HANDLE_WIDTH } from './constants';
 import { useFilmstrip, useWaveform } from './useClipPreviews';
@@ -11,63 +12,113 @@ export type TrimEdge = 'start' | 'end';
 interface ClipViewProps {
   clip: Clip;
   pxPerSec: number;
+  rowHeight: number;
   selected: boolean;
-  locked: boolean;
-  onSelect: () => void;
+  trackLocked: boolean;
+  onSelect: (additive: boolean) => void;
   onMoveStart: (event: React.PointerEvent) => void;
   onTrimStart: (event: React.PointerEvent, edge: TrimEdge) => void;
+  onContextMenu: (event: React.MouseEvent) => void;
 }
 
-export const ClipView = ({ clip, pxPerSec, selected, locked, onSelect, onMoveStart, onTrimStart }: ClipViewProps) => {
-  const left = (clip.startUs / US) * pxPerSec;
-  const width = Math.max(2, (clip.durationUs / US) * pxPerSec);
+/**
+ * A single clip on the timeline.
+ *
+ * Memoised on its own props: a timeline can hold hundreds of these, and a
+ * playhead tick or a drag on one clip must not re-render the rest.
+ */
+export const ClipView = memo(
+  ({ clip, pxPerSec, rowHeight, selected, trackLocked, onSelect, onMoveStart, onTrimStart, onContextMenu }: ClipViewProps) => {
+    const left = (clip.startUs / US) * pxPerSec;
+    const width = Math.max(3, (clip.durationUs / US) * pxPerSec);
+    const locked = trackLocked || clip.locked;
+    const keyTimes = allKeyTimes(clip.animations);
 
-  return (
-    <div
-      role="button"
-      tabIndex={0}
-      aria-label={`${clip.name} clip`}
-      aria-pressed={selected}
-      onPointerDown={event => {
-        if (event.button !== 0) return;
-        onSelect();
-        if (!locked) onMoveStart(event);
-      }}
-      onKeyDown={event => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          onSelect();
-        }
-      }}
-      style={{ left, width }}
-      className={cn(
-        'group absolute top-1 bottom-1 select-none overflow-hidden rounded-md border text-left',
-        locked ? 'cursor-not-allowed' : 'cursor-grab active:cursor-grabbing',
-        selected ? 'border-accent ring-2 ring-accent/60' : 'border-border hover:border-accent/60',
-        clip.kind === 'audio' ? 'bg-success/25' : clip.kind === 'text' ? 'bg-warning/25' : 'bg-surface-tertiary'
-      )}>
-      <ClipBody clip={clip} width={width} />
+    return (
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={`${clip.name} clip`}
+        aria-pressed={selected}
+        onPointerDown={event => {
+          if (event.button !== 0) return;
+          onSelect(event.shiftKey || event.metaKey || event.ctrlKey);
+          if (!locked) onMoveStart(event);
+        }}
+        onContextMenu={onContextMenu}
+        onKeyDown={event => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onSelect(event.shiftKey);
+          }
+        }}
+        data-clip-id={clip.id}
+        style={{ left, width, borderColor: selected ? undefined : `${clip.color}66` }}
+        className={cn(
+          'group gpu-layer absolute top-1 select-none overflow-hidden rounded-md border text-left transition-shadow',
+          locked ? 'cursor-not-allowed' : 'cursor-grab active:cursor-grabbing',
+          selected ? 'z-10 border-accent ring-2 ring-accent/70 elevate' : 'hover:elevate'
+        )}>
+        {/* Row height is user-adjustable, so the body is sized rather than inset. */}
+        <div style={{ height: rowHeight - 8 }} className="relative w-full">
+          <ClipBody clip={clip} width={width} />
 
-      <FadeOverlay clip={clip} width={width} pxPerSec={pxPerSec} />
+          {/* Colour spine, so a glance identifies the clip even when zoomed out. */}
+          <span className="absolute inset-x-0 bottom-0 h-0.5" style={{ background: clip.color }} />
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center gap-1 truncate bg-gradient-to-b from-black/55 to-transparent px-1.5 py-0.5">
-        {clip.kind === 'text' && <Type className="h-3 w-3 shrink-0 text-white" />}
-        {clip.kind === 'audio' && <Music className="h-3 w-3 shrink-0 text-white" />}
-        <span className="truncate text-[10px] font-medium text-white">{clip.name}</span>
-        {!isTextClip(clip) &&
-          clip.kind !== 'image' &&
-          (clip.muted || clip.volume === 0 ? <VolumeX className="h-3 w-3 shrink-0 text-white/70" /> : null)}
-        {!isTextClip(clip) && clip.speed !== 1 && <span className="shrink-0 text-[9px] text-white/80">{clip.speed}×</span>}
+          <FadeOverlay clip={clip} width={width} pxPerSec={pxPerSec} />
+
+          {clip.transitionIn && width > 30 && (
+            <div
+              title={TRANSITION_LABELS[clip.transitionIn.kind]}
+              style={{ width: Math.min(width, (clip.transitionIn.durationUs / US) * pxPerSec) }}
+              className="pointer-events-none absolute inset-y-0 left-0 border-r border-white/40 bg-gradient-to-r from-white/35 to-transparent"
+            />
+          )}
+
+          <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center gap-1 truncate bg-gradient-to-b from-black/60 to-transparent px-1.5 py-0.5">
+            <ClipIcon clip={clip} />
+            <span className="truncate text-[10px] font-medium text-white drop-shadow">{clip.name}</span>
+            {clip.groupId && <Link2 className="h-3 w-3 shrink-0 text-white/70" />}
+            {clip.locked && <Lock className="h-3 w-3 shrink-0 text-white/70" />}
+            {isMediaClip(clip) && clip.kind !== 'image' && (clip.muted || clip.volume === 0) && (
+              <VolumeX className="h-3 w-3 shrink-0 text-white/70" />
+            )}
+            {isMediaClip(clip) && clip.speed !== 1 && <span className="shrink-0 text-[9px] text-white/80">{clip.speed}×</span>}
+            {isMediaClip(clip) && clip.reversed && <span className="shrink-0 text-[9px] text-white/80">REV</span>}
+          </div>
+
+          {keyTimes.length > 0 && width > 24 && (
+            <div className="pointer-events-none absolute inset-x-0 bottom-0.5 h-2">
+              {keyTimes.map(atUs => (
+                <Diamond
+                  key={atUs}
+                  className="absolute h-2 w-2 -translate-x-1/2 fill-accent text-accent drop-shadow"
+                  style={{ left: (atUs / US) * pxPerSec }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {!locked && (
+          <>
+            <TrimHandle side="start" onPointerDown={event => onTrimStart(event, 'start')} />
+            <TrimHandle side="end" onPointerDown={event => onTrimStart(event, 'end')} />
+          </>
+        )}
       </div>
+    );
+  }
+);
 
-      {!locked && (
-        <>
-          <TrimHandle side="start" onPointerDown={event => onTrimStart(event, 'start')} />
-          <TrimHandle side="end" onPointerDown={event => onTrimStart(event, 'end')} />
-        </>
-      )}
-    </div>
-  );
+ClipView.displayName = 'ClipView';
+
+const ClipIcon = ({ clip }: { clip: Clip }) => {
+  const className = 'h-3 w-3 shrink-0 text-white';
+  if (isTextClip(clip)) return <Type className={className} />;
+  if (clip.kind === 'audio') return <Music className={className} />;
+  return null;
 };
 
 const TrimHandle = ({ side, onPointerDown }: { side: TrimEdge; onPointerDown: (event: React.PointerEvent) => void }) => (
@@ -81,17 +132,20 @@ const TrimHandle = ({ side, onPointerDown }: { side: TrimEdge; onPointerDown: (e
       onPointerDown(event);
     }}
     style={{ width: TRIM_HANDLE_WIDTH }}
-    className={cn(
-      'absolute inset-y-0 z-10 cursor-ew-resize bg-accent/0 transition-colors hover:bg-accent/70',
-      side === 'start' ? 'left-0' : 'right-0'
-    )}
-  />
+    className={cn('absolute inset-y-0 z-20 cursor-ew-resize transition-colors hover:bg-accent/80', side === 'start' ? 'left-0' : 'right-0')}>
+    <span
+      className={cn(
+        'absolute top-1/2 h-4 w-0.5 -translate-y-1/2 rounded bg-white/0 group-hover:bg-white/70',
+        side === 'start' ? 'left-1' : 'right-1'
+      )}
+    />
+  </div>
 );
 
 const ClipBody = ({ clip, width }: { clip: Clip; width: number }) => {
   if (isTextClip(clip)) {
     return (
-      <div className="flex h-full items-center px-2 pt-3">
+      <div className="flex h-full items-center px-2 pt-3" style={{ background: `${clip.color}33` }}>
         <span className="truncate text-[11px] text-foreground/80">{clip.text.split('\n')[0]}</span>
       </div>
     );
@@ -147,7 +201,7 @@ const Waveform = ({ clip, width }: { clip: MediaClip; width: number }) => {
 
     const middle = cssHeight / 2;
     const barWidth = 2;
-    context.fillStyle = 'rgba(34, 197, 94, 0.85)';
+    context.fillStyle = `${clip.color}dd`;
 
     for (let x = 0; x < cssWidth; x += barWidth) {
       const ratio = x / cssWidth;
@@ -156,9 +210,9 @@ const Waveform = ({ clip, width }: { clip: MediaClip; width: number }) => {
       const amplitude = peaks[index] * (cssHeight * 0.42);
       context.fillRect(x, middle - amplitude, barWidth - 0.5, amplitude * 2 || 1);
     }
-  }, [peaks, width, clip.inUs, clip.durationUs, clip.speed]);
+  }, [peaks, width, clip.inUs, clip.durationUs, clip.speed, clip.color]);
 
-  return <canvas ref={canvasRef} className="h-full w-full" />;
+  return <canvas ref={canvasRef} className="h-full w-full" style={{ background: `${clip.color}22` }} />;
 };
 
 /** Visualises the fade ramps as translucent wedges, like a NLE's rubber band. */
@@ -169,8 +223,8 @@ const FadeOverlay = ({ clip, width, pxPerSec }: { clip: Clip; width: number; pxP
 
   return (
     <svg className="pointer-events-none absolute inset-0 h-full w-full" preserveAspectRatio="none" aria-hidden="true">
-      {fadeInPx > 0 && <polygon points={`0,0 ${fadeInPx},0 0,100%`} fill="rgba(0,0,0,0.55)" />}
-      {fadeOutPx > 0 && <polygon points={`${width},0 ${width - fadeOutPx},0 ${width},100%`} fill="rgba(0,0,0,0.55)" />}
+      {fadeInPx > 0 && <polygon points={`0,0 ${fadeInPx},0 0,100%`} fill="rgba(0,0,0,0.6)" />}
+      {fadeOutPx > 0 && <polygon points={`${width},0 ${width - fadeOutPx},0 ${width},100%`} fill="rgba(0,0,0,0.6)" />}
     </svg>
   );
 };
