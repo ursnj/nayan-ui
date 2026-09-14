@@ -75,7 +75,7 @@ export const renderScene = async (context: Context2D, scene: Scene, timeUs: numb
 };
 
 /** Clips that should be on screen at `timeUs`, in bottom-to-top draw order. */
-export const visibleLayers = (scene: Scene, timeUs: number): Clip[] => {
+const visibleLayers = (scene: Scene, timeUs: number): Clip[] => {
   const layers: Clip[] = [];
   // tracks[0] is the topmost layer, so walk the list backwards to draw it last.
   for (let index = scene.tracks.length - 1; index >= 0; index--) {
@@ -104,7 +104,7 @@ const previousClipOnTrack = (scene: Scene, clip: Clip): Clip | null => {
 };
 
 /** Fade envelope, shared with the audio engine so sound and picture match. */
-export const envelopeAt = (clip: Clip, timeUs: number): number => {
+const envelopeAt = (clip: Clip, timeUs: number): number => {
   const local = timeUs - clip.startUs;
   const remaining = clip.durationUs - local;
   let gain = 1;
@@ -165,6 +165,17 @@ interface DrawOverride extends LayerTransitionState {
 const scratch = new Map<string, { canvas: OffscreenCanvas | HTMLCanvasElement; context: Context2D }>();
 
 /**
+ * How many offscreen surfaces to keep alive.
+ *
+ * Sample surfaces are keyed by source dimensions, so a project mixing many
+ * resolutions would otherwise accumulate one full-size canvas per distinct
+ * size and never let go: twenty 4K sources is roughly 660MB of backing store
+ * held for the session. A transition needs two at once and the backdrop a
+ * third, so the ceiling only has to be comfortably above that.
+ */
+const SCRATCH_LIMIT = 8;
+
+/**
  * A reusable offscreen surface. Layers that need pixel processing or text
  * rasterisation are drawn here first; allocating a canvas per frame would
  * thrash the GC and stall playback.
@@ -182,6 +193,23 @@ const getScratch = (key: string, width: number, height: number) => {
     const context = canvas.getContext('2d') as Context2D | null;
     if (!context) return null;
     entry = { canvas, context };
+    scratch.set(key, entry);
+
+    // Drop the least recently used surfaces, and release their backing store
+    // rather than waiting for the collector to notice a detached canvas.
+    while (scratch.size > SCRATCH_LIMIT) {
+      const oldest = scratch.keys().next().value;
+      if (oldest === undefined || oldest === key) break;
+      const evicted = scratch.get(oldest);
+      if (evicted) {
+        evicted.canvas.width = 0;
+        evicted.canvas.height = 0;
+      }
+      scratch.delete(oldest);
+    }
+  } else {
+    // Re-insert so Map iteration order stays least-recently-used first.
+    scratch.delete(key);
     scratch.set(key, entry);
   }
   if (entry.canvas.width !== targetWidth || entry.canvas.height !== targetHeight) {
@@ -523,7 +551,7 @@ const drawBackdrop = (context: Context2D, resolved: ResolvedSource, background: 
 };
 
 /** Cover-fit: the box is filled completely, overflowing if aspect ratios differ. */
-export const coverRect = (sourceWidth: number, sourceHeight: number, boxWidth: number, boxHeight: number) => {
+const coverRect = (sourceWidth: number, sourceHeight: number, boxWidth: number, boxHeight: number) => {
   if (!sourceWidth || !sourceHeight) return { width: boxWidth, height: boxHeight };
   const scale = Math.max(boxWidth / sourceWidth, boxHeight / sourceHeight);
   return { width: sourceWidth * scale, height: sourceHeight * scale };

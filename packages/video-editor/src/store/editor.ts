@@ -97,8 +97,25 @@ interface EditorState extends Snapshot {
 
 const INITIAL_TRACKS = [makeTrack('video', 1), makeTrack('audio', 1)];
 
-/** Timeline length, i.e. the end of the last clip. */
-export const timelineDurationUs = (clips: Clip[]) => clips.reduce((end, clip) => Math.max(end, clipEndUs(clip)), 0);
+/*
+ * Timeline length, i.e. the end of the last clip.
+ *
+ * Memoised on the identity of the array, which is an exact key here: the
+ * store never mutates `clips` in place, it replaces it. Seven components read
+ * this through a selector, and every selector re-runs on every store write —
+ * including the playhead update that lands sixty times a second during
+ * playback. Without this that is seven full scans per frame for an answer
+ * that only changes when the timeline is edited.
+ */
+let durationSource: Clip[] | null = null;
+let durationValue = 0;
+
+export const timelineDurationUs = (clips: Clip[]) => {
+  if (clips === durationSource) return durationValue;
+  durationSource = clips;
+  durationValue = clips.reduce((end, clip) => Math.max(end, clipEndUs(clip)), 0);
+  return durationValue;
+};
 
 /** Source material still available after the clip's in-point, in timeline time. */
 const availableSourceUs = (clip: Clip, assets: MediaAsset[]) => {
@@ -764,12 +781,6 @@ export const useEditor = create<EditorState>((set, get) => {
 
 /** Non-reactive read, for the render loop which pulls state every frame. */
 export const readEditorState = () => useEditor.getState();
-
-/** Stable empty array so selectors returning "nothing" don't retrigger renders. */
-const NO_CLIPS: Clip[] = [];
-
-export const selectedClips = (state: EditorState): Clip[] =>
-  state.selectedClipIds.length === 0 ? NO_CLIPS : state.clips.filter(clip => state.selectedClipIds.includes(clip.id));
 
 export const primarySelectedClip = (state: EditorState): Clip | null =>
   state.selectedClipIds.length === 0 ? null : (state.clips.find(clip => clip.id === state.selectedClipIds[0]) ?? null);

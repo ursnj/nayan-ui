@@ -186,7 +186,7 @@ interface KeyframeButtonProps {
  * The diamond every NLE puts beside an animatable property: filled when a key
  * exists at the playhead, outlined when the track is animated elsewhere.
  */
-export const KeyframeButton = ({ clipId, path, value, animated, active }: KeyframeButtonProps) => {
+const KeyframeButton = ({ clipId, path, value, animated, active }: KeyframeButtonProps) => {
   const toggleKeyframe = useEditor(state => state.toggleKeyframe);
   const clearKeyframes = useEditor(state => state.clearKeyframes);
 

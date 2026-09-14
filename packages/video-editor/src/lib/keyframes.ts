@@ -23,7 +23,7 @@ const ease = (t: number, easing: Easing): number => {
  * Returns `fallback` when the property isn't animated, so callers can treat
  * static and animated properties identically.
  */
-export const evaluateTrack = (keys: Keyframe[] | undefined, localUs: number, fallback: number): number => {
+const evaluateTrack = (keys: Keyframe[] | undefined, localUs: number, fallback: number): number => {
   if (!keys || keys.length === 0) return fallback;
   if (keys.length === 1) return keys[0].value;
 
@@ -47,12 +47,6 @@ export const evaluateTrack = (keys: Keyframe[] | undefined, localUs: number, fal
 /** Reads a possibly-animated numeric property of a clip at a timeline instant. */
 export const animatedValue = (clip: Clip, path: string, staticValue: number, timelineUs: number): number =>
   evaluateTrack(clip.animations[path], timelineUs - clip.startUs, staticValue);
-
-export const hasTrack = (animations: Animations, path: string) => (animations[path]?.length ?? 0) > 0;
-
-/** True when a key sits within half a frame of `localUs`. */
-export const keyAt = (keys: Keyframe[] | undefined, localUs: number, toleranceUs: number): Keyframe | null =>
-  keys?.find(key => Math.abs(key.atUs - localUs) <= toleranceUs) ?? null;
 
 /**
  * Inserts or replaces a key, keeping the track sorted.
