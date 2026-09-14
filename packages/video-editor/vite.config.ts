@@ -13,7 +13,21 @@ import { defineConfig } from 'vite';
  * second deployment.
  */
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    /*
+     * The React Compiler memoises components and hook results at build time,
+     * which matters here because the editor re-renders under real pressure:
+     * the store notifies every subscriber sixty times a second during
+     * playback, and a drag fires a store write per pointer move.
+     *
+     * It is conservative — anything it cannot prove safe is left exactly as
+     * written — so the hand-written `memo` and `useCallback` in the timeline
+     * stay as they are rather than being torn out on the assumption that the
+     * compiler covers them.
+     */
+    react({ compiler: { logDiagnostics: true } }),
+    tailwindcss()
+  ],
   optimizeDeps: {
     /*
      * @nayan-ui/react is a workspace package built into its own dist. Left to
