@@ -10,9 +10,9 @@ type PanelId = 'media' | 'text' | 'effects' | 'transitions' | 'background';
 const TABS: { id: PanelId; label: string; icon: React.ReactNode }[] = [
   { id: 'media', label: 'Media', icon: <FolderOpen className="h-[18px] w-[18px]" /> },
   { id: 'text', label: 'Text', icon: <Type className="h-[18px] w-[18px]" /> },
+  { id: 'background', label: 'Background', icon: <ImageIcon className="h-[18px] w-[18px]" /> },
   { id: 'effects', label: 'Effects', icon: <Sparkles className="h-[18px] w-[18px]" /> },
-  { id: 'transitions', label: 'Transitions', icon: <Blend className="h-[18px] w-[18px]" /> },
-  { id: 'background', label: 'Background', icon: <ImageIcon className="h-[18px] w-[18px]" /> }
+  { id: 'transitions', label: 'Transitions', icon: <Blend className="h-[18px] w-[18px]" /> }
 ];
 
 /**

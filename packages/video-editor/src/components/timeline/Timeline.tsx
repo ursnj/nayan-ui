@@ -96,12 +96,24 @@ export const Timeline = () => {
    * `viewport.width` is the scroll container's clientWidth, which includes the
    * sticky header column — hence subtracting it here.
    */
-  const contentWidth = Math.max(
-    viewport.width - HEADER_WIDTH,
-    (durationUs / US) * pxPerSec + TAIL_PADDING_PX,
-    // Before the first measurement lands, something sane to render into.
-    400
-  );
+  // Width available without scrolling. The 400 floor is for the moment before
+  // the first measurement lands, and for a window too narrow to be usable.
+  const laneWidth = Math.max(400, viewport.width - HEADER_WIDTH);
+  const projectWidth = (durationUs / US) * pxPerSec;
+
+  /*
+   * The tail is drag room past the last clip, and it is only reserved once the
+   * project already overflows.
+   *
+   * Adding it unconditionally meant every project scrolled from the moment it
+   * had any content: a 10-second timeline on a 1200px window overran the lanes
+   * by the padding alone, so there was always a scrollbar and the far end of
+   * the scroll was always blank. While the project still fits, the unused lane
+   * space to the right of the last clip *is* the drag room — and the moment a
+   * drag pushes past the edge the duration grows, so the tail appears exactly
+   * when it starts being needed.
+   */
+  const contentWidth = Math.max(laneWidth, projectWidth > laneWidth ? projectWidth + TAIL_PADDING_PX : projectWidth);
 
   /**
    * Clips bucketed by track, built once per change instead of each row
@@ -514,7 +526,16 @@ export const Timeline = () => {
             event
           );
         }}>
-        <div className="relative" style={{ width: HEADER_WIDTH + contentWidth }}>
+        {/*
+          * `overflow-x: clip` rather than `hidden` on purpose: everything in
+          * here is sized to this width, so anything reaching past it is a bug
+          * — a tick, a marker label, a playhead handle — and each one would
+          * add empty scroll to the container above. `clip` contains that
+          * without establishing a scroll container of its own, so the sticky
+          * header column and ruler keep positioning against the real
+          * scrollport. `hidden` would take that over and break both.
+          */}
+        <div className="relative [overflow-x:clip]" style={{ width: HEADER_WIDTH + contentWidth }}>
           <div className="sticky top-0 z-30 flex">
             <div
               style={{ width: HEADER_WIDTH, height: HEAD_HEIGHT }}
