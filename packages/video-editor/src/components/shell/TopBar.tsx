@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react';
-import { NDialog, showToast } from '@nayan-ui/react';
+import { NButton, NDialog, NInput, showToast } from '@nayan-ui/react';
 import { DialogSize } from '@nayan-ui/react';
 import { Clapperboard, Download, FileDown, FilePlus2, FileUp, Moon, Redo2, Settings, Sun, Undo2 } from 'lucide-react';
 import { download } from '../../lib/utils';
 import { readEditorState, serialiseProject, useEditor } from '../../store/editor';
 import type { ProjectFile } from '../../store/editor';
-import { IconButton, NumberField, SelectField } from '../controls';
+import { ColorField, IconButton, NumberField, SelectField } from '../controls';
 
 const RESOLUTIONS = [
   { value: '3840x2160', label: '4K — 3840 × 2160' },
@@ -72,11 +72,12 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
 
       <span className="mx-1 h-5 w-px bg-separator" />
 
-      <input
+      <NInput
         value={project.name}
         onChange={event => updateProject({ name: event.target.value })}
+        wrapperClassName="mb-0 w-56"
+        inputClassName="h-8 text-sm"
         aria-label="Project name"
-        className="w-56 rounded-md border border-transparent bg-transparent px-2 py-1 text-sm text-foreground outline-none transition-colors hover:border-border focus:border-accent focus:bg-field-background"
       />
 
       <div className="ml-2 flex items-center gap-0.5">
@@ -112,26 +113,19 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
 
         <span className="mx-1 h-5 w-px bg-separator" />
 
-        <button
-          type="button"
-          onClick={() => setSettingsOpen(true)}
-          className="flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-[11px] text-muted transition-colors hover:border-accent hover:text-foreground">
-          <Settings className="h-3.5 w-3.5" />
+        <NButton isOutline onClick={() => setSettingsOpen(true)} className="h-7 px-2 text-[11px]">
+          <Settings className="mr-1.5 h-3.5 w-3.5" />
           {project.width} × {project.height} · {project.fps}fps
-        </button>
+        </NButton>
 
         <IconButton label={theme === 'dark' ? 'Light theme' : 'Dark theme'} onClick={onToggleTheme}>
           {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </IconButton>
 
-        <button
-          type="button"
-          onClick={onExport}
-          disabled={clipCount === 0}
-          className="ml-1 flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40">
-          <Download className="h-4 w-4" />
+        <NButton onClick={onExport} disabled={clipCount === 0} className="ml-1 h-8 px-3 text-xs">
+          <Download className="mr-1.5 h-4 w-4" />
           Export
-        </button>
+        </NButton>
       </div>
 
       <NDialog isOpen={settingsOpen} title="Project settings" size={DialogSize.SM} onClose={() => setSettingsOpen(false)}>
@@ -163,16 +157,7 @@ export const TopBar = ({ theme, onToggleTheme, onExport }: TopBarProps) => {
             <NumberField label="Width" value={project.width} min={16} max={7680} step={2} onChange={width => updateProject({ width })} />
             <NumberField label="Height" value={project.height} min={16} max={4320} step={2} onChange={height => updateProject({ height })} />
           </div>
-          <div>
-            <span className="mb-1 block text-[11px] text-muted">Background</span>
-            <input
-              type="color"
-              value={project.backgroundColor}
-              onChange={event => updateProject({ backgroundColor: event.target.value })}
-              aria-label="Background colour"
-              className="h-9 w-full cursor-pointer rounded-md border border-border bg-transparent p-1"
-            />
-          </div>
+          <ColorField label="Background" value={project.backgroundColor} onChange={backgroundColor => updateProject({ backgroundColor })} />
         </div>
       </NDialog>
     </header>

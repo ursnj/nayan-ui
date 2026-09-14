@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { NDialog, NProgress, showToast } from '@nayan-ui/react';
+import { NButton, NDialog, NLink, NProgress, showToast } from '@nayan-ui/react';
 import { DialogSize } from '@nayan-ui/react';
 import { CheckCircle2, Download, X } from 'lucide-react';
 import { EXPORT_PRESETS, ExportCanceledError, exportProject, suggestBitrate } from '../engine/exporter';
@@ -208,37 +208,27 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
           <span className="min-w-0 flex-1 truncate">
             {result.filename} · {formatBytes(result.blob.size)}
           </span>
-          <button type="button" onClick={() => download(result.blob, result.filename)} className="shrink-0 font-medium text-accent hover:underline">
+          <NLink href="#" onPress={() => download(result.blob, result.filename)} className="shrink-0 text-xs font-medium">
             Save again
-          </button>
+          </NLink>
         </div>
       )}
 
       <div className="flex justify-end gap-2 pt-1">
         {running ? (
-          <button
-            type="button"
-            onClick={() => abortRef.current?.abort()}
-            className="flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs text-foreground transition-colors hover:border-danger hover:text-danger">
-            <X className="h-4 w-4" />
+          <NButton isOutline onClick={() => abortRef.current?.abort()}>
+            <X className="mr-1.5 h-4 w-4" />
             Cancel
-          </button>
+          </NButton>
         ) : (
           <>
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-md border border-border px-3 py-1.5 text-xs text-muted transition-colors hover:text-foreground">
+            <NButton isOutline onClick={onClose}>
               Close
-            </button>
-            <button
-              type="button"
-              onClick={() => void runExport()}
-              disabled={spanUs <= 0}
-              className="flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40">
-              <Download className="h-4 w-4" />
+            </NButton>
+            <NButton onClick={() => void runExport()} disabled={spanUs <= 0}>
+              <Download className="mr-1.5 h-4 w-4" />
               {result ? 'Export again' : 'Export'}
-            </button>
+            </NButton>
           </>
         )}
       </div>

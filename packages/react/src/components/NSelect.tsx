@@ -28,6 +28,7 @@ export interface NSelectProps<OptionType = ReactSelectOption, IsMulti extends bo
   inputId?: string;
   name?: string;
   menuPortalTarget?: HTMLElement;
+  styles?: Record<string, unknown>;
   [key: string]: any; // for additional react-select props
 }
 
@@ -56,6 +57,7 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
     inputId,
     name,
     menuPortalTarget,
+    styles,
     ...rest
   } = props;
   const generatedId = useId();
@@ -81,6 +83,17 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
   );
 
   const SelectComponent = isCreatable ? CreatableSelect : Select;
+
+  /*
+   * The menu is rendered into a portal so it can escape panels that clip
+   * their overflow — but react-select gives that portal `z-index: 1`, which
+   * puts it *behind* dialogs, sheets and any raised surface. Lift it, while
+   * still letting a caller override the whole thing.
+   */
+  const mergedStyles = {
+    menuPortal: (base: Record<string, unknown>) => ({ ...base, zIndex: 9999 }),
+    ...styles
+  };
 
   return (
     <div className={cn('nyn-select-block mb-3', className)}>
@@ -108,6 +121,7 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
         onChange={handleChange}
         onCreateOption={isCreatable ? handleCreate : undefined}
         theme={reactSelectTheme}
+        styles={mergedStyles as any}
         aria-label={label}
         menuPortalTarget={typeof window !== 'undefined' ? menuPortalTarget || document.body : undefined}
         {...rest}

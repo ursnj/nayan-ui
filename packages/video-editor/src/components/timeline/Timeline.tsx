@@ -1,4 +1,5 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { NButton } from '@nayan-ui/react';
 import {
   Bookmark,
   Copy,
@@ -654,12 +655,9 @@ const TimelineToolbar = (props: ToolbarProps) => (
     </IconButton>
 
     <div className="ml-auto flex items-center gap-1">
-      <button
-        type="button"
-        onClick={props.onZoomFit}
-        className="rounded-md px-2 py-1 text-[11px] text-muted transition-colors hover:bg-default hover:text-foreground">
+      <NButton isOutline onClick={props.onZoomFit} className="h-7 px-2 text-[11px]">
         Fit
-      </button>
+      </NButton>
       <IconButton label="Zoom out" onClick={props.onZoomOut}>
         <ZoomOut className="h-4 w-4" />
       </IconButton>

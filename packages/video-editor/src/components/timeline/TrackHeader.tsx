@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { NInput, NSlider } from '@nayan-ui/react';
 import { ChevronDown, ChevronUp, Eye, EyeOff, Film, Lock, LockOpen, Music, Trash2, Volume2, VolumeX } from 'lucide-react';
 import { clamp, cn } from '../../lib/utils';
 import { useEditor } from '../../store/editor';
@@ -54,11 +55,12 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
       className="group/header sticky left-0 z-20 flex shrink-0 flex-col justify-center gap-1 overflow-hidden border-b border-r border-border bg-editor-chrome px-2 py-1">
       <div className="flex h-5 items-center gap-1">
         <Icon className={cn('h-3.5 w-3.5 shrink-0', track.hidden ? 'text-muted/50' : 'text-muted')} />
-        <input
+        <NInput
           value={track.name}
           onChange={event => onUpdate({ name: event.target.value })}
+          wrapperClassName="mb-0 min-w-0 flex-1"
+          inputClassName="h-5 px-1 text-xs font-medium"
           aria-label={`${track.name} name`}
-          className="min-w-0 flex-1 truncate rounded border border-transparent bg-transparent px-1 py-0.5 text-xs font-medium text-foreground outline-none transition-colors hover:border-border focus:border-accent focus:bg-field-background"
         />
         {/* Revealed on hover so the resting state stays quiet, but the width is
             always reserved — otherwise the name would jump as you move around. */}
@@ -107,18 +109,14 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
           {track.locked ? <Lock className="h-3.5 w-3.5" /> : <LockOpen className="h-3.5 w-3.5" />}
         </IconButton>
 
-        <input
-          type="range"
+        <NSlider
+          value={Math.round(track.volume * 100)}
           min={0}
           max={150}
-          value={Math.round(track.volume * 100)}
-          onChange={event => onUpdate({ volume: Number(event.target.value) / 100 })}
+          disabled={track.muted}
+          onChange={value => onUpdate({ volume: value / 100 })}
+          className={cn('mb-0 ml-1 min-w-0 flex-1', track.muted && 'opacity-40')}
           aria-label={`${track.name} level`}
-          title={`Level ${Math.round(track.volume * 100)}%`}
-          className={cn(
-            'ml-1 h-1.5 min-w-0 flex-1 cursor-pointer rounded-full bg-default accent-accent',
-            track.muted && 'pointer-events-none opacity-40'
-          )}
         />
       </div>
 
