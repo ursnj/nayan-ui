@@ -116,6 +116,27 @@ a.active {
   color: var(--accent) !important;
 }
 
+/* -------------------------------------------------------------------------
+ * Brand design language
+ * A single, cohesive accent-based gradient (accent blue -> adjacent violet)
+ * used consistently for wordmarks, heading highlights, and primary surfaces.
+ * Keeps the whole site on-brand and theme-aware instead of hardcoded rainbows.
+ * ---------------------------------------------------------------------- */
+@utility text-gradient {
+  background-image: linear-gradient(to right, var(--accent), hsl(258 90% 66%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility bg-brand-gradient {
+  background-image: linear-gradient(to right, var(--accent), hsl(258 90% 66%));
+}
+
+@utility bg-brand-soft {
+  background-image: linear-gradient(to bottom right, color-mix(in oklab, var(--accent) 12%, transparent), transparent);
+}
+
 @keyframes accordion-down {
   from {
     height: 0;

@@ -7,7 +7,7 @@ export interface NPaginationProps {
   currentPage: number;
   onChange: (page: number) => void;
   size?: 'sm' | 'md' | 'lg';
-  isDisabled?: boolean;
+  disabled?: boolean;
   showSummary?: boolean;
   summaryText?: string;
   siblingCount?: number;
@@ -15,6 +15,7 @@ export interface NPaginationProps {
   contentClassName?: string;
   linkClassName?: string;
   activeLinkClassName?: string;
+  'aria-label'?: string;
 }
 
 const NPaginationComponent: React.FC<NPaginationProps> = memo(
@@ -23,52 +24,57 @@ const NPaginationComponent: React.FC<NPaginationProps> = memo(
     currentPage,
     onChange,
     size = 'md',
-    isDisabled = false,
+    disabled = false,
     showSummary = false,
     summaryText,
     siblingCount = 1,
     className = '',
     contentClassName = '',
     linkClassName = '',
-    activeLinkClassName = ''
+    activeLinkClassName = '',
+    'aria-label': ariaLabel = 'Pagination'
   }) => {
+    const pageCount = Math.max(0, Math.floor(totalPages));
+    const activePage = pageCount === 0 ? 0 : Math.min(pageCount, Math.max(1, Math.floor(currentPage)));
+    const siblings = Math.max(0, Math.floor(siblingCount));
+
     const pages = useMemo(() => {
       const result: (number | 'ellipsis')[] = [];
       const addRange = (start: number, end: number) => {
         for (let i = start; i <= end; i++) result.push(i);
       };
 
-      if (totalPages <= 7) {
-        addRange(1, totalPages);
+      if (pageCount <= siblings * 2 + 5) {
+        addRange(1, pageCount);
       } else {
-        const leftBound = Math.max(2, currentPage - siblingCount);
-        const rightBound = Math.min(totalPages - 1, currentPage + siblingCount);
+        const leftBound = Math.max(2, activePage - siblings);
+        const rightBound = Math.min(pageCount - 1, activePage + siblings);
 
         result.push(1);
         if (leftBound > 2) result.push('ellipsis');
         addRange(leftBound, rightBound);
-        if (rightBound < totalPages - 1) result.push('ellipsis');
-        result.push(totalPages);
+        if (rightBound < pageCount - 1) result.push('ellipsis');
+        result.push(pageCount);
       }
       return result;
-    }, [totalPages, currentPage, siblingCount]);
+    }, [activePage, pageCount, siblings]);
 
     const handlePrevious = useCallback(() => {
-      if (currentPage > 1) onChange(currentPage - 1);
-    }, [currentPage, onChange]);
+      if (activePage > 1) onChange(activePage - 1);
+    }, [activePage, onChange]);
 
     const handleNext = useCallback(() => {
-      if (currentPage < totalPages) onChange(currentPage + 1);
-    }, [currentPage, totalPages, onChange]);
+      if (activePage < pageCount) onChange(activePage + 1);
+    }, [activePage, pageCount, onChange]);
 
     return (
-      <Pagination size={size} className={cn('nyn-pagination', className)}>
+      <Pagination size={size} className={cn('nyn-pagination', className)} aria-label={ariaLabel}>
         {showSummary && (
-          <Pagination.Summary className="text-sm text-muted font-medium">{summaryText || `Page ${currentPage} of ${totalPages}`}</Pagination.Summary>
+          <Pagination.Summary className="text-sm text-muted font-medium">{summaryText || `Page ${activePage} of ${pageCount}`}</Pagination.Summary>
         )}
         <Pagination.Content className={cn(contentClassName)}>
           <Pagination.Item>
-            <Pagination.Previous isDisabled={isDisabled || currentPage <= 1} onPress={handlePrevious}>
+            <Pagination.Previous isDisabled={disabled || activePage <= 1} onPress={handlePrevious}>
               <Pagination.PreviousIcon />
               <span>Previous</span>
             </Pagination.Previous>
@@ -81,17 +87,17 @@ const NPaginationComponent: React.FC<NPaginationProps> = memo(
             ) : (
               <Pagination.Item key={page}>
                 <Pagination.Link
-                  isActive={page === currentPage}
-                  isDisabled={isDisabled}
-                  onPress={() => onChange(page)}
-                  className={cn(linkClassName, page === currentPage && activeLinkClassName)}>
+                  isActive={page === activePage}
+                  isDisabled={disabled}
+                  onPress={() => page !== activePage && onChange(page)}
+                  className={cn(linkClassName, page === activePage && activeLinkClassName)}>
                   {page}
                 </Pagination.Link>
               </Pagination.Item>
             )
           )}
           <Pagination.Item>
-            <Pagination.Next isDisabled={isDisabled || currentPage >= totalPages} onPress={handleNext}>
+            <Pagination.Next isDisabled={disabled || activePage >= pageCount} onPress={handleNext}>
               <span>Next</span>
               <Pagination.NextIcon />
             </Pagination.Next>
