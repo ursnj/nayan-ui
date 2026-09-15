@@ -52,6 +52,11 @@ const HeaderMenu = () => {
           </Link>
         </li>
         <li className="w-full md:w-auto">
+          <Link className={linkClass('/video-editor')} href="/video-editor">
+            Video Editor
+          </Link>
+        </li>
+        <li className="w-full md:w-auto">
           <Link className={linkClass('/devtools')} href="/devtools">
             Devtools
           </Link>
