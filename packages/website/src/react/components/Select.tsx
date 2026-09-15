@@ -15,7 +15,15 @@ const Select = () => {
 
   return (
     <ComponentWrapper>
-      <NSelect label="Business Type" placeholder="Select plan" options={options} value={selected} onChange={val => setSelected(val)} />
+      <NSelect
+        label="Business Type"
+        placeholder="Search business types..."
+        isSearchable
+        isClearable
+        options={options}
+        value={selected}
+        onChange={setSelected}
+      />
     </ComponentWrapper>
   );
 };

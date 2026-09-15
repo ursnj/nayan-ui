@@ -6,7 +6,8 @@ export const dynamic = 'force-dynamic';
 
 export const metadata = buildPageMetadata({
   title: '@nayan-ui/games - 50+ React Native Games',
-  description: '50+ high-performance games for React Native applications. Puzzle, arcade, strategy, and casual games built with Skia, Reanimated, and TypeScript for smooth 60fps gameplay.',
+  description:
+    '50+ high-performance games for React Native applications. Puzzle, arcade, strategy, and casual games built with Skia, Reanimated, and TypeScript for smooth 60fps gameplay.',
   path: '/games',
   keywords: 'react native games, mobile games, react native game library, puzzle games, arcade games, nayan ui games'
 });

@@ -8,12 +8,15 @@ export interface NProgressProps {
   indicatorClassName?: string;
 }
 
-export const NProgress = React.memo<NProgressProps>(({ value, className = '', indicatorClassName = '' }) => {
+export const NProgress = React.memo<NProgressProps>(({ value, className, indicatorClassName }) => {
   const clampedValue = Math.min(100, Math.max(0, value));
 
   return (
-    <View className={cn('w-full bg-surface rounded-full overflow-hidden', className)} style={{ height: 8 }}>
-      <View className={cn('w-full bg-accent rounded-full', indicatorClassName)} style={{ height: 8, width: `${clampedValue}%` }} />
+    <View
+      accessibilityRole="progressbar"
+      accessibilityValue={{ min: 0, max: 100, now: Math.round(clampedValue) }}
+      className={cn('h-2 w-full overflow-hidden rounded-full bg-border', className)}>
+      <View className={cn('h-full rounded-full bg-accent', indicatorClassName)} style={{ width: `${clampedValue}%` }} />
     </View>
   );
 });

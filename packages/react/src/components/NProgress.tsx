@@ -1,4 +1,4 @@
-import React, { forwardRef, memo } from 'react';
+import { forwardRef, memo } from 'react';
 import { ProgressBar } from '@heroui/react';
 import { cn } from '../lib/utils';
 
@@ -15,12 +15,16 @@ export const NProgress = memo(
     const clampedValue = Math.max(0, Math.min(100, value));
     return (
       <div className="nyn-progress-wrapper" style={{ width: '100%' }} ref={ref}>
-        {showLabel && (
-          <span className="sr-only" aria-live="polite">
-            {label}: {clampedValue}%
-          </span>
-        )}
-        <ProgressBar value={clampedValue} aria-label={label} className={cn('nyn-progress', className)} {...(rest as any)} />
+        <ProgressBar value={clampedValue} aria-label={label} className={cn('nyn-progress', className)} {...(rest as any)}>
+          {showLabel && (
+            <ProgressBar.Output className="sr-only" aria-live="polite">
+              {label}: {clampedValue}%
+            </ProgressBar.Output>
+          )}
+          <ProgressBar.Track>
+            <ProgressBar.Fill />
+          </ProgressBar.Track>
+        </ProgressBar>
       </div>
     );
   })
