@@ -1,0 +1,33 @@
+{
+  "name": "@nayan-ui/video-editor",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "lint:fix": "oxlint --fix"
+  },
+  "dependencies": {
+    "@nayan-ui/react": "^2.0.0",
+    "lucide-react": "^1.45.0",
+    "mediabunny": "^1.56.2",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.11",
+    "@types/node": "^24.12.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.1.1",
+    "oxc-transform-react": "^0.150.0",
+    "oxlint": "^1.83.0",
+    "tailwindcss": "^4.1.11",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0"
+  }
+}

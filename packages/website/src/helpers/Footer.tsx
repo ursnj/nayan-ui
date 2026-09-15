@@ -48,25 +48,22 @@ const Footer = () => {
               <span className="text-accent">Documentation</span>
             </h3>
             <div className="space-y-2">
-              <NLink
-                href="/react/installation"
-                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
+              <NLink href="/react/installation" className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
                 React Installation
               </NLink>
-              <NLink
-                href="/react-native/installation"
-                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
+              <NLink href="/react-native/installation" className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
                 React Native Installation
               </NLink>
-              <NLink
-                href="/react/components"
-                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
+              <NLink href="/react/components" className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
                 React Components
               </NLink>
-              <NLink
-                href="/react-native/components"
-                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
+              <NLink href="/react-native/components" className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
                 React Native Components
+              </NLink>
+              <NLink
+                href="/video-editor"
+                className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
+                Video Editor
               </NLink>
             </div>
           </div>
@@ -77,14 +74,10 @@ const Footer = () => {
               <span className="text-accent">Resources</span>
             </h3>
             <div className="space-y-2">
-              <NLink
-                href="/contributions"
-                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
+              <NLink href="/contributions" className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
                 Contributing
               </NLink>
-              <NLink
-                href="/tags"
-                className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
+              <NLink href="/tags" className="block !text-muted hover:!text-accent transition-colors duration-200 text-sm">
                 Component Tags
               </NLink>
               <NLink
