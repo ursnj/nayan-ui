@@ -168,10 +168,18 @@ const Banner = () => {
                         </NButton>
                       </div>
                       <div className="flex flex-wrap gap-1.5">
-                        <span className="px-2 py-0.5 rounded-full bg-accent/15 text-accent text-[10px] font-medium border border-accent/20">Badge</span>
-                        <span className="px-2 py-0.5 rounded-full bg-success/15 text-success text-[10px] font-medium border border-success/20">Chip</span>
-                        <span className="px-2 py-0.5 rounded-full bg-warning/15 text-warning text-[10px] font-medium border border-warning/20">Tag</span>
-                        <span className="px-2 py-0.5 rounded-full bg-danger/15 text-danger text-[10px] font-medium border border-danger/20">Status</span>
+                        <span className="px-2 py-0.5 rounded-full bg-accent/15 text-accent text-[10px] font-medium border border-accent/20">
+                          Badge
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full bg-success/15 text-success text-[10px] font-medium border border-success/20">
+                          Chip
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full bg-warning/15 text-warning text-[10px] font-medium border border-warning/20">
+                          Tag
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full bg-danger/15 text-danger text-[10px] font-medium border border-danger/20">
+                          Status
+                        </span>
                       </div>
                     </div>
                   )}
