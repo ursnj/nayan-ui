@@ -1,5 +1,6 @@
 import { useCallback, useRef } from 'react';
 import { fitRect } from '../../engine/compositor';
+import { useHeldInteraction } from '../../lib/shortcuts';
 import { clamp } from '../../lib/utils';
 import { readEditorState, useEditor } from '../../store/editor';
 import { TEXT_LINE_HEIGHT, isMediaClip, isTextClip } from '../../types';
@@ -19,6 +20,14 @@ interface Box {
 }
 
 type Handle = 'move' | 'nw' | 'ne' | 'sw' | 'se' | 'rotate';
+
+/** Nudge direction per arrow key, in frame pixels before the shift multiplier. */
+const NUDGE_KEYS: Record<string, [number, number] | undefined> = {
+  ArrowLeft: [-1, 0],
+  ArrowRight: [1, 0],
+  ArrowUp: [0, -1],
+  ArrowDown: [0, 1]
+};
 
 interface TransformOverlayProps {
   clip: Clip;
@@ -43,13 +52,53 @@ export const TransformOverlay = ({ clip, project, displayWidth, displayHeight }:
   const assets = useEditor(state => state.assets);
   const updateClip = useEditor(state => state.updateClip);
   const dragRef = useRef<{ handle: Handle; startBox: Box; startClip: Clip; startX: number; startY: number } | null>(null);
+  const boxRef = useRef<HTMLDivElement>(null);
+  const held = useHeldInteraction();
 
   const box = readBox(clip, project, assets);
+
+  /**
+   * Arrow-key nudge, in whole pixels of the output frame — the unit every
+   * design tool nudges in, and fine enough to line an edge up exactly.
+   *
+   * Geometry is read from the store rather than from the render, so a held key
+   * accumulates from where the clip actually is instead of from wherever it
+   * was when this component last rendered.
+   */
+  const nudge = useCallback(
+    (pixelsX: number, pixelsY: number) => {
+      const state = readEditorState();
+      const current = state.clips.find(entry => entry.id === clip.id);
+      if (!current) return;
+      const from = readBox(current, project, state.assets);
+      if (!from) return;
+      writeBox(current, from, { ...from, x: from.x + pixelsX / project.width, y: from.y + pixelsY / project.height }, updateClip);
+    },
+    [clip.id, project, updateClip]
+  );
+
+  const onKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      const step = event.shiftKey ? 10 : 1;
+      const delta = NUDGE_KEYS[event.key];
+      if (!delta || event.metaKey || event.ctrlKey || event.altKey) return;
+      // Claims the key from the global handler, which would scrub instead.
+      event.preventDefault();
+      held.begin();
+      nudge(delta[0] * step, delta[1] * step);
+    },
+    [held, nudge]
+  );
 
   const beginDrag = useCallback(
     (handle: Handle) => (event: React.PointerEvent) => {
       event.preventDefault();
       event.stopPropagation();
+
+      // `preventDefault` above suppresses the focus a press would normally
+      // give, and without focus the arrow keys would scrub the playhead
+      // instead of nudging the clip the user just grabbed.
+      boxRef.current?.focus();
 
       const state = readEditorState();
       const startClip = state.clips.find(entry => entry.id === clip.id);
@@ -100,7 +149,14 @@ export const TransformOverlay = ({ clip, project, displayWidth, displayHeight }:
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       <div
-        className="pointer-events-auto absolute cursor-move border border-accent"
+        ref={boxRef}
+        role="button"
+        tabIndex={0}
+        aria-label={`${clip.name} in frame — arrow keys nudge, shift for ten pixels`}
+        onKeyDown={onKeyDown}
+        onKeyUp={held.end}
+        onBlur={held.end}
+        className="pointer-events-auto absolute cursor-move border border-accent outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
         style={{ left, top, width, height, transform: `rotate(${box.rotation}deg)` }}
         onPointerDown={beginDrag('move')}>
         <span className={`${handleClass} -left-1.5 -top-1.5 cursor-nwse-resize`} onPointerDown={beginDrag('nw')} role="presentation" />

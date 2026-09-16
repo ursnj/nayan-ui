@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { NInput, NSlider } from '@nayan-ui/react';
 import { ChevronDown, ChevronUp, Eye, EyeOff, Film, Lock, LockOpen, Music, Trash2, Volume2, VolumeX } from 'lucide-react';
+import { useHeldInteraction } from '../../lib/shortcuts';
 import { clamp, cn } from '../../lib/utils';
 import { useEditor } from '../../store/editor';
 import type { Track } from '../../types';
@@ -25,6 +26,7 @@ interface TrackHeaderProps {
 export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeaderProps) => {
   const reorderTrack = useEditor(state => state.reorderTrack);
   const Icon = track.kind === 'video' ? Film : Music;
+  const held = useHeldInteraction();
 
   /** Drag the bottom edge of the header to change the row height. */
   const onResizePointerDown = useCallback(
@@ -123,8 +125,24 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
       <div
         role="separator"
         aria-label="Resize track height"
+        aria-orientation="horizontal"
+        aria-valuenow={track.height}
+        aria-valuemin={MIN_ROW_HEIGHT}
+        aria-valuemax={MAX_ROW_HEIGHT}
+        tabIndex={0}
         onPointerDown={onResizePointerDown}
-        className="absolute inset-x-0 bottom-0 flex h-1.5 cursor-row-resize items-end justify-center">
+        onKeyDown={event => {
+          const direction = event.key === 'ArrowUp' ? -1 : event.key === 'ArrowDown' ? 1 : 0;
+          if (direction === 0 || event.metaKey || event.ctrlKey || event.altKey) return;
+          // Claims the key from the global handler, which would jump the playhead.
+          event.preventDefault();
+          held.begin();
+          const step = event.shiftKey ? 16 : 4;
+          onUpdate({ height: clamp(track.height + direction * step, MIN_ROW_HEIGHT, MAX_ROW_HEIGHT) });
+        }}
+        onKeyUp={held.end}
+        onBlur={held.end}
+        className="absolute inset-x-0 bottom-0 flex h-1.5 cursor-row-resize items-end justify-center outline-none focus-visible:bg-accent/40">
         <span className="h-0.5 w-6 rounded-full bg-transparent transition-colors group-hover/header:bg-separator" />
       </div>
     </div>

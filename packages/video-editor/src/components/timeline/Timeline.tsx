@@ -22,6 +22,7 @@ import {
   ZoomOut
 } from 'lucide-react';
 import { player, seekTo } from '../../engine/playerInstance';
+import { MOD_LABEL, useCommand } from '../../lib/shortcuts';
 import { clamp, cn } from '../../lib/utils';
 import { readEditorState, timelineDurationUs, useEditor } from '../../store/editor';
 import { MEDIA_FIT_LABELS, US, clipEndUs, isMediaClip } from '../../types';
@@ -482,6 +483,9 @@ export const Timeline = () => {
     return () => element.removeEventListener('wheel', onWheel);
   }, []);
 
+  // Only the timeline knows the viewport the project has to fit into.
+  useCommand('zoomFit', zoomToFit);
+
   const visibleRange = useMemo(() => {
     const startPx = Math.max(0, viewport.left - HEADER_WIDTH - VIRTUALISE_OVERSCAN_PX);
     const endPx = viewport.left + viewport.width - HEADER_WIDTH + VIRTUALISE_OVERSCAN_PX;
@@ -720,13 +724,13 @@ const TimelineToolbar = (props: ToolbarProps) => (
 
     <span className="mx-0.5 h-4 w-px bg-separator" />
 
-    <IconButton label="Split at playhead" onClick={props.onSplit}>
+    <IconButton label="Split at playhead (S)" onClick={props.onSplit}>
       <Split className="h-4 w-4" />
     </IconButton>
-    <IconButton label="Duplicate" onClick={props.onDuplicate} disabled={!props.hasSelection}>
+    <IconButton label={`Duplicate (${MOD_LABEL}D)`} onClick={props.onDuplicate} disabled={!props.hasSelection}>
       <Copy className="h-4 w-4" />
     </IconButton>
-    <IconButton label="Delete" onClick={props.onDelete} disabled={!props.hasSelection} danger>
+    <IconButton label="Delete (Del)" onClick={props.onDelete} disabled={!props.hasSelection} danger>
       <Trash2 className="h-4 w-4" />
     </IconButton>
 
@@ -745,11 +749,11 @@ const TimelineToolbar = (props: ToolbarProps) => (
       </span>
     </IconButton>
 
-    <IconButton label={props.snapEnabled ? 'Snapping on' : 'Snapping off'} onClick={props.toggleSnap} active={props.snapEnabled}>
+    <IconButton label={props.snapEnabled ? 'Snapping on (N)' : 'Snapping off (N)'} onClick={props.toggleSnap} active={props.snapEnabled}>
       <Magnet className="h-4 w-4" />
     </IconButton>
     <IconButton
-      label={props.rippleEnabled ? 'Ripple edit on — deletes close gaps' : 'Ripple edit off'}
+      label={props.rippleEnabled ? 'Ripple edit on — deletes close gaps (R)' : 'Ripple edit off (R)'}
       onClick={props.toggleRipple}
       active={props.rippleEnabled}>
       <Link2 className="h-4 w-4" />
@@ -759,10 +763,10 @@ const TimelineToolbar = (props: ToolbarProps) => (
       <NButton isOutline onClick={props.onZoomFit} className="h-7 px-2 text-[11px]">
         Fit
       </NButton>
-      <IconButton label="Zoom out" onClick={props.onZoomOut}>
+      <IconButton label="Zoom out (−)" onClick={props.onZoomOut}>
         <ZoomOut className="h-4 w-4" />
       </IconButton>
-      <IconButton label="Zoom in" onClick={props.onZoomIn}>
+      <IconButton label="Zoom in (+)" onClick={props.onZoomIn}>
         <ZoomIn className="h-4 w-4" />
       </IconButton>
     </div>

@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { NButton, NConfirmAlert, NDialog, NInput, showToast } from '@nayan-ui/react';
 import { DialogSize } from '@nayan-ui/react';
-import { Clapperboard, Download, FileDown, FilePlus2, FileUp, Moon, Redo2, RotateCcw, Settings, Sun, Undo2 } from 'lucide-react';
+import { Clapperboard, Download, FileDown, FilePlus2, FileUp, Keyboard, Moon, Redo2, RotateCcw, Settings, Sun, Undo2 } from 'lucide-react';
 import { BUNDLE_EXTENSION, BundleError, readBundle, writeBundle } from '../../lib/projectBundle';
+import { MOD_LABEL, useCommand } from '../../lib/shortcuts';
 import { download } from '../../lib/utils';
 import { readEditorState, serialiseProject, useEditor } from '../../store/editor';
 import { IconButton, NumberField, SelectField } from '../controls';
@@ -30,11 +31,13 @@ interface TopBarProps {
   theme: string;
   onToggleTheme: () => void;
   onExport: () => void;
+  /** Opens the key map — the only visible affordance the keyboard has. */
+  onShowShortcuts: () => void;
   /** Restores panel sizes and theme — the settings kept in local storage. */
   onResetPreferences: () => void;
 }
 
-export const TopBar = ({ theme, onToggleTheme, onExport, onResetPreferences }: TopBarProps) => {
+export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onResetPreferences }: TopBarProps) => {
   const project = useEditor(state => state.project);
   const updateProject = useEditor(state => state.updateProject);
   const loadProject = useEditor(state => state.loadProject);
@@ -65,7 +68,7 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onResetPreferences }: T
 
   const [busy, setBusy] = useState<'save' | 'open' | null>(null);
 
-  const saveProject = async () => {
+  const saveProject = useCallback(async () => {
     setBusy('save');
     try {
       const bundle = await writeBundle(serialiseProject(readEditorState()));
@@ -76,7 +79,25 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onResetPreferences }: T
     } finally {
       setBusy(null);
     }
-  };
+  }, [project.name]);
+
+  /*
+   * Lent to the keyboard rather than lifted into `App`: both actions own the
+   * busy flag, the toasts and the hidden file input that live here, and the
+   * key map has no business knowing about any of it.
+   */
+  useCommand(
+    'save',
+    useCallback(() => {
+      if (busy === null) void saveProject();
+    }, [busy, saveProject])
+  );
+  useCommand(
+    'open',
+    useCallback(() => {
+      if (busy === null) fileRef.current?.click();
+    }, [busy])
+  );
 
   const openProject = async (file: File) => {
     setBusy('open');
@@ -123,10 +144,13 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onResetPreferences }: T
         <IconButton label="New project" onClick={startNewProject}>
           <FilePlus2 className="h-4 w-4" />
         </IconButton>
-        <IconButton label="Open project" onClick={() => fileRef.current?.click()} disabled={busy !== null}>
+        <IconButton label={`Open project (${MOD_LABEL}O)`} onClick={() => fileRef.current?.click()} disabled={busy !== null}>
           <FileUp className="h-4 w-4" />
         </IconButton>
-        <IconButton label={busy === 'save' ? 'Bundling media…' : 'Save project'} onClick={() => void saveProject()} disabled={busy !== null}>
+        <IconButton
+          label={busy === 'save' ? 'Bundling media…' : `Save project (${MOD_LABEL}S)`}
+          onClick={() => void saveProject()}
+          disabled={busy !== null}>
           <FileDown className="h-4 w-4" />
         </IconButton>
         <input
@@ -143,10 +167,10 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onResetPreferences }: T
       </div>
 
       <div className="ml-auto flex shrink-0 items-center gap-1">
-        <IconButton label="Undo" onClick={undo} disabled={!canUndo}>
+        <IconButton label={`Undo (${MOD_LABEL}Z)`} onClick={undo} disabled={!canUndo}>
           <Undo2 className="h-4 w-4" />
         </IconButton>
-        <IconButton label="Redo" onClick={redo} disabled={!canRedo}>
+        <IconButton label={`Redo (${MOD_LABEL}⇧Z)`} onClick={redo} disabled={!canRedo}>
           <Redo2 className="h-4 w-4" />
         </IconButton>
 
@@ -161,11 +185,15 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onResetPreferences }: T
           </span>
         </NButton>
 
+        <IconButton label="Keyboard shortcuts (?)" onClick={onShowShortcuts}>
+          <Keyboard className="h-4 w-4" />
+        </IconButton>
+
         <IconButton label={theme === 'dark' ? 'Light theme' : 'Dark theme'} onClick={onToggleTheme}>
           {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </IconButton>
 
-        <NButton onClick={onExport} disabled={clipCount === 0} className="ml-1 h-8 px-3 text-xs">
+        <NButton onClick={onExport} disabled={clipCount === 0} title={`Export video (${MOD_LABEL}E)`} className="ml-1 h-8 px-3 text-xs">
           <Download className="mr-1.5 h-4 w-4" />
           Export
         </NButton>
