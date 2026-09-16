@@ -173,6 +173,38 @@ textarea,
   user-select: text;
 }
 
+/*
+ * Thin sliders.
+ *
+ * The library's slider is a form control: a 20px rail under a 28px capsule
+ * thumb, sized to be hit on a phone. The inspector stacks a dozen of them in
+ * a panel that also has to leave room for the picture and the timeline, so
+ * here it becomes a 6px rail with a small round grip.
+ *
+ * These override the stylesheet's own `.slider[data-orientation] .slider__*`
+ * rules at equal specificity, which is why they must stay unlayered and after
+ * the import at the top of this file — the cascade decides this one on source
+ * order alone.
+ */
+.slider[data-orientation='horizontal'] .slider__track {
+  height: 0.375rem;
+  /* Transparent inline borders the fill colours in at the ends; half the grip
+     keeps it travelling inside the rail rather than past it. */
+  border-inline-width: 0.375rem;
+}
+
+.slider[data-orientation='horizontal'] .slider__thumb {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 999px;
+  box-shadow: 0 1px 2px hsl(0 0% 0% / 0.45);
+}
+
+/* The inset pill reads as a second element at this size; the grip is enough. */
+.slider[data-orientation='horizontal'] .slider__thumb::after {
+  content: none;
+}
+
 /* Slim scrollbars so panels don't lose width to chrome. */
 * {
   scrollbar-width: thin;
