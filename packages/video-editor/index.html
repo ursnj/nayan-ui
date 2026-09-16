@@ -46,6 +46,54 @@
     <meta name="theme-color" content="hsl(220 16% 89%)" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="hsl(226 22% 6%)" media="(prefers-color-scheme: dark)" />
 
+    <!--
+      The ground for each theme, before the app's stylesheet exists.
+
+      `theme-color` above only tints browser chrome; this is what actually
+      paints the page. Both values match `--background` in index.css, and the
+      attribute they key off is the one the theme provider keeps up to date,
+      so a runtime theme toggle moves this with it.
+    -->
+    <style>
+      html[data-theme='light'] {
+        background: hsl(220 16% 89%);
+        color-scheme: light;
+      }
+      html[data-theme='dark'] {
+        background: hsl(226 22% 6%);
+        color-scheme: dark;
+      }
+    </style>
+
+    <!--
+      Applies the stored theme before the first paint.
+
+      The provider sets `data-theme` on the document from an effect, which
+      runs after React's first commit — so the opening frame resolved the
+      `:root` (light) tokens and a dark-theme reload flashed white before
+      settling. The value is read synchronously here instead.
+
+      Deliberately inline and unbundled: anything the module graph pulls in
+      lands after the first paint, which is the whole problem. Kept in sync
+      with `App`, which reads the same key and defaults to dark when there is
+      nothing stored.
+    -->
+    <script>
+      (function () {
+        try {
+          var stored = JSON.parse(window.localStorage.getItem('THEME'));
+          var theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.classList.add(theme);
+        } catch (error) {
+          // Private mode, blocked storage, a corrupt value: the editor's own
+          // default is the safe answer, never a flash of the other theme.
+          document.documentElement.setAttribute('data-theme', 'dark');
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",

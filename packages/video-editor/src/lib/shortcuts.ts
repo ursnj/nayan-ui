@@ -46,8 +46,18 @@ const mod = (event: KeyboardEvent) => (isApple ? event.metaKey && !event.ctrlKey
 /** No modifier at all, so a bare letter can't fire on a browser combination. */
 const bare = (event: KeyboardEvent) => !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey;
 
+/**
+ * Option/Alt combinations are matched on `event.code`.
+ *
+ * macOS treats Option as a compose modifier: ⌥I is a dead key for a
+ * circumflex, so `event.key` arrives as `Dead` or a composed character rather
+ * than `i`. The physical key is the only reliable thing to test.
+ */
+const alt = (event: KeyboardEvent, code: string) => event.altKey && !event.metaKey && !event.ctrlKey && event.code === code;
+
 /** The platform's modifier, for tooltips that name their own shortcut. */
 export const MOD_LABEL = isApple ? '⌘' : 'Ctrl';
+const ALT_LABEL = isApple ? '⌥' : 'Alt';
 
 const key = (event: KeyboardEvent) => event.key.toLowerCase();
 
@@ -198,11 +208,31 @@ export const SHORTCUTS: Shortcut[] = [
   {
     group: 'Playback',
     keys: 'Shift I  Shift O',
-    label: 'Clear the marked range',
+    label: 'Go to the in or out point',
     match: event => event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey && (key(event) === 'i' || key(event) === 'o'),
     act: (state, event) => {
-      if (key(event) === 'i') state.setInPoint(null);
+      const target = key(event) === 'i' ? state.inPointUs : state.outPointUs;
+      if (target !== null) seekTo(target);
+    }
+  },
+  {
+    group: 'Playback',
+    keys: `${ALT_LABEL} I  ${ALT_LABEL} O`,
+    label: 'Clear the in or out point',
+    match: event => alt(event, 'KeyI') || alt(event, 'KeyO'),
+    act: (state, event) => {
+      if (event.code === 'KeyI') state.setInPoint(null);
       else state.setOutPoint(null);
+    }
+  },
+  {
+    group: 'Playback',
+    keys: `${ALT_LABEL} X`,
+    label: 'Clear the whole range',
+    match: event => alt(event, 'KeyX'),
+    act: state => {
+      state.setInPoint(null);
+      state.setOutPoint(null);
     }
   },
 
@@ -216,9 +246,9 @@ export const SHORTCUTS: Shortcut[] = [
   },
   {
     group: 'Selection',
-    keys: 'Esc',
-    label: 'Deselect',
-    match: event => bare(event) && event.key === 'Escape',
+    keys: `${MOD_LABEL} ⇧ A  Esc`,
+    label: 'Deselect everything',
+    match: event => (mod(event) && event.shiftKey && key(event) === 'a') || (bare(event) && event.key === 'Escape'),
     act: state => state.setSelection([])
   },
   {
@@ -239,9 +269,12 @@ export const SHORTCUTS: Shortcut[] = [
   /* ---------------- Editing ---------------- */
   {
     group: 'Editing',
-    keys: 'S',
+    keys: `${MOD_LABEL} B  ${MOD_LABEL} K`,
     label: 'Split at the playhead',
-    match: event => bare(event) && key(event) === 's',
+    // ⌘B is Final Cut's Blade and Resolve's Split; ⌘K is Premiere's Add Edit.
+    // Both are bound because the two camps expect different keys, and a bare
+    // `S` — which this used to be — is Premiere's snapping toggle.
+    match: event => mod(event) && !event.shiftKey && (key(event) === 'b' || key(event) === 'k'),
     act: state => state.splitAt(state.playheadUs)
   },
   {
@@ -318,16 +351,18 @@ export const SHORTCUTS: Shortcut[] = [
   },
   {
     group: 'Timeline',
-    keys: '0',
+    keys: 'Shift Z',
     label: 'Zoom to fit the project',
-    match: event => bare(event) && event.key === '0',
+    // Premiere, Final Cut and Resolve all agree on this one.
+    match: event => event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey && key(event) === 'z',
     act: () => run('zoomFit')
   },
   {
     group: 'Timeline',
-    keys: 'N',
+    keys: 'S  N',
     label: 'Toggle snapping',
-    match: event => bare(event) && key(event) === 'n',
+    // `S` is Premiere's, `N` is Resolve's and Avid's.
+    match: event => bare(event) && (key(event) === 's' || key(event) === 'n'),
     act: state => state.toggleSnap()
   },
   {
@@ -377,16 +412,23 @@ export const SHORTCUTS: Shortcut[] = [
  * ------------------------------------------------------------------ */
 
 /**
- * Keys typed into a field mean what the field says they mean.
+ * Input types that are not text entry, so a key press on them isn't typing.
  *
- * The slider thumb is covered by this too: react-aria builds it around a real
- * `input[type=range]`, which is what takes focus and what already handles
- * arrows, Home/End and PageUp/PageDown itself.
+ * A slider is the one that matters: it takes focus as a real
+ * `input[type=range]`, and treating it as a field meant that after dragging a
+ * value, ⌘Z, ⌘S and Delete all did nothing until focus moved elsewhere. Its
+ * own keys are safe regardless — react-aria's `useMove` calls both
+ * `preventDefault` and `stopPropagation` on the arrows, and the thumb does the
+ * same for Home, End and the page keys, so those never reach this listener.
  */
+const NON_TEXT_INPUTS = new Set(['range', 'checkbox', 'radio', 'color', 'button', 'submit', 'reset', 'file', 'image']);
+
+/** Keys typed into a field mean what the field says they mean. */
 const isFieldTarget = (target: EventTarget | null) => {
   if (!(target instanceof HTMLElement)) return false;
   if (target.isContentEditable) return true;
-  return target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT';
+  if (target instanceof HTMLInputElement) return !NON_TEXT_INPUTS.has(target.type);
+  return target.tagName === 'TEXTAREA' || target.tagName === 'SELECT';
 };
 
 /**
