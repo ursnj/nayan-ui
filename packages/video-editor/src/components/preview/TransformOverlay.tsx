@@ -156,7 +156,14 @@ export const TransformOverlay = ({ clip, project, displayWidth, displayHeight }:
         onKeyDown={onKeyDown}
         onKeyUp={held.end}
         onBlur={held.end}
-        className="pointer-events-auto absolute cursor-move border border-accent outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
+        /*
+         * No outline of any kind on the box itself — no border, and no focus
+         * ring. A clip fitted to the frame fills the preview exactly, so any
+         * rectangle here traced the edge of the picture and read as a border
+         * around the whole stage rather than as a selection. The corner
+         * handles and the rotation grip mark the box on their own.
+         */
+        className="pointer-events-auto absolute cursor-move outline-none"
         style={{ left, top, width, height, transform: `rotate(${box.rotation}deg)` }}
         onPointerDown={beginDrag('move')}>
         <span className={`${handleClass} -left-1.5 -top-1.5 cursor-nwse-resize`} onPointerDown={beginDrag('nw')} role="presentation" />
