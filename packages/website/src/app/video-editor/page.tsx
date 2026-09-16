@@ -6,12 +6,12 @@ import { FAQS } from '@/videoEditor/content';
 export const dynamic = 'force-dynamic';
 
 export const metadata = buildPageMetadata({
-  title: 'Nayan Editor — Free Online Video Editor, No Upload',
+  title: 'Nayan UI Video Editor — Free Online Video Editor, No Upload',
   description:
     'Edit video free in your browser. Multi-track timeline, 16 colour filters, 18 transitions, keyframes, green screen and titles. Exports MP4, MOV, MKV, WebM. Nothing is uploaded — no account, no watermark.',
   path: '/video-editor',
   keywords:
-    'free online video editor, browser video editor, video editor no upload, video editor no watermark, webcodecs video editor, offline video editor, multi track timeline, green screen online, chroma key browser, keyframe animation, video filters online, video transitions, mp4 export, vertical video editor, privacy video editor, nayan editor',
+    'free online video editor, browser video editor, video editor no upload, video editor no watermark, webcodecs video editor, offline video editor, multi track timeline, green screen online, chroma key browser, keyframe animation, video filters online, video transitions, mp4 export, vertical video editor, privacy video editor, nayan ui video editor, nayan editor',
   ogType: 'website'
 });
 
@@ -28,8 +28,9 @@ const schemas = [
   {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'Nayan Editor',
-    alternateName: 'Nayan UI Video Editor',
+    name: 'Nayan UI Video Editor',
+    // The name it shipped under, kept so links and searches for it still land here.
+    alternateName: 'Nayan Editor',
     applicationCategory: 'MultimediaApplication',
     applicationSubCategory: 'Video Editor',
     operatingSystem: 'Web Browser',
