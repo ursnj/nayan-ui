@@ -343,6 +343,15 @@ export const useEditor = create<EditorState>((set, get) => {
     /**
      * Refits the whole selection in one undo step.
      *
+     * Picking a mode is a *reframe*, not just a stored value, so the pan and
+     * zoom that ride on top of the fit are zeroed with it. Without that, a clip
+     * dragged or scaled after being fitted no longer fills the frame, and
+     * pressing the same mode again does nothing at all — the field already
+     * holds that value, so nothing re-renders and the button looks broken.
+     *
+     * Rotation and the flips survive, because neither is framing: they are a
+     * look the user chose, and a fit has no business undoing them.
+     *
      * Clips that don't draw a source frame are skipped rather than patched:
      * text and audio have no shape to fit, and writing the field onto them
      * would leave a dead property in the saved project.
@@ -350,7 +359,9 @@ export const useEditor = create<EditorState>((set, get) => {
     setSelectionFit: fit =>
       commit(state => ({
         clips: state.clips.map(clip =>
-          state.selectedClipIds.includes(clip.id) && isMediaClip(clip) && clip.kind !== 'audio' ? { ...clip, fit } : clip
+          state.selectedClipIds.includes(clip.id) && isMediaClip(clip) && clip.kind !== 'audio'
+            ? { ...clip, fit, transform: { ...clip.transform, x: 0, y: 0, scale: 1 } }
+            : clip
         )
       })),
 
