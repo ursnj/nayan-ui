@@ -219,6 +219,37 @@ button:focus-visible {
 }
 
 /*
+ * Selects sit in the same well as inputs.
+ *
+ * The library's text fields take `--field-background` while its select is a
+ * react-select whose control is `bg-surface` — a panel tone, not a field one.
+ * Side by side in the inspector that read as two kinds of control, with the
+ * select floating a shade above the row it shares with an input.
+ *
+ * Only the closed control is re-pointed. The menu stays on the overlay tone
+ * that the context menu and the command surfaces use, because a dropdown is
+ * something that rises above the panel rather than a well sunk into it.
+ */
+.nyn-select__control {
+  background-color: var(--field-background);
+  border-color: var(--border);
+}
+
+.nyn-select__control:hover {
+  border-color: var(--separator);
+}
+
+.nyn-select__menu {
+  background-color: var(--overlay, var(--surface));
+  border-color: var(--border);
+}
+
+.nyn-select__single-value,
+.nyn-select__input-container {
+  color: var(--field-foreground);
+}
+
+/*
  * Thin sliders.
  *
  * The library's slider is a form control: a 20px rail under a 28px capsule

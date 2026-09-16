@@ -34,12 +34,58 @@ import { ColorField, EmptyState, FieldRow, Section, SegmentedControl, SelectFiel
 
 const SPEEDS = [0.5, 1, 1.5, 2];
 
+/**
+ * The type shelf: families the machine already has, never a web font.
+ *
+ * Canvas draws with whatever is installed at that instant and falls back
+ * silently when a family is missing, so a downloaded font that hadn't arrived
+ * yet would export in a different typeface than the one on screen — with
+ * nothing to say so. Everything here is present on a stock Windows or macOS
+ * install, and each stack names the Windows face, the macOS face and a
+ * metric-compatible Linux substitute before giving up to a generic, so a
+ * missing font degrades to something of the same shape rather than to Arial.
+ *
+ * Multi-word names are quoted because `context.font` takes a CSS font
+ * shorthand: an unquoted `Trebuchet MS` makes the whole declaration invalid,
+ * and canvas responds by keeping the previous font instead of raising.
+ *
+ * The first five values are kept byte-for-byte as they shipped. They are
+ * stored on every text clip ever made, and rewriting them would leave the
+ * picker blank on projects that already use them.
+ */
 const FONTS = [
+  // Sans
   { value: 'Inter, system-ui, sans-serif', label: 'Inter' },
-  { value: 'Georgia, serif', label: 'Georgia' },
-  { value: '"Courier New", monospace', label: 'Courier' },
+  { value: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', label: 'System' },
+  { value: '"Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif', label: 'Helvetica' },
+  { value: 'Arial, "Helvetica Neue", Helvetica, "Liberation Sans", sans-serif', label: 'Arial' },
+  { value: 'Verdana, sans-serif', label: 'Verdana' },
+  { value: 'Tahoma, Geneva, "DejaVu Sans", sans-serif', label: 'Tahoma' },
+  { value: '"Trebuchet MS", "Lucida Grande", "DejaVu Sans", sans-serif', label: 'Trebuchet' },
+  { value: '"Lucida Sans Unicode", "Lucida Grande", "DejaVu Sans", sans-serif', label: 'Lucida Sans' },
+  { value: 'Futura, "Century Gothic", "URW Gothic", "Trebuchet MS", sans-serif', label: 'Futura' },
+  { value: '"Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif', label: 'Gill Sans' },
+
+  // Display — the weight and width a title card wants
   { value: 'Impact, sans-serif', label: 'Impact' },
-  { value: 'Verdana, sans-serif', label: 'Verdana' }
+  { value: '"Arial Black", "Arial Bold", Gadget, "DejaVu Sans Bold", sans-serif', label: 'Arial Black' },
+  { value: '"Arial Narrow", "Liberation Sans Narrow", "Nimbus Sans Narrow", sans-serif', label: 'Arial Narrow' },
+
+  // Serif
+  { value: 'Georgia, serif', label: 'Georgia' },
+  { value: '"Times New Roman", Times, "Liberation Serif", serif', label: 'Times New Roman' },
+  { value: 'Palatino, "Palatino Linotype", "Book Antiqua", "URW Palladio L", serif', label: 'Palatino' },
+  { value: 'Garamond, "Apple Garamond", "URW Garamond", "Times New Roman", serif', label: 'Garamond' },
+  { value: 'Baskerville, "Baskerville Old Face", "Libre Baskerville", Georgia, serif', label: 'Baskerville' },
+  { value: 'Didot, "Bodoni MT", "Playfair Display", Georgia, serif', label: 'Didot' },
+
+  // Mono
+  { value: '"Courier New", monospace', label: 'Courier' },
+  { value: 'Menlo, Consolas, "DejaVu Sans Mono", "Liberation Mono", monospace', label: 'Menlo' },
+
+  // Hand
+  { value: '"Brush Script MT", "Segoe Script", "Bradley Hand", cursive', label: 'Brush Script' },
+  { value: '"Comic Sans MS", "Chalkboard SE", "Comic Neue", cursive', label: 'Comic Sans' }
 ];
 
 export const Inspector = () => {
