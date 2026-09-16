@@ -34,7 +34,7 @@ interface Snapshot {
   clips: Clip[];
 }
 
-interface EditorState extends Snapshot {
+export interface EditorState extends Snapshot {
   assets: MediaAsset[];
   selectedClipIds: string[];
   playheadUs: number;
@@ -65,6 +65,8 @@ interface EditorState extends Snapshot {
   setSelectionFit: (fit: MediaFit) => void;
   toggleSelectionFlip: (axis: 'h' | 'v') => void;
   moveClips: (moves: { clipId: string; startUs: number; trackId: string }[]) => void;
+  nudgeSelection: (deltaUs: number) => void;
+  shiftSelectionTrack: (direction: -1 | 1) => void;
   setClipEdge: (clipId: string, edge: 'start' | 'end', timeUs: number) => void;
   splitAt: (timeUs: number) => void;
   duplicateSelection: () => void;
@@ -414,6 +416,61 @@ export const useEditor = create<EditorState>((set, get) => {
           })
         };
       }),
+
+    /**
+     * Slides the selection along the timeline — the keyboard's version of a drag.
+     *
+     * The delta is clamped against the *earliest* clip before anything moves,
+     * so a selection nudged into the head of the timeline keeps its internal
+     * spacing instead of collapsing onto zero one clip at a time.
+     */
+    nudgeSelection: deltaUs => {
+      const state = get();
+      const targets = state.clips.filter(clip => state.selectedClipIds.includes(clip.id) && !clip.locked);
+      if (targets.length === 0) return;
+
+      let earliest = Number.POSITIVE_INFINITY;
+      for (const clip of targets) earliest = Math.min(earliest, clip.startUs);
+      const delta = Math.max(deltaUs, -earliest);
+      if (delta === 0) return;
+
+      get().moveClips(targets.map(clip => ({ clipId: clip.id, startUs: clip.startUs + delta, trackId: clip.trackId })));
+    },
+
+    /**
+     * Moves the selection to the next usable lane, `-1` being up the stack.
+     *
+     * `tracks[0]` is the topmost layer, so up is towards index 0. Lanes of the
+     * wrong kind are skipped rather than blocking the move, which is what lets
+     * a video clip step past an audio track sitting between two video ones.
+     * `moveClips` still vetoes the gesture as a whole if any clip has nowhere
+     * to go, so a selection can't be torn apart across lanes.
+     */
+    shiftSelectionTrack: direction => {
+      const state = get();
+      const targets = state.clips.filter(clip => state.selectedClipIds.includes(clip.id) && !clip.locked);
+      if (targets.length === 0) return;
+
+      const moves: { clipId: string; startUs: number; trackId: string }[] = [];
+      for (const clip of targets) {
+        const from = state.tracks.findIndex(track => track.id === clip.trackId);
+        if (from < 0) return;
+        const wanted: TrackKind = clip.kind === 'audio' ? 'audio' : 'video';
+
+        let target: Track | null = null;
+        for (let index = from + direction; index >= 0 && index < state.tracks.length; index += direction) {
+          const candidate = state.tracks[index];
+          if (candidate.kind === wanted && !candidate.locked) {
+            target = candidate;
+            break;
+          }
+        }
+        if (!target) return;
+        moves.push({ clipId: clip.id, startUs: clip.startUs, trackId: target.id });
+      }
+
+      get().moveClips(moves);
+    },
 
     setClipEdge: (clipId, edge, timeUs) =>
       commit(state => {

@@ -181,11 +181,11 @@ export const PreviewPanel = () => {
       <div className="flex items-center gap-1 border-t border-border bg-editor-panel px-3 py-1.5">
         {/* `contents` so the wrapper vanishes from the flex row when shown. */}
         <span className="hidden @[470px]:contents">
-          <IconButton label="Jump to start" onClick={() => seekTo(0)}>
+          <IconButton label="Jump to start (Home)" onClick={() => seekTo(0)}>
             <SkipBack className="h-4 w-4" />
           </IconButton>
         </span>
-        <IconButton label="Previous frame" onClick={() => stepFrames(-1)}>
+        <IconButton label="Previous frame (←)" onClick={() => stepFrames(-1)}>
           <ChevronLeft className="h-4 w-4" />
         </IconButton>
 
@@ -199,11 +199,11 @@ export const PreviewPanel = () => {
           </NButton>
         </NTooltip>
 
-        <IconButton label="Next frame" onClick={() => stepFrames(1)}>
+        <IconButton label="Next frame (→)" onClick={() => stepFrames(1)}>
           <ChevronRight className="h-4 w-4" />
         </IconButton>
         <span className="hidden @[470px]:contents">
-          <IconButton label="Jump to end" onClick={() => seekTo(durationUs)}>
+          <IconButton label="Jump to end (End)" onClick={() => seekTo(durationUs)}>
             <SkipForward className="h-4 w-4" />
           </IconButton>
         </span>

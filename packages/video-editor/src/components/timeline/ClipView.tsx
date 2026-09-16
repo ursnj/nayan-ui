@@ -1,7 +1,9 @@
 import { memo, useEffect, useRef } from 'react';
 import { Diamond, Link2, Lock, Music, Type, VolumeX } from 'lucide-react';
 import { allKeyTimes } from '../../lib/keyframes';
+import { useHeldInteraction } from '../../lib/shortcuts';
 import { cn } from '../../lib/utils';
+import { readEditorState } from '../../store/editor';
 import { TRANSITION_LABELS, US, isMediaClip, isTextClip } from '../../types';
 import type { Clip, MediaClip } from '../../types';
 import { TRIM_HANDLE_WIDTH } from './constants';
@@ -36,12 +38,15 @@ export const ClipView = memo(
     const width = Math.max(3, (clip.durationUs / US) * pxPerSec);
     const locked = trackLocked || clip.locked;
     const keyTimes = allKeyTimes(clip.animations);
+    // Stable callbacks of its own, so this doesn't cost the parent a new prop
+    // per clip and defeat the memo.
+    const held = useHeldInteraction();
 
     return (
       <div
         role="button"
         tabIndex={0}
-        aria-label={`${clip.name} clip`}
+        aria-label={`${clip.name} clip — arrow keys move it, shift for a second`}
         aria-pressed={selected}
         onPointerDown={event => {
           if (event.button !== 0) return;
@@ -53,8 +58,39 @@ export const ClipView = memo(
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             onSelect(clip, event.shiftKey);
+            return;
           }
+
+          const horizontal = event.key === 'ArrowLeft' || event.key === 'ArrowRight';
+          const vertical = event.key === 'ArrowUp' || event.key === 'ArrowDown';
+          if ((!horizontal && !vertical) || event.metaKey || event.ctrlKey || event.altKey) return;
+
+          // Claims the key from the global handler, which would scrub instead.
+          event.preventDefault();
+          if (locked) return;
+
+          /*
+           * Nudging acts on the selection, so a focused clip that isn't in it
+           * joins it first. Zustand writes synchronously, so the store action
+           * below already sees this clip selected.
+           */
+          const state = readEditorState();
+          if (!state.selectedClipIds.includes(clip.id)) onSelect(clip, false);
+
+          // One undo entry for the whole hold, as with a drag.
+          held.begin();
+
+          if (vertical) {
+            readEditorState().shiftSelectionTrack(event.key === 'ArrowUp' ? -1 : 1);
+            return;
+          }
+
+          const fps = Math.max(1, readEditorState().project.fps);
+          const frames = event.shiftKey ? Math.round(fps) : 1;
+          readEditorState().nudgeSelection((event.key === 'ArrowLeft' ? -1 : 1) * Math.round((US / fps) * frames));
         }}
+        onKeyUp={held.end}
+        onBlur={held.end}
         data-clip-id={clip.id}
         style={{ left, width, borderColor: selected ? undefined : `${clip.color}66` }}
         className={cn(

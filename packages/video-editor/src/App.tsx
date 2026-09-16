@@ -4,10 +4,12 @@ import { ExportDialog } from './components/ExportDialog';
 import { Inspector } from './components/inspector/Inspector';
 import { LeftRail } from './components/panels/LeftRail';
 import { PreviewPanel } from './components/preview/PreviewPanel';
+import { ShortcutsDialog } from './components/shell/ShortcutsDialog';
 import { SmallScreenNotice } from './components/shell/SmallScreenNotice';
 import { SplitPane } from './components/shell/SplitPane';
 import { TopBar } from './components/shell/TopBar';
 import { Timeline } from './components/timeline/Timeline';
+import { useCommand, useShortcuts } from './lib/shortcuts';
 import { useHasRoom } from './lib/viewport';
 
 /** WebCodecs is the whole premise, so say so plainly rather than failing oddly. */
@@ -54,6 +56,17 @@ function App() {
   const [inspectorWidth, setInspectorWidth] = useLocalStorage('EDITOR_INSPECTOR_W', DEFAULT_INSPECTOR_WIDTH);
   const [timelineHeight, setTimelineHeight] = useLocalStorage('EDITOR_TIMELINE_H', DEFAULT_TIMELINE_HEIGHT);
   const hasRoom = useHasRoom();
+  const [helpOpen, setHelpOpen] = useState(false);
+
+  useShortcuts();
+  useCommand(
+    'export',
+    useCallback(() => setExportOpen(true), [])
+  );
+  useCommand(
+    'help',
+    useCallback(() => setHelpOpen(open => !open), [])
+  );
 
   /*
    * Writes the defaults back rather than clearing the keys: these values are
@@ -92,6 +105,7 @@ function App() {
           theme={theme}
           onToggleTheme={() => setTheme(theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK)}
           onExport={() => setExportOpen(true)}
+          onShowShortcuts={() => setHelpOpen(true)}
           onResetPreferences={resetPreferences}
         />
 
@@ -134,6 +148,7 @@ function App() {
       </div>
 
       <ExportDialog isOpen={exportOpen} onClose={() => setExportOpen(false)} />
+      <ShortcutsDialog isOpen={helpOpen} onClose={() => setHelpOpen(false)} />
     </NTheme>
   );
 }
