@@ -6,8 +6,6 @@ import {
   AlignRight,
   Aperture,
   Crop as CropIcon,
-  FlipHorizontal,
-  FlipVertical,
   Layers,
   Move,
   Palette,
@@ -256,14 +254,6 @@ const TransformSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
         keyframe={rotationKey}
         resetTo={0}
       />
-      <div className="flex gap-1.5">
-        <ToggleChip active={t.flipH} onClick={() => set({ flipH: !t.flipH })} label="Flip horizontally" className="flex-1">
-          <FlipHorizontal className="h-3.5 w-3.5" />
-        </ToggleChip>
-        <ToggleChip active={t.flipV} onClick={() => set({ flipV: !t.flipV })} label="Flip vertically" className="flex-1">
-          <FlipVertical className="h-3.5 w-3.5" />
-        </ToggleChip>
-      </div>
     </Section>
   );
 };

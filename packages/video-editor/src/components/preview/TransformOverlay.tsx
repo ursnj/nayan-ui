@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react';
-import { containRect } from '../../engine/compositor';
+import { fitRect } from '../../engine/compositor';
 import { clamp } from '../../lib/utils';
 import { readEditorState, useEditor } from '../../store/editor';
 import { TEXT_LINE_HEIGHT, isMediaClip, isTextClip } from '../../types';
@@ -160,7 +160,7 @@ const readBox = (clip: Clip, project: ProjectSettings, assets: MediaAsset[]): Bo
   if (isMediaClip(clip)) {
     if (clip.kind === 'audio') return null;
     const asset = assets.find(entry => entry.id === clip.assetId);
-    const fitted = containRect(asset?.width || project.width, asset?.height || project.height, project.width, project.height);
+    const fitted = fitRect(clip.fit, asset?.width || project.width, asset?.height || project.height, project.width, project.height);
     const { scale } = clip.transform;
     return {
       x: clip.transform.x,
