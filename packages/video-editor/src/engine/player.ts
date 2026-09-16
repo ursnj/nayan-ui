@@ -40,8 +40,8 @@ export class Player {
   private audioOrigin: number | null = null;
   private wallOrigin = 0;
   private currentUs = 0;
-  /** Set while a seek render is pending so ticks don't fight it. */
-  private pendingSeek: number | null = null;
+  /** Instant a queued repaint is waiting for, so ticks don't fight it. */
+  private pendingRenderUs: number | null = null;
 
   constructor(callbacks: PlayerCallbacks) {
     this.callbacks = callbacks;
@@ -100,15 +100,28 @@ export class Player {
     }
     if (this.rendering) {
       // Coalesce: the in-flight render will pick this up when it finishes.
-      this.pendingSeek = timeUs;
+      this.pendingRenderUs = timeUs;
       return;
     }
     await this.renderAt(timeUs);
   }
 
-  /** Repaints the current instant — used when a clip property changes. */
+  /**
+   * Repaints the current instant — used when a clip property changes.
+   *
+   * Queues behind an in-flight render exactly as `seek` does. Dropping the
+   * repaint instead, as this used to, meant the canvas kept whatever the
+   * earlier render had left on it: a frame from before the edit, or nothing
+   * at all when that render was one that couldn't resolve its source. Edits
+   * arrive faster than a decode during a slider drag, so the dropped repaint
+   * was frequently the *last* one, and the stale picture then stayed.
+   */
   refresh() {
-    if (this.playing || this.rendering) return;
+    if (this.playing) return;
+    if (this.rendering) {
+      this.pendingRenderUs = this.currentUs;
+      return;
+    }
     void this.renderAt(this.currentUs);
   }
 
@@ -166,27 +179,24 @@ export class Player {
 
     this.rendering = true;
     try {
-      const scene = this.callbacks.getScene();
-      if (canvas.width !== scene.project.width || canvas.height !== scene.project.height) {
-        canvas.width = scene.project.width;
-        canvas.height = scene.project.height;
-      }
+      const complete = await this.paint(context, canvas, timeUs);
 
       /*
-       * Clip ranges are half-open — a clip is visible for `[start, end)` — so
-       * rendering the instant at the very end of the timeline composites
-       * nothing and clears the canvas to the background. Hold the final frame
-       * instead, which is what reaching the end of playback should look like.
+       * A layer whose source wasn't ready — a decoder mid-seek, a reader the
+       * cache evicted a moment ago — is skipped, but the background has
+       * already been painted by then, so the clip simply vanishes. While
+       * paused nothing else repaints, and the empty frame is what stays on
+       * screen. One retry on the next frame is enough for the decoder to
+       * catch up in practice.
        *
-       * The clamp uses the clips' own extent rather than `getDurationUs()`,
-       * because that returns the out point when a range is marked and would
-       * then freeze the picture for any scrub past it.
+       * `rendering` deliberately stays set across the wait: a seek or an edit
+       * arriving meanwhile lands in `pendingRenderUs`, which supersedes this
+       * frame entirely, and nothing starts a second render underneath us.
        */
-      let end = 0;
-      for (const clip of scene.clips) end = Math.max(end, clip.startUs + clip.durationUs);
-      const renderTime = end > 0 ? Math.min(timeUs, end - 1) : timeUs;
-
-      await renderScene(context, scene, renderTime, { target: 'preview' });
+      if (!complete && !this.playing && this.pendingRenderUs === null) {
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        if (!this.playing && this.pendingRenderUs === null) await this.paint(context, canvas, timeUs);
+      }
     } catch (error) {
       // Usually a disposed reader or a closed sample mid-seek, and the next
       // frame recovers. But the background has already been painted by the
@@ -198,10 +208,35 @@ export class Player {
       this.rendering = false;
     }
 
-    if (this.pendingSeek !== null) {
-      const next = this.pendingSeek;
-      this.pendingSeek = null;
+    if (this.pendingRenderUs !== null) {
+      const next = this.pendingRenderUs;
+      this.pendingRenderUs = null;
       await this.renderAt(next);
     }
+  }
+
+  /** One pass over the scene. False when a visible layer had no source to draw. */
+  private async paint(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, timeUs: number) {
+    const scene = this.callbacks.getScene();
+    if (canvas.width !== scene.project.width || canvas.height !== scene.project.height) {
+      canvas.width = scene.project.width;
+      canvas.height = scene.project.height;
+    }
+
+    /*
+     * Clip ranges are half-open — a clip is visible for `[start, end)` — so
+     * rendering the instant at the very end of the timeline composites
+     * nothing and clears the canvas to the background. Hold the final frame
+     * instead, which is what reaching the end of playback should look like.
+     *
+     * The clamp uses the clips' own extent rather than `getDurationUs()`,
+     * because that returns the out point when a range is marked and would
+     * then freeze the picture for any scrub past it.
+     */
+    let end = 0;
+    for (const clip of scene.clips) end = Math.max(end, clip.startUs + clip.durationUs);
+    const renderTime = end > 0 ? Math.min(timeUs, end - 1) : timeUs;
+
+    return renderScene(context, scene, renderTime, { target: 'preview' });
   }
 }

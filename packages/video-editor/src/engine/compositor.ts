@@ -28,9 +28,15 @@ export interface RenderOptions {
  * what guarantees the exported file matches what the user saw. Because all
  * geometry in the model is a fraction of the frame, the same scene renders
  * correctly at any resolution.
+ *
+ * Returns false when a layer that should have been visible had no source to
+ * draw. The background is painted first, so such a frame is not merely
+ * incomplete — it has replaced whatever was on the canvas with an empty
+ * picture, and the caller needs to know it is worth rendering again.
  */
-export const renderScene = async (context: Context2D, scene: Scene, timeUs: number, options: RenderOptions) => {
+export const renderScene = async (context: Context2D, scene: Scene, timeUs: number, options: RenderOptions): Promise<boolean> => {
   const { project } = scene;
+  let complete = true;
 
   await drawBackground(context, scene, timeUs, options);
 
@@ -39,7 +45,7 @@ export const renderScene = async (context: Context2D, scene: Scene, timeUs: numb
     const withinTransition = transition && timeUs < layer.startUs + transition.durationUs;
 
     if (!withinTransition) {
-      await drawLayer(context, layer, project, timeUs, options, null);
+      complete = (await drawLayer(context, layer, project, timeUs, options, null)) && complete;
       continue;
     }
 
@@ -53,13 +59,14 @@ export const renderScene = async (context: Context2D, scene: Scene, timeUs: numb
     if (outgoing && state.outgoing.alpha > 0) {
       // Keep reading the outgoing clip's source forward through the blend
       // rather than freezing its last frame, which looks broken over motion.
-      await drawLayer(context, outgoing, project, Math.min(timeUs, clipEndUs(outgoing) - 1), options, {
+      const drawn = await drawLayer(context, outgoing, project, Math.min(timeUs, clipEndUs(outgoing) - 1), options, {
         ...state.outgoing,
         sourceOverrunUs: isMediaClip(outgoing) ? outgoing.inUs + (timeUs - outgoing.startUs) * outgoing.speed : undefined
       });
+      complete = drawn && complete;
     }
 
-    await drawLayer(context, layer, project, timeUs, options, { ...state.incoming });
+    complete = (await drawLayer(context, layer, project, timeUs, options, { ...state.incoming })) && complete;
 
     if (state.overlay && state.overlay.alpha > 0) {
       context.save();
@@ -72,6 +79,8 @@ export const renderScene = async (context: Context2D, scene: Scene, timeUs: numb
       context.restore();
     }
   }
+
+  return complete;
 };
 
 /** Clips that should be on screen at `timeUs`, in bottom-to-top draw order. */
@@ -228,6 +237,11 @@ const getScratch = (key: string, width: number, height: number) => {
  * Layer drawing
  * ------------------------------------------------------------------ */
 
+/**
+ * Draws one layer. False means a frame that should have been on screen wasn't
+ * available — distinct from one that is deliberately invisible, where there is
+ * nothing to wait for and nothing to retry.
+ */
 const drawLayer = async (
   context: Context2D,
   clip: Clip,
@@ -235,18 +249,19 @@ const drawLayer = async (
   timeUs: number,
   options: RenderOptions,
   override: DrawOverride | null
-) => {
+): Promise<boolean> => {
   const animatedOpacity = animatedValue(clip, 'opacity', clip.opacity, timeUs);
   const alpha = animatedOpacity * envelopeAt(clip, timeUs) * (override?.alpha ?? 1);
-  if (alpha <= 0.001) return;
+  // Transparent by the user's own instruction — opacity, a fade, a transition.
+  if (alpha <= 0.001) return true;
 
   if (isTextClip(clip)) {
     const rendered = renderTextToScratch(clip, project, timeUs, `${options.target}:raster`);
-    if (!rendered) return;
+    if (!rendered) return false;
     compose(context, rendered.canvas, clip, project, timeUs, options, override, alpha, project.width, project.height);
-    return;
+    return true;
   }
-  await drawMediaLayer(context, clip, project, timeUs, options, override, alpha);
+  return drawMediaLayer(context, clip, project, timeUs, options, override, alpha);
 };
 
 interface ResolvedSource {
@@ -302,13 +317,15 @@ const drawMediaLayer = async (
   options: RenderOptions,
   override: DrawOverride | null,
   alpha: number
-) => {
-  if (clip.kind === 'audio') return;
+): Promise<boolean> => {
+  // Audio draws nothing by definition, so it is never an incomplete frame.
+  if (clip.kind === 'audio') return true;
 
   const resolved = clip.kind === 'image' ? resolveImageSource(clip) : await resolveVideoSource(clip, timeUs, options, override?.sourceOverrunUs);
-  if (!resolved) return;
+  if (!resolved) return false;
 
   compose(context, resolved.source, clip, project, timeUs, options, override, alpha, resolved.sourceWidth, resolved.sourceHeight);
+  return true;
 };
 
 /**
