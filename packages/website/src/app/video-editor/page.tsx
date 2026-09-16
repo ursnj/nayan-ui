@@ -16,9 +16,11 @@ export const metadata = buildPageMetadata({
 });
 
 /*
- * The running editor is a static bundle served from /editor, which is a
- * different URL to this page on purpose — a Next route at /editor would
- * shadow the bundle and the app would become unreachable.
+ * The running editor is a static bundle served from /video-editor/start, a
+ * subpath of this page rather than a route of its own: a static folder cannot
+ * shadow a Next route, so the app has to live one level below the page that
+ * describes it. next.config rewrites the extensionless URL onto the bundle's
+ * index.html, and redirects the old /editor to it.
  */
 const schemas = [
   buildBreadcrumbSchema([
@@ -37,7 +39,7 @@ const schemas = [
     description:
       'A free, full-featured video editor that runs entirely in the browser. Multi-track timeline, keyframe animation, green screen, 16 colour filters, 18 transitions, titles and MP4 export using WebCodecs. No upload, no account, no watermark.',
     url: `${SITE_URL}/video-editor`,
-    installUrl: `${SITE_URL}/editor`,
+    installUrl: `${SITE_URL}/video-editor/start`,
     browserRequirements: 'Requires WebCodecs and a window at least 1024px wide. Chrome/Edge 94+, Safari 16.4+.',
     softwareVersion: '1.0',
     isAccessibleForFree: true,

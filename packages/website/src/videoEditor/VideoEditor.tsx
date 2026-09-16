@@ -27,7 +27,7 @@ import {
 import { FAQS } from './content';
 
 /** The running editor lives at this path, served as a static bundle. */
-const EDITOR_URL = '/editor';
+const EDITOR_URL = '/video-editor/start';
 const SOURCE_URL = 'https://github.com/ursnj/nayan-ui/tree/main/packages/video-editor';
 
 const FEATURES = [
