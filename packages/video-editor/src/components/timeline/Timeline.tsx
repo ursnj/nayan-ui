@@ -724,7 +724,7 @@ const TimelineToolbar = (props: ToolbarProps) => (
 
     <span className="mx-0.5 h-4 w-px bg-separator" />
 
-    <IconButton label="Split at playhead (S)" onClick={props.onSplit}>
+    <IconButton label={`Split at playhead (${MOD_LABEL}B)`} onClick={props.onSplit}>
       <Split className="h-4 w-4" />
     </IconButton>
     <IconButton label={`Duplicate (${MOD_LABEL}D)`} onClick={props.onDuplicate} disabled={!props.hasSelection}>
@@ -749,7 +749,7 @@ const TimelineToolbar = (props: ToolbarProps) => (
       </span>
     </IconButton>
 
-    <IconButton label={props.snapEnabled ? 'Snapping on (N)' : 'Snapping off (N)'} onClick={props.toggleSnap} active={props.snapEnabled}>
+    <IconButton label={props.snapEnabled ? 'Snapping on (S)' : 'Snapping off (S)'} onClick={props.toggleSnap} active={props.snapEnabled}>
       <Magnet className="h-4 w-4" />
     </IconButton>
     <IconButton
@@ -760,7 +760,7 @@ const TimelineToolbar = (props: ToolbarProps) => (
     </IconButton>
 
     <div className="ml-auto flex items-center gap-1">
-      <NButton isOutline onClick={props.onZoomFit} className="h-7 px-2 text-[11px]">
+      <NButton isOutline onClick={props.onZoomFit} title="Zoom to fit (Shift Z)" className="h-7 px-2 text-[11px]">
         Fit
       </NButton>
       <IconButton label="Zoom out (−)" onClick={props.onZoomOut}>
