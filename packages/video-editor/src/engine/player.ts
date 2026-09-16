@@ -4,6 +4,13 @@ import { AudioEngine } from './audioEngine';
 import { renderScene } from './compositor';
 import type { Scene } from './compositor';
 
+/**
+ * How long to wait before re-rendering a frame that couldn't resolve a source.
+ * Long enough for a decoder to deliver the sample it was already seeking to,
+ * short enough not to read as a stall.
+ */
+const RETRY_DELAY_MS = 120;
+
 export interface PlayerCallbacks {
   /** Latest scene state, pulled fresh each frame so edits show up live. */
   getScene: () => Scene;
@@ -42,6 +49,8 @@ export class Player {
   private currentUs = 0;
   /** Instant a queued repaint is waiting for, so ticks don't fight it. */
   private pendingRenderUs: number | null = null;
+  /** Outstanding retry for a frame whose source wasn't ready. */
+  private retryTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(callbacks: PlayerCallbacks) {
     this.callbacks = callbacks;
@@ -127,6 +136,7 @@ export class Player {
 
   dispose() {
     this.pause();
+    this.cancelRetry();
     this.audio.dispose();
   }
 
@@ -172,31 +182,18 @@ export class Player {
     if (!this.rendering) void this.renderAt(timeUs);
   };
 
-  private async renderAt(timeUs: number) {
+  private async renderAt(timeUs: number, allowRetry = true) {
     const context = this.context;
     const canvas = this.canvas;
     if (!context || !canvas) return;
 
+    // Whatever this frame turns out to be, it supersedes an older retry.
+    this.cancelRetry();
+
+    let complete = true;
     this.rendering = true;
     try {
-      const complete = await this.paint(context, canvas, timeUs);
-
-      /*
-       * A layer whose source wasn't ready — a decoder mid-seek, a reader the
-       * cache evicted a moment ago — is skipped, but the background has
-       * already been painted by then, so the clip simply vanishes. While
-       * paused nothing else repaints, and the empty frame is what stays on
-       * screen. One retry on the next frame is enough for the decoder to
-       * catch up in practice.
-       *
-       * `rendering` deliberately stays set across the wait: a seek or an edit
-       * arriving meanwhile lands in `pendingRenderUs`, which supersedes this
-       * frame entirely, and nothing starts a second render underneath us.
-       */
-      if (!complete && !this.playing && this.pendingRenderUs === null) {
-        await new Promise(resolve => requestAnimationFrame(resolve));
-        if (!this.playing && this.pendingRenderUs === null) await this.paint(context, canvas, timeUs);
-      }
+      complete = await this.paint(context, canvas, timeUs);
     } catch (error) {
       // Usually a disposed reader or a closed sample mid-seek, and the next
       // frame recovers. But the background has already been painted by the
@@ -212,7 +209,36 @@ export class Player {
       const next = this.pendingRenderUs;
       this.pendingRenderUs = null;
       await this.renderAt(next);
+      return;
     }
+
+    /*
+     * A layer whose source wasn't ready — a decoder mid-seek, a reader the
+     * cache evicted a moment ago — is skipped, but the background has already
+     * been painted by then, so the clip simply vanishes. While paused nothing
+     * else repaints, so the empty frame is what stays on screen.
+     *
+     * The retry is scheduled *after* `rendering` clears, and never awaited
+     * inside the render window. Holding the flag across a wait was a deadlock:
+     * `requestAnimationFrame` doesn't fire while the document is hidden, so
+     * the promise never settled, `finally` never ran, and every later repaint
+     * queued behind a render that would never finish. A timer fires in a
+     * hidden tab, and one retry is enough for a decoder to catch up.
+     */
+    if (!complete && allowRetry && !this.playing) {
+      this.retryTimer = setTimeout(() => {
+        this.retryTimer = null;
+        // Superseded by playback, a newer render, or a move to another instant.
+        if (this.playing || this.rendering || this.currentUs !== timeUs) return;
+        void this.renderAt(timeUs, false);
+      }, RETRY_DELAY_MS);
+    }
+  }
+
+  private cancelRetry() {
+    if (this.retryTimer === null) return;
+    clearTimeout(this.retryTimer);
+    this.retryTimer = null;
   }
 
   /** One pass over the scene. False when a visible layer had no source to draw. */
