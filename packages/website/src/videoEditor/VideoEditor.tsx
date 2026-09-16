@@ -158,7 +158,9 @@ const VideoEditorMain = () => {
                 <Clapperboard className="w-8 h-8 text-white" />
               </div>
               <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold">
-                <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 bg-clip-text text-transparent">Nayan Editor</span>
+                <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+                  Nayan UI Video Editor
+                </span>
               </h1>
             </div>
 

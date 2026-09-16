@@ -1,4 +1,4 @@
-# Nayan Editor — browser video editor
+# Nayan UI Video Editor — browser video editor
 
 A non-linear video editor that runs entirely in the browser. No uploads, no
 server, no WASM build of FFmpeg — decoding, compositing, GPU effects and

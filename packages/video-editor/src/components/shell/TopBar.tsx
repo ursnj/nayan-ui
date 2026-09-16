@@ -110,7 +110,7 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
         showToast(`${assets.length} media file${assets.length === 1 ? '' : 's'} restored.`, 'Project opened');
       }
     } catch (error) {
-      showToast(error instanceof BundleError ? error.message : 'That file is not a Nayan Editor project.', 'Could not open');
+      showToast(error instanceof BundleError ? error.message : 'That file is not a Nayan UI Video Editor project.', 'Could not open');
     } finally {
       setBusy(null);
     }
@@ -120,7 +120,11 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
     <header className="island flex shrink-0 items-center gap-2 px-3 py-2">
       <div className="flex shrink-0 items-center gap-2">
         <Clapperboard className="h-5 w-5 text-accent" />
-        <span className="hidden whitespace-nowrap text-sm font-semibold tracking-tight text-foreground lg:inline">Nayan Editor</span>
+        {/* Shown from xl rather than lg: the name is long enough that at the
+            editor's 1024px minimum it squeezed the project name field, which
+            is the one elastic item in this row. The icon carries the brand
+            below that. */}
+        <span className="hidden whitespace-nowrap text-sm font-semibold tracking-tight text-foreground xl:inline">Nayan UI Video Editor</span>
       </div>
 
       <span className="mx-1 h-5 w-px shrink-0 bg-separator" />
