@@ -1,5 +1,5 @@
 import { MIN_ROW_HEIGHT } from '../components/timeline/constants';
-import { CLIP_COLORS, DEFAULT_CHROMA, DEFAULT_COLOR, DEFAULT_CROP, DEFAULT_TRANSFORM, US } from '../types';
+import { CLIP_COLORS, DEFAULT_CHROMA, DEFAULT_COLOR, DEFAULT_CROP, DEFAULT_FIT, DEFAULT_TRANSFORM, US } from '../types';
 import type { MediaAsset, MediaClip, TextClip, Track, TrackKind } from '../types';
 import { uid } from './utils';
 
@@ -31,6 +31,7 @@ export const makeMediaClip = (asset: MediaAsset, trackId: string, startUs: numbe
   ...clipBase(trackId, asset.name, startUs, durationUs),
   kind: asset.kind,
   assetId: asset.id,
+  fit: DEFAULT_FIT,
   inUs: 0,
   speed: 1,
   reversed: false,

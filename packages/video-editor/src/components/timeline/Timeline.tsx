@@ -1,11 +1,31 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { NButton } from '@nayan-ui/react';
-import { Copy, Film, Group, Link2, Lock, Magnet, MousePointer2, Music, Plus, Split, Trash2, Ungroup, ZoomIn, ZoomOut } from 'lucide-react';
+import {
+  Copy,
+  Expand,
+  Film,
+  FlipHorizontal,
+  FlipVertical,
+  Group,
+  Link2,
+  Lock,
+  Magnet,
+  MousePointer2,
+  Music,
+  Plus,
+  Ratio,
+  Scaling,
+  Split,
+  Trash2,
+  Ungroup,
+  ZoomIn,
+  ZoomOut
+} from 'lucide-react';
 import { player, seekTo } from '../../engine/playerInstance';
 import { clamp, cn } from '../../lib/utils';
 import { readEditorState, timelineDurationUs, useEditor } from '../../store/editor';
-import { US, clipEndUs } from '../../types';
-import type { Clip, Track } from '../../types';
+import { MEDIA_FIT_LABELS, US, clipEndUs, isMediaClip } from '../../types';
+import type { Clip, MediaFit, Track } from '../../types';
 import { IconButton, SegmentedControl } from '../controls';
 import { ClipView } from './ClipView';
 import type { TrimEdge } from './ClipView';
@@ -28,6 +48,19 @@ type DragState =
   | { kind: 'trim'; clipId: string; edge: TrimEdge };
 
 const ASSET_MIME = 'application/x-nayan-asset';
+
+/*
+ * Three deliberately unalike silhouettes — two rectangles, outward arrows, a
+ * pulled corner. Lucide's framing icons (Scan, Maximize, Minimize, Fullscreen)
+ * are all four corner brackets and differ only in which way the corners turn,
+ * which is indistinguishable at 14px.
+ */
+const FIT_OPTIONS: { value: MediaFit; label: React.ReactNode; title: string }[] = [
+  { value: 'contain', label: <Ratio className="h-3.5 w-3.5" />, title: MEDIA_FIT_LABELS.contain },
+  { value: 'cover', label: <Expand className="h-3.5 w-3.5" />, title: MEDIA_FIT_LABELS.cover },
+  { value: 'stretch', label: <Scaling className="h-3.5 w-3.5" />, title: MEDIA_FIT_LABELS.stretch }
+];
+
 /** Stable empty list, so a track with no clips doesn't break row memoisation. */
 const NO_CLIPS: Clip[] = [];
 /** The sticky head above the lanes is just the ruler. */
@@ -60,6 +93,8 @@ export const Timeline = () => {
   const updateTrack = useEditor(state => state.updateTrack);
   const removeTrack = useEditor(state => state.removeTrack);
   const updateClip = useEditor(state => state.updateClip);
+  const setSelectionFit = useEditor(state => state.setSelectionFit);
+  const toggleSelectionFlip = useEditor(state => state.toggleSelectionFlip);
   const addClipFromAsset = useEditor(state => state.addClipFromAsset);
   const setZoom = useEditor(state => state.setZoom);
   const toggleSnap = useEditor(state => state.toggleSnap);
@@ -456,6 +491,45 @@ export const Timeline = () => {
   const videoTrackCount = tracks.filter(track => track.kind === 'video').length;
   const audioTrackCount = tracks.filter(track => track.kind === 'audio').length;
 
+  /**
+   * What the frame controls in the toolbar can say about the selection.
+   *
+   * Fit and flip cover different sets — text has a transform but no source
+   * shape to fit — so each is counted separately, and a control with nothing
+   * to act on is disabled rather than lying about a clip it can't touch.
+   *
+   * `fit` stays null when the selected clips disagree: no segment lights up,
+   * rather than one clip speaking for the rest. The flips report *every*
+   * target being flipped, which is exactly when the button would turn the
+   * axis back off.
+   */
+  const frameState = useMemo(() => {
+    const fits = new Set<MediaFit>();
+    let fittable = 0;
+    let flippable = 0;
+    let flippedH = 0;
+    let flippedV = 0;
+
+    for (const clip of clips) {
+      if (!selectedClipIds.includes(clip.id) || clip.kind === 'audio') continue;
+      flippable++;
+      if (clip.transform.flipH) flippedH++;
+      if (clip.transform.flipV) flippedV++;
+      if (isMediaClip(clip)) {
+        fittable++;
+        fits.add(clip.fit);
+      }
+    }
+
+    return {
+      fit: fits.size === 1 ? [...fits][0] : null,
+      canFit: fittable > 0,
+      canFlip: flippable > 0,
+      flipH: flippable > 0 && flippedH === flippable,
+      flipV: flippable > 0 && flippedV === flippable
+    };
+  }, [clips, selectedClipIds]);
+
   return (
     <section className="island flex h-full min-h-0 flex-col">
       <TimelineToolbar
@@ -464,6 +538,13 @@ export const Timeline = () => {
         toggleSnap={toggleSnap}
         toggleRipple={toggleRipple}
         hasSelection={selectedClipIds.length > 0}
+        fit={frameState.fit}
+        canFit={frameState.canFit}
+        onFitChange={setSelectionFit}
+        canFlip={frameState.canFlip}
+        flipH={frameState.flipH}
+        flipV={frameState.flipV}
+        onFlip={toggleSelectionFlip}
         onSplit={() => splitAt(readEditorState().playheadUs)}
         onDuplicate={duplicateSelection}
         onDelete={() => deleteSelection()}
@@ -580,6 +661,17 @@ interface ToolbarProps {
   toggleSnap: () => void;
   toggleRipple: () => void;
   hasSelection: boolean;
+  /** The selection's shared fit, or null when it has none or they differ. */
+  fit: MediaFit | null;
+  /** False when nothing in the selection draws a frame, so fit means nothing. */
+  canFit: boolean;
+  onFitChange: (fit: MediaFit) => void;
+  /** Text can be flipped too, so this is a wider set than `canFit`. */
+  canFlip: boolean;
+  /** Lit only when every clip the button would act on is already flipped. */
+  flipH: boolean;
+  flipV: boolean;
+  onFlip: (axis: 'h' | 'v') => void;
   onSplit: () => void;
   onDuplicate: () => void;
   onDelete: () => void;
@@ -606,6 +698,25 @@ const TimelineToolbar = (props: ToolbarProps) => (
       className="w-10"
       options={[{ value: 'select', label: <MousePointer2 className="h-3.5 w-3.5" />, title: 'Select' }]}
     />
+
+    <span className="mx-0.5 h-4 w-px bg-separator" />
+
+    {/*
+     * How the selected clips fill the frame. It sits here, beside Select,
+     * because it is reached for straight after dropping footage that doesn't
+     * match the project's shape — and it stays put, disabled, when the
+     * selection has nothing to fit, so the row never reflows under the cursor.
+     */}
+    <SegmentedControl<MediaFit> value={props.fit} options={FIT_OPTIONS} onChange={props.onFitChange} disabled={!props.canFit} className="w-24" />
+
+    <span className="mx-0.5 h-4 w-px bg-separator" />
+
+    <IconButton label="Flip horizontally" onClick={() => props.onFlip('h')} active={props.flipH} disabled={!props.canFlip}>
+      <FlipHorizontal className="h-4 w-4" />
+    </IconButton>
+    <IconButton label="Flip vertically" onClick={() => props.onFlip('v')} active={props.flipV} disabled={!props.canFlip}>
+      <FlipVertical className="h-4 w-4" />
+    </IconButton>
 
     <span className="mx-0.5 h-4 w-px bg-separator" />
 

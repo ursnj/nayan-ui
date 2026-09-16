@@ -70,6 +70,22 @@ export interface Transform {
   flipV: boolean;
 }
 
+/**
+ * How a clip's source frame is sized into the project frame, before its own
+ * transform is applied.
+ *
+ * This is the base fit, not a replacement for `Transform.scale` — the scale
+ * still multiplies whatever the fit resolves to, so `cover` plus 110% is a
+ * filled frame pushed in a little further.
+ */
+export type MediaFit = 'contain' | 'cover' | 'stretch';
+
+export const MEDIA_FIT_LABELS: Record<MediaFit, string> = {
+  contain: 'Contain — whole frame visible, bars where the shape differs',
+  cover: 'Cover — fills the frame, overflow is cropped',
+  stretch: 'Stretch — fills the frame, aspect ratio ignored'
+};
+
 /** Fractions of the source frame trimmed from each side. */
 export interface Crop {
   top: number;
@@ -230,6 +246,8 @@ interface ClipCommon {
 export interface MediaClip extends ClipCommon {
   kind: 'video' | 'audio' | 'image';
   assetId: string;
+  /** How the source frame is sized into the project frame. */
+  fit: MediaFit;
   /** In-point within the source asset. */
   inUs: number;
   speed: number;
@@ -395,6 +413,9 @@ export const sourceTimeUs = (clip: MediaClip, timelineUs: number): number | null
  * ------------------------------------------------------------------ */
 
 export const DEFAULT_TRANSFORM: Transform = { x: 0, y: 0, scale: 1, rotation: 0, flipH: false, flipV: false };
+
+/** Contain, so importing footage never silently crops it. */
+export const DEFAULT_FIT: MediaFit = 'contain';
 
 export const DEFAULT_CROP: Crop = { top: 0, right: 0, bottom: 0, left: 0 };
 

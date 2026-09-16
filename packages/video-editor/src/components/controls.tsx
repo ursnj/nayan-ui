@@ -143,18 +143,22 @@ export const SegmentedControl = <T extends string>({
   value,
   options,
   onChange,
+  disabled,
   className
 }: {
-  value: T;
+  /** No segment is lit when the value is null — a mixed or empty selection. */
+  value: T | null;
   options: { value: T; label: React.ReactNode; title: string }[];
   onChange: (value: T) => void;
+  disabled?: boolean;
   className?: string;
 }) => (
-  <div className={cn('flex gap-0.5 rounded-md bg-surface-secondary p-0.5', className)} role="group">
+  <div className={cn('flex gap-0.5 rounded-md bg-surface-secondary p-0.5', disabled && 'opacity-50', className)} role="group">
     {options.map(option => (
       <NTooltip key={option.value} message={option.title}>
         <NToggleButton
           isSelected={value === option.value}
+          isDisabled={disabled}
           isIconOnly
           variant="ghost"
           size="sm"

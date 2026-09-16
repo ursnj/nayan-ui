@@ -3,7 +3,7 @@ import { animatedValue } from '../lib/keyframes';
 import { clamp } from '../lib/utils';
 import { getImageBitmap, getReader } from '../media/library';
 import { TEXT_LINE_HEIGHT, US, clipEndUs, isMediaClip, isTextClip, sourceTimeUs } from '../types';
-import type { Background, Clip, ColorAdjust, MediaClip, ProjectSettings, TextClip, Track, Transform } from '../types';
+import type { Background, Clip, ColorAdjust, MediaClip, MediaFit, ProjectSettings, TextClip, Track, Transform } from '../types';
 import { blurOnlyFilter, canvasFilterString, exportProcessor, needsPixelProcessing, previewProcessor } from './glProcessor';
 import { transitionStateAt } from './transitions';
 import type { LayerTransitionState } from './transitions';
@@ -375,7 +375,8 @@ const compose = (
     filter = filter === 'none' ? `blur(${radius}px)` : `${filter} blur(${radius}px)`;
   }
 
-  const box = containRect(sw, sh, project.width, project.height);
+  // Text rasterises at project size, so `contain` is the identity for it.
+  const box = fitRect(isMediaClip(clip) ? clip.fit : 'contain', sw, sh, project.width, project.height);
   const transform = transformAt(clip, timeUs);
 
   context.save();
@@ -548,6 +549,17 @@ const drawBackdrop = (context: Context2D, resolved: ResolvedSource, background: 
     context.fillRect(0, 0, project.width, project.height);
     context.globalAlpha = 1;
   }
+};
+
+/**
+ * The base rectangle a layer is drawn into, per its fit mode.
+ *
+ * Shared with the preview overlay, so the selection frame and the handles land
+ * on the pixels that were actually drawn.
+ */
+export const fitRect = (fit: MediaFit, sourceWidth: number, sourceHeight: number, boxWidth: number, boxHeight: number) => {
+  if (fit === 'stretch') return { width: boxWidth, height: boxHeight };
+  return fit === 'cover' ? coverRect(sourceWidth, sourceHeight, boxWidth, boxHeight) : containRect(sourceWidth, sourceHeight, boxWidth, boxHeight);
 };
 
 /** Cover-fit: the box is filled completely, overflowing if aspect ratios differ. */

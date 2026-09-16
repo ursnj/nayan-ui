@@ -3,8 +3,18 @@ import { makeMediaClip, makeTextClip, makeTrack } from '../lib/factories';
 import { removeKeyAt, scaleAnimations, shiftAnimations, splitAnimations, upsertKey } from '../lib/keyframes';
 import { clamp, uid } from '../lib/utils';
 import { releaseAllReaders, releaseAsset, releaseReader } from '../media/library';
-import { DEFAULT_BACKGROUND, DEFAULT_CHROMA, DEFAULT_COLOR, DEFAULT_CROP, DEFAULT_TRANSFORM, US, clipEndUs, isMediaClip } from '../types';
-import type { Clip, MediaAsset, ProjectSettings, TextClip, Track, TrackKind, TransitionKind } from '../types';
+import {
+  DEFAULT_BACKGROUND,
+  DEFAULT_CHROMA,
+  DEFAULT_COLOR,
+  DEFAULT_CROP,
+  DEFAULT_FIT,
+  DEFAULT_TRANSFORM,
+  US,
+  clipEndUs,
+  isMediaClip
+} from '../types';
+import type { Clip, MediaAsset, MediaFit, ProjectSettings, TextClip, Track, TrackKind, TransitionKind } from '../types';
 
 /** Nothing shorter than this can be created by trimming or splitting. */
 export const MIN_CLIP_US = 100_000;
@@ -52,6 +62,8 @@ interface EditorState extends Snapshot {
 
   updateClip: (clipId: string, patch: Partial<Clip>) => void;
   updateSelectedClips: (patch: Partial<Clip>) => void;
+  setSelectionFit: (fit: MediaFit) => void;
+  toggleSelectionFlip: (axis: 'h' | 'v') => void;
   moveClips: (moves: { clipId: string; startUs: number; trackId: string }[]) => void;
   setClipEdge: (clipId: string, edge: 'start' | 'end', timeUs: number) => void;
   splitAt: (timeUs: number) => void;
@@ -201,7 +213,8 @@ const normaliseClip = (clip: Clip): Clip => {
     animations: clip.animations ?? {},
     filter: clip.filter ?? null
   };
-  return isMediaClip(base) ? { ...base, chromaKey: { ...DEFAULT_CHROMA, ...base.chromaKey } } : base;
+  // Pre-fit files were all drawn contained, which is what `DEFAULT_FIT` is.
+  return isMediaClip(base) ? { ...base, fit: base.fit ?? DEFAULT_FIT, chromaKey: { ...DEFAULT_CHROMA, ...base.chromaKey } } : base;
 };
 
 /**
@@ -326,6 +339,40 @@ export const useEditor = create<EditorState>((set, get) => {
       commit(state => ({
         clips: state.clips.map(clip => (state.selectedClipIds.includes(clip.id) ? ({ ...clip, ...patch } as Clip) : clip))
       })),
+
+    /**
+     * Refits the whole selection in one undo step.
+     *
+     * Clips that don't draw a source frame are skipped rather than patched:
+     * text and audio have no shape to fit, and writing the field onto them
+     * would leave a dead property in the saved project.
+     */
+    setSelectionFit: fit =>
+      commit(state => ({
+        clips: state.clips.map(clip =>
+          state.selectedClipIds.includes(clip.id) && isMediaClip(clip) && clip.kind !== 'audio' ? { ...clip, fit } : clip
+        )
+      })),
+
+    /**
+     * Flips the whole selection on one axis, in one undo step.
+     *
+     * A mixed selection is brought *into* line rather than each clip flipping
+     * independently — inverting them one by one would leave the selection just
+     * as mixed as before, and the button no way to report a state. So the axis
+     * turns on unless everything already has it, which is the same behaviour a
+     * single clip has always had.
+     */
+    toggleSelectionFlip: axis =>
+      commit(state => {
+        const key = axis === 'h' ? 'flipH' : 'flipV';
+        const targets = new Set(state.clips.filter(clip => state.selectedClipIds.includes(clip.id) && clip.kind !== 'audio').map(clip => clip.id));
+        if (targets.size === 0) return null;
+        const next = !state.clips.every(clip => !targets.has(clip.id) || clip.transform[key]);
+        return {
+          clips: state.clips.map(clip => (targets.has(clip.id) ? { ...clip, transform: { ...clip.transform, [key]: next } } : clip))
+        };
+      }),
 
     /**
      * Moves a set of clips at once. Taking the whole set in one call keeps a
