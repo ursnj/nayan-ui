@@ -4,7 +4,7 @@ import { DialogSize } from '@nayan-ui/react';
 import { CheckCircle2, Download, X } from 'lucide-react';
 import {
   END_CREDIT_SECONDS,
-  END_CREDIT_TEXT,
+  END_CREDIT_TITLE,
   EXPORT_FORMATS,
   ExportCanceledError,
   exportProject,
@@ -202,7 +202,7 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
           <ToggleChip
             active={endCredit}
             onClick={() => setEndCredit(value => !value)}
-            label={`Append a ${END_CREDIT_SECONDS}s "${END_CREDIT_TEXT}" card after the last frame`}
+            label={`Append a ${END_CREDIT_SECONDS}s ${END_CREDIT_TITLE} card after the last frame`}
             className="flex-1">
             {endCredit ? 'Credits on' : 'Credits off'}
           </ToggleChip>
