@@ -1,3 +1,4 @@
+import { H2_DOC } from '@/design/system';
 import Code from '@/helpers/Code';
 import { robotsCreateAttributes, robotsValidationAttributes } from '@/services/CliAttributes';
 import Attributes from './Attributes';
@@ -5,7 +6,7 @@ import Attributes from './Attributes';
 const SEOSitemaps = () => {
   return (
     <div>
-      <h2 className="text-xl mb-5">🕹 Robots.txt Creation and Validation</h2>
+      <h2 className={H2_DOC}>Robots.txt Creation and Validation</h2>
       <div className="text-lg mb-5"># Robots.txt creation:</div>
       <Code
         language="sh"

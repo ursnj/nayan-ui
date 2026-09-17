@@ -1,115 +1,78 @@
-'use client';
-
-import { NCard } from '@nayan-ui/react';
 import { BookOpenText, Code, Layers, Moon, Palette, PencilRuler, Shield, Smartphone, Zap } from 'lucide-react';
+import { FeatureCard, Section, SectionHeader } from '@/design/Primitives';
+import { GRID_GAP } from '@/design/system';
+import { TOTAL_COMPONENT_COUNT } from '@/services/Counts';
 
-const Features = () => {
-  const features = [
-    {
-      title: 'Cross-Platform',
-      text: 'Separate packages for React web and React Native mobile, sharing a consistent API and design language.',
-      icon: Smartphone,
-      gradient: 'from-blue-500 to-cyan-500',
-      shadow: 'shadow-blue-500/20',
-      iconColor: 'text-white'
-    },
-    {
-      title: 'TypeScript First',
-      text: 'Written in TypeScript with full type definitions. Get autocompletion and type safety out of the box.',
-      icon: Code,
-      gradient: 'from-indigo-500 to-blue-500',
-      shadow: 'shadow-indigo-500/20',
-      iconColor: 'text-white'
-    },
-    {
-      title: 'Accessible',
-      text: 'Built on HeroUI with proper ARIA attributes, keyboard navigation, and screen reader support.',
-      icon: Shield,
-      gradient: 'from-emerald-500 to-teal-500',
-      shadow: 'shadow-emerald-500/20',
-      iconColor: 'text-white'
-    },
-    {
-      title: 'Themeable',
-      text: 'CSS variable based theming with light and dark mode. Customize colors, spacing, and typography to match your brand.',
-      icon: Palette,
-      gradient: 'from-purple-500 to-pink-500',
-      shadow: 'shadow-purple-500/20',
-      iconColor: 'text-white'
-    },
-    {
-      title: 'Dark Mode',
-      text: 'First-class dark mode support. Toggle themes with a single prop using the built-in NTheme provider.',
-      icon: Moon,
-      gradient: 'from-violet-500 to-purple-500',
-      shadow: 'shadow-violet-500/20',
-      iconColor: 'text-white'
-    },
-    {
-      title: 'Customizable',
-      text: 'Every component accepts className props for styling overrides. Works with Tailwind CSS utility classes.',
-      icon: PencilRuler,
-      gradient: 'from-orange-500 to-amber-500',
-      shadow: 'shadow-orange-500/20',
-      iconColor: 'text-white'
-    },
-    {
-      title: 'Lightweight',
-      text: 'Tree-shakable exports so you only ship the components you use. Minimal dependencies for fast load times.',
-      icon: Zap,
-      gradient: 'from-yellow-500 to-orange-500',
-      shadow: 'shadow-yellow-500/20',
-      iconColor: 'text-white'
-    },
-    {
-      title: 'Well Documented',
-      text: 'Interactive demos, prop tables, and code examples for every component. Copy-paste ready usage snippets.',
-      icon: BookOpenText,
-      gradient: 'from-teal-500 to-emerald-500',
-      shadow: 'shadow-teal-500/20',
-      iconColor: 'text-white'
-    },
-    {
-      title: '50+ Components',
-      text: 'Buttons, inputs, modals, tables, accordions, sheets, toasts, menus, popovers, sliders, and many more.',
-      icon: Layers,
-      gradient: 'from-rose-500 to-pink-500',
-      shadow: 'shadow-rose-500/20',
-      iconColor: 'text-white'
-    }
-  ];
+/**
+ * Why the library, in nine claims.
+ *
+ * Each card used to carry its own two-colour gradient tile — nine of them in
+ * a three-by-three grid, no two alike. It read as a colour swatch rather than
+ * a list of reasons, and nothing in it could be emphasised because everything
+ * already was. They share one accent now, and the words do the work.
+ */
+const FEATURES = [
+  {
+    icon: Smartphone,
+    title: 'Cross-platform',
+    body: 'Separate packages for React on the web and React Native on mobile, sharing a consistent API and design language so moving between them costs nothing.'
+  },
+  {
+    icon: Code,
+    title: 'TypeScript first',
+    body: 'Written in TypeScript with full type definitions. Autocompletion on every prop and a compile error when one is wrong, with no @types package to install.'
+  },
+  {
+    icon: Shield,
+    title: 'Accessible',
+    body: 'Built on HeroUI, so components arrive with the ARIA attributes, keyboard handling and focus management already in place rather than as an exercise for you.'
+  },
+  {
+    icon: Palette,
+    title: 'Themeable',
+    body: 'Theming is CSS variables — colour, surface, border and field tokens. Redefine them once and every component follows, including ones you have not used yet.'
+  },
+  {
+    icon: Moon,
+    title: 'Dark mode',
+    body: 'A first-class second theme, not an inverted afterthought. Wrap the tree in NTheme and switch with one prop; each token has a tuned dark counterpart.'
+  },
+  {
+    icon: PencilRuler,
+    title: 'Customisable',
+    body: 'Every component takes a className, merged rather than replaced, so a Tailwind utility is enough to change one instance without forking the component.'
+  },
+  {
+    icon: Zap,
+    title: 'Lightweight',
+    body: 'Tree-shakable named exports, so the bundle carries the components you imported and nothing else. Dependencies are kept few and deliberate.'
+  },
+  {
+    icon: BookOpenText,
+    title: 'Documented',
+    body: 'Every component has a live demo, a copyable usage example and a complete prop table on its own page — rendered from the same library you install.'
+  },
+  {
+    icon: Layers,
+    title: `${TOTAL_COMPONENT_COUNT} components`,
+    body: 'Buttons, inputs, selects, tables, dialogs, sheets, toasts, menus, popovers, sliders, date pickers and more. Enough to build an application, not just a demo.'
+  }
+];
 
-  return (
-    <section className="py-16 sm:py-20 lg:py-24">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 lg:mb-16 max-w-2xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">
-            Why <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Nayan UI</span>?
-          </h2>
-          <p className="text-base sm:text-lg text-muted">
-            Everything you need to build polished React and React Native apps — open source and free forever.
-          </p>
-        </div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
-          {features.map((feature, index) => (
-            <NCard key={index} className="p-5 hover:shadow-lg transition-all duration-300">
-              <div className="flex items-start gap-4">
-                <div
-                  className={`w-10 h-10 bg-gradient-to-br ${feature.gradient} rounded-xl flex items-center justify-center shrink-0 shadow-md ${feature.shadow}`}>
-                  <feature.icon className={`w-5 h-5 ${feature.iconColor}`} />
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold mb-1">{feature.title}</h4>
-                  <p className="text-xs sm:text-sm text-muted leading-relaxed">{feature.text}</p>
-                </div>
-              </div>
-            </NCard>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
+const Features = () => (
+  <Section id="why" labelledBy="why-heading">
+    <SectionHeader
+      eyebrow="Why Nayan UI"
+      id="why-heading"
+      title="Everything you need, nothing you don't"
+      lead="Two packages, one design language, and no licence to buy. Open source and free forever."
+    />
+    <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
+      {FEATURES.map(feature => (
+        <FeatureCard key={feature.title} icon={feature.icon} title={feature.title} body={feature.body} />
+      ))}
+    </div>
+  </Section>
+);
 
 export default Features;

@@ -2,6 +2,7 @@
 
 import { Award, Check, Lightbulb } from 'lucide-react';
 import Link from 'next/link';
+import { H2_DOC } from '@/design/system';
 import Sidebar from '@/helpers/Sidebar';
 import { type GameData, gamesData } from '@/services/GamesData';
 
@@ -30,20 +31,14 @@ const GameDetail = ({ slug }: Props) => {
   return (
     <Sidebar title={game.name}>
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-600/10 via-pink-600/10 to-amber-600/10 border border-purple-500/15 mb-8">
-        <div className="absolute inset-0 bg-surface/50 backdrop-blur-sm rounded-2xl" />
-        <div className="relative px-4 sm:px-6 py-8">
+      <div className="mb-8 overflow-hidden rounded-2xl border border-default bg-surface">
+        <div className="px-4 py-6 sm:px-6">
           <div className="grid items-center gap-8 md:grid-cols-2">
             <div>
               <div className="mb-4 inline-flex items-center gap-2">
                 <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${categoryColors[game.category]}`}>{game.category}</span>
                 <span className="text-xs font-medium bg-default/50 text-muted px-2.5 py-1 rounded-full">{game.difficulty}</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-bold mb-4">
-                <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 bg-clip-text text-transparent">
-                  {game.emoji} {game.name}
-                </span>
-              </h2>
               <p className="text-muted text-base leading-relaxed mb-4">{game.description}</p>
               <div className="flex flex-wrap gap-1.5">
                 {game.tags.map((tag, idx) => (
@@ -64,13 +59,13 @@ const GameDetail = ({ slug }: Props) => {
 
       {/* About */}
       <section className="mb-8">
-        <h2 className="text-xl font-bold text-foreground mb-4">About {game.name}</h2>
+        <h2 className={H2_DOC}>About {game.name}</h2>
         <p className="text-muted leading-relaxed">{game.longDescription}</p>
       </section>
 
       {/* Features */}
       <section className="mb-8">
-        <h2 className="text-xl font-bold text-foreground mb-4">Game Features</h2>
+        <h2 className={H2_DOC}>Game Features</h2>
         <div className="grid gap-3 md:grid-cols-2">
           {game.features.map((feature, index) => (
             <div key={index} className="flex items-start gap-3 rounded-lg border border-default bg-surface p-4">
@@ -83,7 +78,7 @@ const GameDetail = ({ slug }: Props) => {
 
       {/* How to Play */}
       <section className="mb-8">
-        <h2 className="text-xl font-bold text-foreground mb-4">How to Play</h2>
+        <h2 className={H2_DOC}>How to Play</h2>
         <div className="rounded-xl border border-default bg-surface p-6">
           <ol className="space-y-3">
             {game.howToPlay.map((step, index) => (
@@ -110,7 +105,7 @@ const GameDetail = ({ slug }: Props) => {
 
       {/* Tips & Strategies */}
       <section className="mb-8">
-        <h2 className="text-xl font-bold text-foreground mb-4">Tips & Strategies</h2>
+        <h2 className={H2_DOC}>Tips & Strategies</h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {game.tips.map((tip, index) => (
             <div key={index} className="rounded-xl border border-default bg-surface p-4 transition-shadow hover:shadow-md">
@@ -126,7 +121,7 @@ const GameDetail = ({ slug }: Props) => {
       {/* Benefits */}
       {game.benefits.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-xl font-bold text-foreground mb-4">Why Play {game.name}?</h2>
+          <h2 className={H2_DOC}>Why Play {game.name}?</h2>
           <div className="rounded-xl border border-default bg-surface p-6">
             <div className="grid gap-3 md:grid-cols-2">
               {game.benefits.map((benefit, index) => (
@@ -143,7 +138,7 @@ const GameDetail = ({ slug }: Props) => {
       {/* Related Games */}
       {game.relatedGames.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-xl font-bold text-foreground mb-4">You Might Also Like</h2>
+          <h2 className={H2_DOC}>You Might Also Like</h2>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {game.relatedGames.slice(0, 4).map(relatedId => {
               const relatedGame = gamesData[relatedId];

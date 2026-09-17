@@ -2,6 +2,7 @@
 
 import { NLink } from '@nayan-ui/react';
 import { usePathname } from 'next/navigation';
+import { H2_DOC, H3_DOC } from '@/design/system';
 import Sidebar from '@/helpers/Sidebar';
 import { getMenuItem } from '@/services/Utils';
 
@@ -19,7 +20,7 @@ const GamesLicensing = () => {
           </p>
 
           <div className="bg-surface border-t border-r border-b border-default border-l-4 border-l-green-500 rounded-lg p-6">
-            <h3 className="text-xl font-semibold text-foreground mb-3 flex items-center">
+            <h3 className={H3_DOC}>
               <span className="mr-2">🆓</span>
               Non-Commercial License (Free)
             </h3>
@@ -40,7 +41,7 @@ const GamesLicensing = () => {
           </div>
 
           <div className="bg-surface border-t border-r border-b border-default border-l-4 border-l-blue-500 rounded-lg p-6">
-            <h3 className="text-xl font-semibold text-foreground mb-3 flex items-center">
+            <h3 className={H3_DOC}>
               <span className="mr-2">💼</span>
               Commercial License (Paid)
             </h3>
@@ -60,7 +61,7 @@ const GamesLicensing = () => {
               </li>
             </ul>
 
-            <div className="bg-muted/20 rounded-lg p-4 mb-4">
+            <div className="bg-background rounded-lg p-4 mb-4">
               <p className="text-foreground font-semibold mb-2">Commercial licensing includes:</p>
               <ul className="text-muted text-sm space-y-1">
                 <li>• Full commercial usage rights</li>
@@ -87,7 +88,7 @@ const GamesLicensing = () => {
 
       {/* Acknowledgments Section */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center">
+        <h2 className={H2_DOC}>
           <span className="mr-3">🙏</span>
           Acknowledgments
         </h2>
@@ -134,7 +135,7 @@ const GamesLicensing = () => {
 
       {/* Support Section */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center">
+        <h2 className={H2_DOC}>
           <span className="mr-3">📞</span>
           Support
         </h2>

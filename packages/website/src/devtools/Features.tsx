@@ -1,7 +1,9 @@
+import { H2_DOC } from '@/design/system';
+
 const SEOFeatures = () => {
   return (
     <div>
-      <h2 className="text-xl mb-5">✨ Features</h2>
+      <h2 className={H2_DOC}>Features</h2>
       <ul className="list-disc list-inside leading-relaxed mb-5">
         <li>
           ⌨️ <strong>Framework-Agnostic Integration:</strong> Easily integrates into any framework with simple commands.

@@ -1,3 +1,4 @@
+import { H2_DOC } from '@/design/system';
 import Code from '@/helpers/Code';
 import { sitemapsCreateAttributes, sitemapsValidationAttributes } from '@/services/CliAttributes';
 import Attributes from './Attributes';
@@ -5,7 +6,7 @@ import Attributes from './Attributes';
 const SEOSitemaps = () => {
   return (
     <div>
-      <h2 className="text-xl mb-5">🕹 Sitemaps Creation and Validation</h2>
+      <h2 className={H2_DOC}>Sitemaps Creation and Validation</h2>
       <div className="text-lg mb-5"># Simple generation usage:</div>
       <Code language="sh" code={`npx @nayan-ui/cli create sitemap -w https://www.nayanui.com`} />
       <div className="text-lg mb-5"># Advanced generation Usage:</div>

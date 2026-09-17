@@ -2,142 +2,137 @@
 
 import { useEffect, useState } from 'react';
 import { NSheet, THEMES, useLocalStorage } from '@nayan-ui/react';
-import { AlignJustify, Github, MoonStar, Package, Sun } from 'lucide-react';
+import { AlignJustify, Github, MoonStar, Sun } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { reactSidebarItems } from '@/services/Utils';
+import { CONTAINER } from '@/design/system';
 
-const HeaderMenu = () => {
-  const [theme, setTheme] = useLocalStorage('THEME', THEMES.LIGHT);
+/**
+ * The primary navigation, in one place.
+ *
+ * `/react` and `/react-native` point at their installation pages because that
+ * is where a first visit should land; `isActive` still matches the whole
+ * subtree, so every component page keeps the section lit.
+ */
+const NAV = [
+  { label: 'Home', href: '/', match: '/' },
+  { label: 'React', href: '/react/installation', match: '/react' },
+  { label: 'React Native', href: '/react-native/installation', match: '/react-native' },
+  { label: 'Games', href: '/games', match: '/games' },
+  { label: 'Video Editor', href: '/video-editor', match: '/video-editor' },
+  { label: 'Devtools', href: '/devtools', match: '/devtools' }
+];
+
+/**
+ * `/react-native` starts with `/react`, so a plain `startsWith` lights both.
+ * Matching on the segment boundary is what keeps React Native from making the
+ * React tab look active too.
+ */
+const isActive = (pathname: string, match: string) => {
+  if (match === '/') return pathname === '/';
+  return pathname === match || pathname.startsWith(`${match}/`);
+};
+
+const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) => (
+  <ul className="flex flex-col gap-1 md:flex-row md:items-center">
+    {NAV.map(item => {
+      const active = isActive(pathname, item.match);
+      return (
+        <li key={item.href} className="w-full md:w-auto">
+          <Link
+            href={item.href}
+            onClick={onNavigate}
+            aria-current={active ? 'page' : undefined}
+            className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              active ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'text-muted hover:bg-default/60 hover:text-foreground'
+            }`}>
+            {item.label}
+          </Link>
+        </li>
+      );
+    })}
+  </ul>
+);
+
+/**
+ * The site header.
+ *
+ * The gradient hairline along the bottom edge is gone, as is the gradient on
+ * the wordmark. Both were competing with whatever the page itself was trying
+ * to lead with, and the header is chrome — it should be the least interesting
+ * thing on screen.
+ *
+ * The mobile sheet no longer carries a copy of the entire React component
+ * list. That list is the sidebar's job, it was only ever the React one
+ * regardless of which section you were in, and it made the menu a
+ * fifty-item scroll to reach "Devtools".
+ */
+const Header = () => {
   const pathname = usePathname();
+  const [menu, setMenu] = useState(false);
+  const [theme, setTheme] = useLocalStorage('THEME', THEMES.LIGHT);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const toggleTheme = () => {
-    setTheme(theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK);
-  };
-
-  const isActive = (path: string) => {
-    if (path === '/') return pathname === '/';
-    return pathname.startsWith(path);
-  };
-
-  const linkClass = (path: string) =>
-    `text-sm font-medium px-4 py-2.5 block md:inline rounded-lg transition-all duration-200 ${isActive(path) ? 'text-blue-600 dark:text-blue-400 bg-gradient-to-r from-blue-500/10 to-purple-500/10 shadow-sm' : 'text-foreground hover:text-blue-600 dark:hover:text-blue-400 hover:bg-default/50'}`;
-
-  return (
-    <div className="w-full flex flex-col md:flex-row justify-between items-center">
-      <ul className="w-full md:w-auto flex flex-col md:flex-row items-center">
-        <li className="w-full md:w-auto">
-          <Link className={linkClass('/')} href="/">
-            Home
-          </Link>
-        </li>
-        <li className="w-full md:w-auto">
-          <Link className={linkClass('/react/installation')} href="/react/installation">
-            React
-          </Link>
-        </li>
-        <li className="w-full md:w-auto">
-          <Link className={linkClass('/react-native/installation')} href="/react-native/installation">
-            React Native
-          </Link>
-        </li>
-        <li className="w-full md:w-auto">
-          <Link className={linkClass('/games')} href="/games">
-            Games
-          </Link>
-        </li>
-        <li className="w-full md:w-auto">
-          <Link className={linkClass('/video-editor')} href="/video-editor">
-            Video Editor
-          </Link>
-        </li>
-        <li className="w-full md:w-auto">
-          <Link className={linkClass('/devtools')} href="/devtools">
-            Devtools
-          </Link>
-        </li>
-      </ul>
-      <div className="w-full md:w-auto flex items-center justify-center md:justify-end gap-4 mt-3 md:mt-0">
-        <Link
-          href="https://www.github.com/ursnj/nayan-ui"
-          target="_blank"
-          title="Nayan UI Github"
-          aria-label="Nayan UI Github"
-          className="p-2 rounded-lg hover:bg-default/50 transition-colors">
-          <Github className="w-5 h-5 text-foreground hover:text-purple-600 dark:hover:text-purple-400 transition-colors inline" />
-        </Link>
-        <span tabIndex={0} className="p-2 rounded-lg hover:bg-default/50 transition-colors cursor-pointer" onClick={toggleTheme} title="Theme Switch">
-          {mounted && theme !== THEMES.DARK && <MoonStar className="w-5 h-5 text-foreground hover:text-amber-500 transition-colors inline" />}
-          {mounted && theme === THEMES.DARK && <Sun className="w-5 h-5 text-foreground hover:text-amber-400 transition-colors inline" />}
-          {!mounted && <span className="w-5 h-5 inline-block" />}
-        </span>
-      </div>
-
-      <div className="w-full block md:hidden mt-4 mb-4">
-        {reactSidebarItems.map(item => {
-          const Icon = item.icon as any;
-          return (
-            <div key={item.link}>
-              {!item.isHeading && (
-                <Link href={item.link}>
-                  <div className="rounded cursor-pointer hover:bg-default p-1.5 px-3 flex items-center">
-                    <Icon className="w-4 h-4 inline mr-3" />
-                    <span>{item.title}</span>
-                  </div>
-                </Link>
-              )}
-              {!!item.isHeading && <div className="text-sm font-semibold text-muted uppercase tracking-wide p-2 pt-4">{item.title}</div>}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
-
-const Header = () => {
-  const pathname = usePathname();
-  const [menu, setMenu] = useState(false);
-
   useEffect(() => {
     setMenu(false);
     window.scrollTo(0, 0);
   }, [pathname]);
 
+  const toggleTheme = () => setTheme(theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK);
+
   return (
-    <header className="bg-surface/80 backdrop-blur-md fixed top-0 left-0 right-0 z-40 border-b border-default">
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-50" />
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-default bg-surface/80 backdrop-blur-md">
+      <div className={CONTAINER}>
         <NSheet isOpen={menu} title="Nayan UI" onCloseSheet={() => setMenu(false)}>
-          <HeaderMenu />
+          <NavLinks pathname={pathname} onNavigate={() => setMenu(false)} />
         </NSheet>
-        <nav className="flex flex-row py-2.5 justify-between items-center">
-          <Link href="/">
-            <div className="flex items-center gap-3 shrink-0 mr-10">
-              <img
-                src="/logo.webp"
-                fetchPriority="high"
-                className="inline-block align-top"
-                alt="Nayan UI Logo"
-                loading="lazy"
-                width={40}
-                height={40}
-              />
-              <span className="text-lg font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent hidden sm:inline whitespace-nowrap">
-                Nayan UI
-              </span>
-            </div>
+
+        <nav aria-label="Main" className="flex h-[59px] items-center justify-between gap-6">
+          <Link href="/" className="flex shrink-0 items-center gap-2.5">
+            <img src="/logo.webp" fetchPriority="high" alt="" width={32} height={32} className="h-8 w-8" />
+            <span className="hidden whitespace-nowrap text-base font-bold text-foreground sm:inline">Nayan UI</span>
           </Link>
-          <div className="block md:hidden p-2" onClick={() => setMenu(true)}>
-            <AlignJustify className="w-6 h-6 text-foreground" />
+
+          <div className="hidden md:block">
+            <NavLinks pathname={pathname} />
           </div>
-          <div className="w-full hidden md:block">
-            <HeaderMenu />
+
+          <div className="flex items-center gap-1">
+            <Link
+              href="https://www.github.com/ursnj/nayan-ui"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Nayan UI on GitHub"
+              aria-label="Nayan UI on GitHub"
+              className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground">
+              <Github className="h-[18px] w-[18px]" />
+            </Link>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              title="Switch theme"
+              aria-label="Switch theme"
+              className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground">
+              {/* Sized identically before mount, so the row does not shift once the stored theme is known. */}
+              {!mounted ? (
+                <span className="block h-[18px] w-[18px]" />
+              ) : theme === THEMES.DARK ? (
+                <Sun className="h-[18px] w-[18px]" />
+              ) : (
+                <MoonStar className="h-[18px] w-[18px]" />
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => setMenu(true)}
+              aria-label="Open menu"
+              className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground md:hidden">
+              <AlignJustify className="h-5 w-5" />
+            </button>
           </div>
         </nav>
       </div>

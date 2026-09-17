@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { NTagGroup } from '@nayan-ui/react';
+import { H3_DOC } from '@/design/system';
 import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const items = [
@@ -22,12 +23,12 @@ const TagGroup = () => {
 
   return (
     <ComponentWrapper>
-      <h2 className="text-foreground mb-3 text-lg font-semibold">Selectable:</h2>
+      <h3 className={H3_DOC}>Selectable:</h3>
       <div className="mb-5">
         <NTagGroup items={items} selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected} />
       </div>
 
-      <h2 className="text-foreground mb-3 text-lg font-semibold">Removable:</h2>
+      <h3 className={H3_DOC}>Removable:</h3>
       <div className="mb-5">
         <NTagGroup items={removableItems} onRemove={handleRemove} />
       </div>

@@ -1,182 +1,131 @@
-'use client';
+import { Github } from 'lucide-react';
+import Link from 'next/link';
+import { CONTAINER } from '@/design/system';
 
-import { NDivider, NLink } from '@nayan-ui/react';
+/**
+ * The footer.
+ *
+ * Restructured around one idea: a footer is a link index, so it should be
+ * scannable as one. Previously each column's heading took a different colour
+ * — blue, purple, pink — and every link in it hovered to that same colour,
+ * which implied three groups of links that behaved differently. They do not.
+ * One heading style, one link style, four groups.
+ *
+ * Also no longer a client component. It held no state; the only reason it
+ * needed hydrating was `NLink`, and these are ordinary links.
+ */
+const GROUPS = [
+  {
+    title: 'React',
+    links: [
+      { label: 'Installation', href: '/react/installation' },
+      { label: 'Components', href: '/react/components' },
+      { label: 'Component tags', href: '/tags' }
+    ]
+  },
+  {
+    title: 'React Native',
+    links: [
+      { label: 'Installation', href: '/react-native/installation' },
+      { label: 'Components', href: '/react-native/components' },
+      { label: 'Games', href: '/games' }
+    ]
+  },
+  {
+    title: 'Tools',
+    links: [
+      { label: 'Video Editor', href: '/video-editor' },
+      { label: 'Devtools', href: '/devtools' },
+      { label: 'Sitemap generator', href: '/devtools/sitemap' },
+      { label: 'Robots.txt generator', href: '/devtools/robots' }
+    ]
+  },
+  {
+    title: 'Project',
+    links: [
+      { label: 'Contributing', href: '/contributions' },
+      { label: 'GitHub', href: 'https://github.com/ursnj/nayan-ui', external: true },
+      { label: 'Report an issue', href: 'https://github.com/ursnj/nayan-ui/issues', external: true },
+      { label: 'Discussions', href: 'https://github.com/ursnj/nayan-ui/discussions', external: true },
+      { label: 'Releases', href: 'https://github.com/ursnj/nayan-ui/releases', external: true }
+    ]
+  }
+];
+
+const PACKAGES = [
+  { label: '@nayan-ui/react', href: 'https://www.npmjs.com/package/@nayan-ui/react' },
+  { label: '@nayan-ui/native', href: 'https://www.npmjs.com/package/@nayan-ui/native' },
+  { label: '@nayan-ui/cli', href: 'https://www.npmjs.com/package/@nayan-ui/cli' }
+];
+
+const linkClass = 'text-sm text-muted transition-colors hover:text-indigo-600 dark:hover:text-indigo-400';
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-surface/80 backdrop-blur-md border-t border-default mt-12 relative">
-      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-          {/* Brand Section */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <img src="/logo.webp" fetchPriority="high" alt="Nayan UI Logo" className="w-10 h-10" loading="lazy" />
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Nayan UI
-              </span>
-            </div>
-            <p className="text-muted text-sm leading-relaxed">
-              Beautiful, accessible, and customizable React & React Native components built with modern design principles.
+    <footer className="mt-16 border-t border-default bg-surface/60">
+      <div className={`${CONTAINER} py-12`}>
+        <div className="grid gap-10 lg:grid-cols-5">
+          <div className="lg:col-span-2">
+            <Link href="/" className="flex items-center gap-2.5">
+              <img src="/logo.webp" alt="" width={32} height={32} className="h-8 w-8" loading="lazy" />
+              <span className="text-base font-bold text-foreground">Nayan UI</span>
+            </Link>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted">
+              Open source, accessible React and React Native components — plus a browser video editor and a handful of developer tools. Free forever,
+              MIT licensed.
             </p>
-            <div className="flex space-x-4">
-              <NLink
-                href="https://github.com/ursnj/nayan-ui"
-                className="text-muted hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200"
-                target="_blank"
-                rel="noopener noreferrer">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                </svg>
-              </NLink>
-              <NLink
-                href="https://www.npmjs.com/package/@nayan-ui/react"
-                className="text-muted hover:text-red-500 dark:hover:text-red-400 transition-colors duration-200"
-                target="_blank"
-                rel="noopener noreferrer">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331zM10.665 10H12v2.667h-1.335V10z" />
-                </svg>
-              </NLink>
-            </div>
+
+            <ul className="mt-5 space-y-1.5">
+              {PACKAGES.map(pkg => (
+                <li key={pkg.label}>
+                  <Link href={pkg.href} target="_blank" rel="noopener noreferrer" className={`font-mono text-xs ${linkClass}`}>
+                    {pkg.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              href="https://github.com/ursnj/nayan-ui"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Nayan UI on GitHub"
+              className="mt-5 inline-flex items-center gap-2 rounded-lg border border-default bg-surface px-3 py-1.5 text-sm text-muted transition-colors hover:text-foreground">
+              <Github aria-hidden className="h-4 w-4" />
+              Star on GitHub
+            </Link>
           </div>
 
-          {/* Documentation Links */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground">
-              <span className="text-blue-600 dark:text-blue-400">Documentation</span>
-            </h3>
-            <div className="space-y-2">
-              <NLink
-                href="/react/installation"
-                className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
-                React Installation
-              </NLink>
-              <NLink
-                href="/react-native/installation"
-                className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
-                React Native Installation
-              </NLink>
-              <NLink
-                href="/react/components"
-                className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
-                React Components
-              </NLink>
-              <NLink
-                href="/react-native/components"
-                className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
-                React Native Components
-              </NLink>
-              <NLink
-                href="/video-editor"
-                className="block text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm">
-                Video Editor
-              </NLink>
-            </div>
-          </div>
-
-          {/* Resources */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground">
-              <span className="text-purple-600 dark:text-purple-400">Resources</span>
-            </h3>
-            <div className="space-y-2">
-              <NLink
-                href="/contributions"
-                className="block text-muted hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 text-sm">
-                Contributing
-              </NLink>
-              <NLink
-                href="/tags"
-                className="block text-muted hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 text-sm">
-                Component Tags
-              </NLink>
-              <NLink
-                href="https://github.com/ursnj/nayan-ui/issues"
-                className="block text-muted hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 text-sm"
-                target="_blank"
-                rel="noopener noreferrer">
-                Report Issues
-              </NLink>
-              <NLink
-                href="https://github.com/ursnj/nayan-ui/discussions"
-                className="block text-muted hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 text-sm"
-                target="_blank"
-                rel="noopener noreferrer">
-                Discussions
-              </NLink>
-            </div>
-          </div>
-
-          {/* Community */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground">
-              <span className="text-pink-600 dark:text-pink-400">Community</span>
-            </h3>
-            <div className="space-y-2">
-              <NLink
-                href="https://github.com/ursnj/nayan-ui"
-                className="block text-muted hover:text-pink-600 dark:hover:text-pink-400 transition-colors duration-200 text-sm"
-                target="_blank"
-                rel="noopener noreferrer">
-                GitHub Repository
-              </NLink>
-              <NLink
-                href="https://www.npmjs.com/package/@nayan-ui/cli"
-                className="block text-muted hover:text-pink-600 dark:hover:text-pink-400 transition-colors duration-200 text-sm"
-                target="_blank"
-                rel="noopener noreferrer">
-                NPM Package (Cli)
-              </NLink>
-              <NLink
-                href="https://www.npmjs.com/package/@nayan-ui/react"
-                className="block text-muted hover:text-pink-600 dark:hover:text-pink-400 transition-colors duration-200 text-sm"
-                target="_blank"
-                rel="noopener noreferrer">
-                NPM Package (React)
-              </NLink>
-              <NLink
-                href="https://www.npmjs.com/package/@nayan-ui/native"
-                className="block text-muted hover:text-pink-600 dark:hover:text-pink-400 transition-colors duration-200 text-sm"
-                target="_blank"
-                rel="noopener noreferrer">
-                NPM Package (React Native)
-              </NLink>
-            </div>
-          </div>
+          {GROUPS.map(group => (
+            <nav key={group.title} aria-labelledby={`footer-${group.title.replace(/\s+/g, '-').toLowerCase()}`}>
+              <h2
+                id={`footer-${group.title.replace(/\s+/g, '-').toLowerCase()}`}
+                className="mb-3 text-xs font-semibold uppercase tracking-wider text-foreground">
+                {group.title}
+              </h2>
+              <ul className="space-y-2">
+                {group.links.map(link => (
+                  <li key={link.href}>
+                    <Link href={link.href} {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})} className={linkClass}>
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
         </div>
 
-        <NDivider className="my-8" />
-
-        {/* Bottom Footer */}
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
-            <div className="text-sm text-muted">© {currentYear} Nayan UI. All rights reserved.</div>
-            <div className="flex items-center space-x-4 text-sm text-muted">
-              <NLink
-                href="https://github.com/ursnj/nayan-ui/blob/main/LICENSE"
-                className="hover:text-accent transition-colors duration-200"
-                target="_blank"
-                rel="noopener noreferrer">
-                MIT License
-              </NLink>
-              <span>•</span>
-              <NLink
-                href="https://github.com/ursnj/nayan-ui/releases"
-                className="hover:text-accent transition-colors duration-200"
-                target="_blank"
-                rel="noopener noreferrer">
-                Changelog
-              </NLink>
-            </div>
-          </div>
-          <div className="flex items-center space-x-2 text-sm text-muted">
-            <span>Made with</span>
-            <span className="text-red-500 animate-pulse">❤️</span>
-            <span>in India</span>
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-default pt-6 text-sm text-muted sm:flex-row">
+          <p>© {year} Nayan UI</p>
+          <div className="flex items-center gap-4">
+            <Link href="https://github.com/ursnj/nayan-ui/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" className={linkClass}>
+              MIT License
+            </Link>
+            <span aria-hidden>·</span>
+            <p>Made in India</p>
           </div>
         </div>
       </div>
