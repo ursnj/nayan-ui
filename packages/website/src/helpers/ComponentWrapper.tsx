@@ -54,13 +54,34 @@ const ComponentWrapper = (props: Props) => {
     <Sidebar title={component.title}>
       <p className={`mb-8 max-w-3xl ${LEAD}`}>{component.description}</p>
 
-      <SubHeader title="Demo" description="Rendered live, with the same build of the library you install.">
+      <SubHeader
+        title="Demo"
+        description={
+          /* "Rendered live" is true of the React pages and false of the React
+             Native ones, whose components build to native views and stand in
+             with an explanation instead. */
+          type === 'react-native'
+            ? 'React Native components render to native views, so the example below describes the component rather than running it.'
+            : 'Rendered live, with the same build of the library you install.'
+        }>
         {/*
          * A dotted ground, so a component with a white or transparent surface
          * reads as sitting on something rather than dissolving into the page.
          */}
         <div className="rounded-xl border border-default bg-background bg-[radial-gradient(var(--separator)_1px,transparent_1px)] [background-size:16px_16px]">
-          <div className="flex flex-wrap items-start gap-4 p-6 sm:p-8">{children}</div>
+          {/*
+           * Block layout, deliberately. An earlier version of this wrapper used
+           * `flex flex-wrap items-start`, which broke most of the demos on the
+           * site: a flex item is sized to its content, so every demo that
+           * passes a single block-level component — Input, Table, Slider,
+           * Tabs, Progress, Textarea, Select — collapsed to min-content width
+           * instead of filling the panel. The demos that want a row (Button,
+           * Badge) already wrap their own children in one.
+           *
+           * `space-y-4` spaces multi-child demos; `[&>*]:max-w-full` keeps a
+           * wide child (a table) inside the panel rather than through it.
+           */}
+          <div className="space-y-4 p-6 [&>*]:max-w-full sm:p-8">{children}</div>
         </div>
       </SubHeader>
 
