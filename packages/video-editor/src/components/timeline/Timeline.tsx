@@ -77,6 +77,7 @@ export const Timeline = () => {
 
   const tracks = useEditor(state => state.tracks);
   const clips = useEditor(state => state.clips);
+  const assets = useEditor(state => state.assets);
   const pxPerSec = useEditor(state => state.pxPerSec);
   const snapEnabled = useEditor(state => state.snapEnabled);
   const rippleEnabled = useEditor(state => state.rippleEnabled);
@@ -136,6 +137,15 @@ export const Timeline = () => {
    * re-scanning the full list — that was O(tracks x clips) on every render,
    * and every pointer move during a drag is a render.
    */
+  /**
+   * Poster frame per asset, for a clip to paint while its strip is decoding.
+   *
+   * Built here and handed down rather than looked up inside each clip: a
+   * selector that scans the asset list would re-run on every store write, and
+   * the playhead writes sixty times a second during playback.
+   */
+  const posters = useMemo(() => new Map(assets.map(asset => [asset.id, asset.thumbnail])), [assets]);
+
   const clipsByTrack = useMemo(() => {
     const byTrack = new Map<string, Clip[]>();
     for (const clip of clips) {
@@ -626,6 +636,7 @@ export const Timeline = () => {
               pxPerSec={pxPerSec}
               contentWidth={contentWidth}
               selectedIds={selectedIds}
+              posters={posters}
               visibleRange={visibleRange}
               canRemove={(track.kind === 'video' ? videoTrackCount : audioTrackCount) > 1}
               onUpdateTrack={handleUpdateTrack}
@@ -811,6 +822,8 @@ interface TrackRowProps {
   canRemove: boolean;
   /** Indexed, so a row does not scan the selection once per clip it draws. */
   selectedIds: Set<string>;
+  /** Poster frame per asset id, for clips whose strip hasn't arrived yet. */
+  posters: Map<string, string | null>;
   /*
    * Both take the track id rather than closing over it: bound inline at the
    * call site they minted a new function per row per render, which defeated
@@ -835,6 +848,7 @@ const TrackRow = memo(
     pxPerSec,
     contentWidth,
     selectedIds,
+    posters,
     visibleRange,
     canRemove,
     onUpdateTrack,
@@ -890,6 +904,7 @@ const TrackRow = memo(
               rowHeight={track.height}
               selected={selectedIds.has(clip.id)}
               trackLocked={track.locked}
+              poster={(isMediaClip(clip) ? posters.get(clip.assetId) : null) ?? null}
               onSelect={onSelectClip}
               onMoveStart={onClipPointerDown}
               onTrimStart={onTrimStart}

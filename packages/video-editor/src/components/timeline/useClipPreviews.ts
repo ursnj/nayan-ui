@@ -1,61 +1,117 @@
 import { useEffect, useState } from 'react';
 import { clamp } from '../../lib/utils';
-import { generateFilmstrip, getAudioBuffer, getPeaks } from '../../media/library';
+import { getAudioBuffer, getFilmstrip, getPeaks, requestFilmstrip } from '../../media/library';
 import type { MediaClip } from '../../types';
 
-/** Filmstrips are expensive to build, so keep them across mounts and re-renders. */
-const filmstripCache = new Map<string, string[]>();
-/**
- * Each entry is up to 24 JPEG data URLs, and trimming or zooming a clip mints
- * a fresh key every time — left uncapped this grows for the whole session.
- */
-const FILMSTRIP_CACHE_LIMIT = 180;
+/** Stable identity for "no strip", so a clip body isn't handed a new array each render. */
+const NO_FRAMES: string[] = [];
 
-const rememberStrip = (key: string, frames: string[]) => {
-  filmstripCache.set(key, frames);
-  // Map iterates in insertion order, so the front is the least recently added.
-  while (filmstripCache.size > FILMSTRIP_CACHE_LIMIT) {
-    const oldest = filmstripCache.keys().next().value;
-    if (oldest === undefined) break;
-    filmstripCache.delete(oldest);
-  }
+/**
+ * How long the clip has to hold still before a strip is asked for.
+ *
+ * A trim handle or a zoom gesture changes the request on every pointer move,
+ * and each of those would otherwise be a decode. Nothing is queued until the
+ * gesture settles.
+ */
+const DEBOUNCE_MS = 220;
+
+/**
+ * Ceiling on the wait before re-asking for a strip that was dropped.
+ *
+ * Every clip on a busy timeline can be dropped at once — that is what the
+ * queue depth is for — and they would all then re-ask on the same beat,
+ * forever. Backing off per attempt lets the queue actually empty, and the
+ * count resets the moment the clip asks for something different.
+ */
+const MAX_RETRY_MS = 1500;
+
+/** Roughly the tile width the strip aims for, in CSS pixels. */
+const TILE_TARGET_CSS = 72;
+/** Bounds the work a single clip can ask for. */
+const MAX_TILES = 24;
+
+/*
+ * Tile resolution, in device pixels, on a coarse ladder.
+ *
+ * It used to be a flat 160px however wide the tile was drawn. On a 2x display
+ * that is soft at the ordinary size and openly blurry once the tile count hits
+ * its ceiling and the tiles start growing — a long clip drew 160px stills
+ * across boxes twice that wide. Rounding up to a step keeps a nudge of the
+ * zoom from invalidating every strip on the timeline.
+ */
+const TILE_STEP = 64;
+const MIN_TILE_PX = 96;
+const MAX_TILE_PX = 320;
+
+const tileResolution = (tileCssWidth: number) => {
+  const dpr = typeof window === 'undefined' ? 1 : Math.min(2, window.devicePixelRatio || 1);
+  return clamp(Math.ceil((tileCssWidth * dpr) / TILE_STEP) * TILE_STEP, MIN_TILE_PX, MAX_TILE_PX);
 };
+
+export interface ClipFilmstrip {
+  /** One URL per tile, or empty until the strip arrives. */
+  frames: string[];
+  /**
+   * Tiles the clip body should lay out, whether or not they have pictures yet.
+   *
+   * Returned rather than kept private so the placeholder can use the same grid
+   * the strip will: tiles are cover-cropped, and a placeholder drawn as one
+   * background across the whole clip showed a wider view of the frame than the
+   * tiles that replaced it, so the framing visibly jumped as strips landed.
+   */
+  tileCount: number;
+}
 
 /**
  * Evenly spaced stills across the clip's visible source range.
  *
- * Generation is debounced and the frame count is bucketed, so dragging a trim
- * handle or nudging the zoom doesn't kick off a decode on every pointer move.
+ * Only video asks for one. A still image has nothing to walk through — its
+ * poster frame, decoded once at import, is the whole picture — and re-encoding
+ * that same poster into two dozen tiles per clip was pure cost.
  */
-export const useFilmstrip = (clip: MediaClip, widthPx: number): string[] => {
-  const count = clamp(Math.round(widthPx / 72), 1, 24);
+export const useFilmstrip = (clip: MediaClip, widthPx: number): ClipFilmstrip => {
+  const wanted = clip.kind === 'video';
+  const count = clamp(Math.round(widthPx / TILE_TARGET_CSS), 1, MAX_TILES);
+  const tilePx = tileResolution(widthPx / count);
   const sourceEndUs = clip.inUs + clip.durationUs * clip.speed;
-  const key = `${clip.assetId}:${Math.round(clip.inUs)}:${Math.round(sourceEndUs)}:${count}`;
+  const key = `${clip.assetId}:${Math.round(clip.inUs)}:${Math.round(sourceEndUs)}:${count}:${tilePx}`;
 
   // Read the cache during render rather than syncing it into state in an
   // effect: a cache hit then paints on the first render with no extra pass.
   const [generated, setGenerated] = useState<{ key: string; frames: string[] } | null>(null);
-  const cached = filmstripCache.get(key);
-  const frames = cached ?? (generated?.key === key ? generated.frames : []);
+  /** Counts dropped jobs for the current request, so retries can back off. */
+  const [retry, setRetry] = useState<{ key: string; attempt: number }>({ key, attempt: 0 });
+  const attempt = retry.key === key ? retry.attempt : 0;
+  const cached = getFilmstrip(key);
+  const frames = cached ?? (generated?.key === key ? generated.frames : NO_FRAMES);
 
   useEffect(() => {
-    if (cached || clip.kind === 'audio') return;
+    if (!wanted || cached) return;
 
-    let cancelled = false;
-    const timer = window.setTimeout(async () => {
-      const strip = await generateFilmstrip(clip.assetId, clip.inUs, sourceEndUs, count);
-      if (cancelled || strip.length === 0) return;
-      rememberStrip(key, strip);
-      setGenerated({ key, frames: strip });
-    }, 300);
+    // Aborting is how the scheduler learns nobody wants this any more — it
+    // drops the job if it is still queued, and stops it between frames if it
+    // is already decoding.
+    const controller = new AbortController();
+    const timer = window.setTimeout(
+      async () => {
+        const strip = await requestFilmstrip({ key, assetId: clip.assetId, fromUs: clip.inUs, toUs: sourceEndUs, count, tilePx }, controller.signal);
+        if (controller.signal.aborted) return;
+        // Null means the job was abandoned rather than answered. Asking again
+        // is the difference between a strip arriving late and a clip that
+        // stays bare for the rest of the session.
+        if (strip === null) setRetry({ key, attempt: attempt + 1 });
+        else if (strip.length > 0) setGenerated({ key, frames: strip });
+      },
+      Math.min(DEBOUNCE_MS * (attempt + 1), MAX_RETRY_MS)
+    );
 
     return () => {
-      cancelled = true;
+      controller.abort();
       window.clearTimeout(timer);
     };
-  }, [key, cached, clip.assetId, clip.inUs, clip.kind, sourceEndUs, count]);
+  }, [key, cached, wanted, attempt, clip.assetId, clip.inUs, sourceEndUs, count, tilePx]);
 
-  return frames;
+  return { frames, tileCount: count };
 };
 
 /**
