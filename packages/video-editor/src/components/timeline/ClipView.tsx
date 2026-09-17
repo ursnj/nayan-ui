@@ -11,6 +11,22 @@ import { useFilmstrip, useWaveform } from './useClipPreviews';
 
 export type TrimEdge = 'start' | 'end';
 
+/** Assumed shape for an asset that never reported one. */
+export const DEFAULT_ASPECT = 16 / 9;
+
+/**
+ * What a clip needs from its asset to draw a strip, resolved once per asset by
+ * the timeline.
+ *
+ * The aspect ratio is as load-bearing as the picture: a filmstrip tile is as
+ * wide as its frame is at row height, so without it the tiles cannot be sized
+ * and the frames end up cropped to fit boxes of the wrong shape.
+ */
+export interface ClipPreview {
+  poster: string | null;
+  aspect: number;
+}
+
 interface ClipViewProps {
   clip: Clip;
   pxPerSec: number;
@@ -18,11 +34,10 @@ interface ClipViewProps {
   selected: boolean;
   trackLocked: boolean;
   /**
-   * The asset's poster frame, shown in each filmstrip tile until that tile's
-   * own still has decoded. A plain string, so it doesn't cost this component
-   * its memo.
+   * The clip's asset, as the strip needs it. One stable object per asset from
+   * the timeline, so it doesn't cost this component its memo.
    */
-  poster: string | null;
+  preview: ClipPreview | null;
   onSelect: (clip: Clip, additive: boolean) => void;
   onMoveStart: (clip: Clip, event: React.PointerEvent) => void;
   onTrimStart: (clip: Clip, event: React.PointerEvent, edge: TrimEdge) => void;
@@ -39,7 +54,7 @@ interface ClipViewProps {
  * new function per clip per render and defeat the memo entirely.
  */
 export const ClipView = memo(
-  ({ clip, pxPerSec, rowHeight, selected, trackLocked, poster, onSelect, onMoveStart, onTrimStart, onContextMenu }: ClipViewProps) => {
+  ({ clip, pxPerSec, rowHeight, selected, trackLocked, preview, onSelect, onMoveStart, onTrimStart, onContextMenu }: ClipViewProps) => {
     const left = (clip.startUs / US) * pxPerSec;
     const width = Math.max(3, (clip.durationUs / US) * pxPerSec);
     const locked = trackLocked || clip.locked;
@@ -118,7 +133,7 @@ export const ClipView = memo(
         )}>
         {/* Row height is user-adjustable, so the body is sized rather than inset. */}
         <div style={{ height: rowHeight - 8 }} className="relative w-full">
-          <ClipBody clip={clip} width={width} poster={poster} />
+          <ClipBody clip={clip} width={width} height={rowHeight - 8} preview={preview} />
 
           {/* Colour spine, so a glance identifies the clip even when zoomed out. */}
           <span className="absolute inset-x-0 bottom-0 h-0.5" style={{ background: clip.color }} />
@@ -207,7 +222,7 @@ const TrimHandle = ({ side, onPointerDown }: { side: TrimEdge; onPointerDown: (e
   </div>
 );
 
-const ClipBody = ({ clip, width, poster }: { clip: Clip; width: number; poster: string | null }) => {
+const ClipBody = ({ clip, width, height, preview }: { clip: Clip; width: number; height: number; preview: ClipPreview | null }) => {
   if (isTextClip(clip)) {
     return (
       <div className="flex h-full items-center px-2 pt-3" style={{ background: `${clip.color}33` }}>
@@ -216,36 +231,51 @@ const ClipBody = ({ clip, width, poster }: { clip: Clip; width: number; poster: 
     );
   }
   if (clip.kind === 'audio') return <Waveform clip={clip} width={width} />;
-  return <Filmstrip clip={clip} width={width} poster={poster} />;
+  return <Filmstrip clip={clip} width={width} height={height} preview={preview} />;
 };
 
-const Filmstrip = ({ clip, width, poster }: { clip: MediaClip; width: number; poster: string | null }) => {
-  const { frames, tileCount } = useFilmstrip(clip, width);
+const Filmstrip = ({ clip, width, height, preview }: { clip: MediaClip; width: number; height: number; preview: ClipPreview | null }) => {
+  const aspect = preview?.aspect ?? DEFAULT_ASPECT;
+  const poster = preview?.poster ?? null;
+  const { frames, tileWidth, tileCount } = useFilmstrip(clip, width, height, aspect);
 
   /*
-   * One grid, always. A tile shows its own still once the strip has decoded,
-   * and the asset's poster frame until then.
+   * Whole frames, at row height, laid end to end.
    *
-   * Strips are decoded off the render path, and until one arrived the clip was
-   * a slab of flat grey — on every zoom step, for every clip, each waiting its
-   * turn behind a single decoder. The poster is already in the store and costs
-   * nothing to paint, so a clip shows its own footage immediately.
+   * Each tile is given the width its own frame has at this height and the
+   * picture is sized `auto 100%`, so it fills the tile exactly: nothing is
+   * cropped and nothing is stretched. The last tile runs past the end of the
+   * clip and is clipped by the clip body, which is what a strip cut to length
+   * should look like.
    *
-   * It has to be laid out as tiles rather than as one background across the
-   * clip: tiles are cover-cropped, so a single stretched or repeated backdrop
-   * showed a visibly wider view of the frame than the tiles that replaced it,
-   * and the framing jumped as each strip landed. Same boxes, same crop, only
-   * the picture changes.
+   * A tile shows its own still once the strip has decoded and the asset's
+   * poster frame until then. Strips are decoded off the render path, and
+   * without the poster a clip sat on flat grey on every zoom step, each one
+   * waiting its turn behind a single decoder. Because the poster is the same
+   * picture at the same aspect, nothing about the framing changes when the
+   * real stills replace it — only the moment each one shows.
    *
    * For a still image the poster is not a placeholder at all — it is the
    * finished picture, which is why images no longer decode a strip.
    */
   return (
-    <div className="flex h-full w-full bg-surface-tertiary">
+    <div className="flex h-full w-full overflow-hidden bg-surface-tertiary">
       {Array.from({ length: tileCount }, (_, index) => {
-        const tile = frames[index] || poster;
+        // More tiles than frames past the decode budget: repeat the nearest.
+        const decoded = frames.length > 0 ? frames[Math.min(frames.length - 1, Math.floor((index * frames.length) / tileCount))] : '';
+        const tile = decoded || poster;
         return (
-          <div key={index} className="h-full min-w-0 flex-1 bg-cover bg-center" style={tile ? { backgroundImage: `url(${tile})` } : undefined} />
+          <div
+            key={index}
+            style={{
+              width: tileWidth,
+              backgroundImage: tile ? `url(${tile})` : undefined,
+              backgroundSize: 'auto 100%',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            }}
+            className="h-full shrink-0"
+          />
         );
       })}
     </div>

@@ -11,6 +11,8 @@ import type { Scene } from './compositor';
  */
 const RETRY_DELAY_MS = 120;
 
+type BufferContext = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
+
 export interface PlayerCallbacks {
   /** Latest scene state, pulled fresh each frame so edits show up live. */
   getScene: () => Scene;
@@ -37,6 +39,35 @@ export class Player {
   private context: CanvasRenderingContext2D | null = null;
   private callbacks: PlayerCallbacks;
 
+  /**
+   * Off-screen surface each frame is composited into, then blitted to the
+   * screen in one go.
+   *
+   * Compositing straight to the visible canvas meant the screen showed a
+   * half-built frame for as long as the build took. `renderScene` lays the
+   * background down first — it has to, it is the base every layer sits on —
+   * and only then awaits the decoder, so the canvas held nothing but
+   * background for the whole wait.
+   *
+   * Scrubbing forward hid that: the reader steps its open iterator and answers
+   * within the same frame. Scrubbing *backward* cannot — the iterator only
+   * runs forward, so every backward move re-seeks to the preceding keyframe
+   * and replays a group of pictures to get there. That is hundreds of
+   * milliseconds of a visibly empty preview, on every pointer move.
+   *
+   * One surface, at project size, for the life of the page.
+   */
+  private buffer: OffscreenCanvas | HTMLCanvasElement | null = null;
+  private bufferContext: BufferContext | null = null;
+  /**
+   * Whether the visible canvas holds a frame worth protecting.
+   *
+   * Withholding an incomplete frame only makes sense when there is something
+   * better already on screen. Before the first one lands — and after anything
+   * that clears the canvas — a partial picture beats a blank one.
+   */
+  private presented = false;
+
   private rafId = 0;
   private playing = false;
   private rendering = false;
@@ -59,6 +90,8 @@ export class Player {
   attach(canvas: HTMLCanvasElement | null) {
     this.canvas = canvas;
     this.context = canvas?.getContext('2d', { alpha: false }) ?? null;
+    // A fresh canvas has nothing on it to hold on to.
+    this.presented = false;
   }
 
   get isPlaying() {
@@ -138,6 +171,14 @@ export class Player {
     this.pause();
     this.cancelRetry();
     this.audio.dispose();
+    // Hand back the backing store rather than waiting for the collector to
+    // notice a detached canvas; at 4K this surface is about 33MB.
+    if (this.buffer) {
+      this.buffer.width = 0;
+      this.buffer.height = 0;
+    }
+    this.buffer = null;
+    this.bufferContext = null;
   }
 
   private elapsedUs(): number {
@@ -193,7 +234,7 @@ export class Player {
     let complete = true;
     this.rendering = true;
     try {
-      complete = await this.paint(context, canvas, timeUs);
+      complete = await this.paint(context, canvas, timeUs, allowRetry);
     } catch (error) {
       // Usually a disposed reader or a closed sample mid-seek, and the next
       // frame recovers. But the background has already been painted by the
@@ -241,12 +282,31 @@ export class Player {
     this.retryTimer = null;
   }
 
+  /** The off-screen surface, sized to the project. Null if 2D is unavailable. */
+  private ensureBuffer(width: number, height: number): BufferContext | null {
+    if (!this.buffer) {
+      this.buffer =
+        typeof OffscreenCanvas !== 'undefined'
+          ? new OffscreenCanvas(width, height)
+          : Object.assign(document.createElement('canvas'), { width, height });
+      // Opaque, matching the visible canvas: the background is always painted.
+      this.bufferContext = (this.buffer.getContext('2d', { alpha: false }) as BufferContext | null) ?? null;
+    }
+    if (this.buffer.width !== width || this.buffer.height !== height) {
+      this.buffer.width = width;
+      this.buffer.height = height;
+    }
+    return this.bufferContext;
+  }
+
   /** One pass over the scene. False when a visible layer had no source to draw. */
-  private async paint(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, timeUs: number) {
+  private async paint(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, timeUs: number, allowRetry: boolean) {
     const scene = this.callbacks.getScene();
     if (canvas.width !== scene.project.width || canvas.height !== scene.project.height) {
       canvas.width = scene.project.width;
       canvas.height = scene.project.height;
+      // Resizing a canvas clears it, so there is nothing left to protect.
+      this.presented = false;
     }
 
     /*
@@ -263,6 +323,29 @@ export class Player {
     for (const clip of scene.clips) end = Math.max(end, clip.startUs + clip.durationUs);
     const renderTime = end > 0 ? Math.min(timeUs, end - 1) : timeUs;
 
-    return renderScene(context, scene, renderTime, { target: 'preview' });
+    const offscreen = this.ensureBuffer(scene.project.width, scene.project.height);
+    // No off-screen surface to be had: composite to the screen directly, which
+    // is worse to look at but still correct.
+    if (!offscreen) return renderScene(context, scene, renderTime, { target: 'preview' });
+
+    const complete = await renderScene(offscreen, scene, renderTime, { target: 'preview' });
+
+    /*
+     * An incomplete frame is held back while a good one is on screen: a layer
+     * whose decoder is still seeking would otherwise replace a real picture
+     * with a bare background, which is the flicker this buffer exists to
+     * remove. The previous frame stays up, and the retry lands the real one.
+     *
+     * It is shown in the two cases where there is nothing better: when the
+     * screen is empty anyway, and on the retry — by then the source has had
+     * its chance, and a stale picture that never resolves is worse than an
+     * honest empty one, since a deleted asset would otherwise keep showing
+     * footage that has left the project.
+     */
+    if (complete || !allowRetry || !this.presented) {
+      context.drawImage(this.buffer as CanvasImageSource, 0, 0);
+      this.presented = true;
+    }
+    return complete;
   }
 }

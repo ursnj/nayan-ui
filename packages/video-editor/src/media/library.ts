@@ -1,5 +1,6 @@
 import { ALL_FORMATS, AudioBufferSink, BlobSource, CanvasSink, Input, VideoSampleSink } from 'mediabunny';
 import type { InputAudioTrack, InputVideoTrack } from 'mediabunny';
+import { reportOnce } from '../lib/diagnostics';
 import { uid } from '../lib/utils';
 import { US } from '../types';
 import type { AssetKind, MediaAsset } from '../types';
@@ -472,6 +473,7 @@ const buildFilmstrip = async ({ key, assetId, fromUs, toUs, count, tilePx }: Fil
 
   const sink = new CanvasSink(entry.videoTrack, { width: tilePx, poolSize: 0 });
   const encoding: Promise<string>[] = [];
+  let failure: unknown = null;
 
   try {
     for await (const wrapped of sink.canvasesAtTimestamps(timestamps)) {
@@ -484,34 +486,52 @@ const buildFilmstrip = async ({ key, assetId, fromUs, toUs, count, tilePx }: Fil
        */
       encoding.push(wrapped ? canvasToUrl(wrapped.canvas) : Promise.resolve(''));
     }
-  } catch {
-    // Decoder gave out part way; treat it as a partial below.
+  } catch (error) {
+    // Kept rather than swallowed: whatever decoded is still usable, and the
+    // reason this stopped early is the only clue anyone gets.
+    failure = error;
   }
 
   const frames = await Promise.all(encoding);
 
-  if (signal.aborted || frames.length < count) {
-    // Never cache a strip with holes in it: a cached answer is never asked
-    // for again, so one bad decode would leave the clip blank for good.
+  if (signal.aborted) {
     revokeFrames(frames);
     return null;
   }
-  if (frames.every(frame => frame === '')) {
-    // Answered in full, with nothing in it. Retrying would only fail again.
-    return [];
+
+  if (frames.some(frame => frame !== '')) {
+    /*
+     * A decode that gave out part way still has real frames in it, and they
+     * are worth keeping — this used to throw the whole strip away and ask
+     * again, so a file that could only ever yield part of a strip showed none
+     * of it, forever, and retried for the rest of the session.
+     *
+     * Padded to the full count so each tile still maps to the instant it
+     * stands for; the tiles with nothing fall back to the poster frame.
+     */
+    while (frames.length < count) frames.push('');
+    if (failure) reportOnce('filmstrip', failure);
+
+    // Checked again: the cache can have filled during the decode. Whoever got
+    // there first owns the URLs the timeline is showing, so these are the ones
+    // to throw away.
+    const winner = strips.get(key);
+    if (winner) {
+      revokeFrames(frames);
+      return winner.frames;
+    }
+
+    rememberStrip(key, assetId, frames);
+    return frames;
   }
 
-  // Checked again: the cache can have filled during the decode. Whoever got
-  // there first owns the URLs the timeline is showing, so these are the ones
-  // to throw away.
-  const winner = strips.get(key);
-  if (winner) {
-    revokeFrames(frames);
-    return winner.frames;
-  }
-
-  rememberStrip(key, assetId, frames);
-  return frames;
+  /*
+   * Not one frame came back, so there is no point asking again — but silence
+   * here is what makes a broken strip indistinguishable from one still
+   * decoding. Reported once per distinct cause, as the render path does.
+   */
+  reportOnce('filmstrip', failure ?? new Error(`no frames could be decoded from ${entry.file.name}`));
+  return [];
 };
 
 /**
