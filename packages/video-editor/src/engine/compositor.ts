@@ -257,7 +257,21 @@ const drawLayer = async (
   if (alpha <= 0.001) return true;
 
   if (isTextClip(clip)) {
-    const rendered = renderTextToScratch(clip, project, timeUs, `${options.target}:raster`);
+    /*
+     * Keyed per clip, not per target.
+     *
+     * The surface and the signature that guards it share this key, so one key
+     * for every text clip meant two captions on screen invalidated each other
+     * on every frame: A rasterises and stores its signature, B finds A's and
+     * rasterises over it, then A finds B's — a cache that could never hit
+     * while more than one title was visible, re-laying out every line of both
+     * at full project size sixty times a second.
+     *
+     * Still `export:`-prefixed, so `releaseExportSurfaces` still reclaims
+     * these, and still under the same LRU cap, which is what keeps a timeline
+     * full of titles from holding a full-frame canvas for each one.
+     */
+    const rendered = renderTextToScratch(clip, project, timeUs, `${options.target}:raster:${clip.id}`);
     if (!rendered) return false;
     compose(context, rendered.canvas, clip, project, timeUs, options, override, alpha, project.width, project.height);
     return true;
@@ -649,7 +663,7 @@ const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: n
    * animation lands in here already evaluated for this instant.
    */
   const signature = [
-    lines.join(' '),
+    lines.join('\0'),
     font,
     clip.align,
     clip.textColor,

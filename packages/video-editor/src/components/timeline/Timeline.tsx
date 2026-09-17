@@ -64,6 +64,9 @@ const FIT_OPTIONS: { value: MediaFit; label: React.ReactNode; title: string }[] 
 
 /** Stable empty list, so a track with no clips doesn't break row memoisation. */
 const NO_CLIPS: Clip[] = [];
+/** Step the virtualisation window is rounded to. Half the overscan, so a clip
+ *  is always mounted before the window that admits it moves. */
+const QUANTISE_PX = VIRTUALISE_OVERSCAN_PX / 2;
 /** The sticky head above the lanes is just the ruler. */
 const HEAD_HEIGHT = RULER_HEIGHT;
 
@@ -522,11 +525,31 @@ export const Timeline = () => {
   // Only the timeline knows the viewport the project has to fit into.
   useCommand('zoomFit', zoomToFit);
 
-  const visibleRange = useMemo(() => {
-    const startPx = Math.max(0, viewport.left - HEADER_WIDTH - VIRTUALISE_OVERSCAN_PX);
-    const endPx = viewport.left + viewport.width - HEADER_WIDTH + VIRTUALISE_OVERSCAN_PX;
-    return { startUs: (startPx / pxPerSec) * US, endUs: (endPx / pxPerSec) * US };
-  }, [viewport, pxPerSec]);
+  /*
+   * Quantised to a fraction of the overscan, which is what makes it hold still.
+   *
+   * This is a fresh object whenever the scroll position moves a pixel, and it
+   * reaches every `TrackRow` as a prop — so an ordinary sideways scroll was
+   * missing every row's `memo` on every scroll event and re-rendering every
+   * clip on the timeline, sixty times a second, to arrive at the same list.
+   *
+   * Rounding the bounds outward to a step keeps the range stable through small
+   * movements. The step is well inside `VIRTUALISE_OVERSCAN_PX`, so a clip that
+   * scrolls into view is already mounted from the overscan before the range it
+   * belongs to changes — the window only ever grows early, never late.
+   */
+  /*
+   * Rounded outside the memo, and the memo keyed on the rounded numbers rather
+   * than on `viewport`. Keyed on the viewport it would run again on every
+   * scroll event and hand back a new object holding identical values, which is
+   * the whole problem restated — it is the object's identity the rows compare.
+   */
+  const rangeStartPx = Math.max(0, Math.floor(Math.max(0, viewport.left - HEADER_WIDTH - VIRTUALISE_OVERSCAN_PX) / QUANTISE_PX) * QUANTISE_PX);
+  const rangeEndPx = Math.ceil((viewport.left + viewport.width - HEADER_WIDTH + VIRTUALISE_OVERSCAN_PX) / QUANTISE_PX) * QUANTISE_PX;
+  const visibleRange = useMemo(
+    () => ({ startUs: (rangeStartPx / pxPerSec) * US, endUs: (rangeEndPx / pxPerSec) * US }),
+    [rangeStartPx, rangeEndPx, pxPerSec]
+  );
 
   const videoTrackCount = tracks.filter(track => track.kind === 'video').length;
   const audioTrackCount = tracks.filter(track => track.kind === 'audio').length;
