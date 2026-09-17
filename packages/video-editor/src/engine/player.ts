@@ -11,6 +11,22 @@ import type { Scene } from './compositor';
  */
 const RETRY_DELAY_MS = 120;
 
+/**
+ * How many times a frame may fail to resolve before its empty version is shown.
+ *
+ * One attempt was not enough. The decoder that owes this frame a sample shares
+ * the machine with everything else the editor does — importing a file, decoding
+ * poster frames and filmstrips for the timeline, mixing audio for an export —
+ * and any of those can keep it busy well past a single 120ms wait. The retry
+ * then arrived with the source still missing and published the empty frame
+ * anyway, so the preview went blank while the picture was merely late.
+ *
+ * Backed off linearly, so five attempts span roughly 1.8s in total. Past that
+ * the frame really is empty, and an honest blank beats a stale picture of an
+ * asset that may have left the project.
+ */
+const MAX_RENDER_ATTEMPTS = 5;
+
 type BufferContext = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
 
 export interface PlayerCallbacks {
@@ -223,7 +239,7 @@ export class Player {
     if (!this.rendering) void this.renderAt(timeUs);
   };
 
-  private async renderAt(timeUs: number, allowRetry = true) {
+  private async renderAt(timeUs: number, attempt = 0) {
     const context = this.context;
     const canvas = this.canvas;
     if (!context || !canvas) return;
@@ -231,10 +247,11 @@ export class Player {
     // Whatever this frame turns out to be, it supersedes an older retry.
     this.cancelRetry();
 
+    const lastAttempt = attempt >= MAX_RENDER_ATTEMPTS - 1;
     let complete = true;
     this.rendering = true;
     try {
-      complete = await this.paint(context, canvas, timeUs, allowRetry);
+      complete = await this.paint(context, canvas, timeUs, !lastAttempt);
     } catch (error) {
       // Usually a disposed reader or a closed sample mid-seek, and the next
       // frame recovers. But the background has already been painted by the
@@ -263,16 +280,24 @@ export class Player {
      * inside the render window. Holding the flag across a wait was a deadlock:
      * `requestAnimationFrame` doesn't fire while the document is hidden, so
      * the promise never settled, `finally` never ran, and every later repaint
-     * queued behind a render that would never finish. A timer fires in a
-     * hidden tab, and one retry is enough for a decoder to catch up.
+     * queued behind a render that would never finish. A timer fires in a hidden
+     * tab, which is why this is a timeout and not a frame callback.
+     *
+     * Retried up to `MAX_RENDER_ATTEMPTS` times with a widening gap, because a
+     * decoder competing with an import or a timeline full of filmstrips needs
+     * longer than one wait to answer — and `paint` holds the good frame on
+     * screen for every attempt but the last.
      */
-    if (!complete && allowRetry && !this.playing) {
-      this.retryTimer = setTimeout(() => {
-        this.retryTimer = null;
-        // Superseded by playback, a newer render, or a move to another instant.
-        if (this.playing || this.rendering || this.currentUs !== timeUs) return;
-        void this.renderAt(timeUs, false);
-      }, RETRY_DELAY_MS);
+    if (!complete && !lastAttempt && !this.playing) {
+      this.retryTimer = setTimeout(
+        () => {
+          this.retryTimer = null;
+          // Superseded by playback, a newer render, or a move to another instant.
+          if (this.playing || this.rendering || this.currentUs !== timeUs) return;
+          void this.renderAt(timeUs, attempt + 1);
+        },
+        RETRY_DELAY_MS * (attempt + 1)
+      );
     }
   }
 

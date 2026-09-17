@@ -357,6 +357,12 @@ export interface ExportSettings {
   bitrate: number;
   audioBitrate: number;
   includeAudio: boolean;
+  /**
+   * Append the editor's credit card after the last frame. Adds
+   * `END_CREDIT_SECONDS` to the output, which is why it has to reach the
+   * audio mix as well as the frame loop.
+   */
+  endCredit: boolean;
   /** Encode only the region between the in/out points when set. */
   rangeUs: { startUs: number; endUs: number } | null;
 }
