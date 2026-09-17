@@ -199,7 +199,17 @@ export const PreviewPanel = () => {
             disabled={durationUs === 0}
             aria-label={isPlaying ? 'Pause' : 'Play'}
             className="mx-1 h-8 w-8 rounded-full px-0">
-            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="ml-0.5 h-4 w-4" />}
+            {/*
+              No nudge on the triangle. It carried an `ml-0.5`, presumably as
+              the usual optical correction for a shape whose weight sits left of
+              its bounding box — but Lucide has already applied that inside the
+              glyph: its polygon spans 6→20 of a 24 frame, so the triangle is
+              drawn two thirds of a pixel right of centre at this size. The
+              margin stacked a second correction on top of the first and left
+              the play state visibly right of the circle, while Pause below it
+              sat true.
+            */}
+            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
           </NButton>
         </NTooltip>
 
