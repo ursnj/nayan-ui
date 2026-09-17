@@ -640,9 +640,26 @@ export const Timeline = () => {
          * scrolls *under* the header column horizontally, and under the ruler
          * row vertically. Those two never overlap each other — different
          * columns — so only the corner has to beat both, which is why it is
-         * hoisted out of the ruler row below.
+         * hoisted out of the ruler row below. The grab handle, sticky to the
+         * ruler, tops even the corner: see the Playhead.
          */}
         <div className="relative [overflow-x:clip]" style={{ width: HEADER_WIDTH + contentWidth }}>
+          {/*
+           * First child on purpose. The line inside is absolute and could go
+           * anywhere, but the grab handle rides in a sticky wrapper, and a
+           * sticky box only pins once its *flow* position has scrolled past
+           * the offset — rendered last, after the lanes, it would sit at the
+           * bottom of the content until scrolled to. Its wrapper is
+           * zero-height, so leading the content costs no layout.
+           */}
+          <Playhead
+            scrollRef={scrollRef}
+            height={HEAD_HEIGHT + tracksHeight}
+            viewportLeft={viewport.left}
+            viewportWidth={viewport.width}
+            onGrab={event => beginDrag({ kind: 'scrub' }, event)}
+          />
+
           {/*
            * The corner cannot live inside the ruler row: a sticky element is a
            * stacking context whatever its z-index, so nested there its layer
@@ -717,14 +734,6 @@ export const Timeline = () => {
             aria-hidden="true"
             className="pointer-events-none absolute left-0 top-0 z-[26] w-px bg-accent opacity-0"
             style={{ height: HEAD_HEIGHT + tracksHeight }}
-          />
-
-          <Playhead
-            scrollRef={scrollRef}
-            height={HEAD_HEIGHT + tracksHeight}
-            viewportLeft={viewport.left}
-            viewportWidth={viewport.width}
-            onGrab={event => beginDrag({ kind: 'scrub' }, event)}
           />
         </div>
       </div>
@@ -1014,13 +1023,21 @@ const Playhead = ({
     }
   }, [left, isPlaying, scrollRef, viewportLeft, viewportWidth]);
 
+  /*
+   * The line and the handle track the same instant but are separate elements,
+   * because they need different layers and different vertical behaviour — the
+   * line spans the lanes, the handle sticks to the ruler — and one shared
+   * wrapper could give them neither. A wrapper would in fact take the layer
+   * away from both: `transform`, and `will-change` with it, makes an element a
+   * stacking context whatever its z-index, flattening whatever it holds onto
+   * its own layer and burying it under the sticky strips.
+   *
+   * So each carries the translate itself, with nothing inside it to stack.
+   */
+  const moving: React.CSSProperties = { transform: `translateX(${left}px)`, willChange: 'transform' };
+
   return (
-    /*
-     * The wrapper deliberately takes no z-index of its own: the line and the
-     * handle need different layers, and a z-index here would trap both in one
-     * stacking context.
-     */
-    <div className="pointer-events-none absolute top-0" style={{ height, transform: `translateX(${left}px)`, willChange: 'transform' }}>
+    <>
       {/*
         The line stays transparent to the pointer: it crosses every clip, and
         catching clicks along its length would make clips unselectable
@@ -1028,15 +1045,18 @@ const Playhead = ({
 
         Its emphasis is driven by state rather than by `group-hover`, because
         an element with `pointer-events: none` is excluded from hit testing
-        and so never matches `:hover` — the group on this wrapper could never
+        and so never matches `:hover` — a group around these two could never
         have fired, however the handle below was styled.
-      */}
-      {/*
+
         Above the ruler at z-30, so the line stays readable across it, and
         below the track-header column at z-40, so scrolling sideways tucks it
         behind the strip instead of drawing it across the track names.
       */}
-      <div className={cn('relative z-[35] h-full bg-playhead transition-all', emphasised ? 'w-0.5' : 'w-px')} />
+      <div
+        aria-hidden="true"
+        className={cn('pointer-events-none absolute top-0 z-[35] bg-playhead transition-all', emphasised ? 'w-0.5' : 'w-px')}
+        style={{ height, ...moving }}
+      />
 
       {/*
         The one part that takes pointer events. Its hit area is deliberately
@@ -1054,18 +1074,34 @@ const Playhead = ({
         Once the playhead really is behind the header column it is unmounted
         instead, since there is nothing left there to grab at. Unmounting is
         safe mid-drag — the scrub runs on window listeners, not on this button.
+
+        Its wrapper is sticky, so the knob rides the ruler down instead of
+        scrolling off the top once a project has more tracks than fit: the
+        ruler row the knob belongs to is `sticky top-0` itself, and the knob
+        has to stay with it. Absolute at a measured `scrollTop` would not do —
+        that number only reaches React through a scroll handler, so the knob
+        would trail the scale by a frame and visibly drift on a fast flick,
+        where sticky is resolved during layout and never lags.
+
+        The wrapper takes no height, like the corner's, so leading the content
+        does not push the ruler down — and the translate goes on the button
+        rather than on the wrapper, leaving this full-width strip where it is
+        instead of shoving it sideways for `overflow-x: clip` to cut off.
       */}
       {showHandle && (
-        <button
-          type="button"
-          aria-label="Drag to move the playhead"
-          onPointerDown={onGrab}
-          onPointerEnter={() => setHovered(true)}
-          onPointerLeave={() => setHovered(false)}
-          className="pointer-events-auto absolute -left-[11px] -top-1 z-[55] flex h-6 w-6 cursor-grab touch-none items-start justify-center active:cursor-grabbing">
-          <span className={cn('mt-1 h-3 w-2.5 rounded-b-sm bg-playhead transition-transform', emphasised && 'scale-125')} />
-        </button>
+        <div className="pointer-events-none sticky top-0 z-[55] h-0">
+          <button
+            type="button"
+            aria-label="Drag to move the playhead"
+            onPointerDown={onGrab}
+            onPointerEnter={() => setHovered(true)}
+            onPointerLeave={() => setHovered(false)}
+            style={moving}
+            className="pointer-events-auto absolute -left-[11px] -top-1 flex h-6 w-6 cursor-grab touch-none items-start justify-center active:cursor-grabbing">
+            <span className={cn('mt-1 h-3 w-2.5 rounded-b-sm bg-playhead transition-transform', emphasised && 'scale-125')} />
+          </button>
+        </div>
       )}
-    </div>
+    </>
   );
 };
