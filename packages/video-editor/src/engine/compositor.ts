@@ -681,13 +681,32 @@ const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: n
 
   context.globalAlpha = animation.alpha;
 
+  /*
+   * The block stays where the clip is. Only the lines move inside it.
+   *
+   * `fillText` positions a line relative to the x it is handed, according to
+   * `textAlign` — so drawing every alignment at the clip's own centre made the
+   * alignment *move the caption*: left-aligned text began at the centre and ran
+   * right, right-aligned ended there and ran left, and a single-line title (the
+   * ordinary case) simply jumped half its width sideways with nothing about its
+   * ragged edge to show for it.
+   *
+   * Measuring the widest line gives the block its own extent, so the anchor can
+   * be the block's left edge, its right edge or its centre while the block
+   * itself stays centred on the clip in all three. Alignment then means what it
+   * means in a text editor: which side the ragged edge is on. It also puts the
+   * drawn text back where the transform overlay draws its selection box, which
+   * is centred on the clip and was never told about any of this.
+   */
+  const widest = Math.max(...lines.map(line => context.measureText(line).width));
+  const blockLeft = centreX - widest / 2;
+  const anchorX = clip.align === 'left' ? blockLeft : clip.align === 'right' ? blockLeft + widest : centreX;
+
   if (clip.backgroundColor !== 'transparent') {
-    const widest = Math.max(...lines.map(line => context.measureText(line).width));
     const padX = fontSize * 0.4;
     const padY = fontSize * 0.25;
-    const boxLeft = clip.align === 'left' ? centreX : clip.align === 'right' ? centreX - widest : centreX - widest / 2;
     context.fillStyle = clip.backgroundColor;
-    roundedRect(context, boxLeft - padX, centreY - blockHeight / 2 - padY, widest + padX * 2, blockHeight + padY * 2, fontSize * 0.2);
+    roundedRect(context, blockLeft - padX, centreY - blockHeight / 2 - padY, widest + padX * 2, blockHeight + padY * 2, fontSize * 0.2);
     context.fill();
   }
 
@@ -697,10 +716,10 @@ const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: n
       context.lineWidth = clip.strokeWidth * fontSize * 0.1;
       context.strokeStyle = clip.strokeColor;
       context.lineJoin = 'round';
-      context.strokeText(line, centreX, y);
+      context.strokeText(line, anchorX, y);
     }
     context.fillStyle = clip.textColor;
-    context.fillText(line, centreX, y);
+    context.fillText(line, anchorX, y);
   });
 
   return surface;

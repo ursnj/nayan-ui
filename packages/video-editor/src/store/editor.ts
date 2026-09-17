@@ -11,7 +11,8 @@ import {
   DEFAULT_TRANSFORM,
   US,
   clipEndUs,
-  isMediaClip
+  isMediaClip,
+  isTextClip
 } from '../types';
 import type { Clip, MediaAsset, MediaFit, ProjectSettings, TextClip, Track, TrackKind, TransitionKind } from '../types';
 
@@ -186,8 +187,30 @@ const findFreeTrack = (tracks: Track[], clips: Clip[], kind: TrackKind, startUs:
   return null;
 };
 
-/** New video tracks stack on top; new audio tracks go to the bottom. */
-const insertTrack = (tracks: Track[], track: Track): Track[] => (track.kind === 'video' ? [track, ...tracks] : [...tracks, track]);
+/**
+ * New video tracks stack on top; new audio tracks go to the bottom.
+ *
+ * `underTitles` is the exception, and it exists for the one case where "on
+ * top" is never what was meant. Dropping footage that overlaps whatever is
+ * already there needs a new track, and prepending it put that footage above
+ * every title on the timeline — the top row draws last, so a caption written
+ * before the clip arrived vanished behind it. Nobody imports a video in order
+ * to cover their own titles.
+ *
+ * So auto-created footage tracks go above the other footage, which is what you
+ * want for picture-in-picture, and below the run of title tracks at the top,
+ * which is where titles belong. A track counts as a title track while it holds
+ * any text; tracks created for a text clip itself still go straight to the top.
+ */
+const insertTrack = (tracks: Track[], track: Track, clips: Clip[] = [], underTitles = false): Track[] => {
+  if (track.kind !== 'video') return [...tracks, track];
+  if (!underTitles) return [track, ...tracks];
+
+  const titleTrackIds = new Set(clips.filter(isTextClip).map(clip => clip.trackId));
+  let index = 0;
+  while (index < tracks.length && tracks[index].kind === 'video' && titleTrackIds.has(tracks[index].id)) index++;
+  return [...tracks.slice(0, index), track, ...tracks.slice(index)];
+};
 
 const snapshotOf = (state: Snapshot): Snapshot => ({
   project: state.project,
@@ -289,8 +312,20 @@ export const useEditor = create<EditorState>((set, get) => {
       return { ...patch, past: [...state.past, snapshotOf(state)].slice(-MAX_HISTORY), future: [] };
     });
 
-  /** Places a freshly created clip, adding a track if every candidate is busy. */
-  const placeClip = (state: EditorState, kind: TrackKind, startUs: number, durationUs: number, preferredTrackId?: string) => {
+  /**
+   * Places a freshly created clip, adding a track if every candidate is busy.
+   *
+   * `content` only matters when a track has to be made: a title's track goes
+   * on top, footage's goes under whatever titles are already up there.
+   */
+  const placeClip = (
+    state: EditorState,
+    kind: TrackKind,
+    startUs: number,
+    durationUs: number,
+    preferredTrackId?: string,
+    content: 'media' | 'text' = 'media'
+  ) => {
     let tracks = state.tracks;
     const preferred = tracks.find(entry => entry.id === preferredTrackId);
     const preferredUsable =
@@ -303,7 +338,7 @@ export const useEditor = create<EditorState>((set, get) => {
     if (!track) {
       const count = tracks.filter(entry => entry.kind === kind).length + 1;
       track = makeTrack(kind, count);
-      tracks = insertTrack(tracks, track);
+      tracks = insertTrack(tracks, track, state.clips, content === 'media');
     }
     return { tracks, track };
   };
@@ -366,7 +401,7 @@ export const useEditor = create<EditorState>((set, get) => {
     addTextClip: (preset, atUs) => {
       const state = get();
       const startUs = Math.max(0, Math.round(atUs ?? state.playheadUs));
-      const { tracks, track } = placeClip(state, 'video', startUs, 3 * US);
+      const { tracks, track } = placeClip(state, 'video', startUs, 3 * US, undefined, 'text');
       const clip = makeTextClip(track.id, startUs, preset);
       commit(current => ({ tracks, clips: [...current.clips, clip], selectedClipIds: [clip.id] }));
       return clip.id;
