@@ -5,6 +5,7 @@ import { Clapperboard, Download, FileDown, FilePlus2, FileUp, Keyboard, Moon, Re
 import { BUNDLE_EXTENSION, BundleError, readBundle, writeBundle } from '../../lib/projectBundle';
 import { MOD_LABEL, useCommand } from '../../lib/shortcuts';
 import { download } from '../../lib/utils';
+import { generateThumbnail } from '../../media/library';
 import { readEditorState, serialiseProject, useEditor } from '../../store/editor';
 import { IconButton, NumberField, SelectField } from '../controls';
 
@@ -40,6 +41,7 @@ interface TopBarProps {
 export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onResetPreferences }: TopBarProps) => {
   const project = useEditor(state => state.project);
   const updateProject = useEditor(state => state.updateProject);
+  const updateAsset = useEditor(state => state.updateAsset);
   const loadProject = useEditor(state => state.loadProject);
   const resetProject = useEditor(state => state.resetProject);
   const undo = useEditor(state => state.undo);
@@ -104,6 +106,19 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
     try {
       const { project: data, assets, missing } = await readBundle(file);
       loadProject(data, assets);
+      /*
+       * Poster frames are not in the bundle — they are decoded, not saved — so
+       * a reopened project arrived with none at all: no cards in the media
+       * panel and nothing for a clip to show while its filmstrip decodes. The
+       * import path has always done this; only this one never did.
+       *
+       * Fired without waiting, and the library runs them one at a time, so a
+       * project with twenty clips doesn't open twenty decoders to draw them.
+       */
+      for (const asset of assets) {
+        if (asset.thumbnail) continue;
+        void generateThumbnail(asset.id).then(thumbnail => thumbnail && updateAsset(asset.id, { thumbnail }));
+      }
       if (missing.length > 0) {
         showToast(`Could not restore: ${missing.join(', ')}. Those clips will be empty.`, 'Opened with missing media');
       } else {

@@ -17,6 +17,12 @@ interface ClipViewProps {
   rowHeight: number;
   selected: boolean;
   trackLocked: boolean;
+  /**
+   * The asset's poster frame, shown in each filmstrip tile until that tile's
+   * own still has decoded. A plain string, so it doesn't cost this component
+   * its memo.
+   */
+  poster: string | null;
   onSelect: (clip: Clip, additive: boolean) => void;
   onMoveStart: (clip: Clip, event: React.PointerEvent) => void;
   onTrimStart: (clip: Clip, event: React.PointerEvent, edge: TrimEdge) => void;
@@ -33,7 +39,7 @@ interface ClipViewProps {
  * new function per clip per render and defeat the memo entirely.
  */
 export const ClipView = memo(
-  ({ clip, pxPerSec, rowHeight, selected, trackLocked, onSelect, onMoveStart, onTrimStart, onContextMenu }: ClipViewProps) => {
+  ({ clip, pxPerSec, rowHeight, selected, trackLocked, poster, onSelect, onMoveStart, onTrimStart, onContextMenu }: ClipViewProps) => {
     const left = (clip.startUs / US) * pxPerSec;
     const width = Math.max(3, (clip.durationUs / US) * pxPerSec);
     const locked = trackLocked || clip.locked;
@@ -112,7 +118,7 @@ export const ClipView = memo(
         )}>
         {/* Row height is user-adjustable, so the body is sized rather than inset. */}
         <div style={{ height: rowHeight - 8 }} className="relative w-full">
-          <ClipBody clip={clip} width={width} />
+          <ClipBody clip={clip} width={width} poster={poster} />
 
           {/* Colour spine, so a glance identifies the clip even when zoomed out. */}
           <span className="absolute inset-x-0 bottom-0 h-0.5" style={{ background: clip.color }} />
@@ -201,7 +207,7 @@ const TrimHandle = ({ side, onPointerDown }: { side: TrimEdge; onPointerDown: (e
   </div>
 );
 
-const ClipBody = ({ clip, width }: { clip: Clip; width: number }) => {
+const ClipBody = ({ clip, width, poster }: { clip: Clip; width: number; poster: string | null }) => {
   if (isTextClip(clip)) {
     return (
       <div className="flex h-full items-center px-2 pt-3" style={{ background: `${clip.color}33` }}>
@@ -210,22 +216,38 @@ const ClipBody = ({ clip, width }: { clip: Clip; width: number }) => {
     );
   }
   if (clip.kind === 'audio') return <Waveform clip={clip} width={width} />;
-  return <Filmstrip clip={clip} width={width} />;
+  return <Filmstrip clip={clip} width={width} poster={poster} />;
 };
 
-const Filmstrip = ({ clip, width }: { clip: MediaClip; width: number }) => {
-  const frames = useFilmstrip(clip, width);
-  if (frames.length === 0) return <div className="h-full w-full bg-surface-tertiary" />;
+const Filmstrip = ({ clip, width, poster }: { clip: MediaClip; width: number; poster: string | null }) => {
+  const { frames, tileCount } = useFilmstrip(clip, width);
 
+  /*
+   * One grid, always. A tile shows its own still once the strip has decoded,
+   * and the asset's poster frame until then.
+   *
+   * Strips are decoded off the render path, and until one arrived the clip was
+   * a slab of flat grey — on every zoom step, for every clip, each waiting its
+   * turn behind a single decoder. The poster is already in the store and costs
+   * nothing to paint, so a clip shows its own footage immediately.
+   *
+   * It has to be laid out as tiles rather than as one background across the
+   * clip: tiles are cover-cropped, so a single stretched or repeated backdrop
+   * showed a visibly wider view of the frame than the tiles that replaced it,
+   * and the framing jumped as each strip landed. Same boxes, same crop, only
+   * the picture changes.
+   *
+   * For a still image the poster is not a placeholder at all — it is the
+   * finished picture, which is why images no longer decode a strip.
+   */
   return (
-    <div className="flex h-full w-full">
-      {frames.map((frame, index) => (
-        <div
-          key={index}
-          className="h-full min-w-0 flex-1 bg-surface-tertiary bg-cover bg-center"
-          style={frame ? { backgroundImage: `url(${frame})` } : undefined}
-        />
-      ))}
+    <div className="flex h-full w-full bg-surface-tertiary">
+      {Array.from({ length: tileCount }, (_, index) => {
+        const tile = frames[index] || poster;
+        return (
+          <div key={index} className="h-full min-w-0 flex-1 bg-cover bg-center" style={tile ? { backgroundImage: `url(${tile})` } : undefined} />
+        );
+      })}
     </div>
   );
 };
