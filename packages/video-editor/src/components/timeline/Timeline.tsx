@@ -608,8 +608,22 @@ export const Timeline = () => {
     };
   }, [clips, selectedIds]);
 
+  /*
+   * `isolate` keeps this panel's layering to itself.
+   *
+   * The stack inside runs up to 55 for the playhead's grab handle, which has to
+   * clear the sticky corner at 50. Nothing between here and the document root
+   * established a stacking context — `.island` is overflow and a border, the
+   * panes are `position: relative` with no z-index — so those numbers were
+   * competing in the *root* context, against a dialog backdrop that sits at 50.
+   * The knob won, and floated over every modal in the editor.
+   *
+   * `isolation` creates a stacking context without creating a containing block,
+   * so the sticky header column and ruler still position against the scrollport,
+   * and the context menu still portals out to the body.
+   */
   return (
-    <section className="island flex h-full min-h-0 flex-col">
+    <section className="island isolate flex h-full min-h-0 flex-col">
       <TimelineToolbar
         snapEnabled={snapEnabled}
         rippleEnabled={rippleEnabled}
