@@ -23,14 +23,24 @@ import { useEditor } from '../store/editor';
 interface SectionProps {
   title: string;
   icon?: React.ReactNode;
-  defaultOpen?: boolean;
   onReset?: () => void;
   children: React.ReactNode;
 }
 
-/** Collapsible inspector group. Sections remember their state per mount. */
-export const Section = ({ title, icon, defaultOpen = true, onReset, children }: SectionProps) => {
-  const [open, setOpen] = useState(defaultOpen);
+/**
+ * Collapsible inspector group, open on arrival. Sections remember their state
+ * per mount.
+ *
+ * There was a `defaultOpen` for the four that started shut — Texture, Crop,
+ * Green screen, Transition in — on the theory that they are the rarely-touched
+ * ones. What it actually produced was a panel whose shape you could not
+ * predict: half the groups showed their contents and half showed a title, with
+ * nothing on screen to say why, so finding a control meant opening the closed
+ * ones to check. Everything is open now, and the prop is gone rather than left
+ * defaulted, so there is one answer to how a section starts.
+ */
+export const Section = ({ title, icon, onReset, children }: SectionProps) => {
+  const [open, setOpen] = useState(true);
 
   return (
     <section className="border-b border-border/60 last:border-b-0">
