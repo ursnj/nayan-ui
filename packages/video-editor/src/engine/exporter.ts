@@ -184,7 +184,7 @@ const CREDIT_LAYOUT = {
   logoHeight: 0.1,
   logoGap: 0.015,
   titleSize: 0.042,
-  titleGap: 0.04,
+  titleGap: 0.03,
   subtitleSize: 0.022,
   urlSize: 0.024,
   /** Distance from the frame's bottom edge to the top of the URL. */
