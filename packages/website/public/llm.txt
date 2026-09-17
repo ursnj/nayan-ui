@@ -238,6 +238,33 @@ function ContactForm() {
 }
 ```
 
+## Video Editor (Standalone Tool)
+
+**Page**: https://www.nayanui.com/video-editor
+**App**: https://www.nayanui.com/video-editor/start
+**Source**: https://github.com/ursnj/nayan-ui/tree/main/packages/video-editor
+
+A free, open source (MIT) video editor that runs entirely in the browser. There is no server, no account, no upload step and no watermark: media is opened from disk, decoded, composited and encoded on the user's own machine using WebCodecs, and the export is written straight to their downloads folder. It works offline once the page has loaded.
+
+### Capabilities
+- **Timeline**: unlimited video and audio tracks; drag, trim, split at the playhead, ripple delete, multi-select, grouping, copy/cut/paste, detach audio, snapping, in/out range marking, undo/redo
+- **Colour**: 15 named looks each with a strength dial, plus a manual grade — brightness, contrast, highlights, shadows, fade, saturation, vibrance, temperature, tint, split toning, sharpen, vignette, grain, blur
+- **Green screen**: GPU chroma key with similarity, edge softness and spill removal, keyed on chrominance
+- **Transitions**: 18 — dissolve, blur dissolve, dip to black/white, wipes and slides on four edges, pushes, zoom in/out, whip pan, iris
+- **Text**: title/subtitle/caption/outline presets, full font and outline control, five entrance animations including typewriter
+- **Backgrounds**: solid, linear gradient, radial gradient, image, or the blurred clip itself (for landscape footage in a vertical frame)
+- **Audio**: per-clip volume, fades, speed and reverse; per-track faders; mixed at 48 kHz stereo on a Web Audio clock so picture and sound cannot drift
+- **Preview**: on-canvas transform handles, frame stepping, loop, safe zones, rule-of-thirds grid, PNG frame grab, full screen
+
+### Formats and limits
+- **Project sizes**: 4K 3840×2160, 1440p, 1080p, 720p, vertical 1080×1920, portrait 4:5 1080×1350, square 1080×1080, or custom
+- **Frame rates**: 23.976, 24, 25, 30, 50, 60 fps
+- **Import**: MP4, M4V, MOV, MKV, WebM, MPEG-TS; MP3, WAV, M4A, AAC, FLAC, OGG, Opus, MKA; PNG, JPEG, WebP, GIF, AVIF
+- **Export**: MP4 (H.264), MOV, MKV, WebM (VP9) for video; M4A, WAV, OGG for audio only. Four quality levels, measured file-size estimate, optional range-only export
+- **Projects**: saved as a single `.nayanproj` file (a zip) containing the timeline and every imported media file
+- **Requirements**: a browser with WebCodecs (Chrome/Edge 94+, Safari 16.4+) and a window at least 1024px wide. WebGL2 accelerates the grade and key, with a Canvas2D fallback
+- **Not supported**: collaboration, cloud storage, keyframed animation, and timelines larger than the machine's memory
+
 ## Best Practices
 
 ### Component Design
