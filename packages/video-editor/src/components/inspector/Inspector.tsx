@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { NToggleButton } from '@nayan-ui/react';
+import { NCheck } from '@nayan-ui/react';
 import {
   AlignCenter,
   AlignLeft,
@@ -32,7 +32,16 @@ import {
 import type { Clip, ColorPreset, MediaClip, TextAlign, TextAnimation, TextClip, TransitionKind } from '../../types';
 import { ColorField, EmptyState, FieldRow, Section, SegmentedControl, SelectField, SliderField, TextField, ToggleChip } from '../controls';
 
-const SPEEDS = [0.5, 1, 1.5, 2];
+/**
+ * Speed runs from half to five times, in half steps.
+ *
+ * The step is what makes the slider usable without presets beside it: every
+ * stop is a speed someone would ask for by name, and there is no way to land
+ * on 1.03× while aiming for normal.
+ */
+const SPEED_MIN = 0.5;
+const SPEED_MAX = 6;
+const SPEED_STEP = 0.5;
 
 /**
  * The type shelf: families the machine already has, never a web font.
@@ -154,6 +163,23 @@ const BasicsSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   const maxFadeMs = Math.min(3000, clip.durationUs / 1000);
   const media = isMediaClip(clip) && clip.kind !== 'image' ? clip : null;
 
+  /*
+   * Snapped to the nearest half step before it is stored: a slider is free to
+   * hand back 2.0000000000000004, and that reaches the clip badge on the
+   * timeline, the readout above and every project file saved afterwards.
+   */
+  const setSpeed = (next: number) => {
+    if (!media) return;
+    const speed = Math.min(SPEED_MAX, Math.max(SPEED_MIN, Math.round(next / SPEED_STEP) * SPEED_STEP));
+    patch({
+      speed,
+      // Hold the same source range: faster playback, shorter clip. Reading the
+      // old pair is safe mid-drag even if a render is skipped, because their
+      // product — the source range — is what this preserves.
+      durationUs: Math.max(100_000, Math.round((media.durationUs * media.speed) / speed))
+    } as Partial<Clip>);
+  };
+
   return (
     <Section title="Basics" icon={<Move className="h-3.5 w-3.5 text-muted" />}>
       <SliderField
@@ -188,33 +214,28 @@ const BasicsSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
 
       {media && (
         <>
-          <FieldRow label="Speed">
-            <div className="flex gap-1">
-              {SPEEDS.map(speed => (
-                <NToggleButton
-                  key={speed}
-                  isSelected={media.speed === speed}
-                  size="sm"
-                  className="flex-1 px-1 text-[10px]"
-                  onChange={() =>
-                    patch({
-                      speed,
-                      // Hold the same source range: faster playback, shorter clip.
-                      durationUs: Math.max(100_000, Math.round((media.durationUs * media.speed) / speed))
-                    } as Partial<Clip>)
-                  }>
-                  {speed}×
-                </NToggleButton>
-              ))}
-            </div>
-          </FieldRow>
-          <ToggleChip
-            active={media.reversed}
-            onClick={() => patch({ reversed: !media.reversed } as Partial<Clip>)}
-            label="Play backwards"
-            className="w-full">
-            Reverse
-          </ToggleChip>
+          {/* Speed reads like Opacity and the fades above it: one label, one
+              readout, one track. Half steps the whole way, so the values worth
+              naming — half, double, five times — all land on a stop. */}
+          <SliderField
+            label="Speed"
+            value={media.speed}
+            min={SPEED_MIN}
+            max={SPEED_MAX}
+            step={SPEED_STEP}
+            format={value => `${value}×`}
+            onChange={setSpeed}
+            resetTo={1}
+          />
+
+          <NCheck
+            id={`reverse-${clip.id}`}
+            checked={media.reversed}
+            onChange={reversed => patch({ reversed } as Partial<Clip>)}
+            className="mb-2"
+            labelClassName="text-[11px] text-foreground">
+            Play backwards
+          </NCheck>
         </>
       )}
     </Section>

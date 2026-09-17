@@ -4,6 +4,7 @@ import { ExportDialog } from './components/ExportDialog';
 import { Inspector } from './components/inspector/Inspector';
 import { LeftRail } from './components/panels/LeftRail';
 import { PreviewPanel } from './components/preview/PreviewPanel';
+import { LeaveGuard } from './components/shell/LeaveGuard';
 import { ShortcutsDialog } from './components/shell/ShortcutsDialog';
 import { SmallScreenNotice } from './components/shell/SmallScreenNotice';
 import { SplitPane } from './components/shell/SplitPane';
@@ -94,6 +95,9 @@ function App() {
     return (
       <NTheme theme={theme} className="h-full">
         <SmallScreenNotice />
+        {/* Mounted on this branch too: the project survives a window dragged
+            narrow, so the warning on the way out has to survive it as well. */}
+        <LeaveGuard />
       </NTheme>
     );
   }
@@ -149,6 +153,7 @@ function App() {
 
       <ExportDialog isOpen={exportOpen} onClose={() => setExportOpen(false)} />
       <ShortcutsDialog isOpen={helpOpen} onClose={() => setHelpOpen(false)} />
+      <LeaveGuard />
     </NTheme>
   );
 }
