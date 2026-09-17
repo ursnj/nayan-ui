@@ -42,9 +42,92 @@ const readers = new Map<string, { reader: SequentialVideoReader; assetId: string
 
 export class UnsupportedMediaError extends Error {}
 
+/**
+ * Extensions for every container mediabunny reads, plus the images the browser
+ * decodes, spelled out for the file picker.
+ *
+ * `accept="video/*,audio/*,image/*"` on its own is not enough, and this is
+ * what kept `.wav` out: a wildcard makes the browser expand the group through
+ * the operating system's own type database, so whether a file can even be
+ * *selected* depends on what that machine happens to have registered. WAV is
+ * the classic casualty — it is `audio/wav` on some systems, `audio/x-wav` or
+ * `audio/wave` on others, and nothing at all where no player claimed it — and
+ * the same hole swallows `.mkv`, `.m4a`, `.flac`, `.opus` and `.ts`. A file the
+ * picker greys out never reaches the decoder that would have read it happily.
+ *
+ * Naming the extensions removes the mapping from the path entirely. The
+ * wildcards stay on the end, so a format the OS knows about and this list has
+ * not caught up with is still offered.
+ *
+ * The containers come from mediabunny's `ALL_FORMATS`: ISOBMFF and QuickTime,
+ * Matroska and WebM, WAVE, Ogg, FLAC, MP3, ADTS and MPEG-TS. Audio-only
+ * containers are as welcome as video ones — a WAV is a first-class asset here,
+ * not a lesser one.
+ */
+export const MEDIA_ACCEPT = [
+  // ISOBMFF / QuickTime
+  '.mp4',
+  '.m4v',
+  '.m4a',
+  '.mov',
+  // Matroska
+  '.mkv',
+  '.mka',
+  '.webm',
+  // WAVE
+  '.wav',
+  '.wave',
+  // Ogg
+  '.ogg',
+  '.oga',
+  '.ogv',
+  '.opus',
+  // Everything else mediabunny demuxes
+  '.flac',
+  '.mp3',
+  '.aac',
+  '.ts',
+  '.m2ts',
+  '.mts',
+  '.m3u8',
+  // Stills, decoded by the browser rather than mediabunny
+  '.png',
+  '.jpg',
+  '.jpeg',
+  '.webp',
+  '.gif',
+  '.bmp',
+  '.avif',
+  'video/*',
+  'audio/*',
+  'image/*'
+].join(',');
+
+const IMAGE_EXTENSIONS = new Set(['png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp', 'avif', 'apng', 'ico']);
+const AUDIO_EXTENSIONS = new Set(['wav', 'wave', 'mp3', 'm4a', 'aac', 'flac', 'ogg', 'oga', 'opus', 'mka', 'aiff', 'aif']);
+
+const extensionOf = (name: string) => name.slice(name.lastIndexOf('.') + 1).toLowerCase();
+
+/**
+ * The kind a file claims to be, by type and then by name.
+ *
+ * The extension is a fallback rather than a nicety: `file.type` is empty
+ * whenever the machine has no mapping for the extension, which is exactly the
+ * case the list above exists for. Left to the MIME alone, a PNG dragged in
+ * from an app that sets no type went down the container path to be told it was
+ * "not a supported media format".
+ *
+ * Only a hint either way — what the file actually contains is settled below by
+ * decoding it.
+ */
 const kindForFile = (file: File): AssetKind => {
   if (file.type.startsWith('image/')) return 'image';
   if (file.type.startsWith('audio/')) return 'audio';
+  if (file.type.startsWith('video/')) return 'video';
+
+  const extension = extensionOf(file.name);
+  if (IMAGE_EXTENSIONS.has(extension)) return 'image';
+  if (AUDIO_EXTENSIONS.has(extension)) return 'audio';
   return 'video';
 };
 
@@ -73,12 +156,19 @@ export const loadAsset = async (file: File, preferredId?: string): Promise<Media
   const objectUrl = URL.createObjectURL(file);
   const declaredKind = kindForFile(file);
 
-  if (declaredKind === 'image') {
-    const bitmap = await createImageBitmap(file).catch(() => null);
-    if (!bitmap) {
-      URL.revokeObjectURL(objectUrl);
-      throw new UnsupportedMediaError(`${file.name} is not a readable image`);
-    }
+  /*
+   * A failed bitmap is not the end of the attempt.
+   *
+   * The kind above is only what the file *claims*, and the claim is often a
+   * name. Something saved with the wrong extension, or given an image type by
+   * the app it was dragged from, used to be rejected here as "not a readable
+   * image" while being a perfectly good MP4 that the container probe below
+   * would have opened. So this branch returns when it succeeds and falls
+   * through when it doesn't, and only the probe gets to refuse the file.
+   */
+  const bitmap = declaredKind === 'image' ? await createImageBitmap(file).catch(() => null) : null;
+
+  if (bitmap) {
     resources.set(id, {
       file,
       input: null,
@@ -115,7 +205,11 @@ export const loadAsset = async (file: File, preferredId?: string): Promise<Media
   if (!(await input.canRead())) {
     input.dispose();
     URL.revokeObjectURL(objectUrl);
-    throw new UnsupportedMediaError(`${file.name} is not a supported media format`);
+    throw new UnsupportedMediaError(
+      declaredKind === 'image'
+        ? `${file.name} is not a readable image, or any media format this editor knows`
+        : `${file.name} is not a supported media format`
+    );
   }
 
   const videoTrack = await input.getPrimaryVideoTrack();

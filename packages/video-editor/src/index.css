@@ -245,28 +245,41 @@ button:focus-visible {
 }
 
 /*
- * One height for every field.
+ * No height here for text inputs. They are sized where they are used: the
+ * track header's name sits in a 20px row, the project name in the top bar is
+ * its own thing, and the inspector's fields are another. A single height for
+ * all of them was wrong in every one of those places at once.
  *
- * The library sizes each of its field types differently. A text input is as
- * tall as its padding and line-height make it — 34px at the editor's text
- * size, 38px at the library's — the number field's group is a flat `h-9`, and
- * react-select builds its control around a 20px chevron wrapped in 8px of
- * padding, which lands on 38px. Put a select beside an input in a dialog and
- * the pair stood four pixels apart.
- *
- * 34px because that is what the inspector's own text inputs already are: the
- * panel carrying the most fields keeps the size it had, and the outliers come
- * to it. The select has to be loosened from the inside before it can get
- * there — the chevron's padding is what was holding the control open — and its
- * value container gives up the vertical padding it no longer has room for.
+ * What is left is the room for the text to sit in whatever height a caller
+ * picks. The library pads a field 8px top and bottom, which is more than a
+ * compact field has to give: at 28px that leaves 10px of content box for a
+ * 16px line and the text is squeezed against the edge rather than sitting in
+ * it. 4px clears the tallest text any field here uses and gets out of the way
+ * of the height itself.
  */
-:root {
-  --field-height: 2.125rem;
+@layer components {
+  .input,
+  .number-field__input {
+    padding-block: calc(var(--spacing) * 1);
+  }
 }
 
-.input,
-.number-field__group,
-.nyn-select .nyn-select__control {
+/*
+ * The two controls that cannot be given a height from the markup.
+ *
+ * A select's control is react-select's, styled by emotion from a stylesheet
+ * injected at runtime — unlayered, so it beats any class we could put on the
+ * element. The number field's group is inside `NNumberField`, which only
+ * forwards a class to its root. Both therefore take their height here, from a
+ * token a panel can scope if it needs its own, and everything else keeps
+ * setting its height in the markup where it can be seen.
+ */
+:root {
+  --field-height: 1.875rem;
+}
+
+.nyn-select .nyn-select__control,
+.nyn-number-field .number-field__group {
   height: var(--field-height);
   min-height: var(--field-height);
 }

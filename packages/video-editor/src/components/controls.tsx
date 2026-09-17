@@ -323,7 +323,10 @@ export const TextField = ({
       placeholder={placeholder}
       onChange={event => onChange(event.target.value)}
       wrapperClassName="mb-2"
-      inputClassName="text-xs"
+      // The inspector's own height, matching the selects and number fields it
+      // shares rows with. Set here rather than globally: nothing outside this
+      // panel has a reason to be this tall.
+      inputClassName="h-[var(--field-height)] text-xs"
     />
   );
 
@@ -380,14 +383,17 @@ export const ColorField = ({
           value={swatch}
           onChange={event => onChange(event.target.value)}
           aria-label={label}
-          className="h-8 w-9 shrink-0 cursor-pointer rounded border border-border bg-transparent p-0.5"
+          // Both this and the transparent button below take the shared field
+          // height rather than a number of their own, so the row stays level
+          // with the hex input between them whatever that height becomes.
+          className="h-[var(--field-height)] w-9 shrink-0 cursor-pointer rounded border border-border bg-transparent p-0.5"
         />
         <NInput
           value={value}
           onChange={event => onChange(event.target.value)}
           label={undefined}
           wrapperClassName="mb-0 flex-1 min-w-0"
-          inputClassName="font-mono text-[11px]"
+          inputClassName="h-[var(--field-height)] font-mono text-[11px]"
         />
         {allowAlpha && (
           <NTooltip message="Transparent">
@@ -396,7 +402,7 @@ export const ColorField = ({
               onClick={() => onChange('transparent')}
               aria-label="Set transparent"
               className={cn(
-                'checkerboard h-8 w-8 shrink-0 rounded border transition-colors',
+                'checkerboard h-[var(--field-height)] w-8 shrink-0 rounded border transition-colors',
                 value === 'transparent' ? 'border-accent' : 'border-border'
               )}
             />
