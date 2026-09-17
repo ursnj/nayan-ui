@@ -126,16 +126,50 @@ export const END_CREDIT_SECONDS = 2;
 /** The card's two lines, under the logo. */
 export const END_CREDIT_TITLE = 'Nayan UI';
 export const END_CREDIT_SUBTITLE = 'Free Video Editor';
-/** Held at full opacity between these fractions of the card; eased either side. */
-const CREDIT_FADE = 0.25;
+/** Sits against the bottom edge rather than in the centred stack. */
+export const END_CREDIT_URL = 'www.nayanui.com';
+/**
+ * When each part of the card arrives, as fractions of the card's own length.
+ *
+ * The three elements are staggered rather than fading in together: the logo
+ * lands first, the name follows while the logo is still settling, and the line
+ * beneath it last. The overlap is what makes it read as one movement instead of
+ * three — each begins before the one before it has finished.
+ *
+ * Everything is expressed against the card's length, so changing
+ * `END_CREDIT_SECONDS` re-times the whole sequence and nothing needs adjusting
+ * to match.
+ */
+const CREDIT_MOTION = {
+  logo: { from: 0, to: 0.5 },
+  title: { from: 0.14, to: 0.64 },
+  subtitle: { from: 0.28, to: 0.78 },
+  /** The tail of the card, over which the whole thing dips away. */
+  fadeOut: 0.18,
+  /** How far each element travels up as it arrives, as a fraction of height. */
+  rise: 0.028,
+  /** The logo's scale as its entrance begins. */
+  logoFrom: 0.86,
+  /** Peak opacity of the glow behind the stack. */
+  glow: 0.26
+};
+
+const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
+/** Fast off the mark, soft on the landing — the shape most motion wants. */
+const easeOut = (t: number) => 1 - (1 - t) ** 3;
+/** How far into its own entrance an element is at this point in the card. */
+const stageAt = (progress: number, stage: { from: number; to: number }) => easeOut(clamp01((progress - stage.from) / (stage.to - stage.from)));
 
 /** Every measurement on the card, as a fraction of the frame height. */
 const CREDIT_LAYOUT = {
-  logoHeight: 0.15,
-  logoGap: 0.055,
-  titleSize: 0.062,
-  titleGap: 0.035,
-  subtitleSize: 0.032
+  logoHeight: 0.10,
+  logoGap: 0.020,
+  titleSize: 0.042,
+  titleGap: 0.05,
+  subtitleSize: 0.032,
+  urlSize: 0.024,
+  /** Distance from the frame's bottom edge to the top of the URL. */
+  urlBottom: 0.07
 };
 
 /**
@@ -196,8 +230,14 @@ const drawEndCredit = (
   context.fillStyle = '#07090f';
   context.fillRect(0, 0, width, height);
 
-  const eased = Math.min(1, Math.min(progress, 1 - progress) / CREDIT_FADE);
-  if (eased <= 0) return;
+  /*
+   * The card leaves as a whole, over its last fifth, on top of whatever each
+   * element is doing on its way in. Nothing needs to fade in globally: every
+   * element arrives at its own opacity, so the first frame is already the start
+   * of a movement rather than a flat black hold.
+   */
+  const exit = 1 - clamp01((progress - (1 - CREDIT_MOTION.fadeOut)) / CREDIT_MOTION.fadeOut);
+  if (exit <= 0) return;
 
   // Sized against the frame, like everything else in the model, so the card
   // looks the same at 720p and at 4K.
@@ -209,25 +249,61 @@ const drawEndCredit = (
   const subtitleSize = Math.max(10, height * CREDIT_LAYOUT.subtitleSize);
 
   const blockHeight = logoHeight + logoGap + titleSize + titleGap + subtitleSize;
-  let y = (height - blockHeight) / 2;
+  const blockTop = (height - blockHeight) / 2;
+  const rise = height * CREDIT_MOTION.rise;
 
-  context.globalAlpha = eased;
+  const logoIn = stageAt(progress, CREDIT_MOTION.logo);
+  const titleIn = stageAt(progress, CREDIT_MOTION.title);
+  const subtitleIn = stageAt(progress, CREDIT_MOTION.subtitle);
+
   context.textAlign = 'center';
   context.textBaseline = 'top';
 
+  /*
+   * A soft bloom behind the stack, arriving with the logo. It does the work a
+   * flat background cannot: gives the frame a centre, and stops the wordmark
+   * reading as text pasted onto black. Drawn first so everything else sits on
+   * top of it, and kept low enough to be felt rather than seen.
+   */
+  const glowRadius = Math.max(width, height) * 0.42;
+  const glow = context.createRadialGradient(width / 2, blockTop + blockHeight / 2, 0, width / 2, blockTop + blockHeight / 2, glowRadius);
+  glow.addColorStop(0, `rgba(99, 102, 241, ${CREDIT_MOTION.glow * logoIn * exit})`);
+  glow.addColorStop(1, 'rgba(99, 102, 241, 0)');
+  context.fillStyle = glow;
+  context.fillRect(0, 0, width, height);
+
+  let y = blockTop;
+
   if (logo) {
-    context.drawImage(logo, (width - logoWidth) / 2, y, logoWidth, logoHeight);
+    /*
+     * Scaled about its own centre, so it grows into place rather than drifting
+     * right as it gets bigger — which is what scaling a top-left anchored draw
+     * would do.
+     */
+    const scale = CREDIT_MOTION.logoFrom + (1 - CREDIT_MOTION.logoFrom) * logoIn;
+    const drawWidth = logoWidth * scale;
+    const drawHeight = logoHeight * scale;
+    context.globalAlpha = logoIn * exit;
+    context.drawImage(
+      logo,
+      (width - drawWidth) / 2,
+      y + (logoHeight - drawHeight) / 2 + rise * (1 - logoIn),
+      drawWidth,
+      drawHeight
+    );
     y += logoHeight + logoGap;
   }
 
+  context.globalAlpha = titleIn * exit;
   context.font = `700 ${titleSize}px Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`;
   context.fillStyle = '#f5f7fb';
-  context.fillText(END_CREDIT_TITLE, width / 2, y);
+  context.fillText(END_CREDIT_TITLE, width / 2, y + rise * (1 - titleIn));
   y += titleSize + titleGap;
 
+  context.globalAlpha = subtitleIn * exit;
   context.font = `400 ${subtitleSize}px Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`;
   context.fillStyle = '#9aa3b2';
-  context.fillText(END_CREDIT_SUBTITLE, width / 2, y);
+  context.fillText(END_CREDIT_SUBTITLE, width / 2, y + rise * (1 - subtitleIn));
 
   context.globalAlpha = 1;
   context.textBaseline = 'alphabetic';
@@ -356,6 +432,9 @@ export const exportProject = async (
       const timelineFrames = Math.max(1, Math.ceil(durationSeconds * settings.fps));
       const creditFrames = Math.round(creditSeconds * settings.fps);
       const frameCount = timelineFrames + creditFrames;
+      // Fetched and decoded before the loop, so no frame waits on it — and only
+      // when there is a card to put it on.
+      const creditLogo = creditFrames > 0 ? await loadCreditLogo() : null;
       const began = performance.now();
 
       for (let frame = 0; frame < frameCount; frame++) {
@@ -367,7 +446,7 @@ export const exportProject = async (
         } else {
           // Past the timeline: the card, with its own progress across the hold.
           const creditFrame = frame - timelineFrames;
-          drawEndCredit(context, settings.width, settings.height, creditFrames > 1 ? creditFrame / (creditFrames - 1) : 1);
+          drawEndCredit(context, settings.width, settings.height, creditFrames > 1 ? creditFrame / (creditFrames - 1) : 1, creditLogo);
         }
         await videoSource.add(frame / settings.fps, 1 / settings.fps);
 
