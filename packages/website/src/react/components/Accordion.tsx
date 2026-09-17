@@ -1,6 +1,7 @@
 'use client';
 
 import { AccordionTypes, NAccordion } from '@nayan-ui/react';
+import { H3_DOC } from '@/design/system';
 import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const items = [
@@ -12,10 +13,10 @@ const items = [
 const Accordion = () => {
   return (
     <ComponentWrapper>
-      <h2 className="text-foreground mb-3 text-lg font-semibold">Single:</h2>
+      <h3 className={H3_DOC}>Single:</h3>
       <NAccordion type={AccordionTypes.SINGLE} items={items} />
 
-      <h2 className="text-foreground mb-3 mt-5 text-lg font-semibold">Multiple:</h2>
+      <h3 className={H3_DOC}>Multiple:</h3>
       <NAccordion type={AccordionTypes.MULTIPLE} items={items} />
     </ComponentWrapper>
   );

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { NNumberField } from '@nayan-ui/react';
+import { H3_DOC } from '@/design/system';
 import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const NumberField = () => {
@@ -11,10 +12,10 @@ const NumberField = () => {
   return (
     <ComponentWrapper>
       <div className="space-y-4 max-w-sm">
-        <h2 className="text-foreground mb-3 text-lg font-semibold">Basic:</h2>
+        <h3 className={H3_DOC}>Basic:</h3>
         <NNumberField value={quantity} onChange={setQuantity} minValue={0} maxValue={100} aria-label="Quantity" />
 
-        <h2 className="text-foreground mb-3 text-lg font-semibold">Currency:</h2>
+        <h3 className={H3_DOC}>Currency:</h3>
         <NNumberField
           value={price}
           onChange={setPrice}

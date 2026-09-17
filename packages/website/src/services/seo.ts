@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 export const SITE_URL = 'https://www.nayanui.com';
 export const SITE_NAME = 'Nayan UI';
 export const SITE_DESCRIPTION =
-  'Nayan UI is an open source component library for React and React Native. 50+ accessible, customizable, and production-ready UI components built on HeroUI and Tailwind CSS.';
+  'Nayan UI is an open source component library for React and React Native. 58 accessible, customizable, production-ready UI components built on HeroUI and Tailwind CSS.';
 
 export const organizationSchema = {
   '@context': 'https://schema.org',
@@ -39,7 +39,7 @@ export const softwareApplicationSchema = {
   runtimePlatform: ['Web Browser', 'React Native', 'Node.js'],
   requirements: 'React 18+, TypeScript 4.5+, Tailwind CSS 4.0+',
   featureList: [
-    '50+ React Components',
+    '35 React Components',
     'React Native Support',
     'TypeScript First',
     'Tailwind CSS Integration',

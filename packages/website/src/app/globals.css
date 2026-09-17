@@ -116,6 +116,40 @@ a.active {
   color: var(--accent) !important;
 }
 
+/*
+ * Anchored headings land below the fixed header rather than under it.
+ * `scroll-margin` on each target would work too, but this way a heading only
+ * needs an `id` to behave correctly.
+ */
+html {
+  scroll-padding-top: 5rem;
+}
+
+/*
+ * Un-break syntax highlighting.
+ *
+ * `prism-react-renderer` labels a JSX tag's tokens `class="token tag"`, and
+ * HeroUI ships a global `.tag` class — its Tag component's — which sets
+ * `display: inline-flex` among other things. Every JSX tag in every code
+ * sample therefore became a flex container, and a flex container discards
+ * whitespace-only children: `<div className=` rendered as `<divclassName=`,
+ * on all 76 component pages.
+ *
+ * Scoped to `.nyn-code` so it corrects the code blocks without touching real
+ * Tag components elsewhere on the page. The tokens want to be plain inline
+ * spans and nothing else, so everything the collision brought with it is
+ * reverted, not just the display.
+ */
+.nyn-code .token {
+  display: inline;
+  align-items: initial;
+  gap: initial;
+  border-radius: initial;
+  padding: initial;
+  cursor: inherit;
+  white-space: inherit;
+}
+
 @keyframes accordion-down {
   from {
     height: 0;

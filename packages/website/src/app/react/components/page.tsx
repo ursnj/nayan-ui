@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 export const metadata = buildPageMetadata({
   title: 'React Components',
   description:
-    'Browse 50+ React UI components from Nayan UI. Buttons, forms, modals, tables, navigation, and more. Built on HeroUI and Tailwind CSS with TypeScript support.',
+    'Browse 35 React UI components from Nayan UI. Buttons, forms, modals, tables, navigation and more. Built on HeroUI and Tailwind CSS with TypeScript support.',
   path: '/react/components',
   keywords: 'react components, nayan ui react, ui components list, button, input, dialog, table, accordion, toast, tailwind components'
 });

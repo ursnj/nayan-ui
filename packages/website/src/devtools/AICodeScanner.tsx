@@ -1,21 +1,21 @@
+import { H2_DOC, H3_DOC } from '@/design/system';
 import Code from '@/helpers/Code';
 
 const AICodeScanner = () => {
   return (
     <div>
-      <h2 className="text-xl mb-5">🛡️ AI Code Scanner</h2>
-      <div className="mb-5">
+      <div className="mb-10 max-w-3xl text-base leading-relaxed text-muted">
         Scan GitHub repositories for package vulnerabilities using native security tools combined with AI-powered analysis. Supports auto-fix with
         automatic PR creation.
       </div>
 
-      <h2 className="text-xl mb-5">Installation</h2>
+      <h2 className={H2_DOC}>Installation</h2>
       <div className="mb-5">Install the AI CLI globally:</div>
       <Code language="bash" code={`npm install -g @nayan-ui/ai`} />
       <div className="mb-5 mt-5">Or use directly with npx:</div>
       <Code language="bash" code={`npx @nayan-ui/ai scan <repo-url> --token ghp_xxx`} />
 
-      <h2 className="text-xl mb-5 mt-8">Prerequisites</h2>
+      <h2 className={H2_DOC}>Prerequisites</h2>
       <div className="mb-5">
         <strong>Codex CLI</strong> (default LLM) — login first:
       </div>
@@ -25,7 +25,7 @@ const AICodeScanner = () => {
       </div>
       <Code language="bash" code={`claude login`} />
 
-      <h2 className="text-xl mb-5 mt-8">Usage</h2>
+      <h2 className={H2_DOC}>Usage</h2>
       <div className="mb-5">Basic scan — detect and analyze all projects in the repo:</div>
       <Code language="bash" code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx`} />
 
@@ -41,7 +41,7 @@ const AICodeScanner = () => {
       <div className="mb-5 mt-5">Use Claude Code instead of Codex:</div>
       <Code language="bash" code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx --llm claude`} />
 
-      <h2 className="text-xl mb-5 mt-8">Options</h2>
+      <h2 className={H2_DOC}>Options</h2>
       <div className="overflow-x-auto mb-5">
         <table className="w-full text-sm border border-default rounded-lg">
           <thead>
@@ -77,7 +77,7 @@ const AICodeScanner = () => {
         </table>
       </div>
 
-      <h2 className="text-xl mb-5 mt-8">Supported Project Types</h2>
+      <h2 className={H2_DOC}>Supported Project Types</h2>
       <div className="overflow-x-auto mb-5">
         <table className="w-full text-sm border border-default rounded-lg">
           <thead>
@@ -132,25 +132,25 @@ const AICodeScanner = () => {
         </table>
       </div>
 
-      <h2 className="text-xl mb-5 mt-8">Auto-Fix Workflow</h2>
+      <h2 className={H2_DOC}>Auto-Fix Workflow</h2>
       <div className="mb-5">
         When using <code>--fix</code>, Nayan AI will:
       </div>
       <div className="grid sm:grid-cols-2 gap-4 mb-5">
         <div className="bg-surface border border-default rounded-lg p-4">
-          <h3 className="font-semibold mb-2">1. Analyze</h3>
+          <h3 className={H3_DOC}>1. Analyze</h3>
           <p className="text-sm text-muted">Analyze vulnerabilities and generate fixes using AI</p>
         </div>
         <div className="bg-surface border border-default rounded-lg p-4">
-          <h3 className="font-semibold mb-2">2. Create Branch</h3>
+          <h3 className={H3_DOC}>2. Create Branch</h3>
           <p className="text-sm text-muted">Create a new branch with the security fixes</p>
         </div>
         <div className="bg-surface border border-default rounded-lg p-4">
-          <h3 className="font-semibold mb-2">3. Update Files</h3>
+          <h3 className={H3_DOC}>3. Update Files</h3>
           <p className="text-sm text-muted">Update manifest files (package.json, requirements.txt, etc.)</p>
         </div>
         <div className="bg-surface border border-default rounded-lg p-4">
-          <h3 className="font-semibold mb-2">4. Create PR</h3>
+          <h3 className={H3_DOC}>4. Create PR</h3>
           <p className="text-sm text-muted">Commit, push, and create a Pull Request with detailed description</p>
         </div>
       </div>

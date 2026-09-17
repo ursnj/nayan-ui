@@ -1,32 +1,41 @@
 'use client';
 
+import { DocsIntro } from '@/design/Primitives';
 import Code from '@/helpers/Code';
 import Sidebar from '@/helpers/Sidebar';
+import SubHeader from '@/helpers/SubHeader';
 import { appCode, cssCode, installCode, tailwindCode } from '@/services/ReactCodeBlocks';
 
-const Installation = () => {
-  return (
-    <Sidebar title="Installation">
-      <Code language="bash" code={installCode} />
-      <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-        <span className="w-1 h-5 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full" />
-        Configuration
-      </h2>
-      <p className="text-muted mb-4">
-        Include module in `tailwind.config.js` to read tailwind classes, this will help in reusing same tailwind classes.
+/**
+ * Installing the React package.
+ *
+ * The headings were bare `h2`s with a gradient rule beside them — purple for
+ * Configuration, emerald for Usage — and the steps ran together with no
+ * structure beyond those two colours. They are `SubHeader`s now, so they are
+ * anchored, sit on the same rule as every other section on the site, and read
+ * as three ordered steps rather than a page of code blocks.
+ */
+const Installation = () => (
+  <Sidebar title="Installation">
+    <DocsIntro lead="One dependency and one stylesheet import. Tailwind v4 needs no configuration file, and there is no CLI step or code generation to run." />
+
+    <SubHeader title="Install" description="Add the package to your project.">
+      <Code language="bash" code={installCode} filename="terminal" />
+    </SubHeader>
+
+    <SubHeader title="Configuration" description="Wire Tailwind up, then import the library's styles and theme tokens.">
+      <Code code={tailwindCode} filename="vite.config.ts" />
+      <p className="mb-4 mt-6 text-sm leading-relaxed text-muted">
+        Add the library styles to <code className="font-mono text-xs text-foreground">index.css</code>. The theme colour variables can be overridden
+        here for both light and dark modes.
       </p>
-      <Code code={tailwindCode} />
-      <p className="text-muted mb-4">
-        Add library styles to `index.css`, and update theme color variables accordingly for both light and dark modes.
-      </p>
-      <Code code={cssCode} />
-      <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-        <span className="w-1 h-5 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full" />
-        Usage
-      </h2>
-      <Code code={appCode} />
-    </Sidebar>
-  );
-};
+      <Code language="css" code={cssCode} filename="index.css" />
+    </SubHeader>
+
+    <SubHeader title="Usage" description="Wrap the tree in NTheme once; components can then be imported anywhere.">
+      <Code code={appCode} filename="App.tsx" />
+    </SubHeader>
+  </Sidebar>
+);
 
 export default Installation;

@@ -1,40 +1,53 @@
 'use client';
 
-import { NLink } from '@nayan-ui/react';
+import Link from 'next/link';
+import { DocsIntro } from '@/design/Primitives';
+import { ACCENT_TEXT } from '@/design/system';
 import Code from '@/helpers/Code';
 import Sidebar from '@/helpers/Sidebar';
+import SubHeader from '@/helpers/SubHeader';
 import { rnAppCode, rnCssCode, rnInstallCode, rnPeerDepsCode } from '@/services/ReactCodeBlocks';
 
-const Installation = () => {
-  return (
-    <Sidebar title="Installation">
-      <p className="text-muted mb-4">
-        This library requires <NLink href="https://uniwind.dev/docs/installation">Uniwind</NLink> to be set up in your project. Follow the{' '}
-        <NLink href="https://uniwind.dev/docs/installation">Uniwind installation guide</NLink> to configure it before proceeding.
-      </p>
-      <p className="text-muted mb-4">Install the library.</p>
-      <Code language="bash" code={rnInstallCode} />
-      <p className="text-muted mb-4">Install peer dependencies (most Expo projects already include these).</p>
-      <Code language="bash" code={rnPeerDepsCode} />
-      <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-        <span className="w-1 h-5 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full" />
-        Configuration
-      </h2>
-      <p className="text-muted mb-4">
-        Create a <code>global.css</code> file in your project with the following imports:
-      </p>
-      <Code language="css" code={rnCssCode} />
-      <p className="text-muted mb-4">Import this CSS file in your app entry point.</p>
-      <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-        <span className="w-1 h-5 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full" />
-        Usage
-      </h2>
-      <p className="text-muted mb-4">
-        Wrap your app with the <code>NTheme</code> provider:
-      </p>
-      <Code code={rnAppCode} />
-    </Sidebar>
-  );
-};
+/**
+ * Installing the React Native package.
+ *
+ * Structured to match the React installation page step for step, because the
+ * two were laid out differently despite describing the same three stages —
+ * install, configure, use. The Uniwind prerequisite now leads, since it has
+ * to be done before any of the rest will work.
+ *
+ * The two `NLink`s became ordinary links: `NLink` renders underlined, which
+ * made the prerequisite sentence read as two separate links to the same page.
+ */
+const Installation = () => (
+  <Sidebar title="Installation">
+    <DocsIntro
+      lead={
+        <>
+          Built on HeroUI Native and styled with Uniwind. Set{' '}
+          <Link href="https://uniwind.dev/docs/installation" target="_blank" rel="noopener noreferrer" className={`font-medium ${ACCENT_TEXT}`}>
+            Uniwind
+          </Link>{' '}
+          up in your project first — the components will not style correctly without it.
+        </>
+      }
+    />
+
+    <SubHeader title="Install" description="The library, then its peer dependencies — most Expo projects already carry these.">
+      <Code language="bash" code={rnInstallCode} filename="terminal" />
+      <div className="mt-4">
+        <Code language="bash" code={rnPeerDepsCode} filename="terminal" />
+      </div>
+    </SubHeader>
+
+    <SubHeader title="Configuration" description="Create a global stylesheet and import it from your entry point.">
+      <Code language="css" code={rnCssCode} filename="global.css" />
+    </SubHeader>
+
+    <SubHeader title="Usage" description="Wrap your app in the NTheme provider.">
+      <Code code={rnAppCode} filename="App.tsx" />
+    </SubHeader>
+  </Sidebar>
+);
 
 export default Installation;

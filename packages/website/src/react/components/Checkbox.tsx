@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { NCheck, NLink } from '@nayan-ui/react';
+import { H3_DOC } from '@/design/system';
 import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Checkbox = () => {
@@ -12,7 +13,7 @@ const Checkbox = () => {
 
   return (
     <ComponentWrapper>
-      <h2 className="text-foreground mb-3 text-lg font-semibold">Basic:</h2>
+      <h3 className={H3_DOC}>Basic:</h3>
       <div className="space-y-3 mb-5">
         <NCheck checked={notifications} onChange={setNotifications}>
           Enable email notifications
@@ -25,7 +26,7 @@ const Checkbox = () => {
         </NCheck>
       </div>
 
-      <h2 className="text-foreground mb-3 text-lg font-semibold">Disabled:</h2>
+      <h3 className={H3_DOC}>Disabled:</h3>
       <div className="space-y-3">
         <NCheck checked={disabled} disabled onChange={setDisabled}>
           This option is disabled (checked)
