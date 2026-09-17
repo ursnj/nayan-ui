@@ -3,17 +3,18 @@ import { NButton, NDialog, NLink, NProgress, showToast } from '@nayan-ui/react';
 import { DialogSize } from '@nayan-ui/react';
 import { CheckCircle2, Download, X } from 'lucide-react';
 import {
+  END_CREDIT_SECONDS,
+  END_CREDIT_TEXT,
   EXPORT_FORMATS,
-  EXPORT_PRESETS,
   ExportCanceledError,
   exportProject,
   findFormat,
   isFormatSupported,
   suggestBitrate
 } from '../engine/exporter';
-import type { ExportPreset, ExportProgress } from '../engine/exporter';
+import type { ExportProgress } from '../engine/exporter';
 import { pausePlayback, player } from '../engine/playerInstance';
-import { cn, download, formatBytes } from '../lib/utils';
+import { download, formatBytes } from '../lib/utils';
 import { readEditorState, timelineDurationUs, useEditor } from '../store/editor';
 import { US } from '../types';
 import type { ExportSettings } from '../types';
@@ -51,14 +52,12 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
   const inPointUs = useEditor(state => state.inPointUs);
   const outPointUs = useEditor(state => state.outPointUs);
 
-  const [width, setWidth] = useState(project.width);
-  const [height, setHeight] = useState(project.height);
-  const [fps, setFps] = useState(project.fps);
   const [formatId, setFormatId] = useState('mp4');
   /** Probed on open so a container only offers itself if it can actually encode here. */
   const [supported, setSupported] = useState<Record<string, boolean>>({});
   const [quality, setQuality] = useState('1.2');
   const [includeAudio, setIncludeAudio] = useState(true);
+  const [endCredit, setEndCredit] = useState(true);
   const [useRange, setUseRange] = useState(inPointUs !== null || outPointUs !== null);
   const [progress, setProgress] = useState<ExportProgress | null>(null);
   const [result, setResult] = useState<{ blob: Blob; filename: string } | null>(null);
@@ -73,25 +72,23 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
     []
   );
 
-  /*
-   * The highlight is derived rather than stored. Tracking a `preset` alongside
-   * the real width/height let them disagree: the dialog opened showing 1080p
-   * selected while a vertical project would actually export 1080x1920.
-   */
-  const activePreset = EXPORT_PRESETS.find(option => option.width === width && option.height === height && option.fps === fps) ?? null;
   const format = findFormat(formatId);
   const audioOnly = format.kind === 'audio';
 
-  const applyPreset = (next: ExportPreset) => {
-    setWidth(next.width);
-    setHeight(next.height);
-    setFps(next.fps);
-    setQuality(String(next.qualityScale));
-  };
-
+  /*
+   * The frame is the project's, not a choice made here.
+   *
+   * There were size presets on this dialog — 1080p, 720p, Vertical, Square —
+   * and any that disagreed with the project reframed the whole export: every
+   * clip is fitted to the output, so a landscape timeline sent to 1080×1920
+   * lost its sides or gained bars. Resolution and frame rate belong to Project
+   * settings, where changing them re-composes the timeline you can see, rather
+   * than to the last dialog before the file is written.
+   */
+  const { fps } = project;
   // Encoders want even dimensions; odd values fail on several codecs.
-  const evenWidth = Math.max(2, Math.round(width / 2) * 2);
-  const evenHeight = Math.max(2, Math.round(height / 2) * 2);
+  const evenWidth = Math.max(2, Math.round(project.width / 2) * 2);
+  const evenHeight = Math.max(2, Math.round(project.height / 2) * 2);
   const bitrate = Math.round(suggestBitrate(evenWidth, evenHeight, fps) * Number(quality));
 
   useEffect(() => {
@@ -122,7 +119,10 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
    */
   const audioBytesPerSecond = format.id === 'wav' ? MIX_SAMPLE_RATE * 2 * 2 : 192_000 / 8;
   const exactSize = format.id === 'wav';
-  const estimatedBytes = audioOnly ? audioBytesPerSecond * (spanUs / US) : ((bitrate + (includeAudio ? 192_000 : 0)) / 8) * (spanUs / US);
+  /* The credit is part of the file, so the length and the budget both count it. */
+  const creditSeconds = endCredit && !audioOnly ? END_CREDIT_SECONDS : 0;
+  const outputSeconds = spanUs / US + creditSeconds;
+  const estimatedBytes = audioOnly ? audioBytesPerSecond * outputSeconds : ((bitrate + (includeAudio ? 192_000 : 0)) / 8) * outputSeconds;
 
   const runExport = async () => {
     const state = readEditorState();
@@ -142,6 +142,7 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
       bitrate,
       audioBitrate: 192_000,
       includeAudio,
+      endCredit,
       rangeUs: useRange ? { startUs: rangeStart, endUs: rangeEnd } : null
     };
 
@@ -174,29 +175,6 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <div className="space-y-3">
-      {!audioOnly && (
-        <div>
-          <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted">Preset</span>
-          <div className="grid grid-cols-2 gap-1.5">
-            {EXPORT_PRESETS.map(option => (
-              <button
-                key={option.name}
-                type="button"
-                disabled={running}
-                onClick={() => applyPreset(option)}
-                aria-pressed={activePreset?.name === option.name}
-                className={cn(
-                  'rounded-lg border px-2 py-1.5 text-left transition-colors disabled:opacity-50',
-                  activePreset?.name === option.name ? 'border-accent bg-accent/10' : 'border-border hover:border-separator'
-                )}>
-                <span className="block text-[11px] font-medium text-foreground">{option.name}</span>
-                <span className="block text-[10px] text-muted">{option.description}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       <div className="grid grid-cols-2 gap-2">
         <SelectField label="Quality" value={quality} options={QUALITY_OPTIONS} onChange={setQuality} />
         <SelectField
@@ -217,6 +195,18 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
             {includeAudio ? 'Audio on' : 'Audio off'}
           </ToggleChip>
         )}
+        {/* Hidden for an audio-only bounce, which has no picture to show a card
+            on — the exporter skips it there regardless, and offering a switch
+            that does nothing is worse than not offering it. */}
+        {!audioOnly && (
+          <ToggleChip
+            active={endCredit}
+            onClick={() => setEndCredit(value => !value)}
+            label={`Append a ${END_CREDIT_SECONDS}s "${END_CREDIT_TEXT}" card after the last frame`}
+            className="flex-1">
+            {endCredit ? 'Credits on' : 'Credits off'}
+          </ToggleChip>
+        )}
         <ToggleChip active={useRange} onClick={() => setUseRange(value => !value)} label="Export only the marked in/out range" className="flex-1">
           {useRange ? 'In/out range' : 'Whole timeline'}
         </ToggleChip>
@@ -224,7 +214,7 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
 
       <dl className="rounded-lg bg-surface-secondary px-3 py-2 text-xs">
         <Row label="Output" value={audioOnly ? `${format.label} · audio only` : `${evenWidth} × ${evenHeight} · ${fps} fps`} />
-        <Row label="Duration" value={`${(spanUs / US).toFixed(1)}s`} />
+        <Row label="Duration" value={creditSeconds > 0 ? `${outputSeconds.toFixed(1)}s · ${creditSeconds}s credit` : `${outputSeconds.toFixed(1)}s`} />
         {!audioOnly && <Row label="Bitrate" value={`${(bitrate / 1_000_000).toFixed(1)} Mbps`} />}
         <Row label={exactSize ? 'Size' : 'Size budget'} value={`${exactSize ? '' : 'up to '}${formatBytes(estimatedBytes)}`} />
       </dl>

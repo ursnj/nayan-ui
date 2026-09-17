@@ -121,6 +121,118 @@ const MIX_SAMPLE_RATE = 48_000;
 const MIX_CHANNELS = 2;
 const AUDIO_SLICE_SECONDS = 1;
 
+/** How long the end credit holds, when it is included. */
+export const END_CREDIT_SECONDS = 2;
+/** The card's two lines, under the logo. */
+export const END_CREDIT_TITLE = 'Nayan UI';
+export const END_CREDIT_SUBTITLE = 'Free Video Editor';
+/** Held at full opacity between these fractions of the card; eased either side. */
+const CREDIT_FADE = 0.25;
+
+/** Every measurement on the card, as a fraction of the frame height. */
+const CREDIT_LAYOUT = {
+  logoHeight: 0.15,
+  logoGap: 0.055,
+  titleSize: 0.062,
+  titleGap: 0.035,
+  subtitleSize: 0.032
+};
+
+/**
+ * The logo, decoded once per session.
+ *
+ * It lives in `public/`, so it is served from the app's base path rather than
+ * bundled — `BASE_URL` is what makes that work under `/video-editor/start/` in
+ * production as well as in dev. Decoding is a one-off: an export draws the card
+ * sixty times a second and none of those frames should be waiting on a fetch.
+ *
+ * A failure resolves to null rather than throwing. A logo that cannot be
+ * decoded is a reason to fall back to the wordmark alone, never a reason to
+ * fail an export the user has already waited for.
+ */
+let logoPromise: Promise<ImageBitmap | null> | null = null;
+
+const loadCreditLogo = (): Promise<ImageBitmap | null> => {
+  logoPromise ??= (async () => {
+    try {
+      const response = await fetch(`${import.meta.env.BASE_URL}logo.webp`);
+      if (!response.ok) return null;
+      return await createImageBitmap(await response.blob());
+    } catch {
+      return null;
+    }
+  })();
+  return logoPromise;
+};
+
+/**
+ * The card that plays after the last frame of the timeline.
+ *
+ * Deliberately not a clip. Going through the compositor would mean inventing a
+ * text clip on a track that does not exist, at a time past the end of the
+ * project, and every part of the editor that walks the timeline would then have
+ * to know to ignore it. It is a card drawn straight onto the export canvas, in
+ * the one place that wants it.
+ *
+ * The logo, the name and the line beneath it are measured as one block and then
+ * centred as one, so the stack stays optically centred whether or not the logo
+ * arrived — rather than the text sitting low in the frame with a gap above it.
+ *
+ * `progress` runs 0→1 across the card so it can fade up and away rather than
+ * cutting in, which reads as an ending instead of a glitch.
+ */
+const drawEndCredit = (
+  context: OffscreenCanvasRenderingContext2D,
+  width: number,
+  height: number,
+  progress: number,
+  logo: ImageBitmap | null
+) => {
+  context.setTransform(1, 0, 0, 1, 0, 0);
+  context.globalAlpha = 1;
+  context.globalCompositeOperation = 'source-over';
+  context.filter = 'none';
+
+  context.fillStyle = '#07090f';
+  context.fillRect(0, 0, width, height);
+
+  const eased = Math.min(1, Math.min(progress, 1 - progress) / CREDIT_FADE);
+  if (eased <= 0) return;
+
+  // Sized against the frame, like everything else in the model, so the card
+  // looks the same at 720p and at 4K.
+  const logoHeight = logo ? height * CREDIT_LAYOUT.logoHeight : 0;
+  const logoWidth = logo ? logoHeight * (logo.width / logo.height) : 0;
+  const logoGap = logo ? height * CREDIT_LAYOUT.logoGap : 0;
+  const titleSize = Math.max(12, height * CREDIT_LAYOUT.titleSize);
+  const titleGap = height * CREDIT_LAYOUT.titleGap;
+  const subtitleSize = Math.max(10, height * CREDIT_LAYOUT.subtitleSize);
+
+  const blockHeight = logoHeight + logoGap + titleSize + titleGap + subtitleSize;
+  let y = (height - blockHeight) / 2;
+
+  context.globalAlpha = eased;
+  context.textAlign = 'center';
+  context.textBaseline = 'top';
+
+  if (logo) {
+    context.drawImage(logo, (width - logoWidth) / 2, y, logoWidth, logoHeight);
+    y += logoHeight + logoGap;
+  }
+
+  context.font = `700 ${titleSize}px Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`;
+  context.fillStyle = '#f5f7fb';
+  context.fillText(END_CREDIT_TITLE, width / 2, y);
+  y += titleSize + titleGap;
+
+  context.font = `400 ${subtitleSize}px Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`;
+  context.fillStyle = '#9aa3b2';
+  context.fillText(END_CREDIT_SUBTITLE, width / 2, y);
+
+  context.globalAlpha = 1;
+  context.textBaseline = 'alphabetic';
+};
+
 /**
  * Renders the timeline to a video file.
  *
@@ -155,6 +267,13 @@ export const exportProject = async (
   const durationSeconds = spanUs / US;
   if (durationSeconds <= 0) throw new Error('Nothing to export — the selected range is empty.');
 
+  /*
+   * The credit only applies where there is a picture to follow: an audio-only
+   * bounce has nothing to show it on, and two seconds of silence appended to a
+   * WAV would be a defect rather than a credit.
+   */
+  const creditSeconds = settings.endCredit && !videoOnlyAudioless ? END_CREDIT_SECONDS : 0;
+
   // Codecs come from the container's own capability list intersected with
   // what this browser can encode, so the same code serves every format.
   const videoQuality = new Quality({ bitrate: settings.bitrate });
@@ -174,7 +293,14 @@ export const exportProject = async (
   let mixedAudio: AudioBuffer | null = null;
   if (settings.includeAudio || videoOnlyAudioless) {
     onProgress({ stage: 'audio', progress: 0.02, message: 'Mixing audio…' });
-    mixedAudio = await mixAudio(scene, startUs, spanUs);
+    /*
+     * Mixed over the credit as well, which costs one longer buffer and leaves
+     * the two tracks the same length. Nothing plays there — no clip reaches
+     * past the timeline — so the extra span renders as silence, and a player
+     * that takes its duration from the audio track still reports the whole
+     * file rather than cutting the card off the end.
+     */
+    mixedAudio = await mixAudio(scene, startUs, spanUs + creditSeconds * US);
     throwIfCanceled();
   }
   if (videoOnlyAudioless && !mixedAudio) throw new Error('Nothing to export — the timeline has no audible clips.');
@@ -227,14 +353,22 @@ export const exportProject = async (
     // an audio-only bounce, and testing it inside the condition was there to
     // narrow the type, not because it can change.
     if (videoSource) {
-      const frameCount = Math.max(1, Math.ceil(durationSeconds * settings.fps));
+      const timelineFrames = Math.max(1, Math.ceil(durationSeconds * settings.fps));
+      const creditFrames = Math.round(creditSeconds * settings.fps);
+      const frameCount = timelineFrames + creditFrames;
       const began = performance.now();
 
       for (let frame = 0; frame < frameCount; frame++) {
         throwIfCanceled();
-        // Scene time includes the range offset; output time always starts at 0.
-        const sceneTimeUs = startUs + (frame / settings.fps) * US;
-        await renderScene(context, exportScene, sceneTimeUs, { target: 'export' });
+        if (frame < timelineFrames) {
+          // Scene time includes the range offset; output time always starts at 0.
+          const sceneTimeUs = startUs + (frame / settings.fps) * US;
+          await renderScene(context, exportScene, sceneTimeUs, { target: 'export' });
+        } else {
+          // Past the timeline: the card, with its own progress across the hold.
+          const creditFrame = frame - timelineFrames;
+          drawEndCredit(context, settings.width, settings.height, creditFrames > 1 ? creditFrame / (creditFrames - 1) : 1);
+        }
         await videoSource.add(frame / settings.fps, 1 / settings.fps);
 
         const done = frame + 1;
@@ -328,20 +462,3 @@ export const suggestBitrate = (width: number, height: number, fps: number) => {
   return Math.round(Math.min(60_000_000, Math.max(1_000_000, pixels * fps * perPixel)));
 };
 
-/** Size presets only — the container is chosen separately. */
-export interface ExportPreset {
-  name: string;
-  description: string;
-  width: number;
-  height: number;
-  fps: number;
-  qualityScale: number;
-}
-
-/** Named targets, so nobody has to reason about bitrates to post a clip. */
-export const EXPORT_PRESETS: ExportPreset[] = [
-  { name: '1080p', description: '1920×1080 · 30fps', width: 1920, height: 1080, fps: 30, qualityScale: 1.2 },
-  { name: '720p', description: '1280×720 · 30fps', width: 1280, height: 720, fps: 30, qualityScale: 1 },
-  { name: 'Vertical', description: '1080×1920 · 30fps', width: 1080, height: 1920, fps: 30, qualityScale: 1.1 },
-  { name: 'Square', description: '1080×1080 · 30fps', width: 1080, height: 1080, fps: 30, qualityScale: 1.1 }
-];
