@@ -5,7 +5,6 @@ import {
   Blend,
   Clapperboard,
   Crop,
-  Diamond,
   Download,
   Film,
   Gauge,
@@ -38,14 +37,6 @@ const FEATURES = [
     hover: 'hover:border-indigo-500/30',
     text: 'group-hover:text-indigo-600 dark:group-hover:text-indigo-400',
     body: 'Stack as many video and audio tracks as you need. Drag to move, pull an edge to trim, split at the playhead, ripple delete to close the gap. Every track carries its own height, level, mute, hide and lock.'
-  },
-  {
-    icon: Diamond,
-    title: 'Keyframe animation',
-    accent: 'from-violet-500 to-fuchsia-500',
-    hover: 'hover:border-violet-500/30',
-    text: 'group-hover:text-violet-600 dark:group-hover:text-violet-400',
-    body: 'Animate position, scale, rotation, opacity, brightness, contrast, saturation, blur, volume and text. Keys are drawn on the clip and survive moving, trimming and splitting — a cut leaves both halves holding their value.'
   },
   {
     icon: Wand2,
@@ -85,7 +76,7 @@ const FEATURES = [
     accent: 'from-lime-500 to-green-500',
     hover: 'hover:border-lime-500/30',
     text: 'group-hover:text-lime-600 dark:group-hover:text-lime-400',
-    body: 'Per-clip volume with keyframes, fades, speed and reverse, plus track faders. Playback takes its time from the Web Audio clock rather than a wall timer, so picture and sound cannot drift apart. Detach audio from a video clip and the two stay linked.'
+    body: 'Per-clip volume, fades, speed and reverse, plus track faders. Playback takes its time from the Web Audio clock rather than a wall timer, so picture and sound cannot drift apart. Detach audio from a video clip and the two stay linked.'
   },
   {
     icon: ImageIcon,
@@ -165,8 +156,8 @@ const VideoEditorMain = () => {
             </div>
 
             <p className="text-base sm:text-xl text-muted leading-relaxed mb-8 max-w-3xl mx-auto">
-              A free, full-featured video editor that runs in a browser tab. Multi-track timeline, keyframe animation, green screen, sixteen colour
-              filters, eighteen transitions and titles — decoded, composited and encoded on your own machine with WebCodecs.
+              A free, full-featured video editor that runs in a browser tab. Multi-track timeline, green screen, sixteen colour filters, eighteen
+              transitions and titles — decoded, composited and encoded on your own machine with WebCodecs.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { NInput, NNumberField, NSelect, NSlider, NTextarea, NToggleButton, NTooltip } from '@nayan-ui/react';
-import { ChevronDown, Diamond, RotateCcw } from 'lucide-react';
+import { ChevronDown, RotateCcw } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useEditor } from '../store/editor';
 
@@ -173,48 +173,6 @@ export const SegmentedControl = <T extends string>({
 );
 
 /* ------------------------------------------------------------------ *
- * Keyframe toggle
- * ------------------------------------------------------------------ */
-
-interface KeyframeButtonProps {
-  clipId: string;
-  path: string;
-  value: number;
-  /** True when the property has any keys at all. */
-  animated: boolean;
-  /** True when a key sits exactly under the playhead. */
-  active: boolean;
-}
-
-/**
- * The diamond every NLE puts beside an animatable property: filled when a key
- * exists at the playhead, outlined when the track is animated elsewhere.
- */
-const KeyframeButton = ({ clipId, path, value, animated, active }: KeyframeButtonProps) => {
-  const toggleKeyframe = useEditor(state => state.toggleKeyframe);
-  const clearKeyframes = useEditor(state => state.clearKeyframes);
-
-  return (
-    <NTooltip message={active ? 'Remove keyframe' : animated ? 'Add keyframe (alt-click to clear track)' : 'Add keyframe'}>
-      <button
-        type="button"
-        aria-label={`Keyframe ${path}`}
-        aria-pressed={active}
-        onClick={event => {
-          if (event.altKey && animated) clearKeyframes(clipId, path);
-          else toggleKeyframe(clipId, path, value);
-        }}
-        className={cn(
-          'shrink-0 rounded p-0.5 transition-colors',
-          active ? 'text-accent' : animated ? 'text-accent/50 hover:text-accent' : 'text-muted/40 hover:text-muted'
-        )}>
-        <Diamond className={cn('h-3 w-3', active && 'fill-current')} />
-      </button>
-    </NTooltip>
-  );
-};
-
-/* ------------------------------------------------------------------ *
  * Fields
  * ------------------------------------------------------------------ */
 
@@ -226,8 +184,6 @@ interface SliderFieldProps {
   step?: number;
   format?: (value: number) => string;
   onChange: (value: number) => void;
-  /** Enables the keyframe diamond for this property. */
-  keyframe?: { clipId: string; path: string; animated: boolean; active: boolean };
   /** Double-clicking the readout resets to this. */
   resetTo?: number;
 }
@@ -236,7 +192,7 @@ interface SliderFieldProps {
  * A slider emits a change on every pointer move, so the whole drag is bracketed
  * as one interaction — otherwise a single adjustment would fill the undo stack.
  */
-export const SliderField = ({ label, value, min, max, step = 1, format, onChange, keyframe, resetTo }: SliderFieldProps) => {
+export const SliderField = ({ label, value, min, max, step = 1, format, onChange, resetTo }: SliderFieldProps) => {
   const beginInteraction = useEditor(state => state.beginInteraction);
   const endInteraction = useEditor(state => state.endInteraction);
 
@@ -259,9 +215,6 @@ export const SliderField = ({ label, value, min, max, step = 1, format, onChange
   return (
     <div className="mb-2" onPointerDown={onPointerDown}>
       <div className="mb-1 flex items-center gap-1.5">
-        {keyframe && (
-          <KeyframeButton clipId={keyframe.clipId} path={keyframe.path} value={value} animated={keyframe.animated} active={keyframe.active} />
-        )}
         <span className="flex-1 truncate text-[11px] text-muted">{label}</span>
         <button
           type="button"

@@ -209,8 +209,8 @@ textarea,
 }
 
 /*
- * Real buttons the library doesn't style — the keyframe diamonds, the timecode
- * readouts — would otherwise have no focus cue at all, so they get the same
+ * Real buttons the library doesn't style — the timecode readouts, the colour
+ * swatches — would otherwise have no focus cue at all, so they get the same
  * ring by hand. It stays clear of the library's own buttons, whose
  * `.toggle-button`/`.button` focus rules are more specific than this.
  */

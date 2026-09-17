@@ -33,29 +33,6 @@ export interface MediaAsset {
 }
 
 /* ------------------------------------------------------------------ *
- * Keyframes
- * ------------------------------------------------------------------ */
-
-export type Easing = 'hold' | 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
-
-export interface Keyframe {
-  /** Offset from the clip's own start, µs. Stays valid when the clip moves. */
-  atUs: number;
-  value: number;
-  /** Shape of the ramp leaving this key. */
-  easing: Easing;
-}
-
-/**
- * Animation tracks keyed by property path (`'transform.scale'`, `'opacity'`, …).
- *
- * Keeping keyframes in a side table rather than boxing every field means a
- * static clip costs nothing, and any numeric property becomes animatable
- * without changing its type.
- */
-export type Animations = Record<string, Keyframe[]>;
-
-/* ------------------------------------------------------------------ *
  * Visual properties
  * ------------------------------------------------------------------ */
 
@@ -228,7 +205,6 @@ interface ClipCommon {
   opacity: number;
   fadeInUs: number;
   fadeOutUs: number;
-  animations: Animations;
   /** Transition covering this clip's incoming edge. */
   transitionIn: TransitionSpec | null;
   /** Colour swatch in the timeline. */
