@@ -172,7 +172,11 @@ export const PreviewPanel = () => {
 
           {durationUs === 0 && (
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40">
-              <p className="text-sm text-white/60">Add media to the timeline to start editing</p>
+              {/* `text-center` as well as the centred flex: in a vertical
+                  project the frame is narrower than this line, so it wraps —
+                  and wrapped lines fall back to the paragraph's own alignment,
+                  which left-aligned them against the centred block. */}
+              <p className="px-4 text-center text-sm text-white/60">Add media to the timeline to start editing</p>
             </div>
           )}
         </div>
