@@ -28,8 +28,8 @@ import { readEditorState, timelineDurationUs, useEditor } from '../../store/edit
 import { MEDIA_FIT_LABELS, US, clipEndUs, isMediaClip } from '../../types';
 import type { Clip, MediaFit, Track } from '../../types';
 import { IconButton, SegmentedControl } from '../controls';
-import { ClipView } from './ClipView';
-import type { TrimEdge } from './ClipView';
+import { ClipView, DEFAULT_ASPECT } from './ClipView';
+import type { ClipPreview, TrimEdge } from './ClipView';
 import { ContextMenu } from './ContextMenu';
 import type { MenuItem } from './ContextMenu';
 import { TimeRuler } from './TimeRuler';
@@ -137,15 +137,6 @@ export const Timeline = () => {
    * re-scanning the full list — that was O(tracks x clips) on every render,
    * and every pointer move during a drag is a render.
    */
-  /**
-   * Poster frame per asset, for a clip to paint while its strip is decoding.
-   *
-   * Built here and handed down rather than looked up inside each clip: a
-   * selector that scans the asset list would re-run on every store write, and
-   * the playhead writes sixty times a second during playback.
-   */
-  const posters = useMemo(() => new Map(assets.map(asset => [asset.id, asset.thumbnail])), [assets]);
-
   const clipsByTrack = useMemo(() => {
     const byTrack = new Map<string, Clip[]>();
     for (const clip of clips) {
@@ -155,6 +146,27 @@ export const Timeline = () => {
     }
     return byTrack;
   }, [clips]);
+
+  /**
+   * What each asset's clips need to draw a filmstrip: its poster frame, and
+   * its shape.
+   *
+   * Built here and handed down rather than looked up inside each clip: a
+   * selector that scans the asset list would re-run on every store write, and
+   * the playhead writes sixty times a second during playback. One object per
+   * asset, rebuilt only when the library changes, so a clip's `preview` prop
+   * keeps its identity and `ClipView`'s memo holds.
+   */
+  const previews = useMemo(
+    () =>
+      new Map<string, ClipPreview>(
+        assets.map(asset => [
+          asset.id,
+          { poster: asset.thumbnail, aspect: asset.width > 0 && asset.height > 0 ? asset.width / asset.height : DEFAULT_ASPECT }
+        ])
+      ),
+    [assets]
+  );
 
   /** Cumulative row offsets, so hit-testing works with per-track heights. */
   const rowOffsets = useMemo(() => {
@@ -636,7 +648,7 @@ export const Timeline = () => {
               pxPerSec={pxPerSec}
               contentWidth={contentWidth}
               selectedIds={selectedIds}
-              posters={posters}
+              previews={previews}
               visibleRange={visibleRange}
               canRemove={(track.kind === 'video' ? videoTrackCount : audioTrackCount) > 1}
               onUpdateTrack={handleUpdateTrack}
@@ -822,8 +834,8 @@ interface TrackRowProps {
   canRemove: boolean;
   /** Indexed, so a row does not scan the selection once per clip it draws. */
   selectedIds: Set<string>;
-  /** Poster frame per asset id, for clips whose strip hasn't arrived yet. */
-  posters: Map<string, string | null>;
+  /** Per-asset poster frame and shape, for the clips' filmstrips. */
+  previews: Map<string, ClipPreview>;
   /*
    * Both take the track id rather than closing over it: bound inline at the
    * call site they minted a new function per row per render, which defeated
@@ -848,7 +860,7 @@ const TrackRow = memo(
     pxPerSec,
     contentWidth,
     selectedIds,
-    posters,
+    previews,
     visibleRange,
     canRemove,
     onUpdateTrack,
@@ -904,7 +916,7 @@ const TrackRow = memo(
               rowHeight={track.height}
               selected={selectedIds.has(clip.id)}
               trackLocked={track.locked}
-              poster={(isMediaClip(clip) ? posters.get(clip.assetId) : null) ?? null}
+              preview={(isMediaClip(clip) ? previews.get(clip.assetId) : null) ?? null}
               onSelect={onSelectClip}
               onMoveStart={onClipPointerDown}
               onTrimStart={onTrimStart}
