@@ -1083,7 +1083,13 @@ const Playhead = ({
       */}
       <div
         aria-hidden="true"
-        className={cn('pointer-events-none absolute top-0 z-[35] bg-playhead transition-all', emphasised ? 'w-0.5' : 'w-px')}
+        /*
+         * Width only, never `transition-all`. The translate below is on this
+         * same element, and an eased transform meant the line spent 150ms
+         * catching up to every new time — trailing visibly behind the handle,
+         * which has no transition, all through playback.
+         */
+        className={cn('pointer-events-none absolute top-0 z-[35] bg-playhead transition-[width]', emphasised ? 'w-0.5' : 'w-px')}
         style={{ height, ...moving }}
       />
 
