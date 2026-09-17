@@ -1,9 +1,8 @@
 import { reportOnce } from '../lib/diagnostics';
-import { animatedValue } from '../lib/keyframes';
 import { clamp } from '../lib/utils';
 import { getImageBitmap, getReader } from '../media/library';
 import { TEXT_LINE_HEIGHT, US, clipEndUs, isMediaClip, isTextClip, sourceTimeUs } from '../types';
-import type { Background, Clip, ColorAdjust, MediaClip, MediaFit, ProjectSettings, TextClip, Track, Transform } from '../types';
+import type { Background, Clip, MediaClip, MediaFit, ProjectSettings, TextClip, Track, Transform } from '../types';
 import { blurOnlyFilter, canvasFilterString, exportProcessor, needsPixelProcessing, previewProcessor } from './glProcessor';
 import { transitionStateAt } from './transitions';
 import type { LayerTransitionState } from './transitions';
@@ -120,42 +119,6 @@ const envelopeAt = (clip: Clip, timeUs: number): number => {
   if (clip.fadeInUs > 0) gain = Math.min(gain, clamp(local / clip.fadeInUs, 0, 1));
   if (clip.fadeOutUs > 0) gain = Math.min(gain, clamp(remaining / clip.fadeOutUs, 0, 1));
   return gain;
-};
-
-/**
- * Resolves a clip's colour settings at an instant, applying any keyframes.
- *
- * Only the dials worth animating are looked up. The tint hexes and the
- * texture amounts are deliberately static: ramping grain or a split tone
- * reads as a glitch rather than a move.
- */
-const colorAt = (clip: Clip, timeUs: number): ColorAdjust => {
-  const base = clip.colorAdjust;
-  if (Object.keys(clip.animations).length === 0) return base;
-  return {
-    ...base,
-    brightness: animatedValue(clip, 'color.brightness', base.brightness, timeUs),
-    contrast: animatedValue(clip, 'color.contrast', base.contrast, timeUs),
-    saturation: animatedValue(clip, 'color.saturation', base.saturation, timeUs),
-    vibrance: animatedValue(clip, 'color.vibrance', base.vibrance, timeUs),
-    temperature: animatedValue(clip, 'color.temperature', base.temperature, timeUs),
-    highlights: animatedValue(clip, 'color.highlights', base.highlights, timeUs),
-    shadows: animatedValue(clip, 'color.shadows', base.shadows, timeUs),
-    vignette: animatedValue(clip, 'color.vignette', base.vignette, timeUs),
-    blur: animatedValue(clip, 'color.blur', base.blur, timeUs)
-  };
-};
-
-const transformAt = (clip: Clip, timeUs: number): Transform => {
-  const base = clip.transform;
-  if (Object.keys(clip.animations).length === 0) return base;
-  return {
-    ...base,
-    x: animatedValue(clip, 'transform.x', base.x, timeUs),
-    y: animatedValue(clip, 'transform.y', base.y, timeUs),
-    scale: animatedValue(clip, 'transform.scale', base.scale, timeUs),
-    rotation: animatedValue(clip, 'transform.rotation', base.rotation, timeUs)
-  };
 };
 
 interface DrawOverride extends LayerTransitionState {
@@ -289,8 +252,7 @@ const drawLayer = async (
   options: RenderOptions,
   override: DrawOverride | null
 ): Promise<boolean> => {
-  const animatedOpacity = animatedValue(clip, 'opacity', clip.opacity, timeUs);
-  const alpha = animatedOpacity * envelopeAt(clip, timeUs) * (override?.alpha ?? 1);
+  const alpha = clip.opacity * envelopeAt(clip, timeUs) * (override?.alpha ?? 1);
   // Transparent by the user's own instruction — opacity, a fade, a transition.
   if (alpha <= 0.001) return true;
 
@@ -385,7 +347,7 @@ const compose = (
 ) => {
   if (sourceWidth <= 0 || sourceHeight <= 0) return;
 
-  const color = colorAt(clip, timeUs);
+  const color = clip.colorAdjust;
   const chromaKey = isMediaClip(clip) ? clip.chromaKey : undefined;
   const blurScale = project.height / 1080;
 
@@ -407,12 +369,7 @@ const compose = (
   }
 
   // Crop selects a sub-rectangle of the source, which then fills the same box.
-  const crop = {
-    top: animatedValue(clip, 'crop.top', clip.crop.top, timeUs),
-    right: animatedValue(clip, 'crop.right', clip.crop.right, timeUs),
-    bottom: animatedValue(clip, 'crop.bottom', clip.crop.bottom, timeUs),
-    left: animatedValue(clip, 'crop.left', clip.crop.left, timeUs)
-  };
+  const crop = clip.crop;
   const sx = sourceWidth * clamp(crop.left, 0, 0.98);
   const sy = sourceHeight * clamp(crop.top, 0, 0.98);
   const sw = Math.max(1, sourceWidth * (1 - clamp(crop.left + crop.right, 0, 0.99)));
@@ -433,7 +390,7 @@ const compose = (
 
   // Text rasterises at project size, so `contain` is the identity for it.
   const box = fitRect(isMediaClip(clip) ? clip.fit : 'contain', sw, sh, project.width, project.height);
-  const transform = transformAt(clip, timeUs);
+  const transform = clip.transform;
 
   context.save();
   context.globalAlpha = alpha;
@@ -671,7 +628,7 @@ const textSignatures = new Map<string, string>();
 
 const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: number, key: string) => {
   const animation = textAnimationAt(clip, timeUs);
-  const fontSize = Math.max(1, animatedValue(clip, 'text.fontSize', clip.fontSize, timeUs) * project.height * animation.scale);
+  const fontSize = Math.max(1, clip.fontSize * project.height * animation.scale);
   const lineHeight = fontSize * TEXT_LINE_HEIGHT;
 
   let lines = clip.text.split('\n');
@@ -682,14 +639,14 @@ const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: n
   if (lines.length === 0 || (lines.length === 1 && lines[0] === '')) return null;
 
   const font = `${clip.italic ? 'italic ' : ''}${clip.fontWeight} ${fontSize}px ${clip.fontFamily}`;
-  const centreX = project.width / 2 + animatedValue(clip, 'text.x', clip.x, timeUs) * project.width;
-  const centreY = project.height / 2 + (animatedValue(clip, 'text.y', clip.y, timeUs) + animation.offsetY) * project.height;
+  const centreX = project.width / 2 + clip.x * project.width;
+  const centreY = project.height / 2 + (clip.y + animation.offsetY) * project.height;
   const blockHeight = lines.length * lineHeight;
 
   /*
    * Everything a pixel depends on, and nothing that doesn't. The resolved
-   * values are used rather than the raw clip fields, so an animated property
-   * lands in here already evaluated for this instant.
+   * values are used rather than the raw clip fields, so the entrance
+   * animation lands in here already evaluated for this instant.
    */
   const signature = [
     lines.join(' '),

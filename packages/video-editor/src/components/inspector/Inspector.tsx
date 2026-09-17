@@ -134,28 +134,6 @@ export const Inspector = () => {
 
 type Patch = (changes: Partial<Clip>) => void;
 
-/**
- * Keyframe state for a property path at the current playhead.
- *
- * The selector returns the *boolean* rather than the playhead, so the section
- * only re-renders when a key actually comes under the playhead. Selecting
- * `playheadUs` here re-rendered the whole inspector — every section calls this
- * hook — sixty times a second for the entire duration of playback.
- */
-const useKeyframeState = (clip: Clip, path: string) => {
-  const keys = clip.animations[path];
-  const animated = (keys?.length ?? 0) > 0;
-
-  const active = useEditor(state => {
-    if (!keys || keys.length === 0) return false;
-    const localUs = state.playheadUs - clip.startUs;
-    const tolerance = US / (state.project.fps * 2);
-    return keys.some(key => Math.abs(key.atUs - localUs) <= tolerance);
-  });
-
-  return { clipId: clip.id, path, animated, active };
-};
-
 const ClipHeader = ({ clip }: { clip: Clip }) => (
   <div className="border-b border-border px-3 py-2.5">
     <div className="flex items-center gap-2">
@@ -173,7 +151,6 @@ const ClipHeader = ({ clip }: { clip: Clip }) => (
 
 /** Opacity, fades and speed — reached for on almost every clip. */
 const BasicsSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
-  const opacityKey = useKeyframeState(clip, 'opacity');
   const maxFadeMs = Math.min(3000, clip.durationUs / 1000);
   const media = isMediaClip(clip) && clip.kind !== 'image' ? clip : null;
 
@@ -186,7 +163,6 @@ const BasicsSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
         max={100}
         format={value => `${value}%`}
         onChange={value => patch({ opacity: value / 100 })}
-        keyframe={opacityKey}
         resetTo={100}
       />
       <SliderField
@@ -249,12 +225,6 @@ const TransformSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   const t = clip.transform;
   const set = (changes: Partial<typeof t>) => patch({ transform: { ...t, ...changes } } as Partial<Clip>);
 
-  // Hoisted so every hook runs unconditionally, in a stable order.
-  const scaleKey = useKeyframeState(clip, 'transform.scale');
-  const xKey = useKeyframeState(clip, 'transform.x');
-  const yKey = useKeyframeState(clip, 'transform.y');
-  const rotationKey = useKeyframeState(clip, 'transform.rotation');
-
   return (
     <Section
       title="Transform"
@@ -267,7 +237,6 @@ const TransformSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
         max={400}
         format={value => `${value}%`}
         onChange={value => set({ scale: value / 100 })}
-        keyframe={scaleKey}
         resetTo={100}
       />
       <SliderField
@@ -277,7 +246,6 @@ const TransformSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
         max={100}
         format={value => `${value}%`}
         onChange={value => set({ x: value / 100 })}
-        keyframe={xKey}
         resetTo={0}
       />
       <SliderField
@@ -287,7 +255,6 @@ const TransformSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
         max={100}
         format={value => `${value}%`}
         onChange={value => set({ y: value / 100 })}
-        keyframe={yKey}
         resetTo={0}
       />
       <SliderField
@@ -297,7 +264,6 @@ const TransformSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
         max={180}
         format={value => `${value}°`}
         onChange={rotation => set({ rotation })}
-        keyframe={rotationKey}
         resetTo={0}
       />
     </Section>
@@ -389,17 +355,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   // A hand edit means the grade is no longer the preset, so drop the record.
   const set = (changes: Partial<typeof color>) => patch({ colorAdjust: { ...color, ...changes }, filter: null } as Partial<Clip>);
 
-  const brightnessKey = useKeyframeState(clip, 'color.brightness');
-  const contrastKey = useKeyframeState(clip, 'color.contrast');
-  const saturationKey = useKeyframeState(clip, 'color.saturation');
-  const vibranceKey = useKeyframeState(clip, 'color.vibrance');
-  const temperatureKey = useKeyframeState(clip, 'color.temperature');
-  const highlightsKey = useKeyframeState(clip, 'color.highlights');
-  const shadowsKey = useKeyframeState(clip, 'color.shadows');
-  const vignetteKey = useKeyframeState(clip, 'color.vignette');
-  const blurKey = useKeyframeState(clip, 'color.blur');
-
-  /** -100..100 sliders that read as a direction rather than a percentage. */
   return (
     <>
       <Section
@@ -418,7 +373,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={200}
           format={value => `${value}%`}
           onChange={value => set({ brightness: value / 100 })}
-          keyframe={brightnessKey}
           resetTo={100}
         />
         <SliderField
@@ -428,7 +382,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={200}
           format={value => `${value}%`}
           onChange={value => set({ contrast: value / 100 })}
-          keyframe={contrastKey}
           resetTo={100}
         />
         <SliderField
@@ -438,7 +391,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={100}
           format={signed}
           onChange={value => set({ highlights: value / 100 })}
-          keyframe={highlightsKey}
           resetTo={0}
         />
         <SliderField
@@ -448,7 +400,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={100}
           format={signed}
           onChange={value => set({ shadows: value / 100 })}
-          keyframe={shadowsKey}
           resetTo={0}
         />
         <SliderField
@@ -478,7 +429,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={300}
           format={value => `${value}%`}
           onChange={value => set({ saturation: value / 100 })}
-          keyframe={saturationKey}
           resetTo={100}
         />
         <SliderField
@@ -488,7 +438,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={100}
           format={signed}
           onChange={value => set({ vibrance: value / 100 })}
-          keyframe={vibranceKey}
           resetTo={0}
         />
         <SliderField
@@ -498,7 +447,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={100}
           format={value => (value === 0 ? 'Neutral' : value < 0 ? `${-value} cool` : `${value} warm`)}
           onChange={value => set({ temperature: value / 100 })}
-          keyframe={temperatureKey}
           resetTo={0}
         />
         <SliderField
@@ -548,7 +496,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={100}
           format={value => (value === 0 ? 'Off' : `${value}%`)}
           onChange={value => set({ vignette: value / 100 })}
-          keyframe={vignetteKey}
           resetTo={0}
         />
         <SliderField
@@ -568,7 +515,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           step={0.5}
           format={value => `${value}px`}
           onChange={blur => set({ blur })}
-          keyframe={blurKey}
           resetTo={0}
         />
       </Section>
@@ -604,26 +550,22 @@ const CropSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   );
 };
 
-const AudioSection = ({ clip, patch }: { clip: MediaClip; patch: Patch }) => {
-  const volumeKey = useKeyframeState(clip, 'volume');
-  return (
-    <Section title="Audio" icon={<Volume2 className="h-3.5 w-3.5 text-muted" />}>
-      <SliderField
-        label="Volume"
-        value={Math.round(clip.volume * 100)}
-        min={0}
-        max={200}
-        format={value => `${value}%`}
-        onChange={value => patch({ volume: value / 100 } as Partial<Clip>)}
-        keyframe={volumeKey}
-        resetTo={100}
-      />
-      <ToggleChip active={clip.muted} onClick={() => patch({ muted: !clip.muted } as Partial<Clip>)} label="Mute this clip" className="w-full">
-        {clip.muted ? 'Muted' : 'Mute clip'}
-      </ToggleChip>
-    </Section>
-  );
-};
+const AudioSection = ({ clip, patch }: { clip: MediaClip; patch: Patch }) => (
+  <Section title="Audio" icon={<Volume2 className="h-3.5 w-3.5 text-muted" />}>
+    <SliderField
+      label="Volume"
+      value={Math.round(clip.volume * 100)}
+      min={0}
+      max={200}
+      format={value => `${value}%`}
+      onChange={value => patch({ volume: value / 100 } as Partial<Clip>)}
+      resetTo={100}
+    />
+    <ToggleChip active={clip.muted} onClick={() => patch({ muted: !clip.muted } as Partial<Clip>)} label="Mute this clip" className="w-full">
+      {clip.muted ? 'Muted' : 'Mute clip'}
+    </ToggleChip>
+  </Section>
+);
 
 const ChromaSection = ({ clip, patch }: { clip: MediaClip; patch: Patch }) => {
   const key = clip.chromaKey;
@@ -671,10 +613,6 @@ const ChromaSection = ({ clip, patch }: { clip: MediaClip; patch: Patch }) => {
 };
 
 const TextSection = ({ clip, patch }: { clip: TextClip; patch: Patch }) => {
-  const sizeKey = useKeyframeState(clip, 'text.fontSize');
-  const xKey = useKeyframeState(clip, 'text.x');
-  const yKey = useKeyframeState(clip, 'text.y');
-
   return (
     <Section title="Text" icon={<TypeIcon className="h-3.5 w-3.5 text-muted" />}>
       <TextField
@@ -704,7 +642,6 @@ const TextSection = ({ clip, patch }: { clip: TextClip; patch: Patch }) => {
         max={300}
         format={value => `${(value / 10).toFixed(1)}%`}
         onChange={value => patch({ fontSize: value / 1000 } as Partial<Clip>)}
-        keyframe={sizeKey}
         resetTo={80}
       />
 
@@ -763,7 +700,6 @@ const TextSection = ({ clip, patch }: { clip: TextClip; patch: Patch }) => {
         max={70}
         format={value => `${value}%`}
         onChange={value => patch({ x: value / 100 } as Partial<Clip>)}
-        keyframe={xKey}
         resetTo={0}
       />
       <SliderField
@@ -773,7 +709,6 @@ const TextSection = ({ clip, patch }: { clip: TextClip; patch: Patch }) => {
         max={70}
         format={value => `${value}%`}
         onChange={value => patch({ y: value / 100 } as Partial<Clip>)}
-        keyframe={yKey}
         resetTo={0}
       />
     </Section>

@@ -16,7 +16,6 @@ const clipBase = (trackId: string, name: string, startUs: number, durationUs: nu
   opacity: 1,
   fadeInUs: 0,
   fadeOutUs: 0,
-  animations: {},
   transitionIn: null,
   color: nextColor(),
   groupId: null,

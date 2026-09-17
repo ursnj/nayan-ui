@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { makeMediaClip, makeTextClip, makeTrack } from '../lib/factories';
-import { removeKeyAt, scaleAnimations, shiftAnimations, splitAnimations, upsertKey } from '../lib/keyframes';
 import { clamp, uid } from '../lib/utils';
 import { releaseAllReaders, releaseAsset, releaseAssetsExcept, releaseReader } from '../media/library';
 import {
@@ -83,10 +82,6 @@ export interface EditorState extends Snapshot {
   selectAll: () => void;
 
   setTransition: (clipId: string, kind: TransitionKind | null, durationUs?: number) => void;
-
-  toggleKeyframe: (clipId: string, path: string, value: number) => void;
-  removeKeyframe: (clipId: string, path: string, localUs: number) => void;
-  clearKeyframes: (clipId: string, path: string) => void;
 
   addTrack: (kind: TrackKind) => void;
   updateTrack: (trackId: string, patch: Partial<Track>) => void;
@@ -212,7 +207,6 @@ const normaliseClip = (clip: Clip): Clip => {
     transform: { ...DEFAULT_TRANSFORM, ...clip.transform },
     crop: { ...DEFAULT_CROP, ...clip.crop },
     colorAdjust: { ...DEFAULT_COLOR, ...clip.colorAdjust },
-    animations: clip.animations ?? {},
     filter: clip.filter ?? null
   };
   // Pre-fit files were all drawn contained, which is what `DEFAULT_FIT` is.
@@ -516,7 +510,6 @@ export const useEditor = create<EditorState>((set, get) => {
             ...clip,
             startUs: newStart,
             durationUs: newDuration,
-            animations: shiftAnimations(clip.animations, deltaUs, newDuration),
             ...(isMediaClip(clip) && clip.kind !== 'image' ? { inUs: Math.max(0, clip.inUs + deltaUs * clip.speed) } : {})
           } as Clip;
 
@@ -526,11 +519,7 @@ export const useEditor = create<EditorState>((set, get) => {
         const maxDurationUs = availableSourceUs(clip, state.assets);
         const newEnd = clamp(Math.round(timeUs), clip.startUs + MIN_CLIP_US, clip.startUs + maxDurationUs);
         const newDuration = newEnd - clip.startUs;
-        const updated: Clip = {
-          ...clip,
-          durationUs: newDuration,
-          animations: scaleAnimations(clip.animations, newDuration / Math.max(1, clip.durationUs))
-        };
+        const updated: Clip = { ...clip, durationUs: newDuration };
         return { clips: state.clips.map(entry => (entry.id === clipId ? updated : entry)) };
       }),
 
@@ -556,13 +545,11 @@ export const useEditor = create<EditorState>((set, get) => {
         for (const clip of cuttable) {
           const leftDuration = at - clip.startUs;
           const rightDuration = clipEndUs(clip) - at;
-          const { left: leftAnimations, right: rightAnimations } = splitAnimations(clip.animations, leftDuration);
 
           created.push({
             ...clip,
             durationUs: leftDuration,
-            fadeOutUs: Math.min(clip.fadeOutUs, leftDuration),
-            animations: leftAnimations
+            fadeOutUs: Math.min(clip.fadeOutUs, leftDuration)
           } as Clip);
 
           created.push({
@@ -571,7 +558,6 @@ export const useEditor = create<EditorState>((set, get) => {
             startUs: at,
             durationUs: rightDuration,
             fadeInUs: Math.min(clip.fadeInUs, rightDuration),
-            animations: rightAnimations,
             // The right half starts at a cut, not at the original head.
             transitionIn: null,
             ...(isMediaClip(clip) ? { inUs: clip.inUs + leftDuration * clip.speed } : {})
@@ -761,48 +747,6 @@ export const useEditor = create<EditorState>((set, get) => {
             : clip
         )
       })),
-
-    /* ---------------- keyframes ---------------- */
-
-    toggleKeyframe: (clipId, path, value) =>
-      commit(state => {
-        const clip = state.clips.find(entry => entry.id === clipId);
-        if (!clip) return null;
-        const localUs = state.playheadUs - clip.startUs;
-        if (localUs < 0 || localUs > clip.durationUs) return null;
-
-        const tolerance = US / (state.project.fps * 2);
-        const existing = clip.animations[path];
-        const hasKeyHere = existing?.some(key => Math.abs(key.atUs - localUs) <= tolerance);
-
-        const keys = hasKeyHere ? removeKeyAt(existing, localUs, tolerance) : upsertKey(existing, localUs, value, tolerance);
-        const animations = { ...clip.animations };
-        if (keys.length > 0) animations[path] = keys;
-        else delete animations[path];
-
-        return { clips: state.clips.map(entry => (entry.id === clipId ? { ...entry, animations } : entry)) };
-      }),
-
-    removeKeyframe: (clipId, path, localUs) =>
-      commit(state => {
-        const clip = state.clips.find(entry => entry.id === clipId);
-        if (!clip) return null;
-        const tolerance = US / (state.project.fps * 2);
-        const keys = removeKeyAt(clip.animations[path], localUs, tolerance);
-        const animations = { ...clip.animations };
-        if (keys.length > 0) animations[path] = keys;
-        else delete animations[path];
-        return { clips: state.clips.map(entry => (entry.id === clipId ? { ...entry, animations } : entry)) };
-      }),
-
-    clearKeyframes: (clipId, path) =>
-      commit(state => {
-        const clip = state.clips.find(entry => entry.id === clipId);
-        if (!clip) return null;
-        const animations = { ...clip.animations };
-        delete animations[path];
-        return { clips: state.clips.map(entry => (entry.id === clipId ? { ...entry, animations } : entry)) };
-      }),
 
     /* ---------------- tracks ---------------- */
 

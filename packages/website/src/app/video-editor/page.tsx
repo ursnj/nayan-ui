@@ -8,10 +8,10 @@ export const dynamic = 'force-dynamic';
 export const metadata = buildPageMetadata({
   title: 'Nayan UI Video Editor — Free Online Video Editor, No Upload',
   description:
-    'Edit video free in your browser. Multi-track timeline, 16 colour filters, 18 transitions, keyframes, green screen and titles. Exports MP4, MOV, MKV, WebM. Nothing is uploaded — no account, no watermark.',
+    'Edit video free in your browser. Multi-track timeline, 16 colour filters, 18 transitions, green screen and titles. Exports MP4, MOV, MKV, WebM. Nothing is uploaded — no account, no watermark.',
   path: '/video-editor',
   keywords:
-    'free online video editor, browser video editor, video editor no upload, video editor no watermark, webcodecs video editor, offline video editor, multi track timeline, green screen online, chroma key browser, keyframe animation, video filters online, video transitions, mp4 export, vertical video editor, privacy video editor, nayan ui video editor, nayan editor',
+    'free online video editor, browser video editor, video editor no upload, video editor no watermark, webcodecs video editor, offline video editor, multi track timeline, green screen online, chroma key browser, video filters online, video transitions, mp4 export, vertical video editor, privacy video editor, nayan ui video editor, nayan editor',
   ogType: 'website'
 });
 
@@ -37,7 +37,7 @@ const schemas = [
     applicationSubCategory: 'Video Editor',
     operatingSystem: 'Web Browser',
     description:
-      'A free, full-featured video editor that runs entirely in the browser. Multi-track timeline, keyframe animation, green screen, 16 colour filters, 18 transitions, titles and MP4 export using WebCodecs. No upload, no account, no watermark.',
+      'A free, full-featured video editor that runs entirely in the browser. Multi-track timeline, green screen, 16 colour filters, 18 transitions, titles and MP4 export using WebCodecs. No upload, no account, no watermark.',
     url: `${SITE_URL}/video-editor`,
     installUrl: `${SITE_URL}/video-editor/start`,
     browserRequirements: 'Requires WebCodecs and a window at least 1024px wide. Chrome/Edge 94+, Safari 16.4+.',
@@ -48,7 +48,6 @@ const schemas = [
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock' },
     featureList: [
       'Multi-track video and audio timeline',
-      'Keyframe animation',
       'Green screen / chroma key',
       '16 colour filters with adjustable strength',
       '18 transitions',

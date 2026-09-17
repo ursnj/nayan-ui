@@ -1,6 +1,5 @@
-import { memo, useEffect, useMemo, useRef } from 'react';
-import { Diamond, Link2, Lock, Music, Type, VolumeX } from 'lucide-react';
-import { allKeyTimes } from '../../lib/keyframes';
+import { memo, useEffect, useRef } from 'react';
+import { Link2, Lock, Music, Type, VolumeX } from 'lucide-react';
 import { useHeldInteraction } from '../../lib/shortcuts';
 import { cn } from '../../lib/utils';
 import { readEditorState } from '../../store/editor';
@@ -58,9 +57,6 @@ export const ClipView = memo(
     const left = (clip.startUs / US) * pxPerSec;
     const width = Math.max(3, (clip.durationUs / US) * pxPerSec);
     const locked = trackLocked || clip.locked;
-    // Set, spread and sort per clip — but only when the keys themselves change,
-    // not on every zoom step, selection change or row resize.
-    const keyTimes = useMemo(() => allKeyTimes(clip.animations), [clip.animations]);
     // Stable callbacks of its own, so this doesn't cost the parent a new prop
     // per clip and defeat the memo.
     const held = useHeldInteraction();
@@ -167,18 +163,6 @@ export const ClipView = memo(
             {isMediaClip(clip) && clip.speed !== 1 && <span className="shrink-0 text-[9px] text-white/80">{clip.speed}×</span>}
             {isMediaClip(clip) && clip.reversed && <span className="shrink-0 text-[9px] text-white/80">REV</span>}
           </div>
-
-          {keyTimes.length > 0 && width > 24 && (
-            <div className="pointer-events-none absolute inset-x-0 bottom-0.5 h-2">
-              {keyTimes.map(atUs => (
-                <Diamond
-                  key={atUs}
-                  className="absolute h-2 w-2 -translate-x-1/2 fill-accent text-accent drop-shadow"
-                  style={{ left: (atUs / US) * pxPerSec }}
-                />
-              ))}
-            </div>
-          )}
         </div>
 
         {!locked && (
