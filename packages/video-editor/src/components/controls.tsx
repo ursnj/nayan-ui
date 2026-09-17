@@ -144,6 +144,7 @@ export const SegmentedControl = <T extends string>({
   options,
   onChange,
   disabled,
+  framed = false,
   className
 }: {
   /** No segment is lit when the value is null — a mixed or empty selection. */
@@ -151,9 +152,23 @@ export const SegmentedControl = <T extends string>({
   options: { value: T; label: React.ReactNode; title: string }[];
   onChange: (value: T) => void;
   disabled?: boolean;
+  /**
+   * Draws the track the segments sit on. For the inspector, where this is one
+   * field among sliders and selects that all carry a filled background of
+   * their own. Off in the toolbar, where the segments stand in a row of ghost
+   * icon buttons and a track would be the only background in it.
+   */
+  framed?: boolean;
   className?: string;
 }) => (
-  <div className={cn('flex gap-0.5 rounded-md bg-surface-secondary p-0.5', disabled && 'opacity-50', className)} role="group">
+  /*
+   * No dimming on the track: each segment is a disabled NToggleButton already,
+   * and the library fades those to `--disabled-opacity` on its own. An
+   * `opacity-50` here multiplied into that — segments at a quarter opacity,
+   * half as visible as the disabled icon buttons sitting next to them in the
+   * timeline toolbar, and a faded pill behind them that no other control has.
+   */
+  <div className={cn('flex gap-0.5 rounded-md', framed && 'bg-surface-secondary p-0.5', className)} role="group">
     {options.map(option => (
       <NTooltip key={option.value} message={option.title}>
         <NToggleButton
@@ -164,7 +179,14 @@ export const SegmentedControl = <T extends string>({
           size="sm"
           onChange={() => onChange(option.value)}
           aria-label={option.title}
-          className="h-6 flex-1">
+          /*
+           * Either way the control stands 28px tall, the height of an
+           * IconButton: a framed one is 24px of segment inside the track's
+           * 2px padding, an unframed one is the segment alone. Keeping the
+           * 24px without the track would leave the toolbar's segments sitting
+           * short in a row of 28px buttons, with nothing left to disguise it.
+           */
+          className={cn('flex-1', framed ? 'h-6' : 'h-7')}>
           {option.label}
         </NToggleButton>
       </NTooltip>

@@ -626,6 +626,7 @@ const TextSection = ({ clip, patch }: { clip: TextClip; patch: Patch }) => {
       <FieldRow label="Align">
         <SegmentedControl<TextAlign>
           value={clip.align}
+          framed
           onChange={align => patch({ align } as Partial<Clip>)}
           options={[
             { value: 'left', label: <AlignLeft className="h-3.5 w-3.5" />, title: 'Align left' },
