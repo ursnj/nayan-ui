@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { NCheck } from '@nayan-ui/react';
 import {
   AlignCenter,
   AlignLeft,
@@ -228,14 +227,13 @@ const BasicsSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
             resetTo={1}
           />
 
-          <NCheck
-            id={`reverse-${clip.id}`}
-            checked={media.reversed}
-            onChange={reversed => patch({ reversed } as Partial<Clip>)}
-            className="mb-2"
-            labelClassName="text-[11px] text-foreground">
-            Play backwards
-          </NCheck>
+          <ToggleChip
+            active={media.reversed}
+            onClick={() => patch({ reversed: !media.reversed } as Partial<Clip>)}
+            label="Play backwards"
+            className="w-full">
+            Reverse
+          </ToggleChip>
         </>
       )}
     </Section>
