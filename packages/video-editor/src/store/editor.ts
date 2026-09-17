@@ -33,6 +33,41 @@ interface Snapshot {
   clips: Clip[];
 }
 
+/**
+ * Whether a split at `at` would cut this clip: the playhead has to cross it,
+ * it must be unlocked, both halves must clear `MIN_CLIP_US`, and with a
+ * selection active only the selected clips are candidates.
+ */
+const cuttableAt = (clip: Clip, selectedClipIds: string[], at: number) => {
+  if (clip.locked) return false;
+  if (selectedClipIds.length > 0 && !selectedClipIds.includes(clip.id)) return false;
+  return clip.startUs < at && clipEndUs(clip) > at && at - clip.startUs >= MIN_CLIP_US && clipEndUs(clip) - at >= MIN_CLIP_US;
+};
+
+/** The clips a split at `timeUs` would cut. */
+export const splitTargetsAt = (clips: Clip[], selectedClipIds: string[], timeUs: number): Clip[] => {
+  const at = Math.round(timeUs);
+  return clips.filter(clip => cuttableAt(clip, selectedClipIds, at));
+};
+
+/**
+ * Whether a split at `timeUs` would do anything at all.
+ *
+ * `splitAt` is a no-op when nothing is cuttable — an empty timeline, the
+ * playhead parked in a gap, a locked clip, a cut too close to an edge — and a
+ * control that silently does nothing reads as broken. The toolbar and the
+ * context menu gate on this so they cannot disagree with the action: a rule
+ * written out a second time in the UI would be a second thing to keep in step
+ * with the cut itself.
+ *
+ * Separate from `splitTargetsAt` because the UI asks this on every playhead
+ * move, sixty times a second during playback, and does not need the array.
+ */
+export const canSplitAt = (clips: Clip[], selectedClipIds: string[], timeUs: number): boolean => {
+  const at = Math.round(timeUs);
+  return clips.some(clip => cuttableAt(clip, selectedClipIds, at));
+};
+
 export interface EditorState extends Snapshot {
   assets: MediaAsset[];
   selectedClipIds: string[];
@@ -526,17 +561,7 @@ export const useEditor = create<EditorState>((set, get) => {
     splitAt: timeUs =>
       commit(state => {
         const at = Math.round(timeUs);
-        // Cut every clip the playhead crosses: the selected ones, or all of
-        // them across every track when nothing is selected.
-        const targets = state.clips.filter(clip => {
-          if (clip.locked) return false;
-          if (state.selectedClipIds.length > 0 && !state.selectedClipIds.includes(clip.id)) return false;
-          return true;
-        });
-
-        const cuttable = targets.filter(
-          clip => clip.startUs < at && clipEndUs(clip) > at && at - clip.startUs >= MIN_CLIP_US && clipEndUs(clip) - at >= MIN_CLIP_US
-        );
+        const cuttable = splitTargetsAt(state.clips, state.selectedClipIds, at);
         if (cuttable.length === 0) return null;
 
         const removed = new Set(cuttable.map(clip => clip.id));

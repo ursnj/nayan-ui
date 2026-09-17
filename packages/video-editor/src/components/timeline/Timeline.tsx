@@ -24,7 +24,7 @@ import {
 import { player, seekTo } from '../../engine/playerInstance';
 import { MOD_LABEL, useCommand } from '../../lib/shortcuts';
 import { clamp, cn } from '../../lib/utils';
-import { readEditorState, timelineDurationUs, useEditor } from '../../store/editor';
+import { canSplitAt, readEditorState, timelineDurationUs, useEditor } from '../../store/editor';
 import { MEDIA_FIT_LABELS, US, clipEndUs, isMediaClip } from '../../types';
 import type { Clip, MediaFit, Track } from '../../types';
 import { IconButton, SegmentedControl } from '../controls';
@@ -402,8 +402,15 @@ export const Timeline = () => {
   const openClipMenu = useCallback(
     (clip: Clip, event: React.MouseEvent) => {
       event.preventDefault();
+      if (!readEditorState().selectedClipIds.includes(clip.id)) selectClip(clip.id);
+      /*
+       * Snapshotted after that selection change, not before: right-clicking an
+       * unselected clip selects it — the whole group, if it is in one — and the
+       * items below are gated on the selection the menu will actually act on.
+       * Read any earlier, they would answer for the selection the right-click
+       * just replaced.
+       */
       const state = readEditorState();
-      if (!state.selectedClipIds.includes(clip.id)) selectClip(clip.id);
 
       setMenu({
         x: event.clientX,
@@ -412,6 +419,10 @@ export const Timeline = () => {
           {
             label: 'Split at playhead',
             icon: <Split className="h-3.5 w-3.5" />,
+            // The snapshot is enough here, where the toolbar needs a live
+            // subscription: this list is built once per open and thrown away
+            // on close, so there is no frame in which it could go stale.
+            disabled: !canSplitAt(state.clips, state.selectedClipIds, state.playheadUs),
             onSelect: () => splitAt(readEditorState().playheadUs)
           },
           { label: 'Duplicate', icon: <Copy className="h-3.5 w-3.5" />, onSelect: duplicateSelection },
@@ -774,6 +785,26 @@ interface ToolbarProps {
   onZoomFit: () => void;
 }
 
+/**
+ * Subscribes to the playhead itself, rather than taking its enabled state from
+ * the timeline: whether a cut is possible depends on where the playhead is,
+ * which changes every frame during playback, and reading that in the Timeline
+ * body would re-render the lanes sixty times a second. The selector returns a
+ * boolean, so the store's equality check drops the frames where the answer
+ * hasn't changed and only the ones that flip it re-render this button.
+ */
+const SplitButton = ({ onSplit }: { onSplit: () => void }) => {
+  const canSplit = useEditor(state => canSplitAt(state.clips, state.selectedClipIds, state.playheadUs));
+  return (
+    <IconButton
+      label={canSplit ? `Split at playhead (${MOD_LABEL}B)` : `Split at playhead (${MOD_LABEL}B) — nothing crosses it`}
+      onClick={onSplit}
+      disabled={!canSplit}>
+      <Split className="h-4 w-4" />
+    </IconButton>
+  );
+};
+
 const TimelineToolbar = (props: ToolbarProps) => (
   <div className="flex shrink-0 items-center gap-1.5 border-b border-border bg-editor-panel px-2 py-1.5">
     {/*
@@ -812,9 +843,7 @@ const TimelineToolbar = (props: ToolbarProps) => (
 
     <span className="mx-0.5 h-4 w-px bg-separator" />
 
-    <IconButton label={`Split at playhead (${MOD_LABEL}B)`} onClick={props.onSplit}>
-      <Split className="h-4 w-4" />
-    </IconButton>
+    <SplitButton onSplit={props.onSplit} />
     <IconButton label={`Duplicate (${MOD_LABEL}D)`} onClick={props.onDuplicate} disabled={!props.hasSelection}>
       <Copy className="h-4 w-4" />
     </IconButton>
