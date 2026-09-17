@@ -436,7 +436,13 @@ export default Popover;`;
 export const progressCode = `import { NProgress } from '@nayan-ui/react';
 
 const Progress = () => {
-  return <NProgress value={50} />;
+  return (
+    <>
+      <NProgress value={50} />
+      {/* showLabel renders the label and percentage above the bar. */}
+      <NProgress value={72} label="Uploading" showLabel />
+    </>
+  );
 };
 
 export default Progress;`;
