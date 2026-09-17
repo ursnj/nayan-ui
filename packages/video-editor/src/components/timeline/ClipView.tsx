@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef } from 'react';
+import { memo, useEffect, useMemo, useRef } from 'react';
 import { Diamond, Link2, Lock, Music, Type, VolumeX } from 'lucide-react';
 import { allKeyTimes } from '../../lib/keyframes';
 import { useHeldInteraction } from '../../lib/shortcuts';
@@ -37,7 +37,9 @@ export const ClipView = memo(
     const left = (clip.startUs / US) * pxPerSec;
     const width = Math.max(3, (clip.durationUs / US) * pxPerSec);
     const locked = trackLocked || clip.locked;
-    const keyTimes = allKeyTimes(clip.animations);
+    // Set, spread and sort per clip — but only when the keys themselves change,
+    // not on every zoom step, selection change or row resize.
+    const keyTimes = useMemo(() => allKeyTimes(clip.animations), [clip.animations]);
     // Stable callbacks of its own, so this doesn't cost the parent a new prop
     // per clip and defeat the memo.
     const held = useHeldInteraction();
@@ -94,7 +96,17 @@ export const ClipView = memo(
         data-clip-id={clip.id}
         style={{ left, width, borderColor: selected ? undefined : `${clip.color}66` }}
         className={cn(
-          'group gpu-layer absolute top-1 select-none overflow-hidden rounded-md border text-left transition-shadow',
+          /*
+           * No `gpu-layer` here.
+           *
+           * It promoted every clip to its own compositor layer — GPU memory
+           * proportional to each clip's area, plus layer bookkeeping on every
+           * frame — to avoid repaints it cannot avoid: a clip is positioned
+           * with `left`, so moving one invalidates layout rather than a
+           * transform, and absolutely positioned siblings do not repaint each
+           * other. Nothing in here animates a transform.
+           */
+          'group absolute top-1 select-none overflow-hidden rounded-md border text-left transition-shadow',
           locked ? 'cursor-not-allowed' : 'cursor-grab active:cursor-grabbing',
           selected ? 'z-10 border-accent ring-2 ring-accent/70 elevate' : 'hover:elevate'
         )}>
@@ -219,6 +231,21 @@ const Filmstrip = ({ clip, width }: { clip: MediaClip; width: number }) => {
 };
 
 /**
+ * Ceiling on the waveform's backing store, in CSS pixels.
+ *
+ * The canvas is stretched to the clip by CSS, so its own surface does not have
+ * to match the clip's pixel width — and must not. A ten-minute clip at maximum
+ * zoom is 480,000px wide: at device pixel ratio 2 that asked for a surface
+ * nearly a million pixels across, which is past every browser's canvas limit
+ * and hundreds of megabytes of backing store where it is honoured at all.
+ *
+ * Nothing is lost by capping it. The peaks are 2048 buckets for a whole asset,
+ * so a clip showing part of one holds a few hundred distinct values — this is
+ * already oversampling them.
+ */
+const MAX_WAVEFORM_PX = 2048;
+
+/**
  * Peaks are drawn to a canvas rather than SVG: a few thousand bars as DOM nodes
  * would dominate render time on a busy timeline.
  */
@@ -233,7 +260,9 @@ const Waveform = ({ clip, width }: { clip: MediaClip; width: number }) => {
     if (!context) return;
 
     const dpr = Math.min(2, window.devicePixelRatio || 1);
-    const cssWidth = Math.max(1, Math.round(width));
+    // The surface the bars are laid out in, which the element scales to the
+    // clip's real width.
+    const cssWidth = Math.min(MAX_WAVEFORM_PX, Math.max(1, Math.round(width)));
     const cssHeight = canvas.clientHeight || 48;
     canvas.width = Math.round(cssWidth * dpr);
     canvas.height = Math.round(cssHeight * dpr);

@@ -357,6 +357,9 @@ export const Timeline = () => {
     [handleDragMove, showSnapGuide]
   );
 
+  /** Stable, so the memoised ruler isn't re-rendered by a fresh closure. */
+  const beginRulerScrub = useCallback((event: React.PointerEvent) => beginDrag({ kind: 'scrub' }, event), [beginDrag]);
+
   /** Captures where every selected clip started, so a group drag stays rigid. */
   const startMoveDrag = useCallback(
     (clip: Clip, event: React.PointerEvent) => {
@@ -507,6 +510,21 @@ export const Timeline = () => {
    * target being flipped, which is exactly when the button would turn the
    * axis back off.
    */
+  /**
+   * The selection as a set, built once per change.
+   *
+   * Every row tested every clip it drew against the selection *array*, so a
+   * wide selection cost `clips × selected` comparisons on each render — and
+   * a drag renders on every pointer move. Memoised on the array's identity,
+   * which the store only replaces when the selection actually changes, so the
+   * rows' `memo` still holds.
+   */
+  const selectedIds = useMemo(() => new Set(selectedClipIds), [selectedClipIds]);
+
+  /** Bound here rather than at the call site, so `TrackRow`'s memo survives. */
+  const handleUpdateTrack = useCallback((trackId: string, patch: Partial<Track>) => updateTrack(trackId, patch), [updateTrack]);
+  const handleRemoveTrack = useCallback((trackId: string) => removeTrack(trackId), [removeTrack]);
+
   const frameState = useMemo(() => {
     const fits = new Set<MediaFit>();
     let fittable = 0;
@@ -515,7 +533,7 @@ export const Timeline = () => {
     let flippedV = 0;
 
     for (const clip of clips) {
-      if (!selectedClipIds.includes(clip.id) || clip.kind === 'audio') continue;
+      if (!selectedIds.has(clip.id) || clip.kind === 'audio') continue;
       flippable++;
       if (clip.transform.flipH) flippedH++;
       if (clip.transform.flipV) flippedV++;
@@ -532,7 +550,7 @@ export const Timeline = () => {
       flipH: flippable > 0 && flippedH === flippable,
       flipV: flippable > 0 && flippedV === flippable
     };
-  }, [clips, selectedClipIds]);
+  }, [clips, selectedIds]);
 
   return (
     <section className="island flex h-full min-h-0 flex-col">
@@ -590,7 +608,13 @@ export const Timeline = () => {
               style={{ width: HEADER_WIDTH, height: HEAD_HEIGHT }}
               className="sticky left-0 z-40 shrink-0 border-b border-r border-border bg-editor-chrome"
             />
-            <TimeRuler width={contentWidth} pxPerSec={pxPerSec} onScrub={event => beginDrag({ kind: 'scrub' }, event)} />
+            <TimeRuler
+              width={contentWidth}
+              pxPerSec={pxPerSec}
+              viewportLeft={viewport.left}
+              viewportWidth={viewport.width}
+              onScrub={beginRulerScrub}
+            />
           </div>
 
           {tracks.map((track, index) => (
@@ -601,11 +625,11 @@ export const Timeline = () => {
               clips={clipsByTrack.get(track.id) ?? NO_CLIPS}
               pxPerSec={pxPerSec}
               contentWidth={contentWidth}
-              selectedClipIds={selectedClipIds}
+              selectedIds={selectedIds}
               visibleRange={visibleRange}
               canRemove={(track.kind === 'video' ? videoTrackCount : audioTrackCount) > 1}
-              onUpdateTrack={patch => updateTrack(track.id, patch)}
-              onRemoveTrack={() => removeTrack(track.id)}
+              onUpdateTrack={handleUpdateTrack}
+              onRemoveTrack={handleRemoveTrack}
               onSelectClip={handleSelectClip}
               onClipPointerDown={startMoveDrag}
               onTrimStart={handleTrimStart}
@@ -783,11 +807,18 @@ interface TrackRowProps {
   clips: Clip[];
   pxPerSec: number;
   contentWidth: number;
-  selectedClipIds: string[];
   visibleRange: { startUs: number; endUs: number };
   canRemove: boolean;
-  onUpdateTrack: (patch: Partial<Track>) => void;
-  onRemoveTrack: () => void;
+  /** Indexed, so a row does not scan the selection once per clip it draws. */
+  selectedIds: Set<string>;
+  /*
+   * Both take the track id rather than closing over it: bound inline at the
+   * call site they minted a new function per row per render, which defeated
+   * this component's `memo` on every scroll event and every pointer move of
+   * a drag — the exact trap `ClipView` documents one level down.
+   */
+  onUpdateTrack: (trackId: string, patch: Partial<Track>) => void;
+  onRemoveTrack: (trackId: string) => void;
   onSelectClip: (clip: Clip, additive: boolean) => void;
   onClipPointerDown: (clip: Clip, event: React.PointerEvent) => void;
   onTrimStart: (clip: Clip, event: React.PointerEvent, edge: TrimEdge) => void;
@@ -803,7 +834,7 @@ const TrackRow = memo(
     clips,
     pxPerSec,
     contentWidth,
-    selectedClipIds,
+    selectedIds,
     visibleRange,
     canRemove,
     onUpdateTrack,
@@ -823,7 +854,12 @@ const TrackRow = memo(
 
     return (
       <div className="flex">
-        <TrackHeader track={track} canRemove={canRemove} onUpdate={onUpdateTrack} onRemove={onRemoveTrack} />
+        <TrackHeader
+          track={track}
+          canRemove={canRemove}
+          onUpdate={patch => onUpdateTrack(track.id, patch)}
+          onRemove={() => onRemoveTrack(track.id)}
+        />
         <div
           style={{ width: contentWidth, height: track.height }}
           className={cn(
@@ -852,7 +888,7 @@ const TrackRow = memo(
               clip={clip}
               pxPerSec={pxPerSec}
               rowHeight={track.height}
-              selected={selectedClipIds.includes(clip.id)}
+              selected={selectedIds.has(clip.id)}
               trackLocked={track.locked}
               onSelect={onSelectClip}
               onMoveStart={onClipPointerDown}

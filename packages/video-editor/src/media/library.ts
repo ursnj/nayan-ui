@@ -55,6 +55,15 @@ const kindForFile = (file: File): AssetKind => {
  */
 export const loadAsset = async (file: File, preferredId?: string): Promise<MediaAsset> => {
   const id = preferredId ?? uid('asset');
+  /*
+   * A `preferredId` can name an asset that is already registered — reopening
+   * the project that is currently loaded is the ordinary case. `resources.set`
+   * below would drop that entry on the floor with its decoder still open, its
+   * bitmap still allocated, its decoded PCM still held and its object URL
+   * never revoked, so it is released deliberately first.
+   */
+  if (resources.has(id)) await releaseAsset(id);
+
   const objectUrl = URL.createObjectURL(file);
   const declaredKind = kindForFile(file);
 
@@ -323,8 +332,8 @@ export const getAudioBuffer = async (assetId: string): Promise<AudioBuffer | nul
 export const getPeaks = (assetId: string): Float32Array | null => resources.get(assetId)?.peaks ?? null;
 
 export const releaseAsset = async (assetId: string) => {
-  for (const [clipId, entry] of readers) {
-    if (entry.assetId === assetId) await releaseReader(clipId);
+  for (const [key, entry] of readers) {
+    if (entry.assetId === assetId) await releaseReader(key);
   }
   const entry = resources.get(assetId);
   if (!entry) return;
@@ -332,6 +341,21 @@ export const releaseAsset = async (assetId: string) => {
   entry.bitmap?.close();
   entry.input?.dispose();
   URL.revokeObjectURL(entry.objectUrl);
+};
+
+/**
+ * Frees every asset the store is no longer holding.
+ *
+ * Opening a project replaces the whole media library, and the entries here are
+ * keyed by asset id rather than reachable from React state — so without this
+ * the previous project's decoders, bitmaps and decoded PCM stay for the rest
+ * of the session. A fully decoded stereo track is about 23MB a minute, so two
+ * or three projects is enough to matter.
+ */
+export const releaseAssetsExcept = async (keepIds: Iterable<string>) => {
+  const keep = new Set(keepIds);
+  const doomed = [...resources.keys()].filter(id => !keep.has(id));
+  await Promise.all(doomed.map(releaseAsset));
 };
 
 /** The file an asset was imported from, for writing it into a project bundle. */
