@@ -149,15 +149,14 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
       {/* The mask sits on the wrapper: NInput does not forward unknown props,
           so the attribute would never reach the DOM from the component. The
           div takes over as the elastic flex item so the sizing is unchanged. */}
-      {/* No height of its own. `--field-height` in index.css governs every
-          field, so an `h-8` here would be a second answer to the same
-          question — and one the shared rule overrides regardless. */}
+      {/* Its own height, like every input in the editor: the top bar runs on a
+          taller rhythm than the inspector's field stack. */}
       <div data-clarity-mask="true" className="w-56 min-w-24 shrink">
         <NInput
           value={project.name}
           onChange={event => updateProject({ name: event.target.value })}
           wrapperClassName="mb-0 w-full"
-          inputClassName="text-sm"
+          inputClassName="h-8 text-sm"
           aria-label="Project name"
         />
       </div>

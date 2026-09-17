@@ -57,11 +57,15 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
       className="group/header sticky left-0 z-40 flex shrink-0 flex-col justify-center gap-1 overflow-hidden border-b border-r border-border bg-editor-panel px-2 py-1">
       <div className="flex h-5 items-center gap-1">
         <Icon className={cn('h-3.5 w-3.5 shrink-0', track.hidden ? 'text-muted/50' : 'text-muted')} />
+        {/* `py-0` as well as a height: `px-1` only replaces the library's
+            horizontal padding, and the 8px it keeps above and below left this
+            20px box two pixels of room for the text. 11px to match every other
+            small label in the editor. */}
         <NInput
           value={track.name}
           onChange={event => onUpdate({ name: event.target.value })}
           wrapperClassName="mb-0 min-w-0 flex-1"
-          inputClassName="h-5 px-1 text-xs font-medium"
+          inputClassName="h-5 px-1 py-0 text-[11px] font-medium"
           aria-label={`${track.name} name`}
         />
         {/* Revealed on hover so the resting state stays quiet, but the width is
