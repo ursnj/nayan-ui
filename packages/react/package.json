@@ -35,7 +35,6 @@
   "dependencies": {
     "@heroui/react": "^3.0.4",
     "prism-react-renderer": "^2.4.1",
-    "react-linkify": "^1.0.0-alpha",
     "react-select": "^5.10.2"
   },
   "peerDependencies": {

@@ -398,12 +398,13 @@ const Loading = () => {
 
 export default Loading;`;
 
-export const menuCode = `import { NMenu,NMenuItem, MenuSize, NMenuNested, NButton } from '@nayan-ui/react';
+export const menuCode = `import { NMenu, NMenuItem, MenuSize, NMenuNested } from '@nayan-ui/react';
 import { User } from 'lucide-react';
 
 const Menu = () => {
   return (
-    <NMenu align="start" title="My Account" size={MenuSize.LG} trigger={<NButton>Show Menu</NButton>}>
+    {/* The trigger is rendered inside a button already — pass content, not a <NButton>. */}
+    <NMenu align="start" title="My Account" size={MenuSize.LG} trigger="Show Menu">
       <NMenuItem title="Profile" icon={User} shortcut="⌘P" />
       <NMenuNested trigger={<NMenuItem title="Share" icon={User} className="p-0" />}>
         <NMenuItem title="Facebook" icon={User} shortcut="⌘P" />

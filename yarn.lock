@@ -2978,7 +2978,6 @@ __metadata:
     prism-react-renderer: "npm:^2.4.1"
     react: "npm:^19.2.6"
     react-dom: "npm:^19.2.6"
-    react-linkify: "npm:^1.0.0-alpha"
     react-select: "npm:^5.10.2"
     rimraf: "npm:^6.0.1"
     tailwindcss: "npm:^4.3.0"
@@ -9183,15 +9182,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"linkify-it@npm:^2.0.3":
-  version: 2.2.0
-  resolution: "linkify-it@npm:2.2.0"
-  dependencies:
-    uc.micro: "npm:^1.0.1"
-  checksum: 10c0/640f926fa71d46f9451b4dc999c94b2dcad920abf5fe174a85f120b420cbb34b8f950e251846ed73db715ec9aaadadf1f2482d27088dddd21b1c84761f6a0b5a
-  languageName: node
-  linkType: hard
-
 "lint-staged@npm:^16.1.2":
   version: 16.4.0
   resolution: "lint-staged@npm:16.4.0"
@@ -11054,16 +11044,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-linkify@npm:^1.0.0-alpha":
-  version: 1.0.0-alpha
-  resolution: "react-linkify@npm:1.0.0-alpha"
-  dependencies:
-    linkify-it: "npm:^2.0.3"
-    tlds: "npm:^1.199.0"
-  checksum: 10c0/1ac770f16ea4d7452c2d90a5506e01b5bc0badd519ae89ff3159c65a3609c6600689db3fca70935af07fb6f56d85d63ee861459cc2257d13d935a2b629737a76
-  languageName: node
-  linkType: hard
-
 "react-native-builder-bob@npm:^0.41.0":
   version: 0.41.0
   resolution: "react-native-builder-bob@npm:0.41.0"
@@ -12453,15 +12433,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tlds@npm:^1.199.0":
-  version: 1.261.0
-  resolution: "tlds@npm:1.261.0"
-  bin:
-    tlds: bin.js
-  checksum: 10c0/ce05d266618312dd52efe0c958ebd668da70b9b752b7ec1f1b8c4b8fabc6e0f044159f80fec6c3a78df02572afbeb343208df7ef8e83a43e9f8e6c26134c76ee
-  languageName: node
-  linkType: hard
-
 "tmpl@npm:1.0.5":
   version: 1.0.5
   resolution: "tmpl@npm:1.0.5"
@@ -12618,13 +12589,6 @@ __metadata:
   bin:
     ua-parser-js: script/cli.js
   checksum: 10c0/45dc1f7f3ce8248e0e64640d2e29c65c0ea1fc9cb105594de84af80e2a57bba4f718b9376098ca7a5b0ffe240f8995b0fa3714afa9d36861c41370a378f1a274
-  languageName: node
-  linkType: hard
-
-"uc.micro@npm:^1.0.1":
-  version: 1.0.6
-  resolution: "uc.micro@npm:1.0.6"
-  checksum: 10c0/9bde2afc6f2e24b899db6caea47dae778b88862ca76688d844ef6e6121dec0679c152893a74a6cfbd2e6fde34654e6bd8424fee8e0166cdfa6c9ae5d42b8a17b
   languageName: node
   linkType: hard
 

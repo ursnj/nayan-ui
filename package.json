@@ -19,7 +19,7 @@
     "native:typecheck": "yarn workspace @nayan-ui/native typecheck",
     "native:clean": "yarn workspace @nayan-ui/native clean",
     "native:example": "yarn workspace @nayan-ui/native example",
-    "website:dev": "yarn workspace @nayan-ui/website dev",
+    "website:dev": "yarn react:build && yarn workspace @nayan-ui/website dev",
     "website:build": "yarn react:build && yarn editor:build && yarn workspace @nayan-ui/website build",
     "website:start": "yarn workspace @nayan-ui/website start",
     "editor:dev": "yarn workspace @nayan-ui/video-editor dev",
