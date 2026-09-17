@@ -624,12 +624,44 @@ export const Timeline = () => {
          * header column and ruler keep positioning against the real
          * scrollport. `hidden` would take that over and break both.
          */}
+        {/*
+         * Everything below shares one stacking context, in this order:
+         *
+         *   10/20  clips (selected above the rest, each its own context)
+         *   25     marquee
+         *   26     snap guide
+         *   30     ruler row
+         *   35     playhead line
+         *   40     track-header column
+         *   50     the corner where the two sticky strips meet
+         *   55     playhead grab handle
+         *
+         * The two sticky strips are what the order has to serve: lane content
+         * scrolls *under* the header column horizontally, and under the ruler
+         * row vertically. Those two never overlap each other — different
+         * columns — so only the corner has to beat both, which is why it is
+         * hoisted out of the ruler row below.
+         */}
         <div className="relative [overflow-x:clip]" style={{ width: HEADER_WIDTH + contentWidth }}>
-          <div className="sticky top-0 z-30 flex">
+          {/*
+           * The corner cannot live inside the ruler row: a sticky element is a
+           * stacking context whatever its z-index, so nested there its layer
+           * was capped at the row's and the track headers would have drawn over
+           * it. Hoisted out, it takes no height of its own — the visible box is
+           * absolute inside a zero-height sticky wrapper, so the ruler row still
+           * starts at the top of the content.
+           */}
+          <div className="sticky left-0 top-0 z-50 h-0" style={{ width: HEADER_WIDTH }}>
             <div
+              aria-hidden="true"
               style={{ width: HEADER_WIDTH, height: HEAD_HEIGHT }}
-              className="sticky left-0 z-40 shrink-0 border-b border-r border-border bg-editor-chrome"
+              className="absolute left-0 top-0 border-b border-r border-border bg-editor-chrome"
             />
+          </div>
+
+          <div className="sticky top-0 z-30 flex">
+            {/* Holds the ruler clear of the header column. The corner above paints it. */}
+            <div aria-hidden="true" style={{ width: HEADER_WIDTH, height: HEAD_HEIGHT }} className="shrink-0" />
             <TimeRuler
               width={contentWidth}
               pxPerSec={pxPerSec}
@@ -674,7 +706,7 @@ export const Timeline = () => {
 
           {marquee && (
             <div
-              className="pointer-events-none absolute z-40 rounded-sm border border-accent bg-accent/15"
+              className="pointer-events-none absolute z-[25] rounded-sm border border-accent bg-accent/15"
               style={{ left: marquee.left, top: marquee.top, width: marquee.width, height: marquee.height }}
             />
           )}
@@ -959,6 +991,13 @@ const Playhead = ({
   const isPlaying = useEditor(state => state.isPlaying);
   const [hovered, setHovered] = useState(false);
   const left = HEADER_WIDTH + (playheadUs / US) * pxPerSec;
+  // The line is hidden behind the sticky header column by the layer order
+  // alone, but the handle sits above that column — see below — so once the
+  // playhead has scrolled in behind the strip it has to go by hand.
+  const showHandle = left >= viewportLeft + HEADER_WIDTH;
+  // Dropping a hovered handle never delivers its `pointerleave`, which would
+  // otherwise leave the line stuck in its emphasised width.
+  const emphasised = hovered && showHandle;
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -977,16 +1016,11 @@ const Playhead = ({
 
   return (
     /*
-     * Above the ruler, not below it.
-     *
-     * The ruler row is `sticky top-0 z-30` and the grab handle lives in the
-     * top 24px, so at z-25 the handle was painted underneath it and the
-     * ruler took every pointer event aimed at it. Clicking there still
-     * scrubbed — via the ruler's own handler — which made the handle look
-     * like it worked while being entirely unreachable. Still below the
-     * sticky track-header column at z-40, which must stay on top.
+     * The wrapper deliberately takes no z-index of its own: the line and the
+     * handle need different layers, and a z-index here would trap both in one
+     * stacking context.
      */
-    <div className="pointer-events-none absolute top-0 z-[35]" style={{ height, transform: `translateX(${left}px)`, willChange: 'transform' }}>
+    <div className="pointer-events-none absolute top-0" style={{ height, transform: `translateX(${left}px)`, willChange: 'transform' }}>
       {/*
         The line stays transparent to the pointer: it crosses every clip, and
         catching clicks along its length would make clips unselectable
@@ -997,22 +1031,41 @@ const Playhead = ({
         and so never matches `:hover` — the group on this wrapper could never
         have fired, however the handle below was styled.
       */}
-      <div className={cn('h-full bg-playhead transition-all', hovered ? 'w-0.5' : 'w-px')} />
+      {/*
+        Above the ruler at z-30, so the line stays readable across it, and
+        below the track-header column at z-40, so scrolling sideways tucks it
+        behind the strip instead of drawing it across the track names.
+      */}
+      <div className={cn('relative z-[35] h-full bg-playhead transition-all', emphasised ? 'w-0.5' : 'w-px')} />
 
       {/*
         The one part that takes pointer events. Its hit area is deliberately
         larger than the marker it draws: the visible head is 10px wide, which
         is hard to catch with a mouse and unusable with a trackpad.
+
+        It has to out-rank the ruler row: at z-25 it was painted underneath it
+        and the ruler took every pointer event aimed at it. Clicking there
+        still scrubbed — via the ruler's own handler — which made the handle
+        look like it worked while being entirely unreachable.
+
+        It also rides above the corner at z-50, rather than under it with the
+        line: the hit area reaches 11px left of the line, so at the very start
+        of the timeline the corner would otherwise slice the marker in half.
+        Once the playhead really is behind the header column it is unmounted
+        instead, since there is nothing left there to grab at. Unmounting is
+        safe mid-drag — the scrub runs on window listeners, not on this button.
       */}
-      <button
-        type="button"
-        aria-label="Drag to move the playhead"
-        onPointerDown={onGrab}
-        onPointerEnter={() => setHovered(true)}
-        onPointerLeave={() => setHovered(false)}
-        className="pointer-events-auto absolute -left-[11px] -top-1 flex h-6 w-6 cursor-grab touch-none items-start justify-center active:cursor-grabbing">
-        <span className={cn('mt-1 h-3 w-2.5 rounded-b-sm bg-playhead transition-transform', hovered && 'scale-125')} />
-      </button>
+      {showHandle && (
+        <button
+          type="button"
+          aria-label="Drag to move the playhead"
+          onPointerDown={onGrab}
+          onPointerEnter={() => setHovered(true)}
+          onPointerLeave={() => setHovered(false)}
+          className="pointer-events-auto absolute -left-[11px] -top-1 z-[55] flex h-6 w-6 cursor-grab touch-none items-start justify-center active:cursor-grabbing">
+          <span className={cn('mt-1 h-3 w-2.5 rounded-b-sm bg-playhead transition-transform', emphasised && 'scale-125')} />
+        </button>
+      )}
     </div>
   );
 };

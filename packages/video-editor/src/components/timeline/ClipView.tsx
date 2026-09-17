@@ -125,7 +125,15 @@ export const ClipView = memo(
            */
           'group absolute top-1 select-none overflow-hidden rounded-md border text-left transition-shadow',
           locked ? 'cursor-not-allowed' : 'cursor-grab active:cursor-grabbing',
-          selected ? 'z-10 border-accent ring-2 ring-accent/70 elevate' : 'hover:elevate'
+          /*
+           * A clip always carries a z-index, not only when selected, so that it
+           * always forms a stacking context of its own. Without one, the trim
+           * handles' `z-20` escaped into the timeline's shared context and tied
+           * with the sticky track-header column, which they then won on DOM
+           * order — an unselected clip's handles drew over the header strip as
+           * soon as the timeline was scrolled sideways.
+           */
+          selected ? 'z-20 border-accent ring-2 ring-accent/70 elevate' : 'z-10 hover:elevate'
         )}>
         {/* Row height is user-adjustable, so the body is sized rather than inset. */}
         <div style={{ height: rowHeight - 8 }} className="relative w-full">
