@@ -18,8 +18,9 @@ import { getAudioBuffer, releaseExportReaders } from '../media/library';
 import { US } from '../types';
 import type { ExportSettings } from '../types';
 import { audibleClips, scheduleClipAudio } from './audioEngine';
-import { renderScene } from './compositor';
+import { releaseExportSurfaces, renderScene } from './compositor';
 import type { Scene } from './compositor';
+import { exportProcessor } from './glProcessor';
 
 export type ExportStage = 'preparing' | 'audio' | 'video' | 'finalizing' | 'done';
 
@@ -263,8 +264,16 @@ export const exportProject = async (
     if (output.state === 'started' || output.state === 'pending') await output.cancel().catch(() => undefined);
     throw error;
   } finally {
-    // The export spun up its own decoders; hand that memory back.
+    /*
+     * An export runs on its own decoders, its own scratch surfaces and its own
+     * GPU context, all of them sized to the output rather than to the window,
+     * and all of them held by module-level singletons that outlive this call.
+     * Nothing asks for them again until the next export, so they are handed
+     * back here — on the cancel and failure paths as much as on success.
+     */
     void releaseExportReaders();
+    releaseExportSurfaces();
+    exportProcessor.dispose();
   }
 };
 

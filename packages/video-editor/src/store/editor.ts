@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { makeMediaClip, makeTextClip, makeTrack } from '../lib/factories';
 import { removeKeyAt, scaleAnimations, shiftAnimations, splitAnimations, upsertKey } from '../lib/keyframes';
 import { clamp, uid } from '../lib/utils';
-import { releaseAllReaders, releaseAsset, releaseReader } from '../media/library';
+import { releaseAllReaders, releaseAsset, releaseAssetsExcept, releaseReader } from '../media/library';
 import {
   DEFAULT_BACKGROUND,
   DEFAULT_CHROMA,
@@ -225,8 +225,19 @@ const normaliseClip = (clip: Clip): Clip => {
  * Pure, so it lives outside the store factory rather than being rebuilt as
  * part of every store instance.
  */
+/**
+ * The selection as a set.
+ *
+ * The actions below test every clip in the project against it, which on an
+ * array is `clips × selected` comparisons per call — and `nudgeSelection` is
+ * driven by key repeat, so it runs dozens of times a second while an arrow is
+ * held. One set per call makes it `clips + selected`.
+ */
+const selectedSet = (state: EditorState) => new Set(state.selectedClipIds);
+
 const expandGroups = (clips: Clip[], ids: string[]): string[] => {
-  const groups = new Set(clips.filter(clip => ids.includes(clip.id) && clip.groupId).map(clip => clip.groupId));
+  const wanted = new Set(ids);
+  const groups = new Set(clips.filter(clip => wanted.has(clip.id) && clip.groupId).map(clip => clip.groupId));
   if (groups.size === 0) return ids;
   const expanded = new Set(ids);
   for (const clip of clips) {
@@ -338,9 +349,10 @@ export const useEditor = create<EditorState>((set, get) => {
       commit(state => ({ clips: state.clips.map(clip => (clip.id === clipId ? ({ ...clip, ...patch } as Clip) : clip)) })),
 
     updateSelectedClips: patch =>
-      commit(state => ({
-        clips: state.clips.map(clip => (state.selectedClipIds.includes(clip.id) ? ({ ...clip, ...patch } as Clip) : clip))
-      })),
+      commit(state => {
+        const selected = selectedSet(state);
+        return { clips: state.clips.map(clip => (selected.has(clip.id) ? ({ ...clip, ...patch } as Clip) : clip)) };
+      }),
 
     /**
      * Refits the whole selection in one undo step.
@@ -359,13 +371,16 @@ export const useEditor = create<EditorState>((set, get) => {
      * would leave a dead property in the saved project.
      */
     setSelectionFit: fit =>
-      commit(state => ({
-        clips: state.clips.map(clip =>
-          state.selectedClipIds.includes(clip.id) && isMediaClip(clip) && clip.kind !== 'audio'
-            ? { ...clip, fit, transform: { ...clip.transform, x: 0, y: 0, scale: 1 } }
-            : clip
-        )
-      })),
+      commit(state => {
+        const selected = selectedSet(state);
+        return {
+          clips: state.clips.map(clip =>
+            selected.has(clip.id) && isMediaClip(clip) && clip.kind !== 'audio'
+              ? { ...clip, fit, transform: { ...clip.transform, x: 0, y: 0, scale: 1 } }
+              : clip
+          )
+        };
+      }),
 
     /**
      * Flips the whole selection on one axis, in one undo step.
@@ -379,7 +394,8 @@ export const useEditor = create<EditorState>((set, get) => {
     toggleSelectionFlip: axis =>
       commit(state => {
         const key = axis === 'h' ? 'flipH' : 'flipV';
-        const targets = new Set(state.clips.filter(clip => state.selectedClipIds.includes(clip.id) && clip.kind !== 'audio').map(clip => clip.id));
+        const selected = selectedSet(state);
+        const targets = new Set(state.clips.filter(clip => selected.has(clip.id) && clip.kind !== 'audio').map(clip => clip.id));
         if (targets.size === 0) return null;
         const next = !state.clips.every(clip => !targets.has(clip.id) || clip.transform[key]);
         return {
@@ -395,10 +411,17 @@ export const useEditor = create<EditorState>((set, get) => {
     moveClips: moves =>
       commit(state => {
         const trackById = new Map(state.tracks.map(track => [track.id, track]));
+        /*
+         * Indexed rather than scanned. This runs once per pointer move of a
+         * drag, and a linear `find` per moved clip made a group drag cost
+         * `moves × clips` on every one of those — the two numbers that both
+         * grow with the size of the edit.
+         */
+        const clipById = new Map(state.clips.map(clip => [clip.id, clip]));
         const resolved: { clipId: string; startUs: number; trackId: string }[] = [];
 
         for (const move of moves) {
-          const clip = state.clips.find(entry => entry.id === move.clipId);
+          const clip = clipById.get(move.clipId);
           if (!clip || clip.locked) return null;
           const target = trackById.get(move.trackId);
           if (!target || target.locked) return null;
@@ -426,7 +449,8 @@ export const useEditor = create<EditorState>((set, get) => {
      */
     nudgeSelection: deltaUs => {
       const state = get();
-      const targets = state.clips.filter(clip => state.selectedClipIds.includes(clip.id) && !clip.locked);
+      const selected = selectedSet(state);
+      const targets = state.clips.filter(clip => selected.has(clip.id) && !clip.locked);
       if (targets.length === 0) return;
 
       let earliest = Number.POSITIVE_INFINITY;
@@ -448,7 +472,8 @@ export const useEditor = create<EditorState>((set, get) => {
      */
     shiftSelectionTrack: direction => {
       const state = get();
-      const targets = state.clips.filter(clip => state.selectedClipIds.includes(clip.id) && !clip.locked);
+      const selected = selectedSet(state);
+      const targets = state.clips.filter(clip => selected.has(clip.id) && !clip.locked);
       if (targets.length === 0) return;
 
       const moves: { clipId: string; startUs: number; trackId: string }[] = [];
@@ -842,6 +867,18 @@ export const useEditor = create<EditorState>((set, get) => {
       // Every clip id is about to be replaced, so the decoders keyed to the
       // old ones would sit in the pool until eviction pushed them out.
       void releaseAllReaders();
+      /*
+       * The library the caller brought replaces the one on screen, and the
+       * media behind the old one is held outside React — by asset id, in the
+       * media library. Nothing else will ever ask for it again, so this is the
+       * only chance to hand back its decoders and decoded audio.
+       *
+       * Scoped to the assets that are actually being dropped: reopening the
+       * current project arrives with the same ids, already re-registered by
+       * `loadAsset`, and releasing those would empty the library it just
+       * filled.
+       */
+      if (assets) void releaseAssetsExcept(assets.map(asset => asset.id));
       set(state => ({
         project: normaliseProject(data.project),
         tracks: data.tracks,

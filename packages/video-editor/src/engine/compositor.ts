@@ -233,6 +233,45 @@ const getScratch = (key: string, width: number, height: number) => {
   return entry;
 };
 
+/**
+ * An existing surface with its pixels left alone, or null if it is gone or the
+ * wrong size.
+ *
+ * `getScratch` clears on the way out, which is right for a caller about to
+ * redraw and useless to one that wants to reuse what is already there. Reading
+ * through here still counts as a use, so keeping a surface does not make it
+ * the next thing evicted.
+ */
+const peekScratch = (key: string, width: number, height: number) => {
+  const entry = scratch.get(key);
+  if (!entry) return null;
+  if (entry.canvas.width !== Math.max(1, width) || entry.canvas.height !== Math.max(1, height)) return null;
+  scratch.delete(key);
+  scratch.set(key, entry);
+  return entry;
+};
+
+/**
+ * Frees the surfaces an export allocated, leaving the preview's alone.
+ *
+ * Export surfaces are sized to the *output*, not the window: a 4K bounce
+ * leaves up to `SCRATCH_LIMIT` full-frame canvases — the text raster alone is
+ * 3840×2160 — held by a module-level map for the rest of the session, for a
+ * render pass that has finished. The preview's own surfaces are keyed
+ * separately and are still in use, so they are deliberately untouched.
+ */
+export const releaseExportSurfaces = () => {
+  for (const [key, entry] of scratch) {
+    if (!key.startsWith('export:')) continue;
+    // Zero the backing store rather than waiting for the collector to notice
+    // a detached canvas, as the eviction path does.
+    entry.canvas.width = 0;
+    entry.canvas.height = 0;
+    scratch.delete(key);
+    textSignatures.delete(key);
+  }
+};
+
 /* ------------------------------------------------------------------ *
  * Layer drawing
  * ------------------------------------------------------------------ */
@@ -618,11 +657,19 @@ const textAnimationAt = (clip: TextClip, timeUs: number) => {
   }
 };
 
-const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: number, key: string) => {
-  const surface = getScratch(key, project.width, project.height);
-  if (!surface) return null;
-  const context = surface.context;
+/**
+ * What the last raster on a given surface was drawn from.
+ *
+ * Text is rasterised at full project size, so a 4K title costs a clear and a
+ * layout of every line on every frame — even parked on a static caption where
+ * the result is identical. The signature below covers every input that reaches
+ * a pixel, so a frame that would redraw the same thing reuses the surface
+ * instead. An animated title changes its signature each frame and pays the
+ * same cost as before, which is correct: its pixels really do differ.
+ */
+const textSignatures = new Map<string, string>();
 
+const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: number, key: string) => {
   const animation = textAnimationAt(clip, timeUs);
   const fontSize = Math.max(1, animatedValue(clip, 'text.fontSize', clip.fontSize, timeUs) * project.height * animation.scale);
   const lineHeight = fontSize * TEXT_LINE_HEIGHT;
@@ -634,13 +681,46 @@ const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: n
   }
   if (lines.length === 0 || (lines.length === 1 && lines[0] === '')) return null;
 
-  context.font = `${clip.italic ? 'italic ' : ''}${clip.fontWeight} ${fontSize}px ${clip.fontFamily}`;
-  context.textAlign = clip.align;
-  context.textBaseline = 'middle';
-
+  const font = `${clip.italic ? 'italic ' : ''}${clip.fontWeight} ${fontSize}px ${clip.fontFamily}`;
   const centreX = project.width / 2 + animatedValue(clip, 'text.x', clip.x, timeUs) * project.width;
   const centreY = project.height / 2 + (animatedValue(clip, 'text.y', clip.y, timeUs) + animation.offsetY) * project.height;
   const blockHeight = lines.length * lineHeight;
+
+  /*
+   * Everything a pixel depends on, and nothing that doesn't. The resolved
+   * values are used rather than the raw clip fields, so an animated property
+   * lands in here already evaluated for this instant.
+   */
+  const signature = [
+    lines.join(' '),
+    font,
+    clip.align,
+    clip.textColor,
+    clip.backgroundColor,
+    clip.strokeColor,
+    clip.strokeWidth,
+    centreX,
+    centreY,
+    lineHeight,
+    animation.alpha,
+    project.width,
+    project.height
+  ].join('|');
+
+  // `getScratch` clears the surface, so it is only reached on a real miss.
+  if (textSignatures.get(key) === signature) {
+    const cached = peekScratch(key, project.width, project.height);
+    if (cached) return cached;
+  }
+
+  const surface = getScratch(key, project.width, project.height);
+  if (!surface) return null;
+  const context = surface.context;
+  textSignatures.set(key, signature);
+
+  context.font = font;
+  context.textAlign = clip.align;
+  context.textBaseline = 'middle';
 
   context.globalAlpha = animation.alpha;
 

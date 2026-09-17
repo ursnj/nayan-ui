@@ -10,6 +10,14 @@ const GROUPS: ShortcutGroup[] = ['Playback', 'Selection', 'Editing', 'Timeline',
  */
 export const ShortcutsDialog = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => (
   <NDialog isOpen={isOpen} title="Keyboard shortcuts" size={DialogSize.MD} onClose={onClose}>
+    {isOpen ? <ShortcutTable /> : null}
+  </NDialog>
+);
+
+/** Split out so the closed dialog costs nothing: forty-odd rows of element
+ *  tree were being built on every app render to sit behind a hidden dialog. */
+const ShortcutTable = () => (
+  <>
     <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
       {GROUPS.map(group => {
         const rows = [...SHORTCUTS, ...CONTEXTUAL_KEYS].filter(row => row.group === group);
@@ -37,5 +45,5 @@ export const ShortcutsDialog = ({ isOpen, onClose }: { isOpen: boolean; onClose:
       Letters act on the selection and the playhead. A text field, a slider or a focused clip keeps its own keys, so typing a name or adjusting a
       value never moves the timeline.
     </p>
-  </NDialog>
+  </>
 );
