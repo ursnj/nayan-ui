@@ -499,7 +499,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
       <Section
         title="Texture"
         icon={<Aperture className="h-3.5 w-3.5 text-muted" />}
-        defaultOpen={false}
         onReset={() => patch({ colorAdjust: { ...color, sharpen: 0, vignette: 0, grain: 0, blur: 0 }, filter: null } as Partial<Clip>)}>
         <SliderField
           label="Sharpen"
@@ -553,7 +552,6 @@ const CropSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
     <Section
       title="Crop"
       icon={<CropIcon className="h-3.5 w-3.5 text-muted" />}
-      defaultOpen={false}
       onReset={() => patch({ crop: { ...DEFAULT_CROP } } as Partial<Clip>)}>
       {CROP_SIDES.map(side => (
         <SliderField
@@ -593,7 +591,7 @@ const ChromaSection = ({ clip, patch }: { clip: MediaClip; patch: Patch }) => {
   const set = (changes: Partial<typeof key>) => patch({ chromaKey: { ...key, ...changes } } as Partial<Clip>);
 
   return (
-    <Section title="Green screen" icon={<Wand2 className="h-3.5 w-3.5 text-muted" />} defaultOpen={false}>
+    <Section title="Green screen" icon={<Wand2 className="h-3.5 w-3.5 text-muted" />}>
       <ToggleChip active={key.enabled} onClick={() => set({ enabled: !key.enabled })} label="Remove the key colour" className="mb-2 w-full">
         {key.enabled ? 'Keying on' : 'Enable'}
       </ToggleChip>
@@ -742,7 +740,7 @@ const TransitionSection = ({ clip }: { clip: Clip }) => {
   const transition = clip.transitionIn;
 
   return (
-    <Section title="Transition in" defaultOpen={false}>
+    <Section title="Transition in">
       <SelectField
         label="Type"
         value={(transition?.kind ?? 'none') as TransitionKind | 'none'}
