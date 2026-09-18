@@ -398,20 +398,24 @@ const Loading = () => {
 
 export default Loading;`;
 
-export const menuCode = `import { NMenu, NMenuItem, MenuSize, NMenuNested } from '@nayan-ui/react';
-import { User } from 'lucide-react';
+export const menuCode = `import { MenuSize, NMenu, NMenuItem, NMenuNested } from '@nayan-ui/react';
+import { LogOut, Settings, Share2, User } from 'lucide-react';
 
 const Menu = () => {
   return (
-    {/* The trigger is rendered inside a button already — pass content, not a <NButton>. */}
-    <NMenu align="start" title="My Account" size={MenuSize.LG} trigger="Show Menu">
-      <NMenuItem title="Profile" icon={User} shortcut="⌘P" />
-      <NMenuNested trigger={<NMenuItem title="Share" icon={User} className="p-0" />}>
-        <NMenuItem title="Facebook" icon={User} shortcut="⌘P" />
-        <NMenuItem title="Twitter" icon={User} shortcut="⌘P" />
+    // The trigger is rendered inside a button already — pass content, not a <NButton>.
+    <NMenu title="My Account" size={MenuSize.LG} placement="bottom" trigger="Show Menu">
+      <NMenuItem id="profile" title="Profile" icon={User} shortcut="⌘P" onAction={() => console.log('Profile')} />
+      {/* separator draws a divider *after* this item, so it goes on the item
+          above the group you are separating — never on the last one. */}
+      <NMenuItem id="settings" title="Settings" icon={Settings} shortcut="⌘," separator onAction={() => console.log('Settings')} />
+      {/* NMenuNested takes the label itself — passing an NMenuItem as the
+          trigger would nest one menu item inside another. */}
+      <NMenuNested trigger="Share" icon={<Share2 className="h-4 w-4 shrink-0" />}>
+        <NMenuItem id="facebook" title="Facebook" onAction={() => console.log('Facebook')} />
+        <NMenuItem id="twitter" title="Twitter" onAction={() => console.log('Twitter')} />
       </NMenuNested>
-      <NMenuItem title="Settings" icon={User} shortcut="⌘P" separator={true} />
-      <NMenuItem title="Logout" icon={User} shortcut="⌘P" />
+      <NMenuItem id="logout" title="Logout" icon={LogOut} shortcut="⇧⌘Q" onAction={() => console.log('Logout')} />
     </NMenu>
   );
 };
