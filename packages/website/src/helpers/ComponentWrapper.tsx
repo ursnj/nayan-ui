@@ -3,7 +3,7 @@
 import { ArrowLeft, ArrowRight, Github } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BrowserFrame } from '@/design/Primitives';
+import { BrowserFrame, PhoneFrame } from '@/design/Primitives';
 import { CARD, LEAD } from '@/design/system';
 import TagsList from '@/helpers/TagsList';
 import { getMenuItem, getSidebarItems } from '@/services/Utils';
@@ -40,6 +40,15 @@ const ComponentWrapper = (props: Props) => {
   /** `react-native` maps to the `native` package; `react` to `react`. */
   const sourceUrl = `${REPO}/${type === 'react-native' ? 'native' : 'react'}/src/components`;
 
+  /*
+   * React Native pages show a screenshot of the example app in a phone rather
+   * than a browser window: the components render to native views, so there is
+   * nothing to run here. `screenshot` names the pair captured for this page;
+   * pages without one keep the written explanation.
+   */
+  const slug = pathname.split('/').pop() ?? '';
+  const screenshot: string | undefined = component.screenshot ?? (type === 'react-native' ? slug : undefined);
+
   return (
     <Sidebar title={component.title}>
       <p className={`mb-8 max-w-3xl ${LEAD}`}>{component.description}</p>
@@ -48,12 +57,20 @@ const ComponentWrapper = (props: Props) => {
         title="Demo"
         description={
           type === 'react-native'
-            ? 'React Native components render to native views, so the example below describes the component rather than running it.'
+            ? 'React Native components render to native views, so this is the component running in the example app, in the theme you are reading in.'
             : 'Rendered live, with the same build of the library you install.'
         }>
-        <BrowserFrame label={`${SITE_HOST}${pathname}`} padded={false}>
-          <div className="space-y-4 p-6 [&>*]:max-w-full sm:p-8">{children}</div>
-        </BrowserFrame>
+        {type === 'react-native' && screenshot && component.hasScreenshot !== false ? (
+          <PhoneFrame
+            light={`/react-native/${screenshot}-light.png`}
+            dark={`/react-native/${screenshot}-dark.png`}
+            alt={`${component.title} running in the Nayan UI example app`}
+          />
+        ) : (
+          <BrowserFrame label={`${SITE_HOST}${pathname}`} padded={false}>
+            <div className="space-y-4 p-6 [&>*]:max-w-full sm:p-8">{children}</div>
+          </BrowserFrame>
+        )}
       </SubHeader>
 
       <SubHeader
