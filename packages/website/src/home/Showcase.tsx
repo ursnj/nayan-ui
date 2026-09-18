@@ -56,7 +56,7 @@ const PRODUCTS = [
 ];
 
 const Showcase = () => (
-  <Section id="what-you-get" labelledBy="what-heading" className="border-y border-default bg-surface/40">
+  <Section id="what-you-get" labelledBy="what-heading">
     <SectionHeader
       eyebrow="What you get"
       id="what-heading"

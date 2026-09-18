@@ -29,7 +29,7 @@ import {
 import { ArrowRight, Bell, Bold, Check, Copy, Download, Github, Italic, Package, Terminal, Underline } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/design/Primitives';
-import { CARD, CONTAINER, GRADIENT_TEXT, H1_HERO, LEAD } from '@/design/system';
+import { CARD, CONTAINER, GRADIENT_TEXT, H1_HERO, LEAD, WELL } from '@/design/system';
 import { TOTAL_COMPONENT_COUNT } from '@/services/Counts';
 import { installCode, rnInstallCode } from '@/services/ReactCodeBlocks';
 
@@ -264,12 +264,20 @@ const Banner = () => {
               </div>
 
               {/*
-               * A floor on the panel height, so switching tabs does not resize
-               * the card and the hero's two columns stay roughly balanced —
-               * the shortest tab is still well under the height of the pitch
-               * beside it.
+               * A grey well behind the examples, so the components read as
+               * components. Most of them are white or near-white — an input, a
+               * select, an outline button, an accordion — and on the card's own
+               * white surface their edges dissolved: the demo looked like
+               * floating text with a few coloured pills in it. `WELL` is the
+               * token the site already uses for this, and it is what the
+               * component documentation pages put their demos on.
+               *
+               * The min-height is a floor on the panel, so switching tabs does
+               * not resize the card and the hero's two columns stay roughly
+               * balanced — the shortest tab is still well under the height of
+               * the pitch beside it.
                */}
-              <div className="min-h-[19rem]">
+              <div className={`${WELL} min-h-[19rem] p-4`}>
                 {tab === 0 && (
                   <div role="tabpanel" id="home-panel-0" aria-labelledby="home-tab-0" className="space-y-4">
                     <Row label="Buttons">

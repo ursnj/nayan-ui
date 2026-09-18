@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 
 export const SITE_URL = 'https://www.nayanui.com';
+/** The bare host, for anywhere a URL is shown rather than followed. */
+export const SITE_HOST = SITE_URL.replace(/^https?:\/\//, '');
 export const SITE_NAME = 'Nayan UI';
 export const SITE_DESCRIPTION =
   'Nayan UI is an open source component library for React and React Native. 58 accessible, customizable, production-ready UI components built on HeroUI and Tailwind CSS.';

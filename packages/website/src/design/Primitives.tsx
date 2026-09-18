@@ -228,6 +228,67 @@ export const Card = ({ className = '', interactive = false, padded = true, child
   <div className={`${interactive ? CARD_INTERACTIVE : CARD} ${padded ? CARD_PAD : ''} ${className}`}>{children}</div>
 );
 
+interface BrowserFrameProps {
+  /** Shown in the address bar. A URL reads best; anything short works. */
+  label?: string;
+  /** Set false to lay out the body padding yourself. */
+  padded?: boolean;
+  className?: string;
+  children: ReactNode;
+}
+
+/**
+ * A browser window around a live example.
+ *
+ * Demos used to sit in a plain bordered box, which left every component page
+ * with the same question: is this thing part of the page, or is it the example?
+ * A window answers it before the text does — the chrome says "this is an
+ * application, shown to you" and the grey body gives the components something
+ * to sit on. Most of them are white or near-white, and on the page's own
+ * surface their edges disappeared.
+ *
+ * The traffic lights are `bg-default` rather than red/amber/green on purpose.
+ * They are decoration, and the site spends colour on state — an active link, a
+ * focus ring, a danger badge — so three coloured dots at the top of fifty
+ * pages would be the loudest thing on any of them. As grey circles they still
+ * read as a window instantly.
+ *
+ * `aria-hidden` on the whole bar: it is a picture of a browser, not a browser.
+ * A screen reader gaining three unnamed dots and a fake URL would be worse off
+ * than one that skips straight to the demo.
+ */
+export const BrowserFrame = ({ label, padded = true, className = '', children }: BrowserFrameProps) => (
+  <div className={`${CARD} overflow-hidden ${className}`}>
+    <div aria-hidden className="flex items-center gap-3 border-b border-default bg-surface px-3 py-2.5">
+      <span className="flex shrink-0 items-center gap-1.5">
+        <span className="h-2.5 w-2.5 rounded-full bg-default" />
+        <span className="h-2.5 w-2.5 rounded-full bg-default" />
+        <span className="h-2.5 w-2.5 rounded-full bg-default" />
+      </span>
+      {label ? (
+        <span className="min-w-0 flex-1 truncate rounded-md border border-default bg-background px-2.5 py-1 text-center font-mono text-[11px] text-muted">
+          {label}
+        </span>
+      ) : null}
+    </div>
+
+    {/*
+     * The window's surface, as a white margin around the viewport, and the grey
+     * screen inset within it. Two jobs at once: the demo keeps the grey ground
+     * that makes a white component visible, and the window keeps an edge of its
+     * own — before this, the body ran to the window's border and, since both the
+     * body and the page are `--background`, the whole thing read as a region of
+     * the page with a title bar stuck on top.
+     *
+     * Inside rather than around it, so the frame belongs to the window instead
+     * of being a bezel the page has to make room for.
+     */}
+    <div className="bg-surface p-2 sm:p-3">
+      <div className={`overflow-hidden rounded-xl border border-default bg-background ${padded ? 'p-6 sm:p-8' : ''}`}>{children}</div>
+    </div>
+  </div>
+);
+
 interface FeatureCardProps {
   /** A lucide icon component. */
   icon?: React.ComponentType<{ className?: string }>;
