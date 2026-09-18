@@ -1,5 +1,6 @@
 import React, { HTMLAttributes, ReactNode, useEffect, useMemo } from 'react';
 import { Toast } from '@heroui/react';
+import { cn } from '../lib/utils';
 import { THEMES } from './Types';
 
 export type ThemeType = keyof typeof THEMES | (typeof THEMES)[keyof typeof THEMES] | null;
@@ -30,7 +31,7 @@ export const NTheme = React.memo(({ children, theme = null, onThemeChange, ...ma
 
   return (
     <>
-      <main role="main" tabIndex={-1} {...mainProps}>
+      <main role="main" tabIndex={-1} {...mainProps} className={cn('nyn-theme', mainProps.className)}>
         {children}
       </main>
       <Toast.Provider />

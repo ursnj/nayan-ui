@@ -1,4 +1,4 @@
-import React, { ReactNode, memo } from 'react';
+import React, { memo } from 'react';
 import { Calendar } from '@heroui/react';
 import { cn } from '../lib/utils';
 
@@ -8,12 +8,9 @@ export interface NCalendarProps {
   onChange?: (value: any) => void;
   minValue?: any;
   maxValue?: any;
-  /** Dates the user cannot pick, e.g. `date => date.day === 1`. */
   isDateUnavailable?: (date: any) => boolean;
   disabled?: boolean;
-  /** Months shown side by side. */
   visibleMonths?: number;
-  label?: ReactNode;
   className?: string;
   headerClassName?: string;
   gridClassName?: string;

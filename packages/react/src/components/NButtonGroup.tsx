@@ -78,4 +78,6 @@ function NButtonGroupComponent<T = string>({
   );
 }
 
+NButtonGroupComponent.displayName = 'NButtonGroup';
+
 export const NButtonGroup = memo(NButtonGroupComponent) as typeof NButtonGroupComponent;
