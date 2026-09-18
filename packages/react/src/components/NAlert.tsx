@@ -19,10 +19,10 @@ const titleMapping = {
   [AlertTypes.ERROR]: 'Error!'
 };
 
-export interface NAlertProps {
+export interface NAlertProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   type: AlertTypes;
-  message?: string;
-  title?: string;
+  message?: React.ReactNode;
+  title?: React.ReactNode;
   icon?: React.ReactNode;
   actions?: React.ReactNode;
   className?: string;
@@ -34,18 +34,30 @@ export interface NAlertProps {
 }
 
 const NAlertComponent: React.FC<NAlertProps> = memo(
-  ({ className = '', titleClassName = '', messageClassName = '', closeClassName = '', type, title, message, icon, actions, onClose, children }) => {
+  ({
+    className = '',
+    titleClassName = '',
+    messageClassName = '',
+    closeClassName = '',
+    type,
+    title,
+    message,
+    icon,
+    actions,
+    onClose,
+    children,
+    ...rest
+  }) => {
+    const description = message ?? children;
     return (
-      <Alert status={statusMapping[type]} className={cn('nyn-alert', className)}>
+      <Alert status={statusMapping[type]} className={cn('nyn-alert', className)} {...(rest as any)}>
         <Alert.Indicator>{icon}</Alert.Indicator>
         <Alert.Content>
           <Alert.Title className={cn('nyn-alert-title', titleClassName)}>{title ?? titleMapping[type]}</Alert.Title>
-          {(message || children) && (
-            <Alert.Description className={cn('nyn-alert-message', messageClassName)}>{message || children}</Alert.Description>
-          )}
+          {description != null && <Alert.Description className={cn('nyn-alert-message', messageClassName)}>{description}</Alert.Description>}
         </Alert.Content>
         {actions}
-        {onClose && <CloseButton className={cn(closeClassName)} onPress={onClose} />}
+        {onClose && <CloseButton aria-label="Close alert" className={cn(closeClassName)} onPress={onClose} />}
       </Alert>
     );
   }

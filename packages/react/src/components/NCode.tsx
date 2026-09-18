@@ -16,11 +16,14 @@ export const NCode = ({ code, language = 'tsx', theme = THEMES.LIGHT, copied = f
     <div className={cn('nyn-code relative group', className)}>
       {onCopy && (
         <button
+          type="button"
           onClick={() => onCopy(code)}
-          className="absolute top-2.5 right-2.5 p-1.5 rounded-md bg-default/50 hover:bg-default text-muted hover:text-foreground opacity-0 group-hover:opacity-100 transition-all duration-200 z-10"
-          title="Copy code">
+          className="absolute top-2.5 right-2.5 p-1.5 rounded-md bg-default/50 hover:bg-default text-muted hover:text-foreground opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-all duration-200 z-10"
+          aria-label={copied ? 'Code copied' : 'Copy code'}
+          title={copied ? 'Code copied' : 'Copy code'}>
           {copied ? (
             <svg
+              aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="none"
@@ -33,6 +36,7 @@ export const NCode = ({ code, language = 'tsx', theme = THEMES.LIGHT, copied = f
             </svg>
           ) : (
             <svg
+              aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="none"
@@ -47,9 +51,11 @@ export const NCode = ({ code, language = 'tsx', theme = THEMES.LIGHT, copied = f
           )}
         </button>
       )}
-      <Highlight theme={theme === THEMES.LIGHT ? themes.github : themes.dracula} code={code.trim()} language={language}>
+      <Highlight theme={theme === THEMES.LIGHT ? themes.github : themes.dracula} code={code} language={language}>
         {({ style, tokens, getLineProps, getTokenProps }) => (
           <pre
+            tabIndex={0}
+            aria-label={`${language} code`}
             className="overflow-x-auto rounded-lg border border-default text-sm leading-relaxed"
             style={{ ...style, padding: '12px 16px', margin: 0, backgroundColor: 'var(--surface)' }}>
             {tokens.map((line, i) => (

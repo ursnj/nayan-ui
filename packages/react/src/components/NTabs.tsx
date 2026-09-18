@@ -1,4 +1,4 @@
-import React, { Key, ReactNode, memo } from 'react';
+import { Key, ReactNode, memo } from 'react';
 import { Tabs } from '@heroui/react';
 import { cn } from '../lib/utils';
 
@@ -26,7 +26,7 @@ export const NTabs = memo((props: NTabsProps) => {
     variant = 'primary',
     orientation = 'horizontal',
     onChange,
-    ariaLabel
+    ariaLabel = 'Tabs'
   } = props;
 
   const handleSelectionChange = (key: Key) => {

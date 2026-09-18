@@ -45,6 +45,7 @@ export const NMenuItem: React.FC<NMenuItemProps> = React.memo(
         <Dropdown.Item
           id={id}
           textValue={typeof title === 'string' ? title : undefined}
+          isDisabled={disabled}
           className={cn('nyn-menu-item', className)}
           onAction={onAction}>
           {IconElem}

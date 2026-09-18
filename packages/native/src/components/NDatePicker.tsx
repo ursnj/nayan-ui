@@ -2,8 +2,8 @@ import React, { useCallback, useState } from 'react';
 import { Platform, Pressable, View } from 'react-native';
 import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { cn, useThemeColor } from 'heroui-native';
-import { useNTheme } from '../hooks/useNTheme';
 import { CalendarIcon } from '../helpers/icons';
+import { useNTheme } from '../hooks/useNTheme';
 import { NText } from './NText';
 
 export interface NDatePickerProps {
@@ -43,10 +43,7 @@ export const NDatePicker = React.memo<NDatePickerProps>(
         {!isIOS && (
           <Pressable
             onPress={() => !disabled && setShowPicker(true)}
-            className={cn(
-              'min-h-12 justify-center rounded-2xl border-[1.5px] border-field-border bg-field px-3',
-              disabled && 'opacity-50'
-            )}>
+            className={cn('min-h-12 justify-center rounded-2xl border-[1.5px] border-field-border bg-field px-3', disabled && 'opacity-50')}>
             <View className="flex-row items-center justify-between">
               <NText className="text-[16px]">{displayText}</NText>
               <CalendarIcon size={18} color={mutedColor} />

@@ -1,4 +1,4 @@
-import React, { CSSProperties, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import React, { CSSProperties, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { cn } from '../lib/utils';
 import { ThresholdUnits, parseThreshold, throttle } from './Utils';
 
@@ -53,7 +53,6 @@ export const NInfiniteScroll: React.FC<NInfiniteScrollProps> = ({
 }) => {
   const [showLoader, setShowLoader] = useState(false);
   const [pullToRefreshThresholdBreached, setPullToRefreshThresholdBreached] = useState(false);
-  const [prevDataLength, setPrevDataLength] = useState<number | undefined>(dataLength);
   const infScrollRef = useRef<HTMLDivElement>(null);
   const pullDownRef = useRef<HTMLDivElement>(null);
   const scrollableNode = useRef<HTMLElement | Window | null>(null);
@@ -63,10 +62,12 @@ export const NInfiniteScroll: React.FC<NInfiniteScrollProps> = ({
   const currentY = useRef(0);
   const dragging = useRef(false);
   const maxPullDownDistance = useRef(0);
+  const pullToRefreshThresholdBreachedRef = useRef(false);
+  const prevDataLength = useRef(dataLength);
 
   // Get scrollable target
   const getScrollableTarget = useCallback(() => {
-    if (scrollableTarget instanceof HTMLElement) return scrollableTarget;
+    if (typeof HTMLElement !== 'undefined' && scrollableTarget instanceof HTMLElement) return scrollableTarget;
     if (typeof scrollableTarget === 'string') {
       return document.getElementById(scrollableTarget);
     }
@@ -99,7 +100,10 @@ export const NInfiniteScroll: React.FC<NInfiniteScrollProps> = ({
       }
       if (currentY.current < startY.current) return;
       if (currentY.current - startY.current >= pullDownToRefreshThreshold) {
-        setPullToRefreshThresholdBreached(true);
+        if (!pullToRefreshThresholdBreachedRef.current) {
+          pullToRefreshThresholdBreachedRef.current = true;
+          setPullToRefreshThresholdBreached(true);
+        }
       }
       if (currentY.current - startY.current > maxPullDownDistance.current * 1.5) return;
       if (infScrollRef.current) {
@@ -114,8 +118,9 @@ export const NInfiniteScroll: React.FC<NInfiniteScrollProps> = ({
     startY.current = 0;
     currentY.current = 0;
     dragging.current = false;
-    if (pullToRefreshThresholdBreached) {
-      refreshFunction && refreshFunction();
+    if (pullToRefreshThresholdBreachedRef.current) {
+      refreshFunction?.();
+      pullToRefreshThresholdBreachedRef.current = false;
       setPullToRefreshThresholdBreached(false);
     }
     requestAnimationFrame(() => {
@@ -125,7 +130,7 @@ export const NInfiniteScroll: React.FC<NInfiniteScrollProps> = ({
         infScrollRef.current.style.willChange = 'unset';
       }
     });
-  }, [pullToRefreshThresholdBreached, refreshFunction]);
+  }, [refreshFunction]);
 
   // Scroll threshold helpers
   const isElementAtTop = (target: HTMLElement, thresholdVal: string | number = 0.8) => {
@@ -150,7 +155,7 @@ export const NInfiniteScroll: React.FC<NInfiniteScrollProps> = ({
   const onScrollListener = useCallback(
     (event: Event) => {
       if (typeof onScroll === 'function') {
-        setTimeout(() => onScroll(event), 0);
+        onScroll(event);
       }
       const target =
         height || scrollableNode.current instanceof HTMLElement
@@ -170,8 +175,8 @@ export const NInfiniteScroll: React.FC<NInfiniteScrollProps> = ({
     [hasMore, next, onScroll, height, inverse, scrollThreshold]
   );
 
-  // Use throttle correctly: function first, ms second
-  const throttledOnScrollListener = useCallback(throttle(150, onScrollListener), [onScrollListener]);
+  // Keep expensive layout reads out of the browser's hot scroll path.
+  const throttledOnScrollListener = useMemo(() => throttle(150, onScrollListener), [onScrollListener]);
 
   // Effect: set up event listeners
   useEffect(() => {
@@ -199,6 +204,7 @@ export const NInfiniteScroll: React.FC<NInfiniteScrollProps> = ({
     }
     return () => {
       el.removeEventListener('scroll', throttledOnScrollListener as EventListenerOrEventListenerObject);
+      throttledOnScrollListener.cancel();
       if (pullDownToRefresh) {
         el.removeEventListener('touchstart', onStart as EventListener);
         el.removeEventListener('touchmove', onMove as EventListener);
@@ -212,21 +218,21 @@ export const NInfiniteScroll: React.FC<NInfiniteScrollProps> = ({
 
   // Effect: reset loader when data changes
   useEffect(() => {
-    if (dataLength !== prevDataLength) {
+    if (dataLength !== prevDataLength.current) {
       actionTriggered.current = false;
       setShowLoader(false);
-      setPrevDataLength(dataLength);
+      prevDataLength.current = dataLength;
     }
-  }, [dataLength, prevDataLength]);
+  }, [dataLength]);
 
   // Styles
   const mainStyle = {
-    height: height || 'auto',
-    overflow: 'auto',
+    height: height ?? 'auto',
+    overflow: height ? 'auto' : undefined,
     WebkitOverflowScrolling: 'touch',
     ...style
   } as CSSProperties;
-  const hasAnyChildren = hasChildren || !!(children && Array.isArray(children) && (children as any[]).length);
+  const hasAnyChildren = hasChildren ?? React.Children.count(children) > 0;
   const outerDivStyle = pullDownToRefresh && height ? { overflow: 'auto' } : {};
 
   return (
@@ -237,8 +243,8 @@ export const NInfiniteScroll: React.FC<NInfiniteScrollProps> = ({
         style={mainStyle}
         role="region"
         aria-label={ariaLabel}
-        aria-busy={showLoader}
-        tabIndex={0}>
+        aria-busy={showLoader || (!hasAnyChildren && hasMore)}
+        tabIndex={height ? 0 : undefined}>
         {pullDownToRefresh && (
           <div style={{ position: 'relative' }} ref={pullDownRef}>
             <div
@@ -253,12 +259,7 @@ export const NInfiniteScroll: React.FC<NInfiniteScrollProps> = ({
           </div>
         )}
         {children}
-        {!showLoader && !hasAnyChildren && hasMore && loader && (
-          <div role="status" aria-live="polite">
-            {loader}
-          </div>
-        )}
-        {showLoader && hasMore && loader && (
+        {(showLoader || !hasAnyChildren) && hasMore && loader != null && (
           <div role="status" aria-live="polite">
             {loader}
           </div>

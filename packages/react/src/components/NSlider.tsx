@@ -58,16 +58,6 @@ export const NSlider: React.FC<NSliderProps> = React.memo(
       [onChange]
     );
 
-    /*
-     * Slider is a compound component: the root renders only the grid that its
-     * label, track and thumb sit in. Rendering it childless — as this did —
-     * produces an empty div, so the control is invisible and there is nothing
-     * to drag, while any value readout beside it still looks perfectly fine.
-     *
-     * The label belongs inside the root rather than above it: that is the grid
-     * area the stylesheet gives it, and react-aria only names the slider from
-     * a label it owns.
-     */
     return (
       <div className={cn('nyn-slider-block mb-3', className)} {...rest}>
         <Slider
