@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
 import { Menu, Separator, cn, useThemeColor } from 'heroui-native';
+import { type NIcon, resolveIcon } from '../helpers/icons';
 import { NText } from './NText';
 
 export interface NMenuItemProps {
   title: string;
   shortcut?: string;
-  icon?: React.ComponentType<any> | React.ReactElement;
+  icon?: NIcon;
   onPress: () => void;
   isDisabled?: boolean;
   hasSeparator?: boolean;
@@ -18,16 +19,7 @@ export interface NMenuItemProps {
 export const NMenuItem = React.memo<NMenuItemProps>(
   ({ title, shortcut = '', hasSeparator = false, icon, isDisabled, className = '', titleClassName = '', shortcutClassName = '', onPress }) => {
     const foregroundColor = useThemeColor('foreground');
-    const menuIcon = useMemo(() => {
-      if (!icon) return null;
-
-      if (React.isValidElement(icon)) {
-        return React.cloneElement(icon as React.ReactElement<any>, { color: (icon as React.ReactElement<any>).props.color ?? foregroundColor });
-      }
-
-      const IconComponent = icon as React.ComponentType<any>;
-      return <IconComponent size={16} color={foregroundColor} />;
-    }, [icon, foregroundColor]);
+    const menuIcon = useMemo(() => resolveIcon(icon, { color: foregroundColor }), [icon, foregroundColor]);
 
     return (
       <>

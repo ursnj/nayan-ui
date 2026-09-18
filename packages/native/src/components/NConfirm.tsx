@@ -73,7 +73,7 @@ export const NConfirm = React.memo<NConfirmProps>(
             <NText className="text-base font-medium">{cancelText}</NText>
           </NPress>
           <NPress onPress={() => handleResult(true)} className={cn('rounded-xl bg-accent px-4 py-2', confirmClassName)}>
-            <NText className="text-base font-medium text-white">{confirmText}</NText>
+            <NText className="text-base font-medium text-accent-foreground">{confirmText}</NText>
           </NPress>
         </View>
       </NDialog>

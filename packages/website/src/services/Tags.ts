@@ -819,15 +819,6 @@ export const tooltipTags = [
   { sku: 'react-tooltip-implementation', text: 'Implementing Tooltip in React' }
 ];
 
-export const autocompleteTags = [
-  { sku: 'react-autocomplete', text: 'React Autocomplete' },
-  { sku: 'react-search-autocomplete', text: 'React Search Autocomplete' },
-  { sku: 'react-combobox', text: 'React Combobox' },
-  { sku: 'react-typeahead', text: 'React Typeahead' },
-  { sku: 'react-autocomplete-component', text: 'React Autocomplete Component' },
-  { sku: 'react-select-search', text: 'React Select Search' }
-];
-
 export const datePickerTags = [
   { sku: 'react-date-picker', text: 'React Date Picker' },
   { sku: 'react-datepicker', text: 'React DatePicker' },

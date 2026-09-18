@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Dialog, cn } from 'heroui-native';
+import { OVERLAY_STYLE } from '../helpers/utils';
 
 export interface NDialogProps {
   children?: React.ReactNode;
@@ -36,7 +37,7 @@ export const NDialog = React.memo<NDialogProps>(
       <Dialog isOpen={isOpen} isDefaultOpen={isDefaultOpen} onOpenChange={onOpenChange}>
         {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
         <Dialog.Portal>
-          <Dialog.Overlay style={{ backgroundColor: 'rgba(0,0,0,0.5)' }} />
+          <Dialog.Overlay style={OVERLAY_STYLE} />
           <Dialog.Content isSwipeable={isSwipeable} className={cn('rounded-xl bg-surface px-4 py-3', className)}>
             <Dialog.Title className={cn(titleClassName)}>{title}</Dialog.Title>
             {description && <Dialog.Description className={cn('mt-1', descriptionClassName)}>{description}</Dialog.Description>}

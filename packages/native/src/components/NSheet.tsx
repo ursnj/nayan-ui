@@ -1,5 +1,6 @@
 import React from 'react';
 import { BottomSheet, cn } from 'heroui-native';
+import { OVERLAY_STYLE } from '../helpers/utils';
 
 export interface NSheetProps {
   isOpen?: boolean;
@@ -21,7 +22,7 @@ export const NSheet = React.memo<NSheetProps>(
       <BottomSheet isOpen={isOpen} isDefaultOpen={isDefaultOpen} onOpenChange={onOpenChange}>
         {trigger && <BottomSheet.Trigger asChild>{trigger}</BottomSheet.Trigger>}
         <BottomSheet.Portal>
-          <BottomSheet.Overlay style={{ backgroundColor: 'rgba(0,0,0,0.5)' }} />
+          <BottomSheet.Overlay style={OVERLAY_STYLE} />
           <BottomSheet.Content
             className={cn('flex-1 rounded-t-xl bg-surface', className)}
             backgroundClassName="rounded-t-xl bg-surface"
