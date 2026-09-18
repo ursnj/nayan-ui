@@ -34,13 +34,7 @@ export const NProgress = memo(
 
     return (
       <div className="nyn-progress-wrapper" style={{ width: '100%' }} ref={ref}>
-        <ProgressBar
-          value={clampedValue}
-          color={color}
-          size={size}
-          aria-label={label}
-          className={cn('nyn-progress', className)}
-          {...(rest as any)}>
+        <ProgressBar value={clampedValue} color={color} size={size} aria-label={label} className={cn('nyn-progress', className)} {...(rest as any)}>
           {showLabel && (
             <ProgressBar.Output>
               {label} — {clampedValue}%
