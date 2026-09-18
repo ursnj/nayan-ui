@@ -2,7 +2,7 @@
   "name": "@nayan-ui/react",
   "sideEffects": false,
   "description": "React Component Library for smooth and faster web application development.",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "type": "module",
   "source": "./src/index.ts",
   "main": "./dist/index.es.js",
@@ -34,13 +34,8 @@
   },
   "dependencies": {
     "@heroui/react": "^3.2.6",
-    "@internationalized/date": "^3.12.4",
-    "@react-aria/ssr": "^3.10.1",
-    "@react-aria/utils": "^3.34.1",
     "clsx": "^2.1.1",
     "prism-react-renderer": "^2.4.1",
-    "react-aria": "^3.52.1",
-    "react-aria-components": "^1.21.1",
     "react-select": "^5.10.2",
     "tailwind-merge": "^3.7.0"
   },

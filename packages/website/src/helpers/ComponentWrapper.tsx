@@ -15,12 +15,19 @@ import SubHeader from './SubHeader';
 
 interface Props {
   children: any;
+  /**
+   * The usage sample, exported by the demo file next to the demo itself so the
+   * two cannot drift. Falls back to the sidebar entry for pages that still keep
+   * their sample there (the React Native ones, whose components cannot run in a
+   * browser, so there is no demo to derive it from).
+   */
+  code?: string;
 }
 
 const REPO = 'https://github.com/ursnj/nayan-ui/tree/main/packages';
 
 const ComponentWrapper = (props: Props) => {
-  const { children } = props;
+  const { children, code } = props;
   const pathname = usePathname();
   const type = pathname.split('/')[1];
   const component: any = getMenuItem(pathname);
@@ -61,7 +68,7 @@ const ComponentWrapper = (props: Props) => {
             Source
           </Link>
         }>
-        <Code code={component.code} filename={`${component.title.replace(/\s+/g, '')}.tsx`} />
+        <Code code={code ?? component.code} filename={`${component.title.replace(/\s+/g, '')}.tsx`} />
       </SubHeader>
 
       <Attributes data={component.attributes} />

@@ -5,7 +5,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const KeyboardKey = () => {
   return (
-    <ComponentWrapper>
+    <ComponentWrapper code={code}>
       <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
         <NKbd>⌘</NKbd>
         <NKbd>K</NKbd>
@@ -18,3 +18,22 @@ const KeyboardKey = () => {
 };
 
 export default KeyboardKey;
+
+/** The usage sample on this component's page, kept beside the demo it documents. */
+export const code = `import { NKbd } from '@nayan-ui/react';
+
+const KeyboardKey = () => {
+  return (
+    <div>
+      <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
+        <NKbd>⌘</NKbd>
+        <NKbd>K</NKbd>
+        <span>opens the search, and</span>
+        <NKbd>Esc</NKbd>
+        <span>closes it.</span>
+      </div>
+    </div>
+  );
+};
+
+export default KeyboardKey;`;

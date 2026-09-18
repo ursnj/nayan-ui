@@ -10,10 +10,28 @@ const ButtonGroup = () => {
   const [selected, setSelected] = useState(items[0]);
 
   return (
-    <ComponentWrapper>
+    <ComponentWrapper code={code}>
       <NButtonGroup items={items} selected={selected} onChange={setSelected} />
     </ComponentWrapper>
   );
 };
 
 export default ButtonGroup;
+
+/** The usage sample on this component's page, kept beside the demo it documents. */
+export const code = `import { useState } from 'react';
+import { NButtonGroup } from '@nayan-ui/react';
+
+const items = ['Startup', 'Business', 'Enterprise'];
+
+const ButtonGroup = () => {
+  const [selected, setSelected] = useState(items[0]);
+
+  return (
+    <div>
+      <NButtonGroup items={items} selected={selected} onChange={setSelected} />
+    </div>
+  );
+};
+
+export default ButtonGroup;`;

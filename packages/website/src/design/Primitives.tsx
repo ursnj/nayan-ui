@@ -199,7 +199,7 @@ export const BrowserFrame = ({ label, padded = true, className = '', children }:
     </div>
 
     <div className="bg-surface p-2 sm:p-3">
-      <div className={`overflow-hidden rounded-xl border border-default bg-background ${padded ? 'p-6 sm:p-8' : ''}`}>{children}</div>
+      <div className={`min-h-[20rem] overflow-hidden rounded-xl border border-default bg-background ${padded ? 'p-6 sm:p-8' : ''}`}>{children}</div>
     </div>
   </div>
 );
