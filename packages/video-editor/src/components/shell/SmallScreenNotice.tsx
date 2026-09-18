@@ -19,7 +19,7 @@ export const SmallScreenNotice = () => {
       <div className="w-full max-w-md text-center">
         <div className="mb-5 flex items-center justify-center gap-2">
           <Clapperboard className="h-6 w-6 text-accent" />
-          <span className="text-lg font-semibold tracking-tight text-foreground">Nayan Editor</span>
+          <span className="text-lg font-semibold tracking-tight text-foreground">Nayan UI Video Editor</span>
         </div>
 
         <div className="mb-5 flex justify-center">
@@ -31,7 +31,7 @@ export const SmallScreenNotice = () => {
         <NAlert
           type={AlertTypes.WARNING}
           title="This screen is too narrow"
-          message={`Nayan Editor needs a window at least ${MIN_APP_WIDTH}px wide. Yours is currently ${width}px. Please open it on a laptop or desktop — or widen this window — to carry on.`}
+          message={`Nayan UI Video Editor needs a window at least ${MIN_APP_WIDTH}px wide. Yours is currently ${width}px. Please open it on a laptop or desktop — or widen this window — to carry on.`}
           className="text-left"
         />
 

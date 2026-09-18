@@ -54,7 +54,7 @@ export const readBundle = async (file: Blob): Promise<OpenedBundle> => {
   const entries = await readZip(file);
 
   const manifest = entries.get(MANIFEST);
-  if (!manifest) throw new BundleError('This file is not a Nayan Editor project — it has no project.json inside.');
+  if (!manifest) throw new BundleError('This file is not a Nayan UI Video Editor project — it has no project.json inside.');
 
   let project: ProjectFile;
   try {

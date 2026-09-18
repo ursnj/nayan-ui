@@ -133,14 +133,17 @@ export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start
         tabIndex={0}
         onPointerDown={onPointerDown}
         onKeyDown={event => {
+          const wanted = horizontal ? ['ArrowLeft', 'ArrowRight'] : ['ArrowUp', 'ArrowDown'];
+          if (!wanted.includes(event.key) || event.metaKey || event.ctrlKey || event.altKey) return;
+          // Claims the key from the app's global handler, which would otherwise
+          // also step the playhead on every press of this divider.
+          event.preventDefault();
+
           const step = event.shiftKey ? 48 : 12;
           // Stepped from `effective`, not the stored size: otherwise one press
           // on a narrow window jumps back to a value that no longer fits.
-          const nudge = (delta: number) => onResize(clamp(effective + delta, min, Math.min(max, ceiling)));
-          if (horizontal && event.key === 'ArrowLeft') nudge(-step);
-          if (horizontal && event.key === 'ArrowRight') nudge(step);
-          if (!horizontal && event.key === 'ArrowUp') nudge(-step);
-          if (!horizontal && event.key === 'ArrowDown') nudge(step);
+          const delta = event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -step : step;
+          onResize(clamp(effective + delta, min, Math.min(max, ceiling)));
         }}
         className={cn(
           'group flex shrink-0 items-center justify-center focus-visible:outline-none',

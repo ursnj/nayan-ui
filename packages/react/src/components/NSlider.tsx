@@ -1,4 +1,4 @@
-import React, { useCallback, useId } from 'react';
+import React, { useCallback, useEffect, useId, useState } from 'react';
 import { Label, Slider } from '@heroui/react';
 import { cn } from '../lib/utils';
 
@@ -43,11 +43,16 @@ export const NSlider: React.FC<NSliderProps> = React.memo(
   }) => {
     const generatedId = useId();
     const sliderId = id || `nyn-slider-${generatedId}`;
-    const labelId = `${sliderId}-label`;
+    const [internalValue, setInternalValue] = useState<number>(typeof value === 'number' ? value : defaultValue);
+
+    useEffect(() => {
+      if (typeof value === 'number') setInternalValue(value);
+    }, [value]);
 
     const handleChange = useCallback(
       (v: number | number[]) => {
         const val = Array.isArray(v) ? v[0] : v;
+        setInternalValue(val);
         if (onChange) onChange(val);
       },
       [onChange]
@@ -56,9 +61,7 @@ export const NSlider: React.FC<NSliderProps> = React.memo(
     return (
       <div className={cn('nyn-slider-block mb-3', className)} {...rest}>
         <Slider
-          id={sliderId}
-          value={value}
-          defaultValue={value === undefined ? defaultValue : undefined}
+          value={internalValue}
           minValue={min}
           maxValue={max}
           step={step}
@@ -66,14 +69,10 @@ export const NSlider: React.FC<NSliderProps> = React.memo(
           orientation={orientation}
           onChange={handleChange as any}
           className={cn('nyn-slider rounded', sliderClassName)}
-          aria-label={ariaLabel || (!label ? 'Slider' : undefined)}
-          aria-labelledby={ariaLabelledBy || (label ? labelId : undefined)}
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
           aria-valuetext={ariaValueText}>
-          {label && (
-            <Label id={labelId} className={cn(labelClassName)}>
-              {label}
-            </Label>
-          )}
+          {label && <Label className={cn(labelClassName)}>{label}</Label>}
           <Slider.Track>
             <Slider.Fill />
             <Slider.Thumb />

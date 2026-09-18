@@ -172,7 +172,11 @@ export const PreviewPanel = () => {
 
           {durationUs === 0 && (
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40">
-              <p className="text-sm text-white/60">Add media to the timeline to start editing</p>
+              {/* `text-center` as well as the centred flex: in a vertical
+                  project the frame is narrower than this line, so it wraps —
+                  and wrapped lines fall back to the paragraph's own alignment,
+                  which left-aligned them against the centred block. */}
+              <p className="px-4 text-center text-sm text-white/60">Add media to the timeline to start editing</p>
             </div>
           )}
         </div>
@@ -181,11 +185,11 @@ export const PreviewPanel = () => {
       <div className="flex items-center gap-1 border-t border-border bg-editor-panel px-3 py-1.5">
         {/* `contents` so the wrapper vanishes from the flex row when shown. */}
         <span className="hidden @[470px]:contents">
-          <IconButton label="Jump to start" onClick={() => seekTo(0)}>
+          <IconButton label="Jump to start (Home)" onClick={() => seekTo(0)}>
             <SkipBack className="h-4 w-4" />
           </IconButton>
         </span>
-        <IconButton label="Previous frame" onClick={() => stepFrames(-1)}>
+        <IconButton label="Previous frame (←)" onClick={() => stepFrames(-1)}>
           <ChevronLeft className="h-4 w-4" />
         </IconButton>
 
@@ -195,15 +199,25 @@ export const PreviewPanel = () => {
             disabled={durationUs === 0}
             aria-label={isPlaying ? 'Pause' : 'Play'}
             className="mx-1 h-8 w-8 rounded-full px-0">
-            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="ml-0.5 h-4 w-4" />}
+            {/*
+              No nudge on the triangle. It carried an `ml-0.5`, presumably as
+              the usual optical correction for a shape whose weight sits left of
+              its bounding box — but Lucide has already applied that inside the
+              glyph: its polygon spans 6→20 of a 24 frame, so the triangle is
+              drawn two thirds of a pixel right of centre at this size. The
+              margin stacked a second correction on top of the first and left
+              the play state visibly right of the circle, while Pause below it
+              sat true.
+            */}
+            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
           </NButton>
         </NTooltip>
 
-        <IconButton label="Next frame" onClick={() => stepFrames(1)}>
+        <IconButton label="Next frame (→)" onClick={() => stepFrames(1)}>
           <ChevronRight className="h-4 w-4" />
         </IconButton>
         <span className="hidden @[470px]:contents">
-          <IconButton label="Jump to end" onClick={() => seekTo(durationUs)}>
+          <IconButton label="Jump to end (End)" onClick={() => seekTo(durationUs)}>
             <SkipForward className="h-4 w-4" />
           </IconButton>
         </span>

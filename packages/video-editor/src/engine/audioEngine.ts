@@ -1,4 +1,3 @@
-import { animatedValue } from '../lib/keyframes';
 import { getAudioBuffer } from '../media/library';
 import { US, clipEndUs, isAudibleKind, isMediaClip } from '../types';
 import type { Clip, MediaClip, Track } from '../types';
@@ -57,45 +56,13 @@ export const scheduleClipAudio = (
   const parameter = gain.gain;
   const baseVolume = clip.volume * trackVolume;
 
-  const volumeKeys = clip.animations['volume'];
-  if (volumeKeys && volumeKeys.length > 0) {
-    // An automated volume curve replaces the simple fade pair: sample it at a
-    // fixed rate and lay the points onto the param timeline.
-    scheduleVolumeCurve(parameter, clip, entryUs, endUs, atTime, trackVolume);
-  } else {
-    if (clip.fadeInUs > 0) rampSegment(parameter, atTime(clip.startUs), 0, atTime(clip.startUs + clip.fadeInUs), baseVolume);
-    else parameter.setValueAtTime(baseVolume, Math.max(0, atTime(clip.startUs)));
+  if (clip.fadeInUs > 0) rampSegment(parameter, atTime(clip.startUs), 0, atTime(clip.startUs + clip.fadeInUs), baseVolume);
+  else parameter.setValueAtTime(baseVolume, Math.max(0, atTime(clip.startUs)));
 
-    if (clip.fadeOutUs > 0) rampSegment(parameter, atTime(endUs - clip.fadeOutUs), baseVolume, atTime(endUs), 0);
-  }
+  if (clip.fadeOutUs > 0) rampSegment(parameter, atTime(endUs - clip.fadeOutUs), baseVolume, atTime(endUs), 0);
 
   source.start(Math.max(context.currentTime, atTime(entryUs)), offsetSeconds, sourceSeconds);
   return source;
-};
-
-/** Samples a keyframed volume track onto the param timeline. */
-const scheduleVolumeCurve = (
-  parameter: AudioParam,
-  clip: MediaClip,
-  entryUs: number,
-  endUs: number,
-  atTime: (timelineUs: number) => number,
-  trackVolume: number
-) => {
-  /*
-   * 50 Hz is well below any audible stepping, but a fixed step means a long
-   * clip mints an automation event every 20ms — a ten-minute clip would queue
-   * thirty thousand of them on the audio thread. Cap the total and let the
-   * step stretch instead; a volume envelope never needs that resolution.
-   */
-  const MAX_POINTS = 400;
-  const stepUs = Math.max(20_000, (endUs - entryUs) / MAX_POINTS);
-  for (let t = entryUs; t <= endUs; t += stepUs) {
-    const value = animatedValue(clip, 'volume', clip.volume, t) * trackVolume;
-    const when = Math.max(0, atTime(t));
-    if (t === entryUs) parameter.setValueAtTime(Math.max(0, value), when);
-    else parameter.linearRampToValueAtTime(Math.max(0, value), when);
-  }
 };
 
 /**

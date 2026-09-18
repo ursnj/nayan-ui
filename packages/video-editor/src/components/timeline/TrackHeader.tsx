@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { NInput, NSlider } from '@nayan-ui/react';
 import { ChevronDown, ChevronUp, Eye, EyeOff, Film, Lock, LockOpen, Music, Trash2, Volume2, VolumeX } from 'lucide-react';
+import { useHeldInteraction } from '../../lib/shortcuts';
 import { clamp, cn } from '../../lib/utils';
 import { useEditor } from '../../store/editor';
 import type { Track } from '../../types';
@@ -25,6 +26,7 @@ interface TrackHeaderProps {
 export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeaderProps) => {
   const reorderTrack = useEditor(state => state.reorderTrack);
   const Icon = track.kind === 'video' ? Film : Music;
+  const held = useHeldInteraction();
 
   /** Drag the bottom edge of the header to change the row height. */
   const onResizePointerDown = useCallback(
@@ -52,14 +54,18 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
   return (
     <div
       style={{ width: HEADER_WIDTH, height: track.height }}
-      className="group/header sticky left-0 z-20 flex shrink-0 flex-col justify-center gap-1 overflow-hidden border-b border-r border-border bg-editor-panel px-2 py-1">
+      className="group/header sticky left-0 z-40 flex shrink-0 flex-col justify-center gap-1 overflow-hidden border-b border-r border-border bg-editor-panel px-2 py-1">
       <div className="flex h-5 items-center gap-1">
         <Icon className={cn('h-3.5 w-3.5 shrink-0', track.hidden ? 'text-muted/50' : 'text-muted')} />
+        {/* `py-0` as well as a height: `px-1` only replaces the library's
+            horizontal padding, and the 8px it keeps above and below left this
+            20px box two pixels of room for the text. 11px to match every other
+            small label in the editor. */}
         <NInput
           value={track.name}
           onChange={event => onUpdate({ name: event.target.value })}
           wrapperClassName="mb-0 min-w-0 flex-1"
-          inputClassName="h-5 px-1 text-xs font-medium"
+          inputClassName="h-5 px-1 py-0 text-[11px] font-medium"
           aria-label={`${track.name} name`}
         />
         {/* Revealed on hover so the resting state stays quiet, but the width is
@@ -123,8 +129,24 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
       <div
         role="separator"
         aria-label="Resize track height"
+        aria-orientation="horizontal"
+        aria-valuenow={track.height}
+        aria-valuemin={MIN_ROW_HEIGHT}
+        aria-valuemax={MAX_ROW_HEIGHT}
+        tabIndex={0}
         onPointerDown={onResizePointerDown}
-        className="absolute inset-x-0 bottom-0 flex h-1.5 cursor-row-resize items-end justify-center">
+        onKeyDown={event => {
+          const direction = event.key === 'ArrowUp' ? -1 : event.key === 'ArrowDown' ? 1 : 0;
+          if (direction === 0 || event.metaKey || event.ctrlKey || event.altKey) return;
+          // Claims the key from the global handler, which would jump the playhead.
+          event.preventDefault();
+          held.begin();
+          const step = event.shiftKey ? 16 : 4;
+          onUpdate({ height: clamp(track.height + direction * step, MIN_ROW_HEIGHT, MAX_ROW_HEIGHT) });
+        }}
+        onKeyUp={held.end}
+        onBlur={held.end}
+        className="absolute inset-x-0 bottom-0 flex h-1.5 cursor-row-resize items-end justify-center outline-none focus-visible:bg-accent/40">
         <span className="h-0.5 w-6 rounded-full bg-transparent transition-colors group-hover/header:bg-separator" />
       </div>
     </div>
