@@ -27,10 +27,6 @@ import {
  * these inside it.
  */
 
-/* ------------------------------------------------------------------ *
- * Section scaffolding
- * ------------------------------------------------------------------ */
-
 interface SectionProps {
   /** Anchor id. Given one, the section also gets scroll offset for the header. */
   id?: string;
@@ -53,18 +49,9 @@ interface SectionHeaderProps {
   /** The `id` the section's `labelledBy` points at. */
   id?: string;
   lead?: ReactNode;
-  /** Centred by default; left-aligned where the section is a list rather than a pitch. */
   align?: 'center' | 'left';
 }
 
-/**
- * Eyebrow, heading, lead — in that order, at those sizes, everywhere.
- *
- * This is the single most repeated shape on the site, and the one that was
- * most inconsistent before: some sections had a gradient h2 and no lead,
- * others a plain h3 and two paragraphs, and the spacing under each was
- * different again.
- */
 export const SectionHeader = ({ eyebrow, title, id, lead, align = 'center' }: SectionHeaderProps) => (
   <header className={`${HEADER_GAP} ${align === 'center' ? 'mx-auto max-w-3xl text-center' : 'max-w-3xl'}`}>
     {eyebrow ? <p className={`mb-3 ${EYEBROW}`}>{eyebrow}</p> : null}
@@ -74,10 +61,6 @@ export const SectionHeader = ({ eyebrow, title, id, lead, align = 'center' }: Se
     {lead ? <p className={`mt-4 ${LEAD}`}>{lead}</p> : null}
   </header>
 );
-
-/* ------------------------------------------------------------------ *
- * Page headers
- * ------------------------------------------------------------------ */
 
 interface PageHeroProps {
   eyebrow?: string;
@@ -91,23 +74,10 @@ interface PageHeroProps {
   note?: string;
   /** Breadcrumb trail, innermost last. The final entry is rendered as the current page. */
   breadcrumb?: { label: string; href?: string }[];
-  /**
-   * A screenshot or panel for a second column, as on the home page: pitch on
-   * the left, the thing itself on the right. Passing it left-aligns the text,
-   * which is what a two-column hero needs — centred text beside an image reads
-   * as two unrelated blocks. Omit it and the hero is centred as before.
-   */
   media?: ReactNode;
   children?: ReactNode;
 }
 
-/**
- * The top of a landing page.
- *
- * One of these on `/games`, `/devtools`, `/contributions` and `/tags` is what
- * makes them look like the same website — each of those had invented its own
- * header, at its own size, with its own gradient.
- */
 export const PageHero = ({ eyebrow, title, titleAccent, lead, actions, note, breadcrumb, media, children }: PageHeroProps) => (
   <section className="relative overflow-hidden">
     <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
@@ -118,13 +88,6 @@ export const PageHero = ({ eyebrow, title, titleAccent, lead, actions, note, bre
     <div className={`${CONTAINER} pb-10 pt-10 sm:pt-14`}>
       {breadcrumb ? <Breadcrumb items={breadcrumb} /> : null}
 
-      {/*
-       * Two shapes from one component. With `media` the hero is the home
-       * page's: pitch left, the thing itself right, stacked on a phone and
-       * centred there because a lone column of left-aligned text under a
-       * breadcrumb looks like it lost its image. Without `media` nothing
-       * changes for the pages already using this.
-       */}
       <div className={media ? 'grid items-center gap-10 lg:grid-cols-2 lg:gap-14' : ''}>
         <div className={media ? 'text-center lg:text-left' : 'mx-auto max-w-3xl text-center'}>
           {eyebrow ? <p className={`mb-3 ${EYEBROW}`}>{eyebrow}</p> : null}
@@ -156,19 +119,6 @@ interface DocsIntroProps {
   facts?: { value: string; label: string }[];
 }
 
-/**
- * The opening of a page rendered inside the docs shell.
- *
- * `PageHero` cannot be used there — `Sidebar` already supplies the container,
- * the breadcrumb and the `h1`, so a second hero would nest one page header
- * inside another. This is the flat equivalent: the same order of information,
- * no duplicate chrome.
- *
- * It replaces the tinted, blurred, gradient-bordered panel that `/games`,
- * `/devtools` and `/contributions` had each built separately, at three
- * different sizes, in three different colour families, below a title the
- * shell had already printed.
- */
 export const DocsIntro = ({ lead, actions, facts }: DocsIntroProps) => (
   <div className="mb-10">
     <p className={`max-w-3xl text-base ${LEAD}`}>{lead}</p>
@@ -211,10 +161,6 @@ export const Breadcrumb = ({ items }: { items: { label: string; href?: string }[
   </nav>
 );
 
-/* ------------------------------------------------------------------ *
- * Content shapes
- * ------------------------------------------------------------------ */
-
 interface CardProps {
   className?: string;
   /** Adds hover lift and an accent border. For cards that are links. */
@@ -237,26 +183,6 @@ interface BrowserFrameProps {
   children: ReactNode;
 }
 
-/**
- * A browser window around a live example.
- *
- * Demos used to sit in a plain bordered box, which left every component page
- * with the same question: is this thing part of the page, or is it the example?
- * A window answers it before the text does — the chrome says "this is an
- * application, shown to you" and the grey body gives the components something
- * to sit on. Most of them are white or near-white, and on the page's own
- * surface their edges disappeared.
- *
- * The traffic lights are `bg-default` rather than red/amber/green on purpose.
- * They are decoration, and the site spends colour on state — an active link, a
- * focus ring, a danger badge — so three coloured dots at the top of fifty
- * pages would be the loudest thing on any of them. As grey circles they still
- * read as a window instantly.
- *
- * `aria-hidden` on the whole bar: it is a picture of a browser, not a browser.
- * A screen reader gaining three unnamed dots and a fake URL would be worse off
- * than one that skips straight to the demo.
- */
 export const BrowserFrame = ({ label, padded = true, className = '', children }: BrowserFrameProps) => (
   <div className={`${CARD} overflow-hidden ${className}`}>
     <div aria-hidden className="flex items-center gap-3 border-b border-default bg-surface px-3 py-2.5">
@@ -272,17 +198,6 @@ export const BrowserFrame = ({ label, padded = true, className = '', children }:
       ) : null}
     </div>
 
-    {/*
-     * The window's surface, as a white margin around the viewport, and the grey
-     * screen inset within it. Two jobs at once: the demo keeps the grey ground
-     * that makes a white component visible, and the window keeps an edge of its
-     * own — before this, the body ran to the window's border and, since both the
-     * body and the page are `--background`, the whole thing read as a region of
-     * the page with a title bar stuck on top.
-     *
-     * Inside rather than around it, so the frame belongs to the window instead
-     * of being a bezel the page has to make room for.
-     */}
     <div className="bg-surface p-2 sm:p-3">
       <div className={`overflow-hidden rounded-xl border border-default bg-background ${padded ? 'p-6 sm:p-8' : ''}`}>{children}</div>
     </div>
@@ -299,13 +214,6 @@ interface FeatureCardProps {
   className?: string;
 }
 
-/**
- * The card used for every feature grid on the site.
- *
- * The icon sits in a tinted square rather than its own gradient tile: nine
- * differently-gradiented tiles in a row is what made the old grids read as
- * decoration instead of information.
- */
 export const FeatureCard = ({ icon: Icon, title, body, chips, className = '' }: FeatureCardProps) => (
   <article className={`${CARD} ${CARD_PAD} transition-colors duration-200 hover:border-indigo-500/30 ${className}`}>
     {Icon ? (
@@ -368,12 +276,6 @@ export const Badge = ({ icon: Icon, children }: { icon?: React.ComponentType<{ c
   </span>
 );
 
-/**
- * A key/value strip — the compact alternative to a grid of stat cards.
- *
- * Used where the facts support the copy rather than being the point of it:
- * formats a page accepts, the browser it needs, what a licence is.
- */
 export const FactList = ({ facts, className = '' }: { facts: { label: string; value: string }[]; className?: string }) => (
   <dl className={`${CARD} divide-y divide-default ${className}`}>
     {facts.map(fact => (
@@ -385,13 +287,6 @@ export const FactList = ({ facts, className = '' }: { facts: { label: string; va
   </dl>
 );
 
-/**
- * A FAQ, as native `<details>` elements.
- *
- * No JavaScript to open, and every answer sits in the delivered HTML whether
- * or not it is expanded — which is what the `FAQPage` structured data claims,
- * and what a crawler that does not run scripts will see.
- */
 export const FaqList = ({ faqs, className = '' }: { faqs: { q: string; a: string }[]; className?: string }) => (
   <div className={`mx-auto grid max-w-4xl gap-3 md:grid-cols-2 ${className}`}>
     {faqs.map(faq => (
@@ -415,14 +310,6 @@ interface CtaPanelProps {
   children: ReactNode;
 }
 
-/**
- * The closing panel, and the only full-bleed gradient a page is allowed.
- *
- * Shared rather than rebuilt per page: the home page and the video editor
- * each had their own, at different radii, with different glow placement and
- * different padding, which is exactly the kind of near-miss that makes a site
- * feel assembled from parts.
- */
 export const CtaPanel = ({ title, lead, children }: CtaPanelProps) => (
   <div className={`${CONTAINER} pb-16`}>
     <div className="relative overflow-hidden rounded-3xl border border-indigo-500/20">

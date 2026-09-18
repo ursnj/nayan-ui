@@ -30,7 +30,6 @@ const GameDetail = ({ slug }: Props) => {
 
   return (
     <Sidebar title={game.name}>
-      {/* Hero Section */}
       <div className="mb-8 overflow-hidden rounded-2xl border border-default bg-surface">
         <div className="px-4 py-6 sm:px-6">
           <div className="grid items-center gap-8 md:grid-cols-2">
@@ -57,13 +56,11 @@ const GameDetail = ({ slug }: Props) => {
         </div>
       </div>
 
-      {/* About */}
       <section className="mb-8">
         <h2 className={H2_DOC}>About {game.name}</h2>
         <p className="text-muted leading-relaxed">{game.longDescription}</p>
       </section>
 
-      {/* Features */}
       <section className="mb-8">
         <h2 className={H2_DOC}>Game Features</h2>
         <div className="grid gap-3 md:grid-cols-2">
@@ -76,7 +73,6 @@ const GameDetail = ({ slug }: Props) => {
         </div>
       </section>
 
-      {/* How to Play */}
       <section className="mb-8">
         <h2 className={H2_DOC}>How to Play</h2>
         <div className="rounded-xl border border-default bg-surface p-6">
@@ -103,7 +99,6 @@ const GameDetail = ({ slug }: Props) => {
         </div>
       </section>
 
-      {/* Tips & Strategies */}
       <section className="mb-8">
         <h2 className={H2_DOC}>Tips & Strategies</h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -118,7 +113,6 @@ const GameDetail = ({ slug }: Props) => {
         </div>
       </section>
 
-      {/* Benefits */}
       {game.benefits.length > 0 && (
         <section className="mb-8">
           <h2 className={H2_DOC}>Why Play {game.name}?</h2>
@@ -135,7 +129,6 @@ const GameDetail = ({ slug }: Props) => {
         </section>
       )}
 
-      {/* Related Games */}
       {game.relatedGames.length > 0 && (
         <section className="mb-8">
           <h2 className={H2_DOC}>You Might Also Like</h2>

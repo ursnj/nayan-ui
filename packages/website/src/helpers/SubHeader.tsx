@@ -19,19 +19,6 @@ const slug = (value: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
 
-/**
- * A subsection heading inside the docs.
- *
- * Anchored, which it was not before: every Demo, Usage, Attributes and Tags
- * block on the site is now linkable, so an answer to "how do I use this" can
- * point at `/react/select#usage` instead of at the top of the page. The
- * anchor itself only appears on hover or keyboard focus, so it does not
- * clutter the heading it belongs to.
- *
- * The rule that used to sit to the left of the title is gone. It was a
- * blue-to-purple gradient bar on every heading at every level, which gave
- * four equally-weighted sections four identical badges of importance.
- */
 const SubHeader = (props: Props) => {
   const id = props.id ?? slug(props.title);
 

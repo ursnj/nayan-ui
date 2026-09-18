@@ -2,14 +2,6 @@ import { readEditorState, timelineDurationUs, useEditor } from '../store/editor'
 import { US } from '../types';
 import { Player } from './player';
 
-/**
- * One editor per page, so the player is a module singleton. This keeps the
- * transport controls, the timeline and the preview canvas talking to the same
- * instance without threading a context through every component.
- *
- * The player pulls scene state on demand rather than receiving it as props, so
- * edits made while playing show up on the very next frame.
- */
 export const player = new Player({
   getScene: () => {
     const state = readEditorState();
@@ -21,8 +13,6 @@ export const player = new Player({
     return state.outPointUs ?? timelineDurationUs(state.clips);
   },
   getLoopStartUs: () => readEditorState().inPointUs ?? 0,
-  // Written straight to the store rather than through an action: this fires
-  // every animation frame and must not create an undo entry.
   onTime: timeUs => useEditor.setState({ playheadUs: timeUs }),
   onEnded: () => useEditor.setState({ isPlaying: false })
 });

@@ -3,20 +3,6 @@ import { Section, SectionHeader } from '@/design/Primitives';
 import { ACCENT_SOFT, BODY, CARD, CARD_PAD, GRID_GAP, H3 } from '@/design/system';
 import { TOTAL_COMPONENT_COUNT } from '@/services/Counts';
 
-/**
- * Why the library, said in terms of what you get rather than how it is built.
- *
- * The previous nine cards described implementation: "tree-shakable named
- * exports", "CSS variables — colour, surface, border and field tokens",
- * "written in TypeScript with full type definitions". All true, and all
- * answering a question nobody asks on a front page. Six cards now, each
- * leading with the outcome; the mechanism is one clause at the end where it
- * still earns its place.
- *
- * Laid out as a bento rather than a uniform three-by-three: the first card is
- * the reason to be here, so it is not the same size as the one about dark
- * mode.
- */
 const FEATURES = [
   {
     icon: Blocks,
@@ -61,8 +47,6 @@ const Features = () => (
           <article
             key={feature.title}
             className={`group ${CARD} ${CARD_PAD} relative overflow-hidden transition-colors duration-200 hover:border-indigo-500/30 ${feature.span ?? ''}`}>
-            {/* A hairline of accent along the top edge on hover — enough of a
-                response to feel alive without a colour per card. */}
             <span
               aria-hidden
               className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-500/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"

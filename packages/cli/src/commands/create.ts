@@ -1,6 +1,3 @@
-/**
- * Create Commands - Generate sitemaps and robots.txt files
- */
 import { Command } from 'commander';
 import { generateRobots } from '../services/robots.js';
 import { generateSitemap } from '../services/sitemaps.js';

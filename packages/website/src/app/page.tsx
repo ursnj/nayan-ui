@@ -7,8 +7,6 @@ export const dynamic = 'force-dynamic';
 
 export const metadata = buildPageMetadata({
   title: 'Open Source React & React Native Component Library',
-  /* Counted, not typed — the three numbers in this sentence were literals, and
-     removing one component made all three of them wrong at once. */
   description: `Nayan UI is an open source component library providing ${TOTAL_COMPONENT_COUNT} accessible, customizable UI components for React and React Native — ${REACT_COMPONENT_COUNT} for the web, ${NATIVE_COMPONENT_COUNT} for mobile. Built on HeroUI and Tailwind CSS. MIT licensed.`,
   path: '/',
   keywords:

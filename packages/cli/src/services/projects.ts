@@ -1,7 +1,3 @@
-/**
- * Project Service - Handles project creation from templates
- * Supports interactive prompts and template downloading from GitHub
- */
 import { exec } from 'child_process';
 import fs from 'fs';
 import ora from 'ora';
@@ -35,9 +31,6 @@ const GITHUB_REPO = 'https://github.com/ursnj/nayan-ui';
 const EXCLUDED_DIRS = ['node_modules', '.git', 'dist', 'build'] as const;
 const PROJECT_NAME_REGEX = /^[a-zA-Z0-9-_]+$/;
 
-/**
- * Display available templates with descriptions
- */
 export function showTemplates() {
   console.log('\nAvailable templates:\n');
   TEMPLATES.forEach(template => {
@@ -49,10 +42,6 @@ export function showTemplates() {
   console.log('  nayan-ui new my-app -t expo\n');
 }
 
-/**
- * Interactive mode for creating a new project
- * Prompts user for project name and template selection
- */
 export async function interactiveNewProject() {
   console.log('\n🚀 Create a new Nayan UI project\n');
 
@@ -171,10 +160,6 @@ export async function createNewProject(projectName: string, template?: string) {
   }
 }
 
-/**
- * Recursively copy directory contents
- * Skips excluded directories (node_modules, .git, dist, build)
- */
 function copyDirectory(src: string, dest: string) {
   fs.mkdirSync(dest, { recursive: true });
   const entries = fs.readdirSync(src, { withFileTypes: true });

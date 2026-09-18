@@ -88,8 +88,6 @@ export const scanCommand = async (repoUrl: string, options: ScanOptions): Promis
         spinner = ora(`Scanning ${chalk.cyan(project.type)} project: ${relativePath}`).start();
 
         try {
-          // Native scanner is the ONLY source of truth for CVE detection
-          // AI is only used for generating fixes, not finding vulnerabilities
           const nativeResult = await scanProjectNative(project);
 
           // Handle scan result - could be vulnerabilities or an error message
@@ -485,8 +483,6 @@ function scanNpm(projectPath: string): ScanResult {
       : rootLockPath;
 
     if (effectiveLockPath?.endsWith('yarn.lock')) {
-      // Use yarn npm audit for yarn workspaces (yarn v2+/berry)
-      // Or yarn audit for yarn v1 - try both
       auditCmd = 'yarn npm audit --json 2>&1 || yarn audit --json 2>&1 || true';
       // Run from the directory containing yarn.lock
       auditCwd = rootDir || projectPath;
@@ -518,8 +514,6 @@ function scanNpm(projectPath: string): ScanResult {
             const pkg = adv.module_name;
             if (seenPackages.has(pkg)) continue;
 
-            // Filter: only include if this package is a dependency of the scanned project
-            // Check both direct dep and if it's in the resolution path for this project
             const resolutionPath = entry.data.resolution?.path || '';
             const isRelevant = projectDeps.size === 0 || projectDeps.has(pkg) || [...projectDeps].some(dep => resolutionPath.includes(dep));
 
@@ -557,8 +551,6 @@ function scanNpm(projectPath: string): ScanResult {
         // Skip if we've already processed this package
         if (seenPackages.has(pkg)) continue;
 
-        // Filter: only include if this package is a dependency of the scanned project
-        // or if it's a transitive dependency of one of the project's deps
         const isRelevant =
           projectDeps.size === 0 ||
           projectDeps.has(pkg) ||
@@ -888,8 +880,6 @@ async function scanPomXmlWithOSV(pomPath: string): Promise<Vulnerability[]> {
 
     console.log(chalk.gray(`    Found ${dependencies.length} dependencies in pom.xml, checking OSV database...`));
 
-    // Query OSV API for each dependency (batch query)
-    // OSV API: https://api.osv.dev/v1/querybatch
     const queries = dependencies
       .map(dep => ({
         package: {
@@ -1010,8 +1000,6 @@ async function scanScala(projectPath: string): Promise<ScanResult> {
     const buildSbtContent = fs.readFileSync(buildSbtPath, 'utf-8');
     const vulnerabilities: Vulnerability[] = [];
 
-    // Extract dependencies from build.sbt
-    // Common patterns: "org" %% "artifact" % "version" or "org" % "artifact" % "version"
     const dependencyRegex = /"([^"]+)"\s*%%?\s*"([^"]+)"\s*%\s*"([^"]+)"/g;
     const dependencies: { groupId: string; artifactId: string; version: string }[] = [];
 

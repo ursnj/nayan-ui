@@ -1,13 +1,4 @@
-/**
- * Domain model for the editor.
- *
- * All times are in microseconds (µs) — the unit WebCodecs uses for
- * `VideoFrame.timestamp` / `EncodedVideoChunk.timestamp`, so keeping the whole
- * model in µs avoids a class of rounding bugs at the encode boundary.
- *
- * Geometry is stored as *fractions of the frame* rather than pixels, so a
- * project renders identically at any output resolution.
- */
+// All times are in microseconds, the unit WebCodecs uses for frame and chunk timestamps.
 
 export const US = 1_000_000;
 
@@ -17,8 +8,6 @@ export interface MediaAsset {
   id: string;
   kind: AssetKind;
   name: string;
-  /** MIME type of the source file. Needed to rebuild it from a bundle — the
-   *  kind is inferred from it, so losing it misclassifies the asset. */
   type: string;
   size: number;
   url: string;
@@ -32,10 +21,6 @@ export interface MediaAsset {
   webCodecs: boolean;
 }
 
-/* ------------------------------------------------------------------ *
- * Visual properties
- * ------------------------------------------------------------------ */
-
 export interface Transform {
   /** Offset from centre, as a fraction of project width/height. */
   x: number;
@@ -47,14 +32,6 @@ export interface Transform {
   flipV: boolean;
 }
 
-/**
- * How a clip's source frame is sized into the project frame, before its own
- * transform is applied.
- *
- * This is the base fit, not a replacement for `Transform.scale` — the scale
- * still multiplies whatever the fit resolves to, so `cover` plus 110% is a
- * filled frame pushed in a little further.
- */
 export type MediaFit = 'contain' | 'cover' | 'stretch';
 
 export const MEDIA_FIT_LABELS: Record<MediaFit, string> = {
@@ -71,18 +48,6 @@ export interface Crop {
   left: number;
 }
 
-/**
- * The grade applied to a layer.
- *
- * Everything here is resolution-independent and neutral at its default, so a
- * clip with an untouched `ColorAdjust` takes the cheap Canvas2D path and never
- * reaches the shader.
- *
- * Split toning is the one pair that isn't a plain number: `shadowTint` and
- * `highlightTint` name the two ends of the tone range and `splitTone` says how
- * far to push towards them. It is the single biggest contributor to a "look",
- * which is why the named filters lean on it.
- */
 export interface ColorAdjust {
   /** Linear gain. 1 is neutral. */
   brightness: number;
@@ -116,13 +81,6 @@ export interface ColorAdjust {
   grayscale: number;
 }
 
-/**
- * A named look, and how far it has been dialled in.
- *
- * The rendered grade always lives in `ColorAdjust`; this only records where it
- * came from, so the strength stays adjustable after the fact. Touching any
- * slider by hand clears it, because the grade is then no longer that look.
- */
 export interface FilterRef {
   name: string;
   /** 0..1 blend between neutral and the preset. */
@@ -140,10 +98,6 @@ export interface ChromaKey {
   /** 0..1 — how much key-coloured fringe to desaturate. */
   spill: number;
 }
-
-/* ------------------------------------------------------------------ *
- * Transitions
- * ------------------------------------------------------------------ */
 
 export type TransitionKind =
   | 'dissolve'
@@ -190,10 +144,6 @@ export const TRANSITION_LABELS: Record<TransitionKind, string> = {
   'whip-pan': 'Whip pan',
   iris: 'Iris'
 };
-
-/* ------------------------------------------------------------------ *
- * Clips
- * ------------------------------------------------------------------ */
 
 interface ClipCommon {
   id: string;
@@ -257,7 +207,6 @@ export interface TextClip extends ClipCommon {
 
 export type Clip = MediaClip | TextClip;
 
-/** Line spacing is fixed rather than exposed — one less dial for one rare need. */
 export const TEXT_LINE_HEIGHT = 1.25;
 
 export type TrackKind = 'video' | 'audio';
@@ -273,24 +222,8 @@ export interface Track {
   volume: number;
 }
 
-/* ------------------------------------------------------------------ *
- * Background
- * ------------------------------------------------------------------ */
-
 export type BackgroundKind = 'solid' | 'linear-gradient' | 'radial-gradient' | 'image' | 'blur';
 
-/**
- * What fills the frame behind every layer.
- *
- * This matters most when the footage does not match the output shape — a
- * landscape clip in a vertical project — where the alternative is black bars.
- * `blur` is the answer people actually reach for there: the clip itself,
- * scaled to cover and defocused, so the bars become part of the picture.
- *
- * One flat record rather than a discriminated union, because the panel lets
- * you switch kinds back and forth and a union would discard the settings of
- * whichever kind you just left.
- */
 export interface Background {
   kind: BackgroundKind;
   /** The solid fill, and the base painted under every other kind. */
@@ -330,7 +263,6 @@ export const BACKGROUND_LABELS: Record<BackgroundKind, string> = {
   blur: 'Blurred clip'
 };
 
-/** Ready-made gradients, so a decent backdrop is one click rather than two pickers. */
 export const GRADIENT_PRESETS: { name: string; from: string; to: string; angle: number }[] = [
   { name: 'Midnight', from: '#0f2027', to: '#2c5364', angle: 135 },
   { name: 'Ember', from: '#f12711', to: '#f5af19', angle: 135 },
@@ -357,19 +289,10 @@ export interface ExportSettings {
   bitrate: number;
   audioBitrate: number;
   includeAudio: boolean;
-  /**
-   * Append the editor's credit card after the last frame. Adds
-   * `END_CREDIT_SECONDS` to the output, which is why it has to reach the
-   * audio mix as well as the frame loop.
-   */
   endCredit: boolean;
   /** Encode only the region between the in/out points when set. */
   rangeUs: { startUs: number; endUs: number } | null;
 }
-
-/* ------------------------------------------------------------------ *
- * Guards & helpers
- * ------------------------------------------------------------------ */
 
 export const isMediaClip = (clip: Clip): clip is MediaClip => clip.kind !== 'text';
 export const isTextClip = (clip: Clip): clip is TextClip => clip.kind === 'text';
@@ -379,20 +302,12 @@ export const isAudibleKind = (clip: Clip) => clip.kind === 'video' || clip.kind 
 
 export const clipEndUs = (clip: Clip) => clip.startUs + clip.durationUs;
 
-/**
- * Maps a timeline instant onto a position inside the clip's source asset.
- * Returns null when the instant lies outside the clip.
- */
 export const sourceTimeUs = (clip: MediaClip, timelineUs: number): number | null => {
   if (timelineUs < clip.startUs || timelineUs >= clipEndUs(clip)) return null;
   const elapsed = timelineUs - clip.startUs;
   const consumed = clip.reversed ? clip.durationUs - elapsed : elapsed;
   return clip.inUs + consumed * clip.speed;
 };
-
-/* ------------------------------------------------------------------ *
- * Defaults
- * ------------------------------------------------------------------ */
 
 export const DEFAULT_TRANSFORM: Transform = { x: 0, y: 0, scale: 1, rotation: 0, flipH: false, flipV: false };
 
@@ -431,15 +346,6 @@ export const DEFAULT_CHROMA: ChromaKey = {
 
 export const CLIP_COLORS = ['#6366f1', '#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#a855f7', '#ec4899', '#14b8a6'];
 
-/**
- * The filter shelf.
- *
- * Each look is a full `ColorAdjust`, so applying one is an assignment rather
- * than a merge, and dialling its strength is a blend against `DEFAULT_COLOR`.
- * `swatch` is the two-stop gradient the picker paints behind the name — a cheap
- * stand-in for the real thing, since rendering sixteen live previews per frame
- * would cost more than the preview itself.
- */
 export interface ColorPreset {
   name: string;
   color: ColorAdjust;
@@ -477,13 +383,6 @@ export const COLOR_PRESETS: ColorPreset[] = [
   look('Moody', ['#1f1c2c', '#928dab'], { shadows: -0.25, contrast: 1.18, saturation: 0.85, vignette: 0.35, splitTone: 0.25 })
 ];
 
-/**
- * Blends a look towards neutral.
- *
- * Only the amounts interpolate; the two tint hexes are taken wholesale from
- * the preset, because a `splitTone` of zero already means they have no effect
- * and mixing hex values would just muddy the look on the way in.
- */
 export const blendColor = (preset: ColorAdjust, intensity: number): ColorAdjust => {
   const t = Math.max(0, Math.min(1, intensity));
   const mix = (from: number, to: number) => from + (to - from) * t;

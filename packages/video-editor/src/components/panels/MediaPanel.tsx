@@ -75,16 +75,6 @@ export const MediaPanel = () => {
         void importFiles(event.dataTransfer.files);
       }}>
       <div className="flex items-center gap-1.5 px-3 pb-2 pt-3">
-        {/*
-          `min-w-0` is what keeps the import button on screen.
-
-          A flex item defaults to `min-width: auto`, which for a text input
-          means its intrinsic width — around 200px. `flex-1` alone cannot
-          shrink past that, so the field held its size and pushed the button
-          out of the row to be clipped. The panel body is exactly 264px at the
-          default library width, which is why resetting the layout was enough
-          to trigger it. With this the field gives way and the button stays.
-        */}
         <NSearchField
           value={query}
           onChange={setQuery}
@@ -94,14 +84,12 @@ export const MediaPanel = () => {
           className="min-w-0 flex-1"
           aria-label="Search media"
         />
-        {/* IconButton is already `shrink-0`, so it keeps its full 28px. */}
         <IconButton label="Import files" onClick={() => inputRef.current?.click()}>
           <Upload className="h-4 w-4" />
         </IconButton>
       </div>
 
       <div className="px-3 pb-2">
-        {/* NButtonGroup renders plain labels, which is exactly what these are. */}
         <NButtonGroup<Filter>
           items={['all', 'video', 'audio', 'image']}
           selected={filter}

@@ -111,8 +111,6 @@ export const fixVulnerabilities = async (
 };
 
 const parseFixResponse = (response: any): any => {
-  // Response comes as CodeIssue[] with extra fields
-  // Try to find the fix data in the response
   if (Array.isArray(response) && response.length > 0) {
     // Check each item for fix data
     for (const item of response) {

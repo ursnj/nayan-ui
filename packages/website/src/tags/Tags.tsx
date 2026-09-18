@@ -9,16 +9,6 @@ import SubHeader from '@/helpers/SubHeader';
 import TagsList from '@/helpers/TagsList';
 import { reactNativeSidebarItems, reactSidebarItems } from '@/services/Utils';
 
-/**
- * Every component's tags, on one page.
- *
- * The page listed each component's full description — a paragraph apiece,
- * fifty-eight times — above the tags it actually exists to show. That made it
- * the longest page on the site and the tags the hardest thing on it to find.
- * Each component is now a compact row: name, a link to its page, and its
- * tags. The descriptions live on the component pages, which is where someone
- * reading a description wants to be anyway.
- */
 const PLATFORMS = [
   {
     key: 'react' as const,

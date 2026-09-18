@@ -390,17 +390,6 @@ export const reactSidebarItems = [
     icon: TextCursorInput,
     isComponent: true
   },
-  // {
-  //   title: 'Input Hook Form',
-  //   description:
-  //     'An Input with React Hook Form component is a controlled input field that integrates with the React Hook Form library for efficient form handling in React applications. It simplifies the process of managing form state, validation, and submission. By utilizing React Hook Form, this component enables easy tracking of input values, ensures validation rules are applied, and provides streamlined error handling, making it a powerful tool for building robust forms with minimal boilerplate code.',
-  //   link: '/react/input-hook-form',
-  //   attributes: inputHookAttributes,
-  //   code: inputHookCode,
-  //   tags: inputTags,
-  //   icon: TextCursorInput,
-  //   isComponent: true
-  // },
   {
     title: 'Link',
     description:
@@ -440,12 +429,6 @@ export const reactSidebarItems = [
       'A Dropdown Menu component is a UI element that allows users to select an option from a list that appears when the user clicks or hovers over a button or link. This component helps save space on the interface by displaying additional options only when needed. Dropdown menus are commonly used for navigation, settings, or forms, enabling users to choose from multiple choices in a clean and organized manner.',
     link: '/react/menu',
     attributes: menuAttributes,
-    /*
-     * A menu is three components, and the page documented one. `NMenuItem` is
-     * where `title`, `icon`, `shortcut` and `onAction` live — everything a
-     * reader needs to build a single row — and both tables existed in
-     * `ReactAttributes` already, referenced from nowhere.
-     */
     extraAttributes: [
       { title: 'NMenuItem attributes', data: menuItemAttributes },
       { title: 'NMenuNested attributes', data: menuNestedAttributes }

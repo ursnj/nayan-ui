@@ -26,7 +26,6 @@ const MIX_SAMPLE_RATE = 48_000;
 
 /** How long to let the settings settle before measuring the file size. */
 const PROBE_DEBOUNCE_MS = 350;
-/** Past this, measuring is costing more than the exact number is worth. */
 const PROBE_BUDGET_MS = 2500;
 
 interface ExportDialogProps {
@@ -34,11 +33,6 @@ interface ExportDialogProps {
   onClose: () => void;
 }
 
-/**
- * The form is mounted only while the dialog is open, so closing it resets the
- * settings and progress by unmounting rather than by clearing state in an
- * effect — and the in-flight export is aborted by the unmount cleanup.
- */
 export const ExportDialog = ({ isOpen, onClose }: ExportDialogProps) => (
   <NDialog isOpen={isOpen} title="Export video" size={DialogSize.SM} onClose={onClose}>
     {isOpen ? <ExportForm onClose={onClose} /> : null}
@@ -68,9 +62,6 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
   const [progress, setProgress] = useState<ExportProgress | null>(null);
   const [result, setResult] = useState<{ blob: Blob; filename: string } | null>(null);
   const abortRef = useRef<AbortController | null>(null);
-  /* Declared with the state it derives from, because the size-probe effect
-     below reads it — further down, as it was, it was in its own temporal dead
-     zone by the time that effect ran. */
   const running = progress !== null && progress.stage !== 'done';
   /** Measured by a probe encode, and thrown away when any input to it changes. */
   const [measured, setMeasured] = useState<{ key: string; bytes: number } | null>(null);
@@ -79,8 +70,6 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
   /** Set once a probe has proved too slow here to keep doing automatically. */
   const autoProbeOff = useRef(false);
 
-  // Closing the dialog cancels any run still in flight — the export and the
-  // probe alike, since both hold decoders open.
   useEffect(
     () => () => {
       abortRef.current?.abort();
@@ -94,16 +83,6 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
   const format = findFormat(formatId);
   const audioOnly = format.kind === 'audio';
 
-  /*
-   * The frame is the project's, not a choice made here.
-   *
-   * There were size presets on this dialog — 1080p, 720p, Vertical, Square —
-   * and any that disagreed with the project reframed the whole export: every
-   * clip is fitted to the output, so a landscape timeline sent to 1080×1920
-   * lost its sides or gained bars. Resolution and frame rate belong to Project
-   * settings, where changing them re-composes the timeline you can see, rather
-   * than to the last dialog before the file is written.
-   */
   const { fps } = project;
   // Encoders want even dimensions; odd values fail on several codecs.
   const evenWidth = Math.max(2, Math.round(project.width / 2) * 2);
@@ -129,24 +108,7 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
   const rangeStart = useRange ? (inPointUs ?? 0) : 0;
   const rangeEnd = useRange ? (outPointUs ?? durationUs) : durationUs;
   const spanUs = Math.max(0, rangeEnd - rangeStart);
-  /*
-   * Bitrate x duration is a ceiling, not a prediction — and on its own it was a
-   * misleading thing to put in front of someone. WebCodecs encodes at a
-   * variable bitrate and treats the figure as a target it is allowed to come in
-   * under, which it usually does by a wide margin: a 50s 1080p export budgeted
-   * at 33MB lands nearer 6MB. Showing only the ceiling meant the one number on
-   * the row was the one number the file would never be.
-   *
-   * So both ends are shown. The floor is the ceiling scaled by what simple
-   * footage — a still, a title, a locked-off shot — actually costs, which is
-   * roughly a fifth of its target; demanding material climbs toward the top of
-   * the range. It is a rule of thumb rather than a measurement, and the range
-   * is the honest way to say that.
-   *
-   * Audio is left out of the scaling: at a fixed 192kbps it really is close to
-   * constant, so only the video part is uncertain. Uncompressed PCM is exact
-   * throughout, which is why WAV is measured rather than estimated.
-   */
+  // Bitrate x duration is a ceiling, not a prediction: WebCodecs encodes VBR and usually comes in well under.
   const VBR_TYPICAL_SHARE = 0.2;
   const exactSize = format.id === 'wav';
   /* The credit is part of the file, so the length and the budget both count it. */
@@ -172,29 +134,9 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
     rangeUs: useRange ? { startUs: rangeStart, endUs: rangeEnd } : null
   };
 
-  /*
-   * Everything the measured figure depends on. A change to any of it makes the
-   * measurement stale, so the key is what the effect below watches — and a
-   * stale exact number is worse than an honest range, which is what shows while
-   * a fresh measurement is on its way.
-   */
   const measureKey = JSON.stringify({ settings, formatId, spanUs });
   const measuredBytes = measured?.key === measureKey ? measured.bytes : null;
 
-  /*
-   * Measured on its own, as soon as there is something to measure.
-   *
-   * Debounced rather than immediate, because the settings above change under
-   * the cursor — a couple of clicks through the quality list should not start a
-   * couple of encodes. Any probe still running is aborted first, so only the
-   * settings you actually stopped on get measured.
-   *
-   * And bounded: if a probe takes longer than `PROBE_BUDGET_MS` on this machine
-   * at this size, the automatic ones stop for the rest of the session and the
-   * estimate goes back to showing its range. Measuring is worth a moment of
-   * work in the background; it is not worth making the dialog feel broken on a
-   * 4K project or a slow laptop.
-   */
   useEffect(() => {
     if (!showRange || running || autoProbeOff.current) return;
 
@@ -296,9 +238,6 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
             {includeAudio ? 'Audio on' : 'Audio off'}
           </ToggleChip>
         )}
-        {/* Hidden for an audio-only bounce, which has no picture to show a card
-            on — the exporter skips it there regardless, and offering a switch
-            that does nothing is worse than not offering it. */}
         {!audioOnly && (
           <ToggleChip
             active={endCredit}
@@ -320,9 +259,6 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
           value={creditSeconds > 0 ? `${outputSeconds.toFixed(1)}s · ${creditSeconds}s credit` : `${outputSeconds.toFixed(1)}s`}
         />
         {!audioOnly && <Row label="Bitrate" value={`${(bitrate / 1_000_000).toFixed(1)} Mbps ceiling`} />}
-        {/* The measured figure replaces the range in place, so the row never
-            has two answers on it at once. While a measurement is on its way the
-            range stays up — it is still true, just wider than necessary. */}
         <Row
           label={exactSize || measuredBytes !== null ? 'Size' : 'Size estimate'}
           value={

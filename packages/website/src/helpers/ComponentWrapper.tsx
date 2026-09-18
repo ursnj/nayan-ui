@@ -19,32 +19,12 @@ interface Props {
 
 const REPO = 'https://github.com/ursnj/nayan-ui/tree/main/packages';
 
-/**
- * The page every component's documentation is rendered into.
- *
- * What changed is the framing rather than the content. The demo used to sit
- * directly on the page background with nothing marking where the example
- * stopped and the page resumed — a Card component demo was indistinguishable
- * from the page's own card. It now runs inside a browser window on a grey
- * ground, so a white component in it is visible as a component, and the frame
- * says which part of the page is the example.
- *
- * It also gained the two things a reference page of this kind is expected to
- * have and did not: a link to the component's source, and previous/next
- * navigation. Fifty components were reachable only via the sidebar, which
- * meant reading them in order was fifty round trips to the left-hand column.
- */
 const ComponentWrapper = (props: Props) => {
   const { children } = props;
   const pathname = usePathname();
   const type = pathname.split('/')[1];
   const component: any = getMenuItem(pathname);
 
-  /*
-   * Previous and next among the component pages only. Stepping onto
-   * "Installation" or a section heading from the end of the component list
-   * would be a jump sideways, not a step along it.
-   */
   const components = getSidebarItems(pathname).filter((item: any) => item.isComponent);
   const index = components.findIndex((item: any) => item.link === pathname);
   const previous: any = index > 0 ? components[index - 1] : null;
@@ -60,35 +40,11 @@ const ComponentWrapper = (props: Props) => {
       <SubHeader
         title="Demo"
         description={
-          /* "Rendered live" is true of the React pages and false of the React
-             Native ones, whose components build to native views and stand in
-             with an explanation instead. */
           type === 'react-native'
             ? 'React Native components render to native views, so the example below describes the component rather than running it.'
             : 'Rendered live, with the same build of the library you install.'
         }>
-        {/*
-         * A browser window on a grey ground, so a component with a white or
-         * transparent surface reads as sitting on something rather than
-         * dissolving into the page. This replaced a dotted radial ground doing
-         * the same job with less of a hint that the box is a running app.
-         *
-         * The address bar shows the page's own URL, which is true, short, and
-         * tells a visitor what they would install to get this.
-         */}
         <BrowserFrame label={`${SITE_HOST}${pathname}`} padded={false}>
-          {/*
-           * Block layout, deliberately. An earlier version of this wrapper used
-           * `flex flex-wrap items-start`, which broke most of the demos on the
-           * site: a flex item is sized to its content, so every demo that
-           * passes a single block-level component — Input, Table, Slider,
-           * Tabs, Progress, Textarea, Select — collapsed to min-content width
-           * instead of filling the panel. The demos that want a row (Button,
-           * Badge) already wrap their own children in one.
-           *
-           * `space-y-4` spaces multi-child demos; `[&>*]:max-w-full` keeps a
-           * wide child (a table) inside the panel rather than through it.
-           */}
           <div className="space-y-4 p-6 [&>*]:max-w-full sm:p-8">{children}</div>
         </BrowserFrame>
       </SubHeader>
@@ -110,13 +66,6 @@ const ComponentWrapper = (props: Props) => {
 
       <Attributes data={component.attributes} />
 
-      {/*
-       * Some components are really two or three: a menu is `NMenu`, `NMenuItem`
-       * and `NMenuNested`, and a page that lists only the outer one leaves the
-       * props a reader actually types — `title`, `icon`, `shortcut`,
-       * `onAction` — documented nowhere. `extraAttributes` is optional, so
-       * every other page is unaffected.
-       */}
       {(component.extraAttributes ?? []).map((table: any) => (
         <Attributes key={table.title} title={table.title} data={table.data} />
       ))}

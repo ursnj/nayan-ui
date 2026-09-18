@@ -12,7 +12,6 @@ const GamesLicensing = () => {
 
   return (
     <Sidebar title={component?.title || 'Licensing'}>
-      {/* License Section */}
       <div className="mb-8">
         <div className="space-y-6">
           <p className="text-muted">
@@ -86,7 +85,6 @@ const GamesLicensing = () => {
         </div>
       </div>
 
-      {/* Acknowledgments Section */}
       <div className="mb-8">
         <h2 className={H2_DOC}>
           <span className="mr-3">🙏</span>
@@ -133,7 +131,6 @@ const GamesLicensing = () => {
         </ul>
       </div>
 
-      {/* Support Section */}
       <div className="mb-8">
         <h2 className={H2_DOC}>
           <span className="mr-3">📞</span>

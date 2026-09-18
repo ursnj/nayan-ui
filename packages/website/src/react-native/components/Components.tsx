@@ -7,14 +7,6 @@ import { CARD_INTERACTIVE, H4_CARD } from '@/design/system';
 import Sidebar from '@/helpers/Sidebar';
 import { reactNativeSidebarItems } from '@/services/Utils';
 
-/**
- * The React Native component index.
- *
- * Deliberately identical in shape to the React one — same card, same clamp,
- * same grid. The two indexes previously differed in how they sourced their
- * title and description but rendered the same markup, which meant any change
- * to one silently left the other behind.
- */
 const Components = () => {
   const items = reactNativeSidebarItems.filter((item: any) => item.isComponent);
 

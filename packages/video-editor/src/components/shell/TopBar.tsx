@@ -54,12 +54,6 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
   const [confirmNew, setConfirmNew] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  /*
-   * Gated on clips, not on assets: `resetProject` empties the timeline and
-   * restores the project settings, but leaves the imported media alone — so
-   * with nothing on the timeline there is nothing to warn about, and a dialog
-   * in front of a no-op is just a click to dismiss.
-   */
   const startNewProject = () => {
     if (clipCount === 0) {
       resetProject();
@@ -83,11 +77,6 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
     }
   }, [project.name]);
 
-  /*
-   * Lent to the keyboard rather than lifted into `App`: both actions own the
-   * busy flag, the toasts and the hidden file input that live here, and the
-   * key map has no business knowing about any of it.
-   */
   useCommand(
     'save',
     useCallback(() => {
@@ -106,15 +95,6 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
     try {
       const { project: data, assets, missing } = await readBundle(file);
       loadProject(data, assets);
-      /*
-       * Poster frames are not in the bundle — they are decoded, not saved — so
-       * a reopened project arrived with none at all: no cards in the media
-       * panel and nothing for a clip to show while its filmstrip decodes. The
-       * import path has always done this; only this one never did.
-       *
-       * Fired without waiting, and the library runs them one at a time, so a
-       * project with twenty clips doesn't open twenty decoders to draw them.
-       */
       for (const asset of assets) {
         if (asset.thumbnail) continue;
         void generateThumbnail(asset.id).then(thumbnail => thumbnail && updateAsset(asset.id, { thumbnail }));
@@ -135,22 +115,11 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
     <header className="island flex shrink-0 items-center gap-2 px-3 py-2">
       <div className="flex shrink-0 items-center gap-2">
         <Clapperboard className="h-5 w-5 text-accent" />
-        {/* Shown from xl rather than lg: the name is long enough that at the
-            editor's 1024px minimum it squeezed the project name field, which
-            is the one elastic item in this row. The icon carries the brand
-            below that. */}
         <span className="hidden whitespace-nowrap text-sm font-semibold tracking-tight text-foreground xl:inline">Nayan UI Video Editor</span>
       </div>
 
       <span className="mx-1 h-5 w-px shrink-0 bg-separator" />
 
-      {/* The one elastic item in the bar: everything else is a fixed control,
-          so the project name is what gives when the window narrows. */}
-      {/* The mask sits on the wrapper: NInput does not forward unknown props,
-          so the attribute would never reach the DOM from the component. The
-          div takes over as the elastic flex item so the sizing is unchanged. */}
-      {/* Its own height, like every input in the editor: the top bar runs on a
-          taller rhythm than the inspector's field stack. */}
       <div data-clarity-mask="true" className="w-56 min-w-24 shrink">
         <NInput
           value={project.name}
@@ -199,8 +168,6 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
 
         <NButton isOutline onClick={() => setSettingsOpen(true)} aria-label="Project settings" className="h-7 whitespace-nowrap px-2 text-[11px]">
           <Settings className="h-3.5 w-3.5 xl:mr-1.5" />
-          {/* 4K at 23.976fps is the longest this gets; below xl it is the icon
-              alone rather than a string that squeezes out the export button. */}
           <span className="hidden xl:inline">
             {project.width} × {project.height} · {project.fps}fps
           </span>
@@ -261,14 +228,8 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
             <NumberField label="Width" value={project.width} min={16} max={7680} step={2} onChange={width => updateProject({ width })} />
             <NumberField label="Height" value={project.height} min={16} max={4320} step={2} onChange={height => updateProject({ height })} />
           </div>
-          {/* The background lives in its own panel now — a colour field here
-              would be a second place to set the same thing, and the two would
-              drift apart the moment the background stopped being a colour. */}
           <p className="pt-1 text-[11px] text-muted">Background is set in the Background panel, on the left.</p>
 
-          {/* Below the rule is editor state, not project state: it follows the
-              browser rather than the file, which is why it needs its own way
-              back to the defaults. */}
           <div className="mt-3 border-t border-border pt-3">
             <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted">Editor</p>
             <p className="mb-2 text-[11px] leading-relaxed text-muted">

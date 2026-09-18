@@ -2,18 +2,6 @@ import type { TransitionKind } from '../types';
 
 type Context2D = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
 
-/**
- * How the incoming layer is revealed over the outgoing one.
- *
- * Each transition is expressed as a state per layer — an alpha, a clip path, a
- * translation, a scale, a blur — plus an optional overlay afterwards. Keeping
- * them declarative means the compositor needs no branch per kind, and preview
- * and export share the same code.
- *
- * Both sides get a state because the cheap version of this — moving only the
- * incoming layer and leaving the outgoing one nailed down — is what makes a
- * slide read as a sticker sliding over a photo rather than as a camera move.
- */
 export interface LayerTransitionState {
   alpha: number;
   clip?: (context: Context2D, width: number, height: number) => void;
@@ -31,15 +19,6 @@ export interface TransitionState {
   overlay?: { color: string; alpha: number };
 }
 
-/*
- * Easing.
- *
- * The curve matters more than the shape of the move. A slide on a symmetric
- * curve feels like it is being dragged; the same slide on an ease-out leaves
- * immediately and settles, which is what reads as "smooth". So each transition
- * picks a curve deliberately rather than sharing one.
- */
-
 /** Symmetric and gentle at both ends — right for cross-fades, wrong for motion. */
 const smoothstep = (t: number) => t * t * (3 - 2 * t);
 /** Leaves fast, lands soft. The default for anything that travels. */
@@ -49,21 +28,10 @@ const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2
 /** Very fast out, very long settle — the whip. */
 const easeOutQuint = (t: number) => 1 - (1 - t) ** 5;
 
-/**
- * 0 at both ends, 1 in the middle — for effects that peak mid-transition.
- *
- * The endpoints are snapped because `sin(PI)` is 1.2e-16, not 0. That residue
- * is invisible but non-zero, which is enough to leave a blur in the filter
- * chain on the last frame of a transition.
- */
 const arch = (t: number) => (t <= 0 || t >= 1 ? 0 : Math.sin(Math.PI * t));
 
 const NONE: LayerTransitionState = { alpha: 1 };
 
-/**
- * `progress` runs 0 → 1 across the transition: 0 is fully the outgoing clip,
- * 1 is fully the incoming one.
- */
 export const transitionStateAt = (kind: TransitionKind, progress: number, width: number, height: number): TransitionState => {
   const t = Math.max(0, Math.min(1, progress));
 
@@ -72,9 +40,6 @@ export const transitionStateAt = (kind: TransitionKind, progress: number, width:
 
     case 'fade-to-black':
     case 'fade-to-white': {
-      // Each half is eased on its own, so the picture settles into the colour
-      // and leaves it again rather than ramping through at a constant rate.
-      // The swap happens exactly at the peak, where the overlay is opaque.
       const half = t < 0.5 ? easeInOutCubic(t * 2) : 1 - easeInOutCubic((t - 0.5) * 2);
       return {
         incoming: { alpha: t >= 0.5 ? 1 : 0 },
@@ -88,8 +53,6 @@ export const transitionStateAt = (kind: TransitionKind, progress: number, width:
     case 'blur-dissolve': {
       const eased = smoothstep(t);
       const peak = arch(t) * 12;
-      // Both sides defocus into the middle of the blend and resolve out of it,
-      // which hides the moment the two pictures are equally weighted.
       return {
         incoming: { alpha: eased, blur: peak },
         outgoing: { alpha: 1, blur: peak }
@@ -171,9 +134,6 @@ export const transitionStateAt = (kind: TransitionKind, progress: number, width:
 
     case 'zoom-in': {
       const eased = easeInOutCubic(t);
-      // The outgoing frame keeps pushing towards the viewer while the incoming
-      // one arrives from behind it; matching the two moves is what sells it as
-      // one continuous camera move rather than two stacked clips.
       return {
         incoming: { alpha: eased, scale: 0.7 + 0.3 * eased },
         outgoing: { alpha: 1, scale: 1 + 0.35 * eased }
@@ -189,8 +149,6 @@ export const transitionStateAt = (kind: TransitionKind, progress: number, width:
     }
 
     case 'whip-pan': {
-      // Overshoot past the frame edge and a blur that peaks mid-swing: the eye
-      // reads the smear as speed and stops looking for the cut underneath it.
       const eased = easeOutQuint(t);
       const smear = arch(t) * 18;
       return {

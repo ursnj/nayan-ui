@@ -14,22 +14,12 @@ const TABS: { id: PanelId; label: string; icon: React.ReactNode }[] = [
   { id: 'transitions', label: 'Transitions', icon: <Blend className="h-[18px] w-[18px]" /> }
 ];
 
-/**
- * Icon rail plus the active content browser.
- *
- * Every panel stays mounted would be wasteful (the media panel holds
- * thumbnails), so only the selected one renders — the rail itself is the
- * persistent navigation.
- */
 export const LeftRail = () => {
   const [active, setActive] = useState<PanelId>('media');
 
   return (
     <div className="island flex h-full min-h-0">
       <nav aria-label="Editor panels" className="flex w-14 shrink-0 flex-col gap-1 border-r border-border bg-editor-chrome py-2">
-        {/* No tooltips here: each tab already carries its name underneath the
-            icon, and a tooltip would only repeat it. The visible text is also
-            the accessible name, so nothing is lost by dropping it. */}
         {TABS.map(tab => (
           <button
             key={tab.id}

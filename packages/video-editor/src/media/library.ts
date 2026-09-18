@@ -6,17 +6,7 @@ import { US } from '../types';
 import type { AssetKind, MediaAsset } from '../types';
 import { SequentialVideoReader } from './frameReader';
 
-/**
- * Decoders, bitmaps and PCM buffers can't live in the React store, so they're
- * held here and keyed by asset id. The store keeps only plain, serialisable
- * descriptions of each asset.
- */
 interface AssetResources {
-  /**
-   * The file the asset came from, kept so a project can be bundled with its
-   * media. Holding a `File` costs nothing — it is a handle to bytes the
-   * browser already has on disk, not a copy in memory.
-   */
   file: File;
   input: Input | null;
   videoTrack: InputVideoTrack | null;
@@ -26,10 +16,6 @@ interface AssetResources {
   audioBuffer: AudioBuffer | null;
   audioPromise: Promise<AudioBuffer | null> | null;
   peaks: Float32Array | null;
-  /**
-   * The video track's first presentation timestamp, resolved on demand and
-   * then kept. See `videoStartSeconds` for why anything needs to know it.
-   */
   startPromise: Promise<number> | null;
   objectUrl: string;
 }
@@ -42,28 +28,7 @@ const readers = new Map<string, { reader: SequentialVideoReader; assetId: string
 
 export class UnsupportedMediaError extends Error {}
 
-/**
- * Extensions for every container mediabunny reads, plus the images the browser
- * decodes, spelled out for the file picker.
- *
- * `accept="video/*,audio/*,image/*"` on its own is not enough, and this is
- * what kept `.wav` out: a wildcard makes the browser expand the group through
- * the operating system's own type database, so whether a file can even be
- * *selected* depends on what that machine happens to have registered. WAV is
- * the classic casualty — it is `audio/wav` on some systems, `audio/x-wav` or
- * `audio/wave` on others, and nothing at all where no player claimed it — and
- * the same hole swallows `.mkv`, `.m4a`, `.flac`, `.opus` and `.ts`. A file the
- * picker greys out never reaches the decoder that would have read it happily.
- *
- * Naming the extensions removes the mapping from the path entirely. The
- * wildcards stay on the end, so a format the OS knows about and this list has
- * not caught up with is still offered.
- *
- * The containers come from mediabunny's `ALL_FORMATS`: ISOBMFF and QuickTime,
- * Matroska and WebM, WAVE, Ogg, FLAC, MP3, ADTS and MPEG-TS. Audio-only
- * containers are as welcome as video ones — a WAV is a first-class asset here,
- * not a lesser one.
- */
+// Extensions spelled out: a video/* wildcard expands differently per platform and drops .wav from the picker.
 export const MEDIA_ACCEPT = [
   // ISOBMFF / QuickTime
   '.mp4',
@@ -90,7 +55,6 @@ export const MEDIA_ACCEPT = [
   '.m2ts',
   '.mts',
   '.m3u8',
-  // Stills, decoded by the browser rather than mediabunny
   '.png',
   '.jpg',
   '.jpeg',
@@ -108,18 +72,6 @@ const AUDIO_EXTENSIONS = new Set(['wav', 'wave', 'mp3', 'm4a', 'aac', 'flac', 'o
 
 const extensionOf = (name: string) => name.slice(name.lastIndexOf('.') + 1).toLowerCase();
 
-/**
- * The kind a file claims to be, by type and then by name.
- *
- * The extension is a fallback rather than a nicety: `file.type` is empty
- * whenever the machine has no mapping for the extension, which is exactly the
- * case the list above exists for. Left to the MIME alone, a PNG dragged in
- * from an app that sets no type went down the container path to be told it was
- * "not a supported media format".
- *
- * Only a hint either way — what the file actually contains is settled below by
- * decoding it.
- */
 const kindForFile = (file: File): AssetKind => {
   if (file.type.startsWith('image/')) return 'image';
   if (file.type.startsWith('audio/')) return 'audio';
@@ -131,41 +83,14 @@ const kindForFile = (file: File): AssetKind => {
   return 'video';
 };
 
-/**
- * Probes a file and registers everything needed to play it back. Throws
- * `UnsupportedMediaError` when neither mediabunny nor the browser can read it.
- */
-/**
- * Probes a file and registers everything needed to play it back.
- *
- * `preferredId` exists for reopening a bundled project: clips reference their
- * asset by id, so restoring media under a freshly minted id would leave every
- * clip pointing at nothing.
- */
 export const loadAsset = async (file: File, preferredId?: string): Promise<MediaAsset> => {
   const id = preferredId ?? uid('asset');
-  /*
-   * A `preferredId` can name an asset that is already registered — reopening
-   * the project that is currently loaded is the ordinary case. `resources.set`
-   * below would drop that entry on the floor with its decoder still open, its
-   * bitmap still allocated, its decoded PCM still held and its object URL
-   * never revoked, so it is released deliberately first.
-   */
+  // preferredId may already be registered; overwriting would drop a live decoder and its allocations.
   if (resources.has(id)) await releaseAsset(id);
 
   const objectUrl = URL.createObjectURL(file);
   const declaredKind = kindForFile(file);
 
-  /*
-   * A failed bitmap is not the end of the attempt.
-   *
-   * The kind above is only what the file *claims*, and the claim is often a
-   * name. Something saved with the wrong extension, or given an image type by
-   * the app it was dragged from, used to be rejected here as "not a readable
-   * image" while being a perfectly good MP4 that the container probe below
-   * would have opened. So this branch returns when it succeeds and falls
-   * through when it doesn't, and only the probe gets to refuse the file.
-   */
   const bitmap = declaredKind === 'image' ? await createImageBitmap(file).catch(() => null) : null;
 
   if (bitmap) {
@@ -276,31 +201,6 @@ export const loadAsset = async (file: File, preferredId?: string): Promise<Media
   return asset;
 };
 
-/* ------------------------------------------------------------------ *
- * Decode scheduling
- * ------------------------------------------------------------------ */
-
-/**
- * Poster frames and filmstrips run one job at a time.
- *
- * Each job opens a decoder of its own, and every visible clip wants a strip as
- * it mounts — a dozen clips would start a dozen hardware decoders at once and
- * stall playback. This used to be a plain FIFO promise chain, which fixed that
- * and created a worse problem: nothing could be reordered or given up on, so
- * one zoom step queued a job per clip and the strip for the clip under the
- * cursor waited behind every one of them, at a second or more apiece.
- *
- * So the order matters as much as the limit:
- *
- * - Poster frames go first and in request order. They are a single frame each,
- *   and every clip of that asset paints it immediately as its placeholder, so
- *   one cheap job improves the look of the whole timeline.
- * - Filmstrips run newest-first. The most recent request is the one describing
- *   what is on screen *now*; the older ones describe a zoom level the user has
- *   already left. Past a queue depth they are dropped outright.
- * - A job nobody is waiting for any more is abandoned mid-decode, and two
- *   callers asking for the same thing share one job.
- */
 const MAX_QUEUED_STRIPS = 12;
 
 interface Job {
@@ -309,7 +209,6 @@ interface Job {
   waiters: number;
   controller: AbortController;
   run: (signal: AbortSignal) => Promise<unknown>;
-  /** Handed back when the job is dropped instead of run. */
   fallback: unknown;
   resolve: (value: unknown) => void;
   promise: Promise<unknown>;
@@ -346,9 +245,6 @@ const drain = async () => {
       } catch {
         job.resolve(job.fallback);
       } finally {
-        // Only if it is still the job registered under that key: one dropped
-        // mid-run may already have been replaced by a fresh request for the
-        // same thing, and that one is not this one's to unregister.
         if (jobsByKey.get(job.key) === job) jobsByKey.delete(job.key);
       }
     }
@@ -357,13 +253,6 @@ const drain = async () => {
   }
 };
 
-/**
- * Queues `run`, or joins the job already queued under the same key.
- *
- * `signal` is the *caller* losing interest — a clip unmounting, a trim handle
- * moving on — rather than a cancellation of the work: the job only stops once
- * every caller has gone.
- */
 const schedule = <T>(
   key: string,
   kind: 'poster' | 'strip',
@@ -384,8 +273,6 @@ const schedule = <T>(
       posterJobs.push(job);
     } else {
       stripJobs.push(job);
-      // The oldest waiting strips describe a view that has moved on. Their
-      // callers are told so, and ask again if they are still there.
       while (stripJobs.length > MAX_QUEUED_STRIPS) dropJob(stripJobs[0]);
     }
     void drain();
@@ -409,29 +296,10 @@ const schedule = <T>(
   });
 };
 
-/* ------------------------------------------------------------------ *
- * Poster frames and filmstrips
- * ------------------------------------------------------------------ */
-
-/**
- * Where the video actually starts, in seconds.
- *
- * Both APIs below resolve a timestamp to the frame *at or before* it, and
- * return null when there is no such frame. A file whose first video packet
- * starts after zero — an edit list, a trimmed export, a stream with a
- * presentation offset — therefore answers nothing at all for `t = 0`: the
- * media panel got no poster frame and the head of every clip came back blank,
- * with no error to explain either. Requests are clamped to this instead.
- *
- * Playback never hit it, which is why the preview looked fine: the player
- * reads through `samples(t)`, which yields forward from `t` and so lands on
- * the first frame by itself.
- */
+// Both APIs resolve to the frame at or before the timestamp, and return null when there is none.
 const videoStartSeconds = async (entry: AssetResources): Promise<number> => {
   if (!entry.videoTrack) return 0;
   entry.startPromise ??= entry.videoTrack.getFirstTimestamp().catch(() => 0);
-  // A negative first timestamp means offset timing; those frames are not meant
-  // to be presented, so zero is still the floor.
   return Math.max(0, await entry.startPromise);
 };
 
@@ -444,8 +312,6 @@ export const generateThumbnail = async (assetId: string, timeUs = 0): Promise<st
   if (!entry) return null;
   if (entry.bitmap) return bitmapToDataUrl(entry.bitmap);
   if (!entry.videoTrack) return null;
-  // Scheduled because a folder dropped on the media panel fires one of these
-  // per file without waiting, which opened a decoder per file at once.
   return schedule<string | null>(`poster:${assetId}:${Math.round(timeUs)}`, 'poster', undefined, () => buildThumbnail(entry, timeUs), null);
 };
 
@@ -459,8 +325,6 @@ const buildThumbnail = async (entry: AssetResources, timeUs: number): Promise<st
     const wrapped = await sink.getCanvas(Math.max(startSeconds, timeUs / US));
     if (wrapped) return canvasToDataUrl(wrapped.canvas);
 
-    // Nothing at or before that instant even after clamping — a track whose
-    // index disagrees with its packets. Take the first frame it will give up.
     for await (const first of sink.canvases()) {
       return canvasToDataUrl(first.canvas);
     }
@@ -481,18 +345,6 @@ export interface FilmstripRequest {
   tilePx: number;
 }
 
-/**
- * Generated strips, keyed by the caller's cache key.
- *
- * The frames are object URLs rather than data URLs. Base64 costs a third more
- * bytes and keeps every frame on the JS heap as a string, but the real reason
- * is the encode: `toDataURL` is synchronous, so a 24-tile strip meant 24 JPEG
- * encodes on the main thread, and that landed as a visible hitch each time a
- * clip mounted. `toBlob` hands the work to the browser to do off-thread.
- *
- * Owning URLs means eviction has to revoke them — see `rememberStrip` and
- * `forgetStrips`.
- */
 const STRIP_CACHE_LIMIT = 120;
 const strips = new Map<string, { assetId: string; frames: string[] }>();
 
@@ -500,14 +352,6 @@ const revokeFrames = (frames: string[]) => {
   for (const frame of frames) if (frame) URL.revokeObjectURL(frame);
 };
 
-/**
- * Caches a finished strip.
- *
- * Never called for a key that already has one: a cached strip's URLs are the
- * ones the timeline is painting from, and replacing the entry would revoke
- * them out from under a clip that has no reason to re-render. `buildFilmstrip`
- * checks first and discards its own frames instead.
- */
 const rememberStrip = (key: string, assetId: string, frames: string[]) => {
   strips.set(key, { assetId, frames });
   // Map iteration is insertion order, so the front is the oldest strip.
@@ -532,13 +376,6 @@ const forgetStrips = (assetId: string) => {
 /** A strip that has already been generated, for reading during render. */
 export const getFilmstrip = (key: string): string[] | null => strips.get(key)?.frames ?? null;
 
-/**
- * Evenly spaced stills along a clip, drawn behind the clip body.
- *
- * Resolves to the frames, to `[]` when the asset has no stills to give, or to
- * `null` when the job was abandoned — the queue was busy with newer work, or a
- * decode failed. `null` is worth asking about again; `[]` is not.
- */
 export const requestFilmstrip = (request: FilmstripRequest, signal?: AbortSignal): Promise<string[] | null> => {
   const cached = strips.get(request.key);
   if (cached) return Promise.resolve(cached.frames);
@@ -549,10 +386,6 @@ const buildFilmstrip = async ({ key, assetId, fromUs, toUs, count, tilePx }: Fil
   const entry = resources.get(assetId);
   if (!entry?.videoTrack || count <= 0) return [];
 
-  // Another job may have answered this key while this one waited its turn —
-  // a clip that unmounted mid-decode and came straight back asks again, and
-  // the first job still finishes and caches. Decoding it twice would be waste;
-  // the danger is the second result replacing URLs already on screen.
   const ready = strips.get(key);
   if (ready) return ready.frames;
 
@@ -560,9 +393,6 @@ const buildFilmstrip = async ({ key, assetId, fromUs, toUs, count, tilePx }: Fil
   if (signal.aborted) return null;
 
   const span = Math.max(0, toUs - fromUs);
-  // Monotonically non-decreasing, which is what lets `canvasesAtTimestamps`
-  // decode each packet once; clamping can only flatten the start of the ramp,
-  // and a repeated timestamp is answered from the same decoded frame.
   const timestamps = Array.from({ length: count }, (_, index) => Math.max(startSeconds, (fromUs + (span * (index + 0.5)) / count) / US));
 
   const sink = new CanvasSink(entry.videoTrack, { width: tilePx, poolSize: 0 });
@@ -572,17 +402,9 @@ const buildFilmstrip = async ({ key, assetId, fromUs, toUs, count, tilePx }: Fil
   try {
     for await (const wrapped of sink.canvasesAtTimestamps(timestamps)) {
       if (signal.aborted) break;
-      /*
-       * Encoding is started and not awaited, so it overlaps the next decode.
-       * That is only safe because `poolSize: 0` gives each frame a canvas of
-       * its own — with a pool, the surface being encoded is one the sink is
-       * free to draw the next frame into.
-       */
       encoding.push(wrapped ? canvasToUrl(wrapped.canvas) : Promise.resolve(''));
     }
   } catch (error) {
-    // Kept rather than swallowed: whatever decoded is still usable, and the
-    // reason this stopped early is the only clue anyone gets.
     failure = error;
   }
 
@@ -594,21 +416,9 @@ const buildFilmstrip = async ({ key, assetId, fromUs, toUs, count, tilePx }: Fil
   }
 
   if (frames.some(frame => frame !== '')) {
-    /*
-     * A decode that gave out part way still has real frames in it, and they
-     * are worth keeping — this used to throw the whole strip away and ask
-     * again, so a file that could only ever yield part of a strip showed none
-     * of it, forever, and retried for the rest of the session.
-     *
-     * Padded to the full count so each tile still maps to the instant it
-     * stands for; the tiles with nothing fall back to the poster frame.
-     */
     while (frames.length < count) frames.push('');
     if (failure) reportOnce('filmstrip', failure);
 
-    // Checked again: the cache can have filled during the decode. Whoever got
-    // there first owns the URLs the timeline is showing, so these are the ones
-    // to throw away.
     const winner = strips.get(key);
     if (winner) {
       revokeFrames(frames);
@@ -619,24 +429,10 @@ const buildFilmstrip = async ({ key, assetId, fromUs, toUs, count, tilePx }: Fil
     return frames;
   }
 
-  /*
-   * Not one frame came back, so there is no point asking again — but silence
-   * here is what makes a broken strip indistinguishable from one still
-   * decoding. Reported once per distinct cause, as the render path does.
-   */
   reportOnce('filmstrip', failure ?? new Error(`no frames could be decoded from ${entry.file.name}`));
   return [];
 };
 
-/**
- * A reader is bound to a clip rather than an asset: two clips showing different
- * parts of the same file would otherwise fight over one decoder and force a
- * re-seek every frame.
- *
- * `target` keeps preview and export on separate readers — an export walks the
- * timeline from the start while the user may still be scrubbing, and sharing a
- * reader would make each seek thrash the other.
- */
 export const getReader = (clipId: string, assetId: string, target: 'preview' | 'export' = 'preview'): SequentialVideoReader | null => {
   const key = `${target}:${clipId}`;
   const existing = readers.get(key);
@@ -693,11 +489,6 @@ export const releaseAllReaders = async () => {
 
 export const getImageBitmap = (assetId: string): ImageBitmap | null => resources.get(assetId)?.bitmap ?? null;
 
-/**
- * Fully decoded PCM for an asset, used both for Web Audio playback and for the
- * timeline waveform. Decoded once and cached; concurrent callers share one
- * in-flight promise.
- */
 export const getAudioBuffer = async (assetId: string): Promise<AudioBuffer | null> => {
   const entry = resources.get(assetId);
   if (!entry) return null;
@@ -729,23 +520,12 @@ export const releaseAsset = async (assetId: string) => {
   const entry = resources.get(assetId);
   if (!entry) return;
   resources.delete(assetId);
-  // The strips are object URLs this module minted, so they have to be revoked
-  // rather than simply forgotten.
   forgetStrips(assetId);
   entry.bitmap?.close();
   entry.input?.dispose();
   URL.revokeObjectURL(entry.objectUrl);
 };
 
-/**
- * Frees every asset the store is no longer holding.
- *
- * Opening a project replaces the whole media library, and the entries here are
- * keyed by asset id rather than reachable from React state — so without this
- * the previous project's decoders, bitmaps and decoded PCM stay for the rest
- * of the session. A fully decoded stereo track is about 23MB a minute, so two
- * or three projects is enough to matter.
- */
 export const releaseAssetsExcept = async (keepIds: Iterable<string>) => {
   const keep = new Set(keepIds);
   const doomed = [...resources.keys()].filter(id => !keep.has(id));
@@ -808,13 +588,6 @@ const computePeaks = (buffer: AudioBuffer, buckets: number): Float32Array => {
 
 const JPEG_QUALITY = 0.7;
 
-/**
- * A JPEG of the canvas, encoded off the main thread where the browser can.
- *
- * `toDataURL` is the synchronous alternative and it blocks for the whole
- * encode, which is the wrong trade for a filmstrip: the tiles are wanted
- * soon, not instantly, and there are up to 24 of them per clip.
- */
 const canvasToBlob = (canvas: HTMLCanvasElement | OffscreenCanvas): Promise<Blob | null> => {
   if (!(canvas instanceof HTMLCanvasElement)) {
     return canvas.convertToBlob({ type: 'image/jpeg', quality: JPEG_QUALITY }).catch(() => null);
@@ -834,12 +607,6 @@ const canvasToUrl = async (canvas: HTMLCanvasElement | OffscreenCanvas): Promise
   return blob ? URL.createObjectURL(blob) : '';
 };
 
-/**
- * Poster frames stay data URLs on purpose: there is one per asset, it lives in
- * the store for as long as the asset does, and it is rendered by both the media
- * panel and the timeline — a URL with no owner is worth more here than the
- * encode time it costs once.
- */
 const canvasToDataUrl = async (canvas: HTMLCanvasElement | OffscreenCanvas): Promise<string | null> => {
   try {
     if (canvas instanceof HTMLCanvasElement) return canvas.toDataURL('image/jpeg', JPEG_QUALITY);

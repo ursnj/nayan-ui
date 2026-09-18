@@ -1,18 +1,4 @@
-/*
- * Copy for the /video-editor page.
- *
- * Kept here so the structured data in `page.tsx` is built from the same
- * arrays the page renders — a FAQPage or HowTo that disagrees with the
- * visible copy is a structured-data violation.
- *
- * This file used to be three times the length. It carried a sixteen-term
- * glossary, a ten-row comparison table, a six-question buyer's guide, a
- * keyboard map, a specifications grid and an explanation of WebCodecs,
- * hardware decoders and the Web Audio clock. Almost none of that is what
- * someone looking for a free video editor needs before they try one, so it is
- * gone. What is left answers four questions: what is it, what can it do, how
- * do I use it, and where can I post it.
- */
+// Shared with the structured data in page.tsx: a FAQPage that disagrees with the visible copy is a violation.
 
 /** The running editor lives at this path, served as a static Vite bundle. */
 export const EDITOR_URL = '/video-editor/start';
@@ -26,15 +12,6 @@ export const FACTS = [
   { value: '0', label: 'Bytes uploaded' }
 ];
 
-/* ------------------------------------------------------------------ *
- * Steps — also the HowTo schema
- * ------------------------------------------------------------------ */
-
-/**
- * Four steps, down from six. "Open the editor" and "save the project" were
- * instructions in name only; both now live where they belong — in the call to
- * action and in the export step.
- */
 export const STEPS = [
   {
     title: 'Add your clips',
@@ -54,17 +31,6 @@ export const STEPS = [
   }
 ];
 
-/* ------------------------------------------------------------------ *
- * Where it goes
- * ------------------------------------------------------------------ */
-
-/**
- * What used to sit here was a table of pixel dimensions and two lists of
- * codecs — "1080 × 1920", "MP4, MOV, MKV, WebM · MP3, WAV, M4A, FLAC, OGG",
- * "Chrome or Edge 94+, Safari 16.4+". Accurate, and exactly the wrong thing
- * to put in front of someone deciding whether to try a video editor. The
- * presets still exist in the editor; the page describes what they are for.
- */
 export const DESTINATIONS = [
   {
     title: 'Vertical video',
@@ -80,15 +46,6 @@ export const DESTINATIONS = [
   }
 ];
 
-/* ------------------------------------------------------------------ *
- * FAQ — also the FAQPage schema
- * ------------------------------------------------------------------ */
-
-/**
- * Six questions, down from twelve. The ones cut were about browser support
- * matrices, WebGL2 fallbacks and encode speed — real questions, but ones
- * people ask after they have tried it, not before.
- */
 export const FAQS = [
   {
     q: 'Is this video editor really free?',

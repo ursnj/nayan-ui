@@ -2,24 +2,6 @@ import { Github, Package } from 'lucide-react';
 import Link from 'next/link';
 import { CONTAINER, PILL_INTERACTIVE } from '@/design/system';
 
-/*
- * The footer.
- *
- * The previous version's grid did not add up: the brand block took
- * `col-span-2` and there were four nav groups beside it — six units in a
- * five-column grid. So the fourth group wrapped onto a second row, sat alone
- * under the brand, and left the right two-thirds of the footer empty. That
- * void was most of why it looked wrong.
- *
- * Three nav groups now, so brand (2) + 3 = 5 and the row is full. React and
- * React Native are one "Documentation" column rather than two near-identical
- * three-link ones. A footer is a link index, so it should be scannable as
- * one: one heading style, one link style, no per-column colours.
- *
- * The npm packages were a stack of small grey monospace lines that read as
- * console output rather than links; they are pills on one row now.
- */
-
 const GROUPS = [
   {
     title: 'Documentation',
@@ -71,7 +53,6 @@ const Footer = () => {
     <footer className="mt-20 border-t border-default bg-surface/50">
       <div className={`${CONTAINER} py-14`}>
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
-          {/* Brand */}
           <div className="sm:col-span-2">
             <Link href="/" className="inline-flex items-center gap-2.5">
               <img src="/logo.webp" alt="" width={32} height={32} className="h-8 w-8" loading="lazy" />
@@ -108,7 +89,6 @@ const Footer = () => {
             </Link>
           </div>
 
-          {/* Link index */}
           {GROUPS.map(group => (
             <nav key={group.title} aria-labelledby={`footer-${slug(group.title)}`}>
               <h2 id={`footer-${slug(group.title)}`} className="mb-3 text-xs font-semibold uppercase tracking-wider text-foreground">

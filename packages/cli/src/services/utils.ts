@@ -1,6 +1,3 @@
-/**
- * Utility Service - Validation functions for CLI options
- */
 import { existsSync } from 'fs';
 import { URL } from 'url';
 

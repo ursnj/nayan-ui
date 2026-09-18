@@ -15,16 +15,6 @@ export const audibleClips = (clips: Clip[], tracks: Track[], fromUs: number): Me
   });
 };
 
-/**
- * Places one clip on an audio graph: source → EQ → panner → gain → destination.
- *
- * Shared by the live preview and the offline export mix so both produce
- * identical audio — the only difference is which `BaseAudioContext` is passed.
- *
- * Timeline instant `t` maps to `originTime + (t - fromUs) / US` on the target
- * context's clock, which is also how the compositor's fade envelope is
- * evaluated, so sound and picture fade together.
- */
 export const scheduleClipAudio = (
   context: BaseAudioContext,
   destination: AudioNode,
@@ -65,14 +55,6 @@ export const scheduleClipAudio = (
   return source;
 };
 
-/**
- * Schedules one linear gain segment.
- *
- * Web Audio rejects negative times, so a seek that lands part-way through a
- * fade can't simply schedule the ramp's true start. Instead the ramp is
- * restarted from the value it would already have reached, which preserves the
- * slope rather than flattening it against t=0.
- */
 const rampSegment = (parameter: AudioParam, fromTime: number, fromValue: number, toTime: number, toValue: number) => {
   if (toTime <= 0) {
     parameter.setValueAtTime(toValue, 0);
@@ -87,7 +69,6 @@ const rampSegment = (parameter: AudioParam, fromTime: number, fromValue: number,
   parameter.linearRampToValueAtTime(toValue, toTime);
 };
 
-/** Reversed clips need reversed PCM; cached because the copy is not cheap. */
 const reversedCache = new WeakMap<AudioBuffer, AudioBuffer>();
 
 const reversedBuffer = (buffer: AudioBuffer): AudioBuffer => {
@@ -109,14 +90,6 @@ const reversedBuffer = (buffer: AudioBuffer): AudioBuffer => {
   return output;
 };
 
-/**
- * Preview audio.
- *
- * Rather than streaming decoded packets, each clip is scheduled as one
- * `AudioBufferSourceNode` when playback starts. The browser then mixes
- * everything sample-accurately with no per-frame work, and the render loop
- * reads its time from that same clock so the two can't drift apart.
- */
 export class AudioEngine {
   private context: AudioContext | null = null;
   private master: GainNode | null = null;
@@ -146,19 +119,11 @@ export class AudioEngine {
     if (this.master) this.master.gain.value = this.volume;
   }
 
-  /**
-   * Schedules every audible clip from `fromUs` onward. Returns the audio-clock
-   * time corresponding to timeline position `fromUs`.
-   */
   async start(clips: Clip[], tracks: Track[], fromUs: number): Promise<number> {
     const context = await this.ensureContext();
     this.stopSources();
     const generation = ++this.generation;
 
-    // Decode everything *before* fixing the time base. The first play of a clip
-    // can take seconds to decode, and an origin captured beforehand would
-    // already be in the past by the time playback starts — the video loop would
-    // then jump forward by exactly that decode time.
     const decoded = await Promise.all(audibleClips(clips, tracks, fromUs).map(async clip => ({ clip, buffer: await getAudioBuffer(clip.assetId) })));
 
     if (generation !== this.generation || !this.master) return context.currentTime;
