@@ -91,6 +91,13 @@ interface PageHeroProps {
   note?: string;
   /** Breadcrumb trail, innermost last. The final entry is rendered as the current page. */
   breadcrumb?: { label: string; href?: string }[];
+  /**
+   * A screenshot or panel for a second column, as on the home page: pitch on
+   * the left, the thing itself on the right. Passing it left-aligns the text,
+   * which is what a two-column hero needs — centred text beside an image reads
+   * as two unrelated blocks. Omit it and the hero is centred as before.
+   */
+  media?: ReactNode;
   children?: ReactNode;
 }
 
@@ -101,7 +108,7 @@ interface PageHeroProps {
  * makes them look like the same website — each of those had invented its own
  * header, at its own size, with its own gradient.
  */
-export const PageHero = ({ eyebrow, title, titleAccent, lead, actions, note, breadcrumb, children }: PageHeroProps) => (
+export const PageHero = ({ eyebrow, title, titleAccent, lead, actions, note, breadcrumb, media, children }: PageHeroProps) => (
   <section className="relative overflow-hidden">
     <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
       <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/[0.07] to-transparent" />
@@ -111,15 +118,28 @@ export const PageHero = ({ eyebrow, title, titleAccent, lead, actions, note, bre
     <div className={`${CONTAINER} pb-10 pt-10 sm:pt-14`}>
       {breadcrumb ? <Breadcrumb items={breadcrumb} /> : null}
 
-      <div className="mx-auto max-w-3xl text-center">
-        {eyebrow ? <p className={`mb-3 ${EYEBROW}`}>{eyebrow}</p> : null}
-        <h1 className={H1}>
-          {title}
-          {titleAccent ? <span className={`mt-1 block ${GRADIENT_TEXT}`}>{titleAccent}</span> : null}
-        </h1>
-        {lead ? <p className={`mx-auto mt-5 max-w-2xl text-base ${LEAD}`}>{lead}</p> : null}
-        {actions ? <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">{actions}</div> : null}
-        {note ? <p className="mt-5 text-xs text-muted">{note}</p> : null}
+      {/*
+       * Two shapes from one component. With `media` the hero is the home
+       * page's: pitch left, the thing itself right, stacked on a phone and
+       * centred there because a lone column of left-aligned text under a
+       * breadcrumb looks like it lost its image. Without `media` nothing
+       * changes for the pages already using this.
+       */}
+      <div className={media ? 'grid items-center gap-10 lg:grid-cols-2 lg:gap-14' : ''}>
+        <div className={media ? 'text-center lg:text-left' : 'mx-auto max-w-3xl text-center'}>
+          {eyebrow ? <p className={`mb-3 ${EYEBROW}`}>{eyebrow}</p> : null}
+          <h1 className={H1}>
+            {title}
+            {titleAccent ? <span className={`mt-1 block ${GRADIENT_TEXT}`}>{titleAccent}</span> : null}
+          </h1>
+          {lead ? <p className={`mt-5 max-w-2xl text-base ${LEAD} ${media ? 'mx-auto lg:mx-0' : 'mx-auto'}`}>{lead}</p> : null}
+          {actions ? (
+            <div className={`mt-7 flex flex-col gap-3 sm:flex-row ${media ? 'justify-center lg:justify-start' : 'justify-center'}`}>{actions}</div>
+          ) : null}
+          {note ? <p className="mt-5 text-xs text-muted">{note}</p> : null}
+        </div>
+
+        {media}
       </div>
 
       {children}
