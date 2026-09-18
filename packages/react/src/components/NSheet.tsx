@@ -58,7 +58,11 @@ export const NSheet: React.FC<NSheetProps> = memo(
           <span />
         </Drawer.Trigger>
         <Drawer.Backdrop isDismissable>
-          <Drawer.Content placement="right" className={cn('nyn-sheet w-full p-4')}>
+          {/* No padding here: `.drawer__content` is `fixed inset-0`, so padding on it
+              holds the sheet off the top, bottom and trailing edges — and HeroUI
+              squares the dialog's corners for left/right placement precisely
+              because it expects the panel to meet the edge. */}
+          <Drawer.Content placement="right" className={cn('nyn-sheet w-full')}>
             <Drawer.Dialog
               className={cn('nyn-sheet-dialog h-full !w-full', sizeMapping[size], className)}
               aria-label={ariaLabel || (!title && !ariaLabelledBy ? 'Dialog' : undefined)}
@@ -71,7 +75,7 @@ export const NSheet: React.FC<NSheetProps> = memo(
                   <Drawer.CloseTrigger aria-label="Close dialog" />
                 </Drawer.Header>
               )}
-              <Drawer.Body className={cn('h-[calc(100vh_-_44px)] overflow-y-auto', contentClassName)}>{children}</Drawer.Body>
+              <Drawer.Body className={cn('min-h-0 flex-1 overflow-y-auto', contentClassName)}>{children}</Drawer.Body>
               {footer && <Drawer.Footer className="nyn-sheet-footer">{footer}</Drawer.Footer>}
             </Drawer.Dialog>
           </Drawer.Content>

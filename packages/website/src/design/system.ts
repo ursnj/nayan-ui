@@ -1,5 +1,3 @@
-
-
 /** The one accent, for text. */
 export const ACCENT_TEXT = 'text-indigo-600 dark:text-indigo-400';
 

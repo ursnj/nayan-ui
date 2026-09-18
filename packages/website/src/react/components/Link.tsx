@@ -6,8 +6,9 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 const Link = () => {
   return (
     <ComponentWrapper>
-      <NLink href="https://heroui.com" target="_blank">
-        HeroUI Documentation
+      <NLink href="/react/components">Browse the components</NLink>
+      <NLink href="https://www.nayanui.com" target="_blank">
+        Open nayanui.com in a new tab
       </NLink>
     </ComponentWrapper>
   );

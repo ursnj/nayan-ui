@@ -6,7 +6,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 const Linkify = () => {
   return (
     <ComponentWrapper>
-      <NLinkify>Visit https://heroui.com for more information. Contact us at info@heroui.com</NLinkify>
+      <NLinkify>Read the docs at https://www.nayanui.com or www.nayanui.com/react, and mail hello@nayanui.com with anything missing.</NLinkify>
     </ComponentWrapper>
   );
 };

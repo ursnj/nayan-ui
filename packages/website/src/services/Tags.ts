@@ -1497,3 +1497,183 @@ export const aiScannerTags = [
   { sku: 'cve-detection', text: 'CVE Detection' },
   { sku: 'nayan-ai', text: 'Nayan AI' }
 ];
+
+export const avatarTags = [
+  { sku: 'react-avatar', text: 'React Avatar' },
+  { sku: 'react-profile-picture', text: 'React Profile Picture' },
+  { sku: 'react-user-image', text: 'React User Image' },
+  { sku: 'react-avatar-fallback', text: 'React Avatar Fallback' },
+  { sku: 'react-avatar-component', text: 'React Avatar Component' },
+  { sku: 'react-initials-avatar', text: 'React Initials Avatar' }
+];
+
+export const avatarGroupTags = [
+  { sku: 'react-avatar-group', text: 'React Avatar Group' },
+  { sku: 'react-avatar-stack', text: 'React Avatar Stack' },
+  { sku: 'react-user-group', text: 'React User Group' },
+  { sku: 'react-team-avatars', text: 'React Team Avatars' },
+  { sku: 'react-avatar-group-component', text: 'React Avatar Group Component' },
+  { sku: 'react-overlapping-avatars', text: 'React Overlapping Avatars' }
+];
+
+export const breadcrumbsTags = [
+  { sku: 'react-breadcrumbs', text: 'React Breadcrumbs' },
+  { sku: 'react-breadcrumb-navigation', text: 'React Breadcrumb Navigation' },
+  { sku: 'react-navigation-trail', text: 'React Navigation Trail' },
+  { sku: 'react-page-hierarchy', text: 'React Page Hierarchy' },
+  { sku: 'react-breadcrumbs-component', text: 'React Breadcrumbs Component' },
+  { sku: 'react-nav-breadcrumb', text: 'React Nav Breadcrumb' }
+];
+
+export const calendarTags = [
+  { sku: 'react-calendar', text: 'React Calendar' },
+  { sku: 'react-date-grid', text: 'React Date Grid' },
+  { sku: 'react-month-view', text: 'React Month View' },
+  { sku: 'react-date-selection', text: 'React Date Selection' },
+  { sku: 'react-calendar-component', text: 'React Calendar Component' },
+  { sku: 'react-datepicker-inline', text: 'React Datepicker Inline' }
+];
+
+export const checkGroupTags = [
+  { sku: 'react-checkbox-group', text: 'React Checkbox Group' },
+  { sku: 'react-multiple-checkboxes', text: 'React Multiple Checkboxes' },
+  { sku: 'react-checkbox-list', text: 'React Checkbox List' },
+  { sku: 'react-multi-select-checkbox', text: 'React Multi Select Checkbox' },
+  { sku: 'react-checkbox-group-component', text: 'React Checkbox Group Component' },
+  { sku: 'react-form-checkboxes', text: 'React Form Checkboxes' }
+];
+
+export const chipTags = [
+  { sku: 'react-chip', text: 'React Chip' },
+  { sku: 'react-chip-component', text: 'React Chip Component' },
+  { sku: 'react-label-chip', text: 'React Label Chip' },
+  { sku: 'react-status-chip', text: 'React Status Chip' },
+  { sku: 'react-tag-chip', text: 'React Tag Chip' },
+  { sku: 'react-pill-component', text: 'React Pill Component' }
+];
+
+export const dateFieldTags = [
+  { sku: 'react-date-field', text: 'React Date Field' },
+  { sku: 'react-date-input', text: 'React Date Input' },
+  { sku: 'react-date-segments', text: 'React Date Segments' },
+  { sku: 'react-typed-date', text: 'React Typed Date' },
+  { sku: 'react-date-field-component', text: 'React Date Field Component' },
+  { sku: 'react-date-entry', text: 'React Date Entry' }
+];
+
+export const dateRangePickerTags = [
+  { sku: 'react-date-range-picker', text: 'React Date Range Picker' },
+  { sku: 'react-date-range', text: 'React Date Range' },
+  { sku: 'react-range-calendar', text: 'React Range Calendar' },
+  { sku: 'react-start-end-date', text: 'React Start End Date' },
+  { sku: 'react-date-range-component', text: 'React Date Range Component' },
+  { sku: 'react-period-picker', text: 'React Period Picker' }
+];
+
+export const disclosureTags = [
+  { sku: 'react-disclosure', text: 'React Disclosure' },
+  { sku: 'react-collapsible', text: 'React Collapsible' },
+  { sku: 'react-expandable-section', text: 'React Expandable Section' },
+  { sku: 'react-show-hide', text: 'React Show Hide' },
+  { sku: 'react-disclosure-component', text: 'React Disclosure Component' },
+  { sku: 'react-toggle-content', text: 'React Toggle Content' }
+];
+
+export const emptyStateTags = [
+  { sku: 'react-empty-state', text: 'React Empty State' },
+  { sku: 'react-no-data', text: 'React No Data' },
+  { sku: 'react-blank-slate', text: 'React Blank Slate' },
+  { sku: 'react-empty-list', text: 'React Empty List' },
+  { sku: 'react-empty-state-component', text: 'React Empty State Component' },
+  { sku: 'react-zero-state', text: 'React Zero State' }
+];
+
+export const inputOtpTags = [
+  { sku: 'react-input-otp', text: 'React Input Otp' },
+  { sku: 'react-otp-input', text: 'React Otp Input' },
+  { sku: 'react-verification-code', text: 'React Verification Code' },
+  { sku: 'react-two-factor-input', text: 'React Two Factor Input' },
+  { sku: 'react-pin-input', text: 'React Pin Input' },
+  { sku: 'react-otp-component', text: 'React Otp Component' }
+];
+
+export const kbdTags = [
+  { sku: 'react-kbd', text: 'React Kbd' },
+  { sku: 'react-keyboard-key', text: 'React Keyboard Key' },
+  { sku: 'react-shortcut-display', text: 'React Shortcut Display' },
+  { sku: 'react-hotkey-label', text: 'React Hotkey Label' },
+  { sku: 'react-kbd-component', text: 'React Kbd Component' },
+  { sku: 'react-keyboard-shortcut', text: 'React Keyboard Shortcut' }
+];
+
+export const listBoxTags = [
+  { sku: 'react-list-box', text: 'React List Box' },
+  { sku: 'react-listbox', text: 'React Listbox' },
+  { sku: 'react-selectable-list', text: 'React Selectable List' },
+  { sku: 'react-option-list', text: 'React Option List' },
+  { sku: 'react-list-box-component', text: 'React List Box Component' },
+  { sku: 'react-multi-select-list', text: 'React Multi Select List' }
+];
+
+export const paginationTags = [
+  { sku: 'react-pagination', text: 'React Pagination' },
+  { sku: 'react-pager', text: 'React Pager' },
+  { sku: 'react-page-navigation', text: 'React Page Navigation' },
+  { sku: 'react-table-pagination', text: 'React Table Pagination' },
+  { sku: 'react-pagination-component', text: 'React Pagination Component' },
+  { sku: 'react-paged-list', text: 'React Paged List' }
+];
+
+export const progressCircleTags = [
+  { sku: 'react-progress-circle', text: 'React Progress Circle' },
+  { sku: 'react-circular-progress', text: 'React Circular Progress' },
+  { sku: 'react-progress-ring', text: 'React Progress Ring' },
+  { sku: 'react-radial-progress', text: 'React Radial Progress' },
+  { sku: 'react-progress-circle-component', text: 'React Progress Circle Component' },
+  { sku: 'react-loading-circle', text: 'React Loading Circle' }
+];
+
+export const scrollShadowTags = [
+  { sku: 'react-scroll-shadow', text: 'React Scroll Shadow' },
+  { sku: 'react-scroll-fade', text: 'React Scroll Fade' },
+  { sku: 'react-overflow-shadow', text: 'React Overflow Shadow' },
+  { sku: 'react-scrollable-area', text: 'React Scrollable Area' },
+  { sku: 'react-scroll-shadow-component', text: 'React Scroll Shadow Component' },
+  { sku: 'react-fade-edges', text: 'React Fade Edges' }
+];
+
+export const switchGroupTags = [
+  { sku: 'react-switch-group', text: 'React Switch Group' },
+  { sku: 'react-toggle-group', text: 'React Toggle Group' },
+  { sku: 'react-settings-switches', text: 'React Settings Switches' },
+  { sku: 'react-multiple-switches', text: 'React Multiple Switches' },
+  { sku: 'react-switch-group-component', text: 'React Switch Group Component' },
+  { sku: 'react-preferences-toggles', text: 'React Preferences Toggles' }
+];
+
+export const timeFieldTags = [
+  { sku: 'react-time-field', text: 'React Time Field' },
+  { sku: 'react-time-input', text: 'React Time Input' },
+  { sku: 'react-time-picker', text: 'React Time Picker' },
+  { sku: 'react-hour-minute-input', text: 'React Hour Minute Input' },
+  { sku: 'react-time-field-component', text: 'React Time Field Component' },
+  { sku: 'react-time-entry', text: 'React Time Entry' }
+];
+
+export const toggleButtonTags = [
+  { sku: 'react-toggle-button', text: 'React Toggle Button' },
+  { sku: 'react-toggle', text: 'React Toggle' },
+  { sku: 'react-pressed-button', text: 'React Pressed Button' },
+  { sku: 'react-toolbar-toggle', text: 'React Toolbar Toggle' },
+  { sku: 'react-toggle-button-component', text: 'React Toggle Button Component' },
+  { sku: 'react-on-off-button', text: 'React On Off Button' }
+];
+
+export const toolbarTags = [
+  { sku: 'react-toolbar', text: 'React Toolbar' },
+  { sku: 'react-button-toolbar', text: 'React Button Toolbar' },
+  { sku: 'react-action-bar', text: 'React Action Bar' },
+  { sku: 'react-toolbar-component', text: 'React Toolbar Component' },
+  { sku: 'react-editor-toolbar', text: 'React Editor Toolbar' },
+  { sku: 'react-controls-row', text: 'React Controls Row' }
+];

@@ -1,16 +1,21 @@
-import React, { memo } from 'react';
-import { Meter } from '@heroui/react';
+import React, { ReactNode, memo } from 'react';
+import { Label, Meter } from '@heroui/react';
 import { cn } from '../lib/utils';
 
 export interface NMeterProps {
   value: number;
   minValue?: number;
   maxValue?: number;
-  label?: string;
+  label?: ReactNode;
+  output?: ReactNode;
   showOutput?: boolean;
   color?: 'default' | 'accent' | 'success' | 'warning' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  labelClassName?: string;
+  outputClassName?: string;
+  trackClassName?: string;
+  fillClassName?: string;
   'aria-label'?: string;
 }
 
@@ -20,11 +25,16 @@ const NMeterComponent: React.FC<NMeterProps> = memo(
     minValue = 0,
     maxValue = 100,
     label,
+    output,
     showOutput = true,
     color = 'accent',
     size = 'md',
     className = '',
-    'aria-label': ariaLabel = 'Meter'
+    labelClassName = '',
+    outputClassName = '',
+    trackClassName = '',
+    fillClassName = '',
+    'aria-label': ariaLabel
   }) => {
     const lowerBound = Math.min(minValue, maxValue);
     const upperBound = Math.max(minValue, maxValue);
@@ -39,10 +49,11 @@ const NMeterComponent: React.FC<NMeterProps> = memo(
         color={color}
         size={size}
         className={cn('nyn-meter', className)}
-        aria-label={ariaLabel}>
-        {showOutput && <Meter.Output>{label || `${percentage}%`}</Meter.Output>}
-        <Meter.Track>
-          <Meter.Fill />
+        aria-label={ariaLabel || (label ? undefined : 'Meter')}>
+        {label && <Label className={cn('nyn-meter-label', labelClassName)}>{label}</Label>}
+        {showOutput && <Meter.Output className={cn('nyn-meter-output', outputClassName)}>{output ?? `${percentage}%`}</Meter.Output>}
+        <Meter.Track className={cn(trackClassName)}>
+          <Meter.Fill className={cn(fillClassName)} />
         </Meter.Track>
       </Meter>
     );

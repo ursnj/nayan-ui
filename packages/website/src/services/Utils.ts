@@ -3,11 +3,18 @@ import {
   Badge,
   BookOpen,
   Bot,
+  Calendar,
+  CalendarCheck,
   CalendarDays,
+  CalendarRange,
+  ChevronsUpDown,
   CircleAlert,
   CircleCheck,
   CircleDot,
+  CircleUser,
+  Clock,
   Columns3,
+  Command,
   CreditCard,
   Download,
   EllipsisVertical,
@@ -19,17 +26,23 @@ import {
   Grid3x3,
   HandCoins,
   Hash,
+  Inbox,
   Link,
   Link2,
+  List,
+  ListChecks,
   ListCollapse,
   Loader,
+  LoaderCircle,
   Map,
   MessageSquare,
   MessageSquareDot,
   MessageSquareText,
   MessageSquareWarning,
+  PanelTop,
   PictureInPicture2,
   RectangleEllipsis,
+  ScrollText,
   Search,
   Settings,
   ShieldCheck,
@@ -41,83 +54,125 @@ import {
   SquareCheck,
   SquareMousePointer,
   StickyNote,
+  Tag,
   TextCursorInput,
   TextSelect,
   ToggleRight,
+  Users,
   Wrench
 } from 'lucide-react';
 import {
   accordionAttributes,
   alertAttributes,
+  avatarAttributes,
+  avatarGroupAttributes,
   badgeAttributes,
+  breadcrumbsAttributes,
   buttonAttributes,
   buttonGroupAttributes,
+  calendarAttributes,
   cardAttributes,
+  checkGroupAttributes,
   checkboxAttributes,
+  chipAttributes,
   confirmAlertAttributes,
+  dateFieldAttributes,
   datePickerAttributes,
+  dateRangePickerAttributes,
   dialogAttributes,
+  disclosureAttributes,
   dividerAttributes,
+  emptyStateAttributes,
   infiniteScrollAttributes,
   inputAttributes,
+  inputOtpAttributes,
+  kbdAttributes,
   linkAttributes,
+  listBoxAttributes,
   loadingAttributes,
   menuAttributes,
   menuItemAttributes,
   menuNestedAttributes,
   meterAttributes,
   numberFieldAttributes,
+  paginationAttributes,
   popoverAttributes,
   progressAttributes,
+  progressCircleAttributes,
   radioGroupAttributes,
+  scrollShadowAttributes,
   searchFieldAttributes,
   selectAttributes,
   sheetAttributes,
   skeletonAttributes,
   sliderAttributes,
   switchAttributes,
+  switchGroupAttributes,
   tableAttributes,
   tabsAttributes,
   tagGroupAttributes,
   textareaAttributes,
+  timeFieldAttributes,
   toastAttributes,
+  toggleButtonAttributes,
+  toolbarAttributes,
   tooltipAttributes
 } from '@/services/ReactAttributes';
 import {
   accordionCode,
   alertCode,
+  avatarCode,
+  avatarGroupCode,
   badgeCode,
+  breadcrumbsCode,
   buttonCode,
   buttonGroupCode,
+  calendarCode,
   cardCode,
   checkBoxCode,
+  checkGroupCode,
+  chipCode,
   confirmAlertCode,
+  dateFieldCode,
   datePickerCode,
+  dateRangePickerCode,
   dialogCode,
+  disclosureCode,
   dividerCode,
+  emptyStateCode,
   infiniteScrollCode,
   inputCode,
   inputHookCode,
+  inputOtpCode,
+  kbdCode,
   linkCode,
   linkifyCode,
+  listBoxCode,
   loadingCode,
   menuCode,
   meterCode,
   numberFieldCode,
+  paginationCode,
   popoverCode,
+  progressCircleCode,
   progressCode,
   radioGroupCode,
+  scrollShadowCode,
   searchFieldCode,
   selectCode,
   sheetCode,
   skeletonCode,
   sliderCode,
   switchCode,
+  switchGroupCode,
   tableCode,
   tabsCode,
   tagGroupCode,
   textareaCode,
+  timeFieldCode,
   toastCode,
+  toggleButtonCode,
+  toolbarCode,
   tooltipCode
 } from '@/services/ReactCodeBlocks';
 import {
@@ -150,24 +205,39 @@ import {
   aiReviewTags,
   aiScannerTags,
   alertTags,
+  avatarGroupTags,
+  avatarTags,
   badgeTags,
+  breadcrumbsTags,
   buttonGroupTags,
   buttonTags,
+  calendarTags,
   cardTags,
+  checkGroupTags,
   checkboxTags,
+  chipTags,
   confirmAlertTags,
+  dateFieldTags,
   datePickerTags,
+  dateRangePickerTags,
   dialogTags,
+  disclosureTags,
   dividerTags,
+  emptyStateTags,
   infiniteScrollTags,
+  inputOtpTags,
   inputTags,
+  kbdTags,
   linkTags,
   linkifyTags,
+  listBoxTags,
   loadingTags,
   menuTags,
   meterTags,
   numberFieldTags,
+  paginationTags,
   popoverTags,
+  progressCircleTags,
   progressTags,
   radioGroupTags,
   rnAccordionTags,
@@ -191,6 +261,7 @@ import {
   rnToastTags,
   rnTooltipTags,
   robotsTags,
+  scrollShadowTags,
   searchFieldTags,
   selectTags,
   seoMasterTags,
@@ -198,12 +269,16 @@ import {
   sitemapTags,
   skeletonTags,
   sliderTags,
+  switchGroupTags,
   switchTags,
   tableTags,
   tabsTags,
   tagGroupTags,
   textareaTags,
+  timeFieldTags,
   toastTags,
+  toggleButtonTags,
+  toolbarTags,
   tooltipTags
 } from '@/services/Tags';
 
@@ -270,6 +345,28 @@ export const reactSidebarItems = [
     isComponent: true
   },
   {
+    title: 'Avatar',
+    description:
+      'An Avatar component shows a person or entity as a small image, with initials or an icon standing in when there is no picture to show. Avatars identify the author of a comment, the owner of a file or the member of a team, in a shape that stays recognisable at any size.',
+    link: '/react/avatar',
+    attributes: avatarAttributes,
+    code: avatarCode,
+    tags: avatarTags,
+    icon: CircleUser,
+    isComponent: true
+  },
+  {
+    title: 'Avatar Group',
+    description:
+      'An Avatar Group stacks several avatars into one overlapping row and collapses the rest into a count. It answers "who is on this?" in the space of a single line, and is the usual way to show the members of a team, the people on a call or the collaborators on a document.',
+    link: '/react/avatar-group',
+    attributes: avatarGroupAttributes,
+    code: avatarGroupCode,
+    tags: avatarGroupTags,
+    icon: Users,
+    isComponent: true
+  },
+  {
     title: 'Badge',
     description:
       'A Badge component is a small UI element used to display a count, status, or label associated with another element, such as an icon or button. Badges are commonly used to highlight notifications, messages, or any relevant information in a compact and visually distinct way, often appearing as small circles or rectangles with numbers or text.',
@@ -278,6 +375,17 @@ export const reactSidebarItems = [
     code: badgeCode,
     tags: badgeTags,
     icon: Badge,
+    isComponent: true
+  },
+  {
+    title: 'Breadcrumbs',
+    description:
+      "A Breadcrumbs component shows where the current page sits in a hierarchy and gives a way back up it. Each entry but the last is a link to an ancestor, which makes a deep section navigable without reaching for the browser's back button.",
+    link: '/react/breadcrumbs',
+    attributes: breadcrumbsAttributes,
+    code: breadcrumbsCode,
+    tags: breadcrumbsTags,
+    icon: Slash,
     isComponent: true
   },
   {
@@ -303,6 +411,17 @@ export const reactSidebarItems = [
     isComponent: true
   },
   {
+    title: 'Calendar',
+    description:
+      'A Calendar component lays a month out as a grid and lets a date be picked from it. Unlike a date picker it is always open, which suits a booking screen, an availability view or anywhere the surrounding dates are part of the decision.',
+    link: '/react/calendar',
+    attributes: calendarAttributes,
+    code: calendarCode,
+    tags: calendarTags,
+    icon: Calendar,
+    isComponent: true
+  },
+  {
     title: 'Card',
     description:
       'A Card component is a versatile UI element used to display content in a structured and visually appealing way. It typically contains related information, such as text, images, buttons, and other elements, within a bordered or shadowed container. Cards are often used for presenting individual items, like products, articles, or profiles, making the content easy to scan and interact with.',
@@ -325,6 +444,28 @@ export const reactSidebarItems = [
     isComponent: true
   },
   {
+    title: 'Checkbox Group',
+    description:
+      "A Checkbox Group ties several checkboxes to one value, so a set of independent choices is read and written as a single array. It keeps the group's label, its layout and its disabled state in one place instead of spread across the individual boxes.",
+    link: '/react/checkbox-group',
+    attributes: checkGroupAttributes,
+    code: checkGroupCode,
+    tags: checkGroupTags,
+    icon: ListChecks,
+    isComponent: true
+  },
+  {
+    title: 'Chip',
+    description:
+      'A Chip is a compact label for a piece of metadata — a status, a version, a category. It carries a colour and a variant so several chips in a row can be told apart at a glance, and it is deliberately quieter than a badge used for counts.',
+    link: '/react/chip',
+    attributes: chipAttributes,
+    code: chipCode,
+    tags: chipTags,
+    icon: Tag,
+    isComponent: true
+  },
+  {
     title: 'Confirm Alert',
     description:
       'A Confirm Alert component is a UI element that prompts users to confirm or cancel an action before proceeding. It typically displays a message asking for confirmation, along with "Confirm" and "Cancel" buttons, ensuring that the user consciously approves or rejects the action, often used for critical tasks like deletions or irreversible changes.',
@@ -333,6 +474,17 @@ export const reactSidebarItems = [
     code: confirmAlertCode,
     tags: confirmAlertTags,
     icon: MessageSquareWarning,
+    isComponent: true
+  },
+  {
+    title: 'Date Field',
+    description:
+      'A Date Field takes a date typed in segments — day, month, year — with no calendar attached. Each segment validates on its own and can be stepped with the arrow keys, which makes it faster than a picker for a date somebody already knows.',
+    link: '/react/date-field',
+    attributes: dateFieldAttributes,
+    code: dateFieldCode,
+    tags: dateFieldTags,
+    icon: CalendarCheck,
     isComponent: true
   },
   {
@@ -347,6 +499,17 @@ export const reactSidebarItems = [
     isComponent: true
   },
   {
+    title: 'Date Range Picker',
+    description:
+      'A Date Range Picker takes a start and an end date in one control, either typed into its segments or chosen from the calendar it opens. Reporting periods, stays and filters all need two dates that make sense together, which is what a range picker enforces.',
+    link: '/react/date-range-picker',
+    attributes: dateRangePickerAttributes,
+    code: dateRangePickerCode,
+    tags: dateRangePickerTags,
+    icon: CalendarRange,
+    isComponent: true
+  },
+  {
     title: 'Dialog',
     description:
       'A Dialog component is a UI element that displays a pop-up window over the main content to capture user attention or request input. It is often used for tasks like confirmations, alerts, forms, or other interactions that require user feedback before proceeding. Dialogs can include buttons like "OK" or "Cancel" to confirm or dismiss actions, and typically block interaction with the underlying content until closed.',
@@ -358,6 +521,17 @@ export const reactSidebarItems = [
     isComponent: true
   },
   {
+    title: 'Disclosure',
+    description:
+      'A Disclosure is one collapsible section: a heading that opens and closes the content under it. It is the single-section counterpart to an accordion, for hiding detail that most readers will not need without sending them to another page for it.',
+    link: '/react/disclosure',
+    attributes: disclosureAttributes,
+    code: disclosureCode,
+    tags: disclosureTags,
+    icon: ChevronsUpDown,
+    isComponent: true
+  },
+  {
     title: 'Divider',
     description:
       'A Divider component is a simple UI element used to separate content within a layout, creating visual distinction between sections. It helps enhance the organization and readability of the interface by providing clear boundaries between different elements, such as text blocks, images, or other components. Dividers can be styled in various ways (solid, dashed, or dotted) and can vary in thickness and color to match the overall design of the application.',
@@ -366,6 +540,17 @@ export const reactSidebarItems = [
     code: dividerCode,
     tags: dividerTags,
     icon: Slash,
+    isComponent: true
+  },
+  {
+    title: 'Empty State',
+    description:
+      'An Empty State fills a list, table or panel that has nothing in it yet, with a title, an explanation and the action that would change that. A blank area reads as a broken screen; an empty state reads as a screen waiting for its first item.',
+    link: '/react/empty-state',
+    attributes: emptyStateAttributes,
+    code: emptyStateCode,
+    tags: emptyStateTags,
+    icon: Inbox,
     isComponent: true
   },
   {
@@ -391,6 +576,28 @@ export const reactSidebarItems = [
     isComponent: true
   },
   {
+    title: 'Input OTP',
+    description:
+      'An Input OTP takes a one-time code as a row of single-character slots, moving focus along as the code is typed or pasted. It is the control used for two-factor sign-in, email verification and anything else that arrives as a short numeric code.',
+    link: '/react/input-otp',
+    attributes: inputOtpAttributes,
+    code: inputOtpCode,
+    tags: inputOtpTags,
+    icon: RectangleEllipsis,
+    isComponent: true
+  },
+  {
+    title: 'Keyboard Key',
+    description:
+      'A Keyboard Key renders a key or a shortcut the way a keyboard shows it, so instructions can name a key without quoting it as prose. It is the small styled block you see in a shortcut list, a tooltip or an empty state that suggests a command.',
+    link: '/react/kbd',
+    attributes: kbdAttributes,
+    code: kbdCode,
+    tags: kbdTags,
+    icon: Command,
+    isComponent: true
+  },
+  {
     title: 'Link',
     description:
       'A Link component is a UI element that allows users to navigate from one page or section to another within a web application or website. Typically styled as underlined text or buttons, links provide a clear indication of interactivity. They can point to internal or external resources and often include features like hover effects or icons to enhance user experience and accessibility.',
@@ -410,6 +617,17 @@ export const reactSidebarItems = [
     code: linkifyCode,
     tags: linkifyTags,
     icon: SquareArrowOutUpRight,
+    isComponent: true
+  },
+  {
+    title: 'List Box',
+    description:
+      'A List Box shows a set of options as a list that can be selected with the mouse or the keyboard, one at a time or several at once. Unlike a select it stays open, which suits a picker built into a panel, a file list or a settings column.',
+    link: '/react/list-box',
+    attributes: listBoxAttributes,
+    code: listBoxCode,
+    tags: listBoxTags,
+    icon: List,
     isComponent: true
   },
   {
@@ -461,6 +679,17 @@ export const reactSidebarItems = [
     isComponent: true
   },
   {
+    title: 'Pagination',
+    description:
+      'A Pagination component walks through a result set page by page, showing the current page, its neighbours and the ends of the range with an ellipsis in between. It keeps a long list navigable without loading all of it at once.',
+    link: '/react/pagination',
+    attributes: paginationAttributes,
+    code: paginationCode,
+    tags: paginationTags,
+    icon: GalleryVertical,
+    isComponent: true
+  },
+  {
     title: 'Popover',
     description:
       'A Popover component is a UI element that displays additional information or actions when users interact with a specific trigger, such as a button or link. It typically appears as a small overlay or tooltip that provides context, tips, or options without navigating away from the current page. Popovers enhance user experience by offering relevant content in a concise format while maintaining focus on the main interface.',
@@ -483,6 +712,17 @@ export const reactSidebarItems = [
     isComponent: true
   },
   {
+    title: 'Progress Circle',
+    description:
+      'A Progress Circle shows how far along a task is as a ring rather than a bar, which fits a tile, a button or a dense row where a full-width bar would not. Left without a value it spins as an indeterminate indicator.',
+    link: '/react/progress-circle',
+    attributes: progressCircleAttributes,
+    code: progressCircleCode,
+    tags: progressCircleTags,
+    icon: LoaderCircle,
+    isComponent: true
+  },
+  {
     title: 'Radio Group',
     description:
       'A Radio Group component is a UI element that allows users to select one option from a set of mutually exclusive choices. It typically consists of multiple radio buttons, where only one button can be selected at a time. Radio groups are commonly used in forms to gather user preferences, ensuring a clear and organized way to present options for selection. They enhance user experience by providing a straightforward interface for making single-choice decisions.',
@@ -491,6 +731,17 @@ export const reactSidebarItems = [
     code: radioGroupCode,
     tags: radioGroupTags,
     icon: CircleDot,
+    isComponent: true
+  },
+  {
+    title: 'Scroll Shadow',
+    description:
+      'A Scroll Shadow fades the edges of a scrollable area while there is more content beyond them, so a cut-off list looks scrollable instead of finished. The shadows appear and disappear as the content is scrolled, on either axis.',
+    link: '/react/scroll-shadow',
+    attributes: scrollShadowAttributes,
+    code: scrollShadowCode,
+    tags: scrollShadowTags,
+    icon: ScrollText,
     isComponent: true
   },
   {
@@ -560,6 +811,17 @@ export const reactSidebarItems = [
     isComponent: true
   },
   {
+    title: 'Switch Group',
+    description:
+      'A Switch Group collects several switches under one label and one value, for a screen of settings that are each on or off. Every row names its setting and carries its own switch, and the group reports the set that is currently on.',
+    link: '/react/switch-group',
+    attributes: switchGroupAttributes,
+    code: switchGroupCode,
+    tags: switchGroupTags,
+    icon: ToggleRight,
+    isComponent: true
+  },
+  {
     title: 'Table',
     description:
       'A Table component is a structured UI element that organizes and displays data in rows and columns, making it easy to read and compare information. Tables can include features like sorting, filtering, pagination, and inline editing, allowing users to interact with the data efficiently. They are commonly used to present datasets, such as user information, product listings, or any structured content that benefits from a grid-like layout.',
@@ -604,6 +866,17 @@ export const reactSidebarItems = [
     isComponent: true
   },
   {
+    title: 'Time Field',
+    description:
+      'A Time Field takes a time typed in segments — hour, minute, and the period where the locale uses one. It reads and writes a time value rather than a string, so a schedule or a reminder gets a value it can compare and store.',
+    link: '/react/time-field',
+    attributes: timeFieldAttributes,
+    code: timeFieldCode,
+    tags: timeFieldTags,
+    icon: Clock,
+    isComponent: true
+  },
+  {
     title: 'Toast',
     description:
       'A Toast component is a transient notification that appears on the screen to provide feedback or information to users without interrupting their workflow. Typically displayed at the top or bottom of the screen, toasts are brief messages that automatically disappear after a short duration. They are commonly used to inform users about actions such as successful submissions, updates, or alerts, enhancing the overall user experience with minimal disruption.',
@@ -612,6 +885,28 @@ export const reactSidebarItems = [
     code: toastCode,
     tags: toastTags,
     icon: MessageSquareText,
+    isComponent: true
+  },
+  {
+    title: 'Toggle Button',
+    description:
+      'A Toggle Button is a button that stays pressed, for a setting that belongs on a toolbar rather than in a form — bold, italic, mute, pin. It reports its state through its appearance, so a row of them reads as the current formatting.',
+    link: '/react/toggle-button',
+    attributes: toggleButtonAttributes,
+    code: toggleButtonCode,
+    tags: toggleButtonTags,
+    icon: SquareMousePointer,
+    isComponent: true
+  },
+  {
+    title: 'Toolbar',
+    description:
+      'A Toolbar groups the controls that act on the thing below it and makes them one stop on the keyboard: arrow keys move between the controls, so a row of buttons is reached with one Tab rather than several. It can be laid out in a row or a column, joined or spaced.',
+    link: '/react/toolbar',
+    attributes: toolbarAttributes,
+    code: toolbarCode,
+    tags: toolbarTags,
+    icon: PanelTop,
     isComponent: true
   },
   {

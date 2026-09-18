@@ -486,11 +486,16 @@ export const meterAttributes = [
   { name: 'value', type: 'number', default: 'Required', details: 'Current meter value.' },
   { name: 'minValue', type: 'number', default: '0', details: 'Minimum value.' },
   { name: 'maxValue', type: 'number', default: '100', details: 'Maximum value.' },
-  { name: 'label', type: 'string', default: 'Optional', details: 'Label shown in output.' },
-  { name: 'showOutput', type: 'boolean', default: 'true', details: 'Show output label.' },
+  { name: 'label', type: 'React.ReactNode', default: 'Optional', details: 'What is being measured, at the start of the row.' },
+  { name: 'output', type: 'React.ReactNode', default: 'Optional', details: 'The reading, at the end of the row. Defaults to a percentage.' },
+  { name: 'showOutput', type: 'boolean', default: 'true', details: 'Show the reading.' },
   { name: 'color', type: "'default' | 'accent' | 'success' | 'warning' | 'danger'", default: "'accent'", details: 'Meter color.' },
   { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'Meter size.' },
-  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' }
+  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' },
+  { name: 'labelClassName', type: 'string', default: "' '", details: 'Classes for the label.' },
+  { name: 'outputClassName', type: 'string', default: "' '", details: 'Classes for the reading.' },
+  { name: 'trackClassName', type: 'string', default: "' '", details: 'Classes for the track.' },
+  { name: 'fillClassName', type: 'string', default: "' '", details: 'Classes for the filled portion.' }
 ];
 
 export const tagGroupAttributes = [
@@ -517,4 +522,290 @@ export const searchFieldAttributes = [
   { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'Visual variant.' },
   { name: 'fullWidth', type: 'boolean', default: 'false', details: 'Full width mode.' },
   { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' }
+];
+
+export const avatarAttributes = [
+  { name: 'src', type: 'string', default: 'Optional', details: 'The src prop.' },
+  { name: 'alt', type: 'string', default: "''", details: 'The alt prop.' },
+  { name: 'fallback', type: 'React.ReactNode', default: 'Optional', details: 'The fallback prop.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'The size prop.' },
+  { name: 'color', type: "'default' | 'accent' | 'success' | 'warning' | 'danger'", default: "'default'", details: 'The color prop.' },
+  { name: 'variant', type: "'default' | 'soft'", default: "'default'", details: 'The variant prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'imageClassName', type: 'string', default: "''", details: 'The imageClassName prop.' },
+  { name: 'fallbackClassName', type: 'string', default: "''", details: 'The fallbackClassName prop.' },
+  { name: 'loading', type: "'eager' | 'lazy'", default: "'lazy'", details: 'The loading prop.' }
+];
+
+export const avatarGroupAttributes = [
+  { name: 'items', type: 'NAvatarGroupItem[]', default: 'Required', details: 'The items prop.' },
+  { name: 'max', type: 'number', default: 'Optional', details: 'Avatars shown before the rest are collapsed into a count.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'The size prop.' },
+  { name: 'color', type: "'default' | 'accent' | 'success' | 'warning' | 'danger'", default: "'default'", details: 'The color prop.' },
+  { name: 'variant', type: "'default' | 'soft'", default: "'default'", details: 'The variant prop.' },
+  {
+    name: 'overlap',
+    type: "'clip' | 'ring'",
+    default: "'ring'",
+    details: 'How the avatars meet: overlapping with a ring, or clipped into each other.'
+  },
+  { name: 'isGrid', type: 'boolean', default: 'false', details: 'Lays the avatars out in a grid instead of an overlapping row.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'avatarClassName', type: 'string', default: "''", details: 'The avatarClassName prop.' }
+];
+
+export const breadcrumbsAttributes = [
+  { name: 'items', type: 'NBreadcrumbItem[]', default: 'Required', details: 'The items prop.' },
+  { name: 'separator', type: 'React.ReactNode', default: 'Optional', details: 'The separator prop.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'itemClassName', type: 'string', default: "''", details: 'The itemClassName prop.' },
+  { name: 'aria-label', type: 'string', default: "'Breadcrumbs'", details: 'The aria-label prop.' }
+];
+
+export const calendarAttributes = [
+  { name: 'value', type: 'any', default: 'Optional', details: 'The value prop.' },
+  { name: 'defaultValue', type: 'any', default: 'Optional', details: 'The defaultValue prop.' },
+  { name: 'onChange', type: '(value: any) => void', default: 'Optional', details: 'The onChange prop.' },
+  { name: 'minValue', type: 'any', default: 'Optional', details: 'The minValue prop.' },
+  { name: 'maxValue', type: 'any', default: 'Optional', details: 'The maxValue prop.' },
+  {
+    name: 'isDateUnavailable',
+    type: '(date: any) => boolean',
+    default: 'Optional',
+    details: 'Dates the user cannot pick, e.g. `date => date.day === 1`.'
+  },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
+  { name: 'visibleMonths', type: 'number', default: 'Optional', details: 'Months shown side by side.' },
+  { name: 'label', type: 'ReactNode', default: 'Optional', details: 'The label prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'headerClassName', type: 'string', default: "''", details: 'The headerClassName prop.' },
+  { name: 'gridClassName', type: 'string', default: "''", details: 'The gridClassName prop.' },
+  { name: 'aria-label', type: 'string', default: "'Calendar'", details: 'The aria-label prop.' }
+];
+
+export const checkGroupAttributes = [
+  { name: 'items', type: 'NCheckGroupItem[]', default: 'Required', details: 'The items prop.' },
+  { name: 'value', type: 'string[]', default: 'Required', details: 'The value prop.' },
+  { name: 'onChange', type: '(selected: string[]) => void', default: 'Required', details: 'The onChange prop.' },
+  { name: 'orientation', type: "'horizontal' | 'vertical'", default: "'vertical'", details: 'The orientation prop.' },
+  { name: 'label', type: 'string', default: 'Optional', details: 'The label prop.' },
+  { name: 'showLabel', type: 'boolean', default: 'true', details: 'The showLabel prop.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
+  { name: 'id', type: 'string', default: 'Optional', details: 'The id prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'labelClassName', type: 'string', default: "''", details: 'The labelClassName prop.' },
+  { name: 'itemClassName', type: 'string', default: "''", details: 'The itemClassName prop.' }
+];
+
+export const chipAttributes = [
+  { name: 'children', type: 'ReactNode', default: 'Required', details: 'The children prop.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'The size prop.' },
+  { name: 'color', type: "'default' | 'accent' | 'success' | 'warning' | 'danger'", default: "'default'", details: 'The color prop.' },
+  { name: 'variant', type: "'primary' | 'secondary' | 'tertiary' | 'soft'", default: "'secondary'", details: 'The variant prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' }
+];
+
+export const dateFieldAttributes = [
+  { name: 'value', type: 'any', default: 'Optional', details: 'The value prop.' },
+  { name: 'defaultValue', type: 'any', default: 'Optional', details: 'The defaultValue prop.' },
+  { name: 'onChange', type: '(value: any) => void', default: 'Optional', details: 'The onChange prop.' },
+  { name: 'label', type: 'ReactNode', default: 'Optional', details: 'The label prop.' },
+  { name: 'minValue', type: 'any', default: 'Optional', details: 'The minValue prop.' },
+  { name: 'maxValue', type: 'any', default: 'Optional', details: 'The maxValue prop.' },
+  { name: 'granularity', type: "'day' | 'hour' | 'minute' | 'second'", default: "'day'", details: 'The granularity prop.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
+  { name: 'isInvalid', type: 'boolean', default: 'false', details: 'The isInvalid prop.' },
+  { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'The variant prop.' },
+  { name: 'fullWidth', type: 'boolean', default: 'false', details: 'The fullWidth prop.' },
+  { name: 'error', type: 'ReactNode', default: 'Optional', details: 'The error prop.' },
+  { name: 'helperText', type: 'ReactNode', default: 'Optional', details: 'The helperText prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'labelClassName', type: 'string', default: "''", details: 'The labelClassName prop.' },
+  { name: 'aria-label', type: 'string', default: "'Date'", details: 'The aria-label prop.' }
+];
+
+export const dateRangePickerAttributes = [
+  { name: 'value', type: 'any', default: 'Optional', details: '`{ start, end }` as react-aria date values.' },
+  { name: 'defaultValue', type: 'any', default: 'Optional', details: 'The defaultValue prop.' },
+  { name: 'onChange', type: '(value: any) => void', default: 'Optional', details: 'The onChange prop.' },
+  { name: 'label', type: 'ReactNode', default: 'Optional', details: 'The label prop.' },
+  { name: 'minValue', type: 'any', default: 'Optional', details: 'The minValue prop.' },
+  { name: 'maxValue', type: 'any', default: 'Optional', details: 'The maxValue prop.' },
+  { name: 'granularity', type: "'day' | 'hour' | 'minute' | 'second'", default: "'day'", details: 'The granularity prop.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
+  { name: 'isInvalid', type: 'boolean', default: 'false', details: 'The isInvalid prop.' },
+  { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'The variant prop.' },
+  { name: 'fullWidth', type: 'boolean', default: 'true', details: 'The fullWidth prop.' },
+  { name: 'error', type: 'ReactNode', default: 'Optional', details: 'The error prop.' },
+  { name: 'helperText', type: 'ReactNode', default: 'Optional', details: 'The helperText prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'labelClassName', type: 'string', default: "''", details: 'The labelClassName prop.' },
+  { name: 'aria-label', type: 'string', default: "'Date range'", details: 'The aria-label prop.' }
+];
+
+export const disclosureAttributes = [
+  { name: 'title', type: 'ReactNode', default: 'Required', details: 'The title prop.' },
+  { name: 'children', type: 'ReactNode', default: 'Required', details: 'The children prop.' },
+  { name: 'defaultExpanded', type: 'boolean', default: 'false', details: 'The defaultExpanded prop.' },
+  { name: 'expanded', type: 'boolean', default: 'Optional', details: 'The expanded prop.' },
+  { name: 'onExpandedChange', type: '(expanded: boolean) => void', default: 'Optional', details: 'The onExpandedChange prop.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'triggerClassName', type: 'string', default: "''", details: 'The triggerClassName prop.' },
+  { name: 'contentClassName', type: 'string', default: "''", details: 'The contentClassName prop.' },
+  { name: 'indicatorClassName', type: 'string', default: "''", details: 'The indicatorClassName prop.' }
+];
+
+export const emptyStateAttributes = [
+  { name: 'title', type: 'ReactNode', default: 'Required', details: 'The title prop.' },
+  { name: 'message', type: 'ReactNode', default: 'Optional', details: 'The message prop.' },
+  { name: 'icon', type: 'ReactNode', default: 'Optional', details: 'Shown above the title — an icon or a small illustration.' },
+  { name: 'actions', type: 'ReactNode', default: 'Optional', details: 'Buttons or links under the message.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'iconClassName', type: 'string', default: "''", details: 'The iconClassName prop.' },
+  { name: 'titleClassName', type: 'string', default: "''", details: 'The titleClassName prop.' },
+  { name: 'messageClassName', type: 'string', default: "''", details: 'The messageClassName prop.' },
+  { name: 'actionsClassName', type: 'string', default: "''", details: 'The actionsClassName prop.' },
+  { name: 'children', type: 'ReactNode', default: 'Optional', details: 'The children prop.' }
+];
+
+export const inputOtpAttributes = [
+  { name: 'maxLength', type: 'number', default: 'Required', details: 'The maxLength prop.' },
+  { name: 'value', type: 'string', default: 'Optional', details: 'The value prop.' },
+  { name: 'onChange', type: '(value: string) => void', default: 'Optional', details: 'The onChange prop.' },
+  { name: 'onComplete', type: '(value: string) => void', default: 'Optional', details: 'The onComplete prop.' },
+  { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'The variant prop.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
+  { name: 'isInvalid', type: 'boolean', default: 'false', details: 'The isInvalid prop.' },
+  { name: 'pattern', type: 'string', default: 'Optional', details: 'The pattern prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'slotClassName', type: 'string', default: "''", details: 'The slotClassName prop.' },
+  { name: 'separatorIndices', type: 'number[]', default: 'EMPTY_SEPARATOR_INDICES', details: 'The separatorIndices prop.' },
+  { name: 'aria-label', type: 'string', default: "'One-time password'", details: 'The aria-label prop.' }
+];
+
+export const kbdAttributes = [
+  { name: 'children', type: 'ReactNode', default: 'Required', details: 'The children prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' }
+];
+
+export const listBoxAttributes = [
+  { name: 'items', type: 'NListBoxItem[]', default: 'Required', details: 'The items prop.' },
+  { name: 'selectionMode', type: "'none' | 'single' | 'multiple'", default: "'single'", details: 'The selectionMode prop.' },
+  { name: 'selectedKeys', type: 'Iterable<string>', default: 'Optional', details: 'The selectedKeys prop.' },
+  { name: 'onSelectionChange', type: '(keys: Selection) => void', default: 'Optional', details: 'The onSelectionChange prop.' },
+  {
+    name: 'onAction',
+    type: '(key: string) => void',
+    default: 'Optional',
+    details: 'Fires on click or Enter, for a list that acts rather than selects.'
+  },
+  { name: 'variant', type: "'default' | 'danger'", default: "'default'", details: 'The variant prop.' },
+  {
+    name: 'disabledKeys',
+    type: 'Iterable<string>',
+    default: 'Optional',
+    details: 'Keys that cannot be chosen. Individual items can also carry `disabled`.'
+  },
+  { name: 'emptyMessage', type: 'ReactNode', default: "'Nothing here yet.'", details: 'Shown when `items` is empty.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'itemClassName', type: 'string', default: "''", details: 'The itemClassName prop.' },
+  { name: 'aria-label', type: 'string', default: "'Options'", details: 'The aria-label prop.' }
+];
+
+export const paginationAttributes = [
+  { name: 'totalPages', type: 'number', default: 'Required', details: 'The totalPages prop.' },
+  { name: 'currentPage', type: 'number', default: 'Required', details: 'The currentPage prop.' },
+  { name: 'onChange', type: '(page: number) => void', default: 'Required', details: 'The onChange prop.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'The size prop.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
+  { name: 'showSummary', type: 'boolean', default: 'false', details: 'The showSummary prop.' },
+  { name: 'summaryText', type: 'string', default: 'Optional', details: 'The summaryText prop.' },
+  { name: 'siblingCount', type: 'number', default: '1', details: 'The siblingCount prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'contentClassName', type: 'string', default: "''", details: 'The contentClassName prop.' },
+  { name: 'linkClassName', type: 'string', default: "''", details: 'The linkClassName prop.' },
+  { name: 'activeLinkClassName', type: 'string', default: "''", details: 'The activeLinkClassName prop.' },
+  { name: 'aria-label', type: 'string', default: "'Pagination'", details: 'The aria-label prop.' }
+];
+
+export const progressCircleAttributes = [
+  { name: 'value', type: 'number', default: 'Optional', details: 'The value prop.' },
+  { name: 'minValue', type: 'number', default: '0', details: 'The minValue prop.' },
+  { name: 'maxValue', type: 'number', default: '100', details: 'The maxValue prop.' },
+  { name: 'isIndeterminate', type: 'boolean', default: 'false', details: 'Omit `value` for an indeterminate circle.' },
+  { name: 'color', type: "'default' | 'accent' | 'success' | 'warning' | 'danger'", default: "'accent'", details: 'The color prop.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'The size prop.' },
+  { name: 'children', type: 'ReactNode', default: 'Optional', details: 'Rendered in the middle of the circle — a percentage, a count, an icon.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'trackClassName', type: 'string', default: "''", details: 'The trackClassName prop.' },
+  { name: 'aria-label', type: 'string', default: "'Progress'", details: 'The aria-label prop.' }
+];
+
+export const scrollShadowAttributes = [
+  { name: 'children', type: 'ReactNode', default: 'Required', details: 'The children prop.' },
+  { name: 'orientation', type: "'horizontal' | 'vertical'", default: "'vertical'", details: 'The orientation prop.' },
+  { name: 'size', type: 'number', default: 'Optional', details: 'Shadow depth in pixels.' },
+  { name: 'offset', type: 'number', default: 'Optional', details: 'How close to the edge counts as scrolled to it.' },
+  { name: 'hideScrollBar', type: 'boolean', default: 'false', details: 'The hideScrollBar prop.' },
+  { name: 'isEnabled', type: 'boolean', default: 'true', details: 'The isEnabled prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' }
+];
+
+export const switchGroupAttributes = [
+  { name: 'items', type: 'NSwitchGroupItem[]', default: 'Required', details: 'The items prop.' },
+  { name: 'value', type: 'string[]', default: 'Required', details: 'The values currently switched on.' },
+  { name: 'onChange', type: '(selected: string[]) => void', default: 'Required', details: 'The onChange prop.' },
+  { name: 'orientation', type: "'horizontal' | 'vertical'", default: "'vertical'", details: 'The orientation prop.' },
+  { name: 'label', type: 'string', default: 'Optional', details: 'The label prop.' },
+  { name: 'showLabel', type: 'boolean', default: 'true', details: 'The showLabel prop.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
+  { name: 'id', type: 'string', default: 'Optional', details: 'The id prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'labelClassName', type: 'string', default: "''", details: 'The labelClassName prop.' },
+  { name: 'itemClassName', type: 'string', default: "''", details: 'The itemClassName prop.' },
+  { name: 'switchClassName', type: 'string', default: "''", details: 'The switchClassName prop.' }
+];
+
+export const timeFieldAttributes = [
+  { name: 'value', type: 'any', default: 'Optional', details: 'The value prop.' },
+  { name: 'defaultValue', type: 'any', default: 'Optional', details: 'The defaultValue prop.' },
+  { name: 'onChange', type: '(value: any) => void', default: 'Optional', details: 'The onChange prop.' },
+  { name: 'label', type: 'ReactNode', default: 'Optional', details: 'The label prop.' },
+  { name: 'minValue', type: 'any', default: 'Optional', details: 'The minValue prop.' },
+  { name: 'maxValue', type: 'any', default: 'Optional', details: 'The maxValue prop.' },
+  { name: 'granularity', type: "'hour' | 'minute' | 'second'", default: "'minute'", details: 'The granularity prop.' },
+  { name: 'hourCycle', type: '12 | 24', default: 'Optional', details: "12- or 24-hour display. Defaults to the locale's own convention." },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
+  { name: 'isInvalid', type: 'boolean', default: 'false', details: 'The isInvalid prop.' },
+  { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'The variant prop.' },
+  { name: 'fullWidth', type: 'boolean', default: 'false', details: 'The fullWidth prop.' },
+  { name: 'error', type: 'ReactNode', default: 'Optional', details: 'The error prop.' },
+  { name: 'helperText', type: 'ReactNode', default: 'Optional', details: 'The helperText prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'labelClassName', type: 'string', default: "''", details: 'The labelClassName prop.' },
+  { name: 'aria-label', type: 'string', default: "'Time'", details: 'The aria-label prop.' }
+];
+
+export const toggleButtonAttributes = [
+  { name: 'children', type: 'ReactNode', default: 'Required', details: 'The children prop.' },
+  { name: 'isSelected', type: 'boolean', default: 'Optional', details: 'The isSelected prop.' },
+  { name: 'defaultSelected', type: 'boolean', default: 'false', details: 'The defaultSelected prop.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
+  { name: 'isIconOnly', type: 'boolean', default: 'false', details: 'The isIconOnly prop.' },
+  { name: 'variant', type: "'default' | 'ghost'", default: "'default'", details: 'The variant prop.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'The size prop.' },
+  { name: 'onChange', type: '(isSelected: boolean) => void', default: 'Optional', details: 'The onChange prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'aria-label', type: 'string', default: 'Optional', details: 'The aria-label prop.' },
+  { name: 'aria-labelledby', type: 'string', default: 'Optional', details: 'The aria-labelledby prop.' }
+];
+
+export const toolbarAttributes = [
+  { name: 'children', type: 'ReactNode', default: 'Required', details: 'The children prop.' },
+  { name: 'orientation', type: "'horizontal' | 'vertical'", default: "'horizontal'", details: 'The orientation prop.' },
+  { name: 'isAttached', type: 'boolean', default: 'false', details: 'Joins the controls into one segmented strip.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'aria-label', type: 'string', default: "'Toolbar'", details: 'The aria-label prop.' }
 ];
