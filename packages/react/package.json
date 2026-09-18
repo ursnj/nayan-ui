@@ -34,8 +34,14 @@
   },
   "dependencies": {
     "@heroui/react": "^3.2.6",
+    "@heroui/styles": "^3.2.6",
+    "@internationalized/date": "^3.12.4",
+    "@react-aria/ssr": "^3.10.1",
+    "@react-aria/utils": "^3.34.1",
     "clsx": "^2.1.1",
     "prism-react-renderer": "^2.4.1",
+    "react-aria": "^3.52.1",
+    "react-aria-components": "^1.21.1",
     "react-select": "^5.10.2",
     "tailwind-merge": "^3.7.0"
   },
