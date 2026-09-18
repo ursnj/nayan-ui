@@ -9,10 +9,10 @@ const Meter = () => {
     <ComponentWrapper>
       <h3 className={H3_DOC}>Colors:</h3>
       <div className="space-y-4 max-w-sm mb-5">
-        <NMeter value={30} color="accent" label="Storage: 30%" />
-        <NMeter value={60} color="success" label="Battery: 60%" />
-        <NMeter value={80} color="warning" label="Memory: 80%" />
-        <NMeter value={95} color="danger" label="CPU: 95%" />
+        <NMeter value={30} color="accent" label="Storage" />
+        <NMeter value={60} color="success" label="Battery" />
+        <NMeter value={80} color="warning" label="Memory" />
+        <NMeter value={95} color="danger" label="CPU" />
       </div>
 
       <h3 className={H3_DOC}>Sizes:</h3>

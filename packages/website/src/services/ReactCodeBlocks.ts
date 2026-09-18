@@ -684,9 +684,9 @@ export const meterCode = `import { NMeter } from '@nayan-ui/react';
 const Meter = () => {
   return (
     <div className="space-y-4">
-      <NMeter value={30} color="accent" label="Storage: 30%" />
-      <NMeter value={80} color="warning" label="Memory: 80%" />
-      <NMeter value={95} color="danger" label="CPU: 95%" />
+      <NMeter value={30} color="accent" label="Storage" />
+      <NMeter value={80} color="warning" label="Memory" />
+      <NMeter value={95} color="danger" label="CPU" output="95% — critical" />
     </div>
   );
 };
@@ -745,3 +745,443 @@ const Tooltip = () => {
 };
 
 export default Tooltip;`;
+
+export const avatarCode = `import { NAvatar } from '@nayan-ui/react';
+
+const Avatar = () => {
+  return (
+    <div>
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Colors:</h3>
+      <div className="mb-5 flex flex-wrap items-center gap-2">
+        <NAvatar fallback="ND" />
+        <NAvatar fallback="AK" color="accent" variant="soft" />
+        <NAvatar fallback="RS" color="success" variant="soft" />
+        <NAvatar fallback="JP" color="warning" variant="soft" />
+        <NAvatar fallback="MM" color="danger" variant="soft" />
+      </div>
+
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Sizes:</h3>
+      <div className="flex flex-wrap items-center gap-2">
+        <NAvatar fallback="SM" size="sm" color="accent" variant="soft" />
+        <NAvatar fallback="MD" size="md" color="accent" variant="soft" />
+        <NAvatar fallback="LG" size="lg" color="accent" variant="soft" />
+      </div>
+    </div>
+  );
+};
+
+export default Avatar;`;
+
+export const avatarGroupCode = `import { NAvatarGroup } from '@nayan-ui/react';
+
+const members = [{ fallback: 'ND' }, { fallback: 'AK' }, { fallback: 'RS' }, { fallback: 'JP' }, { fallback: 'MM' }];
+
+const AvatarGroup = () => {
+  return (
+    <div>
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Collapsed after three:</h3>
+      <div className="mb-5">
+        <NAvatarGroup items={members} max={3} color="accent" variant="soft" />
+      </div>
+
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">All of them, as a grid:</h3>
+      <NAvatarGroup items={members} isGrid color="accent" variant="soft" />
+    </div>
+  );
+};
+
+export default AvatarGroup;`;
+
+export const breadcrumbsCode = `import { NBreadcrumbs } from '@nayan-ui/react';
+
+const items = [{ label: 'Home', href: '/' }, { label: 'React', href: '/react/components' }, { label: 'Breadcrumbs' }];
+
+const Breadcrumbs = () => {
+  return (
+    <div>
+      <NBreadcrumbs items={items} />
+    </div>
+  );
+};
+
+export default Breadcrumbs;`;
+
+export const calendarCode = `import { useState } from 'react';
+import { NCalendar } from '@nayan-ui/react';
+import { getLocalTimeZone, today } from '@internationalized/date';
+
+const Calendar = () => {
+  const [value, setValue] = useState<any>(today(getLocalTimeZone()));
+
+  return (
+    <div>
+      <NCalendar value={value} onChange={setValue} aria-label="Pick a date" />
+    </div>
+  );
+};
+
+export default Calendar;`;
+
+export const checkGroupCode = `import { useState } from 'react';
+import { NCheckGroup } from '@nayan-ui/react';
+
+const items = [
+  { label: 'Email', value: 'email' },
+  { label: 'Push', value: 'push' },
+  { label: 'SMS', value: 'sms', disabled: true }
+];
+
+const CheckboxGroup = () => {
+  const [value, setValue] = useState<string[]>(['email']);
+
+  return (
+    <div>
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Vertical:</h3>
+      <div className="mb-5">
+        <NCheckGroup label="Notify me by" items={items} value={value} onChange={setValue} />
+      </div>
+
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Horizontal:</h3>
+      <NCheckGroup label="Notify me by" items={items} value={value} onChange={setValue} orientation="horizontal" />
+    </div>
+  );
+};
+
+export default CheckboxGroup;`;
+
+export const chipCode = `import { NChip } from '@nayan-ui/react';
+
+const Chip = () => {
+  return (
+    <div>
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Colors:</h3>
+      <div className="mb-5 flex flex-wrap items-center gap-2">
+        <NChip color="default">Default</NChip>
+        <NChip color="accent">Accent</NChip>
+        <NChip color="success">Success</NChip>
+        <NChip color="warning">Warning</NChip>
+        <NChip color="danger">Danger</NChip>
+      </div>
+
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Variants:</h3>
+      <div className="mb-5 flex flex-wrap items-center gap-2">
+        <NChip color="accent" variant="primary">
+          Primary
+        </NChip>
+        <NChip color="accent" variant="secondary">
+          Secondary
+        </NChip>
+        <NChip color="accent" variant="tertiary">
+          Tertiary
+        </NChip>
+        <NChip color="accent" variant="soft">
+          Soft
+        </NChip>
+      </div>
+
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Sizes:</h3>
+      <div className="flex flex-wrap items-center gap-2">
+        <NChip color="accent" size="sm">
+          Small
+        </NChip>
+        <NChip color="accent" size="md">
+          Medium
+        </NChip>
+        <NChip color="accent" size="lg">
+          Large
+        </NChip>
+      </div>
+    </div>
+  );
+};
+
+export default Chip;`;
+
+export const dateFieldCode = `import { useState } from 'react';
+import { NDateField } from '@nayan-ui/react';
+import { getLocalTimeZone, today } from '@internationalized/date';
+
+const DateField = () => {
+  const [value, setValue] = useState<any>(today(getLocalTimeZone()));
+
+  return (
+    <div>
+      <div className="max-w-sm">
+        <NDateField label="Starts" value={value} onChange={setValue} helperText="Type it, or step the segments with the arrow keys." />
+      </div>
+    </div>
+  );
+};
+
+export default DateField;`;
+
+export const dateRangePickerCode = `import { useState } from 'react';
+import { NDateRangePicker } from '@nayan-ui/react';
+import { getLocalTimeZone, today } from '@internationalized/date';
+
+const DateRangePicker = () => {
+  const [value, setValue] = useState<any>({ start: today(getLocalTimeZone()), end: today(getLocalTimeZone()).add({ days: 6 }) });
+
+  return (
+    <div>
+      <div className="max-w-md">
+        <NDateRangePicker label="Reporting period" value={value} onChange={setValue} />
+      </div>
+    </div>
+  );
+};
+
+export default DateRangePicker;`;
+
+export const disclosureCode = `import { NDisclosure } from '@nayan-ui/react';
+
+const Disclosure = () => {
+  return (
+    <div>
+      <NDisclosure title="What is included?" defaultExpanded>
+        Every component in the library, the source, and the right to ship it in anything you like.
+      </NDisclosure>
+      <NDisclosure title="Do I need a licence key?">No. It is MIT licensed and there is nothing to activate.</NDisclosure>
+    </div>
+  );
+};
+
+export default Disclosure;`;
+
+export const emptyStateCode = `import { NButton, NEmptyState } from '@nayan-ui/react';
+import { Inbox } from 'lucide-react';
+
+const EmptyState = () => {
+  return (
+    <div>
+      <NEmptyState
+        icon={<Inbox className="h-8 w-8" />}
+        title="No projects yet"
+        message="Create your first project and it will show up here."
+        actions={<NButton>New project</NButton>}
+      />
+    </div>
+  );
+};
+
+export default EmptyState;`;
+
+export const inputOtpCode = `import { useState } from 'react';
+import { NInputOtp } from '@nayan-ui/react';
+
+const InputOTP = () => {
+  const [code, setCode] = useState('');
+
+  return (
+    <div>
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Six digits, split into two groups:</h3>
+      <div className="mb-5">
+        <NInputOtp maxLength={6} value={code} onChange={setCode} separatorIndices={[2]} onComplete={value => console.log('Complete', value)} />
+      </div>
+      <p className="text-sm text-muted">Value: {code || 'Empty'}</p>
+    </div>
+  );
+};
+
+export default InputOTP;`;
+
+export const kbdCode = `import { NKbd } from '@nayan-ui/react';
+
+const KeyboardKey = () => {
+  return (
+    <div>
+      <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
+        <NKbd>⌘</NKbd>
+        <NKbd>K</NKbd>
+        <span>opens the search, and</span>
+        <NKbd>Esc</NKbd>
+        <span>closes it.</span>
+      </div>
+    </div>
+  );
+};
+
+export default KeyboardKey;`;
+
+export const listBoxCode = `import { useState } from 'react';
+import { NListBox } from '@nayan-ui/react';
+
+const items = [
+  { id: 'report', label: 'Quarterly report.pdf', description: '2.4 MB · PDF' },
+  { id: 'budget', label: 'Budget.xlsx', description: '812 KB · Spreadsheet' },
+  { id: 'archive', label: 'Archive.zip', description: '18 MB · Archive', disabled: true }
+];
+
+const ListBox = () => {
+  const [selected, setSelected] = useState<any>(new Set(['report']));
+
+  return (
+    <div>
+      <NListBox items={items} selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected} aria-label="Files" />
+    </div>
+  );
+};
+
+export default ListBox;`;
+
+export const paginationCode = `import { useState } from 'react';
+import { NPagination } from '@nayan-ui/react';
+
+const Pagination = () => {
+  const [page, setPage] = useState(3);
+
+  return (
+    <div>
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Nine pages:</h3>
+      <div className="mb-5">
+        <NPagination totalPages={9} currentPage={page} onChange={setPage} />
+      </div>
+
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">With a summary:</h3>
+      <NPagination totalPages={40} currentPage={page} onChange={setPage} showSummary />
+    </div>
+  );
+};
+
+export default Pagination;`;
+
+export const progressCircleCode = `import { NProgressCircle } from '@nayan-ui/react';
+
+const ProgressCircle = () => {
+  return (
+    <div>
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Colors and sizes:</h3>
+      <div className="mb-5 flex flex-wrap items-center gap-5">
+        <NProgressCircle value={25} aria-label="Upload" />
+        <NProgressCircle value={60} color="success" size="lg" aria-label="Sync" />
+        <NProgressCircle value={90} color="warning" size="sm" aria-label="Disk" />
+      </div>
+
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Indeterminate:</h3>
+      <NProgressCircle isIndeterminate aria-label="Working" />
+    </div>
+  );
+};
+
+export default ProgressCircle;`;
+
+export const scrollShadowCode = `import { NScrollShadow } from '@nayan-ui/react';
+
+const ScrollShadow = () => {
+  return (
+    <div>
+      <NScrollShadow className="h-40 max-w-sm rounded-xl border border-default p-3">
+        <div className="space-y-2 text-sm text-muted">
+          {Array.from({ length: 16 }, (_, index) => (
+            <p key={index}>Row {index + 1} — scroll to see the shadows come and go.</p>
+          ))}
+        </div>
+      </NScrollShadow>
+    </div>
+  );
+};
+
+export default ScrollShadow;`;
+
+export const switchGroupCode = `import { useState } from 'react';
+import { NSwitchGroup } from '@nayan-ui/react';
+
+const items = [
+  { label: 'Release notes', value: 'releases' },
+  { label: 'Security alerts', value: 'security' },
+  { label: 'Weekly digest', value: 'digest' }
+];
+
+const SwitchGroup = () => {
+  const [value, setValue] = useState<string[]>(['releases', 'security']);
+
+  return (
+    <div>
+      <div className="max-w-sm">
+        <NSwitchGroup label="Email me about" items={items} value={value} onChange={setValue} />
+      </div>
+    </div>
+  );
+};
+
+export default SwitchGroup;`;
+
+export const timeFieldCode = `import { useState } from 'react';
+import { NTimeField } from '@nayan-ui/react';
+import { Time } from '@internationalized/date';
+
+const TimeField = () => {
+  const [value, setValue] = useState<any>(new Time(9, 30));
+
+  return (
+    <div>
+      <div className="max-w-sm">
+        <NTimeField label="Starts at" value={value} onChange={setValue} />
+        <NTimeField label="24-hour" value={value} onChange={setValue} hourCycle={24} />
+      </div>
+    </div>
+  );
+};
+
+export default TimeField;`;
+
+export const toggleButtonCode = `import { useState } from 'react';
+import { NToggleButton } from '@nayan-ui/react';
+import { Bold, Italic, Underline } from 'lucide-react';
+
+const ToggleButton = () => {
+  const [bold, setBold] = useState(true);
+  const [italic, setItalic] = useState(false);
+
+  return (
+    <div>
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Icon only:</h3>
+      <div className="mb-5 flex flex-wrap items-center gap-2">
+        <NToggleButton isIconOnly aria-label="Bold" isSelected={bold} onChange={setBold}>
+          <Bold className="h-4 w-4" />
+        </NToggleButton>
+        <NToggleButton isIconOnly aria-label="Italic" isSelected={italic} onChange={setItalic}>
+          <Italic className="h-4 w-4" />
+        </NToggleButton>
+        <NToggleButton isIconOnly aria-label="Underline" disabled>
+          <Underline className="h-4 w-4" />
+        </NToggleButton>
+      </div>
+
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">With a label:</h3>
+      <div className="flex flex-wrap items-center gap-2">
+        <NToggleButton size="sm">Small</NToggleButton>
+        <NToggleButton>Medium</NToggleButton>
+        <NToggleButton variant="ghost">Ghost</NToggleButton>
+      </div>
+    </div>
+  );
+};
+
+export default ToggleButton;`;
+
+export const toolbarCode = `import { useState } from 'react';
+import { NToggleButton, NToolbar } from '@nayan-ui/react';
+import { AlignCenter, AlignLeft, AlignRight } from 'lucide-react';
+
+const Toolbar = () => {
+  const [align, setAlign] = useState('left');
+
+  return (
+    <div>
+      <NToolbar aria-label="Text alignment">
+        <NToggleButton isIconOnly aria-label="Align left" isSelected={align === 'left'} onChange={() => setAlign('left')}>
+          <AlignLeft className="h-4 w-4" />
+        </NToggleButton>
+        <NToggleButton isIconOnly aria-label="Align centre" isSelected={align === 'center'} onChange={() => setAlign('center')}>
+          <AlignCenter className="h-4 w-4" />
+        </NToggleButton>
+        <NToggleButton isIconOnly aria-label="Align right" isSelected={align === 'right'} onChange={() => setAlign('right')}>
+          <AlignRight className="h-4 w-4" />
+        </NToggleButton>
+      </NToolbar>
+    </div>
+  );
+};
+
+export default Toolbar;`;

@@ -41,7 +41,7 @@ const NTagGroupComponent: React.FC<NTagGroupProps> = memo(
         selectionMode={selectionMode}
         selectedKeys={selectedKeys}
         onSelectionChange={onSelectionChange}
-        onRemove={keys => onRemove?.(keys as Set<string>)}
+        {...(onRemove ? { onRemove: (keys: Iterable<any>) => onRemove(keys as Set<string>) } : {})}
         size={size}
         variant={variant}
         className={cn('nyn-tag-group', className)}

@@ -69,7 +69,7 @@ export const IconButton = ({
   <NTooltip message={label}>
     <NToggleButton
       isSelected={active}
-      isDisabled={disabled}
+      disabled={disabled}
       isIconOnly
       variant="ghost"
       size="sm"
@@ -122,7 +122,7 @@ export const SegmentedControl = <T extends string>({
       <NTooltip key={option.value} message={option.title}>
         <NToggleButton
           isSelected={value === option.value}
-          isDisabled={disabled}
+          disabled={disabled}
           isIconOnly
           variant="ghost"
           size="sm"
@@ -262,7 +262,7 @@ export const SelectField = <T extends string>({
     label={label}
     value={options.find(option => option.value === value) ?? null}
     options={options}
-    isDisabled={disabled}
+    disabled={disabled}
     isSearchable={false}
     className="mb-2"
     onChange={option => option && onChange(option.value as T)}

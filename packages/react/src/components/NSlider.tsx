@@ -15,6 +15,10 @@ export interface NSliderProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   step?: number;
   disabled?: boolean;
   orientation?: 'horizontal' | 'vertical';
+  /** Show the current value at the end of the label row. */
+  showOutput?: boolean;
+  /** Formats the value for display, e.g. `v => `${v}%``. */
+  output?: (value: number) => React.ReactNode;
   onChange?: (value: number) => void;
   'aria-label'?: string;
   'aria-labelledby'?: string;
@@ -35,6 +39,8 @@ export const NSlider: React.FC<NSliderProps> = React.memo(
     step = 1,
     disabled = false,
     orientation = 'horizontal',
+    showOutput = true,
+    output,
     onChange,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
@@ -73,6 +79,9 @@ export const NSlider: React.FC<NSliderProps> = React.memo(
           aria-labelledby={ariaLabelledBy}
           aria-valuetext={ariaValueText}>
           {label && <Label className={cn(labelClassName)}>{label}</Label>}
+          {/* `internalValue`, not the `value` prop: an uncontrolled slider has no
+              `value`, so the output rendered empty. */}
+          {showOutput && <Slider.Output>{output ? output(internalValue) : internalValue}</Slider.Output>}
           <Slider.Track>
             <Slider.Fill />
             <Slider.Thumb />

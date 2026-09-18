@@ -298,7 +298,7 @@ const Banner = () => {
                       <NProgress value={72} />
                     </Row>
                     <Row label="Storage used">
-                      <NMeter value={82} color="warning" label="82% of 10 GB" />
+                      <NMeter value={82} color="warning" label="Storage" output="82% of 10 GB" />
                     </Row>
                     <Row label={`Volume — ${volume}`}>
                       <NSlider
