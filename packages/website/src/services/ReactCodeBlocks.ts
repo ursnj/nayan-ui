@@ -650,31 +650,6 @@ const Toast = () => {
 
 export default Toast;`;
 
-export const autocompleteCode = `import { useState } from 'react';
-import { NAutocomplete } from '@nayan-ui/react';
-
-const items = [
-  { id: 'react', label: 'React' },
-  { id: 'vue', label: 'Vue' },
-  { id: 'angular', label: 'Angular' },
-  { id: 'svelte', label: 'Svelte' }
-];
-
-const Autocomplete = () => {
-  const [selected, setSelected] = useState(null);
-
-  return (
-    <NAutocomplete
-      items={items}
-      placeholder="Select a framework..."
-      selectedKey={selected}
-      onSelectionChange={setSelected}
-    />
-  );
-};
-
-export default Autocomplete;`;
-
 export const datePickerCode = `import { NDatePicker } from '@nayan-ui/react';
 
 const DatePicker = () => {

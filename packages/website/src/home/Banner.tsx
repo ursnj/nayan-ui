@@ -401,7 +401,11 @@ const Banner = () => {
                         onChange={(value: any) => setVolume(Array.isArray(value) ? value[0] : value)}
                       />
                     </Row>
-                    <NAlert type={AlertTypes.SUCCESS} title="Build passed" message="42 components, no regressions." />
+                    {/* The count comes from the navigation like every other
+                        number on the page; "42 components" was a literal in a
+                        demo, which is exactly how a site ends up quoting a
+                        figure nobody maintains. */}
+                    <NAlert type={AlertTypes.SUCCESS} title="Build passed" message={`${TOTAL_COMPONENT_COUNT} components, no regressions.`} />
                     <NButton isOutline={true} onClick={() => toast('Rendered by the real NToast.', 'Hello from Nayan UI')}>
                       <Bell className="mr-2 h-4 w-4" />
                       Show a toast
