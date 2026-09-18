@@ -61,19 +61,20 @@ const NSwitchGroupComponent: React.FC<NSwitchGroupProps> = memo(
           {items.map(item => {
             const itemId = `${groupId}-${item.value}`;
             return (
-              <div key={item.value} className={cn('flex items-center justify-between gap-3', itemClassName)}>
-                <Label htmlFor={itemId}>{item.label}</Label>
-                <Switch
-                  id={itemId}
-                  isSelected={value.includes(item.value)}
-                  isDisabled={disabled || item.disabled}
-                  onChange={on => toggle(item, on)}
-                  className={cn('nyn-switch', switchClassName)}>
+              <Switch
+                key={item.value}
+                id={itemId}
+                isSelected={value.includes(item.value)}
+                isDisabled={disabled || item.disabled}
+                onChange={on => toggle(item, on)}
+                className={cn('nyn-switch flex items-center justify-between gap-3', itemClassName, switchClassName)}>
+                <Switch.Content className="flex w-full items-center justify-between gap-3">
+                  <Label>{item.label}</Label>
                   <Switch.Control>
                     <Switch.Thumb />
                   </Switch.Control>
-                </Switch>
-              </div>
+                </Switch.Content>
+              </Switch>
             );
           })}
         </SwitchGroup>
