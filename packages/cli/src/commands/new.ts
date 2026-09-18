@@ -1,7 +1,3 @@
-/**
- * New Command - Create a new project from templates
- * Supports both interactive and non-interactive modes
- */
 import { Command } from 'commander';
 import { createNewProject, interactiveNewProject } from '../services/projects.js';
 

@@ -6,11 +6,6 @@ import { readEditorState, useEditor } from '../../store/editor';
 import { TEXT_LINE_HEIGHT, isMediaClip, isTextClip } from '../../types';
 import type { Clip, MediaAsset, ProjectSettings } from '../../types';
 
-/**
- * A clip's on-screen box, expressed in frame fractions so the overlay behaves
- * identically at any preview zoom. `x`/`y` are the centre relative to the
- * frame centre.
- */
 interface Box {
   x: number;
   y: number;
@@ -37,17 +32,6 @@ interface TransformOverlayProps {
   displayHeight: number;
 }
 
-/**
- * Direct manipulation on top of the preview.
- *
- * Media clips and text store geometry differently — a transform versus x/y
- * plus font size. The overlay reads and writes through one `Box` so the drag
- * maths lives in exactly one place.
- *
- * Scaling is applied as a *factor against the state at drag start*, not against
- * the live clip; deriving it from the live value each frame would compound and
- * accelerate the drag.
- */
 export const TransformOverlay = ({ clip, project, displayWidth, displayHeight }: TransformOverlayProps) => {
   const assets = useEditor(state => state.assets);
   const updateClip = useEditor(state => state.updateClip);
@@ -57,14 +41,6 @@ export const TransformOverlay = ({ clip, project, displayWidth, displayHeight }:
 
   const box = readBox(clip, project, assets);
 
-  /**
-   * Arrow-key nudge, in whole pixels of the output frame — the unit every
-   * design tool nudges in, and fine enough to line an edge up exactly.
-   *
-   * Geometry is read from the store rather than from the render, so a held key
-   * accumulates from where the clip actually is instead of from wherever it
-   * was when this component last rendered.
-   */
   const nudge = useCallback(
     (pixelsX: number, pixelsY: number) => {
       const state = readEditorState();
@@ -95,9 +71,6 @@ export const TransformOverlay = ({ clip, project, displayWidth, displayHeight }:
       event.preventDefault();
       event.stopPropagation();
 
-      // `preventDefault` above suppresses the focus a press would normally
-      // give, and without focus the arrow keys would scrub the playhead
-      // instead of nudging the clip the user just grabbed.
       boxRef.current?.focus();
 
       const state = readEditorState();
@@ -119,9 +92,6 @@ export const TransformOverlay = ({ clip, project, displayWidth, displayHeight }:
         writeBox(drag.startClip, drag.startBox, next, updateClip);
       };
 
-      // `pointercancel` matters as much as `pointerup` here: this drag opened an
-      // interaction, and an interrupted pointer that never ends it leaves the
-      // flag set — after which every later edit silently stops recording undo.
       const up = () => {
         window.removeEventListener('pointermove', move);
         window.removeEventListener('pointerup', up);
@@ -156,13 +126,6 @@ export const TransformOverlay = ({ clip, project, displayWidth, displayHeight }:
         onKeyDown={onKeyDown}
         onKeyUp={held.end}
         onBlur={held.end}
-        /*
-         * No outline of any kind on the box itself — no border, and no focus
-         * ring. A clip fitted to the frame fills the preview exactly, so any
-         * rectangle here traced the edge of the picture and read as a border
-         * around the whole stage rather than as a selection. The corner
-         * handles and the rotation grip mark the box on their own.
-         */
         className="pointer-events-auto absolute cursor-move outline-none"
         style={{ left, top, width, height, transform: `rotate(${box.rotation}deg)` }}
         onPointerDown={beginDrag('move')}>
@@ -171,7 +134,6 @@ export const TransformOverlay = ({ clip, project, displayWidth, displayHeight }:
         <span className={`${handleClass} -bottom-1.5 -left-1.5 cursor-nesw-resize`} onPointerDown={beginDrag('sw')} role="presentation" />
         <span className={`${handleClass} -bottom-1.5 -right-1.5 cursor-nwse-resize`} onPointerDown={beginDrag('se')} role="presentation" />
 
-        {/* Rotation grip, floated above the box like every design tool. */}
         <span className="absolute -top-3 left-1/2 h-3 w-px -translate-x-1/2 bg-accent" />
         <span
           className="absolute -top-[26px] left-1/2 h-3.5 w-3.5 -translate-x-1/2 cursor-grab rounded-full border border-white bg-accent shadow-md"
@@ -197,8 +159,6 @@ const applyHandle = (handle: Handle, start: Box, dx: number, dy: number, constra
     return { ...start, rotation: constrain ? Math.round(degrees / 15) * 15 : Math.round(degrees) };
   }
 
-  // Corner handles scale about the centre. Following the dominant axis keeps
-  // the aspect ratio locked, which is what you want for footage.
   const signX = handle === 'ne' || handle === 'se' ? 1 : -1;
   const signY = handle === 'sw' || handle === 'se' ? 1 : -1;
   const deltaX = (dx * signX * 2) / Math.max(start.width, 0.001);
@@ -211,8 +171,6 @@ const applyHandle = (handle: Handle, start: Box, dx: number, dy: number, constra
 /** Reads a clip's geometry into the shared box form. */
 const readBox = (clip: Clip, project: ProjectSettings, assets: MediaAsset[]): Box | null => {
   if (isTextClip(clip)) {
-    // Text has no intrinsic box; approximate one from the font metrics so the
-    // handles land somewhere sensible.
     const lines = clip.text.split('\n');
     const height = clip.fontSize * TEXT_LINE_HEIGHT * Math.max(1, lines.length);
     const longest = Math.max(...lines.map(line => line.length), 1);

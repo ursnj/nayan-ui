@@ -8,19 +8,8 @@ import { BACKGROUND_LABELS, COLOR_PRESETS, GRADIENT_PRESETS, TRANSITION_LABELS }
 import type { Background, BackgroundKind, TransitionKind } from '../../types';
 import { ColorField, EmptyState, SliderField } from '../controls';
 
-/* ------------------------------------------------------------------ *
- * Background
- * ------------------------------------------------------------------ */
-
 const BACKGROUND_KINDS = Object.keys(BACKGROUND_LABELS) as BackgroundKind[];
 
-/**
- * What fills the frame behind the layers.
- *
- * The kinds share one record rather than a union, so switching between them
- * and back keeps each one's settings — picking a gradient and changing your
- * mind should not silently discard the image you had chosen.
- */
 export const BackgroundPanel = () => {
   const background = useEditor(state => state.project.background);
   const assets = useEditor(state => state.assets);
@@ -46,8 +35,6 @@ export const BackgroundPanel = () => {
             aria-pressed={background.kind === kind}
             title={BACKGROUND_LABELS[kind]}
             className={cn(
-              // Truncated rather than wrapped: the library can be dragged down
-              // to 220px, which leaves these cells about 44px wide.
               'truncate rounded-md border px-1.5 py-1.5 text-[10px] transition-colors',
               background.kind === kind
                 ? 'border-accent bg-accent/10 text-accent'
@@ -164,10 +151,6 @@ export const BackgroundPanel = () => {
   );
 };
 
-/* ------------------------------------------------------------------ *
- * Text
- * ------------------------------------------------------------------ */
-
 export const TextPanel = () => {
   const addTextClip = useEditor(state => state.addTextClip);
 
@@ -201,10 +184,6 @@ export const TextPanel = () => {
     </div>
   );
 };
-
-/* ------------------------------------------------------------------ *
- * Transitions
- * ------------------------------------------------------------------ */
 
 export const TransitionsPanel = () => {
   const selectedClipIds = useEditor(state => state.selectedClipIds);
@@ -265,10 +244,6 @@ export const TransitionsPanel = () => {
   );
 };
 
-/* ------------------------------------------------------------------ *
- * Effects (colour presets)
- * ------------------------------------------------------------------ */
-
 export const EffectsPanel = () => {
   const selectedClipIds = useEditor(state => state.selectedClipIds);
   const clips = useEditor(state => state.clips);
@@ -294,13 +269,7 @@ export const EffectsPanel = () => {
               type="button"
               onClick={() =>
                 updateSelectedClips({
-                  // Presets are complete `ColorAdjust` values, so this is an
-                  // assignment rather than a merge — switching looks can never
-                  // leave a stray dial behind.
                   colorAdjust: { ...preset.color } as never,
-                  // Record the look so the inspector's strength slider can
-                  // keep re-deriving it. Without this the panel and the
-                  // inspector would disagree about what is applied.
                   filter: (none ? null : { name: preset.name, intensity: 1 }) as never
                 })
               }

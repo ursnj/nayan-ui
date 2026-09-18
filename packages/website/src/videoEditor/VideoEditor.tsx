@@ -4,22 +4,6 @@ import { CtaPanel, FaqList, FeatureCard, PageHero, Section, SectionHeader, StatG
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, CARD_PAD, GRID_GAP, H3, H4_CARD } from '@/design/system';
 import { DESTINATIONS, EDITOR_URL, FACTS, FAQS, SOURCE_URL, STEPS } from './content';
 
-/**
- * The /video-editor landing page.
- *
- * Rebuilt on the site's design system. It was written before that system
- * existed and so had invented its own of everything: a hand-drawn mock of the
- * editor window in markup, a sticky in-page nav no other page has, a bento
- * grid with nine differently-gradiented icon tiles, chip clouds naming all
- * fifteen colour looks and all eighteen transitions, two wide tables, a
- * keyboard map, a glossary and a page-specific closing panel. Read on its own
- * it was fine. Read after any other page on the site it was a different
- * website.
- *
- * Now it is the same five shapes every other landing page uses — `PageHero`,
- * `SectionHeader`, `FeatureCard`, `FactList`, `CtaPanel` — at the same
- * spacing, in the same one accent.
- */
 const FEATURES = [
   {
     icon: Layers,
@@ -53,23 +37,6 @@ const FEATURES = [
   }
 ];
 
-/**
- * The editor itself, in the theme the visitor is already reading in.
- *
- * Two images swapped by CSS rather than one image picked in JavaScript: HeroUI
- * defines Tailwind's `dark:` variant against the `.dark` class and
- * `[data-theme="dark"]`, both of which `NTheme` sets on `<html>`, so the swap
- * follows the header's toggle with no client component and no flash of the
- * wrong one on first paint. Only the matching image is displayed, and
- * `display: none` keeps the other out of the accessibility tree, so a screen
- * reader is read one description rather than two.
- *
- * `width` and `height` are the file's real pixels so the browser reserves the
- * 16:10 box before either image arrives; without them the hero reflows on a
- * slow connection. The screenshots are of the editor as it opens — empty
- * timeline, nothing loaded — which is honest about what a first visit looks
- * like. Retake them with `/video-editor/start` at 1600×1000 in each theme.
- */
 const EditorScreenshot = () => (
   <div className={`${CARD} overflow-hidden p-1.5 shadow-xl shadow-indigo-500/5`}>
     <img
@@ -111,10 +78,6 @@ const VideoEditorMain = () => (
         </>
       }
       note="Free forever · MIT licensed · Works offline · Nothing leaves your device">
-      {/* The badge that used to sit here said "Runs entirely in your browser",
-          under a headline reading "No upload, no account, no watermark" and
-          above a note reading "Nothing leaves your device" — the same fact,
-          three times, in three type sizes. */}
       <div className="mx-auto mt-10 max-w-4xl">
         <StatGrid stats={FACTS} />
       </div>

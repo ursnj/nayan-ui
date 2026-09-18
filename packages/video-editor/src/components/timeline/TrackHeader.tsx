@@ -15,14 +15,6 @@ interface TrackHeaderProps {
   onRemove: () => void;
 }
 
-/**
- * The controls for one track, in two rows that fit the shortest row height.
- *
- * The fader used to be hidden below 60px, which meant audio tracks — created
- * at 56px, and the ones that most need a level control — never showed one.
- * Laying the toggles and the fader out side by side instead of stacking them
- * makes everything fit at every height, so nothing has to be conditional.
- */
 export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeaderProps) => {
   const reorderTrack = useEditor(state => state.reorderTrack);
   const Icon = track.kind === 'video' ? Film : Music;
@@ -57,10 +49,6 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
       className="group/header sticky left-0 z-40 flex shrink-0 flex-col justify-center gap-1 overflow-hidden border-b border-r border-border bg-editor-panel px-2 py-1">
       <div className="flex h-5 items-center gap-1">
         <Icon className={cn('h-3.5 w-3.5 shrink-0', track.hidden ? 'text-muted/50' : 'text-muted')} />
-        {/* `py-0` as well as a height: `px-1` only replaces the library's
-            horizontal padding, and the 8px it keeps above and below left this
-            20px box two pixels of room for the text. 11px to match every other
-            small label in the editor. */}
         <NInput
           value={track.name}
           onChange={event => onUpdate({ name: event.target.value })}
@@ -68,8 +56,6 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
           inputClassName="h-5 px-1 py-0 text-[11px] font-medium"
           aria-label={`${track.name} name`}
         />
-        {/* Revealed on hover so the resting state stays quiet, but the width is
-            always reserved — otherwise the name would jump as you move around. */}
         <div className="flex shrink-0 items-center opacity-0 transition-opacity group-hover/header:opacity-100 focus-within:opacity-100">
           <IconButton label="Move track up" onClick={() => reorderTrack(track.id, -1)} className="h-5 w-5">
             <ChevronUp className="h-3.5 w-3.5" />

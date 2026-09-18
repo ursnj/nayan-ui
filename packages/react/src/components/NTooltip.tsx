@@ -26,9 +26,6 @@ export interface NTooltipProps extends React.HTMLAttributes<HTMLDivElement> {
   contentProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
-/**
- * NTooltip is a memoized, accessible tooltip component.
- */
 export const NTooltip: React.FC<NTooltipProps> = memo(
   forwardRef<HTMLDivElement, NTooltipProps>(
     (

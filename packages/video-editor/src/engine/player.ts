@@ -4,27 +4,8 @@ import { AudioEngine } from './audioEngine';
 import { renderScene } from './compositor';
 import type { Scene } from './compositor';
 
-/**
- * How long to wait before re-rendering a frame that couldn't resolve a source.
- * Long enough for a decoder to deliver the sample it was already seeking to,
- * short enough not to read as a stall.
- */
 const RETRY_DELAY_MS = 120;
 
-/**
- * How many times a frame may fail to resolve before its empty version is shown.
- *
- * One attempt was not enough. The decoder that owes this frame a sample shares
- * the machine with everything else the editor does — importing a file, decoding
- * poster frames and filmstrips for the timeline, mixing audio for an export —
- * and any of those can keep it busy well past a single 120ms wait. The retry
- * then arrived with the source still missing and published the empty frame
- * anyway, so the preview went blank while the picture was merely late.
- *
- * Backed off linearly, so five attempts span roughly 1.8s in total. Past that
- * the frame really is empty, and an honest blank beats a stale picture of an
- * asset that may have left the project.
- */
 const MAX_RENDER_ATTEMPTS = 5;
 
 type BufferContext = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
@@ -40,14 +21,6 @@ export interface PlayerCallbacks {
   onEnded: () => void;
 }
 
-/**
- * Drives the preview canvas.
- *
- * Time comes from the Web Audio clock whenever audio is playing, so video and
- * audio can't drift; without audio it falls back to `performance.now()`. Frames
- * are rendered one at a time — if a decode takes longer than a display frame we
- * drop the next tick rather than queueing work we can no longer use.
- */
 export class Player {
   readonly audio = new AudioEngine();
 
@@ -55,33 +28,9 @@ export class Player {
   private context: CanvasRenderingContext2D | null = null;
   private callbacks: PlayerCallbacks;
 
-  /**
-   * Off-screen surface each frame is composited into, then blitted to the
-   * screen in one go.
-   *
-   * Compositing straight to the visible canvas meant the screen showed a
-   * half-built frame for as long as the build took. `renderScene` lays the
-   * background down first — it has to, it is the base every layer sits on —
-   * and only then awaits the decoder, so the canvas held nothing but
-   * background for the whole wait.
-   *
-   * Scrubbing forward hid that: the reader steps its open iterator and answers
-   * within the same frame. Scrubbing *backward* cannot — the iterator only
-   * runs forward, so every backward move re-seeks to the preceding keyframe
-   * and replays a group of pictures to get there. That is hundreds of
-   * milliseconds of a visibly empty preview, on every pointer move.
-   *
-   * One surface, at project size, for the life of the page.
-   */
+  // Composite offscreen and blit once: drawing to the visible canvas showed half-built frames.
   private buffer: OffscreenCanvas | HTMLCanvasElement | null = null;
   private bufferContext: BufferContext | null = null;
-  /**
-   * Whether the visible canvas holds a frame worth protecting.
-   *
-   * Withholding an incomplete frame only makes sense when there is something
-   * better already on screen. Before the first one lands — and after anything
-   * that clears the canvas — a partial picture beats a blank one.
-   */
   private presented = false;
 
   private rafId = 0;
@@ -164,16 +113,6 @@ export class Player {
     await this.renderAt(timeUs);
   }
 
-  /**
-   * Repaints the current instant — used when a clip property changes.
-   *
-   * Queues behind an in-flight render exactly as `seek` does. Dropping the
-   * repaint instead, as this used to, meant the canvas kept whatever the
-   * earlier render had left on it: a frame from before the edit, or nothing
-   * at all when that render was one that couldn't resolve its source. Edits
-   * arrive faster than a decode during a slider drag, so the dropped repaint
-   * was frequently the *last* one, and the stale picture then stayed.
-   */
   refresh() {
     if (this.playing) return;
     if (this.rendering) {
@@ -187,8 +126,6 @@ export class Player {
     this.pause();
     this.cancelRetry();
     this.audio.dispose();
-    // Hand back the backing store rather than waiting for the collector to
-    // notice a detached canvas; at 4K this surface is about 33MB.
     if (this.buffer) {
       this.buffer.width = 0;
       this.buffer.height = 0;
@@ -216,9 +153,6 @@ export class Player {
       this.pause();
 
       if (this.looping) {
-        // Restart here rather than through React. Going out to the store and
-        // back would fire a seek and a play concurrently, and the two async
-        // renders race — which is what made looping flash blank.
         const from = this.callbacks.getLoopStartUs();
         this.currentUs = from;
         this.callbacks.onTime(from);
@@ -253,11 +187,6 @@ export class Player {
     try {
       complete = await this.paint(context, canvas, timeUs, !lastAttempt);
     } catch (error) {
-      // Usually a disposed reader or a closed sample mid-seek, and the next
-      // frame recovers. But the background has already been painted by the
-      // time anything here throws, so a *persistent* failure looks exactly
-      // like an empty preview with no error at all — which is unreadable.
-      // Reported once per distinct cause so playback can't flood the console.
       reportOnce('render', error);
     } finally {
       this.rendering = false;
@@ -270,24 +199,7 @@ export class Player {
       return;
     }
 
-    /*
-     * A layer whose source wasn't ready — a decoder mid-seek, a reader the
-     * cache evicted a moment ago — is skipped, but the background has already
-     * been painted by then, so the clip simply vanishes. While paused nothing
-     * else repaints, so the empty frame is what stays on screen.
-     *
-     * The retry is scheduled *after* `rendering` clears, and never awaited
-     * inside the render window. Holding the flag across a wait was a deadlock:
-     * `requestAnimationFrame` doesn't fire while the document is hidden, so
-     * the promise never settled, `finally` never ran, and every later repaint
-     * queued behind a render that would never finish. A timer fires in a hidden
-     * tab, which is why this is a timeout and not a frame callback.
-     *
-     * Retried up to `MAX_RENDER_ATTEMPTS` times with a widening gap, because a
-     * decoder competing with an import or a timeline full of filmstrips needs
-     * longer than one wait to answer — and `paint` holds the good frame on
-     * screen for every attempt but the last.
-     */
+    // A layer whose source is not ready is skipped, and while paused nothing repaints, so the gap would persist.
     if (!complete && !lastAttempt && !this.playing) {
       this.retryTimer = setTimeout(
         () => {
@@ -334,39 +246,17 @@ export class Player {
       this.presented = false;
     }
 
-    /*
-     * Clip ranges are half-open — a clip is visible for `[start, end)` — so
-     * rendering the instant at the very end of the timeline composites
-     * nothing and clears the canvas to the background. Hold the final frame
-     * instead, which is what reaching the end of playback should look like.
-     *
-     * The clamp uses the clips' own extent rather than `getDurationUs()`,
-     * because that returns the out point when a range is marked and would
-     * then freeze the picture for any scrub past it.
-     */
+    // Clip ranges are half-open, so the instant at the timeline's end composites nothing: hold the last frame.
     let end = 0;
     for (const clip of scene.clips) end = Math.max(end, clip.startUs + clip.durationUs);
     const renderTime = end > 0 ? Math.min(timeUs, end - 1) : timeUs;
 
     const offscreen = this.ensureBuffer(scene.project.width, scene.project.height);
-    // No off-screen surface to be had: composite to the screen directly, which
-    // is worse to look at but still correct.
     if (!offscreen) return renderScene(context, scene, renderTime, { target: 'preview' });
 
     const complete = await renderScene(offscreen, scene, renderTime, { target: 'preview' });
 
-    /*
-     * An incomplete frame is held back while a good one is on screen: a layer
-     * whose decoder is still seeking would otherwise replace a real picture
-     * with a bare background, which is the flicker this buffer exists to
-     * remove. The previous frame stays up, and the retry lands the real one.
-     *
-     * It is shown in the two cases where there is nothing better: when the
-     * screen is empty anyway, and on the retry — by then the source has had
-     * its chance, and a stale picture that never resolves is worse than an
-     * honest empty one, since a deleted asset would otherwise keep showing
-     * footage that has left the project.
-     */
+    // Hold the last good frame while a decoder seeks, rather than replacing a picture with a bare background.
     if (complete || !allowRetry || !this.presented) {
       context.drawImage(this.buffer as CanvasImageSource, 0, 0);
       this.presented = true;

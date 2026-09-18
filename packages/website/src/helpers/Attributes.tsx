@@ -8,17 +8,6 @@ interface Props {
   data: any[];
 }
 
-/**
- * The prop reference.
- *
- * The columns are unchanged — every component's attribute data is shaped for
- * them — but the table now sits in a frame that clips its own horizontal
- * scroll. Before, a wide Details column pushed the page sideways on a phone
- * and took the whole layout with it.
- *
- * The count in the heading is worth the line: "Attributes" told you nothing
- * about whether you were looking at a component with three props or thirty.
- */
 const Attributes = (props: Props) => {
   const { data, title = 'Attributes' } = props;
 

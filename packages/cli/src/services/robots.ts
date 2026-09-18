@@ -1,6 +1,3 @@
-/**
- * Robots Service - Generate and validate robots.txt files
- */
 import axios from 'axios';
 import { readFileSync, writeFileSync } from 'fs';
 import ora from 'ora';

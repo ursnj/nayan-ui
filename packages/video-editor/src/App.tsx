@@ -13,27 +13,8 @@ import { Timeline } from './components/timeline/Timeline';
 import { useCommand, useShortcuts } from './lib/shortcuts';
 import { useHasRoom } from './lib/viewport';
 
-/** WebCodecs is the whole premise, so say so plainly rather than failing oddly. */
 const hasWebCodecs = typeof window !== 'undefined' && 'VideoEncoder' in window && 'VideoDecoder' in window;
 
-/*
- * Floors for the three columns and the stage.
- *
- * These are what make the layout survive at `MIN_APP_WIDTH`. Pane sizes are
- * remembered in localStorage and the panes do not shrink, so without a floor
- * a layout dragged wide on a large monitor arrives on a 1024px one with the
- * preview at zero and the inspector clipped off the edge.
- *
- * At 1024px they leave exactly: 432 library + 320 preview + 240 inspector,
- * plus the app padding and two gutters.
- */
-/*
- * Defaults for everything the editor remembers between visits.
- *
- * Named rather than inlined at the `useLocalStorage` call, so the reset in
- * Project settings restores the same values the editor first opened with
- * instead of a second set that can quietly drift from them.
- */
 const DEFAULT_LIBRARY_WIDTH = 360;
 const DEFAULT_INSPECTOR_WIDTH = 300;
 const DEFAULT_TIMELINE_HEIGHT = 240;
@@ -46,8 +27,6 @@ const MIN_STAGE_HEIGHT = 220;
 const SPLIT_GUTTER = 8;
 
 function App() {
-  // useLocalStorage widens to `T | undefined` for the SSR case; the editor is
-  // browser-only, so fall back to the dark theme an NLE is normally used in.
   const [storedTheme, setTheme] = useLocalStorage('THEME', THEMES.DARK);
   const theme = storedTheme ?? THEMES.DARK;
 
@@ -69,11 +48,6 @@ function App() {
     useCallback(() => setHelpOpen(open => !open), [])
   );
 
-  /*
-   * Writes the defaults back rather than clearing the keys: these values are
-   * React state as well as stored strings, so removing them would leave the
-   * running layout untouched until a reload.
-   */
   const resetPreferences = useCallback(() => {
     setLibraryWidth(DEFAULT_LIBRARY_WIDTH);
     setInspectorWidth(DEFAULT_INSPECTOR_WIDTH);
@@ -88,15 +62,10 @@ function App() {
     }
   }, []);
 
-  // After every hook, so the rules of hooks hold on both branches. The store
-  // and the media library are module-scoped, so a window dragged narrow and
-  // back finds the project exactly as it was.
   if (!hasRoom) {
     return (
       <NTheme theme={theme} className="h-full">
         <SmallScreenNotice />
-        {/* Mounted on this branch too: the project survives a window dragged
-            narrow, so the warning on the way out has to survive it as well. */}
         <LeaveGuard />
       </NTheme>
     );
@@ -113,7 +82,6 @@ function App() {
           onResetPreferences={resetPreferences}
         />
 
-        {/* Stage over timeline, then library / preview / inspector across the stage. */}
         <SplitPane
           direction="vertical"
           anchor="end"

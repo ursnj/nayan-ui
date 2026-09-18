@@ -22,7 +22,6 @@ const GamesInstallation = () => {
 
   return (
     <Sidebar title={component?.title || 'Installation'}>
-      {/* Installation Section */}
       <div className="mb-8">
         <div className="space-y-4">
           <div className="mb-4">
@@ -90,7 +89,6 @@ const GamesInstallation = () => {
         </div>
       </div>
 
-      {/* Usage Section */}
       <div className="mb-8">
         <h2 className={H2_DOC}>Usage</h2>
         <div className="space-y-6">

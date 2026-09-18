@@ -20,7 +20,6 @@ const GamesApiReference = () => {
 
   return (
     <Sidebar title={component?.title || 'API Reference'}>
-      {/* API Reference Section */}
       <div className="mb-8">
         <div className="space-y-6">
           <div className="mb-6">

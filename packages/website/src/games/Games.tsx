@@ -11,19 +11,6 @@ import { GAME_CATEGORY_COUNT, GAME_COUNT } from '@/services/Counts';
 import { GAMES_LIST } from '@/services/GamesData';
 import { getMenuItem } from '@/services/Utils';
 
-/**
- * The games overview.
- *
- * Two substantive corrections alongside the visual ones. The page claimed
- * "50+ games" in the intro and "All 50+ Games" over the grid, while the grid
- * itself rendered `GAMES_LIST` — forty of them. Both counts come from the
- * data now, so the number on the page is the number on the page.
- *
- * The category badges keep their colours. Those are the one place on the site
- * where colour is carrying information rather than decorating — four
- * categories, four hues, used consistently — so the restraint elsewhere does
- * not apply.
- */
 const categoryColors: Record<string, string> = {
   Puzzle: 'bg-blue-500/15 text-blue-600 dark:text-blue-300 border-blue-500/25',
   Action: 'bg-red-500/15 text-red-600 dark:text-red-300 border-red-500/25',

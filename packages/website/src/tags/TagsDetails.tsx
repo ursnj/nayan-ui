@@ -15,12 +15,7 @@ const TagDetails = ({ tag }: Props) => {
   const component: any = getMenuItemByTag(tag, pathname);
   const tagItem = component?.tags?.find((t: any) => t.sku === tag);
 
-  /*
-   * An unknown tag used to throw here — `component` came back undefined and
-   * reading `.tags` off it turned any mistyped or retired tag URL into a 500
-   * rather than a 404. There are well over a thousand tag routes, so a dead
-   * one is not hypothetical.
-   */
+  // Unknown tags must 404 rather than throw: there are over a thousand tag routes.
   if (!component || !tagItem) {
     return (
       <Sidebar title="Tag not found">

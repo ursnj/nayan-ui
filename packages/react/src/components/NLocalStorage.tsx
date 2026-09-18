@@ -39,8 +39,6 @@ export function useLocalStorage<T>(key: string, defaultValue?: T, options?: UseL
   loggerRef.current = logger;
   defaultValueRef.current = defaultValue;
 
-  // Use the default for SSR and the first client render to avoid hydration
-  // mismatches, then reconcile with localStorage in the effect below.
   const [value, setValue] = useState<T | undefined>(defaultValue);
   const valueRef = useRef(value);
   valueRef.current = value;

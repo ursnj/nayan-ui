@@ -864,8 +864,6 @@ export const searchFieldTags = [
   { sku: 'react-search-box', text: 'React Search Box' }
 ];
 
-// React Native Tags
-// Additional comprehensive SEO tags for React Native components
 export const rnAccordionTags = [
   { sku: 'react-native-accordion', text: 'React Native Accordion' },
   { sku: 'react-native-collapsible', text: 'React Native Collapsible' },

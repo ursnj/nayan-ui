@@ -33,15 +33,6 @@ import { CARD, CONTAINER, GRADIENT_TEXT, H1_HERO, LEAD, WELL } from '@/design/sy
 import { TOTAL_COMPONENT_COUNT } from '@/services/Counts';
 import { installCode, rnInstallCode } from '@/services/ReactCodeBlocks';
 
-/*
- * Both install commands, taken from the same constants the installation guides
- * print, so the hero cannot drift from the docs.
- *
- * The hero showed only the React line, which quietly framed the library as a
- * web one — the headline two inches above it says "React & React Native", and
- * a visitor who came for mobile had to reach the installation page to find out
- * the native package even exists.
- */
 const INSTALLS = [
   { platform: 'React', command: installCode },
   { platform: 'React Native', command: rnInstallCode }
@@ -74,7 +65,6 @@ const FAQ = [
   { title: 'Does it theme?', message: 'Light and dark out of the box, plus your own tokens.' }
 ];
 
-/** A small caption above a row of examples, so the panel reads as a list of components rather than a pile of controls. */
 const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div>
     <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-muted">{label}</p>
@@ -82,35 +72,6 @@ const Row = ({ label, children }: { label: string; children: React.ReactNode }) 
   </div>
 );
 
-/**
- * The home page hero.
- *
- * The panel on the right renders the actual components from
- * `@nayan-ui/react` — a real `NSwitch`, a real `NSlider`, a real `NInput`.
- * The previous version drew all of them by hand out of divs: a fake checkbox
- * made of a bordered square and a tick icon, a fake switch made of a rounded
- * rectangle with a white dot, fake badges made of styled spans. For a
- * component library's own front page that is precisely the wrong trade —
- * it is an advert for components that says "trust us" instead of showing
- * them, and it drifts the moment the real components change.
- *
- * It doubles as a canary: if a component regresses, the home page shows it.
- *
- * Four tabs rather than three, and each one now holds a handful of components
- * instead of two or three. The panel is the only place on the page where a
- * visitor can judge whether the components look right, so the more of the
- * library it shows the more work it does — a button group, toggle buttons,
- * badges, chips, a tooltip, a search field, a select, a number field, a radio
- * group, a meter, an alert, a toast, avatars, tags, keys and an accordion,
- * all of them the real thing.
- *
- * Badges and chips get a row each rather than sharing one. They look similar
- * enough side by side that a single row read as one set of pills in two
- * shapes; labelled separately, it is clear they are two components.
- *
- * `NSelect` is the one component here that cannot be server rendered; it is
- * mounted behind a client-only guard, explained where it is used.
- */
 const Banner = () => {
   const [tab, setTab] = useState(0);
 
@@ -134,7 +95,6 @@ const Banner = () => {
 
   const toast = useNToast();
 
-  /* See the note beside `NSelect` in the Forms panel. */
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -163,7 +123,6 @@ const Banner = () => {
 
       <div className={`${CONTAINER} py-14 sm:py-20`}>
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          {/* Pitch */}
           <div className="text-center lg:text-left">
             <Badge icon={Package}>Open source · Free forever</Badge>
 
@@ -177,8 +136,6 @@ const Banner = () => {
               the thing you actually set out to build.
             </p>
 
-            {/* The install commands, copyable. They were previously buried at
-                the bottom of the page inside a decorative gradient panel. */}
             <div className="mx-auto mt-7 max-w-md divide-y divide-default overflow-hidden rounded-xl border border-default bg-surface lg:mx-0">
               {INSTALLS.map(({ platform, command }) => (
                 <div key={command} className="flex items-center gap-3 px-3.5 py-2.5">
@@ -197,28 +154,6 @@ const Banner = () => {
               ))}
             </div>
 
-            {/*
-             * Both actions are `NButton`s.
-             *
-             * The GitHub link used to be an `<a>` carrying `BUTTON_SECONDARY`,
-             * and it came out visibly bigger than the button beside it — not
-             * by a rounding error but by ten pixels. HeroUI's button is a fixed
-             * `h-10 md:h-9` at `text-sm`, so the primary was 36px tall with
-             * 14px text no matter what padding it was given (the `py-2.5` it
-             * carried did nothing at all). The anchor had no height of its own:
-             * it inherited the page's 16px text and added `py-3`, landing
-             * around 48px. The radius differed too — `rounded-3xl` from HeroUI
-             * against `rounded-xl` from the token.
-             *
-             * Matching the numbers by hand would just be a copy of HeroUI's
-             * metrics waiting to drift from them, so the secondary is now the
-             * library's own outline button. `BUTTON_SECONDARY` is untouched and
-             * still right on the pages that pair it with `BUTTON_PRIMARY`;
-             * the hero is the one place that mixed the two systems.
-             *
-             * Spacing between label and icon is HeroUI's `gap-2` for both,
-             * rather than a margin on one icon and a different one on the other.
-             */}
             <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
               <Link href="/react/installation" className="sm:w-auto">
                 <NButton className="w-full bg-gradient-to-r from-indigo-500 to-violet-500 px-6 font-semibold text-white shadow-lg shadow-indigo-500/25 hover:from-indigo-600 hover:to-violet-600 sm:w-auto">
@@ -235,11 +170,7 @@ const Banner = () => {
             </div>
           </div>
 
-          {/* Live components */}
           <div className={`${CARD} overflow-hidden shadow-xl shadow-indigo-500/5`}>
-            {/* `bg-surface` for the same reason as the code frame's header
-                (see `helpers/Code.tsx`): this card sits on the page, so a
-                `--background` header was the colour of the page behind it. */}
             <div className="flex items-center justify-between gap-3 border-b border-default bg-surface px-4 py-2.5">
               <span className="font-mono text-xs text-muted">@nayan-ui/react</span>
               <span className="text-[11px] text-muted">Live, not a screenshot</span>
@@ -263,20 +194,6 @@ const Banner = () => {
                 ))}
               </div>
 
-              {/*
-               * A grey well behind the examples, so the components read as
-               * components. Most of them are white or near-white — an input, a
-               * select, an outline button, an accordion — and on the card's own
-               * white surface their edges dissolved: the demo looked like
-               * floating text with a few coloured pills in it. `WELL` is the
-               * token the site already uses for this, and it is what the
-               * component documentation pages put their demos on.
-               *
-               * The min-height is a floor on the panel, so switching tabs does
-               * not resize the card and the hero's two columns stay roughly
-               * balanced — the shortest tab is still well under the height of
-               * the pitch beside it.
-               */}
               <div className={`${WELL} min-h-[19rem] p-4`}>
                 {tab === 0 && (
                   <div role="tabpanel" id="home-panel-0" aria-labelledby="home-tab-0" className="space-y-4">
@@ -349,17 +266,7 @@ const Banner = () => {
                       onChange={e => setEmail(e.target.value)}
                     />
                     <NSearchField value={query} onChange={setQuery} placeholder="Search components..." fullWidth />
-                    {/*
-                     * `NSelect` mounts on the client only. It wraps
-                     * react-select, which reads an emotion cache that is null
-                     * during server rendering — it throws "Cannot read
-                     * properties of null (reading 'registered')" and takes the
-                     * whole home page to a 500. The same guard is on the
-                     * select's own documentation page, for the same reason.
-                     *
-                     * The placeholder matches the mounted field's height, so
-                     * the panel does not jump on hydration.
-                     */}
+                    {/* Client-only: react-select reads a null emotion cache during SSR and takes the page to a 500. */}
                     {mounted ? (
                       <NSelect
                         label="Framework"
@@ -401,10 +308,6 @@ const Banner = () => {
                         onChange={(value: any) => setVolume(Array.isArray(value) ? value[0] : value)}
                       />
                     </Row>
-                    {/* The count comes from the navigation like every other
-                        number on the page; "42 components" was a literal in a
-                        demo, which is exactly how a site ends up quoting a
-                        figure nobody maintains. */}
                     <NAlert type={AlertTypes.SUCCESS} title="Build passed" message={`${TOTAL_COMPONENT_COUNT} components, no regressions.`} />
                     <NButton isOutline={true} onClick={() => toast('Rendered by the real NToast.', 'Hello from Nayan UI')}>
                       <Bell className="mr-2 h-4 w-4" />

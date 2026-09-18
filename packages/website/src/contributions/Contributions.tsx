@@ -10,7 +10,6 @@ const Contributions = () => {
     <>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="space-y-8">
-          {/* Hero Section */}
           <div className="relative overflow-hidden rounded-2xl bg-surface border border-default text-center py-8 sm:py-10 px-4 sm:px-6">
             <div className="relative">
               <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
@@ -24,10 +23,6 @@ const Contributions = () => {
             </div>
           </div>
 
-          {/* Quick facts. Deliberately only things that can be checked against
-              the repository — an earlier version of this strip advertised
-              "100+ Contributors" and "500+ Pull Requests", which were not
-              true of it. */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             <NCard className="p-5 text-center">
               <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
@@ -59,7 +54,6 @@ const Contributions = () => {
             </NCard>
           </div>
 
-          {/* Ways to Contribute */}
           <div>
             <h2 className={`${H2} mb-6`}>Ways to Contribute</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -143,7 +137,6 @@ const Contributions = () => {
             </div>
           </div>
 
-          {/* Getting Started */}
           <div>
             <h2 className={`${H2} mb-6`}>Getting Started</h2>
             <NCard className="p-6">
@@ -209,7 +202,6 @@ const Contributions = () => {
             </NCard>
           </div>
 
-          {/* Development Guidelines */}
           <div>
             <h2 className={`${H2} mb-6`}>Development Guidelines</h2>
             <div className="space-y-4">
@@ -251,7 +243,6 @@ const Contributions = () => {
             </div>
           </div>
 
-          {/* Community & Support */}
           <div>
             <h2 className={`${H2} mb-6`}>Community & Support</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -284,7 +275,6 @@ const Contributions = () => {
             </div>
           </div>
 
-          {/* Call to Action */}
           <div className="relative overflow-hidden rounded-3xl border border-indigo-500/20 px-4 py-12 text-center sm:px-6">
             <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-indigo-600/15 via-violet-600/10 to-fuchsia-600/15" />
             <div aria-hidden className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-fuchsia-500/20 blur-3xl" />

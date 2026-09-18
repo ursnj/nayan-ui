@@ -1,8 +1,4 @@
 #!/usr/bin/env node --no-warnings
-/**
- * Nayan UI CLI - Command Line Interface
- * Main entry point for the CLI application
- */
 import { Command } from 'commander';
 import packageJSON from '../package.json' with { type: 'json' };
 import { registerCreateCommands } from './commands/create.js';

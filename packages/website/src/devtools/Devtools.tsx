@@ -10,19 +10,6 @@ import Sidebar from '@/helpers/Sidebar';
 import SubHeader from '@/helpers/SubHeader';
 import { getMenuItem } from '@/services/Utils';
 
-/**
- * The devtools overview.
- *
- * The four tool cards were each wrapped in an `NLink`, which renders an
- * underlined anchor — so every card title and every description arrived
- * underlined, as though the paragraph itself were a link. They are `next/link`
- * now, with the whole card as the target and one arrow to say so.
- *
- * The command lists were hand-built out of `<pre>` blocks with
- * `bg-muted/20`, which is a token meant for text rather than surfaces and
- * came out muddy in dark mode. They go through the site's `Code` component
- * now, so they are highlighted and copyable like every other sample.
- */
 const TOOLS = [
   {
     icon: MapIcon,

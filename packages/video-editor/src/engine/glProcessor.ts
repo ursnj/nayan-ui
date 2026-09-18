@@ -1,18 +1,5 @@
 import type { ChromaKey, ColorAdjust } from '../types';
 
-/**
- * Per-pixel layer processing on the GPU.
- *
- * Canvas2D's `filter` covers brightness, contrast, saturate, grayscale and
- * blur perfectly well, and those stay on the cheap path. Two things it cannot
- * express are worth a shader: chroma keying, which depends on how close a
- * pixel's own colour is to the key, and colour temperature, which is a
- * per-channel offset rather than a filter.
- *
- * The compositor only routes a layer through here when it needs one of those
- * (`needsPixelProcessing`).
- */
-
 const VERTEX_SHADER = `#version 300 es
 in vec2 aPosition;
 out vec2 vUv;
@@ -27,11 +14,6 @@ void main() {
   gl_Position = vec4(aPosition, 0.0, 1.0);
 }`;
 
-/*
- * The grade runs in the order a colourist would work: fix the picture, then
- * balance it, then style it, then add texture. Reordering these changes the
- * result, so the stages are commented rather than merely listed.
- */
 const FRAGMENT_SHADER = `#version 300 es
 precision highp float;
 
@@ -202,13 +184,6 @@ export interface PixelEffectParams {
   seed: number;
 }
 
-/**
- * True when a layer needs the shader rather than plain `ctx.filter`.
- *
- * Canvas2D covers brightness, contrast, saturate, grayscale and blur, so a
- * clip using only those stays on the cheap path. Everything below is either
- * per-pixel or region-weighted and has no filter-function equivalent.
- */
 export const needsPixelProcessing = (params: { color: ColorAdjust; chromaKey?: ChromaKey }): boolean => {
   const { color } = params;
   return (
@@ -262,22 +237,12 @@ class GLProcessor {
         this.gl = gl;
         this.setup(gl);
       } catch (error) {
-        // Falling back to Canvas2D silently would leave every shader-only
-        // effect doing nothing with no way to tell why, so say so once.
         console.error('[video-editor] GPU effects unavailable, falling back to Canvas2D:', error);
         this.failed = true;
         return null;
       }
     }
-    /*
-     * Grow only, never shrink.
-     *
-     * Resizing a WebGL canvas reallocates its drawing buffer. A transition
-     * runs two layers through here per frame, so a 1080p clip blending into a
-     * 720p one would reallocate twice on every frame of the blend. Keeping the
-     * surface at the high-water mark costs a little idle memory and removes
-     * the churn entirely; `process` renders into a sub-rectangle of it.
-     */
+    // Grow only: resizing a WebGL canvas reallocates its drawing buffer, twice a frame during a blend.
     if (this.canvas && (this.canvas.width < width || this.canvas.height < height)) {
       this.canvas.width = Math.max(this.canvas.width, width);
       this.canvas.height = Math.max(this.canvas.height, height);
@@ -305,8 +270,6 @@ class GLProcessor {
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       throw new Error(gl.getProgramInfoLog(program) ?? 'program link failed');
     }
-    // Flagged for deletion now that they're linked in; the driver frees them
-    // with the program rather than keeping two compiled copies alive.
     gl.deleteShader(vertex);
     gl.deleteShader(fragment);
     gl.useProgram(program);
@@ -328,23 +291,12 @@ class GLProcessor {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   }
 
-  /**
-   * Hands the GPU surface back.
-   *
-   * The drawing buffer is the expensive part and it only ever grows: an export
-   * at 4K leaves a 3840×2160 RGBA buffer — about 33MB — allocated for the rest
-   * of the session, on a processor nothing will touch again until the next
-   * export. `ensure` rebuilds everything on demand, so this is safe to call at
-   * any point and costs one shader compile the next time it is needed.
-   */
   dispose() {
     const gl = this.gl;
     if (gl) {
       if (this.program) gl.deleteProgram(this.program);
       if (this.texture) gl.deleteTexture(this.texture);
       if (this.buffer) gl.deleteBuffer(this.buffer);
-      // Without this the context lingers until the collector notices the
-      // canvas, and a browser only allows a handful of live WebGL contexts.
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     }
     if (this.canvas) {
@@ -367,22 +319,11 @@ class GLProcessor {
     return this.uniforms.get(name) ?? null;
   }
 
-  /**
-   * Runs the effect stack over `source` and returns a canvas holding the
-   * result, or null if the GPU path is unavailable.
-   *
-   * The returned canvas is reused between calls, so draw from it before
-   * processing the next layer.
-   */
   process(source: TexImageSource, width: number, height: number, params: PixelEffectParams): OffscreenCanvas | HTMLCanvasElement | null {
     const gl = this.ensure(width, height);
     if (!gl || !this.program) return null;
 
     try {
-      // The surface may be larger than this layer. GL counts rows from the
-      // bottom and the compositor reads back from the top-left, so the
-      // viewport is pushed up to land the render where Canvas2D will look for
-      // it: the rectangle (0, 0, width, height) in image coordinates.
       const surfaceHeight = this.canvas?.height ?? height;
       gl.viewport(0, surfaceHeight - height, width, height);
       gl.useProgram(this.program);
@@ -408,8 +349,6 @@ class GLProcessor {
       gl.uniform1f(this.location('uSharpen'), color.sharpen);
       gl.uniform1f(this.location('uSplitTone'), color.splitTone);
       gl.uniform1f(this.location('uGrayscale'), color.grayscale);
-      // Wrapped so the value stays small enough for `sin()` to keep its
-      // precision in the grain hash.
       gl.uniform1f(this.location('uSeed'), (params.seed / 1000) % 1024);
 
       const [sr, sg, sb] = hexToRgb(color.shadowTint);
@@ -436,11 +375,6 @@ class GLProcessor {
   }
 }
 
-/**
- * Preview and export each get their own processor: they run concurrently and
- * at different resolutions, and sharing one canvas would make them clobber
- * each other's output.
- */
 export const previewProcessor = new GLProcessor();
 export const exportProcessor = new GLProcessor();
 

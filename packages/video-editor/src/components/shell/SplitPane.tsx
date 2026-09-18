@@ -14,22 +14,12 @@ interface SplitPaneProps {
   onResize: (size: number) => void;
   /** Which side the handle sizes — `end` means the *second* pane is measured. */
   anchor?: 'start' | 'end';
-  /**
-   * Space the *other* pane must keep. The measured pane never grows past what
-   * this leaves, however large the stored size is.
-   */
+  /** Space the other pane must keep; the measured pane never grows past it. */
   minOther?: number;
   children: [React.ReactNode, React.ReactNode];
   className?: string;
 }
 
-/**
- * Two panes with a draggable divider.
- *
- * The divider writes straight to the DOM during a drag and only pushes the
- * final value into React state on release, so resizing a panel doesn't
- * re-render the timeline or restart the preview on every pointer move.
- */
 export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start', minOther = 0, children, className }: SplitPaneProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const firstRef = useRef<HTMLDivElement>(null);
@@ -40,10 +30,6 @@ export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start
 
   const measuredRef = anchor === 'start' ? firstRef : secondRef;
 
-  // Both panes are `flex-shrink: 0`, so nothing gives if they don't fit — the
-  // container simply overflows and the far pane is clipped by the app's own
-  // `overflow-hidden`. The sizes come from localStorage, so a layout dragged
-  // wide on a large monitor arrives pre-broken on a smaller one.
   useEffect(() => {
     const element = containerRef.current;
     if (!element) return;
@@ -54,11 +40,7 @@ export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start
     return () => observer.disconnect();
   }, [horizontal]);
 
-  /*
-   * The stored size is clamped for layout but never written back: shrinking
-   * the window should not destroy a preference the user set on a bigger one,
-   * so widening it again restores exactly what they had.
-   */
+  // Clamped for layout but never written back, so shrinking the window cannot destroy the stored preference.
   const ceiling = extent > 0 ? Math.max(min, extent - GUTTER - minOther) : max;
   const effective = clamp(size, min, Math.min(max, ceiling));
 
@@ -77,8 +59,6 @@ export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start
       const move = (moveEvent: PointerEvent) => {
         const position = horizontal ? moveEvent.clientX - rect.left : moveEvent.clientY - rect.top;
         const total = horizontal ? rect.width : rect.height;
-        // The same ceiling the layout uses, so a drag can't push the other
-        // pane below its minimum either.
         const limit = Math.min(max, Math.max(min, total - GUTTER - minOther));
         latest = clamp(anchor === 'start' ? position : total - position, min, limit);
         // Bypass React while dragging — this fires at pointer rate.
@@ -108,12 +88,6 @@ export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start
 
   return (
     <div ref={containerRef} className={cn('flex min-h-0 min-w-0', horizontal ? 'flex-row' : 'flex-col', className)}>
-      {/*
-        The wrappers are flex columns, not plain blocks: a block wrapper gives
-        its child no height to resolve `flex-1` against, so a pane's content
-        sizes itself and spills over the divider into the pane below. They
-        deliberately don't clip — that would cut off each island's shadow.
-      */}
       <div
         ref={firstRef}
         className="flex min-h-0 min-w-0 flex-col"
@@ -121,11 +95,6 @@ export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start
         {children[0]}
       </div>
 
-      {/*
-        The divider *is* the gutter between two islands, so it needs no line of
-        its own — it's a transparent strip that shows a grab pill on hover.
-        That also makes it comfortably large to hit, which a 1px rule never is.
-      */}
       <div
         role="separator"
         aria-orientation={horizontal ? 'vertical' : 'horizontal'}
@@ -135,13 +104,9 @@ export const SplitPane = ({ direction, size, min, max, onResize, anchor = 'start
         onKeyDown={event => {
           const wanted = horizontal ? ['ArrowLeft', 'ArrowRight'] : ['ArrowUp', 'ArrowDown'];
           if (!wanted.includes(event.key) || event.metaKey || event.ctrlKey || event.altKey) return;
-          // Claims the key from the app's global handler, which would otherwise
-          // also step the playhead on every press of this divider.
           event.preventDefault();
 
           const step = event.shiftKey ? 48 : 12;
-          // Stepped from `effective`, not the stored size: otherwise one press
-          // on a narrow window jumps back to a value that no longer fits.
           const delta = event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -step : step;
           onResize(clamp(effective + delta, min, Math.min(max, ceiling)));
         }}

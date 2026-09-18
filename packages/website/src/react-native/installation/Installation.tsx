@@ -8,17 +8,6 @@ import Sidebar from '@/helpers/Sidebar';
 import SubHeader from '@/helpers/SubHeader';
 import { rnAppCode, rnCssCode, rnInstallCode, rnPeerDepsCode } from '@/services/ReactCodeBlocks';
 
-/**
- * Installing the React Native package.
- *
- * Structured to match the React installation page step for step, because the
- * two were laid out differently despite describing the same three stages —
- * install, configure, use. The Uniwind prerequisite now leads, since it has
- * to be done before any of the rest will work.
- *
- * The two `NLink`s became ordinary links: `NLink` renders underlined, which
- * made the prerequisite sentence read as two separate links to the same page.
- */
 const Installation = () => (
   <Sidebar title="Installation">
     <DocsIntro

@@ -47,8 +47,6 @@ export const PreviewPanel = () => {
 
   useEffect(() => {
     player.attach(canvasRef.current);
-    // Detach but don't dispose: the player is a page-lifetime singleton, and
-    // tearing down its AudioContext on a StrictMode remount would be wasteful.
     return () => player.attach(null);
   }, []);
 
@@ -88,9 +86,6 @@ export const PreviewPanel = () => {
       void document.exitFullscreen().catch(() => undefined);
       return;
     }
-    // The stage rather than the frame: it centres the picture and paints the
-    // surround, so an aspect ratio that does not match the display letterboxes
-    // against editor chrome instead of stretching.
     void stageRef.current?.requestFullscreen().catch(() => undefined);
   }, []);
 
@@ -105,13 +100,6 @@ export const PreviewPanel = () => {
   const overlayVisible = showOverlay && selected !== null && selected.kind !== 'audio' && displaySize.width > 0;
 
   return (
-    /*
-     * A container, not a media query: the transport has to fit the *pane*,
-     * which the user resizes independently of the window. Its full set of
-     * controls needs about 650px, and at 1024px the preview gets 372 — so the
-     * row sheds controls as it narrows, least useful first, keeping transport
-     * and the current time to the end.
-     */
     <section className="island @container flex min-h-0 min-w-0 flex-1 flex-col">
       <div className="flex items-center gap-1 border-b border-border bg-editor-panel px-2 py-1">
         <IconButton label="Transform handles" onClick={() => setShowOverlay(value => !value)} active={showOverlay}>
@@ -135,23 +123,15 @@ export const PreviewPanel = () => {
         </span>
       </div>
 
-      {/*
-        The stage runs edge to edge — no padding, no rounded corners and no
-        shadow on the frame itself, which would only be clipped by the island
-        now that the two touch. Whatever the project's aspect ratio doesn't
-        fill shows as the canvas colour either side of it.
-      */}
       <div ref={stageRef} className="flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-editor-canvas">
         <div
           ref={frameRef}
           className="checkerboard relative max-h-full max-w-full overflow-hidden"
           style={{ aspectRatio: `${project.width} / ${project.height}` }}>
-          {/* The frame itself: masked so a replay never carries the footage. */}
           <canvas ref={canvasRef} width={project.width} height={project.height} data-clarity-mask="true" className="block h-full w-full" />
 
           {showSafeZones && (
             <div className="pointer-events-none absolute inset-0">
-              {/* 90% action-safe and 80% title-safe, the broadcast convention. */}
               <div className="absolute inset-[5%] border border-white/40" />
               <div className="absolute inset-[10%] border border-dashed border-white/30" />
             </div>
@@ -172,10 +152,6 @@ export const PreviewPanel = () => {
 
           {durationUs === 0 && (
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40">
-              {/* `text-center` as well as the centred flex: in a vertical
-                  project the frame is narrower than this line, so it wraps —
-                  and wrapped lines fall back to the paragraph's own alignment,
-                  which left-aligned them against the centred block. */}
               <p className="px-4 text-center text-sm text-white/60">Add media to the timeline to start editing</p>
             </div>
           )}
@@ -183,7 +159,6 @@ export const PreviewPanel = () => {
       </div>
 
       <div className="flex items-center gap-1 border-t border-border bg-editor-panel px-3 py-1.5">
-        {/* `contents` so the wrapper vanishes from the flex row when shown. */}
         <span className="hidden @[470px]:contents">
           <IconButton label="Jump to start (Home)" onClick={() => seekTo(0)}>
             <SkipBack className="h-4 w-4" />
@@ -199,16 +174,6 @@ export const PreviewPanel = () => {
             disabled={durationUs === 0}
             aria-label={isPlaying ? 'Pause' : 'Play'}
             className="mx-1 h-8 w-8 rounded-full px-0">
-            {/*
-              No nudge on the triangle. It carried an `ml-0.5`, presumably as
-              the usual optical correction for a shape whose weight sits left of
-              its bounding box — but Lucide has already applied that inside the
-              glyph: its polygon spans 6→20 of a 24 frame, so the triangle is
-              drawn two thirds of a pixel right of centre at this size. The
-              margin stacked a second correction on top of the first and left
-              the play state visibly right of the circle, while Pause below it
-              sat true.
-            */}
             {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
           </NButton>
         </NTooltip>
@@ -221,8 +186,6 @@ export const PreviewPanel = () => {
             <SkipForward className="h-4 w-4" />
           </IconButton>
         </span>
-        {/* Loop yields to the volume fader below 400px: a niche toggle is a
-            fairer thing to lose than the only way to change the level. */}
         <span className="hidden @[400px]:contents">
           <IconButton label="Loop playback" onClick={() => setLoop(value => !value)} active={loop}>
             <Repeat className="h-4 w-4" />
@@ -232,13 +195,6 @@ export const PreviewPanel = () => {
         <TimeReadout durationUs={durationUs} fps={project.fps} />
 
         <div className="ml-auto flex min-w-0 items-center gap-2">
-          {/*
-           * The fader appears well before the pane is wide, because a mute
-           * button on its own is not volume control — it was previously held
-           * back to 560px, which the preview never reaches at a 1024px
-           * window, so the slider was effectively unreachable. It starts
-           * narrow and widens once there is room to be precise with it.
-           */}
           <NSlider
             value={volume}
             min={0}
@@ -247,7 +203,6 @@ export const PreviewPanel = () => {
             className="mb-0 hidden w-16 @[370px]:block @[600px]:w-24"
             aria-label="Preview volume"
           />
-          {/* Last in the row: the speaker is the anchor the fader reads from. */}
           <IconButton label={muted ? 'Unmute' : 'Mute'} onClick={() => setMuted(value => !value)} active={muted}>
             {muted || volume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
           </IconButton>
@@ -260,10 +215,6 @@ export const PreviewPanel = () => {
   );
 };
 
-/**
- * Isolated so the playhead update on every animation frame re-renders this
- * readout alone rather than the whole preview panel.
- */
 const TimeReadout = ({ durationUs, fps }: { durationUs: number; fps: number }) => {
   const playheadUs = useEditor(state => state.playheadUs);
   /** Non-null while typing; the playhead is ignored until the edit resolves. */
@@ -273,7 +224,6 @@ const TimeReadout = ({ durationUs, fps }: { durationUs: number; fps: number }) =
     if (draft === null) return;
     const parsed = parseTimecode(draft, fps);
     setDraft(null);
-    // An unparseable entry reverts rather than jumping somewhere arbitrary.
     if (parsed !== null) seekTo(clamp(parsed, 0, durationUs));
   };
 
@@ -308,21 +258,12 @@ const TimeReadout = ({ durationUs, fps }: { durationUs: number; fps: number }) =
       title="Click to jump to a time — mm:ss:ff, mm:ss, or plain seconds"
       className="ml-3 shrink-0 whitespace-nowrap rounded px-1 font-mono text-xs tabular-nums text-muted transition-colors hover:bg-default">
       <span className="text-foreground">{formatTimecode(playheadUs, true, fps)}</span>
-      {/* The duration is the half you can do without when space is short. */}
       <span className="mx-1 hidden opacity-50 @[560px]:inline">/</span>
       <span className="hidden @[560px]:inline">{formatTimecode(durationUs, true, fps)}</span>
     </button>
   );
 };
 
-/**
- * Parses a typed position into microseconds, or null if it makes no sense.
- *
- * Three colon-separated parts mean `mm:ss:ff`, matching what the readout
- * shows, so whatever is displayed can be typed straight back. Four adds hours
- * in front for long projects, and the shorter forms are there because typing
- * `90` to reach a minute and a half is faster than typing `01:30:00`.
- */
 const parseTimecode = (text: string, fps: number): number | null => {
   const parts = text.trim().split(':');
   if (parts.length > 4 || parts.some(part => part.trim() === '')) return null;

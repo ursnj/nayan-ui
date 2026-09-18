@@ -21,23 +21,6 @@ const SECTION_LABELS: Record<string, string> = {
   devtools: 'Devtools'
 };
 
-/**
- * The documentation shell: navigation on the left, content on the right.
- *
- * Three things it gained over the previous version, all of them about finding
- * your way around 80-odd pages rather than about looks:
- *
- *   A filter. The React sidebar is more than fifty entries long, so it
- *   scrolled past the fold with no way to get to `Select` except by eye.
- *   Typing narrows it, and headings for groups that no longer match are
- *   dropped so the result is not mostly section titles.
- *
- *   A breadcrumb, because the page title alone never said whether you were
- *   in React or React Native — the two trees have identical page names.
- *
- *   An actual scroll container with its own border, so the navigation reads
- *   as a panel rather than as text that happens to be to the left.
- */
 const Sidebar = (props: Props) => {
   const pathname = usePathname();
   const sidebarItems = getSidebarItems(pathname);
@@ -48,11 +31,6 @@ const Sidebar = (props: Props) => {
     if (!term) return sidebarItems;
 
     const matched = sidebarItems.filter(item => !item.isHeading && item.title.toLowerCase().includes(term));
-    /*
-     * Keep a heading only when something under it survived the filter.
-     * `isHeading` entries carry no group membership, so "under it" means
-     * between this heading and the next one.
-     */
     return sidebarItems.filter(item => {
       if (!item.isHeading) return matched.includes(item);
       const start = sidebarItems.indexOf(item);

@@ -1,6 +1,3 @@
-/**
- * Sitemap Service - Generate and validate XML sitemaps
- */
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { readFileSync, writeFileSync } from 'fs';
@@ -17,9 +14,6 @@ interface UrlWithDepth {
   depth: number;
 }
 
-/**
- * Fetch and parse HTML page to extract links
- */
 const fetchAndParse = async (url: string, website: string, spinner: any): Promise<string[]> => {
   try {
     const { data } = await axios.get(url);
@@ -45,9 +39,6 @@ const fetchAndParse = async (url: string, website: string, spinner: any): Promis
   }
 };
 
-/**
- * Build XML sitemap from crawled URLs
- */
 const buildSitemap = (urls: UrlWithDepth[], maxDepth: number, changefreq: string, website: string, replacer: string): string => {
   const root = xmlbuilder
     .create('urlset', { version: '1.0', encoding: 'UTF-8' })

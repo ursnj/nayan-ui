@@ -15,23 +15,8 @@ export const metadata = buildPageMetadata({
   ogType: 'website'
 });
 
-/*
- * The running editor is a static bundle served from /video-editor/start, a
- * subpath of this page rather than a route of its own: a static folder cannot
- * shadow a Next route, so the app has to live one level below the page that
- * describes it.
- */
 const PAGE_URL = `${SITE_URL}/video-editor`;
 
-/*
- * Structured data, built from the arrays the page renders so the two cannot
- * drift.
- *
- * The `DefinedTermSet` that used to be here went with the glossary it
- * described — sixteen definitions of "playhead" and "bitrate" were more
- * reference material than a landing page should carry. No `aggregateRating`:
- * there are no reviews to aggregate.
- */
 const schemas = [
   buildBreadcrumbSchema([
     { name: 'Home', url: SITE_URL },

@@ -8,15 +8,6 @@ import { CARD_INTERACTIVE, H4_CARD } from '@/design/system';
 import Sidebar from '@/helpers/Sidebar';
 import { getMenuItem, getSidebarItems } from '@/services/Utils';
 
-/**
- * The component index.
- *
- * Each card showed six clamped lines of the component's full description,
- * which made a four-column grid of twelve-line cards and put the component
- * names — the only thing anyone scans this page for — a long way apart. Two
- * lines is enough to tell two components apart; the rest is on the page the
- * card links to.
- */
 const Components = () => {
   const pathname = usePathname();
   const component: any = getMenuItem(pathname) || getMenuItem(pathname + '/components');

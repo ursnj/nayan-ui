@@ -13,14 +13,6 @@ export type TrimEdge = 'start' | 'end';
 /** Assumed shape for an asset that never reported one. */
 export const DEFAULT_ASPECT = 16 / 9;
 
-/**
- * What a clip needs from its asset to draw a strip, resolved once per asset by
- * the timeline.
- *
- * The aspect ratio is as load-bearing as the picture: a filmstrip tile is as
- * wide as its frame is at row height, so without it the tiles cannot be sized
- * and the frames end up cropped to fit boxes of the wrong shape.
- */
 export interface ClipPreview {
   poster: string | null;
   aspect: number;
@@ -32,10 +24,6 @@ interface ClipViewProps {
   rowHeight: number;
   selected: boolean;
   trackLocked: boolean;
-  /**
-   * The clip's asset, as the strip needs it. One stable object per asset from
-   * the timeline, so it doesn't cost this component its memo.
-   */
   preview: ClipPreview | null;
   onSelect: (clip: Clip, additive: boolean) => void;
   onMoveStart: (clip: Clip, event: React.PointerEvent) => void;
@@ -43,22 +31,12 @@ interface ClipViewProps {
   onContextMenu: (clip: Clip, event: React.MouseEvent) => void;
 }
 
-/**
- * A single clip on the timeline.
- *
- * Memoised on its own props: a timeline can hold hundreds of these, and a
- * drag on one clip must not re-render the rest. That only works because every
- * callback below is a stable reference from the parent and receives the clip
- * as an argument — passing `() => onSelect(clip)` from the parent would mint a
- * new function per clip per render and defeat the memo entirely.
- */
+// Memoised per clip: the parent's callbacks must stay stable, or a drag re-renders every clip on the timeline.
 export const ClipView = memo(
   ({ clip, pxPerSec, rowHeight, selected, trackLocked, preview, onSelect, onMoveStart, onTrimStart, onContextMenu }: ClipViewProps) => {
     const left = (clip.startUs / US) * pxPerSec;
     const width = Math.max(3, (clip.durationUs / US) * pxPerSec);
     const locked = trackLocked || clip.locked;
-    // Stable callbacks of its own, so this doesn't cost the parent a new prop
-    // per clip and defeat the memo.
     const held = useHeldInteraction();
 
     return (
@@ -88,11 +66,6 @@ export const ClipView = memo(
           event.preventDefault();
           if (locked) return;
 
-          /*
-           * Nudging acts on the selection, so a focused clip that isn't in it
-           * joins it first. Zustand writes synchronously, so the store action
-           * below already sees this clip selected.
-           */
           const state = readEditorState();
           if (!state.selectedClipIds.includes(clip.id)) onSelect(clip, false);
 
@@ -113,33 +86,13 @@ export const ClipView = memo(
         data-clip-id={clip.id}
         style={{ left, width, borderColor: selected ? undefined : `${clip.color}66` }}
         className={cn(
-          /*
-           * No `gpu-layer` here.
-           *
-           * It promoted every clip to its own compositor layer — GPU memory
-           * proportional to each clip's area, plus layer bookkeeping on every
-           * frame — to avoid repaints it cannot avoid: a clip is positioned
-           * with `left`, so moving one invalidates layout rather than a
-           * transform, and absolutely positioned siblings do not repaint each
-           * other. Nothing in here animates a transform.
-           */
           'group absolute top-1 select-none overflow-hidden rounded-md border text-left transition-shadow',
           locked ? 'cursor-not-allowed' : 'cursor-grab active:cursor-grabbing',
-          /*
-           * A clip always carries a z-index, not only when selected, so that it
-           * always forms a stacking context of its own. Without one, the trim
-           * handles' `z-20` escaped into the timeline's shared context and tied
-           * with the sticky track-header column, which they then won on DOM
-           * order — an unselected clip's handles drew over the header strip as
-           * soon as the timeline was scrolled sideways.
-           */
           selected ? 'z-20 border-accent ring-2 ring-accent/70 elevate' : 'z-10 hover:elevate'
         )}>
-        {/* Row height is user-adjustable, so the body is sized rather than inset. */}
         <div style={{ height: rowHeight - 8 }} className="relative w-full">
           <ClipBody clip={clip} width={width} height={rowHeight - 8} preview={preview} />
 
-          {/* Colour spine, so a glance identifies the clip even when zoomed out. */}
           <span className="absolute inset-x-0 bottom-0 h-0.5" style={{ background: clip.color }} />
 
           <FadeOverlay clip={clip} width={width} pxPerSec={pxPerSec} />
@@ -152,8 +105,6 @@ export const ClipView = memo(
             />
           )}
 
-          {/* Below ~44px the label is unreadable and only adds noise, so the
-              colour spine and filmstrip carry the identification instead. */}
           <div
             className={cn(
               'pointer-events-none absolute inset-x-0 top-0 flex items-center gap-1 truncate bg-gradient-to-b from-black/60 to-transparent px-1.5 py-0.5',
@@ -231,25 +182,6 @@ const Filmstrip = ({ clip, width, height, preview }: { clip: MediaClip; width: n
   const poster = preview?.poster ?? null;
   const { frames, tileWidth, tileCount } = useFilmstrip(clip, width, height, aspect);
 
-  /*
-   * Whole frames, at row height, laid end to end.
-   *
-   * Each tile is given the width its own frame has at this height and the
-   * picture is sized `auto 100%`, so it fills the tile exactly: nothing is
-   * cropped and nothing is stretched. The last tile runs past the end of the
-   * clip and is clipped by the clip body, which is what a strip cut to length
-   * should look like.
-   *
-   * A tile shows its own still once the strip has decoded and the asset's
-   * poster frame until then. Strips are decoded off the render path, and
-   * without the poster a clip sat on flat grey on every zoom step, each one
-   * waiting its turn behind a single decoder. Because the poster is the same
-   * picture at the same aspect, nothing about the framing changes when the
-   * real stills replace it — only the moment each one shows.
-   *
-   * For a still image the poster is not a placeholder at all — it is the
-   * finished picture, which is why images no longer decode a strip.
-   */
   return (
     <div className="flex h-full w-full overflow-hidden bg-surface-tertiary">
       {Array.from({ length: tileCount }, (_, index) => {
@@ -274,25 +206,8 @@ const Filmstrip = ({ clip, width, height, preview }: { clip: MediaClip; width: n
   );
 };
 
-/**
- * Ceiling on the waveform's backing store, in CSS pixels.
- *
- * The canvas is stretched to the clip by CSS, so its own surface does not have
- * to match the clip's pixel width — and must not. A ten-minute clip at maximum
- * zoom is 480,000px wide: at device pixel ratio 2 that asked for a surface
- * nearly a million pixels across, which is past every browser's canvas limit
- * and hundreds of megabytes of backing store where it is honoured at all.
- *
- * Nothing is lost by capping it. The peaks are 2048 buckets for a whole asset,
- * so a clip showing part of one holds a few hundred distinct values — this is
- * already oversampling them.
- */
 const MAX_WAVEFORM_PX = 2048;
 
-/**
- * Peaks are drawn to a canvas rather than SVG: a few thousand bars as DOM nodes
- * would dominate render time on a busy timeline.
- */
 const Waveform = ({ clip, width }: { clip: MediaClip; width: number }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const peaks = useWaveform(clip.assetId, true);
@@ -304,8 +219,6 @@ const Waveform = ({ clip, width }: { clip: MediaClip; width: number }) => {
     if (!context) return;
 
     const dpr = Math.min(2, window.devicePixelRatio || 1);
-    // The surface the bars are laid out in, which the element scales to the
-    // clip's real width.
     const cssWidth = Math.min(MAX_WAVEFORM_PX, Math.max(1, Math.round(width)));
     const cssHeight = canvas.clientHeight || 48;
     canvas.width = Math.round(cssWidth * dpr);

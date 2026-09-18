@@ -12,10 +12,6 @@ export interface NToggleButtonProps {
   size?: 'sm' | 'md' | 'lg';
   onChange?: (isSelected: boolean) => void;
   className?: string;
-  /**
-   * Required for an icon-only toggle — there is no visible text to name it,
-   * and without this assistive tech announces an unlabelled button.
-   */
   'aria-label'?: string;
   'aria-labelledby'?: string;
 }

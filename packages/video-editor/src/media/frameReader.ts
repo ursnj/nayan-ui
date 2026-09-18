@@ -1,22 +1,8 @@
 import type { VideoSample, VideoSampleSink } from 'mediabunny';
 
-/**
- * How far the playhead may jump forward before we tear down the iterator and
- * re-seek. Stepping forward reuses the open decoder; seeking restarts from the
- * preceding keyframe, so we only pay that cost for real jumps.
- */
+/** Jump threshold: stepping forward reuses the decoder, seeking restarts from the preceding keyframe. */
 const RESTART_THRESHOLD_SECONDS = 1;
 
-/**
- * Turns mediabunny's `VideoSampleSink` into something a per-frame render loop
- * can call.
- *
- * `sink.getSample()` spins up a fresh decoder and replays the whole GOP on
- * every call, which is fine for a one-off thumbnail but far too slow at 30 fps.
- * `sink.samples()` instead hands back a pre-decoding iterator — this class keeps
- * one open and walks it forward, which makes sequential playback nearly free
- * while still supporting arbitrary scrubbing.
- */
 export class SequentialVideoReader {
   private readonly sink: VideoSampleSink;
   private iterator: AsyncGenerator<VideoSample, void, unknown> | null = null;
@@ -30,10 +16,6 @@ export class SequentialVideoReader {
     this.sink = sink;
   }
 
-  /**
-   * The returned sample stays valid until the next `sampleAt` call on this
-   * reader, so draw it before awaiting anything else.
-   */
   async sampleAt(seconds: number): Promise<VideoSample | null> {
     if (this.disposed) return null;
     const run = this.chain.then(() => this.advanceTo(seconds)).catch(() => undefined);
@@ -70,30 +52,16 @@ export class SequentialVideoReader {
 
     while (this.iterator && this.current && !this.covers(this.current, seconds) && seconds > this.current.timestamp) {
       const next = await this.iterator.next();
-      // Past the end of the track: hold the last frame rather than blanking.
       if (next.done || !next.value) break;
       this.current.close();
       this.current = next.value;
     }
   }
 
-  /*
-   * Releases the current sample *before* tearing the iterator down, and never
-   * holds one across that teardown.
-   *
-   * An earlier version kept the last frame when the new iterator yielded
-   * nothing, so that seeking into a transition could not blank the outgoing
-   * layer. That is unsafe: closing the iterator invalidates the samples it
-   * produced, so the frame being held was already dead, and drawing it throws
-   * — which `resolveVideoSource` turns into a silently missing layer. Every
-   * play and seek comes through here, so the rare transition case is not worth
-   * risking the common one.
-   */
+  // Release the current sample before tearing the iterator down, and never hold one across that teardown.
   private async restart(seconds: number) {
     await this.closeIterator();
     if (this.disposed) return;
-    // `samples(t)` yields the sample *covering* t first, so this lands exactly
-    // on the frame that should be on screen.
     this.iterator = this.sink.samples(Math.max(0, seconds));
     const first = await this.iterator.next();
     this.current = first.done ? null : first.value;

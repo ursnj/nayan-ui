@@ -4,19 +4,6 @@ import { Section, SectionHeader, StatGrid } from '@/design/Primitives';
 import { ACCENT_SOFT, BODY, BUTTON_SECONDARY, CARD_INTERACTIVE, H3 } from '@/design/system';
 import { GAME_COUNT, NATIVE_COMPONENT_COUNT, REACT_COMPONENT_COUNT, TOTAL_COMPONENT_COUNT } from '@/services/Counts';
 
-/**
- * What else is in the box.
- *
- * This section used to enumerate every component by name — five cards holding
- * around forty pills reading "Input", "Textarea", "Autocomplete", "Number
- * Field" and so on. That is a table of contents, and the component index page
- * already is one; on a front page it was forty pieces of jargon a visitor has
- * to read before learning anything. It is four things you can go and use now,
- * described in a sentence each.
- *
- * The numbers stay. They are the least technical content on the page and the
- * quickest thing to take in.
- */
 const STATS = [
   { value: String(REACT_COMPONENT_COUNT), label: 'React components' },
   { value: String(NATIVE_COMPONENT_COUNT), label: 'React Native components' },

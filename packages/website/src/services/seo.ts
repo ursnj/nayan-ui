@@ -2,14 +2,8 @@ import type { Metadata } from 'next';
 import { TOTAL_COMPONENT_COUNT } from './Counts';
 
 export const SITE_URL = 'https://www.nayanui.com';
-/** The bare host, for anywhere a URL is shown rather than followed. */
 export const SITE_HOST = SITE_URL.replace(/^https?:\/\//, '');
 export const SITE_NAME = 'Nayan UI';
-/*
- * The count is interpolated, not typed in. It read "58" while the navigation
- * listed 58 and then, the moment a component was removed, while it listed 57 —
- * and this string is the description on every page of the site.
- */
 export const SITE_DESCRIPTION = `Nayan UI is an open source component library for React and React Native. ${TOTAL_COMPONENT_COUNT} accessible, customizable, production-ready UI components built on HeroUI and Tailwind CSS.`;
 
 export const organizationSchema = {

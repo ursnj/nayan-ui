@@ -20,19 +20,6 @@ export interface RenderOptions {
   target: 'preview' | 'export';
 }
 
-/**
- * Draws the timeline at a single instant.
- *
- * Preview and export both call this, pointed at different canvases, which is
- * what guarantees the exported file matches what the user saw. Because all
- * geometry in the model is a fraction of the frame, the same scene renders
- * correctly at any resolution.
- *
- * Returns false when a layer that should have been visible had no source to
- * draw. The background is painted first, so such a frame is not merely
- * incomplete — it has replaced whatever was on the canvas with an empty
- * picture, and the caller needs to know it is worth rendering again.
- */
 export const renderScene = async (context: Context2D, scene: Scene, timeUs: number, options: RenderOptions): Promise<boolean> => {
   const { project } = scene;
   let complete = true;
@@ -48,16 +35,11 @@ export const renderScene = async (context: Context2D, scene: Scene, timeUs: numb
       continue;
     }
 
-    // A transition needs the clip it is coming *from* underneath it. That clip
-    // has already ended on the timeline, so it is re-rendered here rather than
-    // appearing in `visibleLayers`.
     const progress = (timeUs - layer.startUs) / transition.durationUs;
     const state = transitionStateAt(transition.kind, progress, project.width, project.height);
     const outgoing = previousClipOnTrack(scene, layer);
 
     if (outgoing && state.outgoing.alpha > 0) {
-      // Keep reading the outgoing clip's source forward through the blend
-      // rather than freezing its last frame, which looks broken over motion.
       const drawn = await drawLayer(context, outgoing, project, Math.min(timeUs, clipEndUs(outgoing) - 1), options, {
         ...state.outgoing,
         sourceOverrunUs: isMediaClip(outgoing) ? outgoing.inUs + (timeUs - outgoing.startUs) * outgoing.speed : undefined
@@ -122,36 +104,16 @@ const envelopeAt = (clip: Clip, timeUs: number): number => {
 };
 
 interface DrawOverride extends LayerTransitionState {
-  /**
-   * Source position to read instead of the one implied by the timeline. Used
-   * by transitions, where the outgoing clip must keep playing past its own
-   * out-point for the duration of the blend.
-   */
+  /** Overrides the source position implied by the timeline; transitions read past a clip's out-point. */
   sourceOverrunUs?: number;
 }
 
-/* ------------------------------------------------------------------ *
- * Scratch surfaces
- * ------------------------------------------------------------------ */
-
 const scratch = new Map<string, { canvas: OffscreenCanvas | HTMLCanvasElement; context: Context2D }>();
 
-/**
- * How many offscreen surfaces to keep alive.
- *
- * Sample surfaces are keyed by source dimensions, so a project mixing many
- * resolutions would otherwise accumulate one full-size canvas per distinct
- * size and never let go: twenty 4K sources is roughly 660MB of backing store
- * held for the session. A transition needs two at once and the backdrop a
- * third, so the ceiling only has to be comfortably above that.
- */
+/** Bounded: surfaces are keyed by source size, so a mixed-resolution project would keep one full-size canvas each. */
 const SCRATCH_LIMIT = 8;
 
-/**
- * A reusable offscreen surface. Layers that need pixel processing or text
- * rasterisation are drawn here first; allocating a canvas per frame would
- * thrash the GC and stall playback.
- */
+/** Reused deliberately: allocating a canvas per frame thrashes the GC and stalls playback. */
 const getScratch = (key: string, width: number, height: number) => {
   let entry = scratch.get(key);
   const targetWidth = Math.max(1, width);
@@ -167,8 +129,6 @@ const getScratch = (key: string, width: number, height: number) => {
     entry = { canvas, context };
     scratch.set(key, entry);
 
-    // Drop the least recently used surfaces, and release their backing store
-    // rather than waiting for the collector to notice a detached canvas.
     while (scratch.size > SCRATCH_LIMIT) {
       const oldest = scratch.keys().next().value;
       if (oldest === undefined || oldest === key) break;
@@ -196,15 +156,6 @@ const getScratch = (key: string, width: number, height: number) => {
   return entry;
 };
 
-/**
- * An existing surface with its pixels left alone, or null if it is gone or the
- * wrong size.
- *
- * `getScratch` clears on the way out, which is right for a caller about to
- * redraw and useless to one that wants to reuse what is already there. Reading
- * through here still counts as a use, so keeping a surface does not make it
- * the next thing evicted.
- */
 const peekScratch = (key: string, width: number, height: number) => {
   const entry = scratch.get(key);
   if (!entry) return null;
@@ -214,20 +165,9 @@ const peekScratch = (key: string, width: number, height: number) => {
   return entry;
 };
 
-/**
- * Frees the surfaces an export allocated, leaving the preview's alone.
- *
- * Export surfaces are sized to the *output*, not the window: a 4K bounce
- * leaves up to `SCRATCH_LIMIT` full-frame canvases — the text raster alone is
- * 3840×2160 — held by a module-level map for the rest of the session, for a
- * render pass that has finished. The preview's own surfaces are keyed
- * separately and are still in use, so they are deliberately untouched.
- */
 export const releaseExportSurfaces = () => {
   for (const [key, entry] of scratch) {
     if (!key.startsWith('export:')) continue;
-    // Zero the backing store rather than waiting for the collector to notice
-    // a detached canvas, as the eviction path does.
     entry.canvas.width = 0;
     entry.canvas.height = 0;
     scratch.delete(key);
@@ -235,15 +175,6 @@ export const releaseExportSurfaces = () => {
   }
 };
 
-/* ------------------------------------------------------------------ *
- * Layer drawing
- * ------------------------------------------------------------------ */
-
-/**
- * Draws one layer. False means a frame that should have been on screen wasn't
- * available — distinct from one that is deliberately invisible, where there is
- * nothing to wait for and nothing to retry.
- */
 const drawLayer = async (
   context: Context2D,
   clip: Clip,
@@ -257,20 +188,7 @@ const drawLayer = async (
   if (alpha <= 0.001) return true;
 
   if (isTextClip(clip)) {
-    /*
-     * Keyed per clip, not per target.
-     *
-     * The surface and the signature that guards it share this key, so one key
-     * for every text clip meant two captions on screen invalidated each other
-     * on every frame: A rasterises and stores its signature, B finds A's and
-     * rasterises over it, then A finds B's — a cache that could never hit
-     * while more than one title was visible, re-laying out every line of both
-     * at full project size sixty times a second.
-     *
-     * Still `export:`-prefixed, so `releaseExportSurfaces` still reclaims
-     * these, and still under the same LRU cap, which is what keeps a timeline
-     * full of titles from holding a full-frame canvas for each one.
-     */
+    // Keyed per clip: one key for all text clips made two captions invalidate each other every frame.
     const rendered = renderTextToScratch(clip, project, timeUs, `${options.target}:raster:${clip.id}`);
     if (!rendered) return false;
     compose(context, rendered.canvas, clip, project, timeUs, options, override, alpha, project.width, project.height);
@@ -303,21 +221,11 @@ const resolveVideoSource = async (clip: MediaClip, timeUs: number, options: Rend
   const sourceWidth = sample.displayWidth;
   const sourceHeight = sample.displayHeight;
 
-  // Blit through a scratch surface so mediabunny applies rotation and pixel
-  // aspect ratio for us, and so the GPU pass has a plain texture source.
-  //
-  // The key carries the dimensions because a transition draws two clips per
-  // frame: sharing one surface between a 1080p and a 720p layer would resize —
-  // and so reallocate and clear — it twice on every single frame of the blend,
-  // which is exactly when there is no headroom to spare.
   const surface = getScratch(`${options.target}:sample:${sourceWidth}x${sourceHeight}`, sourceWidth, sourceHeight);
   if (!surface) return null;
   try {
     sample.draw(surface.context as CanvasRenderingContext2D, 0, 0, sourceWidth, sourceHeight);
   } catch (error) {
-    // A sample invalidated by a concurrent seek is normal and the next frame
-    // recovers. A *closed* one never recovers, and silently dropping the layer
-    // leaves a preview that is empty for no visible reason — so say it once.
     reportOnce('video frame', error);
     return null;
   }
@@ -343,10 +251,6 @@ const drawMediaLayer = async (
   return true;
 };
 
-/**
- * Runs the pixel pipeline (when needed) and draws the result with the clip's
- * crop and transform.
- */
 const compose = (
   context: Context2D,
   source: CanvasImageSource,
@@ -389,14 +293,6 @@ const compose = (
   const sw = Math.max(1, sourceWidth * (1 - clamp(crop.left + crop.right, 0, 0.99)));
   const sh = Math.max(1, sourceHeight * (1 - clamp(crop.top + crop.bottom, 0, 0.99)));
 
-  // A transition's blur rides on top of the grade's own. Two `blur()` functions
-  // in one filter chain compose, so it is appended rather than merged — and it
-  // is scaled with output height like every other blur, so a whip pan smears
-  // by the same amount at 720p and 4K.
-  // The epsilon is not cosmetic: a transition's blur curve lands on values
-  // like 7e-17 at its endpoints, which are invisible but truthy, and a
-  // `blur(0.00px)` in the filter chain still pushes the canvas onto its
-  // filtered draw path for the frame.
   if (override?.blur && override.blur > 0.01) {
     const radius = (override.blur * blurScale).toFixed(2);
     filter = filter === 'none' ? `blur(${radius}px)` : `${filter} blur(${radius}px)`;
@@ -433,25 +329,8 @@ const applyTransform = (context: Context2D, transform: Transform, project: Proje
   context.scale(transform.scale * flipX * extraScale, transform.scale * flipY * extraScale);
 };
 
-/* ------------------------------------------------------------------ *
- * Background
- * ------------------------------------------------------------------ */
-
-/**
- * Blur radius, in pixels, that the reduced backdrop surface is sized around.
- *
- * A 48px blur across a full 1080p frame is tens of milliseconds every frame,
- * which playback cannot afford. Downscaling first buys most of it: blurring by
- * r/k on a surface scaled by k and then scaling back up is the same blur for
- * k² fewer pixels.
- *
- * The reduction is derived from the requested radius rather than fixed, so a
- * heavy blur gets a big saving while a light one is barely reduced at all — a
- * fixed surface would quietly destroy detail the user asked to keep.
- */
 const BACKDROP_TARGET_RADIUS = 4;
 
-/** Below this the blur is doing nothing worth a second surface. */
 const BACKDROP_DIRECT_RADIUS = 2;
 
 const drawBackground = async (context: Context2D, scene: Scene, timeUs: number, options: RenderOptions) => {
@@ -464,9 +343,6 @@ const drawBackground = async (context: Context2D, scene: Scene, timeUs: number, 
   context.globalCompositeOperation = 'source-over';
   context.filter = 'none';
 
-  // Always lay the solid colour down first: it is the base every other kind
-  // sits on, and the only thing standing between a missing asset and a frame
-  // of whatever the canvas happened to hold last.
   context.fillStyle = background.color;
   context.fillRect(0, 0, project.width, project.height);
 
@@ -496,9 +372,6 @@ const buildGradient = (context: Context2D, background: Background, project: Proj
     return gradient;
   }
 
-  // Angle is measured clockwise from straight up, the way every design tool
-  // states it; canvas wants two endpoints, so project the angle onto a line
-  // through the centre long enough to span the frame.
   const radians = ((background.angle - 90) * Math.PI) / 180;
   const reach = (Math.abs(Math.cos(radians)) * project.width + Math.abs(Math.sin(radians)) * project.height) / 2;
   const dx = Math.cos(radians) * reach;
@@ -522,8 +395,6 @@ const resolveBackdropClip = async (scene: Scene, timeUs: number, options: Render
   for (let index = layers.length - 1; index >= 0; index--) {
     const clip = layers[index];
     if (!isMediaClip(clip) || clip.kind === 'audio') continue;
-    // Re-reading the same instant is cheap: the reader already holds this
-    // sample, so this costs a blit rather than a decode.
     return clip.kind === 'image' ? resolveImageSource(clip) : await resolveVideoSource(clip, timeUs, options);
   }
   return null;
@@ -546,8 +417,6 @@ const drawBackdrop = (context: Context2D, resolved: ResolvedSource, background: 
 
   try {
     if (radius < BACKDROP_DIRECT_RADIUS) {
-      // Sharp, or near enough. A reduced surface here would throw away detail
-      // the user explicitly asked to keep by turning the blur down.
       context.filter = radius > 0.1 ? `blur(${radius.toFixed(2)}px)` : 'none';
       paint(context, project.width, project.height);
       context.filter = 'none';
@@ -578,12 +447,6 @@ const drawBackdrop = (context: Context2D, resolved: ResolvedSource, background: 
   }
 };
 
-/**
- * The base rectangle a layer is drawn into, per its fit mode.
- *
- * Shared with the preview overlay, so the selection frame and the handles land
- * on the pixels that were actually drawn.
- */
 export const fitRect = (fit: MediaFit, sourceWidth: number, sourceHeight: number, boxWidth: number, boxHeight: number) => {
   if (fit === 'stretch') return { width: boxWidth, height: boxHeight };
   return fit === 'cover' ? coverRect(sourceWidth, sourceHeight, boxWidth, boxHeight) : containRect(sourceWidth, sourceHeight, boxWidth, boxHeight);
@@ -602,10 +465,6 @@ export const containRect = (sourceWidth: number, sourceHeight: number, boxWidth:
   const scale = Math.min(boxWidth / sourceWidth, boxHeight / sourceHeight);
   return { width: sourceWidth * scale, height: sourceHeight * scale };
 };
-
-/* ------------------------------------------------------------------ *
- * Text
- * ------------------------------------------------------------------ */
 
 /** Reveal fraction and entrance offset for the clip's text animation. */
 const textAnimationAt = (clip: TextClip, timeUs: number) => {
@@ -628,16 +487,6 @@ const textAnimationAt = (clip: TextClip, timeUs: number) => {
   }
 };
 
-/**
- * What the last raster on a given surface was drawn from.
- *
- * Text is rasterised at full project size, so a 4K title costs a clear and a
- * layout of every line on every frame — even parked on a static caption where
- * the result is identical. The signature below covers every input that reaches
- * a pixel, so a frame that would redraw the same thing reuses the surface
- * instead. An animated title changes its signature each frame and pays the
- * same cost as before, which is correct: its pixels really do differ.
- */
 const textSignatures = new Map<string, string>();
 
 const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: number, key: string) => {
@@ -657,11 +506,6 @@ const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: n
   const centreY = project.height / 2 + (clip.y + animation.offsetY) * project.height;
   const blockHeight = lines.length * lineHeight;
 
-  /*
-   * Everything a pixel depends on, and nothing that doesn't. The resolved
-   * values are used rather than the raw clip fields, so the entrance
-   * animation lands in here already evaluated for this instant.
-   */
   const signature = [
     lines.join('\0'),
     font,
@@ -695,23 +539,6 @@ const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: n
 
   context.globalAlpha = animation.alpha;
 
-  /*
-   * The block stays where the clip is. Only the lines move inside it.
-   *
-   * `fillText` positions a line relative to the x it is handed, according to
-   * `textAlign` — so drawing every alignment at the clip's own centre made the
-   * alignment *move the caption*: left-aligned text began at the centre and ran
-   * right, right-aligned ended there and ran left, and a single-line title (the
-   * ordinary case) simply jumped half its width sideways with nothing about its
-   * ragged edge to show for it.
-   *
-   * Measuring the widest line gives the block its own extent, so the anchor can
-   * be the block's left edge, its right edge or its centre while the block
-   * itself stays centred on the clip in all three. Alignment then means what it
-   * means in a text editor: which side the ragged edge is on. It also puts the
-   * drawn text back where the transform overlay draws its selection box, which
-   * is centred on the clip and was never told about any of this.
-   */
   const widest = Math.max(...lines.map(line => context.measureText(line).width));
   const blockLeft = centreX - widest / 2;
   const anchorX = clip.align === 'left' ? blockLeft : clip.align === 'right' ? blockLeft + widest : centreX;

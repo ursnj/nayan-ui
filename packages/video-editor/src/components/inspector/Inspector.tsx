@@ -31,36 +31,11 @@ import {
 import type { Clip, ColorPreset, MediaClip, TextAlign, TextAnimation, TextClip, TransitionKind } from '../../types';
 import { ColorField, EmptyState, FieldRow, Section, SegmentedControl, SelectField, SliderField, TextField, ToggleChip } from '../controls';
 
-/**
- * Speed runs from half to five times, in half steps.
- *
- * The step is what makes the slider usable without presets beside it: every
- * stop is a speed someone would ask for by name, and there is no way to land
- * on 1.03× while aiming for normal.
- */
 const SPEED_MIN = 0.5;
 const SPEED_MAX = 6;
 const SPEED_STEP = 0.5;
 
-/**
- * The type shelf: families the machine already has, never a web font.
- *
- * Canvas draws with whatever is installed at that instant and falls back
- * silently when a family is missing, so a downloaded font that hadn't arrived
- * yet would export in a different typeface than the one on screen — with
- * nothing to say so. Everything here is present on a stock Windows or macOS
- * install, and each stack names the Windows face, the macOS face and a
- * metric-compatible Linux substitute before giving up to a generic, so a
- * missing font degrades to something of the same shape rather than to Arial.
- *
- * Multi-word names are quoted because `context.font` takes a CSS font
- * shorthand: an unquoted `Trebuchet MS` makes the whole declaration invalid,
- * and canvas responds by keeping the previous font instead of raising.
- *
- * The first five values are kept byte-for-byte as they shipped. They are
- * stored on every text clip ever made, and rewriting them would leave the
- * picker blank on projects that already use them.
- */
+// Locally installed families only: canvas falls back silently, so a web font would export as another typeface.
 const FONTS = [
   // Sans
   { value: 'Inter, system-ui, sans-serif', label: 'Inter' },
@@ -162,19 +137,11 @@ const BasicsSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   const maxFadeMs = Math.min(3000, clip.durationUs / 1000);
   const media = isMediaClip(clip) && clip.kind !== 'image' ? clip : null;
 
-  /*
-   * Snapped to the nearest half step before it is stored: a slider is free to
-   * hand back 2.0000000000000004, and that reaches the clip badge on the
-   * timeline, the readout above and every project file saved afterwards.
-   */
   const setSpeed = (next: number) => {
     if (!media) return;
     const speed = Math.min(SPEED_MAX, Math.max(SPEED_MIN, Math.round(next / SPEED_STEP) * SPEED_STEP));
     patch({
       speed,
-      // Hold the same source range: faster playback, shorter clip. Reading the
-      // old pair is safe mid-drag even if a render is skipped, because their
-      // product — the source range — is what this preserves.
       durationUs: Math.max(100_000, Math.round((media.durationUs * media.speed) / speed))
     } as Partial<Clip>);
   };
@@ -213,9 +180,6 @@ const BasicsSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
 
       {media && (
         <>
-          {/* Speed reads like Opacity and the fades above it: one label, one
-              readout, one track. Half steps the whole way, so the values worth
-              naming — half, double, five times — all land on a stop. */}
           <SliderField
             label="Speed"
             value={media.speed}
@@ -289,15 +253,6 @@ const TransformSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   );
 };
 
-/**
- * The look shelf.
- *
- * Applying a preset overwrites the grade outright and records which look it
- * was, so the strength slider below can keep re-deriving it. Any hand edit in
- * the Colour section clears that record, because the grade is no longer the
- * preset and pretending otherwise would let the strength slider silently
- * discard the user's work.
- */
 const FilterSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   const active = clip.filter;
 
@@ -306,9 +261,6 @@ const FilterSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
       patch({ colorAdjust: { ...DEFAULT_COLOR }, filter: null } as Partial<Clip>);
       return;
     }
-    // Always full strength on pick, the way a filter shelf behaves everywhere
-    // else: the tile chooses the look, the slider below adjusts it. Carrying a
-    // previous strength over would make re-picking a look at 0% do nothing.
     patch({ colorAdjust: { ...preset.color }, filter: { name: preset.name, intensity: 1 } } as Partial<Clip>);
   };
 
@@ -366,7 +318,6 @@ const FilterSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   );
 };
 
-/** -100..100 sliders that read as a direction rather than a percentage. */
 const signed = (value: number) => (value === 0 ? 'Off' : value > 0 ? `+${value}` : String(value));
 
 const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {

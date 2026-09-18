@@ -8,13 +8,6 @@ import { usePathname } from 'next/navigation';
 import { CONTAINER } from '@/design/system';
 import { useTheme } from '@/helpers/ThemeProvider';
 
-/**
- * The primary navigation, in one place.
- *
- * `/react` and `/react-native` point at their installation pages because that
- * is where a first visit should land; `isActive` still matches the whole
- * subtree, so every component page keeps the section lit.
- */
 const NAV = [
   { label: 'Home', href: '/', match: '/' },
   { label: 'React', href: '/react/installation', match: '/react' },
@@ -24,11 +17,6 @@ const NAV = [
   { label: 'Devtools', href: '/devtools', match: '/devtools' }
 ];
 
-/**
- * `/react-native` starts with `/react`, so a plain `startsWith` lights both.
- * Matching on the segment boundary is what keeps React Native from making the
- * React tab look active too.
- */
 const isActive = (pathname: string, match: string) => {
   if (match === '/') return pathname === '/';
   return pathname === match || pathname.startsWith(`${match}/`);
@@ -55,24 +43,9 @@ const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
   </ul>
 );
 
-/**
- * The site header.
- *
- * The gradient hairline along the bottom edge is gone, as is the gradient on
- * the wordmark. Both were competing with whatever the page itself was trying
- * to lead with, and the header is chrome — it should be the least interesting
- * thing on screen.
- *
- * The mobile sheet no longer carries a copy of the entire React component
- * list. That list is the sidebar's job, it was only ever the React one
- * regardless of which section you were in, and it made the menu a
- * fifty-item scroll to reach "Devtools".
- */
 const Header = () => {
   const pathname = usePathname();
   const [menu, setMenu] = useState(false);
-  /* Read from `ThemeProvider` rather than from localStorage directly, so the
-     toggle reaches `NTheme` and the rest of the page — see the note there. */
   const { theme, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -103,9 +76,6 @@ const Header = () => {
           </div>
 
           <div className="flex items-center gap-1">
-            {/* The npm profile rather than a single package, since there are
-                four of them. `Package` is the icon the footer already uses for
-                npm links — lucide has no npm mark of its own. */}
             <Link
               href="https://www.npmjs.com/~ursnj"
               target="_blank"
@@ -130,7 +100,6 @@ const Header = () => {
               title="Switch theme"
               aria-label="Switch theme"
               className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground">
-              {/* Sized identically before mount, so the row does not shift once the stored theme is known. */}
               {!mounted ? (
                 <span className="block h-[18px] w-[18px]" />
               ) : theme === THEMES.DARK ? (

@@ -18,17 +18,6 @@ interface ContextMenuProps {
   onClose: () => void;
 }
 
-/**
- * Right-click menu for the timeline.
- *
- * Rendered through a portal into `document.body`. It is positioned in viewport
- * coordinates, and `position: fixed` silently becomes relative to an ancestor
- * the moment one of them has a transform, filter or `will-change` — which the
- * timeline does have, on every clip. The portal takes that whole class of
- * problem off the table, along with the panels' `overflow: hidden`.
- *
- * It flips when it would overflow, so it stays usable near the window edges.
- */
 export const ContextMenu = ({ x, y, items, onClose }: ContextMenuProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ left: x, top: y });
@@ -50,13 +39,9 @@ export const ContextMenu = ({ x, y, items, onClose }: ContextMenuProps) => {
     };
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
-      // Claims the key, so the global handler doesn't also clear the
-      // selection the menu was opened on.
       event.preventDefault();
       onClose();
     };
-    // `pointerdown` rather than `click` so the menu closes before the next
-    // interaction lands on whatever is underneath it.
     window.addEventListener('pointerdown', dismiss, true);
     window.addEventListener('keydown', onKey);
     window.addEventListener('blur', onClose);

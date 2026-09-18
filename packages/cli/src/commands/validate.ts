@@ -1,6 +1,3 @@
-/**
- * Validate Commands - Validate existing sitemaps and robots.txt files
- */
 import { Command } from 'commander';
 import { validateRobots } from '../services/robots.js';
 import { validateSitemap } from '../services/sitemaps.js';
