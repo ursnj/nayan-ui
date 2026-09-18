@@ -49,7 +49,7 @@ const NNumberFieldComponent: React.FC<NNumberFieldProps> = memo(
         variant={variant}
         fullWidth={fullWidth}
         formatOptions={formatOptions}
-        className={cn('nyn-number-field', className)}
+        className={cn('nyn-number-field mb-3', className)}
         aria-label={ariaLabel || (!label ? 'Number' : undefined)}>
         {label && <Label>{label}</Label>}
         <NumberField.Group>

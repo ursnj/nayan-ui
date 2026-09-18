@@ -56,7 +56,7 @@ export const NTextarea = memo(
           isDisabled={disabled}
           isReadOnly={isReadOnly}
           isInvalid={!!error}
-          className={cn('nyn-textarea-block', wrapperClassName, className)}>
+          className={cn('nyn-textarea-block mb-3', wrapperClassName, className)}>
           {label && <Label className={cn(labelClassName)}>{label}</Label>}
           <TextArea
             {...textareaProps}

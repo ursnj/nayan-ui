@@ -25,7 +25,7 @@ function NAccordionComponent<T extends AccordionListItem = AccordionListItem>({
   variant = 'default'
 }: NAccordionProps<T>) {
   return (
-    <Accordion allowsMultipleExpanded={type === AccordionTypes.MULTIPLE} variant={variant} className={cn('w-full', className)}>
+    <Accordion allowsMultipleExpanded={type === AccordionTypes.MULTIPLE} variant={variant} className={cn('nyn-accordion w-full', className)}>
       {items.map((item, index) => {
         const key = item.id || `item-${index}`;
         return (
@@ -45,5 +45,7 @@ function NAccordionComponent<T extends AccordionListItem = AccordionListItem>({
     </Accordion>
   );
 }
+
+NAccordionComponent.displayName = 'NAccordion';
 
 export const NAccordion = memo(NAccordionComponent) as typeof NAccordionComponent;

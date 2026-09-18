@@ -1,3 +1,4 @@
+import React, { memo } from 'react';
 import { Highlight, themes } from 'prism-react-renderer';
 import { cn } from '../lib/utils';
 import { THEMES } from './Types';
@@ -11,7 +12,7 @@ export interface NCodeProps {
   className?: string;
 }
 
-export const NCode = ({ code, language = 'tsx', theme = THEMES.LIGHT, copied = false, onCopy, className }: NCodeProps) => {
+const NCodeComponent: React.FC<NCodeProps> = memo(({ code, language = 'tsx', theme = THEMES.LIGHT, copied = false, onCopy, className }) => {
   return (
     <div className={cn('nyn-code relative group', className)}>
       {onCopy && (
@@ -31,7 +32,7 @@ export const NCode = ({ code, language = 'tsx', theme = THEMES.LIGHT, copied = f
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="w-3.5 h-3.5 text-emerald-500">
+              className="w-3.5 h-3.5 text-success">
               <path d="M20 6 9 17l-5-5" />
             </svg>
           ) : (
@@ -70,4 +71,8 @@ export const NCode = ({ code, language = 'tsx', theme = THEMES.LIGHT, copied = f
       </Highlight>
     </div>
   );
-};
+});
+
+NCodeComponent.displayName = 'NCode';
+
+export const NCode = NCodeComponent;
