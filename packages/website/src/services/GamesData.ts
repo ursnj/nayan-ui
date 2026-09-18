@@ -2035,6 +2035,581 @@ export const gamesData: Record<string, GameData> = {
     ageRating: 'Everyone',
     tags: ['puzzle', 'logic', 'pipe', 'spatial', 'brain-teaser', 'relaxing'],
     relatedGames: ['maze-runner', 'colors-sort', 'sudoku', 'nuts-and-bolts']
+  },
+  'sudoku': {
+    id: 'sudoku',
+    name: 'Sudoku',
+    emoji: '🔢',
+    category: 'Puzzle',
+    description: 'Fill the 9x9 grid with numbers 1-9 with no repeats in rows or columns!',
+    longDescription:
+      'Sudoku is the world-famous logic puzzle that has captivated millions. Fill a 9×9 grid so that every row, every column, and every 3×3 box contains the digits 1 through 9 exactly once. Starting from a partially filled grid, use logical deduction — never guessing — to determine each missing number. With multiple difficulty levels from gentle introductions to fiendishly hard expert puzzles, Sudoku provides an endlessly satisfying mental workout that sharpens your logical thinking and concentration.',
+    features: [
+      'Classic 9×9 Sudoku puzzles with unique solutions',
+      'Multiple difficulty levels: easy, medium, hard, and expert',
+      'Clean, readable grid design with pencil-mark notes support',
+      'Hint system to help when you are stuck',
+      'Error highlighting to catch mistakes early',
+      'Undo/redo for exploring different approaches',
+      'Timer and move counter for competitive play',
+      'Offline play — no internet connection required'
+    ],
+    howToPlay: [
+      'Tap an empty cell and select a number from 1 to 9',
+      'Every row must contain each digit 1-9 exactly once',
+      'Every column must contain each digit 1-9 exactly once',
+      'Every 3×3 box must contain each digit 1-9 exactly once',
+      'Use pencil marks to note possible candidates in a cell',
+      'Complete the entire grid to solve the puzzle'
+    ],
+    tips: [
+      'Start with rows, columns, or boxes that have the most filled cells',
+      'Use pencil marks to track candidate numbers in each empty cell',
+      'Look for "naked singles" — cells with only one possible number',
+      'Scan rows and columns to find where a specific number must go',
+      'Practice elimination: if a number appears in a row/column, it cannot repeat',
+      'Never guess — every cell can be solved through pure logic',
+      'Work on easier puzzles first to build up your solving techniques'
+    ],
+    benefits: [
+      'Sharpens logical reasoning and deduction skills',
+      'Improves concentration and sustained attention',
+      'Enhances pattern recognition and number sense',
+      'Provides calming, meditative puzzle-solving experience',
+      'Strengthens working memory and cognitive flexibility',
+      'Perfect brain training for all ages'
+    ],
+    difficulty: 'Easy to Hard',
+    ageRating: 'Everyone',
+    tags: ['puzzle', 'logic', 'numbers', 'brain-teaser', 'classic', 'relaxing'],
+    relatedGames: ['sliding-numbers', 'mine-sweeper', 'find-different-number', 'game-2048']
+  },
+  'arrows': {
+    id: 'arrows',
+    name: 'Arrows',
+    emoji: '➡️',
+    category: 'Puzzle',
+    description: 'Tap arrows to fly them off the board - clear them all before time runs out!',
+    longDescription:
+      'Arrows is a fast-paced directional puzzle game that tests your observation speed and reflexes. A grid of arrows pointing in various directions fills the screen, and your goal is to tap each arrow so that it flies off the board in the direction it points. Clear every arrow before the timer expires to advance to the next level. As you progress, the grids grow larger, arrows appear faster, and time gets tighter, creating an exhilarating blend of visual scanning and quick tapping.',
+    features: [
+      'Directional arrow puzzle with fast-paced tapping mechanics',
+      'Arrows fly off the board in the direction they point when tapped',
+      'Progressively larger grids with more arrows per level',
+      'Timer-based gameplay for urgency and excitement',
+      'Clean, minimalist design with smooth arrow animations',
+      'Score tracking with personal best records',
+      'Multiple difficulty levels for all skill levels',
+      'Offline play — no internet connection required'
+    ],
+    howToPlay: [
+      'Tap arrows on the grid to launch them in their pointing direction',
+      'Clear all arrows from the board before the timer runs out',
+      'Arrows fly off the screen edge they point toward',
+      'Blocked arrows (pointing toward another arrow) cannot be tapped until the path is clear',
+      'Plan your tapping order to avoid getting stuck',
+      'Complete levels quickly for bonus time on the next round'
+    ],
+    tips: [
+      'Start with arrows pointing toward the edges — they can always fly off immediately',
+      'Work from the outside in to clear paths for inner arrows',
+      'Scan the entire grid before tapping to plan an efficient clearing order',
+      'Speed matters — develop quick pattern recognition for arrow directions',
+      'Prioritize unblocking arrows that clear paths for multiple other arrows',
+      'Stay calm under timer pressure for more accurate tapping'
+    ],
+    benefits: [
+      'Improves visual scanning speed and directional awareness',
+      'Enhances quick decision-making under time pressure',
+      'Develops pattern recognition for spatial orientation',
+      'Provides exciting yet mentally stimulating gameplay',
+      'Strengthens planning and sequential thinking',
+      'Great for short, focused brain-training sessions'
+    ],
+    difficulty: 'Medium',
+    ageRating: 'Everyone',
+    tags: ['puzzle', 'reflex', 'arrows', 'fast-paced', 'brain-teaser', 'casual'],
+    relatedGames: ['find-different-number', 'sliding-numbers', 'block-blast', 'knife-hit']
+  },
+  'bluk': {
+    id: 'bluk',
+    name: 'Bluk',
+    emoji: '🟦',
+    category: 'Arcade',
+    description: 'Sling your block from pillar to pillar - a skill-based physics jumping adventure!',
+    longDescription:
+      'Bluk is a skill-based physics arcade game where you control a small block that must jump from pillar to pillar. Pull back to aim and release to launch your block in the chosen direction with the right amount of force. Land on the next pillar to survive — miss and you fall into the void. The pillars vary in size, distance, and height, demanding precise aim and power control. With its minimalist art style and deeply satisfying physics, Bluk delivers a pure skill challenge that keeps you coming back for one more try.',
+    features: [
+      'Slingshot physics — pull back and release to launch your block',
+      'Procedurally placed pillars with varying size, distance, and height',
+      'Skill-based gameplay with no randomness in controls',
+      'Minimalist visual design with clean, crisp aesthetics',
+      'High score tracking — how many pillars can you reach?',
+      'Satisfying landing feedback with visual and haptic cues',
+      'Increasingly challenging pillar configurations as you progress',
+      'Offline play — no internet connection required'
+    ],
+    howToPlay: [
+      'Touch and drag backward from your block to aim — the line shows direction',
+      'The further you pull back, the more force applied to the jump',
+      'Release to launch the block toward the next pillar',
+      'Land on the pillar to score a point and continue',
+      'Missing the pillar ends the game — precision is key',
+      'Survive as many jumps as possible for a high score'
+    ],
+    tips: [
+      'Focus on both angle and power — both must be correct to land safely',
+      'Practice small adjustments to fine-tune your aim',
+      'Watch for pillars at different heights — adjust your arc accordingly',
+      'Stay calm and take your time with each shot — there is no timer',
+      'Develop a feel for the physics — consistent pull-back distance helps',
+      'Aim for the center of pillars for maximum landing margin'
+    ],
+    benefits: [
+      'Develops precision aiming and fine motor control',
+      'Improves physics intuition through slingshot mechanics',
+      'Enhances focus and patience — every shot demands care',
+      'Provides a satisfying, pure-skill arcade challenge',
+      'Strengthens hand-eye coordination through trajectory planning',
+      'Great for short competitive sessions with friends'
+    ],
+    difficulty: 'Hard',
+    ageRating: 'Everyone',
+    tags: ['arcade', 'physics', 'skill', 'jumping', 'minimalist', 'challenging'],
+    relatedGames: ['stack-tower', 'flappy-bird', 'color-switch', 'perfect-circle']
+  },
+  'chameleon-run': {
+    id: 'chameleon-run',
+    name: 'Chameleon Run',
+    emoji: '🦎',
+    category: 'Arcade',
+    description: 'Dash across colorful platforms - match your color and leap over gaps in this fast runner!',
+    longDescription:
+      'Chameleon Run is a fast-paced auto-runner with a color-matching twist. Your character dashes forward automatically across a series of colored platforms, and you must switch your color to match the platform beneath you while timing jumps to clear gaps. One wrong color or a mistimed jump means instant failure. The combination of split-second color decisions and precise platforming creates an intense, adrenaline-fuelled experience that rewards practice and quick reflexes.',
+    features: [
+      'Auto-runner with color-matching mechanic — match your color to the platform',
+      'Two-button controls: jump and switch color',
+      'Fast-paced levels with tight platforming challenges',
+      'Vibrant, colorful visuals with smooth character animation',
+      'Progressively harder levels with more color switches and tighter gaps',
+      'Checkpoint system for longer levels',
+      'Score tracking based on distance and collectibles',
+      'Offline play — no internet connection required'
+    ],
+    howToPlay: [
+      'Your character runs forward automatically — focus on jumping and color',
+      'Tap the jump button to leap over gaps between platforms',
+      'Tap the color button to switch your character between two colors',
+      'You must be the same color as the platform you land on',
+      'Landing on a mismatched color ends the run immediately',
+      'Collect items along the way for bonus points',
+      'React quickly — platforms alternate colors rapidly in later levels'
+    ],
+    tips: [
+      'Look ahead — anticipate upcoming platform colors before you reach them',
+      'Switch color mid-air to land on a differently colored platform',
+      'Practice the timing between jump and color switch for smooth gameplay',
+      'Focus on survival first, collectibles second',
+      'Learn level layouts through repetition — muscle memory is key',
+      'Stay calm during fast sequences — panicking leads to wrong inputs'
+    ],
+    benefits: [
+      'Improves reaction time and split-second decision-making',
+      'Enhances multitasking — managing jump timing and color simultaneously',
+      'Develops pattern recognition through level memorization',
+      'Provides high-energy, exciting gameplay with great replayability',
+      'Strengthens hand-eye coordination and dexterity',
+      'Great for competitive speed-running challenges'
+    ],
+    difficulty: 'Hard',
+    ageRating: 'Everyone',
+    tags: ['arcade', 'runner', 'color', 'platformer', 'reflex', 'fast-paced'],
+    relatedGames: ['crossy-road', 'color-switch', 'flappy-bird', 'dino-jump']
+  },
+  'crossy-road': {
+    id: 'crossy-road',
+    name: 'Crossy Road',
+    emoji: '🐔',
+    category: 'Arcade',
+    description: 'Hop across busy roads, rivers and railways - how far can you go without getting squished?',
+    longDescription:
+      'Crossy Road is the beloved endless hopper where you guide a cute character across an ever-scrolling landscape of busy roads, flowing rivers, and rumbling railway tracks. Tap to hop forward, swipe to move sideways, and time your movements to avoid speeding cars, trucks, trains, and rushing water. The voxel art style, charming characters, and the constant tension of "just one more hop" make Crossy Road an irresistibly fun arcade experience for players of all ages.',
+    features: [
+      'Endless hopping gameplay across procedurally generated terrain',
+      'Multiple terrain types: roads, rivers, railways, grass, and more',
+      'Charming voxel art style with colorful environments',
+      'Variety of traffic patterns — cars, trucks, trains at different speeds',
+      'River crossings on moving logs and lily pads',
+      'High score tracking with personal best records',
+      'Simple tap-and-swipe controls for intuitive movement',
+      'Offline play — no internet connection required'
+    ],
+    howToPlay: [
+      'Tap to hop forward one square',
+      'Swipe left or right to move sideways',
+      'Avoid getting hit by cars, trucks, or trains on roads and railways',
+      'Cross rivers by hopping on moving logs and lily pads',
+      "Don't stay still too long — the screen scrolls and pushes you forward",
+      'Survive as many crossings as possible for a high score',
+      'Watch traffic patterns and time your hops carefully'
+    ],
+    tips: [
+      'Look ahead several rows to plan your path through traffic',
+      'Use sideways movement to position yourself for safer crossings',
+      'Wait for gaps in traffic rather than rushing through',
+      'On rivers, hop quickly between logs before they move off screen',
+      'Keep moving forward — lingering too long on one row is dangerous',
+      'Learn common traffic patterns for roads with multiple lanes',
+      'Stay near the center of the road for maximum flexibility'
+    ],
+    benefits: [
+      'Improves timing and spatial awareness',
+      'Enhances quick decision-making under pressure',
+      'Develops patience through traffic pattern observation',
+      'Provides charming, family-friendly arcade fun',
+      'Strengthens reflexes and directional movement coordination',
+      'Great for all ages — simple to pick up, endlessly replayable'
+    ],
+    difficulty: 'Medium',
+    ageRating: 'Everyone',
+    tags: ['arcade', 'hopper', 'endless', 'voxel', 'casual', 'fun', 'reflex'],
+    relatedGames: ['chameleon-run', 'dino-jump', 'flappy-bird', 'car-racing']
+  },
+  'mob-control': {
+    id: 'mob-control',
+    name: 'Mob Control',
+    emoji: '👥',
+    category: 'Strategy',
+    description: 'Command your mob through multiplier gates and overwhelm the enemy base to win!',
+    longDescription:
+      'Mob Control is a strategic crowd-battling game where you launch groups of stick figures toward the enemy base. Aim your cannon to send your troops through multiplier gates that double, triple, or even 5× their numbers. The more troops that reach the enemy base, the faster you capture it. But choose your paths wisely — some routes have reducer gates or enemy defenses. Balancing aim, timing, and gate selection creates a deeply strategic experience wrapped in satisfying, crowd-swarming chaos.',
+    features: [
+      'Cannon-based troop launching with aim and trajectory control',
+      'Multiplier gates that grow your army exponentially',
+      'Enemy bases to overwhelm with sheer numbers',
+      'Strategic path selection — maximize multipliers, avoid reducers',
+      'Progressively challenging levels with new gate types and defenses',
+      'Satisfying crowd physics with dozens of units on screen',
+      'Score tracking based on efficiency and speed',
+      'Offline play — no internet connection required'
+    ],
+    howToPlay: [
+      'Aim your cannon by dragging to set the launch direction',
+      'Release to fire a group of troops toward the battlefield',
+      'Guide troops through multiplier gates to grow your numbers',
+      'Avoid reducer gates and enemy obstacles that shrink your army',
+      'Overwhelm the enemy base with enough troops to capture it',
+      'Use strategic aiming to hit the best combination of gates',
+      'Complete levels with maximum efficiency for bonus stars'
+    ],
+    tips: [
+      'Always aim for the highest multiplier gates first to maximize troop count',
+      'Chain multiple multiplier gates for exponential growth',
+      'Avoid reducer gates even if they seem on a shorter path',
+      'Spread your launches across different paths for varied attack angles',
+      'Watch for moving gates and time your shots to hit them at the right moment',
+      'Save your best shots for when multiplier gates align favorably'
+    ],
+    benefits: [
+      'Develops strategic thinking through path optimization',
+      'Improves aim and trajectory planning skills',
+      'Enhances mathematical intuition through multiplication chains',
+      'Provides satisfying crowd-control gameplay with visual impact',
+      'Strengthens decision-making under pressure',
+      'Great casual strategy game for all skill levels'
+    ],
+    difficulty: 'Medium',
+    ageRating: 'Everyone',
+    tags: ['strategy', 'crowd', 'multiplier', 'aim', 'casual', 'satisfying'],
+    relatedGames: ['tank-1990', 'space-fighter', 'balloon-blaster', 'dots-and-boxes']
+  },
+  'paper-io': {
+    id: 'paper-io',
+    name: 'Paper IO',
+    emoji: '📄',
+    category: 'Strategy',
+    description: 'Claim territory, outmaneuver rivals and conquer the board in this classic io battle!',
+    longDescription:
+      'Paper IO is a territory-conquest game where you control a colored square on a shared board. Venture outside your territory to claim new land — but be careful, because your trail is vulnerable while you are outside your zone. If an opponent crosses your trail before you close the loop, you are eliminated. Strategically expand your territory, cut off opponents, and conquer the largest possible area. With its simple controls but deep strategic possibilities, Paper IO delivers intense, competitive gameplay.',
+    features: [
+      'Territory conquest gameplay on a shared grid board',
+      'Draw loops outside your zone to claim new territory',
+      'Vulnerable trail mechanic — opponents can eliminate you mid-expansion',
+      'AI opponents with varying aggression and strategy levels',
+      'Percentage-based territory tracking to show your dominance',
+      'Multiple board sizes for different pacing and strategy',
+      'Colorful visual design with smooth trail-drawing animation',
+      'Offline play — no internet connection required'
+    ],
+    howToPlay: [
+      'Swipe or tilt to move your square across the board',
+      'Leave your territory to start drawing a trail on unclaimed or enemy land',
+      'Return to your territory to close the loop and claim the enclosed area',
+      'If an opponent crosses your trail before you return, you are eliminated',
+      'Eliminate opponents by crossing their exposed trails',
+      'Conquer the largest territory percentage to win',
+      'Be aggressive but cautious — overextending is risky'
+    ],
+    tips: [
+      'Make small, safe expansions rather than risky large loops',
+      'Stay close to your territory edge so you can return quickly',
+      'Attack opponents when they are far from their territory with a long trail',
+      'Watch your back — opponents may try to cut off your trail from behind',
+      'Claim corners and edges first — they are easier to defend',
+      'Avoid venturing into the center early — it is the most contested zone'
+    ],
+    benefits: [
+      'Develops strategic thinking and risk assessment',
+      'Improves spatial awareness and territorial planning',
+      'Enhances competitive decision-making under pressure',
+      'Provides exciting multiplayer-style gameplay against AI',
+      'Strengthens prediction skills — anticipating opponent movements',
+      'Great for competitive, high-replay-value gaming sessions'
+    ],
+    difficulty: 'Medium',
+    ageRating: 'Everyone',
+    tags: ['strategy', 'territory', 'io-game', 'competitive', 'multiplayer', 'casual'],
+    relatedGames: ['snake-3d', 'crossy-road', 'mob-control', 'checkers']
+  },
+  'tangram': {
+    id: 'tangram',
+    name: 'Tangram',
+    emoji: '🔷',
+    category: 'Puzzle',
+    description: 'Arrange the seven classic tans to perfectly fill the target shape - a timeless dissection puzzle!',
+    longDescription:
+      'Tangram is the ancient Chinese dissection puzzle brought to your screen with modern polish. You are given seven flat geometric pieces — the tans — consisting of five triangles, one square, and one parallelogram. Your goal is to arrange all seven pieces to perfectly fill a target silhouette without any overlap or gaps. With hundreds of shapes ranging from simple animals to abstract patterns, Tangram provides a meditative yet challenging spatial puzzle experience that has delighted minds for centuries.',
+    features: [
+      'Classic seven-piece tangram with authentic geometric tans',
+      'Hundreds of target shapes: animals, objects, letters, abstract patterns',
+      'Drag, rotate, and flip pieces to fit the silhouette exactly',
+      'Progressive difficulty from beginner to master-level shapes',
+      'Clean, elegant visual design with smooth piece manipulation',
+      'Hint system to help with particularly tricky shapes',
+      'No timer — solve at your own relaxing pace',
+      'Offline play — no internet connection required'
+    ],
+    howToPlay: [
+      'Drag tangram pieces from the tray onto the target silhouette',
+      'Rotate pieces by tapping or using a rotation gesture',
+      'Flip the parallelogram piece when needed (it is the only asymmetric piece)',
+      'All seven pieces must be used — no piece left unused',
+      'Pieces cannot overlap each other',
+      'Fill the entire silhouette perfectly with no gaps',
+      'Complete the shape to advance to the next puzzle'
+    ],
+    tips: [
+      'Start with the largest pieces (the two big triangles) to establish the shape outline',
+      'Identify right angles and straight edges in the silhouette to guide placement',
+      'The parallelogram is often the trickiest — remember it can be flipped',
+      'Work from the corners inward for geometric shapes',
+      'If stuck, try removing all pieces and starting fresh with a different approach',
+      'Look for familiar sub-shapes (squares, rectangles) within the silhouette'
+    ],
+    benefits: [
+      'Develops spatial reasoning and geometric understanding',
+      'Improves visual-spatial intelligence and mental rotation skills',
+      'Enhances creative thinking through multiple solution approaches',
+      'Provides calming, meditative puzzle-solving experience',
+      'Strengthens problem-solving through trial and spatial deduction',
+      'Great for all ages — a timeless educational tool'
+    ],
+    difficulty: 'Easy to Hard',
+    ageRating: 'Everyone',
+    tags: ['puzzle', 'geometry', 'spatial', 'classic', 'relaxing', 'brain-teaser'],
+    relatedGames: ['sliding-numbers', 'sudoku', 'block-blast', 'nuts-and-bolts']
+  },
+  'checkers': {
+    id: 'checkers',
+    name: 'Checkers',
+    emoji: '♟️',
+    category: 'Strategy',
+    description: 'Outsmart the robot in the classic game of Checkers - capture all its pieces to win!',
+    longDescription:
+      'Checkers (also known as Draughts) is the classic board game of tactical piece movement and capturing. Play on an 8×8 board, moving your pieces diagonally forward and jumping over opponent pieces to capture them. Reach the opposite end of the board to crown a piece as a king, which can move and capture in both directions. With a smart AI opponent offering multiple difficulty levels, Checkers provides an engaging strategic challenge that has been a staple of gaming for hundreds of years.',
+    features: [
+      'Classic 8×8 checkers board with authentic rules',
+      'Smart AI opponent with multiple difficulty levels',
+      'King promotion when pieces reach the opposite end',
+      'Mandatory capture rules for authentic gameplay',
+      'Multi-jump chain captures for satisfying combos',
+      'Move highlighting showing legal moves for selected pieces',
+      'Win/loss statistics and game history tracking',
+      'Offline play — no internet connection required'
+    ],
+    howToPlay: [
+      'Tap a piece to select it, then tap a highlighted square to move diagonally forward',
+      'Jump over opponent pieces diagonally to capture them — the captured piece is removed',
+      'If a jump is available, you must take it (mandatory capture rule)',
+      'Chain multiple jumps in a single turn when consecutive captures are possible',
+      'Reach the opponent end of the board to promote your piece to a king',
+      'Kings can move and capture both forward and backward diagonally',
+      'Capture all opponent pieces or block all their moves to win'
+    ],
+    tips: [
+      'Control the center of the board for maximum mobility and options',
+      'Keep pieces on the back row as long as possible to prevent opponent king promotions',
+      'Look for chain-jump opportunities — multi-capture turns are devastating',
+      'Trade pieces when you have a numerical advantage to simplify the board',
+      'Kings are powerful — prioritize promoting your pieces and preventing opponent promotions',
+      'Set up traps by offering a piece that leads to a double or triple jump for you'
+    ],
+    benefits: [
+      'Develops strategic thinking and forward planning',
+      'Improves logical reasoning and tactical analysis',
+      'Enhances pattern recognition for board positions',
+      'Provides classic, time-tested mental exercise',
+      'Teaches concepts of sacrifice, positioning, and tempo',
+      'Great for all ages — easy to learn with deep strategic depth'
+    ],
+    difficulty: 'Medium',
+    ageRating: 'Everyone',
+    tags: ['strategy', 'board-game', 'classic', 'turn-based', 'logic', 'brain-teaser'],
+    relatedGames: ['tic-tac-toe', 'dots-and-boxes', 'reversi', 'ludo-king']
+  },
+  'memory-match': {
+    id: 'memory-match',
+    name: 'Memory Match',
+    emoji: '🃏',
+    category: 'Puzzle',
+    description: 'Flip the cards two at a time and match every pair before the clock runs out!',
+    longDescription:
+      'Memory Match is the classic card-matching game that tests and improves your short-term memory. A grid of face-down cards hides matching pairs of colorful icons. Flip two cards per turn — if they match, they stay face up; if not, they flip back. Remember the positions of previously revealed cards to find all pairs as efficiently as possible. With timed challenges, increasing grid sizes, and beautiful card designs, Memory Match provides a brain-boosting experience that is both fun and beneficial for cognitive health.',
+    features: [
+      'Classic card-matching memory game with tap-to-flip mechanics',
+      'Multiple grid sizes from 3×4 (easy) to 6×6 (challenging)',
+      'Beautiful, distinctive card icons for clear visual identification',
+      'Timer-based gameplay with countdown challenge',
+      'Move counter tracking your efficiency',
+      'Smooth card flip animations with satisfying match effects',
+      'Progressive difficulty with more cards and less time',
+      'Offline play — no internet connection required'
+    ],
+    howToPlay: [
+      'Tap a face-down card to flip it and reveal its icon',
+      'Tap a second card to flip it — if the two icons match, both stay face up',
+      'If the two cards do not match, they flip back face down after a brief moment',
+      'Remember the positions of cards you have seen for future turns',
+      'Find all matching pairs to complete the level',
+      'Complete the board before the timer runs out',
+      'Fewer moves means a better score'
+    ],
+    tips: [
+      'Focus on remembering card positions rather than flipping randomly',
+      'Start by flipping cards in a systematic pattern (row by row or section by section)',
+      'When you see a card, mentally note its position for when its match appears',
+      'Pair new flips with remembered positions for efficient matching',
+      'On larger grids, divide the board into mental zones to manage memory load',
+      'Practice regularly — memory improves with consistent training'
+    ],
+    benefits: [
+      'Significantly improves short-term and working memory',
+      'Enhances concentration and focused attention',
+      'Develops visual recognition and recall abilities',
+      'Provides scientifically-backed cognitive training through gameplay',
+      'Strengthens associative memory and spatial memory',
+      'Great for all ages — especially beneficial for children and older adults'
+    ],
+    difficulty: 'Easy to Medium',
+    ageRating: 'Everyone',
+    tags: ['puzzle', 'memory', 'cards', 'brain-training', 'cognitive', 'casual'],
+    relatedGames: ['find-different-number', 'word-search', 'number-search', 'sudoku']
+  },
+  'falling-sticks': {
+    id: 'falling-sticks',
+    name: 'Falling Sticks',
+    emoji: '🪵',
+    category: 'Arcade',
+    description: 'Colorful sticks rain down from the sky - tap them before they hit the floor!',
+    longDescription:
+      'Falling Sticks is a fast-paced reflex game where colorful sticks rain down from the top of the screen and you must tap each one before it reaches the bottom. As the game progresses, sticks fall faster, come in larger numbers, and require quicker reactions. The game tests your visual tracking, peripheral awareness, and tapping speed in an increasingly frantic arcade challenge. With its vibrant colors, satisfying tap feedback, and escalating difficulty, Falling Sticks is perfect for reflex training.',
+    features: [
+      'Colorful sticks falling from the top of the screen',
+      'Tap-to-clear mechanics with satisfying visual feedback',
+      'Progressively faster falling speed and higher stick density',
+      'Score tracking with combo bonuses for consecutive catches',
+      'Vibrant, colorful visuals with smooth falling animations',
+      'Multiple stick types with different point values',
+      'Lives system — missing too many sticks ends the game',
+      'Offline play — no internet connection required'
+    ],
+    howToPlay: [
+      'Tap falling sticks before they reach the bottom of the screen',
+      'Each stick tapped earns points based on its color and type',
+      'Missing a stick costs a life — lose all lives and the game ends',
+      'Build combos by tapping consecutive sticks without missing',
+      'Sticks fall faster and more frequently as your score increases',
+      'Special sticks may grant bonus points or extra lives',
+      'Survive as long as possible for the highest score'
+    ],
+    tips: [
+      'Keep your eyes on the upper half of the screen to spot sticks early',
+      'Use multiple fingers for faster tapping when sticks come in clusters',
+      'Prioritize sticks closest to the bottom — they are about to be missed',
+      'Stay relaxed — tensing up slows your reaction time',
+      'Focus on maintaining combos for score multiplier bonuses',
+      'Practice tracking multiple falling objects simultaneously'
+    ],
+    benefits: [
+      'Improves reaction time and tapping speed',
+      'Enhances visual tracking of multiple moving objects',
+      'Develops peripheral awareness and broad visual attention',
+      'Provides exciting, high-energy arcade gameplay',
+      'Strengthens hand-eye coordination and dexterity',
+      'Great for quick reflex-training sessions'
+    ],
+    difficulty: 'Medium',
+    ageRating: 'Everyone',
+    tags: ['arcade', 'reflex', 'fast-paced', 'tapping', 'colorful', 'casual'],
+    relatedGames: ['balloon-blaster', 'whack-a-mole', 'fruit-ninja', 'arrows']
+  },
+  'reversi': {
+    id: 'reversi',
+    name: 'Reversi',
+    emoji: '⚫',
+    category: 'Strategy',
+    description: 'Outflank the robot in this classic Othello duel - trap its discs to flip them to your color!',
+    longDescription:
+      'Reversi (also known as Othello) is a classic two-player strategy game played on an 8×8 board with double-sided discs that are black on one side and white on the other. Place your disc to outflank your opponent — any of their discs caught in a straight line between your new disc and another of your existing discs are flipped to your color. The player with the most discs of their color when the board is full (or no more moves are possible) wins. With deep strategic layers involving corner control, edge play, and mobility management, Reversi is a masterclass in tactical board gaming.',
+    features: [
+      'Classic 8×8 Reversi/Othello board with authentic rules',
+      'Smart AI opponent with multiple difficulty levels',
+      'Disc flipping animations with satisfying visual feedback',
+      'Legal move highlighting to show valid placement options',
+      'Real-time disc count tracking for both players',
+      'Game history and win/loss statistics',
+      'Clean, elegant board design with high-contrast discs',
+      'Offline play — no internet connection required'
+    ],
+    howToPlay: [
+      'Place your disc on an empty square that outflanks opponent discs in at least one direction',
+      'Outflanking means your new disc and an existing disc of yours trap a straight line of opponent discs',
+      'All outflanked opponent discs (horizontal, vertical, diagonal) are flipped to your color',
+      'If you cannot make a valid move, your turn is skipped',
+      'The game ends when the board is full or neither player can move',
+      'The player with more discs of their color on the board wins',
+      'Multiple directions can be outflanked in a single move'
+    ],
+    tips: [
+      'Corners are the most valuable squares — once captured, they can never be flipped',
+      'Avoid placing discs on squares adjacent to empty corners (they help your opponent take the corner)',
+      'Control edges — edge discs are harder to flip than center discs',
+      'Maintain mobility — having more available moves gives you strategic advantage',
+      'Sometimes flipping fewer discs is better than flipping many (to maintain mobility)',
+      'Think several moves ahead — Reversi board states change dramatically each turn'
+    ],
+    benefits: [
+      'Develops deep strategic thinking and long-term planning',
+      'Improves analytical reasoning and board evaluation',
+      'Enhances pattern recognition for flanking opportunities',
+      'Provides intellectually stimulating gameplay for all ages',
+      'Teaches concepts of positional strategy and spatial control',
+      'Great for brain training and cognitive development'
+    ],
+    difficulty: 'Medium to Hard',
+    ageRating: 'Everyone',
+    tags: ['strategy', 'board-game', 'classic', 'turn-based', 'logic', 'othello'],
+    relatedGames: ['checkers', 'dots-and-boxes', 'tic-tac-toe', 'ludo-king']
   }
 };
 
