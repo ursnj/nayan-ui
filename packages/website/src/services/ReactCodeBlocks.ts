@@ -450,15 +450,15 @@ const items = [
 ];
 
 const RadioGroupExample = () => {
-  const [selected, setSelected] = useState(items[0].value);
+  const [value, setValue] = useState(items[0].value);
 
   return (
     <div>
       <h1 className="text-foreground mb-3 text-base">Horizontal:</h1>
-      <NRadioGroup items={items} selected={selected} setSelected={setSelected} />
+      <NRadioGroup label="Plan" items={items} value={value} onChange={setValue} />
       <div className="mt-5" />
       <h1 className="text-foreground mb-3 text-base">Vertical:</h1>
-      <NRadioGroup orientation="vertical" items={items} selected={selected} setSelected={setSelected} />
+      <NRadioGroup orientation="vertical" label="Plan" items={items} value={value} onChange={setValue} />
     </div>
   );
 };
@@ -476,18 +476,16 @@ const items = [
 
 const Select = () => {
   const [selected, setSelected] = useState(items[0]);
+
   return (
     <NSelect
-      isMulti={true}
-      isCreatable={true}
-      placeholder="Select something..."
-      isClearable={true}
-      isSearchable={true}
-      isDisabled={false}
+      label="Business type"
+      placeholder="Search businesses..."
+      isSearchable
+      isClearable
       value={selected}
       options={items}
-      onCreateOptions={value => console.log(value)}
-      onChangeOptions={values => setSelected(values)}
+      onChange={setSelected}
     />
   );
 };
@@ -642,31 +640,6 @@ const Toast = () => {
 };
 
 export default Toast;`;
-
-export const autocompleteCode = `import { useState } from 'react';
-import { NAutocomplete } from '@nayan-ui/react';
-
-const items = [
-  { id: 'react', label: 'React' },
-  { id: 'vue', label: 'Vue' },
-  { id: 'angular', label: 'Angular' },
-  { id: 'svelte', label: 'Svelte' }
-];
-
-const Autocomplete = () => {
-  const [selected, setSelected] = useState(null);
-
-  return (
-    <NAutocomplete
-      items={items}
-      placeholder="Select a framework..."
-      selectedKey={selected}
-      onSelectionChange={setSelected}
-    />
-  );
-};
-
-export default Autocomplete;`;
 
 export const datePickerCode = `import { NDatePicker } from '@nayan-ui/react';
 

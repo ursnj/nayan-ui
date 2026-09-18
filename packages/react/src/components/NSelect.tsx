@@ -14,7 +14,7 @@ export interface NSelectProps<OptionType = ReactSelectOption, IsMulti extends bo
   isCreatable?: boolean;
   isClearable?: boolean;
   isSearchable?: boolean;
-  isDisabled?: boolean;
+  disabled?: boolean;
   className?: string;
   labelClassName?: string;
   selectClassName?: string;
@@ -28,6 +28,7 @@ export interface NSelectProps<OptionType = ReactSelectOption, IsMulti extends bo
   inputId?: string;
   name?: string;
   menuPortalTarget?: HTMLElement;
+  'aria-label'?: string;
   styles?: Record<string, unknown>;
   [key: string]: any; // for additional react-select props
 }
@@ -43,9 +44,9 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
     isLoading = false,
     isCreatable = false,
     placeholder = 'Select...',
-    isSearchable = false,
+    isSearchable = true,
     isClearable = false,
-    isDisabled = false,
+    disabled = false,
     className = '',
     labelClassName = '',
     selectClassName = '',
@@ -57,6 +58,7 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
     inputId,
     name,
     menuPortalTarget,
+    'aria-label': ariaLabel,
     styles,
     ...rest
   } = props;
@@ -116,7 +118,7 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
         name={name}
         isMulti={isMulti}
         isLoading={isLoading}
-        isDisabled={isDisabled}
+        isDisabled={disabled}
         isClearable={isClearable}
         isSearchable={isSearchable}
         className={cn('nyn-select', selectClassName)}
@@ -130,11 +132,11 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
         onChange={handleChange}
         onCreateOption={isCreatable ? handleCreate : undefined}
         theme={reactSelectTheme}
+        aria-label={ariaLabel || label || 'Select'}
+        menuPortalTarget={menuPortalTarget}
         styles={mergedStyles as any}
-        aria-label={label}
         menuPosition="fixed"
         menuShouldScrollIntoView={false}
-        menuPortalTarget={menuPortalTarget}
         {...rest}
       />
     </div>

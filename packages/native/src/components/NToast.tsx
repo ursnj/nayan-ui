@@ -29,6 +29,9 @@ const VARIANT_MAP: Record<string, 'default' | 'success' | 'warning' | 'danger'> 
 
 const TOAST_CLASSNAME = 'flex-row gap-3 border border-border ios:shadow-field android:shadow-md';
 
+// Nudges the leading icon to visually align with the first line of text.
+const TOAST_ICON_STYLE = { marginTop: 4 };
+
 // --- Imperative service ---
 let _registeredMethods: NToastMethods | null = null;
 
@@ -55,7 +58,7 @@ export function useNToast(): NToastMethods {
   const { toast } = useToast();
   const [successColor, dangerColor, foregroundColor, warningColor] = useThemeColor(['success', 'danger', 'foreground', 'warning']);
 
-  const wrapIcon = (icon: React.ReactNode): React.ReactNode => <View style={{ marginTop: 4 }}>{icon}</View>;
+  const wrapIcon = (icon: React.ReactNode): React.ReactNode => <View style={TOAST_ICON_STYLE}>{icon}</View>;
 
   const getIcon = (type: string): React.ReactNode => {
     switch (type) {

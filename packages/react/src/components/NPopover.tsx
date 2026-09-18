@@ -35,7 +35,22 @@ export const NPopover = memo(
       popoverId,
       popoverLabel
     } = props;
-    const id = popoverId || useId();
+    const generatedId = useId();
+    const id = popoverId || `nyn-popover-${generatedId}`;
+    const alignedPlacement = side === 'left' || side === 'right' ? `${side} ${align === 'start' ? 'top' : 'bottom'}` : `${side} ${align}`;
+    const placement = (align === 'center' ? side : alignedPlacement) as
+      | 'top'
+      | 'bottom'
+      | 'right'
+      | 'left'
+      | 'top start'
+      | 'top end'
+      | 'bottom start'
+      | 'bottom end'
+      | 'right top'
+      | 'right bottom'
+      | 'left top'
+      | 'left bottom';
     const triggerNode = React.cloneElement(trigger as any, {
       'aria-controls': id,
       'aria-haspopup': 'dialog',
@@ -44,7 +59,11 @@ export const NPopover = memo(
     return (
       <Popover>
         <Popover.Trigger>{triggerNode}</Popover.Trigger>
-        <Popover.Content className={cn('nyn-popover-content', sizeMapping[size], className)}>{children}</Popover.Content>
+        <Popover.Content placement={placement} className={cn('nyn-popover-content', sizeMapping[size], className)}>
+          <Popover.Dialog ref={ref} id={id} aria-label={popoverLabel || 'Popover'}>
+            {children}
+          </Popover.Dialog>
+        </Popover.Content>
       </Popover>
     );
   })

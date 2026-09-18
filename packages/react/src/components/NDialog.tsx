@@ -1,5 +1,5 @@
 import React, { ReactNode, memo } from 'react';
-import { Modal, useOverlayState } from '@heroui/react';
+import { Modal } from '@heroui/react';
 import { cn } from '../lib/utils';
 import { DialogSize } from './Types';
 
@@ -19,7 +19,7 @@ const maxWidthMapping = {
 
 export interface NDialogProps {
   isOpen: boolean;
-  title: string;
+  title: ReactNode;
   size?: DialogSize;
   className?: string;
   titleClassName?: string;
@@ -30,18 +30,7 @@ export interface NDialogProps {
 }
 
 const NDialogComponent: React.FC<NDialogProps> = memo(
-  ({
-    isOpen,
-    title,
-    children,
-    size = DialogSize.SM,
-    className = '',
-    headerClassName = '',
-    titleClassName = '',
-    contentClassName = '',
-    onClose,
-    ...rest
-  }) => {
+  ({ isOpen, title, children, size = DialogSize.SM, className = '', headerClassName = '', titleClassName = '', contentClassName = '', onClose }) => {
     return (
       <Modal
         isOpen={isOpen}
@@ -53,10 +42,10 @@ const NDialogComponent: React.FC<NDialogProps> = memo(
         </Modal.Trigger>
         <Modal.Backdrop isDismissable>
           <Modal.Container size={sizeMapping[size]}>
-            <Modal.Dialog className={cn('nyn-dialog', maxWidthMapping[size], className)}>
+            <Modal.Dialog className={cn('nyn-dialog p-4', maxWidthMapping[size], className)}>
               <Modal.Header className={cn(headerClassName)}>
-                <span className={cn(titleClassName)}>{title}</span>
-                <Modal.CloseTrigger />
+                <Modal.Heading className={cn(titleClassName)}>{title}</Modal.Heading>
+                <Modal.CloseTrigger aria-label="Close dialog" />
               </Modal.Header>
               <Modal.Body
                 className={cn('h-[calc(100vh_-_140px)] sm:h-auto sm:min-h-[100px] sm:max-h-[calc(100vh_-_75px)] overflow-y-auto', contentClassName)}>
