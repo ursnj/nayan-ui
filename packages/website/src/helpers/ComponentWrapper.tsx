@@ -3,9 +3,11 @@
 import { ArrowLeft, ArrowRight, Github } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { BrowserFrame } from '@/design/Primitives';
 import { CARD, LEAD } from '@/design/system';
 import TagsList from '@/helpers/TagsList';
 import { getMenuItem, getSidebarItems } from '@/services/Utils';
+import { SITE_HOST } from '@/services/seo';
 import Attributes from './Attributes';
 import Code from './Code';
 import Sidebar from './Sidebar';
@@ -23,8 +25,9 @@ const REPO = 'https://github.com/ursnj/nayan-ui/tree/main/packages';
  * What changed is the framing rather than the content. The demo used to sit
  * directly on the page background with nothing marking where the example
  * stopped and the page resumed — a Card component demo was indistinguishable
- * from the page's own card. It now has a preview surface of its own, on a
- * dotted ground, so a white component on it is visible as a component.
+ * from the page's own card. It now runs inside a browser window on a grey
+ * ground, so a white component in it is visible as a component, and the frame
+ * says which part of the page is the example.
  *
  * It also gained the two things a reference page of this kind is expected to
  * have and did not: a link to the component's source, and previous/next
@@ -65,10 +68,15 @@ const ComponentWrapper = (props: Props) => {
             : 'Rendered live, with the same build of the library you install.'
         }>
         {/*
-         * A dotted ground, so a component with a white or transparent surface
-         * reads as sitting on something rather than dissolving into the page.
+         * A browser window on a grey ground, so a component with a white or
+         * transparent surface reads as sitting on something rather than
+         * dissolving into the page. This replaced a dotted radial ground doing
+         * the same job with less of a hint that the box is a running app.
+         *
+         * The address bar shows the page's own URL, which is true, short, and
+         * tells a visitor what they would install to get this.
          */}
-        <div className="rounded-xl border border-default bg-background bg-[radial-gradient(var(--separator)_1px,transparent_1px)] [background-size:16px_16px]">
+        <BrowserFrame label={`${SITE_HOST}${pathname}`} padded={false}>
           {/*
            * Block layout, deliberately. An earlier version of this wrapper used
            * `flex flex-wrap items-start`, which broke most of the demos on the
@@ -82,7 +90,7 @@ const ComponentWrapper = (props: Props) => {
            * wide child (a table) inside the panel rather than through it.
            */}
           <div className="space-y-4 p-6 [&>*]:max-w-full sm:p-8">{children}</div>
-        </div>
+        </BrowserFrame>
       </SubHeader>
 
       <SubHeader

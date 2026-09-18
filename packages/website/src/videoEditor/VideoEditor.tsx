@@ -134,7 +134,7 @@ const VideoEditorMain = () => (
       </div>
     </Section>
 
-    <Section id="how-it-works" labelledBy="how-heading" className="border-y border-default bg-surface/40">
+    <Section id="how-it-works" labelledBy="how-heading">
       <SectionHeader
         eyebrow="How it works"
         id="how-heading"
