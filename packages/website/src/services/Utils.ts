@@ -63,6 +63,8 @@ import {
   linkAttributes,
   loadingAttributes,
   menuAttributes,
+  menuItemAttributes,
+  menuNestedAttributes,
   meterAttributes,
   numberFieldAttributes,
   popoverAttributes,
@@ -438,6 +440,16 @@ export const reactSidebarItems = [
       'A Dropdown Menu component is a UI element that allows users to select an option from a list that appears when the user clicks or hovers over a button or link. This component helps save space on the interface by displaying additional options only when needed. Dropdown menus are commonly used for navigation, settings, or forms, enabling users to choose from multiple choices in a clean and organized manner.',
     link: '/react/menu',
     attributes: menuAttributes,
+    /*
+     * A menu is three components, and the page documented one. `NMenuItem` is
+     * where `title`, `icon`, `shortcut` and `onAction` live — everything a
+     * reader needs to build a single row — and both tables existed in
+     * `ReactAttributes` already, referenced from nowhere.
+     */
+    extraAttributes: [
+      { title: 'NMenuItem attributes', data: menuItemAttributes },
+      { title: 'NMenuNested attributes', data: menuNestedAttributes }
+    ],
     code: menuCode,
     tags: menuTags,
     icon: EllipsisVertical,

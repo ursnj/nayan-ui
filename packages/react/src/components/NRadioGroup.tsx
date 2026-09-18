@@ -76,14 +76,46 @@ export const NRadioGroup = memo(
           isDisabled={disabled}
           onChange={(next: unknown) => onChange(typeof next === 'string' ? next : ((next as any)?.target?.value ?? ''))}
           aria-label={label}
-          className={cn(orientation === 'horizontal' ? 'flex flex-row flex-wrap gap-4' : 'flex flex-col gap-2')}
+          /*
+           * `[&>[data-slot=radio]]:mt-0` on the vertical group: HeroUI's
+           * `.radio-group[data-orientation="vertical"]` puts `mt-4` on every
+           * radio, the first one included, which stacked on top of the `gap-2`
+           * here — options ended up 24px apart with a 16px hole between the
+           * group's label and its first option. Clearing the margin leaves the
+           * gap as the only thing setting the rhythm, so the two orientations
+           * are spaced by the same mechanism.
+           */
+          className={cn(orientation === 'horizontal' ? 'flex flex-row flex-wrap gap-4' : 'flex flex-col gap-2 [&>[data-slot=radio]]:mt-0')}
           {...(rest as any)}>
+          {/*
+           * The control goes *inside* `Radio.Content`, not beside it.
+           *
+           * `Radio` is React Aria's `RadioField`, and HeroUI styles it
+           * `flex flex-col`: it is the field wrapper, whose children stack so
+           * that a description or an error can sit under the option. The
+           * clickable row is `Radio.Content` — HeroUI's own source calls it
+           * "the clickable RadioButton label wrapping the control + Label" —
+           * and it is the element styled `inline-flex items-center gap-3`.
+           *
+           * With the control and the content as siblings of the column, every
+           * option rendered as a circle on one line and its text on the next.
+           * It was most obvious in the vertical group, where the result was six
+           * rows for three options, but the horizontal one was stacking each
+           * pair too.
+           *
+           * The text is a `Label` rather than bare children so it carries
+           * `data-slot="label"`, which is what gives it the pointer cursor and
+           * the no-select behaviour; `Radio.Content` supplies a `LabelContext`
+           * that renders it as a `span`, so this nests nothing illegal.
+           */}
           {items.map(item => (
             <Radio key={item.value} value={item.value} className={cn(radioClassName, itemClassName)}>
-              <Radio.Control>
-                <Radio.Indicator />
-              </Radio.Control>
-              <Radio.Content>{item.label}</Radio.Content>
+              <Radio.Content>
+                <Radio.Control>
+                  <Radio.Indicator />
+                </Radio.Control>
+                <Label>{item.label}</Label>
+              </Radio.Content>
             </Radio>
           ))}
         </RadioGroup>

@@ -110,6 +110,17 @@ const ComponentWrapper = (props: Props) => {
 
       <Attributes data={component.attributes} />
 
+      {/*
+       * Some components are really two or three: a menu is `NMenu`, `NMenuItem`
+       * and `NMenuNested`, and a page that lists only the outer one leaves the
+       * props a reader actually types — `title`, `icon`, `shortcut`,
+       * `onAction` — documented nowhere. `extraAttributes` is optional, so
+       * every other page is unaffected.
+       */}
+      {(component.extraAttributes ?? []).map((table: any) => (
+        <Attributes key={table.title} title={table.title} data={table.data} />
+      ))}
+
       <SubHeader title="Tags" description="Other components solving nearby problems.">
         <TagsList type={type} tags={component.tags} />
       </SubHeader>

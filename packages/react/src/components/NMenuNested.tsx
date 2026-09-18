@@ -5,16 +5,24 @@ import { cn } from '../lib/utils';
 export interface NMenuNestedProps {
   className?: string;
   triggerClassName?: string;
+  /** Rendered before the label, like `NMenuItem`'s icon. */
+  icon?: ReactNode;
   trigger: ReactNode;
   children: ReactNode;
 }
 
-export const NMenuNested: React.FC<NMenuNestedProps> = React.memo(({ trigger, children, className = '', triggerClassName = '' }) => {
+export const NMenuNested: React.FC<NMenuNestedProps> = React.memo(({ trigger, children, icon, className = '', triggerClassName = '' }) => {
   return (
     <Dropdown.SubmenuTrigger>
       <Dropdown.Item className={cn('nyn-menu-nested-trigger', triggerClassName)}>
+        {icon}
         <Label>{trigger}</Label>
-        <Dropdown.SubmenuIndicator />
+        {/* `ms-auto` for the same reason as `NMenuItem`'s shortcut: HeroUI
+            styles the chevron's colour and size but never positions it, so it
+            sat against the label instead of the item's trailing edge — and a
+            submenu arrow in the middle of a row does not read as "there is more
+            this way". */}
+        <Dropdown.SubmenuIndicator className="ms-auto ps-3" />
       </Dropdown.Item>
       <Dropdown.Popover>
         <Dropdown.Menu className={cn('nyn-menu-nested-content', className)}>{children}</Dropdown.Menu>

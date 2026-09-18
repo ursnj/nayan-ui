@@ -34,7 +34,7 @@ export interface NLinkifyProps {
 }
 
 const NLinkifyComponent = memo(({ children, className = '' }: NLinkifyProps) => {
-  const linkClassName = cn('nyn-linkify', className);
+  const linkClassName = cn('nyn-linkify text-accent', className);
 
   const linkifyString = (text: string, keyPrefix: string): ReactNode[] => {
     const parts: ReactNode[] = [];

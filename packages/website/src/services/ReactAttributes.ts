@@ -219,8 +219,7 @@ export const loadingAttributes = [
 export const menuAttributes = [
   { name: 'size', type: 'MenuSize', default: 'Optional', details: 'Size of the menu.' },
   { name: 'title', type: 'React.ReactNode', default: 'Optional', details: 'Title for the menu.' },
-  { name: 'side', type: "'top' | 'bottom' | 'right' | 'left'", default: 'Optional', details: 'Side where menu appears.' },
-  { name: 'align', type: "'start' | 'end' | 'center'", default: 'Optional', details: 'Alignment of the menu.' },
+  { name: 'placement', type: "'top' | 'bottom' | 'right' | 'left'", default: "'bottom'", details: 'Side of the trigger the menu opens on.' },
   { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
   { name: 'triggerClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
   { name: 'titleClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
@@ -237,16 +236,17 @@ export const menuItemAttributes = [
   { name: 'iconClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
   { name: 'titleClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
   { name: 'shortcutClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'disabled', type: 'boolean', default: 'false', details: 'Whether the menu item is disabled.' }
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'Whether the menu item is disabled.' },
+  { name: 'id', type: 'string', default: 'Optional', details: 'Item key, for selection and for React Aria collections.' },
+  { name: 'onAction', type: '() => void', default: 'Optional', details: 'Called when the item is chosen, by click or by keyboard.' }
 ];
 
 export const menuNestedAttributes = [
-  { name: 'size', type: 'Size', default: 'Optional', details: 'Size of the nested menu.' },
+  { name: 'trigger', type: 'React.ReactNode', default: 'Required', details: 'Label for the row that opens the submenu.' },
+  { name: 'icon', type: 'React.ReactNode', default: 'Optional', details: 'Rendered before the label, like an item icon.' },
+  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Submenu content — usually NMenuItem elements.' },
   { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'triggerClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'trigger', type: 'React.ReactElement', default: 'Required', details: 'Trigger element for the nested menu.' },
-  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Nested menu content.' },
-  { name: 'aria-label', type: 'string', default: 'Optional', details: 'ARIA label for accessibility.' }
+  { name: 'triggerClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
 ];
 
 export const popoverAttributes = [
