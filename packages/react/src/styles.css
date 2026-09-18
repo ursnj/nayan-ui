@@ -2,10 +2,8 @@
 
 :root {
   --nyn-radius: 0.5rem;
-  /* A checkbox is square with the corners barely taken off, so it stays
-     distinguishable from a radio — which is round at any radius, because its
-     control is 16px wide and the radius clamps to half of that. */
   --nyn-radius-checkbox: 0.125rem;
+  --nyn-radius-avatar: 9999px;
 }
 
 :root,
@@ -168,7 +166,19 @@
     border-radius: var(--nyn-radius);
   }
 
-  .checkbox__control {
+  .checkbox__control,
+  .checkbox__control::before {
     border-radius: var(--nyn-radius-checkbox);
+  }
+
+  /* Avatars stay circular, including the "+N" count in a group. */
+  .avatar,
+  .avatar--sm,
+  .avatar--md,
+  .avatar--lg,
+  .avatar__image,
+  .avatar__fallback,
+  .avatar-group__count {
+    border-radius: var(--nyn-radius-avatar);
   }
 }
