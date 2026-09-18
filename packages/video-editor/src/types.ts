@@ -33,29 +33,6 @@ export interface MediaAsset {
 }
 
 /* ------------------------------------------------------------------ *
- * Keyframes
- * ------------------------------------------------------------------ */
-
-export type Easing = 'hold' | 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
-
-export interface Keyframe {
-  /** Offset from the clip's own start, µs. Stays valid when the clip moves. */
-  atUs: number;
-  value: number;
-  /** Shape of the ramp leaving this key. */
-  easing: Easing;
-}
-
-/**
- * Animation tracks keyed by property path (`'transform.scale'`, `'opacity'`, …).
- *
- * Keeping keyframes in a side table rather than boxing every field means a
- * static clip costs nothing, and any numeric property becomes animatable
- * without changing its type.
- */
-export type Animations = Record<string, Keyframe[]>;
-
-/* ------------------------------------------------------------------ *
  * Visual properties
  * ------------------------------------------------------------------ */
 
@@ -69,6 +46,22 @@ export interface Transform {
   flipH: boolean;
   flipV: boolean;
 }
+
+/**
+ * How a clip's source frame is sized into the project frame, before its own
+ * transform is applied.
+ *
+ * This is the base fit, not a replacement for `Transform.scale` — the scale
+ * still multiplies whatever the fit resolves to, so `cover` plus 110% is a
+ * filled frame pushed in a little further.
+ */
+export type MediaFit = 'contain' | 'cover' | 'stretch';
+
+export const MEDIA_FIT_LABELS: Record<MediaFit, string> = {
+  contain: 'Contain — whole frame visible, bars where the shape differs',
+  cover: 'Cover — fills the frame, overflow is cropped',
+  stretch: 'Stretch — fills the frame, aspect ratio ignored'
+};
 
 /** Fractions of the source frame trimmed from each side. */
 export interface Crop {
@@ -212,7 +205,6 @@ interface ClipCommon {
   opacity: number;
   fadeInUs: number;
   fadeOutUs: number;
-  animations: Animations;
   /** Transition covering this clip's incoming edge. */
   transitionIn: TransitionSpec | null;
   /** Colour swatch in the timeline. */
@@ -230,6 +222,8 @@ interface ClipCommon {
 export interface MediaClip extends ClipCommon {
   kind: 'video' | 'audio' | 'image';
   assetId: string;
+  /** How the source frame is sized into the project frame. */
+  fit: MediaFit;
   /** In-point within the source asset. */
   inUs: number;
   speed: number;
@@ -363,6 +357,12 @@ export interface ExportSettings {
   bitrate: number;
   audioBitrate: number;
   includeAudio: boolean;
+  /**
+   * Append the editor's credit card after the last frame. Adds
+   * `END_CREDIT_SECONDS` to the output, which is why it has to reach the
+   * audio mix as well as the frame loop.
+   */
+  endCredit: boolean;
   /** Encode only the region between the in/out points when set. */
   rangeUs: { startUs: number; endUs: number } | null;
 }
@@ -395,6 +395,9 @@ export const sourceTimeUs = (clip: MediaClip, timelineUs: number): number | null
  * ------------------------------------------------------------------ */
 
 export const DEFAULT_TRANSFORM: Transform = { x: 0, y: 0, scale: 1, rotation: 0, flipH: false, flipV: false };
+
+/** Contain, so importing footage never silently crops it. */
+export const DEFAULT_FIT: MediaFit = 'contain';
 
 export const DEFAULT_CROP: Crop = { top: 0, right: 0, bottom: 0, left: 0 };
 

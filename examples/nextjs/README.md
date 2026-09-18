@@ -135,6 +135,8 @@ import { NButton, NTheme, THEMES, useLocalStorage } from '@nayan-ui/react';
 
 // src/app/page.tsx
 
+// src/app/page.tsx
+
 export default function Home() {
   const [theme, setTheme] = useLocalStorage('THEME', THEMES.LIGHT);
 

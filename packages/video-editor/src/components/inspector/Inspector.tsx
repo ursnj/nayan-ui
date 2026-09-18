@@ -1,13 +1,10 @@
 import { useCallback } from 'react';
-import { NToggleButton } from '@nayan-ui/react';
 import {
   AlignCenter,
   AlignLeft,
   AlignRight,
   Aperture,
   Crop as CropIcon,
-  FlipHorizontal,
-  FlipVertical,
   Layers,
   Move,
   Palette,
@@ -34,14 +31,69 @@ import {
 import type { Clip, ColorPreset, MediaClip, TextAlign, TextAnimation, TextClip, TransitionKind } from '../../types';
 import { ColorField, EmptyState, FieldRow, Section, SegmentedControl, SelectField, SliderField, TextField, ToggleChip } from '../controls';
 
-const SPEEDS = [0.5, 1, 1.5, 2];
+/**
+ * Speed runs from half to five times, in half steps.
+ *
+ * The step is what makes the slider usable without presets beside it: every
+ * stop is a speed someone would ask for by name, and there is no way to land
+ * on 1.03× while aiming for normal.
+ */
+const SPEED_MIN = 0.5;
+const SPEED_MAX = 6;
+const SPEED_STEP = 0.5;
 
+/**
+ * The type shelf: families the machine already has, never a web font.
+ *
+ * Canvas draws with whatever is installed at that instant and falls back
+ * silently when a family is missing, so a downloaded font that hadn't arrived
+ * yet would export in a different typeface than the one on screen — with
+ * nothing to say so. Everything here is present on a stock Windows or macOS
+ * install, and each stack names the Windows face, the macOS face and a
+ * metric-compatible Linux substitute before giving up to a generic, so a
+ * missing font degrades to something of the same shape rather than to Arial.
+ *
+ * Multi-word names are quoted because `context.font` takes a CSS font
+ * shorthand: an unquoted `Trebuchet MS` makes the whole declaration invalid,
+ * and canvas responds by keeping the previous font instead of raising.
+ *
+ * The first five values are kept byte-for-byte as they shipped. They are
+ * stored on every text clip ever made, and rewriting them would leave the
+ * picker blank on projects that already use them.
+ */
 const FONTS = [
+  // Sans
   { value: 'Inter, system-ui, sans-serif', label: 'Inter' },
-  { value: 'Georgia, serif', label: 'Georgia' },
-  { value: '"Courier New", monospace', label: 'Courier' },
+  { value: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', label: 'System' },
+  { value: '"Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif', label: 'Helvetica' },
+  { value: 'Arial, "Helvetica Neue", Helvetica, "Liberation Sans", sans-serif', label: 'Arial' },
+  { value: 'Verdana, sans-serif', label: 'Verdana' },
+  { value: 'Tahoma, Geneva, "DejaVu Sans", sans-serif', label: 'Tahoma' },
+  { value: '"Trebuchet MS", "Lucida Grande", "DejaVu Sans", sans-serif', label: 'Trebuchet' },
+  { value: '"Lucida Sans Unicode", "Lucida Grande", "DejaVu Sans", sans-serif', label: 'Lucida Sans' },
+  { value: 'Futura, "Century Gothic", "URW Gothic", "Trebuchet MS", sans-serif', label: 'Futura' },
+  { value: '"Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif', label: 'Gill Sans' },
+
+  // Display — the weight and width a title card wants
   { value: 'Impact, sans-serif', label: 'Impact' },
-  { value: 'Verdana, sans-serif', label: 'Verdana' }
+  { value: '"Arial Black", "Arial Bold", Gadget, "DejaVu Sans Bold", sans-serif', label: 'Arial Black' },
+  { value: '"Arial Narrow", "Liberation Sans Narrow", "Nimbus Sans Narrow", sans-serif', label: 'Arial Narrow' },
+
+  // Serif
+  { value: 'Georgia, serif', label: 'Georgia' },
+  { value: '"Times New Roman", Times, "Liberation Serif", serif', label: 'Times New Roman' },
+  { value: 'Palatino, "Palatino Linotype", "Book Antiqua", "URW Palladio L", serif', label: 'Palatino' },
+  { value: 'Garamond, "Apple Garamond", "URW Garamond", "Times New Roman", serif', label: 'Garamond' },
+  { value: 'Baskerville, "Baskerville Old Face", "Libre Baskerville", Georgia, serif', label: 'Baskerville' },
+  { value: 'Didot, "Bodoni MT", "Playfair Display", Georgia, serif', label: 'Didot' },
+
+  // Mono
+  { value: '"Courier New", monospace', label: 'Courier' },
+  { value: 'Menlo, Consolas, "DejaVu Sans Mono", "Liberation Mono", monospace', label: 'Menlo' },
+
+  // Hand
+  { value: '"Brush Script MT", "Segoe Script", "Bradley Hand", cursive', label: 'Brush Script' },
+  { value: '"Comic Sans MS", "Chalkboard SE", "Comic Neue", cursive', label: 'Comic Sans' }
 ];
 
 export const Inspector = () => {
@@ -90,28 +142,6 @@ export const Inspector = () => {
 
 type Patch = (changes: Partial<Clip>) => void;
 
-/**
- * Keyframe state for a property path at the current playhead.
- *
- * The selector returns the *boolean* rather than the playhead, so the section
- * only re-renders when a key actually comes under the playhead. Selecting
- * `playheadUs` here re-rendered the whole inspector — every section calls this
- * hook — sixty times a second for the entire duration of playback.
- */
-const useKeyframeState = (clip: Clip, path: string) => {
-  const keys = clip.animations[path];
-  const animated = (keys?.length ?? 0) > 0;
-
-  const active = useEditor(state => {
-    if (!keys || keys.length === 0) return false;
-    const localUs = state.playheadUs - clip.startUs;
-    const tolerance = US / (state.project.fps * 2);
-    return keys.some(key => Math.abs(key.atUs - localUs) <= tolerance);
-  });
-
-  return { clipId: clip.id, path, animated, active };
-};
-
 const ClipHeader = ({ clip }: { clip: Clip }) => (
   <div className="border-b border-border px-3 py-2.5">
     <div className="flex items-center gap-2">
@@ -129,9 +159,25 @@ const ClipHeader = ({ clip }: { clip: Clip }) => (
 
 /** Opacity, fades and speed — reached for on almost every clip. */
 const BasicsSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
-  const opacityKey = useKeyframeState(clip, 'opacity');
   const maxFadeMs = Math.min(3000, clip.durationUs / 1000);
   const media = isMediaClip(clip) && clip.kind !== 'image' ? clip : null;
+
+  /*
+   * Snapped to the nearest half step before it is stored: a slider is free to
+   * hand back 2.0000000000000004, and that reaches the clip badge on the
+   * timeline, the readout above and every project file saved afterwards.
+   */
+  const setSpeed = (next: number) => {
+    if (!media) return;
+    const speed = Math.min(SPEED_MAX, Math.max(SPEED_MIN, Math.round(next / SPEED_STEP) * SPEED_STEP));
+    patch({
+      speed,
+      // Hold the same source range: faster playback, shorter clip. Reading the
+      // old pair is safe mid-drag even if a render is skipped, because their
+      // product — the source range — is what this preserves.
+      durationUs: Math.max(100_000, Math.round((media.durationUs * media.speed) / speed))
+    } as Partial<Clip>);
+  };
 
   return (
     <Section title="Basics" icon={<Move className="h-3.5 w-3.5 text-muted" />}>
@@ -142,7 +188,6 @@ const BasicsSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
         max={100}
         format={value => `${value}%`}
         onChange={value => patch({ opacity: value / 100 })}
-        keyframe={opacityKey}
         resetTo={100}
       />
       <SliderField
@@ -168,26 +213,20 @@ const BasicsSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
 
       {media && (
         <>
-          <FieldRow label="Speed">
-            <div className="flex gap-1">
-              {SPEEDS.map(speed => (
-                <NToggleButton
-                  key={speed}
-                  isSelected={media.speed === speed}
-                  size="sm"
-                  className="flex-1 px-1 text-[10px]"
-                  onChange={() =>
-                    patch({
-                      speed,
-                      // Hold the same source range: faster playback, shorter clip.
-                      durationUs: Math.max(100_000, Math.round((media.durationUs * media.speed) / speed))
-                    } as Partial<Clip>)
-                  }>
-                  {speed}×
-                </NToggleButton>
-              ))}
-            </div>
-          </FieldRow>
+          {/* Speed reads like Opacity and the fades above it: one label, one
+              readout, one track. Half steps the whole way, so the values worth
+              naming — half, double, five times — all land on a stop. */}
+          <SliderField
+            label="Speed"
+            value={media.speed}
+            min={SPEED_MIN}
+            max={SPEED_MAX}
+            step={SPEED_STEP}
+            format={value => `${value}×`}
+            onChange={setSpeed}
+            resetTo={1}
+          />
+
           <ToggleChip
             active={media.reversed}
             onClick={() => patch({ reversed: !media.reversed } as Partial<Clip>)}
@@ -205,12 +244,6 @@ const TransformSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   const t = clip.transform;
   const set = (changes: Partial<typeof t>) => patch({ transform: { ...t, ...changes } } as Partial<Clip>);
 
-  // Hoisted so every hook runs unconditionally, in a stable order.
-  const scaleKey = useKeyframeState(clip, 'transform.scale');
-  const xKey = useKeyframeState(clip, 'transform.x');
-  const yKey = useKeyframeState(clip, 'transform.y');
-  const rotationKey = useKeyframeState(clip, 'transform.rotation');
-
   return (
     <Section
       title="Transform"
@@ -223,7 +256,6 @@ const TransformSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
         max={400}
         format={value => `${value}%`}
         onChange={value => set({ scale: value / 100 })}
-        keyframe={scaleKey}
         resetTo={100}
       />
       <SliderField
@@ -233,7 +265,6 @@ const TransformSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
         max={100}
         format={value => `${value}%`}
         onChange={value => set({ x: value / 100 })}
-        keyframe={xKey}
         resetTo={0}
       />
       <SliderField
@@ -243,7 +274,6 @@ const TransformSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
         max={100}
         format={value => `${value}%`}
         onChange={value => set({ y: value / 100 })}
-        keyframe={yKey}
         resetTo={0}
       />
       <SliderField
@@ -253,17 +283,8 @@ const TransformSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
         max={180}
         format={value => `${value}°`}
         onChange={rotation => set({ rotation })}
-        keyframe={rotationKey}
         resetTo={0}
       />
-      <div className="flex gap-1.5">
-        <ToggleChip active={t.flipH} onClick={() => set({ flipH: !t.flipH })} label="Flip horizontally" className="flex-1">
-          <FlipHorizontal className="h-3.5 w-3.5" />
-        </ToggleChip>
-        <ToggleChip active={t.flipV} onClick={() => set({ flipV: !t.flipV })} label="Flip vertically" className="flex-1">
-          <FlipVertical className="h-3.5 w-3.5" />
-        </ToggleChip>
-      </div>
     </Section>
   );
 };
@@ -353,17 +374,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   // A hand edit means the grade is no longer the preset, so drop the record.
   const set = (changes: Partial<typeof color>) => patch({ colorAdjust: { ...color, ...changes }, filter: null } as Partial<Clip>);
 
-  const brightnessKey = useKeyframeState(clip, 'color.brightness');
-  const contrastKey = useKeyframeState(clip, 'color.contrast');
-  const saturationKey = useKeyframeState(clip, 'color.saturation');
-  const vibranceKey = useKeyframeState(clip, 'color.vibrance');
-  const temperatureKey = useKeyframeState(clip, 'color.temperature');
-  const highlightsKey = useKeyframeState(clip, 'color.highlights');
-  const shadowsKey = useKeyframeState(clip, 'color.shadows');
-  const vignetteKey = useKeyframeState(clip, 'color.vignette');
-  const blurKey = useKeyframeState(clip, 'color.blur');
-
-  /** -100..100 sliders that read as a direction rather than a percentage. */
   return (
     <>
       <Section
@@ -382,7 +392,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={200}
           format={value => `${value}%`}
           onChange={value => set({ brightness: value / 100 })}
-          keyframe={brightnessKey}
           resetTo={100}
         />
         <SliderField
@@ -392,7 +401,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={200}
           format={value => `${value}%`}
           onChange={value => set({ contrast: value / 100 })}
-          keyframe={contrastKey}
           resetTo={100}
         />
         <SliderField
@@ -402,7 +410,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={100}
           format={signed}
           onChange={value => set({ highlights: value / 100 })}
-          keyframe={highlightsKey}
           resetTo={0}
         />
         <SliderField
@@ -412,7 +419,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={100}
           format={signed}
           onChange={value => set({ shadows: value / 100 })}
-          keyframe={shadowsKey}
           resetTo={0}
         />
         <SliderField
@@ -442,7 +448,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={300}
           format={value => `${value}%`}
           onChange={value => set({ saturation: value / 100 })}
-          keyframe={saturationKey}
           resetTo={100}
         />
         <SliderField
@@ -452,7 +457,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={100}
           format={signed}
           onChange={value => set({ vibrance: value / 100 })}
-          keyframe={vibranceKey}
           resetTo={0}
         />
         <SliderField
@@ -462,7 +466,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={100}
           format={value => (value === 0 ? 'Neutral' : value < 0 ? `${-value} cool` : `${value} warm`)}
           onChange={value => set({ temperature: value / 100 })}
-          keyframe={temperatureKey}
           resetTo={0}
         />
         <SliderField
@@ -494,7 +497,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
       <Section
         title="Texture"
         icon={<Aperture className="h-3.5 w-3.5 text-muted" />}
-        defaultOpen={false}
         onReset={() => patch({ colorAdjust: { ...color, sharpen: 0, vignette: 0, grain: 0, blur: 0 }, filter: null } as Partial<Clip>)}>
         <SliderField
           label="Sharpen"
@@ -512,7 +514,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           max={100}
           format={value => (value === 0 ? 'Off' : `${value}%`)}
           onChange={value => set({ vignette: value / 100 })}
-          keyframe={vignetteKey}
           resetTo={0}
         />
         <SliderField
@@ -532,7 +533,6 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           step={0.5}
           format={value => `${value}px`}
           onChange={blur => set({ blur })}
-          keyframe={blurKey}
           resetTo={0}
         />
       </Section>
@@ -550,7 +550,6 @@ const CropSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
     <Section
       title="Crop"
       icon={<CropIcon className="h-3.5 w-3.5 text-muted" />}
-      defaultOpen={false}
       onReset={() => patch({ crop: { ...DEFAULT_CROP } } as Partial<Clip>)}>
       {CROP_SIDES.map(side => (
         <SliderField
@@ -568,33 +567,29 @@ const CropSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
   );
 };
 
-const AudioSection = ({ clip, patch }: { clip: MediaClip; patch: Patch }) => {
-  const volumeKey = useKeyframeState(clip, 'volume');
-  return (
-    <Section title="Audio" icon={<Volume2 className="h-3.5 w-3.5 text-muted" />}>
-      <SliderField
-        label="Volume"
-        value={Math.round(clip.volume * 100)}
-        min={0}
-        max={200}
-        format={value => `${value}%`}
-        onChange={value => patch({ volume: value / 100 } as Partial<Clip>)}
-        keyframe={volumeKey}
-        resetTo={100}
-      />
-      <ToggleChip active={clip.muted} onClick={() => patch({ muted: !clip.muted } as Partial<Clip>)} label="Mute this clip" className="w-full">
-        {clip.muted ? 'Muted' : 'Mute clip'}
-      </ToggleChip>
-    </Section>
-  );
-};
+const AudioSection = ({ clip, patch }: { clip: MediaClip; patch: Patch }) => (
+  <Section title="Audio" icon={<Volume2 className="h-3.5 w-3.5 text-muted" />}>
+    <SliderField
+      label="Volume"
+      value={Math.round(clip.volume * 100)}
+      min={0}
+      max={200}
+      format={value => `${value}%`}
+      onChange={value => patch({ volume: value / 100 } as Partial<Clip>)}
+      resetTo={100}
+    />
+    <ToggleChip active={clip.muted} onClick={() => patch({ muted: !clip.muted } as Partial<Clip>)} label="Mute this clip" className="w-full">
+      {clip.muted ? 'Muted' : 'Mute clip'}
+    </ToggleChip>
+  </Section>
+);
 
 const ChromaSection = ({ clip, patch }: { clip: MediaClip; patch: Patch }) => {
   const key = clip.chromaKey;
   const set = (changes: Partial<typeof key>) => patch({ chromaKey: { ...key, ...changes } } as Partial<Clip>);
 
   return (
-    <Section title="Green screen" icon={<Wand2 className="h-3.5 w-3.5 text-muted" />} defaultOpen={false}>
+    <Section title="Green screen" icon={<Wand2 className="h-3.5 w-3.5 text-muted" />}>
       <ToggleChip active={key.enabled} onClick={() => set({ enabled: !key.enabled })} label="Remove the key colour" className="mb-2 w-full">
         {key.enabled ? 'Keying on' : 'Enable'}
       </ToggleChip>
@@ -635,10 +630,6 @@ const ChromaSection = ({ clip, patch }: { clip: MediaClip; patch: Patch }) => {
 };
 
 const TextSection = ({ clip, patch }: { clip: TextClip; patch: Patch }) => {
-  const sizeKey = useKeyframeState(clip, 'text.fontSize');
-  const xKey = useKeyframeState(clip, 'text.x');
-  const yKey = useKeyframeState(clip, 'text.y');
-
   return (
     <Section title="Text" icon={<TypeIcon className="h-3.5 w-3.5 text-muted" />}>
       <TextField
@@ -652,6 +643,7 @@ const TextSection = ({ clip, patch }: { clip: TextClip; patch: Patch }) => {
       <FieldRow label="Align">
         <SegmentedControl<TextAlign>
           value={clip.align}
+          framed
           onChange={align => patch({ align } as Partial<Clip>)}
           options={[
             { value: 'left', label: <AlignLeft className="h-3.5 w-3.5" />, title: 'Align left' },
@@ -668,7 +660,6 @@ const TextSection = ({ clip, patch }: { clip: TextClip; patch: Patch }) => {
         max={300}
         format={value => `${(value / 10).toFixed(1)}%`}
         onChange={value => patch({ fontSize: value / 1000 } as Partial<Clip>)}
-        keyframe={sizeKey}
         resetTo={80}
       />
 
@@ -727,7 +718,6 @@ const TextSection = ({ clip, patch }: { clip: TextClip; patch: Patch }) => {
         max={70}
         format={value => `${value}%`}
         onChange={value => patch({ x: value / 100 } as Partial<Clip>)}
-        keyframe={xKey}
         resetTo={0}
       />
       <SliderField
@@ -737,7 +727,6 @@ const TextSection = ({ clip, patch }: { clip: TextClip; patch: Patch }) => {
         max={70}
         format={value => `${value}%`}
         onChange={value => patch({ y: value / 100 } as Partial<Clip>)}
-        keyframe={yKey}
         resetTo={0}
       />
     </Section>
@@ -749,7 +738,7 @@ const TransitionSection = ({ clip }: { clip: Clip }) => {
   const transition = clip.transitionIn;
 
   return (
-    <Section title="Transition in" defaultOpen={false}>
+    <Section title="Transition in">
       <SelectField
         label="Type"
         value={(transition?.kind ?? 'none') as TransitionKind | 'none'}

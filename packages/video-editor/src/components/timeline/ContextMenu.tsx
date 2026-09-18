@@ -49,7 +49,11 @@ export const ContextMenu = ({ x, y, items, onClose }: ContextMenuProps) => {
       onClose();
     };
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+      if (event.key !== 'Escape') return;
+      // Claims the key, so the global handler doesn't also clear the
+      // selection the menu was opened on.
+      event.preventDefault();
+      onClose();
     };
     // `pointerdown` rather than `click` so the menu closes before the next
     // interaction lands on whatever is underneath it.

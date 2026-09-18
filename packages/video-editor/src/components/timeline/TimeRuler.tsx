@@ -1,11 +1,18 @@
+import { memo } from 'react';
 import { cn, pickTickInterval } from '../../lib/utils';
 import { useEditor } from '../../store/editor';
 import { US } from '../../types';
-import { RULER_HEIGHT } from './constants';
+import { HEADER_WIDTH, RULER_HEIGHT, VIRTUALISE_OVERSCAN_PX } from './constants';
 
 interface TimeRulerProps {
   width: number;
   pxPerSec: number;
+  /**
+   * The horizontal scroll window, in content pixels — the same measurement the
+   * lanes virtualise against, so ruler and clips appear and disappear together.
+   */
+  viewportLeft: number;
+  viewportWidth: number;
   onScrub: (event: React.PointerEvent) => void;
 }
 
@@ -34,7 +41,16 @@ const rulerLabel = (seconds: number, interval: number) => {
   return `${pad(minutes)}:${rest.toFixed(2).padStart(5, '0')}`;
 };
 
-export const TimeRuler = ({ width, pxPerSec, onScrub }: TimeRulerProps) => {
+/**
+ * Memoised, and only the ticks on screen are built.
+ *
+ * `width` is the whole project, not the window onto it, so a ten-minute
+ * timeline at a working zoom asked for well over a thousand tick elements —
+ * three DOM nodes each — none of which could be seen. Worse, this used to
+ * rebuild all of them on every parent render, which includes each pointer
+ * move of a marquee drag and each scroll event.
+ */
+export const TimeRuler = memo(({ width, pxPerSec, viewportLeft, viewportWidth, onScrub }: TimeRulerProps) => {
   const inPointUs = useEditor(state => state.inPointUs);
   const outPointUs = useEditor(state => state.outPointUs);
 
@@ -53,6 +69,18 @@ export const TimeRuler = ({ width, pxPerSec, onScrub }: TimeRulerProps) => {
   const tickCount = Math.floor(width / tickSpacing) + 1;
   /** Rough width of a label; one nearer the edge than this would spill. */
   const labelWidth = interval >= 1 ? 36 : 48;
+
+  /*
+   * The slice of the ladder the window can actually see, with the lanes' own
+   * overscan either side so a fast scroll never outruns the next render.
+   *
+   * The ruler starts after the sticky header column, so a tick's local x is
+   * `HEADER_WIDTH` short of its content x — the same offset the lanes correct
+   * for when they pick which clips to mount.
+   */
+  const firstTick = Math.max(0, Math.floor((viewportLeft - HEADER_WIDTH - VIRTUALISE_OVERSCAN_PX) / tickSpacing));
+  const lastTick = Math.min(tickCount - 1, Math.ceil((viewportLeft + viewportWidth - HEADER_WIDTH + VIRTUALISE_OVERSCAN_PX) / tickSpacing));
+  const visibleTicks = Math.max(0, lastTick - firstTick + 1);
 
   const rangeLeft = ((inPointUs ?? 0) / US) * pxPerSec;
   const rangeRight = outPointUs !== null ? (outPointUs / US) * pxPerSec : width;
@@ -74,7 +102,8 @@ export const TimeRuler = ({ width, pxPerSec, onScrub }: TimeRulerProps) => {
 
         {/* Marks along the top, numbers along the bottom — they occupy
             separate bands of the ruler's 30px so neither crowds the other. */}
-        {Array.from({ length: tickCount }, (_, index) => {
+        {Array.from({ length: visibleTicks }, (_, offset) => {
+          const index = firstTick + offset;
           const seconds = index * interval;
           const left = seconds * pxPerSec;
           /*
@@ -103,7 +132,7 @@ export const TimeRuler = ({ width, pxPerSec, onScrub }: TimeRulerProps) => {
         })}
 
         {/* Half-interval marks, shorter, sharing the top edge. */}
-        {Array.from({ length: tickCount }, (_, index) => (index + 0.5) * tickSpacing)
+        {Array.from({ length: visibleTicks }, (_, offset) => (firstTick + offset + 0.5) * tickSpacing)
           .filter(left => left <= width)
           .map(left => (
             <div key={`minor-${left}`} className="pointer-events-none absolute top-0 h-1.5 w-px bg-separator/50" style={{ left }} />
@@ -111,4 +140,6 @@ export const TimeRuler = ({ width, pxPerSec, onScrub }: TimeRulerProps) => {
       </div>
     </div>
   );
-};
+});
+
+TimeRuler.displayName = 'TimeRuler';

@@ -1,4 +1,4 @@
-# Nayan Editor — browser video editor
+# Nayan UI Video Editor — browser video editor
 
 A non-linear video editor that runs entirely in the browser. No uploads, no
 server, no WASM build of FFmpeg — decoding, compositing, GPU effects and
@@ -35,11 +35,6 @@ lock and reordering. Select and razor tools. Multi-select by shift-click or
 rubber-band. Drag to move (groups stay rigid), edge-drag to trim, split, ripple
 delete, duplicate, copy/cut/paste, link and detach audio, markers, in/out
 range, snapping, filmstrip and waveform previews, ⌘-scroll zoom.
-
-**Keyframes** — the properties worth animating: position, scale, rotation,
-opacity, brightness, contrast, saturation, blur, volume, and text size and
-position. Diamonds in the inspector add and remove keys at the playhead; keys
-are drawn on the clip and survive moving, trimming and splitting.
 
 **Clip properties** — opacity, fades, speed, reverse; position, scale,
 rotation, flip; brightness, contrast, saturation, temperature, blur with 8
@@ -78,8 +73,6 @@ src/
                         WebCodecs uses — and all geometry is a fraction of the
                         frame, so a project renders identically at any size.
   lib/
-    keyframes.ts        Interpolation, and the transforms that keep keys valid
-                        through trims, speed changes and splits.
     factories.ts        Clip and track constructors, plus text presets.
   store/editor.ts       Zustand store: clips, tracks, markers, selection,
                         clipboard, tools and undo/redo.
@@ -135,8 +128,8 @@ the pointer is released.
 
 ## Testing
 
-The editing model has a headless suite covering the time maths, keyframe
-transforms, transition states, and every store action — 58 checks:
+The editing model has a headless suite covering the time maths, transition
+states, and every store action:
 
 ```bash
 node_modules/.bin/rolldown <test>.ts -o out.mjs --format esm --platform node && node out.mjs

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { NInput, NNumberField, NSelect, NSlider, NTextarea, NToggleButton, NTooltip } from '@nayan-ui/react';
-import { ChevronDown, Diamond, RotateCcw } from 'lucide-react';
+import { ChevronDown, RotateCcw } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useEditor } from '../store/editor';
 
@@ -23,14 +23,24 @@ import { useEditor } from '../store/editor';
 interface SectionProps {
   title: string;
   icon?: React.ReactNode;
-  defaultOpen?: boolean;
   onReset?: () => void;
   children: React.ReactNode;
 }
 
-/** Collapsible inspector group. Sections remember their state per mount. */
-export const Section = ({ title, icon, defaultOpen = true, onReset, children }: SectionProps) => {
-  const [open, setOpen] = useState(defaultOpen);
+/**
+ * Collapsible inspector group, open on arrival. Sections remember their state
+ * per mount.
+ *
+ * There was a `defaultOpen` for the four that started shut — Texture, Crop,
+ * Green screen, Transition in — on the theory that they are the rarely-touched
+ * ones. What it actually produced was a panel whose shape you could not
+ * predict: half the groups showed their contents and half showed a title, with
+ * nothing on screen to say why, so finding a control meant opening the closed
+ * ones to check. Everything is open now, and the prop is gone rather than left
+ * defaulted, so there is one answer to how a section starts.
+ */
+export const Section = ({ title, icon, onReset, children }: SectionProps) => {
+  const [open, setOpen] = useState(true);
 
   return (
     <section className="border-b border-border/60 last:border-b-0">
@@ -143,72 +153,56 @@ export const SegmentedControl = <T extends string>({
   value,
   options,
   onChange,
+  disabled,
+  framed = false,
   className
 }: {
-  value: T;
+  /** No segment is lit when the value is null — a mixed or empty selection. */
+  value: T | null;
   options: { value: T; label: React.ReactNode; title: string }[];
   onChange: (value: T) => void;
+  disabled?: boolean;
+  /**
+   * Draws the track the segments sit on. For the inspector, where this is one
+   * field among sliders and selects that all carry a filled background of
+   * their own. Off in the toolbar, where the segments stand in a row of ghost
+   * icon buttons and a track would be the only background in it.
+   */
+  framed?: boolean;
   className?: string;
 }) => (
-  <div className={cn('flex gap-0.5 rounded-md bg-surface-secondary p-0.5', className)} role="group">
+  /*
+   * No dimming on the track: each segment is a disabled NToggleButton already,
+   * and the library fades those to `--disabled-opacity` on its own. An
+   * `opacity-50` here multiplied into that — segments at a quarter opacity,
+   * half as visible as the disabled icon buttons sitting next to them in the
+   * timeline toolbar, and a faded pill behind them that no other control has.
+   */
+  <div className={cn('flex gap-0.5 rounded-md', framed && 'bg-surface-secondary p-0.5', className)} role="group">
     {options.map(option => (
       <NTooltip key={option.value} message={option.title}>
         <NToggleButton
           isSelected={value === option.value}
+          isDisabled={disabled}
           isIconOnly
           variant="ghost"
           size="sm"
           onChange={() => onChange(option.value)}
           aria-label={option.title}
-          className="h-6 flex-1">
+          /*
+           * Either way the control stands 28px tall, the height of an
+           * IconButton: a framed one is 24px of segment inside the track's
+           * 2px padding, an unframed one is the segment alone. Keeping the
+           * 24px without the track would leave the toolbar's segments sitting
+           * short in a row of 28px buttons, with nothing left to disguise it.
+           */
+          className={cn('flex-1', framed ? 'h-6' : 'h-7')}>
           {option.label}
         </NToggleButton>
       </NTooltip>
     ))}
   </div>
 );
-
-/* ------------------------------------------------------------------ *
- * Keyframe toggle
- * ------------------------------------------------------------------ */
-
-interface KeyframeButtonProps {
-  clipId: string;
-  path: string;
-  value: number;
-  /** True when the property has any keys at all. */
-  animated: boolean;
-  /** True when a key sits exactly under the playhead. */
-  active: boolean;
-}
-
-/**
- * The diamond every NLE puts beside an animatable property: filled when a key
- * exists at the playhead, outlined when the track is animated elsewhere.
- */
-const KeyframeButton = ({ clipId, path, value, animated, active }: KeyframeButtonProps) => {
-  const toggleKeyframe = useEditor(state => state.toggleKeyframe);
-  const clearKeyframes = useEditor(state => state.clearKeyframes);
-
-  return (
-    <NTooltip message={active ? 'Remove keyframe' : animated ? 'Add keyframe (alt-click to clear track)' : 'Add keyframe'}>
-      <button
-        type="button"
-        aria-label={`Keyframe ${path}`}
-        aria-pressed={active}
-        onClick={event => {
-          if (event.altKey && animated) clearKeyframes(clipId, path);
-          else toggleKeyframe(clipId, path, value);
-        }}
-        className={cn(
-          'shrink-0 rounded p-0.5 transition-colors',
-          active ? 'text-accent' : animated ? 'text-accent/50 hover:text-accent' : 'text-muted/40 hover:text-muted'
-        )}>
-        <Diamond className={cn('h-3 w-3', active && 'fill-current')} />
-      </button>
-    </NTooltip>
-  );
-};
 
 /* ------------------------------------------------------------------ *
  * Fields
@@ -222,8 +216,6 @@ interface SliderFieldProps {
   step?: number;
   format?: (value: number) => string;
   onChange: (value: number) => void;
-  /** Enables the keyframe diamond for this property. */
-  keyframe?: { clipId: string; path: string; animated: boolean; active: boolean };
   /** Double-clicking the readout resets to this. */
   resetTo?: number;
 }
@@ -232,7 +224,7 @@ interface SliderFieldProps {
  * A slider emits a change on every pointer move, so the whole drag is bracketed
  * as one interaction — otherwise a single adjustment would fill the undo stack.
  */
-export const SliderField = ({ label, value, min, max, step = 1, format, onChange, keyframe, resetTo }: SliderFieldProps) => {
+export const SliderField = ({ label, value, min, max, step = 1, format, onChange, resetTo }: SliderFieldProps) => {
   const beginInteraction = useEditor(state => state.beginInteraction);
   const endInteraction = useEditor(state => state.endInteraction);
 
@@ -255,9 +247,6 @@ export const SliderField = ({ label, value, min, max, step = 1, format, onChange
   return (
     <div className="mb-2" onPointerDown={onPointerDown}>
       <div className="mb-1 flex items-center gap-1.5">
-        {keyframe && (
-          <KeyframeButton clipId={keyframe.clipId} path={keyframe.path} value={value} animated={keyframe.animated} active={keyframe.active} />
-        )}
         <span className="flex-1 truncate text-[11px] text-muted">{label}</span>
         <button
           type="button"
@@ -334,7 +323,10 @@ export const TextField = ({
       placeholder={placeholder}
       onChange={event => onChange(event.target.value)}
       wrapperClassName="mb-2"
-      inputClassName="text-xs"
+      // The inspector's own height, matching the selects and number fields it
+      // shares rows with. Set here rather than globally: nothing outside this
+      // panel has a reason to be this tall.
+      inputClassName="h-[var(--field-height)] text-xs"
     />
   );
 
@@ -391,14 +383,17 @@ export const ColorField = ({
           value={swatch}
           onChange={event => onChange(event.target.value)}
           aria-label={label}
-          className="h-8 w-9 shrink-0 cursor-pointer rounded border border-border bg-transparent p-0.5"
+          // Both this and the transparent button below take the shared field
+          // height rather than a number of their own, so the row stays level
+          // with the hex input between them whatever that height becomes.
+          className="h-[var(--field-height)] w-9 shrink-0 cursor-pointer rounded border border-border bg-transparent p-0.5"
         />
         <NInput
           value={value}
           onChange={event => onChange(event.target.value)}
           label={undefined}
           wrapperClassName="mb-0 flex-1 min-w-0"
-          inputClassName="font-mono text-[11px]"
+          inputClassName="h-[var(--field-height)] font-mono text-[11px]"
         />
         {allowAlpha && (
           <NTooltip message="Transparent">
@@ -407,7 +402,7 @@ export const ColorField = ({
               onClick={() => onChange('transparent')}
               aria-label="Set transparent"
               className={cn(
-                'checkerboard h-8 w-8 shrink-0 rounded border transition-colors',
+                'checkerboard h-[var(--field-height)] w-8 shrink-0 rounded border transition-colors',
                 value === 'transparent' ? 'border-accent' : 'border-border'
               )}
             />

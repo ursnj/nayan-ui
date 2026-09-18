@@ -1,10 +1,20 @@
 import { create } from 'zustand';
 import { makeMediaClip, makeTextClip, makeTrack } from '../lib/factories';
-import { removeKeyAt, scaleAnimations, shiftAnimations, splitAnimations, upsertKey } from '../lib/keyframes';
 import { clamp, uid } from '../lib/utils';
-import { releaseAllReaders, releaseAsset, releaseReader } from '../media/library';
-import { DEFAULT_BACKGROUND, DEFAULT_CHROMA, DEFAULT_COLOR, DEFAULT_CROP, DEFAULT_TRANSFORM, US, clipEndUs, isMediaClip } from '../types';
-import type { Clip, MediaAsset, ProjectSettings, TextClip, Track, TrackKind, TransitionKind } from '../types';
+import { releaseAllReaders, releaseAsset, releaseAssetsExcept, releaseReader } from '../media/library';
+import {
+  DEFAULT_BACKGROUND,
+  DEFAULT_CHROMA,
+  DEFAULT_COLOR,
+  DEFAULT_CROP,
+  DEFAULT_FIT,
+  DEFAULT_TRANSFORM,
+  US,
+  clipEndUs,
+  isMediaClip,
+  isTextClip
+} from '../types';
+import type { Clip, MediaAsset, MediaFit, ProjectSettings, TextClip, Track, TrackKind, TransitionKind } from '../types';
 
 /** Nothing shorter than this can be created by trimming or splitting. */
 export const MIN_CLIP_US = 100_000;
@@ -24,7 +34,42 @@ interface Snapshot {
   clips: Clip[];
 }
 
-interface EditorState extends Snapshot {
+/**
+ * Whether a split at `at` would cut this clip: the playhead has to cross it,
+ * it must be unlocked, both halves must clear `MIN_CLIP_US`, and with a
+ * selection active only the selected clips are candidates.
+ */
+const cuttableAt = (clip: Clip, selectedClipIds: string[], at: number) => {
+  if (clip.locked) return false;
+  if (selectedClipIds.length > 0 && !selectedClipIds.includes(clip.id)) return false;
+  return clip.startUs < at && clipEndUs(clip) > at && at - clip.startUs >= MIN_CLIP_US && clipEndUs(clip) - at >= MIN_CLIP_US;
+};
+
+/** The clips a split at `timeUs` would cut. */
+export const splitTargetsAt = (clips: Clip[], selectedClipIds: string[], timeUs: number): Clip[] => {
+  const at = Math.round(timeUs);
+  return clips.filter(clip => cuttableAt(clip, selectedClipIds, at));
+};
+
+/**
+ * Whether a split at `timeUs` would do anything at all.
+ *
+ * `splitAt` is a no-op when nothing is cuttable — an empty timeline, the
+ * playhead parked in a gap, a locked clip, a cut too close to an edge — and a
+ * control that silently does nothing reads as broken. The toolbar and the
+ * context menu gate on this so they cannot disagree with the action: a rule
+ * written out a second time in the UI would be a second thing to keep in step
+ * with the cut itself.
+ *
+ * Separate from `splitTargetsAt` because the UI asks this on every playhead
+ * move, sixty times a second during playback, and does not need the array.
+ */
+export const canSplitAt = (clips: Clip[], selectedClipIds: string[], timeUs: number): boolean => {
+  const at = Math.round(timeUs);
+  return clips.some(clip => cuttableAt(clip, selectedClipIds, at));
+};
+
+export interface EditorState extends Snapshot {
   assets: MediaAsset[];
   selectedClipIds: string[];
   playheadUs: number;
@@ -52,7 +97,11 @@ interface EditorState extends Snapshot {
 
   updateClip: (clipId: string, patch: Partial<Clip>) => void;
   updateSelectedClips: (patch: Partial<Clip>) => void;
+  setSelectionFit: (fit: MediaFit) => void;
+  toggleSelectionFlip: (axis: 'h' | 'v') => void;
   moveClips: (moves: { clipId: string; startUs: number; trackId: string }[]) => void;
+  nudgeSelection: (deltaUs: number) => void;
+  shiftSelectionTrack: (direction: -1 | 1) => void;
   setClipEdge: (clipId: string, edge: 'start' | 'end', timeUs: number) => void;
   splitAt: (timeUs: number) => void;
   duplicateSelection: () => void;
@@ -69,10 +118,6 @@ interface EditorState extends Snapshot {
   selectAll: () => void;
 
   setTransition: (clipId: string, kind: TransitionKind | null, durationUs?: number) => void;
-
-  toggleKeyframe: (clipId: string, path: string, value: number) => void;
-  removeKeyframe: (clipId: string, path: string, localUs: number) => void;
-  clearKeyframes: (clipId: string, path: string) => void;
 
   addTrack: (kind: TrackKind) => void;
   updateTrack: (trackId: string, patch: Partial<Track>) => void;
@@ -142,8 +187,30 @@ const findFreeTrack = (tracks: Track[], clips: Clip[], kind: TrackKind, startUs:
   return null;
 };
 
-/** New video tracks stack on top; new audio tracks go to the bottom. */
-const insertTrack = (tracks: Track[], track: Track): Track[] => (track.kind === 'video' ? [track, ...tracks] : [...tracks, track]);
+/**
+ * New video tracks stack on top; new audio tracks go to the bottom.
+ *
+ * `underTitles` is the exception, and it exists for the one case where "on
+ * top" is never what was meant. Dropping footage that overlaps whatever is
+ * already there needs a new track, and prepending it put that footage above
+ * every title on the timeline — the top row draws last, so a caption written
+ * before the clip arrived vanished behind it. Nobody imports a video in order
+ * to cover their own titles.
+ *
+ * So auto-created footage tracks go above the other footage, which is what you
+ * want for picture-in-picture, and below the run of title tracks at the top,
+ * which is where titles belong. A track counts as a title track while it holds
+ * any text; tracks created for a text clip itself still go straight to the top.
+ */
+const insertTrack = (tracks: Track[], track: Track, clips: Clip[] = [], underTitles = false): Track[] => {
+  if (track.kind !== 'video') return [...tracks, track];
+  if (!underTitles) return [track, ...tracks];
+
+  const titleTrackIds = new Set(clips.filter(isTextClip).map(clip => clip.trackId));
+  let index = 0;
+  while (index < tracks.length && tracks[index].kind === 'video' && titleTrackIds.has(tracks[index].id)) index++;
+  return [...tracks.slice(0, index), track, ...tracks.slice(index)];
+};
 
 const snapshotOf = (state: Snapshot): Snapshot => ({
   project: state.project,
@@ -198,10 +265,10 @@ const normaliseClip = (clip: Clip): Clip => {
     transform: { ...DEFAULT_TRANSFORM, ...clip.transform },
     crop: { ...DEFAULT_CROP, ...clip.crop },
     colorAdjust: { ...DEFAULT_COLOR, ...clip.colorAdjust },
-    animations: clip.animations ?? {},
     filter: clip.filter ?? null
   };
-  return isMediaClip(base) ? { ...base, chromaKey: { ...DEFAULT_CHROMA, ...base.chromaKey } } : base;
+  // Pre-fit files were all drawn contained, which is what `DEFAULT_FIT` is.
+  return isMediaClip(base) ? { ...base, fit: base.fit ?? DEFAULT_FIT, chromaKey: { ...DEFAULT_CHROMA, ...base.chromaKey } } : base;
 };
 
 /**
@@ -210,8 +277,19 @@ const normaliseClip = (clip: Clip): Clip => {
  * Pure, so it lives outside the store factory rather than being rebuilt as
  * part of every store instance.
  */
+/**
+ * The selection as a set.
+ *
+ * The actions below test every clip in the project against it, which on an
+ * array is `clips × selected` comparisons per call — and `nudgeSelection` is
+ * driven by key repeat, so it runs dozens of times a second while an arrow is
+ * held. One set per call makes it `clips + selected`.
+ */
+const selectedSet = (state: EditorState) => new Set(state.selectedClipIds);
+
 const expandGroups = (clips: Clip[], ids: string[]): string[] => {
-  const groups = new Set(clips.filter(clip => ids.includes(clip.id) && clip.groupId).map(clip => clip.groupId));
+  const wanted = new Set(ids);
+  const groups = new Set(clips.filter(clip => wanted.has(clip.id) && clip.groupId).map(clip => clip.groupId));
   if (groups.size === 0) return ids;
   const expanded = new Set(ids);
   for (const clip of clips) {
@@ -234,8 +312,20 @@ export const useEditor = create<EditorState>((set, get) => {
       return { ...patch, past: [...state.past, snapshotOf(state)].slice(-MAX_HISTORY), future: [] };
     });
 
-  /** Places a freshly created clip, adding a track if every candidate is busy. */
-  const placeClip = (state: EditorState, kind: TrackKind, startUs: number, durationUs: number, preferredTrackId?: string) => {
+  /**
+   * Places a freshly created clip, adding a track if every candidate is busy.
+   *
+   * `content` only matters when a track has to be made: a title's track goes
+   * on top, footage's goes under whatever titles are already up there.
+   */
+  const placeClip = (
+    state: EditorState,
+    kind: TrackKind,
+    startUs: number,
+    durationUs: number,
+    preferredTrackId?: string,
+    content: 'media' | 'text' = 'media'
+  ) => {
     let tracks = state.tracks;
     const preferred = tracks.find(entry => entry.id === preferredTrackId);
     const preferredUsable =
@@ -248,7 +338,7 @@ export const useEditor = create<EditorState>((set, get) => {
     if (!track) {
       const count = tracks.filter(entry => entry.kind === kind).length + 1;
       track = makeTrack(kind, count);
-      tracks = insertTrack(tracks, track);
+      tracks = insertTrack(tracks, track, state.clips, content === 'media');
     }
     return { tracks, track };
   };
@@ -311,7 +401,7 @@ export const useEditor = create<EditorState>((set, get) => {
     addTextClip: (preset, atUs) => {
       const state = get();
       const startUs = Math.max(0, Math.round(atUs ?? state.playheadUs));
-      const { tracks, track } = placeClip(state, 'video', startUs, 3 * US);
+      const { tracks, track } = placeClip(state, 'video', startUs, 3 * US, undefined, 'text');
       const clip = makeTextClip(track.id, startUs, preset);
       commit(current => ({ tracks, clips: [...current.clips, clip], selectedClipIds: [clip.id] }));
       return clip.id;
@@ -323,9 +413,59 @@ export const useEditor = create<EditorState>((set, get) => {
       commit(state => ({ clips: state.clips.map(clip => (clip.id === clipId ? ({ ...clip, ...patch } as Clip) : clip)) })),
 
     updateSelectedClips: patch =>
-      commit(state => ({
-        clips: state.clips.map(clip => (state.selectedClipIds.includes(clip.id) ? ({ ...clip, ...patch } as Clip) : clip))
-      })),
+      commit(state => {
+        const selected = selectedSet(state);
+        return { clips: state.clips.map(clip => (selected.has(clip.id) ? ({ ...clip, ...patch } as Clip) : clip)) };
+      }),
+
+    /**
+     * Refits the whole selection in one undo step.
+     *
+     * Picking a mode is a *reframe*, not just a stored value, so the pan and
+     * zoom that ride on top of the fit are zeroed with it. Without that, a clip
+     * dragged or scaled after being fitted no longer fills the frame, and
+     * pressing the same mode again does nothing at all — the field already
+     * holds that value, so nothing re-renders and the button looks broken.
+     *
+     * Rotation and the flips survive, because neither is framing: they are a
+     * look the user chose, and a fit has no business undoing them.
+     *
+     * Clips that don't draw a source frame are skipped rather than patched:
+     * text and audio have no shape to fit, and writing the field onto them
+     * would leave a dead property in the saved project.
+     */
+    setSelectionFit: fit =>
+      commit(state => {
+        const selected = selectedSet(state);
+        return {
+          clips: state.clips.map(clip =>
+            selected.has(clip.id) && isMediaClip(clip) && clip.kind !== 'audio'
+              ? { ...clip, fit, transform: { ...clip.transform, x: 0, y: 0, scale: 1 } }
+              : clip
+          )
+        };
+      }),
+
+    /**
+     * Flips the whole selection on one axis, in one undo step.
+     *
+     * A mixed selection is brought *into* line rather than each clip flipping
+     * independently — inverting them one by one would leave the selection just
+     * as mixed as before, and the button no way to report a state. So the axis
+     * turns on unless everything already has it, which is the same behaviour a
+     * single clip has always had.
+     */
+    toggleSelectionFlip: axis =>
+      commit(state => {
+        const key = axis === 'h' ? 'flipH' : 'flipV';
+        const selected = selectedSet(state);
+        const targets = new Set(state.clips.filter(clip => selected.has(clip.id) && clip.kind !== 'audio').map(clip => clip.id));
+        if (targets.size === 0) return null;
+        const next = !state.clips.every(clip => !targets.has(clip.id) || clip.transform[key]);
+        return {
+          clips: state.clips.map(clip => (targets.has(clip.id) ? { ...clip, transform: { ...clip.transform, [key]: next } } : clip))
+        };
+      }),
 
     /**
      * Moves a set of clips at once. Taking the whole set in one call keeps a
@@ -335,10 +475,17 @@ export const useEditor = create<EditorState>((set, get) => {
     moveClips: moves =>
       commit(state => {
         const trackById = new Map(state.tracks.map(track => [track.id, track]));
+        /*
+         * Indexed rather than scanned. This runs once per pointer move of a
+         * drag, and a linear `find` per moved clip made a group drag cost
+         * `moves × clips` on every one of those — the two numbers that both
+         * grow with the size of the edit.
+         */
+        const clipById = new Map(state.clips.map(clip => [clip.id, clip]));
         const resolved: { clipId: string; startUs: number; trackId: string }[] = [];
 
         for (const move of moves) {
-          const clip = state.clips.find(entry => entry.id === move.clipId);
+          const clip = clipById.get(move.clipId);
           if (!clip || clip.locked) return null;
           const target = trackById.get(move.trackId);
           if (!target || target.locked) return null;
@@ -356,6 +503,63 @@ export const useEditor = create<EditorState>((set, get) => {
           })
         };
       }),
+
+    /**
+     * Slides the selection along the timeline — the keyboard's version of a drag.
+     *
+     * The delta is clamped against the *earliest* clip before anything moves,
+     * so a selection nudged into the head of the timeline keeps its internal
+     * spacing instead of collapsing onto zero one clip at a time.
+     */
+    nudgeSelection: deltaUs => {
+      const state = get();
+      const selected = selectedSet(state);
+      const targets = state.clips.filter(clip => selected.has(clip.id) && !clip.locked);
+      if (targets.length === 0) return;
+
+      let earliest = Number.POSITIVE_INFINITY;
+      for (const clip of targets) earliest = Math.min(earliest, clip.startUs);
+      const delta = Math.max(deltaUs, -earliest);
+      if (delta === 0) return;
+
+      get().moveClips(targets.map(clip => ({ clipId: clip.id, startUs: clip.startUs + delta, trackId: clip.trackId })));
+    },
+
+    /**
+     * Moves the selection to the next usable lane, `-1` being up the stack.
+     *
+     * `tracks[0]` is the topmost layer, so up is towards index 0. Lanes of the
+     * wrong kind are skipped rather than blocking the move, which is what lets
+     * a video clip step past an audio track sitting between two video ones.
+     * `moveClips` still vetoes the gesture as a whole if any clip has nowhere
+     * to go, so a selection can't be torn apart across lanes.
+     */
+    shiftSelectionTrack: direction => {
+      const state = get();
+      const selected = selectedSet(state);
+      const targets = state.clips.filter(clip => selected.has(clip.id) && !clip.locked);
+      if (targets.length === 0) return;
+
+      const moves: { clipId: string; startUs: number; trackId: string }[] = [];
+      for (const clip of targets) {
+        const from = state.tracks.findIndex(track => track.id === clip.trackId);
+        if (from < 0) return;
+        const wanted: TrackKind = clip.kind === 'audio' ? 'audio' : 'video';
+
+        let target: Track | null = null;
+        for (let index = from + direction; index >= 0 && index < state.tracks.length; index += direction) {
+          const candidate = state.tracks[index];
+          if (candidate.kind === wanted && !candidate.locked) {
+            target = candidate;
+            break;
+          }
+        }
+        if (!target) return;
+        moves.push({ clipId: clip.id, startUs: clip.startUs, trackId: target.id });
+      }
+
+      get().moveClips(moves);
+    },
 
     setClipEdge: (clipId, edge, timeUs) =>
       commit(state => {
@@ -376,7 +580,6 @@ export const useEditor = create<EditorState>((set, get) => {
             ...clip,
             startUs: newStart,
             durationUs: newDuration,
-            animations: shiftAnimations(clip.animations, deltaUs, newDuration),
             ...(isMediaClip(clip) && clip.kind !== 'image' ? { inUs: Math.max(0, clip.inUs + deltaUs * clip.speed) } : {})
           } as Clip;
 
@@ -386,28 +589,14 @@ export const useEditor = create<EditorState>((set, get) => {
         const maxDurationUs = availableSourceUs(clip, state.assets);
         const newEnd = clamp(Math.round(timeUs), clip.startUs + MIN_CLIP_US, clip.startUs + maxDurationUs);
         const newDuration = newEnd - clip.startUs;
-        const updated: Clip = {
-          ...clip,
-          durationUs: newDuration,
-          animations: scaleAnimations(clip.animations, newDuration / Math.max(1, clip.durationUs))
-        };
+        const updated: Clip = { ...clip, durationUs: newDuration };
         return { clips: state.clips.map(entry => (entry.id === clipId ? updated : entry)) };
       }),
 
     splitAt: timeUs =>
       commit(state => {
         const at = Math.round(timeUs);
-        // Cut every clip the playhead crosses: the selected ones, or all of
-        // them across every track when nothing is selected.
-        const targets = state.clips.filter(clip => {
-          if (clip.locked) return false;
-          if (state.selectedClipIds.length > 0 && !state.selectedClipIds.includes(clip.id)) return false;
-          return true;
-        });
-
-        const cuttable = targets.filter(
-          clip => clip.startUs < at && clipEndUs(clip) > at && at - clip.startUs >= MIN_CLIP_US && clipEndUs(clip) - at >= MIN_CLIP_US
-        );
+        const cuttable = splitTargetsAt(state.clips, state.selectedClipIds, at);
         if (cuttable.length === 0) return null;
 
         const removed = new Set(cuttable.map(clip => clip.id));
@@ -416,13 +605,11 @@ export const useEditor = create<EditorState>((set, get) => {
         for (const clip of cuttable) {
           const leftDuration = at - clip.startUs;
           const rightDuration = clipEndUs(clip) - at;
-          const { left: leftAnimations, right: rightAnimations } = splitAnimations(clip.animations, leftDuration);
 
           created.push({
             ...clip,
             durationUs: leftDuration,
-            fadeOutUs: Math.min(clip.fadeOutUs, leftDuration),
-            animations: leftAnimations
+            fadeOutUs: Math.min(clip.fadeOutUs, leftDuration)
           } as Clip);
 
           created.push({
@@ -431,7 +618,6 @@ export const useEditor = create<EditorState>((set, get) => {
             startUs: at,
             durationUs: rightDuration,
             fadeInUs: Math.min(clip.fadeInUs, rightDuration),
-            animations: rightAnimations,
             // The right half starts at a cut, not at the original head.
             transitionIn: null,
             ...(isMediaClip(clip) ? { inUs: clip.inUs + leftDuration * clip.speed } : {})
@@ -622,48 +808,6 @@ export const useEditor = create<EditorState>((set, get) => {
         )
       })),
 
-    /* ---------------- keyframes ---------------- */
-
-    toggleKeyframe: (clipId, path, value) =>
-      commit(state => {
-        const clip = state.clips.find(entry => entry.id === clipId);
-        if (!clip) return null;
-        const localUs = state.playheadUs - clip.startUs;
-        if (localUs < 0 || localUs > clip.durationUs) return null;
-
-        const tolerance = US / (state.project.fps * 2);
-        const existing = clip.animations[path];
-        const hasKeyHere = existing?.some(key => Math.abs(key.atUs - localUs) <= tolerance);
-
-        const keys = hasKeyHere ? removeKeyAt(existing, localUs, tolerance) : upsertKey(existing, localUs, value, tolerance);
-        const animations = { ...clip.animations };
-        if (keys.length > 0) animations[path] = keys;
-        else delete animations[path];
-
-        return { clips: state.clips.map(entry => (entry.id === clipId ? { ...entry, animations } : entry)) };
-      }),
-
-    removeKeyframe: (clipId, path, localUs) =>
-      commit(state => {
-        const clip = state.clips.find(entry => entry.id === clipId);
-        if (!clip) return null;
-        const tolerance = US / (state.project.fps * 2);
-        const keys = removeKeyAt(clip.animations[path], localUs, tolerance);
-        const animations = { ...clip.animations };
-        if (keys.length > 0) animations[path] = keys;
-        else delete animations[path];
-        return { clips: state.clips.map(entry => (entry.id === clipId ? { ...entry, animations } : entry)) };
-      }),
-
-    clearKeyframes: (clipId, path) =>
-      commit(state => {
-        const clip = state.clips.find(entry => entry.id === clipId);
-        if (!clip) return null;
-        const animations = { ...clip.animations };
-        delete animations[path];
-        return { clips: state.clips.map(entry => (entry.id === clipId ? { ...entry, animations } : entry)) };
-      }),
-
     /* ---------------- tracks ---------------- */
 
     addTrack: kind =>
@@ -727,6 +871,18 @@ export const useEditor = create<EditorState>((set, get) => {
       // Every clip id is about to be replaced, so the decoders keyed to the
       // old ones would sit in the pool until eviction pushed them out.
       void releaseAllReaders();
+      /*
+       * The library the caller brought replaces the one on screen, and the
+       * media behind the old one is held outside React — by asset id, in the
+       * media library. Nothing else will ever ask for it again, so this is the
+       * only chance to hand back its decoders and decoded audio.
+       *
+       * Scoped to the assets that are actually being dropped: reopening the
+       * current project arrives with the same ids, already re-registered by
+       * `loadAsset`, and releasing those would empty the library it just
+       * filled.
+       */
+      if (assets) void releaseAssetsExcept(assets.map(asset => asset.id));
       set(state => ({
         project: normaliseProject(data.project),
         tracks: data.tracks,

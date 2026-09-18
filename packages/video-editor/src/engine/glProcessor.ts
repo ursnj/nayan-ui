@@ -239,6 +239,7 @@ class GLProcessor {
   private gl: WebGL2RenderingContext | null = null;
   private program: WebGLProgram | null = null;
   private texture: WebGLTexture | null = null;
+  private buffer: WebGLBuffer | null = null;
   private uniforms = new Map<string, WebGLUniformLocation | null>();
   private failed = false;
 
@@ -296,16 +297,23 @@ class GLProcessor {
     };
 
     const program = gl.createProgram()!;
-    gl.attachShader(program, compile(gl.VERTEX_SHADER, VERTEX_SHADER));
-    gl.attachShader(program, compile(gl.FRAGMENT_SHADER, FRAGMENT_SHADER));
+    const vertex = compile(gl.VERTEX_SHADER, VERTEX_SHADER);
+    const fragment = compile(gl.FRAGMENT_SHADER, FRAGMENT_SHADER);
+    gl.attachShader(program, vertex);
+    gl.attachShader(program, fragment);
     gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       throw new Error(gl.getProgramInfoLog(program) ?? 'program link failed');
     }
+    // Flagged for deletion now that they're linked in; the driver frees them
+    // with the program rather than keeping two compiled copies alive.
+    gl.deleteShader(vertex);
+    gl.deleteShader(fragment);
     gl.useProgram(program);
     this.program = program;
 
     const buffer = gl.createBuffer();
+    this.buffer = buffer;
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
     const position = gl.getAttribLocation(program, 'aPosition');
@@ -318,6 +326,38 @@ class GLProcessor {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  }
+
+  /**
+   * Hands the GPU surface back.
+   *
+   * The drawing buffer is the expensive part and it only ever grows: an export
+   * at 4K leaves a 3840×2160 RGBA buffer — about 33MB — allocated for the rest
+   * of the session, on a processor nothing will touch again until the next
+   * export. `ensure` rebuilds everything on demand, so this is safe to call at
+   * any point and costs one shader compile the next time it is needed.
+   */
+  dispose() {
+    const gl = this.gl;
+    if (gl) {
+      if (this.program) gl.deleteProgram(this.program);
+      if (this.texture) gl.deleteTexture(this.texture);
+      if (this.buffer) gl.deleteBuffer(this.buffer);
+      // Without this the context lingers until the collector notices the
+      // canvas, and a browser only allows a handful of live WebGL contexts.
+      gl.getExtension('WEBGL_lose_context')?.loseContext();
+    }
+    if (this.canvas) {
+      this.canvas.width = 0;
+      this.canvas.height = 0;
+    }
+    this.canvas = null;
+    this.gl = null;
+    this.program = null;
+    this.texture = null;
+    this.buffer = null;
+    // Uniform locations belong to the deleted program.
+    this.uniforms.clear();
   }
 
   private location(name: string): WebGLUniformLocation | null {

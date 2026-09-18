@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { NButton, NButtonGroup, NLoading, NSearchField, showToast } from '@nayan-ui/react';
 import { Film, Image as ImageIcon, Music, Plus, Trash2, Upload } from 'lucide-react';
 import { formatBytes, formatDuration } from '../../lib/utils';
-import { UnsupportedMediaError, generateThumbnail, loadAsset } from '../../media/library';
+import { MEDIA_ACCEPT, UnsupportedMediaError, generateThumbnail, loadAsset } from '../../media/library';
 import { useEditor } from '../../store/editor';
 import type { MediaAsset } from '../../types';
 import { EmptyState, IconButton } from '../controls';
@@ -116,7 +116,7 @@ export const MediaPanel = () => {
         ref={inputRef}
         type="file"
         multiple
-        accept="video/*,audio/*,image/*"
+        accept={MEDIA_ACCEPT}
         className="hidden"
         onChange={event => {
           if (event.target.files) void importFiles(event.target.files);

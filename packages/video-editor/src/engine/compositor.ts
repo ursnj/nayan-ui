@@ -1,9 +1,8 @@
 import { reportOnce } from '../lib/diagnostics';
-import { animatedValue } from '../lib/keyframes';
 import { clamp } from '../lib/utils';
 import { getImageBitmap, getReader } from '../media/library';
 import { TEXT_LINE_HEIGHT, US, clipEndUs, isMediaClip, isTextClip, sourceTimeUs } from '../types';
-import type { Background, Clip, ColorAdjust, MediaClip, ProjectSettings, TextClip, Track, Transform } from '../types';
+import type { Background, Clip, MediaClip, MediaFit, ProjectSettings, TextClip, Track, Transform } from '../types';
 import { blurOnlyFilter, canvasFilterString, exportProcessor, needsPixelProcessing, previewProcessor } from './glProcessor';
 import { transitionStateAt } from './transitions';
 import type { LayerTransitionState } from './transitions';
@@ -28,9 +27,15 @@ export interface RenderOptions {
  * what guarantees the exported file matches what the user saw. Because all
  * geometry in the model is a fraction of the frame, the same scene renders
  * correctly at any resolution.
+ *
+ * Returns false when a layer that should have been visible had no source to
+ * draw. The background is painted first, so such a frame is not merely
+ * incomplete — it has replaced whatever was on the canvas with an empty
+ * picture, and the caller needs to know it is worth rendering again.
  */
-export const renderScene = async (context: Context2D, scene: Scene, timeUs: number, options: RenderOptions) => {
+export const renderScene = async (context: Context2D, scene: Scene, timeUs: number, options: RenderOptions): Promise<boolean> => {
   const { project } = scene;
+  let complete = true;
 
   await drawBackground(context, scene, timeUs, options);
 
@@ -39,7 +44,7 @@ export const renderScene = async (context: Context2D, scene: Scene, timeUs: numb
     const withinTransition = transition && timeUs < layer.startUs + transition.durationUs;
 
     if (!withinTransition) {
-      await drawLayer(context, layer, project, timeUs, options, null);
+      complete = (await drawLayer(context, layer, project, timeUs, options, null)) && complete;
       continue;
     }
 
@@ -53,13 +58,14 @@ export const renderScene = async (context: Context2D, scene: Scene, timeUs: numb
     if (outgoing && state.outgoing.alpha > 0) {
       // Keep reading the outgoing clip's source forward through the blend
       // rather than freezing its last frame, which looks broken over motion.
-      await drawLayer(context, outgoing, project, Math.min(timeUs, clipEndUs(outgoing) - 1), options, {
+      const drawn = await drawLayer(context, outgoing, project, Math.min(timeUs, clipEndUs(outgoing) - 1), options, {
         ...state.outgoing,
         sourceOverrunUs: isMediaClip(outgoing) ? outgoing.inUs + (timeUs - outgoing.startUs) * outgoing.speed : undefined
       });
+      complete = drawn && complete;
     }
 
-    await drawLayer(context, layer, project, timeUs, options, { ...state.incoming });
+    complete = (await drawLayer(context, layer, project, timeUs, options, { ...state.incoming })) && complete;
 
     if (state.overlay && state.overlay.alpha > 0) {
       context.save();
@@ -72,6 +78,8 @@ export const renderScene = async (context: Context2D, scene: Scene, timeUs: numb
       context.restore();
     }
   }
+
+  return complete;
 };
 
 /** Clips that should be on screen at `timeUs`, in bottom-to-top draw order. */
@@ -111,42 +119,6 @@ const envelopeAt = (clip: Clip, timeUs: number): number => {
   if (clip.fadeInUs > 0) gain = Math.min(gain, clamp(local / clip.fadeInUs, 0, 1));
   if (clip.fadeOutUs > 0) gain = Math.min(gain, clamp(remaining / clip.fadeOutUs, 0, 1));
   return gain;
-};
-
-/**
- * Resolves a clip's colour settings at an instant, applying any keyframes.
- *
- * Only the dials worth animating are looked up. The tint hexes and the
- * texture amounts are deliberately static: ramping grain or a split tone
- * reads as a glitch rather than a move.
- */
-const colorAt = (clip: Clip, timeUs: number): ColorAdjust => {
-  const base = clip.colorAdjust;
-  if (Object.keys(clip.animations).length === 0) return base;
-  return {
-    ...base,
-    brightness: animatedValue(clip, 'color.brightness', base.brightness, timeUs),
-    contrast: animatedValue(clip, 'color.contrast', base.contrast, timeUs),
-    saturation: animatedValue(clip, 'color.saturation', base.saturation, timeUs),
-    vibrance: animatedValue(clip, 'color.vibrance', base.vibrance, timeUs),
-    temperature: animatedValue(clip, 'color.temperature', base.temperature, timeUs),
-    highlights: animatedValue(clip, 'color.highlights', base.highlights, timeUs),
-    shadows: animatedValue(clip, 'color.shadows', base.shadows, timeUs),
-    vignette: animatedValue(clip, 'color.vignette', base.vignette, timeUs),
-    blur: animatedValue(clip, 'color.blur', base.blur, timeUs)
-  };
-};
-
-const transformAt = (clip: Clip, timeUs: number): Transform => {
-  const base = clip.transform;
-  if (Object.keys(clip.animations).length === 0) return base;
-  return {
-    ...base,
-    x: animatedValue(clip, 'transform.x', base.x, timeUs),
-    y: animatedValue(clip, 'transform.y', base.y, timeUs),
-    scale: animatedValue(clip, 'transform.scale', base.scale, timeUs),
-    rotation: animatedValue(clip, 'transform.rotation', base.rotation, timeUs)
-  };
 };
 
 interface DrawOverride extends LayerTransitionState {
@@ -224,10 +196,54 @@ const getScratch = (key: string, width: number, height: number) => {
   return entry;
 };
 
+/**
+ * An existing surface with its pixels left alone, or null if it is gone or the
+ * wrong size.
+ *
+ * `getScratch` clears on the way out, which is right for a caller about to
+ * redraw and useless to one that wants to reuse what is already there. Reading
+ * through here still counts as a use, so keeping a surface does not make it
+ * the next thing evicted.
+ */
+const peekScratch = (key: string, width: number, height: number) => {
+  const entry = scratch.get(key);
+  if (!entry) return null;
+  if (entry.canvas.width !== Math.max(1, width) || entry.canvas.height !== Math.max(1, height)) return null;
+  scratch.delete(key);
+  scratch.set(key, entry);
+  return entry;
+};
+
+/**
+ * Frees the surfaces an export allocated, leaving the preview's alone.
+ *
+ * Export surfaces are sized to the *output*, not the window: a 4K bounce
+ * leaves up to `SCRATCH_LIMIT` full-frame canvases — the text raster alone is
+ * 3840×2160 — held by a module-level map for the rest of the session, for a
+ * render pass that has finished. The preview's own surfaces are keyed
+ * separately and are still in use, so they are deliberately untouched.
+ */
+export const releaseExportSurfaces = () => {
+  for (const [key, entry] of scratch) {
+    if (!key.startsWith('export:')) continue;
+    // Zero the backing store rather than waiting for the collector to notice
+    // a detached canvas, as the eviction path does.
+    entry.canvas.width = 0;
+    entry.canvas.height = 0;
+    scratch.delete(key);
+    textSignatures.delete(key);
+  }
+};
+
 /* ------------------------------------------------------------------ *
  * Layer drawing
  * ------------------------------------------------------------------ */
 
+/**
+ * Draws one layer. False means a frame that should have been on screen wasn't
+ * available — distinct from one that is deliberately invisible, where there is
+ * nothing to wait for and nothing to retry.
+ */
 const drawLayer = async (
   context: Context2D,
   clip: Clip,
@@ -235,18 +251,32 @@ const drawLayer = async (
   timeUs: number,
   options: RenderOptions,
   override: DrawOverride | null
-) => {
-  const animatedOpacity = animatedValue(clip, 'opacity', clip.opacity, timeUs);
-  const alpha = animatedOpacity * envelopeAt(clip, timeUs) * (override?.alpha ?? 1);
-  if (alpha <= 0.001) return;
+): Promise<boolean> => {
+  const alpha = clip.opacity * envelopeAt(clip, timeUs) * (override?.alpha ?? 1);
+  // Transparent by the user's own instruction — opacity, a fade, a transition.
+  if (alpha <= 0.001) return true;
 
   if (isTextClip(clip)) {
-    const rendered = renderTextToScratch(clip, project, timeUs, `${options.target}:raster`);
-    if (!rendered) return;
+    /*
+     * Keyed per clip, not per target.
+     *
+     * The surface and the signature that guards it share this key, so one key
+     * for every text clip meant two captions on screen invalidated each other
+     * on every frame: A rasterises and stores its signature, B finds A's and
+     * rasterises over it, then A finds B's — a cache that could never hit
+     * while more than one title was visible, re-laying out every line of both
+     * at full project size sixty times a second.
+     *
+     * Still `export:`-prefixed, so `releaseExportSurfaces` still reclaims
+     * these, and still under the same LRU cap, which is what keeps a timeline
+     * full of titles from holding a full-frame canvas for each one.
+     */
+    const rendered = renderTextToScratch(clip, project, timeUs, `${options.target}:raster:${clip.id}`);
+    if (!rendered) return false;
     compose(context, rendered.canvas, clip, project, timeUs, options, override, alpha, project.width, project.height);
-    return;
+    return true;
   }
-  await drawMediaLayer(context, clip, project, timeUs, options, override, alpha);
+  return drawMediaLayer(context, clip, project, timeUs, options, override, alpha);
 };
 
 interface ResolvedSource {
@@ -302,13 +332,15 @@ const drawMediaLayer = async (
   options: RenderOptions,
   override: DrawOverride | null,
   alpha: number
-) => {
-  if (clip.kind === 'audio') return;
+): Promise<boolean> => {
+  // Audio draws nothing by definition, so it is never an incomplete frame.
+  if (clip.kind === 'audio') return true;
 
   const resolved = clip.kind === 'image' ? resolveImageSource(clip) : await resolveVideoSource(clip, timeUs, options, override?.sourceOverrunUs);
-  if (!resolved) return;
+  if (!resolved) return false;
 
   compose(context, resolved.source, clip, project, timeUs, options, override, alpha, resolved.sourceWidth, resolved.sourceHeight);
+  return true;
 };
 
 /**
@@ -329,7 +361,7 @@ const compose = (
 ) => {
   if (sourceWidth <= 0 || sourceHeight <= 0) return;
 
-  const color = colorAt(clip, timeUs);
+  const color = clip.colorAdjust;
   const chromaKey = isMediaClip(clip) ? clip.chromaKey : undefined;
   const blurScale = project.height / 1080;
 
@@ -351,12 +383,7 @@ const compose = (
   }
 
   // Crop selects a sub-rectangle of the source, which then fills the same box.
-  const crop = {
-    top: animatedValue(clip, 'crop.top', clip.crop.top, timeUs),
-    right: animatedValue(clip, 'crop.right', clip.crop.right, timeUs),
-    bottom: animatedValue(clip, 'crop.bottom', clip.crop.bottom, timeUs),
-    left: animatedValue(clip, 'crop.left', clip.crop.left, timeUs)
-  };
+  const crop = clip.crop;
   const sx = sourceWidth * clamp(crop.left, 0, 0.98);
   const sy = sourceHeight * clamp(crop.top, 0, 0.98);
   const sw = Math.max(1, sourceWidth * (1 - clamp(crop.left + crop.right, 0, 0.99)));
@@ -375,8 +402,9 @@ const compose = (
     filter = filter === 'none' ? `blur(${radius}px)` : `${filter} blur(${radius}px)`;
   }
 
-  const box = containRect(sw, sh, project.width, project.height);
-  const transform = transformAt(clip, timeUs);
+  // Text rasterises at project size, so `contain` is the identity for it.
+  const box = fitRect(isMediaClip(clip) ? clip.fit : 'contain', sw, sh, project.width, project.height);
+  const transform = clip.transform;
 
   context.save();
   context.globalAlpha = alpha;
@@ -550,6 +578,17 @@ const drawBackdrop = (context: Context2D, resolved: ResolvedSource, background: 
   }
 };
 
+/**
+ * The base rectangle a layer is drawn into, per its fit mode.
+ *
+ * Shared with the preview overlay, so the selection frame and the handles land
+ * on the pixels that were actually drawn.
+ */
+export const fitRect = (fit: MediaFit, sourceWidth: number, sourceHeight: number, boxWidth: number, boxHeight: number) => {
+  if (fit === 'stretch') return { width: boxWidth, height: boxHeight };
+  return fit === 'cover' ? coverRect(sourceWidth, sourceHeight, boxWidth, boxHeight) : containRect(sourceWidth, sourceHeight, boxWidth, boxHeight);
+};
+
 /** Cover-fit: the box is filled completely, overflowing if aspect ratios differ. */
 const coverRect = (sourceWidth: number, sourceHeight: number, boxWidth: number, boxHeight: number) => {
   if (!sourceWidth || !sourceHeight) return { width: boxWidth, height: boxHeight };
@@ -589,13 +628,21 @@ const textAnimationAt = (clip: TextClip, timeUs: number) => {
   }
 };
 
-const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: number, key: string) => {
-  const surface = getScratch(key, project.width, project.height);
-  if (!surface) return null;
-  const context = surface.context;
+/**
+ * What the last raster on a given surface was drawn from.
+ *
+ * Text is rasterised at full project size, so a 4K title costs a clear and a
+ * layout of every line on every frame — even parked on a static caption where
+ * the result is identical. The signature below covers every input that reaches
+ * a pixel, so a frame that would redraw the same thing reuses the surface
+ * instead. An animated title changes its signature each frame and pays the
+ * same cost as before, which is correct: its pixels really do differ.
+ */
+const textSignatures = new Map<string, string>();
 
+const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: number, key: string) => {
   const animation = textAnimationAt(clip, timeUs);
-  const fontSize = Math.max(1, animatedValue(clip, 'text.fontSize', clip.fontSize, timeUs) * project.height * animation.scale);
+  const fontSize = Math.max(1, clip.fontSize * project.height * animation.scale);
   const lineHeight = fontSize * TEXT_LINE_HEIGHT;
 
   let lines = clip.text.split('\n');
@@ -605,23 +652,75 @@ const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: n
   }
   if (lines.length === 0 || (lines.length === 1 && lines[0] === '')) return null;
 
-  context.font = `${clip.italic ? 'italic ' : ''}${clip.fontWeight} ${fontSize}px ${clip.fontFamily}`;
+  const font = `${clip.italic ? 'italic ' : ''}${clip.fontWeight} ${fontSize}px ${clip.fontFamily}`;
+  const centreX = project.width / 2 + clip.x * project.width;
+  const centreY = project.height / 2 + (clip.y + animation.offsetY) * project.height;
+  const blockHeight = lines.length * lineHeight;
+
+  /*
+   * Everything a pixel depends on, and nothing that doesn't. The resolved
+   * values are used rather than the raw clip fields, so the entrance
+   * animation lands in here already evaluated for this instant.
+   */
+  const signature = [
+    lines.join('\0'),
+    font,
+    clip.align,
+    clip.textColor,
+    clip.backgroundColor,
+    clip.strokeColor,
+    clip.strokeWidth,
+    centreX,
+    centreY,
+    lineHeight,
+    animation.alpha,
+    project.width,
+    project.height
+  ].join('|');
+
+  // `getScratch` clears the surface, so it is only reached on a real miss.
+  if (textSignatures.get(key) === signature) {
+    const cached = peekScratch(key, project.width, project.height);
+    if (cached) return cached;
+  }
+
+  const surface = getScratch(key, project.width, project.height);
+  if (!surface) return null;
+  const context = surface.context;
+  textSignatures.set(key, signature);
+
+  context.font = font;
   context.textAlign = clip.align;
   context.textBaseline = 'middle';
 
-  const centreX = project.width / 2 + animatedValue(clip, 'text.x', clip.x, timeUs) * project.width;
-  const centreY = project.height / 2 + (animatedValue(clip, 'text.y', clip.y, timeUs) + animation.offsetY) * project.height;
-  const blockHeight = lines.length * lineHeight;
-
   context.globalAlpha = animation.alpha;
 
+  /*
+   * The block stays where the clip is. Only the lines move inside it.
+   *
+   * `fillText` positions a line relative to the x it is handed, according to
+   * `textAlign` — so drawing every alignment at the clip's own centre made the
+   * alignment *move the caption*: left-aligned text began at the centre and ran
+   * right, right-aligned ended there and ran left, and a single-line title (the
+   * ordinary case) simply jumped half its width sideways with nothing about its
+   * ragged edge to show for it.
+   *
+   * Measuring the widest line gives the block its own extent, so the anchor can
+   * be the block's left edge, its right edge or its centre while the block
+   * itself stays centred on the clip in all three. Alignment then means what it
+   * means in a text editor: which side the ragged edge is on. It also puts the
+   * drawn text back where the transform overlay draws its selection box, which
+   * is centred on the clip and was never told about any of this.
+   */
+  const widest = Math.max(...lines.map(line => context.measureText(line).width));
+  const blockLeft = centreX - widest / 2;
+  const anchorX = clip.align === 'left' ? blockLeft : clip.align === 'right' ? blockLeft + widest : centreX;
+
   if (clip.backgroundColor !== 'transparent') {
-    const widest = Math.max(...lines.map(line => context.measureText(line).width));
     const padX = fontSize * 0.4;
     const padY = fontSize * 0.25;
-    const boxLeft = clip.align === 'left' ? centreX : clip.align === 'right' ? centreX - widest : centreX - widest / 2;
     context.fillStyle = clip.backgroundColor;
-    roundedRect(context, boxLeft - padX, centreY - blockHeight / 2 - padY, widest + padX * 2, blockHeight + padY * 2, fontSize * 0.2);
+    roundedRect(context, blockLeft - padX, centreY - blockHeight / 2 - padY, widest + padX * 2, blockHeight + padY * 2, fontSize * 0.2);
     context.fill();
   }
 
@@ -631,10 +730,10 @@ const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: n
       context.lineWidth = clip.strokeWidth * fontSize * 0.1;
       context.strokeStyle = clip.strokeColor;
       context.lineJoin = 'round';
-      context.strokeText(line, centreX, y);
+      context.strokeText(line, anchorX, y);
     }
     context.fillStyle = clip.textColor;
-    context.fillText(line, centreX, y);
+    context.fillText(line, anchorX, y);
   });
 
   return surface;
