@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { NCode, THEMES, useLocalStorage } from '@nayan-ui/react';
+import { NCode, THEMES } from '@nayan-ui/react';
 import { Check, Copy } from 'lucide-react';
+import { useTheme } from '@/helpers/ThemeProvider';
 
 interface Props {
   code: string;
@@ -26,7 +27,9 @@ interface Props {
  * miss, so this one says "Copied".
  */
 const Code = ({ code, language = 'tsx', filename }: Props) => {
-  const [theme] = useLocalStorage('THEME', THEMES.LIGHT);
+  /* From context, so a theme switch restyles the highlighted source with the
+     rest of the page instead of on the next reload. */
+  const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -59,7 +62,20 @@ const Code = ({ code, language = 'tsx', filename }: Props) => {
    */
   return (
     <div className="w-full min-w-0 overflow-hidden rounded-xl border border-default bg-surface">
-      <div className="flex items-center justify-between gap-3 border-b border-default bg-background px-3 py-2">
+      {/*
+       * `bg-surface`, not `bg-background`. A code frame on a documentation page
+       * sits directly on the page, and the page is `--background` — so a header
+       * filled with `--background` was the same colour as the page behind it.
+       * The strip read as a gap in the top of the frame rather than as its
+       * header, and in light mode the white code body below made it look like
+       * the frame started an inch too low.
+       *
+       * `--surface-secondary` would be the obvious tint, but in this palette
+       * it is hsl(214 40% 96%) against a page of hsl(214 45% 95%) — the same
+       * problem again. The frame is one surface, and the hairline below does
+       * the separating, which is the rule the rest of the site follows.
+       */}
+      <div className="flex items-center justify-between gap-3 border-b border-default bg-surface px-3 py-2">
         <span className="truncate font-mono text-xs text-muted">{filename ?? language}</span>
         <button
           type="button"

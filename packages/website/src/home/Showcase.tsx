@@ -61,7 +61,12 @@ const Showcase = () => (
       eyebrow="What you get"
       id="what-heading"
       title="More than a component library"
-      lead="Four things, all free and all open source. Start with whichever one you came for."
+      lead={
+        <>
+          Four things, all free and all open source: components for React and React Native, a video editor that runs in a browser tab, a pack of
+          ready-made games, and a set of developer tools. Start with whichever one you came for.
+        </>
+      }
     />
 
     <StatGrid stats={STATS} className="mb-8" />
