@@ -315,7 +315,10 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
 
       <dl className="rounded-lg bg-surface-secondary px-3 py-2 text-xs">
         <Row label="Output" value={audioOnly ? `${format.label} · audio only` : `${evenWidth} × ${evenHeight} · ${fps} fps`} />
-        <Row label="Duration" value={creditSeconds > 0 ? `${outputSeconds.toFixed(1)}s · ${creditSeconds}s credit` : `${outputSeconds.toFixed(1)}s`} />
+        <Row
+          label="Duration"
+          value={creditSeconds > 0 ? `${outputSeconds.toFixed(1)}s · ${creditSeconds}s credit` : `${outputSeconds.toFixed(1)}s`}
+        />
         {!audioOnly && <Row label="Bitrate" value={`${(bitrate / 1_000_000).toFixed(1)} Mbps ceiling`} />}
         {/* The measured figure replaces the range in place, so the row never
             has two answers on it at once. While a measurement is on its way the
