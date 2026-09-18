@@ -1,616 +1,883 @@
-export const installCode = `npm install @nayan-ui/react`;
+/*
+ * Usage samples for the React Native pages, generated from the example app's
+ * screens (packages/native/example/app) so the code on a page is the code that
+ * produced the screenshot above it. The app's `Screen` wrapper is replaced by
+ * the plain `View` a reader would write in their own screen.
+ *
+ * Regenerate after changing an example screen.
+ */
 
-export const tailwindCode = `// No tailwind.config.js needed with Tailwind v4!
-// HeroUI styles handle theming automatically.
-// Use @tailwindcss/vite plugin in vite.config.ts:
+export const accordionCode = `import { View } from 'react-native';
+import { NAccordion, NText } from '@nayan-ui/native';
 
-import tailwindcss from '@tailwindcss/vite';
+export default function AccordionScreen() {
+  return (
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Single (default)</NText>
+      <NAccordion
+        items={[
+          { title: 'What is React Native?', content: 'A framework for building native apps using React.' },
+          { title: 'What is Expo?', content: 'A set of tools for building React Native apps faster.' },
+          { title: 'What is HeroUI?', content: 'A component library for React Native.' }
+        ]}
+      />
 
-export default defineConfig({
-  plugins: [tailwindcss(), react()],
-});`;
+      <NText className="text-lg font-bold">Multiple selection</NText>
+      <NAccordion
+        selectionMode="multiple"
+        items={[
+          { title: 'Item A', content: 'Content A' },
+          { title: 'Item B', content: 'Content B' },
+          { title: 'Item C', content: 'Content C' }
+        ]}
+      />
 
-export const cssCode = `@import '@nayan-ui/react/styles.css';
+      <NText className="text-lg font-bold">With disabled item</NText>
+      <NAccordion
+        items={[
+          { title: 'Enabled', content: 'You can expand this.' },
+          { title: 'Disabled', content: 'Cannot expand.', isDisabled: true }
+        ]}
+      />
 
-body {
-  color: var(--foreground);
-  background: var(--background);
+      <NText className="text-lg font-bold">Surface variant</NText>
+      <NAccordion
+        variant="surface"
+        items={[
+          { title: 'Surface A', content: 'Content in surface variant.' },
+          { title: 'Surface B', content: 'Another surface item.' }
+        ]}
+      />
+    </View>
+  );
 }`;
 
-export const appCode = `import { useState } from 'react';
-import { NTheme, THEMES, useLocalStorage } from '@nayan-ui/react';
+export const alertCode = `import { View } from 'react-native';
+import { NAlert, NText } from '@nayan-ui/native';
 
-const App = () => {
-  const [theme, setTheme] = useLocalStorage('THEME', THEMES.LIGHT);
-
-  const toggleTheme = () => {
-    setTheme(theme === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT);
-  };
-
+export default function AlertScreen() {
   return (
-    <NTheme theme={theme}>
-      <div className="p-3" onClick={toggleTheme}>TOGGLE THEME</div>
-    </NTheme>
-  );
-};
+    <View className="p-4 gap-3">
+      <NText className="text-lg font-bold">Default</NText>
+      <NAlert title="Heads up!" description="This is a default alert." />
 
-export default App;`;
+      <NText className="text-lg font-bold">Accent</NText>
+      <NAlert status="accent" title="New update" description="A new version is available." />
 
-export const accordionCode = `import { NAccordion, AccordionTypes } from '@nayan-ui/react';
+      <NText className="text-lg font-bold">Success</NText>
+      <NAlert status="success" title="Saved" description="Your changes have been saved." />
 
-const Accordion = () => {
-  const items = [
-    { title: 'Heading 1', message: 'Description 1' },
-    { title: 'Heading 2', message: 'Description 2' }
-  ];
+      <NText className="text-lg font-bold">Warning</NText>
+      <NAlert status="warning" title="Warning" description="Your session is about to expire." />
 
-  return (
-    <div>
-      <h1 className="text-foreground mb-3 text-lg">Single:</h1>
-      <NAccordion type={AccordionTypes.SINGLE} items={items} />
-      <h1 className="text-foreground mb-3 mt-5 text-lg">Multiple:</h1>
-      <NAccordion type={AccordionTypes.MULTIPLE} items={items} />
-    </div>
-  );
-};
+      <NText className="text-lg font-bold">Danger</NText>
+      <NAlert status="danger" title="Error" description="Something went wrong." />
 
-export default Accordion;`;
+      <NText className="text-lg font-bold">Title only</NText>
+      <NAlert title="Simple alert without description" />
 
-export const alertCode = `import { NAlert, AlertTypes } from '@nayan-ui/react';
-
-const Alert = () => {
-  return (
-    <div>
-      <NAlert type={AlertTypes.DEFAULT} message="New version available!" className="mb-3" onClose={() => console.log('Alert closed')} />
-      <NAlert type={AlertTypes.INFO} message="New version available!" className="mb-3" onClose={() => console.log('Alert closed')} />
-      <NAlert type={AlertTypes.SUCCESS} message="New version available!" className="mb-3" onClose={() => console.log('Alert closed')} />
-      <NAlert type={AlertTypes.WARNING} message="New version available!" className="mb-3" onClose={() => console.log('Alert closed')} />
-      <NAlert type={AlertTypes.ERROR} title="Error!" message="New version available!" className="mb-3" onClose={() => console.log('Alert closed')} />
-    </div>
-  );
-};
-
-export default Alert;`;
-
-export const badgeCode = `import { NBadge } from '@nayan-ui/react';
-
-const Badge = () => {
-  return (
-    <div className="flex flex-wrap gap-2">
-      <NBadge color="default">Default</NBadge>
-      <NBadge color="accent">Accent</NBadge>
-      <NBadge color="success">Success</NBadge>
-      <NBadge color="warning">Warning</NBadge>
-      <NBadge color="danger">Danger</NBadge>
-    </div>
-  );
-};
-
-export default Badge;`;
-
-export const buttonCode = `import { NButton } from '@nayan-ui/react';
-
-const Button = () => {
-  return (
-    <div className="flex flex-wrap gap-2">
-      <NButton onClick={() => console.log('clicked')}>Primary</NButton>
-      <NButton isOutline={true}>Outline</NButton>
-      <NButton isLoading={true}>Loading</NButton>
-      <NButton disabled>Disabled</NButton>
-    </div>
-  );
-};
-
-export default Button;`;
-
-export const buttonGroupCode = `import { useState } from 'react';
-import { NButtonGroup } from '@nayan-ui/react';
-
-const items = ['Startup', 'Business', 'Enterprise'];
-
-const ButtonGroup = () => {
-  const [selected, setSelected] = useState(items[0]);
-  return <NButtonGroup disabled={false} items={items} selected={selected} onChange={setSelected} />;
-};
-
-export default ButtonGroup;`;
-
-export const cardCode = `import { NCard } from '@nayan-ui/react';
-
-const Card = () => {
-  return <NCard className="p-3">This is sample card.</NCard>
-};
-
-export default Card;`;
-
-export const checkBoxCode = `import { useState } from 'react';
-import { NCheck, NLink } from '@nayan-ui/react';
-
-const Checkbox = () => {
-  const [checked, setChecked] = useState(true);
-
-  return (
-    <NCheck checked={checked} disabled={false} onChange={checked => setChecked(checked)}>
-      Sample label for checkbox. accept <NLink> terms</NLink>
-    </NCheck>
-  );
-};
-
-export default Checkbox;`;
-
-export const comboBoxCode = `import { NCombo } from '@nayan-ui/react';
-import { useState } from 'react';
-
-const items = [
-  { value: 'startup', label: 'Startup' },
-  { value: 'business', label: 'Business' },
-  { value: 'enterprise', label: 'Enterprise' }
-];
-
-const Combobox = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState(items[0].value);
-
-  return (
-    <NCombo
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      selected={selected}
-      placeholder="Select Business"
-      label="Business Type"
-      items={items}
-      onChange={setSelected}
-    />
-  );
-};
-
-export default Combobox;`;
-
-export const confirmAlertCode = `import { useState } from 'react';
-import { NConfirmAlert, NButton } from '@nayan-ui/react';
-
-const ConfirmAlert = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div>
-      <NConfirmAlert
-        isOpen={isOpen}
-        title="Are you absolutely sure?"
-        message="This action cannot be undone. This will permanently delete your account and remove your data from our servers."
-        onResult={result => console.log('Alert Clicked', result)}
-        onClose={() => setIsOpen(false)}
+      <NText className="text-lg font-bold">Long description</NText>
+      <NAlert
+        status="accent"
+        title="Important"
+        description="This is a much longer description that wraps across multiple lines to show how the alert handles longer content gracefully."
       />
-      <NButton onClick={() => setIsOpen(true)}>Show Alert</NButton>
-    </div>
-  );
-};
 
-export default ConfirmAlert;`;
+      <NText className="text-lg font-bold">With close button</NText>
+      <NAlert status="accent" title="Dismissible" description="Tap the close button to dismiss." onClose={() => console.log('closed')} />
+      <NAlert status="success" title="Upload complete" description="Your file has been uploaded." onClose={() => console.log('closed')} />
+      <NAlert status="warning" title="Low storage" description="You are running low on storage." onClose={() => console.log('closed')} />
+    </View>
+  );
+}`;
+
+export const buttonCode = `import { View } from 'react-native';
+import { NButton, NText } from '@nayan-ui/native';
+
+export default function ButtonScreen() {
+  return (
+    <View className="p-4 gap-3">
+      <NText className="text-lg font-bold">Variants</NText>
+      <NButton variant="primary" onPress={() => {}}>
+        Primary
+      </NButton>
+      <NButton variant="secondary" onPress={() => {}}>
+        Secondary
+      </NButton>
+      <NButton variant="outline" onPress={() => {}}>
+        Outline
+      </NButton>
+      <NButton variant="danger" onPress={() => {}}>
+        Danger
+      </NButton>
+      <NButton variant="ghost" onPress={() => {}}>
+        Ghost
+      </NButton>
+
+      <NText className="text-lg font-bold">Sizes</NText>
+      <NButton size="sm" onPress={() => {}}>
+        Small
+      </NButton>
+      <NButton size="md" onPress={() => {}}>
+        Medium (default)
+      </NButton>
+      <NButton size="lg" onPress={() => {}}>
+        Large
+      </NButton>
+
+      <NText className="text-lg font-bold">Disabled</NText>
+      <NButton isDisabled onPress={() => {}}>
+        Disabled Primary
+      </NButton>
+      <NButton variant="outline" isDisabled onPress={() => {}}>
+        Disabled Outline
+      </NButton>
+
+      <NText className="text-lg font-bold">Full width</NText>
+      <NButton className="w-full" onPress={() => {}}>
+        Full Width
+      </NButton>
+    </View>
+  );
+}`;
+
+export const buttonGroupCode = `import { View } from 'react-native';
+import { useState } from 'react';
+import { NButtonGroup, NText } from '@nayan-ui/native';
+
+export default function ButtonGroupScreen() {
+  const [align, setAlign] = useState('left');
+  const [size, setSize] = useState('md');
+
+  return (
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Basic</NText>
+      <NButtonGroup
+        items={[
+          { label: 'Left', value: 'left' },
+          { label: 'Center', value: 'center' },
+          { label: 'Right', value: 'right' }
+        ]}
+        value={align}
+        onValueChange={setAlign}
+      />
+      <NText>Selected: {align}</NText>
+
+      <NText className="text-lg font-bold">Different items</NText>
+      <NButtonGroup
+        items={[
+          { label: 'S', value: 'sm' },
+          { label: 'M', value: 'md' },
+          { label: 'L', value: 'lg' },
+          { label: 'XL', value: 'xl' }
+        ]}
+        value={size}
+        onValueChange={setSize}
+      />
+
+      <NText className="text-lg font-bold">Disabled</NText>
+      <NButtonGroup
+        isDisabled
+        items={[
+          { label: 'A', value: 'a' },
+          { label: 'B', value: 'b' }
+        ]}
+        value="a"
+        onValueChange={() => {}}
+      />
+    </View>
+  );
+}`;
+
+export const cardCode = `import { View } from 'react-native';
+import { NButton, NCard, NText } from '@nayan-ui/native';
+
+export default function CardScreen() {
+  return (
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Default</NText>
+      <NCard>
+        <NText className="font-bold text-lg">Card Title</NText>
+        <NText className="text-muted mt-1">This is the card body text.</NText>
+      </NCard>
+
+      <NText className="text-lg font-bold">Secondary</NText>
+      <NCard variant="secondary">
+        <NText className="font-bold">Secondary Card</NText>
+        <NText className="text-muted mt-1">Different background.</NText>
+      </NCard>
+
+      <NText className="text-lg font-bold">Tertiary</NText>
+      <NCard variant="tertiary">
+        <NText className="font-bold">Tertiary Card</NText>
+        <NText className="text-muted mt-1">Even subtler.</NText>
+      </NCard>
+
+      <NText className="text-lg font-bold">With action</NText>
+      <NCard>
+        <NText className="font-bold text-lg">Upgrade Plan</NText>
+        <NText className="text-muted mt-1">Get more features with Pro.</NText>
+        <NButton className="mt-3" size="sm" onPress={() => {}}>
+          Upgrade
+        </NButton>
+      </NCard>
+    </View>
+  );
+}`;
+
+export const checkBoxCode = `import { View } from 'react-native';
+import { useState } from 'react';
+import { NCheck, NText } from '@nayan-ui/native';
+
+export default function CheckScreen() {
+  const [a, setA] = useState(false);
+  const [b, setB] = useState(true);
+
+  return (
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Basic</NText>
+      <NCheck label="Accept terms and conditions" isSelected={a} onSelectedChange={setA} />
+      <NText>Checked: {a ? 'Yes' : 'No'}</NText>
+
+      <NText className="text-lg font-bold">Pre-checked</NText>
+      <NCheck label="Receive newsletters" isSelected={b} onSelectedChange={setB} />
+
+      <NText className="text-lg font-bold">Disabled</NText>
+      <NCheck label="Disabled unchecked" isSelected={false} isDisabled onSelectedChange={() => {}} />
+      <NCheck label="Disabled checked" isSelected isDisabled onSelectedChange={() => {}} />
+    </View>
+  );
+}`;
 
 export const dialogCode = `import { useState } from 'react';
-import { NButton, NDialog, DialogSize } from '@nayan-ui/react';
+import { View } from 'react-native';
+import { NButton, NDialog, NText } from '@nayan-ui/native';
 
-const Dialog = () => {
-  const [isOpen, setIsOpen] = useState(false);
+export default function DialogScreen() {
+  const [open, setOpen] = useState(false);
 
   return (
-    <div>
-      <NDialog isOpen={isOpen} onClose={() => setIsOpen(false)} size={DialogSize.MD} title="Payment confirmation">
-        Your payment has been successfully submitted. We’ve sent you an email with all of the details of your order.
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Trigger-based</NText>
+      <NDialog title="Welcome" trigger={<NButton>Open Dialog</NButton>}>
+        <View className="">
+          <NText>This dialog opened from a trigger button.</NText>
+        </View>
       </NDialog>
-      <NButton onClick={() => setIsOpen(true)}>Show Dialog</NButton>
-    </div>
+
+      <NText className="text-lg font-bold">Controlled</NText>
+      <NButton onPress={() => setOpen(true)}>Open Controlled</NButton>
+      <NDialog title="Controlled Dialog" isOpen={open} onOpenChange={setOpen}>
+        <View className="">
+          <NText>Controlled via isOpen / onOpenChange.</NText>
+          <NButton className="mt-3" variant="outline" onPress={() => setOpen(false)}>
+            Close
+          </NButton>
+        </View>
+      </NDialog>
+
+      <NText className="text-lg font-bold">With description</NText>
+      <NDialog title="Terms" description="Please read carefully." trigger={<NButton variant="outline">Terms</NButton>}>
+        <View className="">
+          <NText>By using this app you agree to our terms of service and privacy policy.</NText>
+        </View>
+      </NDialog>
+    </View>
   );
-};
+}`;
 
-export default Dialog;`;
+export const dividerCode = `import { View } from 'react-native';
+import { NDivider, NText } from '@nayan-ui/native';
 
-export const dividerCode = `import { NDivider } from '@nayan-ui/react';
-
-const Divider = () => {
+export default function DividerScreen() {
   return (
-    <div>
-      <h1 className="text-foreground mb-3 text-lg">Horizontal:</h1>
-      <NDivider className="my-3" />
-      <h1 className="text-foreground mb-3 text-lg">Vertical:</h1>
-      <NDivider orientation="vertical" className="h-5" />
-    </div>
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Horizontal (default)</NText>
+      <NText>Above</NText>
+      <NDivider />
+      <NText>Below</NText>
+
+      <NText className="text-lg font-bold">Vertical</NText>
+      <View className="flex-row items-center gap-3 h-10">
+        <NText>Left</NText>
+        <NDivider orientation="vertical" />
+        <NText>Right</NText>
+      </View>
+
+      <NText className="text-lg font-bold">Custom thickness</NText>
+      <NDivider thickness={3} />
+    </View>
   );
-};
+}`;
 
-export default Divider;`;
+export const inputCode = `import { View } from 'react-native';
+import { NInput, NText } from '@nayan-ui/native';
 
-export const infiniteScrollCode = `import { NCard, NInfiniteScroll, NLoading } from '@nayan-ui/react';
-import React, { useState } from 'react';
+export default function InputScreen() {
+  return (
+    <View className="p-4 gap-1">
+      <NText className="text-lg font-bold">Basic</NText>
+      <NInput label="Name" />
 
-const InfiniteScroll = () => {
-  const [items, setItems] = useState(new Array(20).fill(''));
-  const [isFetching, setIsFetching] = useState(false);
+      <NText className="text-lg font-bold">With description</NText>
+      <NInput label="Email" description="We'll never share your email." />
 
-  const fetchNextPage = () => {
-    setIsFetching(true);
-    setTimeout(() => {
-      const newItems = [...items, ...new Array(20).fill('')];
-      setItems(newItems);
-      setIsFetching(false);
-    }, 2000);
-  };
+      <NText className="text-lg font-bold">Required</NText>
+      <NInput label="Username" isRequired />
+
+      <NText className="text-lg font-bold">Invalid with error</NText>
+      <NInput label="Password" isInvalid errorMessage="Password must be at least 8 characters." />
+
+      <NText className="text-lg font-bold">Disabled</NText>
+      <NInput label="Organization" isDisabled />
+
+      <NText className="text-lg font-bold">Multiline (textarea)</NText>
+      <NInput label="Bio" multiline description="Tell us about yourself." />
+
+      <NText className="text-lg font-bold">All combined</NText>
+      <NInput label="Phone" description="Include country code." isRequired isInvalid errorMessage="Invalid phone number." />
+    </View>
+  );
+}`;
+
+export const loadingCode = `import { View } from 'react-native';
+import { NLoading, NText } from '@nayan-ui/native';
+
+export default function LoadingScreen() {
+  return (
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Sizes</NText>
+      <View className="flex-row gap-6 items-center">
+        <NLoading size="sm" />
+        <NLoading size="md" />
+        <NLoading size="lg" />
+      </View>
+
+      <NText className="text-lg font-bold">Not loading</NText>
+      <NLoading isLoading={false} />
+      <NText className="text-muted">Nothing shows when isLoading=false</NText>
+
+      <NText className="text-lg font-bold">In container</NText>
+      <View className="h-32 bg-surface rounded-lg">
+        <NLoading size="lg" containerClassName="flex-1 justify-center items-center" />
+      </View>
+    </View>
+  );
+}`;
+
+export const menuCode = `import { View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { NButton, NMenu, NMenuItem, NSubMenu, NText } from '@nayan-ui/native';
+
+export default function MenuScreen() {
+  return (
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Basic menu</NText>
+      <NMenu trigger={<NButton variant="outline">Open Menu</NButton>} title="Actions">
+        <NMenuItem title="Edit" icon={<Ionicons name="create-outline" size={16} />} onPress={() => console.log('Edit')} />
+        <NMenuItem title="Duplicate" icon={<Ionicons name="copy-outline" size={16} />} onPress={() => console.log('Duplicate')} />
+        <NMenuItem title="Archive" icon={<Ionicons name="archive-outline" size={16} />} onPress={() => console.log('Archive')} />
+      </NMenu>
+
+      <NText className="text-lg font-bold">With sub menus</NText>
+      <NMenu trigger={<NButton variant="outline">Open Menu</NButton>}>
+        <NMenuItem title="New File" icon={<Ionicons name="document-outline" size={16} />} onPress={() => {}} />
+        <NMenuItem title="Open" icon={<Ionicons name="folder-open-outline" size={16} />} onPress={() => {}} />
+        <NSubMenu label="Share" icon={<Ionicons name="share-outline" size={16} />}>
+          <NMenuItem title="Email" icon={<Ionicons name="mail-outline" size={16} />} onPress={() => {}} />
+          <NMenuItem title="Message" icon={<Ionicons name="chatbubble-outline" size={16} />} onPress={() => {}} />
+          <NMenuItem title="AirDrop" icon={<Ionicons name="wifi-outline" size={16} />} onPress={() => {}} />
+        </NSubMenu>
+        <NSubMenu label="Export As" icon={<Ionicons name="download-outline" size={16} />}>
+          <NMenuItem title="PDF" icon={<Ionicons name="document-text-outline" size={16} />} onPress={() => {}} />
+          <NMenuItem title="PNG" icon={<Ionicons name="image-outline" size={16} />} onPress={() => {}} />
+          <NMenuItem title="SVG" icon={<Ionicons name="code-outline" size={16} />} onPress={() => {}} />
+        </NSubMenu>
+      </NMenu>
+
+      <NText className="text-lg font-bold">With separators</NText>
+      <NMenu trigger={<NButton variant="outline">File Menu</NButton>}>
+        <NMenuItem title="New" icon={<Ionicons name="add-circle-outline" size={16} />} onPress={() => {}} />
+        <NMenuItem title="Open" icon={<Ionicons name="folder-open-outline" size={16} />} onPress={() => {}} />
+        <NMenuItem title="Save" icon={<Ionicons name="save-outline" size={16} />} onPress={() => {}} hasSeparator />
+        <NMenuItem title="Delete" icon={<Ionicons name="trash-outline" size={16} />} onPress={() => {}} />
+      </NMenu>
+
+      <NText className="text-lg font-bold">With disabled item</NText>
+      <NMenu trigger={<NButton variant="outline">Options</NButton>}>
+        <NMenuItem title="Available" icon={<Ionicons name="checkmark-circle-outline" size={16} />} onPress={() => {}} />
+        <NMenuItem title="Locked" icon={<Ionicons name="lock-closed-outline" size={16} />} onPress={() => {}} isDisabled />
+      </NMenu>
+
+      <NText className="text-lg font-bold">With shortcuts</NText>
+      <NMenu trigger={<NButton variant="outline">Edit</NButton>}>
+        <NMenuItem title="Cut" icon={<Ionicons name="cut-outline" size={16} />} shortcut="⌘X" onPress={() => {}} />
+        <NMenuItem title="Copy" icon={<Ionicons name="copy-outline" size={16} />} shortcut="⌘C" onPress={() => {}} />
+        <NMenuItem title="Paste" icon={<Ionicons name="clipboard-outline" size={16} />} shortcut="⌘V" onPress={() => {}} />
+      </NMenu>
+    </View>
+  );
+}`;
+
+export const popoverCode = `import { View } from 'react-native';
+import { NButton, NPopover, NText } from '@nayan-ui/native';
+
+export default function PopoverScreen() {
+  return (
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Default (bottom)</NText>
+      <NPopover trigger={<NButton variant="outline">Open Popover</NButton>}>
+        <View className="p-3">
+          <NText>Popover content below the trigger.</NText>
+        </View>
+      </NPopover>
+
+      <NText className="text-lg font-bold">Placement top</NText>
+      <NPopover placement="top" trigger={<NButton variant="outline">Top</NButton>}>
+        <View className="p-3">
+          <NText>Above the trigger.</NText>
+        </View>
+      </NPopover>
+
+      <NText className="text-lg font-bold">Placement left</NText>
+      <NPopover placement="left" trigger={<NButton variant="outline">Left</NButton>}>
+        <View className="p-3">
+          <NText>Left side.</NText>
+        </View>
+      </NPopover>
+
+      <NText className="text-lg font-bold">Placement right</NText>
+      <NPopover placement="right" trigger={<NButton variant="outline">Right</NButton>}>
+        <View className="p-3">
+          <NText>Right side.</NText>
+        </View>
+      </NPopover>
+
+      <NText className="text-lg font-bold">Rich content</NText>
+      <NPopover trigger={<NButton>Details</NButton>}>
+        <View className="p-3 gap-2">
+          <NText className="font-bold">User Info</NText>
+          <NText className="text-muted">john@example.com</NText>
+          <NButton size="sm" onPress={() => {}}>
+            View Profile
+          </NButton>
+        </View>
+      </NPopover>
+    </View>
+  );
+}`;
+
+export const progressCode = `import { View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { NProgress, NText } from '@nayan-ui/native';
+
+export default function ProgressScreen() {
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setValue(v => (v >= 100 ? 0 : v + 5));
+    }, 300);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
-    <NInfiniteScroll
-      next={() => !isFetching && fetchNextPage()}
-      hasMore={true}
-      loader={<NLoading />}
-      dataLength={items.length}
-      scrollThreshold={0.99}>
-        {items.map((item: any, index: number) => (
-          <NCard className="p-3 mb-3">Item {index}</NCard>
-        ))}
-    </NInfiniteScroll>
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Animated</NText>
+      <NProgress value={value} />
+      <NText className="text-muted">{value}%</NText>
+
+      <NText className="text-lg font-bold">Static values</NText>
+      <NProgress value={0} />
+      <NProgress value={25} />
+      <NProgress value={50} />
+      <NProgress value={75} />
+      <NProgress value={100} />
+    </View>
   );
-};
+}`;
 
-export default InfiniteScroll;`;
-
-export const inputCode = `import { NInput } from '@nayan-ui/react';
+export const radioGroupCode = `import { View } from 'react-native';
 import { useState } from 'react';
+import { NRadio, NText } from '@nayan-ui/native';
 
-const Input = () => {
-  const [email, setEmail] = useState('niranjan.devasani@gmail.com');
-
-  return (
-    <NInput id="email" type="email" label="Email" placeholder="Enter email" className="mb-3" value={email} onChange={e => setEmail(e.target.value)} />
-  );
-};
-
-export default Input;`;
-
-export const inputHookCode = `import { NButton, NFormInput } from '@nayan-ui/react';
-import { useForm } from 'react-hook-form';
-
-const FormInput = () => {
-  const { control, handleSubmit, formState: { errors },} = useForm({
-    defaultValues: {
-      email: "niranjan.devasani@gmail.com"
-    },
-  });
+export default function RadioScreen() {
+  const [fruit, setFruit] = useState('apple');
+  const [size, setSize] = useState('md');
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <NFormInput
-        control={control}
-        errors={errors}
-        name="email"
-        id="in1"
-        type="email"
-        label="Email"
-        placeholder="Enter email"
-        className="mb-3"
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Basic</NText>
+      <NRadio
+        label="Favorite fruit"
+        value={fruit}
+        onValueChange={setFruit}
+        items={[
+          { label: 'Apple', value: 'apple' },
+          { label: 'Banana', value: 'banana' },
+          { label: 'Cherry', value: 'cherry' },
+          { label: 'Date', value: 'date' }
+        ]}
       />
-      <NButton type="submit">Submit</NButton>
-    </form>
+      <NText>Selected: {fruit}</NText>
+
+      <NText className="text-lg font-bold">Size selection</NText>
+      <NRadio
+        label="Size"
+        value={size}
+        onValueChange={setSize}
+        items={[
+          { label: 'Small', value: 'sm' },
+          { label: 'Medium', value: 'md' },
+          { label: 'Large', value: 'lg' }
+        ]}
+      />
+
+      <NText className="text-lg font-bold">Disabled</NText>
+      <NRadio
+        isDisabled
+        value="a"
+        onValueChange={() => {}}
+        items={[
+          { label: 'Option A', value: 'a' },
+          { label: 'Option B', value: 'b' }
+        ]}
+      />
+    </View>
   );
-};
+}`;
 
-export default FormInput;`;
+export const selectCode = `import { View } from 'react-native';
+import { useState } from 'react';
+import { NSelect, NText } from '@nayan-ui/native';
 
-export const linkCode = `import { NLink } from '@nayan-ui/react';
-
-const handleClick = () => alert('Span clicked!');
-const doSomething = (e) => alert('Custom action!');
-
-const Link = () => {
-  return (
-    <>
-      <div className="mb-4">
-        <NLink href="https://example.com">External Link</NLink>
-      </div>
-
-      <div className="mb-4">
-        <NLink href="https://example.com" target="_self" rel="nofollow" className="text-blue-700 underline">
-          Custom Anchor
-        </NLink>
-      </div>
-
-      <div className="mb-4">
-        <NLink onClick={handleClick}>Clickable Span</NLink>
-      </div>
-
-      <div className="mb-4">
-        <NLink className="font-bold text-green-700" onClick={handleClick}>
-          Styled Span
-        </NLink>
-      </div>
-
-      <div className="mb-4">
-        <NLink href="/about" className="underline text-purple-700">About (Internal Link)</NLink>
-        <br />
-        <NLink className="cursor-pointer text-orange-700" onClick={doSomething}>
-          Do Something
-        </NLink>
-      </div>
-
-      <div className="mb-4">
-        <NLink onClick={handleClick}>Focus me and press Enter or Space</NLink>
-      </div>
-    </>
-  );
-};
-
-export default Link;`;
-
-export const linkifyCode = `import { NLinkify } from '@nayan-ui/react';
-
-const Linkify = () => {
-  return (
-    <NLinkify>Checkout our new landing page at nayanui.com and new email hello@nayanui.com</NLinkify>
-  );
-};
-
-export default Linkify;`;
-
-export const loadingCode = `import { NLoading } from '@nayan-ui/react';
-
-const Loading = () => {
-  return <NLoading className="text-accent" />
-};
-
-export default Loading;`;
-
-export const menuCode = `import { NMenu,NMenuItem, MenuSize, NMenuNested, NButton } from '@nayan-ui/react';
-import { User } from 'lucide-react';
-
-const Menu = () => {
-  return (
-    <NMenu align="start" title="My Account" size={MenuSize.LG} trigger={<NButton>Show Menu</NButton>}>
-      <NMenuItem title="Profile" icon={User} shortcut="⌘P" />
-      <NMenuNested trigger={<NMenuItem title="Share" icon={User} className="p-0" />}>
-        <NMenuItem title="Facebook" icon={User} shortcut="⌘P" />
-        <NMenuItem title="Twitter" icon={User} shortcut="⌘P" />
-      </NMenuNested>
-      <NMenuItem title="Settings" icon={User} shortcut="⌘P" separator={true} />
-      <NMenuItem title="Logout" icon={User} shortcut="⌘P" />
-    </NMenu>
-  );
-};
-
-export default Menu;`;
-
-export const popoverCode = `import { NPopover, NButton, PopoverSize } from '@nayan-ui/react';
-
-const Popover = () => {
-  return (
-    <NPopover size={PopoverSize.MD} trigger={<NButton>Show Popover</NButton>}>
-      <div className="overflow-hidden p-3">
-        <div className="text-sm font-medium text-foreground">Documentation</div>
-        <div className="text-sm text-muted">Start integrating products and tools</div>
-      </div>
-    </NPopover>
-  );
-};
-
-export default Popover;`;
-
-export const progressCode = `import { NProgress } from '@nayan-ui/react';
-
-const Progress = () => {
-  return <NProgress value={50} />;
-};
-
-export default Progress;`;
-
-export const radioGroupCode = `import { useState } from 'react';
-import { NRadioGroup } from '@nayan-ui/react';
-
-const items = [
-  { value: 'startup', label: 'Startup' },
-  { value: 'business', label: 'Business' },
-  { value: 'enterprise', label: 'Enterprise' }
-];
-
-const RadioGroupExample = () => {
-  const [selected, setSelected] = useState(items[0].value);
+export default function SelectScreen() {
+  const [country, setCountry] = useState('');
 
   return (
-    <div>
-      <h1 className="text-foreground mb-3 text-base">Horizontal:</h1>
-      <NRadioGroup items={items} selected={selected} setSelected={setSelected} />
-      <div className="mt-5" />
-      <h1 className="text-foreground mb-3 text-base">Vertical:</h1>
-      <NRadioGroup orientation="vertical" items={items} selected={selected} setSelected={setSelected} />
-    </div>
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Basic</NText>
+      <NSelect
+        label="Country"
+        placeholder="Select a country"
+        items={[
+          { label: 'India', value: 'in' },
+          { label: 'USA', value: 'us' },
+          { label: 'UK', value: 'uk' },
+          { label: 'Germany', value: 'de' },
+          { label: 'Japan', value: 'jp' }
+        ]}
+        onValueChange={setCountry}
+      />
+      <NText>Selected: {country || '—'}</NText>
+
+      <NText className="text-lg font-bold">With default value</NText>
+      <NSelect
+        label="Language"
+        defaultValue={{ label: 'English', value: 'en' }}
+        items={[
+          { label: 'English', value: 'en' },
+          { label: 'Spanish', value: 'es' },
+          { label: 'French', value: 'fr' }
+        ]}
+        onValueChange={() => {}}
+      />
+
+      <NText className="text-lg font-bold">Disabled</NText>
+      <NSelect label="Locked" isDisabled items={[{ label: 'Only option', value: 'only' }]} onValueChange={() => {}} />
+    </View>
   );
-};
-
-export default RadioGroup;`;
-
-export const selectCode = `import { useState } from 'react';
-import { NSelect } from '@nayan-ui/react';
-
-const items = [
-  { value: 'startup', label: 'Startup' },
-  { value: 'business', label: 'Business' },
-  { value: 'enterprise', label: 'Enterprise' }
-];
-
-const Select = () => {
-  const [selected, setSelected] = useState(items[0]);
-  return (
-    <NSelect
-      isMulti={true}
-      isCreatable={true}
-      placeholder="Select something..."
-      isClearable={true}
-      isSearchable={true}
-      disabled={false}
-      value={selected}
-      options={items}
-      onCreateOptions={value => console.log(value)}
-      onChangeOptions={values => setSelected(values)}
-    />
-  );
-};
-
-export default Select;`;
+}`;
 
 export const sheetCode = `import { useState } from 'react';
-import { NSheet, NButton, Size } from '@nayan-ui/react';
+import { View } from 'react-native';
+import { NButton, NSheet, NText } from '@nayan-ui/native';
 
-const SheetExample = () => {
-  const [isOpen, setIsOpen] = useState(false);
+export default function SheetScreen() {
+  const [basic, setBasic] = useState(false);
+  const [content, setContent] = useState(false);
 
   return (
-    <div>
-      <NButton onClick={() => setIsOpen(true)}>Show Sheet</NButton>
-      <NSheet isOpen={isOpen} size={Size.SM} title="Edit Profile" onCloseSheet={() => setIsOpen(false)}>
-        <div className="w-full h-full p-3">
-          Your payment has been successfully submitted. We’ve sent you an email with all of the details of your order.
-        </div>
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Basic</NText>
+      <NButton onPress={() => setBasic(true)}>Open Sheet</NButton>
+      <NSheet isOpen={basic} onOpenChange={setBasic}>
+        <View className="p-4">
+          <NText className="text-lg font-bold mb-2">Bottom Sheet</NText>
+          <NText>Simple sheet content.</NText>
+          <NButton className="mt-4" variant="outline" onPress={() => setBasic(false)}>
+            Close
+          </NButton>
+        </View>
       </NSheet>
-    </div>
+
+      <NText className="text-lg font-bold">Rich content</NText>
+      <NButton variant="outline" onPress={() => setContent(true)}>
+        Open Rich Sheet
+      </NButton>
+      <NSheet isOpen={content} onOpenChange={setContent}>
+        <View className="p-4 gap-3">
+          <NText className="text-xl font-bold">Settings</NText>
+          <NText className="text-muted">Adjust your preferences below.</NText>
+          <NButton onPress={() => setContent(false)}>Save</NButton>
+          <NButton variant="ghost" onPress={() => setContent(false)}>
+            Cancel
+          </NButton>
+        </View>
+      </NSheet>
+    </View>
   );
-};
+}`;
 
-export default Sheet;`;
+export const skeletonCode = `import { View } from 'react-native';
+import { NSkeleton, NSkeletonGroup, NText } from '@nayan-ui/native';
 
-export const skeletonCode = `import { NSkeleton } from '@nayan-ui/react';
-
-const Skeleton = () => {
+export default function SkeletonScreen() {
   return (
-    <div className="flex items-center space-x-4">
-      <NSkeleton className="h-12 w-12 rounded-full" />
-      <div className="space-y-2">
-        <NSkeleton className="h-4 w-[250px]" />
-        <NSkeleton className="h-4 w-[180px]" />
-      </div>
-    </div>
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Basic</NText>
+      <NSkeleton className="h-10 w-full rounded" isLoading />
+      <NSkeleton className="h-10 w-3/4 rounded" isLoading />
+      <NSkeleton className="h-10 w-1/2 rounded" isLoading />
+
+      <NText className="text-lg font-bold">Shimmer variant</NText>
+      <NSkeleton className="h-20 w-full rounded-lg" isLoading variant="shimmer" />
+
+      <NText className="text-lg font-bold">Pulse variant</NText>
+      <NSkeleton className="h-20 w-full rounded-lg" isLoading variant="pulse" />
+
+      <NText className="text-lg font-bold">Card skeleton</NText>
+      <View className="gap-2">
+        <NSkeleton className="h-40 w-full rounded-lg" isLoading />
+        <NSkeleton className="h-4 w-2/3 rounded" isLoading />
+        <NSkeleton className="h-4 w-1/3 rounded" isLoading />
+      </View>
+
+      <NText className="text-lg font-bold">NSkeletonGroup</NText>
+      <NSkeletonGroup isLoading>
+        <View className="flex-row gap-3 items-center">
+          <NSkeleton className="h-12 w-12 rounded-full" />
+          <View className="flex-1 gap-2">
+            <NSkeleton className="h-4 w-3/4 rounded" />
+            <NSkeleton className="h-3 w-1/2 rounded" />
+          </View>
+        </View>
+      </NSkeletonGroup>
+
+      <NText className="text-lg font-bold">Not loading</NText>
+      <NSkeleton className="h-10 w-full rounded" isLoading={false}>
+        <NText>Content loaded!</NText>
+      </NSkeleton>
+    </View>
   );
-};
+}`;
 
-export default Skeleton;`;
+export const sliderCode = `import { View } from 'react-native';
+import { NSlider, NText } from '@nayan-ui/native';
 
-export const sliderCode = `import { NSlider } from '@nayan-ui/react';
-
-const Slider = () => {
+export default function SliderScreen() {
   return (
-    <NSlider defaultValue={50} max={100} step={1} disabled={false} onChange={value => console.log(value)} />
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Basic</NText>
+      <NSlider defaultValue={50} />
+
+      <NText className="text-lg font-bold">With output label</NText>
+      <NSlider defaultValue={30} showOutput />
+
+      <NText className="text-lg font-bold">Custom range (0–200)</NText>
+      <NSlider defaultValue={100} minValue={0} maxValue={200} showOutput />
+
+      <NText className="text-lg font-bold">Step = 10</NText>
+      <NSlider defaultValue={50} step={10} showOutput />
+
+      <NText className="text-lg font-bold">Disabled</NText>
+      <NSlider defaultValue={40} isDisabled />
+    </View>
   );
-};
+}`;
 
-export default Slider;`;
+export const switchCode = `import { View } from 'react-native';
+import { useState } from 'react';
+import { NSwitch, NText } from '@nayan-ui/native';
 
-export const switchCode = `import { useState } from 'react';
-import { NSwitch } from '@nayan-ui/react';
-
-const Switch = () => {
-  const [enabled, setEnabled] = useState(false);
-  return <NSwitch label="Is Dark Mode" enabled={enabled} onChange={setEnabled} />;
-};
-
-export default Switch;`;
-
-export const tableCode = `import { NTable } from '@nayan-ui/react';
-
-const CustomComponent = ({row, col, ...remaining}: any) => {
-  return <div className="text-accent">Oops</div>;
-};
-
-const Table = () => {
-  const columnDef = [
-    { name: 'invoice', title: 'Invoice', className: 'w-[100px]' },
-    { name: 'status', title: 'Status' },
-    { name: 'method', title: 'Method' },
-    { name: 'amount', title: 'Amount', className: 'text-right' },
-    { name: 'custom', title: 'Custom', className: 'text-right', component: CustomComponent }
-  ];
-
-  const data = [
-    { invoice: '10001', status: 'Completed', method: 'Credit Card', amount: '$1000' },
-    { invoice: '10002', status: 'In progress', method: 'Net Banking', amount: '$500' }
-  ];
-
-  return <NTable className="bg-surface" caption="Invoice table" columnDef={columnDef} data={data} />;
-};
-
-export default Table;`;
-
-export const tabsCode = `import { useState } from 'react';
-import { NTabs, NTabsContent } from '@nayan-ui/react';
-
-const items = ['POSTS', 'SAVED'];
-
-const Tabs = () => {
-  const [selected, setSelected] = useState(items[0]);
-
-  return (
-    <div>
-      <h1 className="text-foreground mb-3 text-lg text-left">Tabs:</h1>
-      <NTabs items={items} selected={selected} onChange={setSelected}>
-        <NTabsContent item={items[0]} className="px-3 py-2 text-foreground">
-          Content 1
-        </NTabsContent>
-        <NTabsContent item={items[1]} className="px-3 py-2 text-foreground">
-          Content 2
-        </NTabsContent>
-      </NTabs>
-      <h1 className="text-foreground mb-3 mt-5 text-lg text-left">Full Width:</h1>
-      <NTabs isFull={true} items={items} selected={selected} onChange={setSelected}>
-        <NTabsContent item={items[0]} className="px-3 py-2 text-foreground">
-          Content 3
-        </NTabsContent>
-        <NTabsContent item={items[1]} className="px-3 py-2 text-foreground">
-          Content 4
-        </NTabsContent>
-      </NTabs>
-    </div>
-  );
-};
-
-export default Tabs;`;
-
-export const textareaCode = `import { useState } from 'react';
-import { NTextarea } from '@nayan-ui/react';
-
-const Textarea = () => {
-  const [address, setAddress] = useState('Bangalore, India');
+export default function SwitchScreen() {
+  const [wifi, setWifi] = useState(true);
+  const [bluetooth, setBluetooth] = useState(false);
 
   return (
-    <NTextarea
-      id="ta1"
-      label="Address"
-      placeholder="Enter address"
-      className="mb-3"
-      rows={3}
-      value={address}
-      onChange={e => setAddress(e.target.value)}
-    />
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Basic</NText>
+      <NSwitch label="Wi-Fi" isSelected={wifi} onSelectedChange={setWifi} />
+      <NSwitch label="Bluetooth" isSelected={bluetooth} onSelectedChange={setBluetooth} />
+      <NText className="text-muted">
+        Wi-Fi: {wifi ? 'On' : 'Off'}, Bluetooth: {bluetooth ? 'On' : 'Off'}
+      </NText>
+
+      <NText className="text-lg font-bold">Disabled</NText>
+      <NSwitch label="Disabled on" isSelected isDisabled onSelectedChange={() => {}} />
+      <NSwitch label="Disabled off" isSelected={false} isDisabled onSelectedChange={() => {}} />
+    </View>
   );
-};
+}`;
 
-export default Textarea;`;
+export const tabsCode = `import { View } from 'react-native';
+import { NTabs, NText } from '@nayan-ui/native';
 
-export const toastCode = `import { NButton, useNToast } from '@nayan-ui/react';
+export default function TabsScreen() {
+  return (
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Basic (uncontrolled)</NText>
+      <NTabs
+        defaultValue="account"
+        items={[
+          { label: 'Account', value: 'account', content: <NText>Manage your account settings.</NText> },
+          { label: 'Security', value: 'security', content: <NText>Password and 2FA.</NText> },
+          { label: 'Billing', value: 'billing', content: <NText>Payment methods and invoices.</NText> }
+        ]}
+      />
 
-const Toast = () => {
+      <NText className="text-lg font-bold">Secondary variant</NText>
+      <NTabs
+        variant="secondary"
+        defaultValue="tab1"
+        items={[
+          { label: 'Overview', value: 'tab1', content: <NText>Overview content.</NText> },
+          { label: 'Analytics', value: 'tab2', content: <NText>Analytics data.</NText> },
+          { label: 'Reports', value: 'tab3', content: <NText>Reports list.</NText> }
+        ]}
+      />
+
+      <NText className="text-lg font-bold">With disabled tab</NText>
+      <NTabs
+        defaultValue="a"
+        items={[
+          { label: 'Active', value: 'a', content: <NText>This tab is active.</NText> },
+          { label: 'Disabled', value: 'b', content: <NText>Cannot reach.</NText>, isDisabled: true },
+          { label: 'Another', value: 'c', content: <NText>Another tab.</NText> }
+        ]}
+      />
+    </View>
+  );
+}`;
+
+export const textareaCode = `import { View } from 'react-native';
+import { NInput, NText } from '@nayan-ui/native';
+
+export default function InputScreen() {
+  return (
+    <View className="p-4 gap-1">
+      <NText className="text-lg font-bold">Basic</NText>
+      <NInput label="Name" />
+
+      <NText className="text-lg font-bold">With description</NText>
+      <NInput label="Email" description="We'll never share your email." />
+
+      <NText className="text-lg font-bold">Required</NText>
+      <NInput label="Username" isRequired />
+
+      <NText className="text-lg font-bold">Invalid with error</NText>
+      <NInput label="Password" isInvalid errorMessage="Password must be at least 8 characters." />
+
+      <NText className="text-lg font-bold">Disabled</NText>
+      <NInput label="Organization" isDisabled />
+
+      <NText className="text-lg font-bold">Multiline (textarea)</NText>
+      <NInput label="Bio" multiline description="Tell us about yourself." />
+
+      <NText className="text-lg font-bold">All combined</NText>
+      <NInput label="Phone" description="Include country code." isRequired isInvalid errorMessage="Invalid phone number." />
+    </View>
+  );
+}`;
+
+export const toastCode = `import { View } from 'react-native';
+import { NButton, NText, useNToast } from '@nayan-ui/native';
+
+export default function ToastScreen() {
   const toast = useNToast();
+
   return (
-    <NButton onClick={() => toast('This is a toast notification!', 'Success')}>
-      Show Toast
-    </NButton>
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Shorthand methods</NText>
+      <NButton onPress={() => toast.success('Changes saved successfully!')}>Success</NButton>
+      <NButton variant="danger" onPress={() => toast.error('Something went wrong.')}>
+        Error
+      </NButton>
+      <NButton variant="outline" onPress={() => toast.info('New update available.')}>
+        Info
+      </NButton>
+      <NButton variant="ghost" onPress={() => toast.warning('Low disk space.')}>
+        Warning
+      </NButton>
+
+      <NText className="text-lg font-bold">With custom title</NText>
+      <NButton variant="outline" onPress={() => toast.success('Your profile has been updated.', 'Profile')}>
+        Success with title
+      </NButton>
+      <NButton variant="outline" onPress={() => toast.error('Please check your connection.', 'Network')}>
+        Error with title
+      </NButton>
+
+      <NText className="text-lg font-bold">With action button</NText>
+      <NButton
+        variant="outline"
+        onPress={() =>
+          toast.show({
+            type: 'success',
+            title: 'Item deleted',
+            message: 'The item has been moved to trash.',
+            actionLabel: 'Undo',
+            onActionPress: () => toast.info('Undo successful!')
+          })
+        }>
+        With Action
+      </NButton>
+      <NButton
+        variant="outline"
+        onPress={() =>
+          toast.show({
+            type: 'warning',
+            title: 'Session expiring',
+            message: 'Your session will expire in 5 minutes.',
+            actionLabel: 'Extend',
+            onActionPress: () => toast.success('Session extended!')
+          })
+        }>
+        Warning with Action
+      </NButton>
+
+      <NText className="text-lg font-bold">Generic show()</NText>
+      <NButton variant="outline" onPress={() => toast.show({ type: 'info', title: 'Custom', message: 'Using toast.show() directly.' })}>
+        toast.show()
+      </NButton>
+    </View>
   );
-};
+}`;
 
-export default Toast;`;
+export const tooltipCode = `import { View } from 'react-native';
+import { NButton, NText, NTooltip } from '@nayan-ui/native';
 
-export const tooltipCode = `import { NTooltip, NButton } from '@nayan-ui/react';
-
-const Tooltip = () => {
+export default function TooltipScreen() {
   return (
-    <NTooltip message="This is sample tool tip! This is sample tool tip This is sample tool tip This is sample tool tip ">
-      <NButton>Show Tooltip</NButton>
-    </NTooltip>
-  );
-};
+    <View className="p-4 gap-4">
+      <NText className="text-lg font-bold">Basic</NText>
+      <NTooltip message="This is a tooltip">
+        <NButton variant="outline">Hover / Press</NButton>
+      </NTooltip>
 
-export default Tooltip;`;
+      <NText className="text-lg font-bold">On different elements</NText>
+      <NTooltip message="Button tooltip">
+        <NButton>Primary button</NButton>
+      </NTooltip>
+
+      <NTooltip message="Ghost tooltip">
+        <NButton variant="ghost">Ghost button</NButton>
+      </NTooltip>
+
+      <NText className="text-lg font-bold">Long message</NText>
+      <NTooltip message="This is a longer tooltip message that provides more context about the element it's attached to.">
+        <NButton variant="outline">More info</NButton>
+      </NTooltip>
+    </View>
+  );
+}`;
