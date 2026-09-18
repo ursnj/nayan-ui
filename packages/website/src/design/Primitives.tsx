@@ -228,8 +228,16 @@ interface PhoneFrameProps {
  * which a phone-shaped 9:19.5 box would have trimmed off the sides.
  */
 export const PhoneFrame = ({ light, dark, alt, className = '' }: PhoneFrameProps) => (
-  <div className={`mx-auto w-[260px] rounded-[2.25rem] border border-default bg-surface p-2.5 shadow-xl shadow-indigo-500/5 ${className}`}>
-    <div className="overflow-hidden rounded-[1.75rem] border border-default bg-background">
+  <div className={`w-[260px] rounded-[2.25rem] border border-default bg-surface p-2.5 shadow-xl shadow-indigo-500/5 ${className}`}>
+    <div className="overflow-hidden rounded-[1.75rem] border border-default bg-surface">
+      <div className="flex items-center justify-between px-5 py-1.5 text-[10px] font-semibold text-foreground/70">
+        <span>9:41</span>
+        <div className="flex items-center gap-1">
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="currentColor"><rect x="0" y="6" width="2.5" height="4" rx="0.5" /><rect x="3.5" y="4" width="2.5" height="6" rx="0.5" /><rect x="7" y="2" width="2.5" height="8" rx="0.5" /><rect x="10.5" y="0" width="2.5" height="10" rx="0.5" /></svg>
+          <svg width="13" height="10" viewBox="0 0 13 10" fill="currentColor"><path d="M6.5 3.2a4.8 4.8 0 0 1 3.4 1.4l1-1a6.2 6.2 0 0 0-8.8 0l1 1a4.8 4.8 0 0 1 3.4-1.4Zm0 2.5c.9 0 1.7.3 2.3.9l1-1a4.6 4.6 0 0 0-6.6 0l1 1c.6-.6 1.4-.9 2.3-.9Zm1.2 1.9a1.7 1.7 0 0 0-2.4 0L6.5 9l1.2-1.4Z" /></svg>
+          <svg width="22" height="10" viewBox="0 0 22 10" fill="currentColor"><rect x="0" y="1" width="18" height="8" rx="1.5" stroke="currentColor" strokeWidth="0.8" fill="none" /><rect x="18.5" y="3" width="1.5" height="4" rx="0.5" /><rect x="1.5" y="2.5" width="12" height="5" rx="0.8" /></svg>
+        </div>
+      </div>
       <img src={light} alt={alt} width={520} height={1000} className="block aspect-[520/1000] w-full dark:hidden" />
       <img src={dark} alt={alt} width={520} height={1000} className="hidden aspect-[520/1000] w-full dark:block" />
     </div>
