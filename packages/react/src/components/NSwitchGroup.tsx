@@ -49,9 +49,7 @@ const NSwitchGroupComponent: React.FC<NSwitchGroupProps> = memo(
     return (
       <div className={cn('nyn-switch-group-block mb-3', className)}>
         {label && showLabel && (
-          <Label htmlFor={groupId} className={cn(labelClassName)}>
-            {label}
-          </Label>
+          <Label className={cn(labelClassName)}>{label}</Label>
         )}
         <SwitchGroup
           id={groupId}
@@ -69,7 +67,7 @@ const NSwitchGroupComponent: React.FC<NSwitchGroupProps> = memo(
                 onChange={on => toggle(item, on)}
                 className={cn('nyn-switch flex items-center justify-between gap-3', itemClassName, switchClassName)}>
                 <Switch.Content className="flex w-full items-center justify-between gap-3">
-                  <Label>{item.label}</Label>
+                  <span className="text-sm font-medium">{item.label}</span>
                   <Switch.Control>
                     <Switch.Thumb />
                   </Switch.Control>

@@ -204,6 +204,38 @@ export const BrowserFrame = ({ label, padded = true, className = '', children }:
   </div>
 );
 
+interface PhoneFrameProps {
+  /** Screenshot shown in the light theme. */
+  light: string;
+  /** Screenshot shown in the dark theme. */
+  dark: string;
+  alt: string;
+  className?: string;
+}
+
+/**
+ * A phone around a screenshot, for components that cannot run in a browser.
+ *
+ * The two images are swapped by CSS rather than JavaScript, the same way the
+ * video editor's hero works: HeroUI defines Tailwind's `dark:` variant against
+ * the class `NTheme` puts on `<html>`, so the screenshot follows the site's
+ * theme with no client component and no flash of the wrong one. Only the
+ * matching image is displayed, and `display: none` keeps the other out of the
+ * accessibility tree, so a screen reader is read one description.
+ *
+ * The screen's aspect ratio is the capture's own, 520x1000, so nothing is
+ * cropped or stretched: the app's header and its left-hand padding survive,
+ * which a phone-shaped 9:19.5 box would have trimmed off the sides.
+ */
+export const PhoneFrame = ({ light, dark, alt, className = '' }: PhoneFrameProps) => (
+  <div className={`mx-auto w-[260px] rounded-[2.25rem] border border-default bg-surface p-2.5 shadow-xl shadow-indigo-500/5 ${className}`}>
+    <div className="overflow-hidden rounded-[1.75rem] border border-default bg-background">
+      <img src={light} alt={alt} width={520} height={1000} className="block aspect-[520/1000] w-full dark:hidden" />
+      <img src={dark} alt={alt} width={520} height={1000} className="hidden aspect-[520/1000] w-full dark:block" />
+    </div>
+  </div>
+);
+
 interface FeatureCardProps {
   /** A lucide icon component. */
   icon?: React.ComponentType<{ className?: string }>;
