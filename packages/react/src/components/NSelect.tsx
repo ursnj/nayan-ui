@@ -19,7 +19,9 @@ export interface NSelectProps<OptionType = ReactSelectOption, IsMulti extends bo
   labelClassName?: string;
   selectClassName?: string;
   value: IsMulti extends true ? OptionType[] : OptionType | null;
-  options: OptionType[];
+  options?: OptionType[];
+  /** Alias of `options`, as the React Native package names it. */
+  items?: OptionType[];
   onCreateOption?: (inputValue: string) => void;
   onChange?: (value: IsMulti extends true ? OptionType[] : OptionType | null) => void;
   onChangeOptions?: (value: IsMulti extends true ? OptionType[] : OptionType | null) => void;
@@ -38,6 +40,7 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
 ) => {
   const {
     options,
+    items,
     value,
     label,
     isMulti = false as IsMulti,
@@ -62,6 +65,7 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
     styles,
     ...rest
   } = props;
+  const optionList = options ?? items ?? [];
   const generatedId = useId();
   const selectId = inputId || `nyn-select-${generatedId}`;
 
@@ -111,7 +115,7 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
         placeholder={placeholder}
         classNamePrefix="nyn-select"
         value={isMulti ? (value as OptionType[]) : (value as OptionType | null)}
-        options={options}
+        options={optionList}
         getOptionLabel={getOptionLabel}
         getOptionValue={getOptionValue}
         classNames={reactSelectCustomClassNames}

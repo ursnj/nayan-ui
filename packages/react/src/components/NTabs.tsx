@@ -5,7 +5,9 @@ import { cn } from '../lib/utils';
 export interface NTabsProps {
   items: string[];
   children: ReactNode;
-  selected: string;
+  selected?: string;
+  /** Alias of `selected`, as the React Native package names it. */
+  value?: string;
   className?: string;
   listClassName?: string;
   tabClassName?: string;
@@ -19,6 +21,7 @@ export const NTabs = memo((props: NTabsProps) => {
   const {
     items,
     selected,
+    value,
     children,
     className = '',
     listClassName = '',
@@ -28,6 +31,7 @@ export const NTabs = memo((props: NTabsProps) => {
     onChange,
     ariaLabel = 'Tabs'
   } = props;
+  const current = selected ?? value;
 
   const handleSelectionChange = (key: Key) => {
     onChange(String(key));
@@ -35,7 +39,7 @@ export const NTabs = memo((props: NTabsProps) => {
 
   return (
     <Tabs
-      selectedKey={selected}
+      selectedKey={current}
       onSelectionChange={handleSelectionChange}
       variant={variant}
       orientation={orientation}

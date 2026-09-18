@@ -7,7 +7,9 @@ export interface NButtonGroupProps<T = string> extends Omit<React.HTMLAttributes
   className?: string;
   buttonClassName?: string;
   items: T[];
-  selected: T;
+  selected?: T;
+  /** Alias of `selected`, as the React Native package names it. */
+  value?: T;
   disabled?: boolean;
   onChange: (selected: T) => void;
   getKey?: (item: T, index: number) => React.Key;
@@ -21,6 +23,7 @@ function NButtonGroupComponent<T = string>({
   buttonClassName = '',
   items,
   selected,
+  value,
   disabled = false,
   onChange,
   getKey,
@@ -29,18 +32,19 @@ function NButtonGroupComponent<T = string>({
   size = 'md',
   ...rest
 }: NButtonGroupProps<T>) {
+  const current = (selected ?? value) as T;
   const itemKeys = useMemo(
     () => items.map((item, index) => String(getKey ? getKey(item, index) : typeof item === 'string' || typeof item === 'number' ? item : index)),
     [getKey, items]
   );
-  const selectedIndex = items.findIndex(item => Object.is(item, selected));
+  const selectedIndex = items.findIndex(item => Object.is(item, current));
   const selectedKey =
     selectedIndex >= 0
       ? itemKeys[selectedIndex]
       : getKey
-        ? String(getKey(selected, -1))
-        : typeof selected === 'string' || typeof selected === 'number'
-          ? String(selected)
+        ? String(getKey(current, -1))
+        : typeof current === 'string' || typeof current === 'number'
+          ? String(current)
           : undefined;
   const selectedKeys = useMemo(() => new Set(selectedKey === undefined ? [] : [selectedKey]), [selectedKey]);
 

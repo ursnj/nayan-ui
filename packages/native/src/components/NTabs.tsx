@@ -12,24 +12,30 @@ export interface TabItem {
 export interface NTabsProps extends Omit<TabsProps, 'children' | 'value' | 'onValueChange'> {
   items: TabItem[];
   value?: string;
+  /** Alias of `value`, as the React package names it. */
+  selected?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
+  /** Alias of `onValueChange`. */
+  onChange?: (value: string) => void;
   listClassName?: string;
   triggerClassName?: string;
   contentClassName?: string;
 }
 
 export const NTabs = React.memo<NTabsProps>(
-  ({ items, value, defaultValue, onValueChange, className, listClassName, triggerClassName, contentClassName, ...props }) => {
+  ({ items, value, selected, defaultValue, onValueChange, onChange, className, listClassName, triggerClassName, contentClassName, ...props }) => {
+    const controlled = value ?? selected;
+    const change = onValueChange ?? onChange;
     const [internalValue, setInternalValue] = useState(defaultValue || items[0]?.value || '');
-    const activeValue = value ?? internalValue;
+    const activeValue = controlled ?? internalValue;
 
     const handleChange = useCallback(
       (v: string) => {
-        if (value === undefined) setInternalValue(v);
-        onValueChange?.(v);
+        if (controlled === undefined) setInternalValue(v);
+        change?.(v);
       },
-      [value, onValueChange]
+      [controlled, change]
     );
 
     return (

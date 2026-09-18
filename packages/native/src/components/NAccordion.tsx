@@ -12,11 +12,15 @@ export interface AccordionItemData {
 export interface NAccordionProps {
   items: AccordionItemData[];
   selectionMode?: 'single' | 'multiple';
+  /** Alias of `selectionMode`; the React package calls it `type`. */
+  type?: 'single' | 'multiple';
   defaultValue?: string | string[];
   variant?: 'default' | 'surface';
   hideSeparator?: boolean;
   isCollapsible?: boolean;
   isDisabled?: boolean;
+  /** Alias of `isDisabled`. */
+  disabled?: boolean;
   className?: string;
   itemClassName?: string;
   titleClassName?: string;
@@ -26,17 +30,22 @@ export interface NAccordionProps {
 export const NAccordion = React.memo<NAccordionProps>(
   ({
     items,
-    selectionMode = 'single',
+    selectionMode,
+    type,
     defaultValue,
     variant,
     hideSeparator,
     isCollapsible,
     isDisabled,
+    disabled,
     className,
     itemClassName,
     titleClassName,
     contentClassName
   }) => {
+    const mode = selectionMode ?? type ?? 'single';
+    const off = disabled ?? isDisabled;
+
     const processedItems = useMemo(
       () =>
         items.map((item, index) => ({
@@ -49,12 +58,12 @@ export const NAccordion = React.memo<NAccordionProps>(
     return (
       <Accordion
         className={cn('w-full', className)}
-        selectionMode={selectionMode}
+        selectionMode={mode}
         defaultValue={defaultValue}
         variant={variant}
         hideSeparator={hideSeparator}
         isCollapsible={isCollapsible}
-        isDisabled={isDisabled}>
+        isDisabled={off}>
         {processedItems.map(item => (
           <Accordion.Item key={item.id} value={item.id} isDisabled={item.isDisabled} className={itemClassName}>
             <Accordion.Trigger className="px-4 py-3">

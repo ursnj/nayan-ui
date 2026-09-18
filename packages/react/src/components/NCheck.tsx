@@ -14,7 +14,9 @@ export interface NCheckProps {
   isIndeterminate?: boolean;
   checked: boolean;
   onChange: (checked: boolean) => void;
-  children: ReactNode;
+  children?: ReactNode;
+  /** Alias of `children`, as the React Native package names it. */
+  label?: ReactNode;
   'aria-label'?: string;
 }
 
@@ -32,6 +34,7 @@ const NCheckComponent: React.FC<NCheckProps> = memo(
     isIndeterminate = false,
     onChange,
     children,
+    label,
     ...rest
   }) => {
     return (
@@ -50,7 +53,7 @@ const NCheckComponent: React.FC<NCheckProps> = memo(
           <Checkbox.Control className={cn(checkClassName)}>
             <Checkbox.Indicator />
           </Checkbox.Control>
-          {children}
+          {children ?? label}
         </Checkbox.Content>
       </Checkbox>
     );

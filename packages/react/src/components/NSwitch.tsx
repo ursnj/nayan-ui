@@ -4,6 +4,8 @@ import { cn } from '../lib/utils';
 
 export interface NSwitchProps {
   enabled?: boolean;
+  /** Alias of `enabled`, as the React Native package names it. */
+  checked?: boolean;
   defaultChecked?: boolean;
   label?: React.ReactNode;
   className?: string;
@@ -15,7 +17,7 @@ export interface NSwitchProps {
 }
 
 export const NSwitch: React.FC<NSwitchProps> = React.memo(
-  ({ label, enabled, defaultChecked, disabled = false, onChange, className = '', switchClassName = '', labelClassName = '', id }) => {
+  ({ label, enabled, checked, defaultChecked, disabled = false, onChange, className = '', switchClassName = '', labelClassName = '', id }) => {
     const generatedId = useId();
     const switchId = id || `nyn-switch-${generatedId}`;
 
@@ -28,7 +30,7 @@ export const NSwitch: React.FC<NSwitchProps> = React.memo(
         )}
         <Switch
           id={switchId}
-          isSelected={enabled}
+          isSelected={checked ?? enabled}
           defaultSelected={defaultChecked}
           isDisabled={disabled}
           onChange={onChange}

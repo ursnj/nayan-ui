@@ -13,31 +13,40 @@ export interface ButtonGroupItem {
 
 export interface NButtonGroupProps {
   items: ButtonGroupItem[];
-  value: string;
-  onValueChange: (value: string) => void;
+  value?: string;
+  /** Alias of `value`, as the React package names it. */
+  selected?: string;
+  onValueChange?: (value: string) => void;
+  /** Alias of `onValueChange`. */
+  onChange?: (value: string) => void;
   label?: string;
   isDisabled?: boolean;
+  /** Alias of `isDisabled`. */
+  disabled?: boolean;
   className?: string;
   buttonClassName?: string;
   labelClassName?: string;
 }
 
 export const NButtonGroup = React.memo<NButtonGroupProps>(
-  ({ items, value, onValueChange, label, isDisabled = false, className, buttonClassName, labelClassName }) => {
+  ({ items, value, selected, onValueChange, onChange, label, isDisabled, disabled, className, buttonClassName, labelClassName }) => {
+    const current = value ?? selected;
+    const off = disabled ?? isDisabled ?? false;
+    const change = onValueChange ?? onChange;
     return (
       <View className="w-full">
         {label && <NText className={cn('mb-2 font-medium', labelClassName)}>{label}</NText>}
         <View className={cn('flex-row rounded-xl overflow-hidden', className)}>
           {items.map((item, index) => {
-            const isSelected = item.value === value;
-            const itemDisabled = isDisabled || item.isDisabled;
+            const isSelected = item.value === current;
+            const itemDisabled = off || item.isDisabled;
             const buttonIcon = resolveIcon(item.icon, { size: 16 });
 
             return (
               <Button
                 key={item.value}
                 isDisabled={itemDisabled}
-                onPress={() => onValueChange(item.value)}
+                onPress={() => change?.(item.value)}
                 variant={isSelected ? 'primary' : 'secondary'}
                 className={cn(
                   'rounded-none border-r border-border',
