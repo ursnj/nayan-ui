@@ -6,7 +6,7 @@ import { ArrowRight, Check, Copy, Github, Package, Terminal } from 'lucide-react
 import Link from 'next/link';
 import { Badge } from '@/design/Primitives';
 import { BUTTON_SECONDARY, CARD, CONTAINER, GRADIENT_TEXT, H1_HERO, LEAD } from '@/design/system';
-import { NATIVE_COMPONENT_COUNT, REACT_COMPONENT_COUNT } from '@/services/Counts';
+import { TOTAL_COMPONENT_COUNT } from '@/services/Counts';
 
 const INSTALL = 'npm install @nayan-ui/react';
 
@@ -63,17 +63,16 @@ const Banner = () => {
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Pitch */}
           <div className="text-center lg:text-left">
-            <Badge icon={Package}>Open source · MIT · Free forever</Badge>
+            <Badge icon={Package}>Open source · Free forever</Badge>
 
             <h1 className={`mt-6 ${H1_HERO}`}>
               Components for
               <span className={`block ${GRADIENT_TEXT}`}>React &amp; React Native</span>
             </h1>
 
-            <p className={`mx-auto mt-6 max-w-xl text-base sm:text-lg ${LEAD} lg:mx-0`}>
-              {REACT_COMPONENT_COUNT} accessible React components and {NATIVE_COMPONENT_COUNT} for React Native, sharing one API and one design
-              language. TypeScript throughout, themed with CSS variables, and styled with Tailwind — so overriding anything is one{' '}
-              <code className="font-mono text-[0.9em] text-foreground">className</code> away.
+            <p className={`mx-auto mt-6 max-w-xl text-lg ${LEAD} lg:mx-0`}>
+              {TOTAL_COMPONENT_COUNT} accessible, good-looking components for web and mobile — styled, themeable and documented, so you can start on
+              the thing you actually set out to build.
             </p>
 
             {/* The install command, copyable. It was previously buried at the

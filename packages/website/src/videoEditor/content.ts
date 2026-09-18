@@ -11,7 +11,7 @@
  * hardware decoders and the Web Audio clock. Almost none of that is what
  * someone looking for a free video editor needs before they try one, so it is
  * gone. What is left answers four questions: what is it, what can it do, how
- * do I use it, and what size should my video be.
+ * do I use it, and where can I post it.
  */
 
 /** The running editor lives at this path, served as a static Vite bundle. */
@@ -20,7 +20,7 @@ export const SOURCE_URL = 'https://github.com/ursnj/nayan-ui/tree/main/packages/
 
 /** The facts strip under the hero. Short, checkable, no adjectives. */
 export const FACTS = [
-  { value: '4K', label: 'Up to 3840 × 2160' },
+  { value: '4K', label: 'Full-quality export' },
   { value: '15', label: 'Colour looks' },
   { value: '18', label: 'Transitions' },
   { value: '0', label: 'Bytes uploaded' }
@@ -37,40 +37,47 @@ export const FACTS = [
  */
 export const STEPS = [
   {
-    title: 'Bring in your footage',
-    body: 'Drag files onto the media panel or pick them from disk. Nothing is uploaded — the browser reads each file where it already sits.'
+    title: 'Add your clips',
+    body: 'Drag your videos, photos and music straight in. Nothing gets uploaded — the editor reads the files where they already are.'
   },
   {
     title: 'Cut it down',
-    body: 'Trim the edges, split at the playhead, and ripple delete to close the gaps. Snapping holds cuts to clip edges so joins land clean.'
+    body: 'Shorten clips, split them where you want, and close the gaps. Edges snap together so your cuts land where you meant them to.'
   },
   {
     title: 'Make it look right',
-    body: 'Pick one of fifteen looks and dial its strength, key out a green screen, add titles, and drop a transition on any cut.'
+    body: 'Choose a look, drop out a green screen, add titles, and put a transition between the shots that need one.'
   },
   {
-    title: 'Export or save',
-    body: 'Choose a format and quality, and the dialog estimates the file size before you commit. Or save one project file with the media inside.'
+    title: 'Save or share it',
+    body: 'Export a finished video and it lands in your downloads. Or save the project and come back to it whenever you like.'
   }
 ];
 
 /* ------------------------------------------------------------------ *
- * Sizes — the question people actually arrive with
+ * Where it goes
  * ------------------------------------------------------------------ */
 
-export const SIZES = [
-  { platform: 'YouTube', ratio: '16:9', size: '1920 × 1080' },
-  { platform: 'YouTube Shorts', ratio: '9:16', size: '1080 × 1920' },
-  { platform: 'Instagram Reels · TikTok', ratio: '9:16', size: '1080 × 1920' },
-  { platform: 'Instagram feed', ratio: '4:5', size: '1080 × 1350' },
-  { platform: 'LinkedIn · square feeds', ratio: '1:1', size: '1080 × 1080' },
-  { platform: 'Podcasts · audio only', ratio: '—', size: 'M4A · WAV · OGG' }
-];
-
-export const FORMATS = [
-  { label: 'Import', value: 'MP4, MOV, MKV, WebM · MP3, WAV, M4A, FLAC, OGG · PNG, JPEG, WebP, GIF' },
-  { label: 'Export', value: 'MP4, MOV, MKV, WebM · M4A, WAV, OGG for audio alone' },
-  { label: 'Needs', value: 'Chrome or Edge 94+, Safari 16.4+, and a window at least 1024px wide' }
+/**
+ * What used to sit here was a table of pixel dimensions and two lists of
+ * codecs — "1080 × 1920", "MP4, MOV, MKV, WebM · MP3, WAV, M4A, FLAC, OGG",
+ * "Chrome or Edge 94+, Safari 16.4+". Accurate, and exactly the wrong thing
+ * to put in front of someone deciding whether to try a video editor. The
+ * presets still exist in the editor; the page describes what they are for.
+ */
+export const DESTINATIONS = [
+  {
+    title: 'Vertical video',
+    body: 'One-click presets for Reels, Shorts and TikTok. Landscape footage fills the frame behind itself instead of sitting in black bars.'
+  },
+  {
+    title: 'Widescreen and square',
+    body: 'YouTube, feeds and ads, up to 4K. Safe-zone guides keep your titles clear of the places apps put their own buttons.'
+  },
+  {
+    title: 'Audio on its own',
+    body: 'Cut a podcast on the same timeline and export just the mix, without a video track riding along with it.'
+  }
 ];
 
 /* ------------------------------------------------------------------ *
@@ -97,14 +104,14 @@ export const FAQS = [
   },
   {
     q: 'Can I edit 4K video?',
-    a: 'Yes. Projects go up to 3840 × 2160 at up to 60 fps, and decoding runs on the same hardware your browser uses to play video.'
+    a: 'Yes, all the way up to 4K, and it stays smooth while you work because the editor uses the same video hardware your browser uses to play it.'
   },
   {
     q: 'How do I make a vertical video for Reels, Shorts or TikTok?',
-    a: 'Set the project to the vertical 1080 × 1920 preset. For landscape footage, either reframe the clip, or set the background to the blurred clip so the shot fills the frame behind itself instead of leaving black bars.'
+    a: 'Pick the vertical preset when you start. If your footage is widescreen, you can either reframe it or let the shot fill the space behind itself, so you get a full frame instead of black bars.'
   },
   {
     q: 'Can I save a project and come back to it?',
-    a: 'Yes. Saving writes a single .nayanproj file holding the timeline and every media file you imported, so opening it restores the whole project with nothing to re-import — on this machine or any other.'
+    a: 'Yes. Saving gives you one file with your whole project inside it, media included, so you can reopen it later — on this computer or a different one — and everything is still there.'
   }
 ];
