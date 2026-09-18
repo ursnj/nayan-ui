@@ -53,9 +53,46 @@ const FEATURES = [
   }
 ];
 
+/**
+ * The editor itself, in the theme the visitor is already reading in.
+ *
+ * Two images swapped by CSS rather than one image picked in JavaScript: HeroUI
+ * defines Tailwind's `dark:` variant against the `.dark` class and
+ * `[data-theme="dark"]`, both of which `NTheme` sets on `<html>`, so the swap
+ * follows the header's toggle with no client component and no flash of the
+ * wrong one on first paint. Only the matching image is displayed, and
+ * `display: none` keeps the other out of the accessibility tree, so a screen
+ * reader is read one description rather than two.
+ *
+ * `width` and `height` are the file's real pixels so the browser reserves the
+ * 16:10 box before either image arrives; without them the hero reflows on a
+ * slow connection. The screenshots are of the editor as it opens — empty
+ * timeline, nothing loaded — which is honest about what a first visit looks
+ * like. Retake them with `/video-editor/start` at 1600×1000 in each theme.
+ */
+const EditorScreenshot = () => (
+  <div className={`${CARD} overflow-hidden p-1.5 shadow-xl shadow-indigo-500/5`}>
+    <img
+      src="/video-editor/editor-light.png"
+      alt="The Nayan UI video editor: a media library on the left, the preview in the middle, clip properties on the right and a multi-track timeline along the bottom."
+      width={1600}
+      height={1000}
+      className="block w-full rounded-xl dark:hidden"
+    />
+    <img
+      src="/video-editor/editor-dark.png"
+      alt="The Nayan UI video editor: a media library on the left, the preview in the middle, clip properties on the right and a multi-track timeline along the bottom."
+      width={1600}
+      height={1000}
+      className="hidden w-full rounded-xl dark:block"
+    />
+  </div>
+);
+
 const VideoEditorMain = () => (
   <>
     <PageHero
+      media={<EditorScreenshot />}
       breadcrumb={[{ label: 'Home', href: '/' }, { label: 'Video Editor' }]}
       eyebrow="Video Editor"
       title="Free online video editor"
