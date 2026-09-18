@@ -22,24 +22,20 @@ export const NSwitch: React.FC<NSwitchProps> = React.memo(
     const switchId = id || `nyn-switch-${generatedId}`;
 
     return (
-      <div className={cn('flex items-center justify-between gap-3', className)}>
-        {label && (
-          <Label htmlFor={switchId} className={cn(labelClassName)}>
-            {label}
-          </Label>
-        )}
-        <Switch
-          id={switchId}
-          isSelected={checked ?? enabled}
-          defaultSelected={defaultChecked}
-          isDisabled={disabled}
-          onChange={onChange}
-          className={cn('nyn-switch', switchClassName)}>
+      <Switch
+        id={switchId}
+        isSelected={checked ?? enabled}
+        defaultSelected={defaultChecked}
+        isDisabled={disabled}
+        onChange={onChange}
+        className={cn('nyn-switch flex items-center justify-between gap-3', className, switchClassName)}>
+        <Switch.Content className="flex w-full items-center justify-between gap-3">
+          {label && <Label className={cn(labelClassName)}>{label}</Label>}
           <Switch.Control>
             <Switch.Thumb />
           </Switch.Control>
-        </Switch>
-      </div>
+        </Switch.Content>
+      </Switch>
     );
   }
 );
