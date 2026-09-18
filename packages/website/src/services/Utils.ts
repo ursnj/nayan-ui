@@ -119,31 +119,6 @@ import {
   tooltipAttributes
 } from '@/services/ReactAttributes';
 import {
-  accordionCode,
-  alertCode,
-  buttonCode,
-  buttonGroupCode,
-  cardCode,
-  checkBoxCode,
-  dialogCode,
-  dividerCode,
-  inputCode,
-  loadingCode,
-  menuCode,
-  popoverCode,
-  progressCode,
-  radioGroupCode,
-  selectCode,
-  sheetCode,
-  skeletonCode,
-  sliderCode,
-  switchCode,
-  tabsCode,
-  textareaCode,
-  toastCode,
-  tooltipCode
-} from '@/services/ReactCodeBlocks';
-import {
   accordionAttributes as rnAccordionAttributes,
   alertAttributes as rnAlertAttributes,
   buttonAttributes as rnButtonAttributes,
@@ -168,31 +143,6 @@ import {
   toastAttributes as rnToastAttributes,
   tooltipAttributes as rnTooltipAttributes
 } from '@/services/ReactNativeAttributes';
-import {
-  accordionCode as rnAccordionCode,
-  alertCode as rnAlertCode,
-  buttonCode as rnButtonCode,
-  buttonGroupCode as rnButtonGroupCode,
-  cardCode as rnCardCode,
-  checkBoxCode as rnCheckBoxCode,
-  dialogCode as rnDialogCode,
-  dividerCode as rnDividerCode,
-  inputCode as rnInputCode,
-  loadingCode as rnLoadingCode,
-  menuCode as rnMenuCode,
-  popoverCode as rnPopoverCode,
-  progressCode as rnProgressCode,
-  radioGroupCode as rnRadioGroupCode,
-  selectCode as rnSelectCode,
-  sheetCode as rnSheetCode,
-  skeletonCode as rnSkeletonCode,
-  sliderCode as rnSliderCode,
-  switchCode as rnSwitchCode,
-  tabsCode as rnTabsCode,
-  textareaCode as rnTextareaCode,
-  toastCode as rnToastCode,
-  tooltipCode as rnTooltipCode
-} from '@/services/ReactNativeCodeBlocks';
 import {
   accordionTags,
   aiReviewTags,
@@ -877,7 +827,6 @@ export const reactNativeSidebarItems = [
       'An Accordion component allows users to expand and collapse sections of content, organizing information compactly. Built on top of heroui-native Accordion.',
     link: '/react-native/accordion',
     attributes: rnAccordionAttributes,
-    code: rnAccordionCode,
     tags: rnAccordionTags,
     icon: ListCollapse,
     isComponent: true
@@ -888,7 +837,6 @@ export const reactNativeSidebarItems = [
       'An Alert component displays important messages or notifications to users with different severity levels. Built on top of heroui-native.',
     link: '/react-native/alert',
     attributes: rnAlertAttributes,
-    code: rnAlertCode,
     tags: rnAlertTags,
     icon: CircleAlert,
     isComponent: true
@@ -899,7 +847,6 @@ export const reactNativeSidebarItems = [
       'A Button component triggers actions or events. Built on top of heroui-native Button with support for variants, sizes, colors, and loading states.',
     link: '/react-native/button',
     attributes: rnButtonAttributes,
-    code: rnButtonCode,
     tags: rnButtonTags,
     icon: Square,
     isComponent: true
@@ -909,7 +856,6 @@ export const reactNativeSidebarItems = [
     description: 'A Button Group component groups multiple buttons together for selecting from a set of related actions or options.',
     link: '/react-native/button-group',
     attributes: rnButtonGroupAttributes,
-    code: rnButtonGroupCode,
     tags: rnButtonGroupTags,
     icon: Columns3,
     isComponent: true
@@ -919,7 +865,6 @@ export const reactNativeSidebarItems = [
     description: 'A Card component displays content in a structured container. Built on top of heroui-native Card.',
     link: '/react-native/card',
     attributes: rnCardAttributes,
-    code: rnCardCode,
     tags: rnCardTags,
     icon: CreditCard,
     isComponent: true
@@ -930,7 +875,6 @@ export const reactNativeSidebarItems = [
       'A Checkbox component allows users to select or deselect options. Built on top of heroui-native Checkbox with isSelected/onSelectedChange API.',
     link: '/react-native/checkbox',
     attributes: rnCheckAttributes,
-    code: rnCheckBoxCode,
     tags: rnCheckboxTags,
     icon: SquareCheck,
     isComponent: true
@@ -940,7 +884,6 @@ export const reactNativeSidebarItems = [
     description: 'A Dialog component displays a pop-up window for capturing user attention or input. Built on top of heroui-native Dialog.',
     link: '/react-native/dialog',
     attributes: rnDialogAttributes,
-    code: rnDialogCode,
     tags: rnDialogTags,
     icon: MessageSquare,
     isComponent: true
@@ -950,7 +893,6 @@ export const reactNativeSidebarItems = [
     description: 'A Divider component separates content within a layout. Built on top of heroui-native Separator.',
     link: '/react-native/divider',
     attributes: rnDividerAttributes,
-    code: rnDividerCode,
     tags: rnDividerTags,
     icon: Slash,
     isComponent: true
@@ -960,7 +902,6 @@ export const reactNativeSidebarItems = [
     description: 'An Input component allows users to enter text data. Built on top of heroui-native Input.',
     link: '/react-native/input',
     attributes: rnInputAttributes,
-    code: rnInputCode,
     tags: rnInputTags,
     icon: TextCursorInput,
     isComponent: true
@@ -970,7 +911,6 @@ export const reactNativeSidebarItems = [
     description: 'A Loading component displays a spinner indicator while content is being loaded. Built on top of heroui-native Spinner.',
     link: '/react-native/loading',
     attributes: rnLoadingAttributes,
-    code: rnLoadingCode,
     tags: rnAccordionTags,
     icon: Loader,
     isComponent: true
@@ -980,7 +920,6 @@ export const reactNativeSidebarItems = [
     description: 'A Dropdown Menu component displays a list of options when triggered. Built on top of heroui-native Menu.',
     link: '/react-native/menu',
     attributes: rnMenuAttributes,
-    code: rnMenuCode,
     tags: rnMenuTags,
     icon: EllipsisVertical,
     isComponent: true
@@ -990,7 +929,6 @@ export const reactNativeSidebarItems = [
     description: 'A Popover component displays additional information in a floating overlay. Built on top of heroui-native Popover.',
     link: '/react-native/popover',
     attributes: rnPopoverAttributes,
-    code: rnPopoverCode,
     tags: rnPopoverTags,
     icon: PictureInPicture2,
     isComponent: true
@@ -1000,7 +938,6 @@ export const reactNativeSidebarItems = [
     description: 'A Progress component visually indicates the completion status of a task. Built on top of heroui-native Progress.',
     link: '/react-native/progress',
     attributes: rnProgressAttributes,
-    code: rnProgressCode,
     tags: rnProgressTags,
     icon: RectangleEllipsis,
     isComponent: true
@@ -1011,7 +948,6 @@ export const reactNativeSidebarItems = [
       'A Radio Group component allows users to select one option from a set of mutually exclusive choices. Built on top of heroui-native RadioGroup.',
     link: '/react-native/radio-group',
     attributes: rnRadioAttributes,
-    code: rnRadioGroupCode,
     tags: rnRadioTags,
     icon: CircleDot,
     isComponent: true
@@ -1021,7 +957,6 @@ export const reactNativeSidebarItems = [
     description: 'A Select component allows users to choose from a dropdown list. Built on top of heroui-native Select.',
     link: '/react-native/select',
     attributes: rnSelectAttributes,
-    code: rnSelectCode,
     tags: rnSelectTags,
     icon: SquareMousePointer,
     isComponent: true
@@ -1031,7 +966,6 @@ export const reactNativeSidebarItems = [
     description: 'A Sheet component presents content in a sliding bottom panel. Built on top of heroui-native Sheet.',
     link: '/react-native/sheet',
     attributes: rnSheetAttributes,
-    code: rnSheetCode,
     tags: rnSheetTags,
     icon: StickyNote,
     isComponent: true
@@ -1042,7 +976,6 @@ export const reactNativeSidebarItems = [
       'A Skeleton component is a placeholder UI element that represents the layout of content before it loads. Built on top of heroui-native Skeleton.',
     link: '/react-native/skeleton',
     attributes: rnSkeletonAttributes,
-    code: rnSkeletonCode,
     tags: rnSkeletonTags,
     icon: TextSelect,
     isComponent: true
@@ -1053,7 +986,6 @@ export const reactNativeSidebarItems = [
       'A Slider component allows users to select a value from a range by dragging a thumb along a track. Built on top of heroui-native Slider.',
     link: '/react-native/slider',
     attributes: rnSliderAttributes,
-    code: rnSliderCode,
     tags: rnAccordionTags,
     icon: SlidersHorizontal,
     isComponent: true
@@ -1063,7 +995,6 @@ export const reactNativeSidebarItems = [
     description: 'A Switch component allows users to toggle between two states. Built on top of heroui-native Switch.',
     link: '/react-native/switch',
     attributes: rnSwitchAttributes,
-    code: rnSwitchCode,
     tags: rnSwitchTags,
     icon: ToggleRight,
     isComponent: true
@@ -1074,7 +1005,6 @@ export const reactNativeSidebarItems = [
       'A Tabs component allows users to switch between different views or sections. Built on top of heroui-native Tabs with items-based API.',
     link: '/react-native/tabs',
     attributes: rnTabsAttributes,
-    code: rnTabsCode,
     tags: rnAccordionTags,
     icon: AppWindow,
     isComponent: true
@@ -1084,7 +1014,6 @@ export const reactNativeSidebarItems = [
     description: 'A Textarea component allows users to enter multi-line text. Built on top of heroui-native.',
     link: '/react-native/textarea',
     attributes: rnTextareaAttributes,
-    code: rnTextareaCode,
     tags: rnTextareaTags,
     icon: TextCursorInput,
     isComponent: true
@@ -1094,7 +1023,6 @@ export const reactNativeSidebarItems = [
     description: 'A Toast component displays transient notifications. Uses heroui-native useToast hook for showing toast messages.',
     link: '/react-native/toast',
     attributes: rnToastAttributes,
-    code: rnToastCode,
     tags: rnToastTags,
     icon: MessageSquareText,
     isComponent: true
@@ -1104,7 +1032,6 @@ export const reactNativeSidebarItems = [
     description: 'A Tooltip component displays informative pop-ups when hovering or focusing on an element. Built on top of heroui-native Tooltip.',
     link: '/react-native/tooltip',
     attributes: rnTooltipAttributes,
-    code: rnTooltipCode,
     tags: rnTooltipTags,
     icon: MessageSquareDot,
     isComponent: true
