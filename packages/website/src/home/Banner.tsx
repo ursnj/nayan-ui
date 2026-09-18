@@ -29,7 +29,7 @@ import {
 import { ArrowRight, Bell, Bold, Check, Copy, Download, Github, Italic, Package, Terminal, Underline } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/design/Primitives';
-import { BUTTON_SECONDARY, CARD, CONTAINER, GRADIENT_TEXT, H1_HERO, LEAD } from '@/design/system';
+import { CARD, CONTAINER, GRADIENT_TEXT, H1_HERO, LEAD } from '@/design/system';
 import { TOTAL_COMPONENT_COUNT } from '@/services/Counts';
 import { installCode, rnInstallCode } from '@/services/ReactCodeBlocks';
 
@@ -197,23 +197,50 @@ const Banner = () => {
               ))}
             </div>
 
+            {/*
+             * Both actions are `NButton`s.
+             *
+             * The GitHub link used to be an `<a>` carrying `BUTTON_SECONDARY`,
+             * and it came out visibly bigger than the button beside it — not
+             * by a rounding error but by ten pixels. HeroUI's button is a fixed
+             * `h-10 md:h-9` at `text-sm`, so the primary was 36px tall with
+             * 14px text no matter what padding it was given (the `py-2.5` it
+             * carried did nothing at all). The anchor had no height of its own:
+             * it inherited the page's 16px text and added `py-3`, landing
+             * around 48px. The radius differed too — `rounded-3xl` from HeroUI
+             * against `rounded-xl` from the token.
+             *
+             * Matching the numbers by hand would just be a copy of HeroUI's
+             * metrics waiting to drift from them, so the secondary is now the
+             * library's own outline button. `BUTTON_SECONDARY` is untouched and
+             * still right on the pages that pair it with `BUTTON_PRIMARY`;
+             * the hero is the one place that mixed the two systems.
+             *
+             * Spacing between label and icon is HeroUI's `gap-2` for both,
+             * rather than a margin on one icon and a different one on the other.
+             */}
             <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
               <Link href="/react/installation" className="sm:w-auto">
-                <NButton className="w-full bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-2.5 font-semibold text-white shadow-lg shadow-indigo-500/25 hover:from-indigo-600 hover:to-violet-600 sm:w-auto">
+                <NButton className="w-full bg-gradient-to-r from-indigo-500 to-violet-500 px-6 font-semibold text-white shadow-lg shadow-indigo-500/25 hover:from-indigo-600 hover:to-violet-600 sm:w-auto">
                   Get started
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight aria-hidden className="h-4 w-4" />
                 </NButton>
               </Link>
-              <a href="https://github.com/ursnj/nayan-ui" target="_blank" rel="noopener noreferrer" className={`${BUTTON_SECONDARY} py-2.5`}>
-                <Github className="mr-2 h-4 w-4" />
-                View on GitHub
+              <a href="https://github.com/ursnj/nayan-ui" target="_blank" rel="noopener noreferrer" className="sm:w-auto">
+                <NButton isOutline={true} className="w-full px-6 font-semibold sm:w-auto">
+                  <Github aria-hidden className="h-4 w-4" />
+                  View on GitHub
+                </NButton>
               </a>
             </div>
           </div>
 
           {/* Live components */}
           <div className={`${CARD} overflow-hidden shadow-xl shadow-indigo-500/5`}>
-            <div className="flex items-center justify-between gap-3 border-b border-default bg-background px-4 py-2.5">
+            {/* `bg-surface` for the same reason as the code frame's header
+                (see `helpers/Code.tsx`): this card sits on the page, so a
+                `--background` header was the colour of the page behind it. */}
+            <div className="flex items-center justify-between gap-3 border-b border-default bg-surface px-4 py-2.5">
               <span className="font-mono text-xs text-muted">@nayan-ui/react</span>
               <span className="text-[11px] text-muted">Live, not a screenshot</span>
             </div>

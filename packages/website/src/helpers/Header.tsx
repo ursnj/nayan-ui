@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { NSheet, THEMES, useLocalStorage } from '@nayan-ui/react';
-import { AlignJustify, Github, MoonStar, Sun } from 'lucide-react';
+import { NSheet, THEMES } from '@nayan-ui/react';
+import { AlignJustify, Github, MoonStar, Package, Sun } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { CONTAINER } from '@/design/system';
+import { useTheme } from '@/helpers/ThemeProvider';
 
 /**
  * The primary navigation, in one place.
@@ -70,7 +71,9 @@ const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
 const Header = () => {
   const pathname = usePathname();
   const [menu, setMenu] = useState(false);
-  const [theme, setTheme] = useLocalStorage('THEME', THEMES.LIGHT);
+  /* Read from `ThemeProvider` rather than from localStorage directly, so the
+     toggle reaches `NTheme` and the rest of the page — see the note there. */
+  const { theme, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -81,8 +84,6 @@ const Header = () => {
     setMenu(false);
     window.scrollTo(0, 0);
   }, [pathname]);
-
-  const toggleTheme = () => setTheme(theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK);
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-default bg-surface/80 backdrop-blur-md">
@@ -102,6 +103,18 @@ const Header = () => {
           </div>
 
           <div className="flex items-center gap-1">
+            {/* The npm profile rather than a single package, since there are
+                four of them. `Package` is the icon the footer already uses for
+                npm links — lucide has no npm mark of its own. */}
+            <Link
+              href="https://www.npmjs.com/~ursnj"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Nayan UI packages on npm"
+              aria-label="Nayan UI packages on npm"
+              className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground">
+              <Package className="h-[18px] w-[18px]" />
+            </Link>
             <Link
               href="https://www.github.com/ursnj/nayan-ui"
               target="_blank"
