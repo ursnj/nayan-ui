@@ -19,7 +19,7 @@ const NCodeComponent: React.FC<NCodeProps> = memo(({ code, language = 'tsx', the
         <button
           type="button"
           onClick={() => onCopy(code)}
-          className="absolute top-2.5 right-2.5 p-1.5 rounded-md bg-default/50 hover:bg-default text-muted hover:text-foreground opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-all duration-200 z-10"
+          className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-default/50 hover:bg-default text-muted hover:text-foreground opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-all duration-200 z-10"
           aria-label={copied ? 'Code copied' : 'Copy code'}
           title={copied ? 'Code copied' : 'Copy code'}>
           {copied ? (

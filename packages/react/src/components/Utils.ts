@@ -124,7 +124,7 @@ export const debounce = (delay: number, callback: () => any, options: { atBegin?
 
 export const reactSelectTheme = (theme: any) => ({
   ...theme,
-  borderRadius: 4,
+  borderRadius: 8,
   colors: {
     ...theme.colors,
     neutral0: 'var(--surface)',
@@ -146,11 +146,11 @@ export const reactSelectTheme = (theme: any) => ({
 });
 
 export const reactSelectCustomClassNames = {
-  control: (_state: any) => 'flex h-10 w-full rounded bg-surface border border-default focus:border-accent text-foreground',
-  menu: (_state: any) => 'w-full rounded bg-surface border border-default shadow-lg',
+  control: (_state: any) => 'flex h-10 w-full rounded-lg border border-default bg-surface text-foreground focus:border-accent',
+  menu: (_state: any) => 'w-full rounded-lg border border-default bg-surface shadow-lg',
   option: (state: any) => (state.isSelected ? 'bg-accent text-accent-foreground' : state.isFocused ? 'bg-default/50' : ''),
   singleValue: (_state: any) => 'text-foreground',
-  multiValue: (_state: any) => 'bg-default rounded',
+  multiValue: (_state: any) => 'rounded-lg bg-default',
   multiValueLabel: (_state: any) => 'text-foreground',
   placeholder: (_state: any) => 'text-muted',
   input: (_state: any) => 'text-foreground'

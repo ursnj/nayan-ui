@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import type { Selection } from 'react-aria-components';
+import type { Selection } from '@heroui/react';
 import { Tag, TagGroup } from '@heroui/react';
 import { cn } from '../lib/utils';
 

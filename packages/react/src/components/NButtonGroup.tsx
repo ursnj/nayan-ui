@@ -1,5 +1,5 @@
 import React, { ReactNode, memo, useCallback, useMemo } from 'react';
-import type { Selection } from 'react-aria-components';
+import type { Selection } from '@heroui/react';
 import { ToggleButton, ToggleButtonGroup } from '@heroui/react';
 import { cn } from '../lib/utils';
 

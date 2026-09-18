@@ -14,7 +14,7 @@ const SwitchGroup = () => {
   const [value, setValue] = useState<string[]>(['releases', 'security']);
 
   return (
-    <ComponentWrapper>
+    <ComponentWrapper code={code}>
       <div className="max-w-sm">
         <NSwitchGroup label="Email me about" items={items} value={value} onChange={setValue} />
       </div>
@@ -23,3 +23,27 @@ const SwitchGroup = () => {
 };
 
 export default SwitchGroup;
+
+/** The usage sample on this component's page, kept beside the demo it documents. */
+export const code = `import { useState } from 'react';
+import { NSwitchGroup } from '@nayan-ui/react';
+
+const items = [
+  { label: 'Release notes', value: 'releases' },
+  { label: 'Security alerts', value: 'security' },
+  { label: 'Weekly digest', value: 'digest' }
+];
+
+const SwitchGroup = () => {
+  const [value, setValue] = useState<string[]>(['releases', 'security']);
+
+  return (
+    <div>
+      <div className="max-w-sm">
+        <NSwitchGroup label="Email me about" items={items} value={value} onChange={setValue} />
+      </div>
+    </div>
+  );
+};
+
+export default SwitchGroup;`;

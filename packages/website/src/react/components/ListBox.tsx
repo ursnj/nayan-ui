@@ -14,10 +14,32 @@ const ListBox = () => {
   const [selected, setSelected] = useState<any>(new Set(['report']));
 
   return (
-    <ComponentWrapper>
+    <ComponentWrapper code={code}>
       <NListBox items={items} selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected} aria-label="Files" />
     </ComponentWrapper>
   );
 };
 
 export default ListBox;
+
+/** The usage sample on this component's page, kept beside the demo it documents. */
+export const code = `import { useState } from 'react';
+import { NListBox } from '@nayan-ui/react';
+
+const items = [
+  { id: 'report', label: 'Quarterly report.pdf', description: '2.4 MB · PDF' },
+  { id: 'budget', label: 'Budget.xlsx', description: '812 KB · Spreadsheet' },
+  { id: 'archive', label: 'Archive.zip', description: '18 MB · Archive', disabled: true }
+];
+
+const ListBox = () => {
+  const [selected, setSelected] = useState<any>(new Set(['report']));
+
+  return (
+    <div>
+      <NListBox items={items} selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected} aria-label="Files" />
+    </div>
+  );
+};
+
+export default ListBox;`;
