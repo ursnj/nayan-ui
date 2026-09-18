@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Table } from '@heroui/react';
 import { cn } from '../lib/utils';
 
@@ -28,6 +28,8 @@ export interface NTableProps<T> {
   caption?: string;
   columns: NTableColumn<T>[];
   data: T[];
+  emptyMessage?: React.ReactNode;
+  getRowKey?: (row: T, rowIndex: number) => string | number;
 }
 
 export const NTable = React.memo(
@@ -41,17 +43,16 @@ export const NTable = React.memo(
     bodyClassName = '',
     bodyRowClassName = '',
     bodyCellClassName = '',
-    variant = 'primary'
+    variant = 'primary',
+    emptyMessage = 'No data',
+    getRowKey
   }: NTableProps<T>) => {
-    const memoColumns = useMemo(() => columns, [columns]);
-    const memoData = useMemo(() => data, [data]);
-
     return (
       <Table variant={variant} className={cn('nyn-table', className)}>
         <Table.ScrollContainer>
           <Table.Content aria-label={caption || 'Data table'}>
             <Table.Header className={cn(headerClassName)}>
-              {memoColumns.map((col, colIndex) => (
+              {columns.map((col, colIndex) => (
                 <Table.Column
                   key={col.name}
                   id={col.name}
@@ -61,19 +62,19 @@ export const NTable = React.memo(
                 </Table.Column>
               ))}
             </Table.Header>
-            <Table.Body
-              className={cn(bodyClassName)}
-              items={memoData.map((row, idx) => ({ ...row, _idx: idx }))}
-              renderEmptyState={() => <span>No data</span>}>
-              {(item: T & { _idx: number }) => (
-                <Table.Row id={item._idx} className={cn(bodyRowClassName)}>
-                  {memoColumns.map((col, colIndex) => (
-                    <Table.Cell key={col.name} className={cn(bodyCellClassName, col.cellClassName, col.className)}>
-                      {col.renderCell ? col.renderCell(item, col, item._idx, colIndex) : item[col.name]}
-                    </Table.Cell>
-                  ))}
-                </Table.Row>
-              )}
+            <Table.Body className={cn(bodyClassName)} renderEmptyState={() => <span>{emptyMessage}</span>}>
+              {data.map((row, rowIndex) => {
+                const rowKey = getRowKey ? getRowKey(row, rowIndex) : rowIndex;
+                return (
+                  <Table.Row key={rowKey} id={rowKey} className={cn(bodyRowClassName)}>
+                    {columns.map((col, colIndex) => (
+                      <Table.Cell key={col.name} className={cn(bodyCellClassName, col.cellClassName, col.className)}>
+                        {col.renderCell ? col.renderCell(row, col, rowIndex, colIndex) : row[col.name]}
+                      </Table.Cell>
+                    ))}
+                  </Table.Row>
+                );
+              })}
             </Table.Body>
           </Table.Content>
         </Table.ScrollContainer>

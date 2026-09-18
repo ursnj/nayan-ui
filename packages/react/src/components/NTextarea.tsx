@@ -2,7 +2,10 @@ import React, { ReactNode, forwardRef, memo } from 'react';
 import { Description, FieldError, Label, TextArea, TextField } from '@heroui/react';
 import { cn } from '../lib/utils';
 
-export interface NTextareaProps {
+export interface NTextareaProps extends Omit<
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+  'children' | 'className' | 'defaultValue' | 'disabled' | 'onChange' | 'readOnly' | 'required' | 'value'
+> {
   id?: string;
   name?: string;
   label?: ReactNode;
@@ -10,9 +13,10 @@ export interface NTextareaProps {
   value?: string;
   defaultValue?: string;
   isRequired?: boolean;
-  isDisabled?: boolean;
+  disabled?: boolean;
   isReadOnly?: boolean;
   className?: string;
+  wrapperClassName?: string;
   labelClassName?: string;
   textareaClassName?: string;
   error?: ReactNode;
@@ -31,14 +35,16 @@ export const NTextarea = memo(
         value,
         defaultValue,
         isRequired = false,
-        isDisabled = false,
+        disabled = false,
         isReadOnly = false,
         className = '',
+        wrapperClassName = '',
         labelClassName = '',
         textareaClassName = '',
         error,
         helperText,
-        onChange
+        onChange,
+        ...textareaProps
       },
       ref
     ) => {
@@ -47,12 +53,13 @@ export const NTextarea = memo(
           id={id}
           name={name}
           isRequired={isRequired}
-          isDisabled={isDisabled}
+          isDisabled={disabled}
           isReadOnly={isReadOnly}
           isInvalid={!!error}
-          className={cn('nyn-textarea-block', className)}>
+          className={cn('nyn-textarea-block', wrapperClassName, className)}>
           {label && <Label className={cn(labelClassName)}>{label}</Label>}
           <TextArea
+            {...textareaProps}
             ref={ref}
             placeholder={placeholder}
             value={value}

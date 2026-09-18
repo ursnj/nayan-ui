@@ -1167,7 +1167,7 @@ export const gamesData: Record<string, GameData> = {
       'Complete mazes faster for better scores on the leaderboard'
     ],
     tips: [
-      "Take your time at first — understanding the maze layout is more important than speed",
+      'Take your time at first — understanding the maze layout is more important than speed',
       'Learn to control ball momentum — gentle tilts prevent overshooting corridors',
       'Study the maze layout briefly before moving — identify the general path',
       'Use walls to slow down and make precise turns in tight corridors',
@@ -1223,7 +1223,7 @@ export const gamesData: Record<string, GameData> = {
       'Look for fork opportunities — positions where you create two ways to win simultaneously',
       'Block opponent forks early before they create an unstoppable double threat',
       'The first player has an advantage — use it wisely with strong opening moves',
-      "Against perfect play, the game always draws — so focus on exploiting mistakes",
+      'Against perfect play, the game always draws — so focus on exploiting mistakes',
       'Start with the center, then take a corner — this creates the most fork opportunities'
     ],
     benefits: [
@@ -1632,7 +1632,7 @@ export const gamesData: Record<string, GameData> = {
       'Multi-ball power-ups are the most valuable — they massively speed up clearing',
       'Be patient with the last few bricks — the ball angle becomes harder to control',
       'The angle of the ball depends on where it hits the paddle — use the edges for sharp angles',
-      "When you have a clear path, let the ball bounce naturally rather than chasing it"
+      'When you have a clear path, let the ball bounce naturally rather than chasing it'
     ],
     benefits: [
       'Improves hand-eye coordination and tracking precision',
