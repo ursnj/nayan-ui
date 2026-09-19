@@ -31,3 +31,9 @@ const Link = () => {
 };
 
 export default Link;`;
+
+export const linkAttributes = [
+  { name: 'href', type: 'string', default: 'Optional', details: 'URL for anchor links.' },
+  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Link content.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
+];

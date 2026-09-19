@@ -34,3 +34,10 @@ const Progress = () => {
 };
 
 export default Progress;`;
+
+export const progressAttributes = [
+  { name: 'value', type: 'number', default: 'Required', details: 'Current progress value.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'label', type: 'string', default: 'Optional', details: 'Label for the progress bar.' },
+  { name: 'showLabel', type: 'boolean', default: 'Optional', details: 'Whether to show the label.' }
+];

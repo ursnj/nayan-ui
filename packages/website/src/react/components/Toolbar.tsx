@@ -53,3 +53,11 @@ const Toolbar = () => {
 };
 
 export default Toolbar;`;
+
+export const toolbarAttributes = [
+  { name: 'children', type: 'ReactNode', default: 'Required', details: 'The children prop.' },
+  { name: 'orientation', type: "'horizontal' | 'vertical'", default: "'horizontal'", details: 'The orientation prop.' },
+  { name: 'isAttached', type: 'boolean', default: 'false', details: 'Joins the controls into one segmented strip.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'aria-label', type: 'string', default: "'Toolbar'", details: 'The aria-label prop.' }
+];

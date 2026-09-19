@@ -60,3 +60,18 @@ const NumberField = () => {
 };
 
 export default NumberField;`;
+
+export const numberFieldAttributes = [
+  { name: 'value', type: 'number', default: 'Optional', details: 'Controlled value.' },
+  { name: 'defaultValue', type: 'number', default: 'Optional', details: 'Default value.' },
+  { name: 'onChange', type: '(value: number) => void', default: 'Optional', details: 'Callback when value changes.' },
+  { name: 'minValue', type: 'number', default: 'Optional', details: 'Minimum value.' },
+  { name: 'maxValue', type: 'number', default: 'Optional', details: 'Maximum value.' },
+  { name: 'step', type: 'number', default: '1', details: 'Step increment.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'Disables the field.' },
+  { name: 'isInvalid', type: 'boolean', default: 'false', details: 'Marks as invalid.' },
+  { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'Visual variant.' },
+  { name: 'fullWidth', type: 'boolean', default: 'false', details: 'Full width mode.' },
+  { name: 'formatOptions', type: 'Intl.NumberFormatOptions', default: 'Optional', details: 'Number format options (currency, percent, etc).' },
+  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' }
+];

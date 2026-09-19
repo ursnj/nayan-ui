@@ -33,3 +33,24 @@ const Calendar = () => {
 };
 
 export default Calendar;`;
+
+export const calendarAttributes = [
+  { name: 'value', type: 'any', default: 'Optional', details: 'The value prop.' },
+  { name: 'defaultValue', type: 'any', default: 'Optional', details: 'The defaultValue prop.' },
+  { name: 'onChange', type: '(value: any) => void', default: 'Optional', details: 'The onChange prop.' },
+  { name: 'minValue', type: 'any', default: 'Optional', details: 'The minValue prop.' },
+  { name: 'maxValue', type: 'any', default: 'Optional', details: 'The maxValue prop.' },
+  {
+    name: 'isDateUnavailable',
+    type: '(date: any) => boolean',
+    default: 'Optional',
+    details: 'Dates the user cannot pick, e.g. `date => date.day === 1`.'
+  },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
+  { name: 'visibleMonths', type: 'number', default: 'Optional', details: 'Months shown side by side.' },
+  { name: 'label', type: 'ReactNode', default: 'Optional', details: 'The label prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'headerClassName', type: 'string', default: "''", details: 'The headerClassName prop.' },
+  { name: 'gridClassName', type: 'string', default: "''", details: 'The gridClassName prop.' },
+  { name: 'aria-label', type: 'string', default: "'Calendar'", details: 'The aria-label prop.' }
+];

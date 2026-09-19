@@ -52,3 +52,15 @@ export default function TabsScreen() {
     </View>
   );
 }`;
+
+export const tabsAttributes = [
+  { name: 'items', type: 'TabItem[]', default: 'Required', details: 'Array of tab items with label, value, and optional content.' },
+  { name: 'value', type: 'string', default: 'Optional', details: 'Controlled active tab value.' },
+  { name: 'defaultValue', type: 'string', default: 'Optional', details: 'Default active tab value.' },
+  { name: 'onValueChange', type: '(value: string) => void', default: 'Optional', details: 'Callback when active tab changes.' },
+  { name: 'variant', type: 'string', default: 'Optional', details: 'Tabs variant style.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'listClassName', type: 'string', default: "' '", details: 'You can customise tab list by passing tailwind classes.' },
+  { name: 'triggerClassName', type: 'string', default: "' '", details: 'You can customise tab triggers by passing tailwind classes.' },
+  { name: 'contentClassName', type: 'string', default: "' '", details: 'You can customise tab content by passing tailwind classes.' }
+];

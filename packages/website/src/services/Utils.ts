@@ -61,88 +61,82 @@ import {
   Users,
   Wrench
 } from 'lucide-react';
-import {
-  accordionAttributes,
-  alertAttributes,
-  avatarAttributes,
-  avatarGroupAttributes,
-  badgeAttributes,
-  breadcrumbsAttributes,
-  buttonAttributes,
-  buttonGroupAttributes,
-  calendarAttributes,
-  cardAttributes,
-  checkGroupAttributes,
-  checkboxAttributes,
-  chipAttributes,
-  confirmAlertAttributes,
-  dateFieldAttributes,
-  datePickerAttributes,
-  dateRangePickerAttributes,
-  dialogAttributes,
-  disclosureAttributes,
-  dividerAttributes,
-  emptyStateAttributes,
-  infiniteScrollAttributes,
-  inputAttributes,
-  inputOtpAttributes,
-  kbdAttributes,
-  linkAttributes,
-  listBoxAttributes,
-  loadingAttributes,
-  menuAttributes,
-  menuItemAttributes,
-  menuNestedAttributes,
-  meterAttributes,
-  numberFieldAttributes,
-  paginationAttributes,
-  popoverAttributes,
-  progressAttributes,
-  progressCircleAttributes,
-  radioGroupAttributes,
-  scrollShadowAttributes,
-  searchFieldAttributes,
-  selectAttributes,
-  sheetAttributes,
-  skeletonAttributes,
-  sliderAttributes,
-  switchAttributes,
-  switchGroupAttributes,
-  tableAttributes,
-  tabsAttributes,
-  tagGroupAttributes,
-  textareaAttributes,
-  timeFieldAttributes,
-  toastAttributes,
-  toggleButtonAttributes,
-  toolbarAttributes,
-  tooltipAttributes
-} from '@/services/ReactAttributes';
-import {
-  accordionAttributes as rnAccordionAttributes,
-  alertAttributes as rnAlertAttributes,
-  buttonAttributes as rnButtonAttributes,
-  buttonGroupAttributes as rnButtonGroupAttributes,
-  cardAttributes as rnCardAttributes,
-  checkAttributes as rnCheckAttributes,
-  dialogAttributes as rnDialogAttributes,
-  dividerAttributes as rnDividerAttributes,
-  inputAttributes as rnInputAttributes,
-  loadingAttributes as rnLoadingAttributes,
-  menuAttributes as rnMenuAttributes,
-  popoverAttributes as rnPopoverAttributes,
-  progressAttributes as rnProgressAttributes,
-  radioAttributes as rnRadioAttributes,
-  selectAttributes as rnSelectAttributes,
-  sheetAttributes as rnSheetAttributes,
-  skeletonAttributes as rnSkeletonAttributes,
-  sliderAttributes as rnSliderAttributes,
-  switchAttributes as rnSwitchAttributes,
-  tabsAttributes as rnTabsAttributes,
-  textareaAttributes as rnTextareaAttributes,
-  toastAttributes as rnToastAttributes,
-  tooltipAttributes as rnTooltipAttributes
-} from '@/services/ReactNativeAttributes';
+import { accordionAttributes } from '@/react/components/Accordion';
+import { alertAttributes } from '@/react/components/Alert';
+import { avatarAttributes } from '@/react/components/Avatar';
+import { avatarGroupAttributes } from '@/react/components/AvatarGroup';
+import { badgeAttributes } from '@/react/components/Badge';
+import { breadcrumbsAttributes } from '@/react/components/Breadcrumbs';
+import { buttonAttributes } from '@/react/components/Button';
+import { buttonGroupAttributes } from '@/react/components/ButtonGroup';
+import { calendarAttributes } from '@/react/components/Calendar';
+import { cardAttributes } from '@/react/components/Card';
+import { checkboxAttributes } from '@/react/components/Checkbox';
+import { checkGroupAttributes } from '@/react/components/CheckboxGroup';
+import { chipAttributes } from '@/react/components/Chip';
+import { confirmAlertAttributes } from '@/react/components/ConfirmAlert';
+import { dateFieldAttributes } from '@/react/components/DateField';
+import { datePickerAttributes } from '@/react/components/DatePicker';
+import { dateRangePickerAttributes } from '@/react/components/DateRangePicker';
+import { dialogAttributes } from '@/react/components/Dialog';
+import { disclosureAttributes } from '@/react/components/Disclosure';
+import { dividerAttributes } from '@/react/components/Divider';
+import { emptyStateAttributes } from '@/react/components/EmptyState';
+import { infiniteScrollAttributes } from '@/react/components/InfiniteScroll';
+import { inputAttributes } from '@/react/components/Input';
+import { inputOtpAttributes } from '@/react/components/InputOTP';
+import { kbdAttributes } from '@/react/components/KeyboardKey';
+import { linkAttributes } from '@/react/components/Link';
+import { listBoxAttributes } from '@/react/components/ListBox';
+import { loadingAttributes } from '@/react/components/Loading';
+import { menuAttributes, menuItemAttributes, menuNestedAttributes } from '@/react/components/Menu';
+import { meterAttributes } from '@/react/components/Meter';
+import { numberFieldAttributes } from '@/react/components/NumberField';
+import { paginationAttributes } from '@/react/components/Pagination';
+import { popoverAttributes } from '@/react/components/Popover';
+import { progressAttributes } from '@/react/components/Progress';
+import { progressCircleAttributes } from '@/react/components/ProgressCircle';
+import { radioGroupAttributes } from '@/react/components/RadioGroup';
+import { scrollShadowAttributes } from '@/react/components/ScrollShadow';
+import { searchFieldAttributes } from '@/react/components/SearchField';
+import { selectAttributes } from '@/react/components/Select';
+import { sheetAttributes } from '@/react/components/Sheet';
+import { skeletonAttributes } from '@/react/components/Skeleton';
+import { sliderAttributes } from '@/react/components/Slider';
+import { switchAttributes } from '@/react/components/Switch';
+import { switchGroupAttributes } from '@/react/components/SwitchGroup';
+import { tableAttributes } from '@/react/components/Table';
+import { tabsAttributes } from '@/react/components/Tabs';
+import { tagGroupAttributes } from '@/react/components/TagGroup';
+import { textareaAttributes } from '@/react/components/Textarea';
+import { timeFieldAttributes } from '@/react/components/TimeField';
+import { toastAttributes } from '@/react/components/Toast';
+import { toggleButtonAttributes } from '@/react/components/ToggleButton';
+import { toolbarAttributes } from '@/react/components/Toolbar';
+import { tooltipAttributes } from '@/react/components/Tooltip';
+import { accordionAttributes as rnAccordionAttributes } from '@/react-native/components/Accordion';
+import { alertAttributes as rnAlertAttributes } from '@/react-native/components/Alert';
+import { buttonAttributes as rnButtonAttributes } from '@/react-native/components/Button';
+import { buttonGroupAttributes as rnButtonGroupAttributes } from '@/react-native/components/ButtonGroup';
+import { cardAttributes as rnCardAttributes } from '@/react-native/components/Card';
+import { checkAttributes as rnCheckAttributes } from '@/react-native/components/Checkbox';
+import { dialogAttributes as rnDialogAttributes } from '@/react-native/components/Dialog';
+import { dividerAttributes as rnDividerAttributes } from '@/react-native/components/Divider';
+import { inputAttributes as rnInputAttributes } from '@/react-native/components/Input';
+import { loadingAttributes as rnLoadingAttributes } from '@/react-native/components/Loading';
+import { menuAttributes as rnMenuAttributes } from '@/react-native/components/Menu';
+import { popoverAttributes as rnPopoverAttributes } from '@/react-native/components/Popover';
+import { progressAttributes as rnProgressAttributes } from '@/react-native/components/Progress';
+import { radioAttributes as rnRadioAttributes } from '@/react-native/components/RadioGroup';
+import { selectAttributes as rnSelectAttributes } from '@/react-native/components/Select';
+import { sheetAttributes as rnSheetAttributes } from '@/react-native/components/Sheet';
+import { skeletonAttributes as rnSkeletonAttributes } from '@/react-native/components/Skeleton';
+import { sliderAttributes as rnSliderAttributes } from '@/react-native/components/Slider';
+import { switchAttributes as rnSwitchAttributes } from '@/react-native/components/Switch';
+import { tabsAttributes as rnTabsAttributes } from '@/react-native/components/Tabs';
+import { textareaAttributes as rnTextareaAttributes } from '@/react-native/components/Textarea';
+import { toastAttributes as rnToastAttributes } from '@/react-native/components/Toast';
+import { tooltipAttributes as rnTooltipAttributes } from '@/react-native/components/Tooltip';
 import {
   accordionTags,
   aiReviewTags,

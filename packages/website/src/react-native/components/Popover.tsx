@@ -60,3 +60,12 @@ export default function PopoverScreen() {
     </View>
   );
 }`;
+
+export const popoverAttributes = [
+  { name: 'trigger', type: 'React.ReactNode', default: 'Optional', details: 'Trigger element for the popover.' },
+  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Content for the popover.' },
+  { name: 'isOpen', type: 'boolean', default: 'Optional', details: 'Controlled open state.' },
+  { name: 'onOpenChange', type: '(isOpen: boolean) => void', default: 'Optional', details: 'Callback when open state changes.' },
+  { name: 'placement', type: "'top' | 'bottom' | 'left' | 'right'", default: "'bottom'", details: 'Placement of the popover.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
+];

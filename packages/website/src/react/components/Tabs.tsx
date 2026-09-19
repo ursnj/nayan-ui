@@ -43,3 +43,16 @@ const Tabs = () => {
 };
 
 export default Tabs;`;
+
+export const tabsAttributes = [
+  { name: 'isFull', type: 'boolean', default: 'Optional', details: 'Whether tabs should take full width.' },
+  { name: 'items', type: 'string[]', default: 'Required', details: 'Array of tab items.' },
+  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Tab content.' },
+  { name: 'selected', type: 'string', default: 'Required', details: 'Currently selected tab.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'itemClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'activeItemClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'onChange', type: '(selected: string) => void', default: 'Required', details: 'Callback when tab changes.' },
+  { name: 'ariaLabel', type: 'string', default: 'Optional', details: 'ARIA label for accessibility.' },
+  { name: 'id', type: 'string', default: 'Optional', details: 'ID for the tabs.' }
+];

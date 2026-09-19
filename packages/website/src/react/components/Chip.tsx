@@ -98,3 +98,11 @@ const Chip = () => {
 };
 
 export default Chip;`;
+
+export const chipAttributes = [
+  { name: 'children', type: 'ReactNode', default: 'Required', details: 'The children prop.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'The size prop.' },
+  { name: 'color', type: "'default' | 'accent' | 'success' | 'warning' | 'danger'", default: "'default'", details: 'The color prop.' },
+  { name: 'variant', type: "'primary' | 'secondary' | 'tertiary' | 'soft'", default: "'secondary'", details: 'The variant prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' }
+];

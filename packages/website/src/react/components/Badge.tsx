@@ -92,3 +92,12 @@ const Badge = () => {
 };
 
 export default Badge;`;
+
+export const badgeAttributes = [
+  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'You can pass badge content as children.' },
+  { name: 'color', type: "'default' | 'accent' | 'success' | 'warning' | 'danger'", default: "'default'", details: 'Badge color theme.' },
+  { name: 'variant', type: "'primary' | 'secondary' | 'soft'", default: "'soft'", details: 'Badge visual variant.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'Badge size.' },
+  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' },
+  { name: 'role', type: 'string', default: "'status'", details: 'ARIA role for accessibility.' }
+];

@@ -46,3 +46,30 @@ const Accordion = () => {
 };
 
 export default Accordion;`;
+
+export const accordionAttributes = [
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'itemClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'triggerClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'contentClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'type', type: 'AccordionTypes', default: 'AccordionTypes.SINGLE', details: 'You can pass type of the accordion.' },
+  { name: 'items', type: 'AccordionListItem[]', default: 'Required', details: 'You can pass list of accordion items.' },
+  {
+    name: 'keyExtractor',
+    type: '(item: T, index: number) => string | number',
+    default: 'Optional',
+    details: 'Custom key extractor function for items.'
+  },
+  {
+    name: 'renderTrigger',
+    type: '(item: T, index: number) => React.ReactNode',
+    default: 'Optional',
+    details: 'Custom render function for accordion triggers.'
+  },
+  {
+    name: 'renderContent',
+    type: '(item: T, index: number) => React.ReactNode',
+    default: 'Optional',
+    details: 'Custom render function for accordion content.'
+  }
+];

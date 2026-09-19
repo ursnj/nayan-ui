@@ -37,3 +37,17 @@ const Dialog = () => {
 };
 
 export default Dialog;`;
+
+export const dialogAttributes = [
+  { name: 'isOpen', type: 'boolean', default: 'Required', details: 'Controls whether the dialog is open.' },
+  { name: 'title', type: 'string', default: 'Required', details: 'Title for the dialog.' },
+  { name: 'size', type: 'DialogSize', default: 'Optional', details: 'Size of the dialog.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'titleClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'headerClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'contentClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Content for the dialog.' },
+  { name: 'onClose', type: '() => void', default: 'Required', details: 'Callback when dialog is closed.' },
+  { name: 'renderHeader', type: '(title: string) => React.ReactNode', default: 'Optional', details: 'Custom render function for header.' },
+  { name: 'renderFooter', type: '() => React.ReactNode', default: 'Optional', details: 'Custom render function for footer.' }
+];

@@ -35,3 +35,14 @@ const Button = () => {
 };
 
 export default Button;`;
+
+export const buttonAttributes = [
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'Disables the button.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'isOutline', type: 'boolean', default: 'false', details: 'You can pass this to create outline button.' },
+  { name: 'isLoading', type: 'boolean', default: 'false', details: 'You can pass this to show loading indication.' },
+  { name: 'loadingText', type: 'string', default: "' '", details: 'You can pass this to show customised loading text.' },
+  { name: 'leftIcon', type: 'React.ReactNode', default: 'Optional', details: 'Icon to display on the left side of button.' },
+  { name: 'rightIcon', type: 'React.ReactNode', default: 'Optional', details: 'Icon to display on the right side of button.' },
+  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'You can pass button content as children.' }
+];

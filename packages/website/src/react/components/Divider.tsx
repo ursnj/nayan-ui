@@ -44,3 +44,9 @@ const Divider = () => {
 };
 
 export default Divider;`;
+
+export const dividerAttributes = [
+  { name: 'children', type: 'React.ReactNode', default: 'Optional', details: 'Content to display in the divider.' },
+  { name: 'childrenClassName', type: 'string', default: "' '", details: 'You can customise children by passing tailwind classes.' },
+  { name: 'separatorClassName', type: 'string', default: "' '", details: 'You can customise separator by passing tailwind classes.' }
+];

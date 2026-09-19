@@ -36,3 +36,12 @@ export default function CheckScreen() {
     </View>
   );
 }`;
+
+export const checkAttributes = [
+  { name: 'label', type: 'string', default: 'Required', details: 'Label text for the checkbox.' },
+  { name: 'isSelected', type: 'boolean', default: 'false', details: 'Whether the checkbox is selected.' },
+  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the checkbox is disabled.' },
+  { name: 'onSelectedChange', type: '(selected: boolean) => void', default: 'Optional', details: 'Callback when checkbox state changes.' },
+  { name: 'containerClassName', type: 'string', default: "' '", details: 'You can customise container by passing tailwind classes.' },
+  { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise label by passing tailwind classes.' }
+];
