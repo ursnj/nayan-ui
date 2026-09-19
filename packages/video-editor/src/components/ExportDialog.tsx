@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { NButton, NDialog, NLink, NProgress, showToast } from '@nayan-ui/react';
+import { AlertTypes, NAlert, NButton, NDialog, NLink, NProgress, showToast } from '@nayan-ui/react';
 import { DialogSize } from '@nayan-ui/react';
-import { CheckCircle2, Download, X } from 'lucide-react';
+import { Download, X } from 'lucide-react';
 import {
   END_CREDIT_SECONDS,
   END_CREDIT_TITLE,
@@ -297,15 +297,17 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
       )}
 
       {result && (
-        <div className="flex items-center gap-2 rounded-lg border border-success bg-success/10 px-3 py-2 text-xs text-foreground">
-          <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
-          <span className="min-w-0 flex-1 truncate">
-            {result.filename} · {formatBytes(result.blob.size)}
-          </span>
-          <NLink href="#" onPress={() => download(result.blob, result.filename)} className="shrink-0 text-xs font-medium">
-            Save again
-          </NLink>
-        </div>
+        <NAlert
+          type={AlertTypes.SUCCESS}
+          title={`${result.filename} · ${formatBytes(result.blob.size)}`}
+          className="text-xs"
+          titleClassName="truncate text-xs"
+          actions={
+            <NLink href="#" onPress={() => download(result.blob, result.filename)} className="shrink-0 text-xs font-medium">
+              Save again
+            </NLink>
+          }
+        />
       )}
 
       <div className="flex justify-end gap-2 pt-1">

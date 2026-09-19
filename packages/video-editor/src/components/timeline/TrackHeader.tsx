@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
-import { NInput, NSlider } from '@nayan-ui/react';
+import { NInput, NSlider, cn } from '@nayan-ui/react';
 import { ChevronDown, ChevronUp, Eye, EyeOff, Film, Lock, LockOpen, Music, Trash2, Volume2, VolumeX } from 'lucide-react';
 import { useHeldInteraction } from '../../lib/shortcuts';
-import { clamp, cn } from '../../lib/utils';
+import { clamp } from '../../lib/utils';
 import { useEditor } from '../../store/editor';
 import type { Track } from '../../types';
 import { IconButton } from '../controls';
@@ -106,6 +106,7 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
           min={0}
           max={150}
           disabled={track.muted}
+          showOutput={false}
           onChange={value => onUpdate({ volume: value / 100 })}
           className={cn('mb-0 ml-1 min-w-0 flex-1', track.muted && 'opacity-40')}
           aria-label={`${track.name} level`}

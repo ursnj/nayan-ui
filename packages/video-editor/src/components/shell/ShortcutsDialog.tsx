@@ -1,4 +1,4 @@
-import { DialogSize, NDialog } from '@nayan-ui/react';
+import { DialogSize, NDialog, NKbd } from '@nayan-ui/react';
 import { CONTEXTUAL_KEYS, SHORTCUTS } from '../../lib/shortcuts';
 import type { KeyRow, ShortcutGroup } from '../../lib/shortcuts';
 
@@ -41,8 +41,8 @@ const ShortcutTable = () => (
                 {rows.map(row => (
                   <div key={`${group}:${row.keys}:${row.label}`} className="flex items-baseline justify-between gap-3">
                     <dd className="min-w-0 text-[11px] leading-relaxed text-foreground">{row.label}</dd>
-                    <dt className="shrink-0 whitespace-nowrap rounded border border-border bg-surface-secondary px-1.5 py-0.5 font-mono text-[10px] text-muted">
-                      {row.keys}
+                    <dt className="shrink-0">
+                      <NKbd className="text-[10px]">{row.keys}</NKbd>
                     </dt>
                   </div>
                 ))}

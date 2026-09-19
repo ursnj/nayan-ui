@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
-import { NInput, NNumberField, NSelect, NSlider, NTextarea, NToggleButton, NTooltip } from '@nayan-ui/react';
+import { NEmptyState, NInput, NNumberField, NSelect, NSlider, NTextarea, NToggleButton, NTooltip, cn } from '@nayan-ui/react';
 import { ChevronDown, RotateCcw } from 'lucide-react';
-import { cn } from '../lib/utils';
 import { useEditor } from '../store/editor';
 
 interface SectionProps {
@@ -41,11 +40,15 @@ export const FieldRow = ({ label, children }: { label: string; children: React.R
 );
 
 export const EmptyState = ({ icon, title, hint }: { icon: React.ReactNode; title: string; hint?: string }) => (
-  <div className="flex flex-col items-center justify-center gap-2 px-6 py-12 text-center">
-    <div className="text-muted/50">{icon}</div>
-    <p className="text-xs font-medium text-foreground">{title}</p>
-    {hint && <p className="text-[11px] leading-relaxed text-muted">{hint}</p>}
-  </div>
+  <NEmptyState
+    icon={icon}
+    title={title}
+    message={hint}
+    className="px-6 py-12"
+    iconClassName="text-muted/50"
+    titleClassName="text-xs"
+    messageClassName="text-[11px] leading-relaxed"
+  />
 );
 
 export const IconButton = ({
@@ -177,7 +180,7 @@ export const SliderField = ({ label, value, min, max, step = 1, format, onChange
           {display}
         </button>
       </div>
-      <NSlider value={value} min={min} max={max} step={step} onChange={onChange} className="mb-0" aria-label={label} />
+      <NSlider value={value} min={min} max={max} step={step} onChange={onChange} showOutput={false} className="mb-0" aria-label={label} />
     </div>
   );
 };

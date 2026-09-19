@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef } from 'react';
+import { cn } from '@nayan-ui/react';
 import { Link2, Lock, Music, Type, VolumeX } from 'lucide-react';
 import { useHeldInteraction } from '../../lib/shortcuts';
-import { cn } from '../../lib/utils';
 import { readEditorState } from '../../store/editor';
 import { TRANSITION_LABELS, US, isMediaClip, isTextClip } from '../../types';
 import type { Clip, MediaClip } from '../../types';

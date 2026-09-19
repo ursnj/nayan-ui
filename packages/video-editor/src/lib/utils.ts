@@ -6,7 +6,6 @@ export const uid = (prefix = 'id') => `${prefix}_${Date.now().toString(36)}_${(c
 
 export const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
-export const cn = (...parts: (string | false | null | undefined)[]) => parts.filter(Boolean).join(' ');
 
 /** `1:23.4` — the timeline ruler / playhead readout. */
 /**
