@@ -15,7 +15,7 @@ used for the effects pipeline and degrades to Canvas2D if unavailable.
 ## Deployment
 
 The editor is not its own service. `yarn editor:build` writes a static bundle
-straight into `packages/website/public/editor`, which the Next.js site serves
+straight into `applications/website/public/editor`, which the Next.js site serves
 at **nayanui.com/editor** — so it rides along in the existing website image
 and needs no deployment of its own. `next.config.ts` carries a rewrite so the
 bare `/editor` route resolves to the bundle's entry point, and `vite.config.ts`

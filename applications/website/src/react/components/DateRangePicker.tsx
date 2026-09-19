@@ -1,47 +1,52 @@
 "use client";
 
 import { useState } from "react";
-import { Time } from "@internationalized/date";
-import { NTimeField } from "@nayan-ui/react";
+import { getLocalTimeZone, today, NDateRangePicker } from "@nayan-ui/react";
 import ComponentWrapper from "@/helpers/ComponentWrapper";
 
-const TimeField = () => {
-  const [value, setValue] = useState<any>(new Time(9, 30));
+const DateRangePicker = () => {
+  const [value, setValue] = useState<any>({
+    start: today(getLocalTimeZone()),
+    end: today(getLocalTimeZone()).add({ days: 6 }),
+  });
 
   return (
-    <ComponentWrapper code={code} attributes={timeFieldAttributes}>
-      <div className="max-w-sm">
-        <NTimeField label="Starts at" value={value} onChange={setValue} />
-        <NTimeField label="24-hour" value={value} onChange={setValue} hourCycle={24} />
+    <ComponentWrapper code={code} attributes={dateRangePickerAttributes}>
+      <div className="max-w-md">
+        <NDateRangePicker label="Reporting period" value={value} onChange={setValue} />
       </div>
     </ComponentWrapper>
   );
 };
 
-export default TimeField;
+export default DateRangePicker;
 
 /** The usage sample on this component's page, kept beside the demo it documents. */
 export const code = `import { useState } from 'react';
-import { Time } from '@internationalized/date';
-import { NTimeField } from '@nayan-ui/react';
+import { getLocalTimeZone, today } from '@internationalized/date';
+import { NDateRangePicker } from '@nayan-ui/react';
 
-const TimeField = () => {
-  const [value, setValue] = useState<any>(new Time(9, 30));
+const DateRangePicker = () => {
+  const [value, setValue] = useState<any>({ start: today(getLocalTimeZone()), end: today(getLocalTimeZone()).add({ days: 6 }) });
 
   return (
     <div>
-      <div className="max-w-sm">
-        <NTimeField label="Starts at" value={value} onChange={setValue} />
-        <NTimeField label="24-hour" value={value} onChange={setValue} hourCycle={24} />
+      <div className="max-w-md">
+        <NDateRangePicker label="Reporting period" value={value} onChange={setValue} />
       </div>
     </div>
   );
 };
 
-export default TimeField;`;
+export default DateRangePicker;`;
 
-export const timeFieldAttributes = [
-  { name: "value", type: "any", default: "Optional", details: "The value prop." },
+export const dateRangePickerAttributes = [
+  {
+    name: "value",
+    type: "any",
+    default: "Optional",
+    details: "`{ start, end }` as react-aria date values.",
+  },
   { name: "defaultValue", type: "any", default: "Optional", details: "The defaultValue prop." },
   {
     name: "onChange",
@@ -54,15 +59,9 @@ export const timeFieldAttributes = [
   { name: "maxValue", type: "any", default: "Optional", details: "The maxValue prop." },
   {
     name: "granularity",
-    type: "'hour' | 'minute' | 'second'",
-    default: "'minute'",
+    type: "'day' | 'hour' | 'minute' | 'second'",
+    default: "'day'",
     details: "The granularity prop.",
-  },
-  {
-    name: "hourCycle",
-    type: "12 | 24",
-    default: "Optional",
-    details: "12- or 24-hour display. Defaults to the locale's own convention.",
   },
   { name: "disabled", type: "boolean", default: "false", details: "The disabled prop." },
   { name: "isInvalid", type: "boolean", default: "false", details: "The isInvalid prop." },
@@ -72,10 +71,10 @@ export const timeFieldAttributes = [
     default: "'primary'",
     details: "The variant prop.",
   },
-  { name: "fullWidth", type: "boolean", default: "false", details: "The fullWidth prop." },
+  { name: "fullWidth", type: "boolean", default: "true", details: "The fullWidth prop." },
   { name: "error", type: "ReactNode", default: "Optional", details: "The error prop." },
   { name: "helperText", type: "ReactNode", default: "Optional", details: "The helperText prop." },
   { name: "className", type: "string", default: "''", details: "The className prop." },
   { name: "labelClassName", type: "string", default: "''", details: "The labelClassName prop." },
-  { name: "aria-label", type: "string", default: "'Time'", details: "The aria-label prop." },
+  { name: "aria-label", type: "string", default: "'Date range'", details: "The aria-label prop." },
 ];

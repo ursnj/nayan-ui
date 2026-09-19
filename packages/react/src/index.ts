@@ -62,3 +62,6 @@ export * from "./components/Types";
 
 // Export lib utilities
 export * from "./lib/utils";
+
+// Re-export date utilities so consumers don't need @internationalized/date directly
+export { getLocalTimeZone, today, Time } from "@internationalized/date";
