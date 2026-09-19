@@ -22,7 +22,7 @@ const TagGroup = () => {
   };
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={tagGroupAttributes}>
       <h3 className={H3_DOC}>Selectable:</h3>
       <div className="mb-5">
         <NTagGroup items={items} selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected} />

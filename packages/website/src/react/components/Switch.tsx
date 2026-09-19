@@ -9,7 +9,7 @@ const Switch = () => {
   const [wifi, setWifi] = useState(true);
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={switchAttributes}>
       <div>
         <div className="max-w-sm space-y-3">
           <NSwitch label="Airplane Mode" enabled={airplane} onChange={setAirplane} />

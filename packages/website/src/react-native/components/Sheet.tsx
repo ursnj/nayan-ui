@@ -5,7 +5,7 @@ import DemoComingSoon from './DemoComingSoon';
 
 const Sheet = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={sheetAttributes}>
       <DemoComingSoon componentName="Sheet" />
     </ComponentWrapper>
   );

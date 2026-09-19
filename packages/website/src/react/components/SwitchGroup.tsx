@@ -14,7 +14,7 @@ const SwitchGroup = () => {
   const [value, setValue] = useState<string[]>(['releases', 'security']);
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={switchGroupAttributes}>
       <div className="max-w-sm">
         <NSwitchGroup label="Email me about" items={items} value={value} onChange={setValue} />
       </div>

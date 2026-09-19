@@ -10,7 +10,7 @@ const TRIGGER =
 
 const Menu = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={menuAttributes} extraAttributes={[{ title: 'NMenuItem attributes', data: menuItemAttributes }, { title: 'NMenuNested attributes', data: menuNestedAttributes }]}>
       <h3 className={H3_DOC}>With shortcuts:</h3>
       <div className="mb-5">
         <NMenu size={MenuSize.MD} title="Actions" triggerClassName={TRIGGER} trigger="Open Menu">

@@ -5,7 +5,7 @@ import DemoComingSoon from './DemoComingSoon';
 
 const Checkbox = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={checkAttributes}>
       <DemoComingSoon componentName="Checkbox" />
     </ComponentWrapper>
   );

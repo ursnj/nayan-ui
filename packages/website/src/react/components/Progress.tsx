@@ -6,7 +6,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Progress = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={progressAttributes}>
       <h3 className={H3_DOC}>Bar only</h3>
       <NProgress value={30} />
 

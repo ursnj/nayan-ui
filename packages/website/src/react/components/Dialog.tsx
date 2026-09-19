@@ -8,7 +8,7 @@ const Dialog = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={dialogAttributes}>
       <NDialog isOpen={isOpen} onClose={() => setIsOpen(false)} size={DialogSize.MD} title="Payment confirmation">
         Your payment has been successfully submitted. We've sent you an email with all of the details of your order.
       </NDialog>

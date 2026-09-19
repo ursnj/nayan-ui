@@ -6,7 +6,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Divider = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={dividerAttributes}>
       <h3 className={H3_DOC}>Horizontal:</h3>
       <NDivider orientation="horizontal" className="my-3" />
 

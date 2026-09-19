@@ -8,7 +8,7 @@ const members = [{ fallback: 'ND' }, { fallback: 'AK' }, { fallback: 'RS' }, { f
 
 const AvatarGroup = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={avatarGroupAttributes}>
       <h3 className={H3_DOC}>Collapsed after three:</h3>
       <div className="mb-5">
         <NAvatarGroup items={members} max={3} color="accent" variant="soft" />

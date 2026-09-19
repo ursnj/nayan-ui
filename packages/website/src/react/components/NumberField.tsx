@@ -10,7 +10,7 @@ const NumberField = () => {
   const [price, setPrice] = useState(9.99);
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={numberFieldAttributes}>
       <div className="space-y-4 max-w-sm">
         <h3 className={H3_DOC}>Basic:</h3>
         <NNumberField value={quantity} onChange={setQuantity} minValue={0} maxValue={100} aria-label="Quantity" />

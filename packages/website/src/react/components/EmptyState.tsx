@@ -6,7 +6,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const EmptyState = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={emptyStateAttributes}>
       <NEmptyState
         icon={<Inbox className="h-8 w-8" />}
         title="No projects yet"

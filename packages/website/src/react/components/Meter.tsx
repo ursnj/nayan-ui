@@ -6,7 +6,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Meter = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={meterAttributes}>
       <h3 className={H3_DOC}>Colors:</h3>
       <div className="space-y-4 max-w-sm mb-5">
         <NMeter value={30} color="accent" label="Storage" />

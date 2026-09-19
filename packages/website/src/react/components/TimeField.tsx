@@ -9,7 +9,7 @@ const TimeField = () => {
   const [value, setValue] = useState<any>(new Time(9, 30));
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={timeFieldAttributes}>
       <div className="max-w-sm">
         <NTimeField label="Starts at" value={value} onChange={setValue} />
         <NTimeField label="24-hour" value={value} onChange={setValue} hourCycle={24} />

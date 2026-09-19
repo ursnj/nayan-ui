@@ -5,7 +5,7 @@ import DemoComingSoon from './DemoComingSoon';
 
 const Popover = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={popoverAttributes}>
       <DemoComingSoon componentName="Popover" />
     </ComponentWrapper>
   );

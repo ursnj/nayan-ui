@@ -5,7 +5,7 @@ import DemoComingSoon from './DemoComingSoon';
 
 const Divider = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={dividerAttributes}>
       <DemoComingSoon componentName="Divider" />
     </ComponentWrapper>
   );

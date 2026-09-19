@@ -12,7 +12,7 @@ const Checkbox = () => {
   const [disabled, setDisabled] = useState(true);
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={checkboxAttributes}>
       <h3 className={H3_DOC}>Basic:</h3>
       <div className="space-y-3 mb-5">
         <NCheck checked={notifications} onChange={setNotifications}>

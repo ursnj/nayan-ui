@@ -12,7 +12,7 @@ const items = [
 
 const Accordion = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={accordionAttributes}>
       <h3 className={H3_DOC}>Single:</h3>
       <NAccordion type={AccordionTypes.SINGLE} items={items} />
 

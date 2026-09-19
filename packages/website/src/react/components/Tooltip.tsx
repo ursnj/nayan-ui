@@ -5,7 +5,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Tooltip = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={tooltipAttributes}>
       <NTooltip message="This is a tooltip!">
         <NButton>Hover me</NButton>
       </NTooltip>

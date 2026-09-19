@@ -7,7 +7,7 @@ const items = [{ label: 'Home', href: '/' }, { label: 'React', href: '/react/com
 
 const Breadcrumbs = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={breadcrumbsAttributes}>
       <NBreadcrumbs items={items} />
     </ComponentWrapper>
   );

@@ -14,7 +14,7 @@ const RadioGroup = () => {
   const [value, setValue] = useState('startup');
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={radioGroupAttributes}>
       <h1 className="text-foreground mb-3 text-base">Horizontal:</h1>
       <NRadioGroup label="Plan" items={items} value={value} onChange={setValue} />
       <div className="mt-5" />

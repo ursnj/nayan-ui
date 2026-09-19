@@ -5,7 +5,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Skeleton = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={skeletonAttributes}>
       <div className="space-y-3">
         <NSkeleton className="h-4 w-3/4 rounded" />
         <NSkeleton className="h-4 w-1/2 rounded" />

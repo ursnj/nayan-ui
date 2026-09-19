@@ -8,7 +8,7 @@ const ConfirmAlert = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={confirmAlertAttributes}>
       <NConfirmAlert
         isOpen={isOpen}
         title="Are you absolutely sure?"

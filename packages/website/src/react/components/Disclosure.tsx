@@ -5,7 +5,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Disclosure = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={disclosureAttributes}>
       <NDisclosure title="What is included?" defaultExpanded>
         Every component in the library, the source, and the right to ship it in anything you like.
       </NDisclosure>

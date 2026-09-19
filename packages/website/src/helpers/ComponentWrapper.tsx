@@ -22,12 +22,14 @@ interface Props {
    * browser, so there is no demo to derive it from).
    */
   code?: string;
+  attributes?: any[];
+  extraAttributes?: { title: string; data: any[] }[];
 }
 
 const REPO = 'https://github.com/ursnj/nayan-ui/tree/main/packages';
 
 const ComponentWrapper = (props: Props) => {
-  const { children, code } = props;
+  const { children, code, attributes, extraAttributes } = props;
   const pathname = usePathname();
   const type = pathname.split('/')[1];
   const component: any = getMenuItem(pathname);
@@ -88,9 +90,9 @@ const ComponentWrapper = (props: Props) => {
         <Code code={code ?? component.code} filename={`${component.title.replace(/\s+/g, '')}.tsx`} />
       </SubHeader>
 
-      <Attributes data={component.attributes} />
+      <Attributes data={attributes ?? component.attributes} />
 
-      {(component.extraAttributes ?? []).map((table: any) => (
+      {(extraAttributes ?? component.extraAttributes ?? []).map((table: any) => (
         <Attributes key={table.title} title={table.title} data={table.data} />
       ))}
 

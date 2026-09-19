@@ -14,7 +14,7 @@ const ListBox = () => {
   const [selected, setSelected] = useState<any>(new Set(['report']));
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={listBoxAttributes}>
       <NListBox items={items} selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected} aria-label="Files" />
     </ComponentWrapper>
   );

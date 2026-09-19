@@ -5,7 +5,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Loading = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={loadingAttributes}>
       <div className="flex items-center gap-4">
         <NLoading size="sm" />
         <NLoading size="md" />

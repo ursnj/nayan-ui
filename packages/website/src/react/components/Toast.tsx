@@ -7,7 +7,7 @@ const Toast = () => {
   const toast = useNToast();
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={toastAttributes}>
       <NButton onClick={() => toast('This is a toast notification!', 'Success')}>Show Toast</NButton>
     </ComponentWrapper>
   );

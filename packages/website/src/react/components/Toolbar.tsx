@@ -9,7 +9,7 @@ const Toolbar = () => {
   const [align, setAlign] = useState('left');
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={toolbarAttributes}>
       <NToolbar aria-label="Text alignment">
         <NToggleButton isIconOnly aria-label="Align left" isSelected={align === 'left'} onChange={() => setAlign('left')}>
           <AlignLeft className="h-4 w-4" />

@@ -5,7 +5,7 @@ import DemoComingSoon from './DemoComingSoon';
 
 const RadioGroup = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={radioAttributes}>
       <DemoComingSoon componentName="RadioGroup" />
     </ComponentWrapper>
   );

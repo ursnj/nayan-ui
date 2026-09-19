@@ -8,7 +8,7 @@ const Slider = () => {
   const [value, setValue] = useState(50);
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={sliderAttributes}>
       <NSlider label="Volume" value={value} onChange={setValue} />
     </ComponentWrapper>
   );

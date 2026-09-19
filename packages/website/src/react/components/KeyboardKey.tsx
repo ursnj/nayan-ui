@@ -5,7 +5,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const KeyboardKey = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={kbdAttributes}>
       <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
         <NKbd>⌘</NKbd>
         <NKbd>K</NKbd>

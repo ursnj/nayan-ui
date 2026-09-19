@@ -5,7 +5,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Alert = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={alertAttributes}>
       <div className="space-y-3">
         <NAlert type={AlertTypes.DEFAULT} message="New version available!" onClose={() => console.log('Alert closed')} />
         <NAlert type={AlertTypes.INFO} message="New version available!" onClose={() => console.log('Alert closed')} />
