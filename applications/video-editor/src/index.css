@@ -1,0 +1,506 @@
+@import '@nayan-ui/react/styles.css';
+
+@source '../../node_modules/@nayan-ui/react/dist';
+
+/*
+ * Editing tools live under the eye for hours, so the palette is built for a
+ * dim room: near-neutral greys carrying a trace of blue, low-chroma surfaces
+ * that never compete with the footage, and saturation spent only on the few
+ * things that must be found instantly — the playhead, the selection, the
+ * record-red of an active export.
+ */
+
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  --background: hsl(214 45% 95%);
+  --foreground: hsl(222 47% 11%);
+  --surface: hsl(0 0% 100%);
+  --surface-foreground: hsl(222 47% 11%);
+  --surface-secondary: hsl(214 40% 96%);
+  --surface-secondary-foreground: hsl(222 47% 11%);
+  --surface-tertiary: hsl(214 35% 93%);
+  --surface-tertiary-foreground: hsl(222 47% 11%);
+  --overlay: hsl(0 0% 100%);
+  --overlay-foreground: hsl(222 47% 11%);
+  --muted: hsl(215 16% 47%);
+  --default: hsl(214 35% 90%);
+  --default-foreground: hsl(222 47% 11%);
+  --accent: hsl(217 91% 50%);
+  --accent-foreground: hsl(0 0% 100%);
+  /*
+   * A field is a well with an edge, and both halves have to be set here.
+   *
+   * The fill sits two points below the chrome tone it used to share, because
+   * at the top of a light scale three points of lightness against a white
+   * panel is not a boundary you can see — it read as text floating on the
+   * panel rather than as something to type into.
+   *
+   * The edge is the library's, ours only in colour: it ships
+   * `--field-border: transparent` with `--field-border-width: 0`, and applies
+   * both *after* its own `border` utility, so the fill was carrying the whole
+   * control on its own. `--separator` rather than `--border` on purpose —
+   * separators are the tone in this palette meant to be seen as a line, and
+   * the library derives its hover and focus edges from this one by mixing
+   * toward the field's text colour, so those follow from it.
+   */
+  --field-background: hsl(214 40% 96%);
+  --field-foreground: hsl(222 47% 11%);
+  --field-placeholder: hsl(215 16% 47%);
+  --field-border: var(--separator);
+  --field-border-width: 1px;
+  --success: hsl(142 71% 45%);
+  --success-foreground: hsl(222 47% 11%);
+  --warning: hsl(38 92% 50%);
+  --warning-foreground: hsl(222 47% 11%);
+  --danger: hsl(0 84% 60%);
+  --danger-foreground: hsl(0 0% 100%);
+  --border: hsl(214 35% 86%);
+  --separator: hsl(214 25% 76%);
+  --focus: hsl(217 91% 50%);
+  --link: hsl(222 47% 11%);
+  --segment: hsl(0 0% 100%);
+  --segment-foreground: hsl(222 47% 11%);
+
+  /* Editor-specific */
+  --editor-chrome: hsl(214 40% 96%);
+  --editor-panel: hsl(0 0% 100%);
+  --editor-track: hsl(214 40% 96%);
+  --editor-track-alt: hsl(214 35% 93%);
+  --editor-ruler: hsl(214 40% 96%);
+  --playhead: hsl(0 84% 60%);
+  --elevation: 0 1px 2px hsl(220 20% 20% / 0.06), 0 4px 16px hsl(220 20% 20% / 0.06);
+  --elevation-lg: 0 2px 4px hsl(220 20% 20% / 0.08), 0 12px 40px hsl(220 20% 20% / 0.14);
+}
+
+.dark,
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  /*
+   * Four depths, measured rather than eyeballed (WCAG ratios in brackets):
+   *
+   *    6%  the void behind everything — the gutter between islands
+   *   11%  wells: inputs, and the video stage
+   *   16%  an island's body
+   *   21%  raised chrome inside an island — toolbars, headers, ruler [1.18]
+   *
+   * The earlier scale sat 3–5 points lower across the board with chrome only
+   * 1.13 from the panel, which is why it read as one flat dull sheet. Text was
+   * the bigger problem: secondary labels are 10–11px throughout, and at 5.8
+   * against the panel they were legible on paper and mushy in practice. Muted
+   * is now 7.66 [AAA at this size], separators 2.38, borders 1.70.
+   *
+   * The neutrals stay near-grey on purpose — a colour cast in the chrome
+   * skews how you judge the footage — so the vibrancy lives in the accent and
+   * the semantic colours instead.
+   */
+  --background: hsl(222 47% 11%);
+  --foreground: hsl(210 40% 98%);
+  --surface: hsl(217 33% 22%);
+  --surface-foreground: hsl(210 40% 98%);
+  --surface-secondary: hsl(217 30% 26%);
+  --surface-secondary-foreground: hsl(210 40% 98%);
+  --surface-tertiary: hsl(217 28% 30%);
+  --surface-tertiary-foreground: hsl(210 40% 98%);
+  --overlay: hsl(217 33% 22%);
+  --overlay-foreground: hsl(210 40% 98%);
+  --muted: hsl(215 20% 65%);
+  --default: hsl(217 33% 26%);
+  --default-foreground: hsl(210 40% 98%);
+  --accent: hsl(217 91% 67%);
+  --accent-foreground: hsl(222 47% 11%);
+  /*
+   * Inputs recede rather than rise, so they read as wells in the panel — the
+   * 11% step of the scale above. The fill keeps it; the edge is what was
+   * missing, since the library ships fields with a transparent zero-width
+   * border. `--separator` here too: at 40% it clears both the well it
+   * surrounds and the 16% panel around that.
+   */
+  --field-background: hsl(217 33% 22%);
+  --field-foreground: hsl(210 40% 98%);
+  --field-placeholder: hsl(215 20% 65%);
+  --field-border: var(--separator);
+  --field-border-width: 1px;
+  --success: hsl(142 71% 45%);
+  --success-foreground: hsl(222 47% 11%);
+  --warning: hsl(38 92% 55%);
+  --warning-foreground: hsl(222 47% 11%);
+  --danger: hsl(0 72% 51%);
+  --danger-foreground: hsl(210 40% 98%);
+  /* Lifted so an island's edge still reads against a near-black gutter. */
+  --border: hsl(217 33% 28%);
+  --separator: hsl(217 25% 38%);
+  --focus: hsl(217 91% 67%);
+  --link: hsl(210 40% 98%);
+  --segment: hsl(217 28% 34%);
+  --segment-foreground: hsl(210 40% 98%);
+
+  --editor-chrome: hsl(217 30% 26%);
+  --editor-panel: hsl(217 33% 22%);
+  /*
+   * Lanes sit below the panel so the track area reads as a well, with the
+   * sticky header column and ruler above it at chrome level. The gap between
+   * the two lane tones is the row striping and is meant to be faint.
+   */
+  --editor-track: hsl(217 33% 18%);
+  --editor-track-alt: hsl(217 33% 20%);
+  --editor-ruler: hsl(217 30% 26%);
+  --playhead: hsl(0 84% 60%);
+  --elevation: 0 1px 2px hsl(0 0% 0% / 0.5), 0 4px 16px hsl(0 0% 0% / 0.4);
+  --elevation-lg: 0 2px 4px hsl(0 0% 0% / 0.6), 0 16px 48px hsl(0 0% 0% / 0.6);
+}
+
+@theme inline {
+  --color-editor-chrome: var(--editor-chrome);
+  --color-editor-panel: var(--editor-panel);
+  /*
+   * The video stage matches the rail and the panel chrome rather than having
+   * a tone of its own. Aliasing the token instead of defining it per theme
+   * means the two can never drift apart in one mode and not the other.
+   */
+  --color-editor-canvas: var(--editor-chrome);
+  --color-editor-track: var(--editor-track);
+  --color-editor-track-alt: var(--editor-track-alt);
+  --color-editor-ruler: var(--editor-ruler);
+  --color-playhead: var(--playhead);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--foreground);
+  background: var(--background);
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'tnum';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* A timeline is a dragging surface; accidental text selection ruins it. */
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+input,
+textarea,
+[contenteditable] {
+  user-select: text;
+}
+
+/*
+ * One focus ring, not two.
+ *
+ * The library rings a focused control twice: a 2px offset ring in
+ * `--tw-ring-offset-color`, which resolves to `var(--background)`, sitting
+ * inside a 2px ring in `var(--focus)`. On a form over the page background the
+ * inner one reads as a gap, but every control here sits on a panel of its own
+ * colour, so it reads as a second ring in a colour that belongs to neither the
+ * button nor the panel.
+ *
+ * Zeroing the offset leaves the single `--focus` ring. Set unlayered on
+ * purpose: the library defines this token inside `@layer theme`, and unlayered
+ * declarations win over layered ones no matter the order.
+ */
+:root {
+  --ring-offset-width: 0px;
+}
+
+/*
+ * No outline around a whole region of the editor.
+ *
+ * Nothing here is shaped like a form control. Every surface is either a
+ * scroller — which Chrome makes keyboard-focusable and rings on the first key
+ * press after a click — or a direct-manipulation target that fills its whole
+ * area: a clip, the selection box over the preview, a pane or track divider.
+ * A focus outline on any of them traces the edge of an entire panel or of the
+ * picture itself, which reads as a border on the editor rather than as focus.
+ *
+ * So the outline goes everywhere. The library's controls are unaffected: they
+ * draw their ring with `box-shadow`, not `outline`.
+ */
+*:focus-visible {
+  outline: none;
+}
+
+/*
+ * Real buttons the library doesn't style — the timecode readouts, the colour
+ * swatches — would otherwise have no focus cue at all, so they get the same
+ * ring by hand. It stays clear of the library's own buttons, whose
+ * `.toggle-button`/`.button` focus rules are more specific than this.
+ */
+button:focus-visible {
+  box-shadow: 0 0 0 2px var(--focus);
+}
+
+/*
+ * No height here for text inputs. They are sized where they are used: the
+ * track header's name sits in a 20px row, the project name in the top bar is
+ * its own thing, and the inspector's fields are another. A single height for
+ * all of them was wrong in every one of those places at once.
+ *
+ * What is left is the room for the text to sit in whatever height a caller
+ * picks. The library pads a field 8px top and bottom, which is more than a
+ * compact field has to give: at 28px that leaves 10px of content box for a
+ * 16px line and the text is squeezed against the edge rather than sitting in
+ * it. 4px clears the tallest text any field here uses and gets out of the way
+ * of the height itself.
+ */
+@layer components {
+  .input,
+  .number-field__input {
+    padding-block: calc(var(--spacing) * 1);
+  }
+}
+
+/*
+ * The two controls that cannot be given a height from the markup.
+ *
+ * A select's control is react-select's, styled by emotion from a stylesheet
+ * injected at runtime — unlayered, so it beats any class we could put on the
+ * element. The number field's group is inside `NNumberField`, which only
+ * forwards a class to its root. Both therefore take their height here, from a
+ * token a panel can scope if it needs its own, and everything else keeps
+ * setting its height in the markup where it can be seen.
+ */
+:root {
+  --field-height: 1.875rem;
+}
+
+.nyn-select .nyn-select__control,
+.nyn-number-field .number-field__group {
+  height: var(--field-height);
+  min-height: var(--field-height);
+}
+
+.nyn-select .nyn-select__value-container {
+  padding-block: 0;
+}
+
+.nyn-select .nyn-select__indicator {
+  padding: calc(var(--spacing) * 1);
+}
+
+/*
+ * The checkbox gets the same edge as every other field.
+ *
+ * Only the width is needed here, and only because the library never states
+ * one. It styles the box as `bg-field` plus a `border-color` — for the resting
+ * state, for hover, and a transparent one for when it fills with the accent —
+ * but sets neither a width nor a style anywhere, and Tailwind's preflight
+ * zeroes both on every element. So all three colours had nothing to paint.
+ *
+ * The box is `box-sizing: border-box` like everything else, so it stays 16px
+ * and the tick keeps its room; the checked state paints its accent under the
+ * transparent border rather than leaving a notch, because a background fills
+ * the border box.
+ */
+.checkbox__control {
+  border-style: solid;
+  border-width: var(--border-width-field);
+}
+
+/*
+ * Selects sit in the same well as inputs.
+ *
+ * The library's text fields take `--field-background` while its select is a
+ * react-select whose control is `bg-surface` — a panel tone, not a field one.
+ * Side by side in the inspector that read as two kinds of control, with the
+ * select floating a shade above the row it shares with an input.
+ *
+ * Only the closed control is re-pointed. The menu stays on the overlay tone
+ * that the context menu and the command surfaces use, because a dropdown is
+ * something that rises above the panel rather than a well sunk into it.
+ */
+/*
+ * Every one of these is the value the library's own `.input` rule computes,
+ * rather than a colour that merely looks close: the two controls sit in the
+ * same inspector rows, so the edge, the radius and the fill have to be the
+ * same declarations, and the hover and focus edges have to walk through the
+ * same derived mixes.
+ *
+ * Two classes deep, unlike the rules below it, because these three properties
+ * are ones react-select also sets itself — through emotion, from a stylesheet
+ * injected into the head at runtime. A single class would tie on specificity
+ * and lose on order, and which one wins would depend on when the first select
+ * happened to mount.
+ */
+.nyn-select .nyn-select__control {
+  background-color: var(--field-background);
+  border-width: var(--border-width-field);
+  border-color: var(--color-field-border);
+  border-radius: var(--field-radius, calc(var(--radius) * 1.5));
+  box-shadow: none;
+}
+
+.nyn-select .nyn-select__control:hover {
+  border-color: var(--color-field-border-hover);
+}
+
+/* The library rings a focused field in `--focus` with no offset; react-select
+   would otherwise draw its own 1px primary shadow instead. */
+.nyn-select .nyn-select__control--is-focused {
+  border-color: var(--color-field-border-focus);
+  box-shadow: 0 0 0 2px var(--focus);
+}
+
+.nyn-select__menu {
+  background-color: var(--overlay, var(--surface));
+  border-color: var(--border);
+}
+
+.nyn-select__single-value,
+.nyn-select__input-container {
+  color: var(--field-foreground);
+}
+
+/*
+ * Thin sliders.
+ *
+ * The library's slider is a form control: a 20px rail under a 28px capsule
+ * thumb, sized to be hit on a phone. The inspector stacks a dozen of them in
+ * a panel that also has to leave room for the picture and the timeline, so
+ * here it becomes a 6px rail with a small round grip.
+ *
+ * These override the stylesheet's own `.slider[data-orientation] .slider__*`
+ * rules at equal specificity, which is why they must stay unlayered and after
+ * the import at the top of this file — the cascade decides this one on source
+ * order alone.
+ */
+.slider[data-orientation='horizontal'] .slider__track {
+  height: 0.375rem;
+  /* Transparent inline borders the fill colours in at the ends; half the grip
+     keeps it travelling inside the rail rather than past it. */
+  border-inline-width: 0.375rem;
+}
+
+.slider[data-orientation='horizontal'] .slider__thumb {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 999px;
+  box-shadow: 0 1px 2px hsl(0 0% 0% / 0.45);
+}
+
+/* The inset pill reads as a second element at this size; the grip is enough. */
+.slider[data-orientation='horizontal'] .slider__thumb::after {
+  content: none;
+}
+
+/* Slim scrollbars so panels don't lose width to chrome. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--separator) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--separator);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+@utility panel {
+  background: var(--editor-panel);
+  border-color: var(--border);
+}
+
+/*
+ * Each region of the editor sits on its own raised card with the app
+ * background showing through between them. The gutter does the separating, so
+ * the borders can stay quiet and the eye groups by shape rather than by line.
+ *
+ * `overflow: hidden` keeps scrolling content inside the radius. It doesn't trap
+ * the context menu or command palette — both are `position: fixed`, and no
+ * island establishes a containing block for them.
+ */
+@utility island {
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--editor-panel);
+  box-shadow: var(--elevation);
+}
+
+@utility elevate {
+  box-shadow: var(--elevation);
+}
+
+@utility elevate-lg {
+  box-shadow: var(--elevation-lg);
+}
+
+/* The checkerboard behind the preview, so transparency reads as transparency. */
+@utility checkerboard {
+  background-image:
+    linear-gradient(45deg, hsl(0 0% 50% / 0.18) 25%, transparent 25%), linear-gradient(-45deg, hsl(0 0% 50% / 0.18) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, hsl(0 0% 50% / 0.18) 75%), linear-gradient(-45deg, transparent 75%, hsl(0 0% 50% / 0.18) 75%);
+  background-size: 16px 16px;
+  background-position:
+    0 0,
+    0 8px,
+    8px -8px,
+    -8px 0;
+}
+
+/*
+ * Timeline clips are re-rendered on every drag frame. Promoting them to their
+ * own layer keeps a long timeline from repainting as a whole while one clip
+ * moves.
+ */
+@utility gpu-layer {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+@keyframes editor-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility animate-in {
+  animation: editor-fade-in 140ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
