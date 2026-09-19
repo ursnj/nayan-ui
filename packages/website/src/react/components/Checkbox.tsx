@@ -90,5 +90,10 @@ export const checkboxAttributes = [
   { name: 'checked', type: 'boolean', default: 'Required', details: 'You can pass checked state.' },
   { name: 'onChange', type: '(checked: boolean) => void', default: 'Required', details: 'You can get callback when checkbox state changes.' },
   { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Label content for the checkbox.' },
-  { name: 'renderLabel', type: '(children: React.ReactNode) => React.ReactNode', default: 'Optional', details: 'Custom render function for label.' }
+  { name: 'renderLabel', type: '(children: React.ReactNode) => React.ReactNode', default: 'Optional', details: 'Custom render function for label.' },
+  { name: 'name', type: 'string', default: 'Optional', details: 'HTML name attribute for form submission.' },
+  { name: 'value', type: 'string', default: 'Optional', details: 'Value attribute for the checkbox.' },
+  { name: 'isRequired', type: 'boolean', default: 'false', details: 'Whether the checkbox is required.' },
+  { name: 'isIndeterminate', type: 'boolean', default: 'false', details: 'Whether the checkbox is in an indeterminate state.' },
+  { name: 'label', type: 'React.ReactNode', default: 'Optional', details: 'Alias of children for the checkbox label.' }
 ];

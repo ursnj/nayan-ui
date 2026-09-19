@@ -69,5 +69,8 @@ export const buttonGroupAttributes = [
   { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the button group is disabled.' },
   { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
   { name: 'buttonClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
+  { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'selected', type: 'string', default: 'Optional', details: 'Alias of value.' },
+  { name: 'onChange', type: '(value: string) => void', default: 'Optional', details: 'Alias of onValueChange.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'Alias of isDisabled.' }
 ];

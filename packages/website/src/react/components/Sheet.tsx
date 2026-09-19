@@ -52,5 +52,6 @@ export const sheetAttributes = [
   { name: 'footer', type: 'React.ReactNode', default: 'Optional', details: 'Optional footer content.' },
   { name: 'aria-label', type: 'string', default: 'Optional', details: 'ARIA label for accessibility.' },
   { name: 'aria-labelledby', type: 'string', default: 'Optional', details: 'ARIA labelledby for accessibility.' },
-  { name: 'role', type: 'string', default: 'Optional', details: 'ARIA role for accessibility.' }
+  { name: 'role', type: 'string', default: 'Optional', details: 'ARIA role for accessibility.' },
+  { name: 'onClose', type: '() => void', default: 'Optional', details: 'Callback when the sheet is closed.' }
 ];

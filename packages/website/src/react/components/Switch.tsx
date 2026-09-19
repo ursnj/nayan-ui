@@ -54,5 +54,7 @@ export const switchAttributes = [
   { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
   { name: 'switchClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
   { name: 'onChange', type: '(checked: boolean) => void', default: 'Optional', details: 'Callback when switch state changes.' },
-  { name: 'id', type: 'string', default: 'Optional', details: 'ID for the switch.' }
+  { name: 'id', type: 'string', default: 'Optional', details: 'ID for the switch.' },
+  { name: 'checked', type: 'boolean', default: 'Optional', details: 'Alias of enabled for controlled state.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'Whether the switch is disabled.' }
 ];

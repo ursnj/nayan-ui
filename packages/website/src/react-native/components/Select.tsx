@@ -70,5 +70,9 @@ export const selectAttributes = [
   { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the select is disabled.' },
   { name: 'containerClassName', type: 'string', default: "' '", details: 'You can customise container by passing tailwind classes.' },
   { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise label by passing tailwind classes.' },
-  { name: 'triggerClassName', type: 'string', default: "' '", details: 'You can customise trigger by passing tailwind classes.' }
+  { name: 'triggerClassName', type: 'string', default: "' '", details: 'You can customise trigger by passing tailwind classes.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'Alias of isDisabled.' },
+  { name: 'value', type: 'SelectOption', default: 'Optional', details: 'Controlled selected option.' },
+  { name: 'options', type: 'SelectOption[]', default: 'Optional', details: 'Alias of items.' },
+  { name: 'onChange', type: '(value: string) => void', default: 'Optional', details: 'Alias of onValueChange.' }
 ];

@@ -61,5 +61,6 @@ export const dialogAttributes = [
   { name: 'isSwipeable', type: 'boolean', default: 'Optional', details: 'Whether the dialog can be swiped to dismiss.' },
   { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
   { name: 'titleClassName', type: 'string', default: "' '", details: 'You can customise title by passing tailwind classes.' },
-  { name: 'contentClassName', type: 'string', default: "' '", details: 'You can customise content by passing tailwind classes.' }
+  { name: 'contentClassName', type: 'string', default: "' '", details: 'You can customise content by passing tailwind classes.' },
+  { name: 'descriptionClassName', type: 'string', default: "' '", details: 'Custom class for the dialog description.' }
 ];

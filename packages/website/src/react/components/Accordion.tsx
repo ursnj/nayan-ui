@@ -71,5 +71,7 @@ export const accordionAttributes = [
     type: '(item: T, index: number) => React.ReactNode',
     default: 'Optional',
     details: 'Custom render function for accordion content.'
-  }
+  },
+  { name: 'indicatorClassName', type: 'string', default: "' '", details: 'Custom class for the expand/collapse indicator.' },
+  { name: 'variant', type: "'default' | 'surface'", default: "'default'", details: 'Visual variant of the accordion.' }
 ];
