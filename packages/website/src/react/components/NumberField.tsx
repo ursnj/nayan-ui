@@ -73,5 +73,6 @@ export const numberFieldAttributes = [
   { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'Visual variant.' },
   { name: 'fullWidth', type: 'boolean', default: 'false', details: 'Full width mode.' },
   { name: 'formatOptions', type: 'Intl.NumberFormatOptions', default: 'Optional', details: 'Number format options (currency, percent, etc).' },
-  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' }
+  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' },
+  { name: 'label', type: 'string', default: 'Optional', details: 'Label text for the number field.' }
 ];

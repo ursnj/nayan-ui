@@ -39,5 +39,7 @@ export const progressAttributes = [
   { name: 'value', type: 'number', default: 'Required', details: 'Current progress value.' },
   { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
   { name: 'label', type: 'string', default: 'Optional', details: 'Label for the progress bar.' },
-  { name: 'showLabel', type: 'boolean', default: 'Optional', details: 'Whether to show the label.' }
+  { name: 'showLabel', type: 'boolean', default: 'Optional', details: 'Whether to show the label.' },
+  { name: 'color', type: "'default' | 'accent' | 'success' | 'warning' | 'danger'", default: "'default'", details: 'Color of the progress bar.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'Size of the progress bar.' }
 ];

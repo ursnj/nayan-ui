@@ -63,5 +63,6 @@ export const sheetAttributes = [
   { name: 'onOpenChange', type: '(isOpen: boolean) => void', default: 'Optional', details: 'Callback when open state changes.' },
   { name: 'className', type: 'string', default: "' '", details: 'You can customise content by passing tailwind classes.' },
   { name: 'titleClassName', type: 'string', default: "' '", details: 'You can customise title by passing tailwind classes.' },
-  { name: 'descriptionClassName', type: 'string', default: "' '", details: 'You can customise description by passing tailwind classes.' }
+  { name: 'descriptionClassName', type: 'string', default: "' '", details: 'You can customise description by passing tailwind classes.' },
+  { name: 'snapPoints', type: '(string | number)[]', default: 'Optional', details: 'Array of snap points for the bottom sheet.' }
 ];

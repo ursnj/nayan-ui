@@ -74,5 +74,8 @@ export const tableAttributes = [
     type: '(row: T, col: NTableColumn<T>, rowIndex: number, colIndex: number) => React.TdHTMLAttributes<HTMLTableCellElement>',
     default: 'Optional',
     details: 'Function to get cell props.'
-  }
+  },
+  { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'Visual variant of the table.' },
+  { name: 'emptyMessage', type: 'React.ReactNode', default: 'Optional', details: 'Content shown when table has no data.' },
+  { name: 'getRowKey', type: '(row: T, index: number) => string | number', default: 'Optional', details: 'Custom key extractor for table rows.' }
 ];

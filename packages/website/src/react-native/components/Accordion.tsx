@@ -74,5 +74,7 @@ export const accordionAttributes = [
   { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
   { name: 'itemClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
   { name: 'titleClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'contentClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
+  { name: 'contentClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'type', type: "'single' | 'multiple'", default: "'single'", details: 'Alias of selectionMode.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'Alias of isDisabled.' }
 ];

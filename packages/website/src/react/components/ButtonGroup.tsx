@@ -50,5 +50,9 @@ export const buttonGroupAttributes = [
     default: 'Optional',
     details: 'Custom render function for buttons.'
   },
-  { name: 'ariaLabel', type: 'string', default: 'Optional', details: 'ARIA label for accessibility.' }
+  { name: 'ariaLabel', type: 'string', default: 'Optional', details: 'ARIA label for accessibility.' },
+  { name: 'value', type: 'T', default: 'Optional', details: 'Alias of selected.' },
+  { name: 'getKey', type: '(item: T, index: number) => React.Key', default: 'Optional', details: 'Custom key extractor for items.' },
+  { name: 'renderItem', type: '(item: T, index: number) => ReactNode', default: 'Optional', details: 'Custom render function for button items.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'Size of the button group.' }
 ];

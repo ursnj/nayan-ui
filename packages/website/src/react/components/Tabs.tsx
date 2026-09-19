@@ -54,5 +54,10 @@ export const tabsAttributes = [
   { name: 'activeItemClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
   { name: 'onChange', type: '(selected: string) => void', default: 'Required', details: 'Callback when tab changes.' },
   { name: 'ariaLabel', type: 'string', default: 'Optional', details: 'ARIA label for accessibility.' },
-  { name: 'id', type: 'string', default: 'Optional', details: 'ID for the tabs.' }
+  { name: 'id', type: 'string', default: 'Optional', details: 'ID for the tabs.' },
+  { name: 'value', type: 'string', default: 'Optional', details: 'Alias of selected.' },
+  { name: 'listClassName', type: 'string', default: "' '", details: 'Custom class for the tab list container.' },
+  { name: 'tabClassName', type: 'string', default: "' '", details: 'Custom class for individual tab buttons.' },
+  { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'Visual variant of the tabs.' },
+  { name: 'orientation', type: "'horizontal' | 'vertical'", default: "'horizontal'", details: 'Layout orientation of the tabs.' }
 ];

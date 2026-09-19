@@ -46,7 +46,9 @@ const Divider = () => {
 export default Divider;`;
 
 export const dividerAttributes = [
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'orientation', type: "'horizontal' | 'vertical'", default: "'horizontal'", details: 'Direction of the divider.' },
   { name: 'children', type: 'React.ReactNode', default: 'Optional', details: 'Content to display in the divider.' },
-  { name: 'childrenClassName', type: 'string', default: "' '", details: 'You can customise children by passing tailwind classes.' },
-  { name: 'separatorClassName', type: 'string', default: "' '", details: 'You can customise separator by passing tailwind classes.' }
+  { name: 'childrenClassName', type: 'string', default: "' '", details: 'Custom class for the children wrapper.' },
+  { name: 'separatorClassName', type: 'string', default: "' '", details: 'Custom class for the separator line.' }
 ];

@@ -84,5 +84,6 @@ export const tagGroupAttributes = [
   { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'Tag size.' },
   { name: 'variant', type: "'default' | 'surface'", default: "'default'", details: 'Tag variant.' },
   { name: 'disabled', type: 'boolean', default: 'false', details: 'Disables the tag group.' },
-  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' }
+  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' },
+  { name: 'tagClassName', type: 'string', default: "' '", details: 'Custom class for individual tags.' }
 ];
