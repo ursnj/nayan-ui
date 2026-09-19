@@ -1,12 +1,13 @@
-'use client';
+"use client";
 
-import { NBadge } from '@nayan-ui/react';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { NBadge } from "@nayan-ui/react";
+import { H3_DOC } from "@/design/system";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
 const Badge = () => {
   return (
-    <ComponentWrapper>
-      <h2 className="text-foreground mb-3 text-lg font-semibold">Colors:</h2>
+    <ComponentWrapper code={code} attributes={badgeAttributes}>
+      <h3 className={H3_DOC}>Colors:</h3>
       <div className="flex flex-wrap gap-2 mb-5">
         <NBadge color="default">Default</NBadge>
         <NBadge color="accent">Accent</NBadge>
@@ -15,7 +16,7 @@ const Badge = () => {
         <NBadge color="danger">Danger</NBadge>
       </div>
 
-      <h2 className="text-foreground mb-3 text-lg font-semibold">Variants:</h2>
+      <h3 className={H3_DOC}>Variants:</h3>
       <div className="flex flex-wrap gap-2 mb-5">
         <NBadge color="accent" variant="primary">
           Primary
@@ -28,7 +29,7 @@ const Badge = () => {
         </NBadge>
       </div>
 
-      <h2 className="text-foreground mb-3 text-lg font-semibold">Sizes:</h2>
+      <h3 className={H3_DOC}>Sizes:</h3>
       <div className="flex flex-wrap items-center gap-2 mb-5">
         <NBadge color="accent" size="sm">
           Small
@@ -45,3 +46,73 @@ const Badge = () => {
 };
 
 export default Badge;
+
+/** The usage sample on this component's page, kept beside the demo it documents. */
+export const code = `import { NBadge } from '@nayan-ui/react';
+
+const Badge = () => {
+  return (
+    <div>
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Colors:</h3>
+      <div className="flex flex-wrap gap-2 mb-5">
+        <NBadge color="default">Default</NBadge>
+        <NBadge color="accent">Accent</NBadge>
+        <NBadge color="success">Success</NBadge>
+        <NBadge color="warning">Warning</NBadge>
+        <NBadge color="danger">Danger</NBadge>
+      </div>
+
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Variants:</h3>
+      <div className="flex flex-wrap gap-2 mb-5">
+        <NBadge color="accent" variant="primary">
+          Primary
+        </NBadge>
+        <NBadge color="accent" variant="secondary">
+          Secondary
+        </NBadge>
+        <NBadge color="accent" variant="soft">
+          Soft
+        </NBadge>
+      </div>
+
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Sizes:</h3>
+      <div className="flex flex-wrap items-center gap-2 mb-5">
+        <NBadge color="accent" size="sm">
+          Small
+        </NBadge>
+        <NBadge color="accent" size="md">
+          Medium
+        </NBadge>
+        <NBadge color="accent" size="lg">
+          Large
+        </NBadge>
+      </div>
+    </div>
+  );
+};
+
+export default Badge;`;
+
+export const badgeAttributes = [
+  {
+    name: "children",
+    type: "React.ReactNode",
+    default: "Required",
+    details: "You can pass badge content as children.",
+  },
+  {
+    name: "color",
+    type: "'default' | 'accent' | 'success' | 'warning' | 'danger'",
+    default: "'default'",
+    details: "Badge color theme.",
+  },
+  {
+    name: "variant",
+    type: "'primary' | 'secondary' | 'soft'",
+    default: "'soft'",
+    details: "Badge visual variant.",
+  },
+  { name: "size", type: "'sm' | 'md' | 'lg'", default: "'md'", details: "Badge size." },
+  { name: "className", type: "string", default: "' '", details: "Additional CSS classes." },
+  { name: "role", type: "string", default: "'status'", details: "ARIA role for accessibility." },
+];

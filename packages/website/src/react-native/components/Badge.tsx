@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import ComponentWrapper from '@/helpers/ComponentWrapper';
-import DemoComingSoon from './DemoComingSoon';
+import ComponentWrapper from "@/helpers/ComponentWrapper";
+import DemoComingSoon from "./DemoComingSoon";
 
 const Badge = () => {
   return (

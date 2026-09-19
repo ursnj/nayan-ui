@@ -1,47 +1,33 @@
 {
   "name": "@nayan-ui/root",
+  "version": "1.0.0",
   "private": true,
+  "description": "Reusable Component Libraries for React and React Native.",
+  "license": "ISC",
   "workspaces": [
     "packages/*",
-    "packages/native/example"
+    "packages/native/example",
+    "applications/*"
   ],
-  "version": "1.0.0",
-  "description": "Reusable Component Libraries for React and React Native.",
   "scripts": {
-    "prepare": "husky install",
-    "format": "prettier --write .",
+    "format": "oxfmt",
     "clean": "rimraf packages/*/node_modules packages/*/dist packages/*/lib node_modules",
-    "ai:build": "yarn workspace @nayan-ui/ai build",
-    "cli:build": "yarn workspace @nayan-ui/cli build",
-    "react:dev": "yarn workspace @nayan-ui/react dev",
-    "react:build": "yarn workspace @nayan-ui/react build",
-    "native:build": "yarn workspace @nayan-ui/native build",
-    "native:typecheck": "yarn workspace @nayan-ui/native typecheck",
-    "native:clean": "yarn workspace @nayan-ui/native clean",
-    "native:example": "yarn workspace @nayan-ui/native example",
-    "website:dev": "yarn workspace @nayan-ui/website dev",
-    "website:build": "yarn react:build && yarn editor:build && yarn workspace @nayan-ui/website build",
-    "website:start": "yarn workspace @nayan-ui/website start",
-    "editor:dev": "yarn workspace @nayan-ui/video-editor dev",
-    "editor:build": "yarn workspace @nayan-ui/video-editor build"
+    "ai:build": "bun run --filter @nayan-ui/ai build",
+    "cli:build": "bun run --filter @nayan-ui/cli build",
+    "react:dev": "bun run --filter @nayan-ui/react dev",
+    "react:build": "bun run --filter @nayan-ui/react build",
+    "native:build": "bun run --filter @nayan-ui/native build",
+    "native:typecheck": "bun run --filter @nayan-ui/native typecheck",
+    "native:clean": "bun run --filter @nayan-ui/native clean",
+    "native:example": "bun run --filter @nayan-ui/native example",
+    "website:dev": "bun run react:build && bun run --filter @nayan-ui/website dev",
+    "website:build": "bun run react:build && bun run editor:build && bun run --filter @nayan-ui/website build",
+    "website:start": "bun run --filter @nayan-ui/website start",
+    "editor:dev": "bun run --filter @nayan-ui/video-editor dev",
+    "editor:build": "bun run --filter @nayan-ui/video-editor build"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.1.2",
-    "prettier": "^3.6.2",
+    "oxfmt": "^0.68.0",
     "rimraf": "^6.0.1"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "**/*.{js,jsx,ts,tsx,css,md,json}": [
-      "prettier --write ."
-    ]
-  },
-  "license": "ISC",
-  "packageManager": "yarn@4.11.0"
+  }
 }

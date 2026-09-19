@@ -1,9 +1,16 @@
-import React, { useMemo } from 'react';
-import { View } from 'react-native';
-import { Label, Switch, type SwitchProps, cn, useThemeColor } from 'heroui-native';
+import React, { useMemo } from "react";
+import { View } from "react-native";
+import { Label, Switch, type SwitchProps, cn, useThemeColor } from "heroui-native";
 
-export interface NSwitchProps extends Omit<SwitchProps, 'children'> {
+export interface NSwitchProps extends Omit<SwitchProps, "children"> {
   label?: string;
+  /** Alias of `isSelected`; `enabled` is the React package's name for it. */
+  checked?: boolean;
+  enabled?: boolean;
+  /** Alias of `onSelectedChange`. */
+  onChange?: (checked: boolean) => void;
+  /** Alias of `isDisabled`. */
+  disabled?: boolean;
   containerClassName?: string;
   labelClassName?: string;
 }
@@ -11,58 +18,70 @@ export interface NSwitchProps extends Omit<SwitchProps, 'children'> {
 export const NSwitch = React.memo<NSwitchProps>(
   ({
     label,
-    containerClassName = '',
-    labelClassName = '',
-    className = '',
-    isDisabled = false,
-    isSelected = false,
+    checked,
+    enabled,
+    onChange,
+    disabled,
+    containerClassName = "",
+    labelClassName = "",
+    className = "",
+    isDisabled,
+    isSelected,
     onSelectedChange,
     animation,
     ...props
   }) => {
-    const [surface, accent] = useThemeColor(['surface', 'accent']);
+    const selected = checked ?? enabled ?? isSelected ?? false;
+    const off = disabled ?? isDisabled ?? false;
+    const change = onChange ?? onSelectedChange;
+    const [surface, accent] = useThemeColor(["surface", "accent"]);
 
     const switchAnimation = useMemo(
       () =>
         animation ?? {
-          backgroundColor: { value: [surface, accent] as [string, string] }
+          backgroundColor: { value: [surface, accent] as [string, string] },
         },
-      [animation, surface, accent]
+      [animation, surface, accent],
     );
 
     const thumbAnimation = useMemo(
       () => ({
-        backgroundColor: { value: [accent, surface] as [string, string] }
+        backgroundColor: { value: [accent, surface] as [string, string] },
       }),
-      [accent, surface]
+      [accent, surface],
     );
 
     const handleToggle = () => {
-      if (!isDisabled) {
-        onSelectedChange?.(!isSelected);
+      if (!off) {
+        change?.(!selected);
       }
     };
 
     return (
-      <View className={cn('w-full flex-row items-center justify-between mb-3', containerClassName)}>
+      <View className={cn("w-full flex-row items-center justify-between mb-3", containerClassName)}>
         {label && (
-          <Label className={cn('flex-1 text-foreground text-base pr-3', labelClassName)} nativeID={'switch-' + label} onPress={handleToggle}>
+          <Label
+            className={cn("flex-1 text-foreground text-base pr-3", labelClassName)}
+            nativeID={"switch-" + label}
+            onPress={handleToggle}
+          >
             {label}
           </Label>
         )}
         <Switch
-          isDisabled={isDisabled}
-          isSelected={isSelected}
+          isDisabled={off}
+          isSelected={selected}
           onSelectedChange={handleToggle}
           className={cn(className)}
-          nativeID={'switch-' + label}
+          nativeID={"switch-" + label}
           animation={switchAnimation}
-          {...props}>
+          {...props}
+        >
           <Switch.Thumb animation={thumbAnimation} />
         </Switch>
       </View>
     );
-  }
+  },
 );
 
-NSwitch.displayName = 'NSwitch';
+NSwitch.displayName = "NSwitch";

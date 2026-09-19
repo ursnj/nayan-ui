@@ -1,6 +1,6 @@
-import React, { ReactNode, memo } from 'react';
-import { Button, Modal } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { ReactNode, memo } from "react";
+import { Button, Modal } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NConfirmAlertProps {
   isOpen: boolean;
@@ -21,31 +21,32 @@ export interface NConfirmAlertProps {
 const NConfirmAlertComponent: React.FC<NConfirmAlertProps> = memo(
   ({
     isOpen,
-    title = 'Are you absolutely sure?',
+    title = "Are you absolutely sure?",
     message,
-    className = '',
-    titleClassName = '',
-    messageClassName = '',
-    confirmClassName = '',
-    cancelClassName = '',
-    confirmText = 'Confirm',
-    cancelText = 'Cancel',
+    className = "",
+    titleClassName = "",
+    messageClassName = "",
+    confirmClassName = "",
+    cancelClassName = "",
+    confirmText = "Confirm",
+    cancelText = "Cancel",
     onResult,
     onClose,
-    children
+    children,
   }) => {
     return (
       <Modal
         isOpen={isOpen}
-        onOpenChange={open => {
+        onOpenChange={(open) => {
           if (!open) onClose();
-        }}>
+        }}
+      >
         <Modal.Trigger className="hidden" aria-hidden="true">
           <span />
         </Modal.Trigger>
         <Modal.Backdrop>
           <Modal.Container size="sm">
-            <Modal.Dialog className={cn('nyn-confirm-alert p-4', className)} role="alertdialog">
+            <Modal.Dialog className={cn("nyn-confirm-alert p-4", className)} role="alertdialog">
               <Modal.Header>
                 <Modal.Heading className={cn(titleClassName)}>{title}</Modal.Heading>
               </Modal.Header>
@@ -60,7 +61,8 @@ const NConfirmAlertComponent: React.FC<NConfirmAlertProps> = memo(
                   onPress={() => {
                     onResult(false);
                     onClose();
-                  }}>
+                  }}
+                >
                   {cancelText}
                 </Button>
                 <Button
@@ -69,7 +71,8 @@ const NConfirmAlertComponent: React.FC<NConfirmAlertProps> = memo(
                   onPress={() => {
                     onResult(true);
                     onClose();
-                  }}>
+                  }}
+                >
                   {confirmText}
                 </Button>
               </Modal.Footer>
@@ -78,9 +81,9 @@ const NConfirmAlertComponent: React.FC<NConfirmAlertProps> = memo(
         </Modal.Backdrop>
       </Modal>
     );
-  }
+  },
 );
 
-NConfirmAlertComponent.displayName = 'NConfirmAlert';
+NConfirmAlertComponent.displayName = "NConfirmAlert";
 
 export const NConfirmAlert = NConfirmAlertComponent;

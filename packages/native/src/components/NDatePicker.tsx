@@ -1,17 +1,17 @@
-import React, { useCallback, useState } from 'react';
-import { Platform, Pressable, View } from 'react-native';
-import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { cn, useThemeColor } from 'heroui-native';
-import { CalendarIcon } from '../helpers/icons';
-import { useNTheme } from '../hooks/useNTheme';
-import { NText } from './NText';
+import React, { useCallback, useState } from "react";
+import { Platform, Pressable, View } from "react-native";
+import DateTimePicker, { type DateTimePickerEvent } from "@react-native-community/datetimepicker";
+import { cn, useThemeColor } from "heroui-native";
+import { CalendarIcon } from "../helpers/icons";
+import { useNTheme } from "../hooks/useNTheme";
+import { NText } from "./NText";
 
 export interface NDatePickerProps {
   value: Date;
   onChange: (date: Date) => void;
   label?: string;
-  mode?: 'date' | 'time' | 'datetime';
-  display?: 'default' | 'spinner' | 'compact' | 'inline';
+  mode?: "date" | "time" | "datetime";
+  display?: "default" | "spinner" | "compact" | "inline";
   minimumDate?: Date;
   maximumDate?: Date;
   disabled?: boolean;
@@ -20,10 +20,21 @@ export interface NDatePickerProps {
 }
 
 export const NDatePicker = React.memo<NDatePickerProps>(
-  ({ value, onChange, label, mode = 'date', display, minimumDate, maximumDate, disabled = false, className, labelClassName }) => {
+  ({
+    value,
+    onChange,
+    label,
+    mode = "date",
+    display,
+    minimumDate,
+    maximumDate,
+    disabled = false,
+    className,
+    labelClassName,
+  }) => {
     const { isDarkMode } = useNTheme();
-    const [mutedColor] = useThemeColor(['muted']);
-    const isIOS = Platform.OS === 'ios';
+    const [mutedColor] = useThemeColor(["muted"]);
+    const isIOS = Platform.OS === "ios";
     const [showPicker, setShowPicker] = useState(isIOS);
 
     const handleChange = useCallback(
@@ -31,19 +42,27 @@ export const NDatePicker = React.memo<NDatePickerProps>(
         if (!isIOS) setShowPicker(false);
         if (date) onChange(date);
       },
-      [onChange, isIOS]
+      [onChange, isIOS],
     );
 
-    const displayText = mode === 'time' ? value.toLocaleTimeString() : value.toLocaleDateString();
-    const resolvedDisplay = display ?? (isIOS ? 'compact' : 'default');
+    const displayText = mode === "time" ? value.toLocaleTimeString() : value.toLocaleDateString();
+    const resolvedDisplay = display ?? (isIOS ? "compact" : "default");
 
     return (
-      <View className={cn('mb-3 gap-1.5', className)}>
-        {label && <NText className={cn('px-1.5 text-base font-medium text-foreground', labelClassName)}>{label}</NText>}
+      <View className={cn("mb-3 gap-1.5", className)}>
+        {label && (
+          <NText className={cn("px-1.5 text-base font-medium text-foreground", labelClassName)}>
+            {label}
+          </NText>
+        )}
         {!isIOS && (
           <Pressable
             onPress={() => !disabled && setShowPicker(true)}
-            className={cn('min-h-12 justify-center rounded-2xl border-[1.5px] border-field-border bg-field px-3', disabled && 'opacity-50')}>
+            className={cn(
+              "min-h-12 justify-center rounded-2xl border-[1.5px] border-field-border bg-field px-3",
+              disabled && "opacity-50",
+            )}
+          >
             <View className="flex-row items-center justify-between">
               <NText className="text-[16px]">{displayText}</NText>
               <CalendarIcon size={18} color={mutedColor} />
@@ -58,13 +77,13 @@ export const NDatePicker = React.memo<NDatePickerProps>(
             minimumDate={minimumDate}
             maximumDate={maximumDate}
             disabled={disabled}
-            themeVariant={isDarkMode ? 'dark' : 'light'}
+            themeVariant={isDarkMode ? "dark" : "light"}
             onChange={handleChange}
           />
         )}
       </View>
     );
-  }
+  },
 );
 
-NDatePicker.displayName = 'NDatePicker';
+NDatePicker.displayName = "NDatePicker";

@@ -67,24 +67,21 @@ npx expo start
 
 ## Monorepo Setup
 
-This is a Yarn 4 monorepo.
+This is a Bun monorepo.
 
 ```bash
-# Enable corepack (ships with Node.js 18+)
-corepack enable
-
 # Install dependencies
-yarn install
+bun install
 
 # Development
-yarn react:dev       # Watch-build the React package
-yarn website:dev     # Run the docs website (localhost:3001)
-yarn native:build    # Build the Native package
+bun run react:dev       # Watch-build the React package
+bun run website:dev     # Run the docs website (localhost:3001)
+bun run native:build    # Build the Native package
 
 # Production
-yarn react:build     # Build the React package
-yarn website:build   # Build the docs website
-yarn native:build    # Build the Native package
+bun run react:build     # Build the React package
+bun run website:build   # Build the docs website
+bun run native:build    # Build the Native package
 ```
 
 ## Documentation

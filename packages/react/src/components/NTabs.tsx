@@ -1,16 +1,18 @@
-import { Key, ReactNode, memo } from 'react';
-import { Tabs } from '@heroui/react';
-import { cn } from '../lib/utils';
+import { Key, ReactNode, memo } from "react";
+import { Tabs } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NTabsProps {
   items: string[];
   children: ReactNode;
-  selected: string;
+  selected?: string;
+  /** Alias of `selected`, as the React Native package names it. */
+  value?: string;
   className?: string;
   listClassName?: string;
   tabClassName?: string;
-  variant?: 'primary' | 'secondary';
-  orientation?: 'horizontal' | 'vertical';
+  variant?: "primary" | "secondary";
+  orientation?: "horizontal" | "vertical";
   onChange: (selected: string) => void;
   ariaLabel?: string;
 }
@@ -19,15 +21,17 @@ export const NTabs = memo((props: NTabsProps) => {
   const {
     items,
     selected,
+    value,
     children,
-    className = '',
-    listClassName = '',
-    tabClassName = '',
-    variant = 'primary',
-    orientation = 'horizontal',
+    className = "",
+    listClassName = "",
+    tabClassName = "",
+    variant = "primary",
+    orientation = "horizontal",
     onChange,
-    ariaLabel = 'Tabs'
+    ariaLabel = "Tabs",
   } = props;
+  const current = selected ?? value;
 
   const handleSelectionChange = (key: Key) => {
     onChange(String(key));
@@ -35,14 +39,15 @@ export const NTabs = memo((props: NTabsProps) => {
 
   return (
     <Tabs
-      selectedKey={selected}
+      selectedKey={current}
       onSelectionChange={handleSelectionChange}
       variant={variant}
       orientation={orientation}
-      className={cn('nyn-tabs w-full', className)}>
+      className={cn("nyn-tabs w-full", className)}
+    >
       <Tabs.ListContainer>
         <Tabs.List aria-label={ariaLabel} className={cn(listClassName)}>
-          {items.map(item => (
+          {items.map((item) => (
             <Tabs.Tab key={item} id={item} className={cn(tabClassName)}>
               {item}
             </Tabs.Tab>
@@ -54,4 +59,4 @@ export const NTabs = memo((props: NTabsProps) => {
   );
 });
 
-NTabs.displayName = 'NTabs';
+NTabs.displayName = "NTabs";

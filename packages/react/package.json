@@ -1,14 +1,42 @@
 {
   "name": "@nayan-ui/react",
-  "sideEffects": false,
+  "version": "2.1.0",
   "description": "React Component Library for smooth and faster web application development.",
-  "version": "2.0.1",
-  "type": "module",
+  "keywords": [
+    "dev-tools",
+    "nayan-ui",
+    "next-js-components",
+    "react-component-library",
+    "react-js",
+    "react-reusable-components",
+    "react-ui-library",
+    "react-vite",
+    "seo-tools"
+  ],
+  "homepage": "https://www.nayanui.com",
+  "bugs": {
+    "url": "https://github.com/ursnj/nayan-ui/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Niranjan Devasani",
+    "email": "niranjan.devasani@gmail.com",
+    "url": "https://www.nayanui.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ursnj/nayan-ui"
+  },
   "source": "./src/index.ts",
+  "files": [
+    "dist",
+    "src/styles.css"
+  ],
+  "type": "module",
+  "sideEffects": false,
   "main": "./dist/index.es.js",
   "module": "./dist/index.es.js",
   "types": "./dist/index.d.ts",
-  "homepage": "https://www.nayanui.com",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -21,10 +49,6 @@
       "default": "./src/styles.css"
     }
   },
-  "files": [
-    "dist",
-    "src/styles.css"
-  ],
   "publishConfig": {
     "access": "public"
   },
@@ -33,52 +57,33 @@
     "dev": "rimraf dist && vite build --watch"
   },
   "dependencies": {
-    "@heroui/react": "^3.2.2",
+    "@heroui/react": "^3.2.6",
+    "@heroui/styles": "^3.2.6",
+    "@internationalized/date": "^3.12.4",
+    "@react-aria/ssr": "^3.10.1",
+    "@react-aria/utils": "^3.34.1",
     "clsx": "^2.1.1",
     "prism-react-renderer": "^2.4.1",
-    "react-aria-components": "^1.17.0",
-    "react-linkify": "^1.0.0-alpha",
+    "react-aria": "^3.52.1",
+    "react-aria-components": "^1.21.1",
     "react-select": "^5.10.2",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "rimraf": "^6.1.3",
+    "rolldown": "~1.2.6",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.0"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0",
     "tailwindcss": ">=4.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "^26.1.1",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "rimraf": "^6.1.3",
-    "tailwindcss": "^4.3.3",
-    "typescript": "^6.0.3",
-    "vite": "^8.3.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ursnj/nayan-ui"
-  },
-  "keywords": [
-    "react-js",
-    "react-component-library",
-    "react-reusable-components",
-    "react-ui-library",
-    "next-js-components",
-    "react-vite",
-    "dev-tools",
-    "seo-tools",
-    "nayan-ui"
-  ],
-  "author": {
-    "name": "Niranjan Devasani",
-    "email": "niranjan.devasani@gmail.com",
-    "url": "https://www.nayanui.com"
-  },
-  "bugs": {
-    "url": "https://github.com/ursnj/nayan-ui/issues"
-  },
-  "license": "MIT"
+  }
 }

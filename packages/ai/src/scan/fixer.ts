@@ -1,12 +1,18 @@
-import chalk from 'chalk';
-import { execSync } from 'child_process';
-import * as fs from 'fs';
-import ora from 'ora';
-import * as path from 'path';
-import { analyzeWithClaudeRaw } from '../common/claude.js';
-import { analyzeWithCodexRaw } from '../common/codex.js';
-import type { DetectedProject, ProjectType, RepoInfo, ScanOptions, Vulnerability } from '../common/types.js';
-import { getFixPrompt } from './prompt.js';
+import chalk from "chalk";
+import { execSync } from "child_process";
+import * as fs from "fs";
+import ora from "ora";
+import * as path from "path";
+import { analyzeWithClaudeRaw } from "../common/claude.js";
+import { analyzeWithCodexRaw } from "../common/codex.js";
+import type {
+  DetectedProject,
+  ProjectType,
+  RepoInfo,
+  ScanOptions,
+  Vulnerability,
+} from "../common/types.js";
+import { getFixPrompt } from "./prompt.js";
 
 export interface FixResult {
   project: DetectedProject;
@@ -17,7 +23,7 @@ export interface FixResult {
 }
 
 export interface Fix {
-  type: 'update' | 'remove' | 'add';
+  type: "update" | "remove" | "add";
   package: string;
   from?: string;
   to?: string;
@@ -31,24 +37,24 @@ export interface UpdatedFile {
 }
 
 const MANIFEST_FILES: Record<ProjectType, string> = {
-  npm: 'package.json',
-  python: 'requirements.txt',
-  go: 'go.mod',
-  rust: 'Cargo.toml',
-  ruby: 'Gemfile',
-  php: 'composer.json',
-  java: 'pom.xml',
-  dotnet: '*.csproj',
-  scala: 'build.sbt'
+  npm: "package.json",
+  python: "requirements.txt",
+  go: "go.mod",
+  rust: "Cargo.toml",
+  ruby: "Gemfile",
+  php: "composer.json",
+  java: "pom.xml",
+  dotnet: "*.csproj",
+  scala: "build.sbt",
 };
 
 const getManifestPath = (project: DetectedProject): string | null => {
   const manifestName = MANIFEST_FILES[project.type];
 
-  if (manifestName.includes('*')) {
-    const ext = manifestName.replace('*', '');
+  if (manifestName.includes("*")) {
+    const ext = manifestName.replace("*", "");
     const files = fs.readdirSync(project.path);
-    const match = files.find(f => f.endsWith(ext));
+    const match = files.find((f) => f.endsWith(ext));
     if (match) return path.join(project.path, match);
     return null;
   }
@@ -60,7 +66,7 @@ const getManifestPath = (project: DetectedProject): string | null => {
 export const fixVulnerabilities = async (
   project: DetectedProject,
   vulnerabilities: Vulnerability[],
-  options: ScanOptions
+  options: ScanOptions,
 ): Promise<FixResult | null> => {
   if (vulnerabilities.length === 0) return null;
 
@@ -70,14 +76,14 @@ export const fixVulnerabilities = async (
     return null;
   }
 
-  const manifestContent = fs.readFileSync(manifestPath, 'utf-8');
+  const manifestContent = fs.readFileSync(manifestPath, "utf-8");
   const prompt = getFixPrompt(project.type, manifestContent, vulnerabilities);
   const llmOptions = { verbose: options.verbose };
 
   try {
     // Use raw response parser for fix generation - we need the full JSON, not CodeIssue[]
     const response =
-      options.llm === 'claude'
+      options.llm === "claude"
         ? await analyzeWithClaudeRaw(project.path, prompt, llmOptions)
         : await analyzeWithCodexRaw(project.path, prompt, llmOptions);
 
@@ -98,21 +104,23 @@ export const fixVulnerabilities = async (
       updatedFiles: [
         {
           path: manifestPath,
-          content: fixData.updatedManifest
-        }
+          content: fixData.updatedManifest,
+        },
       ],
-      summary: fixData.summary || 'Security fixes applied',
-      breakingChanges: fixData.breakingChanges || []
+      summary: fixData.summary || "Security fixes applied",
+      breakingChanges: fixData.breakingChanges || [],
     };
   } catch (error) {
-    console.log(chalk.red(`  Fix generation failed: ${error instanceof Error ? error.message : String(error)}`));
+    console.log(
+      chalk.red(
+        `  Fix generation failed: ${error instanceof Error ? error.message : String(error)}`,
+      ),
+    );
     return null;
   }
 };
 
 const parseFixResponse = (response: any): any => {
-  // Response comes as CodeIssue[] with extra fields
-  // Try to find the fix data in the response
   if (Array.isArray(response) && response.length > 0) {
     // Check each item for fix data
     for (const item of response) {
@@ -160,7 +168,7 @@ const parseFixResponse = (response: any): any => {
 
       // Check all string fields for JSON
       for (const [key, value] of Object.entries(item)) {
-        if (typeof value === 'string' && value.includes('{')) {
+        if (typeof value === "string" && value.includes("{")) {
           try {
             const parsed = JSON.parse(value);
             if (parsed.updatedManifest || parsed.fixes) return parsed;
@@ -182,12 +190,12 @@ const parseFixResponse = (response: any): any => {
   }
 
   // Try parsing as direct object
-  if (response && typeof response === 'object' && response.updatedManifest) {
+  if (response && typeof response === "object" && response.updatedManifest) {
     return response;
   }
 
   // If response is a string, try to parse it
-  if (typeof response === 'string') {
+  if (typeof response === "string") {
     try {
       const parsed = JSON.parse(response);
       if (parsed.updatedManifest || parsed.fixes) return parsed;
@@ -212,20 +220,20 @@ export const applyFixes = (repoPath: string, fixResults: FixResult[]): void => {
     for (const file of result.updatedFiles) {
       const relativePath = path.relative(repoPath, file.path);
       console.log(chalk.cyan(`  Writing: ${relativePath}`));
-      fs.writeFileSync(file.path, file.content, 'utf-8');
+      fs.writeFileSync(file.path, file.content, "utf-8");
     }
   }
 };
 
 export const createFixBranch = (repoPath: string, branchName: string): void => {
-  execSync(`git checkout -b ${branchName}`, { cwd: repoPath, stdio: 'pipe' });
+  execSync(`git checkout -b ${branchName}`, { cwd: repoPath, stdio: "pipe" });
 };
 
 export const commitFixes = (repoPath: string, fixResults: FixResult[]): void => {
   // Stage all changed files
   for (const result of fixResults) {
     for (const file of result.updatedFiles) {
-      execSync(`git add "${file.path}"`, { cwd: repoPath, stdio: 'pipe' });
+      execSync(`git add "${file.path}"`, { cwd: repoPath, stdio: "pipe" });
     }
   }
 
@@ -235,39 +243,47 @@ export const commitFixes = (repoPath: string, fixResults: FixResult[]): void => 
 
 ${fixResults
   .map(
-    r => `## ${r.project.type} (${path.basename(r.project.path)})
+    (r) => `## ${r.project.type} (${path.basename(r.project.path)})
 ${r.summary}
 
 Changes:
-${r.fixes.map(f => `- ${f.type}: ${f.package}${f.from ? ` ${f.from}` : ''}${f.to ? ` → ${f.to}` : ''}`).join('\n')}
-`
+${r.fixes.map((f) => `- ${f.type}: ${f.package}${f.from ? ` ${f.from}` : ""}${f.to ? ` → ${f.to}` : ""}`).join("\n")}
+`,
   )
-  .join('\n')}
+  .join("\n")}
 
 Generated by Nayan AI`;
 
-  execSync(`git commit -m "${commitMsg.replace(/"/g, '\\"')}"`, { cwd: repoPath, stdio: 'pipe' });
+  execSync(`git commit -m "${commitMsg.replace(/"/g, '\\"')}"`, { cwd: repoPath, stdio: "pipe" });
 };
 
-export const pushBranch = (repoPath: string, branchName: string, token: string, repoInfo: RepoInfo): void => {
+export const pushBranch = (
+  repoPath: string,
+  branchName: string,
+  token: string,
+  repoInfo: RepoInfo,
+): void => {
   const remoteUrl = repoInfo.githubUrl
-    ? `https://${token}@${repoInfo.githubUrl.replace('https://', '')}/${repoInfo.owner}/${repoInfo.repo}.git`
+    ? `https://${token}@${repoInfo.githubUrl.replace("https://", "")}/${repoInfo.owner}/${repoInfo.repo}.git`
     : `https://${token}@github.com/${repoInfo.owner}/${repoInfo.repo}.git`;
 
-  execSync(`git push "${remoteUrl}" ${branchName}`, { cwd: repoPath, stdio: 'pipe' });
+  execSync(`git push "${remoteUrl}" ${branchName}`, { cwd: repoPath, stdio: "pipe" });
 };
 
 export const createPullRequest = async (
   token: string,
   repoInfo: RepoInfo,
   branchName: string,
-  fixResults: FixResult[]
+  fixResults: FixResult[],
 ): Promise<{ number: number; url: string }> => {
-  const baseUrl = repoInfo.githubUrl || 'https://api.github.com';
-  const apiUrl = baseUrl.includes('api.github.com') ? baseUrl : `${baseUrl}/api/v3`;
+  const baseUrl = repoInfo.githubUrl || "https://api.github.com";
+  const apiUrl = baseUrl.includes("api.github.com") ? baseUrl : `${baseUrl}/api/v3`;
 
   const totalVulns = fixResults.reduce((sum, r) => sum + r.fixes.length, 0);
-  const criticalCount = fixResults.reduce((sum, r) => sum + r.fixes.filter(f => f.reason.toLowerCase().includes('critical')).length, 0);
+  const criticalCount = fixResults.reduce(
+    (sum, r) => sum + r.fixes.filter((f) => f.reason.toLowerCase().includes("critical")).length,
+    0,
+  );
 
   const title = `🔒 Security: Fix ${totalVulns} vulnerabilities`;
 
@@ -283,26 +299,26 @@ This PR contains automated fixes for security vulnerabilities detected in your d
 
 ${fixResults
   .map(
-    r => `
+    (r) => `
 #### 📦 ${r.project.type.toUpperCase()} - ${path.basename(r.project.path)}
 
 ${r.summary}
 
 | Type | Package | Change | Reason |
 |------|---------|--------|--------|
-${r.fixes.map(f => `| ${f.type} | \`${f.package}\` | ${f.from ? `${f.from} → ${f.to || 'removed'}` : f.version || '-'} | ${f.reason} |`).join('\n')}
+${r.fixes.map((f) => `| ${f.type} | \`${f.package}\` | ${f.from ? `${f.from} → ${f.to || "removed"}` : f.version || "-"} | ${f.reason} |`).join("\n")}
 
 ${
   r.breakingChanges.length > 0
     ? `
 ⚠️ **Potential Breaking Changes:**
-${r.breakingChanges.map(c => `- ${c}`).join('\n')}
+${r.breakingChanges.map((c) => `- ${c}`).join("\n")}
 `
-    : ''
+    : ""
 }
-`
+`,
   )
-  .join('\n')}
+  .join("\n")}
 
 ### Recommended Actions
 1. Review the changes carefully
@@ -315,18 +331,18 @@ ${r.breakingChanges.map(c => `- ${c}`).join('\n')}
 `;
 
   const response = await fetch(`${apiUrl}/repos/${repoInfo.owner}/${repoInfo.repo}/pulls`, {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
-      Accept: 'application/vnd.github+json',
-      'Content-Type': 'application/json'
+      Accept: "application/vnd.github+json",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       title,
       body,
       head: branchName,
-      base: 'main'
-    })
+      base: "main",
+    }),
   });
 
   if (!response.ok) {
@@ -338,39 +354,44 @@ ${r.breakingChanges.map(c => `- ${c}`).join('\n')}
   return { number: pr.number, url: pr.html_url };
 };
 
-export const runFixWorkflow = async (repoPath: string, repoInfo: RepoInfo, fixResults: FixResult[], options: ScanOptions): Promise<void> => {
+export const runFixWorkflow = async (
+  repoPath: string,
+  repoInfo: RepoInfo,
+  fixResults: FixResult[],
+  options: ScanOptions,
+): Promise<void> => {
   if (fixResults.length === 0) {
-    console.log(chalk.yellow('\n  No fixes to apply'));
+    console.log(chalk.yellow("\n  No fixes to apply"));
     return;
   }
 
-  const branchName = options.branch || 'nayan-ai/security-fixes';
-  let spinner = ora('Creating fix branch...').start();
+  const branchName = options.branch || "nayan-ai/security-fixes";
+  let spinner = ora("Creating fix branch...").start();
 
   try {
     createFixBranch(repoPath, branchName);
     spinner.succeed(`Created branch: ${branchName}`);
 
-    spinner = ora('Applying fixes...').start();
+    spinner = ora("Applying fixes...").start();
     applyFixes(repoPath, fixResults);
-    spinner.succeed('Fixes applied');
+    spinner.succeed("Fixes applied");
 
-    spinner = ora('Committing changes...').start();
+    spinner = ora("Committing changes...").start();
     commitFixes(repoPath, fixResults);
-    spinner.succeed('Changes committed');
+    spinner.succeed("Changes committed");
 
-    spinner = ora('Pushing to remote...').start();
+    spinner = ora("Pushing to remote...").start();
     pushBranch(repoPath, branchName, options.token, repoInfo);
-    spinner.succeed('Pushed to remote');
+    spinner.succeed("Pushed to remote");
 
-    spinner = ora('Creating Pull Request...').start();
+    spinner = ora("Creating Pull Request...").start();
     const pr = await createPullRequest(options.token, repoInfo, branchName, fixResults);
     spinner.succeed(`Pull Request created: #${pr.number}`);
 
     console.log(chalk.green(`\n✅ Fix PR created successfully!`));
     console.log(chalk.cyan(`   ${pr.url}`));
   } catch (error) {
-    spinner.fail('Fix workflow failed');
+    spinner.fail("Fix workflow failed");
     throw error;
   }
 };

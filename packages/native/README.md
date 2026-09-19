@@ -42,9 +42,9 @@ npm install react-native-reanimated react-native-gesture-handler react-native-sa
 Create a `global.css` file in your project:
 
 ```css
-@import 'tailwindcss';
-@import 'uniwind';
-@import 'heroui-native/styles';
+@import "tailwindcss";
+@import "uniwind";
+@import "heroui-native/styles";
 
 @source '../node_modules/heroui-native/lib';
 @source '../node_modules/@nayan-ui/native/src';
@@ -99,20 +99,20 @@ Add light/dark theme tokens to the same `global.css`:
 ### 3. Setup Metro config
 
 ```js
-const { getDefaultConfig } = require('@expo/metro-config');
-const { withUniwindConfig } = require('uniwind/metro');
+const { getDefaultConfig } = require("@expo/metro-config");
+const { withUniwindConfig } = require("uniwind/metro");
 
 const config = getDefaultConfig(__dirname);
 
 module.exports = withUniwindConfig(config, {
-  cssEntryFile: './global.css'
+  cssEntryFile: "./global.css",
 });
 ```
 
 ### 4. Import global CSS in your app entry
 
 ```tsx
-import './global.css';
+import "./global.css";
 ```
 
 ## Usage
@@ -120,9 +120,9 @@ import './global.css';
 Wrap your app with the `NTheme` provider:
 
 ```tsx
-import { View } from 'react-native';
-import { NButton, NText, NTheme, NThemeToggle, THEMES, useNTheme } from '@nayan-ui/native';
-import './global.css';
+import { View } from "react-native";
+import { NButton, NText, NTheme, NThemeToggle, THEMES, useNTheme } from "@nayan-ui/native";
+import "./global.css";
 
 export default function App() {
   const { isDarkMode, setTheme } = useNTheme();
@@ -132,7 +132,9 @@ export default function App() {
       <View className="flex-1 justify-center items-center bg-background gap-4">
         <NText className="text-3xl font-bold text-foreground">Nayan UI</NText>
         <NText className="text-muted">React Native Component Library</NText>
-        <NButton onPress={() => setTheme(isDarkMode ? THEMES.light : THEMES.dark)}>Toggle Theme</NButton>
+        <NButton onPress={() => setTheme(isDarkMode ? THEMES.light : THEMES.dark)}>
+          Toggle Theme
+        </NButton>
         <NThemeToggle />
       </View>
     </NTheme>

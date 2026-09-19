@@ -14,8 +14,7 @@ README.md
 .env.test.local
 .env.development.local
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+bun.lockb
 .DS_Store
 .vscode
 .idea

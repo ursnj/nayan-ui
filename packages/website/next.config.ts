@@ -1,11 +1,11 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@nayan-ui/react'],
+  transpilePackages: ["@nayan-ui/react"],
   images: {
-    unoptimized: true
+    unoptimized: true,
   },
-  output: 'standalone',
+  output: "standalone",
   async rewrites() {
     // The video editor is a static Vite bundle living in
     // public/video-editor/start, so Next serves its files by exact path. The
@@ -16,10 +16,10 @@ const nextConfig: NextConfig = {
     // after the filesystem, and /video-editor/start matches no page, so it
     // falls through to here rather than being shadowed.
     return [
-      { source: '/video-editor/start', destination: '/video-editor/start/index.html' },
-      { source: '/video-editor/start/', destination: '/video-editor/start/index.html' }
+      { source: "/video-editor/start", destination: "/video-editor/start/index.html" },
+      { source: "/video-editor/start/", destination: "/video-editor/start/index.html" },
     ];
-  }
+  },
 };
 
 export default nextConfig;

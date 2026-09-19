@@ -1,10 +1,15 @@
-/**
- * Utility Service - Validation functions for CLI options
- */
-import { existsSync } from 'fs';
-import { URL } from 'url';
+import { existsSync } from "fs";
+import { URL } from "url";
 
-const VALID_CHANGEFREQ = ['always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never'] as const;
+const VALID_CHANGEFREQ = [
+  "always",
+  "hourly",
+  "daily",
+  "weekly",
+  "monthly",
+  "yearly",
+  "never",
+] as const;
 const MIN_DEPTH = 1;
 
 /**
@@ -29,7 +34,7 @@ export const validateDepth = (depth: string): number => {
  */
 export const validateChangefreq = (changefreq: string): string => {
   if (!VALID_CHANGEFREQ.includes(changefreq as any)) {
-    throw new Error(`Invalid changefreq. Accepted values: ${VALID_CHANGEFREQ.join(', ')}`);
+    throw new Error(`Invalid changefreq. Accepted values: ${VALID_CHANGEFREQ.join(", ")}`);
   }
   return changefreq;
 };
@@ -56,8 +61,8 @@ export const validateWebsite = (website: string): string => {
  * @throws Error if directory doesn't exist
  */
 export const validateOutput = (output: string): string => {
-  const pathParts = output.split('/');
-  const dirPath = pathParts.slice(0, -1).join('/');
+  const pathParts = output.split("/");
+  const dirPath = pathParts.slice(0, -1).join("/");
 
   if (dirPath && !existsSync(dirPath)) {
     throw new Error(`Directory does not exist: ${dirPath}`);

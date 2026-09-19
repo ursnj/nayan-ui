@@ -1,7 +1,7 @@
 # Nayan UI - Component Library Documentation
 
 ## Project Overview
-Nayan UI is a comprehensive, enterprise-grade UI component library for React and React Native applications. It provides 30+ high-quality, reusable components with TypeScript-first development, advanced theming, and cross-platform compatibility.
+Nayan UI is a comprehensive, enterprise-grade UI component library for React and React Native applications. It provides 58 documented components — 35 for React and 23 for React Native — with TypeScript-first development, CSS-variable theming, and cross-platform compatibility.
 
 **Website**: https://www.nayanui.com
 **Repository**: https://github.com/ursnj/nayan-ui

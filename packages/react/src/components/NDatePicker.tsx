@@ -1,6 +1,6 @@
-import React, { ReactNode, memo } from 'react';
-import { Calendar, DateField, DatePicker, Description, FieldError, Label } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { ReactNode, memo } from "react";
+import { Calendar, DateField, DatePicker, Description, FieldError, Label } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NDatePickerProps {
   value?: any;
@@ -11,13 +11,13 @@ export interface NDatePickerProps {
   isInvalid?: boolean;
   minValue?: any;
   maxValue?: any;
-  granularity?: 'day' | 'hour' | 'minute' | 'second';
+  granularity?: "day" | "hour" | "minute" | "second";
   className?: string;
   wrapperClassName?: string;
   labelClassName?: string;
   error?: ReactNode;
   helperText?: ReactNode;
-  'aria-label'?: string;
+  "aria-label"?: string;
 }
 
 const NDatePickerComponent: React.FC<NDatePickerProps> = memo(
@@ -30,13 +30,13 @@ const NDatePickerComponent: React.FC<NDatePickerProps> = memo(
     isInvalid = false,
     minValue,
     maxValue,
-    granularity = 'day',
-    className = '',
-    wrapperClassName = '',
-    labelClassName = '',
+    granularity = "day",
+    className = "",
+    wrapperClassName = "",
+    labelClassName = "",
     error,
     helperText,
-    'aria-label': ariaLabel = 'Date'
+    "aria-label": ariaLabel = "Date",
   }) => {
     return (
       <DatePicker
@@ -48,11 +48,14 @@ const NDatePickerComponent: React.FC<NDatePickerProps> = memo(
         minValue={minValue}
         maxValue={maxValue}
         granularity={granularity}
-        className={cn('nyn-date-picker mb-3 w-full', wrapperClassName, className)}
-        aria-label={ariaLabel}>
+        className={cn("nyn-date-picker mb-3 w-full", wrapperClassName, className)}
+        aria-label={ariaLabel}
+      >
         {label && <Label className={cn(labelClassName)}>{label}</Label>}
         <DateField.Group>
-          <DateField.Input>{(segment: any) => <DateField.Segment segment={segment} />}</DateField.Input>
+          <DateField.Input>
+            {(segment: any) => <DateField.Segment segment={segment} />}
+          </DateField.Input>
           <DateField.Suffix>
             <DatePicker.Trigger>
               <DatePicker.TriggerIndicator />
@@ -69,16 +72,18 @@ const NDatePickerComponent: React.FC<NDatePickerProps> = memo(
               <Calendar.NavButton slot="next" />
             </Calendar.Header>
             <Calendar.Grid>
-              <Calendar.GridHeader>{(day: any) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}</Calendar.GridHeader>
+              <Calendar.GridHeader>
+                {(day: any) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
+              </Calendar.GridHeader>
               <Calendar.GridBody>{(date: any) => <Calendar.Cell date={date} />}</Calendar.GridBody>
             </Calendar.Grid>
           </Calendar>
         </DatePicker.Popover>
       </DatePicker>
     );
-  }
+  },
 );
 
-NDatePickerComponent.displayName = 'NDatePicker';
+NDatePickerComponent.displayName = "NDatePicker";
 
 export const NDatePicker = NDatePickerComponent;

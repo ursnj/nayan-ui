@@ -1,6 +1,6 @@
-import React, { ReactNode, forwardRef, memo } from 'react';
-import { Tooltip } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { ReactNode, forwardRef, memo } from "react";
+import { Tooltip } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NTooltipProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Tooltip message or node */
@@ -12,7 +12,7 @@ export interface NTooltipProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Tooltip trigger element */
   children: ReactNode;
   /** Placement of the tooltip */
-  placement?: 'top' | 'bottom' | 'left' | 'right';
+  placement?: "top" | "bottom" | "left" | "right";
   /** Delay in ms before showing/hiding */
   delayShow?: number;
   delayHide?: number;
@@ -26,18 +26,15 @@ export interface NTooltipProps extends React.HTMLAttributes<HTMLDivElement> {
   contentProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
-/**
- * NTooltip is a memoized, accessible tooltip component.
- */
 export const NTooltip: React.FC<NTooltipProps> = memo(
   forwardRef<HTMLDivElement, NTooltipProps>(
     (
       {
         message,
-        className = '',
-        triggerClassName = '',
+        className = "",
+        triggerClassName = "",
         children,
-        placement = 'top',
+        placement = "top",
         delayShow = 0,
         delayHide = 0,
         id,
@@ -46,11 +43,15 @@ export const NTooltip: React.FC<NTooltipProps> = memo(
         contentProps = {},
         ...rest
       },
-      ref
+      ref,
     ) => {
       return (
         <Tooltip delay={delayShow} closeDelay={delayHide}>
-          <Tooltip.Trigger {...triggerProps} className={cn(triggerClassName, triggerProps.className)} aria-describedby={id}>
+          <Tooltip.Trigger
+            {...triggerProps}
+            className={cn(triggerClassName, triggerProps.className)}
+            aria-describedby={id}
+          >
             {children}
           </Tooltip.Trigger>
           <Tooltip.Content
@@ -60,12 +61,13 @@ export const NTooltip: React.FC<NTooltipProps> = memo(
             aria-label={ariaLabel}
             {...rest}
             {...contentProps}
-            className={cn('nyn-tooltip', className, contentProps.className)}>
+            className={cn("nyn-tooltip", className, contentProps.className)}
+          >
             {message}
           </Tooltip.Content>
         </Tooltip>
       );
-    }
-  )
+    },
+  ),
 );
-NTooltip.displayName = 'NTooltip';
+NTooltip.displayName = "NTooltip";
