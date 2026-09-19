@@ -991,5 +991,15 @@ export const gamesSidebarItems = [
   { title: 'Snakes and Ladders', description: 'Classic dice board game', link: '/games/snakes-and-ladders', icon: Gamepad2 },
   { title: 'Find Different Number', description: 'Spot the odd number', link: '/games/find-different-number', icon: Gamepad2 },
   { title: 'Arrows', description: 'Clear arrows off the board', link: '/games/arrows', icon: Gamepad2 },
-  { title: 'Pipe Connect', description: 'Pipe rotation puzzle', link: '/games/pipe-connect', icon: Gamepad2 }
+  { title: 'Pipe Connect', description: 'Pipe rotation puzzle', link: '/games/pipe-connect', icon: Gamepad2 },
+  { title: 'Bluk', description: 'Block slinging platformer', link: '/games/bluk', icon: Gamepad2 },
+  { title: 'Chameleon Run', description: 'Color matching runner', link: '/games/chameleon-run', icon: Gamepad2 },
+  { title: 'Crossy Road', description: 'Endless road crossing', link: '/games/crossy-road', icon: Gamepad2 },
+  { title: 'Mob Control', description: 'Multiplier mob strategy', link: '/games/mob-control', icon: Gamepad2 },
+  { title: 'Paper IO', description: 'Territory claiming action', link: '/games/paper-io', icon: Gamepad2 },
+  { title: 'Tangram', description: 'Classic shape puzzle', link: '/games/tangram', icon: Gamepad2 },
+  { title: 'Checkers', description: 'Classic board strategy', link: '/games/checkers', icon: Gamepad2 },
+  { title: 'Memory Match', description: 'Card flipping memory', link: '/games/memory-match', icon: Gamepad2 },
+  { title: 'Falling Sticks', description: 'Colorful stick catcher', link: '/games/falling-sticks', icon: Gamepad2 },
+  { title: 'Reversi', description: 'Classic Othello strategy', link: '/games/reversi', icon: Gamepad2 }
 ];
