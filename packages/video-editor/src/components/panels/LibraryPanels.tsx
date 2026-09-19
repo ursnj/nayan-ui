@@ -1,8 +1,7 @@
-import { showToast } from '@nayan-ui/react';
+import { NButton, cn, showToast } from '@nayan-ui/react';
 import { Sparkles } from 'lucide-react';
 import { TRANSITION_PREVIEW_GRADIENT } from '../../engine/transitions';
 import { TEXT_PRESETS } from '../../lib/factories';
-import { cn } from '../../lib/utils';
 import { useEditor } from '../../store/editor';
 import { BACKGROUND_LABELS, COLOR_PRESETS, GRADIENT_PRESETS, TRANSITION_LABELS } from '../../types';
 import type { Background, BackgroundKind, TransitionKind } from '../../types';
@@ -233,12 +232,12 @@ export const TransitionsPanel = () => {
       </div>
 
       {target?.transitionIn && (
-        <button
-          type="button"
+        <NButton
+          isOutline
           onClick={() => setTransition(target.id, null)}
-          className="mt-3 w-full rounded-md border border-border py-1.5 text-[11px] text-muted transition-colors hover:border-danger hover:text-danger">
+          className="mt-3 w-full text-[11px] text-muted hover:border-danger hover:text-danger">
           Remove transition
-        </button>
+        </NButton>
       )}
     </div>
   );

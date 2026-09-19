@@ -79,6 +79,15 @@ export default defineConfig({
      */
     exclude: ['@nayan-ui/react']
   },
+  resolve: {
+    /*
+     * @nayan-ui/react is excluded from pre-bundling so library rebuilds are
+     * picked up immediately. That means Vite serves the library as raw ESM,
+     * and its transitive `react` import can resolve to a second copy. Deduping
+     * forces every import of React to the same instance.
+     */
+    dedupe: ['react', 'react-dom']
+  },
   base: BASE,
   build: {
     outDir: fileURLToPath(new URL('../website/public/video-editor/start', import.meta.url)),

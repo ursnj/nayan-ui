@@ -14,7 +14,8 @@ import {
   Volume2,
   Wand2
 } from 'lucide-react';
-import { cn, formatTimecode } from '../../lib/utils';
+import { NBadge, NChip, cn } from '@nayan-ui/react';
+import { formatTimecode } from '../../lib/utils';
 import { primarySelectedClip, useEditor } from '../../store/editor';
 import {
   COLOR_PRESETS,
@@ -88,7 +89,7 @@ export const Inspector = () => {
     <aside className="island flex h-full min-h-0 flex-col">
       <header className="flex items-center gap-2 border-b border-border px-3 py-2.5">
         <h2 className="flex-1 text-[11px] font-semibold uppercase tracking-wider text-muted">Properties</h2>
-        {selectionCount > 1 && <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[10px] text-accent">{selectionCount} selected</span>}
+        {selectionCount > 1 && <NBadge color="accent" variant="soft" size="sm" className="text-[10px]">{selectionCount} selected</NBadge>}
       </header>
 
       {!clip ? (
@@ -124,7 +125,7 @@ const ClipHeader = ({ clip }: { clip: Clip }) => (
       <p data-clarity-mask="true" className="min-w-0 flex-1 truncate text-xs font-medium text-foreground" title={clip.name}>
         {clip.name}
       </p>
-      <span className="shrink-0 rounded bg-surface-secondary px-1.5 py-0.5 text-[10px] capitalize text-muted">{clip.kind}</span>
+      <NChip size="sm" variant="secondary" className="shrink-0 capitalize text-[10px]">{clip.kind}</NChip>
     </div>
     <p className="mt-1 font-mono text-[10px] tabular-nums text-muted">
       {formatTimecode(clip.startUs)} → {formatTimecode(clipEndUs(clip))} · {(clip.durationUs / US).toFixed(2)}s

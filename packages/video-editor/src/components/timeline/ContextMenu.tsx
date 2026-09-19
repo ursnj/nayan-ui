@@ -1,6 +1,6 @@
+import { cn } from '@nayan-ui/react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { cn } from '../../lib/utils';
 
 export interface MenuItem {
   label: string;

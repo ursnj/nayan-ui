@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { cn, pickTickInterval } from '../../lib/utils';
+import { cn } from '@nayan-ui/react';
+import { pickTickInterval } from '../../lib/utils';
 import { useEditor } from '../../store/editor';
 import { US } from '../../types';
 import { HEADER_WIDTH, RULER_HEIGHT, VIRTUALISE_OVERSCAN_PX } from './constants';

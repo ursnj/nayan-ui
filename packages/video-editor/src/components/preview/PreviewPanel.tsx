@@ -199,6 +199,7 @@ export const PreviewPanel = () => {
             value={volume}
             min={0}
             max={100}
+            showOutput={false}
             onChange={setVolume}
             className="mb-0 hidden w-16 @[370px]:block @[600px]:w-24"
             aria-label="Preview volume"

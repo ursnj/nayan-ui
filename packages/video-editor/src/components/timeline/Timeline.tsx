@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { NButton } from '@nayan-ui/react';
+import { NButton, cn } from '@nayan-ui/react';
 import {
   Copy,
   Expand,
@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { player, seekTo } from '../../engine/playerInstance';
 import { MOD_LABEL, useCommand } from '../../lib/shortcuts';
-import { clamp, cn } from '../../lib/utils';
+import { clamp } from '../../lib/utils';
 import { canSplitAt, readEditorState, timelineDurationUs, useEditor } from '../../store/editor';
 import { MEDIA_FIT_LABELS, US, clipEndUs, isMediaClip } from '../../types';
 import type { Clip, MediaFit, Track } from '../../types';
