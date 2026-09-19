@@ -38,7 +38,7 @@ const FEATURES = [
 ];
 
 const EditorScreenshot = () => (
-  <div className={`${CARD} overflow-hidden p-1.5 shadow-xl shadow-indigo-500/5`}>
+  <div className={`${CARD} overflow-hidden p-1.5 shadow-xl shadow-indigo-500/5 lg:scale-110 lg:translate-x-4`}>
     <img
       src="/video-editor/editor-light.png"
       alt="The Nayan UI video editor: a media library on the left, the preview in the middle, clip properties on the right and a multi-track timeline along the bottom."
