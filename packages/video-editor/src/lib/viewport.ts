@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
  * a thousand pixels the layout does not degrade, it stops working — so the
  * honest thing is to say so rather than render something unusable.
  */
-export const MIN_APP_WIDTH = 1024;
+export const MIN_APP_WIDTH = 950;
 
 /** True while the viewport is wide enough for the editor. */
 export const useHasRoom = () => {
