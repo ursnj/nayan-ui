@@ -1,8 +1,8 @@
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useNTheme } from '@nayan-ui/native';
-import { Stack } from 'expo-router';
-import { HeroUINativeProvider } from 'heroui-native';
-import '../src/global.css';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useNTheme } from "@nayan-ui/native";
+import { Stack } from "expo-router";
+import { HeroUINativeProvider } from "heroui-native";
+import "../src/global.css";
 
 function AppStack() {
   const { headerConfig } = useNTheme();

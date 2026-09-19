@@ -1,11 +1,11 @@
-import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
-import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
-import type { Plugin } from 'vite';
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import { fileURLToPath } from "node:url";
+import { defineConfig } from "vite";
+import type { Plugin } from "vite";
 
 /** Where the editor is served from, in dev and in production alike. */
-const BASE = '/video-editor/start/';
+const BASE = "/video-editor/start/";
 
 /**
  * Serves the base path without its trailing slash, in dev.
@@ -26,16 +26,16 @@ const BASE = '/video-editor/start/';
  * of the 404.
  */
 const serveBareBase = (): Plugin => ({
-  name: 'editor-serve-bare-base',
-  apply: 'serve',
+  name: "editor-serve-bare-base",
+  apply: "serve",
   configureServer(server) {
     const bare = BASE.slice(0, -1);
     server.middlewares.use((request, _response, next) => {
-      const [path, query] = (request.url ?? '').split('?');
+      const [path, query] = (request.url ?? "").split("?");
       if (path === bare) request.url = query ? `${BASE}?${query}` : BASE;
       next();
     });
-  }
+  },
 });
 
 /**
@@ -68,7 +68,7 @@ export default defineConfig({
      */
     react({ compiler: { logDiagnostics: true } }),
     tailwindcss(),
-    serveBareBase()
+    serveBareBase(),
   ],
   optimizeDeps: {
     /*
@@ -77,7 +77,7 @@ export default defineConfig({
      * library is rebuilt — so library fixes silently don't reach the dev
      * server until someone clears .vite by hand.
      */
-    exclude: ['@nayan-ui/react']
+    exclude: ["@nayan-ui/react"],
   },
   resolve: {
     /*
@@ -86,12 +86,12 @@ export default defineConfig({
      * and its transitive `react` import can resolve to a second copy. Deduping
      * forces every import of React to the same instance.
      */
-    dedupe: ['react', 'react-dom']
+    dedupe: ["react", "react-dom"],
   },
   base: BASE,
   build: {
-    outDir: fileURLToPath(new URL('../website/public/video-editor/start', import.meta.url)),
+    outDir: fileURLToPath(new URL("../website/public/video-editor/start", import.meta.url)),
     // Vite refuses to clear an outDir outside the package root unless asked.
-    emptyOutDir: true
-  }
+    emptyOutDir: true,
+  },
 });

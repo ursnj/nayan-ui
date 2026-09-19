@@ -1,44 +1,52 @@
-import { spawn } from 'child_process';
-import { type CodexEvent, processCodexEvent, resetLogState } from './logs.js';
-import type { CodeIssue } from './types.js';
+import { spawn } from "child_process";
+import { type CodexEvent, processCodexEvent, resetLogState } from "./logs.js";
+import type { CodeIssue } from "./types.js";
 
 export interface CodexOptions {
   verbose?: boolean;
 }
 
-export const analyzeWithCodex = async (repoPath: string, prompt: string, options: CodexOptions): Promise<CodeIssue[]> => {
+export const analyzeWithCodex = async (
+  repoPath: string,
+  prompt: string,
+  options: CodexOptions,
+): Promise<CodeIssue[]> => {
   const response = await runCodexExec(repoPath, prompt, options);
   return parseCodexResponse(response);
 };
 
-export const analyzeWithCodexRaw = async (repoPath: string, prompt: string, options: CodexOptions): Promise<any> => {
+export const analyzeWithCodexRaw = async (
+  repoPath: string,
+  prompt: string,
+  options: CodexOptions,
+): Promise<any> => {
   const response = await runCodexExec(repoPath, prompt, options);
   return parseCodexResponseRaw(response);
 };
 
 const runCodexExec = (repoPath: string, prompt: string, options: CodexOptions): Promise<string> =>
   new Promise((resolve, reject) => {
-    const args = ['@openai/codex', 'exec', '--json', '--full-auto', prompt];
+    const args = ["@openai/codex", "exec", "--json", "--full-auto", prompt];
 
     if (options.verbose) {
-      console.log(`\n[Codex] Running: npx ${args.join(' ')}`);
+      console.log(`\n[Codex] Running: npx ${args.join(" ")}`);
       console.log(`[Codex] Working directory: ${repoPath}`);
     }
 
     const startTime = Date.now();
-    const child = spawn('npx', args, { cwd: repoPath, stdio: ['pipe', 'pipe', 'pipe'] });
+    const child = spawn("npx", args, { cwd: repoPath, stdio: ["pipe", "pipe", "pipe"] });
 
-    let stdout = '';
-    let stderr = '';
+    let stdout = "";
+    let stderr = "";
 
     resetLogState();
 
-    child.stdout.on('data', data => {
+    child.stdout.on("data", (data) => {
       const chunk = data.toString();
       stdout += chunk;
 
       chunk
-        .split('\n')
+        .split("\n")
         .filter(Boolean)
         .forEach((line: string) => {
           try {
@@ -54,25 +62,29 @@ const runCodexExec = (repoPath: string, prompt: string, options: CodexOptions): 
         });
     });
 
-    child.stderr.on('data', data => {
+    child.stderr.on("data", (data) => {
       const chunk = data.toString();
       stderr += chunk;
       if (options.verbose) process.stderr.write(chunk);
     });
 
-    child.on('close', code => {
+    child.on("close", (code) => {
       console.log(`\n[Codex] Completed in ${((Date.now() - startTime) / 1000).toFixed(1)}s`);
 
       if (code !== 0) {
-        reject(new Error(`Codex review failed (exit ${code}): ${(stderr || stdout || 'Unknown error').slice(0, 500)}`));
+        reject(
+          new Error(
+            `Codex review failed (exit ${code}): ${(stderr || stdout || "Unknown error").slice(0, 500)}`,
+          ),
+        );
         return;
       }
       resolve(stdout);
     });
 
-    child.on('error', err => {
-      if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
-        reject(new Error('npx not found. Install Node.js/npm (Node 18+) to run nayan-ai.'));
+    child.on("error", (err) => {
+      if ((err as NodeJS.ErrnoException).code === "ENOENT") {
+        reject(new Error("npx not found. Install Node.js/npm (Node 18+) to run nayan-ai."));
         return;
       }
       reject(err);
@@ -80,10 +92,10 @@ const runCodexExec = (repoPath: string, prompt: string, options: CodexOptions): 
   });
 
 const mapIssue = (item: any): CodeIssue & Record<string, any> => ({
-  filename: item.filename || item.package || 'unknown',
+  filename: item.filename || item.package || "unknown",
   line: item.line || 0,
-  category: item.category || 'functionality',
-  severity: item.severity || 'info',
+  category: item.category || "functionality",
+  severity: item.severity || "info",
   message: item.message || item.title || item.description,
   suggestion: item.suggestion || item.fixedIn,
   // Preserve vulnerability-specific fields for scan command
@@ -92,7 +104,7 @@ const mapIssue = (item: any): CodeIssue & Record<string, any> => ({
   title: item.title,
   description: item.description,
   fixedIn: item.fixedIn,
-  cve: item.cve
+  cve: item.cve,
 });
 
 const extractItems = (json: any): any[] => {
@@ -102,14 +114,18 @@ const extractItems = (json: any): any[] => {
 };
 
 const parseCodexResponse = (response: string): CodeIssue[] => {
-  const lines = response.split('\n').filter(Boolean);
+  const lines = response.split("\n").filter(Boolean);
   const allIssues: CodeIssue[] = [];
 
   // First pass: look for agent_message with JSON
   for (const line of lines) {
     try {
       const event = JSON.parse(line);
-      if (event.type === 'item.completed' && event.item?.type === 'agent_message' && event.item.text) {
+      if (
+        event.type === "item.completed" &&
+        event.item?.type === "agent_message" &&
+        event.item.text
+      ) {
         const text = event.item.text;
 
         // Try to parse the text as JSON directly
@@ -120,15 +136,17 @@ const parseCodexResponse = (response: string): CodeIssue[] => {
           if (parsed.fixes || parsed.updatedManifest) {
             return [
               {
-                ...mapIssue({ message: 'Fix response' }),
-                _rawFixData: parsed
-              } as any
+                ...mapIssue({ message: "Fix response" }),
+                _rawFixData: parsed,
+              } as any,
             ];
           }
 
           const items = extractItems(parsed);
           if (items.length > 0) {
-            return items.filter((item: any) => item.message || item.package || item.title).map(mapIssue);
+            return items
+              .filter((item: any) => item.message || item.package || item.title)
+              .map(mapIssue);
           }
         } catch {
           // Text is not valid JSON, try to extract JSON from it
@@ -138,7 +156,9 @@ const parseCodexResponse = (response: string): CodeIssue[] => {
               const parsed = JSON.parse(jsonMatch[0]);
               const items = extractItems(parsed);
               if (items.length > 0) {
-                return items.filter((item: any) => item.message || item.package || item.title).map(mapIssue);
+                return items
+                  .filter((item: any) => item.message || item.package || item.title)
+                  .map(mapIssue);
               }
             } catch {
               // ignore
@@ -156,7 +176,7 @@ const parseCodexResponse = (response: string): CodeIssue[] => {
     try {
       const event = JSON.parse(line);
       // Check reasoning items too - sometimes the JSON is there
-      if (event.type === 'item.completed' && event.item?.text) {
+      if (event.type === "item.completed" && event.item?.text) {
         const text = event.item.text;
         const jsonMatch = text.match(/\{\s*"issues"\s*:\s*\[[\s\S]*?\]\s*\}/);
         if (jsonMatch) {
@@ -164,7 +184,11 @@ const parseCodexResponse = (response: string): CodeIssue[] => {
             const parsed = JSON.parse(jsonMatch[0]);
             const items = extractItems(parsed);
             if (items.length > 0) {
-              allIssues.push(...items.filter((item: any) => item.message || item.package || item.title).map(mapIssue));
+              allIssues.push(
+                ...items
+                  .filter((item: any) => item.message || item.package || item.title)
+                  .map(mapIssue),
+              );
             }
           } catch {
             // ignore
@@ -188,9 +212,9 @@ const parseCodexResponse = (response: string): CodeIssue[] => {
       if (parsed.fixes || parsed.updatedManifest) {
         return [
           {
-            ...mapIssue({ message: 'Fix response' }),
-            _rawFixData: parsed
-          } as any
+            ...mapIssue({ message: "Fix response" }),
+            _rawFixData: parsed,
+          } as any,
         ];
       }
     } catch {
@@ -205,7 +229,9 @@ const parseCodexResponse = (response: string): CodeIssue[] => {
       const parsed = JSON.parse(match[0]);
       const items = extractItems(parsed);
       if (items.length > 0) {
-        return items.filter((item: any) => item.message || item.package || item.title).map(mapIssue);
+        return items
+          .filter((item: any) => item.message || item.package || item.title)
+          .map(mapIssue);
       }
     } catch {
       // ignore
@@ -216,12 +242,16 @@ const parseCodexResponse = (response: string): CodeIssue[] => {
 };
 
 const parseCodexResponseRaw = (response: string): any => {
-  const lines = response.split('\n').filter(Boolean);
+  const lines = response.split("\n").filter(Boolean);
 
   for (const line of lines) {
     try {
       const event = JSON.parse(line);
-      if (event.type === 'item.completed' && event.item?.type === 'agent_message' && event.item.text) {
+      if (
+        event.type === "item.completed" &&
+        event.item?.type === "agent_message" &&
+        event.item.text
+      ) {
         try {
           return JSON.parse(event.item.text);
         } catch {
@@ -235,7 +265,9 @@ const parseCodexResponseRaw = (response: string): any => {
   }
 
   // Try to find any JSON object in the response
-  const jsonMatch = response.match(/\{[\s\S]*"(?:fixes|updatedManifest|issues|vulnerabilities)"[\s\S]*\}/);
+  const jsonMatch = response.match(
+    /\{[\s\S]*"(?:fixes|updatedManifest|issues|vulnerabilities)"[\s\S]*\}/,
+  );
   if (jsonMatch) {
     try {
       return JSON.parse(jsonMatch[0]);

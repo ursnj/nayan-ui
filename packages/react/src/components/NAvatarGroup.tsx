@@ -1,7 +1,7 @@
-import React, { ReactNode, memo } from 'react';
-import { AvatarGroup } from '@heroui/react';
-import { cn } from '../lib/utils';
-import { NAvatar } from './NAvatar';
+import React, { ReactNode, memo } from "react";
+import { AvatarGroup } from "@heroui/react";
+import { cn } from "../lib/utils";
+import { NAvatar } from "./NAvatar";
 
 export interface NAvatarGroupItem {
   src?: string;
@@ -13,11 +13,11 @@ export interface NAvatarGroupProps {
   items: NAvatarGroupItem[];
   /** Avatars shown before the rest are collapsed into a count. */
   max?: number;
-  size?: 'sm' | 'md' | 'lg';
-  color?: 'default' | 'accent' | 'success' | 'warning' | 'danger';
-  variant?: 'default' | 'soft';
+  size?: "sm" | "md" | "lg";
+  color?: "default" | "accent" | "success" | "warning" | "danger";
+  variant?: "default" | "soft";
   /** How the avatars meet: overlapping with a ring, or clipped into each other. */
-  overlap?: 'clip' | 'ring';
+  overlap?: "clip" | "ring";
   /** Lays the avatars out in a grid instead of an overlapping row. */
   isGrid?: boolean;
   className?: string;
@@ -25,7 +25,17 @@ export interface NAvatarGroupProps {
 }
 
 const NAvatarGroupComponent: React.FC<NAvatarGroupProps> = memo(
-  ({ items, max, size = 'md', color = 'default', variant = 'default', overlap = 'ring', isGrid = false, className = '', avatarClassName = '' }) => {
+  ({
+    items,
+    max,
+    size = "md",
+    color = "default",
+    variant = "default",
+    overlap = "ring",
+    isGrid = false,
+    className = "",
+    avatarClassName = "",
+  }) => {
     return (
       <AvatarGroup
         max={max}
@@ -34,10 +44,11 @@ const NAvatarGroupComponent: React.FC<NAvatarGroupProps> = memo(
         variant={variant}
         overlap={overlap}
         isGrid={isGrid}
-        className={cn('nyn-avatar-group', className)}>
+        className={cn("nyn-avatar-group", className)}
+      >
         {items.map((item, index) => (
           <NAvatar
-            key={`${item.src ?? ''}-${index}`}
+            key={`${item.src ?? ""}-${index}`}
             src={item.src}
             alt={item.alt}
             fallback={item.fallback}
@@ -49,9 +60,9 @@ const NAvatarGroupComponent: React.FC<NAvatarGroupProps> = memo(
         ))}
       </AvatarGroup>
     );
-  }
+  },
 );
 
-NAvatarGroupComponent.displayName = 'NAvatarGroup';
+NAvatarGroupComponent.displayName = "NAvatarGroup";
 
 export const NAvatarGroup = NAvatarGroupComponent;

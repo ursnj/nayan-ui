@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { clamp } from '../../lib/utils';
-import { getAudioBuffer, getFilmstrip, getPeaks, requestFilmstrip } from '../../media/library';
-import type { MediaClip } from '../../types';
+import { useEffect, useState } from "react";
+import { clamp } from "../../lib/utils";
+import { getAudioBuffer, getFilmstrip, getPeaks, requestFilmstrip } from "../../media/library";
+import type { MediaClip } from "../../types";
 
 /** Stable identity for "no strip", so a clip body isn't handed a new array each render. */
 const NO_FRAMES: string[] = [];
@@ -22,7 +22,7 @@ const MIN_TILE_PX = 96;
 const MAX_TILE_PX = 384;
 
 const tileResolution = (tileCssWidth: number) => {
-  const dpr = typeof window === 'undefined' ? 1 : Math.min(2, window.devicePixelRatio || 1);
+  const dpr = typeof window === "undefined" ? 1 : Math.min(2, window.devicePixelRatio || 1);
   return clamp(Math.ceil((tileCssWidth * dpr) / TILE_STEP) * TILE_STEP, MIN_TILE_PX, MAX_TILE_PX);
 };
 
@@ -35,8 +35,13 @@ export interface ClipFilmstrip {
   tileCount: number;
 }
 
-export const useFilmstrip = (clip: MediaClip, widthPx: number, rowHeightPx: number, aspect: number): ClipFilmstrip => {
-  const wanted = clip.kind === 'video';
+export const useFilmstrip = (
+  clip: MediaClip,
+  widthPx: number,
+  rowHeightPx: number,
+  aspect: number,
+): ClipFilmstrip => {
+  const wanted = clip.kind === "video";
   const tileWidth = clamp(Math.round(rowHeightPx * aspect), MIN_TILE_CSS, MAX_TILE_CSS);
   const tileCount = Math.max(1, Math.ceil(widthPx / tileWidth));
   const count = Math.min(tileCount, MAX_DECODED_FRAMES);
@@ -57,12 +62,15 @@ export const useFilmstrip = (clip: MediaClip, widthPx: number, rowHeightPx: numb
     const controller = new AbortController();
     const timer = window.setTimeout(
       async () => {
-        const strip = await requestFilmstrip({ key, assetId: clip.assetId, fromUs: clip.inUs, toUs: sourceEndUs, count, tilePx }, controller.signal);
+        const strip = await requestFilmstrip(
+          { key, assetId: clip.assetId, fromUs: clip.inUs, toUs: sourceEndUs, count, tilePx },
+          controller.signal,
+        );
         if (controller.signal.aborted) return;
         if (strip === null) setRetry({ key, attempt: attempt + 1 });
         else if (strip.length > 0) setGenerated({ key, frames: strip });
       },
-      Math.min(DEBOUNCE_MS * (attempt + 1), MAX_RETRY_MS)
+      Math.min(DEBOUNCE_MS * (attempt + 1), MAX_RETRY_MS),
     );
 
     return () => {

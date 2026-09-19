@@ -1,24 +1,39 @@
-import React, { forwardRef, memo } from 'react';
-import { ProgressBar } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { forwardRef, memo } from "react";
+import { ProgressBar } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NProgressProps {
   value: number;
   className?: string;
   label?: string;
   showLabel?: boolean;
-  color?: 'default' | 'accent' | 'success' | 'warning' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
+  color?: "default" | "accent" | "success" | "warning" | "danger";
+  size?: "sm" | "md" | "lg";
 }
 
 export const NProgress = memo(
   forwardRef<HTMLDivElement, NProgressProps>((props, ref) => {
-    const { value, className = '', label = 'Progress', showLabel = false, color = 'accent', size = 'md', ...rest } = props;
+    const {
+      value,
+      className = "",
+      label = "Progress",
+      showLabel = false,
+      color = "accent",
+      size = "md",
+      ...rest
+    } = props;
     const clampedValue = Math.max(0, Math.min(100, value));
 
     return (
-      <div className="nyn-progress-wrapper" style={{ width: '100%' }} ref={ref}>
-        <ProgressBar value={clampedValue} color={color} size={size} aria-label={label} className={cn('nyn-progress', className)} {...(rest as any)}>
+      <div className="nyn-progress-wrapper" style={{ width: "100%" }} ref={ref}>
+        <ProgressBar
+          value={clampedValue}
+          color={color}
+          size={size}
+          aria-label={label}
+          className={cn("nyn-progress", className)}
+          {...(rest as any)}
+        >
           {showLabel && (
             <ProgressBar.Output>
               {label} — {clampedValue}%
@@ -30,7 +45,7 @@ export const NProgress = memo(
         </ProgressBar>
       </div>
     );
-  })
+  }),
 );
 
-NProgress.displayName = 'NProgress';
+NProgress.displayName = "NProgress";

@@ -1,6 +1,6 @@
-import React from 'react';
-import { BottomSheet, cn } from 'heroui-native';
-import { OVERLAY_STYLE } from '../helpers/utils';
+import React from "react";
+import { BottomSheet, cn } from "heroui-native";
+import { OVERLAY_STYLE } from "../helpers/utils";
 
 export interface NSheetProps {
   isOpen?: boolean;
@@ -17,26 +17,43 @@ export interface NSheetProps {
 }
 
 export const NSheet = React.memo<NSheetProps>(
-  ({ isOpen, isDefaultOpen, onOpenChange, trigger, title, description, children, className, titleClassName, descriptionClassName, snapPoints }) => {
+  ({
+    isOpen,
+    isDefaultOpen,
+    onOpenChange,
+    trigger,
+    title,
+    description,
+    children,
+    className,
+    titleClassName,
+    descriptionClassName,
+    snapPoints,
+  }) => {
     return (
       <BottomSheet isOpen={isOpen} isDefaultOpen={isDefaultOpen} onOpenChange={onOpenChange}>
         {trigger && <BottomSheet.Trigger asChild>{trigger}</BottomSheet.Trigger>}
         <BottomSheet.Portal>
           <BottomSheet.Overlay style={OVERLAY_STYLE} />
           <BottomSheet.Content
-            className={cn('flex-1 rounded-t-xl bg-surface', className)}
+            className={cn("flex-1 rounded-t-xl bg-surface", className)}
             backgroundClassName="rounded-t-xl bg-surface"
             contentContainerClassName="px-3 py-0"
             snapPoints={snapPoints}
-            enableDynamicSizing={!snapPoints}>
+            enableDynamicSizing={!snapPoints}
+          >
             {title && <BottomSheet.Title className={titleClassName}>{title}</BottomSheet.Title>}
-            {description && <BottomSheet.Description className={descriptionClassName}>{description}</BottomSheet.Description>}
+            {description && (
+              <BottomSheet.Description className={descriptionClassName}>
+                {description}
+              </BottomSheet.Description>
+            )}
             {children}
           </BottomSheet.Content>
         </BottomSheet.Portal>
       </BottomSheet>
     );
-  }
+  },
 );
 
-NSheet.displayName = 'NSheet';
+NSheet.displayName = "NSheet";

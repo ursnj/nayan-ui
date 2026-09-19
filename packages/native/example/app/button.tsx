@@ -1,5 +1,5 @@
-import { NButton, NText } from '@nayan-ui/native';
-import Screen from '../src/components/Screen';
+import { NButton, NText } from "@nayan-ui/native";
+import Screen from "../src/components/Screen";
 
 export default function ButtonScreen() {
   return (

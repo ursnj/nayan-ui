@@ -1,11 +1,12 @@
-import { US } from '../types';
+import { US } from "../types";
 
 let counter = 0;
 
-export const uid = (prefix = 'id') => `${prefix}_${Date.now().toString(36)}_${(counter++).toString(36)}`;
+export const uid = (prefix = "id") =>
+  `${prefix}_${Date.now().toString(36)}_${(counter++).toString(36)}`;
 
-export const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
-
+export const clamp = (value: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, value));
 
 /** `1:23.4` — the timeline ruler / playhead readout. */
 /**
@@ -23,7 +24,7 @@ export const clamp = (value: number, min: number, max: number) => Math.min(max, 
  * few microseconds — so it can only affect an instant already indivisibly
  * close to the boundary.
  */
-const pad = (n: number) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, "0");
 
 export const formatTimecode = (us: number, showFrames = false, fps = 30) => {
   if (showFrames) {
@@ -53,12 +54,12 @@ export const formatBytes = (bytes: number) => {
 /** Ruler tick spacing that stays legible as the timeline zooms. */
 export const pickTickInterval = (pxPerSec: number) => {
   const candidates = [0.1, 0.25, 0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600];
-  return candidates.find(c => c * pxPerSec >= 70) ?? candidates[candidates.length - 1];
+  return candidates.find((c) => c * pxPerSec >= 70) ?? candidates[candidates.length - 1];
 };
 
 export const download = (blob: Blob, filename: string) => {
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.download = filename;
   document.body.appendChild(a);

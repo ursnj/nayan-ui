@@ -1,5 +1,5 @@
-import React from 'react';
-import type { KeyboardTypeOptions } from 'react-native';
+import React from "react";
+import type { KeyboardTypeOptions } from "react-native";
 import {
   Description,
   FieldError,
@@ -10,10 +10,10 @@ import {
   type TextAreaProps,
   TextField,
   type TextFieldRootProps,
-  cn
-} from 'heroui-native';
+  cn,
+} from "heroui-native";
 
-export interface NInputProps extends Omit<TextFieldRootProps, 'children'> {
+export interface NInputProps extends Omit<TextFieldRootProps, "children"> {
   value?: string;
   onChange?: (text: string) => void;
   placeholder?: string;
@@ -62,21 +62,36 @@ export const NInput = React.memo<NInputProps>(
   }) => {
     const help = description ?? helperText;
     const errorText = errorMessage ?? error;
-    const sharedInputProps = { value, onChangeText: onChange, placeholder, keyboardType, secureTextEntry, editable: disabled ? false : undefined };
+    const sharedInputProps = {
+      value,
+      onChangeText: onChange,
+      placeholder,
+      keyboardType,
+      secureTextEntry,
+      editable: disabled ? false : undefined,
+    };
 
     return (
-      <TextField className={cn('mb-3', containerClassName)} {...props}>
+      <TextField className={cn("mb-3", containerClassName)} {...props}>
         {label && <Label className={cn(labelClassName)}>{label}</Label>}
         {multiline ? (
-          <TextArea className={cn('text-[16px] rounded-xl py-3', className)} {...sharedInputProps} {...textAreaProps} />
+          <TextArea
+            className={cn("text-[16px] rounded-xl py-3", className)}
+            {...sharedInputProps}
+            {...textAreaProps}
+          />
         ) : (
-          <Input className={cn('text-[16px] rounded-xl', className)} {...sharedInputProps} {...inputProps} />
+          <Input
+            className={cn("text-[16px] rounded-xl", className)}
+            {...sharedInputProps}
+            {...inputProps}
+          />
         )}
         {help && <Description className={cn(descriptionClassName)}>{help}</Description>}
         {errorText && <FieldError className={cn(errorClassName)}>{errorText}</FieldError>}
       </TextField>
     );
-  }
+  },
 );
 
-NInput.displayName = 'NInput';
+NInput.displayName = "NInput";

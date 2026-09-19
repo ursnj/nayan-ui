@@ -1,7 +1,7 @@
-import React from 'react';
-import { View } from 'react-native';
-import { InputGroup, type InputGroupProps, type InputProps, cn } from 'heroui-native';
-import { NText } from './NText';
+import React from "react";
+import { View } from "react-native";
+import { InputGroup, type InputGroupProps, type InputProps, cn } from "heroui-native";
+import { NText } from "./NText";
 
 export interface NInputGroupProps extends InputGroupProps {
   label?: string;
@@ -13,10 +13,20 @@ export interface NInputGroupProps extends InputGroupProps {
 }
 
 export const NInputGroup = React.memo<NInputGroupProps>(
-  ({ label, prefix, suffix, containerClassName, labelClassName, className, children, inputProps, ...props }) => {
+  ({
+    label,
+    prefix,
+    suffix,
+    containerClassName,
+    labelClassName,
+    className,
+    children,
+    inputProps,
+    ...props
+  }) => {
     return (
-      <View className={cn('flex mb-3', containerClassName)}>
-        {label && <NText className={cn('mb-1', labelClassName)}>{label}</NText>}
+      <View className={cn("flex mb-3", containerClassName)}>
+        {label && <NText className={cn("mb-1", labelClassName)}>{label}</NText>}
         <InputGroup className={cn(className)} {...props}>
           {prefix && <InputGroup.Prefix>{prefix}</InputGroup.Prefix>}
           <InputGroup.Input {...inputProps} />
@@ -24,7 +34,7 @@ export const NInputGroup = React.memo<NInputGroupProps>(
         </InputGroup>
       </View>
     );
-  }
+  },
 );
 
-NInputGroup.displayName = 'NInputGroup';
+NInputGroup.displayName = "NInputGroup";

@@ -1,8 +1,8 @@
-import { reportOnce } from '../lib/diagnostics';
-import { US } from '../types';
-import { AudioEngine } from './audioEngine';
-import { renderScene } from './compositor';
-import type { Scene } from './compositor';
+import { reportOnce } from "../lib/diagnostics";
+import { US } from "../types";
+import { AudioEngine } from "./audioEngine";
+import { renderScene } from "./compositor";
+import type { Scene } from "./compositor";
 
 const RETRY_DELAY_MS = 120;
 
@@ -54,7 +54,7 @@ export class Player {
 
   attach(canvas: HTMLCanvasElement | null) {
     this.canvas = canvas;
-    this.context = canvas?.getContext('2d', { alpha: false }) ?? null;
+    this.context = canvas?.getContext("2d", { alpha: false }) ?? null;
     // A fresh canvas has nothing on it to hold on to.
     this.presented = false;
   }
@@ -187,7 +187,7 @@ export class Player {
     try {
       complete = await this.paint(context, canvas, timeUs, !lastAttempt);
     } catch (error) {
-      reportOnce('render', error);
+      reportOnce("render", error);
     } finally {
       this.rendering = false;
     }
@@ -208,7 +208,7 @@ export class Player {
           if (this.playing || this.rendering || this.currentUs !== timeUs) return;
           void this.renderAt(timeUs, attempt + 1);
         },
-        RETRY_DELAY_MS * (attempt + 1)
+        RETRY_DELAY_MS * (attempt + 1),
       );
     }
   }
@@ -223,11 +223,12 @@ export class Player {
   private ensureBuffer(width: number, height: number): BufferContext | null {
     if (!this.buffer) {
       this.buffer =
-        typeof OffscreenCanvas !== 'undefined'
+        typeof OffscreenCanvas !== "undefined"
           ? new OffscreenCanvas(width, height)
-          : Object.assign(document.createElement('canvas'), { width, height });
+          : Object.assign(document.createElement("canvas"), { width, height });
       // Opaque, matching the visible canvas: the background is always painted.
-      this.bufferContext = (this.buffer.getContext('2d', { alpha: false }) as BufferContext | null) ?? null;
+      this.bufferContext =
+        (this.buffer.getContext("2d", { alpha: false }) as BufferContext | null) ?? null;
     }
     if (this.buffer.width !== width || this.buffer.height !== height) {
       this.buffer.width = width;
@@ -237,7 +238,12 @@ export class Player {
   }
 
   /** One pass over the scene. False when a visible layer had no source to draw. */
-  private async paint(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, timeUs: number, allowRetry: boolean) {
+  private async paint(
+    context: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    timeUs: number,
+    allowRetry: boolean,
+  ) {
     const scene = this.callbacks.getScene();
     if (canvas.width !== scene.project.width || canvas.height !== scene.project.height) {
       canvas.width = scene.project.width;
@@ -252,9 +258,9 @@ export class Player {
     const renderTime = end > 0 ? Math.min(timeUs, end - 1) : timeUs;
 
     const offscreen = this.ensureBuffer(scene.project.width, scene.project.height);
-    if (!offscreen) return renderScene(context, scene, renderTime, { target: 'preview' });
+    if (!offscreen) return renderScene(context, scene, renderTime, { target: "preview" });
 
-    const complete = await renderScene(offscreen, scene, renderTime, { target: 'preview' });
+    const complete = await renderScene(offscreen, scene, renderTime, { target: "preview" });
 
     // Hold the last good frame while a decoder seeks, rather than replacing a picture with a bare background.
     if (complete || !allowRetry || !this.presented) {

@@ -1,8 +1,8 @@
-const path = require('path');
-const { getConfig } = require('react-native-builder-bob/babel-config');
-const pkg = require('../package.json');
+const path = require("path");
+const { getConfig } = require("react-native-builder-bob/babel-config");
+const pkg = require("../package.json");
 
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, "..");
 
 module.exports = function (api) {
   api.cache(true);
@@ -13,8 +13,8 @@ module.exports = function (api) {
   // here (doing so double-applies the worklets transform).
   return getConfig(
     {
-      presets: ['babel-preset-expo']
+      presets: ["babel-preset-expo"],
     },
-    { root, pkg }
+    { root, pkg },
   );
 };

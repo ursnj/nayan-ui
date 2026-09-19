@@ -19,10 +19,10 @@ npm install @nayan-ui/react
 Add `transpilePackages` so Next.js compiles `@nayan-ui/react`:
 
 ```ts
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@nayan-ui/react']
+  transpilePackages: ["@nayan-ui/react"],
 };
 
 export default nextConfig;
@@ -35,12 +35,12 @@ export default nextConfig;
 ### 3. Configure `src/app/globals.css`
 
 ```css
-@import '@nayan-ui/react/styles.css';
+@import "@nayan-ui/react/styles.css";
 
 @source '../node_modules/@nayan-ui/react/dist';
 
 :root,
-[data-theme='light'] {
+[data-theme="light"] {
   color-scheme: light;
 
   --background: hsl(214 45% 95%);
@@ -76,7 +76,7 @@ export default nextConfig;
 }
 
 .dark,
-[data-theme='dark'] {
+[data-theme="dark"] {
   color-scheme: dark;
 
   --background: hsl(222 47% 11%);
@@ -123,9 +123,9 @@ body {
 
 ```tsx
 // src/app/page.tsx
-'use client';
+"use client";
 
-import { NButton, NTheme, THEMES, useLocalStorage } from '@nayan-ui/react';
+import { NButton, NTheme, THEMES, useLocalStorage } from "@nayan-ui/react";
 
 // src/app/page.tsx
 
@@ -140,12 +140,14 @@ import { NButton, NTheme, THEMES, useLocalStorage } from '@nayan-ui/react';
 // src/app/page.tsx
 
 export default function Home() {
-  const [theme, setTheme] = useLocalStorage('THEME', THEMES.LIGHT);
+  const [theme, setTheme] = useLocalStorage("THEME", THEMES.LIGHT);
 
   return (
     <NTheme theme={theme}>
       <div className="min-h-screen flex items-center justify-center bg-background gap-4">
-        <NButton onClick={() => setTheme(theme === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT)}>Toggle Theme</NButton>
+        <NButton onClick={() => setTheme(theme === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT)}>
+          Toggle Theme
+        </NButton>
       </div>
     </NTheme>
   );

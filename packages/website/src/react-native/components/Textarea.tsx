@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import ComponentWrapper from '@/helpers/ComponentWrapper';
-import DemoComingSoon from './DemoComingSoon';
+import ComponentWrapper from "@/helpers/ComponentWrapper";
+import DemoComingSoon from "./DemoComingSoon";
 
 const Textarea = () => {
   return (
@@ -44,14 +44,54 @@ export default function InputScreen() {
 }`;
 
 export const textareaAttributes = [
-  { name: 'label', type: 'string', default: 'Optional', details: 'Label for the textarea.' },
-  { name: 'description', type: 'string', default: 'Optional', details: 'Description text below the textarea.' },
-  { name: 'errorMessage', type: 'string', default: 'Optional', details: 'Error message to display.' },
-  { name: 'multiline', type: 'boolean', default: 'true', details: 'Set to true for textarea mode (uses NInput with multiline).' },
-  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the textarea is disabled.' },
-  { name: 'value', type: 'string', default: 'Optional', details: 'Controlled textarea value.' },
-  { name: 'onChange', type: '(value: string) => void', default: 'Optional', details: 'Callback when textarea value changes.' },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise textarea by passing tailwind classes.' },
-  { name: 'containerClassName', type: 'string', default: "' '", details: 'You can customise container by passing tailwind classes.' },
-  { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise label by passing tailwind classes.' }
+  { name: "label", type: "string", default: "Optional", details: "Label for the textarea." },
+  {
+    name: "description",
+    type: "string",
+    default: "Optional",
+    details: "Description text below the textarea.",
+  },
+  {
+    name: "errorMessage",
+    type: "string",
+    default: "Optional",
+    details: "Error message to display.",
+  },
+  {
+    name: "multiline",
+    type: "boolean",
+    default: "true",
+    details: "Set to true for textarea mode (uses NInput with multiline).",
+  },
+  {
+    name: "isDisabled",
+    type: "boolean",
+    default: "false",
+    details: "Whether the textarea is disabled.",
+  },
+  { name: "value", type: "string", default: "Optional", details: "Controlled textarea value." },
+  {
+    name: "onChange",
+    type: "(value: string) => void",
+    default: "Optional",
+    details: "Callback when textarea value changes.",
+  },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise textarea by passing tailwind classes.",
+  },
+  {
+    name: "containerClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise container by passing tailwind classes.",
+  },
+  {
+    name: "labelClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise label by passing tailwind classes.",
+  },
 ];

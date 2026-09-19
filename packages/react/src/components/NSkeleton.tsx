@@ -1,26 +1,32 @@
-import React from 'react';
-import { Skeleton } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React from "react";
+import { Skeleton } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NSkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   role?: string;
-  'aria-busy'?: boolean;
-  'aria-live'?: 'off' | 'polite' | 'assertive';
+  "aria-busy"?: boolean;
+  "aria-live"?: "off" | "polite" | "assertive";
 }
 
 export const NSkeleton: React.FC<NSkeletonProps> = React.memo(
-  ({ className = '', role = 'status', 'aria-busy': ariaBusy = true, 'aria-live': ariaLive = 'polite', ...rest }) => {
+  ({
+    className = "",
+    role = "status",
+    "aria-busy": ariaBusy = true,
+    "aria-live": ariaLive = "polite",
+    ...rest
+  }) => {
     return (
       <Skeleton
-        className={cn('nyn-skeleton', className)}
+        className={cn("nyn-skeleton", className)}
         role={role}
         aria-busy={ariaBusy}
         aria-live={ariaLive}
-        aria-label={rest['aria-label'] || 'Loading content'}
+        aria-label={rest["aria-label"] || "Loading content"}
         {...(rest as any)}
       />
     );
-  }
+  },
 );
 
-NSkeleton.displayName = 'NSkeleton';
+NSkeleton.displayName = "NSkeleton";

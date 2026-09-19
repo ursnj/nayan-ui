@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import ComponentWrapper from '@/helpers/ComponentWrapper';
-import DemoComingSoon from './DemoComingSoon';
+import ComponentWrapper from "@/helpers/ComponentWrapper";
+import DemoComingSoon from "./DemoComingSoon";
 
 const Progress = () => {
   return (
@@ -44,7 +44,17 @@ export default function ProgressScreen() {
 }`;
 
 export const progressAttributes = [
-  { name: 'value', type: 'number', default: 'Required', details: 'Progress value (0-100).' },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise progress container by passing tailwind classes.' },
-  { name: 'indicatorClassName', type: 'string', default: "' '", details: 'You can customise progress indicator by passing tailwind classes.' }
+  { name: "value", type: "number", default: "Required", details: "Progress value (0-100)." },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise progress container by passing tailwind classes.",
+  },
+  {
+    name: "indicatorClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise progress indicator by passing tailwind classes.",
+  },
 ];

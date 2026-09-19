@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import { PILL_INTERACTIVE } from '@/design/system';
+import Link from "next/link";
+import { PILL_INTERACTIVE } from "@/design/system";
 
 interface Props {
   type: string;
@@ -8,7 +8,7 @@ interface Props {
 
 const TagsList = (props: Props) => (
   <ul className="flex flex-row flex-wrap items-center gap-2">
-    {props.tags.map(tag => (
+    {props.tags.map((tag) => (
       <li key={tag.sku}>
         <Link href={`/${props.type}/tags/${tag.sku}`} className={PILL_INTERACTIVE}>
           {tag.text}

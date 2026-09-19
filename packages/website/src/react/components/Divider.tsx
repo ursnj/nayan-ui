@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { NDivider } from '@nayan-ui/react';
-import { H3_DOC } from '@/design/system';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { NDivider } from "@nayan-ui/react";
+import { H3_DOC } from "@/design/system";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
 const Divider = () => {
   return (
@@ -46,9 +46,34 @@ const Divider = () => {
 export default Divider;`;
 
 export const dividerAttributes = [
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'orientation', type: "'horizontal' | 'vertical'", default: "'horizontal'", details: 'Direction of the divider.' },
-  { name: 'children', type: 'React.ReactNode', default: 'Optional', details: 'Content to display in the divider.' },
-  { name: 'childrenClassName', type: 'string', default: "' '", details: 'Custom class for the children wrapper.' },
-  { name: 'separatorClassName', type: 'string', default: "' '", details: 'Custom class for the separator line.' }
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "orientation",
+    type: "'horizontal' | 'vertical'",
+    default: "'horizontal'",
+    details: "Direction of the divider.",
+  },
+  {
+    name: "children",
+    type: "React.ReactNode",
+    default: "Optional",
+    details: "Content to display in the divider.",
+  },
+  {
+    name: "childrenClassName",
+    type: "string",
+    default: "' '",
+    details: "Custom class for the children wrapper.",
+  },
+  {
+    name: "separatorClassName",
+    type: "string",
+    default: "' '",
+    details: "Custom class for the separator line.",
+  },
 ];

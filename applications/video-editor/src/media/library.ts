@@ -1,10 +1,17 @@
-import { ALL_FORMATS, AudioBufferSink, BlobSource, CanvasSink, Input, VideoSampleSink } from 'mediabunny';
-import type { InputAudioTrack, InputVideoTrack } from 'mediabunny';
-import { reportOnce } from '../lib/diagnostics';
-import { uid } from '../lib/utils';
-import { US } from '../types';
-import type { AssetKind, MediaAsset } from '../types';
-import { SequentialVideoReader } from './frameReader';
+import {
+  ALL_FORMATS,
+  AudioBufferSink,
+  BlobSource,
+  CanvasSink,
+  Input,
+  VideoSampleSink,
+} from "mediabunny";
+import type { InputAudioTrack, InputVideoTrack } from "mediabunny";
+import { reportOnce } from "../lib/diagnostics";
+import { uid } from "../lib/utils";
+import { US } from "../types";
+import type { AssetKind, MediaAsset } from "../types";
+import { SequentialVideoReader } from "./frameReader";
 
 interface AssetResources {
   file: File;
@@ -24,74 +31,100 @@ const resources = new Map<string, AssetResources>();
 
 /** One decoder per on-screen clip. Capped so a busy timeline can't exhaust GPU memory. */
 const MAX_READERS = 8;
-const readers = new Map<string, { reader: SequentialVideoReader; assetId: string; usedAt: number }>();
+const readers = new Map<
+  string,
+  { reader: SequentialVideoReader; assetId: string; usedAt: number }
+>();
 
 export class UnsupportedMediaError extends Error {}
 
 // Extensions spelled out: a video/* wildcard expands differently per platform and drops .wav from the picker.
 export const MEDIA_ACCEPT = [
   // ISOBMFF / QuickTime
-  '.mp4',
-  '.m4v',
-  '.m4a',
-  '.mov',
+  ".mp4",
+  ".m4v",
+  ".m4a",
+  ".mov",
   // Matroska
-  '.mkv',
-  '.mka',
-  '.webm',
+  ".mkv",
+  ".mka",
+  ".webm",
   // WAVE
-  '.wav',
-  '.wave',
+  ".wav",
+  ".wave",
   // Ogg
-  '.ogg',
-  '.oga',
-  '.ogv',
-  '.opus',
+  ".ogg",
+  ".oga",
+  ".ogv",
+  ".opus",
   // Everything else mediabunny demuxes
-  '.flac',
-  '.mp3',
-  '.aac',
-  '.ts',
-  '.m2ts',
-  '.mts',
-  '.m3u8',
-  '.png',
-  '.jpg',
-  '.jpeg',
-  '.webp',
-  '.gif',
-  '.bmp',
-  '.avif',
-  'video/*',
-  'audio/*',
-  'image/*'
-].join(',');
+  ".flac",
+  ".mp3",
+  ".aac",
+  ".ts",
+  ".m2ts",
+  ".mts",
+  ".m3u8",
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".webp",
+  ".gif",
+  ".bmp",
+  ".avif",
+  "video/*",
+  "audio/*",
+  "image/*",
+].join(",");
 
-const IMAGE_EXTENSIONS = new Set(['png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp', 'avif', 'apng', 'ico']);
-const AUDIO_EXTENSIONS = new Set(['wav', 'wave', 'mp3', 'm4a', 'aac', 'flac', 'ogg', 'oga', 'opus', 'mka', 'aiff', 'aif']);
+const IMAGE_EXTENSIONS = new Set([
+  "png",
+  "jpg",
+  "jpeg",
+  "webp",
+  "gif",
+  "bmp",
+  "avif",
+  "apng",
+  "ico",
+]);
+const AUDIO_EXTENSIONS = new Set([
+  "wav",
+  "wave",
+  "mp3",
+  "m4a",
+  "aac",
+  "flac",
+  "ogg",
+  "oga",
+  "opus",
+  "mka",
+  "aiff",
+  "aif",
+]);
 
-const extensionOf = (name: string) => name.slice(name.lastIndexOf('.') + 1).toLowerCase();
+const extensionOf = (name: string) => name.slice(name.lastIndexOf(".") + 1).toLowerCase();
 
 const kindForFile = (file: File): AssetKind => {
-  if (file.type.startsWith('image/')) return 'image';
-  if (file.type.startsWith('audio/')) return 'audio';
-  if (file.type.startsWith('video/')) return 'video';
+  if (file.type.startsWith("image/")) return "image";
+  if (file.type.startsWith("audio/")) return "audio";
+  if (file.type.startsWith("video/")) return "video";
 
   const extension = extensionOf(file.name);
-  if (IMAGE_EXTENSIONS.has(extension)) return 'image';
-  if (AUDIO_EXTENSIONS.has(extension)) return 'audio';
-  return 'video';
+  if (IMAGE_EXTENSIONS.has(extension)) return "image";
+  if (AUDIO_EXTENSIONS.has(extension)) return "audio";
+  return "video";
 };
 
 export const loadAsset = async (file: File, preferredId?: string): Promise<MediaAsset> => {
-  const id = preferredId ?? uid('asset');
+  const id = preferredId ?? uid("asset");
   // preferredId may already be registered; overwriting would drop a live decoder and its allocations.
   if (resources.has(id)) await releaseAsset(id);
 
   const objectUrl = URL.createObjectURL(file);
   const declaredKind = kindForFile(file);
 
-  const bitmap = declaredKind === 'image' ? await createImageBitmap(file).catch(() => null) : null;
+  const bitmap = declaredKind === "image" ? await createImageBitmap(file).catch(() => null) : null;
 
   if (bitmap) {
     resources.set(id, {
@@ -105,11 +138,11 @@ export const loadAsset = async (file: File, preferredId?: string): Promise<Media
       audioPromise: null,
       peaks: null,
       startPromise: null,
-      objectUrl
+      objectUrl,
     });
     return {
       id,
-      kind: 'image',
+      kind: "image",
       name: file.name,
       type: file.type,
       size: file.size,
@@ -122,7 +155,7 @@ export const loadAsset = async (file: File, preferredId?: string): Promise<Media
       hasAudio: false,
       fps: 0,
       thumbnail: await bitmapToDataUrl(bitmap),
-      webCodecs: false
+      webCodecs: false,
     };
   }
 
@@ -131,9 +164,9 @@ export const loadAsset = async (file: File, preferredId?: string): Promise<Media
     input.dispose();
     URL.revokeObjectURL(objectUrl);
     throw new UnsupportedMediaError(
-      declaredKind === 'image'
+      declaredKind === "image"
         ? `${file.name} is not a readable image, or any media format this editor knows`
-        : `${file.name} is not a supported media format`
+        : `${file.name} is not a supported media format`,
     );
   }
 
@@ -155,7 +188,7 @@ export const loadAsset = async (file: File, preferredId?: string): Promise<Media
   }
 
   const durationSeconds = await input.computeDuration();
-  const kind: AssetKind = decodableVideo ? 'video' : 'audio';
+  const kind: AssetKind = decodableVideo ? "video" : "audio";
 
   let width = 0;
   let height = 0;
@@ -178,7 +211,7 @@ export const loadAsset = async (file: File, preferredId?: string): Promise<Media
     audioPromise: null,
     peaks: null,
     startPromise: null,
-    objectUrl
+    objectUrl,
   });
 
   const asset: MediaAsset = {
@@ -195,7 +228,7 @@ export const loadAsset = async (file: File, preferredId?: string): Promise<Media
     hasAudio: !!decodableAudio,
     fps,
     thumbnail: null,
-    webCodecs: true
+    webCodecs: true,
   };
 
   return asset;
@@ -255,21 +288,29 @@ const drain = async () => {
 
 const schedule = <T>(
   key: string,
-  kind: 'poster' | 'strip',
+  kind: "poster" | "strip",
   signal: AbortSignal | undefined,
   run: (signal: AbortSignal) => Promise<T>,
-  fallback: T
+  fallback: T,
 ): Promise<T> => {
   if (signal?.aborted) return Promise.resolve(fallback);
 
   let job = jobsByKey.get(key);
   if (!job) {
     let resolve!: (value: unknown) => void;
-    const promise = new Promise<unknown>(settle => (resolve = settle));
-    job = { key, waiters: 0, controller: new AbortController(), run: run as Job['run'], fallback, resolve, promise };
+    const promise = new Promise<unknown>((settle) => (resolve = settle));
+    job = {
+      key,
+      waiters: 0,
+      controller: new AbortController(),
+      run: run as Job["run"],
+      fallback,
+      resolve,
+      promise,
+    };
     jobsByKey.set(key, job);
 
-    if (kind === 'poster') {
+    if (kind === "poster") {
       posterJobs.push(job);
     } else {
       stripJobs.push(job);
@@ -287,11 +328,11 @@ const schedule = <T>(
     joined.waiters--;
     if (joined.waiters === 0) dropJob(joined);
   };
-  signal?.addEventListener('abort', release, { once: true });
+  signal?.addEventListener("abort", release, { once: true });
 
-  return joined.promise.then(value => {
+  return joined.promise.then((value) => {
     released = true;
-    signal?.removeEventListener('abort', release);
+    signal?.removeEventListener("abort", release);
     return value as T;
   });
 };
@@ -312,7 +353,13 @@ export const generateThumbnail = async (assetId: string, timeUs = 0): Promise<st
   if (!entry) return null;
   if (entry.bitmap) return bitmapToDataUrl(entry.bitmap);
   if (!entry.videoTrack) return null;
-  return schedule<string | null>(`poster:${assetId}:${Math.round(timeUs)}`, 'poster', undefined, () => buildThumbnail(entry, timeUs), null);
+  return schedule<string | null>(
+    `poster:${assetId}:${Math.round(timeUs)}`,
+    "poster",
+    undefined,
+    () => buildThumbnail(entry, timeUs),
+    null,
+  );
 };
 
 const buildThumbnail = async (entry: AssetResources, timeUs: number): Promise<string | null> => {
@@ -376,13 +423,25 @@ const forgetStrips = (assetId: string) => {
 /** A strip that has already been generated, for reading during render. */
 export const getFilmstrip = (key: string): string[] | null => strips.get(key)?.frames ?? null;
 
-export const requestFilmstrip = (request: FilmstripRequest, signal?: AbortSignal): Promise<string[] | null> => {
+export const requestFilmstrip = (
+  request: FilmstripRequest,
+  signal?: AbortSignal,
+): Promise<string[] | null> => {
   const cached = strips.get(request.key);
   if (cached) return Promise.resolve(cached.frames);
-  return schedule<string[] | null>(request.key, 'strip', signal, jobSignal => buildFilmstrip(request, jobSignal), null);
+  return schedule<string[] | null>(
+    request.key,
+    "strip",
+    signal,
+    (jobSignal) => buildFilmstrip(request, jobSignal),
+    null,
+  );
 };
 
-const buildFilmstrip = async ({ key, assetId, fromUs, toUs, count, tilePx }: FilmstripRequest, signal: AbortSignal): Promise<string[] | null> => {
+const buildFilmstrip = async (
+  { key, assetId, fromUs, toUs, count, tilePx }: FilmstripRequest,
+  signal: AbortSignal,
+): Promise<string[] | null> => {
   const entry = resources.get(assetId);
   if (!entry?.videoTrack || count <= 0) return [];
 
@@ -393,7 +452,9 @@ const buildFilmstrip = async ({ key, assetId, fromUs, toUs, count, tilePx }: Fil
   if (signal.aborted) return null;
 
   const span = Math.max(0, toUs - fromUs);
-  const timestamps = Array.from({ length: count }, (_, index) => Math.max(startSeconds, (fromUs + (span * (index + 0.5)) / count) / US));
+  const timestamps = Array.from({ length: count }, (_, index) =>
+    Math.max(startSeconds, (fromUs + (span * (index + 0.5)) / count) / US),
+  );
 
   const sink = new CanvasSink(entry.videoTrack, { width: tilePx, poolSize: 0 });
   const encoding: Promise<string>[] = [];
@@ -402,7 +463,7 @@ const buildFilmstrip = async ({ key, assetId, fromUs, toUs, count, tilePx }: Fil
   try {
     for await (const wrapped of sink.canvasesAtTimestamps(timestamps)) {
       if (signal.aborted) break;
-      encoding.push(wrapped ? canvasToUrl(wrapped.canvas) : Promise.resolve(''));
+      encoding.push(wrapped ? canvasToUrl(wrapped.canvas) : Promise.resolve(""));
     }
   } catch (error) {
     failure = error;
@@ -415,9 +476,9 @@ const buildFilmstrip = async ({ key, assetId, fromUs, toUs, count, tilePx }: Fil
     return null;
   }
 
-  if (frames.some(frame => frame !== '')) {
-    while (frames.length < count) frames.push('');
-    if (failure) reportOnce('filmstrip', failure);
+  if (frames.some((frame) => frame !== "")) {
+    while (frames.length < count) frames.push("");
+    if (failure) reportOnce("filmstrip", failure);
 
     const winner = strips.get(key);
     if (winner) {
@@ -429,11 +490,18 @@ const buildFilmstrip = async ({ key, assetId, fromUs, toUs, count, tilePx }: Fil
     return frames;
   }
 
-  reportOnce('filmstrip', failure ?? new Error(`no frames could be decoded from ${entry.file.name}`));
+  reportOnce(
+    "filmstrip",
+    failure ?? new Error(`no frames could be decoded from ${entry.file.name}`),
+  );
   return [];
 };
 
-export const getReader = (clipId: string, assetId: string, target: 'preview' | 'export' = 'preview'): SequentialVideoReader | null => {
+export const getReader = (
+  clipId: string,
+  assetId: string,
+  target: "preview" | "export" = "preview",
+): SequentialVideoReader | null => {
   const key = `${target}:${clipId}`;
   const existing = readers.get(key);
   if (existing && existing.assetId === assetId) {
@@ -465,29 +533,34 @@ export const getReader = (clipId: string, assetId: string, target: 'preview' | '
 
 /** Accepts either a bare clip id (releases both targets) or a `target:clipId` key. */
 export const releaseReader = async (keyOrClipId: string) => {
-  const keys = keyOrClipId.includes(':') ? [keyOrClipId] : [`preview:${keyOrClipId}`, `export:${keyOrClipId}`];
+  const keys = keyOrClipId.includes(":")
+    ? [keyOrClipId]
+    : [`preview:${keyOrClipId}`, `export:${keyOrClipId}`];
   await Promise.all(
-    keys.map(async key => {
+    keys.map(async (key) => {
       const entry = readers.get(key);
       if (!entry) return;
       readers.delete(key);
       await entry.reader.dispose();
-    })
+    }),
   );
 };
 
 /** Frees the decoders an export spun up, leaving the preview's alone. */
 export const releaseExportReaders = async () => {
-  await Promise.all([...readers.keys()].filter(key => key.startsWith('export:')).map(releaseReader));
+  await Promise.all(
+    [...readers.keys()].filter((key) => key.startsWith("export:")).map(releaseReader),
+  );
 };
 
 export const releaseAllReaders = async () => {
   const entries = [...readers.values()];
   readers.clear();
-  await Promise.all(entries.map(entry => entry.reader.dispose()));
+  await Promise.all(entries.map((entry) => entry.reader.dispose()));
 };
 
-export const getImageBitmap = (assetId: string): ImageBitmap | null => resources.get(assetId)?.bitmap ?? null;
+export const getImageBitmap = (assetId: string): ImageBitmap | null =>
+  resources.get(assetId)?.bitmap ?? null;
 
 export const getAudioBuffer = async (assetId: string): Promise<AudioBuffer | null> => {
   const entry = resources.get(assetId);
@@ -497,7 +570,7 @@ export const getAudioBuffer = async (assetId: string): Promise<AudioBuffer | nul
   if (!entry.audioTrack) return null;
 
   entry.audioPromise = decodeFullAudio(entry.audioTrack)
-    .then(buffer => {
+    .then((buffer) => {
       entry.audioBuffer = buffer;
       if (buffer) entry.peaks = computePeaks(buffer, 2048);
       return buffer;
@@ -511,7 +584,8 @@ export const getAudioBuffer = async (assetId: string): Promise<AudioBuffer | nul
 };
 
 /** Normalised min/max pairs for waveform drawing. Null until audio is decoded. */
-export const getPeaks = (assetId: string): Float32Array | null => resources.get(assetId)?.peaks ?? null;
+export const getPeaks = (assetId: string): Float32Array | null =>
+  resources.get(assetId)?.peaks ?? null;
 
 export const releaseAsset = async (assetId: string) => {
   for (const [key, entry] of readers) {
@@ -528,7 +602,7 @@ export const releaseAsset = async (assetId: string) => {
 
 export const releaseAssetsExcept = async (keepIds: Iterable<string>) => {
   const keep = new Set(keepIds);
-  const doomed = [...resources.keys()].filter(id => !keep.has(id));
+  const doomed = [...resources.keys()].filter((id) => !keep.has(id));
   await Promise.all(doomed.map(releaseAsset));
 };
 
@@ -558,10 +632,16 @@ const decodeFullAudio = async (track: InputAudioTrack): Promise<AudioBuffer | nu
     if (offset >= length) continue;
     for (let channel = 0; channel < channels; channel++) {
       // Mono sources feed every output channel.
-      const source = chunk.buffer.getChannelData(Math.min(channel, chunk.buffer.numberOfChannels - 1));
+      const source = chunk.buffer.getChannelData(
+        Math.min(channel, chunk.buffer.numberOfChannels - 1),
+      );
       const writable = Math.min(source.length, length - offset);
       if (writable <= 0) continue;
-      output.copyToChannel(writable === source.length ? source : source.subarray(0, writable), channel, offset);
+      output.copyToChannel(
+        writable === source.length ? source : source.subarray(0, writable),
+        channel,
+        offset,
+      );
     }
   }
 
@@ -590,11 +670,11 @@ const JPEG_QUALITY = 0.7;
 
 const canvasToBlob = (canvas: HTMLCanvasElement | OffscreenCanvas): Promise<Blob | null> => {
   if (!(canvas instanceof HTMLCanvasElement)) {
-    return canvas.convertToBlob({ type: 'image/jpeg', quality: JPEG_QUALITY }).catch(() => null);
+    return canvas.convertToBlob({ type: "image/jpeg", quality: JPEG_QUALITY }).catch(() => null);
   }
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     try {
-      canvas.toBlob(blob => resolve(blob), 'image/jpeg', JPEG_QUALITY);
+      canvas.toBlob((blob) => resolve(blob), "image/jpeg", JPEG_QUALITY);
     } catch {
       resolve(null);
     }
@@ -604,13 +684,15 @@ const canvasToBlob = (canvas: HTMLCanvasElement | OffscreenCanvas): Promise<Blob
 /** An empty string for a frame that could not be encoded; the caller tiles around it. */
 const canvasToUrl = async (canvas: HTMLCanvasElement | OffscreenCanvas): Promise<string> => {
   const blob = await canvasToBlob(canvas);
-  return blob ? URL.createObjectURL(blob) : '';
+  return blob ? URL.createObjectURL(blob) : "";
 };
 
-const canvasToDataUrl = async (canvas: HTMLCanvasElement | OffscreenCanvas): Promise<string | null> => {
+const canvasToDataUrl = async (
+  canvas: HTMLCanvasElement | OffscreenCanvas,
+): Promise<string | null> => {
   try {
-    if (canvas instanceof HTMLCanvasElement) return canvas.toDataURL('image/jpeg', JPEG_QUALITY);
-    const blob = await canvas.convertToBlob({ type: 'image/jpeg', quality: JPEG_QUALITY });
+    if (canvas instanceof HTMLCanvasElement) return canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+    const blob = await canvas.convertToBlob({ type: "image/jpeg", quality: JPEG_QUALITY });
     return blobToDataUrl(blob);
   } catch {
     return null;
@@ -619,19 +701,23 @@ const canvasToDataUrl = async (canvas: HTMLCanvasElement | OffscreenCanvas): Pro
 
 const bitmapToDataUrl = async (bitmap: ImageBitmap): Promise<string | null> => {
   const scale = Math.min(1, 320 / Math.max(1, bitmap.width));
-  const canvas = document.createElement('canvas');
+  const canvas = document.createElement("canvas");
   canvas.width = Math.max(1, Math.round(bitmap.width * scale));
   canvas.height = Math.max(1, Math.round(bitmap.height * scale));
-  const context = canvas.getContext('2d');
+  const context = canvas.getContext("2d");
   if (!context) return null;
   context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-  return canvas.toDataURL('image/jpeg', 0.7);
+  return canvas.toDataURL("image/jpeg", 0.7);
 };
 
 const blobToDataUrl = (blob: Blob) =>
-  new Promise<string | null>(resolve => {
+  new Promise<string | null>((resolve) => {
     const reader = new FileReader();
-    reader.addEventListener('load', () => resolve(typeof reader.result === 'string' ? reader.result : null), { once: true });
-    reader.addEventListener('error', () => resolve(null), { once: true });
+    reader.addEventListener(
+      "load",
+      () => resolve(typeof reader.result === "string" ? reader.result : null),
+      { once: true },
+    );
+    reader.addEventListener("error", () => resolve(null), { once: true });
     reader.readAsDataURL(blob);
   });

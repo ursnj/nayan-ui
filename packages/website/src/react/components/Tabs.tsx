@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { NTabs, NTabsContent } from '@nayan-ui/react';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { useState } from "react";
+import { NTabs, NTabsContent } from "@nayan-ui/react";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
-const items = ['Account', 'Security', 'Notifications'];
+const items = ["Account", "Security", "Notifications"];
 
 const Tabs = () => {
   const [selected, setSelected] = useState(items[0]);
@@ -45,19 +45,69 @@ const Tabs = () => {
 export default Tabs;`;
 
 export const tabsAttributes = [
-  { name: 'isFull', type: 'boolean', default: 'Optional', details: 'Whether tabs should take full width.' },
-  { name: 'items', type: 'string[]', default: 'Required', details: 'Array of tab items.' },
-  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Tab content.' },
-  { name: 'selected', type: 'string', default: 'Required', details: 'Currently selected tab.' },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'itemClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'activeItemClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'onChange', type: '(selected: string) => void', default: 'Required', details: 'Callback when tab changes.' },
-  { name: 'ariaLabel', type: 'string', default: 'Optional', details: 'ARIA label for accessibility.' },
-  { name: 'id', type: 'string', default: 'Optional', details: 'ID for the tabs.' },
-  { name: 'value', type: 'string', default: 'Optional', details: 'Alias of selected.' },
-  { name: 'listClassName', type: 'string', default: "' '", details: 'Custom class for the tab list container.' },
-  { name: 'tabClassName', type: 'string', default: "' '", details: 'Custom class for individual tab buttons.' },
-  { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'Visual variant of the tabs.' },
-  { name: 'orientation', type: "'horizontal' | 'vertical'", default: "'horizontal'", details: 'Layout orientation of the tabs.' }
+  {
+    name: "isFull",
+    type: "boolean",
+    default: "Optional",
+    details: "Whether tabs should take full width.",
+  },
+  { name: "items", type: "string[]", default: "Required", details: "Array of tab items." },
+  { name: "children", type: "React.ReactNode", default: "Required", details: "Tab content." },
+  { name: "selected", type: "string", default: "Required", details: "Currently selected tab." },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "itemClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "activeItemClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "onChange",
+    type: "(selected: string) => void",
+    default: "Required",
+    details: "Callback when tab changes.",
+  },
+  {
+    name: "ariaLabel",
+    type: "string",
+    default: "Optional",
+    details: "ARIA label for accessibility.",
+  },
+  { name: "id", type: "string", default: "Optional", details: "ID for the tabs." },
+  { name: "value", type: "string", default: "Optional", details: "Alias of selected." },
+  {
+    name: "listClassName",
+    type: "string",
+    default: "' '",
+    details: "Custom class for the tab list container.",
+  },
+  {
+    name: "tabClassName",
+    type: "string",
+    default: "' '",
+    details: "Custom class for individual tab buttons.",
+  },
+  {
+    name: "variant",
+    type: "'primary' | 'secondary'",
+    default: "'primary'",
+    details: "Visual variant of the tabs.",
+  },
+  {
+    name: "orientation",
+    type: "'horizontal' | 'vertical'",
+    default: "'horizontal'",
+    details: "Layout orientation of the tabs.",
+  },
 ];

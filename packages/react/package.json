@@ -1,14 +1,42 @@
 {
   "name": "@nayan-ui/react",
-  "sideEffects": false,
-  "description": "React Component Library for smooth and faster web application development.",
   "version": "2.1.0",
-  "type": "module",
+  "description": "React Component Library for smooth and faster web application development.",
+  "keywords": [
+    "dev-tools",
+    "nayan-ui",
+    "next-js-components",
+    "react-component-library",
+    "react-js",
+    "react-reusable-components",
+    "react-ui-library",
+    "react-vite",
+    "seo-tools"
+  ],
+  "homepage": "https://www.nayanui.com",
+  "bugs": {
+    "url": "https://github.com/ursnj/nayan-ui/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Niranjan Devasani",
+    "email": "niranjan.devasani@gmail.com",
+    "url": "https://www.nayanui.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ursnj/nayan-ui"
+  },
   "source": "./src/index.ts",
+  "files": [
+    "dist",
+    "src/styles.css"
+  ],
+  "type": "module",
+  "sideEffects": false,
   "main": "./dist/index.es.js",
   "module": "./dist/index.es.js",
   "types": "./dist/index.d.ts",
-  "homepage": "https://www.nayanui.com",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -21,10 +49,6 @@
       "default": "./src/styles.css"
     }
   },
-  "files": [
-    "dist",
-    "src/styles.css"
-  ],
   "publishConfig": {
     "access": "public"
   },
@@ -45,11 +69,6 @@
     "react-select": "^5.10.2",
     "tailwind-merge": "^3.7.0"
   },
-  "peerDependencies": {
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0",
-    "tailwindcss": ">=4.0.0"
-  },
   "devDependencies": {
     "@types/node": "^26.6.1",
     "@types/react": "^19.3.0",
@@ -61,28 +80,9 @@
     "typescript": "^6.0.3",
     "vite": "^8.3.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ursnj/nayan-ui"
-  },
-  "keywords": [
-    "react-js",
-    "react-component-library",
-    "react-reusable-components",
-    "react-ui-library",
-    "next-js-components",
-    "react-vite",
-    "dev-tools",
-    "seo-tools",
-    "nayan-ui"
-  ],
-  "author": {
-    "name": "Niranjan Devasani",
-    "email": "niranjan.devasani@gmail.com",
-    "url": "https://www.nayanui.com"
-  },
-  "bugs": {
-    "url": "https://github.com/ursnj/nayan-ui/issues"
-  },
-  "license": "MIT"
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "tailwindcss": ">=4.0.0"
+  }
 }

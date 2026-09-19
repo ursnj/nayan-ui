@@ -1,6 +1,6 @@
-import React, { ReactNode, memo } from 'react';
-import { Checkbox } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { ReactNode, memo } from "react";
+import { Checkbox } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NCheckProps {
   id?: string;
@@ -17,7 +17,7 @@ export interface NCheckProps {
   children?: ReactNode;
   /** Alias of `children`, as the React Native package names it. */
   label?: ReactNode;
-  'aria-label'?: string;
+  "aria-label"?: string;
 }
 
 const NCheckComponent: React.FC<NCheckProps> = memo(
@@ -25,9 +25,9 @@ const NCheckComponent: React.FC<NCheckProps> = memo(
     id,
     name,
     value,
-    className = '',
-    checkClassName = '',
-    labelClassName = '',
+    className = "",
+    checkClassName = "",
+    labelClassName = "",
     checked,
     disabled = false,
     isRequired = false,
@@ -47,8 +47,9 @@ const NCheckComponent: React.FC<NCheckProps> = memo(
         isRequired={isRequired}
         isIndeterminate={isIndeterminate}
         onChange={onChange}
-        className={cn('nyn-check', className)}
-        {...(rest as any)}>
+        className={cn("nyn-check", className)}
+        {...(rest as any)}
+      >
         <Checkbox.Content className={cn(labelClassName)}>
           <Checkbox.Control className={cn(checkClassName)}>
             <Checkbox.Indicator />
@@ -57,9 +58,9 @@ const NCheckComponent: React.FC<NCheckProps> = memo(
         </Checkbox.Content>
       </Checkbox>
     );
-  }
+  },
 );
 
-NCheckComponent.displayName = 'NCheck';
+NCheckComponent.displayName = "NCheck";
 
 export const NCheck = NCheckComponent;

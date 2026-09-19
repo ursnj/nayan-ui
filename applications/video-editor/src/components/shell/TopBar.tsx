@@ -1,31 +1,44 @@
-import { useCallback, useRef, useState } from 'react';
-import { NButton, NConfirmAlert, NDialog, NInput, showToast } from '@nayan-ui/react';
-import { DialogSize } from '@nayan-ui/react';
-import { Clapperboard, Download, FileDown, FilePlus2, FileUp, Keyboard, Moon, Redo2, RotateCcw, Settings, Sun, Undo2 } from 'lucide-react';
-import { BUNDLE_EXTENSION, BundleError, readBundle, writeBundle } from '../../lib/projectBundle';
-import { MOD_LABEL, useCommand } from '../../lib/shortcuts';
-import { download } from '../../lib/utils';
-import { generateThumbnail } from '../../media/library';
-import { readEditorState, serialiseProject, useEditor } from '../../store/editor';
-import { IconButton, NumberField, SelectField } from '../controls';
+import { useCallback, useRef, useState } from "react";
+import { NButton, NConfirmAlert, NDialog, NInput, showToast } from "@nayan-ui/react";
+import { DialogSize } from "@nayan-ui/react";
+import {
+  Clapperboard,
+  Download,
+  FileDown,
+  FilePlus2,
+  FileUp,
+  Keyboard,
+  Moon,
+  Redo2,
+  RotateCcw,
+  Settings,
+  Sun,
+  Undo2,
+} from "lucide-react";
+import { BUNDLE_EXTENSION, BundleError, readBundle, writeBundle } from "../../lib/projectBundle";
+import { MOD_LABEL, useCommand } from "../../lib/shortcuts";
+import { download } from "../../lib/utils";
+import { generateThumbnail } from "../../media/library";
+import { readEditorState, serialiseProject, useEditor } from "../../store/editor";
+import { IconButton, NumberField, SelectField } from "../controls";
 
 const RESOLUTIONS = [
-  { value: '3840x2160', label: '4K — 3840 × 2160' },
-  { value: '2560x1440', label: '1440p — 2560 × 1440' },
-  { value: '1920x1080', label: '1080p — 1920 × 1080' },
-  { value: '1280x720', label: '720p — 1280 × 720' },
-  { value: '1080x1920', label: 'Vertical — 1080 × 1920' },
-  { value: '1080x1350', label: 'Portrait 4:5 — 1080 × 1350' },
-  { value: '1080x1080', label: 'Square — 1080 × 1080' }
+  { value: "3840x2160", label: "4K — 3840 × 2160" },
+  { value: "2560x1440", label: "1440p — 2560 × 1440" },
+  { value: "1920x1080", label: "1080p — 1920 × 1080" },
+  { value: "1280x720", label: "720p — 1280 × 720" },
+  { value: "1080x1920", label: "Vertical — 1080 × 1920" },
+  { value: "1080x1350", label: "Portrait 4:5 — 1080 × 1350" },
+  { value: "1080x1080", label: "Square — 1080 × 1080" },
 ];
 
 const FRAME_RATES = [
-  { value: '23.976', label: '23.976 fps' },
-  { value: '24', label: '24 fps' },
-  { value: '25', label: '25 fps' },
-  { value: '30', label: '30 fps' },
-  { value: '50', label: '50 fps' },
-  { value: '60', label: '60 fps' }
+  { value: "23.976", label: "23.976 fps" },
+  { value: "24", label: "24 fps" },
+  { value: "25", label: "25 fps" },
+  { value: "30", label: "30 fps" },
+  { value: "50", label: "50 fps" },
+  { value: "60", label: "60 fps" },
 ];
 
 interface TopBarProps {
@@ -38,17 +51,23 @@ interface TopBarProps {
   onResetPreferences: () => void;
 }
 
-export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onResetPreferences }: TopBarProps) => {
-  const project = useEditor(state => state.project);
-  const updateProject = useEditor(state => state.updateProject);
-  const updateAsset = useEditor(state => state.updateAsset);
-  const loadProject = useEditor(state => state.loadProject);
-  const resetProject = useEditor(state => state.resetProject);
-  const undo = useEditor(state => state.undo);
-  const redo = useEditor(state => state.redo);
-  const canUndo = useEditor(state => state.past.length > 0);
-  const canRedo = useEditor(state => state.future.length > 0);
-  const clipCount = useEditor(state => state.clips.length);
+export const TopBar = ({
+  theme,
+  onToggleTheme,
+  onExport,
+  onShowShortcuts,
+  onResetPreferences,
+}: TopBarProps) => {
+  const project = useEditor((state) => state.project);
+  const updateProject = useEditor((state) => state.updateProject);
+  const updateAsset = useEditor((state) => state.updateAsset);
+  const loadProject = useEditor((state) => state.loadProject);
+  const resetProject = useEditor((state) => state.resetProject);
+  const undo = useEditor((state) => state.undo);
+  const redo = useEditor((state) => state.redo);
+  const canUndo = useEditor((state) => state.past.length > 0);
+  const canRedo = useEditor((state) => state.future.length > 0);
+  const clipCount = useEditor((state) => state.clips.length);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [confirmNew, setConfirmNew] = useState(false);
@@ -62,50 +81,66 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
     setConfirmNew(true);
   };
 
-  const [busy, setBusy] = useState<'save' | 'open' | null>(null);
+  const [busy, setBusy] = useState<"save" | "open" | null>(null);
 
   const saveProject = useCallback(async () => {
-    setBusy('save');
+    setBusy("save");
     try {
       const bundle = await writeBundle(serialiseProject(readEditorState()));
-      download(bundle, `${project.name || 'project'}.${BUNDLE_EXTENSION}`);
-      showToast('The project and all its media are inside one file.', 'Project saved');
+      download(bundle, `${project.name || "project"}.${BUNDLE_EXTENSION}`);
+      showToast("The project and all its media are inside one file.", "Project saved");
     } catch (error) {
-      showToast(error instanceof BundleError ? error.message : 'The project could not be saved.', 'Save failed');
+      showToast(
+        error instanceof BundleError ? error.message : "The project could not be saved.",
+        "Save failed",
+      );
     } finally {
       setBusy(null);
     }
   }, [project.name]);
 
   useCommand(
-    'save',
+    "save",
     useCallback(() => {
       if (busy === null) void saveProject();
-    }, [busy, saveProject])
+    }, [busy, saveProject]),
   );
   useCommand(
-    'open',
+    "open",
     useCallback(() => {
       if (busy === null) fileRef.current?.click();
-    }, [busy])
+    }, [busy]),
   );
 
   const openProject = async (file: File) => {
-    setBusy('open');
+    setBusy("open");
     try {
       const { project: data, assets, missing } = await readBundle(file);
       loadProject(data, assets);
       for (const asset of assets) {
         if (asset.thumbnail) continue;
-        void generateThumbnail(asset.id).then(thumbnail => thumbnail && updateAsset(asset.id, { thumbnail }));
+        void generateThumbnail(asset.id).then(
+          (thumbnail) => thumbnail && updateAsset(asset.id, { thumbnail }),
+        );
       }
       if (missing.length > 0) {
-        showToast(`Could not restore: ${missing.join(', ')}. Those clips will be empty.`, 'Opened with missing media');
+        showToast(
+          `Could not restore: ${missing.join(", ")}. Those clips will be empty.`,
+          "Opened with missing media",
+        );
       } else {
-        showToast(`${assets.length} media file${assets.length === 1 ? '' : 's'} restored.`, 'Project opened');
+        showToast(
+          `${assets.length} media file${assets.length === 1 ? "" : "s"} restored.`,
+          "Project opened",
+        );
       }
     } catch (error) {
-      showToast(error instanceof BundleError ? error.message : 'That file is not a Nayan UI Video Editor project.', 'Could not open');
+      showToast(
+        error instanceof BundleError
+          ? error.message
+          : "That file is not a Nayan UI Video Editor project.",
+        "Could not open",
+      );
     } finally {
       setBusy(null);
     }
@@ -115,7 +150,9 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
     <header className="island flex shrink-0 items-center gap-2 px-3 py-2">
       <div className="flex shrink-0 items-center gap-2">
         <Clapperboard className="h-5 w-5 text-accent" />
-        <span className="hidden whitespace-nowrap text-sm font-semibold tracking-tight text-foreground xl:inline">Nayan UI Video Editor</span>
+        <span className="hidden whitespace-nowrap text-sm font-semibold tracking-tight text-foreground xl:inline">
+          Nayan UI Video Editor
+        </span>
       </div>
 
       <span className="mx-1 h-5 w-px shrink-0 bg-separator" />
@@ -123,7 +160,7 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
       <div data-clarity-mask="true" className="w-56 min-w-24 shrink">
         <NInput
           value={project.name}
-          onChange={event => updateProject({ name: event.target.value })}
+          onChange={(event) => updateProject({ name: event.target.value })}
           wrapperClassName="mb-0 w-full"
           inputClassName="h-8 text-sm"
           aria-label="Project name"
@@ -134,13 +171,18 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
         <IconButton label="New project" onClick={startNewProject}>
           <FilePlus2 className="h-4 w-4" />
         </IconButton>
-        <IconButton label={`Open project (${MOD_LABEL}O)`} onClick={() => fileRef.current?.click()} disabled={busy !== null}>
+        <IconButton
+          label={`Open project (${MOD_LABEL}O)`}
+          onClick={() => fileRef.current?.click()}
+          disabled={busy !== null}
+        >
           <FileUp className="h-4 w-4" />
         </IconButton>
         <IconButton
-          label={busy === 'save' ? 'Bundling media…' : `Save project (${MOD_LABEL}S)`}
+          label={busy === "save" ? "Bundling media…" : `Save project (${MOD_LABEL}S)`}
           onClick={() => void saveProject()}
-          disabled={busy !== null}>
+          disabled={busy !== null}
+        >
           <FileDown className="h-4 w-4" />
         </IconButton>
         <input
@@ -148,10 +190,10 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
           type="file"
           accept={`.${BUNDLE_EXTENSION},application/zip`}
           className="hidden"
-          onChange={event => {
+          onChange={(event) => {
             const file = event.target.files?.[0];
             if (file) void openProject(file);
-            event.target.value = '';
+            event.target.value = "";
           }}
         />
       </div>
@@ -166,7 +208,12 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
 
         <span className="mx-1 h-5 w-px bg-separator" />
 
-        <NButton isOutline onClick={() => setSettingsOpen(true)} aria-label="Project settings" className="h-7 whitespace-nowrap px-2 text-[11px]">
+        <NButton
+          isOutline
+          onClick={() => setSettingsOpen(true)}
+          aria-label="Project settings"
+          className="h-7 whitespace-nowrap px-2 text-[11px]"
+        >
           <Settings className="h-3.5 w-3.5 xl:mr-1.5" />
           <span className="hidden xl:inline">
             {project.width} × {project.height} · {project.fps}fps
@@ -177,11 +224,16 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
           <Keyboard className="h-4 w-4" />
         </IconButton>
 
-        <IconButton label={theme === 'dark' ? 'Light theme' : 'Dark theme'} onClick={onToggleTheme}>
-          {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        <IconButton label={theme === "dark" ? "Light theme" : "Dark theme"} onClick={onToggleTheme}>
+          {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </IconButton>
 
-        <NButton onClick={onExport} disabled={clipCount === 0} title={`Export video (${MOD_LABEL}E)`} className="ml-1 h-8 px-3 text-xs">
+        <NButton
+          onClick={onExport}
+          disabled={clipCount === 0}
+          title={`Export video (${MOD_LABEL}E)`}
+          className="ml-1 h-8 px-3 text-xs"
+        >
           <Download className="mr-1.5 h-4 w-4" />
           Export
         </NButton>
@@ -193,24 +245,35 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
         message="This clears the timeline and resets the project settings. Your imported media stays in the Media panel, and Undo will bring the edit back — but nothing is saved automatically, so export or save the project first if you want to keep it."
         confirmText="Discard and start new"
         cancelText="Keep editing"
-        onResult={confirmed => {
+        onResult={(confirmed) => {
           if (confirmed) resetProject();
         }}
         onClose={() => setConfirmNew(false)}
       />
 
-      <NDialog isOpen={settingsOpen} title="Project settings" size={DialogSize.SM} onClose={() => setSettingsOpen(false)}>
+      <NDialog
+        isOpen={settingsOpen}
+        title="Project settings"
+        size={DialogSize.SM}
+        onClose={() => setSettingsOpen(false)}
+      >
         <div className="space-y-1">
           <SelectField
             label="Resolution"
             value={`${project.width}x${project.height}`}
             options={
-              RESOLUTIONS.some(option => option.value === `${project.width}x${project.height}`)
+              RESOLUTIONS.some((option) => option.value === `${project.width}x${project.height}`)
                 ? RESOLUTIONS
-                : [{ value: `${project.width}x${project.height}`, label: `Custom — ${project.width} × ${project.height}` }, ...RESOLUTIONS]
+                : [
+                    {
+                      value: `${project.width}x${project.height}`,
+                      label: `Custom — ${project.width} × ${project.height}`,
+                    },
+                    ...RESOLUTIONS,
+                  ]
             }
-            onChange={value => {
-              const [width, height] = value.split('x').map(Number);
+            onChange={(value) => {
+              const [width, height] = value.split("x").map(Number);
               updateProject({ width, height });
             }}
           />
@@ -218,23 +281,41 @@ export const TopBar = ({ theme, onToggleTheme, onExport, onShowShortcuts, onRese
             label="Frame rate"
             value={String(project.fps)}
             options={
-              FRAME_RATES.some(option => option.value === String(project.fps))
+              FRAME_RATES.some((option) => option.value === String(project.fps))
                 ? FRAME_RATES
                 : [{ value: String(project.fps), label: `${project.fps} fps` }, ...FRAME_RATES]
             }
-            onChange={value => updateProject({ fps: Number(value) })}
+            onChange={(value) => updateProject({ fps: Number(value) })}
           />
           <div className="grid grid-cols-2 gap-2">
-            <NumberField label="Width" value={project.width} min={16} max={7680} step={2} onChange={width => updateProject({ width })} />
-            <NumberField label="Height" value={project.height} min={16} max={4320} step={2} onChange={height => updateProject({ height })} />
+            <NumberField
+              label="Width"
+              value={project.width}
+              min={16}
+              max={7680}
+              step={2}
+              onChange={(width) => updateProject({ width })}
+            />
+            <NumberField
+              label="Height"
+              value={project.height}
+              min={16}
+              max={4320}
+              step={2}
+              onChange={(height) => updateProject({ height })}
+            />
           </div>
-          <p className="pt-1 text-[11px] text-muted">Background is set in the Background panel, on the left.</p>
+          <p className="pt-1 text-[11px] text-muted">
+            Background is set in the Background panel, on the left.
+          </p>
 
           <div className="mt-3 border-t border-border pt-3">
-            <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted">Editor</p>
+            <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted">
+              Editor
+            </p>
             <p className="mb-2 text-[11px] leading-relaxed text-muted">
-              Panel sizes and the light/dark choice are remembered in this browser, not in the project. Resetting them leaves your timeline and media
-              untouched.
+              Panel sizes and the light/dark choice are remembered in this browser, not in the
+              project. Resetting them leaves your timeline and media untouched.
             </p>
             <NButton isOutline onClick={onResetPreferences} className="h-7 px-2 text-[11px]">
               <RotateCcw className="mr-1.5 h-3.5 w-3.5" />

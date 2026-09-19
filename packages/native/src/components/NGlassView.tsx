@@ -1,5 +1,5 @@
-import React from 'react';
-import { GlassView, type GlassViewProps, cn } from 'heroui-native';
+import React from "react";
+import { GlassView, type GlassViewProps, cn } from "heroui-native";
 
 export interface NGlassViewProps extends GlassViewProps {
   children?: React.ReactNode;
@@ -13,4 +13,4 @@ export const NGlassView = React.memo<NGlassViewProps>(({ children, className, ..
   );
 });
 
-NGlassView.displayName = 'NGlassView';
+NGlassView.displayName = "NGlassView";

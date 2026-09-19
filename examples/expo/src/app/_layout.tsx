@@ -1,14 +1,14 @@
-import 'react-native-reanimated';
-import { NTheme, useNTheme } from '@nayan-ui/native';
-import { Stack } from 'expo-router';
-import '../../global.css';
+import "react-native-reanimated";
+import { NTheme, useNTheme } from "@nayan-ui/native";
+import { Stack } from "expo-router";
+import "../../global.css";
 
 function RootNav() {
   const { headerConfig } = useNTheme();
 
   return (
     <Stack>
-      <Stack.Screen name="index" options={{ title: 'Nayan UI', ...headerConfig }} />
+      <Stack.Screen name="index" options={{ title: "Nayan UI", ...headerConfig }} />
     </Stack>
   );
 }

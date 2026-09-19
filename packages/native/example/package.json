@@ -1,6 +1,7 @@
 {
   "name": "react-native-example",
   "version": "1.0.0",
+  "private": true,
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start --clear",
@@ -38,7 +39,6 @@
     "tailwindcss": "^4.0.0",
     "uniwind": "^1.10.0"
   },
-  "private": true,
   "devDependencies": {
     "react-native-builder-bob": "^0.43.0",
     "react-native-monorepo-config": "^0.3.3"

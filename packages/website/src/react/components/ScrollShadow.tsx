@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { NScrollShadow } from '@nayan-ui/react';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { NScrollShadow } from "@nayan-ui/react";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
 const ScrollShadow = () => {
   return (
@@ -39,11 +39,21 @@ const ScrollShadow = () => {
 export default ScrollShadow;`;
 
 export const scrollShadowAttributes = [
-  { name: 'children', type: 'ReactNode', default: 'Required', details: 'The children prop.' },
-  { name: 'orientation', type: "'horizontal' | 'vertical'", default: "'vertical'", details: 'The orientation prop.' },
-  { name: 'size', type: 'number', default: 'Optional', details: 'Shadow depth in pixels.' },
-  { name: 'offset', type: 'number', default: 'Optional', details: 'How close to the edge counts as scrolled to it.' },
-  { name: 'hideScrollBar', type: 'boolean', default: 'false', details: 'The hideScrollBar prop.' },
-  { name: 'isEnabled', type: 'boolean', default: 'true', details: 'The isEnabled prop.' },
-  { name: 'className', type: 'string', default: "''", details: 'The className prop.' }
+  { name: "children", type: "ReactNode", default: "Required", details: "The children prop." },
+  {
+    name: "orientation",
+    type: "'horizontal' | 'vertical'",
+    default: "'vertical'",
+    details: "The orientation prop.",
+  },
+  { name: "size", type: "number", default: "Optional", details: "Shadow depth in pixels." },
+  {
+    name: "offset",
+    type: "number",
+    default: "Optional",
+    details: "How close to the edge counts as scrolled to it.",
+  },
+  { name: "hideScrollBar", type: "boolean", default: "false", details: "The hideScrollBar prop." },
+  { name: "isEnabled", type: "boolean", default: "true", details: "The isEnabled prop." },
+  { name: "className", type: "string", default: "''", details: "The className prop." },
 ];

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import ComponentWrapper from '@/helpers/ComponentWrapper';
-import DemoComingSoon from './DemoComingSoon';
+import ComponentWrapper from "@/helpers/ComponentWrapper";
+import DemoComingSoon from "./DemoComingSoon";
 
 const Checkbox = () => {
   return (
@@ -38,10 +38,35 @@ export default function CheckScreen() {
 }`;
 
 export const checkAttributes = [
-  { name: 'label', type: 'string', default: 'Required', details: 'Label text for the checkbox.' },
-  { name: 'isSelected', type: 'boolean', default: 'false', details: 'Whether the checkbox is selected.' },
-  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the checkbox is disabled.' },
-  { name: 'onSelectedChange', type: '(selected: boolean) => void', default: 'Optional', details: 'Callback when checkbox state changes.' },
-  { name: 'containerClassName', type: 'string', default: "' '", details: 'You can customise container by passing tailwind classes.' },
-  { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise label by passing tailwind classes.' }
+  { name: "label", type: "string", default: "Required", details: "Label text for the checkbox." },
+  {
+    name: "isSelected",
+    type: "boolean",
+    default: "false",
+    details: "Whether the checkbox is selected.",
+  },
+  {
+    name: "isDisabled",
+    type: "boolean",
+    default: "false",
+    details: "Whether the checkbox is disabled.",
+  },
+  {
+    name: "onSelectedChange",
+    type: "(selected: boolean) => void",
+    default: "Optional",
+    details: "Callback when checkbox state changes.",
+  },
+  {
+    name: "containerClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise container by passing tailwind classes.",
+  },
+  {
+    name: "labelClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise label by passing tailwind classes.",
+  },
 ];

@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { usePathname } from 'next/navigation';
-import { H3_DOC } from '@/design/system';
-import Code from '@/helpers/Code';
-import Sidebar from '@/helpers/Sidebar';
+import { usePathname } from "next/navigation";
+import { H3_DOC } from "@/design/system";
+import Code from "@/helpers/Code";
+import Sidebar from "@/helpers/Sidebar";
 import {
   defaultGameSettingsCode,
   exportedConstantsCode,
   gameIdsEnumCode,
   gamesListCode,
   gamesMappingCode,
-  typescriptTypesCode
-} from '@/services/GamesCodeBlocks';
-import { getMenuItem } from '@/services/Utils';
+  typescriptTypesCode,
+} from "@/services/GamesCodeBlocks";
+import { getMenuItem } from "@/services/Utils";
 
 const GamesApiReference = () => {
   const pathname = usePathname();
   const component: any = getMenuItem(pathname);
 
   return (
-    <Sidebar title={component?.title || 'API Reference'}>
+    <Sidebar title={component?.title || "API Reference"}>
       <div className="mb-8">
         <div className="space-y-6">
           <div className="mb-6">

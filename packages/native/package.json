@@ -1,8 +1,31 @@
 {
   "name": "@nayan-ui/native",
-  "sideEffects": false,
   "version": "2.1.0",
   "description": "Component library for React Native.",
+  "keywords": [
+    "android",
+    "ios",
+    "react-native"
+  ],
+  "homepage": "https://github.com/ursnj/nayan-ui#readme",
+  "bugs": {
+    "url": "https://github.com/ursnj/nayan-ui/issues"
+  },
+  "license": "MIT",
+  "author": "ursnj <niranjan.devasani@gmail.com> (https://github.com/ursnj)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ursnj/nayan-ui.git"
+  },
+  "workspaces": [
+    "example"
+  ],
+  "files": [
+    "src",
+    "lib",
+    "!**/.*"
+  ],
+  "sideEffects": false,
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
   "exports": {
@@ -13,34 +36,14 @@
     },
     "./package.json": "./package.json"
   },
-  "files": [
-    "src",
-    "lib",
-    "!**/.*"
-  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "example": "yarn workspace react-native-example",
     "clean": "del-cli lib",
     "build": "bob build",
     "typecheck": "tsc"
-  },
-  "keywords": [
-    "react-native",
-    "ios",
-    "android"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ursnj/nayan-ui.git"
-  },
-  "author": "ursnj <niranjan.devasani@gmail.com> (https://github.com/ursnj)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ursnj/nayan-ui/issues"
-  },
-  "homepage": "https://github.com/ursnj/nayan-ui#readme",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.2.14",
@@ -76,9 +79,6 @@
       "optional": true
     }
   },
-  "workspaces": [
-    "example"
-  ],
   "packageManager": "yarn@4.11.0",
   "react-native-builder-bob": {
     "source": "src",

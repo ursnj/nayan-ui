@@ -1,4 +1,4 @@
-import type { ChromaKey, ColorAdjust } from '../types';
+import type { ChromaKey, ColorAdjust } from "../types";
 
 const VERTEX_SHADER = `#version 300 es
 in vec2 aPosition;
@@ -184,7 +184,10 @@ export interface PixelEffectParams {
   seed: number;
 }
 
-export const needsPixelProcessing = (params: { color: ColorAdjust; chromaKey?: ChromaKey }): boolean => {
+export const needsPixelProcessing = (params: {
+  color: ColorAdjust;
+  chromaKey?: ChromaKey;
+}): boolean => {
   const { color } = params;
   return (
     (params.chromaKey?.enabled ?? false) ||
@@ -202,8 +205,8 @@ export const needsPixelProcessing = (params: { color: ColorAdjust; chromaKey?: C
 };
 
 const hexToRgb = (hex: string): [number, number, number] => {
-  const clean = hex.replace('#', '');
-  const full = clean.length === 3 ? clean.replace(/./g, char => char + char) : clean;
+  const clean = hex.replace("#", "");
+  const full = clean.length === 3 ? clean.replace(/./g, (char) => char + char) : clean;
   const value = Number.parseInt(full.slice(0, 6), 16);
   if (Number.isNaN(value)) return [0, 0, 0];
   return [((value >> 16) & 255) / 255, ((value >> 8) & 255) / 255, (value & 255) / 255];
@@ -224,20 +227,20 @@ class GLProcessor {
     if (!this.gl) {
       try {
         this.canvas =
-          typeof OffscreenCanvas !== 'undefined'
+          typeof OffscreenCanvas !== "undefined"
             ? new OffscreenCanvas(width, height)
-            : Object.assign(document.createElement('canvas'), { width, height });
-        const gl = this.canvas.getContext('webgl2', {
+            : Object.assign(document.createElement("canvas"), { width, height });
+        const gl = this.canvas.getContext("webgl2", {
           premultipliedAlpha: true,
           alpha: true,
           antialias: false,
-          preserveDrawingBuffer: false
+          preserveDrawingBuffer: false,
         }) as WebGL2RenderingContext | null;
-        if (!gl) throw new Error('no webgl2');
+        if (!gl) throw new Error("no webgl2");
         this.gl = gl;
         this.setup(gl);
       } catch (error) {
-        console.error('[video-editor] GPU effects unavailable, falling back to Canvas2D:', error);
+        console.error("[video-editor] GPU effects unavailable, falling back to Canvas2D:", error);
         this.failed = true;
         return null;
       }
@@ -256,7 +259,7 @@ class GLProcessor {
       gl.shaderSource(shader, source);
       gl.compileShader(shader);
       if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        throw new Error(gl.getShaderInfoLog(shader) ?? 'shader compile failed');
+        throw new Error(gl.getShaderInfoLog(shader) ?? "shader compile failed");
       }
       return shader;
     };
@@ -268,7 +271,7 @@ class GLProcessor {
     gl.attachShader(program, fragment);
     gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      throw new Error(gl.getProgramInfoLog(program) ?? 'program link failed');
+      throw new Error(gl.getProgramInfoLog(program) ?? "program link failed");
     }
     gl.deleteShader(vertex);
     gl.deleteShader(fragment);
@@ -279,7 +282,7 @@ class GLProcessor {
     this.buffer = buffer;
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-    const position = gl.getAttribLocation(program, 'aPosition');
+    const position = gl.getAttribLocation(program, "aPosition");
     gl.enableVertexAttribArray(position);
     gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
 
@@ -297,7 +300,7 @@ class GLProcessor {
       if (this.program) gl.deleteProgram(this.program);
       if (this.texture) gl.deleteTexture(this.texture);
       if (this.buffer) gl.deleteBuffer(this.buffer);
-      gl.getExtension('WEBGL_lose_context')?.loseContext();
+      gl.getExtension("WEBGL_lose_context")?.loseContext();
     }
     if (this.canvas) {
       this.canvas.width = 0;
@@ -319,7 +322,12 @@ class GLProcessor {
     return this.uniforms.get(name) ?? null;
   }
 
-  process(source: TexImageSource, width: number, height: number, params: PixelEffectParams): OffscreenCanvas | HTMLCanvasElement | null {
+  process(
+    source: TexImageSource,
+    width: number,
+    height: number,
+    params: PixelEffectParams,
+  ): OffscreenCanvas | HTMLCanvasElement | null {
     const gl = this.ensure(width, height);
     if (!gl || !this.program) return null;
 
@@ -333,35 +341,35 @@ class GLProcessor {
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
 
       const { color, chromaKey } = params;
-      gl.uniform1i(this.location('uTexture'), 0);
-      gl.uniform2f(this.location('uTexel'), 1 / Math.max(1, width), 1 / Math.max(1, height));
-      gl.uniform1f(this.location('uBrightness'), color.brightness);
-      gl.uniform1f(this.location('uContrast'), color.contrast);
-      gl.uniform1f(this.location('uSaturation'), color.saturation);
-      gl.uniform1f(this.location('uVibrance'), color.vibrance);
-      gl.uniform1f(this.location('uTemperature'), color.temperature);
-      gl.uniform1f(this.location('uTint'), color.tint);
-      gl.uniform1f(this.location('uHighlights'), color.highlights);
-      gl.uniform1f(this.location('uShadows'), color.shadows);
-      gl.uniform1f(this.location('uFade'), color.fade);
-      gl.uniform1f(this.location('uVignette'), color.vignette);
-      gl.uniform1f(this.location('uGrain'), color.grain);
-      gl.uniform1f(this.location('uSharpen'), color.sharpen);
-      gl.uniform1f(this.location('uSplitTone'), color.splitTone);
-      gl.uniform1f(this.location('uGrayscale'), color.grayscale);
-      gl.uniform1f(this.location('uSeed'), (params.seed / 1000) % 1024);
+      gl.uniform1i(this.location("uTexture"), 0);
+      gl.uniform2f(this.location("uTexel"), 1 / Math.max(1, width), 1 / Math.max(1, height));
+      gl.uniform1f(this.location("uBrightness"), color.brightness);
+      gl.uniform1f(this.location("uContrast"), color.contrast);
+      gl.uniform1f(this.location("uSaturation"), color.saturation);
+      gl.uniform1f(this.location("uVibrance"), color.vibrance);
+      gl.uniform1f(this.location("uTemperature"), color.temperature);
+      gl.uniform1f(this.location("uTint"), color.tint);
+      gl.uniform1f(this.location("uHighlights"), color.highlights);
+      gl.uniform1f(this.location("uShadows"), color.shadows);
+      gl.uniform1f(this.location("uFade"), color.fade);
+      gl.uniform1f(this.location("uVignette"), color.vignette);
+      gl.uniform1f(this.location("uGrain"), color.grain);
+      gl.uniform1f(this.location("uSharpen"), color.sharpen);
+      gl.uniform1f(this.location("uSplitTone"), color.splitTone);
+      gl.uniform1f(this.location("uGrayscale"), color.grayscale);
+      gl.uniform1f(this.location("uSeed"), (params.seed / 1000) % 1024);
 
       const [sr, sg, sb] = hexToRgb(color.shadowTint);
-      gl.uniform3f(this.location('uShadowTint'), sr, sg, sb);
+      gl.uniform3f(this.location("uShadowTint"), sr, sg, sb);
       const [hr, hg, hb] = hexToRgb(color.highlightTint);
-      gl.uniform3f(this.location('uHighlightTint'), hr, hg, hb);
+      gl.uniform3f(this.location("uHighlightTint"), hr, hg, hb);
 
-      gl.uniform1i(this.location('uChromaEnabled'), chromaKey.enabled ? 1 : 0);
+      gl.uniform1i(this.location("uChromaEnabled"), chromaKey.enabled ? 1 : 0);
       const [r, g, b] = hexToRgb(chromaKey.color);
-      gl.uniform3f(this.location('uKeyColor'), r, g, b);
-      gl.uniform1f(this.location('uSimilarity'), chromaKey.similarity * 0.5);
-      gl.uniform1f(this.location('uSmoothness'), chromaKey.smoothness * 0.5);
-      gl.uniform1f(this.location('uSpill'), chromaKey.spill);
+      gl.uniform3f(this.location("uKeyColor"), r, g, b);
+      gl.uniform1f(this.location("uSimilarity"), chromaKey.similarity * 0.5);
+      gl.uniform1f(this.location("uSmoothness"), chromaKey.smoothness * 0.5);
+      gl.uniform1f(this.location("uSpill"), chromaKey.spill);
 
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
@@ -386,9 +394,9 @@ export const canvasFilterString = (color: ColorAdjust, blurScale: number): strin
   if (color.saturation !== 1) parts.push(`saturate(${color.saturation})`);
   if (color.grayscale > 0) parts.push(`grayscale(${color.grayscale})`);
   if (color.blur > 0) parts.push(`blur(${(color.blur * blurScale).toFixed(2)}px)`);
-  return parts.length > 0 ? parts.join(' ') : 'none';
+  return parts.length > 0 ? parts.join(" ") : "none";
 };
 
 /** Blur only — used after the shader has handled everything else. */
 export const blurOnlyFilter = (color: ColorAdjust, blurScale: number): string =>
-  color.blur > 0 ? `blur(${(color.blur * blurScale).toFixed(2)}px)` : 'none';
+  color.blur > 0 ? `blur(${(color.blur * blurScale).toFixed(2)}px)` : "none";

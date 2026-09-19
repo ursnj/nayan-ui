@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { NCode, THEMES } from '@nayan-ui/react';
-import { Check, Copy } from 'lucide-react';
-import { useTheme } from '@/helpers/ThemeProvider';
+import { useEffect, useState } from "react";
+import { NCode, THEMES } from "@nayan-ui/react";
+import { Check, Copy } from "lucide-react";
+import { useTheme } from "@/helpers/ThemeProvider";
 
 interface Props {
   code: string;
@@ -13,7 +13,7 @@ interface Props {
   filename?: string;
 }
 
-const Code = ({ code, language = 'tsx', filename }: Props) => {
+const Code = ({ code, language = "tsx", filename }: Props) => {
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -46,7 +46,8 @@ const Code = ({ code, language = 'tsx', filename }: Props) => {
           type="button"
           onClick={handleCopy}
           className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-default bg-surface px-2 py-1 text-xs font-medium text-muted transition-colors hover:text-foreground"
-          aria-live="polite">
+          aria-live="polite"
+        >
           {copied ? (
             <>
               <Check aria-hidden className="h-3.5 w-3.5 text-emerald-500" />

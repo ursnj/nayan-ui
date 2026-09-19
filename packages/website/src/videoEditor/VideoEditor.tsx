@@ -1,44 +1,72 @@
-import { Blend, Github, Layers, MonitorPlay, Package, Palette, Type, Volume2, Wand2 } from 'lucide-react';
-import Link from 'next/link';
-import { CtaPanel, FaqList, FeatureCard, PageHero, Section, SectionHeader, StatGrid } from '@/design/Primitives';
-import { BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, CARD_PAD, GRID_GAP, H3, H4_CARD } from '@/design/system';
-import { DESTINATIONS, EDITOR_URL, FACTS, FAQS, SOURCE_URL, STEPS } from './content';
+import {
+  Blend,
+  Github,
+  Layers,
+  MonitorPlay,
+  Package,
+  Palette,
+  Type,
+  Volume2,
+  Wand2,
+} from "lucide-react";
+import Link from "next/link";
+import {
+  CtaPanel,
+  FaqList,
+  FeatureCard,
+  PageHero,
+  Section,
+  SectionHeader,
+  StatGrid,
+} from "@/design/Primitives";
+import {
+  BUTTON_PRIMARY,
+  BUTTON_SECONDARY,
+  CARD,
+  CARD_PAD,
+  GRID_GAP,
+  H3,
+  H4_CARD,
+} from "@/design/system";
+import { DESTINATIONS, EDITOR_URL, FACTS, FAQS, SOURCE_URL, STEPS } from "./content";
 
 const FEATURES = [
   {
     icon: Layers,
-    title: 'Layer as much as you like',
-    body: 'Stack video, music, voice-over and titles on as many tracks as you need, and move any of it without disturbing the rest.'
+    title: "Layer as much as you like",
+    body: "Stack video, music, voice-over and titles on as many tracks as you need, and move any of it without disturbing the rest.",
   },
   {
     icon: Wand2,
-    title: 'Remove a green screen',
-    body: 'Drop out the background behind your subject and put anything you like there instead, with edges that still look believable.'
+    title: "Remove a green screen",
+    body: "Drop out the background behind your subject and put anything you like there instead, with edges that still look believable.",
   },
   {
     icon: Palette,
-    title: 'Make it look good',
-    body: 'Fifteen one-click looks, from warm and sunny to cold and cinematic, each with a dial so you can take it as far as you want.'
+    title: "Make it look good",
+    body: "Fifteen one-click looks, from warm and sunny to cold and cinematic, each with a dial so you can take it as far as you want.",
   },
   {
     icon: Blend,
-    title: 'Smooth cuts between shots',
-    body: 'Eighteen transitions — fades, wipes, slides, zooms and a whip pan — for when a hard cut is not what the moment needs.'
+    title: "Smooth cuts between shots",
+    body: "Eighteen transitions — fades, wipes, slides, zooms and a whip pan — for when a hard cut is not what the moment needs.",
   },
   {
     icon: Type,
-    title: 'Titles and captions',
-    body: 'Add readable text anywhere on the frame, pick a style, and have it appear with a little animation rather than just popping in.'
+    title: "Titles and captions",
+    body: "Add readable text anywhere on the frame, pick a style, and have it appear with a little animation rather than just popping in.",
   },
   {
     icon: Volume2,
-    title: 'Sound that stays put',
-    body: 'Balance your levels, fade music under speech, slow a clip down or run it backwards — and the audio never drifts out of step.'
-  }
+    title: "Sound that stays put",
+    body: "Balance your levels, fade music under speech, slow a clip down or run it backwards — and the audio never drifts out of step.",
+  },
 ];
 
 const EditorScreenshot = () => (
-  <div className={`${CARD} overflow-hidden p-1.5 shadow-xl shadow-indigo-500/5 lg:scale-110 lg:translate-x-4`}>
+  <div
+    className={`${CARD} overflow-hidden p-1.5 shadow-xl shadow-indigo-500/5 lg:scale-110 lg:translate-x-4`}
+  >
     <img
       src="/video-editor/editor-light.png"
       alt="The Nayan UI video editor: a media library on the left, the preview in the middle, clip properties on the right and a multi-track timeline along the bottom."
@@ -60,7 +88,7 @@ const VideoEditorMain = () => (
   <>
     <PageHero
       media={<EditorScreenshot />}
-      breadcrumb={[{ label: 'Home', href: '/' }, { label: 'Video Editor' }]}
+      breadcrumb={[{ label: "Home", href: "/" }, { label: "Video Editor" }]}
       eyebrow="Video Editor"
       title="Free online video editor"
       titleAccent="No upload, no account, no watermark"
@@ -71,13 +99,19 @@ const VideoEditorMain = () => (
             <MonitorPlay aria-hidden className="mr-2 h-5 w-5" />
             Open the editor
           </a>
-          <a href={SOURCE_URL} target="_blank" rel="noopener noreferrer" className={BUTTON_SECONDARY}>
+          <a
+            href={SOURCE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={BUTTON_SECONDARY}
+          >
             <Github aria-hidden className="mr-2 h-5 w-5" />
             View source
           </a>
         </>
       }
-      note="Free forever · MIT licensed · Works offline · Nothing leaves your device">
+      note="Free forever · MIT licensed · Works offline · Nothing leaves your device"
+    >
       <div className="mx-auto mt-10 max-w-4xl">
         <StatGrid stats={FACTS} />
       </div>
@@ -91,8 +125,13 @@ const VideoEditorMain = () => (
         lead="Not a trimmer with a few sliders. The things you actually need to finish a video."
       />
       <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
-        {FEATURES.map(feature => (
-          <FeatureCard key={feature.title} icon={feature.icon} title={feature.title} body={feature.body} />
+        {FEATURES.map((feature) => (
+          <FeatureCard
+            key={feature.title}
+            icon={feature.icon}
+            title={feature.title}
+            body={feature.body}
+          />
         ))}
       </div>
     </Section>
@@ -125,7 +164,7 @@ const VideoEditorMain = () => (
         lead="Pick the shape once and the preview, the guides and the export all follow it."
       />
       <div className={`grid sm:grid-cols-3 ${GRID_GAP}`}>
-        {DESTINATIONS.map(item => (
+        {DESTINATIONS.map((item) => (
           <div key={item.title} className={`${CARD} ${CARD_PAD}`}>
             <h3 className={`mb-2 ${H3}`}>{item.title}</h3>
             <p className="text-sm leading-relaxed text-muted">{item.body}</p>
@@ -136,8 +175,8 @@ const VideoEditorMain = () => (
       <div className={`${CARD} ${CARD_PAD} mt-5`}>
         <h3 className={H3}>Your project, in one file</h3>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">
-          Saving gives you a single file with the timeline and all of your media inside it, so you can close the tab, move to another machine and pick
-          up exactly where you left off.
+          Saving gives you a single file with the timeline and all of your media inside it, so you
+          can close the tab, move to another machine and pick up exactly where you left off.
         </p>
       </div>
     </Section>
@@ -147,7 +186,10 @@ const VideoEditorMain = () => (
       <FaqList faqs={FAQS} />
     </Section>
 
-    <CtaPanel title="Open a tab and start cutting" lead="Nothing to install, nothing to sign up for and nothing to upload. Drop a clip in and go.">
+    <CtaPanel
+      title="Open a tab and start cutting"
+      lead="Nothing to install, nothing to sign up for and nothing to upload. Drop a clip in and go."
+    >
       <a href={EDITOR_URL} target="_blank" rel="noopener noreferrer" className={BUTTON_PRIMARY}>
         <MonitorPlay aria-hidden className="mr-2 h-5 w-5" />
         Open the editor

@@ -1,8 +1,8 @@
-import React from 'react';
-import { View } from 'react-native';
-import { Button, cn } from 'heroui-native';
-import { type NIcon, resolveIcon } from '../helpers/icons';
-import { NText } from './NText';
+import React from "react";
+import { View } from "react-native";
+import { Button, cn } from "heroui-native";
+import { type NIcon, resolveIcon } from "../helpers/icons";
+import { NText } from "./NText";
 
 export interface ButtonGroupItem {
   label: string;
@@ -29,14 +29,26 @@ export interface NButtonGroupProps {
 }
 
 export const NButtonGroup = React.memo<NButtonGroupProps>(
-  ({ items, value, selected, onValueChange, onChange, label, isDisabled, disabled, className, buttonClassName, labelClassName }) => {
+  ({
+    items,
+    value,
+    selected,
+    onValueChange,
+    onChange,
+    label,
+    isDisabled,
+    disabled,
+    className,
+    buttonClassName,
+    labelClassName,
+  }) => {
     const current = value ?? selected;
     const off = disabled ?? isDisabled ?? false;
     const change = onValueChange ?? onChange;
     return (
       <View className="w-full">
-        {label && <NText className={cn('mb-2 font-medium', labelClassName)}>{label}</NText>}
-        <View className={cn('flex-row rounded-xl overflow-hidden', className)}>
+        {label && <NText className={cn("mb-2 font-medium", labelClassName)}>{label}</NText>}
+        <View className={cn("flex-row rounded-xl overflow-hidden", className)}>
           {items.map((item, index) => {
             const isSelected = item.value === current;
             const itemDisabled = off || item.isDisabled;
@@ -47,14 +59,15 @@ export const NButtonGroup = React.memo<NButtonGroupProps>(
                 key={item.value}
                 isDisabled={itemDisabled}
                 onPress={() => change?.(item.value)}
-                variant={isSelected ? 'primary' : 'secondary'}
+                variant={isSelected ? "primary" : "secondary"}
                 className={cn(
-                  'rounded-none border-r border-border',
-                  !isSelected && 'bg-surface',
-                  index === 0 && 'rounded-l-xl',
-                  index === items.length - 1 && 'rounded-r-xl border-r-0',
-                  buttonClassName
-                )}>
+                  "rounded-none border-r border-border",
+                  !isSelected && "bg-surface",
+                  index === 0 && "rounded-l-xl",
+                  index === items.length - 1 && "rounded-r-xl border-r-0",
+                  buttonClassName,
+                )}
+              >
                 {buttonIcon && <View className="mr-1">{buttonIcon}</View>}
                 <Button.Label>{item.label}</Button.Label>
               </Button>
@@ -63,7 +76,7 @@ export const NButtonGroup = React.memo<NButtonGroupProps>(
         </View>
       </View>
     );
-  }
+  },
 );
 
-NButtonGroup.displayName = 'NButtonGroup';
+NButtonGroup.displayName = "NButtonGroup";

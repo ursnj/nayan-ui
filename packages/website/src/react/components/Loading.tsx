@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { NLoading } from '@nayan-ui/react';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { NLoading } from "@nayan-ui/react";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
 const Loading = () => {
   return (
@@ -35,8 +35,28 @@ const Loading = () => {
 export default Loading;`;
 
 export const loadingAttributes = [
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'aria-label', type: 'string', default: 'Optional', details: 'ARIA label for accessibility.' },
-  { name: 'size', type: "'sm' | 'md' | 'lg' | 'xl'", default: "'md'", details: 'Size of the loading spinner.' },
-  { name: 'color', type: "'current' | 'accent' | 'success' | 'warning' | 'danger'", default: "'current'", details: 'Color of the loading spinner.' }
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "aria-label",
+    type: "string",
+    default: "Optional",
+    details: "ARIA label for accessibility.",
+  },
+  {
+    name: "size",
+    type: "'sm' | 'md' | 'lg' | 'xl'",
+    default: "'md'",
+    details: "Size of the loading spinner.",
+  },
+  {
+    name: "color",
+    type: "'current' | 'accent' | 'success' | 'warning' | 'danger'",
+    default: "'current'",
+    details: "Color of the loading spinner.",
+  },
 ];

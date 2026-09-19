@@ -1,6 +1,6 @@
-import React, { ElementType, ReactNode, isValidElement } from 'react';
-import { Dropdown, Kbd, Label, Separator } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { ElementType, ReactNode, isValidElement } from "react";
+import { Dropdown, Kbd, Label, Separator } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NMenuItemProps {
   id?: string;
@@ -20,39 +20,42 @@ export const NMenuItem: React.FC<NMenuItemProps> = React.memo(
   ({
     id,
     title,
-    shortcut = '',
+    shortcut = "",
     separator = false,
-    className = '',
-    iconClassName = '',
-    titleClassName = '',
-    shortcutClassName = '',
+    className = "",
+    iconClassName = "",
+    titleClassName = "",
+    shortcutClassName = "",
     icon,
     disabled = false,
-    onAction
+    onAction,
   }) => {
     let IconElem: ReactNode = null;
     if (icon) {
       if (isValidElement(icon)) {
         IconElem = icon;
-      } else if (typeof icon === 'object' && 'displayName' in icon) {
-        IconElem = React.createElement(icon as any, { className: cn('h-4 w-4 shrink-0', iconClassName) });
-      } else if (typeof icon === 'function') {
-        IconElem = React.createElement(icon, { className: cn('h-4 w-4 shrink-0', iconClassName) });
+      } else if (typeof icon === "object" && "displayName" in icon) {
+        IconElem = React.createElement(icon as any, {
+          className: cn("h-4 w-4 shrink-0", iconClassName),
+        });
+      } else if (typeof icon === "function") {
+        IconElem = React.createElement(icon, { className: cn("h-4 w-4 shrink-0", iconClassName) });
       }
     }
     return (
       <>
         <Dropdown.Item
           id={id}
-          textValue={typeof title === 'string' ? title : undefined}
+          textValue={typeof title === "string" ? title : undefined}
           isDisabled={disabled}
-          className={cn('nyn-menu-item', className)}
-          onAction={onAction}>
+          className={cn("nyn-menu-item", className)}
+          onAction={onAction}
+        >
           {IconElem}
           <Label className={cn(titleClassName)}>{title}</Label>
           {/* ms-auto: nothing in HeroUI targets slot="keyboard", so the shortcut needs pushing to the trailing edge. */}
           {shortcut && (
-            <Kbd slot="keyboard" className={cn('ms-auto ps-3', shortcutClassName)}>
+            <Kbd slot="keyboard" className={cn("ms-auto ps-3", shortcutClassName)}>
               {shortcut}
             </Kbd>
           )}
@@ -60,7 +63,7 @@ export const NMenuItem: React.FC<NMenuItemProps> = React.memo(
         {separator && <Separator />}
       </>
     );
-  }
+  },
 );
 
-NMenuItem.displayName = 'NMenuItem';
+NMenuItem.displayName = "NMenuItem";

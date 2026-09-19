@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
-import { NProgress, NText } from '@nayan-ui/native';
-import Screen from '../src/components/Screen';
+import { useEffect, useState } from "react";
+import { NProgress, NText } from "@nayan-ui/native";
+import Screen from "../src/components/Screen";
 
 export default function ProgressScreen() {
   const [value, setValue] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setValue(v => (v >= 100 ? 0 : v + 5));
+      setValue((v) => (v >= 100 ? 0 : v + 5));
     }, 300);
     return () => clearInterval(timer);
   }, []);

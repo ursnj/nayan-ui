@@ -1,14 +1,16 @@
-'use client';
+"use client";
 
-import { NButton, useNToast } from '@nayan-ui/react';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { NButton, useNToast } from "@nayan-ui/react";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
 const Toast = () => {
   const toast = useNToast();
 
   return (
     <ComponentWrapper code={code} attributes={toastAttributes}>
-      <NButton onClick={() => toast('This is a toast notification!', 'Success')}>Show Toast</NButton>
+      <NButton onClick={() => toast("This is a toast notification!", "Success")}>
+        Show Toast
+      </NButton>
     </ComponentWrapper>
   );
 };
@@ -31,6 +33,11 @@ const Toast = () => {
 export default Toast;`;
 
 export const toastAttributes = [
-  { name: 'description', type: 'string', default: 'Required', details: 'Toast message description.' },
-  { name: 'title', type: 'string', default: 'Optional', details: 'Toast title.' }
+  {
+    name: "description",
+    type: "string",
+    default: "Required",
+    details: "Toast message description.",
+  },
+  { name: "title", type: "string", default: "Optional", details: "Toast title." },
 ];

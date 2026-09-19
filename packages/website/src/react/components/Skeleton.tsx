@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { NSkeleton } from '@nayan-ui/react';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { NSkeleton } from "@nayan-ui/react";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
 const Skeleton = () => {
   return (
@@ -35,8 +35,18 @@ const Skeleton = () => {
 export default Skeleton;`;
 
 export const skeletonAttributes = [
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'role', type: 'string', default: 'Optional', details: 'ARIA role for accessibility.' },
-  { name: 'aria-busy', type: 'boolean', default: 'Optional', details: 'ARIA busy state.' },
-  { name: 'aria-live', type: "'off' | 'polite' | 'assertive'", default: 'Optional', details: 'ARIA live region.' }
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  { name: "role", type: "string", default: "Optional", details: "ARIA role for accessibility." },
+  { name: "aria-busy", type: "boolean", default: "Optional", details: "ARIA busy state." },
+  {
+    name: "aria-live",
+    type: "'off' | 'polite' | 'assertive'",
+    default: "Optional",
+    details: "ARIA live region.",
+  },
 ];

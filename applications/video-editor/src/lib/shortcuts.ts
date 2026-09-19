@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { seekTo, stepFrames, togglePlayback } from '../engine/playerInstance';
-import { readEditorState, timelineDurationUs } from '../store/editor';
-import type { EditorState } from '../store/editor';
-import { clipEndUs } from '../types';
-import type { Clip } from '../types';
+import { useCallback, useEffect, useRef } from "react";
+import { seekTo, stepFrames, togglePlayback } from "../engine/playerInstance";
+import { readEditorState, timelineDurationUs } from "../store/editor";
+import type { EditorState } from "../store/editor";
+import { clipEndUs } from "../types";
+import type { Clip } from "../types";
 
 /* ------------------------------------------------------------------ *
  * Commands owned by components
@@ -18,7 +18,7 @@ import type { Clip } from '../types';
  * down to the key handler, which keeps the whole key map in one file while
  * each action stays where it lives.
  */
-export type CommandName = 'save' | 'open' | 'export' | 'zoomFit' | 'help';
+export type CommandName = "save" | "open" | "export" | "zoomFit" | "help";
 
 const commands = new Map<CommandName, () => void>();
 
@@ -38,13 +38,15 @@ const run = (name: CommandName) => commands.get(name)?.();
  * Modifiers
  * ------------------------------------------------------------------ */
 
-const isApple = typeof navigator !== 'undefined' && /mac|iphone|ipad/i.test(navigator.userAgent);
+const isApple = typeof navigator !== "undefined" && /mac|iphone|ipad/i.test(navigator.userAgent);
 
 /** ⌘ on Apple hardware, Ctrl everywhere else — never both. */
-const mod = (event: KeyboardEvent) => (isApple ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey);
+const mod = (event: KeyboardEvent) =>
+  isApple ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
 
 /** No modifier at all, so a bare letter can't fire on a browser combination. */
-const bare = (event: KeyboardEvent) => !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey;
+const bare = (event: KeyboardEvent) =>
+  !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey;
 
 /**
  * Option/Alt combinations are matched on `event.code`.
@@ -53,11 +55,12 @@ const bare = (event: KeyboardEvent) => !event.metaKey && !event.ctrlKey && !even
  * circumflex, so `event.key` arrives as `Dead` or a composed character rather
  * than `i`. The physical key is the only reliable thing to test.
  */
-const alt = (event: KeyboardEvent, code: string) => event.altKey && !event.metaKey && !event.ctrlKey && event.code === code;
+const alt = (event: KeyboardEvent, code: string) =>
+  event.altKey && !event.metaKey && !event.ctrlKey && event.code === code;
 
 /** The platform's modifier, for tooltips that name their own shortcut. */
-export const MOD_LABEL = isApple ? '⌘' : 'Ctrl';
-const ALT_LABEL = isApple ? '⌥' : 'Alt';
+export const MOD_LABEL = isApple ? "⌘" : "Ctrl";
+const ALT_LABEL = isApple ? "⌥" : "Alt";
 
 const key = (event: KeyboardEvent) => event.key.toLowerCase();
 
@@ -91,7 +94,8 @@ const EDIT_POINT_TOLERANCE_US = 8_000;
 /** The nearest edit point strictly before (`-1`) or after (`1`) an instant. */
 const edgeFrom = (clips: Clip[], fromUs: number, direction: -1 | 1): number | null => {
   const points = editPoints(clips);
-  if (direction > 0) return points.find(point => point > fromUs + EDIT_POINT_TOLERANCE_US) ?? null;
+  if (direction > 0)
+    return points.find((point) => point > fromUs + EDIT_POINT_TOLERANCE_US) ?? null;
   for (let index = points.length - 1; index >= 0; index--) {
     if (points[index] < fromUs - EDIT_POINT_TOLERANCE_US) return points[index];
   }
@@ -107,25 +111,30 @@ const secondInFrames = (state: EditorState) => Math.max(1, Math.round(state.proj
  * keyboard in one place instead of only the half that is global.
  */
 export const CONTEXTUAL_KEYS: KeyRow[] = [
-  { group: 'Selection', keys: '← → ↑ ↓', label: 'Nudge a clip in the frame — selection box over the preview' },
-  { group: 'Selection', keys: 'Shift + arrows', label: 'Nudge ten frame pixels at a time' },
-  { group: 'Editing', keys: '← →', label: 'Move a clip a frame — clip focused on the timeline' },
-  { group: 'Editing', keys: '↑ ↓', label: 'Move a clip to the lane above or below' },
-  { group: 'Timeline', keys: '↑ ↓', label: 'Row height — track divider focused' },
-  { group: 'Timeline', keys: '← → ↑ ↓', label: 'Pane width or height — panel divider focused' }
+  {
+    group: "Selection",
+    keys: "← → ↑ ↓",
+    label: "Nudge a clip in the frame — selection box over the preview",
+  },
+  { group: "Selection", keys: "Shift + arrows", label: "Nudge ten frame pixels at a time" },
+  { group: "Editing", keys: "← →", label: "Move a clip a frame — clip focused on the timeline" },
+  { group: "Editing", keys: "↑ ↓", label: "Move a clip to the lane above or below" },
+  { group: "Timeline", keys: "↑ ↓", label: "Row height — track divider focused" },
+  { group: "Timeline", keys: "← → ↑ ↓", label: "Pane width or height — panel divider focused" },
 ];
 
-const isHorizontalArrow = (event: KeyboardEvent) => event.key === 'ArrowLeft' || event.key === 'ArrowRight';
-const isDeleteKey = (event: KeyboardEvent) => event.key === 'Delete' || event.key === 'Backspace';
+const isHorizontalArrow = (event: KeyboardEvent) =>
+  event.key === "ArrowLeft" || event.key === "ArrowRight";
+const isDeleteKey = (event: KeyboardEvent) => event.key === "Delete" || event.key === "Backspace";
 
 /** `+` arrives as `=` unshifted and `+` shifted; `−` as `-` or `_`. */
-const ZOOM_KEYS: Record<string, number | undefined> = { '=': 1, '+': 1, '-': -1, _: -1 };
+const ZOOM_KEYS: Record<string, number | undefined> = { "=": 1, "+": 1, "-": -1, _: -1 };
 
 /* ------------------------------------------------------------------ *
  * The key map
  * ------------------------------------------------------------------ */
 
-export type ShortcutGroup = 'Playback' | 'Selection' | 'Editing' | 'Timeline' | 'Project';
+export type ShortcutGroup = "Playback" | "Selection" | "Editing" | "Timeline" | "Project";
 
 /** One row of the key map, as the help dialog shows it. */
 export interface KeyRow {
@@ -158,253 +167,276 @@ export interface Shortcut extends KeyRow {
 export const SHORTCUTS: Shortcut[] = [
   /* ---------------- Playback ---------------- */
   {
-    group: 'Playback',
-    keys: 'Space',
-    label: 'Play or pause',
-    match: event => bare(event) && (event.key === ' ' || event.code === 'Space'),
-    act: () => void togglePlayback()
+    group: "Playback",
+    keys: "Space",
+    label: "Play or pause",
+    match: (event) => bare(event) && (event.key === " " || event.code === "Space"),
+    act: () => void togglePlayback(),
   },
   {
-    group: 'Playback',
-    keys: '← →',
-    label: 'Step one frame',
-    match: event => !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey && isHorizontalArrow(event),
-    act: (_state, event) => stepFrames(event.key === 'ArrowLeft' ? -1 : 1)
+    group: "Playback",
+    keys: "← →",
+    label: "Step one frame",
+    match: (event) =>
+      !event.metaKey &&
+      !event.ctrlKey &&
+      !event.altKey &&
+      !event.shiftKey &&
+      isHorizontalArrow(event),
+    act: (_state, event) => stepFrames(event.key === "ArrowLeft" ? -1 : 1),
   },
   {
-    group: 'Playback',
-    keys: 'Shift ← →',
-    label: 'Step one second',
-    match: event => !event.metaKey && !event.ctrlKey && !event.altKey && event.shiftKey && isHorizontalArrow(event),
-    act: (state, event) => stepFrames(event.key === 'ArrowLeft' ? -secondInFrames(state) : secondInFrames(state))
+    group: "Playback",
+    keys: "Shift ← →",
+    label: "Step one second",
+    match: (event) =>
+      !event.metaKey &&
+      !event.ctrlKey &&
+      !event.altKey &&
+      event.shiftKey &&
+      isHorizontalArrow(event),
+    act: (state, event) =>
+      stepFrames(event.key === "ArrowLeft" ? -secondInFrames(state) : secondInFrames(state)),
   },
   {
-    group: 'Playback',
-    keys: '↑ ↓',
-    label: 'Previous or next edit point',
-    match: event => bare(event) && (event.key === 'ArrowUp' || event.key === 'ArrowDown'),
+    group: "Playback",
+    keys: "↑ ↓",
+    label: "Previous or next edit point",
+    match: (event) => bare(event) && (event.key === "ArrowUp" || event.key === "ArrowDown"),
     act: (state, event) => {
-      const target = edgeFrom(state.clips, state.playheadUs, event.key === 'ArrowUp' ? -1 : 1);
+      const target = edgeFrom(state.clips, state.playheadUs, event.key === "ArrowUp" ? -1 : 1);
       if (target !== null) seekTo(target);
-    }
+    },
   },
   {
-    group: 'Playback',
-    keys: 'Home  End',
-    label: 'Jump to the start or the end',
-    match: event => bare(event) && (event.key === 'Home' || event.key === 'End'),
-    act: (state, event) => seekTo(event.key === 'Home' ? 0 : timelineDurationUs(state.clips))
+    group: "Playback",
+    keys: "Home  End",
+    label: "Jump to the start or the end",
+    match: (event) => bare(event) && (event.key === "Home" || event.key === "End"),
+    act: (state, event) => seekTo(event.key === "Home" ? 0 : timelineDurationUs(state.clips)),
   },
   {
-    group: 'Playback',
-    keys: 'I  O',
-    label: 'Mark in or out at the playhead',
-    match: event => bare(event) && (key(event) === 'i' || key(event) === 'o'),
+    group: "Playback",
+    keys: "I  O",
+    label: "Mark in or out at the playhead",
+    match: (event) => bare(event) && (key(event) === "i" || key(event) === "o"),
     act: (state, event) => {
-      if (key(event) === 'i') state.setInPoint(state.playheadUs);
+      if (key(event) === "i") state.setInPoint(state.playheadUs);
       else state.setOutPoint(state.playheadUs);
-    }
+    },
   },
   {
-    group: 'Playback',
-    keys: 'Shift I  Shift O',
-    label: 'Go to the in or out point',
-    match: event => event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey && (key(event) === 'i' || key(event) === 'o'),
+    group: "Playback",
+    keys: "Shift I  Shift O",
+    label: "Go to the in or out point",
+    match: (event) =>
+      event.shiftKey &&
+      !event.metaKey &&
+      !event.ctrlKey &&
+      !event.altKey &&
+      (key(event) === "i" || key(event) === "o"),
     act: (state, event) => {
-      const target = key(event) === 'i' ? state.inPointUs : state.outPointUs;
+      const target = key(event) === "i" ? state.inPointUs : state.outPointUs;
       if (target !== null) seekTo(target);
-    }
+    },
   },
   {
-    group: 'Playback',
+    group: "Playback",
     keys: `${ALT_LABEL} I  ${ALT_LABEL} O`,
-    label: 'Clear the in or out point',
-    match: event => alt(event, 'KeyI') || alt(event, 'KeyO'),
+    label: "Clear the in or out point",
+    match: (event) => alt(event, "KeyI") || alt(event, "KeyO"),
     act: (state, event) => {
-      if (event.code === 'KeyI') state.setInPoint(null);
+      if (event.code === "KeyI") state.setInPoint(null);
       else state.setOutPoint(null);
-    }
+    },
   },
   {
-    group: 'Playback',
+    group: "Playback",
     keys: `${ALT_LABEL} X`,
-    label: 'Clear the whole range',
-    match: event => alt(event, 'KeyX'),
-    act: state => {
+    label: "Clear the whole range",
+    match: (event) => alt(event, "KeyX"),
+    act: (state) => {
       state.setInPoint(null);
       state.setOutPoint(null);
-    }
+    },
   },
 
   /* ---------------- Selection ---------------- */
   {
-    group: 'Selection',
+    group: "Selection",
     keys: `${MOD_LABEL} A`,
-    label: 'Select every clip',
-    match: event => mod(event) && !event.shiftKey && key(event) === 'a',
-    act: state => state.selectAll()
+    label: "Select every clip",
+    match: (event) => mod(event) && !event.shiftKey && key(event) === "a",
+    act: (state) => state.selectAll(),
   },
   {
-    group: 'Selection',
+    group: "Selection",
     keys: `${MOD_LABEL} ⇧ A  Esc`,
-    label: 'Deselect everything',
-    match: event => (mod(event) && event.shiftKey && key(event) === 'a') || (bare(event) && event.key === 'Escape'),
-    act: state => state.setSelection([])
+    label: "Deselect everything",
+    match: (event) =>
+      (mod(event) && event.shiftKey && key(event) === "a") ||
+      (bare(event) && event.key === "Escape"),
+    act: (state) => state.setSelection([]),
   },
   {
-    group: 'Selection',
+    group: "Selection",
     keys: `${MOD_LABEL} G`,
-    label: 'Group the selection',
-    match: event => mod(event) && !event.shiftKey && key(event) === 'g',
-    act: state => state.groupSelection()
+    label: "Group the selection",
+    match: (event) => mod(event) && !event.shiftKey && key(event) === "g",
+    act: (state) => state.groupSelection(),
   },
   {
-    group: 'Selection',
+    group: "Selection",
     keys: `${MOD_LABEL} ⇧ G`,
-    label: 'Ungroup',
-    match: event => mod(event) && event.shiftKey && key(event) === 'g',
-    act: state => state.ungroupSelection()
+    label: "Ungroup",
+    match: (event) => mod(event) && event.shiftKey && key(event) === "g",
+    act: (state) => state.ungroupSelection(),
   },
 
   /* ---------------- Editing ---------------- */
   {
-    group: 'Editing',
+    group: "Editing",
     keys: `${MOD_LABEL} B  ${MOD_LABEL} K`,
-    label: 'Split at the playhead',
+    label: "Split at the playhead",
     // ⌘B is Final Cut's Blade and Resolve's Split; ⌘K is Premiere's Add Edit.
     // Both are bound because the two camps expect different keys, and a bare
     // `S` — which this used to be — is Premiere's snapping toggle.
-    match: event => mod(event) && !event.shiftKey && (key(event) === 'b' || key(event) === 'k'),
-    act: state => state.splitAt(state.playheadUs)
+    match: (event) => mod(event) && !event.shiftKey && (key(event) === "b" || key(event) === "k"),
+    act: (state) => state.splitAt(state.playheadUs),
   },
   {
-    group: 'Editing',
-    keys: 'Delete',
-    label: 'Delete the selection',
-    match: event => bare(event) && isDeleteKey(event),
-    act: state => state.deleteSelection()
+    group: "Editing",
+    keys: "Delete",
+    label: "Delete the selection",
+    match: (event) => bare(event) && isDeleteKey(event),
+    act: (state) => state.deleteSelection(),
   },
   {
-    group: 'Editing',
-    keys: 'Shift Delete',
-    label: 'Ripple delete — closes the gap',
-    match: event => event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey && isDeleteKey(event),
-    act: state => state.deleteSelection(true)
+    group: "Editing",
+    keys: "Shift Delete",
+    label: "Ripple delete — closes the gap",
+    match: (event) =>
+      event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey && isDeleteKey(event),
+    act: (state) => state.deleteSelection(true),
   },
   {
-    group: 'Editing',
+    group: "Editing",
     keys: `${MOD_LABEL} C`,
-    label: 'Copy',
-    match: event => mod(event) && key(event) === 'c',
-    act: state => state.copySelection()
+    label: "Copy",
+    match: (event) => mod(event) && key(event) === "c",
+    act: (state) => state.copySelection(),
   },
   {
-    group: 'Editing',
+    group: "Editing",
     keys: `${MOD_LABEL} X`,
-    label: 'Cut',
-    match: event => mod(event) && key(event) === 'x',
-    act: state => state.cutSelection()
+    label: "Cut",
+    match: (event) => mod(event) && key(event) === "x",
+    act: (state) => state.cutSelection(),
   },
   {
-    group: 'Editing',
+    group: "Editing",
     keys: `${MOD_LABEL} V`,
-    label: 'Paste at the playhead',
-    match: event => mod(event) && key(event) === 'v',
-    act: state => state.paste(state.playheadUs)
+    label: "Paste at the playhead",
+    match: (event) => mod(event) && key(event) === "v",
+    act: (state) => state.paste(state.playheadUs),
   },
   {
-    group: 'Editing',
+    group: "Editing",
     keys: `${MOD_LABEL} D`,
-    label: 'Duplicate',
-    match: event => mod(event) && key(event) === 'd',
-    act: state => state.duplicateSelection()
+    label: "Duplicate",
+    match: (event) => mod(event) && key(event) === "d",
+    act: (state) => state.duplicateSelection(),
   },
   {
-    group: 'Editing',
-    keys: 'T',
-    label: 'Add a text clip',
-    match: event => bare(event) && key(event) === 't',
-    act: state => void state.addTextClip(undefined, state.playheadUs)
+    group: "Editing",
+    keys: "T",
+    label: "Add a text clip",
+    match: (event) => bare(event) && key(event) === "t",
+    act: (state) => void state.addTextClip(undefined, state.playheadUs),
   },
   {
-    group: 'Editing',
+    group: "Editing",
     keys: `${MOD_LABEL} Z`,
-    label: 'Undo',
-    match: event => mod(event) && !event.shiftKey && key(event) === 'z',
-    act: state => state.undo()
+    label: "Undo",
+    match: (event) => mod(event) && !event.shiftKey && key(event) === "z",
+    act: (state) => state.undo(),
   },
   {
-    group: 'Editing',
+    group: "Editing",
     keys: `${MOD_LABEL} ⇧ Z`,
-    label: 'Redo',
-    match: event => (mod(event) && event.shiftKey && key(event) === 'z') || (mod(event) && key(event) === 'y'),
-    act: state => state.redo()
+    label: "Redo",
+    match: (event) =>
+      (mod(event) && event.shiftKey && key(event) === "z") || (mod(event) && key(event) === "y"),
+    act: (state) => state.redo(),
   },
 
   /* ---------------- Timeline ---------------- */
   {
-    group: 'Timeline',
-    keys: '+  −',
-    label: 'Zoom in or out',
-    match: event => !event.metaKey && !event.ctrlKey && !event.altKey && ZOOM_KEYS[event.key] !== undefined,
-    act: (state, event) => state.setZoom(state.pxPerSec * (ZOOM_KEYS[event.key] === 1 ? 1.4 : 1 / 1.4))
+    group: "Timeline",
+    keys: "+  −",
+    label: "Zoom in or out",
+    match: (event) =>
+      !event.metaKey && !event.ctrlKey && !event.altKey && ZOOM_KEYS[event.key] !== undefined,
+    act: (state, event) =>
+      state.setZoom(state.pxPerSec * (ZOOM_KEYS[event.key] === 1 ? 1.4 : 1 / 1.4)),
   },
   {
-    group: 'Timeline',
-    keys: 'Shift Z',
-    label: 'Zoom to fit the project',
+    group: "Timeline",
+    keys: "Shift Z",
+    label: "Zoom to fit the project",
     // Premiere, Final Cut and Resolve all agree on this one.
-    match: event => event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey && key(event) === 'z',
-    act: () => run('zoomFit')
+    match: (event) =>
+      event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey && key(event) === "z",
+    act: () => run("zoomFit"),
   },
   {
-    group: 'Timeline',
-    keys: 'S  N',
-    label: 'Toggle snapping',
+    group: "Timeline",
+    keys: "S  N",
+    label: "Toggle snapping",
     // `S` is Premiere's, `N` is Resolve's and Avid's.
-    match: event => bare(event) && (key(event) === 's' || key(event) === 'n'),
-    act: state => state.toggleSnap()
+    match: (event) => bare(event) && (key(event) === "s" || key(event) === "n"),
+    act: (state) => state.toggleSnap(),
   },
   {
-    group: 'Timeline',
-    keys: 'R',
-    label: 'Toggle ripple editing',
-    match: event => bare(event) && key(event) === 'r',
-    act: state => state.toggleRipple()
+    group: "Timeline",
+    keys: "R",
+    label: "Toggle ripple editing",
+    match: (event) => bare(event) && key(event) === "r",
+    act: (state) => state.toggleRipple(),
   },
 
   /* ---------------- Project ---------------- */
   {
-    group: 'Project',
+    group: "Project",
     keys: `${MOD_LABEL} S`,
-    label: 'Save the project bundle',
-    match: event => mod(event) && !event.shiftKey && key(event) === 's',
-    act: () => run('save'),
-    inFields: true
+    label: "Save the project bundle",
+    match: (event) => mod(event) && !event.shiftKey && key(event) === "s",
+    act: () => run("save"),
+    inFields: true,
   },
   {
-    group: 'Project',
+    group: "Project",
     keys: `${MOD_LABEL} O`,
-    label: 'Open a project bundle',
-    match: event => mod(event) && key(event) === 'o',
-    act: () => run('open'),
-    inFields: true
+    label: "Open a project bundle",
+    match: (event) => mod(event) && key(event) === "o",
+    act: () => run("open"),
+    inFields: true,
   },
   {
-    group: 'Project',
+    group: "Project",
     keys: `${MOD_LABEL} E`,
-    label: 'Export video',
-    match: event => mod(event) && key(event) === 'e',
-    act: () => run('export'),
-    inFields: true
+    label: "Export video",
+    match: (event) => mod(event) && key(event) === "e",
+    act: () => run("export"),
+    inFields: true,
   },
   {
-    group: 'Project',
-    keys: '?',
-    label: 'Show this list',
-    match: event => !event.metaKey && !event.ctrlKey && !event.altKey && event.key === '?',
-    act: () => run('help')
-  }
+    group: "Project",
+    keys: "?",
+    label: "Show this list",
+    match: (event) => !event.metaKey && !event.ctrlKey && !event.altKey && event.key === "?",
+    act: () => run("help"),
+  },
 ];
 
 /* ------------------------------------------------------------------ *
@@ -421,14 +453,24 @@ export const SHORTCUTS: Shortcut[] = [
  * `preventDefault` and `stopPropagation` on the arrows, and the thumb does the
  * same for Home, End and the page keys, so those never reach this listener.
  */
-const NON_TEXT_INPUTS = new Set(['range', 'checkbox', 'radio', 'color', 'button', 'submit', 'reset', 'file', 'image']);
+const NON_TEXT_INPUTS = new Set([
+  "range",
+  "checkbox",
+  "radio",
+  "color",
+  "button",
+  "submit",
+  "reset",
+  "file",
+  "image",
+]);
 
 /** Keys typed into a field mean what the field says they mean. */
 const isFieldTarget = (target: EventTarget | null) => {
   if (!(target instanceof HTMLElement)) return false;
   if (target.isContentEditable) return true;
   if (target instanceof HTMLInputElement) return !NON_TEXT_INPUTS.has(target.type);
-  return target.tagName === 'TEXTAREA' || target.tagName === 'SELECT';
+  return target.tagName === "TEXTAREA" || target.tagName === "SELECT";
 };
 
 /**
@@ -439,7 +481,9 @@ const isFieldTarget = (target: EventTarget | null) => {
  */
 const ownsActivationKeys = (target: EventTarget | null) =>
   target instanceof HTMLElement &&
-  target.closest('button, a[href], [role="button"], [role="checkbox"], [role="switch"], [role="separator"]') !== null;
+  target.closest(
+    'button, a[href], [role="button"], [role="checkbox"], [role="switch"], [role="separator"]',
+  ) !== null;
 
 /**
  * Binds the key map for the life of the app.
@@ -454,7 +498,7 @@ export const useShortcuts = () => {
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.defaultPrevented) return;
-      if ((event.key === ' ' || event.key === 'Enter') && ownsActivationKeys(event.target)) return;
+      if ((event.key === " " || event.key === "Enter") && ownsActivationKeys(event.target)) return;
 
       const inField = isFieldTarget(event.target);
       const state = readEditorState();
@@ -469,8 +513,8 @@ export const useShortcuts = () => {
       }
     };
 
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 };
 

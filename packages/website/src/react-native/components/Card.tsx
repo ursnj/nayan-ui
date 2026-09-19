@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import ComponentWrapper from '@/helpers/ComponentWrapper';
-import DemoComingSoon from './DemoComingSoon';
+import ComponentWrapper from "@/helpers/ComponentWrapper";
+import DemoComingSoon from "./DemoComingSoon";
 
 const Card = () => {
   return (
@@ -50,6 +50,11 @@ export default function CardScreen() {
 }`;
 
 export const cardAttributes = [
-  { name: 'children', type: 'React.ReactNode', default: 'Optional', details: 'Card content.' },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
+  { name: "children", type: "React.ReactNode", default: "Optional", details: "Card content." },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
 ];

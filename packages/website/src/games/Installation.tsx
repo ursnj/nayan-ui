@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { NLink } from '@nayan-ui/react';
-import { usePathname } from 'next/navigation';
-import { H2_DOC, H3_DOC } from '@/design/system';
-import Code from '@/helpers/Code';
-import Sidebar from '@/helpers/Sidebar';
+import { NLink } from "@nayan-ui/react";
+import { usePathname } from "next/navigation";
+import { H2_DOC, H3_DOC } from "@/design/system";
+import Code from "@/helpers/Code";
+import Sidebar from "@/helpers/Sidebar";
 import {
   advancedUsageCode,
   availableGamesCode,
@@ -12,16 +12,16 @@ import {
   installCode,
   installYarnCode,
   peerDepsCode,
-  simpleUsageCode
-} from '@/services/GamesCodeBlocks';
-import { getMenuItem } from '@/services/Utils';
+  simpleUsageCode,
+} from "@/services/GamesCodeBlocks";
+import { getMenuItem } from "@/services/Utils";
 
 const GamesInstallation = () => {
   const pathname = usePathname();
   const component: any = getMenuItem(pathname);
 
   return (
-    <Sidebar title={component?.title || 'Installation'}>
+    <Sidebar title={component?.title || "Installation"}>
       <div className="mb-8">
         <div className="space-y-4">
           <div className="mb-4">
@@ -32,56 +32,71 @@ const GamesInstallation = () => {
 
           <div className="mb-4">
             <h3 className={H3_DOC}>Peer Dependencies</h3>
-            <p className="text-muted text-sm mb-3">This library requires the following peer dependencies to be installed in your project:</p>
+            <p className="text-muted text-sm mb-3">
+              This library requires the following peer dependencies to be installed in your project:
+            </p>
             <Code language="bash" code={peerDepsCode} />
           </div>
 
           <div className="mb-4">
             <h3 className={H3_DOC}>Platform Setup</h3>
-            <p className="text-muted text-sm mb-3">Follow the installation guides for each peer dependency:</p>
+            <p className="text-muted text-sm mb-3">
+              Follow the installation guides for each peer dependency:
+            </p>
             <ul className="text-muted text-sm space-y-2">
               <li>
-                •{' '}
+                •{" "}
                 <NLink
                   href="https://shopify.github.io/react-native-skia/docs/getting-started/installation"
                   target="_blank"
-                  className="text-accent hover:underline">
+                  className="text-accent hover:underline"
+                >
                   @shopify/react-native-skia
-                </NLink>{' '}
+                </NLink>{" "}
                 - Graphics
               </li>
               <li>
-                •{' '}
+                •{" "}
                 <NLink
                   href="https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started"
                   target="_blank"
-                  className="text-accent hover:underline">
+                  className="text-accent hover:underline"
+                >
                   react-native-reanimated
-                </NLink>{' '}
+                </NLink>{" "}
                 - Animations
               </li>
               <li>
-                •{' '}
+                •{" "}
                 <NLink
                   href="https://docs.swmansion.com/react-native-gesture-handler/docs/fundamentals/installation"
                   target="_blank"
-                  className="text-accent hover:underline">
+                  className="text-accent hover:underline"
+                >
                   react-native-gesture-handler
-                </NLink>{' '}
+                </NLink>{" "}
                 - Gestures
               </li>
               <li>
-                •{' '}
-                <NLink href="https://docs.expo.dev/versions/latest/sdk/speech/" target="_blank" className="text-accent hover:underline">
+                •{" "}
+                <NLink
+                  href="https://docs.expo.dev/versions/latest/sdk/speech/"
+                  target="_blank"
+                  className="text-accent hover:underline"
+                >
                   expo-speech
-                </NLink>{' '}
+                </NLink>{" "}
                 - Sounds
               </li>
               <li>
-                •{' '}
-                <NLink href="https://docs.expo.dev/versions/latest/sdk/haptics/" target="_blank" className="text-accent hover:underline">
+                •{" "}
+                <NLink
+                  href="https://docs.expo.dev/versions/latest/sdk/haptics/"
+                  target="_blank"
+                  className="text-accent hover:underline"
+                >
                   expo-haptics
-                </NLink>{' '}
+                </NLink>{" "}
                 - Haptics
               </li>
             </ul>
@@ -101,7 +116,8 @@ const GamesInstallation = () => {
           <div className="mb-6">
             <h3 className={H3_DOC}>Advanced Implementation Example</h3>
             <p className="text-muted text-sm mb-3">
-              All games use the same props pattern for consistency. Here's a complete example with settings persistence and navigation integration:
+              All games use the same props pattern for consistency. Here's a complete example with
+              settings persistence and navigation integration:
             </p>
             <Code code={advancedUsageCode} />
           </div>
@@ -114,16 +130,21 @@ const GamesInstallation = () => {
 
           <div className="mb-6">
             <h3 className={H3_DOC}>Game Settings & Configuration</h3>
-            <p className="text-muted text-sm mb-3">All games use the unified GameSettings interface:</p>
+            <p className="text-muted text-sm mb-3">
+              All games use the unified GameSettings interface:
+            </p>
             <Code code={gameSettingsInterfaceCode} />
           </div>
 
           <div className="mb-6">
             <h3 className={H3_DOC}>Game Settings</h3>
-            <p className="text-muted text-sm mb-3">Each game includes built-in settings screens with a unified, simplified interface:</p>
+            <p className="text-muted text-sm mb-3">
+              Each game includes built-in settings screens with a unified, simplified interface:
+            </p>
             <ul className="text-muted text-sm space-y-2">
               <li>
-                • <strong>Difficulty Levels</strong>: Easy, Medium, Hard - each game has custom difficulty descriptions and behaviors
+                • <strong>Difficulty Levels</strong>: Easy, Medium, Hard - each game has custom
+                difficulty descriptions and behaviors
               </li>
               <li>
                 • <strong>Sound Effects</strong>: Toggle audio feedback on/off
@@ -133,8 +154,9 @@ const GamesInstallation = () => {
               </li>
             </ul>
             <p className="text-muted text-sm mt-3">
-              All games use a centralized settings system for consistency and ease of maintenance. Game durations and difficulty behaviors are
-              customized per game for optimal gameplay experience.
+              All games use a centralized settings system for consistency and ease of maintenance.
+              Game durations and difficulty behaviors are customized per game for optimal gameplay
+              experience.
             </p>
           </div>
         </div>

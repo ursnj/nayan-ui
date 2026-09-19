@@ -1,9 +1,13 @@
-'use client';
+"use client";
 
-import { NBreadcrumbs } from '@nayan-ui/react';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { NBreadcrumbs } from "@nayan-ui/react";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
-const items = [{ label: 'Home', href: '/' }, { label: 'React', href: '/react/components' }, { label: 'Breadcrumbs' }];
+const items = [
+  { label: "Home", href: "/" },
+  { label: "React", href: "/react/components" },
+  { label: "Breadcrumbs" },
+];
 
 const Breadcrumbs = () => {
   return (
@@ -31,10 +35,15 @@ const Breadcrumbs = () => {
 export default Breadcrumbs;`;
 
 export const breadcrumbsAttributes = [
-  { name: 'items', type: 'NBreadcrumbItem[]', default: 'Required', details: 'The items prop.' },
-  { name: 'separator', type: 'React.ReactNode', default: 'Optional', details: 'The separator prop.' },
-  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
-  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
-  { name: 'itemClassName', type: 'string', default: "''", details: 'The itemClassName prop.' },
-  { name: 'aria-label', type: 'string', default: "'Breadcrumbs'", details: 'The aria-label prop.' }
+  { name: "items", type: "NBreadcrumbItem[]", default: "Required", details: "The items prop." },
+  {
+    name: "separator",
+    type: "React.ReactNode",
+    default: "Optional",
+    details: "The separator prop.",
+  },
+  { name: "disabled", type: "boolean", default: "false", details: "The disabled prop." },
+  { name: "className", type: "string", default: "''", details: "The className prop." },
+  { name: "itemClassName", type: "string", default: "''", details: "The itemClassName prop." },
+  { name: "aria-label", type: "string", default: "'Breadcrumbs'", details: "The aria-label prop." },
 ];

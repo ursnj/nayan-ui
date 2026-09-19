@@ -26,22 +26,22 @@ npm install expo-router expo-linking expo-constants expo-splash-screen react-nat
 ### 1. Configure `metro.config.js`
 
 ```js
-const { getDefaultConfig } = require('@expo/metro-config');
-const { withUniwindConfig } = require('uniwind/metro');
+const { getDefaultConfig } = require("@expo/metro-config");
+const { withUniwindConfig } = require("uniwind/metro");
 
 const config = getDefaultConfig(__dirname);
 
 module.exports = withUniwindConfig(config, {
-  cssEntryFile: './global.css'
+  cssEntryFile: "./global.css",
 });
 ```
 
 ### 2. Create `global.css`
 
 ```css
-@import 'tailwindcss';
-@import 'uniwind';
-@import 'heroui-native/styles';
+@import "tailwindcss";
+@import "uniwind";
+@import "heroui-native/styles";
 
 @source './node_modules/heroui-native/lib';
 @source './node_modules/@nayan-ui/native/src';
@@ -64,10 +64,10 @@ See `global.css` for the full token list.
 ### 3. Import CSS and wrap with NTheme
 
 ```tsx
-import 'react-native-reanimated';
-import { NTheme } from '@nayan-ui/native';
-import { Stack } from 'expo-router';
-import '../global.css';
+import "react-native-reanimated";
+import { NTheme } from "@nayan-ui/native";
+import { Stack } from "expo-router";
+import "../global.css";
 
 export default function RootLayout() {
   return (
@@ -81,8 +81,8 @@ export default function RootLayout() {
 ### 4. Use components
 
 ```tsx
-import { View } from 'react-native';
-import { NButton, NText, NThemeToggle, THEMES, useNTheme } from '@nayan-ui/native';
+import { View } from "react-native";
+import { NButton, NText, NThemeToggle, THEMES, useNTheme } from "@nayan-ui/native";
 
 export default function Home() {
   const { isDarkMode, setTheme } = useNTheme();
@@ -90,7 +90,9 @@ export default function Home() {
   return (
     <View className="flex-1 items-center justify-center bg-background gap-4">
       <NText className="text-3xl font-bold text-foreground">Nayan UI</NText>
-      <NButton onPress={() => setTheme(isDarkMode ? THEMES.light : THEMES.dark)}>Toggle Theme</NButton>
+      <NButton onPress={() => setTheme(isDarkMode ? THEMES.light : THEMES.dark)}>
+        Toggle Theme
+      </NButton>
       <NThemeToggle />
     </View>
   );

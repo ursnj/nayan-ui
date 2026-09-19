@@ -36,12 +36,12 @@ npm install react react-dom tailwindcss
 `@nayan-ui/react/styles.css` already includes Tailwind CSS and HeroUI styles — no extra imports needed.
 
 ```css
-@import '@nayan-ui/react/styles.css';
+@import "@nayan-ui/react/styles.css";
 
 @source '../node_modules/@nayan-ui/react/dist';
 
 :root,
-[data-theme='light'] {
+[data-theme="light"] {
   color-scheme: light;
 
   --background: hsl(214 45% 95%);
@@ -73,7 +73,7 @@ npm install react react-dom tailwindcss
 }
 
 .dark,
-[data-theme='dark'] {
+[data-theme="dark"] {
   color-scheme: dark;
 
   --background: hsl(222 47% 11%);
@@ -113,12 +113,12 @@ body {
 **2. For Vite projects, add `@tailwindcss/vite` plugin to `vite.config.ts`:**
 
 ```ts
-import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react-swc';
-import { defineConfig } from 'vite';
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()]
+  plugins: [react(), tailwindcss()],
 });
 ```
 
@@ -127,8 +127,8 @@ export default defineConfig({
 ```js
 export default {
   plugins: {
-    '@tailwindcss/postcss': {}
-  }
+    "@tailwindcss/postcss": {},
+  },
 };
 ```
 
@@ -137,10 +137,10 @@ export default {
 Wrap your app with the `NTheme` provider:
 
 ```tsx
-import { NButton, NTheme, THEMES, useLocalStorage } from '@nayan-ui/react';
+import { NButton, NTheme, THEMES, useLocalStorage } from "@nayan-ui/react";
 
 export default function App() {
-  const [theme, setTheme] = useLocalStorage('THEME', THEMES.LIGHT);
+  const [theme, setTheme] = useLocalStorage("THEME", THEMES.LIGHT);
 
   const toggleTheme = () => {
     setTheme(theme === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT);
@@ -151,7 +151,9 @@ export default function App() {
       <div className="min-h-screen flex flex-col items-center justify-center bg-background">
         <h1 className="mb-5 text-3xl text-foreground">Nayan UI</h1>
         <p className="mb-8 text-muted">Best Component Library for React & React Native.</p>
-        <NButton onClick={toggleTheme}>{theme === THEMES.DARK ? 'Switch to Light' : 'Switch to Dark'}</NButton>
+        <NButton onClick={toggleTheme}>
+          {theme === THEMES.DARK ? "Switch to Light" : "Switch to Dark"}
+        </NButton>
       </div>
     </NTheme>
   );

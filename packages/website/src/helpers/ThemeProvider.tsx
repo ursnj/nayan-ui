@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { ReactNode, createContext, useContext, useMemo } from 'react';
-import { NTheme, THEMES, useLocalStorage } from '@nayan-ui/react';
+import { ReactNode, createContext, useContext, useMemo } from "react";
+import { NTheme, THEMES, useLocalStorage } from "@nayan-ui/react";
 
 interface Props {
   children: ReactNode;
@@ -18,12 +18,12 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 /** The current theme and the two ways to change it. Must be used under `ThemeProvider`. */
 export const useTheme = (): ThemeContextValue => {
   const value = useContext(ThemeContext);
-  if (!value) throw new Error('useTheme must be called inside ThemeProvider.');
+  if (!value) throw new Error("useTheme must be called inside ThemeProvider.");
   return value;
 };
 
 const ThemeProvider = ({ children }: Props) => {
-  const [stored, setStored] = useLocalStorage('THEME', THEMES.LIGHT);
+  const [stored, setStored] = useLocalStorage("THEME", THEMES.LIGHT);
 
   const theme = stored === THEMES.DARK ? THEMES.DARK : THEMES.LIGHT;
 
@@ -31,9 +31,9 @@ const ThemeProvider = ({ children }: Props) => {
     () => ({
       theme,
       setTheme: (next: THEMES) => setStored(next),
-      toggleTheme: () => setStored(theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK)
+      toggleTheme: () => setStored(theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK),
     }),
-    [theme, setStored]
+    [theme, setStored],
   );
 
   return (

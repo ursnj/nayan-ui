@@ -8,7 +8,8 @@
     <title>Nayan UI Video Editor — Free Online Video Editor, No Upload</title>
     <meta
       name="description"
-      content="Edit video free in your browser. Multi-track timeline, 16 colour filters, 18 transitions, keyframes, green screen and titles. Exports MP4, MOV, MKV and WebM. Nothing is uploaded — no account, no watermark." />
+      content="Edit video free in your browser. Multi-track timeline, 16 colour filters, 18 transitions, keyframes, green screen and titles. Exports MP4, MOV, MKV and WebM. Nothing is uploaded — no account, no watermark."
+    />
     <meta name="author" content="Nayan UI" />
 
     <!--
@@ -27,14 +28,16 @@
     <meta property="og:title" content="Nayan UI Video Editor — Free Online Video Editor" />
     <meta
       property="og:description"
-      content="A full-featured video editor that runs entirely in your browser. Multi-track timeline, filters, transitions, green screen and MP4 export — nothing is uploaded." />
+      content="A full-featured video editor that runs entirely in your browser. Multi-track timeline, filters, transitions, green screen and MP4 export — nothing is uploaded."
+    />
     <meta property="og:url" content="https://www.nayanui.com/video-editor/start" />
     <meta property="og:image" content="https://www.nayanui.com/banner.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Nayan UI Video Editor — Free Online Video Editor" />
     <meta
       name="twitter:description"
-      content="A full-featured video editor that runs entirely in your browser. Multi-track timeline, filters, transitions, green screen and MP4 export — nothing is uploaded." />
+      content="A full-featured video editor that runs entirely in your browser. Multi-track timeline, filters, transitions, green screen and MP4 export — nothing is uploaded."
+    />
     <meta name="twitter:image" content="https://www.nayanui.com/banner.png" />
 
     <!--
@@ -55,11 +58,11 @@
       so a runtime theme toggle moves this with it.
     -->
     <style>
-      html[data-theme='light'] {
+      html[data-theme="light"] {
         background: hsl(220 16% 89%);
         color-scheme: light;
       }
-      html[data-theme='dark'] {
+      html[data-theme="dark"] {
         background: hsl(226 22% 6%);
         color-scheme: dark;
       }
@@ -81,15 +84,15 @@
     <script>
       (function () {
         try {
-          var stored = JSON.parse(window.localStorage.getItem('THEME'));
-          var theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
-          document.documentElement.setAttribute('data-theme', theme);
+          var stored = JSON.parse(window.localStorage.getItem("THEME"));
+          var theme = stored === "light" || stored === "dark" ? stored : "dark";
+          document.documentElement.setAttribute("data-theme", theme);
           document.documentElement.classList.add(theme);
         } catch (error) {
           // Private mode, blocked storage, a corrupt value: the editor's own
           // default is the safe answer, never a flash of the other theme.
-          document.documentElement.setAttribute('data-theme', 'dark');
-          document.documentElement.classList.add('dark');
+          document.documentElement.setAttribute("data-theme", "dark");
+          document.documentElement.classList.add("dark");
         }
       })();
     </script>
@@ -131,10 +134,10 @@
           };
         t = l.createElement(r);
         t.async = 1;
-        t.src = 'https://www.clarity.ms/tag/' + i;
+        t.src = "https://www.clarity.ms/tag/" + i;
         y = l.getElementsByTagName(r)[0];
         y.parentNode.insertBefore(t, y);
-      })(window, document, 'clarity', 'script', 'sz9iu23mcr');
+      })(window, document, "clarity", "script", "sz9iu23mcr");
     </script>
   </head>
   <body>
@@ -149,10 +152,14 @@
             16px/1.6 system-ui,
             sans-serif;
           text-align: center;
-        ">
-        <h1 style="font-size: 1.25rem; margin-bottom: 0.5rem">Nayan UI Video Editor needs JavaScript</h1>
+        "
+      >
+        <h1 style="font-size: 1.25rem; margin-bottom: 0.5rem">
+          Nayan UI Video Editor needs JavaScript
+        </h1>
         <p>
-          The editor decodes, composites and encodes video on your own machine, so it cannot run without it. Enable JavaScript and reload, or
+          The editor decodes, composites and encodes video on your own machine, so it cannot run
+          without it. Enable JavaScript and reload, or
           <a href="https://www.nayanui.com/video-editor">read what it does first</a>.
         </p>
       </div>

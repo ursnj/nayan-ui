@@ -1,33 +1,38 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { NButton, NButtonGroup, NLoading, NSearchField, showToast } from '@nayan-ui/react';
-import { Film, Image as ImageIcon, Music, Plus, Trash2, Upload } from 'lucide-react';
-import { formatBytes, formatDuration } from '../../lib/utils';
-import { MEDIA_ACCEPT, UnsupportedMediaError, generateThumbnail, loadAsset } from '../../media/library';
-import { useEditor } from '../../store/editor';
-import type { MediaAsset } from '../../types';
-import { EmptyState, IconButton } from '../controls';
+import { useCallback, useMemo, useRef, useState } from "react";
+import { NButton, NButtonGroup, NLoading, NSearchField, showToast } from "@nayan-ui/react";
+import { Film, Image as ImageIcon, Music, Plus, Trash2, Upload } from "lucide-react";
+import { formatBytes, formatDuration } from "../../lib/utils";
+import {
+  MEDIA_ACCEPT,
+  UnsupportedMediaError,
+  generateThumbnail,
+  loadAsset,
+} from "../../media/library";
+import { useEditor } from "../../store/editor";
+import type { MediaAsset } from "../../types";
+import { EmptyState, IconButton } from "../controls";
 
 const KIND_ICON = { video: Film, audio: Music, image: ImageIcon } as const;
-type Filter = 'all' | 'video' | 'audio' | 'image';
+type Filter = "all" | "video" | "audio" | "image";
 
 export const MediaPanel = () => {
-  const assets = useEditor(state => state.assets);
-  const addAsset = useEditor(state => state.addAsset);
-  const updateAsset = useEditor(state => state.updateAsset);
-  const removeAsset = useEditor(state => state.removeAsset);
-  const addClipFromAsset = useEditor(state => state.addClipFromAsset);
+  const assets = useEditor((state) => state.assets);
+  const addAsset = useEditor((state) => state.addAsset);
+  const updateAsset = useEditor((state) => state.updateAsset);
+  const removeAsset = useEditor((state) => state.removeAsset);
+  const addClipFromAsset = useEditor((state) => state.addClipFromAsset);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [importing, setImporting] = useState(0);
   const [dragging, setDragging] = useState(false);
-  const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState<Filter>('all');
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState<Filter>("all");
 
   const importFiles = useCallback(
     async (files: FileList | File[]) => {
       const list = [...files];
       if (list.length === 0) return;
-      setImporting(count => count + list.length);
+      setImporting((count) => count + list.length);
 
       for (const file of list) {
         try {
@@ -35,23 +40,28 @@ export const MediaPanel = () => {
           addAsset(asset);
           // Poster frames are generated after import so a big drop stays responsive.
           if (!asset.thumbnail) {
-            void generateThumbnail(asset.id).then(thumbnail => thumbnail && updateAsset(asset.id, { thumbnail }));
+            void generateThumbnail(asset.id).then(
+              (thumbnail) => thumbnail && updateAsset(asset.id, { thumbnail }),
+            );
           }
         } catch (error) {
-          const message = error instanceof UnsupportedMediaError ? error.message : `Could not import ${file.name}`;
-          showToast(message, 'Import failed');
+          const message =
+            error instanceof UnsupportedMediaError
+              ? error.message
+              : `Could not import ${file.name}`;
+          showToast(message, "Import failed");
         } finally {
-          setImporting(count => count - 1);
+          setImporting((count) => count - 1);
         }
       }
     },
-    [addAsset, updateAsset]
+    [addAsset, updateAsset],
   );
 
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    return assets.filter(asset => {
-      if (filter !== 'all' && asset.kind !== filter) return false;
+    return assets.filter((asset) => {
+      if (filter !== "all" && asset.kind !== filter) return false;
       return !needle || asset.name.toLowerCase().includes(needle);
     });
   }, [assets, filter, query]);
@@ -59,26 +69,27 @@ export const MediaPanel = () => {
   return (
     <div
       className="flex h-full flex-col"
-      onDragOver={event => {
-        if (!event.dataTransfer.types.includes('Files')) return;
+      onDragOver={(event) => {
+        if (!event.dataTransfer.types.includes("Files")) return;
         event.preventDefault();
         setDragging(true);
       }}
-      onDragLeave={event => {
+      onDragLeave={(event) => {
         if (event.currentTarget.contains(event.relatedTarget as Node)) return;
         setDragging(false);
       }}
-      onDrop={event => {
-        if (!event.dataTransfer.types.includes('Files')) return;
+      onDrop={(event) => {
+        if (!event.dataTransfer.types.includes("Files")) return;
         event.preventDefault();
         setDragging(false);
         void importFiles(event.dataTransfer.files);
-      }}>
+      }}
+    >
       <div className="flex items-center gap-1.5 px-3 pb-2 pt-3">
         <NSearchField
           value={query}
           onChange={setQuery}
-          onClear={() => setQuery('')}
+          onClear={() => setQuery("")}
           placeholder="Search media"
           fullWidth
           className="min-w-0 flex-1"
@@ -91,7 +102,7 @@ export const MediaPanel = () => {
 
       <div className="px-3 pb-2">
         <NButtonGroup<Filter>
-          items={['all', 'video', 'audio', 'image']}
+          items={["all", "video", "audio", "image"]}
           selected={filter}
           size="sm"
           onChange={setFilter}
@@ -106,16 +117,16 @@ export const MediaPanel = () => {
         multiple
         accept={MEDIA_ACCEPT}
         className="hidden"
-        onChange={event => {
+        onChange={(event) => {
           if (event.target.files) void importFiles(event.target.files);
-          event.target.value = '';
+          event.target.value = "";
         }}
       />
 
       {importing > 0 && (
         <div className="flex items-center gap-1 px-3 pb-2 text-[11px] text-muted">
           <NLoading size="sm" className="p-0" />
-          Importing {importing} file{importing > 1 ? 's' : ''}…
+          Importing {importing} file{importing > 1 ? "s" : ""}…
         </div>
       )}
 
@@ -123,13 +134,22 @@ export const MediaPanel = () => {
         {visible.length === 0 && importing === 0 ? (
           <EmptyState
             icon={<Film className="h-8 w-8" />}
-            title={assets.length === 0 ? 'No media yet' : 'Nothing matches'}
-            hint={assets.length === 0 ? 'Drop files here, or use the upload button above.' : 'Try a different search or filter.'}
+            title={assets.length === 0 ? "No media yet" : "Nothing matches"}
+            hint={
+              assets.length === 0
+                ? "Drop files here, or use the upload button above."
+                : "Try a different search or filter."
+            }
           />
         ) : (
           <ul className="grid grid-cols-2 gap-2">
-            {visible.map(asset => (
-              <AssetCard key={asset.id} asset={asset} onAdd={() => addClipFromAsset(asset.id)} onRemove={() => removeAsset(asset.id)} />
+            {visible.map((asset) => (
+              <AssetCard
+                key={asset.id}
+                asset={asset}
+                onAdd={() => addClipFromAsset(asset.id)}
+                onRemove={() => removeAsset(asset.id)}
+              />
             ))}
           </ul>
         )}
@@ -144,7 +164,15 @@ export const MediaPanel = () => {
   );
 };
 
-const AssetCard = ({ asset, onAdd, onRemove }: { asset: MediaAsset; onAdd: () => void; onRemove: () => void }) => {
+const AssetCard = ({
+  asset,
+  onAdd,
+  onRemove,
+}: {
+  asset: MediaAsset;
+  onAdd: () => void;
+  onRemove: () => void;
+}) => {
   const Icon = KIND_ICON[asset.kind];
 
   return (
@@ -153,21 +181,27 @@ const AssetCard = ({ asset, onAdd, onRemove }: { asset: MediaAsset; onAdd: () =>
         role="button"
         tabIndex={0}
         draggable
-        onDragStart={event => {
+        onDragStart={(event) => {
           // The timeline reads this to drop the clip at the pointer position.
-          event.dataTransfer.setData('application/x-nayan-asset', asset.id);
-          event.dataTransfer.effectAllowed = 'copy';
+          event.dataTransfer.setData("application/x-nayan-asset", asset.id);
+          event.dataTransfer.effectAllowed = "copy";
         }}
         onDoubleClick={onAdd}
-        onKeyDown={event => {
-          if (event.key === 'Enter') onAdd();
+        onKeyDown={(event) => {
+          if (event.key === "Enter") onAdd();
         }}
         title={asset.name}
         data-clarity-mask="true"
-        className="group relative cursor-grab overflow-hidden rounded-lg border border-border bg-surface-secondary transition-all hover:border-accent hover:elevate active:cursor-grabbing">
+        className="group relative cursor-grab overflow-hidden rounded-lg border border-border bg-surface-secondary transition-all hover:border-accent hover:elevate active:cursor-grabbing"
+      >
         <div className="checkerboard relative aspect-video w-full overflow-hidden bg-surface-tertiary">
           {asset.thumbnail ? (
-            <img src={asset.thumbnail} alt="" loading="lazy" className="h-full w-full object-cover" />
+            <img
+              src={asset.thumbnail}
+              alt=""
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
               <Icon className="h-5 w-5 text-muted" />
@@ -179,10 +213,19 @@ const AssetCard = ({ asset, onAdd, onRemove }: { asset: MediaAsset; onAdd: () =>
           </span>
 
           <div className="absolute inset-0 flex items-center justify-center gap-1 bg-black/55 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-            <NButton onClick={onAdd} aria-label={`Add ${asset.name} to timeline`} className="h-8 w-8 px-0">
+            <NButton
+              onClick={onAdd}
+              aria-label={`Add ${asset.name} to timeline`}
+              className="h-8 w-8 px-0"
+            >
               <Plus className="h-4 w-4" />
             </NButton>
-            <NButton isOutline onClick={onRemove} aria-label={`Remove ${asset.name}`} className="h-8 w-8 border-white/40 px-0 text-white">
+            <NButton
+              isOutline
+              onClick={onRemove}
+              aria-label={`Remove ${asset.name}`}
+              className="h-8 w-8 border-white/40 px-0 text-white"
+            >
               <Trash2 className="h-4 w-4" />
             </NButton>
           </div>
@@ -191,7 +234,8 @@ const AssetCard = ({ asset, onAdd, onRemove }: { asset: MediaAsset; onAdd: () =>
         <div className="px-1.5 py-1">
           <p className="truncate text-[11px] font-medium text-foreground">{asset.name}</p>
           <p className="truncate text-[10px] text-muted">
-            {asset.kind === 'audio' ? 'Audio' : `${asset.width}×${asset.height}`} · {formatBytes(asset.size)}
+            {asset.kind === "audio" ? "Audio" : `${asset.width}×${asset.height}`} ·{" "}
+            {formatBytes(asset.size)}
           </p>
         </div>
       </div>

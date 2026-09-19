@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import ComponentWrapper from '@/helpers/ComponentWrapper';
-import DemoComingSoon from './DemoComingSoon';
+import ComponentWrapper from "@/helpers/ComponentWrapper";
+import DemoComingSoon from "./DemoComingSoon";
 
 const Slider = () => {
   return (
@@ -38,16 +38,51 @@ export default function SliderScreen() {
 }`;
 
 export const sliderAttributes = [
-  { name: 'value', type: 'number', default: 'Optional', details: 'Controlled slider value.' },
-  { name: 'defaultValue', type: 'number', default: 'Optional', details: 'Default slider value.' },
-  { name: 'onChange', type: '(value: number) => void', default: 'Optional', details: 'Callback when slider value changes.' },
-  { name: 'minValue', type: 'number', default: '0', details: 'Minimum value of the slider.' },
-  { name: 'maxValue', type: 'number', default: '100', details: 'Maximum value of the slider.' },
-  { name: 'step', type: 'number', default: '1', details: 'Step increment of the slider.' },
-  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the slider is disabled.' },
-  { name: 'showOutput', type: 'boolean', default: 'false', details: 'Whether to show the current value output.' },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'trackClassName', type: 'string', default: "' '", details: 'You can customise track by passing tailwind classes.' },
-  { name: 'fillClassName', type: 'string', default: "' '", details: 'You can customise fill by passing tailwind classes.' },
-  { name: 'thumbClassName', type: 'string', default: "' '", details: 'You can customise thumb by passing tailwind classes.' }
+  { name: "value", type: "number", default: "Optional", details: "Controlled slider value." },
+  { name: "defaultValue", type: "number", default: "Optional", details: "Default slider value." },
+  {
+    name: "onChange",
+    type: "(value: number) => void",
+    default: "Optional",
+    details: "Callback when slider value changes.",
+  },
+  { name: "minValue", type: "number", default: "0", details: "Minimum value of the slider." },
+  { name: "maxValue", type: "number", default: "100", details: "Maximum value of the slider." },
+  { name: "step", type: "number", default: "1", details: "Step increment of the slider." },
+  {
+    name: "isDisabled",
+    type: "boolean",
+    default: "false",
+    details: "Whether the slider is disabled.",
+  },
+  {
+    name: "showOutput",
+    type: "boolean",
+    default: "false",
+    details: "Whether to show the current value output.",
+  },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "trackClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise track by passing tailwind classes.",
+  },
+  {
+    name: "fillClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise fill by passing tailwind classes.",
+  },
+  {
+    name: "thumbClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise thumb by passing tailwind classes.",
+  },
 ];

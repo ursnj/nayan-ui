@@ -1,6 +1,15 @@
-import React, { CSSProperties, ReactNode, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { cn } from '../lib/utils';
-import { ThresholdUnits, parseThreshold, throttle } from './Utils';
+import React, {
+  CSSProperties,
+  ReactNode,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { cn } from "../lib/utils";
+import { ThresholdUnits, parseThreshold, throttle } from "./Utils";
 
 type Fn = () => any;
 
@@ -25,7 +34,7 @@ export interface NInfiniteScrollProps {
   dataLength: number;
   initialScrollY?: number;
   className?: string;
-  'aria-label'?: string;
+  "aria-label"?: string;
 }
 
 const NInfiniteScrollComponent: React.FC<NInfiniteScrollProps> = memo(
@@ -49,8 +58,8 @@ const NInfiniteScrollComponent: React.FC<NInfiniteScrollProps> = memo(
     onScroll,
     dataLength,
     initialScrollY,
-    className = '',
-    'aria-label': ariaLabel = 'Infinite Scroll Region'
+    className = "",
+    "aria-label": ariaLabel = "Infinite Scroll Region",
   }) => {
     const [showLoader, setShowLoader] = useState(false);
     const [pullToRefreshThresholdBreached, setPullToRefreshThresholdBreached] = useState(false);
@@ -68,8 +77,9 @@ const NInfiniteScrollComponent: React.FC<NInfiniteScrollProps> = memo(
 
     // Get scrollable target
     const getScrollableTarget = useCallback(() => {
-      if (typeof HTMLElement !== 'undefined' && scrollableTarget instanceof HTMLElement) return scrollableTarget;
-      if (typeof scrollableTarget === 'string') {
+      if (typeof HTMLElement !== "undefined" && scrollableTarget instanceof HTMLElement)
+        return scrollableTarget;
+      if (typeof scrollableTarget === "string") {
         return document.getElementById(scrollableTarget);
       }
       return window;
@@ -79,14 +89,14 @@ const NInfiniteScrollComponent: React.FC<NInfiniteScrollProps> = memo(
     const onStart = useCallback((evt: TouchEvent | MouseEvent) => {
       if (lastScrollTop.current) return;
       dragging.current = true;
-      if ('touches' in evt) {
+      if ("touches" in evt) {
         startY.current = evt.touches[0].pageY;
       } else {
         startY.current = evt.pageY;
       }
       currentY.current = startY.current;
       if (infScrollRef.current) {
-        infScrollRef.current.style.willChange = 'transform';
+        infScrollRef.current.style.willChange = "transform";
         infScrollRef.current.style.transition = `transform 0.2s cubic-bezier(0,0,0.31,1)`;
       }
     }, []);
@@ -94,7 +104,7 @@ const NInfiniteScrollComponent: React.FC<NInfiniteScrollProps> = memo(
     const onMove = useCallback(
       (evt: TouchEvent | MouseEvent) => {
         if (!dragging.current) return;
-        if ('touches' in evt) {
+        if ("touches" in evt) {
           currentY.current = evt.touches[0].pageY;
         } else {
           currentY.current = evt.pageY;
@@ -108,11 +118,11 @@ const NInfiniteScrollComponent: React.FC<NInfiniteScrollProps> = memo(
         }
         if (currentY.current - startY.current > maxPullDownDistance.current * 1.5) return;
         if (infScrollRef.current) {
-          infScrollRef.current.style.overflow = 'visible';
+          infScrollRef.current.style.overflow = "visible";
           infScrollRef.current.style.transform = `translate3d(0px, ${currentY.current - startY.current}px, 0px)`;
         }
       },
-      [pullDownToRefreshThreshold]
+      [pullDownToRefreshThreshold],
     );
 
     const onEnd = useCallback(() => {
@@ -126,16 +136,19 @@ const NInfiniteScrollComponent: React.FC<NInfiniteScrollProps> = memo(
       }
       requestAnimationFrame(() => {
         if (infScrollRef.current) {
-          infScrollRef.current.style.overflow = 'auto';
-          infScrollRef.current.style.transform = 'none';
-          infScrollRef.current.style.willChange = 'unset';
+          infScrollRef.current.style.overflow = "auto";
+          infScrollRef.current.style.transform = "none";
+          infScrollRef.current.style.willChange = "unset";
         }
       });
     }, [refreshFunction]);
 
     // Scroll threshold helpers
     const isElementAtTop = (target: HTMLElement, thresholdVal: string | number = 0.8) => {
-      const clientHeight = target === document.body || target === document.documentElement ? window.screen.availHeight : target.clientHeight;
+      const clientHeight =
+        target === document.body || target === document.documentElement
+          ? window.screen.availHeight
+          : target.clientHeight;
       const threshold = parseThreshold(thresholdVal);
       if (threshold.unit === ThresholdUnits.Pixel) {
         return target.scrollTop <= threshold.value + clientHeight - target.scrollHeight + 1;
@@ -144,7 +157,10 @@ const NInfiniteScrollComponent: React.FC<NInfiniteScrollProps> = memo(
     };
 
     const isElementAtBottom = (target: HTMLElement, thresholdVal: string | number = 0.8) => {
-      const clientHeight = target === document.body || target === document.documentElement ? window.screen.availHeight : target.clientHeight;
+      const clientHeight =
+        target === document.body || target === document.documentElement
+          ? window.screen.availHeight
+          : target.clientHeight;
       const threshold = parseThreshold(thresholdVal);
       if (threshold.unit === ThresholdUnits.Pixel) {
         return target.scrollTop + clientHeight >= target.scrollHeight - threshold.value;
@@ -155,7 +171,7 @@ const NInfiniteScrollComponent: React.FC<NInfiniteScrollProps> = memo(
     // Main scroll listener
     const onScrollListener = useCallback(
       (event: Event) => {
-        if (typeof onScroll === 'function') {
+        if (typeof onScroll === "function") {
           onScroll(event);
         }
         const target =
@@ -165,7 +181,9 @@ const NInfiniteScrollComponent: React.FC<NInfiniteScrollProps> = memo(
               ? document.documentElement
               : document.body;
         if (actionTriggered.current) return;
-        const atBottom = inverse ? isElementAtTop(target, scrollThreshold) : isElementAtBottom(target, scrollThreshold);
+        const atBottom = inverse
+          ? isElementAtTop(target, scrollThreshold)
+          : isElementAtBottom(target, scrollThreshold);
         if (atBottom && hasMore) {
           actionTriggered.current = true;
           setShowLoader(true);
@@ -173,25 +191,31 @@ const NInfiniteScrollComponent: React.FC<NInfiniteScrollProps> = memo(
         }
         lastScrollTop.current = target.scrollTop;
       },
-      [hasMore, next, onScroll, height, inverse, scrollThreshold]
+      [hasMore, next, onScroll, height, inverse, scrollThreshold],
     );
 
     // Keep expensive layout reads out of the browser's hot scroll path.
-    const throttledOnScrollListener = useMemo(() => throttle(150, onScrollListener), [onScrollListener]);
+    const throttledOnScrollListener = useMemo(
+      () => throttle(150, onScrollListener),
+      [onScrollListener],
+    );
 
     // Effect: set up event listeners
     useEffect(() => {
       scrollableNode.current = getScrollableTarget();
       const el = height ? infScrollRef.current : scrollableNode.current || window;
       if (!el) return;
-      el.addEventListener('scroll', throttledOnScrollListener as EventListenerOrEventListenerObject);
+      el.addEventListener(
+        "scroll",
+        throttledOnScrollListener as EventListenerOrEventListenerObject,
+      );
       if (pullDownToRefresh) {
-        el.addEventListener('touchstart', onStart as EventListener);
-        el.addEventListener('touchmove', onMove as EventListener);
-        el.addEventListener('touchend', onEnd as EventListener);
-        el.addEventListener('mousedown', onStart as EventListener);
-        el.addEventListener('mousemove', onMove as EventListener);
-        el.addEventListener('mouseup', onEnd as EventListener);
+        el.addEventListener("touchstart", onStart as EventListener);
+        el.addEventListener("touchmove", onMove as EventListener);
+        el.addEventListener("touchend", onEnd as EventListener);
+        el.addEventListener("mousedown", onStart as EventListener);
+        el.addEventListener("mousemove", onMove as EventListener);
+        el.addEventListener("mouseup", onEnd as EventListener);
         // get BCR of pullDown element to position it above
         maxPullDownDistance.current =
           (pullDownRef.current &&
@@ -200,22 +224,38 @@ const NInfiniteScrollComponent: React.FC<NInfiniteScrollProps> = memo(
           0;
       }
       // Initial scroll
-      if (typeof initialScrollY === 'number' && el instanceof HTMLElement && el.scrollHeight > initialScrollY) {
+      if (
+        typeof initialScrollY === "number" &&
+        el instanceof HTMLElement &&
+        el.scrollHeight > initialScrollY
+      ) {
         el.scrollTo(0, initialScrollY);
       }
       return () => {
-        el.removeEventListener('scroll', throttledOnScrollListener as EventListenerOrEventListenerObject);
+        el.removeEventListener(
+          "scroll",
+          throttledOnScrollListener as EventListenerOrEventListenerObject,
+        );
         throttledOnScrollListener.cancel();
         if (pullDownToRefresh) {
-          el.removeEventListener('touchstart', onStart as EventListener);
-          el.removeEventListener('touchmove', onMove as EventListener);
-          el.removeEventListener('touchend', onEnd as EventListener);
-          el.removeEventListener('mousedown', onStart as EventListener);
-          el.removeEventListener('mousemove', onMove as EventListener);
-          el.removeEventListener('mouseup', onEnd as EventListener);
+          el.removeEventListener("touchstart", onStart as EventListener);
+          el.removeEventListener("touchmove", onMove as EventListener);
+          el.removeEventListener("touchend", onEnd as EventListener);
+          el.removeEventListener("mousedown", onStart as EventListener);
+          el.removeEventListener("mousemove", onMove as EventListener);
+          el.removeEventListener("mouseup", onEnd as EventListener);
         }
       };
-    }, [getScrollableTarget, height, throttledOnScrollListener, pullDownToRefresh, onStart, onMove, onEnd, initialScrollY]);
+    }, [
+      getScrollableTarget,
+      height,
+      throttledOnScrollListener,
+      pullDownToRefresh,
+      onStart,
+      onMove,
+      onEnd,
+      initialScrollY,
+    ]);
 
     // Effect: reset loader when data changes
     useEffect(() => {
@@ -228,34 +268,38 @@ const NInfiniteScrollComponent: React.FC<NInfiniteScrollProps> = memo(
 
     // Styles
     const mainStyle = {
-      height: height ?? 'auto',
-      overflow: height ? 'auto' : undefined,
-      WebkitOverflowScrolling: 'touch',
-      ...style
+      height: height ?? "auto",
+      overflow: height ? "auto" : undefined,
+      WebkitOverflowScrolling: "touch",
+      ...style,
     } as CSSProperties;
     const hasAnyChildren = hasChildren ?? React.Children.count(children) > 0;
-    const outerDivStyle = pullDownToRefresh && height ? { overflow: 'auto' } : {};
+    const outerDivStyle = pullDownToRefresh && height ? { overflow: "auto" } : {};
 
     return (
       <div style={outerDivStyle} className="infinite-scroll-component__outerdiv">
         <div
-          className={cn('nyn-infinite-scroll infinite-scroll-component', className)}
+          className={cn("nyn-infinite-scroll infinite-scroll-component", className)}
           ref={infScrollRef}
           style={mainStyle}
           role="region"
           aria-label={ariaLabel}
           aria-busy={showLoader || (!hasAnyChildren && hasMore)}
-          tabIndex={height ? 0 : undefined}>
+          tabIndex={height ? 0 : undefined}
+        >
           {pullDownToRefresh && (
-            <div style={{ position: 'relative' }} ref={pullDownRef}>
+            <div style={{ position: "relative" }} ref={pullDownRef}>
               <div
                 style={{
-                  position: 'absolute',
+                  position: "absolute",
                   left: 0,
                   right: 0,
-                  top: -1 * maxPullDownDistance.current
-                }}>
-                {pullToRefreshThresholdBreached ? releaseToRefreshContent : pullDownToRefreshContent}
+                  top: -1 * maxPullDownDistance.current,
+                }}
+              >
+                {pullToRefreshThresholdBreached
+                  ? releaseToRefreshContent
+                  : pullDownToRefreshContent}
               </div>
             </div>
           )}
@@ -273,9 +317,9 @@ const NInfiniteScrollComponent: React.FC<NInfiniteScrollProps> = memo(
         </div>
       </div>
     );
-  }
+  },
 );
 
-NInfiniteScrollComponent.displayName = 'NInfiniteScroll';
+NInfiniteScrollComponent.displayName = "NInfiniteScroll";
 
 export const NInfiniteScroll = NInfiniteScrollComponent;

@@ -1,12 +1,13 @@
-import { H2_DOC, H3_DOC } from '@/design/system';
-import Code from '@/helpers/Code';
+import { H2_DOC, H3_DOC } from "@/design/system";
+import Code from "@/helpers/Code";
 
 const AICodeReviewer = () => {
   return (
     <div>
       <div className="mb-10 max-w-3xl text-base leading-relaxed text-muted">
-        A CLI tool that uses <strong>Codex</strong> or <strong>Claude Code</strong> to review GitHub Pull Requests with AI-powered agentic analysis.
-        It performs deep code review including bug detection, security analysis, performance checks, error handling, and test coverage.
+        A CLI tool that uses <strong>Codex</strong> or <strong>Claude Code</strong> to review GitHub
+        Pull Requests with AI-powered agentic analysis. It performs deep code review including bug
+        detection, security analysis, performance checks, error handling, and test coverage.
       </div>
 
       <h2 className={H2_DOC}>Installation</h2>
@@ -27,16 +28,28 @@ const AICodeReviewer = () => {
 
       <h2 className={H2_DOC}>Usage</h2>
       <div className="mb-5">Review a GitHub Pull Request for code issues:</div>
-      <Code language="bash" code={`nayan-ai review https://github.com/owner/repo/pull/123 --token ghp_xxx`} />
+      <Code
+        language="bash"
+        code={`nayan-ai review https://github.com/owner/repo/pull/123 --token ghp_xxx`}
+      />
 
       <div className="mb-5 mt-5">Dry run (analyze without posting comments):</div>
-      <Code language="bash" code={`nayan-ai review https://github.com/owner/repo/pull/123 --token ghp_xxx --dry`} />
+      <Code
+        language="bash"
+        code={`nayan-ai review https://github.com/owner/repo/pull/123 --token ghp_xxx --dry`}
+      />
 
       <div className="mb-5 mt-5">Post inline comments on files instead of summary:</div>
-      <Code language="bash" code={`nayan-ai review https://github.com/owner/repo/pull/123 --token ghp_xxx --inline`} />
+      <Code
+        language="bash"
+        code={`nayan-ai review https://github.com/owner/repo/pull/123 --token ghp_xxx --inline`}
+      />
 
       <div className="mb-5 mt-5">Use Claude Code instead of Codex:</div>
-      <Code language="bash" code={`nayan-ai review https://github.com/owner/repo/pull/123 --token ghp_xxx --llm claude`} />
+      <Code
+        language="bash"
+        code={`nayan-ai review https://github.com/owner/repo/pull/123 --token ghp_xxx --llm claude`}
+      />
 
       <h2 className={H2_DOC}>Options</h2>
       <div className="overflow-x-auto mb-5">
@@ -50,7 +63,9 @@ const AICodeReviewer = () => {
           <tbody>
             <tr>
               <td className="p-3 border-b border-default font-mono text-xs">-t, --token</td>
-              <td className="p-3 border-b border-default">GitHub personal access token (required)</td>
+              <td className="p-3 border-b border-default">
+                GitHub personal access token (required)
+              </td>
             </tr>
             <tr>
               <td className="p-3 border-b border-default font-mono text-xs">-l, --llm</td>
@@ -60,7 +75,9 @@ const AICodeReviewer = () => {
             </tr>
             <tr>
               <td className="p-3 border-b border-default font-mono text-xs">-d, --dry</td>
-              <td className="p-3 border-b border-default">Analyze without posting comments to GitHub</td>
+              <td className="p-3 border-b border-default">
+                Analyze without posting comments to GitHub
+              </td>
             </tr>
             <tr>
               <td className="p-3 font-mono text-xs">-i, --inline</td>
@@ -74,19 +91,27 @@ const AICodeReviewer = () => {
       <div className="grid sm:grid-cols-2 gap-4 mb-5">
         <div className="bg-surface border border-default rounded-lg p-4">
           <h3 className={H3_DOC}>Bug Detection</h3>
-          <p className="text-sm text-muted">Logic errors, null pointer issues, race conditions, and edge cases</p>
+          <p className="text-sm text-muted">
+            Logic errors, null pointer issues, race conditions, and edge cases
+          </p>
         </div>
         <div className="bg-surface border border-default rounded-lg p-4">
           <h3 className={H3_DOC}>Security Analysis</h3>
-          <p className="text-sm text-muted">SQL injection, XSS, hardcoded secrets, and auth issues</p>
+          <p className="text-sm text-muted">
+            SQL injection, XSS, hardcoded secrets, and auth issues
+          </p>
         </div>
         <div className="bg-surface border border-default rounded-lg p-4">
           <h3 className={H3_DOC}>Performance Checks</h3>
-          <p className="text-sm text-muted">Memory leaks, N+1 queries, and unnecessary computations</p>
+          <p className="text-sm text-muted">
+            Memory leaks, N+1 queries, and unnecessary computations
+          </p>
         </div>
         <div className="bg-surface border border-default rounded-lg p-4">
           <h3 className={H3_DOC}>Error Handling</h3>
-          <p className="text-sm text-muted">Missing try/catch, unhandled promises, and silent failures</p>
+          <p className="text-sm text-muted">
+            Missing try/catch, unhandled promises, and silent failures
+          </p>
         </div>
         <div className="bg-surface border border-default rounded-lg p-4">
           <h3 className={H3_DOC}>Test Coverage</h3>

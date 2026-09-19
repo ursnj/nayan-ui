@@ -1,13 +1,16 @@
-'use client';
+"use client";
 
-import { AccordionTypes, NAccordion } from '@nayan-ui/react';
-import { H3_DOC } from '@/design/system';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { AccordionTypes, NAccordion } from "@nayan-ui/react";
+import { H3_DOC } from "@/design/system";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
 const items = [
-  { title: 'What is Nayan UI?', message: 'Nayan UI is a modern React component library built with TypeScript and Tailwind CSS.' },
-  { title: 'How to install?', message: 'Install using npm: npm install @nayan-ui/react' },
-  { title: 'Is it free?', message: 'Yes, Nayan UI is completely free and open source.' }
+  {
+    title: "What is Nayan UI?",
+    message: "Nayan UI is a modern React component library built with TypeScript and Tailwind CSS.",
+  },
+  { title: "How to install?", message: "Install using npm: npm install @nayan-ui/react" },
+  { title: "Is it free?", message: "Yes, Nayan UI is completely free and open source." },
 ];
 
 const Accordion = () => {
@@ -48,30 +51,70 @@ const Accordion = () => {
 export default Accordion;`;
 
 export const accordionAttributes = [
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'itemClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'triggerClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'contentClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'type', type: 'AccordionTypes', default: 'AccordionTypes.SINGLE', details: 'You can pass type of the accordion.' },
-  { name: 'items', type: 'AccordionListItem[]', default: 'Required', details: 'You can pass list of accordion items.' },
   {
-    name: 'keyExtractor',
-    type: '(item: T, index: number) => string | number',
-    default: 'Optional',
-    details: 'Custom key extractor function for items.'
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
   },
   {
-    name: 'renderTrigger',
-    type: '(item: T, index: number) => React.ReactNode',
-    default: 'Optional',
-    details: 'Custom render function for accordion triggers.'
+    name: "itemClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
   },
   {
-    name: 'renderContent',
-    type: '(item: T, index: number) => React.ReactNode',
-    default: 'Optional',
-    details: 'Custom render function for accordion content.'
+    name: "triggerClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
   },
-  { name: 'indicatorClassName', type: 'string', default: "' '", details: 'Custom class for the expand/collapse indicator.' },
-  { name: 'variant', type: "'default' | 'surface'", default: "'default'", details: 'Visual variant of the accordion.' }
+  {
+    name: "contentClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "type",
+    type: "AccordionTypes",
+    default: "AccordionTypes.SINGLE",
+    details: "You can pass type of the accordion.",
+  },
+  {
+    name: "items",
+    type: "AccordionListItem[]",
+    default: "Required",
+    details: "You can pass list of accordion items.",
+  },
+  {
+    name: "keyExtractor",
+    type: "(item: T, index: number) => string | number",
+    default: "Optional",
+    details: "Custom key extractor function for items.",
+  },
+  {
+    name: "renderTrigger",
+    type: "(item: T, index: number) => React.ReactNode",
+    default: "Optional",
+    details: "Custom render function for accordion triggers.",
+  },
+  {
+    name: "renderContent",
+    type: "(item: T, index: number) => React.ReactNode",
+    default: "Optional",
+    details: "Custom render function for accordion content.",
+  },
+  {
+    name: "indicatorClassName",
+    type: "string",
+    default: "' '",
+    details: "Custom class for the expand/collapse indicator.",
+  },
+  {
+    name: "variant",
+    type: "'default' | 'surface'",
+    default: "'default'",
+    details: "Visual variant of the accordion.",
+  },
 ];

@@ -1,10 +1,10 @@
-import React, { forwardRef, memo, useId } from 'react';
-import { Label, Radio, RadioGroup } from '@heroui/react';
-import { cn } from '../lib/utils';
-import { RadioItem } from './Types';
+import React, { forwardRef, memo, useId } from "react";
+import { Label, Radio, RadioGroup } from "@heroui/react";
+import { cn } from "../lib/utils";
+import { RadioItem } from "./Types";
 
 export interface NRadioGroupProps {
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
   items: RadioItem[];
   className?: string;
   id?: string;
@@ -24,13 +24,13 @@ export const NRadioGroup = memo(
       items,
       value,
       onChange,
-      orientation = 'horizontal',
+      orientation = "horizontal",
       id,
       label,
-      className = '',
-      itemClassName = '',
-      radioClassName = '',
-      labelClassName = '',
+      className = "",
+      itemClassName = "",
+      radioClassName = "",
+      labelClassName = "",
       disabled = false,
       showLabel = true,
       ...rest
@@ -40,7 +40,7 @@ export const NRadioGroup = memo(
     const groupId = id || `nyn-radio-${generatedId}`;
 
     return (
-      <div className={cn('nyn-radio-block mb-3', className)} ref={ref}>
+      <div className={cn("nyn-radio-block mb-3", className)} ref={ref}>
         {label && showLabel && (
           <Label htmlFor={groupId} className={cn(labelClassName)}>
             {label}
@@ -51,14 +51,25 @@ export const NRadioGroup = memo(
           orientation={orientation}
           value={value}
           isDisabled={disabled}
-          onChange={(next: unknown) => onChange(typeof next === 'string' ? next : ((next as any)?.target?.value ?? ''))}
+          onChange={(next: unknown) =>
+            onChange(typeof next === "string" ? next : ((next as any)?.target?.value ?? ""))
+          }
           aria-label={label}
           // mt-0: HeroUI puts mt-4 on every radio in a vertical group, including the first, which doubles up with the gap.
-          className={cn(orientation === 'horizontal' ? 'flex flex-row flex-wrap gap-4' : 'flex flex-col gap-2 [&>[data-slot=radio]]:mt-0')}
-          {...(rest as any)}>
+          className={cn(
+            orientation === "horizontal"
+              ? "flex flex-row flex-wrap gap-4"
+              : "flex flex-col gap-2 [&>[data-slot=radio]]:mt-0",
+          )}
+          {...(rest as any)}
+        >
           {/* The control belongs inside Radio.Content: Radio itself is the field wrapper, and HeroUI styles it as a column. */}
-          {items.map(item => (
-            <Radio key={item.value} value={item.value} className={cn(radioClassName, itemClassName)}>
+          {items.map((item) => (
+            <Radio
+              key={item.value}
+              value={item.value}
+              className={cn(radioClassName, itemClassName)}
+            >
               <Radio.Content>
                 <Radio.Control>
                   <Radio.Indicator />
@@ -70,7 +81,7 @@ export const NRadioGroup = memo(
         </RadioGroup>
       </div>
     );
-  })
+  }),
 );
 
-NRadioGroup.displayName = 'NRadioGroup';
+NRadioGroup.displayName = "NRadioGroup";

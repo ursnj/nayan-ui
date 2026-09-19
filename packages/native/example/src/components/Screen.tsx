@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
-import { ScrollView, View } from 'react-native';
-import { Stack } from 'expo-router';
+import type { ReactNode } from "react";
+import { ScrollView, View } from "react-native";
+import { Stack } from "expo-router";
 
 interface ScreenProps {
   /** Shown in the navigation bar. */
@@ -16,7 +16,10 @@ export default function Screen({ title, gap = 4, keyboardAware = false, children
   return (
     <>
       <Stack.Screen options={{ title }} />
-      <ScrollView className="flex-1 bg-background" keyboardShouldPersistTaps={keyboardAware ? 'handled' : undefined}>
+      <ScrollView
+        className="flex-1 bg-background"
+        keyboardShouldPersistTaps={keyboardAware ? "handled" : undefined}
+      >
         <View className={`p-4 gap-${gap}`}>{children}</View>
       </ScrollView>
     </>

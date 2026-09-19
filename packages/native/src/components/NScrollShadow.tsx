@@ -1,7 +1,7 @@
-import React from 'react';
-import { ScrollShadow, type ScrollShadowProps, cn } from 'heroui-native';
+import React from "react";
+import { ScrollShadow, type ScrollShadowProps, cn } from "heroui-native";
 
-export interface NScrollShadowProps extends Omit<ScrollShadowProps, 'children'> {
+export interface NScrollShadowProps extends Omit<ScrollShadowProps, "children"> {
   /** A single scrollable child — a `ScrollView`, `FlatList` or similar. */
   children: React.ReactElement;
   /**
@@ -10,7 +10,7 @@ export interface NScrollShadowProps extends Omit<ScrollShadowProps, 'children'> 
    * it, and the library does not depend on a gradient package itself so the app
    * can pick its own.
    */
-  LinearGradientComponent: ScrollShadowProps['LinearGradientComponent'];
+  LinearGradientComponent: ScrollShadowProps["LinearGradientComponent"];
 }
 
 export const NScrollShadow = React.memo<NScrollShadowProps>(({ children, className, ...props }) => {
@@ -21,4 +21,4 @@ export const NScrollShadow = React.memo<NScrollShadowProps>(({ children, classNa
   );
 });
 
-NScrollShadow.displayName = 'NScrollShadow';
+NScrollShadow.displayName = "NScrollShadow";
