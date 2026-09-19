@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { NMeter } from '@nayan-ui/react';
-import { H3_DOC } from '@/design/system';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { NMeter } from "@nayan-ui/react";
+import { H3_DOC } from "@/design/system";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
 const Meter = () => {
   return (
@@ -54,17 +54,37 @@ const Meter = () => {
 export default Meter;`;
 
 export const meterAttributes = [
-  { name: 'value', type: 'number', default: 'Required', details: 'Current meter value.' },
-  { name: 'minValue', type: 'number', default: '0', details: 'Minimum value.' },
-  { name: 'maxValue', type: 'number', default: '100', details: 'Maximum value.' },
-  { name: 'label', type: 'React.ReactNode', default: 'Optional', details: 'What is being measured, at the start of the row.' },
-  { name: 'output', type: 'React.ReactNode', default: 'Optional', details: 'The reading, at the end of the row. Defaults to a percentage.' },
-  { name: 'showOutput', type: 'boolean', default: 'true', details: 'Show the reading.' },
-  { name: 'color', type: "'default' | 'accent' | 'success' | 'warning' | 'danger'", default: "'accent'", details: 'Meter color.' },
-  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'Meter size.' },
-  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' },
-  { name: 'labelClassName', type: 'string', default: "' '", details: 'Classes for the label.' },
-  { name: 'outputClassName', type: 'string', default: "' '", details: 'Classes for the reading.' },
-  { name: 'trackClassName', type: 'string', default: "' '", details: 'Classes for the track.' },
-  { name: 'fillClassName', type: 'string', default: "' '", details: 'Classes for the filled portion.' }
+  { name: "value", type: "number", default: "Required", details: "Current meter value." },
+  { name: "minValue", type: "number", default: "0", details: "Minimum value." },
+  { name: "maxValue", type: "number", default: "100", details: "Maximum value." },
+  {
+    name: "label",
+    type: "React.ReactNode",
+    default: "Optional",
+    details: "What is being measured, at the start of the row.",
+  },
+  {
+    name: "output",
+    type: "React.ReactNode",
+    default: "Optional",
+    details: "The reading, at the end of the row. Defaults to a percentage.",
+  },
+  { name: "showOutput", type: "boolean", default: "true", details: "Show the reading." },
+  {
+    name: "color",
+    type: "'default' | 'accent' | 'success' | 'warning' | 'danger'",
+    default: "'accent'",
+    details: "Meter color.",
+  },
+  { name: "size", type: "'sm' | 'md' | 'lg'", default: "'md'", details: "Meter size." },
+  { name: "className", type: "string", default: "' '", details: "Additional CSS classes." },
+  { name: "labelClassName", type: "string", default: "' '", details: "Classes for the label." },
+  { name: "outputClassName", type: "string", default: "' '", details: "Classes for the reading." },
+  { name: "trackClassName", type: "string", default: "' '", details: "Classes for the track." },
+  {
+    name: "fillClassName",
+    type: "string",
+    default: "' '",
+    details: "Classes for the filled portion.",
+  },
 ];

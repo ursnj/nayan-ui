@@ -1,7 +1,17 @@
-import { useCallback, useState } from 'react';
-import { NEmptyState, NInput, NNumberField, NSelect, NSlider, NTextarea, NToggleButton, NTooltip, cn } from '@nayan-ui/react';
-import { ChevronDown, RotateCcw } from 'lucide-react';
-import { useEditor } from '../store/editor';
+import { useCallback, useState } from "react";
+import {
+  NEmptyState,
+  NInput,
+  NNumberField,
+  NSelect,
+  NSlider,
+  NTextarea,
+  NToggleButton,
+  NTooltip,
+  cn,
+} from "@nayan-ui/react";
+import { ChevronDown, RotateCcw } from "lucide-react";
+import { useEditor } from "../store/editor";
 
 interface SectionProps {
   title: string;
@@ -16,10 +26,19 @@ export const Section = ({ title, icon, onReset, children }: SectionProps) => {
   return (
     <section className="border-b border-border/60 last:border-b-0">
       <div className="flex items-center gap-1.5 px-3 py-2">
-        <button type="button" onClick={() => setOpen(value => !value)} aria-expanded={open} className="flex flex-1 items-center gap-1.5 text-left">
-          <ChevronDown className={cn('h-3.5 w-3.5 text-muted transition-transform', !open && '-rotate-90')} />
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          aria-expanded={open}
+          className="flex flex-1 items-center gap-1.5 text-left"
+        >
+          <ChevronDown
+            className={cn("h-3.5 w-3.5 text-muted transition-transform", !open && "-rotate-90")}
+          />
           {icon}
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">{title}</span>
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+            {title}
+          </span>
         </button>
         {onReset && (
           <IconButton label={`Reset ${title.toLowerCase()}`} onClick={onReset}>
@@ -39,7 +58,15 @@ export const FieldRow = ({ label, children }: { label: string; children: React.R
   </div>
 );
 
-export const EmptyState = ({ icon, title, hint }: { icon: React.ReactNode; title: string; hint?: string }) => (
+export const EmptyState = ({
+  icon,
+  title,
+  hint,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  hint?: string;
+}) => (
   <NEmptyState
     icon={icon}
     title={title}
@@ -58,7 +85,7 @@ export const IconButton = ({
   disabled,
   danger,
   children,
-  className
+  className,
 }: {
   label: string;
   onClick: () => void;
@@ -78,7 +105,12 @@ export const IconButton = ({
       size="sm"
       onChange={onClick}
       aria-label={label}
-      className={cn('h-7 w-7 shrink-0', danger && 'hover:bg-danger hover:text-danger-foreground', className)}>
+      className={cn(
+        "h-7 w-7 shrink-0",
+        danger && "hover:bg-danger hover:text-danger-foreground",
+        className,
+      )}
+    >
       {children}
     </NToggleButton>
   </NTooltip>
@@ -89,7 +121,7 @@ export const ToggleChip = ({
   onClick,
   label,
   children,
-  className
+  className,
 }: {
   active: boolean;
   onClick: () => void;
@@ -98,7 +130,14 @@ export const ToggleChip = ({
   className?: string;
 }) => (
   <NTooltip message={label}>
-    <NToggleButton isSelected={active} variant="default" size="sm" onChange={onClick} aria-label={label} className={cn('text-[11px]', className)}>
+    <NToggleButton
+      isSelected={active}
+      variant="default"
+      size="sm"
+      onChange={onClick}
+      aria-label={label}
+      className={cn("text-[11px]", className)}
+    >
       {children}
     </NToggleButton>
   </NTooltip>
@@ -110,7 +149,7 @@ export const SegmentedControl = <T extends string>({
   onChange,
   disabled,
   framed = false,
-  className
+  className,
 }: {
   /** No segment is lit when the value is null — a mixed or empty selection. */
   value: T | null;
@@ -120,8 +159,11 @@ export const SegmentedControl = <T extends string>({
   framed?: boolean;
   className?: string;
 }) => (
-  <div className={cn('flex gap-0.5 rounded-md', framed && 'bg-surface-secondary p-0.5', className)} role="group">
-    {options.map(option => (
+  <div
+    className={cn("flex gap-0.5 rounded-md", framed && "bg-surface-secondary p-0.5", className)}
+    role="group"
+  >
+    {options.map((option) => (
       <NTooltip key={option.value} message={option.title}>
         <NToggleButton
           isSelected={value === option.value}
@@ -131,7 +173,8 @@ export const SegmentedControl = <T extends string>({
           size="sm"
           onChange={() => onChange(option.value)}
           aria-label={option.title}
-          className={cn('flex-1', framed ? 'h-6' : 'h-7')}>
+          className={cn("flex-1", framed ? "h-6" : "h-7")}
+        >
           {option.label}
         </NToggleButton>
       </NTooltip>
@@ -151,19 +194,28 @@ interface SliderFieldProps {
   resetTo?: number;
 }
 
-export const SliderField = ({ label, value, min, max, step = 1, format, onChange, resetTo }: SliderFieldProps) => {
-  const beginInteraction = useEditor(state => state.beginInteraction);
-  const endInteraction = useEditor(state => state.endInteraction);
+export const SliderField = ({
+  label,
+  value,
+  min,
+  max,
+  step = 1,
+  format,
+  onChange,
+  resetTo,
+}: SliderFieldProps) => {
+  const beginInteraction = useEditor((state) => state.beginInteraction);
+  const endInteraction = useEditor((state) => state.endInteraction);
 
   const onPointerDown = useCallback(() => {
     beginInteraction();
     const finish = () => {
       endInteraction();
-      window.removeEventListener('pointerup', finish);
-      window.removeEventListener('pointercancel', finish);
+      window.removeEventListener("pointerup", finish);
+      window.removeEventListener("pointercancel", finish);
     };
-    window.addEventListener('pointerup', finish);
-    window.addEventListener('pointercancel', finish);
+    window.addEventListener("pointerup", finish);
+    window.addEventListener("pointercancel", finish);
   }, [beginInteraction, endInteraction]);
 
   const display = format ? format(value) : String(Math.round(value * 100) / 100);
@@ -175,12 +227,22 @@ export const SliderField = ({ label, value, min, max, step = 1, format, onChange
         <button
           type="button"
           onDoubleClick={() => resetTo !== undefined && onChange(resetTo)}
-          title={resetTo !== undefined ? 'Double-click to reset' : undefined}
-          className="font-mono text-[11px] tabular-nums text-foreground">
+          title={resetTo !== undefined ? "Double-click to reset" : undefined}
+          className="font-mono text-[11px] tabular-nums text-foreground"
+        >
           {display}
         </button>
       </div>
-      <NSlider value={value} min={min} max={max} step={step} onChange={onChange} showOutput={false} className="mb-0" aria-label={label} />
+      <NSlider
+        value={value}
+        min={min}
+        max={max}
+        step={step}
+        onChange={onChange}
+        showOutput={false}
+        className="mb-0"
+        aria-label={label}
+      />
     </div>
   );
 };
@@ -191,7 +253,7 @@ export const NumberField = ({
   min,
   max,
   step = 1,
-  onChange
+  onChange,
 }: {
   label: string;
   value: number;
@@ -218,7 +280,7 @@ export const TextField = ({
   value,
   placeholder,
   onChange,
-  multiline
+  multiline,
 }: {
   label?: string;
   value: string;
@@ -232,7 +294,7 @@ export const TextField = ({
         label={label}
         value={value}
         placeholder={placeholder}
-        onChange={event => onChange(event.target.value)}
+        onChange={(event) => onChange(event.target.value)}
         className="mb-2"
         textareaClassName="min-h-20 text-xs"
       />
@@ -242,7 +304,7 @@ export const TextField = ({
       label={label}
       value={value}
       placeholder={placeholder}
-      onChange={event => onChange(event.target.value)}
+      onChange={(event) => onChange(event.target.value)}
       wrapperClassName="mb-2"
       inputClassName="h-[var(--field-height)] text-xs"
     />
@@ -253,7 +315,7 @@ export const SelectField = <T extends string>({
   value,
   options,
   onChange,
-  disabled
+  disabled,
 }: {
   label?: string;
   value: T;
@@ -263,12 +325,12 @@ export const SelectField = <T extends string>({
 }) => (
   <NSelect
     label={label}
-    value={options.find(option => option.value === value) ?? null}
+    value={options.find((option) => option.value === value) ?? null}
     options={options}
     disabled={disabled}
     isSearchable={false}
     className="mb-2"
-    onChange={option => option && onChange(option.value as T)}
+    onChange={(option) => option && onChange(option.value as T)}
   />
 );
 
@@ -276,14 +338,14 @@ export const ColorField = ({
   label,
   value,
   onChange,
-  allowAlpha
+  allowAlpha,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   allowAlpha?: boolean;
 }) => {
-  const swatch = value.startsWith('rgba') || value === 'transparent' ? '#000000' : value;
+  const swatch = value.startsWith("rgba") || value === "transparent" ? "#000000" : value;
   return (
     <div className="mb-2">
       <span className="mb-1 block text-[11px] text-muted">{label}</span>
@@ -291,13 +353,13 @@ export const ColorField = ({
         <input
           type="color"
           value={swatch}
-          onChange={event => onChange(event.target.value)}
+          onChange={(event) => onChange(event.target.value)}
           aria-label={label}
           className="h-[var(--field-height)] w-9 shrink-0 cursor-pointer rounded border border-border bg-transparent p-0.5"
         />
         <NInput
           value={value}
-          onChange={event => onChange(event.target.value)}
+          onChange={(event) => onChange(event.target.value)}
           label={undefined}
           wrapperClassName="mb-0 flex-1 min-w-0"
           inputClassName="h-[var(--field-height)] font-mono text-[11px]"
@@ -306,11 +368,11 @@ export const ColorField = ({
           <NTooltip message="Transparent">
             <button
               type="button"
-              onClick={() => onChange('transparent')}
+              onClick={() => onChange("transparent")}
               aria-label="Set transparent"
               className={cn(
-                'checkerboard h-[var(--field-height)] w-8 shrink-0 rounded border transition-colors',
-                value === 'transparent' ? 'border-accent' : 'border-border'
+                "checkerboard h-[var(--field-height)] w-8 shrink-0 rounded border transition-colors",
+                value === "transparent" ? "border-accent" : "border-border",
               )}
             />
           </NTooltip>

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import ComponentWrapper from '@/helpers/ComponentWrapper';
-import DemoComingSoon from './DemoComingSoon';
+import ComponentWrapper from "@/helpers/ComponentWrapper";
+import DemoComingSoon from "./DemoComingSoon";
 
 const Accordion = () => {
   return (
@@ -60,21 +60,76 @@ export default function AccordionScreen() {
 
 export const accordionAttributes = [
   {
-    name: 'items',
-    type: 'AccordionItemData[]',
-    default: 'Required',
-    details: 'Array of accordion items with id, title, content, and optional isDisabled.'
+    name: "items",
+    type: "AccordionItemData[]",
+    default: "Required",
+    details: "Array of accordion items with id, title, content, and optional isDisabled.",
   },
-  { name: 'selectionMode', type: "'single' | 'multiple'", default: "'single'", details: 'Whether single or multiple items can be expanded.' },
-  { name: 'defaultValue', type: 'string | string[]', default: 'Optional', details: 'Default expanded item values.' },
-  { name: 'variant', type: "'default' | 'surface'", default: 'Optional', details: 'Visual variant style.' },
-  { name: 'hideSeparator', type: 'boolean', default: 'false', details: 'Whether to hide separators between items.' },
-  { name: 'isCollapsible', type: 'boolean', default: 'false', details: 'Whether expanded items can be collapsed.' },
-  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the accordion is disabled.' },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'itemClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'titleClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'contentClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'type', type: "'single' | 'multiple'", default: "'single'", details: 'Alias of selectionMode.' },
-  { name: 'disabled', type: 'boolean', default: 'false', details: 'Alias of isDisabled.' }
+  {
+    name: "selectionMode",
+    type: "'single' | 'multiple'",
+    default: "'single'",
+    details: "Whether single or multiple items can be expanded.",
+  },
+  {
+    name: "defaultValue",
+    type: "string | string[]",
+    default: "Optional",
+    details: "Default expanded item values.",
+  },
+  {
+    name: "variant",
+    type: "'default' | 'surface'",
+    default: "Optional",
+    details: "Visual variant style.",
+  },
+  {
+    name: "hideSeparator",
+    type: "boolean",
+    default: "false",
+    details: "Whether to hide separators between items.",
+  },
+  {
+    name: "isCollapsible",
+    type: "boolean",
+    default: "false",
+    details: "Whether expanded items can be collapsed.",
+  },
+  {
+    name: "isDisabled",
+    type: "boolean",
+    default: "false",
+    details: "Whether the accordion is disabled.",
+  },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "itemClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "titleClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "contentClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "type",
+    type: "'single' | 'multiple'",
+    default: "'single'",
+    details: "Alias of selectionMode.",
+  },
+  { name: "disabled", type: "boolean", default: "false", details: "Alias of isDisabled." },
 ];

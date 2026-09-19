@@ -1,30 +1,59 @@
 {
   "name": "@nayan-ui/cli",
   "version": "1.0.0",
-  "sideEffects": false,
   "description": "Command Line Tool for Nayan UI.",
-  "type": "module",
-  "main": "./dist/index.js",
-  "bin": {
-    "nayan-ui": "./dist/index.js"
+  "keywords": [
+    "Automated Sitemap Generator",
+    "Easy Sitemap Generator",
+    "Free Sitemap Generator",
+    "Nayan UI CLI",
+    "Nayan UI for Expo",
+    "Nayan UI for Games",
+    "Nayan UI for React",
+    "Nayan UI for React Native",
+    "Nayan UI for Vite JS",
+    "Online Sitemap Generator",
+    "Robots.txt Generator",
+    "Robots.txt Validator",
+    "Simple Sitemap Generator",
+    "Sitemap Generator",
+    "Sitemap Validator",
+    "Website Sitemap Generator",
+    "XML Sitemap Generator"
+  ],
+  "bugs": {
+    "url": "https://github.com/ursnj/nayan-ui/issues"
   },
-  "scripts": {
-    "build": "tsc && chmod +x ./dist/index.js"
-  },
-  "exports": {
-    ".": {
-      "default": "./dist/index.js"
-    }
-  },
+  "license": "MIT",
   "author": {
     "name": "Niranjan Devasani",
     "email": "niranjan.devasani@gmail.com",
     "url": "https://www.ursnj.com"
   },
-  "engines": {
-    "node": ">=18"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ursnj/nayan-ui"
   },
-  "license": "MIT",
+  "bin": {
+    "nayan-ui": "./dist/index.js"
+  },
+  "files": [
+    "/dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc && chmod +x ./dist/index.js"
+  },
   "dependencies": {
     "@types/prompts": "^2.4.9",
     "axios": "^1.7.7",
@@ -40,36 +69,7 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   },
-  "files": [
-    "/dist"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ursnj/nayan-ui"
-  },
-  "bugs": {
-    "url": "https://github.com/ursnj/nayan-ui/issues"
-  },
-  "keywords": [
-    "Nayan UI for Vite JS",
-    "Nayan UI for Expo",
-    "Nayan UI for React",
-    "Nayan UI for React Native",
-    "Nayan UI for Games",
-    "Nayan UI CLI",
-    "Sitemap Generator",
-    "Sitemap Validator",
-    "Free Sitemap Generator",
-    "XML Sitemap Generator",
-    "Automated Sitemap Generator",
-    "Website Sitemap Generator",
-    "Online Sitemap Generator",
-    "Easy Sitemap Generator",
-    "Simple Sitemap Generator",
-    "Robots.txt Generator",
-    "Robots.txt Validator"
-  ]
+  "engines": {
+    "node": ">=18"
+  }
 }

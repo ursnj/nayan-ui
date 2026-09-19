@@ -1,6 +1,6 @@
-import { readEditorState, timelineDurationUs, useEditor } from '../store/editor';
-import { US } from '../types';
-import { Player } from './player';
+import { readEditorState, timelineDurationUs, useEditor } from "../store/editor";
+import { US } from "../types";
+import { Player } from "./player";
 
 export const player = new Player({
   getScene: () => {
@@ -13,8 +13,8 @@ export const player = new Player({
     return state.outPointUs ?? timelineDurationUs(state.clips);
   },
   getLoopStartUs: () => readEditorState().inPointUs ?? 0,
-  onTime: timeUs => useEditor.setState({ playheadUs: timeUs }),
-  onEnded: () => useEditor.setState({ isPlaying: false })
+  onTime: (timeUs) => useEditor.setState({ playheadUs: timeUs }),
+  onEnded: () => useEditor.setState({ isPlaying: false }),
 });
 
 export const togglePlayback = async () => {
@@ -27,7 +27,10 @@ export const togglePlayback = async () => {
   if (timelineDurationUs(state.clips) <= 0) return;
   useEditor.setState({ isPlaying: true });
   // Playing with a marked range starts from the in point when outside it.
-  const from = state.inPointUs !== null && state.playheadUs < state.inPointUs ? state.inPointUs : state.playheadUs;
+  const from =
+    state.inPointUs !== null && state.playheadUs < state.inPointUs
+      ? state.inPointUs
+      : state.playheadUs;
   await player.play(from);
 };
 

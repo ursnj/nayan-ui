@@ -1,4 +1,4 @@
-@import '@heroui/styles';
+@import "@heroui/styles";
 
 :root {
   --nyn-radius: 0.5rem;
@@ -7,10 +7,10 @@
 }
 
 :root,
-[data-theme='light'],
+[data-theme="light"],
 .light,
 .dark,
-[data-theme='dark'] {
+[data-theme="dark"] {
   --field-border-width: 1px;
   --field-border: var(--default);
 }
@@ -155,14 +155,14 @@
   .tooltip,
   .typography--code,
   .typography-prose,
-  [data-slot='color-input-group-prefix'],
-  [data-slot='color-input-group-suffix'],
-  [data-slot='date-input-group-prefix'],
-  [data-slot='date-input-group-suffix'],
-  [data-slot='drawer-handle-bar'],
-  [data-slot='input-group-prefix'],
-  [data-slot='input-group-suffix'],
-  [data-slot='search-field-search-icon'] {
+  [data-slot="color-input-group-prefix"],
+  [data-slot="color-input-group-suffix"],
+  [data-slot="date-input-group-prefix"],
+  [data-slot="date-input-group-suffix"],
+  [data-slot="drawer-handle-bar"],
+  [data-slot="input-group-prefix"],
+  [data-slot="input-group-suffix"],
+  [data-slot="search-field-search-icon"] {
     border-radius: var(--nyn-radius);
   }
 

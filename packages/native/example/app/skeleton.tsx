@@ -1,6 +1,6 @@
-import { View } from 'react-native';
-import { NSkeleton, NSkeletonGroup, NText } from '@nayan-ui/native';
-import Screen from '../src/components/Screen';
+import { View } from "react-native";
+import { NSkeleton, NSkeletonGroup, NText } from "@nayan-ui/native";
+import Screen from "../src/components/Screen";
 
 export default function SkeletonScreen() {
   return (

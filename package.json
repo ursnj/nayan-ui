@@ -1,16 +1,16 @@
 {
   "name": "@nayan-ui/root",
+  "version": "1.0.0",
   "private": true,
+  "description": "Reusable Component Libraries for React and React Native.",
+  "license": "ISC",
   "workspaces": [
     "packages/*",
     "packages/native/example",
     "applications/*"
   ],
-  "version": "1.0.0",
-  "description": "Reusable Component Libraries for React and React Native.",
   "scripts": {
-    "prepare": "husky install",
-    "format": "prettier --write .",
+    "format": "oxfmt",
     "clean": "rimraf packages/*/node_modules packages/*/dist packages/*/lib node_modules",
     "ai:build": "yarn workspace @nayan-ui/ai build",
     "cli:build": "yarn workspace @nayan-ui/cli build",
@@ -27,22 +27,8 @@
     "editor:build": "yarn workspace @nayan-ui/video-editor build"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.1.2",
-    "prettier": "^3.6.2",
+    "oxfmt": "^0.68.0",
     "rimraf": "^6.0.1"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "**/*.{js,jsx,ts,tsx,css,md,json}": [
-      "prettier --write ."
-    ]
-  },
-  "license": "ISC",
   "packageManager": "yarn@4.11.0"
 }

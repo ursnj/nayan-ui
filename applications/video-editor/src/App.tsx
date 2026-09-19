@@ -1,19 +1,20 @@
-import { useCallback, useEffect, useState } from 'react';
-import { NTheme, THEMES, showToast, useLocalStorage } from '@nayan-ui/react';
-import { ExportDialog } from './components/ExportDialog';
-import { Inspector } from './components/inspector/Inspector';
-import { LeftRail } from './components/panels/LeftRail';
-import { PreviewPanel } from './components/preview/PreviewPanel';
-import { LeaveGuard } from './components/shell/LeaveGuard';
-import { ShortcutsDialog } from './components/shell/ShortcutsDialog';
-import { SmallScreenNotice } from './components/shell/SmallScreenNotice';
-import { SplitPane } from './components/shell/SplitPane';
-import { TopBar } from './components/shell/TopBar';
-import { Timeline } from './components/timeline/Timeline';
-import { useCommand, useShortcuts } from './lib/shortcuts';
-import { useHasRoom } from './lib/viewport';
+import { useCallback, useEffect, useState } from "react";
+import { NTheme, THEMES, showToast, useLocalStorage } from "@nayan-ui/react";
+import { ExportDialog } from "./components/ExportDialog";
+import { Inspector } from "./components/inspector/Inspector";
+import { LeftRail } from "./components/panels/LeftRail";
+import { PreviewPanel } from "./components/preview/PreviewPanel";
+import { LeaveGuard } from "./components/shell/LeaveGuard";
+import { ShortcutsDialog } from "./components/shell/ShortcutsDialog";
+import { SmallScreenNotice } from "./components/shell/SmallScreenNotice";
+import { SplitPane } from "./components/shell/SplitPane";
+import { TopBar } from "./components/shell/TopBar";
+import { Timeline } from "./components/timeline/Timeline";
+import { useCommand, useShortcuts } from "./lib/shortcuts";
+import { useHasRoom } from "./lib/viewport";
 
-const hasWebCodecs = typeof window !== 'undefined' && 'VideoEncoder' in window && 'VideoDecoder' in window;
+const hasWebCodecs =
+  typeof window !== "undefined" && "VideoEncoder" in window && "VideoDecoder" in window;
 
 const DEFAULT_LIBRARY_WIDTH = 360;
 const DEFAULT_INSPECTOR_WIDTH = 300;
@@ -27,25 +28,34 @@ const MIN_STAGE_HEIGHT = 220;
 const SPLIT_GUTTER = 8;
 
 function App() {
-  const [storedTheme, setTheme] = useLocalStorage('THEME', THEMES.DARK);
+  const [storedTheme, setTheme] = useLocalStorage("THEME", THEMES.DARK);
   const theme = storedTheme ?? THEMES.DARK;
 
   const [exportOpen, setExportOpen] = useState(false);
 
-  const [libraryWidth, setLibraryWidth] = useLocalStorage('EDITOR_LIBRARY_W', DEFAULT_LIBRARY_WIDTH);
-  const [inspectorWidth, setInspectorWidth] = useLocalStorage('EDITOR_INSPECTOR_W', DEFAULT_INSPECTOR_WIDTH);
-  const [timelineHeight, setTimelineHeight] = useLocalStorage('EDITOR_TIMELINE_H', DEFAULT_TIMELINE_HEIGHT);
+  const [libraryWidth, setLibraryWidth] = useLocalStorage(
+    "EDITOR_LIBRARY_W",
+    DEFAULT_LIBRARY_WIDTH,
+  );
+  const [inspectorWidth, setInspectorWidth] = useLocalStorage(
+    "EDITOR_INSPECTOR_W",
+    DEFAULT_INSPECTOR_WIDTH,
+  );
+  const [timelineHeight, setTimelineHeight] = useLocalStorage(
+    "EDITOR_TIMELINE_H",
+    DEFAULT_TIMELINE_HEIGHT,
+  );
   const hasRoom = useHasRoom();
   const [helpOpen, setHelpOpen] = useState(false);
 
   useShortcuts();
   useCommand(
-    'export',
-    useCallback(() => setExportOpen(true), [])
+    "export",
+    useCallback(() => setExportOpen(true), []),
   );
   useCommand(
-    'help',
-    useCallback(() => setHelpOpen(open => !open), [])
+    "help",
+    useCallback(() => setHelpOpen((open) => !open), []),
   );
 
   const resetPreferences = useCallback(() => {
@@ -53,12 +63,15 @@ function App() {
     setInspectorWidth(DEFAULT_INSPECTOR_WIDTH);
     setTimelineHeight(DEFAULT_TIMELINE_HEIGHT);
     setTheme(THEMES.DARK);
-    showToast('Panel sizes and theme are back to how the editor ships.', 'Layout reset');
+    showToast("Panel sizes and theme are back to how the editor ships.", "Layout reset");
   }, [setInspectorWidth, setLibraryWidth, setTheme, setTimelineHeight]);
 
   useEffect(() => {
     if (!hasWebCodecs) {
-      showToast('This browser has no WebCodecs support. Try a recent Chrome, Edge or Safari.', 'Unsupported browser');
+      showToast(
+        "This browser has no WebCodecs support. Try a recent Chrome, Edge or Safari.",
+        "Unsupported browser",
+      );
     }
   }, []);
 
@@ -90,7 +103,8 @@ function App() {
           max={620}
           minOther={MIN_STAGE_HEIGHT}
           onResize={setTimelineHeight}
-          className="flex-1">
+          className="flex-1"
+        >
           <SplitPane
             direction="horizontal"
             size={libraryWidth ?? 320}
@@ -99,7 +113,8 @@ function App() {
             // The library must leave room for both panes to its right.
             minOther={INSPECTOR_MIN + SPLIT_GUTTER + MIN_PREVIEW_WIDTH}
             onResize={setLibraryWidth}
-            className="h-full">
+            className="h-full"
+          >
             <LeftRail />
             <SplitPane
               direction="horizontal"
@@ -109,7 +124,8 @@ function App() {
               max={480}
               minOther={MIN_PREVIEW_WIDTH}
               onResize={setInspectorWidth}
-              className="h-full">
+              className="h-full"
+            >
               <PreviewPanel />
               <Inspector />
             </SplitPane>

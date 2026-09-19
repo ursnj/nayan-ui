@@ -1,7 +1,7 @@
-import React from 'react';
-import { View } from 'react-native';
-import { Select, cn } from 'heroui-native';
-import { NText } from './NText';
+import React from "react";
+import { View } from "react-native";
+import { Select, cn } from "heroui-native";
+import { NText } from "./NText";
 
 export interface SelectOption {
   label: string;
@@ -31,9 +31,9 @@ export interface NSelectProps {
 
 export const NSelect = React.memo<NSelectProps>(
   ({
-    label = '',
-    selectLabel = '',
-    placeholder = '',
+    label = "",
+    selectLabel = "",
+    placeholder = "",
     isDisabled,
     disabled,
     defaultValue,
@@ -42,19 +42,27 @@ export const NSelect = React.memo<NSelectProps>(
     options,
     onValueChange,
     onChange,
-    containerClassName = '',
-    labelClassName = '',
-    triggerClassName = ''
+    containerClassName = "",
+    labelClassName = "",
+    triggerClassName = "",
   }) => {
     const list = items ?? options ?? [];
     const off = disabled ?? isDisabled ?? false;
     const change = onValueChange ?? onChange;
 
     return (
-      <View className={cn('flex-1 mb-3', containerClassName)}>
-        {label && <NText className={cn('mb-1', labelClassName)}>{label}</NText>}
-        <Select value={value} defaultValue={defaultValue} onValueChange={(option: any) => change?.(option?.value ?? '')} isDisabled={off}>
-          <Select.Trigger className={cn('w-full', isDisabled && 'opacity-70', triggerClassName)} isDisabled={isDisabled}>
+      <View className={cn("flex-1 mb-3", containerClassName)}>
+        {label && <NText className={cn("mb-1", labelClassName)}>{label}</NText>}
+        <Select
+          value={value}
+          defaultValue={defaultValue}
+          onValueChange={(option: any) => change?.(option?.value ?? "")}
+          isDisabled={off}
+        >
+          <Select.Trigger
+            className={cn("w-full", isDisabled && "opacity-70", triggerClassName)}
+            isDisabled={isDisabled}
+          >
             <Select.Value placeholder={placeholder} />
             <Select.TriggerIndicator />
           </Select.Trigger>
@@ -62,7 +70,7 @@ export const NSelect = React.memo<NSelectProps>(
             <Select.Overlay />
             <Select.Content presentation="popover" width="trigger">
               {selectLabel && <Select.ListLabel>{selectLabel}</Select.ListLabel>}
-              {list.map(item => (
+              {list.map((item) => (
                 <Select.Item key={item.value} label={item.label} value={item.value} />
               ))}
             </Select.Content>
@@ -70,7 +78,7 @@ export const NSelect = React.memo<NSelectProps>(
         </Select>
       </View>
     );
-  }
+  },
 );
 
-NSelect.displayName = 'NSelect';
+NSelect.displayName = "NSelect";

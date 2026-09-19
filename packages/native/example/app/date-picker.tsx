@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { NDatePicker, NText } from '@nayan-ui/native';
-import Screen from '../src/components/Screen';
+import { useState } from "react";
+import { NDatePicker, NText } from "@nayan-ui/native";
+import Screen from "../src/components/Screen";
 
 export default function DatePickerScreen() {
   const [date, setDate] = useState(new Date());

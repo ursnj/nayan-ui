@@ -1,5 +1,5 @@
-import React from 'react';
-import { Chip, type ChipProps, cn } from 'heroui-native';
+import React from "react";
+import { Chip, type ChipProps, cn } from "heroui-native";
 
 export interface NChipProps extends ChipProps {}
 
@@ -11,4 +11,4 @@ export const NChip = React.memo<NChipProps>(({ children, className, ...props }) 
   );
 });
 
-NChip.displayName = 'NChip';
+NChip.displayName = "NChip";

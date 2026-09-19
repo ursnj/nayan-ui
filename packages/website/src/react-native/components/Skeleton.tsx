@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import ComponentWrapper from '@/helpers/ComponentWrapper';
-import DemoComingSoon from './DemoComingSoon';
+import ComponentWrapper from "@/helpers/ComponentWrapper";
+import DemoComingSoon from "./DemoComingSoon";
 
 const Skeleton = () => {
   return (
@@ -56,14 +56,51 @@ export default function SkeletonScreen() {
   );
 }`;
 
-export const skeletonAttributes = [{ name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }];
+export const skeletonAttributes = [
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+];
 
 export const switchAttributes = [
-  { name: 'label', type: 'string', default: 'Optional', details: 'Label for the switch.' },
-  { name: 'isSelected', type: 'boolean', default: 'false', details: 'Whether the switch is selected.' },
-  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the switch is disabled.' },
-  { name: 'onSelectedChange', type: '(selected: boolean) => void', default: 'Optional', details: 'Callback when switch state changes.' },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise switch by passing tailwind classes.' },
-  { name: 'containerClassName', type: 'string', default: "' '", details: 'You can customise container by passing tailwind classes.' },
-  { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise label by passing tailwind classes.' }
+  { name: "label", type: "string", default: "Optional", details: "Label for the switch." },
+  {
+    name: "isSelected",
+    type: "boolean",
+    default: "false",
+    details: "Whether the switch is selected.",
+  },
+  {
+    name: "isDisabled",
+    type: "boolean",
+    default: "false",
+    details: "Whether the switch is disabled.",
+  },
+  {
+    name: "onSelectedChange",
+    type: "(selected: boolean) => void",
+    default: "Optional",
+    details: "Callback when switch state changes.",
+  },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise switch by passing tailwind classes.",
+  },
+  {
+    name: "containerClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise container by passing tailwind classes.",
+  },
+  {
+    name: "labelClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise label by passing tailwind classes.",
+  },
 ];

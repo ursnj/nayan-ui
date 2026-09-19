@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   AlertTypes,
   NAccordion,
@@ -24,45 +24,57 @@ import {
   NTagGroup,
   NToggleButton,
   NTooltip,
-  useNToast
-} from '@nayan-ui/react';
-import { ArrowRight, Bell, Bold, Check, Copy, Download, Github, Italic, Package, Terminal, Underline } from 'lucide-react';
-import Link from 'next/link';
-import { Badge } from '@/design/Primitives';
-import { CARD, CONTAINER, GRADIENT_TEXT, H1_HERO, LEAD, WELL } from '@/design/system';
-import { TOTAL_COMPONENT_COUNT } from '@/services/Counts';
-import { installCode, rnInstallCode } from '@/services/ReactCodeBlocks';
+  useNToast,
+} from "@nayan-ui/react";
+import {
+  ArrowRight,
+  Bell,
+  Bold,
+  Check,
+  Copy,
+  Download,
+  Github,
+  Italic,
+  Package,
+  Terminal,
+  Underline,
+} from "lucide-react";
+import Link from "next/link";
+import { Badge } from "@/design/Primitives";
+import { CARD, CONTAINER, GRADIENT_TEXT, H1_HERO, LEAD, WELL } from "@/design/system";
+import { TOTAL_COMPONENT_COUNT } from "@/services/Counts";
+import { installCode, rnInstallCode } from "@/services/ReactCodeBlocks";
 
 const INSTALLS = [
-  { platform: 'React', command: installCode },
-  { platform: 'React Native', command: rnInstallCode }
+  { platform: "React", command: installCode },
+  { platform: "React Native", command: rnInstallCode },
 ];
 
-const TABS = ['Buttons', 'Forms', 'Feedback', 'Elements'] as const;
+const TABS = ["Buttons", "Forms", "Feedback", "Elements"] as const;
 
-const RANGES = ['Day', 'Week', 'Month'];
+const RANGES = ["Day", "Week", "Month"];
 
 const FRAMEWORKS = [
-  { value: 'next', label: 'Next.js' },
-  { value: 'vite', label: 'Vite' },
-  { value: 'remix', label: 'Remix' },
-  { value: 'expo', label: 'Expo' }
+  { value: "next", label: "Next.js" },
+  { value: "vite", label: "Vite" },
+  { value: "remix", label: "Remix" },
+  { value: "expo", label: "Expo" },
 ];
 
 const PLANS = [
-  { label: 'Free', value: 'free' },
-  { label: 'Pro', value: 'pro' }
+  { label: "Free", value: "free" },
+  { label: "Pro", value: "pro" },
 ];
 
 const TAGS = [
-  { id: 'react', label: 'React' },
-  { id: 'native', label: 'React Native' },
-  { id: 'a11y', label: 'Accessible' }
+  { id: "react", label: "React" },
+  { id: "native", label: "React Native" },
+  { id: "a11y", label: "Accessible" },
 ];
 
 const FAQ = [
-  { title: 'Is it free?', message: 'Yes — MIT licensed, and it stays that way.' },
-  { title: 'Does it theme?', message: 'Light and dark out of the box, plus your own tokens.' }
+  { title: "Is it free?", message: "Yes — MIT licensed, and it stays that way." },
+  { title: "Does it theme?", message: "Light and dark out of the box, plus your own tokens." },
 ];
 
 const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
@@ -79,11 +91,13 @@ const Banner = () => {
   const [copied, setCopied] = useState<string | null>(null);
 
   /* Live state for the demo controls, so they actually respond. */
-  const [email, setEmail] = useState('');
-  const [query, setQuery] = useState('');
+  const [email, setEmail] = useState("");
+  const [query, setQuery] = useState("");
   const [seats, setSeats] = useState(3);
-  const [framework, setFramework] = useState<{ value: string; label: string } | null>(FRAMEWORKS[0]);
-  const [plan, setPlan] = useState('pro');
+  const [framework, setFramework] = useState<{ value: string; label: string } | null>(
+    FRAMEWORKS[0],
+  );
+  const [plan, setPlan] = useState("pro");
   const [notify, setNotify] = useState(true);
   const [dark, setDark] = useState(false);
   const [volume, setVolume] = useState(60);
@@ -91,7 +105,7 @@ const Banner = () => {
   const [bold, setBold] = useState(true);
   const [italic, setItalic] = useState(false);
   const [underline, setUnderline] = useState(false);
-  const [tags, setTags] = useState<any>(new Set(['react']));
+  const [tags, setTags] = useState<any>(new Set(["react"]));
 
   const toast = useNToast();
 
@@ -132,23 +146,31 @@ const Banner = () => {
             </h1>
 
             <p className={`mx-auto mt-6 max-w-xl text-lg ${LEAD} lg:mx-0`}>
-              {TOTAL_COMPONENT_COUNT} accessible, good-looking components for web and mobile — styled, themeable and documented, so you can start on
-              the thing you actually set out to build.
+              {TOTAL_COMPONENT_COUNT} accessible, good-looking components for web and mobile —
+              styled, themeable and documented, so you can start on the thing you actually set out
+              to build.
             </p>
 
             <div className="mx-auto mt-7 max-w-md divide-y divide-default overflow-hidden rounded-xl border border-default bg-surface lg:mx-0">
               {INSTALLS.map(({ platform, command }) => (
                 <div key={command} className="flex items-center gap-3 px-3.5 py-2.5">
                   <Terminal aria-hidden className="h-4 w-4 shrink-0 text-muted" />
-                  <code className="min-w-0 flex-1 truncate font-mono text-sm text-foreground">{command}</code>
+                  <code className="min-w-0 flex-1 truncate font-mono text-sm text-foreground">
+                    {command}
+                  </code>
                   <span className="shrink-0 text-[11px] font-medium text-muted">{platform}</span>
                   <button
                     type="button"
                     onClick={() => copyInstall(command)}
                     aria-label={`Copy ${platform} install command`}
                     aria-live="polite"
-                    className="shrink-0 rounded-md p-1 text-muted transition-colors hover:text-foreground">
-                    {copied === command ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+                    className="shrink-0 rounded-md p-1 text-muted transition-colors hover:text-foreground"
+                  >
+                    {copied === command ? (
+                      <Check className="h-4 w-4 text-emerald-500" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               ))}
@@ -161,7 +183,12 @@ const Banner = () => {
                   <ArrowRight aria-hidden className="h-4 w-4" />
                 </NButton>
               </Link>
-              <a href="https://github.com/ursnj/nayan-ui" target="_blank" rel="noopener noreferrer" className="sm:w-auto">
+              <a
+                href="https://github.com/ursnj/nayan-ui"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sm:w-auto"
+              >
                 <NButton isOutline={true} className="w-full px-6 font-semibold sm:w-auto">
                   <Github aria-hidden className="h-4 w-4" />
                   View on GitHub
@@ -177,7 +204,11 @@ const Banner = () => {
             </div>
 
             <div className="p-4 sm:p-5">
-              <div role="tablist" aria-label="Component examples" className="mb-5 flex gap-1 rounded-lg bg-background p-1">
+              <div
+                role="tablist"
+                aria-label="Component examples"
+                className="mb-5 flex gap-1 rounded-lg bg-background p-1"
+              >
                 {TABS.map((label, index) => (
                   <button
                     key={label}
@@ -187,8 +218,11 @@ const Banner = () => {
                     aria-controls={`home-panel-${index}`}
                     onClick={() => setTab(index)}
                     className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                      tab === index ? 'bg-surface text-foreground shadow-sm' : 'text-muted hover:text-foreground'
-                    }`}>
+                      tab === index
+                        ? "bg-surface text-foreground shadow-sm"
+                        : "text-muted hover:text-foreground"
+                    }`}
+                  >
                     {label}
                   </button>
                 ))}
@@ -196,7 +230,12 @@ const Banner = () => {
 
               <div className={`${WELL} min-h-[19rem] p-4`}>
                 {tab === 0 && (
-                  <div role="tabpanel" id="home-panel-0" aria-labelledby="home-tab-0" className="space-y-4">
+                  <div
+                    role="tabpanel"
+                    id="home-panel-0"
+                    aria-labelledby="home-tab-0"
+                    className="space-y-4"
+                  >
                     <Row label="Buttons">
                       <div className="flex flex-wrap gap-2">
                         <NButton>Primary</NButton>
@@ -209,17 +248,41 @@ const Banner = () => {
                       </div>
                     </Row>
                     <Row label="Button group">
-                      <NButtonGroup items={RANGES} selected={range} onChange={setRange} size="sm" ariaLabel="Date range" />
+                      <NButtonGroup
+                        items={RANGES}
+                        selected={range}
+                        onChange={setRange}
+                        size="sm"
+                        ariaLabel="Date range"
+                      />
                     </Row>
                     <Row label="Toggle buttons">
                       <div className="flex flex-wrap items-center gap-2">
-                        <NToggleButton isIconOnly aria-label="Bold" size="sm" isSelected={bold} onChange={setBold}>
+                        <NToggleButton
+                          isIconOnly
+                          aria-label="Bold"
+                          size="sm"
+                          isSelected={bold}
+                          onChange={setBold}
+                        >
                           <Bold className="h-4 w-4" />
                         </NToggleButton>
-                        <NToggleButton isIconOnly aria-label="Italic" size="sm" isSelected={italic} onChange={setItalic}>
+                        <NToggleButton
+                          isIconOnly
+                          aria-label="Italic"
+                          size="sm"
+                          isSelected={italic}
+                          onChange={setItalic}
+                        >
                           <Italic className="h-4 w-4" />
                         </NToggleButton>
-                        <NToggleButton isIconOnly aria-label="Underline" size="sm" isSelected={underline} onChange={setUnderline}>
+                        <NToggleButton
+                          isIconOnly
+                          aria-label="Underline"
+                          size="sm"
+                          isSelected={underline}
+                          onChange={setUnderline}
+                        >
                           <Underline className="h-4 w-4" />
                         </NToggleButton>
                         <NTooltip message="Tooltips too">
@@ -256,16 +319,26 @@ const Banner = () => {
                 )}
 
                 {tab === 1 && (
-                  <div role="tabpanel" id="home-panel-1" aria-labelledby="home-tab-1" className="space-y-4">
+                  <div
+                    role="tabpanel"
+                    id="home-panel-1"
+                    aria-labelledby="home-tab-1"
+                    className="space-y-4"
+                  >
                     <NInput
                       id="home-email"
                       type="email"
                       label="Email"
                       placeholder="you@example.com"
                       value={email}
-                      onChange={e => setEmail(e.target.value)}
+                      onChange={(e) => setEmail(e.target.value)}
                     />
-                    <NSearchField value={query} onChange={setQuery} placeholder="Search components..." fullWidth />
+                    <NSearchField
+                      value={query}
+                      onChange={setQuery}
+                      placeholder="Search components..."
+                      fullWidth
+                    />
                     {/* Client-only: react-select reads a null emotion cache during SSR and takes the page to a 500. */}
                     {mounted ? (
                       <NSelect
@@ -273,15 +346,24 @@ const Banner = () => {
                         placeholder="Pick a framework"
                         options={FRAMEWORKS}
                         value={framework}
-                        onChange={value => setFramework(value)}
+                        onChange={(value) => setFramework(value)}
                         className="mb-3"
                       />
                     ) : (
-                      <div className="h-[68px] animate-pulse rounded-lg border border-default bg-background" aria-hidden />
+                      <div
+                        className="h-[68px] animate-pulse rounded-lg border border-default bg-background"
+                        aria-hidden
+                      />
                     )}
                     <div className="grid gap-4 sm:grid-cols-2">
                       <Row label="Seats">
-                        <NNumberField value={seats} onChange={setSeats} minValue={1} maxValue={99} aria-label="Seats" />
+                        <NNumberField
+                          value={seats}
+                          onChange={setSeats}
+                          minValue={1}
+                          maxValue={99}
+                          aria-label="Seats"
+                        />
                       </Row>
                       <NRadioGroup label="Plan" items={PLANS} value={plan} onChange={setPlan} />
                     </div>
@@ -293,7 +375,12 @@ const Banner = () => {
                 )}
 
                 {tab === 2 && (
-                  <div role="tabpanel" id="home-panel-2" aria-labelledby="home-tab-2" className="space-y-5">
+                  <div
+                    role="tabpanel"
+                    id="home-panel-2"
+                    aria-labelledby="home-tab-2"
+                    className="space-y-5"
+                  >
                     <Row label="Upload progress">
                       <NProgress value={72} />
                     </Row>
@@ -305,11 +392,20 @@ const Banner = () => {
                         defaultValue={volume}
                         max={100}
                         step={1}
-                        onChange={(value: any) => setVolume(Array.isArray(value) ? value[0] : value)}
+                        onChange={(value: any) =>
+                          setVolume(Array.isArray(value) ? value[0] : value)
+                        }
                       />
                     </Row>
-                    <NAlert type={AlertTypes.SUCCESS} title="Build passed" message={`${TOTAL_COMPONENT_COUNT} components, no regressions.`} />
-                    <NButton isOutline={true} onClick={() => toast('Rendered by the real NToast.', 'Hello from Nayan UI')}>
+                    <NAlert
+                      type={AlertTypes.SUCCESS}
+                      title="Build passed"
+                      message={`${TOTAL_COMPONENT_COUNT} components, no regressions.`}
+                    />
+                    <NButton
+                      isOutline={true}
+                      onClick={() => toast("Rendered by the real NToast.", "Hello from Nayan UI")}
+                    >
                       <Bell className="mr-2 h-4 w-4" />
                       Show a toast
                     </NButton>
@@ -317,7 +413,12 @@ const Banner = () => {
                 )}
 
                 {tab === 3 && (
-                  <div role="tabpanel" id="home-panel-3" aria-labelledby="home-tab-3" className="space-y-5">
+                  <div
+                    role="tabpanel"
+                    id="home-panel-3"
+                    aria-labelledby="home-tab-3"
+                    className="space-y-5"
+                  >
                     <Row label="Avatars">
                       <div className="flex items-center gap-2">
                         <NAvatar size="sm" color="accent" variant="soft" fallback="ND" />
@@ -327,7 +428,13 @@ const Banner = () => {
                       </div>
                     </Row>
                     <Row label="Tags">
-                      <NTagGroup items={TAGS} selectionMode="multiple" selectedKeys={tags} onSelectionChange={setTags} size="sm" />
+                      <NTagGroup
+                        items={TAGS}
+                        selectionMode="multiple"
+                        selectedKeys={tags}
+                        onSelectionChange={setTags}
+                        size="sm"
+                      />
                     </Row>
                     <Row label="Keyboard shortcut">
                       <div className="flex items-center gap-1.5 text-sm text-muted">

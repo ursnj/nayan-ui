@@ -1,32 +1,34 @@
-import { NButton, cn, showToast } from '@nayan-ui/react';
-import { Sparkles } from 'lucide-react';
-import { TRANSITION_PREVIEW_GRADIENT } from '../../engine/transitions';
-import { TEXT_PRESETS } from '../../lib/factories';
-import { useEditor } from '../../store/editor';
-import { BACKGROUND_LABELS, COLOR_PRESETS, GRADIENT_PRESETS, TRANSITION_LABELS } from '../../types';
-import type { Background, BackgroundKind, TransitionKind } from '../../types';
-import { ColorField, EmptyState, SliderField } from '../controls';
+import { NButton, cn, showToast } from "@nayan-ui/react";
+import { Sparkles } from "lucide-react";
+import { TRANSITION_PREVIEW_GRADIENT } from "../../engine/transitions";
+import { TEXT_PRESETS } from "../../lib/factories";
+import { useEditor } from "../../store/editor";
+import { BACKGROUND_LABELS, COLOR_PRESETS, GRADIENT_PRESETS, TRANSITION_LABELS } from "../../types";
+import type { Background, BackgroundKind, TransitionKind } from "../../types";
+import { ColorField, EmptyState, SliderField } from "../controls";
 
 const BACKGROUND_KINDS = Object.keys(BACKGROUND_LABELS) as BackgroundKind[];
 
 export const BackgroundPanel = () => {
-  const background = useEditor(state => state.project.background);
-  const assets = useEditor(state => state.assets);
-  const updateProject = useEditor(state => state.updateProject);
+  const background = useEditor((state) => state.project.background);
+  const assets = useEditor((state) => state.assets);
+  const updateProject = useEditor((state) => state.updateProject);
 
-  const set = (changes: Partial<Background>) => updateProject({ background: { ...background, ...changes } });
+  const set = (changes: Partial<Background>) =>
+    updateProject({ background: { ...background, ...changes } });
 
-  const images = assets.filter(asset => asset.kind === 'image');
-  const gradient = background.kind === 'linear-gradient' || background.kind === 'radial-gradient';
+  const images = assets.filter((asset) => asset.kind === "image");
+  const gradient = background.kind === "linear-gradient" || background.kind === "radial-gradient";
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto p-3">
       <p className="mb-2 text-[11px] text-muted">
-        Fills the frame behind every clip — most visible where your footage does not match the output shape.
+        Fills the frame behind every clip — most visible where your footage does not match the
+        output shape.
       </p>
 
       <div className="mb-3 grid grid-cols-3 gap-1.5">
-        {BACKGROUND_KINDS.map(kind => (
+        {BACKGROUND_KINDS.map((kind) => (
           <button
             key={kind}
             type="button"
@@ -34,22 +36,25 @@ export const BackgroundPanel = () => {
             aria-pressed={background.kind === kind}
             title={BACKGROUND_LABELS[kind]}
             className={cn(
-              'truncate rounded-md border px-1.5 py-1.5 text-[10px] transition-colors',
+              "truncate rounded-md border px-1.5 py-1.5 text-[10px] transition-colors",
               background.kind === kind
-                ? 'border-accent bg-accent/10 text-accent'
-                : 'border-border text-muted hover:border-separator hover:text-foreground'
-            )}>
+                ? "border-accent bg-accent/10 text-accent"
+                : "border-border text-muted hover:border-separator hover:text-foreground",
+            )}
+          >
             {BACKGROUND_LABELS[kind]}
           </button>
         ))}
       </div>
 
-      {background.kind === 'solid' && <ColorField label="Colour" value={background.color} onChange={color => set({ color })} />}
+      {background.kind === "solid" && (
+        <ColorField label="Colour" value={background.color} onChange={(color) => set({ color })} />
+      )}
 
       {gradient && (
         <>
           <div className="mb-2 grid grid-cols-4 gap-1.5">
-            {GRADIENT_PRESETS.map(preset => (
+            {GRADIENT_PRESETS.map((preset) => (
               <button
                 key={preset.name}
                 type="button"
@@ -57,39 +62,43 @@ export const BackgroundPanel = () => {
                 aria-label={`${preset.name} gradient`}
                 onClick={() => set({ from: preset.from, to: preset.to, angle: preset.angle })}
                 className={cn(
-                  'h-9 rounded-md border transition-colors',
-                  background.from === preset.from && background.to === preset.to ? 'border-accent' : 'border-border hover:border-separator'
+                  "h-9 rounded-md border transition-colors",
+                  background.from === preset.from && background.to === preset.to
+                    ? "border-accent"
+                    : "border-border hover:border-separator",
                 )}
-                style={{ background: `linear-gradient(${preset.angle}deg, ${preset.from}, ${preset.to})` }}
+                style={{
+                  background: `linear-gradient(${preset.angle}deg, ${preset.from}, ${preset.to})`,
+                }}
               />
             ))}
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <ColorField label="From" value={background.from} onChange={from => set({ from })} />
-            <ColorField label="To" value={background.to} onChange={to => set({ to })} />
+            <ColorField label="From" value={background.from} onChange={(from) => set({ from })} />
+            <ColorField label="To" value={background.to} onChange={(to) => set({ to })} />
           </div>
-          {background.kind === 'linear-gradient' && (
+          {background.kind === "linear-gradient" && (
             <SliderField
               label="Angle"
               value={background.angle}
               min={0}
               max={360}
-              format={value => `${value}°`}
-              onChange={angle => set({ angle })}
+              format={(value) => `${value}°`}
+              onChange={(angle) => set({ angle })}
               resetTo={135}
             />
           )}
         </>
       )}
 
-      {background.kind === 'image' &&
+      {background.kind === "image" &&
         (images.length === 0 ? (
           <p className="rounded-md border border-dashed border-border px-3 py-4 text-center text-[11px] text-muted">
             Import an image in the Media panel to use it here.
           </p>
         ) : (
           <div className="mb-2 grid grid-cols-3 gap-1.5">
-            {images.map(asset => (
+            {images.map((asset) => (
               <button
                 key={asset.id}
                 type="button"
@@ -97,32 +106,43 @@ export const BackgroundPanel = () => {
                 onClick={() => set({ assetId: asset.id })}
                 aria-pressed={background.assetId === asset.id}
                 className={cn(
-                  'aspect-video overflow-hidden rounded-md border bg-surface-secondary transition-colors',
-                  background.assetId === asset.id ? 'border-accent' : 'border-border hover:border-separator'
-                )}>
+                  "aspect-video overflow-hidden rounded-md border bg-surface-secondary transition-colors",
+                  background.assetId === asset.id
+                    ? "border-accent"
+                    : "border-border hover:border-separator",
+                )}
+              >
                 {asset.thumbnail ? (
-                  <img src={asset.thumbnail} alt={asset.name} className="h-full w-full object-cover" />
+                  <img
+                    src={asset.thumbnail}
+                    alt={asset.name}
+                    className="h-full w-full object-cover"
+                  />
                 ) : (
-                  <span className="flex h-full items-center justify-center text-[9px] text-muted">{asset.name}</span>
+                  <span className="flex h-full items-center justify-center text-[9px] text-muted">
+                    {asset.name}
+                  </span>
                 )}
               </button>
             ))}
           </div>
         ))}
 
-      {background.kind === 'blur' && (
-        <p className="mb-2 text-[11px] text-muted">Uses the frontmost clip at the playhead, scaled to fill and defocused.</p>
+      {background.kind === "blur" && (
+        <p className="mb-2 text-[11px] text-muted">
+          Uses the frontmost clip at the playhead, scaled to fill and defocused.
+        </p>
       )}
 
-      {(background.kind === 'blur' || background.kind === 'image') && (
+      {(background.kind === "blur" || background.kind === "image") && (
         <>
           <SliderField
             label="Blur"
             value={background.blur}
             min={0}
             max={120}
-            format={value => `${value}px`}
-            onChange={blur => set({ blur })}
+            format={(value) => `${value}px`}
+            onChange={(blur) => set({ blur })}
             resetTo={48}
           />
           <SliderField
@@ -130,8 +150,8 @@ export const BackgroundPanel = () => {
             value={Math.round(background.scale * 100)}
             min={100}
             max={200}
-            format={value => `${value}%`}
-            onChange={value => set({ scale: value / 100 })}
+            format={(value) => `${value}%`}
+            onChange={(value) => set({ scale: value / 100 })}
             resetTo={115}
           />
           <SliderField
@@ -139,11 +159,15 @@ export const BackgroundPanel = () => {
             value={Math.round(background.dim * 100)}
             min={0}
             max={100}
-            format={value => (value === 0 ? 'Off' : `${value}%`)}
-            onChange={value => set({ dim: value / 100 })}
+            format={(value) => (value === 0 ? "Off" : `${value}%`)}
+            onChange={(value) => set({ dim: value / 100 })}
             resetTo={25}
           />
-          <ColorField label="Dim colour" value={background.color} onChange={color => set({ color })} />
+          <ColorField
+            label="Dim colour"
+            value={background.color}
+            onChange={(color) => set({ color })}
+          />
         </>
       )}
     </div>
@@ -151,29 +175,38 @@ export const BackgroundPanel = () => {
 };
 
 export const TextPanel = () => {
-  const addTextClip = useEditor(state => state.addTextClip);
+  const addTextClip = useEditor((state) => state.addTextClip);
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto p-3">
-      <p className="mb-2 text-[11px] text-muted">Click a style to drop it on the timeline at the playhead.</p>
+      <p className="mb-2 text-[11px] text-muted">
+        Click a style to drop it on the timeline at the playhead.
+      </p>
       <div className="grid grid-cols-2 gap-2">
-        {TEXT_PRESETS.map(preset => (
+        {TEXT_PRESETS.map((preset) => (
           <button
             key={preset.name}
             type="button"
             onClick={() => addTextClip(preset.preset)}
-            className="group flex aspect-video flex-col items-center justify-center gap-1 rounded-lg border border-border bg-surface-secondary transition-all hover:border-accent hover:elevate">
+            className="group flex aspect-video flex-col items-center justify-center gap-1 rounded-lg border border-border bg-surface-secondary transition-all hover:border-accent hover:elevate"
+          >
             <span
               className="text-foreground transition-transform group-hover:scale-110"
               style={{
                 fontWeight: preset.preset.fontWeight ?? 700,
                 fontFamily: preset.preset.fontFamily,
                 color: preset.preset.textColor,
-                WebkitTextStroke: preset.preset.strokeWidth ? `1px ${preset.preset.strokeColor}` : undefined,
-                background: preset.preset.backgroundColor !== 'transparent' ? preset.preset.backgroundColor : undefined,
-                padding: preset.preset.backgroundColor !== 'transparent' ? '2px 8px' : undefined,
-                borderRadius: 4
-              }}>
+                WebkitTextStroke: preset.preset.strokeWidth
+                  ? `1px ${preset.preset.strokeColor}`
+                  : undefined,
+                background:
+                  preset.preset.backgroundColor !== "transparent"
+                    ? preset.preset.backgroundColor
+                    : undefined,
+                padding: preset.preset.backgroundColor !== "transparent" ? "2px 8px" : undefined,
+                borderRadius: 4,
+              }}
+            >
               Aa
             </span>
             <span className="text-[10px] text-muted">{preset.name}</span>
@@ -185,15 +218,15 @@ export const TextPanel = () => {
 };
 
 export const TransitionsPanel = () => {
-  const selectedClipIds = useEditor(state => state.selectedClipIds);
-  const setTransition = useEditor(state => state.setTransition);
-  const clips = useEditor(state => state.clips);
+  const selectedClipIds = useEditor((state) => state.selectedClipIds);
+  const setTransition = useEditor((state) => state.setTransition);
+  const clips = useEditor((state) => state.clips);
 
-  const target = clips.find(clip => clip.id === selectedClipIds[0]) ?? null;
+  const target = clips.find((clip) => clip.id === selectedClipIds[0]) ?? null;
 
   const apply = (kind: TransitionKind) => {
     if (!target) {
-      showToast('Select the clip the transition should open with.', 'No clip selected');
+      showToast("Select the clip the transition should open with.", "No clip selected");
       return;
     }
     setTransition(target.id, kind, 500_000);
@@ -203,14 +236,17 @@ export const TransitionsPanel = () => {
     <div className="min-h-0 flex-1 overflow-y-auto p-3">
       {target ? (
         <p className="mb-2 text-[11px] text-muted">
-          Applies to the start of <span className="text-foreground">{target.name}</span>, blending from the clip before it.
+          Applies to the start of <span className="text-foreground">{target.name}</span>, blending
+          from the clip before it.
         </p>
       ) : (
-        <p className="mb-2 text-[11px] text-muted">Select a clip first — a transition opens the clip you apply it to.</p>
+        <p className="mb-2 text-[11px] text-muted">
+          Select a clip first — a transition opens the clip you apply it to.
+        </p>
       )}
 
       <div className="grid grid-cols-2 gap-2">
-        {(Object.keys(TRANSITION_LABELS) as TransitionKind[]).map(kind => {
+        {(Object.keys(TRANSITION_LABELS) as TransitionKind[]).map((kind) => {
           const active = target?.transitionIn?.kind === kind;
           return (
             <button
@@ -219,11 +255,19 @@ export const TransitionsPanel = () => {
               onClick={() => apply(kind)}
               aria-pressed={active}
               className={cn(
-                'overflow-hidden rounded-lg border transition-all hover:elevate',
-                active ? 'border-accent ring-1 ring-accent' : 'border-border hover:border-accent'
-              )}>
-              <span className="block h-10 w-full" style={{ background: TRANSITION_PREVIEW_GRADIENT[kind] }} aria-hidden />
-              <span title={TRANSITION_LABELS[kind]} className="block truncate px-1.5 py-1 text-[10px] text-foreground">
+                "overflow-hidden rounded-lg border transition-all hover:elevate",
+                active ? "border-accent ring-1 ring-accent" : "border-border hover:border-accent",
+              )}
+            >
+              <span
+                className="block h-10 w-full"
+                style={{ background: TRANSITION_PREVIEW_GRADIENT[kind] }}
+                aria-hidden
+              />
+              <span
+                title={TRANSITION_LABELS[kind]}
+                className="block truncate px-1.5 py-1 text-[10px] text-foreground"
+              >
                 {TRANSITION_LABELS[kind]}
               </span>
             </button>
@@ -235,7 +279,8 @@ export const TransitionsPanel = () => {
         <NButton
           isOutline
           onClick={() => setTransition(target.id, null)}
-          className="mt-3 w-full text-[11px] text-muted hover:border-danger hover:text-danger">
+          className="mt-3 w-full text-[11px] text-muted hover:border-danger hover:text-danger"
+        >
           Remove transition
         </NButton>
       )}
@@ -244,24 +289,31 @@ export const TransitionsPanel = () => {
 };
 
 export const EffectsPanel = () => {
-  const selectedClipIds = useEditor(state => state.selectedClipIds);
-  const clips = useEditor(state => state.clips);
-  const updateSelectedClips = useEditor(state => state.updateSelectedClips);
+  const selectedClipIds = useEditor((state) => state.selectedClipIds);
+  const clips = useEditor((state) => state.clips);
+  const updateSelectedClips = useEditor((state) => state.updateSelectedClips);
 
-  const selected = clips.filter(clip => selectedClipIds.includes(clip.id));
+  const selected = clips.filter((clip) => selectedClipIds.includes(clip.id));
 
   if (selected.length === 0) {
-    return <EmptyState icon={<Sparkles className="h-8 w-8" />} title="No clip selected" hint="Select one or more clips to apply a look." />;
+    return (
+      <EmptyState
+        icon={<Sparkles className="h-8 w-8" />}
+        title="No clip selected"
+        hint="Select one or more clips to apply a look."
+      />
+    );
   }
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto p-3">
       <p className="mb-2 text-[11px] text-muted">
-        Applying to {selected.length} clip{selected.length > 1 ? 's' : ''}. Fine-tune in the Colour section of the inspector.
+        Applying to {selected.length} clip{selected.length > 1 ? "s" : ""}. Fine-tune in the Colour
+        section of the inspector.
       </p>
       <div className="grid grid-cols-3 gap-2">
-        {COLOR_PRESETS.map(preset => {
-          const none = preset.name === 'None';
+        {COLOR_PRESETS.map((preset) => {
+          const none = preset.name === "None";
           return (
             <button
               key={preset.name}
@@ -269,17 +321,22 @@ export const EffectsPanel = () => {
               onClick={() =>
                 updateSelectedClips({
                   colorAdjust: { ...preset.color } as never,
-                  filter: (none ? null : { name: preset.name, intensity: 1 }) as never
+                  filter: (none ? null : { name: preset.name, intensity: 1 }) as never,
                 })
               }
               title={preset.name}
-              className="group overflow-hidden rounded-lg border border-border transition-all hover:border-accent hover:elevate">
+              className="group overflow-hidden rounded-lg border border-border transition-all hover:border-accent hover:elevate"
+            >
               <span
                 className="block h-12 w-full"
-                style={{ background: `linear-gradient(135deg, ${preset.swatch[0]}, ${preset.swatch[1]})` }}
+                style={{
+                  background: `linear-gradient(135deg, ${preset.swatch[0]}, ${preset.swatch[1]})`,
+                }}
                 aria-hidden
               />
-              <span className="block truncate px-1.5 py-1 text-[10px] text-foreground">{preset.name}</span>
+              <span className="block truncate px-1.5 py-1 text-[10px] text-foreground">
+                {preset.name}
+              </span>
             </button>
           );
         })}

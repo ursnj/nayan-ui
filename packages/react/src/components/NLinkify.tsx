@@ -1,10 +1,11 @@
-import React, { ReactNode, memo } from 'react';
-import { Link } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { ReactNode, memo } from "react";
+import { Link } from "@heroui/react";
+import { cn } from "../lib/utils";
 
-const PATTERN = /((?:https?:\/\/|www\.)[^\s<]+[^\s<.,:;"'!?)\]}]|[^\s<@]+@[^\s<@]+\.[^\s<@.,:;"'!?)\]}]+)/g;
+const PATTERN =
+  /((?:https?:\/\/|www\.)[^\s<]+[^\s<.,:;"'!?)\]}]|[^\s<@]+@[^\s<@]+\.[^\s<@.,:;"'!?)\]}]+)/g;
 
-const isEmail = (value: string) => !/^(?:https?:\/\/|www\.)/i.test(value) && value.includes('@');
+const isEmail = (value: string) => !/^(?:https?:\/\/|www\.)/i.test(value) && value.includes("@");
 
 /** What the match should point at. `www.` needs a scheme; an address needs `mailto:`. */
 const hrefFor = (match: string) => {
@@ -17,8 +18,8 @@ export interface NLinkifyProps {
   className?: string;
 }
 
-const NLinkifyComponent = memo(({ children, className = '' }: NLinkifyProps) => {
-  const linkClassName = cn('nyn-linkify text-accent', className);
+const NLinkifyComponent = memo(({ children, className = "" }: NLinkifyProps) => {
+  const linkClassName = cn("nyn-linkify text-accent", className);
 
   const linkifyString = (text: string, keyPrefix: string): ReactNode[] => {
     const parts: ReactNode[] = [];
@@ -35,10 +36,11 @@ const NLinkifyComponent = memo(({ children, className = '' }: NLinkifyProps) => 
           key={`${keyPrefix}-${start}`}
           className={linkClassName}
           href={hrefFor(value)}
-          target={isEmail(value) ? undefined : '_blank'}
-          rel={isEmail(value) ? undefined : 'noopener noreferrer'}>
+          target={isEmail(value) ? undefined : "_blank"}
+          rel={isEmail(value) ? undefined : "noopener noreferrer"}
+        >
           {value}
-        </Link>
+        </Link>,
       );
       cursor = start + value.length;
     }
@@ -48,13 +50,16 @@ const NLinkifyComponent = memo(({ children, className = '' }: NLinkifyProps) => 
   };
 
   const walk = (node: ReactNode, keyPrefix: string): ReactNode => {
-    if (typeof node === 'string') return linkifyString(node, keyPrefix);
-    if (Array.isArray(node)) return node.map((child, index) => <React.Fragment key={index}>{walk(child, `${keyPrefix}-${index}`)}</React.Fragment>);
+    if (typeof node === "string") return linkifyString(node, keyPrefix);
+    if (Array.isArray(node))
+      return node.map((child, index) => (
+        <React.Fragment key={index}>{walk(child, `${keyPrefix}-${index}`)}</React.Fragment>
+      ));
 
     if (React.isValidElement(node)) {
       const element = node as React.ReactElement<{ children?: ReactNode }>;
       // Leave an existing anchor alone; linkifying inside one would nest them.
-      if (element.type === Link || element.type === 'a') return node;
+      if (element.type === Link || element.type === "a") return node;
       if (element.props?.children === undefined) return node;
       return React.cloneElement(element, { children: walk(element.props.children, keyPrefix) });
     }
@@ -62,9 +67,9 @@ const NLinkifyComponent = memo(({ children, className = '' }: NLinkifyProps) => 
     return node;
   };
 
-  return <>{walk(children, 'linkify')}</>;
+  return <>{walk(children, "linkify")}</>;
 });
 
-NLinkifyComponent.displayName = 'NLinkify';
+NLinkifyComponent.displayName = "NLinkify";
 
 export const NLinkify = NLinkifyComponent;

@@ -1,11 +1,11 @@
-import { Command } from 'commander';
-import { createNewProject, interactiveNewProject } from '../services/projects.js';
+import { Command } from "commander";
+import { createNewProject, interactiveNewProject } from "../services/projects.js";
 
 export function registerNewCommand(program: Command) {
   program
-    .command('new [project-name]')
-    .description('Create a new project from a template')
-    .option('-t, --template <template>', 'Template to use (expo, games, nextjs, vite)')
+    .command("new [project-name]")
+    .description("Create a new project from a template")
+    .option("-t, --template <template>", "Template to use (expo, games, nextjs, vite)")
     .action(async (projectName?: string, options?: { template?: string }) => {
       if (!projectName) {
         await interactiveNewProject();

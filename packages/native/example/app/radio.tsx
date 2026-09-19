@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { NRadio, NText } from '@nayan-ui/native';
-import Screen from '../src/components/Screen';
+import { useState } from "react";
+import { NRadio, NText } from "@nayan-ui/native";
+import Screen from "../src/components/Screen";
 
 export default function RadioScreen() {
-  const [fruit, setFruit] = useState('apple');
-  const [size, setSize] = useState('md');
+  const [fruit, setFruit] = useState("apple");
+  const [size, setSize] = useState("md");
 
   return (
     <Screen title="NRadio">
@@ -14,10 +14,10 @@ export default function RadioScreen() {
         value={fruit}
         onValueChange={setFruit}
         items={[
-          { label: 'Apple', value: 'apple' },
-          { label: 'Banana', value: 'banana' },
-          { label: 'Cherry', value: 'cherry' },
-          { label: 'Date', value: 'date' }
+          { label: "Apple", value: "apple" },
+          { label: "Banana", value: "banana" },
+          { label: "Cherry", value: "cherry" },
+          { label: "Date", value: "date" },
         ]}
       />
       <NText>Selected: {fruit}</NText>
@@ -28,9 +28,9 @@ export default function RadioScreen() {
         value={size}
         onValueChange={setSize}
         items={[
-          { label: 'Small', value: 'sm' },
-          { label: 'Medium', value: 'md' },
-          { label: 'Large', value: 'lg' }
+          { label: "Small", value: "sm" },
+          { label: "Medium", value: "md" },
+          { label: "Large", value: "lg" },
         ]}
       />
 
@@ -40,8 +40,8 @@ export default function RadioScreen() {
         value="a"
         onValueChange={() => {}}
         items={[
-          { label: 'Option A', value: 'a' },
-          { label: 'Option B', value: 'b' }
+          { label: "Option A", value: "a" },
+          { label: "Option B", value: "b" },
         ]}
       />
     </Screen>

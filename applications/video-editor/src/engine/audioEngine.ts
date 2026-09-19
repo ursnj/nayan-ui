@@ -1,10 +1,10 @@
-import { getAudioBuffer } from '../media/library';
-import { US, clipEndUs, isAudibleKind, isMediaClip } from '../types';
-import type { Clip, MediaClip, Track } from '../types';
+import { getAudioBuffer } from "../media/library";
+import { US, clipEndUs, isAudibleKind, isMediaClip } from "../types";
+import type { Clip, MediaClip, Track } from "../types";
 
 /** Clips that produce sound at or after `fromUs`, honouring mutes and solos. */
 export const audibleClips = (clips: Clip[], tracks: Track[], fromUs: number): MediaClip[] => {
-  const trackById = new Map(tracks.map(track => [track.id, track]));
+  const trackById = new Map(tracks.map((track) => [track.id, track]));
 
   return clips.filter((clip): clip is MediaClip => {
     if (!isMediaClip(clip) || !isAudibleKind(clip)) return false;
@@ -22,7 +22,7 @@ export const scheduleClipAudio = (
   buffer: AudioBuffer,
   fromUs: number,
   originTime: number,
-  trackVolume = 1
+  trackVolume = 1,
 ): AudioBufferSourceNode | null => {
   const entryUs = Math.max(fromUs, clip.startUs);
   const endUs = clipEndUs(clip);
@@ -46,16 +46,30 @@ export const scheduleClipAudio = (
   const parameter = gain.gain;
   const baseVolume = clip.volume * trackVolume;
 
-  if (clip.fadeInUs > 0) rampSegment(parameter, atTime(clip.startUs), 0, atTime(clip.startUs + clip.fadeInUs), baseVolume);
+  if (clip.fadeInUs > 0)
+    rampSegment(
+      parameter,
+      atTime(clip.startUs),
+      0,
+      atTime(clip.startUs + clip.fadeInUs),
+      baseVolume,
+    );
   else parameter.setValueAtTime(baseVolume, Math.max(0, atTime(clip.startUs)));
 
-  if (clip.fadeOutUs > 0) rampSegment(parameter, atTime(endUs - clip.fadeOutUs), baseVolume, atTime(endUs), 0);
+  if (clip.fadeOutUs > 0)
+    rampSegment(parameter, atTime(endUs - clip.fadeOutUs), baseVolume, atTime(endUs), 0);
 
   source.start(Math.max(context.currentTime, atTime(entryUs)), offsetSeconds, sourceSeconds);
   return source;
 };
 
-const rampSegment = (parameter: AudioParam, fromTime: number, fromValue: number, toTime: number, toValue: number) => {
+const rampSegment = (
+  parameter: AudioParam,
+  fromTime: number,
+  fromValue: number,
+  toTime: number,
+  toValue: number,
+) => {
   if (toTime <= 0) {
     parameter.setValueAtTime(toValue, 0);
     return;
@@ -78,7 +92,7 @@ const reversedBuffer = (buffer: AudioBuffer): AudioBuffer => {
   const output = new AudioBuffer({
     length: buffer.length,
     sampleRate: buffer.sampleRate,
-    numberOfChannels: buffer.numberOfChannels
+    numberOfChannels: buffer.numberOfChannels,
   });
   for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
     const source = buffer.getChannelData(channel);
@@ -106,7 +120,7 @@ export class AudioEngine {
       this.master.gain.value = this.volume;
       this.master.connect(this.context.destination);
     }
-    if (this.context.state === 'suspended') await this.context.resume();
+    if (this.context.state === "suspended") await this.context.resume();
     return this.context;
   }
 
@@ -124,20 +138,33 @@ export class AudioEngine {
     this.stopSources();
     const generation = ++this.generation;
 
-    const decoded = await Promise.all(audibleClips(clips, tracks, fromUs).map(async clip => ({ clip, buffer: await getAudioBuffer(clip.assetId) })));
+    const decoded = await Promise.all(
+      audibleClips(clips, tracks, fromUs).map(async (clip) => ({
+        clip,
+        buffer: await getAudioBuffer(clip.assetId),
+      })),
+    );
 
     if (generation !== this.generation || !this.master) return context.currentTime;
 
-    const trackVolumes = new Map(tracks.map(track => [track.id, track.volume]));
+    const trackVolumes = new Map(tracks.map((track) => [track.id, track.volume]));
     // Small lead-in so the scheduling work below can't cause a late first note.
     const originTime = context.currentTime + 0.06;
 
     for (const { clip, buffer } of decoded) {
       if (!buffer) continue;
-      const source = scheduleClipAudio(context, this.master, clip, buffer, fromUs, originTime, trackVolumes.get(clip.trackId) ?? 1);
+      const source = scheduleClipAudio(
+        context,
+        this.master,
+        clip,
+        buffer,
+        fromUs,
+        originTime,
+        trackVolumes.get(clip.trackId) ?? 1,
+      );
       if (!source) continue;
-      source.addEventListener('ended', () => {
-        this.active = this.active.filter(node => node !== source);
+      source.addEventListener("ended", () => {
+        this.active = this.active.filter((node) => node !== source);
       });
       this.active.push(source);
     }

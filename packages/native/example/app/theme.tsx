@@ -1,6 +1,6 @@
-import { View } from 'react-native';
-import { NButton, NText, NThemeToggle, useNTheme } from '@nayan-ui/native';
-import Screen from '../src/components/Screen';
+import { View } from "react-native";
+import { NButton, NText, NThemeToggle, useNTheme } from "@nayan-ui/native";
+import Screen from "../src/components/Screen";
 
 function ThemeInfo() {
   const { theme, setTheme, toggleTheme } = useNTheme();
@@ -15,10 +15,10 @@ function ThemeInfo() {
       </NButton>
       <NText className="text-lg font-bold">useNTheme — setTheme</NText>
       <View className="flex-row gap-2">
-        <NButton size="sm" onPress={() => setTheme('light')}>
+        <NButton size="sm" onPress={() => setTheme("light")}>
           Light
         </NButton>
-        <NButton size="sm" onPress={() => setTheme('dark')}>
+        <NButton size="sm" onPress={() => setTheme("dark")}>
           Dark
         </NButton>
       </View>

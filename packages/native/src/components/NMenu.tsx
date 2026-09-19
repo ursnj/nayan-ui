@@ -1,8 +1,8 @@
-import React, { type ReactNode } from 'react';
-import { View } from 'react-native';
-import { Menu, Separator, SubMenu, type SubMenuRootProps, cn, useThemeColor } from 'heroui-native';
-import { type NIcon, resolveIcon } from '../helpers/icons';
-import { NText } from './NText';
+import React, { type ReactNode } from "react";
+import { View } from "react-native";
+import { Menu, Separator, SubMenu, type SubMenuRootProps, cn, useThemeColor } from "heroui-native";
+import { type NIcon, resolveIcon } from "../helpers/icons";
+import { NText } from "./NText";
 
 export interface NMenuProps {
   children?: ReactNode;
@@ -13,29 +13,31 @@ export interface NMenuProps {
   titleClassName?: string;
 }
 
-export const NMenu = React.memo<NMenuProps>(({ children, trigger, title = '', width = 220, className = '', titleClassName = '' }) => {
-  return (
-    <Menu>
-      <Menu.Trigger asChild>{trigger}</Menu.Trigger>
-      <Menu.Portal>
-        <Menu.Overlay />
-        <Menu.Content presentation="popover" width={width} className={cn(className)}>
-          {title && (
-            <>
-              <View className="mb-2">
-                <Menu.Label className={cn(titleClassName)}>{title}</Menu.Label>
-              </View>
-              <Separator />
-            </>
-          )}
-          {children}
-        </Menu.Content>
-      </Menu.Portal>
-    </Menu>
-  );
-});
+export const NMenu = React.memo<NMenuProps>(
+  ({ children, trigger, title = "", width = 220, className = "", titleClassName = "" }) => {
+    return (
+      <Menu>
+        <Menu.Trigger asChild>{trigger}</Menu.Trigger>
+        <Menu.Portal>
+          <Menu.Overlay />
+          <Menu.Content presentation="popover" width={width} className={cn(className)}>
+            {title && (
+              <>
+                <View className="mb-2">
+                  <Menu.Label className={cn(titleClassName)}>{title}</Menu.Label>
+                </View>
+                <Separator />
+              </>
+            )}
+            {children}
+          </Menu.Content>
+        </Menu.Portal>
+      </Menu>
+    );
+  },
+);
 
-NMenu.displayName = 'NMenu';
+NMenu.displayName = "NMenu";
 
 export interface NSubMenuProps extends SubMenuRootProps {
   label: string;
@@ -44,20 +46,25 @@ export interface NSubMenuProps extends SubMenuRootProps {
   contentClassName?: string;
 }
 
-export const NSubMenu = React.memo<NSubMenuProps>(({ label, icon, children, className, triggerClassName, contentClassName, ...props }) => {
-  const foregroundColor = useThemeColor('foreground');
-  const menuIcon = React.useMemo(() => resolveIcon(icon, { color: foregroundColor }), [icon, foregroundColor]);
+export const NSubMenu = React.memo<NSubMenuProps>(
+  ({ label, icon, children, className, triggerClassName, contentClassName, ...props }) => {
+    const foregroundColor = useThemeColor("foreground");
+    const menuIcon = React.useMemo(
+      () => resolveIcon(icon, { color: foregroundColor }),
+      [icon, foregroundColor],
+    );
 
-  return (
-    <SubMenu className={cn(className)} {...props}>
-      <SubMenu.Trigger className={cn(triggerClassName)}>
-        {menuIcon && <View className="mr-2">{menuIcon}</View>}
-        <NText className="flex-1">{label}</NText>
-        <SubMenu.TriggerIndicator />
-      </SubMenu.Trigger>
-      <SubMenu.Content className={cn(contentClassName)}>{children}</SubMenu.Content>
-    </SubMenu>
-  );
-});
+    return (
+      <SubMenu className={cn(className)} {...props}>
+        <SubMenu.Trigger className={cn(triggerClassName)}>
+          {menuIcon && <View className="mr-2">{menuIcon}</View>}
+          <NText className="flex-1">{label}</NText>
+          <SubMenu.TriggerIndicator />
+        </SubMenu.Trigger>
+        <SubMenu.Content className={cn(contentClassName)}>{children}</SubMenu.Content>
+      </SubMenu>
+    );
+  },
+);
 
-NSubMenu.displayName = 'NSubMenu';
+NSubMenu.displayName = "NSubMenu";

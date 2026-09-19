@@ -1,11 +1,26 @@
-import { reportOnce } from '../lib/diagnostics';
-import { clamp } from '../lib/utils';
-import { getImageBitmap, getReader } from '../media/library';
-import { TEXT_LINE_HEIGHT, US, clipEndUs, isMediaClip, isTextClip, sourceTimeUs } from '../types';
-import type { Background, Clip, MediaClip, MediaFit, ProjectSettings, TextClip, Track, Transform } from '../types';
-import { blurOnlyFilter, canvasFilterString, exportProcessor, needsPixelProcessing, previewProcessor } from './glProcessor';
-import { transitionStateAt } from './transitions';
-import type { LayerTransitionState } from './transitions';
+import { reportOnce } from "../lib/diagnostics";
+import { clamp } from "../lib/utils";
+import { getImageBitmap, getReader } from "../media/library";
+import { TEXT_LINE_HEIGHT, US, clipEndUs, isMediaClip, isTextClip, sourceTimeUs } from "../types";
+import type {
+  Background,
+  Clip,
+  MediaClip,
+  MediaFit,
+  ProjectSettings,
+  TextClip,
+  Track,
+  Transform,
+} from "../types";
+import {
+  blurOnlyFilter,
+  canvasFilterString,
+  exportProcessor,
+  needsPixelProcessing,
+  previewProcessor,
+} from "./glProcessor";
+import { transitionStateAt } from "./transitions";
+import type { LayerTransitionState } from "./transitions";
 
 export interface Scene {
   project: ProjectSettings;
@@ -17,10 +32,15 @@ type Context2D = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
 
 export interface RenderOptions {
   /** Preview and export keep separate GPU/scratch surfaces so they can't clash. */
-  target: 'preview' | 'export';
+  target: "preview" | "export";
 }
 
-export const renderScene = async (context: Context2D, scene: Scene, timeUs: number, options: RenderOptions): Promise<boolean> => {
+export const renderScene = async (
+  context: Context2D,
+  scene: Scene,
+  timeUs: number,
+  options: RenderOptions,
+): Promise<boolean> => {
   const { project } = scene;
   let complete = true;
 
@@ -40,21 +60,32 @@ export const renderScene = async (context: Context2D, scene: Scene, timeUs: numb
     const outgoing = previousClipOnTrack(scene, layer);
 
     if (outgoing && state.outgoing.alpha > 0) {
-      const drawn = await drawLayer(context, outgoing, project, Math.min(timeUs, clipEndUs(outgoing) - 1), options, {
-        ...state.outgoing,
-        sourceOverrunUs: isMediaClip(outgoing) ? outgoing.inUs + (timeUs - outgoing.startUs) * outgoing.speed : undefined
-      });
+      const drawn = await drawLayer(
+        context,
+        outgoing,
+        project,
+        Math.min(timeUs, clipEndUs(outgoing) - 1),
+        options,
+        {
+          ...state.outgoing,
+          sourceOverrunUs: isMediaClip(outgoing)
+            ? outgoing.inUs + (timeUs - outgoing.startUs) * outgoing.speed
+            : undefined,
+        },
+      );
       complete = drawn && complete;
     }
 
-    complete = (await drawLayer(context, layer, project, timeUs, options, { ...state.incoming })) && complete;
+    complete =
+      (await drawLayer(context, layer, project, timeUs, options, { ...state.incoming })) &&
+      complete;
 
     if (state.overlay && state.overlay.alpha > 0) {
       context.save();
       context.setTransform(1, 0, 0, 1, 0, 0);
       context.globalAlpha = state.overlay.alpha;
-      context.globalCompositeOperation = 'source-over';
-      context.filter = 'none';
+      context.globalCompositeOperation = "source-over";
+      context.filter = "none";
       context.fillStyle = state.overlay.color;
       context.fillRect(0, 0, project.width, project.height);
       context.restore();
@@ -70,7 +101,7 @@ const visibleLayers = (scene: Scene, timeUs: number): Clip[] => {
   // tracks[0] is the topmost layer, so walk the list backwards to draw it last.
   for (let index = scene.tracks.length - 1; index >= 0; index--) {
     const track = scene.tracks[index];
-    if (track.kind !== 'video' || track.hidden) continue;
+    if (track.kind !== "video" || track.hidden) continue;
     for (const clip of scene.clips) {
       if (clip.trackId !== track.id) continue;
       if (timeUs < clip.startUs || timeUs >= clipEndUs(clip)) continue;
@@ -108,7 +139,10 @@ interface DrawOverride extends LayerTransitionState {
   sourceOverrunUs?: number;
 }
 
-const scratch = new Map<string, { canvas: OffscreenCanvas | HTMLCanvasElement; context: Context2D }>();
+const scratch = new Map<
+  string,
+  { canvas: OffscreenCanvas | HTMLCanvasElement; context: Context2D }
+>();
 
 /** Bounded: surfaces are keyed by source size, so a mixed-resolution project would keep one full-size canvas each. */
 const SCRATCH_LIMIT = 8;
@@ -121,10 +155,13 @@ const getScratch = (key: string, width: number, height: number) => {
 
   if (!entry) {
     const canvas =
-      typeof OffscreenCanvas !== 'undefined'
+      typeof OffscreenCanvas !== "undefined"
         ? new OffscreenCanvas(targetWidth, targetHeight)
-        : Object.assign(document.createElement('canvas'), { width: targetWidth, height: targetHeight });
-    const context = canvas.getContext('2d') as Context2D | null;
+        : Object.assign(document.createElement("canvas"), {
+            width: targetWidth,
+            height: targetHeight,
+          });
+    const context = canvas.getContext("2d") as Context2D | null;
     if (!context) return null;
     entry = { canvas, context };
     scratch.set(key, entry);
@@ -150,8 +187,8 @@ const getScratch = (key: string, width: number, height: number) => {
   }
   entry.context.setTransform(1, 0, 0, 1, 0, 0);
   entry.context.globalAlpha = 1;
-  entry.context.globalCompositeOperation = 'source-over';
-  entry.context.filter = 'none';
+  entry.context.globalCompositeOperation = "source-over";
+  entry.context.filter = "none";
   entry.context.clearRect(0, 0, entry.canvas.width, entry.canvas.height);
   return entry;
 };
@@ -159,7 +196,8 @@ const getScratch = (key: string, width: number, height: number) => {
 const peekScratch = (key: string, width: number, height: number) => {
   const entry = scratch.get(key);
   if (!entry) return null;
-  if (entry.canvas.width !== Math.max(1, width) || entry.canvas.height !== Math.max(1, height)) return null;
+  if (entry.canvas.width !== Math.max(1, width) || entry.canvas.height !== Math.max(1, height))
+    return null;
   scratch.delete(key);
   scratch.set(key, entry);
   return entry;
@@ -167,7 +205,7 @@ const peekScratch = (key: string, width: number, height: number) => {
 
 export const releaseExportSurfaces = () => {
   for (const [key, entry] of scratch) {
-    if (!key.startsWith('export:')) continue;
+    if (!key.startsWith("export:")) continue;
     entry.canvas.width = 0;
     entry.canvas.height = 0;
     scratch.delete(key);
@@ -181,7 +219,7 @@ const drawLayer = async (
   project: ProjectSettings,
   timeUs: number,
   options: RenderOptions,
-  override: DrawOverride | null
+  override: DrawOverride | null,
 ): Promise<boolean> => {
   const alpha = clip.opacity * envelopeAt(clip, timeUs) * (override?.alpha ?? 1);
   // Transparent by the user's own instruction — opacity, a fade, a transition.
@@ -189,9 +227,25 @@ const drawLayer = async (
 
   if (isTextClip(clip)) {
     // Keyed per clip: one key for all text clips made two captions invalidate each other every frame.
-    const rendered = renderTextToScratch(clip, project, timeUs, `${options.target}:raster:${clip.id}`);
+    const rendered = renderTextToScratch(
+      clip,
+      project,
+      timeUs,
+      `${options.target}:raster:${clip.id}`,
+    );
     if (!rendered) return false;
-    compose(context, rendered.canvas, clip, project, timeUs, options, override, alpha, project.width, project.height);
+    compose(
+      context,
+      rendered.canvas,
+      clip,
+      project,
+      timeUs,
+      options,
+      override,
+      alpha,
+      project.width,
+      project.height,
+    );
     return true;
   }
   return drawMediaLayer(context, clip, project, timeUs, options, override, alpha);
@@ -209,7 +263,12 @@ const resolveImageSource = (clip: MediaClip): ResolvedSource | null => {
   return { source: bitmap, sourceWidth: bitmap.width, sourceHeight: bitmap.height };
 };
 
-const resolveVideoSource = async (clip: MediaClip, timeUs: number, options: RenderOptions, overrunUs?: number): Promise<ResolvedSource | null> => {
+const resolveVideoSource = async (
+  clip: MediaClip,
+  timeUs: number,
+  options: RenderOptions,
+  overrunUs?: number,
+): Promise<ResolvedSource | null> => {
   const reader = getReader(clip.id, clip.assetId, options.target);
   if (!reader) return null;
   const sourceUs = overrunUs ?? sourceTimeUs(clip, timeUs);
@@ -221,12 +280,16 @@ const resolveVideoSource = async (clip: MediaClip, timeUs: number, options: Rend
   const sourceWidth = sample.displayWidth;
   const sourceHeight = sample.displayHeight;
 
-  const surface = getScratch(`${options.target}:sample:${sourceWidth}x${sourceHeight}`, sourceWidth, sourceHeight);
+  const surface = getScratch(
+    `${options.target}:sample:${sourceWidth}x${sourceHeight}`,
+    sourceWidth,
+    sourceHeight,
+  );
   if (!surface) return null;
   try {
     sample.draw(surface.context as CanvasRenderingContext2D, 0, 0, sourceWidth, sourceHeight);
   } catch (error) {
-    reportOnce('video frame', error);
+    reportOnce("video frame", error);
     return null;
   }
   return { source: surface.canvas, sourceWidth, sourceHeight };
@@ -239,15 +302,29 @@ const drawMediaLayer = async (
   timeUs: number,
   options: RenderOptions,
   override: DrawOverride | null,
-  alpha: number
+  alpha: number,
 ): Promise<boolean> => {
   // Audio draws nothing by definition, so it is never an incomplete frame.
-  if (clip.kind === 'audio') return true;
+  if (clip.kind === "audio") return true;
 
-  const resolved = clip.kind === 'image' ? resolveImageSource(clip) : await resolveVideoSource(clip, timeUs, options, override?.sourceOverrunUs);
+  const resolved =
+    clip.kind === "image"
+      ? resolveImageSource(clip)
+      : await resolveVideoSource(clip, timeUs, options, override?.sourceOverrunUs);
   if (!resolved) return false;
 
-  compose(context, resolved.source, clip, project, timeUs, options, override, alpha, resolved.sourceWidth, resolved.sourceHeight);
+  compose(
+    context,
+    resolved.source,
+    clip,
+    project,
+    timeUs,
+    options,
+    override,
+    alpha,
+    resolved.sourceWidth,
+    resolved.sourceHeight,
+  );
   return true;
 };
 
@@ -261,7 +338,7 @@ const compose = (
   override: DrawOverride | null,
   alpha: number,
   sourceWidth: number,
-  sourceHeight: number
+  sourceHeight: number,
 ) => {
   if (sourceWidth <= 0 || sourceHeight <= 0) return;
 
@@ -273,11 +350,17 @@ const compose = (
   let filter = canvasFilterString(color, blurScale);
 
   if (needsPixelProcessing({ color, chromaKey })) {
-    const processor = options.target === 'export' ? exportProcessor : previewProcessor;
+    const processor = options.target === "export" ? exportProcessor : previewProcessor;
     const processed = processor.process(source as TexImageSource, sourceWidth, sourceHeight, {
       color,
-      chromaKey: chromaKey ?? { enabled: false, color: '#000000', similarity: 0, smoothness: 0, spill: 0 },
-      seed: timeUs
+      chromaKey: chromaKey ?? {
+        enabled: false,
+        color: "#000000",
+        similarity: 0,
+        smoothness: 0,
+        spill: 0,
+      },
+      seed: timeUs,
     });
     if (processed) {
       image = processed;
@@ -295,11 +378,17 @@ const compose = (
 
   if (override?.blur && override.blur > 0.01) {
     const radius = (override.blur * blurScale).toFixed(2);
-    filter = filter === 'none' ? `blur(${radius}px)` : `${filter} blur(${radius}px)`;
+    filter = filter === "none" ? `blur(${radius}px)` : `${filter} blur(${radius}px)`;
   }
 
   // Text rasterises at project size, so `contain` is the identity for it.
-  const box = fitRect(isMediaClip(clip) ? clip.fit : 'contain', sw, sh, project.width, project.height);
+  const box = fitRect(
+    isMediaClip(clip) ? clip.fit : "contain",
+    sw,
+    sh,
+    project.width,
+    project.height,
+  );
   const transform = clip.transform;
 
   context.save();
@@ -312,17 +401,35 @@ const compose = (
   context.filter = filter;
 
   try {
-    context.drawImage(image, sx, sy, sw, sh, -box.width / 2, -box.height / 2, box.width, box.height);
+    context.drawImage(
+      image,
+      sx,
+      sy,
+      sw,
+      sh,
+      -box.width / 2,
+      -box.height / 2,
+      box.width,
+      box.height,
+    );
   } catch (error) {
     // A closed VideoFrame or a zero-sized surface; drop the frame.
-    reportOnce('layer draw', error);
+    reportOnce("layer draw", error);
   }
   context.restore();
 };
 
 /** Applies the clip's transform around the canvas centre. */
-const applyTransform = (context: Context2D, transform: Transform, project: ProjectSettings, extraScale: number) => {
-  context.translate(project.width / 2 + transform.x * project.width, project.height / 2 + transform.y * project.height);
+const applyTransform = (
+  context: Context2D,
+  transform: Transform,
+  project: ProjectSettings,
+  extraScale: number,
+) => {
+  context.translate(
+    project.width / 2 + transform.x * project.width,
+    project.height / 2 + transform.y * project.height,
+  );
   if (transform.rotation) context.rotate((transform.rotation * Math.PI) / 180);
   const flipX = transform.flipH ? -1 : 1;
   const flipY = transform.flipV ? -1 : 1;
@@ -333,24 +440,32 @@ const BACKDROP_TARGET_RADIUS = 4;
 
 const BACKDROP_DIRECT_RADIUS = 2;
 
-const drawBackground = async (context: Context2D, scene: Scene, timeUs: number, options: RenderOptions) => {
+const drawBackground = async (
+  context: Context2D,
+  scene: Scene,
+  timeUs: number,
+  options: RenderOptions,
+) => {
   const { project } = scene;
   const background = project.background;
 
   context.save();
   context.setTransform(1, 0, 0, 1, 0, 0);
   context.globalAlpha = 1;
-  context.globalCompositeOperation = 'source-over';
-  context.filter = 'none';
+  context.globalCompositeOperation = "source-over";
+  context.filter = "none";
 
   context.fillStyle = background.color;
   context.fillRect(0, 0, project.width, project.height);
 
-  if (background.kind === 'linear-gradient' || background.kind === 'radial-gradient') {
+  if (background.kind === "linear-gradient" || background.kind === "radial-gradient") {
     context.fillStyle = buildGradient(context, background, project);
     context.fillRect(0, 0, project.width, project.height);
-  } else if (background.kind === 'image' || background.kind === 'blur') {
-    const source = background.kind === 'image' ? resolveBackgroundImage(background) : await resolveBackdropClip(scene, timeUs, options);
+  } else if (background.kind === "image" || background.kind === "blur") {
+    const source =
+      background.kind === "image"
+        ? resolveBackgroundImage(background)
+        : await resolveBackdropClip(scene, timeUs, options);
     if (source) drawBackdrop(context, source, background, project, options);
   }
 
@@ -358,14 +473,14 @@ const drawBackground = async (context: Context2D, scene: Scene, timeUs: number, 
 };
 
 const buildGradient = (context: Context2D, background: Background, project: ProjectSettings) => {
-  if (background.kind === 'radial-gradient') {
+  if (background.kind === "radial-gradient") {
     const gradient = context.createRadialGradient(
       project.width / 2,
       project.height / 2,
       0,
       project.width / 2,
       project.height / 2,
-      Math.hypot(project.width, project.height) / 2
+      Math.hypot(project.width, project.height) / 2,
     );
     gradient.addColorStop(0, background.from);
     gradient.addColorStop(1, background.to);
@@ -373,10 +488,17 @@ const buildGradient = (context: Context2D, background: Background, project: Proj
   }
 
   const radians = ((background.angle - 90) * Math.PI) / 180;
-  const reach = (Math.abs(Math.cos(radians)) * project.width + Math.abs(Math.sin(radians)) * project.height) / 2;
+  const reach =
+    (Math.abs(Math.cos(radians)) * project.width + Math.abs(Math.sin(radians)) * project.height) /
+    2;
   const dx = Math.cos(radians) * reach;
   const dy = Math.sin(radians) * reach;
-  const gradient = context.createLinearGradient(project.width / 2 - dx, project.height / 2 - dy, project.width / 2 + dx, project.height / 2 + dy);
+  const gradient = context.createLinearGradient(
+    project.width / 2 - dx,
+    project.height / 2 - dy,
+    project.width / 2 + dx,
+    project.height / 2 + dy,
+  );
   gradient.addColorStop(0, background.from);
   gradient.addColorStop(1, background.to);
   return gradient;
@@ -390,36 +512,54 @@ const resolveBackgroundImage = (background: Background): ResolvedSource | null =
 };
 
 /** The frontmost picture on screen — what a blurred backdrop is made from. */
-const resolveBackdropClip = async (scene: Scene, timeUs: number, options: RenderOptions): Promise<ResolvedSource | null> => {
+const resolveBackdropClip = async (
+  scene: Scene,
+  timeUs: number,
+  options: RenderOptions,
+): Promise<ResolvedSource | null> => {
   const layers = visibleLayers(scene, timeUs);
   for (let index = layers.length - 1; index >= 0; index--) {
     const clip = layers[index];
-    if (!isMediaClip(clip) || clip.kind === 'audio') continue;
-    return clip.kind === 'image' ? resolveImageSource(clip) : await resolveVideoSource(clip, timeUs, options);
+    if (!isMediaClip(clip) || clip.kind === "audio") continue;
+    return clip.kind === "image"
+      ? resolveImageSource(clip)
+      : await resolveVideoSource(clip, timeUs, options);
   }
   return null;
 };
 
 /** Cover-fits a picture over the whole frame, defocused and dimmed. */
-const drawBackdrop = (context: Context2D, resolved: ResolvedSource, background: Background, project: ProjectSettings, options: RenderOptions) => {
+const drawBackdrop = (
+  context: Context2D,
+  resolved: ResolvedSource,
+  background: Background,
+  project: ProjectSettings,
+  options: RenderOptions,
+) => {
   // The radius is stated at 1080p so a project looks the same at 720p and 4K.
   const radius = Math.max(0, background.blur) * (project.height / 1080);
   const zoom = Math.max(1, background.scale);
 
   context.imageSmoothingEnabled = true;
-  context.imageSmoothingQuality = 'high';
+  context.imageSmoothingQuality = "high";
 
   /** Fills `target` with the source, cropped to cover and zoomed. */
   const paint = (target: Context2D, width: number, height: number) => {
     const cover = coverRect(resolved.sourceWidth, resolved.sourceHeight, width, height);
-    target.drawImage(resolved.source, (width - cover.width * zoom) / 2, (height - cover.height * zoom) / 2, cover.width * zoom, cover.height * zoom);
+    target.drawImage(
+      resolved.source,
+      (width - cover.width * zoom) / 2,
+      (height - cover.height * zoom) / 2,
+      cover.width * zoom,
+      cover.height * zoom,
+    );
   };
 
   try {
     if (radius < BACKDROP_DIRECT_RADIUS) {
-      context.filter = radius > 0.1 ? `blur(${radius.toFixed(2)}px)` : 'none';
+      context.filter = radius > 0.1 ? `blur(${radius.toFixed(2)}px)` : "none";
       paint(context, project.width, project.height);
-      context.filter = 'none';
+      context.filter = "none";
     } else {
       const ratio = Math.min(1, BACKDROP_TARGET_RADIUS / radius);
       const width = Math.max(1, Math.round(project.width * ratio));
@@ -428,14 +568,14 @@ const drawBackdrop = (context: Context2D, resolved: ResolvedSource, background: 
       if (!surface) return;
 
       surface.context.imageSmoothingEnabled = true;
-      surface.context.imageSmoothingQuality = 'high';
+      surface.context.imageSmoothingQuality = "high";
       surface.context.filter = `blur(${(radius * ratio).toFixed(2)}px)`;
       paint(surface.context, width, height);
       context.drawImage(surface.canvas, 0, 0, project.width, project.height);
     }
   } catch {
     // A closed VideoFrame; leave the solid base showing for this frame.
-    context.filter = 'none';
+    context.filter = "none";
     return;
   }
 
@@ -447,20 +587,38 @@ const drawBackdrop = (context: Context2D, resolved: ResolvedSource, background: 
   }
 };
 
-export const fitRect = (fit: MediaFit, sourceWidth: number, sourceHeight: number, boxWidth: number, boxHeight: number) => {
-  if (fit === 'stretch') return { width: boxWidth, height: boxHeight };
-  return fit === 'cover' ? coverRect(sourceWidth, sourceHeight, boxWidth, boxHeight) : containRect(sourceWidth, sourceHeight, boxWidth, boxHeight);
+export const fitRect = (
+  fit: MediaFit,
+  sourceWidth: number,
+  sourceHeight: number,
+  boxWidth: number,
+  boxHeight: number,
+) => {
+  if (fit === "stretch") return { width: boxWidth, height: boxHeight };
+  return fit === "cover"
+    ? coverRect(sourceWidth, sourceHeight, boxWidth, boxHeight)
+    : containRect(sourceWidth, sourceHeight, boxWidth, boxHeight);
 };
 
 /** Cover-fit: the box is filled completely, overflowing if aspect ratios differ. */
-const coverRect = (sourceWidth: number, sourceHeight: number, boxWidth: number, boxHeight: number) => {
+const coverRect = (
+  sourceWidth: number,
+  sourceHeight: number,
+  boxWidth: number,
+  boxHeight: number,
+) => {
   if (!sourceWidth || !sourceHeight) return { width: boxWidth, height: boxHeight };
   const scale = Math.max(boxWidth / sourceWidth, boxHeight / sourceHeight);
   return { width: sourceWidth * scale, height: sourceHeight * scale };
 };
 
 /** Contain-fit: the whole frame is visible, letterboxed if aspect ratios differ. */
-export const containRect = (sourceWidth: number, sourceHeight: number, boxWidth: number, boxHeight: number) => {
+export const containRect = (
+  sourceWidth: number,
+  sourceHeight: number,
+  boxWidth: number,
+  boxHeight: number,
+) => {
   if (!sourceWidth || !sourceHeight) return { width: boxWidth, height: boxHeight };
   const scale = Math.min(boxWidth / sourceWidth, boxHeight / sourceHeight);
   return { width: sourceWidth * scale, height: sourceHeight * scale };
@@ -474,13 +632,13 @@ const textAnimationAt = (clip: TextClip, timeUs: number) => {
   const eased = progress * (2 - progress);
 
   switch (clip.animation) {
-    case 'fade':
+    case "fade":
       return { alpha: eased, offsetY: 0, scale: 1, reveal: 1 };
-    case 'rise':
+    case "rise":
       return { alpha: eased, offsetY: (1 - eased) * 0.06, scale: 1, reveal: 1 };
-    case 'pop':
+    case "pop":
       return { alpha: eased, offsetY: 0, scale: 0.7 + 0.3 * eased, reveal: 1 };
-    case 'typewriter':
+    case "typewriter":
       return { alpha: 1, offsetY: 0, scale: 1, reveal: progress };
     default:
       return { alpha: 1, offsetY: 0, scale: 1, reveal: 1 };
@@ -489,25 +647,30 @@ const textAnimationAt = (clip: TextClip, timeUs: number) => {
 
 const textSignatures = new Map<string, string>();
 
-const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: number, key: string) => {
+const renderTextToScratch = (
+  clip: TextClip,
+  project: ProjectSettings,
+  timeUs: number,
+  key: string,
+) => {
   const animation = textAnimationAt(clip, timeUs);
   const fontSize = Math.max(1, clip.fontSize * project.height * animation.scale);
   const lineHeight = fontSize * TEXT_LINE_HEIGHT;
 
-  let lines = clip.text.split('\n');
+  let lines = clip.text.split("\n");
   if (animation.reveal < 1) {
     // Typewriter: reveal characters across the whole block, not per line.
-    lines = clip.text.slice(0, Math.floor(clip.text.length * animation.reveal)).split('\n');
+    lines = clip.text.slice(0, Math.floor(clip.text.length * animation.reveal)).split("\n");
   }
-  if (lines.length === 0 || (lines.length === 1 && lines[0] === '')) return null;
+  if (lines.length === 0 || (lines.length === 1 && lines[0] === "")) return null;
 
-  const font = `${clip.italic ? 'italic ' : ''}${clip.fontWeight} ${fontSize}px ${clip.fontFamily}`;
+  const font = `${clip.italic ? "italic " : ""}${clip.fontWeight} ${fontSize}px ${clip.fontFamily}`;
   const centreX = project.width / 2 + clip.x * project.width;
   const centreY = project.height / 2 + (clip.y + animation.offsetY) * project.height;
   const blockHeight = lines.length * lineHeight;
 
   const signature = [
-    lines.join('\0'),
+    lines.join("\0"),
     font,
     clip.align,
     clip.textColor,
@@ -519,8 +682,8 @@ const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: n
     lineHeight,
     animation.alpha,
     project.width,
-    project.height
-  ].join('|');
+    project.height,
+  ].join("|");
 
   // `getScratch` clears the surface, so it is only reached on a real miss.
   if (textSignatures.get(key) === signature) {
@@ -535,19 +698,27 @@ const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: n
 
   context.font = font;
   context.textAlign = clip.align;
-  context.textBaseline = 'middle';
+  context.textBaseline = "middle";
 
   context.globalAlpha = animation.alpha;
 
-  const widest = Math.max(...lines.map(line => context.measureText(line).width));
+  const widest = Math.max(...lines.map((line) => context.measureText(line).width));
   const blockLeft = centreX - widest / 2;
-  const anchorX = clip.align === 'left' ? blockLeft : clip.align === 'right' ? blockLeft + widest : centreX;
+  const anchorX =
+    clip.align === "left" ? blockLeft : clip.align === "right" ? blockLeft + widest : centreX;
 
-  if (clip.backgroundColor !== 'transparent') {
+  if (clip.backgroundColor !== "transparent") {
     const padX = fontSize * 0.4;
     const padY = fontSize * 0.25;
     context.fillStyle = clip.backgroundColor;
-    roundedRect(context, blockLeft - padX, centreY - blockHeight / 2 - padY, widest + padX * 2, blockHeight + padY * 2, fontSize * 0.2);
+    roundedRect(
+      context,
+      blockLeft - padX,
+      centreY - blockHeight / 2 - padY,
+      widest + padX * 2,
+      blockHeight + padY * 2,
+      fontSize * 0.2,
+    );
     context.fill();
   }
 
@@ -556,7 +727,7 @@ const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: n
     if (clip.strokeWidth > 0) {
       context.lineWidth = clip.strokeWidth * fontSize * 0.1;
       context.strokeStyle = clip.strokeColor;
-      context.lineJoin = 'round';
+      context.lineJoin = "round";
       context.strokeText(line, anchorX, y);
     }
     context.fillStyle = clip.textColor;
@@ -566,7 +737,14 @@ const renderTextToScratch = (clip: TextClip, project: ProjectSettings, timeUs: n
   return surface;
 };
 
-const roundedRect = (context: Context2D, x: number, y: number, width: number, height: number, radius: number) => {
+const roundedRect = (
+  context: Context2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+) => {
   const r = Math.max(0, Math.min(radius, width / 2, height / 2));
   context.beginPath();
   context.moveTo(x + r, y);

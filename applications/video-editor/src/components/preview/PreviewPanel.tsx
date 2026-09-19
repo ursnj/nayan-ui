@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { NButton, NSlider, NTooltip } from '@nayan-ui/react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { NButton, NSlider, NTooltip } from "@nayan-ui/react";
 import {
   Camera,
   ChevronLeft,
@@ -15,25 +15,25 @@ import {
   SkipForward,
   Square,
   Volume2,
-  VolumeX
-} from 'lucide-react';
-import { player, seekTo, stepFrames, togglePlayback } from '../../engine/playerInstance';
-import { clamp, download, formatTimecode } from '../../lib/utils';
-import { primarySelectedClip, timelineDurationUs, useEditor } from '../../store/editor';
-import { US } from '../../types';
-import { IconButton } from '../controls';
-import { TransformOverlay } from './TransformOverlay';
+  VolumeX,
+} from "lucide-react";
+import { player, seekTo, stepFrames, togglePlayback } from "../../engine/playerInstance";
+import { clamp, download, formatTimecode } from "../../lib/utils";
+import { primarySelectedClip, timelineDurationUs, useEditor } from "../../store/editor";
+import { US } from "../../types";
+import { IconButton } from "../controls";
+import { TransformOverlay } from "./TransformOverlay";
 
 export const PreviewPanel = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
 
-  const project = useEditor(state => state.project);
-  const isPlaying = useEditor(state => state.isPlaying);
-  const durationUs = useEditor(state => timelineDurationUs(state.clips));
-  const clips = useEditor(state => state.clips);
-  const tracks = useEditor(state => state.tracks);
+  const project = useEditor((state) => state.project);
+  const isPlaying = useEditor((state) => state.isPlaying);
+  const durationUs = useEditor((state) => timelineDurationUs(state.clips));
+  const clips = useEditor((state) => state.clips);
+  const tracks = useEditor((state) => state.tracks);
   const selected = useEditor(primarySelectedClip);
 
   const [muted, setMuted] = useState(false);
@@ -67,7 +67,7 @@ export const PreviewPanel = () => {
   useLayoutEffect(() => {
     const element = frameRef.current;
     if (!element) return;
-    const observer = new ResizeObserver(entries => {
+    const observer = new ResizeObserver((entries) => {
       const rect = entries[0]?.contentRect;
       if (rect) setDisplaySize({ width: rect.width, height: rect.height });
     });
@@ -77,8 +77,8 @@ export const PreviewPanel = () => {
 
   useEffect(() => {
     const sync = () => setFullscreen(document.fullscreenElement === stageRef.current);
-    document.addEventListener('fullscreenchange', sync);
-    return () => document.removeEventListener('fullscreenchange', sync);
+    document.addEventListener("fullscreenchange", sync);
+    return () => document.removeEventListener("fullscreenchange", sync);
   }, []);
 
   const toggleFullscreen = useCallback(() => {
@@ -92,23 +92,32 @@ export const PreviewPanel = () => {
   const snapshot = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    canvas.toBlob(blob => {
-      if (blob) download(blob, `${project.name.replace(/[^\w\-. ]+/g, '_') || 'frame'}.png`);
-    }, 'image/png');
+    canvas.toBlob((blob) => {
+      if (blob) download(blob, `${project.name.replace(/[^\w\-. ]+/g, "_") || "frame"}.png`);
+    }, "image/png");
   }, [project.name]);
 
-  const overlayVisible = showOverlay && selected !== null && selected.kind !== 'audio' && displaySize.width > 0;
+  const overlayVisible =
+    showOverlay && selected !== null && selected.kind !== "audio" && displaySize.width > 0;
 
   return (
     <section className="island @container flex min-h-0 min-w-0 flex-1 flex-col">
       <div className="flex items-center gap-1 border-b border-border bg-editor-panel px-2 py-1">
-        <IconButton label="Transform handles" onClick={() => setShowOverlay(value => !value)} active={showOverlay}>
+        <IconButton
+          label="Transform handles"
+          onClick={() => setShowOverlay((value) => !value)}
+          active={showOverlay}
+        >
           <MousePointer2 className="h-4 w-4" />
         </IconButton>
-        <IconButton label="Safe zones" onClick={() => setShowSafeZones(value => !value)} active={showSafeZones}>
+        <IconButton
+          label="Safe zones"
+          onClick={() => setShowSafeZones((value) => !value)}
+          active={showSafeZones}
+        >
           <Square className="h-4 w-4" />
         </IconButton>
-        <IconButton label="Grid" onClick={() => setShowGrid(value => !value)} active={showGrid}>
+        <IconButton label="Grid" onClick={() => setShowGrid((value) => !value)} active={showGrid}>
           <Grid3x3 className="h-4 w-4" />
         </IconButton>
 
@@ -123,12 +132,22 @@ export const PreviewPanel = () => {
         </span>
       </div>
 
-      <div ref={stageRef} className="flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-editor-canvas">
+      <div
+        ref={stageRef}
+        className="flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-editor-canvas"
+      >
         <div
           ref={frameRef}
           className="checkerboard relative max-h-full max-w-full overflow-hidden"
-          style={{ aspectRatio: `${project.width} / ${project.height}` }}>
-          <canvas ref={canvasRef} width={project.width} height={project.height} data-clarity-mask="true" className="block h-full w-full" />
+          style={{ aspectRatio: `${project.width} / ${project.height}` }}
+        >
+          <canvas
+            ref={canvasRef}
+            width={project.width}
+            height={project.height}
+            data-clarity-mask="true"
+            className="block h-full w-full"
+          />
 
           {showSafeZones && (
             <div className="pointer-events-none absolute inset-0">
@@ -147,12 +166,19 @@ export const PreviewPanel = () => {
           )}
 
           {overlayVisible && (
-            <TransformOverlay clip={selected} project={project} displayWidth={displaySize.width} displayHeight={displaySize.height} />
+            <TransformOverlay
+              clip={selected}
+              project={project}
+              displayWidth={displaySize.width}
+              displayHeight={displaySize.height}
+            />
           )}
 
           {durationUs === 0 && (
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40">
-              <p className="px-4 text-center text-sm text-white/60">Add media to the timeline to start editing</p>
+              <p className="px-4 text-center text-sm text-white/60">
+                Add media to the timeline to start editing
+              </p>
             </div>
           )}
         </div>
@@ -168,12 +194,13 @@ export const PreviewPanel = () => {
           <ChevronLeft className="h-4 w-4" />
         </IconButton>
 
-        <NTooltip message={isPlaying ? 'Pause' : 'Play'}>
+        <NTooltip message={isPlaying ? "Pause" : "Play"}>
           <NButton
             onClick={() => void togglePlayback()}
             disabled={durationUs === 0}
-            aria-label={isPlaying ? 'Pause' : 'Play'}
-            className="mx-1 h-8 w-8 rounded-full px-0">
+            aria-label={isPlaying ? "Pause" : "Play"}
+            className="mx-1 h-8 w-8 rounded-full px-0"
+          >
             {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
           </NButton>
         </NTooltip>
@@ -187,7 +214,11 @@ export const PreviewPanel = () => {
           </IconButton>
         </span>
         <span className="hidden @[400px]:contents">
-          <IconButton label="Loop playback" onClick={() => setLoop(value => !value)} active={loop}>
+          <IconButton
+            label="Loop playback"
+            onClick={() => setLoop((value) => !value)}
+            active={loop}
+          >
             <Repeat className="h-4 w-4" />
           </IconButton>
         </span>
@@ -204,10 +235,22 @@ export const PreviewPanel = () => {
             className="mb-0 hidden w-16 @[370px]:block @[600px]:w-24"
             aria-label="Preview volume"
           />
-          <IconButton label={muted ? 'Unmute' : 'Mute'} onClick={() => setMuted(value => !value)} active={muted}>
-            {muted || volume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+          <IconButton
+            label={muted ? "Unmute" : "Mute"}
+            onClick={() => setMuted((value) => !value)}
+            active={muted}
+          >
+            {muted || volume === 0 ? (
+              <VolumeX className="h-4 w-4" />
+            ) : (
+              <Volume2 className="h-4 w-4" />
+            )}
           </IconButton>
-          <IconButton label={fullscreen ? 'Exit full screen' : 'Full screen'} onClick={toggleFullscreen} active={fullscreen}>
+          <IconButton
+            label={fullscreen ? "Exit full screen" : "Full screen"}
+            onClick={toggleFullscreen}
+            active={fullscreen}
+          >
             {fullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
           </IconButton>
         </div>
@@ -217,7 +260,7 @@ export const PreviewPanel = () => {
 };
 
 const TimeReadout = ({ durationUs, fps }: { durationUs: number; fps: number }) => {
-  const playheadUs = useEditor(state => state.playheadUs);
+  const playheadUs = useEditor((state) => state.playheadUs);
   /** Non-null while typing; the playhead is ignored until the edit resolves. */
   const [draft, setDraft] = useState<string | null>(null);
 
@@ -233,15 +276,15 @@ const TimeReadout = ({ durationUs, fps }: { durationUs: number; fps: number }) =
       <input
         value={draft}
         autoFocus
-        onFocus={event => event.target.select()}
-        onChange={event => setDraft(event.target.value)}
+        onFocus={(event) => event.target.select()}
+        onChange={(event) => setDraft(event.target.value)}
         onBlur={commit}
-        onKeyDown={event => {
-          if (event.key === 'Enter') {
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
             event.preventDefault();
             commit();
           }
-          if (event.key === 'Escape') {
+          if (event.key === "Escape") {
             event.preventDefault();
             setDraft(null);
           }
@@ -257,7 +300,8 @@ const TimeReadout = ({ durationUs, fps }: { durationUs: number; fps: number }) =
       type="button"
       onClick={() => setDraft(formatTimecode(playheadUs, true, fps))}
       title="Click to jump to a time — mm:ss:ff, mm:ss, or plain seconds"
-      className="ml-3 shrink-0 whitespace-nowrap rounded px-1 font-mono text-xs tabular-nums text-muted transition-colors hover:bg-default">
+      className="ml-3 shrink-0 whitespace-nowrap rounded px-1 font-mono text-xs tabular-nums text-muted transition-colors hover:bg-default"
+    >
       <span className="text-foreground">{formatTimecode(playheadUs, true, fps)}</span>
       <span className="mx-1 hidden opacity-50 @[560px]:inline">/</span>
       <span className="hidden @[560px]:inline">{formatTimecode(durationUs, true, fps)}</span>
@@ -266,11 +310,11 @@ const TimeReadout = ({ durationUs, fps }: { durationUs: number; fps: number }) =
 };
 
 const parseTimecode = (text: string, fps: number): number | null => {
-  const parts = text.trim().split(':');
-  if (parts.length > 4 || parts.some(part => part.trim() === '')) return null;
+  const parts = text.trim().split(":");
+  if (parts.length > 4 || parts.some((part) => part.trim() === "")) return null;
 
-  const numbers = parts.map(part => Number(part));
-  if (numbers.some(value => !Number.isFinite(value) || value < 0)) return null;
+  const numbers = parts.map((part) => Number(part));
+  if (numbers.some((value) => !Number.isFinite(value) || value < 0)) return null;
 
   const [seconds, frames] =
     numbers.length === 1

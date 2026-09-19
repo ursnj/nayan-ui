@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import ComponentWrapper from '@/helpers/ComponentWrapper';
-import DemoComingSoon from './DemoComingSoon';
+import ComponentWrapper from "@/helpers/ComponentWrapper";
+import DemoComingSoon from "./DemoComingSoon";
 
 const Loading = () => {
   return (
@@ -39,6 +39,16 @@ export default function LoadingScreen() {
 }`;
 
 export const loadingAttributes = [
-  { name: 'containerClassName', type: 'string', default: "' '", details: 'You can customise container by passing tailwind classes.' },
-  { name: '...SpinnerProps', type: 'SpinnerProps', default: '', details: 'All heroui-native Spinner props are supported (size, color, etc.).' }
+  {
+    name: "containerClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise container by passing tailwind classes.",
+  },
+  {
+    name: "...SpinnerProps",
+    type: "SpinnerProps",
+    default: "",
+    details: "All heroui-native Spinner props are supported (size, color, etc.).",
+  },
 ];

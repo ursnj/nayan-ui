@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { NTextarea } from '@nayan-ui/react';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import React, { useState } from "react";
+import { NTextarea } from "@nayan-ui/react";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
 const Textarea = () => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
 
   return (
     <ComponentWrapper code={code} attributes={textareaAttributes}>
@@ -43,12 +43,52 @@ const Textarea = () => {
 export default Textarea;`;
 
 export const textareaAttributes = [
-  { name: 'id', type: 'string', default: 'Optional', details: 'You can pass id to create unique identifier.' },
-  { name: 'label', type: 'React.ReactNode', default: 'Optional', details: 'Label for the textarea.' },
-  { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'textareaClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'error', type: 'React.ReactNode', default: 'Optional', details: 'Error message to display.' },
-  { name: 'helperText', type: 'React.ReactNode', default: 'Optional', details: 'Helper text to display.' },
-  { name: 'onChange', type: '(e: React.ChangeEvent<HTMLTextAreaElement>) => void', default: 'Optional', details: 'Change event handler.' }
+  {
+    name: "id",
+    type: "string",
+    default: "Optional",
+    details: "You can pass id to create unique identifier.",
+  },
+  {
+    name: "label",
+    type: "React.ReactNode",
+    default: "Optional",
+    details: "Label for the textarea.",
+  },
+  {
+    name: "labelClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "textareaClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "error",
+    type: "React.ReactNode",
+    default: "Optional",
+    details: "Error message to display.",
+  },
+  {
+    name: "helperText",
+    type: "React.ReactNode",
+    default: "Optional",
+    details: "Helper text to display.",
+  },
+  {
+    name: "onChange",
+    type: "(e: React.ChangeEvent<HTMLTextAreaElement>) => void",
+    default: "Optional",
+    details: "Change event handler.",
+  },
 ];

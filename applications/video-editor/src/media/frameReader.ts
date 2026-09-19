@@ -1,4 +1,4 @@
-import type { VideoSample, VideoSampleSink } from 'mediabunny';
+import type { VideoSample, VideoSampleSink } from "mediabunny";
 
 /** Jump threshold: stepping forward reuses the decoder, seeking restarts from the preceding keyframe. */
 const RESTART_THRESHOLD_SECONDS = 1;
@@ -50,7 +50,12 @@ export class SequentialVideoReader {
       return;
     }
 
-    while (this.iterator && this.current && !this.covers(this.current, seconds) && seconds > this.current.timestamp) {
+    while (
+      this.iterator &&
+      this.current &&
+      !this.covers(this.current, seconds) &&
+      seconds > this.current.timestamp
+    ) {
       const next = await this.iterator.next();
       if (next.done || !next.value) break;
       this.current.close();

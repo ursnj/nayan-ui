@@ -1,6 +1,6 @@
-import React, { ReactNode, memo } from 'react';
-import { Disclosure } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { ReactNode, memo } from "react";
+import { Disclosure } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NDisclosureProps {
   title: ReactNode;
@@ -24,10 +24,10 @@ const NDisclosureComponent: React.FC<NDisclosureProps> = memo(
     expanded,
     onExpandedChange,
     disabled = false,
-    className = '',
-    triggerClassName = '',
-    contentClassName = '',
-    indicatorClassName = ''
+    className = "",
+    triggerClassName = "",
+    contentClassName = "",
+    indicatorClassName = "",
   }) => {
     return (
       <Disclosure
@@ -35,11 +35,14 @@ const NDisclosureComponent: React.FC<NDisclosureProps> = memo(
         isExpanded={expanded}
         onExpandedChange={onExpandedChange}
         isDisabled={disabled}
-        className={cn('nyn-disclosure w-full', className)}>
+        className={cn("nyn-disclosure w-full", className)}
+      >
         <Disclosure.Heading>
           {/* HeroUI styles .disclosure__trigger as inline-block, so the title and the
               indicator stack unless the trigger is made a row. */}
-          <Disclosure.Trigger className={cn('flex w-full items-center justify-between gap-3', triggerClassName)}>
+          <Disclosure.Trigger
+            className={cn("flex w-full items-center justify-between gap-3", triggerClassName)}
+          >
             {title}
             <Disclosure.Indicator className={cn(indicatorClassName)} />
           </Disclosure.Trigger>
@@ -49,9 +52,9 @@ const NDisclosureComponent: React.FC<NDisclosureProps> = memo(
         </Disclosure.Content>
       </Disclosure>
     );
-  }
+  },
 );
 
-NDisclosureComponent.displayName = 'NDisclosure';
+NDisclosureComponent.displayName = "NDisclosure";
 
 export const NDisclosure = NDisclosureComponent;

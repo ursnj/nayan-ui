@@ -1,5 +1,5 @@
-import { NAlert, NText } from '@nayan-ui/native';
-import Screen from '../src/components/Screen';
+import { NAlert, NText } from "@nayan-ui/native";
+import Screen from "../src/components/Screen";
 
 export default function AlertScreen() {
   return (
@@ -30,9 +30,24 @@ export default function AlertScreen() {
       />
 
       <NText className="text-lg font-bold">With close button</NText>
-      <NAlert status="accent" title="Dismissible" description="Tap the close button to dismiss." onClose={() => console.log('closed')} />
-      <NAlert status="success" title="Upload complete" description="Your file has been uploaded." onClose={() => console.log('closed')} />
-      <NAlert status="warning" title="Low storage" description="You are running low on storage." onClose={() => console.log('closed')} />
+      <NAlert
+        status="accent"
+        title="Dismissible"
+        description="Tap the close button to dismiss."
+        onClose={() => console.log("closed")}
+      />
+      <NAlert
+        status="success"
+        title="Upload complete"
+        description="Your file has been uploaded."
+        onClose={() => console.log("closed")}
+      />
+      <NAlert
+        status="warning"
+        title="Low storage"
+        description="You are running low on storage."
+        onClose={() => console.log("closed")}
+      />
     </Screen>
   );
 }

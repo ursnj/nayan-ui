@@ -1,5 +1,5 @@
-import { NTabs, NText } from '@nayan-ui/native';
-import Screen from '../src/components/Screen';
+import { NTabs, NText } from "@nayan-ui/native";
+import Screen from "../src/components/Screen";
 
 export default function TabsScreen() {
   return (
@@ -8,9 +8,17 @@ export default function TabsScreen() {
       <NTabs
         defaultValue="account"
         items={[
-          { label: 'Account', value: 'account', content: <NText>Manage your account settings.</NText> },
-          { label: 'Security', value: 'security', content: <NText>Password and 2FA.</NText> },
-          { label: 'Billing', value: 'billing', content: <NText>Payment methods and invoices.</NText> }
+          {
+            label: "Account",
+            value: "account",
+            content: <NText>Manage your account settings.</NText>,
+          },
+          { label: "Security", value: "security", content: <NText>Password and 2FA.</NText> },
+          {
+            label: "Billing",
+            value: "billing",
+            content: <NText>Payment methods and invoices.</NText>,
+          },
         ]}
       />
 
@@ -19,9 +27,9 @@ export default function TabsScreen() {
         variant="secondary"
         defaultValue="tab1"
         items={[
-          { label: 'Overview', value: 'tab1', content: <NText>Overview content.</NText> },
-          { label: 'Analytics', value: 'tab2', content: <NText>Analytics data.</NText> },
-          { label: 'Reports', value: 'tab3', content: <NText>Reports list.</NText> }
+          { label: "Overview", value: "tab1", content: <NText>Overview content.</NText> },
+          { label: "Analytics", value: "tab2", content: <NText>Analytics data.</NText> },
+          { label: "Reports", value: "tab3", content: <NText>Reports list.</NText> },
         ]}
       />
 
@@ -29,9 +37,14 @@ export default function TabsScreen() {
       <NTabs
         defaultValue="a"
         items={[
-          { label: 'Active', value: 'a', content: <NText>This tab is active.</NText> },
-          { label: 'Disabled', value: 'b', content: <NText>Cannot reach.</NText>, isDisabled: true },
-          { label: 'Another', value: 'c', content: <NText>Another tab.</NText> }
+          { label: "Active", value: "a", content: <NText>This tab is active.</NText> },
+          {
+            label: "Disabled",
+            value: "b",
+            content: <NText>Cannot reach.</NText>,
+            isDisabled: true,
+          },
+          { label: "Another", value: "c", content: <NText>Another tab.</NText> },
         ]}
       />
     </Screen>

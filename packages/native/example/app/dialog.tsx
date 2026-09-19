@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { View } from 'react-native';
-import { NButton, NDialog, NText } from '@nayan-ui/native';
-import Screen from '../src/components/Screen';
+import { useState } from "react";
+import { View } from "react-native";
+import { NButton, NDialog, NText } from "@nayan-ui/native";
+import Screen from "../src/components/Screen";
 
 export default function DialogScreen() {
   const [open, setOpen] = useState(false);
@@ -27,7 +27,11 @@ export default function DialogScreen() {
       </NDialog>
 
       <NText className="text-lg font-bold">With description</NText>
-      <NDialog title="Terms" description="Please read carefully." trigger={<NButton variant="outline">Terms</NButton>}>
+      <NDialog
+        title="Terms"
+        description="Please read carefully."
+        trigger={<NButton variant="outline">Terms</NButton>}
+      >
         <View className="">
           <NText>By using this app you agree to our terms of service and privacy policy.</NText>
         </View>

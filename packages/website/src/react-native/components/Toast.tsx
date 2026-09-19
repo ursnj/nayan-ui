@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import ComponentWrapper from '@/helpers/ComponentWrapper';
-import DemoComingSoon from './DemoComingSoon';
+import ComponentWrapper from "@/helpers/ComponentWrapper";
+import DemoComingSoon from "./DemoComingSoon";
 
 const Toast = () => {
   return (
@@ -78,15 +78,40 @@ export default function ToastScreen() {
 }`;
 
 export const toastAttributes = [
-  { name: 'useNToast()', type: 'Hook', default: '', details: 'Returns toast methods: show, success, error, info, warning.' },
   {
-    name: 'show(options)',
-    type: 'NToastShowOptions',
-    default: '',
-    details: 'Show a toast with type, message, title, icon, actionLabel, onActionPress.'
+    name: "useNToast()",
+    type: "Hook",
+    default: "",
+    details: "Returns toast methods: show, success, error, info, warning.",
   },
-  { name: 'success(message, title?, icon?)', type: 'method', default: '', details: 'Show a success toast.' },
-  { name: 'error(message, title?, icon?)', type: 'method', default: '', details: 'Show an error toast.' },
-  { name: 'info(message, title?, icon?)', type: 'method', default: '', details: 'Show an info toast.' },
-  { name: 'warning(message, title?, icon?)', type: 'method', default: '', details: 'Show a warning toast.' }
+  {
+    name: "show(options)",
+    type: "NToastShowOptions",
+    default: "",
+    details: "Show a toast with type, message, title, icon, actionLabel, onActionPress.",
+  },
+  {
+    name: "success(message, title?, icon?)",
+    type: "method",
+    default: "",
+    details: "Show a success toast.",
+  },
+  {
+    name: "error(message, title?, icon?)",
+    type: "method",
+    default: "",
+    details: "Show an error toast.",
+  },
+  {
+    name: "info(message, title?, icon?)",
+    type: "method",
+    default: "",
+    details: "Show an info toast.",
+  },
+  {
+    name: "warning(message, title?, icon?)",
+    type: "method",
+    default: "",
+    details: "Show a warning toast.",
+  },
 ];

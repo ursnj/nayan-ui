@@ -84,7 +84,10 @@ export const writeZip = async (entries: ZipEntry[]): Promise<Blob> => {
   for (const entry of entries) {
     const name = encoder.encode(entry.name);
     const size = entry.data.size;
-    if (size > MAX_SIZE) throw new ZipError(`${entry.name} is larger than 4GB, which this archive format cannot hold.`);
+    if (size > MAX_SIZE)
+      throw new ZipError(
+        `${entry.name} is larger than 4GB, which this archive format cannot hold.`,
+      );
 
     const crc = await crc32OfBlob(entry.data);
 
@@ -128,7 +131,8 @@ export const writeZip = async (entries: ZipEntry[]): Promise<Blob> => {
     central.push(record);
 
     offset += local.length + size;
-    if (offset > MAX_SIZE) throw new ZipError('The project is larger than 4GB, which this archive format cannot hold.');
+    if (offset > MAX_SIZE)
+      throw new ZipError("The project is larger than 4GB, which this archive format cannot hold.");
   }
 
   const centralSize = central.reduce((total, record) => total + record.length, 0);
@@ -143,7 +147,10 @@ export const writeZip = async (entries: ZipEntry[]): Promise<Blob> => {
   endView.setUint32(16, offset, true);
   endView.setUint16(20, 0, true); // comment
 
-  return new Blob([...parts, ...central.map(record => record.buffer as ArrayBuffer), end.buffer as ArrayBuffer], { type: 'application/zip' });
+  return new Blob(
+    [...parts, ...central.map((record) => record.buffer as ArrayBuffer), end.buffer as ArrayBuffer],
+    { type: "application/zip" },
+  );
 };
 
 /* ------------------------------------------------------------------ *
@@ -172,7 +179,8 @@ export const readZip = async (file: Blob): Promise<Map<string, Blob>> => {
       break;
     }
   }
-  if (eocd < 0) throw new ZipError('This file is not a project bundle — no archive directory was found.');
+  if (eocd < 0)
+    throw new ZipError("This file is not a project bundle — no archive directory was found.");
 
   const count = tailView.getUint16(eocd + 10, true);
   const centralSize = tailView.getUint32(eocd + 12, true);
@@ -185,7 +193,8 @@ export const readZip = async (file: Blob): Promise<Map<string, Blob>> => {
 
   let cursor = 0;
   for (let index = 0; index < count; index++) {
-    if (centralView.getUint32(cursor, true) !== CENTRAL_SIG) throw new ZipError('The project bundle is damaged — its directory is unreadable.');
+    if (centralView.getUint32(cursor, true) !== CENTRAL_SIG)
+      throw new ZipError("The project bundle is damaged — its directory is unreadable.");
 
     const method = centralView.getUint16(cursor + 10, true);
     const size = centralView.getUint32(cursor + 24, true);
@@ -195,15 +204,18 @@ export const readZip = async (file: Blob): Promise<Map<string, Blob>> => {
     const localOffset = centralView.getUint32(cursor + 42, true);
     const name = decoder.decode(central.subarray(cursor + 46, cursor + 46 + nameLength));
 
-    if (method !== 0) throw new ZipError(`"${name}" is compressed, and this reader only handles stored entries.`);
+    if (method !== 0)
+      throw new ZipError(`"${name}" is compressed, and this reader only handles stored entries.`);
 
     // The local header repeats the name and may carry a different amount of
     // extra data, so the payload offset has to come from the local header
     // rather than being assumed from the central one.
     const localHeader = await bytesOf(file.slice(localOffset, localOffset + 30));
     const localView = new DataView(localHeader.buffer);
-    if (localView.getUint32(0, true) !== LOCAL_SIG) throw new ZipError(`The entry "${name}" is damaged.`);
-    const dataStart = localOffset + 30 + localView.getUint16(26, true) + localView.getUint16(28, true);
+    if (localView.getUint32(0, true) !== LOCAL_SIG)
+      throw new ZipError(`The entry "${name}" is damaged.`);
+    const dataStart =
+      localOffset + 30 + localView.getUint16(26, true) + localView.getUint16(28, true);
 
     entries.set(name, file.slice(dataStart, dataStart + size));
     cursor += 46 + nameLength + extraLength + commentLength;

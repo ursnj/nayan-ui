@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { NPress, NText } from '@nayan-ui/native';
-import Screen from '../src/components/Screen';
+import { useState } from "react";
+import { NPress, NText } from "@nayan-ui/native";
+import Screen from "../src/components/Screen";
 
 export default function PressScreen() {
   const [count, setCount] = useState(0);

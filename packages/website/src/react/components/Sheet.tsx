@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { NButton, NSheet, SheetSize } from '@nayan-ui/react';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { useState } from "react";
+import { NButton, NSheet, SheetSize } from "@nayan-ui/react";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
 const Sheet = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -39,19 +39,79 @@ const Sheet = () => {
 export default Sheet;`;
 
 export const sheetAttributes = [
-  { name: 'isOpen', type: 'boolean', default: 'Required', details: 'Controls whether the sheet is open.' },
-  { name: 'title', type: 'string', default: 'Optional', details: 'Title for the sheet.' },
-  { name: 'size', type: 'SheetSize', default: 'Optional', details: 'Size of the sheet.' },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'headerClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'titleClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'contentClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Content for the sheet.' },
-  { name: 'onCloseSheet', type: '() => void', default: 'Optional', details: 'Callback when sheet is closed.' },
-  { name: 'header', type: 'React.ReactNode', default: 'Optional', details: 'Custom header content.' },
-  { name: 'footer', type: 'React.ReactNode', default: 'Optional', details: 'Optional footer content.' },
-  { name: 'aria-label', type: 'string', default: 'Optional', details: 'ARIA label for accessibility.' },
-  { name: 'aria-labelledby', type: 'string', default: 'Optional', details: 'ARIA labelledby for accessibility.' },
-  { name: 'role', type: 'string', default: 'Optional', details: 'ARIA role for accessibility.' },
-  { name: 'onClose', type: '() => void', default: 'Optional', details: 'Callback when the sheet is closed.' }
+  {
+    name: "isOpen",
+    type: "boolean",
+    default: "Required",
+    details: "Controls whether the sheet is open.",
+  },
+  { name: "title", type: "string", default: "Optional", details: "Title for the sheet." },
+  { name: "size", type: "SheetSize", default: "Optional", details: "Size of the sheet." },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "headerClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "titleClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "contentClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "children",
+    type: "React.ReactNode",
+    default: "Required",
+    details: "Content for the sheet.",
+  },
+  {
+    name: "onCloseSheet",
+    type: "() => void",
+    default: "Optional",
+    details: "Callback when sheet is closed.",
+  },
+  {
+    name: "header",
+    type: "React.ReactNode",
+    default: "Optional",
+    details: "Custom header content.",
+  },
+  {
+    name: "footer",
+    type: "React.ReactNode",
+    default: "Optional",
+    details: "Optional footer content.",
+  },
+  {
+    name: "aria-label",
+    type: "string",
+    default: "Optional",
+    details: "ARIA label for accessibility.",
+  },
+  {
+    name: "aria-labelledby",
+    type: "string",
+    default: "Optional",
+    details: "ARIA labelledby for accessibility.",
+  },
+  { name: "role", type: "string", default: "Optional", details: "ARIA role for accessibility." },
+  {
+    name: "onClose",
+    type: "() => void",
+    default: "Optional",
+    details: "Callback when the sheet is closed.",
+  },
 ];

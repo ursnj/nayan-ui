@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import ComponentWrapper from '@/helpers/ComponentWrapper';
-import DemoComingSoon from './DemoComingSoon';
+import ComponentWrapper from "@/helpers/ComponentWrapper";
+import DemoComingSoon from "./DemoComingSoon";
 
 const Menu = () => {
   return (
@@ -68,10 +68,35 @@ export default function MenuScreen() {
 }`;
 
 export const menuAttributes = [
-  { name: 'trigger', type: 'React.ReactNode', default: 'Required', details: 'Trigger element for the menu.' },
-  { name: 'children', type: 'React.ReactNode', default: 'Optional', details: 'Menu content (NMenuItem, NSubMenu items).' },
-  { name: 'title', type: 'string', default: 'Optional', details: 'Title label shown at the top of the menu.' },
-  { name: 'width', type: 'number', default: '220', details: 'Width of the menu content.' },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'titleClassName', type: 'string', default: "' '", details: 'You can customise title by passing tailwind classes.' }
+  {
+    name: "trigger",
+    type: "React.ReactNode",
+    default: "Required",
+    details: "Trigger element for the menu.",
+  },
+  {
+    name: "children",
+    type: "React.ReactNode",
+    default: "Optional",
+    details: "Menu content (NMenuItem, NSubMenu items).",
+  },
+  {
+    name: "title",
+    type: "string",
+    default: "Optional",
+    details: "Title label shown at the top of the menu.",
+  },
+  { name: "width", type: "number", default: "220", details: "Width of the menu content." },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "titleClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise title by passing tailwind classes.",
+  },
 ];

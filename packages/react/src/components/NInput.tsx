@@ -1,10 +1,18 @@
-import React, { ReactNode, forwardRef } from 'react';
-import { Description, FieldError, Input, Label, TextField } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { ReactNode, forwardRef } from "react";
+import { Description, FieldError, Input, Label, TextField } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NInputProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  'children' | 'className' | 'defaultValue' | 'disabled' | 'onChange' | 'readOnly' | 'required' | 'type' | 'value'
+  | "children"
+  | "className"
+  | "defaultValue"
+  | "disabled"
+  | "onChange"
+  | "readOnly"
+  | "required"
+  | "type"
+  | "value"
 > {
   id?: string;
   name?: string;
@@ -32,23 +40,23 @@ export const NInput = React.memo(
         id,
         name,
         label,
-        type = 'text',
+        type = "text",
         placeholder,
         value,
         defaultValue,
         isRequired = false,
         disabled = false,
         isReadOnly = false,
-        className = '',
-        wrapperClassName = '',
-        labelClassName = '',
-        inputClassName = '',
+        className = "",
+        wrapperClassName = "",
+        labelClassName = "",
+        inputClassName = "",
         error,
         helperText,
         onChange,
         ...inputProps
       },
-      ref
+      ref,
     ) => {
       return (
         <TextField
@@ -59,7 +67,8 @@ export const NInput = React.memo(
           isDisabled={disabled}
           isReadOnly={isReadOnly}
           isInvalid={!!error}
-          className={cn('nyn-input-block mb-3', wrapperClassName, className)}>
+          className={cn("nyn-input-block mb-3", wrapperClassName, className)}
+        >
           {label && <Label className={cn(labelClassName)}>{label}</Label>}
           <Input
             {...inputProps}
@@ -74,8 +83,8 @@ export const NInput = React.memo(
           {error && <FieldError>{error}</FieldError>}
         </TextField>
       );
-    }
-  )
+    },
+  ),
 );
 
-NInput.displayName = 'NInput';
+NInput.displayName = "NInput";

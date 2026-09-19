@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { NCard } from '@nayan-ui/react';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { NCard } from "@nayan-ui/react";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
 const Card = () => {
   return (
@@ -27,12 +27,22 @@ const Card = () => {
 export default Card;`;
 
 export const cardAttributes = [
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'You can pass card content as children.' },
   {
-    name: 'onClick',
-    type: '(e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>) => void',
-    default: 'Optional',
-    details: 'You can get callback when card is clicked.'
-  }
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "children",
+    type: "React.ReactNode",
+    default: "Required",
+    details: "You can pass card content as children.",
+  },
+  {
+    name: "onClick",
+    type: "(e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>) => void",
+    default: "Optional",
+    details: "You can get callback when card is clicked.",
+  },
 ];

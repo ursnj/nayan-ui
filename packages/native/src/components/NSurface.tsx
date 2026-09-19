@@ -1,5 +1,5 @@
-import React from 'react';
-import { Surface, type SurfaceRootProps, cn } from 'heroui-native';
+import React from "react";
+import { Surface, type SurfaceRootProps, cn } from "heroui-native";
 
 export interface NSurfaceProps extends SurfaceRootProps {
   children: React.ReactNode;
@@ -13,4 +13,4 @@ export const NSurface = React.memo<NSurfaceProps>(({ children, className, ...pro
   );
 });
 
-NSurface.displayName = 'NSurface';
+NSurface.displayName = "NSurface";

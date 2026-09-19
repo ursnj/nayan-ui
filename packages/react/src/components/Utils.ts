@@ -1,37 +1,37 @@
 export enum ThresholdUnits {
-  Pixel = 'Pixel',
-  Percent = 'Percent'
+  Pixel = "Pixel",
+  Percent = "Percent",
 }
 
 const defaultThreshold = {
   unit: ThresholdUnits.Percent,
-  value: 0.8
+  value: 0.8,
 };
 
 export const isWindowDefined = () => {
-  return typeof window !== 'undefined';
+  return typeof window !== "undefined";
 };
 
 export function parseThreshold(scrollThreshold: string | number): any {
-  if (typeof scrollThreshold === 'number') {
+  if (typeof scrollThreshold === "number") {
     return {
       unit: ThresholdUnits.Percent,
-      value: scrollThreshold * 100
+      value: scrollThreshold * 100,
     };
   }
 
-  if (typeof scrollThreshold === 'string') {
+  if (typeof scrollThreshold === "string") {
     if (scrollThreshold.match(/^(\d*(\.\d+)?)px$/)) {
       return {
         unit: ThresholdUnits.Pixel,
-        value: parseFloat(scrollThreshold)
+        value: parseFloat(scrollThreshold),
       };
     }
 
     if (scrollThreshold.match(/^(\d*(\.\d+)?)%$/)) {
       return {
         unit: ThresholdUnits.Percent,
-        value: parseFloat(scrollThreshold)
+        value: parseFloat(scrollThreshold),
       };
     }
 
@@ -40,7 +40,7 @@ export function parseThreshold(scrollThreshold: string | number): any {
     return defaultThreshold;
   }
 
-  console.warn('scrollThreshold should be string or number');
+  console.warn("scrollThreshold should be string or number");
 
   return defaultThreshold;
 }
@@ -48,7 +48,7 @@ export function parseThreshold(scrollThreshold: string | number): any {
 export const throttle = (
   delay: number,
   callback: (...args: any[]) => any,
-  options: { noTrailing?: boolean; noLeading?: boolean; debounceMode?: boolean } = {}
+  options: { noTrailing?: boolean; noLeading?: boolean; debounceMode?: boolean } = {},
 ) => {
   const { noTrailing = false, noLeading = false, debounceMode = undefined } = options || {};
   let timeoutID: any;
@@ -107,7 +107,10 @@ export const throttle = (
       }
     } else if (noTrailing !== true) {
       // Trailing mode: the pending call is rescheduled for the remainder of the window, not dropped.
-      timeoutID = setTimeout(debounceMode ? clear : exec, debounceMode === undefined ? delay - elapsed : delay);
+      timeoutID = setTimeout(
+        debounceMode ? clear : exec,
+        debounceMode === undefined ? delay - elapsed : delay,
+      );
     }
   }
 
@@ -117,7 +120,11 @@ export const throttle = (
   return wrapper;
 };
 
-export const debounce = (delay: number, callback: () => any, options: { atBegin?: boolean } = {}) => {
+export const debounce = (
+  delay: number,
+  callback: () => any,
+  options: { atBegin?: boolean } = {},
+) => {
   const { atBegin = false } = options || {};
   return throttle(delay, callback, { debounceMode: atBegin !== false });
 };
@@ -127,31 +134,33 @@ export const reactSelectTheme = (theme: any) => ({
   borderRadius: 8,
   colors: {
     ...theme.colors,
-    neutral0: 'var(--surface)',
-    neutral5: 'var(--surface)',
-    neutral10: 'var(--default)',
-    neutral20: 'var(--default)',
-    neutral30: 'var(--default)',
-    neutral40: 'var(--muted)',
-    neutral50: 'var(--muted)',
-    neutral60: 'var(--foreground)',
-    neutral80: 'var(--foreground)',
-    primary: 'var(--accent)',
-    primary25: 'var(--default)',
-    primary50: 'var(--default)',
-    primary75: 'var(--accent)',
-    danger: 'var(--danger)',
-    dangerLight: 'var(--danger)'
-  }
+    neutral0: "var(--surface)",
+    neutral5: "var(--surface)",
+    neutral10: "var(--default)",
+    neutral20: "var(--default)",
+    neutral30: "var(--default)",
+    neutral40: "var(--muted)",
+    neutral50: "var(--muted)",
+    neutral60: "var(--foreground)",
+    neutral80: "var(--foreground)",
+    primary: "var(--accent)",
+    primary25: "var(--default)",
+    primary50: "var(--default)",
+    primary75: "var(--accent)",
+    danger: "var(--danger)",
+    dangerLight: "var(--danger)",
+  },
 });
 
 export const reactSelectCustomClassNames = {
-  control: (_state: any) => 'flex h-10 w-full rounded-lg border border-default bg-surface text-foreground focus:border-accent',
-  menu: (_state: any) => 'w-full rounded-lg border border-default bg-surface shadow-lg',
-  option: (state: any) => (state.isSelected ? 'bg-accent text-accent-foreground' : state.isFocused ? 'bg-default/50' : ''),
-  singleValue: (_state: any) => 'text-foreground',
-  multiValue: (_state: any) => 'rounded-lg bg-default',
-  multiValueLabel: (_state: any) => 'text-foreground',
-  placeholder: (_state: any) => 'text-muted',
-  input: (_state: any) => 'text-foreground'
+  control: (_state: any) =>
+    "flex h-10 w-full rounded-lg border border-default bg-surface text-foreground focus:border-accent",
+  menu: (_state: any) => "w-full rounded-lg border border-default bg-surface shadow-lg",
+  option: (state: any) =>
+    state.isSelected ? "bg-accent text-accent-foreground" : state.isFocused ? "bg-default/50" : "",
+  singleValue: (_state: any) => "text-foreground",
+  multiValue: (_state: any) => "rounded-lg bg-default",
+  multiValueLabel: (_state: any) => "text-foreground",
+  placeholder: (_state: any) => "text-muted",
+  input: (_state: any) => "text-foreground",
 } as any;

@@ -1,12 +1,12 @@
-import { H2_DOC, H3_DOC } from '@/design/system';
-import Code from '@/helpers/Code';
+import { H2_DOC, H3_DOC } from "@/design/system";
+import Code from "@/helpers/Code";
 
 const AICodeScanner = () => {
   return (
     <div>
       <div className="mb-10 max-w-3xl text-base leading-relaxed text-muted">
-        Scan GitHub repositories for package vulnerabilities using native security tools combined with AI-powered analysis. Supports auto-fix with
-        automatic PR creation.
+        Scan GitHub repositories for package vulnerabilities using native security tools combined
+        with AI-powered analysis. Supports auto-fix with automatic PR creation.
       </div>
 
       <h2 className={H2_DOC}>Installation</h2>
@@ -30,16 +30,28 @@ const AICodeScanner = () => {
       <Code language="bash" code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx`} />
 
       <div className="mb-5 mt-5">Scan specific paths in the repo:</div>
-      <Code language="bash" code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx --paths packages/api,packages/web`} />
+      <Code
+        language="bash"
+        code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx --paths packages/api,packages/web`}
+      />
 
       <div className="mb-5 mt-5">Auto-fix vulnerabilities and create a PR:</div>
-      <Code language="bash" code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx --fix`} />
+      <Code
+        language="bash"
+        code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx --fix`}
+      />
 
       <div className="mb-5 mt-5">Auto-fix with custom branch name:</div>
-      <Code language="bash" code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx --fix --branch nayan-ai/security-updates`} />
+      <Code
+        language="bash"
+        code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx --fix --branch nayan-ai/security-updates`}
+      />
 
       <div className="mb-5 mt-5">Use Claude Code instead of Codex:</div>
-      <Code language="bash" code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx --llm claude`} />
+      <Code
+        language="bash"
+        code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx --llm claude`}
+      />
 
       <h2 className={H2_DOC}>Options</h2>
       <div className="overflow-x-auto mb-5">
@@ -53,7 +65,9 @@ const AICodeScanner = () => {
           <tbody>
             <tr>
               <td className="p-3 border-b border-default font-mono text-xs">-t, --token</td>
-              <td className="p-3 border-b border-default">GitHub personal access token (required)</td>
+              <td className="p-3 border-b border-default">
+                GitHub personal access token (required)
+              </td>
             </tr>
             <tr>
               <td className="p-3 border-b border-default font-mono text-xs">-l, --llm</td>
@@ -63,15 +77,21 @@ const AICodeScanner = () => {
             </tr>
             <tr>
               <td className="p-3 border-b border-default font-mono text-xs">-p, --paths</td>
-              <td className="p-3 border-b border-default">Comma-separated list of paths to scan for projects</td>
+              <td className="p-3 border-b border-default">
+                Comma-separated list of paths to scan for projects
+              </td>
             </tr>
             <tr>
               <td className="p-3 border-b border-default font-mono text-xs">-f, --fix</td>
-              <td className="p-3 border-b border-default">Auto-fix vulnerabilities and create a PR</td>
+              <td className="p-3 border-b border-default">
+                Auto-fix vulnerabilities and create a PR
+              </td>
             </tr>
             <tr>
               <td className="p-3 font-mono text-xs">-b, --branch</td>
-              <td className="p-3">Branch name for fix PR (default: nayan-ai/security-fixes-&lt;timestamp&gt;)</td>
+              <td className="p-3">
+                Branch name for fix PR (default: nayan-ai/security-fixes-&lt;timestamp&gt;)
+              </td>
             </tr>
           </tbody>
         </table>
@@ -121,7 +141,9 @@ const AICodeScanner = () => {
             <tr>
               <td className="p-3 border-b border-default font-semibold">Java</td>
               <td className="p-3 border-b border-default font-mono text-xs">pom.xml</td>
-              <td className="p-3 border-b border-default font-mono text-xs">mvn dependency-check</td>
+              <td className="p-3 border-b border-default font-mono text-xs">
+                mvn dependency-check
+              </td>
             </tr>
             <tr>
               <td className="p-3 font-semibold">.NET</td>
@@ -147,11 +169,15 @@ const AICodeScanner = () => {
         </div>
         <div className="bg-surface border border-default rounded-lg p-4">
           <h3 className={H3_DOC}>3. Update Files</h3>
-          <p className="text-sm text-muted">Update manifest files (package.json, requirements.txt, etc.)</p>
+          <p className="text-sm text-muted">
+            Update manifest files (package.json, requirements.txt, etc.)
+          </p>
         </div>
         <div className="bg-surface border border-default rounded-lg p-4">
           <h3 className={H3_DOC}>4. Create PR</h3>
-          <p className="text-sm text-muted">Commit, push, and create a Pull Request with detailed description</p>
+          <p className="text-sm text-muted">
+            Commit, push, and create a Pull Request with detailed description
+          </p>
         </div>
       </div>
     </div>

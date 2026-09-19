@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { NPagination } from '@nayan-ui/react';
-import { H3_DOC } from '@/design/system';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { useState } from "react";
+import { NPagination } from "@nayan-ui/react";
+import { H3_DOC } from "@/design/system";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
 const Pagination = () => {
   const [page, setPage] = useState(3);
@@ -46,17 +46,32 @@ const Pagination = () => {
 export default Pagination;`;
 
 export const paginationAttributes = [
-  { name: 'totalPages', type: 'number', default: 'Required', details: 'The totalPages prop.' },
-  { name: 'currentPage', type: 'number', default: 'Required', details: 'The currentPage prop.' },
-  { name: 'onChange', type: '(page: number) => void', default: 'Required', details: 'The onChange prop.' },
-  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'The size prop.' },
-  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
-  { name: 'showSummary', type: 'boolean', default: 'false', details: 'The showSummary prop.' },
-  { name: 'summaryText', type: 'string', default: 'Optional', details: 'The summaryText prop.' },
-  { name: 'siblingCount', type: 'number', default: '1', details: 'The siblingCount prop.' },
-  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
-  { name: 'contentClassName', type: 'string', default: "''", details: 'The contentClassName prop.' },
-  { name: 'linkClassName', type: 'string', default: "''", details: 'The linkClassName prop.' },
-  { name: 'activeLinkClassName', type: 'string', default: "''", details: 'The activeLinkClassName prop.' },
-  { name: 'aria-label', type: 'string', default: "'Pagination'", details: 'The aria-label prop.' }
+  { name: "totalPages", type: "number", default: "Required", details: "The totalPages prop." },
+  { name: "currentPage", type: "number", default: "Required", details: "The currentPage prop." },
+  {
+    name: "onChange",
+    type: "(page: number) => void",
+    default: "Required",
+    details: "The onChange prop.",
+  },
+  { name: "size", type: "'sm' | 'md' | 'lg'", default: "'md'", details: "The size prop." },
+  { name: "disabled", type: "boolean", default: "false", details: "The disabled prop." },
+  { name: "showSummary", type: "boolean", default: "false", details: "The showSummary prop." },
+  { name: "summaryText", type: "string", default: "Optional", details: "The summaryText prop." },
+  { name: "siblingCount", type: "number", default: "1", details: "The siblingCount prop." },
+  { name: "className", type: "string", default: "''", details: "The className prop." },
+  {
+    name: "contentClassName",
+    type: "string",
+    default: "''",
+    details: "The contentClassName prop.",
+  },
+  { name: "linkClassName", type: "string", default: "''", details: "The linkClassName prop." },
+  {
+    name: "activeLinkClassName",
+    type: "string",
+    default: "''",
+    details: "The activeLinkClassName prop.",
+  },
+  { name: "aria-label", type: "string", default: "'Pagination'", details: "The aria-label prop." },
 ];

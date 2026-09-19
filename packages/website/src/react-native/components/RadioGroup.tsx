@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import ComponentWrapper from '@/helpers/ComponentWrapper';
-import DemoComingSoon from './DemoComingSoon';
+import ComponentWrapper from "@/helpers/ComponentWrapper";
+import DemoComingSoon from "./DemoComingSoon";
 
 const RadioGroup = () => {
   return (
@@ -64,12 +64,42 @@ export default function RadioScreen() {
 }`;
 
 export const radioAttributes = [
-  { name: 'value', type: 'string', default: 'Required', details: 'Currently selected value.' },
-  { name: 'items', type: 'RadioItem[]', default: 'Required', details: 'Array of radio items with label and value.' },
-  { name: 'onValueChange', type: '(value: string) => void', default: 'Required', details: 'Callback when selection changes.' },
-  { name: 'label', type: 'string', default: 'Optional', details: 'Label for the radio group.' },
-  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the radio group is disabled.' },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise container by passing tailwind classes.' },
-  { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise group label by passing tailwind classes.' },
-  { name: 'itemClassName', type: 'string', default: "' '", details: 'You can customise individual radio items by passing tailwind classes.' }
+  { name: "value", type: "string", default: "Required", details: "Currently selected value." },
+  {
+    name: "items",
+    type: "RadioItem[]",
+    default: "Required",
+    details: "Array of radio items with label and value.",
+  },
+  {
+    name: "onValueChange",
+    type: "(value: string) => void",
+    default: "Required",
+    details: "Callback when selection changes.",
+  },
+  { name: "label", type: "string", default: "Optional", details: "Label for the radio group." },
+  {
+    name: "isDisabled",
+    type: "boolean",
+    default: "false",
+    details: "Whether the radio group is disabled.",
+  },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise container by passing tailwind classes.",
+  },
+  {
+    name: "labelClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise group label by passing tailwind classes.",
+  },
+  {
+    name: "itemClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise individual radio items by passing tailwind classes.",
+  },
 ];

@@ -1,10 +1,10 @@
-import React, { memo, useCallback, useId } from 'react';
-import Select from 'react-select';
-import CreatableSelect from 'react-select/creatable';
-import { Label } from '@heroui/react';
-import { cn } from '../lib/utils';
-import { ReactSelectOption } from './Types';
-import { reactSelectCustomClassNames, reactSelectTheme } from './Utils';
+import React, { memo, useCallback, useId } from "react";
+import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
+import { Label } from "@heroui/react";
+import { cn } from "../lib/utils";
+import { ReactSelectOption } from "./Types";
+import { reactSelectCustomClassNames, reactSelectTheme } from "./Utils";
 
 export interface NSelectProps<OptionType = ReactSelectOption, IsMulti extends boolean = false> {
   isMulti?: IsMulti;
@@ -30,13 +30,16 @@ export interface NSelectProps<OptionType = ReactSelectOption, IsMulti extends bo
   inputId?: string;
   name?: string;
   menuPortalTarget?: HTMLElement;
-  'aria-label'?: string;
+  "aria-label"?: string;
   styles?: Record<string, unknown>;
   [key: string]: any; // for additional react-select props
 }
 
-const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, IsMulti extends boolean = false>(
-  props: NSelectProps<OptionType, IsMulti>
+const NSelectInner = <
+  OptionType extends ReactSelectOption = ReactSelectOption,
+  IsMulti extends boolean = false,
+>(
+  props: NSelectProps<OptionType, IsMulti>,
 ) => {
   const {
     options,
@@ -46,13 +49,13 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
     isMulti = false as IsMulti,
     isLoading = false,
     isCreatable = false,
-    placeholder = 'Select...',
+    placeholder = "Select...",
     isSearchable = true,
     isClearable = false,
     disabled = false,
-    className = '',
-    labelClassName = '',
-    selectClassName = '',
+    className = "",
+    labelClassName = "",
+    selectClassName = "",
     onChange,
     onChangeOptions,
     onCreateOption,
@@ -61,7 +64,7 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
     inputId,
     name,
     menuPortalTarget,
-    'aria-label': ariaLabel,
+    "aria-label": ariaLabel,
     styles,
     ...rest
   } = props;
@@ -77,14 +80,14 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
         onChange(selected);
       }
     },
-    [onChange, onChangeOptions]
+    [onChange, onChangeOptions],
   );
 
   const handleCreate = useCallback(
     (inputValue: string) => {
       if (onCreateOption) onCreateOption(inputValue);
     },
-    [onCreateOption]
+    [onCreateOption],
   );
 
   const SelectComponent = isCreatable ? CreatableSelect : Select;
@@ -93,11 +96,11 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
   const mergedStyles = {
     menuPortal: (base: Record<string, unknown>) => ({ ...base, zIndex: 9999 }),
     menu: (base: Record<string, unknown>) => ({ ...base, zIndex: 50 }),
-    ...styles
+    ...styles,
   };
 
   return (
-    <div className={cn('nyn-select-block mb-3', className)}>
+    <div className={cn("nyn-select-block mb-3", className)}>
       {label && (
         <Label htmlFor={selectId} className={cn(labelClassName)}>
           {label}
@@ -111,7 +114,7 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
         isDisabled={disabled}
         isClearable={isClearable}
         isSearchable={isSearchable}
-        className={cn('nyn-select', selectClassName)}
+        className={cn("nyn-select", selectClassName)}
         placeholder={placeholder}
         classNamePrefix="nyn-select"
         value={isMulti ? (value as OptionType[]) : (value as OptionType | null)}
@@ -122,7 +125,7 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
         onChange={handleChange}
         onCreateOption={isCreatable ? handleCreate : undefined}
         theme={reactSelectTheme}
-        aria-label={ariaLabel || label || 'Select'}
+        aria-label={ariaLabel || label || "Select"}
         menuPortalTarget={menuPortalTarget}
         styles={mergedStyles as any}
         menuPosition="fixed"
@@ -135,4 +138,4 @@ const NSelectInner = <OptionType extends ReactSelectOption = ReactSelectOption, 
 
 export const NSelect = memo(NSelectInner) as typeof NSelectInner;
 
-(NSelect as React.FC).displayName = 'NSelect';
+(NSelect as React.FC).displayName = "NSelect";

@@ -1,33 +1,60 @@
-import React, { ReactNode, memo } from 'react';
-import { Separator } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { ReactNode, memo } from "react";
+import { Separator } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NDividerProps {
   className?: string;
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
   children?: ReactNode;
   childrenClassName?: string;
   separatorClassName?: string;
 }
 
 const NDividerComponent: React.FC<NDividerProps> = memo(
-  ({ className = '', orientation = 'horizontal', children, childrenClassName = '', separatorClassName = '', ...rest }) => {
-    if (children != null && orientation === 'vertical') {
-      return <Separator orientation={orientation} className={cn('nyn-divider', className, separatorClassName)} {...(rest as any)} />;
-    }
-    if (children != null && orientation === 'horizontal') {
+  ({
+    className = "",
+    orientation = "horizontal",
+    children,
+    childrenClassName = "",
+    separatorClassName = "",
+    ...rest
+  }) => {
+    if (children != null && orientation === "vertical") {
       return (
-        <div className={cn('nyn-divider flex items-center', className)}>
-          <Separator orientation="horizontal" className={cn('flex-1', separatorClassName)} {...(rest as any)} />
-          <span className={cn('mx-2 whitespace-nowrap', childrenClassName)}>{children}</span>
-          <Separator orientation="horizontal" className={cn('flex-1', separatorClassName)} {...(rest as any)} />
+        <Separator
+          orientation={orientation}
+          className={cn("nyn-divider", className, separatorClassName)}
+          {...(rest as any)}
+        />
+      );
+    }
+    if (children != null && orientation === "horizontal") {
+      return (
+        <div className={cn("nyn-divider flex items-center", className)}>
+          <Separator
+            orientation="horizontal"
+            className={cn("flex-1", separatorClassName)}
+            {...(rest as any)}
+          />
+          <span className={cn("mx-2 whitespace-nowrap", childrenClassName)}>{children}</span>
+          <Separator
+            orientation="horizontal"
+            className={cn("flex-1", separatorClassName)}
+            {...(rest as any)}
+          />
         </div>
       );
     }
-    return <Separator orientation={orientation} className={cn('nyn-divider', className, separatorClassName)} {...(rest as any)} />;
-  }
+    return (
+      <Separator
+        orientation={orientation}
+        className={cn("nyn-divider", className, separatorClassName)}
+        {...(rest as any)}
+      />
+    );
+  },
 );
 
-NDividerComponent.displayName = 'NDivider';
+NDividerComponent.displayName = "NDivider";
 
 export const NDivider = NDividerComponent;

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { NKbd } from '@nayan-ui/react';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { NKbd } from "@nayan-ui/react";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
 const KeyboardKey = () => {
   return (
@@ -39,6 +39,6 @@ const KeyboardKey = () => {
 export default KeyboardKey;`;
 
 export const kbdAttributes = [
-  { name: 'children', type: 'ReactNode', default: 'Required', details: 'The children prop.' },
-  { name: 'className', type: 'string', default: "''", details: 'The className prop.' }
+  { name: "children", type: "ReactNode", default: "Required", details: "The children prop." },
+  { name: "className", type: "string", default: "''", details: "The className prop." },
 ];

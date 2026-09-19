@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import ComponentWrapper from '@/helpers/ComponentWrapper';
-import DemoComingSoon from './DemoComingSoon';
+import ComponentWrapper from "@/helpers/ComponentWrapper";
+import DemoComingSoon from "./DemoComingSoon";
 
 const Tooltip = () => {
   return (
@@ -42,8 +42,23 @@ export default function TooltipScreen() {
 }`;
 
 export const tooltipAttributes = [
-  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Trigger element for the tooltip.' },
-  { name: 'message', type: 'string', default: 'Required', details: 'Tooltip message text.' },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise tooltip content by passing tailwind classes.' },
-  { name: 'textClassName', type: 'string', default: "' '", details: 'You can customise tooltip text by passing tailwind classes.' }
+  {
+    name: "children",
+    type: "React.ReactNode",
+    default: "Required",
+    details: "Trigger element for the tooltip.",
+  },
+  { name: "message", type: "string", default: "Required", details: "Tooltip message text." },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise tooltip content by passing tailwind classes.",
+  },
+  {
+    name: "textClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise tooltip text by passing tailwind classes.",
+  },
 ];

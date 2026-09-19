@@ -1,66 +1,80 @@
-import chalk from 'chalk';
-import { spawn } from 'child_process';
-import type { CodeIssue } from './types.js';
+import chalk from "chalk";
+import { spawn } from "child_process";
+import type { CodeIssue } from "./types.js";
 
 export interface ClaudeOptions {
   verbose?: boolean;
 }
 
-export const analyzeWithClaude = async (repoPath: string, prompt: string, options: ClaudeOptions): Promise<CodeIssue[]> => {
+export const analyzeWithClaude = async (
+  repoPath: string,
+  prompt: string,
+  options: ClaudeOptions,
+): Promise<CodeIssue[]> => {
   const response = await runClaudeExec(repoPath, prompt, options);
   return parseClaudeResponse(response);
 };
 
-export const analyzeWithClaudeRaw = async (repoPath: string, prompt: string, options: ClaudeOptions): Promise<any> => {
+export const analyzeWithClaudeRaw = async (
+  repoPath: string,
+  prompt: string,
+  options: ClaudeOptions,
+): Promise<any> => {
   const response = await runClaudeExec(repoPath, prompt, options);
   return parseClaudeResponseRaw(response);
 };
 
 const runClaudeExec = (repoPath: string, prompt: string, options: ClaudeOptions): Promise<string> =>
   new Promise((resolve, reject) => {
-    const args = ['-p', '--output-format', 'json', prompt];
+    const args = ["-p", "--output-format", "json", prompt];
 
     if (options.verbose) {
-      console.log(`\n[Claude] Running: claude ${args.slice(0, 3).join(' ')} "<prompt>"`);
+      console.log(`\n[Claude] Running: claude ${args.slice(0, 3).join(" ")} "<prompt>"`);
       console.log(`[Claude] Working directory: ${repoPath}`);
     }
 
     const startTime = Date.now();
-    const child = spawn('claude', args, { cwd: repoPath, stdio: ['pipe', 'pipe', 'pipe'] });
+    const child = spawn("claude", args, { cwd: repoPath, stdio: ["pipe", "pipe", "pipe"] });
 
-    let stdout = '';
-    let stderr = '';
+    let stdout = "";
+    let stderr = "";
 
-    child.stdout.on('data', data => {
+    child.stdout.on("data", (data) => {
       const chunk = data.toString();
       stdout += chunk;
       if (options.verbose) {
         process.stdout.write(chunk);
       } else {
-        process.stdout.write(chalk.gray('.'));
+        process.stdout.write(chalk.gray("."));
       }
     });
 
-    child.stderr.on('data', data => {
+    child.stderr.on("data", (data) => {
       const chunk = data.toString();
       stderr += chunk;
       if (options.verbose) process.stderr.write(chunk);
     });
 
-    child.on('close', code => {
+    child.on("close", (code) => {
       if (!options.verbose) console.log();
       console.log(`\n[Claude] Completed in ${((Date.now() - startTime) / 1000).toFixed(1)}s`);
 
       if (code !== 0) {
-        reject(new Error(`Claude review failed (exit ${code}): ${(stderr || stdout || 'Unknown error').slice(0, 500)}`));
+        reject(
+          new Error(
+            `Claude review failed (exit ${code}): ${(stderr || stdout || "Unknown error").slice(0, 500)}`,
+          ),
+        );
         return;
       }
       resolve(stdout);
     });
 
-    child.on('error', err => {
-      if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
-        reject(new Error('claude CLI not found. Install Claude Code CLI first: https://code.claude.com'));
+    child.on("error", (err) => {
+      if ((err as NodeJS.ErrnoException).code === "ENOENT") {
+        reject(
+          new Error("claude CLI not found. Install Claude Code CLI first: https://code.claude.com"),
+        );
         return;
       }
       reject(err);
@@ -68,10 +82,10 @@ const runClaudeExec = (repoPath: string, prompt: string, options: ClaudeOptions)
   });
 
 const mapIssue = (item: any): CodeIssue & Record<string, any> => ({
-  filename: item.filename || item.package || 'unknown',
+  filename: item.filename || item.package || "unknown",
   line: item.line || 0,
-  category: item.category || 'functionality',
-  severity: item.severity || 'info',
+  category: item.category || "functionality",
+  severity: item.severity || "info",
   message: item.message || item.title || item.description,
   suggestion: item.suggestion || item.fixedIn,
   // Preserve vulnerability-specific fields for scan command
@@ -80,7 +94,7 @@ const mapIssue = (item: any): CodeIssue & Record<string, any> => ({
   title: item.title,
   description: item.description,
   fixedIn: item.fixedIn,
-  cve: item.cve
+  cve: item.cve,
 });
 
 const extractItems = (json: any): any[] => {
@@ -108,9 +122,9 @@ const extractIssuesFromText = (text: string): CodeIssue[] | null => {
   if (fixData) {
     return [
       {
-        ...mapIssue({ message: 'Fix response' }),
-        _rawFixData: fixData
-      } as any
+        ...mapIssue({ message: "Fix response" }),
+        _rawFixData: fixData,
+      } as any,
     ];
   }
 
@@ -135,13 +149,13 @@ const parseClaudeResponse = (response: string): CodeIssue[] => {
     const text = parsed.result || parsed.text || response;
 
     // Check for fix response first
-    const fixData = extractFixData(typeof text === 'string' ? text : JSON.stringify(text));
+    const fixData = extractFixData(typeof text === "string" ? text : JSON.stringify(text));
     if (fixData) {
       return [
         {
-          ...mapIssue({ message: 'Fix response' }),
-          _rawFixData: fixData
-        } as any
+          ...mapIssue({ message: "Fix response" }),
+          _rawFixData: fixData,
+        } as any,
       ];
     }
 
@@ -154,7 +168,11 @@ const parseClaudeResponse = (response: string): CodeIssue[] => {
   const issues = extractIssuesFromText(response);
   if (issues) return issues;
 
-  if (response.trim() && !response.includes('"issues"') && !response.includes('"vulnerabilities"')) {
+  if (
+    response.trim() &&
+    !response.includes('"issues"') &&
+    !response.includes('"vulnerabilities"')
+  ) {
     console.warn(chalk.yellow(`\n⚠ Warning: Claude response does not contain expected format`));
     console.warn(chalk.gray(`  Response preview: ${response.slice(0, 200)}...`));
   }
@@ -168,12 +186,14 @@ const parseClaudeResponseRaw = (response: string): any => {
     const text = parsed.result || parsed.text || response;
 
     // Try to parse the text as JSON
-    if (typeof text === 'string') {
+    if (typeof text === "string") {
       try {
         return JSON.parse(text);
       } catch {
         // Text contains JSON somewhere
-        const jsonMatch = text.match(/\{[\s\S]*"(?:fixes|updatedManifest|issues|vulnerabilities)"[\s\S]*\}/);
+        const jsonMatch = text.match(
+          /\{[\s\S]*"(?:fixes|updatedManifest|issues|vulnerabilities)"[\s\S]*\}/,
+        );
         if (jsonMatch) {
           return JSON.parse(jsonMatch[0]);
         }
@@ -189,7 +209,9 @@ const parseClaudeResponseRaw = (response: string): any => {
   }
 
   // Try to find JSON in raw response
-  const jsonMatch = response.match(/\{[\s\S]*"(?:fixes|updatedManifest|issues|vulnerabilities)"[\s\S]*\}/);
+  const jsonMatch = response.match(
+    /\{[\s\S]*"(?:fixes|updatedManifest|issues|vulnerabilities)"[\s\S]*\}/,
+  );
   if (jsonMatch) {
     try {
       return JSON.parse(jsonMatch[0]);

@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { NSwitch, NText } from '@nayan-ui/native';
-import Screen from '../src/components/Screen';
+import { useState } from "react";
+import { NSwitch, NText } from "@nayan-ui/native";
+import Screen from "../src/components/Screen";
 
 export default function SwitchScreen() {
   const [wifi, setWifi] = useState(true);
@@ -12,7 +12,7 @@ export default function SwitchScreen() {
       <NSwitch label="Wi-Fi" isSelected={wifi} onSelectedChange={setWifi} />
       <NSwitch label="Bluetooth" isSelected={bluetooth} onSelectedChange={setBluetooth} />
       <NText className="text-muted">
-        Wi-Fi: {wifi ? 'On' : 'Off'}, Bluetooth: {bluetooth ? 'On' : 'Off'}
+        Wi-Fi: {wifi ? "On" : "Off"}, Bluetooth: {bluetooth ? "On" : "Off"}
       </NText>
 
       <NText className="text-lg font-bold">Disabled</NText>

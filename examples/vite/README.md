@@ -25,24 +25,24 @@ npm install -D @tailwindcss/vite tailwindcss
 ### 1. Add Tailwind plugin to `vite.config.ts`
 
 ```ts
-import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()]
+  plugins: [react(), tailwindcss()],
 });
 ```
 
 ### 2. Configure `src/index.css`
 
 ```css
-@import '@nayan-ui/react/styles.css';
+@import "@nayan-ui/react/styles.css";
 
 @source '../../node_modules/@nayan-ui/react/dist';
 
 :root,
-[data-theme='light'] {
+[data-theme="light"] {
   color-scheme: light;
 
   --background: hsl(214 45% 95%);
@@ -78,7 +78,7 @@ export default defineConfig({
 }
 
 .dark,
-[data-theme='dark'] {
+[data-theme="dark"] {
   color-scheme: dark;
 
   --background: hsl(222 47% 11%);
@@ -120,7 +120,7 @@ body {
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
-    'Segoe UI',
+    "Segoe UI",
     Roboto,
     sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -131,15 +131,17 @@ body {
 ### 3. Use components in `src/App.tsx`
 
 ```tsx
-import { NButton, NTheme, THEMES, useLocalStorage } from '@nayan-ui/react';
+import { NButton, NTheme, THEMES, useLocalStorage } from "@nayan-ui/react";
 
 function App() {
-  const [theme, setTheme] = useLocalStorage('THEME', THEMES.LIGHT);
+  const [theme, setTheme] = useLocalStorage("THEME", THEMES.LIGHT);
 
   return (
     <NTheme theme={theme}>
       <div className="min-h-screen flex items-center justify-center bg-background gap-4">
-        <NButton onClick={() => setTheme(theme === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT)}>Toggle Theme</NButton>
+        <NButton onClick={() => setTheme(theme === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT)}>
+          Toggle Theme
+        </NButton>
       </div>
     </NTheme>
   );

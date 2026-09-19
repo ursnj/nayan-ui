@@ -1,10 +1,16 @@
-'use client';
+"use client";
 
-import { NAvatarGroup } from '@nayan-ui/react';
-import { H3_DOC } from '@/design/system';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { NAvatarGroup } from "@nayan-ui/react";
+import { H3_DOC } from "@/design/system";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
-const members = [{ fallback: 'ND' }, { fallback: 'AK' }, { fallback: 'RS' }, { fallback: 'JP' }, { fallback: 'MM' }];
+const members = [
+  { fallback: "ND" },
+  { fallback: "AK" },
+  { fallback: "RS" },
+  { fallback: "JP" },
+  { fallback: "MM" },
+];
 
 const AvatarGroup = () => {
   return (
@@ -44,18 +50,38 @@ const AvatarGroup = () => {
 export default AvatarGroup;`;
 
 export const avatarGroupAttributes = [
-  { name: 'items', type: 'NAvatarGroupItem[]', default: 'Required', details: 'The items prop.' },
-  { name: 'max', type: 'number', default: 'Optional', details: 'Avatars shown before the rest are collapsed into a count.' },
-  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'The size prop.' },
-  { name: 'color', type: "'default' | 'accent' | 'success' | 'warning' | 'danger'", default: "'default'", details: 'The color prop.' },
-  { name: 'variant', type: "'default' | 'soft'", default: "'default'", details: 'The variant prop.' },
+  { name: "items", type: "NAvatarGroupItem[]", default: "Required", details: "The items prop." },
   {
-    name: 'overlap',
+    name: "max",
+    type: "number",
+    default: "Optional",
+    details: "Avatars shown before the rest are collapsed into a count.",
+  },
+  { name: "size", type: "'sm' | 'md' | 'lg'", default: "'md'", details: "The size prop." },
+  {
+    name: "color",
+    type: "'default' | 'accent' | 'success' | 'warning' | 'danger'",
+    default: "'default'",
+    details: "The color prop.",
+  },
+  {
+    name: "variant",
+    type: "'default' | 'soft'",
+    default: "'default'",
+    details: "The variant prop.",
+  },
+  {
+    name: "overlap",
     type: "'clip' | 'ring'",
     default: "'ring'",
-    details: 'How the avatars meet: overlapping with a ring, or clipped into each other.'
+    details: "How the avatars meet: overlapping with a ring, or clipped into each other.",
   },
-  { name: 'isGrid', type: 'boolean', default: 'false', details: 'Lays the avatars out in a grid instead of an overlapping row.' },
-  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
-  { name: 'avatarClassName', type: 'string', default: "''", details: 'The avatarClassName prop.' }
+  {
+    name: "isGrid",
+    type: "boolean",
+    default: "false",
+    details: "Lays the avatars out in a grid instead of an overlapping row.",
+  },
+  { name: "className", type: "string", default: "''", details: "The className prop." },
+  { name: "avatarClassName", type: "string", default: "''", details: "The avatarClassName prop." },
 ];

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { NSwitch } from '@nayan-ui/react';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { useState } from "react";
+import { NSwitch } from "@nayan-ui/react";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
 
 const Switch = () => {
   const [airplane, setAirplane] = useState(false);
@@ -47,14 +47,54 @@ const Switch = () => {
 export default Switch;`;
 
 export const switchAttributes = [
-  { name: 'enabled', type: 'boolean', default: 'Optional', details: 'Whether the switch is enabled.' },
-  { name: 'defaultChecked', type: 'boolean', default: 'Optional', details: 'Default checked state.' },
-  { name: 'label', type: 'React.ReactNode', default: 'Optional', details: 'Label for the switch.' },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'switchClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
-  { name: 'onChange', type: '(checked: boolean) => void', default: 'Optional', details: 'Callback when switch state changes.' },
-  { name: 'id', type: 'string', default: 'Optional', details: 'ID for the switch.' },
-  { name: 'checked', type: 'boolean', default: 'Optional', details: 'Alias of enabled for controlled state.' },
-  { name: 'disabled', type: 'boolean', default: 'false', details: 'Whether the switch is disabled.' }
+  {
+    name: "enabled",
+    type: "boolean",
+    default: "Optional",
+    details: "Whether the switch is enabled.",
+  },
+  {
+    name: "defaultChecked",
+    type: "boolean",
+    default: "Optional",
+    details: "Default checked state.",
+  },
+  { name: "label", type: "React.ReactNode", default: "Optional", details: "Label for the switch." },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "labelClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "switchClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "onChange",
+    type: "(checked: boolean) => void",
+    default: "Optional",
+    details: "Callback when switch state changes.",
+  },
+  { name: "id", type: "string", default: "Optional", details: "ID for the switch." },
+  {
+    name: "checked",
+    type: "boolean",
+    default: "Optional",
+    details: "Alias of enabled for controlled state.",
+  },
+  {
+    name: "disabled",
+    type: "boolean",
+    default: "false",
+    details: "Whether the switch is disabled.",
+  },
 ];

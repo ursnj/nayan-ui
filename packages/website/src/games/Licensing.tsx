@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { NLink } from '@nayan-ui/react';
-import { usePathname } from 'next/navigation';
-import { H2_DOC, H3_DOC } from '@/design/system';
-import Sidebar from '@/helpers/Sidebar';
-import { getMenuItem } from '@/services/Utils';
+import { NLink } from "@nayan-ui/react";
+import { usePathname } from "next/navigation";
+import { H2_DOC, H3_DOC } from "@/design/system";
+import Sidebar from "@/helpers/Sidebar";
+import { getMenuItem } from "@/services/Utils";
 
 const GamesLicensing = () => {
   const pathname = usePathname();
   const component: any = getMenuItem(pathname);
 
   return (
-    <Sidebar title={component?.title || 'Licensing'}>
+    <Sidebar title={component?.title || "Licensing"}>
       <div className="mb-8">
         <div className="space-y-6">
           <p className="text-muted">
@@ -73,10 +73,11 @@ const GamesLicensing = () => {
             <div className="bg-accent/10 rounded-lg p-4">
               <p className="text-foreground font-semibold mb-2">Get Commercial License:</p>
               <p className="text-muted text-sm">
-                📧 Email:{' '}
+                📧 Email:{" "}
                 <NLink
                   href="mailto:niranjan.devasani@gmail.com?subject=%40nayan-ui%2Fgames%20-%20Commercial%20License%20Request"
-                  className="text-accent hover:underline">
+                  className="text-accent hover:underline"
+                >
                   niranjan.devasani@gmail.com
                 </NLink>
               </p>
@@ -92,39 +93,63 @@ const GamesLicensing = () => {
         </h2>
         <ul className="text-muted space-y-2">
           <li>
-            • Built with{' '}
-            <NLink href="https://shopify.github.io/react-native-skia/" target="_blank" className="text-accent hover:underline">
+            • Built with{" "}
+            <NLink
+              href="https://shopify.github.io/react-native-skia/"
+              target="_blank"
+              className="text-accent hover:underline"
+            >
               React Native Skia
-            </NLink>{' '}
+            </NLink>{" "}
             for high-performance graphics
           </li>
           <li>
-            • Powered by{' '}
-            <NLink href="https://docs.swmansion.com/react-native-reanimated/" target="_blank" className="text-accent hover:underline">
+            • Powered by{" "}
+            <NLink
+              href="https://docs.swmansion.com/react-native-reanimated/"
+              target="_blank"
+              className="text-accent hover:underline"
+            >
               React Native Reanimated
-            </NLink>{' '}
+            </NLink>{" "}
             for smooth animations
           </li>
           <li>
-            • Enhanced with{' '}
-            <NLink href="https://github.com/margelo/react-native-worklets" target="_blank" className="text-accent hover:underline">
+            • Enhanced with{" "}
+            <NLink
+              href="https://github.com/margelo/react-native-worklets"
+              target="_blank"
+              className="text-accent hover:underline"
+            >
               React Native Worklets
-            </NLink>{' '}
+            </NLink>{" "}
             for high-performance JavaScript
           </li>
           <li>
-            • State management with{' '}
-            <NLink href="https://github.com/pmndrs/zustand" target="_blank" className="text-accent hover:underline">
+            • State management with{" "}
+            <NLink
+              href="https://github.com/pmndrs/zustand"
+              target="_blank"
+              className="text-accent hover:underline"
+            >
               Zustand
-            </NLink>{' '}
-            and{' '}
-            <NLink href="https://github.com/immerjs/immer" target="_blank" className="text-accent hover:underline">
+            </NLink>{" "}
+            and{" "}
+            <NLink
+              href="https://github.com/immerjs/immer"
+              target="_blank"
+              className="text-accent hover:underline"
+            >
               Immer
             </NLink>
           </li>
           <li>
-            • Created with{' '}
-            <NLink href="https://github.com/callstack/react-native-builder-bob" target="_blank" className="text-accent hover:underline">
+            • Created with{" "}
+            <NLink
+              href="https://github.com/callstack/react-native-builder-bob"
+              target="_blank"
+              className="text-accent hover:underline"
+            >
               create-react-native-library
             </NLink>
           </li>
@@ -140,21 +165,32 @@ const GamesLicensing = () => {
           <li className="flex items-center">
             <span className="mr-2">📧</span>
             <strong className="mr-2">Email:</strong>
-            <NLink href="mailto:niranjan.devasani@gmail.com" className="text-accent hover:underline">
+            <NLink
+              href="mailto:niranjan.devasani@gmail.com"
+              className="text-accent hover:underline"
+            >
               niranjan.devasani@gmail.com
             </NLink>
           </li>
           <li className="flex items-center">
             <span className="mr-2">🐛</span>
             <strong className="mr-2">Issues:</strong>
-            <NLink href="https://github.com/ursnj/nayan-ui/issues" target="_blank" className="text-accent hover:underline">
+            <NLink
+              href="https://github.com/ursnj/nayan-ui/issues"
+              target="_blank"
+              className="text-accent hover:underline"
+            >
               GitHub Issues
             </NLink>
           </li>
           <li className="flex items-center">
             <span className="mr-2">🌐</span>
             <strong className="mr-2">Website:</strong>
-            <NLink href="https://www.nayanui.com/games" target="_blank" className="text-accent hover:underline">
+            <NLink
+              href="https://www.nayanui.com/games"
+              target="_blank"
+              className="text-accent hover:underline"
+            >
               https://www.nayanui.com/games
             </NLink>
           </li>

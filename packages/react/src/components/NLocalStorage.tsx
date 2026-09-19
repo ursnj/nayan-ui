@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 
-const isWindowDefined = () => typeof window !== 'undefined';
-const LOCAL_STORAGE_CHANGE_EVENT = 'nayan-ui:local-storage-change';
+const isWindowDefined = () => typeof window !== "undefined";
+const LOCAL_STORAGE_CHANGE_EVENT = "nayan-ui:local-storage-change";
 
 interface LocalStorageChangeDetail {
   key: string;
@@ -21,7 +21,11 @@ export type UseLocalStorageOptions<T> = Partial<{
 }>;
 
 // Named export for the hook
-export function useLocalStorage<T>(key: string, defaultValue?: T, options?: UseLocalStorageOptions<T>): [T | undefined, LocalStorageSetter<T>] {
+export function useLocalStorage<T>(
+  key: string,
+  defaultValue?: T,
+  options?: UseLocalStorageOptions<T>,
+): [T | undefined, LocalStorageSetter<T>] {
   const serializer = options?.serializer ?? (JSON.stringify as LocalStorageSerializer<T>);
   const parser = options?.parser ?? (JSON.parse as LocalStorageParser<T>);
   const logger = options?.logger ?? console.error;
@@ -80,18 +84,21 @@ export function useLocalStorage<T>(key: string, defaultValue?: T, options?: UseL
       applyStoredValue(newValue);
     };
 
-    window.addEventListener('storage', handleStorage);
+    window.addEventListener("storage", handleStorage);
     window.addEventListener(LOCAL_STORAGE_CHANGE_EVENT, handleLocalStorageChange);
     return () => {
-      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener("storage", handleStorage);
       window.removeEventListener(LOCAL_STORAGE_CHANGE_EVENT, handleLocalStorageChange);
     };
   }, [applyStoredValue, key, syncData]);
 
   // Setter: update state and localStorage
   const setLocalStorageValue = useCallback<LocalStorageSetter<T>>(
-    val => {
-      const resolved = typeof val === 'function' ? (val as (previous: T | undefined) => T | undefined)(valueRef.current) : val;
+    (val) => {
+      const resolved =
+        typeof val === "function"
+          ? (val as (previous: T | undefined) => T | undefined)(valueRef.current)
+          : val;
       valueRef.current = resolved;
       setValue(resolved);
 
@@ -105,14 +112,14 @@ export function useLocalStorage<T>(key: string, defaultValue?: T, options?: UseL
         }
         window.dispatchEvent(
           new CustomEvent<LocalStorageChangeDetail>(LOCAL_STORAGE_CHANGE_EVENT, {
-            detail: { key, newValue: serialized, source: sourceRef.current }
-          })
+            detail: { key, newValue: serialized, source: sourceRef.current },
+          }),
         );
       } catch (error) {
         loggerRef.current(error);
       }
     },
-    [key]
+    [key],
   );
 
   return [value, setLocalStorageValue];

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import ComponentWrapper from '@/helpers/ComponentWrapper';
-import DemoComingSoon from './DemoComingSoon';
+import ComponentWrapper from "@/helpers/ComponentWrapper";
+import DemoComingSoon from "./DemoComingSoon";
 
 const Input = () => {
   return (
@@ -44,18 +44,78 @@ export default function InputScreen() {
 }`;
 
 export const inputAttributes = [
-  { name: 'label', type: 'string', default: 'Optional', details: 'Label for the input field.' },
-  { name: 'description', type: 'string', default: 'Optional', details: 'Description text below the input.' },
-  { name: 'errorMessage', type: 'string', default: 'Optional', details: 'Error message to display.' },
-  { name: 'multiline', type: 'boolean', default: 'false', details: 'Whether to render as a multiline textarea.' },
-  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the input is disabled.' },
-  { name: 'isRequired', type: 'boolean', default: 'false', details: 'Whether the input is required.' },
-  { name: 'isInvalid', type: 'boolean', default: 'false', details: 'Whether the input is in an invalid state.' },
-  { name: 'value', type: 'string', default: 'Optional', details: 'Controlled input value.' },
-  { name: 'onChange', type: '(value: string) => void', default: 'Optional', details: 'Callback when input value changes.' },
-  { name: 'className', type: 'string', default: "' '", details: 'You can customise input by passing tailwind classes.' },
-  { name: 'containerClassName', type: 'string', default: "' '", details: 'You can customise container by passing tailwind classes.' },
-  { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise label by passing tailwind classes.' },
-  { name: 'descriptionClassName', type: 'string', default: "' '", details: 'You can customise description by passing tailwind classes.' },
-  { name: 'errorClassName', type: 'string', default: "' '", details: 'You can customise error by passing tailwind classes.' }
+  { name: "label", type: "string", default: "Optional", details: "Label for the input field." },
+  {
+    name: "description",
+    type: "string",
+    default: "Optional",
+    details: "Description text below the input.",
+  },
+  {
+    name: "errorMessage",
+    type: "string",
+    default: "Optional",
+    details: "Error message to display.",
+  },
+  {
+    name: "multiline",
+    type: "boolean",
+    default: "false",
+    details: "Whether to render as a multiline textarea.",
+  },
+  {
+    name: "isDisabled",
+    type: "boolean",
+    default: "false",
+    details: "Whether the input is disabled.",
+  },
+  {
+    name: "isRequired",
+    type: "boolean",
+    default: "false",
+    details: "Whether the input is required.",
+  },
+  {
+    name: "isInvalid",
+    type: "boolean",
+    default: "false",
+    details: "Whether the input is in an invalid state.",
+  },
+  { name: "value", type: "string", default: "Optional", details: "Controlled input value." },
+  {
+    name: "onChange",
+    type: "(value: string) => void",
+    default: "Optional",
+    details: "Callback when input value changes.",
+  },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise input by passing tailwind classes.",
+  },
+  {
+    name: "containerClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise container by passing tailwind classes.",
+  },
+  {
+    name: "labelClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise label by passing tailwind classes.",
+  },
+  {
+    name: "descriptionClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise description by passing tailwind classes.",
+  },
+  {
+    name: "errorClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise error by passing tailwind classes.",
+  },
 ];
