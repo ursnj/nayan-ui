@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
-import { View } from 'react-native';
-import { cn, useThemeColor } from 'heroui-native';
-import { ChevronForwardIcon, type NIcon, resolveIcon } from '../helpers/icons';
-import { NPress } from './NPress';
-import { NText } from './NText';
+import React, { useMemo } from "react";
+import { View } from "react-native";
+import { cn, useThemeColor } from "heroui-native";
+import { ChevronForwardIcon, type NIcon, resolveIcon } from "../helpers/icons";
+import { NPress } from "./NPress";
+import { NText } from "./NText";
 
 export interface NActionItemProps {
   name: string;
@@ -31,27 +31,39 @@ export const NActionItem = React.memo<NActionItemProps>(
     titleClassName,
     descriptionClassName,
     onPress,
-    onLongPress
+    onLongPress,
   }) => {
-    const [mutedColor, foregroundColor] = useThemeColor(['muted', 'foreground']);
-    const actionIcon = useMemo(() => resolveIcon(icon, { color: foregroundColor }), [icon, foregroundColor]);
+    const [mutedColor, foregroundColor] = useThemeColor(["muted", "foreground"]);
+    const actionIcon = useMemo(
+      () => resolveIcon(icon, { color: foregroundColor }),
+      [icon, foregroundColor],
+    );
 
     return (
       <NPress
         feedback={feedback}
-        className={cn('flex-row items-center px-4 py-3 bg-surface rounded-xl', isDisabled && 'opacity-50', className)}
+        className={cn(
+          "flex-row items-center px-4 py-3 bg-surface rounded-xl",
+          isDisabled && "opacity-50",
+          className,
+        )}
         onPress={onPress}
         onLongPress={onLongPress}
-        disabled={isDisabled}>
+        disabled={isDisabled}
+      >
         {actionIcon}
-        <View className={cn('flex-1', actionIcon && 'ml-3')}>
-          <NText className={cn('font-medium', titleClassName)}>{name}</NText>
-          {description && <NText className={cn('text-sm text-muted mt-0.5', descriptionClassName)}>{description}</NText>}
+        <View className={cn("flex-1", actionIcon && "ml-3")}>
+          <NText className={cn("font-medium", titleClassName)}>{name}</NText>
+          {description && (
+            <NText className={cn("text-sm text-muted mt-0.5", descriptionClassName)}>
+              {description}
+            </NText>
+          )}
         </View>
         {showArrow && <ChevronForwardIcon size={16} color={mutedColor} />}
       </NPress>
     );
-  }
+  },
 );
 
-NActionItem.displayName = 'NActionItem';
+NActionItem.displayName = "NActionItem";

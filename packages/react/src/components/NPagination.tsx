@@ -1,12 +1,12 @@
-import React, { memo, useCallback, useMemo } from 'react';
-import { Pagination } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { memo, useCallback, useMemo } from "react";
+import { Pagination } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NPaginationProps {
   totalPages: number;
   currentPage: number;
   onChange: (page: number) => void;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   disabled?: boolean;
   showSummary?: boolean;
   summaryText?: string;
@@ -15,7 +15,7 @@ export interface NPaginationProps {
   contentClassName?: string;
   linkClassName?: string;
   activeLinkClassName?: string;
-  'aria-label'?: string;
+  "aria-label"?: string;
 }
 
 const NPaginationComponent: React.FC<NPaginationProps> = memo(
@@ -23,23 +23,24 @@ const NPaginationComponent: React.FC<NPaginationProps> = memo(
     totalPages,
     currentPage,
     onChange,
-    size = 'md',
+    size = "md",
     disabled = false,
     showSummary = false,
     summaryText,
     siblingCount = 1,
-    className = '',
-    contentClassName = '',
-    linkClassName = '',
-    activeLinkClassName = '',
-    'aria-label': ariaLabel = 'Pagination'
+    className = "",
+    contentClassName = "",
+    linkClassName = "",
+    activeLinkClassName = "",
+    "aria-label": ariaLabel = "Pagination",
   }) => {
     const pageCount = Math.max(0, Math.floor(totalPages));
-    const activePage = pageCount === 0 ? 0 : Math.min(pageCount, Math.max(1, Math.floor(currentPage)));
+    const activePage =
+      pageCount === 0 ? 0 : Math.min(pageCount, Math.max(1, Math.floor(currentPage)));
     const siblings = Math.max(0, Math.floor(siblingCount));
 
     const pages = useMemo(() => {
-      const result: (number | 'ellipsis')[] = [];
+      const result: (number | "ellipsis")[] = [];
       const addRange = (start: number, end: number) => {
         for (let i = start; i <= end; i++) result.push(i);
       };
@@ -51,9 +52,9 @@ const NPaginationComponent: React.FC<NPaginationProps> = memo(
         const rightBound = Math.min(pageCount - 1, activePage + siblings);
 
         result.push(1);
-        if (leftBound > 2) result.push('ellipsis');
+        if (leftBound > 2) result.push("ellipsis");
         addRange(leftBound, rightBound);
-        if (rightBound < pageCount - 1) result.push('ellipsis');
+        if (rightBound < pageCount - 1) result.push("ellipsis");
         result.push(pageCount);
       }
       return result;
@@ -68,9 +69,11 @@ const NPaginationComponent: React.FC<NPaginationProps> = memo(
     }, [activePage, pageCount, onChange]);
 
     return (
-      <Pagination size={size} className={cn('nyn-pagination', className)} aria-label={ariaLabel}>
+      <Pagination size={size} className={cn("nyn-pagination", className)} aria-label={ariaLabel}>
         {showSummary && (
-          <Pagination.Summary className="text-sm text-muted font-medium">{summaryText || `Page ${activePage} of ${pageCount}`}</Pagination.Summary>
+          <Pagination.Summary className="text-sm text-muted font-medium">
+            {summaryText || `Page ${activePage} of ${pageCount}`}
+          </Pagination.Summary>
         )}
         <Pagination.Content className={cn(contentClassName)}>
           <Pagination.Item>
@@ -80,7 +83,7 @@ const NPaginationComponent: React.FC<NPaginationProps> = memo(
             </Pagination.Previous>
           </Pagination.Item>
           {pages.map((page, index) =>
-            page === 'ellipsis' ? (
+            page === "ellipsis" ? (
               <Pagination.Item key={`ellipsis-${index}`}>
                 <Pagination.Ellipsis />
               </Pagination.Item>
@@ -90,11 +93,12 @@ const NPaginationComponent: React.FC<NPaginationProps> = memo(
                   isActive={page === activePage}
                   isDisabled={disabled}
                   onPress={() => page !== activePage && onChange(page)}
-                  className={cn(linkClassName, page === activePage && activeLinkClassName)}>
+                  className={cn(linkClassName, page === activePage && activeLinkClassName)}
+                >
                   {page}
                 </Pagination.Link>
               </Pagination.Item>
-            )
+            ),
           )}
           <Pagination.Item>
             <Pagination.Next isDisabled={disabled || activePage >= pageCount} onPress={handleNext}>
@@ -105,9 +109,9 @@ const NPaginationComponent: React.FC<NPaginationProps> = memo(
         </Pagination.Content>
       </Pagination>
     );
-  }
+  },
 );
 
-NPaginationComponent.displayName = 'NPagination';
+NPaginationComponent.displayName = "NPagination";
 
 export const NPagination = NPaginationComponent;

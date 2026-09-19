@@ -1,37 +1,37 @@
 export enum ThresholdUnits {
-  Pixel = 'Pixel',
-  Percent = 'Percent'
+  Pixel = "Pixel",
+  Percent = "Percent",
 }
 
 const defaultThreshold = {
   unit: ThresholdUnits.Percent,
-  value: 0.8
+  value: 0.8,
 };
 
 export const isWindowDefined = () => {
-  return typeof window !== 'undefined';
+  return typeof window !== "undefined";
 };
 
 export function parseThreshold(scrollThreshold: string | number): any {
-  if (typeof scrollThreshold === 'number') {
+  if (typeof scrollThreshold === "number") {
     return {
       unit: ThresholdUnits.Percent,
-      value: scrollThreshold * 100
+      value: scrollThreshold * 100,
     };
   }
 
-  if (typeof scrollThreshold === 'string') {
+  if (typeof scrollThreshold === "string") {
     if (scrollThreshold.match(/^(\d*(\.\d+)?)px$/)) {
       return {
         unit: ThresholdUnits.Pixel,
-        value: parseFloat(scrollThreshold)
+        value: parseFloat(scrollThreshold),
       };
     }
 
     if (scrollThreshold.match(/^(\d*(\.\d+)?)%$/)) {
       return {
         unit: ThresholdUnits.Percent,
-        value: parseFloat(scrollThreshold)
+        value: parseFloat(scrollThreshold),
       };
     }
 
@@ -40,7 +40,7 @@ export function parseThreshold(scrollThreshold: string | number): any {
     return defaultThreshold;
   }
 
-  console.warn('scrollThreshold should be string or number');
+  console.warn("scrollThreshold should be string or number");
 
   return defaultThreshold;
 }
@@ -48,14 +48,9 @@ export function parseThreshold(scrollThreshold: string | number): any {
 export const throttle = (
   delay: number,
   callback: (...args: any[]) => any,
-  options: { noTrailing?: boolean; noLeading?: boolean; debounceMode?: boolean } = {}
+  options: { noTrailing?: boolean; noLeading?: boolean; debounceMode?: boolean } = {},
 ) => {
   const { noTrailing = false, noLeading = false, debounceMode = undefined } = options || {};
-  /*
-   * After wrapper has stopped being called, this timeout ensures that
-   * `callback` is executed at the proper times in `throttle` and `end`
-   * debounce modes.
-   */
   let timeoutID: any;
   let cancelled = false;
 
@@ -76,11 +71,6 @@ export const throttle = (
     cancelled = !upcomingOnly;
   }
 
-  /*
-   * The `wrapper` function encapsulates all of the throttling / debouncing
-   * functionality and when executed will limit the rate at which `callback`
-   * is executed.
-   */
   function wrapper(...arguments_: any) {
     // @ts-ignore
     let self = this;
@@ -96,20 +86,11 @@ export const throttle = (
       callback.apply(self, arguments_);
     }
 
-    /*
-     * If `debounceMode` is true (at begin) this is used to clear the flag
-     * to allow future `callback` executions.
-     */
     function clear() {
       timeoutID = undefined;
     }
 
     if (!noLeading && debounceMode && !timeoutID) {
-      /*
-       * Since `wrapper` is being called for the first time and
-       * `debounceMode` is true (at begin), execute `callback`
-       * and noLeading != true.
-       */
       exec();
     }
 
@@ -117,35 +98,19 @@ export const throttle = (
 
     if (debounceMode === undefined && elapsed > delay) {
       if (noLeading) {
-        /*
-         * In throttle mode with noLeading, if `delay` time has
-         * been exceeded, update `lastExec` and schedule `callback`
-         * to execute after `delay` ms.
-         */
         lastExec = Date.now();
         if (!noTrailing) {
           timeoutID = setTimeout(debounceMode ? clear : exec, delay);
         }
       } else {
-        /*
-         * In throttle mode without noLeading, if `delay` time has been exceeded, execute
-         * `callback`.
-         */
         exec();
       }
     } else if (noTrailing !== true) {
-      /*
-       * In trailing throttle mode, since `delay` time has not been
-       * exceeded, schedule `callback` to execute `delay` ms after most
-       * recent execution.
-       *
-       * If `debounceMode` is true (at begin), schedule `clear` to execute
-       * after `delay` ms.
-       *
-       * If `debounceMode` is false (at end), schedule `callback` to
-       * execute after `delay` ms.
-       */
-      timeoutID = setTimeout(debounceMode ? clear : exec, debounceMode === undefined ? delay - elapsed : delay);
+      // Trailing mode: the pending call is rescheduled for the remainder of the window, not dropped.
+      timeoutID = setTimeout(
+        debounceMode ? clear : exec,
+        debounceMode === undefined ? delay - elapsed : delay,
+      );
     }
   }
 
@@ -155,41 +120,47 @@ export const throttle = (
   return wrapper;
 };
 
-export const debounce = (delay: number, callback: () => any, options: { atBegin?: boolean } = {}) => {
+export const debounce = (
+  delay: number,
+  callback: () => any,
+  options: { atBegin?: boolean } = {},
+) => {
   const { atBegin = false } = options || {};
   return throttle(delay, callback, { debounceMode: atBegin !== false });
 };
 
 export const reactSelectTheme = (theme: any) => ({
   ...theme,
-  borderRadius: 4,
+  borderRadius: 8,
   colors: {
     ...theme.colors,
-    neutral0: 'var(--surface)',
-    neutral5: 'var(--surface)',
-    neutral10: 'var(--default)',
-    neutral20: 'var(--default)',
-    neutral30: 'var(--default)',
-    neutral40: 'var(--muted)',
-    neutral50: 'var(--muted)',
-    neutral60: 'var(--foreground)',
-    neutral80: 'var(--foreground)',
-    primary: 'var(--accent)',
-    primary25: 'var(--default)',
-    primary50: 'var(--default)',
-    primary75: 'var(--accent)',
-    danger: 'var(--danger)',
-    dangerLight: 'var(--danger)'
-  }
+    neutral0: "var(--surface)",
+    neutral5: "var(--surface)",
+    neutral10: "var(--default)",
+    neutral20: "var(--default)",
+    neutral30: "var(--default)",
+    neutral40: "var(--muted)",
+    neutral50: "var(--muted)",
+    neutral60: "var(--foreground)",
+    neutral80: "var(--foreground)",
+    primary: "var(--accent)",
+    primary25: "var(--default)",
+    primary50: "var(--default)",
+    primary75: "var(--accent)",
+    danger: "var(--danger)",
+    dangerLight: "var(--danger)",
+  },
 });
 
 export const reactSelectCustomClassNames = {
-  control: (_state: any) => 'flex h-10 w-full rounded bg-surface border border-default focus:border-accent text-foreground',
-  menu: (_state: any) => 'w-full rounded bg-surface border border-default shadow-lg',
-  option: (state: any) => (state.isSelected ? 'bg-accent text-accent-foreground' : state.isFocused ? 'bg-default/50' : ''),
-  singleValue: (_state: any) => 'text-foreground',
-  multiValue: (_state: any) => 'bg-default rounded',
-  multiValueLabel: (_state: any) => 'text-foreground',
-  placeholder: (_state: any) => 'text-muted',
-  input: (_state: any) => 'text-foreground'
+  control: (_state: any) =>
+    "flex h-10 w-full rounded-lg border border-default bg-surface text-foreground focus:border-accent",
+  menu: (_state: any) => "w-full rounded-lg border border-default bg-surface shadow-lg",
+  option: (state: any) =>
+    state.isSelected ? "bg-accent text-accent-foreground" : state.isFocused ? "bg-default/50" : "",
+  singleValue: (_state: any) => "text-foreground",
+  multiValue: (_state: any) => "rounded-lg bg-default",
+  multiValueLabel: (_state: any) => "text-foreground",
+  placeholder: (_state: any) => "text-muted",
+  input: (_state: any) => "text-foreground",
 } as any;

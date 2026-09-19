@@ -1,6 +1,6 @@
-import React, { ReactNode, memo } from 'react';
-import { Button } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { ReactNode, memo } from "react";
+import { Button } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
@@ -11,23 +11,33 @@ export interface NButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
 }
 
 const NButtonComponent: React.FC<NButtonProps> = memo(
-  ({ children, className = '', isOutline = false, isLoading = false, loadingText = 'Loading...', disabled, type = 'button', ...remaining }) => {
+  ({
+    children,
+    className = "",
+    isOutline = false,
+    isLoading = false,
+    loadingText = "Loading...",
+    disabled,
+    type = "button",
+    ...remaining
+  }) => {
     const isDisabled = isLoading || disabled;
     return (
       <Button
         type={type}
-        variant={isOutline ? 'outline' : 'primary'}
+        variant={isOutline ? "outline" : "primary"}
         isPending={isLoading}
         isDisabled={isDisabled}
         aria-busy={isLoading}
-        className={cn('nyn-button', className)}
-        {...(remaining as any)}>
+        className={cn("nyn-button", className)}
+        {...(remaining as any)}
+      >
         {!isLoading ? children : <span aria-live="polite">{loadingText}</span>}
       </Button>
     );
-  }
+  },
 );
 
-NButtonComponent.displayName = 'NButton';
+NButtonComponent.displayName = "NButton";
 
 export const NButton = NButtonComponent;

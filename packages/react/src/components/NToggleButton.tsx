@@ -1,6 +1,6 @@
-import React, { ReactNode, memo } from 'react';
-import { ToggleButton } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { ReactNode, memo } from "react";
+import { ToggleButton } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NToggleButtonProps {
   children: ReactNode;
@@ -8,16 +8,12 @@ export interface NToggleButtonProps {
   defaultSelected?: boolean;
   disabled?: boolean;
   isIconOnly?: boolean;
-  variant?: 'default' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "default" | "ghost";
+  size?: "sm" | "md" | "lg";
   onChange?: (isSelected: boolean) => void;
   className?: string;
-  /**
-   * Required for an icon-only toggle — there is no visible text to name it,
-   * and without this assistive tech announces an unlabelled button.
-   */
-  'aria-label'?: string;
-  'aria-labelledby'?: string;
+  "aria-label"?: string;
+  "aria-labelledby"?: string;
 }
 
 const NToggleButtonComponent: React.FC<NToggleButtonProps> = memo(
@@ -27,12 +23,12 @@ const NToggleButtonComponent: React.FC<NToggleButtonProps> = memo(
     defaultSelected = false,
     disabled = false,
     isIconOnly = false,
-    variant = 'default',
-    size = 'md',
+    variant = "default",
+    size = "md",
     onChange,
-    className = '',
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledBy
+    className = "",
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledBy,
   }) => {
     return (
       <ToggleButton
@@ -45,13 +41,14 @@ const NToggleButtonComponent: React.FC<NToggleButtonProps> = memo(
         onChange={onChange}
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
-        className={cn('nyn-toggle-button', className)}>
+        className={cn("nyn-toggle-button", className)}
+      >
         {children}
       </ToggleButton>
     );
-  }
+  },
 );
 
-NToggleButtonComponent.displayName = 'NToggleButton';
+NToggleButtonComponent.displayName = "NToggleButton";
 
 export const NToggleButton = NToggleButtonComponent;

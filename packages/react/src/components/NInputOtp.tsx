@@ -1,6 +1,6 @@
-import React, { memo, useMemo } from 'react';
-import { InputOTP } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { memo, useMemo } from "react";
+import { InputOTP } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 const EMPTY_SEPARATOR_INDICES: number[] = [];
 
@@ -9,14 +9,14 @@ export interface NInputOtpProps {
   value?: string;
   onChange?: (value: string) => void;
   onComplete?: (value: string) => void;
-  variant?: 'primary' | 'secondary';
+  variant?: "primary" | "secondary";
   disabled?: boolean;
   isInvalid?: boolean;
   pattern?: string;
   className?: string;
   slotClassName?: string;
   separatorIndices?: number[];
-  'aria-label'?: string;
+  "aria-label"?: string;
 }
 
 const NInputOtpComponent: React.FC<NInputOtpProps> = memo(
@@ -25,14 +25,14 @@ const NInputOtpComponent: React.FC<NInputOtpProps> = memo(
     value,
     onChange,
     onComplete,
-    variant = 'primary',
+    variant = "primary",
     disabled = false,
     isInvalid = false,
     pattern,
-    className = '',
-    slotClassName = '',
+    className = "",
+    slotClassName = "",
     separatorIndices = EMPTY_SEPARATOR_INDICES,
-    'aria-label': ariaLabel = 'One-time password'
+    "aria-label": ariaLabel = "One-time password",
   }) => {
     const separatorSet = useMemo(() => new Set(separatorIndices), [separatorIndices]);
 
@@ -47,7 +47,8 @@ const NInputOtpComponent: React.FC<NInputOtpProps> = memo(
         isInvalid={isInvalid}
         pattern={pattern}
         aria-label={ariaLabel}
-        className={cn('nyn-input-otp', className)}>
+        className={cn("nyn-input-otp", className)}
+      >
         <InputOTP.Group>
           {Array.from({ length: maxLength }, (_, i) => (
             <React.Fragment key={i}>
@@ -58,9 +59,9 @@ const NInputOtpComponent: React.FC<NInputOtpProps> = memo(
         </InputOTP.Group>
       </InputOTP>
     );
-  }
+  },
 );
 
-NInputOtpComponent.displayName = 'NInputOtp';
+NInputOtpComponent.displayName = "NInputOtp";
 
 export const NInputOtp = NInputOtpComponent;

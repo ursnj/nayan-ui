@@ -1,11 +1,12 @@
-import Code from '@/helpers/Code';
-import { robotsCreateAttributes, robotsValidationAttributes } from '@/services/CliAttributes';
-import Attributes from './Attributes';
+import { H2_DOC } from "@/design/system";
+import Code from "@/helpers/Code";
+import { robotsCreateAttributes, robotsValidationAttributes } from "@/services/CliAttributes";
+import Attributes from "./Attributes";
 
 const SEOSitemaps = () => {
   return (
     <div>
-      <h2 className="text-xl mb-5">🕹 Robots.txt Creation and Validation</h2>
+      <h2 className={H2_DOC}>Robots.txt Creation and Validation</h2>
       <div className="text-lg mb-5"># Robots.txt creation:</div>
       <Code
         language="sh"
@@ -22,8 +23,12 @@ const SEOSitemaps = () => {
       <Code language="sh" code={`npx @nayan-ui/cli validate robots --input ./robots.txt`} />
       <div className="mb-5">You can also use the shorter version of this command.</div>
       <Code code={`npx @nayan-ui/cli validate robots -i ./robots.txt`} />
-      <div className="mb-5">You can also validate robots.txt of your live website by passing URL.</div>
-      <Code code={`npx @nayan-ui/cli validate robots --input https://www.nayanui.com/robots.txt --isremote true`} />
+      <div className="mb-5">
+        You can also validate robots.txt of your live website by passing URL.
+      </div>
+      <Code
+        code={`npx @nayan-ui/cli validate robots --input https://www.nayanui.com/robots.txt --isremote true`}
+      />
       <Attributes data={robotsValidationAttributes} />
     </div>
   );

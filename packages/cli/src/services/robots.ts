@@ -1,9 +1,6 @@
-/**
- * Robots Service - Generate and validate robots.txt files
- */
-import axios from 'axios';
-import { readFileSync, writeFileSync } from 'fs';
-import ora from 'ora';
+import axios from "axios";
+import { readFileSync, writeFileSync } from "fs";
+import ora from "ora";
 
 /**
  * Generate robots.txt file with specified rules
@@ -12,19 +9,24 @@ import ora from 'ora';
  * @param sitemap - Sitemap URL to include
  * @param output - Output file path
  */
-export const generateRobots = (allowed: string = '', disallowed: string = '', sitemap: string = '', output: string): void => {
+export const generateRobots = (
+  allowed: string = "",
+  disallowed: string = "",
+  sitemap: string = "",
+  output: string,
+): void => {
   const spinner = ora(`Generating robots.txt for: ${output}`).start();
 
-  const disallow: string[] = disallowed ? disallowed.split(',').map(item => item.trim()) : [''];
-  const allow: string[] = allowed ? allowed.split(',').map(item => item.trim()) : [];
+  const disallow: string[] = disallowed ? disallowed.split(",").map((item) => item.trim()) : [""];
+  const allow: string[] = allowed ? allowed.split(",").map((item) => item.trim()) : [];
 
-  let robotsContent = 'User-agent: *\n';
+  let robotsContent = "User-agent: *\n";
 
-  disallow.forEach(path => {
+  disallow.forEach((path) => {
     robotsContent += `Disallow: ${path}\n`;
   });
 
-  allow.forEach(path => {
+  allow.forEach((path) => {
     robotsContent += `Allow: ${path}\n`;
   });
 
@@ -45,7 +47,7 @@ export const validateRobots = async (url: string, isRemote: boolean): Promise<vo
   const spinner = ora(`Validating robots.txt: ${url}`).start();
 
   try {
-    const robotsTxtContent = isRemote ? (await axios.get(url)).data : readFileSync(url, 'utf-8');
+    const robotsTxtContent = isRemote ? (await axios.get(url)).data : readFileSync(url, "utf-8");
 
     const hasUserAgent = /User-agent:/i.test(robotsTxtContent);
     const hasDisallow = /Disallow:/i.test(robotsTxtContent);
@@ -55,10 +57,10 @@ export const validateRobots = async (url: string, isRemote: boolean): Promise<vo
       spinner.succeed(`Validation passed for ${url}`);
     } else {
       const missing = [];
-      if (!hasUserAgent) missing.push('User-agent');
-      if (!hasDisallow) missing.push('Disallow');
-      if (!hasSitemap) missing.push('Sitemap');
-      spinner.fail(`Validation failed: Missing directives - ${missing.join(', ')}`);
+      if (!hasUserAgent) missing.push("User-agent");
+      if (!hasDisallow) missing.push("Disallow");
+      if (!hasSitemap) missing.push("Sitemap");
+      spinner.fail(`Validation failed: Missing directives - ${missing.join(", ")}`);
     }
   } catch (error: any) {
     spinner.fail(`Error validating robots.txt: ${error.message}`);

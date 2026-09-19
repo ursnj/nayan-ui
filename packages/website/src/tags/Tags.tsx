@@ -1,70 +1,64 @@
-'use client';
+"use client";
 
-import Sidebar from '@/helpers/Sidebar';
-import TagsList from '@/helpers/TagsList';
-import { reactNativeSidebarItems, reactSidebarItems } from '@/services/Utils';
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { DocsIntro } from "@/design/Primitives";
+import { CARD, H4_CARD } from "@/design/system";
+import Sidebar from "@/helpers/Sidebar";
+import SubHeader from "@/helpers/SubHeader";
+import TagsList from "@/helpers/TagsList";
+import { reactNativeSidebarItems, reactSidebarItems } from "@/services/Utils";
 
-const Tags = () => {
-  const reactComponents = reactSidebarItems.filter((item: any) => item.isComponent);
-  const reactNativeComponents = reactNativeSidebarItems.filter((item: any) => item.isComponent);
+const PLATFORMS = [
+  {
+    key: "react" as const,
+    title: "React components",
+    description: "For the web. Each tag links to the components that share it.",
+    items: reactSidebarItems.filter((item: any) => item.isComponent),
+  },
+  {
+    key: "react-native" as const,
+    title: "React Native components",
+    description: "For iOS and Android, tagged the same way.",
+    items: reactNativeSidebarItems.filter((item: any) => item.isComponent),
+  },
+];
 
-  return (
-    <Sidebar title="Component Tags">
-      <div className="mb-8 leading-relaxed">
-        Our component library offers a variety of customizable and reusable UI elements for both React and React Native. These tags include
-        interactive components such as buttons, forms, modals, accordions, and more, designed for seamless integration into your applications. Each
-        element is built with flexibility and performance in mind, enabling you to enhance user experience efficiently.
-      </div>
+const Tags = () => (
+  <Sidebar title="Component Tags">
+    <DocsIntro
+      lead="Tags group components by the problem they solve rather than by their name, so a tag is a good way in when you know the job but not the component. Every tag below links to the full list of components carrying it."
+      facts={[
+        { value: String(PLATFORMS[0].items.length), label: "React components" },
+        { value: String(PLATFORMS[1].items.length), label: "React Native components" },
+      ]}
+    />
 
-      {/* React Components Section */}
-      <div className="mb-12">
-        <div className="flex items-center mb-6">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mr-3 shadow-md shadow-blue-500/20">
-            <span className="text-white font-bold text-sm">R</span>
-          </div>
-          <h2 className="text-2xl font-bold">
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">React Components</span>
-          </h2>
-        </div>
-        <div className="mb-6 text-muted leading-relaxed">
-          React components for web applications with modern design patterns and accessibility features.
-        </div>
-        {reactComponents.map((component: any) => (
-          <div key={`react-${component.title}`} className="mb-8">
-            <div className="flex flex-row justify-between items-center mb-3 py-2">
-              <h3 className="text-lg font-semibold text-foreground">{component.title}</h3>
-            </div>
-            <div className="mb-4 leading-relaxed text-sm text-muted">{component.description}</div>
-            <TagsList type="react" tags={component.tags || []} />
-          </div>
-        ))}
-      </div>
-
-      {/* React Native Components Section */}
-      <div className="mb-12">
-        <div className="flex items-center mb-6">
-          <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center mr-3 shadow-md shadow-emerald-500/20">
-            <span className="text-white font-bold text-sm">RN</span>
-          </div>
-          <h2 className="text-2xl font-bold">
-            <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">React Native Components</span>
-          </h2>
-        </div>
-        <div className="mb-6 text-muted leading-relaxed">
-          React Native components for mobile applications with native performance and cross-platform compatibility.
-        </div>
-        {reactNativeComponents.map((component: any) => (
-          <div key={`react-native-${component.title}`} className="mb-8">
-            <div className="flex flex-row justify-between items-center mb-3 py-2">
-              <h3 className="text-lg font-semibold text-foreground">{component.title}</h3>
-            </div>
-            <div className="mb-4 leading-relaxed text-sm text-muted">{component.description}</div>
-            <TagsList type="react-native" tags={component.tags || []} />
-          </div>
-        ))}
-      </div>
-    </Sidebar>
-  );
-};
+    {PLATFORMS.map((platform) => (
+      <SubHeader key={platform.key} title={platform.title} description={platform.description}>
+        <ul className="space-y-3">
+          {platform.items.map((component: any) => (
+            <li key={`${platform.key}-${component.title}`} className={`${CARD} p-4`}>
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <h3 className={H4_CARD}>{component.title}</h3>
+                <Link
+                  href={component.link}
+                  className="group inline-flex shrink-0 items-center gap-1 text-xs font-medium text-muted transition-colors hover:text-indigo-600 dark:hover:text-indigo-400"
+                >
+                  Docs
+                  <ArrowRight
+                    aria-hidden
+                    className="h-3 w-3 transition-transform group-hover:translate-x-0.5"
+                  />
+                </Link>
+              </div>
+              <TagsList type={platform.key} tags={component.tags || []} />
+            </li>
+          ))}
+        </ul>
+      </SubHeader>
+    ))}
+  </Sidebar>
+);
 
 export default Tags;

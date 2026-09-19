@@ -27,8 +27,8 @@ export interface FileChange {
 export interface CodeIssue {
   filename: string;
   line: number;
-  category: 'functionality' | 'readability' | 'performance';
-  severity: 'error' | 'warning' | 'info';
+  category: "functionality" | "readability" | "performance";
+  severity: "error" | "warning" | "info";
   message: string;
   suggestion?: string;
 }
@@ -36,11 +36,11 @@ export interface CodeIssue {
 export interface ReviewComment {
   path: string;
   line: number;
-  side: 'RIGHT';
+  side: "RIGHT";
   body: string;
 }
 
-export type LLMProvider = 'codex' | 'claude';
+export type LLMProvider = "codex" | "claude";
 
 export interface ReviewOptions {
   token: string;
@@ -70,7 +70,7 @@ export interface ScanOptions {
 export interface Vulnerability {
   package: string;
   version: string;
-  severity: 'critical' | 'high' | 'medium' | 'low';
+  severity: "critical" | "high" | "medium" | "low";
   title: string;
   description?: string;
   fixedIn?: string;
@@ -83,7 +83,16 @@ export interface ProjectScanResult {
   vulnerabilities: Vulnerability[];
 }
 
-export type ProjectType = 'npm' | 'python' | 'go' | 'rust' | 'ruby' | 'php' | 'java' | 'dotnet' | 'scala';
+export type ProjectType =
+  | "npm"
+  | "python"
+  | "go"
+  | "rust"
+  | "ruby"
+  | "php"
+  | "java"
+  | "dotnet"
+  | "scala";
 
 export interface DetectedProject {
   path: string;

@@ -1,6 +1,6 @@
-import React, { memo } from 'react';
-import { SearchField } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { memo } from "react";
+import { SearchField } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NSearchFieldProps {
   value?: string;
@@ -11,10 +11,10 @@ export interface NSearchFieldProps {
   placeholder?: string;
   disabled?: boolean;
   isInvalid?: boolean;
-  variant?: 'primary' | 'secondary';
+  variant?: "primary" | "secondary";
   fullWidth?: boolean;
   className?: string;
-  'aria-label'?: string;
+  "aria-label"?: string;
 }
 
 const NSearchFieldComponent: React.FC<NSearchFieldProps> = memo(
@@ -24,13 +24,13 @@ const NSearchFieldComponent: React.FC<NSearchFieldProps> = memo(
     onChange,
     onSubmit,
     onClear,
-    placeholder = 'Search...',
+    placeholder = "Search...",
     disabled = false,
     isInvalid = false,
-    variant = 'primary',
+    variant = "primary",
     fullWidth = false,
-    className = '',
-    'aria-label': ariaLabel = 'Search'
+    className = "",
+    "aria-label": ariaLabel = "Search",
   }) => {
     return (
       <SearchField
@@ -43,8 +43,9 @@ const NSearchFieldComponent: React.FC<NSearchFieldProps> = memo(
         isInvalid={isInvalid}
         variant={variant}
         fullWidth={fullWidth}
-        className={cn('nyn-search-field', className)}
-        aria-label={ariaLabel}>
+        className={cn("nyn-search-field", className)}
+        aria-label={ariaLabel}
+      >
         <SearchField.Group>
           <SearchField.SearchIcon />
           <SearchField.Input placeholder={placeholder} />
@@ -52,9 +53,9 @@ const NSearchFieldComponent: React.FC<NSearchFieldProps> = memo(
         </SearchField.Group>
       </SearchField>
     );
-  }
+  },
 );
 
-NSearchFieldComponent.displayName = 'NSearchField';
+NSearchFieldComponent.displayName = "NSearchField";
 
 export const NSearchField = NSearchFieldComponent;

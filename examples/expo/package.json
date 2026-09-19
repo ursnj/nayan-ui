@@ -1,8 +1,8 @@
 {
   "name": "nayan-ui-expo-example",
   "version": "1.0.0",
-  "main": "expo-router/entry",
   "private": true,
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start --clear",
     "prebuild": "expo prebuild --clean",

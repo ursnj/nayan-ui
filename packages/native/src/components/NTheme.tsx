@@ -1,7 +1,7 @@
-import React from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { HeroUINativeProvider } from 'heroui-native';
-import { useNToast } from './NToast';
+import React from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { HeroUINativeProvider } from "heroui-native";
+import { useNToast } from "./NToast";
 
 export interface NThemeProps {
   children: React.ReactNode;
@@ -23,4 +23,4 @@ export const NTheme = React.memo<NThemeProps>(({ children }) => {
   );
 });
 
-NTheme.displayName = 'NTheme';
+NTheme.displayName = "NTheme";

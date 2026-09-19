@@ -1,87 +1,69 @@
-'use client';
+import { Accessibility, Blocks, Paintbrush, Smartphone, Sparkles } from "lucide-react";
+import { Section, SectionHeader } from "@/design/Primitives";
+import { ACCENT_SOFT, BODY, CARD, CARD_PAD, GRID_GAP, H3 } from "@/design/system";
+import { TOTAL_COMPONENT_COUNT } from "@/services/Counts";
 
-import { NCard } from '@nayan-ui/react';
-import { BookOpenText, Code, Layers, Moon, Palette, PencilRuler, Shield, Smartphone, Zap } from 'lucide-react';
+const FEATURES = [
+  {
+    icon: Blocks,
+    span: "lg:col-span-2",
+    title: `${TOTAL_COMPONENT_COUNT} components, ready to ship`,
+    body: "Buttons, forms, tables, dialogs, sheets, menus, date pickers — enough to build a real application rather than a demo. Every one arrives styled, accessible and documented, so the first thing you write is your feature, not a dropdown.",
+  },
+  {
+    icon: Smartphone,
+    title: "Web and mobile, one API",
+    body: "The same prop names and the same design language on React and React Native, so moving between them costs you nothing.",
+  },
+  {
+    icon: Accessibility,
+    title: "Accessible out of the box",
+    body: "Keyboard navigation, focus management and screen-reader labels are already handled — not left as an exercise for later.",
+  },
+  {
+    icon: Paintbrush,
+    title: "Looks like your product",
+    body: "Restyle everything from one set of colour tokens — including a dark theme that was designed, not inverted. Or override a single instance with a utility class.",
+  },
+  {
+    icon: Sparkles,
+    title: "Free, and staying free",
+    body: "MIT licensed with no paid tier, no seat count and nothing held back. Use it in client work without asking anyone.",
+  },
+];
 
-const Features = () => {
-  const features = [
-    {
-      title: 'Cross-Platform',
-      text: 'Separate packages for React web and React Native mobile, sharing a consistent API and design language.',
-      icon: Smartphone
-    },
-    {
-      title: 'TypeScript First',
-      text: 'Written in TypeScript with full type definitions. Get autocompletion and type safety out of the box.',
-      icon: Code
-    },
-    {
-      title: 'Accessible',
-      text: 'Built on HeroUI with proper ARIA attributes, keyboard navigation, and screen reader support.',
-      icon: Shield
-    },
-    {
-      title: 'Themeable',
-      text: 'CSS variable based theming with light and dark mode. Customize colors, spacing, and typography to match your brand.',
-      icon: Palette
-    },
-    {
-      title: 'Dark Mode',
-      text: 'First-class dark mode support. Toggle themes with a single prop using the built-in NTheme provider.',
-      icon: Moon
-    },
-    {
-      title: 'Customizable',
-      text: 'Every component accepts className props for styling overrides. Works with Tailwind CSS utility classes.',
-      icon: PencilRuler
-    },
-    {
-      title: 'Lightweight',
-      text: 'Tree-shakable exports so you only ship the components you use. Minimal dependencies for fast load times.',
-      icon: Zap
-    },
-    {
-      title: 'Well Documented',
-      text: 'Interactive demos, prop tables, and code examples for every component. Copy-paste ready usage snippets.',
-      icon: BookOpenText
-    },
-    {
-      title: '50+ Components',
-      text: 'Buttons, inputs, modals, tables, accordions, sheets, toasts, menus, popovers, sliders, and many more.',
-      icon: Layers
-    }
-  ];
-
-  return (
-    <section className="py-16 sm:py-20 lg:py-24">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 lg:mb-16 max-w-2xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">
-            Why <span className="text-gradient">Nayan UI</span>?
-          </h2>
-          <p className="text-base sm:text-lg text-muted">
-            Everything you need to build polished React and React Native apps — open source and free forever.
-          </p>
-        </div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
-          {features.map((feature, index) => (
-            <NCard key={index} className="p-5 group hover:border-accent/40 hover:shadow-lg transition-all duration-300">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-accent/10 text-accent group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-                  <feature.icon className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold mb-1">{feature.title}</h4>
-                  <p className="text-xs sm:text-sm text-muted leading-relaxed">{feature.text}</p>
-                </div>
-              </div>
-            </NCard>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
+const Features = () => (
+  <Section id="why" labelledBy="why-heading">
+    <SectionHeader
+      eyebrow="Why Nayan UI"
+      id="why-heading"
+      title="Everything you need, nothing you don't"
+      lead="Two packages, one design language, and no licence to buy."
+    />
+    <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
+      {FEATURES.map((feature) => {
+        const Icon = feature.icon;
+        return (
+          <article
+            key={feature.title}
+            className={`group ${CARD} ${CARD_PAD} relative overflow-hidden transition-colors duration-200 hover:border-indigo-500/30 ${feature.span ?? ""}`}
+          >
+            <span
+              aria-hidden
+              className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-500/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            />
+            <span
+              className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl border ${ACCENT_SOFT}`}
+            >
+              <Icon className="h-5 w-5" />
+            </span>
+            <h3 className={`mb-2 ${H3}`}>{feature.title}</h3>
+            <p className={BODY}>{feature.body}</p>
+          </article>
+        );
+      })}
+    </div>
+  </Section>
+);
 
 export default Features;

@@ -1,18 +1,284 @@
-'use client';
+"use client";
 
-import { MenuSize, NButton, NMenu, NMenuItem } from '@nayan-ui/react';
-import ComponentWrapper from '@/helpers/ComponentWrapper';
+import { MenuSize, NMenu, NMenuItem, NMenuNested } from "@nayan-ui/react";
+import { Copy, Download, FileText, Pencil, Share2, Trash2 } from "lucide-react";
+import { H3_DOC } from "@/design/system";
+import ComponentWrapper from "@/helpers/ComponentWrapper";
+
+const TRIGGER =
+  "inline-flex items-center rounded-lg border border-default bg-surface px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-default/50";
 
 const Menu = () => {
   return (
-    <ComponentWrapper>
-      <NMenu size={MenuSize.MD} title="Actions" trigger={<NButton>Open Menu</NButton>}>
-        <NMenuItem id="edit" title="Edit" shortcut="⌘E" onAction={() => console.log('Edit')} />
-        <NMenuItem id="copy" title="Copy" shortcut="⌘C" onAction={() => console.log('Copy')} />
-        <NMenuItem id="delete" title="Delete" shortcut="⌘D" separator onAction={() => console.log('Delete')} />
+    <ComponentWrapper
+      code={code}
+      attributes={menuAttributes}
+      extraAttributes={[
+        { title: "NMenuItem attributes", data: menuItemAttributes },
+        { title: "NMenuNested attributes", data: menuNestedAttributes },
+      ]}
+    >
+      <h3 className={H3_DOC}>With shortcuts:</h3>
+      <div className="mb-5">
+        <NMenu size={MenuSize.MD} title="Actions" triggerClassName={TRIGGER} trigger="Open Menu">
+          <NMenuItem id="edit" title="Edit" shortcut="⌘E" onAction={() => console.log("Edit")} />
+          <NMenuItem id="copy" title="Copy" shortcut="⌘C" onAction={() => console.log("Copy")} />
+          <NMenuItem
+            id="duplicate"
+            title="Duplicate"
+            shortcut="⇧⌘D"
+            separator
+            onAction={() => console.log("Duplicate")}
+          />
+          <NMenuItem
+            id="delete"
+            title="Delete"
+            shortcut="⌫"
+            onAction={() => console.log("Delete")}
+          />
+        </NMenu>
+      </div>
+
+      <h3 className={H3_DOC}>With icons and a submenu:</h3>
+      <div className="mb-5">
+        <NMenu size={MenuSize.LG} title="Document" triggerClassName={TRIGGER} trigger="File">
+          <NMenuItem
+            id="rename"
+            title="Rename"
+            icon={Pencil}
+            shortcut="F2"
+            onAction={() => console.log("Rename")}
+          />
+          <NMenuItem
+            id="duplicate-file"
+            title="Duplicate"
+            icon={Copy}
+            shortcut="⌘D"
+            onAction={() => console.log("Duplicate")}
+          />
+          <NMenuNested trigger="Export as" icon={<Download className="h-4 w-4 shrink-0" />}>
+            <NMenuItem id="pdf" title="PDF" onAction={() => console.log("PDF")} />
+            <NMenuItem id="markdown" title="Markdown" onAction={() => console.log("Markdown")} />
+            <NMenuItem id="html" title="HTML" onAction={() => console.log("HTML")} />
+          </NMenuNested>
+          <NMenuItem
+            id="share"
+            title="Share"
+            icon={Share2}
+            shortcut="⌘⇧S"
+            separator
+            onAction={() => console.log("Share")}
+          />
+          <NMenuItem
+            id="trash"
+            title="Move to trash"
+            icon={Trash2}
+            onAction={() => console.log("Trash")}
+          />
+        </NMenu>
+      </div>
+
+      <h3 className={H3_DOC}>Disabled item:</h3>
+      <NMenu size={MenuSize.MD} triggerClassName={TRIGGER} trigger="More">
+        <NMenuItem
+          id="report"
+          title="Open report"
+          icon={FileText}
+          onAction={() => console.log("Report")}
+        />
+        <NMenuItem
+          id="unavailable"
+          title="Not available yet"
+          disabled
+          onAction={() => console.log("Never fires")}
+        />
       </NMenu>
     </ComponentWrapper>
   );
 };
 
 export default Menu;
+
+/** The usage sample on this component's page, kept beside the demo it documents. */
+export const code = `import { MenuSize, NMenu, NMenuItem, NMenuNested } from '@nayan-ui/react';
+import { Copy, Download, FileText, Pencil, Share2, Trash2 } from 'lucide-react';
+
+const TRIGGER =
+  'inline-flex items-center rounded-lg border border-default bg-surface px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-default/50';
+
+const Menu = () => {
+  return (
+    <div>
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">With shortcuts:</h3>
+      <div className="mb-5">
+        <NMenu size={MenuSize.MD} title="Actions" triggerClassName={TRIGGER} trigger="Open Menu">
+          <NMenuItem id="edit" title="Edit" shortcut="⌘E" onAction={() => console.log('Edit')} />
+          <NMenuItem id="copy" title="Copy" shortcut="⌘C" onAction={() => console.log('Copy')} />
+          <NMenuItem id="duplicate" title="Duplicate" shortcut="⇧⌘D" separator onAction={() => console.log('Duplicate')} />
+          <NMenuItem id="delete" title="Delete" shortcut="⌫" onAction={() => console.log('Delete')} />
+        </NMenu>
+      </div>
+
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">With icons and a submenu:</h3>
+      <div className="mb-5">
+        <NMenu size={MenuSize.LG} title="Document" triggerClassName={TRIGGER} trigger="File">
+          <NMenuItem id="rename" title="Rename" icon={Pencil} shortcut="F2" onAction={() => console.log('Rename')} />
+          <NMenuItem id="duplicate-file" title="Duplicate" icon={Copy} shortcut="⌘D" onAction={() => console.log('Duplicate')} />
+          <NMenuNested trigger="Export as" icon={<Download className="h-4 w-4 shrink-0" />}>
+            <NMenuItem id="pdf" title="PDF" onAction={() => console.log('PDF')} />
+            <NMenuItem id="markdown" title="Markdown" onAction={() => console.log('Markdown')} />
+            <NMenuItem id="html" title="HTML" onAction={() => console.log('HTML')} />
+          </NMenuNested>
+          <NMenuItem id="share" title="Share" icon={Share2} shortcut="⌘⇧S" separator onAction={() => console.log('Share')} />
+          <NMenuItem id="trash" title="Move to trash" icon={Trash2} onAction={() => console.log('Trash')} />
+        </NMenu>
+      </div>
+
+      <h3 className="text-foreground mb-2 mt-4 text-sm font-semibold">Disabled item:</h3>
+      <NMenu size={MenuSize.MD} triggerClassName={TRIGGER} trigger="More">
+        <NMenuItem id="report" title="Open report" icon={FileText} onAction={() => console.log('Report')} />
+        <NMenuItem id="unavailable" title="Not available yet" disabled onAction={() => console.log('Never fires')} />
+      </NMenu>
+    </div>
+  );
+};
+
+export default Menu;`;
+
+export const menuAttributes = [
+  { name: "size", type: "MenuSize", default: "Optional", details: "Size of the menu." },
+  { name: "title", type: "React.ReactNode", default: "Optional", details: "Title for the menu." },
+  {
+    name: "placement",
+    type: "'top' | 'bottom' | 'right' | 'left'",
+    default: "'bottom'",
+    details: "Side of the trigger the menu opens on.",
+  },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "triggerClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "titleClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "trigger",
+    type: "React.ReactNode",
+    default: "Required",
+    details: "Trigger element for the menu.",
+  },
+  { name: "children", type: "React.ReactNode", default: "Required", details: "Menu content." },
+];
+
+export const menuItemAttributes = [
+  {
+    name: "title",
+    type: "React.ReactNode",
+    default: "Required",
+    details: "Title for the menu item.",
+  },
+  {
+    name: "shortcut",
+    type: "string",
+    default: "Optional",
+    details: "Keyboard shortcut to display.",
+  },
+  {
+    name: "icon",
+    type: "ElementType | React.ReactNode",
+    default: "Optional",
+    details: "Icon for the menu item.",
+  },
+  {
+    name: "separator",
+    type: "boolean",
+    default: "false",
+    details: "Whether to show separator after item.",
+  },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "iconClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "titleClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "shortcutClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "disabled",
+    type: "boolean",
+    default: "false",
+    details: "Whether the menu item is disabled.",
+  },
+  {
+    name: "id",
+    type: "string",
+    default: "Optional",
+    details: "Item key, for selection and for React Aria collections.",
+  },
+  {
+    name: "onAction",
+    type: "() => void",
+    default: "Optional",
+    details: "Called when the item is chosen, by click or by keyboard.",
+  },
+];
+
+export const menuNestedAttributes = [
+  {
+    name: "trigger",
+    type: "React.ReactNode",
+    default: "Required",
+    details: "Label for the row that opens the submenu.",
+  },
+  {
+    name: "icon",
+    type: "React.ReactNode",
+    default: "Optional",
+    details: "Rendered before the label, like an item icon.",
+  },
+  {
+    name: "children",
+    type: "React.ReactNode",
+    default: "Required",
+    details: "Submenu content — usually NMenuItem elements.",
+  },
+  {
+    name: "className",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+  {
+    name: "triggerClassName",
+    type: "string",
+    default: "' '",
+    details: "You can customise by passing tailwind classes.",
+  },
+];

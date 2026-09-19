@@ -1,9 +1,11 @@
-import React, { useId } from 'react';
-import { Switch } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { useId } from "react";
+import { Switch } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NSwitchProps {
   enabled?: boolean;
+  /** Alias of `enabled`, as the React Native package names it. */
+  checked?: boolean;
   defaultChecked?: boolean;
   label?: React.ReactNode;
   className?: string;
@@ -12,52 +14,43 @@ export interface NSwitchProps {
   onChange?: (checked: boolean) => void;
   disabled?: boolean;
   id?: string;
-  name?: string;
-  value?: string;
-  isRequired?: boolean;
-  'aria-label'?: string;
 }
 
 export const NSwitch: React.FC<NSwitchProps> = React.memo(
   ({
     label,
     enabled,
+    checked,
     defaultChecked,
     disabled = false,
     onChange,
-    className = '',
-    switchClassName = '',
-    labelClassName = '',
+    className = "",
+    switchClassName = "",
+    labelClassName = "",
     id,
-    name,
-    value,
-    isRequired = false,
-    'aria-label': ariaLabel
   }) => {
     const generatedId = useId();
     const switchId = id || `nyn-switch-${generatedId}`;
+    const selected = checked ?? enabled;
 
     return (
       <Switch
         id={switchId}
-        name={name}
-        value={value}
-        isSelected={enabled}
-        defaultSelected={enabled === undefined ? defaultChecked : undefined}
+        {...(selected !== undefined ? { isSelected: selected } : {})}
+        defaultSelected={defaultChecked}
         isDisabled={disabled}
-        isRequired={isRequired}
         onChange={onChange}
-        aria-label={ariaLabel || (!label ? 'Switch' : undefined)}
-        className={cn('nyn-switch', className)}>
-        <Switch.Content className={cn(switchClassName)}>
+        className={cn("nyn-switch", className, switchClassName)}
+      >
+        <Switch.Content className="flex w-full items-center justify-between gap-3">
+          {label && <span className={cn("text-sm font-medium", labelClassName)}>{label}</span>}
           <Switch.Control>
             <Switch.Thumb />
           </Switch.Control>
-          {label && <span className={cn(labelClassName)}>{label}</span>}
         </Switch.Content>
       </Switch>
     );
-  }
+  },
 );
 
-NSwitch.displayName = 'NSwitch';
+NSwitch.displayName = "NSwitch";

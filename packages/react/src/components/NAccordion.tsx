@@ -1,7 +1,7 @@
-import { memo } from 'react';
-import { Accordion } from '@heroui/react';
-import { cn } from '../lib/utils';
-import { AccordionListItem, AccordionTypes } from './Types';
+import { memo } from "react";
+import { Accordion } from "@heroui/react";
+import { cn } from "../lib/utils";
+import { AccordionListItem, AccordionTypes } from "./Types";
 
 export interface NAccordionProps<T extends AccordionListItem = AccordionListItem> {
   className?: string;
@@ -9,7 +9,7 @@ export interface NAccordionProps<T extends AccordionListItem = AccordionListItem
   triggerClassName?: string;
   contentClassName?: string;
   indicatorClassName?: string;
-  variant?: 'default' | 'surface';
+  variant?: "default" | "surface";
   type?: AccordionTypes;
   items: T[];
 }
@@ -17,19 +17,28 @@ export interface NAccordionProps<T extends AccordionListItem = AccordionListItem
 function NAccordionComponent<T extends AccordionListItem = AccordionListItem>({
   type = AccordionTypes.SINGLE,
   items,
-  className = '',
-  itemClassName = '',
-  triggerClassName = '',
-  contentClassName = '',
-  indicatorClassName = '',
-  variant = 'default'
+  className = "",
+  itemClassName = "",
+  triggerClassName = "",
+  contentClassName = "",
+  indicatorClassName = "",
+  variant = "default",
 }: NAccordionProps<T>) {
   return (
-    <Accordion allowsMultipleExpanded={type === AccordionTypes.MULTIPLE} variant={variant} className={cn('w-full', className)}>
+    <Accordion
+      allowsMultipleExpanded={type === AccordionTypes.MULTIPLE}
+      variant={variant}
+      className={cn("nyn-accordion w-full", className)}
+    >
       {items.map((item, index) => {
         const key = item.id || `item-${index}`;
         return (
-          <Accordion.Item key={key} id={key} isDisabled={item.disabled} className={cn(itemClassName)}>
+          <Accordion.Item
+            key={key}
+            id={key}
+            isDisabled={item.disabled}
+            className={cn(itemClassName)}
+          >
             <Accordion.Heading>
               <Accordion.Trigger className={cn(triggerClassName)}>
                 {item.title}
@@ -45,5 +54,7 @@ function NAccordionComponent<T extends AccordionListItem = AccordionListItem>({
     </Accordion>
   );
 }
+
+NAccordionComponent.displayName = "NAccordion";
 
 export const NAccordion = memo(NAccordionComponent) as typeof NAccordionComponent;

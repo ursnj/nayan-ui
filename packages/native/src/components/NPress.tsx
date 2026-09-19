@@ -1,6 +1,6 @@
-import React from 'react';
-import { Pressable, type PressableProps } from 'react-native';
-import { PressableFeedback, cn } from 'heroui-native';
+import React from "react";
+import { Pressable, type PressableProps } from "react-native";
+import { PressableFeedback, cn } from "heroui-native";
 
 export interface NPressProps extends PressableProps {
   children: React.ReactNode;
@@ -8,22 +8,28 @@ export interface NPressProps extends PressableProps {
   className?: string;
 }
 
-export const NPress = React.memo<NPressProps>(({ children, feedback = false, className = '', ...props }) => {
-  if (feedback) {
+export const NPress = React.memo<NPressProps>(
+  ({ children, feedback = false, className = "", ...props }) => {
+    if (feedback) {
+      return (
+        <PressableFeedback accessibilityRole="button" className={cn(className)} {...props}>
+          <PressableFeedback.Highlight />
+          <PressableFeedback.Ripple />
+          {children}
+        </PressableFeedback>
+      );
+    }
+
     return (
-      <PressableFeedback accessibilityRole="button" className={cn(className)} {...props}>
-        <PressableFeedback.Highlight />
-        <PressableFeedback.Ripple />
+      <Pressable
+        accessibilityRole="button"
+        className={cn("active:opacity-80", className)}
+        {...props}
+      >
         {children}
-      </PressableFeedback>
+      </Pressable>
     );
-  }
+  },
+);
 
-  return (
-    <Pressable accessibilityRole="button" className={cn('active:opacity-80', className)} {...props}>
-      {children}
-    </Pressable>
-  );
-});
-
-NPress.displayName = 'NPress';
+NPress.displayName = "NPress";

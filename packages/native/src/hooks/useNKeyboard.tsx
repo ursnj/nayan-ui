@@ -1,24 +1,27 @@
-import * as React from 'react';
-import { Keyboard, type KeyboardEvent } from 'react-native';
+import * as React from "react";
+import { Keyboard, type KeyboardEvent } from "react-native";
 
 const EVENT_TYPE = {
-  didShow: { show: 'keyboardDidShow', hide: 'keyboardDidHide' },
-  willShow: { show: 'keyboardWillShow', hide: 'keyboardWillHide' }
+  didShow: { show: "keyboardDidShow", hide: "keyboardDidHide" },
+  willShow: { show: "keyboardWillShow", hide: "keyboardWillHide" },
 } as const;
 
 export function useNKeyboard(
-  { eventType = 'didShow' }: { eventType?: keyof typeof EVENT_TYPE } = {
-    eventType: 'didShow'
-  }
+  { eventType = "didShow" }: { eventType?: keyof typeof EVENT_TYPE } = {
+    eventType: "didShow",
+  },
 ) {
   const [isKeyboardVisible, setKeyboardVisible] = React.useState(false);
   const [keyboardHeight, setKeyboardHeight] = React.useState(0);
 
   React.useEffect(() => {
-    const showListener: any = Keyboard.addListener(EVENT_TYPE[eventType].show, (e: KeyboardEvent) => {
-      setKeyboardVisible(true);
-      setKeyboardHeight(e.endCoordinates.height);
-    });
+    const showListener: any = Keyboard.addListener(
+      EVENT_TYPE[eventType].show,
+      (e: KeyboardEvent) => {
+        setKeyboardVisible(true);
+        setKeyboardHeight(e.endCoordinates.height);
+      },
+    );
     const hideListener: any = Keyboard.addListener(EVENT_TYPE[eventType].hide, () => {
       setKeyboardVisible(false);
       setKeyboardHeight(0);
@@ -38,6 +41,6 @@ export function useNKeyboard(
   return {
     isKeyboardVisible,
     keyboardHeight,
-    dismissKeyboard
+    dismissKeyboard,
   };
 }

@@ -1,7 +1,7 @@
-import React, { memo } from 'react';
-import type { Selection } from 'react-aria-components';
-import { Tag, TagGroup } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { memo } from "react";
+import type { Selection } from "@heroui/react";
+import { Tag, TagGroup } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NTagItem {
   id: string;
@@ -10,45 +10,51 @@ export interface NTagItem {
 
 export interface NTagGroupProps {
   items: NTagItem[];
-  selectionMode?: 'none' | 'single' | 'multiple';
+  selectionMode?: "none" | "single" | "multiple";
   selectedKeys?: Iterable<string>;
   onSelectionChange?: (keys: Selection) => void;
   onRemove?: (keys: Set<string>) => void;
-  size?: 'sm' | 'md' | 'lg';
-  variant?: 'default' | 'surface';
+  size?: "sm" | "md" | "lg";
+  variant?: "default" | "surface";
   disabled?: boolean;
   className?: string;
   tagClassName?: string;
-  'aria-label'?: string;
+  "aria-label"?: string;
 }
 
 const NTagGroupComponent: React.FC<NTagGroupProps> = memo(
   ({
     items,
-    selectionMode = 'none',
+    selectionMode = "none",
     selectedKeys,
     onSelectionChange,
     onRemove,
-    size = 'md',
-    variant = 'default',
+    size = "md",
+    variant = "default",
     disabled = false,
-    className = '',
-    tagClassName = '',
-    'aria-label': ariaLabel = 'Tags'
+    className = "",
+    tagClassName = "",
+    "aria-label": ariaLabel = "Tags",
   }) => {
     return (
       <TagGroup
         selectionMode={selectionMode}
         selectedKeys={selectedKeys}
         onSelectionChange={onSelectionChange}
-        onRemove={keys => onRemove?.(keys as Set<string>)}
+        {...(onRemove ? { onRemove: (keys: Iterable<any>) => onRemove(keys as Set<string>) } : {})}
         size={size}
         variant={variant}
-        className={cn('nyn-tag-group', className)}
-        aria-label={ariaLabel}>
+        className={cn("nyn-tag-group", className)}
+        aria-label={ariaLabel}
+      >
         <TagGroup.List items={items}>
           {(item: NTagItem) => (
-            <Tag id={item.id} textValue={item.label} isDisabled={disabled} className={cn(tagClassName)}>
+            <Tag
+              id={item.id}
+              textValue={item.label}
+              isDisabled={disabled}
+              className={cn(tagClassName)}
+            >
               {item.label}
               {onRemove && <Tag.RemoveButton isDisabled={disabled} />}
             </Tag>
@@ -56,9 +62,9 @@ const NTagGroupComponent: React.FC<NTagGroupProps> = memo(
         </TagGroup.List>
       </TagGroup>
     );
-  }
+  },
 );
 
-NTagGroupComponent.displayName = 'NTagGroup';
+NTagGroupComponent.displayName = "NTagGroup";
 
 export const NTagGroup = NTagGroupComponent;

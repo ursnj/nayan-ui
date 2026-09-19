@@ -1,6 +1,6 @@
-import React, { memo } from 'react';
-import { Label, NumberField } from '@heroui/react';
-import { cn } from '../lib/utils';
+import React, { memo } from "react";
+import { Label, NumberField } from "@heroui/react";
+import { cn } from "../lib/utils";
 
 export interface NNumberFieldProps {
   value?: number;
@@ -12,11 +12,11 @@ export interface NNumberFieldProps {
   label?: string;
   disabled?: boolean;
   isInvalid?: boolean;
-  variant?: 'primary' | 'secondary';
+  variant?: "primary" | "secondary";
   fullWidth?: boolean;
   formatOptions?: Intl.NumberFormatOptions;
   className?: string;
-  'aria-label'?: string;
+  "aria-label"?: string;
 }
 
 const NNumberFieldComponent: React.FC<NNumberFieldProps> = memo(
@@ -30,11 +30,11 @@ const NNumberFieldComponent: React.FC<NNumberFieldProps> = memo(
     label,
     disabled = false,
     isInvalid = false,
-    variant = 'primary',
+    variant = "primary",
     fullWidth = false,
     formatOptions,
-    className = '',
-    'aria-label': ariaLabel
+    className = "",
+    "aria-label": ariaLabel,
   }) => {
     return (
       <NumberField
@@ -49,8 +49,9 @@ const NNumberFieldComponent: React.FC<NNumberFieldProps> = memo(
         variant={variant}
         fullWidth={fullWidth}
         formatOptions={formatOptions}
-        className={cn('nyn-number-field', className)}
-        aria-label={ariaLabel || (!label ? 'Number' : undefined)}>
+        className={cn("nyn-number-field mb-3", className)}
+        aria-label={ariaLabel || (!label ? "Number" : undefined)}
+      >
         {label && <Label>{label}</Label>}
         <NumberField.Group>
           <NumberField.DecrementButton>-</NumberField.DecrementButton>
@@ -59,9 +60,9 @@ const NNumberFieldComponent: React.FC<NNumberFieldProps> = memo(
         </NumberField.Group>
       </NumberField>
     );
-  }
+  },
 );
 
-NNumberFieldComponent.displayName = 'NNumberField';
+NNumberFieldComponent.displayName = "NNumberField";
 
 export const NNumberField = NNumberFieldComponent;

@@ -1,290 +1,452 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { NButton, NCard } from '@nayan-ui/react';
+import { useEffect, useState } from "react";
+import {
+  AlertTypes,
+  NAccordion,
+  NAlert,
+  NAvatar,
+  NBadge,
+  NButton,
+  NButtonGroup,
+  NCheck,
+  NChip,
+  NInput,
+  NKbd,
+  NMeter,
+  NNumberField,
+  NProgress,
+  NRadioGroup,
+  NSearchField,
+  NSelect,
+  NSlider,
+  NSwitch,
+  NTagGroup,
+  NToggleButton,
+  NTooltip,
+  useNToast,
+} from "@nayan-ui/react";
 import {
   ArrowRight,
   Bell,
-  Calendar,
+  Bold,
   Check,
-  Code,
+  Copy,
+  Download,
   Github,
-  Heart,
+  Italic,
   Package,
-  Palette,
-  Rocket,
-  Search,
-  Settings,
-  Shield,
-  Smartphone,
-  Star,
-  User,
-  Zap
-} from 'lucide-react';
-import Link from 'next/link';
+  Terminal,
+  Underline,
+} from "lucide-react";
+import Link from "next/link";
+import { Badge } from "@/design/Primitives";
+import { CARD, CONTAINER, GRADIENT_TEXT, H1_HERO, LEAD, WELL } from "@/design/system";
+import { TOTAL_COMPONENT_COUNT } from "@/services/Counts";
+import { installCode, rnInstallCode } from "@/services/ReactCodeBlocks";
+
+const INSTALLS = [
+  { platform: "React", command: installCode },
+  { platform: "React Native", command: rnInstallCode },
+];
+
+const TABS = ["Buttons", "Forms", "Feedback", "Elements"] as const;
+
+const RANGES = ["Day", "Week", "Month"];
+
+const FRAMEWORKS = [
+  { value: "next", label: "Next.js" },
+  { value: "vite", label: "Vite" },
+  { value: "remix", label: "Remix" },
+  { value: "expo", label: "Expo" },
+];
+
+const PLANS = [
+  { label: "Free", value: "free" },
+  { label: "Pro", value: "pro" },
+];
+
+const TAGS = [
+  { id: "react", label: "React" },
+  { id: "native", label: "React Native" },
+  { id: "a11y", label: "Accessible" },
+];
+
+const FAQ = [
+  { title: "Is it free?", message: "Yes — MIT licensed, and it stays that way." },
+  { title: "Does it theme?", message: "Light and dark out of the box, plus your own tokens." },
+];
+
+const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
+  <div>
+    <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-muted">{label}</p>
+    {children}
+  </div>
+);
 
 const Banner = () => {
-  const [activeTab, setActiveTab] = useState(0);
-  const [progress, setProgress] = useState(65);
-  const [isLoading, setIsLoading] = useState(false);
+  const [tab, setTab] = useState(0);
+
+  /* Which command was last copied, so each row ticks independently. */
+  const [copied, setCopied] = useState<string | null>(null);
+
+  /* Live state for the demo controls, so they actually respond. */
+  const [email, setEmail] = useState("");
+  const [query, setQuery] = useState("");
+  const [seats, setSeats] = useState(3);
+  const [framework, setFramework] = useState<{ value: string; label: string } | null>(
+    FRAMEWORKS[0],
+  );
+  const [plan, setPlan] = useState("pro");
+  const [notify, setNotify] = useState(true);
+  const [dark, setDark] = useState(false);
+  const [volume, setVolume] = useState(60);
+  const [range, setRange] = useState(RANGES[1]);
+  const [bold, setBold] = useState(true);
+  const [italic, setItalic] = useState(false);
+  const [underline, setUnderline] = useState(false);
+  const [tags, setTags] = useState<any>(new Set(["react"]));
+
+  const toast = useNToast();
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress(prev => {
-        const next = prev + Math.random() * 10;
-        return next > 100 ? 20 : next;
-      });
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
+    if (!copied) return;
+    const timer = setTimeout(() => setCopied(null), 2000);
+    return () => clearTimeout(timer);
+  }, [copied]);
 
-  const handleButtonClick = () => {
-    setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 1500);
+  const copyInstall = async (command: string) => {
+    try {
+      await navigator.clipboard.writeText(command);
+      setCopied(command);
+    } catch {
+      // Clipboard permission can be denied; the command is visible regardless.
+    }
   };
 
   return (
     <section className="relative overflow-hidden">
-      {/* Subtle accent background */}
-      <div className="absolute inset-0 bg-brand-soft" />
-      <div className="absolute top-1/4 right-1/4 w-72 h-72 bg-accent/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-accent/5 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/[0.07] via-transparent to-transparent" />
+        <div className="absolute -top-32 left-1/4 h-72 w-72 rounded-full bg-indigo-500/15 blur-3xl" />
+        <div className="absolute -top-20 right-1/4 h-64 w-64 rounded-full bg-fuchsia-500/10 blur-3xl" />
+      </div>
 
-      <div className="container relative mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left — Text Content */}
-          <div className="text-center lg:text-left space-y-6">
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-medium">
-                <Package className="w-3.5 h-3.5" />
-                Open Source
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-success/10 border border-success/20 text-success text-xs font-medium">
-                <Heart className="w-3.5 h-3.5" />
-                Free Forever
-              </span>
-            </div>
+      <div className={`${CONTAINER} py-14 sm:py-20`}>
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <div className="text-center lg:text-left">
+            <Badge icon={Package}>Open source · Free forever</Badge>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight tracking-tight">
-              Build Beautiful
-              <span className="block text-gradient">React & React Native</span>
-              Components
+            <h1 className={`mt-6 ${H1_HERO}`}>
+              Components for
+              <span className={`block ${GRADIENT_TEXT}`}>React &amp; React Native</span>
             </h1>
 
-            <p className="text-base sm:text-lg text-muted max-w-lg mx-auto lg:mx-0">
-              A comprehensive component library with 50+ production-ready, accessible, and customizable UI components for web and mobile.
+            <p className={`mx-auto mt-6 max-w-xl text-lg ${LEAD} lg:mx-0`}>
+              {TOTAL_COMPONENT_COUNT} accessible, good-looking components for web and mobile —
+              styled, themeable and documented, so you can start on the thing you actually set out
+              to build.
             </p>
 
-            {/* Stats */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-5 text-sm">
-              <span className="flex items-center gap-1.5 font-medium">
-                <Star className="w-4 h-4 text-accent" />
-                50+ Components
-              </span>
-              <span className="flex items-center gap-1.5 font-medium">
-                <Code className="w-4 h-4 text-accent" />
-                TypeScript
-              </span>
-              <span className="flex items-center gap-1.5 font-medium">
-                <Palette className="w-4 h-4 text-accent" />
-                Themeable
-              </span>
-              <span className="flex items-center gap-1.5 font-medium">
-                <Shield className="w-4 h-4 text-accent" />
-                MIT Licensed
-              </span>
+            <div className="mx-auto mt-7 max-w-md divide-y divide-default overflow-hidden rounded-xl border border-default bg-surface lg:mx-0">
+              {INSTALLS.map(({ platform, command }) => (
+                <div key={command} className="flex items-center gap-3 px-3.5 py-2.5">
+                  <Terminal aria-hidden className="h-4 w-4 shrink-0 text-muted" />
+                  <code className="min-w-0 flex-1 truncate font-mono text-sm text-foreground">
+                    {command}
+                  </code>
+                  <span className="shrink-0 text-[11px] font-medium text-muted">{platform}</span>
+                  <button
+                    type="button"
+                    onClick={() => copyInstall(command)}
+                    aria-label={`Copy ${platform} install command`}
+                    aria-live="polite"
+                    className="shrink-0 rounded-md p-1 text-muted transition-colors hover:text-foreground"
+                  >
+                    {copied === command ? (
+                      <Check className="h-4 w-4 text-emerald-500" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              ))}
             </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              <Link href="/react/installation">
-                <NButton className="px-6 py-2.5 font-semibold w-full sm:w-auto">
-                  <Rocket className="w-4 h-4 mr-2" />
-                  Get Started
-                  <ArrowRight className="w-4 h-4 ml-2" />
+            <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
+              <Link href="/react/installation" className="sm:w-auto">
+                <NButton className="w-full bg-gradient-to-r from-indigo-500 to-violet-500 px-6 font-semibold text-white shadow-lg shadow-indigo-500/25 hover:from-indigo-600 hover:to-violet-600 sm:w-auto">
+                  Get started
+                  <ArrowRight aria-hidden className="h-4 w-4" />
                 </NButton>
               </Link>
-              <a href="https://github.com/ursnj/nayan-ui" target="_blank" rel="noopener noreferrer">
-                <NButton isOutline className="w-full sm:w-auto px-6 py-2.5 font-semibold">
-                  <Github className="w-4 h-4 mr-2" />
+              <a
+                href="https://github.com/ursnj/nayan-ui"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sm:w-auto"
+              >
+                <NButton isOutline={true} className="w-full px-6 font-semibold sm:w-auto">
+                  <Github aria-hidden className="h-4 w-4" />
                   View on GitHub
                 </NButton>
               </a>
             </div>
           </div>
 
-          {/* Right — Browser Demo (intentionally colorful: it showcases the components) */}
-          <div className="relative flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-md lg:max-w-lg space-y-4">
-              {/* Browser Window */}
-              <NCard className="overflow-hidden shadow-2xl border-0">
-                {/* Chrome Bar */}
-                <div className="flex items-center gap-2 px-4 py-3 bg-surface-secondary border-b border-default">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-500" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                    <div className="w-3 h-3 rounded-full bg-green-500" />
-                  </div>
-                  <div className="flex-1 mx-3">
-                    <div className="bg-background rounded-md px-3 py-1 text-xs text-muted text-center truncate">nayanui.com/react/components</div>
-                  </div>
-                </div>
+          <div className={`${CARD} overflow-hidden shadow-xl shadow-indigo-500/5`}>
+            <div className="flex items-center justify-between gap-3 border-b border-default bg-surface px-4 py-2.5">
+              <span className="font-mono text-xs text-muted">@nayan-ui/react</span>
+              <span className="text-[11px] text-muted">Live, not a screenshot</span>
+            </div>
 
-                {/* Demo Content */}
-                <div className="p-4 sm:p-5 space-y-4">
-                  {/* Tab Navigation */}
-                  <div className="flex gap-1 bg-background/60 rounded-lg p-1">
-                    {['Buttons', 'Forms', 'Cards'].map((tab, index) => (
-                      <button
-                        key={tab}
-                        onClick={() => setActiveTab(index)}
-                        className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
-                          activeTab === index ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted hover:text-foreground'
-                        }`}>
-                        {tab}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Buttons Tab */}
-                  {activeTab === 0 && (
-                    <div className="space-y-3">
-                      <NButton onClick={handleButtonClick} className="w-full">
-                        {isLoading ? (
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                        ) : (
-                          <Zap className="w-4 h-4 mr-2" />
-                        )}
-                        {isLoading ? 'Loading...' : 'Interactive Button'}
-                      </NButton>
-                      <div className="grid grid-cols-2 gap-2">
-                        <NButton className="bg-success hover:bg-success/90 text-success-foreground text-xs">
-                          <Check className="w-3 h-3 mr-1" />
-                          Success
-                        </NButton>
-                        <NButton className="bg-danger hover:bg-danger/90 text-danger-foreground text-xs">
-                          <Shield className="w-3 h-3 mr-1" />
-                          Danger
-                        </NButton>
-                      </div>
-                      <div className="flex flex-wrap gap-1.5">
-                        <span className="px-2 py-0.5 rounded-full bg-accent/15 text-accent text-[10px] font-medium border border-accent/20">
-                          Badge
-                        </span>
-                        <span className="px-2 py-0.5 rounded-full bg-success/15 text-success text-[10px] font-medium border border-success/20">
-                          Chip
-                        </span>
-                        <span className="px-2 py-0.5 rounded-full bg-warning/15 text-warning text-[10px] font-medium border border-warning/20">
-                          Tag
-                        </span>
-                        <span className="px-2 py-0.5 rounded-full bg-danger/15 text-danger text-[10px] font-medium border border-danger/20">
-                          Status
-                        </span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Forms Tab */}
-                  {activeTab === 1 && (
-                    <div className="space-y-3">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
-                        <input
-                          type="text"
-                          placeholder="Search components..."
-                          className="w-full pl-10 pr-4 py-2 bg-background border border-default rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
-                        />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded border-2 border-accent bg-accent flex items-center justify-center">
-                          <Check className="w-3 h-3 text-accent-foreground" />
-                        </div>
-                        <span className="text-sm">Enable notifications</span>
-                      </div>
-                      <select className="w-full px-3 py-2 bg-background border border-default rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50">
-                        <option>Choose framework</option>
-                        <option>React</option>
-                        <option>React Native</option>
-                      </select>
-                      <div className="flex gap-2">
-                        <div className="h-2 flex-1 rounded-full bg-accent" />
-                        <div className="h-2 w-1/4 rounded-full bg-default" />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Cards Tab */}
-                  {activeTab === 2 && (
-                    <div className="space-y-2.5">
-                      <div className="flex items-center justify-between p-3 bg-background/60 rounded-lg border border-default/50">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-accent/10 text-accent flex items-center justify-center">
-                            <User className="w-3.5 h-3.5" />
-                          </div>
-                          <span className="text-sm font-medium">Profile</span>
-                        </div>
-                        <Settings className="w-4 h-4 text-muted" />
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-background/60 rounded-lg border border-default/50">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-warning/10 text-warning flex items-center justify-center">
-                            <Bell className="w-3.5 h-3.5" />
-                          </div>
-                          <span className="text-sm font-medium">Notifications</span>
-                        </div>
-                        <div className="w-8 h-4 bg-accent rounded-full relative">
-                          <div className="w-3 h-3 bg-white rounded-full absolute right-0.5 top-0.5" />
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-background/60 rounded-lg border border-default/50">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-success/10 text-success flex items-center justify-center">
-                            <Calendar className="w-3.5 h-3.5" />
-                          </div>
-                          <span className="text-sm font-medium">Schedule</span>
-                        </div>
-                        <span className="text-xs text-muted">Today</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </NCard>
-
-              {/* Progress Card */}
-              <NCard className="p-4 shadow-xl border-0">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Component Library</span>
-                    <span className="text-xs font-medium text-accent">{Math.round(progress)}%</span>
-                  </div>
-                  <div className="h-2 bg-default/50 rounded-full overflow-hidden">
-                    <div className="h-full bg-brand-gradient rounded-full transition-all duration-1000 ease-out" style={{ width: `${progress}%` }} />
-                  </div>
-                  <div className="text-xs text-muted">Building amazing components...</div>
-                </div>
-              </NCard>
-
-              {/* Feature Pills */}
-              <div className="flex flex-wrap gap-2">
-                {[
-                  { icon: Code, label: 'TypeScript' },
-                  { icon: Palette, label: 'Theming' },
-                  { icon: Zap, label: 'Fast' },
-                  { icon: Shield, label: 'Accessible' },
-                  { icon: Smartphone, label: 'Cross-Platform' }
-                ].map(pill => (
-                  <span
-                    key={pill.label}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-medium">
-                    <pill.icon className="w-3 h-3" />
-                    {pill.label}
-                  </span>
+            <div className="p-4 sm:p-5">
+              <div
+                role="tablist"
+                aria-label="Component examples"
+                className="mb-5 flex gap-1 rounded-lg bg-background p-1"
+              >
+                {TABS.map((label, index) => (
+                  <button
+                    key={label}
+                    role="tab"
+                    id={`home-tab-${index}`}
+                    aria-selected={tab === index}
+                    aria-controls={`home-panel-${index}`}
+                    onClick={() => setTab(index)}
+                    className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                      tab === index
+                        ? "bg-surface text-foreground shadow-sm"
+                        : "text-muted hover:text-foreground"
+                    }`}
+                  >
+                    {label}
+                  </button>
                 ))}
               </div>
 
-              {/* Floating Decorative Dots */}
-              <div className="absolute -top-3 -right-3 w-6 h-6 bg-accent/80 rounded-full hidden lg:block" />
-              <div className="absolute -bottom-3 -left-3 w-4 h-4 bg-accent/40 rounded-full hidden lg:block" />
+              <div className={`${WELL} min-h-[19rem] p-4`}>
+                {tab === 0 && (
+                  <div
+                    role="tabpanel"
+                    id="home-panel-0"
+                    aria-labelledby="home-tab-0"
+                    className="space-y-4"
+                  >
+                    <Row label="Buttons">
+                      <div className="flex flex-wrap gap-2">
+                        <NButton>Primary</NButton>
+                        <NButton isOutline={true}>Outline</NButton>
+                        <NButton isLoading={true}>Loading</NButton>
+                        <NButton disabled>Disabled</NButton>
+                        <NButton isOutline={true} aria-label="Download">
+                          <Download className="h-4 w-4" />
+                        </NButton>
+                      </div>
+                    </Row>
+                    <Row label="Button group">
+                      <NButtonGroup
+                        items={RANGES}
+                        selected={range}
+                        onChange={setRange}
+                        size="sm"
+                        ariaLabel="Date range"
+                      />
+                    </Row>
+                    <Row label="Toggle buttons">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <NToggleButton
+                          isIconOnly
+                          aria-label="Bold"
+                          size="sm"
+                          isSelected={bold}
+                          onChange={setBold}
+                        >
+                          <Bold className="h-4 w-4" />
+                        </NToggleButton>
+                        <NToggleButton
+                          isIconOnly
+                          aria-label="Italic"
+                          size="sm"
+                          isSelected={italic}
+                          onChange={setItalic}
+                        >
+                          <Italic className="h-4 w-4" />
+                        </NToggleButton>
+                        <NToggleButton
+                          isIconOnly
+                          aria-label="Underline"
+                          size="sm"
+                          isSelected={underline}
+                          onChange={setUnderline}
+                        >
+                          <Underline className="h-4 w-4" />
+                        </NToggleButton>
+                        <NTooltip message="Tooltips too">
+                          <NButton isOutline={true}>Hover me</NButton>
+                        </NTooltip>
+                      </div>
+                    </Row>
+                    <Row label="Badges">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <NBadge color="default">Default</NBadge>
+                        <NBadge color="accent">Accent</NBadge>
+                        <NBadge color="success">Success</NBadge>
+                        <NBadge color="warning">Warning</NBadge>
+                        <NBadge color="danger">Danger</NBadge>
+                      </div>
+                    </Row>
+                    <Row label="Chips">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <NChip color="accent" variant="primary" size="sm">
+                          New
+                        </NChip>
+                        <NChip color="success" variant="soft" size="sm">
+                          Stable
+                        </NChip>
+                        <NChip color="default" variant="secondary" size="sm">
+                          v2.1
+                        </NChip>
+                        <NChip color="danger" variant="soft" size="sm">
+                          Beta
+                        </NChip>
+                      </div>
+                    </Row>
+                  </div>
+                )}
+
+                {tab === 1 && (
+                  <div
+                    role="tabpanel"
+                    id="home-panel-1"
+                    aria-labelledby="home-tab-1"
+                    className="space-y-4"
+                  >
+                    <NInput
+                      id="home-email"
+                      type="email"
+                      label="Email"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <NSearchField
+                      value={query}
+                      onChange={setQuery}
+                      placeholder="Search components..."
+                      fullWidth
+                    />
+                    {/* Client-only: react-select reads a null emotion cache during SSR and takes the page to a 500. */}
+                    {mounted ? (
+                      <NSelect
+                        label="Framework"
+                        placeholder="Pick a framework"
+                        options={FRAMEWORKS}
+                        value={framework}
+                        onChange={(value) => setFramework(value)}
+                        className="mb-3"
+                      />
+                    ) : (
+                      <div
+                        className="h-[68px] animate-pulse rounded-lg border border-default bg-background"
+                        aria-hidden
+                      />
+                    )}
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <Row label="Seats">
+                        <NNumberField
+                          value={seats}
+                          onChange={setSeats}
+                          minValue={1}
+                          maxValue={99}
+                          aria-label="Seats"
+                        />
+                      </Row>
+                      <NRadioGroup label="Plan" items={PLANS} value={plan} onChange={setPlan} />
+                    </div>
+                    <NCheck checked={notify} onChange={setNotify}>
+                      Email me about releases
+                    </NCheck>
+                    <NSwitch label="Dark mode" enabled={dark} onChange={setDark} />
+                  </div>
+                )}
+
+                {tab === 2 && (
+                  <div
+                    role="tabpanel"
+                    id="home-panel-2"
+                    aria-labelledby="home-tab-2"
+                    className="space-y-5"
+                  >
+                    <Row label="Upload progress">
+                      <NProgress value={72} />
+                    </Row>
+                    <Row label="Storage used">
+                      <NMeter value={82} color="warning" label="Storage" output="82% of 10 GB" />
+                    </Row>
+                    <Row label={`Volume — ${volume}`}>
+                      <NSlider
+                        defaultValue={volume}
+                        max={100}
+                        step={1}
+                        onChange={(value: any) =>
+                          setVolume(Array.isArray(value) ? value[0] : value)
+                        }
+                      />
+                    </Row>
+                    <NAlert
+                      type={AlertTypes.SUCCESS}
+                      title="Build passed"
+                      message={`${TOTAL_COMPONENT_COUNT} components, no regressions.`}
+                    />
+                    <NButton
+                      isOutline={true}
+                      onClick={() => toast("Rendered by the real NToast.", "Hello from Nayan UI")}
+                    >
+                      <Bell className="mr-2 h-4 w-4" />
+                      Show a toast
+                    </NButton>
+                  </div>
+                )}
+
+                {tab === 3 && (
+                  <div
+                    role="tabpanel"
+                    id="home-panel-3"
+                    aria-labelledby="home-tab-3"
+                    className="space-y-5"
+                  >
+                    <Row label="Avatars">
+                      <div className="flex items-center gap-2">
+                        <NAvatar size="sm" color="accent" variant="soft" fallback="ND" />
+                        <NAvatar size="sm" color="success" variant="soft" fallback="AK" />
+                        <NAvatar size="sm" color="warning" variant="soft" fallback="RS" />
+                        <NAvatar size="sm" fallback="+9" />
+                      </div>
+                    </Row>
+                    <Row label="Tags">
+                      <NTagGroup
+                        items={TAGS}
+                        selectionMode="multiple"
+                        selectedKeys={tags}
+                        onSelectionChange={setTags}
+                        size="sm"
+                      />
+                    </Row>
+                    <Row label="Keyboard shortcut">
+                      <div className="flex items-center gap-1.5 text-sm text-muted">
+                        <NKbd>⌘</NKbd>
+                        <NKbd>K</NKbd>
+                        <span>to search the docs</span>
+                      </div>
+                    </Row>
+                    <NAccordion items={FAQ} />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

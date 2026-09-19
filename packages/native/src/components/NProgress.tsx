@@ -1,6 +1,6 @@
-import React from 'react';
-import { View } from 'react-native';
-import { cn } from 'heroui-native';
+import React from "react";
+import { View } from "react-native";
+import { cn } from "heroui-native";
 
 export interface NProgressProps {
   value: number;
@@ -15,10 +15,14 @@ export const NProgress = React.memo<NProgressProps>(({ value, className, indicat
     <View
       accessibilityRole="progressbar"
       accessibilityValue={{ min: 0, max: 100, now: Math.round(clampedValue) }}
-      className={cn('h-2 w-full overflow-hidden rounded-full bg-border', className)}>
-      <View className={cn('h-full rounded-full bg-accent', indicatorClassName)} style={{ width: `${clampedValue}%` }} />
+      className={cn("h-2 w-full overflow-hidden rounded-full bg-border", className)}
+    >
+      <View
+        className={cn("h-full rounded-full bg-accent", indicatorClassName)}
+        style={{ width: `${clampedValue}%` }}
+      />
     </View>
   );
 });
 
-NProgress.displayName = 'NProgress';
+NProgress.displayName = "NProgress";
