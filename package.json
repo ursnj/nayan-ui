@@ -3,7 +3,8 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "packages/native/example"
+    "packages/native/example",
+    "applications/*"
   ],
   "version": "1.0.0",
   "description": "Reusable Component Libraries for React and React Native.",

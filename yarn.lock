@@ -2970,9 +2970,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nayan-ui/video-editor@workspace:packages/video-editor":
+"@nayan-ui/video-editor@workspace:applications/video-editor":
   version: 0.0.0-use.local
-  resolution: "@nayan-ui/video-editor@workspace:packages/video-editor"
+  resolution: "@nayan-ui/video-editor@workspace:applications/video-editor"
   dependencies:
     "@nayan-ui/react": "npm:^2.0.0"
     "@tailwindcss/vite": "npm:^4.1.11"
