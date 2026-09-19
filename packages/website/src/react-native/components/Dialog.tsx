@@ -49,3 +49,17 @@ export default function DialogScreen() {
     </View>
   );
 }`;
+
+export const dialogAttributes = [
+  { name: 'title', type: 'string', default: 'Required', details: 'Title for the dialog.' },
+  { name: 'description', type: 'string', default: 'Optional', details: 'Description text below the title.' },
+  { name: 'children', type: 'React.ReactNode', default: 'Optional', details: 'Content for the dialog body.' },
+  { name: 'trigger', type: 'React.ReactNode', default: 'Optional', details: 'Trigger element for the dialog.' },
+  { name: 'isOpen', type: 'boolean', default: 'Optional', details: 'Controlled open state.' },
+  { name: 'isDefaultOpen', type: 'boolean', default: 'Optional', details: 'Default open state for uncontrolled usage.' },
+  { name: 'onOpenChange', type: '(isOpen: boolean) => void', default: 'Optional', details: 'Callback when open state changes.' },
+  { name: 'isSwipeable', type: 'boolean', default: 'Optional', details: 'Whether the dialog can be swiped to dismiss.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'titleClassName', type: 'string', default: "' '", details: 'You can customise title by passing tailwind classes.' },
+  { name: 'contentClassName', type: 'string', default: "' '", details: 'You can customise content by passing tailwind classes.' }
+];

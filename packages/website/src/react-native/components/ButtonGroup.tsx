@@ -60,3 +60,14 @@ export default function ButtonGroupScreen() {
     </View>
   );
 }`;
+
+export const buttonGroupAttributes = [
+  { name: 'items', type: 'ButtonGroupItem[]', default: 'Required', details: 'Array of items with label, value, optional icon and isDisabled.' },
+  { name: 'value', type: 'string', default: 'Required', details: 'Currently selected value.' },
+  { name: 'onValueChange', type: '(value: string) => void', default: 'Required', details: 'Callback when selection changes.' },
+  { name: 'label', type: 'string', default: 'Optional', details: 'Label for the button group.' },
+  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the button group is disabled.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'buttonClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
+];

@@ -42,3 +42,9 @@ export default function ProgressScreen() {
     </View>
   );
 }`;
+
+export const progressAttributes = [
+  { name: 'value', type: 'number', default: 'Required', details: 'Progress value (0-100).' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise progress container by passing tailwind classes.' },
+  { name: 'indicatorClassName', type: 'string', default: "' '", details: 'You can customise progress indicator by passing tailwind classes.' }
+];

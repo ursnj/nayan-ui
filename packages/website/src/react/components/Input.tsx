@@ -31,3 +31,14 @@ const Input = () => {
 };
 
 export default Input;`;
+
+export const inputAttributes = [
+  { name: 'id', type: 'string', default: 'Optional', details: 'You can pass id to create unique identifier.' },
+  { name: 'label', type: 'React.ReactNode', default: 'Optional', details: 'Label for the input field.' },
+  { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'inputClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'wrapperClassName', type: 'string', default: "' '", details: 'You can customise wrapper by passing tailwind classes.' },
+  { name: 'error', type: 'React.ReactNode', default: 'Optional', details: 'Error message to display.' },
+  { name: 'helperText', type: 'React.ReactNode', default: 'Optional', details: 'Helper text to display.' },
+  { name: 'onChange', type: '(e: React.ChangeEvent<HTMLInputElement>) => void', default: 'Optional', details: 'Change event handler.' }
+];

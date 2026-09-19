@@ -37,3 +37,8 @@ export default function LoadingScreen() {
     </View>
   );
 }`;
+
+export const loadingAttributes = [
+  { name: 'containerClassName', type: 'string', default: "' '", details: 'You can customise container by passing tailwind classes.' },
+  { name: '...SpinnerProps', type: 'SpinnerProps', default: '', details: 'All heroui-native Spinner props are supported (size, color, etc.).' }
+];

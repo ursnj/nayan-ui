@@ -40,3 +40,18 @@ const InputOTP = () => {
 };
 
 export default InputOTP;`;
+
+export const inputOtpAttributes = [
+  { name: 'maxLength', type: 'number', default: 'Required', details: 'The maxLength prop.' },
+  { name: 'value', type: 'string', default: 'Optional', details: 'The value prop.' },
+  { name: 'onChange', type: '(value: string) => void', default: 'Optional', details: 'The onChange prop.' },
+  { name: 'onComplete', type: '(value: string) => void', default: 'Optional', details: 'The onComplete prop.' },
+  { name: 'variant', type: "'primary' | 'secondary'", default: "'primary'", details: 'The variant prop.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
+  { name: 'isInvalid', type: 'boolean', default: 'false', details: 'The isInvalid prop.' },
+  { name: 'pattern', type: 'string', default: 'Optional', details: 'The pattern prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'slotClassName', type: 'string', default: "''", details: 'The slotClassName prop.' },
+  { name: 'separatorIndices', type: 'number[]', default: 'EMPTY_SEPARATOR_INDICES', details: 'The separatorIndices prop.' },
+  { name: 'aria-label', type: 'string', default: "'One-time password'", details: 'The aria-label prop.' }
+];

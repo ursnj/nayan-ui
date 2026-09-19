@@ -54,3 +54,21 @@ export default function SelectScreen() {
     </View>
   );
 }`;
+
+export const selectAttributes = [
+  { name: 'items', type: 'SelectOption[]', default: 'Required', details: 'Array of select options with label and value.' },
+  {
+    name: 'onValueChange',
+    type: '(value: string) => void',
+    default: 'Required',
+    details: 'Callback when selection changes (returns the value string).'
+  },
+  { name: 'label', type: 'string', default: 'Optional', details: 'Label above the select.' },
+  { name: 'selectLabel', type: 'string', default: 'Optional', details: 'Label shown inside the dropdown list.' },
+  { name: 'placeholder', type: 'string', default: 'Optional', details: 'Placeholder text for the select trigger.' },
+  { name: 'defaultValue', type: 'SelectOption', default: 'Optional', details: 'Default selected option.' },
+  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the select is disabled.' },
+  { name: 'containerClassName', type: 'string', default: "' '", details: 'You can customise container by passing tailwind classes.' },
+  { name: 'labelClassName', type: 'string', default: "' '", details: 'You can customise label by passing tailwind classes.' },
+  { name: 'triggerClassName', type: 'string', default: "' '", details: 'You can customise trigger by passing tailwind classes.' }
+];

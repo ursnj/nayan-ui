@@ -29,3 +29,8 @@ const Toast = () => {
 };
 
 export default Toast;`;
+
+export const toastAttributes = [
+  { name: 'description', type: 'string', default: 'Required', details: 'Toast message description.' },
+  { name: 'title', type: 'string', default: 'Optional', details: 'Toast title.' }
+];

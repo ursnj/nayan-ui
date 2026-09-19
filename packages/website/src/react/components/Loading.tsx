@@ -33,3 +33,8 @@ const Loading = () => {
 };
 
 export default Loading;`;
+
+export const loadingAttributes = [
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'aria-label', type: 'string', default: 'Optional', details: 'ARIA label for accessibility.' }
+];

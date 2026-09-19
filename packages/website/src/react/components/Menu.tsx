@@ -92,3 +92,36 @@ const Menu = () => {
 };
 
 export default Menu;`;
+
+export const menuAttributes = [
+  { name: 'size', type: 'MenuSize', default: 'Optional', details: 'Size of the menu.' },
+  { name: 'title', type: 'React.ReactNode', default: 'Optional', details: 'Title for the menu.' },
+  { name: 'placement', type: "'top' | 'bottom' | 'right' | 'left'", default: "'bottom'", details: 'Side of the trigger the menu opens on.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'triggerClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'titleClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'trigger', type: 'React.ReactNode', default: 'Required', details: 'Trigger element for the menu.' },
+  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Menu content.' }
+];
+
+export const menuItemAttributes = [
+  { name: 'title', type: 'React.ReactNode', default: 'Required', details: 'Title for the menu item.' },
+  { name: 'shortcut', type: 'string', default: 'Optional', details: 'Keyboard shortcut to display.' },
+  { name: 'icon', type: 'ElementType | React.ReactNode', default: 'Optional', details: 'Icon for the menu item.' },
+  { name: 'separator', type: 'boolean', default: 'false', details: 'Whether to show separator after item.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'iconClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'titleClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'shortcutClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'Whether the menu item is disabled.' },
+  { name: 'id', type: 'string', default: 'Optional', details: 'Item key, for selection and for React Aria collections.' },
+  { name: 'onAction', type: '() => void', default: 'Optional', details: 'Called when the item is chosen, by click or by keyboard.' }
+];
+
+export const menuNestedAttributes = [
+  { name: 'trigger', type: 'React.ReactNode', default: 'Required', details: 'Label for the row that opens the submenu.' },
+  { name: 'icon', type: 'React.ReactNode', default: 'Optional', details: 'Rendered before the label, like an item icon.' },
+  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Submenu content — usually NMenuItem elements.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'triggerClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
+];

@@ -54,3 +54,16 @@ const Avatar = () => {
 };
 
 export default Avatar;`;
+
+export const avatarAttributes = [
+  { name: 'src', type: 'string', default: 'Optional', details: 'The src prop.' },
+  { name: 'alt', type: 'string', default: "''", details: 'The alt prop.' },
+  { name: 'fallback', type: 'React.ReactNode', default: 'Optional', details: 'The fallback prop.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'The size prop.' },
+  { name: 'color', type: "'default' | 'accent' | 'success' | 'warning' | 'danger'", default: "'default'", details: 'The color prop.' },
+  { name: 'variant', type: "'default' | 'soft'", default: "'default'", details: 'The variant prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'imageClassName', type: 'string', default: "''", details: 'The imageClassName prop.' },
+  { name: 'fallbackClassName', type: 'string', default: "''", details: 'The fallbackClassName prop.' },
+  { name: 'loading', type: "'eager' | 'lazy'", default: "'lazy'", details: 'The loading prop.' }
+];

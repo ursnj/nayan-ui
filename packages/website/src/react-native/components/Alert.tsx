@@ -51,3 +51,12 @@ export default function AlertScreen() {
     </View>
   );
 }`;
+
+export const alertAttributes = [
+  { name: 'title', type: 'string', default: 'Optional', details: 'Title for the alert.' },
+  { name: 'description', type: 'string', default: 'Optional', details: 'Description text for the alert.' },
+  { name: 'onClose', type: '() => void', default: 'Optional', details: 'Callback to show a close button and handle dismissal.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'titleClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'descriptionClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
+];

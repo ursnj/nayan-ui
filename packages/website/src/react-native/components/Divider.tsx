@@ -36,3 +36,8 @@ export default function DividerScreen() {
     </View>
   );
 }`;
+
+export const dividerAttributes = [
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'orientation', type: 'vertical | horizontal', default: 'horizontal', details: 'You can pass divider orientation.' }
+];

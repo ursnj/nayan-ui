@@ -43,3 +43,27 @@ const ListBox = () => {
 };
 
 export default ListBox;`;
+
+export const listBoxAttributes = [
+  { name: 'items', type: 'NListBoxItem[]', default: 'Required', details: 'The items prop.' },
+  { name: 'selectionMode', type: "'none' | 'single' | 'multiple'", default: "'single'", details: 'The selectionMode prop.' },
+  { name: 'selectedKeys', type: 'Iterable<string>', default: 'Optional', details: 'The selectedKeys prop.' },
+  { name: 'onSelectionChange', type: '(keys: Selection) => void', default: 'Optional', details: 'The onSelectionChange prop.' },
+  {
+    name: 'onAction',
+    type: '(key: string) => void',
+    default: 'Optional',
+    details: 'Fires on click or Enter, for a list that acts rather than selects.'
+  },
+  { name: 'variant', type: "'default' | 'danger'", default: "'default'", details: 'The variant prop.' },
+  {
+    name: 'disabledKeys',
+    type: 'Iterable<string>',
+    default: 'Optional',
+    details: 'Keys that cannot be chosen. Individual items can also carry `disabled`.'
+  },
+  { name: 'emptyMessage', type: 'ReactNode', default: "'Nothing here yet.'", details: 'Shown when `items` is empty.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'itemClassName', type: 'string', default: "''", details: 'The itemClassName prop.' },
+  { name: 'aria-label', type: 'string', default: "'Options'", details: 'The aria-label prop.' }
+];

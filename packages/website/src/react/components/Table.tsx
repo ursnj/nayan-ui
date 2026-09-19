@@ -49,3 +49,30 @@ const Table = () => {
 };
 
 export default Table;`;
+
+export const tableAttributes = [
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'captionClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'headerClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'headerRowClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'headerCellClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'bodyClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'bodyRowClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'bodyCellClassName', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' },
+  { name: 'caption', type: 'string', default: 'Optional', details: 'Caption for the table.' },
+  { name: 'columns', type: 'NTableColumn<T>[]', default: 'Required', details: 'Array of table columns.' },
+  { name: 'data', type: 'T[]', default: 'Required', details: 'Array of table data.' },
+  { name: 'tableProps', type: 'React.TableHTMLAttributes<HTMLTableElement>', default: 'Optional', details: 'Props for table element.' },
+  {
+    name: 'rowProps',
+    type: '(row: T, rowIndex: number) => React.HTMLAttributes<HTMLTableRowElement>',
+    default: 'Optional',
+    details: 'Function to get row props.'
+  },
+  {
+    name: 'cellProps',
+    type: '(row: T, col: NTableColumn<T>, rowIndex: number, colIndex: number) => React.TdHTMLAttributes<HTMLTableCellElement>',
+    default: 'Optional',
+    details: 'Function to get cell props.'
+  }
+];

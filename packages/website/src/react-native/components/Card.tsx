@@ -48,3 +48,8 @@ export default function CardScreen() {
     </View>
   );
 }`;
+
+export const cardAttributes = [
+  { name: 'children', type: 'React.ReactNode', default: 'Optional', details: 'Card content.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
+];

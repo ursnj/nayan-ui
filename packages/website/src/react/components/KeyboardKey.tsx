@@ -37,3 +37,8 @@ const KeyboardKey = () => {
 };
 
 export default KeyboardKey;`;
+
+export const kbdAttributes = [
+  { name: 'children', type: 'ReactNode', default: 'Required', details: 'The children prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' }
+];

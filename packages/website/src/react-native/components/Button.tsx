@@ -62,3 +62,13 @@ export default function ButtonScreen() {
     </View>
   );
 }`;
+
+export const buttonAttributes = [
+  { name: 'children', type: 'React.ReactNode', default: 'Required', details: 'Button label content.' },
+  { name: 'icon', type: 'React.ComponentType<any> | React.ReactElement', default: 'Optional', details: 'Icon component or element to display.' },
+  { name: 'variant', type: "'primary' | 'secondary' | 'outline' | 'ghost' | 'link'", default: "'primary'", details: 'Button variant style.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'Button size.' },
+  { name: 'isDisabled', type: 'boolean', default: 'false', details: 'Whether the button is disabled.' },
+  { name: 'onPress', type: '() => void', default: 'Optional', details: 'Callback when button is pressed.' },
+  { name: 'className', type: 'string', default: "' '", details: 'You can customise by passing tailwind classes.' }
+];

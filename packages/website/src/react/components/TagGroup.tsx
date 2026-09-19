@@ -74,3 +74,15 @@ const TagGroup = () => {
 };
 
 export default TagGroup;`;
+
+export const tagGroupAttributes = [
+  { name: 'items', type: 'NTagItem[]', default: 'Required', details: 'List of tag items with id and label.' },
+  { name: 'selectionMode', type: "'none' | 'single' | 'multiple'", default: "'none'", details: 'Selection mode.' },
+  { name: 'selectedKeys', type: 'Iterable<string>', default: 'Optional', details: 'Selected tag keys.' },
+  { name: 'onSelectionChange', type: '(keys: Selection) => void', default: 'Optional', details: 'Callback when selection changes.' },
+  { name: 'onRemove', type: '(keys: Set<string>) => void', default: 'Optional', details: 'Callback when tags are removed.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'Tag size.' },
+  { name: 'variant', type: "'default' | 'surface'", default: "'default'", details: 'Tag variant.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'Disables the tag group.' },
+  { name: 'className', type: 'string', default: "' '", details: 'Additional CSS classes.' }
+];

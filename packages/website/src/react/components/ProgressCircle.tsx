@@ -42,3 +42,16 @@ const ProgressCircle = () => {
 };
 
 export default ProgressCircle;`;
+
+export const progressCircleAttributes = [
+  { name: 'value', type: 'number', default: 'Optional', details: 'The value prop.' },
+  { name: 'minValue', type: 'number', default: '0', details: 'The minValue prop.' },
+  { name: 'maxValue', type: 'number', default: '100', details: 'The maxValue prop.' },
+  { name: 'isIndeterminate', type: 'boolean', default: 'false', details: 'Omit `value` for an indeterminate circle.' },
+  { name: 'color', type: "'default' | 'accent' | 'success' | 'warning' | 'danger'", default: "'accent'", details: 'The color prop.' },
+  { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", details: 'The size prop.' },
+  { name: 'children', type: 'ReactNode', default: 'Optional', details: 'Rendered in the middle of the circle — a percentage, a count, an icon.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'trackClassName', type: 'string', default: "''", details: 'The trackClassName prop.' },
+  { name: 'aria-label', type: 'string', default: "'Progress'", details: 'The aria-label prop.' }
+];

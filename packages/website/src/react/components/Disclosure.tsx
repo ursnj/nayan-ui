@@ -31,3 +31,16 @@ const Disclosure = () => {
 };
 
 export default Disclosure;`;
+
+export const disclosureAttributes = [
+  { name: 'title', type: 'ReactNode', default: 'Required', details: 'The title prop.' },
+  { name: 'children', type: 'ReactNode', default: 'Required', details: 'The children prop.' },
+  { name: 'defaultExpanded', type: 'boolean', default: 'false', details: 'The defaultExpanded prop.' },
+  { name: 'expanded', type: 'boolean', default: 'Optional', details: 'The expanded prop.' },
+  { name: 'onExpandedChange', type: '(expanded: boolean) => void', default: 'Optional', details: 'The onExpandedChange prop.' },
+  { name: 'disabled', type: 'boolean', default: 'false', details: 'The disabled prop.' },
+  { name: 'className', type: 'string', default: "''", details: 'The className prop.' },
+  { name: 'triggerClassName', type: 'string', default: "''", details: 'The triggerClassName prop.' },
+  { name: 'contentClassName', type: 'string', default: "''", details: 'The contentClassName prop.' },
+  { name: 'indicatorClassName', type: 'string', default: "''", details: 'The indicatorClassName prop.' }
+];
