@@ -109,8 +109,8 @@
   --muted: hsl(215 20% 65%);
   --default: hsl(217 33% 26%);
   --default-foreground: hsl(210 40% 98%);
-  --accent: hsl(262 83% 72%);
-  --accent-foreground: hsl(0 0% 100%);
+  --accent: hsl(217 91% 67%);
+  --accent-foreground: hsl(222 47% 11%);
   /*
    * Inputs recede rather than rise, so they read as wells in the panel — the
    * 11% step of the scale above. The fill keeps it; the edge is what was
@@ -132,7 +132,7 @@
   /* Lifted so an island's edge still reads against a near-black gutter. */
   --border: hsl(217 33% 28%);
   --separator: hsl(217 25% 38%);
-  --focus: hsl(262 83% 72%);
+  --focus: hsl(217 91% 67%);
   --link: hsl(210 40% 98%);
   --segment: hsl(217 28% 34%);
   --segment-foreground: hsl(210 40% 98%);
