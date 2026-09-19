@@ -12,5 +12,5 @@ jobs:
           docker login -u ursnj -p ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: Build & Publish Nayan UI Website Image
         run: |
-          docker build -f packages/website/Dockerfile -t ursnj/nayanui:latest .
+          docker build -f applications/website/Dockerfile -t ursnj/nayanui:latest .
           docker push ursnj/nayanui:latest

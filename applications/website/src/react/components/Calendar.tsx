@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { getLocalTimeZone, today } from "@internationalized/date";
-import { NCalendar } from "@nayan-ui/react";
+import { getLocalTimeZone, today, NCalendar } from "@nayan-ui/react";
 import ComponentWrapper from "@/helpers/ComponentWrapper";
 
 const Calendar = () => {

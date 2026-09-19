@@ -12,7 +12,7 @@ COPY packages/cli/package.json ./packages/cli/package.json
 COPY packages/react/package.json ./packages/react/package.json
 COPY packages/native/package.json ./packages/native/package.json
 COPY packages/native/example/package.json ./packages/native/example/package.json
-COPY packages/website/package.json ./packages/website/package.json
+COPY applications/website/package.json ./applications/website/package.json
 COPY applications/video-editor/package.json ./applications/video-editor/package.json
 RUN bun install --frozen-lockfile
 
@@ -45,15 +45,15 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 bunjs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/packages/website/public ./packages/website/public
+COPY --from=builder /app/applications/website/public ./applications/website/public
 
 # Set the correct permission for prerender cache
-RUN mkdir -p packages/website/.next
-RUN chown nextjs:bunjs packages/website/.next
+RUN mkdir -p applications/website/.next
+RUN chown nextjs:bunjs applications/website/.next
 
 # Automatically leverage output traces to reduce image size
-COPY --from=builder --chown=nextjs:bunjs /app/packages/website/.next/standalone ./
-COPY --from=builder --chown=nextjs:bunjs /app/packages/website/.next/static ./packages/website/.next/static
+COPY --from=builder --chown=nextjs:bunjs /app/applications/website/.next/standalone ./
+COPY --from=builder --chown=nextjs:bunjs /app/applications/website/.next/static ./applications/website/.next/static
 
 USER nextjs
 
@@ -62,4 +62,4 @@ EXPOSE 7100
 ENV PORT=7100
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["bun", "run", "packages/website/server.js"]
+CMD ["bun", "run", "applications/website/server.js"]

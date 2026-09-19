@@ -1,49 +1,45 @@
 "use client";
 
 import { useState } from "react";
-import { getLocalTimeZone, today } from "@internationalized/date";
-import { NDateField } from "@nayan-ui/react";
+import { Time, NTimeField } from "@nayan-ui/react";
 import ComponentWrapper from "@/helpers/ComponentWrapper";
 
-const DateField = () => {
-  const [value, setValue] = useState<any>(today(getLocalTimeZone()));
+const TimeField = () => {
+  const [value, setValue] = useState<any>(new Time(9, 30));
 
   return (
-    <ComponentWrapper code={code} attributes={dateFieldAttributes}>
+    <ComponentWrapper code={code} attributes={timeFieldAttributes}>
       <div className="max-w-sm">
-        <NDateField
-          label="Starts"
-          value={value}
-          onChange={setValue}
-          helperText="Type it, or step the segments with the arrow keys."
-        />
+        <NTimeField label="Starts at" value={value} onChange={setValue} />
+        <NTimeField label="24-hour" value={value} onChange={setValue} hourCycle={24} />
       </div>
     </ComponentWrapper>
   );
 };
 
-export default DateField;
+export default TimeField;
 
 /** The usage sample on this component's page, kept beside the demo it documents. */
 export const code = `import { useState } from 'react';
-import { getLocalTimeZone, today } from '@internationalized/date';
-import { NDateField } from '@nayan-ui/react';
+import { Time } from '@internationalized/date';
+import { NTimeField } from '@nayan-ui/react';
 
-const DateField = () => {
-  const [value, setValue] = useState<any>(today(getLocalTimeZone()));
+const TimeField = () => {
+  const [value, setValue] = useState<any>(new Time(9, 30));
 
   return (
     <div>
       <div className="max-w-sm">
-        <NDateField label="Starts" value={value} onChange={setValue} helperText="Type it, or step the segments with the arrow keys." />
+        <NTimeField label="Starts at" value={value} onChange={setValue} />
+        <NTimeField label="24-hour" value={value} onChange={setValue} hourCycle={24} />
       </div>
     </div>
   );
 };
 
-export default DateField;`;
+export default TimeField;`;
 
-export const dateFieldAttributes = [
+export const timeFieldAttributes = [
   { name: "value", type: "any", default: "Optional", details: "The value prop." },
   { name: "defaultValue", type: "any", default: "Optional", details: "The defaultValue prop." },
   {
@@ -57,9 +53,15 @@ export const dateFieldAttributes = [
   { name: "maxValue", type: "any", default: "Optional", details: "The maxValue prop." },
   {
     name: "granularity",
-    type: "'day' | 'hour' | 'minute' | 'second'",
-    default: "'day'",
+    type: "'hour' | 'minute' | 'second'",
+    default: "'minute'",
     details: "The granularity prop.",
+  },
+  {
+    name: "hourCycle",
+    type: "12 | 24",
+    default: "Optional",
+    details: "12- or 24-hour display. Defaults to the locale's own convention.",
   },
   { name: "disabled", type: "boolean", default: "false", details: "The disabled prop." },
   { name: "isInvalid", type: "boolean", default: "false", details: "The isInvalid prop." },
@@ -74,5 +76,5 @@ export const dateFieldAttributes = [
   { name: "helperText", type: "ReactNode", default: "Optional", details: "The helperText prop." },
   { name: "className", type: "string", default: "''", details: "The className prop." },
   { name: "labelClassName", type: "string", default: "''", details: "The labelClassName prop." },
-  { name: "aria-label", type: "string", default: "'Date'", details: "The aria-label prop." },
+  { name: "aria-label", type: "string", default: "'Time'", details: "The aria-label prop." },
 ];

@@ -29,4 +29,4 @@ examples/expo-app/.expo
 examples/expo-app/dist
 
 # Regenerated inside the image by the editor build
-packages/website/public/editor
+applications/website/public/editor

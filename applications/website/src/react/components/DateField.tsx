@@ -1,53 +1,49 @@
 "use client";
 
 import { useState } from "react";
-import { getLocalTimeZone, today } from "@internationalized/date";
-import { NDateRangePicker } from "@nayan-ui/react";
+import { getLocalTimeZone, today, NDateField } from "@nayan-ui/react";
 import ComponentWrapper from "@/helpers/ComponentWrapper";
 
-const DateRangePicker = () => {
-  const [value, setValue] = useState<any>({
-    start: today(getLocalTimeZone()),
-    end: today(getLocalTimeZone()).add({ days: 6 }),
-  });
+const DateField = () => {
+  const [value, setValue] = useState<any>(today(getLocalTimeZone()));
 
   return (
-    <ComponentWrapper code={code} attributes={dateRangePickerAttributes}>
-      <div className="max-w-md">
-        <NDateRangePicker label="Reporting period" value={value} onChange={setValue} />
+    <ComponentWrapper code={code} attributes={dateFieldAttributes}>
+      <div className="max-w-sm">
+        <NDateField
+          label="Starts"
+          value={value}
+          onChange={setValue}
+          helperText="Type it, or step the segments with the arrow keys."
+        />
       </div>
     </ComponentWrapper>
   );
 };
 
-export default DateRangePicker;
+export default DateField;
 
 /** The usage sample on this component's page, kept beside the demo it documents. */
 export const code = `import { useState } from 'react';
 import { getLocalTimeZone, today } from '@internationalized/date';
-import { NDateRangePicker } from '@nayan-ui/react';
+import { NDateField } from '@nayan-ui/react';
 
-const DateRangePicker = () => {
-  const [value, setValue] = useState<any>({ start: today(getLocalTimeZone()), end: today(getLocalTimeZone()).add({ days: 6 }) });
+const DateField = () => {
+  const [value, setValue] = useState<any>(today(getLocalTimeZone()));
 
   return (
     <div>
-      <div className="max-w-md">
-        <NDateRangePicker label="Reporting period" value={value} onChange={setValue} />
+      <div className="max-w-sm">
+        <NDateField label="Starts" value={value} onChange={setValue} helperText="Type it, or step the segments with the arrow keys." />
       </div>
     </div>
   );
 };
 
-export default DateRangePicker;`;
+export default DateField;`;
 
-export const dateRangePickerAttributes = [
-  {
-    name: "value",
-    type: "any",
-    default: "Optional",
-    details: "`{ start, end }` as react-aria date values.",
-  },
+export const dateFieldAttributes = [
+  { name: "value", type: "any", default: "Optional", details: "The value prop." },
   { name: "defaultValue", type: "any", default: "Optional", details: "The defaultValue prop." },
   {
     name: "onChange",
@@ -72,10 +68,10 @@ export const dateRangePickerAttributes = [
     default: "'primary'",
     details: "The variant prop.",
   },
-  { name: "fullWidth", type: "boolean", default: "true", details: "The fullWidth prop." },
+  { name: "fullWidth", type: "boolean", default: "false", details: "The fullWidth prop." },
   { name: "error", type: "ReactNode", default: "Optional", details: "The error prop." },
   { name: "helperText", type: "ReactNode", default: "Optional", details: "The helperText prop." },
   { name: "className", type: "string", default: "''", details: "The className prop." },
   { name: "labelClassName", type: "string", default: "''", details: "The labelClassName prop." },
-  { name: "aria-label", type: "string", default: "'Date range'", details: "The aria-label prop." },
+  { name: "aria-label", type: "string", default: "'Date'", details: "The aria-label prop." },
 ];
