@@ -14,20 +14,20 @@
 [data-theme='light'] {
   color-scheme: light;
 
-  --background: hsl(220 16% 89%);
-  --foreground: hsl(222 30% 12%);
+  --background: hsl(214 45% 95%);
+  --foreground: hsl(222 47% 11%);
   --surface: hsl(0 0% 100%);
-  --surface-foreground: hsl(222 30% 12%);
-  --surface-secondary: hsl(220 22% 97%);
-  --surface-secondary-foreground: hsl(222 30% 12%);
-  --surface-tertiary: hsl(220 18% 92%);
-  --surface-tertiary-foreground: hsl(222 30% 12%);
+  --surface-foreground: hsl(222 47% 11%);
+  --surface-secondary: hsl(214 40% 96%);
+  --surface-secondary-foreground: hsl(222 47% 11%);
+  --surface-tertiary: hsl(214 35% 93%);
+  --surface-tertiary-foreground: hsl(222 47% 11%);
   --overlay: hsl(0 0% 100%);
-  --overlay-foreground: hsl(222 30% 12%);
-  --muted: hsl(220 10% 46%);
-  --default: hsl(220 18% 90%);
-  --default-foreground: hsl(222 30% 12%);
-  --accent: hsl(243 75% 59%);
+  --overlay-foreground: hsl(222 47% 11%);
+  --muted: hsl(215 16% 47%);
+  --default: hsl(214 35% 90%);
+  --default-foreground: hsl(222 47% 11%);
+  --accent: hsl(217 91% 50%);
   --accent-foreground: hsl(0 0% 100%);
   /*
    * A field is a well with an edge, and both halves have to be set here.
@@ -45,31 +45,31 @@
    * the library derives its hover and focus edges from this one by mixing
    * toward the field's text colour, so those follow from it.
    */
-  --field-background: hsl(220 20% 95%);
-  --field-foreground: hsl(222 30% 12%);
-  --field-placeholder: hsl(220 10% 55%);
+  --field-background: hsl(214 40% 96%);
+  --field-foreground: hsl(222 47% 11%);
+  --field-placeholder: hsl(215 16% 47%);
   --field-border: var(--separator);
   --field-border-width: 1px;
-  --success: hsl(160 84% 39%);
-  --success-foreground: hsl(0 0% 100%);
-  --warning: hsl(35 92% 50%);
-  --warning-foreground: hsl(222 30% 12%);
+  --success: hsl(142 71% 45%);
+  --success-foreground: hsl(222 47% 11%);
+  --warning: hsl(38 92% 50%);
+  --warning-foreground: hsl(222 47% 11%);
   --danger: hsl(0 84% 60%);
   --danger-foreground: hsl(0 0% 100%);
-  --border: hsl(220 14% 84%);
-  --separator: hsl(220 14% 80%);
-  --focus: hsl(243 75% 59%);
-  --link: hsl(243 75% 59%);
+  --border: hsl(214 35% 86%);
+  --separator: hsl(214 25% 76%);
+  --focus: hsl(217 91% 50%);
+  --link: hsl(222 47% 11%);
   --segment: hsl(0 0% 100%);
-  --segment-foreground: hsl(222 30% 12%);
+  --segment-foreground: hsl(222 47% 11%);
 
   /* Editor-specific */
-  --editor-chrome: hsl(220 22% 97%);
+  --editor-chrome: hsl(214 40% 96%);
   --editor-panel: hsl(0 0% 100%);
-  --editor-track: hsl(220 20% 95%);
-  --editor-track-alt: hsl(220 18% 92%);
-  --editor-ruler: hsl(220 20% 96%);
-  --playhead: hsl(0 84% 55%);
+  --editor-track: hsl(214 40% 96%);
+  --editor-track-alt: hsl(214 35% 93%);
+  --editor-ruler: hsl(214 40% 96%);
+  --playhead: hsl(0 84% 60%);
   --elevation: 0 1px 2px hsl(220 20% 20% / 0.06), 0 4px 16px hsl(220 20% 20% / 0.06);
   --elevation-lg: 0 2px 4px hsl(220 20% 20% / 0.08), 0 12px 40px hsl(220 20% 20% / 0.14);
 }
@@ -96,20 +96,20 @@
    * skews how you judge the footage — so the vibrancy lives in the accent and
    * the semantic colours instead.
    */
-  --background: hsl(226 22% 6%);
-  --foreground: hsl(220 26% 98%);
-  --surface: hsl(224 14% 16%);
-  --surface-foreground: hsl(220 26% 98%);
-  --surface-secondary: hsl(224 13% 20%);
-  --surface-secondary-foreground: hsl(220 26% 98%);
-  --surface-tertiary: hsl(224 12% 25%);
-  --surface-tertiary-foreground: hsl(220 26% 98%);
-  --overlay: hsl(224 14% 20%);
-  --overlay-foreground: hsl(220 26% 98%);
-  --muted: hsl(222 15% 74%);
-  --default: hsl(224 14% 26%);
-  --default-foreground: hsl(220 26% 98%);
-  --accent: hsl(245 92% 70%);
+  --background: hsl(222 47% 11%);
+  --foreground: hsl(210 40% 98%);
+  --surface: hsl(217 33% 22%);
+  --surface-foreground: hsl(210 40% 98%);
+  --surface-secondary: hsl(217 30% 26%);
+  --surface-secondary-foreground: hsl(210 40% 98%);
+  --surface-tertiary: hsl(217 28% 30%);
+  --surface-tertiary-foreground: hsl(210 40% 98%);
+  --overlay: hsl(217 33% 22%);
+  --overlay-foreground: hsl(210 40% 98%);
+  --muted: hsl(215 20% 65%);
+  --default: hsl(217 33% 26%);
+  --default-foreground: hsl(210 40% 98%);
+  --accent: hsl(262 83% 72%);
   --accent-foreground: hsl(0 0% 100%);
   /*
    * Inputs recede rather than rise, so they read as wells in the panel — the
@@ -118,36 +118,36 @@
    * border. `--separator` here too: at 40% it clears both the well it
    * surrounds and the 16% panel around that.
    */
-  --field-background: hsl(226 18% 11%);
-  --field-foreground: hsl(220 26% 98%);
-  --field-placeholder: hsl(222 12% 60%);
+  --field-background: hsl(217 33% 22%);
+  --field-foreground: hsl(210 40% 98%);
+  --field-placeholder: hsl(215 20% 65%);
   --field-border: var(--separator);
   --field-border-width: 1px;
-  --success: hsl(158 75% 52%);
-  --success-foreground: hsl(226 22% 6%);
-  --warning: hsl(38 98% 62%);
-  --warning-foreground: hsl(226 22% 6%);
-  --danger: hsl(0 84% 66%);
-  --danger-foreground: hsl(226 22% 6%);
+  --success: hsl(142 71% 45%);
+  --success-foreground: hsl(222 47% 11%);
+  --warning: hsl(38 92% 55%);
+  --warning-foreground: hsl(222 47% 11%);
+  --danger: hsl(0 72% 51%);
+  --danger-foreground: hsl(210 40% 98%);
   /* Lifted so an island's edge still reads against a near-black gutter. */
-  --border: hsl(224 14% 31%);
-  --separator: hsl(224 14% 40%);
-  --focus: hsl(245 92% 70%);
-  --link: hsl(245 95% 78%);
-  --segment: hsl(224 14% 27%);
-  --segment-foreground: hsl(220 26% 98%);
+  --border: hsl(217 33% 28%);
+  --separator: hsl(217 25% 38%);
+  --focus: hsl(262 83% 72%);
+  --link: hsl(210 40% 98%);
+  --segment: hsl(217 28% 34%);
+  --segment-foreground: hsl(210 40% 98%);
 
-  --editor-chrome: hsl(224 13% 21%);
-  --editor-panel: hsl(224 14% 16%);
+  --editor-chrome: hsl(217 30% 26%);
+  --editor-panel: hsl(217 33% 22%);
   /*
    * Lanes sit below the panel so the track area reads as a well, with the
    * sticky header column and ruler above it at chrome level. The gap between
    * the two lane tones is the row striping and is meant to be faint.
    */
-  --editor-track: hsl(226 16% 13%);
-  --editor-track-alt: hsl(226 16% 15%);
-  --editor-ruler: hsl(224 13% 21%);
-  --playhead: hsl(0 90% 65%);
+  --editor-track: hsl(217 33% 18%);
+  --editor-track-alt: hsl(217 33% 20%);
+  --editor-ruler: hsl(217 30% 26%);
+  --playhead: hsl(0 84% 60%);
   --elevation: 0 1px 2px hsl(0 0% 0% / 0.5), 0 4px 16px hsl(0 0% 0% / 0.4);
   --elevation-lg: 0 2px 4px hsl(0 0% 0% / 0.6), 0 16px 48px hsl(0 0% 0% / 0.6);
 }
