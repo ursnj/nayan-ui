@@ -8,7 +8,7 @@ const SearchField = () => {
   const [query, setQuery] = useState('');
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={searchFieldAttributes}>
       <div className="space-y-4 max-w-sm">
         <NSearchField value={query} onChange={setQuery} placeholder="Search components..." />
         <p className="text-sm text-muted">Query: {query || 'Empty'}</p>

@@ -17,7 +17,7 @@ const data = [
 
 const Table = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={tableAttributes}>
       <NTable columns={columns} data={data} />
     </ComponentWrapper>
   );

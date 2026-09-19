@@ -8,7 +8,7 @@ const Sheet = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={sheetAttributes}>
       <NSheet isOpen={isOpen} onClose={() => setIsOpen(false)} size={SheetSize.SM} title="Settings">
         <p className="text-foreground p-3">Sheet content goes here.</p>
       </NSheet>

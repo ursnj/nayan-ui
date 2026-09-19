@@ -5,7 +5,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const ScrollShadow = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={scrollShadowAttributes}>
       <NScrollShadow className="h-40 max-w-sm rounded-xl border border-default p-3">
         <div className="space-y-2 text-sm text-muted">
           {Array.from({ length: 16 }, (_, index) => (

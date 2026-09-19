@@ -5,7 +5,7 @@ import DemoComingSoon from './DemoComingSoon';
 
 const Tooltip = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={tooltipAttributes}>
       <DemoComingSoon componentName="Tooltip" />
     </ComponentWrapper>
   );

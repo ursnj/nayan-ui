@@ -9,7 +9,7 @@ const DateRangePicker = () => {
   const [value, setValue] = useState<any>({ start: today(getLocalTimeZone()), end: today(getLocalTimeZone()).add({ days: 6 }) });
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={dateRangePickerAttributes}>
       <div className="max-w-md">
         <NDateRangePicker label="Reporting period" value={value} onChange={setValue} />
       </div>

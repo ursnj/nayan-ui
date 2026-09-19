@@ -9,7 +9,7 @@ const Calendar = () => {
   const [value, setValue] = useState<any>(today(getLocalTimeZone()));
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={calendarAttributes}>
       <NCalendar value={value} onChange={setValue} aria-label="Pick a date" />
     </ComponentWrapper>
   );

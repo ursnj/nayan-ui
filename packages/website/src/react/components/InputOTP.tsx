@@ -9,7 +9,7 @@ const InputOTP = () => {
   const [code, setCode] = useState('');
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={inputOtpAttributes}>
       <h3 className={H3_DOC}>Six digits, split into two groups:</h3>
       <div className="mb-5">
         <NInputOtp maxLength={6} value={code} onChange={setCode} separatorIndices={[2]} onComplete={value => console.log('Complete', value)} />

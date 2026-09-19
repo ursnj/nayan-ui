@@ -6,7 +6,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Badge = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={badgeAttributes}>
       <h3 className={H3_DOC}>Colors:</h3>
       <div className="flex flex-wrap gap-2 mb-5">
         <NBadge color="default">Default</NBadge>

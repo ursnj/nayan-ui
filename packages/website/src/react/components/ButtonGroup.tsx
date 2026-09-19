@@ -10,7 +10,7 @@ const ButtonGroup = () => {
   const [selected, setSelected] = useState(items[0]);
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={buttonGroupAttributes}>
       <NButtonGroup items={items} selected={selected} onChange={setSelected} />
     </ComponentWrapper>
   );

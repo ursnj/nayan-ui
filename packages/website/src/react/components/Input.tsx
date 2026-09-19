@@ -8,7 +8,7 @@ const Input = () => {
   const [value, setValue] = useState('');
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={inputAttributes}>
       <NInput label="Email" type="email" placeholder="Enter email" value={value} onChange={e => setValue(e.target.value)} />
     </ComponentWrapper>
   );

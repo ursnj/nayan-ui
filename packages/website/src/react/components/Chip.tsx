@@ -6,7 +6,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Chip = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={chipAttributes}>
       <h3 className={H3_DOC}>Colors:</h3>
       <div className="mb-5 flex flex-wrap items-center gap-2">
         <NChip color="default">Default</NChip>

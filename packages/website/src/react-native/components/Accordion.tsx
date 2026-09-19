@@ -5,7 +5,7 @@ import DemoComingSoon from './DemoComingSoon';
 
 const Accordion = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={accordionAttributes}>
       <DemoComingSoon componentName="Accordion" />
     </ComponentWrapper>
   );

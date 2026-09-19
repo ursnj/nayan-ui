@@ -17,7 +17,7 @@ const InfiniteScroll = () => {
   };
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={infiniteScrollAttributes}>
       <NInfiniteScroll
         next={() => !isFetching && fetchNextPage()}
         hasMore={true}

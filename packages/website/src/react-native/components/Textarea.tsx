@@ -5,7 +5,7 @@ import DemoComingSoon from './DemoComingSoon';
 
 const Textarea = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={textareaAttributes}>
       <DemoComingSoon componentName="Textarea" />
     </ComponentWrapper>
   );

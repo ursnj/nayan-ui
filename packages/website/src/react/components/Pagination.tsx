@@ -9,7 +9,7 @@ const Pagination = () => {
   const [page, setPage] = useState(3);
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={paginationAttributes}>
       <h3 className={H3_DOC}>Nine pages:</h3>
       <div className="mb-5">
         <NPagination totalPages={9} currentPage={page} onChange={setPage} />

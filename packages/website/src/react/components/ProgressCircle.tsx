@@ -6,7 +6,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const ProgressCircle = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={progressCircleAttributes}>
       <h3 className={H3_DOC}>Colors and sizes:</h3>
       <div className="mb-5 flex flex-wrap items-center gap-5">
         <NProgressCircle value={25} aria-label="Upload" />

@@ -5,7 +5,7 @@ import DemoComingSoon from './DemoComingSoon';
 
 const Switch = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={switchAttributes}>
       <DemoComingSoon componentName="Switch" />
     </ComponentWrapper>
   );

@@ -15,7 +15,7 @@ const CheckboxGroup = () => {
   const [value, setValue] = useState<string[]>(['email']);
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={checkGroupAttributes}>
       <h3 className={H3_DOC}>Vertical:</h3>
       <div className="mb-5">
         <NCheckGroup label="Notify me by" items={items} value={value} onChange={setValue} />

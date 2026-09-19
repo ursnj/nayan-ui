@@ -5,7 +5,7 @@ import DemoComingSoon from './DemoComingSoon';
 
 const ButtonGroup = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={buttonGroupAttributes}>
       <DemoComingSoon componentName="ButtonGroup" />
     </ComponentWrapper>
   );

@@ -5,7 +5,7 @@ import DemoComingSoon from './DemoComingSoon';
 
 const Menu = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={menuAttributes}>
       <DemoComingSoon componentName="Menu" />
     </ComponentWrapper>
   );

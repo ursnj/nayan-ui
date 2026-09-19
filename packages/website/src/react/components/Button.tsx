@@ -5,7 +5,7 @@ import ComponentWrapper from '@/helpers/ComponentWrapper';
 
 const Button = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={buttonAttributes}>
       <div className="flex flex-wrap gap-3">
         <NButton onClick={() => console.log('clicked')}>Primary</NButton>
         <NButton isOutline>Outline</NButton>

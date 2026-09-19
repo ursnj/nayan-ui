@@ -8,7 +8,7 @@ const Textarea = () => {
   const [value, setValue] = useState('');
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={textareaAttributes}>
       <NTextarea
         label="Message"
         placeholder="Type your message here..."

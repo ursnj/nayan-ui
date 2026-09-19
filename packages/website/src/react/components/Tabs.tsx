@@ -10,7 +10,7 @@ const Tabs = () => {
   const [selected, setSelected] = useState(items[0]);
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={tabsAttributes}>
       <NTabs items={items} selected={selected} onChange={setSelected}>
         <NTabsContent item="Account">Account settings content.</NTabsContent>
         <NTabsContent item="Security">Security settings content.</NTabsContent>

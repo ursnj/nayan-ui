@@ -18,7 +18,7 @@ const Select = () => {
   useEffect(() => setMounted(true), []);
 
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={selectAttributes}>
       {mounted ? (
         <NSelect label="Business Type" placeholder="Select plan" options={options} value={selected} onChange={val => setSelected(val)} />
       ) : (

@@ -5,7 +5,7 @@ import DemoComingSoon from './DemoComingSoon';
 
 const Progress = () => {
   return (
-    <ComponentWrapper code={code}>
+    <ComponentWrapper code={code} attributes={progressAttributes}>
       <DemoComingSoon componentName="Progress" />
     </ComponentWrapper>
   );
