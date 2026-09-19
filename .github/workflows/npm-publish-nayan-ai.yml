@@ -7,19 +7,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Enable Corepack
-        run: corepack enable
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: yarn install
+        run: bun install
 
       - name: Build
-        run: yarn ai:build
+        run: bun run ai:build
 
       - name: Publish to npm
         run: |
