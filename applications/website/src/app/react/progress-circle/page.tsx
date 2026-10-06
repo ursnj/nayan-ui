@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import ProgressCircle from "@/react/components/ProgressCircle";
+import JsonLd from "@/components/helpers/JsonLd";
+import ProgressCircle from "@/components/react/components/ProgressCircle";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
   "/react/progress-circle",

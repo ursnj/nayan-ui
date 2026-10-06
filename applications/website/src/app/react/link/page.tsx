@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import Link from "@/react/components/Link";
+import JsonLd from "@/components/helpers/JsonLd";
+import Link from "@/components/react/components/Link";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/link", "react");
 export const metadata = pageMetadata;

@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import RNButton from "@/react-native/components/Button";
+import JsonLd from "@/components/helpers/JsonLd";
+import RNButton from "@/components/react-native/components/Button";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
   "/react-native/button",

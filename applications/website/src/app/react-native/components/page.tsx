@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import Components from "@/react-native/components/Components";
+import JsonLd from "@/components/helpers/JsonLd";
+import Components from "@/components/react-native/components/Components";
 import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/seo";
-
-export const dynamic = "force-dynamic";
 
 export const metadata = buildPageMetadata({
   title: "React Native Components",

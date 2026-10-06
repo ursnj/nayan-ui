@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import Pagination from "@/react/components/Pagination";
+import JsonLd from "@/components/helpers/JsonLd";
+import Pagination from "@/components/react/components/Pagination";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/pagination", "react");
 export const metadata = pageMetadata;

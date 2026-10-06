@@ -24,7 +24,7 @@ import { useState, useLayoutEffect } from 'react';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { DEFAULT_GAME_SETTINGS, GAME_IDS, type GameSettings, FruitNinja } from '@nayan-ui/games';
-import { StorageService } from '../services/StorageService';
+import { StorageService } from './StorageService';
 
 export default function FruitNinjaScreen() {
   const { colors } = useTheme();

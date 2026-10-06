@@ -1,13 +1,11 @@
-import GamesInstallation from "@/games/Installation";
-import JsonLd from "@/helpers/JsonLd";
+import GamesInstallation from "@/components/games/Installation";
+import JsonLd from "@/components/helpers/JsonLd";
 import {
   SITE_URL,
   buildBreadcrumbSchema,
   buildPageMetadata,
   buildTechArticleSchema,
 } from "@/services/seo";
-
-export const dynamic = "force-dynamic";
 
 export const metadata = buildPageMetadata({
   title: "Games Installation",

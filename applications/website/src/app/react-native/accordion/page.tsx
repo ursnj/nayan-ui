@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import RNAccordion from "@/react-native/components/Accordion";
+import JsonLd from "@/components/helpers/JsonLd";
+import RNAccordion from "@/components/react-native/components/Accordion";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
   "/react-native/accordion",

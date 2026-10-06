@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import SwitchGroup from "@/react/components/SwitchGroup";
+import JsonLd from "@/components/helpers/JsonLd";
+import SwitchGroup from "@/components/react/components/SwitchGroup";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/switch-group", "react");
 export const metadata = pageMetadata;

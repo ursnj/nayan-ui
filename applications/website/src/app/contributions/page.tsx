@@ -1,8 +1,6 @@
-import Contributions from "@/contributions/Contributions";
-import JsonLd from "@/helpers/JsonLd";
+import Contributions from "@/components/contributions/Contributions";
+import JsonLd from "@/components/helpers/JsonLd";
 import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/seo";
-
-export const dynamic = "force-dynamic";
 
 export const metadata = buildPageMetadata({
   title: "Contributions - Open Source Contributors",

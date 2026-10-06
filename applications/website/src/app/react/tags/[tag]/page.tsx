@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import JsonLd from "@/helpers/JsonLd";
+import JsonLd from "@/components/helpers/JsonLd";
 import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/seo";
-import TagDetails from "@/tags/TagsDetails";
-
-export const dynamic = "force-dynamic";
-
+import TagDetails from "@/components/tags/TagsDetails";
 export async function generateMetadata({
   params,
 }: {

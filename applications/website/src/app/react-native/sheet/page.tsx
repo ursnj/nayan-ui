@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import RNSheet from "@/react-native/components/Sheet";
+import JsonLd from "@/components/helpers/JsonLd";
+import RNSheet from "@/components/react-native/components/Sheet";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
   "/react-native/sheet",

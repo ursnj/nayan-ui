@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import RNCard from "@/react-native/components/Card";
+import JsonLd from "@/components/helpers/JsonLd";
+import RNCard from "@/components/react-native/components/Card";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
   "/react-native/card",

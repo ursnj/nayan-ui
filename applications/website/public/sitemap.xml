@@ -17,7 +17,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools</loc>
+    <loc>https://www.nayanui.com/tools</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
@@ -472,13 +472,284 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/sitemap</loc>
+    <loc>https://www.nayanui.com/tools/sitemap-generator</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/robots</loc>
+    <loc>https://www.nayanui.com/tools/robots-generator</loc>
     <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/compress-image</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/resize-image</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/crop-image</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/convert-image</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/watermark-image</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/rotate-image</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- PDF Tools -->
+  <url>
+    <loc>https://www.nayanui.com/tools/merge-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/split-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/compress-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/rotate-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/watermark-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/page-numbers-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/protect-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/unlock-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/image-to-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/pdf-to-image</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/organize-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/crop-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/repair-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/html-to-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/word-to-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/pdf-to-word</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/excel-to-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/pdf-to-excel</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/ppt-to-pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/pdf-to-ppt</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- JSON Tools -->
+  <url>
+    <loc>https://www.nayanui.com/tools/json-formatter</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/json-minifier</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/json-validator</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/json-to-csv</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/json-to-yaml</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/json-to-xml</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/json-to-tsv</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/json-to-excel</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- XML Tools -->
+  <url>
+    <loc>https://www.nayanui.com/tools/xml-formatter</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/xml-minifier</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/xml-validator</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/xml-to-json</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/xml-to-csv</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/xml-to-yaml</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/xml-to-tsv</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/xml-to-excel</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Text Tools -->
+  <url>
+    <loc>https://www.nayanui.com/tools/text-compare</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/character-counter</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/word-counter</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/case-converter</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/lorem-ipsum-generator</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/text-reverser</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/slug-generator</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/markdown-preview</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- AI Tools -->
+  <url>
+    <loc>https://www.nayanui.com/tools/ai-code-reviewer</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tools/ai-code-scanner</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Games -->
+  <url>
+    <loc>https://www.nayanui.com/games</loc>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
@@ -5897,237 +6168,237 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/sitemap-generator</loc>
+    <loc>https://www.nayanui.com/tools/tags/sitemap-generator</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/xml-sitemap</loc>
+    <loc>https://www.nayanui.com/tools/tags/xml-sitemap</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/seo-sitemap</loc>
+    <loc>https://www.nayanui.com/tools/tags/seo-sitemap</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/website-sitemap</loc>
+    <loc>https://www.nayanui.com/tools/tags/website-sitemap</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/sitemap-creation</loc>
+    <loc>https://www.nayanui.com/tools/tags/sitemap-creation</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/sitemap-validator</loc>
+    <loc>https://www.nayanui.com/tools/tags/sitemap-validator</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/search-engine-sitemap</loc>
+    <loc>https://www.nayanui.com/tools/tags/search-engine-sitemap</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/google-sitemap</loc>
+    <loc>https://www.nayanui.com/tools/tags/google-sitemap</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/sitemap-optimization</loc>
+    <loc>https://www.nayanui.com/tools/tags/sitemap-optimization</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/automatic-sitemap</loc>
+    <loc>https://www.nayanui.com/tools/tags/automatic-sitemap</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/sitemap-crawler</loc>
+    <loc>https://www.nayanui.com/tools/tags/sitemap-crawler</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/website-indexing</loc>
+    <loc>https://www.nayanui.com/tools/tags/website-indexing</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/seo-tools</loc>
+    <loc>https://www.nayanui.com/tools/tags/seo-tools</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/web-crawler</loc>
+    <loc>https://www.nayanui.com/tools/tags/web-crawler</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/sitemap-cli</loc>
+    <loc>https://www.nayanui.com/tools/tags/sitemap-cli</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/robots-txt</loc>
+    <loc>https://www.nayanui.com/tools/tags/robots-txt</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/robots-txt-generator</loc>
+    <loc>https://www.nayanui.com/tools/tags/robots-txt-generator</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/robots-txt-validator</loc>
+    <loc>https://www.nayanui.com/tools/tags/robots-txt-validator</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/web-crawler-control</loc>
+    <loc>https://www.nayanui.com/tools/tags/web-crawler-control</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/search-engine-crawling</loc>
+    <loc>https://www.nayanui.com/tools/tags/search-engine-crawling</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/robots-file</loc>
+    <loc>https://www.nayanui.com/tools/tags/robots-file</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/crawler-directives</loc>
+    <loc>https://www.nayanui.com/tools/tags/crawler-directives</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/seo-robots</loc>
+    <loc>https://www.nayanui.com/tools/tags/seo-robots</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/website-crawling</loc>
+    <loc>https://www.nayanui.com/tools/tags/website-crawling</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/robots-txt-creation</loc>
+    <loc>https://www.nayanui.com/tools/tags/robots-txt-creation</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/search-bot-control</loc>
+    <loc>https://www.nayanui.com/tools/tags/search-bot-control</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/web-indexing-control</loc>
+    <loc>https://www.nayanui.com/tools/tags/web-indexing-control</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/robots-protocol</loc>
+    <loc>https://www.nayanui.com/tools/tags/robots-protocol</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/crawler-permissions</loc>
+    <loc>https://www.nayanui.com/tools/tags/crawler-permissions</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/robots-cli</loc>
+    <loc>https://www.nayanui.com/tools/tags/robots-cli</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/ai-code-reviewer</loc>
+    <loc>https://www.nayanui.com/tools/ai-code-reviewer</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/ai-code-scanner</loc>
+    <loc>https://www.nayanui.com/tools/ai-code-scanner</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/ai-code-review</loc>
+    <loc>https://www.nayanui.com/tools/tags/ai-code-review</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/pull-request-review</loc>
+    <loc>https://www.nayanui.com/tools/tags/pull-request-review</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/codex-cli</loc>
+    <loc>https://www.nayanui.com/tools/tags/codex-cli</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/claude-code</loc>
+    <loc>https://www.nayanui.com/tools/tags/claude-code</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/automated-review</loc>
+    <loc>https://www.nayanui.com/tools/tags/automated-review</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/github-pr-review</loc>
+    <loc>https://www.nayanui.com/tools/tags/github-pr-review</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/code-analysis</loc>
+    <loc>https://www.nayanui.com/tools/tags/code-analysis</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/bug-detection</loc>
+    <loc>https://www.nayanui.com/tools/tags/bug-detection</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/nayan-ai</loc>
+    <loc>https://www.nayanui.com/tools/tags/nayan-ai</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/vulnerability-scanner</loc>
+    <loc>https://www.nayanui.com/tools/tags/vulnerability-scanner</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/security-scanning</loc>
+    <loc>https://www.nayanui.com/tools/tags/security-scanning</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/dependency-audit</loc>
+    <loc>https://www.nayanui.com/tools/tags/dependency-audit</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/auto-fix</loc>
+    <loc>https://www.nayanui.com/tools/tags/auto-fix</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/npm-audit</loc>
+    <loc>https://www.nayanui.com/tools/tags/npm-audit</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/devtools/tags/cve-detection</loc>
+    <loc>https://www.nayanui.com/tools/tags/cve-detection</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>

@@ -11,7 +11,7 @@ export interface NLinkProps extends Omit<LinkButtonProps, "children"> {
 export const NLink = React.memo<NLinkProps>(
   ({ children, href, onPress, className, labelClassName, ...props }) => {
     const handlePress = (event: any) => {
-      onPress?.(event);
+      if (typeof onPress === "function") onPress(event);
       if (href) Linking.openURL(href);
     };
 

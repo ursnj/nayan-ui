@@ -1,27 +1,30 @@
-# Nayan UI - Component Library Documentation
+# Nayan UI - Component Library & Developer Tools
 
 ## Project Overview
-Nayan UI is a comprehensive, enterprise-grade UI component library for React and React Native applications. It provides 58 documented components — 35 for React and 23 for React Native — with TypeScript-first development, CSS-variable theming, and cross-platform compatibility.
+Nayan UI is a comprehensive, enterprise-grade UI component library for React and React Native applications, plus a full suite of 50+ free online developer tools. It provides 58 documented components — 35 for React and 23 for React Native — with TypeScript-first development, CSS-variable theming, and cross-platform compatibility.
 
 **Website**: https://www.nayanui.com
-**Repository**: https://github.com/ursnj/nayan-ui
+**Repository**: https://gitlab.com/ursnj/nayan-ui
 **License**: ISC
 
 ## Architecture
-- **Monorepo Structure**: Yarn workspaces with packages in `packages/` directory
+- **Monorepo Structure**: Yarn workspaces
 - **Packages**:
-  - `@nayan-ui/react` - React components with Tailwind CSS
-  - `@nayan-ui/native` - React Native components with NativeWind
-  - `@nayan-ui/cli` - Command line tools for SEO (sitemap, robots.txt)
-  - `@nayan-ui/website` - Documentation website (this site)
+  - `@nayan-ui/react` — React components built on HeroUI + Tailwind CSS
+  - `@nayan-ui/native` — React Native components with NativeWind
+  - `@nayan-ui/cli` — CLI tools for SEO (sitemap, robots.txt generation)
+  - `@nayan-ui/ai` — AI-powered code reviewer & vulnerability scanner CLI
+  - `@nayan-ui/tools` — Tools library (video editor, PDF tools, image tools, JSON tools, XML tools, text tools)
+  - `@nayan-ui/website` — Next.js documentation website (this site)
 
 ## Technology Stack
-- **Frontend**: React 19, TypeScript, Tailwind CSS, Vite
+- **Website**: Next.js 15, React 19, TypeScript, Tailwind CSS v4, HeroUI
+- **React Package**: React 19, TypeScript, HeroUI, Tailwind CSS, Vite
 - **React Native**: React Native 0.80+, NativeWind, Expo SDK 53+
-- **Build Tools**: Vite, react-native-builder-bob, TypeScript
-- **Styling**: Tailwind CSS, tailwindcss-animate, CSS variables for theming
+- **Build Tools**: Vite, Next.js, react-native-builder-bob, TypeScript
+- **Styling**: Tailwind CSS, HeroUI design tokens, CSS variables for theming
 - **Icons**: Lucide React (React), Lucide React Native (React Native)
-- **Development**: Yarn workspaces, Husky, Prettier, ESR server-side rendering
+- **Development**: Yarn workspaces, Husky, Prettier
 
 ## Component Categories
 
@@ -238,11 +241,93 @@ function ContactForm() {
 }
 ```
 
-## Video Editor (Standalone Tool)
+## Free Online Developer Tools
+
+Nayan UI provides 50+ free online tools at https://www.nayanui.com/tools — all tools run in the browser or via server-side processing with no signup required.
+
+### PDF Tools (20 tools)
+- **Merge PDF** — Combine multiple PDF files into one document
+- **Split PDF** — Extract specific page ranges into separate PDFs
+- **Compress PDF** — Reduce PDF file size while preserving quality
+- **Rotate PDF** — Rotate pages by 90°, 180°, or 270°
+- **Watermark PDF** — Add text watermarks to every page
+- **Page Numbers PDF** — Add page numbers with custom formatting
+- **Protect PDF** — Encrypt PDFs with AES-256 password protection
+- **Unlock PDF** — Remove password protection from PDFs
+- **Image to PDF** — Convert JPG, PNG, WebP images to PDF
+- **PDF to Image** — Extract PDF pages as image files
+- **Organize PDF** — Reorder, delete, and rearrange pages
+- **Crop PDF** — Trim margins and adjust page borders
+- **Repair PDF** — Fix corrupted or damaged PDF files
+- **HTML to PDF** — Convert HTML content to PDF documents
+- **Word to PDF** — Convert DOCX/DOC to PDF
+- **PDF to Word** — Convert PDF to editable DOCX
+- **Excel to PDF** — Convert XLSX/XLS spreadsheets to PDF
+- **PDF to Excel** — Convert PDF to XLSX spreadsheets
+- **PowerPoint to PDF** — Convert PPTX/PPT to PDF
+- **PDF to PowerPoint** — Convert PDF to PPTX presentations
+
+### Image Tools (6 tools)
+- **Compress Image** — Reduce JPG, PNG, SVG, GIF file sizes
+- **Resize Image** — Scale images by percentage or pixel dimensions
+- **Crop Image** — Crop images with pixel precision or visual editor
+- **Convert Image** — Convert between JPG, PNG, WebP, GIF, TIFF, AVIF
+- **Watermark Image** — Add text watermarks with custom typography
+- **Rotate Image** — Rotate or flip images individually or in bulk
+
+### JSON Tools (8 tools)
+- **JSON Formatter** — Format and beautify JSON with indentation
+- **JSON Minifier** — Minify JSON by removing whitespace
+- **JSON Validator** — Validate syntax and analyze structure
+- **JSON to CSV** — Convert JSON arrays to CSV format
+- **JSON to YAML** — Convert JSON to YAML configuration format
+- **JSON to XML** — Convert JSON to XML with custom root tags
+- **JSON to TSV** — Convert JSON to tab-separated values
+- **JSON to Excel** — Convert JSON data to XLSX spreadsheets
+
+### XML Tools (8 tools)
+- **XML Formatter** — Format and beautify XML with customizable indentation
+- **XML Minifier** — Minify XML by removing whitespace and reducing file size
+- **XML Validator** — Validate XML syntax and analyze document structure
+- **XML to JSON** — Convert XML to JSON format for modern APIs
+- **XML to CSV** — Convert XML records to CSV format for spreadsheets
+- **XML to YAML** — Convert XML to YAML configuration format
+- **XML to TSV** — Convert XML records to tab-separated values
+- **XML to Excel** — Convert XML data to XLSX spreadsheets
+
+### Text Tools (8 tools)
+- **Text Compare** — Side-by-side text diff and comparison
+- **Character Counter** — Count characters, words, sentences, paragraphs
+- **Word Counter** — Analyze word frequency and vocabulary density
+- **Case Converter** — Convert between uppercase, lowercase, camelCase, snake_case
+- **Lorem Ipsum Generator** — Generate placeholder text for designs
+- **Text Reverser** — Reverse text, words, or lines
+- **Slug Generator** — Generate SEO-friendly URL slugs
+- **Markdown Preview** — Live markdown editor with HTML preview
+
+### SEO Tools (2 tools)
+- **Sitemap Generator** — Generate and validate XML sitemaps
+- **Robots.txt Generator** — Create and validate robots.txt files
+
+### AI Tools (2 tools)
+- **AI Code Reviewer** — AI-powered GitHub PR review using Codex & Claude Code
+- **AI Code Scanner** — Vulnerability scanning with auto-fix for npm, Python, Go, Rust, Ruby, PHP, Java, .NET, Scala
+
+## Nayan AI — CLI Code Analysis
+
+**Package**: `@nayan-ui/ai` (npm: `nayan-ai`)
+**Install**: `npm install -g @nayan-ui/ai`
+
+- `nayan-ai review` — Deep AI review of GitHub Pull Requests
+- `nayan-ai scan` — Vulnerability scanning with auto-fix PR creation
+- LLM providers: Codex (default) and Claude Code
+- Supports: npm, Python, Go, Rust, Ruby, PHP, Java, .NET, Scala
+
+## Video Editor
 
 **Page**: https://www.nayanui.com/video-editor
 **App**: https://www.nayanui.com/video-editor/start
-**Source**: https://github.com/ursnj/nayan-ui/tree/main/packages/video-editor
+**Source**: https://gitlab.com/ursnj/nayan-ui
 
 A free, open source (MIT) video editor that runs entirely in the browser. There is no server, no account, no upload step and no watermark: media is opened from disk, decoded, composited and encoded on the user's own machine using WebCodecs, and the export is written straight to their downloads folder. It works offline once the page has loaded.
 
@@ -282,29 +367,30 @@ A free, open source (MIT) video editor that runs entirely in the browser. There 
 
 ### Styling
 - Use Tailwind utility classes for consistent styling
-- Leverage CSS variables for theme customization
+- Leverage HeroUI design tokens (bg-surface, text-foreground, border-default, etc.)
 - Provide className props for component customization
 - Use responsive design principles
 
 ## Browser & Platform Support
 
 ### React
-- **Browsers**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
-- **Node.js**: 16.0+
-- **React**: 18.0+
+- **Browsers**: Chrome 94+, Firefox 88+, Safari 16.4+, Edge 94+
+- **Node.js**: 18.0+
+- **React**: 19.0+
 
 ### React Native
-- **iOS**: 11.0+
-- **Android**: API 21+ (Android 5.0)
-- **React Native**: 0.70+
-- **Expo**: SDK 47+
+- **iOS**: 13.0+
+- **Android**: API 24+ (Android 7.0)
+- **React Native**: 0.80+
+- **Expo**: SDK 53+
 
 ## Contributing
 The project follows standard open-source contribution guidelines with Prettier formatting, Husky pre-commit hooks, and comprehensive TypeScript typing. All components include extensive examples and documentation.
 
 ## SEO & Performance
-- Server-side rendering with Express
-- Automatic sitemap generation
-- Optimized bundle sizes
+- Next.js server-side rendering and static generation
+- Schema.org structured data (Organization, SoftwareApplication, Website, BreadcrumbList, TechArticle)
+- Comprehensive XML sitemap with all pages
+- Optimized bundle sizes with tree shaking
 - Progressive enhancement
 - Semantic HTML structure

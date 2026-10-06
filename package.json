@@ -20,11 +20,9 @@
     "native:typecheck": "bun run --filter @nayan-ui/native typecheck",
     "native:clean": "bun run --filter @nayan-ui/native clean",
     "native:example": "bun run --filter @nayan-ui/native example",
-    "website:dev": "bun run react:build && bun run --filter @nayan-ui/website dev",
-    "website:build": "bun run react:build && bun run editor:build && bun run --filter @nayan-ui/website build",
-    "website:start": "bun run --filter @nayan-ui/website start",
-    "editor:dev": "bun run --filter @nayan-ui/video-editor dev",
-    "editor:build": "bun run --filter @nayan-ui/video-editor build"
+    "website:dev": "bun run --filter @nayan-ui/website dev",
+    "website:build": "bun run --filter @nayan-ui/website build",
+    "website:start": "bun run --filter @nayan-ui/website start"
   },
   "devDependencies": {
     "oxfmt": "^0.68.0",

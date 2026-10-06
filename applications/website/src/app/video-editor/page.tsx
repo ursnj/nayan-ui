@@ -1,10 +1,7 @@
-import JsonLd from "@/helpers/JsonLd";
+import JsonLd from "@/components/helpers/JsonLd";
 import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/seo";
-import VideoEditor from "@/videoEditor/VideoEditor";
-import { FAQS, STEPS } from "@/videoEditor/content";
-
-export const dynamic = "force-dynamic";
-
+import VideoEditor from "@/components/video-editor/VideoEditor";
+import { FAQS, STEPS } from "@/components/video-editor/content";
 export const metadata = buildPageMetadata({
   title: "Free Online Video Editor — No Upload, No Watermark",
   description:

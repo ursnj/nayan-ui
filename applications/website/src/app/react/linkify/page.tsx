@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import Linkify from "@/react/components/Linkify";
+import JsonLd from "@/components/helpers/JsonLd";
+import Linkify from "@/components/react/components/Linkify";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/linkify", "react");
 export const metadata = pageMetadata;

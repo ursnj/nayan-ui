@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import AvatarGroup from "@/react/components/AvatarGroup";
+import JsonLd from "@/components/helpers/JsonLd";
+import AvatarGroup from "@/components/react/components/AvatarGroup";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/avatar-group", "react");
 export const metadata = pageMetadata;

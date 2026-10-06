@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import InfiniteScroll from "@/react/components/InfiniteScroll";
+import JsonLd from "@/components/helpers/JsonLd";
+import InfiniteScroll from "@/components/react/components/InfiniteScroll";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
   "/react/infinite-scroll",

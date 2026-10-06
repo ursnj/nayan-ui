@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import DateField from "@/react/components/DateField";
+import JsonLd from "@/components/helpers/JsonLd";
+import DateField from "@/components/react/components/DateField";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/date-field", "react");
 export const metadata = pageMetadata;

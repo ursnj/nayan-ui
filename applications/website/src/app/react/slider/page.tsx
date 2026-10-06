@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import Slider from "@/react/components/Slider";
+import JsonLd from "@/components/helpers/JsonLd";
+import Slider from "@/components/react/components/Slider";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/slider", "react");
 export const metadata = pageMetadata;

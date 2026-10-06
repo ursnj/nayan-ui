@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import CheckboxGroup from "@/react/components/CheckboxGroup";
+import JsonLd from "@/components/helpers/JsonLd";
+import CheckboxGroup from "@/components/react/components/CheckboxGroup";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/checkbox-group", "react");
 export const metadata = pageMetadata;

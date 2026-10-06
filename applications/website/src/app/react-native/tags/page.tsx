@@ -1,9 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
+import JsonLd from "@/components/helpers/JsonLd";
 import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/seo";
-import Tags from "@/tags/Tags";
-
-export const dynamic = "force-dynamic";
-
+import Tags from "@/components/tags/Tags";
 export const metadata = buildPageMetadata({
   title: "React Native Component Tags",
   description:

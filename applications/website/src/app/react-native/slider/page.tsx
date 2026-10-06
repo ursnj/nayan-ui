@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import RNSlider from "@/react-native/components/Slider";
+import JsonLd from "@/components/helpers/JsonLd";
+import RNSlider from "@/components/react-native/components/Slider";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
   "/react-native/slider",

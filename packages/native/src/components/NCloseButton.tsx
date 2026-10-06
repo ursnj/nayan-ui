@@ -7,9 +7,9 @@ export interface NCloseButtonProps extends Omit<CloseButtonProps, "children"> {
 }
 
 export const NCloseButton = React.memo<NCloseButtonProps>(
-  ({ className, accessibilityLabel = "Close", ...props }) => {
+  ({ className, accessibilityLabel = "Close", feedbackVariant: _fv, animation: _anim, ...props }) => {
     return (
-      <CloseButton className={cn(className)} accessibilityLabel={accessibilityLabel} {...props} />
+      <CloseButton className={cn(className)} accessibilityLabel={accessibilityLabel} feedbackVariant="none" {...(props as any)} />
     );
   },
 );

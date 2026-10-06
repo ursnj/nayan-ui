@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import RNInput from "@/react-native/components/Input";
+import JsonLd from "@/components/helpers/JsonLd";
+import RNInput from "@/components/react-native/components/Input";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
   "/react-native/input",

@@ -1,13 +1,11 @@
-import JsonLd from "@/helpers/JsonLd";
-import Installation from "@/react-native/installation/Installation";
+import JsonLd from "@/components/helpers/JsonLd";
+import Installation from "@/components/react-native/installation/Installation";
 import {
   SITE_URL,
   buildBreadcrumbSchema,
   buildPageMetadata,
   buildTechArticleSchema,
 } from "@/services/seo";
-
-export const dynamic = "force-dynamic";
 
 export const metadata = buildPageMetadata({
   title: "Installation - React Native Components",

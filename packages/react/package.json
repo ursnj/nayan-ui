@@ -30,7 +30,7 @@
   "source": "./src/index.ts",
   "files": [
     "dist",
-    "src/styles.css"
+    "src"
   ],
   "type": "module",
   "sideEffects": false,
@@ -40,8 +40,8 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.es.js",
-      "default": "./dist/index.es.js"
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
     },
     "./styles.css": {
       "import": "./src/styles.css",
@@ -50,7 +50,22 @@
     }
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "main": "./dist/index.es.js",
+    "module": "./dist/index.es.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.es.js",
+        "default": "./dist/index.es.js"
+      },
+      "./styles.css": {
+        "import": "./src/styles.css",
+        "require": "./src/styles.css",
+        "default": "./src/styles.css"
+      }
+    }
   },
   "scripts": {
     "build": "rimraf dist && vite build && tsc -p tsconfig.build.json",

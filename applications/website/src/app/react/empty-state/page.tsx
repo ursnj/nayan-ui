@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import EmptyState from "@/react/components/EmptyState";
+import JsonLd from "@/components/helpers/JsonLd";
+import EmptyState from "@/components/react/components/EmptyState";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/empty-state", "react");
 export const metadata = pageMetadata;

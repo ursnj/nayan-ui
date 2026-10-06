@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import Textarea from "@/react/components/Textarea";
+import JsonLd from "@/components/helpers/JsonLd";
+import Textarea from "@/components/react/components/Textarea";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/textarea", "react");
 export const metadata = pageMetadata;

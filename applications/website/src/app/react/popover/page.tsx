@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import Popover from "@/react/components/Popover";
+import JsonLd from "@/components/helpers/JsonLd";
+import Popover from "@/components/react/components/Popover";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/popover", "react");
 export const metadata = pageMetadata;

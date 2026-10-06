@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import RNTooltip from "@/react-native/components/Tooltip";
+import JsonLd from "@/components/helpers/JsonLd";
+import RNTooltip from "@/components/react-native/components/Tooltip";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
   "/react-native/tooltip",

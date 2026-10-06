@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import RNToast from "@/react-native/components/Toast";
+import JsonLd from "@/components/helpers/JsonLd";
+import RNToast from "@/components/react-native/components/Toast";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
   "/react-native/toast",

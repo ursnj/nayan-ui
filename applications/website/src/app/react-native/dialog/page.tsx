@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import RNDialog from "@/react-native/components/Dialog";
+import JsonLd from "@/components/helpers/JsonLd";
+import RNDialog from "@/components/react-native/components/Dialog";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
   "/react-native/dialog",

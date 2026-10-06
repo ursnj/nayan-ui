@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import RNProgress from "@/react-native/components/Progress";
+import JsonLd from "@/components/helpers/JsonLd";
+import RNProgress from "@/components/react-native/components/Progress";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
   "/react-native/progress",

@@ -1,8 +1,6 @@
-import Games from "@/games/Games";
-import JsonLd from "@/helpers/JsonLd";
+import Games from "@/components/games/Games";
+import JsonLd from "@/components/helpers/JsonLd";
 import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/seo";
-
-export const dynamic = "force-dynamic";
 
 export const metadata = buildPageMetadata({
   title: "@nayan-ui/games - 50 React Native Games",

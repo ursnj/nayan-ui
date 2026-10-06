@@ -1,8 +1,6 @@
-import GamesLicensing from "@/games/Licensing";
-import JsonLd from "@/helpers/JsonLd";
+import GamesLicensing from "@/components/games/Licensing";
+import JsonLd from "@/components/helpers/JsonLd";
 import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/seo";
-
-export const dynamic = "force-dynamic";
 
 export const metadata = buildPageMetadata({
   title: "Games Licensing",

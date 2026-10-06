@@ -1,12 +1,9 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import GameDetail from "@/games/GameDetail";
-import JsonLd from "@/helpers/JsonLd";
+import GameDetail from "@/components/games/GameDetail";
+import JsonLd from "@/components/helpers/JsonLd";
 import { gamesData } from "@/services/GamesData";
 import { SITE_NAME, SITE_URL, buildBreadcrumbSchema } from "@/services/seo";
-
-export const dynamic = "force-dynamic";
-
 export async function generateStaticParams() {
   return Object.keys(gamesData).map((slug) => ({ slug }));
 }

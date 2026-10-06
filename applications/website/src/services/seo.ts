@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { TOTAL_COMPONENT_COUNT } from "./Counts";
+import { TOOL_COUNT, TOTAL_COMPONENT_COUNT } from "./Counts";
 
 export const SITE_URL = "https://www.nayanui.com";
+export const REPO_URL = "https://gitlab.com/ursnj/nayan-ui";
 export const SITE_HOST = SITE_URL.replace(/^https?:\/\//, "");
 export const SITE_NAME = "Nayan UI";
-export const SITE_DESCRIPTION = `Nayan UI is an open source component library for React and React Native. ${TOTAL_COMPONENT_COUNT} accessible, customizable, production-ready UI components built on HeroUI and Tailwind CSS.`;
+export const SITE_DESCRIPTION = `Nayan UI is an open source component library for React and React Native with ${TOTAL_COMPONENT_COUNT} accessible, production-ready UI components, plus ${TOOL_COUNT} free online developer tools for PDFs, images, JSON, text and AI code review. Built on HeroUI and Tailwind CSS.`;
 
 export const organizationSchema = {
   "@context": "https://schema.org",
@@ -14,11 +15,11 @@ export const organizationSchema = {
   logo: `${SITE_URL}/banner.png`,
   description: SITE_DESCRIPTION,
   foundingDate: "2024",
-  sameAs: ["https://github.com/ursnj/nayan-ui", "https://www.npmjs.com/org/nayan-ui"],
+  sameAs: [REPO_URL, "https://www.npmjs.com/org/nayan-ui"],
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "technical support",
-    url: "https://github.com/ursnj/nayan-ui/issues",
+    url: REPO_URL,
   },
 };
 
@@ -42,6 +43,13 @@ export const softwareApplicationSchema = {
   featureList: [
     "35 React Components",
     "React Native Support",
+    "54 Free Developer Tools",
+    "PDF Tools — Merge, Split, Compress, Convert & More",
+    "Image Tools — Compress, Resize, Crop, Convert, Watermark",
+    "JSON Tools — Format, Validate, Convert to CSV/YAML/XML/Excel",
+    "XML Tools — Format, Validate, Convert to JSON/CSV/YAML/TSV/Excel",
+    "Text Tools — Compare, Count, Convert Case, Generate Slugs",
+    "AI Code Review & Vulnerability Scanning",
     "TypeScript First",
     "Tailwind CSS Integration",
     "HeroUI Foundation",

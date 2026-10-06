@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import Badge from "@/react/components/Badge";
+import JsonLd from "@/components/helpers/JsonLd";
+import Badge from "@/components/react/components/Badge";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/badge", "react");
 export const metadata = pageMetadata;

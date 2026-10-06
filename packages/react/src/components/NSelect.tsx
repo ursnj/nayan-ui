@@ -94,8 +94,18 @@ const NSelectInner = <
 
   // menuPosition="fixed" rather than a portal: a portalled menu is an outside press, which dismisses a dialog or sheet.
   const mergedStyles = {
+    control: (base: Record<string, unknown>) => ({
+      ...base,
+      minHeight: "auto",
+      background: "transparent",
+      boxShadow: "none",
+    }),
     menuPortal: (base: Record<string, unknown>) => ({ ...base, zIndex: 9999 }),
     menu: (base: Record<string, unknown>) => ({ ...base, zIndex: 50 }),
+    valueContainer: (base: Record<string, unknown>) => ({ ...base, padding: "0 8px" }),
+    indicatorSeparator: () => ({ display: "none" }),
+    dropdownIndicator: (base: Record<string, unknown>) => ({ ...base, padding: "0 8px", color: "inherit" }),
+    clearIndicator: (base: Record<string, unknown>) => ({ ...base, padding: "0 4px", color: "inherit" }),
     ...styles,
   };
 
@@ -107,6 +117,7 @@ const NSelectInner = <
         </Label>
       )}
       <SelectComponent
+        instanceId={selectId}
         inputId={selectId}
         name={name}
         isMulti={isMulti}

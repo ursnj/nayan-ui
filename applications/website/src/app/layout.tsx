@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Footer from "@/helpers/Footer";
-import Header from "@/helpers/Header";
-import JsonLd from "@/helpers/JsonLd";
-import ThemeProvider from "@/helpers/ThemeProvider";
+import Footer from "@/components/helpers/Footer";
+import Header from "@/components/helpers/Header";
+import JsonLd from "@/components/helpers/JsonLd";
+import ThemeProvider from "@/components/helpers/ThemeProvider";
 import {
   SITE_DESCRIPTION,
   SITE_NAME,

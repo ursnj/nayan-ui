@@ -1,13 +1,11 @@
-import ApiReference from "@/games/ApiReference";
-import JsonLd from "@/helpers/JsonLd";
+import ApiReference from "@/components/games/ApiReference";
+import JsonLd from "@/components/helpers/JsonLd";
 import {
   SITE_URL,
   buildBreadcrumbSchema,
   buildPageMetadata,
   buildTechArticleSchema,
 } from "@/services/seo";
-
-export const dynamic = "force-dynamic";
 
 export const metadata = buildPageMetadata({
   title: "Games API Reference",

@@ -153,14 +153,16 @@ export const reactSelectTheme = (theme: any) => ({
 });
 
 export const reactSelectCustomClassNames = {
-  control: (_state: any) =>
-    "flex h-10 w-full rounded-lg border border-default bg-surface text-foreground focus:border-accent",
-  menu: (_state: any) => "w-full rounded-lg border border-default bg-surface shadow-lg",
+  control: (state: any) =>
+    `flex h-10 w-full items-center rounded-lg border bg-surface text-sm text-foreground transition-colors ${state.isFocused ? "border-accent" : "border-default"}`,
+  menu: (_state: any) => "mt-1 w-full rounded-lg border border-default bg-surface shadow-lg",
+  menuList: (_state: any) => "max-h-60 overflow-auto py-1",
   option: (state: any) =>
-    state.isSelected ? "bg-accent text-accent-foreground" : state.isFocused ? "bg-default/50" : "",
-  singleValue: (_state: any) => "text-foreground",
-  multiValue: (_state: any) => "rounded-lg bg-default",
+    `cursor-pointer px-3 py-2 text-sm ${state.isSelected ? "bg-accent text-accent-foreground" : state.isFocused ? "bg-default/50 text-foreground" : "text-foreground"}`,
+  singleValue: (_state: any) => "text-sm text-foreground",
+  multiValue: (_state: any) => "rounded bg-default text-sm",
   multiValueLabel: (_state: any) => "text-foreground",
-  placeholder: (_state: any) => "text-muted",
-  input: (_state: any) => "text-foreground",
+  placeholder: (_state: any) => "text-sm text-muted",
+  input: (_state: any) => "text-sm text-foreground",
+  noOptionsMessage: (_state: any) => "px-3 py-2 text-sm text-muted",
 } as any;

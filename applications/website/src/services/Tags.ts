@@ -1444,34 +1444,117 @@ export const sitemapTags = [
   { sku: "seo-sitemap", text: "SEO Sitemap" },
   { sku: "website-sitemap", text: "Website Sitemap" },
   { sku: "sitemap-creation", text: "Sitemap Creation" },
-  { sku: "sitemap-validator", text: "Sitemap Validator" },
   { sku: "search-engine-sitemap", text: "Search Engine Sitemap" },
   { sku: "google-sitemap", text: "Google Sitemap" },
   { sku: "sitemap-optimization", text: "Sitemap Optimization" },
-  { sku: "automatic-sitemap", text: "Automatic Sitemap" },
-  { sku: "sitemap-crawler", text: "Sitemap Crawler" },
-  { sku: "website-indexing", text: "Website Indexing" },
   { sku: "seo-tools", text: "SEO Tools" },
-  { sku: "web-crawler", text: "Web Crawler" },
-  { sku: "sitemap-cli", text: "Sitemap CLI" },
+  { sku: "sitemap-creator", text: "Sitemap Creator" },
+  { sku: "sitemap-builder", text: "Sitemap Builder" },
+  { sku: "xml-sitemap-generator", text: "XML Sitemap Generator" },
+  { sku: "free-sitemap-tool", text: "Free Sitemap Tool" },
+];
+
+export const sitemapValidatorTags = [
+  { sku: "sitemap-validator", text: "Sitemap Validator" },
+  { sku: "xml-sitemap-validator", text: "XML Sitemap Validator" },
+  { sku: "sitemap-checker", text: "Sitemap Checker" },
+  { sku: "sitemap-tester", text: "Sitemap Tester" },
+  { sku: "validate-sitemap", text: "Validate Sitemap" },
+  { sku: "sitemap-verification", text: "Sitemap Verification" },
+  { sku: "xml-validation", text: "XML Validation" },
+  { sku: "seo-sitemap-check", text: "SEO Sitemap Check" },
+  { sku: "sitemap-analysis", text: "Sitemap Analysis" },
+  { sku: "seo-tools", text: "SEO Tools" },
+  { sku: "website-indexing", text: "Website Indexing" },
+  { sku: "free-sitemap-validator", text: "Free Sitemap Validator" },
 ];
 
 export const robotsTags = [
-  { sku: "robots-txt", text: "Robots.txt" },
   { sku: "robots-txt-generator", text: "Robots.txt Generator" },
-  { sku: "robots-txt-validator", text: "Robots.txt Validator" },
+  { sku: "robots-txt", text: "Robots.txt" },
+  { sku: "robots-txt-creator", text: "Robots.txt Creator" },
+  { sku: "robots-txt-builder", text: "Robots.txt Builder" },
   { sku: "web-crawler-control", text: "Web Crawler Control" },
   { sku: "search-engine-crawling", text: "Search Engine Crawling" },
-  { sku: "robots-file", text: "Robots File" },
   { sku: "crawler-directives", text: "Crawler Directives" },
   { sku: "seo-robots", text: "SEO Robots" },
-  { sku: "website-crawling", text: "Website Crawling" },
   { sku: "robots-txt-creation", text: "Robots.txt Creation" },
   { sku: "search-bot-control", text: "Search Bot Control" },
+  { sku: "seo-tools", text: "SEO Tools" },
+  { sku: "free-robots-tool", text: "Free Robots.txt Tool" },
+];
+
+export const robotsValidatorTags = [
+  { sku: "robots-txt-validator", text: "Robots.txt Validator" },
+  { sku: "robots-txt-checker", text: "Robots.txt Checker" },
+  { sku: "robots-txt-tester", text: "Robots.txt Tester" },
+  { sku: "validate-robots-txt", text: "Validate Robots.txt" },
+  { sku: "robots-verification", text: "Robots.txt Verification" },
+  { sku: "robots-txt-analysis", text: "Robots.txt Analysis" },
+  { sku: "crawler-permissions", text: "Crawler Permissions" },
   { sku: "web-indexing-control", text: "Web Indexing Control" },
   { sku: "robots-protocol", text: "Robots Protocol" },
-  { sku: "crawler-permissions", text: "Crawler Permissions" },
-  { sku: "robots-cli", text: "Robots CLI" },
+  { sku: "seo-tools", text: "SEO Tools" },
+  { sku: "free-robots-validator", text: "Free Robots.txt Validator" },
+];
+
+export const metaTagGeneratorTags = [
+  { sku: "meta-tag-generator", text: "Meta Tag Generator" },
+  { sku: "html-meta-tags", text: "HTML Meta Tags" },
+  { sku: "open-graph-tags", text: "Open Graph Tags" },
+  { sku: "twitter-card-tags", text: "Twitter Card Tags" },
+  { sku: "seo-meta-tags", text: "SEO Meta Tags" },
+  { sku: "meta-description", text: "Meta Description" },
+  { sku: "og-tags-generator", text: "OG Tags Generator" },
+  { sku: "social-media-meta", text: "Social Media Meta" },
+  { sku: "robots-meta-tag", text: "Robots Meta Tag" },
+  { sku: "canonical-url", text: "Canonical URL" },
+  { sku: "seo-tools", text: "SEO Tools" },
+  { sku: "free-meta-tag-tool", text: "Free Meta Tag Tool" },
+];
+
+export const urlEncoderDecoderTags = [
+  { sku: "url-encoder", text: "URL Encoder" },
+  { sku: "url-decoder", text: "URL Decoder" },
+  { sku: "url-encode-decode", text: "URL Encode/Decode" },
+  { sku: "percent-encoding", text: "Percent Encoding" },
+  { sku: "uri-encoder", text: "URI Encoder" },
+  { sku: "uri-decoder", text: "URI Decoder" },
+  { sku: "encode-uri-component", text: "encodeURIComponent" },
+  { sku: "url-escaping", text: "URL Escaping" },
+  { sku: "query-string-encoder", text: "Query String Encoder" },
+  { sku: "seo-tools", text: "SEO Tools" },
+  { sku: "free-url-encoder", text: "Free URL Encoder" },
+];
+
+export const openGraphPreviewTags = [
+  { sku: "open-graph-preview", text: "Open Graph Preview" },
+  { sku: "og-preview", text: "OG Preview" },
+  { sku: "social-media-preview", text: "Social Media Preview" },
+  { sku: "facebook-preview", text: "Facebook Preview" },
+  { sku: "twitter-preview", text: "Twitter Preview" },
+  { sku: "linkedin-preview", text: "LinkedIn Preview" },
+  { sku: "slack-preview", text: "Slack Preview" },
+  { sku: "google-search-preview", text: "Google Search Preview" },
+  { sku: "og-image-preview", text: "OG Image Preview" },
+  { sku: "social-share-preview", text: "Social Share Preview" },
+  { sku: "seo-tools", text: "SEO Tools" },
+  { sku: "free-og-preview", text: "Free OG Preview" },
+];
+
+export const keywordDensityTags = [
+  { sku: "keyword-density", text: "Keyword Density" },
+  { sku: "keyword-analyzer", text: "Keyword Analyzer" },
+  { sku: "keyword-density-checker", text: "Keyword Density Checker" },
+  { sku: "seo-keyword-analysis", text: "SEO Keyword Analysis" },
+  { sku: "content-analysis", text: "Content Analysis" },
+  { sku: "keyword-frequency", text: "Keyword Frequency" },
+  { sku: "keyword-counter", text: "Keyword Counter" },
+  { sku: "content-optimization", text: "Content Optimization" },
+  { sku: "seo-content-tool", text: "SEO Content Tool" },
+  { sku: "keyword-research", text: "Keyword Research" },
+  { sku: "seo-tools", text: "SEO Tools" },
+  { sku: "free-keyword-tool", text: "Free Keyword Tool" },
 ];
 
 export const aiReviewTags = [
@@ -1676,4 +1759,1423 @@ export const toolbarTags = [
   { sku: "react-toolbar-component", text: "React Toolbar Component" },
   { sku: "react-editor-toolbar", text: "React Editor Toolbar" },
   { sku: "react-controls-row", text: "React Controls Row" },
+];
+
+export const compressImageTags = [
+  { sku: "compress-image", text: "Compress Image" },
+  { sku: "image-compression", text: "Image Compression" },
+  { sku: "reduce-image-size", text: "Reduce Image Size" },
+  { sku: "optimize-image", text: "Optimize Image" },
+  { sku: "jpg-compression", text: "JPG Compression" },
+  { sku: "png-compression", text: "PNG Compression" },
+  { sku: "webp-compression", text: "WebP Compression" },
+  { sku: "image-optimizer", text: "Image Optimizer" },
+  { sku: "bulk-image-compression", text: "Bulk Image Compression" },
+  { sku: "lossless-compression", text: "Lossless Compression" },
+  { sku: "online-image-compressor", text: "Online Image Compressor" },
+  { sku: "free-image-compression", text: "Free Image Compression" },
+];
+
+export const resizeImageTags = [
+  { sku: "resize-image", text: "Resize Image" },
+  { sku: "image-resizer", text: "Image Resizer" },
+  { sku: "resize-photo", text: "Resize Photo" },
+  { sku: "image-dimensions", text: "Image Dimensions" },
+  { sku: "scale-image", text: "Scale Image" },
+  { sku: "resize-jpg", text: "Resize JPG" },
+  { sku: "resize-png", text: "Resize PNG" },
+  { sku: "bulk-resize", text: "Bulk Resize" },
+  { sku: "image-size-reducer", text: "Image Size Reducer" },
+  { sku: "online-image-resizer", text: "Online Image Resizer" },
+  { sku: "free-image-resizer", text: "Free Image Resizer" },
+  { sku: "resize-by-percentage", text: "Resize By Percentage" },
+];
+
+export const cropImageTags = [
+  { sku: "crop-image", text: "Crop Image" },
+  { sku: "image-cropper", text: "Image Cropper" },
+  { sku: "crop-photo", text: "Crop Photo" },
+  { sku: "crop-jpg", text: "Crop JPG" },
+  { sku: "crop-png", text: "Crop PNG" },
+  { sku: "image-trimmer", text: "Image Trimmer" },
+  { sku: "visual-cropper", text: "Visual Cropper" },
+  { sku: "free-image-cropper", text: "Free Image Cropper" },
+  { sku: "online-image-cropper", text: "Online Image Cropper" },
+  { sku: "aspect-ratio-crop", text: "Aspect Ratio Crop" },
+  { sku: "custom-crop", text: "Custom Crop" },
+  { sku: "crop-to-size", text: "Crop To Size" },
+];
+
+export const convertImageTags = [
+  { sku: "convert-image", text: "Convert Image" },
+  { sku: "image-converter", text: "Image Converter" },
+  { sku: "jpg-to-png", text: "JPG to PNG" },
+  { sku: "png-to-jpg", text: "PNG to JPG" },
+  { sku: "webp-to-jpg", text: "WebP to JPG" },
+  { sku: "jpg-to-webp", text: "JPG to WebP" },
+  { sku: "image-format-converter", text: "Image Format Converter" },
+  { sku: "bulk-image-converter", text: "Bulk Image Converter" },
+  { sku: "free-image-converter", text: "Free Image Converter" },
+  { sku: "online-image-converter", text: "Online Image Converter" },
+  { sku: "svg-to-png", text: "SVG to PNG" },
+  { sku: "heic-to-jpg", text: "HEIC to JPG" },
+];
+
+export const watermarkImageTags = [
+  { sku: "watermark-image", text: "Watermark Image" },
+  { sku: "image-watermark", text: "Image Watermark" },
+  { sku: "add-watermark", text: "Add Watermark" },
+  { sku: "text-watermark", text: "Text Watermark" },
+  { sku: "logo-watermark", text: "Logo Watermark" },
+  { sku: "photo-watermark", text: "Photo Watermark" },
+  { sku: "batch-watermark", text: "Batch Watermark" },
+  { sku: "free-watermark-tool", text: "Free Watermark Tool" },
+  { sku: "online-watermark", text: "Online Watermark" },
+  { sku: "custom-watermark", text: "Custom Watermark" },
+  { sku: "watermark-generator", text: "Watermark Generator" },
+  { sku: "transparent-watermark", text: "Transparent Watermark" },
+];
+
+export const rotateImageTags = [
+  { sku: "rotate-image", text: "Rotate Image" },
+  { sku: "image-rotator", text: "Image Rotator" },
+  { sku: "rotate-photo", text: "Rotate Photo" },
+  { sku: "flip-image", text: "Flip Image" },
+  { sku: "rotate-jpg", text: "Rotate JPG" },
+  { sku: "rotate-png", text: "Rotate PNG" },
+  { sku: "bulk-rotate", text: "Bulk Rotate" },
+  { sku: "rotate-90-degrees", text: "Rotate 90 Degrees" },
+  { sku: "free-image-rotator", text: "Free Image Rotator" },
+  { sku: "online-image-rotator", text: "Online Image Rotator" },
+  { sku: "mirror-image", text: "Mirror Image" },
+  { sku: "image-orientation", text: "Image Orientation" },
+];
+
+export const htmlToImageTags = [
+  { sku: "html-to-image", text: "HTML to Image" },
+  { sku: "webpage-screenshot", text: "Webpage Screenshot" },
+  { sku: "url-to-image", text: "URL to Image" },
+  { sku: "website-to-image", text: "Website to Image" },
+  { sku: "html-to-jpg", text: "HTML to JPG" },
+  { sku: "html-to-png", text: "HTML to PNG" },
+  { sku: "html-to-svg", text: "HTML to SVG" },
+  { sku: "webpage-capture", text: "Webpage Capture" },
+  { sku: "website-screenshot-tool", text: "Website Screenshot Tool" },
+  { sku: "free-screenshot-tool", text: "Free Screenshot Tool" },
+  { sku: "online-html-to-image", text: "Online HTML to Image" },
+  { sku: "web-page-to-image", text: "Web Page to Image" },
+];
+
+export const mergePdfTags = [
+  { sku: "merge-pdf", text: "Merge PDF" },
+  { sku: "combine-pdf", text: "Combine PDF" },
+  { sku: "join-pdf", text: "Join PDF" },
+  { sku: "pdf-merger", text: "PDF Merger" },
+  { sku: "merge-pdf-online", text: "Merge PDF Online" },
+  { sku: "free-pdf-merger", text: "Free PDF Merger" },
+  { sku: "combine-pdf-files", text: "Combine PDF Files" },
+  { sku: "pdf-joiner", text: "PDF Joiner" },
+  { sku: "merge-multiple-pdfs", text: "Merge Multiple PDFs" },
+  { sku: "pdf-combiner-tool", text: "PDF Combiner Tool" },
+  { sku: "merge-pdf-files-free", text: "Merge PDF Files Free" },
+  { sku: "join-pdf-documents", text: "Join PDF Documents" },
+  { sku: "concatenate-pdf", text: "Concatenate PDF" },
+  { sku: "batch-merge-pdf", text: "Batch Merge PDF" },
+  { sku: "merge-pdf-no-signup", text: "Merge PDF No Signup" },
+  { sku: "append-pdf-pages", text: "Append PDF Pages" },
+];
+
+export const splitPdfTags = [
+  { sku: "split-pdf", text: "Split PDF" },
+  { sku: "pdf-splitter", text: "PDF Splitter" },
+  { sku: "extract-pdf-pages", text: "Extract PDF Pages" },
+  { sku: "separate-pdf", text: "Separate PDF" },
+  { sku: "split-pdf-online", text: "Split PDF Online" },
+  { sku: "free-pdf-splitter", text: "Free PDF Splitter" },
+  { sku: "pdf-page-extractor", text: "PDF Page Extractor" },
+  { sku: "divide-pdf", text: "Divide PDF" },
+  { sku: "split-pdf-by-pages", text: "Split PDF by Pages" },
+  { sku: "split-pdf-into-multiple-files", text: "Split PDF into Multiple Files" },
+  { sku: "pdf-page-separator", text: "PDF Page Separator" },
+  { sku: "break-pdf-apart", text: "Break PDF Apart" },
+  { sku: "split-large-pdf", text: "Split Large PDF" },
+  { sku: "pdf-cutter", text: "PDF Cutter" },
+  { sku: "split-pdf-by-range", text: "Split PDF by Range" },
+  { sku: "remove-pages-from-pdf", text: "Remove Pages from PDF" },
+];
+
+export const compressPdfTags = [
+  { sku: "compress-pdf", text: "Compress PDF" },
+  { sku: "pdf-compressor", text: "PDF Compressor" },
+  { sku: "reduce-pdf-size", text: "Reduce PDF Size" },
+  { sku: "shrink-pdf", text: "Shrink PDF" },
+  { sku: "compress-pdf-online", text: "Compress PDF Online" },
+  { sku: "free-pdf-compressor", text: "Free PDF Compressor" },
+  { sku: "optimize-pdf", text: "Optimize PDF" },
+  { sku: "pdf-size-reducer", text: "PDF Size Reducer" },
+  { sku: "make-pdf-smaller", text: "Make PDF Smaller" },
+  { sku: "pdf-file-compressor", text: "PDF File Compressor" },
+  { sku: "minimize-pdf", text: "Minimize PDF" },
+  { sku: "compress-pdf-for-email", text: "Compress PDF for Email" },
+  { sku: "lightweight-pdf", text: "Lightweight PDF" },
+  { sku: "reduce-pdf-file-size-online", text: "Reduce PDF File Size Online" },
+  { sku: "pdf-optimization-tool", text: "PDF Optimization Tool" },
+  { sku: "compress-pdf-without-losing-quality", text: "Compress PDF Without Losing Quality" },
+];
+
+export const rotatePdfTags = [
+  { sku: "rotate-pdf", text: "Rotate PDF" },
+  { sku: "pdf-rotator", text: "PDF Rotator" },
+  { sku: "rotate-pdf-pages", text: "Rotate PDF Pages" },
+  { sku: "rotate-pdf-online", text: "Rotate PDF Online" },
+  { sku: "free-pdf-rotator", text: "Free PDF Rotator" },
+  { sku: "pdf-page-rotation", text: "PDF Page Rotation" },
+  { sku: "flip-pdf", text: "Flip PDF" },
+  { sku: "turn-pdf-pages", text: "Turn PDF Pages" },
+  { sku: "rotate-pdf-90-degrees", text: "Rotate PDF 90 Degrees" },
+  { sku: "rotate-pdf-180-degrees", text: "Rotate PDF 180 Degrees" },
+  { sku: "fix-pdf-orientation", text: "Fix PDF Orientation" },
+  { sku: "change-pdf-orientation", text: "Change PDF Orientation" },
+  { sku: "pdf-landscape-to-portrait", text: "PDF Landscape to Portrait" },
+  { sku: "rotate-scanned-pdf", text: "Rotate Scanned PDF" },
+  { sku: "pdf-rotation-tool", text: "PDF Rotation Tool" },
+  { sku: "rotate-single-pdf-page", text: "Rotate Single PDF Page" },
+];
+
+export const watermarkPdfTags = [
+  { sku: "watermark-pdf", text: "Watermark PDF" },
+  { sku: "pdf-watermark", text: "PDF Watermark" },
+  { sku: "add-watermark-pdf", text: "Add Watermark to PDF" },
+  { sku: "stamp-pdf", text: "Stamp PDF" },
+  { sku: "watermark-pdf-online", text: "Watermark PDF Online" },
+  { sku: "free-pdf-watermark", text: "Free PDF Watermark" },
+  { sku: "text-watermark-pdf", text: "Text Watermark PDF" },
+  { sku: "pdf-stamp-tool", text: "PDF Stamp Tool" },
+  { sku: "add-logo-to-pdf", text: "Add Logo to PDF" },
+  { sku: "pdf-branding-tool", text: "PDF Branding Tool" },
+  { sku: "custom-watermark-pdf", text: "Custom Watermark PDF" },
+  { sku: "transparent-watermark-pdf", text: "Transparent Watermark PDF" },
+  { sku: "diagonal-watermark-pdf", text: "Diagonal Watermark PDF" },
+  { sku: "bulk-watermark-pdf", text: "Bulk Watermark PDF" },
+  { sku: "confidential-stamp-pdf", text: "Confidential Stamp PDF" },
+  { sku: "draft-watermark-pdf", text: "Draft Watermark PDF" },
+];
+
+export const pageNumbersPdfTags = [
+  { sku: "pdf-page-numbers", text: "PDF Page Numbers" },
+  { sku: "add-page-numbers-pdf", text: "Add Page Numbers to PDF" },
+  { sku: "number-pdf-pages", text: "Number PDF Pages" },
+  { sku: "pdf-page-numbering", text: "PDF Page Numbering" },
+  { sku: "pdf-page-numbers-online", text: "PDF Page Numbers Online" },
+  { sku: "free-pdf-page-numbers", text: "Free PDF Page Numbers" },
+  { sku: "pdf-footer-numbers", text: "PDF Footer Numbers" },
+  { sku: "insert-page-numbers", text: "Insert Page Numbers" },
+  { sku: "pdf-header-page-numbers", text: "PDF Header Page Numbers" },
+  { sku: "automatic-page-numbering-pdf", text: "Automatic Page Numbering PDF" },
+  { sku: "custom-page-numbers-pdf", text: "Custom Page Numbers PDF" },
+  { sku: "bates-numbering-pdf", text: "Bates Numbering PDF" },
+  { sku: "sequential-numbering-pdf", text: "Sequential Numbering PDF" },
+  { sku: "pdf-pagination", text: "PDF Pagination" },
+  { sku: "add-footer-to-pdf", text: "Add Footer to PDF" },
+  { sku: "number-pdf-pages-free", text: "Number PDF Pages Free" },
+];
+
+export const protectPdfTags = [
+  { sku: "protect-pdf", text: "Protect PDF" },
+  { sku: "encrypt-pdf", text: "Encrypt PDF" },
+  { sku: "password-protect-pdf", text: "Password Protect PDF" },
+  { sku: "lock-pdf", text: "Lock PDF" },
+  { sku: "secure-pdf", text: "Secure PDF" },
+  { sku: "protect-pdf-online", text: "Protect PDF Online" },
+  { sku: "free-pdf-protection", text: "Free PDF Protection" },
+  { sku: "pdf-password", text: "PDF Password" },
+  { sku: "aes-256-encrypt-pdf", text: "AES-256 Encrypt PDF" },
+  { sku: "pdf-encryption-tool", text: "PDF Encryption Tool" },
+  { sku: "add-password-to-pdf", text: "Add Password to PDF" },
+  { sku: "restrict-pdf-access", text: "Restrict PDF Access" },
+  { sku: "pdf-security-tool", text: "PDF Security Tool" },
+  { sku: "set-pdf-permissions", text: "Set PDF Permissions" },
+  { sku: "protect-pdf-from-copying", text: "Protect PDF from Copying" },
+  { sku: "pdf-password-protection-free", text: "PDF Password Protection Free" },
+];
+
+export const imageToPdfTags = [
+  { sku: "image-to-pdf", text: "Image to PDF" },
+  { sku: "jpg-to-pdf", text: "JPG to PDF" },
+  { sku: "png-to-pdf", text: "PNG to PDF" },
+  { sku: "convert-image-to-pdf", text: "Convert Image to PDF" },
+  { sku: "photo-to-pdf", text: "Photo to PDF" },
+  { sku: "image-to-pdf-online", text: "Image to PDF Online" },
+  { sku: "free-image-to-pdf", text: "Free Image to PDF" },
+  { sku: "picture-to-pdf", text: "Picture to PDF" },
+  { sku: "jpeg-to-pdf", text: "JPEG to PDF" },
+  { sku: "webp-to-pdf", text: "WebP to PDF" },
+  { sku: "bmp-to-pdf", text: "BMP to PDF" },
+  { sku: "multiple-images-to-pdf", text: "Multiple Images to PDF" },
+  { sku: "scan-to-pdf", text: "Scan to PDF" },
+  { sku: "batch-image-to-pdf", text: "Batch Image to PDF" },
+  { sku: "combine-images-into-pdf", text: "Combine Images into PDF" },
+  { sku: "create-pdf-from-images", text: "Create PDF from Images" },
+];
+
+export const pdfToImageTags = [
+  { sku: "pdf-to-image", text: "PDF to Image" },
+  { sku: "pdf-to-jpg", text: "PDF to JPG" },
+  { sku: "pdf-to-png", text: "PDF to PNG" },
+  { sku: "convert-pdf-to-image", text: "Convert PDF to Image" },
+  { sku: "pdf-to-image-online", text: "PDF to Image Online" },
+  { sku: "free-pdf-to-image", text: "Free PDF to Image" },
+  { sku: "extract-pdf-images", text: "Extract PDF Images" },
+  { sku: "pdf-page-to-image", text: "PDF Page to Image" },
+  { sku: "pdf-to-jpeg", text: "PDF to JPEG" },
+  { sku: "pdf-to-picture", text: "PDF to Picture" },
+  { sku: "pdf-page-screenshot", text: "PDF Page Screenshot" },
+  { sku: "render-pdf-as-image", text: "Render PDF as Image" },
+  { sku: "pdf-to-high-resolution-image", text: "PDF to High Resolution Image" },
+  { sku: "save-pdf-as-image", text: "Save PDF as Image" },
+  { sku: "pdf-to-photo", text: "PDF to Photo" },
+  { sku: "export-pdf-pages-as-images", text: "Export PDF Pages as Images" },
+];
+
+export const unlockPdfTags = [
+  { sku: "unlock-pdf", text: "Unlock PDF" },
+  { sku: "remove-pdf-password", text: "Remove PDF Password" },
+  { sku: "decrypt-pdf", text: "Decrypt PDF" },
+  { sku: "pdf-password-remover", text: "PDF Password Remover" },
+  { sku: "unlock-pdf-online", text: "Unlock PDF Online" },
+  { sku: "free-pdf-unlocker", text: "Free PDF Unlocker" },
+  { sku: "unprotect-pdf", text: "Unprotect PDF" },
+  { sku: "pdf-decryptor", text: "PDF Decryptor" },
+  { sku: "crack-pdf-password", text: "Crack PDF Password" },
+  { sku: "open-locked-pdf", text: "Open Locked PDF" },
+  { sku: "remove-pdf-restrictions", text: "Remove PDF Restrictions" },
+  { sku: "bypass-pdf-password", text: "Bypass PDF Password" },
+  { sku: "pdf-unlock-tool", text: "PDF Unlock Tool" },
+  { sku: "unsecure-pdf", text: "Unsecure PDF" },
+  { sku: "remove-pdf-encryption", text: "Remove PDF Encryption" },
+  { sku: "unlock-protected-pdf-free", text: "Unlock Protected PDF Free" },
+];
+
+export const organizePdfTags = [
+  { sku: "organize-pdf", text: "Organize PDF" },
+  { sku: "reorder-pdf-pages", text: "Reorder PDF Pages" },
+  { sku: "delete-pdf-pages", text: "Delete PDF Pages" },
+  { sku: "rearrange-pdf", text: "Rearrange PDF" },
+  { sku: "sort-pdf-pages", text: "Sort PDF Pages" },
+  { sku: "organize-pdf-online", text: "Organize PDF Online" },
+  { sku: "pdf-page-organizer", text: "PDF Page Organizer" },
+  { sku: "remove-pdf-pages", text: "Remove PDF Pages" },
+  { sku: "move-pdf-pages", text: "Move PDF Pages" },
+  { sku: "swap-pdf-pages", text: "Swap PDF Pages" },
+  { sku: "drag-and-drop-pdf-pages", text: "Drag and Drop PDF Pages" },
+  { sku: "pdf-page-manager", text: "PDF Page Manager" },
+  { sku: "resequence-pdf", text: "Resequence PDF" },
+  { sku: "delete-blank-pdf-pages", text: "Delete Blank PDF Pages" },
+  { sku: "pdf-page-arrangement", text: "PDF Page Arrangement" },
+  { sku: "customize-pdf-page-order", text: "Customize PDF Page Order" },
+];
+
+export const cropPdfTags = [
+  { sku: "crop-pdf", text: "Crop PDF" },
+  { sku: "trim-pdf-margins", text: "Trim PDF Margins" },
+  { sku: "resize-pdf-pages", text: "Resize PDF Pages" },
+  { sku: "crop-pdf-online", text: "Crop PDF Online" },
+  { sku: "pdf-margin-cutter", text: "PDF Margin Cutter" },
+  { sku: "pdf-page-cropper", text: "PDF Page Cropper" },
+  { sku: "cut-pdf-borders", text: "Cut PDF Borders" },
+  { sku: "free-pdf-cropper", text: "Free PDF Cropper" },
+  { sku: "remove-pdf-whitespace", text: "Remove PDF Whitespace" },
+  { sku: "adjust-pdf-margins", text: "Adjust PDF Margins" },
+  { sku: "pdf-trim-tool", text: "PDF Trim Tool" },
+  { sku: "crop-pdf-for-printing", text: "Crop PDF for Printing" },
+  { sku: "reduce-pdf-margins", text: "Reduce PDF Margins" },
+  { sku: "pdf-bleed-remover", text: "PDF Bleed Remover" },
+  { sku: "crop-scanned-pdf", text: "Crop Scanned PDF" },
+  { sku: "set-pdf-crop-box", text: "Set PDF Crop Box" },
+];
+
+export const repairPdfTags = [
+  { sku: "repair-pdf", text: "Repair PDF" },
+  { sku: "fix-pdf", text: "Fix PDF" },
+  { sku: "recover-pdf", text: "Recover PDF" },
+  { sku: "fix-corrupted-pdf", text: "Fix Corrupted PDF" },
+  { sku: "repair-pdf-online", text: "Repair PDF Online" },
+  { sku: "pdf-recovery-tool", text: "PDF Recovery Tool" },
+  { sku: "broken-pdf-fixer", text: "Broken PDF Fixer" },
+  { sku: "restore-pdf", text: "Restore PDF" },
+  { sku: "damaged-pdf-repair", text: "Damaged PDF Repair" },
+  { sku: "pdf-error-fixer", text: "PDF Error Fixer" },
+  { sku: "rebuild-pdf", text: "Rebuild PDF" },
+  { sku: "fix-pdf-cannot-open", text: "Fix PDF Cannot Open" },
+  { sku: "recover-corrupted-pdf-file", text: "Recover Corrupted PDF File" },
+  { sku: "pdf-repair-tool-free", text: "PDF Repair Tool Free" },
+  { sku: "salvage-pdf", text: "Salvage PDF" },
+  { sku: "reconstruct-pdf", text: "Reconstruct PDF" },
+];
+
+export const htmlToPdfTags = [
+  { sku: "html-to-pdf", text: "HTML to PDF" },
+  { sku: "convert-html-to-pdf", text: "Convert HTML to PDF" },
+  { sku: "html-to-pdf-online", text: "HTML to PDF Online" },
+  { sku: "text-to-pdf", text: "Text to PDF" },
+  { sku: "html-pdf-converter", text: "HTML PDF Converter" },
+  { sku: "free-html-to-pdf", text: "Free HTML to PDF" },
+  { sku: "webpage-to-pdf", text: "Webpage to PDF" },
+  { sku: "html-content-to-pdf", text: "HTML Content to PDF" },
+  { sku: "save-html-as-pdf", text: "Save HTML as PDF" },
+  { sku: "web-page-to-pdf", text: "Web Page to PDF" },
+  { sku: "html-code-to-pdf", text: "HTML Code to PDF" },
+  { sku: "print-html-to-pdf", text: "Print HTML to PDF" },
+  { sku: "generate-pdf-from-html", text: "Generate PDF from HTML" },
+  { sku: "html-report-to-pdf", text: "HTML Report to PDF" },
+  { sku: "convert-text-to-pdf-online", text: "Convert Text to PDF Online" },
+  { sku: "html-to-pdf-generator", text: "HTML to PDF Generator" },
+];
+
+export const wordToPdfTags = [
+  { sku: "word-to-pdf", text: "Word to PDF" },
+  { sku: "docx-to-pdf", text: "DOCX to PDF" },
+  { sku: "doc-to-pdf", text: "DOC to PDF" },
+  { sku: "convert-word-to-pdf", text: "Convert Word to PDF" },
+  { sku: "word-to-pdf-online", text: "Word to PDF Online" },
+  { sku: "free-word-to-pdf", text: "Free Word to PDF" },
+  { sku: "word-converter", text: "Word Converter" },
+  { sku: "office-to-pdf", text: "Office to PDF" },
+  { sku: "word-document-to-pdf", text: "Word Document to PDF" },
+  { sku: "microsoft-word-to-pdf", text: "Microsoft Word to PDF" },
+  { sku: "save-word-as-pdf", text: "Save Word as PDF" },
+  { sku: "export-docx-to-pdf", text: "Export DOCX to PDF" },
+  { sku: "word-to-pdf-converter-free", text: "Word to PDF Converter Free" },
+  { sku: "batch-word-to-pdf", text: "Batch Word to PDF" },
+  { sku: "word-to-pdf-no-signup", text: "Word to PDF No Signup" },
+  { sku: "docx-pdf-converter", text: "DOCX PDF Converter" },
+];
+
+export const pdfToWordTags = [
+  { sku: "pdf-to-word", text: "PDF to Word" },
+  { sku: "pdf-to-docx", text: "PDF to DOCX" },
+  { sku: "convert-pdf-to-word", text: "Convert PDF to Word" },
+  { sku: "pdf-to-word-online", text: "PDF to Word Online" },
+  { sku: "free-pdf-to-word", text: "Free PDF to Word" },
+  { sku: "pdf-to-word-converter", text: "PDF to Word Converter" },
+  { sku: "pdf-to-editable-word", text: "PDF to Editable Word" },
+  { sku: "extract-text-from-pdf", text: "Extract Text from PDF" },
+  { sku: "pdf-to-microsoft-word", text: "PDF to Microsoft Word" },
+  { sku: "pdf-to-doc", text: "PDF to DOC" },
+  { sku: "open-pdf-in-word", text: "Open PDF in Word" },
+  { sku: "edit-pdf-as-word", text: "Edit PDF as Word" },
+  { sku: "pdf-to-word-no-signup", text: "PDF to Word No Signup" },
+  { sku: "pdf-to-editable-document", text: "PDF to Editable Document" },
+  { sku: "pdf-text-extractor", text: "PDF Text Extractor" },
+  { sku: "pdf-to-word-free-online", text: "PDF to Word Free Online" },
+];
+
+export const excelToPdfTags = [
+  { sku: "excel-to-pdf", text: "Excel to PDF" },
+  { sku: "xlsx-to-pdf", text: "XLSX to PDF" },
+  { sku: "xls-to-pdf", text: "XLS to PDF" },
+  { sku: "convert-excel-to-pdf", text: "Convert Excel to PDF" },
+  { sku: "excel-to-pdf-online", text: "Excel to PDF Online" },
+  { sku: "free-excel-to-pdf", text: "Free Excel to PDF" },
+  { sku: "spreadsheet-to-pdf", text: "Spreadsheet to PDF" },
+  { sku: "excel-converter", text: "Excel Converter" },
+  { sku: "microsoft-excel-to-pdf", text: "Microsoft Excel to PDF" },
+  { sku: "save-excel-as-pdf", text: "Save Excel as PDF" },
+  { sku: "export-xlsx-to-pdf", text: "Export XLSX to PDF" },
+  { sku: "excel-table-to-pdf", text: "Excel Table to PDF" },
+  { sku: "print-excel-to-pdf", text: "Print Excel to PDF" },
+  { sku: "excel-to-pdf-converter-free", text: "Excel to PDF Converter Free" },
+  { sku: "google-sheets-to-pdf", text: "Google Sheets to PDF" },
+  { sku: "csv-to-pdf", text: "CSV to PDF" },
+];
+
+export const pdfToExcelTags = [
+  { sku: "pdf-to-excel", text: "PDF to Excel" },
+  { sku: "pdf-to-xlsx", text: "PDF to XLSX" },
+  { sku: "convert-pdf-to-excel", text: "Convert PDF to Excel" },
+  { sku: "pdf-to-excel-online", text: "PDF to Excel Online" },
+  { sku: "free-pdf-to-excel", text: "Free PDF to Excel" },
+  { sku: "pdf-to-spreadsheet", text: "PDF to Spreadsheet" },
+  { sku: "extract-data-from-pdf", text: "Extract Data from PDF" },
+  { sku: "pdf-table-extractor", text: "PDF Table Extractor" },
+  { sku: "pdf-to-xls", text: "PDF to XLS" },
+  { sku: "pdf-to-csv", text: "PDF to CSV" },
+  { sku: "pdf-to-google-sheets", text: "PDF to Google Sheets" },
+  { sku: "extract-tables-from-pdf", text: "Extract Tables from PDF" },
+  { sku: "pdf-data-extraction", text: "PDF Data Extraction" },
+  { sku: "pdf-to-excel-no-signup", text: "PDF to Excel No Signup" },
+  { sku: "pdf-to-editable-spreadsheet", text: "PDF to Editable Spreadsheet" },
+  { sku: "pdf-to-excel-converter-free", text: "PDF to Excel Converter Free" },
+];
+
+export const pptToPdfTags = [
+  { sku: "ppt-to-pdf", text: "PPT to PDF" },
+  { sku: "pptx-to-pdf", text: "PPTX to PDF" },
+  { sku: "convert-powerpoint-to-pdf", text: "Convert PowerPoint to PDF" },
+  { sku: "powerpoint-to-pdf-online", text: "PowerPoint to PDF Online" },
+  { sku: "free-ppt-to-pdf", text: "Free PPT to PDF" },
+  { sku: "presentation-to-pdf", text: "Presentation to PDF" },
+  { sku: "slides-to-pdf", text: "Slides to PDF" },
+  { sku: "powerpoint-converter", text: "PowerPoint Converter" },
+  { sku: "microsoft-powerpoint-to-pdf", text: "Microsoft PowerPoint to PDF" },
+  { sku: "save-pptx-as-pdf", text: "Save PPTX as PDF" },
+  { sku: "export-powerpoint-to-pdf", text: "Export PowerPoint to PDF" },
+  { sku: "ppt-to-pdf-converter-free", text: "PPT to PDF Converter Free" },
+  { sku: "google-slides-to-pdf", text: "Google Slides to PDF" },
+  { sku: "keynote-to-pdf", text: "Keynote to PDF" },
+  { sku: "presentation-pdf-converter", text: "Presentation PDF Converter" },
+  { sku: "ppt-to-pdf-no-signup", text: "PPT to PDF No Signup" },
+];
+
+export const pdfToPptTags = [
+  { sku: "pdf-to-ppt", text: "PDF to PPT" },
+  { sku: "pdf-to-pptx", text: "PDF to PPTX" },
+  { sku: "convert-pdf-to-powerpoint", text: "Convert PDF to PowerPoint" },
+  { sku: "pdf-to-powerpoint-online", text: "PDF to PowerPoint Online" },
+  { sku: "free-pdf-to-ppt", text: "Free PDF to PPT" },
+  { sku: "pdf-to-slides", text: "PDF to Slides" },
+  { sku: "pdf-to-presentation", text: "PDF to Presentation" },
+  { sku: "pdf-ppt-converter", text: "PDF PPT Converter" },
+  { sku: "pdf-to-microsoft-powerpoint", text: "PDF to Microsoft PowerPoint" },
+  { sku: "pdf-to-google-slides", text: "PDF to Google Slides" },
+  { sku: "pdf-to-keynote", text: "PDF to Keynote" },
+  { sku: "pdf-to-editable-slides", text: "PDF to Editable Slides" },
+  { sku: "pdf-to-pptx-free-online", text: "PDF to PPTX Free Online" },
+  { sku: "pdf-to-ppt-no-signup", text: "PDF to PPT No Signup" },
+  { sku: "pdf-slide-converter", text: "PDF Slide Converter" },
+  { sku: "make-presentation-from-pdf", text: "Make Presentation from PDF" },
+];
+
+export const pdfToMarkdownTags = [
+  { sku: "pdf-to-markdown", text: "PDF to Markdown" },
+  { sku: "pdf-to-md", text: "PDF to MD" },
+  { sku: "convert-pdf-to-markdown", text: "Convert PDF to Markdown" },
+  { sku: "pdf-to-markdown-online", text: "PDF to Markdown Online" },
+  { sku: "free-pdf-to-markdown", text: "Free PDF to Markdown" },
+  { sku: "pdf-markdown-converter", text: "PDF Markdown Converter" },
+  { sku: "extract-markdown-from-pdf", text: "Extract Markdown from PDF" },
+  { sku: "pdf-to-md-online", text: "PDF to MD Online" },
+  { sku: "pdf-to-text-markdown", text: "PDF to Text Markdown" },
+  { sku: "pdf-to-md-free", text: "PDF to MD Free" },
+  { sku: "pdf-to-markdown-no-signup", text: "PDF to Markdown No Signup" },
+  { sku: "pdf-to-markdown-converter", text: "PDF to Markdown Converter" },
+];
+
+export const markdownToPdfTags = [
+  { sku: "markdown-to-pdf", text: "Markdown to PDF" },
+  { sku: "md-to-pdf", text: "MD to PDF" },
+  { sku: "convert-markdown-to-pdf", text: "Convert Markdown to PDF" },
+  { sku: "markdown-to-pdf-online", text: "Markdown to PDF Online" },
+  { sku: "free-markdown-to-pdf", text: "Free Markdown to PDF" },
+  { sku: "md-to-pdf-converter", text: "MD to PDF Converter" },
+  { sku: "markdown-pdf-converter", text: "Markdown PDF Converter" },
+  { sku: "md-to-pdf-online", text: "MD to PDF Online" },
+  { sku: "render-markdown-pdf", text: "Render Markdown PDF" },
+  { sku: "markdown-to-pdf-free", text: "Markdown to PDF Free" },
+  { sku: "markdown-to-pdf-no-signup", text: "Markdown to PDF No Signup" },
+  { sku: "export-markdown-as-pdf", text: "Export Markdown as PDF" },
+];
+
+export const jsonFormatterTags = [
+  { sku: "json-formatter", text: "JSON Formatter" },
+  { sku: "json-beautifier", text: "JSON Beautifier" },
+  { sku: "json-pretty-print", text: "JSON Pretty Print" },
+  { sku: "format-json-online", text: "Format JSON Online" },
+  { sku: "json-viewer", text: "JSON Viewer" },
+  { sku: "json-prettifier", text: "JSON Prettifier" },
+  { sku: "json-indent", text: "JSON Indent" },
+  { sku: "beautify-json", text: "Beautify JSON" },
+  { sku: "json-formatter-online", text: "JSON Formatter Online" },
+  { sku: "free-json-formatter", text: "Free JSON Formatter" },
+  { sku: "json-format-tool", text: "JSON Format Tool" },
+  { sku: "pretty-print-json", text: "Pretty Print JSON" },
+  { sku: "json-tree-viewer", text: "JSON Tree Viewer" },
+  { sku: "json-formatter-validator", text: "JSON Formatter Validator" },
+  { sku: "json-beautify-tool", text: "JSON Beautify Tool" },
+  { sku: "json-formatter-free", text: "JSON Formatter Free" },
+];
+
+export const jsonMinifierTags = [
+  { sku: "json-minifier", text: "JSON Minifier" },
+  { sku: "json-minify", text: "JSON Minify" },
+  { sku: "minify-json-online", text: "Minify JSON Online" },
+  { sku: "json-compressor", text: "JSON Compressor" },
+  { sku: "compress-json", text: "Compress JSON" },
+  { sku: "json-compact", text: "JSON Compact" },
+  { sku: "json-minifier-online", text: "JSON Minifier Online" },
+  { sku: "free-json-minifier", text: "Free JSON Minifier" },
+  { sku: "json-uglify", text: "JSON Uglify" },
+  { sku: "reduce-json-size", text: "Reduce JSON Size" },
+  { sku: "json-compress-tool", text: "JSON Compress Tool" },
+  { sku: "shrink-json", text: "Shrink JSON" },
+  { sku: "json-whitespace-remover", text: "JSON Whitespace Remover" },
+  { sku: "json-minify-tool", text: "JSON Minify Tool" },
+  { sku: "json-minifier-free", text: "JSON Minifier Free" },
+  { sku: "compact-json-online", text: "Compact JSON Online" },
+];
+
+export const jsonValidatorTags = [
+  { sku: "json-validator", text: "JSON Validator" },
+  { sku: "json-lint", text: "JSON Lint" },
+  { sku: "validate-json-online", text: "Validate JSON Online" },
+  { sku: "json-checker", text: "JSON Checker" },
+  { sku: "json-syntax-checker", text: "JSON Syntax Checker" },
+  { sku: "json-parser", text: "JSON Parser" },
+  { sku: "json-validator-online", text: "JSON Validator Online" },
+  { sku: "free-json-validator", text: "Free JSON Validator" },
+  { sku: "json-error-finder", text: "JSON Error Finder" },
+  { sku: "json-verify", text: "JSON Verify" },
+  { sku: "check-json", text: "Check JSON" },
+  { sku: "json-tester", text: "JSON Tester" },
+  { sku: "json-debug", text: "JSON Debug" },
+  { sku: "json-validation-tool", text: "JSON Validation Tool" },
+  { sku: "json-lint-online", text: "JSON Lint Online" },
+  { sku: "json-validator-free", text: "JSON Validator Free" },
+];
+
+export const jsonToCsvTags = [
+  { sku: "json-to-csv", text: "JSON to CSV" },
+  { sku: "convert-json-to-csv", text: "Convert JSON to CSV" },
+  { sku: "json-to-csv-online", text: "JSON to CSV Online" },
+  { sku: "json-csv-converter", text: "JSON CSV Converter" },
+  { sku: "free-json-to-csv", text: "Free JSON to CSV" },
+  { sku: "export-json-as-csv", text: "Export JSON as CSV" },
+  { sku: "json-to-csv-download", text: "JSON to CSV Download" },
+  { sku: "json-to-comma-separated", text: "JSON to Comma Separated" },
+  { sku: "json-to-csv-converter-free", text: "JSON to CSV Converter Free" },
+  { sku: "json-array-to-csv", text: "JSON Array to CSV" },
+  { sku: "json-to-csv-tool", text: "JSON to CSV Tool" },
+  { sku: "json-to-spreadsheet", text: "JSON to Spreadsheet" },
+  { sku: "json-to-csv-file", text: "JSON to CSV File" },
+  { sku: "json-to-csv-no-signup", text: "JSON to CSV No Signup" },
+  { sku: "json-data-to-csv", text: "JSON Data to CSV" },
+  { sku: "json-to-csv-export", text: "JSON to CSV Export" },
+];
+
+export const jsonToYamlTags = [
+  { sku: "json-to-yaml", text: "JSON to YAML" },
+  { sku: "convert-json-to-yaml", text: "Convert JSON to YAML" },
+  { sku: "json-to-yaml-online", text: "JSON to YAML Online" },
+  { sku: "json-yaml-converter", text: "JSON YAML Converter" },
+  { sku: "free-json-to-yaml", text: "Free JSON to YAML" },
+  { sku: "json-to-yml", text: "JSON to YML" },
+  { sku: "json-to-yaml-converter-free", text: "JSON to YAML Converter Free" },
+  { sku: "json-to-yaml-tool", text: "JSON to YAML Tool" },
+  { sku: "json-to-yaml-download", text: "JSON to YAML Download" },
+  { sku: "json-to-yaml-file", text: "JSON to YAML File" },
+  { sku: "json-to-yaml-no-signup", text: "JSON to YAML No Signup" },
+  { sku: "json-config-to-yaml", text: "JSON Config to YAML" },
+  { sku: "json-to-yaml-format", text: "JSON to YAML Format" },
+  { sku: "convert-json-to-yml", text: "Convert JSON to YML" },
+  { sku: "json-to-yaml-export", text: "JSON to YAML Export" },
+  { sku: "json-yaml-transformer", text: "JSON YAML Transformer" },
+];
+
+export const jsonToXmlTags = [
+  { sku: "json-to-xml", text: "JSON to XML" },
+  { sku: "convert-json-to-xml", text: "Convert JSON to XML" },
+  { sku: "json-to-xml-online", text: "JSON to XML Online" },
+  { sku: "json-xml-converter", text: "JSON XML Converter" },
+  { sku: "free-json-to-xml", text: "Free JSON to XML" },
+  { sku: "json-to-xml-converter-free", text: "JSON to XML Converter Free" },
+  { sku: "json-to-xml-tool", text: "JSON to XML Tool" },
+  { sku: "json-to-xml-download", text: "JSON to XML Download" },
+  { sku: "json-to-xml-file", text: "JSON to XML File" },
+  { sku: "json-to-xml-no-signup", text: "JSON to XML No Signup" },
+  { sku: "json-to-xml-format", text: "JSON to XML Format" },
+  { sku: "json-to-xml-string", text: "JSON to XML String" },
+  { sku: "json-object-to-xml", text: "JSON Object to XML" },
+  { sku: "json-to-xml-export", text: "JSON to XML Export" },
+  { sku: "json-to-xml-transformer", text: "JSON to XML Transformer" },
+  { sku: "json-xml-transform", text: "JSON XML Transform" },
+];
+
+export const jsonToTsvTags = [
+  { sku: "json-to-tsv", text: "JSON to TSV" },
+  { sku: "convert-json-to-tsv", text: "Convert JSON to TSV" },
+  { sku: "json-to-tsv-online", text: "JSON to TSV Online" },
+  { sku: "json-tsv-converter", text: "JSON TSV Converter" },
+  { sku: "free-json-to-tsv", text: "Free JSON to TSV" },
+  { sku: "json-to-tab-separated", text: "JSON to Tab Separated" },
+  { sku: "json-to-tsv-download", text: "JSON to TSV Download" },
+  { sku: "json-to-tsv-converter-free", text: "JSON to TSV Converter Free" },
+  { sku: "json-to-tsv-tool", text: "JSON to TSV Tool" },
+  { sku: "json-array-to-tsv", text: "JSON Array to TSV" },
+  { sku: "json-to-tsv-file", text: "JSON to TSV File" },
+  { sku: "json-to-tsv-no-signup", text: "JSON to TSV No Signup" },
+  { sku: "json-to-tsv-export", text: "JSON to TSV Export" },
+  { sku: "json-data-to-tsv", text: "JSON Data to TSV" },
+  { sku: "json-to-tsv-format", text: "JSON to TSV Format" },
+  { sku: "json-to-tab-delimited", text: "JSON to Tab Delimited" },
+];
+
+export const jsonToExcelTags = [
+  { sku: "json-to-excel", text: "JSON to Excel" },
+  { sku: "convert-json-to-excel", text: "Convert JSON to Excel" },
+  { sku: "json-to-xlsx", text: "JSON to XLSX" },
+  { sku: "json-to-excel-online", text: "JSON to Excel Online" },
+  { sku: "json-excel-converter", text: "JSON Excel Converter" },
+  { sku: "free-json-to-excel", text: "Free JSON to Excel" },
+  { sku: "json-to-excel-download", text: "JSON to Excel Download" },
+  { sku: "json-to-excel-converter-free", text: "JSON to Excel Converter Free" },
+  { sku: "json-to-excel-tool", text: "JSON to Excel Tool" },
+  { sku: "json-to-spreadsheet-excel", text: "JSON to Spreadsheet Excel" },
+  { sku: "json-to-xls", text: "JSON to XLS" },
+  { sku: "json-to-excel-file", text: "JSON to Excel File" },
+  { sku: "json-to-excel-no-signup", text: "JSON to Excel No Signup" },
+  { sku: "json-data-to-excel", text: "JSON Data to Excel" },
+  { sku: "export-json-to-excel", text: "Export JSON to Excel" },
+  { sku: "json-to-excel-export", text: "JSON to Excel Export" },
+];
+
+export const xmlFormatterTags = [
+  { sku: "xml-formatter", text: "XML Formatter" },
+  { sku: "xml-beautifier", text: "XML Beautifier" },
+  { sku: "xml-pretty-print", text: "XML Pretty Print" },
+  { sku: "format-xml-online", text: "Format XML Online" },
+  { sku: "xml-viewer", text: "XML Viewer" },
+  { sku: "xml-prettifier", text: "XML Prettifier" },
+  { sku: "xml-indent", text: "XML Indent" },
+  { sku: "beautify-xml", text: "Beautify XML" },
+  { sku: "xml-formatter-online", text: "XML Formatter Online" },
+  { sku: "free-xml-formatter", text: "Free XML Formatter" },
+  { sku: "xml-format-tool", text: "XML Format Tool" },
+  { sku: "pretty-print-xml", text: "Pretty Print XML" },
+  { sku: "xml-tree-viewer", text: "XML Tree Viewer" },
+  { sku: "xml-formatter-validator", text: "XML Formatter Validator" },
+  { sku: "xml-beautify-tool", text: "XML Beautify Tool" },
+  { sku: "xml-formatter-free", text: "XML Formatter Free" },
+];
+
+export const xmlMinifierTags = [
+  { sku: "xml-minifier", text: "XML Minifier" },
+  { sku: "xml-minify", text: "XML Minify" },
+  { sku: "minify-xml-online", text: "Minify XML Online" },
+  { sku: "xml-compressor", text: "XML Compressor" },
+  { sku: "compress-xml", text: "Compress XML" },
+  { sku: "xml-compact", text: "XML Compact" },
+  { sku: "xml-minifier-online", text: "XML Minifier Online" },
+  { sku: "free-xml-minifier", text: "Free XML Minifier" },
+  { sku: "reduce-xml-size", text: "Reduce XML Size" },
+  { sku: "xml-compress-tool", text: "XML Compress Tool" },
+  { sku: "shrink-xml", text: "Shrink XML" },
+  { sku: "xml-whitespace-remover", text: "XML Whitespace Remover" },
+  { sku: "xml-minify-tool", text: "XML Minify Tool" },
+  { sku: "xml-minifier-free", text: "XML Minifier Free" },
+  { sku: "compact-xml-online", text: "Compact XML Online" },
+  { sku: "xml-strip-whitespace", text: "XML Strip Whitespace" },
+];
+
+export const xmlValidatorTags = [
+  { sku: "xml-validator", text: "XML Validator" },
+  { sku: "xml-lint", text: "XML Lint" },
+  { sku: "validate-xml-online", text: "Validate XML Online" },
+  { sku: "xml-checker", text: "XML Checker" },
+  { sku: "xml-syntax-checker", text: "XML Syntax Checker" },
+  { sku: "xml-parser", text: "XML Parser" },
+  { sku: "xml-validator-online", text: "XML Validator Online" },
+  { sku: "free-xml-validator", text: "Free XML Validator" },
+  { sku: "xml-error-finder", text: "XML Error Finder" },
+  { sku: "xml-verify", text: "XML Verify" },
+  { sku: "check-xml", text: "Check XML" },
+  { sku: "xml-well-formedness", text: "XML Well-Formedness" },
+  { sku: "xml-validation-tool", text: "XML Validation Tool" },
+  { sku: "xml-lint-online", text: "XML Lint Online" },
+  { sku: "xml-validator-free", text: "XML Validator Free" },
+  { sku: "xml-schema-check", text: "XML Schema Check" },
+];
+
+export const xmlToJsonTags = [
+  { sku: "xml-to-json", text: "XML to JSON" },
+  { sku: "convert-xml-to-json", text: "Convert XML to JSON" },
+  { sku: "xml-to-json-online", text: "XML to JSON Online" },
+  { sku: "xml-json-converter", text: "XML JSON Converter" },
+  { sku: "free-xml-to-json", text: "Free XML to JSON" },
+  { sku: "xml-to-json-converter-free", text: "XML to JSON Converter Free" },
+  { sku: "xml-to-json-tool", text: "XML to JSON Tool" },
+  { sku: "xml-to-json-download", text: "XML to JSON Download" },
+  { sku: "xml-to-json-file", text: "XML to JSON File" },
+  { sku: "xml-to-json-no-signup", text: "XML to JSON No Signup" },
+  { sku: "xml-to-json-format", text: "XML to JSON Format" },
+  { sku: "xml-to-json-string", text: "XML to JSON String" },
+  { sku: "xml-to-json-export", text: "XML to JSON Export" },
+  { sku: "xml-to-json-transformer", text: "XML to JSON Transformer" },
+  { sku: "parse-xml-to-json", text: "Parse XML to JSON" },
+  { sku: "soap-to-json", text: "SOAP to JSON" },
+];
+
+export const xmlToCsvTags = [
+  { sku: "xml-to-csv", text: "XML to CSV" },
+  { sku: "convert-xml-to-csv", text: "Convert XML to CSV" },
+  { sku: "xml-to-csv-online", text: "XML to CSV Online" },
+  { sku: "xml-csv-converter", text: "XML CSV Converter" },
+  { sku: "free-xml-to-csv", text: "Free XML to CSV" },
+  { sku: "export-xml-as-csv", text: "Export XML as CSV" },
+  { sku: "xml-to-csv-download", text: "XML to CSV Download" },
+  { sku: "xml-to-csv-converter-free", text: "XML to CSV Converter Free" },
+  { sku: "xml-to-csv-tool", text: "XML to CSV Tool" },
+  { sku: "xml-to-spreadsheet", text: "XML to Spreadsheet" },
+  { sku: "xml-to-csv-file", text: "XML to CSV File" },
+  { sku: "xml-to-csv-no-signup", text: "XML to CSV No Signup" },
+  { sku: "xml-data-to-csv", text: "XML Data to CSV" },
+  { sku: "xml-to-csv-export", text: "XML to CSV Export" },
+  { sku: "xml-to-comma-separated", text: "XML to Comma Separated" },
+  { sku: "xml-records-to-csv", text: "XML Records to CSV" },
+];
+
+export const xmlToYamlTags = [
+  { sku: "xml-to-yaml", text: "XML to YAML" },
+  { sku: "convert-xml-to-yaml", text: "Convert XML to YAML" },
+  { sku: "xml-to-yaml-online", text: "XML to YAML Online" },
+  { sku: "xml-yaml-converter", text: "XML YAML Converter" },
+  { sku: "free-xml-to-yaml", text: "Free XML to YAML" },
+  { sku: "xml-to-yml", text: "XML to YML" },
+  { sku: "xml-to-yaml-converter-free", text: "XML to YAML Converter Free" },
+  { sku: "xml-to-yaml-tool", text: "XML to YAML Tool" },
+  { sku: "xml-to-yaml-download", text: "XML to YAML Download" },
+  { sku: "xml-to-yaml-file", text: "XML to YAML File" },
+  { sku: "xml-to-yaml-no-signup", text: "XML to YAML No Signup" },
+  { sku: "xml-config-to-yaml", text: "XML Config to YAML" },
+  { sku: "xml-to-yaml-format", text: "XML to YAML Format" },
+  { sku: "convert-xml-to-yml", text: "Convert XML to YML" },
+  { sku: "xml-to-yaml-export", text: "XML to YAML Export" },
+  { sku: "xml-yaml-transformer", text: "XML YAML Transformer" },
+];
+
+export const xmlToTsvTags = [
+  { sku: "xml-to-tsv", text: "XML to TSV" },
+  { sku: "convert-xml-to-tsv", text: "Convert XML to TSV" },
+  { sku: "xml-to-tsv-online", text: "XML to TSV Online" },
+  { sku: "xml-tsv-converter", text: "XML TSV Converter" },
+  { sku: "free-xml-to-tsv", text: "Free XML to TSV" },
+  { sku: "xml-to-tab-separated", text: "XML to Tab Separated" },
+  { sku: "xml-to-tsv-download", text: "XML to TSV Download" },
+  { sku: "xml-to-tsv-converter-free", text: "XML to TSV Converter Free" },
+  { sku: "xml-to-tsv-tool", text: "XML to TSV Tool" },
+  { sku: "xml-to-tsv-file", text: "XML to TSV File" },
+  { sku: "xml-to-tsv-no-signup", text: "XML to TSV No Signup" },
+  { sku: "xml-to-tsv-export", text: "XML to TSV Export" },
+  { sku: "xml-data-to-tsv", text: "XML Data to TSV" },
+  { sku: "xml-to-tsv-format", text: "XML to TSV Format" },
+  { sku: "xml-to-tab-delimited", text: "XML to Tab Delimited" },
+  { sku: "xml-records-to-tsv", text: "XML Records to TSV" },
+];
+
+export const xmlToExcelTags = [
+  { sku: "xml-to-excel", text: "XML to Excel" },
+  { sku: "convert-xml-to-excel", text: "Convert XML to Excel" },
+  { sku: "xml-to-xlsx", text: "XML to XLSX" },
+  { sku: "xml-to-excel-online", text: "XML to Excel Online" },
+  { sku: "xml-excel-converter", text: "XML Excel Converter" },
+  { sku: "free-xml-to-excel", text: "Free XML to Excel" },
+  { sku: "xml-to-excel-download", text: "XML to Excel Download" },
+  { sku: "xml-to-excel-converter-free", text: "XML to Excel Converter Free" },
+  { sku: "xml-to-excel-tool", text: "XML to Excel Tool" },
+  { sku: "xml-to-spreadsheet-excel", text: "XML to Spreadsheet Excel" },
+  { sku: "xml-to-xls", text: "XML to XLS" },
+  { sku: "xml-to-excel-file", text: "XML to Excel File" },
+  { sku: "xml-to-excel-no-signup", text: "XML to Excel No Signup" },
+  { sku: "xml-data-to-excel", text: "XML Data to Excel" },
+  { sku: "export-xml-to-excel", text: "Export XML to Excel" },
+  { sku: "xml-to-excel-export", text: "XML to Excel Export" },
+];
+
+export const textCompareTags = [
+  { sku: "text-compare", text: "Text Compare" },
+  { sku: "text-diff", text: "Text Diff" },
+  { sku: "compare-text-online", text: "Compare Text Online" },
+  { sku: "diff-checker", text: "Diff Checker" },
+  { sku: "text-comparison-tool", text: "Text Comparison Tool" },
+  { sku: "find-differences-text", text: "Find Differences in Text" },
+  { sku: "online-diff-tool", text: "Online Diff Tool" },
+  { sku: "side-by-side-diff", text: "Side by Side Diff" },
+  { sku: "text-diff-viewer", text: "Text Diff Viewer" },
+  { sku: "compare-two-texts", text: "Compare Two Texts" },
+  { sku: "free-text-compare", text: "Free Text Compare" },
+  { sku: "text-compare-no-signup", text: "Text Compare No Signup" },
+];
+
+export const characterCounterTags = [
+  { sku: "character-counter", text: "Character Counter" },
+  { sku: "character-count-online", text: "Character Count Online" },
+  { sku: "count-characters", text: "Count Characters" },
+  { sku: "letter-counter", text: "Letter Counter" },
+  { sku: "text-length-counter", text: "Text Length Counter" },
+  { sku: "char-count-tool", text: "Char Count Tool" },
+  { sku: "character-counter-free", text: "Character Counter Free" },
+  { sku: "online-character-counter", text: "Online Character Counter" },
+  { sku: "text-character-count", text: "Text Character Count" },
+  { sku: "reading-time-calculator", text: "Reading Time Calculator" },
+  { sku: "word-sentence-counter", text: "Word Sentence Counter" },
+  { sku: "paragraph-counter", text: "Paragraph Counter" },
+];
+
+export const wordCounterTags = [
+  { sku: "word-counter", text: "Word Counter" },
+  { sku: "word-count-online", text: "Word Count Online" },
+  { sku: "count-words", text: "Count Words" },
+  { sku: "word-frequency-counter", text: "Word Frequency Counter" },
+  { sku: "word-frequency-analyzer", text: "Word Frequency Analyzer" },
+  { sku: "word-counter-tool", text: "Word Counter Tool" },
+  { sku: "free-word-counter", text: "Free Word Counter" },
+  { sku: "online-word-counter", text: "Online Word Counter" },
+  { sku: "text-word-count", text: "Text Word Count" },
+  { sku: "unique-word-counter", text: "Unique Word Counter" },
+  { sku: "vocabulary-density", text: "Vocabulary Density" },
+  { sku: "word-count-checker", text: "Word Count Checker" },
+];
+
+export const caseConverterTags = [
+  { sku: "case-converter", text: "Case Converter" },
+  { sku: "text-case-converter", text: "Text Case Converter" },
+  { sku: "uppercase-converter", text: "Uppercase Converter" },
+  { sku: "lowercase-converter", text: "Lowercase Converter" },
+  { sku: "title-case-converter", text: "Title Case Converter" },
+  { sku: "sentence-case-converter", text: "Sentence Case Converter" },
+  { sku: "camel-case-converter", text: "Camel Case Converter" },
+  { sku: "snake-case-converter", text: "Snake Case Converter" },
+  { sku: "kebab-case-converter", text: "Kebab Case Converter" },
+  { sku: "change-text-case", text: "Change Text Case" },
+  { sku: "convert-case-online", text: "Convert Case Online" },
+  { sku: "free-case-converter", text: "Free Case Converter" },
+];
+
+export const loremIpsumGeneratorTags = [
+  { sku: "lorem-ipsum-generator", text: "Lorem Ipsum Generator" },
+  { sku: "lorem-ipsum", text: "Lorem Ipsum" },
+  { sku: "placeholder-text-generator", text: "Placeholder Text Generator" },
+  { sku: "dummy-text-generator", text: "Dummy Text Generator" },
+  { sku: "generate-lorem-ipsum", text: "Generate Lorem Ipsum" },
+  { sku: "lipsum-generator", text: "Lipsum Generator" },
+  { sku: "random-text-generator", text: "Random Text Generator" },
+  { sku: "filler-text-generator", text: "Filler Text Generator" },
+  { sku: "lorem-ipsum-online", text: "Lorem Ipsum Online" },
+  { sku: "free-lorem-ipsum", text: "Free Lorem Ipsum" },
+  { sku: "lorem-ipsum-paragraphs", text: "Lorem Ipsum Paragraphs" },
+  { sku: "lorem-ipsum-words", text: "Lorem Ipsum Words" },
+];
+
+export const textReverserTags = [
+  { sku: "text-reverser", text: "Text Reverser" },
+  { sku: "reverse-text-online", text: "Reverse Text Online" },
+  { sku: "reverse-string", text: "Reverse String" },
+  { sku: "reverse-words", text: "Reverse Words" },
+  { sku: "backwards-text", text: "Backwards Text" },
+  { sku: "flip-text", text: "Flip Text" },
+  { sku: "mirror-text", text: "Mirror Text" },
+  { sku: "text-reverser-tool", text: "Text Reverser Tool" },
+  { sku: "reverse-text-free", text: "Reverse Text Free" },
+  { sku: "reverse-lines", text: "Reverse Lines" },
+  { sku: "reverse-each-word", text: "Reverse Each Word" },
+  { sku: "online-text-reverser", text: "Online Text Reverser" },
+];
+
+export const slugGeneratorTags = [
+  { sku: "slug-generator", text: "Slug Generator" },
+  { sku: "url-slug-generator", text: "URL Slug Generator" },
+  { sku: "slug-maker", text: "Slug Maker" },
+  { sku: "seo-slug-generator", text: "SEO Slug Generator" },
+  { sku: "create-url-slug", text: "Create URL Slug" },
+  { sku: "permalink-generator", text: "Permalink Generator" },
+  { sku: "friendly-url-generator", text: "Friendly URL Generator" },
+  { sku: "slug-converter", text: "Slug Converter" },
+  { sku: "text-to-slug", text: "Text to Slug" },
+  { sku: "title-to-slug", text: "Title to Slug" },
+  { sku: "slug-generator-free", text: "Slug Generator Free" },
+  { sku: "online-slug-generator", text: "Online Slug Generator" },
+];
+
+export const markdownPreviewTags = [
+  { sku: "markdown-preview", text: "Markdown Preview" },
+  { sku: "markdown-viewer", text: "Markdown Viewer" },
+  { sku: "markdown-editor", text: "Markdown Editor" },
+  { sku: "markdown-to-html", text: "Markdown to HTML" },
+  { sku: "live-markdown-preview", text: "Live Markdown Preview" },
+  { sku: "markdown-renderer", text: "Markdown Renderer" },
+  { sku: "online-markdown-editor", text: "Online Markdown Editor" },
+  { sku: "free-markdown-preview", text: "Free Markdown Preview" },
+  { sku: "markdown-preview-tool", text: "Markdown Preview Tool" },
+  { sku: "markdown-live-editor", text: "Markdown Live Editor" },
+  { sku: "md-preview", text: "MD Preview" },
+  { sku: "markdown-parser", text: "Markdown Parser" },
+];
+
+export const base64EncoderDecoderTags = [
+  { sku: "base64-encoder", text: "Base64 Encoder" },
+  { sku: "base64-decoder", text: "Base64 Decoder" },
+  { sku: "base64-encode-decode", text: "Base64 Encode Decode" },
+  { sku: "online-base64-tool", text: "Online Base64 Tool" },
+  { sku: "text-to-base64", text: "Text to Base64" },
+  { sku: "base64-to-text", text: "Base64 to Text" },
+  { sku: "free-base64-converter", text: "Free Base64 Converter" },
+];
+
+export const hashGeneratorTags = [
+  { sku: "hash-generator", text: "Hash Generator" },
+  { sku: "sha256-hash", text: "SHA-256 Hash" },
+  { sku: "sha512-hash", text: "SHA-512 Hash" },
+  { sku: "online-hash-tool", text: "Online Hash Tool" },
+  { sku: "text-hash-generator", text: "Text Hash Generator" },
+  { sku: "crypto-hash", text: "Crypto Hash" },
+  { sku: "free-hash-generator", text: "Free Hash Generator" },
+];
+
+export const regexTesterTags = [
+  { sku: "regex-tester", text: "Regex Tester" },
+  { sku: "regex-validator", text: "Regex Validator" },
+  { sku: "regular-expression-tester", text: "Regular Expression Tester" },
+  { sku: "online-regex-tool", text: "Online Regex Tool" },
+  { sku: "regex-pattern-matcher", text: "Regex Pattern Matcher" },
+  { sku: "regex-debugger", text: "Regex Debugger" },
+  { sku: "free-regex-tester", text: "Free Regex Tester" },
+];
+
+export const textToBinaryTags = [
+  { sku: "text-to-binary", text: "Text to Binary" },
+  { sku: "binary-to-text", text: "Binary to Text" },
+  { sku: "text-to-hex", text: "Text to Hex" },
+  { sku: "hex-to-text", text: "Hex to Text" },
+  { sku: "text-to-octal", text: "Text to Octal" },
+  { sku: "number-system-converter", text: "Number System Converter" },
+  { sku: "binary-converter", text: "Binary Converter" },
+];
+
+export const findAndReplaceTags = [
+  { sku: "find-and-replace", text: "Find and Replace" },
+  { sku: "text-search-replace", text: "Text Search Replace" },
+  { sku: "online-find-replace", text: "Online Find Replace" },
+  { sku: "regex-find-replace", text: "Regex Find Replace" },
+  { sku: "bulk-text-replace", text: "Bulk Text Replace" },
+  { sku: "text-replacement-tool", text: "Text Replacement Tool" },
+  { sku: "free-find-replace", text: "Free Find Replace" },
+];
+
+export const lineSorterTags = [
+  { sku: "line-sorter", text: "Line Sorter" },
+  { sku: "sort-lines-online", text: "Sort Lines Online" },
+  { sku: "text-line-sorter", text: "Text Line Sorter" },
+  { sku: "alphabetical-sorter", text: "Alphabetical Sorter" },
+  { sku: "remove-duplicate-lines", text: "Remove Duplicate Lines" },
+  { sku: "line-sorting-tool", text: "Line Sorting Tool" },
+  { sku: "free-line-sorter", text: "Free Line Sorter" },
+];
+
+export const uuidGeneratorTags = [
+  { sku: "uuid-generator", text: "UUID Generator" },
+  { sku: "guid-generator", text: "GUID Generator" },
+  { sku: "random-uuid", text: "Random UUID" },
+  { sku: "online-uuid-tool", text: "Online UUID Tool" },
+  { sku: "uuid-v4-generator", text: "UUID v4 Generator" },
+  { sku: "unique-id-generator", text: "Unique ID Generator" },
+  { sku: "free-uuid-generator", text: "Free UUID Generator" },
+];
+
+export const colorConverterTags = [
+  { sku: "color-converter", text: "Color Converter" },
+  { sku: "hex-to-rgb", text: "Hex to RGB" },
+  { sku: "rgb-to-hex", text: "RGB to Hex" },
+  { sku: "hex-to-hsl", text: "Hex to HSL" },
+  { sku: "color-picker", text: "Color Picker" },
+  { sku: "color-format-converter", text: "Color Format Converter" },
+  { sku: "free-color-converter", text: "Free Color Converter" },
+];
+
+export const jwtDecoderTags = [
+  { sku: "jwt-decoder", text: "JWT Decoder" },
+  { sku: "jwt-parser", text: "JWT Parser" },
+  { sku: "json-web-token-decoder", text: "JSON Web Token Decoder" },
+  { sku: "jwt-inspector", text: "JWT Inspector" },
+  { sku: "jwt-token-viewer", text: "JWT Token Viewer" },
+  { sku: "online-jwt-decoder", text: "Online JWT Decoder" },
+  { sku: "free-jwt-decoder", text: "Free JWT Decoder" },
+];
+
+export const timestampConverterTags = [
+  { sku: "timestamp-converter", text: "Timestamp Converter" },
+  { sku: "unix-timestamp-converter", text: "Unix Timestamp Converter" },
+  { sku: "epoch-converter", text: "Epoch Converter" },
+  { sku: "date-to-timestamp", text: "Date to Timestamp" },
+  { sku: "timestamp-to-date", text: "Timestamp to Date" },
+  { sku: "online-timestamp-tool", text: "Online Timestamp Tool" },
+  { sku: "free-timestamp-converter", text: "Free Timestamp Converter" },
+];
+
+export const cssMinifierTags = [
+  { sku: "css-minifier", text: "CSS Minifier" },
+  { sku: "css-compressor", text: "CSS Compressor" },
+  { sku: "minify-css", text: "Minify CSS" },
+  { sku: "online-css-minifier", text: "Online CSS Minifier" },
+  { sku: "css-optimizer", text: "CSS Optimizer" },
+  { sku: "css-reducer", text: "CSS Reducer" },
+  { sku: "free-css-minifier", text: "Free CSS Minifier" },
+];
+
+export const htmlMinifierTags = [
+  { sku: "html-minifier", text: "HTML Minifier" },
+  { sku: "html-compressor", text: "HTML Compressor" },
+  { sku: "minify-html", text: "Minify HTML" },
+  { sku: "online-html-minifier", text: "Online HTML Minifier" },
+  { sku: "html-optimizer", text: "HTML Optimizer" },
+  { sku: "html-reducer", text: "HTML Reducer" },
+  { sku: "free-html-minifier", text: "Free HTML Minifier" },
+];
+
+export const qrCodeGeneratorTags = [
+  { sku: "qr-code-generator", text: "QR Code Generator" },
+  { sku: "qr-generator", text: "QR Generator" },
+  { sku: "create-qr-code", text: "Create QR Code" },
+  { sku: "online-qr-code", text: "Online QR Code" },
+  { sku: "qr-code-maker", text: "QR Code Maker" },
+  { sku: "url-to-qr-code", text: "URL to QR Code" },
+  { sku: "free-qr-code-generator", text: "Free QR Code Generator" },
+];
+
+export const csvToJsonTags = [
+  { sku: "csv-to-json", text: "CSV to JSON" },
+  { sku: "csv-json-converter", text: "CSV JSON Converter" },
+  { sku: "convert-csv-to-json", text: "Convert CSV to JSON" },
+  { sku: "online-csv-to-json", text: "Online CSV to JSON" },
+  { sku: "csv-parser", text: "CSV Parser" },
+  { sku: "csv-to-json-tool", text: "CSV to JSON Tool" },
+  { sku: "free-csv-to-json", text: "Free CSV to JSON" },
+];
+
+export const yamlToJsonTags = [
+  { sku: "yaml-to-json", text: "YAML to JSON" },
+  { sku: "yaml-json-converter", text: "YAML JSON Converter" },
+  { sku: "convert-yaml-to-json", text: "Convert YAML to JSON" },
+  { sku: "online-yaml-to-json", text: "Online YAML to JSON" },
+  { sku: "yaml-parser", text: "YAML Parser" },
+  { sku: "yml-to-json", text: "YML to JSON" },
+  { sku: "free-yaml-to-json", text: "Free YAML to JSON" },
+];
+
+export const jsonPathFinderTags = [
+  { sku: "json-path-finder", text: "JSON Path Finder" },
+  { sku: "jsonpath-tool", text: "JSONPath Tool" },
+  { sku: "json-query", text: "JSON Query" },
+  { sku: "json-path-tester", text: "JSON Path Tester" },
+  { sku: "json-explorer", text: "JSON Explorer" },
+  { sku: "online-jsonpath", text: "Online JSONPath" },
+  { sku: "free-json-path-finder", text: "Free JSON Path Finder" },
+];
+
+export const jsonSchemaValidatorTags = [
+  { sku: "json-schema-validator", text: "JSON Schema Validator" },
+  { sku: "json-schema-checker", text: "JSON Schema Checker" },
+  { sku: "validate-json-schema", text: "Validate JSON Schema" },
+  { sku: "json-schema-tester", text: "JSON Schema Tester" },
+  { sku: "online-json-schema-validator", text: "Online JSON Schema Validator" },
+  { sku: "json-schema-tool", text: "JSON Schema Tool" },
+  { sku: "free-json-schema-validator", text: "Free JSON Schema Validator" },
+];
+
+export const jsonDiffTags = [
+  { sku: "json-diff", text: "JSON Diff" },
+  { sku: "json-compare", text: "JSON Compare" },
+  { sku: "compare-json", text: "Compare JSON" },
+  { sku: "json-difference", text: "JSON Difference" },
+  { sku: "json-diff-tool", text: "JSON Diff Tool" },
+  { sku: "online-json-diff", text: "Online JSON Diff" },
+  { sku: "free-json-diff", text: "Free JSON Diff" },
+];
+
+// --- New tools batch: dev-tools ---
+
+export const passwordGeneratorTags = [
+  { sku: "password-generator", text: "Password Generator" },
+  { sku: "secure-password-generator", text: "Secure Password Generator" },
+  { sku: "random-password-generator", text: "Random Password Generator" },
+  { sku: "strong-password-generator", text: "Strong Password Generator" },
+  { sku: "crypto-password", text: "Crypto Password" },
+  { sku: "free-password-generator", text: "Free Password Generator" },
+];
+
+export const numberBaseConverterTags = [
+  { sku: "number-base-converter", text: "Number Base Converter" },
+  { sku: "binary-to-decimal", text: "Binary to Decimal" },
+  { sku: "decimal-to-binary", text: "Decimal to Binary" },
+  { sku: "hex-to-decimal", text: "Hex to Decimal" },
+  { sku: "binary-to-hex", text: "Binary to Hex" },
+  { sku: "octal-converter", text: "Octal Converter" },
+  { sku: "free-base-converter", text: "Free Base Converter" },
+];
+
+export const htmlEntityEncoderDecoderTags = [
+  { sku: "html-entity-encoder", text: "HTML Entity Encoder" },
+  { sku: "html-entity-decoder", text: "HTML Entity Decoder" },
+  { sku: "html-escape", text: "HTML Escape" },
+  { sku: "html-unescape", text: "HTML Unescape" },
+  { sku: "named-entities", text: "Named Entities" },
+  { sku: "free-html-entity-tool", text: "Free HTML Entity Tool" },
+];
+
+export const cssGradientGeneratorTags = [
+  { sku: "css-gradient-generator", text: "CSS Gradient Generator" },
+  { sku: "linear-gradient-generator", text: "Linear Gradient Generator" },
+  { sku: "radial-gradient-generator", text: "Radial Gradient Generator" },
+  { sku: "css-background-gradient", text: "CSS Background Gradient" },
+  { sku: "gradient-maker", text: "Gradient Maker" },
+  { sku: "free-css-gradient-tool", text: "Free CSS Gradient Tool" },
+];
+
+export const cronExpressionParserTags = [
+  { sku: "cron-expression-parser", text: "Cron Expression Parser" },
+  { sku: "crontab-generator", text: "Crontab Generator" },
+  { sku: "cron-validator", text: "Cron Validator" },
+  { sku: "cron-syntax-checker", text: "Cron Syntax Checker" },
+  { sku: "cron-schedule", text: "Cron Schedule" },
+  { sku: "free-cron-tool", text: "Free Cron Tool" },
+];
+
+// --- New tools batch: text-tools ---
+
+export const rot13CaesarCipherTags = [
+  { sku: "rot13", text: "ROT13" },
+  { sku: "caesar-cipher", text: "Caesar Cipher" },
+  { sku: "rot13-converter", text: "ROT13 Converter" },
+  { sku: "caesar-cipher-encoder", text: "Caesar Cipher Encoder" },
+  { sku: "caesar-cipher-decoder", text: "Caesar Cipher Decoder" },
+  { sku: "letter-shift-cipher", text: "Letter Shift Cipher" },
+  { sku: "text-shift-encoder", text: "Text Shift Encoder" },
+  { sku: "classical-cipher", text: "Classical Cipher" },
+  { sku: "encode-decode-text", text: "Encode Decode Text" },
+  { sku: "free-rot13-tool", text: "Free ROT13 Tool" },
+];
+
+export const morseCodeConverterTags = [
+  { sku: "morse-code-converter", text: "Morse Code Converter" },
+  { sku: "morse-code-translator", text: "Morse Code Translator" },
+  { sku: "text-to-morse-code", text: "Text to Morse Code" },
+  { sku: "morse-code-to-text", text: "Morse Code to Text" },
+  { sku: "morse-code-generator", text: "Morse Code Generator" },
+  { sku: "decode-morse-code", text: "Decode Morse Code" },
+  { sku: "encode-morse-code", text: "Encode Morse Code" },
+  { sku: "amateur-radio-tool", text: "Amateur Radio Tool" },
+  { sku: "free-morse-code-tool", text: "Free Morse Code Tool" },
+];
+
+export const letterFrequencyAnalyzerTags = [
+  { sku: "letter-frequency-analyzer", text: "Letter Frequency Analyzer" },
+  { sku: "letter-frequency-counter", text: "Letter Frequency Counter" },
+  { sku: "text-analysis-tool", text: "Text Analysis Tool" },
+  { sku: "alphabet-frequency", text: "Alphabet Frequency" },
+  { sku: "cipher-analysis-tool", text: "Cipher Analysis Tool" },
+  { sku: "cryptography-tool", text: "Cryptography Tool" },
+  { sku: "character-frequency", text: "Character Frequency" },
+  { sku: "free-letter-frequency-tool", text: "Free Letter Frequency Tool" },
+];
+
+// --- New tools batch: json-tools ---
+
+export const jsonToTypescriptTags = [
+  { sku: "json-to-typescript", text: "JSON to TypeScript" },
+  { sku: "json-to-ts", text: "JSON to TS" },
+  { sku: "generate-typescript-interface", text: "Generate TypeScript Interface" },
+  { sku: "json-to-interface", text: "JSON to Interface" },
+  { sku: "typescript-type-generator", text: "TypeScript Type Generator" },
+  { sku: "convert-json-to-typescript", text: "Convert JSON to TypeScript" },
+  { sku: "free-json-to-typescript", text: "Free JSON to TypeScript" },
+];
+
+export const jsonFlattenUnflattenTags = [
+  { sku: "json-flatten", text: "JSON Flatten" },
+  { sku: "json-unflatten", text: "JSON Unflatten" },
+  { sku: "flatten-json-object", text: "Flatten JSON Object" },
+  { sku: "unflatten-json", text: "Unflatten JSON" },
+  { sku: "dot-notation-json", text: "Dot Notation JSON" },
+  { sku: "nested-json-to-flat", text: "Nested JSON to Flat" },
+  { sku: "free-json-flattener", text: "Free JSON Flattener" },
+];
+
+export const jsonQueryStringConverterTags = [
+  { sku: "json-to-query-string", text: "JSON to Query String" },
+  { sku: "query-string-to-json", text: "Query String to JSON" },
+  { sku: "url-query-string-converter", text: "URL Query String Converter" },
+  { sku: "json-url-params", text: "JSON URL Params" },
+  { sku: "parse-query-string", text: "Parse Query String" },
+  { sku: "build-query-string", text: "Build Query String" },
+  { sku: "free-online-tool", text: "Free Online Tool" },
+];
+
+// --- New tools batch: xml-tools ---
+
+export const xpathTesterTags = [
+  { sku: "xpath-tester", text: "XPath Tester" },
+  { sku: "xpath-evaluator", text: "XPath Evaluator" },
+  { sku: "test-xpath-online", text: "Test XPath Online" },
+  { sku: "xpath-query-tool", text: "XPath Query Tool" },
+  { sku: "xpath-expression-tester", text: "XPath Expression Tester" },
+  { sku: "xml-xpath", text: "XML XPath" },
+  { sku: "xpath-checker", text: "XPath Checker" },
+  { sku: "free-xpath-tester", text: "Free XPath Tester" },
+  { sku: "xpath-tool-online", text: "XPath Tool Online" },
+  { sku: "xpath-node-finder", text: "XPath Node Finder" },
+];
+
+export const csvToXmlTags = [
+  { sku: "csv-to-xml", text: "CSV to XML" },
+  { sku: "convert-csv-to-xml", text: "Convert CSV to XML" },
+  { sku: "csv-to-xml-online", text: "CSV to XML Online" },
+  { sku: "csv-xml-converter", text: "CSV XML Converter" },
+  { sku: "free-csv-to-xml", text: "Free CSV to XML" },
+  { sku: "export-csv-as-xml", text: "Export CSV as XML" },
+  { sku: "csv-to-xml-converter-free", text: "CSV to XML Converter Free" },
+  { sku: "csv-to-xml-tool", text: "CSV to XML Tool" },
+  { sku: "csv-to-xml-file", text: "CSV to XML File" },
+  { sku: "csv-data-to-xml", text: "CSV Data to XML" },
+];
+
+export const yamlToXmlTags = [
+  { sku: "yaml-to-xml", text: "YAML to XML" },
+  { sku: "convert-yaml-to-xml", text: "Convert YAML to XML" },
+  { sku: "yaml-to-xml-online", text: "YAML to XML Online" },
+  { sku: "yaml-xml-converter", text: "YAML XML Converter" },
+  { sku: "free-yaml-to-xml", text: "Free YAML to XML" },
+  { sku: "yaml-config-to-xml", text: "YAML Config to XML" },
+  { sku: "yaml-to-xml-converter-free", text: "YAML to XML Converter Free" },
+  { sku: "yaml-to-xml-tool", text: "YAML to XML Tool" },
+  { sku: "yaml-to-xml-file", text: "YAML to XML File" },
+  { sku: "yaml-sequence-to-xml", text: "YAML Sequence to XML" },
+];
+
+// --- New tools batch: seo-tools ---
+
+export const serpSnippetPreviewTags = [
+  { sku: "serp-snippet-preview", text: "SERP Snippet Preview" },
+  { sku: "google-search-preview", text: "Google Search Preview" },
+  { sku: "serp-preview-tool", text: "SERP Preview Tool" },
+  { sku: "meta-title-preview", text: "Meta Title Preview" },
+  { sku: "meta-description-preview", text: "Meta Description Preview" },
+  { sku: "search-result-preview", text: "Search Result Preview" },
+  { sku: "google-snippet-generator", text: "Google Snippet Generator" },
+  { sku: "title-tag-length-checker", text: "Title Tag Length Checker" },
+  { sku: "seo-tools", text: "SEO Tools" },
+  { sku: "free-serp-tool", text: "Free SERP Tool" },
+];
+
+export const schemaMarkupGeneratorTags = [
+  { sku: "schema-markup-generator", text: "Schema Markup Generator" },
+  { sku: "json-ld-generator", text: "JSON-LD Generator" },
+  { sku: "structured-data-generator", text: "Structured Data Generator" },
+  { sku: "faq-schema", text: "FAQ Schema" },
+  { sku: "article-schema", text: "Article Schema" },
+  { sku: "product-schema", text: "Product Schema" },
+  { sku: "local-business-schema", text: "Local Business Schema" },
+  { sku: "breadcrumb-schema", text: "Breadcrumb Schema" },
+  { sku: "rich-results", text: "Rich Results" },
+  { sku: "free-json-ld-tool", text: "Free JSON-LD Tool" },
+];
+
+export const utmCampaignBuilderTags = [
+  { sku: "utm-campaign-builder", text: "UTM Campaign Builder" },
+  { sku: "utm-url-builder", text: "UTM URL Builder" },
+  { sku: "campaign-url-builder", text: "Campaign URL Builder" },
+  { sku: "google-analytics-utm", text: "Google Analytics UTM" },
+  { sku: "utm-link-generator", text: "UTM Link Generator" },
+  { sku: "url-tagging-tool", text: "URL Tagging Tool" },
+  { sku: "marketing-campaign-url", text: "Marketing Campaign URL" },
+  { sku: "free-utm-builder", text: "Free UTM Builder" },
+];
+
+// --- New tools batch: pdf-tools ---
+
+export const pdfToTextTags = [
+  { sku: "pdf-to-text", text: "PDF to Text" },
+  { sku: "extract-text-from-pdf", text: "Extract Text from PDF" },
+  { sku: "pdf-text-extractor", text: "PDF Text Extractor" },
+  { sku: "convert-pdf-to-text", text: "Convert PDF to Text" },
+  { sku: "pdf-to-txt", text: "PDF to TXT" },
+  { sku: "free-pdf-text-extractor", text: "Free PDF Text Extractor" },
+  { sku: "get-text-from-pdf", text: "Get Text from PDF" },
+];
+
+export const pdfMetadataEditorTags = [
+  { sku: "pdf-metadata-editor", text: "PDF Metadata Editor" },
+  { sku: "edit-pdf-properties", text: "Edit PDF Properties" },
+  { sku: "change-pdf-title", text: "Change PDF Title" },
+  { sku: "change-pdf-author", text: "Change PDF Author" },
+  { sku: "pdf-document-properties", text: "PDF Document Properties" },
+  { sku: "edit-pdf-metadata-online", text: "Edit PDF Metadata Online" },
+];
+
+export const pdfInfoTags = [
+  { sku: "pdf-info", text: "PDF Info" },
+  { sku: "pdf-stats", text: "PDF Stats" },
+  { sku: "pdf-page-count", text: "PDF Page Count" },
+  { sku: "check-pdf-properties", text: "Check PDF Properties" },
+  { sku: "pdf-file-analyzer", text: "PDF File Analyzer" },
+  { sku: "is-pdf-encrypted", text: "Is PDF Encrypted" },
+  { sku: "pdf-word-count", text: "PDF Word Count" },
+];
+
+export const signPdfTags = [
+  { sku: "sign-pdf", text: "Sign PDF" },
+  { sku: "pdf-signature", text: "PDF Signature" },
+  { sku: "esign-pdf", text: "eSign PDF" },
+  { sku: "draw-signature-online", text: "Draw Signature Online" },
+  { sku: "add-signature-to-pdf", text: "Add Signature to PDF" },
+  { sku: "free-pdf-signer", text: "Free PDF Signer" },
+];
+
+export const extractImagesFromPdfTags = [
+  { sku: "extract-images-from-pdf", text: "Extract Images from PDF" },
+  { sku: "pdf-image-extractor", text: "PDF Image Extractor" },
+  { sku: "get-images-from-pdf", text: "Get Images from PDF" },
+  { sku: "pull-images-out-of-pdf", text: "Pull Images Out of PDF" },
+  { sku: "pdf-to-images-zip", text: "PDF to Images ZIP" },
+];
+
+// --- New tools batch: image-tools ---
+
+export const imageToBase64Tags = [
+  { sku: "image-to-base64", text: "Image to Base64" },
+  { sku: "base64-to-image", text: "Base64 to Image" },
+  { sku: "image-base64-converter", text: "Image Base64 Converter" },
+  { sku: "base64-image-encoder", text: "Base64 Image Encoder" },
+  { sku: "data-url-generator", text: "Data URL Generator" },
+  { sku: "convert-image-to-base64-string", text: "Convert Image to Base64 String" },
+  { sku: "embed-image-css", text: "Embed Image in CSS" },
+  { sku: "free-base64-image-converter", text: "Free Base64 Image Converter" },
+];
+
+export const flipImageTags = [
+  { sku: "flip-image", text: "Flip Image" },
+  { sku: "mirror-image", text: "Mirror Image" },
+  { sku: "flip-image-horizontal", text: "Flip Image Horizontal" },
+  { sku: "flip-image-vertical", text: "Flip Image Vertical" },
+  { sku: "image-mirror-tool", text: "Image Mirror Tool" },
+  { sku: "flip-photo-online", text: "Flip Photo Online" },
+  { sku: "free-image-flipper", text: "Free Image Flipper" },
+];
+
+export const imageColorPickerTags = [
+  { sku: "image-color-picker", text: "Image Color Picker" },
+  { sku: "color-picker-from-image", text: "Color Picker From Image" },
+  { sku: "extract-colors-from-image", text: "Extract Colors From Image" },
+  { sku: "dominant-color-palette", text: "Dominant Color Palette" },
+  { sku: "image-palette-generator", text: "Image Palette Generator" },
+  { sku: "eyedropper-tool", text: "Eyedropper Tool" },
+  { sku: "hex-color-picker", text: "Hex Color Picker" },
+  { sku: "free-color-picker", text: "Free Color Picker" },
+];
+
+export const imageExifViewerTags = [
+  { sku: "image-exif-viewer", text: "Image EXIF Viewer" },
+  { sku: "exif-data-viewer", text: "EXIF Data Viewer" },
+  { sku: "view-photo-metadata", text: "View Photo Metadata" },
+  { sku: "jpeg-metadata-reader", text: "JPEG Metadata Reader" },
+  { sku: "camera-exif-reader", text: "Camera EXIF Reader" },
+  { sku: "gps-exif-data", text: "GPS EXIF Data" },
+  { sku: "free-exif-viewer", text: "Free EXIF Viewer" },
+];
+
+export const faviconGeneratorTags = [
+  { sku: "favicon-generator", text: "Favicon Generator" },
+  { sku: "favicon-maker", text: "Favicon Maker" },
+  { sku: "generate-favicon", text: "Generate Favicon" },
+  { sku: "apple-touch-icon-generator", text: "Apple Touch Icon Generator" },
+  { sku: "webmanifest-generator", text: "Webmanifest Generator" },
+  { sku: "favicon-ico-generator", text: "Favicon.ico Generator" },
+  { sku: "free-favicon-generator", text: "Free Favicon Generator" },
 ];

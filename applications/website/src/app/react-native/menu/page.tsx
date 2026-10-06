@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import RNMenu from "@/react-native/components/Menu";
+import JsonLd from "@/components/helpers/JsonLd";
+import RNMenu from "@/components/react-native/components/Menu";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
   "/react-native/menu",

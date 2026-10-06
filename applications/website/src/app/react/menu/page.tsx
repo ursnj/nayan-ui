@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import Menu from "@/react/components/Menu";
+import JsonLd from "@/components/helpers/JsonLd";
+import Menu from "@/components/react/components/Menu";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/menu", "react");
 export const metadata = pageMetadata;

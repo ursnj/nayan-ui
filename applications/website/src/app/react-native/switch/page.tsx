@@ -1,8 +1,6 @@
-import JsonLd from "@/helpers/JsonLd";
-import RNSwitch from "@/react-native/components/Switch";
+import JsonLd from "@/components/helpers/JsonLd";
+import RNSwitch from "@/components/react-native/components/Switch";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
-
-export const dynamic = "force-dynamic";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
   "/react-native/switch",

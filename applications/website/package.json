@@ -8,15 +8,29 @@
     "start": "next start --port 7100"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "@nayan-ui/react": "workspace:*",
+    "@napi-rs/canvas": "^0.1.68",
+    "docx": "^9.5.0",
+    "exceljs": "^4.4.0",
+    "jszip": "^3.10.1",
     "lucide-react": "^0.577.0",
+    "mediabunny": "^1.56.2",
     "next": "16.3.5",
+    "pdf-lib": "^1.17.1",
+    "pdf-lib-encrypt": "^1.0.3",
+    "pdfjs-dist": "^4.10.38",
+    "pptxgenjs": "^3.12.0",
+    "qrcode": "^1.5.4",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react-dom": "^19.3.0",
+    "sharp": "^0.35.4",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
