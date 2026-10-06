@@ -4,7 +4,7 @@
 Nayan UI is a comprehensive, enterprise-grade UI component library for React and React Native applications, plus a full suite of 50+ free online developer tools. It provides 58 documented components — 35 for React and 23 for React Native — with TypeScript-first development, CSS-variable theming, and cross-platform compatibility.
 
 **Website**: https://www.nayanui.com
-**Repository**: https://gitlab.com/ursnj/nayan-ui
+**Repository**: https://github.com/ursnj/nayan-ui
 **License**: ISC
 
 ## Architecture
@@ -327,7 +327,7 @@ Nayan UI provides 50+ free online tools at https://www.nayanui.com/tools — all
 
 **Page**: https://www.nayanui.com/video-editor
 **App**: https://www.nayanui.com/video-editor/start
-**Source**: https://gitlab.com/ursnj/nayan-ui
+**Source**: https://github.com/ursnj/nayan-ui
 
 A free, open source (MIT) video editor that runs entirely in the browser. There is no server, no account, no upload step and no watermark: media is opened from disk, decoded, composited and encoded on the user's own machine using WebCodecs, and the export is written straight to their downloads folder. It works offline once the page has loaded.
 

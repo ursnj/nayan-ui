@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { TOOL_COUNT, TOTAL_COMPONENT_COUNT } from "./Counts";
 
 export const SITE_URL = "https://www.nayanui.com";
-export const REPO_URL = "https://gitlab.com/ursnj/nayan-ui";
+export const REPO_URL = "https://github.com/ursnj/nayan-ui";
 export const SITE_HOST = SITE_URL.replace(/^https?:\/\//, "");
 export const SITE_NAME = "Nayan UI";
 export const SITE_DESCRIPTION = `Nayan UI is an open source component library for React and React Native with ${TOTAL_COMPONENT_COUNT} accessible, production-ready UI components, plus ${TOOL_COUNT} free online developer tools for PDFs, images, JSON, text and AI code review. Built on HeroUI and Tailwind CSS.`;

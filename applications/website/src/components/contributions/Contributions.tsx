@@ -179,7 +179,7 @@ const Contributions = () => {
                     <h3 className={`mb-2 ${H4_CARD}`}>Clone & Setup</h3>
                     <p className="text-muted mb-2">Clone your fork and install dependencies:</p>
                     <div className="bg-background p-3 rounded-md font-mono text-sm overflow-x-auto">
-                      git clone https://gitlab.com/your-username/nayan-ui.git
+                      git clone https://github.com/your-username/nayan-ui.git
                       <br />
                       cd nayan
                       <br />

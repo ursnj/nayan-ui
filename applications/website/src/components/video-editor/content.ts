@@ -2,7 +2,7 @@
 
 /** The running editor lives at this path, rendered as a Next.js page. */
 export const EDITOR_URL = "/video-editor/start";
-export const SOURCE_URL = "https://gitlab.com/ursnj/nayan-ui";
+export const SOURCE_URL = "https://github.com/ursnj/nayan-ui";
 
 /** The facts strip under the hero. Short, checkable, no adjectives. */
 export const FACTS = [
