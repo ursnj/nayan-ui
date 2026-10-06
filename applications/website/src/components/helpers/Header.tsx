@@ -103,8 +103,8 @@ const Header = () => {
               href={REPO_URL}
               target="_blank"
               rel="noopener noreferrer"
-              title="Nayan UI on GitLab"
-              aria-label="Nayan UI on GitLab"
+              title="Nayan UI on GitHub"
+              aria-label="Nayan UI on GitHub"
               className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground"
             >
               <Github className="h-[18px] w-[18px]" />

@@ -181,7 +181,7 @@ const GamesLicensing = () => {
               target="_blank"
               className="text-accent hover:underline"
             >
-              GitLab Issues
+              GitHub Issues
             </NLink>
           </li>
           <li className="flex items-center">

@@ -28,7 +28,7 @@ const GROUPS = [
     title: "Project",
     links: [
       { label: "Contributing", href: "/contributions" },
-      { label: "GitLab", href: REPO_URL, external: true },
+      { label: "GitHub", href: REPO_URL, external: true },
     ],
   },
 ];
@@ -98,7 +98,7 @@ const Footer = () => {
               className="mt-5 inline-flex items-center gap-2 rounded-lg border border-default bg-surface px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-default/50"
             >
               <Github aria-hidden className="h-4 w-4" />
-              Star on GitLab
+              Star on GitHub
             </Link>
           </div>
 

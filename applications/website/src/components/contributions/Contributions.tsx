@@ -289,7 +289,7 @@ const Contributions = () => {
                       href={REPO_URL}
                       className="text-accent hover:underline"
                     >
-                      GitLab Repository
+                      GitHub Repository
                     </a>
                   </div>
                   <div className="flex items-center gap-3">
@@ -307,7 +307,7 @@ const Contributions = () => {
                   We value every contribution! Contributors are recognized in:
                 </p>
                 <ul className="space-y-1 text-muted text-sm">
-                  <li>• GitLab contributors list</li>
+                  <li>• GitHub contributors list</li>
                   <li>• Release notes and changelogs</li>
                   <li>• Project documentation</li>
                   <li>• Social media shoutouts</li>
@@ -342,7 +342,7 @@ const Contributions = () => {
                   className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-2.5 font-semibold text-white shadow-lg shadow-indigo-500/25 hover:from-indigo-600 hover:to-violet-600"
                 >
                   <Github className="w-4 h-4" />
-                  View on GitLab
+                  View on GitHub
                 </NButton>
                 <NButton
                   onClick={() => window.open(REPO_URL, "_blank")}
