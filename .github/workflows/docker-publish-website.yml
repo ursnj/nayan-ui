@@ -5,12 +5,25 @@ jobs:
   publish_images:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Docker Authentication
-        run: |
-          docker login -u ursnj -p ${{ secrets.DOCKER_HUB_TOKEN }}
+        uses: docker/login-action@v3
+        with:
+          username: ursnj
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
       - name: Build & Publish Nayan UI Website Image
-        run: |
-          docker build --platform linux/amd64 -f applications/website/Dockerfile -t ursnj/nayanui:latest .
-          docker push ursnj/nayanui:latest
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: packages/website/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ursnj/nayanui:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

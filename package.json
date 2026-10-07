@@ -6,8 +6,7 @@
   "license": "ISC",
   "workspaces": [
     "packages/*",
-    "packages/native/example",
-    "applications/*"
+    "packages/native/example"
   ],
   "scripts": {
     "format": "oxfmt",

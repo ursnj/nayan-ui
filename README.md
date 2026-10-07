@@ -21,7 +21,7 @@ Reusable Component Libraries for React and React Native and Devtools to help dev
 
 | Application                                            | Description                                          |
 | ------------------------------------------------------ |------------------------------------------------------|
-| [@nayan-ui/website](./applications/website)            | Documentation website built with Next.js + Nayan UI  |
+| [@nayan-ui/website](./packages/website)                | Documentation website built with Next.js + Nayan UI  |
 | [@nayan-ui/video-editor](./applications/video-editor)  | Video editor built with Vite + MediaBunny + Nayan UI |
 
 ## Examples

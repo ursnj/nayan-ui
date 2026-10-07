@@ -12,7 +12,7 @@ COPY packages/cli/package.json ./packages/cli/package.json
 COPY packages/react/package.json ./packages/react/package.json
 COPY packages/native/package.json ./packages/native/package.json
 COPY packages/native/example/package.json ./packages/native/example/package.json
-COPY applications/website/package.json ./applications/website/package.json
+COPY packages/website/package.json ./packages/website/package.json
 RUN bun install --frozen-lockfile
 
 # Rebuild the source code only when needed
@@ -40,14 +40,14 @@ RUN apk add --no-cache libc6-compat && \
     addgroup --system --gid 1001 bunjs && \
     adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/applications/website/public ./applications/website/public
+COPY --from=builder /app/packages/website/public ./packages/website/public
 
 # Automatically leverage output traces to reduce image size
-COPY --from=builder --chown=nextjs:bunjs /app/applications/website/.next/standalone ./
-COPY --from=builder --chown=nextjs:bunjs /app/applications/website/.next/static ./applications/website/.next/static
+COPY --from=builder --chown=nextjs:bunjs /app/packages/website/.next/standalone ./
+COPY --from=builder --chown=nextjs:bunjs /app/packages/website/.next/static ./packages/website/.next/static
 
 # Set prerender cache permissions, remove source maps and wrong-platform sharp binaries
-RUN mkdir -p applications/website/.next && chown nextjs:bunjs applications/website/.next && \
+RUN mkdir -p packages/website/.next && chown nextjs:bunjs packages/website/.next && \
     find . -name '*.map' -delete 2>/dev/null; \
     rm -rf node_modules/.bun/@img+sharp-libvips-darwin-* \
            node_modules/.bun/@img+sharp-darwin-* \
@@ -62,4 +62,4 @@ EXPOSE 7100
 ENV PORT=7100
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["bun", "--smol", "run", "applications/website/server.js"]
+CMD ["bun", "--smol", "run", "packages/website/server.js"]
