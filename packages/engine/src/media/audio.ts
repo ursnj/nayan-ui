@@ -1,5 +1,5 @@
 // Sound, played by the Rust core's mixer (no Expo or other native audio dependency).
-import { assetUri, loadAssetBytes, type AssetSource } from "../assets";
+import { assetUri, loadAssetBytes, type AssetSource } from "../assets/source";
 import NativeEngine from "../native/NativeNayanEngine";
 
 /** A decoded sound in the core's mixer. */

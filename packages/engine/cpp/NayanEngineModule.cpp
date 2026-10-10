@@ -8,6 +8,7 @@
 #include <fbjni/fbjni.h>
 #include <jni.h>
 #endif
+#include <string>
 #include <vector>
 
 namespace facebook::react {
@@ -123,7 +124,7 @@ void NayanEngineModule::destroyWorld(jsi::Runtime &, double world) {
 
 namespace {
 
-// An encoded entity description: a Float64Array's ArrayBuffer of ENGINE_DESC_LEN doubles.
+// An encoded description (entity, animation, burst): a Float64Array's ArrayBuffer of doubles.
 const double *descData(jsi::Runtime &rt, jsi::Object &desc, size_t &len) {
   if (!desc.isArrayBuffer(rt)) {
     throw jsi::JSError(rt, "NayanEngine: expected an ArrayBuffer description");
@@ -131,6 +132,14 @@ const double *descData(jsi::Runtime &rt, jsi::Object &desc, size_t &len) {
   jsi::ArrayBuffer buffer = desc.getArrayBuffer(rt);
   len = buffer.size(rt) / sizeof(double);
   return reinterpret_cast<const double *>(buffer.data(rt));
+}
+
+// Bytes of a file passed from JS (copied by the core).
+jsi::ArrayBuffer fileData(jsi::Runtime &rt, jsi::Object &data, const char *method) {
+  if (!data.isArrayBuffer(rt)) {
+    throw jsi::JSError(rt, std::string("NayanEngine.") + method + ": expected an ArrayBuffer");
+  }
+  return data.getArrayBuffer(rt);
 }
 
 } // namespace
@@ -172,8 +181,29 @@ double NayanEngineModule::raycast(
   return hit == ENGINE_NO_ENTITY ? -1 : static_cast<double>(hit);
 }
 
-bool NayanEngineModule::readPosition(jsi::Runtime &, double world, double entity) {
-  return engine_world_read_position(find(world), id(entity)) != 0;
+double NayanEngineModule::pick(jsi::Runtime &, double world, double ox, double oy, double oz, double dx, double dy, double dz) {
+  uint32_t hit = engine_world_pick(find(world), ox, oy, oz, dx, dy, dz);
+  return hit == ENGINE_NO_ENTITY ? -1 : static_cast<double>(hit);
+}
+
+bool NayanEngineModule::readPosition(jsi::Runtime &, double world, double entity, bool rendered) {
+  return engine_world_read_position(find(world), id(entity), rendered ? 1 : 0) != 0;
+}
+
+bool NayanEngineModule::animate(jsi::Runtime &rt, double world, double entity, jsi::Object animation) {
+  size_t len = 0;
+  const double *data = descData(rt, animation, len);
+  return engine_world_animate(find(world), id(entity), data, len) != 0;
+}
+
+bool NayanEngineModule::stopAnimation(jsi::Runtime &, double world, double entity) {
+  return engine_world_stop_animation(find(world), id(entity)) != 0;
+}
+
+double NayanEngineModule::burst(jsi::Runtime &rt, double world, jsi::Object burst) {
+  size_t len = 0;
+  const double *data = descData(rt, burst, len);
+  return engine_world_burst(find(world), data, len);
 }
 
 bool NayanEngineModule::readVelocity(jsi::Runtime &, double world, double entity) {
@@ -198,8 +228,24 @@ jsi::Object NayanEngineModule::getColors(jsi::Runtime &rt, double world) {
   return external(rt, engine_world_colors(w), static_cast<size_t>(engine_world_capacity(w)) * 4 * sizeof(float));
 }
 
+jsi::Object NayanEngineModule::getRegions(jsi::Runtime &rt, double world) {
+  ::World *w = find(world);
+  return external(rt, engine_world_regions(w), static_cast<size_t>(engine_world_capacity(w)) * 4 * sizeof(float));
+}
+
 jsi::Object NayanEngineModule::getRanges(jsi::Runtime &rt, double world) {
-  return external(rt, engine_world_ranges(find(world)), ENGINE_MAX_MESHES * 2 * sizeof(uint32_t));
+  return external(rt, engine_world_ranges(find(world)), ENGINE_MAX_MESHES * 4 * sizeof(uint32_t));
+}
+
+jsi::Object NayanEngineModule::getDone(jsi::Runtime &rt, double world) {
+  ::World *w = find(world);
+  // At least one element so a zero-capacity world still gets a valid buffer.
+  size_t capacity = std::max<size_t>(engine_world_capacity(w), 1);
+  return external(rt, engine_world_done(w), capacity * sizeof(uint32_t));
+}
+
+double NayanEngineModule::doneLength(jsi::Runtime &, double world) {
+  return engine_world_done_len(find(world));
 }
 
 jsi::Object NayanEngineModule::getEvents(jsi::Runtime &rt, double world) {
@@ -219,16 +265,13 @@ void NayanEngineModule::setListener(jsi::Runtime &, double world, double entity)
 }
 
 double NayanEngineModule::modelLoad(jsi::Runtime &rt, jsi::Object data, bool center, double fit) {
-  if (!data.isArrayBuffer(rt)) {
-    throw jsi::JSError(rt, "NayanEngine.modelLoad: expected an ArrayBuffer");
-  }
-  jsi::ArrayBuffer buffer = data.getArrayBuffer(rt);
+  jsi::ArrayBuffer buffer = fileData(rt, data, "modelLoad");
   return engine_model_load(buffer.data(rt), buffer.size(rt), center ? 1 : 0, static_cast<float>(fit)); // copied
 }
 
 jsi::Object NayanEngineModule::modelVertices(jsi::Runtime &rt, double mesh) {
   uint32_t m = id(mesh);
-  return external(rt, engine_model_vertices(m), static_cast<size_t>(engine_model_vertex_count(m)) * 9 * sizeof(float));
+  return external(rt, engine_model_vertices(m), static_cast<size_t>(engine_model_vertex_count(m)) * 11 * sizeof(float));
 }
 
 jsi::Object NayanEngineModule::modelIndices(jsi::Runtime &rt, double mesh) {
@@ -242,9 +285,52 @@ jsi::Array NayanEngineModule::modelSize(jsi::Runtime &rt, double mesh) {
   return jsi::Array::createWithElements(rt, size[0], size[1], size[2]);
 }
 
-jsi::String NayanEngineModule::modelError(jsi::Runtime &rt) {
+double NayanEngineModule::modelTexture(jsi::Runtime &, double mesh) {
+  return engine_model_texture(id(mesh));
+}
+
+double NayanEngineModule::meshAlias(jsi::Runtime &, double base) {
+  return engine_mesh_alias(id(base));
+}
+
+double NayanEngineModule::textureLoad(jsi::Runtime &rt, jsi::Object data) {
+  jsi::ArrayBuffer buffer = fileData(rt, data, "textureLoad");
+  return engine_texture_load(buffer.data(rt), buffer.size(rt)); // decoded and copied
+}
+
+jsi::Object NayanEngineModule::texturePixels(jsi::Runtime &rt, double texture) {
+  uint32_t size[2] = {0, 0};
+  engine_texture_size(id(texture), size);
+  return external(rt, engine_texture_pixels(id(texture)), static_cast<size_t>(size[0]) * size[1] * 4);
+}
+
+jsi::Array NayanEngineModule::textureSize(jsi::Runtime &rt, double texture) {
+  uint32_t size[2] = {0, 0};
+  engine_texture_size(id(texture), size);
+  return jsi::Array::createWithElements(rt, static_cast<double>(size[0]), static_cast<double>(size[1]));
+}
+
+double NayanEngineModule::fontLoad(jsi::Runtime &rt, jsi::Object data, double depth, jsi::String chars) {
+  jsi::ArrayBuffer buffer = fileData(rt, data, "fontLoad");
+  std::string utf8 = chars.utf8(rt);
+  return engine_font_load(buffer.data(rt), buffer.size(rt), static_cast<float>(depth), utf8.data(), utf8.size());
+}
+
+jsi::Array NayanEngineModule::fontGlyphs(jsi::Runtime &rt, double font) {
+  uint32_t f = id(font);
+  const float *glyphs = engine_font_glyphs(f);
+  size_t n = glyphs == nullptr ? 0 : engine_font_glyph_floats(f);
+  jsi::Array out(rt, n + 1);
+  for (size_t i = 0; i < n; i++) {
+    out.setValueAtIndex(rt, i, static_cast<double>(glyphs[i]));
+  }
+  out.setValueAtIndex(rt, n, static_cast<double>(engine_font_cap_height(f)));
+  return out;
+}
+
+jsi::String NayanEngineModule::loadError(jsi::Runtime &rt) {
   char message[512];
-  engine_model_error(message, sizeof(message));
+  engine_load_error(message, sizeof(message));
   return jsi::String::createFromUtf8(rt, message);
 }
 
