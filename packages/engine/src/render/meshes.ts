@@ -1,4 +1,4 @@
-import { Mesh } from "./types";
+import { Mesh } from "../types";
 
 // Interleaved position(3) + normal(3). All meshes are unit-sized and centered at the origin.
 // Instance transforms assume uniform scale (or a plane scaled in X/Z) so normals stay correct.

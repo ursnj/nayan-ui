@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { PixelRatio, StyleSheet, type ViewStyle } from "react-native";
 import { Canvas, useCanvasRef, type CanvasRef } from "react-native-webgpu";
 import { defaultCamera, defaultLight, Renderer } from "./Renderer";
-import type { Camera, Light, RenderSource } from "./types";
+import type { Camera, Light, RenderSource } from "../types";
 
 const DEFAULT_BACKGROUND = [0.04, 0.05, 0.09] as const;
 
