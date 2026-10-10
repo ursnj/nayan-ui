@@ -65,3 +65,19 @@ pub unsafe extern "C" fn engine_model_size(mesh: u32, out: *mut f32) -> i32 {
     unsafe { std::ptr::copy_nonoverlapping(size.to_array().as_ptr(), out, 3) };
     1
 }
+
+/// Copies the reason the last load failed (NUL-terminated, truncated to `cap`) into `out`.
+/// Returns the full message length in bytes (0 after a successful load).
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_model_error(out: *mut u8, cap: usize) -> usize {
+    let message = model::last_error();
+    if !out.is_null() && cap > 0 {
+        let n = message.len().min(cap - 1);
+        // SAFETY: caller passes room for `cap` bytes.
+        unsafe {
+            std::ptr::copy_nonoverlapping(message.as_ptr(), out, n);
+            *out.add(n) = 0;
+        }
+    }
+    message.len()
+}

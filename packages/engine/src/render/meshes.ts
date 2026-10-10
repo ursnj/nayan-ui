@@ -1,8 +1,11 @@
 import { Mesh } from "../types";
 
-// Interleaved position(3) + normal(3). All meshes are unit-sized and centered at the origin.
+// Interleaved position(3) + normal(3) + color(3), the same layout loaded models use. Built-in shapes
+// are unit-sized, centered at the origin and white (the instance color tints them).
 // Instance transforms assume uniform scale (or a plane scaled in X/Z) so normals stay correct.
 type Geometry = { vertices: number[]; indices: number[] };
+
+export const VERTEX_FLOATS = 9;
 
 function cube(): Geometry {
   type V3 = readonly [number, number, number];
@@ -23,6 +26,7 @@ function cube(): Geometry {
         (n[1] + u[1] * a + v[1] * b) * 0.5,
         (n[2] + u[2] * a + v[2] * b) * 0.5,
         n[0], n[1], n[2],
+        1, 1, 1,
       );
     }
     const o = f * 4;
@@ -40,7 +44,7 @@ function sphere(rings = 16, segments = 24): Geometry {
       const x = Math.sin(phi) * Math.cos(theta);
       const y = Math.cos(phi);
       const z = Math.sin(phi) * Math.sin(theta);
-      g.vertices.push(x * 0.5, y * 0.5, z * 0.5, x, y, z);
+      g.vertices.push(x * 0.5, y * 0.5, z * 0.5, x, y, z, 1, 1, 1);
     }
   }
   for (let i = 0; i < rings; i++) {
@@ -55,30 +59,38 @@ function sphere(rings = 16, segments = 24): Geometry {
 
 function plane(): Geometry {
   return {
-    vertices: [-0.5, 0, -0.5, 0, 1, 0, -0.5, 0, 0.5, 0, 1, 0, 0.5, 0, 0.5, 0, 1, 0, 0.5, 0, -0.5, 0, 1, 0],
+    vertices: [
+      -0.5, 0, -0.5, 0, 1, 0, 1, 1, 1,
+      -0.5, 0, 0.5, 0, 1, 0, 1, 1, 1,
+      0.5, 0, 0.5, 0, 1, 0, 1, 1, 1,
+      0.5, 0, -0.5, 0, 1, 0, 1, 1, 1,
+    ],
     indices: [0, 1, 2, 0, 2, 3],
   };
 }
 
-export type MeshRange = { firstIndex: number; indexCount: number; baseVertex: number };
+/** Render-ready geometry: VERTEX_FLOATS floats per vertex, u32 triangle indices. */
+export type MeshGeometry = { vertices: Float32Array; indices: Uint32Array };
 
-/** All meshes packed into one vertex/index buffer; `ranges[meshId]` locates each one. */
-export function createMeshes() {
-  const geometry: Record<number, Geometry> = {
-    [Mesh.Cube]: cube(),
-    [Mesh.Sphere]: sphere(),
-    [Mesh.Plane]: plane(),
-  };
-  const vertices: number[] = [];
-  const indices: number[] = [];
-  const ranges: MeshRange[] = [];
-  for (const id of Object.values(Mesh)) {
-    const g = geometry[id]!;
-    ranges[id] = { firstIndex: indices.length, indexCount: g.indices.length, baseVertex: vertices.length / 6 };
-    vertices.push(...g.vertices);
-    indices.push(...g.indices);
-  }
-  // WebGPU buffer writes must be a multiple of 4 bytes: pad to an even number of u16 indices.
-  if (indices.length % 2) indices.push(0);
-  return { vertices: new Float32Array(vertices), indices: new Uint16Array(indices), ranges };
+const toGeometry = (g: Geometry): MeshGeometry => ({
+  vertices: new Float32Array(g.vertices),
+  indices: new Uint32Array(g.indices),
+});
+
+let builtIns: Map<number, MeshGeometry> | null = null;
+const models = new Map<number, MeshGeometry>();
+
+/** Registers a loaded model's geometry under its mesh id (see loadModel). */
+export function registerMesh(mesh: number, geometry: MeshGeometry) {
+  models.set(mesh, geometry);
+}
+
+/** Geometry for a mesh id: a built-in shape or a loaded model. */
+export function meshGeometry(mesh: number): MeshGeometry | undefined {
+  builtIns ??= new Map([
+    [Mesh.Cube, toGeometry(cube())],
+    [Mesh.Sphere, toGeometry(sphere())],
+    [Mesh.Plane, toGeometry(plane())],
+  ]);
+  return builtIns.get(mesh) ?? models.get(mesh);
 }

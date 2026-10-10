@@ -15,8 +15,10 @@ export interface RenderSource {
 }
 
 /** Mesh ids understood by the renderer. */
+/** Built-in mesh ids. Loaded models get their own ids (see `loadModel`). */
 export const Mesh = { Cube: 0, Sphere: 1, Plane: 2 } as const;
-export type MeshKind = (typeof Mesh)[keyof typeof Mesh];
+/** A built-in shape (`Mesh.*`) or a loaded model's `mesh`. */
+export type MeshKind = number;
 
 export type Camera = {
   eye: [number, number, number];

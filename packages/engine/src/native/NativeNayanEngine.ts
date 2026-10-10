@@ -50,13 +50,25 @@ export interface Spec extends TurboModule {
   getMatrices(world: number): Object;
   /** capacity * 4 floats (rgba), same order as the matrices. */
   getColors(world: number): Object;
-  /** 16 u32: [first, count] per mesh id (8 meshes). */
+  /** 128 u32: [first, count] per mesh id (64 meshes: 0..2 built-in, 3.. models). */
   getRanges(world: number): Object;
   /** Collision events from the last update, 4 u32 each: [a, b, flags, speed as f32 bits]. */
   getEvents(world: number): Object;
   eventLength(world: number): number;
   /** 16 floats. */
   getScratch(world: number): Object;
+
+  // Models (global)
+  /** Parses a glTF/GLB ArrayBuffer. Returns its mesh id, or -1 (see `modelError`). */
+  modelLoad(data: Object, center: boolean, fit: number): number;
+  /** 9 floats per vertex (position, normal, color); aliases native memory. */
+  modelVertices(mesh: number): Object;
+  /** u32 triangle indices; aliases native memory. */
+  modelIndices(mesh: number): Object;
+  /** Full bounding-box size [x, y, z]. */
+  modelSize(mesh: number): Array<number>;
+  /** Why the last modelLoad failed ("" after a success). */
+  modelError(): string;
 
   // Audio (global)
   /** Decodes a WAV ArrayBuffer. Returns a sound id, or -1. */
