@@ -3,6 +3,7 @@
 #include <engine_core.h>
 
 #include <algorithm>
+#include <vector>
 
 namespace facebook::react {
 
@@ -218,6 +219,61 @@ double NayanEngineModule::eventLength(jsi::Runtime &, double world) {
 
 jsi::Object NayanEngineModule::getScratch(jsi::Runtime &rt, double world) {
   return external(rt, engine_world_scratch(find(world)), 16 * sizeof(float));
+}
+
+void NayanEngineModule::setImpactFeedback(
+    jsi::Runtime &, double world, double entity, bool enabled, double sound, double minSpeed, double maxSpeed,
+    double volume, double haptic) {
+  engine_world_set_impact_feedback(
+      find(world), id(entity), enabled ? 1 : 0, id(sound), minSpeed, maxSpeed, volume, haptic); // -1 -> no sound
+}
+
+void NayanEngineModule::setListener(jsi::Runtime &, double world, double entity) {
+  engine_world_set_listener(find(world), id(entity));
+}
+
+double NayanEngineModule::audioLoad(jsi::Runtime &rt, jsi::Object data) {
+  if (!data.isArrayBuffer(rt)) {
+    throw jsi::JSError(rt, "NayanEngine.audioLoad: expected an ArrayBuffer");
+  }
+  jsi::ArrayBuffer buffer = data.getArrayBuffer(rt);
+  return engine_audio_load_wav(buffer.data(rt), buffer.size(rt)); // copied by the core
+}
+
+double NayanEngineModule::audioPlay(jsi::Runtime &, double sound, double volume, double pan, double pitch, bool loop) {
+  return static_cast<double>(engine_audio_play(id(sound), volume, pan, pitch, loop ? 1 : 0));
+}
+
+void NayanEngineModule::audioStop(jsi::Runtime &, double voice) {
+  if (voice >= 1 && voice <= 9007199254740992.0) {
+    engine_audio_stop(static_cast<uint64_t>(voice));
+  }
+}
+
+void NayanEngineModule::audioSetVolume(jsi::Runtime &, double volume) {
+  engine_audio_set_volume(volume);
+}
+
+void NayanEngineModule::audioSetMuted(jsi::Runtime &, bool muted) {
+  engine_audio_set_muted(muted ? 1 : 0);
+}
+
+bool NayanEngineModule::audioIsRunning(jsi::Runtime &) {
+  return engine_audio_is_running() != 0;
+}
+
+bool NayanEngineModule::hapticsSupported(jsi::Runtime &) {
+  return engine_haptics_supported() != 0;
+}
+
+void NayanEngineModule::hapticsPlay(jsi::Runtime &rt, jsi::Array taps, bool throttle) {
+  size_t n = taps.size(rt) / 3 * 3;
+  std::vector<float> values(n);
+  for (size_t i = 0; i < n; i++) {
+    jsi::Value v = taps.getValueAtIndex(rt, i);
+    values[i] = v.isNumber() ? static_cast<float>(v.asNumber()) : 0.0f;
+  }
+  engine_haptics_play(values.data(), static_cast<uint32_t>(n / 3), throttle ? 1 : 0);
 }
 
 } // namespace facebook::react

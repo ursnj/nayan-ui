@@ -108,6 +108,20 @@ impl PhysicsDesc {
     }
 }
 
+/// Sound and haptic played by the core itself when this entity starts touching something.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ImpactFeedback {
+    /// Sound id from `audio::load_wav`, or None for haptics only.
+    pub sound: Option<u32>,
+    /// Impacts slower than this are silent; at `max_speed` and above, full volume/strength.
+    pub min_speed: f32,
+    pub max_speed: f32,
+    /// Volume at full strength (0..2).
+    pub volume: f32,
+    /// Haptic intensity at full strength (0..1); 0 = no haptic.
+    pub haptic: f32,
+}
+
 #[derive(Clone, Copy, Debug, Default)]
 struct Oscillation {
     amplitude: Vec3,
@@ -184,14 +198,19 @@ pub struct World {
     lifetime: Vec<f32>,
     /// Parent entity (raw id) or NO_ENTITY. A child's position/rotation are local to the parent.
     parent: Vec<u32>,
+    feedback: Vec<Option<ImpactFeedback>>,
 
     // handle table
     slots: Vec<Slot>,
     free: Vec<u32>,
 
     bounds: Option<(Vec3, Vec3)>,
+    /// Entity whose position pans and attenuates impact sounds (raw id or NO_ENTITY).
+    listener: u32,
     physics: PhysicsWorld,
     sink: EventSink,
+    /// Per-entity velocity just before the current physics step (approach speed for impacts).
+    pre_velocity: Vec<Vec3>,
     accumulator: f32,
 
     // outputs (fixed size)
@@ -225,11 +244,14 @@ impl World {
             body: Vec::with_capacity(capacity),
             lifetime: Vec::with_capacity(capacity),
             parent: Vec::with_capacity(capacity),
+            feedback: Vec::with_capacity(capacity),
             slots: Vec::with_capacity(capacity),
             free: Vec::new(),
             bounds: None,
+            listener: NO_ENTITY,
             physics,
             sink: EventSink::default(),
+            pre_velocity: Vec::with_capacity(capacity),
             accumulator: 0.0,
             out_matrices: vec![0.0; capacity * 16],
             out_colors: vec![0.0; capacity * 4],
@@ -287,6 +309,7 @@ impl World {
         self.body.push(None);
         self.lifetime.push(f32::INFINITY);
         self.parent.push(NO_ENTITY);
+        self.feedback.push(None);
         Some(handle)
     }
 
@@ -318,6 +341,7 @@ impl World {
         self.body.swap_remove(i);
         self.lifetime.swap_remove(i);
         self.parent.swap_remove(i);
+        self.feedback.swap_remove(i);
         if i != last {
             let moved = self.dense_slot[i];
             self.slots[moved as usize].dense = i as u32;
@@ -562,6 +586,24 @@ impl World {
         true
     }
 
+    /// Plays a sound/haptic from the core whenever this entity starts touching something solid
+    /// (sensor contacts don't count), scaled
+    /// by impact speed and panned relative to the listener. `None` removes it.
+    pub fn set_impact_feedback(&mut self, e: Entity, feedback: Option<ImpactFeedback>) {
+        let valid = feedback.is_none_or(|f| {
+            f.min_speed.is_finite() && f.max_speed.is_finite() && f.max_speed > f.min_speed && f.volume.is_finite() && f.haptic.is_finite()
+        });
+        if let Some(i) = self.dense(e).filter(|_| valid) {
+            self.feedback[i] = feedback;
+        }
+    }
+
+    /// Impact sounds are panned and attenuated relative to this entity (usually the player or the
+    /// camera's focus). `None` plays them centred at full volume.
+    pub fn set_listener(&mut self, e: Option<Entity>) {
+        self.listener = e.map_or(NO_ENTITY, |e| e.0);
+    }
+
     pub fn set_gravity(&mut self, gravity: Vec3) {
         if gravity.is_finite() {
             self.physics.gravity = gravity;
@@ -703,6 +745,16 @@ impl World {
             }
         }
         if any_body {
+            // Contacts are resolved inside the step, so velocities read afterwards understate how hard
+            // things hit. Remember the approach velocities first.
+            self.pre_velocity.clear();
+            for i in 0..self.len() {
+                self.pre_velocity.push(match self.body[i] {
+                    Some((h, BodyKind::Dynamic)) => self.physics.bodies.get(h).map_or(Vec3::ZERO, |b| b.linvel()),
+                    Some((_, BodyKind::Kinematic)) | None => self.velocity[i],
+                    Some((_, BodyKind::Fixed)) => Vec3::ZERO,
+                });
+            }
             self.physics.step_with_events(&(), &self.sink);
             self.sync_dynamic_bodies();
             self.collect_events();
@@ -738,8 +790,12 @@ impl World {
     }
 
     fn collect_events(&mut self) {
-        let Ok(mut raw) = self.sink.0.lock() else { return };
-        for event in raw.drain(..) {
+        let mut pending: Vec<(u32, u32, f32)> = Vec::new();
+        let raw = match self.sink.0.lock() {
+            Ok(mut events) => std::mem::take(&mut *events),
+            Err(_) => return,
+        };
+        for event in raw {
             if self.events.len() + EVENT_STRIDE > MAX_EVENTS * EVENT_STRIDE {
                 break;
             }
@@ -747,15 +803,49 @@ impl World {
             let (Some(c1), Some(c2)) = (colliders.get(event.collider1()), colliders.get(event.collider2())) else {
                 continue;
             };
-            let velocity = |c: &Collider| {
-                c.parent()
-                    .and_then(|h| self.physics.bodies.get(h))
-                    .map_or(Vec3::ZERO, |b| b.linvel())
+            let approach = |c: &Collider| {
+                self.dense(Entity(c.user_data as u32))
+                    .and_then(|i| self.pre_velocity.get(i).copied())
+                    .unwrap_or(Vec3::ZERO)
             };
-            let speed = if event.started() { (velocity(c1) - velocity(c2)).length() } else { 0.0 };
+            let speed = if event.started() { (approach(c1) - approach(c2)).length() } else { 0.0 };
             let flags = (event.started() as u32 * EVENT_STARTED) | (event.sensor() as u32 * EVENT_SENSOR);
-            self.events
-                .extend_from_slice(&[c1.user_data as u32, c2.user_data as u32, flags, speed.to_bits()]);
+            let (a, b) = (c1.user_data as u32, c2.user_data as u32);
+            self.events.extend_from_slice(&[a, b, flags, speed.to_bits()]);
+            if event.started() && !event.sensor() {
+                pending.push((a, b, speed)); // sensors (pickups, triggers) aren't physical impacts
+            }
+        }
+        for (a, b, speed) in pending {
+            self.impact_feedback(Entity(a), Entity(b), speed);
+        }
+    }
+
+    /// Plays the configured impact feedback for either side of a contact that just started.
+    fn impact_feedback(&mut self, a: Entity, b: Entity, speed: f32) {
+        let listener = self.dense(Entity(self.listener)).map(|l| self.position[l]);
+        let mut played: Option<u32> = None;
+        for e in [a, b] {
+            let Some(i) = self.dense(e) else { continue };
+            let Some(f) = self.feedback[i] else { continue };
+            let strength = ((speed - f.min_speed) / (f.max_speed - f.min_speed)).clamp(0.0, 1.0);
+            if strength <= 0.0 {
+                continue;
+            }
+            let (pan, attenuation) = match listener {
+                Some(l) => {
+                    let d = self.position[i] - l;
+                    ((d.x / 12.0).clamp(-1.0, 1.0), 1.0 / (1.0 + d.length() / 20.0))
+                }
+                None => (0.0, 1.0),
+            };
+            if let Some(sound) = f.sound.filter(|&s| played != Some(s)) {
+                feedback::sound(sound, f.volume * strength * attenuation, pan);
+                played = Some(sound);
+            }
+            if f.haptic > 0.0 {
+                feedback::haptic(f.haptic * strength, 0.4 + 0.5 * strength);
+            }
         }
     }
 
@@ -837,6 +927,35 @@ impl World {
     fn dense(&self, e: Entity) -> Option<usize> {
         let slot = self.slots.get((e.0 & SLOT_MASK) as usize)?;
         (slot.alive && slot.generation == e.0 >> SLOT_BITS).then_some(slot.dense as usize)
+    }
+}
+
+/// Where impact feedback goes: the audio/haptics systems, or a log in tests.
+mod feedback {
+    #[cfg(not(test))]
+    pub fn sound(sound: u32, volume: f32, pan: f32) {
+        crate::audio::play(sound, volume, pan, 1.0, false);
+    }
+
+    #[cfg(not(test))]
+    pub fn haptic(intensity: f32, sharpness: f32) {
+        crate::haptics::impact(intensity, sharpness);
+    }
+
+    #[cfg(test)]
+    thread_local! {
+        pub static LOG: std::cell::RefCell<Vec<(&'static str, f32, f32)>> = const { std::cell::RefCell::new(Vec::new()) };
+    }
+
+    #[cfg(test)]
+    pub fn sound(sound: u32, volume: f32, pan: f32) {
+        let _ = sound;
+        LOG.with(|l| l.borrow_mut().push(("sound", volume, pan)));
+    }
+
+    #[cfg(test)]
+    pub fn haptic(intensity: f32, sharpness: f32) {
+        LOG.with(|l| l.borrow_mut().push(("haptic", intensity, sharpness)));
     }
 }
 
@@ -1092,6 +1211,30 @@ mod tests {
         assert!(!w.set_parent(a, Some(c)), "entity with children can't be attached");
         assert!(!w.set_physics(b, Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 }))));
         assert!(w.set_parent(b, None));
+    }
+
+    #[test]
+    fn impact_feedback_plays_scaled_and_panned_from_the_core() {
+        feedback::LOG.with(|l| l.borrow_mut().clear());
+        let mut w = World::new(4);
+        floor(&mut w);
+        let listener = spawn(&mut w, 0, Vec3::new(-12.0, 0.0, 0.0)); // ball lands 12 to its right
+        let ball = spawn(&mut w, 1, Vec3::new(0.0, 4.0, 0.0));
+        w.set_physics(ball, Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 })));
+        w.set_impact_feedback(ball, Some(ImpactFeedback { sound: Some(3), min_speed: 1.0, max_speed: 9.0, volume: 1.0, haptic: 0.8 }));
+        w.set_listener(Some(listener));
+        run(&mut w, 1.5);
+        let log = feedback::LOG.with(|l| l.borrow().clone());
+        let (_, volume, pan) = *log.iter().find(|e| e.0 == "sound").expect("landing plays a sound");
+        assert!(volume > 0.1 && volume < 1.0, "scaled by speed and distance: {volume}");
+        assert!((pan - 1.0).abs() < 1e-3, "panned right: {pan}");
+        assert!(log.iter().any(|e| e.0 == "haptic" && e.1 > 0.0));
+
+        // Invalid settings are ignored, None removes it.
+        w.set_impact_feedback(ball, Some(ImpactFeedback { sound: None, min_speed: 5.0, max_speed: 1.0, volume: 1.0, haptic: 0.0 }));
+        assert!(w.feedback[w.dense(ball).unwrap()].is_some(), "kept the valid settings");
+        w.set_impact_feedback(ball, None);
+        assert!(w.feedback[w.dense(ball).unwrap()].is_none());
     }
 
     // ── physics ──

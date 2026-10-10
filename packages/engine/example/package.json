@@ -12,9 +12,7 @@
   "dependencies": {
     "@nayan-ui/engine": "*",
     "expo": "~57.0.27",
-    "expo-audio": "~57.0.5",
     "expo-dev-client": "~57.0.9",
-    "expo-haptics": "~57.0.3",
     "react": "19.2.3",
     "react-native": "0.86.3",
     "react-native-webgpu": "^0.13.0"

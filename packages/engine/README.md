@@ -9,8 +9,7 @@ A small, fast 3D engine for React Native.
 ## Quick look
 
 ```tsx
-import { GameView, World, Mesh, Joystick, createJoystickState, impactStrength } from "@nayan-ui/engine";
-import { createExpoAudio, createExpoHaptics } from "@nayan-ui/engine/expo"; // optional
+import { GameView, World, Mesh, audio, haptics } from "@nayan-ui/engine";
 
 const world = new World(500); // fixed capacity
 
@@ -25,9 +24,12 @@ const pickup = world.spawn({ mesh: Mesh.Sphere, position: [5, 1, 0], body: "kine
   collider: { layer: 4, sensor: true } });
 const enemy = world.spawn({ body: { type: "dynamic", lockRotations: true }, follow: { target: player, speed: 3 } });
 
-const audio = createExpoAudio({ pickup: require("./pickup.wav"), music: require("./music.wav") });
-const haptics = createExpoHaptics();
-audio.playMusic("music", { volume: 0.4 });
+const sfx = audio.load({ pickup: require("./pickup.wav"), bump: require("./bump.wav"), music: require("./music.wav") });
+await sfx.ready;
+sfx.play("music", { volume: 0.4, loop: true });
+// The core plays this itself on every solid impact: volume/haptic scale with speed, panned to the listener.
+world.setImpactFeedback(player, { sound: sfx.get("bump"), minSpeed: 1, maxSpeed: 10, haptic: 0.7 });
+world.setListener(player);
 
 <GameView
   source={world}
@@ -36,9 +38,8 @@ audio.playMusic("music", { volume: 0.4 });
   onUpdate={(dt) => {
     world.setPlanarVelocity(player, stick.x * 8, -stick.y * 8);
     world.update(dt);                            // Rust: fixed-step physics, chasing, events
-    world.forEachCollision((a, b, { started, sensor, speed }) => {
-      if (started && sensor) { audio.play("pickup"); haptics.impact("light"); }
-      if (started && !sensor) audio.play("bump", { volume: impactStrength(speed) });
+    world.forEachCollision((a, b, { started, sensor }) => {
+      if (started && sensor) { sfx.play("pickup"); haptics.impact(0.4, 0.8); }
     });
   }}
 />
@@ -55,11 +56,16 @@ audio.playMusic("music", { volume: 0.4 });
   collision layers/masks, sensors, start/stop contact events with impact speed.
 - **Simulation**: fixed 60 Hz steps with render interpolation; velocity, spin, visual bobbing,
   chase behavior, arena bounds, lifetimes (auto-despawn with shrink-out) for particles and projectiles.
-- **Audio** (`@nayan-ui/engine/expo`, expo-audio): preloaded effects with a voice pool, looping music, mute.
-- **Haptics** (`@nayan-ui/engine/expo`, expo-haptics): impacts, notifications, selection; throttled.
+- **Audio** (Rust): a realtime mixer on its own thread (32 voices, pitch, constant-power pan, looping,
+  soft limiter) fed by WAV files and played through cpal (CoreAudio on iOS). The JS thread talks to it
+  through a lock-free queue. iOS session category "ambient": respects the silent switch and mixes with other apps.
+- **Haptics** (Rust): Core Haptics transients with continuous intensity and sharpness, patterns, throttling.
+- **Impact feedback** (Rust): per-entity sound + haptic played by the core straight from physics contacts,
+  scaled by approach speed and panned/attenuated relative to a listener entity. No JS per impact.
+- **Attachments**: child entities follow a parent's interpolated pose (characters made of parts, props).
 - **Input**: `Joystick` touch stick; plain RN touchables for buttons.
 
-`GameAudio` / `GameHaptics` are interfaces: the core has no audio dependency and you can swap in another backend.
+No Expo modules are required: rendering, physics, audio and haptics all live in this package.
 
 ## Layout
 
@@ -67,7 +73,7 @@ audio.playMusic("music", { volume: 0.4 });
 src/            TypeScript library (World, GameView, Renderer, WGSL, Joystick)
 core/           Rust simulation core (+ C header in core/include)
 cpp/ ios/       C++ TurboModule + provider that expose the core to JS (zero-copy)
-example/        Expo app: Orb Rush game + a 10k-cube JS-vs-Rust benchmark
+example/        Expo app: Flappy, Orb Rush, and a JS-vs-Rust / physics benchmark
 ```
 
 ## Develop
@@ -111,7 +117,8 @@ Engine v0.3 (iOS only so far):
 - [x] Rust world with generation-checked handles; Rapier rigid bodies, colliders, events, raycasts
 - [x] Fixed-step simulation with interpolation; lifetimes; chase; bounds
 - [x] Renderer with shadows; `GameView`; `Joystick`
-- [x] Audio and haptics (Expo adapters)
+- [x] Audio mixer and haptics in Rust; impact feedback from physics; attachments; sky color and fog
+- [ ] Android audio/haptics backends (cpal AAudio is ready; haptics needs a JNI Vibrator call)
 - [ ] Android native module
 - [ ] glTF / custom meshes, textures, transparency
 

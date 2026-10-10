@@ -1,19 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import {
+  audio,
   GameView,
+  haptics,
   impactStrength,
   Mesh,
   World,
   type Camera,
   type Color,
   type Entity,
-  type GameAudio,
-  type GameHaptics,
   type Light,
   type Vec3,
 } from "@nayan-ui/engine";
-import { createExpoAudio, createExpoHaptics } from "@nayan-ui/engine/expo";
 
 // Collision layers. A pair collides if either side's mask includes the other's layer.
 const BIRD = 1;
@@ -43,14 +42,14 @@ const SAND: Color = [0.86, 0.77, 0.5];
 // Demo / QA mode: a bot flaps and restarts. Run Metro with EXPO_PUBLIC_AUTOPLAY=1.
 const AUTOPLAY = process.env.EXPO_PUBLIC_AUTOPLAY === "1";
 
-const SOUNDS = {
+// Decoded once by the Rust mixer, shared by every round.
+const sfx = audio.load({
   flap: require("./assets/sfx/flap.wav"),
   point: require("./assets/sfx/point.wav"),
   hit: require("./assets/sfx/hit.wav"),
   die: require("./assets/sfx/die.wav"),
   bump: require("./assets/sfx/bump.wav"),
-};
-type Sound = keyof typeof SOUNDS;
+});
 type Phase = "ready" | "playing" | "dead" | "over";
 
 let best = 0;
@@ -62,7 +61,7 @@ const aboutX = (angle: number) => [Math.sin(angle / 2), 0, 0, Math.cos(angle / 2
 type Pipe = { parts: Entity[]; probe: Entity; gapY: number; scored: boolean };
 type Scroller = { entity: Entity; wrap: number };
 
-function createGame(audio: GameAudio<Sound>, haptics: GameHaptics) {
+function createGame() {
   const world = new World(320);
   world.setGravity([0, GRAVITY, 0]);
   const solid = { body: "fixed" as const, collider: { layer: SOLID, mask: 0 } };
@@ -139,11 +138,11 @@ function createGame(audio: GameAudio<Sound>, haptics: GameHaptics) {
   part(Mesh.Cube, [-0.52, 0.1, 0], [0.26, 0.14, 0.22], [0.95, 0.68, 0.12]);
   const wing = part(Mesh.Cube, [-0.1, -0.02, 0.48], [0.46, 0.1, 0.32], [0.98, 0.7, 0.14]);
 
+  world.setListener(bird);
+
   const camera: Camera = { eye: [0, 1.5, 18], target: [0, 1, 0], fov: Math.PI / 3 };
   return {
     world,
-    audio,
-    haptics,
     bird,
     wing,
     ground,
@@ -237,8 +236,8 @@ function flap(g: Game) {
   g.flapTime = g.time;
   const p = g.world.position(g.bird);
   if (p) feathers(g, [p[0] - 0.4, p[1] - 0.1, p[2]], 2, 1.2);
-  g.audio.play("flap", { volume: 0.7, rate: rand(0.92, 1.08) });
-  g.haptics.impact("soft");
+  sfx.play("flap", { volume: 0.7, pitch: rand(0.92, 1.08) });
+  haptics.impact(0.3, 0.2);
 }
 
 function die(g: Game, speed: number) {
@@ -255,10 +254,12 @@ function die(g: Game, speed: number) {
     collider: { radius: 0.42, layer: BIRD, mask: SOLID, restitution: 0.45, friction: 0.5 },
   });
   g.world.applyImpulse(g.bird, [-1.2, 1.8, 0]);
+  // From here on the core itself thumps (sound + haptic) every time the tumbling bird lands.
+  g.world.setImpactFeedback(g.bird, { sound: sfx.get("bump"), minSpeed: 1, maxSpeed: 12, volume: 1, haptic: 0.7 });
   const p = g.world.position(g.bird);
   if (p) feathers(g, p, 14, 3.5);
-  g.audio.play("hit", { volume: 0.6 + impactStrength(speed, 2, 10) * 0.4 });
-  g.haptics.impact("heavy");
+  sfx.play("hit", { volume: 0.6 + impactStrength(speed, 2, 10) * 0.4 });
+  haptics.impact(1, 0.8);
   g.onFlash();
   g.onPhase("dead");
 }
@@ -300,8 +301,8 @@ function tick(g: Game, dt: number) {
       pipe.scored = true;
       g.score += 1;
       g.onScore(g.score);
-      g.audio.play("point", { volume: 0.8 });
-      g.haptics.impact("light");
+      sfx.play("point", { volume: 0.8 });
+      haptics.impact(0.4, 0.8);
     }
     if (x < DESPAWN_X) {
       for (const e of pipe.parts) g.world.despawn(e);
@@ -316,18 +317,15 @@ function tick(g: Game, dt: number) {
       die(g, info.speed);
     } else if (g.phase === "dead" && other === g.ground && info.speed > 1) {
       const p = g.world.position(g.bird);
-      const strength = impactStrength(info.speed, 1, 12);
-      if (p) dust(g, p, strength);
-      g.audio.play("bump", { volume: 0.3 + strength * 0.7 });
-      g.haptics.impact(strength > 0.5 ? "medium" : "light");
+      if (p) dust(g, p, impactStrength(info.speed, 1, 12)); // the thump itself comes from the core
     }
   });
 
   if (g.phase === "dead") {
     if (!g.diedSoundPlayed && g.time - g.deadAt > 0.3) {
       g.diedSoundPlayed = true;
-      g.audio.play("die", { volume: 0.7 });
-      g.haptics.notify("error");
+      sfx.play("die", { volume: 0.7 });
+      haptics.notify("error");
     }
     if (g.time - g.deadAt > 1.4) {
       g.phase = "over";
@@ -352,8 +350,8 @@ function autopilot(g: Game) {
   if (p[1] < target && v[1] < 1.5) flap(g);
 }
 
-function Round({ audio, haptics, onRestart }: { audio: GameAudio<Sound>; haptics: GameHaptics; onRestart: () => void }) {
-  const game = useMemo(() => createGame(audio, haptics), [audio, haptics]);
+function Round({ onRestart }: { onRestart: () => void }) {
+  const game = useMemo(createGame, []);
   const light = useMemo<Light>(() => ({ direction: [0.3, 0.85, 0.55], ambient: 0.45, shadowExtent: 16 }), []);
   const [phase, setPhase] = useState<Phase>("ready");
   const [score, setScore] = useState(0);
@@ -444,11 +442,17 @@ function Round({ audio, haptics, onRestart }: { audio: GameAudio<Sound>; haptics
 
 export function Flappy() {
   const [round, setRound] = useState(0);
-  const audio = useMemo(() => createExpoAudio(SOUNDS, { voices: 4 }), []);
-  const haptics = useMemo(() => createExpoHaptics(), []);
-  useEffect(() => () => audio.dispose(), [audio]);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    sfx.ready.then(() => alive && setLoaded(true));
+    return () => {
+      alive = false;
+    };
+  }, []);
   const restart = useMemo(() => () => setRound((r) => r + 1), []);
-  return <Round key={round} audio={audio} haptics={haptics} onRestart={restart} />;
+  if (!loaded) return <View style={styles.root} />; // sounds decode in a few ms
+  return <Round key={round} onRestart={restart} />;
 }
 
 const shadow = { textShadowColor: "rgba(0,0,0,0.35)", textShadowOffset: { width: 0, height: 3 }, textShadowRadius: 0 };
