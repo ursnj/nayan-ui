@@ -13,7 +13,12 @@ import {
   engineTextureCode,
   engineTransparencyCode,
 } from "@/services/GameEngineCodeBlocks";
-import { fontOptionsAttributes } from "@/services/GameEngineData";
+import {
+  fontAttributes,
+  fontOptionsAttributes,
+  textOptionsAttributes,
+  textureAttributes,
+} from "@/services/GameEngineData";
 
 const EngineTextTextures = () => (
   <Sidebar title="Text & Textures">
@@ -27,6 +32,10 @@ const EngineTextTextures = () => (
     </SubHeader>
 
     <Attributes title="loadFont options" data={fontOptionsAttributes} />
+
+    <Attributes title="Text entity options" data={textOptionsAttributes} />
+
+    <Attributes title="Font" data={fontAttributes} headers={{ default: "" }} unit="field" />
 
     <SubHeader
       title="Text on a tile"
@@ -59,6 +68,8 @@ const EngineTextTextures = () => (
     >
       <Code code={engineTextureCode} filename="crates.ts" />
     </SubHeader>
+
+    <Attributes title="Texture" data={textureAttributes} headers={{ default: "" }} unit="field" />
 
     <SubHeader
       title="Atlases and cards"

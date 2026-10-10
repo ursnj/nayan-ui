@@ -13,7 +13,14 @@ import {
   engineMusicCode,
   engineSoundsCode,
 } from "@/services/GameEngineCodeBlocks";
-import { impactFeedbackAttributes, playOptionsAttributes } from "@/services/GameEngineData";
+import {
+  audioApiAttributes,
+  hapticTapAttributes,
+  hapticsApiAttributes,
+  impactFeedbackAttributes,
+  playOptionsAttributes,
+  soundBankAttributes,
+} from "@/services/GameEngineData";
 
 const EngineAudioHaptics = () => (
   <Sidebar title="Audio & Haptics">
@@ -23,11 +30,15 @@ const EngineAudioHaptics = () => (
       <Code code={engineSoundsCode} filename="sounds.ts" />
     </SubHeader>
 
+    <Attributes title="SoundBank" data={soundBankAttributes} headers={{ type: "Returns", default: "" }} unit="method" />
+
     <Attributes title="Play options" data={playOptionsAttributes} />
 
     <SubHeader title="Music and settings">
       <Code code={engineMusicCode} filename="Game.tsx" />
     </SubHeader>
+
+    <Attributes title="audio" data={audioApiAttributes} headers={{ type: "Returns / type" }} unit="member" />
 
     <SubHeader
       title="Impact feedback"
@@ -41,6 +52,10 @@ const EngineAudioHaptics = () => (
     <SubHeader title="Haptics">
       <Code code={engineHapticsCode} filename="haptics.ts" />
     </SubHeader>
+
+    <Attributes title="haptics" data={hapticsApiAttributes} headers={{ type: "Returns / type" }} unit="member" />
+
+    <Attributes title="Haptic tap" data={hapticTapAttributes} unit="field" />
 
     <SubHeader
       title="Scale by impact speed"

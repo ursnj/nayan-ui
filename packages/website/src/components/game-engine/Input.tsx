@@ -13,7 +13,13 @@ import {
   enginePickCode,
   engineToScreenCode,
 } from "@/services/GameEngineCodeBlocks";
-import { joystickAttributes } from "@/services/GameEngineData";
+import {
+  dragEventAttributes,
+  gestureAttributes,
+  joystickAttributes,
+  joystickStateAttributes,
+  pickHitAttributes,
+} from "@/services/GameEngineData";
 
 const EngineInput = () => (
   <Sidebar title="Input">
@@ -39,6 +45,10 @@ const EngineInput = () => (
       </ul>
     </SubHeader>
 
+    <Attributes title="Gestures" data={gestureAttributes} headers={{ name: "Prop", type: "Gesture", default: "Fires when" }} unit="gesture" />
+
+    <Attributes title="DragEvent" data={dragEventAttributes} headers={{ default: "" }} unit="field" />
+
     <SubHeader
       title="Tap 3D objects"
       description="world.pick finds the entity under a point of the GameView. Use it with the x and y from onTap."
@@ -49,6 +59,8 @@ const EngineInput = () => (
         without bodies. Set <code>pickable: false</code> on anything that should let taps through.
       </p>
     </SubHeader>
+
+    <Attributes title="PickHit" data={pickHitAttributes} headers={{ default: "" }} unit="field" />
 
     <SubHeader
       title="Labels over 3D objects"
@@ -65,6 +77,8 @@ const EngineInput = () => (
     </SubHeader>
 
     <Attributes title="Joystick props" data={joystickAttributes} />
+
+    <Attributes title="JoystickState" data={joystickStateAttributes} unit="field" />
 
     <SubHeader title="Buttons and taps">
       <Code code={engineButtonsCode} filename="Game.tsx" />
