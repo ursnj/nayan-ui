@@ -1,4 +1,4 @@
-"""Synthesizes Orb Rush's sound effects and music into assets/sfx/*.wav (stdlib only).
+"""Synthesizes the Flappy example's sound effects into assets/sfx/*.wav (stdlib only).
 
 Run from the example directory:  python3 scripts/make-sounds.py
 """
@@ -63,22 +63,8 @@ def midi(n):
     return 440.0 * 2 ** ((n - 69) / 12)
 
 
-def pickup():
-    buf = []
-    mix_into(buf, note(midi(88), 0.09, soft_square, decay=0.05), 0.0)   # E6
-    mix_into(buf, note(midi(95), 0.16, soft_square, decay=0.07), 0.06)  # B6
-    return buf
 
 
-def dash():
-    n = int(0.28 * RATE)
-    out, y = [], 0.0
-    for i in range(n):
-        t = i / RATE
-        cutoff = 0.35 * math.exp(-t / 0.12) + 0.02  # one-pole low-pass sweeping down
-        y += cutoff * (random.uniform(-1, 1) - y)
-        out.append(y * min(1, t / 0.01) * math.exp(-t / 0.1))
-    return out
 
 
 def bump():
@@ -93,11 +79,6 @@ def bump():
     return out
 
 
-def gameover():
-    buf = []
-    for k, m in enumerate([69, 65, 62, 57]):  # A4 F4 D4 A3, falling
-        mix_into(buf, note(midi(m), 0.32, triangle, decay=0.18), k * 0.17)
-    return buf
 
 
 def flap():
@@ -146,36 +127,11 @@ def die():
     return out
 
 
-def music():
-    bpm = 120
-    beat = 60 / bpm
-    bars = 4
-    buf = [0.0] * int(bars * 4 * beat * RATE)
-    chords = [(57, [69, 72, 76]), (53, [69, 72, 77]), (48, [67, 72, 76]), (55, [67, 71, 74])]  # Am F C G
-    for bar, (root, arp) in enumerate(chords):
-        t0 = bar * 4 * beat
-        for b in range(4):  # bass on every beat
-            mix_into(buf, note(midi(root - 12), beat * 0.9, triangle, decay=0.25, volume=0.55), t0 + b * beat)
-        for e in range(8):  # eighth-note arpeggio
-            m = arp[e % 3] + (12 if e in (3, 7) else 0)
-            mix_into(buf, note(midi(m), beat * 0.45, sine, decay=0.09, volume=0.22), t0 + e * beat / 2)
-        for e in range(8):  # soft hi-hat
-            hat = [random.uniform(-1, 1) * math.exp(-(i / RATE) / 0.012) for i in range(int(0.04 * RATE))]
-            mix_into(buf, [h * (0.07 if e % 2 else 0.04) for h in hat], t0 + e * beat / 2)
-    buf = buf[: int(bars * 4 * beat * RATE)]  # exact loop length
-    ramp = int(0.002 * RATE)  # 2 ms fade-in so the loop seam (last sample ~0) doesn't click
-    for i in range(ramp):
-        buf[i] *= i / ramp
-    return buf
 
 
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
-    write("pickup", pickup())
-    write("dash", dash(), peak=0.7)
     write("bump", bump())
-    write("gameover", gameover())
-    write("music", music(), peak=0.6)
     write("flap", flap(), peak=0.6)
     write("point", point())
     write("hit", hit())
