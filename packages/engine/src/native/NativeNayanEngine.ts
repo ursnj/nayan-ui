@@ -39,9 +39,20 @@ export interface Spec extends TurboModule {
     maxDistance: number,
     mask: number,
   ): number;
-  /** Write position / velocity to the scratch buffer (`getScratch`). Return false if not alive. */
-  readPosition(world: number, entity: number): boolean;
+  /** Nearest pickable entity along a ray (as last drawn), or -1; on a hit the scratch buffer holds distance, point. */
+  pick(world: number, ox: number, oy: number, oz: number, dx: number, dy: number, dz: number): number;
+  /**
+   * Write position / velocity to the scratch buffer (`getScratch`). Return false if not alive.
+   * `rendered`: where it was last drawn, in world space (otherwise simulated, relative to its parent).
+   */
+  readPosition(world: number, entity: number, rendered: boolean): boolean;
   readVelocity(world: number, entity: number): boolean;
+
+  /** Replaces the entity's animation (Float64Array buffer, layout in engine_core.h). False if it didn't start. */
+  animate(world: number, entity: number, animation: Object): boolean;
+  stopAnimation(world: number, entity: number): boolean;
+  /** Spawns a particle burst (Float64Array buffer). Returns how many particles were spawned. */
+  burst(world: number, burst: Object): number;
 
   update(world: number, dt: number): void;
   count(world: number): number;
@@ -50,25 +61,44 @@ export interface Spec extends TurboModule {
   getMatrices(world: number): Object;
   /** capacity * 4 floats (rgba), same order as the matrices. */
   getColors(world: number): Object;
-  /** 128 u32: [first, count] per mesh id (64 meshes: 0..2 built-in, 3.. models). */
+  /** capacity * 4 floats: texture region (u0 v0 u1 v1), same order as the matrices. */
+  getRegions(world: number): Object;
+  /** 1024 u32: [first, count] per mesh id (256) for opaque instances, then for transparent ones. */
   getRanges(world: number): Object;
+  /** Entities whose animation ended during the last update (room for `capacity`). */
+  getDone(world: number): Object;
+  doneLength(world: number): number;
   /** Collision events from the last update, 4 u32 each: [a, b, flags, speed as f32 bits]. */
   getEvents(world: number): Object;
   eventLength(world: number): number;
   /** 16 floats. */
   getScratch(world: number): Object;
 
-  // Models (global)
-  /** Parses a glTF/GLB ArrayBuffer. Returns its mesh id, or -1 (see `modelError`). */
+  // Meshes, models, textures, fonts (global)
+  /** Parses a glTF/GLB ArrayBuffer. Returns its mesh id, or -1 (see `loadError`). */
   modelLoad(data: Object, center: boolean, fit: number): number;
-  /** 9 floats per vertex (position, normal, color); aliases native memory. */
+  /** 11 floats per vertex (position, normal, color, uv); aliases native memory. */
   modelVertices(mesh: number): Object;
   /** u32 triangle indices; aliases native memory. */
   modelIndices(mesh: number): Object;
   /** Full bounding-box size [x, y, z]. */
   modelSize(mesh: number): Array<number>;
-  /** Why the last modelLoad failed ("" after a success). */
-  modelError(): string;
+  /** The model's base color texture id, or -1. */
+  modelTexture(mesh: number): number;
+  /** A new mesh id with `base`'s geometry (to give it another texture), or -1. */
+  meshAlias(base: number): number;
+  /** Decodes a PNG/JPEG ArrayBuffer. Returns the texture id, or -1. */
+  textureLoad(data: Object): number;
+  /** RGBA8 pixels, top row first; aliases native memory. */
+  texturePixels(texture: number): Object;
+  /** [width, height]. */
+  textureSize(texture: number): Array<number>;
+  /** Builds extruded glyph meshes for `chars`. Returns the font id, or -1. */
+  fontLoad(data: Object, depth: number, chars: string): number;
+  /** [codepoint, mesh (-1 = nothing drawn), advance, ...] followed by the cap height. */
+  fontGlyphs(font: number): Array<number>;
+  /** Why the last model / texture / font / alias load failed ("" after a success). */
+  loadError(): string;
 
   // Audio (global)
   /** Decodes a WAV ArrayBuffer. Returns a sound id, or -1. */

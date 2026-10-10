@@ -18,6 +18,12 @@ pub enum BodyKind {
 pub enum Shape {
     Ball { radius: f32 },
     Cuboid { half_extents: Vec3 },
+    /// Along Y.
+    Cylinder { half_height: f32, radius: f32 },
+    /// Along Y; `half_height` is half the straight middle part (not counting the round caps).
+    Capsule { half_height: f32, radius: f32 },
+    /// Along Y, tip up.
+    Cone { half_height: f32, radius: f32 },
 }
 
 /// Rigid body + collider for an entity. Validated by `World::set_physics`.
@@ -40,6 +46,8 @@ pub struct PhysicsDesc {
     pub lock_rotations: bool,
     /// Continuous collision detection, for fast small bodies that could tunnel through walls.
     pub ccd: bool,
+    /// Stays in its XY plane (2D games): moves in X/Y and only spins around Z.
+    pub planar: bool,
 }
 
 impl PhysicsDesc {
@@ -58,6 +66,7 @@ impl PhysicsDesc {
             gravity_scale: 1.0,
             lock_rotations: false,
             ccd: false,
+            planar: false,
         }
     }
 
@@ -68,6 +77,8 @@ impl PhysicsDesc {
         let shape_ok = match self.shape {
             Shape::Ball { radius } => positive(radius),
             Shape::Cuboid { half_extents: h } => positive(h.x) && positive(h.y) && positive(h.z),
+            Shape::Cylinder { half_height, radius } | Shape::Cone { half_height, radius } => positive(half_height) && positive(radius),
+            Shape::Capsule { half_height, radius } => non_negative(half_height) && positive(radius),
         };
         shape_ok
             && non_negative(self.friction)
@@ -77,6 +88,21 @@ impl PhysicsDesc {
             && non_negative(self.angular_damping)
             && self.gravity_scale.is_finite()
     }
+}
+
+/// Sets a body's velocity without moving it along locked axes (Rapier only enforces locks in the
+/// solver, not on velocities set directly).
+pub(super) fn set_linvel(b: &mut RigidBody, mut v: Vec3) {
+    let locked = b.locked_axes();
+    for (axis, lock) in [LockedAxes::TRANSLATION_LOCKED_X, LockedAxes::TRANSLATION_LOCKED_Y, LockedAxes::TRANSLATION_LOCKED_Z]
+        .into_iter()
+        .enumerate()
+    {
+        if locked.contains(lock) {
+            v[axis] = 0.0;
+        }
+    }
+    b.set_linvel(v, true);
 }
 
 /// Collects Rapier collision events during a step.
@@ -117,7 +143,14 @@ impl World {
         let Some(d) = desc else { return true };
 
         let builder = match d.kind {
-            BodyKind::Dynamic => RigidBodyBuilder::dynamic().linvel(self.velocity[i]).angvel(self.angular_velocity[i]),
+            BodyKind::Dynamic => {
+                let (mut v, mut w) = (self.velocity[i], self.angular_velocity[i]);
+                if d.planar {
+                    v.z = 0.0;
+                    w = Vec3::new(0.0, 0.0, w.z);
+                }
+                RigidBodyBuilder::dynamic().linvel(v).angvel(w)
+            }
             BodyKind::Kinematic => RigidBodyBuilder::kinematic_position_based(),
             BodyKind::Fixed => RigidBodyBuilder::fixed(),
         };
@@ -132,10 +165,19 @@ impl World {
         if d.lock_rotations {
             builder = builder.lock_rotations();
         }
+        if d.planar {
+            builder = builder.enabled_translations(true, true, false);
+            if !d.lock_rotations {
+                builder = builder.enabled_rotations(false, false, true);
+            }
+        }
 
         let collider = match d.shape {
             Shape::Ball { radius } => ColliderBuilder::ball(radius),
             Shape::Cuboid { half_extents: h } => ColliderBuilder::cuboid(h.x, h.y, h.z),
+            Shape::Cylinder { half_height, radius } => ColliderBuilder::cylinder(half_height, radius),
+            Shape::Capsule { half_height, radius } => ColliderBuilder::capsule_y(half_height, radius),
+            Shape::Cone { half_height, radius } => ColliderBuilder::cone(half_height, radius),
         }
         .sensor(d.sensor)
         .friction(d.friction)

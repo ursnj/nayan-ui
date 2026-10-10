@@ -5,11 +5,11 @@
 //! fields are present; the rest live at fixed offsets (see `slot`). Doubles keep entity ids and
 //! layer bits exact.
 
-use super::{BodyKind, Entity, ImpactFeedback, NO_ENTITY, PhysicsDesc, Shape, World};
+use super::{BodyKind, Entity, ImpactFeedback, NO_ENTITY, PhysicsDesc, Shape, World, shapes};
 use rapier3d::glamx::{Quat, Vec3};
 
 /// Length of an encoded description, in f64 values.
-pub const DESC_LEN: usize = 55;
+pub const DESC_LEN: usize = 64;
 
 /// Which fields an encoded description carries (slot 0).
 pub mod flag {
@@ -27,6 +27,9 @@ pub mod flag {
     pub const PARENT: u64 = 1 << 11;
     pub const PHYSICS: u64 = 1 << 12;
     pub const IMPACT: u64 = 1 << 13;
+    pub const ACCELERATION: u64 = 1 << 14;
+    pub const PICKABLE: u64 = 1 << 15;
+    pub const REGION: u64 = 1 << 16;
 }
 
 /// Offsets of each field in an encoded description.
@@ -44,26 +47,35 @@ pub mod slot {
     pub const FOLLOW: usize = 29; // target (-1 = stop), speed
     pub const LIFETIME: usize = 31; // seconds (<= 0 clears)
     pub const PARENT: usize = 32; // entity (-1 = detach)
-    /// kind (0 remove, 1 dynamic, 2 kinematic, 3 fixed), shape (0 ball, 1 box, 2 from mesh),
-    /// size x y z (radius in x for a ball, half extents for a box; <= 0 = from the entity's scale),
-    /// layer, mask, sensor, friction, bounce, density, drag, angular drag, gravity scale, upright, ccd.
+    /// kind (0 remove, 1 dynamic, 2 kinematic, 3 fixed), shape (0 ball, 1 box, 2 from mesh,
+    /// 3 cylinder, 4 capsule, 5 cone), size x y z (ball: radius in x; box: half extents; cylinder,
+    /// capsule, cone: radius in x, half the total height in y; <= 0 = from the entity's scale),
+    /// layer, mask, sensor, friction, bounce, density, drag, angular drag, gravity scale, upright,
+    /// ccd, planar.
     pub const PHYSICS: usize = 33;
     /// enabled, sound (-1 = none), min speed, max speed, volume, haptic.
-    pub const IMPACT: usize = 49;
+    pub const IMPACT: usize = 50;
+    /// x y z, units / second² (entities without a dynamic body).
+    pub const ACCELERATION: usize = 56;
+    /// 0 or 1.
+    pub const PICKABLE: usize = 59;
+    /// Texture region u0 v0 u1 v1.
+    pub const REGION: usize = 60;
 }
 
-/// The renderer's mesh ids (see `Mesh` in the TypeScript API): used to size default colliders.
-const MESH_SPHERE: u8 = 1;
-const MESH_PLANE: u8 = 2;
-
-/// A collider shape request. `None` sizes come from the entity's scale when the body is created.
+/// A collider shape request. `None` sizes come from the entity's mesh and scale when the body is created.
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub enum ShapeSpec {
-    /// Spheres get a ball; everything else a box (planes a thin slab).
+    /// Matches the mesh: spheres get a ball, cylinders (and tori) a cylinder, capsules a capsule,
+    /// cones a cone; everything else a box (planes a thin slab).
     #[default]
     FromMesh,
     Ball(Option<f32>),
     Box(Option<Vec3>),
+    /// Radius and half the total height.
+    Cylinder(Option<f32>, Option<f32>),
+    Capsule(Option<f32>, Option<f32>),
+    Cone(Option<f32>, Option<f32>),
 }
 
 /// A rigid body request: the body settings plus a shape that may be sized from the entity.
@@ -93,6 +105,10 @@ pub struct EntityDesc {
     pub parent: Option<Option<Entity>>,
     pub physics: Option<Option<PhysicsRequest>>,
     pub impact: Option<Option<ImpactFeedback>>,
+    pub acceleration: Option<Vec3>,
+    pub pickable: Option<bool>,
+    /// Texture region u0 v0 u1 v1.
+    pub region: Option<[f32; 4]>,
 }
 
 fn id(v: f64) -> Option<Entity> {
@@ -168,10 +184,14 @@ impl EntityDesc {
                 kind @ 1..=3 => {
                     let kind = [BodyKind::Dynamic, BodyKind::Kinematic, BodyKind::Fixed][kind as usize - 1];
                     let size = v3(p + 2);
+                    let given = |v: f32| (v > 0.0).then_some(v);
                     let shape = match d[p + 1] as i64 {
-                        0 => ShapeSpec::Ball((size.x > 0.0).then_some(size.x)),
+                        0 => ShapeSpec::Ball(given(size.x)),
                         1 => ShapeSpec::Box((size.min_element() > 0.0).then_some(size)),
                         2 => ShapeSpec::FromMesh,
+                        3 => ShapeSpec::Cylinder(given(size.x), given(size.y)),
+                        4 => ShapeSpec::Capsule(given(size.x), given(size.y)),
+                        5 => ShapeSpec::Cone(given(size.x), given(size.y)),
                         _ => return None,
                     };
                     let desc = PhysicsDesc {
@@ -188,6 +208,7 @@ impl EntityDesc {
                         gravity_scale: f(p + 13),
                         lock_rotations: d[p + 14] != 0.0,
                         ccd: d[p + 15] != 0.0,
+                        planar: d[p + 16] != 0.0,
                     };
                     Some(PhysicsRequest { desc, shape })
                 }
@@ -203,6 +224,16 @@ impl EntityDesc {
                 volume: f(i + 4),
                 haptic: f(i + 5),
             }));
+        }
+        if has(flag::ACCELERATION) {
+            out.acceleration = Some(v3(slot::ACCELERATION));
+        }
+        if has(flag::PICKABLE) {
+            out.pickable = Some(d[slot::PICKABLE] != 0.0);
+        }
+        if has(flag::REGION) {
+            let r = slot::REGION;
+            out.region = Some([f(r), f(r + 1), f(r + 2), f(r + 3)]);
         }
         Some(out)
     }
@@ -291,6 +322,15 @@ impl World {
         if let Some(impact) = d.impact {
             self.set_impact_feedback(e, impact);
         }
+        if let Some(a) = d.acceleration {
+            self.set_acceleration(e, a);
+        }
+        if let Some(pickable) = d.pickable {
+            self.set_pickable(e, pickable);
+        }
+        if let Some(region) = d.region {
+            self.set_region(e, region);
+        }
         ok
     }
 }
@@ -299,26 +339,46 @@ impl World {
     /// Turns a shape request into a concrete shape, sizing it from the entity's mesh and scale.
     fn resolve_shape(&self, e: Entity, spec: ShapeSpec) -> Shape {
         let Some(i) = self.dense(e) else { return Shape::Ball { radius: 0.5 } };
-        let (scale, mesh) = (self.scale[i].abs(), self.mesh[i]);
-        // Built-in shapes are 1 unit across; models know their own bounding box.
-        let mut half = match crate::model::get(mesh) {
-            Some(model) => model.half_extents.max(Vec3::splat(0.01)) * scale,
-            None => scale / 2.0,
-        };
-        if mesh == MESH_PLANE {
+        let mesh = crate::model::resolve(self.mesh[i]);
+        let mut half = shapes::half_extents(mesh).max(Vec3::splat(0.005)) * self.scale[i].abs();
+        if mesh == shapes::PLANE {
             half.y = 0.05; // a plane gets a thin slab
         }
+        let round = half.x.max(half.z);
         let ball = |r: Option<f32>| Shape::Ball {
             radius: r.unwrap_or(half.max_element()),
         };
         let cuboid = |h: Option<Vec3>| Shape::Cuboid {
             half_extents: h.unwrap_or(half),
         };
+        let cylinder = |r: Option<f32>, h: Option<f32>| Shape::Cylinder {
+            radius: r.unwrap_or(round),
+            half_height: h.unwrap_or(half.y),
+        };
+        let cone = |r: Option<f32>, h: Option<f32>| Shape::Cone {
+            radius: r.unwrap_or(round),
+            half_height: h.unwrap_or(half.y),
+        };
+        let capsule = |r: Option<f32>, h: Option<f32>| {
+            let radius = r.unwrap_or(round);
+            Shape::Capsule {
+                radius,
+                half_height: (h.unwrap_or(half.y) - radius).max(0.0),
+            }
+        };
         match spec {
-            ShapeSpec::FromMesh if mesh == MESH_SPHERE => ball(None),
-            ShapeSpec::FromMesh => cuboid(None),
+            ShapeSpec::FromMesh => match mesh {
+                shapes::SPHERE => ball(None),
+                shapes::CYLINDER | shapes::TORUS => cylinder(None, None),
+                shapes::CONE => cone(None, None),
+                shapes::CAPSULE => capsule(None, None),
+                _ => cuboid(None),
+            },
             ShapeSpec::Ball(r) => ball(r),
             ShapeSpec::Box(h) => cuboid(h),
+            ShapeSpec::Cylinder(r, h) => cylinder(r, h),
+            ShapeSpec::Capsule(r, h) => capsule(r, h),
+            ShapeSpec::Cone(r, h) => cone(r, h),
         }
     }
 }
@@ -501,7 +561,7 @@ mod tests {
         assert_eq!(
             w.resolve_shape(e, ShapeSpec::FromMesh),
             Shape::Cuboid {
-                half_extents: Vec3::new(1.0, 1.0, 0.005)
+                half_extents: Vec3::new(1.0, 1.0, 0.0025)
             },
             "bounding box x entity scale (flat axis kept thin, not zero)"
         );
@@ -532,16 +592,6 @@ mod tests {
             }
         ));
         assert_eq!(w.physics.bodies.len(), 0);
-        assert!(
-            !w.apply(
-                e,
-                &EntityDesc {
-                    mesh: Some(200),
-                    ..Default::default()
-                }
-            ),
-            "invalid mesh"
-        );
         w.despawn(e);
         assert!(!w.apply(e, &EntityDesc::default()), "stale handle");
     }

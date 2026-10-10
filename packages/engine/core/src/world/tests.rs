@@ -54,9 +54,8 @@ fn spawn_writes_transform_and_color() {
 }
 
 #[test]
-fn spawn_rejects_full_world_bad_mesh_and_non_finite_input() {
+fn spawn_rejects_full_world_and_non_finite_input() {
     let mut w = World::new(2);
-    assert!(w.spawn(MAX_MESHES as u8, Vec3::ZERO, Vec3::ONE, WHITE).is_none());
     assert!(w.spawn(0, Vec3::new(f32::NAN, 0.0, 0.0), Vec3::ONE, WHITE).is_none());
     assert!(w.spawn(0, Vec3::ZERO, Vec3::splat(f32::INFINITY), WHITE).is_none());
     assert!(w.spawn(0, Vec3::ZERO, Vec3::ONE, WHITE).is_some());
@@ -252,10 +251,72 @@ fn invalid_attachments_are_rejected() {
     assert!(!w.set_parent(a, Some(a)), "self");
     assert!(!w.set_parent(body, Some(a)), "bodies can't be attached");
     assert!(w.set_parent(b, Some(a)));
-    assert!(!w.set_parent(c, Some(b)), "parent is itself attached");
-    assert!(!w.set_parent(a, Some(c)), "entity with children can't be attached");
+    assert!(w.set_parent(c, Some(b)), "attachments nest");
+    assert!(!w.set_parent(a, Some(c)), "cycle");
     assert!(!w.set_physics(b, Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 }))));
     assert!(w.set_parent(b, None));
+}
+
+#[test]
+fn nested_attachments_compose_transforms_and_despawn_together() {
+    let mut w = World::new(4);
+    let root = spawn(&mut w, 0, Vec3::new(10.0, 0.0, 0.0));
+    w.set_scale(root, Vec3::splat(2.0));
+    w.set_rotation(root, Quat::from_rotation_y(std::f32::consts::FRAC_PI_2));
+    let arm = spawn(&mut w, 0, Vec3::new(1.0, 0.0, 0.0));
+    let hand = spawn(&mut w, 0, Vec3::new(1.0, 0.0, 0.0));
+    assert!(w.set_parent(arm, Some(root)));
+    assert!(w.set_parent(hand, Some(arm)));
+    w.update(0.0);
+    assert!(w.read_position(hand, true));
+    let p = Vec3::from_slice(&w.scratch()[..3]);
+    // Local +X 2 units (1 + 1), scaled by 2 and turned to -Z: (10, 0, -4).
+    assert!((p - Vec3::new(10.0, 0.0, -4.0)).length() < 1e-4, "{p:?}");
+    w.despawn(root);
+    assert_eq!(w.len(), 0);
+}
+
+#[test]
+fn pick_finds_the_nearest_visible_entity() {
+    let mut w = World::new(4);
+    let near = spawn(&mut w, 0, Vec3::new(0.0, 0.0, 2.0));
+    let _far = spawn(&mut w, 0, Vec3::ZERO);
+    let hidden = spawn(&mut w, shapes::NONE, Vec3::new(0.0, 0.0, 4.0));
+    w.update(0.0);
+    let ray = (Vec3::new(0.0, 0.0, 10.0), Vec3::NEG_Z);
+    assert_eq!(w.pick(ray.0, ray.1), Some(near), "invisible entities are skipped");
+    assert!((w.scratch()[0] - 7.5).abs() < 1e-4, "hits the front face");
+    w.set_pickable(near, false);
+    assert_ne!(w.pick(ray.0, ray.1), Some(near));
+    assert_ne!(w.pick(ray.0, ray.1), Some(hidden));
+    assert_eq!(w.pick(Vec3::new(5.0, 0.0, 10.0), Vec3::NEG_Z), None, "miss");
+}
+
+#[test]
+fn transparent_instances_are_drawn_after_opaque_ones() {
+    let mut w = World::new(4);
+    w.spawn(0, Vec3::ZERO, Vec3::ONE, [1.0, 0.0, 0.0, 0.5]).unwrap();
+    w.spawn(0, Vec3::ZERO, Vec3::ONE, WHITE).unwrap();
+    w.update(0.0);
+    let r = w.ranges();
+    assert_eq!(r[0..2], [0, 1], "opaque cube first");
+    assert_eq!(r[MAX_MESHES * 2..MAX_MESHES * 2 + 2], [1, 1], "then the transparent one");
+    assert_eq!(w.colors()[7], 0.5);
+}
+
+#[test]
+fn planar_bodies_stay_in_their_plane() {
+    let mut w = World::new(4);
+    let ball = spawn(&mut w, 1, Vec3::new(0.0, 5.0, 0.0));
+    let mut d = PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 });
+    d.planar = true;
+    w.set_physics(ball, Some(d));
+    w.set_velocity(ball, Vec3::new(1.0, 0.0, 3.0));
+    for _ in 0..30 {
+        w.update(FIXED_DT);
+    }
+    let p = w.position(ball).unwrap();
+    assert!(p.z.abs() < 1e-5 && p.x > 0.1 && p.y < 5.0, "{p:?}");
 }
 
 #[test]
