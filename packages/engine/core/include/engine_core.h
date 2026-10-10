@@ -111,7 +111,14 @@ void engine_audio_set_volume(float volume);
 void engine_audio_set_muted(int32_t muted);
 int32_t engine_audio_is_running(void);
 
-// ── Haptics (global; Core Haptics on iOS, no-op elsewhere for now) ───────
+// ── Android ──────────────────────────────────────────────────────────────
+#ifdef __ANDROID__
+// Call once at startup with the JavaVM and a JNI *global* reference to a Context (the Application):
+// audio and haptics need them. Repeat calls are ignored.
+void engine_android_init(void *java_vm, void *context);
+#endif
+
+// ── Haptics (global; Core Haptics on iOS, the Vibrator service on Android) ──
 int32_t engine_haptics_supported(void);
 // `count` taps as [time, intensity 0..1, sharpness 0..1] triples.
 void engine_haptics_play(const float *taps, uint32_t count, int32_t throttle);

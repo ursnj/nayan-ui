@@ -82,9 +82,11 @@ core/                     Rust core (static library)
   src/haptics.rs          Core Haptics
   src/ffi/                C ABI (world, media); header in include/engine_core.h
   scripts/build-ios.sh    builds build/EngineCore.xcframework
+  scripts/build-android.sh builds build/android/<abi>/libengine_core.a
   examples/bench.rs       benchmarks
-cpp/                      JSI TurboModule (C++, shared by iOS and Android)
+cpp/                      JSI TurboModule (C++, shared by iOS and Android); cpp/generated = codegen header
 ios/                      iOS module provider
+android/CMakeLists.txt    Android build (a pure C++ module, autolinked via react-native.config.js)
 example/                  Expo app
   games/flappy/           Flappy (physics, attachments, feedback, fog)
   games/orb-rush/         Orb Rush (joystick, dash, crates, sparks, music)
@@ -112,9 +114,15 @@ bun run core:bench          # ms per update() at 10k / 100k entities
 
 Native changes need extra steps (JS changes just reload):
 
-- Changed `core/` (Rust): `bun run core:build:ios`, then rebuild the app.
-- Changed `src/native/*` (the native module's TS spec): run `pod install` in `example/ios` **before** rebuilding.
-  Codegen regenerates the C++ spec header only then; otherwise new methods compile but are `undefined` in JS.
+- Changed `core/` (Rust): `bun run core:build:ios` and/or `bun run core:build:android`, then rebuild the app.
+- Changed `src/native/*` (the native module's TS spec): run `bun run codegen` (Android's shipped header) and
+  `pod install` in `example/ios` **before** rebuilding. Otherwise new methods compile but are `undefined` in JS.
+
+Android apps must declare the vibrate permission for haptics (the engine has no manifest of its own). In Expo:
+
+```json
+{ "expo": { "android": { "permissions": ["android.permission.VIBRATE"] } } }
+```
 - Don't start Metro with `CI=1` while developing: it disables file watching and serves stale JS.
 - `EXPO_PUBLIC_AUTOPLAY=1` (set when starting Metro) makes a bot play the games: handy for demos and QA.
 
@@ -129,13 +137,12 @@ Native changes need extra steps (JS changes just reload):
 
 ## Status
 
-Engine v0.3 (iOS only so far):
+Engine v0.3 (iOS and Android):
 
 - [x] Rust world with generation-checked handles; Rapier rigid bodies, colliders, events, raycasts
 - [x] Fixed-step simulation with interpolation; lifetimes; chase; bounds
 - [x] Renderer with shadows; `GameView`; `Joystick`
 - [x] Audio mixer and haptics in Rust; impact feedback from physics; attachments; sky color and fog
-- [ ] Android audio/haptics backends (cpal AAudio is ready; haptics needs a JNI Vibrator call)
-- [ ] Android native module
+- [x] Android: native module (pure C++ autolinking), AAudio sound, Vibrator haptics
 - [ ] glTF / custom meshes, textures, transparency
 - [ ] CI that builds the binaries and publishes

@@ -26,3 +26,7 @@ objc2 = "0.6.5"
 objc2-avf-audio = "0.3.2"
 objc2-core-haptics = "0.3.2"
 objc2-foundation = "0.3.2"
+
+[target.'cfg(target_os = "android")'.dependencies]
+jni = "0.22"
+ndk-context = "0.1"

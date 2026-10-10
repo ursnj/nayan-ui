@@ -193,6 +193,8 @@ version = "0.1.0"
 dependencies = [
  "cpal",
  "hound",
+ "jni",
+ "ndk-context",
  "objc2",
  "objc2-avf-audio",
  "objc2-core-haptics",
