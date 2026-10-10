@@ -10,4 +10,5 @@
 #[cfg(target_os = "android")]
 pub mod android;
 pub mod media;
+pub mod model;
 pub mod world;

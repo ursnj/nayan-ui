@@ -23,7 +23,7 @@ use rapier3d::glamx::{Quat, Vec3};
 use rapier3d::prelude::{PhysicsWorld, RigidBodyHandle};
 
 /// Mesh ids are small integers chosen by the renderer; the core only buckets by them.
-pub const MAX_MESHES: usize = 8;
+pub const MAX_MESHES: usize = 64;
 /// Collision events kept per `update`. Extra events are dropped.
 pub const MAX_EVENTS: usize = 4096;
 /// u32 values per event in `events()`: `[entity_a, entity_b, flags, impact_speed (f32 bits)]`.

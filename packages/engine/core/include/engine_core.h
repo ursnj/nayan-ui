@@ -10,7 +10,7 @@ extern "C" {
 typedef struct World World;
 
 #define ENGINE_NO_ENTITY UINT32_MAX
-#define ENGINE_MAX_MESHES 8
+#define ENGINE_MAX_MESHES 64       // 0..2 built-in shapes, 3.. loaded models
 #define ENGINE_MAX_EVENTS 4096
 #define ENGINE_EVENT_STRIDE 4      // u32s per event: entity_a, entity_b, flags, impact speed (f32 bits)
 #define ENGINE_EVENT_STARTED 1u    // flag: started touching (otherwise stopped)
@@ -101,6 +101,15 @@ const uint32_t *engine_world_events(World *w);
 uint32_t engine_world_event_len(World *w);
 
 const float *engine_world_scratch(World *w); // 16 floats
+
+// ── Models (global) ──────────────────────────────────────────────────────
+// glTF 2.0 (.glb, or .gltf with embedded data), merged into one mesh. Returns the mesh id, or -1.
+int32_t engine_model_load(const uint8_t *data, size_t len, int32_t center, float fit);
+const float *engine_model_vertices(uint32_t mesh);  // vertex_count * 9 floats: position, normal, color
+uint32_t engine_model_vertex_count(uint32_t mesh);
+const uint32_t *engine_model_indices(uint32_t mesh);
+uint32_t engine_model_index_count(uint32_t mesh);
+int32_t engine_model_size(uint32_t mesh, float *out_xyz); // full bounding-box size; 1 if known
 
 // ── Audio (global) ───────────────────────────────────────────────────────
 // The output stream starts on first use. WAV (PCM int or float, mono/stereo).

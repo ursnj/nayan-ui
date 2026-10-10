@@ -10,7 +10,9 @@ name = "engine_core"
 crate-type = ["staticlib", "rlib"]
 
 [dependencies]
+base64 = "0.23.1"
 cpal = "0.18.2"
+gltf = { version = "1.4.1", default-features = false, features = ["utils"] }
 hound = "3.5.1"
 rapier3d = "0.36.1"
 rtrb = "0.4.0"
