@@ -22,8 +22,8 @@ mod tests;
 
 pub use animation::{ANIM_LEN, Animation, Easing};
 pub use desc::{DESC_LEN, EntityDesc, PhysicsRequest, ShapeSpec, flag as desc_flag, slot as desc_slot};
-pub use particles::{BURST_LEN, Burst};
 pub use feedback::ImpactFeedback;
+pub use particles::{BURST_LEN, Burst};
 pub use physics::{BodyKind, PhysicsDesc, Shape};
 
 use physics::EventSink;

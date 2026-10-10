@@ -36,8 +36,12 @@ const EngineModels = () => (
           • glTF 2.0: binary <code>.glb</code> files, or <code>.gltf</code> with the data embedded.
         </li>
         <li>• Meshes, their node positions, rotations and scales, and material and vertex colors.</li>
-        <li>• Textures, skinned animation and Draco-compressed files aren&apos;t supported yet.</li>
-        <li>• Up to 61 different models per app. Spawn each one as many times as you like.</li>
+        <li>• The base color texture, one per model.</li>
+        <li>• Skinned animation and Draco-compressed files aren&apos;t supported yet.</li>
+        <li>
+          • Models, font letters and textured shapes share 240 mesh ids. Spawn each model as many times as you
+          like.
+        </li>
       </ul>
     </SubHeader>
 
@@ -45,7 +49,8 @@ const EngineModels = () => (
       <ul className={`space-y-2 ${BODY}`}>
         <li>• All copies of a model are drawn together: a forest of 500 trees is still a single draw call.</li>
         <li>
-          • The entity&apos;s <code>color</code> tints the model. Leave it white to keep the original colors.
+          • The entity&apos;s <code>color</code> tints the model. Leave it white to keep the original colors and
+          texture.
         </li>
         <li>• Physics colliders fit the model&apos;s bounding box. Pass a radius or size for a tighter fit.</li>
         <li>• Keep models low-poly for phones: a few thousand triangles each is plenty.</li>

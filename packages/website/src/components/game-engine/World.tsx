@@ -7,8 +7,10 @@ import Code from "@/components/helpers/Code";
 import Sidebar from "@/components/helpers/Sidebar";
 import SubHeader from "@/components/helpers/SubHeader";
 import {
+  engineAccelerationCode,
   engineAttachCode,
   engineDisposeCode,
+  engineGroupsCode,
   engineLifetimeCode,
   engineQueryCode,
   engineSpawnCode,
@@ -18,7 +20,7 @@ import { entityOptionsAttributes } from "@/services/GameEngineData";
 
 const EngineWorld = () => (
   <Sidebar title="World & Entities">
-    <DocsIntro lead="A World holds every object in your game. Each object is an entity: a shape with a position, a color and, optionally, physics. spawn creates one and set changes it; both take the same options, and each is a single fast call into the engine." />
+    <DocsIntro lead="A World holds every object in your game. Each object is an entity: a shape, model or piece of text with a position, a color and, optionally, physics. spawn creates one and set changes it; both take the same options, and each is a single fast call into the engine." />
 
     <SubHeader
       title="Create and spawn"
@@ -49,8 +51,33 @@ const EngineWorld = () => (
     >
       <Code code={engineAttachCode} filename="bird.ts" />
       <p className={`mt-4 ${BODY}`}>
-        Attachments are one level deep, and attached parts are visual only: put physics on the parent.
+        Attached parts are visual only: put physics on the parent.
       </p>
+    </SubHeader>
+
+    <SubHeader
+      title="Groups"
+      description='Attachments nest to any depth. Use mesh: "none" for an invisible group or pivot.'
+    >
+      <Code code={engineGroupsCode} filename="windmill.ts" />
+      <ul className={`mt-4 space-y-2 ${BODY}`}>
+        <li>
+          • Children move, turn and scale with their parent. A child&apos;s position, rotation and scale are in
+          its parent&apos;s space.
+        </li>
+        <li>
+          • Because children inherit scale, a rotated child under a parent with uneven scale gets stretched. Keep
+          the parent&apos;s scale even, or use a <code>&quot;none&quot;</code> group as the parent.
+        </li>
+        <li>• Despawning a group despawns everything inside it.</li>
+      </ul>
+    </SubHeader>
+
+    <SubHeader
+      title="Acceleration and picking"
+      description="acceleration bends motion over time for entities without a dynamic body. pickable decides whether taps can hit an entity."
+    >
+      <Code code={engineAccelerationCode} filename="effects.ts" />
     </SubHeader>
 
     <SubHeader title="Read state">

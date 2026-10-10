@@ -1,25 +1,36 @@
 // Public API of @nayan-ui/engine.
 
-// World: entities, physics, collisions, impact feedback.
+// World: entities, physics, collisions, animation, particles, picking.
 export { World, isEngineAvailable } from "./world/World";
 export type {
+  AnimateOptions,
+  AnimateTarget,
   BodyType,
   Bounds,
+  BurstOptions,
   CollisionInfo,
   Color,
+  Easing,
   Entity,
   EntityOptions,
   ImpactFeedback,
   PhysicsOptions,
+  PickHit,
   Quat,
   RaycastHit,
 } from "./world/World";
 
-// Rendering and 3D models.
+// Rendering and touch.
 export { GameView } from "./render/GameView";
-export type { GameStats } from "./render/GameView";
-export { loadModel } from "./model/Model";
-export type { Model, ModelOptions } from "./model/Model";
+export type { DragEvent, GameStats, SwipeDirection } from "./render/GameView";
+
+// Models, textures and fonts.
+export { loadModel } from "./assets/model";
+export type { Model, ModelOptions } from "./assets/model";
+export { loadTexture } from "./assets/texture";
+export type { Texture } from "./assets/texture";
+export { loadFont } from "./assets/font";
+export type { Font, FontOptions, TextAlign } from "./assets/font";
 
 // Sound and haptics.
 export { audio } from "./media/audio";

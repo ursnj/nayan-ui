@@ -10,7 +10,7 @@ export const DEFAULT_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmn
 export type FontOptions = {
   /** How deep letters are extruded, as a fraction of the font size. 0 = flat. Default 0.2. */
   depth?: number;
-  /** Characters to build. Fewer = faster load and fewer meshes (each one uses a mesh id). Default: DEFAULT_CHARS. */
+  /** Characters to build (space is always included). Fewer = faster load and fewer meshes (each uses a mesh id). Default: DEFAULT_CHARS. */
   chars?: string;
 };
 
@@ -40,7 +40,7 @@ export function loadFont(source: AssetSource, options: FontOptions = {}): Promis
   const native = NativeEngine;
   if (!native) return Promise.reject(new Error("loadFont: the native core is not linked into this build"));
   const depth = options.depth ?? 0.2;
-  const chars = options.chars ?? DEFAULT_CHARS;
+  const chars = `${options.chars ?? DEFAULT_CHARS} `; // the space is always there (it has no mesh)
   const uri = assetUri(source) ?? String(source);
   const key = `${uri}|${depth}|${chars}`;
   let pending = loads.get(key);

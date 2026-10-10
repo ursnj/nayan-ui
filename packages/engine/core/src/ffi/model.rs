@@ -101,7 +101,9 @@ pub extern "C" fn engine_texture_pixels(id: u32) -> *const u8 {
 /// Writes width and height to `out[0..2]`. Returns 1 for a known texture.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_texture_size(id: u32, out: *mut u32) -> i32 {
-    let Some(t) = texture::get(id).filter(|_| !out.is_null()) else { return 0 };
+    let Some(t) = texture::get(id).filter(|_| !out.is_null()) else {
+        return 0;
+    };
     // SAFETY: caller passes room for 2 values.
     unsafe {
         *out = t.width;

@@ -87,7 +87,9 @@ fn load_image(image: &gltf::Image, buffers: &[Vec<u8>]) -> Result<crate::texture
     let bytes = match image.source() {
         gltf::image::Source::View { view, .. } => {
             let data = buffers.get(view.buffer().index()).ok_or("texture buffer missing")?;
-            data.get(view.offset()..view.offset() + view.length()).ok_or("texture data out of range")?.to_vec()
+            data.get(view.offset()..view.offset() + view.length())
+                .ok_or("texture data out of range")?
+                .to_vec()
         }
         gltf::image::Source::Uri { uri, .. } => {
             decode_data_uri(uri).ok_or_else(|| format!("external texture \"{uri}\" isn't supported: export as .glb or embed it"))?
@@ -280,7 +282,9 @@ pub fn alias(base: u8) -> Result<u8, String> {
 
 /// The mesh whose geometry `mesh` uses: itself, or what it aliases.
 pub fn resolve(mesh: u8) -> u8 {
-    let Some(index) = (mesh as usize).checked_sub(FIRST_MODEL_MESH as usize) else { return mesh };
+    let Some(index) = (mesh as usize).checked_sub(FIRST_MODEL_MESH as usize) else {
+        return mesh;
+    };
     match MESHES.lock().ok().and_then(|m| match m.get(index) {
         Some(Entry::Alias(base)) => Some(*base),
         _ => None,
@@ -429,7 +433,10 @@ pub(crate) mod tests {
         let json_len = u32::from_le_bytes(glb[12..16].try_into().unwrap()) as usize;
         let json = std::str::from_utf8(&glb[20..20 + json_len]).unwrap().trim_end();
         let uvs: Vec<u8> = [0.0f32, 0.0, 1.0, 0.0, 0.0, 1.0].iter().flat_map(|f| f.to_le_bytes()).collect();
-        let uv_uri = format!("data:application/octet-stream;base64,{}", base64::engine::general_purpose::STANDARD.encode(&uvs));
+        let uv_uri = format!(
+            "data:application/octet-stream;base64,{}",
+            base64::engine::general_purpose::STANDARD.encode(&uvs)
+        );
         let png_uri = format!("data:image/png;base64,{}", base64::engine::general_purpose::STANDARD.encode(&png));
         let json = json
             .replacen(r#""attributes":{"POSITION":0}"#, r#""attributes":{"POSITION":0,"TEXCOORD_0":2}"#, 1)
@@ -454,7 +461,10 @@ pub(crate) mod tests {
         );
         // Swap the embedded binary chunk for the data URI form so every buffer is in the JSON.
         let bin = &glb[20 + json_len + 8..];
-        let bin_uri = format!("data:application/octet-stream;base64,{}", base64::engine::general_purpose::STANDARD.encode(bin));
+        let bin_uri = format!(
+            "data:application/octet-stream;base64,{}",
+            base64::engine::general_purpose::STANDARD.encode(bin)
+        );
         let json = json.replacen(r#"{"byteLength""#, &format!(r#"{{"uri":"{bin_uri}","byteLength""#), 1);
         let m = parse(json.as_bytes(), LoadOptions { center: false, fit: 0.0 }).unwrap();
         let texture = crate::texture::get(m.texture.expect("texture kept")).unwrap();

@@ -16,14 +16,27 @@ pub enum BodyKind {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Shape {
-    Ball { radius: f32 },
-    Cuboid { half_extents: Vec3 },
+    Ball {
+        radius: f32,
+    },
+    Cuboid {
+        half_extents: Vec3,
+    },
     /// Along Y.
-    Cylinder { half_height: f32, radius: f32 },
+    Cylinder {
+        half_height: f32,
+        radius: f32,
+    },
     /// Along Y; `half_height` is half the straight middle part (not counting the round caps).
-    Capsule { half_height: f32, radius: f32 },
+    Capsule {
+        half_height: f32,
+        radius: f32,
+    },
     /// Along Y, tip up.
-    Cone { half_height: f32, radius: f32 },
+    Cone {
+        half_height: f32,
+        radius: f32,
+    },
 }
 
 /// Rigid body + collider for an entity. Validated by `World::set_physics`.
@@ -94,9 +107,13 @@ impl PhysicsDesc {
 /// solver, not on velocities set directly).
 pub(super) fn set_linvel(b: &mut RigidBody, mut v: Vec3) {
     let locked = b.locked_axes();
-    for (axis, lock) in [LockedAxes::TRANSLATION_LOCKED_X, LockedAxes::TRANSLATION_LOCKED_Y, LockedAxes::TRANSLATION_LOCKED_Z]
-        .into_iter()
-        .enumerate()
+    for (axis, lock) in [
+        LockedAxes::TRANSLATION_LOCKED_X,
+        LockedAxes::TRANSLATION_LOCKED_Y,
+        LockedAxes::TRANSLATION_LOCKED_Z,
+    ]
+    .into_iter()
+    .enumerate()
     {
         if locked.contains(lock) {
             v[axis] = 0.0;

@@ -9,9 +9,11 @@ import SubHeader from "@/components/helpers/SubHeader";
 import {
   engineBodiesCode,
   engineChangePhysicsCode,
+  engineColliderShapesCode,
   engineCollisionsCode,
   engineLayersCode,
   engineMovementCode,
+  enginePlanarCode,
   engineRaycastCode,
 } from "@/services/GameEngineCodeBlocks";
 import { physicsOptionsAttributes } from "@/services/GameEngineData";
@@ -25,6 +27,34 @@ const EnginePhysics = () => (
     </SubHeader>
 
     <Attributes title="Physics options" data={physicsOptionsAttributes} />
+
+    <SubHeader
+      title="Collider shapes"
+      description="Balls, boxes, cylinders, capsules and cones. By default the collider matches the mesh and is sized from its scale."
+    >
+      <Code code={engineColliderShapesCode} filename="level.ts" />
+      <ul className={`mt-4 space-y-2 ${BODY}`}>
+        <li>
+          • Spheres get a ball, cylinders a cylinder, cones a cone and capsules a capsule. Tori get a flat cylinder.
+          Everything else, models included, gets a box.
+        </li>
+        <li>
+          • Pass <code>shape</code> with <code>radius</code>, <code>height</code> or <code>size</code> for a
+          tighter fit.
+        </li>
+      </ul>
+    </SubHeader>
+
+    <SubHeader
+      title="2D games"
+      description="planar keeps a body in its XY plane: it moves in x and y and spins only around z."
+    >
+      <Code code={enginePlanarCode} filename="Jar.tsx" />
+      <p className={`mt-4 ${BODY}`}>
+        Your game keeps 2D rules while looking 3D: lit, shadowed, with real depth. Pair it with an orthographic
+        camera looking down -z.
+      </p>
+    </SubHeader>
 
     <SubHeader
       title="Collision layers"
@@ -51,8 +81,8 @@ const EnginePhysics = () => (
     <SubHeader title="Change physics later">
       <Code code={engineChangePhysicsCode} filename="bird.ts" />
       <p className={`mt-4 ${BODY}`}>
-        Collider shapes are balls and boxes for now, sized from the entity&apos;s mesh and scale when the
-        body is created. Scaling an entity afterwards changes how it looks, not its collider.
+        Colliders are sized from the entity&apos;s mesh and scale when the body is created. Scaling an entity
+        afterwards changes how it looks, not its collider. Set physics again to resize it.
       </p>
     </SubHeader>
   </Sidebar>

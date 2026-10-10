@@ -194,7 +194,11 @@ impl World {
             if t.elapsed < t.delay {
                 continue;
             }
-            let raw = if t.duration > 0.0 { ((t.elapsed - t.delay) / t.duration).min(1.0) } else { 1.0 };
+            let raw = if t.duration > 0.0 {
+                ((t.elapsed - t.delay) / t.duration).min(1.0)
+            } else {
+                1.0
+            };
             let k = t.easing.apply(if t.forward { raw } else { 1.0 - raw });
             let (position, rotation, scale, color) = (
                 t.position.map(|(a, b)| a.lerp(b, k)),
@@ -273,7 +277,15 @@ mod tests {
 
     #[test]
     fn easings_start_at_0_and_end_at_1() {
-        for e in [Easing::Linear, Easing::In, Easing::Out, Easing::InOut, Easing::Back, Easing::Bounce, Easing::Elastic] {
+        for e in [
+            Easing::Linear,
+            Easing::In,
+            Easing::Out,
+            Easing::InOut,
+            Easing::Back,
+            Easing::Bounce,
+            Easing::Elastic,
+        ] {
             assert!(e.apply(0.0).abs() < 1e-4, "{e:?}");
             assert!((e.apply(1.0) - 1.0).abs() < 1e-4, "{e:?}");
         }

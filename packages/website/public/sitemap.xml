@@ -87,6 +87,16 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.nayanui.com/game-engine/animation</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/game-engine/text-textures</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.nayanui.com/game-engine/audio-haptics</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
