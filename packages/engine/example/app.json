@@ -15,7 +15,11 @@
       ]
     },
     "plugins": [
-      "expo-dev-client"
+      "expo-dev-client",
+      [
+        "./plugins/withAndroidMinSdk",
+        26
+      ]
     ],
     "scheme": "nayan-engine-example"
   }

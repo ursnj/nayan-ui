@@ -218,6 +218,36 @@ void NayanEngineModule::setListener(jsi::Runtime &, double world, double entity)
   engine_world_set_listener(find(world), id(entity));
 }
 
+double NayanEngineModule::modelLoad(jsi::Runtime &rt, jsi::Object data, bool center, double fit) {
+  if (!data.isArrayBuffer(rt)) {
+    throw jsi::JSError(rt, "NayanEngine.modelLoad: expected an ArrayBuffer");
+  }
+  jsi::ArrayBuffer buffer = data.getArrayBuffer(rt);
+  return engine_model_load(buffer.data(rt), buffer.size(rt), center ? 1 : 0, static_cast<float>(fit)); // copied
+}
+
+jsi::Object NayanEngineModule::modelVertices(jsi::Runtime &rt, double mesh) {
+  uint32_t m = id(mesh);
+  return external(rt, engine_model_vertices(m), static_cast<size_t>(engine_model_vertex_count(m)) * 9 * sizeof(float));
+}
+
+jsi::Object NayanEngineModule::modelIndices(jsi::Runtime &rt, double mesh) {
+  uint32_t m = id(mesh);
+  return external(rt, engine_model_indices(m), static_cast<size_t>(engine_model_index_count(m)) * sizeof(uint32_t));
+}
+
+jsi::Array NayanEngineModule::modelSize(jsi::Runtime &rt, double mesh) {
+  float size[3] = {0, 0, 0};
+  engine_model_size(id(mesh), size);
+  return jsi::Array::createWithElements(rt, size[0], size[1], size[2]);
+}
+
+jsi::String NayanEngineModule::modelError(jsi::Runtime &rt) {
+  char message[512];
+  engine_model_error(message, sizeof(message));
+  return jsi::String::createFromUtf8(rt, message);
+}
+
 double NayanEngineModule::audioLoad(jsi::Runtime &rt, jsi::Object data) {
   if (!data.isArrayBuffer(rt)) {
     throw jsi::JSError(rt, "NayanEngine.audioLoad: expected an ArrayBuffer");

@@ -1,5 +1,5 @@
 // Sound, played by the Rust core's mixer (no Expo or other native audio dependency).
-import { Image } from "react-native";
+import { assetUri, loadAssetBytes, type AssetSource } from "../assets";
 import NativeEngine from "../native/NativeNayanEngine";
 
 /** A decoded sound in the core's mixer. */
@@ -18,22 +18,18 @@ export type PlayOptions = {
   loop?: boolean;
 };
 
-/** A `require("./file.wav")` asset, or a URI (http(s):// or file://). WAV, PCM or float, mono or stereo. */
-export type SoundSource = number | string;
+/** A `require("./file.wav")` asset, or a URI. WAV, PCM or float, mono or stereo. */
+export type SoundSource = AssetSource;
 
 const loads = new Map<string, Promise<Sound | null>>();
 
 function loadSound(source: SoundSource): Promise<Sound | null> {
-  const uri = typeof source === "number" ? Image.resolveAssetSource(source)?.uri : source;
+  const uri = assetUri(source);
   if (!uri || !NativeEngine) return Promise.resolve(null);
   let pending = loads.get(uri);
   if (!pending) {
-    pending = fetch(uri)
-      .then((response) => {
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response.arrayBuffer();
-      })
-      .then((bytes) => {
+    pending = loadAssetBytes(source)
+      .then(({ bytes }) => {
         const id = NativeEngine!.audioLoad(bytes);
         if (id < 0) throw new Error("not a supported WAV file");
         return id as Sound;

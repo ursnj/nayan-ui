@@ -110,6 +110,8 @@ uint32_t engine_model_vertex_count(uint32_t mesh);
 const uint32_t *engine_model_indices(uint32_t mesh);
 uint32_t engine_model_index_count(uint32_t mesh);
 int32_t engine_model_size(uint32_t mesh, float *out_xyz); // full bounding-box size; 1 if known
+// Why the last engine_model_load failed (NUL-terminated into out). Returns the full length (0 = no error).
+size_t engine_model_error(char *out, size_t cap);
 
 // ── Audio (global) ───────────────────────────────────────────────────────
 // The output stream starts on first use. WAV (PCM int or float, mono/stereo).

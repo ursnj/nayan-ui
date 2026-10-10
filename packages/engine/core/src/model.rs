@@ -180,10 +180,24 @@ fn decode_data_uri(uri: &str) -> Option<Vec<u8>> {
 // ── Registry ─────────────────────────────────────────────────────────────
 
 static MODELS: Mutex<Vec<Arc<Model>>> = Mutex::new(Vec::new());
+static LAST_ERROR: Mutex<String> = Mutex::new(String::new());
+
+/// Why the last `load` failed (empty after a success).
+pub fn last_error() -> String {
+    LAST_ERROR.lock().map(|e| e.clone()).unwrap_or_default()
+}
 
 /// Parses a model and registers it. Returns its mesh id, or an error message.
 /// Models live for the whole process, so pointers into them stay valid.
 pub fn load(bytes: &[u8], options: LoadOptions) -> Result<u8, String> {
+    let result = load_inner(bytes, options);
+    if let Ok(mut error) = LAST_ERROR.lock() {
+        *error = result.as_ref().err().cloned().unwrap_or_default();
+    }
+    result
+}
+
+fn load_inner(bytes: &[u8], options: LoadOptions) -> Result<u8, String> {
     let model = parse(bytes, options)?;
     let mut models = MODELS.lock().map_err(|_| "model registry unavailable".to_string())?;
     let id = FIRST_MODEL_MESH as usize + models.len();

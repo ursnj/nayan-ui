@@ -34,6 +34,11 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   jsi::Object getEvents(jsi::Runtime &rt, double world);
   double eventLength(jsi::Runtime &rt, double world);
   jsi::Object getScratch(jsi::Runtime &rt, double world);
+  double modelLoad(jsi::Runtime &rt, jsi::Object data, bool center, double fit);
+  jsi::Object modelVertices(jsi::Runtime &rt, double mesh);
+  jsi::Object modelIndices(jsi::Runtime &rt, double mesh);
+  jsi::Array modelSize(jsi::Runtime &rt, double mesh);
+  jsi::String modelError(jsi::Runtime &rt);
   double audioLoad(jsi::Runtime &rt, jsi::Object data);
   double audioPlay(jsi::Runtime &rt, double sound, double volume, double pan, double pitch, bool loop);
   void audioStop(jsi::Runtime &rt, double voice);
