@@ -306,7 +306,7 @@ mod tests {
 
     #[test]
     fn builds_glyphs_from_a_real_font() {
-        let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../example/assets/fonts/Inter-Bold.ttf")).unwrap();
+        let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/Inter-Bold.ttf")).unwrap();
         let font = get(load(&bytes, 0.2, "08A A").unwrap()).unwrap();
         // "0", "8", "A", " " (duplicates skipped); space has an advance but nothing to draw.
         let glyphs: &[[f32; 3]] = font.glyphs.as_chunks::<3>().0;
@@ -324,7 +324,7 @@ mod tests {
 
     #[test]
     fn every_glyph_fills_exactly_its_outline() {
-        let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../example/assets/fonts/Inter-Bold.ttf")).unwrap();
+        let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/Inter-Bold.ttf")).unwrap();
         let face = ttf_parser::Face::parse(&bytes, 0).unwrap();
         for ch in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!?&%@#".chars() {
             let mut outline = Outline {
