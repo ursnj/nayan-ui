@@ -15,15 +15,17 @@ namespace facebook::react {
 
 namespace {
 
-// Exposes Rust-owned memory to JS as an ArrayBuffer without copying.
-// Valid until the world is destroyed (capacity is fixed, so it never moves).
+// Exposes Rust-owned memory to JS as an ArrayBuffer without copying (capacity is fixed, so it never
+// moves). Holds a reference to the owning world, so a buffer JS keeps after destroyWorld stays valid.
 class ExternalBuffer : public jsi::MutableBuffer {
  public:
-  ExternalBuffer(uint8_t *data, size_t size) : data_(data), size_(size) {}
+  ExternalBuffer(std::shared_ptr<void> owner, uint8_t *data, size_t size)
+      : owner_(std::move(owner)), data_(data), size_(size) {}
   size_t size() const override { return size_; }
   uint8_t *data() override { return data_; }
 
  private:
+  std::shared_ptr<void> owner_;
   uint8_t *data_;
   size_t size_;
 };
@@ -86,23 +88,31 @@ NayanEngineModule::NayanEngineModule(std::shared_ptr<CallInvoker> jsInvoker)
 #endif
 }
 
-NayanEngineModule::~NayanEngineModule() {
-  for (auto &entry : worlds_) {
-    engine_world_free(entry.second);
-  }
-}
+// Worlds are freed when the module and every buffer aliasing them are gone.
+NayanEngineModule::~NayanEngineModule() = default;
 
-::World *NayanEngineModule::find(double worldId) const {
+std::shared_ptr<::World> NayanEngineModule::owner(double worldId) const {
+  // NaN, fractional and out-of-range ids are unknown (casting them to int is undefined or aliases another id).
+  if (!(worldId >= 1 && worldId < next_) || worldId != static_cast<int>(worldId)) {
+    return nullptr;
+  }
   auto it = worlds_.find(static_cast<int>(worldId));
   return it == worlds_.end() ? nullptr : it->second;
 }
 
-jsi::Object NayanEngineModule::external(jsi::Runtime &rt, const void *data, size_t bytes) const {
+::World *NayanEngineModule::find(double worldId) const {
+  return owner(worldId).get(); // the map still holds it
+}
+
+jsi::Object NayanEngineModule::external(
+    jsi::Runtime &rt, std::shared_ptr<void> owner, const void *data, size_t bytes) const {
   if (data == nullptr) {
-    throw jsi::JSError(rt, "NayanEngine: unknown world");
+    throw jsi::JSError(rt, "NayanEngine: unknown world, mesh or texture");
   }
   jsi::ArrayBuffer buffer(
-      rt, std::make_shared<ExternalBuffer>(reinterpret_cast<uint8_t *>(const_cast<void *>(data)), bytes));
+      rt,
+      std::make_shared<ExternalBuffer>(
+          std::move(owner), reinterpret_cast<uint8_t *>(const_cast<void *>(data)), bytes));
   return jsi::Object(std::move(buffer));
 }
 
@@ -110,15 +120,13 @@ double NayanEngineModule::createWorld(jsi::Runtime &, double capacity) {
   int worldId = next_++;
   // NaN / negative -> 0; the core clamps very large values.
   uint32_t n = capacity >= 1 ? static_cast<uint32_t>(std::min(capacity, 1048576.0)) : 0;
-  worlds_[worldId] = engine_world_new(n);
+  worlds_[worldId] = std::shared_ptr<::World>(engine_world_new(n), engine_world_free);
   return worldId;
 }
 
 void NayanEngineModule::destroyWorld(jsi::Runtime &, double world) {
-  auto it = worlds_.find(static_cast<int>(world));
-  if (it != worlds_.end()) {
-    engine_world_free(it->second);
-    worlds_.erase(it);
+  if (owner(world) != nullptr) {
+    worlds_.erase(static_cast<int>(world));
   }
 }
 
@@ -219,28 +227,29 @@ double NayanEngineModule::count(jsi::Runtime &, double world) {
 }
 
 jsi::Object NayanEngineModule::getMatrices(jsi::Runtime &rt, double world) {
-  ::World *w = find(world);
-  return external(rt, engine_world_matrices(w), static_cast<size_t>(engine_world_capacity(w)) * 16 * sizeof(float));
+  auto w = owner(world);
+  return external(rt, w, engine_world_matrices(w.get()), static_cast<size_t>(engine_world_capacity(w.get())) * 16 * sizeof(float));
 }
 
 jsi::Object NayanEngineModule::getColors(jsi::Runtime &rt, double world) {
-  ::World *w = find(world);
-  return external(rt, engine_world_colors(w), static_cast<size_t>(engine_world_capacity(w)) * 4 * sizeof(float));
+  auto w = owner(world);
+  return external(rt, w, engine_world_colors(w.get()), static_cast<size_t>(engine_world_capacity(w.get())) * 4 * sizeof(float));
 }
 
 jsi::Object NayanEngineModule::getRegions(jsi::Runtime &rt, double world) {
-  ::World *w = find(world);
-  return external(rt, engine_world_regions(w), static_cast<size_t>(engine_world_capacity(w)) * 4 * sizeof(float));
+  auto w = owner(world);
+  return external(rt, w, engine_world_regions(w.get()), static_cast<size_t>(engine_world_capacity(w.get())) * 4 * sizeof(float));
 }
 
 jsi::Object NayanEngineModule::getRanges(jsi::Runtime &rt, double world) {
-  return external(rt, engine_world_ranges(find(world)), ENGINE_MAX_MESHES * 4 * sizeof(uint32_t));
+  auto w = owner(world);
+  return external(rt, w, engine_world_ranges(w.get()), ENGINE_MAX_MESHES * 4 * sizeof(uint32_t));
 }
 
 jsi::Object NayanEngineModule::getDone(jsi::Runtime &rt, double world) {
-  ::World *w = find(world);
-  size_t room = static_cast<size_t>(engine_world_capacity(w)) * ENGINE_DONE_PER_ENTITY + 64;
-  return external(rt, engine_world_done(w), room * sizeof(uint32_t));
+  auto w = owner(world);
+  size_t room = static_cast<size_t>(engine_world_capacity(w.get())) * ENGINE_DONE_PER_ENTITY + 64;
+  return external(rt, w, engine_world_done(w.get()), room * sizeof(uint32_t));
 }
 
 double NayanEngineModule::doneLength(jsi::Runtime &, double world) {
@@ -248,7 +257,8 @@ double NayanEngineModule::doneLength(jsi::Runtime &, double world) {
 }
 
 jsi::Object NayanEngineModule::getEvents(jsi::Runtime &rt, double world) {
-  return external(rt, engine_world_events(find(world)), ENGINE_MAX_EVENTS * ENGINE_EVENT_STRIDE * sizeof(uint32_t));
+  auto w = owner(world);
+  return external(rt, w, engine_world_events(w.get()), ENGINE_MAX_EVENTS * ENGINE_EVENT_STRIDE * sizeof(uint32_t));
 }
 
 double NayanEngineModule::eventLength(jsi::Runtime &, double world) {
@@ -256,7 +266,8 @@ double NayanEngineModule::eventLength(jsi::Runtime &, double world) {
 }
 
 jsi::Object NayanEngineModule::getScratch(jsi::Runtime &rt, double world) {
-  return external(rt, engine_world_scratch(find(world)), 16 * sizeof(float));
+  auto w = owner(world);
+  return external(rt, w, engine_world_scratch(w.get()), 16 * sizeof(float));
 }
 
 void NayanEngineModule::setListener(jsi::Runtime &, double world, double entity) {
@@ -270,12 +281,12 @@ double NayanEngineModule::modelLoad(jsi::Runtime &rt, jsi::Object data, bool cen
 
 jsi::Object NayanEngineModule::modelVertices(jsi::Runtime &rt, double mesh) {
   uint32_t m = id(mesh);
-  return external(rt, engine_model_vertices(m), static_cast<size_t>(engine_model_vertex_count(m)) * 11 * sizeof(float));
+  return external(rt, nullptr, engine_model_vertices(m), static_cast<size_t>(engine_model_vertex_count(m)) * 11 * sizeof(float));
 }
 
 jsi::Object NayanEngineModule::modelIndices(jsi::Runtime &rt, double mesh) {
   uint32_t m = id(mesh);
-  return external(rt, engine_model_indices(m), static_cast<size_t>(engine_model_index_count(m)) * sizeof(uint32_t));
+  return external(rt, nullptr, engine_model_indices(m), static_cast<size_t>(engine_model_index_count(m)) * sizeof(uint32_t));
 }
 
 jsi::Array NayanEngineModule::modelSize(jsi::Runtime &rt, double mesh) {
@@ -300,7 +311,7 @@ double NayanEngineModule::textureLoad(jsi::Runtime &rt, jsi::Object data) {
 jsi::Object NayanEngineModule::texturePixels(jsi::Runtime &rt, double texture) {
   uint32_t size[2] = {0, 0};
   engine_texture_size(id(texture), size);
-  return external(rt, engine_texture_pixels(id(texture)), static_cast<size_t>(size[0]) * size[1] * 4);
+  return external(rt, nullptr, engine_texture_pixels(id(texture)), static_cast<size_t>(size[0]) * size[1] * 4);
 }
 
 jsi::Array NayanEngineModule::textureSize(jsi::Runtime &rt, double texture) {
@@ -328,16 +339,14 @@ jsi::Array NayanEngineModule::fontGlyphs(jsi::Runtime &rt, double font) {
 }
 
 jsi::String NayanEngineModule::loadError(jsi::Runtime &rt) {
-  char message[512];
-  engine_load_error(message, sizeof(message));
+  // Sized to the full message: truncating could split a UTF-8 sequence.
+  std::string message(engine_load_error(nullptr, 0) + 1, '\0');
+  message.resize(engine_load_error(message.data(), message.size()));
   return jsi::String::createFromUtf8(rt, message);
 }
 
 double NayanEngineModule::audioLoad(jsi::Runtime &rt, jsi::Object data) {
-  if (!data.isArrayBuffer(rt)) {
-    throw jsi::JSError(rt, "NayanEngine.audioLoad: expected an ArrayBuffer");
-  }
-  jsi::ArrayBuffer buffer = data.getArrayBuffer(rt);
+  jsi::ArrayBuffer buffer = fileData(rt, data, "audioLoad");
   return engine_audio_load_wav(buffer.data(rt), buffer.size(rt)); // copied by the core
 }
 

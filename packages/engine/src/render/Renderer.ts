@@ -44,9 +44,12 @@ export class Renderer {
   private shadowView: GPUTextureView;
   private msaa?: GPUTexture;
   private depth?: GPUTexture;
+  private msaaView?: GPUTextureView;
+  private depthView?: GPUTextureView;
   private width = 0;
   private height = 0;
-  private projectionKey = "";
+  /** fov, or -ortho, the projection was built for (NaN = rebuild). */
+  private projectionKey = NaN;
   private proj = mat4.create();
   private view = mat4.create();
   /** The camera matrix of the last frame (for picking and projecting to the screen). */
@@ -55,6 +58,9 @@ export class Renderer {
   private lightProj = mat4.create();
   private lightViewProj = mat4.create();
   private up = vec3.create(0, 1, 0);
+  private north = vec3.create(0, 0, -1);
+  private south = vec3.create(0, 0, 1);
+  private lightDirection = vec3.create();
   private lightEye = vec3.create();
   private lightTarget = vec3.create();
 
@@ -210,7 +216,9 @@ export class Renderer {
       sampleCount: SAMPLES,
       usage: GPUTextureUsage.RENDER_ATTACHMENT,
     });
-    this.projectionKey = ""; // force projection rebuild
+    this.msaaView = this.msaa.createView();
+    this.depthView = this.depth.createView();
+    this.projectionKey = NaN; // force projection rebuild
   }
 
   /** Orthographic light camera covering `extent` around the camera target, snapped to texels to avoid shimmer. */
@@ -220,7 +228,7 @@ export class Renderer {
     const snap = (v: number) => Math.round(v / texelWorld) * texelWorld;
     vec3.set(snap(camera.target[0]), snap(camera.target[1]), snap(camera.target[2]), this.lightTarget);
     vec3.addScaled(this.lightTarget, direction, 60, this.lightEye);
-    const up = Math.abs(direction[1]!) > 0.99 ? vec3.create(0, 0, 1) : this.up;
+    const up = Math.abs(direction[1]!) > 0.99 ? this.south : this.up;
     mat4.lookAt(this.lightEye, this.lightTarget, up, this.lightView);
     mat4.ortho(-extent, extent, -extent, extent, 1, 140, this.lightProj);
     mat4.multiply(this.lightProj, this.lightView, this.lightViewProj);
@@ -228,7 +236,7 @@ export class Renderer {
 
   render(width: number, height: number, camera: Camera, light: Light, environment: Environment) {
     this.resize(width, height);
-    const key = camera.ortho ? `o${camera.ortho}` : `p${camera.fov}`;
+    const key = camera.ortho ? -camera.ortho : camera.fov;
     if (key !== this.projectionKey) {
       const aspect = width / height;
       if (camera.ortho) {
@@ -241,20 +249,24 @@ export class Renderer {
     }
     // Looking straight down (board games) needs a different "up" than the world's.
     const flat = Math.abs(camera.target[0] - camera.eye[0]) + Math.abs(camera.target[2] - camera.eye[2]) < 1e-6;
-    mat4.lookAt(camera.eye, camera.target, flat ? [0, 0, -1] : this.up, this.view);
+    mat4.lookAt(camera.eye, camera.target, flat ? this.north : this.up, this.view);
     mat4.multiply(this.proj, this.view, this.viewProj);
 
-    const direction = vec3.normalize(vec3.create(...light.direction));
+    const [lx, ly, lz] = light.direction;
+    const direction = vec3.normalize(vec3.set(lx, ly, lz, this.lightDirection), this.lightDirection);
     const shadows = light.shadows ?? true;
     if (shadows) this.updateLight(camera, light, direction);
     const g = this.globalsData;
     g.set(this.viewProj, 0);
     g.set(this.lightViewProj, 16);
-    g.set([direction[0]!, direction[1]!, direction[2]!, light.ambient], 32);
-    g.set([0, shadows ? 1 : 0, 0.0005, 0], 36);
+    g.set(direction, 32);
+    g[35] = light.ambient;
+    g[37] = shadows ? 1 : 0;
+    g[38] = 0.0005;
+    g.set(camera.eye, 40);
     const [br, bg, bb] = environment.background;
-    g.set([camera.eye[0], camera.eye[1], camera.eye[2], 0], 40);
-    g.set([br, bg, bb, Math.max(0, environment.fog)], 44);
+    g.set(environment.background, 44);
+    g[47] = Math.max(0, environment.fog);
 
     const queue = this.device.queue;
     const used = this.source.count;
@@ -285,7 +297,7 @@ export class Renderer {
     const pass = encoder.beginRenderPass({
       colorAttachments: [
         {
-          view: this.msaa!.createView(),
+          view: this.msaaView!,
           resolveTarget: this.context.getCurrentTexture().createView(),
           clearValue: [br, bg, bb, 1],
           loadOp: "clear",
@@ -293,7 +305,7 @@ export class Renderer {
         },
       ],
       depthStencilAttachment: {
-        view: this.depth!.createView(),
+        view: this.depthView!,
         depthClearValue: 1,
         depthLoadOp: "clear",
         depthStoreOp: "discard",

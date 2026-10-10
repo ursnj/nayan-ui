@@ -19,11 +19,18 @@ impl Sound {
         let mut reader = hound::WavReader::new(Cursor::new(bytes)).ok()?;
         let spec = reader.spec();
         let channels = spec.channels as usize;
-        if channels == 0 || channels > 2 || spec.sample_rate == 0 {
+        // WAVE_FORMAT_EXTENSIBLE headers can claim any bit depth.
+        let int_bits_ok = spec.sample_format == hound::SampleFormat::Float || (1..=32).contains(&spec.bits_per_sample);
+        if channels == 0 || channels > 2 || spec.sample_rate == 0 || !int_bits_ok {
             return None;
         }
         let samples: Vec<f32> = match spec.sample_format {
-            hound::SampleFormat::Float => reader.samples::<f32>().collect::<Result<_, _>>().ok()?,
+            // NaN samples would turn the whole mix to NaN while the sound plays.
+            hound::SampleFormat::Float => reader
+                .samples::<f32>()
+                .map(|s| s.map(|v| if v.is_finite() { v } else { 0.0 }))
+                .collect::<Result<_, _>>()
+                .ok()?,
             hound::SampleFormat::Int => {
                 let scale = 1.0 / (1u64 << (spec.bits_per_sample - 1)) as f32;
                 reader
@@ -131,7 +138,7 @@ impl Mixer {
                     if !voice.looping {
                         break;
                     }
-                    voice.position -= len as f64;
+                    voice.position %= len as f64; // a step can be longer than a short sound
                 }
                 let i = voice.position as usize;
                 let t = (voice.position - i as f64) as f32;
@@ -271,6 +278,39 @@ mod tests {
         m.render(&mut out, 2);
         assert!(out.iter().all(|&s| s == 0.0));
         assert_eq!(m.active_voices(), 0);
+    }
+
+    #[test]
+    fn loops_sounds_shorter_than_one_step() {
+        let (mut p, mut m) = mixer();
+        // 2 frames at 4x the output rate, pitched up 4x: each output frame steps 16 frames.
+        let tiny = Arc::new(Sound {
+            frames: vec![[0.5, 0.5]; 2],
+            rate: 192_000,
+        });
+        play(&mut p, 1, &tiny, 4.0, true);
+        let mut out = [0.0f32; 16];
+        m.render(&mut out, 2);
+        assert!(out.iter().all(|&s| s > 0.3), "{out:?}");
+        assert_eq!(m.active_voices(), 1);
+    }
+
+    #[test]
+    fn non_finite_float_samples_are_silenced() {
+        let mut out = Cursor::new(Vec::new());
+        let spec = hound::WavSpec {
+            channels: 1,
+            sample_rate: 48_000,
+            bits_per_sample: 32,
+            sample_format: hound::SampleFormat::Float,
+        };
+        let mut w = hound::WavWriter::new(&mut out, spec).unwrap();
+        for s in [0.5, f32::NAN, f32::INFINITY] {
+            w.write_sample(s).unwrap();
+        }
+        w.finalize().unwrap();
+        let sound = Sound::from_wav(&out.into_inner()).unwrap();
+        assert_eq!(sound.frames, vec![[0.5, 0.5], [0.0, 0.0], [0.0, 0.0]]);
     }
 
     #[test]

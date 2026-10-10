@@ -205,7 +205,8 @@ export function registerMesh(mesh: number, info: MeshInfo) {
 /** What to draw for a mesh id, or undefined ("none", or unknown). Built-in shapes are generated on first use. */
 export function meshInfo(mesh: number): MeshInfo | undefined {
   const info = registered.get(mesh) ?? built.get(mesh);
-  if (info) return info;
+  // "none" (groups, text roots) is asked for every frame: answer without searching.
+  if (info || mesh === SHAPE_MESH.none) return info;
   const shape = (Object.keys(SHAPE_MESH) as Shape[]).find((s) => SHAPE_MESH[s] === mesh);
   const make = shape && BUILT_IN[shape];
   if (!make) return undefined;

@@ -3,8 +3,8 @@
 //! Every triangle primitive in the default scene is flattened into one vertex/index buffer with the
 //! node transforms baked in and the material's base color (times any vertex colors) stored per
 //! vertex. One model = one mesh id, so any number of copies draw in one instanced call.
-//! The first base color texture found is kept (one texture per model); skins, morph targets and
-//! Draco meshes aren't supported.
+//! The first base color texture found is kept (one texture per model); skins, morph targets, sparse
+//! accessors and Draco meshes aren't supported.
 //!
 //! This module also holds the global mesh registry shared by models, font glyphs and aliases
 //! (a built-in shape or model drawn with a different texture).
@@ -48,7 +48,8 @@ impl Default for LoadOptions {
 
 /// Parses and merges a glTF/GLB file.
 pub fn parse(bytes: &[u8], options: LoadOptions) -> Result<Model, String> {
-    let gltf = gltf::Gltf::from_slice(bytes).map_err(|e| format!("not a valid glTF file: {e}"))?;
+    let gltf = gltf::Gltf::from_slice_without_validation(bytes).map_err(|e| format!("not a valid glTF file: {e}"))?;
+    validate(gltf.document.as_json())?;
     let buffers = gltf
         .document
         .buffers()
@@ -66,7 +67,10 @@ pub fn parse(bytes: &[u8], options: LoadOptions) -> Result<Model, String> {
         .or_else(|| gltf.document.scenes().next())
         .ok_or("the file has no scene")?;
 
-    let mut builder = Builder::default();
+    let mut builder = Builder {
+        visited: vec![false; gltf.document.nodes().len()],
+        ..Default::default()
+    };
     for node in scene.nodes() {
         builder.visit(&node, Mat4::IDENTITY, &buffers)?;
     }
@@ -80,6 +84,28 @@ pub fn parse(bytes: &[u8], options: LoadOptions) -> Result<Model, String> {
     let mut model = builder.finish(options);
     model.texture = texture;
     Ok(model)
+}
+
+/// `gltf::Gltf::from_slice`'s validation, minus its panic: gltf-json indexes the accessors with each
+/// primitive's POSITION index before checking that it's in range.
+fn validate(root: &gltf::json::Root) -> Result<(), String> {
+    use gltf::json::validation::{Checked, Validate};
+    let positions = Checked::Valid(gltf::json::mesh::Semantic::Positions);
+    let in_range = root
+        .meshes
+        .iter()
+        .flat_map(|mesh| &mesh.primitives)
+        .all(|p| p.attributes.get(&positions).is_none_or(|a| a.value() < root.accessors.len()));
+    if !in_range {
+        return Err("not a valid glTF file: a mesh refers to a missing accessor".into());
+    }
+    let mut errors = Vec::new();
+    root.validate(root, gltf::json::Path::new, &mut |path, error| errors.push((path(), error)));
+    if errors.is_empty() {
+        Ok(())
+    } else {
+        Err(format!("not a valid glTF file: {}", gltf::Error::Validation(errors)))
+    }
 }
 
 /// Decodes a glTF image (embedded in a buffer view or a data URI).
@@ -107,10 +133,15 @@ struct Builder<'a> {
     indices: Vec<u32>,
     /// The first base color texture seen.
     texture: Option<gltf::Image<'a>>,
+    /// Nodes already merged, by index: a node reached twice means a cycle (or a shared child).
+    visited: Vec<bool>,
 }
 
 impl<'a> Builder<'a> {
     fn visit(&mut self, node: &gltf::Node<'a>, parent: Mat4, buffers: &[Vec<u8>]) -> Result<(), String> {
+        if self.visited.get_mut(node.index()).is_none_or(|seen| std::mem::replace(seen, true)) {
+            return Err("the node hierarchy isn't a tree (a node is its own ancestor or has two parents)".into());
+        }
         let transform = parent * Mat4::from_cols_array_2d(&node.transform().matrix());
         if let Some(mesh) = node.mesh() {
             for primitive in mesh.primitives() {
@@ -126,6 +157,12 @@ impl<'a> Builder<'a> {
     }
 
     fn add_primitive(&mut self, primitive: &gltf::Primitive<'a>, transform: Mat4, buffers: &[Vec<u8>]) -> Result<(), String> {
+        let pbr = primitive.material().pbr_metallic_roughness();
+        let base = pbr.base_color_factor();
+        let uv_set = pbr.base_color_texture().map_or(0, |info| info.tex_coord());
+        if !readable_attributes(primitive, uv_set) {
+            return Err("a mesh has vertex data of an unsupported type or layout".into());
+        }
         let reader = primitive.reader(|buffer| buffers.get(buffer.index()).map(|data| data.as_slice()));
         let Some(positions) = reader.read_positions() else { return Ok(()) };
         let positions: Vec<Vec3> = positions.map(Vec3::from_array).collect();
@@ -142,15 +179,9 @@ impl<'a> Builder<'a> {
             Some(normals) => normals.map(Vec3::from_array).collect(),
             None => smooth_normals(&positions, &indices),
         };
-        let pbr = primitive.material().pbr_metallic_roughness();
-        let base = pbr.base_color_factor();
-        let uv_set = match pbr.base_color_texture() {
-            Some(info) => {
-                self.texture.get_or_insert(info.texture().source());
-                info.tex_coord()
-            }
-            None => 0,
-        };
+        if let Some(info) = pbr.base_color_texture() {
+            self.texture.get_or_insert(info.texture().source());
+        }
         let uvs: Vec<[f32; 2]> = match reader.read_tex_coords(uv_set) {
             Some(uvs) => uvs.into_f32().collect(),
             None => vec![[0.0, 0.0]; positions.len()],
@@ -159,6 +190,10 @@ impl<'a> Builder<'a> {
             Some(colors) => colors.into_rgba_f32().map(|c| [c[0] * base[0], c[1] * base[1], c[2] * base[2]]).collect(),
             None => vec![[base[0], base[1], base[2]]; positions.len()],
         };
+        // Every attribute must have one value per vertex, or the merged buffers fall out of step.
+        if normals.len() != positions.len() || uvs.len() != positions.len() || colors.len() != positions.len() {
+            return Err("a mesh has vertex attributes of different lengths".into());
+        }
 
         // Normals use the inverse-transpose; a mirroring transform flips winding, so swap it back.
         let normal_matrix = Mat3::from_mat4(transform).inverse().transpose();
@@ -202,6 +237,26 @@ impl<'a> Builder<'a> {
             texture: None,
         }
     }
+}
+
+/// Whether the gltf reader can read the attributes `add_primitive` uses without panicking: it trusts
+/// the file (other types hit `unreachable!`, and a stride shorter than an element over-reads).
+fn readable_attributes(primitive: &gltf::Primitive, uv_set: u32) -> bool {
+    use gltf::Semantic;
+    use gltf::accessor::{DataType as T, Dimensions as D};
+    let ok = |accessor: Option<gltf::Accessor>, types: &[T], dims: &[D]| {
+        accessor.is_none_or(|a| {
+            types.contains(&a.data_type())
+                && dims.contains(&a.dimensions())
+                && a.sparse().is_none()
+                && a.view().and_then(|v| v.stride()).is_none_or(|stride| stride >= a.size())
+        })
+    };
+    ok(primitive.get(&Semantic::Positions), &[T::F32], &[D::Vec3])
+        && ok(primitive.get(&Semantic::Normals), &[T::F32], &[D::Vec3])
+        && ok(primitive.get(&Semantic::TexCoords(uv_set)), &[T::U8, T::U16, T::F32], &[D::Vec2])
+        && ok(primitive.get(&Semantic::Colors(0)), &[T::U8, T::U16, T::F32], &[D::Vec3, D::Vec4])
+        && ok(primitive.indices(), &[T::U8, T::U16, T::U32], &[D::Scalar])
 }
 
 /// Area-weighted vertex normals, for meshes exported without them.
@@ -423,6 +478,50 @@ pub(crate) mod tests {
         let err = parse(external.as_bytes(), LoadOptions::default()).err().unwrap();
         assert!(err.contains("isn't supported"), "{err}");
         assert!(parse(b"not a model", LoadOptions::default()).is_err());
+    }
+
+    /// The one-triangle test model as .gltf JSON (buffer in a data URI), after `edit`.
+    fn edited(edit: impl FnOnce(String) -> String) -> Vec<u8> {
+        let glb = glb(&[([0.0, 0.0, 0.0], 1.0, [1.0; 4])]);
+        let json_len = u32::from_le_bytes(glb[12..16].try_into().unwrap()) as usize;
+        let json = std::str::from_utf8(&glb[20..20 + json_len]).unwrap().trim_end();
+        let uri = format!(
+            "data:application/octet-stream;base64,{}",
+            base64::engine::general_purpose::STANDARD.encode(&glb[20 + json_len + 8..])
+        );
+        edit(json.replacen(r#""buffers":[{"#, &format!(r#""buffers":[{{"uri":"{uri}","#), 1)).into_bytes()
+    }
+
+    #[test]
+    fn malformed_files_are_errors_not_panics() {
+        let parse = |bytes: Vec<u8>| parse(&bytes, LoadOptions::default()).err().unwrap_or_default();
+        assert!(parse(edited(|j| j)).is_empty(), "the unedited file loads");
+        let missing = parse(edited(|j| j.replace(r#""POSITION":0"#, r#""POSITION":9"#)));
+        assert!(missing.contains("missing accessor"), "gltf-json indexes with it unchecked: {missing}");
+        let cycle = parse(edited(|j| j.replace(r#""mesh":0,"#, r#""mesh":0,"children":[0],"#)));
+        assert!(cycle.contains("tree"), "would recurse until the stack overflows: {cycle}");
+        // Float indices hit `unreachable!` in the gltf reader.
+        let float_indices = parse(edited(|j| j.replace(r#""componentType":5123"#, r#""componentType":5126"#)));
+        assert!(float_indices.contains("unsupported"), "{float_indices}");
+        // A stride shorter than a vec3 over-reads each element.
+        let stride = parse(edited(|j| j.replacen(r#""byteLength":36}"#, r#""byteLength":36,"byteStride":4}"#, 1)));
+        assert!(stride.contains("unsupported"), "{stride}");
+    }
+
+    #[test]
+    fn attributes_must_match_the_vertex_count() {
+        // NORMAL with 2 values for 3 positions: the merged buffers would fall out of step, leaving
+        // indices past the end of the vertex data.
+        let bytes = edited(|j| {
+            j.replace(r#""attributes":{"POSITION":0}"#, r#""attributes":{"POSITION":0,"NORMAL":2}"#)
+                .replacen(
+                    r#"{"bufferView":1,"componentType":5123,"count":3,"type":"SCALAR"}"#,
+                    r#"{"bufferView":1,"componentType":5123,"count":3,"type":"SCALAR"},{"bufferView":0,"componentType":5126,"count":2,"type":"VEC3"}"#,
+                    1,
+                )
+        });
+        let err = parse(&bytes, LoadOptions::default()).err().unwrap();
+        assert!(err.contains("different lengths"), "{err}");
     }
 
     #[test]

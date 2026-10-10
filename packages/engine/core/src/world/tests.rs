@@ -241,6 +241,40 @@ fn despawning_a_parent_despawns_its_children() {
 }
 
 #[test]
+fn reparented_children_despawn_with_their_new_parent_only() {
+    let mut w = World::new(4);
+    let a = spawn(&mut w, 0, Vec3::ZERO);
+    let b = spawn(&mut w, 0, Vec3::ZERO);
+    let c = spawn(&mut w, 0, Vec3::ZERO);
+    let d = spawn(&mut w, 0, Vec3::ZERO);
+    assert!(w.set_parent(c, Some(a)));
+    assert!(w.set_parent(c, Some(b)), "moved from a to b");
+    assert!(w.set_parent(d, Some(a)));
+    assert!(w.set_parent(d, None), "detached");
+    w.despawn(a);
+    assert!(w.is_alive(c) && w.is_alive(d), "no longer a's children");
+    w.despawn(b);
+    assert!(!w.is_alive(c), "despawned with its new parent");
+    assert!(w.is_alive(d));
+}
+
+#[test]
+fn lifetimes_count_down_once_per_step_when_despawns_reorder_entities() {
+    let mut w = World::new(4);
+    let child = spawn(&mut w, 0, Vec3::ZERO);
+    let parent = spawn(&mut w, 0, Vec3::ZERO);
+    let other = spawn(&mut w, 0, Vec3::ZERO);
+    assert!(w.set_parent(child, Some(parent)));
+    w.set_lifetime(parent, FIXED_DT * 0.5);
+    w.set_lifetime(other, FIXED_DT * 1.5);
+    // Step 1 despawns the parent, then its child before it, swapping `other` back past the loop.
+    w.update(FIXED_DT);
+    assert!(!w.is_alive(parent) && !w.is_alive(child));
+    w.update(FIXED_DT);
+    assert!(!w.is_alive(other), "expired on the second step, not a step late");
+}
+
+#[test]
 fn invalid_attachments_are_rejected() {
     let mut w = World::new(5);
     let a = spawn(&mut w, 0, Vec3::ZERO);
@@ -317,6 +351,26 @@ fn planar_bodies_stay_in_their_plane() {
     }
     let p = w.position(ball).unwrap();
     assert!(p.z.abs() < 1e-5 && p.x > 0.1 && p.y < 5.0, "{p:?}");
+}
+
+#[test]
+fn spin_keeps_planar_and_upright_bodies_in_their_locks() {
+    let mut w = World::new(4);
+    let flat = spawn(&mut w, 1, Vec3::new(0.0, 5.0, 0.0));
+    let upright = spawn(&mut w, 1, Vec3::new(5.0, 5.0, 0.0));
+    let (mut planar, mut locked) = (
+        PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 }),
+        PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 }),
+    );
+    planar.planar = true;
+    locked.lock_rotations = true;
+    w.set_angular_velocity(upright, Vec3::splat(3.0)); // before the body: handed to it
+    assert!(w.set_physics(flat, Some(planar)) && w.set_physics(upright, Some(locked)));
+    w.set_angular_velocity(flat, Vec3::new(3.0, 3.0, 3.0));
+    run(&mut w, 0.5);
+    let (f, u) = (w.rotation[0], w.rotation[1]);
+    assert!(f.x.abs() < 1e-5 && f.y.abs() < 1e-5 && f.z.abs() > 0.1, "only spins around Z: {f:?}");
+    assert!(u.angle_between(Quat::IDENTITY) < 1e-5, "doesn't tip over: {u:?}");
 }
 
 #[test]

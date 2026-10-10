@@ -63,10 +63,12 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   void hapticsPlay(jsi::Runtime &rt, jsi::Array taps, bool throttle);
 
  private:
+  std::shared_ptr<::World> owner(double id) const;
   ::World *find(double id) const;
-  jsi::Object external(jsi::Runtime &rt, const void *data, size_t bytes) const;
+  // `owner` is kept alive while JS holds the buffer (null for process-lifetime memory).
+  jsi::Object external(jsi::Runtime &rt, std::shared_ptr<void> owner, const void *data, size_t bytes) const;
 
-  std::unordered_map<int, ::World *> worlds_;
+  std::unordered_map<int, std::shared_ptr<::World>> worlds_;
   int next_ = 1;
 };
 

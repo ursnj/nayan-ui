@@ -16,17 +16,21 @@ pub struct Image {
 
 /// Decodes a PNG or JPEG file.
 pub fn decode(bytes: &[u8]) -> Result<Image, String> {
-    let image = if bytes.starts_with(b"\x89PNG") {
-        decode_png(bytes)?
+    if bytes.starts_with(b"\x89PNG") {
+        decode_png(bytes)
     } else if bytes.starts_with(&[0xff, 0xd8]) {
-        decode_jpeg(bytes)?
+        decode_jpeg(bytes)
     } else {
-        return Err("not a PNG or JPEG image".into());
-    };
-    if image.width == 0 || image.height == 0 || image.width > MAX_SIZE || image.height > MAX_SIZE {
-        return Err(format!("image is {}x{} (must be 1..{MAX_SIZE} on each side)", image.width, image.height));
+        Err("not a PNG or JPEG image".into())
     }
-    Ok(image)
+}
+
+/// Checked from the header, before decoding: a few bytes can claim gigabytes of pixels.
+fn check_size(width: u32, height: u32) -> Result<(), String> {
+    if width == 0 || height == 0 || width > MAX_SIZE || height > MAX_SIZE {
+        return Err(format!("image is {width}x{height} (must be 1..{MAX_SIZE} on each side)"));
+    }
+    Ok(())
 }
 
 fn decode_png(bytes: &[u8]) -> Result<Image, String> {
@@ -34,6 +38,7 @@ fn decode_png(bytes: &[u8]) -> Result<Image, String> {
     // 16-bit -> 8-bit, palette / low bit depths -> 8-bit channels.
     decoder.set_transformations(png::Transformations::normalize_to_color8());
     let mut reader = decoder.read_info().map_err(|e| format!("bad PNG: {e}"))?;
+    check_size(reader.info().width, reader.info().height)?;
     let size = reader.output_buffer_size().ok_or("PNG too large")?;
     let mut buf = vec![0; size];
     let info = reader.next_frame(&mut buf).map_err(|e| format!("bad PNG: {e}"))?;
@@ -51,8 +56,10 @@ fn decode_png(bytes: &[u8]) -> Result<Image, String> {
 
 fn decode_jpeg(bytes: &[u8]) -> Result<Image, String> {
     let mut decoder = jpeg_decoder::Decoder::new(Cursor::new(bytes));
-    let pixels = decoder.decode().map_err(|e| format!("bad JPEG: {e}"))?;
+    decoder.read_info().map_err(|e| format!("bad JPEG: {e}"))?;
     let info = decoder.info().ok_or("bad JPEG: no header")?;
+    check_size(info.width as u32, info.height as u32)?;
+    let pixels = decoder.decode().map_err(|e| format!("bad JPEG: {e}"))?;
     let rgba = match info.pixel_format {
         jpeg_decoder::PixelFormat::RGB24 => pixels.as_chunks::<3>().0.iter().flat_map(|p| [p[0], p[1], p[2], 255]).collect(),
         jpeg_decoder::PixelFormat::L8 => pixels.iter().flat_map(|&g| [g, g, g, 255]).collect(),
@@ -109,6 +116,28 @@ pub(crate) mod tests {
         assert_eq!(image.rgba, pixels);
         let id = load(&png(2, 1, &pixels)).unwrap();
         assert_eq!(get(id).unwrap().rgba.len(), 8);
+    }
+
+    #[test]
+    fn rejects_huge_images_from_the_header() {
+        // Just the headers, claiming 100000 x 100000 pixels: 40 GB once decoded.
+        let crc32 = |bytes: &[u8]| {
+            !bytes.iter().fold(!0u32, |crc, &b| {
+                (0..8).fold(crc ^ b as u32, |c, _| if c & 1 != 0 { (c >> 1) ^ 0xedb8_8320 } else { c >> 1 })
+            })
+        };
+        let mut ihdr = b"IHDR".to_vec();
+        ihdr.extend_from_slice(&100_000u32.to_be_bytes());
+        ihdr.extend_from_slice(&100_000u32.to_be_bytes());
+        ihdr.extend_from_slice(&[8, 6, 0, 0, 0]);
+        let mut file = b"\x89PNG\r\n\x1a\n".to_vec();
+        for chunk in [&ihdr[..], b"IDAT"] {
+            file.extend_from_slice(&(chunk.len() as u32 - 4).to_be_bytes());
+            file.extend_from_slice(chunk);
+            file.extend_from_slice(&crc32(chunk).to_be_bytes());
+        }
+        let err = decode(&file).err().unwrap();
+        assert!(err.contains("100000x100000"), "{err}");
     }
 
     #[test]
