@@ -44,11 +44,11 @@ const AUTOPLAY = process.env.EXPO_PUBLIC_AUTOPLAY === "1";
 
 // Decoded once by the Rust mixer, shared by every round.
 const sfx = audio.load({
-  flap: require("./assets/sfx/flap.wav"),
-  point: require("./assets/sfx/point.wav"),
-  hit: require("./assets/sfx/hit.wav"),
-  die: require("./assets/sfx/die.wav"),
-  bump: require("./assets/sfx/bump.wav"),
+  flap: require("../../assets/sfx/flap.wav"),
+  point: require("../../assets/sfx/point.wav"),
+  hit: require("../../assets/sfx/hit.wav"),
+  die: require("../../assets/sfx/die.wav"),
+  bump: require("../../assets/sfx/bump.wav"),
 });
 type Phase = "ready" | "playing" | "dead" | "over";
 

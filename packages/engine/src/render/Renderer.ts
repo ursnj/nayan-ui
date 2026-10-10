@@ -2,7 +2,7 @@ import { mat4, vec3 } from "wgpu-matrix";
 import type { RNCanvasContext } from "react-native-webgpu";
 import { createMeshes } from "./meshes";
 import { SHADER } from "./shader";
-import type { Camera, Light, RenderSource } from "./types";
+import type { Camera, Light, RenderSource } from "../types";
 
 /** Clear color and fog. Fog fades geometry towards `background` with distance. */
 export type Environment = {

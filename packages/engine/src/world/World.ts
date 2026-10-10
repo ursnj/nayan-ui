@@ -1,6 +1,6 @@
-import type { Sound } from "./audio";
-import NativeEngine from "./specs/NativeNayanEngine";
-import { Mesh, type MeshKind, type RenderSource, type Vec3 } from "./types";
+import type { Sound } from "../media/audio";
+import NativeEngine from "../native/NativeNayanEngine";
+import { Mesh, type MeshKind, type RenderSource, type Vec3 } from "../types";
 
 /** True when the native Rust core is linked into this build (it is not in Expo Go). */
 export const isRustAvailable = NativeEngine != null;

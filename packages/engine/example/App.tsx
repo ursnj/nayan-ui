@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { isRustAvailable } from "@nayan-ui/engine";
-import { Benchmark } from "./Benchmark";
-import { Flappy } from "./Flappy";
-import { OrbRush } from "./OrbRush";
+import { Benchmark } from "./games/benchmark/Benchmark";
+import { Flappy } from "./games/flappy/Flappy";
+import { OrbRush } from "./games/orb-rush/OrbRush";
 
 const SCREENS = [
   { key: "flappy", label: "Flappy", Component: Flappy },

@@ -43,11 +43,11 @@ const AUTOPLAY = process.env.EXPO_PUBLIC_AUTOPLAY === "1";
 
 // Decoded once by the Rust mixer, shared by every round.
 const sfx = audio.load({
-  pickup: require("./assets/sfx/pickup.wav"),
-  dash: require("./assets/sfx/dash.wav"),
-  bump: require("./assets/sfx/bump.wav"),
-  gameover: require("./assets/sfx/gameover.wav"),
-  music: require("./assets/sfx/music.wav"),
+  pickup: require("../../assets/sfx/pickup.wav"),
+  dash: require("../../assets/sfx/dash.wav"),
+  bump: require("../../assets/sfx/bump.wav"),
+  gameover: require("../../assets/sfx/gameover.wav"),
+  music: require("../../assets/sfx/music.wav"),
 });
 
 let best = 0; // best score this session
