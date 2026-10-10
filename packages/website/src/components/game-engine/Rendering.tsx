@@ -30,7 +30,7 @@ const EngineRendering = () => (
     <SubHeader title="Shapes and colors">
       <ul className={`space-y-2 ${BODY}`}>
         <li>
-          • <code>Mesh.Cube</code>, <code>Mesh.Sphere</code> and <code>Mesh.Plane</code>, each 1 unit
+          • <code>&quot;cube&quot;</code>, <code>&quot;sphere&quot;</code> and <code>&quot;plane&quot;</code>, each 1 unit
           in size before scaling.
         </li>
         <li>• Each entity has its own solid color. Combine shapes with attachments to build characters.</li>

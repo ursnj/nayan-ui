@@ -4,7 +4,10 @@ import { Animated, PanResponder, StyleSheet, View, type ViewStyle } from "react-
 /** Written by `<Joystick>` on touch; read it from your game loop. Each axis is in -1..1, y is up. */
 export type JoystickState = { x: number; y: number };
 
-export const createJoystickState = (): JoystickState => ({ x: 0, y: 0 });
+/** A joystick state that lives as long as the component: `const stick = useJoystick()`. */
+export function useJoystick(): JoystickState {
+  return useRef<JoystickState>({ x: 0, y: 0 }).current;
+}
 
 type Props = {
   state: JoystickState;

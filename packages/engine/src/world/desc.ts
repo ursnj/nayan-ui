@@ -1,6 +1,7 @@
 // Encodes entity options into the flat layout the Rust core decodes (core/include/engine_core.h,
 // core/src/world/desc.rs). One reusable Float64Array per world: spawning or changing an entity is
 // a single native call, and doubles keep entity ids and layer bits exact.
+import { SHAPE_MESH } from "../types";
 import type { EntityOptions, PhysicsOptions } from "./World";
 
 export const DESC_LEN = 55;
@@ -81,7 +82,7 @@ export function encode(d: Float64Array, o: EntityOptions) {
   let flags = 0;
   if (o.mesh !== undefined) {
     flags |= FLAG.MESH;
-    d[SLOT.MESH] = o.mesh;
+    d[SLOT.MESH] = typeof o.mesh === "string" ? SHAPE_MESH[o.mesh] : o.mesh.id;
   }
   if (o.position) {
     flags |= FLAG.POSITION;

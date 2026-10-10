@@ -1,10 +1,11 @@
 import type { Sound } from "../media/audio";
+import type { Model } from "../model/Model";
 import NativeEngine from "../native/NativeNayanEngine";
-import type { MeshKind, RenderSource, Vec3 } from "../types";
+import type { RenderSource, Shape, Vec3 } from "../types";
 import { DESC_LEN, encode } from "./desc";
 
-/** True when the native Rust core is linked into this build (it is not in Expo Go). */
-export const isRustAvailable = NativeEngine != null;
+/** True when the engine's native code is linked into this build (it is not in Expo Go). */
+export const isEngineAvailable = NativeEngine != null;
 
 /** Opaque entity handle. Handles of despawned entities are safely ignored. */
 export type Entity = number & { readonly __entity: unique symbol };
@@ -70,7 +71,8 @@ export type ImpactFeedback = {
  * pass changes, and `null` removes something (physics, parent, follow, bob, lifetime, impact).
  */
 export type EntityOptions = {
-  mesh?: MeshKind;
+  /** A built-in shape or a model from `loadModel`. Default "cube". */
+  mesh?: Shape | Model;
   /** Relative to the parent when attached. */
   position?: Vec3;
   rotation?: Quat;
@@ -123,7 +125,7 @@ const EVENT_SENSOR = 2;
  *
  * ```ts
  * const world = new World(500);
- * const ball = world.spawn({ mesh: Mesh.Sphere, position: [0, 5, 0], physics: "dynamic" });
+ * const ball = world.spawn({ mesh: "sphere", position: [0, 5, 0], physics: "dynamic" });
  * world.set(ball, { color: [1, 0, 0] });
  * ```
  */

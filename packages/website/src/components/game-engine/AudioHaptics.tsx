@@ -44,7 +44,7 @@ const EngineAudioHaptics = () => (
 
     <SubHeader
       title="Scale by impact speed"
-      description="For your own collision handling, impactStrength turns a speed into a 0..1 strength."
+      description="For your own collision handling, turn the impact speed into a 0..1 strength."
     >
       <Code code={engineImpactStrengthCode} filename="Game.tsx" />
     </SubHeader>

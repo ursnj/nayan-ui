@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { GameView, loadModel, Mesh, World, type Camera, type GameStats, type Model } from "@nayan-ui/engine";
+import { GameView, loadModel, World, type Camera, type GameStats, type Model } from "@nayan-ui/engine";
 
 const TREES = 120;
 const ROCKETS = 150;
@@ -10,14 +10,14 @@ type Scene = { world: World; update: (dt: number) => void };
 /** A forest of instanced trees (fixed colliders sized from the model) with rockets raining onto it. */
 function createScene(tree: Model, rocket: Model): Scene {
   const world = new World(TREES + ROCKETS + 4);
-  world.spawn({ mesh: Mesh.Plane, scale: [60, 1, 60], color: [0.35, 0.55, 0.3], physics: "fixed" });
+  world.spawn({ mesh: "plane", scale: [60, 1, 60], color: [0.35, 0.55, 0.3], physics: "fixed" });
 
   for (let i = 0; i < TREES; i++) {
     const angle = i * 2.39996; // golden angle: an even, natural-looking scatter
     const r = 4 + Math.sqrt(i) * 2.2;
     const scale = 1.4 + ((i * 37) % 10) / 10;
     world.spawn({
-      mesh: tree.mesh,
+      mesh: tree,
       position: [Math.cos(angle) * r, (tree.size[1] * scale) / 2, Math.sin(angle) * r],
       rotation: [0, Math.sin(angle), 0, Math.cos(angle)],
       scale,
@@ -36,7 +36,7 @@ function createScene(tree: Model, rocket: Model): Scene {
         launched++;
         const a = launched * 1.7;
         world.spawn({
-          mesh: rocket.mesh,
+          mesh: rocket,
           position: [Math.cos(a) * 6, 18, Math.sin(a) * 6],
           rotation: [Math.sin(a), 0, 0, Math.cos(a)],
           scale: 1.2,

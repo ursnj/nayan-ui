@@ -4,15 +4,17 @@ import {
   audio,
   GameView,
   haptics,
-  impactStrength,
-  Mesh,
   World,
   type Camera,
   type Color,
   type Entity,
   type Light,
+  type Shape,
   type Vec3,
 } from "@nayan-ui/engine";
+
+/** 0 below `min`, 1 at `max` and above. */
+const strength = (speed: number, min: number, max: number) => Math.max(0, Math.min(1, (speed - min) / (max - min)));
 
 // Collision layers. A pair collides if either side's mask includes the other's layer.
 const BIRD = 1;
@@ -95,7 +97,7 @@ function createGame() {
   for (let i = 0; i < 7; i++) {
     const s = rand(10, 16);
     const hill = world.spawn({
-      mesh: Mesh.Sphere,
+      mesh: "sphere",
       position: [-30 + i * 10 + rand(-2, 2), GROUND_Y - s * 0.2, -30 - rand(0, 6)],
       scale: s,
       color: [0.3 + rand(0, 0.08), 0.58 + rand(0, 0.1), 0.3],
@@ -104,14 +106,14 @@ function createGame() {
   }
   for (let i = 0; i < 6; i++) {
     const cloud = world.spawn({
-      mesh: Mesh.Sphere,
+      mesh: "sphere",
       position: [-24 + i * 9 + rand(-2, 2), rand(4, 9), -14 - rand(0, 4)],
       scale: rand(2.2, 3),
       color: [1, 1, 1],
     });
     for (let k = 0; k < 3; k++) {
       world.spawn({
-        mesh: Mesh.Sphere,
+        mesh: "sphere",
         parent: cloud,
         position: [rand(-1.4, 1.4), rand(-0.4, 0.2), rand(-0.5, 0.5)],
         scale: rand(1.5, 2.1), // child scale is absolute (not multiplied by the parent's)
@@ -123,20 +125,20 @@ function createGame() {
 
   // The bird: a ball body plus attached eye, pupil, beak, wing and tail.
   const bird = world.spawn({
-    mesh: Mesh.Sphere,
+    mesh: "sphere",
     position: [BIRD_X, 1, 0],
     scale: 1,
     color: YELLOW,
     bob: { amplitude: [0, 0.35, 0], speed: 4 },
     physics: { type: "kinematic", radius: 0.42, layer: BIRD, mask: SOLID },
   });
-  const part = (mesh: (typeof Mesh)[keyof typeof Mesh], position: Vec3, scale: Vec3 | number, color: Color) =>
+  const part = (mesh: Shape, position: Vec3, scale: Vec3 | number, color: Color) =>
     world.spawn({ mesh, parent: bird, position, scale, color });
-  part(Mesh.Sphere, [0.22, 0.17, 0.33], 0.34, [1, 1, 1]);
-  part(Mesh.Sphere, [0.31, 0.18, 0.47], 0.15, [0.05, 0.05, 0.08]);
-  part(Mesh.Cube, [0.5, -0.06, 0], [0.36, 0.16, 0.28], [1, 0.5, 0.15]);
-  part(Mesh.Cube, [-0.52, 0.1, 0], [0.26, 0.14, 0.22], [0.95, 0.68, 0.12]);
-  const wing = part(Mesh.Cube, [-0.1, -0.02, 0.48], [0.46, 0.1, 0.32], [0.98, 0.7, 0.14]);
+  part("sphere", [0.22, 0.17, 0.33], 0.34, [1, 1, 1]);
+  part("sphere", [0.31, 0.18, 0.47], 0.15, [0.05, 0.05, 0.08]);
+  part("cube", [0.5, -0.06, 0], [0.36, 0.16, 0.28], [1, 0.5, 0.15]);
+  part("cube", [-0.52, 0.1, 0], [0.26, 0.14, 0.22], [0.95, 0.68, 0.12]);
+  const wing = part("cube", [-0.1, -0.02, 0.48], [0.46, 0.1, 0.32], [0.98, 0.7, 0.14]);
 
   world.listener = bird;
 
@@ -254,7 +256,7 @@ function die(g: Game, speed: number) {
   g.world.impulse(g.bird, [-1.2, 1.8, 0]);
   const p = g.world.position(g.bird);
   if (p) feathers(g, p, 14, 3.5);
-  sfx.play("hit", { volume: 0.6 + impactStrength(speed, 2, 10) * 0.4 });
+  sfx.play("hit", { volume: 0.6 + strength(speed, 2, 10) * 0.4 });
   haptics.impact(1, 0.8);
   g.onFlash();
   g.onPhase("dead");
@@ -313,7 +315,7 @@ function tick(g: Game, dt: number) {
       die(g, info.speed);
     } else if (g.phase === "dead" && other === g.ground && info.speed > 1) {
       const p = g.world.position(g.bird);
-      if (p) dust(g, p, impactStrength(info.speed, 1, 12)); // the thump itself comes from the core
+      if (p) dust(g, p, strength(info.speed, 1, 12)); // the thump itself comes from the core
     }
   });
 

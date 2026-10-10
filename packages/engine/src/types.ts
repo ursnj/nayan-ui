@@ -14,11 +14,11 @@ export interface RenderSource {
   readonly capacity: number;
 }
 
-/** Mesh ids understood by the renderer. */
-/** Built-in mesh ids. Loaded models get their own ids (see `loadModel`). */
-export const Mesh = { Cube: 0, Sphere: 1, Plane: 2 } as const;
-/** A built-in shape (`Mesh.*`) or a loaded model's `mesh`. */
-export type MeshKind = number;
+/** Built-in shapes, each 1 unit in size before scaling. */
+export type Shape = "cube" | "sphere" | "plane";
+
+/** Mesh ids of the built-in shapes, as the core and renderer know them. Loaded models get ids from 3 up. */
+export const SHAPE_MESH: Record<Shape, number> = { cube: 0, sphere: 1, plane: 2 };
 
 export type Camera = {
   eye: [number, number, number];

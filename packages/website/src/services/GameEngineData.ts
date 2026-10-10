@@ -2,7 +2,7 @@
 // Keep them in sync with packages/engine/src.
 
 export const entityOptionsAttributes = [
-  { name: "mesh", type: "Mesh.Cube | Mesh.Sphere | Mesh.Plane | model.mesh", default: "Mesh.Cube", details: "The shape to draw: a built-in shape or a loaded model." },
+  { name: "mesh", type: '"cube" | "sphere" | "plane" | Model', default: '"cube"', details: "The shape to draw: a built-in shape or a model from loadModel." },
   { name: "position", type: "[x, y, z]", default: "[0, 0, 0]", details: "Where it is. Relative to the parent when attached." },
   { name: "rotation", type: "[x, y, z, w]", default: "none", details: "A quaternion." },
   { name: "scale", type: "number | [x, y, z]", default: "1", details: "Size. Also sizes the default collider." },
