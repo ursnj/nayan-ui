@@ -32,13 +32,20 @@ protected:
     methodMap_["setBounds"] = MethodMetadata {.argCount = 5, .invoker = __setBounds};
     methodMap_["setListener"] = MethodMetadata {.argCount = 2, .invoker = __setListener};
     methodMap_["raycast"] = MethodMetadata {.argCount = 9, .invoker = __raycast};
-    methodMap_["readPosition"] = MethodMetadata {.argCount = 2, .invoker = __readPosition};
+    methodMap_["pick"] = MethodMetadata {.argCount = 7, .invoker = __pick};
+    methodMap_["readPosition"] = MethodMetadata {.argCount = 3, .invoker = __readPosition};
     methodMap_["readVelocity"] = MethodMetadata {.argCount = 2, .invoker = __readVelocity};
+    methodMap_["animate"] = MethodMetadata {.argCount = 3, .invoker = __animate};
+    methodMap_["stopAnimation"] = MethodMetadata {.argCount = 2, .invoker = __stopAnimation};
+    methodMap_["burst"] = MethodMetadata {.argCount = 2, .invoker = __burst};
     methodMap_["update"] = MethodMetadata {.argCount = 2, .invoker = __update};
     methodMap_["count"] = MethodMetadata {.argCount = 1, .invoker = __count};
     methodMap_["getMatrices"] = MethodMetadata {.argCount = 1, .invoker = __getMatrices};
     methodMap_["getColors"] = MethodMetadata {.argCount = 1, .invoker = __getColors};
+    methodMap_["getRegions"] = MethodMetadata {.argCount = 1, .invoker = __getRegions};
     methodMap_["getRanges"] = MethodMetadata {.argCount = 1, .invoker = __getRanges};
+    methodMap_["getDone"] = MethodMetadata {.argCount = 1, .invoker = __getDone};
+    methodMap_["doneLength"] = MethodMetadata {.argCount = 1, .invoker = __doneLength};
     methodMap_["getEvents"] = MethodMetadata {.argCount = 1, .invoker = __getEvents};
     methodMap_["eventLength"] = MethodMetadata {.argCount = 1, .invoker = __eventLength};
     methodMap_["getScratch"] = MethodMetadata {.argCount = 1, .invoker = __getScratch};
@@ -46,7 +53,14 @@ protected:
     methodMap_["modelVertices"] = MethodMetadata {.argCount = 1, .invoker = __modelVertices};
     methodMap_["modelIndices"] = MethodMetadata {.argCount = 1, .invoker = __modelIndices};
     methodMap_["modelSize"] = MethodMetadata {.argCount = 1, .invoker = __modelSize};
-    methodMap_["modelError"] = MethodMetadata {.argCount = 0, .invoker = __modelError};
+    methodMap_["modelTexture"] = MethodMetadata {.argCount = 1, .invoker = __modelTexture};
+    methodMap_["meshAlias"] = MethodMetadata {.argCount = 1, .invoker = __meshAlias};
+    methodMap_["textureLoad"] = MethodMetadata {.argCount = 1, .invoker = __textureLoad};
+    methodMap_["texturePixels"] = MethodMetadata {.argCount = 1, .invoker = __texturePixels};
+    methodMap_["textureSize"] = MethodMetadata {.argCount = 1, .invoker = __textureSize};
+    methodMap_["fontLoad"] = MethodMetadata {.argCount = 3, .invoker = __fontLoad};
+    methodMap_["fontGlyphs"] = MethodMetadata {.argCount = 1, .invoker = __fontGlyphs};
+    methodMap_["loadError"] = MethodMetadata {.argCount = 0, .invoker = __loadError};
     methodMap_["audioLoad"] = MethodMetadata {.argCount = 1, .invoker = __audioLoad};
     methodMap_["audioPlay"] = MethodMetadata {.argCount = 5, .invoker = __audioPlay};
     methodMap_["audioStop"] = MethodMetadata {.argCount = 1, .invoker = __audioStop};
@@ -162,13 +176,28 @@ private:
       count <= 8 ? throw jsi::JSError(rt, "Expected argument in position 8 to be passed") : args[8].asNumber());
   }
 
+  static jsi::Value __pick(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::pick) == 8,
+      "Expected pick(...) to have 8 parameters");
+    return bridging::callFromJs<double>(rt, &T::pick,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber(),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asNumber(),
+      count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asNumber(),
+      count <= 3 ? throw jsi::JSError(rt, "Expected argument in position 3 to be passed") : args[3].asNumber(),
+      count <= 4 ? throw jsi::JSError(rt, "Expected argument in position 4 to be passed") : args[4].asNumber(),
+      count <= 5 ? throw jsi::JSError(rt, "Expected argument in position 5 to be passed") : args[5].asNumber(),
+      count <= 6 ? throw jsi::JSError(rt, "Expected argument in position 6 to be passed") : args[6].asNumber());
+  }
+
   static jsi::Value __readPosition(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
     static_assert(
-      bridging::getParameterCount(&T::readPosition) == 3,
-      "Expected readPosition(...) to have 3 parameters");
+      bridging::getParameterCount(&T::readPosition) == 4,
+      "Expected readPosition(...) to have 4 parameters");
     return bridging::callFromJs<bool>(rt, &T::readPosition,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
       count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber(),
-      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asNumber());
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asNumber(),
+      count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asBool());
   }
 
   static jsi::Value __readVelocity(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
@@ -178,6 +207,34 @@ private:
     return bridging::callFromJs<bool>(rt, &T::readVelocity,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
       count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber(),
       count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asNumber());
+  }
+
+  static jsi::Value __animate(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::animate) == 4,
+      "Expected animate(...) to have 4 parameters");
+    return bridging::callFromJs<bool>(rt, &T::animate,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber(),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asNumber(),
+      count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asObject(rt));
+  }
+
+  static jsi::Value __stopAnimation(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::stopAnimation) == 3,
+      "Expected stopAnimation(...) to have 3 parameters");
+    return bridging::callFromJs<bool>(rt, &T::stopAnimation,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber(),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asNumber());
+  }
+
+  static jsi::Value __burst(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::burst) == 3,
+      "Expected burst(...) to have 3 parameters");
+    return bridging::callFromJs<double>(rt, &T::burst,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber(),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asObject(rt));
   }
 
   static jsi::Value __update(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
@@ -213,11 +270,35 @@ private:
       count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
   }
 
+  static jsi::Value __getRegions(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::getRegions) == 2,
+      "Expected getRegions(...) to have 2 parameters");
+    return bridging::callFromJs<jsi::Object>(rt, &T::getRegions,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
   static jsi::Value __getRanges(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
     static_assert(
       bridging::getParameterCount(&T::getRanges) == 2,
       "Expected getRanges(...) to have 2 parameters");
     return bridging::callFromJs<jsi::Object>(rt, &T::getRanges,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
+  static jsi::Value __getDone(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::getDone) == 2,
+      "Expected getDone(...) to have 2 parameters");
+    return bridging::callFromJs<jsi::Object>(rt, &T::getDone,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
+  static jsi::Value __doneLength(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::doneLength) == 2,
+      "Expected doneLength(...) to have 2 parameters");
+    return bridging::callFromJs<double>(rt, &T::doneLength,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
       count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
   }
 
@@ -279,11 +360,69 @@ private:
       count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
   }
 
-  static jsi::Value __modelError(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* /*args*/, size_t /*count*/) {
+  static jsi::Value __modelTexture(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
     static_assert(
-      bridging::getParameterCount(&T::modelError) == 1,
-      "Expected modelError(...) to have 1 parameters");
-    return bridging::callFromJs<jsi::String>(rt, &T::modelError,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule));
+      bridging::getParameterCount(&T::modelTexture) == 2,
+      "Expected modelTexture(...) to have 2 parameters");
+    return bridging::callFromJs<double>(rt, &T::modelTexture,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
+  static jsi::Value __meshAlias(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::meshAlias) == 2,
+      "Expected meshAlias(...) to have 2 parameters");
+    return bridging::callFromJs<double>(rt, &T::meshAlias,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
+  static jsi::Value __textureLoad(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::textureLoad) == 2,
+      "Expected textureLoad(...) to have 2 parameters");
+    return bridging::callFromJs<double>(rt, &T::textureLoad,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt));
+  }
+
+  static jsi::Value __texturePixels(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::texturePixels) == 2,
+      "Expected texturePixels(...) to have 2 parameters");
+    return bridging::callFromJs<jsi::Object>(rt, &T::texturePixels,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
+  static jsi::Value __textureSize(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::textureSize) == 2,
+      "Expected textureSize(...) to have 2 parameters");
+    return bridging::callFromJs<jsi::Array>(rt, &T::textureSize,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
+  static jsi::Value __fontLoad(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::fontLoad) == 4,
+      "Expected fontLoad(...) to have 4 parameters");
+    return bridging::callFromJs<double>(rt, &T::fontLoad,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asNumber(),
+      count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asString(rt));
+  }
+
+  static jsi::Value __fontGlyphs(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::fontGlyphs) == 2,
+      "Expected fontGlyphs(...) to have 2 parameters");
+    return bridging::callFromJs<jsi::Array>(rt, &T::fontGlyphs,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
+  static jsi::Value __loadError(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* /*args*/, size_t /*count*/) {
+    static_assert(
+      bridging::getParameterCount(&T::loadError) == 1,
+      "Expected loadError(...) to have 1 parameters");
+    return bridging::callFromJs<jsi::String>(rt, &T::loadError,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule));
   }
 
   static jsi::Value __audioLoad(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {

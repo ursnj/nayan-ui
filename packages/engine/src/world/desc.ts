@@ -1,10 +1,9 @@
 // Encodes entity options into the flat layout the Rust core decodes (core/include/engine_core.h,
 // core/src/world/desc.rs). One reusable Float64Array per world: spawning or changing an entity is
 // a single native call, and doubles keep entity ids and layer bits exact.
-import { SHAPE_MESH } from "../types";
 import type { EntityOptions, PhysicsOptions } from "./World";
 
-export const DESC_LEN = 55;
+export const DESC_LEN = 64;
 
 const FLAG = {
   MESH: 1 << 0,
@@ -21,6 +20,9 @@ const FLAG = {
   PARENT: 1 << 11,
   PHYSICS: 1 << 12,
   IMPACT: 1 << 13,
+  ACCELERATION: 1 << 14,
+  PICKABLE: 1 << 15,
+  REGION: 1 << 16,
 } as const;
 
 const SLOT = {
@@ -38,27 +40,32 @@ const SLOT = {
   LIFETIME: 31,
   PARENT: 32,
   PHYSICS: 33,
-  IMPACT: 49,
+  IMPACT: 50,
+  ACCELERATION: 56,
+  PICKABLE: 59,
+  REGION: 60,
 } as const;
 
 const BODY_KIND = { dynamic: 1, kinematic: 2, fixed: 3 } as const;
-const SHAPE = { ball: 0, box: 1, fromMesh: 2 } as const;
+const SHAPE = { ball: 0, box: 1, fromMesh: 2, cylinder: 3, capsule: 4, cone: 5 } as const;
 
 function encodePhysics(d: Float64Array, physics: PhysicsOptions) {
   const p = SLOT.PHYSICS;
   const shape =
-    physics.shape === "ball" || (physics.shape === undefined && physics.radius !== undefined)
-      ? SHAPE.ball
-      : physics.shape === "box" || physics.size !== undefined
+    physics.shape !== undefined
+      ? SHAPE[physics.shape]
+      : physics.size !== undefined
         ? SHAPE.box
-        : SHAPE.fromMesh;
+        : physics.radius !== undefined
+          ? SHAPE.ball
+          : SHAPE.fromMesh;
   // Sizes <= 0 tell the core to size the collider from the entity's mesh and scale.
   const [sx, sy, sz] =
-    shape === SHAPE.ball
-      ? [physics.radius ?? 0, 0, 0]
-      : physics.size
+    shape === SHAPE.box
+      ? physics.size
         ? [physics.size[0] / 2, physics.size[1] / 2, physics.size[2] / 2]
-        : [0, 0, 0];
+        : [0, 0, 0]
+      : [physics.radius ?? 0, (physics.height ?? 0) / 2, 0];
   d[p] = BODY_KIND[physics.type];
   d[p + 1] = shape;
   d[p + 2] = sx;
@@ -75,14 +82,15 @@ function encodePhysics(d: Float64Array, physics: PhysicsOptions) {
   d[p + 13] = physics.gravityScale ?? 1;
   d[p + 14] = physics.upright ? 1 : 0;
   d[p + 15] = physics.ccd ? 1 : 0;
+  d[p + 16] = physics.planar ? 1 : 0;
 }
 
-/** Writes `options` into `d`. Only the fields present are flagged; the rest are ignored. */
-export function encode(d: Float64Array, o: EntityOptions) {
+/** Writes `options` into `d`, with the mesh id already resolved. Only the fields present are flagged. */
+export function encode(d: Float64Array, o: EntityOptions, mesh: number | undefined) {
   let flags = 0;
-  if (o.mesh !== undefined) {
+  if (mesh !== undefined) {
     flags |= FLAG.MESH;
-    d[SLOT.MESH] = typeof o.mesh === "string" ? SHAPE_MESH[o.mesh] : o.mesh.id;
+    d[SLOT.MESH] = mesh;
   }
   if (o.position) {
     flags |= FLAG.POSITION;
@@ -150,5 +158,23 @@ export function encode(d: Float64Array, o: EntityOptions) {
     d[i + 4] = o.impact?.volume ?? 1;
     d[i + 5] = o.impact?.haptic ?? 0;
   }
+  if (o.acceleration) {
+    flags |= FLAG.ACCELERATION;
+    d.set(o.acceleration, SLOT.ACCELERATION);
+  }
+  if (o.pickable !== undefined) {
+    flags |= FLAG.PICKABLE;
+    d[SLOT.PICKABLE] = o.pickable ? 1 : 0;
+  }
+  if (o.textureRegion) {
+    flags |= FLAG.REGION;
+    d.set(o.textureRegion, SLOT.REGION);
+  }
   d[SLOT.FLAGS] = flags;
 }
+
+// ── Animations and bursts (layouts in core/include/engine_core.h) ─────────
+
+export const ANIM_LEN = 20;
+export const BURST_LEN = 30;
+export const EASING = { linear: 0, easeIn: 1, easeOut: 2, easeInOut: 3, back: 4, bounce: 5, elastic: 6 } as const;

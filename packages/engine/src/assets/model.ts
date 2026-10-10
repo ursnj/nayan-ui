@@ -1,5 +1,5 @@
 // External 3D models: glTF 2.0 (.glb, or .gltf with embedded buffers), parsed by the Rust core.
-import { assetUri, loadAssetBytes, type AssetSource } from "../assets";
+import { assetUri, loadAssetBytes, type AssetSource } from "./source";
 import NativeEngine from "../native/NativeNayanEngine";
 import { registerMesh } from "../render/meshes";
 import type { Vec3 } from "../types";
@@ -21,10 +21,18 @@ export type Model = {
 
 const loads = new Map<string, Promise<Model>>();
 
+/** A registered mesh's geometry, aliasing native memory. */
+export function nativeGeometry(mesh: number) {
+  return {
+    vertices: new Float32Array(NativeEngine!.modelVertices(mesh) as ArrayBuffer),
+    indices: new Uint32Array(NativeEngine!.modelIndices(mesh) as ArrayBuffer),
+  };
+}
+
 /**
- * Loads a glTF model once and returns a mesh id to spawn it with. Meshes, node transforms and
- * material base colors are kept; textures, skins and animations are ignored. Every entity using
- * the mesh is drawn in one instanced draw call.
+ * Loads a glTF model once; pass it as an entity's `mesh`. Meshes, node transforms, material colors
+ * and the base color texture are kept (one texture per model); skins and animations are ignored.
+ * Every entity using the model is drawn in one instanced draw call.
  *
  * ```ts
  * const tree = await loadModel(require("./assets/tree.glb"), { fit: 2 });
@@ -43,11 +51,9 @@ export function loadModel(source: AssetSource, options: ModelOptions = {}): Prom
     pending = loadAssetBytes(source)
       .then(({ bytes }) => {
         const mesh = native.modelLoad(bytes, center, fit);
-        if (mesh < 0) throw new Error(native.modelError() || "not a glTF model");
-        registerMesh(mesh, {
-          vertices: new Float32Array(native.modelVertices(mesh) as ArrayBuffer),
-          indices: new Uint32Array(native.modelIndices(mesh) as ArrayBuffer),
-        });
+        if (mesh < 0) throw new Error(native.loadError() || "not a glTF model");
+        const texture = native.modelTexture(mesh);
+        registerMesh(mesh, { geometry: nativeGeometry(mesh), texture: texture >= 0 ? texture : undefined });
         const [x, y, z] = native.modelSize(mesh);
         return { id: mesh, size: [x!, y!, z!] as Vec3 };
       })
