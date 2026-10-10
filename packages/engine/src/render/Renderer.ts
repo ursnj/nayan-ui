@@ -278,8 +278,7 @@ export class Renderer {
       });
       pass.setPipeline(this.shadowPipeline);
       pass.setBindGroup(0, this.shadowBindGroup);
-      this.draw(pass, used, 0, false);
-      this.draw(pass, used, MAX_MESHES, false);
+      this.draw(pass, used, 0, false); // see-through instances don't cast shadows
       pass.end();
     }
 
