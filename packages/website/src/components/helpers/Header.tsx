@@ -13,8 +13,8 @@ const NAV = [
   { label: "Home", href: "/", match: "/" },
   { label: "React", href: "/react/installation", match: "/react" },
   { label: "React Native", href: "/react-native/installation", match: "/react-native" },
-  { label: "Games", href: "/games", match: "/games" },
   { label: "Game Engine", href: "/game-engine", match: "/game-engine" },
+  { label: "Games", href: "/games", match: "/games" },
   { label: "Video Editor", href: "/video-editor", match: "/video-editor" },
   { label: "Tools", href: "/tools", match: "/tools" },
 ];
