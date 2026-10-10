@@ -26,14 +26,21 @@ impl Sound {
             hound::SampleFormat::Float => reader.samples::<f32>().collect::<Result<_, _>>().ok()?,
             hound::SampleFormat::Int => {
                 let scale = 1.0 / (1u64 << (spec.bits_per_sample - 1)) as f32;
-                reader.samples::<i32>().map(|s| s.map(|v| v as f32 * scale)).collect::<Result<_, _>>().ok()?
+                reader
+                    .samples::<i32>()
+                    .map(|s| s.map(|v| v as f32 * scale))
+                    .collect::<Result<_, _>>()
+                    .ok()?
             }
         };
         let frames = samples
             .chunks_exact(channels)
             .map(|f| if channels == 2 { [f[0], f[1]] } else { [f[0], f[0]] })
             .collect::<Vec<_>>();
-        (!frames.is_empty()).then_some(Sound { frames, rate: spec.sample_rate })
+        (!frames.is_empty()).then_some(Sound {
+            frames,
+            rate: spec.sample_rate,
+        })
     }
 
     pub fn duration(&self) -> f32 {
@@ -42,7 +49,13 @@ impl Sound {
 }
 
 pub(super) enum Command {
-    Play { id: u64, sound: Arc<Sound>, gain: [f32; 2], pitch: f32, looping: bool },
+    Play {
+        id: u64,
+        sound: Arc<Sound>,
+        gain: [f32; 2],
+        pitch: f32,
+        looping: bool,
+    },
     Stop(u64),
 }
 
@@ -65,15 +78,32 @@ pub struct Mixer {
 }
 
 impl Mixer {
-    pub(super) fn new(commands: rtrb::Consumer<Command>, output_rate: u32, volume: Arc<AtomicU32>, muted: Arc<AtomicBool>) -> Self {
-        Self { voices: Vec::with_capacity(MAX_VOICES), commands, output_rate, volume, muted }
+    pub(super) fn new(
+        commands: rtrb::Consumer<Command>,
+        output_rate: u32,
+        volume: Arc<AtomicU32>,
+        muted: Arc<AtomicBool>,
+    ) -> Self {
+        Self {
+            voices: Vec::with_capacity(MAX_VOICES),
+            commands,
+            output_rate,
+            volume,
+            muted,
+        }
     }
 
     /// Fills `out` (interleaved, `channels` per frame) with the mix.
     pub fn render(&mut self, out: &mut [f32], channels: usize) {
         while let Ok(command) = self.commands.pop() {
             match command {
-                Command::Play { id, sound, gain, pitch, looping } => {
+                Command::Play {
+                    id,
+                    sound,
+                    gain,
+                    pitch,
+                    looping,
+                } => {
                     if self.voices.len() == MAX_VOICES {
                         match self.voices.iter().position(|v| !v.looping) {
                             Some(oldest) => {
@@ -83,7 +113,14 @@ impl Mixer {
                         }
                     }
                     let step = sound.rate as f64 / self.output_rate as f64 * pitch as f64;
-                    self.voices.push(Voice { id, sound, position: 0.0, step, gain, looping });
+                    self.voices.push(Voice {
+                        id,
+                        sound,
+                        position: 0.0,
+                        step,
+                        gain,
+                        looping,
+                    });
                 }
                 Command::Stop(id) => self.voices.retain(|v| v.id != id),
             }
@@ -103,7 +140,13 @@ impl Mixer {
                 }
                 let i = voice.position as usize;
                 let t = (voice.position - i as f64) as f32;
-                let next = if i + 1 < len { i + 1 } else if voice.looping { 0 } else { i };
+                let next = if i + 1 < len {
+                    i + 1
+                } else if voice.looping {
+                    0
+                } else {
+                    i
+                };
                 let l = frames[i][0] + (frames[next][0] - frames[i][0]) * t;
                 let r = frames[i][1] + (frames[next][1] - frames[i][1]) * t;
                 if channels == 1 {
@@ -115,9 +158,14 @@ impl Mixer {
                 voice.position += voice.step;
             }
         }
-        self.voices.retain(|v| v.looping || v.position < v.sound.frames.len() as f64);
+        self.voices
+            .retain(|v| v.looping || v.position < v.sound.frames.len() as f64);
 
-        let volume = if self.muted.load(Ordering::Relaxed) { 0.0 } else { f32::from_bits(self.volume.load(Ordering::Relaxed)) };
+        let volume = if self.muted.load(Ordering::Relaxed) {
+            0.0
+        } else {
+            f32::from_bits(self.volume.load(Ordering::Relaxed))
+        };
         for s in out.iter_mut() {
             *s = soft_clip(*s * volume);
         }
@@ -142,7 +190,10 @@ fn soft_clip(x: f32) -> f32 {
 /// Constant-power pan: equal loudness across the stereo field.
 pub(super) fn pan_gains(volume: f32, pan: f32) -> [f32; 2] {
     let angle = (pan.clamp(-1.0, 1.0) + 1.0) * std::f32::consts::FRAC_PI_4;
-    [angle.cos() * volume * std::f32::consts::SQRT_2, angle.sin() * volume * std::f32::consts::SQRT_2]
+    [
+        angle.cos() * volume * std::f32::consts::SQRT_2,
+        angle.sin() * volume * std::f32::consts::SQRT_2,
+    ]
 }
 
 #[cfg(test)]
@@ -151,7 +202,12 @@ mod tests {
 
     fn wav(samples: &[i16], channels: u16, rate: u32) -> Vec<u8> {
         let mut out = Cursor::new(Vec::new());
-        let spec = hound::WavSpec { channels, sample_rate: rate, bits_per_sample: 16, sample_format: hound::SampleFormat::Int };
+        let spec = hound::WavSpec {
+            channels,
+            sample_rate: rate,
+            bits_per_sample: 16,
+            sample_format: hound::SampleFormat::Int,
+        };
         let mut w = hound::WavWriter::new(&mut out, spec).unwrap();
         for &s in samples {
             w.write_sample(s).unwrap();
@@ -162,13 +218,26 @@ mod tests {
 
     fn mixer() -> (rtrb::Producer<Command>, Mixer) {
         let (p, c) = rtrb::RingBuffer::new(16);
-        let m = Mixer::new(c, 48_000, Arc::new(AtomicU32::new(1.0f32.to_bits())), Arc::new(AtomicBool::new(false)));
+        let m = Mixer::new(
+            c,
+            48_000,
+            Arc::new(AtomicU32::new(1.0f32.to_bits())),
+            Arc::new(AtomicBool::new(false)),
+        );
         (p, m)
     }
 
     fn play(p: &mut rtrb::Producer<Command>, id: u64, sound: &Arc<Sound>, pitch: f32, looping: bool) {
         let gain = pan_gains(1.0, 0.0);
-        p.push(Command::Play { id, sound: sound.clone(), gain, pitch, looping }).ok().unwrap();
+        p.push(Command::Play {
+            id,
+            sound: sound.clone(),
+            gain,
+            pitch,
+            looping,
+        })
+        .ok()
+        .unwrap();
     }
 
     #[test]
@@ -179,13 +248,19 @@ mod tests {
         let stereo = Sound::from_wav(&wav(&[16384, 0, 0, -16384], 2, 48_000)).unwrap();
         assert_eq!(stereo.frames, vec![[0.5, 0.0], [0.0, -0.5]]);
         assert!(Sound::from_wav(b"not a wav").is_none());
-        assert!(Sound::from_wav(&wav(&[], 1, 48_000)).is_none(), "empty files are rejected");
+        assert!(
+            Sound::from_wav(&wav(&[], 1, 48_000)).is_none(),
+            "empty files are rejected"
+        );
     }
 
     #[test]
     fn plays_a_sound_once_then_frees_the_voice() {
         let (mut p, mut m) = mixer();
-        let sound = Arc::new(Sound { frames: vec![[0.5, 0.5]; 4], rate: 48_000 });
+        let sound = Arc::new(Sound {
+            frames: vec![[0.5, 0.5]; 4],
+            rate: 48_000,
+        });
         play(&mut p, 1, &sound, 1.0, false);
         let mut out = [0.0f32; 12]; // 6 stereo frames
         m.render(&mut out, 2);
@@ -197,7 +272,10 @@ mod tests {
     #[test]
     fn loops_until_stopped_and_resamples() {
         let (mut p, mut m) = mixer();
-        let sound = Arc::new(Sound { frames: vec![[0.5, 0.5]; 4], rate: 24_000 }); // half the output rate
+        let sound = Arc::new(Sound {
+            frames: vec![[0.5, 0.5]; 4],
+            rate: 24_000,
+        }); // half the output rate
         play(&mut p, 7, &sound, 1.0, true);
         let mut out = [0.0f32; 64];
         m.render(&mut out, 2);
@@ -213,8 +291,16 @@ mod tests {
     fn steals_the_oldest_effect_when_full_but_keeps_music() {
         let (p, c) = rtrb::RingBuffer::new(MAX_VOICES * 2 + 4);
         let mut p = p;
-        let mut m = Mixer::new(c, 48_000, Arc::new(AtomicU32::new(1.0f32.to_bits())), Arc::new(AtomicBool::new(false)));
-        let long = Arc::new(Sound { frames: vec![[0.1, 0.1]; 48_000], rate: 48_000 });
+        let mut m = Mixer::new(
+            c,
+            48_000,
+            Arc::new(AtomicU32::new(1.0f32.to_bits())),
+            Arc::new(AtomicBool::new(false)),
+        );
+        let long = Arc::new(Sound {
+            frames: vec![[0.1, 0.1]; 48_000],
+            rate: 48_000,
+        });
         play(&mut p, 1, &long, 1.0, true); // music
         for id in 2..=MAX_VOICES as u64 + 5 {
             play(&mut p, id, &long, 1.0, false);
@@ -223,7 +309,10 @@ mod tests {
         m.render(&mut out, 2);
         assert_eq!(m.active_voices(), MAX_VOICES);
         assert!(m.voices.iter().any(|v| v.id == 1), "music survives");
-        assert!(m.voices.iter().any(|v| v.id == MAX_VOICES as u64 + 5), "newest effect plays");
+        assert!(
+            m.voices.iter().any(|v| v.id == MAX_VOICES as u64 + 5),
+            "newest effect plays"
+        );
         assert!(!m.voices.iter().any(|v| v.id == 2), "oldest effect was stolen");
     }
 
@@ -232,16 +321,25 @@ mod tests {
         let (l, r) = (pan_gains(1.0, -1.0), pan_gains(1.0, 1.0));
         assert!(l[0] > 1.0 && l[1].abs() < 1e-6 && r[0].abs() < 1e-6 && r[1] > 1.0);
         let c = pan_gains(1.0, 0.0);
-        assert!((c[0] - 1.0).abs() < 1e-5 && (c[1] - 1.0).abs() < 1e-5, "centre is unity: {c:?}");
+        assert!(
+            (c[0] - 1.0).abs() < 1e-5 && (c[1] - 1.0).abs() < 1e-5,
+            "centre is unity: {c:?}"
+        );
 
         let (mut p, mut m) = mixer();
-        let loud = Arc::new(Sound { frames: vec![[1.0, 1.0]; 64], rate: 48_000 });
+        let loud = Arc::new(Sound {
+            frames: vec![[1.0, 1.0]; 64],
+            rate: 48_000,
+        });
         for id in 0..10 {
             play(&mut p, id, &loud, 1.0, false);
         }
         let mut out = [0.0f32; 16];
         m.render(&mut out, 2);
-        assert!(out.iter().all(|&s| s <= 1.0 && s > 0.95), "stacked sounds are limited to ±1: {out:?}");
+        assert!(
+            out.iter().all(|&s| s <= 1.0 && s > 0.95),
+            "stacked sounds are limited to ±1: {out:?}"
+        );
         assert_eq!(soft_clip(0.5), 0.5, "transparent at normal levels");
         assert_eq!(soft_clip(-0.8), -0.8);
         m.muted.store(true, Ordering::Relaxed);

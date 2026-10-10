@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds rust/build/EngineCore.xcframework (iOS device + Apple-silicon simulator).
+# Builds core/build/EngineCore.xcframework (iOS device + Apple-silicon simulator).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 export PATH="$HOME/.cargo/bin:$PATH"

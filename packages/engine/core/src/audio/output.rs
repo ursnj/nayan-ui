@@ -17,8 +17,12 @@ pub fn start(
     let spawned = std::thread::Builder::new().name("engine-audio".into()).spawn(move || {
         #[cfg(target_os = "ios")]
         ios::configure_session();
-        let Some(device) = cpal::default_host().default_output_device() else { return };
-        let Ok(supported) = device.default_output_config() else { return };
+        let Some(device) = cpal::default_host().default_output_device() else {
+            return;
+        };
+        let Ok(supported) = device.default_output_config() else {
+            return;
+        };
         let format = supported.sample_format();
         let config: StreamConfig = supported.into();
         let mixer = Mixer::new(consumer, config.sample_rate, volume, muted);

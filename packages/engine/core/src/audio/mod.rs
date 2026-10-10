@@ -67,7 +67,13 @@ pub fn play(sound: u32, volume: f32, pan: f32, pitch: f32, looping: bool) -> Opt
     let system = system();
     let sound = system.sounds.lock().ok()?.get(sound as usize)?.clone();
     let id = system.next_voice.fetch_add(1, Ordering::Relaxed);
-    let command = Command::Play { id, sound, gain: pan_gains(volume.min(2.0), pan), pitch: pitch.clamp(0.1, 4.0), looping };
+    let command = Command::Play {
+        id,
+        sound,
+        gain: pan_gains(volume.min(2.0), pan),
+        pitch: pitch.clamp(0.1, 4.0),
+        looping,
+    };
     system.producer.lock().ok()?.push(command).ok()?;
     Some(id)
 }
@@ -80,7 +86,9 @@ pub fn stop(voice: u64) {
 
 pub fn set_volume(volume: f32) {
     if volume.is_finite() {
-        system().volume.store(volume.clamp(0.0, 2.0).to_bits(), Ordering::Relaxed);
+        system()
+            .volume
+            .store(volume.clamp(0.0, 2.0).to_bits(), Ordering::Relaxed);
     }
 }
 

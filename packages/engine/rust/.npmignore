@@ -1,3 +1,0 @@
-# npm ignores files listed in .gitignore unless this file exists: ship rust/build (prebuilt binaries)
-# and rust/include, but not Rust build intermediates.
-target/

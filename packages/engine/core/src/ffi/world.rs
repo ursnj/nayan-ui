@@ -38,7 +38,9 @@ pub unsafe extern "C" fn engine_world_spawn(
     b: f32,
     a: f32,
 ) -> u32 {
-    let Some(w) = (unsafe { world(w) }) else { return NO_ENTITY };
+    let Some(w) = (unsafe { world(w) }) else {
+        return NO_ENTITY;
+    };
     let Ok(mesh) = u8::try_from(mesh) else { return NO_ENTITY };
     w.spawn(mesh, Vec3::new(x, y, z), Vec3::new(sx, sy, sz), [r, g, b, a])
         .map_or(NO_ENTITY, |e| e.0)
@@ -160,7 +162,9 @@ pub struct EnginePhysicsDesc {
 /// Returns 1 on success, 0 for a stale id, null pointer or invalid description.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_world_set_physics(w: *mut World, id: u32, desc: *const EnginePhysicsDesc) -> i32 {
-    let (Some(w), Some(d)) = (unsafe { world(w) }, unsafe { desc.as_ref() }) else { return 0 };
+    let (Some(w), Some(d)) = (unsafe { world(w) }, unsafe { desc.as_ref() }) else {
+        return 0;
+    };
     let kind = match d.kind {
         0 => return w.set_physics(Entity(id), None) as i32,
         1 => BodyKind::Dynamic,
@@ -170,7 +174,9 @@ pub unsafe extern "C" fn engine_world_set_physics(w: *mut World, id: u32, desc: 
     };
     let shape = match d.shape {
         0 => Shape::Ball { radius: d.size[0] },
-        1 => Shape::Cuboid { half_extents: Vec3::from_array(d.size) },
+        1 => Shape::Cuboid {
+            half_extents: Vec3::from_array(d.size),
+        },
         _ => return 0,
     };
     let desc = PhysicsDesc {
