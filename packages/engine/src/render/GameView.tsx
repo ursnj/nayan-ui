@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { PanResponder, PixelRatio, StyleSheet, View, type ViewStyle } from "react-native";
 import { Canvas, useCanvasRef, type CanvasRef } from "react-native-webgpu";
+import { AutoQuality, QUALITY_LEVELS, type Quality, type QualitySetting } from "./quality";
 import { defaultCamera, defaultLight, Renderer } from "./Renderer";
 import type { Camera, Light, RenderSource } from "../types";
 import type { Entity } from "../world/World";
@@ -15,6 +16,8 @@ export type GameStats = {
   fps: number;
   /** Mean time spent in `onUpdate` per frame, in milliseconds. */
   updateMs: number;
+  /** The quality level drawn with (with `quality="auto"`, the one it settled on so far). */
+  quality: Quality;
 };
 
 export type SwipeDirection = "left" | "right" | "up" | "down";
@@ -44,6 +47,11 @@ type Props = {
   background?: readonly [number, number, number];
   /** Distance fog density towards `background` (e.g. 0.02). Default 0 (off). */
   fog?: number;
+  /**
+   * Resolution, anti-aliasing and shadow quality. "auto" (default) starts at "medium" and steps down
+   * while the game can't hold 60 fps, so it stays smooth on low-end phones.
+   */
+  quality?: QualitySetting;
   style?: ViewStyle;
   /** A quick tap, at `x, y` points in the view. `world.pick(x, y)` finds what was tapped. */
   onTap?: (x: number, y: number) => void;
@@ -131,7 +139,13 @@ export function GameView(props: Props) {
       const canvas = context.canvas as unknown as ReturnType<CanvasRef["getNativeSurface"]>;
       // Validation errors don't throw in WebGPU; scope the setup and first frame so they surface.
       device.pushErrorScope("validation");
-      const renderer = new Renderer(device, context, format, source);
+      const auto = new AutoQuality();
+      const chosen = () => {
+        const setting = live.current.props.quality ?? "auto";
+        return setting === "auto" ? auto.quality : setting;
+      };
+      let quality = chosen();
+      const renderer = new Renderer(device, context, format, source, QUALITY_LEVELS[quality]);
       const followed: [number, number, number] = [0, 0, 0];
       const shaken: Camera = { eye: [0, 0, 0], target: [0, 0, 0], fov: 1 };
       let firstFrame = true;
@@ -155,7 +169,13 @@ export function GameView(props: Props) {
         follow(camera, source, followed, dt);
         const view = shake(camera, shaken, dt);
 
-        const ratio = PixelRatio.get();
+        const next = chosen();
+        if (next !== quality) {
+          quality = next;
+          renderer.setQuality(QUALITY_LEVELS[quality]);
+        }
+        // Phones' GPUs are fill-rate bound: cap the pixels drawn rather than match a 3x+ screen.
+        const ratio = Math.min(PixelRatio.get(), QUALITY_LEVELS[quality].maxPixelRatio);
         const width = Math.max(1, Math.round(canvas.clientWidth * ratio));
         const height = Math.max(1, Math.round(canvas.clientHeight * ratio));
         if (canvas.width !== width) canvas.width = width;
@@ -169,7 +189,8 @@ export function GameView(props: Props) {
 
         frames++;
         if (now - fpsStart >= 1000) {
-          current.onStats?.({ fps: (frames * 1000) / (now - fpsStart), updateMs: updateTime / frames });
+          auto.report(now, (now - fpsStart) / frames);
+          current.onStats?.({ fps: (frames * 1000) / (now - fpsStart), updateMs: updateTime / frames, quality });
           frames = 0;
           updateTime = 0;
           fpsStart = now;

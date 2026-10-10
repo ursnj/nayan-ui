@@ -57,6 +57,7 @@ export const gameViewAttributes = [
   { name: "light", type: "Light", default: "direction [0.4, 0.8, 0.5], ambient 0.35, shadows on", details: "Direction, ambient level and shadows. Read every frame. See Light fields." },
   { name: "background", type: "[r, g, b]", default: "dark navy", details: "Sky / clear color, linear 0..1 RGB. Also the fog color." },
   { name: "fog", type: "number", default: "0 (off)", details: "Distance fog density, e.g. 0.02." },
+  { name: "quality", type: '"auto" | "high" | "medium" | "low" | "lowest"', default: '"auto"', details: "Resolution, anti-aliasing and shadow quality. \"auto\" starts at \"medium\" and steps down while the game can't hold 60 fps, so it stays smooth on low-end phones. See Quality levels." },
   { name: "style", type: "ViewStyle", default: "flex: 1", details: "Style of the canvas view." },
   { name: "onTap", type: "(x: number, y: number) => void", default: "none", details: "A quick tap (under 10 points of movement and 300 ms), in points from the view's top-left. world.pick(x, y) finds what was tapped." },
   { name: "onSwipe", type: '(direction: "left" | "right" | "up" | "down") => void', default: "none", details: "A quick flick (over 30 points, faster than 0.3 points/ms) in its main direction: 2048, runners, sliding puzzles." },
@@ -254,6 +255,14 @@ export const shapeAttributes = [
 export const gameStatsAttributes = [
   { name: "fps", type: "number", default: "", details: "Frames drawn per second over the last second." },
   { name: "updateMs", type: "number", default: "", details: "Mean time spent in onUpdate per frame, in milliseconds." },
+  { name: "quality", type: '"high" | "medium" | "low" | "lowest"', default: "", details: "The level being drawn with. With quality=\"auto\", the one it has settled on so far." },
+];
+
+export const qualityAttributes = [
+  { name: '"high"', type: "up to 3×", default: "4× MSAA", details: "2048 shadow map, soft shadow edges. For tablets and flagship phones." },
+  { name: '"medium"', type: "up to 2×", default: "4× MSAA", details: "1024 shadow map, soft shadow edges. Looks nearly the same as high on a phone. Where \"auto\" starts." },
+  { name: '"low"', type: "up to 1.5×", default: "off", details: "1024 shadow map, hard shadow edges. For budget phones." },
+  { name: '"lowest"', type: "1×", default: "off", details: "512 shadow map, hard shadow edges. The cheapest: old and entry-level phones." },
 ];
 
 // ── Input ────────────────────────────────────────────────────────────────

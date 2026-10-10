@@ -1,5 +1,6 @@
-// One shader module, three pipelines: `vs_shadow` renders depth from the light; `vs` + `fs_opaque`
-// draw solid instances (sampling that depth for shadows) and `vs` + `fs_blend` see-through ones.
+// One shader module, four pipelines: `vs_shadow` renders depth from the light; `vs` + `fs_opaque`
+// draw solid instances (sampling that depth for shadows), `vs` + `fs_cutout` solid ones whose texture
+// has holes, and `vs` + `fs_blend` see-through ones.
 // Each instance reads its model matrix, color and texture region from storage buffers; each mesh
 // binds its texture (white when it has none).
 export const SHADER = /* wgsl */ `
@@ -7,7 +8,7 @@ struct Globals {
   viewProj: mat4x4f,
   lightViewProj: mat4x4f,
   light: vec4f,  // xyz = direction towards the light (normalized), w = ambient
-  shadow: vec4f, // y = enabled (0/1), z = depth bias
+  shadow: vec4f, // x = soft (0/1), y = enabled (0/1), z = depth bias
   camera: vec4f, // xyz = eye position
   fog: vec4f,    // rgb = fog color (the background), a = density (0 = off)
 };
@@ -31,6 +32,7 @@ struct VSOut {
   @location(1) color: vec4f,
   @location(2) world: vec3f,
   @location(3) uv: vec2f,
+  @location(4) shadowPos: vec3f, // position in the light's clip space (orthographic, so w = 1)
 };
 
 @vertex
@@ -56,17 +58,17 @@ fn vs(
   out.color = colors[instance] * vec4f(vertexColor, 1.0);
   out.world = world.xyz;
   out.uv = mix(region.xy, region.zw, uv);
+  out.shadowPos = (globals.lightViewProj * world).xyz; // per vertex: saves a matrix per pixel
   return out;
 }
 
-// 1 = lit, 0 = in shadow. 3x3 PCF done by hand with textureLoad: comparison samplers are not
-// available on every backend (Dawn disables them on some Metal devices, e.g. the iOS simulator).
-fn shadowFactor(world: vec3f) -> f32 {
+// 1 = lit, 0 = in shadow. 3x3 PCF (or one tap when shadows are hard) done by hand with textureLoad:
+// comparison samplers are not available on every backend (Dawn disables them on some Metal devices,
+// e.g. the iOS simulator).
+fn shadowFactor(ndc: vec3f) -> f32 {
   if (globals.shadow.y == 0.0) {
     return 1.0;
   }
-  let p = globals.lightViewProj * vec4f(world, 1.0);
-  let ndc = p.xyz / p.w;
   let uv = vec2f(ndc.x * 0.5 + 0.5, 0.5 - ndc.y * 0.5);
   if (any(uv < vec2f(0.0)) || any(uv > vec2f(1.0)) || ndc.z > 1.0) {
     return 1.0; // outside the shadow map: lit
@@ -74,6 +76,9 @@ fn shadowFactor(world: vec3f) -> f32 {
   let depth = ndc.z - globals.shadow.z;
   let size = vec2i(textureDimensions(shadowMap));
   let center = vec2i(uv * vec2f(size));
+  if (globals.shadow.x == 0.0) {
+    return select(0.0, 1.0, depth <= textureLoad(shadowMap, min(center, size - vec2i(1)), 0));
+  }
   var sum = 0.0;
   for (var y = -1; y <= 1; y++) {
     for (var x = -1; x <= 1; x++) {
@@ -87,7 +92,7 @@ fn shadowFactor(world: vec3f) -> f32 {
 // Lit, fogged color of a surface.
 fn shade(in: VSOut, base: vec3f) -> vec3f {
   let n = normalize(in.normal);
-  let diffuse = max(dot(n, globals.light.xyz), 0.0) * shadowFactor(in.world);
+  let diffuse = max(dot(n, globals.light.xyz), 0.0) * shadowFactor(in.shadowPos);
   let hemisphere = mix(0.6, 1.0, n.y * 0.5 + 0.5); // sky/ground tint so faces away from the light aren't flat
   let lit = globals.light.w * hemisphere + (1.0 - globals.light.w) * diffuse;
   // Exponential-squared distance fog towards the background color: depth for far scenery.
@@ -98,6 +103,12 @@ fn shade(in: VSOut, base: vec3f) -> vec3f {
 
 @fragment
 fn fs_opaque(in: VSOut) -> @location(0) vec4f {
+  let texel = textureSample(tex, texSampler, in.uv);
+  return vec4f(shade(in, in.color.rgb * texel.rgb), 1.0);
+}
+
+@fragment
+fn fs_cutout(in: VSOut) -> @location(0) vec4f {
   let texel = textureSample(tex, texSampler, in.uv);
   if (texel.a < 0.5) {
     discard; // cut-out textures (leaves, sprites, rounded cards)

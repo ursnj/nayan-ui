@@ -138,7 +138,8 @@ world.spawn({ mesh: tree, position: [0, tree.size[1] / 2, 0], physics: "fixed" }
 
 - **Rendering** (WebGPU): 8 built-in shapes, glTF models, 3D text, textures and atlas regions, transparency,
   per-instance color, one instanced draw per mesh, directional light with a filtered shadow map that follows the camera,
-  fog, perspective or orthographic cameras with follow and shake, 4x MSAA.
+  fog, perspective or orthographic cameras with follow and shake, 4x MSAA, and quality levels (`quality="auto"` steps
+  down resolution, MSAA and shadows on phones that can't hold 60 fps).
 - **Physics** ([Rapier](https://rapier.rs) in Rust): dynamic / kinematic / fixed bodies, ball, box, cylinder, capsule
   and cone colliders, friction, restitution, density, damping, rotation locks, 2D (planar) bodies, CCD, gravity, impulses, raycasts,
   collision layers/masks, sensors, start/stop contact events with impact speed.
@@ -237,6 +238,10 @@ Tips:
 - One pipeline, one instanced `drawIndexed` per mesh in use. Model matrices live in a storage buffer.
 - One `writeBuffer` for all matrices per frame. No per-entity JS↔native calls.
 - 4x MSAA with depth/MSAA targets set to `storeOp: "discard"`, so tile GPUs keep them on-chip.
+- Resolution capped per quality level (phones with 3x+ screens don't draw every pixel); `"auto"` drops a level
+  after two slow seconds.
+- Only cut-out textures use `discard`, so early depth testing stays on for everything else on tile GPUs.
+- Shadow coordinates computed per vertex; 16-bit shadow map and 16-bit indices halve their bandwidth.
 - No allocation in the frame loop. `world.position(e, out)` / `velocity(e, out)` fill an array you reuse.
 - One native call per `spawn` / `set`: options are packed into a reusable Float64Array that the core decodes.
 - Rust core: structure-of-arrays storage, entities are `u32` handles, render buffers are fixed-size and never move.

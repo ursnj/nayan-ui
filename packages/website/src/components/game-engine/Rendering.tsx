@@ -19,6 +19,7 @@ import {
   cameraAttributes,
   gameStatsAttributes,
   gameViewAttributes,
+  qualityAttributes,
   lightAttributes,
   shapeAttributes,
 } from "@/services/GameEngineData";
@@ -101,12 +102,27 @@ const EngineRendering = () => (
 
     <Attributes title="GameStats" data={gameStatsAttributes} headers={{ default: "" }} unit="field" />
 
+    <Attributes
+      title="Quality levels"
+      data={qualityAttributes}
+      headers={{ name: "Quality", type: "Pixels per point", default: "Anti-aliasing" }}
+      unit="level"
+    />
+
     <SubHeader title="Performance tips">
       <ul className={`space-y-2 ${BODY}`}>
         <li>• Do game logic in onUpdate and mutate the camera object; avoid React state updates every frame.</li>
         <li>• Update React state only when something visible changes, like the score.</li>
         <li>• Prefer world settings (velocity, follow, lifetime) and animate over moving entities from JS each frame.</li>
         <li>• Use lifetimes or burst for particles so they clean themselves up.</li>
+        <li>
+          • Leave <code>quality</code> on &quot;auto&quot; so low-end phones drop resolution and anti-aliasing
+          instead of frames. Turn off <code>light.shadows</code> for the cheapest rendering.
+        </li>
+        <li>
+          • Textures with see-through texels (alpha below 0.5) are drawn with a slower pipeline on mobile GPUs.
+          Use fully opaque textures where you can.
+        </li>
       </ul>
     </SubHeader>
   </Sidebar>

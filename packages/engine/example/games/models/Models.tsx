@@ -53,7 +53,7 @@ function createScene(tree: Model, rocket: Model): Scene {
 export function Models() {
   const [models, setModels] = useState<[Model, Model] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [stats, setStats] = useState<GameStats>({ fps: 0, updateMs: 0 });
+  const [stats, setStats] = useState<GameStats>({ fps: 0, updateMs: 0, quality: "medium" });
 
   useEffect(() => {
     Promise.all([
