@@ -1,27 +1,19 @@
-// One pipeline, one draw call: every instance reads its model matrix from a storage buffer.
+// One pipeline for every mesh: each instance reads its model matrix and color from storage buffers.
 export const SHADER = /* wgsl */ `
 struct Globals {
   viewProj: mat4x4f,
-  lightDir: vec4f,
+  light: vec4f, // xyz = direction towards the light (normalized), w = ambient
 };
 
 @group(0) @binding(0) var<uniform> globals: Globals;
 @group(0) @binding(1) var<storage, read> models: array<mat4x4f>;
+@group(0) @binding(2) var<storage, read> colors: array<vec4f>;
 
 struct VSOut {
   @builtin(position) pos: vec4f,
   @location(0) normal: vec3f,
   @location(1) color: vec3f,
 };
-
-fn hashColor(i: u32) -> vec3f {
-  let h = i * 2654435761u;
-  return vec3f(
-    f32((h >> 0u) & 255u),
-    f32((h >> 8u) & 255u),
-    f32((h >> 16u) & 255u),
-  ) / 255.0 * 0.7 + 0.3;
-}
 
 @vertex
 fn vs(
@@ -32,14 +24,17 @@ fn vs(
   let model = models[instance];
   var out: VSOut;
   out.pos = globals.viewProj * model * vec4f(position, 1.0);
-  out.normal = (model * vec4f(normal, 0.0)).xyz; // uniform scale only
-  out.color = hashColor(instance);
+  out.normal = (model * vec4f(normal, 0.0)).xyz; // uniform scale (or plane X/Z scale) only
+  out.color = colors[instance].rgb;
   return out;
 }
 
 @fragment
 fn fs(in: VSOut) -> @location(0) vec4f {
-  let diffuse = max(dot(normalize(in.normal), globals.lightDir.xyz), 0.0);
-  return vec4f(in.color * (0.25 + 0.75 * diffuse), 1.0);
+  let n = normalize(in.normal);
+  let diffuse = max(dot(n, globals.light.xyz), 0.0);
+  let hemisphere = mix(0.6, 1.0, n.y * 0.5 + 0.5); // sky/ground tint so faces away from the light aren't flat
+  let lit = globals.light.w * hemisphere + (1.0 - globals.light.w) * diffuse;
+  return vec4f(in.color * lit, 1.0);
 }
 `;

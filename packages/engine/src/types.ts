@@ -1,10 +1,33 @@
-/**
- * The seam between game logic and rendering.
- * `matrices` is `count` column-major mat4s (16 floats each). The renderer only reads it.
- * Today a JS class implements this; the Rust core will fill the same buffer natively.
- */
-export interface Simulation {
+export type Vec3 = readonly [number, number, number];
+
+/** What the renderer draws. `World` implements it; so can any custom simulation. */
+export interface RenderSource {
+  /** Column-major mat4 per instance (16 floats), grouped by mesh. Only the first `count` are valid. */
+  readonly matrices: Float32Array;
+  /** RGBA per instance (4 floats), same order as `matrices`. */
+  readonly colors: Float32Array;
+  /** `[first, count]` per mesh id, in instances: ranges[2 * mesh], ranges[2 * mesh + 1]. */
+  readonly ranges: Uint32Array;
+  /** Total number of valid instances. */
   readonly count: number;
-  readonly matrices: Float32Array<ArrayBuffer>;
-  update(dt: number): void;
+  /** Maximum number of instances (sizes the GPU buffers). */
+  readonly capacity: number;
 }
+
+/** Mesh ids understood by the renderer. */
+export const Mesh = { Cube: 0, Sphere: 1, Plane: 2 } as const;
+export type MeshKind = (typeof Mesh)[keyof typeof Mesh];
+
+export type Camera = {
+  eye: [number, number, number];
+  target: [number, number, number];
+  /** Vertical field of view in radians. */
+  fov: number;
+};
+
+export type Light = {
+  /** Direction *towards* the light. Need not be normalized. */
+  direction: [number, number, number];
+  /** 0..1 ambient term. */
+  ambient: number;
+};
