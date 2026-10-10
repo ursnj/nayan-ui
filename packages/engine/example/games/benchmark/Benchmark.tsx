@@ -63,7 +63,7 @@ function createPhysicsWorld() {
 
 export function Benchmark() {
   const [backend, setBackend] = useState<Backend>(isEngineAvailable ? "rust" : "js");
-  const [stats, setStats] = useState<GameStats>({ fps: 0, updateMs: 0 });
+  const [stats, setStats] = useState<GameStats>({ fps: 0, updateMs: 0, quality: "medium" });
 
   const { source, step, dispose } = useMemo(() => {
     if (backend === "physics") {
@@ -100,7 +100,7 @@ export function Benchmark() {
           {backend === "physics" ? `${BODIES.toLocaleString()} rigid bodies` : `${COUNT.toLocaleString()} cubes`} ·{" "}
           {stats.fps.toFixed(0)} fps
         </Text>
-        <Text style={styles.text}>update() {stats.updateMs.toFixed(2)} ms</Text>
+        <Text style={styles.text}>update() {stats.updateMs.toFixed(2)} ms · {stats.quality} quality</Text>
         <View style={styles.row}>
           {(["js", "rust", "physics"] as const).map((b) => (
             <Pressable
