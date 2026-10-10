@@ -53,6 +53,8 @@ const sfx = audio.load({
 type Phase = "ready" | "playing" | "dead" | "over";
 
 let best = 0;
+// Reused for per-frame position reads, so the game loop doesn't allocate.
+const tmp: [number, number, number] = [0, 0, 0];
 
 const rand = (min: number, max: number) => min + Math.random() * (max - min);
 const aboutZ = (angle: number) => [0, 0, Math.sin(angle / 2), Math.cos(angle / 2)] as const;
@@ -63,22 +65,21 @@ type Scroller = { entity: Entity; wrap: number };
 
 function createGame() {
   const world = new World(320);
-  world.setGravity([0, GRAVITY, 0]);
-  const solid = { body: "fixed" as const, collider: { layer: SOLID, mask: 0 } };
+  world.gravity = [0, GRAVITY, 0];
+  const solid = { physics: { type: "fixed" as const, layer: SOLID, mask: 0 } };
 
   // Ground (solid) with scrolling grass tiles on top, and an invisible-ish ceiling above the view.
   const ground = world.spawn({
     position: [0, GROUND_Y - 2, 0],
     scale: [80, 4, 16],
     color: SAND,
-    body: "fixed",
-    collider: { layer: SOLID, mask: 0, friction: 0.8, restitution: 0.25 },
+    physics: { type: "fixed", layer: SOLID, mask: 0, friction: 0.8, bounce: 0.25 },
   });
   const ceiling = world.spawn({ position: [0, CEILING_Y + 0.5, 0], scale: [80, 1, 4], color: SKY, ...solid });
 
   const scrollers: Scroller[] = [];
   const scroll = (entity: Entity, speed: number, wrap: number) => {
-    world.setVelocity(entity, [-speed, 0, 0]);
+    world.set(entity, { velocity: [-speed, 0, 0] });
     scrollers.push({ entity, wrap });
   };
   for (let i = 0; i < 14; i++) {
@@ -126,9 +127,8 @@ function createGame() {
     position: [BIRD_X, 1, 0],
     scale: 1,
     color: YELLOW,
-    oscillation: { amplitude: [0, 0.35, 0], frequency: 4 },
-    body: "kinematic",
-    collider: { radius: 0.42, layer: BIRD, mask: SOLID },
+    bob: { amplitude: [0, 0.35, 0], speed: 4 },
+    physics: { type: "kinematic", radius: 0.42, layer: BIRD, mask: SOLID },
   });
   const part = (mesh: (typeof Mesh)[keyof typeof Mesh], position: Vec3, scale: Vec3 | number, color: Color) =>
     world.spawn({ mesh, parent: bird, position, scale, color });
@@ -138,7 +138,7 @@ function createGame() {
   part(Mesh.Cube, [-0.52, 0.1, 0], [0.26, 0.14, 0.22], [0.95, 0.68, 0.12]);
   const wing = part(Mesh.Cube, [-0.1, -0.02, 0.48], [0.46, 0.1, 0.32], [0.98, 0.7, 0.14]);
 
-  world.setListener(bird);
+  world.listener = bird;
 
   const camera: Camera = { eye: [0, 1.5, 18], target: [0, 1, 0], fov: Math.PI / 3 };
   return {
@@ -170,7 +170,7 @@ function spawnPipe(g: Game) {
   const gapY = rand(GROUND_Y + 2.2 + GAP / 2, 8 - GAP / 2);
   const bottomTop = gapY - GAP / 2;
   const topBottom = gapY + GAP / 2;
-  const kinematic = { body: "kinematic" as const, collider: { layer: SOLID, mask: 0 } };
+  const kinematic = { physics: { type: "kinematic" as const, layer: SOLID, mask: 0 } };
   const v: Vec3 = [-SCROLL, 0, 0];
   const bottomH = bottomTop - GROUND_Y + 1;
   const topH = CEILING_Y + 2 - topBottom;
@@ -191,9 +191,8 @@ function feathers(g: Game, at: Vec3, count: number, spread: number) {
       rotation: aboutZ(rand(0, 6)),
       color: FEATHER,
       velocity: [rand(-spread, spread * 0.4) - 1, rand(-spread, spread), rand(-spread, spread)],
-      angularVelocity: [rand(-8, 8), rand(-8, 8), rand(-8, 8)],
-      body: { type: "dynamic", gravityScale: 0.12, linearDamping: 2.5, angularDamping: 1.5 },
-      collider: { layer: FX, mask: SOLID, density: 0.1, friction: 0.9 },
+      spin: [rand(-8, 8), rand(-8, 8), rand(-8, 8)],
+      physics: { type: "dynamic", gravityScale: 0.12, drag: 2.5, angularDrag: 1.5, layer: FX, mask: SOLID, density: 0.1, friction: 0.9 },
       lifetime: rand(1.2, 2.2),
     });
   }
@@ -211,8 +210,7 @@ function dust(g: Game, at: Vec3, strength: number) {
       scale: rand(0.08, 0.16),
       color: [SAND[0] * rand(0.9, 1.05), SAND[1] * rand(0.9, 1.05), SAND[2] * rand(0.9, 1.05)],
       velocity: [Math.cos(a) * s, rand(1.5, 4), rand(-1.5, 1.5)],
-      body: { type: "dynamic", linearDamping: 1.2 },
-      collider: { layer: FX, mask: SOLID, restitution: 0.2, density: 0.4 },
+      physics: { type: "dynamic", drag: 1.2, layer: FX, mask: SOLID, bounce: 0.2, density: 0.4 },
       lifetime: rand(0.5, 0.9),
     });
   }
@@ -220,11 +218,10 @@ function dust(g: Game, at: Vec3, strength: number) {
 
 function start(g: Game) {
   g.phase = "playing";
-  g.world.setOscillation(g.bird, { amplitude: [0, 0, 0], frequency: 0 });
-  g.world.setPhysics(g.bird, {
-    mesh: Mesh.Sphere,
-    body: { type: "dynamic", lockRotations: true, ccd: true },
-    collider: { radius: 0.42, layer: BIRD, mask: SOLID, restitution: 0.3, friction: 0.6 },
+  // Stop bobbing and hand the bird to physics, in one call.
+  g.world.set(g.bird, {
+    bob: null,
+    physics: { type: "dynamic", upright: true, ccd: true, radius: 0.42, layer: BIRD, mask: SOLID, bounce: 0.3, friction: 0.6 },
   });
   g.onPhase("playing");
 }
@@ -232,7 +229,7 @@ function start(g: Game) {
 function flap(g: Game) {
   if (g.phase === "ready") start(g);
   if (g.phase !== "playing") return;
-  g.world.setVelocity(g.bird, [0, FLAP_SPEED, 0]);
+  g.world.set(g.bird, { velocity: [0, FLAP_SPEED, 0] });
   g.flapTime = g.time;
   const p = g.world.position(g.bird);
   if (p) feathers(g, [p[0] - 0.4, p[1] - 0.1, p[2]], 2, 1.2);
@@ -245,17 +242,16 @@ function die(g: Game, speed: number) {
   g.deadAt = g.time;
   g.shake = 0.5;
   // Everything stops scrolling; the bird loses control and tumbles under real physics.
-  for (const pipe of g.pipes) for (const e of pipe.parts) g.world.setVelocity(e, [0, 0, 0]);
-  for (const s of g.scrollers) g.world.setVelocity(s.entity, [0, 0, 0]);
-  g.world.setAngularVelocity(g.bird, [0, 0, 9]);
-  g.world.setPhysics(g.bird, {
-    mesh: Mesh.Sphere,
-    body: { type: "dynamic", ccd: true, angularDamping: 0.3 },
-    collider: { radius: 0.42, layer: BIRD, mask: SOLID, restitution: 0.45, friction: 0.5 },
+  for (const pipe of g.pipes) for (const e of pipe.parts) g.world.set(e, { velocity: [0, 0, 0] });
+  for (const s of g.scrollers) g.world.set(s.entity, { velocity: [0, 0, 0] });
+  g.world.set(g.bird, {
+    spin: [0, 0, 9],
+    // No longer upright: it tumbles.
+    physics: { type: "dynamic", ccd: true, angularDrag: 0.3, radius: 0.42, layer: BIRD, mask: SOLID, bounce: 0.45, friction: 0.5 },
+    // From here on the core itself thumps (sound + haptic) every time the tumbling bird lands.
+    impact: { sound: sfx.get("bump"), minSpeed: 1, maxSpeed: 12, volume: 1, haptic: 0.7 },
   });
-  g.world.applyImpulse(g.bird, [-1.2, 1.8, 0]);
-  // From here on the core itself thumps (sound + haptic) every time the tumbling bird lands.
-  g.world.setImpactFeedback(g.bird, { sound: sfx.get("bump"), minSpeed: 1, maxSpeed: 12, volume: 1, haptic: 0.7 });
+  g.world.impulse(g.bird, [-1.2, 1.8, 0]);
   const p = g.world.position(g.bird);
   if (p) feathers(g, p, 14, 3.5);
   sfx.play("hit", { volume: 0.6 + impactStrength(speed, 2, 10) * 0.4 });
@@ -271,8 +267,8 @@ function tick(g: Game, dt: number) {
   // Scrolling scenery wraps around.
   if (alive) {
     for (const s of g.scrollers) {
-      const p = g.world.position(s.entity);
-      if (p && p[0] < -s.wrap / 2) g.world.setPosition(s.entity, [p[0] + s.wrap, p[1], p[2]]);
+      const p = g.world.position(s.entity, tmp);
+      if (p && p[0] < -s.wrap / 2) g.world.set(s.entity, { position: [p[0] + s.wrap, p[1], p[2]] });
     }
   }
 
@@ -283,20 +279,20 @@ function tick(g: Game, dt: number) {
       spawnPipe(g);
     }
     // Nose follows velocity; the wing beats right after a flap, then glides.
-    const v = g.world.velocity(g.bird);
-    if (v) g.world.setRotation(g.bird, aboutZ(Math.max(-1.3, Math.min(0.45, v[1] * 0.09))));
+    const v = g.world.velocity(g.bird, tmp);
+    if (v) g.world.set(g.bird, { rotation: aboutZ(Math.max(-1.3, Math.min(0.45, v[1] * 0.09))) });
     if (AUTOPLAY) autopilot(g);
   }
   const sinceFlap = g.time - g.flapTime;
   const wingAngle = alive && sinceFlap < 0.3 ? Math.sin(sinceFlap * 40) * 0.9 : alive ? Math.sin(g.time * 6) * 0.15 : 0.6;
-  g.world.setRotation(g.wing, aboutX(wingAngle));
+  g.world.set(g.wing, { rotation: aboutX(wingAngle) });
 
   g.world.update(dt);
 
   // Score when a pipe passes the bird; drop pipes that left the screen.
   for (let i = g.pipes.length - 1; i >= 0; i--) {
     const pipe = g.pipes[i]!;
-    const x = g.world.position(pipe.probe)?.[0] ?? DESPAWN_X - 1;
+    const x = g.world.position(pipe.probe, tmp)?.[0] ?? DESPAWN_X - 1;
     if (!pipe.scored && g.phase === "playing" && x < BIRD_X - PIPE_W / 2) {
       pipe.scored = true;
       g.score += 1;

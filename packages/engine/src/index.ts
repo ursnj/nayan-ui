@@ -3,15 +3,16 @@
 // World: entities, physics, collisions, impact feedback.
 export { World, isRustAvailable } from "./world/World";
 export type {
-  BodyOptions,
   BodyType,
-  ColliderOptions,
+  Bounds,
   CollisionInfo,
   Color,
   Entity,
+  EntityOptions,
   ImpactFeedback,
+  PhysicsOptions,
+  Quat,
   RaycastHit,
-  SpawnOptions,
 } from "./world/World";
 
 // Rendering.

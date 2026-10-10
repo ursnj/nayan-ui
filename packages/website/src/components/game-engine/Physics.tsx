@@ -14,18 +14,17 @@ import {
   engineMovementCode,
   engineRaycastCode,
 } from "@/services/GameEngineCodeBlocks";
-import { bodyOptionsAttributes, colliderOptionsAttributes } from "@/services/GameEngineData";
+import { physicsOptionsAttributes } from "@/services/GameEngineData";
 
 const EnginePhysics = () => (
   <Sidebar title="Physics">
     <DocsIntro lead="Physics is powered by Rapier, running natively. Add a body to an entity and it falls, collides, bounces and gets pushed around. The simulation steps at a fixed 60 Hz and the picture is smoothed between steps, so motion looks the same on any device." />
 
-    <SubHeader title="Bodies" description="Three kinds, set with the body option when spawning.">
+    <SubHeader title="Bodies" description="Three kinds, set with the physics option. The short form is just the type.">
       <Code code={engineBodiesCode} filename="level.ts" />
     </SubHeader>
 
-    <Attributes title="Body options" data={bodyOptionsAttributes} />
-    <Attributes title="Collider options" data={colliderOptionsAttributes} />
+    <Attributes title="Physics options" data={physicsOptionsAttributes} />
 
     <SubHeader
       title="Collision layers"
@@ -52,8 +51,8 @@ const EnginePhysics = () => (
     <SubHeader title="Change physics later">
       <Code code={engineChangePhysicsCode} filename="bird.ts" />
       <p className={`mt-4 ${BODY}`}>
-        Collider shapes are balls and boxes for now. Scaling an entity afterwards changes how it looks,
-        not its collider: set the size when you spawn it.
+        Collider shapes are balls and boxes for now, sized from the entity&apos;s mesh and scale when the
+        body is created. Scaling an entity afterwards changes how it looks, not its collider.
       </p>
     </SubHeader>
   </Sidebar>

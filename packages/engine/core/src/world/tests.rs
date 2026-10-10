@@ -44,9 +44,7 @@ fn floor(w: &mut World) -> Entity {
 #[test]
 fn spawn_writes_transform_and_color() {
     let mut w = World::new(4);
-    let e = w
-        .spawn(0, Vec3::new(1.0, 2.0, 3.0), Vec3::splat(2.0), [0.1, 0.2, 0.3, 1.0])
-        .unwrap();
+    let e = w.spawn(0, Vec3::new(1.0, 2.0, 3.0), Vec3::splat(2.0), [0.1, 0.2, 0.3, 1.0]).unwrap();
     assert!(w.is_alive(e));
     w.update(0.0);
     let m = w.matrices();
@@ -73,11 +71,7 @@ fn despawn_invalidates_handle_even_after_slot_reuse() {
     let b = spawn(&mut w, 0, Vec3::new(2.0, 0.0, 0.0));
     assert!(w.despawn(a));
     assert!(!w.despawn(a), "double despawn is a no-op");
-    assert_eq!(
-        w.position(b),
-        Some(Vec3::new(2.0, 0.0, 0.0)),
-        "swap-remove keeps other handles valid"
-    );
+    assert_eq!(w.position(b), Some(Vec3::new(2.0, 0.0, 0.0)), "swap-remove keeps other handles valid");
 
     let c = spawn(&mut w, 0, Vec3::new(9.0, 0.0, 0.0)); // reuses a's slot
     assert_ne!(a, c);
@@ -109,10 +103,7 @@ fn buffers_never_move_under_churn() {
     let mut live = Vec::new();
     for round in 0..100 {
         while let Some(e) = w.spawn(1, Vec3::new(0.0, 1.0 + round as f32 * 0.01, 0.0), Vec3::ONE, WHITE) {
-            w.set_physics(
-                e,
-                Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 })),
-            );
+            w.set_physics(e, Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 })));
             live.push(e);
         }
         for e in live.drain(..3) {
@@ -120,10 +111,7 @@ fn buffers_never_move_under_churn() {
         }
         w.update(FIXED_DT);
     }
-    assert_eq!(
-        (w.matrices().as_ptr(), w.colors().as_ptr(), w.events().as_ptr()),
-        (m, c, ev)
-    );
+    assert_eq!((w.matrices().as_ptr(), w.colors().as_ptr(), w.events().as_ptr()), (m, c, ev));
 }
 
 // ── kinematic motion ──
@@ -137,11 +125,7 @@ fn spin_rotates_about_y() {
     // extra step for the drawn transform to show a full second: a quarter turn, +X maps to -Z.
     run(&mut w, 1.0 + FIXED_DT);
     let m = w.matrices();
-    assert!(
-        close(m[0], 0.0, 1e-3) && close(m[2], -1.0, 1e-3),
-        "x axis: {:?}",
-        &m[0..3]
-    );
+    assert!(close(m[0], 0.0, 1e-3) && close(m[2], -1.0, 1e-3), "x axis: {:?}", &m[0..3]);
 }
 
 #[test]
@@ -176,10 +160,7 @@ fn follow_steers_toward_target_and_stops_when_it_is_gone() {
     assert!(close(w.position(chaser).unwrap().x, 2.0, 1e-3));
     w.despawn(target);
     run(&mut w, 1.0);
-    assert!(
-        close(w.position(chaser).unwrap().x, 2.0, 1e-3),
-        "no target, no movement"
-    );
+    assert!(close(w.position(chaser).unwrap().x, 2.0, 1e-3), "no target, no movement");
 }
 
 #[test]
@@ -190,10 +171,7 @@ fn render_output_interpolates_between_steps() {
     w.update(FIXED_DT); // one step: prev = 0, current = 1
     w.update(FIXED_DT * 0.5); // no new step: drawn half way between prev (0) and current (1)
     assert!(close(w.matrices()[12], 0.5, 1e-3), "{}", w.matrices()[12]);
-    assert!(
-        close(w.position(e).unwrap().x, 1.0, 1e-3),
-        "simulation state is not interpolated"
-    );
+    assert!(close(w.position(e).unwrap().x, 1.0, 1e-3), "simulation state is not interpolated");
 }
 
 #[test]
@@ -213,10 +191,7 @@ fn lifetime_despawns_and_shrinks() {
     let keep = spawn(&mut w, 0, Vec3::ZERO);
     let short = spawn(&mut w, 0, Vec3::X);
     let with_body = spawn(&mut w, 1, Vec3::Y);
-    w.set_physics(
-        with_body,
-        Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 })),
-    );
+    w.set_physics(with_body, Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 })));
     w.set_lifetime(short, 0.5);
     w.set_lifetime(with_body, 0.5);
     run(&mut w, 0.4);
@@ -248,11 +223,7 @@ fn children_follow_the_parents_interpolated_pose() {
         close(cx, 0.5, 1e-3) && close(cz, -1.0, 1e-3),
         "child at parent + rotated offset: {cx}, {cz}"
     );
-    assert_eq!(
-        w.position(child),
-        Some(Vec3::new(1.0, 0.0, 0.0)),
-        "child state stays local"
-    );
+    assert_eq!(w.position(child), Some(Vec3::new(1.0, 0.0, 0.0)), "child state stays local");
 }
 
 #[test]
@@ -277,19 +248,13 @@ fn invalid_attachments_are_rejected() {
     let b = spawn(&mut w, 0, Vec3::ZERO);
     let c = spawn(&mut w, 0, Vec3::ZERO);
     let body = spawn(&mut w, 1, Vec3::ZERO);
-    w.set_physics(
-        body,
-        Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 })),
-    );
+    w.set_physics(body, Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 })));
     assert!(!w.set_parent(a, Some(a)), "self");
     assert!(!w.set_parent(body, Some(a)), "bodies can't be attached");
     assert!(w.set_parent(b, Some(a)));
     assert!(!w.set_parent(c, Some(b)), "parent is itself attached");
     assert!(!w.set_parent(a, Some(c)), "entity with children can't be attached");
-    assert!(!w.set_physics(
-        b,
-        Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 }))
-    ));
+    assert!(!w.set_physics(b, Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 }))));
     assert!(w.set_parent(b, None));
 }
 
@@ -300,10 +265,7 @@ fn impact_feedback_plays_scaled_and_panned_from_the_core() {
     floor(&mut w);
     let listener = spawn(&mut w, 0, Vec3::new(-12.0, 0.0, 0.0)); // ball lands 12 to its right
     let ball = spawn(&mut w, 1, Vec3::new(0.0, 4.0, 0.0));
-    w.set_physics(
-        ball,
-        Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 })),
-    );
+    w.set_physics(ball, Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 })));
     w.set_impact_feedback(
         ball,
         Some(ImpactFeedback {
@@ -345,10 +307,7 @@ fn dynamic_ball_falls_and_rests_on_the_floor() {
     let mut w = World::new(4);
     floor(&mut w);
     let ball = spawn(&mut w, 1, Vec3::new(0.0, 5.0, 0.0));
-    assert!(w.set_physics(
-        ball,
-        Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 }))
-    ));
+    assert!(w.set_physics(ball, Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 }))));
     run(&mut w, 0.5);
     let y = w.position(ball).unwrap().y;
     assert!(y < 4.0, "gravity pulls it down: {y}");
@@ -367,18 +326,11 @@ fn impulse_and_planar_velocity_move_dynamic_bodies() {
     w.set_physics(ball, Some(desc));
     w.apply_impulse(ball, Vec3::new(0.0, 5.0, 0.0));
     assert!(w.read_velocity(ball));
-    assert!(
-        w.scratch()[1] > 1.0,
-        "impulse launched it upward: {:?}",
-        &w.scratch()[0..3]
-    );
+    assert!(w.scratch()[1] > 1.0, "impulse launched it upward: {:?}", &w.scratch()[0..3]);
 
     w.set_planar_velocity(ball, 2.0, 0.0);
     assert!(w.read_velocity(ball));
-    assert!(
-        close(w.scratch()[0], 2.0, 1e-3) && w.scratch()[1] > 1.0,
-        "x set, y kept"
-    );
+    assert!(close(w.scratch()[0], 2.0, 1e-3) && w.scratch()[1] > 1.0, "x set, y kept");
 }
 
 #[test]
@@ -460,11 +412,7 @@ fn raycast_hits_solid_colliders_by_mask() {
 
     let hit = w.raycast(Vec3::ZERO, Vec3::X, 100.0, 4);
     assert_eq!(hit, Some(wall), "sensors are skipped");
-    assert!(
-        close(w.scratch()[0], 4.5, 1e-3),
-        "distance to the near face: {}",
-        w.scratch()[0]
-    );
+    assert!(close(w.scratch()[0], 4.5, 1e-3), "distance to the near face: {}", w.scratch()[0]);
     assert!(close(w.scratch()[1], -1.0, 1e-3), "normal faces the ray");
     assert_eq!(w.raycast(Vec3::ZERO, Vec3::X, 100.0, 1), None, "mask excludes the wall");
     assert_eq!(w.raycast(Vec3::ZERO, Vec3::X, 3.0, 4), None, "out of range");
@@ -488,10 +436,7 @@ fn invalid_physics_is_rejected_without_panicking() {
     let mut d = PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 1.0 });
     d.density = 0.0;
     assert!(!w.set_physics(e, Some(d)));
-    assert!(!w.set_physics(
-        Entity(NO_ENTITY),
-        Some(PhysicsDesc::new(BodyKind::Fixed, Shape::Ball { radius: 1.0 }))
-    ));
+    assert!(!w.set_physics(Entity(NO_ENTITY), Some(PhysicsDesc::new(BodyKind::Fixed, Shape::Ball { radius: 1.0 }))));
     run(&mut w, 0.1);
 }
 
@@ -499,17 +444,11 @@ fn invalid_physics_is_rejected_without_panicking() {
 fn removing_physics_and_despawning_clean_up_bodies() {
     let mut w = World::new(4);
     let e = spawn(&mut w, 1, Vec3::ZERO);
-    w.set_physics(
-        e,
-        Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 })),
-    );
+    w.set_physics(e, Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 })));
     assert_eq!(w.physics.bodies.len(), 1);
     assert!(w.set_physics(e, None));
     assert_eq!(w.physics.bodies.len(), 0);
-    w.set_physics(
-        e,
-        Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 })),
-    );
+    w.set_physics(e, Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 })));
     w.despawn(e);
     assert_eq!(w.physics.bodies.len(), 0);
     assert_eq!(w.physics.colliders.len(), 0);

@@ -16,24 +16,14 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
 
   double createWorld(jsi::Runtime &rt, double capacity);
   void destroyWorld(jsi::Runtime &rt, double world);
-  double spawn(jsi::Runtime &rt, double world, double mesh, double x, double y, double z, double sx, double sy, double sz, double r, double g, double b, double a);
+  double spawnDesc(jsi::Runtime &rt, double world, jsi::Object desc);
+  bool setDesc(jsi::Runtime &rt, double world, double entity, jsi::Object desc);
   bool despawn(jsi::Runtime &rt, double world, double entity);
-  void setPosition(jsi::Runtime &rt, double world, double entity, double x, double y, double z);
-  void setRotation(jsi::Runtime &rt, double world, double entity, double x, double y, double z, double w);
-  void setScale(jsi::Runtime &rt, double world, double entity, double x, double y, double z);
-  void setColor(jsi::Runtime &rt, double world, double entity, double r, double g, double b, double a);
-  void setVelocity(jsi::Runtime &rt, double world, double entity, double x, double y, double z);
-  void setAngularVelocity(jsi::Runtime &rt, double world, double entity, double x, double y, double z);
-  void setOscillation(jsi::Runtime &rt, double world, double entity, double ax, double ay, double az, double frequency, double phase);
-  void setLifetime(jsi::Runtime &rt, double world, double entity, double seconds);
-  bool setParent(jsi::Runtime &rt, double world, double entity, double parent);
-  void setPlanarVelocity(jsi::Runtime &rt, double world, double entity, double x, double z);
-  void applyImpulse(jsi::Runtime &rt, double world, double entity, double x, double y, double z);
+  void impulse(jsi::Runtime &rt, double world, double entity, double x, double y, double z);
   void setGravity(jsi::Runtime &rt, double world, double x, double y, double z);
-  bool setPhysics(jsi::Runtime &rt, double world, double entity, double kind, double shape, double sx, double sy, double sz, double layer, double mask, bool sensor, double friction, double restitution, double density, double linearDamping, double angularDamping, double gravityScale, bool lockRotations, bool ccd);
-  double raycast(jsi::Runtime &rt, double world, double ox, double oy, double oz, double dx, double dy, double dz, double maxDistance, double mask);
-  void setFollow(jsi::Runtime &rt, double world, double entity, double target, double speed);
   void setBounds(jsi::Runtime &rt, double world, double minX, double minZ, double maxX, double maxZ);
+  void setListener(jsi::Runtime &rt, double world, double entity);
+  double raycast(jsi::Runtime &rt, double world, double ox, double oy, double oz, double dx, double dy, double dz, double maxDistance, double mask);
   bool readPosition(jsi::Runtime &rt, double world, double entity);
   bool readVelocity(jsi::Runtime &rt, double world, double entity);
   void update(jsi::Runtime &rt, double world, double dt);
@@ -44,10 +34,6 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   jsi::Object getEvents(jsi::Runtime &rt, double world);
   double eventLength(jsi::Runtime &rt, double world);
   jsi::Object getScratch(jsi::Runtime &rt, double world);
-  void setImpactFeedback(
-      jsi::Runtime &rt, double world, double entity, bool enabled, double sound, double minSpeed, double maxSpeed,
-      double volume, double haptic);
-  void setListener(jsi::Runtime &rt, double world, double entity);
   double audioLoad(jsi::Runtime &rt, jsi::Object data);
   double audioPlay(jsi::Runtime &rt, double sound, double volume, double pan, double pitch, bool loop);
   void audioStop(jsi::Runtime &rt, double voice);

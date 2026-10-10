@@ -21,7 +21,7 @@ pub enum Shape {
 }
 
 /// Rigid body + collider for an entity. Validated by `World::set_physics`.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct PhysicsDesc {
     pub kind: BodyKind,
     pub shape: Shape,
@@ -84,13 +84,7 @@ impl PhysicsDesc {
 pub(super) struct EventSink(pub(super) Mutex<Vec<CollisionEvent>>);
 
 impl EventHandler for EventSink {
-    fn handle_collision_event(
-        &self,
-        _bodies: &RigidBodySet,
-        _colliders: &ColliderSet,
-        event: CollisionEvent,
-        _contact_pair: Option<&ContactPair>,
-    ) {
+    fn handle_collision_event(&self, _bodies: &RigidBodySet, _colliders: &ColliderSet, event: CollisionEvent, _contact_pair: Option<&ContactPair>) {
         if let Ok(mut events) = self.0.lock() {
             events.push(event);
         }
@@ -123,9 +117,7 @@ impl World {
         let Some(d) = desc else { return true };
 
         let builder = match d.kind {
-            BodyKind::Dynamic => RigidBodyBuilder::dynamic()
-                .linvel(self.velocity[i])
-                .angvel(self.angular_velocity[i]),
+            BodyKind::Dynamic => RigidBodyBuilder::dynamic().linvel(self.velocity[i]).angvel(self.angular_velocity[i]),
             BodyKind::Kinematic => RigidBodyBuilder::kinematic_position_based(),
             BodyKind::Fixed => RigidBodyBuilder::fixed(),
         };
@@ -196,15 +188,7 @@ impl World {
         let (handle, hit) = self.physics.cast_ray_and_get_normal(&ray, max_distance, true, filter)?;
         let entity = Entity(self.physics.colliders.get(handle)?.user_data as u32);
         let point = origin + dir * hit.time_of_impact;
-        self.scratch[..7].copy_from_slice(&[
-            hit.time_of_impact,
-            hit.normal.x,
-            hit.normal.y,
-            hit.normal.z,
-            point.x,
-            point.y,
-            point.z,
-        ]);
+        self.scratch[..7].copy_from_slice(&[hit.time_of_impact, hit.normal.x, hit.normal.y, hit.normal.z, point.x, point.y, point.z]);
         Some(entity)
     }
 }

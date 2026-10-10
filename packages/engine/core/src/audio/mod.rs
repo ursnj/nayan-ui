@@ -86,9 +86,7 @@ pub fn stop(voice: u64) {
 
 pub fn set_volume(volume: f32) {
     if volume.is_finite() {
-        system()
-            .volume
-            .store(volume.clamp(0.0, 2.0).to_bits(), Ordering::Relaxed);
+        system().volume.store(volume.clamp(0.0, 2.0).to_bits(), Ordering::Relaxed);
     }
 }
 

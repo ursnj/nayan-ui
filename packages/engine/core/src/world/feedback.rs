@@ -22,11 +22,7 @@ impl World {
     /// by impact speed and panned relative to the listener. `None` removes it.
     pub fn set_impact_feedback(&mut self, e: Entity, feedback: Option<ImpactFeedback>) {
         let valid = feedback.is_none_or(|f| {
-            f.min_speed.is_finite()
-                && f.max_speed.is_finite()
-                && f.max_speed > f.min_speed
-                && f.volume.is_finite()
-                && f.haptic.is_finite()
+            f.min_speed.is_finite() && f.max_speed.is_finite() && f.max_speed > f.min_speed && f.volume.is_finite() && f.haptic.is_finite()
         });
         if let Some(i) = self.dense(e).filter(|_| valid) {
             self.feedback[i] = feedback;

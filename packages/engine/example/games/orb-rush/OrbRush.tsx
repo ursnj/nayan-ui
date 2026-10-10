@@ -51,6 +51,8 @@ const sfx = audio.load({
 });
 
 let best = 0; // best score this session
+// Reused for per-frame position reads, so the game loop doesn't allocate.
+const tmp: [number, number, number] = [0, 0, 0];
 
 const rand = (min: number, max: number) => min + Math.random() * (max - min);
 
@@ -64,8 +66,7 @@ function createGame() {
     mesh: Mesh.Plane,
     scale: [ARENA * 2 + 12, 1, ARENA * 2 + 12],
     color: [0.11, 0.17, 0.21],
-    body: "fixed",
-    collider: { layer: WORLD, mask: 0, friction: 0.9 },
+    physics: { type: "fixed", layer: WORLD, mask: 0, friction: 0.9 },
   });
   const wall: Color = [0.27, 0.32, 0.4];
   const len = ARENA * 2 + 2;
@@ -76,7 +77,7 @@ function createGame() {
     [[ARENA + 1, 0.75, 0], [1, 1.5, len]],
   ];
   for (const [position, scale] of walls) {
-    world.spawn({ position, scale, color: wall, body: "fixed", collider: { layer: WORLD, mask: 0, restitution: 0.3 } });
+    world.spawn({ position, scale, color: wall, physics: { type: "fixed", layer: WORLD, mask: 0, bounce: 0.3 } });
   }
 
   // Pushable crates (dynamic, collide with everything solid).
@@ -90,8 +91,7 @@ function createGame() {
         rotation: [0, Math.sin(a / 2), 0, Math.cos(a / 2)],
         scale: 1.3,
         color: [0.62, 0.45, 0.28],
-        body: { type: "dynamic", angularDamping: 0.5 },
-        collider: { layer: WORLD, mask: WORLD, friction: 0.7, density: 0.5 },
+        physics: { type: "dynamic", angularDrag: 0.5, layer: WORLD, mask: WORLD, friction: 0.7, density: 0.5 },
         impact: { sound: bump, minSpeed: 3, maxSpeed: 12, volume: 0.5 }, // knocks, played by the core
       }),
     );
@@ -102,11 +102,10 @@ function createGame() {
     position: [0, 0.7, 0],
     scale: 1.2,
     color: BLUE,
-    body: { type: "dynamic", angularDamping: 0.3 },
-    collider: { layer: PLAYER, mask: WORLD | ORB | ENEMY, friction: 0.9, restitution: 0.1, density: 2 },
+    physics: { type: "dynamic", angularDrag: 0.3, layer: PLAYER, mask: WORLD | ORB | ENEMY, friction: 0.9, bounce: 0.1, density: 2 },
     impact: { sound: bump, minSpeed: 1.5, maxSpeed: 10, volume: 1, haptic: 0.7 },
   });
-  world.setListener(player); // impact sounds pan relative to the player
+  world.listener = player; // impact sounds pan relative to the player
 
   const camera: Camera = { eye: [0, 22, 15], target: [0, 0, 0], fov: Math.PI / 3 };
   const game = {
@@ -152,9 +151,8 @@ function spawnOrb(g: Game) {
       position: [x, 0.9, z],
       scale: 0.7,
       color: GOLD,
-      oscillation: { amplitude: [0, 0.25, 0], frequency: 3, phase: rand(0, 6) },
-      body: "kinematic",
-      collider: { radius: 0.5, layer: ORB, mask: 0, sensor: true },
+      bob: { amplitude: [0, 0.25, 0], speed: 3, phase: rand(0, 6) },
+      physics: { type: "kinematic", radius: 0.5, layer: ORB, mask: 0, sensor: true },
     }),
   );
 }
@@ -175,8 +173,7 @@ function spawnEnemy(g: Game) {
       position: [x, 3, z], // drops in
       scale: 1.1,
       color: RED,
-      body: { type: "dynamic", lockRotations: true },
-      collider: { layer: ENEMY, mask: WORLD | ENEMY | PLAYER, friction: 0.2, density: 1 },
+      physics: { type: "dynamic", upright: true, layer: ENEMY, mask: WORLD | ENEMY | PLAYER, friction: 0.2, density: 1 },
       follow: { target: g.player, speed: Math.min(2.4 + g.elapsed * 0.05, 6) },
     }),
   );
@@ -193,9 +190,8 @@ function sparks(g: Game, at: Vec3, color: Color, count = 12) {
       scale: rand(0.14, 0.24),
       color,
       velocity: [Math.cos(a) * s, rand(4, 8), Math.sin(a) * s],
-      angularVelocity: [rand(-10, 10), rand(-10, 10), rand(-10, 10)],
-      body: "dynamic",
-      collider: { layer: SPARK, mask: WORLD, restitution: 0.5, density: 0.3 },
+      spin: [rand(-10, 10), rand(-10, 10), rand(-10, 10)],
+      physics: { type: "dynamic", layer: SPARK, mask: WORLD, bounce: 0.5, density: 0.3 },
       lifetime: rand(0.6, 1.0),
     });
   }
@@ -234,9 +230,9 @@ function tick(g: Game, stick: JoystickState, dt: number) {
     // Movement: dashing overrides the stick.
     if (g.dashTime > 0) {
       g.dashTime -= dt;
-      g.world.setPlanarVelocity(g.player, g.dashDir[0] * DASH_SPEED, g.dashDir[1] * DASH_SPEED);
+      g.world.set(g.player, { groundVelocity: [g.dashDir[0] * DASH_SPEED, g.dashDir[1] * DASH_SPEED] });
     } else {
-      g.world.setPlanarVelocity(g.player, stick.x * PLAYER_SPEED, -stick.y * PLAYER_SPEED);
+      g.world.set(g.player, { groundVelocity: [stick.x * PLAYER_SPEED, -stick.y * PLAYER_SPEED] });
       const len = Math.hypot(stick.x, stick.y);
       if (len > 0.2) g.dashDir = [stick.x / len, -stick.y / len];
     }
@@ -289,7 +285,7 @@ function tick(g: Game, stick: JoystickState, dt: number) {
   });
 
   // Camera: smooth follow from behind and above.
-  const p = g.world.position(g.player);
+  const p = g.world.position(g.player, tmp);
   if (p) {
     const k = 1 - Math.exp(-dt * 5);
     const { eye, target } = g.camera;

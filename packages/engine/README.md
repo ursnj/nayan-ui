@@ -13,33 +13,31 @@ import { GameView, World, Mesh, audio, haptics } from "@nayan-ui/engine";
 
 const world = new World(500); // fixed capacity
 
-// Static level geometry and a dynamic, physically simulated player.
-world.spawn({ mesh: Mesh.Plane, scale: [40, 1, 40], body: "fixed" });
+// One call per entity: everything about it in one options object.
+world.spawn({ mesh: Mesh.Plane, scale: [40, 1, 40], physics: "fixed" });
 const player = world.spawn({
   mesh: Mesh.Sphere, position: [0, 1, 0], color: [0.3, 0.6, 1],
-  body: "dynamic",
-  collider: { layer: 2, mask: 1 | 4, restitution: 0.2 },
+  physics: { type: "dynamic", layer: 2, mask: 1 | 4, bounce: 0.2 },
 });
-const pickup = world.spawn({ mesh: Mesh.Sphere, position: [5, 1, 0], body: "kinematic",
-  collider: { layer: 4, sensor: true } });
-const enemy = world.spawn({ body: { type: "dynamic", lockRotations: true }, follow: { target: player, speed: 3 } });
+const coin = world.spawn({ mesh: Mesh.Sphere, position: [5, 1, 0], physics: { type: "kinematic", layer: 4, sensor: true } });
+const enemy = world.spawn({ physics: { type: "dynamic", upright: true }, follow: { target: player, speed: 3 } });
 
-const sfx = audio.load({ pickup: require("./pickup.wav"), bump: require("./bump.wav"), music: require("./music.wav") });
+const sfx = audio.load({ coin: require("./coin.wav"), bump: require("./bump.wav"), music: require("./music.wav") });
 await sfx.ready;
 sfx.play("music", { volume: 0.4, loop: true });
 // The core plays this itself on every solid impact: volume/haptic scale with speed, panned to the listener.
-world.setImpactFeedback(player, { sound: sfx.get("bump"), minSpeed: 1, maxSpeed: 10, haptic: 0.7 });
-world.setListener(player);
+world.set(player, { impact: { sound: sfx.get("bump"), minSpeed: 1, maxSpeed: 10, haptic: 0.7 } });
+world.listener = player;
 
 <GameView
   source={world}
   camera={camera}                                // mutate camera.eye / camera.target each frame
   light={{ direction: [0.4, 0.8, 0.5], ambient: 0.3, shadows: true }}
   onUpdate={(dt) => {
-    world.setPlanarVelocity(player, stick.x * 8, -stick.y * 8);
+    world.set(player, { groundVelocity: [stick.x * 8, -stick.y * 8] });
     world.update(dt);                            // Rust: fixed-step physics, chasing, events
-    world.forEachCollision((a, b, { started, sensor }) => {
-      if (started && sensor) { sfx.play("pickup"); haptics.impact(0.4, 0.8); }
+    world.forEachCollision((a, b, { started }) => {
+      if (started && (a === coin || b === coin)) { sfx.play("coin"); haptics.impact(0.4, 0.8); }
     });
   }}
 />
@@ -125,7 +123,8 @@ Native changes need extra steps (JS changes just reload):
 - One pipeline, one `drawIndexed` call for all instances. Model matrices live in a storage buffer.
 - One `writeBuffer` for all matrices per frame. No per-entity JS↔native calls.
 - 4x MSAA with depth/MSAA targets set to `storeOp: "discard"`, so tile GPUs keep them on-chip.
-- No allocation in the frame loop.
+- No allocation in the frame loop. `world.position(e, out)` / `velocity(e, out)` fill an array you reuse.
+- One native call per `spawn` / `set`: options are packed into a reusable Float64Array that the core decodes.
 - Rust core: structure-of-arrays storage, entities are `u32` handles, render buffers are fixed-size and never move.
 
 ## Status

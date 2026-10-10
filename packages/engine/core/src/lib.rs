@@ -8,6 +8,6 @@ mod world;
 
 pub use rapier3d::glamx::{Quat, Vec3};
 pub use world::{
-    BodyKind, EVENT_SENSOR, EVENT_STARTED, EVENT_STRIDE, Entity, FIXED_DT, ImpactFeedback, MAX_EVENTS, MAX_MESHES,
-    NO_ENTITY, PhysicsDesc, Shape, World,
+    BodyKind, DESC_LEN, EVENT_SENSOR, EVENT_STARTED, EVENT_STRIDE, Entity, EntityDesc, FIXED_DT, ImpactFeedback, MAX_EVENTS, MAX_MESHES, NO_ENTITY,
+    PhysicsDesc, PhysicsRequest, Shape, ShapeSpec, World, desc_flag, desc_slot,
 };

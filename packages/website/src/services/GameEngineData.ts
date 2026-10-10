@@ -1,42 +1,39 @@
 // Option tables for the @nayan-ui/engine docs (rendered with <Attributes />).
 // Keep them in sync with packages/engine/src.
 
-export const spawnOptionsAttributes = [
+export const entityOptionsAttributes = [
   { name: "mesh", type: "Mesh.Cube | Mesh.Sphere | Mesh.Plane", default: "Mesh.Cube", details: "The shape to draw." },
-  { name: "position", type: "[x, y, z]", default: "[0, 0, 0]", details: "Where it starts. Relative to the parent when attached." },
+  { name: "position", type: "[x, y, z]", default: "[0, 0, 0]", details: "Where it is. Relative to the parent when attached." },
+  { name: "rotation", type: "[x, y, z, w]", default: "none", details: "A quaternion." },
   { name: "scale", type: "number | [x, y, z]", default: "1", details: "Size. Also sizes the default collider." },
   { name: "color", type: "[r, g, b] | [r, g, b, a]", default: "[1, 1, 1]", details: "Each channel 0..1." },
-  { name: "rotation", type: "[x, y, z, w]", default: "none", details: "Starting rotation as a quaternion." },
   { name: "velocity", type: "[x, y, z]", default: "none", details: "Units per second." },
-  { name: "angularVelocity", type: "[x, y, z]", default: "none", details: "Spin, radians per second around each axis." },
-  { name: "oscillation", type: "{ amplitude, frequency, phase? }", default: "none", details: "A visual bob. Doesn't move the collider." },
-  { name: "body", type: '"dynamic" | "kinematic" | "fixed" | BodyOptions', default: "none", details: "Adds physics. See the Physics page." },
-  { name: "collider", type: "ColliderOptions", default: "from mesh", details: "Collision shape and layers. A collider without a body becomes kinematic." },
-  { name: "follow", type: "{ target, speed }", default: "none", details: "Chase another entity on the ground plane." },
-  { name: "lifetime", type: "number", default: "none", details: "Seconds until it shrinks away and is despawned." },
-  { name: "parent", type: "Entity", default: "none", details: "Attach to another entity. Visual only: no body or collider." },
-  { name: "impact", type: "ImpactFeedback", default: "none", details: "Sound and haptic played by the engine on solid impacts." },
+  { name: "groundVelocity", type: "[x, z]", default: "none", details: "Horizontal speed that keeps the vertical one: steer a body and it still falls." },
+  { name: "spin", type: "[x, y, z]", default: "none", details: "Radians per second around each axis." },
+  { name: "bob", type: "{ amplitude, speed, phase? } | null", default: "none", details: "A visual bob. Doesn't move the collider." },
+  { name: "follow", type: "{ target, speed } | null", default: "none", details: "Chase another entity along the ground." },
+  { name: "lifetime", type: "number | null", default: "none", details: "Seconds until it shrinks away and is despawned." },
+  { name: "parent", type: "Entity | null", default: "none", details: "Attach to another entity. Visual only: no physics." },
+  { name: "physics", type: '"dynamic" | "kinematic" | "fixed" | PhysicsOptions | null', default: "none", details: "Adds a rigid body and collider. See the Physics page." },
+  { name: "impact", type: "ImpactFeedback | null", default: "none", details: "Sound and haptic played by the engine on solid impacts." },
 ];
 
-export const bodyOptionsAttributes = [
+export const physicsOptionsAttributes = [
   { name: "type", type: '"dynamic" | "kinematic" | "fixed"', default: "required", details: "Dynamic: moved by physics. Kinematic: moved by you. Fixed: never moves." },
-  { name: "linearDamping", type: "number", default: "0", details: "Slows movement over time, like air drag." },
-  { name: "angularDamping", type: "number", default: "0.05", details: "Slows spinning over time." },
-  { name: "gravityScale", type: "number", default: "1", details: "Multiplier on world gravity. 0 floats." },
-  { name: "lockRotations", type: "boolean", default: "false", details: "Keeps the body upright (no tumbling)." },
-  { name: "ccd", type: "boolean", default: "false", details: "Stops fast, small bodies from passing through walls." },
-];
-
-export const colliderOptionsAttributes = [
   { name: "shape", type: '"ball" | "box"', default: "from mesh", details: "Spheres get a ball, everything else a box." },
   { name: "radius", type: "number", default: "half the largest scale", details: "Ball size." },
-  { name: "halfExtents", type: "[x, y, z]", default: "half the scale", details: "Box size. Planes get a thin slab." },
+  { name: "size", type: "[x, y, z]", default: "the scale", details: "Box size: full width, height and depth. Planes get a thin slab." },
   { name: "layer", type: "number (bits)", default: "1", details: "Which layers this collider is on." },
   { name: "mask", type: "number (bits)", default: "all", details: "Which layers it interacts with. Either side's mask is enough." },
   { name: "sensor", type: "boolean", default: "false", details: "Reports touches but doesn't push: pickups, trigger zones." },
   { name: "friction", type: "number", default: "0.5", details: "How grippy the surface is." },
-  { name: "restitution", type: "number", default: "0", details: "Bounciness, 0..1." },
+  { name: "bounce", type: "number", default: "0", details: "Bounciness, 0..1." },
   { name: "density", type: "number", default: "1", details: "Mass per volume: heavier bodies push lighter ones." },
+  { name: "drag", type: "number", default: "0", details: "Slows movement over time, like air resistance." },
+  { name: "angularDrag", type: "number", default: "0.05", details: "Slows spinning over time." },
+  { name: "gravityScale", type: "number", default: "1", details: "Multiplier on world gravity. 0 floats." },
+  { name: "upright", type: "boolean", default: "false", details: "Stays upright: never tumbles." },
+  { name: "ccd", type: "boolean", default: "false", details: "Stops fast, small bodies passing through walls." },
 ];
 
 export const gameViewAttributes = [
