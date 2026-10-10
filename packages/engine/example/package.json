@@ -1,0 +1,24 @@
+{
+  "name": "engine-example",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "prebuild": "expo prebuild --clean",
+    "ios": "expo run:ios",
+    "android": "expo run:android"
+  },
+  "dependencies": {
+    "@nayan-ui/engine": "*",
+    "expo": "~57.0.27",
+    "expo-dev-client": "~57.0.9",
+    "react": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-webgpu": "^0.13.0"
+  },
+  "devDependencies": {
+    "react-native-monorepo-config": "^0.3.3",
+    "babel-preset-expo": "~57.0.14"
+  }
+}

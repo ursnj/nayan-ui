@@ -1,0 +1,9 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "types": ["@webgpu/types"],
+    "paths": { "@nayan-ui/engine": ["../src/index"] }
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
+}

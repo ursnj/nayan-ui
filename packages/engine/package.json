@@ -1,0 +1,106 @@
+{
+  "name": "@nayan-ui/engine",
+  "version": "0.1.0",
+  "description": "A fast 3D game engine for React Native, built on WebGPU.",
+  "keywords": [
+    "react-native",
+    "ios",
+    "android",
+    "3d",
+    "game-engine",
+    "webgpu"
+  ],
+  "homepage": "https://github.com/ursnj/nayan-ui#readme",
+  "bugs": {
+    "url": "https://github.com/ursnj/nayan-ui/issues"
+  },
+  "license": "MIT",
+  "author": "ursnj <niranjan.devasani@gmail.com> (https://github.com/ursnj)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ursnj/nayan-ui.git",
+    "directory": "packages/engine"
+  },
+  "workspaces": [
+    "example"
+  ],
+  "files": [
+    "src",
+    "lib",
+    "cpp",
+    "ios",
+    "*.podspec",
+    "core/include",
+    "core/build",
+    "!**/.*"
+  ],
+  "sideEffects": false,
+  "main": "./lib/module/index.js",
+  "types": "./lib/typescript/src/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./lib/typescript/src/index.d.ts",
+      "default": "./lib/module/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "example": "bun run --cwd example",
+    "clean": "del-cli lib",
+    "build": "bob build",
+    "typecheck": "tsc",
+    "core:test": "cargo test --manifest-path core/Cargo.toml",
+    "core:bench": "cargo run --release --example bench --manifest-path core/Cargo.toml",
+    "core:build:ios": "core/scripts/build-ios.sh"
+  },
+  "dependencies": {
+    "wgpu-matrix": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.4",
+    "@webgpu/types": "^0.1.60",
+    "del-cli": "^7.0.0",
+    "react": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-builder-bob": "^0.43.1",
+    "react-native-webgpu": "^0.13.0",
+    "typescript": "~6.0.3"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-webgpu": ">=0.13.0"
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      [
+        "module",
+        {
+          "esm": true
+        }
+      ],
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  },
+  "codegenConfig": {
+    "name": "NayanEngineSpec",
+    "type": "modules",
+    "jsSrcsDir": "src/specs",
+    "ios": {
+      "modulesProvider": {
+        "NativeNayanEngine": "NayanEngineProvider"
+      }
+    }
+  }
+}
