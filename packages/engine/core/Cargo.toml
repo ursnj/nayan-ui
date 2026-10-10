@@ -1,0 +1,19 @@
+[package]
+name = "engine-core"
+version = "0.1.0"
+edition = "2024"
+description = "Simulation core for @nayan-ui/engine"
+license = "MIT"
+
+[lib]
+name = "engine_core"
+crate-type = ["staticlib", "rlib"]
+
+[dependencies]
+glam = "0.30"
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+panic = "abort"
+strip = true

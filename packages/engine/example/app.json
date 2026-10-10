@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "engine",
+    "slug": "engine",
+    "version": "0.0.1",
+    "orientation": "default",
+    "newArchEnabled": true,
+    "ios": {
+      "bundleIdentifier": "dev.nayan.engine"
+    },
+    "android": {
+      "package": "dev.nayan.engine"
+    },
+    "plugins": [
+      "expo-dev-client"
+    ],
+    "scheme": "nayan-engine-example"
+  }
+}
