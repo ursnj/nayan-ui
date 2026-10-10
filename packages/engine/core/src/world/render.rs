@@ -35,11 +35,11 @@ impl World {
         }
     }
 
-    /// Interpolated (and bobbing-offset) local pose used for rendering.
+    /// Interpolated (and bobbing / shake offset) local pose used for rendering.
     pub(super) fn render_pose(&self, i: usize, alpha: f32) -> (Vec3, Quat) {
         let osc = self.oscillation[i];
         (
-            self.prev_position[i].lerp(self.position[i], alpha) + osc.amplitude * osc.phase.sin(),
+            self.prev_position[i].lerp(self.position[i], alpha) + osc.amplitude * osc.phase.sin() + self.shake_offset[i],
             self.prev_rotation[i].lerp(self.rotation[i], alpha),
         )
     }

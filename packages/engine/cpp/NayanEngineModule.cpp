@@ -190,10 +190,10 @@ bool NayanEngineModule::readPosition(jsi::Runtime &, double world, double entity
   return engine_world_read_position(find(world), id(entity), rendered ? 1 : 0) != 0;
 }
 
-bool NayanEngineModule::animate(jsi::Runtime &rt, double world, double entity, jsi::Object animation) {
+double NayanEngineModule::animate(jsi::Runtime &rt, double world, jsi::Object animation) {
   size_t len = 0;
   const double *data = descData(rt, animation, len);
-  return engine_world_animate(find(world), id(entity), data, len) != 0;
+  return engine_world_animate(find(world), data, len);
 }
 
 bool NayanEngineModule::stopAnimation(jsi::Runtime &, double world, double entity) {
@@ -239,9 +239,8 @@ jsi::Object NayanEngineModule::getRanges(jsi::Runtime &rt, double world) {
 
 jsi::Object NayanEngineModule::getDone(jsi::Runtime &rt, double world) {
   ::World *w = find(world);
-  // At least one element so a zero-capacity world still gets a valid buffer.
-  size_t capacity = std::max<size_t>(engine_world_capacity(w), 1);
-  return external(rt, engine_world_done(w), capacity * sizeof(uint32_t));
+  size_t room = static_cast<size_t>(engine_world_capacity(w)) * ENGINE_DONE_PER_ENTITY + 64;
+  return external(rt, engine_world_done(w), room * sizeof(uint32_t));
 }
 
 double NayanEngineModule::doneLength(jsi::Runtime &, double world) {

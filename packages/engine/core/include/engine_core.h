@@ -66,10 +66,16 @@ typedef struct World World;
 #define ENGINE_SLOT_REGION 60       // texture region u0 v0 u1 v1
 
 // ── Animations and particle bursts ───────────────────────────────────────
-// Animation: flags (1 position, 2 rotation, 4 scale, 8 color), position xyz, rotation xyzw, scale xyz,
-// color rgba, duration, delay, easing (0 linear, 1 in, 2 out, 3 in-out, 4 back, 5 bounce, 6 elastic),
-// repeat (-1 = forever), yoyo.
-#define ENGINE_ANIM_LEN 20
+// Animation: a header, then `entity count` entity ids, then `keyframe count` keyframes.
+// Header: entity count, keyframe count (1..64), duration, delay, easing (0 linear, 1 in, 2 out, 3 in-out,
+// 4 back, 5 bounce, 6 elastic), repeat (-1 = forever), yoyo, stagger (seconds per entity), smooth path,
+// spring stiffness (0 = timed tween), spring damping, spring mass.
+// Keyframe: flags (1 position, 2 rotation, 4 scale, 8 color, 16 move by, 32 turn, 64 shake, 128 has time),
+// time 0..1, position xyz, rotation xyzw, scale xyz, color rgba, move by xyz, turn xyz (radians), shake.
+// Each animated property is its own track: a new one replaces only the same property on the same entity.
+#define ENGINE_ANIM_HEADER 12
+#define ENGINE_ANIM_KEY_LEN 23
+#define ENGINE_DONE_PER_ENTITY 5 // room in engine_world_done: capacity * 5 + 64 ids
 // Burst: position xyz, direction xyz, spread (radians), count, mesh, size, speed, lifetime, gravity,
 // color count (1..4), colors rgba x 4.
 #define ENGINE_BURST_LEN 30
@@ -106,8 +112,10 @@ uint32_t engine_world_pick(World *w, float ox, float oy, float oz, float dx, flo
 int32_t engine_world_read_position(World *w, uint32_t id, int32_t rendered);
 int32_t engine_world_read_velocity(World *w, uint32_t id);
 
-// Replaces the entity's animation (ENGINE_ANIM_LEN doubles). Returns 1 if it started.
-int32_t engine_world_animate(World *w, uint32_t id, const double *anim, size_t len);
+// Starts an animation (layout above). Returns its id (> 0), reported by engine_world_done when every
+// track has ended (finished, replaced, stopped or despawned); 0 if nothing started.
+uint32_t engine_world_animate(World *w, const double *anim, size_t len);
+// Stops every animation on the entity where it is. Returns 1 if it had any.
 int32_t engine_world_stop_animation(World *w, uint32_t id);
 // Spawns particles (ENGINE_BURST_LEN doubles). Returns how many were spawned.
 uint32_t engine_world_burst(World *w, const double *burst, size_t len);
@@ -123,7 +131,7 @@ const float *engine_world_colors(World *w);    // capacity * 4 floats (rgba)
 const float *engine_world_regions(World *w);   // capacity * 4 floats (texture region u0 v0 u1 v1)
 // ENGINE_MAX_MESHES * 4 u32: [first, count] per mesh for opaque instances, then for transparent ones.
 const uint32_t *engine_world_ranges(World *w);
-// Entities whose animation ended (finished or despawned) during the last update; room for `capacity`.
+// Ids of animations that ended since the last update began (room for capacity * 5 + 64).
 const uint32_t *engine_world_done(World *w);
 uint32_t engine_world_done_len(World *w);
 

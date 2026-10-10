@@ -27,7 +27,7 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   double pick(jsi::Runtime &rt, double world, double ox, double oy, double oz, double dx, double dy, double dz);
   bool readPosition(jsi::Runtime &rt, double world, double entity, bool rendered);
   bool readVelocity(jsi::Runtime &rt, double world, double entity);
-  bool animate(jsi::Runtime &rt, double world, double entity, jsi::Object animation);
+  double animate(jsi::Runtime &rt, double world, jsi::Object animation);
   bool stopAnimation(jsi::Runtime &rt, double world, double entity);
   double burst(jsi::Runtime &rt, double world, jsi::Object burst);
   void update(jsi::Runtime &rt, double world, double dt);

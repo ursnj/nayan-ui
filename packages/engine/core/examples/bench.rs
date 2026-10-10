@@ -1,5 +1,5 @@
 //! `cargo run --release --example bench` — milliseconds per `update(1/60)`.
-use engine_core::{BodyKind, FIXED_DT, PhysicsDesc, Shape, Vec3, World};
+use engine_core::{Animation, BodyKind, Easing, Entity, FIXED_DT, Keyframe, PhysicsDesc, Shape, Spring, Vec3, World};
 use std::time::Instant;
 
 fn time(label: &str, w: &mut World) {
@@ -99,4 +99,58 @@ fn main() {
         w.set_physics(o, Some(od));
     }
     time("game mix: 300 dynamic chasers + 300 sensors", &mut w);
+
+    // Animations: every entity runs a looping keyframed hop (move + turn + scale) in Rust.
+    let mut w = World::new(10_000);
+    let all: Vec<Entity> = (0..10_000)
+        .map(|i| w.spawn(0, Vec3::new((i % 100) as f32, 0.0, (i / 100) as f32), Vec3::ONE, [1.0; 4]).unwrap())
+        .collect();
+    let hop = |y: f32| Keyframe {
+        move_by: Some(Vec3::new(0.0, y, 0.0)),
+        ..Default::default()
+    };
+    w.animate(&Animation {
+        entities: all,
+        keys: vec![
+            hop(1.0),
+            Keyframe {
+                turn: Some(Vec3::new(0.0, 6.0, 0.0)),
+                scale: Some(Vec3::splat(1.3)),
+                ..hop(0.0)
+            },
+        ],
+        duration: 1.0,
+        delay: 0.0,
+        easing: Easing::InOut,
+        repeat: -1,
+        yoyo: true,
+        stagger: 0.0001,
+        smooth: true,
+        spring: None,
+    });
+    time("10000 entities with keyframe animations", &mut w);
+
+    let mut w = World::new(1000);
+    let all: Vec<Entity> = (0..1000).map(|i| w.spawn(0, Vec3::new(i as f32, 0.0, 0.0), Vec3::ONE, [1.0; 4]).unwrap()).collect();
+    let spring = |x: f32| Animation {
+        entities: all.clone(),
+        keys: vec![Keyframe {
+            move_by: Some(Vec3::new(x, 0.0, 0.0)),
+            ..Default::default()
+        }],
+        duration: 0.0,
+        delay: 0.0,
+        easing: Easing::Linear,
+        repeat: 0,
+        yoyo: false,
+        stagger: 0.0,
+        smooth: false,
+        spring: Some(Spring {
+            stiffness: 120.0,
+            damping: 4.0, // barely damped: keeps moving for the whole measurement
+            mass: 1.0,
+        }),
+    };
+    w.animate(&spring(5.0));
+    time_with("1000 entities on springs", &mut w, 5, 100);
 }

@@ -3,7 +3,7 @@
 
 #![allow(clippy::missing_safety_doc)] // the shared contract is documented once, in ffi/mod.rs
 
-use crate::{ANIM_LEN, Animation, BURST_LEN, Burst, DESC_LEN, Entity, EntityDesc, NO_ENTITY, Vec3, World};
+use crate::{ANIM_HEADER, Animation, BURST_LEN, Burst, DESC_LEN, Entity, EntityDesc, NO_ENTITY, Vec3, World};
 
 unsafe fn world<'a>(w: *mut World) -> Option<&'a mut World> {
     // SAFETY: caller contract above; null is handled by `as_mut`.
@@ -52,16 +52,17 @@ unsafe fn doubles<'a>(data: *const f64, len: usize, min: usize) -> Option<&'a [f
     (!data.is_null() && len >= min).then(|| unsafe { std::slice::from_raw_parts(data, len) })
 }
 
-/// Starts an animation from an encoded description (`ENGINE_ANIM_LEN` doubles). Returns 1 if it started.
+/// Starts an animation from an encoded description (header, entity ids, keyframes; see the header
+/// file). Returns its id (reported by `engine_world_done` when it ends), or 0 if nothing started.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn engine_world_animate(w: *mut World, id: u32, data: *const f64, len: usize) -> i32 {
-    let (Some(w), Some(d)) = (unsafe { world(w) }, unsafe { doubles(data, len, ANIM_LEN) }) else {
+pub unsafe extern "C" fn engine_world_animate(w: *mut World, data: *const f64, len: usize) -> u32 {
+    let (Some(w), Some(d)) = (unsafe { world(w) }, unsafe { doubles(data, len, ANIM_HEADER) }) else {
         return 0;
     };
-    Animation::decode(d).is_some_and(|a| w.animate(Entity(id), &a)) as i32
+    Animation::decode(d).and_then(|a| w.animate(&a)).unwrap_or(0)
 }
 
-/// Stops the entity's animation where it is. Returns 1 if it had one.
+/// Stops every animation on the entity where it is. Returns 1 if it had any.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_world_stop_animation(w: *mut World, id: u32) -> i32 {
     unsafe { world(w) }.is_some_and(|w| w.stop_animation(Entity(id))) as i32
@@ -186,7 +187,7 @@ pub unsafe extern "C" fn engine_world_regions(w: *mut World) -> *const f32 {
     unsafe { world(w) }.map_or(std::ptr::null(), |w| w.regions().as_ptr())
 }
 
-/// Entities whose animation ended during the last update (`capacity` u32s of room).
+/// Ids of animations that ended since the last update began (room for `capacity * 5 + 64` u32s).
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_world_done(w: *mut World) -> *const u32 {
     unsafe { world(w) }.map_or(std::ptr::null(), |w| w.done().as_ptr())

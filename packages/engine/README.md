@@ -73,8 +73,7 @@ world.burst({ position: [0, 1, 0], count: 30, color: [[1, 0.3, 0.3], [1, 0.9, 0.
 - **Shapes**: `"cube"`, `"sphere"`, `"plane"`, `"cylinder"`, `"cone"`, `"capsule"`, `"torus"`, `"roundedBox"`, and
   `"none"` (invisible: groups, pivots, trigger zones). Each is 1 unit across before scaling; colliders match the shape.
 - **Groups**: `parent` nests to any depth; children move, turn and scale with their parent.
-- **Animations** run in Rust (`position`, `rotation`, `scale`, `color`; easings, `delay`, `repeat`, `yoyo`) and return a
-  Promise. Starting another animation on the same entity replaces it.
+- **Animations** run in Rust and return a Promise (see [Animation](#animation)).
 - **Text** (`text` + `font`): each character is an extruded mesh, so every "7" on screen is one draw call. Letters are
   1 unit tall at scale 1; `align` is left / center / right. Changing `text` rebuilds the letters (one entity each).
 - **Picking** tests what was drawn (bounding boxes), not physics. `pickable: false` lets taps through.
@@ -88,6 +87,34 @@ world.burst({ position: [0, 1, 0], count: 30, color: [[1, 0.3, 0.3], [1, 0.9, 0.
   `camera.shake = 0.3` for a hit (it fades by itself).
 - **Particles**: `world.burst(...)` spawns short-lived pieces in one native call (direction, spread, speed, gravity,
   up to 4 colors). They count against the world's capacity.
+
+## Animation
+
+Everything runs in the Rust core at 60 Hz, smoothed between steps like physics: no per-frame JS, and one native
+call however many entities you animate.
+
+```ts
+await world.animate(piece, { position: [2, 0, 3] }, { duration: 0.25, easing: "back" });     // tween, then continue
+world.animate(coin, { scale: 1.2 }, { repeat: "forever", yoyo: true });                       // pulse
+world.animate(piece, [{ moveBy: [1, 1.5, 0] }, { moveBy: [2, 0, 0] }], { path: "smooth" }); // hop in an arc
+world.animate(card, { turn: [0, Math.PI, 0] });                                               // flip (2π = full spin)
+world.animate(tiles, { scale: 1 }, { stagger: 0.03, easing: "back" });                        // reveal a board
+world.animate(cursor, { position: [x, 0, z] }, { spring: true });                             // chase a target
+world.animate(tile, { shake: 0.15 }, { duration: 0.4 });                                      // "no!"
+```
+
+- **Independent properties**: position, rotation, scale, color and shake are separate tracks, so a piece can move while
+  it pulses. Animating a property again replaces just that property.
+- **Keyframes**: pass an array of targets, each with an optional `at` (0..1). `path: "smooth"` curves through them.
+- **Relative**: `moveBy` (offset from the start) and `turn` (angles; more than 2π keeps spinning).
+- **Springs**: `spring: true`, `"bouncy"` or `{ stiffness, damping, mass }` instead of a duration. Retargeting a moving
+  spring keeps its velocity, so following a finger or a moving target never jerks.
+- **Stagger**: give several entities and `stagger` seconds; one Promise resolves when the last one is done.
+- **Shake**: decaying jitter on the drawn position only; the entity's real position (and collider) stays put.
+- Easings: linear, easeIn, easeOut (default), easeInOut, back, bounce, elastic. Plus `delay`, `repeat` (or
+  `"forever"`) and `yoyo`. `world.stopAnimation(e)` stops everything on an entity where it is.
+- Cost: 10,000 entities with looping keyframe animations (30,000 tracks) take about 0.7 ms per update on an M-series
+  Mac (`bun run core:bench`).
 
 ## 3D models
 
