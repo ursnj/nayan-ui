@@ -6,14 +6,13 @@ struct Globals {
   viewProj: mat4x4f,
   lightViewProj: mat4x4f,
   light: vec4f,  // xyz = direction towards the light (normalized), w = ambient
-  shadow: vec4f, // x = shadow-map texel size, y = enabled (0/1), z = depth bias
+  shadow: vec4f, // y = enabled (0/1), z = depth bias
 };
 
 @group(0) @binding(0) var<uniform> globals: Globals;
 @group(0) @binding(1) var<storage, read> models: array<mat4x4f>;
 @group(0) @binding(2) var<storage, read> colors: array<vec4f>;
 @group(0) @binding(3) var shadowMap: texture_depth_2d;
-@group(0) @binding(4) var shadowSampler: sampler_comparison;
 
 @vertex
 fn vs_shadow(@location(0) position: vec3f, @builtin(instance_index) instance: u32) -> @builtin(position) vec4f {
@@ -43,7 +42,8 @@ fn vs(
   return out;
 }
 
-// 1 = lit, 0 = in shadow. 3x3 PCF on top of the sampler's hardware 2x2 comparison filter.
+// 1 = lit, 0 = in shadow. 3x3 PCF done by hand with textureLoad: comparison samplers are not
+// available on every backend (Dawn disables them on some Metal devices, e.g. the iOS simulator).
 fn shadowFactor(world: vec3f) -> f32 {
   if (globals.shadow.y == 0.0) {
     return 1.0;
@@ -55,11 +55,13 @@ fn shadowFactor(world: vec3f) -> f32 {
     return 1.0; // outside the shadow map: lit
   }
   let depth = ndc.z - globals.shadow.z;
-  let texel = globals.shadow.x;
+  let size = vec2i(textureDimensions(shadowMap));
+  let center = vec2i(uv * vec2f(size));
   var sum = 0.0;
   for (var y = -1; y <= 1; y++) {
     for (var x = -1; x <= 1; x++) {
-      sum += textureSampleCompareLevel(shadowMap, shadowSampler, uv + vec2f(f32(x), f32(y)) * texel, depth);
+      let texel = clamp(center + vec2i(x, y), vec2i(0), size - vec2i(1));
+      sum += select(0.0, 1.0, depth <= textureLoad(shadowMap, texel, 0));
     }
   }
   return sum / 9.0;

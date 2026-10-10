@@ -110,7 +110,6 @@ export class Renderer {
       },
     });
 
-    const shadowSampler = device.createSampler({ compare: "less", magFilter: "linear", minFilter: "linear" });
     this.bindGroup = device.createBindGroup({
       layout: this.pipeline.getBindGroupLayout(0),
       entries: [
@@ -118,7 +117,6 @@ export class Renderer {
         { binding: 1, resource: { buffer: this.matrixBuffer } },
         { binding: 2, resource: { buffer: this.colorBuffer } },
         { binding: 3, resource: this.shadowView },
-        { binding: 4, resource: shadowSampler },
       ],
     });
     // "auto" layouts only contain the bindings an entry point uses, so the shadow pass needs its own group.
@@ -182,7 +180,7 @@ export class Renderer {
     g.set(this.viewProj, 0);
     g.set(this.lightViewProj, 16);
     g.set([direction[0]!, direction[1]!, direction[2]!, light.ambient], 32);
-    g.set([1 / SHADOW_SIZE, shadows ? 1 : 0, 0.0005, 0], 36);
+    g.set([0, shadows ? 1 : 0, 0.0005, 0], 36);
 
     const queue = this.device.queue;
     const used = this.source.count;

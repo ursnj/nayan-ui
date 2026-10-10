@@ -71,7 +71,10 @@ export function GameView({ source, onUpdate, camera, light, style, onStats, onEr
       const format = navigator.gpu.getPreferredCanvasFormat();
       context.configure({ device, format, alphaMode: "opaque" });
       const canvas = context.canvas as unknown as ReturnType<CanvasRef["getNativeSurface"]>;
+      // Validation errors don't throw in WebGPU; scope the setup and first frame so they surface.
+      device.pushErrorScope("validation");
       const renderer = new Renderer(device, context, format, source);
+      let firstFrame = true;
 
       let last = 0;
       let frames = 0;
@@ -95,6 +98,10 @@ export function GameView({ source, onUpdate, camera, light, style, onStats, onEr
         if (canvas.width !== width) canvas.width = width;
         if (canvas.height !== height) canvas.height = height;
         renderer.render(width, height, camera, light);
+        if (firstFrame) {
+          firstFrame = false;
+          device!.popErrorScope().then((e) => e && report(new Error(`WebGPU setup: ${e.message}`)), report);
+        }
 
         frames++;
         if (now - fpsStart >= 1000) {
