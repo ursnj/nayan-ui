@@ -13,6 +13,7 @@ mod world;
 
 pub use rapier3d::glamx::{Quat, Vec3};
 pub use world::{
-    ANIM_LEN, Animation, BURST_LEN, BodyKind, Burst, DESC_LEN, EVENT_SENSOR, EVENT_STARTED, EVENT_STRIDE, Easing, Entity, EntityDesc, FIXED_DT,
-    ImpactFeedback, MAX_DEPTH, MAX_EVENTS, MAX_MESHES, NO_ENTITY, PhysicsDesc, PhysicsRequest, Shape, ShapeSpec, World, desc_flag, desc_slot, shapes,
+    ANIM_HEADER, ANIM_KEY_LEN, Animation, BURST_LEN, BodyKind, Burst, DESC_LEN, DONE_PER_ENTITY, EVENT_SENSOR, EVENT_STARTED, EVENT_STRIDE, Easing,
+    Entity, EntityDesc, FIXED_DT, ImpactFeedback, Keyframe, MAX_DEPTH, MAX_EVENTS, MAX_MESHES, NO_ENTITY, PhysicsDesc, PhysicsRequest, Shape,
+    ShapeSpec, Spring, World, desc_flag, desc_slot, shapes,
 };

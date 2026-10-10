@@ -16,8 +16,9 @@ import {
 } from "@nayan-ui/engine";
 
 // Tic-tac-toe on a wooden board: tap a tile, pieces drop in, the winning line pulses.
-// Shows: tap picking, animations (awaited), 3D text, textures, rounded boxes, tori, nested
-// groups (an X is two bars under an invisible parent) and confetti bursts.
+// Shows: tap picking, Rust animations (staggered reveal, spins, arcs, shakes, pulses running at the
+// same time as other animations), 3D text, textures, rounded boxes, tori, nested groups (an X is two
+// bars under an invisible parent) and confetti bursts.
 
 type Mark = "X" | "O";
 type Cell = Mark | null;
@@ -83,8 +84,10 @@ function createGame(font: Font, wood: Texture, onScore: (x: number, o: number) =
   world.spawn({ mesh: "roundedBox", texture: wood, scale: [7.4, 0.5, 7.4], position: [0, -0.25, 0] });
   const tiles = Array.from({ length: 9 }, (_, i) => {
     const [x, , z] = cellPosition(i);
-    return world.spawn({ mesh: "roundedBox", position: [x, 0.1, z], scale: [2, 0.2, 2], color: TILE });
+    return world.spawn({ mesh: "roundedBox", position: [x, 0.1, z], scale: 0.01, color: TILE });
   });
+  // Reveal the board one tile after another: one native call for all nine.
+  world.animate(tiles, { scale: [2, 0.2, 2] }, { duration: 0.4, stagger: 0.06, easing: "back" });
   const status = world.spawn({ text: "", font, position: [0, 1.1, -4.6], rotation: pitch(-0.6), scale: 0.8, color: [1, 1, 1] });
 
   const g = {
@@ -120,7 +123,9 @@ function createGame(font: Font, wood: Texture, onScore: (x: number, o: number) =
       world.spawn({ mesh: "torus", parent: piece, scale: [1.5, 2.2, 1.5], color: BLUE, pickable: false });
     }
     g.pieces[i] = piece;
+    // Grow, spin and drop at once: separate properties animate independently.
     world.animate(piece, { scale: 1 }, { duration: 0.35, easing: "back" });
+    world.animate(piece, { turn: [0, mark === "X" ? Math.PI : 0, 0] }, { duration: 0.45 });
     await world.animate(piece, { position: [x, 0.42, z] }, { duration: 0.5, easing: "bounce" });
     if (g.stopped) return; // the screen closed while the piece was dropping
     sfx.play("place", { volume: 0.6, pitch: mark === "X" ? 1 : 1.2 });
@@ -135,8 +140,17 @@ function createGame(font: Font, wood: Texture, onScore: (x: number, o: number) =
       say(`${win.mark} WINS!`, win.mark === "X" ? RED : BLUE);
       sfx.play("win");
       haptics.notify("success");
+      // The winning pieces hop in arcs, one after another, while they pulse.
+      const winners = win.line.map((c) => g.pieces[c]!);
+      world.animate(winners, [{ moveBy: [0, 1.2, 0] }, { moveBy: [0, 0, 0] }], {
+        duration: 0.6,
+        path: "smooth",
+        stagger: 0.12,
+        repeat: "forever",
+        easing: "easeInOut",
+      });
+      world.animate(winners, { scale: 1.2 }, { duration: 0.3, repeat: "forever", yoyo: true, easing: "easeInOut" });
       for (const c of win.line) {
-        world.animate(g.pieces[c]!, { scale: 1.25 }, { duration: 0.35, repeat: "forever", yoyo: true, easing: "easeInOut" });
         world.burst({ position: [cellPosition(c)[0], 0.8, cellPosition(c)[2]], count: 24, speed: 6, size: 0.18, color: [RED, BLUE, [1, 0.85, 0.2], [1, 1, 1]] });
       }
       world.set(status, { scale: 0.3 });
@@ -173,7 +187,11 @@ function createGame(font: Font, wood: Texture, onScore: (x: number, o: number) =
       if (g.turn !== "X" || AUTOPLAY) return;
       const hit = world.pick(x, y);
       const i = hit ? tiles.indexOf(hit.entity) : -1;
-      if (i >= 0) void place(i);
+      if (i < 0) return;
+      if (g.board[i]) {
+        world.animate(tiles[i]!, { shake: 0.12 }, { duration: 0.35 }); // taken: shake "no"
+        haptics.notify("warning");
+      } else void place(i);
     },
     update(dt: number) {
       g.elapsed += dt;

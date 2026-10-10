@@ -30,7 +30,7 @@ impl World {
         let n = self.len();
         self.prev_position.copy_from_slice(&self.position);
         self.prev_rotation.copy_from_slice(&self.rotation);
-        self.advance_tweens(h);
+        self.advance_tracks(h);
 
         // Followers steer toward their target.
         for i in 0..n {

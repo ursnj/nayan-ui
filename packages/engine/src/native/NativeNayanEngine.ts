@@ -48,8 +48,8 @@ export interface Spec extends TurboModule {
   readPosition(world: number, entity: number, rendered: boolean): boolean;
   readVelocity(world: number, entity: number): boolean;
 
-  /** Replaces the entity's animation (Float64Array buffer, layout in engine_core.h). False if it didn't start. */
-  animate(world: number, entity: number, animation: Object): boolean;
+  /** Starts an animation (Float64Array buffer, layout in engine_core.h). Returns its id, or 0 if nothing started. */
+  animate(world: number, animation: Object): number;
   stopAnimation(world: number, entity: number): boolean;
   /** Spawns a particle burst (Float64Array buffer). Returns how many particles were spawned. */
   burst(world: number, burst: Object): number;
@@ -65,7 +65,7 @@ export interface Spec extends TurboModule {
   getRegions(world: number): Object;
   /** 1024 u32: [first, count] per mesh id (256) for opaque instances, then for transparent ones. */
   getRanges(world: number): Object;
-  /** Entities whose animation ended during the last update (room for `capacity`). */
+  /** Ids of animations that ended since the last update began (room for capacity * 5 + 64). */
   getDone(world: number): Object;
   doneLength(world: number): number;
   /** Collision events from the last update, 4 u32 each: [a, b, flags, speed as f32 bits]. */

@@ -67,12 +67,13 @@ function createGame(font: Font, onScore: (score: number) => void) {
   const preview = world.spawn({ mesh: "sphere", position: [0, DROP_Y, 0], pickable: false });
   const guide = world.spawn({ mesh: "cube", position: [0, DROP_Y / 2, 0], scale: [0.04, DROP_Y, 0.04], color: [1, 1, 1, 0.25], pickable: false });
 
+  // The preview and guide chase the finger on springs: smooth, and never jerky when the finger turns.
   const showNext = () => {
-    const { radius, color } = LEVELS[g.next]!;
-    world.set(preview, { scale: radius * 2, color, position: [g.aimX, DROP_Y, 0] });
-    world.set(guide, { position: [g.aimX, DROP_Y / 2, 0] });
+    world.animate(preview, { position: [g.aimX, DROP_Y, 0] }, { spring: { stiffness: 400, damping: 40 } });
+    world.animate(guide, { position: [g.aimX, DROP_Y / 2, 0] }, { spring: { stiffness: 400, damping: 40 } });
   };
   g.next = Math.floor(Math.random() * 4);
+  world.set(preview, { scale: LEVELS[g.next]!.radius * 2, color: LEVELS[g.next]!.color });
   showNext();
 
   function spawnFruit(level: number, x: number, y: number, pop: boolean) {

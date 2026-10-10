@@ -81,6 +81,26 @@ export const animateOptionsAttributes = [
   { name: "easing", type: "Easing", default: '"easeOut"', details: "How it speeds up and slows down. See the easings below." },
   { name: "repeat", type: 'number | "forever"', default: "0", details: "Extra runs after the first." },
   { name: "yoyo", type: "boolean", default: "false", details: "Every other run plays backwards: pulses and ping-pong." },
+  { name: "stagger", type: "number", default: "0", details: "With several entities: extra delay for each next one, in seconds." },
+  { name: "path", type: '"linear" | "smooth"', default: '"linear"', details: "smooth curves through keyframes: arcs and hops." },
+  { name: "spring", type: 'true | "bouncy" | SpringOptions', default: "none", details: "Simulated spring motion instead of a duration. Keeps its speed when retargeted." },
+];
+
+export const animateTargetAttributes = [
+  { name: "position", type: "[x, y, z]", default: "none", details: "Where to move to." },
+  { name: "rotation", type: "[x, y, z, w]", default: "none", details: "A quaternion to turn to (the short way)." },
+  { name: "scale", type: "number | [x, y, z]", default: "none", details: "Size to grow or shrink to." },
+  { name: "color", type: "[r, g, b] | [r, g, b, a]", default: "none", details: "Color to fade to. Alpha below 1 fades out." },
+  { name: "moveBy", type: "[x, y, z]", default: "none", details: "Move by this offset from where it starts." },
+  { name: "turn", type: "[x, y, z]", default: "none", details: "Turn by these angles in radians. 2π spins once; more spins more." },
+  { name: "shake", type: "number", default: "none", details: "Shake by up to this distance, fading out. Only the drawn position shakes." },
+  { name: "at", type: "number", default: "even", details: "Keyframes only: when to reach this keyframe, 0..1 of the duration." },
+];
+
+export const springAttributes = [
+  { name: "stiffness", type: "number", default: "170", details: "How strongly it pulls toward the target." },
+  { name: "damping", type: "number", default: "26", details: "How quickly it calms down. Lower values bounce more." },
+  { name: "mass", type: "number", default: "1", details: "Heavier moves slower and swings further." },
 ];
 
 export const easingAttributes = [

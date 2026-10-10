@@ -175,6 +175,7 @@ export function encode(d: Float64Array, o: EntityOptions, mesh: number | undefin
 
 // ── Animations and bursts (layouts in core/include/engine_core.h) ─────────
 
-export const ANIM_LEN = 20;
+export const ANIM_HEADER = 12;
+export const ANIM_KEY_LEN = 23;
 export const BURST_LEN = 30;
 export const EASING = { linear: 0, easeIn: 1, easeOut: 2, easeInOut: 3, back: 4, bounce: 5, elastic: 6 } as const;

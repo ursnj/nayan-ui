@@ -5,7 +5,7 @@
 //! - `simulation.rs` the fixed-step update loop and collision events
 //! - `feedback.rs`   impact sounds/haptics played straight from collisions
 //! - `render.rs`     interpolated instance buffers for the renderer, picking
-//! - `animation.rs`  tweens (move / rotate / scale / recolor over time)
+//! - `animation.rs`  tweens, keyframes, springs, turns, shake, stagger
 //! - `particles.rs`  particle bursts
 //! - `shapes.rs`     built-in shape ids and sizes
 
@@ -20,7 +20,7 @@ mod simulation;
 #[cfg(test)]
 mod tests;
 
-pub use animation::{ANIM_LEN, Animation, Easing};
+pub use animation::{ANIM_HEADER, ANIM_KEY_LEN, Animation, DONE_PER_ENTITY, Easing, Keyframe, Spring};
 pub use desc::{DESC_LEN, EntityDesc, PhysicsRequest, ShapeSpec, flag as desc_flag, slot as desc_slot};
 pub use feedback::ImpactFeedback;
 pub use particles::{BURST_LEN, Burst};
@@ -109,7 +109,8 @@ pub struct World {
     pickable: Vec<bool>,
     /// Texture region u0 v0 u1 v1.
     region: Vec<[f32; 4]>,
-    tween: Vec<Option<Box<animation::Tween>>>,
+    /// Drawn on top of the position by shake animations (reset every step).
+    shake_offset: Vec<Vec3>,
 
     // handle table
     slots: Vec<Slot>,
@@ -126,6 +127,9 @@ pub struct World {
     /// Interpolation factor of the last render output (for picking and smooth positions).
     alpha: f32,
     rng: u32,
+    /// Running animation tracks (only animating entities cost anything).
+    tracks: Vec<animation::Track>,
+    next_animation: u32,
 
     // outputs (fixed size)
     out_matrices: Vec<f32>,
@@ -134,7 +138,7 @@ pub struct World {
     /// `[first, count]` per mesh for opaque instances, then the same for transparent ones.
     ranges: Box<[u32; MAX_MESHES * 4]>,
     events: Vec<u32>,
-    /// Entities whose animation ended (finished or despawned) during the last update.
+    /// Ids of animations that ended (finished, replaced, stopped, despawned) since the last update.
     done: Vec<u32>,
     scratch: Box<[f32; 16]>,
 }
@@ -166,7 +170,7 @@ impl World {
             acceleration: Vec::with_capacity(capacity),
             pickable: Vec::with_capacity(capacity),
             region: Vec::with_capacity(capacity),
-            tween: Vec::with_capacity(capacity),
+            shake_offset: Vec::with_capacity(capacity),
             slots: Vec::with_capacity(capacity),
             free: Vec::new(),
             bounds: None,
@@ -177,12 +181,14 @@ impl World {
             accumulator: 0.0,
             alpha: 0.0,
             rng: 0x9e37_79b9,
+            tracks: Vec::new(),
+            next_animation: 0,
             out_matrices: vec![0.0; capacity * 16],
             out_colors: vec![0.0; capacity * 4],
             out_regions: vec![0.0; capacity * 4],
             ranges: Box::new([0; MAX_MESHES * 4]),
             events: Vec::with_capacity(MAX_EVENTS * EVENT_STRIDE),
-            done: Vec::with_capacity(capacity),
+            done: Vec::with_capacity(capacity * DONE_PER_ENTITY + 64),
             scratch: Box::new([0.0; 16]),
         }
     }
@@ -245,7 +251,7 @@ impl World {
         self.acceleration.push(Vec3::ZERO);
         self.pickable.push(true);
         self.region.push([0.0, 0.0, 1.0, 1.0]);
-        self.tween.push(None);
+        self.shake_offset.push(Vec3::ZERO);
         Some(handle)
     }
 
@@ -267,10 +273,8 @@ impl World {
 
     /// Removes one entity (not its children).
     fn remove(&mut self, e: Entity) {
+        self.remove_tracks(e); // pending animate() promises resolve
         let Some(i) = self.dense(e) else { return };
-        if self.tween[i].is_some() && self.done.len() < self.capacity {
-            self.done.push(e.0); // a pending animate() promise resolves
-        }
         if let Some((h, _)) = self.body[i] {
             self.physics.remove_body(h);
         }
@@ -296,7 +300,7 @@ impl World {
         self.acceleration.swap_remove(i);
         self.pickable.swap_remove(i);
         self.region.swap_remove(i);
-        self.tween.swap_remove(i);
+        self.shake_offset.swap_remove(i);
         if i != last {
             let moved = self.dense_slot[i];
             self.slots[moved as usize].dense = i as u32;
@@ -565,7 +569,8 @@ impl World {
         &self.ranges
     }
 
-    /// Entities whose animation ended (finished, or the entity was despawned) in the last update.
+    /// Ids of animations (from `animate`) that ended since the last update began: finished,
+    /// replaced, stopped, or their entities despawned. Room for `capacity * DONE_PER_ENTITY + 64`.
     pub fn done(&self) -> &[u32] {
         &self.done
     }

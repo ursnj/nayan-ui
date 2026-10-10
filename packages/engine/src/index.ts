@@ -14,10 +14,12 @@ export type {
   Entity,
   EntityOptions,
   ImpactFeedback,
+  Keyframe,
   PhysicsOptions,
   PickHit,
   Quat,
   RaycastHit,
+  SpringOptions,
 } from "./world/World";
 
 // Rendering and touch.

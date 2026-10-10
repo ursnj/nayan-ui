@@ -431,6 +431,56 @@ world.animate(scoreText, { scale: 1.35 }, { duration: 0.12, repeat: 1, yoyo: tru
 // Stop it where it is.
 world.stopAnimation(coin);`;
 
+export const engineAnimateTogetherCode = `// Each property runs on its own: this piece moves, spins and pulses at the same time.
+world.animate(piece, { position: [3, 0, 0] }, { duration: 0.6 });
+world.animate(piece, { turn: [0, Math.PI * 2, 0] }, { duration: 0.6 });
+world.animate(piece, { scale: 1.2 }, { duration: 0.15, yoyo: true, repeat: 3 });
+
+// Animating a property again replaces just that property.
+world.animate(piece, { position: [0, 0, 0] }); // the spin and the pulse keep going`;
+
+export const engineKeyframesCode = `// A hop: up and over in a curve, landing two tiles to the right.
+await world.animate(piece, [{ moveBy: [1, 1.5, 0] }, { moveBy: [2, 0, 0] }], {
+  duration: 0.5,
+  path: "smooth",
+});
+
+// Keyframes can set their own timing (0..1 of the duration) and mix properties.
+world.animate(gem, [
+  { scale: 1.4, at: 0.2 },
+  { scale: 1, color: [1, 0.9, 0.3], at: 0.6 },
+  { color: [1, 1, 1] },
+], { duration: 1 });`;
+
+export const engineRelativeCode = `world.animate(card, { turn: [0, Math.PI, 0] });                  // flip over
+world.animate(coin, { turn: [0, Math.PI * 2, 0] }, { repeat: "forever", easing: "linear" }); // spin
+world.animate(player, { moveBy: [0, 0, -2] }, { easing: "back" }); // step forward`;
+
+export const engineSpringCode = `// Follow the finger: each move retargets the spring, which keeps its speed. No jerks.
+<GameView
+  source={world}
+  onDrag={({ x, y }) => {
+    const hit = world.pick(x, y);
+    if (hit) world.animate(cursor, { position: hit.point }, { spring: true });
+  }}
+/>
+
+world.animate(button, { scale: 1 }, { spring: "bouncy" });                     // a playful pop
+world.animate(door, { rotation: open }, { spring: { stiffness: 80, damping: 12 } }); // heavy and swingy`;
+
+export const engineStaggerCode = `// One call for the whole board: each tile starts 0.03 s after the previous one.
+await world.animate(tiles, { scale: [1, 0.2, 1] }, { stagger: 0.03, easing: "back" });
+
+// Waves work with any animation.
+world.animate(columns, [{ moveBy: [0, 1, 0] }, { moveBy: [0, 0, 0] }], {
+  stagger: 0.08,
+  repeat: "forever",
+  path: "smooth",
+});`;
+
+export const engineShakeAnimCode = `// Wrong move: the tile shakes "no". Its real position (and collider) never changes.
+world.animate(tile, { shake: 0.12 }, { duration: 0.35 });`;
+
 export const engineBurstCode = `// Confetti: one call spawns them all. They fly out, fall, spin, shrink away and clean themselves up.
 world.burst({
   position: [0, 1, 0],
@@ -691,7 +741,7 @@ export const engineExportsCode = `import {
 import type {
   // World
   Entity, EntityOptions, PhysicsOptions, BodyType, ImpactFeedback, CollisionInfo, RaycastHit, PickHit, Bounds,
-  AnimateOptions, AnimateTarget, Easing, BurstOptions, Color, Quat, Vec3, Shape,
+  AnimateOptions, AnimateTarget, Keyframe, SpringOptions, Easing, BurstOptions, Color, Quat, Vec3, Shape,
   // Rendering and touch
   Camera, Light, RenderSource, GameStats, DragEvent, SwipeDirection,
   // Models, textures and fonts
@@ -712,7 +762,7 @@ export const engineWorldApiCode = `class World {
   impulse(e: Entity, impulse: Vec3): void;
 
   // Animation and effects
-  animate(e: Entity, to: AnimateTarget, options?: AnimateOptions): Promise<void>;
+  animate(e: Entity | Entity[], to: AnimateTarget | Keyframe[], options?: AnimateOptions): Promise<void>;
   stopAnimation(e: Entity): void;
   burst(options: BurstOptions): number;              // how many particles were spawned
 
@@ -780,7 +830,13 @@ type PhysicsOptions = {
   planar?: boolean;        // 2D: stays in its XY plane
 };
 
-type AnimateTarget = { position?: Vec3; rotation?: Quat; scale?: Vec3 | number; color?: Color };
+type AnimateTarget = {
+  position?: Vec3; rotation?: Quat; scale?: Vec3 | number; color?: Color;
+  moveBy?: Vec3;                 // offset from the start
+  turn?: Vec3;                   // radians to turn by; 2π = one full spin
+  shake?: number;                // fading jitter on the drawn position
+};
+type Keyframe = AnimateTarget & { at?: number }; // when, 0..1 of the duration
 
 type AnimateOptions = {
   duration?: number;             // seconds, default 0.3
@@ -788,6 +844,9 @@ type AnimateOptions = {
   easing?: Easing;               // default "easeOut"
   repeat?: number | "forever";   // extra runs, default 0
   yoyo?: boolean;                // every other run plays backwards
+  stagger?: number;              // seconds between entities
+  path?: "linear" | "smooth";    // smooth = curve through keyframes
+  spring?: boolean | "bouncy" | { stiffness?: number; damping?: number; mass?: number };
 };
 
 type Easing = "linear" | "easeIn" | "easeOut" | "easeInOut" | "back" | "bounce" | "elastic";

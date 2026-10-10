@@ -5,7 +5,7 @@ import { texturedMesh, type Texture } from "../assets/texture";
 import type { Sound } from "../media/audio";
 import NativeEngine from "../native/NativeNayanEngine";
 import { SHAPE_MESH, type RenderSource, type Shape, type Vec3 } from "../types";
-import { ANIM_LEN, BURST_LEN, DESC_LEN, EASING, encode } from "./desc";
+import { ANIM_HEADER, ANIM_KEY_LEN, BURST_LEN, DESC_LEN, EASING, encode } from "./desc";
 
 /** True when the engine's native code is linked into this build (it is not in Expo Go). */
 export const isEngineAvailable = NativeEngine != null;
@@ -121,16 +121,34 @@ export type EntityOptions = {
 
 export type Easing = keyof typeof EASING;
 
-/** What `animate` changes. Anything left out stays as it is. */
+/** What `animate` changes. Anything left out stays as it is (and keeps any animation it already has). */
 export type AnimateTarget = {
   position?: Vec3;
   rotation?: Quat;
   scale?: Vec3 | number;
   color?: Color;
+  /** Move by this offset from where the animation starts (instead of to a `position`). */
+  moveBy?: Vec3;
+  /** Turn by these angles (radians around x, y, z) from the starting rotation. 2π spins once; more spins more. */
+  turn?: Vec3;
+  /** Shake by up to this distance, fading out. Only the drawn position shakes (hits, wrong moves). */
+  shake?: number;
+};
+
+/** A step of a keyframed animation: values to pass through, and when (0..1 of the duration; default evenly spaced). */
+export type Keyframe = AnimateTarget & { at?: number };
+
+export type SpringOptions = {
+  /** How strongly it pulls toward the target. Default 170. */
+  stiffness?: number;
+  /** How quickly it calms down. Lower bounces more. Default 26 (no overshoot). */
+  damping?: number;
+  /** Heavier moves slower and swings further. Default 1. */
+  mass?: number;
 };
 
 export type AnimateOptions = {
-  /** Seconds. Default 0.3. */
+  /** Seconds (ignored by springs). Default 0.3. */
   duration?: number;
   /** Seconds before it starts. Default 0. */
   delay?: number;
@@ -140,7 +158,18 @@ export type AnimateOptions = {
   repeat?: number | "forever";
   /** Every other run plays backwards (pulses, ping-pong). */
   yoyo?: boolean;
+  /** With several entities: extra delay for each next one, in seconds (waves, board reveals). */
+  stagger?: number;
+  /** "smooth" moves along a curve through the keyframes (arcs, hops) instead of straight lines. */
+  path?: "linear" | "smooth";
+  /**
+   * Physically simulated motion instead of a fixed duration: true (smooth), "bouncy", or your own
+   * settings. Interrupting a spring with another keeps its speed, so it never jerks.
+   */
+  spring?: boolean | "bouncy" | SpringOptions;
 };
+
+const KEY_FLAG = { position: 1, rotation: 2, scale: 4, color: 8, moveBy: 16, turn: 32, shake: 64, at: 128 } as const;
 
 export type BurstOptions = {
   position: Vec3;
@@ -217,10 +246,11 @@ export class World implements RenderSource {
   private readonly finished: Uint32Array;
   private readonly scratch: Float32Array;
   private readonly desc = new Float64Array(DESC_LEN);
-  private readonly anim = new Float64Array(ANIM_LEN);
+  private anim = new Float64Array(ANIM_HEADER + 1 + ANIM_KEY_LEN);
   private readonly burstDesc = new Float64Array(BURST_LEN);
   private readonly info: CollisionInfo = { started: false, sensor: false, speed: 0 };
-  private readonly pending = new Map<number, (() => void)[]>();
+  /** Promise resolvers of running animations, by animation id. */
+  private readonly pending = new Map<number, () => void>();
   private readonly texts = new Map<number, TextState>();
   private readonly id: number;
   private disposed = false;
@@ -315,8 +345,7 @@ export class World implements RenderSource {
   despawn(e: Entity): boolean {
     const existed = this.native.despawn(this.id, e);
     this.texts.delete(e);
-    this.resolve(e);
-    this.resolveFinished(); // animations of attached entities that went with it
+    this.resolveFinished(); // its animations, and those of attached entities that went with it
     return existed;
   }
 
@@ -354,55 +383,95 @@ export class World implements RenderSource {
   // ── Animation and effects ────────────────────────────────────────────
 
   /**
-   * Animates an entity from where it is to `to`, in Rust (no per-frame JS). Starting another
-   * animation on the same entity replaces this one. Resolves when it finishes, is replaced or
-   * stopped, or the entity is despawned.
+   * Animates in Rust, with no per-frame JS: from where things are to `to`, or through keyframes.
+   * Each property (position, rotation, scale, color, shake) runs on its own, so a piece can move
+   * while it pulses; animating a property again replaces only that property. Pass several entities
+   * to animate them together (with `stagger` for waves). Resolves when every part has finished, been
+   * replaced or stopped, or its entity was despawned.
    *
    * ```ts
    * await world.animate(piece, { position: [2, 0, 3] }, { duration: 0.25, easing: "back" });
    * world.animate(coin, { scale: 1.2 }, { repeat: "forever", yoyo: true }); // pulse
+   * world.animate(piece, [{ moveBy: [1, 1.5, 0] }, { moveBy: [2, 0, 0] }], { path: "smooth" }); // hop
+   * world.animate(card, { turn: [0, Math.PI, 0] }); // flip
+   * world.animate(tiles, { scale: 1 }, { stagger: 0.03, easing: "back" }); // reveal a board
+   * world.animate(cursor, { position: [x, 0, z] }, { spring: true }); // follows the finger smoothly
+   * world.animate(wrongTile, { shake: 0.15 }, { duration: 0.4 });
    * ```
    */
-  animate(e: Entity, to: AnimateTarget, options: AnimateOptions = {}): Promise<void> {
-    this.resolve(e); // the previous animation, if any, is replaced
+  animate(targets: Entity | readonly Entity[], to: AnimateTarget | readonly Keyframe[], options: AnimateOptions = {}): Promise<void> {
+    const entities: readonly number[] = typeof targets === "number" ? [targets] : targets;
+    const keys: readonly Keyframe[] = Array.isArray(to) ? to : [to as AnimateTarget];
+    if (entities.length === 0 || keys.length === 0) return Promise.resolve();
+    if (keys.length > 64) throw new Error("World.animate: at most 64 keyframes");
+    const length = ANIM_HEADER + entities.length + keys.length * ANIM_KEY_LEN;
+    if (this.anim.length < length) this.anim = new Float64Array(length * 2);
     const a = this.anim;
-    a.fill(0);
-    let flags = 0;
-    if (to.position) {
-      flags |= 1;
-      a.set(to.position, 1);
-    }
-    if (to.rotation) {
-      flags |= 2;
-      a.set(to.rotation, 4);
-    }
-    if (to.scale !== undefined) {
-      flags |= 4;
-      if (typeof to.scale === "number") a.fill(to.scale, 8, 11);
-      else a.set(to.scale, 8);
-    }
-    if (to.color) {
-      flags |= 8;
-      a.set([to.color[0], to.color[1], to.color[2], to.color[3] ?? 1], 11);
-    }
-    a[0] = flags;
-    a[15] = options.duration ?? 0.3;
-    a[16] = options.delay ?? 0;
-    a[17] = EASING[options.easing ?? "easeOut"];
-    a[18] = options.repeat === "forever" ? -1 : (options.repeat ?? 0);
-    a[19] = options.yoyo ? 1 : 0;
-    if (!this.native.animate(this.id, e, a.buffer)) return Promise.resolve();
-    return new Promise((resolve) => {
-      const list = this.pending.get(e);
-      if (list) list.push(resolve);
-      else this.pending.set(e, [resolve]);
-    });
+    a.fill(0, 0, length);
+    const spring =
+      options.spring === true ? {} : options.spring === "bouncy" ? { stiffness: 220, damping: 12 } : options.spring || null;
+    a[0] = entities.length;
+    a[1] = keys.length;
+    a[2] = options.duration ?? 0.3;
+    a[3] = options.delay ?? 0;
+    a[4] = EASING[options.easing ?? "easeOut"];
+    a[5] = options.repeat === "forever" ? -1 : (options.repeat ?? 0);
+    a[6] = options.yoyo ? 1 : 0;
+    a[7] = options.stagger ?? 0;
+    a[8] = options.path === "smooth" ? 1 : 0;
+    a[9] = spring ? (spring.stiffness ?? 170) : 0;
+    a[10] = spring?.damping ?? 26;
+    a[11] = spring?.mass ?? 1;
+    a.set(entities, ANIM_HEADER);
+    keys.forEach((k, j) => this.encodeKeyframe(a, ANIM_HEADER + entities.length + j * ANIM_KEY_LEN, k));
+    const id = this.native.animate(this.id, a.buffer);
+    this.resolveFinished(); // animations this one replaced
+    if (id === 0) return Promise.resolve();
+    return new Promise((resolve) => this.pending.set(id, resolve));
   }
 
-  /** Stops the entity's animation where it is. */
+  private encodeKeyframe(a: Float64Array, o: number, k: Keyframe) {
+    let flags = 0;
+    if (k.at !== undefined) {
+      flags |= KEY_FLAG.at;
+      a[o + 1] = k.at;
+    }
+    if (k.position) {
+      flags |= KEY_FLAG.position;
+      a.set(k.position, o + 2);
+    }
+    if (k.rotation) {
+      flags |= KEY_FLAG.rotation;
+      a.set(k.rotation, o + 5);
+    }
+    if (k.scale !== undefined) {
+      flags |= KEY_FLAG.scale;
+      if (typeof k.scale === "number") a.fill(k.scale, o + 9, o + 12);
+      else a.set(k.scale, o + 9);
+    }
+    if (k.color) {
+      flags |= KEY_FLAG.color;
+      a.set([k.color[0], k.color[1], k.color[2], k.color[3] ?? 1], o + 12);
+    }
+    if (k.moveBy) {
+      flags |= KEY_FLAG.moveBy;
+      a.set(k.moveBy, o + 16);
+    }
+    if (k.turn) {
+      flags |= KEY_FLAG.turn;
+      a.set(k.turn, o + 19);
+    }
+    if (k.shake !== undefined) {
+      flags |= KEY_FLAG.shake;
+      a[o + 22] = k.shake;
+    }
+    a[o] = flags;
+  }
+
+  /** Stops every animation on the entity where it is (their promises resolve). */
   stopAnimation(e: Entity) {
     this.native.stopAnimation(this.id, e);
-    this.resolve(e);
+    this.resolveFinished();
   }
 
   /**
@@ -428,17 +497,18 @@ export class World implements RenderSource {
     return this.native.burst(this.id, b.buffer);
   }
 
-  private resolve(e: number) {
-    const list = this.pending.get(e);
-    if (!list) return;
-    this.pending.delete(e);
-    for (const r of list) r();
-  }
-
+  /** Resolves the promises of animations the core reports as ended. */
   private resolveFinished() {
     if (this.pending.size === 0) return;
     const n = this.native.doneLength(this.id);
-    for (let i = 0; i < n; i++) this.resolve(this.finished[i]!);
+    for (let i = 0; i < n; i++) {
+      const id = this.finished[i]!;
+      const resolve = this.pending.get(id);
+      if (resolve) {
+        this.pending.delete(id);
+        resolve();
+      }
+    }
   }
 
   // ── Queries ──────────────────────────────────────────────────────────
@@ -587,7 +657,8 @@ export class World implements RenderSource {
   dispose() {
     if (this.disposed) return;
     this.disposed = true;
-    for (const e of [...this.pending.keys()]) this.resolve(e);
+    for (const resolve of this.pending.values()) resolve();
+    this.pending.clear();
     NativeEngine!.destroyWorld(this.id);
   }
 }

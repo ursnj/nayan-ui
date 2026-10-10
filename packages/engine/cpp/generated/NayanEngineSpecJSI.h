@@ -35,7 +35,7 @@ protected:
     methodMap_["pick"] = MethodMetadata {.argCount = 7, .invoker = __pick};
     methodMap_["readPosition"] = MethodMetadata {.argCount = 3, .invoker = __readPosition};
     methodMap_["readVelocity"] = MethodMetadata {.argCount = 2, .invoker = __readVelocity};
-    methodMap_["animate"] = MethodMetadata {.argCount = 3, .invoker = __animate};
+    methodMap_["animate"] = MethodMetadata {.argCount = 2, .invoker = __animate};
     methodMap_["stopAnimation"] = MethodMetadata {.argCount = 2, .invoker = __stopAnimation};
     methodMap_["burst"] = MethodMetadata {.argCount = 2, .invoker = __burst};
     methodMap_["update"] = MethodMetadata {.argCount = 2, .invoker = __update};
@@ -211,12 +211,11 @@ private:
 
   static jsi::Value __animate(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
     static_assert(
-      bridging::getParameterCount(&T::animate) == 4,
-      "Expected animate(...) to have 4 parameters");
-    return bridging::callFromJs<bool>(rt, &T::animate,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      bridging::getParameterCount(&T::animate) == 3,
+      "Expected animate(...) to have 3 parameters");
+    return bridging::callFromJs<double>(rt, &T::animate,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
       count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber(),
-      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asNumber(),
-      count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asObject(rt));
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asObject(rt));
   }
 
   static jsi::Value __stopAnimation(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
