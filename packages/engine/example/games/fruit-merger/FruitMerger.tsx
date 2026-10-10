@@ -13,6 +13,7 @@ const JAR = 1;
 const HALF_WIDTH = 3.6; // inner half-width of the jar
 const TOP = 10.2; // fruits resting above this line end the game
 const DROP_Y = 11.4;
+const DEPTH = 4; // front to back: deeper than the biggest fruit
 const LEVELS: { radius: number; color: Color }[] = [
   { radius: 0.32, color: [0.86, 0.15, 0.3] }, // cherry
   { radius: 0.42, color: [1, 0.45, 0.4] }, // strawberry
@@ -38,15 +39,16 @@ function createGame(font: Font, onScore: (score: number) => void) {
   world.gravity = [0, -14, 0];
   const solid = { type: "fixed", layer: JAR, planar: true } as const;
   const jarColor: Color = [0.88, 0.92, 0.97];
-  world.spawn({ mesh: "roundedBox", position: [0, -0.3, 0], scale: [HALF_WIDTH * 2 + 1, 0.6, 2], color: jarColor, physics: solid });
+  world.spawn({ mesh: "roundedBox", position: [0, -0.3, 0], scale: [HALF_WIDTH * 2 + 1, 0.6, DEPTH + 0.4], color: jarColor, physics: solid });
   for (const side of [-1, 1]) {
-    world.spawn({ mesh: "roundedBox", position: [side * (HALF_WIDTH + 0.25), 5.5, 0], scale: [0.5, 12, 2], color: jarColor, physics: solid });
+    world.spawn({ mesh: "roundedBox", position: [side * (HALF_WIDTH + 0.25), 5.5, 0], scale: [0.5, 12, DEPTH + 0.4], color: jarColor, physics: solid });
   }
-  world.spawn({ mesh: "cube", position: [0, 5.5, -1.05], scale: [HALF_WIDTH * 2, 12, 0.1], color: [0.95, 0.85, 0.7] });
+  world.spawn({ mesh: "cube", position: [0, 5.5, -DEPTH / 2 - 0.05], scale: [HALF_WIDTH * 2, 12, 0.1], color: [0.95, 0.85, 0.7] });
   // The glass front: see-through (alpha < 1), drawn after everything solid. Visual only.
-  world.spawn({ mesh: "cube", position: [0, 5.5, 1.05], scale: [HALF_WIDTH * 2, 12, 0.08], color: [0.75, 0.9, 1, 0.16], pickable: false });
-  world.spawn({ mesh: "cube", position: [0, TOP, 1.12], scale: [HALF_WIDTH * 2, 0.04, 0.02], color: [1, 0.3, 0.3, 0.6] });
-  const scoreText = world.spawn({ text: "0", font, position: [0, 13.6, 0], scale: 1.1, color: [1, 1, 1] });
+  world.spawn({ mesh: "cube", position: [0, 5.5, DEPTH / 2 + 0.05], scale: [HALF_WIDTH * 2, 12, 0.08], color: [0.75, 0.9, 1, 0.16], pickable: false });
+  world.spawn({ mesh: "cube", position: [0, TOP, DEPTH / 2 + 0.12], scale: [HALF_WIDTH * 2, 0.04, 0.02], color: [1, 0.3, 0.3, 0.6] });
+  const INK: Color = [0.42, 0.27, 0.14];
+  const scoreText = world.spawn({ text: "0", font, position: [0, 13.6, 0], scale: 1.1, color: INK });
 
   const fruits = new Map<Entity, number>();
   const g = {
@@ -128,7 +130,7 @@ function createGame(font: Font, onScore: (score: number) => void) {
     g.score = 0;
     g.over = false;
     g.dangerTime = 0;
-    world.set(scoreText, { text: "0", color: [1, 1, 1] });
+    world.set(scoreText, { text: "0", color: INK });
     onScore(0);
   }
 
