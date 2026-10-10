@@ -42,6 +42,11 @@ protected:
     methodMap_["getEvents"] = MethodMetadata {.argCount = 1, .invoker = __getEvents};
     methodMap_["eventLength"] = MethodMetadata {.argCount = 1, .invoker = __eventLength};
     methodMap_["getScratch"] = MethodMetadata {.argCount = 1, .invoker = __getScratch};
+    methodMap_["modelLoad"] = MethodMetadata {.argCount = 3, .invoker = __modelLoad};
+    methodMap_["modelVertices"] = MethodMetadata {.argCount = 1, .invoker = __modelVertices};
+    methodMap_["modelIndices"] = MethodMetadata {.argCount = 1, .invoker = __modelIndices};
+    methodMap_["modelSize"] = MethodMetadata {.argCount = 1, .invoker = __modelSize};
+    methodMap_["modelError"] = MethodMetadata {.argCount = 0, .invoker = __modelError};
     methodMap_["audioLoad"] = MethodMetadata {.argCount = 1, .invoker = __audioLoad};
     methodMap_["audioPlay"] = MethodMetadata {.argCount = 5, .invoker = __audioPlay};
     methodMap_["audioStop"] = MethodMetadata {.argCount = 1, .invoker = __audioStop};
@@ -238,6 +243,47 @@ private:
       "Expected getScratch(...) to have 2 parameters");
     return bridging::callFromJs<jsi::Object>(rt, &T::getScratch,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
       count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
+  static jsi::Value __modelLoad(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::modelLoad) == 4,
+      "Expected modelLoad(...) to have 4 parameters");
+    return bridging::callFromJs<double>(rt, &T::modelLoad,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asBool(),
+      count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asNumber());
+  }
+
+  static jsi::Value __modelVertices(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::modelVertices) == 2,
+      "Expected modelVertices(...) to have 2 parameters");
+    return bridging::callFromJs<jsi::Object>(rt, &T::modelVertices,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
+  static jsi::Value __modelIndices(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::modelIndices) == 2,
+      "Expected modelIndices(...) to have 2 parameters");
+    return bridging::callFromJs<jsi::Object>(rt, &T::modelIndices,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
+  static jsi::Value __modelSize(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::modelSize) == 2,
+      "Expected modelSize(...) to have 2 parameters");
+    return bridging::callFromJs<jsi::Array>(rt, &T::modelSize,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
+  static jsi::Value __modelError(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* /*args*/, size_t /*count*/) {
+    static_assert(
+      bridging::getParameterCount(&T::modelError) == 1,
+      "Expected modelError(...) to have 1 parameters");
+    return bridging::callFromJs<jsi::String>(rt, &T::modelError,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule));
   }
 
   static jsi::Value __audioLoad(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {

@@ -32,6 +32,7 @@ struct VSOut {
 fn vs(
   @location(0) position: vec3f,
   @location(1) normal: vec3f,
+  @location(2) vertexColor: vec3f, // white for built-in shapes; material color for models
   @builtin(instance_index) instance: u32,
 ) -> VSOut {
   let model = models[instance];
@@ -39,7 +40,7 @@ fn vs(
   var out: VSOut;
   out.pos = globals.viewProj * world;
   out.normal = (model * vec4f(normal, 0.0)).xyz; // uniform scale (or plane X/Z scale) only
-  out.color = colors[instance].rgb;
+  out.color = colors[instance].rgb * vertexColor;
   out.world = world.xyz;
   return out;
 }
