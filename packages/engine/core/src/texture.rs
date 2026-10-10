@@ -41,8 +41,8 @@ fn decode_png(bytes: &[u8]) -> Result<Image, String> {
     let (width, height) = (info.width, info.height);
     let rgba = match info.color_type {
         png::ColorType::Rgba => buf,
-        png::ColorType::Rgb => buf.chunks_exact(3).flat_map(|p| [p[0], p[1], p[2], 255]).collect(),
-        png::ColorType::GrayscaleAlpha => buf.chunks_exact(2).flat_map(|p| [p[0], p[0], p[0], p[1]]).collect(),
+        png::ColorType::Rgb => buf.as_chunks::<3>().0.iter().flat_map(|p| [p[0], p[1], p[2], 255]).collect(),
+        png::ColorType::GrayscaleAlpha => buf.as_chunks::<2>().0.iter().flat_map(|p| [p[0], p[0], p[0], p[1]]).collect(),
         png::ColorType::Grayscale => buf.iter().flat_map(|&g| [g, g, g, 255]).collect(),
         png::ColorType::Indexed => return Err("unexpected indexed PNG output".into()),
     };
@@ -54,7 +54,7 @@ fn decode_jpeg(bytes: &[u8]) -> Result<Image, String> {
     let pixels = decoder.decode().map_err(|e| format!("bad JPEG: {e}"))?;
     let info = decoder.info().ok_or("bad JPEG: no header")?;
     let rgba = match info.pixel_format {
-        jpeg_decoder::PixelFormat::RGB24 => pixels.chunks_exact(3).flat_map(|p| [p[0], p[1], p[2], 255]).collect(),
+        jpeg_decoder::PixelFormat::RGB24 => pixels.as_chunks::<3>().0.iter().flat_map(|p| [p[0], p[1], p[2], 255]).collect(),
         jpeg_decoder::PixelFormat::L8 => pixels.iter().flat_map(|&g| [g, g, g, 255]).collect(),
         _ => return Err("unsupported JPEG pixel format (use RGB or grayscale)".into()),
     };

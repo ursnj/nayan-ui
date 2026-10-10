@@ -139,46 +139,55 @@ fn contains(c: &[[f32; 2]], p: [f32; 2]) -> bool {
     inside
 }
 
-/// Triangulates the contours (holes found by nesting, so either winding convention works) and
-/// extrudes them into a closed mesh. None if nothing could be triangulated.
+/// Triangulates the contours (holes found by winding, either font convention) and extrudes them into
+/// a closed mesh. None if nothing could be triangulated.
 fn extrude(contours: &[Vec<[f32; 2]>], depth: f32) -> Option<Model> {
-    // Nesting depth: even = solid outline, odd = hole. Normalize winding: solids CCW, holes CW.
-    let nesting: Vec<usize> = contours
-        .iter()
-        .enumerate()
-        .map(|(i, c)| contours.iter().enumerate().filter(|&(j, o)| j != i && contains(o, c[0])).count())
-        .collect();
+    // Holes wind opposite to solid outlines (TrueType solids run clockwise, CFF counter-clockwise).
+    // The largest contour is always solid, so it tells which convention this font uses. Winding,
+    // not nesting, decides: overlapping strokes (common in variable-font instances) stay solid.
+    let areas: Vec<f32> = contours.iter().map(|c| signed_area(c)).collect();
+    let solid_sign = areas.iter().copied().max_by(|a, b| a.abs().total_cmp(&b.abs()))?.signum();
+    let solid: Vec<bool> = areas.iter().map(|a| a.signum() == solid_sign).collect();
+    // Normalize winding: solids counter-clockwise, holes clockwise.
     let rings: Vec<Vec<[f32; 2]>> = contours
         .iter()
-        .zip(&nesting)
-        .map(|(c, &n)| {
+        .zip(&areas)
+        .zip(&solid)
+        .map(|((c, &area), &is_solid)| {
             let mut c = c.clone();
-            if (signed_area(&c) > 0.0) != (n % 2 == 0) {
+            if (area > 0.0) != is_solid {
                 c.reverse();
             }
             c
         })
         .collect();
+    // Each hole belongs to the smallest solid around it.
+    let owner: Vec<Option<usize>> = (0..rings.len())
+        .map(|h| {
+            if solid[h] {
+                return None;
+            }
+            (0..rings.len())
+                .filter(|&s| solid[s] && contains(&rings[s], rings[h][0]))
+                .min_by(|&a, &b| areas[a].abs().total_cmp(&areas[b].abs()))
+        })
+        .collect();
 
     let mut mesh = MeshBuilder::default();
     let (front, back) = (depth / 2.0, -depth / 2.0);
-    for (i, outer) in rings.iter().enumerate().filter(|(i, _)| nesting[*i] % 2 == 0) {
-        // Holes directly inside this outline: one level deeper and contained by it.
-        let holes: Vec<&Vec<[f32; 2]>> = rings
-            .iter()
-            .enumerate()
-            .filter(|&(j, h)| nesting[j] == nesting[i] + 1 && contains(outer, h[0]))
-            .map(|(_, h)| h)
-            .collect();
+    for (i, outer) in rings.iter().enumerate().filter(|(i, _)| solid[*i]) {
+        let holes: Vec<&Vec<[f32; 2]>> = (0..rings.len()).filter(|&h| owner[h] == Some(i)).map(|h| &rings[h]).collect();
         let mut flat: Vec<f64> = outer.iter().flat_map(|p| [p[0] as f64, p[1] as f64]).collect();
         let mut hole_starts = Vec::new();
         for h in &holes {
             hole_starts.push(flat.len() / 2);
             flat.extend(h.iter().flat_map(|p| [p[0] as f64, p[1] as f64]));
         }
-        let Ok(triangles) = earcutr::earcut(&flat, &hole_starts, 2) else { continue };
-        let points: Vec<[f32; 2]> = flat.chunks_exact(2).map(|p| [p[0] as f32, p[1] as f32]).collect();
-        for t in triangles.chunks_exact(3) {
+        let Ok(triangles) = earcutr::earcut(&flat, &hole_starts, 2) else {
+            continue;
+        };
+        let points: Vec<[f32; 2]> = flat.as_chunks::<2>().0.iter().map(|p| [p[0] as f32, p[1] as f32]).collect();
+        for t in triangles.as_chunks::<3>().0 {
             let (a, b, c) = (points[t[0]], points[t[1]], points[t[2]]);
             let ccw = (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1]) > 0.0;
             let (b, c) = if ccw { (b, c) } else { (c, b) };
@@ -217,7 +226,8 @@ impl MeshBuilder {
             p.swap(1, 2);
         }
         for v in p {
-            self.vertices.extend_from_slice(&[v.x, v.y, v.z, normal.x, normal.y, normal.z, 1.0, 1.0, 1.0, 0.0, 0.0]);
+            self.vertices
+                .extend_from_slice(&[v.x, v.y, v.z, normal.x, normal.y, normal.z, 1.0, 1.0, 1.0, 0.0, 0.0]);
             self.bounds = Some(match self.bounds {
                 Some((lo, hi)) => (lo.min(v), hi.max(v)),
                 None => (v, v),
@@ -273,7 +283,7 @@ mod tests {
         assert_eq!(triangles, 8 + 8 + 16);
         assert!((m.half_extents - Vec3::new(0.5, 0.5, 0.1)).length() < 1e-5);
         // Every front-face triangle (z = +0.1, normal +Z) is counter-clockwise.
-        for t in m.vertices.chunks_exact(VERTEX_FLOATS * 3) {
+        for t in m.vertices.as_chunks::<{ VERTEX_FLOATS * 3 }>().0 {
             let v = |k: usize| Vec3::new(t[k * VERTEX_FLOATS], t[k * VERTEX_FLOATS + 1], t[k * VERTEX_FLOATS + 2]);
             let n = Vec3::new(t[3], t[4], t[5]);
             assert!((v(1) - v(0)).cross(v(2) - v(0)).dot(n) > 0.0, "faces its normal");
@@ -281,7 +291,9 @@ mod tests {
         // Front-face area = 1 - 0.25 (the hole isn't filled).
         let area: f32 = m
             .vertices
-            .chunks_exact(VERTEX_FLOATS * 3)
+            .as_chunks::<{ VERTEX_FLOATS * 3 }>()
+            .0
+            .iter()
             .filter(|t| t[5] > 0.5)
             .map(|t| {
                 let v = |k: usize| Vec3::new(t[k * VERTEX_FLOATS], t[k * VERTEX_FLOATS + 1], 0.0);
@@ -289,6 +301,13 @@ mod tests {
             })
             .sum();
         assert!((area - 0.75).abs() < 1e-4, "area {area}");
+    }
+
+    #[test]
+    fn overlapping_solids_stay_solid() {
+        // Two overlapping squares wound the same way (like the strokes of an "N" in a variable font).
+        let m = extrude(&[square(0.0, 0.0, 1.0, false), square(0.5, 0.0, 1.0, false)], 0.0).unwrap();
+        assert_eq!(m.vertices.len() / VERTEX_FLOATS, 12, "both filled, neither treated as a hole");
     }
 
     #[test]
@@ -302,7 +321,7 @@ mod tests {
         let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../example/assets/fonts/Inter-Bold.ttf")).unwrap();
         let font = get(load(&bytes, 0.2, "08A A").unwrap()).unwrap();
         // "0", "8", "A", " " (duplicates skipped); space has an advance but nothing to draw.
-        let glyphs: Vec<&[f32]> = font.glyphs.chunks_exact(3).collect();
+        let glyphs: &[[f32; 3]] = font.glyphs.as_chunks::<3>().0;
         assert_eq!(glyphs.len(), 4);
         assert_eq!(glyphs[3][0], ' ' as u32 as f32);
         assert_eq!(glyphs[3][1], -1.0);
@@ -319,5 +338,40 @@ mod tests {
     fn rejects_non_fonts() {
         assert!(load(b"not a font", 0.1, "A").is_err());
         assert!(!model::last_error().is_empty());
+    }
+}
+
+#[cfg(test)]
+mod audit {
+    use super::*;
+
+    #[test]
+    #[ignore]
+    fn triangulation_matches_outline_area() {
+        let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../example/assets/fonts/Inter-Bold.ttf")).unwrap();
+        let face = ttf_parser::Face::parse(&bytes, 0).unwrap();
+        for ch in "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?abcdefghijklmnopqrstuvwxyz".chars() {
+            let id = face.glyph_index(ch).unwrap();
+            let mut outline = Outline { scale: 1.0 / face.units_per_em() as f32, ..Default::default() };
+            face.outline_glyph(id, &mut outline);
+            let contours = outline.finish();
+            let areas: Vec<f32> = contours.iter().map(|c| signed_area(c)).collect();
+            let sign = areas.iter().copied().max_by(|a, b| a.abs().total_cmp(&b.abs())).unwrap().signum();
+            let expected: f32 = areas.iter().map(|a| a * sign).sum();
+            let m = extrude(&contours, 0.0).unwrap();
+            let got: f32 = m
+                .vertices
+                .as_chunks::<{ VERTEX_FLOATS * 3 }>()
+                .0
+                .iter()
+                .map(|t| {
+                    let v = |k: usize| Vec3::new(t[k * VERTEX_FLOATS], t[k * VERTEX_FLOATS + 1], 0.0);
+                    (v(1) - v(0)).cross(v(2) - v(0)).length() / 2.0
+                })
+                .sum();
+            if (got - expected).abs() > 1e-3 {
+                println!("{ch}: contours {} areas {areas:?} expected {expected:.4} got {got:.4}", contours.len());
+            }
+        }
     }
 }

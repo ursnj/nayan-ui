@@ -1,6 +1,19 @@
 "use client";
 
-import { Atom, BookOpen, Download, Gamepad2, Github, Joystick, Monitor, Rocket, Volume2, Vibrate } from "lucide-react";
+import {
+  Atom,
+  BookOpen,
+  Download,
+  Gamepad2,
+  Github,
+  Joystick,
+  Monitor,
+  Rocket,
+  Type,
+  Volume2,
+  Vibrate,
+  WandSparkles,
+} from "lucide-react";
 import Link from "next/link";
 import { CheckList, DocsIntro, FeatureCard } from "@/design/Primitives";
 import { ACCENT_TEXT, BODY, BUTTON_SMALL } from "@/design/system";
@@ -14,20 +27,32 @@ const FEATURES = [
   {
     icon: Gamepad2,
     title: "World & entities",
-    body: "Spawn, move and despawn thousands of objects. Lifetimes, chasing, bobbing and attached parts built in.",
-    chips: ["spawn", "lifetime", "follow", "attach"],
+    body: "Spawn, move and despawn thousands of objects. Lifetimes, chasing, bobbing and nested groups built in.",
+    chips: ["spawn", "lifetime", "follow", "groups"],
   },
   {
     icon: Atom,
     title: "Real physics",
-    body: "Rapier rigid bodies with gravity, friction, bounce, impulses, collision layers, sensors and raycasts.",
-    chips: ["dynamic", "kinematic", "fixed", "raycast"],
+    body: "Rapier rigid bodies with gravity, friction, bounce, impulses, collision layers, sensors and raycasts. Planar bodies for 2D games.",
+    chips: ["dynamic", "kinematic", "fixed", "2D"],
   },
   {
     icon: Monitor,
     title: "Fast 3D rendering",
-    body: "WebGPU with soft shadows, fog and a sky color. Load glTF models; every object of the same shape is drawn in one call.",
-    chips: ["glTF", "shadows", "fog", "4x MSAA"],
+    body: "WebGPU with eight built-in shapes, soft shadows, fog and transparency. Load glTF models; every object of the same shape is drawn in one call.",
+    chips: ["glTF", "shadows", "ortho", "4x MSAA"],
+  },
+  {
+    icon: WandSparkles,
+    title: "Animation & effects",
+    body: "Tween position, rotation, scale and color with easings, and await the result. Particle bursts and camera shake.",
+    chips: ["animate", "easings", "burst", "shake"],
+  },
+  {
+    icon: Type,
+    title: "Text & textures",
+    body: "3D text from TTF and OTF fonts for scores and labels. PNG and JPEG textures, with atlas regions for cards and sprites.",
+    chips: ["loadFont", "loadTexture", "atlas"],
   },
   {
     icon: Volume2,
@@ -44,8 +69,8 @@ const FEATURES = [
   {
     icon: Joystick,
     title: "Touch input",
-    body: "A drop-in on-screen joystick, plus any React Native button or gesture for everything else.",
-    chips: ["joystick", "buttons", "taps"],
+    body: "Taps, swipes and drags on the game view, tap-to-pick 3D objects, and a drop-in on-screen joystick.",
+    chips: ["tap", "swipe", "pick", "joystick"],
   },
 ];
 
@@ -122,7 +147,10 @@ const EngineOverview = () => (
       <ul className={`space-y-2 ${BODY}`}>
         <li>• Runs on iOS and Android (8.0 or newer).</li>
         <li>• Needs a development build: Expo Go can&apos;t load native code.</li>
-        <li>• Draws cubes, spheres, planes and glTF models with solid or material colors. Textures and animated models are planned.</li>
+        <li>
+          • Draws built-in shapes, glTF models and 3D text, with colors, textures and transparency. Skinned
+          (animated) glTF models aren&apos;t supported yet.
+        </li>
         <li>• Sounds are WAV files.</li>
       </ul>
       <p className={`mt-4 ${BODY}`}>

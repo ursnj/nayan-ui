@@ -137,7 +137,38 @@ world.set(wing, { rotation: [Math.sin(angle / 2), 0, 0, Math.cos(angle / 2)] });
 // Despawning the parent despawns its children too.
 world.despawn(bird);`;
 
-export const engineQueryCode = `const p = world.position(player);       // [x, y, z] or null if it's gone
+export const engineGroupsCode = `// "none" draws nothing: use it as a group, a pivot or a trigger zone.
+const piece = world.spawn({ mesh: "none", position: [0, 0, 0], scale: 0.5 });
+
+// An X made of two bars. Children move, turn and scale with their parent.
+world.spawn({ mesh: "roundedBox", parent: piece, rotation: [0, 0.38, 0, 0.92], scale: [1.7, 0.36, 0.38] });
+world.spawn({ mesh: "roundedBox", parent: piece, rotation: [0, -0.38, 0, 0.92], scale: [1.7, 0.36, 0.38] });
+
+// Groups nest to any depth: a windmill > a turning hub > two crossed blades.
+const windmill = world.spawn({ mesh: "none", position: [5, 0, 0] });
+world.spawn({ mesh: "cylinder", parent: windmill, position: [0, 2, 0], scale: [0.4, 4, 0.4] }); // tower
+const hub = world.spawn({ mesh: "none", parent: windmill, position: [0, 4, 0.3], spin: [0, 0, 1] });
+world.spawn({ mesh: "cube", parent: hub, scale: [0.2, 3, 0.05] });
+world.spawn({ mesh: "cube", parent: hub, scale: [3, 0.2, 0.05] });
+
+// Moving, turning or scaling a group affects every part inside it.
+world.set(windmill, { scale: 2 });`;
+
+export const engineAccelerationCode = `// Debris that arcs and falls without a physics body.
+world.spawn({
+  mesh: "cube",
+  position: [x, y, z],
+  scale: 0.2,
+  velocity: [2, 6, 0],
+  acceleration: [0, -9.81, 0], // units per second²
+  lifetime: 1.5,
+});
+
+// Decorations that taps should pass through.
+world.spawn({ mesh: "plane", scale: [10, 1, 10], color: [0.2, 0.3, 0.4], pickable: false });`;
+
+export const engineQueryCode = `const p = world.position(player);       // [x, y, z] or null if it's gone (relative to the parent when attached)
+const w = world.worldPosition(sword);   // where it was last drawn, in world space (parents included)
 const v = world.velocity(player);       // [x, y, z] or null
 world.has(player);                      // still exists?
 world.count;                            // live entities
@@ -165,6 +196,29 @@ world.spawn({
   mesh: "cube",
   physics: { type: "dynamic", upright: true, drag: 0.5, ccd: true, friction: 0.2, bounce: 0.4, density: 2 },
 });`;
+
+export const engineColliderShapesCode = `// The default collider matches the mesh: a cylinder rolls, a capsule stands like a character.
+world.spawn({ mesh: "cylinder", position: [0, 2, 0], physics: "dynamic" });
+world.spawn({ mesh: "capsule", scale: [1, 2, 1], physics: { type: "dynamic", upright: true } });
+
+// Or pick the shape and size yourself. height is end to end.
+world.spawn({
+  mesh: tree, // a loaded model: a cylinder hugs the trunk better than its bounding box
+  physics: { type: "fixed", shape: "cylinder", radius: 0.3, height: 2 },
+});
+world.spawn({ mesh: "cone", physics: { type: "dynamic", shape: "cone", radius: 0.5, height: 1 } });`;
+
+export const enginePlanarCode = `// A 2D game with 3D looks: bodies move in x/y and spin only around z.
+world.spawn({ mesh: "cube", position: [0, -0.5, 0], scale: [10, 1, 1], physics: { type: "fixed", planar: true } });
+
+const fruit = world.spawn({
+  mesh: "sphere",
+  position: [0, 8, 0],
+  physics: { type: "dynamic", planar: true, bounce: 0.15 },
+});
+
+// Look straight down -z with an orthographic camera, so it reads as 2D.
+const camera: Camera = { eye: [0, 5, 30], target: [0, 5, 0], fov: 0.5, ortho: 8 };`;
 
 export const engineLayersCode = `// Give each kind of object a layer bit...
 const WORLD = 1, PLAYER = 2, COIN = 4, ENEMY = 8;
@@ -259,6 +313,45 @@ export const engineLightCode = `<GameView
   fog={0.016}                     // distant objects fade into the sky
 />`;
 
+export const engineShapesCode = `// Built-in shapes are strings. Each is 1 unit across before scaling.
+world.spawn({ mesh: "cube" });
+world.spawn({ mesh: "sphere" });
+world.spawn({ mesh: "plane" });       // flat, facing up
+world.spawn({ mesh: "cylinder" });    // radius 0.5, height 1
+world.spawn({ mesh: "cone" });        // base radius 0.5, height 1, tip up
+world.spawn({ mesh: "capsule" });     // radius 0.25, height 1 in total
+world.spawn({ mesh: "torus" });       // lies flat: outer radius 0.5, tube 0.15
+world.spawn({ mesh: "roundedBox" });  // a cube with soft edges: tiles, buttons
+world.spawn({ mesh: "none" });        // invisible: groups, pivots, trigger zones
+
+// Alpha below 1 makes any shape see-through: glass, ghosts, highlights.
+world.spawn({ mesh: "cube", scale: [6, 8, 0.1], color: [0.75, 0.9, 1, 0.2] });`;
+
+export const engineOrthoCode = `// Straight down, no perspective: boards and puzzles look flat and tidy.
+const camera: Camera = {
+  eye: [0, 10, 0.01],
+  target: [0, 0, 0],
+  fov: 1,     // ignored when ortho is set
+  ortho: 5,   // half the visible height, in world units
+};`;
+
+export const engineFollowCode = `const camera = useMemo<Camera>(
+  () => ({
+    eye: [0, 8, 12],
+    target: [0, 0, 0],
+    fov: Math.PI / 3,
+    // Each frame the target eases toward the player and the eye keeps this offset.
+    follow: { target: player, offset: [0, 8, 12], smoothing: 0.15 },
+  }),
+  [player],
+);
+
+// On a big hit: shake it. The shake fades out by itself.
+camera.shake = 0.3;
+
+// Stop following.
+camera.follow = null;`;
+
 export const engineStatsCode = `<GameView
   source={world}
   onStats={({ fps, updateMs }) => setStats(\`\${fps.toFixed(0)} fps · \${updateMs.toFixed(2)} ms\`)}
@@ -307,6 +400,130 @@ export const engineModelScreenCode = `function Forest() {
 
   return world ? <GameView source={world} /> : <Text>Loading…</Text>;
 }`;
+
+// ── Animation & effects ──────────────────────────────────────────────────
+
+export const engineAnimateCode = `// Animate from where it is now to the target. Anything you leave out stays as it is.
+world.animate(piece, { position: [2, 0, 3] }, { duration: 0.25, easing: "back" });
+
+// Animate several things at once: position, rotation, scale and color.
+world.animate(tile, { scale: 1.2, color: [1, 0.8, 0.3] }, { duration: 0.4 });
+
+// Wait before starting.
+world.animate(door, { rotation: [0, 0.71, 0, 0.71] }, { delay: 0.5 }); // turn 90° around y`;
+
+export const engineAnimateChainCode = `// animate returns a Promise that resolves when it finishes, so you can wait for it.
+async function move(piece: Entity, x: number, z: number) {
+  await world.animate(piece, { position: [x, 1, z] }, { duration: 0.2 });              // lift and slide
+  await world.animate(piece, { position: [x, 0, z] }, { duration: 0.3, easing: "bounce" }); // drop
+  checkBoard(); // runs once the piece has landed
+}
+
+// Different entities animate side by side. Wait for all of them.
+await Promise.all(tiles.map((t, i) => world.animate(t, { position: targets[i] })));`;
+
+export const engineAnimatePulseCode = `// A pulse: grow, then play backwards, forever.
+world.animate(coin, { scale: 1.25 }, { duration: 0.35, repeat: "forever", yoyo: true, easing: "easeInOut" });
+
+// A quick pop: up and back once (one extra run, played backwards).
+world.animate(scoreText, { scale: 1.35 }, { duration: 0.12, repeat: 1, yoyo: true });
+
+// Stop it where it is.
+world.stopAnimation(coin);`;
+
+export const engineBurstCode = `// Confetti: one call spawns them all. They fly out, fall, spin, shrink away and clean themselves up.
+world.burst({
+  position: [0, 1, 0],
+  count: 30,
+  color: [[1, 0.3, 0.3], [1, 0.9, 0.2], [0.3, 0.7, 1]], // up to 4 colors, picked at random
+});
+
+// Sparks shooting up in a narrow cone that float instead of falling.
+world.burst({
+  position: hit.point,
+  direction: [0, 1, 0],
+  spread: 0.4,          // radians around direction
+  mesh: "sphere",
+  size: 0.08,
+  speed: 8,
+  lifetime: 0.5,
+  gravity: 0,
+  color: [1, 0.8, 0.2],
+});`;
+
+export const engineShakeCode = `<GameView
+  source={world}
+  camera={camera}
+  onUpdate={(dt) => {
+    world.update(dt);
+    world.forEachCollision((a, b, { started, speed }) => {
+      // Shake harder for harder hits. It fades out by itself.
+      if (started && speed > 5) camera.shake = Math.min(0.5, speed * 0.03);
+    });
+  }}
+/>`;
+
+// ── Text & textures ──────────────────────────────────────────────────────
+
+export const engineFontCode = `import { loadFont } from "@nayan-ui/engine";
+
+// Each character becomes a 3D mesh. Only build the ones you need: it loads faster.
+const font = await loadFont(require("./assets/Inter-Bold.ttf"), { chars: "0123456789", depth: 0.2 });
+
+// Letters are 1 unit tall at scale 1.
+const score = world.spawn({ text: "0", font, position: [0, 5, 0], scale: 0.8, color: [1, 1, 1] });
+
+// Change the text or color later. Changing text rebuilds the letters.
+world.set(score, { text: "120" });
+world.set(score, { color: [1, 0.4, 0.4] });
+
+// Line it up around its position: "left", "center" (default) or "right".
+world.spawn({ text: "42", font, align: "right", position: [4, 5, 0] });`;
+
+export const engineTextTileCode = `// Text faces +z. Turn it -90° around x to lie face up on a tile.
+const flat = [-Math.SQRT1_2, 0, 0, Math.SQRT1_2] as const;
+
+const tile = world.spawn({ mesh: "roundedBox", scale: [1, 0.3, 1], color: [1, 0.8, 0.4] });
+
+// Parent the label to the tile: it moves, turns and scales with it.
+// Children inherit the parent's scale, so position is in the tile's units: 0.6 x 0.3 = 0.18, just above its top.
+const label = world.spawn({ text: "2048", font, parent: tile, position: [0, 0.6, 0], rotation: flat, scale: 0.4 });
+
+// Moving or animating the tile carries the label along.
+world.animate(tile, { position: [1, 0, 0] }, { easing: "back" });`;
+
+export const engineTextureCode = `import { loadTexture } from "@nayan-ui/engine";
+
+// PNG or JPEG, up to 4096 x 4096. Loading the same file twice returns the cached texture.
+const wood = await loadTexture(require("./assets/wood.png"));
+
+world.spawn({ mesh: "cube", texture: wood });                         // any built-in shape or model
+world.spawn({ mesh: "plane", texture: wood, color: [1, 0.8, 0.6] });   // color tints the texture
+
+// To change the texture with set, pass the mesh too.
+world.set(crate, { mesh: "cube", texture: metal });
+world.set(crate, { mesh: "cube", texture: null }); // remove it`;
+
+export const engineAtlasCode = `// One image holds all 52 cards: 13 columns, 4 rows.
+const cards = await loadTexture(require("./assets/cards.png"));
+const COLS = 13, ROWS = 4;
+
+// [u0, v0, u1, v1], each 0..1: the part of the image to show.
+const region = (col: number, row: number) =>
+  [col / COLS, row / ROWS, (col + 1) / COLS, (row + 1) / ROWS] as const;
+
+const card = world.spawn({ mesh: "plane", scale: [0.7, 1, 1], texture: cards, textureRegion: region(0, 0) });
+
+// Show a different card: change only the region.
+world.set(card, { textureRegion: region(11, 2) });`;
+
+export const engineTransparencyCode = `// Alpha below 1 is drawn see-through, after everything solid.
+world.spawn({ mesh: "cube", scale: [6, 8, 0.1], color: [0.75, 0.9, 1, 0.16], pickable: false }); // glass
+world.spawn({ mesh: "sphere", color: [1, 1, 1, 0.4] });                                         // a ghost
+
+// Fade something out, then remove it.
+await world.animate(enemy, { color: [1, 0.3, 0.3, 0] }, { duration: 0.4 });
+world.despawn(enemy);`;
 
 // ── Audio & haptics ──────────────────────────────────────────────────────
 
@@ -394,6 +611,57 @@ function Game() {
   );
 }`;
 
+export const engineGesturesCode = `import { GameView, type DragEvent, type SwipeDirection } from "@nayan-ui/engine";
+
+<GameView
+  source={world}
+  onUpdate={(dt) => world.update(dt)}
+  // A quick tap, in points from the view's top-left.
+  onTap={(x, y) => tapAt(x, y)}
+  // A quick flick: "left" | "right" | "up" | "down".
+  onSwipe={(direction: SwipeDirection) => slide(direction)}
+  // Finger down, moving and up. dx and dy are measured from where the drag started.
+  onDrag={({ phase, x, y, dx, dy }: DragEvent) => {
+    if (phase === "start") startAim(x, y);
+    else if (phase === "move") aim(dx, dy);
+    else shoot(dx, dy); // "end"
+  }}
+/>`;
+
+export const enginePickCode = `// Find the entity under the finger. It tests what was drawn, so no physics is needed.
+<GameView
+  source={world}
+  onTap={(x, y) => {
+    const hit = world.pick(x, y);
+    if (!hit) return;               // nothing pickable there
+    hit.entity;                     // what was tapped
+    hit.point;                      // [x, y, z] where the tap ray hit it
+    hit.distance;                   // how far from the camera
+    if (cells.has(hit.entity)) play(hit.entity);
+  }}
+/>
+
+// Things taps should pass through (glass, guides, text):
+world.spawn({ mesh: "cube", color: [1, 1, 1, 0.2], pickable: false });`;
+
+export const engineToScreenCode = `// Place a React Native view over a 3D object, e.g. a name tag or a "+10" popup.
+const [tag, setTag] = useState<[number, number] | null>(null);
+const tmp: [number, number, number] = [0, 0, 0];
+
+<View style={{ flex: 1 }}>
+  <GameView
+    source={world}
+    onUpdate={(dt) => {
+      world.update(dt);
+      const p = world.worldPosition(player, tmp);
+      // [x, y] in points from the view's top-left, or null if it's behind the camera.
+      const screen = p && world.toScreen([p[0], p[1] + 1.5, p[2]]);
+      if (screen && shouldUpdate(screen)) setTag(screen); // update state only when it really moves
+    }}
+  />
+  {tag && <Text style={{ position: "absolute", left: tag[0], top: tag[1] }}>Player 1</Text>}
+</View>`;
+
 export const engineButtonsCode = `import { Pressable, StyleSheet, Text } from "react-native";
 
 // Any React Native touchable works. onPressIn reacts on touch-down: lowest latency.
@@ -401,7 +669,8 @@ export const engineButtonsCode = `import { Pressable, StyleSheet, Text } from "r
   <Text>JUMP</Text>
 </Pressable>
 
-// Tap anywhere: a full-screen Pressable over the GameView.
+// Lowest-latency "tap anywhere": a full-screen Pressable over the GameView.
+// GameView's onTap waits for the finger to lift, to tell taps from swipes.
 <Pressable style={StyleSheet.absoluteFill} onPressIn={flap} />`;
 
 // ── API reference ────────────────────────────────────────────────────────
@@ -409,8 +678,10 @@ export const engineButtonsCode = `import { Pressable, StyleSheet, Text } from "r
 export const engineExportsCode = `import {
   // World
   World, isEngineAvailable,
-  // Rendering and models
-  GameView, loadModel,
+  // Rendering and touch
+  GameView,
+  // Models, textures and fonts
+  loadModel, loadTexture, loadFont,
   // Sound and haptics
   audio, haptics,
   // Input
@@ -418,27 +689,41 @@ export const engineExportsCode = `import {
 } from "@nayan-ui/engine";
 
 import type {
-  Entity, EntityOptions, PhysicsOptions, BodyType, ImpactFeedback, CollisionInfo, RaycastHit, Bounds,
-  Color, Quat, Vec3, Shape, Model, ModelOptions, Camera, Light, RenderSource, GameStats,
-  Sound, Voice, PlayOptions, SoundSource, HapticTap, JoystickState,
+  // World
+  Entity, EntityOptions, PhysicsOptions, BodyType, ImpactFeedback, CollisionInfo, RaycastHit, PickHit, Bounds,
+  AnimateOptions, AnimateTarget, Easing, BurstOptions, Color, Quat, Vec3, Shape,
+  // Rendering and touch
+  Camera, Light, RenderSource, GameStats, DragEvent, SwipeDirection,
+  // Models, textures and fonts
+  Model, ModelOptions, Texture, Font, FontOptions, TextAlign,
+  // Sound, haptics and input
+  Sound, SoundBank, Voice, PlayOptions, SoundSource, HapticTap, JoystickState,
 } from "@nayan-ui/engine";`;
 
 export const engineWorldApiCode = `class World {
   constructor(capacity: number);
   readonly capacity: number;
-  readonly count: number;
+  readonly count: number;        // live entities (text letters count too)
 
   // Entities: one call each
   spawn(options?: EntityOptions): Entity;
   set(e: Entity, options: EntityOptions): boolean;  // only what you pass changes; null removes
-  despawn(e: Entity): boolean;
+  despawn(e: Entity): boolean;                       // also removes anything attached to it
   impulse(e: Entity, impulse: Vec3): void;
 
+  // Animation and effects
+  animate(e: Entity, to: AnimateTarget, options?: AnimateOptions): Promise<void>;
+  stopAnimation(e: Entity): void;
+  burst(options: BurstOptions): number;              // how many particles were spawned
+
   // Queries (pass \`out\` to reuse an array)
-  position(e: Entity, out?: [x, y, z]): [x, y, z] | null;
+  position(e: Entity, out?: [x, y, z]): [x, y, z] | null;       // relative to the parent when attached
+  worldPosition(e: Entity, out?: [x, y, z]): [x, y, z] | null;  // where it was last drawn, world space
   velocity(e: Entity, out?: [x, y, z]): [x, y, z] | null;
   has(e: Entity): boolean;
   raycast(origin: Vec3, direction: Vec3, maxDistance: number, mask?: number): RaycastHit | null;
+  pick(x: number, y: number): PickHit | null;        // the entity under a GameView point
+  toScreen(position: Vec3): [x, y] | null;           // GameView points, null if behind the camera
 
   // World settings
   gravity: Vec3;                 // default [0, -9.81, 0]
@@ -452,32 +737,101 @@ export const engineWorldApiCode = `class World {
 }
 
 type EntityOptions = {
-  mesh?: Shape | Model;  // default "cube"
+  mesh?: Shape | Model;                  // default "cube"
+  texture?: Texture | null;
+  textureRegion?: [u0, v0, u1, v1];      // 0..1
+  text?: string;                         // needs font
+  font?: Font;
+  align?: TextAlign;                     // default "center"
   position?: Vec3;
   rotation?: Quat;
   scale?: Vec3 | number;
-  color?: Color;
+  color?: Color;                         // alpha below 1 is see-through
   velocity?: Vec3;
   groundVelocity?: [x, z];
+  acceleration?: Vec3;
   spin?: Vec3;
   bob?: { amplitude: Vec3; speed: number; phase?: number } | null;
   follow?: { target: Entity; speed: number } | null;
   lifetime?: number | null;
   parent?: Entity | null;
-  physics?: "dynamic" | "kinematic" | "fixed" | PhysicsOptions | null;
+  physics?: BodyType | PhysicsOptions | null;
   impact?: ImpactFeedback | null;
+  pickable?: boolean;                    // default true
+};
+
+type PhysicsOptions = {
+  type: "dynamic" | "kinematic" | "fixed";
+  shape?: "ball" | "box" | "cylinder" | "capsule" | "cone";  // default: matches the mesh
+  radius?: number;
+  height?: number;
+  size?: Vec3;
+  layer?: number;          // default 1
+  mask?: number;           // default all
+  sensor?: boolean;
+  friction?: number;       // default 0.5
+  bounce?: number;         // default 0
+  density?: number;        // default 1
+  drag?: number;           // default 0
+  angularDrag?: number;    // default 0.05
+  gravityScale?: number;   // default 1
+  upright?: boolean;
+  ccd?: boolean;
+  planar?: boolean;        // 2D: stays in its XY plane
+};
+
+type AnimateTarget = { position?: Vec3; rotation?: Quat; scale?: Vec3 | number; color?: Color };
+
+type AnimateOptions = {
+  duration?: number;             // seconds, default 0.3
+  delay?: number;                // seconds, default 0
+  easing?: Easing;               // default "easeOut"
+  repeat?: number | "forever";   // extra runs, default 0
+  yoyo?: boolean;                // every other run plays backwards
+};
+
+type Easing = "linear" | "easeIn" | "easeOut" | "easeInOut" | "back" | "bounce" | "elastic";
+
+type BurstOptions = {
+  position: Vec3;
+  count?: number;                  // default 16
+  direction?: Vec3;                // default [0, 1, 0]
+  spread?: number;                 // radians, default π
+  mesh?: Shape | Model;            // default "cube"
+  size?: number;                   // default 0.15
+  speed?: number;                  // default 5
+  lifetime?: number;               // default 0.8
+  gravity?: number;                // default -9.81
+  color?: Color | Color[];         // up to 4, default white
 };`;
 
 export const engineTypesCode = `type Vec3 = readonly [number, number, number];
 type Color = readonly [r, g, b] | readonly [r, g, b, a];  // 0..1
+type Quat = readonly [x, y, z, w];
 type Entity = number;  // opaque handle
 
-type Shape = "cube" | "sphere" | "plane";  // each 1 unit before scaling
+// Each 1 unit across before scaling. "none" isn't drawn.
+type Shape = "cube" | "sphere" | "plane" | "cylinder" | "cone" | "capsule" | "torus" | "roundedBox" | "none";
 
 function loadModel(source: number | string, options?: { center?: boolean; fit?: number }): Promise<Model>;
 type Model = { size: Vec3; id: number };  // pass as mesh; size at scale 1
 
-type Camera = { eye: [x, y, z]; target: [x, y, z]; fov: number /* radians */ };
+function loadTexture(source: number | string): Promise<Texture>;  // PNG or JPEG, up to 4096
+type Texture = { id: number; width: number; height: number };
+
+function loadFont(source: number | string, options?: FontOptions): Promise<Font>;  // TTF or OTF
+type FontOptions = { depth?: number /* default 0.2 */; chars?: string };
+type Font = { id: number; capHeight: number; glyphs: ReadonlyMap<string, { mesh: number; advance: number }> };
+type TextAlign = "left" | "center" | "right";
+
+type Camera = {
+  eye: [x, y, z];
+  target: [x, y, z];
+  fov: number;              // radians; ignored when ortho is set
+  ortho?: number;           // orthographic: half the visible height in world units
+  follow?: { target: Entity; offset: Vec3; smoothing?: number /* default 0.15 */ } | null;
+  shake?: number;           // world units; fades out by itself
+};
 
 type Light = {
   direction: [x, y, z];   // towards the light
@@ -493,6 +847,12 @@ type RaycastHit = {
   distance: number;
   normal: [x, y, z];
   point: [x, y, z];
+};
+
+type PickHit = {
+  entity: Entity;
+  point: [x, y, z];   // where the tap ray hit its bounding box
+  distance: number;
 };
 
 type GameStats = { fps: number; updateMs: number };`;
@@ -522,7 +882,22 @@ const haptics: {
   play(taps: { time: number; intensity: number; sharpness: number }[]): void;
 };`;
 
-export const engineInputApiCode = `type JoystickState = { x: number; y: number }; // each -1..1, y is up
+export const engineInputApiCode = `// GameView touch props
+onTap?: (x: number, y: number) => void;           // points from the view's top-left
+onSwipe?: (direction: SwipeDirection) => void;
+onDrag?: (drag: DragEvent) => void;
+
+type SwipeDirection = "left" | "right" | "up" | "down";
+
+type DragEvent = {
+  phase: "start" | "move" | "end";
+  x: number;    // finger position in the view, in points
+  y: number;
+  dx: number;   // distance moved since the drag started
+  dy: number;
+};
+
+type JoystickState = { x: number; y: number }; // each -1..1, y is up
 
 function useJoystick(): JoystickState;  // a state object for the component's lifetime
 

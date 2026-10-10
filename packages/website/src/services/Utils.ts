@@ -121,6 +121,8 @@ import {
   Rocket,
   Volume2,
   Shapes,
+  Type,
+  WandSparkles,
 } from "lucide-react";
 import {
   accordionTags,
@@ -2296,6 +2298,18 @@ export const gameEngineSidebarItems = [
     icon: Shapes,
   },
   {
+    title: "Animation & Effects",
+    description: "Tweens, particle bursts and camera shake",
+    link: "/game-engine/animation",
+    icon: WandSparkles,
+  },
+  {
+    title: "Text & Textures",
+    description: "3D text, images, card atlases and transparency",
+    link: "/game-engine/text-textures",
+    icon: Type,
+  },
+  {
     title: "Audio & Haptics",
     description: "Sound effects, music, vibration and impact feedback",
     link: "/game-engine/audio-haptics",
@@ -2303,7 +2317,7 @@ export const gameEngineSidebarItems = [
   },
   {
     title: "Input",
-    description: "Joystick and touch controls",
+    description: "Taps, swipes, drags, picking and the joystick",
     link: "/game-engine/input",
     icon: Joystick,
   },

@@ -105,7 +105,9 @@ impl World {
             let speed = b.speed * (0.5 + 0.5 * self.random());
             let size = b.size * (0.7 + 0.6 * self.random());
             let color = b.colors[(self.random() * b.colors.len() as f32) as usize % b.colors.len()];
-            let Some(e) = self.spawn(b.mesh, b.position, Vec3::splat(size), color) else { break };
+            let Some(e) = self.spawn(b.mesh, b.position, Vec3::splat(size), color) else {
+                break;
+            };
             let i = self.len() - 1;
             self.velocity[i] = dir * speed;
             self.acceleration[i] = Vec3::new(0.0, b.gravity, 0.0);

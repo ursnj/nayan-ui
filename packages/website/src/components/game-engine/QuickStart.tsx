@@ -13,8 +13,10 @@ const NEXT = [
   { href: "/game-engine/physics", label: "Physics", text: "bodies, collisions and raycasts" },
   { href: "/game-engine/rendering", label: "Rendering", text: "camera, light, shadows and fog" },
   { href: "/game-engine/models", label: "3D models", text: "load glTF models" },
+  { href: "/game-engine/animation", label: "Animation & effects", text: "tweens, particle bursts and camera shake" },
+  { href: "/game-engine/text-textures", label: "Text & textures", text: "3D text, images and transparency" },
   { href: "/game-engine/audio-haptics", label: "Audio & haptics", text: "sound effects, music and vibration" },
-  { href: "/game-engine/input", label: "Input", text: "joystick and touch controls" },
+  { href: "/game-engine/input", label: "Input", text: "taps, swipes, drags, picking and the joystick" },
 ];
 
 const EngineQuickStart = () => (
@@ -31,7 +33,7 @@ const EngineQuickStart = () => (
           • <strong>World</strong> holds every object. Its capacity is fixed when you create it.
         </li>
         <li>
-          • <strong>spawn</strong> adds an object. <code>body: &quot;dynamic&quot;</code> hands it to the
+          • <strong>spawn</strong> adds an object. <code>physics: &quot;dynamic&quot;</code> hands it to the
           physics engine; <code>&quot;fixed&quot;</code> makes it a static floor.
         </li>
         <li>

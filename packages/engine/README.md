@@ -43,7 +43,51 @@ world.listener = player;
 />
 ```
 
-`example/games/` has complete examples: Flappy, Orb Rush, a glTF models scene and a benchmark.
+`example/games/` has complete examples: Flappy, Orb Rush, Tic-Tac-Toe (board game), Fruit Merger (2D physics),
+a glTF models scene and a benchmark.
+
+## Board and puzzle games
+
+Tap to pick, animate pieces, write numbers and letters in 3D:
+
+```tsx
+const font = await loadFont(require("./Inter-Bold.ttf"), { chars: "0123456789" });
+const tile = world.spawn({ mesh: "roundedBox", scale: [1, 0.3, 1], color: [1, 0.8, 0.4] });
+const label = world.spawn({ text: "2048", font, parent: tile, position: [0, 0.6, 0], rotation: flat, scale: 0.4 });
+
+<GameView
+  source={world}
+  camera={{ eye: [0, 10, 0.01], target: [0, 0, 0], fov: 1, ortho: 5 }} // straight down, no perspective
+  onTap={(x, y) => {
+    const hit = world.pick(x, y);                 // what's under the finger (no physics needed)
+    if (hit?.entity === tile) world.animate(tile, { scale: [1.2, 0.3, 1.2] }, { yoyo: true, repeat: 1 });
+  }}
+  onSwipe={(direction) => slide(direction)}       // "left" | "right" | "up" | "down"
+/>
+
+await world.animate(piece, { position: [2, 0, 3] }, { duration: 0.25, easing: "back" }); // then check the board
+world.set(label, { text: "4096" });
+world.burst({ position: [0, 1, 0], count: 30, color: [[1, 0.3, 0.3], [1, 0.9, 0.2]] }); // confetti
+```
+
+- **Shapes**: `"cube"`, `"sphere"`, `"plane"`, `"cylinder"`, `"cone"`, `"capsule"`, `"torus"`, `"roundedBox"`, and
+  `"none"` (invisible: groups, pivots, trigger zones). Each is 1 unit across before scaling; colliders match the shape.
+- **Groups**: `parent` nests to any depth; children move, turn and scale with their parent.
+- **Animations** run in Rust (`position`, `rotation`, `scale`, `color`; easings, `delay`, `repeat`, `yoyo`) and return a
+  Promise. Starting another animation on the same entity replaces it.
+- **Text** (`text` + `font`): each character is an extruded mesh, so every "7" on screen is one draw call. Letters are
+  1 unit tall at scale 1; `align` is left / center / right. Changing `text` rebuilds the letters (one entity each).
+- **Picking** tests what was drawn (bounding boxes), not physics. `pickable: false` lets taps through.
+- **`toScreen(position)`** places React Native views (score popups, labels) over 3D objects.
+- **Transparency**: any color with alpha below 1 is drawn see-through, after everything solid.
+- **Textures**: `loadTexture(require("./crate.png"))` (PNG / JPEG), then `{ mesh: "cube", texture }`. `textureRegion`
+  shows part of an atlas (cards, sprite sheets). glTF models keep their base color texture.
+- **2D physics**: `physics: { type: "dynamic", planar: true }` keeps a body in its XY plane, so 2D games keep their
+  rules and gain 3D looks. Pair it with an orthographic camera looking down -z.
+- **Camera**: `ortho` for flat board views, `follow: { target, offset, smoothing }` to chase an entity, and
+  `camera.shake = 0.3` for a hit (it fades by itself).
+- **Particles**: `world.burst(...)` spawns short-lived pieces in one native call (direction, spread, speed, gravity,
+  up to 4 colors). They count against the world's capacity.
 
 ## 3D models
 
@@ -56,23 +100,25 @@ const tree = await loadModel(require("./assets/tree.glb"), { fit: 2 }); // large
 world.spawn({ mesh: tree, position: [0, tree.size[1] / 2, 0], physics: "fixed" });
 ```
 
-- Parsed in Rust: meshes, node transforms and material base colors (and vertex colors) are kept.
-  Textures, skins, animations and Draco compression are not supported yet.
+- Parsed in Rust: meshes, node transforms, material base colors (and vertex colors) and the base color texture are
+  kept (one texture per model). Skins, animations and Draco compression are not supported yet.
 - Every entity using a model is drawn in one instanced draw call, like the built-in shapes.
 - Physics colliders sized "from the mesh" use the model's bounding box times the entity's scale.
 - `center` (default true) puts the bounding box center at the origin; `fit` rescales to a size.
-- Up to 61 models (64 mesh ids including the 3 built-ins). Loading the same file twice returns the cached model.
+- Models, font letters and textured variants share 240 mesh ids. Loading the same file twice returns the cached model.
 - Add the extensions to Metro so `require` works: `config.resolver.assetExts.push("glb", "gltf")`.
 
 ## Features
 
-- **Rendering** (WebGPU): cube / sphere / plane meshes and glTF models, per-instance color, one instanced draw per mesh,
-  directional light with a filtered shadow map that follows the camera, 4x MSAA.
-- **Physics** ([Rapier](https://rapier.rs) in Rust): dynamic / kinematic / fixed bodies, ball and box colliders,
-  friction, restitution, density, damping, rotation locks, CCD, gravity, impulses, raycasts,
+- **Rendering** (WebGPU): 8 built-in shapes, glTF models, 3D text, textures and atlas regions, transparency,
+  per-instance color, one instanced draw per mesh, directional light with a filtered shadow map that follows the camera,
+  fog, perspective or orthographic cameras with follow and shake, 4x MSAA.
+- **Physics** ([Rapier](https://rapier.rs) in Rust): dynamic / kinematic / fixed bodies, ball, box, cylinder, capsule
+  and cone colliders, friction, restitution, density, damping, rotation locks, 2D (planar) bodies, CCD, gravity, impulses, raycasts,
   collision layers/masks, sensors, start/stop contact events with impact speed.
-- **Simulation**: fixed 60 Hz steps with render interpolation; velocity, spin, visual bobbing,
-  chase behavior, arena bounds, lifetimes (auto-despawn with shrink-out) for particles and projectiles.
+- **Simulation**: fixed 60 Hz steps with render interpolation; velocity, acceleration, spin, visual bobbing,
+  chase behavior, arena bounds, lifetimes (auto-despawn with shrink-out), tween animations, particle bursts,
+  nested attachments (scene graph), picking.
 - **Audio** (Rust): a realtime mixer on its own thread (32 voices, pitch, constant-power pan, looping,
   soft limiter) fed by WAV files and played through cpal (CoreAudio on iOS, AAudio on Android). The JS thread talks to it
   through a lock-free queue. iOS session category "ambient": respects the silent switch and mixes with other apps.
@@ -81,7 +127,8 @@ world.spawn({ mesh: tree, position: [0, tree.size[1] / 2, 0], physics: "fixed" }
 - **Impact feedback** (Rust): per-entity sound + haptic played by the core straight from physics contacts,
   scaled by approach speed and panned/attenuated relative to a listener entity. No JS per impact.
 - **Attachments**: child entities follow a parent's interpolated pose (characters made of parts, props).
-- **Input**: `Joystick` touch stick; plain RN touchables for buttons.
+- **Input**: `onTap` / `onSwipe` / `onDrag` on `GameView`, `world.pick(x, y)`, a `Joystick` touch stick; plain RN
+  touchables for buttons.
 
 No Expo modules are required: rendering, physics, audio and haptics all live in this package.
 
@@ -91,20 +138,21 @@ No Expo modules are required: rendering, physics, audio and haptics all live in 
 src/                      TypeScript library
   index.ts                public API
   types.ts                shared types (Shape, Camera, Light, RenderSource)
-  assets.ts               loads require() assets / URIs as bytes
-  model/Model.ts          loadModel (glTF)
-  world/World.ts          entities, physics, collisions, impact feedback
-  render/                 GameView, Renderer, WGSL shader, meshes
+  assets/                 loadModel (glTF), loadTexture, loadFont, asset bytes
+  world/World.ts          entities, physics, collisions, animation, particles, text, picking
+  render/                 GameView (touch, camera follow/shake), Renderer, WGSL shader, built-in shapes
   media/                  audio.ts (sound banks, playback), haptics.ts
   input/Joystick.tsx      touch stick
   native/                 TurboModule spec (codegen input)
 core/                     Rust core (static library)
-  src/world/              entities · physics · simulation · feedback · render · tests
+  src/world/              entities · physics · simulation · animation · particles · feedback · render/picking · shapes
   src/audio/              public API · mixer · device output
-  src/model.rs            glTF parsing and the model registry
+  src/model.rs            glTF parsing and the mesh registry (models, glyphs, textured variants)
+  src/texture.rs          PNG / JPEG decoding
+  src/font.rs             TrueType / OpenType glyphs extruded into meshes
   src/haptics.rs          Core Haptics (iOS), Vibrator (Android)
   src/android.rs          JavaVM/Context hand-off for audio and haptics
-  src/ffi/                C ABI (world, media, models, android); header in include/engine_core.h
+  src/ffi/                C ABI (world, media, meshes/textures/fonts, android); header in include/engine_core.h
   scripts/build-ios.sh    builds build/EngineCore.xcframework
   scripts/build-android.sh builds build/android/<abi>/libengine_core.a
   examples/bench.rs       benchmarks
@@ -114,10 +162,14 @@ android/                  Android build: CMakeLists.txt (a pure C++ module, auto
 example/                  Expo app
   games/flappy/           Flappy (physics, attachments, feedback, fog)
   games/orb-rush/         Orb Rush (joystick, dash, crates, sparks, music)
+  games/tic-tac-toe/      Tic-Tac-Toe (tap picking, animations, 3D text, textures, confetti)
+  games/fruit-merger/     Fruit Merger (2D physics, drag, glass, orthographic camera, shake)
   games/models/           glTF trees and rockets with physics
   games/benchmark/        JS vs Rust and 1,500-body physics benchmark
   assets/sfx/             sounds, generated by scripts/make-sounds.py
   assets/models/          low-poly GLBs, generated by scripts/make-models.py
+  assets/textures/        wood.png, generated by scripts/make-textures.py
+  assets/fonts/           Inter Bold (SIL Open Font License, see OFL.txt)
 ```
 
 ## Develop
@@ -157,7 +209,7 @@ Tips:
 
 - Don't start Metro with `CI=1` while developing: it disables file watching and serves stale JS.
 - `EXPO_PUBLIC_AUTOPLAY=1` (set when starting Metro) makes a bot play the games: handy for demos and QA.
-- `EXPO_PUBLIC_SCREEN=models` (or `flappy`, `orbrush`, `benchmark`) opens that example first.
+- `EXPO_PUBLIC_SCREEN=tictactoe` (or `flappy`, `fruits`, `models`, `orbrush`, `benchmark`) opens that example first.
 
 ## How it stays fast
 
@@ -170,13 +222,15 @@ Tips:
 
 ## Status
 
-Engine v0.4 (iOS and Android):
+Engine v0.5 (iOS and Android):
 
 - [x] Rust world with generation-checked handles; Rapier rigid bodies, colliders, events, raycasts
 - [x] Fixed-step simulation with interpolation; lifetimes; chase; bounds
 - [x] Renderer with shadows; `GameView`; `Joystick`
 - [x] Audio mixer and haptics in Rust; impact feedback from physics; attachments; sky color and fog
 - [x] Android: native module (pure C++ autolinking), AAudio sound, Vibrator haptics
-- [x] glTF models (meshes, node transforms, material colors) with instancing and bounding-box colliders
-- [ ] Textures, skinned animation, transparency
+- [x] glTF models (meshes, node transforms, material colors, base color texture) with instancing and bounding-box colliders
+- [x] Board / puzzle toolkit: picking, tap / swipe / drag, Rust animations, 3D text, more shapes, nested groups
+- [x] Textures and atlas regions, transparency, orthographic camera, camera follow and shake, particle bursts, 2D physics
+- [ ] Skinned / animated models, mipmapped textures, sorted transparency
 - [ ] CI that builds the binaries and publishes

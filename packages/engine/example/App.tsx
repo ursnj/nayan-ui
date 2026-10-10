@@ -3,11 +3,15 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { isEngineAvailable } from "@nayan-ui/engine";
 import { Benchmark } from "./games/benchmark/Benchmark";
 import { Flappy } from "./games/flappy/Flappy";
+import { FruitMerger } from "./games/fruit-merger/FruitMerger";
 import { Models } from "./games/models/Models";
 import { OrbRush } from "./games/orb-rush/OrbRush";
+import { TicTacToe } from "./games/tic-tac-toe/TicTacToe";
 
 const SCREENS = [
   { key: "flappy", label: "Flappy", Component: Flappy },
+  { key: "tictactoe", label: "Tic-Tac-Toe", Component: TicTacToe },
+  { key: "fruits", label: "Fruit Merger", Component: FruitMerger },
   { key: "models", label: "Models", Component: Models },
   { key: "orbrush", label: "Orb Rush", Component: OrbRush },
   { key: "benchmark", label: "Benchmark", Component: Benchmark },
