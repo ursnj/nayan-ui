@@ -5,6 +5,8 @@
 //! origin is on the baseline at its left edge, facing +Z, centered on z = 0 in depth.
 
 use crate::model::{self, Model, VERTEX_FLOATS};
+use i_overlay::core::fill_rule::FillRule;
+use i_overlay::float::simplify::SimplifyShape;
 use rapier3d::glamx::Vec3;
 use std::sync::{Arc, Mutex};
 
@@ -126,79 +128,48 @@ fn signed_area(c: &[[f32; 2]]) -> f32 {
     a / 2.0
 }
 
-fn contains(c: &[[f32; 2]], p: [f32; 2]) -> bool {
-    let mut inside = false;
-    let mut j = c.len() - 1;
-    for i in 0..c.len() {
-        let (a, b) = (c[i], c[j]);
-        if (a[1] > p[1]) != (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0] {
-            inside = !inside;
-        }
-        j = i;
-    }
-    inside
-}
-
-/// Triangulates the contours (holes found by winding, either font convention) and extrudes them into
-/// a closed mesh. None if nothing could be triangulated.
+/// Resolves the outline with the non-zero fill rule fonts use (overlapping and self-crossing strokes,
+/// common in variable-font instances, merge) into clean shapes, triangulates them and extrudes them
+/// into a closed mesh. None if nothing could be triangulated.
 fn extrude(contours: &[Vec<[f32; 2]>], depth: f32) -> Option<Model> {
-    // Holes wind opposite to solid outlines (TrueType solids run clockwise, CFF counter-clockwise).
-    // The largest contour is always solid, so it tells which convention this font uses. Winding,
-    // not nesting, decides: overlapping strokes (common in variable-font instances) stay solid.
-    let areas: Vec<f32> = contours.iter().map(|c| signed_area(c)).collect();
-    let solid_sign = areas.iter().copied().max_by(|a, b| a.abs().total_cmp(&b.abs()))?.signum();
-    let solid: Vec<bool> = areas.iter().map(|a| a.signum() == solid_sign).collect();
-    // Normalize winding: solids counter-clockwise, holes clockwise.
-    let rings: Vec<Vec<[f32; 2]>> = contours
-        .iter()
-        .zip(&areas)
-        .zip(&solid)
-        .map(|((c, &area), &is_solid)| {
+    let shapes = contours.to_vec().simplify_shape(FillRule::NonZero);
+    let mut mesh = MeshBuilder::default();
+    let (front, back) = (depth / 2.0, -depth / 2.0);
+    // Every ring, wound so the solid is on its left: outlines counter-clockwise, holes clockwise.
+    let mut rings: Vec<Vec<[f32; 2]>> = Vec::new();
+    for shape in &shapes {
+        let Some((outer, holes)) = shape.split_first() else { continue };
+        let wound = |c: &Vec<[f32; 2]>, ccw: bool| {
             let mut c = c.clone();
-            if (area > 0.0) != is_solid {
+            if (signed_area(&c) > 0.0) != ccw {
                 c.reverse();
             }
             c
-        })
-        .collect();
-    // Each hole belongs to the smallest solid around it.
-    let owner: Vec<Option<usize>> = (0..rings.len())
-        .map(|h| {
-            if solid[h] {
-                return None;
-            }
-            (0..rings.len())
-                .filter(|&s| solid[s] && contains(&rings[s], rings[h][0]))
-                .min_by(|&a, &b| areas[a].abs().total_cmp(&areas[b].abs()))
-        })
-        .collect();
-
-    let mut mesh = MeshBuilder::default();
-    let (front, back) = (depth / 2.0, -depth / 2.0);
-    for (i, outer) in rings.iter().enumerate().filter(|(i, _)| solid[*i]) {
-        let holes: Vec<&Vec<[f32; 2]>> = (0..rings.len()).filter(|&h| owner[h] == Some(i)).map(|h| &rings[h]).collect();
+        };
+        let outer = wound(outer, true);
+        let holes: Vec<Vec<[f32; 2]>> = holes.iter().map(|h| wound(h, false)).collect();
         let mut flat: Vec<f64> = outer.iter().flat_map(|p| [p[0] as f64, p[1] as f64]).collect();
         let mut hole_starts = Vec::new();
         for h in &holes {
             hole_starts.push(flat.len() / 2);
             flat.extend(h.iter().flat_map(|p| [p[0] as f64, p[1] as f64]));
         }
+        rings.push(outer);
+        rings.extend(holes);
         let Ok(triangles) = earcutr::earcut(&flat, &hole_starts, 2) else {
             continue;
         };
         let points: Vec<[f32; 2]> = flat.as_chunks::<2>().0.iter().map(|p| [p[0] as f32, p[1] as f32]).collect();
         for t in triangles.as_chunks::<3>().0 {
             let (a, b, c) = (points[t[0]], points[t[1]], points[t[2]]);
-            let ccw = (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1]) > 0.0;
-            let (b, c) = if ccw { (b, c) } else { (c, b) };
             mesh.triangle([a, b, c].map(|p| Vec3::new(p[0], p[1], front)), Vec3::Z);
             if depth > 0.0 {
-                mesh.triangle([a, c, b].map(|p| Vec3::new(p[0], p[1], back)), Vec3::NEG_Z);
+                mesh.triangle([a, b, c].map(|p| Vec3::new(p[0], p[1], back)), Vec3::NEG_Z);
             }
         }
     }
     if depth > 0.0 {
-        // Side walls: solids are CCW and holes CW, so the outward normal is always to the right.
+        // Side walls: the solid is on each ring's left, so the outward normal is to the right.
         for ring in &rings {
             for k in 0..ring.len() {
                 let (a, b) = (ring[k], ring[(k + 1) % ring.len()]);
@@ -303,11 +274,28 @@ mod tests {
         assert!((area - 0.75).abs() < 1e-4, "area {area}");
     }
 
+    fn front_area(m: &Model) -> f32 {
+        m.vertices
+            .as_chunks::<{ VERTEX_FLOATS * 3 }>()
+            .0
+            .iter()
+            .filter(|t| t[5] > 0.5)
+            .map(|t| {
+                let v = |k: usize| Vec3::new(t[k * VERTEX_FLOATS], t[k * VERTEX_FLOATS + 1], 0.0);
+                (v(1) - v(0)).cross(v(2) - v(0)).length() / 2.0
+            })
+            .sum()
+    }
+
     #[test]
-    fn overlapping_solids_stay_solid() {
-        // Two overlapping squares wound the same way (like the strokes of an "N" in a variable font).
+    fn overlapping_and_self_crossing_outlines_fill_once() {
+        // Two overlapping strokes (like an "N" in a variable-font instance) merge: 1.5 x 1, not 2.
         let m = extrude(&[square(0.0, 0.0, 1.0, false), square(0.5, 0.0, 1.0, false)], 0.0).unwrap();
-        assert_eq!(m.vertices.len() / VERTEX_FLOATS, 12, "both filled, neither treated as a hole");
+        assert!((front_area(&m) - 1.5).abs() < 1e-3);
+        // One contour that crosses itself (a bow tie): both halves filled, no overfill.
+        let bow = vec![[0.0, 0.0], [1.0, 1.0], [1.0, 0.0], [0.0, 1.0]];
+        let m = extrude(&[bow], 0.0).unwrap();
+        assert!((front_area(&m) - 0.5).abs() < 1e-3, "{}", front_area(&m));
     }
 
     #[test]
@@ -335,43 +323,36 @@ mod tests {
     }
 
     #[test]
+    fn every_glyph_fills_exactly_its_outline() {
+        let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../example/assets/fonts/Inter-Bold.ttf")).unwrap();
+        let face = ttf_parser::Face::parse(&bytes, 0).unwrap();
+        for ch in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!?&%@#".chars() {
+            let mut outline = Outline {
+                scale: 1.0 / face.units_per_em() as f32,
+                ..Default::default()
+            };
+            face.outline_glyph(face.glyph_index(ch).unwrap(), &mut outline);
+            let contours = outline.finish();
+            // The filled area: outlines minus holes once overlaps are resolved.
+            let expected: f32 = contours
+                .to_vec()
+                .simplify_shape(FillRule::NonZero)
+                .iter()
+                .flat_map(|shape| {
+                    shape
+                        .iter()
+                        .enumerate()
+                        .map(|(k, c)| signed_area(c).abs() * if k == 0 { 1.0 } else { -1.0 })
+                })
+                .sum();
+            let got = front_area(&extrude(&contours, 0.0).unwrap());
+            assert!((got - expected).abs() < 1e-3, "{ch}: filled {got}, outline {expected}");
+        }
+    }
+
+    #[test]
     fn rejects_non_fonts() {
         assert!(load(b"not a font", 0.1, "A").is_err());
         assert!(!model::last_error().is_empty());
-    }
-}
-
-#[cfg(test)]
-mod audit {
-    use super::*;
-
-    #[test]
-    #[ignore]
-    fn triangulation_matches_outline_area() {
-        let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../example/assets/fonts/Inter-Bold.ttf")).unwrap();
-        let face = ttf_parser::Face::parse(&bytes, 0).unwrap();
-        for ch in "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?abcdefghijklmnopqrstuvwxyz".chars() {
-            let id = face.glyph_index(ch).unwrap();
-            let mut outline = Outline { scale: 1.0 / face.units_per_em() as f32, ..Default::default() };
-            face.outline_glyph(id, &mut outline);
-            let contours = outline.finish();
-            let areas: Vec<f32> = contours.iter().map(|c| signed_area(c)).collect();
-            let sign = areas.iter().copied().max_by(|a, b| a.abs().total_cmp(&b.abs())).unwrap().signum();
-            let expected: f32 = areas.iter().map(|a| a * sign).sum();
-            let m = extrude(&contours, 0.0).unwrap();
-            let got: f32 = m
-                .vertices
-                .as_chunks::<{ VERTEX_FLOATS * 3 }>()
-                .0
-                .iter()
-                .map(|t| {
-                    let v = |k: usize| Vec3::new(t[k * VERTEX_FLOATS], t[k * VERTEX_FLOATS + 1], 0.0);
-                    (v(1) - v(0)).cross(v(2) - v(0)).length() / 2.0
-                })
-                .sum();
-            if (got - expected).abs() > 1e-3 {
-                println!("{ch}: contours {} areas {areas:?} expected {expected:.4} got {got:.4}", contours.len());
-            }
-        }
     }
 }

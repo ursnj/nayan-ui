@@ -93,6 +93,7 @@ function createGame(font: Font, wood: Texture, onScore: (x: number, o: number) =
     pieces: Array<Entity | null>(9).fill(null),
     turn: "X" as Mark,
     busy: false,
+    stopped: false,
     over: false,
     overAt: 0,
     elapsed: 0,
@@ -121,6 +122,7 @@ function createGame(font: Font, wood: Texture, onScore: (x: number, o: number) =
     g.pieces[i] = piece;
     world.animate(piece, { scale: 1 }, { duration: 0.35, easing: "back" });
     await world.animate(piece, { position: [x, 0.42, z] }, { duration: 0.5, easing: "bounce" });
+    if (g.stopped) return; // the screen closed while the piece was dropping
     sfx.play("place", { volume: 0.6, pitch: mark === "X" ? 1 : 1.2 });
     haptics.impact(0.5, 0.6);
 
@@ -162,6 +164,10 @@ function createGame(font: Font, wood: Texture, onScore: (x: number, o: number) =
 
   return {
     world,
+    dispose() {
+      g.stopped = true;
+      world.dispose();
+    },
     tap(x: number, y: number) {
       if (g.over) return reset();
       if (g.turn !== "X" || AUTOPLAY) return;
@@ -192,7 +198,7 @@ export function TicTacToe() {
   }, []);
 
   const game = useMemo(() => (assets ? createGame(assets.font, assets.wood, (x, o) => setScore({ x, o })) : null), [assets]);
-  useEffect(() => () => game?.world.dispose(), [game]);
+  useEffect(() => () => game?.dispose(), [game]);
   const camera = useRef<Camera>({ eye: [0, 15, 11], target: [0, -0.6, 0.2], fov: Math.PI / 3.6 }).current;
 
   return (
