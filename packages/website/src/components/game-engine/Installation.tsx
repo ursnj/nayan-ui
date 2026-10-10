@@ -7,6 +7,7 @@ import Code from "@/components/helpers/Code";
 import Sidebar from "@/components/helpers/Sidebar";
 import SubHeader from "@/components/helpers/SubHeader";
 import {
+  engineAndroidConfigCode,
   engineBareIosCode,
   engineCheckCode,
   engineExpoBuildCode,
@@ -43,7 +44,7 @@ const EngineInstallation = () => (
     <SubHeader title="Requirements">
       <ul className={`space-y-2 ${BODY}`}>
         <li>• React Native with the New Architecture.</li>
-        <li>• iOS. Android support is in progress.</li>
+        <li>• iOS, and Android 8.0 or newer (API 26).</li>
         <li>
           • A development build. The engine includes native code, so it won&apos;t run in Expo Go.
         </li>
@@ -55,6 +56,17 @@ const EngineInstallation = () => (
       <Code language="bash" code={engineExpoBuildCode} filename="terminal" />
       <h3 className="mb-2 mt-6 text-sm font-semibold text-foreground">React Native CLI</h3>
       <Code language="bash" code={engineBareIosCode} filename="terminal" />
+    </SubHeader>
+
+    <SubHeader
+      title="Android setup"
+      description="Android needs version 8.0 or newer (minSdkVersion 26), and the vibrate permission for haptics. In Expo, install expo-build-properties and add:"
+    >
+      <Code language="json" code={engineAndroidConfigCode} filename="app.json" />
+      <p className={`mt-4 ${BODY}`}>
+        React Native CLI: set <code>minSdkVersion = 26</code> in <code>android/build.gradle</code> and add the
+        VIBRATE permission to <code>AndroidManifest.xml</code>.
+      </p>
     </SubHeader>
 
     <SubHeader

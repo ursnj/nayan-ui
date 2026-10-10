@@ -54,7 +54,7 @@ const EngineAudioHaptics = () => (
         <li>• Sounds are WAV files: mono or stereo, any sample rate.</li>
         <li>• Sounds follow the silent switch and mix with music from other apps.</li>
         <li>• Haptics need a device with a haptic engine: simulators don&apos;t vibrate.</li>
-        <li>• Haptics run on iOS today; Android is coming with Android support.</li>
+        <li>• On Android, haptics use the vibrator and need the VIBRATE permission (see Installation).</li>
       </ul>
     </SubHeader>
   </Sidebar>

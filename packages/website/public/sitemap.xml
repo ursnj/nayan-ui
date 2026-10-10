@@ -82,6 +82,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.nayanui.com/game-engine/models</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.nayanui.com/game-engine/audio-haptics</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

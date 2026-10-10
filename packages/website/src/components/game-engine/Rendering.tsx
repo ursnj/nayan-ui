@@ -1,7 +1,8 @@
 "use client";
 
 import { DocsIntro } from "@/design/Primitives";
-import { BODY } from "@/design/system";
+import Link from "next/link";
+import { ACCENT_TEXT, BODY } from "@/design/system";
 import Attributes from "@/components/helpers/Attributes";
 import Code from "@/components/helpers/Code";
 import Sidebar from "@/components/helpers/Sidebar";
@@ -33,7 +34,13 @@ const EngineRendering = () => (
           in size before scaling.
         </li>
         <li>• Each entity has its own solid color. Combine shapes with attachments to build characters.</li>
-        <li>• Custom models, textures and transparency are planned.</li>
+        <li>
+          • Load your own glTF models too: see{" "}
+          <Link href="/game-engine/models" className={`font-medium ${ACCENT_TEXT}`}>
+            3D Models
+          </Link>
+          . Textures and transparency are planned.
+        </li>
       </ul>
     </SubHeader>
 
