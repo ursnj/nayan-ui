@@ -6,13 +6,17 @@ import { JsSimulation } from "./JsSimulation";
 const COUNT = 10_000;
 type Backend = "js" | "rust";
 
+// Same scene as JsSimulation: grid of cubes, each spinning 1 rad/s and bobbing, phase-offset by index.
 function createRustSimulation(count: number) {
   const sim = new RustSimulation(count);
   const side = Math.ceil(Math.sqrt(count));
   const spacing = 1.6;
   for (let i = 0; i < count; i++) {
+    const phase = (i % 97) * 0.1;
     sim.spawn([((i % side) - side / 2) * spacing, 0, (Math.floor(i / side) - side / 2) * spacing], {
-      angularVelocity: [0, 1 + (i % 7) * 0.4, 0],
+      rotation: [0, Math.sin(phase / 2), 0, Math.cos(phase / 2)],
+      angularVelocity: [0, 1, 0],
+      oscillation: { amplitude: [0, 0.8, 0], frequency: 1.5, phase: phase * 1.5 },
     });
   }
   return sim;

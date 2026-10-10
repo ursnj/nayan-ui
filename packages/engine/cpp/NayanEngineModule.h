@@ -18,6 +18,9 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   void destroyWorld(jsi::Runtime &rt, double world);
   double spawn(jsi::Runtime &rt, double world, double x, double y, double z, double sx, double sy, double sz);
   void setAngularVelocity(jsi::Runtime &rt, double world, double entity, double x, double y, double z);
+  void setRotation(jsi::Runtime &rt, double world, double entity, double x, double y, double z, double w);
+  void setOscillation(
+      jsi::Runtime &rt, double world, double entity, double ax, double ay, double az, double frequency, double phase);
   void update(jsi::Runtime &rt, double world, double dt);
   double count(jsi::Runtime &rt, double world);
   jsi::Object getMatrices(jsi::Runtime &rt, double world);

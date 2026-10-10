@@ -32,6 +32,13 @@ bun run core:test           # unit tests
 bun run core:bench          # ms per update() at 10k / 100k entities
 ```
 
+Native changes need extra steps (JS changes just reload):
+
+- Changed `core/` (Rust): `bun run core:build:ios`, then rebuild the app.
+- Changed `src/specs/*` (the native module's TS spec): run `pod install` in `example/ios` **before** rebuilding.
+  Codegen regenerates the C++ spec header only then; otherwise new methods compile but are `undefined` in JS.
+- Don't start Metro with `CI=1` while developing: it disables file watching and serves stale JS.
+
 ## How it stays fast
 
 - One pipeline, one `drawIndexed` call for all instances. Model matrices live in a storage buffer.
