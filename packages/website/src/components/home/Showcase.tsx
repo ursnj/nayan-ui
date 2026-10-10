@@ -1,4 +1,4 @@
-import { ArrowRight, Clapperboard, Gamepad2, LayoutGrid, Wrench } from "lucide-react";
+import { ArrowRight, Atom, Clapperboard, Gamepad2, LayoutGrid, Wrench } from "lucide-react";
 import Link from "next/link";
 import { Section, SectionHeader, StatGrid } from "@/design/Primitives";
 import { ACCENT_SOFT, BODY, BUTTON_SECONDARY, CARD_INTERACTIVE, H3 } from "@/design/system";
@@ -40,6 +40,13 @@ const PRODUCTS = [
     action: "See the games",
   },
   {
+    icon: Atom,
+    title: "Game engine",
+    body: "Build your own 3D games for React Native: real physics, WebGPU rendering with shadows, sound and haptics, all driven from TypeScript.",
+    href: "/game-engine",
+    action: "Read the docs",
+  },
+  {
     icon: Wrench,
     title: "Developer tools",
     body: `${TOOL_COUNT} free tools — PDF merge, split & convert, image compress & resize, JSON format & validate, text compare, AI code review, and more.`,
@@ -56,10 +63,10 @@ const Showcase = () => (
       title="More than a component library"
       lead={
         <>
-          Five things, all free and all open source: components for React and React Native, a video
+          Six things, all free and all open source: components for React and React Native, a video
           editor that runs in a browser tab, {TOOL_COUNT} developer tools for PDFs, images, JSON,
-          text and AI code review, and a pack of ready-made games. Start with whichever one you came
-          for.
+          text and AI code review, a pack of ready-made games, and a game engine to build your own.
+          Start with whichever one you came for.
         </>
       }
     />
