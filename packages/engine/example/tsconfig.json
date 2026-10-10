@@ -3,7 +3,7 @@
   "compilerOptions": {
     "strict": true,
     "types": ["@webgpu/types"],
-    "paths": { "@nayan-ui/engine": ["../src/index"] }
+    "paths": { "@nayan-ui/engine": ["../src/index"], "@nayan-ui/engine/expo": ["../src/expo/index"] }
   },
   "include": ["**/*.ts", "**/*.tsx"]
 }

@@ -78,5 +78,7 @@ export function createMeshes() {
     vertices.push(...g.vertices);
     indices.push(...g.indices);
   }
+  // WebGPU buffer writes must be a multiple of 4 bytes: pad to an even number of u16 indices.
+  if (indices.length % 2) indices.push(0);
   return { vertices: new Float32Array(vertices), indices: new Uint16Array(indices), ranges };
 }

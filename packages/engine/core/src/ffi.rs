@@ -6,8 +6,7 @@
 
 #![allow(clippy::missing_safety_doc)] // the shared contract is documented once, above
 
-use crate::{Entity, NO_ENTITY, World};
-use glam::{Quat, Vec3};
+use crate::{BodyKind, Entity, NO_ENTITY, PhysicsDesc, Quat, Shape, Vec3, World};
 
 unsafe fn world<'a>(w: *mut World) -> Option<&'a mut World> {
     // SAFETY: caller contract above; null is handled by `as_mut`.
@@ -113,16 +112,16 @@ pub unsafe extern "C" fn engine_world_set_oscillation(
 }
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn engine_world_set_collider(w: *mut World, id: u32, radius: f32, layer: u32, mask: u32) {
+pub unsafe extern "C" fn engine_world_set_follow(w: *mut World, id: u32, target: u32, speed: f32) {
     if let Some(w) = unsafe { world(w) } {
-        w.set_collider(Entity(id), radius, layer, mask);
+        w.set_follow(Entity(id), Entity(target), speed);
     }
 }
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn engine_world_set_follow(w: *mut World, id: u32, target: u32, speed: f32) {
+pub unsafe extern "C" fn engine_world_set_lifetime(w: *mut World, id: u32, seconds: f32) {
     if let Some(w) = unsafe { world(w) } {
-        w.set_follow(Entity(id), Entity(target), speed);
+        w.set_lifetime(Entity(id), seconds);
     }
 }
 
@@ -131,6 +130,107 @@ pub unsafe extern "C" fn engine_world_set_bounds(w: *mut World, min_x: f32, min_
     if let Some(w) = unsafe { world(w) } {
         w.set_bounds(Vec3::new(min_x, 0.0, min_z), Vec3::new(max_x, 0.0, max_z));
     }
+}
+
+/// Physics description passed across the C ABI. Mirrors `EnginePhysicsDesc` in the header.
+#[repr(C)]
+pub struct EnginePhysicsDesc {
+    /// 0 = remove physics, 1 = dynamic, 2 = kinematic, 3 = fixed.
+    pub kind: u32,
+    /// 0 = ball (size[0] = radius), 1 = box (size = half extents).
+    pub shape: u32,
+    pub size: [f32; 3],
+    pub layer: u32,
+    pub mask: u32,
+    pub sensor: u32,
+    pub friction: f32,
+    pub restitution: f32,
+    pub density: f32,
+    pub linear_damping: f32,
+    pub angular_damping: f32,
+    pub gravity_scale: f32,
+    pub lock_rotations: u32,
+    pub ccd: u32,
+}
+
+/// Gives the entity a rigid body + collider (replacing any), or removes them when `kind` is 0.
+/// Returns 1 on success, 0 for a stale id, null pointer or invalid description.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_set_physics(w: *mut World, id: u32, desc: *const EnginePhysicsDesc) -> i32 {
+    let (Some(w), Some(d)) = (unsafe { world(w) }, unsafe { desc.as_ref() }) else { return 0 };
+    let kind = match d.kind {
+        0 => return w.set_physics(Entity(id), None) as i32,
+        1 => BodyKind::Dynamic,
+        2 => BodyKind::Kinematic,
+        3 => BodyKind::Fixed,
+        _ => return 0,
+    };
+    let shape = match d.shape {
+        0 => Shape::Ball { radius: d.size[0] },
+        1 => Shape::Cuboid { half_extents: Vec3::from_array(d.size) },
+        _ => return 0,
+    };
+    let desc = PhysicsDesc {
+        kind,
+        shape,
+        layer: d.layer,
+        mask: d.mask,
+        sensor: d.sensor != 0,
+        friction: d.friction,
+        restitution: d.restitution,
+        density: d.density,
+        linear_damping: d.linear_damping,
+        angular_damping: d.angular_damping,
+        gravity_scale: d.gravity_scale,
+        lock_rotations: d.lock_rotations != 0,
+        ccd: d.ccd != 0,
+    };
+    w.set_physics(Entity(id), Some(desc)) as i32
+}
+
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_set_planar_velocity(w: *mut World, id: u32, x: f32, z: f32) {
+    if let Some(w) = unsafe { world(w) } {
+        w.set_planar_velocity(Entity(id), x, z);
+    }
+}
+
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_apply_impulse(w: *mut World, id: u32, x: f32, y: f32, z: f32) {
+    if let Some(w) = unsafe { world(w) } {
+        w.apply_impulse(Entity(id), Vec3::new(x, y, z));
+    }
+}
+
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_set_gravity(w: *mut World, x: f32, y: f32, z: f32) {
+    if let Some(w) = unsafe { world(w) } {
+        w.set_gravity(Vec3::new(x, y, z));
+    }
+}
+
+/// Returns the hit entity or `UINT32_MAX`; on a hit, scratch[0..7] = distance, normal, point.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_raycast(
+    w: *mut World,
+    ox: f32,
+    oy: f32,
+    oz: f32,
+    dx: f32,
+    dy: f32,
+    dz: f32,
+    max_distance: f32,
+    mask: u32,
+) -> u32 {
+    unsafe { world(w) }
+        .and_then(|w| w.raycast(Vec3::new(ox, oy, oz), Vec3::new(dx, dy, dz), max_distance, mask))
+        .map_or(NO_ENTITY, |e| e.0)
+}
+
+/// Writes the entity velocity to the scratch buffer. Returns 1 on success.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_read_velocity(w: *mut World, id: u32) -> i32 {
+    unsafe { world(w) }.is_some_and(|w| w.read_velocity(Entity(id))) as i32
 }
 
 /// Writes the entity position to the scratch buffer (`engine_world_scratch`). Returns 1 on success.
@@ -174,19 +274,19 @@ pub unsafe extern "C" fn engine_world_ranges(w: *mut World) -> *const u32 {
     unsafe { world(w) }.map_or(std::ptr::null(), |w| w.ranges().as_ptr())
 }
 
-/// Collision pairs from the last update, as `[a0, b0, a1, b1, ...]` entity ids.
+/// Collision events from the last update, 4 u32s each: `[entity_a, entity_b, flags, speed bits]`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_world_events(w: *mut World) -> *const u32 {
     unsafe { world(w) }.map_or(std::ptr::null(), |w| w.events().as_ptr())
 }
 
-/// Number of u32 values (2 per pair) valid in `engine_world_events`.
+/// Number of u32 values (4 per event) valid in `engine_world_events`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_world_event_len(w: *mut World) -> u32 {
     unsafe { world(w) }.map_or(0, |w| w.events().len() as u32)
 }
 
-/// 16 floats; first 3 hold the result of `engine_world_read_position`.
+/// 16 floats written by `read_position`, `read_velocity` and `raycast`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_world_scratch(w: *mut World) -> *const f32 {
     unsafe { world(w) }.map_or(std::ptr::null(), |w| w.scratch().as_ptr())

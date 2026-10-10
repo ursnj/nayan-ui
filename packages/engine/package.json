@@ -43,6 +43,11 @@
       "types": "./lib/typescript/src/index.d.ts",
       "default": "./lib/module/index.js"
     },
+    "./expo": {
+      "source": "./src/expo/index.ts",
+      "types": "./lib/typescript/src/expo/index.d.ts",
+      "default": "./lib/module/expo/index.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -68,12 +73,16 @@
     "react-native": "0.86.3",
     "react-native-builder-bob": "^0.43.1",
     "react-native-webgpu": "^0.13.0",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "expo-audio": "~57.0.5",
+    "expo-haptics": "~57.0.3"
   },
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-webgpu": ">=0.13.0"
+    "react-native-webgpu": ">=0.13.0",
+    "expo-audio": "*",
+    "expo-haptics": "*"
   },
   "react-native-builder-bob": {
     "source": "src",
@@ -101,6 +110,14 @@
       "modulesProvider": {
         "NativeNayanEngine": "NayanEngineProvider"
       }
+    }
+  },
+  "peerDependenciesMeta": {
+    "expo-audio": {
+      "optional": true
+    },
+    "expo-haptics": {
+      "optional": true
     }
   }
 }

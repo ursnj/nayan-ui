@@ -2,6 +2,8 @@
 
 #include <engine_core.h>
 
+#include <algorithm>
+
 namespace facebook::react {
 
 namespace {
@@ -22,6 +24,14 @@ class ExternalBuffer : public jsi::MutableBuffer {
 // JS numbers -> entity ids. Negative or out-of-range values (e.g. -1 for "none") map to NO_ENTITY.
 uint32_t id(double v) {
   return (v >= 0 && v <= static_cast<double>(UINT32_MAX)) ? static_cast<uint32_t>(v) : ENGINE_NO_ENTITY;
+}
+
+// JS numbers -> layer/mask bit sets (layers are 32 bits; -1 or 0xffffffff means "all").
+uint32_t bits(double v) {
+  if (!(v >= -2147483648.0 && v <= 4294967295.0)) {
+    return 0; // NaN or out of range (the cast below would be undefined)
+  }
+  return static_cast<uint32_t>(static_cast<int64_t>(v) & 0xffffffff);
 }
 
 } // namespace
@@ -51,7 +61,9 @@ jsi::Object NayanEngineModule::external(jsi::Runtime &rt, const void *data, size
 
 double NayanEngineModule::createWorld(jsi::Runtime &, double capacity) {
   int worldId = next_++;
-  worlds_[worldId] = engine_world_new(static_cast<uint32_t>(capacity));
+  // NaN / negative -> 0; the core clamps very large values.
+  uint32_t n = capacity >= 1 ? static_cast<uint32_t>(std::min(capacity, 1048576.0)) : 0;
+  worlds_[worldId] = engine_world_new(n);
   return worldId;
 }
 
@@ -67,7 +79,7 @@ double NayanEngineModule::spawn(
     jsi::Runtime &, double world, double mesh, double x, double y, double z, double sx, double sy, double sz,
     double r, double g, double b, double a) {
   uint32_t entity = engine_world_spawn(
-      find(world), static_cast<uint32_t>(mesh), x, y, z, sx, sy, sz, r, g, b, a);
+      find(world), id(mesh), x, y, z, sx, sy, sz, r, g, b, a); // invalid mesh -> rejected by the core
   return entity == ENGINE_NO_ENTITY ? -1 : static_cast<double>(entity);
 }
 
@@ -106,9 +118,51 @@ void NayanEngineModule::setOscillation(
   engine_world_set_oscillation(find(world), id(entity), ax, ay, az, frequency, phase);
 }
 
-void NayanEngineModule::setCollider(
-    jsi::Runtime &, double world, double entity, double radius, double layer, double mask) {
-  engine_world_set_collider(find(world), id(entity), radius, static_cast<uint32_t>(layer), static_cast<uint32_t>(mask));
+void NayanEngineModule::setLifetime(jsi::Runtime &, double world, double entity, double seconds) {
+  engine_world_set_lifetime(find(world), id(entity), seconds);
+}
+
+void NayanEngineModule::setPlanarVelocity(jsi::Runtime &, double world, double entity, double x, double z) {
+  engine_world_set_planar_velocity(find(world), id(entity), x, z);
+}
+
+void NayanEngineModule::applyImpulse(jsi::Runtime &, double world, double entity, double x, double y, double z) {
+  engine_world_apply_impulse(find(world), id(entity), x, y, z);
+}
+
+void NayanEngineModule::setGravity(jsi::Runtime &, double world, double x, double y, double z) {
+  engine_world_set_gravity(find(world), x, y, z);
+}
+
+bool NayanEngineModule::setPhysics(
+    jsi::Runtime &, double world, double entity, double kind, double shape, double sx, double sy, double sz,
+    double layer, double mask, bool sensor, double friction, double restitution, double density,
+    double linearDamping, double angularDamping, double gravityScale, bool lockRotations, bool ccd) {
+  EnginePhysicsDesc desc{};
+  desc.kind = id(kind);   // out-of-range values are rejected by the core
+  desc.shape = id(shape);
+  desc.size[0] = static_cast<float>(sx);
+  desc.size[1] = static_cast<float>(sy);
+  desc.size[2] = static_cast<float>(sz);
+  desc.layer = bits(layer);
+  desc.mask = bits(mask);
+  desc.sensor = sensor ? 1 : 0;
+  desc.friction = static_cast<float>(friction);
+  desc.restitution = static_cast<float>(restitution);
+  desc.density = static_cast<float>(density);
+  desc.linear_damping = static_cast<float>(linearDamping);
+  desc.angular_damping = static_cast<float>(angularDamping);
+  desc.gravity_scale = static_cast<float>(gravityScale);
+  desc.lock_rotations = lockRotations ? 1 : 0;
+  desc.ccd = ccd ? 1 : 0;
+  return engine_world_set_physics(find(world), id(entity), &desc) != 0;
+}
+
+double NayanEngineModule::raycast(
+    jsi::Runtime &, double world, double ox, double oy, double oz, double dx, double dy, double dz,
+    double maxDistance, double mask) {
+  uint32_t hit = engine_world_raycast(find(world), ox, oy, oz, dx, dy, dz, maxDistance, bits(mask));
+  return hit == ENGINE_NO_ENTITY ? -1 : static_cast<double>(hit);
 }
 
 void NayanEngineModule::setFollow(jsi::Runtime &, double world, double entity, double target, double speed) {
@@ -122,6 +176,10 @@ void NayanEngineModule::setBounds(
 
 bool NayanEngineModule::readPosition(jsi::Runtime &, double world, double entity) {
   return engine_world_read_position(find(world), id(entity)) != 0;
+}
+
+bool NayanEngineModule::readVelocity(jsi::Runtime &, double world, double entity) {
+  return engine_world_read_velocity(find(world), id(entity)) != 0;
 }
 
 void NayanEngineModule::update(jsi::Runtime &, double world, double dt) {
@@ -147,7 +205,7 @@ jsi::Object NayanEngineModule::getRanges(jsi::Runtime &rt, double world) {
 }
 
 jsi::Object NayanEngineModule::getEvents(jsi::Runtime &rt, double world) {
-  return external(rt, engine_world_events(find(world)), ENGINE_MAX_EVENT_PAIRS * 2 * sizeof(uint32_t));
+  return external(rt, engine_world_events(find(world)), ENGINE_MAX_EVENTS * ENGINE_EVENT_STRIDE * sizeof(uint32_t));
 }
 
 double NayanEngineModule::eventLength(jsi::Runtime &, double world) {

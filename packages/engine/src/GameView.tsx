@@ -24,27 +24,49 @@ type Props = {
   style?: ViewStyle;
   /** Called once a second. */
   onStats?: (stats: GameStats) => void;
+  /** GPU setup failures and WebGPU validation errors. Defaults to console.error. */
+  onError?: (error: Error) => void;
 };
 
-export function GameView({ source, onUpdate, camera, light, style, onStats }: Props) {
+export function GameView({ source, onUpdate, camera, light, style, onStats, onError }: Props) {
   const ref = useCanvasRef();
   // Latest props, read from the frame loop without restarting it.
-  const live = useRef({ onUpdate, onStats, camera: camera ?? defaultCamera(), light: light ?? defaultLight() });
+  const live = useRef({
+    onUpdate,
+    onStats,
+    onError,
+    camera: camera ?? defaultCamera(),
+    light: light ?? defaultLight(),
+  });
   live.current.onUpdate = onUpdate;
   live.current.onStats = onStats;
+  live.current.onError = onError;
   if (camera) live.current.camera = camera;
   if (light) live.current.light = light;
 
   useEffect(() => {
     let alive = true;
     let raf = 0;
+    let device: GPUDevice | undefined;
+    const report = (error: unknown) => {
+      const e = error instanceof Error ? error : new Error(String(error));
+      (live.current.onError ?? ((x: Error) => console.error(`GameView: ${x.message}`)))(e);
+    };
 
     (async () => {
       const adapter = await navigator.gpu.requestAdapter();
       if (!adapter || !alive) return;
-      const device = await adapter.requestDevice();
+      device = await adapter.requestDevice();
+      if (!alive) {
+        device.destroy(); // unmounted while we were waiting
+        return;
+      }
+      device.onuncapturederror = (event) => report(new Error(`WebGPU: ${event.error.message}`));
+      device.lost.then((info) => {
+        if (alive && info.reason !== "destroyed") console.warn(`GameView: GPU device lost (${info.message})`);
+      });
       const context = ref.current?.getContext("webgpu");
-      if (!context || !alive) return;
+      if (!context) return;
 
       const format = navigator.gpu.getPreferredCanvasFormat();
       context.configure({ device, format, alphaMode: "opaque" });
@@ -84,11 +106,12 @@ export function GameView({ source, onUpdate, camera, light, style, onStats }: Pr
         raf = requestAnimationFrame(frame);
       };
       raf = requestAnimationFrame(frame);
-    })();
+    })().catch(report);
 
     return () => {
       alive = false;
       cancelAnimationFrame(raf);
+      device?.destroy(); // frees every GPU resource the renderer created
     };
     // The source is fixed for the lifetime of the view.
     // eslint-disable-next-line react-hooks/exhaustive-deps
