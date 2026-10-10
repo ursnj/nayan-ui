@@ -29,7 +29,9 @@
     "lib",
     "cpp",
     "ios",
+    "android",
     "*.podspec",
+    "react-native.config.js",
     "core/include",
     "core/build",
     "!**/.*"
@@ -55,7 +57,9 @@
     "typecheck": "tsc",
     "core:test": "cargo test --manifest-path core/Cargo.toml",
     "core:bench": "cargo run --release --example bench --manifest-path core/Cargo.toml",
-    "core:build:ios": "core/scripts/build-ios.sh"
+    "core:build:ios": "core/scripts/build-ios.sh",
+    "core:build:android": "core/scripts/build-android.sh",
+    "codegen": "node scripts/codegen-cxx.js"
   },
   "dependencies": {
     "wgpu-matrix": "^3.4.0"

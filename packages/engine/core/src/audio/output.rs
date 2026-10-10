@@ -12,6 +12,11 @@ pub fn start(consumer: rtrb::Consumer<Command>, volume: Arc<AtomicU32>, muted: A
     let spawned = std::thread::Builder::new().name("engine-audio".into()).spawn(move || {
         #[cfg(target_os = "ios")]
         ios::configure_session();
+        // cpal's AAudio backend needs the Android context; without it, stay silent rather than panic.
+        #[cfg(target_os = "android")]
+        if !crate::android::is_initialized() {
+            return;
+        }
         let Some(device) = cpal::default_host().default_output_device() else {
             return;
         };

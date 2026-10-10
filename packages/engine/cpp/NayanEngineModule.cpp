@@ -3,6 +3,11 @@
 #include <engine_core.h>
 
 #include <algorithm>
+
+#ifdef __ANDROID__
+#include <fbjni/fbjni.h>
+#include <jni.h>
+#endif
 #include <vector>
 
 namespace facebook::react {
@@ -35,10 +40,50 @@ uint32_t bits(double v) {
   return static_cast<uint32_t>(static_cast<int64_t>(v) & 0xffffffff);
 }
 
+#ifdef __ANDROID__
+// Gives the core the JavaVM and the Application context, which audio (cpal's AAudio backend) and
+// haptics (the Vibrator service) need. Runs once; any failure leaves audio and haptics silent.
+void initAndroid() {
+  static bool done = false;
+  if (done) {
+    return;
+  }
+  done = true;
+  try {
+    JNIEnv *env = facebook::jni::Environment::current();
+    JavaVM *vm = nullptr;
+    if (env == nullptr || env->GetJavaVM(&vm) != JNI_OK || vm == nullptr) {
+      return;
+    }
+    jclass activityThread = env->FindClass("android/app/ActivityThread");
+    jmethodID currentApplication = activityThread == nullptr
+        ? nullptr
+        : env->GetStaticMethodID(activityThread, "currentApplication", "()Landroid/app/Application;");
+    jobject app = currentApplication == nullptr ? nullptr : env->CallStaticObjectMethod(activityThread, currentApplication);
+    if (env->ExceptionCheck()) {
+      env->ExceptionClear();
+    }
+    if (app != nullptr) {
+      engine_android_init(vm, env->NewGlobalRef(app)); // global ref: lives for the whole process
+      env->DeleteLocalRef(app);
+    }
+    if (activityThread != nullptr) {
+      env->DeleteLocalRef(activityThread);
+    }
+  } catch (...) {
+    // No JNI environment on this thread: audio and haptics stay off rather than crash.
+  }
+}
+#endif
+
 } // namespace
 
 NayanEngineModule::NayanEngineModule(std::shared_ptr<CallInvoker> jsInvoker)
-    : NativeNayanEngineCxxSpec(std::move(jsInvoker)) {}
+    : NativeNayanEngineCxxSpec(std::move(jsInvoker)) {
+#ifdef __ANDROID__
+  initAndroid();
+#endif
+}
 
 NayanEngineModule::~NayanEngineModule() {
   for (auto &entry : worlds_) {

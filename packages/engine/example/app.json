@@ -9,7 +9,10 @@
       "bundleIdentifier": "dev.nayan.engine"
     },
     "android": {
-      "package": "dev.nayan.engine"
+      "package": "dev.nayan.engine",
+      "permissions": [
+        "android.permission.VIBRATE"
+      ]
     },
     "plugins": [
       "expo-dev-client"

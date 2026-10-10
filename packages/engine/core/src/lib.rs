@@ -1,6 +1,8 @@
 //! Engine core: entity state, Rapier physics, a realtime audio mixer and haptics, and the instance
 //! buffers the renderer uploads once per frame. See `include/engine_core.h` for the C interface.
 
+#[cfg(target_os = "android")]
+pub mod android;
 pub mod audio;
 pub mod ffi;
 pub mod haptics;

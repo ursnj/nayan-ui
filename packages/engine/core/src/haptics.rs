@@ -1,5 +1,5 @@
-//! Haptics: transient taps with continuous intensity and sharpness (Core Haptics on iOS).
-//! Other platforms are a no-op for now.
+//! Haptics: transient taps with continuous intensity and sharpness (Core Haptics on iOS, the
+//! Vibrator service on Android). Other platforms are a no-op.
 
 /// One tap in a pattern: when (seconds from now), how strong (0..1), how crisp (0..1).
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -152,7 +152,117 @@ mod platform {
     }
 }
 
-#[cfg(any(not(target_os = "ios"), test))]
+#[cfg(all(target_os = "android", not(test)))]
+mod platform {
+    //! Android's Vibrator service via JNI. Needs `engine_android_init` and the app's VIBRATE
+    //! permission; without either, haptics are silently skipped.
+    use super::Tap;
+    use jni::objects::{JObject, JValue};
+    use jni::strings::JNIString;
+    use jni::sys::jobject;
+    use jni::{Env, JavaVM, jni_sig};
+
+    /// Runs `f` with the Vibrator service. Java exceptions are cleared, never left pending.
+    fn with_vibrator<R>(f: impl for<'j> FnOnce(&mut Env<'j>, &JObject<'j>) -> jni::errors::Result<R>) -> Option<R> {
+        if !crate::android::is_initialized() {
+            return None;
+        }
+        let ctx = ndk_context::android_context();
+        // SAFETY: `ctx` was initialized from the process JavaVM and a global Context reference.
+        let vm = unsafe { JavaVM::from_raw(ctx.vm().cast()) };
+        vm.attach_current_thread(|env: &mut Env<'_>| -> jni::errors::Result<Option<R>> {
+            let result = (|| {
+                // SAFETY: a global reference that lives for the whole process.
+                let context = unsafe { JObject::from_raw(env, ctx.context() as jobject) };
+                let name = env.new_string("vibrator")?;
+                let vibrator = env
+                    .call_method(
+                        &context,
+                        JNIString::new("getSystemService"),
+                        jni_sig!("(Ljava/lang/String;)Ljava/lang/Object;"),
+                        &[JValue::Object(&name)],
+                    )?
+                    .l()?;
+                if vibrator.is_null() {
+                    return Ok(None);
+                }
+                f(env, &vibrator).map(Some)
+            })();
+            if env.exception_check() {
+                env.exception_clear(); // e.g. SecurityException without the VIBRATE permission
+            }
+            Ok(result.ok().flatten())
+        })
+        .ok()
+        .flatten()
+    }
+
+    pub fn supported() -> bool {
+        with_vibrator(|env, vibrator| {
+            env.call_method(vibrator, JNIString::new("hasVibrator"), jni_sig!("()Z"), &[])?.z()
+        })
+        .unwrap_or(false)
+    }
+
+    /// A tap becomes a short pulse: intensity -> amplitude (1..255), sharpness -> shorter pulse.
+    fn pulse(t: &Tap) -> (i64, i32) {
+        let ms = (30.0 - 20.0 * t.sharpness).round() as i64;
+        let amplitude = (t.intensity * 255.0).round().clamp(1.0, 255.0) as i32;
+        (ms, amplitude)
+    }
+
+    pub fn play(taps: &[Tap]) {
+        // Waveform: alternating off/on segments, starting with the delay before the first tap.
+        let mut timings: Vec<i64> = Vec::with_capacity(taps.len() * 2);
+        let mut amplitudes: Vec<i32> = Vec::with_capacity(taps.len() * 2);
+        let mut now_ms = 0i64;
+        let mut sorted = taps.to_vec();
+        sorted.sort_by(|a, b| a.time.total_cmp(&b.time));
+        for t in &sorted {
+            let start = (t.time * 1000.0).round() as i64;
+            let (ms, amplitude) = pulse(t);
+            timings.push((start - now_ms).max(0));
+            amplitudes.push(0);
+            timings.push(ms);
+            amplitudes.push(amplitude);
+            now_ms = start.max(now_ms) + ms;
+        }
+        with_vibrator(|env, vibrator| {
+            let effect_class = env.find_class(JNIString::new("android/os/VibrationEffect"))?;
+            let effect = if let [t] = sorted.as_slice() {
+                let (ms, amplitude) = pulse(t);
+                env.call_static_method(
+                    &effect_class,
+                    JNIString::new("createOneShot"),
+                    jni_sig!("(JI)Landroid/os/VibrationEffect;"),
+                    &[JValue::Long(ms), JValue::Int(amplitude)],
+                )?
+                .l()?
+            } else {
+                let timing_array = env.new_long_array(timings.len())?;
+                timing_array.set_region(env, 0, &timings)?;
+                let amplitude_array = env.new_int_array(amplitudes.len())?;
+                amplitude_array.set_region(env, 0, &amplitudes)?;
+                env.call_static_method(
+                    &effect_class,
+                    JNIString::new("createWaveform"),
+                    jni_sig!("([J[II)Landroid/os/VibrationEffect;"),
+                    &[JValue::Object(&timing_array), JValue::Object(&amplitude_array), JValue::Int(-1)],
+                )?
+                .l()?
+            };
+            env.call_method(
+                vibrator,
+                JNIString::new("vibrate"),
+                jni_sig!("(Landroid/os/VibrationEffect;)V"),
+                &[JValue::Object(&effect)],
+            )?;
+            Ok(())
+        });
+    }
+}
+
+#[cfg(any(not(any(target_os = "ios", target_os = "android")), test))]
 mod platform {
     use super::Tap;
 

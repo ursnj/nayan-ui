@@ -7,5 +7,7 @@
 //! - `world.rs` worlds, entities, physics, impact feedback
 //! - `media.rs` audio and haptics (global)
 
+#[cfg(target_os = "android")]
+pub mod android;
 pub mod media;
 pub mod world;
