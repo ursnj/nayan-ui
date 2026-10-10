@@ -15,7 +15,13 @@ import {
   engineShapesCode,
   engineStatsCode,
 } from "@/services/GameEngineCodeBlocks";
-import { cameraAttributes, gameViewAttributes } from "@/services/GameEngineData";
+import {
+  cameraAttributes,
+  gameStatsAttributes,
+  gameViewAttributes,
+  lightAttributes,
+  shapeAttributes,
+} from "@/services/GameEngineData";
 
 const EngineRendering = () => (
   <Sidebar title="Rendering">
@@ -30,7 +36,7 @@ const EngineRendering = () => (
       <Code code={engineCameraCode} filename="Game.tsx" />
     </SubHeader>
 
-    <Attributes title="Camera fields" data={cameraAttributes} />
+    <Attributes title="Camera fields" data={cameraAttributes} unit="field" />
 
     <SubHeader
       title="Orthographic camera"
@@ -58,7 +64,9 @@ const EngineRendering = () => (
       <Code code={engineLightCode} filename="Game.tsx" />
     </SubHeader>
 
-    <SubHeader title="Shapes and colors" description="Built-in shapes are strings, each 1 unit across before scaling.">
+    <Attributes title="Light fields" data={lightAttributes} unit="field" />
+
+    <SubHeader title="Shapes and colors" description="Built-in shapes are strings, about 1 unit across before scaling.">
       <Code code={engineShapesCode} filename="shapes.ts" />
       <ul className={`mt-4 space-y-2 ${BODY}`}>
         <li>
@@ -85,9 +93,13 @@ const EngineRendering = () => (
       </ul>
     </SubHeader>
 
+    <Attributes title="Built-in shapes" data={shapeAttributes} headers={{ name: "Shape", type: "Size at scale 1", default: "Collider" }} unit="shape" />
+
     <SubHeader title="Stats and errors" description="Show frame rate and game-loop time while you build; catch GPU problems.">
       <Code code={engineStatsCode} filename="Game.tsx" />
     </SubHeader>
+
+    <Attributes title="GameStats" data={gameStatsAttributes} headers={{ default: "" }} unit="field" />
 
     <SubHeader title="Performance tips">
       <ul className={`space-y-2 ${BODY}`}>

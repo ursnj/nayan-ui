@@ -7,7 +7,11 @@ import Code from "@/components/helpers/Code";
 import Sidebar from "@/components/helpers/Sidebar";
 import SubHeader from "@/components/helpers/SubHeader";
 import { engineModelLoadCode, engineModelMetroCode, engineModelScreenCode } from "@/services/GameEngineCodeBlocks";
-import { modelOptionsAttributes } from "@/services/GameEngineData";
+import {
+  assetSourceAttributes,
+  modelAttributes,
+  modelOptionsAttributes,
+} from "@/services/GameEngineData";
 
 const EngineModels = () => (
   <Sidebar title="3D Models">
@@ -25,6 +29,10 @@ const EngineModels = () => (
     </SubHeader>
 
     <Attributes title="loadModel options" data={modelOptionsAttributes} />
+
+    <Attributes title="Model" data={modelAttributes} headers={{ default: "" }} unit="field" />
+
+    <Attributes title="Asset sources" data={assetSourceAttributes} headers={{ name: "Source", default: "" }} unit="source" />
 
     <SubHeader title="In a screen" description="Load the model, then build the world once it's ready.">
       <Code code={engineModelScreenCode} filename="Forest.tsx" />

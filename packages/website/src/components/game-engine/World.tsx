@@ -16,7 +16,14 @@ import {
   engineSpawnCode,
   engineTransformCode,
 } from "@/services/GameEngineCodeBlocks";
-import { entityOptionsAttributes } from "@/services/GameEngineData";
+import {
+  bobAttributes,
+  entityOptionsAttributes,
+  followAttributes,
+  nullableOptionsAttributes,
+  worldMethodsAttributes,
+  worldPropertiesAttributes,
+} from "@/services/GameEngineData";
 
 const EngineWorld = () => (
   <Sidebar title="World & Entities">
@@ -31,12 +38,18 @@ const EngineWorld = () => (
 
     <Attributes title="Entity options" data={entityOptionsAttributes} />
 
+    <Attributes title="Bob options" data={bobAttributes} />
+
+    <Attributes title="Follow options" data={followAttributes} />
+
     <SubHeader
       title="Change entities"
       description="world.set takes the same options as spawn. Only what you pass changes, and null removes something. Handles of despawned entities are safely ignored."
     >
       <Code code={engineTransformCode} filename="world.ts" />
     </SubHeader>
+
+    <Attributes title="Removing with null" data={nullableOptionsAttributes} headers={{ name: "Option", type: "In", default: "" }} unit="option" />
 
     <SubHeader
       title="Lifetimes"
@@ -83,6 +96,10 @@ const EngineWorld = () => (
     <SubHeader title="Read state">
       <Code code={engineQueryCode} filename="world.ts" />
     </SubHeader>
+
+    <Attributes title="World methods" data={worldMethodsAttributes} headers={{ type: "Returns", default: "" }} unit="method" />
+
+    <Attributes title="World properties" data={worldPropertiesAttributes} unit="property" />
 
     <SubHeader title="Clean up" description="A world owns native memory. Dispose it when the screen closes.">
       <Code code={engineDisposeCode} filename="Game.tsx" />

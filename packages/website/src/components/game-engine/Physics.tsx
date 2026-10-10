@@ -16,7 +16,12 @@ import {
   enginePlanarCode,
   engineRaycastCode,
 } from "@/services/GameEngineCodeBlocks";
-import { physicsOptionsAttributes } from "@/services/GameEngineData";
+import {
+  colliderDefaultsAttributes,
+  collisionInfoAttributes,
+  physicsOptionsAttributes,
+  raycastHitAttributes,
+} from "@/services/GameEngineData";
 
 const EnginePhysics = () => (
   <Sidebar title="Physics">
@@ -27,6 +32,8 @@ const EnginePhysics = () => (
     </SubHeader>
 
     <Attributes title="Physics options" data={physicsOptionsAttributes} />
+
+    <Attributes title="Default collider by mesh" data={colliderDefaultsAttributes} headers={{ name: "Mesh", type: "Collider", default: "Sized from" }} unit="mesh" />
 
     <SubHeader
       title="Collider shapes"
@@ -70,6 +77,8 @@ const EnginePhysics = () => (
       <Code code={engineCollisionsCode} filename="Game.tsx" />
     </SubHeader>
 
+    <Attributes title="CollisionInfo" data={collisionInfoAttributes} headers={{ default: "" }} unit="field" />
+
     <SubHeader title="Moving bodies">
       <Code code={engineMovementCode} filename="player.ts" />
     </SubHeader>
@@ -77,6 +86,8 @@ const EnginePhysics = () => (
     <SubHeader title="Raycasts" description="Find the first solid thing along a line: ground checks, line of sight, aiming.">
       <Code code={engineRaycastCode} filename="player.ts" />
     </SubHeader>
+
+    <Attributes title="RaycastHit" data={raycastHitAttributes} headers={{ default: "" }} unit="field" />
 
     <SubHeader title="Change physics later">
       <Code code={engineChangePhysicsCode} filename="bird.ts" />
