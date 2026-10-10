@@ -12,6 +12,7 @@ const NEXT = [
   { href: "/game-engine/world", label: "World & entities", text: "spawn, move and remove objects" },
   { href: "/game-engine/physics", label: "Physics", text: "bodies, collisions and raycasts" },
   { href: "/game-engine/rendering", label: "Rendering", text: "camera, light, shadows and fog" },
+  { href: "/game-engine/models", label: "3D models", text: "load glTF models" },
   { href: "/game-engine/audio-haptics", label: "Audio & haptics", text: "sound effects, music and vibration" },
   { href: "/game-engine/input", label: "Input", text: "joystick and touch controls" },
 ];

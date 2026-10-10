@@ -8,10 +8,17 @@ export const engineInstallBunCode = `bun add @nayan-ui/engine react-native-webgp
 
 export const engineExpoBuildCode = `# Native code: build a development client (Expo Go can't load it)
 npx expo prebuild
-npx expo run:ios`;
+npx expo run:ios      # or: npx expo run:android`;
 
 export const engineBareIosCode = `cd ios && pod install && cd ..
-npx react-native run-ios`;
+npx react-native run-ios      # or: npx react-native run-android`;
+
+export const engineAndroidConfigCode = `{
+  "expo": {
+    "android": { "permissions": ["android.permission.VIBRATE"] },
+    "plugins": [["expo-build-properties", { "android": { "minSdkVersion": 26 } }]]
+  }
+}`;
 
 export const engineCheckCode = `import { isRustAvailable } from "@nayan-ui/engine";
 
@@ -258,6 +265,49 @@ export const engineStatsCode = `<GameView
   onError={(error) => console.error(error)}
 />`;
 
+// ── Models ───────────────────────────────────────────────────────────────
+
+export const engineModelMetroCode = `// metro.config.js: let require() bundle model files
+const { getDefaultConfig } = require("expo/metro-config");
+
+const config = getDefaultConfig(__dirname);
+config.resolver.assetExts.push("glb", "gltf");
+
+module.exports = config;`;
+
+export const engineModelLoadCode = `import { loadModel, World } from "@nayan-ui/engine";
+
+// Loads and parses once; later calls with the same file return the same model.
+const tree = await loadModel(require("./assets/tree.glb"), { fit: 2 }); // largest side = 2 units
+
+world.spawn({
+  mesh: tree.mesh,
+  position: [4, tree.size[1] / 2, 0], // size is the model's bounding box at scale 1
+  scale: 1.5,
+  physics: "fixed",                   // collider = bounding box * scale
+});`;
+
+export const engineModelScreenCode = `function Forest() {
+  const [tree, setTree] = useState<Model | null>(null);
+
+  useEffect(() => {
+    loadModel(require("./assets/tree.glb"), { fit: 2 }).then(setTree, console.error);
+  }, []);
+
+  const world = useMemo(() => {
+    if (!tree) return null;
+    const world = new World(200);
+    world.spawn({ mesh: Mesh.Plane, scale: [60, 1, 60], color: [0.35, 0.55, 0.3], physics: "fixed" });
+    for (let i = 0; i < 100; i++) {
+      world.spawn({ mesh: tree.mesh, position: [(i % 10) * 4 - 18, 1, Math.floor(i / 10) * 4 - 18] });
+    }
+    return world;
+  }, [tree]);
+  useEffect(() => () => world?.dispose(), [world]);
+
+  return world ? <GameView source={world} /> : <Text>Loading…</Text>;
+}`;
+
 // ── Audio & haptics ──────────────────────────────────────────────────────
 
 export const engineSoundsCode = `import { audio } from "@nayan-ui/engine";
@@ -362,8 +412,8 @@ export const engineButtonsCode = `import { Pressable, StyleSheet, Text } from "r
 export const engineExportsCode = `import {
   // World
   World, isRustAvailable, Mesh,
-  // Rendering
-  GameView,
+  // Rendering and models
+  GameView, loadModel,
   // Sound and haptics
   audio, haptics, impactStrength, SoundBank,
   // Input
@@ -372,7 +422,7 @@ export const engineExportsCode = `import {
 
 import type {
   Entity, EntityOptions, PhysicsOptions, BodyType, ImpactFeedback, CollisionInfo, RaycastHit, Bounds,
-  Color, Quat, Vec3, MeshKind, Camera, Light, RenderSource, GameStats,
+  Color, Quat, Vec3, MeshKind, Model, ModelOptions, Camera, Light, RenderSource, GameStats,
   Sound, Voice, PlayOptions, SoundSource, HapticTap, JoystickState,
 } from "@nayan-ui/engine";`;
 
@@ -426,6 +476,10 @@ type Color = readonly [r, g, b] | readonly [r, g, b, a];  // 0..1
 type Entity = number;  // opaque handle
 
 const Mesh = { Cube: 0, Sphere: 1, Plane: 2 };
+type MeshKind = number;  // a Mesh value or a loaded model's mesh
+
+function loadModel(source: number | string, options?: { center?: boolean; fit?: number }): Promise<Model>;
+type Model = { mesh: MeshKind; size: Vec3 };  // size at scale 1
 
 type Camera = { eye: [x, y, z]; target: [x, y, z]; fov: number /* radians */ };
 

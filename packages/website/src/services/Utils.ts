@@ -118,6 +118,7 @@ import {
   Monitor,
   Rocket,
   Volume2,
+  Shapes,
 } from "lucide-react";
 import {
   accordionTags,
@@ -2205,6 +2206,12 @@ export const gameEngineSidebarItems = [
     description: "GameView, camera, light, shadows and fog",
     link: "/game-engine/rendering",
     icon: Monitor,
+  },
+  {
+    title: "3D Models",
+    description: "Load glTF models and spawn them as entities",
+    link: "/game-engine/models",
+    icon: Shapes,
   },
   {
     title: "Audio & Haptics",

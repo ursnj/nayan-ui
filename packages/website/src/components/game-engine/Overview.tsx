@@ -26,8 +26,8 @@ const FEATURES = [
   {
     icon: Monitor,
     title: "Fast 3D rendering",
-    body: "WebGPU with soft shadows, fog and a sky color. Every object of the same shape is drawn in one call.",
-    chips: ["shadows", "fog", "4x MSAA"],
+    body: "WebGPU with soft shadows, fog and a sky color. Load glTF models; every object of the same shape is drawn in one call.",
+    chips: ["glTF", "shadows", "fog", "4x MSAA"],
   },
   {
     icon: Volume2,
@@ -85,7 +85,7 @@ const EngineOverview = () => (
         </>
       }
       facts={[
-        { value: "iOS", label: "Android coming soon" },
+        { value: "iOS + Android", label: "Native Rust core" },
         { value: "60 Hz", label: "Fixed-step simulation" },
         { value: "Rapier", label: "Physics engine" },
         { value: "~7.5 MB", label: "Added to your app" },
@@ -120,9 +120,9 @@ const EngineOverview = () => (
 
     <SubHeader title="Good to know" description="Current status and limits, so there are no surprises.">
       <ul className={`space-y-2 ${BODY}`}>
-        <li>• Runs on iOS today. Android support is in progress.</li>
+        <li>• Runs on iOS and Android (8.0 or newer).</li>
         <li>• Needs a development build: Expo Go can&apos;t load native code.</li>
-        <li>• Shapes are cubes, spheres and planes with solid colors. Models and textures are planned.</li>
+        <li>• Draws cubes, spheres, planes and glTF models with solid or material colors. Textures and animated models are planned.</li>
         <li>• Sounds are WAV files.</li>
       </ul>
       <p className={`mt-4 ${BODY}`}>

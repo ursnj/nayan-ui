@@ -2,7 +2,7 @@
 // Keep them in sync with packages/engine/src.
 
 export const entityOptionsAttributes = [
-  { name: "mesh", type: "Mesh.Cube | Mesh.Sphere | Mesh.Plane", default: "Mesh.Cube", details: "The shape to draw." },
+  { name: "mesh", type: "Mesh.Cube | Mesh.Sphere | Mesh.Plane | model.mesh", default: "Mesh.Cube", details: "The shape to draw: a built-in shape or a loaded model." },
   { name: "position", type: "[x, y, z]", default: "[0, 0, 0]", details: "Where it is. Relative to the parent when attached." },
   { name: "rotation", type: "[x, y, z, w]", default: "none", details: "A quaternion." },
   { name: "scale", type: "number | [x, y, z]", default: "1", details: "Size. Also sizes the default collider." },
@@ -34,6 +34,11 @@ export const physicsOptionsAttributes = [
   { name: "gravityScale", type: "number", default: "1", details: "Multiplier on world gravity. 0 floats." },
   { name: "upright", type: "boolean", default: "false", details: "Stays upright: never tumbles." },
   { name: "ccd", type: "boolean", default: "false", details: "Stops fast, small bodies passing through walls." },
+];
+
+export const modelOptionsAttributes = [
+  { name: "center", type: "boolean", default: "true", details: "Move the model's middle to the origin, so position is its center." },
+  { name: "fit", type: "number", default: "keep size", details: "Scale it so its largest side is this long, e.g. 1 to match the built-in shapes." },
 ];
 
 export const gameViewAttributes = [
