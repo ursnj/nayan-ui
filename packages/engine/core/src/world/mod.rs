@@ -178,7 +178,11 @@ impl World {
         let slot = match self.free.pop() {
             Some(s) => s,
             None => {
-                self.slots.push(Slot { dense: 0, generation: 0, alive: false });
+                self.slots.push(Slot {
+                    dense: 0,
+                    generation: 0,
+                    alive: false,
+                });
                 (self.slots.len() - 1) as u32
             }
         };
@@ -198,7 +202,10 @@ impl World {
         self.velocity.push(Vec3::ZERO);
         self.angular_velocity.push(Vec3::ZERO);
         self.oscillation.push(Oscillation::default());
-        self.follow.push(Follow { target: NO_ENTITY, speed: 0.0 });
+        self.follow.push(Follow {
+            target: NO_ENTITY,
+            speed: 0.0,
+        });
         self.body.push(None);
         self.lifetime.push(f32::INFINITY);
         self.parent.push(NO_ENTITY);
@@ -258,7 +265,11 @@ impl World {
     /// Handy for particles, projectiles and effects. Non-positive or non-finite clears it.
     pub fn set_lifetime(&mut self, e: Entity, seconds: f32) {
         if let Some(i) = self.dense(e) {
-            self.lifetime[i] = if seconds.is_finite() && seconds > 0.0 { seconds } else { f32::INFINITY };
+            self.lifetime[i] = if seconds.is_finite() && seconds > 0.0 {
+                seconds
+            } else {
+                f32::INFINITY
+            };
         }
     }
 
@@ -392,7 +403,11 @@ impl World {
             return;
         }
         if let Some(i) = self.dense(e) {
-            self.oscillation[i] = Oscillation { amplitude, frequency, phase };
+            self.oscillation[i] = Oscillation {
+                amplitude,
+                frequency,
+                phase,
+            };
         }
     }
 
@@ -401,7 +416,10 @@ impl World {
     pub fn set_follow(&mut self, e: Entity, target: Entity, speed: f32) {
         if let Some(i) = self.dense(e) {
             let speed = if speed.is_finite() { speed.max(0.0) } else { 0.0 };
-            self.follow[i] = Follow { target: target.0, speed };
+            self.follow[i] = Follow {
+                target: target.0,
+                speed,
+            };
         }
     }
 

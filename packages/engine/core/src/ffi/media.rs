@@ -59,7 +59,11 @@ pub unsafe extern "C" fn engine_haptics_play(taps: *const f32, count: u32, throt
         .as_chunks::<3>()
         .0
         .iter()
-        .map(|&[time, intensity, sharpness]| haptics::Tap { time, intensity, sharpness })
+        .map(|&[time, intensity, sharpness]| haptics::Tap {
+            time,
+            intensity,
+            sharpness,
+        })
         .collect();
     haptics::play(&taps, throttle != 0);
 }

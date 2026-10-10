@@ -30,8 +30,8 @@
     "cpp",
     "ios",
     "*.podspec",
-    "rust/include",
-    "rust/build",
+    "core/include",
+    "core/build",
     "!**/.*"
   ],
   "sideEffects": false,
@@ -53,9 +53,9 @@
     "clean": "del-cli lib",
     "build": "bob build",
     "typecheck": "tsc",
-    "rust:test": "cargo test --manifest-path rust/Cargo.toml",
-    "rust:bench": "cargo run --release --example bench --manifest-path rust/Cargo.toml",
-    "rust:build:ios": "rust/scripts/build-ios.sh"
+    "core:test": "cargo test --manifest-path core/Cargo.toml",
+    "core:bench": "cargo run --release --example bench --manifest-path core/Cargo.toml",
+    "core:build:ios": "core/scripts/build-ios.sh"
   },
   "dependencies": {
     "wgpu-matrix": "^3.4.0"

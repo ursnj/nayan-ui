@@ -123,7 +123,9 @@ impl World {
         let Some(d) = desc else { return true };
 
         let builder = match d.kind {
-            BodyKind::Dynamic => RigidBodyBuilder::dynamic().linvel(self.velocity[i]).angvel(self.angular_velocity[i]),
+            BodyKind::Dynamic => RigidBodyBuilder::dynamic()
+                .linvel(self.velocity[i])
+                .angvel(self.angular_velocity[i]),
             BodyKind::Kinematic => RigidBodyBuilder::kinematic_position_based(),
             BodyKind::Fixed => RigidBodyBuilder::fixed(),
         };

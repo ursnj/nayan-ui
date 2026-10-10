@@ -18,7 +18,11 @@ pub fn play(taps: &[Tap], throttle: bool) {
     let taps: Vec<Tap> = taps
         .iter()
         .filter(|t| t.time.is_finite() && t.intensity.is_finite() && t.sharpness.is_finite())
-        .map(|t| Tap { time: t.time.max(0.0), intensity: t.intensity.clamp(0.0, 1.0), sharpness: t.sharpness.clamp(0.0, 1.0) })
+        .map(|t| Tap {
+            time: t.time.max(0.0),
+            intensity: t.intensity.clamp(0.0, 1.0),
+            sharpness: t.sharpness.clamp(0.0, 1.0),
+        })
         .filter(|t| t.intensity > 0.0)
         .collect();
     if taps.is_empty() || (throttle && taps.len() == 1 && !gate::allow(MIN_IMPACT_INTERVAL)) {
@@ -28,7 +32,14 @@ pub fn play(taps: &[Tap], throttle: bool) {
 }
 
 pub fn impact(intensity: f32, sharpness: f32) {
-    play(&[Tap { time: 0.0, intensity, sharpness }], true);
+    play(
+        &[Tap {
+            time: 0.0,
+            intensity,
+            sharpness,
+        }],
+        true,
+    );
 }
 
 /// True if the device has a haptic actuator the engine can drive.
@@ -47,7 +58,10 @@ mod gate {
     pub fn allow(min_interval: f32) -> bool {
         LAST.with(|last| {
             let now = Instant::now();
-            if last.get().is_some_and(|t| now.duration_since(t).as_secs_f32() < min_interval) {
+            if last
+                .get()
+                .is_some_and(|t| now.duration_since(t).as_secs_f32() < min_interval)
+            {
                 return false;
             }
             last.set(Some(now));
@@ -62,9 +76,9 @@ mod platform {
     use objc2::AnyThread;
     use objc2::rc::Retained;
     use objc2_core_haptics::{
-        CHHapticDeviceCapability, CHHapticEngine, CHHapticEvent, CHHapticEventParameter, CHHapticEventParameterIDHapticIntensity,
-        CHHapticEventParameterIDHapticSharpness, CHHapticEventTypeHapticTransient, CHHapticPattern,
-        CHHapticPatternPlayer, CHHapticTimeImmediate,
+        CHHapticDeviceCapability, CHHapticEngine, CHHapticEvent, CHHapticEventParameter,
+        CHHapticEventParameterIDHapticIntensity, CHHapticEventParameterIDHapticSharpness,
+        CHHapticEventTypeHapticTransient, CHHapticPattern, CHHapticPatternPlayer, CHHapticTimeImmediate,
     };
     use objc2_foundation::NSArray;
     use std::cell::RefCell;
@@ -166,8 +180,29 @@ mod tests {
         assert!(gate::allow(10.0));
         assert!(!gate::allow(10.0), "second call inside the interval is dropped");
         // Patterns are never throttled (exercised through `play`, which is a no-op off-device).
-        play(&[Tap { time: 0.0, intensity: 1.0, sharpness: 0.5 }, Tap { time: 0.1, intensity: 0.5, sharpness: 0.5 }], true);
-        play(&[Tap { time: f32::NAN, intensity: 1.0, sharpness: 0.5 }], false);
+        play(
+            &[
+                Tap {
+                    time: 0.0,
+                    intensity: 1.0,
+                    sharpness: 0.5,
+                },
+                Tap {
+                    time: 0.1,
+                    intensity: 0.5,
+                    sharpness: 0.5,
+                },
+            ],
+            true,
+        );
+        play(
+            &[Tap {
+                time: f32::NAN,
+                intensity: 1.0,
+                sharpness: 0.5,
+            }],
+            false,
+        );
         assert!(!supported(), "no actuator in tests");
     }
 }
