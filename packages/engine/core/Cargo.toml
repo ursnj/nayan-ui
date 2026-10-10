@@ -11,6 +11,7 @@ crate-type = ["staticlib", "rlib"]
 
 [dependencies]
 glam = "0.30"
+rapier3d = "0.36.1"
 
 [profile.release]
 opt-level = 3

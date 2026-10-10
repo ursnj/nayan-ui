@@ -1,68 +1,51 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { GameView, isRustAvailable, RustSimulation, type GameStats, type Simulation } from "@nayan-ui/engine";
-import { JsSimulation } from "./JsSimulation";
+import { isRustAvailable } from "@nayan-ui/engine";
+import { Benchmark } from "./Benchmark";
+import { OrbRush } from "./OrbRush";
 
-const COUNT = 10_000;
-type Backend = "js" | "rust";
-
-// Same scene as JsSimulation: grid of cubes, each spinning 1 rad/s and bobbing, phase-offset by index.
-function createRustSimulation(count: number) {
-  const sim = new RustSimulation(count);
-  const side = Math.ceil(Math.sqrt(count));
-  const spacing = 1.6;
-  for (let i = 0; i < count; i++) {
-    const phase = (i % 97) * 0.1;
-    sim.spawn([((i % side) - side / 2) * spacing, 0, (Math.floor(i / side) - side / 2) * spacing], {
-      rotation: [0, Math.sin(phase / 2), 0, Math.cos(phase / 2)],
-      angularVelocity: [0, 1, 0],
-      oscillation: { amplitude: [0, 0.8, 0], frequency: 1.5, phase: phase * 1.5 },
-    });
-  }
-  return sim;
-}
+type Screen = "game" | "benchmark";
 
 export default function App() {
-  const [backend, setBackend] = useState<Backend>(isRustAvailable ? "rust" : "js");
-  const [stats, setStats] = useState<GameStats>({ fps: 0, updateMs: 0 });
+  const [screen, setScreen] = useState<Screen>("game");
 
-  const simulation = useMemo<Simulation>(
-    () => (backend === "rust" ? createRustSimulation(COUNT) : new JsSimulation(COUNT)),
-    [backend],
-  );
-  useEffect(() => () => (simulation instanceof RustSimulation ? simulation.dispose() : undefined), [simulation]);
+  if (!isRustAvailable) {
+    return (
+      <View style={styles.missing}>
+        <Text style={styles.missingText}>
+          The native Rust core isn't linked into this build (Expo Go, or a platform without it yet).
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.root}>
-      <GameView key={backend} simulation={simulation} onStats={setStats} />
-      <View style={styles.hud} pointerEvents="box-none">
-        <Text style={styles.text}>
-          {COUNT.toLocaleString()} cubes · {stats.fps.toFixed(0)} fps
-        </Text>
-        <Text style={styles.text}>update() {stats.updateMs.toFixed(2)} ms</Text>
-        <View style={styles.row}>
-          {(["js", "rust"] as const).map((b) => (
-            <Pressable
-              key={b}
-              disabled={b === "rust" && !isRustAvailable}
-              onPress={() => setBackend(b)}
-              style={[styles.button, backend === b && styles.active, b === "rust" && !isRustAvailable && styles.off]}
-            >
-              <Text style={styles.text}>{b === "js" ? "JS" : "Rust"}</Text>
-            </Pressable>
-          ))}
-        </View>
-      </View>
+      {screen === "game" ? <OrbRush /> : <Benchmark />}
+      <Pressable
+        style={styles.switch}
+        onPress={() => setScreen(screen === "game" ? "benchmark" : "game")}
+      >
+        <Text style={styles.switchText}>{screen === "game" ? "Benchmark" : "Game"}</Text>
+      </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#0d0f17" },
-  hud: { position: "absolute", top: 56, left: 16, gap: 4 },
-  text: { color: "#fff", fontVariant: ["tabular-nums"] },
-  row: { flexDirection: "row", gap: 8, marginTop: 6 },
-  button: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: "#fff5" },
-  active: { backgroundColor: "#3b82f6" },
-  off: { opacity: 0.35 },
+  root: { flex: 1, backgroundColor: "#0a0c17" },
+  switch: {
+    position: "absolute",
+    top: 60,
+    right: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#fff5",
+    backgroundColor: "#0008",
+  },
+  switchText: { color: "#fff", fontSize: 12 },
+  missing: { flex: 1, backgroundColor: "#0a0c17", alignItems: "center", justifyContent: "center", padding: 32 },
+  missingText: { color: "#fff", textAlign: "center" },
 });
