@@ -76,6 +76,11 @@ export type SpawnOptions = {
   follow?: { target: Entity; speed: number };
   /** Despawn automatically after this many seconds (shrinks away at the end). */
   lifetime?: number;
+  /**
+   * Attach to another entity: `position`/`rotation` become local to it, the child follows the
+   * parent's interpolated pose exactly and despawns with it. Visual only (no body/collider).
+   */
+  parent?: Entity;
 };
 
 export type CollisionInfo = {
@@ -161,7 +166,11 @@ export class World implements RenderSource {
       collider,
       follow,
       lifetime,
+      parent,
     } = options;
+    if (parent !== undefined && (body || collider)) {
+      throw new Error("World: attached entities can't have a body or collider");
+    }
     const s: Vec3 = typeof scale === "number" ? [scale, scale, scale] : scale;
     const e = n.spawn(this.id, mesh, ...position, ...s, color[0], color[1], color[2], color[3] ?? 1);
     if (e < 0) throw new Error(`World: cannot spawn (capacity ${this.capacity} reached, or invalid mesh/position)`);
@@ -179,6 +188,10 @@ export class World implements RenderSource {
     }
     if (follow) n.setFollow(this.id, e, follow.target, follow.speed);
     if (lifetime) n.setLifetime(this.id, e, lifetime);
+    if (parent !== undefined && !n.setParent(this.id, e, parent)) {
+      n.despawn(this.id, e);
+      throw new Error("World: cannot attach (parent missing, parent is itself attached, or nesting too deep)");
+    }
     return entity;
   }
 
@@ -187,9 +200,17 @@ export class World implements RenderSource {
     return this.native.despawn(this.id, e);
   }
 
+  /**
+   * Attach to `parent` (null detaches; the child then keeps its local values as world values).
+   * One level only, no bodies. Returns false if rejected.
+   */
+  setParent(e: Entity, parent: Entity | null): boolean {
+    return this.native.setParent(this.id, e, parent ?? -1);
+  }
+
   // ── Transform & appearance ───────────────────────────────────────────
 
-  /** Teleports the entity (and its body). */
+  /** Teleports the entity (and its body). For attached entities this is the local offset. */
   setPosition(e: Entity, [x, y, z]: Vec3) {
     this.native.setPosition(this.id, e, x, y, z);
   }
@@ -226,6 +247,11 @@ export class World implements RenderSource {
   /** Instant change in momentum (dynamic bodies only). */
   applyImpulse(e: Entity, [x, y, z]: Vec3) {
     this.native.applyImpulse(this.id, e, x, y, z);
+  }
+
+  /** Visual bob: rendered position += amplitude * sin(phase). Pass a zero amplitude to stop. */
+  setOscillation(e: Entity, { amplitude, frequency, phase = 0 }: { amplitude: Vec3; frequency: number; phase?: number }) {
+    this.native.setOscillation(this.id, e, ...amplitude, frequency, phase);
   }
 
   setFollow(e: Entity, target: Entity, speed: number) {

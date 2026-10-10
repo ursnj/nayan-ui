@@ -7,6 +7,8 @@ struct Globals {
   lightViewProj: mat4x4f,
   light: vec4f,  // xyz = direction towards the light (normalized), w = ambient
   shadow: vec4f, // y = enabled (0/1), z = depth bias
+  camera: vec4f, // xyz = eye position
+  fog: vec4f,    // rgb = fog color (the background), a = density (0 = off)
 };
 
 @group(0) @binding(0) var<uniform> globals: Globals;
@@ -73,6 +75,9 @@ fn fs(in: VSOut) -> @location(0) vec4f {
   let diffuse = max(dot(n, globals.light.xyz), 0.0) * shadowFactor(in.world);
   let hemisphere = mix(0.6, 1.0, n.y * 0.5 + 0.5); // sky/ground tint so faces away from the light aren't flat
   let lit = globals.light.w * hemisphere + (1.0 - globals.light.w) * diffuse;
-  return vec4f(in.color * lit, 1.0);
+  // Exponential-squared distance fog towards the background color: depth for far scenery.
+  let d = distance(in.world, globals.camera.xyz) * globals.fog.a;
+  let fog = 1.0 - exp(-d * d);
+  return vec4f(mix(in.color * lit, globals.fog.rgb, fog), 1.0);
 }
 `;

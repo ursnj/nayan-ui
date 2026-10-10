@@ -118,6 +118,13 @@ pub unsafe extern "C" fn engine_world_set_follow(w: *mut World, id: u32, target:
     }
 }
 
+/// Attaches `id` to `parent` (`UINT32_MAX` detaches). Returns 1 on success.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_set_parent(w: *mut World, id: u32, parent: u32) -> i32 {
+    let parent = (parent != NO_ENTITY).then_some(Entity(parent));
+    unsafe { world(w) }.is_some_and(|w| w.set_parent(Entity(id), parent)) as i32
+}
+
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_world_set_lifetime(w: *mut World, id: u32, seconds: f32) {
     if let Some(w) = unsafe { world(w) } {

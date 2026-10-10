@@ -4,12 +4,19 @@ import { createMeshes } from "./meshes";
 import { SHADER } from "./shader";
 import type { Camera, Light, RenderSource } from "./types";
 
+/** Clear color and fog. Fog fades geometry towards `background` with distance. */
+export type Environment = {
+  background: readonly [number, number, number];
+  /** Fog density (roughly 1 / distance at which things are mostly fogged). 0 = off. */
+  fog: number;
+};
+
 const DEPTH_FORMAT: GPUTextureFormat = "depth24plus";
 const SHADOW_FORMAT: GPUTextureFormat = "depth32float";
 const SHADOW_SIZE = 2048;
 const SAMPLES = 4;
 const MESH_COUNT = 3;
-const GLOBALS_FLOATS = 16 + 16 + 4 + 4;
+const GLOBALS_FLOATS = 16 + 16 + 4 + 4 + 4 + 4;
 
 export const defaultCamera = (): Camera => ({ eye: [0, 40, 60], target: [0, 0, 0], fov: Math.PI / 3 });
 export const defaultLight = (): Light => ({ direction: [0.4, 0.8, 0.5], ambient: 0.35 });
@@ -164,7 +171,7 @@ export class Renderer {
     mat4.multiply(this.lightProj, this.lightView, this.lightViewProj);
   }
 
-  render(width: number, height: number, camera: Camera, light: Light) {
+  render(width: number, height: number, camera: Camera, light: Light, environment: Environment) {
     this.resize(width, height);
     if (camera.fov !== this.fov) {
       mat4.perspective(camera.fov, width / height, 0.1, 500, this.proj);
@@ -181,6 +188,9 @@ export class Renderer {
     g.set(this.lightViewProj, 16);
     g.set([direction[0]!, direction[1]!, direction[2]!, light.ambient], 32);
     g.set([0, shadows ? 1 : 0, 0.0005, 0], 36);
+    const [br, bg, bb] = environment.background;
+    g.set([camera.eye[0], camera.eye[1], camera.eye[2], 0], 40);
+    g.set([br, bg, bb, Math.max(0, environment.fog)], 44);
 
     const queue = this.device.queue;
     const used = this.source.count;
@@ -212,7 +222,7 @@ export class Renderer {
         {
           view: this.msaa!.createView(),
           resolveTarget: this.context.getCurrentTexture().createView(),
-          clearValue: [0.04, 0.05, 0.09, 1],
+          clearValue: [br, bg, bb, 1],
           loadOp: "clear",
           storeOp: "discard", // MSAA target never leaves tile memory
         },

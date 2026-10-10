@@ -47,6 +47,8 @@ export interface Spec extends TurboModule {
     phase: number,
   ): void;
   setLifetime(world: number, entity: number, seconds: number): void;
+  /** Attach to `parent` (-1 detaches). Returns false if rejected. */
+  setParent(world: number, entity: number, parent: number): boolean;
   /** Sets X/Z velocity, keeps Y. */
   setPlanarVelocity(world: number, entity: number, x: number, z: number): void;
   applyImpulse(world: number, entity: number, x: number, y: number, z: number): void;

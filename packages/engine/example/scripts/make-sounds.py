@@ -100,6 +100,52 @@ def gameover():
     return buf
 
 
+def flap():
+    """Soft wing beat: a band of noise with a quick rise and fall."""
+    n = int(0.12 * RATE)
+    out, lo, hi = [], 0.0, 0.0
+    for i in range(n):
+        t = i / RATE
+        x = random.uniform(-1, 1)
+        lo += 0.25 * (x - lo)  # low-pass ...
+        hi += 0.08 * (lo - hi)  # ... minus a slower low-pass = band-pass
+        env = math.sin(math.pi * min(1.0, t / 0.12)) ** 2
+        out.append((lo - hi) * env)
+    return out
+
+
+def point():
+    buf = []
+    mix_into(buf, note(midi(83), 0.10, soft_square, decay=0.06, volume=0.8), 0.0)   # B5
+    mix_into(buf, note(midi(90), 0.30, soft_square, decay=0.12), 0.08)              # F#6
+    return buf
+
+
+def hit():
+    n = int(0.25 * RATE)
+    out, phase = [], 0.0
+    for i in range(n):
+        t = i / RATE
+        freq = 90 + 400 * math.exp(-t / 0.015)
+        phase += freq / RATE
+        smack = random.uniform(-1, 1) * math.exp(-t / 0.008)
+        out.append(sine(phase) * math.exp(-t / 0.07) * 0.9 + smack * 0.8)
+    return out
+
+
+def die():
+    """Falling whistle."""
+    n = int(0.6 * RATE)
+    out, phase = [], 0.0
+    for i in range(n):
+        t = i / RATE
+        freq = 900 * math.exp(-t / 0.35) + 150
+        phase += freq / RATE
+        release = min(1.0, (n - i) / (0.01 * RATE))  # fade out: no click at the end
+        out.append(triangle(phase) * min(1, t / 0.02) * math.exp(-t / 0.4) * release)
+    return out
+
+
 def music():
     bpm = 120
     beat = 60 / bpm
@@ -130,3 +176,7 @@ if __name__ == "__main__":
     write("bump", bump())
     write("gameover", gameover())
     write("music", music(), peak=0.6)
+    write("flap", flap(), peak=0.6)
+    write("point", point())
+    write("hit", hit())
+    write("die", die(), peak=0.7)

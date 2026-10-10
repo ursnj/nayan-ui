@@ -26,6 +26,7 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   void setAngularVelocity(jsi::Runtime &rt, double world, double entity, double x, double y, double z);
   void setOscillation(jsi::Runtime &rt, double world, double entity, double ax, double ay, double az, double frequency, double phase);
   void setLifetime(jsi::Runtime &rt, double world, double entity, double seconds);
+  bool setParent(jsi::Runtime &rt, double world, double entity, double parent);
   void setPlanarVelocity(jsi::Runtime &rt, double world, double entity, double x, double z);
   void applyImpulse(jsi::Runtime &rt, double world, double entity, double x, double y, double z);
   void setGravity(jsi::Runtime &rt, double world, double x, double y, double z);

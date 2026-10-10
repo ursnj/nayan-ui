@@ -122,6 +122,10 @@ void NayanEngineModule::setLifetime(jsi::Runtime &, double world, double entity,
   engine_world_set_lifetime(find(world), id(entity), seconds);
 }
 
+bool NayanEngineModule::setParent(jsi::Runtime &, double world, double entity, double parent) {
+  return engine_world_set_parent(find(world), id(entity), id(parent)) != 0; // -1 -> NO_ENTITY: detach
+}
+
 void NayanEngineModule::setPlanarVelocity(jsi::Runtime &, double world, double entity, double x, double z) {
   engine_world_set_planar_velocity(find(world), id(entity), x, z);
 }

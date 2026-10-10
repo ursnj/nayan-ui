@@ -182,6 +182,8 @@ pub struct World {
     body: Vec<Option<(RigidBodyHandle, BodyKind)>>,
     /// Seconds left before automatic despawn; infinite = forever.
     lifetime: Vec<f32>,
+    /// Parent entity (raw id) or NO_ENTITY. A child's position/rotation are local to the parent.
+    parent: Vec<u32>,
 
     // handle table
     slots: Vec<Slot>,
@@ -222,6 +224,7 @@ impl World {
             follow: Vec::with_capacity(capacity),
             body: Vec::with_capacity(capacity),
             lifetime: Vec::with_capacity(capacity),
+            parent: Vec::with_capacity(capacity),
             slots: Vec::with_capacity(capacity),
             free: Vec::new(),
             bounds: None,
@@ -283,12 +286,17 @@ impl World {
         self.follow.push(Follow { target: NO_ENTITY, speed: 0.0 });
         self.body.push(None);
         self.lifetime.push(f32::INFINITY);
+        self.parent.push(NO_ENTITY);
         Some(handle)
     }
 
-    /// Removes an entity (and its rigid body). Returns false for a stale or invalid handle.
+    /// Removes an entity, its rigid body and its children. Returns false for a stale or invalid handle.
     pub fn despawn(&mut self, e: Entity) -> bool {
         let Some(i) = self.dense(e) else { return false };
+        let children: Vec<Entity> = (0..self.len())
+            .filter(|&j| self.parent[j] == e.0)
+            .map(|j| self.entity_at(j))
+            .collect();
         if let Some((h, _)) = self.body[i] {
             self.physics.remove_body(h);
         }
@@ -309,6 +317,7 @@ impl World {
         self.follow.swap_remove(i);
         self.body.swap_remove(i);
         self.lifetime.swap_remove(i);
+        self.parent.swap_remove(i);
         if i != last {
             let moved = self.dense_slot[i];
             self.slots[moved as usize].dense = i as u32;
@@ -318,6 +327,9 @@ impl World {
         s.alive = false;
         s.generation = (s.generation + 1) % MAX_GENERATION;
         self.free.push(slot);
+        for child in children {
+            self.despawn(child); // children never have children (one level), so this doesn't recurse further
+        }
         true
     }
 
@@ -475,13 +487,35 @@ impl World {
         }
     }
 
+    /// Attaches `child` to `parent` (or detaches it with `None`). While attached, the child's
+    /// position and rotation are local to the parent, are resolved from the parent's
+    /// *interpolated* pose (so attached parts never lag or jitter), and the child is despawned with
+    /// the parent. Spin and bobbing still apply locally; velocity and follow are ignored.
+    ///
+    /// One level only: a parent can't itself be attached, an entity with children can't be
+    /// attached, and entities with rigid bodies can't be attached. Returns false if rejected.
+    pub fn set_parent(&mut self, child: Entity, parent: Option<Entity>) -> bool {
+        let Some(c) = self.dense(child) else { return false };
+        let Some(parent) = parent else {
+            self.parent[c] = NO_ENTITY;
+            return true;
+        };
+        let Some(p) = self.dense(parent) else { return false };
+        let child_has_children = self.parent.contains(&child.0);
+        if p == c || self.body[c].is_some() || self.parent[p] != NO_ENTITY || child_has_children {
+            return false;
+        }
+        self.parent[c] = parent.0;
+        true
+    }
+
     // ── Physics ──────────────────────────────────────────────────────────
 
     /// Gives the entity a rigid body and collider (replacing any existing ones), or removes
     /// them with `None`. Returns false for a stale handle or an invalid description.
     pub fn set_physics(&mut self, e: Entity, desc: Option<PhysicsDesc>) -> bool {
         let Some(i) = self.dense(e) else { return false };
-        if desc.is_some_and(|d| !d.is_valid()) {
+        if desc.is_some_and(|d| !d.is_valid() || self.parent[i] != NO_ENTITY) {
             return false;
         }
         if let Some((h, _)) = self.body[i].take() {
@@ -615,7 +649,7 @@ impl World {
         // Followers steer toward their target.
         for i in 0..n {
             let f = self.follow[i];
-            if f.speed <= 0.0 {
+            if f.speed <= 0.0 || self.parent[i] != NO_ENTITY {
                 continue;
             }
             let dir = match self.dense(Entity(f.target)) {
@@ -649,7 +683,7 @@ impl World {
                 continue;
             }
             let v = self.velocity[i];
-            if v != Vec3::ZERO {
+            if v != Vec3::ZERO && self.parent[i] == NO_ENTITY {
                 let mut p = self.position[i] + v * h;
                 if let Some((lo, hi)) = self.bounds {
                     p.x = p.x.clamp(lo.x, hi.x);
@@ -746,14 +780,26 @@ impl World {
             let m = self.mesh[i] as usize;
             let k = cursor[m] as usize;
             cursor[m] += 1;
-            let osc = self.oscillation[i];
-            let position = self.prev_position[i].lerp(self.position[i], alpha) + osc.amplitude * osc.phase.sin();
-            let rotation = self.prev_rotation[i].lerp(self.rotation[i], alpha);
+            let (mut position, mut rotation) = self.render_pose(i, alpha);
+            if let Some(p) = self.dense(Entity(self.parent[i])) {
+                let (parent_position, parent_rotation) = self.render_pose(p, alpha);
+                position = parent_position + parent_rotation * position;
+                rotation = parent_rotation * rotation;
+            }
             let fade = (self.lifetime[i] / 0.2).min(1.0); // shrink away at the end of a lifetime
             let matrix = Mat4::from_scale_rotation_translation(self.scale[i] * fade, rotation, position);
             self.out_matrices[k * 16..k * 16 + 16].copy_from_slice(&matrix.to_cols_array());
             self.out_colors[k * 4..k * 4 + 4].copy_from_slice(&self.color[i]);
         }
+    }
+
+    /// Interpolated (and bobbing-offset) local pose used for rendering.
+    fn render_pose(&self, i: usize, alpha: f32) -> (Vec3, Quat) {
+        let osc = self.oscillation[i];
+        (
+            self.prev_position[i].lerp(self.position[i], alpha) + osc.amplitude * osc.phase.sin(),
+            self.prev_rotation[i].lerp(self.rotation[i], alpha),
+        )
     }
 
     // ── Output buffers ───────────────────────────────────────────────────
@@ -995,6 +1041,57 @@ mod tests {
         assert!(!w.is_alive(short) && !w.is_alive(with_body));
         assert!(w.is_alive(keep));
         assert_eq!(w.physics.bodies.len(), 0, "expired bodies are removed from physics");
+    }
+
+    #[test]
+    fn children_follow_the_parents_interpolated_pose() {
+        let mut w = World::new(4);
+        let parent = spawn(&mut w, 0, Vec3::ZERO);
+        let child = spawn(&mut w, 1, Vec3::new(1.0, 0.0, 0.0)); // local offset
+        assert!(w.set_parent(child, Some(parent)));
+        w.set_rotation(parent, Quat::from_rotation_y(FRAC_PI_2)); // +X local -> -Z world
+        w.set_velocity(parent, Vec3::new(60.0, 0.0, 0.0)); // 1 unit per step
+        w.update(FIXED_DT);
+        w.update(FIXED_DT * 0.5); // parent drawn at x = 0.5
+        let r = w.ranges();
+        let parent_x = w.matrices()[r[0] as usize * 16 + 12];
+        let c = r[2] as usize * 16;
+        let (cx, cz) = (w.matrices()[c + 12], w.matrices()[c + 14]);
+        assert!(close(parent_x, 0.5, 1e-3));
+        assert!(close(cx, 0.5, 1e-3) && close(cz, -1.0, 1e-3), "child at parent + rotated offset: {cx}, {cz}");
+        assert_eq!(w.position(child), Some(Vec3::new(1.0, 0.0, 0.0)), "child state stays local");
+    }
+
+    #[test]
+    fn despawning_a_parent_despawns_its_children() {
+        let mut w = World::new(4);
+        let parent = spawn(&mut w, 0, Vec3::ZERO);
+        let a = spawn(&mut w, 0, Vec3::X);
+        let b = spawn(&mut w, 0, Vec3::Y);
+        let other = spawn(&mut w, 0, Vec3::Z);
+        w.set_parent(a, Some(parent));
+        w.set_parent(b, Some(parent));
+        w.despawn(parent);
+        assert!(!w.is_alive(a) && !w.is_alive(b));
+        assert!(w.is_alive(other));
+        assert_eq!(w.len(), 1);
+    }
+
+    #[test]
+    fn invalid_attachments_are_rejected() {
+        let mut w = World::new(5);
+        let a = spawn(&mut w, 0, Vec3::ZERO);
+        let b = spawn(&mut w, 0, Vec3::ZERO);
+        let c = spawn(&mut w, 0, Vec3::ZERO);
+        let body = spawn(&mut w, 1, Vec3::ZERO);
+        w.set_physics(body, Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 })));
+        assert!(!w.set_parent(a, Some(a)), "self");
+        assert!(!w.set_parent(body, Some(a)), "bodies can't be attached");
+        assert!(w.set_parent(b, Some(a)));
+        assert!(!w.set_parent(c, Some(b)), "parent is itself attached");
+        assert!(!w.set_parent(a, Some(c)), "entity with children can't be attached");
+        assert!(!w.set_physics(b, Some(PhysicsDesc::new(BodyKind::Dynamic, Shape::Ball { radius: 0.5 }))));
+        assert!(w.set_parent(b, None));
     }
 
     // ── physics ──

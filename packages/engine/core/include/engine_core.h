@@ -58,6 +58,9 @@ void engine_world_set_oscillation(World *w, uint32_t id, float ax, float ay, flo
 void engine_world_set_planar_velocity(World *w, uint32_t id, float x, float z);
 // Move toward `target` on the XZ plane at `speed` each step. speed <= 0 stops.
 void engine_world_set_follow(World *w, uint32_t id, uint32_t target, float speed);
+// Attach `id` to `parent` (ENGINE_NO_ENTITY detaches). While attached, position/rotation are local
+// to the parent and the child despawns with it. One level; no rigid bodies. Returns 1 on success.
+int32_t engine_world_set_parent(World *w, uint32_t id, uint32_t parent);
 // Despawn automatically after `seconds` (shrinking over the last 0.2 s). <= 0 clears it.
 void engine_world_set_lifetime(World *w, uint32_t id, float seconds);
 // Moving non-dynamic entities are clamped to this XZ rectangle (dynamic bodies use walls).

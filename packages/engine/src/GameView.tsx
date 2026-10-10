@@ -4,6 +4,8 @@ import { Canvas, useCanvasRef, type CanvasRef } from "react-native-webgpu";
 import { defaultCamera, defaultLight, Renderer } from "./Renderer";
 import type { Camera, Light, RenderSource } from "./types";
 
+const DEFAULT_BACKGROUND = [0.04, 0.05, 0.09] as const;
+
 export type GameStats = {
   fps: number;
   /** Mean time spent in `onUpdate` per frame, in milliseconds. */
@@ -21,6 +23,10 @@ type Props = {
   /** Mutate this object (e.g. `camera.eye`) from `onUpdate`; it is read every frame. */
   camera?: Camera;
   light?: Light;
+  /** Sky / clear color, linear 0..1 RGB. Also the fog color. Default dark navy. */
+  background?: readonly [number, number, number];
+  /** Distance fog density towards `background` (e.g. 0.02). Default 0 (off). */
+  fog?: number;
   style?: ViewStyle;
   /** Called once a second. */
   onStats?: (stats: GameStats) => void;
@@ -28,7 +34,7 @@ type Props = {
   onError?: (error: Error) => void;
 };
 
-export function GameView({ source, onUpdate, camera, light, style, onStats, onError }: Props) {
+export function GameView({ source, onUpdate, camera, light, background, fog, style, onStats, onError }: Props) {
   const ref = useCanvasRef();
   // Latest props, read from the frame loop without restarting it.
   const live = useRef({
@@ -37,12 +43,14 @@ export function GameView({ source, onUpdate, camera, light, style, onStats, onEr
     onError,
     camera: camera ?? defaultCamera(),
     light: light ?? defaultLight(),
+    environment: { background: background ?? DEFAULT_BACKGROUND, fog: fog ?? 0 },
   });
   live.current.onUpdate = onUpdate;
   live.current.onStats = onStats;
   live.current.onError = onError;
   if (camera) live.current.camera = camera;
   if (light) live.current.light = light;
+  live.current.environment = { background: background ?? DEFAULT_BACKGROUND, fog: fog ?? 0 };
 
   useEffect(() => {
     let alive = true;
@@ -87,7 +95,7 @@ export function GameView({ source, onUpdate, camera, light, style, onStats, onEr
         const dt = Math.min((now - last) / 1000, 0.1);
         last = now;
 
-        const { onUpdate, onStats, camera, light } = live.current;
+        const { onUpdate, onStats, camera, light, environment } = live.current;
         const t0 = performance.now();
         onUpdate?.(dt);
         updateTime += performance.now() - t0;
@@ -97,7 +105,7 @@ export function GameView({ source, onUpdate, camera, light, style, onStats, onEr
         const height = Math.max(1, Math.round(canvas.clientHeight * ratio));
         if (canvas.width !== width) canvas.width = width;
         if (canvas.height !== height) canvas.height = height;
-        renderer.render(width, height, camera, light);
+        renderer.render(width, height, camera, light, environment);
         if (firstFrame) {
           firstFrame = false;
           device!.popErrorScope().then((e) => e && report(new Error(`WebGPU setup: ${e.message}`)), report);
