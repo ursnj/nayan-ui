@@ -6,6 +6,7 @@ pub mod android;
 pub mod audio;
 pub mod ffi;
 pub mod haptics;
+pub mod model;
 mod world;
 
 pub use rapier3d::glamx::{Quat, Vec3};

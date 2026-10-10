@@ -198,10 +198,7 @@ mod platform {
     }
 
     pub fn supported() -> bool {
-        with_vibrator(|env, vibrator| {
-            env.call_method(vibrator, JNIString::new("hasVibrator"), jni_sig!("()Z"), &[])?.z()
-        })
-        .unwrap_or(false)
+        with_vibrator(|env, vibrator| env.call_method(vibrator, JNIString::new("hasVibrator"), jni_sig!("()Z"), &[])?.z()).unwrap_or(false)
     }
 
     /// A tap becomes a short pulse: intensity -> amplitude (1..255), sharpness -> shorter pulse.

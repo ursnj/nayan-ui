@@ -300,17 +300,19 @@ impl World {
     fn resolve_shape(&self, e: Entity, spec: ShapeSpec) -> Shape {
         let Some(i) = self.dense(e) else { return Shape::Ball { radius: 0.5 } };
         let (scale, mesh) = (self.scale[i].abs(), self.mesh[i]);
-        let ball = |r: Option<f32>| Shape::Ball {
-            radius: r.unwrap_or(scale.max_element() / 2.0),
+        // Built-in shapes are 1 unit across; models know their own bounding box.
+        let mut half = match crate::model::get(mesh) {
+            Some(model) => model.half_extents.max(Vec3::splat(0.01)) * scale,
+            None => scale / 2.0,
         };
-        let cuboid = |h: Option<Vec3>| {
-            let mut half = scale / 2.0;
-            if mesh == MESH_PLANE {
-                half.y = 0.05; // a plane gets a thin slab
-            }
-            Shape::Cuboid {
-                half_extents: h.unwrap_or(half),
-            }
+        if mesh == MESH_PLANE {
+            half.y = 0.05; // a plane gets a thin slab
+        }
+        let ball = |r: Option<f32>| Shape::Ball {
+            radius: r.unwrap_or(half.max_element()),
+        };
+        let cuboid = |h: Option<Vec3>| Shape::Cuboid {
+            half_extents: h.unwrap_or(half),
         };
         match spec {
             ShapeSpec::FromMesh if mesh == MESH_SPHERE => ball(None),
@@ -477,6 +479,32 @@ mod tests {
         d[slot::PHYSICS + 1] = 0.0; // ball, radius 0
         let decoded = EntityDesc::decode(&d).unwrap().physics.unwrap().unwrap();
         assert_eq!(decoded.shape, ShapeSpec::Ball(None));
+    }
+
+    #[test]
+    fn model_colliders_use_the_model_bounding_box() {
+        use crate::model::{self, LoadOptions};
+        // One triangle, 1 x 1 units, fitted to 4: half extents (2, 2, 0) before entity scale.
+        let mesh = model::load(
+            &model::tests::glb(&[([0.0, 0.0, 0.0], 1.0, [1.0; 4])]),
+            LoadOptions { center: true, fit: 4.0 },
+        )
+        .unwrap();
+        let mut w = World::new(2);
+        let e = w
+            .spawn_with(&EntityDesc {
+                mesh: Some(mesh),
+                scale: Some(Vec3::splat(0.5)),
+                ..Default::default()
+            })
+            .unwrap();
+        assert_eq!(
+            w.resolve_shape(e, ShapeSpec::FromMesh),
+            Shape::Cuboid {
+                half_extents: Vec3::new(1.0, 1.0, 0.005)
+            },
+            "bounding box x entity scale (flat axis kept thin, not zero)"
+        );
     }
 
     #[test]
