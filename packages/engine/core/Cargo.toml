@@ -10,10 +10,19 @@ name = "engine_core"
 crate-type = ["staticlib", "rlib"]
 
 [dependencies]
+cpal = "0.18.2"
+hound = "3.5.1"
 rapier3d = "0.36.1"
+rtrb = "0.4.0"
 
 [profile.release]
 opt-level = 3
 codegen-units = 1
 panic = "abort"
 strip = true
+
+[target.'cfg(target_os = "ios")'.dependencies]
+objc2 = "0.6.5"
+objc2-avf-audio = "0.3.2"
+objc2-core-haptics = "0.3.2"
+objc2-foundation = "0.3.2"
