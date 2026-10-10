@@ -14,11 +14,11 @@ import {
   engineSpawnCode,
   engineTransformCode,
 } from "@/services/GameEngineCodeBlocks";
-import { spawnOptionsAttributes } from "@/services/GameEngineData";
+import { entityOptionsAttributes } from "@/services/GameEngineData";
 
 const EngineWorld = () => (
   <Sidebar title="World & Entities">
-    <DocsIntro lead="A World holds every object in your game. Each object is an entity: a shape with a position, a color and, optionally, physics. You get back a small handle to change or remove it later." />
+    <DocsIntro lead="A World holds every object in your game. Each object is an entity: a shape with a position, a color and, optionally, physics. spawn creates one and set changes it; both take the same options, and each is a single fast call into the engine." />
 
     <SubHeader
       title="Create and spawn"
@@ -27,11 +27,11 @@ const EngineWorld = () => (
       <Code code={engineSpawnCode} filename="world.ts" />
     </SubHeader>
 
-    <Attributes title="Spawn options" data={spawnOptionsAttributes} />
+    <Attributes title="Entity options" data={entityOptionsAttributes} />
 
     <SubHeader
-      title="Move and change"
-      description="Every setter takes the entity handle. Handles of despawned entities are safely ignored."
+      title="Change entities"
+      description="world.set takes the same options as spawn. Only what you pass changes, and null removes something. Handles of despawned entities are safely ignored."
     >
       <Code code={engineTransformCode} filename="world.ts" />
     </SubHeader>

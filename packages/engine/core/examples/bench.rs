@@ -80,9 +80,7 @@ fn main() {
     w.set_physics(player, Some(pd));
     for i in 0..300 {
         let a = i as f32 * 0.7;
-        let e = w
-            .spawn(0, Vec3::new(a.cos() * 40.0, 0.5, a.sin() * 40.0), Vec3::ONE, [1.0; 4])
-            .unwrap();
+        let e = w.spawn(0, Vec3::new(a.cos() * 40.0, 0.5, a.sin() * 40.0), Vec3::ONE, [1.0; 4]).unwrap();
         let mut d = PhysicsDesc::new(
             BodyKind::Dynamic,
             Shape::Cuboid {
@@ -93,9 +91,7 @@ fn main() {
         d.lock_rotations = true;
         w.set_physics(e, Some(d));
         w.set_follow(e, player, 3.0);
-        let o = w
-            .spawn(1, Vec3::new(a.sin() * 30.0, 0.7, a.cos() * 30.0), Vec3::ONE, [1.0; 4])
-            .unwrap();
+        let o = w.spawn(1, Vec3::new(a.sin() * 30.0, 0.7, a.cos() * 30.0), Vec3::ONE, [1.0; 4]).unwrap();
         let mut od = PhysicsDesc::new(BodyKind::Kinematic, Shape::Ball { radius: 0.4 });
         od.layer = 2;
         od.mask = 0;

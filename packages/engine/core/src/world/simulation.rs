@@ -149,11 +149,7 @@ impl World {
                     .and_then(|i| self.pre_velocity.get(i).copied())
                     .unwrap_or(Vec3::ZERO)
             };
-            let speed = if event.started() {
-                (approach(c1) - approach(c2)).length()
-            } else {
-                0.0
-            };
+            let speed = if event.started() { (approach(c1) - approach(c2)).length() } else { 0.0 };
             let flags = (event.started() as u32 * EVENT_STARTED) | (event.sensor() as u32 * EVENT_SENSOR);
             let (a, b) = (c1.user_data as u32, c2.user_data as u32);
             self.events.extend_from_slice(&[a, b, flags, speed.to_bits()]);

@@ -1,111 +1,106 @@
 import type { Sound } from "../media/audio";
 import NativeEngine from "../native/NativeNayanEngine";
-import { Mesh, type MeshKind, type RenderSource, type Vec3 } from "../types";
+import type { MeshKind, RenderSource, Vec3 } from "../types";
+import { DESC_LEN, encode } from "./desc";
 
 /** True when the native Rust core is linked into this build (it is not in Expo Go). */
 export const isRustAvailable = NativeEngine != null;
 
-/** Opaque entity handle. Stale handles (entity despawned) are safely ignored. */
+/** Opaque entity handle. Handles of despawned entities are safely ignored. */
 export type Entity = number & { readonly __entity: unique symbol };
 
 export type Color = readonly [number, number, number] | readonly [number, number, number, number];
+export type Quat = readonly [number, number, number, number];
 
 /**
- * - `dynamic`: moved by physics (gravity, contacts, impulses).
- * - `kinematic`: moved by you (position, velocity, follow); pushes dynamic bodies.
+ * - `dynamic`: moved by physics (gravity, collisions, impulses).
+ * - `kinematic`: moved by you; pushes dynamic bodies out of the way.
  * - `fixed`: never moves (floors, walls).
  */
 export type BodyType = "dynamic" | "kinematic" | "fixed";
 
-export type BodyOptions = {
+export type PhysicsOptions = {
   type: BodyType;
-  /** Slows linear motion over time (air drag). Default 0. */
-  linearDamping?: number;
-  /** Slows spinning over time. Default 0.05. */
-  angularDamping?: number;
-  /** Multiplier on world gravity. Default 1. */
+  /** Default: from the mesh (spheres get a ball, everything else a box). */
+  shape?: "ball" | "box";
+  /** Ball radius. Default: half the entity's largest scale axis. */
+  radius?: number;
+  /** Box size (full width, height, depth). Default: the entity's scale. */
+  size?: Vec3;
+  /** Layer bits this collider is on. Default 1. */
+  layer?: number;
+  /** Layers it interacts with. Either side's mask is enough. Default: all. */
+  mask?: number;
+  /** Reports touches but doesn't push: pickups, trigger zones. */
+  sensor?: boolean;
+  /** How grippy, default 0.5. */
+  friction?: number;
+  /** Bounciness 0..1, default 0. */
+  bounce?: number;
+  /** Mass per volume, default 1. */
+  density?: number;
+  /** Slows movement over time (air resistance), default 0. */
+  drag?: number;
+  /** Slows spinning over time, default 0.05. */
+  angularDrag?: number;
+  /** Multiplier on world gravity, default 1. */
   gravityScale?: number;
-  /** Keep the body upright (no tumbling). */
-  lockRotations?: boolean;
-  /** Continuous collision detection for fast, small bodies that could tunnel through walls. */
+  /** Stays upright: never tumbles. */
+  upright?: boolean;
+  /** Stops fast, small bodies passing through walls. */
   ccd?: boolean;
 };
 
-export type ColliderOptions = {
-  /** Defaults from the mesh: spheres get a ball, everything else a box. */
-  shape?: "ball" | "box";
-  /** Ball radius. Default: half the largest scale axis. */
-  radius?: number;
-  /** Box half extents. Default: half the scale (planes get a thin slab). */
-  halfExtents?: Vec3;
-  /** Layer bits this collider is on. Default 1. */
-  layer?: number;
-  /**
-   * Layers it interacts with. A pair interacts if either side's mask includes the other's layer.
-   * Default: everything.
-   */
-  mask?: number;
-  /** Report contacts without pushing (pickups, trigger zones). */
-  sensor?: boolean;
-  /** Default 0.5. */
-  friction?: number;
-  /** Bounciness, 0..1. Default 0. */
-  restitution?: number;
-  /** Mass per volume. Default 1. */
-  density?: number;
-};
-
-export type SpawnOptions = {
-  mesh?: MeshKind;
-  position?: Vec3;
-  /** A number scales uniformly. */
-  scale?: Vec3 | number;
-  color?: Color;
-  /** Quaternion (x, y, z, w). */
-  rotation?: readonly [number, number, number, number];
-  /** Units per second. */
-  velocity?: Vec3;
-  /** Radians per second about each world axis. */
-  angularVelocity?: Vec3;
-  /** Visual bob: rendered position += amplitude * sin(phase), phase advancing `frequency` rad/s. */
-  oscillation?: { amplitude: Vec3; frequency: number; phase?: number };
-  /** Rigid body. A collider without a body becomes kinematic. */
-  body?: BodyType | BodyOptions;
-  /** Collider. A body without a collider gets one sized from the mesh and scale. */
-  collider?: ColliderOptions;
-  /** Chase `target` on the XZ plane at `speed`. Stops if the target is despawned. */
-  follow?: { target: Entity; speed: number };
-  /** Despawn automatically after this many seconds (shrinks away at the end). */
-  lifetime?: number;
-  /** Sound/haptic played by the core on impacts, scaled by speed and panned to the listener. */
-  impact?: ImpactFeedback;
-  /**
-   * Attach to another entity: `position`/`rotation` become local to it, the child follows the
-   * parent's interpolated pose exactly and despawns with it. Visual only (no body/collider).
-   */
-  parent?: Entity;
-};
-
-/** Sound/haptic the Rust core plays itself when the entity starts touching something solid. */
+/** Sound/haptic the core plays by itself when the entity hits something solid. */
 export type ImpactFeedback = {
-  /** A loaded sound (e.g. `bank.get("bump")`). Omit for haptics only. */
+  /** A loaded sound, e.g. `sfx.get("bump")`. Omit for haptics only. */
   sound?: Sound;
-  /** Impacts slower than this are silent. Default 1. */
+  /** Slower impacts are silent. Default 1. */
   minSpeed?: number;
-  /** Full volume / strength at this speed and above. Default 10. */
+  /** Full volume and strength at this speed. Default 10. */
   maxSpeed?: number;
   /** Volume at full strength, 0..2. Default 1. */
   volume?: number;
-  /** Haptic intensity at full strength, 0..1. Default 0 (none). */
+  /** Vibration at full strength, 0..1. Default 0 (none). */
   haptic?: number;
 };
 
+/**
+ * Everything about an entity. `spawn` and `set` take the same options; in `set`, only what you
+ * pass changes, and `null` removes something (physics, parent, follow, bob, lifetime, impact).
+ */
+export type EntityOptions = {
+  mesh?: MeshKind;
+  /** Relative to the parent when attached. */
+  position?: Vec3;
+  rotation?: Quat;
+  /** A number scales uniformly. Visual only after the body exists. */
+  scale?: Vec3 | number;
+  color?: Color;
+  /** Units per second. */
+  velocity?: Vec3;
+  /** Sets horizontal speed [x, z] and keeps the vertical one: steer a body and it still falls. */
+  groundVelocity?: readonly [number, number];
+  /** Radians per second around each axis. */
+  spin?: Vec3;
+  /** Visual bob: the drawn position moves by amplitude * sin(phase), phase advancing at `speed`. */
+  bob?: { amplitude: Vec3; speed: number; phase?: number } | null;
+  /** Chase `target` along the ground at `speed`. */
+  follow?: { target: Entity; speed: number } | null;
+  /** Seconds until it shrinks away and is despawned. */
+  lifetime?: number | null;
+  /** Attach to another entity: it follows the parent exactly and is despawned with it. Visual only. */
+  parent?: Entity | null;
+  physics?: BodyType | PhysicsOptions | null;
+  impact?: ImpactFeedback | null;
+};
+
 export type CollisionInfo = {
-  /** True when the pair started touching; false when it stopped. */
+  /** True when the touch started; false when it ended. */
   started: boolean;
-  /** A sensor was involved (no physical response). */
+  /** A sensor was involved. */
   sensor: boolean;
-  /** Relative speed at the moment of impact (0 for "stopped"). Use it to scale sounds/haptics. */
+  /** Impact speed (0 when a touch ends). */
   speed: number;
 };
 
@@ -116,18 +111,21 @@ export type RaycastHit = {
   point: [number, number, number];
 };
 
-const BODY_KIND: Record<BodyType, number> = { dynamic: 1, kinematic: 2, fixed: 3 };
+export type Bounds = readonly [minX: number, minZ: number, maxX: number, maxZ: number];
+
 const EVENT_STRIDE = 4;
 const EVENT_STARTED = 1;
 const EVENT_SENSOR = 2;
 
 /**
- * The game world, simulated by the Rust core: transforms, motion, chasing, Rapier rigid-body
- * physics, collision events and raycasts. JS issues a handful of calls per frame; the render
- * buffers alias Rust memory. Implements `RenderSource`, so it can go straight into `<GameView>`.
+ * A game world, simulated by the Rust core: entities, motion, Rapier physics, collisions and
+ * raycasts at a fixed 60 Hz, with rendering smoothed between steps. Pass it to `<GameView>`.
  *
- * Simulation runs at a fixed 60 Hz; rendering interpolates between steps.
- * Capacity is fixed up front; despawn frees room for new entities.
+ * ```ts
+ * const world = new World(500);
+ * const ball = world.spawn({ mesh: Mesh.Sphere, position: [0, 5, 0], physics: "dynamic" });
+ * world.set(ball, { color: [1, 0, 0] });
+ * ```
  */
 export class World implements RenderSource {
   readonly matrices: Float32Array;
@@ -136,13 +134,17 @@ export class World implements RenderSource {
   private readonly events: Uint32Array;
   private readonly eventFloats: Float32Array;
   private readonly scratch: Float32Array;
-  private readonly id: number;
+  private readonly desc = new Float64Array(DESC_LEN);
   private readonly info: CollisionInfo = { started: false, sensor: false, speed: 0 };
+  private readonly id: number;
   private disposed = false;
+  private gravityValue: Vec3 = [0, -9.81, 0];
+  private boundsValue: Bounds | null = null;
+  private listenerValue: Entity | null = null;
 
   constructor(readonly capacity: number) {
     if (!NativeEngine) {
-      throw new Error("@nayan-ui/engine: the native Rust core is not available in this build.");
+      throw new Error("@nayan-ui/engine: the native core is not linked into this build (Expo Go?).");
     }
     this.id = NativeEngine.createWorld(capacity);
     const buffer = (o: Object) => o as ArrayBuffer;
@@ -155,239 +157,126 @@ export class World implements RenderSource {
     this.scratch = new Float32Array(buffer(NativeEngine.getScratch(this.id)));
   }
 
-  /** Number of live entities. */
-  get count() {
-    return this.disposed ? 0 : this.native.count(this.id);
-  }
-
   private get native() {
     if (this.disposed) throw new Error("World: used after dispose()");
     return NativeEngine!;
   }
 
-  // ── Entities ─────────────────────────────────────────────────────────
-
-  /** Adds an entity. Throws if the world is full or the physics description is invalid. */
-  spawn(options: SpawnOptions = {}): Entity {
-    const n = this.native;
-    const {
-      mesh = Mesh.Cube,
-      position = [0, 0, 0],
-      scale = 1,
-      color = [1, 1, 1, 1],
-      rotation,
-      velocity,
-      angularVelocity,
-      oscillation,
-      body,
-      collider,
-      follow,
-      lifetime,
-      parent,
-      impact,
-    } = options;
-    if (parent !== undefined && (body || collider)) {
-      throw new Error("World: attached entities can't have a body or collider");
-    }
-    const s: Vec3 = typeof scale === "number" ? [scale, scale, scale] : scale;
-    const e = n.spawn(this.id, mesh, ...position, ...s, color[0], color[1], color[2], color[3] ?? 1);
-    if (e < 0) throw new Error(`World: cannot spawn (capacity ${this.capacity} reached, or invalid mesh/position)`);
-    const entity = e as Entity;
-
-    if (rotation) n.setRotation(this.id, e, ...rotation);
-    if (velocity) n.setVelocity(this.id, e, ...velocity);
-    if (angularVelocity) n.setAngularVelocity(this.id, e, ...angularVelocity);
-    if (oscillation) n.setOscillation(this.id, e, ...oscillation.amplitude, oscillation.frequency, oscillation.phase ?? 0);
-    if (body || collider) {
-      if (!this.setPhysics(entity, { mesh, scale: s, body, collider })) {
-        n.despawn(this.id, e);
-        throw new Error("World: invalid body/collider options (sizes and density must be positive)");
-      }
-    }
-    if (follow) n.setFollow(this.id, e, follow.target, follow.speed);
-    if (lifetime) n.setLifetime(this.id, e, lifetime);
-    if (impact) this.setImpactFeedback(entity, impact);
-    if (parent !== undefined && !n.setParent(this.id, e, parent)) {
-      n.despawn(this.id, e);
-      throw new Error("World: cannot attach (parent missing, parent is itself attached, or nesting too deep)");
-    }
-    return entity;
+  /** Live entities. */
+  get count() {
+    return this.disposed ? 0 : this.native.count(this.id);
   }
 
-  /** Removes an entity. Returns false if it was already gone. */
+  // ── Entities ─────────────────────────────────────────────────────────
+
+  /** Adds an entity (one native call). Throws if the world is full or an option is invalid. */
+  spawn(options: EntityOptions = {}): Entity {
+    if (options.parent != null && options.physics != null) {
+      throw new Error("World.spawn: attached entities can't have physics (put it on the parent)");
+    }
+    encode(this.desc, options);
+    const e = this.native.spawnDesc(this.id, this.desc.buffer);
+    if (e < 0) {
+      throw new Error(
+        this.count >= this.capacity
+          ? `World.spawn: the world is full (capacity ${this.capacity})`
+          : "World.spawn: invalid options (sizes and density must be positive, the parent must exist)",
+      );
+    }
+    return e as Entity;
+  }
+
+  /**
+   * Changes an entity (one native call). Only the options you pass change; `null` removes.
+   * Returns false if the entity is gone or an option was rejected (the others still apply).
+   */
+  set(e: Entity, options: EntityOptions): boolean {
+    encode(this.desc, options);
+    return this.native.setDesc(this.id, e, this.desc.buffer);
+  }
+
+  /** Removes an entity and anything attached to it. Returns false if it was already gone. */
   despawn(e: Entity): boolean {
     return this.native.despawn(this.id, e);
   }
 
-  /**
-   * Attach to `parent` (null detaches; the child then keeps its local values as world values).
-   * One level only, no bodies. Returns false if rejected.
-   */
-  setParent(e: Entity, parent: Entity | null): boolean {
-    return this.native.setParent(this.id, e, parent ?? -1);
-  }
-
-  // ── Transform & appearance ───────────────────────────────────────────
-
-  /** Teleports the entity (and its body). For attached entities this is the local offset. */
-  setPosition(e: Entity, [x, y, z]: Vec3) {
-    this.native.setPosition(this.id, e, x, y, z);
-  }
-
-  setRotation(e: Entity, [x, y, z, w]: readonly [number, number, number, number]) {
-    this.native.setRotation(this.id, e, x, y, z, w);
-  }
-
-  /** Visual only; does not resize an existing collider. */
-  setScale(e: Entity, [x, y, z]: Vec3) {
-    this.native.setScale(this.id, e, x, y, z);
-  }
-
-  setColor(e: Entity, [r, g, b, a = 1]: Color) {
-    this.native.setColor(this.id, e, r, g, b, a);
-  }
-
-  // ── Motion ───────────────────────────────────────────────────────────
-
-  /** Units per second. For dynamic bodies this sets their current velocity. */
-  setVelocity(e: Entity, [x, y, z]: Vec3) {
-    this.native.setVelocity(this.id, e, x, y, z);
-  }
-
-  /** Sets X/Z velocity and keeps Y, so a steered dynamic body still falls. */
-  setPlanarVelocity(e: Entity, x: number, z: number) {
-    this.native.setPlanarVelocity(this.id, e, x, z);
-  }
-
-  setAngularVelocity(e: Entity, [x, y, z]: Vec3) {
-    this.native.setAngularVelocity(this.id, e, x, y, z);
-  }
-
-  /** Instant change in momentum (dynamic bodies only). */
-  applyImpulse(e: Entity, [x, y, z]: Vec3) {
-    this.native.applyImpulse(this.id, e, x, y, z);
-  }
-
-  /** Visual bob: rendered position += amplitude * sin(phase). Pass a zero amplitude to stop. */
-  setOscillation(e: Entity, { amplitude, frequency, phase = 0 }: { amplitude: Vec3; frequency: number; phase?: number }) {
-    this.native.setOscillation(this.id, e, ...amplitude, frequency, phase);
-  }
-
-  setFollow(e: Entity, target: Entity, speed: number) {
-    this.native.setFollow(this.id, e, target, speed);
-  }
-
-  /** Despawn after `seconds`; 0 clears it. */
-  setLifetime(e: Entity, seconds: number) {
-    this.native.setLifetime(this.id, e, seconds);
-  }
-
-  /** Non-dynamic movers are clamped to this XZ rectangle. Dynamic bodies need walls. */
-  setBounds(minX: number, minZ: number, maxX: number, maxZ: number) {
-    this.native.setBounds(this.id, minX, minZ, maxX, maxZ);
-  }
-
-  // ── Physics ──────────────────────────────────────────────────────────
-
-  /**
-   * The core plays `feedback` itself whenever this entity starts touching something solid: volume
-   * and haptic strength scale with impact speed, and the sound is panned relative to the listener.
-   * No JS runs per impact. `null` removes it.
-   */
-  setImpactFeedback(e: Entity, feedback: ImpactFeedback | null) {
-    const { sound, minSpeed = 1, maxSpeed = 10, volume = 1, haptic = 0 } = feedback ?? {};
-    this.native.setImpactFeedback(this.id, e, feedback !== null, sound ?? -1, minSpeed, maxSpeed, volume, haptic);
-  }
-
-  /** Impact sounds are panned/attenuated relative to this entity (usually the player). */
-  setListener(e: Entity | null) {
-    this.native.setListener(this.id, e ?? -1);
-  }
-
-  setGravity([x, y, z]: Vec3) {
-    this.native.setGravity(this.id, x, y, z);
-  }
-
-  /**
-   * Replaces the entity's body/collider (`null` removes them). `mesh`/`scale` size the default
-   * collider. Returns false if the options are invalid.
-   */
-  setPhysics(
-    e: Entity,
-    options: { body?: BodyType | BodyOptions; collider?: ColliderOptions; mesh?: MeshKind; scale?: Vec3 } | null,
-  ): boolean {
-    const n = this.native;
-    if (!options) {
-      return n.setPhysics(this.id, e, 0, 0, 1, 1, 1, 0, 0, false, 0, 0, 1, 0, 0, 1, false, false);
-    }
-    const { mesh = Mesh.Cube, scale = [1, 1, 1], collider = {} } = options;
-    const body: BodyOptions =
-      typeof options.body === "string" ? { type: options.body } : (options.body ?? { type: "kinematic" });
-    const ball = (collider.shape ?? (mesh === Mesh.Sphere ? "ball" : "box")) === "ball";
-    const size: Vec3 = ball
-      ? [collider.radius ?? Math.max(...scale) / 2, 0, 0]
-      : (collider.halfExtents ?? [scale[0] / 2, mesh === Mesh.Plane ? 0.05 : scale[1] / 2, scale[2] / 2]);
-    return n.setPhysics(
-      this.id,
-      e,
-      BODY_KIND[body.type],
-      ball ? 0 : 1,
-      ...size,
-      collider.layer ?? 1,
-      collider.mask ?? -1,
-      collider.sensor ?? false,
-      collider.friction ?? 0.5,
-      collider.restitution ?? 0,
-      collider.density ?? 1,
-      body.linearDamping ?? 0,
-      body.angularDamping ?? 0.05,
-      body.gravityScale ?? 1,
-      body.lockRotations ?? false,
-      body.ccd ?? false,
-    );
-  }
-
-  /**
-   * First solid (non-sensor) collider hit along the ray whose layer intersects `mask`,
-   * as of the last `update`. `direction` need not be normalized.
-   */
-  raycast(origin: Vec3, direction: Vec3, maxDistance: number, mask = -1): RaycastHit | null {
-    const hit = this.native.raycast(this.id, ...origin, ...direction, maxDistance, mask);
-    if (hit < 0) return null;
-    const s = this.scratch;
-    return {
-      entity: hit as Entity,
-      distance: s[0]!,
-      normal: [s[1]!, s[2]!, s[3]!],
-      point: [s[4]!, s[5]!, s[6]!],
-    };
+  /** A one-off push: jump, explosion, knockback (dynamic bodies only). */
+  impulse(e: Entity, [x, y, z]: Vec3) {
+    this.native.impulse(this.id, e, x, y, z);
   }
 
   // ── Queries ──────────────────────────────────────────────────────────
 
-  /** Current position, or null if the entity is gone. */
-  position(e: Entity): [number, number, number] | null {
-    if (!this.native.readPosition(this.id, e)) return null;
-    return [this.scratch[0]!, this.scratch[1]!, this.scratch[2]!];
+  /** Current position, or null if the entity is gone. Pass `out` to avoid allocating every frame. */
+  position(e: Entity, out: [number, number, number] = [0, 0, 0]): [number, number, number] | null {
+    return this.native.readPosition(this.id, e) ? this.copyScratch(out) : null;
   }
 
-  /** Current linear velocity, or null if the entity is gone. */
-  velocity(e: Entity): [number, number, number] | null {
-    if (!this.native.readVelocity(this.id, e)) return null;
-    return [this.scratch[0]!, this.scratch[1]!, this.scratch[2]!];
+  /** Current velocity, or null if the entity is gone. Pass `out` to avoid allocating every frame. */
+  velocity(e: Entity, out: [number, number, number] = [0, 0, 0]): [number, number, number] | null {
+    return this.native.readVelocity(this.id, e) ? this.copyScratch(out) : null;
+  }
+
+  /** True while the entity exists. */
+  has(e: Entity): boolean {
+    return this.native.readPosition(this.id, e);
+  }
+
+  /** First solid (non-sensor) collider along the ray whose layer is in `mask`, as of the last update. */
+  raycast(origin: Vec3, direction: Vec3, maxDistance: number, mask = -1): RaycastHit | null {
+    const hit = this.native.raycast(this.id, ...origin, ...direction, maxDistance, mask);
+    if (hit < 0) return null;
+    const s = this.scratch;
+    return { entity: hit as Entity, distance: s[0]!, normal: [s[1]!, s[2]!, s[3]!], point: [s[4]!, s[5]!, s[6]!] };
+  }
+
+  private copyScratch(out: [number, number, number]) {
+    out[0] = this.scratch[0]!;
+    out[1] = this.scratch[1]!;
+    out[2] = this.scratch[2]!;
+    return out;
+  }
+
+  // ── World settings ───────────────────────────────────────────────────
+
+  /** Default [0, -9.81, 0]. */
+  get gravity(): Vec3 {
+    return this.gravityValue;
+  }
+  set gravity(g: Vec3) {
+    this.gravityValue = g;
+    this.native.setGravity(this.id, g[0], g[1], g[2]);
+  }
+
+  /** Keeps moving non-physics entities inside [minX, minZ, maxX, maxZ]. Physics bodies need walls. */
+  get bounds(): Bounds | null {
+    return this.boundsValue;
+  }
+  set bounds(b: Bounds | null) {
+    this.boundsValue = b;
+    const [minX, minZ, maxX, maxZ] = b ?? [-1e9, -1e9, 1e9, 1e9];
+    this.native.setBounds(this.id, minX, minZ, maxX, maxZ);
+  }
+
+  /** Impact sounds pan and fade relative to this entity (usually the player). */
+  get listener(): Entity | null {
+    return this.listenerValue;
+  }
+  set listener(e: Entity | null) {
+    this.listenerValue = e;
+    this.native.setListener(this.id, e ?? -1);
   }
 
   // ── Simulation ───────────────────────────────────────────────────────
 
-  /** Advances the simulation (fixed 60 Hz steps) and refreshes the render buffers. */
+  /** Advances the simulation (fixed 60 Hz steps) and refreshes what GameView draws. */
   update(dt: number) {
     this.native.update(this.id, dt);
   }
 
   /**
-   * Calls `fn` for each contact that started or stopped during the last `update`.
-   * `info` is reused between calls: copy what you need. Either entity may already have been
-   * despawned by an earlier callback; `despawn` and the setters ignore stale ids.
+   * Calls `fn` for each touch that started or ended during the last `update`. `info` is reused:
+   * copy what you need. Either entity may already be despawned by an earlier callback.
    */
   forEachCollision(fn: (a: Entity, b: Entity, info: CollisionInfo) => void) {
     const length = this.native.eventLength(this.id);
@@ -401,7 +290,7 @@ export class World implements RenderSource {
     }
   }
 
-  /** Frees the native world. Any further call throws. */
+  /** Frees the native world. Any later call throws. */
   dispose() {
     if (this.disposed) return;
     this.disposed = true;

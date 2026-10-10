@@ -20,8 +20,8 @@ function createRustWorld(count: number) {
       position: [((i % side) - side / 2) * spacing, 0, (Math.floor(i / side) - side / 2) * spacing],
       color: hashColor(i),
       rotation: [0, Math.sin(phase / 2), 0, Math.cos(phase / 2)],
-      angularVelocity: [0, 1, 0],
-      oscillation: { amplitude: [0, 0.8, 0], frequency: 1.5, phase: phase * 1.5 },
+      spin: [0, 1, 0],
+      bob: { amplitude: [0, 0.8, 0], speed: 1.5, phase: phase * 1.5 },
     });
   }
   return world;
@@ -30,7 +30,7 @@ function createRustWorld(count: number) {
 /** 1,500 dynamic boxes and balls in a walled pit; every few seconds they're blasted back up. */
 function createPhysicsWorld() {
   const world = new World(BODIES + 8);
-  const fixed = { body: "fixed" as const, collider: { layer: 1, mask: 0 } };
+  const fixed = { physics: { type: "fixed" as const, layer: 1, mask: 0 } };
   world.spawn({ mesh: Mesh.Plane, scale: [40, 1, 40], color: [0.12, 0.15, 0.2], ...fixed });
   for (const [x, z, sx, sz] of [[0, -12, 25, 1], [0, 12, 25, 1], [-12, 0, 1, 25], [12, 0, 1, 25]] as const) {
     world.spawn({ position: [x, 2, z], scale: [sx, 4, sz], color: [0.25, 0.3, 0.38], ...fixed });
@@ -43,8 +43,7 @@ function createPhysicsWorld() {
         position: [(i % 15) * 1.2 - 8.4, 2 + Math.floor(i / 225) * 1.3, (Math.floor(i / 15) % 15) * 1.2 - 8.4],
         scale: 0.9,
         color: hashColor(i),
-        body: "dynamic",
-        collider: { layer: 1, mask: 1, restitution: 0.2 },
+        physics: { type: "dynamic", layer: 1, mask: 1, bounce: 0.2 },
       }),
     );
   }
@@ -55,7 +54,7 @@ function createPhysicsWorld() {
       t += dt;
       if (t > 6) {
         t = 0;
-        for (const b of bodies) world.applyImpulse(b, [Math.random() * 4 - 2, 6 + Math.random() * 6, Math.random() * 4 - 2]);
+        for (const b of bodies) world.impulse(b, [Math.random() * 4 - 2, 6 + Math.random() * 6, Math.random() * 4 - 2]);
       }
       world.update(dt);
     },

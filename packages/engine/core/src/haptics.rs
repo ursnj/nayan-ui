@@ -58,10 +58,7 @@ mod gate {
     pub fn allow(min_interval: f32) -> bool {
         LAST.with(|last| {
             let now = Instant::now();
-            if last
-                .get()
-                .is_some_and(|t| now.duration_since(t).as_secs_f32() < min_interval)
-            {
+            if last.get().is_some_and(|t| now.duration_since(t).as_secs_f32() < min_interval) {
                 return false;
             }
             last.set(Some(now));
@@ -76,9 +73,8 @@ mod platform {
     use objc2::AnyThread;
     use objc2::rc::Retained;
     use objc2_core_haptics::{
-        CHHapticDeviceCapability, CHHapticEngine, CHHapticEvent, CHHapticEventParameter,
-        CHHapticEventParameterIDHapticIntensity, CHHapticEventParameterIDHapticSharpness,
-        CHHapticEventTypeHapticTransient, CHHapticPattern, CHHapticPatternPlayer, CHHapticTimeImmediate,
+        CHHapticDeviceCapability, CHHapticEngine, CHHapticEvent, CHHapticEventParameter, CHHapticEventParameterIDHapticIntensity,
+        CHHapticEventParameterIDHapticSharpness, CHHapticEventTypeHapticTransient, CHHapticPattern, CHHapticPatternPlayer, CHHapticTimeImmediate,
     };
     use objc2_foundation::NSArray;
     use std::cell::RefCell;
@@ -140,11 +136,7 @@ mod platform {
                     )
                 })
                 .collect();
-            CHHapticPattern::initWithEvents_parameters_error(
-                CHHapticPattern::alloc(),
-                &NSArray::from_retained_slice(&events),
-                &NSArray::new(),
-            )
+            CHHapticPattern::initWithEvents_parameters_error(CHHapticPattern::alloc(), &NSArray::from_retained_slice(&events), &NSArray::new())
         };
         let Ok(pattern) = pattern else { return };
         let start = |engine: &CHHapticEngine| unsafe {

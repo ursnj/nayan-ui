@@ -8,12 +8,7 @@ use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 
 /// Opens the default output on a dedicated thread that owns the stream for the app's lifetime
 /// (cpal streams aren't `Send` on every platform). Failures leave audio silent, never crash.
-pub fn start(
-    consumer: rtrb::Consumer<Command>,
-    volume: Arc<AtomicU32>,
-    muted: Arc<AtomicBool>,
-    running: Arc<AtomicBool>,
-) {
+pub fn start(consumer: rtrb::Consumer<Command>, volume: Arc<AtomicU32>, muted: Arc<AtomicBool>, running: Arc<AtomicBool>) {
     let spawned = std::thread::Builder::new().name("engine-audio".into()).spawn(move || {
         #[cfg(target_os = "ios")]
         ios::configure_session();
@@ -45,11 +40,7 @@ pub fn start(
     let _ = spawned;
 }
 
-fn build<T: SizedSample + FromSample<f32>>(
-    device: &cpal::Device,
-    config: StreamConfig,
-    mut mixer: Mixer,
-) -> Option<cpal::Stream> {
+fn build<T: SizedSample + FromSample<f32>>(device: &cpal::Device, config: StreamConfig, mut mixer: Mixer) -> Option<cpal::Stream> {
     let channels = config.channels as usize;
     let mut scratch: Vec<f32> = Vec::with_capacity(8192);
     device

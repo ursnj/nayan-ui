@@ -76,62 +76,38 @@ void NayanEngineModule::destroyWorld(jsi::Runtime &, double world) {
   }
 }
 
-double NayanEngineModule::spawn(
-    jsi::Runtime &, double world, double mesh, double x, double y, double z, double sx, double sy, double sz,
-    double r, double g, double b, double a) {
-  uint32_t entity = engine_world_spawn(
-      find(world), id(mesh), x, y, z, sx, sy, sz, r, g, b, a); // invalid mesh -> rejected by the core
+namespace {
+
+// An encoded entity description: a Float64Array's ArrayBuffer of ENGINE_DESC_LEN doubles.
+const double *descData(jsi::Runtime &rt, jsi::Object &desc, size_t &len) {
+  if (!desc.isArrayBuffer(rt)) {
+    throw jsi::JSError(rt, "NayanEngine: expected an ArrayBuffer description");
+  }
+  jsi::ArrayBuffer buffer = desc.getArrayBuffer(rt);
+  len = buffer.size(rt) / sizeof(double);
+  return reinterpret_cast<const double *>(buffer.data(rt));
+}
+
+} // namespace
+
+double NayanEngineModule::spawnDesc(jsi::Runtime &rt, double world, jsi::Object desc) {
+  size_t len = 0;
+  const double *data = descData(rt, desc, len);
+  uint32_t entity = engine_world_spawn_desc(find(world), data, len);
   return entity == ENGINE_NO_ENTITY ? -1 : static_cast<double>(entity);
+}
+
+bool NayanEngineModule::setDesc(jsi::Runtime &rt, double world, double entity, jsi::Object desc) {
+  size_t len = 0;
+  const double *data = descData(rt, desc, len);
+  return engine_world_set_desc(find(world), id(entity), data, len) != 0;
 }
 
 bool NayanEngineModule::despawn(jsi::Runtime &, double world, double entity) {
   return engine_world_despawn(find(world), id(entity)) != 0;
 }
 
-void NayanEngineModule::setPosition(jsi::Runtime &, double world, double entity, double x, double y, double z) {
-  engine_world_set_position(find(world), id(entity), x, y, z);
-}
-
-void NayanEngineModule::setRotation(
-    jsi::Runtime &, double world, double entity, double x, double y, double z, double w) {
-  engine_world_set_rotation(find(world), id(entity), x, y, z, w);
-}
-
-void NayanEngineModule::setScale(jsi::Runtime &, double world, double entity, double x, double y, double z) {
-  engine_world_set_scale(find(world), id(entity), x, y, z);
-}
-
-void NayanEngineModule::setColor(jsi::Runtime &, double world, double entity, double r, double g, double b, double a) {
-  engine_world_set_color(find(world), id(entity), r, g, b, a);
-}
-
-void NayanEngineModule::setVelocity(jsi::Runtime &, double world, double entity, double x, double y, double z) {
-  engine_world_set_velocity(find(world), id(entity), x, y, z);
-}
-
-void NayanEngineModule::setAngularVelocity(
-    jsi::Runtime &, double world, double entity, double x, double y, double z) {
-  engine_world_set_angular_velocity(find(world), id(entity), x, y, z);
-}
-
-void NayanEngineModule::setOscillation(
-    jsi::Runtime &, double world, double entity, double ax, double ay, double az, double frequency, double phase) {
-  engine_world_set_oscillation(find(world), id(entity), ax, ay, az, frequency, phase);
-}
-
-void NayanEngineModule::setLifetime(jsi::Runtime &, double world, double entity, double seconds) {
-  engine_world_set_lifetime(find(world), id(entity), seconds);
-}
-
-bool NayanEngineModule::setParent(jsi::Runtime &, double world, double entity, double parent) {
-  return engine_world_set_parent(find(world), id(entity), id(parent)) != 0; // -1 -> NO_ENTITY: detach
-}
-
-void NayanEngineModule::setPlanarVelocity(jsi::Runtime &, double world, double entity, double x, double z) {
-  engine_world_set_planar_velocity(find(world), id(entity), x, z);
-}
-
-void NayanEngineModule::applyImpulse(jsi::Runtime &, double world, double entity, double x, double y, double z) {
+void NayanEngineModule::impulse(jsi::Runtime &, double world, double entity, double x, double y, double z) {
   engine_world_apply_impulse(find(world), id(entity), x, y, z);
 }
 
@@ -139,28 +115,9 @@ void NayanEngineModule::setGravity(jsi::Runtime &, double world, double x, doubl
   engine_world_set_gravity(find(world), x, y, z);
 }
 
-bool NayanEngineModule::setPhysics(
-    jsi::Runtime &, double world, double entity, double kind, double shape, double sx, double sy, double sz,
-    double layer, double mask, bool sensor, double friction, double restitution, double density,
-    double linearDamping, double angularDamping, double gravityScale, bool lockRotations, bool ccd) {
-  EnginePhysicsDesc desc{};
-  desc.kind = id(kind);   // out-of-range values are rejected by the core
-  desc.shape = id(shape);
-  desc.size[0] = static_cast<float>(sx);
-  desc.size[1] = static_cast<float>(sy);
-  desc.size[2] = static_cast<float>(sz);
-  desc.layer = bits(layer);
-  desc.mask = bits(mask);
-  desc.sensor = sensor ? 1 : 0;
-  desc.friction = static_cast<float>(friction);
-  desc.restitution = static_cast<float>(restitution);
-  desc.density = static_cast<float>(density);
-  desc.linear_damping = static_cast<float>(linearDamping);
-  desc.angular_damping = static_cast<float>(angularDamping);
-  desc.gravity_scale = static_cast<float>(gravityScale);
-  desc.lock_rotations = lockRotations ? 1 : 0;
-  desc.ccd = ccd ? 1 : 0;
-  return engine_world_set_physics(find(world), id(entity), &desc) != 0;
+void NayanEngineModule::setBounds(
+    jsi::Runtime &, double world, double minX, double minZ, double maxX, double maxZ) {
+  engine_world_set_bounds(find(world), minX, minZ, maxX, maxZ);
 }
 
 double NayanEngineModule::raycast(
@@ -168,15 +125,6 @@ double NayanEngineModule::raycast(
     double maxDistance, double mask) {
   uint32_t hit = engine_world_raycast(find(world), ox, oy, oz, dx, dy, dz, maxDistance, bits(mask));
   return hit == ENGINE_NO_ENTITY ? -1 : static_cast<double>(hit);
-}
-
-void NayanEngineModule::setFollow(jsi::Runtime &, double world, double entity, double target, double speed) {
-  engine_world_set_follow(find(world), id(entity), id(target), speed);
-}
-
-void NayanEngineModule::setBounds(
-    jsi::Runtime &, double world, double minX, double minZ, double maxX, double maxZ) {
-  engine_world_set_bounds(find(world), minX, minZ, maxX, maxZ);
 }
 
 bool NayanEngineModule::readPosition(jsi::Runtime &, double world, double entity) {
@@ -219,13 +167,6 @@ double NayanEngineModule::eventLength(jsi::Runtime &, double world) {
 
 jsi::Object NayanEngineModule::getScratch(jsi::Runtime &rt, double world) {
   return external(rt, engine_world_scratch(find(world)), 16 * sizeof(float));
-}
-
-void NayanEngineModule::setImpactFeedback(
-    jsi::Runtime &, double world, double entity, bool enabled, double sound, double minSpeed, double maxSpeed,
-    double volume, double haptic) {
-  engine_world_set_impact_feedback(
-      find(world), id(entity), enabled ? 1 : 0, id(sound), minSpeed, maxSpeed, volume, haptic); // -1 -> no sound
 }
 
 void NayanEngineModule::setListener(jsi::Runtime &, double world, double entity) {

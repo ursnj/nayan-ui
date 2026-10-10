@@ -6,6 +6,7 @@
 //! - `feedback.rs`   impact sounds/haptics played straight from collisions
 //! - `render.rs`     interpolated instance buffers for the renderer
 
+mod desc;
 mod feedback;
 mod physics;
 mod render;
@@ -13,6 +14,7 @@ mod simulation;
 #[cfg(test)]
 mod tests;
 
+pub use desc::{DESC_LEN, EntityDesc, PhysicsRequest, ShapeSpec, flag as desc_flag, slot as desc_slot};
 pub use feedback::ImpactFeedback;
 pub use physics::{BodyKind, PhysicsDesc, Shape};
 
@@ -216,10 +218,7 @@ impl World {
     /// Removes an entity, its rigid body and its children. Returns false for a stale or invalid handle.
     pub fn despawn(&mut self, e: Entity) -> bool {
         let Some(i) = self.dense(e) else { return false };
-        let children: Vec<Entity> = (0..self.len())
-            .filter(|&j| self.parent[j] == e.0)
-            .map(|j| self.entity_at(j))
-            .collect();
+        let children: Vec<Entity> = (0..self.len()).filter(|&j| self.parent[j] == e.0).map(|j| self.entity_at(j)).collect();
         if let Some((h, _)) = self.body[i] {
             self.physics.remove_body(h);
         }
@@ -265,11 +264,7 @@ impl World {
     /// Handy for particles, projectiles and effects. Non-positive or non-finite clears it.
     pub fn set_lifetime(&mut self, e: Entity, seconds: f32) {
         if let Some(i) = self.dense(e) {
-            self.lifetime[i] = if seconds.is_finite() && seconds > 0.0 {
-                seconds
-            } else {
-                f32::INFINITY
-            };
+            self.lifetime[i] = if seconds.is_finite() && seconds > 0.0 { seconds } else { f32::INFINITY };
         }
     }
 
@@ -334,6 +329,17 @@ impl World {
     pub fn set_scale(&mut self, e: Entity, scale: Vec3) {
         if let Some(i) = self.dense(e).filter(|_| scale.is_finite()) {
             self.scale[i] = scale;
+        }
+    }
+
+    /// Changes what the entity is drawn as. Returns false for a stale handle or a mesh id out of range.
+    pub fn set_mesh(&mut self, e: Entity, mesh: u8) -> bool {
+        match self.dense(e) {
+            Some(i) if (mesh as usize) < MAX_MESHES => {
+                self.mesh[i] = mesh;
+                true
+            }
+            _ => false,
         }
     }
 
@@ -403,11 +409,7 @@ impl World {
             return;
         }
         if let Some(i) = self.dense(e) {
-            self.oscillation[i] = Oscillation {
-                amplitude,
-                frequency,
-                phase,
-            };
+            self.oscillation[i] = Oscillation { amplitude, frequency, phase };
         }
     }
 
@@ -416,10 +418,7 @@ impl World {
     pub fn set_follow(&mut self, e: Entity, target: Entity, speed: f32) {
         if let Some(i) = self.dense(e) {
             let speed = if speed.is_finite() { speed.max(0.0) } else { 0.0 };
-            self.follow[i] = Follow {
-                target: target.0,
-                speed,
-            };
+            self.follow[i] = Follow { target: target.0, speed };
         }
     }
 
