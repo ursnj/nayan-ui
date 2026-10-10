@@ -112,6 +112,12 @@ import {
   Pipette,
   Info,
   ImagePlus,
+  Atom,
+  Boxes,
+  Joystick,
+  Monitor,
+  Rocket,
+  Volume2,
 } from "lucide-react";
 import {
   accordionTags,
@@ -312,6 +318,9 @@ export const getSidebarItems = (path: string) => {
   }
   if (path.startsWith("/games")) {
     return gamesSidebarItems;
+  }
+  if (path.startsWith("/game-engine")) {
+    return gameEngineSidebarItems;
   }
   return reactSidebarItems;
 };
@@ -2155,5 +2164,65 @@ export const gamesSidebarItems = [
     description: "Classic Othello strategy",
     link: "/games/reversi",
     icon: Gamepad2,
+  },
+];
+
+export const gameEngineSidebarItems = [
+  { title: "Get Started", description: "", link: "", isHeading: true },
+  {
+    title: "Overview",
+    description: "A 3D game engine for React Native with physics, sound and haptics",
+    link: "/game-engine",
+    icon: Gamepad2,
+  },
+  {
+    title: "Installation",
+    description: "Install @nayan-ui/engine and build a development client",
+    link: "/game-engine/installation",
+    icon: Download,
+  },
+  {
+    title: "Quick Start",
+    description: "A first physics game in about thirty lines",
+    link: "/game-engine/quick-start",
+    icon: Rocket,
+  },
+  { title: "Guides", description: "", link: "", isHeading: true },
+  {
+    title: "World & Entities",
+    description: "Spawn, move and remove objects",
+    link: "/game-engine/world",
+    icon: Boxes,
+  },
+  {
+    title: "Physics",
+    description: "Bodies, colliders, collisions and raycasts",
+    link: "/game-engine/physics",
+    icon: Atom,
+  },
+  {
+    title: "Rendering",
+    description: "GameView, camera, light, shadows and fog",
+    link: "/game-engine/rendering",
+    icon: Monitor,
+  },
+  {
+    title: "Audio & Haptics",
+    description: "Sound effects, music, vibration and impact feedback",
+    link: "/game-engine/audio-haptics",
+    icon: Volume2,
+  },
+  {
+    title: "Input",
+    description: "Joystick and touch controls",
+    link: "/game-engine/input",
+    icon: Joystick,
+  },
+  { title: "Reference", description: "", link: "", isHeading: true },
+  {
+    title: "API Reference",
+    description: "Every export of @nayan-ui/engine",
+    link: "/game-engine/api-reference",
+    icon: BookOpen,
   },
 ];
