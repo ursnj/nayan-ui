@@ -9,27 +9,57 @@ A small, fast 3D engine for React Native.
 ## Quick look
 
 ```tsx
-import { GameView, World, Mesh, Joystick, createJoystickState } from "@nayan-ui/engine";
+import { GameView, World, Mesh, Joystick, createJoystickState, impactStrength } from "@nayan-ui/engine";
+import { createExpoAudio, createExpoHaptics } from "@nayan-ui/engine/expo"; // optional
 
-const world = new World(1000);                       // fixed capacity
+const world = new World(500); // fixed capacity
+
+// Static level geometry and a dynamic, physically simulated player.
+world.spawn({ mesh: Mesh.Plane, scale: [40, 1, 40], body: "fixed" });
 const player = world.spawn({
-  mesh: Mesh.Sphere, position: [0, 0.5, 0], color: [0.3, 0.6, 1],
-  collider: { radius: 0.5, layer: 1, mask: 2 },
+  mesh: Mesh.Sphere, position: [0, 1, 0], color: [0.3, 0.6, 1],
+  body: "dynamic",
+  collider: { layer: 2, mask: 1 | 4, restitution: 0.2 },
 });
-const enemy = world.spawn({ mesh: Mesh.Cube, follow: { target: player, speed: 3 } });
+const pickup = world.spawn({ mesh: Mesh.Sphere, position: [5, 1, 0], body: "kinematic",
+  collider: { layer: 4, sensor: true } });
+const enemy = world.spawn({ body: { type: "dynamic", lockRotations: true }, follow: { target: player, speed: 3 } });
+
+const audio = createExpoAudio({ pickup: require("./pickup.wav"), music: require("./music.wav") });
+const haptics = createExpoHaptics();
+audio.playMusic("music", { volume: 0.4 });
 
 <GameView
   source={world}
-  camera={camera}                                      // mutate camera.eye / camera.target each frame
+  camera={camera}                                // mutate camera.eye / camera.target each frame
+  light={{ direction: [0.4, 0.8, 0.5], ambient: 0.3, shadows: true }}
   onUpdate={(dt) => {
-    world.setVelocity(player, [stick.x * 9, 0, -stick.y * 9]);
-    world.update(dt);                                  // Rust: motion, chasing, collisions
-    world.forEachCollision((a, b) => { /* ... */ });
+    world.setPlanarVelocity(player, stick.x * 8, -stick.y * 8);
+    world.update(dt);                            // Rust: fixed-step physics, chasing, events
+    world.forEachCollision((a, b, { started, sensor, speed }) => {
+      if (started && sensor) { audio.play("pickup"); haptics.impact("light"); }
+      if (started && !sensor) audio.play("bump", { volume: impactStrength(speed) });
+    });
   }}
 />
 ```
 
-`example/OrbRush.tsx` is a complete game built this way (about 250 lines).
+`example/OrbRush.tsx` is a complete game built this way.
+
+## Features
+
+- **Rendering** (WebGPU): cube / sphere / plane meshes, per-instance color, one instanced draw per mesh,
+  directional light with a filtered shadow map that follows the camera, 4x MSAA.
+- **Physics** ([Rapier](https://rapier.rs) in Rust): dynamic / kinematic / fixed bodies, ball and box colliders,
+  friction, restitution, density, damping, rotation locks, CCD, gravity, impulses, raycasts,
+  collision layers/masks, sensors, start/stop contact events with impact speed.
+- **Simulation**: fixed 60 Hz steps with render interpolation; velocity, spin, visual bobbing,
+  chase behavior, arena bounds, lifetimes (auto-despawn with shrink-out) for particles and projectiles.
+- **Audio** (`@nayan-ui/engine/expo`, expo-audio): preloaded effects with a voice pool, looping music, mute.
+- **Haptics** (`@nayan-ui/engine/expo`, expo-haptics): impacts, notifications, selection; throttled.
+- **Input**: `Joystick` touch stick; plain RN touchables for buttons.
+
+`GameAudio` / `GameHaptics` are interfaces: the core has no audio dependency and you can swap in another backend.
 
 ## Layout
 
@@ -76,13 +106,14 @@ Native changes need extra steps (JS changes just reload):
 
 ## Status
 
-Engine v0.2 (iOS only so far):
+Engine v0.3 (iOS only so far):
 
-- [x] Rust world: spawn/despawn with generation-checked handles, velocity, spin, oscillation, chase, bounds
-- [x] Sphere colliders with layers/masks and per-frame collision events (brute force; add a grid beyond a few thousand colliders)
-- [x] Renderer: cube / sphere / plane, per-instance color, camera, directional light, one instanced draw per mesh
-- [x] Touch `Joystick`, `GameView` game loop, example game
-- [ ] Shadows, glTF, audio, rigid-body physics
+- [x] Rust world with generation-checked handles; Rapier rigid bodies, colliders, events, raycasts
+- [x] Fixed-step simulation with interpolation; lifetimes; chase; bounds
+- [x] Renderer with shadows; `GameView`; `Joystick`
+- [x] Audio and haptics (Expo adapters)
+- [ ] Android native module
+- [ ] glTF / custom meshes, textures, transparency
 
 - [x] WebGPU renderer, instanced cubes (iOS)
 - [x] Rust core: transforms, angular velocity, C ABI (tested on host)

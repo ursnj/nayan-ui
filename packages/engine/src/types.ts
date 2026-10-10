@@ -30,4 +30,8 @@ export type Light = {
   direction: [number, number, number];
   /** 0..1 ambient term. */
   ambient: number;
+  /** Cast shadows (one directional shadow map centred on the camera target). Default true. */
+  shadows?: boolean;
+  /** Half-size in world units of the shadowed area around the camera target. Default 30. */
+  shadowExtent?: number;
 };

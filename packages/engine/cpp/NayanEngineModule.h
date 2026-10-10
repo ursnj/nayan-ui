@@ -25,10 +25,16 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   void setVelocity(jsi::Runtime &rt, double world, double entity, double x, double y, double z);
   void setAngularVelocity(jsi::Runtime &rt, double world, double entity, double x, double y, double z);
   void setOscillation(jsi::Runtime &rt, double world, double entity, double ax, double ay, double az, double frequency, double phase);
-  void setCollider(jsi::Runtime &rt, double world, double entity, double radius, double layer, double mask);
+  void setLifetime(jsi::Runtime &rt, double world, double entity, double seconds);
+  void setPlanarVelocity(jsi::Runtime &rt, double world, double entity, double x, double z);
+  void applyImpulse(jsi::Runtime &rt, double world, double entity, double x, double y, double z);
+  void setGravity(jsi::Runtime &rt, double world, double x, double y, double z);
+  bool setPhysics(jsi::Runtime &rt, double world, double entity, double kind, double shape, double sx, double sy, double sz, double layer, double mask, bool sensor, double friction, double restitution, double density, double linearDamping, double angularDamping, double gravityScale, bool lockRotations, bool ccd);
+  double raycast(jsi::Runtime &rt, double world, double ox, double oy, double oz, double dx, double dy, double dz, double maxDistance, double mask);
   void setFollow(jsi::Runtime &rt, double world, double entity, double target, double speed);
   void setBounds(jsi::Runtime &rt, double world, double minX, double minZ, double maxX, double maxZ);
   bool readPosition(jsi::Runtime &rt, double world, double entity);
+  bool readVelocity(jsi::Runtime &rt, double world, double entity);
   void update(jsi::Runtime &rt, double world, double dt);
   double count(jsi::Runtime &rt, double world);
   jsi::Object getMatrices(jsi::Runtime &rt, double world);
