@@ -2,12 +2,17 @@ import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { isRustAvailable } from "@nayan-ui/engine";
 import { Benchmark } from "./Benchmark";
+import { Flappy } from "./Flappy";
 import { OrbRush } from "./OrbRush";
 
-type Screen = "game" | "benchmark";
+const SCREENS = [
+  { key: "flappy", label: "Flappy", Component: Flappy },
+  { key: "orbrush", label: "Orb Rush", Component: OrbRush },
+  { key: "benchmark", label: "Benchmark", Component: Benchmark },
+] as const;
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>("game");
+  const [index, setIndex] = useState(0);
 
   if (!isRustAvailable) {
     return (
@@ -19,14 +24,13 @@ export default function App() {
     );
   }
 
+  const { Component } = SCREENS[index]!;
+  const next = SCREENS[(index + 1) % SCREENS.length]!;
   return (
     <View style={styles.root}>
-      {screen === "game" ? <OrbRush /> : <Benchmark />}
-      <Pressable
-        style={styles.switch}
-        onPress={() => setScreen(screen === "game" ? "benchmark" : "game")}
-      >
-        <Text style={styles.switchText}>{screen === "game" ? "Benchmark" : "Game"}</Text>
+      <Component />
+      <Pressable style={styles.switch} onPress={() => setIndex((i) => (i + 1) % SCREENS.length)} hitSlop={8}>
+        <Text style={styles.switchText}>{next.label} ›</Text>
       </Pressable>
     </View>
   );
