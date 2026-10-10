@@ -9,17 +9,17 @@ A small, fast 3D game engine for React Native.
 ## Quick look
 
 ```tsx
-import { GameView, World, Mesh, audio, haptics } from "@nayan-ui/engine";
+import { GameView, World, audio, haptics } from "@nayan-ui/engine";
 
 const world = new World(500); // fixed capacity
 
 // One call per entity: everything about it in one options object.
-world.spawn({ mesh: Mesh.Plane, scale: [40, 1, 40], physics: "fixed" });
+world.spawn({ mesh: "plane", scale: [40, 1, 40], physics: "fixed" });
 const player = world.spawn({
-  mesh: Mesh.Sphere, position: [0, 1, 0], color: [0.3, 0.6, 1],
+  mesh: "sphere", position: [0, 1, 0], color: [0.3, 0.6, 1],
   physics: { type: "dynamic", layer: 2, mask: 1 | 4, bounce: 0.2 },
 });
-const coin = world.spawn({ mesh: Mesh.Sphere, position: [5, 1, 0], physics: { type: "kinematic", layer: 4, sensor: true } });
+const coin = world.spawn({ mesh: "sphere", position: [5, 1, 0], physics: { type: "kinematic", layer: 4, sensor: true } });
 const enemy = world.spawn({ physics: { type: "dynamic", upright: true }, follow: { target: player, speed: 3 } });
 
 const sfx = audio.load({ coin: require("./coin.wav"), bump: require("./bump.wav"), music: require("./music.wav") });
@@ -53,7 +53,7 @@ Load glTF 2.0 models (`.glb`, or `.gltf` with embedded buffers) and spawn them l
 import { loadModel } from "@nayan-ui/engine";
 
 const tree = await loadModel(require("./assets/tree.glb"), { fit: 2 }); // largest side = 2 units
-world.spawn({ mesh: tree.mesh, position: [0, tree.size[1] / 2, 0], physics: "fixed" });
+world.spawn({ mesh: tree, position: [0, tree.size[1] / 2, 0], physics: "fixed" });
 ```
 
 - Parsed in Rust: meshes, node transforms and material base colors (and vertex colors) are kept.
@@ -90,7 +90,7 @@ No Expo modules are required: rendering, physics, audio and haptics all live in 
 ```
 src/                      TypeScript library
   index.ts                public API
-  types.ts                shared types (Mesh, Camera, Light, RenderSource)
+  types.ts                shared types (Shape, Camera, Light, RenderSource)
   assets.ts               loads require() assets / URIs as bytes
   model/Model.ts          loadModel (glTF)
   world/World.ts          entities, physics, collisions, impact feedback

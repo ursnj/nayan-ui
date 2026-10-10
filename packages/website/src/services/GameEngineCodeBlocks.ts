@@ -20,9 +20,9 @@ export const engineAndroidConfigCode = `{
   }
 }`;
 
-export const engineCheckCode = `import { isRustAvailable } from "@nayan-ui/engine";
+export const engineCheckCode = `import { isEngineAvailable } from "@nayan-ui/engine";
 
-if (!isRustAvailable) {
+if (!isEngineAvailable) {
   // Expo Go, or a platform the native core doesn't support yet.
   console.warn("The game engine's native core isn't linked into this build.");
 }`;
@@ -30,7 +30,7 @@ if (!isRustAvailable) {
 // ── Quick start ──────────────────────────────────────────────────────────
 
 export const engineQuickStartCode = `import { useEffect, useMemo } from "react";
-import { GameView, Mesh, World, type Camera } from "@nayan-ui/engine";
+import { GameView, World, type Camera } from "@nayan-ui/engine";
 
 export default function BouncingBalls() {
   // 1. A world holds every object in the game. Capacity is fixed up front.
@@ -38,12 +38,12 @@ export default function BouncingBalls() {
     const w = new World(200);
 
     // A floor that never moves...
-    w.spawn({ mesh: Mesh.Plane, scale: [20, 1, 20], color: [0.2, 0.25, 0.3], physics: "fixed" });
+    w.spawn({ mesh: "plane", scale: [20, 1, 20], color: [0.2, 0.25, 0.3], physics: "fixed" });
 
     // ...and balls that fall, bounce and roll under real physics.
     for (let i = 0; i < 20; i++) {
       w.spawn({
-        mesh: Mesh.Sphere,
+        mesh: "sphere",
         position: [Math.random() * 6 - 3, 4 + i, Math.random() * 6 - 3],
         color: [1, 0.6, 0.2],
         physics: { type: "dynamic", bounce: 0.7 },
@@ -86,12 +86,12 @@ export const engineGameLoopCode = `const tmp: [number, number, number] = [0, 0, 
 
 // ── World & entities ─────────────────────────────────────────────────────
 
-export const engineSpawnCode = `import { Mesh, World } from "@nayan-ui/engine";
+export const engineSpawnCode = `import { World } from "@nayan-ui/engine";
 
 const world = new World(500);
 
 const crate = world.spawn({
-  mesh: Mesh.Cube,
+  mesh: "cube",
   position: [0, 2, 0],
   scale: 1.5,                    // a number scales uniformly, or pass [x, y, z]
   color: [0.6, 0.45, 0.3],       // RGB, 0..1
@@ -116,7 +116,7 @@ world.gravity = [0, -20, 0];`;
 
 export const engineLifetimeCode = `// Short-lived effects clean themselves up: the entity shrinks away and is despawned.
 world.spawn({
-  mesh: Mesh.Cube,
+  mesh: "cube",
   position: [x, y, z],
   scale: 0.2,
   color: [1, 0.8, 0.2],
@@ -126,10 +126,10 @@ world.spawn({
 });`;
 
 export const engineAttachCode = `// A character made of parts: children follow the parent exactly, with no lag.
-const bird = world.spawn({ mesh: Mesh.Sphere, color: [1, 0.8, 0.2], physics: "dynamic" });
+const bird = world.spawn({ mesh: "sphere", color: [1, 0.8, 0.2], physics: "dynamic" });
 
-world.spawn({ mesh: Mesh.Sphere, parent: bird, position: [0.3, 0.2, 0.4], scale: 0.3, color: [1, 1, 1] }); // eye
-const wing = world.spawn({ mesh: Mesh.Cube, parent: bird, position: [-0.1, 0, 0.5], scale: [0.45, 0.1, 0.3] });
+world.spawn({ mesh: "sphere", parent: bird, position: [0.3, 0.2, 0.4], scale: 0.3, color: [1, 1, 1] }); // eye
+const wing = world.spawn({ mesh: "cube", parent: bird, position: [-0.1, 0, 0.5], scale: [0.45, 0.1, 0.3] });
 
 // For an attached entity, position and rotation are relative to the parent.
 world.set(wing, { rotation: [Math.sin(angle / 2), 0, 0, Math.cos(angle / 2)] });
@@ -152,17 +152,17 @@ export const engineDisposeCode = `useEffect(() => () => world.dispose(), [world]
 // ── Physics ──────────────────────────────────────────────────────────────
 
 export const engineBodiesCode = `// Never moves: floors, walls, platforms.
-world.spawn({ mesh: Mesh.Plane, scale: [40, 1, 40], physics: "fixed" });
+world.spawn({ mesh: "plane", scale: [40, 1, 40], physics: "fixed" });
 
 // Moved by physics: gravity, collisions, impulses.
-const ball = world.spawn({ mesh: Mesh.Sphere, position: [0, 5, 0], physics: "dynamic" });
+const ball = world.spawn({ mesh: "sphere", position: [0, 5, 0], physics: "dynamic" });
 
 // Moved by you, but still pushes dynamic bodies out of the way.
-const paddle = world.spawn({ mesh: Mesh.Cube, scale: [3, 0.5, 1], physics: "kinematic" });
+const paddle = world.spawn({ mesh: "cube", scale: [3, 0.5, 1], physics: "kinematic" });
 
 // Fine-tune with the long form. The collider is sized from the mesh and scale unless you say otherwise.
 world.spawn({
-  mesh: Mesh.Cube,
+  mesh: "cube",
   physics: { type: "dynamic", upright: true, drag: 0.5, ccd: true, friction: 0.2, bounce: 0.4, density: 2 },
 });`;
 
@@ -170,7 +170,7 @@ export const engineLayersCode = `// Give each kind of object a layer bit...
 const WORLD = 1, PLAYER = 2, COIN = 4, ENEMY = 8;
 
 const player = world.spawn({
-  mesh: Mesh.Sphere,
+  mesh: "sphere",
   // ...and say which layers it interacts with.
   physics: { type: "dynamic", layer: PLAYER, mask: WORLD | COIN | ENEMY },
 });
@@ -178,7 +178,7 @@ const player = world.spawn({
 // Two colliders interact if either one's mask includes the other's layer,
 // so coins don't need their own mask to be picked up by the player.
 const coin = world.spawn({
-  mesh: Mesh.Sphere,
+  mesh: "sphere",
   scale: 0.6,
   physics: { type: "kinematic", layer: COIN, mask: 0, sensor: true }, // a sensor reports touches but doesn't push
 });`;
@@ -281,7 +281,7 @@ export const engineModelLoadCode = `import { loadModel, World } from "@nayan-ui/
 const tree = await loadModel(require("./assets/tree.glb"), { fit: 2 }); // largest side = 2 units
 
 world.spawn({
-  mesh: tree.mesh,
+  mesh: tree,
   position: [4, tree.size[1] / 2, 0], // size is the model's bounding box at scale 1
   scale: 1.5,
   physics: "fixed",                   // collider = bounding box * scale
@@ -297,9 +297,9 @@ export const engineModelScreenCode = `function Forest() {
   const world = useMemo(() => {
     if (!tree) return null;
     const world = new World(200);
-    world.spawn({ mesh: Mesh.Plane, scale: [60, 1, 60], color: [0.35, 0.55, 0.3], physics: "fixed" });
+    world.spawn({ mesh: "plane", scale: [60, 1, 60], color: [0.35, 0.55, 0.3], physics: "fixed" });
     for (let i = 0; i < 100; i++) {
-      world.spawn({ mesh: tree.mesh, position: [(i % 10) * 4 - 18, 1, Math.floor(i / 10) * 4 - 18] });
+      world.spawn({ mesh: tree, position: [(i % 10) * 4 - 18, 1, Math.floor(i / 10) * 4 - 18] });
     }
     return world;
   }, [tree]);
@@ -349,7 +349,7 @@ world.set(player, {
 world.listener = player;
 
 // Or set it when spawning:
-world.spawn({ mesh: Mesh.Cube, physics: "dynamic", impact: { sound: sfx.get("bump"), minSpeed: 3 } });`;
+world.spawn({ mesh: "cube", physics: "dynamic", impact: { sound: sfx.get("bump"), minSpeed: 3 } });`;
 
 export const engineHapticsCode = `import { haptics } from "@nayan-ui/engine";
 
@@ -366,22 +366,19 @@ haptics.play([
 haptics.enabled = false;    // a settings toggle
 haptics.supported;          // false on simulators and devices without a haptic engine`;
 
-export const engineImpactStrengthCode = `import { impactStrength } from "@nayan-ui/engine";
-
-world.forEachCollision((a, b, { started, speed }) => {
+export const engineImpactStrengthCode = `world.forEachCollision((a, b, { started, speed }) => {
   if (!started) return;
-  const strength = impactStrength(speed, 2, 12); // 0 below 2, 1 at 12 and above
+  const strength = Math.min(1, Math.max(0, (speed - 2) / 10)); // 0 below 2, 1 at 12 and above
   if (strength > 0) sfx.play("hit", { volume: strength });
 });`;
 
 // ── Input ────────────────────────────────────────────────────────────────
 
-export const engineJoystickCode = `import { useMemo } from "react";
-import { View } from "react-native";
-import { createJoystickState, GameView, Joystick } from "@nayan-ui/engine";
+export const engineJoystickCode = `import { View } from "react-native";
+import { GameView, Joystick, useJoystick } from "@nayan-ui/engine";
 
 function Game() {
-  const stick = useMemo(createJoystickState, []); // { x, y }, each -1..1, y is up
+  const stick = useJoystick(); // { x, y }, each -1..1, y is up
 
   return (
     <View style={{ flex: 1 }}>
@@ -411,18 +408,18 @@ export const engineButtonsCode = `import { Pressable, StyleSheet, Text } from "r
 
 export const engineExportsCode = `import {
   // World
-  World, isRustAvailable, Mesh,
+  World, isEngineAvailable,
   // Rendering and models
   GameView, loadModel,
   // Sound and haptics
-  audio, haptics, impactStrength, SoundBank,
+  audio, haptics,
   // Input
-  Joystick, createJoystickState,
+  Joystick, useJoystick,
 } from "@nayan-ui/engine";
 
 import type {
   Entity, EntityOptions, PhysicsOptions, BodyType, ImpactFeedback, CollisionInfo, RaycastHit, Bounds,
-  Color, Quat, Vec3, MeshKind, Model, ModelOptions, Camera, Light, RenderSource, GameStats,
+  Color, Quat, Vec3, Shape, Model, ModelOptions, Camera, Light, RenderSource, GameStats,
   Sound, Voice, PlayOptions, SoundSource, HapticTap, JoystickState,
 } from "@nayan-ui/engine";`;
 
@@ -455,7 +452,7 @@ export const engineWorldApiCode = `class World {
 }
 
 type EntityOptions = {
-  mesh?: MeshKind;
+  mesh?: Shape | Model;  // default "cube"
   position?: Vec3;
   rotation?: Quat;
   scale?: Vec3 | number;
@@ -475,11 +472,10 @@ export const engineTypesCode = `type Vec3 = readonly [number, number, number];
 type Color = readonly [r, g, b] | readonly [r, g, b, a];  // 0..1
 type Entity = number;  // opaque handle
 
-const Mesh = { Cube: 0, Sphere: 1, Plane: 2 };
-type MeshKind = number;  // a Mesh value or a loaded model's mesh
+type Shape = "cube" | "sphere" | "plane";  // each 1 unit before scaling
 
 function loadModel(source: number | string, options?: { center?: boolean; fit?: number }): Promise<Model>;
-type Model = { mesh: MeshKind; size: Vec3 };  // size at scale 1
+type Model = { size: Vec3; id: number };  // pass as mesh; size at scale 1
 
 type Camera = { eye: [x, y, z]; target: [x, y, z]; fov: number /* radians */ };
 
@@ -510,11 +506,12 @@ export const engineMediaApiCode = `const audio: {
   readonly running: boolean;
 };
 
-class SoundBank<K extends string> {
+// Returned by audio.load
+type SoundBank<K extends string> = {
   readonly ready: Promise<void>;
   get(name: K): Sound | undefined;
   play(name: K, options?: PlayOptions): Voice | null;
-}
+};
 
 const haptics: {
   enabled: boolean;
@@ -523,13 +520,11 @@ const haptics: {
   selection(): void;
   notify(type: "success" | "warning" | "error"): void;
   play(taps: { time: number; intensity: number; sharpness: number }[]): void;
-};
-
-function impactStrength(speed: number, min?: number, max?: number): number; // 0..1`;
+};`;
 
 export const engineInputApiCode = `type JoystickState = { x: number; y: number }; // each -1..1, y is up
 
-function createJoystickState(): JoystickState;
+function useJoystick(): JoystickState;  // a state object for the component's lifetime
 
 function Joystick(props: {
   state: JoystickState;

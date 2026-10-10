@@ -2,7 +2,7 @@
 import { assetUri, loadAssetBytes, type AssetSource } from "../assets";
 import NativeEngine from "../native/NativeNayanEngine";
 import { registerMesh } from "../render/meshes";
-import type { MeshKind, Vec3 } from "../types";
+import type { Vec3 } from "../types";
 
 export type ModelOptions = {
   /** Move the model's bounding box center to the origin, so `position` is its middle. Default true. */
@@ -11,11 +11,12 @@ export type ModelOptions = {
   fit?: number;
 };
 
+/** A loaded model: pass it as an entity's `mesh`. Colliders sized from the mesh fit its bounding box. */
 export type Model = {
-  /** Use as an entity's `mesh`. Colliders sized "from the mesh" fit the model's bounding box. */
-  mesh: MeshKind;
   /** Bounding box size [x, y, z] at scale 1 (after `fit`). */
-  size: Vec3;
+  readonly size: Vec3;
+  /** Mesh id in the core. */
+  readonly id: number;
 };
 
 const loads = new Map<string, Promise<Model>>();
@@ -27,7 +28,7 @@ const loads = new Map<string, Promise<Model>>();
  *
  * ```ts
  * const tree = await loadModel(require("./assets/tree.glb"), { fit: 2 });
- * world.spawn({ mesh: tree.mesh, position: [0, 1, 0], physics: "fixed" });
+ * world.spawn({ mesh: tree, position: [0, 1, 0], physics: "fixed" });
  * ```
  */
 export function loadModel(source: AssetSource, options: ModelOptions = {}): Promise<Model> {
@@ -48,7 +49,7 @@ export function loadModel(source: AssetSource, options: ModelOptions = {}): Prom
           indices: new Uint32Array(native.modelIndices(mesh) as ArrayBuffer),
         });
         const [x, y, z] = native.modelSize(mesh);
-        return { mesh, size: [x!, y!, z!] as Vec3 };
+        return { id: mesh, size: [x!, y!, z!] as Vec3 };
       })
       .catch((error: unknown) => {
         loads.delete(key); // allow a retry

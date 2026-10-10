@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { GameView, isRustAvailable, Mesh, World, type Camera, type GameStats, type RenderSource } from "@nayan-ui/engine";
+import { GameView, isEngineAvailable, World, type Camera, type GameStats, type RenderSource } from "@nayan-ui/engine";
 import { hashColor } from "./hashColor";
 import { JsSimulation } from "./JsSimulation";
 
@@ -16,7 +16,7 @@ function createRustWorld(count: number) {
   for (let i = 0; i < count; i++) {
     const phase = (i % 97) * 0.1;
     world.spawn({
-      mesh: Mesh.Cube,
+      mesh: "cube",
       position: [((i % side) - side / 2) * spacing, 0, (Math.floor(i / side) - side / 2) * spacing],
       color: hashColor(i),
       rotation: [0, Math.sin(phase / 2), 0, Math.cos(phase / 2)],
@@ -31,7 +31,7 @@ function createRustWorld(count: number) {
 function createPhysicsWorld() {
   const world = new World(BODIES + 8);
   const fixed = { physics: { type: "fixed" as const, layer: 1, mask: 0 } };
-  world.spawn({ mesh: Mesh.Plane, scale: [40, 1, 40], color: [0.12, 0.15, 0.2], ...fixed });
+  world.spawn({ mesh: "plane", scale: [40, 1, 40], color: [0.12, 0.15, 0.2], ...fixed });
   for (const [x, z, sx, sz] of [[0, -12, 25, 1], [0, 12, 25, 1], [-12, 0, 1, 25], [12, 0, 1, 25]] as const) {
     world.spawn({ position: [x, 2, z], scale: [sx, 4, sz], color: [0.25, 0.3, 0.38], ...fixed });
   }
@@ -39,7 +39,7 @@ function createPhysicsWorld() {
   for (let i = 0; i < BODIES; i++) {
     bodies.push(
       world.spawn({
-        mesh: i % 2 ? Mesh.Sphere : Mesh.Cube,
+        mesh: i % 2 ? "sphere" : "cube",
         position: [(i % 15) * 1.2 - 8.4, 2 + Math.floor(i / 225) * 1.3, (Math.floor(i / 15) % 15) * 1.2 - 8.4],
         scale: 0.9,
         color: hashColor(i),
@@ -62,7 +62,7 @@ function createPhysicsWorld() {
 }
 
 export function Benchmark() {
-  const [backend, setBackend] = useState<Backend>(isRustAvailable ? "rust" : "js");
+  const [backend, setBackend] = useState<Backend>(isEngineAvailable ? "rust" : "js");
   const [stats, setStats] = useState<GameStats>({ fps: 0, updateMs: 0 });
 
   const { source, step, dispose } = useMemo(() => {
@@ -105,9 +105,9 @@ export function Benchmark() {
           {(["js", "rust", "physics"] as const).map((b) => (
             <Pressable
               key={b}
-              disabled={b !== "js" && !isRustAvailable}
+              disabled={b !== "js" && !isEngineAvailable}
               onPress={() => setBackend(b)}
-              style={[styles.button, backend === b && styles.active, b !== "js" && !isRustAvailable && styles.off]}
+              style={[styles.button, backend === b && styles.active, b !== "js" && !isEngineAvailable && styles.off]}
             >
               <Text style={styles.text}>{b === "js" ? "JS" : b === "rust" ? "Rust" : "Physics"}</Text>
             </Pressable>

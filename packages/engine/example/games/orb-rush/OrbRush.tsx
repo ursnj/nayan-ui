@@ -2,11 +2,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import {
   audio,
-  createJoystickState,
   GameView,
   haptics,
   Joystick,
-  Mesh,
+  useJoystick,
   World,
   type Camera,
   type Color,
@@ -63,7 +62,7 @@ function createGame() {
 
   // Floor and walls (fixed bodies).
   world.spawn({
-    mesh: Mesh.Plane,
+    mesh: "plane",
     scale: [ARENA * 2 + 12, 1, ARENA * 2 + 12],
     color: [0.11, 0.17, 0.21],
     physics: { type: "fixed", layer: WORLD, mask: 0, friction: 0.9 },
@@ -98,7 +97,7 @@ function createGame() {
   }
 
   const player = world.spawn({
-    mesh: Mesh.Sphere,
+    mesh: "sphere",
     position: [0, 0.7, 0],
     scale: 1.2,
     color: BLUE,
@@ -147,7 +146,7 @@ function spawnOrb(g: Game) {
   }
   g.orbs.add(
     g.world.spawn({
-      mesh: Mesh.Sphere,
+      mesh: "sphere",
       position: [x, 0.9, z],
       scale: 0.7,
       color: GOLD,
@@ -336,7 +335,7 @@ function autopilot(g: Game, stick: JoystickState) {
 
 function Round({ muted, onToggleMute, onRestart }: { muted: boolean; onToggleMute: () => void; onRestart: () => void }) {
   const game = useMemo(createGame, []);
-  const stick = useMemo(createJoystickState, []);
+  const stick = useJoystick();
   const light = useMemo<Light>(() => ({ direction: [0.45, 0.85, 0.35], ambient: 0.32, shadowExtent: 26 }), []);
   const [score, setScore] = useState(0);
   const [over, setOver] = useState(false);

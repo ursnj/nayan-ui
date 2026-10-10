@@ -1,4 +1,4 @@
-import { Mesh } from "../types";
+import { SHAPE_MESH } from "../types";
 
 // Interleaved position(3) + normal(3) + color(3), the same layout loaded models use. Built-in shapes
 // are unit-sized, centered at the origin and white (the instance color tints them).
@@ -88,9 +88,9 @@ export function registerMesh(mesh: number, geometry: MeshGeometry) {
 /** Geometry for a mesh id: a built-in shape or a loaded model. */
 export function meshGeometry(mesh: number): MeshGeometry | undefined {
   builtIns ??= new Map([
-    [Mesh.Cube, toGeometry(cube())],
-    [Mesh.Sphere, toGeometry(sphere())],
-    [Mesh.Plane, toGeometry(plane())],
+    [SHAPE_MESH.cube, toGeometry(cube())],
+    [SHAPE_MESH.sphere, toGeometry(sphere())],
+    [SHAPE_MESH.plane, toGeometry(plane())],
   ]);
   return builtIns.get(mesh) ?? models.get(mesh);
 }

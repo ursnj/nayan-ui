@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { isRustAvailable } from "@nayan-ui/engine";
+import { isEngineAvailable } from "@nayan-ui/engine";
 import { Benchmark } from "./games/benchmark/Benchmark";
 import { Flappy } from "./games/flappy/Flappy";
 import { Models } from "./games/models/Models";
@@ -17,7 +17,7 @@ export default function App() {
   // EXPO_PUBLIC_SCREEN=models (etc.) opens that screen first.
   const [index, setIndex] = useState(() => Math.max(0, SCREENS.findIndex((s) => s.key === process.env.EXPO_PUBLIC_SCREEN)));
 
-  if (!isRustAvailable) {
+  if (!isEngineAvailable) {
     return (
       <View style={styles.missing}>
         <Text style={styles.missingText}>

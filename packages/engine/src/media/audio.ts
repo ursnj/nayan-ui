@@ -59,7 +59,7 @@ export class SoundBank<K extends string> {
     ).then(() => undefined);
   }
 
-  /** The sound id, once loaded (e.g. for `World.setImpactFeedback`). */
+  /** The sound, once loaded (e.g. for an entity's `impact.sound`). */
   get(name: K): Sound | undefined {
     return this.ids[name];
   }
@@ -111,8 +111,3 @@ export const audio = {
     return NativeEngine?.audioIsRunning() ?? false;
   },
 };
-
-/** Maps an impact speed to a 0..1 volume/strength: 0 below `min`, 1 at `max`. */
-export function impactStrength(speed: number, min = 1, max = 8): number {
-  return Math.max(0, Math.min(1, (speed - min) / (max - min)));
-}
