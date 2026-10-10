@@ -30,7 +30,7 @@ export type DragEvent = {
 };
 
 type Props = {
-  /** What to draw (usually a `World`). Fixed for the lifetime of the view. */
+  /** What to draw (usually a `World`). Changing it restarts the view; never pass a disposed world. */
   source: RenderSource;
   /**
    * Your game loop, called once per frame before drawing, with the elapsed seconds (capped at 0.1).
@@ -184,9 +184,9 @@ export function GameView(props: Props) {
       cancelAnimationFrame(raf);
       device?.destroy(); // frees every GPU resource the renderer created
     };
-    // The source is fixed for the lifetime of the view.
+    // A new source (e.g. a new round's World) restarts drawing; everything else is read live.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [source]);
 
   const touchable = props.onTap || props.onSwipe || props.onDrag;
   return (
