@@ -1,4 +1,4 @@
-//! The fixed-step update loop: steering, integration, physics, events, lifetimes.
+//! The fixed-step update loop: animations, steering, integration, physics, events, lifetimes.
 
 use super::*;
 use rapier3d::prelude::Collider;
@@ -10,6 +10,7 @@ impl World {
     /// Collision events from all steps run this call are available from `events()`.
     pub fn update(&mut self, dt: f32) {
         self.events.clear();
+        self.done.clear();
         if dt.is_finite() && dt > 0.0 {
             self.accumulator += dt;
             let mut steps = 0;
@@ -29,6 +30,7 @@ impl World {
         let n = self.len();
         self.prev_position.copy_from_slice(&self.position);
         self.prev_rotation.copy_from_slice(&self.rotation);
+        self.advance_tweens(h);
 
         // Followers steer toward their target.
         for i in 0..n {
@@ -47,7 +49,7 @@ impl World {
                 Some((h, BodyKind::Dynamic)) => {
                     if let Some(b) = self.physics.bodies.get_mut(h) {
                         let y = b.linvel().y;
-                        b.set_linvel(Vec3::new(dir.x * f.speed, y, dir.z * f.speed), true);
+                        physics::set_linvel(b, Vec3::new(dir.x * f.speed, y, dir.z * f.speed));
                     }
                 }
                 _ => self.velocity[i] = dir * f.speed,
@@ -65,6 +67,10 @@ impl World {
             any_body |= body.is_some();
             if matches!(body, Some((_, BodyKind::Dynamic | BodyKind::Fixed))) {
                 continue;
+            }
+            let a = self.acceleration[i];
+            if a != Vec3::ZERO {
+                self.velocity[i] += a * h;
             }
             let v = self.velocity[i];
             if v != Vec3::ZERO && self.parent[i] == NO_ENTITY {

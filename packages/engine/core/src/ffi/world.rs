@@ -3,7 +3,7 @@
 
 #![allow(clippy::missing_safety_doc)] // the shared contract is documented once, in ffi/mod.rs
 
-use crate::{DESC_LEN, Entity, EntityDesc, NO_ENTITY, Vec3, World};
+use crate::{ANIM_LEN, Animation, BURST_LEN, Burst, DESC_LEN, Entity, EntityDesc, NO_ENTITY, Vec3, World};
 
 unsafe fn world<'a>(w: *mut World) -> Option<&'a mut World> {
     // SAFETY: caller contract above; null is handled by `as_mut`.
@@ -44,8 +44,45 @@ pub unsafe extern "C" fn engine_world_set_desc(w: *mut World, id: u32, desc: *co
 }
 
 unsafe fn desc_slice<'a>(desc: *const f64, len: usize) -> Option<&'a [f64]> {
+    unsafe { doubles(desc, len, DESC_LEN) }
+}
+
+unsafe fn doubles<'a>(data: *const f64, len: usize, min: usize) -> Option<&'a [f64]> {
     // SAFETY: caller passes `len` readable f64s, used only during the call.
-    (!desc.is_null() && len >= DESC_LEN).then(|| unsafe { std::slice::from_raw_parts(desc, len) })
+    (!data.is_null() && len >= min).then(|| unsafe { std::slice::from_raw_parts(data, len) })
+}
+
+/// Starts an animation from an encoded description (`ENGINE_ANIM_LEN` doubles). Returns 1 if it started.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_animate(w: *mut World, id: u32, data: *const f64, len: usize) -> i32 {
+    let (Some(w), Some(d)) = (unsafe { world(w) }, unsafe { doubles(data, len, ANIM_LEN) }) else {
+        return 0;
+    };
+    Animation::decode(d).is_some_and(|a| w.animate(Entity(id), &a)) as i32
+}
+
+/// Stops the entity's animation where it is. Returns 1 if it had one.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_stop_animation(w: *mut World, id: u32) -> i32 {
+    unsafe { world(w) }.is_some_and(|w| w.stop_animation(Entity(id))) as i32
+}
+
+/// Spawns a particle burst (`ENGINE_BURST_LEN` doubles). Returns how many particles were spawned.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_burst(w: *mut World, data: *const f64, len: usize) -> u32 {
+    let (Some(w), Some(d)) = (unsafe { world(w) }, unsafe { doubles(data, len, BURST_LEN) }) else {
+        return 0;
+    };
+    Burst::decode(d).map_or(0, |b| w.burst(&b))
+}
+
+/// Nearest pickable entity along a ray, as last drawn. Returns it or `UINT32_MAX`; on a hit
+/// scratch[0..4] = distance, point xyz.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_pick(w: *mut World, ox: f32, oy: f32, oz: f32, dx: f32, dy: f32, dz: f32) -> u32 {
+    unsafe { world(w) }
+        .and_then(|w| w.pick(Vec3::new(ox, oy, oz), Vec3::new(dx, dy, dz)))
+        .map_or(NO_ENTITY, |e| e.0)
 }
 
 /// Returns 1 if the entity existed.
@@ -101,10 +138,11 @@ pub unsafe extern "C" fn engine_world_raycast(
         .map_or(NO_ENTITY, |e| e.0)
 }
 
-/// Writes the entity position to the scratch buffer (`engine_world_scratch`). Returns 1 on success.
+/// Writes the entity position to the scratch buffer (`engine_world_scratch`): simulated (relative to
+/// its parent), or with `rendered` != 0 where it was last drawn, in world space. Returns 1 on success.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn engine_world_read_position(w: *mut World, id: u32) -> i32 {
-    unsafe { world(w) }.is_some_and(|w| w.read_position(Entity(id))) as i32
+pub unsafe extern "C" fn engine_world_read_position(w: *mut World, id: u32, rendered: i32) -> i32 {
+    unsafe { world(w) }.is_some_and(|w| w.read_position(Entity(id), rendered != 0)) as i32
 }
 
 /// Writes the entity velocity to the scratch buffer. Returns 1 on success.
@@ -142,7 +180,24 @@ pub unsafe extern "C" fn engine_world_colors(w: *mut World) -> *const f32 {
     unsafe { world(w) }.map_or(std::ptr::null(), |w| w.colors().as_ptr())
 }
 
-/// `MAX_MESHES * 2` u32s: `[first, count]` per mesh id.
+/// `capacity * 4` floats: texture region (u0 v0 u1 v1), same instance order as the matrices.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_regions(w: *mut World) -> *const f32 {
+    unsafe { world(w) }.map_or(std::ptr::null(), |w| w.regions().as_ptr())
+}
+
+/// Entities whose animation ended during the last update (`capacity` u32s of room).
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_done(w: *mut World) -> *const u32 {
+    unsafe { world(w) }.map_or(std::ptr::null(), |w| w.done().as_ptr())
+}
+
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_done_len(w: *mut World) -> u32 {
+    unsafe { world(w) }.map_or(0, |w| w.done().len() as u32)
+}
+
+/// `MAX_MESHES * 4` u32s: `[first, count]` per mesh id for opaque instances, then for transparent ones.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_world_ranges(w: *mut World) -> *const u32 {
     unsafe { world(w) }.map_or(std::ptr::null(), |w| w.ranges().as_ptr())

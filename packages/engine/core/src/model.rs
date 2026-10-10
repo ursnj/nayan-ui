@@ -3,7 +3,11 @@
 //! Every triangle primitive in the default scene is flattened into one vertex/index buffer with the
 //! node transforms baked in and the material's base color (times any vertex colors) stored per
 //! vertex. One model = one mesh id, so any number of copies draw in one instanced call.
-//! Not supported yet: textures (base color factor only), skinning/morph targets, Draco meshes.
+//! The first base color texture found is kept (one texture per model); skins, morph targets and
+//! Draco meshes aren't supported.
+//!
+//! This module also holds the global mesh registry shared by models, font glyphs and aliases
+//! (a built-in shape or model drawn with a different texture).
 
 use base64::Engine;
 use gltf::buffer::Source;
@@ -11,10 +15,10 @@ use gltf::mesh::Mode;
 use rapier3d::glamx::{Mat3, Mat4, Vec3};
 use std::sync::{Arc, Mutex};
 
-/// Mesh ids 0..3 are the renderer's built-in primitives (cube, sphere, plane).
-pub const FIRST_MODEL_MESH: u8 = 3;
-/// Floats per vertex: position (3), normal (3), color (3).
-pub const VERTEX_FLOATS: usize = 9;
+/// Mesh ids 0..16 are the built-in shapes (see `world::shapes`); registered meshes follow.
+pub const FIRST_MODEL_MESH: u8 = 16;
+/// Floats per vertex: position (3), normal (3), color (3), texture coordinates (2).
+pub const VERTEX_FLOATS: usize = 11;
 
 /// A merged, render-ready model.
 pub struct Model {
@@ -24,6 +28,8 @@ pub struct Model {
     pub indices: Vec<u32>,
     /// Half the size of the bounding box (after centering / fitting).
     pub half_extents: Vec3,
+    /// Base color texture (a `texture` id), if the file has one.
+    pub texture: Option<u32>,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -67,19 +73,42 @@ pub fn parse(bytes: &[u8], options: LoadOptions) -> Result<Model, String> {
     if builder.indices.is_empty() {
         return Err("no triangle meshes found (compressed or point/line-only meshes aren't supported)".into());
     }
-    Ok(builder.finish(options))
+    let texture = match builder.texture.take() {
+        Some(image) => Some(crate::texture::register(load_image(&image, &buffers)?)?),
+        None => None,
+    };
+    let mut model = builder.finish(options);
+    model.texture = texture;
+    Ok(model)
+}
+
+/// Decodes a glTF image (embedded in a buffer view or a data URI).
+fn load_image(image: &gltf::Image, buffers: &[Vec<u8>]) -> Result<crate::texture::Image, String> {
+    let bytes = match image.source() {
+        gltf::image::Source::View { view, .. } => {
+            let data = buffers.get(view.buffer().index()).ok_or("texture buffer missing")?;
+            data.get(view.offset()..view.offset() + view.length()).ok_or("texture data out of range")?.to_vec()
+        }
+        gltf::image::Source::Uri { uri, .. } => {
+            decode_data_uri(uri).ok_or_else(|| format!("external texture \"{uri}\" isn't supported: export as .glb or embed it"))?
+        }
+    };
+    crate::texture::decode(&bytes).map_err(|e| format!("texture: {e}"))
 }
 
 #[derive(Default)]
-struct Builder {
+struct Builder<'a> {
     positions: Vec<Vec3>,
     normals: Vec<Vec3>,
     colors: Vec<[f32; 3]>,
+    uvs: Vec<[f32; 2]>,
     indices: Vec<u32>,
+    /// The first base color texture seen.
+    texture: Option<gltf::Image<'a>>,
 }
 
-impl Builder {
-    fn visit(&mut self, node: &gltf::Node, parent: Mat4, buffers: &[Vec<u8>]) -> Result<(), String> {
+impl<'a> Builder<'a> {
+    fn visit(&mut self, node: &gltf::Node<'a>, parent: Mat4, buffers: &[Vec<u8>]) -> Result<(), String> {
         let transform = parent * Mat4::from_cols_array_2d(&node.transform().matrix());
         if let Some(mesh) = node.mesh() {
             for primitive in mesh.primitives() {
@@ -94,7 +123,7 @@ impl Builder {
         Ok(())
     }
 
-    fn add_primitive(&mut self, primitive: &gltf::Primitive, transform: Mat4, buffers: &[Vec<u8>]) -> Result<(), String> {
+    fn add_primitive(&mut self, primitive: &gltf::Primitive<'a>, transform: Mat4, buffers: &[Vec<u8>]) -> Result<(), String> {
         let reader = primitive.reader(|buffer| buffers.get(buffer.index()).map(|data| data.as_slice()));
         let Some(positions) = reader.read_positions() else { return Ok(()) };
         let positions: Vec<Vec3> = positions.map(Vec3::from_array).collect();
@@ -111,7 +140,19 @@ impl Builder {
             Some(normals) => normals.map(Vec3::from_array).collect(),
             None => smooth_normals(&positions, &indices),
         };
-        let base = primitive.material().pbr_metallic_roughness().base_color_factor();
+        let pbr = primitive.material().pbr_metallic_roughness();
+        let base = pbr.base_color_factor();
+        let uv_set = match pbr.base_color_texture() {
+            Some(info) => {
+                self.texture.get_or_insert(info.texture().source());
+                info.tex_coord()
+            }
+            None => 0,
+        };
+        let uvs: Vec<[f32; 2]> = match reader.read_tex_coords(uv_set) {
+            Some(uvs) => uvs.into_f32().collect(),
+            None => vec![[0.0, 0.0]; positions.len()],
+        };
         let colors: Vec<[f32; 3]> = match reader.read_colors(0) {
             Some(colors) => colors.into_rgba_f32().map(|c| [c[0] * base[0], c[1] * base[1], c[2] * base[2]]).collect(),
             None => vec![[base[0], base[1], base[2]]; positions.len()],
@@ -129,6 +170,7 @@ impl Builder {
         self.positions.extend(positions.iter().map(|&p| transform.transform_point3(p)));
         self.normals.extend(normals.iter().map(|&n| (normal_matrix * n).normalize_or(Vec3::Y)));
         self.colors.extend(colors);
+        self.uvs.extend(uvs);
         self.indices.extend(indices.iter().map(|&i| i + offset));
         Ok(())
     }
@@ -147,14 +189,15 @@ impl Builder {
         };
 
         let mut vertices = Vec::with_capacity(self.positions.len() * VERTEX_FLOATS);
-        for ((p, n), c) in self.positions.iter().zip(&self.normals).zip(&self.colors) {
+        for (((p, n), c), uv) in self.positions.iter().zip(&self.normals).zip(&self.colors).zip(&self.uvs) {
             let p = (*p - center) * scale;
-            vertices.extend_from_slice(&[p.x, p.y, p.z, n.x, n.y, n.z, c[0], c[1], c[2]]);
+            vertices.extend_from_slice(&[p.x, p.y, p.z, n.x, n.y, n.z, c[0], c[1], c[2], uv[0], uv[1]]);
         }
         Model {
             vertices,
             indices: self.indices,
             half_extents: size * scale / 2.0,
+            texture: None,
         }
     }
 }
@@ -179,39 +222,85 @@ fn decode_data_uri(uri: &str) -> Option<Vec<u8>> {
 
 // ── Registry ─────────────────────────────────────────────────────────────
 
-static MODELS: Mutex<Vec<Arc<Model>>> = Mutex::new(Vec::new());
+/// A registered mesh id: its own geometry, or another mesh drawn with a different texture.
+enum Entry {
+    Model(Arc<Model>),
+    Alias(u8),
+}
+
+static MESHES: Mutex<Vec<Entry>> = Mutex::new(Vec::new());
 static LAST_ERROR: Mutex<String> = Mutex::new(String::new());
 
-/// Why the last `load` failed (empty after a success).
+/// Why the last model, texture or font load failed (empty after a success).
 pub fn last_error() -> String {
     LAST_ERROR.lock().map(|e| e.clone()).unwrap_or_default()
 }
 
-/// Parses a model and registers it. Returns its mesh id, or an error message.
-/// Models live for the whole process, so pointers into them stay valid.
-pub fn load(bytes: &[u8], options: LoadOptions) -> Result<u8, String> {
-    let result = load_inner(bytes, options);
+/// Remembers a load's error message for `last_error` (clears it on success).
+pub(crate) fn record_error<T>(result: Result<T, String>) -> Result<T, String> {
     if let Ok(mut error) = LAST_ERROR.lock() {
         *error = result.as_ref().err().cloned().unwrap_or_default();
     }
     result
 }
 
-fn load_inner(bytes: &[u8], options: LoadOptions) -> Result<u8, String> {
-    let model = parse(bytes, options)?;
-    let mut models = MODELS.lock().map_err(|_| "model registry unavailable".to_string())?;
-    let id = FIRST_MODEL_MESH as usize + models.len();
+/// Parses a model and registers it. Returns its mesh id, or an error message.
+/// Models live for the whole process, so pointers into them stay valid.
+pub fn load(bytes: &[u8], options: LoadOptions) -> Result<u8, String> {
+    record_error(parse(bytes, options).and_then(register))
+}
+
+fn push(entry: Entry) -> Result<u8, String> {
+    let mut meshes = MESHES.lock().map_err(|_| "mesh registry unavailable".to_string())?;
+    let id = FIRST_MODEL_MESH as usize + meshes.len();
     if id >= crate::MAX_MESHES {
-        return Err(format!("too many models (at most {})", crate::MAX_MESHES - FIRST_MODEL_MESH as usize));
+        return Err(format!(
+            "too many meshes (models, font glyphs and textured variants share {} ids)",
+            crate::MAX_MESHES - FIRST_MODEL_MESH as usize
+        ));
     }
-    models.push(Arc::new(model));
+    meshes.push(entry);
     Ok(id as u8)
 }
 
-/// The model registered under a mesh id.
+/// Registers render-ready geometry under a new mesh id.
+pub fn register(model: Model) -> Result<u8, String> {
+    push(Entry::Model(Arc::new(model)))
+}
+
+/// A new mesh id drawn with `base`'s geometry (a built-in shape or a registered mesh). The
+/// renderer gives it its own texture; colliders and picking treat it exactly like `base`.
+pub fn alias(base: u8) -> Result<u8, String> {
+    let base = resolve(base);
+    if base >= FIRST_MODEL_MESH && get(base).is_none() {
+        return Err("unknown mesh".into());
+    }
+    record_error(push(Entry::Alias(base)))
+}
+
+/// The mesh whose geometry `mesh` uses: itself, or what it aliases.
+pub fn resolve(mesh: u8) -> u8 {
+    let Some(index) = (mesh as usize).checked_sub(FIRST_MODEL_MESH as usize) else { return mesh };
+    match MESHES.lock().ok().and_then(|m| match m.get(index) {
+        Some(Entry::Alias(base)) => Some(*base),
+        _ => None,
+    }) {
+        Some(base) => base,
+        None => mesh,
+    }
+}
+
+/// The geometry registered under a mesh id (following an alias). None for built-in shapes.
 pub fn get(mesh: u8) -> Option<Arc<Model>> {
-    let index = (mesh as usize).checked_sub(FIRST_MODEL_MESH as usize)?;
-    MODELS.lock().ok()?.get(index).cloned()
+    let meshes = MESHES.lock().ok()?;
+    let mut index = (mesh as usize).checked_sub(FIRST_MODEL_MESH as usize)?;
+    for _ in 0..2 {
+        match meshes.get(index)? {
+            Entry::Model(model) => return Some(model.clone()),
+            Entry::Alias(base) => index = (*base as usize).checked_sub(FIRST_MODEL_MESH as usize)?,
+        }
+    }
+    None
 }
 
 #[cfg(test)]
@@ -330,6 +419,60 @@ pub(crate) mod tests {
         let err = parse(external.as_bytes(), LoadOptions::default()).err().unwrap();
         assert!(err.contains("isn't supported"), "{err}");
         assert!(parse(b"not a model", LoadOptions::default()).is_err());
+    }
+
+    #[test]
+    fn keeps_the_base_color_texture_and_uvs() {
+        // The test triangle with a TEXCOORD_0 accessor and an embedded 1x1 PNG.
+        let png = crate::texture::tests::png(1, 1, &[10, 20, 30, 255]);
+        let glb = glb(&[([0.0, 0.0, 0.0], 1.0, [1.0; 4])]);
+        let json_len = u32::from_le_bytes(glb[12..16].try_into().unwrap()) as usize;
+        let json = std::str::from_utf8(&glb[20..20 + json_len]).unwrap().trim_end();
+        let uvs: Vec<u8> = [0.0f32, 0.0, 1.0, 0.0, 0.0, 1.0].iter().flat_map(|f| f.to_le_bytes()).collect();
+        let uv_uri = format!("data:application/octet-stream;base64,{}", base64::engine::general_purpose::STANDARD.encode(&uvs));
+        let png_uri = format!("data:image/png;base64,{}", base64::engine::general_purpose::STANDARD.encode(&png));
+        let json = json
+            .replacen(r#""attributes":{"POSITION":0}"#, r#""attributes":{"POSITION":0,"TEXCOORD_0":2}"#, 1)
+            .replacen(
+                r#"{"pbrMetallicRoughness":{"baseColorFactor":[1,1,1,1]}}"#,
+                r#"{"pbrMetallicRoughness":{"baseColorFactor":[1,1,1,1],"baseColorTexture":{"index":0}}}"#,
+                1,
+            )
+            .replacen(r#""buffers":[{"#, &format!(r#""buffers":[{{"uri":"{uv_uri}","byteLength":24}},{{"#), 1)
+            .replace(r#""buffer":0"#, r#""buffer":1"#)
+            .replacen(r#""bufferViews":["#, r#""bufferViews":[{"buffer":0,"byteOffset":0,"byteLength":24},"#, 1)
+            .replace(r#""bufferView":0,"#, r#""bufferView":1,"#)
+            .replace(r#""bufferView":1,"componentType":5123"#, r#""bufferView":2,"componentType":5123"#);
+        let json = json.replacen(
+            r#"{"bufferView":2,"componentType":5123,"count":3,"type":"SCALAR"}]"#,
+            r#"{"bufferView":2,"componentType":5123,"count":3,"type":"SCALAR"},{"bufferView":0,"componentType":5126,"count":3,"type":"VEC2"}]"#,
+            1,
+        );
+        let json = format!(
+            r#"{},"textures":[{{"source":0}}],"images":[{{"uri":"{png_uri}"}}]}}"#,
+            json.trim_end().strip_suffix('}').unwrap()
+        );
+        // Swap the embedded binary chunk for the data URI form so every buffer is in the JSON.
+        let bin = &glb[20 + json_len + 8..];
+        let bin_uri = format!("data:application/octet-stream;base64,{}", base64::engine::general_purpose::STANDARD.encode(bin));
+        let json = json.replacen(r#"{"byteLength""#, &format!(r#"{{"uri":"{bin_uri}","byteLength""#), 1);
+        let m = parse(json.as_bytes(), LoadOptions { center: false, fit: 0.0 }).unwrap();
+        let texture = crate::texture::get(m.texture.expect("texture kept")).unwrap();
+        assert_eq!(texture.rgba, [10, 20, 30, 255]);
+        assert_eq!(&vertex(&m, 1)[9..11], &[1.0, 0.0], "uvs");
+    }
+
+    #[test]
+    fn aliases_share_geometry() {
+        let model = load(&glb(&[([0.0, 0.0, 0.0], 1.0, [1.0; 4])]), LoadOptions::default()).unwrap();
+        let alias = super::alias(model).unwrap();
+        assert_ne!(alias, model);
+        assert_eq!(resolve(alias), model);
+        assert_eq!(get(alias).unwrap().indices, get(model).unwrap().indices);
+        let cube = super::alias(0).unwrap();
+        assert_eq!(resolve(cube), 0, "built-in shapes can be aliased");
+        assert!(get(cube).is_none());
+        assert_eq!(resolve(super::alias(alias).unwrap()), model, "aliases of aliases point at the geometry");
     }
 
     #[test]

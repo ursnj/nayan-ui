@@ -4,17 +4,25 @@
 //! - `physics.rs`    rigid bodies and colliders (Rapier), raycasts
 //! - `simulation.rs` the fixed-step update loop and collision events
 //! - `feedback.rs`   impact sounds/haptics played straight from collisions
-//! - `render.rs`     interpolated instance buffers for the renderer
+//! - `render.rs`     interpolated instance buffers for the renderer, picking
+//! - `animation.rs`  tweens (move / rotate / scale / recolor over time)
+//! - `particles.rs`  particle bursts
+//! - `shapes.rs`     built-in shape ids and sizes
 
+mod animation;
 mod desc;
 mod feedback;
+mod particles;
 mod physics;
 mod render;
+pub mod shapes;
 mod simulation;
 #[cfg(test)]
 mod tests;
 
+pub use animation::{ANIM_LEN, Animation, Easing};
 pub use desc::{DESC_LEN, EntityDesc, PhysicsRequest, ShapeSpec, flag as desc_flag, slot as desc_slot};
+pub use particles::{BURST_LEN, Burst};
 pub use feedback::ImpactFeedback;
 pub use physics::{BodyKind, PhysicsDesc, Shape};
 
@@ -22,8 +30,10 @@ use physics::EventSink;
 use rapier3d::glamx::{Quat, Vec3};
 use rapier3d::prelude::{PhysicsWorld, RigidBodyHandle};
 
-/// Mesh ids are small integers chosen by the renderer; the core only buckets by them.
-pub const MAX_MESHES: usize = 64;
+/// Mesh ids: 0..16 built-in shapes, then models, font glyphs and textured variants.
+pub const MAX_MESHES: usize = 256;
+/// Attachment chains deeper than this are rejected.
+pub const MAX_DEPTH: usize = 16;
 /// Collision events kept per `update`. Extra events are dropped.
 pub const MAX_EVENTS: usize = 4096;
 /// u32 values per event in `events()`: `[entity_a, entity_b, flags, impact_speed (f32 bits)]`.
@@ -94,6 +104,12 @@ pub struct World {
     /// Parent entity (raw id) or NO_ENTITY. A child's position/rotation are local to the parent.
     parent: Vec<u32>,
     feedback: Vec<Option<ImpactFeedback>>,
+    /// Constant acceleration for entities physics doesn't move (particles, debris).
+    acceleration: Vec<Vec3>,
+    pickable: Vec<bool>,
+    /// Texture region u0 v0 u1 v1.
+    region: Vec<[f32; 4]>,
+    tween: Vec<Option<Box<animation::Tween>>>,
 
     // handle table
     slots: Vec<Slot>,
@@ -107,12 +123,19 @@ pub struct World {
     /// Per-entity velocity just before the current physics step (approach speed for impacts).
     pre_velocity: Vec<Vec3>,
     accumulator: f32,
+    /// Interpolation factor of the last render output (for picking and smooth positions).
+    alpha: f32,
+    rng: u32,
 
     // outputs (fixed size)
     out_matrices: Vec<f32>,
     out_colors: Vec<f32>,
-    ranges: [u32; MAX_MESHES * 2],
+    out_regions: Vec<f32>,
+    /// `[first, count]` per mesh for opaque instances, then the same for transparent ones.
+    ranges: Box<[u32; MAX_MESHES * 4]>,
     events: Vec<u32>,
+    /// Entities whose animation ended (finished or despawned) during the last update.
+    done: Vec<u32>,
     scratch: Box<[f32; 16]>,
 }
 
@@ -140,6 +163,10 @@ impl World {
             lifetime: Vec::with_capacity(capacity),
             parent: Vec::with_capacity(capacity),
             feedback: Vec::with_capacity(capacity),
+            acceleration: Vec::with_capacity(capacity),
+            pickable: Vec::with_capacity(capacity),
+            region: Vec::with_capacity(capacity),
+            tween: Vec::with_capacity(capacity),
             slots: Vec::with_capacity(capacity),
             free: Vec::new(),
             bounds: None,
@@ -148,10 +175,14 @@ impl World {
             sink: EventSink::default(),
             pre_velocity: Vec::with_capacity(capacity),
             accumulator: 0.0,
+            alpha: 0.0,
+            rng: 0x9e37_79b9,
             out_matrices: vec![0.0; capacity * 16],
             out_colors: vec![0.0; capacity * 4],
-            ranges: [0; MAX_MESHES * 2],
+            out_regions: vec![0.0; capacity * 4],
+            ranges: Box::new([0; MAX_MESHES * 4]),
             events: Vec::with_capacity(MAX_EVENTS * EVENT_STRIDE),
+            done: Vec::with_capacity(capacity),
             scratch: Box::new([0.0; 16]),
         }
     }
@@ -170,10 +201,9 @@ impl World {
 
     // ── Lifecycle ────────────────────────────────────────────────────────
 
-    /// Adds an entity. Returns `None` if the world is full, `mesh` is out of range, or the
-    /// position/scale are not finite.
+    /// Adds an entity. Returns `None` if the world is full or the position/scale are not finite.
     pub fn spawn(&mut self, mesh: u8, position: Vec3, scale: Vec3, color: [f32; 4]) -> Option<Entity> {
-        if self.len() >= self.capacity || mesh as usize >= MAX_MESHES || !position.is_finite() || !scale.is_finite() {
+        if self.len() >= self.capacity || !position.is_finite() || !scale.is_finite() {
             return None;
         }
         let dense = self.len() as u32;
@@ -212,13 +242,35 @@ impl World {
         self.lifetime.push(f32::INFINITY);
         self.parent.push(NO_ENTITY);
         self.feedback.push(None);
+        self.acceleration.push(Vec3::ZERO);
+        self.pickable.push(true);
+        self.region.push([0.0, 0.0, 1.0, 1.0]);
+        self.tween.push(None);
         Some(handle)
     }
 
-    /// Removes an entity, its rigid body and its children. Returns false for a stale or invalid handle.
+    /// Removes an entity, its rigid body and everything attached to it (at any depth).
+    /// Returns false for a stale or invalid handle.
     pub fn despawn(&mut self, e: Entity) -> bool {
-        let Some(i) = self.dense(e) else { return false };
-        let children: Vec<Entity> = (0..self.len()).filter(|&j| self.parent[j] == e.0).map(|j| self.entity_at(j)).collect();
+        if !self.is_alive(e) {
+            return false;
+        }
+        let mut pending = vec![e];
+        while let Some(next) = pending.pop() {
+            if self.is_alive(next) {
+                pending.extend((0..self.len()).filter(|&j| self.parent[j] == next.0).map(|j| self.entity_at(j)));
+                self.remove(next);
+            }
+        }
+        true
+    }
+
+    /// Removes one entity (not its children).
+    fn remove(&mut self, e: Entity) {
+        let Some(i) = self.dense(e) else { return };
+        if self.tween[i].is_some() && self.done.len() < self.capacity {
+            self.done.push(e.0); // a pending animate() promise resolves
+        }
         if let Some((h, _)) = self.body[i] {
             self.physics.remove_body(h);
         }
@@ -241,6 +293,10 @@ impl World {
         self.lifetime.swap_remove(i);
         self.parent.swap_remove(i);
         self.feedback.swap_remove(i);
+        self.acceleration.swap_remove(i);
+        self.pickable.swap_remove(i);
+        self.region.swap_remove(i);
+        self.tween.swap_remove(i);
         if i != last {
             let moved = self.dense_slot[i];
             self.slots[moved as usize].dense = i as u32;
@@ -250,10 +306,6 @@ impl World {
         s.alive = false;
         s.generation = (s.generation + 1) % MAX_GENERATION;
         self.free.push(slot);
-        for child in children {
-            self.despawn(child); // children never have children (one level), so this doesn't recurse further
-        }
-        true
     }
 
     pub fn is_alive(&self, e: Entity) -> bool {
@@ -269,25 +321,36 @@ impl World {
     }
 
     /// Attaches `child` to `parent` (or detaches it with `None`). While attached, the child's
-    /// position and rotation are local to the parent, are resolved from the parent's
-    /// *interpolated* pose (so attached parts never lag or jitter), and the child is despawned with
-    /// the parent. Spin and bobbing still apply locally; velocity and follow are ignored.
+    /// position, rotation and scale are relative to the parent (a scene graph: attachments nest),
+    /// are resolved from the parent's *interpolated* pose (so attached parts never lag or jitter),
+    /// and the child is despawned with the parent. Spin, bobbing and animations still apply
+    /// locally; velocity and follow are ignored.
     ///
-    /// One level only: a parent can't itself be attached, an entity with children can't be
-    /// attached, and entities with rigid bodies can't be attached. Returns false if rejected.
+    /// Rejected (returns false): entities with rigid bodies, cycles, and chains deeper than `MAX_DEPTH`.
     pub fn set_parent(&mut self, child: Entity, parent: Option<Entity>) -> bool {
         let Some(c) = self.dense(child) else { return false };
         let Some(parent) = parent else {
             self.parent[c] = NO_ENTITY;
             return true;
         };
-        let Some(p) = self.dense(parent) else { return false };
-        let child_has_children = self.parent.contains(&child.0);
-        if p == c || self.body[c].is_some() || self.parent[p] != NO_ENTITY || child_has_children {
+        if self.dense(parent).is_none() || self.body[c].is_some() {
             return false;
         }
-        self.parent[c] = parent.0;
-        true
+        // Walk up from the new parent: reaching the child would make a cycle.
+        let mut ancestor = parent.0;
+        for _ in 0..MAX_DEPTH {
+            if ancestor == child.0 {
+                return false;
+            }
+            match self.dense(Entity(ancestor)) {
+                Some(k) => ancestor = self.parent[k],
+                None => {
+                    self.parent[c] = parent.0;
+                    return true;
+                }
+            }
+        }
+        false // too deep
     }
 
     // ── Transform & appearance ───────────────────────────────────────────
@@ -332,20 +395,31 @@ impl World {
         }
     }
 
-    /// Changes what the entity is drawn as. Returns false for a stale handle or a mesh id out of range.
+    /// Changes what the entity is drawn as. Returns false for a stale handle.
     pub fn set_mesh(&mut self, e: Entity, mesh: u8) -> bool {
-        match self.dense(e) {
-            Some(i) if (mesh as usize) < MAX_MESHES => {
-                self.mesh[i] = mesh;
-                true
-            }
-            _ => false,
+        let Some(i) = self.dense(e) else { return false };
+        self.mesh[i] = mesh;
+        true
+    }
+
+    /// RGBA; alpha below 1 draws the entity see-through.
+    pub fn set_color(&mut self, e: Entity, color: [f32; 4]) {
+        if let Some(i) = self.dense(e).filter(|_| color.iter().all(|c| c.is_finite())) {
+            self.color[i] = color;
         }
     }
 
-    pub fn set_color(&mut self, e: Entity, color: [f32; 4]) {
+    /// Part of the mesh's texture to show, as u0 v0 u1 v1 (sprite sheets, card atlases).
+    pub fn set_region(&mut self, e: Entity, region: [f32; 4]) {
+        if let Some(i) = self.dense(e).filter(|_| region.iter().all(|c| c.is_finite())) {
+            self.region[i] = region;
+        }
+    }
+
+    /// Whether `pick` can hit this entity (default true).
+    pub fn set_pickable(&mut self, e: Entity, pickable: bool) {
         if let Some(i) = self.dense(e) {
-            self.color[i] = color;
+            self.pickable[i] = pickable;
         }
     }
 
@@ -361,7 +435,7 @@ impl World {
             if let Some((h, BodyKind::Dynamic)) = self.body[i]
                 && let Some(b) = self.physics.bodies.get_mut(h)
             {
-                b.set_linvel(velocity, true);
+                physics::set_linvel(b, velocity);
             }
         }
     }
@@ -376,7 +450,7 @@ impl World {
                 Some((h, BodyKind::Dynamic)) => {
                     if let Some(b) = self.physics.bodies.get_mut(h) {
                         let y = b.linvel().y;
-                        b.set_linvel(Vec3::new(x, y, z), true);
+                        physics::set_linvel(b, Vec3::new(x, y, z));
                     }
                 }
                 _ => {
@@ -399,6 +473,13 @@ impl World {
             {
                 b.set_angvel(velocity, true);
             }
+        }
+    }
+
+    /// Constant acceleration (e.g. gravity for particles) for entities physics doesn't move.
+    pub fn set_acceleration(&mut self, e: Entity, acceleration: Vec3) {
+        if let Some(i) = self.dense(e).filter(|_| acceleration.is_finite()) {
+            self.acceleration[i] = acceleration;
         }
     }
 
@@ -437,9 +518,16 @@ impl World {
         self.dense(e).map(|i| self.position[i])
     }
 
-    /// Writes the entity's position into scratch[0..3]. Returns false if not alive.
-    pub fn read_position(&mut self, e: Entity) -> bool {
-        let Some(p) = self.position(e) else { return false };
+    /// Writes the entity's position into scratch[0..3]: its simulated position (relative to its
+    /// parent if attached), or with `rendered` where it was last drawn (interpolated, in world
+    /// space; what a camera should follow). Returns false if not alive.
+    pub fn read_position(&mut self, e: Entity, rendered: bool) -> bool {
+        let Some(i) = self.dense(e) else { return false };
+        let p = if rendered {
+            self.world_matrix(i, self.alpha).w_axis.truncate()
+        } else {
+            self.position[i]
+        };
         self.scratch[..3].copy_from_slice(&p.to_array());
         true
     }
@@ -467,9 +555,19 @@ impl World {
         &self.out_colors
     }
 
-    /// `[first, count]` per mesh id, in instances.
-    pub fn ranges(&self) -> &[u32; MAX_MESHES * 2] {
+    /// Capacity-sized buffer; texture region (u0 v0 u1 v1) per instance, same order as `matrices`.
+    pub fn regions(&self) -> &[f32] {
+        &self.out_regions
+    }
+
+    /// `[first, count]` per mesh id for opaque instances, then the same for transparent ones.
+    pub fn ranges(&self) -> &[u32; MAX_MESHES * 4] {
         &self.ranges
+    }
+
+    /// Entities whose animation ended (finished, or the entity was despawned) in the last update.
+    pub fn done(&self) -> &[u32] {
+        &self.done
     }
 
     /// Events from the last update, `EVENT_STRIDE` u32s each:
