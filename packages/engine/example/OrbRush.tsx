@@ -1,23 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import {
+  audio,
   createJoystickState,
   GameView,
-  impactStrength,
+  haptics,
   Joystick,
   Mesh,
   World,
   type Camera,
   type Color,
   type Entity,
-  type GameAudio,
-  type GameHaptics,
   type GameStats,
   type JoystickState,
   type Light,
   type Vec3,
+  type Voice,
 } from "@nayan-ui/engine";
-import { createExpoAudio, createExpoHaptics } from "@nayan-ui/engine/expo";
 
 // Collision layers. A pair collides if either side's mask includes the other's layer.
 const WORLD = 1; // floor, walls, crates
@@ -42,22 +41,23 @@ const BLUE: Color = [0.25, 0.55, 1];
 // Demo / QA mode: a bot plays and restarts automatically. Run Metro with EXPO_PUBLIC_AUTOPLAY=1.
 const AUTOPLAY = process.env.EXPO_PUBLIC_AUTOPLAY === "1";
 
-const SOUNDS = {
+// Decoded once by the Rust mixer, shared by every round.
+const sfx = audio.load({
   pickup: require("./assets/sfx/pickup.wav"),
   dash: require("./assets/sfx/dash.wav"),
   bump: require("./assets/sfx/bump.wav"),
   gameover: require("./assets/sfx/gameover.wav"),
   music: require("./assets/sfx/music.wav"),
-};
-type Sound = keyof typeof SOUNDS;
+});
 
 let best = 0; // best score this session
 
 const rand = (min: number, max: number) => min + Math.random() * (max - min);
 
 /** Everything a round needs. Mutable on purpose: it is touched every frame, outside React. */
-function createGame(audio: GameAudio<Sound>, haptics: GameHaptics) {
+function createGame() {
   const world = new World(400);
+  const bump = sfx.get("bump");
 
   // Floor and walls (fixed bodies).
   world.spawn({
@@ -92,6 +92,7 @@ function createGame(audio: GameAudio<Sound>, haptics: GameHaptics) {
         color: [0.62, 0.45, 0.28],
         body: { type: "dynamic", angularDamping: 0.5 },
         collider: { layer: WORLD, mask: WORLD, friction: 0.7, density: 0.5 },
+        impact: { sound: bump, minSpeed: 3, maxSpeed: 12, volume: 0.5 }, // knocks, played by the core
       }),
     );
   }
@@ -103,13 +104,13 @@ function createGame(audio: GameAudio<Sound>, haptics: GameHaptics) {
     color: BLUE,
     body: { type: "dynamic", angularDamping: 0.3 },
     collider: { layer: PLAYER, mask: WORLD | ORB | ENEMY, friction: 0.9, restitution: 0.1, density: 2 },
+    impact: { sound: bump, minSpeed: 1.5, maxSpeed: 10, volume: 1, haptic: 0.7 },
   });
+  world.setListener(player); // impact sounds pan relative to the player
 
   const camera: Camera = { eye: [0, 22, 15], target: [0, 0, 0], fov: Math.PI / 3 };
   const game = {
     world,
-    audio,
-    haptics,
     player,
     camera,
     crates,
@@ -206,8 +207,8 @@ function dash(g: Game, stick: JoystickState) {
   if (len > 0.2) g.dashDir = [stick.x / len, -stick.y / len];
   g.dashTime = DASH_TIME;
   g.dashCooldown = DASH_COOLDOWN;
-  g.audio.play("dash", { volume: 0.8 });
-  g.haptics.impact("medium");
+  sfx.play("dash", { volume: 0.8 });
+  haptics.impact(0.6, 0.6);
   g.onDash(false);
 }
 
@@ -218,8 +219,8 @@ function gameOver(g: Game) {
   best = Math.max(best, g.score);
   sparks(g, p, BLUE, 24);
   g.world.despawn(g.player);
-  g.audio.play("gameover");
-  g.haptics.notify("error");
+  sfx.play("gameover");
+  haptics.notify("error");
   g.onOver();
 }
 
@@ -266,8 +267,8 @@ function tick(g: Game, stick: JoystickState, dt: number) {
         sparks(g, p, GOLD, 10);
         g.score += 10;
         g.onScore(g.score);
-        g.audio.play("pickup", { volume: 0.9 });
-        g.haptics.impact("light");
+        sfx.play("pickup", { volume: 0.9, pitch: 0.95 + Math.random() * 0.1 });
+        haptics.impact(0.35, 0.8);
         spawnOrb(g);
       } else if (g.enemies.has(other)) {
         if (g.dashTime > 0) {
@@ -277,20 +278,13 @@ function tick(g: Game, stick: JoystickState, dt: number) {
           sparks(g, p, RED, 16);
           g.score += 25;
           g.onScore(g.score);
-          g.audio.play("bump", { volume: 1, rate: 0.8 });
-          g.haptics.impact("heavy");
+          sfx.play("bump", { volume: 1, pitch: 0.8 });
+          haptics.impact(1, 0.7);
         } else {
           gameOver(g);
         }
-      } else {
-        const strength = impactStrength(info.speed, 1.5, 10);
-        if (strength > 0) {
-          g.audio.play("bump", { volume: strength });
-          g.haptics.impact(strength > 0.6 ? "medium" : "light");
-        }
       }
-    } else if ((g.crates.has(a) || g.crates.has(b)) && info.speed > 3) {
-      g.audio.play("bump", { volume: impactStrength(info.speed, 3, 12) * 0.5 }); // crates knocking about
+      // Bumps into walls and crates (and crates knocking each other) play from the core.
     }
   });
 
@@ -344,20 +338,8 @@ function autopilot(g: Game, stick: JoystickState) {
   if (closest < 2.2) dash(g, stick);
 }
 
-function Round({
-  audio,
-  haptics,
-  muted,
-  onToggleMute,
-  onRestart,
-}: {
-  audio: GameAudio<Sound>;
-  haptics: GameHaptics;
-  muted: boolean;
-  onToggleMute: () => void;
-  onRestart: () => void;
-}) {
-  const game = useMemo(() => createGame(audio, haptics), [audio, haptics]);
+function Round({ muted, onToggleMute, onRestart }: { muted: boolean; onToggleMute: () => void; onRestart: () => void }) {
+  const game = useMemo(createGame, []);
   const stick = useMemo(createJoystickState, []);
   const light = useMemo<Light>(() => ({ direction: [0.45, 0.85, 0.35], ambient: 0.32, shadowExtent: 26 }), []);
   const [score, setScore] = useState(0);
@@ -432,29 +414,29 @@ function Round({
 
 export function OrbRush() {
   const [round, setRound] = useState(0);
-  const [muted, setMuted] = useState(false);
-  const audio = useMemo(() => createExpoAudio(SOUNDS), []);
-  const haptics = useMemo(() => createExpoHaptics(), []);
+  const [muted, setMuted] = useState(audio.muted);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    audio.playMusic("music", { volume: 0.35 });
-    return () => audio.dispose();
-  }, [audio]);
+    let music: Voice | null = null;
+    let alive = true;
+    sfx.ready.then(() => {
+      if (!alive) return;
+      setLoaded(true);
+      music = sfx.play("music", { volume: 0.35, loop: true });
+    });
+    return () => {
+      alive = false;
+      audio.stop(music);
+    };
+  }, []);
   useEffect(() => {
     audio.muted = muted;
-  }, [audio, muted]);
+  }, [muted]);
 
   const restart = useMemo(() => () => setRound((r) => r + 1), []);
-  return (
-    <Round
-      key={round}
-      audio={audio}
-      haptics={haptics}
-      muted={muted}
-      onToggleMute={() => setMuted((m) => !m)}
-      onRestart={restart}
-    />
-  );
+  if (!loaded) return <View style={styles.root} />; // sounds decode in a few ms; impact feedback needs their ids
+  return <Round key={round} muted={muted} onToggleMute={() => setMuted((m) => !m)} onRestart={restart} />;
 }
 
 const styles = StyleSheet.create({

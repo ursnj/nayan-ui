@@ -6,6 +6,7 @@ export type {
   BodyType,
   ColliderOptions,
   CollisionInfo,
+  ImpactFeedback,
   Color,
   Entity,
   RaycastHit,
@@ -15,5 +16,5 @@ export { Mesh } from "./types";
 export type { Camera, Light, MeshKind, RenderSource, Vec3 } from "./types";
 export { Joystick, createJoystickState } from "./Joystick";
 export type { JoystickState } from "./Joystick";
-export { impactStrength, noHaptics, silentAudio } from "./audio";
-export type { GameAudio, GameHaptics, HapticImpact, HapticNotification, PlayOptions } from "./audio";
+export { audio, haptics, impactStrength, SoundBank } from "./audio";
+export type { HapticTap, PlayOptions, Sound, SoundSource, Voice } from "./audio";

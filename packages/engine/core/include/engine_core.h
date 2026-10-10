@@ -1,5 +1,6 @@
 // C interface to the engine core. Keep in sync with src/ffi.rs.
 #pragma once
+#include <stddef.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -94,6 +95,26 @@ const uint32_t *engine_world_events(World *w);
 uint32_t engine_world_event_len(World *w);
 
 const float *engine_world_scratch(World *w); // 16 floats
+
+// Impact feedback played by the core when `id` starts touching something: volume/strength scale
+// from min_speed (silent) to max_speed (full); panned relative to the listener entity.
+// sound = UINT32_MAX for haptics only; enabled = 0 removes it.
+void engine_world_set_impact_feedback(World *w, uint32_t id, int32_t enabled, uint32_t sound, float min_speed,
+                                      float max_speed, float volume, float haptic);
+void engine_world_set_listener(World *w, uint32_t id);
+
+// Audio (global). The output stream starts on first use. WAV (PCM int or float, mono/stereo).
+int32_t engine_audio_load_wav(const uint8_t *data, size_t len); // sound id, or -1
+uint64_t engine_audio_play(uint32_t sound, float volume, float pan, float pitch, int32_t looping); // voice id, 0 = none
+void engine_audio_stop(uint64_t voice);
+void engine_audio_set_volume(float volume);
+void engine_audio_set_muted(int32_t muted);
+int32_t engine_audio_is_running(void);
+
+// Haptics (global; Core Haptics on iOS, no-op elsewhere for now).
+int32_t engine_haptics_supported(void);
+// `count` taps as [time, intensity 0..1, sharpness 0..1] triples.
+void engine_haptics_play(const float *taps, uint32_t count, int32_t throttle);
 
 #ifdef __cplusplus
 }

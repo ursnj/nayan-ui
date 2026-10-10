@@ -1,3 +1,4 @@
+import type { Sound } from "./audio";
 import NativeEngine from "./specs/NativeNayanEngine";
 import { Mesh, type MeshKind, type RenderSource, type Vec3 } from "./types";
 
@@ -76,11 +77,27 @@ export type SpawnOptions = {
   follow?: { target: Entity; speed: number };
   /** Despawn automatically after this many seconds (shrinks away at the end). */
   lifetime?: number;
+  /** Sound/haptic played by the core on impacts, scaled by speed and panned to the listener. */
+  impact?: ImpactFeedback;
   /**
    * Attach to another entity: `position`/`rotation` become local to it, the child follows the
    * parent's interpolated pose exactly and despawns with it. Visual only (no body/collider).
    */
   parent?: Entity;
+};
+
+/** Sound/haptic the Rust core plays itself when the entity starts touching something solid. */
+export type ImpactFeedback = {
+  /** A loaded sound (e.g. `bank.get("bump")`). Omit for haptics only. */
+  sound?: Sound;
+  /** Impacts slower than this are silent. Default 1. */
+  minSpeed?: number;
+  /** Full volume / strength at this speed and above. Default 10. */
+  maxSpeed?: number;
+  /** Volume at full strength, 0..2. Default 1. */
+  volume?: number;
+  /** Haptic intensity at full strength, 0..1. Default 0 (none). */
+  haptic?: number;
 };
 
 export type CollisionInfo = {
@@ -167,6 +184,7 @@ export class World implements RenderSource {
       follow,
       lifetime,
       parent,
+      impact,
     } = options;
     if (parent !== undefined && (body || collider)) {
       throw new Error("World: attached entities can't have a body or collider");
@@ -188,6 +206,7 @@ export class World implements RenderSource {
     }
     if (follow) n.setFollow(this.id, e, follow.target, follow.speed);
     if (lifetime) n.setLifetime(this.id, e, lifetime);
+    if (impact) this.setImpactFeedback(entity, impact);
     if (parent !== undefined && !n.setParent(this.id, e, parent)) {
       n.despawn(this.id, e);
       throw new Error("World: cannot attach (parent missing, parent is itself attached, or nesting too deep)");
@@ -269,6 +288,21 @@ export class World implements RenderSource {
   }
 
   // ── Physics ──────────────────────────────────────────────────────────
+
+  /**
+   * The core plays `feedback` itself whenever this entity starts touching something solid: volume
+   * and haptic strength scale with impact speed, and the sound is panned relative to the listener.
+   * No JS runs per impact. `null` removes it.
+   */
+  setImpactFeedback(e: Entity, feedback: ImpactFeedback | null) {
+    const { sound, minSpeed = 1, maxSpeed = 10, volume = 1, haptic = 0 } = feedback ?? {};
+    this.native.setImpactFeedback(this.id, e, feedback !== null, sound ?? -1, minSpeed, maxSpeed, volume, haptic);
+  }
+
+  /** Impact sounds are panned/attenuated relative to this entity (usually the player). */
+  setListener(e: Entity | null) {
+    this.native.setListener(this.id, e ?? -1);
+  }
 
   setGravity([x, y, z]: Vec3) {
     this.native.setGravity(this.id, x, y, z);

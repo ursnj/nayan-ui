@@ -44,6 +44,18 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   jsi::Object getEvents(jsi::Runtime &rt, double world);
   double eventLength(jsi::Runtime &rt, double world);
   jsi::Object getScratch(jsi::Runtime &rt, double world);
+  void setImpactFeedback(
+      jsi::Runtime &rt, double world, double entity, bool enabled, double sound, double minSpeed, double maxSpeed,
+      double volume, double haptic);
+  void setListener(jsi::Runtime &rt, double world, double entity);
+  double audioLoad(jsi::Runtime &rt, jsi::Object data);
+  double audioPlay(jsi::Runtime &rt, double sound, double volume, double pan, double pitch, bool loop);
+  void audioStop(jsi::Runtime &rt, double voice);
+  void audioSetVolume(jsi::Runtime &rt, double volume);
+  void audioSetMuted(jsi::Runtime &rt, bool muted);
+  bool audioIsRunning(jsi::Runtime &rt);
+  bool hapticsSupported(jsi::Runtime &rt);
+  void hapticsPlay(jsi::Runtime &rt, jsi::Array taps, bool throttle);
 
  private:
   ::World *find(double id) const;

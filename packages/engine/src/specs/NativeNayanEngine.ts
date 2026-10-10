@@ -111,6 +111,35 @@ export interface Spec extends TurboModule {
   eventLength(world: number): number;
   /** 16 floats. */
   getScratch(world: number): Object;
+
+  /** Impact sound/haptic played by the core. sound -1 = haptics only; enabled false removes it. */
+  setImpactFeedback(
+    world: number,
+    entity: number,
+    enabled: boolean,
+    sound: number,
+    minSpeed: number,
+    maxSpeed: number,
+    volume: number,
+    haptic: number,
+  ): void;
+  /** Entity used to pan/attenuate impact sounds (-1 clears). */
+  setListener(world: number, entity: number): void;
+
+  // Audio (global)
+  /** Decodes a WAV ArrayBuffer. Returns a sound id, or -1. */
+  audioLoad(data: Object): number;
+  /** Returns a voice id (> 0), or 0 if nothing played. */
+  audioPlay(sound: number, volume: number, pan: number, pitch: number, loop: boolean): number;
+  audioStop(voice: number): void;
+  audioSetVolume(volume: number): void;
+  audioSetMuted(muted: boolean): void;
+  audioIsRunning(): boolean;
+
+  // Haptics (global)
+  hapticsSupported(): boolean;
+  /** Taps as flat [time, intensity, sharpness, ...] triples. */
+  hapticsPlay(taps: Array<number>, throttle: boolean): void;
 }
 
 export default TurboModuleRegistry.get<Spec>("NativeNayanEngine");

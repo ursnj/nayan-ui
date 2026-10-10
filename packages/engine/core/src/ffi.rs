@@ -6,7 +6,7 @@
 
 #![allow(clippy::missing_safety_doc)] // the shared contract is documented once, above
 
-use crate::{BodyKind, Entity, NO_ENTITY, PhysicsDesc, Quat, Shape, Vec3, World};
+use crate::{BodyKind, Entity, ImpactFeedback, NO_ENTITY, PhysicsDesc, Quat, Shape, Vec3, World, audio, haptics};
 
 unsafe fn world<'a>(w: *mut World) -> Option<&'a mut World> {
     // SAFETY: caller contract above; null is handled by `as_mut`.
@@ -297,4 +297,101 @@ pub unsafe extern "C" fn engine_world_event_len(w: *mut World) -> u32 {
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_world_scratch(w: *mut World) -> *const f32 {
     unsafe { world(w) }.map_or(std::ptr::null(), |w| w.scratch().as_ptr())
+}
+
+/// Sound and haptic the core plays when `id` starts touching something (see `ImpactFeedback`).
+/// `sound` = UINT32_MAX for haptics only; `enabled` = 0 removes it.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_set_impact_feedback(
+    w: *mut World,
+    id: u32,
+    enabled: i32,
+    sound: u32,
+    min_speed: f32,
+    max_speed: f32,
+    volume: f32,
+    haptic: f32,
+) {
+    if let Some(w) = unsafe { world(w) } {
+        let feedback = (enabled != 0).then_some(ImpactFeedback {
+            sound: (sound != NO_ENTITY).then_some(sound),
+            min_speed,
+            max_speed,
+            volume,
+            haptic,
+        });
+        w.set_impact_feedback(Entity(id), feedback);
+    }
+}
+
+/// Entity used to pan/attenuate impact sounds; UINT32_MAX clears it.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_set_listener(w: *mut World, id: u32) {
+    if let Some(w) = unsafe { world(w) } {
+        w.set_listener((id != NO_ENTITY).then_some(Entity(id)));
+    }
+}
+
+// ── Audio (global) ──────────────────────────────────────────────────────
+
+/// Decodes a WAV file (copied). Returns its sound id, or -1 if it can't be decoded.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_audio_load_wav(data: *const u8, len: usize) -> i32 {
+    if data.is_null() || len == 0 {
+        return -1;
+    }
+    // SAFETY: caller passes a readable buffer of `len` bytes, used only during this call.
+    let bytes = unsafe { std::slice::from_raw_parts(data, len) };
+    audio::load_wav(bytes).map_or(-1, |id| id as i32)
+}
+
+/// Returns a voice id (> 0) for `engine_audio_stop`, or 0 if nothing was played.
+#[unsafe(no_mangle)]
+pub extern "C" fn engine_audio_play(sound: u32, volume: f32, pan: f32, pitch: f32, looping: i32) -> u64 {
+    audio::play(sound, volume, pan, pitch, looping != 0).unwrap_or(0)
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn engine_audio_stop(voice: u64) {
+    audio::stop(voice);
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn engine_audio_set_volume(volume: f32) {
+    audio::set_volume(volume);
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn engine_audio_set_muted(muted: i32) {
+    audio::set_muted(muted != 0);
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn engine_audio_is_running() -> i32 {
+    audio::is_running() as i32
+}
+
+// ── Haptics (global) ────────────────────────────────────────────────────
+
+#[unsafe(no_mangle)]
+pub extern "C" fn engine_haptics_supported() -> i32 {
+    haptics::supported() as i32
+}
+
+/// Plays `count` taps given as `[time, intensity, sharpness]` triples. With `throttle`, a lone tap
+/// right after another is dropped.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_haptics_play(taps: *const f32, count: u32, throttle: i32) {
+    if taps.is_null() || count == 0 {
+        return;
+    }
+    // SAFETY: caller passes `count * 3` readable floats, used only during this call.
+    let raw = unsafe { std::slice::from_raw_parts(taps, count as usize * 3) };
+    let taps: Vec<haptics::Tap> = raw
+        .as_chunks::<3>()
+        .0
+        .iter()
+        .map(|&[time, intensity, sharpness]| haptics::Tap { time, intensity, sharpness })
+        .collect();
+    haptics::play(&taps, throttle != 0);
 }

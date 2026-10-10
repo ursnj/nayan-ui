@@ -15,6 +15,8 @@ Pod::Spec.new do |s|
 
   s.source_files = "cpp/**/*.{h,cpp}", "ios/**/*.{h,m,mm}"
   s.vendored_frameworks = "core/build/EngineCore.xcframework"
+  # The Rust core's audio (cpal / CoreAudio) and haptics (Core Haptics) need these system frameworks.
+  s.frameworks = "AudioToolbox", "AVFAudio", "CoreAudio", "CoreHaptics", "Foundation"
 
   s.pod_target_xcconfig = {
     "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/core/include\" \"$(PODS_TARGET_SRCROOT)/cpp\"",
