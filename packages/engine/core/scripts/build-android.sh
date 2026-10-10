@@ -5,19 +5,22 @@ cd "$(dirname "$0")/.."
 export PATH="$HOME/.cargo/bin:$PATH"
 
 SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-$HOME/Library/Android/sdk}}"
-NDK="${ANDROID_NDK_HOME:-$(ls -d "$SDK"/ndk/* 2>/dev/null | sort -V | tail -1)}"
-STRIP="$(ls "$NDK"/toolchains/llvm/prebuilt/*/bin/llvm-strip 2>/dev/null | head -1)"
+# `|| true`: with pipefail a failed `ls` would exit here silently instead of reaching the message below.
+NDK="${ANDROID_NDK_HOME:-$(ls -d "$SDK"/ndk/* 2>/dev/null | sort -V | tail -1 || true)}"
+STRIP="$(ls "$NDK"/toolchains/llvm/prebuilt/*/bin/llvm-strip 2>/dev/null | head -1 || true)"
 if [ -z "$STRIP" ]; then
   echo "Android NDK not found (set ANDROID_NDK_HOME)" >&2
   exit 1
 fi
 
-# Rust target -> Android ABI directory name
+# Rust target -> Android ABI directory name (React Native's default reactNativeArchitectures)
 TARGETS=(
   "aarch64-linux-android:arm64-v8a"
   "armv7-linux-androideabi:armeabi-v7a"
   "x86_64-linux-android:x86_64"
+  "i686-linux-android:x86"
 )
+rustup target add "${TARGETS[@]%%:*}"
 for pair in "${TARGETS[@]}"; do
   target="${pair%%:*}"
   abi="${pair##*:}"

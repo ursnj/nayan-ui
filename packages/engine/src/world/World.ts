@@ -311,8 +311,13 @@ export class World implements RenderSource {
         color: options.color ?? [1, 1, 1],
         glyphs: [],
       };
+      try {
+        this.buildText(e as Entity, state);
+      } catch (error) {
+        this.native.despawn(this.id, e); // takes the letters spawned so far with it
+        throw error;
+      }
       this.texts.set(e, state);
-      this.buildText(e as Entity, state);
     }
     return e as Entity;
   }
@@ -336,7 +341,10 @@ export class World implements RenderSource {
       text.align = options.align ?? text.align;
       if (options.color) text.color = options.color;
       if (rebuild) this.buildText(e, text);
-      else if (options.color) for (const g of text.glyphs) this.native.setDesc(this.id, g, this.encodeColor(options.color));
+      else if (options.color) {
+        const desc = this.encodeColor(options.color);
+        for (const g of text.glyphs) this.native.setDesc(this.id, g, desc);
+      }
     }
     return ok;
   }
@@ -564,9 +572,14 @@ export class World implements RenderSource {
   toScreen(position: Vec3): [number, number] | null {
     const v = this.view;
     if (!v) return null;
-    const p = vec4.transformMat4([position[0], position[1], position[2], 1], v.viewProj);
-    if (p[3]! <= 0) return null;
-    return [((p[0]! / p[3]! + 1) / 2) * v.width, ((1 - p[1]! / p[3]!) / 2) * v.height];
+    // Column-major viewProj * [x, y, z, 1], without temporaries (overlays call this every frame).
+    const m = v.viewProj;
+    const [x, y, z] = position;
+    const w = m[3]! * x + m[7]! * y + m[11]! * z + m[15]!;
+    if (w <= 0) return null;
+    const px = (m[0]! * x + m[4]! * y + m[8]! * z + m[12]!) / w;
+    const py = (m[1]! * x + m[5]! * y + m[9]! * z + m[13]!) / w;
+    return [((px + 1) / 2) * v.width, ((1 - py) / 2) * v.height];
   }
 
   /** World-space ray [origin xyz, direction xyz] through a GameView point. */

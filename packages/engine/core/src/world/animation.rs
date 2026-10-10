@@ -27,6 +27,8 @@ pub const ANIM_HEADER: usize = 12;
 pub const ANIM_KEY_LEN: usize = 23;
 /// Room in `World::done` per entity of capacity (one id per animated property, at most).
 pub const DONE_PER_ENTITY: usize = 5;
+/// Most substeps a spring takes per simulation step (very stiff springs are capped to fit).
+const MAX_SPRING_SUBSTEPS: f32 = 8.0;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum Easing {
@@ -150,7 +152,8 @@ impl Animation {
         }
         let (n, k) = (n as usize, k as usize);
         let len = ANIM_HEADER + n + k * ANIM_KEY_LEN;
-        if d.len() < len || !d[..len].iter().all(|v| v.is_finite()) {
+        // Finite as f32 too: 1e300 is a finite f64 that becomes an infinite position.
+        if d.len() < len || !d[..len].iter().all(|&v| (v as f32).is_finite()) {
             return None;
         }
         let f = |i: usize| d[i] as f32;
@@ -267,6 +270,9 @@ impl Track {
     /// The value at overall progress `k` (eased, so it may leave 0..1 for Back / Elastic).
     fn sample(&self, k: f32) -> [f32; 4] {
         let n = self.values.len();
+        if k > self.times[n - 1] && self.times[n - 1] < 1.0 {
+            return self.values[n - 1]; // after the last keyframe: hold it (don't extrapolate past it)
+        }
         // The segment containing k (the first / last one when overshooting).
         let s = (1..n).find(|&i| k <= self.times[i]).unwrap_or(n - 1) - 1;
         let span = (self.times[s + 1] - self.times[s]).max(1e-6);
@@ -364,6 +370,15 @@ impl World {
             times = vec![0.0, 1.0]; // from the amplitude down to nothing
             values = vec![values[1], [0.0; 4]];
         }
+        if channel == Channel::Rotation && turn_base.is_none() {
+            // Each quaternion on the same side as the one before: springs move the components straight
+            // to the target, so q and -q (the same rotation) would turn the long way round.
+            for j in 1..values.len() {
+                if quat(values[j - 1]).dot(quat(values[j])) < 0.0 {
+                    values[j] = (-quat(values[j])).to_array();
+                }
+            }
+        }
         let spring = a.spring.filter(|_| channel != Channel::Shake).map(|spring| SpringState {
             spring,
             current: values[0],
@@ -391,17 +406,23 @@ impl World {
     /// Adds a track, replacing any on the same entity and property. A replaced spring hands over its
     /// velocity, so retargeting mid-motion stays smooth.
     fn add_track(&mut self, mut track: Track) {
-        if let Some(k) = self.tracks.iter().position(|t| t.entity == track.entity && t.channel == track.channel) {
-            let old = self.tracks.swap_remove(k);
-            if let (Some(new), Some(prev)) = (track.spring.as_mut(), old.spring)
-                && old.turn_base.is_none()
-                && track.turn_base.is_none()
-            {
-                new.velocity = prev.velocity;
-            }
-            self.report_if_finished(old.id);
+        let old = self
+            .tracks
+            .iter()
+            .position(|t| t.entity == track.entity && t.channel == track.channel)
+            .map(|k| self.tracks.swap_remove(k));
+        if let Some(old) = &old
+            && let (Some(new), Some(prev)) = (track.spring.as_mut(), old.spring)
+            && old.turn_base.is_none()
+            && track.turn_base.is_none()
+        {
+            new.velocity = prev.velocity;
         }
         self.tracks.push(track);
+        // After the push: the replacement can belong to the same animation (an entity listed twice).
+        if let Some(old) = old {
+            self.report_if_finished(old.id);
+        }
     }
 
     /// Reports an animation id as done once none of its tracks remain.
@@ -509,15 +530,28 @@ fn step_track(t: &mut Track, h: f32) -> (Option<[f32; 4]>, bool) {
     }
     let target = t.values[t.values.len() - 1];
     if let Some(s) = t.spring.as_mut() {
-        // Semi-implicit Euler: stable at 60 Hz for game-like stiffness.
+        // Semi-implicit Euler with implicit damping, in substeps short enough to stay stable (plain
+        // Euler at 60 Hz blows up to NaN once stiffness / mass passes ~14000, or damping / mass ~120).
+        // Springs faster than the substeps can follow are slowed to one radian per substep, keeping
+        // their damping ratio (how bouncy they are).
         let Spring { stiffness, damping, mass } = s.spring;
-        let mut settled = true;
-        for ((x, v), goal) in s.current.iter_mut().zip(&mut s.velocity).zip(target) {
-            let accel = (-stiffness * (*x - goal) - damping * *v) / mass;
-            *v += accel * h;
-            *x += *v * h;
-            settled &= (*x - goal).abs() < 1e-3 && v.abs() < 1e-2;
+        let omega = (stiffness / mass).sqrt().min(f32::MAX);
+        let substeps = (h * omega).ceil().clamp(1.0, MAX_SPRING_SUBSTEPS);
+        let dt = h / substeps;
+        let capped = omega.min(1.0 / dt);
+        let (k, c) = (capped * capped, damping / mass * (capped / omega));
+        for _ in 0..substeps as usize {
+            for ((x, v), goal) in s.current.iter_mut().zip(&mut s.velocity).zip(target) {
+                *v = (*v - k * (*x - goal) * dt) / (1.0 + c * dt);
+                *x += *v * dt;
+            }
         }
+        let settled = s
+            .current
+            .iter()
+            .zip(&s.velocity)
+            .zip(target)
+            .all(|((x, v), goal)| (x - goal).abs() < 1e-3 && v.abs() < 1e-2);
         return if settled { (Some(target), true) } else { (Some(s.current), false) };
     }
     let raw = if t.duration > 0.0 {
@@ -725,6 +759,74 @@ mod tests {
     }
 
     #[test]
+    fn very_stiff_springs_stay_finite_and_settle() {
+        let mut w = World::new(2);
+        let e = spawn(&mut w);
+        let mut a = anim(&[e], vec![to(Vec3::new(1.0, 0.0, 0.0))], 0.0);
+        a.spring = Some(Spring {
+            stiffness: 1e6,
+            damping: 500.0,
+            mass: 1e-3,
+        });
+        let id = w.animate(&a).unwrap();
+        for _ in 0..10 {
+            w.update(FIXED_DT);
+            assert!(w.position(e).unwrap().is_finite(), "plain Euler blows up here");
+        }
+        assert!(run_until_done(&mut w, id, 5.0).is_some(), "settles");
+        assert_eq!(w.position(e), Some(Vec3::new(1.0, 0.0, 0.0)));
+    }
+
+    #[test]
+    fn rotation_springs_turn_the_short_way() {
+        let mut w = World::new(2);
+        let e = spawn(&mut w);
+        // A small turn written with negative w: the same rotation as its positive form.
+        let target = -Quat::from_rotation_y(0.3);
+        let mut a = anim(
+            &[e],
+            vec![Keyframe {
+                rotation: Some(target),
+                ..Default::default()
+            }],
+            0.0,
+        );
+        a.spring = Some(Spring {
+            stiffness: 200.0,
+            damping: 30.0,
+            mass: 1.0,
+        });
+        let id = w.animate(&a).unwrap();
+        let mut widest: f32 = 0.0;
+        while !w.done().contains(&id) {
+            w.update(FIXED_DT);
+            widest = widest.max(w.rotation[0].angle_between(Quat::IDENTITY));
+        }
+        assert!(widest < 0.5, "turned {widest} radians to reach 0.3");
+        assert!(w.rotation[0].angle_between(target) < 1e-2);
+    }
+
+    #[test]
+    fn values_hold_after_the_last_keyframe_time() {
+        let mut w = World::new(2);
+        let e = spawn(&mut w);
+        let mut half = to(Vec3::new(1.0, 0.0, 0.0));
+        half.at = Some(0.5);
+        w.animate(&anim(&[e], vec![half], 1.0)).unwrap();
+        run(&mut w, 0.75);
+        assert!((w.position(e).unwrap().x - 1.0).abs() < 1e-5, "held, not extrapolated to 1.5");
+    }
+
+    #[test]
+    fn an_entity_listed_twice_reports_done_when_it_finishes() {
+        let mut w = World::new(2);
+        let e = spawn(&mut w);
+        let id = w.animate(&anim(&[e, e], vec![scale_to(2.0)], 0.5)).unwrap();
+        assert!(!w.done().contains(&id), "the second track replaced the first, but is still running");
+        assert!(run_until_done(&mut w, id, 1.0).unwrap() > 0.45);
+    }
+
+    #[test]
     fn stagger_delays_each_entity_and_one_id_covers_all() {
         let mut w = World::new(4);
         let es: Vec<Entity> = (0..3).map(|_| spawn(&mut w)).collect();
@@ -792,5 +894,8 @@ mod tests {
         assert!(Animation::decode(&d[..ANIM_HEADER + 3]).is_none(), "too short");
         d[2] = f64::NAN;
         assert!(Animation::decode(&d).is_none(), "not finite");
+        d[2] = 0.5;
+        d[k + 2] = 1e300;
+        assert!(Animation::decode(&d).is_none(), "not finite as f32");
     }
 }

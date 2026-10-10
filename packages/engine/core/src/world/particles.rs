@@ -69,11 +69,13 @@ impl Burst {
             gravity: f(slot::GRAVITY),
             colors,
         };
-        let finite = b.position.is_finite()
+        // A NaN color count clamps to NaN, which casts to zero colors.
+        let valid = !b.colors.is_empty()
+            && b.position.is_finite()
             && b.direction.is_finite()
             && [b.spread, b.size, b.speed, b.lifetime, b.gravity].iter().all(|v| v.is_finite())
             && b.colors.iter().flatten().all(|c| c.is_finite());
-        finite.then_some(b)
+        valid.then_some(b)
     }
 }
 
@@ -154,5 +156,15 @@ mod tests {
         }
         run(&mut w, 0.6);
         assert_eq!(w.len(), 0, "all expired");
+    }
+
+    #[test]
+    fn decode_rejects_a_nan_color_count() {
+        let mut d = [0.0; BURST_LEN];
+        d[slot::COUNT] = 5.0;
+        d[slot::COLOR_COUNT] = f64::NAN; // clamps to NaN, casts to 0 colors: picking one divided by 0
+        assert!(Burst::decode(&d).is_none());
+        d[slot::COLOR_COUNT] = 1.0;
+        assert_eq!(World::new(8).burst(&Burst::decode(&d).unwrap()), 5);
     }
 }

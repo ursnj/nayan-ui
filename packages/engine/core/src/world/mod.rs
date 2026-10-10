@@ -103,6 +103,9 @@ pub struct World {
     lifetime: Vec<f32>,
     /// Parent entity (raw id) or NO_ENTITY. A child's position/rotation are local to the parent.
     parent: Vec<u32>,
+    /// How many entities are attached directly to this one (despawns only search for children of
+    /// entities that have some).
+    children: Vec<u32>,
     feedback: Vec<Option<ImpactFeedback>>,
     /// Constant acceleration for entities physics doesn't move (particles, debris).
     acceleration: Vec<Vec3>,
@@ -166,6 +169,7 @@ impl World {
             body: Vec::with_capacity(capacity),
             lifetime: Vec::with_capacity(capacity),
             parent: Vec::with_capacity(capacity),
+            children: Vec::with_capacity(capacity),
             feedback: Vec::with_capacity(capacity),
             acceleration: Vec::with_capacity(capacity),
             pickable: Vec::with_capacity(capacity),
@@ -247,6 +251,7 @@ impl World {
         self.body.push(None);
         self.lifetime.push(f32::INFINITY);
         self.parent.push(NO_ENTITY);
+        self.children.push(0);
         self.feedback.push(None);
         self.acceleration.push(Vec3::ZERO);
         self.pickable.push(true);
@@ -258,13 +263,17 @@ impl World {
     /// Removes an entity, its rigid body and everything attached to it (at any depth).
     /// Returns false for a stale or invalid handle.
     pub fn despawn(&mut self, e: Entity) -> bool {
-        if !self.is_alive(e) {
-            return false;
+        let Some(i) = self.dense(e) else { return false };
+        if self.children[i] == 0 {
+            self.remove(e); // the common case (particles, projectiles): nothing to search for
+            return true;
         }
         let mut pending = vec![e];
         while let Some(next) = pending.pop() {
-            if self.is_alive(next) {
-                pending.extend((0..self.len()).filter(|&j| self.parent[j] == next.0).map(|j| self.entity_at(j)));
+            if let Some(i) = self.dense(next) {
+                if self.children[i] > 0 {
+                    pending.extend((0..self.len()).filter(|&j| self.parent[j] == next.0).map(|j| self.entity_at(j)));
+                }
                 self.remove(next);
             }
         }
@@ -277,6 +286,9 @@ impl World {
         let Some(i) = self.dense(e) else { return };
         if let Some((h, _)) = self.body[i] {
             self.physics.remove_body(h);
+        }
+        if let Some(p) = self.dense(Entity(self.parent[i])) {
+            self.children[p] -= 1;
         }
         let slot = e.0 & SLOT_MASK;
         let last = self.len() - 1;
@@ -296,6 +308,7 @@ impl World {
         self.body.swap_remove(i);
         self.lifetime.swap_remove(i);
         self.parent.swap_remove(i);
+        self.children.swap_remove(i);
         self.feedback.swap_remove(i);
         self.acceleration.swap_remove(i);
         self.pickable.swap_remove(i);
@@ -334,7 +347,7 @@ impl World {
     pub fn set_parent(&mut self, child: Entity, parent: Option<Entity>) -> bool {
         let Some(c) = self.dense(child) else { return false };
         let Some(parent) = parent else {
-            self.parent[c] = NO_ENTITY;
+            self.attach(c, NO_ENTITY);
             return true;
         };
         if self.dense(parent).is_none() || self.body[c].is_some() {
@@ -349,12 +362,23 @@ impl World {
             match self.dense(Entity(ancestor)) {
                 Some(k) => ancestor = self.parent[k],
                 None => {
-                    self.parent[c] = parent.0;
+                    self.attach(c, parent.0);
                     return true;
                 }
             }
         }
         false // too deep
+    }
+
+    /// Sets the parent of the entity at dense index `c`, keeping the parents' child counts.
+    fn attach(&mut self, c: usize, parent: u32) {
+        if let Some(old) = self.dense(Entity(self.parent[c])) {
+            self.children[old] -= 1;
+        }
+        if let Some(new) = self.dense(Entity(parent)) {
+            self.children[new] += 1;
+        }
+        self.parent[c] = parent;
     }
 
     // ── Transform & appearance ───────────────────────────────────────────
@@ -475,7 +499,7 @@ impl World {
             if let Some((h, BodyKind::Dynamic)) = self.body[i]
                 && let Some(b) = self.physics.bodies.get_mut(h)
             {
-                b.set_angvel(velocity, true);
+                physics::set_angvel(b, velocity);
             }
         }
     }

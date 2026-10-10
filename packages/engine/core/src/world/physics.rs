@@ -105,21 +105,32 @@ impl PhysicsDesc {
 
 /// Sets a body's velocity without moving it along locked axes (Rapier only enforces locks in the
 /// solver, not on velocities set directly).
-pub(super) fn set_linvel(b: &mut RigidBody, mut v: Vec3) {
-    let locked = b.locked_axes();
-    for (axis, lock) in [
+pub(super) fn set_linvel(b: &mut RigidBody, v: Vec3) {
+    let locks = [
         LockedAxes::TRANSLATION_LOCKED_X,
         LockedAxes::TRANSLATION_LOCKED_Y,
         LockedAxes::TRANSLATION_LOCKED_Z,
-    ]
-    .into_iter()
-    .enumerate()
-    {
-        if locked.contains(lock) {
+    ];
+    b.set_linvel(unlocked(b, v, locks), true);
+}
+
+/// Sets a body's spin without turning it around locked axes (upright and planar bodies would tip).
+pub(super) fn set_angvel(b: &mut RigidBody, w: Vec3) {
+    let locks = [
+        LockedAxes::ROTATION_LOCKED_X,
+        LockedAxes::ROTATION_LOCKED_Y,
+        LockedAxes::ROTATION_LOCKED_Z,
+    ];
+    b.set_angvel(unlocked(b, w, locks), true);
+}
+
+fn unlocked(b: &RigidBody, mut v: Vec3, locks: [LockedAxes; 3]) -> Vec3 {
+    for (axis, lock) in locks.into_iter().enumerate() {
+        if b.locked_axes().contains(lock) {
             v[axis] = 0.0;
         }
     }
-    b.set_linvel(v, true);
+    v
 }
 
 /// Collects Rapier collision events during a step.
@@ -160,14 +171,7 @@ impl World {
         let Some(d) = desc else { return true };
 
         let builder = match d.kind {
-            BodyKind::Dynamic => {
-                let (mut v, mut w) = (self.velocity[i], self.angular_velocity[i]);
-                if d.planar {
-                    v.z = 0.0;
-                    w = Vec3::new(0.0, 0.0, w.z);
-                }
-                RigidBodyBuilder::dynamic().linvel(v).angvel(w)
-            }
+            BodyKind::Dynamic => RigidBodyBuilder::dynamic(),
             BodyKind::Kinematic => RigidBodyBuilder::kinematic_position_based(),
             BodyKind::Fixed => RigidBodyBuilder::fixed(),
         };
@@ -210,6 +214,13 @@ impl World {
         .user_data(e.0 as u128);
 
         let (handle, _) = self.physics.insert(builder, collider);
+        if d.kind == BodyKind::Dynamic
+            && let Some(b) = self.physics.bodies.get_mut(handle)
+        {
+            // It starts with the entity's velocity and spin, minus its locked axes.
+            set_linvel(b, self.velocity[i]);
+            set_angvel(b, self.angular_velocity[i]);
+        }
         self.body[i] = Some((handle, d.kind));
         true
     }

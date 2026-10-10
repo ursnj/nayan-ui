@@ -5,6 +5,7 @@ cd "$(dirname "$0")/.."
 export PATH="$HOME/.cargo/bin:$PATH"
 
 TARGETS=(aarch64-apple-ios aarch64-apple-ios-sim)
+rustup target add "${TARGETS[@]}"
 args=()
 for t in "${TARGETS[@]}"; do
   cargo build --release --target "$t"

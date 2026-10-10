@@ -112,9 +112,12 @@ impl World {
 
     /// Despawns entities whose lifetime ran out.
     pub(super) fn expire(&mut self, h: f32) {
+        // Count down first: a despawn can swap an entity from the end to before `i`.
+        for life in &mut self.lifetime {
+            *life -= h;
+        }
         let mut i = 0;
         while i < self.len() {
-            self.lifetime[i] -= h;
             if self.lifetime[i] <= 0.0 {
                 let e = self.entity_at(i);
                 self.despawn(e); // swap-remove: re-check index i
@@ -137,12 +140,11 @@ impl World {
     }
 
     pub(super) fn collect_events(&mut self) {
-        let mut pending: Vec<(u32, u32, f32)> = Vec::new();
-        let raw = match self.sink.0.lock() {
+        let mut raw = match self.sink.0.lock() {
             Ok(mut events) => std::mem::take(&mut *events),
             Err(_) => return,
         };
-        for event in raw {
+        for &event in &raw {
             if self.events.len() + EVENT_STRIDE > MAX_EVENTS * EVENT_STRIDE {
                 break;
             }
@@ -160,11 +162,12 @@ impl World {
             let (a, b) = (c1.user_data as u32, c2.user_data as u32);
             self.events.extend_from_slice(&[a, b, flags, speed.to_bits()]);
             if event.started() && !event.sensor() {
-                pending.push((a, b, speed)); // sensors (pickups, triggers) aren't physical impacts
+                self.impact_feedback(Entity(a), Entity(b), speed); // sensors (pickups, triggers) aren't physical impacts
             }
         }
-        for (a, b, speed) in pending {
-            self.impact_feedback(Entity(a), Entity(b), speed);
+        raw.clear();
+        if let Ok(mut events) = self.sink.0.lock() {
+            *events = raw; // hand the allocation back for the next step
         }
     }
 }
