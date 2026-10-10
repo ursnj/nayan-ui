@@ -74,6 +74,21 @@ pub unsafe extern "C" fn engine_world_set_angular_velocity(w: *mut World, id: u3
 }
 
 #[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_set_oscillation(
+    w: *mut World,
+    id: u32,
+    ax: f32,
+    ay: f32,
+    az: f32,
+    frequency: f32,
+    phase: f32,
+) {
+    if let Some(w) = unsafe { world(w) } {
+        w.set_oscillation(Entity(id), Vec3::new(ax, ay, az), frequency, phase);
+    }
+}
+
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_world_update(w: *mut World, dt: f32) {
     if let Some(w) = unsafe { world(w) } {
         w.update(dt);

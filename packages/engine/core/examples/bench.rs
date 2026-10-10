@@ -1,4 +1,4 @@
-//! `cargo run --release --example bench` — time per `update()` with every entity spinning.
+//! `cargo run --release --example bench` — time per `update()` with every entity spinning and bobbing.
 use engine_core::World;
 use glam::Vec3;
 use std::time::Instant;
@@ -8,7 +8,8 @@ fn main() {
         let mut w = World::with_capacity(n);
         for i in 0..n {
             let e = w.spawn(Vec3::new(i as f32, 0.0, 0.0), Vec3::ONE);
-            w.set_angular_velocity(e, Vec3::new(0.0, 1.0 + (i % 7) as f32, 0.0));
+            w.set_angular_velocity(e, Vec3::new(0.0, 1.0, 0.0));
+            w.set_oscillation(e, Vec3::new(0.0, 0.8, 0.0), 1.5, (i % 97) as f32 * 0.15);
         }
         for _ in 0..20 {
             w.update(1.0 / 60.0);

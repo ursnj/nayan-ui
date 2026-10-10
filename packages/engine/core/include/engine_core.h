@@ -20,6 +20,9 @@ void engine_world_set_rotation(World *w, uint32_t id, float x, float y, float z,
 void engine_world_set_scale(World *w, uint32_t id, float x, float y, float z);
 void engine_world_set_angular_velocity(World *w, uint32_t id, float x, float y, float z);
 
+// Offsets position by amplitude * sin(phase); phase starts at `phase`, advances `frequency` rad/s.
+void engine_world_set_oscillation(World *w, uint32_t id, float ax, float ay, float az, float frequency, float phase);
+
 void engine_world_update(World *w, float dt);
 uint32_t engine_world_count(World *w);
 

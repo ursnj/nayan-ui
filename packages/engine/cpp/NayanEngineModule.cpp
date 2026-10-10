@@ -59,6 +59,16 @@ void NayanEngineModule::setAngularVelocity(jsi::Runtime &, double world, double 
   engine_world_set_angular_velocity(find(world), static_cast<uint32_t>(entity), x, y, z);
 }
 
+void NayanEngineModule::setRotation(
+    jsi::Runtime &, double world, double entity, double x, double y, double z, double w) {
+  engine_world_set_rotation(find(world), static_cast<uint32_t>(entity), x, y, z, w);
+}
+
+void NayanEngineModule::setOscillation(
+    jsi::Runtime &, double world, double entity, double ax, double ay, double az, double frequency, double phase) {
+  engine_world_set_oscillation(find(world), static_cast<uint32_t>(entity), ax, ay, az, frequency, phase);
+}
+
 void NayanEngineModule::update(jsi::Runtime &, double world, double dt) {
   engine_world_update(find(world), static_cast<float>(dt));
 }
