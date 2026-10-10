@@ -1,6 +1,6 @@
 import { mat4, vec3 } from "wgpu-matrix";
 import type { RNCanvasContext } from "react-native-webgpu";
-import { createMeshes } from "./meshes";
+import { meshGeometry, VERTEX_FLOATS } from "./meshes";
 import { SHADER } from "./shader";
 import type { Camera, Light, RenderSource } from "../types";
 
@@ -15,7 +15,6 @@ const DEPTH_FORMAT: GPUTextureFormat = "depth24plus";
 const SHADOW_FORMAT: GPUTextureFormat = "depth32float";
 const SHADOW_SIZE = 2048;
 const SAMPLES = 4;
-const MESH_COUNT = 3;
 const GLOBALS_FLOATS = 16 + 16 + 4 + 4 + 4 + 4;
 
 export const defaultCamera = (): Camera => ({ eye: [0, 40, 60], target: [0, 0, 0], fov: Math.PI / 3 });
@@ -26,9 +25,8 @@ export class Renderer {
   private shadowPipeline: GPURenderPipeline;
   private bindGroup: GPUBindGroup;
   private shadowBindGroup: GPUBindGroup;
-  private vertexBuffer: GPUBuffer;
-  private indexBuffer: GPUBuffer;
-  private meshes = createMeshes();
+  /** GPU geometry per mesh id, uploaded the first time an entity uses that mesh. */
+  private meshBuffers = new Map<number, { vertices: GPUBuffer; indices: GPUBuffer; indexCount: number }>();
   private globals: GPUBuffer;
   private globalsData = new Float32Array(GLOBALS_FLOATS);
   private matrixBuffer: GPUBuffer;
@@ -55,18 +53,6 @@ export class Renderer {
     private format: GPUTextureFormat,
     private source: RenderSource,
   ) {
-    const { vertices, indices } = this.meshes;
-    this.vertexBuffer = device.createBuffer({
-      size: vertices.byteLength,
-      usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
-    });
-    device.queue.writeBuffer(this.vertexBuffer, 0, vertices);
-    this.indexBuffer = device.createBuffer({
-      size: indices.byteLength, // meshes pads to a multiple of 4 bytes
-      usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST,
-    });
-    device.queue.writeBuffer(this.indexBuffer, 0, indices);
-
     this.globals = device.createBuffer({
       size: this.globalsData.byteLength,
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
@@ -89,10 +75,11 @@ export class Renderer {
 
     const module = device.createShaderModule({ code: SHADER });
     const vertexLayout: GPUVertexBufferLayout = {
-      arrayStride: 24,
+      arrayStride: VERTEX_FLOATS * 4,
       attributes: [
-        { shaderLocation: 0, offset: 0, format: "float32x3" },
-        { shaderLocation: 1, offset: 12, format: "float32x3" },
+        { shaderLocation: 0, offset: 0, format: "float32x3" }, // position
+        { shaderLocation: 1, offset: 12, format: "float32x3" }, // normal
+        { shaderLocation: 2, offset: 24, format: "float32x3" }, // color
       ],
     };
     this.pipeline = device.createRenderPipeline({
@@ -242,17 +229,37 @@ export class Renderer {
     this.context.present();
   }
 
+  private buffersFor(mesh: number) {
+    let buffers = this.meshBuffers.get(mesh);
+    if (buffers) return buffers;
+    const geometry = meshGeometry(mesh);
+    if (!geometry) return undefined; // unknown id: nothing to draw
+    const upload = (data: Float32Array | Uint32Array, usage: number) => {
+      const buffer = this.device.createBuffer({ size: Math.max(4, data.byteLength), usage: usage | GPUBufferUsage.COPY_DST });
+      this.device.queue.writeBuffer(buffer, 0, data);
+      return buffer;
+    };
+    buffers = {
+      vertices: upload(geometry.vertices, GPUBufferUsage.VERTEX),
+      indices: upload(geometry.indices, GPUBufferUsage.INDEX),
+      indexCount: geometry.indices.length,
+    };
+    this.meshBuffers.set(mesh, buffers);
+    return buffers;
+  }
+
   /** One instanced draw per mesh. Ranges are clamped to `used` so a stale buffer can't overrun. */
   private drawAll(pass: GPURenderPassEncoder, used: number) {
-    pass.setVertexBuffer(0, this.vertexBuffer);
-    pass.setIndexBuffer(this.indexBuffer, "uint16");
     const ranges = this.source.ranges;
-    for (let m = 0; m < MESH_COUNT; m++) {
+    for (let m = 0; m < ranges.length / 2; m++) {
       const first = ranges[m * 2]!;
       const count = Math.min(ranges[m * 2 + 1]!, Math.max(0, used - first));
       if (count === 0) continue;
-      const mesh = this.meshes.ranges[m]!;
-      pass.drawIndexed(mesh.indexCount, count, mesh.firstIndex, mesh.baseVertex, first);
+      const mesh = this.buffersFor(m);
+      if (!mesh) continue;
+      pass.setVertexBuffer(0, mesh.vertices);
+      pass.setIndexBuffer(mesh.indices, "uint32");
+      pass.drawIndexed(mesh.indexCount, count, 0, 0, first);
     }
   }
 }

@@ -3,16 +3,19 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { isRustAvailable } from "@nayan-ui/engine";
 import { Benchmark } from "./games/benchmark/Benchmark";
 import { Flappy } from "./games/flappy/Flappy";
+import { Models } from "./games/models/Models";
 import { OrbRush } from "./games/orb-rush/OrbRush";
 
 const SCREENS = [
   { key: "flappy", label: "Flappy", Component: Flappy },
+  { key: "models", label: "Models", Component: Models },
   { key: "orbrush", label: "Orb Rush", Component: OrbRush },
   { key: "benchmark", label: "Benchmark", Component: Benchmark },
 ] as const;
 
 export default function App() {
-  const [index, setIndex] = useState(0);
+  // EXPO_PUBLIC_SCREEN=models (etc.) opens that screen first.
+  const [index, setIndex] = useState(() => Math.max(0, SCREENS.findIndex((s) => s.key === process.env.EXPO_PUBLIC_SCREEN)));
 
   if (!isRustAvailable) {
     return (

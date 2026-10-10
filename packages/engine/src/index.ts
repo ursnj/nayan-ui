@@ -15,6 +15,10 @@ export type {
   RaycastHit,
 } from "./world/World";
 
+// External 3D models (glTF / GLB).
+export { loadModel } from "./model/Model";
+export type { Model, ModelOptions } from "./model/Model";
+
 // Rendering.
 export { GameView } from "./render/GameView";
 export type { GameStats } from "./render/GameView";

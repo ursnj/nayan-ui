@@ -14,7 +14,9 @@ set_target_properties(engine_core PROPERTIES
 # The codegen target autolinking expects (react_codegen_<codegenConfig.name>). It must be a real
 # library: autolinking links `common_flags` into it with a plain target_link_libraries call.
 add_library(react_codegen_NayanEngineSpec STATIC "${ENGINE_ROOT}/cpp/generated/NayanEngineSpecJSI.cpp")
-target_include_directories(react_codegen_NayanEngineSpec PUBLIC "${ENGINE_ROOT}/cpp/generated")
+# android/ holds NayanEngineSpec.h, the (empty) Java module provider autolinking includes.
+target_include_directories(react_codegen_NayanEngineSpec PUBLIC "${ENGINE_ROOT}/cpp/generated" "${CMAKE_CURRENT_LIST_DIR}")
+target_compile_features(react_codegen_NayanEngineSpec PUBLIC cxx_std_20)
 target_link_libraries(react_codegen_NayanEngineSpec jsi reactnative)
 
 # The TurboModule (shared with iOS) and the Rust core it calls.

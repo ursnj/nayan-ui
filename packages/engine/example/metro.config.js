@@ -19,4 +19,7 @@ config.resolver.nodeModulesPaths = [
   path.resolve(monorepoRoot, "node_modules"),
 ];
 
+// 3D models loaded with loadModel(require("./model.glb")).
+config.resolver.assetExts.push("glb", "gltf");
+
 module.exports = config;
