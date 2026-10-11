@@ -1,0 +1,105 @@
+name: Publish npm packages
+on:
+  workflow_dispatch:
+    inputs:
+      ai:
+        description: "@nayan-ui/ai"
+        type: boolean
+        default: false
+      cli:
+        description: "@nayan-ui/cli"
+        type: boolean
+        default: false
+      react:
+        description: "@nayan-ui/react"
+        type: boolean
+        default: false
+      native:
+        description: "@nayan-ui/native"
+        type: boolean
+        default: false
+      engine:
+        description: "@nayan-ui/engine"
+        type: boolean
+        default: false
+      dry_run:
+        description: "Dry run (build and pack, don't publish)"
+        type: boolean
+        default: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.pick.outputs.packages }}
+    steps:
+      - id: pick
+        env:
+          AI: ${{ inputs.ai }}
+          CLI: ${{ inputs.cli }}
+          REACT: ${{ inputs.react }}
+          NATIVE: ${{ inputs.native }}
+        run: |
+          picked=()
+          if [ "$AI" = "true" ]; then picked+=('{"dir":"ai","build":"ai:build"}'); fi
+          if [ "$CLI" = "true" ]; then picked+=('{"dir":"cli","build":"cli:build"}'); fi
+          if [ "$REACT" = "true" ]; then picked+=('{"dir":"react","build":"react:build"}'); fi
+          if [ "$NATIVE" = "true" ]; then picked+=('{"dir":"native","build":"native:build"}'); fi
+          echo "packages=[$(IFS=,; echo "${picked[*]}")]" >> "$GITHUB_OUTPUT"
+
+  publish:
+    needs: plan
+    if: needs.plan.outputs.packages != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJSON(needs.plan.outputs.packages) }}
+    name: publish (${{ matrix.package.dir }})
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build
+        run: bun run ${{ matrix.package.build }}
+
+      - name: Publish to npm
+        working-directory: ./packages/${{ matrix.package.dir }}
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: ../../.github/scripts/npm-publish.sh
+
+  engine:
+    if: inputs.engine
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build the Rust core (iOS xcframework, Android static libraries)
+        working-directory: ./packages/engine
+        run: |
+          export ANDROID_NDK_HOME="${ANDROID_NDK_LATEST_HOME:-${ANDROID_NDK_HOME:-}}"
+          bun run core:build:ios
+          bun run core:build:android
+
+      - name: Build
+        run: bun run engine:build
+
+      - name: Publish to npm
+        working-directory: ./packages/engine
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: ../../.github/scripts/npm-publish.sh
