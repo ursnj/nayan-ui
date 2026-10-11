@@ -191,6 +191,10 @@ export type BurstOptions = {
   gravity?: number;
   /** One color, or up to 4 to pick from at random. Default white. */
   color?: Color | readonly Color[];
+  /** Size at the end of each particle's life, as a multiple of its start size: above 1 grows (smoke), below shrinks (embers). Default 1. */
+  endSize?: number;
+  /** Color every particle shifts to over its life, e.g. flame to dark red; an alpha below 1 fades it out. Default: keeps its color. */
+  endColor?: Color;
 };
 
 export type CollisionInfo = {
@@ -484,7 +488,8 @@ export class World implements RenderSource {
 
   /**
    * Particles: many small, short-lived pieces flying out of a point (explosions, sparks, dust,
-   * confetti). One native call; they fall, spin, shrink away and clean themselves up.
+   * confetti). One native call; they fall, spin, shrink away and clean themselves up. `endSize` and
+   * `endColor` grow / shrink and recolor them over their life (fire cooling, smoke thinning out).
    * Returns how many were spawned (fewer if the world is nearly full).
    */
   burst(options: BurstOptions): number {
@@ -502,6 +507,10 @@ export class World implements RenderSource {
     b[12] = options.gravity ?? -9.81;
     b[13] = Math.max(1, Math.min(4, colors.length));
     colors.slice(0, 4).forEach((c, k) => b.set([c[0], c[1], c[2], c[3] ?? 1], 14 + k * 4));
+    b[30] = options.endSize ?? 1;
+    const end = options.endColor;
+    b[31] = end ? 1 : 0;
+    if (end) b.set([end[0], end[1], end[2], end[3] ?? 1], 32);
     return this.native.burst(this.id, b.buffer);
   }
 

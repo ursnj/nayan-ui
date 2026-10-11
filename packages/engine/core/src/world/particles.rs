@@ -1,14 +1,16 @@
 //! Particle bursts: many short-lived entities spawned in one call (explosions, sparks, confetti,
 //! dust). Particles are ordinary entities with velocity, spin, acceleration and a lifetime, so they
-//! cost nothing extra to draw and clean themselves up.
+//! cost nothing extra to draw and clean themselves up. A burst can also grow or shrink its particles
+//! and shift their color over their life (fire cooling to smoke, smoke thinning out).
 
 use super::*;
 
 /// Length of an encoded burst, in f64 values.
-pub const BURST_LEN: usize = 30;
+pub const BURST_LEN: usize = 36;
 
 /// Encoded layout: position xyz, direction xyz, spread (radians), count, mesh, size, speed,
-/// lifetime, gravity (added to y velocity per second), color count (1..4), colors rgba x 4.
+/// lifetime, gravity (added to y velocity per second), color count (1..4), colors rgba x 4,
+/// end size (a multiple of the start size), has end color (0 / 1), end color rgba.
 mod slot {
     pub const POSITION: usize = 0;
     pub const DIRECTION: usize = 3;
@@ -21,6 +23,9 @@ mod slot {
     pub const GRAVITY: usize = 12;
     pub const COLOR_COUNT: usize = 13;
     pub const COLORS: usize = 14;
+    pub const END_SIZE: usize = 30;
+    pub const HAS_END_COLOR: usize = 31;
+    pub const END_COLOR: usize = 32;
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -42,6 +47,20 @@ pub struct Burst {
     pub gravity: f32,
     /// Each particle picks one at random.
     pub colors: Vec<[f32; 4]>,
+    /// Size at the end of a particle's life, as a multiple of its start size (1 = unchanged).
+    pub end_size: f32,
+    /// Color every particle shifts to by the end of its life (alpha below 1 fades it out).
+    pub end_color: Option<[f32; 4]>,
+}
+
+/// A particle's size and color over its life (`total` 0 = none).
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub(super) struct OverLife {
+    total: f32,
+    size_from: Vec3,
+    size_to: Vec3,
+    color_from: [f32; 4],
+    color_to: [f32; 4],
 }
 
 impl Burst {
@@ -51,6 +70,7 @@ impl Burst {
         }
         let f = |i: usize| d[i] as f32;
         let v3 = |i: usize| Vec3::new(f(i), f(i + 1), f(i + 2));
+        let v4 = |i: usize| [f(i), f(i + 1), f(i + 2), f(i + 3)];
         let colors = (0..(d[slot::COLOR_COUNT].clamp(1.0, 4.0) as usize))
             .map(|k| {
                 let c = slot::COLORS + k * 4;
@@ -68,13 +88,15 @@ impl Burst {
             lifetime: f(slot::LIFETIME),
             gravity: f(slot::GRAVITY),
             colors,
+            end_size: f(slot::END_SIZE),
+            end_color: (d[slot::HAS_END_COLOR] > 0.5).then(|| v4(slot::END_COLOR)),
         };
         // A NaN color count clamps to NaN, which casts to zero colors.
         let valid = !b.colors.is_empty()
             && b.position.is_finite()
             && b.direction.is_finite()
-            && [b.spread, b.size, b.speed, b.lifetime, b.gravity].iter().all(|v| v.is_finite())
-            && b.colors.iter().flatten().all(|c| c.is_finite());
+            && [b.spread, b.size, b.speed, b.lifetime, b.gravity, b.end_size].iter().all(|v| v.is_finite())
+            && b.colors.iter().chain(b.end_color.iter()).flatten().all(|c| c.is_finite());
         valid.then_some(b)
     }
 }
@@ -118,9 +140,33 @@ impl World {
             self.pickable[i] = false;
             let life = b.lifetime * (0.7 + 0.3 * self.random());
             self.set_lifetime(e, life);
+            if (b.end_size != 1.0 || b.end_color.is_some()) && life > 0.0 {
+                self.over_life[i] = OverLife {
+                    total: life,
+                    size_from: Vec3::splat(size),
+                    size_to: Vec3::splat(size * b.end_size.max(0.0)),
+                    color_from: color,
+                    color_to: b.end_color.unwrap_or(color),
+                };
+            }
             spawned += 1;
         }
         spawned
+    }
+
+    /// Moves particles along their size and color curves (after their lifetimes count down).
+    pub(super) fn apply_over_life(&mut self) {
+        for i in 0..self.len() {
+            let o = self.over_life[i];
+            if o.total <= 0.0 {
+                continue;
+            }
+            let t = (1.0 - self.lifetime[i] / o.total).clamp(0.0, 1.0);
+            self.scale[i] = o.size_from.lerp(o.size_to, t);
+            for c in 0..4 {
+                self.color[i][c] = o.color_from[c] + (o.color_to[c] - o.color_from[c]) * t;
+            }
+        }
     }
 }
 
@@ -148,6 +194,8 @@ mod tests {
             lifetime: 0.5,
             gravity: -9.81,
             colors: vec![[1.0, 0.0, 0.0, 1.0], [1.0, 1.0, 0.0, 1.0]],
+            end_size: 1.0,
+            end_color: None,
         };
         assert_eq!(w.burst(&b), 10, "capped by capacity");
         for i in 0..w.len() {
@@ -156,6 +204,33 @@ mod tests {
         }
         run(&mut w, 0.6);
         assert_eq!(w.len(), 0, "all expired");
+    }
+
+    #[test]
+    fn particles_grow_and_fade_over_their_life() {
+        let mut w = World::new(1);
+        let b = Burst {
+            position: Vec3::ZERO,
+            direction: Vec3::Y,
+            spread: 0.0,
+            count: 1,
+            mesh: 0,
+            size: 1.0,
+            speed: 0.0,
+            lifetime: 1.0,
+            gravity: 0.0,
+            colors: vec![[2.0, 1.0, 0.0, 1.0]],
+            end_size: 3.0,
+            end_color: Some([0.2, 0.2, 0.2, 0.0]),
+        };
+        assert_eq!(w.burst(&b), 1);
+        let start = w.scale[0].x;
+        let total = w.over_life[0].total;
+        run(&mut w, total * 0.5);
+        let half = w.scale[0].x / start;
+        assert!((half - 2.0).abs() < 0.1, "halfway between 1x and 3x: {half}");
+        let [r, _, _, a] = w.color[0];
+        assert!((r - 1.1).abs() < 0.1 && (a - 0.5).abs() < 0.1, "halfway to the end color: {:?}", w.color[0]);
     }
 
     #[test]

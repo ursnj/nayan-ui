@@ -118,6 +118,7 @@ impl World {
         for life in &mut self.lifetime {
             *life -= h;
         }
+        self.apply_over_life();
         let mut i = 0;
         while i < self.len() {
             if self.lifetime[i] <= 0.0 {

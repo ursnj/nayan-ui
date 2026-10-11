@@ -103,6 +103,8 @@ pub struct World {
     body: Vec<Option<(RigidBodyHandle, BodyKind)>>,
     /// Seconds left before automatic despawn; infinite = forever.
     lifetime: Vec<f32>,
+    /// Size and color over a particle's life.
+    over_life: Vec<particles::OverLife>,
     /// Parent entity (raw id) or NO_ENTITY. A child's position/rotation are local to the parent.
     parent: Vec<u32>,
     /// How many entities are attached directly to this one (despawns only search for children of
@@ -174,6 +176,7 @@ impl World {
             follow: Vec::with_capacity(capacity),
             body: Vec::with_capacity(capacity),
             lifetime: Vec::with_capacity(capacity),
+            over_life: Vec::with_capacity(capacity),
             parent: Vec::with_capacity(capacity),
             children: Vec::with_capacity(capacity),
             feedback: Vec::with_capacity(capacity),
@@ -258,6 +261,7 @@ impl World {
         });
         self.body.push(None);
         self.lifetime.push(f32::INFINITY);
+        self.over_life.push(Default::default());
         self.parent.push(NO_ENTITY);
         self.children.push(0);
         self.feedback.push(None);
@@ -316,6 +320,7 @@ impl World {
         self.follow.swap_remove(i);
         self.body.swap_remove(i);
         self.lifetime.swap_remove(i);
+        self.over_life.swap_remove(i);
         self.parent.swap_remove(i);
         self.children.swap_remove(i);
         self.feedback.swap_remove(i);
