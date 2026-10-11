@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { Animated, Pressable, StyleSheet, Switch, Text, View, useWindowDimensions } from "react-native";
 import {
   audio,
   GameView,
@@ -18,6 +18,7 @@ import {
   type Vec3,
   type Voice,
 } from "@nayan-ui/engine";
+import { HEADER_HEIGHT, SAFE_TOP } from "../layout";
 
 // Rules follow Playtura's Car Racing: a 2-minute timer, 3 lives, 500 points per car passed. The run
 // ends when the timer runs out ("TIME UP!") or the last life is lost ("CRASHED!").
@@ -832,7 +833,12 @@ function Run({ assets: a, onRestart }: { assets: Assets; onRestart: () => void }
   const [kmh, setKmh] = useState(0);
   const [nitro, setNitro] = useState(0.5);
   const [boosting, setBoosting] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [soundOn, setSoundOn] = useState(!audio.muted);
+  const [hapticsOn, setHapticsOn] = useState(haptics.enabled);
   const flash = useRef(new Animated.Value(0)).current;
+  const pulse = useRef(new Animated.Value(1)).current;
+  const card = useRef(new Animated.Value(0)).current;
   const pop = useRef(new Animated.Value(1)).current;
   const near = useRef(new Animated.Value(0)).current;
 
@@ -873,6 +879,26 @@ function Run({ assets: a, onRestart }: { assets: Assets; onRestart: () => void }
     return () => clearTimeout(t);
   }, [phase]);
 
+  // Playtura's START GAME button breathes while the game waits for you.
+  useEffect(() => {
+    if (phase === "playing") return;
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, { toValue: 1.05, duration: 1000, useNativeDriver: true }),
+        Animated.timing(pulse, { toValue: 1, duration: 1000, useNativeDriver: true }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [phase, pulse]);
+
+  // The results card springs in.
+  useEffect(() => {
+    if (!showResults) return;
+    card.setValue(0);
+    Animated.spring(card, { toValue: 1, friction: 6, tension: 90, useNativeDriver: true }).start();
+  }, [showResults, card]);
+
   // Autoplay: start by itself and restart after a pause.
   useEffect(() => {
     if (!AUTOPLAY || phase === "playing") return;
@@ -896,87 +922,150 @@ function Run({ assets: a, onRestart }: { assets: Assets; onRestart: () => void }
     [game, width],
   );
 
+  const won = lives > 0;
   return (
     <View style={styles.root}>
       <GameView source={game.world} camera={game.camera} light={light} background={SKY} fog={0.0075} onUpdate={onUpdate} onDrag={onDrag} />
 
-      {phase !== "ready" && (
-        <View style={styles.board} pointerEvents="none">
+      {/* Header, like Playtura's game screen: (back), title and level, settings. The example's screen
+          switcher sits in the left slot, where Playtura has its back button. */}
+      <View style={styles.header}>
+        <View style={styles.headerSide} />
+        <View style={styles.headerTitleBox}>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            Car Racing
+          </Text>
+          <Text style={styles.headerSubtitle} numberOfLines={1}>
+            {best > 0 ? `Best ${best}` : "Level 1"}
+          </Text>
+        </View>
+        <Pressable style={styles.headerSide} onPress={() => setSettingsOpen(true)} hitSlop={10} accessibilityLabel="Game settings">
+          <Text style={styles.headerIcon}>⚙︎</Text>
+        </Pressable>
+      </View>
+
+      {/* Playtura's scoreboard: SCORE, LIVES and TIMER. */}
+      <View style={styles.boardWrap} pointerEvents="none">
+        <View style={styles.board}>
           <View style={styles.column}>
             <Text style={styles.label}>SCORE</Text>
             <Animated.Text style={[styles.value, { transform: [{ scale: pop }] }]}>{score}</Animated.Text>
           </View>
           <View style={styles.column}>
             <Text style={styles.label}>LIVES</Text>
-            <Text style={styles.hearts}>{Array.from({ length: LIVES }, (_, i) => (i < lives ? "❤️" : "🖤")).join("")}</Text>
+            <View style={styles.hearts}>
+              {Array.from({ length: LIVES }, (_, i) => (
+                <Text key={i} style={styles.heart}>
+                  {i < lives ? "❤️" : "🖤"}
+                </Text>
+              ))}
+            </View>
           </View>
           <View style={styles.column}>
             <Text style={styles.label}>TIMER</Text>
             <Text style={[styles.value, timeLeft <= LOW_TIME && styles.timeLow]}>{formatTime(timeLeft)}</Text>
           </View>
         </View>
-      )}
+      </View>
 
       <Animated.Text pointerEvents="none" style={[styles.nearMiss, { opacity: near }]}>
         NEAR MISS!
       </Animated.Text>
 
-      {phase === "playing" && (
-        <>
-          <Pressable style={[styles.nitro, boosting && styles.nitroOn, nitro < 0.15 && styles.nitroEmpty]} onPressIn={() => boost(game)}>
-            <View style={[styles.nitroFill, { height: `${Math.round(nitro * 100)}%` }]} />
-            <Text style={styles.nitroText}>NITRO</Text>
-          </Pressable>
-          <View style={styles.speedo} pointerEvents="none">
-            <Text style={styles.speed}>{kmh}</Text>
-            <Text style={styles.unit}>km/h</Text>
-          </View>
-        </>
-      )}
-
       {phase === "ready" && (
-        <>
-          <Text style={[styles.title, styles.readyTitle]} pointerEvents="none">
-            Racing
-          </Text>
-          <View style={styles.readyBottom}>
-            <Pressable style={styles.button} onPress={() => start(game)}>
-              <Text style={styles.buttonText}>Start</Text>
-            </Pressable>
-            <Text style={styles.subtitle}>Dodge traffic to score!</Text>
-            <Text style={styles.hint}>Drag to steer · tap NITRO to boost</Text>
-            {/* The car model is CC-BY 4.0: it must be credited. */}
-            <Text style={styles.credit}>Car: “Car Concept” by Khronos Group, after Unity Fan (CC BY 4.0)</Text>
-          </View>
-        </>
+        <View style={styles.readyNotes} pointerEvents="none">
+          <Text style={styles.hint}>Swipe to steer · tap NITRO to boost</Text>
+          {/* The car model is CC-BY 4.0: it must be credited. */}
+          <Text style={styles.credit}>Car: “Car Concept” by Khronos Group, after Unity Fan (CC BY 4.0)</Text>
+        </View>
       )}
 
+      {/* Playtura's game controls: a round button each side of the main one. Here the left is NITRO
+          (its fill is the tank) and the right the speedometer. */}
+      <View style={styles.controls} pointerEvents="box-none">
+        <View style={styles.controlsRow}>
+          <Pressable
+            style={[styles.iconButton, boosting && styles.nitroOn, (phase !== "playing" || nitro < 0.15) && styles.nitroIdle]}
+            onPressIn={() => boost(game)}
+            accessibilityLabel="Nitro"
+          >
+            <View style={[styles.nitroFill, { height: `${Math.round(nitro * 100)}%` }]} />
+            <Text style={styles.iconText}>N₂O</Text>
+          </Pressable>
+
+          {phase === "playing" ? (
+            <View style={styles.mainWrap}>
+              <Pressable style={styles.mainButton} onPress={onRestart}>
+                <Text style={styles.mainText}>STOP GAME</Text>
+                <Text style={styles.mainSubtext}>Stop current game</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <Animated.View style={[styles.mainWrap, { transform: [{ scale: pulse }] }]}>
+              <Pressable style={styles.mainButton} onPress={phase === "ready" ? () => start(game) : onRestart}>
+                <Text style={styles.mainText} numberOfLines={1}>
+                  START GAME
+                </Text>
+                <Text style={styles.mainSubtext} numberOfLines={1}>
+                  Dodge traffic to score!
+                </Text>
+              </Pressable>
+            </Animated.View>
+          )}
+
+          <View style={styles.iconButton} pointerEvents="none">
+            <Text style={styles.speed}>{kmh}</Text>
+            <Text style={styles.speedUnit}>km/h</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Playtura's game-over card. */}
       {showResults && (
-        <View style={styles.center}>
-          <View style={styles.panel}>
-            <Text style={styles.panelTitle}>{lives > 0 ? "TIME UP!" : "CRASHED!"}</Text>
-            <Text style={styles.message}>{lives > 0 ? "Great driving!" : "You ran out of lives!"}</Text>
-            <View style={styles.row}>
-              <View style={styles.cell}>
-                <Text style={styles.panelLabel}>Score</Text>
-                <Text style={styles.panelValue}>{score}</Text>
-              </View>
-              <View style={styles.cell}>
-                <Text style={styles.panelLabel}>Best</Text>
-                <Text style={styles.panelValue}>{best}</Text>
-              </View>
+        <View style={styles.overlay}>
+          <Animated.View style={[styles.card, { opacity: card, transform: [{ scale: card.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] }) }] }]}>
+            <Text style={styles.trophy}>🏆</Text>
+            <Text style={styles.cardTitle}>{won ? "TIME UP!" : "CRASHED!"}</Text>
+            <Text style={styles.cardMessage}>{won ? "Great driving!" : "You ran out of lives!"}</Text>
+            <View style={styles.scoreCard}>
+              <Text style={styles.scoreLabel}>Final Score</Text>
+              <Text style={styles.scoreValue}>{score}</Text>
+              <Text style={styles.scoreBest}>Best {best}</Text>
             </View>
             <Pressable
-              style={styles.button}
+              style={styles.playAgain}
               onPress={() => {
                 haptics.selection();
                 onRestart();
               }}
             >
-              <Text style={styles.buttonText}>Play Again!</Text>
+              <Text style={styles.playAgainText}>▶  Play Again!</Text>
             </Pressable>
-          </View>
+          </Animated.View>
         </View>
+      )}
+
+      {/* Playtura's settings: sound and haptics. */}
+      {settingsOpen && (
+        <Pressable style={styles.overlay} onPress={() => setSettingsOpen(false)}>
+          <Pressable style={styles.card} onPress={() => {}}>
+            <Text style={styles.cardTitle}>Settings</Text>
+            {(
+              [
+                ["Sounds", soundOn, (on: boolean) => ((audio.muted = !on), setSoundOn(on))],
+                ["Haptics", hapticsOn, (on: boolean) => ((haptics.enabled = on), setHapticsOn(on))],
+              ] as const
+            ).map(([label, on, set]) => (
+              <View key={label} style={styles.settingRow}>
+                <Text style={styles.settingLabel}>{label}</Text>
+                <Switch value={on} onValueChange={set} trackColor={{ false: "rgba(255,255,255,0.3)", true: "#7c5cff" }} thumbColor="#fff" />
+              </View>
+            ))}
+            <Pressable style={styles.playAgain} onPress={() => setSettingsOpen(false)}>
+              <Text style={styles.playAgainText}>Done</Text>
+            </Pressable>
+          </Pressable>
+        </Pressable>
       )}
 
       <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.flash, { opacity: flash }]} />
@@ -1008,73 +1097,92 @@ export function Racing() {
   return <Run key={run} assets={loaded} onRestart={restart} />;
 }
 
-const shadow = { textShadowColor: "rgba(0,0,0,0.4)", textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 0 };
+// Playtura's classic game theme (ThemeService / GamesConstants).
+const UI = {
+  BACKGROUND: "#3a3a5e",
+  SURFACE: "rgba(255, 255, 255, 0.3)",
+  BORDER: "rgba(255, 255, 255, 0.6)",
+  BORDER_WIDTH: 1.5,
+  TEXT: "#ffffff",
+  TEXT_SUBTLE: "rgba(255, 255, 255, 0.85)",
+  TEXT_SHADOW: "rgba(0, 0, 0, 0.35)",
+  DANGER: "#FF5252",
+  SOLID: "#ffffff",
+  ON_SOLID: "#3a3a5e",
+  OVERLAY: "rgba(0, 0, 0, 0.8)",
+  GOLD: "#facc15",
+  HEADER_BACKGROUND: "rgba(255, 255, 255, 0.2)",
+  HEADER_BORDER: "rgba(255, 255, 255, 0.3)",
+};
+const shadow = { textShadowColor: UI.TEXT_SHADOW, textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3 };
+const panel = { backgroundColor: UI.SURFACE, borderColor: UI.BORDER, borderWidth: UI.BORDER_WIDTH };
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "rgb(158,199,242)" },
   loading: { alignItems: "center", justifyContent: "center" },
-  // Playtura's scoreboard: SCORE, LIVES and TIMER columns on a translucent bar.
-  board: {
-    position: "absolute",
-    top: 104,
-    left: 16,
-    right: 16,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingVertical: 10,
-    borderRadius: 14,
-    backgroundColor: "rgba(58,58,94,0.82)",
-  },
-  column: { alignItems: "center", minWidth: 80 },
-  label: { color: "rgba(255,255,255,0.7)", fontSize: 12, fontWeight: "700", letterSpacing: 1 },
-  value: { color: "#fff", fontSize: 22, fontWeight: "900", fontVariant: ["tabular-nums"], marginTop: 2 },
-  hearts: { fontSize: 18, marginTop: 4, letterSpacing: 2 },
-  timeLow: { color: "#ff5a5a" },
-  nearMiss: { position: "absolute", top: 210, alignSelf: "center", color: "#ffd23f", fontSize: 30, fontWeight: "900", fontStyle: "italic", ...shadow },
-  nitro: {
-    position: "absolute",
-    bottom: 44,
-    left: 24,
-    width: 84,
-    height: 84,
-    borderRadius: 42,
-    overflow: "hidden",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(20,24,40,0.6)",
-    borderWidth: 3,
-    borderColor: "#3fb6ff",
-  },
-  nitroOn: { borderColor: "#ffb020" },
-  nitroEmpty: { opacity: 0.5 },
-  nitroFill: { position: "absolute", left: 0, right: 0, bottom: 0, backgroundColor: "rgba(63,182,255,0.55)" },
-  nitroText: { color: "#fff", fontSize: 14, fontWeight: "900", fontStyle: "italic", ...shadow },
-  speedo: { position: "absolute", bottom: 48, right: 24, alignItems: "flex-end" },
-  speed: { color: "#fff", fontSize: 48, fontWeight: "900", fontStyle: "italic", fontVariant: ["tabular-nums"], ...shadow },
-  unit: { color: "#fff", fontSize: 14, fontWeight: "700", marginTop: -4, ...shadow },
-  center: { position: "absolute", top: 0, bottom: 0, left: 0, right: 0, alignItems: "center", justifyContent: "center", gap: 16 },
-  title: { color: "#fff", fontSize: 60, fontWeight: "900", fontStyle: "italic", ...shadow },
-  // The start screen leaves the middle to the car the camera orbits.
-  readyTitle: { position: "absolute", top: 150, alignSelf: "center" },
-  readyBottom: { position: "absolute", bottom: 90, left: 0, right: 0, alignItems: "center", gap: 14 },
   subtitle: { color: "#fff", fontSize: 18, fontWeight: "700", ...shadow },
-  hint: { color: "rgba(255,255,255,0.9)", fontSize: 14, fontWeight: "600", ...shadow },
-  credit: { color: "rgba(255,255,255,0.7)", fontSize: 10, marginTop: 6, ...shadow },
-  button: { backgroundColor: "#ff4444", borderRadius: 14, paddingVertical: 14, paddingHorizontal: 36, marginTop: 4 },
-  buttonText: { color: "#fff", fontSize: 20, fontWeight: "900" },
-  panel: {
-    backgroundColor: "rgba(58,58,94,0.95)",
-    borderRadius: 18,
-    paddingVertical: 24,
-    paddingHorizontal: 30,
+
+  header: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: HEADER_HEIGHT,
+    paddingTop: SAFE_TOP,
+    paddingHorizontal: 12,
+    flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    backgroundColor: UI.HEADER_BACKGROUND,
+    borderBottomWidth: 1,
+    borderBottomColor: UI.HEADER_BORDER,
   },
-  panelTitle: { color: "#fff", fontSize: 34, fontWeight: "900" },
-  message: { color: "rgba(255,255,255,0.8)", fontSize: 16, fontWeight: "600" },
-  row: { flexDirection: "row", gap: 40, marginVertical: 4 },
-  cell: { alignItems: "center" },
-  panelLabel: { color: "rgba(255,255,255,0.7)", fontSize: 13, fontWeight: "700", textTransform: "uppercase" },
-  panelValue: { color: "#fff", fontSize: 30, fontWeight: "900", fontVariant: ["tabular-nums"] },
+  headerSide: { width: 88, alignItems: "flex-end", justifyContent: "center" },
+  headerTitleBox: { flex: 1, alignItems: "center" },
+  headerTitle: { color: UI.TEXT, fontSize: 18, fontWeight: "600", ...shadow },
+  headerSubtitle: { color: UI.TEXT, fontSize: 14, fontWeight: "600", marginTop: -1, ...shadow },
+  headerIcon: { color: UI.TEXT, fontSize: 24, ...shadow },
+
+  boardWrap: { position: "absolute", top: HEADER_HEIGHT + 15, left: 0, right: 0, alignItems: "center" },
+  board: { ...panel, width: "92%", maxWidth: 500, flexDirection: "row", paddingVertical: 14, paddingHorizontal: 12, borderRadius: 18 },
+  column: { flex: 1, alignItems: "center" },
+  label: { color: UI.TEXT, fontSize: 12, fontWeight: "500", letterSpacing: 1.2, marginBottom: 4, ...shadow },
+  value: { color: UI.TEXT, fontSize: 24, fontWeight: "800", fontVariant: ["tabular-nums"], ...shadow },
+  timeLow: { color: UI.DANGER },
+  hearts: { flexDirection: "row" },
+  heart: { fontSize: 22, marginHorizontal: 3 },
+
+  nearMiss: { position: "absolute", top: HEADER_HEIGHT + 110, alignSelf: "center", color: UI.GOLD, fontSize: 30, fontWeight: "900", fontStyle: "italic", ...shadow },
+  readyNotes: { position: "absolute", bottom: 128, left: 16, right: 16, alignItems: "center", gap: 6 },
+  hint: { color: UI.TEXT, fontSize: 14, fontWeight: "600", ...shadow },
+  credit: { color: UI.TEXT_SUBTLE, fontSize: 10, ...shadow },
+
+  controls: { position: "absolute", bottom: 5, left: 0, right: 0, alignItems: "center" },
+  controlsRow: { flexDirection: "row", alignItems: "center", width: "92%", maxWidth: 500, paddingVertical: 20, gap: 20 },
+  iconButton: { ...panel, width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center", overflow: "hidden" },
+  iconText: { color: UI.TEXT, fontSize: 13, fontWeight: "900", ...shadow },
+  nitroFill: { position: "absolute", left: 0, right: 0, bottom: 0, backgroundColor: "rgba(63, 182, 255, 0.6)" },
+  nitroOn: { borderColor: "#ffb020" },
+  nitroIdle: { opacity: 0.6 },
+  speed: { color: UI.TEXT, fontSize: 17, fontWeight: "900", fontVariant: ["tabular-nums"], ...shadow },
+  speedUnit: { color: UI.TEXT, fontSize: 9, fontWeight: "700", marginTop: -2, ...shadow },
+  mainWrap: { flex: 1 },
+  mainButton: { ...panel, minHeight: 60, borderRadius: 30, paddingHorizontal: 24, paddingVertical: 16, alignItems: "center", justifyContent: "center" },
+  mainText: { color: UI.TEXT, fontSize: 16, fontWeight: "800", letterSpacing: 1, ...shadow },
+  mainSubtext: { color: UI.TEXT, fontSize: 10, fontWeight: "600", letterSpacing: 0.5, marginTop: 2 },
+
+  overlay: { ...StyleSheet.absoluteFill, backgroundColor: UI.OVERLAY, alignItems: "center", justifyContent: "center" },
+  card: { width: "95%", maxWidth: 500, borderRadius: 16, backgroundColor: UI.BACKGROUND, padding: 20, alignItems: "center" },
+  trophy: { fontSize: 44 },
+  cardTitle: { color: UI.TEXT, fontSize: 28, fontWeight: "bold", letterSpacing: 1, marginTop: 8, marginBottom: 4 },
+  cardMessage: { color: UI.TEXT_SUBTLE, fontSize: 14, marginBottom: 16 },
+  scoreCard: { backgroundColor: UI.SURFACE, borderRadius: 16, paddingVertical: 16, paddingHorizontal: 32, alignItems: "center", marginBottom: 24 },
+  scoreLabel: { color: UI.TEXT_SUBTLE, fontSize: 13, fontWeight: "600", letterSpacing: 1, marginBottom: 4 },
+  scoreValue: { color: UI.GOLD, fontSize: 44, fontWeight: "bold", fontVariant: ["tabular-nums"] },
+  scoreBest: { color: UI.TEXT_SUBTLE, fontSize: 12, fontWeight: "600", marginTop: 2 },
+  playAgain: { width: "100%", paddingVertical: 16, borderRadius: 28, backgroundColor: UI.SOLID, alignItems: "center" },
+  playAgainText: { color: UI.ON_SOLID, fontSize: 17, fontWeight: "bold", letterSpacing: 0.5 },
+  settingRow: { width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 12 },
+  settingLabel: { color: UI.TEXT, fontSize: 16, fontWeight: "600" },
+
   flash: { backgroundColor: "#ff3b3b" },
 });
