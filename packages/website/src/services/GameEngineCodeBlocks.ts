@@ -375,6 +375,7 @@ world.spawn({ mesh: "cone" });        // base radius 0.5, height 1, tip up
 world.spawn({ mesh: "capsule" });     // radius 0.25, height 1 in total
 world.spawn({ mesh: "torus" });       // lies flat: outer radius 0.5, tube 0.15
 world.spawn({ mesh: "roundedBox" });  // a cube with soft edges: tiles, buttons
+world.spawn({ mesh: "puff" });        // a soft sprite facing the camera: fire, smoke, glows
 world.spawn({ mesh: "none" });        // invisible: groups, pivots, trigger zones
 
 // Alpha below 1 makes any shape see-through: glass, ghosts, highlights.
@@ -552,6 +553,38 @@ world.burst({
   lifetime: 0.5,
   gravity: 0,
   color: [1, 0.8, 0.2],
+});
+
+// Fire: soft puffs that rise, shrink and cool from yellow to a fading red.
+world.burst({
+  position: wreck,
+  mesh: "puff",
+  count: 6,
+  size: 0.9,
+  speed: 4,
+  lifetime: 0.5,
+  gravity: 6,           // hot gas keeps climbing
+  direction: [0, 1, 0],
+  spread: 0.2,
+  color: [[2, 1.75, 0.7], [2, 1.35, 0.35]], // above 1 glows
+  endSize: 0.2,
+  endColor: [1.7, 0.3, 0.06, 0],
+});
+
+// Smoke: dark puffs that swell and thin out as they rise.
+world.burst({
+  position: [wreck[0], wreck[1] + 1.5, wreck[2]],
+  mesh: "puff",
+  count: 2,
+  size: 1.2,
+  speed: 2.5,
+  lifetime: 2,
+  gravity: 3,
+  direction: [0, 1, 0],
+  spread: 0.35,
+  color: [0.1, 0.1, 0.1, 0.7],
+  endSize: 3,
+  endColor: [0.4, 0.4, 0.4, 0],
 });`;
 
 export const engineShakeCode = `<GameView

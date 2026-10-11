@@ -4,7 +4,7 @@ import { textureImage } from "../assets/texture";
 import { meshInfo, VERTEX_FLOATS } from "./meshes";
 import type { QualityLevel } from "./quality";
 import { SHADER } from "./shader";
-import { MAX_MESHES, type Camera, type Light, type RenderSource } from "../types";
+import { MAX_MESHES, SHAPE_MESH, type Camera, type Light, type RenderSource } from "../types";
 
 /** Clear color and fog. Fog fades geometry towards `background` with distance. */
 export type Environment = {
@@ -34,13 +34,17 @@ type MeshBuffers = {
   cutout: boolean;
 };
 
-/** Which meshes a draw covers: all of them, only solid ones, or only cut-out ones. */
-type Only = "all" | "solid" | "cutout";
+/**
+ * Which meshes a draw covers: all of them, only solid ones, only cut-out ones, every see-through one
+ * except flames ("blended"), or only flames ("added").
+ */
+type Only = "all" | "solid" | "cutout" | "blended" | "added";
 
 export class Renderer {
   private pipeline!: GPURenderPipeline;
   private cutoutPipeline!: GPURenderPipeline;
   private blendPipeline!: GPURenderPipeline;
+  private addPipeline!: GPURenderPipeline;
   private shadowPipeline: GPURenderPipeline;
   private bindGroup!: GPUBindGroup;
   private shadowBindGroup: GPUBindGroup;
@@ -185,9 +189,10 @@ export class Renderer {
     this.softShadows = quality.softShadows;
     if (quality.samples !== this.samples) {
       this.samples = quality.samples;
-      this.pipeline = this.scenePipeline("fs_opaque", false);
-      this.cutoutPipeline = this.scenePipeline("fs_cutout", false);
-      this.blendPipeline = this.scenePipeline("fs_blend", true);
+      this.pipeline = this.scenePipeline("fs_opaque", "solid");
+      this.cutoutPipeline = this.scenePipeline("fs_cutout", "solid");
+      this.blendPipeline = this.scenePipeline("fs_blend", "blend");
+      this.addPipeline = this.scenePipeline("fs_blend", "add");
       this.width = this.height = 0; // new render targets on the next frame
     }
     if (quality.shadowSize !== this.shadowSize) {
@@ -212,7 +217,9 @@ export class Renderer {
     }
   }
 
-  private scenePipeline(entryPoint: string, transparent: boolean) {
+  /** "blend" paints over what's behind (glass, smoke); "add" adds light to it (flames, glows). */
+  private scenePipeline(entryPoint: string, mode: "solid" | "blend" | "add") {
+    const transparent = mode !== "solid";
     return this.device.createRenderPipeline({
       layout: this.pipelineLayout,
       vertex: { module: this.module, entryPoint: "vs", buffers: [this.vertexLayout] },
@@ -223,10 +230,16 @@ export class Renderer {
           transparent
             ? {
                 format: this.format,
-                blend: {
-                  color: { srcFactor: "src-alpha", dstFactor: "one-minus-src-alpha" },
-                  alpha: { srcFactor: "one", dstFactor: "one-minus-src-alpha" },
-                },
+                blend:
+                  mode === "add"
+                    ? {
+                        color: { srcFactor: "src-alpha", dstFactor: "one" },
+                        alpha: { srcFactor: "zero", dstFactor: "one" },
+                      }
+                    : {
+                        color: { srcFactor: "src-alpha", dstFactor: "one-minus-src-alpha" },
+                        alpha: { srcFactor: "one", dstFactor: "one-minus-src-alpha" },
+                      },
               }
             : { format: this.format },
         ],
@@ -372,7 +385,9 @@ export class Renderer {
       pass.setPipeline(this.cutoutPipeline);
       this.draw(pass, used, 0, true, "cutout");
       pass.setPipeline(this.blendPipeline);
-      this.draw(pass, used, MAX_MESHES, true, "all"); // see-through instances last, over the solid scene
+      this.draw(pass, used, MAX_MESHES, true, "blended"); // see-through instances last, over the solid scene
+      pass.setPipeline(this.addPipeline);
+      this.draw(pass, used, MAX_MESHES, true, "added"); // flames add their light last, so smoke never dulls them
     }
     pass.end();
     queue.submit([encoder.finish()]);
@@ -390,8 +405,10 @@ export class Renderer {
       const first = ranges[b * 2]!;
       const count = Math.min(ranges[b * 2 + 1]!, Math.max(0, used - first));
       if (count === 0) continue;
-      const mesh = this.buffersFor(b - offset);
+      const id = b - offset;
+      const mesh = this.buffersFor(id);
       if (!mesh || (only === "solid" && mesh.cutout) || (only === "cutout" && !mesh.cutout)) continue;
+      if ((only === "blended" && id === SHAPE_MESH.flame) || (only === "added" && id !== SHAPE_MESH.flame)) continue;
       if (textured) pass.setBindGroup(1, mesh.textureGroup);
       pass.setVertexBuffer(0, mesh.vertices);
       pass.setIndexBuffer(mesh.indices, mesh.indexFormat);

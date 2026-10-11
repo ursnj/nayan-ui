@@ -10,7 +10,11 @@ impl World {
     pub(super) fn write_outputs(&mut self, alpha: f32) {
         self.alpha = alpha;
         let n = self.len();
-        let bucket = |i: usize, mesh: &[u8], color: &[[f32; 4]]| mesh[i] as usize + if color[i][3] < 1.0 { MAX_MESHES } else { 0 };
+        // See-through instances, and sprites (puffs and flames), go in the second half: drawn blended, last.
+        let bucket = |i: usize, mesh: &[u8], color: &[[f32; 4]]| {
+            let sprite = mesh[i] == shapes::PUFF || mesh[i] == shapes::FLAME;
+            mesh[i] as usize + if color[i][3] < 1.0 || sprite { MAX_MESHES } else { 0 }
+        };
         let mut counts = [0u32; MAX_MESHES * 2];
         let mut attached = false;
         for i in 0..n {

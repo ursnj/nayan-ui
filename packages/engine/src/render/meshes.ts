@@ -177,6 +177,22 @@ function plane() {
   return g;
 }
 
+/**
+ * A soft sprite: a quad whose zero normals tell the vertex shader to turn it to face the camera, and
+ * the fragment shader to fade it out toward its rim.
+ */
+function puff() {
+  const g = new Builder();
+  const billboard: V3 = [0, 0, 0];
+  g.quad(
+    g.vertex([-0.5, -0.5, 0], billboard, 0, 1),
+    g.vertex([0.5, -0.5, 0], billboard, 1, 1),
+    g.vertex([0.5, 0.5, 0], billboard, 1, 0),
+    g.vertex([-0.5, 0.5, 0], billboard, 0, 0),
+  );
+  return g;
+}
+
 /** Render-ready geometry: VERTEX_FLOATS floats per vertex, u32 triangle indices. */
 export type MeshGeometry = { vertices: Float32Array; indices: Uint32Array };
 
@@ -193,6 +209,8 @@ const BUILT_IN: Partial<Record<Shape, () => Builder>> = {
   capsule,
   torus,
   roundedBox: () => roundedBox(),
+  puff,
+  flame: puff, // the same sprite; the renderer draws it additively
 };
 
 const built = new Map<number, MeshInfo>();

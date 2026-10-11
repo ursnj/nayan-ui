@@ -26,8 +26,14 @@ export interface RenderSource {
   setView?(viewProj: Float32Array, width: number, height: number): void;
 }
 
-/** Built-in shapes, each 1 unit across before scaling. "none" isn't drawn (groups, pivots, trigger zones). */
-export type Shape = "cube" | "sphere" | "plane" | "cylinder" | "cone" | "capsule" | "torus" | "roundedBox" | "none";
+/**
+ * Built-in shapes, each 1 unit across before scaling. "none" isn't drawn (groups, pivots, trigger zones).
+ * "puff" is a soft, round sprite that always faces the camera and is always see-through: overlapping
+ * puffs blend into smoke, dust, steam and clouds. "flame" is the same sprite drawn additively: it adds
+ * light to what's behind it, so overlapping flames build up to a hot white core and stay bright over
+ * smoke (fire, sparks, explosions, magic, glows). Use them as a burst's `mesh`.
+ */
+export type Shape = "cube" | "sphere" | "plane" | "cylinder" | "cone" | "capsule" | "torus" | "roundedBox" | "puff" | "flame" | "none";
 
 /** Mesh ids of the built-in shapes, as the core and renderer know them. */
 export const SHAPE_MESH: Record<Shape, number> = {
@@ -39,6 +45,8 @@ export const SHAPE_MESH: Record<Shape, number> = {
   capsule: 5,
   torus: 6,
   roundedBox: 7,
+  puff: 8,
+  flame: 9,
   none: 15,
 };
 
