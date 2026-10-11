@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from "react-native-reanimated";
 import {
   audio,
   GameView,
@@ -353,8 +354,11 @@ function Round({ onRestart }: { onRestart: () => void }) {
   const light = useMemo<Light>(() => ({ direction: [0.3, 0.85, 0.55], ambient: 0.45, shadowExtent: 16 }), []);
   const [phase, setPhase] = useState<Phase>("ready");
   const [score, setScore] = useState(0);
-  const flash = useRef(new Animated.Value(0)).current;
-  const pop = useRef(new Animated.Value(1)).current;
+  // HUD animations run on the UI thread (Reanimated), so the game loop never stutters them.
+  const flash = useSharedValue(0);
+  const pop = useSharedValue(1);
+  const flashStyle = useAnimatedStyle(() => ({ opacity: flash.value }));
+  const popStyle = useAnimatedStyle(() => ({ transform: [{ scale: pop.value }] }));
   const overAt = useRef(0);
 
   useEffect(() => {
@@ -364,12 +368,10 @@ function Round({ onRestart }: { onRestart: () => void }) {
     };
     game.onScore = (s) => {
       setScore(s);
-      pop.setValue(1.35);
-      Animated.spring(pop, { toValue: 1, friction: 4, useNativeDriver: true }).start();
+      pop.value = withSequence(withTiming(1.35, { duration: 0 }), withSpring(1, { damping: 8, stiffness: 320 }));
     };
     game.onFlash = () => {
-      flash.setValue(0.85);
-      Animated.timing(flash, { toValue: 0, duration: 350, useNativeDriver: true }).start();
+      flash.value = withSequence(withTiming(0.85, { duration: 0 }), withTiming(0, { duration: 350 }));
     };
     return () => game.world.dispose();
   }, [game, flash, pop]);
@@ -403,7 +405,7 @@ function Round({ onRestart }: { onRestart: () => void }) {
 
       <View style={styles.hud} pointerEvents="none">
         {phase !== "ready" && (
-          <Animated.Text style={[styles.score, { transform: [{ scale: pop }] }]}>{score}</Animated.Text>
+          <Animated.Text style={[styles.score, popStyle]}>{score}</Animated.Text>
         )}
         {phase === "ready" && (
           <>
@@ -433,7 +435,7 @@ function Round({ onRestart }: { onRestart: () => void }) {
         </View>
       )}
 
-      <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.flash, { opacity: flash }]} />
+      <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.flash, flashStyle]} />
     </View>
   );
 }
