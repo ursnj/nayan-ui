@@ -62,7 +62,9 @@ export const gameViewAttributes = [
   { name: "onTap", type: "(x: number, y: number) => void", default: "none", details: "A quick tap (under 10 points of movement and 300 ms), in points from the view's top-left. world.pick(x, y) finds what was tapped." },
   { name: "onSwipe", type: '(direction: "left" | "right" | "up" | "down") => void', default: "none", details: "A quick flick (over 30 points, faster than 0.3 points/ms) in its main direction: 2048, runners, sliding puzzles." },
   { name: "onDrag", type: "({ phase, x, y, dx, dy }) => void", default: "none", details: 'Finger down, moving and up. phase is "start", "move" or "end"; dx and dy are measured from the start.' },
-  { name: "onStats", type: "({ fps, updateMs }) => void", default: "none", details: "Called once a second with the frame rate and the mean onUpdate time in ms. See GameStats." },
+  { name: "onLongPress", type: "(x: number, y: number) => void", default: "none", details: "A finger held still for half a second: pick up a piece, show its moves. No tap follows." },
+  { name: "onPinch", type: "({ phase, scale, rotation, x, y }) => void", default: "none", details: "Two fingers spreading, pinching or turning: zoom and rotate a board. Ends any drag in progress (with cancelled: true)." },
+  { name: "onStats", type: "({ fps, updateMs, quality }) => void", default: "none", details: "Called once a second with the frame rate and the mean onUpdate time in ms. See GameStats." },
   { name: "onError", type: "(error: Error) => void", default: "console.error", details: "GPU setup failures and WebGPU errors." },
 ];
 
@@ -191,8 +193,9 @@ export const worldMethodsAttributes = [
   { name: "has(e)", type: "boolean", default: "", details: "True while the entity exists." },
   { name: "raycast(origin, direction, maxDistance, mask?)", type: "RaycastHit | null", default: "", details: "First solid (non-sensor) collider along the ray whose layer is in mask (default all), as of the last update." },
   { name: "pick(x, y)", type: "PickHit | null", default: "", details: "The pickable entity under a GameView point, tested against bounding boxes of what was last drawn. Needs no physics." },
+  { name: "screenToWorld(x, y, plane?)", type: "[x, y, z] | null", default: "", details: "Where a GameView point lands on a plane: { point, normal }, default the ground (y = 0). Drag pieces across a board with it. null if the plane is behind the camera." },
   { name: "toScreen([x, y, z])", type: "[x, y] | null", default: "", details: "Where a world position appears in the GameView, in points from its top-left. null if behind the camera or nothing has been drawn yet." },
-  { name: "update(dt)", type: "void", default: "", details: "Advances the simulation in fixed 60 Hz steps, resolves finished animations and refreshes what GameView draws. Call it from onUpdate." },
+  { name: "update(dt)", type: "void", default: "", details: "Advances the simulation in fixed 60 Hz steps (at most 3 per call, so a slow phone slows the game slightly rather than falling behind), resolves finished animations and refreshes what GameView draws. Call it from onUpdate." },
   { name: "forEachCollision(fn)", type: "void", default: "", details: "Calls fn(a, b, info) for each touch that started or ended during the last update. info is reused: copy what you need." },
   { name: "dispose()", type: "void", default: "", details: "Frees the native world. Pending animation promises resolve; any later call throws." },
 ];
@@ -270,13 +273,23 @@ export const qualityAttributes = [
 export const gestureAttributes = [
   { name: "onTap(x, y)", type: "tap", default: "< 10 pt, < 300 ms", details: "Fires on release when the finger barely moved and lifted quickly. x and y are where it went down." },
   { name: "onSwipe(direction)", type: "swipe", default: "> 30 pt, > 0.3 pt/ms", details: 'Fires on release for a fast flick. direction is "left", "right", "up" or "down", whichever axis moved more.' },
-  { name: "onDrag(drag)", type: "drag", default: "every touch", details: 'Fires "start" on touch, "move" while moving and "end" on release or when the touch is cancelled. Taps and swipes send drag events too.' },
+  { name: "onDrag(drag)", type: "drag", default: "every touch", details: 'Fires "start" on touch, "move" while moving and "end" on release. Taps and swipes send drag events too.' },
+  { name: "onLongPress(x, y)", type: "long press", default: "held 500 ms, < 10 pt", details: "Fires while the finger is still down. The drag keeps going if it then moves (long-press to pick up, then drag). No tap fires on release." },
+  { name: "onPinch(pinch)", type: "two fingers", default: "second finger lands", details: 'Fires "start", "move" and "end". A drag in progress ends first with cancelled: true. Only handled when onPinch is set.' },
 ];
 
 export const dragEventAttributes = [
   { name: "phase", type: '"start" | "move" | "end"', default: "", details: "Where in the touch this event is." },
   { name: "x, y", type: "number", default: "", details: "Finger position in the view, in points from its top-left." },
   { name: "dx, dy", type: "number", default: "", details: "Distance moved since the drag started, in points. y grows downward." },
+  { name: "cancelled", type: "boolean | undefined", default: "", details: 'On "end": true if a pinch or the system interrupted the drag. Put a held piece back instead of dropping it.' },
+];
+
+export const pinchEventAttributes = [
+  { name: "phase", type: '"start" | "move" | "end"', default: "", details: "Where in the gesture this event is. \"end\" repeats the last values." },
+  { name: "scale", type: "number", default: "", details: "Finger spread relative to the start: 2 is twice as far apart (zoom in), 0.5 half (zoom out)." },
+  { name: "rotation", type: "number", default: "", details: "Radians the fingers turned since the start, clockwise on screen." },
+  { name: "x, y", type: "number", default: "", details: "Midpoint between the fingers in the view, in points." },
 ];
 
 export const pickHitAttributes = [

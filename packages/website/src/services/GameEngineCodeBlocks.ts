@@ -13,6 +13,59 @@ npx expo run:ios      # or: npx expo run:android`;
 export const engineBareIosCode = `cd ios && pod install && cd ..
 npx react-native run-ios      # or: npx react-native run-android`;
 
+export const engineBoardDragCode = `import { GameView, World, type DragEvent, type Entity, type Vec3 } from "@nayan-ui/engine";
+
+const PIECE_Y = 0.25; // the height pieces slide at
+const board = { point: [0, PIECE_Y, 0] as Vec3 }; // the plane the finger moves them on
+let held: { piece: Entity; from: Vec3; grab: Vec3 } | null = null;
+
+function onDrag({ phase, x, y, cancelled }: DragEvent) {
+  const at = world.screenToWorld(x, y, board); // the finger on the board, in world space
+  if (phase === "start") {
+    const hit = world.pick(x, y);
+    if (!hit || !pieces.has(hit.entity) || !at) return;
+    const from = world.position(hit.entity)!;
+    // Keep the spot you grabbed under the finger, so the piece doesn't jump to it.
+    held = { piece: hit.entity, from, grab: [from[0] - at[0], 0, from[2] - at[2]] };
+    world.animate(held.piece, { scale: 1.15 }, { duration: 0.1 }); // lift
+    return;
+  }
+  if (!held) return;
+  if (phase === "move" && at) {
+    const to: Vec3 = [at[0] + held.grab[0], PIECE_Y + 0.3, at[2] + held.grab[2]];
+    world.animate(held.piece, { position: to }, { spring: true }); // follows the finger smoothly
+    return;
+  }
+  // "end": snap to the nearest legal cell, or go back.
+  const cell = !cancelled && at ? nearestLegalCell(held.piece, at) : null;
+  const to: Vec3 = cell ? [cell.x, PIECE_Y, cell.z] : held.from;
+  world.animate(held.piece, { position: to, scale: 1 }, { spring: "bouncy" });
+  if (cell) move(held.piece, cell);
+  held = null;
+}
+
+<GameView source={world} camera={camera} onUpdate={(dt) => world.update(dt)} onDrag={onDrag} />`;
+
+export const engineLongPressPinchCode = `<GameView
+  source={world}
+  camera={camera}
+  // Hold still for half a second: no tap follows.
+  onLongPress={(x, y) => {
+    const hit = world.pick(x, y);
+    if (hit && pieces.has(hit.entity)) showLegalMoves(hit.entity);
+  }}
+  // Two fingers: zoom and turn the board. A drag in progress ends with cancelled: true.
+  onPinch={({ phase, scale, rotation }) => {
+    if (phase === "start") start = { zoom: camera.ortho!, angle: boardAngle };
+    camera.ortho = clamp(start.zoom / scale, 4, 12); // spread to zoom in
+    boardAngle = start.angle + rotation;
+    world.set(boardRoot, { rotation: quatY(boardAngle) });
+  }}
+/>`;
+
+export const engineAbiCode = `# android/gradle.properties: phones only (x86 and x86_64 are for emulators)
+reactNativeArchitectures=armeabi-v7a,arm64-v8a`;
+
 export const engineAndroidConfigCode = `{
   "expo": {
     "android": { "permissions": ["android.permission.VIBRATE"] },
@@ -743,7 +796,7 @@ import type {
   Entity, EntityOptions, PhysicsOptions, BodyType, ImpactFeedback, CollisionInfo, RaycastHit, PickHit, Bounds,
   AnimateOptions, AnimateTarget, Keyframe, SpringOptions, Easing, BurstOptions, Color, Quat, Vec3, Shape,
   // Rendering and touch
-  Camera, Light, RenderSource, GameStats, DragEvent, SwipeDirection,
+  Camera, Light, RenderSource, GameStats, DragEvent, PinchEvent, SwipeDirection, Quality, QualitySetting,
   // Models, textures and fonts
   Model, ModelOptions, Texture, Font, FontOptions, TextAlign,
   // Sound, haptics and input
@@ -774,6 +827,7 @@ export const engineWorldApiCode = `class World {
   raycast(origin: Vec3, direction: Vec3, maxDistance: number, mask?: number): RaycastHit | null;
   pick(x: number, y: number): PickHit | null;        // the entity under a GameView point
   toScreen(position: Vec3): [x, y] | null;           // GameView points, null if behind the camera
+  screenToWorld(x: number, y: number, plane?: { point?: Vec3; normal?: Vec3 }): [x, y, z] | null; // finger -> plane (default ground)
 
   // World settings
   gravity: Vec3;                 // default [0, -9.81, 0]
@@ -945,6 +999,8 @@ export const engineInputApiCode = `// GameView touch props
 onTap?: (x: number, y: number) => void;           // points from the view's top-left
 onSwipe?: (direction: SwipeDirection) => void;
 onDrag?: (drag: DragEvent) => void;
+onLongPress?: (x: number, y: number) => void;     // held still for 0.5 s; no tap follows
+onPinch?: (pinch: PinchEvent) => void;            // two fingers; ends any drag (cancelled: true)
 
 type SwipeDirection = "left" | "right" | "up" | "down";
 
@@ -954,6 +1010,15 @@ type DragEvent = {
   y: number;
   dx: number;   // distance moved since the drag started
   dy: number;
+  cancelled?: boolean;  // on "end": interrupted (pinch or system); put a held piece back
+};
+
+type PinchEvent = {
+  phase: "start" | "move" | "end";
+  scale: number;     // finger spread relative to the start (2 = twice as far apart)
+  rotation: number;  // radians turned since the start, clockwise on screen
+  x: number;         // midpoint between the fingers, in points
+  y: number;
 };
 
 type JoystickState = { x: number; y: number }; // each -1..1, y is up

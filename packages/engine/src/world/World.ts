@@ -582,6 +582,24 @@ export class World implements RenderSource {
     return [((px + 1) / 2) * v.width, ((1 - py) / 2) * v.height];
   }
 
+  /**
+   * Where a GameView point (a finger's `x, y`) lands on a plane, or null if the plane is behind the
+   * camera or edge-on. Defaults to the ground (y = 0). Drag a piece across a board with it:
+   * `world.screenToWorld(x, y, { point: [0, pieceHeight, 0] })`. 2D games looking down -z use
+   * `{ normal: [0, 0, 1] }`.
+   */
+  screenToWorld(x: number, y: number, plane: { point?: Vec3; normal?: Vec3 } = {}): [number, number, number] | null {
+    const ray = this.screenRay(x, y);
+    if (!ray) return null;
+    const [px, py, pz] = plane.point ?? [0, 0, 0];
+    const [nx, ny, nz] = plane.normal ?? [0, 1, 0];
+    const facing = ray[3]! * nx + ray[4]! * ny + ray[5]! * nz;
+    if (Math.abs(facing) < 1e-9) return null;
+    const t = ((px - ray[0]!) * nx + (py - ray[1]!) * ny + (pz - ray[2]!) * nz) / facing;
+    if (t < 0) return null;
+    return [ray[0]! + ray[3]! * t, ray[1]! + ray[4]! * t, ray[2]! + ray[5]! * t];
+  }
+
   /** World-space ray [origin xyz, direction xyz] through a GameView point. */
   private screenRay(x: number, y: number): number[] | null {
     const v = this.view;

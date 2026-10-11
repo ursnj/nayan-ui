@@ -39,8 +39,8 @@ const FEATURES = [
   {
     icon: Monitor,
     title: "Fast 3D rendering",
-    body: "WebGPU with eight built-in shapes, soft shadows, fog and transparency. Load glTF models; every object of the same shape is drawn in one call.",
-    chips: ["glTF", "shadows", "ortho", "4x MSAA"],
+    body: "WebGPU with eight built-in shapes, soft shadows, fog and transparency. Load glTF models; every object of the same shape is drawn in one call. Quality adapts so low-end phones stay at 60 fps.",
+    chips: ["glTF", "shadows", "ortho", "auto quality"],
   },
   {
     icon: WandSparkles,
@@ -69,8 +69,8 @@ const FEATURES = [
   {
     icon: Joystick,
     title: "Touch input",
-    body: "Taps, swipes and drags on the game view, tap-to-pick 3D objects, and a drop-in on-screen joystick.",
-    chips: ["tap", "swipe", "pick", "joystick"],
+    body: "Taps, swipes, drags, long presses and pinches; pick up 3D pieces and drag them across a board; a drop-in on-screen joystick.",
+    chips: ["tap", "drag", "pinch", "pick", "joystick"],
   },
 ];
 
@@ -113,7 +113,7 @@ const EngineOverview = () => (
         { value: "iOS + Android", label: "Native Rust core" },
         { value: "60 Hz", label: "Fixed-step simulation" },
         { value: "Rapier", label: "Physics engine" },
-        { value: "~7.5 MB", label: "Added to your app" },
+        { value: "~1.5 MB", label: "Added to each download" },
       ]}
     />
 
@@ -139,6 +139,8 @@ const EngineOverview = () => (
           "The renderer reads object positions straight from Rust memory: nothing is copied each frame.",
           "Objects that share a shape are drawn together in a single GPU call.",
           "Sound is mixed on its own thread, so a busy frame never stutters the audio.",
+          "On low-end phones, quality=\"auto\" lowers resolution, anti-aliasing and shadows instead of dropping frames.",
+          "A slow frame catches up at most 3 physics steps, so a struggling phone slows the game slightly instead of falling further behind.",
         ]}
       />
     </SubHeader>
@@ -152,6 +154,14 @@ const EngineOverview = () => (
           (animated) glTF models aren&apos;t supported yet.
         </li>
         <li>• Sounds are WAV files.</li>
+        <li>
+          • The native core is about 2.9 MB per CPU architecture, about 1.5 MB compressed. App stores deliver only
+          the one each device needs. See{" "}
+          <Link href="/game-engine/installation" className={`font-medium ${ACCENT_TEXT}`}>
+            Installation
+          </Link>{" "}
+          for keeping APKs small.
+        </li>
       </ul>
       <p className={`mt-4 ${BODY}`}>
         Ready to try it?{" "}
