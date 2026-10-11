@@ -23,6 +23,11 @@ if [ "$published" = "true" ]; then
   exit 0
 fi
 
+# A prerelease (1.0.0-beta.1) goes out under its own dist-tag ("beta"), so `npm install` keeps
+# getting the latest stable version.
+tag=latest
+case "$version" in *-*) tag="$(echo "${version#*-}" | sed 's/[^a-zA-Z].*//')"; tag="${tag:-next}" ;; esac
+
 echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-npm publish --access public
-echo "Published $name@$version"
+npm publish --access public --tag "$tag"
+echo "Published $name@$version (tag: $tag)"
