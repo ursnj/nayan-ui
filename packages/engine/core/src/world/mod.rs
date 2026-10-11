@@ -46,7 +46,9 @@ pub const EVENT_SENSOR: u32 = 2;
 pub const NO_ENTITY: u32 = u32::MAX;
 /// Simulation step. `update(dt)` runs as many fixed steps as fit and interpolates the rest.
 pub const FIXED_DT: f32 = 1.0 / 60.0;
-const MAX_STEPS_PER_UPDATE: u32 = 5;
+/// Catch-up steps per `update`. Each one makes a slow frame slower, so on a device that can't keep
+/// up the game slows down (time beyond 3 steps = 50 ms is dropped) instead of spiralling.
+const MAX_STEPS_PER_UPDATE: u32 = 3;
 const SLOT_BITS: u32 = 20;
 const SLOT_MASK: u32 = (1 << SLOT_BITS) - 1;
 /// Generations cycle 0..MAX_GENERATION so that `u32::MAX` is never a valid handle.
@@ -114,6 +116,8 @@ pub struct World {
     region: Vec<[f32; 4]>,
     /// Drawn on top of the position by shake animations (reset every step).
     shake_offset: Vec<Vec3>,
+    /// Animation tracks running on this entity (despawns of entities without any skip the search).
+    track_count: Vec<u32>,
 
     // handle table
     slots: Vec<Slot>,
@@ -144,6 +148,8 @@ pub struct World {
     /// Ids of animations that ended (finished, replaced, stopped, despawned) since the last update.
     done: Vec<u32>,
     scratch: Box<[f32; 16]>,
+    /// Scratch for `write_outputs` (only used when entities are attached).
+    world_cache: render::WorldCache,
 }
 
 impl World {
@@ -175,6 +181,7 @@ impl World {
             pickable: Vec::with_capacity(capacity),
             region: Vec::with_capacity(capacity),
             shake_offset: Vec::with_capacity(capacity),
+            track_count: Vec::with_capacity(capacity),
             slots: Vec::with_capacity(capacity),
             free: Vec::new(),
             bounds: None,
@@ -194,6 +201,7 @@ impl World {
             events: Vec::with_capacity(MAX_EVENTS * EVENT_STRIDE),
             done: Vec::with_capacity(capacity * DONE_PER_ENTITY + 64),
             scratch: Box::new([0.0; 16]),
+            world_cache: render::WorldCache::default(),
         }
     }
 
@@ -257,6 +265,7 @@ impl World {
         self.pickable.push(true);
         self.region.push([0.0, 0.0, 1.0, 1.0]);
         self.shake_offset.push(Vec3::ZERO);
+        self.track_count.push(0);
         Some(handle)
     }
 
@@ -314,6 +323,7 @@ impl World {
         self.pickable.swap_remove(i);
         self.region.swap_remove(i);
         self.shake_offset.swap_remove(i);
+        self.track_count.swap_remove(i);
         if i != last {
             let moved = self.dense_slot[i];
             self.slots[moved as usize].dense = i as u32;
