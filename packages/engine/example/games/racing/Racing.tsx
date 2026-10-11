@@ -38,6 +38,8 @@ const ACCELERATION = 0.22; // m/s per second
 const NITRO_BOOST = 1.45;
 const NITRO_BURN = 0.32; // of a full tank per second
 const LATERAL_SPEED = 15; // m/s across the road
+const STEER_RESPONSE = 9; // how quickly the sideways speed eases toward what the finger asks for
+const STEER_WIDTH = 0.6; // a swipe across this much of the screen crosses the whole road
 const TRAFFIC_SPEED = 14; // one speed: cars keep the gaps they spawned with, so no wall forms later
 const SPAWN_AHEAD = 170; // hidden by fog
 const CRASH_SLOWDOWN = 0.55;
@@ -302,6 +304,7 @@ function createGame(a: Assets) {
     s: 0,
     d: 0,
     target: 0, // where the finger wants the car across the road
+    dragX: 0, // the finger's last dx, so each move steers by its own distance
     speed: 0,
     baseSpeed: START_SPEED,
     lateral: 0,
@@ -631,11 +634,14 @@ function tick(g: Game, dt: number) {
 
   // Steering: slide toward the finger, scraping along the rail at the edges.
   const goal = clamp(g.target, -EDGE - 0.6, EDGE + 0.6);
-  g.lateral = playing ? clamp((goal - g.d) * 7, -LATERAL_SPEED, LATERAL_SPEED) : g.lateral * Math.exp(-dt * 6);
+  // The sideways speed eases toward the target instead of jumping to it, so lane changes curve in and settle.
+  const wanted = playing ? clamp((goal - g.d) * 6, -LATERAL_SPEED, LATERAL_SPEED) : 0;
+  g.lateral += (wanted - g.lateral) * (1 - Math.exp(-dt * STEER_RESPONSE));
   g.d += g.lateral * dt;
   g.scrape -= dt;
   if (Math.abs(g.d) > EDGE) {
     g.d = Math.sign(g.d) * EDGE;
+    if (Math.sign(g.lateral) === Math.sign(g.d)) g.lateral = 0; // the rail stops it; steering away responds at once
     if (playing && Math.abs(goal) > EDGE + 0.2 && g.scrape <= 0) {
       g.scrape = 0.06;
       g.speed *= 0.985;
@@ -835,11 +841,16 @@ function Run({ assets: a, onRestart }: { assets: Assets; onRestart: () => void }
 
   const onUpdate = useMemo(() => (dt: number) => tick(game, dt), [game]);
 
-  // Steer like Asphalt: the car slides toward the finger's spot across the screen.
+  // Relative steering: wherever the swipe starts, the car moves by how far the finger moves. Each move
+  // adds its own distance, so pushing past the rail and swiping back responds at once.
   const onDrag = useMemo(
     () =>
-      ({ phase: touch, x }: DragEvent) => {
-        if (touch !== "end") game.target = ((x / width) * 2 - 1) * (EDGE + 0.8);
+      ({ phase: touch, dx }: DragEvent) => {
+        if (touch === "start") game.dragX = 0;
+        if (touch === "end") return;
+        const metresPerPoint = (2 * EDGE) / (STEER_WIDTH * width);
+        game.target = clamp(game.target + (dx - game.dragX) * metresPerPoint, -EDGE - 0.6, EDGE + 0.6);
+        game.dragX = dx;
       },
     [game, width],
   );
