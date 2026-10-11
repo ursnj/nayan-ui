@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Pressable, StyleSheet, Switch, Text, View, useColorScheme, useWindowDimensions } from "react-native";
+import { Animated, Image, Pressable, Share, StyleSheet, Switch, Text, View, useColorScheme, useWindowDimensions } from "react-native";
 import {
   audio,
   GameView,
@@ -221,6 +221,11 @@ type Car = {
 type Segment = { root: Entity; s: number; props: Entity[] };
 
 let best = 0;
+/** This session's best runs, for the leaderboard (the example has no backend). */
+const topScores: number[] = [];
+// Playtura's TrophyIcon and ShareIcon, rendered to white PNGs and tinted to the theme.
+const TROPHY_ICON = require("../../assets/icons/trophy.png");
+const SHARE_ICON = require("../../assets/icons/share.png");
 // Reused per frame, so the game loop doesn't allocate.
 const tmp: [number, number, number] = [0, 0, 0];
 const at: [number, number, number] = [0, 0, 0];
@@ -642,6 +647,11 @@ function end(g: Game) {
   audio.stop(g.engine);
   g.engine = null;
   best = Math.max(best, g.score);
+  if (g.score > 0) {
+    topScores.push(g.score);
+    topScores.sort((x, y) => y - x);
+    topScores.length = Math.min(topScores.length, 5);
+  }
   if (g.lives > 0) {
     sfx.play("point", { volume: 0.9, pitch: 1.25 });
     haptics.notify("success");
@@ -666,6 +676,7 @@ function tick(g: Game, dt: number) {
       if (g.timeLeft <= 0) end(g);
     }
     g.baseSpeed = Math.min(MAX_SPEED, g.baseSpeed + ACCELERATION * dt);
+    if (!g.boosting && g.nitro >= 1) boost(g); // a full tank fires by itself
     if (g.boosting) {
       g.nitro = Math.max(0, g.nitro - NITRO_BURN * dt);
       if (g.nitro <= 0) g.boosting = false;
@@ -840,19 +851,33 @@ function autopilot(g: Game) {
     }
   }
   g.target = LANES[lane]!;
-  if (g.nitro > 0.7) boost(g);
+
 }
 
 const formatTime = (seconds: number) =>
   `${Math.floor(seconds / 60).toString().padStart(2, "0")}:${(seconds % 60).toString().padStart(2, "0")}`;
 
-type RunProps = { assets: Assets; onRestart: () => void; dark: boolean; onDark: (dark: boolean) => void };
+/**
+ * How a host app configures the game, like Playtura's GameProps: the side buttons appear only when
+ * given (Playtura shows its leaderboard and share buttons only for `onShowLeaderboard` / `onShare`).
+ */
+export type RacingProps = {
+  /** The leaderboard button: a function to handle it yourself, `true` for the built-in session leaderboard, omitted to hide it. */
+  leaderboard?: boolean | (() => void);
+  /** The share button: a function given the score, `true` for the system share sheet, omitted to hide it. */
+  share?: boolean | ((score: number) => void);
+  /** "light" or "dark", like Playtura's `settings.theme`. Default: the system theme (and the in-game switch). */
+  theme?: "light" | "dark";
+};
 
-function Run({ assets: a, onRestart, dark, onDark }: RunProps) {
+type RunProps = RacingProps & { assets: Assets; onRestart: () => void; dark: boolean; onDark: (dark: boolean) => void };
+
+function Run({ assets: a, onRestart, dark, onDark, leaderboard, share }: RunProps) {
   const game = useMemo(() => createGame(a, dark), [a, dark]);
   const theme = dark ? DARK : LIGHT;
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { width } = useWindowDimensions();
+  const gameWidth = Math.min(width - 30, 500); // Playtura's getGameDimensions(): the scoreboard and controls are this wide
   const [phase, setPhase] = useState<Phase>("ready");
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
@@ -862,6 +887,7 @@ function Run({ assets: a, onRestart, dark, onDark }: RunProps) {
   const [nitro, setNitro] = useState(0.5);
   const [boosting, setBoosting] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [leaderboardOpen, setLeaderboardOpen] = useState(false);
   const [soundOn, setSoundOn] = useState(!audio.muted);
   const [hapticsOn, setHapticsOn] = useState(haptics.enabled);
   const flash = useRef(new Animated.Value(0)).current;
@@ -953,7 +979,7 @@ function Run({ assets: a, onRestart, dark, onDark }: RunProps) {
   const won = lives > 0;
   return (
     <View style={styles.root}>
-      <GameView source={game.world} camera={game.camera} light={!dark ? NIGHT_LIGHT : DAY_LIGHT} background={dark ? NIGHT_SKY : SKY} fog={0.0075} onUpdate={onUpdate} onDrag={onDrag} />
+      <GameView source={game.world} camera={game.camera} light={dark ? NIGHT_LIGHT : DAY_LIGHT} background={dark ? NIGHT_SKY : SKY} fog={0.0075} onUpdate={onUpdate} onDrag={onDrag} />
 
       {/* Header, like Playtura's game screen: (back), title and level, settings. The example's screen
           switcher sits in the left slot, where Playtura has its back button. */}
@@ -974,7 +1000,7 @@ function Run({ assets: a, onRestart, dark, onDark }: RunProps) {
 
       {/* Playtura's scoreboard: SCORE, LIVES and TIMER. */}
       <View style={styles.boardWrap} pointerEvents="none">
-        <View style={styles.board}>
+        <View style={[styles.board, { width: gameWidth }]}>
           <View style={styles.column}>
             <Text style={styles.label}>SCORE</Text>
             <Animated.Text style={[styles.value, { transform: [{ scale: pop }] }]}>{score}</Animated.Text>
@@ -1002,24 +1028,37 @@ function Run({ assets: a, onRestart, dark, onDark }: RunProps) {
 
       {phase === "ready" && (
         <View style={styles.readyNotes} pointerEvents="none">
-          <Text style={styles.hint}>Swipe to steer · tap NITRO to boost</Text>
+          <Text style={styles.hint}>Swipe to steer · pass cars to fill nitro</Text>
           {/* The car model is CC-BY 4.0: it must be credited. */}
           <Text style={styles.credit}>Car: “Car Concept” by Khronos Group, after Unity Fan (CC BY 4.0)</Text>
         </View>
       )}
 
-      {/* Playtura's game controls: a round button each side of the main one. Here the left is NITRO
-          (its fill is the tank) and the right the speedometer. */}
+      {/* Speed and nitro, while driving. */}
+      {phase === "playing" && (
+        <View style={styles.gauges} pointerEvents="none">
+          <View style={[styles.gauge, boosting && styles.gaugeBoost]}>
+            <View style={[styles.nitroFill, { width: `${Math.round(nitro * 100)}%` }]} />
+            <Text style={styles.gaugeText}>{boosting ? "NITRO!" : "NITRO"}</Text>
+          </View>
+          <View style={styles.gauge}>
+            <Text style={styles.gaugeText}>{kmh} km/h</Text>
+          </View>
+        </View>
+      )}
+
+      {/* Playtura's game controls: leaderboard, the main button, share. */}
       <View style={styles.controls} pointerEvents="box-none">
-        <View style={styles.controlsRow}>
-          <Pressable
-            style={[styles.iconButton, boosting && styles.nitroOn, (phase !== "playing" || nitro < 0.15) && styles.nitroIdle]}
-            onPressIn={() => boost(game)}
-            accessibilityLabel="Nitro"
-          >
-            <View style={[styles.nitroFill, { height: `${Math.round(nitro * 100)}%` }]} />
-            <Text style={styles.iconText}>N₂O</Text>
-          </Pressable>
+        <View style={[styles.controlsRow, { width: gameWidth }]}>
+          {leaderboard && (
+            <Pressable
+              style={styles.iconButton}
+              onPress={typeof leaderboard === "function" ? leaderboard : () => setLeaderboardOpen(true)}
+              accessibilityLabel="Leaderboard"
+            >
+              <Image source={TROPHY_ICON} style={[styles.icon, { tintColor: theme.TEXT }]} />
+            </Pressable>
+          )}
 
           {phase === "playing" ? (
             <View style={styles.mainWrap}>
@@ -1041,10 +1080,19 @@ function Run({ assets: a, onRestart, dark, onDark }: RunProps) {
             </Animated.View>
           )}
 
-          <View style={styles.iconButton} pointerEvents="none">
-            <Text style={styles.speed}>{kmh}</Text>
-            <Text style={styles.speedUnit}>km/h</Text>
-          </View>
+          {share && (
+            <Pressable
+              style={styles.iconButton}
+              onPress={() => {
+                const result = Math.max(score, best);
+                if (typeof share === "function") share(result);
+                else Share.share({ message: `I scored ${result} in Car Racing on the Nayan engine! Can you beat it?` });
+              }}
+              accessibilityLabel="Share"
+            >
+              <Image source={SHARE_ICON} style={[styles.icon, { tintColor: theme.TEXT }]} />
+            </Pressable>
+          )}
         </View>
       </View>
 
@@ -1052,7 +1100,7 @@ function Run({ assets: a, onRestart, dark, onDark }: RunProps) {
       {showResults && (
         <View style={styles.overlay}>
           <Animated.View style={[styles.card, { opacity: card, transform: [{ scale: card.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] }) }] }]}>
-            <Text style={styles.trophy}>🏆</Text>
+            <Image source={TROPHY_ICON} style={[styles.cardIcon, { tintColor: theme.SCORE_HIGHLIGHT }]} />
             <Text style={styles.cardTitle}>{won ? "TIME UP!" : "CRASHED!"}</Text>
             <Text style={styles.cardMessage}>{won ? "Great driving!" : "You ran out of lives!"}</Text>
             <View style={styles.scoreCard}>
@@ -1071,6 +1119,31 @@ function Run({ assets: a, onRestart, dark, onDark }: RunProps) {
             </Pressable>
           </Animated.View>
         </View>
+      )}
+
+      {/* Leaderboard: this session's best runs. */}
+      {leaderboardOpen && (
+        <Pressable style={styles.overlay} onPress={() => setLeaderboardOpen(false)}>
+          <Pressable style={styles.card} onPress={() => {}}>
+            <Image source={TROPHY_ICON} style={[styles.cardIcon, { tintColor: theme.SCORE_HIGHLIGHT }]} />
+            <Text style={styles.cardTitle}>Leaderboard</Text>
+            {topScores.length === 0 ? (
+              <Text style={styles.cardMessage}>No runs yet: start a game!</Text>
+            ) : (
+              <View style={styles.ranks}>
+                {topScores.map((value, i) => (
+                  <View key={i} style={styles.rankRow}>
+                    <Text style={styles.rankPlace}>#{i + 1}</Text>
+                    <Text style={styles.rankScore}>{value}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+            <Pressable style={styles.playAgain} onPress={() => setLeaderboardOpen(false)}>
+              <Text style={styles.playAgainText}>Close</Text>
+            </Pressable>
+          </Pressable>
+        </Pressable>
       )}
 
       {/* Playtura's settings: sound and haptics. */}
@@ -1102,7 +1175,7 @@ function Run({ assets: a, onRestart, dark, onDark }: RunProps) {
   );
 }
 
-export function Racing() {
+export function Racing(props: RacingProps) {
   const [run, setRun] = useState(0);
   const [loaded, setLoaded] = useState<Assets | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -1119,7 +1192,7 @@ export function Racing() {
   // Follows the system theme like Playtura's games, and can be switched in the game's settings.
   const system = useColorScheme() === "dark";
   const [choice, setChoice] = useState<boolean | null>(null);
-  const dark = choice ?? system;
+  const dark = choice ?? (props.theme ? props.theme === "dark" : system);
   if (!loaded) {
     return (
       <View style={[baseStyles.root, baseStyles.loading, { backgroundColor: (dark ? DARK : LIGHT).BACKGROUND }]}>
@@ -1128,7 +1201,7 @@ export function Racing() {
     );
   }
   // A new theme rebuilds the scene (day or night), so it starts a fresh run.
-  return <Run key={`${run}-${dark}`} assets={loaded} onRestart={restart} dark={dark} onDark={setChoice} />;
+  return <Run key={`${run}-${dark}`} {...props} assets={loaded} onRestart={restart} dark={dark} onDark={setChoice} />;
 }
 
 // Playtura's game themes (ThemeService): light, and dark (which also drives the scene at night).
@@ -1211,7 +1284,7 @@ function makeStyles(t: Theme) {
     headerIcon: { color: t.HEADER_TINT, fontSize: 24 },
 
     boardWrap: { position: "absolute", top: HEADER_HEIGHT + 15, left: 0, right: 0, alignItems: "center" },
-    board: { ...panel, width: "92%", maxWidth: 500, flexDirection: "row", paddingVertical: 14, paddingHorizontal: 12, borderRadius: 18 },
+    board: { ...panel, flexDirection: "row", paddingVertical: 14, paddingHorizontal: 12, borderRadius: 18 },
     column: { flex: 1, alignItems: "center" },
     label: { color: t.TEXT, fontSize: 12, fontWeight: "500", letterSpacing: 1.2, marginBottom: 4, ...shadow },
     value: { color: t.TEXT, fontSize: 24, fontWeight: "800", fontVariant: ["tabular-nums"], ...shadow },
@@ -1225,14 +1298,14 @@ function makeStyles(t: Theme) {
     credit: { ...panel, color: t.TEXT, fontSize: 10, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 10, overflow: "hidden" },
 
     controls: { position: "absolute", bottom: 5, left: 0, right: 0, alignItems: "center" },
-    controlsRow: { flexDirection: "row", alignItems: "center", width: "92%", maxWidth: 500, paddingVertical: 20, gap: 20 },
+    controlsRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 20, paddingHorizontal: 16, gap: 20 },
     iconButton: { ...panel, width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center", overflow: "hidden" },
-    iconText: { color: t.TEXT, fontSize: 13, fontWeight: "900", ...shadow },
-    nitroFill: { position: "absolute", left: 0, right: 0, bottom: 0, backgroundColor: t.NITRO },
-    nitroOn: { borderColor: t.SCORE_HIGHLIGHT },
-    nitroIdle: { opacity: 0.6 },
-    speed: { color: t.TEXT, fontSize: 17, fontWeight: "900", fontVariant: ["tabular-nums"], ...shadow },
-    speedUnit: { color: t.TEXT, fontSize: 9, fontWeight: "700", marginTop: -2, ...shadow },
+    icon: { width: 24, height: 24 },
+    gauges: { position: "absolute", bottom: 112, left: 0, right: 0, flexDirection: "row", justifyContent: "center", gap: 10 },
+    gauge: { ...panel, minWidth: 104, paddingHorizontal: 14, paddingVertical: 6, borderRadius: 14, alignItems: "center", overflow: "hidden" },
+    gaugeBoost: { borderColor: t.SCORE_HIGHLIGHT },
+    gaugeText: { color: t.TEXT, fontSize: 13, fontWeight: "800", fontVariant: ["tabular-nums"], letterSpacing: 0.5, ...shadow },
+    nitroFill: { position: "absolute", left: 0, top: 0, bottom: 0, backgroundColor: t.NITRO },
     mainWrap: { flex: 1 },
     mainButton: { ...panel, minHeight: 60, borderRadius: 30, paddingHorizontal: 24, paddingVertical: 16, alignItems: "center", justifyContent: "center" },
     mainText: { color: t.TEXT, fontSize: 16, fontWeight: "800", letterSpacing: 1, ...shadow },
@@ -1240,7 +1313,11 @@ function makeStyles(t: Theme) {
 
     overlay: { ...StyleSheet.absoluteFill, backgroundColor: t.OVERLAY, alignItems: "center", justifyContent: "center" },
     card: { width: "95%", maxWidth: 500, borderRadius: 16, backgroundColor: t.BACKGROUND, padding: 20, alignItems: "center" },
-    trophy: { fontSize: 44 },
+    cardIcon: { width: 48, height: 48 },
+    ranks: { width: "100%", marginBottom: 20 },
+    rankRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 8, paddingHorizontal: 12, borderRadius: 10, backgroundColor: t.SURFACE, marginTop: 6 },
+    rankPlace: { color: t.TEXT, fontSize: 16, fontWeight: "700" },
+    rankScore: { color: t.SCORE_HIGHLIGHT, fontSize: 16, fontWeight: "800", fontVariant: ["tabular-nums"] },
     cardTitle: { color: t.TEXT, fontSize: 28, fontWeight: "bold", letterSpacing: 1, marginTop: 8, marginBottom: 4 },
     cardMessage: { color: t.TEXT_SUBTLE, fontSize: 14, marginBottom: 16 },
     scoreCard: { backgroundColor: t.SURFACE, borderRadius: 16, paddingVertical: 16, paddingHorizontal: 32, alignItems: "center", marginBottom: 24 },
