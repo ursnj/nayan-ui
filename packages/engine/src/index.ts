@@ -32,7 +32,7 @@ export { loadModel } from "./assets/model";
 export type { Model, ModelOptions } from "./assets/model";
 export { loadTexture } from "./assets/texture";
 export type { Texture } from "./assets/texture";
-export { createShape, extrude, lathe, merge, Path, shapeGeometry, tube } from "./assets/shape";
+export { createShape, extrude, lathe, merge, Path, recolor, shapeGeometry, tube } from "./assets/shape";
 export type { ExtrudeOptions, FaceColor, Geometry, LatheOptions, Part, ShapeOptions, SurfaceColor, SurfacePoint, TubeOptions } from "./assets/shape";
 export { loadFont } from "./assets/font";
 export type { Font, FontOptions, TextAlign } from "./assets/font";
