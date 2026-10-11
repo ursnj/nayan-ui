@@ -11,7 +11,7 @@ export const entityOptionsAttributes = [
   { name: "position", type: "[x, y, z]", default: "[0, 0, 0]", details: "Where it is. Relative to the parent when attached." },
   { name: "rotation", type: "[x, y, z, w]", default: "[0, 0, 0, 1] (none)", details: "A quaternion. Relative to the parent when attached." },
   { name: "scale", type: "number | [x, y, z]", default: "1", details: "Size. Also sizes the default collider. Children scale with their parent." },
-  { name: "color", type: "[r, g, b] | [r, g, b, a]", default: "[1, 1, 1]", details: "Each channel 0..1. Alpha below 1 makes it see-through. Tints a texture." },
+  { name: "color", type: "[r, g, b] | [r, g, b, a]", default: "[1, 1, 1]", details: "Each channel 0..1. Alpha below 1 makes it see-through. Tints a texture. Channels above 1 glow: at 2 the surface is self-lit, ignoring light and shadow (fire, lamps, lasers)." },
   { name: "velocity", type: "[x, y, z]", default: "none", details: "Units per second." },
   { name: "groundVelocity", type: "[x, z]", default: "none", details: "Horizontal speed that keeps the vertical one: steer a body and it still falls." },
   { name: "acceleration", type: "[x, y, z]", default: "none", details: "Units per second², for entities without a dynamic body: falling debris, thrown items." },
@@ -127,7 +127,7 @@ export const burstOptionsAttributes = [
   { name: "speed", type: "number", default: "5", details: "Top speed." },
   { name: "lifetime", type: "number", default: "0.8", details: "Seconds before they shrink away." },
   { name: "gravity", type: "number", default: "-9.81", details: "Vertical acceleration. 0 floats." },
-  { name: "color", type: "Color | Color[]", default: "white", details: "One color, or up to 4 to pick from at random." },
+  { name: "color", type: "Color | Color[]", default: "white", details: "One color, or up to 4 to pick from at random. Channels above 1 glow, e.g. [2, 1.2, 0.3] for fire that stays bright in shadow." },
 ];
 
 export const fontOptionsAttributes = [

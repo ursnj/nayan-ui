@@ -295,6 +295,8 @@ function createGame(a: Assets) {
     horizon,
     segments,
     traffic: [] as Car[],
+    /** Wrecks on fire: flames and smoke come off them until `until` (game time). */
+    burning: [] as { root: Entity; until: number; smoke: number }[],
     phase: "ready" as Phase,
     time: 0,
     s: 0,
@@ -481,7 +483,8 @@ function crash(g: Game, car: Car) {
   });
   g.world.impulse(car.root, [right[0] * side * 10 + fwd[0] * g.speed * 0.5, 8, right[2] * side * 10 + fwd[2] * g.speed * 0.5]);
   const p = g.world.position(car.root);
-  if (p) g.world.burst({ position: p, count: 30, speed: 8, size: 0.2, lifetime: 0.7, color: [[1, 0.6, 0.15], [1, 0.9, 0.3], [0.3, 0.3, 0.32]] });
+  if (p) explode(g, p);
+  g.burning.push({ root: car.root, until: g.time + 2.4, smoke: 0 });
 
   g.speed = Math.max(START_SPEED * 0.6, g.speed * CRASH_SLOWDOWN);
   g.boosting = false;
@@ -492,6 +495,8 @@ function crash(g: Game, car: Car) {
   sfx.play("hit", { volume: 1 });
   haptics.impact(1, 0.8);
   if (g.lives <= 0) {
+    // The player's car catches fire too, and keeps burning behind the results.
+    g.burning.push({ root: g.player.root, until: Infinity, smoke: 0 });
     end(g);
     return;
   }
@@ -501,6 +506,80 @@ function crash(g: Game, car: Car) {
   const blink = { duration: 0.2, repeat: 7 };
   g.world.animate(g.player.body, [{ color: [r, gr, b, 0.25] }, { color: [r, gr, b, 1] }], blink);
   for (const part of [g.player.glass, g.player.trim]) g.world.animate(part, [{ color: [1, 1, 1, 0.25] }, { color: [1, 1, 1, 1] }], blink);
+}
+
+// ── Fire ────────────────────────────────────────────────────────────────
+
+// Channels above 1 glow (the engine draws them self-lit): flames stay bright in shadow. Particles keep
+// their color, so a flame is layered instead: a white-hot base, orange tongues, red tips above.
+const FLAME_BASE: Color[] = [
+  [2, 2, 1.6],
+  [2, 1.85, 1],
+];
+const FLAME: Color[] = [
+  [2, 1.44, 0.36],
+  [2, 1.15, 0.24],
+  [2, 0.84, 0.16],
+];
+const FLAME_TIP: Color[] = [
+  [1.8, 0.36, 0.1],
+  [1.5, 0.22, 0.06],
+];
+const SMOKE: Color[] = [
+  [0.22, 0.21, 0.21, 0.28],
+  [0.32, 0.31, 0.3, 0.22],
+  [0.16, 0.16, 0.16, 0.3],
+];
+
+/** A crash: a white-hot flash, a rolling fireball, sparks and a cloud of smoke. Round particles rise as they burn out. */
+function explode(g: Game, at: Vec3) {
+  const w = g.world;
+  w.burst({ position: at, mesh: "sphere", count: 10, size: 0.6, speed: 3, lifetime: 0.22, gravity: 2, color: FLAME_BASE });
+  w.burst({ position: at, mesh: "sphere", count: 30, size: 0.38, speed: 6, lifetime: 0.55, gravity: 5, color: FLAME });
+  w.burst({ position: at, mesh: "sphere", count: 18, size: 0.32, speed: 8, lifetime: 0.75, gravity: 6, direction: [0, 1, 0], spread: 1.1, color: FLAME_TIP });
+  w.burst({ position: at, count: 22, size: 0.06, speed: 13, lifetime: 0.5, color: [[2, 1.8, 0.8], [2, 1.4, 0.4]] }); // sparks fall
+  w.burst({ position: [at[0], at[1] + 0.6, at[2]], mesh: "sphere", count: 6, size: 0.6, speed: 2.2, lifetime: 1.2, gravity: 2.5, direction: [0, 1, 0], spread: 1, color: SMOKE });
+}
+
+/**
+ * Burning wrecks: layered flames every frame and a puff of smoke now and then. They're launched with the
+ * wreck's own velocity (plus a rise), so they ride along with it and stream off behind.
+ */
+const wreckVelocity: [number, number, number] = [0, 0, 0];
+function burn(g: Game, dt: number) {
+  for (let i = g.burning.length - 1; i >= 0; i--) {
+    const fire = g.burning[i]!;
+    const p = g.world.worldPosition(fire.root, tmp);
+    if (!p || g.time > fire.until) {
+      g.burning.splice(i, 1);
+      continue;
+    }
+    const v = g.world.velocity(fire.root, wreckVelocity) ?? [0, 0, 0];
+    const flames = (rise: number, y: number, count: number, size: number, lifetime: number, color: Color[]) => {
+      const dir: Vec3 = [v[0], v[1] + rise, v[2]];
+      const speed = Math.hypot(dir[0], dir[1], dir[2]);
+      g.world.burst({
+        position: [p[0] + rand(-0.7, 0.7), p[1] + y, p[2] + rand(-1.2, 1.2)],
+        mesh: "sphere",
+        count,
+        size,
+        speed,
+        lifetime,
+        gravity: rise * 2,
+        direction: [dir[0] / speed, dir[1] / speed, dir[2] / speed],
+        spread: 0.35,
+        color,
+      });
+    };
+    flames(2.5, 0.7, 3, rand(0.16, 0.26), rand(0.16, 0.24), FLAME_BASE);
+    flames(3.5, 0.9, 3, rand(0.22, 0.36), rand(0.28, 0.4), FLAME);
+    flames(4, 1.25, 2, rand(0.28, 0.42), rand(0.4, 0.55), FLAME_TIP);
+    fire.smoke -= dt;
+    if (fire.smoke <= 0) {
+      fire.smoke = 0.14;
+      flames(2.2, 1.6, 1, rand(0.35, 0.55), 1, SMOKE);
+    }
+  }
 }
 
 function end(g: Game) {
@@ -620,6 +699,7 @@ function tick(g: Game, dt: number) {
     }
   }
 
+  burn(g, dt);
   g.world.update(dt);
 
   // Segments left behind jump to the front.
@@ -698,6 +778,7 @@ function Run({ assets: a, onRestart }: { assets: Assets; onRestart: () => void }
   const light = useMemo<Light>(() => ({ direction: [0.45, 0.85, 0.3], ambient: 0.5, shadowExtent: 26 }), []);
   const { width } = useWindowDimensions();
   const [phase, setPhase] = useState<Phase>("ready");
+  const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(LIVES);
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
@@ -737,6 +818,13 @@ function Run({ assets: a, onRestart }: { assets: Assets; onRestart: () => void }
       game.world.dispose();
     };
   }, [game, flash, pop, near]);
+
+  // The results wait a moment, so the crash (or the finish) is seen before the panel covers it.
+  useEffect(() => {
+    if (phase !== "over") return;
+    const t = setTimeout(() => setShowResults(true), 1200);
+    return () => clearTimeout(t);
+  }, [phase]);
 
   // Autoplay: start by itself and restart after a pause.
   useEffect(() => {
@@ -811,7 +899,7 @@ function Run({ assets: a, onRestart }: { assets: Assets; onRestart: () => void }
         </>
       )}
 
-      {phase === "over" && (
+      {showResults && (
         <View style={styles.center}>
           <View style={styles.panel}>
             <Text style={styles.panelTitle}>{lives > 0 ? "TIME UP!" : "CRASHED!"}</Text>

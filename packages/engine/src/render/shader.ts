@@ -97,7 +97,11 @@ fn shade(in: VSOut, base: vec3f) -> vec3f {
   let diffuse = max(dot(n, globals.light.xyz), 0.0) * shadow;
   let hemisphere = mix(0.6, 1.0, n.y * 0.5 + 0.5); // sky/ground tint so faces away from the light aren't flat
   let lit = globals.light.w * hemisphere + (1.0 - globals.light.w) * diffuse;
-  var color = base * lit;
+  // Colors brighter than 1 glow: at a peak channel of 2 the surface is self-lit (its hue at full
+  // brightness, ignoring light and shadow), blending in from 1. Fire, lamps, lasers.
+  let peak = max(base.r, max(base.g, base.b));
+  let glow = clamp(peak - 1.0, 0.0, 1.0);
+  var color = mix(min(base, vec3f(1.0)) * lit, base / max(peak, 1.0), glow);
   // Glossy materials: a sun highlight, and the sky reflected more strongly at grazing angles (Fresnel).
   let shine = material.x;
   if (shine > 0.0) {
