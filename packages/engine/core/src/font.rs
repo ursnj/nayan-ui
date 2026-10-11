@@ -37,7 +37,7 @@ fn build(bytes: &[u8], depth: f32, chars: &str) -> Result<Font, String> {
         let advance = face.glyph_hor_advance(id).unwrap_or(0) as f32 * scale;
         let mut outline = Outline { scale, ..Default::default() };
         let mesh = match face.outline_glyph(id, &mut outline) {
-            Some(_) => match extrude(&outline.finish(), depth) {
+            Some(_) => match extrude(&outline.finish(), depth, FillRule::NonZero) {
                 Some(m) => model::register(m)? as f32,
                 None => -1.0,
             },
@@ -128,11 +128,12 @@ fn signed_area(c: &[[f32; 2]]) -> f32 {
     a / 2.0
 }
 
-/// Resolves the outline with the non-zero fill rule fonts use (overlapping and self-crossing strokes,
-/// common in variable-font instances, merge) into clean shapes, triangulates them and extrudes them
-/// into a closed mesh. None if nothing could be triangulated.
-fn extrude(contours: &[Vec<[f32; 2]>], depth: f32) -> Option<Model> {
-    let shapes = contours.to_vec().simplify_shape(FillRule::NonZero);
+/// Resolves the outline with `fill` (fonts use non-zero: overlapping and self-crossing strokes, common
+/// in variable-font instances, merge) into clean shapes, triangulates them and extrudes them into a
+/// closed mesh, front face at +Z. None if nothing could be triangulated. Also used for 2D paths
+/// (`shape::extrude`).
+pub(crate) fn extrude(contours: &[Vec<[f32; 2]>], depth: f32, fill: FillRule) -> Option<Model> {
+    let shapes = contours.to_vec().simplify_shape(fill);
     let mut mesh = MeshBuilder::default();
     let (front, back) = (depth / 2.0, -depth / 2.0);
     // Every ring, wound so the solid is on its left: outlines counter-clockwise, holes clockwise.
@@ -206,8 +207,14 @@ impl MeshBuilder {
         }
     }
 
-    fn finish(self) -> Option<Model> {
+    fn finish(mut self) -> Option<Model> {
         let (lo, hi) = self.bounds?;
+        // Texture coordinates across the outline's bounds (front and back faces show the whole image).
+        let size = (hi - lo).max(Vec3::splat(1e-6));
+        for v in self.vertices.as_chunks_mut::<VERTEX_FLOATS>().0 {
+            v[9] = (v[0] - lo.x) / size.x;
+            v[10] = 1.0 - (v[1] - lo.y) / size.y;
+        }
         let count = (self.vertices.len() / VERTEX_FLOATS) as u32;
         Some(Model {
             vertices: self.vertices,
@@ -248,7 +255,7 @@ mod tests {
     fn extrudes_a_ring_with_a_hole() {
         // An "o": outer square with a square hole, given in TrueType winding (outer clockwise).
         let contours = vec![square(0.0, 0.0, 1.0, false), square(0.25, 0.25, 0.5, true)];
-        let m = extrude(&contours, 0.2).unwrap();
+        let m = extrude(&contours, 0.2, FillRule::NonZero).unwrap();
         let triangles = m.vertices.len() / VERTEX_FLOATS / 3;
         // front 8 + back 8 (a square ring) + walls 2 per edge * 8 edges
         assert_eq!(triangles, 8 + 8 + 16);
@@ -290,17 +297,17 @@ mod tests {
     #[test]
     fn overlapping_and_self_crossing_outlines_fill_once() {
         // Two overlapping strokes (like an "N" in a variable-font instance) merge: 1.5 x 1, not 2.
-        let m = extrude(&[square(0.0, 0.0, 1.0, false), square(0.5, 0.0, 1.0, false)], 0.0).unwrap();
+        let m = extrude(&[square(0.0, 0.0, 1.0, false), square(0.5, 0.0, 1.0, false)], 0.0, FillRule::NonZero).unwrap();
         assert!((front_area(&m) - 1.5).abs() < 1e-3);
         // One contour that crosses itself (a bow tie): both halves filled, no overfill.
         let bow = vec![[0.0, 0.0], [1.0, 1.0], [1.0, 0.0], [0.0, 1.0]];
-        let m = extrude(&[bow], 0.0).unwrap();
+        let m = extrude(&[bow], 0.0, FillRule::NonZero).unwrap();
         assert!((front_area(&m) - 0.5).abs() < 1e-3, "{}", front_area(&m));
     }
 
     #[test]
     fn flat_text_has_front_faces_only() {
-        let m = extrude(&[square(0.0, 0.0, 1.0, true)], 0.0).unwrap();
+        let m = extrude(&[square(0.0, 0.0, 1.0, true)], 0.0, FillRule::NonZero).unwrap();
         assert_eq!(m.vertices.len() / VERTEX_FLOATS, 6);
     }
 
@@ -345,7 +352,7 @@ mod tests {
                         .map(|(k, c)| signed_area(c).abs() * if k == 0 { 1.0 } else { -1.0 })
                 })
                 .sum();
-            let got = front_area(&extrude(&contours, 0.0).unwrap());
+            let got = front_area(&extrude(&contours, 0.0, FillRule::NonZero).unwrap());
             assert!((got - expected).abs() < 1e-3, "{ch}: filled {got}, outline {expected}");
         }
     }

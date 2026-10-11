@@ -87,6 +87,13 @@ export interface Spec extends TurboModule {
   modelTexture(mesh: number): number;
   /** A new mesh id with `base`'s geometry (to give it another texture), or -1. */
   meshAlias(base: number): number;
+  /** Registers geometry (copied): 11 floats per vertex, u32 triangle indices. Returns the mesh id, or -1. */
+  meshCreate(vertices: Object, indices: Object): number;
+  /**
+   * Fills 2D contours ([x, y] f32 pairs, `counts[k]` points per contour) by the non-zero or even-odd
+   * rule and extrudes them `depth` deep. Returns an ArrayBuffer of 11 floats per vertex (unindexed).
+   */
+  pathExtrude(points: Object, counts: Array<number>, depth: number, evenOdd: boolean): Object;
   /** Decodes a PNG/JPEG ArrayBuffer. Returns the texture id, or -1. */
   textureLoad(data: Object): number;
   /** RGBA8 pixels, top row first; aliases native memory. */

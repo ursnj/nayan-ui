@@ -8,6 +8,7 @@ pub mod ffi;
 pub mod font;
 pub mod haptics;
 pub mod model;
+pub mod shape;
 pub mod texture;
 mod world;
 

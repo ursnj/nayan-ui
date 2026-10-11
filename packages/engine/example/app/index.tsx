@@ -18,6 +18,12 @@ const EXAMPLES: {
     icon: "car-sport",
   },
   {
+    href: "/shapes",
+    title: "Shapes",
+    description: "Custom shapes: Skia-style paths, SVG, lathes and tubes. Tap fruit to slice it.",
+    icon: "nutrition",
+  },
+  {
     href: "/benchmark",
     title: "Benchmark",
     description: "Thousands of cubes or rigid bodies, JS against the Rust core, with live fps.",

@@ -3,7 +3,8 @@
 #![allow(clippy::missing_safety_doc)] // the shared contract is documented once, in ffi/mod.rs
 
 use crate::model::{self, LoadOptions};
-use crate::{font, texture};
+use crate::{font, shape, texture};
+use std::sync::Mutex;
 
 unsafe fn bytes<'a>(data: *const u8, len: usize) -> Option<&'a [u8]> {
     // SAFETY: caller passes a readable buffer of `len` bytes, used only during the call.
@@ -83,6 +84,65 @@ pub extern "C" fn engine_model_texture(mesh: u32) -> i32 {
 #[unsafe(no_mangle)]
 pub extern "C" fn engine_mesh_alias(base: u32) -> i32 {
     u8::try_from(base).ok().map_or(-1, |b| model::alias(b).map_or(-1, i32::from))
+}
+
+/// Registers geometry (copied): `vertex_count` vertices of 11 floats (position, normal, color, uv) and
+/// `index_count` u32 triangle indices. Returns its mesh id, or -1 (see `engine_load_error`).
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_mesh_create(vertices: *const f32, vertex_count: usize, indices: *const u32, index_count: usize) -> i32 {
+    if vertices.is_null() || indices.is_null() {
+        return -1;
+    }
+    // SAFETY: caller passes readable buffers of the given lengths, used only during the call.
+    let (v, i) = unsafe {
+        (
+            std::slice::from_raw_parts(vertices, vertex_count * model::VERTEX_FLOATS),
+            std::slice::from_raw_parts(indices, index_count),
+        )
+    };
+    shape::create(v, i).map_or(-1, i32::from)
+}
+
+/// The vertices of the last `engine_path_extrude`, until the next one.
+static EXTRUDED: Mutex<Vec<f32>> = Mutex::new(Vec::new());
+
+/// Fills and extrudes 2D contours: `points` holds [x, y] pairs, `counts[k]` points per contour.
+/// Returns the number of floats made (11 per vertex, unindexed triangles; 0 = nothing to fill),
+/// which `engine_path_extrude_copy` then copies out.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_path_extrude(points: *const f32, counts: *const u32, contour_count: usize, depth: f32, even_odd: i32) -> usize {
+    if points.is_null() || counts.is_null() {
+        return 0;
+    }
+    // SAFETY: caller passes `contour_count` counts and as many points as they add up to.
+    let counts = unsafe { std::slice::from_raw_parts(counts, contour_count) };
+    let total: usize = counts.iter().map(|&c| c as usize).sum();
+    let flat = unsafe { std::slice::from_raw_parts(points, total * 2) };
+    let mut contours = Vec::with_capacity(counts.len());
+    let mut at = 0;
+    for &c in counts {
+        let c = c as usize;
+        contours.push(flat[at * 2..(at + c) * 2].as_chunks::<2>().0.to_vec());
+        at += c;
+    }
+    let made = shape::extrude(&contours, depth, even_odd != 0).unwrap_or_default();
+    let len = made.len();
+    if let Ok(mut out) = EXTRUDED.lock() {
+        *out = made;
+    }
+    len
+}
+
+/// Copies up to `cap` floats of the last extrusion into `out`. Returns how many were copied.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_path_extrude_copy(out: *mut f32, cap: usize) -> usize {
+    let Ok(made) = EXTRUDED.lock() else { return 0 };
+    let n = made.len().min(cap);
+    if !out.is_null() && n > 0 {
+        // SAFETY: caller passes room for `cap` floats.
+        unsafe { std::ptr::copy_nonoverlapping(made.as_ptr(), out, n) };
+    }
+    n
 }
 
 /// Decodes a PNG or JPEG (copied). Returns the texture id, or -1.
