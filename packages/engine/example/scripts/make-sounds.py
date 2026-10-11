@@ -3,6 +3,7 @@
 Run from the example directory:  python3 scripts/make-sounds.py
 """
 import math
+import sys
 import random
 import struct
 import wave
@@ -129,10 +130,47 @@ def die():
 
 
 
+def engine():
+    """A one-second engine hum that loops seamlessly: whole cycles of every partial."""
+    n = RATE
+    out = []
+    for i in range(n):
+        t = i / RATE
+        # 55 Hz firing with harmonics, a slower 7 Hz throb, and a little grit.
+        v = 0.0
+        for k, amp in ((1, 1.0), (2, 0.55), (3, 0.35), (4, 0.2), (6, 0.12)):
+            v += amp * soft_square(55 * k * t) / k
+        v *= 0.75 + 0.25 * sine(7 * t)
+        v += random.uniform(-1, 1) * 0.04
+        out.append(v)
+    return out
+
+
+def nitro():
+    """Whoosh: noise through a low-pass that opens up, then fades."""
+    n = int(0.9 * RATE)
+    out, y = [], 0.0
+    for i in range(n):
+        t = i / RATE
+        cutoff = 0.04 + 0.4 * min(1.0, t / 0.25)
+        y += cutoff * (random.uniform(-1, 1) - y)
+        out.append(y * min(1, t / 0.03) * math.exp(-max(0.0, t - 0.2) / 0.25))
+    return out
+
+
 if __name__ == "__main__":
+    # Pass names (e.g. `engine nitro`) to write only those.
+    only = set(sys.argv[1:])
     OUT.mkdir(parents=True, exist_ok=True)
-    write("bump", bump())
-    write("flap", flap(), peak=0.6)
-    write("point", point())
-    write("hit", hit())
-    write("die", die(), peak=0.7)
+    sounds = {
+        "bump": lambda: write("bump", bump()),
+        "flap": lambda: write("flap", flap(), peak=0.6),
+        "point": lambda: write("point", point()),
+        "hit": lambda: write("hit", hit()),
+        "die": lambda: write("die", die(), peak=0.7),
+        "engine": lambda: write("engine", engine(), peak=0.5),
+        "nitro": lambda: write("nitro", nitro(), peak=0.8),
+    }
+    for name, make in sounds.items():
+        if not only or name in only:
+            make()
