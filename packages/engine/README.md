@@ -62,6 +62,12 @@ const label = world.spawn({ text: "2048", font, parent: tile, position: [0, 0.6,
     if (hit?.entity === tile) world.animate(tile, { scale: [1.2, 0.3, 1.2] }, { yoyo: true, repeat: 1 });
   }}
   onSwipe={(direction) => slide(direction)}       // "left" | "right" | "up" | "down"
+  onDrag={({ phase, x, y }) => {                  // drag a piece: the finger on the board plane
+    const at = world.screenToWorld(x, y, { point: [0, 0.25, 0] });
+    if (phase === "move" && at && held) world.animate(held, { position: at }, { spring: true });
+  }}
+  onLongPress={(x, y) => showMoves(world.pick(x, y)?.entity)}
+  onPinch={({ scale }) => (camera.ortho = zoom / scale)} // two fingers; ends any drag (cancelled: true)
 />
 
 await world.animate(piece, { position: [2, 0, 3] }, { duration: 0.25, easing: "back" }); // then check the board
@@ -154,7 +160,8 @@ world.spawn({ mesh: tree, position: [0, tree.size[1] / 2, 0], physics: "fixed" }
 - **Impact feedback** (Rust): per-entity sound + haptic played by the core straight from physics contacts,
   scaled by approach speed and panned/attenuated relative to a listener entity. No JS per impact.
 - **Attachments**: child entities follow a parent's interpolated pose (characters made of parts, props).
-- **Input**: `onTap` / `onSwipe` / `onDrag` on `GameView`, `world.pick(x, y)`, a `Joystick` touch stick; plain RN
+- **Input**: `onTap` / `onSwipe` / `onDrag` / `onLongPress` / `onPinch` on `GameView`, `world.pick(x, y)`,
+  `world.screenToWorld(x, y, plane)` (finger to board position), a `Joystick` touch stick; plain RN
   touchables for buttons.
 
 No Expo modules are required: rendering, physics, audio and haptics all live in this package.

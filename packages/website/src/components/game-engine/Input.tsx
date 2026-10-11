@@ -9,7 +9,9 @@ import SubHeader from "@/components/helpers/SubHeader";
 import {
   engineButtonsCode,
   engineGesturesCode,
+  engineBoardDragCode,
   engineJoystickCode,
+  engineLongPressPinchCode,
   enginePickCode,
   engineToScreenCode,
 } from "@/services/GameEngineCodeBlocks";
@@ -18,12 +20,13 @@ import {
   gestureAttributes,
   joystickAttributes,
   joystickStateAttributes,
+  pinchEventAttributes,
   pickHitAttributes,
 } from "@/services/GameEngineData";
 
 const EngineInput = () => (
   <Sidebar title="Input">
-    <DocsIntro lead="GameView reports taps, swipes and drags, and world.pick tells you which 3D object was tapped. Add the built-in joystick for movement and regular React Native touchables for buttons." />
+    <DocsIntro lead="GameView reports taps, swipes, drags, long presses and pinches; world.pick tells you which 3D object is under a finger and world.screenToWorld where the finger is on your board. Together they cover board and puzzle games: pick up a piece, drag it, drop it on a cell. Add the built-in joystick for movement and regular React Native touchables for buttons." />
 
     <SubHeader
       title="Taps, swipes and drags"
@@ -61,6 +64,38 @@ const EngineInput = () => (
     </SubHeader>
 
     <Attributes title="PickHit" data={pickHitAttributes} headers={{ default: "" }} unit="field" />
+
+    <SubHeader
+      title="Move pieces on a board"
+      description="Pick the piece under the finger, move it to where the finger is on the board with screenToWorld, and snap it to a cell on release."
+    >
+      <Code code={engineBoardDragCode} filename="Board.tsx" />
+      <ul className={`mt-4 space-y-2 ${BODY}`}>
+        <li>
+          • <code>screenToWorld(x, y, plane)</code> intersects the finger&apos;s ray with a plane:{" "}
+          <code>{"{ point, normal }"}</code>, the ground (y = 0) by default. Use the height pieces sit at. 2D games
+          looking down -z pass <code>{"{ normal: [0, 0, 1] }"}</code>.
+        </li>
+        <li>
+          • Animating the position with <code>spring: true</code> on every move makes the piece trail the finger
+          smoothly; setting <code>position</code> directly sticks it to the finger.
+        </li>
+        <li>
+          • On <code>end</code>, check <code>cancelled</code>: a pinch or the system interrupted the drag, so put
+          the piece back.
+        </li>
+        <li>• Mark the board, cells and labels <code>pickable: false</code> if only pieces should be grabbed.</li>
+      </ul>
+    </SubHeader>
+
+    <SubHeader
+      title="Long press and pinch"
+      description="Hold a piece to show its moves; pinch and turn with two fingers to zoom and rotate the board."
+    >
+      <Code code={engineLongPressPinchCode} filename="Board.tsx" />
+    </SubHeader>
+
+    <Attributes title="PinchEvent" data={pinchEventAttributes} headers={{ default: "" }} unit="field" />
 
     <SubHeader
       title="Labels over 3D objects"

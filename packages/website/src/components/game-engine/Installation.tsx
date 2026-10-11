@@ -7,6 +7,7 @@ import Code from "@/components/helpers/Code";
 import Sidebar from "@/components/helpers/Sidebar";
 import SubHeader from "@/components/helpers/SubHeader";
 import {
+  engineAbiCode,
   engineAndroidConfigCode,
   engineBareIosCode,
   engineCheckCode,
@@ -66,6 +67,27 @@ const EngineInstallation = () => (
       <p className={`mt-4 ${BODY}`}>
         React Native CLI: set <code>minSdkVersion = 26</code> in <code>android/build.gradle</code> and add the
         VIBRATE permission to <code>AndroidManifest.xml</code>.
+      </p>
+    </SubHeader>
+
+    <SubHeader
+      title="App size"
+      description="The native core adds about 2.9 MB per CPU architecture (ABI), about 1.5 MB compressed."
+    >
+      <ul className={`space-y-2 ${BODY}`}>
+        <li>
+          • <strong>Android App Bundle (AAB):</strong> Google Play delivers only the architecture each phone needs,
+          so players download about 1.5 MB. This is the default for Play Store releases.
+        </li>
+        <li>
+          • <strong>APK:</strong> a universal APK carries a copy for every architecture in{" "}
+          <code>reactNativeArchitectures</code>, four by default. Build release APKs for phones only:
+        </li>
+      </ul>
+      <Code language="bash" code={engineAbiCode} filename="gradle.properties" />
+      <p className={`mt-4 ${BODY}`}>
+        In Expo, use expo-build-properties: <code>{'"android": { "buildArchs": ["armeabi-v7a", "arm64-v8a"] }'}</code>. iOS apps include only
+        arm64.
       </p>
     </SubHeader>
 

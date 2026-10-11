@@ -42,7 +42,7 @@ const EngineQuickStart = () => (
         </li>
         <li>
           • <strong>world.update(dt)</strong> advances the simulation. It runs in fixed 60 Hz steps, so
-          physics behaves the same at any frame rate.
+          physics behaves the same at any frame rate. A slow frame catches up at most 3 steps.
         </li>
         <li>
           • <strong>dispose</strong> frees the native memory when the screen closes.

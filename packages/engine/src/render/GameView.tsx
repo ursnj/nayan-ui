@@ -11,6 +11,7 @@ const TAP_SLOP = 10; // points a finger may wander and still tap
 const TAP_TIME = 300; // ms
 const SWIPE_DISTANCE = 30; // points
 const SWIPE_SPEED = 0.3; // points per ms
+const LONG_PRESS_TIME = 500; // ms
 
 export type GameStats = {
   fps: number;
@@ -30,6 +31,19 @@ export type DragEvent = {
   /** Distance moved since the drag started, in points. */
   dx: number;
   dy: number;
+  /** On "end": the drag was interrupted (a second finger started a pinch, or the system took the touch). Put a held piece back. */
+  cancelled?: boolean;
+};
+
+export type PinchEvent = {
+  phase: "start" | "move" | "end";
+  /** Finger spread relative to the start: 2 = twice as far apart (zoom in). */
+  scale: number;
+  /** Radians the two fingers turned since the start, clockwise on screen. */
+  rotation: number;
+  /** Midpoint between the fingers in the view, in points. */
+  x: number;
+  y: number;
 };
 
 type Props = {
@@ -59,6 +73,10 @@ type Props = {
   onSwipe?: (direction: SwipeDirection) => void;
   /** Finger down, moving and up (aiming, dragging pieces, slicing). */
   onDrag?: (drag: DragEvent) => void;
+  /** A finger held still for half a second (pick up, show moves). No tap follows. */
+  onLongPress?: (x: number, y: number) => void;
+  /** Two fingers spreading, pinching or turning (zoom and rotate a board). Ends any drag in progress. */
+  onPinch?: (pinch: PinchEvent) => void;
   /** Called once a second. */
   onStats?: (stats: GameStats) => void;
   /** GPU setup failures and WebGPU validation errors. Defaults to console.error. */
@@ -84,20 +102,81 @@ export function GameView(props: Props) {
 
   const touch = useMemo(() => {
     let start = { x: 0, y: 0, time: 0 };
-    const drag = (phase: DragEvent["phase"], x: number, y: number) =>
-      live.current.props.onDrag?.({ phase, x, y, dx: x - start.x, dy: y - start.y });
-    return PanResponder.create({
+    let origin = { x: 0, y: 0 }; // the view's top-left on the page, to place a second finger
+    let mode: "drag" | "pinch" | "none" = "none";
+    let pinch0 = { distance: 1, angle: 0 };
+    let lastPinch: PinchEvent = { phase: "end", scale: 1, rotation: 0, x: 0, y: 0 };
+    let longPress: ReturnType<typeof setTimeout> | undefined;
+    let longPressed = false;
+    const drag = (phase: DragEvent["phase"], x: number, y: number, cancelled?: boolean) =>
+      live.current.props.onDrag?.({ phase, x, y, dx: x - start.x, dy: y - start.y, ...(cancelled && { cancelled }) });
+    type Touch = { pageX: number; pageY: number };
+    const twoFingers = (touches: readonly Touch[], phase: PinchEvent["phase"]) => {
+      const [a, b] = touches as [Touch, Touch];
+      const distance = Math.max(1, Math.hypot(b.pageX - a.pageX, b.pageY - a.pageY));
+      const angle = Math.atan2(b.pageY - a.pageY, b.pageX - a.pageX);
+      if (phase === "start") pinch0 = { distance, angle };
+      lastPinch = {
+        phase,
+        scale: distance / pinch0.distance,
+        rotation: angle - pinch0.angle,
+        x: (a.pageX + b.pageX) / 2 - origin.x,
+        y: (a.pageY + b.pageY) / 2 - origin.y,
+      };
+      live.current.props.onPinch?.(lastPinch);
+    };
+    const stopLongPress = () => {
+      clearTimeout(longPress);
+      longPress = undefined;
+    };
+    const responder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
       onPanResponderGrant: (e) => {
-        start = { x: e.nativeEvent.locationX, y: e.nativeEvent.locationY, time: Date.now() };
+        const { locationX, locationY, pageX, pageY } = e.nativeEvent;
+        start = { x: locationX, y: locationY, time: Date.now() };
+        origin = { x: pageX - locationX, y: pageY - locationY };
+        mode = "drag";
+        longPressed = false;
         drag("start", start.x, start.y);
+        if (live.current.props.onLongPress) {
+          longPress = setTimeout(() => {
+            longPress = undefined;
+            if (mode !== "drag") return;
+            longPressed = true;
+            live.current.props.onLongPress?.(start.x, start.y);
+          }, LONG_PRESS_TIME);
+        }
       },
-      onPanResponderMove: (_, g) => drag("move", start.x + g.dx, start.y + g.dy),
+      onPanResponderMove: (e, g) => {
+        const touches = e.nativeEvent.touches;
+        if (touches.length >= 2 && live.current.props.onPinch) {
+          if (mode === "drag") {
+            stopLongPress();
+            drag("end", start.x + g.dx, start.y + g.dy, true);
+            mode = "pinch";
+            twoFingers(touches, "start");
+          } else if (mode === "pinch") {
+            twoFingers(touches, "move");
+          }
+          return;
+        }
+        if (mode !== "drag") return; // one finger left after a pinch: wait for it to lift
+        if (Math.hypot(g.dx, g.dy) >= TAP_SLOP) stopLongPress();
+        drag("move", start.x + g.dx, start.y + g.dy);
+      },
       onPanResponderRelease: (_, g) => {
+        stopLongPress();
+        const was = mode;
+        mode = "none";
+        if (was === "pinch") {
+          live.current.props.onPinch?.({ ...lastPinch, phase: "end" });
+          return;
+        }
         const x = start.x + g.dx;
         const y = start.y + g.dy;
         drag("end", x, y);
+        if (longPressed) return;
         const { onTap, onSwipe } = live.current.props;
         const distance = Math.hypot(g.dx, g.dy);
         const time = Date.now() - start.time;
@@ -106,9 +185,17 @@ export function GameView(props: Props) {
           onSwipe?.(Math.abs(g.dx) > Math.abs(g.dy) ? (g.dx > 0 ? "right" : "left") : g.dy > 0 ? "down" : "up");
         }
       },
-      onPanResponderTerminate: (_, g) => drag("end", start.x + g.dx, start.y + g.dy),
+      onPanResponderTerminate: (_, g) => {
+        stopLongPress();
+        const was = mode;
+        mode = "none";
+        if (was === "pinch") live.current.props.onPinch?.({ ...lastPinch, phase: "end" });
+        else if (was === "drag") drag("end", start.x + g.dx, start.y + g.dy, true);
+      },
     });
+    return { responder, dispose: stopLongPress };
   }, []);
+  useEffect(() => touch.dispose, [touch]);
 
   useEffect(() => {
     let alive = true;
@@ -209,9 +296,9 @@ export function GameView(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [source]);
 
-  const touchable = props.onTap || props.onSwipe || props.onDrag;
+  const touchable = props.onTap || props.onSwipe || props.onDrag || props.onLongPress || props.onPinch;
   return (
-    <View style={[styles.canvas, style]} {...(touchable ? touch.panHandlers : undefined)}>
+    <View style={[styles.canvas, style]} {...(touchable ? touch.responder.panHandlers : undefined)}>
       <Canvas ref={ref} style={styles.canvas} />
     </View>
   );
