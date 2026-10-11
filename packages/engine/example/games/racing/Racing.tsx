@@ -45,9 +45,9 @@ const INVULNERABLE = 1.6; // seconds after a crash
 const SEG_LEN = 6;
 const SEGMENTS = 42;
 const RS = 0.2; // road segment roots sit this far below the surface: their colliders are 0.4 thick
+const BEHIND = 8; // segments kept behind the player, so neither camera sees where the road ends
 
 const SKY = [0.62, 0.78, 0.95] as const;
-const GRASS: Color = [0.27, 0.5, 0.18];
 const LINE: Color = [0.95, 0.95, 0.9];
 const RAIL: Color = [0.72, 0.74, 0.78];
 const PAINTS: Color[] = [
@@ -79,7 +79,7 @@ const sfx = audio.load({
 type Kind = "sports" | "sedan" | "suv";
 /** Three models in one frame: a glossy white body the entity color paints, the windows, and untinted trim. */
 type CarModel = { body: Model; glass: Model; trim: Model; size: Vec3 };
-type Assets = { cars: Record<Kind, CarModel>; asphalt: Texture; facade: Texture; tree: Model };
+type Assets = { cars: Record<Kind, CarModel>; asphalt: Texture; facade: Texture; grass: Texture; ads: Texture[]; tree: Model };
 
 let assets: Promise<Assets> | undefined;
 function loadAssets(): Promise<Assets> {
@@ -101,8 +101,14 @@ function loadAssets(): Promise<Assets> {
     car(require("../../assets/models/suv_body.glb"), require("../../assets/models/suv_glass.glb"), require("../../assets/models/suv_trim.glb")),
     loadTexture(require("../../assets/textures/asphalt.png")),
     loadTexture(require("../../assets/textures/facade.png")),
+    loadTexture(require("../../assets/textures/grass.png")),
+    Promise.all([
+      loadTexture(require("../../assets/textures/ad_chevrons.png")),
+      loadTexture(require("../../assets/textures/ad_bubbles.png")),
+      loadTexture(require("../../assets/textures/ad_bolt.png")),
+    ]),
     loadModel(require("../../assets/models/tree.glb"), { center: false }),
-  ]).then(([sports, sedan, suv, asphalt, facade, tree]) => ({ cars: { sports, sedan, suv }, asphalt, facade, tree }));
+  ]).then(([sports, sedan, suv, asphalt, facade, grass, ads, tree]) => ({ cars: { sports, sedan, suv }, asphalt, facade, grass, ads, tree }));
   return assets;
 }
 
@@ -131,7 +137,16 @@ class Track {
   }
 
   sample(s: number, out: Sample): Sample {
-    const t = Math.max(0, s);
+    if (s < 0) {
+      // Behind the start line the road runs straight back (the start-screen camera sees it).
+      out.x = 0;
+      out.y = 0;
+      out.z = -s;
+      out.heading = 0;
+      out.pitch = 0;
+      return out;
+    }
+    const t = s;
     this.ensure(t);
     const i = Math.floor(t);
     const f = t - i;
@@ -188,7 +203,8 @@ type Car = {
   /** Closest it came beside the player, for near misses. */
   closest: number;
 };
-type Segment = { root: Entity; s: number };
+/** A stretch of road; `props` is its scenery, rebuilt for the zone it lands in each time it jumps ahead. */
+type Segment = { root: Entity; s: number; props: Entity[] };
 
 let best = 0;
 // Reused per frame, so the game loop doesn't allocate.
@@ -213,7 +229,7 @@ function spawnCar(world: World, a: Assets, kind: Kind, paint: Color, position: V
 }
 
 function createGame(a: Assets) {
-  const world = new World(1800);
+  const world = new World(2600);
   const camera: Camera = { eye: [6, 3, 6], target: [0, 0.6, 0], fov: 1 };
 
   // Road segments: a root carrying the ground collider, with asphalt, curbs, markings, rails and
@@ -230,7 +246,7 @@ function createGame(a: Assets) {
     const len = SEG_LEN + 0.35;
     add("cube", [0, RS - 0.05 + lift, 0], [ROAD_HALF * 2 + 0.6, 0.1, len], [1, 1, 1], a.asphalt);
     for (const side of [-1, 1]) {
-      add("cube", [side * (ROAD_HALF + 31), RS - 0.09 + lift, 0], [62, 0.1, len], i % 2 ? GRASS : [0.25, 0.47, 0.17]);
+      add("cube", [side * (ROAD_HALF + 31), RS - 0.09 + lift, 0], [62, 0.1, len], i % 2 ? [1, 1, 1] : [0.94, 0.97, 0.92], a.grass);
       for (const z of [-SEG_LEN / 4, SEG_LEN / 4]) {
         const red = (i * 2 + (z > 0 ? 1 : 0)) % 2 === 0;
         add("cube", [side * (ROAD_HALF + 0.2), RS + 0.01 + lift, z], [0.5, 0.08, SEG_LEN / 2], red ? [0.85, 0.12, 0.1] : [0.95, 0.95, 0.95]);
@@ -240,27 +256,24 @@ function createGame(a: Assets) {
       add("cube", [side * (ROAD_HALF + 1.1), RS + 0.55, 0], [0.1, 0.26, len], RAIL);
       add("cube", [side * (ROAD_HALF + 1.15), RS + 0.3, 0], [0.12, 0.6, 0.12], [0.45, 0.46, 0.5]);
     }
-    // Scenery: street lights, trees and buildings, alternating sides.
-    const side = i % 2 ? 1 : -1;
-    if (i % 4 === 0) {
-      add("cylinder", [side * (ROAD_HALF + 1.7), RS + 3.2, 0], [0.16, 6.4, 0.16], [0.35, 0.36, 0.4]);
-      add("cube", [side * (ROAD_HALF + 0.8), RS + 6.35, 0], [1.9, 0.1, 0.12], [0.35, 0.36, 0.4]);
-      add("cube", [side * (ROAD_HALF - 0.05), RS + 6.25, 0], [0.7, 0.1, 0.32], [1, 0.97, 0.82]);
-    }
-    if (i % 3 === 1) {
-      const h = rand(12, 34);
-      const tone = rand(0.75, 1);
-      add("cube", [side * (ROAD_HALF + rand(13, 22)), RS + h / 2, rand(-1, 1)], [rand(8, 13), h, rand(7, 11)], [tone, tone * rand(0.92, 1), tone * rand(0.88, 1)], a.facade);
-    } else {
-      for (let t = 0; t < 2; t++) {
-        add(a.tree, [-side * (ROAD_HALF + rand(4, 16)), RS, rand(-SEG_LEN / 2, SEG_LEN / 2)], rand(2.2, 3.6), [1, 1, 1]);
-      }
-    }
-    segments.push({ root, s: (i - 3) * SEG_LEN });
+    segments.push({ root, s: (i - BEHIND) * SEG_LEN, props: [] });
   }
 
-  // Mountains all around, riding along with the player so they never get closer.
+  // Mountains and rolling hills all around, riding along with the player so they never get closer.
   const horizon = world.spawn({ mesh: "none" });
+  for (let i = 0; i < 26; i++) {
+    const angle = (i / 26) * Math.PI * 2 + rand(-0.08, 0.08);
+    const r = rand(150, 210);
+    const size = rand(40, 75);
+    world.spawn({
+      mesh: "sphere",
+      parent: horizon,
+      position: [Math.sin(angle) * r, -size * 0.32, -Math.cos(angle) * r],
+      scale: [size * 1.6, size * 0.9, size * 1.6],
+      color: [0.3 + rand(0, 0.06), 0.52 + rand(0, 0.08), 0.24],
+      pickable: false,
+    });
+  }
   for (let i = 0; i < 18; i++) {
     const angle = (i / 18) * Math.PI * 2 + rand(-0.1, 0.1);
     const size = rand(45, 80);
@@ -314,7 +327,10 @@ function createGame(a: Assets) {
     onFlash: () => {},
     onNearMiss: () => {},
   };
-  for (const seg of segments) placeSegment(g, seg);
+  for (const seg of segments) {
+    placeSegment(g, seg);
+    spawnProps(g, seg);
+  }
   return g;
 }
 type Game = ReturnType<typeof createGame>;
@@ -322,6 +338,87 @@ type Game = ReturnType<typeof createGame>;
 function placeSegment(g: Game, seg: Segment) {
   const t = g.track.sample(seg.s, sample);
   g.world.set(seg.root, { position: [t.x, t.y - RS, t.z], rotation: orient(t.heading, t.pitch) });
+}
+
+// ── Scenery ─────────────────────────────────────────────────────────────
+
+type Zone = "city" | "suburb" | "country";
+/** Every 600 m the roadside changes. */
+const zoneAt = (s: number): Zone => (["city", "suburb", "country"] as const)[Math.floor(Math.max(0, s + 300) / 600) % 3]!;
+
+const HOUSE_WALLS: Color[] = [[0.95, 0.9, 0.78], [0.86, 0.9, 0.95], [0.95, 0.82, 0.75], [0.9, 0.93, 0.82]];
+const ROOFS: Color[] = [[0.62, 0.2, 0.15], [0.35, 0.25, 0.2], [0.3, 0.32, 0.38]];
+
+/** Fills a segment's roadside for its zone. Positions are in the segment's frame: x across, z along, y up. */
+function spawnProps(g: Game, seg: Segment) {
+  const { world, assets: a } = g;
+  const add = (options: Parameters<World["spawn"]>[0] & {}) =>
+    seg.props.push(world.spawn({ parent: seg.root, pickable: false, ...options }));
+  const index = Math.round(seg.s / SEG_LEN);
+  const zone = zoneAt(seg.s);
+  const z = () => rand(-SEG_LEN / 2, SEG_LEN / 2);
+
+  for (const side of [-1, 1]) {
+    // Bushes along the rail, everywhere.
+    if (Math.random() < 0.55) {
+      add({ mesh: "sphere", position: [side * (ROAD_HALF + rand(2.2, 3.4)), RS + 0.25, z()], scale: [rand(1, 1.8), rand(0.7, 1.1), rand(1, 1.8)], color: [0.18 + rand(0, 0.08), 0.4 + rand(0, 0.12), 0.14] });
+    }
+    if (zone === "city") {
+      add({ mesh: "cube", position: [side * (ROAD_HALF + 3.2), RS + 0.05, 0], scale: [2.6, 0.12, SEG_LEN + 0.35], color: [0.68, 0.68, 0.66] }); // sidewalk
+      if ((index + (side > 0 ? 1 : 0)) % 2 === 0) {
+        const h = rand(14, 42);
+        const tone = rand(0.72, 1);
+        add({ mesh: "cube", texture: a.facade, position: [side * (ROAD_HALF + rand(10, 15)), RS + h / 2, rand(-1, 1)], scale: [rand(8, 12), h, rand(8, 11)], color: [tone, tone * rand(0.92, 1), tone * rand(0.86, 1)] });
+        if (Math.random() < 0.5) {
+          const h2 = rand(20, 55);
+          add({ mesh: "cube", texture: a.facade, position: [side * (ROAD_HALF + rand(24, 32)), RS + h2 / 2, rand(-2, 2)], scale: [rand(9, 14), h2, rand(9, 12)], color: [0.8, 0.82, 0.88] });
+        }
+      }
+    } else if (zone === "suburb") {
+      if ((index + (side > 0 ? 1 : 0)) % 3 === 0) {
+        // A house: walls, a door, two windows, a gable roof (a cube turned 45° under a flattened group), a fence.
+        const x = side * (ROAD_HALF + rand(10, 14));
+        const wall = pick(HOUSE_WALLS);
+        const face = x - side * 2.52; // the wall facing the road
+        add({ mesh: "cube", position: [x, RS + 1.6, 0], scale: [5, 3.2, 5.6], color: wall });
+        add({ mesh: "cube", position: [face, RS + 0.95, 0.9], scale: [0.06, 1.9, 0.9], color: [0.35, 0.22, 0.14] });
+        for (const wz of [-1.4, 2.2]) add({ mesh: "cube", position: [face, RS + 2, wz], scale: [0.06, 0.8, 0.9], color: [0.55, 0.7, 0.85] });
+        const roof = world.spawn({ mesh: "none", parent: seg.root, pickable: false, position: [x, RS + 3.2, 0], scale: [1, 0.55, 1] });
+        seg.props.push(roof);
+        seg.props.push(world.spawn({ mesh: "cube", parent: roof, pickable: false, rotation: [0, 0, Math.sin(Math.PI / 8), Math.cos(Math.PI / 8)], scale: [4, 4, 6.2], color: pick(ROOFS) }));
+        add({ mesh: "cube", position: [side * (ROAD_HALF + 6.5), RS + 0.35, 0], scale: [0.08, 0.6, SEG_LEN], color: [0.95, 0.95, 0.95] }); // fence
+      } else {
+        const x = side * (ROAD_HALF + rand(7, 16));
+        const zz = z();
+        const h = rand(1.6, 2.6);
+        add({ mesh: "cylinder", position: [x, RS + h / 2, zz], scale: [0.35, h, 0.35], color: [0.42, 0.29, 0.17] });
+        add({ mesh: "sphere", position: [x, RS + h + 1.1, zz], scale: rand(2.6, 3.6), color: [0.24 + rand(0, 0.08), 0.5 + rand(0, 0.12), 0.2] });
+      }
+    } else {
+      // Countryside: a pine forest, rocks, a wooden fence and the odd power pole.
+      for (let t = 0; t < 3; t++) add({ mesh: a.tree, position: [side * (ROAD_HALF + rand(5, 28)), RS, z()], scale: rand(2.4, 4.2), color: [1, 1, 1] });
+      if (Math.random() < 0.35) add({ mesh: "sphere", position: [side * (ROAD_HALF + rand(4, 12)), RS, z()], scale: [rand(0.8, 1.8), rand(0.5, 0.9), rand(0.8, 1.6)], color: [0.52, 0.5, 0.48] });
+      for (const y of [0.45, 0.85]) add({ mesh: "cube", position: [side * (ROAD_HALF + 4.2), RS + y, 0], scale: [0.07, 0.1, SEG_LEN + 0.3], color: [0.48, 0.34, 0.2] });
+      add({ mesh: "cube", position: [side * (ROAD_HALF + 4.2), RS + 0.5, 0], scale: [0.12, 1, 0.12], color: [0.4, 0.28, 0.16] });
+      if (index % 6 === (side > 0 ? 0 : 3)) {
+        add({ mesh: "cylinder", position: [side * (ROAD_HALF + 7), RS + 4.5, 0], scale: [0.22, 9, 0.22], color: [0.38, 0.27, 0.18] });
+        add({ mesh: "cube", position: [side * (ROAD_HALF + 7), RS + 8.4, 0], scale: [2.2, 0.14, 0.14], color: [0.38, 0.27, 0.18] });
+      }
+    }
+  }
+
+  // Street lights (closer together in the city) and, now and then, a billboard angled toward traffic.
+  const side = index % 2 ? 1 : -1;
+  if (index % (zone === "city" ? 2 : 4) === 0) {
+    add({ mesh: "cylinder", position: [side * (ROAD_HALF + 1.7), RS + 3.2, 0], scale: [0.16, 6.4, 0.16], color: [0.35, 0.36, 0.4] });
+    add({ mesh: "cube", position: [side * (ROAD_HALF + 0.8), RS + 6.35, 0], scale: [1.9, 0.1, 0.12], color: [0.35, 0.36, 0.4] });
+    add({ mesh: "cube", position: [side * (ROAD_HALF - 0.05), RS + 6.25, 0], scale: [0.7, 0.1, 0.32], color: [1, 0.97, 0.82] });
+  }
+  if (index % 11 === 5) {
+    const x = -side * (ROAD_HALF + 6);
+    for (const px of [-2.2, 2.2]) add({ mesh: "cylinder", position: [x + px, RS + 2.5, 0], scale: [0.25, 5, 0.25], color: [0.3, 0.3, 0.34] });
+    add({ mesh: "cube", texture: pick(a.ads), position: [x, RS + 6, 0], scale: [7.5, 3.6, 0.25], rotation: [0, Math.sin((side * 0.35) / 2), 0, Math.cos((side * 0.35) / 2)], color: [1, 1, 1] });
+  }
 }
 
 function start(g: Game) {
@@ -532,9 +629,12 @@ function tick(g: Game, dt: number) {
 
   // Segments left behind jump to the front.
   for (const seg of g.segments) {
-    if (seg.s >= g.s - SEG_LEN * 3) continue;
+    if (seg.s >= g.s - SEG_LEN * BEHIND) continue;
     seg.s += SEGMENTS * SEG_LEN;
     placeSegment(g, seg);
+    for (const e of seg.props) g.world.despawn(e);
+    seg.props.length = 0;
+    spawnProps(g, seg);
   }
 
   // Camera: orbiting the car on the start screen, then low behind it, looking down the road.
