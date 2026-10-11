@@ -19,7 +19,7 @@ import {
   type Vec3,
   type Voice,
 } from "@nayan-ui/engine";
-import { GameLayout, HudPill, ScoreColumn, ScoreLives, ScoreTimer, useGameInsets, usePop, type GameProps } from "../ui/GameLayout";
+import { GameLayout, ScoreColumn, ScoreLives, ScoreTimer, useGameInsets, usePop, type GameProps } from "../ui/GameLayout";
 import { useGameTheme, type Theme } from "../ui/theme";
 
 // Rules follow Playtura's Car Racing: a 2-minute timer, 3 lives, 500 points per car passed. The run
@@ -974,15 +974,6 @@ function Run({ assets: a, onRestart, dark, ...props }: RunProps) {
       <Animated.Text pointerEvents="none" style={[styles.nearMiss, { top: insets.top + 14 }, nearStyle]}>
         NEAR MISS!
       </Animated.Text>
-
-      {phase === "ready" && (
-        <View style={[styles.hud, { bottom: insets.bottom + 16 }]} pointerEvents="none">
-          <HudPill>Swipe to steer · pass cars to score</HudPill>
-          {/* The car model is CC-BY 4.0: it must be credited. */}
-          <HudPill small>Car: “Car Concept” by Khronos Group, after Unity Fan (CC BY 4.0)</HudPill>
-        </View>
-      )}
-
       <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.flash, flashStyle]} />
     </GameLayout>
   );
@@ -1024,6 +1015,7 @@ function makeStyles(t: Theme) {
   return StyleSheet.create({
     nearMiss: { position: "absolute", alignSelf: "center", color: t.SCORE_HIGHLIGHT, fontSize: 30, fontWeight: "900", fontStyle: "italic" },
     hud: { position: "absolute", left: 16, right: 16, alignItems: "center", gap: 6 },
+    hint: { color: t.TEXT, fontSize: 13, fontWeight: "800", letterSpacing: 0.5, textShadowColor: "rgba(0,0,0,0.6)", textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3 },
     flash: { backgroundColor: "#ff3b3b" },
   });
 }
