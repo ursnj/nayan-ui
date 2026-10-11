@@ -4,11 +4,39 @@
 use crate::model::{self, Model, VERTEX_FLOATS};
 use i_overlay::core::fill_rule::FillRule;
 use rapier3d::glamx::Vec3;
+use std::collections::HashMap;
+use std::hash::{DefaultHasher, Hash, Hasher};
+use std::sync::Mutex;
 
-/// Registers render-ready geometry (`VERTEX_FLOATS` floats per vertex, a triangle list) under a new
-/// mesh id. Colliders and picking use a box around the origin that holds every vertex.
+/// Shapes registered so far, by a hash of their geometry: mesh ids outlive the JS context, so a
+/// reload that builds the same shapes again gets the same ids back instead of using up new ones.
+static SHAPES: Mutex<Option<HashMap<u64, Vec<u8>>>> = Mutex::new(None);
+
+fn fingerprint(vertices: &[f32], indices: &[u32]) -> u64 {
+    let mut h = DefaultHasher::new();
+    vertices.iter().for_each(|v| v.to_bits().hash(&mut h));
+    indices.hash(&mut h);
+    h.finish()
+}
+
+/// Registers render-ready geometry (`VERTEX_FLOATS` floats per vertex, a triangle list) under a
+/// mesh id. Colliders and picking use a box around the origin that holds every vertex. Geometry
+/// identical to an earlier shape's reuses its id (meshes are immutable, so sharing is safe).
 pub fn create(vertices: &[f32], indices: &[u32]) -> Result<u8, String> {
-    model::record_error(build(vertices, indices).and_then(model::register))
+    let key = fingerprint(vertices, indices);
+    let mut shapes = SHAPES.lock().map_err(|_| "shape registry unavailable".to_string())?;
+    let shapes = shapes.get_or_insert_with(HashMap::new);
+    let same = shapes.get(&key).and_then(|ids| {
+        ids.iter().copied().find(|&id| {
+            model::get(id).is_some_and(|m| m.indices == indices && m.vertices.iter().map(|v| v.to_bits()).eq(vertices.iter().map(|v| v.to_bits())))
+        })
+    });
+    if let Some(id) = same {
+        return model::record_error(Ok(id));
+    }
+    let id = model::record_error(build(vertices, indices).and_then(model::register))?;
+    shapes.entry(key).or_default().push(id);
+    Ok(id)
 }
 
 fn build(vertices: &[f32], indices: &[u32]) -> Result<Model, String> {
@@ -86,6 +114,18 @@ mod tests {
         let model = model::get(mesh).unwrap();
         assert_eq!(model.half_extents, Vec3::new(2.0, 3.0, 0.5));
         assert_eq!(model.indices, vec![0, 1, 2]);
+    }
+
+    #[test]
+    fn identical_geometry_reuses_its_mesh() {
+        let v = |x: f32, y: f32| [x, y, 0.25, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0];
+        let vertices: Vec<f32> = [v(-7.0, 0.0), v(7.0, 0.0), v(0.0, 7.0)].concat();
+        let first = create(&vertices, &[0, 1, 2]).unwrap();
+        assert_eq!(create(&vertices, &[0, 1, 2]).unwrap(), first, "built again (a JS reload)");
+        assert_ne!(create(&vertices, &[0, 2, 1]).unwrap(), first, "different triangles");
+        let mut moved = vertices.clone();
+        moved[0] = -7.5;
+        assert_ne!(create(&moved, &[0, 1, 2]).unwrap(), first, "different vertices");
     }
 
     #[test]

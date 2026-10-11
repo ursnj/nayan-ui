@@ -196,7 +196,9 @@ world.spawn({ mesh: apple, position: [0, 2, 0], physics: "dynamic" });
 - Shapes share the 240 mesh ids with models and fonts, for the life of the app: create each one once (at module
   level), not per render or per spawn.
 
-The example app's **Shapes** screen tosses fruit built this way (`example/games/shapes/fruits.ts`) and slices it on tap.
+The example app's **Shapes** screen tosses fruit built this way (`example/games/shapes/fruits.ts`) and slices it on tap:
+apple, orange, lemon, pear, strawberry, watermelon, banana, cherries, grapes, kiwi, mango, peach, pineapple, pomegranate
+and papaya, each with painted skin and a cut face showing its flesh, seeds or stone.
 
 ## Features
 
