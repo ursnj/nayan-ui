@@ -43,7 +43,7 @@ world.listener = player;
 />
 ```
 
-`example/games/` has complete examples: Flappy, a glTF models scene and a benchmark.
+`example/games/` has complete examples: Racing (a 3D highway racer), Flappy, a glTF models scene and a benchmark.
 
 ## Board and puzzle games
 
@@ -194,6 +194,8 @@ cpp/                      JSI TurboModule (C++, shared by iOS and Android); cpp/
 ios/                      iOS module provider
 android/                  Android build: CMakeLists.txt (a pure C++ module, autolinked via react-native.config.js)
 example/                  Expo app
+  games/racing/           Racing (chase camera, lane steering with screenToWorld, traffic, crashes into physics,
+                          2-minute timer, lives and score)
   games/flappy/           Flappy (physics, attachments, feedback, fog)
   games/models/           glTF trees and rockets with physics
   games/benchmark/        JS vs Rust and 1,500-body physics benchmark
@@ -238,7 +240,7 @@ Tips:
 
 - Don't start Metro with `CI=1` while developing: it disables file watching and serves stale JS.
 - `EXPO_PUBLIC_AUTOPLAY=1` (set when starting Metro) makes a bot play the games: handy for demos and QA.
-- `EXPO_PUBLIC_SCREEN=models` (or `flappy`, `benchmark`) opens that example first.
+- `EXPO_PUBLIC_SCREEN=racing` (or `flappy`, `models`, `benchmark`) opens that example first.
 
 ## How it stays fast
 
