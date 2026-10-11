@@ -153,6 +153,14 @@ int32_t engine_model_size(uint32_t mesh, float *out_xyz); // full bounding-box s
 int32_t engine_model_texture(uint32_t mesh);              // base color texture id, or -1
 // A new mesh id drawn with base's geometry (so it can have its own texture). Returns it, or -1.
 int32_t engine_mesh_alias(uint32_t base);
+// Registers geometry (copied): vertex_count * 11 floats (position, normal, color, uv) and u32 triangle
+// indices. Colliders use a box around the origin holding every vertex. Returns the mesh id, or -1.
+int32_t engine_mesh_create(const float *vertices, size_t vertex_count, const uint32_t *indices, size_t index_count);
+// Fills 2D contours (points = [x, y] pairs, counts[k] points per contour; y up) by the non-zero or
+// even-odd rule and extrudes them depth deep (0 = front face only, facing +Z). Returns the number of
+// floats made (11 per vertex, unindexed triangles), copied out by engine_path_extrude_copy.
+size_t engine_path_extrude(const float *points, const uint32_t *counts, size_t contour_count, float depth, int32_t even_odd);
+size_t engine_path_extrude_copy(float *out, size_t cap);
 
 // PNG or JPEG. Returns the texture id, or -1.
 int32_t engine_texture_load(const uint8_t *data, size_t len);

@@ -147,6 +147,8 @@ export function GameLayout(props: GameLayoutProps) {
         {/* The navigator's header, see-through over the scene, themed like Playtura's. */}
         <Stack.Screen
           options={{
+            // No swipe-back mid-game: steering swipes near the left edge would leave the screen.
+            gestureEnabled: phase !== "playing",
             headerTransparent: true,
             headerShadowVisible: false,
             headerTintColor: theme.HEADER_TINT,

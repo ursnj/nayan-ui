@@ -31,6 +31,7 @@ export default function RootLayout() {
       <Stack.Screen name="index" options={{ title: "Nayan Engine" }} />
       {/* Games draw their scene under a see-through header (GameLayout themes it). */}
       <Stack.Screen name="car-racing" options={{ title: "Car Racing", headerTransparent: true, headerStyle: { backgroundColor: "transparent" } }} />
+      <Stack.Screen name="shapes" options={{ title: "Shapes" }} />
       {/* The benchmark's scene is dark whatever the theme. */}
       <Stack.Screen
         name="benchmark"

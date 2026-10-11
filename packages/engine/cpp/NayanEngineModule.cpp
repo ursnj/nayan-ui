@@ -17,6 +17,17 @@ namespace {
 
 // Exposes Rust-owned memory to JS as an ArrayBuffer without copying (capacity is fixed, so it never
 // moves). Holds a reference to the owning world, so a buffer JS keeps after destroyWorld stays valid.
+// Memory owned by the buffer itself (results the core copies out).
+class OwnedBuffer : public jsi::MutableBuffer {
+ public:
+  explicit OwnedBuffer(size_t size) : bytes_(size) {}
+  size_t size() const override { return bytes_.size(); }
+  uint8_t *data() override { return bytes_.data(); }
+
+ private:
+  std::vector<uint8_t> bytes_;
+};
+
 class ExternalBuffer : public jsi::MutableBuffer {
  public:
   ExternalBuffer(std::shared_ptr<void> owner, uint8_t *data, size_t size)
@@ -301,6 +312,33 @@ double NayanEngineModule::modelTexture(jsi::Runtime &, double mesh) {
 
 double NayanEngineModule::meshAlias(jsi::Runtime &, double base) {
   return engine_mesh_alias(id(base));
+}
+
+double NayanEngineModule::meshCreate(jsi::Runtime &rt, jsi::Object vertices, jsi::Object indices) {
+  jsi::ArrayBuffer v = fileData(rt, vertices, "meshCreate");
+  jsi::ArrayBuffer i = fileData(rt, indices, "meshCreate");
+  return engine_mesh_create(
+      reinterpret_cast<const float *>(v.data(rt)), v.size(rt) / (11 * sizeof(float)),
+      reinterpret_cast<const uint32_t *>(i.data(rt)), i.size(rt) / sizeof(uint32_t)); // copied
+}
+
+jsi::Object NayanEngineModule::pathExtrude(jsi::Runtime &rt, jsi::Object points, jsi::Array counts, double depth, bool evenOdd) {
+  jsi::ArrayBuffer p = fileData(rt, points, "pathExtrude");
+  size_t available = p.size(rt) / (2 * sizeof(float));
+  std::vector<uint32_t> n(counts.size(rt));
+  size_t total = 0;
+  for (size_t k = 0; k < n.size(); k++) {
+    double c = counts.getValueAtIndex(rt, k).asNumber();
+    n[k] = c >= 0 && c <= static_cast<double>(UINT32_MAX) ? static_cast<uint32_t>(c) : 0;
+    total += n[k];
+  }
+  if (total > available) {
+    throw jsi::JSError(rt, "NayanEngine.pathExtrude: the counts add up to more points than given");
+  }
+  size_t floats = engine_path_extrude(reinterpret_cast<const float *>(p.data(rt)), n.data(), n.size(), static_cast<float>(depth), evenOdd ? 1 : 0);
+  auto out = std::make_shared<OwnedBuffer>(floats * sizeof(float));
+  engine_path_extrude_copy(reinterpret_cast<float *>(out->data()), floats);
+  return jsi::Object(jsi::ArrayBuffer(rt, std::move(out)));
 }
 
 double NayanEngineModule::textureLoad(jsi::Runtime &rt, jsi::Object data) {

@@ -27,11 +27,13 @@ export { GameView } from "./render/GameView";
 export type { DragEvent, GameStats, PinchEvent, SwipeDirection } from "./render/GameView";
 export type { Quality, QualitySetting } from "./render/quality";
 
-// Models, textures and fonts.
+// Models, custom shapes, textures and fonts.
 export { loadModel } from "./assets/model";
 export type { Model, ModelOptions } from "./assets/model";
 export { loadTexture } from "./assets/texture";
 export type { Texture } from "./assets/texture";
+export { createShape, extrude, lathe, merge, Path, shapeGeometry, tube } from "./assets/shape";
+export type { ExtrudeOptions, Geometry, LatheOptions, Part, ShapeOptions, TubeOptions } from "./assets/shape";
 export { loadFont } from "./assets/font";
 export type { Font, FontOptions, TextAlign } from "./assets/font";
 

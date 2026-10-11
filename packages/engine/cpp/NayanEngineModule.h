@@ -47,6 +47,8 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   jsi::Array modelSize(jsi::Runtime &rt, double mesh);
   double modelTexture(jsi::Runtime &rt, double mesh);
   double meshAlias(jsi::Runtime &rt, double base);
+  double meshCreate(jsi::Runtime &rt, jsi::Object vertices, jsi::Object indices);
+  jsi::Object pathExtrude(jsi::Runtime &rt, jsi::Object points, jsi::Array counts, double depth, bool evenOdd);
   double textureLoad(jsi::Runtime &rt, jsi::Object data);
   jsi::Object texturePixels(jsi::Runtime &rt, double texture);
   jsi::Array textureSize(jsi::Runtime &rt, double texture);

@@ -55,6 +55,8 @@ protected:
     methodMap_["modelSize"] = MethodMetadata {.argCount = 1, .invoker = __modelSize};
     methodMap_["modelTexture"] = MethodMetadata {.argCount = 1, .invoker = __modelTexture};
     methodMap_["meshAlias"] = MethodMetadata {.argCount = 1, .invoker = __meshAlias};
+    methodMap_["meshCreate"] = MethodMetadata {.argCount = 2, .invoker = __meshCreate};
+    methodMap_["pathExtrude"] = MethodMetadata {.argCount = 4, .invoker = __pathExtrude};
     methodMap_["textureLoad"] = MethodMetadata {.argCount = 1, .invoker = __textureLoad};
     methodMap_["texturePixels"] = MethodMetadata {.argCount = 1, .invoker = __texturePixels};
     methodMap_["textureSize"] = MethodMetadata {.argCount = 1, .invoker = __textureSize};
@@ -373,6 +375,26 @@ private:
       "Expected meshAlias(...) to have 2 parameters");
     return bridging::callFromJs<double>(rt, &T::meshAlias,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
       count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
+  static jsi::Value __meshCreate(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::meshCreate) == 3,
+      "Expected meshCreate(...) to have 3 parameters");
+    return bridging::callFromJs<double>(rt, &T::meshCreate,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asObject(rt));
+  }
+
+  static jsi::Value __pathExtrude(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::pathExtrude) == 5,
+      "Expected pathExtrude(...) to have 5 parameters");
+    return bridging::callFromJs<jsi::Object>(rt, &T::pathExtrude,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asObject(rt).asArray(rt),
+      count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asNumber(),
+      count <= 3 ? throw jsi::JSError(rt, "Expected argument in position 3 to be passed") : args[3].asBool());
   }
 
   static jsi::Value __textureLoad(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {

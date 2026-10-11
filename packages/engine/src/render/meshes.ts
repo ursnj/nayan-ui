@@ -6,7 +6,7 @@ export const VERTEX_FLOATS = 11;
 
 type V3 = readonly [number, number, number];
 
-class Builder {
+export class Builder {
   vertices: number[] = [];
   indices: number[] = [];
 
