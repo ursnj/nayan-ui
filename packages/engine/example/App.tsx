@@ -6,8 +6,12 @@ import { Benchmark } from "./games/benchmark/Benchmark";
 import { Flappy } from "./games/flappy/Flappy";
 import { Racing } from "./games/racing/Racing";
 
+// The racing example with Playtura's optional side buttons switched on: the built-in session
+// leaderboard and the system share sheet (pass functions instead to handle them yourself).
+const RacingScreen = () => <Racing leaderboard share />;
+
 const SCREENS = [
-  { key: "racing", label: "Racing", Component: Racing },
+  { key: "racing", label: "Racing", Component: RacingScreen },
   { key: "flappy", label: "Flappy", Component: Flappy },
   { key: "benchmark", label: "Benchmark", Component: Benchmark },
 ] as const;
