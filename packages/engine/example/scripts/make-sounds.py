@@ -1,4 +1,4 @@
-"""Synthesizes the Flappy example's sound effects into assets/sfx/*.wav (stdlib only).
+"""Synthesizes the racing example's sound effects into assets/sfx/*.wav (stdlib only).
 
 Run from the example directory:  python3 scripts/make-sounds.py
 """
@@ -82,20 +82,6 @@ def bump():
 
 
 
-def flap():
-    """Soft wing beat: a band of noise with a quick rise and fall."""
-    n = int(0.12 * RATE)
-    out, lo, hi = [], 0.0, 0.0
-    for i in range(n):
-        t = i / RATE
-        x = random.uniform(-1, 1)
-        lo += 0.25 * (x - lo)  # low-pass ...
-        hi += 0.08 * (lo - hi)  # ... minus a slower low-pass = band-pass
-        env = math.sin(math.pi * min(1.0, t / 0.12)) ** 2
-        out.append((lo - hi) * env)
-    return out
-
-
 def point():
     buf = []
     mix_into(buf, note(midi(83), 0.10, soft_square, decay=0.06, volume=0.8), 0.0)   # B5
@@ -164,7 +150,6 @@ if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     sounds = {
         "bump": lambda: write("bump", bump()),
-        "flap": lambda: write("flap", flap(), peak=0.6),
         "point": lambda: write("point", point()),
         "hit": lambda: write("hit", hit()),
         "die": lambda: write("die", die(), peak=0.7),
