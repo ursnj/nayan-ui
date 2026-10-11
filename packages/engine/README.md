@@ -309,6 +309,40 @@ Tips:
 - The games share one layout (`example/games/ui/GameLayout.tsx`): header, scoreboard, controls, and the result,
   leaderboard and settings cards. A game supplies its scene and scoreboard columns.
 
+## Publish
+
+The package ships its native binaries, which aren't in git: the iOS `core/build/EngineCore.xcframework` and the
+Android `core/build/android/<abi>/libengine_core.a`. Build them before every publish, or the package installs but
+the app fails to link.
+
+**From GitHub (usual)**: Actions → **Publish npm packages** → Run workflow → tick **@nayan-ui/engine**. The
+`engine` job runs on macOS: it builds the Rust core for iOS and Android, runs `bob build` (`lib/`), and publishes
+with the repo's `NPM_PUBLISH` secret. Tick **Dry run** first to see the files it would publish without publishing.
+A version that's already on npm is skipped with a warning, so bump `version` in `package.json` first.
+
+**From your machine**:
+
+```sh
+cd packages/engine
+bun run core:build:ios          # macOS + Xcode; Rust targets aarch64-apple-ios(-sim) are added by the script
+bun run core:build:android      # needs the Android NDK (ANDROID_NDK_HOME, or the newest one in the SDK)
+bun run build                   # lib/ (JS and type declarations)
+npm pack --dry-run              # check: lib/, src/, cpp/, ios/, android/, core/include, core/build, the podspec
+npm publish --access public --tag beta   # prereleases; plain `npm publish --access public` for a stable version
+```
+
+Versions and tags:
+
+- Prereleases are `1.0.0-beta.1`, `1.0.0-beta.2`, … (a dot before the number, so `beta.10` sorts after `beta.9`).
+  The workflow publishes them under the dist-tag in the name (`beta`, `rc`), so `npm install @nayan-ui/engine`
+  keeps getting the latest stable version, and apps opt in with `npm install @nayan-ui/engine@beta`.
+- A stable version (`1.0.0`) is published as `latest`. To promote a prerelease without republishing:
+  `npm dist-tag add @nayan-ui/engine@1.0.0-beta.2 latest`.
+- `core/Cargo.toml`'s version is internal and doesn't need to match.
+
+After publishing, apps need a native rebuild (`pod install` and a new dev client or store build) to pick up a new
+version, not just a JS reload.
+
 ## How it stays fast
 
 - One instanced `drawIndexed` per mesh in use. Model matrices live in a storage buffer.
