@@ -1,14 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Image, Pressable, Share, StyleSheet, Switch, Text, View, useColorScheme, useWindowDimensions } from "react-native";
-import Animated, {
-  cancelAnimation,
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withSequence,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
+import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import {
   audio,
   GameView,
@@ -27,7 +19,8 @@ import {
   type Vec3,
   type Voice,
 } from "@nayan-ui/engine";
-import { HEADER_HEIGHT, SAFE_TOP } from "../layout";
+import { GameLayout, HudPill, ScoreColumn, ScoreLives, ScoreTimer, useGameInsets, usePop, type GameProps } from "../ui/GameLayout";
+import { useGameTheme, type Theme } from "../ui/theme";
 
 // Rules follow Playtura's Car Racing: a 2-minute timer, 3 lives, 500 points per car passed. The run
 // ends when the timer runs out ("TIME UP!") or the last life is lost ("CRASHED!").
@@ -233,8 +226,6 @@ let best = 0;
 /** This session's best runs, for the leaderboard (the example has no backend). */
 const topScores: number[] = [];
 // Playtura's TrophyIcon and ShareIcon, rendered to white PNGs and tinted to the theme.
-const TROPHY_ICON = require("../../assets/icons/trophy.png");
-const SHARE_ICON = require("../../assets/icons/share.png");
 // Reused per frame, so the game loop doesn't allocate.
 const tmp: [number, number, number] = [0, 0, 0];
 const at: [number, number, number] = [0, 0, 0];
@@ -863,30 +854,16 @@ function autopilot(g: Game) {
 
 }
 
-const formatTime = (seconds: number) =>
-  `${Math.floor(seconds / 60).toString().padStart(2, "0")}:${(seconds % 60).toString().padStart(2, "0")}`;
+export type RacingProps = GameProps;
 
-/**
- * How a host app configures the game, like Playtura's GameProps: the side buttons appear only when
- * given (Playtura shows its leaderboard and share buttons only for `onShowLeaderboard` / `onShare`).
- */
-export type RacingProps = {
-  /** The leaderboard button: a function to handle it yourself, `true` for the built-in session leaderboard, omitted to hide it. */
-  leaderboard?: boolean | (() => void);
-  /** The share button: a function given the score, `true` for the system share sheet, omitted to hide it. */
-  share?: boolean | ((score: number) => void);
-  /** "light" or "dark", like Playtura's `settings.theme`. Default: the system theme (and the in-game switch). */
-  theme?: "light" | "dark";
-};
+type RunProps = RacingProps & { assets: Assets; onRestart: () => void; dark: boolean };
 
-type RunProps = RacingProps & { assets: Assets; onRestart: () => void; dark: boolean; onDark: (dark: boolean) => void };
-
-function Run({ assets: a, onRestart, dark, onDark, leaderboard, share }: RunProps) {
+function Run({ assets: a, onRestart, dark, ...props }: RunProps) {
   const game = useMemo(() => createGame(a, dark), [a, dark]);
-  const theme = dark ? DARK : LIGHT;
+  const theme = useGameTheme(props.theme);
   const styles = useMemo(() => makeStyles(theme), [theme]);
+  const insets = useGameInsets();
   const { width } = useWindowDimensions();
-  const gameWidth = Math.min(width - 30, 500); // Playtura's getGameDimensions(): the scoreboard and controls are this wide
   const [phase, setPhase] = useState<Phase>("ready");
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
@@ -895,20 +872,11 @@ function Run({ assets: a, onRestart, dark, onDark, leaderboard, share }: RunProp
   const [kmh, setKmh] = useState(0);
   const [nitro, setNitro] = useState(0.5);
   const [boosting, setBoosting] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [leaderboardOpen, setLeaderboardOpen] = useState(false);
-  const [soundOn, setSoundOn] = useState(!audio.muted);
-  const [hapticsOn, setHapticsOn] = useState(haptics.enabled);
   // HUD animations run on the UI thread (Reanimated), so the game loop never stutters them.
+  const [pop, bounce] = usePop();
   const flash = useSharedValue(0);
-  const pulse = useSharedValue(1);
-  const card = useSharedValue(0);
-  const pop = useSharedValue(1);
   const near = useSharedValue(0);
   const flashStyle = useAnimatedStyle(() => ({ opacity: flash.value }));
-  const pulseStyle = useAnimatedStyle(() => ({ transform: [{ scale: pulse.value }] }));
-  const cardStyle = useAnimatedStyle(() => ({ opacity: card.value, transform: [{ scale: 0.85 + card.value * 0.15 }] }));
-  const popStyle = useAnimatedStyle(() => ({ transform: [{ scale: pop.value }] }));
   const nearStyle = useAnimatedStyle(() => ({ opacity: near.value }));
 
   useEffect(() => {
@@ -917,7 +885,7 @@ function Run({ assets: a, onRestart, dark, onDark, leaderboard, share }: RunProp
     game.onTime = setTimeLeft;
     game.onScore = (s) => {
       setScore(s);
-      pop.value = withSequence(withTiming(1.3, { duration: 0 }), withSpring(1, { damping: 8, stiffness: 320 }));
+      bounce();
     };
     game.onFlash = () => {
       flash.value = withSequence(withTiming(0.6, { duration: 0 }), withTiming(0, { duration: 400 }));
@@ -936,7 +904,7 @@ function Run({ assets: a, onRestart, dark, onDark, leaderboard, share }: RunProp
       audio.stop(game.engine);
       game.world.dispose();
     };
-  }, [game, flash, pop, near]);
+  }, [game, flash, bounce, near]);
 
   // The results wait a moment, so the crash (or the finish) is seen before the panel covers it.
   useEffect(() => {
@@ -944,24 +912,6 @@ function Run({ assets: a, onRestart, dark, onDark, leaderboard, share }: RunProp
     const t = setTimeout(() => setShowResults(true), 1200);
     return () => clearTimeout(t);
   }, [phase]);
-
-  // Playtura's START GAME button breathes while the game waits for you.
-  useEffect(() => {
-    if (phase === "playing") {
-      cancelAnimation(pulse);
-      pulse.value = 1;
-      return;
-    }
-    pulse.value = withRepeat(withSequence(withTiming(1.05, { duration: 1000 }), withTiming(1, { duration: 1000 })), -1);
-    return () => cancelAnimation(pulse);
-  }, [phase, pulse]);
-
-  // The results card springs in.
-  useEffect(() => {
-    if (!showResults) return;
-    card.value = 0;
-    card.value = withSpring(1, { damping: 12, stiffness: 180 });
-  }, [showResults, card]);
 
   // Autoplay: start by itself and restart after a pause.
   useEffect(() => {
@@ -988,200 +938,53 @@ function Run({ assets: a, onRestart, dark, onDark, leaderboard, share }: RunProp
 
   const won = lives > 0;
   return (
-    <View style={styles.root}>
+    <GameLayout
+      {...props}
+      title="Car Racing"
+      subtitle={best > 0 ? `Best ${best}` : "Level 1"}
+      phase={phase}
+      scoreboard={
+        <>
+          <ScoreColumn label="SCORE" value={score} pop={pop} />
+          <ScoreLives lives={lives} max={LIVES} />
+          <ScoreTimer seconds={timeLeft} low={LOW_TIME} />
+        </>
+      }
+      startHint="Dodge traffic to score!"
+      onStart={() => start(game)}
+      onStop={onRestart}
+      result={showResults ? { title: won ? "TIME UP!" : "CRASHED!", message: won ? "Great driving!" : "You ran out of lives!", score, best } : null}
+      onPlayAgain={onRestart}
+      scores={topScores}
+      shareScore={Math.max(score, best)}
+      shareMessage={(s) => `I scored ${s} in Car Racing on the Nayan engine! Can you beat it?`}
+    >
       <GameView source={game.world} camera={game.camera} light={dark ? NIGHT_LIGHT : DAY_LIGHT} background={dark ? NIGHT_SKY : SKY} fog={0.0075} onUpdate={onUpdate} onDrag={onDrag} />
 
-      {/* Header, like Playtura's game screen: (back), title and level, settings. The example's screen
-          switcher sits in the left slot, where Playtura has its back button. */}
-      <View style={styles.header}>
-        <View style={styles.headerSide} />
-        <View style={styles.headerTitleBox}>
-          <Text style={styles.headerTitle} numberOfLines={1}>
-            Car Racing
-          </Text>
-          <Text style={styles.headerSubtitle} numberOfLines={1}>
-            {best > 0 ? `Best ${best}` : "Level 1"}
-          </Text>
-        </View>
-        <Pressable style={styles.headerSide} onPress={() => setSettingsOpen(true)} hitSlop={10} accessibilityLabel="Game settings">
-          <Text style={styles.headerIcon}>⚙︎</Text>
-        </Pressable>
-      </View>
-
-      {/* Playtura's scoreboard: SCORE, LIVES and TIMER. */}
-      <View style={styles.boardWrap} pointerEvents="none">
-        <View style={[styles.board, { width: gameWidth }]}>
-          <View style={styles.column}>
-            <Text style={styles.label}>SCORE</Text>
-            <Animated.Text style={[styles.value, popStyle]}>{score}</Animated.Text>
-          </View>
-          <View style={styles.column}>
-            <Text style={styles.label}>LIVES</Text>
-            <View style={styles.hearts}>
-              {Array.from({ length: LIVES }, (_, i) => (
-                <Text key={i} style={styles.heart}>
-                  {i < lives ? "❤️" : "🖤"}
-                </Text>
-              ))}
-            </View>
-          </View>
-          <View style={styles.column}>
-            <Text style={styles.label}>TIMER</Text>
-            <Text style={[styles.value, timeLeft <= LOW_TIME && styles.timeLow]}>{formatTime(timeLeft)}</Text>
-          </View>
-        </View>
-      </View>
-
-      <Animated.Text pointerEvents="none" style={[styles.nearMiss, nearStyle]}>
+      <Animated.Text pointerEvents="none" style={[styles.nearMiss, { top: insets.top + 14 }, nearStyle]}>
         NEAR MISS!
       </Animated.Text>
 
       {phase === "ready" && (
-        <View style={styles.readyNotes} pointerEvents="none">
-          <Text style={styles.hint}>Swipe to steer · pass cars to fill nitro</Text>
+        <View style={[styles.hud, { bottom: insets.bottom + 16 }]} pointerEvents="none">
+          <HudPill>Swipe to steer · pass cars to fill nitro</HudPill>
           {/* The car model is CC-BY 4.0: it must be credited. */}
-          <Text style={styles.credit}>Car: “Car Concept” by Khronos Group, after Unity Fan (CC BY 4.0)</Text>
+          <HudPill small>Car: “Car Concept” by Khronos Group, after Unity Fan (CC BY 4.0)</HudPill>
         </View>
       )}
 
       {/* Speed and nitro, while driving. */}
       {phase === "playing" && (
-        <View style={styles.gauges} pointerEvents="none">
-          <View style={[styles.gauge, boosting && styles.gaugeBoost]}>
-            <View style={[styles.nitroFill, { width: `${Math.round(nitro * 100)}%` }]} />
-            <Text style={styles.gaugeText}>{boosting ? "NITRO!" : "NITRO"}</Text>
-          </View>
-          <View style={styles.gauge}>
-            <Text style={styles.gaugeText}>{kmh} km/h</Text>
-          </View>
+        <View style={[styles.hud, styles.gauges, { bottom: insets.bottom }]} pointerEvents="none">
+          <HudPill highlight={boosting} fill={nitro}>
+            {boosting ? "NITRO!" : "NITRO"}
+          </HudPill>
+          <HudPill>{kmh} km/h</HudPill>
         </View>
-      )}
-
-      {/* Playtura's game controls: leaderboard, the main button, share. */}
-      <View style={styles.controls} pointerEvents="box-none">
-        <View style={[styles.controlsRow, { width: gameWidth }]}>
-          {leaderboard && (
-            <Pressable
-              style={styles.iconButton}
-              onPress={typeof leaderboard === "function" ? leaderboard : () => setLeaderboardOpen(true)}
-              accessibilityLabel="Leaderboard"
-            >
-              <Image source={TROPHY_ICON} style={[styles.icon, { tintColor: theme.TEXT }]} />
-            </Pressable>
-          )}
-
-          {phase === "playing" ? (
-            <View style={styles.mainWrap}>
-              <Pressable style={styles.mainButton} onPress={onRestart}>
-                <Text style={styles.mainText}>STOP GAME</Text>
-                <Text style={styles.mainSubtext}>Stop current game</Text>
-              </Pressable>
-            </View>
-          ) : (
-            <Animated.View style={[styles.mainWrap, pulseStyle]}>
-              <Pressable style={styles.mainButton} onPress={phase === "ready" ? () => start(game) : onRestart}>
-                <Text style={styles.mainText} numberOfLines={1}>
-                  START GAME
-                </Text>
-                <Text style={styles.mainSubtext} numberOfLines={1}>
-                  Dodge traffic to score!
-                </Text>
-              </Pressable>
-            </Animated.View>
-          )}
-
-          {share && (
-            <Pressable
-              style={styles.iconButton}
-              onPress={() => {
-                const result = Math.max(score, best);
-                if (typeof share === "function") share(result);
-                else Share.share({ message: `I scored ${result} in Car Racing on the Nayan engine! Can you beat it?` });
-              }}
-              accessibilityLabel="Share"
-            >
-              <Image source={SHARE_ICON} style={[styles.icon, { tintColor: theme.TEXT }]} />
-            </Pressable>
-          )}
-        </View>
-      </View>
-
-      {/* Playtura's game-over card. */}
-      {showResults && (
-        <View style={styles.overlay}>
-          <Animated.View style={[styles.card, cardStyle]}>
-            <Image source={TROPHY_ICON} style={[styles.cardIcon, { tintColor: theme.SCORE_HIGHLIGHT }]} />
-            <Text style={styles.cardTitle}>{won ? "TIME UP!" : "CRASHED!"}</Text>
-            <Text style={styles.cardMessage}>{won ? "Great driving!" : "You ran out of lives!"}</Text>
-            <View style={styles.scoreCard}>
-              <Text style={styles.scoreLabel}>Final Score</Text>
-              <Text style={styles.scoreValue}>{score}</Text>
-              <Text style={styles.scoreBest}>Best {best}</Text>
-            </View>
-            <Pressable
-              style={styles.playAgain}
-              onPress={() => {
-                haptics.selection();
-                onRestart();
-              }}
-            >
-              <Text style={styles.playAgainText}>▶  Play Again!</Text>
-            </Pressable>
-          </Animated.View>
-        </View>
-      )}
-
-      {/* Leaderboard: this session's best runs. */}
-      {leaderboardOpen && (
-        <Pressable style={styles.overlay} onPress={() => setLeaderboardOpen(false)}>
-          <Pressable style={styles.card} onPress={() => {}}>
-            <Image source={TROPHY_ICON} style={[styles.cardIcon, { tintColor: theme.SCORE_HIGHLIGHT }]} />
-            <Text style={styles.cardTitle}>Leaderboard</Text>
-            {topScores.length === 0 ? (
-              <Text style={styles.cardMessage}>No runs yet: start a game!</Text>
-            ) : (
-              <View style={styles.ranks}>
-                {topScores.map((value, i) => (
-                  <View key={i} style={styles.rankRow}>
-                    <Text style={styles.rankPlace}>#{i + 1}</Text>
-                    <Text style={styles.rankScore}>{value}</Text>
-                  </View>
-                ))}
-              </View>
-            )}
-            <Pressable style={styles.playAgain} onPress={() => setLeaderboardOpen(false)}>
-              <Text style={styles.playAgainText}>Close</Text>
-            </Pressable>
-          </Pressable>
-        </Pressable>
-      )}
-
-      {/* Playtura's settings: sound and haptics. */}
-      {settingsOpen && (
-        <Pressable style={styles.overlay} onPress={() => setSettingsOpen(false)}>
-          <Pressable style={styles.card} onPress={() => {}}>
-            <Text style={styles.cardTitle}>Settings</Text>
-            {(
-              [
-                ["Sounds", soundOn, (on: boolean) => ((audio.muted = !on), setSoundOn(on))],
-                ["Haptics", hapticsOn, (on: boolean) => ((haptics.enabled = on), setHapticsOn(on))],
-                ["Dark mode", dark, onDark],
-              ] as const
-            ).map(([label, on, set]) => (
-              <View key={label} style={styles.settingRow}>
-                <Text style={styles.settingLabel}>{label}</Text>
-                <Switch value={on} onValueChange={set} trackColor={{ false: theme.SWITCH_TRACK_OFF, true: theme.SWITCH_TRACK_ON }} thumbColor={theme.SWITCH_THUMB} />
-              </View>
-            ))}
-            <Pressable style={styles.playAgain} onPress={() => setSettingsOpen(false)}>
-              <Text style={styles.playAgainText}>Done</Text>
-            </Pressable>
-          </Pressable>
-        </Pressable>
       )}
 
       <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.flash, flashStyle]} />
-    </View>
+    </GameLayout>
   );
 }
 
@@ -1199,146 +1002,29 @@ export function Racing(props: RacingProps) {
     };
   }, []);
   const restart = useMemo(() => () => setRun((r) => r + 1), []);
-  // Follows the system theme like Playtura's games, and can be switched in the game's settings.
-  const system = useColorScheme() === "dark";
-  const [choice, setChoice] = useState<boolean | null>(null);
-  const dark = choice ?? (props.theme ? props.theme === "dark" : system);
+  // Dark mode drives at night: it follows the system like Playtura's games, or the settings switch.
+  const theme = useGameTheme(props.theme);
   if (!loaded) {
     return (
-      <View style={[baseStyles.root, baseStyles.loading, { backgroundColor: (dark ? DARK : LIGHT).BACKGROUND }]}>
-        <Text style={[baseStyles.loadingText, { color: (dark ? DARK : LIGHT).TEXT }]}>{error ?? "Loading…"}</Text>
+      <View style={[baseStyles.loading, { backgroundColor: theme.BACKGROUND }]}>
+        <Text style={[baseStyles.loadingText, { color: theme.TEXT }]}>{error ?? "Loading…"}</Text>
       </View>
     );
   }
   // A new theme rebuilds the scene (day or night), so it starts a fresh run.
-  return <Run key={`${run}-${dark}`} {...props} assets={loaded} onRestart={restart} dark={dark} onDark={setChoice} />;
+  return <Run key={`${run}-${theme.dark}`} {...props} assets={loaded} onRestart={restart} dark={theme.dark} />;
 }
 
-// Playtura's game themes (ThemeService): light, and dark (which also drives the scene at night).
-type Theme = typeof LIGHT;
-const LIGHT = {
-  BACKGROUND: "#C8C2E0",
-  SURFACE: "rgba(255, 255, 255, 0.55)",
-  BORDER: "rgba(255, 255, 255, 0.9)",
-  BORDER_WIDTH: 1.5,
-  TEXT: "#0F1729",
-  TEXT_SUBTLE: "#0F1729",
-  TEXT_SHADOW: "transparent",
-  SOLID: "#6F3EF4",
-  ON_SOLID: "#FFFFFF",
-  SCORE_HIGHLIGHT: "#6F3EF4",
-  DANGER: "#EF4343",
-  OVERLAY: "rgba(15, 23, 41, 0.8)",
-  SWITCH_TRACK_OFF: "rgba(15, 23, 41, 0.15)",
-  SWITCH_TRACK_ON: "#6F3EF4",
-  SWITCH_THUMB: "#FFFFFF",
-  HEADER_BACKGROUND: "rgba(255, 255, 255, 0.55)",
-  HEADER_BORDER: "rgba(255, 255, 255, 0.9)",
-  HEADER_TINT: "#0F1729",
-  NITRO: "rgba(111, 62, 244, 0.45)",
-  NEAR_MISS: "#6F3EF4",
-};
-const DARK: Theme = {
-  BACKGROUND: "#17122B",
-  SURFACE: "rgba(153, 118, 249, 0.16)",
-  BORDER: "rgba(153, 118, 249, 0.22)",
-  BORDER_WIDTH: 1.5,
-  TEXT: "#F9F8FB",
-  TEXT_SUBTLE: "#F9F8FB",
-  TEXT_SHADOW: "transparent",
-  SOLID: "#9976F9",
-  ON_SOLID: "#FFFFFF",
-  SCORE_HIGHLIGHT: "#F6A823",
-  DANGER: "#DC2828",
-  OVERLAY: "rgba(0, 0, 0, 0.86)",
-  SWITCH_TRACK_OFF: "rgba(153, 118, 249, 0.3)",
-  SWITCH_TRACK_ON: "#9976F9",
-  SWITCH_THUMB: "#F9F8FB",
-  HEADER_BACKGROUND: "rgba(153, 118, 249, 0.16)",
-  HEADER_BORDER: "rgba(153, 118, 249, 0.2)",
-  HEADER_TINT: "#F9F8FB",
-  NITRO: "rgba(153, 118, 249, 0.5)",
-  NEAR_MISS: "#F6A823",
-};
-
 const baseStyles = StyleSheet.create({
-  root: { flex: 1 },
-  loading: { alignItems: "center", justifyContent: "center" },
+  loading: { flex: 1, alignItems: "center", justifyContent: "center" },
   loadingText: { fontSize: 18, fontWeight: "700" },
 });
 
 function makeStyles(t: Theme) {
-  const shadow = { textShadowColor: t.TEXT_SHADOW, textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3 };
-  const panel = { backgroundColor: t.SURFACE, borderColor: t.BORDER, borderWidth: t.BORDER_WIDTH };
   return StyleSheet.create({
-    root: { flex: 1, backgroundColor: t.BACKGROUND },
-
-    header: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      height: HEADER_HEIGHT,
-      paddingTop: SAFE_TOP,
-      paddingHorizontal: 12,
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: t.HEADER_BACKGROUND,
-      borderBottomWidth: 1,
-      borderBottomColor: t.HEADER_BORDER,
-    },
-    headerSide: { width: 88, alignItems: "flex-end", justifyContent: "center" },
-    headerTitleBox: { flex: 1, alignItems: "center" },
-    headerTitle: { color: t.HEADER_TINT, fontSize: 18, fontWeight: "600" },
-    headerSubtitle: { color: t.HEADER_TINT, fontSize: 14, fontWeight: "600", marginTop: -1 },
-    headerIcon: { color: t.HEADER_TINT, fontSize: 24 },
-
-    boardWrap: { position: "absolute", top: HEADER_HEIGHT + 15, left: 0, right: 0, alignItems: "center" },
-    board: { ...panel, flexDirection: "row", paddingVertical: 14, paddingHorizontal: 12, borderRadius: 18 },
-    column: { flex: 1, alignItems: "center" },
-    label: { color: t.TEXT, fontSize: 12, fontWeight: "500", letterSpacing: 1.2, marginBottom: 4, ...shadow },
-    value: { color: t.TEXT, fontSize: 24, fontWeight: "800", fontVariant: ["tabular-nums"], ...shadow },
-    timeLow: { color: t.DANGER },
-    hearts: { flexDirection: "row" },
-    heart: { fontSize: 22, marginHorizontal: 3 },
-
-    nearMiss: { position: "absolute", top: HEADER_HEIGHT + 110, alignSelf: "center", color: t.NEAR_MISS, fontSize: 30, fontWeight: "900", fontStyle: "italic" },
-    readyNotes: { position: "absolute", bottom: 128, left: 16, right: 16, alignItems: "center", gap: 6 },
-    hint: { ...panel, color: t.TEXT, fontSize: 14, fontWeight: "600", paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, overflow: "hidden" },
-    credit: { ...panel, color: t.TEXT, fontSize: 10, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 10, overflow: "hidden" },
-
-    controls: { position: "absolute", bottom: 5, left: 0, right: 0, alignItems: "center" },
-    controlsRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 20, paddingHorizontal: 16, gap: 20 },
-    iconButton: { ...panel, width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center", overflow: "hidden" },
-    icon: { width: 24, height: 24 },
-    gauges: { position: "absolute", bottom: 112, left: 0, right: 0, flexDirection: "row", justifyContent: "center", gap: 10 },
-    gauge: { ...panel, minWidth: 104, paddingHorizontal: 14, paddingVertical: 6, borderRadius: 14, alignItems: "center", overflow: "hidden" },
-    gaugeBoost: { borderColor: t.SCORE_HIGHLIGHT },
-    gaugeText: { color: t.TEXT, fontSize: 13, fontWeight: "800", fontVariant: ["tabular-nums"], letterSpacing: 0.5, ...shadow },
-    nitroFill: { position: "absolute", left: 0, top: 0, bottom: 0, backgroundColor: t.NITRO },
-    mainWrap: { flex: 1 },
-    mainButton: { ...panel, minHeight: 60, borderRadius: 30, paddingHorizontal: 24, paddingVertical: 16, alignItems: "center", justifyContent: "center" },
-    mainText: { color: t.TEXT, fontSize: 16, fontWeight: "800", letterSpacing: 1, ...shadow },
-    mainSubtext: { color: t.TEXT, fontSize: 10, fontWeight: "600", letterSpacing: 0.5, marginTop: 2 },
-
-    overlay: { ...StyleSheet.absoluteFill, backgroundColor: t.OVERLAY, alignItems: "center", justifyContent: "center" },
-    card: { width: "95%", maxWidth: 500, borderRadius: 16, backgroundColor: t.BACKGROUND, padding: 20, alignItems: "center" },
-    cardIcon: { width: 48, height: 48 },
-    ranks: { width: "100%", marginBottom: 20 },
-    rankRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 8, paddingHorizontal: 12, borderRadius: 10, backgroundColor: t.SURFACE, marginTop: 6 },
-    rankPlace: { color: t.TEXT, fontSize: 16, fontWeight: "700" },
-    rankScore: { color: t.SCORE_HIGHLIGHT, fontSize: 16, fontWeight: "800", fontVariant: ["tabular-nums"] },
-    cardTitle: { color: t.TEXT, fontSize: 28, fontWeight: "bold", letterSpacing: 1, marginTop: 8, marginBottom: 4 },
-    cardMessage: { color: t.TEXT_SUBTLE, fontSize: 14, marginBottom: 16 },
-    scoreCard: { backgroundColor: t.SURFACE, borderRadius: 16, paddingVertical: 16, paddingHorizontal: 32, alignItems: "center", marginBottom: 24 },
-    scoreLabel: { color: t.TEXT_SUBTLE, fontSize: 13, fontWeight: "600", letterSpacing: 1, marginBottom: 4 },
-    scoreValue: { color: t.SCORE_HIGHLIGHT, fontSize: 44, fontWeight: "bold", fontVariant: ["tabular-nums"] },
-    scoreBest: { color: t.TEXT_SUBTLE, fontSize: 12, fontWeight: "600", marginTop: 2 },
-    playAgain: { width: "100%", paddingVertical: 16, borderRadius: 28, backgroundColor: t.SOLID, alignItems: "center" },
-    playAgainText: { color: t.ON_SOLID, fontSize: 17, fontWeight: "bold", letterSpacing: 0.5 },
-    settingRow: { width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 12 },
-    settingLabel: { color: t.TEXT, fontSize: 16, fontWeight: "600" },
-
+    nearMiss: { position: "absolute", alignSelf: "center", color: t.SCORE_HIGHLIGHT, fontSize: 30, fontWeight: "900", fontStyle: "italic" },
+    hud: { position: "absolute", left: 16, right: 16, alignItems: "center", gap: 6 },
+    gauges: { flexDirection: "row", justifyContent: "center", gap: 10 },
     flash: { backgroundColor: "#ff3b3b" },
   });
 }

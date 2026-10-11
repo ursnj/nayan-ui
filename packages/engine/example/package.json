@@ -2,7 +2,7 @@
   "name": "engine-example",
   "version": "1.0.0",
   "private": true,
-  "main": "index.ts",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start --dev-client",
     "prebuild": "expo prebuild --clean",
@@ -10,12 +10,18 @@
     "android": "expo run:android"
   },
   "dependencies": {
+    "@expo/vector-icons": "^15.0.2",
     "@nayan-ui/engine": "*",
     "expo": "~57.0.27",
+    "expo-constants": "~57.0.21",
     "expo-dev-client": "~57.0.9",
+    "expo-linking": "~57.0.12",
+    "expo-router": "~57.0.25",
     "react": "19.2.3",
     "react-native": "0.86.3",
     "react-native-reanimated": "4.5.1",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
     "react-native-webgpu": "^0.13.0",
     "react-native-worklets": "0.10.1"
   },

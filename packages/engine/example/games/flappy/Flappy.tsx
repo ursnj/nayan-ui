@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import {
   audio,
   GameView,
@@ -13,6 +13,8 @@ import {
   type Shape,
   type Vec3,
 } from "@nayan-ui/engine";
+import { GameLayout, HudPill, ScoreColumn, useGameInsets, usePop, type GameProps } from "../ui/GameLayout";
+import { useGameTheme } from "../ui/theme";
 
 /** 0 below `min`, 1 at `max` and above. */
 const strength = (speed: number, min: number, max: number) => Math.max(0, Math.min(1, (speed - min) / (max - min)));
@@ -36,6 +38,7 @@ const SPAWN_X = 9;
 const DESPAWN_X = -10;
 
 const SKY = [0.47, 0.73, 0.93] as const;
+const NIGHT_SKY = [0.227, 0.192, 0.376] as const; // Playtura's NIGHT_SCENE sky, as in dark mode
 const PIPE: Color = [0.36, 0.76, 0.26];
 const PIPE_CAP: Color = [0.27, 0.62, 0.19];
 const YELLOW: Color = [1, 0.82, 0.2];
@@ -56,6 +59,8 @@ const sfx = audio.load({
 type Phase = "ready" | "playing" | "dead" | "over";
 
 let best = 0;
+/** This session's best rounds, for the leaderboard (the example has no backend). */
+const topScores: number[] = [];
 // Reused for per-frame position reads, so the game loop doesn't allocate.
 const tmp: [number, number, number] = [0, 0, 0];
 
@@ -66,7 +71,7 @@ const aboutX = (angle: number) => [Math.sin(angle / 2), 0, 0, Math.cos(angle / 2
 type Pipe = { parts: Entity[]; probe: Entity; gapY: number; scored: boolean };
 type Scroller = { entity: Entity; wrap: number };
 
-function createGame() {
+function createGame(night: boolean) {
   const world = new World(320);
   world.gravity = [0, GRAVITY, 0];
   const solid = { physics: { type: "fixed" as const, layer: SOLID, mask: 0 } };
@@ -78,7 +83,7 @@ function createGame() {
     color: SAND,
     physics: { type: "fixed", layer: SOLID, mask: 0, friction: 0.8, bounce: 0.25 },
   });
-  const ceiling = world.spawn({ position: [0, CEILING_Y + 0.5, 0], scale: [80, 1, 4], color: SKY, ...solid });
+  const ceiling = world.spawn({ position: [0, CEILING_Y + 0.5, 0], scale: [80, 1, 4], color: night ? NIGHT_SKY : SKY, ...solid });
 
   const scrollers: Scroller[] = [];
   const scroll = (entity: Entity, speed: number, wrap: number) => {
@@ -329,6 +334,11 @@ function tick(g: Game, dt: number) {
     if (g.time - g.deadAt > 1.4) {
       g.phase = "over";
       best = Math.max(best, g.score);
+      if (g.score > 0) {
+        topScores.push(g.score);
+        topScores.sort((x, y) => y - x);
+        topScores.length = Math.min(topScores.length, 5);
+      }
       g.onPhase("over");
     }
   }
@@ -349,32 +359,32 @@ function autopilot(g: Game) {
   if (p[1] < target && v[1] < 1.5) flap(g);
 }
 
-function Round({ onRestart }: { onRestart: () => void }) {
-  const game = useMemo(createGame, []);
-  const light = useMemo<Light>(() => ({ direction: [0.3, 0.85, 0.55], ambient: 0.45, shadowExtent: 16 }), []);
+export type FlappyProps = GameProps;
+
+const DAY_LIGHT: Light = { direction: [0.3, 0.85, 0.55], ambient: 0.45, shadowExtent: 16 };
+const NIGHT_LIGHT: Light = { direction: [0.3, 0.85, 0.55], ambient: 0.6, shadowExtent: 16, color: [0.6, 0.64, 0.86] };
+
+function Round({ onRestart, night, ...props }: FlappyProps & { onRestart: () => void; night: boolean }) {
+  const game = useMemo(() => createGame(night), [night]);
+  const insets = useGameInsets();
   const [phase, setPhase] = useState<Phase>("ready");
   const [score, setScore] = useState(0);
   // HUD animations run on the UI thread (Reanimated), so the game loop never stutters them.
+  const [pop, bounce] = usePop();
   const flash = useSharedValue(0);
-  const pop = useSharedValue(1);
   const flashStyle = useAnimatedStyle(() => ({ opacity: flash.value }));
-  const popStyle = useAnimatedStyle(() => ({ transform: [{ scale: pop.value }] }));
-  const overAt = useRef(0);
 
   useEffect(() => {
-    game.onPhase = (p) => {
-      if (p === "over") overAt.current = Date.now();
-      setPhase(p);
-    };
+    game.onPhase = setPhase;
     game.onScore = (s) => {
       setScore(s);
-      pop.value = withSequence(withTiming(1.35, { duration: 0 }), withSpring(1, { damping: 8, stiffness: 320 }));
+      bounce();
     };
     game.onFlash = () => {
       flash.value = withSequence(withTiming(0.85, { duration: 0 }), withTiming(0, { duration: 350 }));
     };
     return () => game.world.dispose();
-  }, [game, flash, pop]);
+  }, [game, flash, bounce]);
 
   // Autoplay: start by itself and restart after a pause.
   useEffect(() => {
@@ -385,64 +395,60 @@ function Round({ onRestart }: { onRestart: () => void }) {
 
   const onUpdate = useMemo(() => (dt: number) => tick(game, dt), [game]);
 
-  const onTap = () => {
-    if (game.phase === "over") {
-      if (Date.now() - overAt.current > 500) {
-        haptics.selection();
-        onRestart();
-      }
-      return;
-    }
-    flap(game);
-  };
-
   const medal = score >= 40 ? "Gold" : score >= 20 ? "Silver" : score >= 10 ? "Bronze" : null;
+  const styles = useMemo(() => makeStyles(night), [night]);
 
   return (
-    <View style={styles.root}>
-      <GameView source={game.world} camera={game.camera} light={light} background={SKY} fog={0.016} onUpdate={onUpdate} />
-      <Pressable style={StyleSheet.absoluteFill} onPressIn={onTap} />
+    <GameLayout
+      {...props}
+      title="Flappy Bird"
+      subtitle={best > 0 ? `Best ${best}` : "Level 1"}
+      // The bird's tumble after a hit still belongs to the run.
+      phase={phase === "dead" ? "playing" : phase}
+      scoreboard={
+        <>
+          <ScoreColumn label="SCORE" value={score} pop={pop} />
+          <ScoreColumn label="BEST" value={Math.max(best, score)} />
+        </>
+      }
+      startHint="Tap to flap!"
+      onStart={() => flap(game)}
+      onStop={onRestart}
+      result={
+        phase === "over"
+          ? {
+              title: "GAME OVER",
+              message: score > 0 && score >= best ? "A new best!" : "The pipes got you!",
+              score,
+              best,
+              extra: medal ? <Text style={styles.medal}>{medal} medal</Text> : null,
+            }
+          : null
+      }
+      onPlayAgain={onRestart}
+      scores={topScores}
+      shareScore={Math.max(score, best)}
+      shareMessage={(s) => `I scored ${s} in Flappy Bird on the Nayan engine! Can you beat it?`}
+    >
+      <GameView source={game.world} camera={game.camera} light={night ? NIGHT_LIGHT : DAY_LIGHT} background={night ? NIGHT_SKY : SKY} fog={0.016} onUpdate={onUpdate} />
+      {/* Tap anywhere to flap (the first tap starts the run). */}
+      <Pressable style={StyleSheet.absoluteFill} onPressIn={() => flap(game)} disabled={phase === "over"} />
 
-      <View style={styles.hud} pointerEvents="none">
-        {phase !== "ready" && (
-          <Animated.Text style={[styles.score, popStyle]}>{score}</Animated.Text>
-        )}
-        {phase === "ready" && (
-          <>
-            <Text style={styles.title}>Flappy</Text>
-            <Text style={styles.subtitle}>Tap to flap</Text>
-          </>
-        )}
-      </View>
-
-      {phase === "over" && (
-        <View style={styles.panelWrap} pointerEvents="none">
-          <View style={styles.panel}>
-            <Text style={styles.panelTitle}>Game over</Text>
-            <View style={styles.row}>
-              <View style={styles.cell}>
-                <Text style={styles.label}>Score</Text>
-                <Text style={styles.value}>{score}</Text>
-              </View>
-              <View style={styles.cell}>
-                <Text style={styles.label}>Best</Text>
-                <Text style={styles.value}>{best}</Text>
-              </View>
-            </View>
-            {medal && <Text style={styles.medal}>{medal} medal</Text>}
-            <Text style={styles.again}>Tap to play again</Text>
-          </View>
+      {phase === "ready" && (
+        <View style={[styles.hud, { bottom: insets.bottom + 16 }]} pointerEvents="none">
+          <HudPill>Tap anywhere to flap · fly through the gaps</HudPill>
         </View>
       )}
 
       <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.flash, flashStyle]} />
-    </View>
+    </GameLayout>
   );
 }
 
-export function Flappy() {
+export function Flappy(props: FlappyProps) {
   const [round, setRound] = useState(0);
   const [loaded, setLoaded] = useState(false);
+  const theme = useGameTheme(props.theme);
   useEffect(() => {
     let alive = true;
     sfx.ready.then(() => alive && setLoaded(true));
@@ -451,35 +457,15 @@ export function Flappy() {
     };
   }, []);
   const restart = useMemo(() => () => setRound((r) => r + 1), []);
-  if (!loaded) return <View style={styles.root} />; // sounds decode in a few ms
-  return <Round key={round} onRestart={restart} />;
+  if (!loaded) return <View style={{ flex: 1, backgroundColor: theme.BACKGROUND }} />; // sounds decode in a few ms
+  // Dark mode flies at night; a new theme starts a fresh round.
+  return <Round key={`${round}-${theme.dark}`} {...props} onRestart={restart} night={theme.dark} />;
 }
 
-const shadow = { textShadowColor: "rgba(0,0,0,0.35)", textShadowOffset: { width: 0, height: 3 }, textShadowRadius: 0 };
-
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "rgb(120,186,237)" },
-  hud: { position: "absolute", top: 110, left: 0, right: 0, alignItems: "center" },
-  score: { color: "#fff", fontSize: 64, fontWeight: "900", fontVariant: ["tabular-nums"], ...shadow },
-  title: { color: "#fff", fontSize: 56, fontWeight: "900", ...shadow },
-  subtitle: { color: "#fff", fontSize: 22, fontWeight: "700", marginTop: 8, ...shadow },
-  panelWrap: { position: "absolute", top: 0, bottom: 0, left: 0, right: 0, alignItems: "center", justifyContent: "center" },
-  panel: {
-    backgroundColor: "#fdf3d0",
-    borderRadius: 18,
-    borderWidth: 4,
-    borderColor: "#5b3b16",
-    paddingVertical: 22,
-    paddingHorizontal: 30,
-    alignItems: "center",
-    gap: 12,
-  },
-  panelTitle: { color: "#e8692a", fontSize: 34, fontWeight: "900" },
-  row: { flexDirection: "row", gap: 36 },
-  cell: { alignItems: "center" },
-  label: { color: "#8a5a22", fontSize: 14, fontWeight: "700", textTransform: "uppercase" },
-  value: { color: "#3a2410", fontSize: 32, fontWeight: "900", fontVariant: ["tabular-nums"] },
-  medal: { color: "#b7791f", fontSize: 18, fontWeight: "800" },
-  again: { color: "#5b3b16", fontSize: 16, fontWeight: "700", marginTop: 4 },
-  flash: { backgroundColor: "#fff" },
-});
+function makeStyles(night: boolean) {
+  return StyleSheet.create({
+    hud: { position: "absolute", left: 16, right: 16, alignItems: "center" },
+    medal: { color: "#C9922B", fontSize: 18, fontWeight: "800", marginTop: -12, marginBottom: 16 },
+    flash: { backgroundColor: night ? "#C8C2E0" : "#fff" },
+  });
+}
