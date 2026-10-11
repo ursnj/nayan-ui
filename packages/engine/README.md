@@ -243,7 +243,10 @@ Tips:
 
 - Don't start Metro with `CI=1` while developing: it disables file watching and serves stale JS.
 - `EXPO_PUBLIC_AUTOPLAY=1` (set when starting Metro) makes a bot play the games: handy for demos and QA.
-- `EXPO_PUBLIC_SCREEN=racing` (or `flappy`, `benchmark`) opens that example first.
+- The example uses Expo Router: its home screen lists the examples, and a deep link opens one directly, e.g.
+  `npx uri-scheme open nayan-engine-example://car-racing --android` (or `flappy-bird`, `benchmark`).
+- The games share one layout (`example/games/ui/GameLayout.tsx`): header, scoreboard, controls, and the result,
+  leaderboard and settings cards. A game supplies its scene and scoreboard columns.
 
 ## How it stays fast
 

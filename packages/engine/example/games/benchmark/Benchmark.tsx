@@ -120,7 +120,7 @@ export function Benchmark() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#0a0c17" },
-  hud: { position: "absolute", top: 100, left: 16, gap: 4 },
+  hud: { position: "absolute", top: 16, left: 16, gap: 4 }, // under the navigator's header
   text: { color: "#fff", fontVariant: ["tabular-nums"] },
   row: { flexDirection: "row", gap: 8, marginTop: 6 },
   button: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: "#fff5" },
