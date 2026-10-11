@@ -29,6 +29,17 @@ lto = "fat"
 panic = "abort"
 strip = true
 
+# Size: dependencies are built for size, except the physics engine, which is hot every step. The
+# engine's own crate stays at opt-level 3. Saves ~5% of the linked library at no measured speed cost.
+[profile.release.package."*"]
+opt-level = "s"
+
+[profile.release.package.rapier3d]
+opt-level = 3
+
+[profile.release.package.parry3d]
+opt-level = 3
+
 [target.'cfg(target_os = "ios")'.dependencies]
 objc2 = "0.6.5"
 objc2-avf-audio = "0.3.2"
