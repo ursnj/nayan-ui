@@ -229,7 +229,45 @@ def wheel(radius, width, outer, z):
                       {"translation": [face - (0.02 if side > 0 else 0) + side * 0.02, radius, z], "rotation": rot}))
     return parts
 
-def write_car(name, body, cabin, wheels, *, pillar=None, nose, tail, spoiler=False, rails=False):
+def rear(body, cabin, tail, exhausts, sporty):
+    """Everything on the back panel: light clusters in dark housings joined by a light bar, reversing
+    lights, badge, number plate in a recess, boot-lid line, a finned diffuser, reflectors, exhaust tips
+    and a third brake light at the top of the rear window. Sized from the body's last section."""
+    ty, tz, tw = tail
+    _, w, yb, yt = body[-1]
+    h = yt - yb
+    y = lambda f: yb + h * f  # height on the back panel, 0 = bottom .. 1 = top
+    z = tz + 0.002
+    parts = [
+        (box(tw * 0.92, 0.008, 0.02), TRIM, {"translation": [0, y(0.86), z]}),              # boot-lid line
+        (box(tw * 0.62, 0.05, 0.05), TAIL, {"translation": [0, ty, z]}),                     # light bar
+        (box(0.11, 0.05, 0.03), CHROME, {"translation": [0, y(0.55), z]}),                    # badge
+        (box(0.5, 0.15, 0.02), TRIM, {"translation": [0, y(0.38), z]}),                      # plate recess
+        (box(0.42, 0.11, 0.025), PLATE, {"translation": [0, y(0.38), z + 0.005]}),
+        (box(w * 1.5, 0.1, 0.06), TRIM, {"translation": [0, y(0.08), z + 0.01]}),             # diffuser
+        *[(box(0.02, 0.1, 0.16), TRIM, {"translation": [x, y(0.08) - 0.02, z + 0.04]}) for x in (-0.3, -0.1, 0.1, 0.3)],
+    ]
+    for side in (-1, 1):
+        cx = side * (tw / 2 - 0.16)
+        parts += [
+            (box(0.4, 0.18, 0.04), TRIM, {"translation": [cx, ty - 0.02, z]}),               # light housing
+            (box(0.34, 0.12, 0.05), TAIL, {"translation": [cx, ty - 0.02, z + 0.004]}),
+            (box(0.12, 0.05, 0.055), HEAD, {"translation": [cx - side * 0.09, ty - 0.05, z + 0.006]}),  # reversing
+            (box(0.12, 0.04, 0.03), TAIL, {"translation": [side * (w * 0.78), y(0.2), z + 0.012]}),     # reflector
+        ]
+        if sporty:
+            parts.append((box(0.16, 0.09, 0.03), TRIM, {"translation": [side * (w * 0.62), y(0.42), z]}))  # vent
+    xs = (-0.5, -0.36, 0.36, 0.5) if exhausts == 4 else (-0.42, 0.42)
+    for x in xs:
+        parts += [
+            (prism(10, 0.055, 0.055, 0.14), CHROME, {"translation": [x, y(0.06), tz - 0.06], "rotation": quat_x(math.pi / 2)}),
+            (prism(10, 0.036, 0.036, 0.145), WELL, {"translation": [x, y(0.06), tz - 0.06], "rotation": quat_x(math.pi / 2)}),
+        ]
+    zr, _, _, yr = cabin[-2]
+    parts.append((box(0.5, 0.035, 0.04), TAIL, {"translation": [0, yr + 0.005, zr + 0.06]}))  # third brake light
+    return parts
+
+def write_car(name, body, cabin, wheels, *, pillar=None, nose, tail, spoiler=False, rails=False, exhausts=2):
     radius, width, zs = wheels
     body_w = max(st[1] for st in body)
     outer = body_w + 0.035
@@ -250,10 +288,7 @@ def write_car(name, body, cabin, wheels, *, pillar=None, nose, tail, spoiler=Fal
         (loft(band(body, 0.0, 0.2, 0.012), 22, 4.2), TRIM, {}),          # bumpers and side skirts
         *[(box(hw, 0.07, 0.04), HEAD, {"translation": [side * hx, hy, hz]}) for side in (-1, 1)],
         (box(hx * 1.3, 0.1, 0.05), TRIM, {"translation": [0, hy - 0.14, hz - 0.005]}),       # grille
-        (box(tw, 0.07, 0.05), TAIL, {"translation": [0, ty, tz]}),                           # light bar
-        *[(box(0.3, 0.12, 0.055), TAIL, {"translation": [side * (tw / 2 - 0.12), ty - 0.02, tz + 0.003]}) for side in (-1, 1)],
-        (box(0.42, 0.11, 0.02), PLATE, {"translation": [0, ty - 0.2, tz + 0.01]}),
-        *[(prism(8, 0.045, 0.045, 0.12), CHROME, {"translation": [side * 0.42, 0.28, tz - 0.06], "rotation": quat_x(math.pi / 2)}) for side in (-1, 1)],
+        *rear(body, cabin, tail, exhausts, spoiler),
     ]
     for z in zs:
         for side in (-1, 1):  # wheel wells: dark discs just outside the body, behind the tyres
@@ -281,6 +316,7 @@ write_car(
     nose=(0.4, 0.42, -2.3, 0.34),
     tail=(0.66, 2.32, 1.3),
     spoiler=True,
+    exhausts=4,
 )
 
 # Sedan: taller three-box shape with a boot and two side windows.
