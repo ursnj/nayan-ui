@@ -926,7 +926,7 @@ type Entity = number;  // opaque handle
 // Each 1 unit across before scaling. "none" isn't drawn.
 type Shape = "cube" | "sphere" | "plane" | "cylinder" | "cone" | "capsule" | "torus" | "roundedBox" | "none";
 
-function loadModel(source: number | string, options?: { center?: boolean; fit?: number }): Promise<Model>;
+function loadModel(source: number | string, options?: { center?: boolean; fit?: number; shine?: number }): Promise<Model>;
 type Model = { size: Vec3; id: number };  // pass as mesh; size at scale 1
 
 function loadTexture(source: number | string): Promise<Texture>;  // PNG or JPEG, up to 4096

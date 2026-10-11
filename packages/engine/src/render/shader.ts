@@ -20,6 +20,7 @@ struct Globals {
 @group(0) @binding(4) var<storage, read> regions: array<vec4f>;
 @group(1) @binding(0) var tex: texture_2d<f32>;
 @group(1) @binding(1) var texSampler: sampler;
+@group(1) @binding(2) var<uniform> material: vec4f; // x = shine (0 matte .. 1 polished)
 
 @vertex
 fn vs_shadow(@location(0) position: vec3f, @builtin(instance_index) instance: u32) -> @builtin(position) vec4f {
@@ -92,13 +93,26 @@ fn shadowFactor(ndc: vec3f) -> f32 {
 // Lit, fogged color of a surface.
 fn shade(in: VSOut, base: vec3f) -> vec3f {
   let n = normalize(in.normal);
-  let diffuse = max(dot(n, globals.light.xyz), 0.0) * shadowFactor(in.shadowPos);
+  let shadow = shadowFactor(in.shadowPos);
+  let diffuse = max(dot(n, globals.light.xyz), 0.0) * shadow;
   let hemisphere = mix(0.6, 1.0, n.y * 0.5 + 0.5); // sky/ground tint so faces away from the light aren't flat
   let lit = globals.light.w * hemisphere + (1.0 - globals.light.w) * diffuse;
+  var color = base * lit;
+  // Glossy materials: a sun highlight, and the sky reflected more strongly at grazing angles (Fresnel).
+  let shine = material.x;
+  if (shine > 0.0) {
+    let v = normalize(globals.camera.xyz - in.world);
+    let h = normalize(globals.light.xyz + v);
+    let highlight = pow(max(dot(n, h), 0.0), mix(16.0, 220.0, shine)) * shine * shadow;
+    let r = reflect(-v, n);
+    let sky = mix(vec3f(0.16, 0.15, 0.14), globals.fog.rgb * 1.08, smoothstep(-0.15, 0.35, r.y));
+    let fresnel = 0.05 + 0.95 * pow(1.0 - max(dot(n, v), 0.0), 5.0);
+    color = mix(color, sky, min(1.0, fresnel * shine)) + vec3f(highlight * 1.6);
+  }
   // Exponential-squared distance fog towards the background color: depth for far scenery.
   let d = distance(in.world, globals.camera.xyz) * globals.fog.a;
   let fog = 1.0 - exp(-d * d);
-  return mix(base * lit, globals.fog.rgb, fog);
+  return mix(color, globals.fog.rgb, fog);
 }
 
 @fragment

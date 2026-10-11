@@ -65,7 +65,7 @@ export function texturedMesh(mesh: number, texture: Texture): number {
     if (!base) throw new Error("texture: this mesh has nothing to draw");
     id = NativeEngine!.meshAlias(mesh);
     if (id < 0) throw new Error(`texture: ${NativeEngine!.loadError()}`);
-    registerMesh(id, { geometry: base.geometry, texture: texture.id });
+    registerMesh(id, { geometry: base.geometry, texture: texture.id, shine: base.shine });
     variants.set(key, id);
   }
   return id;

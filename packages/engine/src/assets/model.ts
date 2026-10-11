@@ -9,6 +9,11 @@ export type ModelOptions = {
   center?: boolean;
   /** Scale it so its largest side is this long (e.g. 1 to match the built-in shapes). Default: keep its size. */
   fit?: number;
+  /**
+   * How glossy, 0..1: a sharp sun highlight and a reflection of the sky that grows at grazing angles.
+   * 0 is matte; around 0.8 reads as car paint or glass. Default 0.
+   */
+  shine?: number;
 };
 
 /** A loaded model: pass it as an entity's `mesh`. Colliders sized from the mesh fit its bounding box. */
@@ -45,7 +50,8 @@ export function loadModel(source: AssetSource, options: ModelOptions = {}): Prom
   const uri = assetUri(source);
   const center = options.center ?? true;
   const fit = options.fit ?? 0;
-  const key = `${uri}|${center}|${fit}`;
+  const shine = Math.max(0, Math.min(1, options.shine ?? 0));
+  const key = `${uri}|${center}|${fit}|${shine}`;
   let pending = loads.get(key);
   if (!pending) {
     pending = loadAssetBytes(source)
@@ -53,7 +59,7 @@ export function loadModel(source: AssetSource, options: ModelOptions = {}): Prom
         const mesh = native.modelLoad(bytes, center, fit);
         if (mesh < 0) throw new Error(native.loadError() || "not a glTF model");
         const texture = native.modelTexture(mesh);
-        registerMesh(mesh, { geometry: nativeGeometry(mesh), texture: texture >= 0 ? texture : undefined });
+        registerMesh(mesh, { geometry: nativeGeometry(mesh), texture: texture >= 0 ? texture : undefined, shine });
         const [x, y, z] = native.modelSize(mesh);
         return { id: mesh, size: [x!, y!, z!] as Vec3 };
       })
