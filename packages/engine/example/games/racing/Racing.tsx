@@ -76,29 +76,19 @@ const sfx = audio.load({
 
 // ── Assets ──────────────────────────────────────────────────────────────
 
-type Kind = "sports" | "sedan" | "suv";
-/** Three models in one frame: a glossy white body the entity color paints, the windows, and untinted trim. */
+/**
+ * One car for everyone: Khronos' "Car Concept" (CC-BY 4.0, converted by scripts/import-car.py). A
+ * glossy white body each entity paints its own color, the windows, and untinted trim (tyres, lights).
+ */
 type CarModel = { body: Model; glass: Model; trim: Model; size: Vec3 };
-type Assets = { cars: Record<Kind, CarModel>; asphalt: Texture; facade: Texture; grass: Texture; ads: Texture[]; tree: Model };
+type Assets = { car: CarModel; asphalt: Texture; facade: Texture; grass: Texture; ads: Texture[]; tree: Model };
 
 let assets: Promise<Assets> | undefined;
 function loadAssets(): Promise<Assets> {
-  // Paint and glass are glossy (sun highlights, sky reflections); tyres and bumpers nearly matte.
-  const car = (body: number, glass: number, trim: number) =>
-    Promise.all([
-      loadModel(body, { center: false, shine: 0.85 }),
-      loadModel(glass, { center: false, shine: 0.95 }),
-      loadModel(trim, { center: false, shine: 0.12 }),
-    ]).then(([b, gl, t]) => ({
-      body: b,
-      glass: gl,
-      trim: t,
-      size: [Math.max(b.size[0], t.size[0]), Math.max(b.size[1], t.size[1]), Math.max(b.size[2], t.size[2])] as Vec3,
-    }));
   assets ??= Promise.all([
-    car(require("../../assets/models/sports_body.glb"), require("../../assets/models/sports_glass.glb"), require("../../assets/models/sports_trim.glb")),
-    car(require("../../assets/models/sedan_body.glb"), require("../../assets/models/sedan_glass.glb"), require("../../assets/models/sedan_trim.glb")),
-    car(require("../../assets/models/suv_body.glb"), require("../../assets/models/suv_glass.glb"), require("../../assets/models/suv_trim.glb")),
+    loadModel(require("../../assets/models/car_body.glb"), { center: false, shine: 0.85 }),
+    loadModel(require("../../assets/models/car_glass.glb"), { center: false, shine: 0.95 }),
+    loadModel(require("../../assets/models/car_trim.glb"), { center: false, shine: 0.25 }),
     loadTexture(require("../../assets/textures/asphalt.png")),
     loadTexture(require("../../assets/textures/facade.png")),
     loadTexture(require("../../assets/textures/grass.png")),
@@ -108,7 +98,14 @@ function loadAssets(): Promise<Assets> {
       loadTexture(require("../../assets/textures/ad_bolt.png")),
     ]),
     loadModel(require("../../assets/models/tree.glb"), { center: false }),
-  ]).then(([sports, sedan, suv, asphalt, facade, grass, ads, tree]) => ({ cars: { sports, sedan, suv }, asphalt, facade, grass, ads, tree }));
+  ]).then(([body, glass, trim, asphalt, facade, grass, ads, tree]) => ({
+    car: { body, glass, trim, size: [Math.max(body.size[0], trim.size[0]), Math.max(body.size[1], trim.size[1]), Math.max(body.size[2], trim.size[2])] as Vec3 },
+    asphalt,
+    facade,
+    grass,
+    ads,
+    tree,
+  }));
   return assets;
 }
 
@@ -195,7 +192,6 @@ function orient(heading: number, pitch: number, yaw = 0, roll = 0): Quat {
 type Phase = "ready" | "playing" | "over";
 type Car = {
   root: Entity;
-  kind: Kind;
   s: number;
   d: number;
   passed: boolean;
@@ -218,8 +214,8 @@ const pick = <T,>(items: readonly T[]) => items[Math.floor(Math.random() * items
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
 /** A car: an invisible root at its middle (the collider's centre once wrecked) with body, glass and trim attached. */
-function spawnCar(world: World, a: Assets, kind: Kind, paint: Color, position: Vec3) {
-  const model = a.cars[kind];
+function spawnCar(world: World, a: Assets, paint: Color, position: Vec3) {
+  const model = a.car;
   const root = world.spawn({ mesh: "none", position });
   const offset: Vec3 = [0, -model.size[1] / 2, 0];
   const body = world.spawn({ mesh: model.body, parent: root, position: offset, color: paint });
@@ -287,7 +283,7 @@ function createGame(a: Assets) {
     });
   }
 
-  const player = spawnCar(world, a, "sports", PLAYER_PAINT, [0, a.cars.sports.size[1] / 2, 0]);
+  const player = spawnCar(world, a, PLAYER_PAINT, [0, a.car.size[1] / 2, 0]);
   world.listener = player.root;
 
   const g = {
@@ -449,12 +445,11 @@ function spawnTraffic(g: Game, ahead = SPAWN_AHEAD) {
   const open = [0, 1, 2].filter((l) => !blocked.has(l));
   if (open.length <= 1) return;
   const d = LANES[pick(open)]!;
-  const kind = pick<Kind>(["sedan", "sedan", "suv", "sports"]);
   const t = g.track.sample(s, sample);
-  placeAt(t, d, g.assets.cars[kind].size[1] / 2, at);
-  const { root } = spawnCar(g.world, g.assets, kind, pick(PAINTS), [at[0], at[1], at[2]]);
+  placeAt(t, d, g.assets.car.size[1] / 2, at);
+  const { root } = spawnCar(g.world, g.assets, pick(PAINTS), [at[0], at[1], at[2]]);
   g.world.set(root, { rotation: orient(t.heading, t.pitch) });
-  g.traffic.push({ root, kind, s, d, passed: false, crashed: false, closest: Infinity });
+  g.traffic.push({ root, s, d, passed: false, crashed: false, closest: Infinity });
 }
 
 /** Moves an entity to (s, d) by giving it the velocity that gets it there this frame: the core smooths the rest. */
@@ -477,7 +472,7 @@ function crash(g: Game, car: Car) {
   const right = rightOf(t.heading);
   const fwd = forwardOf(t.heading);
   const side = Math.sign(car.d - g.d) || (Math.random() < 0.5 ? -1 : 1);
-  const size = g.assets.cars[car.kind].size;
+  const size = g.assets.car.size;
   g.world.set(car.root, {
     physics: { type: "dynamic", size: [size[0] * 0.95, size[1], size[2] * 0.95], layer: 8, mask: 4 | 8, bounce: 0.25, friction: 0.6, density: 0.4 },
     spin: [rand(-2, 2), rand(-5, 5), -side * rand(2, 5)],
@@ -573,7 +568,7 @@ function tick(g: Game, dt: number) {
   }
 
   g.s += g.speed * dt;
-  const size = g.assets.cars.sports.size;
+  const size = g.assets.car.size;
   const steerYaw = Math.atan2(g.lateral, Math.max(8, g.speed)) * 0.9;
   drive(g, g.player.root, g.s, g.d, size[1] / 2, dt, steerYaw, clamp(g.lateral * 0.006, -0.06, 0.06));
 
@@ -594,7 +589,7 @@ function tick(g: Game, dt: number) {
       if (!g.world.has(car.root)) g.traffic.splice(i, 1); // its lifetime ended
       continue;
     }
-    const carSize = g.assets.cars[car.kind].size;
+    const carSize = g.assets.car.size;
     car.s += TRAFFIC_SPEED * dt;
     drive(g, car.root, car.s, car.d, carSize[1] / 2, dt);
     const ds = car.s - g.s;
@@ -654,9 +649,10 @@ function tick(g: Game, dt: number) {
       cam.target[1] = drawn[1] + 0.2;
       cam.target[2] = drawn[2];
     } else {
-      ex = drawn[0] - fwd[0] * 8.6;
-      ey = drawn[1] + 3.1 + Math.max(0, -t.pitch) * 3;
-      ez = drawn[2] - fwd[2] * 8.6;
+      // Low, like Asphalt: it sees under the tail to the rear tyres.
+      ex = drawn[0] - fwd[0] * 7.6;
+      ey = drawn[1] + 2.5 + Math.max(0, -t.pitch) * 3;
+      ez = drawn[2] - fwd[2] * 7.6;
       cam.target[0] = drawn[0] + fwd[0] * 12;
       cam.target[1] = drawn[1] + 0.5 + Math.tan(t.pitch) * 12;
       cam.target[2] = drawn[2] + fwd[2] * 12;
@@ -809,6 +805,8 @@ function Run({ assets: a, onRestart }: { assets: Assets; onRestart: () => void }
             </Pressable>
             <Text style={styles.subtitle}>Dodge traffic to score!</Text>
             <Text style={styles.hint}>Drag to steer · tap NITRO to boost</Text>
+            {/* The car model is CC-BY 4.0: it must be credited. */}
+            <Text style={styles.credit}>Car: “Car Concept” by Khronos Group, after Unity Fan (CC BY 4.0)</Text>
           </View>
         </>
       )}
@@ -921,6 +919,7 @@ const styles = StyleSheet.create({
   readyBottom: { position: "absolute", bottom: 90, left: 0, right: 0, alignItems: "center", gap: 14 },
   subtitle: { color: "#fff", fontSize: 18, fontWeight: "700", ...shadow },
   hint: { color: "rgba(255,255,255,0.9)", fontSize: 14, fontWeight: "600", ...shadow },
+  credit: { color: "rgba(255,255,255,0.7)", fontSize: 10, marginTop: 6, ...shadow },
   button: { backgroundColor: "#ff4444", borderRadius: 14, paddingVertical: 14, paddingHorizontal: 36, marginTop: 4 },
   buttonText: { color: "#fff", fontSize: 20, fontWeight: "900" },
   panel: {

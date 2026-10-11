@@ -3,13 +3,11 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { isEngineAvailable } from "@nayan-ui/engine";
 import { Benchmark } from "./games/benchmark/Benchmark";
 import { Flappy } from "./games/flappy/Flappy";
-import { Models } from "./games/models/Models";
 import { Racing } from "./games/racing/Racing";
 
 const SCREENS = [
   { key: "racing", label: "Racing", Component: Racing },
   { key: "flappy", label: "Flappy", Component: Flappy },
-  { key: "models", label: "Models", Component: Models },
   { key: "benchmark", label: "Benchmark", Component: Benchmark },
 ] as const;
 
