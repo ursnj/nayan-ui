@@ -48,6 +48,7 @@ export const physicsOptionsAttributes = [
 export const modelOptionsAttributes = [
   { name: "center", type: "boolean", default: "true", details: "Move the model's middle to the origin, so position is its center." },
   { name: "fit", type: "number", default: "keep size", details: "Scale it so its largest side is this long, e.g. 1 to match the built-in shapes." },
+  { name: "shine", type: "number", default: "0", details: "How glossy, 0..1: a sharp sun highlight and a sky reflection that grows at grazing angles. 0 is matte; about 0.85 reads as car paint, 0.95 as glass. Load glossy and matte parts as separate models." },
 ];
 
 export const gameViewAttributes = [

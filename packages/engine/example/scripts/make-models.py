@@ -143,69 +143,170 @@ write_glb(os.path.join(here, "rocket.glb"), [
 ])
 
 # ── Cars ────────────────────────────────────────────────────────────────────
-# Each car is two models in the same frame (front at -z, wheels on y = 0): a white body that the
-# entity color tints to any paint, and untinted trim (glass, tyres, rims, lights). Lights sit just outside
-# the body's end caps, or the body hides them.
-GLASS, TYRE, RIM = [0.07, 0.09, 0.12, 1], [0.04, 0.04, 0.045, 1], [0.72, 0.73, 0.76, 1]
-HEAD, TAIL, DARK, PAINT = [1, 0.96, 0.82, 1], [0.85, 0.05, 0.04, 1], [0.05, 0.05, 0.06, 1], [1, 1, 1, 1]
+# Each car is three models in the same frame (front at -z, wheels on y = 0): a white body (paint, roof,
+# pillars, mirrors) that the entity color tints to any paint, the windows, and untinted trim (bumpers,
+# tyres, alloys, lights). Details sit just outside the surfaces they belong to, or the body hides them.
+GLASS, TYRE, ALLOY, WELL = [0.05, 0.07, 0.1, 1], [0.035, 0.035, 0.04, 1], [0.78, 0.79, 0.82, 1], [0.02, 0.02, 0.025, 1]
+HEAD, TAIL, TRIM, PLATE = [1, 0.97, 0.88, 1], [0.8, 0.03, 0.03, 1], [0.07, 0.07, 0.08, 1], [0.93, 0.93, 0.9, 1]
+PAINT, CHROME = [1, 1, 1, 1], [0.7, 0.7, 0.72, 1]
 
-def wheels(radius, width, x, zs):
-    """Tyres (axis along x, outer face at |x|) with a rim disc on the outside."""
+def patch(stations, a0, a1, grow, steps=10, n=3.4):
+    """Part of a loft's surface: section angles a0..a1 (0 = right side, pi/2 = top, pi = left) over the
+    given stations, inflated by `grow` so it sits on top of the full loft (windows on a cabin)."""
+    rings = []
+    for z, w, yb, yt in stations:
+        w, yt = w + grow, yt + grow
+        ym, h = (yb + yt) / 2, (yt - yb) / 2
+        ring = []
+        for i in range(steps + 1):
+            a = a0 + (a1 - a0) * i / steps
+            c, s_ = math.cos(a), math.sin(a)
+            ring.append((w * math.copysign(abs(c) ** (2 / n), c), ym + h * math.copysign(abs(s_) ** (2 / n), s_), z))
+        rings.append(ring)
+    acc = [[[0.0, 0.0, 0.0] for _ in range(steps + 1)] for _ in rings]
+    quads = []
+    for k in range(len(rings) - 1):
+        for i in range(steps):
+            A, B, C, D = rings[k][i], rings[k][i + 1], rings[k + 1][i + 1], rings[k + 1][i]
+            nrm = cross(sub(B, A), sub(D, A))
+            if sum(x * x for x in nrm) < 1e-12:
+                nrm = cross(sub(C, B), sub(D, B))
+            for kk, ii in ((k, i), (k, i + 1), (k + 1, i + 1), (k + 1, i)):
+                for t in range(3):
+                    acc[kk][ii][t] += nrm[t]
+            quads.append(((k, i), (k, i + 1), (k + 1, i + 1), (k + 1, i)))
+    unit = lambda v: [x / (math.sqrt(sum(y * y for y in v)) or 1) for x in v]
+    pos, nor = [], []
+    for q in quads:
+        for kk, ii in (q[0], q[1], q[2], q[0], q[2], q[3]):
+            pos.append(rings[kk][ii]); nor.append(unit(acc[kk][ii]))
+    return pos, nor
+
+def windows(cabin, grow=0.012):
+    """Windshield, rear window and side windows as panels over a cabin loft; the roof and pillars
+    between them stay painted."""
+    pi = math.pi
+    front, rear, middle = cabin[:2], cabin[-2:], cabin[1:-1]
+    parts = [patch(front, 0.8, pi - 0.8, grow), patch(rear, 0.8, pi - 0.8, grow)]
+    parts += [patch(middle, -0.3, 0.88, grow), patch(middle, pi - 0.88, pi + 0.3, grow)]
+    pos, nor = [], []
+    for p_, n_ in parts:
+        pos += p_; nor += n_
+    return pos, nor
+
+def quat_x(angle):
+    return [math.sin(angle / 2), 0, 0, math.cos(angle / 2)]
+
+def band(stations, lo, hi, grow):
+    """A loft over part of each section's height (lo..hi as fractions), pushed out by `grow`."""
+    out = []
+    for z, w, yb, yt in stations:
+        h = yt - yb
+        out.append((z, w + grow, yb + h * lo, max(yb + h * lo + 0.002, yb + h * hi)))
+    return out
+
+def width_at(stations, z):
+    """Half width of a loft at z (linear between stations)."""
+    for (z0, w0, *_), (z1, w1, *_) in zip(stations, stations[1:]):
+        if z0 <= z <= z1:
+            return w0 + (w1 - w0) * (z - z0) / (z1 - z0)
+    return stations[0][1] if z < stations[0][0] else stations[-1][1]
+
+def wheel(radius, width, outer, z):
+    """Tyre with a dark rim face, five silver spokes and a hub; `outer` is the tyre's outside x (>0)."""
     parts = []
     for side in (-1, 1):
-        for z in zs:
-            # prism runs along +y; rotated -90° about z it runs along +x, from the translation outwards.
-            start = x - width if side > 0 else -x
-            parts.append((prism(14, radius, radius, width), TYRE, {"translation": [start, radius, z], "rotation": quat_z(-math.pi / 2)}))
-            parts.append((prism(10, radius * 0.62, radius * 0.62, 0.02), RIM,
-                          {"translation": [side * x, radius, z], "rotation": quat_z(-side * math.pi / 2)}))
+        start = outer - width if side > 0 else -outer
+        rot = quat_z(-math.pi / 2)  # prism runs along +y; this turns it to +x, from the translation outwards
+        parts.append((prism(18, radius, radius, width), TYRE, {"translation": [start, radius, z], "rotation": rot}))
+        face = side * (outer + 0.004)
+        parts.append((prism(16, radius * 0.66, radius * 0.66, 0.006), [0.12, 0.12, 0.13, 1],
+                      {"translation": [face - (0.006 if side > 0 else 0), radius, z], "rotation": rot}))
+        for k in range(5):
+            parts.append((box(0.02, radius * 1.22, 0.06), ALLOY,
+                          {"translation": [side * (outer + 0.014), radius, z], "rotation": quat_x(k * math.pi / 5)}))
+        parts.append((prism(10, radius * 0.16, radius * 0.16, 0.02), ALLOY,
+                      {"translation": [face - (0.02 if side > 0 else 0) + side * 0.02, radius, z], "rotation": rot}))
     return parts
 
-def write_car(name, body, cabin, wheel, lights, extras=()):
-    write_glb(os.path.join(here, f"{name}_body.glb"), [(loft(body, 16, 4.5), PAINT, {})])
-    radius, width, wx, wzs = wheel
-    (hx, hy, hz), (tx, ty, tz) = lights
-    write_glb(os.path.join(here, f"{name}_trim.glb"), [
-        (loft(cabin, 14, 3.2), GLASS, {}),
-        *wheels(radius, width, wx, wzs),
-        *[(box(0.36, 0.11, 0.06), HEAD, {"translation": [side * hx, hy, hz]}) for side in (-1, 1)],
-        *[(box(0.42, 0.1, 0.05), TAIL, {"translation": [side * tx, ty, tz]}) for side in (-1, 1)],
-        (box(hx * 1.1, 0.12, 0.05), DARK, {"translation": [0, hy - 0.13, hz + 0.01]}),  # grille
-        *extras,
-    ])
+def write_car(name, body, cabin, wheels, *, pillar=None, nose, tail, spoiler=False, rails=False):
+    radius, width, zs = wheels
+    body_w = max(st[1] for st in body)
+    outer = body_w + 0.035
+    # Body: paint, roof and pillars (the cabin is painted; glass is a band over it in the trim).
+    paint = [(loft(body, 22, 4.2), PAINT, {}), (loft(cabin, 18, 3.4), PAINT, {})]
+    mz = cabin[0][0] + 0.35
+    for side in (-1, 1):
+        paint.append((box(0.12, 0.07, 0.1), PAINT, {"translation": [side * (width_at(cabin, mz) + 0.07), cabin[0][2] + 0.1, mz]}))  # mirrors
+        if pillar is not None:
+            paint.append((box(0.05, cabin[1][3] - cabin[1][2], 0.11), PAINT,
+                          {"translation": [side * (width_at(cabin, pillar) + 0.012), (cabin[1][2] + cabin[1][3]) / 2 + 0.02, pillar]}))
+    write_glb(os.path.join(here, f"{name}_body.glb"), paint)
 
-# Sports car: low wedge, long hood, fastback cabin, rear wing.
+    (hx, hy, hz, hw), (ty, tz, tw) = nose, tail
+    # Windows all round, as their own model so they can be glossier than the trim.
+    write_glb(os.path.join(here, f"{name}_glass.glb"), [(windows(cabin), GLASS, {})])
+    trim = [
+        (loft(band(body, 0.0, 0.2, 0.012), 22, 4.2), TRIM, {}),          # bumpers and side skirts
+        *[(box(hw, 0.07, 0.04), HEAD, {"translation": [side * hx, hy, hz]}) for side in (-1, 1)],
+        (box(hx * 1.3, 0.1, 0.05), TRIM, {"translation": [0, hy - 0.14, hz - 0.005]}),       # grille
+        (box(tw, 0.07, 0.05), TAIL, {"translation": [0, ty, tz]}),                           # light bar
+        *[(box(0.3, 0.12, 0.055), TAIL, {"translation": [side * (tw / 2 - 0.12), ty - 0.02, tz + 0.003]}) for side in (-1, 1)],
+        (box(0.42, 0.11, 0.02), PLATE, {"translation": [0, ty - 0.2, tz + 0.01]}),
+        *[(prism(8, 0.045, 0.045, 0.12), CHROME, {"translation": [side * 0.42, 0.28, tz - 0.06], "rotation": quat_x(math.pi / 2)}) for side in (-1, 1)],
+    ]
+    for z in zs:
+        for side in (-1, 1):  # wheel wells: dark discs just outside the body, behind the tyres
+            trim.append((prism(20, radius * 1.24, radius * 1.24, 0.01), WELL,
+                         {"translation": [side * (width_at(body, z) + 0.004), radius, z],
+                          "rotation": quat_z(-side * math.pi / 2)}))
+        trim += wheel(radius, width, outer, z)
+    if spoiler:
+        trim.append((box(body_w * 1.75, 0.04, 0.3), TRIM, {"translation": [0, body[-2][3] + 0.24, body[-2][0] + 0.05]}))
+        trim += [(box(0.05, 0.24, 0.14), TRIM, {"translation": [side * 0.55, body[-2][3] + 0.11, body[-2][0] + 0.05]}) for side in (-1, 1)]
+    if rails:
+        trim += [(box(0.05, 0.06, (cabin[-2][0] - cabin[1][0]) * 0.95), TRIM,
+                  {"translation": [side * 0.7, cabin[2][3] + 0.04, (cabin[-2][0] + cabin[1][0]) / 2]}) for side in (-1, 1)]
+    write_glb(os.path.join(here, f"{name}_trim.glb"), trim)
+
+# Sports car: low wedge nose, long hood, fastback cabin, rear wing.
 write_car(
     "sports",
-    body=[(-2.25, 0.62, 0.30, 0.52), (-2.05, 0.84, 0.24, 0.62), (-1.4, 0.94, 0.20, 0.72), (-0.6, 0.97, 0.20, 0.78),
-          (0.4, 0.98, 0.20, 0.82), (1.3, 0.97, 0.22, 0.85), (1.95, 0.92, 0.26, 0.84), (2.25, 0.82, 0.32, 0.78)],
-    cabin=[(-0.75, 0.80, 0.74, 0.76), (-0.25, 0.74, 0.76, 1.04), (0.35, 0.68, 0.78, 1.14), (0.95, 0.66, 0.80, 1.08),
-           (1.55, 0.72, 0.82, 0.88), (1.85, 0.76, 0.83, 0.84)],
-    wheel=(0.34, 0.26, 0.98, (-1.4, 1.4)),
-    lights=((0.38, 0.43, -2.27), (0.5, 0.62, 2.27)),
-    extras=[(box(1.7, 0.05, 0.32), DARK, {"translation": [0, 1.06, 2.0]}),
-            *[(box(0.06, 0.24, 0.16), DARK, {"translation": [side * 0.6, 0.94, 2.02]}) for side in (-1, 1)]],
+    body=[(-2.28, 0.58, 0.30, 0.48), (-2.15, 0.80, 0.24, 0.58), (-1.75, 0.92, 0.21, 0.66), (-1.1, 0.96, 0.20, 0.72),
+          (-0.4, 0.97, 0.20, 0.77), (0.4, 0.98, 0.20, 0.81), (1.2, 0.98, 0.22, 0.84), (1.8, 0.95, 0.25, 0.84),
+          (2.15, 0.88, 0.29, 0.81), (2.3, 0.78, 0.33, 0.76)],
+    cabin=[(-0.8, 0.80, 0.74, 0.76), (-0.35, 0.75, 0.76, 1.02), (0.25, 0.68, 0.78, 1.15), (0.85, 0.66, 0.80, 1.12),
+           (1.45, 0.70, 0.81, 0.96), (1.95, 0.76, 0.82, 0.84)],
+    wheels=(0.34, 0.27, (-1.42, 1.38)),
+    nose=(0.4, 0.42, -2.3, 0.34),
+    tail=(0.66, 2.32, 1.3),
+    spoiler=True,
 )
 
-# Sedan: taller, three-box shape with a boot.
+# Sedan: taller three-box shape with a boot and two side windows.
 write_car(
     "sedan",
-    body=[(-2.3, 0.70, 0.32, 0.66), (-2.1, 0.86, 0.26, 0.76), (-1.2, 0.92, 0.24, 0.84), (-0.4, 0.93, 0.24, 0.86),
-          (0.8, 0.93, 0.24, 0.88), (1.6, 0.92, 0.26, 0.92), (2.15, 0.86, 0.30, 0.92), (2.35, 0.76, 0.36, 0.86)],
-    cabin=[(-0.65, 0.84, 0.84, 0.86), (-0.15, 0.80, 0.86, 1.30), (0.55, 0.78, 0.88, 1.38), (1.15, 0.78, 0.88, 1.36),
-           (1.55, 0.82, 0.90, 0.96)],
-    wheel=(0.35, 0.24, 0.95, (-1.45, 1.45)),
-    lights=((0.44, 0.52, -2.32), (0.45, 0.72, 2.37)),
+    body=[(-2.35, 0.68, 0.32, 0.64), (-2.2, 0.84, 0.26, 0.74), (-1.6, 0.91, 0.24, 0.82), (-0.8, 0.93, 0.24, 0.85),
+          (0.2, 0.93, 0.24, 0.87), (1.2, 0.93, 0.25, 0.89), (1.85, 0.91, 0.27, 0.92), (2.25, 0.85, 0.31, 0.92),
+          (2.38, 0.76, 0.36, 0.86)],
+    cabin=[(-0.7, 0.84, 0.84, 0.86), (-0.2, 0.80, 0.86, 1.30), (0.5, 0.78, 0.88, 1.40), (1.1, 0.78, 0.88, 1.38),
+           (1.6, 0.82, 0.90, 0.98)],
+    wheels=(0.35, 0.25, (-1.45, 1.45)),
+    pillar=0.42,
+    nose=(0.46, 0.52, -2.37, 0.36),
+    tail=(0.74, 2.4, 1.4),
 )
 
 # SUV: boxy and tall, with roof rails.
 write_car(
     "suv",
-    body=[(-2.35, 0.80, 0.40, 0.86), (-2.15, 0.94, 0.34, 0.98), (-1.3, 0.98, 0.32, 1.06), (0.2, 0.99, 0.32, 1.08),
-          (1.6, 0.99, 0.34, 1.10), (2.25, 0.96, 0.38, 1.12), (2.4, 0.88, 0.44, 1.08)],
-    cabin=[(-1.0, 0.92, 1.04, 1.08), (-0.55, 0.90, 1.06, 1.62), (0.6, 0.90, 1.08, 1.70), (2.1, 0.90, 1.10, 1.68),
-           (2.32, 0.88, 1.10, 1.40)],
-    wheel=(0.42, 0.3, 1.0, (-1.45, 1.5)),
-    lights=((0.5, 0.66, -2.37), (0.55, 0.9, 2.42)),
-    extras=[*[(box(0.06, 0.06, 2.6), DARK, {"translation": [side * 0.7, 1.75, 0.8]}) for side in (-1, 1)]],
+    body=[(-2.4, 0.80, 0.40, 0.84), (-2.25, 0.93, 0.34, 0.97), (-1.6, 0.98, 0.32, 1.05), (-0.4, 0.99, 0.32, 1.08),
+          (0.9, 0.99, 0.33, 1.09), (1.9, 0.99, 0.35, 1.11), (2.32, 0.95, 0.39, 1.12), (2.44, 0.87, 0.45, 1.08)],
+    cabin=[(-1.05, 0.92, 1.04, 1.08), (-0.6, 0.90, 1.06, 1.64), (0.55, 0.90, 1.08, 1.72), (1.9, 0.90, 1.10, 1.70),
+           (2.34, 0.88, 1.10, 1.42)],
+    wheels=(0.43, 0.31, (-1.48, 1.52)),
+    pillar=0.6,
+    nose=(0.52, 0.68, -2.42, 0.4),
+    tail=(0.92, 2.46, 1.5),
+    rails=True,
 )

@@ -245,7 +245,9 @@ Tips:
 
 ## How it stays fast
 
-- One pipeline, one instanced `drawIndexed` per mesh in use. Model matrices live in a storage buffer.
+- One instanced `drawIndexed` per mesh in use. Model matrices live in a storage buffer.
+- Glossy models (`loadModel(src, { shine })`) get a sun highlight and Fresnel sky reflection from a per-mesh
+  material, at no per-instance cost.
 - One `writeBuffer` for all matrices per frame. No per-entity JS↔native calls.
 - 4x MSAA with depth/MSAA targets set to `storeOp: "discard"`, so tile GPUs keep them on-chip.
 - Resolution capped per quality level (phones with 3x+ screens don't draw every pixel); `"auto"` drops a level

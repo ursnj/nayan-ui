@@ -51,8 +51,10 @@ export class Renderer {
   private sampler: GPUSampler;
   /** GPU geometry per mesh id, uploaded the first time an entity uses that mesh. */
   private meshBuffers = new Map<number, MeshBuffers>();
-  /** Texture bind group per texture id (WHITE for none), uploaded on first use. */
-  private textureGroups = new Map<number, { group: GPUBindGroup; cutout: boolean }>();
+  /** Texture and material bind group per texture id (WHITE for none) and shine, made on first use. */
+  private textureGroups = new Map<string, { group: GPUBindGroup; cutout: boolean }>();
+  /** GPU textures by texture id, shared by every material that uses them. */
+  private textures = new Map<number, { view: GPUTextureView; cutout: boolean }>();
   private globals: GPUBuffer;
   private globalsData = new Float32Array(GLOBALS_FLOATS);
   private matrixBuffer: GPUBuffer;
@@ -132,6 +134,7 @@ export class Renderer {
       entries: [
         { binding: 0, visibility: F, texture: { sampleType: "float" } },
         { binding: 1, visibility: F, sampler: { type: "filtering" } },
+        { binding: 2, visibility: F, buffer: { type: "uniform" } }, // material: x = shine
       ],
     });
     // The shadow pass writes the shadow map, so it can't bind it: it gets a layout without it.
@@ -408,7 +411,7 @@ export class Renderer {
     const { vertices, indices } = info.geometry;
     // 16-bit indices halve index fetches; every built-in shape and most models fit.
     const short = vertices.length / VERTEX_FLOATS <= 0x10000;
-    const texture = this.textureGroup(info.texture ?? WHITE);
+    const texture = this.textureGroup(info.texture ?? WHITE, info.shine ?? 0);
     buffers = {
       vertices: upload(vertices, GPUBufferUsage.VERTEX),
       indices: upload(short ? Uint16Array.from(indices) : indices, GPUBufferUsage.INDEX),
@@ -421,8 +424,28 @@ export class Renderer {
     return buffers;
   }
 
-  private textureGroup(id: number) {
-    let entry = this.textureGroups.get(id);
+  private textureGroup(id: number, shine: number) {
+    const key = `${id}:${shine}`;
+    let entry = this.textureGroups.get(key);
+    if (entry) return entry;
+    const texture = this.texture(id);
+    const material = this.device.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    this.device.queue.writeBuffer(material, 0, new Float32Array([shine, 0, 0, 0]));
+    const group = this.device.createBindGroup({
+      layout: this.textureLayout,
+      entries: [
+        { binding: 0, resource: texture.view },
+        { binding: 1, resource: this.sampler },
+        { binding: 2, resource: { buffer: material } },
+      ],
+    });
+    entry = { group, cutout: texture.cutout };
+    this.textureGroups.set(key, entry);
+    return entry;
+  }
+
+  private texture(id: number) {
+    let entry = this.textures.get(id);
     if (entry) return entry;
     const image = id === WHITE ? { width: 1, height: 1, pixels: new Uint8Array([255, 255, 255, 255]) } : textureImage(id);
     const texture = this.device.createTexture({
@@ -431,17 +454,11 @@ export class Renderer {
       usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
     });
     this.device.queue.writeTexture({ texture }, image.pixels, { bytesPerRow: image.width * 4 }, { width: image.width, height: image.height });
-    const group = this.device.createBindGroup({
-      layout: this.textureLayout,
-      entries: [
-        { binding: 0, resource: texture.createView() },
-        { binding: 1, resource: this.sampler },
-      ],
-    });
-    entry = { group, cutout: hasCutout(image.pixels) };
-    this.textureGroups.set(id, entry);
+    entry = { view: texture.createView(), cutout: hasCutout(image.pixels) };
+    this.textures.set(id, entry);
     return entry;
   }
+
 }
 
 /** True if any texel is see-through enough for `fs_cutout` to discard it (alpha below 0.5). */

@@ -77,22 +77,28 @@ const sfx = audio.load({
 // ── Assets ──────────────────────────────────────────────────────────────
 
 type Kind = "sports" | "sedan" | "suv";
-/** Two models in one frame: a white body the entity color paints, and untinted glass, tyres and lights. */
-type CarModel = { body: Model; trim: Model; size: Vec3 };
+/** Three models in one frame: a glossy white body the entity color paints, the windows, and untinted trim. */
+type CarModel = { body: Model; glass: Model; trim: Model; size: Vec3 };
 type Assets = { cars: Record<Kind, CarModel>; asphalt: Texture; facade: Texture; tree: Model };
 
 let assets: Promise<Assets> | undefined;
 function loadAssets(): Promise<Assets> {
-  const car = (body: number, trim: number) =>
-    Promise.all([loadModel(body, { center: false }), loadModel(trim, { center: false })]).then(([b, t]) => ({
+  // Paint and glass are glossy (sun highlights, sky reflections); tyres and bumpers nearly matte.
+  const car = (body: number, glass: number, trim: number) =>
+    Promise.all([
+      loadModel(body, { center: false, shine: 0.85 }),
+      loadModel(glass, { center: false, shine: 0.95 }),
+      loadModel(trim, { center: false, shine: 0.12 }),
+    ]).then(([b, gl, t]) => ({
       body: b,
+      glass: gl,
       trim: t,
       size: [Math.max(b.size[0], t.size[0]), Math.max(b.size[1], t.size[1]), Math.max(b.size[2], t.size[2])] as Vec3,
     }));
   assets ??= Promise.all([
-    car(require("../../assets/models/sports_body.glb"), require("../../assets/models/sports_trim.glb")),
-    car(require("../../assets/models/sedan_body.glb"), require("../../assets/models/sedan_trim.glb")),
-    car(require("../../assets/models/suv_body.glb"), require("../../assets/models/suv_trim.glb")),
+    car(require("../../assets/models/sports_body.glb"), require("../../assets/models/sports_glass.glb"), require("../../assets/models/sports_trim.glb")),
+    car(require("../../assets/models/sedan_body.glb"), require("../../assets/models/sedan_glass.glb"), require("../../assets/models/sedan_trim.glb")),
+    car(require("../../assets/models/suv_body.glb"), require("../../assets/models/suv_glass.glb"), require("../../assets/models/suv_trim.glb")),
     loadTexture(require("../../assets/textures/asphalt.png")),
     loadTexture(require("../../assets/textures/facade.png")),
     loadModel(require("../../assets/models/tree.glb"), { center: false }),
@@ -195,14 +201,15 @@ const rand = (min: number, max: number) => min + Math.random() * (max - min);
 const pick = <T,>(items: readonly T[]) => items[Math.floor(Math.random() * items.length)]!;
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
-/** A car: an invisible root at its middle (the collider's centre once wrecked) with body and trim attached. */
+/** A car: an invisible root at its middle (the collider's centre once wrecked) with body, glass and trim attached. */
 function spawnCar(world: World, a: Assets, kind: Kind, paint: Color, position: Vec3) {
   const model = a.cars[kind];
   const root = world.spawn({ mesh: "none", position });
   const offset: Vec3 = [0, -model.size[1] / 2, 0];
   const body = world.spawn({ mesh: model.body, parent: root, position: offset, color: paint });
+  const glass = world.spawn({ mesh: model.glass, parent: root, position: offset });
   const trim = world.spawn({ mesh: model.trim, parent: root, position: offset });
-  return { root, body, trim };
+  return { root, body, glass, trim };
 }
 
 function createGame(a: Assets) {
@@ -401,7 +408,7 @@ function crash(g: Game, car: Car) {
   const [r, gr, b] = PLAYER_PAINT;
   const blink = { duration: 0.2, repeat: 7 };
   g.world.animate(g.player.body, [{ color: [r, gr, b, 0.25] }, { color: [r, gr, b, 1] }], blink);
-  g.world.animate(g.player.trim, [{ color: [1, 1, 1, 0.25] }, { color: [1, 1, 1, 1] }], blink);
+  for (const part of [g.player.glass, g.player.trim]) g.world.animate(part, [{ color: [1, 1, 1, 0.25] }, { color: [1, 1, 1, 1] }], blink);
 }
 
 function end(g: Game) {

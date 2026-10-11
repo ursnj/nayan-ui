@@ -181,7 +181,8 @@ function plane() {
 export type MeshGeometry = { vertices: Float32Array; indices: Uint32Array };
 
 /** What the renderer draws for a mesh id: geometry, and a texture id (see `loadTexture`) if any. */
-export type MeshInfo = { geometry: MeshGeometry; texture?: number };
+/** `shine` 0..1: how glossy (sun highlight and sky reflection), 0 = matte. */
+export type MeshInfo = { geometry: MeshGeometry; texture?: number; shine?: number };
 
 const BUILT_IN: Partial<Record<Shape, () => Builder>> = {
   cube,
