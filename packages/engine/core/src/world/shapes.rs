@@ -16,6 +16,10 @@ pub const CAPSULE: u8 = 5;
 pub const TORUS: u8 = 6;
 /// A unit cube with rounded edges.
 pub const ROUNDED_BOX: u8 = 7;
+/// A soft sprite facing the camera (fire, smoke, dust): always drawn see-through.
+pub const PUFF: u8 = 8;
+/// The same sprite, drawn additively (fire, sparks, glows): always see-through.
+pub const FLAME: u8 = 9;
 /// Not drawn: groups, pivots, text roots, invisible trigger zones.
 pub const NONE: u8 = 15;
 

@@ -1,6 +1,6 @@
 // One shader module, four pipelines: `vs_shadow` renders depth from the light; `vs` + `fs_opaque`
 // draw solid instances (sampling that depth for shadows), `vs` + `fs_cutout` solid ones whose texture
-// has holes, and `vs` + `fs_blend` see-through ones.
+// has holes, and `vs` + `fs_blend` see-through ones (including "puff" sprites, which face the camera).
 // Each instance reads its model matrix, color and texture region from storage buffers; each mesh
 // binds its texture (white when it has none).
 export const SHADER = /* wgsl */ `
@@ -35,6 +35,7 @@ struct VSOut {
   @location(2) world: vec3f,
   @location(3) uv: vec2f,
   @location(4) shadowPos: vec3f, // position in the light's clip space (orthographic, so w = 1)
+  @location(5) sprite: vec4f, // puffs: xyz = toward the camera, w = 1 (0 for everything else)
 };
 
 @vertex
@@ -46,7 +47,17 @@ fn vs(
   @builtin(instance_index) instance: u32,
 ) -> VSOut {
   let model = models[instance];
-  let world = model * vec4f(position, 1.0);
+  var world = model * vec4f(position, 1.0);
+  // Zero normals mark a puff: a sprite turned to face the camera, sized by the instance's x / y scale.
+  let sprite = dot(normal, normal) < 0.5;
+  var toward = vec3f(0.0);
+  if (sprite) {
+    let center = model[3].xyz;
+    toward = normalize(globals.camera.xyz - center);
+    let right = normalize(cross(-toward, select(vec3f(0.0, 1.0, 0.0), vec3f(0.0, 0.0, 1.0), abs(toward.y) > 0.99)));
+    let up = cross(right, -toward);
+    world = vec4f(center + right * position.x * length(model[0].xyz) + up * position.y * length(model[1].xyz), 1.0);
+  }
   // Normals need the inverse-transpose so stretched shapes stay lit correctly. For a 3x3 matrix with
   // columns a, b, c that is (b x c, c x a, a x b) / det; the scale doesn't matter (normalized later).
   let a = model[0].xyz;
@@ -61,6 +72,7 @@ fn vs(
   out.world = world.xyz;
   out.uv = mix(region.xy, region.zw, uv);
   out.shadowPos = (globals.lightViewProj * world).xyz; // per vertex: saves a matrix per pixel
+  out.sprite = vec4f(toward, select(0.0, 1.0, sprite));
   return out;
 }
 
@@ -114,9 +126,10 @@ fn shade(in: VSOut, base: vec3f) -> vec3f {
     let fresnel = 0.05 + 0.95 * pow(1.0 - max(dot(n, v), 0.0), 5.0);
     color = mix(color, sky, min(1.0, fresnel * shine)) + highlight * 1.6 * globals.lightColor.rgb;
   }
-  // Exponential-squared distance fog towards the background color: depth for far scenery.
+  // Exponential-squared distance fog towards the background color: depth for far scenery. Glowing
+  // colors cut through it, as lights do in haze.
   let d = distance(in.world, globals.camera.xyz) * globals.fog.a;
-  let fog = 1.0 - exp(-d * d);
+  let fog = (1.0 - exp(-d * d)) * (1.0 - glow * 0.75);
   return mix(color, globals.fog.rgb, fog);
 }
 
@@ -138,6 +151,21 @@ fn fs_cutout(in: VSOut) -> @location(0) vec4f {
 @fragment
 fn fs_blend(in: VSOut) -> @location(0) vec4f {
   let texel = textureSample(tex, texSampler, in.uv);
+  if (in.sprite.w > 0.5) {
+    // A puff: shaded like a ball (normals bulging toward the camera), fading out softly to its rim.
+    let p = in.uv * 2.0 - 1.0;
+    let r2 = dot(p, p);
+    if (r2 >= 1.0) {
+      discard;
+    }
+    let toward = in.sprite.xyz;
+    let right = normalize(cross(-toward, select(vec3f(0.0, 1.0, 0.0), vec3f(0.0, 0.0, 1.0), abs(toward.y) > 0.99)));
+    let up = cross(right, -toward);
+    var lit = in;
+    lit.normal = right * p.x - up * p.y + toward * sqrt(1.0 - r2);
+    let soft = smoothstep(0.0, 0.8, 1.0 - r2); // a full core, fading smoothly over the outer part
+    return vec4f(shade(lit, in.color.rgb * texel.rgb), in.color.a * texel.a * soft);
+  }
   return vec4f(shade(in, in.color.rgb * texel.rgb), in.color.a * texel.a);
 }
 `;

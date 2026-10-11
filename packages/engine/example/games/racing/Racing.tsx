@@ -38,8 +38,6 @@ const EDGE = ROAD_HALF - 1.05; // furthest a car's centre goes before scraping t
 const START_SPEED = 26;
 const MAX_SPEED = 52;
 const ACCELERATION = 0.22; // m/s per second
-const NITRO_BOOST = 1.45;
-const NITRO_BURN = 0.32; // of a full tank per second
 const LATERAL_SPEED = 15; // m/s across the road
 const STEER_RESPONSE = 9; // how quickly the sideways speed eases toward what the finger asks for
 const STEER_WIDTH = 0.6; // a swipe across this much of the screen crosses the whole road
@@ -347,8 +345,6 @@ function createGame(a: Assets, night: boolean) {
     speed: 0,
     baseSpeed: START_SPEED,
     lateral: 0,
-    nitro: 0.5,
-    boosting: false,
     spawnTimer: 0.5,
     invulnerable: 0,
     scrape: 0,
@@ -472,14 +468,6 @@ function start(g: Game) {
   haptics.impact(0.6, 0.4);
 }
 
-function boost(g: Game) {
-  if (g.phase !== "playing" || g.boosting || g.nitro < 0.15) return;
-  g.boosting = true;
-  g.shake = Math.max(g.shake, 0.12);
-  sfx.play("nitro", { volume: 1 });
-  haptics.impact(0.8, 0.3);
-}
-
 /** Traffic ahead, in a lane that doesn't close the road: cars close together always leave a lane open. */
 function spawnTraffic(g: Game, ahead = SPAWN_AHEAD) {
   const s = g.s + ahead;
@@ -514,22 +502,30 @@ function crash(g: Game, car: Car) {
   // The other car is knocked off the road: real physics from here, with the core thumping on impacts.
   const t = g.track.sample(car.s, sample);
   const right = rightOf(t.heading);
-  const fwd = forwardOf(t.heading);
   const side = Math.sign(car.d - g.d) || (Math.random() < 0.5 ? -1 : 1);
   const size = g.assets.car.size;
   g.world.set(car.root, {
     physics: { type: "dynamic", size: [size[0] * 0.95, size[1], size[2] * 0.95], layer: 8, mask: 4 | 8, bounce: 0.25, friction: 0.6, density: 0.4 },
     spin: [rand(-2, 2), rand(-5, 5), -side * rand(2, 5)],
     impact: { sound: sfx.get("bump"), minSpeed: 2, maxSpeed: 14, volume: 0.8, haptic: 0.3 },
-    lifetime: 2.6,
+    lifetime: 3.6,
   });
-  g.world.impulse(car.root, [right[0] * side * 10 + fwd[0] * g.speed * 0.5, 8, right[2] * side * 10 + fwd[2] * g.speed * 0.5]);
+  // Thrown on ahead at about the player's new speed, so it tumbles and slides along in view, burning,
+  // before friction lets the player pass it.
+  g.speed = Math.max(START_SPEED * 0.6, g.speed * CRASH_SLOWDOWN);
+  const ahead = g.speed * 1.1;
+  // The way the road runs here (toward larger s), measured from the track itself.
+  const a = g.track.sample(car.s, sample);
+  const ax = a.x;
+  const az = a.z;
+  const b = g.track.sample(car.s + 1, sample);
+  const len = Math.hypot(b.x - ax, b.z - az) || 1;
+  const along: Vec3 = [(b.x - ax) / len, 0, (b.z - az) / len];
+  g.world.set(car.root, { velocity: [along[0] * ahead + right[0] * side * 3, 4, along[2] * ahead + right[2] * side * 3] });
   const p = g.world.position(car.root);
   if (p) explode(g, p);
-  g.burning.push({ root: car.root, until: g.time + 2.4, flame: 0, smoke: 0, ember: 0 });
+  g.burning.push({ root: car.root, until: g.time + 3.2, flame: 0, smoke: 0, ember: 0 });
 
-  g.speed = Math.max(START_SPEED * 0.6, g.speed * CRASH_SLOWDOWN);
-  g.boosting = false;
   g.shake = 0.5;
   g.lives -= 1;
   g.onLives(g.lives);
@@ -569,33 +565,36 @@ function sideswipe(g: Game, car: Car, overlap: number) {
 
 // ── Fire ────────────────────────────────────────────────────────────────
 
-// Channels above 1 glow (the engine draws them self-lit), so flames stay bright in shadow. Each particle
-// cools over its life (`endColor`): white-hot to yellow, orange, then a dark red that fades out, and
-// tongues taper as they rise (`endSize` below 1). Smoke starts dark and dense, then swells and thins.
+// Flames are "flame" particles: soft sprites facing the camera that add their light to what's behind
+// them, so overlapping flames build up to a hot white core and stay bright over smoke and through fog.
+// Each one cools over its life (`endColor`: yellow, orange, then a deep red that fades) while shrinking
+// (`endSize`), the way a tongue of fire tapers as it rises. Smoke is "puff" particles, painted over the
+// scene: dark and dense at first, swelling and thinning as it climbs. Channels above 1 glow (self-lit).
+const FLASH: Color = [2, 1.95, 1.7, 0.9];
 const FIREBALL: Color[] = [
-  [2, 1.9, 1.3],
-  [2, 1.6, 0.6],
-  [2, 1.3, 0.35],
+  [2, 1.7, 0.8, 0.6],
+  [2, 1.45, 0.5, 0.6],
+  [2, 1.2, 0.35, 0.6],
 ];
 const FLAME_CORE: Color[] = [
-  [2, 1.9, 1.2],
-  [2, 1.75, 0.8],
+  [2, 1.85, 1.1, 0.5],
+  [2, 1.7, 0.75, 0.5],
 ];
 const FLAME: Color[] = [
-  [2, 1.45, 0.4],
-  [2, 1.2, 0.28],
-  [2, 0.95, 0.2],
+  [2, 1.6, 0.55, 0.42],
+  [2, 1.35, 0.38, 0.42],
+  [2, 1.1, 0.25, 0.42],
 ];
-const COOLED: Color = [0.9, 0.12, 0.03, 0]; // dark red, gone
+const COOLED: Color = [2, 0.35, 0.08, 0]; // a deep red, fading out
 const SMOKE: Color[] = [
-  [0.07, 0.065, 0.06, 0.8],
-  [0.1, 0.095, 0.09, 0.75],
-  [0.13, 0.12, 0.11, 0.7],
+  [0.1, 0.095, 0.09, 0.5],
+  [0.14, 0.13, 0.12, 0.45],
+  [0.18, 0.17, 0.16, 0.4],
 ];
-const SMOKE_END: Color = [0.42, 0.41, 0.4, 0];
+const SMOKE_END: Color = [0.45, 0.44, 0.43, 0];
 const EMBER: Color[] = [
-  [2, 1.3, 0.4],
-  [2, 0.9, 0.2],
+  [2, 1.4, 0.5],
+  [2, 1, 0.25],
 ];
 const DEBRIS: Color[] = [
   [0.06, 0.06, 0.07],
@@ -603,30 +602,38 @@ const DEBRIS: Color[] = [
 ];
 
 /**
- * A crash: a white-hot flash swelling into a rolling fireball that cools to red, sparks and car bits
- * thrown out, and a column of black smoke that billows up and thins.
+ * A crash: a white-hot flash, a fireball that swells and cools to red, sparks and car bits thrown out,
+ * and smoke that billows up and thins.
  */
 function explode(g: Game, at: Vec3) {
   const w = g.world;
   const up: Vec3 = [0, 1, 0];
-  w.burst({ position: at, mesh: "sphere", count: 6, size: 0.9, speed: 2, lifetime: 0.28, gravity: 0, color: [2, 2, 1.8], endSize: 2.6, endColor: [2, 1.2, 0.3, 0] });
-  w.burst({ position: at, mesh: "sphere", count: 28, size: 0.55, speed: 5.5, lifetime: 0.9, gravity: 4, color: FIREBALL, endSize: 2.4, endColor: COOLED });
-  w.burst({ position: [at[0], at[1] + 0.5, at[2]], mesh: "sphere", count: 14, size: 0.5, speed: 6, lifetime: 1.1, gravity: 5, direction: up, spread: 0.7, color: FLAME, endSize: 1.8, endColor: COOLED });
-  w.burst({ position: at, count: 26, size: 0.07, speed: 14, lifetime: 0.7, gravity: -9.81, color: EMBER, endSize: 0.3, endColor: [1.2, 0.2, 0.05] }); // sparks fall
-  w.burst({ position: at, count: 10, size: 0.16, speed: 9, lifetime: 1.4, gravity: -9.81, direction: up, spread: 1.2, color: DEBRIS }); // bits of car
-  w.burst({ position: [at[0], at[1] + 1, at[2]], mesh: "sphere", count: 10, size: 0.8, speed: 2.5, lifetime: 2.4, gravity: 1.6, direction: up, spread: 0.9, color: SMOKE, endSize: 4, endColor: SMOKE_END });
+  w.burst({ position: at, mesh: "flame", count: 3, size: 3.2, speed: 0.5, lifetime: 0.22, gravity: 0, color: FLASH, endSize: 1.8, endColor: [2, 1.4, 0.4, 0] });
+  w.burst({ position: at, mesh: "flame", count: 30, size: 1.1, speed: 4.5, lifetime: 0.85, gravity: 3, color: FIREBALL, endSize: 2.2, endColor: COOLED });
+  w.burst({ position: [at[0], at[1] + 0.4, at[2]], mesh: "flame", count: 14, size: 0.9, speed: 5.5, lifetime: 0.9, gravity: 5, direction: up, spread: 0.55, color: FLAME, endSize: 1.4, endColor: COOLED });
+  w.burst({ position: at, mesh: "flame", count: 30, size: 0.16, speed: 14, lifetime: 0.7, gravity: -9.81, color: EMBER, endSize: 0.3, endColor: [2, 0.3, 0.05, 0] }); // sparks fall
+  w.burst({ position: at, count: 10, size: 0.14, speed: 8, lifetime: 1.4, gravity: -9.81, direction: up, spread: 1.2, color: DEBRIS }); // bits of car
+  w.burst({ position: [at[0], at[1] + 1.4, at[2]], mesh: "puff", count: 6, size: 1, speed: 2, lifetime: 2, gravity: 2, direction: up, spread: 0.6, color: SMOKE, endSize: 3, endColor: SMOKE_END });
 }
 
 /**
  * Burning wrecks, at a steady rate whatever the frame rate: flame tongues licking up from across the
  * car, a hot core low down, embers drifting up, and smoke rolling off the top. They're launched with
- * the wreck's own velocity (plus a rise), so they ride along with it and stream off behind.
+ * the wreck's own velocity (plus a rise), so they ride along with it and stream off behind. A wreck that
+ * has dropped back to the camera stops emitting, so fire never fills the screen from up close.
  */
 const wreckVelocity: [number, number, number] = [0, 0, 0];
-const FLAMES_PER_SECOND = 70;
-const SMOKE_PER_SECOND = 16;
-const EMBERS_PER_SECOND = 10;
+const FLAMES_PER_SECOND = 120;
+const SMOKE_PER_SECOND = 10;
+const EMBERS_PER_SECOND = 14;
+const FIRE_MIN_DISTANCE = 5; // metres in front of the camera
+type Emit = { size: number; lifetime: number; color: Color[]; endSize: number; endColor: Color; spread: number; mesh: "flame" | "puff" };
 function burn(g: Game, dt: number) {
+  const { eye, target } = g.camera;
+  const fx = target[0] - eye[0];
+  const fy = target[1] - eye[1];
+  const fz = target[2] - eye[2];
+  const fl = Math.hypot(fx, fy, fz) || 1;
   for (let i = g.burning.length - 1; i >= 0; i--) {
     const fire = g.burning[i]!;
     const p = g.world.worldPosition(fire.root, tmp);
@@ -634,49 +641,50 @@ function burn(g: Game, dt: number) {
       g.burning.splice(i, 1);
       continue;
     }
+    const ahead = ((p[0] - eye[0]) * fx + (p[1] - eye[1]) * fy + (p[2] - eye[2]) * fz) / fl;
+    if (ahead < FIRE_MIN_DISTANCE) continue;
     const v = g.world.velocity(fire.root, wreckVelocity) ?? [0, 0, 0];
-    const emit = (rise: number, y: number, spreadX: number, spreadZ: number, opts: { count: number; size: number; lifetime: number; color: Color[]; endSize: number; endColor: Color; spread: number; mesh?: "sphere" | "cube" }) => {
+    const emit = (rise: number, y: number, spreadX: number, spreadZ: number, o: Emit) => {
       const dir: Vec3 = [v[0], v[1] + rise, v[2]];
       const speed = Math.hypot(dir[0], dir[1], dir[2]);
       g.world.burst({
         position: [p[0] + rand(-spreadX, spreadX), p[1] + y, p[2] + rand(-spreadZ, spreadZ)],
-        mesh: opts.mesh ?? "sphere",
-        count: opts.count,
-        size: opts.size,
+        mesh: o.mesh,
+        count: 1,
+        size: o.size,
         speed,
-        lifetime: opts.lifetime,
+        lifetime: o.lifetime,
         gravity: rise * 1.5, // keeps climbing, as hot gas does
         direction: [dir[0] / speed, dir[1] / speed, dir[2] / speed],
-        spread: opts.spread,
-        color: opts.color,
-        endSize: opts.endSize,
-        endColor: opts.endColor,
+        spread: o.spread,
+        color: o.color,
+        endSize: o.endSize,
+        endColor: o.endColor,
       });
     };
     fire.flame += dt * FLAMES_PER_SECOND;
     while (fire.flame >= 1) {
       fire.flame -= 1;
-      // Tongues: fat at the base, tapering and reddening as they lick upward.
-      emit(3.2, 0.6, 0.8, 1.6, { count: 1, size: rand(0.38, 0.55), lifetime: rand(0.4, 0.6), color: FLAME, endSize: 0.25, endColor: COOLED, spread: 0.3 });
+      // Tongues: rising fast, so they stretch into columns that taper and redden toward the tips.
+      emit(4.2, 0.8, 0.75, 1.5, { mesh: "flame", size: rand(0.8, 1.1), lifetime: rand(0.45, 0.65), color: FLAME, endSize: 0.25, endColor: COOLED, spread: 0.2 });
       // Every other one, the white-yellow heart of the fire, low on the car.
-      if (Math.random() < 0.5) emit(2, 0.5, 0.6, 1.3, { count: 1, size: rand(0.3, 0.42), lifetime: rand(0.2, 0.3), color: FLAME_CORE, endSize: 0.5, endColor: [2, 0.9, 0.2, 0], spread: 0.25 });
+      if (Math.random() < 0.5) emit(1.5, 0.7, 0.55, 1.2, { mesh: "flame", size: rand(0.7, 0.95), lifetime: rand(0.18, 0.28), color: FLAME_CORE, endSize: 0.7, endColor: [2, 1.4, 0.4, 0], spread: 0.2 });
     }
     fire.smoke += dt * SMOKE_PER_SECOND;
     while (fire.smoke >= 1) {
       fire.smoke -= 1;
-      emit(2.4, 1.6, 0.6, 1.2, { count: 1, size: rand(0.45, 0.65), lifetime: rand(1.6, 2.2), color: SMOKE, endSize: 4.5, endColor: SMOKE_END, spread: 0.35 });
+      emit(2.6, 2, 0.5, 1, { mesh: "puff", size: rand(1, 1.3), lifetime: rand(1.6, 2.1), color: SMOKE, endSize: 3, endColor: SMOKE_END, spread: 0.35 });
     }
     fire.ember += dt * EMBERS_PER_SECOND;
     while (fire.ember >= 1) {
       fire.ember -= 1;
-      emit(4.5, 1, 0.7, 1.4, { count: 1, size: 0.06, lifetime: rand(0.8, 1.3), color: EMBER, endSize: 0.3, endColor: [1.4, 0.2, 0.05, 0], spread: 0.6, mesh: "cube" });
+      emit(4.5, 1, 0.6, 1.3, { mesh: "flame", size: 0.14, lifetime: rand(0.8, 1.3), color: EMBER, endSize: 0.3, endColor: [2, 0.3, 0.05, 0], spread: 0.6 });
     }
   }
 }
 
 function end(g: Game) {
   g.phase = "over";
-  g.boosting = false;
   audio.stop(g.engine);
   g.engine = null;
   best = Math.max(best, g.score);
@@ -709,13 +717,7 @@ function tick(g: Game, dt: number) {
       if (g.timeLeft <= 0) end(g);
     }
     g.baseSpeed = Math.min(MAX_SPEED, g.baseSpeed + ACCELERATION * dt);
-    if (!g.boosting && g.nitro >= 1) boost(g); // a full tank fires by itself
-    if (g.boosting) {
-      g.nitro = Math.max(0, g.nitro - NITRO_BURN * dt);
-      if (g.nitro <= 0) g.boosting = false;
-    }
-    const want = g.baseSpeed * (g.boosting ? NITRO_BOOST : 1);
-    g.speed += (want - g.speed) * (1 - Math.exp(-dt * (g.boosting ? 2.5 : 1.2)));
+    g.speed += (g.baseSpeed - g.speed) * (1 - Math.exp(-dt * 1.2));
     g.invulnerable = Math.max(0, g.invulnerable - dt);
     g.spawnTimer -= dt;
     if (g.spawnTimer <= 0) {
@@ -751,16 +753,6 @@ function tick(g: Game, dt: number) {
   const size = g.assets.car.size;
   const steerYaw = Math.atan2(g.lateral, Math.max(8, g.speed)) * 0.9;
   drive(g, g.player.root, g.s, g.d, size[1] / 2, dt, steerYaw, clamp(g.lateral * 0.006, -0.06, 0.06));
-
-  // Exhaust flames while boosting: launched at up to the car's own speed, so they trail behind it.
-  if (g.boosting) {
-    const t = g.track.sample(g.s - size[2] / 2 - 0.1, sample);
-    const fwd = forwardOf(t.heading);
-    for (const side of [-0.45, 0.45]) {
-      placeAt(t, g.d + side, 0.38, at);
-      g.world.burst({ position: [at[0], at[1], at[2]], direction: fwd, spread: 0.08, count: 3, size: 0.3, speed: g.speed * 0.95, lifetime: 0.25, gravity: 0, color: [[1, 0.55, 0.1], [0.45, 0.7, 1], [1, 0.85, 0.3]] });
-    }
-  }
 
   // Traffic drives along its lane; scored once behind the player, gone once far behind.
   for (let i = g.traffic.length - 1; i >= 0; i--) {
@@ -802,13 +794,9 @@ function tick(g: Game, dt: number) {
       car.passed = true;
       g.score += POINTS_PER_CAR_PASSED;
       g.onScore(g.score);
-      g.nitro = Math.min(1, g.nitro + 0.12);
       sfx.play("point", { volume: 0.5 });
       haptics.impact(0.25, 0.9);
-      if (car.closest < 2.9 && !car.bumped) {
-        g.nitro = Math.min(1, g.nitro + 0.12);
-        g.onNearMiss();
-      }
+      if (car.closest < 2.9 && !car.bumped) g.onNearMiss();
     }
     if (ds < -30) {
       g.world.despawn(car.root);
@@ -858,15 +846,14 @@ function tick(g: Game, dt: number) {
     cam.eye[0] += (ex - cam.eye[0]) * k + rand(-1, 1) * g.shake;
     cam.eye[1] += (ey - cam.eye[1]) * k + rand(-1, 1) * g.shake;
     cam.eye[2] += (ez - cam.eye[2]) * k;
-    const fov = 0.95 + (g.speed / MAX_SPEED) * 0.28 + (g.boosting ? 0.18 : 0);
+    const fov = 0.95 + (g.speed / MAX_SPEED) * 0.28;
     cam.fov += (fov - cam.fov) * (1 - Math.exp(-dt * 4));
     g.world.set(g.horizon, { position: [drawn[0], 0, drawn[2]] });
   }
   g.shake *= Math.exp(-dt * 6);
-  if (g.boosting) g.shake = Math.max(g.shake, 0.03);
 }
 
-/** Demo bot: head for the lane whose next car is furthest away; use nitro when the tank is full. */
+/** Demo bot: head for the lane whose next car is furthest away. */
 function autopilot(g: Game) {
   const nearest = [Infinity, Infinity, Infinity];
   for (const car of g.traffic) {
@@ -902,9 +889,6 @@ function Run({ assets: a, onRestart, dark, ...props }: RunProps) {
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(LIVES);
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
-  const [kmh, setKmh] = useState(0);
-  const [nitro, setNitro] = useState(0.5);
-  const [boosting, setBoosting] = useState(false);
   // HUD animations run on the UI thread (Reanimated), so the game loop never stutters them.
   const [pop, bounce] = usePop();
   const flash = useSharedValue(0);
@@ -926,14 +910,7 @@ function Run({ assets: a, onRestart, dark, ...props }: RunProps) {
     game.onNearMiss = () => {
       near.value = withSequence(withTiming(1, { duration: 0 }), withTiming(0, { duration: 900 }));
     };
-    // Gauges only need a few updates a second.
-    const gauges = setInterval(() => {
-      setKmh(Math.round(game.speed * 3.6));
-      setNitro(game.nitro);
-      setBoosting(game.boosting);
-    }, 150);
     return () => {
-      clearInterval(gauges);
       audio.stop(game.engine);
       game.world.dispose();
     };
@@ -1000,19 +977,9 @@ function Run({ assets: a, onRestart, dark, ...props }: RunProps) {
 
       {phase === "ready" && (
         <View style={[styles.hud, { bottom: insets.bottom + 16 }]} pointerEvents="none">
-          <HudPill>Swipe to steer · pass cars to fill nitro</HudPill>
+          <HudPill>Swipe to steer · pass cars to score</HudPill>
           {/* The car model is CC-BY 4.0: it must be credited. */}
           <HudPill small>Car: “Car Concept” by Khronos Group, after Unity Fan (CC BY 4.0)</HudPill>
-        </View>
-      )}
-
-      {/* Speed and nitro, while driving. */}
-      {phase === "playing" && (
-        <View style={[styles.hud, styles.gauges, { bottom: insets.bottom }]} pointerEvents="none">
-          <HudPill highlight={boosting} fill={nitro}>
-            {boosting ? "NITRO!" : "NITRO"}
-          </HudPill>
-          <HudPill>{kmh} km/h</HudPill>
         </View>
       )}
 
@@ -1057,7 +1024,6 @@ function makeStyles(t: Theme) {
   return StyleSheet.create({
     nearMiss: { position: "absolute", alignSelf: "center", color: t.SCORE_HIGHLIGHT, fontSize: 30, fontWeight: "900", fontStyle: "italic" },
     hud: { position: "absolute", left: 16, right: 16, alignItems: "center", gap: 6 },
-    gauges: { flexDirection: "row", justifyContent: "center", gap: 10 },
     flash: { backgroundColor: "#ff3b3b" },
   });
 }

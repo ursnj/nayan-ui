@@ -2,7 +2,7 @@
 // Keep them in sync with packages/engine/src.
 
 export const entityOptionsAttributes = [
-  { name: "mesh", type: "Shape | Model", default: '"cube"', details: 'A built-in shape ("cube", "sphere", "plane", "cylinder", "cone", "capsule", "torus", "roundedBox" or "none") or a model from loadModel.' },
+  { name: "mesh", type: "Shape | Model", default: '"cube"', details: 'A built-in shape ("cube", "sphere", "plane", "cylinder", "cone", "capsule", "torus", "roundedBox", "puff" or "none") or a model from loadModel.' },
   { name: "texture", type: "Texture | null", default: "none", details: "An image from loadTexture, drawn on the mesh. In set, pass mesh with it." },
   { name: "textureRegion", type: "[u0, v0, u1, v1]", default: "whole texture", details: "Part of the texture to show, each 0..1: sprite sheets and card atlases." },
   { name: "text", type: "string", default: "none", details: "3D text instead of a mesh. Needs font. Letters are 1 unit tall at scale 1." },
@@ -122,12 +122,14 @@ export const burstOptionsAttributes = [
   { name: "count", type: "number", default: "16", details: "How many particles." },
   { name: "direction", type: "[x, y, z]", default: "[0, 1, 0]", details: "Main direction. Default up." },
   { name: "spread", type: "number", default: "π", details: "Half-angle of the cone around direction, in radians. π means every direction." },
-  { name: "mesh", type: "Shape | Model", default: '"cube"', details: "What each particle looks like." },
+  { name: "mesh", type: "Shape | Model", default: '"cube"', details: 'What each particle looks like. "puff" (a soft sprite facing the camera) blends into fire, smoke and dust.' },
   { name: "size", type: "number", default: "0.15", details: "Particle size." },
   { name: "speed", type: "number", default: "5", details: "Top speed." },
   { name: "lifetime", type: "number", default: "0.8", details: "Seconds before they shrink away." },
   { name: "gravity", type: "number", default: "-9.81", details: "Vertical acceleration. 0 floats." },
   { name: "color", type: "Color | Color[]", default: "white", details: "One color, or up to 4 to pick from at random. Channels above 1 glow, e.g. [2, 1.2, 0.3] for fire that stays bright in shadow." },
+  { name: "endSize", type: "number", default: "1", details: "Size at the end of each particle's life, as a multiple of its start size: above 1 grows (smoke), below 1 shrinks (flame tongues, embers)." },
+  { name: "endColor", type: "Color", default: "keeps its color", details: "Color each particle shifts to over its life, e.g. from yellow to a dark red. An alpha below 1 fades it out." },
 ];
 
 export const fontOptionsAttributes = [
@@ -254,6 +256,7 @@ export const shapeAttributes = [
   { name: '"capsule"', type: "0.5 across, 1 tall", default: "capsule", details: "Characters and pills: rolls and slides smoothly." },
   { name: '"torus"', type: "1 across, 0.3 tall", default: "flat cylinder", details: "Rings and donuts, lying flat." },
   { name: '"roundedBox"', type: "1 × 1 × 1", default: "box", details: "A cube with soft edges: tiles, buttons, cards." },
+  { name: '"puff"', type: "1 across, faces the camera", default: "box", details: "A soft round sprite, always see-through: overlapping puffs blend into fire, smoke, dust and glows." },
   { name: '"none"', type: "not drawn", default: "box", details: "Groups, pivots, trigger zones and invisible walls." },
 ];
 
