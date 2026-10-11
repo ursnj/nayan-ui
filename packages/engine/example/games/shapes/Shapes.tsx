@@ -7,7 +7,12 @@ import { useGameTheme } from "../ui/theme";
 // Custom shapes in action: fruit (lathes, tubes, extruded leaves) tossed up; tap one to slice it in
 // two halves that fly apart, as in Fruit Ninja. A row of extruded SVG / Skia-style badges sits behind.
 const GRAVITY = -9.81;
-const KINDS: FruitKind[] = ["apple", "orange", "lemon", "pear", "strawberry", "watermelon", "banana"];
+const KINDS: FruitKind[] = [
+  "apple", "orange", "lemon", "pear", "strawberry", "watermelon", "banana",
+  "cherries", "grapes", "kiwi", "mango", "peach", "pineapple", "pomegranate", "papaya",
+];
+/** How big each is drawn (fruit are built 1 unit across, plus stems and leaves). */
+const SIZE: Partial<Record<FruitKind, number>> = { watermelon: 1.9, banana: 1.5, pineapple: 1.7, papaya: 1.6, grapes: 1.5, mango: 1.2, pomegranate: 1.2, cherries: 1.2, kiwi: 0.9 };
 const LIGHT: Light = { direction: [0.4, 0.9, 0.6], ambient: 0.55, shadows: false };
 
 const yTurn = (angle: number): Quat => [0, Math.sin(angle / 2), 0, Math.cos(angle / 2)];
@@ -52,7 +57,7 @@ function createScene() {
         const kind = KINDS[Math.floor(Math.random() * KINDS.length)]!;
         const fruit = fruits[kind];
         const x = rand(-3.5, 3.5);
-        const scale = kind === "watermelon" ? 1.9 : kind === "banana" ? 1.5 : 1.1;
+        const scale = SIZE[kind] ?? 1.1;
         const entity = world.spawn({
           mesh: fruit.whole,
           position: [x, -4, 0],

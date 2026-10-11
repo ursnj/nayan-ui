@@ -828,6 +828,8 @@ export type ShapeOptions = {
  * `texture`, physics and picking. Colliders default to a box holding the shape. Mesh ids are
  * shared by models, fonts and shapes (about 240) and live for the whole app: create each shape once,
  * at module level, not per render or per spawn.
+ * Registering the same geometry again (as a JS reload does) returns the same mesh id, so reloads
+ * don't use ids up; the latest `shine` applies to every use of it.
  *
  * ```ts
  * const orange = createShape(lathe(orangeProfile, { color: [1, 0.55, 0.1] }), { fit: 1, shine: 0.3 });
