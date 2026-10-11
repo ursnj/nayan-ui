@@ -522,7 +522,8 @@ function makeStyles(t: Theme) {
     board: {
       ...panel,
       flexDirection: "row",
-      paddingVertical: 14,
+      alignItems: "center",
+      height: 60, // the same as the main button
       paddingHorizontal: 12,
       borderRadius: 18,
     },
@@ -532,18 +533,19 @@ function makeStyles(t: Theme) {
       fontSize: 12,
       fontWeight: "500",
       letterSpacing: 1.2,
-      marginBottom: 4,
+      marginBottom: 2,
       ...shadow,
     },
     value: {
       color: t.TEXT,
-      fontSize: 24,
+      fontSize: 22,
+      lineHeight: 26,
       fontWeight: "800",
       fontVariant: ["tabular-nums"],
       ...shadow,
     },
     hearts: { flexDirection: "row" },
-    heart: { fontSize: 22, marginHorizontal: 3 },
+    heart: { fontSize: 20, lineHeight: 26, marginHorizontal: 3 },
 
     controls: { position: "absolute", bottom: 5, left: 0, right: 0, alignItems: "center" },
     controlsRow: {
