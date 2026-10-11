@@ -116,7 +116,13 @@ function loadAssets(): Promise<Assets> {
     ads,
     tree,
   }));
+  assets.catch(() => (assets = undefined)); // a failed load is retried next time
   return assets;
+}
+
+/** Starts loading the game's models, textures and sounds (they're cached), so opening it is quick. */
+export function preloadRacing() {
+  loadAssets().catch(() => {}); // the game screen reports any error
 }
 
 // ── Track ───────────────────────────────────────────────────────────────
@@ -463,6 +469,12 @@ function start(g: Game) {
   // Fill the road ahead, so the first cars arrive within seconds.
   for (let ahead = 50; ahead < SPAWN_AHEAD; ahead += rand(18, 26)) spawnTraffic(g, ahead);
   g.engine = sfx.play("engine", { volume: 0.32, loop: true });
+  // Sounds load alongside the scene; if they're still decoding, the engine starts once they're in.
+  if (!g.engine) {
+    sfx.ready.then(() => {
+      if (g.phase === "playing" && !g.engine) g.engine = sfx.play("engine", { volume: 0.32, loop: true });
+    });
+  }
   g.onPhase("playing");
   sfx.play("nitro", { volume: 0.6 });
   haptics.impact(0.6, 0.4);
@@ -985,8 +997,9 @@ export function Racing(props: RacingProps) {
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     let alive = true;
-    Promise.all([loadAssets(), sfx.ready])
-      .then(([a]) => alive && setLoaded(a))
+    // Sounds don't hold up the scene: plays before they're decoded are skipped.
+    loadAssets()
+      .then((a) => alive && setLoaded(a))
       .catch((e: Error) => alive && setError(e.message));
     return () => {
       alive = false;

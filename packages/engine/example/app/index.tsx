@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Link, type Href } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { preloadRacing } from "../games/racing/Racing";
 import { useGameTheme, type Theme } from "../games/ui/theme";
 
 const EXAMPLES: {
@@ -13,7 +14,7 @@ const EXAMPLES: {
   {
     href: "/car-racing",
     title: "Car Racing",
-    description: "A 3D highway racer: glTF cars, physics crashes, fire, nitro and day / night.",
+    description: "A 3D highway racer: glTF cars, physics crashes, fire and day / night.",
     icon: "car-sport",
   },
   {
@@ -27,6 +28,8 @@ const EXAMPLES: {
 export default function Home() {
   const theme = useGameTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
+  // Load the racer's assets while the menu is up, so the game opens without a wait.
+  useEffect(preloadRacing, []);
   return (
     <ScrollView contentContainerStyle={styles.list}>
       {EXAMPLES.map((e) => (

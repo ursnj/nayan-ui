@@ -504,6 +504,7 @@ function makeStyles(t: Theme) {
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   };
+  const BAR_HEIGHT = 64; // the scoreboard and the main button, whichever text the button shows
   const panel = { backgroundColor: t.SURFACE, borderColor: t.BORDER, borderWidth: t.BORDER_WIDTH };
   return StyleSheet.create({
     root: { flex: 1, backgroundColor: t.BACKGROUND },
@@ -523,7 +524,7 @@ function makeStyles(t: Theme) {
       ...panel,
       flexDirection: "row",
       alignItems: "center",
-      height: 60, // the same as the main button
+      height: BAR_HEIGHT,
       paddingHorizontal: 12,
       borderRadius: 18,
     },
@@ -569,10 +570,9 @@ function makeStyles(t: Theme) {
     mainWrap: { flex: 1 },
     mainButton: {
       ...panel,
-      minHeight: 60,
+      height: BAR_HEIGHT,
       borderRadius: 30,
       paddingHorizontal: 24,
-      paddingVertical: 16,
       alignItems: "center",
       justifyContent: "center",
     },
