@@ -430,6 +430,8 @@ export type LatheOptions = {
    * As a function: `r` from the axis (0) to the skin (1) at that height, and the height `y`. Default `color`.
    */
   cutColor?: Color | ((r: number, y: number) => Color);
+  /** Steps from the axis to the skin across each cut face, for a detailed `cutColor`. Default 12 for a function. */
+  cutSteps?: number;
 };
 
 /** Colors each vertex by `fn` of its surface point (u, v read from the texture coordinates). */
@@ -443,6 +445,14 @@ function paintBy(g: Geometry, color: SurfaceColor | undefined): Geometry {
     v[i + 8] = c[2];
   }
   return g;
+}
+
+/**
+ * Recolors geometry point by point (in place, and returned): two-tone leaves, painted tips, stripes on
+ * an extrusion. `u` and `v` are the texture coordinates there.
+ */
+export function recolor(geometry: Geometry, color: (p: SurfacePoint) => Color): Geometry {
+  return paintBy(geometry, color);
 }
 
 /**
@@ -572,7 +582,7 @@ export function lathe(profile: Path | readonly (readonly [number, number])[], op
   let face: Geometry;
   if (falling) {
     const g = new Builder();
-    const steps = typeof cutColor === "function" ? 12 : 1;
+    const steps = Math.max(1, Math.round(options.cutSteps ?? (typeof cutColor === "function" ? 12 : 1)));
     g.grid(last, steps, (u, v) => {
       const [r, y] = points[Math.round(v * last)]!;
       return [[u * r, y, 0], [0, 0, 1]];
