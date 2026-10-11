@@ -364,7 +364,7 @@ function lemon(): Fruit {
 
 function pear(): Fruit {
   // Narrow neck, round bottom, a slight dimple where the stem goes in.
-  const p = normalize(profile(1, (t) => Math.pow(Math.sin(Math.PI * t), 0.55) * (0.15 + 0.31 * Math.pow(t, 1.35)) * (1 - 0.15 * Math.exp(-t * 30)), 64));
+  const p = normalize(profile(1, (t) => Math.pow(Math.sin(Math.PI * t), 0.55) * (0.18 + 0.37 * Math.pow(t, 1.35)) * (1 - 0.15 * Math.exp(-t * 30)), 64));
   const skin = ({ u, v }: { u: number; v: number }): Color => {
     let c = mix([0.62, 0.74, 0.2], [0.84, 0.8, 0.28], noise(u, v, 6, 4));
     const blush = Math.pow(Math.max(0, Math.cos((u - 0.2) * TAU)), 2) * smoothstep(0.3, 0.8, v);
@@ -503,7 +503,7 @@ function banana(): Fruit {
   const [cx, cy] = [(Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...ys) + Math.max(...ys)) / 2];
   const scale = 0.92 / (Math.max(...xs) - Math.min(...xs));
   const arc: Vec3[] = raw.map(([x, y]) => [(x - cx) * scale, (y - cy) * scale + 0.06, 0]);
-  const radius = (t: number) => 0.012 + 0.07 * Math.pow(Math.sin(Math.PI * Math.min(1, 0.03 + t * 0.97)), 0.55);
+  const radius = (t: number) => 0.014 + 0.09 * Math.pow(Math.sin(Math.PI * Math.min(1, 0.03 + t * 0.97)), 0.55);
   const ridges = (around: number) => 1 + 0.06 * Math.cos(around * TAU * 5);
   const skin = ({ u, v }: { u: number; v: number }): Color => {
     let c: Color = [1, 0.84, 0.16];
