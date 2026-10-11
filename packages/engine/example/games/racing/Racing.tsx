@@ -62,9 +62,9 @@ const BEHIND = 8; // segments kept behind the player, so neither camera sees whe
 const SKY = [0.62, 0.78, 0.95] as const;
 // Dark mode drives at night, as Playtura repaints its outdoor scenes (NIGHT_SCENE): its night sky,
 // dim bluish moonlight, and glowing lamps, lights and billboards (colors above 1 glow).
-const NIGHT_SKY = [0.141, 0.114, 0.251] as const; // NIGHT_SCENE.SKY horizon #241D40
+const NIGHT_SKY = [0.227, 0.192, 0.376] as const; // NIGHT_SCENE.SKY's lightest, at the horizon: #3A3160
 const DAY_LIGHT: Light = { direction: [0.45, 0.85, 0.3], ambient: 0.5, shadowExtent: 26 };
-const NIGHT_LIGHT: Light = { direction: [0.25, 0.9, 0.35], ambient: 0.6, shadowExtent: 26, color: [0.34, 0.36, 0.58] };
+const NIGHT_LIGHT: Light = { direction: [0.25, 0.9, 0.35], ambient: 0.62, shadowExtent: 26, color: [0.56, 0.6, 0.82] };
 const LAMP: Color = [1, 0.97, 0.82];
 const LAMP_LIT: Color = [2, 1.85, 1.3];
 const LINE: Color = [0.95, 0.95, 0.9];
