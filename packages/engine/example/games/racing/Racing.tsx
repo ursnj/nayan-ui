@@ -1,5 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Image, Pressable, Share, StyleSheet, Switch, Text, View, useColorScheme, useWindowDimensions } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { Image, Pressable, Share, StyleSheet, Switch, Text, View, useColorScheme, useWindowDimensions } from "react-native";
+import Animated, {
+  cancelAnimation,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import {
   audio,
   GameView,
@@ -890,11 +899,17 @@ function Run({ assets: a, onRestart, dark, onDark, leaderboard, share }: RunProp
   const [leaderboardOpen, setLeaderboardOpen] = useState(false);
   const [soundOn, setSoundOn] = useState(!audio.muted);
   const [hapticsOn, setHapticsOn] = useState(haptics.enabled);
-  const flash = useRef(new Animated.Value(0)).current;
-  const pulse = useRef(new Animated.Value(1)).current;
-  const card = useRef(new Animated.Value(0)).current;
-  const pop = useRef(new Animated.Value(1)).current;
-  const near = useRef(new Animated.Value(0)).current;
+  // HUD animations run on the UI thread (Reanimated), so the game loop never stutters them.
+  const flash = useSharedValue(0);
+  const pulse = useSharedValue(1);
+  const card = useSharedValue(0);
+  const pop = useSharedValue(1);
+  const near = useSharedValue(0);
+  const flashStyle = useAnimatedStyle(() => ({ opacity: flash.value }));
+  const pulseStyle = useAnimatedStyle(() => ({ transform: [{ scale: pulse.value }] }));
+  const cardStyle = useAnimatedStyle(() => ({ opacity: card.value, transform: [{ scale: 0.85 + card.value * 0.15 }] }));
+  const popStyle = useAnimatedStyle(() => ({ transform: [{ scale: pop.value }] }));
+  const nearStyle = useAnimatedStyle(() => ({ opacity: near.value }));
 
   useEffect(() => {
     game.onPhase = setPhase;
@@ -902,16 +917,13 @@ function Run({ assets: a, onRestart, dark, onDark, leaderboard, share }: RunProp
     game.onTime = setTimeLeft;
     game.onScore = (s) => {
       setScore(s);
-      pop.setValue(1.3);
-      Animated.spring(pop, { toValue: 1, friction: 4, useNativeDriver: true }).start();
+      pop.value = withSequence(withTiming(1.3, { duration: 0 }), withSpring(1, { damping: 8, stiffness: 320 }));
     };
     game.onFlash = () => {
-      flash.setValue(0.6);
-      Animated.timing(flash, { toValue: 0, duration: 400, useNativeDriver: true }).start();
+      flash.value = withSequence(withTiming(0.6, { duration: 0 }), withTiming(0, { duration: 400 }));
     };
     game.onNearMiss = () => {
-      near.setValue(1);
-      Animated.timing(near, { toValue: 0, duration: 900, useNativeDriver: true }).start();
+      near.value = withSequence(withTiming(1, { duration: 0 }), withTiming(0, { duration: 900 }));
     };
     // Gauges only need a few updates a second.
     const gauges = setInterval(() => {
@@ -935,22 +947,20 @@ function Run({ assets: a, onRestart, dark, onDark, leaderboard, share }: RunProp
 
   // Playtura's START GAME button breathes while the game waits for you.
   useEffect(() => {
-    if (phase === "playing") return;
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulse, { toValue: 1.05, duration: 1000, useNativeDriver: true }),
-        Animated.timing(pulse, { toValue: 1, duration: 1000, useNativeDriver: true }),
-      ]),
-    );
-    loop.start();
-    return () => loop.stop();
+    if (phase === "playing") {
+      cancelAnimation(pulse);
+      pulse.value = 1;
+      return;
+    }
+    pulse.value = withRepeat(withSequence(withTiming(1.05, { duration: 1000 }), withTiming(1, { duration: 1000 })), -1);
+    return () => cancelAnimation(pulse);
   }, [phase, pulse]);
 
   // The results card springs in.
   useEffect(() => {
     if (!showResults) return;
-    card.setValue(0);
-    Animated.spring(card, { toValue: 1, friction: 6, tension: 90, useNativeDriver: true }).start();
+    card.value = 0;
+    card.value = withSpring(1, { damping: 12, stiffness: 180 });
   }, [showResults, card]);
 
   // Autoplay: start by itself and restart after a pause.
@@ -1003,7 +1013,7 @@ function Run({ assets: a, onRestart, dark, onDark, leaderboard, share }: RunProp
         <View style={[styles.board, { width: gameWidth }]}>
           <View style={styles.column}>
             <Text style={styles.label}>SCORE</Text>
-            <Animated.Text style={[styles.value, { transform: [{ scale: pop }] }]}>{score}</Animated.Text>
+            <Animated.Text style={[styles.value, popStyle]}>{score}</Animated.Text>
           </View>
           <View style={styles.column}>
             <Text style={styles.label}>LIVES</Text>
@@ -1022,7 +1032,7 @@ function Run({ assets: a, onRestart, dark, onDark, leaderboard, share }: RunProp
         </View>
       </View>
 
-      <Animated.Text pointerEvents="none" style={[styles.nearMiss, { opacity: near }]}>
+      <Animated.Text pointerEvents="none" style={[styles.nearMiss, nearStyle]}>
         NEAR MISS!
       </Animated.Text>
 
@@ -1068,7 +1078,7 @@ function Run({ assets: a, onRestart, dark, onDark, leaderboard, share }: RunProp
               </Pressable>
             </View>
           ) : (
-            <Animated.View style={[styles.mainWrap, { transform: [{ scale: pulse }] }]}>
+            <Animated.View style={[styles.mainWrap, pulseStyle]}>
               <Pressable style={styles.mainButton} onPress={phase === "ready" ? () => start(game) : onRestart}>
                 <Text style={styles.mainText} numberOfLines={1}>
                   START GAME
@@ -1099,7 +1109,7 @@ function Run({ assets: a, onRestart, dark, onDark, leaderboard, share }: RunProp
       {/* Playtura's game-over card. */}
       {showResults && (
         <View style={styles.overlay}>
-          <Animated.View style={[styles.card, { opacity: card, transform: [{ scale: card.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] }) }] }]}>
+          <Animated.View style={[styles.card, cardStyle]}>
             <Image source={TROPHY_ICON} style={[styles.cardIcon, { tintColor: theme.SCORE_HIGHLIGHT }]} />
             <Text style={styles.cardTitle}>{won ? "TIME UP!" : "CRASHED!"}</Text>
             <Text style={styles.cardMessage}>{won ? "Great driving!" : "You ran out of lives!"}</Text>
@@ -1170,7 +1180,7 @@ function Run({ assets: a, onRestart, dark, onDark, leaderboard, share }: RunProp
         </Pressable>
       )}
 
-      <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.flash, { opacity: flash }]} />
+      <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.flash, flashStyle]} />
     </View>
   );
 }
