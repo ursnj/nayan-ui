@@ -401,16 +401,109 @@ export function extrude(path: Path, options: ExtrudeOptions = {}): Geometry {
   return paint({ vertices, indices }, options.color);
 }
 
+/** Where a color function is asked about: `u` around (0..1), `v` along (0..1), and the surface there. */
+export type SurfacePoint = { u: number; v: number; position: Vec3; normal: Vec3 };
+/** A flat color, or one per point of the surface: blushes, stripes, speckles, spots. */
+export type SurfaceColor = Color | ((p: SurfacePoint) => Color);
+/** A flat color, or one per point of a round face: `r` from its center (0) to its rim (1), `angle` around it. */
+export type FaceColor = Color | ((r: number, angle: number) => Color);
+
 export type LatheOptions = {
   /** Steps around the axis. Default 32. */
   segments?: number;
   /** How far around, in radians: TAU (default) is a full turn; Math.PI a half, for a cut fruit. */
   sweep?: number;
-  /** Vertex color of the outside. Default white. */
-  color?: Color;
-  /** Color of the flat faces where a partial sweep is cut open (the flesh of a cut fruit). Default `color`. */
-  cutColor?: Color;
+  /** Color of the outside: one color, or a function of the surface point (u around, v down the profile). Default white. */
+  color?: SurfaceColor;
+  /**
+   * Pushes the surface out (or in, if negative) along its normal by this much at (u, v): peel dimples,
+   * ribs, ridges, bumps. Normals are recomputed so the bumps catch the light. Make it repeat in u
+   * (equal at u = 0 and 1) to avoid a seam.
+   */
+  displace?: (u: number, v: number) => number;
+  /** Color of the flat ends where the profile stops away from the axis (the face of a fruit cut across). Default `color`. */
+  capColor?: FaceColor;
+  /** Rings across each end cap, for patterned `capColor`. Default 1, or 12 for a function. */
+  capRings?: number;
+  /**
+   * Color of the faces where a partial sweep is cut open (the flesh of a fruit cut through its core).
+   * As a function: `r` from the axis (0) to the skin (1) at that height, and the height `y`. Default `color`.
+   */
+  cutColor?: Color | ((r: number, y: number) => Color);
 };
+
+/** Colors each vertex by `fn` of its surface point (u, v read from the texture coordinates). */
+function paintBy(g: Geometry, color: SurfaceColor | undefined): Geometry {
+  if (typeof color !== "function") return paint(g, color);
+  const v = g.vertices;
+  for (let i = 0; i < v.length; i += VERTEX_FLOATS) {
+    const c = color({ u: v[i + 9]!, v: v[i + 10]!, position: [v[i]!, v[i + 1]!, v[i + 2]!], normal: [v[i + 3]!, v[i + 4]!, v[i + 5]!] });
+    v[i + 6] = c[0];
+    v[i + 7] = c[1];
+    v[i + 8] = c[2];
+  }
+  return g;
+}
+
+/**
+ * A round face: a polar grid of `rings` x `segments` around `center` in the plane spanned by unit
+ * vectors `x` and `y` (radius `radius(angle)` toward the rim), facing `normal`, swept `sweep` radians.
+ */
+function roundFace(center: Vec3, x: Vec3, y: Vec3, normal: Vec3, radius: (u: number) => number, sweep: number, segments: number, rings: number, color: FaceColor | undefined) {
+  const b = new Builder();
+  b.grid(rings, segments, (u, v) => {
+    const a = u * sweep;
+    const r = radius(u) * v;
+    const [c, s] = [Math.cos(a) * r, Math.sin(a) * r];
+    return [[center[0] + x[0] * c + y[0] * s, center[1] + x[1] * c + y[1] * s, center[2] + x[2] * c + y[2] * s], normal];
+  });
+  const g = facingOutward(fromBuilder(b));
+  const vs = g.vertices;
+  for (let i = 0; i < vs.length; i += VERTEX_FLOATS) {
+    const a = vs[i + 9]! * sweep;
+    const r = vs[i + 10]!;
+    // Texture coordinates across the face, like a disc's.
+    vs[i + 9] = 0.5 + (Math.cos(a) * r) / 2;
+    vs[i + 10] = 0.5 + (Math.sin(a) * r) / 2;
+    if (typeof color === "function") {
+      const c = color(r, a);
+      vs[i + 6] = c[0];
+      vs[i + 7] = c[1];
+      vs[i + 8] = c[2];
+    }
+  }
+  return typeof color === "function" ? g : paint(g, color);
+}
+
+/** Recomputes normals from the triangles, averaged across vertices at the same place (seams, poles). */
+function smoothNormals(g: Geometry): Geometry {
+  const v = g.vertices;
+  const key = (i: number) => `${Math.round(v[i * VERTEX_FLOATS]! * 1e5)},${Math.round(v[i * VERTEX_FLOATS + 1]! * 1e5)},${Math.round(v[i * VERTEX_FLOATS + 2]! * 1e5)}`;
+  const sums = new Map<string, [number, number, number]>();
+  const keys: string[] = [];
+  for (let i = 0; i < v.length / VERTEX_FLOATS; i++) keys.push(key(i));
+  const idx = g.indices;
+  for (let t = 0; t < idx.length; t += 3) {
+    const [a, b, c] = [idx[t]! * VERTEX_FLOATS, idx[t + 1]! * VERTEX_FLOATS, idx[t + 2]! * VERTEX_FLOATS];
+    const e1 = [v[b]! - v[a]!, v[b + 1]! - v[a + 1]!, v[b + 2]! - v[a + 2]!];
+    const e2 = [v[c]! - v[a]!, v[c + 1]! - v[a + 1]!, v[c + 2]! - v[a + 2]!];
+    const f = [e1[1]! * e2[2]! - e1[2]! * e2[1]!, e1[2]! * e2[0]! - e1[0]! * e2[2]!, e1[0]! * e2[1]! - e1[1]! * e2[0]!]; // area-weighted
+    for (const i of [idx[t]!, idx[t + 1]!, idx[t + 2]!]) {
+      const k = keys[i]!;
+      const sum = sums.get(k) ?? [0, 0, 0];
+      sum[0] += f[0]!;
+      sum[1] += f[1]!;
+      sum[2] += f[2]!;
+      sums.set(k, sum);
+    }
+  }
+  for (let i = 0; i < keys.length; i++) {
+    const n = sums.get(keys[i]!);
+    const len = n ? Math.hypot(n[0], n[1], n[2]) : 0;
+    if (len > 1e-12) v.set([n![0] / len, n![1] / len, n![2] / len], i * VERTEX_FLOATS + 3);
+  }
+  return g;
+}
 
 /**
  * Spins a profile around the vertical axis, like a potter's wheel: fruit (apples, oranges, lemons,
@@ -427,15 +520,15 @@ export function lathe(profile: Path | readonly (readonly [number, number])[], op
   const segments = Math.max(3, Math.round(options.segments ?? 32));
   const sweep = Math.min(TAU, Math.max(1e-3, options.sweep ?? TAU));
   const full = sweep >= TAU - 1e-6;
+  const last = points.length - 1;
 
   // Profile normals in the (radius, height) plane: the average of the neighbouring edges', turned outward.
   const edge = (i: number): P2 => {
     const a = points[Math.max(0, i)]!;
-    const b = points[Math.min(points.length - 1, i + 1)]!;
+    const b = points[Math.min(last, i + 1)]!;
     const len = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
     return [(a[1] - b[1]) / len, (b[0] - a[0]) / len]; // going down the profile, outward is to the left
   };
-  const last = points.length - 1;
   const normals = points.map(([r], i) => {
     // On the axis the surface is a pole: straight up at the top, down at the bottom.
     if (r < 1e-6 && (i === 0 || i === last)) return [0, i === 0 ? 1 : -1] as P2;
@@ -447,31 +540,67 @@ export function lathe(profile: Path | readonly (readonly [number, number])[], op
   });
 
   const b = new Builder();
+  const displace = options.displace;
   // a = u * sweep around the axis; the same orientation as the built-in sphere, so faces point outward.
-  b.grid(points.length - 1, segments, (u, v) => {
-    const i = Math.round(v * (points.length - 1));
+  b.grid(last, segments, (u, v) => {
+    const i = Math.round(v * last);
     const a = u * sweep;
     const [r, y] = points[i]!;
     const [nr, ny] = normals[i]!;
-    return [
-      [r * Math.cos(a), y, -r * Math.sin(a)],
-      [nr * Math.cos(a), ny, -nr * Math.sin(a)],
-    ];
+    const n: Vec3 = [nr * Math.cos(a), ny, -nr * Math.sin(a)];
+    // The seam and the poles must move together, or the surface tears.
+    const d = displace ? displace(r < 1e-6 || (full && u === 1) ? 0 : u, v) : 0;
+    return [[r * Math.cos(a) + n[0] * d, y + n[1] * d, -r * Math.sin(a) + n[2] * d], n];
   });
-  const outside = fromBuilder(b);
-  const top = points[0]!;
-  const bottom = points[points.length - 1]!;
-  if (full) {
-    const caps = new Builder();
-    if (top[0] > 1e-6) caps.disc(top[1], top[0], 1, segments);
-    if (bottom[0] > 1e-6) caps.disc(bottom[1], bottom[0], -1, segments);
-    paint(outside, options.color);
-    return caps.indices.length ? merge([{ geometry: outside }, { geometry: paint(fromBuilder(caps), options.color) }]) : outside;
+  const parts: Part[] = [{ geometry: paintBy(displace ? smoothNormals(fromBuilder(b)) : fromBuilder(b), options.color) }];
+
+  // Ends away from the axis: flat round faces (part of a circle when the sweep is partial).
+  const capColor = options.capColor ?? (typeof options.color === "function" ? undefined : options.color);
+  const rings = Math.max(1, Math.round(options.capRings ?? (typeof capColor === "function" ? 12 : 1)));
+  for (const [i, facing] of [[0, 1], [last, -1]] as const) {
+    const [r, y] = points[i]!;
+    if (r < 1e-6) continue;
+    parts.push({ geometry: roundFace([0, y, 0], [1, 0, 0], [0, 0, -1], [0, facing, 0], () => r, sweep, segments, rings, capColor) });
   }
+  if (full) return parts.length > 1 ? merge(parts) : parts[0]!.geometry;
 
   // The cut: the region between the profile and the axis, laid into the planes at a = 0 and a = sweep.
-  const outline = new Path().addPoly([[0, -top[1]], ...points.map(([r, y]) => [r, -y] as P2), [0, -bottom[1]]]);
-  const face = extrude(outline, { depth: 0 });
+  // A profile whose height only falls gets a grid (so a color function has points to work with);
+  // one that turns back (a dimple) is filled exactly by the core.
+  const cutColor = options.cutColor ?? (typeof options.color === "function" ? undefined : options.color);
+  const falling = points.every((p, i) => i === 0 || p[1] <= points[i - 1]![1] + 1e-9);
+  let face: Geometry;
+  if (falling) {
+    const g = new Builder();
+    const steps = typeof cutColor === "function" ? 12 : 1;
+    g.grid(last, steps, (u, v) => {
+      const [r, y] = points[Math.round(v * last)]!;
+      return [[u * r, y, 0], [0, 0, 1]];
+    });
+    face = facingOutward(fromBuilder(g));
+  } else {
+    face = extrude(new Path().addPoly([[0, -points[0]![1]], ...points.map(([r, y]) => [r, -y] as P2), [0, -points[last]![1]]]), { depth: 0 });
+  }
+  if (typeof cutColor === "function") {
+    const widest = Math.max(...points.map((p) => p[0]), 1e-6);
+    const skinAt = (y: number) => {
+      // The profile's radius at height y (for r from the axis to the skin).
+      let best = 0;
+      for (let i = 0; i < last; i++) {
+        const [r0, y0] = points[i]!;
+        const [r1, y1] = points[i + 1]!;
+        if ((y - y0) * (y - y1) <= 0 && y0 !== y1) best = Math.max(best, r0 + ((y - y0) / (y1 - y0)) * (r1 - r0));
+      }
+      return best || widest;
+    };
+    const fv = face.vertices;
+    for (let i = 0; i < fv.length; i += VERTEX_FLOATS) {
+      const c = cutColor(Math.min(1, fv[i]! / skinAt(fv[i + 1]!)), fv[i + 1]!);
+      fv.set(c.slice(0, 3), i + 6);
+    }
+  } else {
+    paint(face, cutColor);
+  }
   const cut = (angle: number, flip: boolean): Geometry => {
     const g: Geometry = { vertices: face.vertices.slice(), indices: face.indices.slice() };
     const [c, s] = [Math.cos(angle), Math.sin(angle)];
@@ -485,21 +614,27 @@ export function lathe(profile: Path | readonly (readonly [number, number])[], op
     if (flip) for (let t = 0; t < g.indices.length; t += 3) [g.indices[t + 1], g.indices[t + 2]] = [g.indices[t + 2]!, g.indices[t + 1]!];
     return g;
   };
-  const flesh = options.cutColor ?? options.color;
-  return merge([{ geometry: paint(outside, options.color) }, { geometry: paint(cut(0, false), flesh) }, { geometry: paint(cut(sweep, true), flesh) }]);
+  return merge([...parts, { geometry: cut(0, false) }, { geometry: cut(sweep, true) }]);
 }
 
 export type TubeOptions = {
   /** Radius, or a function of t (0 at the first point, 1 at the last) for tapering: bananas, horns, tails. Default 0.1. */
   radius?: number | ((t: number) => number);
+  /**
+   * The cross-section: a radius multiplier at each point around (0..1, repeating), e.g. ridges for a
+   * banana or a star for a churro. Default round.
+   */
+  shape?: (around: number) => number;
   /** Steps around the tube. Default 12. */
   sides?: number;
   /** Steps between each pair of points (the path is smoothed through them). Default 8. */
   smoothness?: number;
   /** Cap the ends (where the radius isn't 0). Default true. */
   caps?: boolean;
-  /** Vertex color. Default white. */
-  color?: Color;
+  /** Color: one, or a function of the surface point (u around, v = t along). Default white. */
+  color?: SurfaceColor;
+  /** Color of the end caps (the face of a cut banana). Default `color`. */
+  capColor?: FaceColor;
 };
 
 /**
@@ -509,6 +644,7 @@ export type TubeOptions = {
 export function tube(points: readonly Vec3[], options: TubeOptions = {}): Geometry {
   if (points.length < 2) throw new Error("tube: needs at least two points");
   const radius = typeof options.radius === "function" ? options.radius : () => (options.radius as number | undefined) ?? 0.1;
+  const shape = options.shape ?? (() => 1);
   const sides = Math.max(3, Math.round(options.sides ?? 12));
   const steps = Math.max(1, Math.round(options.smoothness ?? 8));
 
@@ -553,7 +689,8 @@ export function tube(points: readonly Vec3[], options: TubeOptions = {}): Geomet
     for (let j = 0; j <= sides; j++) {
       const a = (j / sides) * TAU;
       const dir: Vec3 = [0, 1, 2].map((k) => Math.cos(a) * n[k]! + Math.sin(a) * bn[k]!) as unknown as Vec3;
-      b.vertex([c[0] + dir[0] * r, c[1] + dir[1] * r, c[2] + dir[2] * r], dir, j / sides, i / (curve.length - 1));
+      const rj = r * shape(j === sides ? 0 : j / sides);
+      b.vertex([c[0] + dir[0] * rj, c[1] + dir[1] * rj, c[2] + dir[2] * rj], dir, j / sides, i / (curve.length - 1));
     }
     return { first, r };
   });
@@ -564,23 +701,23 @@ export function tube(points: readonly Vec3[], options: TubeOptions = {}): Geomet
       b.indices.push(a, a + 1, c, a + 1, c + 1, c);
     }
   }
+  let side = facingOutward(fromBuilder(b));
+  if (options.shape) side = smoothNormals(side);
+  const parts: Part[] = [{ geometry: paintBy(side, options.color) }];
   if (options.caps ?? true) {
+    const capColor = options.capColor ?? (typeof options.color === "function" ? undefined : options.color);
+    const rings = typeof capColor === "function" ? 8 : 1;
     for (const [i, facing] of [[0, -1], [ring.length - 1, 1]] as const) {
       const { r } = ring[i]!;
       if (r < 1e-6) continue;
       const t = tangents[i]!;
-      const n: Vec3 = [t[0] * facing, t[1] * facing, t[2] * facing];
-      const center = b.vertex(curve[i]!, n, 0.5, 0.5);
       const [fn, fb] = frames[i]!;
-      for (let j = 0; j <= sides; j++) {
-        const a = (j / sides) * TAU;
-        const dir = [0, 1, 2].map((k) => Math.cos(a) * fn[k]! + Math.sin(a) * fb[k]!);
-        b.vertex([curve[i]![0] + dir[0]! * r, curve[i]![1] + dir[1]! * r, curve[i]![2] + dir[2]! * r], n, 0.5 + Math.cos(a) / 2, 0.5 + Math.sin(a) / 2);
-      }
-      for (let j = 0; j < sides; j++) b.indices.push(center, center + 1 + j, center + 2 + j);
+      parts.push({
+        geometry: roundFace(curve[i]!, fn, fb, [t[0] * facing, t[1] * facing, t[2] * facing], (u) => r * shape(u === 1 ? 0 : u), TAU, sides, rings, capColor),
+      });
     }
   }
-  return paint(facingOutward(fromBuilder(b)), options.color);
+  return parts.length > 1 ? merge(parts) : parts[0]!.geometry;
 }
 
 /** Flips triangles whose winding disagrees with their vertex normals (so back-face culling keeps them). */

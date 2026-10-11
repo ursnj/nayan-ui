@@ -179,10 +179,16 @@ world.spawn({ mesh: apple, position: [0, 2, 0], physics: "dynamic" });
   one-sided face). `fillRule` is `"nonzero"` (Skia's default, kWinding) or `"evenodd"` (every inner contour is a
   hole: rings, tags, donuts). Overlapping and self-crossing contours are resolved in Rust, as for 3D text. Textures map
   across the face. Badges, coins, leaves, hearts, stars, logos, fruit slices.
-- **`lathe(profile, { segments, sweep, cutColor })`**: fruit, vases, bottles, bowls, chess pieces. The profile is a
-  `Path` or `[radius, height]` points (y up). With `sweep` below a full turn, the cut faces are filled (`cutColor`).
-- **`tube(points, { radius, sides })`**: a smooth tube through 3D points. `radius` can be a function of t (0..1) to
-  taper it: bananas, stems, horns, worms, ropes.
+- **`lathe(profile, { segments, sweep, color, displace, capColor, cutColor })`**: fruit, vases, bottles, bowls, chess
+  pieces. The profile is a `Path` or `[radius, height]` points (y up). With `sweep` below a full turn, the cut faces are
+  filled (`cutColor`); flat ends away from the axis are capped (`capColor`: the face of a fruit cut across).
+- **`tube(points, { radius, shape, sides, color, capColor })`**: a smooth tube through 3D points. `radius` can be a
+  function of t (0..1) to taper it, and `shape` a function around it for ridges: bananas, stems, horns, worms, ropes.
+- **Surface detail**: every `color` can be a function of the surface point (`u` around, `v` along, position, normal)
+  for blushes, streaks, stripes and speckles; `capColor` and `cutColor` can be functions of the distance from the
+  middle and the angle (or height) for segments, rinds and cores. `displace(u, v)` pushes a lathe's surface in or out
+  (peel dimples, ribs) and recomputes its normals. Painted detail needs vertices: raise `segments` (and the number of
+  profile points) for fine patterns.
 - **`merge(parts)`**: bakes parts (any of the above, or `shapeGeometry("sphere")` and the other built-ins), each
   moved, rotated, scaled and colored, into one geometry. One mesh is one instanced draw and moves as one entity.
 - **`createShape(geometry, { center, fit, shine })`**: registers it. Use the result as `mesh` anywhere (spawn, burst,

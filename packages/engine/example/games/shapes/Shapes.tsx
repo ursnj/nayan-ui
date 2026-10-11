@@ -87,10 +87,10 @@ function createScene() {
       // +X and the right one -X.
       for (const side of [-1, 1]) {
         world.spawn({
-          mesh: fruit.half ?? fruit.whole,
+          mesh: fruit.pieces[side < 0 ? 0 : 1],
           position: [at[0] + side * 0.05, at[1], at[2]],
           rotation: yTurn(-side * (Math.PI / 2)),
-          scale: fruit.half ? scale : scale * 0.6,
+          scale,
           velocity: [v[0] + side * 3, v[1] * 0.4 + 2, 0],
           acceleration: [0, GRAVITY, 0],
           spin: [0, 0, side * -4],
