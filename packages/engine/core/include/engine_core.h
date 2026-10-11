@@ -77,8 +77,8 @@ typedef struct World World;
 #define ENGINE_ANIM_KEY_LEN 23
 #define ENGINE_DONE_PER_ENTITY 5 // room in engine_world_done: capacity * 5 + 64 ids
 // Burst: position xyz, direction xyz, spread (radians), count, mesh, size, speed, lifetime, gravity,
-// color count (1..4), colors rgba x 4.
-#define ENGINE_BURST_LEN 30
+// color count (1..4), colors rgba x 4, end size (x start size), has end color (0 / 1), end color rgba.
+#define ENGINE_BURST_LEN 36
 
 // ── Worlds and entities ──────────────────────────────────────────────────
 // Capacity is fixed: every pointer below stays valid until engine_world_free.

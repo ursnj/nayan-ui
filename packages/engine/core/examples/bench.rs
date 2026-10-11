@@ -145,6 +145,8 @@ fn main() {
         lifetime: 1.0,
         gravity: -9.81,
         colors: vec![[1.0, 0.5, 0.0, 1.0], [1.0, 1.0, 0.0, 0.8]],
+        end_size: 1.0,
+        end_color: None,
     };
     time_with(
         "particles: 60/frame burst, 1 s life (~3000 alive)",

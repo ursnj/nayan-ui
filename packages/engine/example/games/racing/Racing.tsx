@@ -337,7 +337,7 @@ function createGame(a: Assets, night: boolean) {
     segments,
     traffic: [] as Car[],
     /** Wrecks on fire: flames and smoke come off them until `until` (game time). */
-    burning: [] as { root: Entity; until: number; smoke: number }[],
+    burning: [] as { root: Entity; until: number; flame: number; smoke: number; ember: number }[],
     phase: "ready" as Phase,
     time: 0,
     s: 0,
@@ -526,7 +526,7 @@ function crash(g: Game, car: Car) {
   g.world.impulse(car.root, [right[0] * side * 10 + fwd[0] * g.speed * 0.5, 8, right[2] * side * 10 + fwd[2] * g.speed * 0.5]);
   const p = g.world.position(car.root);
   if (p) explode(g, p);
-  g.burning.push({ root: car.root, until: g.time + 2.4, smoke: 0 });
+  g.burning.push({ root: car.root, until: g.time + 2.4, flame: 0, smoke: 0, ember: 0 });
 
   g.speed = Math.max(START_SPEED * 0.6, g.speed * CRASH_SLOWDOWN);
   g.boosting = false;
@@ -538,7 +538,7 @@ function crash(g: Game, car: Car) {
   haptics.impact(1, 0.8);
   if (g.lives <= 0) {
     // The player's car catches fire too, and keeps burning behind the results.
-    g.burning.push({ root: g.player.root, until: Infinity, smoke: 0 });
+    g.burning.push({ root: g.player.root, until: Infinity, flame: 0, smoke: 0, ember: 0 });
     end(g);
     return;
   }
@@ -569,42 +569,63 @@ function sideswipe(g: Game, car: Car, overlap: number) {
 
 // ── Fire ────────────────────────────────────────────────────────────────
 
-// Channels above 1 glow (the engine draws them self-lit): flames stay bright in shadow. Particles keep
-// their color, so a flame is layered instead: a white-hot base, orange tongues, red tips above.
-const FLAME_BASE: Color[] = [
-  [2, 2, 1.6],
-  [2, 1.85, 1],
+// Channels above 1 glow (the engine draws them self-lit), so flames stay bright in shadow. Each particle
+// cools over its life (`endColor`): white-hot to yellow, orange, then a dark red that fades out, and
+// tongues taper as they rise (`endSize` below 1). Smoke starts dark and dense, then swells and thins.
+const FIREBALL: Color[] = [
+  [2, 1.9, 1.3],
+  [2, 1.6, 0.6],
+  [2, 1.3, 0.35],
+];
+const FLAME_CORE: Color[] = [
+  [2, 1.9, 1.2],
+  [2, 1.75, 0.8],
 ];
 const FLAME: Color[] = [
-  [2, 1.44, 0.36],
-  [2, 1.15, 0.24],
-  [2, 0.84, 0.16],
+  [2, 1.45, 0.4],
+  [2, 1.2, 0.28],
+  [2, 0.95, 0.2],
 ];
-const FLAME_TIP: Color[] = [
-  [1.8, 0.36, 0.1],
-  [1.5, 0.22, 0.06],
-];
+const COOLED: Color = [0.9, 0.12, 0.03, 0]; // dark red, gone
 const SMOKE: Color[] = [
-  [0.22, 0.21, 0.21, 0.28],
-  [0.32, 0.31, 0.3, 0.22],
-  [0.16, 0.16, 0.16, 0.3],
+  [0.07, 0.065, 0.06, 0.8],
+  [0.1, 0.095, 0.09, 0.75],
+  [0.13, 0.12, 0.11, 0.7],
+];
+const SMOKE_END: Color = [0.42, 0.41, 0.4, 0];
+const EMBER: Color[] = [
+  [2, 1.3, 0.4],
+  [2, 0.9, 0.2],
+];
+const DEBRIS: Color[] = [
+  [0.06, 0.06, 0.07],
+  [0.18, 0.18, 0.2],
 ];
 
-/** A crash: a white-hot flash, a rolling fireball, sparks and a cloud of smoke. Round particles rise as they burn out. */
+/**
+ * A crash: a white-hot flash swelling into a rolling fireball that cools to red, sparks and car bits
+ * thrown out, and a column of black smoke that billows up and thins.
+ */
 function explode(g: Game, at: Vec3) {
   const w = g.world;
-  w.burst({ position: at, mesh: "sphere", count: 10, size: 0.6, speed: 3, lifetime: 0.22, gravity: 2, color: FLAME_BASE });
-  w.burst({ position: at, mesh: "sphere", count: 30, size: 0.38, speed: 6, lifetime: 0.55, gravity: 5, color: FLAME });
-  w.burst({ position: at, mesh: "sphere", count: 18, size: 0.32, speed: 8, lifetime: 0.75, gravity: 6, direction: [0, 1, 0], spread: 1.1, color: FLAME_TIP });
-  w.burst({ position: at, count: 22, size: 0.06, speed: 13, lifetime: 0.5, color: [[2, 1.8, 0.8], [2, 1.4, 0.4]] }); // sparks fall
-  w.burst({ position: [at[0], at[1] + 0.6, at[2]], mesh: "sphere", count: 6, size: 0.6, speed: 2.2, lifetime: 1.2, gravity: 2.5, direction: [0, 1, 0], spread: 1, color: SMOKE });
+  const up: Vec3 = [0, 1, 0];
+  w.burst({ position: at, mesh: "sphere", count: 6, size: 0.9, speed: 2, lifetime: 0.28, gravity: 0, color: [2, 2, 1.8], endSize: 2.6, endColor: [2, 1.2, 0.3, 0] });
+  w.burst({ position: at, mesh: "sphere", count: 28, size: 0.55, speed: 5.5, lifetime: 0.9, gravity: 4, color: FIREBALL, endSize: 2.4, endColor: COOLED });
+  w.burst({ position: [at[0], at[1] + 0.5, at[2]], mesh: "sphere", count: 14, size: 0.5, speed: 6, lifetime: 1.1, gravity: 5, direction: up, spread: 0.7, color: FLAME, endSize: 1.8, endColor: COOLED });
+  w.burst({ position: at, count: 26, size: 0.07, speed: 14, lifetime: 0.7, gravity: -9.81, color: EMBER, endSize: 0.3, endColor: [1.2, 0.2, 0.05] }); // sparks fall
+  w.burst({ position: at, count: 10, size: 0.16, speed: 9, lifetime: 1.4, gravity: -9.81, direction: up, spread: 1.2, color: DEBRIS }); // bits of car
+  w.burst({ position: [at[0], at[1] + 1, at[2]], mesh: "sphere", count: 10, size: 0.8, speed: 2.5, lifetime: 2.4, gravity: 1.6, direction: up, spread: 0.9, color: SMOKE, endSize: 4, endColor: SMOKE_END });
 }
 
 /**
- * Burning wrecks: layered flames every frame and a puff of smoke now and then. They're launched with the
- * wreck's own velocity (plus a rise), so they ride along with it and stream off behind.
+ * Burning wrecks, at a steady rate whatever the frame rate: flame tongues licking up from across the
+ * car, a hot core low down, embers drifting up, and smoke rolling off the top. They're launched with
+ * the wreck's own velocity (plus a rise), so they ride along with it and stream off behind.
  */
 const wreckVelocity: [number, number, number] = [0, 0, 0];
+const FLAMES_PER_SECOND = 70;
+const SMOKE_PER_SECOND = 16;
+const EMBERS_PER_SECOND = 10;
 function burn(g: Game, dt: number) {
   for (let i = g.burning.length - 1; i >= 0; i--) {
     const fire = g.burning[i]!;
@@ -614,29 +635,41 @@ function burn(g: Game, dt: number) {
       continue;
     }
     const v = g.world.velocity(fire.root, wreckVelocity) ?? [0, 0, 0];
-    const flames = (rise: number, y: number, count: number, size: number, lifetime: number, color: Color[]) => {
+    const emit = (rise: number, y: number, spreadX: number, spreadZ: number, opts: { count: number; size: number; lifetime: number; color: Color[]; endSize: number; endColor: Color; spread: number; mesh?: "sphere" | "cube" }) => {
       const dir: Vec3 = [v[0], v[1] + rise, v[2]];
       const speed = Math.hypot(dir[0], dir[1], dir[2]);
       g.world.burst({
-        position: [p[0] + rand(-0.7, 0.7), p[1] + y, p[2] + rand(-1.2, 1.2)],
-        mesh: "sphere",
-        count,
-        size,
+        position: [p[0] + rand(-spreadX, spreadX), p[1] + y, p[2] + rand(-spreadZ, spreadZ)],
+        mesh: opts.mesh ?? "sphere",
+        count: opts.count,
+        size: opts.size,
         speed,
-        lifetime,
-        gravity: rise * 2,
+        lifetime: opts.lifetime,
+        gravity: rise * 1.5, // keeps climbing, as hot gas does
         direction: [dir[0] / speed, dir[1] / speed, dir[2] / speed],
-        spread: 0.35,
-        color,
+        spread: opts.spread,
+        color: opts.color,
+        endSize: opts.endSize,
+        endColor: opts.endColor,
       });
     };
-    flames(2.5, 0.7, 3, rand(0.16, 0.26), rand(0.16, 0.24), FLAME_BASE);
-    flames(3.5, 0.9, 3, rand(0.22, 0.36), rand(0.28, 0.4), FLAME);
-    flames(4, 1.25, 2, rand(0.28, 0.42), rand(0.4, 0.55), FLAME_TIP);
-    fire.smoke -= dt;
-    if (fire.smoke <= 0) {
-      fire.smoke = 0.14;
-      flames(2.2, 1.6, 1, rand(0.35, 0.55), 1, SMOKE);
+    fire.flame += dt * FLAMES_PER_SECOND;
+    while (fire.flame >= 1) {
+      fire.flame -= 1;
+      // Tongues: fat at the base, tapering and reddening as they lick upward.
+      emit(3.2, 0.6, 0.8, 1.6, { count: 1, size: rand(0.38, 0.55), lifetime: rand(0.4, 0.6), color: FLAME, endSize: 0.25, endColor: COOLED, spread: 0.3 });
+      // Every other one, the white-yellow heart of the fire, low on the car.
+      if (Math.random() < 0.5) emit(2, 0.5, 0.6, 1.3, { count: 1, size: rand(0.3, 0.42), lifetime: rand(0.2, 0.3), color: FLAME_CORE, endSize: 0.5, endColor: [2, 0.9, 0.2, 0], spread: 0.25 });
+    }
+    fire.smoke += dt * SMOKE_PER_SECOND;
+    while (fire.smoke >= 1) {
+      fire.smoke -= 1;
+      emit(2.4, 1.6, 0.6, 1.2, { count: 1, size: rand(0.45, 0.65), lifetime: rand(1.6, 2.2), color: SMOKE, endSize: 4.5, endColor: SMOKE_END, spread: 0.35 });
+    }
+    fire.ember += dt * EMBERS_PER_SECOND;
+    while (fire.ember >= 1) {
+      fire.ember -= 1;
+      emit(4.5, 1, 0.7, 1.4, { count: 1, size: 0.06, lifetime: rand(0.8, 1.3), color: EMBER, endSize: 0.3, endColor: [1.4, 0.2, 0.05, 0], spread: 0.6, mesh: "cube" });
     }
   }
 }
