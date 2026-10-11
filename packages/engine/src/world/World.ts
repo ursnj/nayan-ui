@@ -95,7 +95,7 @@ export type EntityOptions = {
   rotation?: Quat;
   /** A number scales uniformly. Children scale with their parent. Visual only after the body exists. */
   scale?: Vec3 | number;
-  /** Alpha below 1 makes it see-through. */
+  /** Alpha below 1 makes it see-through. Channels above 1 glow: at 2 it's self-lit, ignoring light and shadow (fire, lamps). */
   color?: Color;
   /** Units per second. */
   velocity?: Vec3;
