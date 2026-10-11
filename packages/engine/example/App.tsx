@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { isEngineAvailable } from "@nayan-ui/engine";
+import { SAFE_TOP } from "./games/layout";
 import { Benchmark } from "./games/benchmark/Benchmark";
 import { Flappy } from "./games/flappy/Flappy";
 import { Racing } from "./games/racing/Racing";
@@ -41,8 +42,8 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#0a0c17" },
   switch: {
     position: "absolute",
-    top: 60,
-    right: 16,
+    top: SAFE_TOP + 12, // the left slot of a game's header (where a back button would be)
+    left: 12,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
