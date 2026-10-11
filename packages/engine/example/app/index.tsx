@@ -17,12 +17,6 @@ const EXAMPLES: {
     icon: "car-sport",
   },
   {
-    href: "/flappy-bird",
-    title: "Flappy Bird",
-    description: "Tap to flap through the pipes. Physics tumbles, particles and sound.",
-    icon: "egg",
-  },
-  {
     href: "/benchmark",
     title: "Benchmark",
     description: "Thousands of cubes or rigid bodies, JS against the Rust core, with live fps.",
