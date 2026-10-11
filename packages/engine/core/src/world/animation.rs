@@ -406,11 +406,18 @@ impl World {
     /// Adds a track, replacing any on the same entity and property. A replaced spring hands over its
     /// velocity, so retargeting mid-motion stays smooth.
     fn add_track(&mut self, mut track: Track) {
-        let old = self
-            .tracks
-            .iter()
-            .position(|t| t.entity == track.entity && t.channel == track.channel)
-            .map(|k| self.tracks.swap_remove(k));
+        let Some(i) = self.dense(track.entity) else { return };
+        let old = if self.track_count[i] == 0 {
+            None // nothing to replace: skip the search
+        } else {
+            self.tracks
+                .iter()
+                .position(|t| t.entity == track.entity && t.channel == track.channel)
+                .map(|k| self.tracks.swap_remove(k))
+        };
+        if old.is_none() {
+            self.track_count[i] += 1;
+        }
         if let Some(old) = &old
             && let (Some(new), Some(prev)) = (track.spring.as_mut(), old.spring)
             && old.turn_base.is_none()
@@ -439,9 +446,10 @@ impl World {
 
     /// Drops an entity's tracks (stopped or despawned), reporting ids that ended. True if it had any.
     pub(super) fn remove_tracks(&mut self, e: Entity) -> bool {
-        if self.tracks.is_empty() {
-            return false; // the common case for despawns (particles, projectiles)
-        }
+        let Some(i) = self.dense(e).filter(|&i| self.track_count[i] > 0) else {
+            return false; // the common case for despawns (particles, projectiles): no search
+        };
+        self.track_count[i] = 0;
         let mut ended = Vec::new();
         self.tracks.retain(|t| {
             if t.entity == e {
@@ -449,9 +457,7 @@ impl World {
             }
             t.entity != e
         });
-        if let Some(i) = self.dense(e) {
-            self.shake_offset[i] = Vec3::ZERO;
-        }
+        self.shake_offset[i] = Vec3::ZERO;
         ended.dedup();
         for &id in &ended {
             self.report_if_finished(id);
@@ -475,6 +481,7 @@ impl World {
                 self.apply_channel(i, t.channel, value, t.turn_base, t.elapsed);
             }
             if finished {
+                self.track_count[i] -= 1;
                 let id = self.tracks.swap_remove(k).id;
                 self.report_if_finished(id);
             } else {

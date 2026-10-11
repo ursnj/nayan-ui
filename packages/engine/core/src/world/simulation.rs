@@ -5,9 +5,9 @@ use rapier3d::prelude::Collider;
 use std::f32::consts::TAU;
 
 impl World {
-    /// Advances by `dt` seconds: runs whole `FIXED_DT` steps (at most 5; a longer stall is dropped
-    /// rather than spiralling), then interpolates the render output between the last two steps.
-    /// Collision events from all steps run this call are available from `events()`.
+    /// Advances by `dt` seconds: runs whole `FIXED_DT` steps (at most `MAX_STEPS_PER_UPDATE`; a
+    /// longer stall is dropped rather than spiralling), then interpolates the render output between
+    /// the last two steps. Collision events from all steps run this call are available from `events()`.
     pub fn update(&mut self, dt: f32) {
         self.events.clear();
         self.done.clear();
@@ -61,7 +61,9 @@ impl World {
         for i in 0..n {
             let osc = &mut self.oscillation[i];
             if osc.frequency != 0.0 {
-                osc.phase = (osc.phase + osc.frequency * h) % TAU;
+                // fmod is slow and only changes anything once per cycle (x % TAU == x while |x| < TAU).
+                let phase = osc.phase + osc.frequency * h;
+                osc.phase = if phase.abs() < TAU { phase } else { phase % TAU };
             }
             let body = self.body[i];
             any_body |= body.is_some();

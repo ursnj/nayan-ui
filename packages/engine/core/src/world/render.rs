@@ -12,8 +12,19 @@ impl World {
         let n = self.len();
         let bucket = |i: usize, mesh: &[u8], color: &[[f32; 4]]| mesh[i] as usize + if color[i][3] < 1.0 { MAX_MESHES } else { 0 };
         let mut counts = [0u32; MAX_MESHES * 2];
+        let mut attached = false;
         for i in 0..n {
             counts[bucket(i, &self.mesh, &self.color)] += 1;
+            attached |= self.parent[i] != NO_ENTITY;
+        }
+        // Ancestors' world matrices are computed once per frame and reused by every descendant.
+        let mut cache = std::mem::take(&mut self.world_cache);
+        if attached {
+            cache.done.clear();
+            cache.done.resize(n, false);
+            if cache.matrices.len() < n {
+                cache.matrices.resize(n, Mat4::IDENTITY);
+            }
         }
         let mut cursor = [0u32; MAX_MESHES * 2];
         let mut first = 0;
@@ -28,18 +39,39 @@ impl World {
             let b = bucket(i, &self.mesh, &self.color);
             let k = cursor[b] as usize;
             cursor[b] += 1;
-            let matrix = self.world_matrix(i, alpha);
+            let matrix = self.cached_world_matrix(i, alpha, &mut cache, 0);
             self.out_matrices[k * 16..k * 16 + 16].copy_from_slice(&matrix.to_cols_array());
             self.out_colors[k * 4..k * 4 + 4].copy_from_slice(&self.color[i]);
             self.out_regions[k * 4..k * 4 + 4].copy_from_slice(&self.region[i]);
         }
+        self.world_cache = cache;
+    }
+
+    /// `world_matrix` for `write_outputs`: the parent's world matrix comes from `cache` (computed on
+    /// first use), so a chain costs one local matrix per entity instead of one per ancestor.
+    fn cached_world_matrix(&self, i: usize, alpha: f32, cache: &mut WorldCache, depth: usize) -> Mat4 {
+        let local = self.local_matrix(i, alpha);
+        let Some(p) = self.dense(Entity(self.parent[i])).filter(|_| depth < MAX_DEPTH) else {
+            return local;
+        };
+        if !cache.done[p] {
+            cache.matrices[p] = self.cached_world_matrix(p, alpha, cache, depth + 1);
+            cache.done[p] = true;
+        }
+        cache.matrices[p] * local
     }
 
     /// Interpolated (and bobbing / shake offset) local pose used for rendering.
     pub(super) fn render_pose(&self, i: usize, alpha: f32) -> (Vec3, Quat) {
         let osc = self.oscillation[i];
+        // Most entities don't bob: skip the sine.
+        let bob = if osc.amplitude != Vec3::ZERO {
+            osc.amplitude * osc.phase.sin()
+        } else {
+            Vec3::ZERO
+        };
         (
-            self.prev_position[i].lerp(self.position[i], alpha) + osc.amplitude * osc.phase.sin() + self.shake_offset[i],
+            self.prev_position[i].lerp(self.position[i], alpha) + bob + self.shake_offset[i],
             self.prev_rotation[i].lerp(self.rotation[i], alpha),
         )
     }
@@ -47,7 +79,8 @@ impl World {
     /// Local transform: interpolated pose and scale, shrinking over the last 0.2 s of a lifetime.
     fn local_matrix(&self, i: usize, alpha: f32) -> Mat4 {
         let (position, rotation) = self.render_pose(i, alpha);
-        let fade = (self.lifetime[i] / 0.2).min(1.0);
+        let life = self.lifetime[i];
+        let fade = if life < 0.2 { life / 0.2 } else { 1.0 };
         Mat4::from_scale_rotation_translation(self.scale[i] * fade, rotation, position)
     }
 
@@ -90,6 +123,13 @@ impl World {
         self.scratch[..4].copy_from_slice(&[t, point.x, point.y, point.z]);
         Some(self.entity_at(i))
     }
+}
+
+/// Ancestors' world matrices for the frame being written, by dense index (kept to reuse the memory).
+#[derive(Default)]
+pub(super) struct WorldCache {
+    matrices: Vec<Mat4>,
+    done: Vec<bool>,
 }
 
 /// Distance along the ray to an axis-aligned box `[-half, half]` (slab test), if it's hit ahead.

@@ -24,7 +24,9 @@ rustup target add "${TARGETS[@]%%:*}"
 for pair in "${TARGETS[@]}"; do
   target="${pair%%:*}"
   abi="${pair##*:}"
-  cargo build --release --target "$target"
+  # Only the staticlib: Cargo skips the release profile's LTO when the rlib (for tests and the
+  # bench) is built alongside it.
+  cargo rustc --release --lib --crate-type staticlib --target "$target"
   mkdir -p "build/android/$abi"
   cp "target/$target/release/libengine_core.a" "build/android/$abi/libengine_core.a"
   # Cargo's `strip` setting doesn't apply to static libraries. Drop debug info and the embedded LLVM

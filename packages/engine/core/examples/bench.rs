@@ -1,5 +1,6 @@
 //! `cargo run --release --example bench` — milliseconds per `update(1/60)` (fastest of 7 runs,
-//! each on a freshly built world, so a busy machine skews it less).
+//! each on a freshly built world, so a busy machine skews it less). An argument runs only the
+//! scenarios whose label contains it: `cargo run --release --example bench -- particles`.
 use engine_core::{Animation, BodyKind, Burst, Easing, Entity, FIXED_DT, Keyframe, PhysicsDesc, Quat, Shape, Spring, Vec3, World};
 use std::time::Instant;
 
@@ -11,6 +12,9 @@ fn time(label: &str, build: impl Fn() -> World) {
 
 /// `frame` runs before every update (game code: bursts, steering).
 fn time_with(label: &str, build: impl Fn() -> World, warmup: usize, iters: usize, mut frame: impl FnMut(&mut World, usize)) {
+    if std::env::args().nth(1).is_some_and(|filter| !label.contains(&filter)) {
+        return;
+    }
     let fastest = (0..RUNS)
         .map(|_| {
             let mut w = build();
@@ -60,6 +64,27 @@ fn pile() -> World {
     w
 }
 
+/// Moves, turns and scales `entities` (3 tracks each) over `duration` seconds.
+fn tween(entities: Vec<Entity>, duration: f32, repeat: i32) -> Animation {
+    Animation {
+        entities,
+        keys: vec![Keyframe {
+            move_by: Some(Vec3::new(0.0, 1.0, 0.0)),
+            turn: Some(Vec3::new(0.0, 3.0, 0.0)),
+            scale: Some(Vec3::splat(1.3)),
+            ..Default::default()
+        }],
+        duration,
+        delay: 0.0,
+        easing: Easing::InOut,
+        repeat,
+        yoyo: true,
+        stagger: 0.0,
+        smooth: false,
+        spring: None,
+    }
+}
+
 fn main() {
     // No physics: transforms + output only.
     for n in [10_000usize, 100_000] {
@@ -79,7 +104,12 @@ fn main() {
         let mut w = World::new(10_000);
         for i in 0..10_000 {
             let alpha = if i % 3 == 0 { 0.5 } else { 1.0 };
-            w.spawn((i * 7 % 40) as u8, Vec3::new((i % 100) as f32, 0.0, (i / 100) as f32), Vec3::ONE, [1.0, 1.0, 1.0, alpha]);
+            w.spawn(
+                (i * 7 % 40) as u8,
+                Vec3::new((i % 100) as f32, 0.0, (i / 100) as f32),
+                Vec3::ONE,
+                [1.0, 1.0, 1.0, alpha],
+            );
         }
         w
     });
@@ -88,7 +118,9 @@ fn main() {
     time("1000 spinning roots x 8-deep attachment chains", || {
         let mut w = World::new(8000);
         for r in 0..1000 {
-            let root = w.spawn(0, Vec3::new((r % 40) as f32 * 3.0, 0.0, (r / 40) as f32 * 3.0), Vec3::ONE, [1.0; 4]).unwrap();
+            let root = w
+                .spawn(0, Vec3::new((r % 40) as f32 * 3.0, 0.0, (r / 40) as f32 * 3.0), Vec3::ONE, [1.0; 4])
+                .unwrap();
             w.set_angular_velocity(root, Vec3::new(0.0, 1.0, 0.0));
             let mut parent = root;
             for d in 0..7 {
@@ -114,9 +146,15 @@ fn main() {
         gravity: -9.81,
         colors: vec![[1.0, 0.5, 0.0, 1.0], [1.0, 1.0, 0.0, 0.8]],
     };
-    time_with("particles: 60/frame burst, 1 s life (~3000 alive)", || World::new(5000), 90, 300, |w, _| {
-        w.burst(&burst);
-    });
+    time_with(
+        "particles: 60/frame burst, 1 s life (~3000 alive)",
+        || World::new(5000),
+        90,
+        300,
+        |w, _| {
+            w.burst(&burst);
+        },
+    );
 
     // No warm-up and only the first second: bodies are falling and colliding, not asleep.
     time_with("1000 dynamic bodies falling + piling (1st s)", pile, 0, 60, |_, _| {});
@@ -159,7 +197,10 @@ fn main() {
     time("10000 entities with keyframe animations", || {
         let mut w = World::new(10_000);
         let all: Vec<Entity> = (0..10_000)
-            .map(|i| w.spawn(0, Vec3::new((i % 100) as f32, 0.0, (i / 100) as f32), Vec3::ONE, [1.0; 4]).unwrap())
+            .map(|i| {
+                w.spawn(0, Vec3::new((i % 100) as f32, 0.0, (i / 100) as f32), Vec3::ONE, [1.0; 4])
+                    .unwrap()
+            })
             .collect();
         let hop = |y: f32| Keyframe {
             move_by: Some(Vec3::new(0.0, y, 0.0)),
@@ -187,9 +228,46 @@ fn main() {
         w
     });
 
+    // One-shot tweens on 10000 entities that all end in the measured second (3 tracks each).
+    time_with(
+        "10000 one-shot tweens ending together (1st s)",
+        || {
+            let mut w = World::new(10_000);
+            let all: Vec<Entity> = (0..10_000)
+                .map(|i| w.spawn(0, Vec3::new(i as f32, 0.0, 0.0), Vec3::ONE, [1.0; 4]).unwrap())
+                .collect();
+            w.animate(&tween(all, 0.5, 0));
+            w
+        },
+        0,
+        60,
+        |_, _| {},
+    );
+
+    // UI-like: 2000 entities looping a tween while particles expire around them (despawns must not
+    // search every animation track).
+    time_with(
+        "2000 looping tweens + 60/frame particle bursts",
+        || {
+            let mut w = World::new(6000);
+            let all: Vec<Entity> = (0..2000)
+                .map(|i| w.spawn(0, Vec3::new(i as f32, 0.0, 0.0), Vec3::ONE, [1.0; 4]).unwrap())
+                .collect();
+            w.animate(&tween(all, 1.0, -1));
+            w
+        },
+        90,
+        300,
+        |w, _| {
+            w.burst(&burst);
+        },
+    );
+
     let springs = || {
         let mut w = World::new(1000);
-        let all: Vec<Entity> = (0..1000).map(|i| w.spawn(0, Vec3::new(i as f32, 0.0, 0.0), Vec3::ONE, [1.0; 4]).unwrap()).collect();
+        let all: Vec<Entity> = (0..1000)
+            .map(|i| w.spawn(0, Vec3::new(i as f32, 0.0, 0.0), Vec3::ONE, [1.0; 4]).unwrap())
+            .collect();
         w.animate(&Animation {
             entities: all,
             keys: vec![Keyframe {
