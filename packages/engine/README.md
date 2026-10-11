@@ -251,6 +251,7 @@ Tips:
 - Glossy models (`loadModel(src, { shine })`) get a sun highlight and Fresnel sky reflection from a per-mesh
   material, at no per-instance cost.
 - Colors above 1 glow (self-lit at 2): fire and lamps need no extra pass or per-instance data.
+- `light.color` dims and tints sun and ambient (moonlight); glowing colors ignore it, so night scenes keep lit lamps.
 - One `writeBuffer` for all matrices per frame. No per-entity JS↔native calls.
 - 4x MSAA with depth/MSAA targets set to `storeOp: "discard"`, so tile GPUs keep them on-chip.
 - Resolution capped per quality level (phones with 3x+ screens don't draw every pixel); `"auto"` drops a level

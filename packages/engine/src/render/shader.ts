@@ -11,6 +11,7 @@ struct Globals {
   shadow: vec4f, // x = soft (0/1), y = enabled (0/1), z = depth bias
   camera: vec4f, // xyz = eye position
   fog: vec4f,    // rgb = fog color (the background), a = density (0 = off)
+  lightColor: vec4f, // rgb = light color and brightness (multiplies sun and ambient)
 };
 
 @group(0) @binding(0) var<uniform> globals: Globals;
@@ -96,7 +97,7 @@ fn shade(in: VSOut, base: vec3f) -> vec3f {
   let shadow = shadowFactor(in.shadowPos);
   let diffuse = max(dot(n, globals.light.xyz), 0.0) * shadow;
   let hemisphere = mix(0.6, 1.0, n.y * 0.5 + 0.5); // sky/ground tint so faces away from the light aren't flat
-  let lit = globals.light.w * hemisphere + (1.0 - globals.light.w) * diffuse;
+  let lit = (globals.light.w * hemisphere + (1.0 - globals.light.w) * diffuse) * globals.lightColor.rgb;
   // Colors brighter than 1 glow: at a peak channel of 2 the surface is self-lit (its hue at full
   // brightness, ignoring light and shadow), blending in from 1. Fire, lamps, lasers.
   let peak = max(base.r, max(base.g, base.b));
@@ -111,7 +112,7 @@ fn shade(in: VSOut, base: vec3f) -> vec3f {
     let r = reflect(-v, n);
     let sky = mix(vec3f(0.16, 0.15, 0.14), globals.fog.rgb * 1.08, smoothstep(-0.15, 0.35, r.y));
     let fresnel = 0.05 + 0.95 * pow(1.0 - max(dot(n, v), 0.0), 5.0);
-    color = mix(color, sky, min(1.0, fresnel * shine)) + vec3f(highlight * 1.6);
+    color = mix(color, sky, min(1.0, fresnel * shine)) + highlight * 1.6 * globals.lightColor.rgb;
   }
   // Exponential-squared distance fog towards the background color: depth for far scenery.
   let d = distance(in.world, globals.camera.xyz) * globals.fog.a;

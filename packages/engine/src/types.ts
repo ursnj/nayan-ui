@@ -67,4 +67,9 @@ export type Light = {
   shadows?: boolean;
   /** Half-size in world units of the shadowed area around the camera target. Default 30. */
   shadowExtent?: number;
+  /**
+   * Color and brightness of the light, multiplying both sun and ambient: e.g. [0.35, 0.38, 0.6] for
+   * moonlight. Glowing colors (channels above 1) aren't affected. Default [1, 1, 1].
+   */
+  color?: [number, number, number];
 };

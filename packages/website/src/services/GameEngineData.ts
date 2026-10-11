@@ -242,6 +242,7 @@ export const lightAttributes = [
   { name: "ambient", type: "number", default: "0.35", details: "0..1. How bright the shadowed sides are." },
   { name: "shadows", type: "boolean", default: "true", details: "Cast shadows from one directional shadow map centred on the camera target." },
   { name: "shadowExtent", type: "number", default: "30", details: "Half-size in world units of the shadowed area around the camera target. Smaller is sharper." },
+  { name: "color", type: "[r, g, b]", default: "[1, 1, 1]", details: "Color and brightness of the light, multiplying sun and ambient: e.g. [0.35, 0.38, 0.6] for moonlight. Glowing colors (channels above 1) aren't affected, so lamps and lights stand out at night." },
 ];
 
 export const shapeAttributes = [
