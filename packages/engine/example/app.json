@@ -21,6 +21,7 @@
         26
       ]
     ],
-    "scheme": "nayan-engine-example"
+    "scheme": "nayan-engine-example",
+    "userInterfaceStyle": "automatic"
   }
 }

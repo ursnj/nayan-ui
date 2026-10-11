@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Pressable, StyleSheet, Switch, Text, View, useWindowDimensions } from "react-native";
+import { Animated, Pressable, StyleSheet, Switch, Text, View, useColorScheme, useWindowDimensions } from "react-native";
 import {
   audio,
   GameView,
@@ -51,6 +51,13 @@ const RS = 0.2; // road segment roots sit this far below the surface: their coll
 const BEHIND = 8; // segments kept behind the player, so neither camera sees where the road ends
 
 const SKY = [0.62, 0.78, 0.95] as const;
+// Dark mode drives at night, as Playtura repaints its outdoor scenes (NIGHT_SCENE): its night sky,
+// dim bluish moonlight, and glowing lamps, lights and billboards (colors above 1 glow).
+const NIGHT_SKY = [0.141, 0.114, 0.251] as const; // NIGHT_SCENE.SKY horizon #241D40
+const DAY_LIGHT: Light = { direction: [0.45, 0.85, 0.3], ambient: 0.5, shadowExtent: 26 };
+const NIGHT_LIGHT: Light = { direction: [0.25, 0.9, 0.35], ambient: 0.6, shadowExtent: 26, color: [0.34, 0.36, 0.58] };
+const LAMP: Color = [1, 0.97, 0.82];
+const LAMP_LIT: Color = [2, 1.85, 1.3];
 const LINE: Color = [0.95, 0.95, 0.9];
 const RAIL: Color = [0.72, 0.74, 0.78];
 const PAINTS: Color[] = [
@@ -225,17 +232,25 @@ const pick = <T,>(items: readonly T[]) => items[Math.floor(Math.random() * items
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
 /** A car: an invisible root at its middle (the collider's centre once wrecked) with body, glass and trim attached. */
-function spawnCar(world: World, a: Assets, paint: Color, position: Vec3) {
+function spawnCar(world: World, a: Assets, paint: Color, position: Vec3, night: boolean) {
   const model = a.car;
   const root = world.spawn({ mesh: "none", position });
-  const offset: Vec3 = [0, -model.size[1] / 2, 0];
+  const lift = -model.size[1] / 2;
+  const offset: Vec3 = [0, lift, 0];
   const body = world.spawn({ mesh: model.body, parent: root, position: offset, color: paint });
   const glass = world.spawn({ mesh: model.glass, parent: root, position: offset });
   const trim = world.spawn({ mesh: model.trim, parent: root, position: offset });
+  if (night) {
+    // Headlights and the tail-light bar glow, over where the model has them.
+    for (const x of [-0.6, 0.6]) {
+      world.spawn({ mesh: "cube", parent: root, position: [x, lift + 0.66, -2.04], scale: [0.42, 0.06, 0.05], color: [2, 1.95, 1.7], pickable: false });
+    }
+    world.spawn({ mesh: "cube", parent: root, position: [0, lift + 0.96, 1.87], scale: [1.2, 0.045, 0.04], color: [2, 0.16, 0.1], pickable: false });
+  }
   return { root, body, glass, trim };
 }
 
-function createGame(a: Assets) {
+function createGame(a: Assets, night: boolean) {
   const world = new World(2600);
   const camera: Camera = { eye: [6, 3, 6], target: [0, 0.6, 0], fov: 1 };
 
@@ -294,11 +309,21 @@ function createGame(a: Assets) {
     });
   }
 
-  const player = spawnCar(world, a, PLAYER_PAINT, [0, a.car.size[1] / 2, 0]);
+  if (night) {
+    // A moon and stars, riding along with the horizon.
+    world.spawn({ mesh: "sphere", parent: horizon, position: [-120, 120, -230], scale: 26, color: [2, 1.95, 1.8], pickable: false });
+    for (let i = 0; i < 70; i++) {
+      const angle = rand(0, Math.PI * 2);
+      world.spawn({ mesh: "sphere", parent: horizon, position: [Math.sin(angle) * 280, rand(50, 190), -Math.cos(angle) * 280], scale: rand(0.6, 1.4), color: [2, 2, 2.2], pickable: false });
+    }
+  }
+
+  const player = spawnCar(world, a, PLAYER_PAINT, [0, a.car.size[1] / 2, 0], night);
   world.listener = player.root;
 
   const g = {
     world,
+    night,
     track: new Track(),
     assets: a,
     camera,
@@ -422,12 +447,12 @@ function spawnProps(g: Game, seg: Segment) {
   if (index % (zone === "city" ? 2 : 4) === 0) {
     add({ mesh: "cylinder", position: [side * (ROAD_HALF + 1.7), RS + 3.2, 0], scale: [0.16, 6.4, 0.16], color: [0.35, 0.36, 0.4] });
     add({ mesh: "cube", position: [side * (ROAD_HALF + 0.8), RS + 6.35, 0], scale: [1.9, 0.1, 0.12], color: [0.35, 0.36, 0.4] });
-    add({ mesh: "cube", position: [side * (ROAD_HALF - 0.05), RS + 6.25, 0], scale: [0.7, 0.1, 0.32], color: [1, 0.97, 0.82] });
+    add({ mesh: "cube", position: [side * (ROAD_HALF - 0.05), RS + 6.25, 0], scale: [0.7, 0.1, 0.32], color: g.night ? LAMP_LIT : LAMP });
   }
   if (index % 11 === 5) {
     const x = -side * (ROAD_HALF + 6);
     for (const px of [-2.2, 2.2]) add({ mesh: "cylinder", position: [x + px, RS + 2.5, 0], scale: [0.25, 5, 0.25], color: [0.3, 0.3, 0.34] });
-    add({ mesh: "cube", texture: pick(a.ads), position: [x, RS + 6, 0], scale: [7.5, 3.6, 0.25], rotation: [0, Math.sin((side * 0.35) / 2), 0, Math.cos((side * 0.35) / 2)], color: [1, 1, 1] });
+    add({ mesh: "cube", texture: pick(a.ads), position: [x, RS + 6, 0], scale: [7.5, 3.6, 0.25], rotation: [0, Math.sin((side * 0.35) / 2), 0, Math.cos((side * 0.35) / 2)], color: g.night ? [1.7, 1.7, 1.7] : [1, 1, 1] }); // lit at night
   }
 }
 
@@ -461,7 +486,7 @@ function spawnTraffic(g: Game, ahead = SPAWN_AHEAD) {
   const d = LANES[pick(open)]!;
   const t = g.track.sample(s, sample);
   placeAt(t, d, g.assets.car.size[1] / 2, at);
-  const { root } = spawnCar(g.world, g.assets, pick(PAINTS), [at[0], at[1], at[2]]);
+  const { root } = spawnCar(g.world, g.assets, pick(PAINTS), [at[0], at[1], at[2]], g.night);
   g.world.set(root, { rotation: orient(t.heading, t.pitch) });
   g.traffic.push({ root, s, d, lane: LANES.indexOf(d), vd: 0, passed: false, crashed: false, bumped: false, bumpCooldown: 0, closest: Infinity });
 }
@@ -821,9 +846,12 @@ function autopilot(g: Game) {
 const formatTime = (seconds: number) =>
   `${Math.floor(seconds / 60).toString().padStart(2, "0")}:${(seconds % 60).toString().padStart(2, "0")}`;
 
-function Run({ assets: a, onRestart }: { assets: Assets; onRestart: () => void }) {
-  const game = useMemo(() => createGame(a), [a]);
-  const light = useMemo<Light>(() => ({ direction: [0.45, 0.85, 0.3], ambient: 0.5, shadowExtent: 26 }), []);
+type RunProps = { assets: Assets; onRestart: () => void; dark: boolean; onDark: (dark: boolean) => void };
+
+function Run({ assets: a, onRestart, dark, onDark }: RunProps) {
+  const game = useMemo(() => createGame(a, dark), [a, dark]);
+  const theme = dark ? DARK : LIGHT;
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { width } = useWindowDimensions();
   const [phase, setPhase] = useState<Phase>("ready");
   const [showResults, setShowResults] = useState(false);
@@ -925,7 +953,7 @@ function Run({ assets: a, onRestart }: { assets: Assets; onRestart: () => void }
   const won = lives > 0;
   return (
     <View style={styles.root}>
-      <GameView source={game.world} camera={game.camera} light={light} background={SKY} fog={0.0075} onUpdate={onUpdate} onDrag={onDrag} />
+      <GameView source={game.world} camera={game.camera} light={!dark ? NIGHT_LIGHT : DAY_LIGHT} background={dark ? NIGHT_SKY : SKY} fog={0.0075} onUpdate={onUpdate} onDrag={onDrag} />
 
       {/* Header, like Playtura's game screen: (back), title and level, settings. The example's screen
           switcher sits in the left slot, where Playtura has its back button. */}
@@ -1054,11 +1082,12 @@ function Run({ assets: a, onRestart }: { assets: Assets; onRestart: () => void }
               [
                 ["Sounds", soundOn, (on: boolean) => ((audio.muted = !on), setSoundOn(on))],
                 ["Haptics", hapticsOn, (on: boolean) => ((haptics.enabled = on), setHapticsOn(on))],
+                ["Dark mode", dark, onDark],
               ] as const
             ).map(([label, on, set]) => (
               <View key={label} style={styles.settingRow}>
                 <Text style={styles.settingLabel}>{label}</Text>
-                <Switch value={on} onValueChange={set} trackColor={{ false: "rgba(255,255,255,0.3)", true: "#7c5cff" }} thumbColor="#fff" />
+                <Switch value={on} onValueChange={set} trackColor={{ false: theme.SWITCH_TRACK_OFF, true: theme.SWITCH_TRACK_ON }} thumbColor={theme.SWITCH_THUMB} />
               </View>
             ))}
             <Pressable style={styles.playAgain} onPress={() => setSettingsOpen(false)}>
@@ -1087,102 +1116,142 @@ export function Racing() {
     };
   }, []);
   const restart = useMemo(() => () => setRun((r) => r + 1), []);
+  // Follows the system theme like Playtura's games, and can be switched in the game's settings.
+  const system = useColorScheme() === "dark";
+  const [choice, setChoice] = useState<boolean | null>(null);
+  const dark = choice ?? system;
   if (!loaded) {
     return (
-      <View style={[styles.root, styles.loading]}>
-        <Text style={styles.subtitle}>{error ?? "Loading…"}</Text>
+      <View style={[baseStyles.root, baseStyles.loading, { backgroundColor: (dark ? DARK : LIGHT).BACKGROUND }]}>
+        <Text style={[baseStyles.loadingText, { color: (dark ? DARK : LIGHT).TEXT }]}>{error ?? "Loading…"}</Text>
       </View>
     );
   }
-  return <Run key={run} assets={loaded} onRestart={restart} />;
+  // A new theme rebuilds the scene (day or night), so it starts a fresh run.
+  return <Run key={`${run}-${dark}`} assets={loaded} onRestart={restart} dark={dark} onDark={setChoice} />;
 }
 
-// Playtura's classic game theme (ThemeService / GamesConstants).
-const UI = {
-  BACKGROUND: "#3a3a5e",
-  SURFACE: "rgba(255, 255, 255, 0.3)",
-  BORDER: "rgba(255, 255, 255, 0.6)",
+// Playtura's game themes (ThemeService): light, and dark (which also drives the scene at night).
+type Theme = typeof LIGHT;
+const LIGHT = {
+  BACKGROUND: "#C8C2E0",
+  SURFACE: "rgba(255, 255, 255, 0.55)",
+  BORDER: "rgba(255, 255, 255, 0.9)",
   BORDER_WIDTH: 1.5,
-  TEXT: "#ffffff",
-  TEXT_SUBTLE: "rgba(255, 255, 255, 0.85)",
-  TEXT_SHADOW: "rgba(0, 0, 0, 0.35)",
-  DANGER: "#FF5252",
-  SOLID: "#ffffff",
-  ON_SOLID: "#3a3a5e",
-  OVERLAY: "rgba(0, 0, 0, 0.8)",
-  GOLD: "#facc15",
-  HEADER_BACKGROUND: "rgba(255, 255, 255, 0.2)",
-  HEADER_BORDER: "rgba(255, 255, 255, 0.3)",
+  TEXT: "#0F1729",
+  TEXT_SUBTLE: "#0F1729",
+  TEXT_SHADOW: "transparent",
+  SOLID: "#6F3EF4",
+  ON_SOLID: "#FFFFFF",
+  SCORE_HIGHLIGHT: "#6F3EF4",
+  DANGER: "#EF4343",
+  OVERLAY: "rgba(15, 23, 41, 0.8)",
+  SWITCH_TRACK_OFF: "rgba(15, 23, 41, 0.15)",
+  SWITCH_TRACK_ON: "#6F3EF4",
+  SWITCH_THUMB: "#FFFFFF",
+  HEADER_BACKGROUND: "rgba(255, 255, 255, 0.55)",
+  HEADER_BORDER: "rgba(255, 255, 255, 0.9)",
+  HEADER_TINT: "#0F1729",
+  NITRO: "rgba(111, 62, 244, 0.45)",
+  NEAR_MISS: "#6F3EF4",
 };
-const shadow = { textShadowColor: UI.TEXT_SHADOW, textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3 };
-const panel = { backgroundColor: UI.SURFACE, borderColor: UI.BORDER, borderWidth: UI.BORDER_WIDTH };
+const DARK: Theme = {
+  BACKGROUND: "#17122B",
+  SURFACE: "rgba(153, 118, 249, 0.16)",
+  BORDER: "rgba(153, 118, 249, 0.22)",
+  BORDER_WIDTH: 1.5,
+  TEXT: "#F9F8FB",
+  TEXT_SUBTLE: "#F9F8FB",
+  TEXT_SHADOW: "transparent",
+  SOLID: "#9976F9",
+  ON_SOLID: "#FFFFFF",
+  SCORE_HIGHLIGHT: "#F6A823",
+  DANGER: "#DC2828",
+  OVERLAY: "rgba(0, 0, 0, 0.86)",
+  SWITCH_TRACK_OFF: "rgba(153, 118, 249, 0.3)",
+  SWITCH_TRACK_ON: "#9976F9",
+  SWITCH_THUMB: "#F9F8FB",
+  HEADER_BACKGROUND: "rgba(153, 118, 249, 0.16)",
+  HEADER_BORDER: "rgba(153, 118, 249, 0.2)",
+  HEADER_TINT: "#F9F8FB",
+  NITRO: "rgba(153, 118, 249, 0.5)",
+  NEAR_MISS: "#F6A823",
+};
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "rgb(158,199,242)" },
+const baseStyles = StyleSheet.create({
+  root: { flex: 1 },
   loading: { alignItems: "center", justifyContent: "center" },
-  subtitle: { color: "#fff", fontSize: 18, fontWeight: "700", ...shadow },
-
-  header: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: HEADER_HEIGHT,
-    paddingTop: SAFE_TOP,
-    paddingHorizontal: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: UI.HEADER_BACKGROUND,
-    borderBottomWidth: 1,
-    borderBottomColor: UI.HEADER_BORDER,
-  },
-  headerSide: { width: 88, alignItems: "flex-end", justifyContent: "center" },
-  headerTitleBox: { flex: 1, alignItems: "center" },
-  headerTitle: { color: UI.TEXT, fontSize: 18, fontWeight: "600", ...shadow },
-  headerSubtitle: { color: UI.TEXT, fontSize: 14, fontWeight: "600", marginTop: -1, ...shadow },
-  headerIcon: { color: UI.TEXT, fontSize: 24, ...shadow },
-
-  boardWrap: { position: "absolute", top: HEADER_HEIGHT + 15, left: 0, right: 0, alignItems: "center" },
-  board: { ...panel, width: "92%", maxWidth: 500, flexDirection: "row", paddingVertical: 14, paddingHorizontal: 12, borderRadius: 18 },
-  column: { flex: 1, alignItems: "center" },
-  label: { color: UI.TEXT, fontSize: 12, fontWeight: "500", letterSpacing: 1.2, marginBottom: 4, ...shadow },
-  value: { color: UI.TEXT, fontSize: 24, fontWeight: "800", fontVariant: ["tabular-nums"], ...shadow },
-  timeLow: { color: UI.DANGER },
-  hearts: { flexDirection: "row" },
-  heart: { fontSize: 22, marginHorizontal: 3 },
-
-  nearMiss: { position: "absolute", top: HEADER_HEIGHT + 110, alignSelf: "center", color: UI.GOLD, fontSize: 30, fontWeight: "900", fontStyle: "italic", ...shadow },
-  readyNotes: { position: "absolute", bottom: 128, left: 16, right: 16, alignItems: "center", gap: 6 },
-  hint: { color: UI.TEXT, fontSize: 14, fontWeight: "600", ...shadow },
-  credit: { color: UI.TEXT_SUBTLE, fontSize: 10, ...shadow },
-
-  controls: { position: "absolute", bottom: 5, left: 0, right: 0, alignItems: "center" },
-  controlsRow: { flexDirection: "row", alignItems: "center", width: "92%", maxWidth: 500, paddingVertical: 20, gap: 20 },
-  iconButton: { ...panel, width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center", overflow: "hidden" },
-  iconText: { color: UI.TEXT, fontSize: 13, fontWeight: "900", ...shadow },
-  nitroFill: { position: "absolute", left: 0, right: 0, bottom: 0, backgroundColor: "rgba(63, 182, 255, 0.6)" },
-  nitroOn: { borderColor: "#ffb020" },
-  nitroIdle: { opacity: 0.6 },
-  speed: { color: UI.TEXT, fontSize: 17, fontWeight: "900", fontVariant: ["tabular-nums"], ...shadow },
-  speedUnit: { color: UI.TEXT, fontSize: 9, fontWeight: "700", marginTop: -2, ...shadow },
-  mainWrap: { flex: 1 },
-  mainButton: { ...panel, minHeight: 60, borderRadius: 30, paddingHorizontal: 24, paddingVertical: 16, alignItems: "center", justifyContent: "center" },
-  mainText: { color: UI.TEXT, fontSize: 16, fontWeight: "800", letterSpacing: 1, ...shadow },
-  mainSubtext: { color: UI.TEXT, fontSize: 10, fontWeight: "600", letterSpacing: 0.5, marginTop: 2 },
-
-  overlay: { ...StyleSheet.absoluteFill, backgroundColor: UI.OVERLAY, alignItems: "center", justifyContent: "center" },
-  card: { width: "95%", maxWidth: 500, borderRadius: 16, backgroundColor: UI.BACKGROUND, padding: 20, alignItems: "center" },
-  trophy: { fontSize: 44 },
-  cardTitle: { color: UI.TEXT, fontSize: 28, fontWeight: "bold", letterSpacing: 1, marginTop: 8, marginBottom: 4 },
-  cardMessage: { color: UI.TEXT_SUBTLE, fontSize: 14, marginBottom: 16 },
-  scoreCard: { backgroundColor: UI.SURFACE, borderRadius: 16, paddingVertical: 16, paddingHorizontal: 32, alignItems: "center", marginBottom: 24 },
-  scoreLabel: { color: UI.TEXT_SUBTLE, fontSize: 13, fontWeight: "600", letterSpacing: 1, marginBottom: 4 },
-  scoreValue: { color: UI.GOLD, fontSize: 44, fontWeight: "bold", fontVariant: ["tabular-nums"] },
-  scoreBest: { color: UI.TEXT_SUBTLE, fontSize: 12, fontWeight: "600", marginTop: 2 },
-  playAgain: { width: "100%", paddingVertical: 16, borderRadius: 28, backgroundColor: UI.SOLID, alignItems: "center" },
-  playAgainText: { color: UI.ON_SOLID, fontSize: 17, fontWeight: "bold", letterSpacing: 0.5 },
-  settingRow: { width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 12 },
-  settingLabel: { color: UI.TEXT, fontSize: 16, fontWeight: "600" },
-
-  flash: { backgroundColor: "#ff3b3b" },
+  loadingText: { fontSize: 18, fontWeight: "700" },
 });
+
+function makeStyles(t: Theme) {
+  const shadow = { textShadowColor: t.TEXT_SHADOW, textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3 };
+  const panel = { backgroundColor: t.SURFACE, borderColor: t.BORDER, borderWidth: t.BORDER_WIDTH };
+  return StyleSheet.create({
+    root: { flex: 1, backgroundColor: t.BACKGROUND },
+
+    header: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      height: HEADER_HEIGHT,
+      paddingTop: SAFE_TOP,
+      paddingHorizontal: 12,
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: t.HEADER_BACKGROUND,
+      borderBottomWidth: 1,
+      borderBottomColor: t.HEADER_BORDER,
+    },
+    headerSide: { width: 88, alignItems: "flex-end", justifyContent: "center" },
+    headerTitleBox: { flex: 1, alignItems: "center" },
+    headerTitle: { color: t.HEADER_TINT, fontSize: 18, fontWeight: "600" },
+    headerSubtitle: { color: t.HEADER_TINT, fontSize: 14, fontWeight: "600", marginTop: -1 },
+    headerIcon: { color: t.HEADER_TINT, fontSize: 24 },
+
+    boardWrap: { position: "absolute", top: HEADER_HEIGHT + 15, left: 0, right: 0, alignItems: "center" },
+    board: { ...panel, width: "92%", maxWidth: 500, flexDirection: "row", paddingVertical: 14, paddingHorizontal: 12, borderRadius: 18 },
+    column: { flex: 1, alignItems: "center" },
+    label: { color: t.TEXT, fontSize: 12, fontWeight: "500", letterSpacing: 1.2, marginBottom: 4, ...shadow },
+    value: { color: t.TEXT, fontSize: 24, fontWeight: "800", fontVariant: ["tabular-nums"], ...shadow },
+    timeLow: { color: t.DANGER },
+    hearts: { flexDirection: "row" },
+    heart: { fontSize: 22, marginHorizontal: 3 },
+
+    nearMiss: { position: "absolute", top: HEADER_HEIGHT + 110, alignSelf: "center", color: t.NEAR_MISS, fontSize: 30, fontWeight: "900", fontStyle: "italic" },
+    readyNotes: { position: "absolute", bottom: 128, left: 16, right: 16, alignItems: "center", gap: 6 },
+    hint: { ...panel, color: t.TEXT, fontSize: 14, fontWeight: "600", paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, overflow: "hidden" },
+    credit: { ...panel, color: t.TEXT, fontSize: 10, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 10, overflow: "hidden" },
+
+    controls: { position: "absolute", bottom: 5, left: 0, right: 0, alignItems: "center" },
+    controlsRow: { flexDirection: "row", alignItems: "center", width: "92%", maxWidth: 500, paddingVertical: 20, gap: 20 },
+    iconButton: { ...panel, width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center", overflow: "hidden" },
+    iconText: { color: t.TEXT, fontSize: 13, fontWeight: "900", ...shadow },
+    nitroFill: { position: "absolute", left: 0, right: 0, bottom: 0, backgroundColor: t.NITRO },
+    nitroOn: { borderColor: t.SCORE_HIGHLIGHT },
+    nitroIdle: { opacity: 0.6 },
+    speed: { color: t.TEXT, fontSize: 17, fontWeight: "900", fontVariant: ["tabular-nums"], ...shadow },
+    speedUnit: { color: t.TEXT, fontSize: 9, fontWeight: "700", marginTop: -2, ...shadow },
+    mainWrap: { flex: 1 },
+    mainButton: { ...panel, minHeight: 60, borderRadius: 30, paddingHorizontal: 24, paddingVertical: 16, alignItems: "center", justifyContent: "center" },
+    mainText: { color: t.TEXT, fontSize: 16, fontWeight: "800", letterSpacing: 1, ...shadow },
+    mainSubtext: { color: t.TEXT, fontSize: 10, fontWeight: "600", letterSpacing: 0.5, marginTop: 2 },
+
+    overlay: { ...StyleSheet.absoluteFill, backgroundColor: t.OVERLAY, alignItems: "center", justifyContent: "center" },
+    card: { width: "95%", maxWidth: 500, borderRadius: 16, backgroundColor: t.BACKGROUND, padding: 20, alignItems: "center" },
+    trophy: { fontSize: 44 },
+    cardTitle: { color: t.TEXT, fontSize: 28, fontWeight: "bold", letterSpacing: 1, marginTop: 8, marginBottom: 4 },
+    cardMessage: { color: t.TEXT_SUBTLE, fontSize: 14, marginBottom: 16 },
+    scoreCard: { backgroundColor: t.SURFACE, borderRadius: 16, paddingVertical: 16, paddingHorizontal: 32, alignItems: "center", marginBottom: 24 },
+    scoreLabel: { color: t.TEXT_SUBTLE, fontSize: 13, fontWeight: "600", letterSpacing: 1, marginBottom: 4 },
+    scoreValue: { color: t.SCORE_HIGHLIGHT, fontSize: 44, fontWeight: "bold", fontVariant: ["tabular-nums"] },
+    scoreBest: { color: t.TEXT_SUBTLE, fontSize: 12, fontWeight: "600", marginTop: 2 },
+    playAgain: { width: "100%", paddingVertical: 16, borderRadius: 28, backgroundColor: t.SOLID, alignItems: "center" },
+    playAgainText: { color: t.ON_SOLID, fontSize: 17, fontWeight: "bold", letterSpacing: 0.5 },
+    settingRow: { width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 12 },
+    settingLabel: { color: t.TEXT, fontSize: 16, fontWeight: "600" },
+
+    flash: { backgroundColor: "#ff3b3b" },
+  });
+}

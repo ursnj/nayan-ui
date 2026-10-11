@@ -951,6 +951,7 @@ type Light = {
   ambient: number;        // 0..1
   shadows?: boolean;      // default true
   shadowExtent?: number;  // default 30
+  color?: [r, g, b];      // light color and brightness, default [1, 1, 1]; e.g. moonlight at night
 };
 
 type CollisionInfo = { started: boolean; sensor: boolean; speed: number };

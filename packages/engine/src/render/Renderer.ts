@@ -17,8 +17,9 @@ const DEPTH_FORMAT: GPUTextureFormat = "depth24plus";
 // 16 bits cover the light's 1..140 depth range to ~0.002 units, well inside the depth bias, at half
 // the bandwidth of depth32float.
 const SHADOW_FORMAT: GPUTextureFormat = "depth16unorm";
-const GLOBALS_FLOATS = 16 + 16 + 4 + 4 + 4 + 4;
+const GLOBALS_FLOATS = 16 + 16 + 4 + 4 + 4 + 4 + 4;
 const WHITE = -1; // texture key for meshes without a texture
+const WHITE_LIGHT = [1, 1, 1] as const;
 
 export const defaultCamera = (): Camera => ({ eye: [0, 40, 60], target: [0, 0, 0], fov: Math.PI / 3 });
 export const defaultLight = (): Light => ({ direction: [0.4, 0.8, 0.5], ambient: 0.35 });
@@ -312,6 +313,10 @@ export class Renderer {
     const [br, bg, bb] = environment.background;
     g.set(environment.background, 44);
     g[47] = Math.max(0, environment.fog);
+    const [cr, cg, cb] = light.color ?? WHITE_LIGHT;
+    g[48] = cr;
+    g[49] = cg;
+    g[50] = cb;
 
     const queue = this.device.queue;
     const used = this.source.count;
