@@ -23,6 +23,7 @@ export default function RootLayout() {
         headerTintColor: theme.HEADER_TINT,
         headerShadowVisible: false,
         headerTitleAlign: "center",
+        headerBackButtonDisplayMode: "minimal", // just the arrow, no "Nayan Engine" beside it (iOS)
         contentStyle: { backgroundColor: theme.BACKGROUND },
         statusBarStyle: theme.dark ? "light" : "dark",
       }}
