@@ -196,8 +196,16 @@ type Car = {
   root: Entity;
   s: number;
   d: number;
+  /** The lane it spawned in (a sideswipe can shove it out of it). */
+  lane: number;
+  /** Sideways speed from a sideswipe, fading back to 0. */
+  vd: number;
   passed: boolean;
   crashed: boolean;
+  /** It was sideswiped (no near-miss bonus for it). */
+  bumped: boolean;
+  /** Seconds until another sideswipe makes a sound again. */
+  bumpCooldown: number;
   /** Closest it came beside the player, for near misses. */
   closest: number;
 };
@@ -446,7 +454,7 @@ function spawnTraffic(g: Game, ahead = SPAWN_AHEAD) {
   const s = g.s + ahead;
   const window = 14 + g.speed * 0.35;
   const blocked = new Set<number>();
-  for (const car of g.traffic) if (!car.crashed && Math.abs(car.s - s) < window) blocked.add(LANES.indexOf(car.d));
+  for (const car of g.traffic) if (!car.crashed && Math.abs(car.s - s) < window) blocked.add(car.lane);
   const open = [0, 1, 2].filter((l) => !blocked.has(l));
   if (open.length <= 1) return;
   const d = LANES[pick(open)]!;
@@ -454,7 +462,7 @@ function spawnTraffic(g: Game, ahead = SPAWN_AHEAD) {
   placeAt(t, d, g.assets.car.size[1] / 2, at);
   const { root } = spawnCar(g.world, g.assets, pick(PAINTS), [at[0], at[1], at[2]]);
   g.world.set(root, { rotation: orient(t.heading, t.pitch) });
-  g.traffic.push({ root, s, d, passed: false, crashed: false, closest: Infinity });
+  g.traffic.push({ root, s, d, lane: LANES.indexOf(d), vd: 0, passed: false, crashed: false, bumped: false, bumpCooldown: 0, closest: Infinity });
 }
 
 /** Moves an entity to (s, d) by giving it the velocity that gets it there this frame: the core smooths the rest. */
@@ -503,12 +511,29 @@ function crash(g: Game, car: Car) {
     end(g);
     return;
   }
-  // A blink while the player can't be hit again.
-  g.invulnerable = INVULNERABLE;
-  const [r, gr, b] = PLAYER_PAINT;
-  const blink = { duration: 0.2, repeat: 7 };
-  g.world.animate(g.player.body, [{ color: [r, gr, b, 0.25] }, { color: [r, gr, b, 1] }], blink);
-  for (const part of [g.player.glass, g.player.trim]) g.world.animate(part, [{ color: [1, 1, 1, 0.25] }, { color: [1, 1, 1, 1] }], blink);
+  g.invulnerable = INVULNERABLE; // a moment's grace, so one pile-up doesn't cost two lives
+}
+
+/**
+ * A sideswipe: no life lost. The other car is shoved sideways (its nose kicks out as it slides), the
+ * player bounces back a little, and the two are pushed apart so the contact doesn't repeat.
+ */
+function sideswipe(g: Game, car: Car, overlap: number) {
+  const away = Math.sign(car.d - g.d) || 1;
+  car.d += away * overlap * 0.65;
+  g.d -= away * overlap * 0.35;
+  car.vd = away * (4 + Math.abs(g.lateral) * 0.8);
+  g.lateral = -away * Math.abs(g.lateral) * 0.3;
+  car.bumped = true;
+  g.speed *= 0.97;
+  g.shake = Math.max(g.shake, 0.15);
+  if (car.bumpCooldown > 0) return;
+  car.bumpCooldown = 0.3;
+  const t = g.track.sample((car.s + g.s) / 2, sample);
+  placeAt(t, (car.d + g.d) / 2, 0.6, at);
+  g.world.burst({ position: [at[0], at[1], at[2]], count: 10, speed: 7, size: 0.07, lifetime: 0.4, color: [[2, 1.8, 0.8], [2, 1.3, 0.4]] });
+  sfx.play("bump", { volume: 0.9 });
+  haptics.impact(0.6, 0.7);
 }
 
 // ── Fire ────────────────────────────────────────────────────────────────
@@ -676,15 +701,31 @@ function tick(g: Game, dt: number) {
     }
     const carSize = g.assets.car.size;
     car.s += TRAFFIC_SPEED * dt;
-    drive(g, car.root, car.s, car.d, carSize[1] / 2, dt);
+    // A shove slides it sideways, fading out; the rails bounce it back.
+    car.bumpCooldown -= dt;
+    car.d += car.vd * dt;
+    car.vd *= Math.exp(-dt * 2.5);
+    if (Math.abs(car.d) > EDGE) {
+      car.d = Math.sign(car.d) * EDGE;
+      car.vd = -car.vd * 0.3;
+    }
+    drive(g, car.root, car.s, car.d, carSize[1] / 2, dt, Math.atan2(car.vd, TRAFFIC_SPEED) * 0.9);
     const ds = car.s - g.s;
     const reach = (carSize[2] + size[2]) / 2 - 0.2;
     const gap = Math.abs(car.d - g.d);
     if (Math.abs(ds) < reach) {
       car.closest = Math.min(car.closest, gap);
-      if (playing && g.invulnerable <= 0 && gap < (carSize[0] + size[0]) / 2 - 0.1) {
-        crash(g, car);
-        continue;
+      // Touching: the axis they overlap least on says how. Mostly side by side = a sideswipe; nose to
+      // tail = a crash.
+      const across = (carSize[0] + size[0]) / 2 - 0.1 - gap;
+      const along = reach - Math.abs(ds);
+      if (playing && across > 0) {
+        if (across < along) {
+          sideswipe(g, car, across);
+        } else if (g.invulnerable <= 0) {
+          crash(g, car);
+          continue;
+        }
       }
     }
     if (!car.passed && playing && ds < -reach) {
@@ -694,7 +735,7 @@ function tick(g: Game, dt: number) {
       g.nitro = Math.min(1, g.nitro + 0.12);
       sfx.play("point", { volume: 0.5 });
       haptics.impact(0.25, 0.9);
-      if (car.closest < 2.9) {
+      if (car.closest < 2.9 && !car.bumped) {
         g.nitro = Math.min(1, g.nitro + 0.12);
         g.onNearMiss();
       }
@@ -761,7 +802,7 @@ function autopilot(g: Game) {
   for (const car of g.traffic) {
     if (car.crashed) continue;
     const ahead = car.s - g.s;
-    const lane = LANES.indexOf(car.d);
+    const lane = car.lane;
     if (ahead > -4 && lane >= 0) nearest[lane] = Math.min(nearest[lane]!, ahead);
   }
   let current = 0;
