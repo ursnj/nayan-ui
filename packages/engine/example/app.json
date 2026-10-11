@@ -6,7 +6,10 @@
     "orientation": "default",
     "newArchEnabled": true,
     "ios": {
-      "bundleIdentifier": "dev.nayan.engine"
+      "bundleIdentifier": "dev.nayan.engine",
+      "infoPlist": {
+        "UIViewControllerBasedStatusBarAppearance": true
+      }
     },
     "android": {
       "package": "dev.nayan.engine",
