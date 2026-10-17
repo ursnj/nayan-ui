@@ -11,4 +11,5 @@
 pub mod android;
 pub mod media;
 pub mod model;
+pub mod render;
 pub mod world;

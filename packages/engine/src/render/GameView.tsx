@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useRef, useState, type ComponentType } from "react";
-import { PanResponder, PixelRatio, Platform, StyleSheet, View, type ViewStyle } from "react-native";
-import { Canvas, useCanvasRef, type CanvasRef } from "react-native-webgpu";
-import { GLRenderer } from "./GLRenderer";
+import { useEffect, useMemo, useRef } from "react";
+import { PanResponder, PixelRatio, requireNativeComponent, StyleSheet, View, type ViewStyle } from "react-native";
+import NativeEngine from "../native/NativeNayanEngine";
+import { uploadBuiltInMeshes } from "./meshes";
 import { AutoQuality, QUALITY_LEVELS, type Quality, type QualitySetting } from "./quality";
-import { defaultCamera, defaultLight, Renderer } from "./Renderer";
 import type { Camera, Light, RenderSource } from "../types";
 import type { Entity } from "../world/World";
 
@@ -14,15 +13,13 @@ const SWIPE_DISTANCE = 30; // points
 const SWIPE_SPEED = 0.3; // points per ms
 const LONG_PRESS_TIME = 500; // ms
 
-type GLViewProps = { style?: ViewStyle; onContextCreate: (gl: unknown) => void };
-/** expo-gl's view, when installed: the OpenGL ES fallback for Android GPUs without WebGPU. */
-const GLView: ComponentType<GLViewProps> | undefined = (() => {
-  try {
-    return require("expo-gl").GLView;
-  } catch {
-    return undefined;
-  }
-})();
+/** The native view the Rust renderer draws into (Vulkan / GLES on Android, Metal on iOS). */
+const EngineSurface = requireNativeComponent<{ surfaceId: number; style?: ViewStyle }>("NayanEngineSurface");
+const FRAME_LEN = 26; // ENGINE_FRAME_LEN
+let nextSurface = 1;
+
+const defaultCamera = (): Camera => ({ eye: [0, 40, 60], target: [0, 0, 0], fov: Math.PI / 3 });
+const defaultLight = (): Light => ({ direction: [0.4, 0.8, 0.5], ambient: 0.35 });
 
 export type GameStats = {
   fps: number;
@@ -30,6 +27,8 @@ export type GameStats = {
   updateMs: number;
   /** The quality level drawn with (with `quality="auto"`, the one it settled on so far). */
   quality: Quality;
+  /** The graphics API drawing: "vulkan", "gl" (OpenGL ES) or "metal". */
+  backend: string;
 };
 
 export type SwipeDirection = "left" | "right" | "up" | "down";
@@ -90,7 +89,7 @@ type Props = {
   onPinch?: (pinch: PinchEvent) => void;
   /** Called once a second. */
   onStats?: (stats: GameStats) => void;
-  /** GPU setup failures and WebGPU validation errors. Defaults to console.error. */
+  /** GPU setup failures and rendering errors. Defaults to console.error. */
   onError?: (error: Error) => void;
 };
 
@@ -98,7 +97,6 @@ type WithPosition = RenderSource & { worldPosition(e: Entity, out: [number, numb
 
 export function GameView(props: Props) {
   const { source, camera, light, background, fog, style } = props;
-  const ref = useCanvasRef();
   // Latest props, read from the frame loop and touch handlers without restarting them.
   const live = useRef({
     props,
@@ -208,34 +206,34 @@ export function GameView(props: Props) {
   }, []);
   useEffect(() => touch.dispose, [touch]);
 
-  // Android GPUs without WebGPU (no adapter even in compatibility mode) draw with OpenGL ES instead.
-  const [useGL, setUseGL] = useState(false);
-  const [gl, setGL] = useState<WebGL2RenderingContext | null>(null);
-  const size = useRef({ width: 1, height: 1 });
+  const surfaceId = useMemo(() => nextSurface++, []);
+  const size = useRef({ width: 0, height: 0 });
 
-  const report = (error: unknown) => {
-    const e = error instanceof Error ? error : new Error(String(error));
-    (live.current.props.onError ?? ((x: Error) => console.error(`GameView: ${x.message}`)))(e);
-  };
-
-  /** Runs the game loop: update, camera, quality, draw, stats. Returns a stop function. */
-  const startLoop = (
-    renderer: Pick<Renderer, "render" | "setQuality" | "viewProj">,
-    resize: (ratio: number) => { width: number; height: number; clientWidth: number; clientHeight: number },
-    onFirstFrame?: () => void,
-  ) => {
+  useEffect(() => {
+    const native = NativeEngine;
+    const report = (error: unknown) => {
+      const e = error instanceof Error ? error : new Error(String(error));
+      (live.current.props.onError ?? ((x: Error) => console.error(`GameView: ${x.message}`)))(e);
+    };
+    if (!native) {
+      report(new Error("the native engine is not linked into this build"));
+      return;
+    }
+    uploadBuiltInMeshes();
     let alive = true;
     let raf = 0;
+    let errors = 0;
     const auto = new AutoQuality();
     const chosen = () => {
       const setting = live.current.props.quality ?? "auto";
       return setting === "auto" ? auto.quality : setting;
     };
-    let quality = chosen();
-    renderer.setQuality(QUALITY_LEVELS[quality]);
     const followed: [number, number, number] = [0, 0, 0];
     const shaken: Camera = { eye: [0, 0, 0], target: [0, 0, 0], fov: 1 };
-    let firstFrame = true;
+    const frameData = new Float64Array(FRAME_LEN);
+    const viewProj = new Float32Array(16);
+    // Sources without texture regions show whole textures.
+    const regions = source.regions ?? new Float32Array(Math.max(1, source.capacity) * 4).map((_, i) => (i % 4 < 2 ? 0 : 1));
     let last = 0;
     let frames = 0;
     let fpsStart = 0;
@@ -243,6 +241,7 @@ export function GameView(props: Props) {
 
     const frame = (now: number) => {
       if (!alive) return;
+      raf = requestAnimationFrame(frame);
       if (!last) last = fpsStart = now;
       const dt = Math.min((now - last) / 1000, 0.1);
       last = now;
@@ -255,125 +254,61 @@ export function GameView(props: Props) {
       follow(camera, source, followed, dt);
       const view = shake(camera, shaken, dt);
 
-      const next = chosen();
-      if (next !== quality) {
-        quality = next;
-        renderer.setQuality(QUALITY_LEVELS[quality]);
-      }
+      const quality = chosen();
+      const level = QUALITY_LEVELS[quality];
+      const { width, height } = size.current;
       // Phones' GPUs are fill-rate bound: cap the pixels drawn rather than match a 3x+ screen.
-      const { width, height, clientWidth, clientHeight } = resize(Math.min(PixelRatio.get(), QUALITY_LEVELS[quality].maxPixelRatio));
-      renderer.render(width, height, view, light, environment);
-      source.setView?.(renderer.viewProj, clientWidth, clientHeight);
-      if (firstFrame) {
-        firstFrame = false;
-        onFirstFrame?.();
+      const ratio = Math.min(PixelRatio.get(), level.maxPixelRatio);
+      const f = frameData;
+      f.set(view.eye, 0);
+      f.set(view.target, 3);
+      f[6] = view.fov;
+      f[7] = view.ortho ?? 0;
+      f.set(light.direction, 8);
+      f[11] = light.ambient;
+      f[12] = (light.shadows ?? true) ? 1 : 0;
+      f[13] = light.shadowExtent ?? 30;
+      f.set(light.color ?? [1, 1, 1], 14);
+      f.set(environment.background, 17);
+      f[20] = environment.fog;
+      f[21] = Math.round(width * ratio);
+      f[22] = Math.round(height * ratio);
+      f[23] = level.samples;
+      f[24] = level.shadowSize;
+      f[25] = level.softShadows ? 1 : 0;
+      const drawn = native.renderFrame(
+        surfaceId,
+        f.buffer,
+        source.matrices.buffer,
+        source.colors.buffer,
+        regions.buffer,
+        source.ranges.buffer,
+        source.count,
+        viewProj.buffer,
+      );
+      if (drawn === 1) {
+        source.setView?.(viewProj, width, height);
+      } else if (drawn < 0 && errors++ < 3) {
+        report(new Error(native.renderError() || "rendering failed"));
       }
 
       frames++;
       if (now - fpsStart >= 1000) {
         auto.report(now, (now - fpsStart) / frames);
-        current.onStats?.({ fps: (frames * 1000) / (now - fpsStart), updateMs: updateTime / frames, quality });
+        current.onStats?.({ fps: (frames * 1000) / (now - fpsStart), updateMs: updateTime / frames, quality, backend: native.renderBackend() });
         frames = 0;
         updateTime = 0;
         fpsStart = now;
       }
-      raf = requestAnimationFrame(frame);
     };
     raf = requestAnimationFrame(frame);
     return () => {
       alive = false;
       cancelAnimationFrame(raf);
     };
-  };
-
-  useEffect(() => {
-    if (useGL) return;
-    let alive = true;
-    let stop: (() => void) | undefined;
-    let device: GPUDevice | undefined;
-
-    (async () => {
-      // Older GPUs (e.g. PowerVR GE8322) miss WebGPU core limits; fall back to compatibility mode.
-      const adapter =
-        (await navigator.gpu.requestAdapter()) ??
-        (await navigator.gpu.requestAdapter({ featureLevel: "compatibility" } as GPURequestAdapterOptions));
-      if (!alive) return;
-      if (!adapter) {
-        if (Platform.OS === "android" && GLView) setUseGL(true);
-        else report(new Error("no WebGPU adapter: this device's GPU doesn't support WebGPU"));
-        return;
-      }
-      device = await adapter.requestDevice();
-      if (!alive) {
-        device.destroy(); // unmounted while we were waiting
-        return;
-      }
-      device.onuncapturederror = (event) => report(new Error(`WebGPU: ${event.error.message}`));
-      device.lost.then((info) => {
-        if (alive && info.reason !== "destroyed") console.warn(`GameView: GPU device lost (${info.message})`);
-      });
-      const context = ref.current?.getContext("webgpu");
-      if (!context) return;
-
-      const format = navigator.gpu.getPreferredCanvasFormat();
-      context.configure({ device, format, alphaMode: "opaque" });
-      const canvas = context.canvas as unknown as ReturnType<CanvasRef["getNativeSurface"]>;
-      // Validation errors don't throw in WebGPU; scope the setup and first frame so they surface.
-      device.pushErrorScope("validation");
-      const quality = live.current.props.quality;
-      const renderer = new Renderer(device, context, format, source, QUALITY_LEVELS[!quality || quality === "auto" ? "medium" : quality]);
-      const gpu = device;
-      stop = startLoop(
-        renderer,
-        (ratio) => {
-          const width = Math.max(1, Math.round(canvas.clientWidth * ratio));
-          const height = Math.max(1, Math.round(canvas.clientHeight * ratio));
-          if (canvas.width !== width) canvas.width = width;
-          if (canvas.height !== height) canvas.height = height;
-          return { width, height, clientWidth: canvas.clientWidth, clientHeight: canvas.clientHeight };
-        },
-        () => gpu.popErrorScope().then((e) => e && report(new Error(`WebGPU setup: ${e.message}`)), report),
-      );
-    })().catch(report);
-
-    return () => {
-      alive = false;
-      stop?.();
-      device?.destroy(); // frees every GPU resource the renderer created
-    };
     // A new source (e.g. a new round's World) restarts drawing; everything else is read live.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [source, useGL]);
-
-  useEffect(() => {
-    if (!gl) return;
-    let renderer: GLRenderer | undefined;
-    let stop: (() => void) | undefined;
-    try {
-      const quality = live.current.props.quality;
-      renderer = new GLRenderer(gl, source, QUALITY_LEVELS[!quality || quality === "auto" ? "medium" : quality]);
-      // Same quality levels as WebGPU: drawn offscreen at the level's pixel ratio, scaled up to the screen.
-      stop = startLoop(
-        renderer,
-        (ratio) => {
-          const { width, height } = size.current;
-          return {
-            width: Math.max(1, Math.round(width * ratio)),
-            height: Math.max(1, Math.round(height * ratio)),
-            clientWidth: width,
-            clientHeight: height,
-          };
-        },
-      );
-    } catch (error) {
-      report(error);
-    }
-    return () => {
-      stop?.();
-      renderer?.dispose();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [source, gl]);
+  }, [source]);
 
   const touchable = props.onTap || props.onSwipe || props.onDrag || props.onLongPress || props.onPinch;
   return (
@@ -382,11 +317,7 @@ export function GameView(props: Props) {
       onLayout={(e) => (size.current = { width: e.nativeEvent.layout.width, height: e.nativeEvent.layout.height })}
       {...(touchable ? touch.responder.panHandlers : undefined)}
     >
-      {useGL && GLView ? (
-        <GLView style={styles.canvas} onContextCreate={(context) => setGL(context as unknown as WebGL2RenderingContext)} />
-      ) : (
-        <Canvas ref={ref} style={styles.canvas} />
-      )}
+      <EngineSurface surfaceId={surfaceId} style={styles.canvas} />
     </View>
   );
 }

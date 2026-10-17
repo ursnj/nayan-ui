@@ -1,0 +1,26 @@
+// Java side of the engine: the EngineSurface view the renderer draws into. The native module itself is
+// pure C++ (CMakeLists.txt, built into the app by autolinking).
+apply plugin: "com.android.library"
+
+def safeExtGet(prop, fallback) {
+  rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
+android {
+  namespace "com.nayanui.engine"
+  compileSdkVersion safeExtGet("compileSdkVersion", 35)
+
+  defaultConfig {
+    minSdkVersion safeExtGet("minSdkVersion", 24)
+    consumerProguardFiles "proguard-rules.pro"
+  }
+}
+
+repositories {
+  google()
+  mavenCentral()
+}
+
+dependencies {
+  implementation "com.facebook.react:react-android"
+}

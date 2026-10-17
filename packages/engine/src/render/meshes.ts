@@ -1,3 +1,4 @@
+import NativeEngine from "../native/NativeNayanEngine";
 import { SHAPE_MESH, type Shape } from "../types";
 
 // Interleaved position(3) + normal(3) + color(3) + uv(2), the same layout loaded models use.
@@ -219,6 +220,33 @@ const registered = new Map<number, MeshInfo>();
 /** Registers what a mesh id draws (loaded models, glyphs, textured variants). */
 export function registerMesh(mesh: number, info: MeshInfo) {
   registered.set(mesh, info);
+  upload(mesh, info);
+}
+
+/** A typed array's bytes as an ArrayBuffer of exactly its length. */
+function exact(data: Float32Array | Uint32Array): ArrayBuffer {
+  const whole = data.byteOffset === 0 && data.byteLength === data.buffer.byteLength;
+  return (whole ? data : data.slice()).buffer as ArrayBuffer;
+}
+
+/** Hands a mesh's geometry and material to the native renderer (which copies them). */
+function upload(mesh: number, info: MeshInfo) {
+  const { vertices, indices } = info.geometry;
+  NativeEngine?.renderMesh(mesh, exact(vertices), exact(indices), info.texture ?? -1, info.shine ?? 0);
+}
+
+let builtInsUploaded = false;
+
+/** Generates the built-in shapes and hands them to the native renderer (once). */
+export function uploadBuiltInMeshes() {
+  if (builtInsUploaded) return;
+  builtInsUploaded = true;
+  for (const shape of Object.keys(BUILT_IN) as Shape[]) {
+    const mesh = SHAPE_MESH[shape];
+    if (registered.has(mesh)) continue;
+    const info = meshInfo(mesh);
+    if (info) upload(mesh, info);
+  }
 }
 
 /** What to draw for a mesh id, or undefined ("none", or unknown). Built-in shapes are generated on first use. */

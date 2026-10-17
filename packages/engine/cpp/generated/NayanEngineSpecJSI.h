@@ -63,6 +63,10 @@ protected:
     methodMap_["fontLoad"] = MethodMetadata {.argCount = 3, .invoker = __fontLoad};
     methodMap_["fontGlyphs"] = MethodMetadata {.argCount = 1, .invoker = __fontGlyphs};
     methodMap_["loadError"] = MethodMetadata {.argCount = 0, .invoker = __loadError};
+    methodMap_["renderMesh"] = MethodMetadata {.argCount = 5, .invoker = __renderMesh};
+    methodMap_["renderFrame"] = MethodMetadata {.argCount = 8, .invoker = __renderFrame};
+    methodMap_["renderError"] = MethodMetadata {.argCount = 0, .invoker = __renderError};
+    methodMap_["renderBackend"] = MethodMetadata {.argCount = 0, .invoker = __renderBackend};
     methodMap_["audioLoad"] = MethodMetadata {.argCount = 1, .invoker = __audioLoad};
     methodMap_["audioPlay"] = MethodMetadata {.argCount = 5, .invoker = __audioPlay};
     methodMap_["audioStop"] = MethodMetadata {.argCount = 1, .invoker = __audioStop};
@@ -444,6 +448,47 @@ private:
       bridging::getParameterCount(&T::loadError) == 1,
       "Expected loadError(...) to have 1 parameters");
     return bridging::callFromJs<jsi::String>(rt, &T::loadError,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule));
+  }
+
+  static jsi::Value __renderMesh(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::renderMesh) == 6,
+      "Expected renderMesh(...) to have 6 parameters");
+    bridging::callFromJs<void>(rt, &T::renderMesh,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber(),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asObject(rt),
+      count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asObject(rt),
+      count <= 3 ? throw jsi::JSError(rt, "Expected argument in position 3 to be passed") : args[3].asNumber(),
+      count <= 4 ? throw jsi::JSError(rt, "Expected argument in position 4 to be passed") : args[4].asNumber());return jsi::Value::undefined();
+  }
+
+  static jsi::Value __renderFrame(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::renderFrame) == 9,
+      "Expected renderFrame(...) to have 9 parameters");
+    return bridging::callFromJs<double>(rt, &T::renderFrame,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber(),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asObject(rt),
+      count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asObject(rt),
+      count <= 3 ? throw jsi::JSError(rt, "Expected argument in position 3 to be passed") : args[3].asObject(rt),
+      count <= 4 ? throw jsi::JSError(rt, "Expected argument in position 4 to be passed") : args[4].asObject(rt),
+      count <= 5 ? throw jsi::JSError(rt, "Expected argument in position 5 to be passed") : args[5].asObject(rt),
+      count <= 6 ? throw jsi::JSError(rt, "Expected argument in position 6 to be passed") : args[6].asNumber(),
+      count <= 7 ? throw jsi::JSError(rt, "Expected argument in position 7 to be passed") : args[7].asObject(rt));
+  }
+
+  static jsi::Value __renderError(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* /*args*/, size_t /*count*/) {
+    static_assert(
+      bridging::getParameterCount(&T::renderError) == 1,
+      "Expected renderError(...) to have 1 parameters");
+    return bridging::callFromJs<jsi::String>(rt, &T::renderError,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule));
+  }
+
+  static jsi::Value __renderBackend(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* /*args*/, size_t /*count*/) {
+    static_assert(
+      bridging::getParameterCount(&T::renderBackend) == 1,
+      "Expected renderBackend(...) to have 1 parameters");
+    return bridging::callFromJs<jsi::String>(rt, &T::renderBackend,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule));
   }
 
   static jsi::Value __audioLoad(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {

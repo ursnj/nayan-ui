@@ -194,6 +194,26 @@ int32_t engine_audio_is_running(void);
 void engine_android_init(void *java_vm, void *context);
 #endif
 
+// ── Renderer (wgpu: Vulkan, else GLES 3.0, on Android; Metal on iOS) ───────
+#define ENGINE_FRAME_LEN 26
+// Geometry (copied) drawn for a mesh id: vertex_count * 11 floats, u32 indices; texture -1 = none.
+void engine_render_mesh(uint32_t mesh, const float *vertices, size_t vertex_count, const uint32_t *indices, size_t index_count,
+                        int32_t texture, float shine);
+// Attaches (or resizes) surface `surface` drawing into `window` (ANativeWindow* on Android, CAMetalLayer*
+// on iOS) at width x height pixels. `window` must stay valid until engine_render_detach returns.
+// Returns 1, or 0 on failure (see engine_render_error).
+int32_t engine_render_attach(int32_t surface, void *window, uint32_t width, uint32_t height);
+void engine_render_detach(int32_t surface);
+// Draws a frame. `frame`: ENGINE_FRAME_LEN doubles (layout in core/src/render/gpu.rs, Frame::from_slice).
+// Instance buffers hold `capacity` instances (regions may be NULL); `ranges` as engine_world_ranges.
+// Returns 1 (drawn; out_view_proj gets 16 floats), 0 (surface not ready / frame skipped), -1 (error).
+int32_t engine_render_frame(int32_t surface, const double *frame, size_t frame_len, const float *matrices, const float *colors,
+                            const float *regions, size_t capacity, const uint32_t *ranges, size_t ranges_len, size_t count,
+                            float *out_view_proj);
+size_t engine_render_error(char *out, size_t cap);
+// "vulkan", "gl", "metal", or "" before the first attach.
+size_t engine_render_backend(char *out, size_t cap);
+
 // ── Haptics (global; Core Haptics on iOS, the Vibrator service on Android) ──
 int32_t engine_haptics_supported(void);
 // `count` taps as [time, intensity 0..1, sharpness 0..1] triples.
