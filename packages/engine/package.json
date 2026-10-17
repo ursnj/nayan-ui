@@ -1,14 +1,16 @@
 {
   "name": "@nayan-ui/engine",
   "version": "1.0.0-beta.2",
-  "description": "A fast 3D game engine for React Native, built on WebGPU.",
+  "description": "A fast 3D game engine for React Native, rendered natively with wgpu (Vulkan, OpenGL ES, Metal).",
   "keywords": [
     "react-native",
     "ios",
     "android",
     "3d",
     "game-engine",
-    "webgpu"
+    "wgpu",
+    "vulkan",
+    "metal"
   ],
   "homepage": "https://github.com/ursnj/nayan-ui#readme",
   "bugs": {
@@ -66,26 +68,19 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.4",
-    "@webgpu/types": "^0.1.60",
     "del-cli": "^7.0.0",
     "react": "19.2.3",
     "react-native": "0.86.3",
     "react-native-builder-bob": "^0.43.1",
-    "react-native-webgpu": "^0.13.0",
     "typescript": "~6.0.3"
   },
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-webgpu": ">=0.13.0",
-    "expo-asset": "*",
-    "expo-gl": "*"
+    "expo-asset": "*"
   },
   "peerDependenciesMeta": {
     "expo-asset": {
-      "optional": true
-    },
-    "expo-gl": {
       "optional": true
     }
   },

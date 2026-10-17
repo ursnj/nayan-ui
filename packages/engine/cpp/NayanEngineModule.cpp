@@ -383,6 +383,54 @@ jsi::String NayanEngineModule::loadError(jsi::Runtime &rt) {
   return jsi::String::createFromUtf8(rt, message);
 }
 
+void NayanEngineModule::renderMesh(
+    jsi::Runtime &rt, double mesh, jsi::Object vertices, jsi::Object indices, double texture, double shine) {
+  jsi::ArrayBuffer v = fileData(rt, vertices, "renderMesh");
+  jsi::ArrayBuffer i = fileData(rt, indices, "renderMesh");
+  engine_render_mesh(
+      id(mesh), reinterpret_cast<const float *>(v.data(rt)), v.size(rt) / (11 * sizeof(float)),
+      reinterpret_cast<const uint32_t *>(i.data(rt)), i.size(rt) / sizeof(uint32_t),
+      texture >= 0 ? static_cast<int32_t>(texture) : -1, static_cast<float>(shine)); // copied
+}
+
+double NayanEngineModule::renderFrame(
+    jsi::Runtime &rt,
+    double surface,
+    jsi::Object frame,
+    jsi::Object matrices,
+    jsi::Object colors,
+    jsi::Object regions,
+    jsi::Object ranges,
+    double count,
+    jsi::Object viewProj) {
+  jsi::ArrayBuffer f = fileData(rt, frame, "renderFrame");
+  jsi::ArrayBuffer m = fileData(rt, matrices, "renderFrame");
+  jsi::ArrayBuffer c = fileData(rt, colors, "renderFrame");
+  jsi::ArrayBuffer g = fileData(rt, regions, "renderFrame");
+  jsi::ArrayBuffer r = fileData(rt, ranges, "renderFrame");
+  jsi::ArrayBuffer out = fileData(rt, viewProj, "renderFrame");
+  // The instance count every buffer has room for.
+  size_t capacity = std::min({m.size(rt) / (16 * sizeof(float)), c.size(rt) / (4 * sizeof(float)), g.size(rt) / (4 * sizeof(float))});
+  size_t n = count > 0 ? std::min(static_cast<size_t>(count), capacity) : 0;
+  return engine_render_frame(
+      static_cast<int32_t>(surface), reinterpret_cast<const double *>(f.data(rt)), f.size(rt) / sizeof(double),
+      reinterpret_cast<const float *>(m.data(rt)), reinterpret_cast<const float *>(c.data(rt)),
+      reinterpret_cast<const float *>(g.data(rt)), capacity, reinterpret_cast<const uint32_t *>(r.data(rt)),
+      r.size(rt) / sizeof(uint32_t), n, out.size(rt) >= 16 * sizeof(float) ? reinterpret_cast<float *>(out.data(rt)) : nullptr);
+}
+
+jsi::String NayanEngineModule::renderError(jsi::Runtime &rt) {
+  std::string message(engine_render_error(nullptr, 0) + 1, '\0');
+  message.resize(engine_render_error(message.data(), message.size()));
+  return jsi::String::createFromUtf8(rt, message);
+}
+
+jsi::String NayanEngineModule::renderBackend(jsi::Runtime &rt) {
+  char name[16] = {0};
+  engine_render_backend(name, sizeof(name));
+  return jsi::String::createFromAscii(rt, name);
+}
+
 double NayanEngineModule::audioLoad(jsi::Runtime &rt, jsi::Object data) {
   jsi::ArrayBuffer buffer = fileData(rt, data, "audioLoad");
   return engine_audio_load_wav(buffer.data(rt), buffer.size(rt)); // copied by the core
@@ -425,3 +473,54 @@ void NayanEngineModule::hapticsPlay(jsi::Runtime &rt, jsi::Array taps, bool thro
 }
 
 } // namespace facebook::react
+
+#ifdef __ANDROID__
+#include <android/native_window_jni.h>
+
+#include <mutex>
+#include <unordered_map>
+
+// JNI for com.nayanui.engine.EngineSurfaceView: hands its Surface to the renderer. Called on the UI
+// thread; the renderer draws from the JS thread and serializes both with its own lock.
+namespace {
+std::mutex windowsMutex;
+std::unordered_map<int, ANativeWindow *> windows;
+
+void releaseWindow(int surface) {
+  engine_render_detach(surface); // the renderer stops using the window before it's released
+  std::lock_guard<std::mutex> lock(windowsMutex);
+  auto it = windows.find(surface);
+  if (it != windows.end()) {
+    ANativeWindow_release(it->second);
+    windows.erase(it);
+  }
+}
+} // namespace
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_nayanui_engine_EngineSurfaceView_nativeAttach(JNIEnv *env, jclass, jint surface, jobject javaSurface, jint width, jint height) {
+  ANativeWindow *window = ANativeWindow_fromSurface(env, javaSurface);
+  if (window == nullptr) {
+    return JNI_FALSE;
+  }
+  {
+    std::lock_guard<std::mutex> lock(windowsMutex);
+    auto it = windows.find(surface);
+    if (it != windows.end() && it->second == window) {
+      ANativeWindow_release(window); // same window: just a resize
+      window = it->second;
+    } else if (it != windows.end()) {
+      engine_render_detach(surface);
+      ANativeWindow_release(it->second);
+      it->second = window;
+    } else {
+      windows[surface] = window;
+    }
+  }
+  return engine_render_attach(surface, window, static_cast<uint32_t>(width), static_cast<uint32_t>(height)) == 1 ? JNI_TRUE : JNI_FALSE;
+}
+
+extern "C" JNIEXPORT void JNICALL Java_com_nayanui_engine_EngineSurfaceView_nativeDetach(JNIEnv *, jclass, jint surface) {
+  releaseWindow(surface);
+}
+#endif

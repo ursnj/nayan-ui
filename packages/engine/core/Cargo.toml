@@ -18,9 +18,13 @@ hound = "3.5.1"
 i_overlay = "9.0.1"
 jpeg-decoder = { version = "0.3.2", default-features = false }
 png = "0.18.1"
+pollster = "1.0.1"
 rapier3d = "0.36.1"
+raw-window-handle = "0.6.2"
 rtrb = "0.4.0"
 ttf-parser = "0.25.1"
+# Vulkan with a GLES fallback on Android, Metal on Apple; nothing else is compiled in.
+wgpu = { version = "30.0.1", default-features = false, features = ["wgsl", "std", "vulkan", "gles", "metal"] }
 
 [profile.release]
 opt-level = 3
@@ -49,3 +53,6 @@ objc2-foundation = "0.3.2"
 [target.'cfg(target_os = "android")'.dependencies]
 jni = "0.22"
 ndk-context = "0.1"
+
+[dev-dependencies]
+naga = { version = "30.0.1", features = ["wgsl-in", "glsl-out", "msl-out", "spv-out"] }

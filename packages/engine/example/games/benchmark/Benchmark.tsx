@@ -63,7 +63,7 @@ function createPhysicsWorld() {
 
 export function Benchmark() {
   const [backend, setBackend] = useState<Backend>(isEngineAvailable ? "rust" : "js");
-  const [stats, setStats] = useState<GameStats>({ fps: 0, updateMs: 0, quality: "medium" });
+  const [stats, setStats] = useState<GameStats>({ fps: 0, updateMs: 0, quality: "medium", backend: "" });
 
   const { source, step, dispose } = useMemo(() => {
     if (backend === "physics") {

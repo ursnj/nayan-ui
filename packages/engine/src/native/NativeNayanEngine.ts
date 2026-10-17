@@ -107,6 +107,28 @@ export interface Spec extends TurboModule {
   /** Why the last model / texture / font / alias load failed ("" after a success). */
   loadError(): string;
 
+  // Rendering (global; surfaces come from the native EngineSurface view)
+  /** Geometry (copied) drawn for a mesh id: 11 floats per vertex, u32 indices. `texture` -1 = none. */
+  renderMesh(mesh: number, vertices: Object, indices: Object, texture: number, shine: number): void;
+  /**
+   * Draws a frame into surface `surface`. `frame`: Float64Array buffer (layout in engine_core.h);
+   * instance buffers hold the same number of instances; `viewProj` (16 floats) gets the camera used.
+   * Returns 1 (drawn), 0 (surface not ready yet / frame skipped) or -1 (see `renderError`).
+   */
+  renderFrame(
+    surface: number,
+    frame: Object,
+    matrices: Object,
+    colors: Object,
+    regions: Object,
+    ranges: Object,
+    count: number,
+    viewProj: Object,
+  ): number;
+  renderError(): string;
+  /** "vulkan", "gl" or "metal" ("" before the first surface). */
+  renderBackend(): string;
+
   // Audio (global)
   /** Decodes a WAV ArrayBuffer. Returns a sound id, or -1. */
   audioLoad(data: Object): number;
