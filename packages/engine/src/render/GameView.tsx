@@ -207,8 +207,15 @@ export function GameView(props: Props) {
     };
 
     (async () => {
-      const adapter = await navigator.gpu.requestAdapter();
-      if (!adapter || !alive) return;
+      // Older GPUs (e.g. PowerVR GE8322) miss WebGPU core limits; fall back to compatibility mode.
+      const adapter =
+        (await navigator.gpu.requestAdapter()) ??
+        (await navigator.gpu.requestAdapter({ featureLevel: "compatibility" } as GPURequestAdapterOptions));
+      if (!alive) return;
+      if (!adapter) {
+        report(new Error("no WebGPU adapter: this device's GPU doesn't support WebGPU"));
+        return;
+      }
       device = await adapter.requestDevice();
       if (!alive) {
         device.destroy(); // unmounted while we were waiting

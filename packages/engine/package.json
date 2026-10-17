@@ -77,7 +77,13 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-webgpu": ">=0.13.0"
+    "react-native-webgpu": ">=0.13.0",
+    "expo-asset": "*"
+  },
+  "peerDependenciesMeta": {
+    "expo-asset": {
+      "optional": true
+    }
   },
   "react-native-builder-bob": {
     "source": "src",
