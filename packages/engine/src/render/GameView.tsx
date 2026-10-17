@@ -300,7 +300,7 @@ export function GameView(props: Props) {
 
       frames++;
       if (now - fpsStart >= 1000) {
-        auto.report(now, (now - fpsStart) / frames);
+        auto.report(now, (now - fpsStart) / frames, renderTime / frames);
         current.onStats?.({ fps: (frames * 1000) / (now - fpsStart), updateMs: updateTime / frames, renderMs: renderTime / frames, quality, backend: native.renderBackend() });
         frames = 0;
         updateTime = 0;
