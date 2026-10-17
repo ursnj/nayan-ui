@@ -11,15 +11,18 @@ export function assetUri(source: AssetSource): string | undefined {
 
 /** Copies a bundled asset to a local file (Android release bundles them as res/raw resources). */
 async function localAssetUri(source: number): Promise<string> {
-  type ExpoAsset = { name: string; localUri: string | null; downloadAsync(): Promise<ExpoAsset> };
-  let Asset: { fromModule(module: number): ExpoAsset };
+  type ExpoAsset = { name: string; type: string; hash: string | null; uri: string; localUri: string | null; downloadAsync(): Promise<ExpoAsset> };
+  let Asset: { fromModule(module: number): ExpoAsset; new (descriptor: { name: string; type: string; hash: string | null; uri: string }): ExpoAsset };
   try {
     ({ Asset } = require("expo-asset"));
   } catch {
     throw new Error("loading bundled assets in Android release builds needs expo-asset installed");
   }
-  const asset = await Asset.fromModule(source).downloadAsync();
-  if (!asset.localUri) throw new Error(`couldn't copy the bundled asset ${asset.name}`);
+  const { name, type, hash, uri } = Asset.fromModule(source);
+  // fromModule marks images as "downloaded" with localUri = the drawable name (fine for <Image>, not
+  // for reading bytes); an Asset without dimensions makes expo-asset copy the resource to a file.
+  const asset = await new Asset({ name, type, hash, uri }).downloadAsync();
+  if (!asset.localUri?.includes(":")) throw new Error(`couldn't copy the bundled asset ${name}`);
   return asset.localUri;
 }
 
