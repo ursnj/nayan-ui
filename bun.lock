@@ -49,7 +49,7 @@
     },
     "packages/engine": {
       "name": "@nayan-ui/engine",
-      "version": "1.0.0-beta.1",
+      "version": "1.0.0-beta.2",
       "dependencies": {
         "wgpu-matrix": "^3.4.0",
       },
@@ -64,10 +64,14 @@
         "typescript": "~6.0.3",
       },
       "peerDependencies": {
+        "expo-asset": "*",
         "react": "*",
         "react-native": "*",
         "react-native-webgpu": ">=0.13.0",
       },
+      "optionalPeers": [
+        "expo-asset",
+      ],
     },
     "packages/engine/example": {
       "name": "engine-example",
