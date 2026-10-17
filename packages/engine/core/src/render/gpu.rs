@@ -350,7 +350,9 @@ impl Gpu {
         let format = caps.formats.iter().copied().find(|f| !f.is_srgb()).or(caps.formats.first().copied()).unwrap_or(TextureFormat::Rgba8Unorm);
         let mut config = surface.get_default_config(&self.adapter, width.max(1), height.max(1)).expect("surface supported by the adapter");
         config.format = format;
-        config.present_mode = PresentMode::Fifo;
+        // Frames are drawn from the JS thread: Mailbox never blocks it waiting for vsync (the frame loop
+        // is already paced by requestAnimationFrame). Fifo (always available) where it isn't supported.
+        config.present_mode = if caps.present_modes.contains(&PresentMode::Mailbox) { PresentMode::Mailbox } else { PresentMode::Fifo };
         config.alpha_mode = if caps.alpha_modes.contains(&CompositeAlphaMode::Opaque) { CompositeAlphaMode::Opaque } else { caps.alpha_modes[0] };
         config.desired_maximum_frame_latency = 2;
         config.view_formats = Vec::new();
