@@ -16,6 +16,7 @@ const LONG_PRESS_TIME = 500; // ms
 /** The native view the Rust renderer draws into (Vulkan / GLES on Android, Metal on iOS). */
 const EngineSurface = requireNativeComponent<{ surfaceId: number; style?: ViewStyle }>("NayanEngineSurface");
 const FRAME_LEN = 26; // ENGINE_FRAME_LEN
+const WHITE = [1, 1, 1] as const;
 let nextSurface = 1;
 
 const defaultCamera = (): Camera => ({ eye: [0, 40, 60], target: [0, 0, 0], fov: Math.PI / 3 });
@@ -25,6 +26,8 @@ export type GameStats = {
   fps: number;
   /** Mean time spent in `onUpdate` per frame, in milliseconds. */
   updateMs: number;
+  /** Average milliseconds per frame spent drawing (CPU side, including waiting on the GPU). */
+  renderMs: number;
   /** The quality level drawn with (with `quality="auto"`, the one it settled on so far). */
   quality: Quality;
   /** The graphics API drawing: "vulkan", "gl" (OpenGL ES) or "metal". */
@@ -238,6 +241,7 @@ export function GameView(props: Props) {
     let frames = 0;
     let fpsStart = 0;
     let updateTime = 0;
+    let renderTime = 0;
 
     const frame = (now: number) => {
       if (!alive) return;
@@ -268,7 +272,7 @@ export function GameView(props: Props) {
       f[11] = light.ambient;
       f[12] = (light.shadows ?? true) ? 1 : 0;
       f[13] = light.shadowExtent ?? 30;
-      f.set(light.color ?? [1, 1, 1], 14);
+      f.set(light.color ?? WHITE, 14);
       f.set(environment.background, 17);
       f[20] = environment.fog;
       f[21] = Math.round(width * ratio);
@@ -276,6 +280,7 @@ export function GameView(props: Props) {
       f[23] = level.samples;
       f[24] = level.shadowSize;
       f[25] = level.softShadows ? 1 : 0;
+      const t1 = performance.now();
       const drawn = native.renderFrame(
         surfaceId,
         f.buffer,
@@ -286,6 +291,7 @@ export function GameView(props: Props) {
         source.count,
         viewProj.buffer,
       );
+      renderTime += performance.now() - t1;
       if (drawn === 1) {
         source.setView?.(viewProj, width, height);
       } else if (drawn < 0 && errors++ < 3) {
@@ -295,9 +301,10 @@ export function GameView(props: Props) {
       frames++;
       if (now - fpsStart >= 1000) {
         auto.report(now, (now - fpsStart) / frames);
-        current.onStats?.({ fps: (frames * 1000) / (now - fpsStart), updateMs: updateTime / frames, quality, backend: native.renderBackend() });
+        current.onStats?.({ fps: (frames * 1000) / (now - fpsStart), updateMs: updateTime / frames, renderMs: renderTime / frames, quality, backend: native.renderBackend() });
         frames = 0;
         updateTime = 0;
+        renderTime = 0;
         fpsStart = now;
       }
     };
