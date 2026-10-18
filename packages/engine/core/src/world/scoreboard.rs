@@ -38,6 +38,9 @@ pub mod op {
     pub const RESET: u32 = 7;
     /// a = seconds added to the clock (time bonuses).
     pub const ADD_TIME: u32 = 8;
+    /// Adds a = points per whole second saved: the seconds shown on a countdown, or b (the expected
+    /// time) minus the whole seconds elapsed on a clock counting up. Returns the new score.
+    pub const TIME_BONUS: u32 = 9;
 }
 
 #[derive(Debug, Default)]
@@ -123,6 +126,10 @@ impl Scoreboard {
                 self.carry = 0.0;
                 self.refresh_shown();
             }
+            op::TIME_BONUS => {
+                let saved = if self.countdown { self.shown() } else { (fin(b) - self.state[SB_SECONDS].floor()).max(0.0) };
+                self.set_score(self.state[SB_SCORE] + saved * fin(a));
+            }
             op::ADD_TIME => {
                 self.state[SB_SECONDS] = (self.state[SB_SECONDS] + fin(a)).max(0.0);
                 self.refresh_shown();
@@ -202,6 +209,18 @@ mod tests {
         s.apply(op::STOP_CLOCK, 0.0, 0.0);
         s.advance(1.0);
         assert_eq!(s.state[SB_SCORE], 10.0);
+    }
+
+    #[test]
+    fn time_bonus_pays_for_seconds_saved() {
+        let mut s = Scoreboard::default();
+        s.apply(op::START_CLOCK, 300.0, 0.0);
+        s.advance(10.5); // 289.5 left, shown 290
+        assert_eq!(s.apply(op::TIME_BONUS, 100.0, 0.0), 29_000.0);
+        let mut up = Scoreboard::default();
+        up.apply(op::START_CLOCK, 0.0, 0.0);
+        up.advance(40.7);
+        assert_eq!(up.apply(op::TIME_BONUS, 10.0, 60.0), 200.0);
     }
 
     #[test]

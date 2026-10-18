@@ -1,6 +1,6 @@
 import NativeEngine from "../native/NativeNayanEngine";
 
-const OP = { addScore: 0, setScore: 1, addLives: 2, setLives: 3, startClock: 4, stopClock: 5, resumeClock: 6, reset: 7, addTime: 8 } as const;
+const OP = { addScore: 0, setScore: 1, addLives: 2, setLives: 3, startClock: 4, stopClock: 5, resumeClock: 6, reset: 7, addTime: 8, timeBonus: 9 } as const;
 const S = { score: 0, lives: 1, seconds: 2, shown: 3, flags: 4, running: 5, rate: 6, best: 7 } as const;
 const FLAG = { score: 1, lives: 2, second: 4, timeUp: 8, livesOut: 16 } as const;
 
@@ -96,6 +96,13 @@ export class Scoreboard {
   /** Time bonus (or penalty) on the clock. */
   addTime(seconds: number) {
     this.op(OP.addTime, seconds);
+  }
+  /**
+   * Adds `pointsPerSecond` for each whole second saved: the seconds left on a countdown, or
+   * `expectedSeconds` minus the seconds elapsed on a clock counting up. Returns the score.
+   */
+  awardTimeBonus(pointsPerSecond: number, expectedSeconds = 0) {
+    return this.op(OP.timeBonus, pointsPerSecond, expectedSeconds);
   }
   /** A new run: score 0, `lives`, clock stopped at 0. */
   reset(lives = 0) {
