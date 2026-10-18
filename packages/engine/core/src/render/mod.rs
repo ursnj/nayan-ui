@@ -34,6 +34,47 @@ pub struct Instances<'a> {
     pub count: usize,
 }
 
+/// A screen-space layer drawn over the scene (scoreboards, buttons): a copy of a second world's
+/// buffers, in points. x right and y up from the view's top-left (so on screen y is negative), z
+/// toward the viewer within -100..100. Drawn unlit (flat faces show their exact color), always in
+/// front of the scene.
+#[derive(Default)]
+pub struct Overlay {
+    pub matrices: Vec<f32>,
+    pub colors: Vec<f32>,
+    pub regions: Vec<f32>,
+    pub ranges: Vec<u32>,
+    pub count: usize,
+    /// The view's size in points.
+    pub width: f32,
+    pub height: f32,
+}
+
+impl Overlay {
+    /// Replaces the contents with `inst` (only its `count` valid instances), reusing the allocations.
+    pub fn copy_from(&mut self, inst: &Instances, width: f32, height: f32) {
+        let n = inst.count.min(inst.matrices.len() / 16).min(inst.colors.len() / 4);
+        self.matrices.clear();
+        self.matrices.extend_from_slice(&inst.matrices[..n * 16]);
+        self.colors.clear();
+        self.colors.extend_from_slice(&inst.colors[..n * 4]);
+        self.regions.clear();
+        match inst.regions.filter(|r| r.len() >= n * 4) {
+            Some(r) => self.regions.extend_from_slice(&r[..n * 4]),
+            None => self.regions.extend((0..n).flat_map(|_| [0.0, 0.0, 1.0, 1.0])),
+        }
+        self.ranges.clear();
+        self.ranges.extend_from_slice(inst.ranges);
+        self.count = n;
+        self.width = width;
+        self.height = height;
+    }
+
+    pub(crate) fn instances(&self) -> Instances<'_> {
+        Instances { matrices: &self.matrices, colors: &self.colors, regions: Some(&self.regions), ranges: &self.ranges, count: self.count }
+    }
+}
+
 /// What to draw into: an Android `ANativeWindow*` or an Apple `CAMetalLayer*`.
 #[derive(Clone, Copy)]
 pub struct NativeWindow(pub *mut c_void);
@@ -111,6 +152,17 @@ pub fn detach(id: i32) {
 /// The backend surfaces draw with ("vulkan", "gl", "metal"), or "" before the first attach.
 pub fn backend() -> &'static str {
     state().gpu.as_ref().map(|g| g.backend).unwrap_or("")
+}
+
+/// Sets (or with None, removes) the overlay drawn over surface `id` from its next frame on. `width` and
+/// `height` are the view's size in points.
+pub fn set_overlay(id: i32, inst: Option<&Instances>, width: f32, height: f32) {
+    let mut guard = state();
+    let Some(target) = guard.targets.get_mut(&id) else { return };
+    match inst {
+        Some(inst) if width > 0.0 && height > 0.0 => target.overlay.get_or_insert_with(Overlay::default).copy_from(inst, width, height),
+        _ => target.overlay = None,
+    }
 }
 
 /// Draws a frame into surface `id`. Returns the camera's view-projection matrix it drew with, or

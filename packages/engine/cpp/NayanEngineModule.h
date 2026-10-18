@@ -52,7 +52,7 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   double textureLoad(jsi::Runtime &rt, jsi::Object data);
   jsi::Object texturePixels(jsi::Runtime &rt, double texture);
   jsi::Array textureSize(jsi::Runtime &rt, double texture);
-  double fontLoad(jsi::Runtime &rt, jsi::Object data, double depth, jsi::String chars);
+  double fontLoad(jsi::Runtime &rt, jsi::Object data, double depth, jsi::String chars, double weight);
   jsi::Array fontGlyphs(jsi::Runtime &rt, double font);
   jsi::String loadError(jsi::Runtime &rt);
   void renderMesh(jsi::Runtime &rt, double mesh, jsi::Object vertices, jsi::Object indices, double texture, double shine);
@@ -66,6 +66,16 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
       jsi::Object ranges,
       double count,
       jsi::Object viewProj);
+  void renderOverlay(
+      jsi::Runtime &rt,
+      double surface,
+      jsi::Object matrices,
+      jsi::Object colors,
+      jsi::Object regions,
+      jsi::Object ranges,
+      double count,
+      double width,
+      double height);
   jsi::String renderError(jsi::Runtime &rt);
   jsi::String renderBackend(jsi::Runtime &rt);
   double audioLoad(jsi::Runtime &rt, jsi::Object data);

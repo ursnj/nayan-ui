@@ -29,7 +29,6 @@ export const QUALITY_LEVELS: Record<Quality, QualityLevel> = {
   low: { maxPixelRatio: 3, samples: 1, shadowSize: 1024, softShadows: false },
   lowest: { maxPixelRatio: 2, samples: 1, shadowSize: 512, softShadows: false },
 };
-
 const SLOW_FRAME_MS = 1000 / 52; // a mean frame slower than this misses 60 fps
 const SETTLE_MS = 1500; // ignore start-up (loading, shader compiles) and the frames after a change
 const SLOW_SECONDS = 2; // consecutive slow seconds before stepping down

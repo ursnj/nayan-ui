@@ -6,7 +6,7 @@ use std::sync::{Arc, Mutex};
 use rapier3d::glamx::{Mat4, Vec3};
 use wgpu::*;
 
-use super::{Instances, MeshData, NativeWindow, VERTEX_FLOATS};
+use super::{Instances, MeshData, NativeWindow, Overlay, VERTEX_FLOATS};
 
 const DEPTH_FORMAT: TextureFormat = TextureFormat::Depth24Plus;
 // 16 bits cover the light's 1..140 depth range to ~0.002 units, well inside the depth bias.
@@ -15,6 +15,19 @@ const GLOBALS_FLOATS: usize = 16 + 16 + 4 * 5;
 const MAX_MESHES: usize = crate::MAX_MESHES;
 const FLAME_MESH: usize = 9;
 const WHITE: i64 = -1;
+/// The overlay's depth range: z -100..100 points squeezed into the nearest 0.1% of depth, so it is
+/// sorted within itself yet in front of all but what touches the scene camera's near plane.
+const OVERLAY_DEPTH: f32 = 1e-3;
+/// Cancels the shader's hemisphere tint (0.8 for faces toward the viewer), so with full ambient
+/// light the overlay's flat faces show their exact color.
+const OVERLAY_LIGHT: f32 = 1.25;
+
+/// The overlay's camera: points from the view's top-left (x right, y up, so on screen y <= 0), z
+/// toward the viewer within -100..100, into the front `OVERLAY_DEPTH` of the depth range.
+#[allow(deprecated)]
+pub(crate) fn overlay_view_proj(width: f32, height: f32) -> Mat4 {
+    Mat4::from_scale(Vec3::new(1.0, 1.0, OVERLAY_DEPTH)) * Mat4::orthographic_rh(0.0, width.max(1.0), -height.max(1.0), 0.0, -100.0, 100.0)
+}
 
 /// Doubles per frame description (see `Frame::from_slice` and `engine_render_frame`).
 pub const FRAME_LEN: usize = 26;
@@ -368,6 +381,12 @@ impl Gpu {
             layout: &self.shadow_layout,
             entries: &[BindGroupEntry { binding: 0, resource: globals.as_entire_binding() }],
         });
+        let overlay_globals = self.device.create_buffer(&BufferDescriptor {
+            label: Some("overlay globals"),
+            size: (GLOBALS_FLOATS * 4) as u64,
+            usage: BufferUsages::UNIFORM | BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
         Target {
             surface,
             window,
@@ -383,6 +402,10 @@ impl Gpu {
             samples: 0,
             target_size: (0, 0),
             instances: None,
+            overlay: None,
+            overlay_globals,
+            overlay_group: None,
+            overlay_instances: None,
         }
     }
 
@@ -589,11 +612,35 @@ impl Gpu {
             }
         }
 
+        // The overlay: its own camera (points), full ambient light, no shadows or fog.
+        let overlay = target.overlay.as_ref();
+        let overlay_inst = overlay.map(|o| o.instances());
+        let overlay_used = overlay_inst.as_ref().map_or(0, |o| o.count);
+        if let (Some(o), Some(oi)) = (overlay, &overlay_inst)
+            && overlay_used > 0
+        {
+            let mut g = [0f32; GLOBALS_FLOATS];
+            g[0..16].copy_from_slice(&overlay_view_proj(o.width, o.height).to_cols_array());
+            g[32..36].copy_from_slice(&[0.0, 0.0, 1.0, 1.0]); // light toward the viewer, ambient 1
+            g[39] = if target.srgb { 1.0 } else { 0.0 };
+            g[40..44].copy_from_slice(&[o.width / 2.0, -o.height / 2.0, 1000.0, 1.0]);
+            g[48..52].copy_from_slice(&[OVERLAY_LIGHT, OVERLAY_LIGHT, OVERLAY_LIGHT, 1.0]);
+            self.queue.write_buffer(&target.overlay_globals, 0, bytes(&g));
+            let ob = target.overlay_instances.as_ref().expect("prepared");
+            self.queue.write_buffer(&ob.matrices, 0, bytes(&oi.matrices[..overlay_used * 16]));
+            self.queue.write_buffer(&ob.colors, 0, bytes(&oi.colors[..overlay_used * 4]));
+            if let Some(regions) = oi.regions.filter(|r| r.len() >= overlay_used * 4) {
+                self.queue.write_buffer(&ob.regions, 0, bytes(&regions[..overlay_used * 4]));
+            }
+        }
+
         // Upload every mesh drawn this frame before recording (the passes borrow them).
-        let buckets = (inst.ranges.len() / 2).min(2 * MAX_MESHES);
-        for b in 0..buckets {
-            if inst.ranges[b * 2 + 1] > 0 {
-                self.ensure_mesh((b % MAX_MESHES) as u8, meshes);
+        for ranges in std::iter::once(inst.ranges).chain(overlay_inst.as_ref().map(|o| o.ranges)) {
+            let buckets = (ranges.len() / 2).min(2 * MAX_MESHES);
+            for b in 0..buckets {
+                if ranges[b * 2 + 1] > 0 {
+                    self.ensure_mesh((b % MAX_MESHES) as u8, meshes);
+                }
             }
         }
         let format = target.config.format;
@@ -670,6 +717,20 @@ impl Gpu {
                 // Flames add their light last, so smoke never dulls them.
                 pass.set_pipeline(&p.add);
                 self.draw(&mut pass, buffers, ranges, used, MAX_MESHES, true, Only::Added);
+            }
+            // The overlay last, in the same pass (MSAA included): its depth range is in front of the scene.
+            if let Some(oi) = overlay_inst.as_ref().filter(|_| overlay_used > 0) {
+                let p = &self.pipelines[&(format, samples)];
+                let ob = target.overlay_instances.as_ref().expect("prepared");
+                pass.set_bind_group(0, target.overlay_group.as_ref().expect("prepared"), &[]);
+                pass.set_pipeline(&p.opaque);
+                self.draw(&mut pass, ob, oi.ranges, overlay_used, 0, true, Only::Solid);
+                pass.set_pipeline(&p.cutout);
+                self.draw(&mut pass, ob, oi.ranges, overlay_used, 0, true, Only::Cutout);
+                pass.set_pipeline(&p.blend);
+                self.draw(&mut pass, ob, oi.ranges, overlay_used, MAX_MESHES, true, Only::Blended);
+                pass.set_pipeline(&p.add);
+                self.draw(&mut pass, ob, oi.ranges, overlay_used, MAX_MESHES, true, Only::Added);
             }
         }
         self.queue.submit([encoder.finish()]);
@@ -750,6 +811,11 @@ pub struct Target {
     samples: u32,
     target_size: (u32, u32),
     instances: Option<InstanceBuffers>,
+    /// Drawn over the scene every frame until replaced (see `render::set_overlay`).
+    pub(super) overlay: Option<Overlay>,
+    overlay_globals: Buffer,
+    overlay_group: Option<BindGroup>,
+    overlay_instances: Option<InstanceBuffers>,
 }
 
 impl Target {
@@ -803,32 +869,69 @@ impl Target {
                     view_formats: &[],
                 })
                 .create_view(&TextureViewDescriptor::default());
-            self.scene_group = Some(device.create_bind_group(&BindGroupDescriptor {
-                label: Some("scene"),
-                layout: &gpu.scene_layout,
-                entries: &[
-                    BindGroupEntry { binding: 0, resource: self.globals.as_entire_binding() },
-                    BindGroupEntry { binding: 1, resource: BindingResource::TextureView(&view) },
-                ],
-            }));
-            self.shadow_view = Some(view);
-        }
-        let needed = used.max(1);
-        if self.instances.as_ref().is_none_or(|b| b.capacity < needed) {
-            let capacity = needed.next_power_of_two().max(256);
-            let buffer = |label, floats: usize| {
-                device.create_buffer(&BufferDescriptor {
+            let group = |label, globals: &Buffer| {
+                device.create_bind_group(&BindGroupDescriptor {
                     label: Some(label),
-                    size: (capacity * floats * 4) as u64,
-                    usage: BufferUsages::VERTEX | BufferUsages::COPY_DST,
-                    mapped_at_creation: false,
+                    layout: &gpu.scene_layout,
+                    entries: &[
+                        BindGroupEntry { binding: 0, resource: globals.as_entire_binding() },
+                        BindGroupEntry { binding: 1, resource: BindingResource::TextureView(&view) },
+                    ],
                 })
             };
-            let regions = buffer("regions", 4);
-            // Sources without regions show whole textures.
-            let whole: Vec<f32> = (0..capacity).flat_map(|_| [0.0, 0.0, 1.0, 1.0]).collect();
-            gpu.queue.write_buffer(&regions, 0, bytes(&whole));
-            self.instances = Some(InstanceBuffers { capacity, matrices: buffer("matrices", 16), colors: buffer("colors", 4), regions });
+            self.scene_group = Some(group("scene", &self.globals));
+            self.overlay_group = Some(group("overlay", &self.overlay_globals));
+            self.shadow_view = Some(view);
         }
+        ensure_instances(gpu, &mut self.instances, used, 256);
+        let overlay_used = self.overlay.as_ref().map_or(0, |o| o.count);
+        if overlay_used > 0 {
+            ensure_instances(gpu, &mut self.overlay_instances, overlay_used, 64);
+        }
+    }
+}
+
+/// Grows `slot` to hold at least `used` instances (at least `min`, in powers of two).
+fn ensure_instances(gpu: &Gpu, slot: &mut Option<InstanceBuffers>, used: usize, min: usize) {
+    let needed = used.max(1);
+    if slot.as_ref().is_some_and(|b| b.capacity >= needed) {
+        return;
+    }
+    let capacity = needed.next_power_of_two().max(min);
+    let buffer = |label, floats: usize| {
+        gpu.device.create_buffer(&BufferDescriptor {
+            label: Some(label),
+            size: (capacity * floats * 4) as u64,
+            usage: BufferUsages::VERTEX | BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        })
+    };
+    let regions = buffer("regions", 4);
+    // Sources without regions show whole textures.
+    let whole: Vec<f32> = (0..capacity).flat_map(|_| [0.0, 0.0, 1.0, 1.0]).collect();
+    gpu.queue.write_buffer(&regions, 0, bytes(&whole));
+    *slot = Some(InstanceBuffers { capacity, matrices: buffer("matrices", 16), colors: buffer("colors", 4), regions });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn project(m: Mat4, p: [f32; 3]) -> [f32; 3] {
+        let v = m * rapier3d::glamx::Vec4::new(p[0], p[1], p[2], 1.0);
+        [v.x / v.w, v.y / v.w, v.z / v.w]
+    }
+
+    #[test]
+    fn overlay_maps_points_to_the_screen_and_stays_in_front() {
+        let m = overlay_view_proj(400.0, 800.0);
+        let close = |a: [f32; 3], b: [f32; 3]| a.iter().zip(b).all(|(x, y)| (x - y).abs() < 1e-5);
+        // Top-left, bottom-right and the middle of the view (y up from the top: on screen y <= 0).
+        assert!(close(project(m, [0.0, 0.0, 0.0]), [-1.0, 1.0, OVERLAY_DEPTH / 2.0]));
+        assert!(close(project(m, [400.0, -800.0, 0.0]), [1.0, -1.0, OVERLAY_DEPTH / 2.0]));
+        assert!(close(project(m, [200.0, -400.0, 0.0]), [0.0, 0.0, OVERLAY_DEPTH / 2.0]));
+        // Higher z is nearer (smaller depth); the whole range is in front of the scene's depths.
+        let (front, back) = (project(m, [0.0, 0.0, 100.0])[2], project(m, [0.0, 0.0, -100.0])[2]);
+        assert!(front.abs() < 1e-6 && (back - OVERLAY_DEPTH).abs() < 1e-6 && front < back);
     }
 }

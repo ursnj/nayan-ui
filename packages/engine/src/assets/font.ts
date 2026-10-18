@@ -12,6 +12,8 @@ export type FontOptions = {
   depth?: number;
   /** Characters to build (space is always included). Fewer = faster load and fewer meshes (each uses a mesh id). Default: DEFAULT_CHARS. */
   chars?: string;
+  /** Weight (e.g. 400, 600) for a variable font, such as the device's system font. Default: the font's own. */
+  weight?: number;
 };
 
 type Glyph = { mesh: number; advance: number };
@@ -42,12 +44,13 @@ export function loadFont(source: AssetSource, options: FontOptions = {}): Promis
   const depth = options.depth ?? 0.2;
   const chars = `${options.chars ?? DEFAULT_CHARS} `; // the space is always there (it has no mesh)
   const uri = assetUri(source) ?? String(source);
-  const key = `${uri}|${depth}|${chars}`;
+  const weight = options.weight ?? 0;
+  const key = `${uri}|${depth}|${chars}|${weight}`;
   let pending = loads.get(key);
   if (!pending) {
     pending = loadAssetBytes(source)
       .then(({ bytes }) => {
-        const id = native.fontLoad(bytes, depth, chars);
+        const id = native.fontLoad(bytes, depth, chars, weight);
         if (id < 0) throw new Error(native.loadError() || "not a TrueType / OpenType font");
         const data = native.fontGlyphs(id);
         const glyphs = new Map<string, Glyph>();
@@ -69,15 +72,30 @@ export function loadFont(source: AssetSource, options: FontOptions = {}): Promis
 
 export type TextAlign = "left" | "center" | "right";
 
+export type TextLayout = {
+  /** Extra space between letters, in ems (at scale 1, letters are 1 em tall). Default 0. */
+  letterSpacing?: number;
+  /** Digits all as wide as the widest, so changing numbers (scores, timers) don't shift. Default false. */
+  tabular?: boolean;
+};
+
+const DIGIT = /[0-9]/;
+
 /** Glyph placements for a line of text: centered vertically on capitals, aligned horizontally. */
-export function layoutText(font: Font, text: string, align: TextAlign): { mesh: number; x: number; y: number }[] {
+export function layoutText(font: Font, text: string, align: TextAlign, options: TextLayout = {}): { mesh: number; x: number; y: number }[] {
+  const spacing = options.letterSpacing ?? 0;
+  let digit = 0;
+  if (options.tabular) for (const d of "0123456789") digit = Math.max(digit, font.glyphs.get(d)?.advance ?? 0);
   let width = 0;
+  let letters = 0;
   const placed: { mesh: number; x: number; y: number }[] = [];
   for (const ch of text) {
     const glyph = font.glyphs.get(ch) ?? font.glyphs.get("?");
     if (!glyph) continue;
-    if (glyph.mesh >= 0) placed.push({ mesh: glyph.mesh, x: width, y: 0 });
-    width += glyph.advance;
+    const advance = digit > 0 && DIGIT.test(ch) ? digit : glyph.advance;
+    if (letters++ > 0) width += spacing;
+    if (glyph.mesh >= 0) placed.push({ mesh: glyph.mesh, x: width + (advance - glyph.advance) / 2, y: 0 });
+    width += advance;
   }
   const shift = align === "left" ? 0 : align === "right" ? -width : -width / 2;
   const lift = -font.capHeight / 2;

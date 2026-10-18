@@ -36,6 +36,8 @@ export type GameStats = {
 
 export type SwipeDirection = "left" | "right" | "up" | "down";
 
+export type OverlayTouchPhase = "start" | "move" | "end" | "cancel";
+
 export type DragEvent = {
   phase: "start" | "move" | "end";
   /** Finger position in the view, in points. */
@@ -90,6 +92,19 @@ type Props = {
   onLongPress?: (x: number, y: number) => void;
   /** Two fingers spreading, pinching or turning (zoom and rotate a board). Ends any drag in progress. */
   onPinch?: (pinch: PinchEvent) => void;
+  /**
+   * A screen-space layer drawn over the scene by the renderer (scoreboards, buttons): usually a second
+   * `World`, in points from the view's top-left with y up (so on screen y <= 0) and z toward the viewer
+   * within -100..100. Unlit (flat faces show their exact color) and always in front. Step it yourself
+   * (`overlay.update(dt)` in `onUpdate`).
+   */
+  overlay?: RenderSource;
+  /**
+   * Touches for the overlay, in points in the view. Return true from "start" to claim the touch (a
+   * button was hit): its moves and end come here, and the game gets no drag, tap or swipe for it.
+   * "cancel" when the system takes the touch.
+   */
+  onOverlayTouch?: (phase: OverlayTouchPhase, x: number, y: number) => boolean | void;
   /** Called once a second. */
   onStats?: (stats: GameStats) => void;
   /** GPU setup failures and rendering errors. Defaults to console.error. */
@@ -115,7 +130,7 @@ export function GameView(props: Props) {
   const touch = useMemo(() => {
     let start = { x: 0, y: 0, time: 0 };
     let origin = { x: 0, y: 0 }; // the view's top-left on the page, to place a second finger
-    let mode: "drag" | "pinch" | "none" = "none";
+    let mode: "drag" | "pinch" | "overlay" | "none" = "none";
     let pinch0 = { distance: 1, angle: 0 };
     let lastPinch: PinchEvent = { phase: "end", scale: 1, rotation: 0, x: 0, y: 0 };
     let longPress: ReturnType<typeof setTimeout> | undefined;
@@ -148,6 +163,10 @@ export function GameView(props: Props) {
         const { locationX, locationY, pageX, pageY } = e.nativeEvent;
         start = { x: locationX, y: locationY, time: Date.now() };
         origin = { x: pageX - locationX, y: pageY - locationY };
+        if (live.current.props.onOverlayTouch?.("start", start.x, start.y) === true) {
+          mode = "overlay";
+          return;
+        }
         mode = "drag";
         longPressed = false;
         drag("start", start.x, start.y);
@@ -161,6 +180,10 @@ export function GameView(props: Props) {
         }
       },
       onPanResponderMove: (e, g) => {
+        if (mode === "overlay") {
+          live.current.props.onOverlayTouch?.("move", start.x + g.dx, start.y + g.dy);
+          return;
+        }
         const touches = e.nativeEvent.touches;
         if (touches.length >= 2 && live.current.props.onPinch) {
           if (mode === "drag") {
@@ -181,6 +204,10 @@ export function GameView(props: Props) {
         stopLongPress();
         const was = mode;
         mode = "none";
+        if (was === "overlay") {
+          live.current.props.onOverlayTouch?.("end", start.x + g.dx, start.y + g.dy);
+          return;
+        }
         if (was === "pinch") {
           live.current.props.onPinch?.({ ...lastPinch, phase: "end" });
           return;
@@ -201,7 +228,8 @@ export function GameView(props: Props) {
         stopLongPress();
         const was = mode;
         mode = "none";
-        if (was === "pinch") live.current.props.onPinch?.({ ...lastPinch, phase: "end" });
+        if (was === "overlay") live.current.props.onOverlayTouch?.("cancel", start.x + g.dx, start.y + g.dy);
+        else if (was === "pinch") live.current.props.onPinch?.({ ...lastPinch, phase: "end" });
         else if (was === "drag") drag("end", start.x + g.dx, start.y + g.dy, true);
       },
     });
@@ -236,7 +264,9 @@ export function GameView(props: Props) {
     const frameData = new Float64Array(FRAME_LEN);
     const viewProj = new Float32Array(16);
     // Sources without texture regions show whole textures.
-    const regions = source.regions ?? new Float32Array(Math.max(1, source.capacity) * 4).map((_, i) => (i % 4 < 2 ? 0 : 1));
+    const wholeRegions = (s: RenderSource) => s.regions ?? new Float32Array(Math.max(1, s.capacity) * 4).map((_, i) => (i % 4 < 2 ? 0 : 1));
+    const regions = wholeRegions(source);
+    let overlay: { source: RenderSource; regions: Float32Array } | null = null;
     let last = 0;
     let frames = 0;
     let fpsStart = 0;
@@ -281,6 +311,14 @@ export function GameView(props: Props) {
       f[24] = level.shadowSize;
       f[25] = level.softShadows ? 1 : 0;
       const t1 = performance.now();
+      const layer = current.overlay;
+      if (layer) {
+        if (overlay?.source !== layer) overlay = { source: layer, regions: wholeRegions(layer) };
+        native.renderOverlay(surfaceId, layer.matrices.buffer, layer.colors.buffer, overlay.regions.buffer, layer.ranges.buffer, layer.count, width, height);
+      } else if (overlay) {
+        overlay = null;
+        native.renderOverlay(surfaceId, regions.buffer, regions.buffer, regions.buffer, regions.buffer, 0, 0, 0); // removes it
+      }
       const drawn = native.renderFrame(
         surfaceId,
         f.buffer,
@@ -317,7 +355,7 @@ export function GameView(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [source]);
 
-  const touchable = props.onTap || props.onSwipe || props.onDrag || props.onLongPress || props.onPinch;
+  const touchable = props.onTap || props.onSwipe || props.onDrag || props.onLongPress || props.onPinch || props.onOverlayTouch;
   return (
     <View
       style={[styles.canvas, style]}

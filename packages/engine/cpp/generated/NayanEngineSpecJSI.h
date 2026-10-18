@@ -60,11 +60,12 @@ protected:
     methodMap_["textureLoad"] = MethodMetadata {.argCount = 1, .invoker = __textureLoad};
     methodMap_["texturePixels"] = MethodMetadata {.argCount = 1, .invoker = __texturePixels};
     methodMap_["textureSize"] = MethodMetadata {.argCount = 1, .invoker = __textureSize};
-    methodMap_["fontLoad"] = MethodMetadata {.argCount = 3, .invoker = __fontLoad};
+    methodMap_["fontLoad"] = MethodMetadata {.argCount = 4, .invoker = __fontLoad};
     methodMap_["fontGlyphs"] = MethodMetadata {.argCount = 1, .invoker = __fontGlyphs};
     methodMap_["loadError"] = MethodMetadata {.argCount = 0, .invoker = __loadError};
     methodMap_["renderMesh"] = MethodMetadata {.argCount = 5, .invoker = __renderMesh};
     methodMap_["renderFrame"] = MethodMetadata {.argCount = 8, .invoker = __renderFrame};
+    methodMap_["renderOverlay"] = MethodMetadata {.argCount = 8, .invoker = __renderOverlay};
     methodMap_["renderError"] = MethodMetadata {.argCount = 0, .invoker = __renderError};
     methodMap_["renderBackend"] = MethodMetadata {.argCount = 0, .invoker = __renderBackend};
     methodMap_["audioLoad"] = MethodMetadata {.argCount = 1, .invoker = __audioLoad};
@@ -427,12 +428,13 @@ private:
 
   static jsi::Value __fontLoad(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
     static_assert(
-      bridging::getParameterCount(&T::fontLoad) == 4,
-      "Expected fontLoad(...) to have 4 parameters");
+      bridging::getParameterCount(&T::fontLoad) == 5,
+      "Expected fontLoad(...) to have 5 parameters");
     return bridging::callFromJs<double>(rt, &T::fontLoad,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
       count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt),
       count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asNumber(),
-      count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asString(rt));
+      count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asString(rt),
+      count <= 3 ? throw jsi::JSError(rt, "Expected argument in position 3 to be passed") : args[3].asNumber());
   }
 
   static jsi::Value __fontGlyphs(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
@@ -475,6 +477,21 @@ private:
       count <= 5 ? throw jsi::JSError(rt, "Expected argument in position 5 to be passed") : args[5].asObject(rt),
       count <= 6 ? throw jsi::JSError(rt, "Expected argument in position 6 to be passed") : args[6].asNumber(),
       count <= 7 ? throw jsi::JSError(rt, "Expected argument in position 7 to be passed") : args[7].asObject(rt));
+  }
+
+  static jsi::Value __renderOverlay(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::renderOverlay) == 9,
+      "Expected renderOverlay(...) to have 9 parameters");
+    bridging::callFromJs<void>(rt, &T::renderOverlay,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber(),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asObject(rt),
+      count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asObject(rt),
+      count <= 3 ? throw jsi::JSError(rt, "Expected argument in position 3 to be passed") : args[3].asObject(rt),
+      count <= 4 ? throw jsi::JSError(rt, "Expected argument in position 4 to be passed") : args[4].asObject(rt),
+      count <= 5 ? throw jsi::JSError(rt, "Expected argument in position 5 to be passed") : args[5].asNumber(),
+      count <= 6 ? throw jsi::JSError(rt, "Expected argument in position 6 to be passed") : args[6].asNumber(),
+      count <= 7 ? throw jsi::JSError(rt, "Expected argument in position 7 to be passed") : args[7].asNumber());return jsi::Value::undefined();
   }
 
   static jsi::Value __renderError(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* /*args*/, size_t /*count*/) {

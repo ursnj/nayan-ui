@@ -101,7 +101,7 @@ export interface Spec extends TurboModule {
   /** [width, height]. */
   textureSize(texture: number): Array<number>;
   /** Builds extruded glyph meshes for `chars`. Returns the font id, or -1. */
-  fontLoad(data: Object, depth: number, chars: string): number;
+  fontLoad(data: Object, depth: number, chars: string, weight: number): number;
   /** [codepoint, mesh (-1 = nothing drawn), advance, ...] followed by the cap height. */
   fontGlyphs(font: number): Array<number>;
   /** Why the last model / texture / font / alias load failed ("" after a success). */
@@ -125,6 +125,22 @@ export interface Spec extends TurboModule {
     count: number,
     viewProj: Object,
   ): number;
+  /**
+   * The screen-space overlay drawn over surface `surface` from its next frame on, copied from a world's
+   * buffers. In points: x right and y up from the view's top-left (on screen y <= 0), z toward the
+   * viewer within -100..100; `width` x `height` is the view in points. Unlit, always in front of the
+   * scene. count 0 removes it.
+   */
+  renderOverlay(
+    surface: number,
+    matrices: Object,
+    colors: Object,
+    regions: Object,
+    ranges: Object,
+    count: number,
+    width: number,
+    height: number,
+  ): void;
   renderError(): string;
   /** "vulkan", "gl" or "metal" ("" before the first surface). */
   renderBackend(): string;

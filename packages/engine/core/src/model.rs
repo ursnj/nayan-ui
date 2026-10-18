@@ -321,7 +321,21 @@ fn push(entry: Entry) -> Result<u8, String> {
 }
 
 /// Registers render-ready geometry under a new mesh id.
+/// Identical geometry gets the id it already has: the registry outlives the JS runtime (a reload
+/// rebuilds every shape and font), and ids are few.
 pub fn register(model: Model) -> Result<u8, String> {
+    {
+        let meshes = MESHES.lock().map_err(|_| "mesh registry unavailable".to_string())?;
+        let same = |m: &Model| {
+            m.texture == model.texture
+                && m.indices == model.indices
+                && m.vertices.len() == model.vertices.len()
+                && m.vertices.iter().zip(&model.vertices).all(|(a, b)| a.to_bits() == b.to_bits())
+        };
+        if let Some(index) = meshes.iter().position(|e| matches!(e, Entry::Model(m) if same(m))) {
+            return Ok((FIRST_MODEL_MESH as usize + index) as u8);
+        }
+    }
     push(Entry::Model(Arc::new(model)))
 }
 

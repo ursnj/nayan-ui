@@ -1,5 +1,5 @@
 import { mat4, vec4 } from "wgpu-matrix";
-import { layoutText, type Font, type TextAlign } from "../assets/font";
+import { layoutText, type Font, type TextAlign, type TextLayout } from "../assets/font";
 import type { Model } from "../assets/model";
 import { texturedMesh, type Texture } from "../assets/texture";
 import type { Sound } from "../media/audio";
@@ -90,6 +90,10 @@ export type EntityOptions = {
   font?: Font;
   /** Text alignment around `position`. Default "center". */
   align?: TextAlign;
+  /** Extra space between letters, in ems. Default 0. */
+  letterSpacing?: number;
+  /** Digits all as wide as the widest, so changing scores and timers don't shift. Default false. */
+  tabular?: boolean;
   /** Relative to the parent when attached. */
   position?: Vec3;
   rotation?: Quat;
@@ -222,7 +226,7 @@ export type PickHit = {
 
 export type Bounds = readonly [minX: number, minZ: number, maxX: number, maxZ: number];
 
-type TextState = { font: Font; text: string; align: TextAlign; color: Color; glyphs: Entity[] };
+type TextState = { font: Font; text: string; align: TextAlign; layout: TextLayout; color: Color; glyphs: Entity[] };
 
 const EVENT_STRIDE = 4;
 const EVENT_STARTED = 1;
@@ -312,6 +316,7 @@ export class World implements RenderSource {
         font: options.font!,
         text: options.text,
         align: options.align ?? "center",
+        layout: { letterSpacing: options.letterSpacing, tabular: options.tabular },
         color: options.color ?? [1, 1, 1],
         glyphs: [],
       };
@@ -339,10 +344,13 @@ export class World implements RenderSource {
       const rebuild =
         (options.text !== undefined && options.text !== text.text) ||
         (options.font !== undefined && options.font !== text.font) ||
-        (options.align !== undefined && options.align !== text.align);
+        (options.align !== undefined && options.align !== text.align) ||
+        (options.letterSpacing !== undefined && options.letterSpacing !== text.layout.letterSpacing) ||
+        (options.tabular !== undefined && options.tabular !== text.layout.tabular);
       text.text = options.text ?? text.text;
       text.font = options.font ?? text.font;
       text.align = options.align ?? text.align;
+      text.layout = { letterSpacing: options.letterSpacing ?? text.layout.letterSpacing, tabular: options.tabular ?? text.layout.tabular };
       if (options.color) text.color = options.color;
       if (rebuild) this.buildText(e, text);
       else if (options.color) {
@@ -384,7 +392,7 @@ export class World implements RenderSource {
   private buildText(root: Entity, text: TextState) {
     for (const g of text.glyphs) this.native.despawn(this.id, g);
     text.glyphs = [];
-    for (const { mesh, x, y } of layoutText(text.font, text.text, text.align)) {
+    for (const { mesh, x, y } of layoutText(text.font, text.text, text.align, text.layout)) {
       encode(this.desc, { parent: root, position: [x, y, 0], color: text.color, pickable: false }, mesh);
       const g = this.native.spawnDesc(this.id, this.desc.buffer);
       if (g < 0) throw new Error(`World: no room for text "${text.text}" (capacity ${this.capacity})`);

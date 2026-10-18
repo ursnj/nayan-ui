@@ -358,10 +358,10 @@ jsi::Array NayanEngineModule::textureSize(jsi::Runtime &rt, double texture) {
   return jsi::Array::createWithElements(rt, static_cast<double>(size[0]), static_cast<double>(size[1]));
 }
 
-double NayanEngineModule::fontLoad(jsi::Runtime &rt, jsi::Object data, double depth, jsi::String chars) {
+double NayanEngineModule::fontLoad(jsi::Runtime &rt, jsi::Object data, double depth, jsi::String chars, double weight) {
   jsi::ArrayBuffer buffer = fileData(rt, data, "fontLoad");
   std::string utf8 = chars.utf8(rt);
-  return engine_font_load(buffer.data(rt), buffer.size(rt), static_cast<float>(depth), utf8.data(), utf8.size());
+  return engine_font_load(buffer.data(rt), buffer.size(rt), static_cast<float>(depth), utf8.data(), utf8.size(), static_cast<float>(weight));
 }
 
 jsi::Array NayanEngineModule::fontGlyphs(jsi::Runtime &rt, double font) {
@@ -417,6 +417,28 @@ double NayanEngineModule::renderFrame(
       reinterpret_cast<const float *>(m.data(rt)), reinterpret_cast<const float *>(c.data(rt)),
       reinterpret_cast<const float *>(g.data(rt)), capacity, reinterpret_cast<const uint32_t *>(r.data(rt)),
       r.size(rt) / sizeof(uint32_t), n, out.size(rt) >= 16 * sizeof(float) ? reinterpret_cast<float *>(out.data(rt)) : nullptr);
+}
+
+void NayanEngineModule::renderOverlay(
+    jsi::Runtime &rt,
+    double surface,
+    jsi::Object matrices,
+    jsi::Object colors,
+    jsi::Object regions,
+    jsi::Object ranges,
+    double count,
+    double width,
+    double height) {
+  jsi::ArrayBuffer m = fileData(rt, matrices, "renderOverlay");
+  jsi::ArrayBuffer c = fileData(rt, colors, "renderOverlay");
+  jsi::ArrayBuffer g = fileData(rt, regions, "renderOverlay");
+  jsi::ArrayBuffer r = fileData(rt, ranges, "renderOverlay");
+  size_t capacity = std::min({m.size(rt) / (16 * sizeof(float)), c.size(rt) / (4 * sizeof(float)), g.size(rt) / (4 * sizeof(float))});
+  size_t n = count > 0 ? std::min(static_cast<size_t>(count), capacity) : 0;
+  engine_render_overlay(
+      static_cast<int32_t>(surface), reinterpret_cast<const float *>(m.data(rt)), reinterpret_cast<const float *>(c.data(rt)),
+      reinterpret_cast<const float *>(g.data(rt)), capacity, reinterpret_cast<const uint32_t *>(r.data(rt)), r.size(rt) / sizeof(uint32_t), n,
+      static_cast<float>(width), static_cast<float>(height));
 }
 
 jsi::String NayanEngineModule::renderError(jsi::Runtime &rt) {

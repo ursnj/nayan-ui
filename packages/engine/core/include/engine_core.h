@@ -168,8 +168,9 @@ const uint8_t *engine_texture_pixels(uint32_t id); // width * height RGBA8, top 
 int32_t engine_texture_size(uint32_t id, uint32_t *out_wh);
 
 // TrueType / OpenType: one extruded mesh per character of `chars` (UTF-8), depth in ems. Returns the
-// font id, or -1. Glyphs: [codepoint, mesh (-1 = nothing drawn), advance in ems] floats.
-int32_t engine_font_load(const uint8_t *data, size_t len, float depth, const char *chars, size_t chars_len);
+// font id, or -1. `weight` picks a variable font's weight (0 = its default). Glyphs: [codepoint, mesh
+// (-1 = nothing drawn), advance in ems] floats.
+int32_t engine_font_load(const uint8_t *data, size_t len, float depth, const char *chars, size_t chars_len, float weight);
 const float *engine_font_glyphs(uint32_t font);
 uint32_t engine_font_glyph_floats(uint32_t font);
 float engine_font_cap_height(uint32_t font);
@@ -210,6 +211,12 @@ void engine_render_detach(int32_t surface);
 int32_t engine_render_frame(int32_t surface, const double *frame, size_t frame_len, const float *matrices, const float *colors,
                             const float *regions, size_t capacity, const uint32_t *ranges, size_t ranges_len, size_t count,
                             float *out_view_proj);
+// The screen-space overlay drawn over `surface` from its next frame on (scoreboards, buttons), copied
+// from a world's buffers (as engine_render_frame). In points: x right and y up from the view's top-left
+// (on screen y <= 0), z toward the viewer within -100..100; `width` x `height` is the view in points.
+// Unlit and always in front of the scene. count 0 (or NULL buffers) removes it.
+void engine_render_overlay(int32_t surface, const float *matrices, const float *colors, const float *regions, size_t capacity,
+                           const uint32_t *ranges, size_t ranges_len, size_t count, float width, float height);
 size_t engine_render_error(char *out, size_t cap);
 // "vulkan", "gl", "metal", or "" before the first attach.
 size_t engine_render_backend(char *out, size_t cap);

@@ -94,6 +94,36 @@ pub unsafe extern "C" fn engine_render_frame(
 }
 
 #[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_render_overlay(
+    surface: i32,
+    matrices: *const f32,
+    colors: *const f32,
+    regions: *const f32,
+    capacity: usize,
+    ranges: *const u32,
+    ranges_len: usize,
+    count: usize,
+    width: f32,
+    height: f32,
+) {
+    if matrices.is_null() || colors.is_null() || ranges.is_null() || count == 0 {
+        render::set_overlay(surface, None, 0.0, 0.0);
+        return;
+    }
+    // SAFETY: caller passes readable buffers of the given lengths, used only during the call (copied).
+    let instances = unsafe {
+        Instances {
+            matrices: std::slice::from_raw_parts(matrices, capacity * 16),
+            colors: std::slice::from_raw_parts(colors, capacity * 4),
+            regions: (!regions.is_null()).then(|| std::slice::from_raw_parts(regions, capacity * 4)),
+            ranges: std::slice::from_raw_parts(ranges, ranges_len),
+            count: count.min(capacity),
+        }
+    };
+    render::set_overlay(surface, Some(&instances), width, height);
+}
+
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_render_error(out: *mut u8, cap: usize) -> usize {
     copy_str(&render::last_error(), out, cap)
 }

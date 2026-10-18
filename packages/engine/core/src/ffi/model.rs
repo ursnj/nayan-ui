@@ -173,14 +173,14 @@ pub unsafe extern "C" fn engine_texture_size(id: u32, out: *mut u32) -> i32 {
 }
 
 /// Builds 3D glyph meshes for the UTF-8 `chars` from a TrueType/OpenType font (copied), extruded by
-/// `depth` ems. Returns the font id, or -1.
+/// `depth` ems, at `weight` for a variable font (0 = its default). Returns the font id, or -1.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn engine_font_load(data: *const u8, len: usize, depth: f32, chars: *const u8, chars_len: usize) -> i32 {
+pub unsafe extern "C" fn engine_font_load(data: *const u8, len: usize, depth: f32, chars: *const u8, chars_len: usize, weight: f32) -> i32 {
     let (Some(bytes), Some(chars)) = (unsafe { bytes(data, len) }, unsafe { bytes(chars, chars_len) }) else {
         return -1;
     };
     let Ok(chars) = std::str::from_utf8(chars) else { return -1 };
-    font::load(bytes, depth, chars).map_or(-1, |id| id as i32)
+    font::load(bytes, depth, chars, weight).map_or(-1, |id| id as i32)
 }
 
 /// `[codepoint, mesh id (-1 = nothing drawn), advance in ems]` per glyph, as floats. Valid for the life

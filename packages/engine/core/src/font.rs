@@ -21,13 +21,20 @@ pub struct Font {
 }
 
 /// Parses `bytes` and builds a mesh for each character of `chars` the font has.
-/// `depth` is the extrusion depth in ems (0 = flat, front face only).
-pub fn load(bytes: &[u8], depth: f32, chars: &str) -> Result<u32, String> {
-    model::record_error(build(bytes, depth, chars).and_then(register))
+/// `depth` is the extrusion depth in ems (0 = flat, front face only). `weight` (e.g. 400, 600) picks
+/// that weight of a variable font (system fonts usually are); 0 or a static font keeps its own.
+pub fn load(bytes: &[u8], depth: f32, chars: &str, weight: f32) -> Result<u32, String> {
+    model::record_error(build(bytes, depth, chars, weight).and_then(register))
 }
 
-fn build(bytes: &[u8], depth: f32, chars: &str) -> Result<Font, String> {
-    let face = ttf_parser::Face::parse(bytes, 0).map_err(|e| format!("not a TrueType/OpenType font: {e}"))?;
+fn build(bytes: &[u8], depth: f32, chars: &str, weight: f32) -> Result<Font, String> {
+    let mut face = ttf_parser::Face::parse(bytes, 0).map_err(|e| format!("not a TrueType/OpenType font: {e}"))?;
+    if weight > 0.0 && weight.is_finite() {
+        let wght = ttf_parser::Tag::from_bytes(b"wght");
+        if let Some(axis) = face.variation_axes().into_iter().find(|a| a.tag == wght) {
+            face.set_variation(wght, weight.clamp(axis.min_value, axis.max_value));
+        }
+    }
     let scale = 1.0 / face.units_per_em() as f32;
     let depth = if depth.is_finite() { depth.max(0.0) } else { 0.0 };
     let mut glyphs = Vec::new();
@@ -314,7 +321,7 @@ mod tests {
     #[test]
     fn builds_glyphs_from_a_real_font() {
         let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/Inter-Bold.ttf")).unwrap();
-        let font = get(load(&bytes, 0.2, "08A A").unwrap()).unwrap();
+        let font = get(load(&bytes, 0.2, "08A A", 0.0).unwrap()).unwrap();
         // "0", "8", "A", " " (duplicates skipped); space has an advance but nothing to draw.
         let glyphs: &[[f32; 3]] = font.glyphs.as_chunks::<3>().0;
         assert_eq!(glyphs.len(), 4);
@@ -359,7 +366,7 @@ mod tests {
 
     #[test]
     fn rejects_non_fonts() {
-        assert!(load(b"not a font", 0.1, "A").is_err());
+        assert!(load(b"not a font", 0.1, "A", 0.0).is_err());
         assert!(!model::last_error().is_empty());
     }
 }

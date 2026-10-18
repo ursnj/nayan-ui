@@ -24,7 +24,7 @@ export type {
 
 // Rendering and touch.
 export { GameView } from "./render/GameView";
-export type { DragEvent, GameStats, PinchEvent, SwipeDirection } from "./render/GameView";
+export type { DragEvent, GameStats, OverlayTouchPhase, PinchEvent, SwipeDirection } from "./render/GameView";
 export type { Quality, QualitySetting } from "./render/quality";
 
 // Models, custom shapes, textures and fonts.
