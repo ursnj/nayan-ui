@@ -18,6 +18,7 @@ mod render;
 pub mod shapes;
 mod simulation;
 mod timers;
+pub mod scoreboard;
 #[cfg(test)]
 mod tests;
 
@@ -143,6 +144,8 @@ pub struct World {
     /// Pending `after` timers, and the clock they run on (seconds of `update` dt).
     timers: Vec<timers::Timer>,
     clock: f64,
+    /// Score, lives and the game clock.
+    pub scoreboard: scoreboard::Scoreboard,
 
     // outputs (fixed size)
     out_matrices: Vec<f32>,
@@ -203,6 +206,7 @@ impl World {
             next_animation: 0,
             timers: Vec::new(),
             clock: 0.0,
+            scoreboard: scoreboard::Scoreboard::default(),
             out_matrices: vec![0.0; capacity * 16],
             out_colors: vec![0.0; capacity * 4],
             out_regions: vec![0.0; capacity * 4],

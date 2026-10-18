@@ -164,6 +164,19 @@ pub unsafe extern "C" fn engine_world_cancel_timers(w: *mut World) -> u32 {
     unsafe { world(w) }.map_or(0, |w| w.cancel_timers() as u32)
 }
 
+/// Score / lives / clock operation (see `scoreboard::op`). Returns the score after it.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_scoreboard(w: *mut World, op: u32, a: f64, b: f64) -> f64 {
+    unsafe { world(w) }.map_or(0.0, |w| w.scoreboard.apply(op, a, b))
+}
+
+/// The scoreboard state (ENGINE_SCOREBOARD_LEN doubles), valid until engine_world_free. JS may
+/// clear the flags slot after reading it.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_scoreboard_state(w: *mut World) -> *mut f64 {
+    unsafe { world(w) }.map_or(std::ptr::null_mut(), |w| w.scoreboard.state.as_mut_ptr())
+}
+
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_world_update(w: *mut World, dt: f32) {
     if let Some(w) = unsafe { world(w) } {

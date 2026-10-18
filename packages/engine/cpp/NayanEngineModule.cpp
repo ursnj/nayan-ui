@@ -241,6 +241,15 @@ double NayanEngineModule::cancelTimers(jsi::Runtime &, double world) {
   return engine_world_cancel_timers(find(world));
 }
 
+double NayanEngineModule::scoreboard(jsi::Runtime &, double world, double op, double a, double b) {
+  return engine_world_scoreboard(find(world), op >= 0 ? static_cast<uint32_t>(op) : UINT32_MAX, a, b);
+}
+
+jsi::Object NayanEngineModule::getScoreboard(jsi::Runtime &rt, double world) {
+  auto w = owner(world);
+  return external(rt, w, engine_world_scoreboard_state(w.get()), ENGINE_SCOREBOARD_LEN * sizeof(double));
+}
+
 double NayanEngineModule::count(jsi::Runtime &, double world) {
   return engine_world_count(find(world));
 }

@@ -6,6 +6,7 @@ import type { Sound } from "../media/audio";
 import NativeEngine from "../native/NativeNayanEngine";
 import { SHAPE_MESH, type RenderSource, type Shape, type Vec3 } from "../types";
 import { ANIM_HEADER, ANIM_KEY_LEN, BURST_LEN, DESC_LEN, EASING, encode } from "./desc";
+import { Scoreboard } from "./Scoreboard";
 
 /** True when the engine's native code is linked into this build (it is not in Expo Go). */
 export const isEngineAvailable = NativeEngine != null;
@@ -264,6 +265,7 @@ export class World implements RenderSource {
   /** Timers for a native core built before `after` existed: [fire time, callback], on `clock`. */
   private fallbackTimers: { at: number; run: () => void }[] = [];
   private clock = 0;
+  private scoreboardValue: Scoreboard | null = null;
   private readonly texts = new Map<number, TextState>();
   private readonly id: number;
   private disposed = false;
@@ -556,6 +558,11 @@ export class World implements RenderSource {
     if (typeof native.cancelTimers === "function") native.cancelTimers(this.id);
   }
 
+  /** Score, lives and the game clock, kept in Rust (created on first use). */
+  get scoreboard(): Scoreboard {
+    return (this.scoreboardValue ??= new Scoreboard(this.id));
+  }
+
   /** Timers waiting to fire. */
   get timerCount() {
     return this.timers.size + this.fallbackTimers.length;
@@ -742,6 +749,7 @@ export class World implements RenderSource {
     this.native.update(this.id, dt);
     this.resolveFinished();
     this.runFallbackTimers(dt);
+    if (!this.disposed) this.scoreboardValue?.dispatch();
   }
 
   /**

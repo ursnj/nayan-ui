@@ -33,6 +33,8 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   void update(jsi::Runtime &rt, double world, double dt);
   double after(jsi::Runtime &rt, double world, double seconds);
   double cancelTimers(jsi::Runtime &rt, double world);
+  double scoreboard(jsi::Runtime &rt, double world, double op, double a, double b);
+  jsi::Object getScoreboard(jsi::Runtime &rt, double world);
   double count(jsi::Runtime &rt, double world);
   jsi::Object getMatrices(jsi::Runtime &rt, double world);
   jsi::Object getColors(jsi::Runtime &rt, double world);

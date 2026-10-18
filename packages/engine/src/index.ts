@@ -2,6 +2,7 @@
 
 // World: entities, physics, collisions, animation, particles, picking.
 export { World, isEngineAvailable } from "./world/World";
+export { Scoreboard, type ScoreboardHandlers } from "./world/Scoreboard";
 export type {
   AnimateOptions,
   AnimateTarget,

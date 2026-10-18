@@ -41,6 +41,8 @@ protected:
     methodMap_["update"] = MethodMetadata {.argCount = 2, .invoker = __update};
     methodMap_["after"] = MethodMetadata {.argCount = 2, .invoker = __after};
     methodMap_["cancelTimers"] = MethodMetadata {.argCount = 1, .invoker = __cancelTimers};
+    methodMap_["scoreboard"] = MethodMetadata {.argCount = 4, .invoker = __scoreboard};
+    methodMap_["getScoreboard"] = MethodMetadata {.argCount = 1, .invoker = __getScoreboard};
     methodMap_["count"] = MethodMetadata {.argCount = 1, .invoker = __count};
     methodMap_["getMatrices"] = MethodMetadata {.argCount = 1, .invoker = __getMatrices};
     methodMap_["getColors"] = MethodMetadata {.argCount = 1, .invoker = __getColors};
@@ -271,6 +273,25 @@ private:
       bridging::getParameterCount(&T::cancelTimers) == 2,
       "Expected cancelTimers(...) to have 2 parameters");
     return bridging::callFromJs<double>(rt, &T::cancelTimers,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
+  static jsi::Value __scoreboard(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::scoreboard) == 5,
+      "Expected scoreboard(...) to have 5 parameters");
+    return bridging::callFromJs<double>(rt, &T::scoreboard,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber(),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asNumber(),
+      count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asNumber(),
+      count <= 3 ? throw jsi::JSError(rt, "Expected argument in position 3 to be passed") : args[3].asNumber());
+  }
+
+  static jsi::Value __getScoreboard(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::getScoreboard) == 2,
+      "Expected getScoreboard(...) to have 2 parameters");
+    return bridging::callFromJs<jsi::Object>(rt, &T::getScoreboard,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
       count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
   }
 

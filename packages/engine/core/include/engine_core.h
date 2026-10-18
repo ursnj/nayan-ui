@@ -127,6 +127,13 @@ void engine_world_update(World *w, float dt);
 uint32_t engine_world_after(World *w, float seconds);
 // Drops every pending timer (they never fire). Returns how many were dropped.
 uint32_t engine_world_cancel_timers(World *w);
+// Score, lives and the game clock, advanced by engine_world_update. op: 0 add score, 1 set score,
+// 2 add lives, 3 set lives, 4 start clock (a = countdown seconds or 0 to count up, b = points per
+// second), 5 stop, 6 resume, 7 reset (a = lives), 8 add time (a = seconds). Returns the score.
+#define ENGINE_SCOREBOARD_LEN 8
+double engine_world_scoreboard(World *w, uint32_t op, double a, double b);
+// [score, lives, seconds, shown seconds, changed flags, running, points per second, best].
+double *engine_world_scoreboard_state(World *w);
 uint32_t engine_world_count(World *w);
 uint32_t engine_world_capacity(World *w);
 

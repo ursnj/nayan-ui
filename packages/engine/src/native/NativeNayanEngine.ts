@@ -59,6 +59,10 @@ export interface Spec extends TurboModule {
   after(world: number, seconds: number): number;
   /** Drops every pending timer. Returns how many were dropped. */
   cancelTimers(world: number): number;
+  /** Score / lives / clock operation (layout in engine_core.h). Returns the score after it. */
+  scoreboard(world: number, op: number, a: number, b: number): number;
+  /** 8 doubles: score, lives, seconds, shown seconds, changed flags, running, points per second, best. Aliases native memory. */
+  getScoreboard(world: number): Object;
   count(world: number): number;
 
   /** capacity * 16 floats, column-major, grouped by mesh. */
