@@ -122,6 +122,11 @@ uint32_t engine_world_burst(World *w, const double *burst, size_t len);
 
 // Runs whole ENGINE_FIXED_DT steps and interpolates the render output between the last two.
 void engine_world_update(World *w, float dt);
+// Timers on the world's clock (update dt): the id is reported in done (like an animation's) at the
+// end of the update that reaches it. Returns the id, or 0.
+uint32_t engine_world_after(World *w, float seconds);
+// Drops every pending timer (they never fire). Returns how many were dropped.
+uint32_t engine_world_cancel_timers(World *w);
 uint32_t engine_world_count(World *w);
 uint32_t engine_world_capacity(World *w);
 
@@ -161,6 +166,15 @@ int32_t engine_mesh_create(const float *vertices, size_t vertex_count, const uin
 // floats made (11 per vertex, unindexed triangles), copied out by engine_path_extrude_copy.
 size_t engine_path_extrude(const float *points, const uint32_t *counts, size_t contour_count, float depth, int32_t even_odd);
 size_t engine_path_extrude_copy(float *out, size_t cap);
+// Geometry passes, in place (11 floats per vertex). Smooth: normals from the triangles, averaged
+// across vertices at the same place. Face outward: flips triangles whose winding disagrees with
+// their normals.
+void engine_geometry_smooth_normals(float *vertices, size_t vertex_count, const uint32_t *indices, size_t index_count);
+void engine_geometry_face_outward(const float *vertices, size_t vertex_count, uint32_t *indices, size_t index_count);
+// Bakes a part into merged buffers: placement = position xyz, rotation quat xyzw, scale xyz, color
+// rgb (13 floats). Writes vertex_count vertices and index_count indices (plus first).
+void engine_geometry_place(const float *vertices, size_t vertex_count, const uint32_t *indices, size_t index_count, const float *placement,
+                           uint32_t first, float *out_vertices, uint32_t *out_indices);
 
 // PNG or JPEG. Returns the texture id, or -1.
 int32_t engine_texture_load(const uint8_t *data, size_t len);

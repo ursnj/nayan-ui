@@ -3,7 +3,7 @@
 #![allow(clippy::missing_safety_doc)] // the shared contract is documented once, in ffi/mod.rs
 
 use crate::model::{self, LoadOptions};
-use crate::{font, shape, texture};
+use crate::{font, geometry, shape, texture};
 use std::sync::Mutex;
 
 unsafe fn bytes<'a>(data: *const u8, len: usize) -> Option<&'a [u8]> {
@@ -143,6 +143,66 @@ pub unsafe extern "C" fn engine_path_extrude_copy(out: *mut f32, cap: usize) -> 
         unsafe { std::ptr::copy_nonoverlapping(made.as_ptr(), out, n) };
     }
     n
+}
+
+/// Recomputes normals in place (11 floats per vertex), averaged across vertices at the same place.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_geometry_smooth_normals(vertices: *mut f32, vertex_count: usize, indices: *const u32, index_count: usize) {
+    if vertices.is_null() || (indices.is_null() && index_count > 0) {
+        return;
+    }
+    // SAFETY: caller passes vertex_count * 11 floats and index_count indices, not overlapping.
+    let v = unsafe { std::slice::from_raw_parts_mut(vertices, vertex_count * geometry::VERTEX_FLOATS) };
+    let i = if index_count == 0 { &[][..] } else { unsafe { std::slice::from_raw_parts(indices, index_count) } };
+    geometry::smooth_normals(v, i);
+}
+
+/// Flips triangles (in place) whose winding disagrees with their vertex normals.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_geometry_face_outward(vertices: *const f32, vertex_count: usize, indices: *mut u32, index_count: usize) {
+    if vertices.is_null() || indices.is_null() {
+        return;
+    }
+    // SAFETY: as above.
+    let v = unsafe { std::slice::from_raw_parts(vertices, vertex_count * geometry::VERTEX_FLOATS) };
+    let i = unsafe { std::slice::from_raw_parts_mut(indices, index_count) };
+    geometry::face_outward(v, i);
+}
+
+/// Bakes a part into merged buffers. `placement` = [position xyz, rotation quat xyzw, scale xyz,
+/// color rgb] (13 floats). Writes vertex_count vertices to `out_vertices` and index_count indices
+/// (offset by `first`) to `out_indices`.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_geometry_place(
+    vertices: *const f32,
+    vertex_count: usize,
+    indices: *const u32,
+    index_count: usize,
+    placement: *const f32,
+    first: u32,
+    out_vertices: *mut f32,
+    out_indices: *mut u32,
+) {
+    if vertices.is_null() || placement.is_null() || out_vertices.is_null() || (index_count > 0 && (indices.is_null() || out_indices.is_null())) {
+        return;
+    }
+    // SAFETY: caller passes the sizes given, outputs not overlapping inputs.
+    let p = unsafe { std::slice::from_raw_parts(placement, 13) };
+    let placement = geometry::Placement {
+        position: [p[0], p[1], p[2]],
+        rotation: [p[3], p[4], p[5], p[6]],
+        scale: [p[7], p[8], p[9]],
+        color: [p[10], p[11], p[12]],
+    };
+    let floats = vertex_count * geometry::VERTEX_FLOATS;
+    let sv = unsafe { std::slice::from_raw_parts(vertices, floats) };
+    let ov = unsafe { std::slice::from_raw_parts_mut(out_vertices, floats) };
+    let (si, oi): (&[u32], &mut [u32]) = if index_count == 0 {
+        (&[], &mut [])
+    } else {
+        unsafe { (std::slice::from_raw_parts(indices, index_count), std::slice::from_raw_parts_mut(out_indices, index_count)) }
+    };
+    geometry::place_part(sv, si, &placement, first, ov, oi);
 }
 
 /// Decodes a PNG or JPEG (copied). Returns the texture id, or -1.

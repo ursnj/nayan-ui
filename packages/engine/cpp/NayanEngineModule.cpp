@@ -233,6 +233,14 @@ void NayanEngineModule::update(jsi::Runtime &, double world, double dt) {
   engine_world_update(find(world), static_cast<float>(dt));
 }
 
+double NayanEngineModule::after(jsi::Runtime &, double world, double seconds) {
+  return engine_world_after(find(world), static_cast<float>(seconds));
+}
+
+double NayanEngineModule::cancelTimers(jsi::Runtime &, double world) {
+  return engine_world_cancel_timers(find(world));
+}
+
 double NayanEngineModule::count(jsi::Runtime &, double world) {
   return engine_world_count(find(world));
 }
@@ -339,6 +347,53 @@ jsi::Object NayanEngineModule::pathExtrude(jsi::Runtime &rt, jsi::Object points,
   auto out = std::make_shared<OwnedBuffer>(floats * sizeof(float));
   engine_path_extrude_copy(reinterpret_cast<float *>(out->data()), floats);
   return jsi::Object(jsi::ArrayBuffer(rt, std::move(out)));
+}
+
+void NayanEngineModule::geometrySmoothNormals(jsi::Runtime &rt, jsi::Object vertices, jsi::Object indices) {
+  jsi::ArrayBuffer v = fileData(rt, vertices, "geometrySmoothNormals");
+  jsi::ArrayBuffer i = fileData(rt, indices, "geometrySmoothNormals");
+  engine_geometry_smooth_normals(
+      reinterpret_cast<float *>(v.data(rt)), v.size(rt) / (11 * sizeof(float)),
+      reinterpret_cast<const uint32_t *>(i.data(rt)), i.size(rt) / sizeof(uint32_t));
+}
+
+void NayanEngineModule::geometryFaceOutward(jsi::Runtime &rt, jsi::Object vertices, jsi::Object indices) {
+  jsi::ArrayBuffer v = fileData(rt, vertices, "geometryFaceOutward");
+  jsi::ArrayBuffer i = fileData(rt, indices, "geometryFaceOutward");
+  engine_geometry_face_outward(
+      reinterpret_cast<const float *>(v.data(rt)), v.size(rt) / (11 * sizeof(float)),
+      reinterpret_cast<uint32_t *>(i.data(rt)), i.size(rt) / sizeof(uint32_t));
+}
+
+void NayanEngineModule::geometryPlace(
+    jsi::Runtime &rt,
+    jsi::Object vertices,
+    jsi::Object indices,
+    jsi::Array placement,
+    double first,
+    jsi::Object outVertices,
+    double vertexOffset,
+    jsi::Object outIndices,
+    double indexOffset) {
+  jsi::ArrayBuffer v = fileData(rt, vertices, "geometryPlace");
+  jsi::ArrayBuffer i = fileData(rt, indices, "geometryPlace");
+  jsi::ArrayBuffer ov = fileData(rt, outVertices, "geometryPlace");
+  jsi::ArrayBuffer oi = fileData(rt, outIndices, "geometryPlace");
+  if (placement.size(rt) < 13) {
+    throw jsi::JSError(rt, "NayanEngine.geometryPlace: placement needs 13 numbers");
+  }
+  float p[13];
+  for (size_t k = 0; k < 13; k++) p[k] = static_cast<float>(placement.getValueAtIndex(rt, k).asNumber());
+  size_t vertexCount = v.size(rt) / (11 * sizeof(float));
+  size_t indexCount = i.size(rt) / sizeof(uint32_t);
+  size_t vo = vertexOffset > 0 ? static_cast<size_t>(vertexOffset) : 0; // floats
+  size_t io = indexOffset > 0 ? static_cast<size_t>(indexOffset) : 0;
+  if (vo + vertexCount * 11 > ov.size(rt) / sizeof(float) || io + indexCount > oi.size(rt) / sizeof(uint32_t)) {
+    throw jsi::JSError(rt, "NayanEngine.geometryPlace: the output is too small");
+  }
+  engine_geometry_place(
+      reinterpret_cast<const float *>(v.data(rt)), vertexCount, reinterpret_cast<const uint32_t *>(i.data(rt)), indexCount, p,
+      first > 0 ? static_cast<uint32_t>(first) : 0, reinterpret_cast<float *>(ov.data(rt)) + vo, reinterpret_cast<uint32_t *>(oi.data(rt)) + io);
 }
 
 double NayanEngineModule::textureLoad(jsi::Runtime &rt, jsi::Object data) {

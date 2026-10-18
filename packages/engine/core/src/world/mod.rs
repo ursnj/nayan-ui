@@ -17,6 +17,7 @@ mod physics;
 mod render;
 pub mod shapes;
 mod simulation;
+mod timers;
 #[cfg(test)]
 mod tests;
 
@@ -139,6 +140,9 @@ pub struct World {
     /// Running animation tracks (only animating entities cost anything).
     tracks: Vec<animation::Track>,
     next_animation: u32,
+    /// Pending `after` timers, and the clock they run on (seconds of `update` dt).
+    timers: Vec<timers::Timer>,
+    clock: f64,
 
     // outputs (fixed size)
     out_matrices: Vec<f32>,
@@ -197,6 +201,8 @@ impl World {
             rng: 0x9e37_79b9,
             tracks: Vec::new(),
             next_animation: 0,
+            timers: Vec::new(),
+            clock: 0.0,
             out_matrices: vec![0.0; capacity * 16],
             out_colors: vec![0.0; capacity * 4],
             out_regions: vec![0.0; capacity * 4],

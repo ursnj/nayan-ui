@@ -259,6 +259,11 @@ export class World implements RenderSource {
   private readonly info: CollisionInfo = { started: false, sensor: false, speed: 0 };
   /** Promise resolvers of running animations, by animation id. */
   private readonly pending = new Map<number, () => void>();
+  /** Callbacks of pending `after` timers, by timer id (the core counts the time). */
+  private readonly timers = new Map<number, () => void>();
+  /** Timers for a native core built before `after` existed: [fire time, callback], on `clock`. */
+  private fallbackTimers: { at: number; run: () => void }[] = [];
+  private clock = 0;
   private readonly texts = new Map<number, TextState>();
   private readonly id: number;
   private disposed = false;
@@ -522,18 +527,71 @@ export class World implements RenderSource {
     return this.native.burst(this.id, b.buffer);
   }
 
-  /** Resolves the promises of animations the core reports as ended. */
+  /**
+   * Runs `fn` after `seconds` of `update` time (game time: it pauses when updates stop). The clock is
+   * kept in Rust, so there's no JS timer list to scan every frame. Due callbacks run inside `update`,
+   * earliest first. Returns the timer's id. `cancelTimers()` drops every pending one.
+   *
+   * ```ts
+   * world.after(0.3, () => checkMatches());
+   * ```
+   */
+  after(seconds: number, fn: () => void): number {
+    const native = this.native;
+    if (typeof native.after !== "function") {
+      this.fallbackTimers.push({ at: this.clock + Math.max(0, seconds || 0), run: fn });
+      return -1;
+    }
+    const id = native.after(this.id, seconds);
+    if (id > 0) this.timers.set(id, fn);
+    return id;
+  }
+
+  /** Drops every pending `after` timer: their callbacks never run (a new round, a reset). */
+  cancelTimers() {
+    this.fallbackTimers = [];
+    if (this.timers.size === 0) return;
+    this.timers.clear();
+    const native = this.native;
+    if (typeof native.cancelTimers === "function") native.cancelTimers(this.id);
+  }
+
+  /** Timers waiting to fire. */
+  get timerCount() {
+    return this.timers.size + this.fallbackTimers.length;
+  }
+
+  /** Resolves the promises of animations the core reports as ended, then runs due timers. */
   private resolveFinished() {
-    if (this.pending.size === 0) return;
+    if (this.pending.size === 0 && this.timers.size === 0) return;
     const n = this.native.doneLength(this.id);
+    let due: (() => void)[] | null = null;
     for (let i = 0; i < n; i++) {
       const id = this.finished[i]!;
       const resolve = this.pending.get(id);
       if (resolve) {
         this.pending.delete(id);
         resolve();
+        continue;
+      }
+      const run = this.timers.get(id);
+      if (run) {
+        this.timers.delete(id);
+        (due ??= []).push(run);
       }
     }
+    // Collected first: a callback may start timers or animations (which read the done list again).
+    if (due) for (const run of due) if (!this.disposed) run();
+  }
+
+  private runFallbackTimers(dt: number) {
+    if (dt > 0 && Number.isFinite(dt)) this.clock += dt;
+    if (this.fallbackTimers.length === 0) return;
+    const now = this.clock;
+    const due = this.fallbackTimers.filter((t) => t.at <= now).sort((a, b) => a.at - b.at);
+    if (due.length === 0) return;
+    this.fallbackTimers = this.fallbackTimers.filter((t) => t.at > now);
+    for (const t of due) if (!this.disposed) t.run();
   }
 
   // ── Queries ──────────────────────────────────────────────────────────
@@ -683,6 +741,7 @@ export class World implements RenderSource {
   update(dt: number) {
     this.native.update(this.id, dt);
     this.resolveFinished();
+    this.runFallbackTimers(dt);
   }
 
   /**
@@ -707,6 +766,8 @@ export class World implements RenderSource {
     this.disposed = true;
     for (const resolve of this.pending.values()) resolve();
     this.pending.clear();
+    this.timers.clear();
+    this.fallbackTimers = [];
     NativeEngine!.destroyWorld(this.id);
   }
 }

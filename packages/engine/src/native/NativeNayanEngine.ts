@@ -55,6 +55,10 @@ export interface Spec extends TurboModule {
   burst(world: number, burst: Object): number;
 
   update(world: number, dt: number): void;
+  /** Starts a timer firing `seconds` of update time from now; its id is reported in `getDone`. Returns the id, or 0. */
+  after(world: number, seconds: number): number;
+  /** Drops every pending timer. Returns how many were dropped. */
+  cancelTimers(world: number): number;
   count(world: number): number;
 
   /** capacity * 16 floats, column-major, grouped by mesh. */
@@ -94,6 +98,24 @@ export interface Spec extends TurboModule {
    * rule and extrudes them `depth` deep. Returns an ArrayBuffer of 11 floats per vertex (unindexed).
    */
   pathExtrude(points: Object, counts: Array<number>, depth: number, evenOdd: boolean): Object;
+  /** Recomputes normals in place (vertex / u32 index ArrayBuffers), averaged across vertices at the same place. */
+  geometrySmoothNormals(vertices: Object, indices: Object): void;
+  /** Flips triangles in place whose winding disagrees with their vertex normals. */
+  geometryFaceOutward(vertices: Object, indices: Object): void;
+  /**
+   * Bakes a part into merged buffers: `placement` = position xyz, rotation quat xyzw, scale xyz, color
+   * rgb. Writes at `vertexOffset` floats / `indexOffset` indices, indices offset by `first`.
+   */
+  geometryPlace(
+    vertices: Object,
+    indices: Object,
+    placement: Array<number>,
+    first: number,
+    outVertices: Object,
+    vertexOffset: number,
+    outIndices: Object,
+    indexOffset: number,
+  ): void;
   /** Decodes a PNG/JPEG ArrayBuffer. Returns the texture id, or -1. */
   textureLoad(data: Object): number;
   /** RGBA8 pixels, top row first; aliases native memory. */

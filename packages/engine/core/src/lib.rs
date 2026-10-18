@@ -6,6 +6,7 @@ pub mod android;
 pub mod audio;
 pub mod ffi;
 pub mod font;
+pub mod geometry;
 pub mod haptics;
 pub mod model;
 pub mod render;

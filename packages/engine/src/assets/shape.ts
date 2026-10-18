@@ -485,8 +485,19 @@ function roundFace(center: Vec3, x: Vec3, y: Vec3, normal: Vec3, radius: (u: num
   return typeof color === "function" ? g : paint(g, color);
 }
 
+/** Whether a typed array covers its whole ArrayBuffer (so the native passes can take the buffer). */
+const whole = (a: Float32Array | Uint32Array) => a.byteOffset === 0 && a.byteLength === a.buffer.byteLength;
+
+/** The Rust geometry passes, if this app's native core has them and the arrays can be handed over. */
+const nativeGeometry3 = (g: Geometry) => (NativeEngine && typeof NativeEngine.geometryPlace === "function" && whole(g.vertices) && whole(g.indices) ? NativeEngine : null);
+
 /** Recomputes normals from the triangles, averaged across vertices at the same place (seams, poles). */
 function smoothNormals(g: Geometry): Geometry {
+  const n = nativeGeometry3(g);
+  if (n) {
+    n.geometrySmoothNormals(g.vertices.buffer, g.indices.buffer);
+    return g;
+  }
   const v = g.vertices;
   const key = (i: number) => `${Math.round(v[i * VERTEX_FLOATS]! * 1e5)},${Math.round(v[i * VERTEX_FLOATS + 1]! * 1e5)},${Math.round(v[i * VERTEX_FLOATS + 2]! * 1e5)}`;
   const sums = new Map<string, [number, number, number]>();
@@ -732,6 +743,11 @@ export function tube(points: readonly Vec3[], options: TubeOptions = {}): Geomet
 
 /** Flips triangles whose winding disagrees with their vertex normals (so back-face culling keeps them). */
 function facingOutward(g: Geometry): Geometry {
+  const native = nativeGeometry3(g);
+  if (native) {
+    native.geometryFaceOutward(g.vertices.buffer, g.indices.buffer);
+    return g;
+  }
   const v = g.vertices;
   const at = (i: number, k: number) => v[g.indices[i]! * VERTEX_FLOATS + k]!;
   for (let t = 0; t < g.indices.length; t += 3) {
@@ -772,6 +788,15 @@ export function merge(parts: readonly Part[]): Geometry {
     const s = part.scale ?? 1;
     const [sx, sy, sz] = typeof s === "number" ? [s, s, s] : s;
     const [qx, qy, qz, qw] = part.rotation ?? [0, 0, 0, 1];
+    const fast = nativeGeometry3(part.geometry);
+    if (fast) {
+      const c = part.color ?? [1, 1, 1];
+      const placement = [px, py, pz, qx, qy, qz, qw, sx, sy, sz, c[0], c[1], c[2]];
+      fast.geometryPlace(part.geometry.vertices.buffer, part.geometry.indices.buffer, placement, vo / VERTEX_FLOATS, vertices.buffer, vo, indices.buffer, io);
+      vo += part.geometry.vertices.length;
+      io += part.geometry.indices.length;
+      continue;
+    }
     const rotate = (x: number, y: number, z: number): Vec3 => {
       // v + 2w(q x v) + 2(q x (q x v))
       const tx = 2 * (qy * z - qz * y);

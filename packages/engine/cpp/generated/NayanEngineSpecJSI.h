@@ -39,6 +39,8 @@ protected:
     methodMap_["stopAnimation"] = MethodMetadata {.argCount = 2, .invoker = __stopAnimation};
     methodMap_["burst"] = MethodMetadata {.argCount = 2, .invoker = __burst};
     methodMap_["update"] = MethodMetadata {.argCount = 2, .invoker = __update};
+    methodMap_["after"] = MethodMetadata {.argCount = 2, .invoker = __after};
+    methodMap_["cancelTimers"] = MethodMetadata {.argCount = 1, .invoker = __cancelTimers};
     methodMap_["count"] = MethodMetadata {.argCount = 1, .invoker = __count};
     methodMap_["getMatrices"] = MethodMetadata {.argCount = 1, .invoker = __getMatrices};
     methodMap_["getColors"] = MethodMetadata {.argCount = 1, .invoker = __getColors};
@@ -57,6 +59,9 @@ protected:
     methodMap_["meshAlias"] = MethodMetadata {.argCount = 1, .invoker = __meshAlias};
     methodMap_["meshCreate"] = MethodMetadata {.argCount = 2, .invoker = __meshCreate};
     methodMap_["pathExtrude"] = MethodMetadata {.argCount = 4, .invoker = __pathExtrude};
+    methodMap_["geometrySmoothNormals"] = MethodMetadata {.argCount = 2, .invoker = __geometrySmoothNormals};
+    methodMap_["geometryFaceOutward"] = MethodMetadata {.argCount = 2, .invoker = __geometryFaceOutward};
+    methodMap_["geometryPlace"] = MethodMetadata {.argCount = 8, .invoker = __geometryPlace};
     methodMap_["textureLoad"] = MethodMetadata {.argCount = 1, .invoker = __textureLoad};
     methodMap_["texturePixels"] = MethodMetadata {.argCount = 1, .invoker = __texturePixels};
     methodMap_["textureSize"] = MethodMetadata {.argCount = 1, .invoker = __textureSize};
@@ -252,6 +257,23 @@ private:
       count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asNumber());return jsi::Value::undefined();
   }
 
+  static jsi::Value __after(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::after) == 3,
+      "Expected after(...) to have 3 parameters");
+    return bridging::callFromJs<double>(rt, &T::after,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber(),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asNumber());
+  }
+
+  static jsi::Value __cancelTimers(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::cancelTimers) == 2,
+      "Expected cancelTimers(...) to have 2 parameters");
+    return bridging::callFromJs<double>(rt, &T::cancelTimers,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
   static jsi::Value __count(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
     static_assert(
       bridging::getParameterCount(&T::count) == 2,
@@ -400,6 +422,39 @@ private:
       count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asObject(rt).asArray(rt),
       count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asNumber(),
       count <= 3 ? throw jsi::JSError(rt, "Expected argument in position 3 to be passed") : args[3].asBool());
+  }
+
+  static jsi::Value __geometrySmoothNormals(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::geometrySmoothNormals) == 3,
+      "Expected geometrySmoothNormals(...) to have 3 parameters");
+    bridging::callFromJs<void>(rt, &T::geometrySmoothNormals,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asObject(rt));return jsi::Value::undefined();
+  }
+
+  static jsi::Value __geometryFaceOutward(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::geometryFaceOutward) == 3,
+      "Expected geometryFaceOutward(...) to have 3 parameters");
+    bridging::callFromJs<void>(rt, &T::geometryFaceOutward,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asObject(rt));return jsi::Value::undefined();
+  }
+
+  static jsi::Value __geometryPlace(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::geometryPlace) == 9,
+      "Expected geometryPlace(...) to have 9 parameters");
+    bridging::callFromJs<void>(rt, &T::geometryPlace,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt),
+      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asObject(rt),
+      count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asObject(rt).asArray(rt),
+      count <= 3 ? throw jsi::JSError(rt, "Expected argument in position 3 to be passed") : args[3].asNumber(),
+      count <= 4 ? throw jsi::JSError(rt, "Expected argument in position 4 to be passed") : args[4].asObject(rt),
+      count <= 5 ? throw jsi::JSError(rt, "Expected argument in position 5 to be passed") : args[5].asNumber(),
+      count <= 6 ? throw jsi::JSError(rt, "Expected argument in position 6 to be passed") : args[6].asObject(rt),
+      count <= 7 ? throw jsi::JSError(rt, "Expected argument in position 7 to be passed") : args[7].asNumber());return jsi::Value::undefined();
   }
 
   static jsi::Value __textureLoad(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {

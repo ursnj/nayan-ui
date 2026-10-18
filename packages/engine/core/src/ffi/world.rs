@@ -152,6 +152,18 @@ pub unsafe extern "C" fn engine_world_read_velocity(w: *mut World, id: u32) -> i
     unsafe { world(w) }.is_some_and(|w| w.read_velocity(Entity(id))) as i32
 }
 
+/// Starts a timer firing `seconds` from now; its id is reported in `done`. Returns the id, or 0.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_after(w: *mut World, seconds: f32) -> u32 {
+    unsafe { world(w) }.map_or(0, |w| w.after(seconds))
+}
+
+/// Drops every pending timer. Returns how many were dropped.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_world_cancel_timers(w: *mut World) -> u32 {
+    unsafe { world(w) }.map_or(0, |w| w.cancel_timers() as u32)
+}
+
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_world_update(w: *mut World, dt: f32) {
     if let Some(w) = unsafe { world(w) } {

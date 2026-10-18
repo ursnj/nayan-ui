@@ -31,6 +31,8 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   bool stopAnimation(jsi::Runtime &rt, double world, double entity);
   double burst(jsi::Runtime &rt, double world, jsi::Object burst);
   void update(jsi::Runtime &rt, double world, double dt);
+  double after(jsi::Runtime &rt, double world, double seconds);
+  double cancelTimers(jsi::Runtime &rt, double world);
   double count(jsi::Runtime &rt, double world);
   jsi::Object getMatrices(jsi::Runtime &rt, double world);
   jsi::Object getColors(jsi::Runtime &rt, double world);
@@ -49,6 +51,18 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   double meshAlias(jsi::Runtime &rt, double base);
   double meshCreate(jsi::Runtime &rt, jsi::Object vertices, jsi::Object indices);
   jsi::Object pathExtrude(jsi::Runtime &rt, jsi::Object points, jsi::Array counts, double depth, bool evenOdd);
+  void geometrySmoothNormals(jsi::Runtime &rt, jsi::Object vertices, jsi::Object indices);
+  void geometryFaceOutward(jsi::Runtime &rt, jsi::Object vertices, jsi::Object indices);
+  void geometryPlace(
+      jsi::Runtime &rt,
+      jsi::Object vertices,
+      jsi::Object indices,
+      jsi::Array placement,
+      double first,
+      jsi::Object outVertices,
+      double vertexOffset,
+      jsi::Object outIndices,
+      double indexOffset);
   double textureLoad(jsi::Runtime &rt, jsi::Object data);
   jsi::Object texturePixels(jsi::Runtime &rt, double texture);
   jsi::Array textureSize(jsi::Runtime &rt, double texture);

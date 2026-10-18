@@ -24,6 +24,7 @@ impl World {
             }
         }
         self.write_outputs(self.accumulator / FIXED_DT);
+        self.advance_timers(dt);
     }
 
     pub(super) fn step(&mut self, h: f32) {
