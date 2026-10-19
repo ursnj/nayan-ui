@@ -18,6 +18,13 @@ public class EngineSurfaceViewManager extends SimpleViewManager<EngineSurfaceVie
     return new EngineSurfaceView(context);
   }
 
+  // React removed the view (its screen unmounted); hide the surface even if an exit animation keeps it attached.
+  @Override
+  public void onDropViewInstance(@NonNull EngineSurfaceView view) {
+    view.release();
+    super.onDropViewInstance(view);
+  }
+
   @ReactProp(name = "surfaceId", defaultInt = -1)
   public void setSurfaceId(EngineSurfaceView view, int surfaceId) {
     view.setSurfaceId(surfaceId);

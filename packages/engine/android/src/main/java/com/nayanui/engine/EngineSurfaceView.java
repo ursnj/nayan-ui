@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+   import android.view.View;
 
 /**
  * A surface the Rust renderer draws into (Vulkan, or OpenGL ES when Vulkan isn't usable). JS refers to
@@ -29,6 +30,40 @@ public class EngineSurfaceView extends SurfaceView implements SurfaceHolder.Call
     }
     surfaceId = id;
     attach();
+  }
+
+  /**
+   * Takes the surface off screen. A SurfaceView's layer is composited apart from the view tree, so a
+   * screen popped with an exit animation (react-native-screens) could leave the last frame covering
+   * the screen below; GONE removes the layer at once.
+   */
+  public void release() {
+    if (surfaceId >= 0) {
+      nativeDetach(surfaceId);
+      surfaceId = -1;
+    }
+    setVisibility(GONE);
+  }
+
+  @Override
+  protected void onAttachedToWindow() {
+    super.onAttachedToWindow();
+    setVisibility(VISIBLE);
+  }
+
+  @Override
+  protected void onDetachedFromWindow() {
+    setVisibility(GONE);
+    // The window keeps the transparent hole it punched for this surface until it lays out again, and
+    // a screen coming back from the back stack doesn't always ask; without this it shows black.
+    final View root = getRootView();
+    super.onDetachedFromWindow();
+    if (root != null && root != this) {
+      root.post(() -> {
+        root.requestLayout();
+        root.invalidate();
+      });
+    }
   }
 
   private void attach() {
