@@ -136,11 +136,34 @@ enum Only {
     Added,
 }
 
+/// Whether this is the Android emulator (goldfish / ranchu), whose Vulkan is unreliable.
+#[cfg(target_os = "android")]
+fn is_emulator() -> bool {
+    unsafe extern "C" {
+        fn __system_property_get(name: *const std::ffi::c_char, value: *mut std::ffi::c_char) -> i32;
+    }
+    let prop = |name: &std::ffi::CStr| {
+        let mut buf = [0 as std::ffi::c_char; 92]; // PROP_VALUE_MAX
+        let len = unsafe { __system_property_get(name.as_ptr(), buf.as_mut_ptr()) };
+        if len <= 0 {
+            return String::new();
+        }
+        unsafe { std::ffi::CStr::from_ptr(buf.as_ptr()) }.to_string_lossy().into_owned()
+    };
+    let hardware = prop(c"ro.hardware");
+    prop(c"ro.kernel.qemu") == "1" || prop(c"ro.boot.qemu") == "1" || hardware.contains("goldfish") || hardware.contains("ranchu")
+}
+
 /// Backends to try, best first.
 fn backends() -> &'static [Backends] {
     #[cfg(target_os = "android")]
     {
-        &[Backends::VULKAN, Backends::GL]
+        // The emulator draws with GLES by default; Vulkan stays the fallback there
+        if is_emulator() {
+            &[Backends::GL, Backends::VULKAN]
+        } else {
+            &[Backends::VULKAN, Backends::GL]
+        }
     }
     #[cfg(target_vendor = "apple")]
     {
