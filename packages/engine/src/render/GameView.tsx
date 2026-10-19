@@ -266,6 +266,13 @@ export function GameView(props: Props) {
     // Sources without texture regions show whole textures.
     const wholeRegions = (s: RenderSource) => s.regions ?? new Float32Array(Math.max(1, s.capacity) * 4).map((_, i) => (i % 4 < 2 ? 0 : 1));
     const regions = wholeRegions(source);
+    // Instances actually packed (hidden ones are left out): the furthest range end, at most `count`.
+    const drawn = (s: RenderSource) => {
+      const r = s.ranges;
+      let end = 0;
+      for (let i = 0; i + 1 < r.length; i += 2) if (r[i + 1]! > 0) end = Math.max(end, r[i]! + r[i + 1]!);
+      return Math.min(s.count, end);
+    };
     let overlay: { source: RenderSource; regions: Float32Array } | null = null;
     let last = 0;
     let frames = 0;
@@ -314,25 +321,25 @@ export function GameView(props: Props) {
       const layer = current.overlay;
       if (layer) {
         if (overlay?.source !== layer) overlay = { source: layer, regions: wholeRegions(layer) };
-        native.renderOverlay(surfaceId, layer.matrices.buffer, layer.colors.buffer, overlay.regions.buffer, layer.ranges.buffer, layer.count, width, height);
+        native.renderOverlay(surfaceId, layer.matrices.buffer, layer.colors.buffer, overlay.regions.buffer, layer.ranges.buffer, drawn(layer), width, height);
       } else if (overlay) {
         overlay = null;
         native.renderOverlay(surfaceId, regions.buffer, regions.buffer, regions.buffer, regions.buffer, 0, 0, 0); // removes it
       }
-      const drawn = native.renderFrame(
+      const rendered = native.renderFrame(
         surfaceId,
         f.buffer,
         source.matrices.buffer,
         source.colors.buffer,
         regions.buffer,
         source.ranges.buffer,
-        source.count,
+        drawn(source),
         viewProj.buffer,
       );
       renderTime += performance.now() - t1;
-      if (drawn === 1) {
+      if (rendered === 1) {
         source.setView?.(viewProj, width, height);
-      } else if (drawn < 0 && errors++ < 3) {
+      } else if (rendered < 0 && errors++ < 3) {
         report(new Error(native.renderError() || "rendering failed"));
       }
 

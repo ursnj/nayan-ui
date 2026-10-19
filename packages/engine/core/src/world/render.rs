@@ -11,14 +11,20 @@ impl World {
         self.alpha = alpha;
         let n = self.len();
         // See-through instances, and sprites (puffs and flames), go in the second half: drawn blended, last.
+        // Nothing to draw (no mesh, or fully transparent): left out, so it costs no upload or overdraw.
         let bucket = |i: usize, mesh: &[u8], color: &[[f32; 4]]| {
+            if mesh[i] == shapes::NONE || color[i][3] <= 0.0 {
+                return None;
+            }
             let sprite = mesh[i] == shapes::PUFF || mesh[i] == shapes::FLAME;
-            mesh[i] as usize + if color[i][3] < 1.0 || sprite { MAX_MESHES } else { 0 }
+            Some(mesh[i] as usize + if color[i][3] < 1.0 || sprite { MAX_MESHES } else { 0 })
         };
         let mut counts = [0u32; MAX_MESHES * 2];
         let mut attached = false;
         for i in 0..n {
-            counts[bucket(i, &self.mesh, &self.color)] += 1;
+            if let Some(b) = bucket(i, &self.mesh, &self.color) {
+                counts[b] += 1;
+            }
             attached |= self.parent[i] != NO_ENTITY;
         }
         // Ancestors' world matrices are computed once per frame and reused by every descendant.
@@ -40,7 +46,7 @@ impl World {
         }
 
         for i in 0..n {
-            let b = bucket(i, &self.mesh, &self.color);
+            let Some(b) = bucket(i, &self.mesh, &self.color) else { continue };
             let k = cursor[b] as usize;
             cursor[b] += 1;
             let matrix = self.cached_world_matrix(i, alpha, &mut cache, 0);
@@ -152,4 +158,29 @@ fn ray_box(origin: Vec3, dir: Vec3, half: Vec3) -> Option<f32> {
         far = far.min(a.max(b));
     }
     (near <= far && far >= 0.0).then_some(near.max(0.0))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn hidden_instances_are_not_packed() {
+        let mut w = World::new(8);
+        let root = w.spawn(shapes::NONE, Vec3::ZERO, Vec3::ONE, [1.0; 4]).unwrap();
+        let shade = w.spawn(shapes::CUBE, Vec3::ZERO, Vec3::ONE, [0.0, 0.0, 0.0, 0.0]).unwrap();
+        w.spawn(shapes::CUBE, Vec3::new(1.0, 2.0, 3.0), Vec3::ONE, [1.0; 4]).unwrap();
+        w.set_parent(shade, Some(root));
+        w.update(1.0 / 60.0);
+        let r = w.ranges();
+        let packed: u32 = r.chunks(2).map(|p| p[1]).sum();
+        assert_eq!(packed, 1, "only the visible cube");
+        let cube = shapes::CUBE as usize;
+        assert_eq!((r[cube * 2], r[cube * 2 + 1]), (0, 1));
+        assert_eq!(r[(MAX_MESHES + cube) * 2 + 1], 0, "the clear shade isn't drawn");
+        assert_eq!(&w.out_matrices[12..15], &[1.0, 2.0, 3.0]);
+        w.set_color(shade, [0.0, 0.0, 0.0, 0.5]);
+        w.update(1.0 / 60.0);
+        assert_eq!(w.ranges()[(MAX_MESHES + cube) * 2 + 1], 1, "visible again once it has alpha");
+    }
 }
