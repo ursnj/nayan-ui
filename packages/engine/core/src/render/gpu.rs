@@ -235,6 +235,13 @@ impl Gpu {
                     continue;
                 }
             };
+            // PowerVR's Android Vulkan drivers (e.g. the GE8322 in Unisoc SC9863A phones) crash inside
+            // vkQueueSubmit; those GPUs draw with GLES instead.
+            let info = adapter.get_info();
+            if backends == Backends::VULKAN && (info.vendor == 0x1010 || info.name.contains("PowerVR")) {
+                last = format!("{backends:?}: {} is blocklisted", info.name);
+                continue;
+            }
             let desc = DeviceDescriptor {
                 label: Some("nayan"),
                 required_features: Features::empty(),
