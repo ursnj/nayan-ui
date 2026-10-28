@@ -429,3 +429,8 @@ uses durable app-private storage with no expo-file-system dependency. Completed 
 TTL or automatic eviction. Browser storage remains subject to browser policy/quotas. Call
 await clearAssetCache() only from an explicit user action to clear engine-owned saved assets. Worlds/entities remain owned by each game scene;
 asset caching does not cache live gameplay state. Keep asset construction outside onUpdate.
+
+Web assets use binary IndexedDB records, not localStorage. Rust still owns keys, checksums and
+geometry preparation. File assets read asynchronously on demand; warmUpEngine hydrates a bounded
+set of recent geometry into Rust before synchronous scene setup. IndexedDB quota is browser-managed,
+and failed writes do not evict previous records.

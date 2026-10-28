@@ -62,7 +62,7 @@
   ],
   "caching": {
     "automatic": "Rust owns shape hashing, preparation, solid generation and prepared-mesh caching. Loaders also persist original asset bytes through the Rust cache.",
-    "persistence": "No TTL or automatic eviction. Native uses app-private Application Support/filesDir storage without expo-file-system. Browser persistence is subject to browser storage policy and quotas.",
+    "persistence": "No TTL or automatic eviction. Native uses app-private Application Support/filesDir storage without expo-file-system. Web uses binary IndexedDB records with a browser-managed quota; files load on demand and recent prepared geometry warms into Rust.",
     "fallback": "Denied/full storage or corrupt records cause a rebuild; completed records are not evicted to make room.",
     "ownership": "Create a new World and fresh entities per scene. Dispose worlds on unmount; shared assets remain valid.",
     "advanced": "ProceduralCache(revision) is optional for expensive deterministic multi-model factories.",
