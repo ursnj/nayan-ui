@@ -12,6 +12,7 @@ Nayan UI is a comprehensive, enterprise-grade UI component library for React and
 - **Packages**:
   - `@nayan-ui/react` — React components built on HeroUI + Tailwind CSS
   - `@nayan-ui/native` — React Native components with NativeWind
+  - `@nayan-ui/engine` — shared Rust/wgpu game engine for React browsers and React Native
   - `@nayan-ui/cli` — CLI tools for SEO (sitemap, robots.txt generation)
   - `@nayan-ui/ai` — AI-powered code reviewer & vulnerability scanner CLI
   - `@nayan-ui/tools` — Tools library (video editor, PDF tools, image tools, JSON tools, XML tools, text tools)
@@ -394,3 +395,19 @@ The project follows standard open-source contribution guidelines with Prettier f
 - Optimized bundle sizes with tree shaking
 - Progressive enhancement
 - Semantic HTML structure
+
+
+## Nayan Engine documentation
+- Overview: https://www.nayanui.com/engine
+- Installation: https://www.nayanui.com/engine/installation
+- React browser quickstart: https://www.nayanui.com/engine/react
+- React Native quickstart: https://www.nayanui.com/engine/react-native
+- Public API: https://www.nayanui.com/engine/api-reference
+
+The engine uses one TypeScript API for World, GameView, physics, skeletal and transform animation,
+input/picking, procedural geometry, models, textures, fonts, audio/haptics and game-time scoring.
+Browser builds use WebAssembly and WebGPU/WebGL2; native builds use JSI and Metal/Vulkan/GLES.
+Await warmUpEngine() before browser worlds or asset loading. Web assets are URLs; Metro numeric
+require() assets apply to React Native. Browser styles are CSS; native styles are ViewStyle.
+GameView calls onUpdate but the application calls world.update(dt), and disposes worlds on unmount.
+Engine browser support does not imply that every @nayan-ui/games host component supports browsers.

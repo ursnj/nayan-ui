@@ -1,3 +1,5 @@
+import type { LucideIcon } from "lucide-react";
+import { engineNavigation } from "./engine/navigation";
 import {
   AppWindow,
   Badge,
@@ -302,13 +304,25 @@ export const isWindowDefined = () => {
   return typeof window !== "undefined";
 };
 
+export interface SidebarItem {
+  title: string;
+  description: string;
+  link: string;
+  icon?: LucideIcon;
+  isHeading?: boolean;
+  tags?: { sku: string; text: string }[];
+}
+
 // Utility function to determine which sidebar items to use based on URL path
-export const getSidebarItems = (path: string) => {
+export const getSidebarItems = (path: string): SidebarItem[] => {
   if (path.startsWith("/react-native")) {
     return reactNativeSidebarItems;
   }
   if (path.startsWith("/tools")) {
     return toolsSidebarItems;
+  }
+  if (path === "/engine" || path.startsWith("/engine/")) {
+    return engineSidebarItems;
   }
   if (path.startsWith("/games")) {
     return gamesSidebarItems;
@@ -1842,6 +1856,42 @@ export const toolsSidebarItems = [
     tags: cronExpressionParserTags,
     icon: Clock3,
   },
+];
+
+const engineSidebarItem = (slug: string, title: string, icon: LucideIcon): SidebarItem => {
+  const guide = engineNavigation.find((item) => item.slug === slug);
+  if (!guide) throw new Error(`Missing engine guide: ${slug}`);
+  return { title, description: guide.description, link: guide.link, icon };
+};
+
+export const engineSidebarItems: SidebarItem[] = [
+  { title: "Get Started", description: "", link: "", isHeading: true },
+  engineSidebarItem("overview", "Overview", Gamepad2),
+  engineSidebarItem("installation", "Installation", Settings),
+  engineSidebarItem("react", "React Quickstart", AppWindow),
+  engineSidebarItem("react-native", "React Native Quickstart", AppWindow),
+  { title: "Core Concepts", description: "", link: "", isHeading: true },
+  engineSidebarItem("world-entities", "World & Entities", Layers),
+  engineSidebarItem("game-view", "GameView", PanelTop),
+  engineSidebarItem("camera-lighting", "Camera & Lighting", Eye),
+  engineSidebarItem("physics-collisions", "Physics & Collisions", Gauge),
+  engineSidebarItem("animation", "Animation", RotateCw),
+  engineSidebarItem("skeletal-animation", "Skeletal Animation", Users),
+  engineSidebarItem("input-picking", "Input & Picking", SquareMousePointer),
+  engineSidebarItem("particles", "Particles", Sparkles),
+  engineSidebarItem("scoreboard-timers", "Scoreboards & Timers", Clock),
+  engineSidebarItem("audio-haptics", "Audio & Haptics", Radio),
+  { title: "Assets & Geometry", description: "", link: "", isHeading: true },
+  engineSidebarItem("models-textures", "Models & Textures", Images),
+  engineSidebarItem("text-fonts", "Text & Fonts", TextCursorInput),
+  engineSidebarItem("procedural-geometry", "Procedural Geometry", PenTool),
+  engineSidebarItem("surfaces-lofts", "Surfaces & Lofts", Map),
+  engineSidebarItem("solid-modelling", "Solid Modelling", Layers),
+  { title: "Advanced", description: "", link: "", isHeading: true },
+  engineSidebarItem("cache-performance", "Cache & Performance", Gauge),
+  engineSidebarItem("render-source", "RenderSource", Code2),
+  engineSidebarItem("troubleshooting", "Troubleshooting", CircleAlert),
+  engineSidebarItem("api-reference", "API Reference", BookOpen),
 ];
 
 export const gamesSidebarItems = [

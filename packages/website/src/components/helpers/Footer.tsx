@@ -11,6 +11,7 @@ const GROUPS = [
       { label: "React components", href: "/react/components" },
       { label: "React Native installation", href: "/react-native/installation" },
       { label: "React Native components", href: "/react-native/components" },
+      { label: "Nayan Engine", href: "/engine" },
       { label: "Component tags", href: "/tags" },
     ],
   },
@@ -36,6 +37,7 @@ const GROUPS = [
 const PACKAGES = [
   { label: "react", href: "https://www.npmjs.com/package/@nayan-ui/react" },
   { label: "native", href: "https://www.npmjs.com/package/@nayan-ui/native" },
+  { label: "engine", href: "https://www.npmjs.com/package/@nayan-ui/engine" },
   { label: "cli", href: "https://www.npmjs.com/package/@nayan-ui/cli" },
   { label: "ai", href: "https://www.npmjs.com/package/@nayan-ui/ai" },
 ];
@@ -130,12 +132,7 @@ const Footer = () => {
         <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-default pt-6 text-sm text-muted sm:flex-row">
           <p>© {year} Nayan UI</p>
           <div className="flex items-center gap-4">
-            <Link
-              href={REPO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={linkClass}
-            >
+            <Link href={REPO_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
               MIT License
             </Link>
             <span aria-hidden>·</span>

@@ -18,6 +18,7 @@ const SECTION_LABELS: Record<string, string> = {
   react: "React",
   "react-native": "React Native",
   games: "Games",
+  engine: "Engine",
   tools: "Tools",
 };
 
