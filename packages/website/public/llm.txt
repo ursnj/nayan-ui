@@ -411,3 +411,13 @@ Await warmUpEngine() before browser worlds or asset loading. Web assets are URLs
 require() assets apply to React Native. Browser styles are CSS; native styles are ViewStyle.
 GameView calls onUpdate but the application calls world.update(dt), and disposes worlds on unmount.
 Engine browser support does not imply that every @nayan-ui/games host component supports browsers.
+
+## Practical engine examples
+- Complete game (shared rules and both platform screens): https://www.nayanui.com/engine/first-game
+- Common recipes: https://www.nayanui.com/engine/recipes
+- AI agent instructions: https://www.nayanui.com/engine/agent-guide
+- Structured API usage summary: https://www.nayanui.com/engine.json
+
+Start with the complete tap-to-collect game. Keep shared rules in tapGame.ts, initialize in
+useTapGame.ts, and choose the React or React Native host. The recipes explain where each
+helper is called and which update function owns world.update(dt).

@@ -1,0 +1,63 @@
+{
+  "package": "@nayan-ui/engine",
+  "documentation": "https://www.nayanui.com/engine",
+  "startHere": "https://www.nayanui.com/engine/first-game",
+  "recipes": "https://www.nayanui.com/engine/recipes",
+  "reference": "https://www.nayanui.com/engine/api-reference",
+  "platforms": {
+    "react": {
+      "surface": "HTML canvas",
+      "style": "CSSProperties",
+      "assets": "URL strings",
+      "initialize": "await warmUpEngine() in an effect before creating the scene"
+    },
+    "reactNative": {
+      "surface": "Native development build; Expo Go does not include the engine",
+      "style": "ViewStyle",
+      "assets": "Metro require(...) numbers or URI strings",
+      "initialize": "await warmUpEngine(); rebuild the app after native engine changes"
+    }
+  },
+  "workflow": [
+    "Initialize once per scene, after warmUpEngine.",
+    "Store gameplay in a shared TypeScript factory returning world, camera, update and input functions.",
+    "Connect one world.update(dt) to GameView.onUpdate.",
+    "Use React state for UI changes rather than every object transform.",
+    "Define round start, stop, reset and result handling in the game layer.",
+    "On pause, stop updates and input; on reset, clear timers, actors, input and round flags.",
+    "Cache mesh/model/font/sound preparation outside the frame loop.",
+    "Cancel late asynchronous setup and dispose the world on unmount."
+  ],
+  "api": {
+    "create": "new World(capacity)",
+    "spawn": "const entity = world.spawn(options)",
+    "move": "world.set(entity, {position: [x, y, z]})",
+    "steer": "world.set(entity, {groundVelocity: [x, z]})",
+    "remove": "world.despawn(entity)",
+    "step": "world.update(dt)",
+    "tap": "world.pick(localX, localY)",
+    "collision": "world.forEachCollision(callback) after update",
+    "animate": "world.animate(entity, target, options)",
+    "delay": "world.after(seconds, callback)",
+    "clearTimers": "world.cancelTimers()",
+    "score": "world.scoreboard.add(points)",
+    "countdown": "world.scoreboard.startCountdown(seconds)",
+    "cleanup": "world.dispose()"
+  },
+  "distinctions": {
+    "entity": "A handle for one object in one World",
+    "model": "A reusable mesh; spawn entities from it",
+    "pause": "Stop updates and input while retaining the current world",
+    "reset": "Application function that prepares a fresh round",
+    "time": "dt and animation/timer durations are in seconds",
+    "coordinates": "World Y is up; ground movement uses X/Z. Screen input is local view points or CSS pixels."
+  },
+  "verification": [
+    "Initialization errors are visible.",
+    "The game surface has a real size.",
+    "Start, score, win, lose, stop, replay and cleanup work.",
+    "Input and clock do not advance while paused.",
+    "Web assets load from the built host over HTTP(S).",
+    "Only claim native runtime verification after exercising a native build."
+  ]
+}

@@ -3,7 +3,7 @@ export const engineNavigation = [
     slug: "overview",
     title: "Nayan Engine",
     description:
-      "One TypeScript API for React browser games and React Native games, backed by the same Rust simulation, animation, asset pipeline and wgpu renderer.",
+      "Create objects, draw them, and react to player input. Learn the shared engine API through a complete game and small practical examples.",
     link: "/engine",
   },
   {
@@ -12,6 +12,13 @@ export const engineNavigation = [
     description:
       "Install the engine, select the correct platform entry, prepare native development builds, and serve browser WASM assets correctly.",
     link: "/engine/installation",
+  },
+  {
+    slug: "first-game",
+    title: "Build your first game",
+    description:
+      "Make a complete tap-to-collect game with a shared scene, initialization hook, and React or React Native screen.",
+    link: "/engine/first-game",
   },
   {
     slug: "react",
@@ -26,6 +33,20 @@ export const engineNavigation = [
     description:
       "A complete scene, an initialization hook with cleanup, and a platform host. Tap the bouncing ball to apply an impulse; pause and resume without replacing the world.",
     link: "/engine/react-native",
+  },
+  {
+    slug: "recipes",
+    title: "Common game recipes",
+    description:
+      "Copy focused examples for movement, collisions, pickups, input, scoring, animation, timers and reusable models.",
+    link: "/engine/recipes",
+  },
+  {
+    slug: "agent-guide",
+    title: "Engine guide for AI agents",
+    description:
+      "Exact engine patterns, a reusable implementation prompt and concrete checks for coding agents.",
+    link: "/engine/agent-guide",
   },
   {
     slug: "world-entities",

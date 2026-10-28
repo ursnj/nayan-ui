@@ -72,29 +72,26 @@ for (const platform of ["react", "native"] as const) {
   const directory = join(temporary, platform);
   await mkdir(directory);
   const files: string[] = [];
-  const sceneGuide = engineGuides.find(
-    (guide) => guide.slug === (platform === "react" ? "react" : "react-native"),
-  )!;
-  for (const section of sceneGuide.sections)
-    for (const example of section.examples ?? []) {
-      if (!/\.(ts|tsx)$/.test(example.title)) continue;
-      const path = join(directory, example.title);
-      await writeFile(path, example.code);
-      files.push(path);
-      examples++;
-    }
-  let index = 0;
   for (const guide of engineGuides) {
-    if (["react", "react-native", "api-reference"].includes(guide.slug)) continue;
-    for (const section of guide.sections)
+    if (guide.slug === "api-reference") continue;
+    if (guide.slug === "react" && platform !== "react") continue;
+    if (guide.slug === "react-native" && platform !== "native") continue;
+    const guideDirectory = join(directory, guide.slug);
+    await mkdir(guideDirectory);
+    let index = 0;
+    for (const section of guide.sections) {
       for (const example of section.examples ?? []) {
         if (example.language && example.language !== "tsx") continue;
         if (example.platform !== "shared" && example.platform !== platform) continue;
-        const path = join(directory, `${guide.slug}-${index++}.tsx`);
+        // Preserve named tutorial files so their relative imports are checked together.
+        const name = /\.(ts|tsx)$/.test(example.title) ? example.title : `snippet-${index++}.tsx`;
+        const path = join(guideDirectory, name);
+        check(!files.includes(path), `Duplicate example file: ${guide.slug}/${name}`);
         await writeFile(path, example.code);
         files.push(path);
         examples++;
       }
+    }
   }
   const options: ts.CompilerOptions = {
     strict: true,

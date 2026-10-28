@@ -5,14 +5,14 @@ export const GettingStartedGuides: EngineGuide[] = [
     slug: "overview",
     title: "Nayan Engine",
     description:
-      "One TypeScript API for React browser games and React Native games, backed by the same Rust simulation, animation, asset pipeline and wgpu renderer.",
+      "Create objects, draw them, and react to player input. Learn the shared engine API through a complete game and small practical examples.",
     sections: [
       {
         id: "how-the-engine-fits-together",
         title: "How the engine fits together",
         paragraphs: [
-          "React owns mounting, menus and application state. World owns entities, fixed-step simulation, physics, animations, timers and render buffers. GameView hosts the surface and calls your onUpdate callback before drawing. Call world.update(dt) yourself exactly once per simulation tick; mounting GameView alone does not step World.",
-          "Browser builds call the Rust core through WebAssembly and render into an HTML canvas using WebGPU or WebGL2. React Native calls that core through its JSI TurboModule and renders with Metal on iOS or Vulkan/GLES on Android. The API imports remain @nayan-ui/engine on both platforms.",
+          "Think of World as the container for your game objects. spawn adds an object, set changes it, and despawn removes it. Keep the Entity handle returned by spawn so you can change that object later. GameView draws the World and sends player input to your callbacks.",
+          "Connect GameView.onUpdate to world.update(dt) once per frame. This makes motion, physics, animations and game-time clocks advance. React handles screen controls and loading; the engine handles the game scene. Both platforms import the same API from @nayan-ui/engine.",
         ],
         table: {
           headers: ["API / option", "Behavior"],
@@ -40,9 +40,43 @@ export const GettingStartedGuides: EngineGuide[] = [
         id: "choose-a-starting-point",
         title: "Choose a starting point",
         paragraphs: [
-          "Read Installation first, then the complete React or React Native quickstart. Both quickstarts use the same scene factory and lifecycle hook. The later guides label identical code as shared rather than duplicating the game rules.",
+          "New to the engine? Read Installation, then Build your first game. It gives you every file for a working game on either platform. Already building a game? Open Common Recipes and copy the helper for the task you need. AI agents can start with the AI Agent Guide and /engine.json.",
           "The engine package and @nayan-ui/games are separate libraries. Browser support in the engine does not automatically make the games package, its host navigation, its settings screens or its Metro asset imports browser-compatible.",
         ],
+      },
+      {
+        id: "find-an-example",
+        title: "Find an example for your task",
+        paragraphs: [
+          "Start with a working example, then read the detailed guide when you need more options. Every shared example uses the same game API on React and React Native.",
+        ],
+        table: {
+          headers: ["Task", "Example", "Guide"],
+          rows: [
+            [
+              "Build a complete game",
+              "Tap targets, score, countdown, pause and replay",
+              "/engine/first-game",
+            ],
+            [
+              "Move a player or add a pickup",
+              "Short setup and update functions",
+              "/engine/recipes",
+            ],
+            [
+              "Give an AI agent the right context",
+              "File structure, exact APIs and acceptance checks",
+              "/engine/agent-guide",
+            ],
+            ["Mount only a minimal scene", "Bouncing-ball React host", "/engine/react"],
+            ["Mount a native screen", "Bouncing-ball React Native host", "/engine/react-native"],
+            [
+              "Look up an option",
+              "All public exports and type signatures",
+              "/engine/api-reference",
+            ],
+          ],
+        },
       },
       {
         id: "coordinates-values-and-handles",
