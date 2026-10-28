@@ -375,7 +375,7 @@ export function createScoreLabel(world: World, font: Font) {
             ],
             [
               "FontOptions",
-              "depth, chars, weight. Changing these options gives a distinct cached load.",
+              "depth, chars, weight. Source/depth/weight identify a shared font; chars extends its prewarmed glyph set without rebuilding existing glyphs.",
             ],
             [
               "TextLayout",
@@ -400,16 +400,16 @@ export function createScoreLabel(world: World, font: Font) {
         id: "geometry-and-registration",
         title: "Geometry and registration",
         paragraphs: [
-          "Geometry contains Float32Array vertices and Uint32Array indices. Each vertex has 11 floats: position XYZ, normal XYZ, RGB color and UV. Indices are triangle triples. Geometry is unregistered CPU data; createShape registers it and returns a Model. Cache the returned model and spawn new entities from it.",
+          "Geometry contains Float32Array vertices and Uint32Array indices. Each vertex has 11 floats: position XYZ, normal XYZ, RGB color and UV. Indices are triangle triples. Geometry is unregistered CPU data; createShape registers it and returns a Model. Equal geometry and options automatically reuse prepared models. Spawn new entities for each run; no application-level model map is needed.",
           "createShape options: center defaults true; fit sets the longest dimension; shine defaults zero; optimize defaults false and accepts true or OptimizeOptions. It copies the geometry. Built-in shapeGeometry returns copied geometry for cube, sphere, plane, cylinder, cone, capsule, torus and roundedBox after warm-up; none/puff/flame have no supported solid geometry.",
         ],
         examples: [
           {
             title: "Prepare and reuse a model",
             code: `import { warmUpEngine, createShape, shapeGeometry, type World } from "@nayan-ui/engine";
-let assets: Promise<ReturnType<typeof createShape>> | undefined;
-export function loadToken() {
-  return assets ??= warmUpEngine().then(() => createShape(shapeGeometry("roundedBox"), { fit: 1, shine: 0.25, optimize: true }));
+export async function loadToken() {
+  await warmUpEngine();
+  return createShape(shapeGeometry("roundedBox"), { fit: 1, shine: 0.25, optimize: true });
 }
 export async function addToken(world: World) { return world.spawn({ mesh: await loadToken(), position: [0, 1, 0] }); }`,
             platform: "shared",

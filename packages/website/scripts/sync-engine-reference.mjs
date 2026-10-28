@@ -25,6 +25,7 @@ const targets = {
   "render/meshes": "cache-performance",
   "render/quality": "game-view",
   "assets/model": "models-textures",
+  "assets/AssetCache": "cache-performance",
   "assets/texture": "models-textures",
   "assets/ProceduralCache": "cache-performance",
   "assets/modelling": "solid-modelling",

@@ -421,3 +421,11 @@ Engine browser support does not imply that every @nayan-ui/games host component 
 Start with the complete tap-to-collect game. Keep shared rules in tapGame.ts, initialize in
 useTapGame.ts, and choose the React or React Native host. The recipes explain where each
 helper is called and which update function owns world.update(dt).
+
+Asset reuse is managed by the engine on both React and React Native. Use loadModel, loadTexture,
+loadFont, audio.load, createShape and createSolid directly during scene setup. Do not add manual
+promise caches, mesh maps or storage adapters for normal assets. Rust owns geometry hashing, preparation, solid generation and saved binary records. Native
+uses durable app-private storage with no expo-file-system dependency. Completed records have no
+TTL or automatic eviction. Browser storage remains subject to browser policy/quotas. Call
+await clearAssetCache() only from an explicit user action to clear engine-owned saved assets. Worlds/entities remain owned by each game scene;
+asset caching does not cache live gameplay state. Keep asset construction outside onUpdate.

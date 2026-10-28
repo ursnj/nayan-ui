@@ -228,6 +228,12 @@
     "guide": "models-textures"
   },
   {
+    "name": "clearAssetCache",
+    "module": "assets/AssetCache",
+    "typeOnly": false,
+    "guide": "cache-performance"
+  },
+  {
     "name": "ProceduralCache",
     "module": "assets/ProceduralCache",
     "typeOnly": false,

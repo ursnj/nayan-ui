@@ -85,7 +85,7 @@ export const GettingStartedGuides: EngineGuide[] = [
           "World coordinates use X right and Y up; ground-based games move on X/Z. Screen callbacks use points on mobile and CSS pixels on web, measured from the top-left with Y down. Camera field of view and angular motion use radians. Rotation is a quaternion [x, y, z, w], with [0, 0, 0, 1] as identity.",
           "Colors are numeric RGB or RGBA tuples. Ordinary channels use 0..1. Entity alpha below one draws transparency; channels above one produce emissive-looking color, with values at two self-lit. Vertex colors, texture colors and entity colors multiply. Models and entities are different: a Model is a reusable mesh, while an Entity belongs to one World.",
         ],
-        note: "Keep worlds and loaded asset promises outside React render work. Create entities per run, reuse registered meshes, and dispose each World when its owning screen unmounts.",
+        note: "Initialize worlds and assets from scene setup, outside React render work. The engine reuses loaded/prepared assets automatically. Create entities per run and dispose each World when its owning screen unmounts.",
       },
       {
         id: "what-is-shared-and-what-changes",

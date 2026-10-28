@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "Nayan Car Racing",
+    "slug": "nayan-car-racing",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "nayan-car-racing",
+    "ios": {
+      "bundleIdentifier": "dev.nayan.example.racing"
+    },
+    "android": {
+      "package": "dev.nayan.example.racing",
+      "permissions": ["android.permission.VIBRATE"]
+    },
+    "plugins": ["expo-dev-client", ["./plugins/withAndroidMinSdk", 26]],
+    "userInterfaceStyle": "dark"
+  }
+}

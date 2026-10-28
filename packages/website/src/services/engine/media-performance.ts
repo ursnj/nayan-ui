@@ -273,25 +273,28 @@ export function reward(enabled: boolean) {
     slug: "cache-performance",
     title: "Procedural cache and performance",
     description:
-      "Persist deterministic static meshes, batch transform updates, observe capacity limits, and keep the frame loop free of asset construction.",
+      "Let the engine reuse asset work automatically. Learn scene ownership, optional custom factory persistence and advanced diagnostics.",
     sections: [
       {
         id: "session-caches-and-persistent-geometry",
         title: "Session caches and persistent geometry",
         paragraphs: [
-          "Keep a promise or model factory cache at module scope and reuse its result across runs. Mesh IDs are process/session resources shared by imported models, glyphs, aliases and procedural models. Disposing a world does not free those registrations. meshIdLimit() is one past the highest registered mesh ID, not a remaining-capacity count; there are 4096 total slots, including built-ins.",
-          "ProceduralCache(revision,storage?) persists deterministic factory results containing static untextured Model objects nested in plain arrays/objects and serializable data. A hit registers saved geometry, avoiding tessellation and painting. It does not persist raw native handles, textures, imported rigs, lazy getters, typed-array factory output or arbitrary class instances. Unsupported persistence does not stop the factory result from being used in memory.",
+          "Use loadModel, loadTexture, loadFont, audio.load, createShape and createSolid directly during setup. The engine owns resource reuse: concurrent file requests share work, and Rust owns shape hashing, normalization, optimization, solid generation and prepared-mesh reuse. Original model/texture/font/sound bytes and prepared geometry are saved by the core without a host storage adapter. A failed load can be retried. You do not need promise variables, asset maps or storage adapters for ordinary usage.",
+          "Temporary download bytes stay bounded in RAM. The current core hashes and caches prepared geometry in Rust instead of retaining JS geometry snapshots. Releasing temporary RAM never deletes saved records or invalidates model/texture/font/sound handles. Decoded registrations remain session resources; a new World gets independent actors while sharing assets. Disposing a world does not dispose shared assets.",
+          "Saved records have no TTL or automatic capacity eviction. Native Rust reads/writes app-private durable files (iOS Application Support and Android filesDir), without expo-file-system. WASM uses the same Rust validation/encoding and a browser storage bridge. The engine requests browser persistence; browser quotas, private mode, user clearing and permission decisions still apply. Storage denial/full storage/corrupt data fall back to rebuilding, without deleting other completed records. Use versioned asset URLs when file contents change.",
         ],
         examples: [
           {
-            title: "Cache a deterministic model factory",
-            code: `import { ProceduralCache, createShape, block } from "@nayan-ui/engine";
-export const sceneryCache = new ProceduralCache("scenery-v3");
-export function prepareBench() {
-  return sceneryCache.get("bench", () => ({
-    seat: createShape(block(2, 0.2, 0.6), { shine: 0.15 }),
-    leg: createShape(block(0.15, 0.7, 0.15)),
-  }));
+            title: "Call the normal APIs on every scene setup",
+            code: `import { warmUpEngine, World, loadModel, createShape, block } from "@nayan-ui/engine";
+export async function createLevel(heroUrl: string) {
+  await warmUpEngine();
+  const hero = await loadModel(heroUrl, { fit: 2 });
+  const crate = createShape(block(1, 1, 1), { optimize: true });
+  const world = new World(64);
+  world.spawn({ mesh: hero, position: [0, 1, 0] });
+  world.spawn({ mesh: crate, position: [2, 0.5, 0] });
+  return { world, update: (dt: number) => world.update(dt), dispose: () => world.dispose() };
 }`,
             platform: "shared",
             language: "tsx",
@@ -300,41 +303,46 @@ export function prepareBench() {
       },
       {
         id: "storage-contract-and-revisioning",
-        title: "Storage contract and revisioning",
+        title: "Permanent records and explicit clearing",
         paragraphs: [
-          "ProceduralStorage.read(key) must synchronously return Uint8Array|null. write(key,bytes) may be synchronous or Promise<void>. flush awaits outstanding writes; stats exposes hits/builds/invalid/failures/pendingWrites. Repeated memory-cache gets return the same object without another storage hit.",
-          "Increment the revision or key when recipes, tessellation, paint, engine geometry format assumptions or options change. Include the revision in the storage namespace too. Corrupt/mismatched/oversized records are rejected and rebuilt. Individual records have a 32 MiB limit. localStorage is only suitable for small examples; a larger browser cache needs a synchronous in-memory layer hydrated from IndexedDB before the cache is used.",
+          "Successful writes stay saved across restarts and game replays until the user explicitly clears engine storage, clears the app/site data or uninstalls the native app. The engine does not expire old recipe revisions or evict completed records to make space. When a new write cannot fit, existing records remain intact and gameplay continues with in-memory resources. A browser can only provide the persistence its storage policy allows.",
+          "Call clearAssetCache() only from an explicit user action. It clears engine-owned saved geometry and original files, plus temporary download bytes. Existing worlds and loaded handles remain valid; a future app launch reloads/rebuilds assets. It does not clear unrelated application settings or custom ProceduralStorage adapters. A rejected clear is reported to the caller rather than showing a false success message.",
+          "ProceduralCache(revision) remains optional for expensive deterministic multi-model factories. Its default binary storage also delegates to Rust. Revision/key changes distinguish new recipes without deleting older records. Do not persist live worlds, Entity handles, imported rigs or texture handles in this static factory cache.",
         ],
         examples: [
           {
-            title: "Small browser storage adapter",
-            code: `import { ProceduralCache, type ProceduralStorage } from "@nayan-ui/engine";
-export function createBrowserCache() {
-  const revision = "props-v3";
-  const storage: ProceduralStorage = {
-    read(key) {
-      const raw = localStorage.getItem(revision + ":" + key);
-      return raw === null ? null : Uint8Array.from(JSON.parse(raw) as number[]);
-    },
-    write(key, bytes) { localStorage.setItem(revision + ":" + key, JSON.stringify(Array.from(bytes))); },
-  };
-  return new ProceduralCache(revision, storage);
+            title: "Clear saved assets from a React settings button",
+            code: `import { useState } from "react";
+import { clearAssetCache } from "@nayan-ui/engine";
+export function ClearWebAssets() {
+  const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
+  async function clear() {
+    setBusy(true);
+    try { await clearAssetCache(); setMessage("Saved assets cleared. They reload next launch."); }
+    catch { setMessage("Could not clear saved assets. Please try again."); }
+    finally { setBusy(false); }
+  }
+  return <div><button disabled={busy} onClick={() => void clear()}>Clear saved game assets</button><p>{message}</p></div>;
 }`,
             platform: "react",
             language: "tsx",
           },
           {
-            title: "Native host storage adapter",
-            code: `import { ProceduralCache, type ProceduralStorage } from "@nayan-ui/engine";
-// Adapt an existing synchronous binary store (e.g. your MMKV/file cache).
-interface BinaryStore { read(key: string): Uint8Array | null; write(key: string, bytes: Uint8Array): void; }
-export function createNativeCache(store: BinaryStore) {
-  const revision = "props-v3";
-  const storage: ProceduralStorage = {
-    read: key => store.read(revision + ":" + key),
-    write: (key, bytes) => store.write(revision + ":" + key, bytes),
-  };
-  return new ProceduralCache(revision, storage);
+            title: "Use the same clear API in React Native settings",
+            code: `import { useState } from "react";
+import { Button, Text, View } from "react-native";
+import { clearAssetCache } from "@nayan-ui/engine";
+export function ClearNativeAssets() {
+  const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
+  async function clear() {
+    setBusy(true);
+    try { await clearAssetCache(); setMessage("Saved assets cleared. They reload next launch."); }
+    catch { setMessage("Could not clear saved assets. Please try again."); }
+    finally { setBusy(false); }
+  }
+  return <View><Button title="Clear saved game assets" disabled={busy} onPress={() => void clear()} /><Text>{message}</Text></View>;
 }`,
             platform: "native",
             language: "tsx",
@@ -498,7 +506,7 @@ export async function createCustomSource(): Promise<RenderSource> {
             ],
             [
               "Out of entities / meshes",
-              "Budget glyph children and particles; cache mesh creation across reset/unmount rather than registering per frame.",
+              "Budget glyph children and particles; equal assets are reused automatically, but unique geometry, glyphs and particles still consume capacity. Keep asset construction in setup.",
             ],
           ],
         },

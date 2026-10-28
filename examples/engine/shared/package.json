@@ -1,0 +1,14 @@
+{
+  "name": "@nayan-engine-example/shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./car-racing": "./car-racing/src/index.ts",
+    "./car-racing/assets/*": "./car-racing/assets/*"
+  },
+  "peerDependencies": {
+    "@nayan-ui/engine": "*",
+    "react": "*"
+  }
+}

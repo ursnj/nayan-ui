@@ -1,0 +1,4 @@
+.engine/
+mobile/ios/
+mobile/android/
+mobile/expo-env.d.ts

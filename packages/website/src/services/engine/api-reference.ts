@@ -4,7 +4,7 @@ export const apiReferenceGuide: EngineGuide = {
   slug: "api-reference",
   title: "Public API reference",
   description:
-    "101 named public exports, including classes, helpers, component contracts and TypeScript data structures, audited against the shared engine entry point.",
+    "102 named public exports, including classes, helpers, component contracts and TypeScript data structures, audited against the shared engine entry point.",
   sections: [
     {
       id: "reading-the-reference",
@@ -879,6 +879,32 @@ export declare function loadModel(source: AssetSource, options?: ModelOptions): 
       ],
     },
     {
+      id: "assets-AssetCache",
+      title: "assets/AssetCache",
+      paragraphs: [
+        "Detailed usage: /engine/cache-performance. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
+      ],
+      table: {
+        headers: ["Export", "Kind", "Guide"],
+        rows: [["clearAssetCache", "Runtime API", "/engine/cache-performance"]],
+      },
+      examples: [
+        {
+          title: "assets/AssetCache declarations",
+          platform: "shared",
+          language: "typescript",
+          code: `/**
+ * Explicitly removes the engine's saved geometry and original model/texture/font/audio files.
+ * Also clears temporary download bytes. Existing worlds and loaded handles remain usable;
+ * registrations are session resources and will be rebuilt/reloaded on a future app launch.
+ * Custom ProceduralStorage adapters belong to their host and are not cleared by this function.
+ * Rejects if storage cannot be cleared, allowing a settings screen to report the failure.
+ */
+export declare function clearAssetCache(): Promise<void>;`,
+        },
+      ],
+    },
+    {
       id: "assets-ProceduralCache",
       title: "assets/ProceduralCache",
       paragraphs: [
@@ -896,7 +922,7 @@ export declare function loadModel(source: AssetSource, options?: ModelOptions): 
           title: "assets/ProceduralCache declarations",
           platform: "shared",
           language: "typescript",
-          code: `/** Local storage is supplied by the host; the engine has no filesystem dependency. */
+          code: `/** Optional storage override. The engine selects a best-effort platform cache by default. */
 export interface ProceduralStorage {
     read(key: string): Uint8Array | null;
     write(key: string, bytes: Uint8Array): void | Promise<void>;
@@ -1096,13 +1122,14 @@ export interface SolidOptions {
     uv?: "xy" | "xz" | "yz";
 }
 
-/** Tessellates a solid natively into an unregistered mesh. Build/cache once, then createShape(). */
+/** Tessellates into editable, unregistered geometry. Prefer createSolid() for automatic model reuse. */
 export declare function solidGeometry(solid: Solid, options?: SolidOptions): Geometry;
 
 /**
  * Tessellates, cleans and registers a solid once, then returns its cached model on later calls
  * with the same recipe/options. White vertex colors can be tinted per spawned entity. Temporary
- * intermediate meshes consume no IDs. Call after warmUpEngine(), before spawning a run.
+ * intermediate meshes consume no IDs. Prepared solids persist automatically when platform storage
+ * is available; storage failure falls back to building. Call after warmUpEngine(), before spawning a run.
  */
 export declare function createSolid(solid: Solid, options?: SolidOptions & ShapeOptions): Model;
 
@@ -1496,10 +1523,9 @@ export type ShapeOptions = {
 /**
  * Registers geometry as a mesh: pass the result as an entity's \`mesh\` (or a burst's), with any
  * \`texture\`, physics and picking. Colliders default to a box holding the shape. Mesh ids are
- * shared by models, fonts and shapes (about 4,080) and live for the whole app: create each shape once,
- * at module level, not per render or per spawn.
- * Registering the same geometry again (as a JS reload does) returns the same mesh id, so reloads
- * don't use ids up; the latest \`shine\` applies to every use of it.
+ * shared by models, fonts and shapes (about 4,080) and live for the whole app. Equal geometry/options
+ * automatically reuse preparation and registration; input buffers may still be edited for a later
+ * call. Material variants remain independent. Build geometry during scene setup, outside onUpdate.
  *
  * \`\`\`ts
  * const orange = createShape(lathe(orangeProfile, { color: [1, 0.55, 0.1] }), { fit: 1, shine: 0.3 });
@@ -1557,7 +1583,7 @@ export type Font = {
 };
 
 /**
- * Loads a TrueType / OpenType font (.ttf / .otf) for 3D text. Letters are real meshes: lit, shadowed,
+ * Loads a TrueType / OpenType font (.ttf / .otf) for 3D text. The source/depth/weight are cached independently of the requested prewarm characters. Letters are real meshes: lit, shadowed,
  * and every copy of a letter on screen is drawn in one call. At scale 1, letters are 1 unit tall (em).
  * Additional Unicode glyphs are built on demand from the same font and cached. The font must contain
  * an outline for the character; missing characters still use ?, including unsupported emoji.

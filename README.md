@@ -9,29 +9,31 @@ Reusable Component Libraries for React and React Native and Devtools to help dev
 
 ## Packages
 
-| Package                               | Version                                                                                                   | Description                                                     |
-| ------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| [@nayan-ui/react](./packages/react)   | [![npm](https://badge.fury.io/js/@nayan-ui%2Freact.svg)](https://www.npmjs.com/package/@nayan-ui/react)   | React component library built on HeroUI + Tailwind CSS v4       |
-| [@nayan-ui/native](./packages/native) | [![npm](https://badge.fury.io/js/@nayan-ui%2Fnative.svg)](https://www.npmjs.com/package/@nayan-ui/native) | React Native component library built on HeroUI Native + Uniwind |
-| [@nayan-ui/games](https://www.npmjs.com/package/@nayan-ui/games) | [![npm](https://badge.fury.io/js/@nayan-ui%2Fgames.svg)](https://www.npmjs.com/package/@nayan-ui/games) | Free games for React Native projects                            |
-| [@nayan-ui/cli](./packages/cli)       | [![npm](https://badge.fury.io/js/@nayan-ui%2Fcli.svg)](https://www.npmjs.com/package/@nayan-ui/cli)       | CLI for project scaffolding, sitemap & robots.txt generation    |
-| [@nayan-ui/ai](./packages/ai)         | [![npm](https://badge.fury.io/js/@nayan-ui%2Fai.svg)](https://www.npmjs.com/package/@nayan-ui/ai)         | AI-powered code reviewer using Codex & Claude Code agents       |
+| Package                                                          | Version                                                                                                   | Description                                                     |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| [@nayan-ui/react](./packages/react)                              | [![npm](https://badge.fury.io/js/@nayan-ui%2Freact.svg)](https://www.npmjs.com/package/@nayan-ui/react)   | React component library built on HeroUI + Tailwind CSS v4       |
+| [@nayan-ui/native](./packages/native)                            | [![npm](https://badge.fury.io/js/@nayan-ui%2Fnative.svg)](https://www.npmjs.com/package/@nayan-ui/native) | React Native component library built on HeroUI Native + Uniwind |
+| [@nayan-ui/games](https://www.npmjs.com/package/@nayan-ui/games) | [![npm](https://badge.fury.io/js/@nayan-ui%2Fgames.svg)](https://www.npmjs.com/package/@nayan-ui/games)   | Free games for React Native projects                            |
+| [@nayan-ui/cli](./packages/cli)                                  | [![npm](https://badge.fury.io/js/@nayan-ui%2Fcli.svg)](https://www.npmjs.com/package/@nayan-ui/cli)       | CLI for project scaffolding, sitemap & robots.txt generation    |
+| [@nayan-ui/ai](./packages/ai)                                    | [![npm](https://badge.fury.io/js/@nayan-ui%2Fai.svg)](https://www.npmjs.com/package/@nayan-ui/ai)         | AI-powered code reviewer using Codex & Claude Code agents       |
 
 ## Applications
 
-| Application                                            | Description                                          |
-| ------------------------------------------------------ |------------------------------------------------------|
-| [@nayan-ui/website](./packages/website)                | Documentation website built with Next.js + Nayan UI  |
-| [@nayan-ui/video-editor](./applications/video-editor)  | Video editor built with Vite + MediaBunny + Nayan UI |
+| Application                                           | Description                                          |
+| ----------------------------------------------------- | ---------------------------------------------------- |
+| [@nayan-ui/website](./packages/website)               | Documentation website built with Next.js + Nayan UI  |
+| [@nayan-ui/video-editor](./applications/video-editor) | Video editor built with Vite + MediaBunny + Nayan UI |
 
 ## Examples
 
 | Example                              | Description                               |
-| ------------------------------------ |-------------------------------------------|
+| ------------------------------------ | ----------------------------------------- |
 | [examples/vite](./examples/vite)     | React + Vite + Tailwind CSS v4 + Nayan UI |
 | [examples/nextjs](./examples/nextjs) | Next.js + Tailwind CSS v4 + Nayan UI      |
 | [examples/expo](./examples/expo)     | Expo + Uniwind + Nayan UI native          |
 | [examples/games](./examples/games)   | Expo + Nayan UI Games                     |
+
+| [examples/engine](./examples/engine) | Car racing workspace: web, mobile, and shared engine code |
 
 ## Quick Start
 

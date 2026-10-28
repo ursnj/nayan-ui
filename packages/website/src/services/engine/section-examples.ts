@@ -133,12 +133,11 @@ export async function createBrowserWorld() {
       {
         title: "Load a GLB after Metro resolves the asset",
         description:
-          "Call this from native preparation after adding glb to Metro assetExts. Keep the promise shared across visits rather than loading from onUpdate. The referenced asset must exist in your project.",
+          "Call this from native preparation after adding glb to Metro assetExts. The loader shares resources across visits automatically. Call during setup rather than onUpdate. The referenced asset must exist in your project.",
         code: `import { warmUpEngine, loadModel } from "@nayan-ui/engine";
-let model: ReturnType<typeof loadModel> | undefined;
 export async function prepareAvatar() {
   await warmUpEngine();
-  return model ??= loadModel(require("./assets/avatar.glb"), { center: false });
+  return loadModel(require("./assets/avatar.glb"), { center: false });
 }`,
         platform: "native",
         language: "tsx",
@@ -1525,17 +1524,13 @@ export function selectWithFeedback(enabled: boolean) {
   "cache-performance": {
     "session-caches-and-persistent-geometry": [
       {
-        title: "Store nested procedural assets and inspect cache results",
+        title: "Reuse a solid automatically on replay",
         description:
-          "Call once after warm-up. The factory returns static untextured models and ordinary data, which the cache can persist. Do not cache live Entity handles.",
-        code: `import { ProceduralCache, createShape, block } from "@nayan-ui/engine";
-const cache = new ProceduralCache("furniture-v2");
-export function prepareFurniture() {
-  const assets = cache.get("stool", () => ({
-    seat: createShape(block(1, 0.2, 1)), leg: createShape(block(0.15, 0.8, 0.15)), height: 0.9,
-  }));
-  console.log(cache.stats);
-  return assets;
+          "Call during scene setup after warm-up. Rust reuses the prepared solid model without JS tessellation or geometry snapshots; saved records have no automatic expiry or eviction.",
+        code: `import { Solid, createSolid, type World } from "@nayan-ui/engine";
+export function addStool(world: World) {
+  const seat = createSolid(Solid.box([1, 0.2, 1]).paint([0.5, 0.3, 0.1]));
+  return world.spawn({ mesh: seat, position: [0, 0.9, 0] });
 }`,
         platform: "shared",
         language: "tsx",
@@ -1543,13 +1538,13 @@ export function prepareFurniture() {
     ],
     "storage-contract-and-revisioning": [
       {
-        title: "Wait for asynchronous writes before closing a cache owner",
+        title: "Clear engine storage only after a user action",
         description:
-          "Use when a native storage adapter or browser memory layer writes asynchronously. flush waits for tracked writes; it does not make an asynchronous read adapter valid.",
-        code: `import type { ProceduralCache } from "@nayan-ui/engine";
-export async function finishAssetPreparation(cache: ProceduralCache) {
-  await cache.flush();
-  return { ...cache.stats };
+          "Call from a settings action on either host. Await success before showing confirmation. This preserves loaded worlds and handles and prevents older downloads from refilling cleared storage.",
+        code: `import { clearAssetCache } from "@nayan-ui/engine";
+export async function clearSavedGameAssets() {
+  await clearAssetCache();
+  return "Engine assets cleared; other application data is unchanged.";
 }`,
         platform: "shared",
         language: "tsx",
@@ -1670,6 +1665,17 @@ python3 -m http.server 8080 --directory packages/engine/example/web/dist`,
     ],
   },
   "api-reference": {
+    "assets-AssetCache": [
+      {
+        title: "Remove saved assets without invalidating a running scene",
+        description:
+          "Use from an explicit user settings action, on React or React Native. The promise rejects when the platform cannot clear storage; keep the current scene alive and report the error.",
+        code: `import { clearAssetCache } from "@nayan-ui/engine";
+export async function clearEngineStorage() { await clearAssetCache(); }`,
+        platform: "shared",
+        language: "tsx",
+      },
+    ],
     "reading-the-reference": [
       {
         title: "Use a public type to validate an options object",
@@ -1803,7 +1809,7 @@ export async function inspectModel(source: number | string) {
       {
         title: "Cache a static geometry factory",
         description:
-          "Use a revisioned factory after warm-up. In-memory reuse works without a storage adapter; persistence is optional.",
+          "Use a revisioned factory after warm-up. The default platform storage is selected by the engine; supplying an adapter is optional. This advanced factory cache is unnecessary for ordinary createShape/createSolid/loader usage.",
         code: `import { ProceduralCache, createShape, block } from "@nayan-ui/engine";
 const props = new ProceduralCache("props-v1");
 export function cachedCrate() {

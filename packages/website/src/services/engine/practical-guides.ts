@@ -505,17 +505,17 @@ export function scheduleBonus(world: World) {
         id: "build-one-model-and-reuse-it-for-many-objects",
         title: "Build one model and reuse it for many objects",
         paragraphs: [
-          "Prepare geometry once after warm-up, then spawn entities using that model. Put the promise at module scope so a replay or remount reuses the mesh. Resetting entities should not rebuild their geometry.",
+          "Create models after warm-up and spawn entities using those models. Repeating the same creation call during scene setup reuses engine-managed preparation and registration. You do not need a module-level promise or cache map. Keep geometry construction outside the frame callback.",
         ],
         examples: [
           {
-            title: "Cache a reusable star",
+            title: "Create a reusable star with automatic caching",
             code: `import { warmUpEngine, Path, extrude, createShape, type World } from "@nayan-ui/engine";
-let starPromise: Promise<ReturnType<typeof createShape>> | undefined;
-export function loadStar() {
-  return starPromise ??= warmUpEngine().then(() => createShape(
+export async function loadStar() {
+  await warmUpEngine();
+  return createShape(
     extrude(new Path().addStar(0, 0, 0.5, 0.22, 5), { depth: 0.15 }), { shine: 0.4 }
-  ));
+  );
 }
 export async function addStars(world: World, isDisposed: () => boolean) {
   const star = await loadStar();
@@ -652,7 +652,8 @@ Keep positions/velocities in the scene, not in per-frame React state.
 Define start, stop, reset and result handling in the game layer.
 Keep the same scene for pause/resume; clear held input when paused.
 On reset: clear timers, old actors, input and round flags.
-Cache geometry/model/font/sound loading outside the frame loop.
+Prepare assets outside the frame loop; the engine manages resource reuse.
+Do not add promise caches, mesh maps or storage adapters for ordinary assets.
 Use URL assets on web and Metro require() assets on native.
 Use CSS styles for React and ViewStyle for React Native.
 Preserve the same shared TypeScript game code on both platforms.
