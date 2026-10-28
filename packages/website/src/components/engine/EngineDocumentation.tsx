@@ -82,6 +82,9 @@ export default function EngineDocumentation({ guide }: { guide: EngineGuide }) {
               <div key={example.title} className="mb-6 min-w-0">
                 <h3 className={H3_DOC}>{example.title}</h3>
                 <p className="mb-3 text-sm text-muted">{platformLabels[example.platform]}</p>
+                {example.description && (
+                  <p className="mb-4 text-sm leading-relaxed text-muted">{example.description}</p>
+                )}
                 <Code
                   code={example.code}
                   language={example.language ?? "tsx"}

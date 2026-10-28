@@ -6,6 +6,7 @@ import { resolve, join } from "node:path";
 import { engineGuides } from "../src/services/engine/guides";
 import { engineNavigation } from "../src/services/engine/navigation";
 import { createRequire } from "node:module";
+import { sectionExamples } from "../src/services/engine/section-examples";
 import inventory from "../src/services/engine/api-inventory.json";
 
 const packagePath = process.argv[2];
@@ -14,6 +15,7 @@ if (!packagePath)
 const engine = resolve(packagePath);
 const monorepo = resolve(engine, "../..");
 const require = createRequire(join(engine, "package.json"));
+const websiteRequire = createRequire(import.meta.url);
 const nativePackage = require.resolve("react-native/package.json");
 const nativeMetadata = JSON.parse(await readFile(nativePackage, "utf8"));
 const nativeTypes = resolve(
@@ -39,6 +41,23 @@ for (const guide of engineGuides) {
     new Set(guide.sections.map((section) => section.id)).size === guide.sections.length,
     `Duplicate section ID: ${guide.slug}`,
   );
+}
+// Every existing section has an explanatory example; reject typos in augmentation keys.
+for (const guide of engineGuides)
+  for (const section of guide.sections) {
+    check((section.examples?.length ?? 0) > 0, `Missing example: ${guide.slug}/${section.id}`);
+  }
+for (const [slug, sections] of Object.entries(sectionExamples)) {
+  const guide = engineGuides.find((item) => item.slug === slug);
+  check(guide, `Unknown example guide: ${slug}`);
+  for (const [id, examples] of Object.entries(sections)) {
+    check(
+      guide?.sections.some((section) => section.id === id),
+      `Unknown example section: ${slug}/${id}`,
+    );
+    for (const example of examples)
+      check(example.description, `Missing setup explanation: ${slug}/${id}/${example.title}`);
+  }
 }
 const source = ts.createSourceFile(
   "index.ts",
@@ -73,7 +92,6 @@ for (const platform of ["react", "native"] as const) {
   await mkdir(directory);
   const files: string[] = [];
   for (const guide of engineGuides) {
-    if (guide.slug === "api-reference") continue;
     if (guide.slug === "react" && platform !== "react") continue;
     if (guide.slug === "react-native" && platform !== "native") continue;
     const guideDirectory = join(directory, guide.slug);
@@ -116,6 +134,7 @@ for (const platform of ["react", "native"] as const) {
       react: [join(monorepo, "node_modules/@types/react/index.d.ts")],
       "react/jsx-runtime": [join(monorepo, "node_modules/@types/react/jsx-runtime.d.ts")],
       "react-native": [nativeTypes],
+      "next/dynamic": [websiteRequire.resolve("next/dynamic").replace(/\.js$/, ".d.ts")],
     },
   };
   const program = ts.createProgram(files, options);

@@ -1,5 +1,7 @@
 export interface EngineExample {
   title: string;
+  /** When to run this example and the result to expect. */
+  description?: string;
   platform: "shared" | "react" | "native" | "shell";
   code: string;
   language?: string;
