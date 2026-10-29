@@ -644,7 +644,7 @@ export function rewardPickup(bank: SoundBank<"pickup">, enableSounds: boolean, e
 Read /engine/first-game, /engine/recipes and /engine/api-reference first.
 
 Create a shared scene factory and a React initialization hook.
-Await warmUpEngine() before constructing World or loading assets.
+Await warmUpEngine() before constructing World or synchronous procedural meshes. Async model, texture, font and sound loaders initialize the core automatically.
 Create one World per mounted scene; dispose it on cleanup.
 Cancel late asynchronous initialization after unmount.
 Run one world.update(dt) from GameView.onUpdate.

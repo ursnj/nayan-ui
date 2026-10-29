@@ -7,6 +7,7 @@ import Code from "@/components/helpers/Code";
 import Sidebar from "@/components/helpers/Sidebar";
 import {
   advancedUsageCode,
+  clearGameAssetsCode,
   availableGamesCode,
   gameSettingsInterfaceCode,
   installCode,
@@ -46,14 +47,10 @@ const GamesInstallation = () => {
             <ul className="text-muted text-sm space-y-2">
               <li>
                 •{" "}
-                <NLink
-                  href="https://shopify.github.io/react-native-skia/docs/getting-started/installation"
-                  target="_blank"
-                  className="text-accent hover:underline"
-                >
-                  @shopify/react-native-skia
+                <NLink href="/engine/installation" className="text-accent hover:underline">
+                  @nayan-ui/engine
                 </NLink>{" "}
-                - Graphics
+                - Rendering, physics, animation, audio and haptics
               </li>
               <li>
                 •{" "}
@@ -78,30 +75,59 @@ const GamesInstallation = () => {
                 - Gestures
               </li>
               <li>
-                •{" "}
-                <NLink
-                  href="https://docs.expo.dev/versions/latest/sdk/speech/"
-                  target="_blank"
-                  className="text-accent hover:underline"
-                >
-                  expo-speech
-                </NLink>{" "}
-                - Sounds
+                • <strong>react-native-worklets / react-native-svg</strong> - Shared UI and
+                animation integration
               </li>
               <li>
-                •{" "}
-                <NLink
-                  href="https://docs.expo.dev/versions/latest/sdk/haptics/"
-                  target="_blank"
-                  className="text-accent hover:underline"
-                >
-                  expo-haptics
-                </NLink>{" "}
-                - Haptics
+                • <strong>expo-asset</strong> - Bundled asset bytes in native release builds
+              </li>
+              <li>
+                • <strong>expo-router / expo-modules-core</strong> - Host navigation and Expo
+                integration
               </li>
             </ul>
           </div>
         </div>
+      </div>
+
+      <div className="mb-8">
+        <h2 className={H2_DOC}>Engine setup and asset caching</h2>
+        <p className="text-muted text-sm mb-3">
+          Use a native development build containing the engine; Expo Go cannot load its Rust core.
+          Rebuild the host app after engine native/codegen updates. The selected heavy game's
+          loading screen waits for engine initialization and cache hydration before constructing its
+          models. You do not need to configure asset storage or add promise caches in game screens.
+        </p>
+        <p className="text-muted text-sm mb-3">
+          Rust handles mesh hashing, preparation and durable native storage. The web engine uses
+          binary IndexedDB records, reads source files on demand and warms recent geometry into
+          Rust. Saved records have no expiry or automatic eviction. Browser quotas and permissions
+          still apply; unavailable or full storage falls back to session reuse.
+        </p>
+        <p className="text-muted text-sm mb-3">
+          The games library does not require expo-file-system for caching. Host applications may
+          still use it for screenshots or drawings. Stop, replay and unmount reuse shared assets;
+          they do not clear stored files. See the{" "}
+          <NLink href="/engine/cache-performance" className="text-accent hover:underline">
+            engine caching guide
+          </NLink>{" "}
+          for storage behavior and the same API on React and React Native.
+        </p>
+        <p className="text-muted text-sm mb-3">
+          These game components use a React Native host. The engine's browser support does not make
+          the games package a plain React DOM library. Use the{" "}
+          <NLink href="/engine/react" className="text-accent hover:underline">
+            React engine quickstart
+          </NLink>{" "}
+          for a browser scene with the shared engine API.
+        </p>
+        <h3 className={H3_DOC}>Clear saved assets from settings</h3>
+        <p className="text-muted text-sm mb-3">
+          Call clearAssetCache only when the user chooses to clear saved game assets. Await success
+          before showing confirmation. Loaded worlds and handles remain valid; assets reload or
+          rebuild on the next launch. Other application data is preserved.
+        </p>
+        <Code code={clearGameAssetsCode} />
       </div>
 
       <div className="mb-8">

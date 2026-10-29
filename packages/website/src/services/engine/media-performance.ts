@@ -307,7 +307,7 @@ export async function createLevel(heroUrl: string) {
         paragraphs: [
           "Successful writes stay saved across restarts and game replays until the user explicitly clears engine storage, clears the app/site data or uninstalls the native app. The engine does not expire old recipe revisions or evict completed records to make space. When a new write cannot fit, existing records remain intact and gameplay continues with in-memory resources. A browser can only provide the persistence its storage policy allows.",
           "Call clearAssetCache() only from an explicit user action. It clears engine-owned saved geometry and original files, plus temporary download bytes. Existing worlds and loaded handles remain valid; a future app launch reloads/rebuilds assets. It does not clear unrelated application settings or custom ProceduralStorage adapters. A rejected clear is reported to the caller rather than showing a false success message.",
-          "ProceduralCache(revision) remains optional for expensive deterministic multi-model factories. Its default binary storage also delegates to Rust. Revision/key changes distinguish new recipes without deleting older records. Do not persist live worlds, Entity handles, imported rigs or texture handles in this static factory cache.",
+          "ProceduralCache(revision) remains optional for expensive deterministic multi-model factories. The games library uses it internally to skip JS factory construction while the engine owns storage and mesh preparation; host applications do not need to configure it. Its default binary storage also delegates to Rust. Revision/key changes distinguish new recipes without deleting older records. Do not persist live worlds, Entity handles, imported rigs or texture handles in this static factory cache.",
         ],
         examples: [
           {
@@ -440,7 +440,7 @@ export async function createCustomSource(): Promise<RenderSource> {
           rows: [
             [
               "Engine says to await warmUpEngine",
-              "Call and await it before browser World construction, loaders and synchronous procedural registration. isEngineAvailable means the bridge is present, not that WASM loading has finished.",
+              "Call and await it before browser World construction and synchronous procedural registration. Async asset loaders initialize the core themselves. isEngineAvailable means the bridge is present, not that WASM loading has finished.",
             ],
             [
               "Native core not linked / Expo Go",

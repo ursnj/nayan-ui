@@ -407,7 +407,7 @@ The project follows standard open-source contribution guidelines with Prettier f
 The engine uses one TypeScript API for World, GameView, physics, skeletal and transform animation,
 input/picking, procedural geometry, models, textures, fonts, audio/haptics and game-time scoring.
 Browser builds use WebAssembly and WebGPU/WebGL2; native builds use JSI and Metal/Vulkan/GLES.
-Await warmUpEngine() before browser worlds or asset loading. Web assets are URLs; Metro numeric
+Await warmUpEngine() before browser worlds and synchronous procedural APIs. Async asset loaders initialize the core themselves. Web assets are URLs; Metro numeric
 require() assets apply to React Native. Browser styles are CSS; native styles are ViewStyle.
 GameView calls onUpdate but the application calls world.update(dt), and disposes worlds on unmount.
 Engine browser support does not imply that every @nayan-ui/games host component supports browsers.
@@ -434,3 +434,10 @@ Web assets use binary IndexedDB records, not localStorage. Rust still owns keys,
 geometry preparation. File assets read asynchronously on demand; warmUpEngine hydrates a bounded
 set of recent geometry into Rust before synchronous scene setup. IndexedDB quota is browser-managed,
 and failed writes do not evict previous records.
+
+Games-library asset integration: heavy-game loading screens await engine initialization before
+building resources. Imported-character loaders rely on the engine’s automatic async initialization before decoding files.
+@nayan-ui/games does not require expo-file-system for caching; applications can still use it
+independently for screenshots/drawings. Preserve library factory caches that skip expensive JS
+construction. Do not clear stored assets during Stop/replay/unmount. Game components still use
+React Native host APIs; see /engine/react for browser scenes using the shared engine API.

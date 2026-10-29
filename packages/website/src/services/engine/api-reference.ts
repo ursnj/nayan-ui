@@ -4,7 +4,7 @@ export const apiReferenceGuide: EngineGuide = {
   slug: "api-reference",
   title: "Public API reference",
   description:
-    "102 named public exports, including classes, helpers, component contracts and TypeScript data structures, audited against the shared engine entry point.",
+    "107 named public exports, including classes, helpers, component contracts and TypeScript data structures, audited against the shared engine entry point.",
   sections: [
     {
       id: "reading-the-reference",
@@ -72,12 +72,7 @@ export declare class World implements RenderSource {
     /** Play a named GLB clip. Re-selecting it changes speed without restarting; \`time\` explicitly seeks.
      * \`fade\` crossfades from the current pose (seconds). A speed of zero holds a pose for a ready screen.
      */
-    playClip(entity: Entity, clip: string, options?: {
-        loop?: boolean;
-        speed?: number;
-        fade?: number;
-        time?: number;
-    }): boolean;
+    playClip(entity: Entity, clip: string, options?: ClipOptions): boolean;
     /** Hold the current GLB pose, or return to its bind pose with \`reset\`. */
     stopClip(entity: Entity, reset?: boolean): boolean;
     /** Sample selected animated vertices in model space for foot contact and attachments.
@@ -183,10 +178,7 @@ export declare class World implements RenderSource {
      * \`world.screenToWorld(x, y, { point: [0, pieceHeight, 0] })\`. 2D games looking down -z use
      * \`{ normal: [0, 0, 1] }\`.
      */
-    screenToWorld(x: number, y: number, plane?: {
-        point?: Vec3;
-        normal?: Vec3;
-    }): [
+    screenToWorld(x: number, y: number, plane?: ScreenPlane): [
         number,
         number,
         number
@@ -310,6 +302,8 @@ export declare class Scoreboard {
           ["Bounds", "TypeScript type", "/engine/world-entities"],
           ["BurstOptions", "TypeScript type", "/engine/world-entities"],
           ["CollisionInfo", "TypeScript type", "/engine/world-entities"],
+          ["ClipOptions", "TypeScript type", "/engine/world-entities"],
+          ["ScreenPlane", "TypeScript type", "/engine/world-entities"],
           ["Color", "TypeScript type", "/engine/world-entities"],
           ["Easing", "TypeScript type", "/engine/world-entities"],
           ["Entity", "TypeScript type", "/engine/world-entities"],
@@ -350,6 +344,24 @@ export type Quat = readonly [
     number,
     number
 ];
+
+/** Playback for one entity using a skeletal animation embedded in a loaded model. */
+export interface ClipOptions {
+    /** Repeat the clip. Default true. */
+    loop?: boolean;
+    /** Playback rate; zero holds a pose. Default 1. */
+    speed?: number;
+    /** Crossfade from the current pose, in seconds. Default 0.15. */
+    fade?: number;
+    /** Seek to this time in seconds. Omit to retain playback when reselecting a clip. */
+    time?: number;
+}
+
+/** Plane used by screenToWorld; defaults to the ground through the origin. */
+export interface ScreenPlane {
+    point?: Vec3;
+    normal?: Vec3;
+}
 
 /**
  * - \`dynamic\`: moved by physics (gravity, collisions, impulses).
@@ -606,6 +618,7 @@ export type Bounds = readonly [
         rows: [
           ["GameView", "Runtime API", "/engine/game-view"],
           ["DragEvent", "TypeScript type", "/engine/game-view"],
+          ["GameViewProps", "TypeScript type", "/engine/game-view"],
           ["GameStats", "TypeScript type", "/engine/game-view"],
           ["OverlayTouchPhase", "TypeScript type", "/engine/game-view"],
           ["PinchEvent", "TypeScript type", "/engine/game-view"],
@@ -656,7 +669,7 @@ export type PinchEvent = {
     y: number;
 };
 
-type Props = {
+export type GameViewProps = {
     /** What to draw (usually a \`World\`). Changing it restarts the view; never pass a disposed world. */
     source: RenderSource;
     /**
@@ -714,7 +727,7 @@ type Props = {
     onError?: (error: Error) => void;
 };
 
-export declare function GameView(props: Props): import("react").JSX.Element;`,
+export declare function GameView(props: GameViewProps): import("react").JSX.Element;`,
         },
       ],
     },
@@ -813,6 +826,26 @@ export type QualitySetting = Quality | "auto";`,
       ],
     },
     {
+      id: "assets-source",
+      title: "assets/source",
+      paragraphs: [
+        "Detailed usage: /engine/models-textures. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
+      ],
+      table: {
+        headers: ["Export", "Kind", "Guide"],
+        rows: [["AssetSource", "TypeScript type", "/engine/models-textures"]],
+      },
+      examples: [
+        {
+          title: "assets/source declarations",
+          platform: "shared",
+          language: "typescript",
+          code: `/** Browser assets use URLs (including URLs emitted by Vite/webpack imports). */
+export type AssetSource = number | string;`,
+        },
+      ],
+    },
+    {
       id: "assets-model",
       title: "assets/model",
       paragraphs: [
@@ -865,7 +898,7 @@ export type LoadedModel = Model & {
 };
 
 /**
- * Loads a glTF model once; pass it as an entity's \`mesh\`. Meshes, node transforms, material colors
+ * Initializes the engine automatically. Loads a glTF model once; pass it as an entity's \`mesh\`. Meshes, node transforms, material colors
  * and the base color texture are kept (one texture per model); skeletal animation clips are available through \`animations\` and \`World.playClip\`.
  * Every entity using the model is drawn in one instanced draw call.
  *
@@ -975,7 +1008,7 @@ export type Texture = {
 };
 
 /**
- * Loads a PNG or JPEG once (up to 4096 x 4096). Use it on any entity: \`{ mesh: "cube", texture }\`.
+ * Initializes the engine automatically. Loads a PNG or JPEG once (up to 4096 x 4096). Use it on any entity: \`{ mesh: "cube", texture }\`.
  * The entity's \`color\` tints it; \`textureRegion\` shows part of it (sprite sheets, card atlases).
  *
  * \`\`\`ts
@@ -1583,7 +1616,7 @@ export type Font = {
 };
 
 /**
- * Loads a TrueType / OpenType font (.ttf / .otf) for 3D text. The source/depth/weight are cached independently of the requested prewarm characters. Letters are real meshes: lit, shadowed,
+ * Initializes the engine automatically. Loads a TrueType / OpenType font (.ttf / .otf) for 3D text. The source/depth/weight are cached independently of the requested prewarm characters. Letters are real meshes: lit, shadowed,
  * and every copy of a letter on screen is drawn in one call. At scale 1, letters are 1 unit tall (em).
  * Additional Unicode glyphs are built on demand from the same font and cached. The font must contain
  * an outline for the character; missing characters still use ?, including unsupported emoji.
@@ -1666,7 +1699,7 @@ export declare class SoundBank<K extends string> {
 }
 
 export declare const audio: {
-    /** Loads named sounds into the core's mixer. Loading the same asset twice decodes it once. */
+    /** Initializes the engine and loads named sounds into its mixer. Each asset decodes once per session. */
     load<K extends string>(sources: Record<K, SoundSource>): SoundBank<K>;
     /** Plays a sound (low latency: mixed in Rust on the audio thread). Returns null if it couldn't play. */
     play(sound: Sound, { volume: v, pan, pitch, loop }?: PlayOptions): Voice | null;
@@ -1735,6 +1768,7 @@ export declare const haptics: {
           ["Joystick", "Runtime API", "/engine/input-picking"],
           ["useJoystick", "Runtime API", "/engine/input-picking"],
           ["JoystickState", "TypeScript type", "/engine/input-picking"],
+          ["JoystickProps", "TypeScript type", "/engine/input-picking"],
         ],
       },
       examples: [
@@ -1749,13 +1783,13 @@ export declare const haptics: {
 
 export declare function useJoystick(): JoystickState;
 
-interface Props {
+export interface JoystickProps {
     state: JoystickState;
     size?: number;
     style?: CSSProperties;
 }
 
-export declare function Joystick({ state, size, style }: Props): import("react").JSX.Element;`,
+export declare function Joystick({ state, size, style }: JoystickProps): import("react").JSX.Element;`,
         },
       ],
     },

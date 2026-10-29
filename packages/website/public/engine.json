@@ -25,7 +25,7 @@
     "Use React state for UI changes rather than every object transform.",
     "Define round start, stop, reset and result handling in the game layer.",
     "On pause, stop updates and input; on reset, clear timers, actors, input and round flags.",
-    "Prepare assets outside the frame loop; the engine automatically reuses resources without application promise caches or mesh maps.",
+    "Prepare assets outside the frame loop; async model, texture, font and sound loaders initialize the core and reuse resources automatically. Await warmUpEngine before synchronous worlds and procedural APIs.",
     "Cancel late asynchronous setup and dispose the world on unmount."
   ],
   "api": {
@@ -42,7 +42,10 @@
     "clearTimers": "world.cancelTimers()",
     "score": "world.scoreboard.add(points)",
     "countdown": "world.scoreboard.startCountdown(seconds)",
-    "cleanup": "world.dispose()"
+    "cleanup": "world.dispose()",
+    "viewProps": "import type { GameViewProps } from \"@nayan-ui/engine\"",
+    "assetSource": "AssetSource = string | number; URLs on React, Metro require(...) or URIs on React Native",
+    "types": "GameViewProps, JoystickProps, AssetSource, ClipOptions and ScreenPlane are public; import them instead of duplicating engine option shapes."
   },
   "distinctions": {
     "entity": "A handle for one object in one World",
@@ -66,6 +69,12 @@
     "fallback": "Denied/full storage or corrupt records cause a rebuild; completed records are not evicted to make room.",
     "ownership": "Create a new World and fresh entities per scene. Dispose worlds on unmount; shared assets remain valid.",
     "advanced": "ProceduralCache(revision) is optional for expensive deterministic multi-model factories.",
-    "clear": "await clearAssetCache() from an explicit user action; clears engine-owned saved assets while preserving loaded worlds/handles and unrelated app data."
+    "clear": "await clearAssetCache() from an explicit user action; clears engine-owned saved assets while preserving loaded worlds/handles and unrelated app data.",
+    "gamesIntegration": "@nayan-ui/games heavy-game loaders await engine initialization before builders. The library needs no expo-file-system cache adapter; factory caches retain recipe identity and skip JS construction. Game components still require their React Native host."
+  },
+  "assetLoading": {
+    "initialize": "loadModel, loadTexture, loadFont and audio.load initialize the core automatically; no application readiness cache is required.",
+    "errors": "Model, texture and font loading rejects with the API name, source and original Error.cause; sound bank failures log and skip optional sounds. Retry by calling the loader again.",
+    "ownership": "Loaded handles are session resources shared across worlds. Each scene owns and disposes its own World. clearAssetCache removes saved data without invalidating loaded handles."
   }
 }

@@ -1665,6 +1665,19 @@ python3 -m http.server 8080 --directory packages/engine/example/web/dist`,
     ],
   },
   "api-reference": {
+    "assets-source": [
+      {
+        title: "Accept assets through the shared public source type",
+        description:
+          "Pass a URL in React or Metro require(...) in React Native. The loader initializes the core and shares the resource without a caller-owned promise map.",
+        code: `import { loadTexture, type AssetSource } from "@nayan-ui/engine";
+export function loadBoardImage(source: AssetSource) {
+  return loadTexture(source);
+}`,
+        platform: "shared",
+        language: "tsx",
+      },
+    ],
     "assets-AssetCache": [
       {
         title: "Remove saved assets without invalidating a running scene",
@@ -1725,7 +1738,9 @@ export function scoreRound(world: World, handlers: ScoreboardHandlers) {
         title: "Keep entity and collider options explicit",
         description:
           "Store the returned Entity handle, not the configuration object, for later world operations. The configuration can be shared, but each spawn creates an independent actor.",
-        code: `import type { World, EntityOptions, PhysicsOptions, Entity } from "@nayan-ui/engine";
+        code: `import type { World, EntityOptions, PhysicsOptions, Entity, ClipOptions, ScreenPlane } from "@nayan-ui/engine";
+export const walkClip: ClipOptions = { loop: true, speed: 1, fade: 0.15 };
+export const groundPlane: ScreenPlane = { point: [0, 0, 0], normal: [0, 1, 0] };
 export function typedActor(world: World): Entity {
   const physics: PhysicsOptions = { type: "dynamic", shape: "ball", radius: 0.5, bounce: 0.4 };
   const options: EntityOptions = { mesh: "sphere", position: [0, 3, 0], physics };
@@ -1740,9 +1755,10 @@ export function typedActor(world: World): Entity {
         title: "Connect the minimum rendering contract",
         description:
           "Mount inside a measured/sized host. Keep the world stable between renders and call its update method from this single frame callback.",
-        code: `import { GameView, type World } from "@nayan-ui/engine";
-export function MinimalView({ world }: { world: World }) {
-  return <GameView source={world} onUpdate={dt => world.update(dt)} />;
+        code: `import { GameView, type GameViewProps, type World } from "@nayan-ui/engine";
+type SceneViewProps = Omit<GameViewProps, "source"> & { world: World };
+export function MinimalView({ world, ...props }: SceneViewProps) {
+  return <GameView {...props} source={world} onUpdate={props.onUpdate ?? (dt => world.update(dt))} />;
 }`,
         platform: "shared",
         language: "tsx",
@@ -1836,7 +1852,7 @@ export function texturedProp(world: World, mesh: Model, texture: Texture) {
       {
         title: "Create a rounded solid prop",
         description:
-          "Build outside the frame loop after warm-up. createSolid caches the same recipe/options within the session.",
+          "Build outside the frame loop after warm-up. Rust reuses equal solid recipes/options and saves prepared geometry through the platform store.",
         code: `import { Solid, createSolid } from "@nayan-ui/engine";
 export function roundedCrate() {
   return createSolid(Solid.box([1, 1, 1], 0.1).paint([0.5, 0.3, 0.1]), { resolution: 24 });
@@ -1939,10 +1955,10 @@ export function doubleTap(enabled: boolean) {
         title: "Keep joystick input in a stable object",
         description:
           "Use useJoystick in the host. The frame callback reads current values without a React state update for each pointer move.",
-        code: `import { useJoystick, Joystick } from "@nayan-ui/engine";
-export function InputPad() {
+        code: `import { useJoystick, Joystick, type JoystickProps } from "@nayan-ui/engine";
+export function InputPad(props: Omit<JoystickProps, "state">) {
   const state = useJoystick();
-  return <Joystick state={state} size={140} />;
+  return <Joystick {...props} state={state} size={props.size ?? 140} />;
 }`,
         platform: "shared",
         language: "tsx",

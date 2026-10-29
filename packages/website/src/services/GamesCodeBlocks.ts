@@ -2,7 +2,26 @@
 export const installCode = `npm install @nayan-ui/games`;
 export const installYarnCode = `yarn add @nayan-ui/games`;
 
-export const peerDepsCode = `npm install @shopify/react-native-skia react-native-reanimated react-native-gesture-handler react-native-worklets expo-speech expo-haptics`;
+export const peerDepsCode = `npm install @nayan-ui/engine react-native-reanimated react-native-gesture-handler react-native-worklets react-native-svg expo-asset expo-modules-core expo-router`;
+
+// The engine owns saved assets; applications only provide an explicit user action to clear them.
+export const clearGameAssetsCode = `import { useState } from 'react';
+import { Alert, Button } from 'react-native';
+import { clearAssetCache } from '@nayan-ui/engine';
+
+export function ClearSavedGameAssets() {
+  const [busy, setBusy] = useState(false);
+  async function clear() {
+    setBusy(true);
+    try {
+      await clearAssetCache();
+      Alert.alert('Saved assets cleared', 'Assets reload or rebuild on the next launch.');
+    } catch {
+      Alert.alert('Unable to clear assets', 'Please try again.');
+    } finally { setBusy(false); }
+  }
+  return <Button title="Clear saved game assets" disabled={busy} onPress={() => void clear()} />;
+}`;
 
 // Usage code blocks
 export const simpleUsageCode = `import React, { useState } from 'react';

@@ -100,7 +100,7 @@ export const GettingStartedGuides: EngineGuide[] = [
             ],
             [
               "Initialization",
-              "Await warmUpEngine() before browser worlds/assets and before built-in procedural geometry on either platform. Native warm-up still performs its initial work synchronously.",
+              "Await warmUpEngine() before browser worlds and before synchronous procedural geometry on either platform. Async model, texture, font and sound loaders initialize the core themselves. Native warm-up still performs its initial work synchronously.",
             ],
             [
               "Styles",
@@ -211,7 +211,7 @@ module.exports = config;`,
         id: "browser-hosting",
         title: "Browser hosting",
         paragraphs: [
-          "Await warmUpEngine() before using synchronous engine APIs. Serve over HTTPS or localhost for WebGPU and AudioWorklet. WebGL2 is the renderer fallback; availability still depends on the browser/device. The current WASM runtime runs on the main thread and does not require cross-origin isolation headers.",
+          "Await warmUpEngine() before using synchronous engine APIs; asynchronous asset loaders initialize the core themselves. Serve over HTTPS or localhost for WebGPU and AudioWorklet. WebGL2 is the renderer fallback; availability still depends on the browser/device. The current WASM runtime runs on the main thread and does not require cross-origin isolation headers.",
           "Keep index.js, engine_core_bg.wasm and audio-worklet.js together when serving the browser output directly. Vite resolves the static WASM/worklet URLs in its production build. Other bundlers must preserve or emit those URLs; inspect the built Network requests rather than assuming an asset-copy plugin is configured. Serve WASM as application/wasm. A strict CSP must permit your scripts, worklet and WebAssembly execution.",
         ],
         note: "Cross-origin models, textures, fonts and sounds need the remote server to grant CORS. A 200 response containing your HTML fallback is not a valid WASM, image or model response.",

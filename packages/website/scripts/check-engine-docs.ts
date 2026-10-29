@@ -8,6 +8,7 @@ import { engineNavigation } from "../src/services/engine/navigation";
 import { createRequire } from "node:module";
 import { sectionExamples } from "../src/services/engine/section-examples";
 import inventory from "../src/services/engine/api-inventory.json";
+import { clearGameAssetsCode } from "../src/services/GamesCodeBlocks";
 
 const packagePath = process.argv[2];
 if (!packagePath)
@@ -110,6 +111,12 @@ for (const platform of ["react", "native"] as const) {
         examples++;
       }
     }
+  }
+  if (platform === "native") {
+    const path = join(directory, "games-clear-assets.tsx");
+    await writeFile(path, clearGameAssetsCode);
+    files.push(path);
+    examples++;
   }
   const options: ts.CompilerOptions = {
     strict: true,

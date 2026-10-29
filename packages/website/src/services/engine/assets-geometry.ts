@@ -234,14 +234,13 @@ export function explosion(world: World, position: Vec3) {
         title: "Asset sources on each platform",
         paragraphs: [
           "The loaders accept strings on both platforms. Browser strings are URLs, including public paths or URLs emitted by an asset import. Metro require(...) returns a numeric asset identifier on React Native. Configure nonstandard file extensions in Metro and install expo-asset for numeric bundled resource copying on Android release builds.",
-          "Call warmUpEngine before starting these loaders on web. Repeated model loads with identical source/options share a promise; texture/font/sound loaders also cache their sources. Failed loads allow retry. Load once during preparation rather than starting new asset work during every frame.",
+          "loadModel, loadTexture, loadFont and audio.load initialize the core automatically on React and React Native. Repeated source/options share decoding and session handles; failed requests can be retried. Prepare assets outside the frame loop. Explicitly await warmUpEngine() before synchronous APIs such as new World(), createShape(), createSolid() and shapeGeometry(). Loading an asset does not create a scene or transfer ownership of a World.",
         ],
         examples: [
           {
             title: "Browser asset preparation",
-            code: `import { warmUpEngine, loadModel, loadTexture } from "@nayan-ui/engine";
+            code: `import { loadModel, loadTexture } from "@nayan-ui/engine";
 export async function loadAssets() {
-  await warmUpEngine();
   const [tree, bark] = await Promise.all([
     loadModel("/models/tree.glb", { center: false, fit: 3, shine: 0.1 }),
     loadTexture("/textures/bark.jpg"),
@@ -253,14 +252,71 @@ export async function loadAssets() {
           },
           {
             title: "React Native asset preparation",
-            code: `import { warmUpEngine, loadModel, loadTexture } from "@nayan-ui/engine";
+            code: `import { loadModel, loadTexture } from "@nayan-ui/engine";
 export async function loadAssets() {
-  await warmUpEngine();
   const [tree, bark] = await Promise.all([
     loadModel(require("./assets/tree.glb"), { center: false, fit: 3, shine: 0.1 }),
     loadTexture(require("./assets/bark.jpg")),
   ]);
   return { tree, bark };
+}`,
+            platform: "native",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "loading-errors-and-retry",
+        title: "Loading errors and retry",
+        paragraphs: [
+          "A rejected model, texture or font load includes the loader name and asset source in its message; Error.cause retains the original failure. Calling the loader again retries a failed request. Successful assets stay shared across scenes. A payload rejected by the decoder is removed from saved storage so the retry can fetch fresh bytes; initialization and network failures do not delete saved data.",
+          "Use a loading/error state in the host and let a Retry button start another attempt. Ignore results after unmount or a source change. Audio is optional: SoundBank.ready resolves after its sounds are attempted, while individual failures are logged and skipped. Do not repeatedly retry a broken URL from onUpdate.",
+        ],
+        examples: [
+          {
+            title: "useBoardTexture.ts",
+            code: `import { useEffect, useState } from "react";
+import { loadTexture, type AssetSource, type Texture } from "@nayan-ui/engine";
+export function useBoardTexture(source: AssetSource) {
+  const [attempt, setAttempt] = useState(0);
+  const [texture, setTexture] = useState<Texture | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+  useEffect(() => {
+    let active = true;
+    setTexture(null);
+    setError(null);
+    loadTexture(source).then(
+      value => { if (active) setTexture(value); },
+      cause => { if (active) setError(cause instanceof Error ? cause : new Error(String(cause))); },
+    );
+    return () => { active = false; };
+  }, [source, attempt]);
+  return { texture, error, retry: () => setAttempt(value => value + 1) };
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+          {
+            title: "React loading and error UI",
+            code: `import { useBoardTexture } from "./useBoardTexture";
+export function TextureStatus() {
+  const { texture, error, retry } = useBoardTexture("/textures/board.png");
+  if (error) return <div role="alert">{error.message} <button onClick={retry}>Retry</button></div>;
+  if (!texture) return <p>Loading board…</p>;
+  return <p>Ready: {texture.width} × {texture.height}</p>;
+}`,
+            platform: "react",
+            language: "tsx",
+          },
+          {
+            title: "React Native loading and error UI",
+            code: `import { ActivityIndicator, Button, Text, View } from "react-native";
+import { useBoardTexture } from "./useBoardTexture";
+export function TextureStatus() {
+  const { texture, error, retry } = useBoardTexture(require("./assets/board.png"));
+  if (error) return <View><Text>{error.message}</Text><Button title="Retry" onPress={retry} /></View>;
+  if (!texture) return <ActivityIndicator />;
+  return <Text>Ready: {texture.width} × {texture.height}</Text>;
 }`,
             platform: "native",
             language: "tsx",

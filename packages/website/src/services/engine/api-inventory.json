@@ -60,6 +60,18 @@
     "guide": "world-entities"
   },
   {
+    "name": "ClipOptions",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "ScreenPlane",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
     "name": "Color",
     "module": "world/types",
     "typeOnly": true,
@@ -138,6 +150,12 @@
     "guide": "game-view"
   },
   {
+    "name": "GameViewProps",
+    "module": "render/GameView",
+    "typeOnly": true,
+    "guide": "game-view"
+  },
+  {
     "name": "GameStats",
     "module": "render/GameView",
     "typeOnly": true,
@@ -196,6 +214,12 @@
     "module": "render/quality",
     "typeOnly": true,
     "guide": "game-view"
+  },
+  {
+    "name": "AssetSource",
+    "module": "assets/source",
+    "typeOnly": true,
+    "guide": "models-textures"
   },
   {
     "name": "loadModel",
@@ -577,6 +601,12 @@
   },
   {
     "name": "JoystickState",
+    "module": "input/Joystick",
+    "typeOnly": true,
+    "guide": "input-picking"
+  },
+  {
+    "name": "JoystickProps",
     "module": "input/Joystick",
     "typeOnly": true,
     "guide": "input-picking"
