@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   AppState,
   Pressable,
@@ -28,9 +28,8 @@ export default function CarRacing() {
   const styles = useMemo(() => makeStyles(racing.dark), [racing.dark]);
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  const narrow = width < 600;
   const hudTop = insets.top + 16;
-  const hudHeight = narrow ? 124 : 60;
+  const [hudHeight, setHudHeight] = useState(252);
   const { game, phase, paused, setPaused } = racing;
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (state) => {
@@ -131,17 +130,17 @@ export default function CarRacing() {
       </View>
       <View
         pointerEvents="box-none"
+        onLayout={(event) => setHudHeight(event.nativeEvent.layout.height)}
         style={[
           styles.hud,
           {
             top: hudTop,
             left: insets.left + 16,
             right: insets.right + 16,
-            flexDirection: narrow ? "column" : "row",
           },
         ]}
       >
-        <View pointerEvents="none" style={[styles.stats, !narrow && styles.wideStats]}>
+        <View pointerEvents="none" style={styles.stats}>
           <View>
             <Text style={styles.label}>SCORE</Text>
             <Text style={styles.value}>{racing.score.toLocaleString()}</Text>
@@ -260,7 +259,6 @@ const hudStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 4,
-    backgroundColor: "#14241d88",
   },
   pressed: { opacity: 0.65 },
   icon: { color: "#ffffff", fontSize: 24, lineHeight: 28, ...textShadow },
@@ -274,6 +272,7 @@ const makeStyles = (dark: boolean) =>
     hud: {
       position: "absolute",
       zIndex: 30,
+      flexDirection: "column",
       alignItems: "flex-end",
       justifyContent: "space-between",
       gap: 12,
@@ -284,7 +283,6 @@ const makeStyles = (dark: boolean) =>
       justifyContent: "space-between",
       gap: 16,
     },
-    wideStats: { gap: 36 },
     label: { color: "#ffffff", fontSize: 9, fontWeight: "700", letterSpacing: 1.5, ...textShadow },
     value: {
       color: "#ffffff",
@@ -298,7 +296,7 @@ const makeStyles = (dark: boolean) =>
     hearts: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 3, minHeight: 38 },
     heart: { color: "#ff737b", fontSize: 25, ...textShadow },
     lostHeart: { color: "#ffffff80" },
-    controls: { flexDirection: "row", gap: 8 },
+    controls: { flexDirection: "column", gap: 8 },
     nearMiss: {
       position: "absolute",
       alignSelf: "center",
