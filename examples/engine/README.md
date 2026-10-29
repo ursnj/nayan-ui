@@ -40,6 +40,8 @@ bun install
 
 Setup creates an ignored `.engine/nayan-ui-engine.tgz`. Both apps install that same package, without depending on the location of the checkout at runtime. After engine changes, rebuild it, rerun setup, and reinstall dependencies. Rebuild native apps after native engine changes. When distributing this workspace to another developer, have them run setup against their own checkout.
 
+The engine package must include `src` in its `package.json` `files` list. React Native Codegen reads `src/native/spec/NativeNayanEngine.ts` during pod installation, so compiled JavaScript alone is insufficient. Setup checks the archive for the required source and build files before replacing the existing tarball. If pod installation reports a missing `src/native` directory, update the engine checkout, rerun setup, and run `bun install --force` here to refresh the installed tarball.
+
 ## Run the browser app
 
 ```bash
@@ -65,7 +67,7 @@ bun run android
 bun run mobile
 ```
 
-Swipe anywhere on the road to steer. The Light mode/Dark mode control switches the scene and UI during a race, initially following the device appearance. Touch controls remain outside the engine surface. An active race pauses when the app backgrounds and resumes through the Resume button. Android requires API 26 or newer; the included Expo plugin sets the minimum SDK.
+The race fills the mobile screen with the status bar hidden. Score, lives and distance overlay the road at the top, with theme, sound and pause controls placed inside the safe area. Swipe anywhere on the road to steer; the HUD leaves touches free outside its buttons. The Light mode/Dark mode control switches the scene and UI during a race, initially following the device appearance. An active race pauses when the app backgrounds and resumes through the Resume button. Android requires API 26 or newer; the included Expo plugin sets the minimum SDK.
 
 ## Develop a shared game
 

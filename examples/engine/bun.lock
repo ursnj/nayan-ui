@@ -280,7 +280,7 @@
 
     "@nayan-engine-example/web": ["@nayan-engine-example/web@workspace:web"],
 
-    "@nayan-ui/engine": ["@nayan-ui/engine@../.engine/nayan-ui-engine.tgz", { "peerDependencies": { "expo-asset": "*", "expo-file-system": "*", "react": "*", "react-native": "*" }, "optionalPeers": ["expo-asset", "expo-file-system", "react-native"] }, "sha512-OLUQaT6i1hGVxln78BQgrjPPc+W0Iy93/k9PMBxu0gkAdoDFE3YqgNmkrHlpgENO3UUQQDdWZUa6DDCmrE1j8g=="],
+    "@nayan-ui/engine": ["@nayan-ui/engine@../.engine/nayan-ui-engine.tgz", { "peerDependencies": { "expo-asset": "*", "react": "*", "react-native": "*" }, "optionalPeers": ["expo-asset", "react-native"] }, "sha512-3npPu5DU0EOiHPQpns4kNvuYIdvw/+WpCDPiDUBZmsGPxVbbvVHV49/kz7H8kRWCICPCyue7/g52s19kdDeTnQ=="],
 
     "@noxcturnal/noxcturnal-darwin-arm64": ["@noxcturnal/noxcturnal-darwin-arm64@0.1.11", "", { "os": "darwin", "cpu": "arm64" }, "sha512-tqvZOVmSoiJzm7QjQ+whPxCP45J2C1zCAZnzc1HhwmJrFIWw/qyA8o9Cup0aVqnjNVAN+as9GHX+DbAmkCbGlQ=="],
 

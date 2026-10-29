@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import {
   AppState,
   Pressable,
+  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -9,7 +10,7 @@ import {
   useWindowDimensions,
   useColorScheme,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { GameView } from "@nayan-ui/engine";
 import {
   DAY_LIGHT,
@@ -25,7 +26,11 @@ export default function CarRacing() {
   const systemMode = useColorScheme();
   const racing = useRacing(sources, systemMode === "dark");
   const styles = useMemo(() => makeStyles(racing.dark), [racing.dark]);
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const narrow = width < 600;
+  const hudTop = insets.top + 16;
+  const hudHeight = narrow ? 124 : 60;
   const { game, phase, paused, setPaused } = racing;
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (state) => {
@@ -34,27 +39,8 @@ export default function CarRacing() {
     return () => subscription.remove();
   }, [phase, setPaused]);
   return (
-    <SafeAreaView style={styles.screen}>
-      <StatusBar barStyle={racing.dark ? "light-content" : "dark-content"} />
-      <View style={styles.header}>
-        <Text style={styles.brand}>NAYAN / ENGINE</Text>
-        <Text style={styles.subtitle}>MOBILE + SHARED TYPESCRIPT</Text>
-      </View>
-      <Text style={styles.title}>CAR RACING</Text>
-      <View style={styles.hud}>
-        <View>
-          <Text style={styles.label}>SCORE</Text>
-          <Text style={styles.value}>{racing.score}</Text>
-        </View>
-        <View>
-          <Text style={styles.label}>LIVES</Text>
-          <Text style={styles.value}>{racing.lives} / 3</Text>
-        </View>
-        <View>
-          <Text style={styles.label}>TRACK LEFT</Text>
-          <Text style={styles.value}>{racing.left} m</Text>
-        </View>
-      </View>
+    <View style={styles.screen}>
+      <StatusBar hidden />
       <View style={styles.scene}>
         {game && (
           <GameView
@@ -66,141 +52,262 @@ export default function CarRacing() {
             paused={racing.renderPaused}
             onError={racing.reportError}
             onUpdate={racing.update}
-            onDrag={(event) => racing.drag(event, width - 32)}
+            onDrag={(event) => racing.drag(event, width)}
           />
         )}
         {racing.nearMiss && (
-          <Text pointerEvents="none" style={styles.nearMiss}>
+          <Text pointerEvents="none" style={[styles.nearMiss, { top: hudTop + hudHeight + 12 }]}>
             NEAR MISS!
           </Text>
         )}
         {racing.flash && <View pointerEvents="none" style={[styles.overlay, styles.flash]} />}
         {(racing.error || !game || phase !== "playing" || paused) && (
-          <View style={styles.overlay}>
-            <View style={styles.card}>
-              <Text accessibilityRole="header" style={styles.heading}>
-                {racing.error
-                  ? "Unable to load"
-                  : !game
-                    ? "Starting engine…"
-                    : paused
-                      ? "Race paused"
-                      : phase === "over"
-                        ? racing.lives > 0
-                          ? "Finished!"
-                          : "Crashed!"
-                        : "Ready to drive?"}
-              </Text>
-              <Text style={styles.copy}>
-                {racing.error ??
-                  (phase === "over"
-                    ? `Score ${racing.score} · Best ${racing.best} · ${TRACK_LENGTH - racing.left} m driven`
-                    : "2,000 metres. Three lives.\n500 points for every car passed.")}
-              </Text>
-              {racing.error ? (
-                <Button dark={racing.dark} label="Retry" onPress={racing.restart} />
-              ) : (
-                game && (
-                  <Button
-                    dark={racing.dark}
-                    label={paused ? "Resume race" : phase === "ready" ? "Start race" : "Race again"}
-                    onPress={
-                      paused
-                        ? () => setPaused(false)
-                        : phase === "ready"
-                          ? racing.start
-                          : racing.restart
-                    }
-                  />
-                )
-              )}
-            </View>
+          <View
+            style={[
+              styles.overlay,
+              {
+                paddingTop: hudTop + hudHeight + 16,
+                paddingBottom: insets.bottom + 56,
+                paddingLeft: insets.left + 20,
+                paddingRight: insets.right + 20,
+              },
+            ]}
+          >
+            <ScrollView
+              style={styles.cardScroll}
+              contentContainerStyle={styles.cardContent}
+              bounces={false}
+            >
+              <View style={styles.card}>
+                <Text style={styles.eyebrow}>
+                  {racing.error
+                    ? "ENGINE ERROR"
+                    : phase === "over"
+                      ? "RACE COMPLETE"
+                      : "CAR RACING"}
+                </Text>
+                <Text accessibilityRole="header" style={styles.heading}>
+                  {racing.error
+                    ? "Unable to load"
+                    : !game
+                      ? "Starting engine…"
+                      : paused
+                        ? "Race paused"
+                        : phase === "over"
+                          ? racing.lives > 0
+                            ? "Finished!"
+                            : "Crashed!"
+                          : "Ready to drive?"}
+                </Text>
+                <Text style={styles.copy}>
+                  {racing.error ??
+                    (phase === "over"
+                      ? `Score ${racing.score} · Best ${racing.best} · ${TRACK_LENGTH - racing.left} m driven`
+                      : "2,000 metres. Three lives.\n500 points for every car passed.")}
+                </Text>
+                {racing.error ? (
+                  <Button dark={racing.dark} label="Retry" onPress={racing.restart} />
+                ) : (
+                  game && (
+                    <Button
+                      dark={racing.dark}
+                      label={
+                        paused ? "Resume race" : phase === "ready" ? "Start race" : "Race again"
+                      }
+                      onPress={
+                        paused
+                          ? () => setPaused(false)
+                          : phase === "ready"
+                            ? racing.start
+                            : racing.restart
+                      }
+                    />
+                  )
+                )}
+              </View>
+            </ScrollView>
           </View>
         )}
       </View>
-      <View style={styles.controls}>
-        <Button
-          dark={racing.dark}
-          quiet
-          label={racing.dark ? "Light mode" : "Dark mode"}
-          onPress={racing.toggleMode}
-        />
-        <Button
-          dark={racing.dark}
-          quiet
-          label={racing.muted ? "Sound off" : "Sound on"}
-          onPress={racing.toggleMute}
-        />
-        {phase === "playing" && (
-          <Button
-            dark={racing.dark}
-            quiet
-            label={paused ? "Resume" : "Pause"}
-            onPress={() => setPaused(!paused)}
+      <View
+        pointerEvents="box-none"
+        style={[
+          styles.hud,
+          {
+            top: hudTop,
+            left: insets.left + 16,
+            right: insets.right + 16,
+            flexDirection: narrow ? "column" : "row",
+          },
+        ]}
+      >
+        <View pointerEvents="none" style={[styles.stats, !narrow && styles.wideStats]}>
+          <View>
+            <Text style={styles.label}>SCORE</Text>
+            <Text style={styles.value}>{racing.score.toLocaleString()}</Text>
+          </View>
+          <View accessible accessibilityLabel={`${racing.lives} of 3 lives`}>
+            <Text style={styles.label}>LIVES</Text>
+            <View style={styles.hearts}>
+              {[0, 1, 2].map((life) => (
+                <Text key={life} style={[styles.heart, life >= racing.lives && styles.lostHeart]}>
+                  {life < racing.lives ? "♥" : "♡"}
+                </Text>
+              ))}
+            </View>
+          </View>
+          <View>
+            <Text style={styles.label}>TRACK LEFT</Text>
+            <Text style={styles.value}>
+              {racing.left.toLocaleString()} <Text style={styles.unit}>m</Text>
+            </Text>
+          </View>
+        </View>
+        <View pointerEvents="box-none" style={styles.controls}>
+          <Action
+            icon={racing.dark ? "☀" : "☾"}
+            label={racing.dark ? "Light mode" : "Dark mode"}
+            accessibilityLabel={racing.dark ? "Switch to light mode" : "Switch to dark mode"}
+            selected={racing.dark}
+            onPress={racing.toggleMode}
           />
-        )}
+          <Action
+            icon={racing.muted ? "♪ ×" : "♫"}
+            label={racing.muted ? "Sound off" : "Sound on"}
+            accessibilityLabel={racing.muted ? "Turn sound on" : "Turn sound off"}
+            selected={!racing.muted}
+            onPress={racing.toggleMute}
+          />
+          {phase === "playing" && (
+            <Action
+              icon={paused ? "▶" : "Ⅱ"}
+              label={paused ? "Resume" : "Pause"}
+              onPress={() => setPaused(!paused)}
+            />
+          )}
+        </View>
       </View>
-      <Text style={styles.hint}>Swipe the road to steer · Inspired by Playtura</Text>
-    </SafeAreaView>
+      <Text
+        pointerEvents="none"
+        style={[
+          styles.hint,
+          { bottom: insets.bottom + 16, left: insets.left + 20, right: insets.right + 20 },
+          height < 450 && styles.compactHint,
+        ]}
+      >
+        Swipe the road to steer
+      </Text>
+    </View>
   );
 }
 
-function Button({
+function Action({
+  icon,
   label,
+  accessibilityLabel = label,
+  selected,
   onPress,
-  quiet = false,
-  dark,
 }: {
+  icon: string;
   label: string;
+  accessibilityLabel?: string;
+  selected?: boolean;
   onPress: () => void;
-  quiet?: boolean;
-  dark: boolean;
 }) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={selected === undefined ? undefined : { selected }}
+      onPress={onPress}
+      style={({ pressed }) => [hudStyles.action, pressed && hudStyles.pressed]}
+    >
+      <Text accessible={false} style={hudStyles.icon}>
+        {icon}
+      </Text>
+      <Text accessible={false} style={hudStyles.actionLabel}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+}
+
+function Button({ label, onPress, dark }: { label: string; onPress: () => void; dark: boolean }) {
   const styles = useMemo(() => makeStyles(dark), [dark]);
   return (
     <Pressable
       accessibilityRole="button"
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.button,
-        quiet && styles.quietButton,
-        pressed && { opacity: 0.7 },
-      ]}
+      style={({ pressed }) => [styles.button, pressed && hudStyles.pressed]}
     >
-      <Text style={[styles.buttonText, quiet && styles.quietButtonText]}>{label}</Text>
+      <Text style={styles.buttonText}>{label}</Text>
     </Pressable>
   );
 }
 
+const textShadow = {
+  textShadowColor: "#000000cc",
+  textShadowOffset: { width: 0, height: 2 },
+  textShadowRadius: 5,
+};
+
+const hudStyles = StyleSheet.create({
+  action: {
+    minWidth: 60,
+    minHeight: 56,
+    borderRadius: 8,
+    padding: 4,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    backgroundColor: "#14241d88",
+  },
+  pressed: { opacity: 0.65 },
+  icon: { color: "#ffffff", fontSize: 24, lineHeight: 28, ...textShadow },
+  actionLabel: { color: "#ffffff", fontSize: 10, fontWeight: "600", ...textShadow },
+});
+
 const makeStyles = (dark: boolean) =>
   StyleSheet.create({
-    screen: { flex: 1, backgroundColor: dark ? "#111b19" : "#f2f6ef", paddingHorizontal: 16 },
-    header: { flexDirection: "row", justifyContent: "space-between", paddingTop: 14 },
-    brand: { color: dark ? "#dcff8c" : "#365a30", fontWeight: "800", fontSize: 12 },
-    subtitle: { color: dark ? "#a7b8ae" : "#526957", fontSize: 9 },
-    title: {
-      color: dark ? "#edf2ef" : "#253c30",
-      fontSize: 36,
-      fontWeight: "900",
-      marginVertical: 18,
-    },
+    screen: { flex: 1, backgroundColor: dark ? "#111b19" : "#bdd8eb" },
+    scene: { position: "absolute", top: 0, right: 0, bottom: 0, left: 0, overflow: "hidden" },
     hud: {
+      position: "absolute",
+      zIndex: 30,
+      alignItems: "flex-end",
+      justifyContent: "space-between",
+      gap: 12,
+    },
+    stats: {
+      alignSelf: "stretch",
       flexDirection: "row",
       justifyContent: "space-between",
-      padding: 16,
+      gap: 16,
     },
-    label: { color: dark ? "#acbfb1" : "#526957", fontSize: 10, letterSpacing: 2 },
-    value: { color: dark ? "#edf2ef" : "#253c30", fontSize: 25, fontWeight: "800", marginTop: 3 },
+    wideStats: { gap: 36 },
+    label: { color: "#ffffff", fontSize: 9, fontWeight: "700", letterSpacing: 1.5, ...textShadow },
+    value: {
+      color: "#ffffff",
+      fontSize: 32,
+      fontWeight: "800",
+      fontVariant: ["tabular-nums"],
+      marginTop: 3,
+      ...textShadow,
+    },
+    unit: { fontSize: 18 },
+    hearts: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 3, minHeight: 38 },
+    heart: { color: "#ff737b", fontSize: 25, ...textShadow },
+    lostHeart: { color: "#ffffff80" },
+    controls: { flexDirection: "row", gap: 8 },
     nearMiss: {
       position: "absolute",
-      top: 24,
       alignSelf: "center",
-      color: dark ? "#dcff8c" : "#365a30",
+      color: "#dcff8c",
       fontSize: 28,
       fontWeight: "900",
+      ...textShadow,
     },
     flash: { backgroundColor: "#ff3b3b60" },
-    scene: { flex: 1, overflow: "hidden", borderBottomLeftRadius: 12, borderBottomRightRadius: 12 },
     overlay: {
       position: "absolute",
       top: 0,
@@ -212,6 +319,8 @@ const makeStyles = (dark: boolean) =>
       padding: 20,
       backgroundColor: "#08130b40",
     },
+    cardScroll: { flexGrow: 0, maxHeight: "100%", width: "100%", maxWidth: 440 },
+    cardContent: { flexGrow: 1, justifyContent: "center" },
     card: {
       backgroundColor: dark ? "#15251eee" : "#f7faf2f5",
       borderRadius: 16,
@@ -219,6 +328,12 @@ const makeStyles = (dark: boolean) =>
       alignItems: "center",
       borderWidth: 1,
       borderColor: dark ? "#5a6a51" : "#bfcdb9",
+    },
+    eyebrow: {
+      color: dark ? "#c1cfc6" : "#526957",
+      fontSize: 11,
+      letterSpacing: 2,
+      marginBottom: 10,
     },
     heading: {
       color: dark ? "#edf2ef" : "#253c30",
@@ -239,18 +354,13 @@ const makeStyles = (dark: boolean) =>
       borderRadius: 8,
       minHeight: 44,
     },
-    quietButton: {
-      backgroundColor: "transparent",
-      borderWidth: 1,
-      borderColor: dark ? "#ffffff40" : "#253c3040",
-    },
-    quietButtonText: { color: dark ? "#edf2ef" : "#253c30" },
     buttonText: { color: dark ? "#1a2c15" : "#ffffff", fontWeight: "800", textAlign: "center" },
-    controls: { flexDirection: "row", gap: 8, flexWrap: "wrap", paddingTop: 16 },
     hint: {
-      color: dark ? "#a7b8ae" : "#526957",
+      position: "absolute",
+      color: "#ffffff",
       fontSize: 11,
       textAlign: "center",
-      paddingVertical: 16,
+      ...textShadow,
     },
+    compactHint: { fontSize: 10 },
   });

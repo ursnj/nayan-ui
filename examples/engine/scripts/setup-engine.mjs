@@ -14,13 +14,16 @@ const manifest = JSON.parse(await readFile(resolve(engine, "package.json"), "utf
 if (manifest.name !== "@nayan-ui/engine" || !manifest.exports?.["./web"]) {
   throw new Error("Use a current @nayan-ui/engine checkout with browser support.");
 }
-for (const artifact of [
+const requiredFiles = [
   "lib/module/index.js",
   "lib/typescript/src/index.d.ts",
   "lib/web/index.js",
   "lib/web/engine_core_bg.wasm",
   "lib/web/audio-worklet.js",
-]) {
+  "src/index.ts",
+  "src/native/spec/NativeNayanEngine.ts",
+];
+for (const artifact of requiredFiles) {
   try {
     await access(resolve(engine, artifact));
   } catch {
@@ -36,8 +39,15 @@ const result = spawnSync(
 );
 if (result.status !== 0) throw new Error(result.stderr || result.stdout);
 const [packed] = JSON.parse(result.stdout);
+const packedFiles = new Set(packed.files.map((file) => file.path));
+const missing = requiredFiles.filter((file) => !packedFiles.has(file));
+if (missing.length) {
+  await rm(resolve(destination, packed.filename), { force: true });
+  throw new Error(
+    `Engine archive is missing required files:\n${missing.join("\n")}\nUpdate the engine package.json files list to include src and the built lib outputs, then rerun setup. React Native Codegen requires the original TypeScript spec.`,
+  );
+}
 const archive = resolve(destination, "nayan-ui-engine.tgz");
-await rm(archive, { force: true });
 await rename(resolve(destination, packed.filename), archive);
 console.log(
   "Engine packaged in .engine/nayan-ui-engine.tgz. Run bun install from examples/engine.",
