@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { stepSteering, sideImpactSpeed } from "../src/handling";
+import { stepSteering, sideImpactSpeed, smoothSteeringPose } from "../src/handling";
 import { frontHit, overlapAcross } from "../src/footprint";
 
 const body = { length: 4.36, halfWidth: () => 1 };
@@ -60,4 +60,17 @@ test("solid side hits use relative closing speed on either side of the car", () 
   assert.equal(sideImpactSpeed(-6, 0, 1.7), 0);
   assert.equal(sideImpactSpeed(6, 6, 1.7), 0);
   assert.ok(sideImpactSpeed(0.8, 0, 1.7) < 2.5);
+});
+
+test("quick direction changes ease car rotation and lean instead of snapping the body", () => {
+  const pose = { yaw: 0, roll: 0 };
+  smoothSteeringPose(pose, 10, 20, 1 / 60);
+  assert.ok(pose.yaw > 0 && pose.yaw < 0.15);
+  assert.ok(pose.roll > 0 && pose.roll < 0.02);
+  const before = pose.yaw;
+  smoothSteeringPose(pose, -10, 20, 1 / 60);
+  assert.ok(pose.yaw < before);
+  assert.ok(pose.yaw > -0.15, "body should not jump straight to the opposite turn");
+  for (let frame = 0; frame < 30; frame++) smoothSteeringPose(pose, 0, 20, 1 / 60);
+  assert.ok(Math.abs(pose.yaw) < 0.001 && Math.abs(pose.roll) < 0.001);
 });

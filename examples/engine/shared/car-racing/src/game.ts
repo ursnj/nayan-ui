@@ -61,7 +61,7 @@ import { frontHit, overlapAcross } from "./footprint";
 import { CAR_FOOTPRINT } from "./meshes";
 
 import { createChase, updateChase } from "./chase";
-import { stepSteering, sideImpactSpeed } from "./handling";
+import { stepSteering, sideImpactSpeed, smoothSteeringPose } from "./handling";
 
 export const session = { best: 0 };
 
@@ -103,6 +103,7 @@ export function createGame(a: Assets, night: boolean) {
     dragX: 0, // the finger's last dx, so each move steers by its own distance
     speed: 0,
     lateral: 0,
+    steeringPose: { yaw: 0, roll: 0 },
     spawnTimer: 0.5,
     invulnerable: 0,
     scrape: 0,
@@ -408,17 +409,8 @@ export function tick(g: Game, dt: number) {
     if (g.s >= TRACK_LENGTH) end(g);
   }
   const size = g.assets.car.size;
-  const steerYaw = Math.atan2(g.lateral, Math.max(8, g.speed)) * 0.9;
-  drive(
-    g,
-    g.player.root,
-    g.s,
-    g.d,
-    size[1] / 2,
-    dt,
-    steerYaw,
-    clamp(g.lateral * 0.006, -0.06, 0.06),
-  );
+  smoothSteeringPose(g.steeringPose, g.lateral, g.speed, dt);
+  drive(g, g.player.root, g.s, g.d, size[1] / 2, dt, g.steeringPose.yaw, g.steeringPose.roll);
 
   // Traffic drives along its lane; scored once behind the player, gone once far behind.
   for (let i = g.traffic.length - 1; i >= 0; i--) {
