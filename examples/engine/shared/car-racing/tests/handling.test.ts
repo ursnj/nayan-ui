@@ -5,7 +5,7 @@ import { frontHit, overlapAcross } from "../src/footprint";
 
 const body = { length: 4.36, halfWidth: () => 1 };
 
-test("lane steering reaches 90% of the adjacent lane in under 0.4 seconds", () => {
+test("lane steering reaches 90% of the adjacent lane in under half a second", () => {
   for (const fps of [30, 60, 120, 144]) {
     const car = { d: 0, target: 3.4, lateral: 0 };
     let arrival = Infinity;
@@ -13,7 +13,7 @@ test("lane steering reaches 90% of the adjacent lane in under 0.4 seconds", () =
       stepSteering(car, car.target, 1 / fps);
       if (car.d >= 3.06 && arrival === Infinity) arrival = (frame + 1) / fps;
     }
-    assert.ok(arrival <= 0.4, `${fps} FPS took ${arrival}s`);
+    assert.ok(arrival <= 0.5, `${fps} FPS took ${arrival}s`);
   }
 });
 
@@ -21,7 +21,7 @@ test("lane steering caps lateral speed and settles at the requested lane", () =>
   const car = { d: 0, target: 3.4, lateral: 0 };
   for (let frame = 0; frame < 360; frame++) {
     stepSteering(car, car.target, 1 / 120);
-    assert.ok(Math.abs(car.lateral) <= 15);
+    assert.ok(Math.abs(car.lateral) <= 9);
   }
   assert.ok(Math.abs(car.d - 3.4) < 0.001);
 });
@@ -29,10 +29,10 @@ test("lane steering caps lateral speed and settles at the requested lane", () =>
 test("keyboard steering remains responsive with filtered targets", () => {
   const car = { d: 0, target: 0, lateral: 0 };
   for (let frame = 0; frame < 60; frame++) {
-    car.target = Math.min(3.4, car.target + 15 / 120);
+    car.target = Math.min(3.4, car.target + 9 / 120);
     stepSteering(car, car.target, 1 / 120);
   }
-  assert.ok(car.d > 3, `Only reached ${car.d}m after half a second`);
+  assert.ok(car.d > 1.8 && car.d < 3.4, `Only reached ${car.d}m after half a second`);
 });
 
 test("steering reverses quickly with continuous velocity", () => {
@@ -41,9 +41,9 @@ test("steering reverses quickly with continuous velocity", () => {
   const before = car.lateral;
   assert.ok(before > 0);
   stepSteering(car, -3.4, 1 / 120);
-  assert.ok(car.lateral < before && car.lateral > -15);
+  assert.ok(car.lateral < before && car.lateral > -9);
   for (let frame = 0; frame < 60; frame++) stepSteering(car, -3.4, 1 / 120);
-  assert.ok(car.d < -2.8);
+  assert.ok(car.d < -2.3);
 });
 
 test("reference footprint detection separates front hits from sideswipes", () => {
@@ -104,4 +104,15 @@ test("uneven frame intervals keep the same smooth trajectory", () => {
   const uneven = run([1 / 30, 1 / 144, 1 / 60, 1 / 90]);
   assert.ok(Math.abs(fixed.d - uneven.d) < 0.001);
   assert.ok(Math.abs(fixed.lateral - uneven.lateral) < 0.01);
+});
+
+test("visible turning stays within a modest angle and rotates progressively", () => {
+  const pose = { yaw: 0, roll: 0 };
+  for (let frame = 0; frame < 120; frame++) {
+    const before = pose.yaw;
+    smoothSteeringPose(pose, frame < 60 ? 15 : -15, 20, 1 / 60);
+    assert.ok(Math.abs(pose.yaw) <= 0.22 + 1e-9);
+    assert.ok(Math.abs(pose.yaw - before) <= 0.9 / 60 + 1e-9);
+    assert.ok(Math.abs(pose.roll) <= 0.035 + 1e-9);
+  }
 });

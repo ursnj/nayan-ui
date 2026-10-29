@@ -9,6 +9,7 @@ import {
   type Vec3,
 } from "@nayan-ui/engine";
 import { createGameMesh, cacheGameAsset } from "./cache";
+import { facadeWindowQuads } from "./facade";
 
 type Vector = [number, number, number];
 class Details {
@@ -159,35 +160,14 @@ function facade(style: number): Model {
 }
 function windows(): Model {
   return detail(
-    "night-windows",
+    "night-windows-aligned-v2",
     (m) => {
-      for (let row = 0; row < 16; row++)
-        for (let col = 0; col < 8; col++) {
-          if ((row * 7 + col * 3) % 13 > 1) continue;
-          const x = (col + 0.5) / 8 - 0.5,
-            y = (row + 0.5) / 16 - 0.5,
-            w = 0.033,
-            h = 0.021;
-          const color: Color = (col + row) % 3 ? [1.55, 1.28, 0.72] : [1.2, 1.37, 1.48];
-          for (const side of [-1, 1]) {
-            m.quad(
-              [x - w, y - h, side * 0.501],
-              [x + w, y - h, side * 0.501],
-              [x + w, y + h, side * 0.501],
-              [x - w, y + h, side * 0.501],
-              [0, 0, side],
-              color,
-            );
-            m.quad(
-              [side * 0.501, y - h, x - w],
-              [side * 0.501, y - h, x + w],
-              [side * 0.501, y + h, x + w],
-              [side * 0.501, y + h, x - w],
-              [side, 0, 0],
-              color,
-            );
-          }
-        }
+      for (const {
+        corners: [a, b, c, d],
+        normal,
+      } of facadeWindowQuads()) {
+        m.quad(a, b, c, d, normal, [1.6, 1.46, 1.02]);
+      }
     },
     0,
   );

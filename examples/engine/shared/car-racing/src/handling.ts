@@ -4,8 +4,8 @@ export function stepSteering(
   state: SteeringState,
   goal: number,
   dt: number,
-  maxSpeed = 15,
-  response = 13,
+  maxSpeed = 9,
+  response = 10.5,
   playing = true,
 ) {
   if (dt <= 0) return;
@@ -22,7 +22,7 @@ export function stepSteering(
   // Position/velocity use the closed-form critically damped solution rather than Euler correction.
   while (remaining > 1e-9) {
     const h = Math.min(remaining, 1 / 240);
-    filtered = goal + (filtered - goal) * Math.exp(-26 * h);
+    filtered = goal + (filtered - goal) * Math.exp(-22 * h);
     const error = state.d - filtered;
     const coefficient = state.lateral + response * error;
     const decay = Math.exp(-response * h);
@@ -52,8 +52,9 @@ export function smoothSteeringPose(
   dt: number,
 ) {
   const blend = 1 - Math.exp(-Math.max(0, dt) * 18);
-  const yaw = Math.atan2(lateral, Math.max(8, speed)) * 0.9;
-  const roll = Math.max(-0.06, Math.min(0.06, lateral * 0.006));
-  pose.yaw += (yaw - pose.yaw) * blend;
+  const yaw = Math.max(-0.22, Math.min(0.22, Math.atan2(lateral, Math.max(8, speed)) * 0.55));
+  const roll = Math.max(-0.035, Math.min(0.035, lateral * 0.004));
+  const yawStep = (yaw - pose.yaw) * blend;
+  pose.yaw += Math.max(-0.9 * dt, Math.min(0.9 * dt, yawStep));
   pose.roll += (roll - pose.roll) * blend;
 }
