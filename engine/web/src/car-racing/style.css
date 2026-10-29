@@ -1,0 +1,343 @@
+:root {
+  font-family: 'DM Sans', sans-serif;
+  color: #edf2ef;
+  background: #111b19;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+.racing-screen {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  --panel: #f7faf2f5;
+  --panel-border: #bfcdb9;
+  --panel-text: #253c30;
+  --panel-muted: #526957;
+  --accent: #365a30;
+  --accent-text: #ffffff;
+  color-scheme: light;
+}
+.racing-screen[data-theme='dark'] {
+  --panel: #15251eee;
+  --panel-border: #5a6a51;
+  --panel-text: #edf2ef;
+  --panel-muted: #c1cfc6;
+  --accent: #dcff8c;
+  --accent-text: #1a2c15;
+  color-scheme: dark;
+}
+.race-scene {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  background: #15221e;
+}
+.racing-screen button {
+  border: 1px solid #71867a;
+  background: #24362eee;
+  color: #f4f8f5;
+  padding: 11px 18px;
+  border-radius: 8px;
+  font: inherit;
+  cursor: pointer;
+  min-height: 44px;
+}
+.racing-screen button:hover {
+  background: #354b3d;
+}
+.racing-screen button:focus-visible {
+  outline: 3px solid #dcff8c;
+  outline-offset: 3px;
+}
+.hud {
+  position: absolute;
+  z-index: 30;
+  top: max(24px, env(safe-area-inset-top));
+  left: max(28px, env(safe-area-inset-left));
+  right: max(28px, env(safe-area-inset-right));
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  color: white;
+  text-shadow:
+    0 2px 5px #000c,
+    0 0 16px #0008;
+  pointer-events: none;
+}
+.race-stats {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(24px, 4vw, 64px);
+}
+.stat > span {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+.stat strong {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.stat small {
+  font-size: 22px;
+  font-weight: 600;
+}
+.score-stat {
+  min-width: 64px;
+}
+.distance-stat {
+  min-width: 100px;
+}
+.hearts {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+}
+.heart {
+  width: 23px;
+  height: 23px;
+  fill: transparent;
+  stroke: #ffffff80;
+  stroke-width: 1.5;
+  filter: drop-shadow(0 2px 3px #0008);
+}
+.heart.filled {
+  fill: #ff737b;
+  stroke: #ffc4c8;
+}
+.race-actions {
+  display: flex;
+  gap: 14px;
+  pointer-events: auto;
+}
+.racing-screen .hud-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 58px;
+  min-height: 60px;
+  padding: 4px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: white;
+  text-shadow: 0 2px 5px #000c;
+}
+.racing-screen .hud-action:hover {
+  color: #dcff8c;
+  background: transparent;
+}
+.hud-action svg {
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 3px #0009);
+}
+.hud-action span {
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.overlay {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 120px 20px 70px;
+  background: #08130b40;
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 28px;
+  text-align: center;
+  max-width: 440px;
+  max-height: 100%;
+  overflow-y: auto;
+  box-shadow: 0 20px 70px #0004;
+}
+.card h2 {
+  color: var(--panel-text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 44px;
+  margin: 8px 0;
+  text-transform: uppercase;
+}
+.card p {
+  color: var(--panel-muted);
+  line-height: 1.6;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.card > p:first-child {
+  color: var(--panel-muted);
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-top: 0;
+}
+.racing-screen .primary {
+  background: var(--accent);
+  border: 0;
+  color: var(--accent-text);
+  font-weight: 700;
+  min-width: 160px;
+  margin-top: 18px;
+}
+.racing-screen .primary:hover {
+  background: var(--accent);
+  filter: brightness(1.08);
+}
+.driving-hint {
+  position: absolute;
+  z-index: 10;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  left: 20px;
+  right: 20px;
+  margin: 0;
+  text-align: center;
+  color: white;
+  font-size: 12px;
+  text-shadow: 0 1px 5px #000;
+  pointer-events: none;
+}
+.driving-hint kbd {
+  font: inherit;
+  border: 1px solid #ffffff70;
+  background: #14241d99;
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+.near-miss {
+  position: absolute;
+  z-index: 10;
+  top: 130px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #dcff8c;
+  text-shadow: 0 2px 6px #000;
+  font-size: 30px;
+  font-weight: 900;
+  pointer-events: none;
+}
+.crash-flash {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  background: #ff3b3b60;
+  pointer-events: none;
+}
+@media (max-width: 600px) {
+  .hud {
+    top: max(16px, env(safe-area-inset-top));
+    left: 16px;
+    right: 16px;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .race-stats {
+    flex: 1;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .stat > span {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+  }
+  .stat strong {
+    font-size: 32px;
+  }
+  .distance-stat {
+    min-width: 80px;
+  }
+  .hearts {
+    height: 32px;
+    gap: 4px;
+  }
+  .heart {
+    width: 19px;
+    height: 19px;
+  }
+  .race-actions {
+    margin-left: auto;
+    gap: 8px;
+  }
+  .racing-screen .hud-action {
+    min-width: 44px;
+    min-height: 52px;
+  }
+  .hud-action svg {
+    width: 22px;
+    height: 22px;
+  }
+  .driving-hint {
+    font-size: 10px;
+  }
+}
+@media (max-width: 430px) {
+  .hud {
+    gap: 12px;
+  }
+  .race-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .near-miss {
+    top: 155px;
+  }
+}
+@media (max-height: 450px) {
+  .hud {
+    top: 10px;
+  }
+  .stat strong {
+    font-size: 28px;
+  }
+  .hearts {
+    height: 28px;
+  }
+  .overlay {
+    padding-top: 84px;
+    padding-bottom: 40px;
+  }
+  .card {
+    padding: 14px 24px;
+  }
+  .card h2 {
+    color: var(--panel-text);
+    font-size: 32px;
+  }
+  .driving-hint {
+    bottom: 10px;
+  }
+}

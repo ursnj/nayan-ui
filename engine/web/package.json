@@ -1,0 +1,24 @@
+{
+  "name": "@nayan-engine/web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@nayan-engine-example/shared": "workspace:*",
+    "@nayan-ui/engine": "file:../.engine/nayan-ui-engine.tgz",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/react-dom": "^19.2.0",
+    "vite": "^8.3.4",
+    "@tailwindcss/vite": "^4.1.11",
+    "tailwindcss": "^4.1.11"
+  }
+}

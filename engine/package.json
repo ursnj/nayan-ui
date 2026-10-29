@@ -1,0 +1,24 @@
+{
+  "name": "@nayan-engine/root",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "web",
+    "mobile",
+    "shared"
+  ],
+  "scripts": {
+    "setup": "node scripts/setup-engine.mjs",
+    "web": "bun run --cwd web dev",
+    "web:build": "bun run --cwd web build",
+    "mobile": "bun run --cwd mobile start",
+    "prebuild": "bun run --cwd mobile prebuild",
+    "ios": "bun run --cwd mobile ios",
+    "android": "bun run --cwd mobile android",
+    "typecheck": "bun run --cwd web typecheck && bun run --cwd mobile typecheck"
+  },
+  "devDependencies": {
+    "@types/react": "~19.3.0",
+    "typescript": "~6.0.3"
+  }
+}

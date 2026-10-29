@@ -23,6 +23,7 @@ Reusable Component Libraries for React and React Native and Devtools to help dev
 | ----------------------------------------------------- | ---------------------------------------------------- |
 | [@nayan-ui/website](./packages/website)               | Documentation website built with Next.js + Nayan UI  |
 | [@nayan-ui/video-editor](./applications/video-editor) | Video editor built with Vite + MediaBunny + Nayan UI |
+| [engine](./engine) | Car racing workspace: web, mobile, and shared engine code |
 
 ## Examples
 
@@ -32,8 +33,6 @@ Reusable Component Libraries for React and React Native and Devtools to help dev
 | [examples/nextjs](./examples/nextjs) | Next.js + Tailwind CSS v4 + Nayan UI      |
 | [examples/expo](./examples/expo)     | Expo + Uniwind + Nayan UI native          |
 | [examples/games](./examples/games)   | Expo + Nayan UI Games                     |
-
-| [examples/engine](./examples/engine) | Car racing workspace: web, mobile, and shared engine code |
 
 ## Quick Start
 
