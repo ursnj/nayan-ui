@@ -18,6 +18,7 @@ import {
 type GeometryPart = Parameters<typeof merge>[0][number];
 import { createGameMesh as createShape, cacheGameAsset } from "./cache";
 
+import { sceneryMeshes } from "./scenery";
 import { CAR_LAMPS } from "./meshes";
 import {
   BEHIND,
@@ -213,10 +214,11 @@ export function buildRoad(world: World, a: Assets): Segment[] {
     const len = SEG_LEN + 0.35;
     add("cube", [0, RS - 0.05 + lift, 0], [ROAD_HALF * 2 + 0.6, 0.1, len], [1, 1, 1], a.asphalt);
     for (const side of [-1, 1]) {
+      // Wide verge strips need extra overlap where the track bends, so distant ground has no gaps.
       add(
-        "cube",
-        [side * (ROAD_HALF + 31), RS - 0.09 + lift, 0],
-        [62, 0.1, len],
+        a.scenery.grassGround,
+        [side * (ROAD_HALF + 31), RS - 0.04 + lift, 0],
+        [62, 1, SEG_LEN + 4],
         i % 2 ? [1, 1, 1] : [0.94, 0.97, 0.92],
         a.grass,
       );
@@ -282,6 +284,20 @@ export function setHorizonNight(world: World, horizon: Entity, night: boolean) {
   const lights = skies.get(horizon) ?? [];
   for (const entity of lights) world.despawn(entity);
   lights.length = 0;
+  // Low-contrast cloud banks sit behind the existing skyline and mountains.
+  for (let i = 0; i < 5; i++) {
+    const angle = i * 1.256 + 0.7;
+    lights.push(
+      world.spawn({
+        mesh: sceneryMeshes().cloud,
+        parent: horizon,
+        position: [Math.sin(angle) * 160, 35 + (i % 3) * 8, -Math.cos(angle) * 160],
+        scale: [1.4 + (i % 2) * 0.5, 1, 1.1],
+        color: night ? [0.55, 0.58, 0.68] : [1.4, 1.43, 1.45],
+        pickable: false,
+      }),
+    );
+  }
   if (night) {
     // A moon and stars, riding along with the horizon.
     lights.push(
@@ -349,6 +365,26 @@ export function spawnProps(g: SceneryContext, seg: Segment) {
   const index = Math.round(seg.s / SEG_LEN);
   const zone = zoneAt(seg.s);
   const z = () => rand(-SEG_LEN / 2, SEG_LEN / 2);
+  const detailIndex = Math.abs(index);
+  const detail = a.scenery;
+  const decorateTower = (
+    x: number,
+    zz: number,
+    w: number,
+    h: number,
+    depth: number,
+    style: number,
+  ) => {
+    // Keep the original textured tower and silhouette; these are thin architectural layers.
+    add({ mesh: detail.podium, position: [x, RS, zz], scale: [w, 1, depth] });
+    add({ mesh: detail.roofs[style % 2], position: [x, RS + h, zz], scale: [w, 1, depth] });
+    add({ mesh: detail.facades[style % 3], position: [x, RS + h / 2, zz], scale: [w, h, depth] });
+    addLight(
+      { mesh: detail.windows, position: [x, RS + h / 2, zz], scale: [w, h, depth] },
+      [1, 1, 1, 0],
+      [1, 1, 1],
+    );
+  };
 
   for (const side of [-1, 1]) {
     // Bushes along the rail, everywhere.
@@ -362,21 +398,24 @@ export function spawnProps(g: SceneryContext, seg: Segment) {
     }
     if (zone === "city") {
       add({
-        mesh: "cube",
+        mesh: detail.pavement,
         position: [side * (ROAD_HALF + 3.2), RS + 0.05, 0],
-        scale: [2.6, 0.12, SEG_LEN + 0.35],
-        color: [0.68, 0.68, 0.66],
       }); // sidewalk
       if ((index + (side > 0 ? 1 : 0)) % 2 === 0) {
         const h = rand(14, 42);
         const tone = rand(0.72, 1);
+        const x = side * (ROAD_HALF + rand(10, 15)),
+          zz = rand(-1, 1);
+        const width = rand(8, 12),
+          depth = rand(8, 11);
         add({
           mesh: "cube",
           texture: a.facade,
-          position: [side * (ROAD_HALF + rand(10, 15)), RS + h / 2, rand(-1, 1)],
-          scale: [rand(8, 12), h, rand(8, 11)],
+          position: [x, RS + h / 2, zz],
+          scale: [width, h, depth],
           color: [tone, tone * rand(0.92, 1), tone * rand(0.86, 1)],
         });
+        decorateTower(x, zz, width, h, depth, detailIndex + (side > 0 ? 1 : 0));
         if (Math.random() < 0.5) {
           const h2 = rand(20, 55);
           add({
@@ -388,6 +427,41 @@ export function spawnProps(g: SceneryContext, seg: Segment) {
           });
         }
       }
+      const rhythm = detailIndex + (side > 0 ? 2 : 0);
+      const streetX = side * (ROAD_HALF + 3.2);
+      if (rhythm % 5 === 1) {
+        add({ mesh: detail.planter, position: [streetX, RS + 0.1, 0] });
+        add({
+          mesh: "cylinder",
+          position: [streetX, RS + 1.7, 0],
+          scale: [0.28, 2.7, 0.28],
+          color: [0.35, 0.26, 0.16],
+        });
+        add({
+          mesh: "sphere",
+          position: [streetX, RS + 3.6, 0],
+          scale: [2.1, 2.7, 2.0],
+          color: [0.23, 0.41, 0.19],
+        });
+        add({
+          mesh: "sphere",
+          position: [streetX + side * 0.45, RS + 3.2, 0.35],
+          scale: [1.5, 1.8, 1.5],
+          color: [0.27, 0.44, 0.2],
+        });
+      } else if (rhythm % 5 === 3) {
+        add({ mesh: detail.planter, position: [streetX, RS + 0.1, 0] });
+        add({ mesh: detail.flowers, position: [streetX, RS + 0.67, 0], scale: [1.3, 1.2, 1.3] });
+      }
+      if (rhythm % 9 === 4) {
+        add({
+          mesh: detail.bench,
+          position: [streetX, RS + 0.12, 0],
+          rotation: [0, Math.sin((side * Math.PI) / 4), 0, Math.cos((side * Math.PI) / 4)],
+        });
+        add({ mesh: detail.bin, position: [streetX, RS + 0.12, 1.8] });
+      }
+      if (rhythm % 19 === 8) add({ mesh: detail.shelter, position: [streetX, RS + 0.12, 0] });
     } else if (zone === "suburb") {
       if ((index + (side > 0 ? 1 : 0)) % 3 === 0) {
         // A house: walls, a door, two windows, a gable roof (a cube turned 45° under a flattened group), a fence.
@@ -395,6 +469,18 @@ export function spawnProps(g: SceneryContext, seg: Segment) {
         const wall = pick(HOUSE_WALLS);
         const face = x - side * 2.52; // the wall facing the road
         add({ mesh: "cube", position: [x, RS + 1.6, 0], scale: [5, 3.2, 5.6], color: wall });
+        add({ mesh: detail.house, position: [x, RS, 0] });
+        add({
+          mesh: detail.flowers,
+          position: [face - side * 0.45, RS, -1.0],
+          scale: [0.8, 1, 1.4],
+        });
+        add({
+          mesh: "cube",
+          position: [side * (ROAD_HALF + 7.3), RS - 0.005, 0.9],
+          scale: [4.5, 0.035, 1.8],
+          color: [0.48, 0.49, 0.46],
+        });
         add({
           mesh: "cube",
           position: [face, RS + 0.95, 0.9],
@@ -493,6 +579,30 @@ export function spawnProps(g: SceneryContext, seg: Segment) {
         });
       }
     }
+    if (detailIndex % 2 === 0) {
+      const vergeX = side * (ROAD_HALF + (zone === "city" ? 1.8 : 3.2));
+      add({
+        mesh: detail.grass,
+        position: [vergeX, RS - 0.025, -1.6],
+        scale: zone === "city" ? 0.8 : 1.4,
+      });
+      if (zone !== "city")
+        add({ mesh: detail.grass, position: [vergeX + side * 0.8, RS - 0.025, 1.6], scale: 1.1 });
+    }
+    if (zone === "country" && detailIndex % 4 === 1)
+      add({ mesh: detail.flowers, position: [side * (ROAD_HALF + 3.1), RS - 0.02, 0], scale: 1.1 });
+    if (zone === "city" && detailIndex % 3 === 0)
+      add({ mesh: detail.drain, position: [side * (ROAD_HALF - 0.4), RS + 0.008, 0] });
+    if (detailIndex % 2 === 1)
+      addLight(
+        {
+          mesh: "cube",
+          position: [side * (ROAD_HALF + 1.04), RS + 0.61, 0],
+          scale: [0.1, 0.08, 0.07],
+        },
+        [0.9, 0.88, 0.75],
+        [1.45, 1.3, 0.8],
+      );
   }
 
   // Street lights (closer together in the city) and, now and then, a billboard angled toward traffic.
@@ -518,6 +628,28 @@ export function spawnProps(g: SceneryContext, seg: Segment) {
       },
       LAMP,
       LAMP_LIT,
+    );
+  }
+  if (detailIndex % 17 === 7) {
+    const signX = side * (ROAD_HALF + 4.6);
+    for (const dx of [-1.65, 1.65])
+      add({
+        mesh: "cylinder",
+        position: [signX + dx, RS + 2, 0],
+        scale: [0.1, 4, 0.1],
+        color: [0.4, 0.44, 0.42],
+      });
+    add({ mesh: detail.routeSign, position: [signX, RS + 4.15, 0] });
+    addLight(
+      {
+        text: zone === "city" ? "CITY" : zone === "suburb" ? "HILLS" : "FOREST",
+        font: a.font,
+        position: [signX - 0.35, RS + 3.92, 0.09],
+        scale: 0.48,
+        letterSpacing: 0.04,
+      },
+      [0.94, 0.95, 0.88],
+      [1.4, 1.4, 1.25],
     );
   }
   if (index % 11 === 5) {

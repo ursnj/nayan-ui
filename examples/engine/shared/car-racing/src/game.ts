@@ -104,6 +104,7 @@ export function createGame(a: Assets, night: boolean) {
     speed: 0,
     lateral: 0,
     steeringPose: { yaw: 0, roll: 0 },
+    steeringGoal: 0,
     spawnTimer: 0.5,
     invulnerable: 0,
     scrape: 0,

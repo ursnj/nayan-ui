@@ -13,6 +13,7 @@ import {
   type Vec3,
 } from "@nayan-ui/engine";
 import { carMeshes, treeMesh } from "./meshes";
+import { sceneryMeshes, type SceneryMeshes } from "./scenery";
 
 // ── Rules and tuning ──────────────────────────────────────────────────
 
@@ -33,7 +34,7 @@ export const EDGE = ROAD_HALF - 1.05; // furthest a car's centre goes before scr
 export const START_SPEED = 20; // m/s (72 km/h), held for the whole race
 export const CAMERA_FOV = 0.95; // Fixed perspective: no speed-driven zoom
 export const LATERAL_SPEED = 15;
-export const STEER_RESPONSE = 8.5;
+export const STEER_RESPONSE = 13; // Damped response frequency; fast settling without lane overshoot
 export const CRASH_SLOWDOWN = 0.55; // m/s across the road
 export const STEER_WIDTH = 0.6; // a swipe across this much of the screen crosses the whole road
 export const TRAFFIC_SPEED = 12; // one speed: cars keep the gaps they spawned with, so no wall forms later
@@ -99,6 +100,7 @@ export type Assets = {
   grass: Texture;
   ads: Texture[];
   tree: Model;
+  scenery: SceneryMeshes;
   font: Font;
 };
 
@@ -108,7 +110,7 @@ export const getCachedAssets = (): Assets | null => cachedAssets;
 export function loadAssets(sources: AssetSources): Promise<Assets> {
   sfx ??= audio.load(sources.sounds);
   assets ??= Promise.all([
-    loadFont(sources.font, { depth: 0, chars: "FINISH" }),
+    loadFont(sources.font, { depth: 0, chars: "FINISHCITYHILLSFOREST" }),
     loadTexture(sources.textures.asphalt),
     loadTexture(sources.textures.facade),
     loadTexture(sources.textures.grass),
@@ -136,6 +138,7 @@ export function loadAssets(sources: AssetSources): Promise<Assets> {
       grass,
       ads,
       tree: treeMesh(),
+      scenery: sceneryMeshes(),
     };
   });
   assets.then(
