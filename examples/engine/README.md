@@ -1,6 +1,6 @@
 # Nayan Engine game workspace
 
-A complete Car Racing game for React browsers and React Native, adapted from Playtura's engine example. Both apps run the same road, traffic, collision, scoring, audio, camera and lifecycle code. Only the UI and asset references differ.
+A complete Car Racing game for React browsers and React Native, adapted from Playtura's games-library Car Racing. Both apps run the same road, traffic, collision, scoring, audio, camera and lifecycle code. Only the UI and asset references differ.
 
 ```text
 engine/
@@ -48,7 +48,7 @@ bun run web:build
 bun run --cwd web preview
 ```
 
-Open the local Vite URL. Use arrow keys or A/D, or drag/swipe the road. Start the race with the button; it also unlocks browser audio. Pause, resume, mute and replay are available. Losing focus pauses an active race. The browser needs WebGPU or WebGL2; deploy the complete `web/dist` output over HTTPS (localhost works for development), including the emitted WASM and audio worklet.
+Open the local Vite URL. Use arrow keys or A/D, or drag/swipe the road. Start the race with the button; it also unlocks browser audio. The road fills the browser viewport, with the HUD and controls overlaid. Use the sun/moon control to switch light and dark mode; the browser remembers the choice, initially following the system preference. Switching modes preserves the active race, car positions and scenery layout while updating sky, lighting, moon/stars, street lamps and vehicle lights. Pause, resume, mute and replay are available. The example holds a 20 m/s cruising speed with a fixed camera field of view; web rendering uses medium quality to preserve resolution and anti-aliasing without automatic changes. Losing focus pauses an active race. The browser needs WebGPU or WebGL2; deploy the complete `web/dist` output over HTTPS (localhost works for development), including the emitted WASM and audio worklet.
 
 ### Tailwind CSS
 
@@ -65,7 +65,7 @@ bun run android
 bun run mobile
 ```
 
-Swipe anywhere on the road to steer. Touch controls remain outside the engine surface. An active race pauses when the app backgrounds and resumes through the Resume button. Android requires API 26 or newer; the included Expo plugin sets the minimum SDK.
+Swipe anywhere on the road to steer. The Light mode/Dark mode control switches the scene and UI during a race, initially following the device appearance. Touch controls remain outside the engine surface. An active race pauses when the app backgrounds and resumes through the Resume button. Android requires API 26 or newer; the included Expo plugin sets the minimum SDK.
 
 ## Develop a shared game
 
@@ -73,12 +73,15 @@ Keep each example in `shared/<example-name>/`, with its own `src` and `assets` d
 
 Store each game’s assets once in `shared/<example-name>/assets` and expose them through its own package subpath, such as `@nayan-engine-example/shared/car-racing/assets/*`. The web adapter uses Vite `?url` imports, and the mobile adapter uses Metro's static `require`. Pass either adapter to the same `loadAssets` function. Avoid browser or React Native imports in shared rules. Keep platform UI and asset adapters in matching folders: `web/src/<example-name>/` and `mobile/src/<example-name>/`. The app entry points mount the selected example; keep providers and other app setup in those entry points.
 
-The game awards 500 points per car passed, lasts 120 seconds, and ends early after three crashes. Best scores last for the app session.
+The game is a 2,000-metre sprint: crossing the finish gate wins, losing three lives ends the race, and each car passed earns 500 points. Scenery and procedural models follow Playtura’s games-app Car Racing: textured city buildings, suburban houses, roadside trees, country forests, rails and street lights. Driving follows that game’s fast lateral steering (15 m/s limit, response 9), car yaw/lean, footprint-based front hits and sideswipes, crash tumbles, bursts and burning wrecks. Solid side hits also send the struck car into a native rolling wreck with a blast and fire; light grazes shove it aside and spark, without costing the player a life. The example keeps its calmer 20 m/s cruising speed and fixed camera field of view.
+
+Vehicles controlled by the shared rules receive their integrated pose directly, so the engine’s separate 60 Hz simulation cannot double-apply movement on high-refresh displays. The engine still simulates crashed cars, particles, score, audio and haptics. The chase camera follows the displayed player position exactly while smoothing its relative offsets. Best scores last for the app session.
 
 ```bash
 bun run typecheck
+bun test shared/car-racing/tests
 ```
 
 ## Attribution
 
-The racing implementation and bundled scenery/sounds are adapted from the sibling Playtura checkout's `packages/engine/example/games/racing` and `assets` directories. The car derives from Khronos' [Car Concept sample](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/CarConcept), under CC BY 4.0. See [shared/car-racing/assets/ATTRIBUTION.md](./shared/car-racing/assets/ATTRIBUTION.md) for the model credit and modifications.
+The racing implementation is adapted from the sibling Playtura checkout's `packages/games/src/games/car-racing` and its racing helpers in `packages/games/src/games/shared`. Cars, trees and race markers are built procedurally in TypeScript. Textures, sound effects and the finish banner font come from `packages/games/src/assets`. See [shared/car-racing/assets/ATTRIBUTION.md](./shared/car-racing/assets/ATTRIBUTION.md).

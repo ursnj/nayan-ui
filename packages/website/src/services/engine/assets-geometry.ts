@@ -4,8 +4,7 @@ export const AssetsGeometryGuides: EngineGuide[] = [
   {
     slug: "skeletal-animation",
     title: "Skeletal models and animation clips",
-    description:
-      "Load a rig once, play embedded GLB clips independently on entities, crossfade poses, and sample selected animated vertices for grounding and attachments.",
+    description: "Load GLB clips, control each character and sample animated vertices.",
     sections: [
       {
         id: "load-a-rig-and-inspect-clips",
@@ -59,7 +58,7 @@ export function addCharacters(world: World, model: LoadedModel) {
         id: "sample-selected-surface-points",
         title: "Sample selected surface points",
         paragraphs: [
-          "skinPoints(entity,indices,output,after=0) fills reusable model-space XYZ coordinates for selected original model vertex indices. output must hold at least three floats per index. after previews the pose following an upcoming update; use the next frame dt when positioning a supporting foot for that pose. It returns false if sampling cannot be performed.",
+          "sampleSkinnedVertices(entity,indices,output,after=0) fills reusable model-space XYZ coordinates for selected original model vertex indices. output must hold at least three floats per index. after previews the pose following an upcoming update; use the next frame dt when positioning a supporting foot for that pose. It returns false if sampling cannot be performed.",
           "The engine supports up to 128 joints in its skin palette. Query a small set of known boot/contact vertices rather than skinning the whole model in JavaScript. Convert model-space samples through the actor transform when comparing against world-space terrain. A model re-export or topology change can change vertex indices; inspect your actual asset rather than copying arbitrary indices.",
         ],
         examples: [
@@ -68,7 +67,7 @@ export function addCharacters(world: World, model: LoadedModel) {
             code: `import type { World, Entity } from "@nayan-ui/engine";
 export function makeContactSampler(world: World, actor: Entity, bootVertexIds: Uint32Array) {
   const points = new Float32Array(bootVertexIds.length * 3);
-  return (nextDt: number) => world.skinPoints(actor, bootVertexIds, points, nextDt) ? points : null;
+  return (nextDt: number) => world.sampleSkinnedVertices(actor, bootVertexIds, points, nextDt) ? points : null;
 }`,
             platform: "shared",
             language: "tsx",
@@ -80,8 +79,7 @@ export function makeContactSampler(world: World, actor: Entity, bootVertexIds: U
   {
     slug: "input-picking",
     title: "Gestures, joystick and picking",
-    description:
-      "Use the same gesture API for browser pointers and native touches, pick rendered entities, and convert between screen coordinates and world space.",
+    description: "Handle gestures, read joystick input and convert screen coordinates.",
     sections: [
       {
         id: "gesture-callbacks",
@@ -164,8 +162,7 @@ export function queryScreen(world: World, x: number, y: number, position: Vec3) 
   {
     slug: "particles",
     title: "Particles, smoke and emissive effects",
-    description:
-      "Spawn core-simulated bursts with built-in or reusable custom meshes, directional spread, lifetime color changes and expanding smoke.",
+    description: "Create sparks, confetti, fire and smoke with reusable particle settings.",
     sections: [
       {
         id: "burst-lifecycle",
@@ -226,15 +223,14 @@ export function explosion(world: World, position: Vec3) {
   {
     slug: "models-textures",
     title: "Models, textures and asset loading",
-    description:
-      "Load cached GLB/glTF meshes and PNG/JPEG textures on both hosts, understand material limits, and use normalized texture regions.",
+    description: "Load models and images, handle errors and apply textures.",
     sections: [
       {
         id: "asset-sources-on-each-platform",
         title: "Asset sources on each platform",
         paragraphs: [
-          "The loaders accept strings on both platforms. Browser strings are URLs, including public paths or URLs emitted by an asset import. Metro require(...) returns a numeric asset identifier on React Native. Configure nonstandard file extensions in Metro and install expo-asset for numeric bundled resource copying on Android release builds.",
-          "loadModel, loadTexture, loadFont and audio.load initialize the core automatically on React and React Native. Repeated source/options share decoding and session handles; failed requests can be retried. Prepare assets outside the frame loop. Explicitly await warmUpEngine() before synchronous APIs such as new World(), createShape(), createSolid() and shapeGeometry(). Loading an asset does not create a scene or transfer ownership of a World.",
+          "React: pass a URL or bundler asset import. React Native: pass a URI or Metro require(...). Add glb/gltf to Metro and install expo-asset for bundled Android release assets.",
+          "Async asset loaders initialize the core and reuse decoded resources. Load outside onUpdate. Await warmUpEngine() before synchronous worlds or procedural meshes. Each scene still owns its World.",
         ],
         examples: [
           {
@@ -269,8 +265,8 @@ export async function loadAssets() {
         id: "loading-errors-and-retry",
         title: "Loading errors and retry",
         paragraphs: [
-          "A rejected model, texture or font load includes the loader name and asset source in its message; Error.cause retains the original failure. Calling the loader again retries a failed request. Successful assets stay shared across scenes. A payload rejected by the decoder is removed from saved storage so the retry can fetch fresh bytes; initialization and network failures do not delete saved data.",
-          "Use a loading/error state in the host and let a Retry button start another attempt. Ignore results after unmount or a source change. Audio is optional: SoundBank.ready resolves after its sounds are attempted, while individual failures are logged and skipped. Do not repeatedly retry a broken URL from onUpdate.",
+          "Model, texture and font errors include the API name, source and Error.cause. Call the loader again to retry. Rejected payloads are discarded; initialization and network failures preserve saved data.",
+          "Show loading, errors and a Retry action. Ignore late results after unmount. SoundBank.ready resolves after all attempts; failed sounds log and skip. Never retry from onUpdate.",
         ],
         examples: [
           {
@@ -368,8 +364,7 @@ export function addCard(world: World, atlas: Texture, cardMesh: Model) {
   {
     slug: "text-fonts",
     title: "Fonts, text and measurement",
-    description:
-      "Draw flat or extruded text in the scene or HUD, preload useful glyphs, measure strings and keep changing scores aligned.",
+    description: "Load fonts, draw text and align changing scores.",
     sections: [
       {
         id: "load-font-outlines",
@@ -449,8 +444,7 @@ export function createScoreLabel(world: World, font: Font) {
   {
     slug: "procedural-geometry",
     title: "Paths, extrusion, lathe and tube geometry",
-    description:
-      "Build reusable meshes from outlines and profiles, combine parts, color surfaces and control normals without creating new meshes every frame.",
+    description: "Create meshes from paths, profiles, tubes and combined parts.",
     sections: [
       {
         id: "geometry-and-registration",
@@ -500,12 +494,12 @@ export function createBadge() {
               "Begin a contour, append a line and close it; builder methods chain.",
             ],
             [
-              "quadTo / cubicTo",
+              "quadraticTo / cubicTo",
               "Quadratic and cubic Bézier controls and destination coordinates.",
             ],
             ["arcTo", "rx, ry, rotation in radians, largeArc, sweep, x, y."],
             [
-              "addPoly / addRect / addRRect",
+              "addPolygon / addRect / addRoundedRect",
               "Polygon (optional close), rectangle and rounded rectangle.",
             ],
             [
@@ -517,7 +511,7 @@ export function createBadge() {
               "Parse supported SVG path commands, including relative forms. Use outlines rather than SVG markup.",
             ],
             [
-              "toPoints / bounds",
+              "toContours / bounds",
               "Copies of flattened contours and [minX,minY,maxX,maxY], or undefined if empty. transform(sx,sy=sx,dx=0,dy=0) returns a scaled/translated Path.",
             ],
           ],
@@ -577,14 +571,13 @@ export function createMarker() {
   {
     slug: "surfaces-lofts",
     title: "Parametric surfaces, lofts and deformation",
-    description:
-      "Author terrain, curved shells, rounded blocks and ellipsoids with controlled tessellation, UVs and reusable interpolation functions.",
+    description: "Build curved surfaces, lofts, terrain and deformed geometry.",
     sections: [
       {
         id: "parametric-surfaces",
         title: "Parametric surfaces",
         paragraphs: [
-          "parametricSurface(sample,options?) samples u/v from zero to one. SurfaceOptions sets uSegments (default 32), vSegments (16), wrapU/wrapV and color. Wrapped edges retain separate 0/1 UVs with coincident geometry/normals. Winding follows dP/du × dP/dv; choose your coordinate order so the front faces outward.",
+          "parametricSurface(sample,options?) samples u/v from zero to one. ParametricSurfaceOptions sets uSegments (default 32), vSegments (16), wrapU/wrapV and color. Wrapped edges retain separate 0/1 UVs with coincident geometry/normals. Winding follows dP/du × dP/dv; choose your coordinate order so the front faces outward.",
         ],
         examples: [
           {

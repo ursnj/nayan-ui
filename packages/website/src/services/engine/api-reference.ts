@@ -10,16 +10,14 @@ export const apiReferenceGuide: EngineGuide = {
       id: "reading-the-reference",
       title: "Reading the reference",
       paragraphs: [
-        "This reference inventories every named export of the audited engine entry point. Definitions are taken from its generated browser declarations, with private class members and internal imports omitted. Shared gameplay APIs have the same signatures on React and React Native; the host’s style type and asset source differ as described in the platform guides.",
-        "The code below is a declaration reference, not an executable application. Types imported elsewhere in a module are defined in the other reference sections. Local support types are included when a public signature needs them. Use the linked concept guide for behavior, lifecycle and runnable usage examples.",
+        "Every public export is listed below. Signatures come from built declarations. Gameplay APIs are shared; host styles and asset sources follow the platform guides.",
+        "Use declarations to look up types. Use the runnable examples and linked guides for setup, behavior and cleanup.",
       ],
     },
     {
       id: "world-World",
       title: "world/World",
-      paragraphs: [
-        "Detailed usage: /engine/world-entities. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/world-entities."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
@@ -78,7 +76,7 @@ export declare class World implements RenderSource {
     /** Sample selected animated vertices in model space for foot contact and attachments.
      * Reuse both arrays. \`after\` previews the interpolated pose following the next update.
      */
-    skinPoints(entity: Entity, vertices: Uint32Array, output: Float32Array, after?: number): boolean;
+    sampleSkinnedVertices(entity: Entity, vertices: Uint32Array, output: Float32Array, after?: number): boolean;
     /**
      * Animates in Rust, with no per-frame JS: from where things are to \`to\`, or through keyframes.
      * Each property (position, rotation, scale, color, shake) runs on its own, so a piece can move
@@ -210,9 +208,7 @@ export declare class World implements RenderSource {
     {
       id: "world-Scoreboard",
       title: "world/Scoreboard",
-      paragraphs: [
-        "Detailed usage: /engine/scoreboard-timers. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/scoreboard-timers."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
@@ -290,9 +286,7 @@ export declare class Scoreboard {
     {
       id: "world-types",
       title: "world/types",
-      paragraphs: [
-        "Detailed usage: /engine/world-entities. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/world-entities."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
@@ -610,16 +604,14 @@ export type Bounds = readonly [
     {
       id: "render-GameView",
       title: "render/GameView",
-      paragraphs: [
-        "Detailed usage: /engine/game-view. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/game-view."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
           ["GameView", "Runtime API", "/engine/game-view"],
           ["DragEvent", "TypeScript type", "/engine/game-view"],
           ["GameViewProps", "TypeScript type", "/engine/game-view"],
-          ["GameStats", "TypeScript type", "/engine/game-view"],
+          ["GameViewStats", "TypeScript type", "/engine/game-view"],
           ["OverlayTouchPhase", "TypeScript type", "/engine/game-view"],
           ["PinchEvent", "TypeScript type", "/engine/game-view"],
           ["SwipeDirection", "TypeScript type", "/engine/game-view"],
@@ -630,14 +622,14 @@ export type Bounds = readonly [
           title: "render/GameView declarations",
           platform: "shared",
           language: "typescript",
-          code: `export type GameStats = {
+          code: `export type GameViewStats = {
     fps: number;
     /** Mean time spent in \`onUpdate\` per frame, in milliseconds. */
     updateMs: number;
     /** Average milliseconds per frame spent drawing (CPU side, including waiting on the GPU). */
     renderMs: number;
     /** The quality level drawn with (with \`quality="auto"\`, the one it settled on so far). */
-    quality: Quality;
+    quality: RenderQuality;
     /** The graphics API drawing: "vulkan", "gl" (OpenGL ES) or "metal". */
     backend: string;
 };
@@ -694,7 +686,7 @@ export type GameViewProps = {
      * while the GPU really can't keep up (shadow detail first, then anti-aliasing, resolution last) and
      * steps back up once frames are smooth again, so every phone gets the best look it can hold.
      */
-    quality?: QualitySetting;
+    quality?: RenderQualitySetting;
     /** Suspend updates and drawing while keeping the native surface mounted. */
     paused?: boolean;
     style?: ViewStyle;
@@ -722,7 +714,7 @@ export type GameViewProps = {
      */
     onOverlayTouch?: (phase: OverlayTouchPhase, x: number, y: number) => boolean | void;
     /** Called once a second. */
-    onStats?: (stats: GameStats) => void;
+    onStats?: (stats: GameViewStats) => void;
     /** GPU setup failures and rendering errors. Defaults to console.error. */
     onError?: (error: Error) => void;
 };
@@ -734,14 +726,12 @@ export declare function GameView(props: GameViewProps): import("react").JSX.Elem
     {
       id: "render-meshes",
       title: "render/meshes",
-      paragraphs: [
-        "Detailed usage: /engine/cache-performance. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/cache-performance."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
           ["warmUpEngine", "Runtime API", "/engine/cache-performance"],
-          ["meshIdLimit", "Runtime API", "/engine/cache-performance"],
+          ["getMeshIdLimit", "Runtime API", "/engine/cache-performance"],
         ],
       },
       examples: [
@@ -756,7 +746,7 @@ export declare function GameView(props: GameViewProps): import("react").JSX.Elem
 ];
 
 /** One past the highest mesh id in use: per-frame scans of a source's ranges stop here. */
-export declare const meshIdLimit: () => number;
+export declare const getMeshIdLimit: () => number;
 
 /**
  * Initializes the shared core and built-in meshes. Await before using the engine on the web.
@@ -770,9 +760,7 @@ export declare function warmUpEngine(): Promise<void>;`,
     {
       id: "world-TransformBatch",
       title: "world/TransformBatch",
-      paragraphs: [
-        "Detailed usage: /engine/cache-performance. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/cache-performance."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
@@ -803,14 +791,12 @@ export declare class TransformBatch {
     {
       id: "render-quality",
       title: "render/quality",
-      paragraphs: [
-        "Detailed usage: /engine/game-view. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/game-view."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
-          ["Quality", "TypeScript type", "/engine/game-view"],
-          ["QualitySetting", "TypeScript type", "/engine/game-view"],
+          ["RenderQuality", "TypeScript type", "/engine/game-view"],
+          ["RenderQualitySetting", "TypeScript type", "/engine/game-view"],
         ],
       },
       examples: [
@@ -818,19 +804,17 @@ export declare class TransformBatch {
           title: "render/quality declarations",
           platform: "shared",
           language: "typescript",
-          code: `export type Quality = "high" | "medium" | "low" | "lowest";
+          code: `export type RenderQuality = "high" | "medium" | "low" | "lowest";
 
 /** \`"auto"\` starts at "high" and steps down only while the device really can't keep up. */
-export type QualitySetting = Quality | "auto";`,
+export type RenderQualitySetting = RenderQuality | "auto";`,
         },
       ],
     },
     {
       id: "assets-source",
       title: "assets/source",
-      paragraphs: [
-        "Detailed usage: /engine/models-textures. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/models-textures."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [["AssetSource", "TypeScript type", "/engine/models-textures"]],
@@ -848,9 +832,7 @@ export type AssetSource = number | string;`,
     {
       id: "assets-model",
       title: "assets/model",
-      paragraphs: [
-        "Detailed usage: /engine/models-textures. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/models-textures."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
@@ -914,9 +896,7 @@ export declare function loadModel(source: AssetSource, options?: ModelOptions): 
     {
       id: "assets-AssetCache",
       title: "assets/AssetCache",
-      paragraphs: [
-        "Detailed usage: /engine/cache-performance. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/cache-performance."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [["clearAssetCache", "Runtime API", "/engine/cache-performance"]],
@@ -940,9 +920,7 @@ export declare function clearAssetCache(): Promise<void>;`,
     {
       id: "assets-ProceduralCache",
       title: "assets/ProceduralCache",
-      paragraphs: [
-        "Detailed usage: /engine/cache-performance. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/cache-performance."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
@@ -985,9 +963,7 @@ export declare class ProceduralCache {
     {
       id: "assets-texture",
       title: "assets/texture",
-      paragraphs: [
-        "Detailed usage: /engine/models-textures. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/models-textures."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
@@ -1023,9 +999,7 @@ export declare function loadTexture(source: AssetSource): Promise<Texture>;`,
     {
       id: "assets-modelling",
       title: "assets/modelling",
-      paragraphs: [
-        "Detailed usage: /engine/solid-modelling. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/solid-modelling."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
@@ -1033,8 +1007,8 @@ export declare function loadTexture(source: AssetSource): Promise<Texture>;`,
           ["solidGeometry", "Runtime API", "/engine/solid-modelling"],
           ["createSolid", "Runtime API", "/engine/solid-modelling"],
           ["optimizeGeometry", "Runtime API", "/engine/solid-modelling"],
-          ["geometryLods", "Runtime API", "/engine/solid-modelling"],
-          ["geometryStats", "Runtime API", "/engine/solid-modelling"],
+          ["createGeometryLods", "Runtime API", "/engine/solid-modelling"],
+          ["getGeometryStats", "Runtime API", "/engine/solid-modelling"],
           ["deformGeometry", "Runtime API", "/engine/solid-modelling"],
           ["DisplacementOptions", "TypeScript type", "/engine/solid-modelling"],
           ["SolidOptions", "TypeScript type", "/engine/solid-modelling"],
@@ -1187,7 +1161,7 @@ export declare function optimizeGeometry(geometry: Geometry, options?: OptimizeO
  * Independently simplifies the original at each requested ratio, avoiding accumulated error.
  * Cache/register the results once. The caller selects a level when camera distance changes.
  */
-export declare function geometryLods(geometry: Geometry, ratios?: readonly number[], options?: Omit<OptimizeOptions, "ratio">): Geometry[];
+export declare function createGeometryLods(geometry: Geometry, ratios?: readonly number[], options?: Omit<OptimizeOptions, "ratio">): Geometry[];
 
 export interface GeometryStats {
     vertices: number;
@@ -1202,7 +1176,7 @@ export interface GeometryStats {
 }
 
 /** Cheap counts and bounds without registering a mesh. */
-export declare function geometryStats(geometry: Geometry): GeometryStats;
+export declare function getGeometryStats(geometry: Geometry): GeometryStats;
 
 /** Copies/sculpts one smooth surface and updates its normals. Deform hard-edged parts separately. */
 export declare function deformGeometry(geometry: Geometry, deform: (position: Vec3, uv: readonly [
@@ -1215,9 +1189,7 @@ export declare function deformGeometry(geometry: Geometry, deform: (position: Ve
     {
       id: "assets-loft",
       title: "assets/loft",
-      paragraphs: [
-        "Detailed usage: /engine/surfaces-lofts. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/surfaces-lofts."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
@@ -1275,14 +1247,12 @@ export declare function smoothCurve(points: readonly (readonly [
     {
       id: "assets-surface",
       title: "assets/surface",
-      paragraphs: [
-        "Detailed usage: /engine/surfaces-lofts. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/surfaces-lofts."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
           ["parametricSurface", "Runtime API", "/engine/surfaces-lofts"],
-          ["SurfaceOptions", "TypeScript type", "/engine/surfaces-lofts"],
+          ["ParametricSurfaceOptions", "TypeScript type", "/engine/surfaces-lofts"],
         ],
       },
       examples: [
@@ -1290,7 +1260,7 @@ export declare function smoothCurve(points: readonly (readonly [
           title: "assets/surface declarations",
           platform: "shared",
           language: "typescript",
-          code: `export interface SurfaceOptions {
+          code: `export interface ParametricSurfaceOptions {
     uSegments?: number;
     vSegments?: number;
     /** Match the first/last positions and smooth their normals, keeping separate 0/1 UVs. */
@@ -1304,16 +1274,14 @@ export declare function smoothCurve(points: readonly (readonly [
  * Use for terrain, cloth, wings, twisted ribbons and custom mathematical forms. Wrapped edges
  * retain texture seams; coincident pole vertices share normals. Degenerate triangles are omitted.
  */
-export declare function parametricSurface(sample: (u: number, v: number) => Vec3, options?: SurfaceOptions): Geometry;`,
+export declare function parametricSurface(sample: (u: number, v: number) => Vec3, options?: ParametricSurfaceOptions): Geometry;`,
         },
       ],
     },
     {
       id: "assets-shape",
       title: "assets/shape",
-      paragraphs: [
-        "Detailed usage: /engine/procedural-geometry. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/procedural-geometry."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
@@ -1330,7 +1298,7 @@ export declare function parametricSurface(sample: (u: number, v: number) => Vec3
           ["FaceColor", "TypeScript type", "/engine/procedural-geometry"],
           ["Geometry", "TypeScript type", "/engine/procedural-geometry"],
           ["LatheOptions", "TypeScript type", "/engine/procedural-geometry"],
-          ["Part", "TypeScript type", "/engine/procedural-geometry"],
+          ["GeometryPart", "TypeScript type", "/engine/procedural-geometry"],
           ["ShapeOptions", "TypeScript type", "/engine/procedural-geometry"],
           ["SurfaceColor", "TypeScript type", "/engine/procedural-geometry"],
           ["SurfacePoint", "TypeScript type", "/engine/procedural-geometry"],
@@ -1362,7 +1330,7 @@ export declare class Path {
     moveTo(x: number, y: number): this;
     lineTo(x: number, y: number): this;
     /** A quadratic Bézier through control point (cx, cy) to (x, y). */
-    quadTo(cx: number, cy: number, x: number, y: number): this;
+    quadraticTo(cx: number, cy: number, x: number, y: number): this;
     /** A cubic Bézier through control points (c1x, c1y) and (c2x, c2y) to (x, y). */
     cubicTo(c1x: number, c1y: number, c2x: number, c2y: number, x: number, y: number): this;
     /**
@@ -1373,13 +1341,13 @@ export declare class Path {
     /** Closes the current contour back to its first point. */
     close(): this;
     /** A closed polygon through \`points\`. */
-    addPoly(points: readonly (readonly [
+    addPolygon(points: readonly (readonly [
         number,
         number
     ])[], close?: boolean): this;
     addRect(x: number, y: number, width: number, height: number): this;
     /** A rectangle with corners rounded by \`radius\` (or [rx, ry]). */
-    addRRect(x: number, y: number, width: number, height: number, radius: number | readonly [
+    addRoundedRect(x: number, y: number, width: number, height: number, radius: number | readonly [
         number,
         number
     ]): this;
@@ -1398,7 +1366,7 @@ export declare class Path {
     /** A copy moved by (dx, dy) and scaled by sx, sy (about the origin, before moving). */
     transform(sx: number, sy?: number, dx?: number, dy?: number): Path;
     /** The flattened contours (curves turned into points), y down as drawn. */
-    toPoints(): P2[][];
+    toContours(): P2[][];
     /** [minX, minY, maxX, maxY], or undefined for an empty path. */
     bounds(): [
         number,
@@ -1526,7 +1494,7 @@ export type TubeOptions = {
  */
 export declare function tube(points: readonly Vec3[], options?: TubeOptions): Geometry;
 
-export type Part = {
+export type GeometryPart = {
     geometry: Geometry;
     position?: Vec3;
     /** A quaternion [x, y, z, w], as entities use. */
@@ -1540,7 +1508,7 @@ export type Part = {
  * Bakes parts into one geometry, each scaled, rotated, moved and colored. One mesh draws in one
  * instanced call and moves, spins and slices as one entity.
  */
-export declare function merge(parts: readonly Part[]): Geometry;
+export declare function merge(parts: readonly GeometryPart[]): Geometry;
 
 export type ShapeOptions = {
     /** Clean/optimize before upload, or simplify within an error bound. Built once, then shared. Default false. */
@@ -1572,9 +1540,7 @@ export declare function createShape(geometry: Geometry, options?: ShapeOptions):
     {
       id: "assets-font",
       title: "assets/font",
-      paragraphs: [
-        "Detailed usage: /engine/text-fonts. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/text-fonts."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
@@ -1645,14 +1611,12 @@ export declare function measureText(font: Font, text: string, options?: TextLayo
     {
       id: "media-audio",
       title: "media/audio",
-      paragraphs: [
-        "Detailed usage: /engine/audio-haptics. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/audio-haptics."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
           ["audio", "Runtime API", "/engine/audio-haptics"],
-          ["PlayOptions", "TypeScript type", "/engine/audio-haptics"],
+          ["AudioPlayOptions", "TypeScript type", "/engine/audio-haptics"],
           ["Sound", "TypeScript type", "/engine/audio-haptics"],
           ["SoundBank", "TypeScript type", "/engine/audio-haptics"],
           ["SoundSource", "TypeScript type", "/engine/audio-haptics"],
@@ -1674,7 +1638,7 @@ export type Voice = number & {
     readonly __voice: unique symbol;
 };
 
-export type PlayOptions = {
+export type AudioPlayOptions = {
     /** 0..2. Default 1. */
     volume?: number;
     /** -1 left .. 1 right. Default 0. */
@@ -1695,14 +1659,14 @@ export declare class SoundBank<K extends string> {
     constructor(sources: Record<K, SoundSource>);
     /** The sound, once loaded (e.g. for an entity's \`impact.sound\`). */
     get(name: K): Sound | undefined;
-    play(name: K, options?: PlayOptions): Voice | null;
+    play(name: K, options?: AudioPlayOptions): Voice | null;
 }
 
 export declare const audio: {
     /** Initializes the engine and loads named sounds into its mixer. Each asset decodes once per session. */
     load<K extends string>(sources: Record<K, SoundSource>): SoundBank<K>;
     /** Plays a sound (low latency: mixed in Rust on the audio thread). Returns null if it couldn't play. */
-    play(sound: Sound, { volume: v, pan, pitch, loop }?: PlayOptions): Voice | null;
+    play(sound: Sound, { volume: v, pan, pitch, loop }?: AudioPlayOptions): Voice | null;
     stop(voice: Voice | null | undefined): void;
     muted: boolean;
     /** Master volume, 0..2. */
@@ -1716,9 +1680,7 @@ export declare const audio: {
     {
       id: "media-haptics",
       title: "media/haptics",
-      paragraphs: [
-        "Detailed usage: /engine/audio-haptics. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/audio-haptics."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
@@ -1759,9 +1721,7 @@ export declare const haptics: {
     {
       id: "input-Joystick",
       title: "input/Joystick",
-      paragraphs: [
-        "Detailed usage: /engine/input-picking. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/input-picking."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
@@ -1796,9 +1756,7 @@ export declare function Joystick({ state, size, style }: JoystickProps): import(
     {
       id: "types",
       title: "types",
-      paragraphs: [
-        "Detailed usage: /engine/render-source. These declarations describe the public contract; internal bridge methods are intentionally excluded.",
-      ],
+      paragraphs: ["Usage and examples: /engine/render-source."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [

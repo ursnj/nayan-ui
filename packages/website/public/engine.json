@@ -45,7 +45,12 @@
     "cleanup": "world.dispose()",
     "viewProps": "import type { GameViewProps } from \"@nayan-ui/engine\"",
     "assetSource": "AssetSource = string | number; URLs on React, Metro require(...) or URIs on React Native",
-    "types": "GameViewProps, JoystickProps, AssetSource, ClipOptions and ScreenPlane are public; import them instead of duplicating engine option shapes."
+    "types": "Import GameViewProps, GameViewStats, JoystickProps, AssetSource, AudioPlayOptions, ClipOptions, ScreenPlane, GeometryPart and ParametricSurfaceOptions.",
+    "geometryStats": "getGeometryStats(geometry)",
+    "geometryLods": "createGeometryLods(geometry, [1, 0.5, 0.25])",
+    "meshIdScanLimit": "getMeshIdLimit(); exclusive upper bound, not a mesh count",
+    "skinnedVertices": "world.sampleSkinnedVertices(entity, indices, output, nextDt)",
+    "path": "new Path().addRoundedRect(x, y, width, height, radius); quadraticTo and toContours use descriptive names."
   },
   "distinctions": {
     "entity": "A handle for one object in one World",

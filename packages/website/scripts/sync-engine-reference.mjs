@@ -66,8 +66,8 @@ const sections = [
     id: "reading-the-reference",
     title: "Reading the reference",
     paragraphs: [
-      "This reference inventories every named export of the audited engine entry point. Definitions are taken from its generated browser declarations, with private class members and internal imports omitted. Shared gameplay APIs have the same signatures on React and React Native; the host’s style type and asset source differ as described in the platform guides.",
-      "The code below is a declaration reference, not an executable application. Types imported elsewhere in a module are defined in the other reference sections. Local support types are included when a public signature needs them. Use the linked concept guide for behavior, lifecycle and runnable usage examples.",
+      "Every public export is listed below. Signatures come from built declarations. Gameplay APIs are shared; host styles and asset sources follow the platform guides.",
+      "Use declarations to look up types. Use the runnable examples and linked guides for setup, behavior and cleanup.",
     ],
   },
 ];
@@ -116,9 +116,7 @@ for (const [module, symbols] of groups) {
   sections.push({
     id: module.replaceAll("/", "-"),
     title: module,
-    paragraphs: [
-      `Detailed usage: /engine/${targets[module]}. These declarations describe the public contract; internal bridge methods are intentionally excluded.`,
-    ],
+    paragraphs: [`Usage and examples: /engine/${targets[module]}.`],
     table: {
       headers: ["Export", "Kind", "Guide"],
       rows: symbols.map((s) => [

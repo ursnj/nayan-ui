@@ -13,6 +13,6 @@
       "permissions": ["android.permission.VIBRATE"]
     },
     "plugins": ["expo-dev-client", ["./plugins/withAndroidMinSdk", 26]],
-    "userInterfaceStyle": "dark"
+    "userInterfaceStyle": "automatic"
   }
 }

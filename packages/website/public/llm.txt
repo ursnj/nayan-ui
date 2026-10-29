@@ -441,3 +441,10 @@ building resources. Imported-character loaders rely on the engine’s automatic 
 independently for screenshots/drawings. Preserve library factory caches that skip expensive JS
 construction. Do not clear stored assets during Stop/replay/unmount. Game components still use
 React Native host APIs; see /engine/react for browser scenes using the shared engine API.
+
+Public naming: use GameViewStats for rendering measurements, AudioPlayOptions for sound settings,
+GeometryPart for merged mesh parts, ParametricSurfaceOptions for sampled surfaces, and
+RenderQuality / RenderQualitySetting for renderer quality. Query geometry with getGeometryStats;
+build detail levels with createGeometryLods. getMeshIdLimit returns an exclusive mesh-ID boundary.
+Sample animated vertices with World.sampleSkinnedVertices. Path exposes addPolygon,
+addRoundedRect, quadraticTo and toContours. Use these names in new examples and applications.

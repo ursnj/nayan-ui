@@ -4,8 +4,7 @@ export const PracticalGuides: EngineGuide[] = [
   {
     slug: "first-game",
     title: "Build your first game",
-    description:
-      "Make a complete tap-to-collect game. Clear five green cubes in 15 seconds, earn points, pause, stop and play again. Use the same game code in React and React Native.",
+    description: "Build a complete tap game with scoring, a countdown, pause and replay.",
     sections: [
       {
         id: "what-you-will-build",
@@ -253,7 +252,7 @@ export default function TapGameScreen() {
     slug: "recipes",
     title: "Common game recipes",
     description:
-      "Small, copyable answers to “How do I…?” Each recipe explains where the code belongs, how to connect it, and what should happen.",
+      "Copy small examples for movement, collisions, input, scoring, animation and assets.",
     sections: [
       {
         id: "how-to-use-these-examples",
@@ -551,8 +550,7 @@ export function rewardPickup(bank: SoundBank<"pickup">, enableSounds: boolean, e
   {
     slug: "agent-guide",
     title: "Engine guide for AI agents",
-    description:
-      "A compact implementation contract for coding agents: which files to create, which APIs to call, how to share a game across hosts, and how to verify it.",
+    description: "Give coding agents the correct APIs, file structure and verification steps.",
     sections: [
       {
         id: "read-these-pages-first",

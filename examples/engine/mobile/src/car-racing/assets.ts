@@ -1,12 +1,7 @@
 import type { AssetSources } from "@nayan-engine-example/shared/car-racing";
 
 export const sources: AssetSources = {
-  models: {
-    car_body: require("@nayan-engine-example/shared/car-racing/assets/models/car_body.glb"),
-    car_glass: require("@nayan-engine-example/shared/car-racing/assets/models/car_glass.glb"),
-    car_trim: require("@nayan-engine-example/shared/car-racing/assets/models/car_trim.glb"),
-    tree: require("@nayan-engine-example/shared/car-racing/assets/models/tree.glb"),
-  },
+  font: require("@nayan-engine-example/shared/car-racing/assets/fonts/Inter-SemiBold.ttf"),
   textures: {
     asphalt: require("@nayan-engine-example/shared/car-racing/assets/textures/asphalt.png"),
     facade: require("@nayan-engine-example/shared/car-racing/assets/textures/facade.png"),
@@ -20,6 +15,7 @@ export const sources: AssetSources = {
     nitro: require("@nayan-engine-example/shared/car-racing/assets/sfx/nitro.wav"),
     point: require("@nayan-engine-example/shared/car-racing/assets/sfx/point.wav"),
     hit: require("@nayan-engine-example/shared/car-racing/assets/sfx/hit.wav"),
+    win: require("@nayan-engine-example/shared/car-racing/assets/sfx/win.wav"),
     die: require("@nayan-engine-example/shared/car-racing/assets/sfx/die.wav"),
     bump: require("@nayan-engine-example/shared/car-racing/assets/sfx/bump.wav"),
   },

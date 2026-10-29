@@ -1,6 +1,24 @@
 // Everything Car Racing draws: the track (where a distance along the road and an offset across it are
 // in the world), the cars, the road with its roadside and horizon, and fire.
-import type { Camera, Color, Entity, Model, Quat, Texture, Vec3, World } from "@nayan-ui/engine";
+import {
+  merge,
+  tube,
+  type Font,
+  type Camera,
+  type Color,
+  type Entity,
+  type Model,
+  type Quat,
+  type Texture,
+  type Vec3,
+  type World,
+  block,
+} from "@nayan-ui/engine";
+
+type GeometryPart = Parameters<typeof merge>[0][number];
+import { createGameMesh as createShape, cacheGameAsset } from "./cache";
+
+import { CAR_LAMPS } from "./meshes";
 import {
   BEHIND,
   LAMP,
@@ -18,17 +36,6 @@ import {
 export const rand = (min: number, max: number) => min + Math.random() * (max - min);
 export const pick = <T>(items: readonly T[]) => items[Math.floor(Math.random() * items.length)]!;
 export const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
-
-function quatMul(a: Quat, b: Quat): Quat {
-  const [ax, ay, az, aw] = a;
-  const [bx, by, bz, bw] = b;
-  return [
-    aw * bx + ax * bw + ay * bz - az * by,
-    aw * by - ax * bz + ay * bw + az * bx,
-    aw * bz + ax * by - ay * bx + az * bw,
-    aw * bw - ax * bx - ay * by - az * bz,
-  ];
-}
 
 // ── Track ─────────────────────────────────────────────────────────────
 
@@ -92,12 +99,29 @@ export function placeAt(t: Sample, d: number, h: number, out: [number, number, n
 }
 
 /** Facing along `heading` (turned `yaw` further right), nose up by `pitch`, rolled left by `roll`. */
-export function orient(heading: number, pitch: number, yaw = 0, roll = 0): Quat {
+export function orient(
+  heading: number,
+  pitch: number,
+  yaw = 0,
+  roll = 0,
+  out: [number, number, number, number] = [0, 0, 0, 1],
+): Quat {
   const a = -(heading + yaw) / 2;
-  const qy: Quat = [0, Math.sin(a), 0, Math.cos(a)];
-  const qx: Quat = [Math.sin(pitch / 2), 0, 0, Math.cos(pitch / 2)];
-  const qz: Quat = [0, 0, Math.sin(roll / 2), Math.cos(roll / 2)];
-  return quatMul(quatMul(qy, qx), qz);
+  const sy = Math.sin(a),
+    cy = Math.cos(a),
+    sx = Math.sin(pitch / 2),
+    cx = Math.cos(pitch / 2);
+  const sz = Math.sin(roll / 2),
+    cz = Math.cos(roll / 2);
+  const x = cy * sx,
+    y = sy * cx,
+    z = -sy * sx,
+    w = cy * cx;
+  out[0] = x * cz + y * sz;
+  out[1] = -x * sz + y * cz;
+  out[2] = w * sz + z * cz;
+  out[3] = w * cz - z * sz;
+  return out;
 }
 
 // ── Cars ──────────────────────────────────────────────────────────────
@@ -111,28 +135,44 @@ export function spawnCar(world: World, a: Assets, paint: Color, position: Vec3, 
   const body = world.spawn({ mesh: model.body, parent: root, position: offset, color: paint });
   const glass = world.spawn({ mesh: model.glass, parent: root, position: offset });
   const trim = world.spawn({ mesh: model.trim, parent: root, position: offset });
-  if (night) {
-    // Headlights and the tail-light bar glow, over where the model has them.
-    for (const x of [-0.6, 0.6]) {
+  const car = { root, body, glass, trim, lights: [] as Entity[] };
+  setCarNight(world, car, night, model.size[1]);
+  return car;
+}
+
+/** Toggle lamp meshes in place so switching theme preserves every car's pose and physics. */
+export function setCarNight(
+  world: World,
+  car: { root: Entity; lights: Entity[] },
+  night: boolean,
+  height: number,
+) {
+  for (const entity of car.lights) world.despawn(entity);
+  car.lights.length = 0;
+  if (!night || !world.has(car.root)) return;
+  const lift = -height / 2;
+  for (const [x, y, z] of CAR_LAMPS.headlights)
+    car.lights.push(
       world.spawn({
         mesh: "cube",
-        parent: root,
-        position: [x, lift + 0.66, -2.04],
-        scale: [0.42, 0.06, 0.05],
+        parent: car.root,
+        position: [x, lift + y, z],
+        scale: CAR_LAMPS.headlightSize,
         color: [2, 1.95, 1.7],
         pickable: false,
-      });
-    }
+      }),
+    );
+  const [x, y, z] = CAR_LAMPS.tail;
+  car.lights.push(
     world.spawn({
       mesh: "cube",
-      parent: root,
-      position: [0, lift + 0.96, 1.87],
-      scale: [1.2, 0.045, 0.04],
+      parent: car.root,
+      position: [x, lift + y, z],
+      scale: CAR_LAMPS.tailSize,
       color: [2, 0.16, 0.1],
       pickable: false,
-    });
-  }
-  return { root, body, glass, trim };
+    }),
+  );
 }
 
 // ── Road and scenery ──────────────────────────────────────────────────
@@ -140,7 +180,12 @@ export function spawnCar(world: World, a: Assets, paint: Color, position: Vec3, 
 // Segments that leapfrog ahead, the roadside for each zone, and the mountains on the horizon.
 
 /** A stretch of road; `props` is its scenery, rebuilt for the zone it lands in each time it jumps ahead. */
-export type Segment = { root: Entity; s: number; props: Entity[] };
+export type Segment = {
+  root: Entity;
+  s: number;
+  props: Entity[];
+  lights: { entity: Entity; day: Color; night: Color }[];
+};
 /** What the scenery needs from the game. */
 export type SceneryContext = { world: World; assets: Assets; night: boolean; track: Track };
 
@@ -189,7 +234,7 @@ export function buildRoad(world: World, a: Assets): Segment[] {
       add("cube", [side * (ROAD_HALF + 1.1), RS + 0.55, 0], [0.1, 0.26, len], RAIL);
       add("cube", [side * (ROAD_HALF + 1.15), RS + 0.3, 0], [0.12, 0.6, 0.12], [0.45, 0.46, 0.5]);
     }
-    segments.push({ root, s: (i - BEHIND) * SEG_LEN, props: [] });
+    segments.push({ root, s: (i - BEHIND) * SEG_LEN, props: [], lights: [] });
   }
   return segments;
 }
@@ -223,29 +268,47 @@ export function buildHorizon(world: World, night: boolean): Entity {
     });
   }
 
+  setHorizonNight(world, horizon, night);
+  return horizon;
+}
+
+const nightSkies = new WeakMap<World, Map<Entity, Entity[]>>();
+export function setHorizonNight(world: World, horizon: Entity, night: boolean) {
+  let skies = nightSkies.get(world);
+  if (!skies) {
+    skies = new Map();
+    nightSkies.set(world, skies);
+  }
+  const lights = skies.get(horizon) ?? [];
+  for (const entity of lights) world.despawn(entity);
+  lights.length = 0;
   if (night) {
     // A moon and stars, riding along with the horizon.
-    world.spawn({
-      mesh: "sphere",
-      parent: horizon,
-      position: [-120, 120, -230],
-      scale: 26,
-      color: [2, 1.95, 1.8],
-      pickable: false,
-    });
-    for (let i = 0; i < 70; i++) {
-      const angle = rand(0, Math.PI * 2);
+    lights.push(
       world.spawn({
         mesh: "sphere",
         parent: horizon,
-        position: [Math.sin(angle) * 280, rand(50, 190), -Math.cos(angle) * 280],
-        scale: rand(0.6, 1.4),
-        color: [2, 2, 2.2],
+        position: [-120, 120, -230],
+        scale: 26,
+        color: [2, 1.95, 1.8],
         pickable: false,
-      });
+      }),
+    );
+    for (let i = 0; i < 70; i++) {
+      const angle = rand(0, Math.PI * 2);
+      lights.push(
+        world.spawn({
+          mesh: "sphere",
+          parent: horizon,
+          position: [Math.sin(angle) * 280, rand(50, 190), -Math.cos(angle) * 280],
+          scale: rand(0.6, 1.4),
+          color: [2, 2, 2.2],
+          pickable: false,
+        }),
+      );
     }
   }
-  return horizon;
+  skies.set(horizon, lights);
 }
 
 /** Puts a segment where its distance along the track is. */
@@ -274,8 +337,15 @@ const ROOFS: Color[] = [
 /** Fills a segment's roadside for its zone. Positions are in the segment's frame: x across, z along, y up. */
 export function spawnProps(g: SceneryContext, seg: Segment) {
   const { world, assets: a } = g;
-  const add = (options: Parameters<World["spawn"]>[0] & {}) =>
-    seg.props.push(world.spawn({ parent: seg.root, pickable: false, ...options }));
+  const add = (options: Parameters<World["spawn"]>[0] & {}) => {
+    const entity = world.spawn({ parent: seg.root, pickable: false, ...options });
+    seg.props.push(entity);
+    return entity;
+  };
+  const addLight = (options: Parameters<World["spawn"]>[0], day: Color, night: Color) => {
+    const entity = add({ ...options, color: g.night ? night : day });
+    seg.lights.push({ entity, day, night });
+  };
   const index = Math.round(seg.s / SEG_LEN);
   const zone = zoneAt(seg.s);
   const z = () => rand(-SEG_LEN / 2, SEG_LEN / 2);
@@ -440,12 +510,15 @@ export function spawnProps(g: SceneryContext, seg: Segment) {
       scale: [1.9, 0.1, 0.12],
       color: [0.35, 0.36, 0.4],
     });
-    add({
-      mesh: "cube",
-      position: [side * (ROAD_HALF - 0.05), RS + 6.25, 0],
-      scale: [0.7, 0.1, 0.32],
-      color: g.night ? LAMP_LIT : LAMP,
-    });
+    addLight(
+      {
+        mesh: "cube",
+        position: [side * (ROAD_HALF - 0.05), RS + 6.25, 0],
+        scale: [0.7, 0.1, 0.32],
+      },
+      LAMP,
+      LAMP_LIT,
+    );
   }
   if (index % 11 === 5) {
     const x = -side * (ROAD_HALF + 6);
@@ -456,14 +529,17 @@ export function spawnProps(g: SceneryContext, seg: Segment) {
         scale: [0.25, 5, 0.25],
         color: [0.3, 0.3, 0.34],
       });
-    add({
-      mesh: "cube",
-      texture: pick(a.ads),
-      position: [x, RS + 6, 0],
-      scale: [7.5, 3.6, 0.25],
-      rotation: [0, Math.sin((side * 0.35) / 2), 0, Math.cos((side * 0.35) / 2)],
-      color: g.night ? [1.7, 1.7, 1.7] : [1, 1, 1],
-    }); // lit at night
+    addLight(
+      {
+        mesh: "cube",
+        texture: pick(a.ads),
+        position: [x, RS + 6, 0],
+        scale: [7.5, 3.6, 0.25],
+        rotation: [0, Math.sin((side * 0.35) / 2), 0, Math.cos((side * 0.35) / 2)],
+      },
+      [1, 1, 1],
+      [1.7, 1.7, 1.7],
+    ); // lit at night
   }
 }
 
@@ -475,6 +551,7 @@ export function recycleRoad(g: SceneryContext, segments: Segment[], s: number) {
     placeSegment(g, seg);
     for (const e of seg.props) g.world.despawn(e);
     seg.props.length = 0;
+    seg.lights.length = 0;
     spawnProps(g, seg);
   }
 }
@@ -718,4 +795,159 @@ export function burn(world: World, camera: Camera, fires: Fire[], time: number, 
       });
     }
   }
+}
+
+// ── Start and finish ──────────────────────────────────────────────────
+
+/** Gantry posts stand outside the rails; the banner and its crossbar span the road between them. */
+const GANTRY_X = ROAD_HALF + 1.7;
+const GANTRY_H = 6.4;
+const BANNER_Y = 5.5;
+const markerMeshes = new Map<string, Model>();
+const markerMesh = (key: string, build: () => Model) => {
+  let m = markerMeshes.get(key);
+  if (!m) markerMeshes.set(key, (m = cacheGameAsset("car-racing/CarRacingScene:" + key, build)));
+  return m;
+};
+
+/** Twin posts, a crossbar and a banner across the road, over the finish. */
+function gantryParts(frame: Color, banner: Color): GeometryPart[] {
+  const parts: GeometryPart[] = [];
+  for (const side of [-1, 1]) {
+    parts.push({
+      geometry: block(0.55, GANTRY_H, 0.55, 6),
+      position: [side * GANTRY_X, GANTRY_H / 2, 0],
+      color: frame,
+    });
+    parts.push({
+      geometry: block(0.9, 0.3, 0.9, 6),
+      position: [side * GANTRY_X, 0.15, 0],
+      color: frame,
+    }); // footings
+  }
+  parts.push(
+    {
+      geometry: block(GANTRY_X * 2 + 0.9, 0.45, 0.6),
+      position: [0, GANTRY_H + 0.1, 0],
+      color: frame,
+    },
+    {
+      geometry: block(GANTRY_X * 2 - 1.4, 1.25, 0.12),
+      position: [0, BANNER_Y, 0.08],
+      color: banner,
+    },
+    {
+      geometry: block(GANTRY_X * 2 - 2.2, 0.08, 0.04),
+      position: [0, BANNER_Y - 0.5, 0.15],
+      color: [1, 0.9, 0.5],
+    },
+    {
+      geometry: block(GANTRY_X * 2 - 2.2, 0.08, 0.04),
+      position: [0, BANNER_Y + 0.5, 0.15],
+      color: [1, 0.9, 0.5],
+    },
+  );
+  return parts;
+}
+
+/** The finish: a checkered band across the road under a golden gantry, a red banner and pennants. */
+const finishMesh = () =>
+  markerMesh("finish", () => {
+    const squares: GeometryPart[] = [];
+    const size = 0.7;
+    const across = Math.ceil((ROAD_HALF * 2 + 0.6) / size);
+    for (let i = 0; i < across; i++)
+      for (let j = 0; j < 2; j++)
+        squares.push({
+          geometry: block(size, 0.03, size, 8),
+          position: [(i - (across - 1) / 2) * size, 0.016, (j - 0.5) * size],
+          color: (i + j) % 2 ? [0.96, 0.96, 0.94] : [0.08, 0.08, 0.1],
+        });
+    const pennants: GeometryPart[] = [-4, -2, 0, 2, 4].map((x, i) => ({
+      geometry: tube(
+        [
+          [x, GANTRY_H - 0.15, 0.32],
+          [x + 0.06, GANTRY_H - 0.8, 0.33],
+        ],
+        {
+          radius: (t) => 0.2 * (1 - t),
+          shape: (a) => 0.2 + 0.8 * Math.abs(Math.cos(a * Math.PI * 2)),
+          sides: 6,
+        },
+      ),
+      color: (
+        [
+          [0.2, 0.5, 0.95],
+          [1, 0.8, 0.15],
+          [0.2, 0.75, 0.3],
+        ] as Color[]
+      )[i % 3]!,
+    }));
+    return createShape(
+      merge([...squares, ...gantryParts([0.95, 0.72, 0.2], [0.85, 0.12, 0.14]), ...pennants]),
+      { center: false, shine: 0.5 },
+    );
+  });
+
+/** The start line: a white band across the road. */
+const startMesh = () =>
+  markerMesh("start", () =>
+    createShape(
+      merge([
+        {
+          geometry: block(ROAD_HALF * 2 + 0.4, 0.03, 0.5, 8),
+          position: [0, 0.016, 0],
+          color: [0.96, 0.96, 0.92],
+        },
+      ]),
+      {
+        center: false,
+        shine: 0.3,
+      },
+    ),
+  );
+
+const markerSample = newSample();
+const markerAt: [number, number, number] = [0, 0, 0];
+
+/**
+ * The race's start line (at `startS`) and finish gate (at `finishS`), placed on the road and facing the
+ * driver, with FINISH written on the gate's banner once the HUD's font is in.
+ */
+export function spawnRaceMarkers(
+  world: World,
+  track: Track,
+  startS: number,
+  finishS: number,
+  font: Font,
+) {
+  const place = (mesh: Model, s: number, label?: string) => {
+    const t = track.sample(s, markerSample);
+    placeAt(t, 0, 0, markerAt);
+    const root = world.spawn({
+      mesh,
+      position: [markerAt[0], markerAt[1], markerAt[2]],
+      rotation: orient(t.heading, t.pitch),
+      pickable: false,
+    });
+    if (!label) return root;
+    world.spawn({
+      text: label,
+      font,
+      parent: root,
+      position: [0, BANNER_Y - 0.36, 0.16],
+      scale: 0.78,
+      color: [1, 1, 1],
+      letterSpacing: 0.12,
+      pickable: false,
+    });
+    return root;
+  };
+  return { start: place(startMesh(), startS), finish: place(finishMesh(), finishS, "FINISH") };
+}
+
+/** Reusable assets; the game loader advances one builder per frame. */
+export function* warmAssets(): Iterable<() => unknown> {
+  yield finishMesh;
+  yield startMesh;
 }

@@ -4,8 +4,7 @@ export const WorldRenderingGuides: EngineGuide[] = [
   {
     slug: "world-entities",
     title: "Worlds, entities and lifecycle",
-    description:
-      "Create fixed-capacity worlds, compose reusable entities, drive motion and parent transforms, and release each world predictably.",
+    description: "Create entities, move them, query their state and clean up each scene.",
     sections: [
       {
         id: "create-set-and-remove",
@@ -128,8 +127,7 @@ export function makeTracker(world: World, entity: Entity) {
   {
     slug: "game-view",
     title: "GameView, quality and overlays",
-    description:
-      "Configure the shared frame loop, rendering surface, errors, performance reporting and screen-space engine UI.",
+    description: "Connect the frame loop, gestures, quality settings and overlays.",
     sections: [
       {
         id: "gameview-props",
@@ -162,14 +160,14 @@ export function makeTracker(world: World, entity: Entity) {
               "overlay / onOverlayTouch",
               "A separate screen-space RenderSource and touch capture callback.",
             ],
-            ["onStats", "Once-per-second GameStats reporting."],
+            ["onStats", "Once-per-second GameViewStats reporting."],
             ["onError", "Receives initialization/rendering errors. Defaults to console.error."],
           ],
         },
       },
       {
         id: "quality-levels-and-statistics",
-        title: "Quality levels and statistics",
+        title: "Render quality levels and statistics",
         paragraphs: [
           "Auto quality starts high and adjusts when sustained drawing cost cannot keep up. Lower shadow detail comes first, followed by antialiasing and resolution. It does not fix expensive JavaScript gameplay. updateMs and renderMs measure CPU-side time, not a GPU timestamp or the full cost of every browser compositor operation.",
         ],
@@ -195,7 +193,7 @@ export function Preview({ source }: { source: RenderSource }) {
             ["low", "Pixel ratio cap 3; 1× MSAA; 1024 shadow map; hard shadows."],
             ["lowest", "Pixel ratio cap 2; 1× MSAA; 512 shadow map; hard shadows."],
             [
-              "GameStats",
+              "GameViewStats",
               "fps, updateMs, renderMs, quality, backend. Browser backend is webgpu or gl; native is metal, vulkan or gl.",
             ],
           ],
@@ -234,8 +232,7 @@ export function SceneWithHud({ world, hud, onStart }: { world: World; hud: World
   {
     slug: "camera-lighting",
     title: "Camera, light, fog and materials",
-    description:
-      "Build perspective, orthographic and following cameras, then tune directional lighting, shadows and material color.",
+    description: "Set perspective, orthographic and following cameras, lighting and fog.",
     sections: [
       {
         id: "camera-configuration",
@@ -301,8 +298,7 @@ export function Evening({ world }: { world: World }) {
   {
     slug: "physics-collisions",
     title: "Physics, collisions and raycasts",
-    description:
-      "Use Rapier rigid bodies, custom colliders, collision layers, sensors, impulses and world-space raycasts through the shared API.",
+    description: "Add rigid bodies, sensors, collision filters, impulses and raycasts.",
     sections: [
       {
         id: "choose-a-body-and-collider",
@@ -416,8 +412,7 @@ export function groundBelow(world: World, x: number, y: number, z: number) {
   {
     slug: "animation",
     title: "Transform animation and springs",
-    description:
-      "Animate positions, rotations, scales and colors in the core, including keyframes, staggered groups, loops, relative turns and interruptible springs.",
+    description: "Animate transforms with keyframes, springs, loops and stagger.",
     sections: [
       {
         id: "targets-and-completion",

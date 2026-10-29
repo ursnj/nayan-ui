@@ -4,8 +4,7 @@ export const MediaPerformanceGuides: EngineGuide[] = [
   {
     slug: "solid-modelling",
     title: "Solid modelling, optimization and LOD",
-    description:
-      "Use immutable solid recipes for boolean forms and seeded displacement, then tessellate, optimize and reuse static geometry.",
+    description: "Build solids, combine shapes and prepare optimized geometry.",
     sections: [
       {
         id: "solid-constructors-and-operations",
@@ -40,11 +39,11 @@ export function createArch() {
         examples: [
           {
             title: "Inspect before registering",
-            code: `import { Solid, solidGeometry, geometryStats, createShape } from "@nayan-ui/engine";
+            code: `import { Solid, solidGeometry, getGeometryStats, createShape } from "@nayan-ui/engine";
 export function createRock() {
   const recipe = Solid.ellipsoid([1, 0.6, 0.8]).displace({ amplitude: 0.08, frequency: 3, seed: 42, octaves: 3 });
   const geometry = solidGeometry(recipe, { resolution: 32, uv: "xz" });
-  console.log(geometryStats(geometry));
+  console.log(getGeometryStats(geometry));
   return createShape(geometry, { optimize: true });
 }`,
             platform: "shared",
@@ -57,15 +56,15 @@ export function createRock() {
         title: "Optimize and select LOD explicitly",
         paragraphs: [
           "optimizeGeometry returns new geometry, cleaning unused/duplicate vertices and degenerate triangles, simplifying within an error bound and reordering for GPU reuse. Options are ratio in (0,1] (default 1, cleanup only), error in 0..1 (default 0.001) and lockBorders (default true). The error bound can prevent reaching the requested ratio.",
-          "geometryLods independently simplifies the original for strictly decreasing ratios (default [1,0.5,0.25]). It returns Geometry[], not an automatic runtime LOD system. Register/cache levels once and select an entity mesh when distance changes. Do not optimize skinned meshes or geometry whose exact vertex indices other code relies on.",
+          "createGeometryLods independently simplifies the original for strictly decreasing ratios (default [1,0.5,0.25]). It returns Geometry[], not an automatic runtime LOD system. Register/cache levels once and select an entity mesh when distance changes. Do not optimize skinned meshes or geometry whose exact vertex indices other code relies on.",
         ],
         examples: [
           {
             title: "Build selectable LOD meshes",
-            code: `import { geometryLods, geometryStats, createShape, type Geometry, type World, type Entity } from "@nayan-ui/engine";
+            code: `import { createGeometryLods, getGeometryStats, createShape, type Geometry, type World, type Entity } from "@nayan-ui/engine";
 export function prepareLods(geometry: Geometry) {
-  return geometryLods(geometry, [1, 0.5, 0.25], { error: 0.01, lockBorders: true }).map(level => {
-    console.log(geometryStats(level));
+  return createGeometryLods(geometry, [1, 0.5, 0.25], { error: 0.01, lockBorders: true }).map(level => {
+    console.log(getGeometryStats(level));
     return createShape(level, { center: false });
   });
 }
@@ -83,8 +82,7 @@ export function chooseLod(world: World, entity: Entity, levels: ReturnType<typeo
   {
     slug: "scoreboard-timers",
     title: "Scoreboards and game-time timers",
-    description:
-      "Keep scores, lives and clocks in the shared core, dispatch UI events during update, and schedule callbacks that pause with the game.",
+    description: "Track score, lives and time with clocks that pause with the game.",
     sections: [
       {
         id: "scoreboard-state-and-handlers",
@@ -171,8 +169,7 @@ export function scheduleEnemy(world: World) {
   {
     slug: "audio-haptics",
     title: "Audio, impact feedback and haptics",
-    description:
-      "Load WAV banks, manage individual voices and global preferences, and respect differences between native feedback and browser capabilities.",
+    description: "Load sounds, manage playback and respect feedback preferences.",
     sections: [
       {
         id: "load-a-named-sound-bank",
@@ -272,17 +269,41 @@ export function reward(enabled: boolean) {
   {
     slug: "cache-performance",
     title: "Procedural cache and performance",
-    description:
-      "Let the engine reuse asset work automatically. Learn scene ownership, optional custom factory persistence and advanced diagnostics.",
+    description: "Use automatic asset caching, clear saved data and control frame costs.",
     sections: [
       {
         id: "session-caches-and-persistent-geometry",
         title: "Session caches and persistent geometry",
         paragraphs: [
-          "Use loadModel, loadTexture, loadFont, audio.load, createShape and createSolid directly during setup. The engine owns resource reuse: concurrent file requests share work, and Rust owns shape hashing, normalization, optimization, solid generation and prepared-mesh reuse. Original model/texture/font/sound bytes and prepared geometry are saved by the core without a host storage adapter. A failed load can be retried. You do not need promise variables, asset maps or storage adapters for ordinary usage.",
-          "Temporary download bytes stay bounded in RAM. The current core hashes and caches prepared geometry in Rust instead of retaining JS geometry snapshots. Releasing temporary RAM never deletes saved records or invalidates model/texture/font/sound handles. Decoded registrations remain session resources; a new World gets independent actors while sharing assets. Disposing a world does not dispose shared assets.",
-          "Saved records have no TTL or automatic capacity eviction. Native Rust reads/writes app-private durable files (iOS Application Support and Android filesDir), without expo-file-system. WASM uses the same Rust validation/encoding with binary IndexedDB records, avoiding localStorage’s small quota and Base64 expansion. File assets load on demand. warmUpEngine hydrates recent prepared geometry into Rust (up to 64 MiB / 1,024 records); cold geometry outside that warm budget can be rebuilt on first use without deleting its saved record. The engine requests browser persistence; browser quotas, private mode, user clearing and permission decisions still apply. Storage denial/full storage/corrupt data fall back to rebuilding, without deleting other completed records. Use versioned asset URLs when file contents change.",
+          "Use the normal loaders and mesh factories during setup. The engine shares downloads, decoding and prepared models. Rust owns geometry preparation and persistent records. No application cache is needed.",
+          "Worlds own actors; assets are shared session resources. Disposing a world or releasing temporary bytes keeps loaded handles and saved records valid.",
+          "Saved records have no expiry or automatic eviction. Full or denied storage falls back to session resources; corrupt entries rebuild. Browser quotas and user clearing still apply. Use versioned URLs when assets change.",
         ],
+        table: {
+          headers: ["Storage", "Behavior"],
+          rows: [
+            [
+              "Native",
+              "Rust stores files in Application Support / filesDir. No Expo FileSystem dependency.",
+            ],
+            [
+              "Web",
+              "Binary IndexedDB records; Rust validates keys and checksums. No localStorage or Base64.",
+            ],
+            [
+              "Browser warm-up",
+              "Up to 64 MiB / 1,024 recent geometry records warm into Rust. Cold records may rebuild without deletion.",
+            ],
+            [
+              "RAM",
+              "Temporary source bytes are bounded. Releasing them never deletes saved files.",
+            ],
+            [
+              "Clear",
+              "clearAssetCache removes engine records after a user action; loaded handles remain usable.",
+            ],
+          ],
+        },
         examples: [
           {
             title: "Call the normal APIs on every scene setup",
@@ -379,8 +400,8 @@ export function animateSwarm(world: World, entities: readonly Entity[]) {
         id: "practical-budgets",
         title: "Practical budgets",
         paragraphs: [
-          "Prepare built-ins, geometry, fonts, sounds and model data before a run. Do not createShape/createSolid/loadModel/new World inside onUpdate. Reuse typed arrays for skinPoints and position queries, use instancing for repeated static models, and limit transparent overlap and shadow extent.",
-          "The native bridge aliases fixed world buffers; browser code maintains stable JavaScript buffers while copying across WASM memory boundaries so memory growth cannot detach arrays held by consumers. Avoid assuming web and native have identical zero-copy behavior or identical performance. Profile actual target devices with GameStats and a production build.",
+          "Prepare built-ins, geometry, fonts, sounds and model data before a run. Do not createShape/createSolid/loadModel/new World inside onUpdate. Reuse typed arrays for sampleSkinnedVertices and position queries, use instancing for repeated static models, and limit transparent overlap and shadow extent.",
+          "The native bridge aliases fixed world buffers; browser code maintains stable JavaScript buffers while copying across WASM memory boundaries so memory growth cannot detach arrays held by consumers. Avoid assuming web and native have identical zero-copy behavior or identical performance. Profile actual target devices with GameViewStats and a production build.",
         ],
       },
     ],
@@ -388,8 +409,7 @@ export function animateSwarm(world: World, entities: readonly Entity[]) {
   {
     slug: "render-source",
     title: "Custom RenderSource integration",
-    description:
-      "Feed GameView from a custom simulation using the same instance-buffer layout, or use World as the supported high-level source.",
+    description: "Render a custom simulation using the shared instance-buffer contract.",
     sections: [
       {
         id: "instance-buffer-contract",
@@ -420,7 +440,7 @@ export async function createCustomSource(): Promise<RenderSource> {
         title: "Use custom sources deliberately",
         paragraphs: [
           "Pass a custom source to GameView and update its arrays in onUpdate. It does not acquire World’s physics, entity handles, timers, animation or pick methods automatically. Optional nativeWorld belongs to a real World and associates skeletal draw data; do not invent one for a custom simulation.",
-          "Prefer the high-level World API unless you already own a simulation and can guarantee correct packing, ranges and buffer lifetimes. meshIdLimit is a scan bound used by rendering and does not replace the fixed transparent-half offset.",
+          "Prefer the high-level World API unless you already own a simulation and can guarantee correct packing, ranges and buffer lifetimes. getMeshIdLimit is a scan bound used by rendering and does not replace the fixed transparent-half offset.",
         ],
       },
     ],
@@ -428,8 +448,7 @@ export async function createCustomSource(): Promise<RenderSource> {
   {
     slug: "troubleshooting",
     title: "Troubleshooting and deployment",
-    description:
-      "Diagnose initialization, asset, layout, input and lifecycle failures on React and React Native without changing the shared gameplay API.",
+    description: "Fix initialization, rendering, asset and feedback problems.",
     sections: [
       {
         id: "initialization-and-rendering",

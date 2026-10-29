@@ -5,5 +5,5 @@
     "noEmit": true,
     "customConditions": ["react-native"]
   },
-  "include": ["**/*.ts", "**/*.tsx", "../shared"]
+  "include": ["**/*.ts", "**/*.tsx", "../shared/*/src/**/*.ts", "../shared/*/src/**/*.tsx"]
 }

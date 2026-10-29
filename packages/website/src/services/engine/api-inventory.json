@@ -156,7 +156,7 @@
     "guide": "game-view"
   },
   {
-    "name": "GameStats",
+    "name": "GameViewStats",
     "module": "render/GameView",
     "typeOnly": true,
     "guide": "game-view"
@@ -186,7 +186,7 @@
     "guide": "cache-performance"
   },
   {
-    "name": "meshIdLimit",
+    "name": "getMeshIdLimit",
     "module": "render/meshes",
     "typeOnly": false,
     "guide": "cache-performance"
@@ -204,13 +204,13 @@
     "guide": "cache-performance"
   },
   {
-    "name": "Quality",
+    "name": "RenderQuality",
     "module": "render/quality",
     "typeOnly": true,
     "guide": "game-view"
   },
   {
-    "name": "QualitySetting",
+    "name": "RenderQualitySetting",
     "module": "render/quality",
     "typeOnly": true,
     "guide": "game-view"
@@ -306,13 +306,13 @@
     "guide": "solid-modelling"
   },
   {
-    "name": "geometryLods",
+    "name": "createGeometryLods",
     "module": "assets/modelling",
     "typeOnly": false,
     "guide": "solid-modelling"
   },
   {
-    "name": "geometryStats",
+    "name": "getGeometryStats",
     "module": "assets/modelling",
     "typeOnly": false,
     "guide": "solid-modelling"
@@ -390,7 +390,7 @@
     "guide": "surfaces-lofts"
   },
   {
-    "name": "SurfaceOptions",
+    "name": "ParametricSurfaceOptions",
     "module": "assets/surface",
     "typeOnly": true,
     "guide": "surfaces-lofts"
@@ -474,7 +474,7 @@
     "guide": "procedural-geometry"
   },
   {
-    "name": "Part",
+    "name": "GeometryPart",
     "module": "assets/shape",
     "typeOnly": true,
     "guide": "procedural-geometry"
@@ -546,7 +546,7 @@
     "guide": "audio-haptics"
   },
   {
-    "name": "PlayOptions",
+    "name": "AudioPlayOptions",
     "module": "media/audio",
     "typeOnly": true,
     "guide": "audio-haptics"

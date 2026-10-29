@@ -5,6 +5,21 @@ export const sectionExamples: Record<string, Record<string, EngineExample[]>> = 
   overview: {
     "how-the-engine-fits-together": [
       {
+        title: "Load files automatically; warm up synchronous setup",
+        description:
+          "Async loaders prepare themselves. Await warm-up before creating the world or procedural meshes.",
+        platform: "shared",
+        language: "tsx",
+        code: `import { loadTexture, warmUpEngine, World } from "@nayan-ui/engine";
+export async function createTexturedCube(imageUrl: string) {
+  const texture = await loadTexture(imageUrl);
+  await warmUpEngine();
+  const world = new World(8);
+  world.spawn({ mesh: "cube", texture });
+  return { world, update: (dt: number) => world.update(dt), dispose: () => world.dispose() };
+}`,
+      },
+      {
         title: "Initialize a world and connect its frame callback",
         description:
           "Call createDemo once from your initialization hook. Give the returned world and update function to GameView; dispose the returned scene when the hook cleans up.",
@@ -55,6 +70,18 @@ export function addReward(world: World) {
       },
     ],
     "coordinates-values-and-handles": [
+      {
+        title: "Use a typed plane for screen input",
+        description:
+          "Call from onTap. The plane uses world coordinates; x and y are local screen coordinates.",
+        platform: "shared",
+        language: "tsx",
+        code: `import type { World, ScreenPlane } from "@nayan-ui/engine";
+const ground: ScreenPlane = { point: [0, 0, 0], normal: [0, 1, 0] };
+export function groundPoint(world: World, x: number, y: number) {
+  return world.screenToWorld(x, y, ground);
+}`,
+      },
       {
         title: "Rotate by 90 degrees and use an RGB color",
         description:
@@ -145,6 +172,17 @@ export async function prepareAvatar() {
     ],
     "browser-hosting": [
       {
+        title: "Initialize the explicit browser entry on the client",
+        description:
+          "Call from a client effect. This loads the browser core without creating a world or another frame loop.",
+        platform: "react",
+        language: "tsx",
+        code: `export async function prepareBrowserEngine() {
+  const { warmUpEngine } = await import("@nayan-ui/engine/web");
+  await warmUpEngine();
+}`,
+      },
+      {
         title: "Show a useful WASM initialization error",
         description:
           "Use this hook in a client component. It reports loading failure without constructing a world on the server or setting state after unmount. Create the scene only once ready is true.",
@@ -229,6 +267,15 @@ export function SettingsAwareScene({ scene, settingsOpen }: {
     ],
     "platform-details": [
       {
+        title: "Load an image from the browser host",
+        description:
+          "Place the image in public/textures. The loader initializes the core and caches the decoded texture.",
+        platform: "react",
+        language: "tsx",
+        code: `import { loadTexture } from "@nayan-ui/engine";
+export const loadBoardTexture = () => loadTexture("/textures/board.png");`,
+      },
+      {
         title: "Load the game only on the client in Next.js",
         description:
           "In a Next.js App Router application, place this in a client entry and adjust ./Game to your game component. The optional dynamic wrapper also avoids rendering the game subtree on the server.",
@@ -291,6 +338,15 @@ export function SettingsAwareScene({ scene, settingsOpen }: {
       },
     ],
     "platform-details": [
+      {
+        title: "Load the same image through Metro",
+        description:
+          "Bundle this file in the native app. No caller-owned readiness or texture cache is needed.",
+        platform: "native",
+        language: "tsx",
+        code: `import { loadTexture } from "@nayan-ui/engine";
+export const loadBoardTexture = () => loadTexture(require("./assets/board.png"));`,
+      },
       {
         title: "Pause while a mounted native screen loses focus",
         description:
@@ -737,6 +793,19 @@ export function removeOwned(world: World, owned: Set<Entity>, actor: Entity) {
     ],
     "entityoptions-reference": [
       {
+        title: "Define a reusable trigger configuration",
+        description:
+          "Spawn once per scene. Each call creates a fresh entity from the same typed settings.",
+        platform: "shared",
+        language: "tsx",
+        code: `import type { EntityOptions, World } from "@nayan-ui/engine";
+const trigger: EntityOptions = {
+  mesh: "none", pickable: false,
+  physics: { type: "fixed", shape: "ball", radius: 1, sensor: true, layer: 4, mask: 2 },
+};
+export function addTrigger(world: World) { return world.spawn(trigger); }`,
+      },
+      {
         title: "Combine independent motion and lifetime options",
         description:
           "Run once during scene setup or a spawn event. This non-physics object moves, spins, bobs visually and expires through the normal world updates.",
@@ -782,6 +851,24 @@ export function addArenaMover(world: World) {
     ],
     "update-pause-reset-and-dispose": [
       {
+        title: "Reset a round while reusing its world and assets",
+        description:
+          "Call on replay. Track the entities owned by this round and clear held input before spawning replacements.",
+        platform: "shared",
+        language: "tsx",
+        code: `import type { World, Entity, Model, JoystickState } from "@nayan-ui/engine";
+export function resetRound(world: World, actors: Entity[], playerModel: Model, input: JoystickState) {
+  input.x = input.y = 0;
+  world.cancelTimers();
+  for (const actor of actors) world.despawn(actor);
+  actors.length = 0;
+  world.scoreboard.reset(3);
+  const player = world.spawn({ mesh: playerModel, position: [0, 1, 0] });
+  actors.push(player);
+  return player;
+}`,
+      },
+      {
         title: "Reset round-owned actors while retaining the scene",
         description:
           "Store this controller once per scene. It owns only its actor set and clears game timers before preparing another round. Call world.dispose separately when the whole screen closes.",
@@ -805,6 +892,17 @@ export function makeRound(world: World) {
   "game-view": {
     "gameview-props": [
       {
+        title: "Report render statistics without updating state every frame",
+        description: "onStats runs once a second. Keep gameplay motion inside onUpdate.",
+        platform: "shared",
+        language: "tsx",
+        code: `import { GameView, type World, type GameViewStats } from "@nayan-ui/engine";
+export function MeasuredScene({ world, report }: { world: World; report: (stats: GameViewStats) => void }) {
+  return <GameView source={world} quality="auto" onStats={report}
+    onError={error => console.error(error.message)} onUpdate={dt => world.update(dt)} />;
+}`,
+      },
+      {
         title: "Build a board view with explicit camera and pause behavior",
         description:
           "Use this instead of a default GameView for an XY board. The host supplies the sized container and playing state; the same world stays mounted while paused.",
@@ -823,8 +921,8 @@ export function BoardView({ world, paused }: { world: World; paused: boolean }) 
         title: "Let the host choose an explicit quality level",
         description:
           "Use a settings control to change level. React updates the quality prop; the world and its entities are retained. Compare onStats before deciding whether a lower setting is useful on the target device.",
-        code: `import { GameView, type World, type QualitySetting } from "@nayan-ui/engine";
-export function QualityPreview({ world, level }: { world: World; level: QualitySetting }) {
+        code: `import { GameView, type World, type RenderQualitySetting } from "@nayan-ui/engine";
+export function QualityPreview({ world, level }: { world: World; level: RenderQualitySetting }) {
   return <GameView source={world} quality={level} onUpdate={dt => world.update(dt)}
     onStats={stats => console.log(\`\${stats.backend}: \${Math.round(stats.fps)} FPS (\${stats.quality})\`)} />;
 }`,
@@ -917,6 +1015,21 @@ export function addWalls(world: World) {
     ],
     "physicsoptions-reference": [
       {
+        title: "Configure a fast projectile",
+        description:
+          "Call during a shot. CCD reduces tunneling; planar keeps motion in the XY plane.",
+        platform: "shared",
+        language: "tsx",
+        code: `import type { World, PhysicsOptions } from "@nayan-ui/engine";
+const projectilePhysics: PhysicsOptions = {
+  type: "dynamic", shape: "ball", radius: 0.1, ccd: true, planar: true,
+  gravityScale: 0, layer: 8, mask: 1,
+};
+export function fireProjectile(world: World) {
+  return world.spawn({ mesh: "sphere", scale: 0.2, physics: projectilePhysics, velocity: [15, 0, 0] });
+}`,
+      },
+      {
         title: "Make an XY physics game",
         description:
           "planar keeps a dynamic body in its XY plane. Combine it with a camera looking along -Z; this example uses downward Y gravity and a thin fixed floor.",
@@ -982,6 +1095,18 @@ export function pulseSelection(world: World, actor: Entity) {
       },
     ],
     "animateoptions-reference": [
+      {
+        title: "Start and stop a reusable pulse",
+        description: "Call when selecting an entity. Run the returned cleanup when selection ends.",
+        platform: "shared",
+        language: "tsx",
+        code: `import type { World, Entity, AnimateOptions } from "@nayan-ui/engine";
+const pulse: AnimateOptions = { duration: 0.35, repeat: "forever", yoyo: true };
+export function pulseSelection(world: World, entity: Entity) {
+  void world.animate(entity, { scale: 1.1 }, pulse);
+  return () => { world.stopAnimation(entity); world.set(entity, { scale: 1 }); };
+}`,
+      },
       {
         title: "Delay and stagger a group reveal",
         description:
@@ -1055,7 +1180,7 @@ export function clipController(world: World, actor: Entity, idle: string, walk: 
 export function footSampler(world: World, actor: Entity, vertex: number) {
   const indices = new Uint32Array([vertex]), point = new Float32Array(3);
   return (dt: number, position: readonly [number, number, number], yaw: number, scale: number) => {
-    if (!world.skinPoints(actor, indices, point, dt)) return null;
+    if (!world.sampleSkinnedVertices(actor, indices, point, dt)) return null;
     const x = point[0]! * scale, y = point[1]! * scale, z = point[2]! * scale;
     return [position[0] + Math.cos(yaw) * x + Math.sin(yaw) * z,
       position[1] + y, position[2] - Math.sin(yaw) * x + Math.cos(yaw) * z];
@@ -1134,6 +1259,19 @@ export function smallBurst(world: World, position: Vec3) {
     ],
     "burstoptions-reference": [
       {
+        title: "Reuse typed confetti settings",
+        description:
+          "Create settings once; call burst for each celebration. Particle lifetimes advance through world.update.",
+        platform: "shared",
+        language: "tsx",
+        code: `import type { World, BurstOptions, Vec3 } from "@nayan-ui/engine";
+const confetti: Omit<BurstOptions, "position"> = {
+  count: 24, mesh: "cube", size: 0.08, speed: 4, lifetime: 0.7,
+  color: [[1, 0.3, 0.2], [0.2, 0.8, 1]], endSize: 0.1,
+};
+export function celebrateAt(world: World, position: Vec3) { return world.burst({ ...confetti, position }); }`,
+      },
+      {
         title: "Aim a cone of sparks in one direction",
         description:
           "Use a narrower spread for a jet or hit direction. Values are in world units and radians; the particles still advance through the same world update.",
@@ -1148,6 +1286,19 @@ export function directionalSparks(world: World, position: Vec3) {
       },
     ],
     "puff-and-flame-materials": [
+      {
+        title: "Let smoke grow and fade",
+        description:
+          "Call on an impact. Puff particles face the camera and need no custom mesh registration.",
+        platform: "shared",
+        language: "tsx",
+        code: `import type { World, Vec3 } from "@nayan-ui/engine";
+export function dustCloud(world: World, position: Vec3) {
+  return world.burst({ position, mesh: "puff", count: 10, size: 0.2, speed: 0.8,
+    gravity: 0, lifetime: 1.2, color: [0.5, 0.4, 0.3, 0.3],
+    endColor: [0.5, 0.4, 0.3, 0], endSize: 4 });
+}`,
+      },
       {
         title: "Compare smoke and an additive glow",
         description:
@@ -1165,6 +1316,18 @@ export function compareSprites(world: World) {
   "models-textures": {
     "asset-sources-on-each-platform": [
       {
+        title: "Accept either host asset source in shared code",
+        description:
+          "The host supplies a URL or Metro asset number. Keep loading policy inside the engine.",
+        platform: "shared",
+        language: "tsx",
+        code: `import { loadModel, loadTexture, type AssetSource } from "@nayan-ui/engine";
+export async function loadCharacterAssets(modelSource: AssetSource, textureSource: AssetSource) {
+  const [model, texture] = await Promise.all([loadModel(modelSource), loadTexture(textureSource)]);
+  return { model, texture };
+}`,
+      },
+      {
         title: "Inject asset sources into shared preparation code",
         description:
           "The scene can depend on this function instead of importing a platform asset path. A browser host passes URLs; a native host passes Metro require(...) values. Run it after warm-up.",
@@ -1178,6 +1341,18 @@ export async function prepareProp(modelSource: number | string, textureSource: n
       },
     ],
     "models-and-format-limits": [
+      {
+        title: "Check a clip before playing it",
+        description: "Use model metadata instead of assuming every GLB includes a walk clip.",
+        platform: "shared",
+        language: "tsx",
+        code: `import type { World, Entity, LoadedModel, ClipOptions } from "@nayan-ui/engine";
+export function playAvailableClip(world: World, actor: Entity, model: LoadedModel, name: string) {
+  if (!model.animations.some(clip => clip.name === name)) return false;
+  const options: ClipOptions = { loop: true, speed: 1, fade: 0.15 };
+  return world.playClip(actor, name, options);
+}`,
+      },
       {
         title: "Place a loaded model using its reported dimensions",
         description:
@@ -1237,6 +1412,19 @@ export function fitLabel(world: World, font: Font, text: string, maxWidth: numbe
       },
     ],
     "font-and-text-types": [
+      {
+        title: "Align changing scores with tabular digits",
+        description: "Call when the score changes. Keep the font and entity from scene setup.",
+        platform: "shared",
+        language: "tsx",
+        code: `import { measureText, type Font, type TextLayout, type World, type Entity } from "@nayan-ui/engine";
+const digits: TextLayout = { tabular: true, letterSpacing: 0.02 };
+export function setScoreLabel(world: World, label: Entity, font: Font, score: number) {
+  const text = score.toString();
+  world.set(label, { text, ...digits });
+  return measureText(font, text, digits);
+}`,
+      },
       {
         title: "Share text layout settings between measurement and drawing",
         description:
@@ -1385,12 +1573,12 @@ export function mushroomModel() {
       {
         title: "Compare the cost of two resolutions before choosing one",
         description:
-          "Run during development/preparation, not onUpdate. geometryStats reports geometry size so you can compare detail against startup and memory cost without registering both meshes.",
-        code: `import { Solid, solidGeometry, geometryStats } from "@nayan-ui/engine";
+          "Run during development/preparation, not onUpdate. getGeometryStats reports geometry size so you can compare detail against startup and memory cost without registering both meshes.",
+        code: `import { Solid, solidGeometry, getGeometryStats } from "@nayan-ui/engine";
 export function compareResolution() {
   const recipe = Solid.sphere(1).displace({ amplitude: 0.08, seed: 7 });
   return [24, 48].map(resolution => ({ resolution,
-    stats: geometryStats(solidGeometry(recipe, { resolution })) }));
+    stats: getGeometryStats(solidGeometry(recipe, { resolution })) }));
 }`,
         platform: "shared",
         language: "tsx",
@@ -1401,10 +1589,10 @@ export function compareResolution() {
         title: "Keep the source unchanged while simplifying a prop",
         description:
           "Use this for static geometry whose vertex indices are not used for skin-point queries or other external data. A small error limit may keep more triangles than the requested ratio.",
-        code: `import { optimizeGeometry, geometryStats, type Geometry } from "@nayan-ui/engine";
+        code: `import { optimizeGeometry, getGeometryStats, type Geometry } from "@nayan-ui/engine";
 export function simplifyProp(source: Geometry) {
   const reduced = optimizeGeometry(source, { ratio: 0.5, error: 0.005, lockBorders: true });
-  console.log({ before: geometryStats(source).triangles, after: geometryStats(reduced).triangles });
+  console.log({ before: getGeometryStats(source).triangles, after: getGeometryStats(reduced).triangles });
   return reduced;
 }`,
         platform: "shared",
@@ -1432,6 +1620,22 @@ export function wireRoundEnd(world: World, onLose: () => void) {
       },
     ],
     "scoreboard-operations": [
+      {
+        title: "Pause only the scoreboard clock",
+        description:
+          "Use world pause for the entire simulation. These controls stop or resume only the scoreboard clock.",
+        platform: "shared",
+        language: "tsx",
+        code: `import type { World } from "@nayan-ui/engine";
+export function roundClock(world: World) {
+  return {
+    start: () => world.scoreboard.startCountdown(45),
+    pause: () => world.scoreboard.stop(),
+    resume: () => world.scoreboard.resume(),
+    bonus: () => world.scoreboard.addTime(5),
+  };
+}`,
+      },
       {
         title: "Award time saved when the player finishes",
         description:
@@ -1481,6 +1685,19 @@ export function prepareSoundBank(sources: { hit: SoundSource; win: SoundSource }
     ],
     "voices-and-preferences": [
       {
+        title: "Reuse named audio playback options",
+        description:
+          "Wait for bank.ready during preparation. Playback remains optional until audio output is available.",
+        platform: "shared",
+        language: "tsx",
+        code: `import { audio, type AudioPlayOptions, type SoundBank } from "@nayan-ui/engine";
+const quietLoop: AudioPlayOptions = { volume: 0.25, loop: true };
+export function startMusic(bank: SoundBank<"music">) {
+  const voice = bank.play("music", quietLoop);
+  return () => audio.stop(voice);
+}`,
+      },
+      {
         title: "Apply master sound settings from a host panel",
         description:
           "Call on settings changes rather than every frame. Muting is global, so a screen should coordinate ownership if multiple game screens can stay mounted.",
@@ -1524,6 +1741,18 @@ export function selectWithFeedback(enabled: boolean) {
   "cache-performance": {
     "session-caches-and-persistent-geometry": [
       {
+        title: "Load the same file twice without a second decoder",
+        description:
+          "Useful during separate scene preparations. Both results share one session resource.",
+        platform: "shared",
+        language: "tsx",
+        code: `import { loadTexture, type AssetSource } from "@nayan-ui/engine";
+export async function verifyTextureReuse(source: AssetSource) {
+  const [first, second] = await Promise.all([loadTexture(source), loadTexture(source)]);
+  return first === second;
+}`,
+      },
+      {
         title: "Reuse a solid automatically on replay",
         description:
           "Call during scene setup after warm-up. Rust reuses the prepared solid model without JS tessellation or geometry snapshots; saved records have no automatic expiry or eviction.",
@@ -1537,6 +1766,17 @@ export function addStool(world: World) {
       },
     ],
     "storage-contract-and-revisioning": [
+      {
+        title: "Load a new remote asset revision",
+        description:
+          "Change the URL when file contents change. Existing records remain saved until the user clears storage.",
+        platform: "react",
+        language: "tsx",
+        code: `import { loadModel } from "@nayan-ui/engine";
+export function loadHeroRevision(revision: string) {
+  return loadModel("/models/hero.glb?v=" + encodeURIComponent(revision), { center: false });
+}`,
+      },
       {
         title: "Clear engine storage only after a user action",
         description:
@@ -1570,14 +1810,26 @@ export function queuedDrag(world: World) {
     ],
     "practical-budgets": [
       {
+        title: "Check geometry size before registration",
+        description:
+          "Run during preparation. Counts describe CPU mesh buffers, excluding textures and GPU copies.",
+        platform: "shared",
+        language: "tsx",
+        code: `import { getGeometryStats, type Geometry } from "@nayan-ui/engine";
+export function inspectMesh(geometry: Geometry) {
+  const { vertices, triangles, bytes } = getGeometryStats(geometry);
+  return { vertices, triangles, kibibytes: Math.ceil(bytes / 1024) };
+}`,
+      },
+      {
         title: "Reserve space before emitting an optional effect",
         description:
           "Use capacity checks for optional scene decoration/effects. Text glyphs and particles also consume capacity, so a budget should leave room for the gameplay-critical actors.",
-        code: `import { meshIdLimit, type World } from "@nayan-ui/engine";
+        code: `import { getMeshIdLimit, type World } from "@nayan-ui/engine";
 export function reportBudget(world: World) {
   return { live: world.count, capacity: world.capacity,
     availableEntities: world.capacity - world.count,
-    registeredMeshScanLimit: meshIdLimit() };
+    registeredMeshScanLimit: getMeshIdLimit() };
 }`,
         platform: "shared",
         language: "tsx",
@@ -1606,6 +1858,18 @@ export function twoCubes(): RenderSource {
     ],
     "use-custom-sources-deliberately": [
       {
+        title: "Measure custom source capacity",
+        description:
+          "A custom simulation owns its buffers. Report these values when diagnosing missing instances.",
+        platform: "shared",
+        language: "tsx",
+        code: `import type { RenderSource } from "@nayan-ui/engine";
+export function inspectInstances(source: RenderSource) {
+  return { live: source.count, capacity: source.capacity,
+    matrixSlots: source.matrices.length / 16, colorSlots: source.colors.length / 4 };
+}`,
+      },
+      {
         title: "Update one custom transform without allocating a new buffer",
         description:
           "Call this from onUpdate for the source returned by your custom simulation. It changes the translation part of an existing column-major matrix; it does not add World physics or picking.",
@@ -1622,6 +1886,18 @@ export function moveFirstInstance(source: RenderSource, x: number, y: number, z:
   troubleshooting: {
     "initialization-and-rendering": [
       {
+        title: "Return a visible initialization error",
+        description:
+          "Call from a loading effect and display the returned error. Create the scene only when preparation succeeds.",
+        platform: "shared",
+        language: "tsx",
+        code: `import { warmUpEngine } from "@nayan-ui/engine";
+export async function checkStartup(): Promise<Error | null> {
+  try { await warmUpEngine(); return null; }
+  catch (cause) { return cause instanceof Error ? cause : new Error(String(cause)); }
+}`,
+      },
+      {
         title: "Separate a layout problem from a simulation problem",
         description:
           "Use this minimal view with a prepared world. A visible cube confirms initialization, camera placement and frame stepping; then add your gameplay back a piece at a time.",
@@ -1636,6 +1912,21 @@ export function DebugView({ world }: { world: World }) {
       },
     ],
     "assets-animation-and-feedback": [
+      {
+        title: "Inspect the original asset failure",
+        description:
+          "Call from loading UI. Retry on a user action after correcting connectivity, permissions or the URL.",
+        platform: "shared",
+        language: "tsx",
+        code: `import { loadModel, type AssetSource } from "@nayan-ui/engine";
+export async function explainModelFailure(source: AssetSource) {
+  try { await loadModel(source); return "Model ready"; }
+  catch (error) {
+    if (!(error instanceof Error)) return String(error);
+    return error.message + (error.cause instanceof Error ? ": " + error.cause.message : "");
+  }
+}`,
+      },
       {
         title: "Report available animation names when a clip fails",
         description:
@@ -1768,11 +2059,11 @@ export function MinimalView({ world, ...props }: SceneViewProps) {
       {
         title: "Warm up before inspecting registered mesh usage",
         description:
-          "meshIdLimit reports the renderer’s scan boundary, not the number of free entities or remaining mesh slots. Use it as a diagnostic during asset preparation.",
-        code: `import { warmUpEngine, meshIdLimit } from "@nayan-ui/engine";
+          "getMeshIdLimit reports the renderer’s scan boundary, not the number of free entities or remaining mesh slots. Use it as a diagnostic during asset preparation.",
+        code: `import { warmUpEngine, getMeshIdLimit } from "@nayan-ui/engine";
 export async function prepareAndInspect() {
   await warmUpEngine();
-  console.log("Mesh scan limit:", meshIdLimit());
+  console.log("Mesh scan limit:", getMeshIdLimit());
 }`,
         platform: "shared",
         language: "tsx",
@@ -1799,8 +2090,8 @@ export function batchTransform(world: World, actor: Entity) {
         title: "Choose an allowed quality setting",
         description:
           "The host can offer an automatic setting and a battery-saving override. Pass the returned value as GameView.quality.",
-        code: `import type { QualitySetting } from "@nayan-ui/engine";
-export function preferredQuality(saveBattery: boolean): QualitySetting {
+        code: `import type { RenderQualitySetting } from "@nayan-ui/engine";
+export function preferredQuality(saveBattery: boolean): RenderQualitySetting {
   return saveBattery ? "low" : "auto";
 }`,
         platform: "shared",
@@ -1898,7 +2189,7 @@ export function groundPatch() {
           "Build once after warm-up and use it on entities in an overlay World. A zero-depth extrusion faces +Z and can be tinted per entity.",
         code: `import { Path, extrude, createShape } from "@nayan-ui/engine";
 export function buttonMesh() {
-  return createShape(extrude(new Path().addRRect(-1, -0.3, 2, 0.6, 0.15), { depth: 0 }));
+  return createShape(extrude(new Path().addRoundedRect(-1, -0.3, 2, 0.6, 0.15), { depth: 0 }));
 }`,
         platform: "shared",
         language: "tsx",
