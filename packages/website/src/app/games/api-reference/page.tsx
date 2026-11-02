@@ -10,7 +10,7 @@ import {
 export const metadata = buildPageMetadata({
   title: "Games API Reference",
   description:
-    "Every export of @nayan-ui/games and @nayan-ui/games/services: game components, GAME_IDS, GameProps, GameSettings, loadGameComponent, theme helpers, metadata and sounds.",
+    "Every export of @nayan-ui/games and @nayan-ui/games/services, with types and signatures.",
   path: "/games/api-reference",
   keywords: "react native games api, game api reference, react native games documentation",
 });

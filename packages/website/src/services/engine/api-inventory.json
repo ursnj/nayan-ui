@@ -24,6 +24,18 @@
     "guide": "world-entities"
   },
   {
+    "name": "toColor",
+    "module": "world/color",
+    "typeOnly": false,
+    "guide": "camera-lighting"
+  },
+  {
+    "name": "ColorInput",
+    "module": "world/color",
+    "typeOnly": true,
+    "guide": "camera-lighting"
+  },
+  {
     "name": "effects",
     "module": "world/effects",
     "typeOnly": false,
@@ -180,6 +192,12 @@
     "guide": "world-entities"
   },
   {
+    "name": "afterNextFrame",
+    "module": "render/GameView",
+    "typeOnly": false,
+    "guide": "game-view"
+  },
+  {
     "name": "GameView",
     "module": "render/GameView",
     "typeOnly": false,
@@ -220,6 +238,24 @@
     "module": "render/GameView",
     "typeOnly": true,
     "guide": "game-view"
+  },
+  {
+    "name": "useWorld",
+    "module": "render/useWorld",
+    "typeOnly": false,
+    "guide": "world-entities"
+  },
+  {
+    "name": "WorldSetup",
+    "module": "render/useWorld",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "frontLight",
+    "module": "render/light",
+    "typeOnly": false,
+    "guide": "camera-lighting"
   },
   {
     "name": "warmUpEngine",

@@ -10,7 +10,7 @@ import BuildAGame from "./BuildAGame";
 export const metadata = buildPageMetadata({
   title: "Build an Engine Game",
   description:
-    "How games in @nayan-ui/games are built on @nayan-ui/engine: the screen, constants, game and scene files, useEngineGame, EngineGameScreen, the engine HUD and lifecycle rules.",
+    "Build a @nayan-ui/games game on @nayan-ui/engine with useEngineGame, EngineGameScreen and the lifecycle rules.",
   path: "/games/build-a-game",
   keywords:
     "nayan engine game tutorial, react native 3d game, useEngineGame, EngineGameScreen, game lifecycle",

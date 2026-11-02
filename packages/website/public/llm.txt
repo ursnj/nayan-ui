@@ -398,77 +398,48 @@ The project follows standard open-source contribution guidelines with Prettier f
 
 
 ## Nayan Engine documentation
-- Overview: https://www.nayanui.com/engine
-- Installation: https://www.nayanui.com/engine/installation
-- React browser quickstart: https://www.nayanui.com/engine/react
-- React Native quickstart: https://www.nayanui.com/engine/react-native
-- Lifecycle rules, entities and quat rotations: https://www.nayanui.com/engine/world-entities
-- Effects (confetti, sparkle, shatter, splash, sparks, explosion, dust, flash, pop): https://www.nayanui.com/engine/particles
-- Drawing and painting (DrawingDocument, DrawingCanvas, drawing in games): https://www.nayanui.com/engine/drawing
-- Performance (world.transforms, zero-allocation frames): https://www.nayanui.com/engine/cache-performance
-- Public API: https://www.nayanui.com/engine/api-reference
+- Overview: https://www.nayanui.com/game-engine
+- Installation: https://www.nayanui.com/game-engine/installation
+- React browser quickstart: https://www.nayanui.com/game-engine/react
+- React Native quickstart: https://www.nayanui.com/game-engine/react-native
+- Lifecycle rules, entities and quat rotations: https://www.nayanui.com/game-engine/world-entities
+- Effects (confetti, sparkle, shatter, splash, sparks, explosion, dust, flash, pop): https://www.nayanui.com/game-engine/particles
+- Drawing and painting (DrawingDocument, DrawingCanvas, drawing in games): https://www.nayanui.com/game-engine/drawing
+- Performance (world.transforms, zero-allocation frames): https://www.nayanui.com/game-engine/cache-performance
+- Public API: https://www.nayanui.com/game-engine/api-reference
 
-The engine uses one TypeScript API for World, GameView, physics, skeletal and transform animation,
-input/picking, procedural geometry, models, textures, fonts, audio/haptics, game-time scoring,
-ready-made effects, quaternion helpers and native 2D drawing.
-Browser builds use WebAssembly and WebGPU/WebGL2; native builds use JSI and Metal/Vulkan/GLES.
-Await warmUpEngine() before browser worlds and synchronous procedural APIs. Async asset loaders initialize the core themselves. Web assets are URLs; Metro numeric
-require() assets apply to React Native. Browser styles are CSS; native styles are ViewStyle.
-GameView calls onUpdate but the application calls world.update(dt), and disposes worlds on unmount.
+The engine is one TypeScript API on a Rust core: World, GameView, physics, skeletal and tween animation,
+input/picking, procedural geometry, models, textures, fonts, audio/haptics, scoring/timers, effects and
+native 2D drawing. Web: WebAssembly with WebGPU/WebGL2. Native: JSI with Metal/Vulkan/GLES.
 
-Engine lifecycle rules: (1) create the World in a React effect after await warmUpEngine() (required on
-the web; on native, built-in shapes also work before it); (2) call world.update(dt) exactly once per
-frame from GameView onUpdate; (3) queue per-frame moves on world.transforms (position, rotation, scale,
-color, transform) and call world.transforms.flush() once after update, since it is not auto-flushed;
-(4) world.dispose() in the effect cleanup; (5) use world.isDisposed instead of a custom flag. After
-dispose, despawn/set/has/animate/stopAnimation/impulse/playClip/stopClip/after/cancelTimer(s), queries
-and forEachCollision are safe no-ops; spawn, update, burst and effects throw.
-Rotations: quat.x/y/z(angle), axisAngle, fromEuler, multiply(a, b) (a after b), slerp, identity; each
-takes an optional out MutableQuat. Queries take out arguments too: position, worldPosition, velocity,
-raycast, pick, toScreen, screenToWorld (the last two return null before the first drawn frame).
-Effects: effects.confetti/sparkle/shatter/splash/sparks/explosion(world, EffectOptions),
-effects.dust(world, DustOptions), effects.flash(world, FlashOptions), await effects.pop(world, piece,
-PopOptions) then world.despawn(piece); effects.hot/pale color helpers; effects.POP_TIME. world.burst is
-the advanced single-layer API. Timers: world.after returns an id for world.cancelTimer(id);
-cancelTimers() on reset. world.scoreboard.reset(lives, countdownSeconds) shows a stopped full countdown
-(ready screen); resume() starts it. Settings: audio.enabled = enableSounds (inverse of audio.muted),
-haptics.enabled = enableHaptics. GameView background and Light.color accept Color (alpha ignored).
-MAX_MESHES is 4096 mesh ids; never create meshes per spawn.
-Drawing: DrawingDocument(width, height, pixelRatio?) owns artwork in Rust; DrawingCanvas shows it with
-brushes, layers, undo/redo and SVG/PNG export. Games use document.texture() on any entity, feed
-document.input(phase, x, y, pressure, 'document'), and read strokes({from, tolerance}), sample(x, y)
-and coverage(rect) for colliders and scoring. dispose() the document on unmount (it throws afterwards).
+Rules: (1) own a World with useWorld(capacity, setup), or create it in an effect after await
+warmUpEngine() and dispose it in the cleanup; (2) GameView steps the world (and an overlay) once a frame,
+right after onUpdate; call world.update(dt) yourself only to step differently; never step from
+requestAnimationFrame/setInterval; (3) queue per-frame moves on world.transforms in onUpdate; the step
+applies them (flush() only before reading back); (4) use world.isDisposed, not a custom flag; cleanup
+calls and queries are no-ops after dispose, spawn/update/burst/effects throw.
+On iOS/Android the display clock drives frames and the engine's render thread draws them; textures,
+models, fonts and sounds decode on native threads; the renderer culls off-screen instances in Rust.
+Colors are CSS strings or 0..1 tuples everywhere (toColor converts); frontLight lights flat boards.
+Scoreboard: handlers for rules, listen() for UI; reset(lives, seconds) = ready screen, resume() starts.
+Timers: world.after / cancelTimer / cancelTimers. Effects: effects.confetti/sparkle/shatter/splash/
+sparks/explosion/dust/flash, await effects.pop(world, piece) then despawn. Settings: audio.enabled,
+haptics.enabled. Mesh ids are never freed: build meshes once. afterNextFrame slices long setup work;
+ProceduralCache.peek restores saved results. Drawing: DrawingDocument + DrawingCanvas; document.texture()
+on entities, input()/strokes()/sample()/coverage() for games.
 @nayan-ui/games ships its own browser build (lib/web), so its games run in React websites too.
 
 ## Practical engine examples
-- Complete game (shared rules and both platform screens): https://www.nayanui.com/engine/first-game
-- Common recipes: https://www.nayanui.com/engine/recipes
-- AI agent instructions (file structure, one API per task, never-do list, game template): https://www.nayanui.com/engine/agent-guide
+- Complete game (shared rules and both platform screens): https://www.nayanui.com/game-engine/first-game
+- Common recipes: https://www.nayanui.com/game-engine/recipes
+- AI agent instructions (file structure, one API per task, never-do list, game template): https://www.nayanui.com/game-engine/agent-guide
 - Structured API usage summary: https://www.nayanui.com/engine.json
 
-Start with the complete tap-to-collect game. Keep shared rules in tapGame.ts, initialize in
-useTapGame.ts, and choose the React or React Native host. The recipes explain where each
-helper is called and which update function owns world.update(dt).
-
-Asset reuse is managed by the engine on both React and React Native. Use loadModel, loadTexture,
-loadFont, audio.load, createShape and createSolid directly during scene setup. Do not add manual
-promise caches, mesh maps or storage adapters for normal assets. Rust owns geometry hashing, preparation, solid generation and saved binary records. Native
-uses durable app-private storage with no expo-file-system dependency. Completed records have no
-TTL or automatic eviction. Browser storage remains subject to browser policy/quotas. Call
-await clearAssetCache() only from an explicit user action to clear engine-owned saved assets. Worlds/entities remain owned by each game scene;
-asset caching does not cache live gameplay state. Keep asset construction outside onUpdate.
-
-Web assets use binary IndexedDB records, not localStorage. Rust still owns keys, checksums and
-geometry preparation. File assets read asynchronously on demand; warmUpEngine hydrates a bounded
-set of recent geometry into Rust before synchronous scene setup. IndexedDB quota is browser-managed,
-and failed writes do not evict previous records.
-
-Games-library asset integration: heavy-game loading screens await engine initialization before
-building resources. Imported-character loaders rely on the engine’s automatic async initialization before decoding files.
-@nayan-ui/games does not require expo-file-system for caching; applications can still use it
-independently for screenshots/drawings. Preserve library factory caches that skip expensive JS
-construction. Do not clear stored assets during Stop/replay/unmount. On the web, game components
-render through the package's bundled React Native Web adapters; see /games/installation.
+Start with the tap-to-collect game (/game-engine/first-game), then the recipes. Load assets with
+loadModel, loadTexture, loadFont, audio.load, createShape and createSolid during setup; the engine caches
+and persists them (native app-private files, web IndexedDB, no eviction). No app-side asset caches.
+clearAssetCache() only from a user action. @nayan-ui/games loads each game behind its own loading screen
+and runs on the web through its bundled React Native Web adapters; see /games/installation.
 
 Public naming: use GameViewStats for rendering measurements, AudioPlayOptions for sound settings,
 GeometryPart for merged mesh parts, ParametricSurfaceOptions for sampled surfaces, and

@@ -4,8 +4,7 @@ import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/s
 
 export const metadata = buildPageMetadata({
   title: "Games Licensing",
-  description:
-    "License information, commercial usage terms, and acknowledgments for @nayan-ui/games package.",
+  description: "Dual licensing, commercial terms and acknowledgments for @nayan-ui/games.",
   path: "/games/licensing",
   keywords: "react native games license, game library licensing, commercial usage, dual license",
 });

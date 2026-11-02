@@ -19,11 +19,14 @@ const source = ts.createSourceFile(
 const targets = {
   "world/World": "world-entities",
   "world/quat": "world-entities",
+  "world/color": "camera-lighting",
   "world/effects": "particles",
   "world/Scoreboard": "scoreboard-timers",
   "world/types": "world-entities",
   "world/TransformBatch": "cache-performance",
   "render/GameView": "game-view",
+  "render/useWorld": "world-entities",
+  "render/light": "camera-lighting",
   "render/meshes": "cache-performance",
   "render/quality": "game-view",
   "assets/source": "models-textures",
@@ -73,6 +76,22 @@ const sections = [
     paragraphs: [
       "Every public export is listed below. Signatures come from built declarations. Gameplay APIs are shared; host styles and asset sources follow the platform guides.",
       "Use declarations to look up types. Use the runnable examples and linked guides for setup, behavior and cleanup.",
+    ],
+    examples: [
+      {
+        title: "Import runtime APIs and types from one entry",
+        platform: "shared",
+        language: "tsx",
+        code: `import { GameView, useWorld, type Entity, type EntityOptions } from "@nayan-ui/engine";
+
+const ball: EntityOptions = { mesh: "sphere", color: "#33B3FF", physics: "dynamic" };
+
+export function Ball() {
+  let handle: Entity | null = null;
+  const world = useWorld(16, (w) => { handle = w.spawn(ball); });
+  return world && <GameView source={world} onTap={() => handle !== null && world.impulse(handle, [0, 4, 0])} />;
+}`,
+      },
     ],
   },
 ];
@@ -143,13 +162,13 @@ for (const [module, symbols] of groups) {
   sections.push({
     id: module.replaceAll("/", "-"),
     title: module,
-    paragraphs: [`Usage and examples: /engine/${targets[module]}.`],
+    paragraphs: [`Usage and examples: /game-engine/${targets[module]}.`],
     table: {
       headers: ["Export", "Kind", "Guide"],
       rows: symbols.map((s) => [
         s.name,
         s.typeOnly ? "TypeScript type" : "Runtime API",
-        `/engine/${targets[module]}`,
+        `/game-engine/${targets[module]}`,
       ]),
     },
     examples: [

@@ -13,15 +13,14 @@ const NAV = [
   { label: "Home", href: "/", match: "/" },
   { label: "React", href: "/react/installation", match: "/react" },
   { label: "React Native", href: "/react-native/installation", match: "/react-native" },
-  { label: "Engine", href: "/engine", match: "/engine" },
-  { label: "Games", href: "/games", match: "/games" },
+  { label: "Game Engine", href: "/game-engine", match: ["/game-engine", "/games"] },
   { label: "Video Editor", href: "/video-editor", match: "/video-editor" },
   { label: "Tools", href: "/tools", match: "/tools" },
 ];
 
-const isActive = (pathname: string, match: string) => {
+const isActive = (pathname: string, match: string | string[]) => {
   if (match === "/") return pathname === "/";
-  return pathname === match || pathname.startsWith(`${match}/`);
+  return (Array.isArray(match) ? match : [match]).some((m) => pathname === m || pathname.startsWith(`${m}/`));
 };
 
 const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) => (

@@ -4,73 +4,69 @@ export const WorldRenderingGuides: EngineGuide[] = [
   {
     slug: "world-entities",
     title: "Worlds, entities and lifecycle",
-    description:
-      "Create a world, spawn and change entities, rotate them with quat, query their state and dispose the scene safely.",
+    description: "Own a world, spawn and change entities, and dispose them safely.",
     sections: [
       {
-        id: "lifecycle-rules",
-        title: "The five lifecycle rules",
+        id: "lifecycle",
+        title: "Lifecycle in five rules",
         paragraphs: [
-          "Every engine scene follows the same five rules. Following them prevents almost every blank screen, leak and crash.",
-          "1. Create the World inside a React effect, after await warmUpEngine() (required on the web, harmless on native). Never create it in useMemo, at module scope or during render. 2. Step it exactly once per frame: call world.update(dt) from GameView's onUpdate and nowhere else. 3. If you queue moves on world.transforms, call world.transforms.flush() once at the end of the same onUpdate, after world.update(dt); it is not flushed automatically. 4. Call world.dispose() in the effect's cleanup, and cancel any setup that finishes after unmount. 5. Use world.isDisposed instead of keeping your own disposed flag: after dispose, despawn, set, has, animate, stopAnimation, impulse, playClip, stopClip, after, cancelTimer, cancelTimers, the queries and forEachCollision are safe no-ops, so late animation promises and timers need no guard. spawn, update, burst and the effects still throw, because calling them on a disposed world is a bug.",
+          "useWorld and GameView make a complete scene; these five rules keep it leak-free and crash-free.",
+          "1. Own the world with useWorld(capacity, setup), or create it in an effect after await warmUpEngine(); never during render or at module scope.",
+          "2. GameView steps the world right after onUpdate; call world.update(dt) yourself only to step differently, and GameView then skips its step (it watches world.updateCount).",
+          "3. Queue per-frame moves on world.transforms in onUpdate; the step applies them, so call flush() only before reading positions back.",
+          "4. Dispose the world on unmount (useWorld does) and release your subscriptions with it.",
+          "5. Check world.isDisposed instead of keeping a flag: afterwards set, despawn, has, animate, stopAnimation, impulse, clips, timers, queries and forEachCollision are no-ops, while spawn and update throw.",
         ],
         examples: [
           {
-            title: "useSpinningCube.ts",
+            title: "SpinningCube.tsx",
             description:
-              "A complete, copyable scene hook. Pass the returned world and update function to GameView. Works unchanged in React and React Native.",
-            code: `import { useEffect, useState } from "react";
-import { warmUpEngine, World, quat } from "@nayan-ui/engine";
+              "A complete scene: useWorld owns the world, onUpdate queues the spin and GameView steps the world after it.",
+            code: `import { useRef } from "react";
+import { GameView, quat, useWorld, type Entity, type MutableQuat } from "@nayan-ui/engine";
 
-export function useSpinningCube() {
-  const [scene, setScene] = useState<{ world: World; update: (dt: number) => void } | null>(null);
-  useEffect(() => {
-    let cancelled = false;
-    let world: World | undefined;
-    void warmUpEngine().then(() => {
-      if (cancelled) return; // Unmounted while warming up: create nothing.
-      const owned = new World(64);
-      world = owned;
-      const cube = owned.spawn({ mesh: "cube", color: [0.2, 0.7, 1] });
-      let angle = 0;
-      const turn: [number, number, number, number] = [0, 0, 0, 1];
-      const update = (dt: number) => {
-        owned.update(dt); // Rule 2: once per frame.
-        angle += dt;
-        quat.y(angle, turn); // No allocation per frame.
-        owned.transforms.rotation(cube, turn[0], turn[1], turn[2], turn[3]);
-        owned.transforms.flush(); // Rule 3: after update, once.
-      };
-      setScene({ world: owned, update });
-    }).catch((error: unknown) => console.error(error));
-    return () => {
-      cancelled = true;
-      world?.dispose(); // Rule 4.
-    };
-  }, []);
-  return scene;
+const turn: MutableQuat = [0, 0, 0, 1]; // reused every frame
+
+export function SpinningCube() {
+  const cube = useRef<Entity | null>(null);
+  const angle = useRef(0);
+  const world = useWorld(64, (w) => {
+    cube.current = w.spawn({ mesh: "cube", color: "#33B3FF" });
+  });
+  if (!world) return null; // ready after warm-up (one frame)
+  return (
+    <GameView source={world} style={{ flex: 1 }} camera={{ eye: [0, 2, 5], target: [0, 0, 0], fov: 0.9 }}
+      onUpdate={(dt) => {
+        if (!cube.current) return;
+        angle.current += dt;
+        quat.y(angle.current, turn);
+        world.transforms.rotation(cube.current, turn[0], turn[1], turn[2], turn[3]);
+      }} />
+  );
 }`,
             platform: "shared",
             language: "tsx",
           },
         ],
-        note: "World has no start(), reset() or pause() method. Pause by passing paused to GameView (or by not calling update). Reset is your own function: cancel timers, despawn the round's entities and spawn new ones in the same world.",
+        note: "World has no start, pause or reset method: pause with GameView's paused prop, and reset with your own function.",
       },
       {
-        id: "create-set-and-remove",
-        title: "Create, set and remove",
+        id: "spawn-set-despawn",
+        title: "Spawn, set and despawn",
         paragraphs: [
-          "new World(capacity) reserves a fixed number of entity slots; capacity also covers text letters and particles, so size it for the busiest moment. world.count is the number of live entities.",
-          "spawn(options) returns an opaque Entity handle and throws when the world is full or an option is invalid. set(entity, options) changes only the fields you pass (null removes an option) and returns false if the entity is gone, the world is disposed or an option was rejected. despawn(entity) removes the entity and everything attached to it and returns false if it was already gone. has(entity) tells you whether it still exists. Keep the handle spawn returns; never invent numeric IDs.",
+          "new World(capacity) reserves slots for entities, text letters and particles; spawn returns an Entity handle and throws when the world is full or an option is invalid.",
+          "set(entity, options) changes only what you pass (null removes) and returns false if the entity is gone. despawn removes an entity with its children; has and count report what is alive.",
         ],
         examples: [
           {
-            title: "Spawn, change and remove an entity",
-            description: "Call once during scene setup. The returned function removes the player.",
-            code: `import { World, quat } from "@nayan-ui/engine";
+            title: "Spawn, change and remove",
+            code: `import { quat, type World } from "@nayan-ui/engine";
+
 export function addPlayer(world: World) {
-  const player = world.spawn({ mesh: "capsule", position: [0, 1, 0], color: [0.3, 0.7, 1] });
+  const player = world.spawn({ mesh: "capsule", position: [0, 1, 0], color: "#4DB3FF" });
   world.set(player, { scale: [1, 1.5, 1], rotation: quat.y(Math.PI / 2) });
+  world.set(player, { bob: null }); // null removes an option
+  console.log(world.count, world.has(player));
   return () => world.despawn(player);
 }`,
             platform: "shared",
@@ -79,101 +75,128 @@ export function addPlayer(world: World) {
         ],
       },
       {
-        id: "entityoptions-reference",
+        id: "entity-options",
         title: "EntityOptions reference",
         paragraphs: [
-          "spawn and set take the same EntityOptions object. Import the type to share configurations between spawns.",
+          "spawn and set take the same EntityOptions; in set, null removes physics, parent, follow, bob, lifetime and impact.",
         ],
         table: {
-          headers: ["API / option", "Behavior"],
+          headers: ["Option", "Behavior"],
           rows: [
             [
               "mesh",
-              "Shape or Model; defaults to cube. none is invisible and useful as a group/pivot. Built-in shapes: cube, sphere, plane, cylinder, cone, capsule, torus, roundedBox, puff, flame, none.",
+              "Built-in Shape or loaded Model; default cube. none draws nothing (groups, pivots).",
             ],
-            [
-              "position / rotation / scale",
-              "Position Vec3; rotation quaternion [x,y,z,w] (build it with quat); uniform numeric scale or Vec3. Child transforms are parent-relative.",
-            ],
-            ["color", "RGB/RGBA. Alpha below 1 draws see-through; channels above 1 glow."],
             [
               "texture / textureRegion",
-              "Texture (from loadTexture or DrawingDocument.texture()) or null; normalized atlas rectangle [u0,v0,u1,v1]. When changing texture with set(), also pass mesh.",
+              "Texture or null; atlas rect [u0, v0, u1, v1]. In set, pass mesh too.",
             ],
+            ["text / font", "3D text (1 unit tall at scale 1) instead of a mesh; needs font."],
+            [
+              "align / letterSpacing / tabular",
+              "Text alignment (default center), extra em spacing, equal-width digits.",
+            ],
+            ["position / rotation", "Vec3 and quat [x, y, z, w]; relative to the parent."],
+            ["scale", "Number or Vec3; visual only once a body exists."],
+            ["color", "CSS string or 0..1 tuple; alpha < 1 is see-through, channels > 1 glow."],
             [
               "velocity / groundVelocity",
-              "Full velocity Vec3; horizontal [x,z] preserving existing vertical velocity.",
+              "Units per second; groundVelocity sets [x, z] and keeps vertical speed.",
             ],
             [
               "acceleration / spin",
-              "Acceleration for non-dynamic motion; angular velocity in radians/sec.",
+              "Units/s² for non-dynamic entities; radians per second per axis.",
             ],
-            ["bob", "{amplitude: Vec3, speed, phase?}; a visual offset. null removes it."],
-            ["follow", "{target: Entity, speed}; ground chase. null removes it."],
-            ["lifetime", "Seconds before shrinking/despawning; null clears."],
-            ["parent", "Entity handle or null. Attached entities cannot own physics."],
-            [
-              "physics / impact",
-              "Physics body/options or null; impact sound/haptic configuration or null.",
-            ],
-            [
-              "text / font / align / letterSpacing / tabular",
-              "Text content and layout instead of a mesh. A font is required when text is supplied.",
-            ],
-            ["pickable", "Defaults true; set false for scenery that should not receive taps."],
-          ],
-        },
-      },
-      {
-        id: "rotations-with-quat",
-        title: "Rotations with quat",
-        paragraphs: [
-          "Rotations are quaternions [x, y, z, w]. Do not write them by hand: use the quat helpers, which return a MutableQuat you can pass straight to rotation options, keyframes and geometry parts. Angles are in radians.",
-          "Every helper takes an optional last out argument. Pass a reused array in per-frame code so nothing is allocated; omit it in setup code. multiply(a, b) means a after b: b turns first. out may be a or b.",
-        ],
-        table: {
-          headers: ["Helper", "Result"],
-          rows: [
-            ["quat.identity", "No rotation (a read-only Quat)."],
-            ["quat.x(angle, out?)", "Pitch: rotation around the x axis."],
-            [
-              "quat.y(angle, out?)",
-              "Yaw/heading: rotation around the y axis (the usual choice for ground actors).",
-            ],
-            ["quat.z(angle, out?)", "Roll; also the spin for 2D games looking down -z."],
-            ["quat.axisAngle(x, y, z, angle, out?)", "Rotation around a unit axis."],
-            ["quat.multiply(a, b, out?)", "Combine rotations: a after b."],
-            [
-              "quat.fromEuler(x, y, z, out?)",
-              "Turn around x, then y, then z: multiply(z(z), multiply(y(y), x(x))).",
-            ],
-            [
-              "quat.slerp(a, b, t, out?)",
-              "Shortest-path blend from a (t=0) to b (t=1); use it to turn smoothly.",
-            ],
+            ["bob", "{ amplitude, speed, phase? }: visual sine offset of the drawn position."],
+            ["follow", "{ target, speed }: chase an entity along the ground."],
+            ["lifetime", "Seconds until it shrinks away and despawns."],
+            ["parent", "Attach to an entity: moves, turns, scales and despawns with it."],
+            ["physics / impact", "BodyType or PhysicsOptions; automatic impact sound and haptic."],
+            ["pickable", "Whether pick can hit it; default true."],
           ],
         },
         examples: [
           {
-            title: "Face the direction of travel and turn smoothly",
-            description:
-              "Call setup once; call steer from onUpdate after world.update(dt) and flush the transforms once at the end of the frame. The scratch arrays are reused, so steering allocates nothing. quat.y(Math.atan2(x, z)) faces a model whose front is +z toward (x, z).",
+            title: "Reusable options",
+            code: `import type { EntityOptions, World } from "@nayan-ui/engine";
+
+const coin: EntityOptions = {
+  mesh: "cylinder",
+  scale: [0.6, 0.1, 0.6],
+  color: "#FFC83D",
+  spin: [0, 3, 0],
+  bob: { amplitude: [0, 0.2, 0], speed: 4 },
+  pickable: false,
+};
+
+export function dropCoin(world: World, x: number, z: number) {
+  return world.spawn({ ...coin, position: [x, 1, z], lifetime: 10 });
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "quat",
+        title: "Rotations with quat",
+        paragraphs: [
+          "Rotations are quaternions [x, y, z, w] built with quat, with angles in radians. Every helper takes an optional out array; reuse one in per-frame code so nothing allocates.",
+        ],
+        table: {
+          headers: ["Helper", "Result"],
+          rows: [
+            ["quat.identity", "No rotation (frozen)."],
+            ["quat.x / y / z(angle, out?)", "Pitch, yaw (heading) or roll; z spins 2D games."],
+            ["quat.axisAngle(x, y, z, angle, out?)", "Rotation around a unit axis."],
+            ["quat.multiply(a, b, out?)", "a after b (b turns first); out may be a or b."],
+            ["quat.fromEuler(x, y, z, out?)", "Turns around x, then y, then z."],
+            ["quat.slerp(a, b, t, out?)", "Shortest-path blend from a (t = 0) to b (t = 1)."],
+          ],
+        },
+        examples: [
+          {
+            title: "Turn smoothly toward travel",
+            description: "Call the returned function from onUpdate; it allocates nothing.",
             code: `import { quat, type Entity, type MutableQuat, type World } from "@nayan-ui/engine";
 
 export function makeSteering(world: World, actor: Entity) {
   const current: MutableQuat = [0, 0, 0, 1];
   const target: MutableQuat = [0, 0, 0, 1];
-  return (dt: number, moveX: number, moveZ: number) => {
-    if (moveX !== 0 || moveZ !== 0) quat.y(Math.atan2(moveX, moveZ), target);
-    quat.slerp(current, target, Math.min(1, dt * 10), current); // out may be an input
+  return (dt: number, x: number, z: number) => {
+    if (x || z) quat.y(Math.atan2(x, z), target); // face +z toward (x, z)
+    quat.slerp(current, target, Math.min(1, dt * 10), current);
     world.transforms.rotation(actor, current[0], current[1], current[2], current[3]);
   };
 }
 
-// Setup-time rotations can allocate freely:
-export function addSign(world: World) {
-  const tilt = quat.multiply(quat.y(Math.PI / 4), quat.x(-0.3)); // tilt first, then turn
-  return world.spawn({ mesh: "cube", scale: [2, 1, 0.1], rotation: tilt });
+export const tilted = quat.multiply(quat.y(Math.PI / 4), quat.x(-0.3)); // tilt, then turn`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "transforms",
+        title: "Per-frame moves with world.transforms",
+        paragraphs: [
+          "world.transforms queues draw-only position, rotation, scale, color and transform updates without allocating; the next world.update applies them in one native call.",
+          "Call flush() only before reading positions or animating in the same frame; set(entity, options) takes the object form. Use world.set for text entities.",
+        ],
+        examples: [
+          {
+            title: "Move many pieces in one call",
+            description: "Call from onUpdate; GameView's step applies the batch.",
+            code: `import type { Entity, World } from "@nayan-ui/engine";
+
+type Piece = { entity: Entity; x: number; z: number };
+
+export function placePieces(world: World, pieces: readonly Piece[], time: number) {
+  const batch = world.transforms;
+  for (const p of pieces) {
+    batch.position(p.entity, p.x, Math.sin(time + p.x) * 0.2, p.z);
+    batch.scale(p.entity, 1 + Math.sin(time) * 0.05);
+  }
 }`,
             platform: "shared",
             language: "tsx",
@@ -181,22 +204,21 @@ export function addSign(world: World) {
         ],
       },
       {
-        id: "parenting-and-independent-actors",
-        title: "Parenting and independent actors",
+        id: "parenting",
+        title: "Parents and groups",
         paragraphs: [
-          "Attach visual children to an invisible root. They inherit translation, rotation and scale and disappear with the parent. Put physics on the root; attached children are visual rather than separate rigid bodies. For independent collision bodies, spawn independent entities.",
+          "Children inherit their parent's position, rotation and scale and despawn with it. Put physics on the parent: attached entities can't have bodies.",
         ],
         examples: [
           {
             title: "Compose a collectible",
-            description:
-              "Call once per collectible. Despawning the returned root removes both parts.",
-            code: `import { World } from "@nayan-ui/engine";
+            code: `import type { World } from "@nayan-ui/engine";
+
 export function addCollectible(world: World) {
   const root = world.spawn({ mesh: "none", position: [2, 1, 0], spin: [0, 1, 0] });
-  world.spawn({ mesh: "torus", parent: root, scale: 0.8, color: [1, 0.7, 0.1] });
-  world.spawn({ mesh: "sphere", parent: root, scale: 0.3, color: [1, 1, 0.5] });
-  return root;
+  world.spawn({ mesh: "torus", parent: root, scale: 0.8, color: "orange" });
+  world.spawn({ mesh: "sphere", parent: root, scale: 0.3, color: "#FFF080" });
+  return root; // despawn(root) removes all three
 }`,
             platform: "shared",
             language: "tsx",
@@ -204,25 +226,25 @@ export function addCollectible(world: World) {
         ],
       },
       {
-        id: "movement-bounds-and-queries",
-        title: "Movement, bounds and queries",
+        id: "queries-and-settings",
+        title: "Queries, bounds and gravity",
         paragraphs: [
-          "position(entity) returns the simulated, parent-relative position. worldPosition(entity) returns where it was last drawn in world space, including parents and smoothing. velocity(entity) returns the current velocity. All three return null for removed entities (and after dispose).",
-          "Every query takes an optional out argument: position, worldPosition and velocity fill a [x, y, z] tuple, raycast and pick fill a hit object, toScreen fills [x, y] and screenToWorld fills [x, y, z]. Pass a reused value in per-frame code so a 60 fps loop allocates nothing. toScreen and screenToWorld use the last drawn camera, so they return null until the first frame is on screen.",
-          "world.bounds = [minX, minZ, maxX, maxZ] keeps moving non-physics entities inside a rectangle; null removes it. Rigid bodies need real walls. world.gravity defaults to [0, -9.81, 0]. world.listener is the entity impact sounds pan and fade relative to; null clears it.",
+          "position (parent-relative), worldPosition (as drawn) and velocity return null once an entity is gone; pass an out tuple per frame. toScreen and screenToWorld use the last drawn camera, so they return null before the first frame.",
+          "world.bounds = [minX, minZ, maxX, maxZ] keeps non-physics entities inside; bodies need walls. world.gravity defaults to [0, -9.81, 0], and world.listener pans impact sounds.",
         ],
         examples: [
           {
-            title: "Read positions without allocating",
-            description:
-              "Create the tracker once; call the returned function from onUpdate after world.update(dt).",
-            code: `import { World, type Entity } from "@nayan-ui/engine";
+            title: "Read state without allocating",
+            code: `import type { Entity, World } from "@nayan-ui/engine";
+
 export function makeTracker(world: World, player: Entity, onFall: () => void) {
   const at: [number, number, number] = [0, 0, 0];
+  const screen: [number, number] = [0, 0];
   world.bounds = [-20, -20, 20, 20];
   world.listener = player;
   return () => {
     if (world.position(player, at) && at[1] < -5) onFall();
+    return world.toScreen(at, screen); // place a label over the player
   };
 }`,
             platform: "shared",
@@ -231,24 +253,28 @@ export function makeTracker(world: World, player: Entity, onFall: () => void) {
         ],
       },
       {
-        id: "update-pause-reset-and-dispose",
-        title: "Update, pause, reset and dispose",
+        id: "reset-and-dispose",
+        title: "Reset and dispose",
         paragraphs: [
-          "world.update(dt) advances fixed 60 Hz steps, refreshes what GameView draws and then runs finished animation promises, due timers and scoreboard handlers. GameView caps dt at 0.1 seconds and passes 0 until a frame has actually appeared. Passing paused to GameView stops both its onUpdate callback and drawing while keeping the scene mounted.",
-          "A reset is your own function: cancel timers, despawn the round's actors, reset the scoreboard and spawn the next round in the same world while reusing loaded assets. Call world.update(0) afterwards if the new layout must be visible before the clock runs.",
-          "dispose() frees the native world; calling it twice is safe. Pending animation promises resolve and timers are dropped. After it, world.isDisposed is true, cleanup calls and queries are no-ops (false, null, 0 or a resolved promise) and spawn and update throw. So world.animate(e, ...).then(() => world.despawn(e)) needs no guard, but code that spawns new entities after an await should check world.isDisposed first.",
+          "A reset is your own function: cancelTimers(), despawn the round's entities, reset the scoreboard and spawn the next round in the same world. Loaded assets and mesh ids stay valid.",
+          "dispose() is idempotent, resolves pending animation promises and drops timers. Code that spawns after an await checks world.isDisposed; cleanup calls need no guard.",
         ],
         examples: [
           {
             title: "Spawn safely after an await",
-            description:
-              "Late continuations only need a guard when they spawn. Cleanup calls such as despawn are already safe after dispose.",
-            code: `import { World, type Entity } from "@nayan-ui/engine";
+            code: `import type { Entity, World } from "@nayan-ui/engine";
+
 export async function popAndReplace(world: World, piece: Entity) {
   await world.animate(piece, { scale: 0 }, { duration: 0.2 });
-  world.despawn(piece); // Safe even if the screen closed meanwhile.
-  if (world.isDisposed) return null; // spawn would throw on a disposed world.
+  world.despawn(piece); // safe even if the screen closed
+  if (world.isDisposed) return null; // spawn would throw
   return world.spawn({ mesh: "cube", position: [0, 4, 0] });
+}
+
+export function resetRound(world: World, actors: Entity[]) {
+  world.cancelTimers();
+  for (const actor of actors.splice(0)) world.despawn(actor);
+  world.scoreboard.reset(3);
 }`,
             platform: "shared",
             language: "tsx",
@@ -260,169 +286,349 @@ export async function popAndReplace(world: World, piece: Entity) {
   {
     slug: "game-view",
     title: "GameView, quality and overlays",
-    description: "Connect the frame loop, gestures, quality settings and overlays.",
+    description: "Draw a world, run the frame loop, choose quality and layer overlays.",
     sections: [
       {
-        id: "gameview-props",
+        id: "props",
         title: "GameView props",
-        paragraphs: [],
+        paragraphs: [
+          "GameView draws a RenderSource (usually a World) and calls onUpdate once a frame. Other props are read live; changing source restarts the view.",
+        ],
         table: {
-          headers: ["API / option", "Behavior"],
+          headers: ["Prop", "Behavior"],
           rows: [
-            ["source", "Required RenderSource, usually a World. Keep it stable during a visit."],
-            [
-              "onUpdate(dt)",
-              "Seconds since the previous rendered frame; step each scene/overlay once yourself.",
-            ],
-            [
-              "camera / light",
-              "Mutable Camera and Light objects read each frame. See Camera and lighting.",
-            ],
-            [
-              "background / fog",
-              "Sky/clear color as a Color (RGB, or RGBA with alpha ignored), default dark navy; it is also the fog color. fog is the density toward it, default 0 (off).",
-            ],
+            ["source", "Required RenderSource; never pass a disposed world."],
+            ["onUpdate(dt)", "Game logic per frame; GameView steps source and overlay after it."],
+            ["camera / light", "Mutable Camera and Light objects, read every frame."],
+            ["background / fog", "Sky and fog color (CSS or tuple); fog density, default 0."],
             ["quality", "auto (default), high, medium, low or lowest."],
+            ["paused", "Stops updates and drawing, cancels gestures, keeps the surface."],
+            ["style", "ViewStyle on React Native; CSS properties on the web."],
+            ["onTap / onLongPress", "(x, y) in view points; world.pick(x, y) finds the entity."],
             [
-              "paused",
-              "Stops updates/drawing and cancels active gestures while keeping the surface.",
+              "onSwipe / onDrag / onPinch",
+              "Flick direction, drag phases and two-finger scale/rotation.",
             ],
-            ["style", "CSSProperties on React; ViewStyle on React Native."],
-            [
-              "onTap / onSwipe / onDrag / onLongPress / onPinch",
-              "Shared gesture callbacks in local CSS pixels/view points.",
-            ],
+            ["onPrimaryAction", "Keyboard primary action, such as Start or Play Again."],
             [
               "overlay / onOverlayTouch",
-              "A separate screen-space RenderSource and touch capture callback.",
+              "Screen-space RenderSource drawn on top, and its touch handler.",
             ],
-            ["onStats", "Once-per-second GameViewStats reporting."],
-            ["onError", "Receives initialization/rendering errors. Defaults to console.error."],
+            ["onStats", "GameViewStats once a second."],
+            ["onError", "Setup and rendering errors; default console.error."],
           ],
         },
-      },
-      {
-        id: "quality-levels-and-statistics",
-        title: "Render quality levels and statistics",
-        paragraphs: [
-          "Auto quality starts high and adjusts when sustained drawing cost cannot keep up. Lower shadow detail comes first, followed by antialiasing and resolution. It does not fix expensive JavaScript gameplay. updateMs and renderMs measure CPU-side time, not a GPU timestamp or the full cost of every browser compositor operation.",
-        ],
         examples: [
           {
-            title: "Observe rendering cost",
-            code: `import { GameView, type RenderSource } from "@nayan-ui/engine";
-export function Preview({ source }: { source: RenderSource }) {
-  return <GameView source={source} quality="auto"
-    onStats={({ fps, updateMs, renderMs, quality, backend }) => {
-      console.log({ fps, updateMs, renderMs, quality, backend });
-    }} onError={error => console.error(error.message)} />;
+            title: "Scene.tsx",
+            code: `import { GameView, useWorld } from "@nayan-ui/engine";
+
+export function Scene() {
+  const world = useWorld(100, (w) => {
+    w.spawn({ mesh: "plane", scale: [20, 1, 20], color: "#4C9A4C", physics: "fixed" });
+    w.spawn({ mesh: "sphere", position: [0, 4, 0], color: "#3399FF", physics: "dynamic" });
+  });
+  if (!world) return null;
+  return (
+    <GameView source={world} style={{ flex: 1 }} background="#87CEEB" quality="auto"
+      camera={{ eye: [0, 8, 14], target: [0, 0, 0], fov: Math.PI / 3 }}
+      onTap={(x, y) => {
+        const hit = world.pick(x, y);
+        if (hit) world.impulse(hit.entity, [0, 6, 0]);
+      }} />
+  );
 }`,
             platform: "shared",
             language: "tsx",
           },
+        ],
+      },
+      {
+        id: "frames",
+        title: "Frames and dt",
+        paragraphs: [
+          "On iOS and Android frames come from the display clock at 60 Hz: onUpdate steps the game and hands a copy to the engine's render thread, so JavaScript never waits on the GPU. A frame not yet drawn is replaced by a newer one, not queued; the web uses requestAnimationFrame.",
+          "dt is capped at 0.1 s and is 0 until the first frame is on screen, so intros don't play unseen. Step the world yourself only for a different dt, such as slow motion.",
+        ],
+        examples: [
+          {
+            title: "SlowMotion.tsx",
+            description:
+              "Calling world.update in onUpdate replaces GameView's own step for that frame (updateCount changed).",
+            code: `import { GameView, type World } from "@nayan-ui/engine";
+
+export function SlowMotion({ world, slow }: { world: World; slow: boolean }) {
+  return (
+    <GameView source={world} style={{ flex: 1 }}
+      onUpdate={(dt) => {
+        if (slow) world.update(dt * 0.25); // GameView skips its step this frame
+      }} />
+  );
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+        note: "afterNextFrame(fn) runs fn right after the next frame leaves, the best moment for sliced loading; it returns a cancel function.",
+      },
+      {
+        id: "quality",
+        title: "Render quality",
+        paragraphs: [
+          "auto starts at high and steps down only while drawing can't keep up: after one second under ~33 fps, or a few seconds missing ~50 fps. It drops shadow detail first, then MSAA, then resolution, and climbs back after about ten smooth seconds.",
+          "Quality can't fix a slow game loop; that shows in updateMs, not renderMs. The chosen level survives pauses and only restarts with a new source.",
         ],
         table: {
-          headers: ["API / option", "Behavior"],
+          headers: ["Level", "Pixel ratio cap", "MSAA", "Shadow map"],
           rows: [
-            ["high", "Pixel ratio cap 3; 4× MSAA; 2048 shadow map; soft shadows."],
-            ["medium", "Pixel ratio cap 3; 4× MSAA; 1024 shadow map; soft shadows."],
-            ["low", "Pixel ratio cap 3; 1× MSAA; 1024 shadow map; hard shadows."],
-            ["lowest", "Pixel ratio cap 2; 1× MSAA; 512 shadow map; hard shadows."],
-            [
-              "GameViewStats",
-              "fps, updateMs, renderMs, quality, backend. Browser backend is webgpu or gl; native is metal, vulkan or gl.",
-            ],
+            ["high", "3", "4×", "2048, soft"],
+            ["medium", "3", "4×", "1024, soft"],
+            ["low", "3", "off", "1024, hard"],
+            ["lowest", "2", "off", "512, hard"],
           ],
         },
-      },
-      {
-        id: "draw-engine-ui-over-a-scene",
-        title: "Draw engine UI over a scene",
-        paragraphs: [
-          "An overlay uses view points: X right, Y up from the top-left, so visible screen Y is negative; Z ranges from -100 to 100 toward the viewer. It is unlit and drawn in front of the scene. Supply the container width and height yourself when placing controls. GameView does not step the overlay automatically.",
-          'Return true from onOverlayTouch("start", x, y) only when a control was hit. That gesture then belongs to the overlay, including move/end/cancel, and is excluded from scene gestures. World.pick uses the scene camera; test overlay rectangles yourself.',
-        ],
         examples: [
           {
-            title: "Overlay controls",
-            code: `import { GameView, type World } from "@nayan-ui/engine";
-export function SceneWithHud({ world, hud, onStart }: { world: World; hud: World; onStart: () => void }) {
-  // hud was created after warmUpEngine(), and is disposed by its owner.
-  return <GameView source={world} overlay={hud}
-    onUpdate={dt => { world.update(dt); hud.update(dt); }}
-    onOverlayTouch={(phase, x, y) => {
-      const inside = x >= 20 && x <= 140 && y >= 20 && y <= 70;
-      if (phase === "start") return inside;
-      if (phase === "end" && inside) onStart();
-      return true;
-    }} />;
+            title: "Battery saver",
+            code: `import { GameView, type RenderQualitySetting, type World } from "@nayan-ui/engine";
+
+export function Game({ world, saver }: { world: World; saver: boolean }) {
+  const quality: RenderQualitySetting = saver ? "low" : "auto";
+  return <GameView source={world} quality={quality} style={{ flex: 1 }} />;
 }`,
             platform: "shared",
             language: "tsx",
           },
         ],
-        note: "Share the same screen-space sizing convention with your layout. In React use ResizeObserver or a measured DOM container; on React Native use onLayout. A fixed browser pixel size is not a substitute for measuring a responsive canvas.",
+      },
+      {
+        id: "stats",
+        title: "Frame statistics",
+        paragraphs: [
+          "onStats receives GameViewStats once a second. On iOS and Android fps counts frames actually presented and renderMs is the render thread's time per frame.",
+        ],
+        table: {
+          headers: ["Field", "Meaning"],
+          rows: [
+            ["fps", "Frames per second (presented frames on native)."],
+            ["updateMs", "Mean milliseconds in onUpdate and the step."],
+            ["renderMs", "Mean milliseconds drawing (render thread on native, CPU side on web)."],
+            ["quality", "Level drawn with; with auto, where it settled so far."],
+            ["backend", "metal, vulkan or gl on native; webgpu or gl on the web."],
+          ],
+        },
+        examples: [
+          {
+            title: "Log rendering cost",
+            code: `import { GameView, type GameViewStats, type World } from "@nayan-ui/engine";
+
+const log = ({ fps, updateMs, renderMs, quality, backend }: GameViewStats) =>
+  console.log(\`\${fps.toFixed(0)} fps, update \${updateMs.toFixed(1)} ms, render \${renderMs.toFixed(1)} ms, \${quality}, \${backend}\`);
+
+export function Profiled({ world }: { world: World }) {
+  return <GameView source={world} onStats={log} onError={(e) => console.error(e.message)} />;
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "overlay",
+        title: "Overlays",
+        paragraphs: [
+          "overlay draws a second World in view points from the top-left, y up (visible y ≤ 0) and z within -100..100. It is unlit, always in front and stepped after onUpdate like the scene.",
+          'Return true from onOverlayTouch("start") to claim a touch: its moves and end then go to the overlay, never to scene gestures. "cancel" arrives when the system takes the touch.',
+        ],
+        examples: [
+          {
+            title: "Overlay button",
+            code: `import { GameView, type World } from "@nayan-ui/engine";
+
+export function WithHud({ world, hud, onStart }: { world: World; hud: World; onStart: () => void }) {
+  const inside = (x: number, y: number) => x >= 20 && x <= 140 && y >= 20 && y <= 70;
+  return (
+    <GameView source={world} overlay={hud} style={{ flex: 1 }}
+      onOverlayTouch={(phase, x, y) => {
+        if (phase === "start") return inside(x, y);
+        if (phase === "end" && inside(x, y)) onStart();
+        return true;
+      }} />
+  );
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "pause",
+        title: "Pause",
+        paragraphs: [
+          "paused stops onUpdate, stepping and drawing and cancels gestures while the surface stays mounted. The view also suspends itself when the app goes to the background.",
+        ],
+        examples: [
+          {
+            title: "Pause behind a settings sheet",
+            code: `import { GameView, type World } from "@nayan-ui/engine";
+
+export function Paused({ world, settingsOpen }: { world: World; settingsOpen: boolean }) {
+  return <GameView source={world} paused={settingsOpen} style={{ flex: 1 }} />;
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
       },
     ],
   },
   {
     slug: "camera-lighting",
-    title: "Camera, light, fog and materials",
-    description: "Set perspective, orthographic and following cameras, lighting and fog.",
+    title: "Camera, light and fog",
+    description: "Aim, follow and shake the camera, and light and color the scene.",
     sections: [
       {
-        id: "camera-configuration",
-        title: "Camera configuration",
+        id: "camera",
+        title: "Perspective and orthographic",
         paragraphs: [
-          "eye and target are mutable [x,y,z] tuples. fov is the vertical field of view in radians. ortho is an optional orthographic half-height in world units and takes precedence over fov. Avoid coincident eye/target and an exactly vertical view with an ambiguous up vector; a tiny Z offset helps a top-down board.",
+          "A Camera has mutable eye and target tuples and a vertical fov in radians. ortho (half the visible height in world units) makes it orthographic and overrides fov.",
+          "Mutate the object from onUpdate; GameView reads it every frame. Keep a tiny offset for straight-down views so eye and target never align vertically.",
         ],
         examples: [
           {
-            title: "Perspective and board cameras",
+            title: "Two cameras",
             code: `import type { Camera } from "@nayan-ui/engine";
+
 export const perspective: Camera = { eye: [8, 6, 12], target: [0, 1, 0], fov: Math.PI / 3 };
 export const board: Camera = { eye: [0, 20, 0.01], target: [0, 0, 0], fov: 1, ortho: 6 };
-// Use either object as <GameView camera={...} />.`,
+
+export function orbit(camera: Camera, time: number) {
+  camera.eye[0] = Math.sin(time) * 12;
+  camera.eye[2] = Math.cos(time) * 12;
+}`,
             platform: "shared",
             language: "tsx",
           },
         ],
       },
       {
-        id: "follow-and-shake",
+        id: "follow-shake",
         title: "Follow and shake",
         paragraphs: [
-          "camera.follow = {target,offset,smoothing?} follows an entity using its drawn position. offset is measured from the followed target, and smoothing roughly expresses catch-up time in seconds (default 0.15; zero is rigid). Set follow to null to return to direct control. Shake is a world-unit amplitude that decays automatically.",
+          "camera.follow = { target, offset, smoothing? } eases the target toward the entity's drawn position and keeps the eye at offset. smoothing is roughly the catch-up time in seconds (default 0.15, 0 is rigid); null returns control.",
+          "camera.shake is a strength in world units that fades by itself.",
         ],
         examples: [
           {
-            title: "Camera feedback",
+            title: "Chase and hit feedback",
             code: `import type { Camera, Entity } from "@nayan-ui/engine";
+
 export function chase(camera: Camera, player: Entity) {
   camera.follow = { target: player, offset: [0, 4, 7], smoothing: 0.12 };
-  camera.shake = 0.2;
 }
-export function stopChasing(camera: Camera) { camera.follow = null; }`,
+export function onHit(camera: Camera) {
+  camera.shake = 0.3;
+}
+export function release(camera: Camera) {
+  camera.follow = null;
+}`,
             platform: "shared",
             language: "tsx",
           },
         ],
       },
       {
-        id: "directional-light-and-fog",
-        title: "Directional light and fog",
+        id: "light",
+        title: "Directional light",
         paragraphs: [
-          "Light.direction points toward the light and need not be normalized. ambient is 0..1. shadows defaults true; shadowExtent is the half-size of the shadowed region around the camera target, default 30. A region too small clips distant shadows; a larger region reduces detail at a fixed shadow resolution.",
-          "Light.color is a Color (alpha ignored) that multiplies sunlight and ambient, default white; glowing colors above 1 are unaffected, so lamps stay lit at night. Mesh shine is configured when loading a model or registering a shape, rather than on every entity. Background is also the fog color. Fog defaults off.",
+          "One directional light with ambient fill and a shadow map centred on the camera target. A small shadowExtent clips distant shadows; a large one blurs them.",
+        ],
+        table: {
+          headers: ["Light field", "Behavior"],
+          rows: [
+            ["direction", "Toward the light; need not be normalized."],
+            ["ambient", "0..1 ambient term."],
+            ["color", "CSS or tuple multiplying sun and ambient; glowing colors unaffected."],
+            ["shadows", "Cast shadows; default true."],
+            ["shadowExtent", "Half-size of the shadowed area in world units; default 30."],
+          ],
+        },
+        examples: [
+          {
+            title: "Moonlit scene",
+            code: `import { GameView, type Light, type World } from "@nayan-ui/engine";
+
+const moon: Light = { direction: [-0.5, 0.8, 0.3], ambient: 0.3, color: "#5A61A0", shadowExtent: 24 };
+
+export function Night({ world }: { world: World }) {
+  return <GameView source={world} light={moon} background="#0B1020" style={{ flex: 1 }} />;
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "background-fog",
+        title: "Background and fog",
+        paragraphs: [
+          "background is the clear color (CSS or tuple, alpha ignored; default dark navy) and also the fog color. fog is the density toward it, such as 0.02; default 0.",
         ],
         examples: [
           {
-            title: "Evening environment",
-            code: `import { GameView, type World, type Light } from "@nayan-ui/engine";
-const light: Light = { direction: [-0.5, 0.8, 0.3], ambient: 0.3, color: [0.8, 0.85, 1], shadows: true, shadowExtent: 24 };
-export function Evening({ world }: { world: World }) {
-  return <GameView source={world} light={light} background={[0.12, 0.16, 0.24]}
-    fog={0.02} onUpdate={dt => world.update(dt)} />;
+            title: "Hazy horizon",
+            code: `import { GameView, type World } from "@nayan-ui/engine";
+
+export function Haze({ world }: { world: World }) {
+  return <GameView source={world} background="rgb(200, 215, 230)" fog={0.03} style={{ flex: 1 }} />;
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "front-light",
+        title: "Flat boards with frontLight",
+        paragraphs: [
+          "frontLight(direction, ambient) lights camera-facing surfaces at exactly 1, so flat tiles show their exact theme color while rounded shapes keep shading. It turns shadows off; pair it with a camera looking down -z.",
+        ],
+        examples: [
+          {
+            title: "Puzzle board",
+            code: `import { GameView, frontLight, type World } from "@nayan-ui/engine";
+
+const light = frontLight([-0.45, 0.6, 1], 0.5);
+
+export function Board({ world }: { world: World }) {
+  return (
+    <GameView source={world} light={light} background="#F4F1EA" style={{ flex: 1 }}
+      camera={{ eye: [0, 0, 50], target: [0, 0, 0], fov: 1, ortho: 10 }} />
+  );
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "colors",
+        title: "Colors and toColor",
+        paragraphs: [
+          "Every color option takes '#RGB', '#RGBA', '#RRGGBB', '#RRGGBBAA', 'rgb(…)', 'rgba(…)', a name (transparent, black, white, red, green, blue, yellow, orange, purple, gray, grey) or a 0..1 tuple. Tuple channels above 1 glow, and at 2 ignore light and shadow.",
+          "toColor(color, alpha?) returns the [r, g, b, a] tuple, for when you need the numbers. Unknown strings throw.",
+        ],
+        examples: [
+          {
+            title: "Brighten a theme color",
+            code: `import { toColor, type World } from "@nayan-ui/engine";
+
+const [r, g, b] = toColor("#FF4757");
+export const ember = [r * 2, g * 2, b * 2] as const; // self-lit glow
+export const ghost = toColor("#FF4757", 0.4); // see-through
+
+export function addLamp(world: World) {
+  return world.spawn({ mesh: "sphere", color: ember, position: [0, 3, 0] });
 }`,
             platform: "shared",
             language: "tsx",
@@ -434,30 +640,25 @@ export function Evening({ world }: { world: World }) {
   {
     slug: "physics-collisions",
     title: "Physics, collisions and raycasts",
-    description: "Add rigid bodies, sensors, collision filters, impulses and raycasts.",
+    description: "Add rigid bodies, sensors, layers, impulses and raycasts.",
     sections: [
       {
-        id: "choose-a-body-and-collider",
-        title: "Choose a body and collider",
+        id: "bodies",
+        title: "Bodies and colliders",
         paragraphs: [
-          'dynamic bodies respond to gravity, contact and impulses. kinematic bodies are moved by gameplay and can push dynamic bodies. fixed bodies stay stationary. A shorthand physics: "dynamic" uses defaults. Built-in collider defaults match supported shapes; imported/procedural models normally use an enclosing box, not their exact triangle surface.',
-          "Collider dimensions are established from the entity at body creation. Later visual scale changes do not resize an existing collider. Set explicit collider dimensions for game-specific collision volumes. Attached child entities cannot own physics.",
+          "dynamic bodies move under gravity and contact, kinematic ones are moved by you and push dynamic ones, and fixed ones never move. The collider matches the mesh (models get a box) and is sized from the entity when the body is created.",
+          "Later scale changes don't resize it, so set explicit sizes for gameplay volumes. set(entity, { physics: null }) removes the body.",
         ],
         examples: [
           {
-            title: "Floor, player and trigger",
-            code: `import { World } from "@nayan-ui/engine";
+            title: "Floor, ball and paddle",
+            code: `import type { World } from "@nayan-ui/engine";
+
 export function setupPhysics(world: World) {
-  world.gravity = [0, -9.81, 0];
   world.spawn({ mesh: "cube", position: [0, -0.5, 0], scale: [30, 1, 30], physics: "fixed" });
-  const player = world.spawn({ mesh: "capsule", position: [0, 2, 0], physics: {
-    type: "dynamic", shape: "capsule", radius: 0.4, height: 1.8,
-    upright: true, ccd: true, layer: 2, mask: 1 | 4,
-  } });
-  const pickup = world.spawn({ mesh: "sphere", position: [3, 1, 0], physics: {
-    type: "fixed", shape: "ball", radius: 0.7, layer: 4, mask: 2, sensor: true,
-  } });
-  return { player, pickup };
+  const ball = world.spawn({ mesh: "sphere", position: [0, 5, 0], physics: { type: "dynamic", bounce: 0.6 } });
+  const paddle = world.spawn({ mesh: "cube", position: [0, 0.5, 4], scale: [3, 0.5, 0.5], physics: "kinematic" });
+  return { ball, paddle };
 }`,
             platform: "shared",
             language: "tsx",
@@ -465,78 +666,163 @@ export function setupPhysics(world: World) {
         ],
       },
       {
-        id: "physicsoptions-reference",
+        id: "physics-options",
         title: "PhysicsOptions reference",
-        paragraphs: [],
+        paragraphs: ["physics takes a BodyType string for defaults, or PhysicsOptions."],
         table: {
-          headers: ["API / option", "Behavior"],
+          headers: ["Option", "Behavior"],
           rows: [
-            [
-              "type / shape",
-              "dynamic | kinematic | fixed; shape is ball | box | cylinder | capsule | cone.",
-            ],
-            [
-              "radius / height / size",
-              "Explicit radius, total height or full box size Vec3; default from mesh/entity dimensions.",
-            ],
-            ["friction / bounce / density", "Defaults 0.5, 0 and 1. Density is mass per volume."],
-            ["drag / angularDrag", "Linear and angular damping; defaults 0 and 0.05."],
-            [
-              "gravityScale / upright / ccd",
-              "Gravity multiplier default 1, lock tumbling, continuous collision detection.",
-            ],
-            [
-              "layer / mask",
-              "32-bit membership and interaction masks. Default layer 1, mask all. Either side allowing the other layer is sufficient in this engine.",
-            ],
-            ["sensor", "Reports contact without physical push."],
-            [
-              "planar",
-              "Lock to XY motion and Z rotation for 2D games; use a camera looking down -Z.",
-            ],
+            ["type", "dynamic, kinematic or fixed."],
+            ["shape", "ball, box, cylinder, capsule or cone; default matches the mesh."],
+            ["radius / height", "Ball, cylinder, capsule or cone radius and total height."],
+            ["size", "Full box size Vec3; default the entity's size."],
+            ["layer / mask", "Layer bits (default 1) and layers it meets (default all)."],
+            ["sensor", "Reports touches without pushing."],
+            ["friction / bounce / density", "Defaults 0.5, 0 (0..1) and 1 (mass per volume)."],
+            ["drag / angularDrag", "Linear and spin damping; defaults 0 and 0.05."],
+            ["gravityScale", "Multiplier on world gravity; default 1."],
+            ["upright", "Never tumbles (characters)."],
+            ["ccd", "Stops fast, small bodies passing through walls."],
+            ["planar", "2D: stays in XY and spins around z; camera looks down -z."],
           ],
         },
-      },
-      {
-        id: "steer-jump-and-consume-collisions",
-        title: "Steer, jump and consume collisions",
-        paragraphs: [
-          "groundVelocity sets [x,z] while retaining vertical velocity; impulse is a one-off momentum change for dynamic bodies. Call forEachCollision after world.update to read that update’s events. CollisionInfo is reused, so copy needed values before keeping them beyond the callback. Either entity might already be removed by an earlier callback.",
-        ],
         examples: [
           {
-            title: "Input and pickup handling",
-            code: `import type { World, Entity } from "@nayan-ui/engine";
-export function tickPlayer(world: World, player: Entity, pickup: Entity, dt: number, x: number, z: number) {
-  world.set(player, { groundVelocity: [x * 6, z * 6] });
-  world.update(dt);
-  world.forEachCollision((a, b, info) => {
-    if (info.started && info.sensor && (a === pickup || b === pickup)) {
-      world.despawn(pickup);
-      world.scoreboard.add(100);
-    }
-  });
-}
-export function jump(world: World, player: Entity) { world.impulse(player, [0, 5, 0]); }`,
+            title: "Character capsule",
+            code: `import type { PhysicsOptions, World } from "@nayan-ui/engine";
+
+const body: PhysicsOptions = {
+  type: "dynamic", shape: "capsule", radius: 0.4, height: 1.8,
+  upright: true, ccd: true, friction: 0.2, drag: 0.5,
+};
+
+export function addHero(world: World) {
+  return world.spawn({ mesh: "capsule", position: [0, 2, 0], scale: [0.8, 1.8, 0.8], physics: body });
+}`,
             platform: "shared",
             language: "tsx",
           },
         ],
       },
       {
-        id: "raycasts-and-contact-feedback",
-        title: "Raycasts and contact feedback",
+        id: "move-bodies",
+        title: "Steer and push",
         paragraphs: [
-          "raycast(origin,direction,maxDistance,mask?) finds the first solid collider matching the mask, excluding sensors, as of the last update. Use a normalized nonzero direction. It returns {entity,distance,normal,point} or null. Screen picking is a different query based on rendered bounds, documented under Input and picking.",
-          "impact attaches automatic speed-scaled sound and haptics to solid contacts. Use world.listener to pan/attenuate sounds relative to a player. Apply application sound/haptic preferences when configuring these entity options as well as when calling feedback APIs.",
+          "groundVelocity sets horizontal [x, z] speed and keeps the vertical one, so a steered body still falls. impulse(entity, vec) is a one-off push for dynamic bodies: jumps, knockback.",
+        ],
+        examples: [
+          {
+            title: "Steer and jump",
+            description: "Call steer from onUpdate with joystick input.",
+            code: `import type { Entity, World } from "@nayan-ui/engine";
+
+export function steer(world: World, player: Entity, x: number, z: number) {
+  world.set(player, { groundVelocity: [x * 6, z * 6] });
+}
+export function jump(world: World, player: Entity) {
+  world.impulse(player, [0, 5, 0]);
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "sensors-layers",
+        title: "Sensors, layers and masks",
+        paragraphs: [
+          "A sensor reports touches but never pushes: pickups and trigger zones. Two colliders interact when either one's mask includes the other's layer.",
+        ],
+        examples: [
+          {
+            title: "Pickup on its own layer",
+            code: `import type { World } from "@nayan-ui/engine";
+
+export const PLAYER = 2;
+export const PICKUP = 4;
+
+export function addPickup(world: World, x: number, z: number) {
+  return world.spawn({
+    mesh: "sphere", position: [x, 1, z], color: "yellow",
+    physics: { type: "fixed", shape: "ball", radius: 0.7, sensor: true, layer: PICKUP, mask: PLAYER },
+  });
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "collisions",
+        title: "Collision events",
+        paragraphs: [
+          "forEachCollision in onUpdate visits the touches that started or ended during the last step. CollisionInfo (started, sensor, speed) is reused, and either entity may already be despawned by an earlier callback.",
+        ],
+        examples: [
+          {
+            title: "Collect pickups",
+            description: "Call from onUpdate; GameView steps the world right after.",
+            code: `import type { Entity, World } from "@nayan-ui/engine";
+
+export function collect(world: World, player: Entity, pickups: Set<Entity>) {
+  world.forEachCollision((a, b, info) => {
+    if (!info.started || !info.sensor) return;
+    const other = a === player ? b : b === player ? a : null;
+    if (other === null || !pickups.delete(other)) return;
+    world.despawn(other);
+    world.scoreboard.add(100);
+  });
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "raycast",
+        title: "Raycasts",
+        paragraphs: [
+          "raycast(origin, direction, maxDistance, mask?, out?) returns the first solid, non-sensor collider as of the last step, as { entity, distance, normal, point }, or null. Reuse an out hit per frame.",
         ],
         examples: [
           {
             title: "Ground probe",
             code: `import type { World } from "@nayan-ui/engine";
-export function groundBelow(world: World, x: number, y: number, z: number) {
+
+export function groundHeight(world: World, x: number, y: number, z: number) {
   const hit = world.raycast([x, y + 1, z], [0, -1, 0], 20, 1);
-  return hit ? { height: hit.point[1], normal: hit.normal } : null;
+  return hit ? hit.point[1] : null;
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "impact",
+        title: "Impact feedback",
+        paragraphs: [
+          "impact makes the core play a sound and haptic by itself when the entity hits something solid, scaled by speed. Sounds pan relative to world.listener; leave impact off when the player muted sounds.",
+        ],
+        table: {
+          headers: ["ImpactFeedback", "Behavior"],
+          rows: [
+            ["sound", "A loaded Sound; omit for haptics only."],
+            ["minSpeed / maxSpeed", "Silent below; full strength at; defaults 1 and 10."],
+            ["volume", "Volume at full strength, 0..2; default 1."],
+            ["haptic", "Vibration at full strength, 0..1; default 0."],
+          ],
+        },
+        examples: [
+          {
+            title: "Bouncing crate",
+            code: `import type { Sound, World } from "@nayan-ui/engine";
+
+export function addCrate(world: World, thud: Sound, sounds: boolean) {
+  return world.spawn({
+    mesh: "cube", position: [0, 6, 0], physics: "dynamic",
+    impact: sounds ? { sound: thud, minSpeed: 2, maxSpeed: 12, haptic: 0.4 } : null,
+  });
 }`,
             platform: "shared",
             language: "tsx",
@@ -547,27 +833,38 @@ export function groundBelow(world: World, x: number, y: number, z: number) {
   },
   {
     slug: "animation",
-    title: "Transform animation and springs",
-    description: "Animate transforms with keyframes, springs, loops and stagger.",
+    title: "Animation and springs",
+    description: "Tween, keyframe and spring entities in Rust, awaiting their completion.",
     sections: [
       {
-        id: "targets-and-completion",
-        title: "Targets and completion",
+        id: "animate",
+        title: "Animate and await",
         paragraphs: [
-          "world.animate(entityOrEntities,targetOrKeyframes,options?) returns Promise<void>. It resolves after all relevant parts finish, are replaced, stop, or their entities/world disappear. Completion is a lifetime signal, not proof that the target was reached. The world must continue receiving updates while you await an ordinary finite animation.",
-          "Position, rotation, scale, color and shake use independent channels. Replacing one leaves other channels running. stopAnimation(entity) stops all channels on that entity and resolves their promises. Relative moveBy and turn start from the current state; turn uses Euler angle offsets in radians, while rotation uses a quaternion.",
+          "world.animate(targets, to, options?) runs in Rust and returns a promise that resolves when every part finishes, is replaced or stopped, or its entity or world goes. Resolution means it ended, not that it reached the target.",
+          "Each property runs on its own channel, so a piece can move while it pulses; animating a property again replaces only that one.",
         ],
+        table: {
+          headers: ["AnimateTarget", "Behavior"],
+          rows: [
+            ["position / rotation", "Move to a Vec3; turn to a quat."],
+            ["scale / color", "Number or Vec3; CSS color or tuple."],
+            ["moveBy", "Offset from where the animation starts."],
+            ["turn", "Radians around x, y, z from the start; 2π spins once."],
+            ["shake", "Shakes the drawn position by up to this distance, fading."],
+          ],
+        },
         examples: [
           {
-            title: "Animate and sequence safely",
-            code: `import type { World, Entity } from "@nayan-ui/engine";
-export async function reveal(world: World, tile: Entity, isDisposed: () => boolean) {
-  await world.animate(tile, { scale: 1.15, color: [1, 0.8, 0.3] }, { duration: 0.2, easing: "back" });
-  if (isDisposed() || !world.has(tile)) return;
+            title: "Sequence two steps",
+            code: `import type { Entity, World } from "@nayan-ui/engine";
+
+export async function reveal(world: World, tile: Entity) {
+  await world.animate(tile, { scale: 1.15, color: "#FFCC4D" }, { duration: 0.2, easing: "back" });
   await world.animate(tile, { scale: 1 }, { duration: 0.15 });
 }
-export function spin(world: World, tile: Entity) {
-  void world.animate(tile, { turn: [0, Math.PI * 2, 0] }, { duration: 1, repeat: "forever", easing: "linear" });
+
+export function flip(world: World, card: Entity) {
+  return world.animate(card, { turn: [0, Math.PI, 0] });
 }`,
             platform: "shared",
             language: "tsx",
@@ -575,60 +872,120 @@ export function spin(world: World, tile: Entity) {
         ],
       },
       {
-        id: "animateoptions-reference",
+        id: "options",
         title: "AnimateOptions reference",
-        paragraphs: [],
+        paragraphs: [
+          'A repeat: "forever" promise resolves only when stopped, replaced or despawned, so never await it.',
+        ],
         table: {
-          headers: ["API / option", "Behavior"],
+          headers: ["Option", "Behavior"],
           rows: [
-            [
-              "duration / delay",
-              "Seconds; duration defaults 0.3, delay 0. Duration is ignored by springs.",
-            ],
-            ["easing", "linear, easeIn, easeOut (default), easeInOut, back, bounce or elastic."],
-            [
-              "repeat / yoyo",
-              "Extra runs after the first, or forever; yoyo reverses alternating runs.",
-            ],
-            ["stagger", "Additional delay per entity in an array; useful for reveals."],
-            ["path", "linear (default) or smooth through positional keyframes."],
-            [
-              "spring",
-              "true, bouncy or {stiffness?,damping?,mass?}; defaults 170/26/1 for custom settings.",
-            ],
-            [
-              "Keyframe.at",
-              "Normalized time within the duration, 0..1; defaults to evenly spaced. At most 64 keyframes.",
-            ],
-            [
-              "AnimateTarget",
-              "position, rotation, scale, color, moveBy, turn, shake. Unspecified fields keep their current animation/state.",
-            ],
+            ["duration", "Seconds; default 0.3; ignored by springs."],
+            ["delay", "Seconds before it starts; default 0."],
+            ["easing", "linear, easeIn, easeOut (default), easeInOut, back, bounce, elastic."],
+            ["repeat", 'Extra runs after the first, or "forever"; default 0.'],
+            ["yoyo", "Every other run plays backwards."],
+            ["stagger", "Extra delay per entity when animating several."],
+            ["path", 'linear (default) or "smooth" curve through keyframes.'],
+            ["spring", 'true, "bouncy" or SpringOptions instead of a duration.'],
           ],
         },
+        examples: [
+          {
+            title: "Pulse and shake",
+            code: `import type { Entity, World } from "@nayan-ui/engine";
+
+export function pulse(world: World, coin: Entity) {
+  void world.animate(coin, { scale: 1.2 }, { duration: 0.5, repeat: "forever", yoyo: true, easing: "easeInOut" });
+}
+export function wrong(world: World, tile: Entity) {
+  return world.animate(tile, { shake: 0.15 }, { duration: 0.4, delay: 0.05 });
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
       },
       {
-        id: "paths-group-stagger-and-springs",
-        title: "Paths, group stagger and springs",
+        id: "keyframes",
+        title: "Keyframes and paths",
         paragraphs: [
-          'Use keyframes for a defined timeline and springs for interactive following. A replaced spring retains its velocity for a continuous response. A repeat: "forever" promise resolves only when interrupted or disposed; do not await it before starting the game loop.',
+          'Pass an array of up to 64 Keyframes to pass through values in order. Each may set at (0..1 of the duration; default evenly spaced), and path: "smooth" curves through them.',
         ],
         examples: [
           {
-            title: "Hop, reveal and follow",
-            code: `import type { World, Entity } from "@nayan-ui/engine";
-export function animateBoard(world: World, tiles: readonly Entity[]) {
-  void world.animate(tiles, { scale: 1 }, { stagger: 0.03, easing: "back" });
-}
+            title: "Hop",
+            code: `import type { Entity, World } from "@nayan-ui/engine";
+
 export function hop(world: World, piece: Entity) {
   return world.animate(piece, [
-    { moveBy: [0, 0, 0], at: 0 },
-    { moveBy: [1, 2, 0], at: 0.5 },
+    { moveBy: [1, 1.5, 0], at: 0.5 },
     { moveBy: [2, 0, 0], at: 1 },
   ], { duration: 0.6, path: "smooth" });
-}
-export function followPointer(world: World, cursor: Entity, x: number, z: number) {
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "groups",
+        title: "Groups and stagger",
+        paragraphs: [
+          "Pass an array of entities to animate them together with one promise. stagger adds a delay per entity for waves and board reveals.",
+        ],
+        examples: [
+          {
+            title: "Reveal a board",
+            code: `import type { Entity, World } from "@nayan-ui/engine";
+
+export function revealBoard(world: World, tiles: readonly Entity[]) {
+  for (const tile of tiles) world.set(tile, { scale: 0 });
+  return world.animate(tiles, { scale: 1 }, { stagger: 0.03, easing: "back" });
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "springs",
+        title: "Springs",
+        paragraphs: [
+          'spring replaces the duration with simulated motion: true (smooth, no overshoot), "bouncy" or { stiffness, damping, mass } (defaults 170, 26, 1). Interrupting a spring keeps its speed, so following a finger never jerks.',
+        ],
+        examples: [
+          {
+            title: "Follow the finger",
+            description: "Call on every drag move; each call retargets the running spring.",
+            code: `import type { Entity, World } from "@nayan-ui/engine";
+
+export function moveCursor(world: World, cursor: Entity, x: number, z: number) {
   void world.animate(cursor, { position: [x, 0, z] }, { spring: { stiffness: 220, damping: 20 } });
+}
+export function landPiece(world: World, piece: Entity) {
+  return world.animate(piece, { scale: 1 }, { spring: "bouncy" });
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "stop",
+        title: "Stop animations",
+        paragraphs: [
+          "stopAnimation(entity) stops every channel where it is and resolves their promises. Despawning or disposing does the same, so no guard is needed afterwards.",
+        ],
+        examples: [
+          {
+            title: "Stop a pulse on pickup",
+            code: `import type { Entity, World } from "@nayan-ui/engine";
+
+export async function pickUp(world: World, coin: Entity) {
+  world.stopAnimation(coin);
+  await world.animate(coin, { scale: 0, moveBy: [0, 1, 0] }, { duration: 0.25 });
+  world.despawn(coin);
 }`,
             platform: "shared",
             language: "tsx",

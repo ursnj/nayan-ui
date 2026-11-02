@@ -62,7 +62,7 @@ export default function EngineDocumentation({ guide }: { guide: EngineGuide }) {
                             </th>
                           ) : (
                             <td key={j} className="px-4 py-3 leading-6 text-muted align-top">
-                              {cell.startsWith("/engine") ? (
+                              {cell.startsWith("/game-engine") ? (
                                 <Link className="text-indigo-600 dark:text-indigo-400" href={cell}>
                                   {cell}
                                 </Link>
