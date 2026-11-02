@@ -19,7 +19,6 @@ const GROUPS = [
     title: "Tools",
     links: [
       { label: "Video Editor", href: "/video-editor" },
-      { label: "Game Engine", href: "/game-engine" },
       { label: "Games", href: "/games" },
       { label: "Tools", href: "/tools" },
       { label: "Sitemap generator", href: "/tools/sitemap-generator" },

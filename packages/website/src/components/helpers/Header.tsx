@@ -15,7 +15,6 @@ const NAV = [
   { label: "React Native", href: "/react-native/installation", match: "/react-native" },
   { label: "Engine", href: "/engine", match: "/engine" },
   { label: "Games", href: "/games", match: "/games" },
-  { label: "Game Engine", href: "/game-engine", match: "/game-engine" },
   { label: "Video Editor", href: "/video-editor", match: "/video-editor" },
   { label: "Tools", href: "/tools", match: "/tools" },
 ];

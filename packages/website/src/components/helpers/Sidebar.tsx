@@ -162,7 +162,7 @@ const Sidebar = (props: Props) => {
   const sectionLabel = SECTION_LABELS[section];
 
   const breadcrumb: { label: string; href?: string }[] = [{ label: "Home", href: "/" }];
-  // A section's own landing page (e.g. "Game Engine" at /game-engine) shows its title once.
+  // A section's own landing page (e.g. "Engine" at /engine) shows its title once.
   if (sectionLabel && sectionLabel !== props.title) breadcrumb.push({ label: sectionLabel, href: `/${section}` });
   if (props.title) breadcrumb.push({ label: props.title });
 

@@ -114,15 +114,7 @@ import {
   Pipette,
   Info,
   ImagePlus,
-  Atom,
   Boxes,
-  Joystick,
-  Monitor,
-  Rocket,
-  Volume2,
-  Shapes,
-  Type,
-  WandSparkles,
 } from "lucide-react";
 import {
   accordionTags,
@@ -335,9 +327,6 @@ export const getSidebarItems = (path: string): SidebarItem[] => {
   }
   if (path.startsWith("/games")) {
     return gamesSidebarItems;
-  }
-  if (path.startsWith("/game-engine")) {
-    return gameEngineSidebarItems;
   }
   return reactSidebarItems;
 };
@@ -2252,80 +2241,3 @@ export const gamesSidebarItems = [
   },
 ];
 
-export const gameEngineSidebarItems = [
-  { title: "Get Started", description: "", link: "", isHeading: true },
-  {
-    title: "Overview",
-    description: "A 3D game engine for React Native with physics, sound and haptics",
-    link: "/game-engine",
-    icon: Gamepad2,
-  },
-  {
-    title: "Installation",
-    description: "Install @nayan-ui/engine and build a development client",
-    link: "/game-engine/installation",
-    icon: Download,
-  },
-  {
-    title: "Quick Start",
-    description: "A first physics game in about thirty lines",
-    link: "/game-engine/quick-start",
-    icon: Rocket,
-  },
-  { title: "Guides", description: "", link: "", isHeading: true },
-  {
-    title: "World & Entities",
-    description: "Spawn, move and remove objects",
-    link: "/game-engine/world",
-    icon: Boxes,
-  },
-  {
-    title: "Physics",
-    description: "Bodies, colliders, collisions and raycasts",
-    link: "/game-engine/physics",
-    icon: Atom,
-  },
-  {
-    title: "Rendering",
-    description: "GameView, camera, light, shadows and fog",
-    link: "/game-engine/rendering",
-    icon: Monitor,
-  },
-  {
-    title: "3D Models",
-    description: "Load glTF models and spawn them as entities",
-    link: "/game-engine/models",
-    icon: Shapes,
-  },
-  {
-    title: "Animation & Effects",
-    description: "Tweens, particle bursts and camera shake",
-    link: "/game-engine/animation",
-    icon: WandSparkles,
-  },
-  {
-    title: "Text & Textures",
-    description: "3D text, images, card atlases and transparency",
-    link: "/game-engine/text-textures",
-    icon: Type,
-  },
-  {
-    title: "Audio & Haptics",
-    description: "Sound effects, music, vibration and impact feedback",
-    link: "/game-engine/audio-haptics",
-    icon: Volume2,
-  },
-  {
-    title: "Input",
-    description: "Taps, swipes, drags, picking and the joystick",
-    link: "/game-engine/input",
-    icon: Joystick,
-  },
-  { title: "Reference", description: "", link: "", isHeading: true },
-  {
-    title: "API Reference",
-    description: "Every export of @nayan-ui/engine",
-    link: "/game-engine/api-reference",
-    icon: BookOpen,
-  },
-];

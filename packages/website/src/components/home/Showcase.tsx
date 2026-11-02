@@ -43,7 +43,7 @@ const PRODUCTS = [
     icon: Atom,
     title: "Game engine",
     body: "Build your own 3D games for React Native: real physics, WebGPU rendering with shadows, sound and haptics, all driven from TypeScript.",
-    href: "/game-engine",
+    href: "/engine",
     action: "Read the docs",
   },
   {
