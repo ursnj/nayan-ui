@@ -85,13 +85,11 @@ export function groundPoint(world: World, x: number, y: number) {
       {
         title: "Rotate by 90 degrees and use an RGB color",
         description:
-          "Quaternions store four values, while the angle here is in radians. Run this during setup or from a game event; the actor turns around the vertical Y axis.",
-        code: `import type { World, Entity, Quat, Color } from "@nayan-ui/engine";
+          "quat.y builds the quaternion for a turn around the vertical Y axis; the angle is in radians. Run this during setup or from a game event.",
+        code: `import { quat, type World, type Entity, type Color } from "@nayan-ui/engine";
 export function turnRight(world: World, actor: Entity) {
-  const angle = Math.PI / 2;
-  const rotation: Quat = [0, Math.sin(angle / 2), 0, Math.cos(angle / 2)];
   const color: Color = [0.2, 0.8, 0.4];
-  world.set(actor, { rotation, color });
+  world.set(actor, { rotation: quat.y(Math.PI / 2), color });
 }`,
         platform: "shared",
         language: "tsx",
@@ -639,17 +637,16 @@ export function useSeconds(world: World) {
       {
         title: "Repeat a spawn until a wave ends",
         description:
-          "Create this during a round, and call stop before resetting/disposal. Each timer schedules the next only after it fires. The count guard avoids throwing when this world has no free entity slots.",
+          "Create this during a round, and call the returned stop function before resetting. Each timer schedules the next only after it fires, and cancelTimer drops the pending one. The count guard avoids throwing when this world has no free entity slots.",
         code: `import type { World } from "@nayan-ui/engine";
 export function spawnWave(world: World) {
-  let stopped = false;
+  let id = 0;
   const next = () => {
-    if (stopped) return;
     if (world.count < world.capacity) world.spawn({ mesh: "sphere", position: [0, 3, 0] });
-    world.after(1, next);
+    id = world.after(1, next);
   };
-  world.after(1, next);
-  return () => { stopped = true; }; // Pending callback becomes a no-op.
+  id = world.after(1, next);
+  return () => world.cancelTimer(id);
 }`,
         platform: "shared",
         language: "tsx",
@@ -1652,16 +1649,22 @@ export function finishWithTimeBonus(world: World) {
     ],
     "timers-follow-simulation-time": [
       {
-        title: "Invalidate callbacks from an earlier round",
+        title: "Cancel only this controller's timers",
         description:
-          "Use a generation token when this controller should cancel only its own logical work. World.cancelTimers clears every timer; a token lets unrelated game-time timers continue.",
+          "Keep the ids this controller scheduled and cancel just those with cancelTimer. world.cancelTimers clears every timer; this lets unrelated game-time timers continue.",
         code: `import type { World } from "@nayan-ui/engine";
 export function roundDelayedAction(world: World) {
-  let generation = 0;
-  return { schedule(action: () => void) {
-    const expected = generation;
-    world.after(2, () => { if (generation === expected) action(); });
-  }, reset() { generation++; } };
+  const ids = new Set<number>();
+  return {
+    schedule(action: () => void) {
+      const id = world.after(2, () => { ids.delete(id); action(); });
+      ids.add(id);
+    },
+    reset() {
+      for (const id of ids) world.cancelTimer(id);
+      ids.clear();
+    },
+  };
 }`,
         platform: "shared",
         language: "tsx",
@@ -1698,13 +1701,14 @@ export function startMusic(bank: SoundBank<"music">) {
 }`,
       },
       {
-        title: "Apply master sound settings from a host panel",
+        title: "Apply sound and haptic settings from a host panel",
         description:
-          "Call on settings changes rather than every frame. Muting is global, so a screen should coordinate ownership if multiple game screens can stay mounted.",
-        code: `import { audio } from "@nayan-ui/engine";
-export function applySoundSettings(enabled: boolean, volume: number) {
-  audio.muted = !enabled;
-  audio.volume = Math.max(0, Math.min(2, volume));
+          "Call on settings changes rather than every frame. audio.enabled mirrors haptics.enabled (audio.muted is its inverse). Both are global, so a screen should coordinate ownership if multiple game screens can stay mounted.",
+        code: `import { audio, haptics } from "@nayan-ui/engine";
+export function applyFeedbackSettings(settings: { enableSounds: boolean; enableHaptics: boolean; volume: number }) {
+  audio.enabled = settings.enableSounds;
+  haptics.enabled = settings.enableHaptics;
+  audio.volume = Math.max(0, Math.min(2, settings.volume));
 }`,
         platform: "shared",
         language: "tsx",

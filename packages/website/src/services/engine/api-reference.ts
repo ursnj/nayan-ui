@@ -4,7 +4,7 @@ export const apiReferenceGuide: EngineGuide = {
   slug: "api-reference",
   title: "Public API reference",
   description:
-    "107 named public exports, including classes, helpers, component contracts and TypeScript data structures, audited against the shared engine entry point.",
+    "136 named public exports, including classes, helpers, component contracts and TypeScript data structures, audited against the shared engine entry point.",
   sections: [
     {
       id: "reading-the-reference",
@@ -50,21 +50,30 @@ export declare class World implements RenderSource {
     readonly regions: Float32Array;
     readonly ranges: Uint32Array;
     constructor(capacity: number);
+    /** True once \`dispose()\` has run. Cleanup calls (despawn, set, has, queries, stopping animations
+     * and timers) are safe no-ops afterwards, so late animation promises and timers need no guard.
+     */
+    get isDisposed(): boolean;
     /** Live entities (text letters count too). */
     get count(): number;
     /** Adds an entity (one native call; text adds one per letter). Throws if the world is full or an option is invalid. */
     spawn(options?: EntityOptions): Entity;
     /**
      * Changes an entity (one native call). Only the options you pass change; \`null\` removes.
-     * Returns false if the entity is gone or an option was rejected (the others still apply).
+     * Returns false if the entity is gone, the world is disposed, or an option was rejected (the others still apply).
      */
     set(e: Entity, options: EntityOptions): boolean;
+    /**
+     * This world's shared draw-only transform batch (created on first use). Queue per-frame moves with
+     * its allocation-free methods after \`update()\`, then \`flush()\` once before the frame is drawn.
+     */
+    get transforms(): TransformBatch;
     /** Reusable draw-only transforms; use set() for text entities and flush before animations/queries. */
     createTransformBatch(): TransformBatch;
     /** Removes an entity and anything attached to it. Returns false if it was already gone. */
     despawn(e: Entity): boolean;
     /** A one-off push: jump, explosion, knockback (dynamic bodies only). */
-    impulse(e: Entity, [x, y, z]: Vec3): void;
+    impulse(e: Entity, impulse: Vec3): void;
     /** Native world backing this render source; bone palettes stay in Rust. */
     get nativeWorld(): number;
     /** Play a named GLB clip. Re-selecting it changes speed without restarting; \`time\` explicitly seeks.
@@ -107,13 +116,16 @@ export declare class World implements RenderSource {
     /**
      * Runs \`fn\` after \`seconds\` of \`update\` time (game time: it pauses when updates stop). The clock is
      * kept in Rust, so there's no JS timer list to scan every frame. Due callbacks run inside \`update\`,
-     * earliest first. Returns the timer's id. \`cancelTimers()\` drops every pending one.
+     * earliest first. Returns the timer's id for \`cancelTimer\`; \`cancelTimers()\` drops every pending one.
+     * After \`dispose()\` it does nothing and returns 0.
      *
      * \`\`\`ts
      * world.after(0.3, () => checkMatches());
      * \`\`\`
      */
     after(seconds: number, fn: () => void): number;
+    /** Drops one pending \`after\` timer so its callback never runs. Returns false if it already ran or was dropped. */
+    cancelTimer(id: number): boolean;
     /** Drops every pending \`after\` timer: their callbacks never run (a new round, a reset). */
     cancelTimers(): void;
     /** Score, lives and the game clock, kept in Rust (created on first use). */
@@ -153,20 +165,27 @@ export declare class World implements RenderSource {
         number,
         number
     ] | null;
-    /** True while the entity exists. */
+    /** True while the entity exists (false after \`dispose()\`). */
     has(e: Entity): boolean;
-    /** First solid (non-sensor) collider along the ray whose layer is in \`mask\`, as of the last update. */
-    raycast(origin: Vec3, direction: Vec3, maxDistance: number, mask?: number): RaycastHit | null;
+    /**
+     * First solid (non-sensor) collider along the ray whose layer is in \`mask\`, as of the last update.
+     * Pass \`out\` to reuse a hit object every frame.
+     */
+    raycast(origin: Vec3, direction: Vec3, maxDistance: number, mask?: number, out?: RaycastHit): RaycastHit | null;
     /**
      * The entity under a point of the GameView (e.g. a tap's \`x, y\`), tested against what was last
-     * drawn. Needs no physics. Returns null if nothing pickable is there.
+     * drawn. Needs no physics. Returns null if nothing pickable is there. Pass \`out\` to reuse a hit object.
      */
-    pick(x: number, y: number): PickHit | null;
+    pick(x: number, y: number, out?: PickHit): PickHit | null;
     /**
      * Where a world position appears in the GameView, in points from its top-left, or null if it's behind
      * the camera (or nothing has been drawn yet). Place React Native views over 3D objects with it.
+     * Pass \`out\` to avoid allocating every frame.
      */
-    toScreen(position: Vec3): [
+    toScreen(position: Vec3, out?: [
+        number,
+        number
+    ]): [
         number,
         number
     ] | null;
@@ -174,9 +193,14 @@ export declare class World implements RenderSource {
      * Where a GameView point (a finger's \`x, y\`) lands on a plane, or null if the plane is behind the
      * camera or edge-on. Defaults to the ground (y = 0). Drag a piece across a board with it:
      * \`world.screenToWorld(x, y, { point: [0, pieceHeight, 0] })\`. 2D games looking down -z use
-     * \`{ normal: [0, 0, 1] }\`.
+     * \`{ normal: [0, 0, 1] }\`. Like \`toScreen\`, it needs a drawn frame (null before the first one).
+     * Pass \`out\` to avoid allocating every frame.
      */
-    screenToWorld(x: number, y: number, plane?: ScreenPlane): [
+    screenToWorld(x: number, y: number, plane?: ScreenPlane, out?: [
+        number,
+        number,
+        number
+    ]): [
         number,
         number,
         number
@@ -199,9 +223,215 @@ export declare class World implements RenderSource {
      * copy what you need. Either entity may already be despawned by an earlier callback.
      */
     forEachCollision(fn: (a: Entity, b: Entity, info: CollisionInfo) => void): void;
-    /** Frees the native world. Pending animation promises resolve; any later call throws. */
+    /**
+     * Frees the native world. Pending animation promises resolve and timers are dropped. Later cleanup
+     * calls and queries are no-ops (see \`isDisposed\`); \`spawn\` and \`update\` throw.
+     */
     dispose(): void;
 }`,
+        },
+      ],
+    },
+    {
+      id: "world-quat",
+      title: "world/quat",
+      paragraphs: ["Usage and examples: /engine/world-entities."],
+      table: {
+        headers: ["Export", "Kind", "Guide"],
+        rows: [
+          ["quat", "Runtime API", "/engine/world-entities"],
+          ["MutableQuat", "TypeScript type", "/engine/world-entities"],
+        ],
+      },
+      examples: [
+        {
+          title: "world/quat declarations",
+          platform: "shared",
+          language: "typescript",
+          code: `/** A writable quaternion; pass one as \`out\` to reuse it instead of allocating. */
+export type MutableQuat = [
+    number,
+    number,
+    number,
+    number
+];
+
+/**
+ * Quaternion helpers for \`rotation\` options, keyframes and geometry parts ([x, y, z, w]). Every
+ * function takes an optional \`out\` so per-frame code can reuse one array instead of allocating.
+ *
+ * \`\`\`ts
+ * world.set(car, { rotation: quat.y(heading) });
+ * const spin = quat.multiply(quat.y(yaw), quat.x(pitch), scratch); // pitch first, then yaw
+ * \`\`\`
+ */
+export declare const quat: {
+    /** No rotation. */
+    identity: Quat;
+    /** Rotation by \`angle\` radians around the unit axis (x, y, z). */
+    axisAngle(x: number, y: number, z: number, angle: number, out?: MutableQuat): MutableQuat;
+    /** Rotation around the x axis (pitch). */
+    x(angle: number, out?: MutableQuat): MutableQuat;
+    /** Rotation around the y axis (yaw, heading). */
+    y(angle: number, out?: MutableQuat): MutableQuat;
+    /** Rotation around the z axis (roll; spin for 2D games looking down -z). */
+    z(angle: number, out?: MutableQuat): MutableQuat;
+    /** \`a\` after \`b\`: \`b\` turns first. \`out\` may be \`a\` or \`b\`. */
+    multiply(a: Quat, b: Quat, out?: MutableQuat): MutableQuat;
+    /** Turns around x, then y, then z (radians): the same as \`multiply(z(z), multiply(y(y), x(x)))\`. */
+    fromEuler(x: number, y: number, z: number, out?: MutableQuat): MutableQuat;
+    /** Shortest-path interpolation from \`a\` (t = 0) to \`b\` (t = 1). */
+    slerp(a: Quat, b: Quat, t: number, out?: MutableQuat): MutableQuat;
+};`,
+        },
+      ],
+    },
+    {
+      id: "world-effects",
+      title: "world/effects",
+      paragraphs: ["Usage and examples: /engine/particles."],
+      table: {
+        headers: ["Export", "Kind", "Guide"],
+        rows: [
+          ["effects", "Runtime API", "/engine/particles"],
+          ["DustOptions", "TypeScript type", "/engine/particles"],
+          ["EffectOptions", "TypeScript type", "/engine/particles"],
+          ["FlashOptions", "TypeScript type", "/engine/particles"],
+          ["PopOptions", "TypeScript type", "/engine/particles"],
+        ],
+      },
+      examples: [
+        {
+          title: "world/effects declarations",
+          platform: "shared",
+          language: "typescript",
+          code: `/** Shared options of the layered effects (confetti, sparkle, shatter, splash, sparks, explosion). */
+export type EffectOptions = {
+    position: Vec3;
+    /** One color, or several to pick from at random. */
+    colors: Color | readonly Color[];
+    /** Typical particle size. */
+    size: number;
+    /** Top speed. */
+    speed: number;
+    /** About how many particles (a few extra go to the flash and puffs). */
+    count: number;
+    /** Seconds. */
+    lifetime: number;
+    /** Vertical acceleration (negative falls). Default 0. */
+    gravity?: number;
+    /** Main direction. Default up. */
+    direction?: Vec3;
+    /** Half-angle of the cone around \`direction\`. Default π (every direction). */
+    spread?: number;
+    /** A brief glow at the source. Default true. */
+    flash?: boolean;
+};
+
+/** A soft cloud of puffs that swell and fade: landing dust, kicked-up sand, sawdust, steam, muzzle smoke. */
+export type DustOptions = {
+    position: Vec3;
+    /** Start color (alpha is how thick it looks), or several to pick from. */
+    color: Color | readonly Color[];
+    /** Puff size at the start. */
+    size: number;
+    /** Top speed. */
+    speed: number;
+    count: number;
+    /** Seconds. */
+    lifetime: number;
+    /** Default up. */
+    direction?: Vec3;
+    /** Half-angle around \`direction\`. Default π. */
+    spread?: number;
+    /** Default 0 (dust hangs; positive rises like smoke). */
+    gravity?: number;
+    /** How much each puff grows by the end. Default 2. */
+    endSize?: number;
+    /** Color at the end. Default: a single \`color\` faded to transparent; several colors keep theirs. */
+    endColor?: Color;
+    /** Default "puff" (blended); "flame" adds light instead. */
+    mesh?: BurstOptions['mesh'];
+};
+
+/** One glow that swells and fades at a point: a hit, a strike, a muzzle flash. */
+export type FlashOptions = {
+    position: Vec3;
+    /** Use channels above 1 to glow (see \`effects.hot\`). */
+    color: Color;
+    size: number;
+    /** Seconds. Default 0.22. */
+    lifetime?: number;
+    /** How much it grows by the end. Default 2.2. */
+    endSize?: number;
+    /** Default: \`color\` faded to transparent. */
+    endColor?: Color;
+    /** Default "flame" (adds light); "sphere" or "puff" for a solid or soft flash. */
+    mesh?: BurstOptions['mesh'];
+    /** Glows drawn at once (slightly scattered when \`speed\` > 0). Default 1. */
+    count?: number;
+    /** Default 0. */
+    speed?: number;
+};
+
+/** The cleared-piece pop: swell, flash white, settle, shrink away. */
+export type PopOptions = {
+    /** Its scale at rest (what it has now): one number, or per axis. */
+    scale: number | Vec3;
+    /** Its color at rest, to return to after the white flash. Omit to flash \`flash\` only (or nothing). */
+    color?: Color;
+    /** Parts to flash white as well (a group's visible children, whose rest color is white). */
+    flash?: readonly Entity[];
+    /** Seconds before it starts. Default 0. */
+    delay?: number;
+    /** Seconds it takes. Default \`effects.POP_TIME\`. */
+    duration?: number;
+};
+
+type Rgba = [
+    number,
+    number,
+    number,
+    number
+];
+
+/**
+ * Ready-made effects. Each is one call; particles then live, fall, shrink and recolor in Rust.
+ *
+ * \`\`\`ts
+ * effects.confetti(world, { position, colors: [RED, GOLD], size: 0.12, speed: 6, count: 40, lifetime: 1.2, gravity: -6 });
+ * effects.dust(world, { position: feet, color: [0.8, 0.75, 0.65, 0.6], size: 0.3, speed: 1.5, count: 6, lifetime: 0.5 });
+ * effects.flash(world, { position: hit, color: effects.hot(ORANGE), size: 0.8 });
+ * await effects.pop(world, candy, { scale: 1, color: RED });
+ * world.despawn(candy);
+ * \`\`\`
+ */
+export declare const effects: {
+    /** Celebration: tumbling paper, glints and a pop of light (wins, level-ups). */
+    confetti: typeof confetti;
+    /** Reward glitter: bright beads and glints (pickups, perfect moves). */
+    sparkle: typeof sparkle;
+    /** Breaking apart: chunks, crumbs, a glow and dust (bricks, crates, glass). \`mesh\` shapes the chunks. */
+    shatter: typeof shatter;
+    /** Liquid: droplets and mist (water, juice, paint). */
+    splash: typeof splash;
+    /** Hot metal: additive streaks and beads (scrapes, strikes, electricity). */
+    sparks: typeof sparks;
+    /** Fiery blast: flash, fireball cooling to smoke, embers and optional debris. */
+    explosion: typeof explosion;
+    /** Soft swelling puffs: dust, sand, sawdust, steam, smoke. */
+    dust: typeof dust;
+    /** One swelling glow: hits, strikes, muzzle flashes. */
+    flash: typeof flash;
+    /** The cleared-piece animation: swell, flash white, settle, shrink to nothing. */
+    pop: typeof pop;
+    /** Default \`pop\` duration in seconds. */
+    POP_TIME: number;
+    /** The same hue made self-lit (brightest channel lifted to \`peak\`), for glows. */
+    hot: typeof hot;
+    /** Part way (\`t\`, 0..1) to white. */
+    pale: typeof pale;
+};`,
         },
       ],
     },
@@ -275,8 +505,11 @@ export declare class Scoreboard {
      * \`expectedSeconds\` minus the seconds elapsed on a clock counting up. Returns the score.
      */
     awardTimeBonus(pointsPerSecond: number, expectedSeconds?: number): number;
-    /** A new run: score 0, \`lives\`, clock stopped at 0. */
-    reset(lives?: number): void;
+    /**
+     * A new run: score 0, \`lives\`, clock stopped at 0. With \`countdownSeconds\`, the stopped clock shows
+     * that countdown in full (a ready screen); \`resume()\` starts it.
+     */
+    reset(lives?: number, countdownSeconds?: number): void;
     /** @internal Runs handlers for what changed since the last call. */
     dispatch(): void;
 }`,
@@ -362,12 +595,12 @@ export interface ScreenPlane {
  * - \`kinematic\`: moved by you; pushes dynamic bodies out of the way.
  * - \`fixed\`: never moves (floors, walls).
  */
-export type BodyType = "dynamic" | "kinematic" | "fixed";
+export type BodyType = 'dynamic' | 'kinematic' | 'fixed';
 
 export type PhysicsOptions = {
     type: BodyType;
     /** Default: matches the mesh (spheres get a ball, cylinders a cylinder, ...; anything else a box). */
-    shape?: "ball" | "box" | "cylinder" | "capsule" | "cone";
+    shape?: 'ball' | 'box' | 'cylinder' | 'capsule' | 'cone';
     /** Ball, cylinder, capsule or cone radius. Default: from the entity's size. */
     radius?: number;
     /** Cylinder, capsule or cone height (total). Default: from the entity's size. */
@@ -479,7 +712,7 @@ export type EntityOptions = {
     pickable?: boolean;
 };
 
-export type Easing = "linear" | "easeIn" | "easeOut" | "easeInOut" | "back" | "bounce" | "elastic";
+export type Easing = 'linear' | 'easeIn' | 'easeOut' | 'easeInOut' | 'back' | 'bounce' | 'elastic';
 
 /** What \`animate\` changes. Anything left out stays as it is (and keeps any animation it already has). */
 export type AnimateTarget = {
@@ -517,18 +750,18 @@ export type AnimateOptions = {
     /** Default "easeOut". "back" overshoots, "bounce" bounces, "elastic" springs. */
     easing?: Easing;
     /** Extra runs after the first, or "forever". Default 0. */
-    repeat?: number | "forever";
+    repeat?: number | 'forever';
     /** Every other run plays backwards (pulses, ping-pong). */
     yoyo?: boolean;
     /** With several entities: extra delay for each next one, in seconds (waves, board reveals). */
     stagger?: number;
     /** "smooth" moves along a curve through the keyframes (arcs, hops) instead of straight lines. */
-    path?: "linear" | "smooth";
+    path?: 'linear' | 'smooth';
     /**
      * Physically simulated motion instead of a fixed duration: true (smooth), "bouncy", or your own
      * settings. Interrupting a spring with another keeps its speed, so it never jerks.
      */
-    spring?: boolean | "bouncy" | SpringOptions;
+    spring?: boolean | 'bouncy' | SpringOptions;
 };
 
 export type BurstOptions = {
@@ -634,12 +867,12 @@ export type Bounds = readonly [
     backend: string;
 };
 
-export type SwipeDirection = "left" | "right" | "up" | "down";
+export type SwipeDirection = 'left' | 'right' | 'up' | 'down';
 
-export type OverlayTouchPhase = "start" | "move" | "end" | "cancel";
+export type OverlayTouchPhase = 'start' | 'move' | 'end' | 'cancel';
 
 export type DragEvent = {
-    phase: "start" | "move" | "end";
+    phase: 'start' | 'move' | 'end';
     /** Finger position in the view, in points. */
     x: number;
     y: number;
@@ -651,7 +884,7 @@ export type DragEvent = {
 };
 
 export type PinchEvent = {
-    phase: "start" | "move" | "end";
+    phase: 'start' | 'move' | 'end';
     /** Finger spread relative to the start: 2 = twice as far apart (zoom in). */
     scale: number;
     /** Radians the two fingers turned since the start, clockwise on screen. */
@@ -673,12 +906,8 @@ export type GameViewProps = {
     /** Mutate this object (e.g. \`camera.eye\`) from \`onUpdate\`; it is read every frame. */
     camera?: Camera;
     light?: Light;
-    /** Sky / clear color, linear 0..1 RGB. Also the fog color. Default dark navy. */
-    background?: readonly [
-        number,
-        number,
-        number
-    ];
+    /** Sky / clear color, linear 0..1 RGB (alpha ignored). Also the fog color. Default dark navy. */
+    background?: Color;
     /** Distance fog density towards \`background\` (e.g. 0.02). Default 0 (off). */
     fog?: number;
     /**
@@ -700,6 +929,8 @@ export type GameViewProps = {
     onLongPress?: (x: number, y: number) => void;
     /** Two fingers spreading, pinching or turning (zoom and rotate a board). Ends any drag in progress. */
     onPinch?: (pinch: PinchEvent) => void;
+    /** Host primary action for keyboard input, such as Start/Stop or Play Again. */
+    onPrimaryAction?: () => void;
     /**
      * A screen-space layer drawn over the scene by the renderer (scoreboards, buttons): usually a second
      * \`World\`, in points from the view's top-left with y up (so on screen y <= 0) and z toward the viewer
@@ -773,14 +1004,34 @@ export declare function warmUpEngine(): Promise<void>;`,
           title: "world/TransformBatch declarations",
           platform: "shared",
           language: "typescript",
-          code: `export type TransformOptions = Pick<EntityOptions, "position" | "rotation" | "scale" | "color">;
+          code: `export type TransformOptions = Pick<EntityOptions, 'position' | 'rotation' | 'scale' | 'color'>;
 
-/** Explicit draw-only updates. Flush before reading positions, animating, or stepping the world.
- * Records and scratch storage are reused; values are copied when queued, never retained by reference.
+/**
+ * Explicit draw-only updates, applied in one native call by \`flush()\`. Flush before reading
+ * positions, animating, or stepping the world. Records and scratch storage are reused; values are
+ * copied when queued, never retained by reference. The scalar methods (\`position\`, \`rotation\`,
+ * \`scale\`, \`color\`, \`transform\`) allocate nothing; consecutive calls for the same entity share one
+ * record.
+ *
+ * \`\`\`ts
+ * const batch = world.transforms;
+ * for (const p of pieces) batch.transform(p.entity, p.x, 0, p.z, 0, p.qy, 0, p.qw);
+ * batch.flush();
+ * \`\`\`
  */
 export declare class TransformBatch {
     constructor(commit: (data: Float64Array, count: number) => number);
     position(entity: Entity, x: number, y: number, z: number): void;
+    /** Rotation quaternion [x, y, z, w]. */
+    rotation(entity: Entity, x: number, y: number, z: number, w: number): void;
+    /** Uniform scale, or per axis. */
+    scale(entity: Entity, x: number, y?: number, z?: number): void;
+    /** RGBA color; alpha defaults to 1. */
+    color(entity: Entity, r: number, g: number, b: number, a?: number): void;
+    /** Position and rotation together (the common per-frame update for a moving piece). */
+    transform(entity: Entity, x: number, y: number, z: number, qx: number, qy: number, qz: number, qw: number): void;
+    /** Queued records (merged per entity). */
+    get size(): number;
     set(entity: Entity, options: TransformOptions): void;
     flush(): number;
     clear(): void;
@@ -804,10 +1055,10 @@ export declare class TransformBatch {
           title: "render/quality declarations",
           platform: "shared",
           language: "typescript",
-          code: `export type RenderQuality = "high" | "medium" | "low" | "lowest";
+          code: `export type RenderQuality = 'high' | 'medium' | 'low' | 'lowest';
 
 /** \`"auto"\` starts at "high" and steps down only while the device really can't keep up. */
-export type RenderQualitySetting = RenderQuality | "auto";`,
+export type RenderQualitySetting = RenderQuality | 'auto';`,
         },
       ],
     },
@@ -1022,53 +1273,53 @@ export declare function loadTexture(source: AssetSource): Promise<Texture>;`,
           platform: "shared",
           language: "typescript",
           code: `type Node = {
-    readonly kind: "sphere";
+    readonly kind: 'sphere';
     readonly radius: number;
 } | {
-    readonly kind: "ellipsoid";
+    readonly kind: 'ellipsoid';
     readonly radii: Vec3;
 } | {
-    readonly kind: "box";
+    readonly kind: 'box';
     readonly size: Vec3;
     readonly radius: number;
 } | {
-    readonly kind: "capsule";
+    readonly kind: 'capsule';
     readonly start: Vec3;
     readonly end: Vec3;
     readonly radius: number;
 } | {
-    readonly kind: "cylinder";
+    readonly kind: 'cylinder';
     readonly radius: number;
     readonly height: number;
 } | {
-    readonly kind: "torus";
+    readonly kind: 'torus';
     readonly radius: number;
     readonly tube: number;
 } | {
-    readonly kind: "union";
+    readonly kind: 'union';
     readonly a: Node;
     readonly b: Node;
     readonly blend: number;
 } | {
-    readonly kind: "subtract" | "intersect";
+    readonly kind: 'subtract' | 'intersect';
     readonly a: Node;
     readonly b: Node;
 } | {
-    readonly kind: "transform";
+    readonly kind: 'transform';
     readonly child: Node;
     readonly position: Vec3;
     readonly rotation: Quat;
     readonly scale: Vec3;
 } | {
-    readonly kind: "paint";
+    readonly kind: 'paint';
     readonly child: Node;
     readonly color: Color;
 } | {
-    readonly kind: "shell";
+    readonly kind: 'shell';
     readonly child: Node;
     readonly thickness: number;
 } | {
-    readonly kind: "displace";
+    readonly kind: 'displace';
     readonly child: Node;
     readonly amplitude: number;
     readonly frequency: number;
@@ -1126,7 +1377,7 @@ export interface SolidOptions {
     /** Cells across the longest dimension, 8..128. Default 48. Higher costs cubic sampling work. */
     resolution?: number;
     /** Planar UV projection. Use parametricSurface/loft for explicitly authored UVs. Default xy. */
-    uv?: "xy" | "xz" | "yz";
+    uv?: 'xy' | 'xz' | 'yz';
 }
 
 /** Tessellates into editable, unregistered geometry. Prefer createSolid() for automatic model reuse. */
@@ -1161,7 +1412,7 @@ export declare function optimizeGeometry(geometry: Geometry, options?: OptimizeO
  * Independently simplifies the original at each requested ratio, avoiding accumulated error.
  * Cache/register the results once. The caller selects a level when camera distance changes.
  */
-export declare function createGeometryLods(geometry: Geometry, ratios?: readonly number[], options?: Omit<OptimizeOptions, "ratio">): Geometry[];
+export declare function createGeometryLods(geometry: Geometry, ratios?: readonly number[], options?: Omit<OptimizeOptions, 'ratio'>): Geometry[];
 
 export interface GeometryStats {
     vertices: number;
@@ -1231,10 +1482,10 @@ export interface LoftOptions {
 export declare function loft(sections: readonly LoftSection[], options?: LoftOptions): Geometry;
 
 /** A rounded rectangular cross-section with flat front/back caps, centered at the origin. */
-export declare function block(w: number, h: number, d: number, square?: number, color?: LoftOptions["color"]): Geometry;
+export declare function block(w: number, h: number, d: number, square?: number, color?: LoftOptions['color']): Geometry;
 
 /** An exact ellipsoid with analytic normals, rather than capped/truncated poles. */
-export declare function ellipsoid(radii: Vec3, color?: LoftOptions["color"], around?: number): Geometry;
+export declare function ellipsoid(radii: Vec3, color?: LoftOptions['color'], around?: number): Geometry;
 
 /** Smooth Hermite interpolation through increasing [x,value] points; clamped beyond the ends. */
 export declare function smoothCurve(points: readonly (readonly [
@@ -1316,7 +1567,7 @@ export declare function parametricSurface(sample: (u: number, v: number) => Vec3
 ];
 
 /**
- * A 2D outline, built like Skia's \`SkPath\` (or an SVG path): x right, y down. Solids made from it
+ * A 2D outline, built like an SVG path: x right, y down. Solids made from it
  * (\`extrude\`, \`lathe\`) are flipped upright, so a path drawn the way it looks on screen stands the
  * same way in the world. Coordinates are in world units: a 1 x 1 path makes a 1 unit wide shape.
  *
@@ -1383,15 +1634,15 @@ export declare class Path {
 export type Geometry = MeshGeometry;
 
 /** A built-in shape's geometry (unit-sized, centered), to \`merge\` with others. */
-export declare function shapeGeometry(shape: Exclude<Shape, "none" | "puff" | "flame">, options?: {
+export declare function shapeGeometry(shape: Exclude<Shape, 'none' | 'puff' | 'flame'>, options?: {
     color?: Color;
 }): Geometry;
 
 export type ExtrudeOptions = {
     /** How deep, in the path's units. 0 = a flat, one-sided face (facing +Z). Default 0.2. */
     depth?: number;
-    /** Skia's fill types: "nonzero" (Skia's kWinding, the default) or "evenodd" (every inner contour is a hole). */
-    fillRule?: "nonzero" | "evenodd";
+    /** SVG fill rules: "nonzero" (the default winding rule) or "evenodd" (every inner contour is a hole). */
+    fillRule?: 'nonzero' | 'evenodd';
     /** Vertex color (multiplies the entity's color). Default white. */
     color?: Color;
 };
@@ -1594,7 +1845,7 @@ export type Font = {
  */
 export declare function loadFont(source: AssetSource, options?: FontOptions): Promise<Font>;
 
-export type TextAlign = "left" | "center" | "right";
+export type TextAlign = 'left' | 'center' | 'right';
 
 export type TextLayout = {
     /** Extra space between letters, in ems (at scale 1, letters are 1 em tall). Default 0. */
@@ -1669,6 +1920,8 @@ export declare const audio: {
     play(sound: Sound, { volume: v, pan, pitch, loop }?: AudioPlayOptions): Voice | null;
     stop(voice: Voice | null | undefined): void;
     muted: boolean;
+    /** The inverse of \`muted\`, matching \`haptics.enabled\` (e.g. \`audio.enabled = settings.enableSounds\`). */
+    enabled: boolean;
     /** Master volume, 0..2. */
     volume: number;
     /** True once the device's audio output is running. */
@@ -1754,12 +2007,50 @@ export declare function Joystick({ state, size, style }: JoystickProps): import(
       ],
     },
     {
+      id: "input-keyboard",
+      title: "input/keyboard",
+      paragraphs: ["Usage and examples: /engine/input-picking."],
+      table: {
+        headers: ["Export", "Kind", "Guide"],
+        rows: [
+          ["createKeyboardInput", "Runtime API", "/engine/input-picking"],
+          ["KeyboardInputMode", "TypeScript type", "/engine/input-picking"],
+          ["KeyboardInputOptions", "TypeScript type", "/engine/input-picking"],
+        ],
+      },
+      examples: [
+        {
+          title: "input/keyboard declarations",
+          platform: "shared",
+          language: "typescript",
+          code: `export type KeyboardInputMode = 'pointer' | 'drag' | 'swipe';
+
+export interface KeyboardInputOptions {
+    mode?: KeyboardInputMode;
+    enabled?: () => boolean;
+    /** Optional primary control, in CSS pixels relative to the input surface. */
+    primary?: () => {
+        x: number;
+        y: number;
+    };
+}
+
+/** Browser keyboard adapter. Reuses pointer input, including engine gestures and raw contact surfaces. */
+export declare function createKeyboardInput(surface: HTMLElement, options?: KeyboardInputOptions): {
+    cancel: () => void;
+    dispose(): void;
+};`,
+        },
+      ],
+    },
+    {
       id: "types",
       title: "types",
       paragraphs: ["Usage and examples: /engine/render-source."],
       table: {
         headers: ["Export", "Kind", "Guide"],
         rows: [
+          ["MAX_MESHES", "Runtime API", "/engine/render-source"],
           ["Camera", "TypeScript type", "/engine/render-source"],
           ["Light", "TypeScript type", "/engine/render-source"],
           ["RenderSource", "TypeScript type", "/engine/render-source"],
@@ -1777,6 +2068,9 @@ export declare function Joystick({ state, size, style }: JoystickProps): import(
     number,
     number
 ];
+
+/** Number of mesh ids: built-in shapes (0..15), then loaded models, glyphs and textured variants. */
+export declare const MAX_MESHES = 4096;
 
 /** What the renderer draws. \`World\` implements it; so can any custom simulation. */
 export interface RenderSource {
@@ -1808,7 +2102,7 @@ export interface RenderSource {
  * light to what's behind it, so overlapping flames build up to a hot white core and stay bright over
  * smoke (fire, sparks, explosions, magic, glows). Use them as a burst's \`mesh\`.
  */
-export type Shape = "cube" | "sphere" | "plane" | "cylinder" | "cone" | "capsule" | "torus" | "roundedBox" | "puff" | "flame" | "none";
+export type Shape = 'cube' | 'sphere' | 'plane' | 'cylinder' | 'cone' | 'capsule' | 'torus' | 'roundedBox' | 'puff' | 'flame' | 'none';
 
 export type Camera = {
     eye: [
@@ -1853,14 +2147,299 @@ export type Light = {
     shadowExtent?: number;
     /**
      * Color and brightness of the light, multiplying both sun and ambient: e.g. [0.35, 0.38, 0.6] for
-     * moonlight. Glowing colors (channels above 1) aren't affected. Default [1, 1, 1].
+     * moonlight. Glowing colors (channels above 1) aren't affected. Alpha, if given, is ignored.
+     * Default [1, 1, 1].
      */
-    color?: [
+    color?: Color;
+};`,
+        },
+      ],
+    },
+    {
+      id: "drawing-DrawingDocument",
+      title: "drawing/DrawingDocument",
+      paragraphs: ["Usage and examples: /engine/drawing."],
+      table: {
+        headers: ["Export", "Kind", "Guide"],
+        rows: [
+          ["DrawingDocument", "Runtime API", "/engine/drawing"],
+          ["DrawingBrush", "TypeScript type", "/engine/drawing"],
+          ["DrawingBrushOptions", "TypeScript type", "/engine/drawing"],
+          ["DrawingControls", "TypeScript type", "/engine/drawing"],
+          ["DrawingState", "TypeScript type", "/engine/drawing"],
+          ["DrawingSnapshot", "TypeScript type", "/engine/drawing"],
+          ["SavedDrawingPath", "TypeScript type", "/engine/drawing"],
+          ["DrawingTool", "TypeScript type", "/engine/drawing"],
+          ["DrawingShape", "TypeScript type", "/engine/drawing"],
+          ["DrawingShapePreview", "TypeScript type", "/engine/drawing"],
+          ["DrawingSymmetry", "TypeScript type", "/engine/drawing"],
+          ["DrawingLayer", "TypeScript type", "/engine/drawing"],
+          ["DrawingProject", "TypeScript type", "/engine/drawing"],
+          ["DrawingStroke", "TypeScript type", "/engine/drawing"],
+          ["DrawingSample", "TypeScript type", "/engine/drawing"],
+          ["DrawingCoverageOptions", "TypeScript type", "/engine/drawing"],
+        ],
+      },
+      examples: [
+        {
+          title: "drawing/DrawingDocument declarations",
+          platform: "shared",
+          language: "typescript",
+          code: `export type DrawingBrush = 'NORMAL' | 'MARKER' | 'PENCIL' | 'CALLIGRAPHY' | 'WATERCOLOR' | 'NEON' | 'CRAYON' | 'SPRINKLING';
+
+export type DrawingShape = 'line' | 'arrow' | 'rectangle' | 'square' | 'rounded-rectangle' | 'circle' | 'ellipse' | 'triangle' | 'right-triangle' | 'diamond' | 'pentagon' | 'hexagon' | 'octagon' | 'star' | 'heart' | 'trapezoid' | 'parallelogram' | 'cross' | 'speech-bubble' | 'cloud';
+
+export interface DrawingShapePreview {
+    kind: DrawingShape;
+    name: string;
+    path: string;
+    filledPath: string;
+    canFill: boolean;
+}
+
+export type DrawingTool = 'brush' | 'fill' | 'picker' | DrawingShape;
+
+export type DrawingSymmetry = 'none' | 'vertical' | 'horizontal' | 'both';
+
+export interface DrawingLayer {
+    id: number;
+    name: string;
+    visible: boolean;
+    locked: boolean;
+    opacity: number;
+}
+
+export interface DrawingProject {
+    version: 2;
+    width: number;
+    height: number;
+    activeLayer: number;
+    layers: DrawingLayer[];
+    paths: SavedDrawingPath[];
+}
+
+export interface DrawingBrushOptions {
+    brushType: DrawingBrush;
+    color: string;
+    width: number;
+    opacity: number;
+    isEraser?: boolean;
+    pressure?: boolean;
+    smoothing?: number;
+    tool?: DrawingTool;
+    symmetry?: DrawingSymmetry;
+    filled?: boolean;
+    tolerance?: number;
+}
+
+export interface DrawingState {
+    controls: DrawingControls;
+    count: number;
+    canUndo: boolean;
+    canRedo: boolean;
+    revision: number;
+    width: number;
+    height: number;
+    pixelWidth: number;
+    pixelHeight: number;
+    zoom: number;
+    layers: DrawingLayer[];
+    activeLayer: number;
+    editable: boolean;
+    isDrawing: boolean;
+    tool: DrawingTool | null;
+    pickedColor: string | null;
+    error: string | null;
+}
+
+/** Native document settings; React may display this snapshot but never owns the tool state. */
+export interface DrawingControls {
+    tool: 'brush' | 'eraser' | 'move' | 'shape';
+    brushType: DrawingBrush;
+    color: string;
+    width: number;
+    opacity: number;
+    shape: DrawingShape;
+    filled: boolean;
+    pressure: boolean;
+    smoothing: number;
+}
+
+export interface DrawingSnapshot {
+    base64: string;
+    width: number;
+    height: number;
+}
+
+/** A committed stroke's geometry in document coordinates, for colliders, tracing and scoring. */
+export interface DrawingStroke {
+    /** Position in the document's stroke list; pass \`index + 1\` as \`from\` to read only newer strokes. */
+    index: number;
+    layerId: number;
+    color: string;
+    /** Painted width in document units, including the brush's width factor. */
+    width: number;
+    opacity: number;
+    isEraser: boolean;
+    brushType: string;
+    /** \`fill\`: \`outline\` is the painted shape. \`stroke\`: \`outline\` is the centreline. */
+    style: 'fill' | 'stroke';
+    /** [x, y, width, height] of the painted outline. */
+    bounds: [
+        number,
         number,
         number,
         number
     ];
-};`,
+    /**
+     * Smoothed gesture centrelines as flat [x0, y0, x1, y1, ...] arrays: one per symmetry copy, for
+     * brush strokes drawn this session. Empty for loaded strokes, fills and shapes; use \`outline\`.
+     */
+    lines: number[][];
+    /** Flattened contours of the painted path as flat [x0, y0, ...] arrays. */
+    outline: {
+        points: number[];
+        closed: boolean;
+    }[];
+}
+
+/** The composited ink under a document point (straight alpha; transparent paper is alpha 0). */
+export interface DrawingSample {
+    color: string;
+    alpha: number;
+}
+
+export interface DrawingCoverageOptions {
+    /** Document rectangle to measure; defaults to the whole paper. */
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+    /** Minimum ink alpha (0..1) that counts as painted. Default 0.5. */
+    minAlpha?: number;
+}
+
+export interface SavedDrawingPath {
+    path: string;
+    color: string;
+    width: number | string;
+    opacity?: number;
+    style?: 'fill' | 'stroke';
+    isEraser?: boolean;
+    brushType?: string;
+    touchPoints?: unknown[] | null;
+    [key: string]: unknown;
+}
+
+/**
+ * A native art document. Touches and live rendering never subscribe to React state.
+ *
+ * Games use the same document without \`DrawingCanvas\`: bind \`texture()\` to any entity, feed
+ * \`input(..., 'document')\` from the game's own touches or world hits, and read \`strokes()\`,
+ * \`sample()\` and \`coverage()\` for colliders and scoring. Create one document per game screen and
+ * \`clear()\` it on replay; \`dispose()\` it on unmount (this also frees its texture).
+ */
+export declare class DrawingDocument {
+    readonly id: number;
+    readonly width: number;
+    readonly height: number;
+    constructor(width: number, height: number, pixelRatio?: number);
+    get isDisposed(): boolean;
+    setBrush(options: DrawingBrushOptions): null;
+    updateControls(options: Partial<DrawingControls> & {
+        reset?: boolean;
+    }): DrawingState;
+    /** Atomic import: errors leave the current artwork intact, including unknown legacy metadata. */
+    load(paths: string | readonly SavedDrawingPath[] | DrawingProject): DrawingState;
+    get state(): DrawingState;
+    exportPaths(): string;
+    /** Rust checks idleness and revision atomically; autosave never finishes a live stroke. */
+    setEditingEnabled(enabled: boolean): DrawingState;
+    captureDraft(afterRevision?: number): {
+        project: string;
+        revision: number;
+        width: number;
+        height: number;
+    } | null;
+    /** Browser change stream. Native canvases deliver changes directly from their display clock. */
+    readChange(): DrawingState | null;
+    exportSVG(): string;
+    /** Full editable project: preserves layer order, visibility, locks and original SVG metadata. */
+    exportProject(): string;
+    layer(action: 'add' | 'duplicate' | 'select' | 'update' | 'move' | 'delete' | 'clear', options?: Partial<DrawingLayer> & {
+        index?: number;
+    }): DrawingState;
+    fill(x: number, y: number, tolerance?: number): DrawingState;
+    shapeCatalog(): DrawingShapePreview[];
+    addShape(kind: DrawingShape, x: number, y: number, endX: number, endY: number, filled?: boolean): DrawingState;
+    snapshot(): DrawingSnapshot;
+    undo(): DrawingState;
+    redo(): DrawingState;
+    clear(): DrawingState;
+    invalidateView(): DrawingState;
+    resetView(): DrawingState;
+    /** Fit the full artwork or fill the viewport width without changing saved dimensions. */
+    setViewFit(fit: 'contain' | 'width'): DrawingState;
+    finish(): DrawingState;
+    cancel(): DrawingState;
+    /**
+     * Feeds one pointer sample: 0 begin, 1 move, 2 end, 3 cancel. \`view\` coordinates are relative to
+     * a \`DrawingCanvas\` and follow its zoom/pan (browser pointer sampling; native canvases feed
+     * touches straight into the Rust core). \`document\` coordinates skip the view mapping, for games
+     * that convert their own touches or world hits (e.g. a raycast's texture UV × document size).
+     */
+    input(phase: 0 | 1 | 2 | 3, x: number, y: number, pressure?: number, space?: 'view' | 'document'): void;
+    /**
+     * A live texture of the artwork (transparent paper, straight alpha), usable as any entity's
+     * \`texture\`. In-progress strokes appear immediately; only changed rows are uploaded each frame.
+     * Created once per document and freed by \`dispose()\`. Its pixels are not readable through
+     * texture APIs; use \`sample()\`, \`coverage()\` or \`snapshot()\`.
+     */
+    texture(): Texture;
+    /** Committed strokes from index \`from\`, flattened to \`tolerance\` document units (default 0.5). */
+    strokes(options?: {
+        from?: number;
+        tolerance?: number;
+    }): DrawingStroke[];
+    /** The ink under a document point, or null off the paper. Includes an in-progress stroke. */
+    sample(x: number, y: number): DrawingSample | null;
+    /** Fraction (0..1) of a document rectangle covered by ink, for colouring and scratch-off scoring. */
+    coverage(options?: DrawingCoverageOptions): number;
+    transform(dx: number, dy: number, scale?: number): DrawingState;
+    /** Browser presentation; iOS and Android use native display clocks with automatic suspension. */
+    present(width: number, height: number, background?: string, pixelRatio?: number): boolean;
+    dispose(): void;
+}`,
+        },
+      ],
+    },
+    {
+      id: "drawing-DrawingCanvas",
+      title: "drawing/DrawingCanvas",
+      paragraphs: ["Usage and examples: /engine/drawing."],
+      table: {
+        headers: ["Export", "Kind", "Guide"],
+        rows: [
+          ["DrawingCanvas", "Runtime API", "/engine/drawing"],
+          ["DrawingCanvasProps", "TypeScript type", "/engine/drawing"],
+        ],
+      },
+      examples: [
+        {
+          title: "drawing/DrawingCanvas declarations",
+          platform: "shared",
+          language: "typescript",
+          code: `export declare const DrawingCanvas: import("react").MemoExoticComponent<({ document: drawing, mode, background, active, onError, onChange, style }: DrawingCanvasProps) => import("react").JSX.Element>;
+
+export interface DrawingCanvasProps {
+    document: DrawingDocument;
+    mode?: 'draw' | 'move' | 'view';
+    background?: string;
+    active?: boolean;
+    onChange?: (state: DrawingState) => void;
+    onError?: (error: Error) => void;
+    style?: ViewStyle;
+}`,
         },
       ],
     },

@@ -67,6 +67,11 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.nayanui.com/games/build-a-game</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.nayanui.com/react/avatar</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -6563,6 +6568,86 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.nayanui.com/games/arrows</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/games/bluk</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/games/chameleon-run</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/games/checkers</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/games/crossy-road</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/games/falling-sticks</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/games/find-different-number</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/games/memory-match</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/games/mob-control</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/games/paper-io</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/games/penguin-run</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/games/play-with-tua</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/games/reversi</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/games/snakes-and-ladders</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/games/tangram</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/games/treasure-hunt</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.nayanui.com/games/block-breaker</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -6649,6 +6734,11 @@
   </url>
   <url>
     <loc>https://www.nayanui.com/engine/particles</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/engine/drawing</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

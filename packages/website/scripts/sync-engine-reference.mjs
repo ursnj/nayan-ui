@@ -18,6 +18,8 @@ const source = ts.createSourceFile(
 );
 const targets = {
   "world/World": "world-entities",
+  "world/quat": "world-entities",
+  "world/effects": "particles",
   "world/Scoreboard": "scoreboard-timers",
   "world/types": "world-entities",
   "world/TransformBatch": "cache-performance",
@@ -37,7 +39,10 @@ const targets = {
   "media/audio": "audio-haptics",
   "media/haptics": "audio-haptics",
   "input/Joystick": "input-picking",
+  "input/keyboard": "input-picking",
   types: "render-source",
+  "drawing/DrawingDocument": "drawing",
+  "drawing/DrawingCanvas": "drawing",
 };
 const groups = new Map();
 for (const statement of source.statements) {
@@ -77,7 +82,29 @@ for (const [module, symbols] of groups) {
     throw new Error(`Build the engine browser declarations first; missing ${path}`);
   const file = ts.createSourceFile(path, readFileSync(path, "utf8"), ts.ScriptTarget.Latest, true);
   const declarations = [];
+  // Public types re-exported from a sibling file (export type { X } from "./types") are printed from there.
+  const statements = [...file.statements];
   for (const statement of file.statements) {
+    if (
+      !ts.isExportDeclaration(statement) ||
+      !statement.moduleSpecifier ||
+      !statement.exportClause ||
+      !ts.isNamedExports(statement.exportClause)
+    )
+      continue;
+    const names = statement.exportClause.elements.map((e) => (e.propertyName ?? e.name).text);
+    if (!symbols.some((symbol) => names.includes(symbol.local))) continue;
+    const target = resolve(dirname(path), `${statement.moduleSpecifier.text}.d.ts`);
+    if (!existsSync(target)) continue;
+    const other = ts.createSourceFile(
+      target,
+      readFileSync(target, "utf8"),
+      ts.ScriptTarget.Latest,
+      true,
+    );
+    statements.push(...other.statements.filter((s) => names.includes(s.name?.text)));
+  }
+  for (const statement of statements) {
     if (ts.isImportDeclaration(statement) || ts.isExportDeclaration(statement)) continue;
     const name = statement.name?.text;
     const vars = ts.isVariableStatement(statement)
@@ -109,7 +136,7 @@ for (const [module, symbols] of groups) {
         ),
       );
     }
-    declarations.push(printer.printNode(ts.EmitHint.Unspecified, node, file));
+    declarations.push(printer.printNode(ts.EmitHint.Unspecified, node, statement.getSourceFile()));
   }
   for (const symbol of symbols)
     members.push({ name: symbol.name, module, typeOnly: symbol.typeOnly, guide: targets[module] });

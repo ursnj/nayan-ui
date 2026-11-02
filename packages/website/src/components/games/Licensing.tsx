@@ -94,64 +94,55 @@ const GamesLicensing = () => {
         </h2>
         <ul className="text-muted space-y-2">
           <li>
-            • Built with{" "}
-            <NLink
-              href="https://shopify.github.io/react-native-skia/"
-              target="_blank"
-              className="text-accent hover:underline"
-            >
-              React Native Skia
-            </NLink>{" "}
-            for high-performance graphics
+            • Rendering, physics, animation, audio and haptics by
+            <NLink href="/engine" className="text-accent hover:underline">
+              @nayan-ui/engine
+            </NLink>
+            (Rust and
+            <NLink href="https://wgpu.rs/" target="_blank" className="text-accent hover:underline">
+              wgpu
+            </NLink>
+            ), with a WebAssembly build for browsers
           </li>
           <li>
-            • Powered by{" "}
+            • Browser build of the shared UI through
             <NLink
-              href="https://docs.swmansion.com/react-native-reanimated/"
+              href="https://necolas.github.io/react-native-web/"
               target="_blank"
               className="text-accent hover:underline"
             >
-              React Native Reanimated
-            </NLink>{" "}
-            for smooth animations
-          </li>
-          <li>
-            • Enhanced with{" "}
-            <NLink
-              href="https://github.com/margelo/react-native-worklets"
-              target="_blank"
-              className="text-accent hover:underline"
-            >
-              React Native Worklets
-            </NLink>{" "}
-            for high-performance JavaScript
-          </li>
-          <li>
-            • State management with{" "}
-            <NLink
-              href="https://github.com/pmndrs/zustand"
-              target="_blank"
-              className="text-accent hover:underline"
-            >
-              Zustand
-            </NLink>{" "}
-            and{" "}
-            <NLink
-              href="https://github.com/immerjs/immer"
-              target="_blank"
-              className="text-accent hover:underline"
-            >
-              Immer
+              React Native Web
             </NLink>
           </li>
           <li>
-            • Created with{" "}
+            • Treasure Hunt&apos;s explorer: a CC0 MakeHuman character from
+            <NLink
+              href="https://github.com/olatunde85/3d-gen"
+              target="_blank"
+              className="text-accent hover:underline"
+            >
+              3d-gen
+            </NLink>
+            , animated with motion capture from the CMU Graphics Lab Motion Capture Database
+          </li>
+          <li>
+            • HUD text set in
+            <NLink
+              href="https://rsms.me/inter/"
+              target="_blank"
+              className="text-accent hover:underline"
+            >
+              Inter
+            </NLink>
+          </li>
+          <li>
+            • Packaged with
             <NLink
               href="https://github.com/callstack/react-native-builder-bob"
               target="_blank"
               className="text-accent hover:underline"
             >
-              create-react-native-library
+              react-native-builder-bob
             </NLink>
           </li>
         </ul>
@@ -176,11 +167,7 @@ const GamesLicensing = () => {
           <li className="flex items-center">
             <span className="mr-2">🐛</span>
             <strong className="mr-2">Issues:</strong>
-            <NLink
-              href={REPO_URL}
-              target="_blank"
-              className="text-accent hover:underline"
-            >
+            <NLink href={REPO_URL} target="_blank" className="text-accent hover:underline">
               GitHub Issues
             </NLink>
           </li>

@@ -12,6 +12,48 @@
     "guide": "world-entities"
   },
   {
+    "name": "quat",
+    "module": "world/quat",
+    "typeOnly": false,
+    "guide": "world-entities"
+  },
+  {
+    "name": "MutableQuat",
+    "module": "world/quat",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "effects",
+    "module": "world/effects",
+    "typeOnly": false,
+    "guide": "particles"
+  },
+  {
+    "name": "DustOptions",
+    "module": "world/effects",
+    "typeOnly": true,
+    "guide": "particles"
+  },
+  {
+    "name": "EffectOptions",
+    "module": "world/effects",
+    "typeOnly": true,
+    "guide": "particles"
+  },
+  {
+    "name": "FlashOptions",
+    "module": "world/effects",
+    "typeOnly": true,
+    "guide": "particles"
+  },
+  {
+    "name": "PopOptions",
+    "module": "world/effects",
+    "typeOnly": true,
+    "guide": "particles"
+  },
+  {
     "name": "Scoreboard",
     "module": "world/Scoreboard",
     "typeOnly": false,
@@ -612,6 +654,30 @@
     "guide": "input-picking"
   },
   {
+    "name": "createKeyboardInput",
+    "module": "input/keyboard",
+    "typeOnly": false,
+    "guide": "input-picking"
+  },
+  {
+    "name": "KeyboardInputMode",
+    "module": "input/keyboard",
+    "typeOnly": true,
+    "guide": "input-picking"
+  },
+  {
+    "name": "KeyboardInputOptions",
+    "module": "input/keyboard",
+    "typeOnly": true,
+    "guide": "input-picking"
+  },
+  {
+    "name": "MAX_MESHES",
+    "module": "types",
+    "typeOnly": false,
+    "guide": "render-source"
+  },
+  {
     "name": "Camera",
     "module": "types",
     "typeOnly": true,
@@ -640,5 +706,113 @@
     "module": "types",
     "typeOnly": true,
     "guide": "render-source"
+  },
+  {
+    "name": "DrawingDocument",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": false,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingBrush",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingBrushOptions",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingControls",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingState",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingSnapshot",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "SavedDrawingPath",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingTool",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingShape",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingShapePreview",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingSymmetry",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingLayer",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingProject",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingStroke",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingSample",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingCoverageOptions",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingCanvas",
+    "module": "drawing/DrawingCanvas",
+    "typeOnly": false,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingCanvasProps",
+    "module": "drawing/DrawingCanvas",
+    "typeOnly": true,
+    "guide": "drawing"
   }
 ]

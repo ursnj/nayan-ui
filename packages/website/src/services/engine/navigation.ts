@@ -46,7 +46,8 @@ export const engineNavigation = [
   {
     slug: "world-entities",
     title: "Worlds, entities and lifecycle",
-    description: "Create entities, move them, query their state and clean up each scene.",
+    description:
+      "Follow the five lifecycle rules, spawn and change entities, rotate them with quat and dispose safely.",
     link: "/engine/world-entities",
   },
   {
@@ -81,15 +82,24 @@ export const engineNavigation = [
   },
   {
     slug: "input-picking",
-    title: "Gestures, joystick and picking",
-    description: "Handle gestures, read joystick input and convert screen coordinates.",
+    title: "Gestures, joystick, keyboard and picking",
+    description:
+      "Handle gestures, joystick and browser keyboard input and convert screen coordinates.",
     link: "/engine/input-picking",
   },
   {
     slug: "particles",
-    title: "Particles, smoke and emissive effects",
-    description: "Create sparks, confetti, fire and smoke with reusable particle settings.",
+    title: "Effects, particles and the cleared-piece pop",
+    description:
+      "Add confetti, sparkle, shatter, splash, sparks, explosions, dust, flashes and the cleared-piece pop in one call.",
     link: "/engine/particles",
+  },
+  {
+    slug: "drawing",
+    title: "Drawing and painting",
+    description:
+      "Paint with native brushes and layers, export artwork, and paint, trace or colour inside games.",
+    link: "/engine/drawing",
   },
   {
     slug: "models-textures",
@@ -136,7 +146,8 @@ export const engineNavigation = [
   {
     slug: "cache-performance",
     title: "Procedural cache and performance",
-    description: "Use automatic asset caching, clear saved data and control frame costs.",
+    description:
+      "Use automatic asset caching, move many entities with world.transforms and keep frames allocation-free.",
     link: "/engine/cache-performance",
   },
   {

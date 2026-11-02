@@ -1676,7 +1676,8 @@ export const toolsSidebarItems = [
   },
   {
     title: "Morse Code Converter",
-    description: "Convert text to Morse code and back, with full letter, digit, and punctuation support",
+    description:
+      "Convert text to Morse code and back, with full letter, digit, and punctuation support",
     link: "/tools/morse-code-converter",
     tags: morseCodeConverterTags,
     icon: Radio,
@@ -1710,7 +1711,8 @@ export const toolsSidebarItems = [
   },
   {
     title: "Robots.txt Generator",
-    description: "Build robots.txt files with user-agent rules, allow/disallow paths, and sitemap directives",
+    description:
+      "Build robots.txt files with user-agent rules, allow/disallow paths, and sitemap directives",
     link: "/tools/robots-generator",
     tags: robotsTags,
     icon: Bot,
@@ -1823,14 +1825,16 @@ export const toolsSidebarItems = [
   },
   {
     title: "Password Generator",
-    description: "Generate strong, cryptographically secure passwords with custom length and character sets",
+    description:
+      "Generate strong, cryptographically secure passwords with custom length and character sets",
     link: "/tools/password-generator",
     tags: passwordGeneratorTags,
     icon: KeyRound,
   },
   {
     title: "Number Base Converter",
-    description: "Convert numbers between binary, octal, decimal, and hexadecimal with arbitrary precision",
+    description:
+      "Convert numbers between binary, octal, decimal, and hexadecimal with arbitrary precision",
     link: "/tools/number-base-converter",
     tags: numberBaseConverterTags,
     icon: Binary,
@@ -1881,9 +1885,10 @@ export const engineSidebarItems: SidebarItem[] = [
   engineSidebarItem("animation", "Animation", RotateCw),
   engineSidebarItem("skeletal-animation", "Skeletal Animation", Users),
   engineSidebarItem("input-picking", "Input & Picking", SquareMousePointer),
-  engineSidebarItem("particles", "Particles", Sparkles),
+  engineSidebarItem("particles", "Effects & Particles", Sparkles),
   engineSidebarItem("scoreboard-timers", "Scoreboards & Timers", Clock),
   engineSidebarItem("audio-haptics", "Audio & Haptics", Radio),
+  engineSidebarItem("drawing", "Drawing & Painting", PenTool),
   { title: "Assets & Geometry", description: "", link: "", isHeading: true },
   engineSidebarItem("models-textures", "Models & Textures", Images),
   engineSidebarItem("text-fonts", "Text & Fonts", TextCursorInput),
@@ -1916,6 +1921,12 @@ export const gamesSidebarItems = [
     description: "Complete API documentation for all exported constants and types",
     link: "/games/api-reference",
     icon: BookOpen,
+  },
+  {
+    title: "Build an engine game",
+    description: "File pattern, lifecycle and shared helpers for new engine games",
+    link: "/games/build-a-game",
+    icon: Wrench,
   },
   {
     title: "Licensing",
@@ -2207,6 +2218,24 @@ export const gamesSidebarItems = [
     title: "Reversi",
     description: "Classic Othello strategy",
     link: "/games/reversi",
+    icon: Gamepad2,
+  },
+  {
+    title: "Penguin Run",
+    description: "3D lane runner",
+    link: "/games/penguin-run",
+    icon: Gamepad2,
+  },
+  {
+    title: "Treasure Hunt",
+    description: "3D wilderness exploration",
+    link: "/games/treasure-hunt",
+    icon: Gamepad2,
+  },
+  {
+    title: "Play With Tua",
+    description: "Playful 3D companion",
+    link: "/games/play-with-tua",
     icon: Gamepad2,
   },
 ];

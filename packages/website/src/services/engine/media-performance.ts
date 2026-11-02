@@ -89,18 +89,22 @@ export function chooseLod(world: World, entity: Entity, levels: ReturnType<typeo
         title: "Scoreboard state and handlers",
         paragraphs: [
           "Access world.scoreboard rather than constructing Scoreboard yourself. Read score, best, lives, seconds, shownSeconds and running. Assign handlers onScore/onLives/onSecond/onTimeUp/onLivesOut. Operations change core state immediately; callbacks are dispatched by World.update when flags indicate changes, not on each React render.",
-          "reset(lives=0) clears the run’s score, lives/clock settings and current timing state; best remains in-memory across resets of the same scoreboard. Persist personal bests in your application if they must survive world disposal or app restart. The engine does not provide a leaderboard backend.",
+          "reset(lives = 0, countdownSeconds = 0) starts a new run: score 0, the given lives and a stopped clock. With countdownSeconds, the stopped clock already shows that full countdown, which is exactly what a ready screen needs; resume() then starts it. best stays in memory across resets of the same scoreboard. Persist personal bests in your application if they must survive world disposal or an app restart. The engine has no leaderboard backend.",
         ],
         examples: [
           {
-            title: "Wire scoring and a countdown",
+            title: "Ready screen, start and scoring",
+            description:
+              "Call ready when a round is prepared (the UI shows 60 seconds and 3 lives), start when the player presses Start, and score from gameplay events.",
             code: `import type { World } from "@nayan-ui/engine";
-export function beginRound(world: World, onScore: (score: number) => void, onEnd: () => void) {
-  world.scoreboard.handlers = { onScore, onTimeUp: onEnd, onLivesOut: onEnd };
-  world.scoreboard.reset(3);
-  world.scoreboard.startCountdown(60);
-  world.scoreboard.add(100);
-  world.scoreboard.addLives(-1);
+export function makeRound(world: World, onScore: (score: number) => void, onSecond: (seconds: number) => void, onEnd: () => void) {
+  world.scoreboard.handlers = { onScore, onSecond, onTimeUp: onEnd, onLivesOut: onEnd };
+  return {
+    ready: () => world.scoreboard.reset(3, 60), // Stopped, showing 60.
+    start: () => world.scoreboard.resume(), // The countdown begins.
+    score: (points: number) => world.scoreboard.add(points),
+    hurt: () => world.scoreboard.addLives(-1),
+  };
 }`,
             platform: "shared",
             language: "tsx",
@@ -137,8 +141,8 @@ export function beginRound(world: World, onScore: (score: number) => void, onEnd
               "Reward whole seconds saved in countdown, or expected minus elapsed time.",
             ],
             [
-              "reset(lives=0)",
-              "Begin a new scoreboard run; application resets actors and input separately.",
+              "reset(lives=0, countdownSeconds=0)",
+              "Begin a new run with a stopped clock; with countdownSeconds it shows the full countdown (ready screen) until resume(). Reset actors and input separately.",
             ],
           ],
         },
@@ -147,22 +151,27 @@ export function beginRound(world: World, onScore: (score: number) => void, onEnd
         id: "timers-follow-simulation-time",
         title: "Timers follow simulation time",
         paragraphs: [
-          "world.after(seconds,callback) schedules a callback by accumulated update time and returns an ID. Due callbacks run in update, earliest first. No updates means no elapsed game time. cancelTimers drops all pending callbacks, and timerCount reports how many remain. There is no public cancel-one-timer API.",
+          "world.after(seconds, callback) runs callback after that many seconds of update time and returns a timer id. It is game time: it pauses whenever updates stop (GameView paused, app in background), so never use setTimeout for gameplay delays. Due callbacks run inside update, earliest first.",
+          "cancelTimer(id) drops one timer and returns false if it already ran or was dropped. cancelTimers() drops every pending timer; call it on reset and stop so an old round cannot act in the new one. timerCount reports how many are waiting. After dispose, after does nothing and returns 0, and pending timers never run.",
         ],
         examples: [
           {
-            title: "Schedule a delayed spawn",
+            title: "Schedule and cancel game-time delays",
+            description:
+              "Call schedule when an enemy should appear later. cancel drops just that spawn; resetRound drops every pending timer.",
             code: `import type { World } from "@nayan-ui/engine";
 export function scheduleEnemy(world: World) {
-  const timerId = world.after(1.5, () => world.spawn({ mesh: "sphere", position: [3, 2, 0] }));
-  console.log(timerId, world.timerCount);
-  return () => world.cancelTimers();
+  const id = world.after(1.5, () => world.spawn({ mesh: "sphere", position: [3, 2, 0] }));
+  return {
+    cancel: () => world.cancelTimer(id),
+    resetRound: () => world.cancelTimers(),
+  };
 }`,
             platform: "shared",
             language: "tsx",
           },
         ],
-        note: "Clock handler dispatch and animation promises can finish during reset/dispose. Guard async continuations against a disposed game and report a run’s win/lose/cancel only once in your application lifecycle.",
+        note: "Report a run's win/lose/cancel only once in your application lifecycle: a time-up and a lost life can both arrive in the same update.",
       },
     ],
   },
@@ -206,7 +215,7 @@ export async function loadSounds() {
         id: "voices-and-preferences",
         title: "Voices and preferences",
         paragraphs: [
-          "audio.play(sound,options?) and bank.play support volume (0..2, default 1), pan (-1 left to 1 right, default 0), pitch (default 1) and loop (default false). Keep the returned voice and call audio.stop(voice) to stop that instance; it safely accepts null/undefined. audio.volume is master gain and audio.muted is a global toggle. audio.running reports whether output is running.",
+          "audio.play(sound,options?) and bank.play support volume (0..2, default 1), pan (-1 left to 1 right, default 0), pitch (default 1) and loop (default false). Keep the returned voice and call audio.stop(voice) to stop that instance; it safely accepts null/undefined. audio.volume is master gain. audio.enabled is the global sound switch (audio.muted is its inverse); it mirrors haptics.enabled, so apply settings with audio.enabled = settings.enableSounds and haptics.enabled = settings.enableHaptics. audio.running reports whether output is running.",
           "Web output starts after a click/touch/key gesture, streams the Rust mixer into an AudioWorklet and suspends in hidden tabs. The native mixer starts its platform output on demand. Loading bytes does not bypass browser autoplay restrictions. A game screen owns its loops and should stop them when leaving.",
         ],
         examples: [
@@ -214,7 +223,7 @@ export async function loadSounds() {
             title: "A loop with explicit cleanup",
             code: `import { audio, type SoundBank } from "@nayan-ui/engine";
 export function startMusic(bank: SoundBank<"jump" | "music">, enabled: boolean) {
-  audio.muted = !enabled;
+  audio.enabled = enabled;
   const voice = enabled ? bank.play("music", { volume: 0.35, loop: true }) : null;
   return () => audio.stop(voice);
 }`,
@@ -269,7 +278,8 @@ export function reward(enabled: boolean) {
   {
     slug: "cache-performance",
     title: "Procedural cache and performance",
-    description: "Use automatic asset caching, clear saved data and control frame costs.",
+    description:
+      "Use automatic asset caching, clear saved data, move many entities with world.transforms and keep frames allocation-free.",
     sections: [
       {
         id: "session-caches-and-persistent-geometry",
@@ -372,23 +382,74 @@ export function ClearNativeAssets() {
       },
       {
         id: "transform-batches",
-        title: "Transform batches",
+        title: "Move many entities with world.transforms",
         paragraphs: [
-          "world.createTransformBatch() creates a reusable batch for draw-only position/rotation/scale/color changes. position(entity,x,y,z) writes a position; set(entity,TransformOptions) queues other supported fields. flush applies queued records and returns the number applied, clearing the queue even if commit fails. clear discards queued changes.",
-          "Flush before queries, animations or update so those operations see the new state. Use world.set for text updates, physics and non-transform options. Batching avoids many bridge calls; it is not a separate physics controller or permission to mutate renderer internals.",
+          "world.transforms is the world's shared TransformBatch, created on first use. Its scalar methods queue draw-only changes without allocating: position(entity, x, y, z), rotation(entity, qx, qy, qz, qw), scale(entity, x, y?, z?), color(entity, r, g, b, a?) and transform(entity, x, y, z, qx, qy, qz, qw) for position and rotation together. Consecutive calls for the same entity merge into one record; size reports the queued records.",
+          "The batch is not flushed automatically. The rule: call world.update(dt) first, queue your moves, then call world.transforms.flush() once at the end of the same onUpdate. flush applies everything in one native call and returns how many records applied. Also flush before you read positions, start an animation or run a query that must see the new values. clear() discards queued changes.",
+          "Use world.set for text, physics, parents and other options; set(entity, TransformOptions) on the batch exists for occasional mixed updates but allocates more than the scalar methods. createTransformBatch() makes an extra, independent batch (for example a drag preview you may discard), but most games only need world.transforms.",
         ],
         examples: [
           {
-            title: "Batch a visual swarm",
-            code: `import type { World, Entity } from "@nayan-ui/engine";
-export function animateSwarm(world: World, entities: readonly Entity[]) {
-  const batch = world.createTransformBatch();
+            title: "Orbit a swarm with one native call per frame",
+            description:
+              "Create once during setup and pass the returned function to GameView's onUpdate. It steps the world, queues every move and flushes once.",
+            code: `import { quat, type Entity, type MutableQuat, type World } from "@nayan-ui/engine";
+export function makeSwarm(world: World, entities: readonly Entity[]) {
+  const turn: MutableQuat = [0, 0, 0, 1];
   let time = 0;
   return (dt: number) => {
-    time += dt;
-    entities.forEach((entity, i) => batch.position(entity, Math.sin(time + i) * 3, 1, Math.cos(time + i) * 3));
-    batch.flush();
     world.update(dt);
+    time += dt;
+    const batch = world.transforms;
+    for (let i = 0; i < entities.length; i++) {
+      const angle = time + i;
+      quat.y(-angle, turn);
+      batch.transform(entities[i]!, Math.sin(angle) * 3, 1, Math.cos(angle) * 3, turn[0], turn[1], turn[2], turn[3]);
+    }
+    batch.flush();
+  };
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "zero-allocation-frames",
+        title: "Zero-allocation frames",
+        paragraphs: [
+          "A 60 fps loop that creates arrays and objects every frame causes garbage-collection stutter on phones. The engine's per-frame APIs let you avoid that entirely: allocate scratch values once during setup, then reuse them.",
+          "Queries take an out argument: position, worldPosition and velocity fill a [x,y,z] tuple; raycast fills a RaycastHit and pick a PickHit; toScreen fills [x,y]; screenToWorld fills [x,y,z]. Every quat helper takes an out MutableQuat. world.transforms moves entities with plain numbers. The value returned is the out object itself (or null), so copy it if you need to keep it beyond the frame.",
+        ],
+        table: {
+          headers: ["Instead of (allocates each frame)", "Use (reuses storage)"],
+          rows: [
+            ["world.position(e)", "world.position(e, at)"],
+            ["world.raycast(o, d, max)", "world.raycast(o, d, max, mask, hit)"],
+            [
+              "world.set(e, { rotation: quat.y(a) })",
+              "quat.y(a, q); world.transforms.rotation(e, q[0], q[1], q[2], q[3])",
+            ],
+            [
+              "world.set(e, { position: [x, y, z] }) for many entities",
+              "world.transforms.position(e, x, y, z) … then one flush()",
+            ],
+            ["world.toScreen(p)", "world.toScreen(p, screen)"],
+          ],
+        },
+        examples: [
+          {
+            title: "A ground probe that allocates nothing",
+            description:
+              "Create the probe once. Call it from onUpdate after world.update(dt). DOWN, at and hit are created once and reused forever.",
+            code: `import type { Entity, RaycastHit, Vec3, World } from "@nayan-ui/engine";
+const DOWN: Vec3 = [0, -1, 0];
+export function makeGroundProbe(world: World, player: Entity, floorLayer: number) {
+  const at: [number, number, number] = [0, 0, 0];
+  const hit: RaycastHit = { entity: -1 as Entity, distance: 0, normal: [0, 0, 0], point: [0, 0, 0] };
+  return (): boolean => {
+    if (!world.position(player, at)) return false;
+    return world.raycast(at, DOWN, 1.05, floorLayer, hit) !== null;
   };
 }`,
             platform: "shared",
@@ -400,8 +461,9 @@ export function animateSwarm(world: World, entities: readonly Entity[]) {
         id: "practical-budgets",
         title: "Practical budgets",
         paragraphs: [
-          "Prepare built-ins, geometry, fonts, sounds and model data before a run. Do not createShape/createSolid/loadModel/new World inside onUpdate. Reuse typed arrays for sampleSkinnedVertices and position queries, use instancing for repeated static models, and limit transparent overlap and shadow extent.",
-          "The native bridge aliases fixed world buffers; browser code maintains stable JavaScript buffers while copying across WASM memory boundaries so memory growth cannot detach arrays held by consumers. Avoid assuming web and native have identical zero-copy behavior or identical performance. Profile actual target devices with GameViewStats and a production build.",
+          "Prepare built-ins, geometry, fonts, sounds and model data before a run. Do not createShape/createSolid/loadModel/new World inside onUpdate. Reuse typed arrays for sampleSkinnedVertices and position queries, use instancing for repeated static models, and limit transparent overlap and shadow extent. Mesh ids are app-wide and never freed (MAX_MESHES = 4096 ids including the 16 built-in shapes, so about 4,080 custom registrations per session); never build a mesh per spawn.",
+          "The native bridge aliases fixed world buffers. In the browser, the renderer reads a live world's output buffers in place in WASM memory instead of copying them each frame, and the JavaScript mirrors copy only the valid instances rather than the whole capacity. Web and native still differ in performance; profile real target devices with GameViewStats and a production build.",
+          "Drawing documents replay strokes efficiently: undo, redo and layer changes reuse their composite buffers and make one pass over the strokes, and only changed pixel rows upload to the GPU. A DrawingDocument texture used on a game entity costs one texture, not a mesh id.",
         ],
       },
     ],
@@ -482,8 +544,16 @@ export async function createCustomSource(): Promise<RenderSource> {
               "Pass the true focus/playing state, clear held input, and keep the existing world for resume.",
             ],
             [
-              "World used after dispose",
-              "Create one owned scene per effect setup and cancel late async initialization; never remount a disposed scene.",
+              '"World: used after dispose()" error',
+              "Only spawn, update, burst and effects throw after dispose; cleanup calls and queries are no-ops. Check world.isDisposed before spawning or firing an effect after an await, create one owned scene per effect setup, cancel late async initialization and never remount a disposed scene.",
+            ],
+            [
+              "Moves queued on world.transforms never appear",
+              "The batch is not auto-flushed: call world.transforms.flush() once at the end of onUpdate, after world.update(dt).",
+            ],
+            [
+              "toScreen or screenToWorld returns null",
+              "They need a drawn frame: call them after the first onUpdate with dt > 0, and check for null (behind the camera or edge-on plane).",
             ],
           ],
         },
@@ -517,7 +587,7 @@ export async function createCustomSource(): Promise<RenderSource> {
             ],
             [
               "No sound before interaction",
-              "Browser autoplay policy requires a click, touch or key press. Await bank.ready and check audio.muted/running.",
+              "Browser autoplay policy requires a click, touch or key press. Await bank.ready and check audio.enabled/running.",
             ],
             [
               "No vibration",

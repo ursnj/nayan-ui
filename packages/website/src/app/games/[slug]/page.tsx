@@ -1,6 +1,8 @@
+import type { GAME_IDS } from "@nayan-ui/games/services";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import GameDetail from "@/components/games/GameDetail";
+import GameExperience from "@/components/games/GameExperience";
 import JsonLd from "@/components/helpers/JsonLd";
 import { gamesData } from "@/services/GamesData";
 import { SITE_NAME, SITE_URL, buildBreadcrumbSchema } from "@/services/seo";
@@ -23,9 +25,11 @@ export async function generateMetadata({
   const url = `${SITE_URL}/games/${slug}`;
 
   return {
-    title: `${game.name} - React Native Game`,
-    description: `${game.name}: ${game.description} Part of @nayan-ui/games - a collection of ${Object.keys(gamesData).length}+ React Native games.`,
+    title: `Play ${game.name} Online - React & React Native Game`,
+    description: `Play ${game.name} free in your browser. ${game.description} Part of @nayan-ui/games - a collection of ${Object.keys(gamesData).length}+ React Native games.`,
     keywords: [
+      `play ${game.name} online`,
+      `${game.name} browser game`,
       `${game.name} react native`,
       `react native ${game.category.toLowerCase()} game`,
       ...game.tags,
@@ -75,6 +79,8 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
       genre: game.category,
       gamePlatform: ["iOS", "Android", "Web"],
       url: `${SITE_URL}/games/${slug}`,
+      playMode: "SinglePlayer",
+      potentialAction: { "@type": "PlayAction", target: `${SITE_URL}/games/${slug}` },
       image: `${SITE_URL}/games/${slug}.png`,
       author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
@@ -101,7 +107,14 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
   return (
     <>
       <JsonLd data={schemas} />
-      <GameDetail slug={slug} />
+      <GameExperience
+        key={slug}
+        gameId={slug as GAME_IDS}
+        title={game.name}
+        description={game.description}
+      >
+        <GameDetail slug={slug} />
+      </GameExperience>
     </>
   );
 }

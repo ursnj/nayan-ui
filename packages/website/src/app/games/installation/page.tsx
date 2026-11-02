@@ -10,9 +10,10 @@ import {
 export const metadata = buildPageMetadata({
   title: "Games Installation",
   description:
-    "Installation guide and setup instructions for @nayan-ui/games. Learn how to add classic games to your React Native app.",
+    "Install @nayan-ui/games in an Expo development build or a React website (Next.js, Vite): requirements, Metro and Android setup, rendering a game, settings, results, theming and keyboard controls.",
   path: "/games/installation",
-  keywords: "react native games installation, mobile game setup, react native game library setup",
+  keywords:
+    "react native games installation, expo games setup, next.js games, vite games, nayan engine setup",
 });
 
 const schemas = [

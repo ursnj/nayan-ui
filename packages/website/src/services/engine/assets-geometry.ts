@@ -78,8 +78,9 @@ export function makeContactSampler(world: World, actor: Entity, bootVertexIds: U
   },
   {
     slug: "input-picking",
-    title: "Gestures, joystick and picking",
-    description: "Handle gestures, read joystick input and convert screen coordinates.",
+    title: "Gestures, joystick, keyboard and picking",
+    description:
+      "Handle gestures, read joystick and browser keyboard input, pick entities and convert between screen and world coordinates.",
     sections: [
       {
         id: "gesture-callbacks",
@@ -139,11 +140,14 @@ export function Controls({ world, player }: { world: World; player: Entity }) {
         title: "Pick, project and intersect",
         paragraphs: [
           "world.pick(x,y) tests pickable rendered bounding boxes and returns PickHit {entity,point,distance} or null. It needs a camera from a successfully drawn GameView and does not require a physics body. It is a bounds test rather than exact per-triangle ray intersection.",
-          "screenToWorld(x,y,{point?,normal?}) intersects a plane; defaults to ground Y=0. Use normal [0,0,1] for an XY board. toScreen(Vec3) returns [x,y] or null when behind the camera or not yet drawn. These queries use the most recently rendered view. setView(matrix,width,height) is for custom render integration, not necessary for an ordinary World in GameView.",
+          "screenToWorld(x,y,{point?,normal?}) intersects a plane; defaults to ground Y=0. Use normal [0,0,1] for an XY board. toScreen(Vec3) returns [x,y] or null when behind the camera. Both use the most recently drawn camera, so they return null until the first frame is on screen. setView(matrix,width,height) is for custom render integration, not necessary for an ordinary World in GameView.",
+          "pick, toScreen and screenToWorld take an optional last out argument (a PickHit, a [x,y] tuple and a [x,y,z] tuple). Reuse one in code that runs every frame or on every pointer move, such as a label that follows an entity.",
         ],
         examples: [
           {
             title: "Project a label and query a board",
+            description:
+              "Call from a tap or drag handler. Each query returns null when there is no answer.",
             code: `import type { World, Vec3 } from "@nayan-ui/engine";
 export function queryScreen(world: World, x: number, y: number, position: Vec3) {
   return {
@@ -155,26 +159,264 @@ export function queryScreen(world: World, x: number, y: number, position: Vec3) 
             platform: "shared",
             language: "tsx",
           },
+          {
+            title: "Follow an entity with a label, allocation-free",
+            description:
+              "Create once; call from onUpdate after world.update(dt). The returned tuple is reused every frame, so copy it if you keep it.",
+            code: `import type { Entity, World } from "@nayan-ui/engine";
+export function makeLabelTracker(world: World, target: Entity) {
+  const at: [number, number, number] = [0, 0, 0];
+  const screen: [number, number] = [0, 0];
+  return () => {
+    if (!world.worldPosition(target, at)) return null;
+    at[1] += 1.2; // Above the head.
+    return world.toScreen(at, screen); // null before the first drawn frame.
+  };
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "browser-keyboard-input",
+        title: "Browser keyboard input",
+        paragraphs: [
+          "createKeyboardInput(surface, options?) makes a browser game playable from the keyboard by turning keys into the same pointer events your touch handlers already receive, so onTap, onDrag and onSwipe keep working unchanged. It is browser-only (it uses the DOM); do not call it in React Native.",
+          "Arrow keys and WASD move a visible cursor; Space presses at the cursor and Enter taps at options.primary() (or the cursor). mode chooses how arrows behave: pointer (default; Space press/hold), drag (arrows drag from the centre) or swipe (each arrow is one 80-pixel swipe). options.enabled() returning false ignores keys, for example while paused. Call cancel() to release a held key press and dispose() on unmount. Keys typed into inputs and buttons are ignored.",
+        ],
+        examples: [
+          {
+            title: "KeyboardGame.tsx",
+            description:
+              "Wrap GameView in an element you own and attach keyboard input to it. Swipe mode suits 2048-style games; use drag for steering and pointer for tap games.",
+            code: `"use client";
+import { useEffect, useRef } from "react";
+import { createKeyboardInput, GameView, type SwipeDirection, type World } from "@nayan-ui/engine";
+
+export function KeyboardGame({ world, paused, onSwipe }: { world: World; paused: boolean; onSwipe: (direction: SwipeDirection) => void }) {
+  const surface = useRef<HTMLDivElement>(null);
+  const pausedRef = useRef(paused);
+  useEffect(() => { pausedRef.current = paused; }, [paused]);
+  useEffect(() => {
+    if (!surface.current) return;
+    const keyboard = createKeyboardInput(surface.current, { mode: "swipe", enabled: () => !pausedRef.current });
+    return () => keyboard.dispose();
+  }, []);
+  return <div ref={surface} tabIndex={0} style={{ position: "relative", height: "100%" }}>
+    <GameView source={world} paused={paused} onUpdate={dt => world.update(dt)} onSwipe={onSwipe} style={{ height: "100%" }} />
+  </div>;
+}`,
+            platform: "react",
+            language: "tsx",
+          },
         ],
       },
     ],
   },
   {
     slug: "particles",
-    title: "Particles, smoke and emissive effects",
-    description: "Create sparks, confetti, fire and smoke with reusable particle settings.",
+    title: "Effects, particles and the cleared-piece pop",
+    description:
+      "Use ready-made effects (confetti, sparkle, shatter, splash, sparks, explosion, dust, flash, pop) in one call, and world.burst for custom particles.",
     sections: [
       {
-        id: "burst-lifecycle",
-        title: "Burst lifecycle",
+        id: "effects-at-a-glance",
+        title: "Effects at a glance",
         paragraphs: [
-          "world.burst(options) returns how many particles were spawned, possibly fewer when world capacity is exhausted. Position is required. Bursts advance and expire through World.update, so they pause with the scene. Particle entities share the world capacity with normal actors and text glyphs; reserve room for peak effects.",
+          "Import effects and call one function per event. Each call layers several particle bursts (big slow pieces, small fast ones, a glow at the source and lingering puffs) that then move, shrink, recolor and clean themselves up in Rust. There is nothing to update or remove yourself. Particles advance with world.update, so they pause with the game.",
+          "Particles count against the world's capacity, like entities and text letters: size new World(capacity) for the busiest moment. Effects call world.burst, which throws on a disposed world, so do not fire effects from a callback that can run after dispose without checking world.isDisposed.",
+        ],
+        table: {
+          headers: ["Call", "Use it for"],
+          rows: [
+            [
+              "effects.confetti(world, EffectOptions)",
+              "Wins and level-ups: tumbling paper, glints and a pop of light.",
+            ],
+            [
+              "effects.sparkle(world, EffectOptions)",
+              "Pickups and perfect moves: bright beads and glints.",
+            ],
+            [
+              "effects.shatter(world, EffectOptions & { mesh?, dust? })",
+              "Bricks, crates, glass: chunks shaped by mesh, crumbs, a glow and dust.",
+            ],
+            ["effects.splash(world, EffectOptions)", "Water, juice, paint: droplets and mist."],
+            [
+              "effects.sparks(world, EffectOptions)",
+              "Scrapes, strikes, electricity: hot streaks and beads.",
+            ],
+            [
+              "effects.explosion(world, options)",
+              "A fireball cooling to smoke, embers and optional debris; colors is optional here.",
+            ],
+            [
+              "effects.dust(world, DustOptions)",
+              "Soft swelling puffs: landing dust, sand, sawdust, steam, smoke. Returns the particle count.",
+            ],
+            [
+              "effects.flash(world, FlashOptions)",
+              "One swelling glow: hits, strikes, muzzle flashes. Returns the particle count.",
+            ],
+            [
+              "effects.pop(world, entity, PopOptions)",
+              "A cleared piece swells, flashes white, settles and shrinks away. Returns a Promise.",
+            ],
+            [
+              "effects.hot(color, peak?, alpha?) / effects.pale(color, t, alpha?)",
+              "Color helpers: a self-lit glow version of a hue, and a tint toward white.",
+            ],
+            ["effects.POP_TIME", "Default pop duration in seconds (0.5)."],
+          ],
+        },
+        examples: [
+          {
+            title: "Celebrate a win and reward a pickup",
+            description:
+              "Call from gameplay events (a win, a collected coin). Nothing else is needed: the particles expire on their own.",
+            code: `import { effects, type Vec3, type World } from "@nayan-ui/engine";
+
+const RED = [1, 0.25, 0.3] as const;
+const GOLD = [1, 0.8, 0.2] as const;
+
+export function celebrate(world: World, position: Vec3) {
+  effects.confetti(world, { position, colors: [RED, GOLD], size: 0.12, speed: 6, count: 40, lifetime: 1.2, gravity: -6 });
+}
+
+export function collect(world: World, position: Vec3) {
+  effects.sparkle(world, { position, colors: GOLD, size: 0.08, speed: 3, count: 14, lifetime: 0.6 });
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "effect-options",
+        title: "EffectOptions for the layered effects",
+        paragraphs: [
+          "confetti, sparkle, shatter, splash, sparks and explosion share EffectOptions. position, colors, size, speed, count and lifetime are required (explosion makes colors optional). Units are world units, units per second and seconds.",
+        ],
+        table: {
+          headers: ["Option", "Meaning"],
+          rows: [
+            ["position", "Where the effect starts (Vec3)."],
+            ["colors", "One Color or several to pick from at random."],
+            ["size / speed", "Typical particle size; top speed."],
+            ["count", "About how many particles (a few extra go to the flash and puffs)."],
+            ["lifetime", "Seconds."],
+            ["gravity", "Vertical acceleration; negative falls. Default 0."],
+            [
+              "direction / spread",
+              "Main direction (default up) and the half-angle of the cone around it (default π, every direction).",
+            ],
+            ["flash", "A brief glow at the source. Default true."],
+            [
+              "shatter: mesh, dust",
+              "The chunks' shape (a Shape or Model) and whether to add a dust puff.",
+            ],
+            [
+              "explosion: debris, smoke",
+              "Colors for chunks of whatever blew up, and the smoke color. size is the fireball's puff size; direction, spread and gravity aim the embers and debris.",
+            ],
+          ],
+        },
+        examples: [
+          {
+            title: "Break a crate, splash water, strike sparks, blow up a barrel",
+            description:
+              "Each function is one gameplay event. Typed EffectOptions can be shared and spread with a new position.",
+            code: `import { effects, type EffectOptions, type Vec3, type World } from "@nayan-ui/engine";
+
+const WOOD = [[0.55, 0.35, 0.18], [0.4, 0.25, 0.12]] as const;
+const splashStyle: Omit<EffectOptions, "position"> = {
+  colors: [0.3, 0.6, 1, 0.9], size: 0.1, speed: 4, count: 24, lifetime: 0.8, gravity: -9.8,
+};
+
+export function breakCrate(world: World, position: Vec3) {
+  effects.shatter(world, { position, colors: WOOD, size: 0.2, speed: 5, count: 16, lifetime: 0.7, gravity: -9.8, mesh: "cube" });
+}
+export function splashAt(world: World, position: Vec3) {
+  effects.splash(world, { ...splashStyle, position });
+}
+export function scrape(world: World, position: Vec3, away: Vec3) {
+  effects.sparks(world, { position, colors: [2, 1.4, 0.4], size: 0.05, speed: 8, count: 20, lifetime: 0.4, direction: away, spread: 0.5, gravity: -6 });
+}
+export function blowUp(world: World, position: Vec3) {
+  effects.explosion(world, { position, size: 0.6, speed: 6, count: 40, lifetime: 1, debris: [[0.3, 0.3, 0.32]], smoke: [0.2, 0.2, 0.2, 0.6] });
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "dust-and-flash",
+        title: "Dust puffs and single flashes",
+        paragraphs: [
+          "dust makes a soft cloud of puffs that swell and fade. color is required (alpha is how thick it looks); endSize defaults 2; gravity defaults 0 so dust hangs, positive values rise like smoke. A single color fades to transparent unless you pass endColor. mesh defaults to puff (blended); flame adds light instead.",
+          "flash makes one glow that swells and fades at a point. lifetime defaults 0.22 s and endSize 2.2. Use channels above 1 to make it glow, most easily with effects.hot(color). mesh defaults to flame (additive); sphere or puff give a solid or soft flash. count draws several glows, scattered when speed is above 0.",
+        ],
+        examples: [
+          {
+            title: "Landing dust and a hit flash",
+            description:
+              "Call landed when a jump ends and hit when an attack connects. effects.hot lifts the hue so it glows through light, shadow and fog.",
+            code: `import { effects, type Vec3, type World } from "@nayan-ui/engine";
+
+const ORANGE = [1, 0.5, 0.1] as const;
+
+export function landed(world: World, feet: Vec3) {
+  effects.dust(world, { position: feet, color: [0.8, 0.75, 0.65, 0.6], size: 0.3, speed: 1.5, count: 6, lifetime: 0.5 });
+}
+export function hit(world: World, at: Vec3) {
+  effects.flash(world, { position: at, color: effects.hot(ORANGE), size: 0.8 });
+}
+export function steam(world: World, vent: Vec3) {
+  effects.dust(world, { position: vent, color: effects.pale([0.6, 0.7, 0.8], 0.6, 0.4), size: 0.4, speed: 1, count: 8, lifetime: 1.5, gravity: 1, endSize: 3 });
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "pop-cleared-pieces",
+        title: "Pop a cleared piece",
+        paragraphs: [
+          "effects.pop(world, entity, options) is the cleared, matched or collected piece animation: the piece swells, flashes white, settles and shrinks to nothing. It stops any animation already on the entity and resolves when the piece has gone. Despawning it is your job. Because despawn is a safe no-op after dispose, await pop and then despawn needs no guard.",
+          "scale is the piece's current rest scale (a number or Vec3) and is required. color is its rest color to return to after the white flash; omit it to skip the flash. flash lists child entities (whose rest color is white) to flash as well. delay and duration (default effects.POP_TIME) are in seconds. Pair it with sparkle at the same spot for a burst.",
+        ],
+        examples: [
+          {
+            title: "Clear matched pieces in a wave",
+            description:
+              "Call when a match is found. Every piece pops with a short stagger, then is despawned; the function resolves after the last one.",
+            code: `import { effects, type Color, type Entity, type World } from "@nayan-ui/engine";
+
+export async function clearPieces(world: World, pieces: readonly Entity[], color: Color) {
+  await Promise.all(pieces.map((piece, i) =>
+    effects.pop(world, piece, { scale: 1, color, delay: i * 0.05 }).then(() => world.despawn(piece))));
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
+        id: "burst-lifecycle",
+        title: "Custom particles with world.burst (advanced)",
+        paragraphs: [
+          "Use effects first. Reach for world.burst(options) only when you need one plain layer with exact control. It spawns up to count pieces in one native call and returns how many were spawned, possibly fewer when the world is nearly full. position is required. Bursts advance and expire through world.update, so they pause with the scene.",
         ],
         examples: [
           {
             title: "Smoke and sparks",
+            description:
+              "Two plain layers: a blended puff of smoke and an additive cone of flame sparks.",
             code: `import type { World, Vec3 } from "@nayan-ui/engine";
-export function explosion(world: World, position: Vec3) {
+export function smokeAndSparks(world: World, position: Vec3) {
   world.burst({ position, mesh: "puff", count: 18, color: [0.5, 0.5, 0.5, 0.5],
     size: 0.3, speed: 2, gravity: 0, lifetime: 1.5, endSize: 4, endColor: [0.2, 0.2, 0.2, 0] });
   return world.burst({ position, mesh: "flame", count: 28, direction: [0, 1, 0], spread: Math.PI / 2,

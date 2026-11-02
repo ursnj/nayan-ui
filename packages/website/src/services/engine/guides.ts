@@ -4,6 +4,7 @@ import { GettingStartedGuides } from "./getting-started";
 import { WorldRenderingGuides } from "./world-rendering";
 import { AssetsGeometryGuides } from "./assets-geometry";
 import { MediaPerformanceGuides } from "./media-performance";
+import { DrawingGuides } from "./drawing";
 import { apiReferenceGuide } from "./api-reference";
 const guides = [
   ...GettingStartedGuides,
@@ -11,6 +12,7 @@ const guides = [
   ...WorldRenderingGuides,
   ...AssetsGeometryGuides,
   ...MediaPerformanceGuides,
+  ...DrawingGuides,
   apiReferenceGuide,
 ];
 

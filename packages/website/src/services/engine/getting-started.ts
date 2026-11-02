@@ -19,7 +19,11 @@ export const GettingStartedGuides: EngineGuide[] = [
           rows: [
             [
               "World",
-              "Fixed-capacity entities, transforms, Rapier physics, animations, particles, timers, scoring and queries.",
+              "Fixed-capacity entities, transforms, Rapier physics, animations, particles, timers, scoring and queries. world.transforms moves many entities in one native call.",
+            ],
+            [
+              "effects / quat",
+              "Ready-made particle effects (confetti, sparkle, shatter, splash, sparks, explosion, dust, flash) and the cleared-piece pop; quaternion helpers for rotations.",
             ],
             [
               "GameView",
@@ -32,6 +36,10 @@ export const GettingStartedGuides: EngineGuide[] = [
             [
               "audio / haptics",
               "Sound banks, voices, global preferences, native collision feedback and platform feedback capabilities.",
+            ],
+            [
+              "DrawingDocument / DrawingCanvas",
+              "Native 2D painting with brushes, layers, undo and SVG/PNG export; the same document can texture game entities and score what was drawn.",
             ],
           ],
         },
@@ -70,6 +78,12 @@ export const GettingStartedGuides: EngineGuide[] = [
             ],
             ["Mount only a minimal scene", "Bouncing-ball React host", "/engine/react"],
             ["Mount a native screen", "Bouncing-ball React Native host", "/engine/react-native"],
+            ["Add confetti, dust or a cleared-piece pop", "One-call effects", "/engine/particles"],
+            [
+              "Paint, trace or colour in a game",
+              "DrawingDocument, DrawingCanvas and document textures",
+              "/engine/drawing",
+            ],
             [
               "Look up an option",
               "All public exports and type signatures",
@@ -82,7 +96,7 @@ export const GettingStartedGuides: EngineGuide[] = [
         id: "coordinates-values-and-handles",
         title: "Coordinates, values and handles",
         paragraphs: [
-          "World coordinates use X right and Y up; ground-based games move on X/Z. Screen callbacks use points on mobile and CSS pixels on web, measured from the top-left with Y down. Camera field of view and angular motion use radians. Rotation is a quaternion [x, y, z, w], with [0, 0, 0, 1] as identity.",
+          "World coordinates use X right and Y up; ground-based games move on X/Z. Screen callbacks use points on mobile and CSS pixels on web, measured from the top-left with Y down. Camera field of view and angular motion use radians. Rotation is a quaternion [x, y, z, w], with [0, 0, 0, 1] as identity; build rotations with quat.y(angle), quat.x(angle) and friends instead of writing quaternions by hand.",
           "Colors are numeric RGB or RGBA tuples. Ordinary channels use 0..1. Entity alpha below one draws transparency; channels above one produce emissive-looking color, with values at two self-lit. Vertex colors, texture colors and entity colors multiply. Models and entities are different: a Model is a reusable mesh, while an Entity belongs to one World.",
         ],
         note: "Initialize worlds and assets from scene setup, outside React render work. The engine reuses loaded/prepared assets automatically. Create entities per run and dispose each World when its owning screen unmounts.",
@@ -100,7 +114,7 @@ export const GettingStartedGuides: EngineGuide[] = [
             ],
             [
               "Initialization",
-              "Await warmUpEngine() before browser worlds and before synchronous procedural geometry on either platform. Async model, texture, font and sound loaders initialize the core themselves. Native warm-up still performs its initial work synchronously.",
+              "Always await warmUpEngine() before creating a World, a DrawingDocument or procedural geometry; this is required in the browser. On native, warm-up is synchronous and built-in shapes (and shapeGeometry for them) also work before it, but awaiting it keeps one code path for both hosts. Async model, texture, font and sound loaders initialize the core themselves.",
             ],
             [
               "Styles",

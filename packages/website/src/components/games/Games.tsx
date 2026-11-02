@@ -36,65 +36,68 @@ const categoryColors: Record<string, string> = {
   Strategy: "bg-amber-500/15 text-amber-600 dark:text-amber-300 border-amber-500/25",
 };
 
+/** Games without a screenshot in public/games yet; they show their emoji instead. */
+const SCREENSHOTS_PENDING = new Set(["penguin-run", "play-with-tua", "treasure-hunt"]);
+
 const CAPABILITIES = [
   {
     icon: Zap,
-    title: "High performance",
+    title: "Nayan engine",
     items: [
-      "60fps gameplay with React Native Skia",
-      "Animations on Reanimated 3",
-      "Delta-time physics loops",
-      "Minimal re-renders via direct store subscriptions",
+      "Rust and wgpu rendering: Metal on iOS, Vulkan or GLES on Android",
+      "WebAssembly with WebGPU or a WebGL2 fallback in browsers",
+      "Physics, animation, particles and the scoreboard clock run in Rust",
+      "Prepared assets saved on device and reused across runs",
     ],
   },
   {
     icon: Smartphone,
-    title: "Cross-platform",
+    title: "React Native and React",
     items: [
-      "iOS, Android and Web",
-      "Consistent performance across platforms",
-      "Responsive to every screen size",
-      "Notch-aware offset handling",
+      "One package for Expo development builds and websites",
+      "Browser build at lib/web for Next.js and Vite",
+      "Keyboard play on the web through the engine's keyboard adapter",
+      "Header offset and responsive layout from phones to tablets",
     ],
   },
   {
     icon: Volume2,
     title: "Audio and haptics",
     items: [
-      "Sound effects and speech synthesis",
-      "Haptic feedback",
-      "Configurable audio settings",
-      "Per-game sound customisation",
+      "Sound effects mixed by the engine",
+      "Native haptics, and vibration where browsers support it",
+      "Sound and haptic switches in every game's settings",
+      "Muted automatically while paused or in the background",
     ],
   },
   {
     icon: Settings2,
-    title: "Customisable",
+    title: "One settings model",
     items: [
-      "Multiple difficulty levels",
-      "Adjustable game parameters",
-      "Persistent settings storage",
-      "One settings interface for all of them",
+      "The same GameSettings for every game",
+      "Built-in settings modal with how-to-play instructions",
+      "Light and dark themes, configurable with configureGameThemes",
+      "paused for your own overlays",
     ],
   },
   {
     icon: Sparkles,
-    title: "Game features",
+    title: "Complete game screens",
     items: [
-      "Physics simulation and collisions",
-      "Particle systems and visual effects",
-      "Procedural mazes and obstacles",
-      "Scores and achievements",
+      "Scoreboard, Start/Stop and results card drawn by the engine",
+      "Loading screen while the engine and assets prepare",
+      "Confetti, sparkles, shatters and other particle effects",
+      "Optional share, leaderboard and banner-ad slots",
     ],
   },
   {
     icon: Gamepad2,
     title: "Developer friendly",
     items: [
-      "TypeScript throughout",
-      "Shared GameControlButton and ScoreBoard",
-      "One consistent API across every game",
-      "Documented per game",
+      "TypeScript types for every prop and callback",
+      "onEndGame reports win, lose or cancel once per run",
+      "loadGameComponent loads only the game you open",
+      "A documented file pattern for building new games",
     ],
   },
 ];
@@ -110,9 +113,10 @@ const GamesMain = () => {
       <DocsIntro
         lead={
           <>
-            {GAME_COUNT} ready-made games for React Native projects, built on Skia, Reanimated,
-            Gesture Handler and TypeScript for 60fps gameplay across iOS, Android and the web. Drop
-            one into a screen, or read how it works and build your own.
+            {GAME_COUNT} ready-made games for React Native apps and React websites, rendered by the
+            Nayan engine: Rust and wgpu on iOS and Android, WebAssembly with WebGPU or WebGL2 in
+            browsers. Each one is a single component with the same props. These docs describe the
+            engine-based release that follows npm 1.19.0.
           </>
         }
         actions={
@@ -138,19 +142,22 @@ const GamesMain = () => {
             <Link href="/games/installation" className={BUTTON_SMALL}>
               Installation
             </Link>
+            <Link href="/games/build-a-game" className={BUTTON_SMALL}>
+              Build a game
+            </Link>
           </>
         }
         facts={[
           { value: String(GAME_COUNT), label: "Games" },
           { value: String(GAME_CATEGORY_COUNT), label: "Categories" },
-          { value: "60fps", label: "Target frame rate" },
-          { value: "MIT", label: "Licence" },
+          { value: "Web + Native", label: "Platforms" },
+          { value: "Dual", label: "Licence" },
         ]}
       />
 
       <SubHeader
         title="What you get"
-        description="Every game in the package is built on the same foundations."
+        description="Every game in the package is built on the same engine and screen."
       >
         <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
           {CAPABILITIES.map((capability) => {
@@ -174,7 +181,7 @@ const GamesMain = () => {
 
       <SubHeader
         title={`All ${GAME_COUNT} games`}
-        description="Each one has its own page with how to play, tips and the props it takes."
+        description="Each one has its own page with its controls, rules and tips."
         action={
           <div className="hidden flex-wrap gap-1.5 sm:flex">
             {categories.map((category) => (
@@ -196,12 +203,21 @@ const GamesMain = () => {
               className={`${CARD_INTERACTIVE} group overflow-hidden`}
             >
               <div className="relative overflow-hidden">
-                <img
-                  src={`/games/${game.id}.png`}
-                  alt={`${game.name} screenshot`}
-                  className="aspect-square w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                  loading="lazy"
-                />
+                {SCREENSHOTS_PENDING.has(game.id) ? (
+                  <div
+                    aria-hidden
+                    className="flex aspect-square w-full items-center justify-center bg-default/40 text-7xl"
+                  >
+                    {game.emoji}
+                  </div>
+                ) : (
+                  <img
+                    src={`/games/${game.id}.png`}
+                    alt={`${game.name} screenshot`}
+                    className="aspect-square w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                )}
                 <span
                   className={`absolute right-3 top-3 rounded-full border px-2.5 py-1 text-xs font-semibold ${categoryColors[game.category]}`}
                 >

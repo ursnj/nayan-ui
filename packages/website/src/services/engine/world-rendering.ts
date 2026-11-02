@@ -4,22 +4,73 @@ export const WorldRenderingGuides: EngineGuide[] = [
   {
     slug: "world-entities",
     title: "Worlds, entities and lifecycle",
-    description: "Create entities, move them, query their state and clean up each scene.",
+    description:
+      "Create a world, spawn and change entities, rotate them with quat, query their state and dispose the scene safely.",
     sections: [
+      {
+        id: "lifecycle-rules",
+        title: "The five lifecycle rules",
+        paragraphs: [
+          "Every engine scene follows the same five rules. Following them prevents almost every blank screen, leak and crash.",
+          "1. Create the World inside a React effect, after await warmUpEngine() (required on the web, harmless on native). Never create it in useMemo, at module scope or during render. 2. Step it exactly once per frame: call world.update(dt) from GameView's onUpdate and nowhere else. 3. If you queue moves on world.transforms, call world.transforms.flush() once at the end of the same onUpdate, after world.update(dt); it is not flushed automatically. 4. Call world.dispose() in the effect's cleanup, and cancel any setup that finishes after unmount. 5. Use world.isDisposed instead of keeping your own disposed flag: after dispose, despawn, set, has, animate, stopAnimation, impulse, playClip, stopClip, after, cancelTimer, cancelTimers, the queries and forEachCollision are safe no-ops, so late animation promises and timers need no guard. spawn, update, burst and the effects still throw, because calling them on a disposed world is a bug.",
+        ],
+        examples: [
+          {
+            title: "useSpinningCube.ts",
+            description:
+              "A complete, copyable scene hook. Pass the returned world and update function to GameView. Works unchanged in React and React Native.",
+            code: `import { useEffect, useState } from "react";
+import { warmUpEngine, World, quat } from "@nayan-ui/engine";
+
+export function useSpinningCube() {
+  const [scene, setScene] = useState<{ world: World; update: (dt: number) => void } | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    let world: World | undefined;
+    void warmUpEngine().then(() => {
+      if (cancelled) return; // Unmounted while warming up: create nothing.
+      const owned = new World(64);
+      world = owned;
+      const cube = owned.spawn({ mesh: "cube", color: [0.2, 0.7, 1] });
+      let angle = 0;
+      const turn: [number, number, number, number] = [0, 0, 0, 1];
+      const update = (dt: number) => {
+        owned.update(dt); // Rule 2: once per frame.
+        angle += dt;
+        quat.y(angle, turn); // No allocation per frame.
+        owned.transforms.rotation(cube, turn[0], turn[1], turn[2], turn[3]);
+        owned.transforms.flush(); // Rule 3: after update, once.
+      };
+      setScene({ world: owned, update });
+    }).catch((error: unknown) => console.error(error));
+    return () => {
+      cancelled = true;
+      world?.dispose(); // Rule 4.
+    };
+  }, []);
+  return scene;
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+        note: "World has no start(), reset() or pause() method. Pause by passing paused to GameView (or by not calling update). Reset is your own function: cancel timers, despawn the round's entities and spawn new ones in the same world.",
+      },
       {
         id: "create-set-and-remove",
         title: "Create, set and remove",
         paragraphs: [
-          "new World(capacity) reserves space; capacity includes glyph entities and particles. count is the number of live entities. spawn(options) returns an opaque Entity and throws when full or invalid. set(entity, options) changes only fields supplied and returns false for a stale entity or rejected option. despawn removes descendants too; has tests existence.",
+          "new World(capacity) reserves a fixed number of entity slots; capacity also covers text letters and particles, so size it for the busiest moment. world.count is the number of live entities.",
+          "spawn(options) returns an opaque Entity handle and throws when the world is full or an option is invalid. set(entity, options) changes only the fields you pass (null removes an option) and returns false if the entity is gone, the world is disposed or an option was rejected. despawn(entity) removes the entity and everything attached to it and returns false if it was already gone. has(entity) tells you whether it still exists. Keep the handle spawn returns; never invent numeric IDs.",
         ],
         examples: [
           {
-            title: "Entity operations",
-            code: `import { World } from "@nayan-ui/engine";
+            title: "Spawn, change and remove an entity",
+            description: "Call once during scene setup. The returned function removes the player.",
+            code: `import { World, quat } from "@nayan-ui/engine";
 export function addPlayer(world: World) {
   const player = world.spawn({ mesh: "capsule", position: [0, 1, 0], color: [0.3, 0.7, 1] });
-  world.set(player, { scale: [1, 1.5, 1], rotation: [0, 0, 0, 1] });
-  if (world.has(player)) console.log(world.position(player));
+  world.set(player, { scale: [1, 1.5, 1], rotation: quat.y(Math.PI / 2) });
   return () => world.despawn(player);
 }`,
             platform: "shared",
@@ -30,22 +81,24 @@ export function addPlayer(world: World) {
       {
         id: "entityoptions-reference",
         title: "EntityOptions reference",
-        paragraphs: [],
+        paragraphs: [
+          "spawn and set take the same EntityOptions object. Import the type to share configurations between spawns.",
+        ],
         table: {
           headers: ["API / option", "Behavior"],
           rows: [
             [
               "mesh",
-              "Shape or Model; defaults to cube. none is invisible and useful as a group/pivot.",
+              "Shape or Model; defaults to cube. none is invisible and useful as a group/pivot. Built-in shapes: cube, sphere, plane, cylinder, cone, capsule, torus, roundedBox, puff, flame, none.",
             ],
             [
               "position / rotation / scale",
-              "Position Vec3; quaternion rotation; uniform numeric scale or Vec3. Child transforms are parent-relative.",
+              "Position Vec3; rotation quaternion [x,y,z,w] (build it with quat); uniform numeric scale or Vec3. Child transforms are parent-relative.",
             ],
-            ["color", "RGB/RGBA. Alpha controls transparency; channels above one glow."],
+            ["color", "RGB/RGBA. Alpha below 1 draws see-through; channels above 1 glow."],
             [
               "texture / textureRegion",
-              "Texture or null; normalized atlas rectangle [u0,v0,u1,v1]. When changing texture with set(), also pass mesh.",
+              "Texture (from loadTexture or DrawingDocument.texture()) or null; normalized atlas rectangle [u0,v0,u1,v1]. When changing texture with set(), also pass mesh.",
             ],
             [
               "velocity / groundVelocity",
@@ -72,6 +125,62 @@ export function addPlayer(world: World) {
         },
       },
       {
+        id: "rotations-with-quat",
+        title: "Rotations with quat",
+        paragraphs: [
+          "Rotations are quaternions [x, y, z, w]. Do not write them by hand: use the quat helpers, which return a MutableQuat you can pass straight to rotation options, keyframes and geometry parts. Angles are in radians.",
+          "Every helper takes an optional last out argument. Pass a reused array in per-frame code so nothing is allocated; omit it in setup code. multiply(a, b) means a after b: b turns first. out may be a or b.",
+        ],
+        table: {
+          headers: ["Helper", "Result"],
+          rows: [
+            ["quat.identity", "No rotation (a read-only Quat)."],
+            ["quat.x(angle, out?)", "Pitch: rotation around the x axis."],
+            [
+              "quat.y(angle, out?)",
+              "Yaw/heading: rotation around the y axis (the usual choice for ground actors).",
+            ],
+            ["quat.z(angle, out?)", "Roll; also the spin for 2D games looking down -z."],
+            ["quat.axisAngle(x, y, z, angle, out?)", "Rotation around a unit axis."],
+            ["quat.multiply(a, b, out?)", "Combine rotations: a after b."],
+            [
+              "quat.fromEuler(x, y, z, out?)",
+              "Turn around x, then y, then z: multiply(z(z), multiply(y(y), x(x))).",
+            ],
+            [
+              "quat.slerp(a, b, t, out?)",
+              "Shortest-path blend from a (t=0) to b (t=1); use it to turn smoothly.",
+            ],
+          ],
+        },
+        examples: [
+          {
+            title: "Face the direction of travel and turn smoothly",
+            description:
+              "Call setup once; call steer from onUpdate after world.update(dt) and flush the transforms once at the end of the frame. The scratch arrays are reused, so steering allocates nothing. quat.y(Math.atan2(x, z)) faces a model whose front is +z toward (x, z).",
+            code: `import { quat, type Entity, type MutableQuat, type World } from "@nayan-ui/engine";
+
+export function makeSteering(world: World, actor: Entity) {
+  const current: MutableQuat = [0, 0, 0, 1];
+  const target: MutableQuat = [0, 0, 0, 1];
+  return (dt: number, moveX: number, moveZ: number) => {
+    if (moveX !== 0 || moveZ !== 0) quat.y(Math.atan2(moveX, moveZ), target);
+    quat.slerp(current, target, Math.min(1, dt * 10), current); // out may be an input
+    world.transforms.rotation(actor, current[0], current[1], current[2], current[3]);
+  };
+}
+
+// Setup-time rotations can allocate freely:
+export function addSign(world: World) {
+  const tilt = quat.multiply(quat.y(Math.PI / 4), quat.x(-0.3)); // tilt first, then turn
+  return world.spawn({ mesh: "cube", scale: [2, 1, 0.1], rotation: tilt });
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
         id: "parenting-and-independent-actors",
         title: "Parenting and independent actors",
         paragraphs: [
@@ -80,6 +189,8 @@ export function addPlayer(world: World) {
         examples: [
           {
             title: "Compose a collectible",
+            description:
+              "Call once per collectible. Despawning the returned root removes both parts.",
             code: `import { World } from "@nayan-ui/engine";
 export function addCollectible(world: World) {
   const root = world.spawn({ mesh: "none", position: [2, 1, 0], spin: [0, 1, 0] });
@@ -96,18 +207,23 @@ export function addCollectible(world: World) {
         id: "movement-bounds-and-queries",
         title: "Movement, bounds and queries",
         paragraphs: [
-          "position returns the simulated, parent-relative position. worldPosition returns the last rendered world position, including hierarchy and interpolation. velocity returns current velocity. These return null for removed entities; pass an output tuple to reuse storage. Do not interpret a query as a frame subscription.",
-          "world.bounds = [minX,minZ,maxX,maxZ] confines non-physics movement on the ground plane. null removes it. Rigid bodies need actual walls. world.gravity defaults to [0,-9.81,0]. world.listener controls spatial attenuation/panning of impact sounds; null clears the listener.",
+          "position(entity) returns the simulated, parent-relative position. worldPosition(entity) returns where it was last drawn in world space, including parents and smoothing. velocity(entity) returns the current velocity. All three return null for removed entities (and after dispose).",
+          "Every query takes an optional out argument: position, worldPosition and velocity fill a [x, y, z] tuple, raycast and pick fill a hit object, toScreen fills [x, y] and screenToWorld fills [x, y, z]. Pass a reused value in per-frame code so a 60 fps loop allocates nothing. toScreen and screenToWorld use the last drawn camera, so they return null until the first frame is on screen.",
+          "world.bounds = [minX, minZ, maxX, maxZ] keeps moving non-physics entities inside a rectangle; null removes it. Rigid bodies need real walls. world.gravity defaults to [0, -9.81, 0]. world.listener is the entity impact sounds pan and fade relative to; null clears it.",
         ],
         examples: [
           {
-            title: "Reuse query storage",
+            title: "Read positions without allocating",
+            description:
+              "Create the tracker once; call the returned function from onUpdate after world.update(dt).",
             code: `import { World, type Entity } from "@nayan-ui/engine";
-export function makeTracker(world: World, entity: Entity) {
-  const out: [number, number, number] = [0, 0, 0];
+export function makeTracker(world: World, player: Entity, onFall: () => void) {
+  const at: [number, number, number] = [0, 0, 0];
   world.bounds = [-20, -20, 20, 20];
-  world.listener = entity;
-  return () => { if (world.worldPosition(entity, out)) console.log(out[0], out[1], out[2]); };
+  world.listener = player;
+  return () => {
+    if (world.position(player, at) && at[1] < -5) onFall();
+  };
 }`,
             platform: "shared",
             language: "tsx",
@@ -118,8 +234,25 @@ export function makeTracker(world: World, entity: Entity) {
         id: "update-pause-reset-and-dispose",
         title: "Update, pause, reset and dispose",
         paragraphs: [
-          "World.update(dt) advances native/WASM fixed 60 Hz steps, refreshes render buffers and dispatches completed animations, timers and scoreboard changes. GameView caps dt at 0.1 seconds and supplies zero until a frame has actually appeared. paused prevents its callback and drawing, preserving the mounted scene.",
-          "A reset is your game policy: clear timers and held input, despawn actors and spawn a new run while reusing assets. World has no reset() or start() method. dispose() is idempotent, resolves pending animation promises and clears timers; subsequent active operations throw. Always release worlds on unmount and unsubscribe application-owned listeners.",
+          "world.update(dt) advances fixed 60 Hz steps, refreshes what GameView draws and then runs finished animation promises, due timers and scoreboard handlers. GameView caps dt at 0.1 seconds and passes 0 until a frame has actually appeared. Passing paused to GameView stops both its onUpdate callback and drawing while keeping the scene mounted.",
+          "A reset is your own function: cancel timers, despawn the round's actors, reset the scoreboard and spawn the next round in the same world while reusing loaded assets. Call world.update(0) afterwards if the new layout must be visible before the clock runs.",
+          "dispose() frees the native world; calling it twice is safe. Pending animation promises resolve and timers are dropped. After it, world.isDisposed is true, cleanup calls and queries are no-ops (false, null, 0 or a resolved promise) and spawn and update throw. So world.animate(e, ...).then(() => world.despawn(e)) needs no guard, but code that spawns new entities after an await should check world.isDisposed first.",
+        ],
+        examples: [
+          {
+            title: "Spawn safely after an await",
+            description:
+              "Late continuations only need a guard when they spawn. Cleanup calls such as despawn are already safe after dispose.",
+            code: `import { World, type Entity } from "@nayan-ui/engine";
+export async function popAndReplace(world: World, piece: Entity) {
+  await world.animate(piece, { scale: 0 }, { duration: 0.2 });
+  world.despawn(piece); // Safe even if the screen closed meanwhile.
+  if (world.isDisposed) return null; // spawn would throw on a disposed world.
+  return world.spawn({ mesh: "cube", position: [0, 4, 0] });
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
         ],
       },
     ],
@@ -145,7 +278,10 @@ export function makeTracker(world: World, entity: Entity) {
               "camera / light",
               "Mutable Camera and Light objects read each frame. See Camera and lighting.",
             ],
-            ["background / fog", "Clear/fog RGB, default [0.04,0.05,0.09]; fog density default 0."],
+            [
+              "background / fog",
+              "Sky/clear color as a Color (RGB, or RGBA with alpha ignored), default dark navy; it is also the fog color. fog is the density toward it, default 0 (off).",
+            ],
             ["quality", "auto (default), high, medium, low or lowest."],
             [
               "paused",
@@ -277,7 +413,7 @@ export function stopChasing(camera: Camera) { camera.follow = null; }`,
         title: "Directional light and fog",
         paragraphs: [
           "Light.direction points toward the light and need not be normalized. ambient is 0..1. shadows defaults true; shadowExtent is the half-size of the shadowed region around the camera target, default 30. A region too small clips distant shadows; a larger region reduces detail at a fixed shadow resolution.",
-          "Light.color multiplies sunlight and ambient, default white. Mesh shine is configured when loading a model or registering a shape, rather than on every entity. Background is also the fog color. Fog defaults off.",
+          "Light.color is a Color (alpha ignored) that multiplies sunlight and ambient, default white; glowing colors above 1 are unaffected, so lamps stay lit at night. Mesh shine is configured when loading a model or registering a shape, rather than on every entity. Background is also the fog color. Fog defaults off.",
         ],
         examples: [
           {

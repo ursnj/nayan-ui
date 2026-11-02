@@ -7,7 +7,7 @@ export const metadata = buildPageMetadata({
   description:
     "License information, commercial usage terms, and acknowledgments for @nayan-ui/games package.",
   path: "/games/licensing",
-  keywords: "react native games license, game library licensing, commercial usage, MIT license",
+  keywords: "react native games license, game library licensing, commercial usage, dual license",
 });
 
 const schemas = [
