@@ -487,7 +487,7 @@ addRoundedRect, quadraticTo and toContours. Use these names in new examples and 
 - Per-game controls and rules: https://www.nayanui.com/games/<game-id> (GAME_IDS values, e.g. /games/treasure-hunt)
 - Licensing (dual: free non-commercial, paid commercial): https://www.nayanui.com/games/licensing
 
-These docs describe the engine-based release that follows npm 1.19.0 (1.19.0 is the older Skia/Reanimated build).
+These docs describe @nayan-ui/games 1.20.0, the engine-based release (requires @nayan-ui/engine ^1.0.0-beta.2; 1.19.0 and earlier are the older Skia/Reanimated build).
 Peers: @nayan-ui/engine and react; react-native + expo-asset + expo-modules-core for native; react-dom for web.
 Native: development build (not Expo Go), New Architecture, Android minSdkVersion 26, VIBRATE permission,
 Metro assetExts include glb and gltf. Web: client-only rendering (Next.js dynamic import with ssr:false), HTTPS or localhost.

@@ -116,7 +116,7 @@ const GamesMain = () => {
             {GAME_COUNT} ready-made games for React Native apps and React websites, rendered by the
             Nayan engine: Rust and wgpu on iOS and Android, WebAssembly with WebGPU or WebGL2 in
             browsers. Each one is a single component with the same props. These docs describe the
-            engine-based release that follows npm 1.19.0.
+            engine-based release, version 1.20.0.
           </>
         }
         actions={

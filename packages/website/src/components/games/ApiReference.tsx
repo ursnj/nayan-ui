@@ -43,9 +43,9 @@ const GamesApiReference = () => {
   return (
     <Sidebar title={component?.title || "API Reference"}>
       <p className={P}>
-        This page covers the engine-based release that follows npm 1.19.0. Each package entry
-        resolves to <code>lib/module</code> in React Native and to <code>lib/web</code> in browsers.
-        Both expose the same API.
+        This page covers the engine-based release, version 1.20.0. Each package entry resolves to{" "}
+        <code>lib/module</code> in React Native and to <code>lib/web</code> in browsers. Both expose
+        the same API.
       </p>
 
       <div className="mb-8">

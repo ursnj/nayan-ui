@@ -95,9 +95,9 @@ const GamesInstallation = () => {
             @nayan-ui/engine
           </NLink>{" "}
           (Rust and wgpu on iOS and Android, WebAssembly with WebGPU or WebGL2 in browsers). It
-          ships in the next npm release after 1.19.0. The version on npm now, 1.19.0, is the earlier
-          Skia and Reanimated build. It has different peer dependencies and does not run in plain
-          React websites.
+          ships from version 1.20.0, which requires @nayan-ui/engine 1.0.0-beta.2 or later. Version
+          1.19.0 and earlier are the Skia and Reanimated build. They have different peer
+          dependencies and do not run in plain React websites.
         </p>
       </div>
 
