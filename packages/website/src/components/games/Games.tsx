@@ -11,22 +11,21 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { CheckList, DocsIntro } from "@/design/Primitives";
 import {
   ACCENT_SOFT,
   BUTTON_SMALL,
   CARD,
   CARD_INTERACTIVE,
+  CONTAINER,
   GRID_GAP,
+  H1,
   H3,
   PILL,
 } from "@/design/system";
-import Sidebar from "@/components/helpers/Sidebar";
 import SubHeader from "@/components/helpers/SubHeader";
 import { GAME_CATEGORY_COUNT, GAME_COUNT } from "@/services/Counts";
 import { GAMES_LIST } from "@/services/GamesData";
-import { getMenuItem } from "@/services/Utils";
 import { REPO_URL } from "@/services/seo";
 
 const categoryColors: Record<string, string> = {
@@ -103,13 +102,12 @@ const CAPABILITIES = [
 ];
 
 const GamesMain = () => {
-  const pathname = usePathname();
-  const component: any = getMenuItem(pathname);
-
   const categories = [...new Set(GAMES_LIST.map((game) => game.category))];
 
   return (
-    <Sidebar title={component?.title || "Games"}>
+    // A full-width page with every game, like the video editor's page: no docs sidebar.
+    <div className={`${CONTAINER} py-6 sm:py-8`}>
+      <h1 className={`mb-4 ${H1}`}>Games</h1>
       <DocsIntro
         lead={
           <>
@@ -249,7 +247,7 @@ const GamesMain = () => {
           ))}
         </div>
       </SubHeader>
-    </Sidebar>
+    </div>
   );
 };
 

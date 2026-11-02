@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return buildPageMetadata({
     title: `${guide.title} · Nayan Engine`,
     description: guide.description,
-    path: `/engine/${slug}`,
+    path: `/game-engine/${slug}`,
     keywords:
       "Nayan engine, React game engine, React Native game engine, Rust, WebAssembly, WebGPU, documentation",
   });
@@ -36,13 +36,13 @@ export default async function EngineGuidePage({ params }: { params: Promise<{ sl
         data={[
           buildBreadcrumbSchema([
             { name: "Home", url: SITE_URL },
-            { name: "Engine", url: `${SITE_URL}/engine` },
-            { name: guide.title, url: `${SITE_URL}/engine/${slug}` },
+            { name: "Game Engine", url: `${SITE_URL}/game-engine` },
+            { name: guide.title, url: `${SITE_URL}/game-engine/${slug}` },
           ]),
           buildTechArticleSchema({
             title: guide.title,
             description: guide.description,
-            url: `${SITE_URL}/engine/${slug}`,
+            url: `${SITE_URL}/game-engine/${slug}`,
           }),
         ]}
       />

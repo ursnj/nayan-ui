@@ -322,9 +322,11 @@ export const getSidebarItems = (path: string): SidebarItem[] => {
   if (path.startsWith("/tools")) {
     return toolsSidebarItems;
   }
-  // The games library is documented, and its games listed, under Game Engine.
-  if (path === "/game-engine" || path.startsWith("/game-engine/") || path === "/games" || path.startsWith("/games/")) {
-    return gameEngineSidebarItems;
+  if (path === "/game-engine" || path.startsWith("/game-engine/")) {
+    return engineSidebarItems;
+  }
+  if (path.startsWith("/games")) {
+    return gamesSidebarItems;
   }
   return reactSidebarItems;
 };
@@ -2237,24 +2239,6 @@ export const gamesSidebarItems = [
     link: "/games/play-with-tua",
     icon: Gamepad2,
   },
-];
-const GAMES_LIBRARY_TITLES: Record<string, string> = {
-  "Get Started": "Games Library",
-  Overview: "Games Overview",
-  Installation: "Games Installation",
-  "API Reference": "Games API Reference",
-  Licensing: "Games Licensing",
-};
-
-/** The Game Engine sidebar: the engine guides, then the games library and every game. */
-export const gameEngineSidebarItems: SidebarItem[] = [
-  ...engineSidebarItems,
-  ...gamesSidebarItems.map((item) => {
-    const title = GAMES_LIBRARY_TITLES[item.title];
-    // The games list lives under Game Engine too (/game-engine/games shows the same page as /games).
-    const link = item.link === "/games" ? "/game-engine/games" : item.link;
-    return title ? { ...item, title, link } : item;
-  }),
 ];
 
 

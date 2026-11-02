@@ -48,7 +48,7 @@ export default function GameExperience({
   }, []);
 
   return (
-    <div className="nyn-game-page fixed inset-x-0 bottom-0 top-[60px] z-30 bg-background">
+    <div className="nyn-game-page fixed inset-x-0 bottom-0 top-0 z-30 bg-background">
       <h1 className="sr-only">Play {title}</h1>
       <p className="sr-only">{description}</p>
       <GamePlayer
