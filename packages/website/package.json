@@ -10,8 +10,8 @@
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "@napi-rs/canvas": "^0.1.68",
-    "@nayan-ui/engine": "1.0.0-beta.2",
-    "@nayan-ui/games": "^1.20.0",
+    "@nayan-ui/engine": "1.0.0-beta.3",
+    "@nayan-ui/games": "^1.21.0",
     "@nayan-ui/react": "workspace:*",
     "docx": "^9.5.0",
     "exceljs": "^4.4.0",
