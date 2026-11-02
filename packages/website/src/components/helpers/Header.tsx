@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NSheet, THEMES } from "@nayan-ui/react";
 import { AlignJustify, Github, MoonStar, Package, Sun } from "lucide-react";
 import Link from "next/link";
@@ -58,8 +58,22 @@ const Header = () => {
     setMounted(true);
   }, []);
 
+  // Back and forward keep the page where it was; only new navigations start at the top.
+  const historyNavigation = useRef(false);
+  useEffect(() => {
+    const onPopState = () => {
+      historyNavigation.current = true;
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
   useEffect(() => {
     setMenu(false);
+    if (historyNavigation.current) {
+      historyNavigation.current = false;
+      return;
+    }
     window.scrollTo(0, 0);
   }, [pathname]);
 

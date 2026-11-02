@@ -17,7 +17,6 @@ import {
   PageHero,
   Section,
   SectionHeader,
-  StatGrid,
 } from "@/design/Primitives";
 import {
   BUTTON_PRIMARY,
@@ -110,12 +109,9 @@ const VideoEditorMain = () => (
           </a>
         </>
       }
+      pills={FACTS}
       note="Free forever · MIT licensed · Works offline · Nothing leaves your device"
-    >
-      <div className="mx-auto mt-10 max-w-4xl">
-        <StatGrid stats={FACTS} />
-      </div>
-    </PageHero>
+    />
 
     <Section id="features" labelledBy="features-heading">
       <SectionHeader

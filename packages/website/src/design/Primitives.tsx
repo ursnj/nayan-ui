@@ -14,6 +14,7 @@ import {
   H3,
   HEADER_GAP,
   LEAD,
+  PILL,
   SCROLL_MT,
   SECTION_Y,
 } from "./system";
@@ -82,6 +83,8 @@ interface PageHeroProps {
   lead?: ReactNode;
   /** Buttons. */
   actions?: ReactNode;
+  /** Short facts shown as pills under the actions. */
+  pills?: string[];
   /** A line of small print under the actions — licence, price, requirements. */
   note?: string;
   /** Breadcrumb trail, innermost last. The final entry is rendered as the current page. */
@@ -96,6 +99,7 @@ export const PageHero = ({
   titleAccent,
   lead,
   actions,
+  pills,
   note,
   breadcrumb,
   media,
@@ -132,6 +136,17 @@ export const PageHero = ({
             >
               {actions}
             </div>
+          ) : null}
+          {pills?.length ? (
+            <ul
+              className={`mt-5 flex flex-wrap gap-2 ${media ? "justify-center lg:justify-start" : "justify-center"}`}
+            >
+              {pills.map((pill) => (
+                <li key={pill} className={`text-xs font-semibold ${PILL}`}>
+                  {pill}
+                </li>
+              ))}
+            </ul>
           ) : null}
           {note ? <p className="mt-5 text-xs text-muted">{note}</p> : null}
         </div>

@@ -4,13 +4,8 @@
 export const EDITOR_URL = "/video-editor/start";
 export const SOURCE_URL = "https://github.com/ursnj/nayan-ui";
 
-/** The facts strip under the hero. Short, checkable, no adjectives. */
-export const FACTS = [
-  { value: "4K", label: "Full-quality export" },
-  { value: "15", label: "Colour looks" },
-  { value: "18", label: "Transitions" },
-  { value: "0", label: "Bytes uploaded" },
-];
+/** The fact pills under the hero's buttons. Short, checkable, no adjectives. */
+export const FACTS = ["4K export", "15 colour looks", "18 transitions", "0 bytes uploaded"];
 
 export const STEPS = [
   {

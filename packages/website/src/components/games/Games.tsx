@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
+  Code2,
   Gamepad2,
   Github,
   Package,
@@ -11,22 +13,41 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import { CheckList, DocsIntro } from "@/design/Primitives";
 import {
-  ACCENT_SOFT,
-  BUTTON_SMALL,
+  CtaPanel,
+  FaqList,
+  FeatureCard,
+  PageHero,
+  Section,
+  SectionHeader,
+} from "@/design/Primitives";
+import {
+  BUTTON_PRIMARY,
+  BUTTON_SECONDARY,
   CARD,
   CARD_INTERACTIVE,
-  CONTAINER,
+  CARD_PAD,
   GRID_GAP,
-  H1,
-  H3,
+  H4_CARD,
   PILL,
 } from "@/design/system";
-import SubHeader from "@/components/helpers/SubHeader";
 import { GAME_CATEGORY_COUNT, GAME_COUNT } from "@/services/Counts";
 import { GAMES_LIST } from "@/services/GamesData";
 import { REPO_URL } from "@/services/seo";
+
+const NPM_URL = "https://www.npmjs.com/package/@nayan-ui/games";
+
+/**
+ * Where the list was scrolled when a game was opened. A game screen locks page scrolling while it
+ * plays, so the browser's own restoration can't be relied on when coming back.
+ */
+const SCROLL_KEY = "nyn-games-scroll";
+
+const rememberScroll = () => {
+  try {
+    sessionStorage.setItem(SCROLL_KEY, String(window.scrollY));
+  } catch {}
+};
 
 const categoryColors: Record<string, string> = {
   Puzzle: "bg-blue-500/15 text-blue-600 dark:text-blue-300 border-blue-500/25",
@@ -35,187 +56,206 @@ const categoryColors: Record<string, string> = {
   Strategy: "bg-amber-500/15 text-amber-600 dark:text-amber-300 border-amber-500/25",
 };
 
-/** Games without a screenshot in public/games yet; they show their emoji instead. */
-const SCREENSHOTS_PENDING = new Set(["penguin-run", "play-with-tua", "treasure-hunt"]);
+const FACTS = [
+  `${GAME_COUNT} games`,
+  `${GAME_CATEGORY_COUNT} categories`,
+  "iOS, Android and web",
+  "One props API",
+];
 
-const CAPABILITIES = [
+const FEATURES = [
   {
     icon: Zap,
-    title: "Nayan engine",
-    items: [
-      "Rust and wgpu rendering: Metal on iOS, Vulkan or GLES on Android",
-      "WebAssembly with WebGPU or a WebGL2 fallback in browsers",
-      "Physics, animation, particles and the scoreboard clock run in Rust",
-      "Prepared assets saved on device and reused across runs",
-    ],
+    title: "Native engine speed",
+    body: "Rendered by the Nayan engine: Rust and wgpu on iOS and Android, WebAssembly with WebGPU or WebGL2 in browsers.",
   },
   {
     icon: Smartphone,
-    title: "React Native and React",
-    items: [
-      "One package for Expo development builds and websites",
-      "Browser build at lib/web for Next.js and Vite",
-      "Keyboard play on the web through the engine's keyboard adapter",
-      "Header offset and responsive layout from phones to tablets",
-    ],
-  },
-  {
-    icon: Volume2,
-    title: "Audio and haptics",
-    items: [
-      "Sound effects mixed by the engine",
-      "Native haptics, and vibration where browsers support it",
-      "Sound and haptic switches in every game's settings",
-      "Muted automatically while paused or in the background",
-    ],
-  },
-  {
-    icon: Settings2,
-    title: "One settings model",
-    items: [
-      "The same GameSettings for every game",
-      "Built-in settings modal with how-to-play instructions",
-      "Light and dark themes, configurable with configureGameThemes",
-      "paused for your own overlays",
-    ],
+    title: "Apps and websites",
+    body: "One package for Expo development builds and React websites, with keyboard play on the web.",
   },
   {
     icon: Sparkles,
     title: "Complete game screens",
-    items: [
-      "Scoreboard, Start/Stop and results card drawn by the engine",
-      "Loading screen while the engine and assets prepare",
-      "Confetti, sparkles, shatters and other particle effects",
-      "Optional share, leaderboard and banner-ad slots",
-    ],
+    body: "Scoreboard, Start/Stop, results card, loading screen and particle effects come with every game.",
   },
   {
-    icon: Gamepad2,
+    icon: Volume2,
+    title: "Sound and haptics",
+    body: "Engine-mixed sound effects and native haptics, muted while paused or in the background.",
+  },
+  {
+    icon: Settings2,
+    title: "One settings model",
+    body: "The same GameSettings, settings modal, light and dark themes and pause prop for every game.",
+  },
+  {
+    icon: Code2,
     title: "Developer friendly",
-    items: [
-      "TypeScript types for every prop and callback",
-      "onEndGame reports win, lose or cancel once per run",
-      "loadGameComponent loads only the game you open",
-      "A documented file pattern for building new games",
-    ],
+    body: "TypeScript props, one onEndGame report per run, and only the game you open is loaded.",
   },
 ];
 
+const STEPS = [
+  {
+    title: "Install",
+    body: "Add @nayan-ui/games and @nayan-ui/engine to an Expo development build or a React website.",
+  },
+  {
+    title: "Render a game",
+    body: "Each game is one component. Load any of them by id with a single game screen.",
+  },
+  {
+    title: "Pass your settings",
+    body: "Sounds, haptics, theme and pause come from your app, so every game follows them.",
+  },
+  {
+    title: "Get the result",
+    body: "onEndGame reports win, lose or cancel with the score, once per run.",
+  },
+];
+
+const FAQS = [
+  {
+    q: "Are the games free?",
+    a: "They are free for non-commercial use. Commercial use needs a paid licence; see Licensing.",
+  },
+  {
+    q: "Which platforms do they run on?",
+    a: "iOS and Android through an Expo development build or a bare React Native app, and React websites such as Next.js and Vite. Expo Go does not include the engine.",
+  },
+  {
+    q: "How do I add one game to my app?",
+    a: "Install the package, then render the game's component with GameProps. The Installation guide shows a single-game screen and a catalog that loads any game by id.",
+  },
+  {
+    q: "Can I build my own game the same way?",
+    a: "Yes. Build a game documents the screen, constants, game and scene files every game in the library follows, on top of the Nayan engine.",
+  },
+];
+
+/** A few screenshots as the hero image, in the slot the video editor uses for its screenshot. */
+const HERO_GAMES = [
+  "block-blast",
+  "treasure-hunt",
+  "candy-crush",
+  "penguin-run",
+  "bubble-shooter",
+  "mob-control",
+];
+
+const GamesCollage = () => (
+  <div
+    className={`${CARD} grid grid-cols-3 gap-1.5 overflow-hidden p-1.5 shadow-xl shadow-indigo-500/5 lg:translate-x-4 lg:scale-110`}
+  >
+    {HERO_GAMES.map((id) => {
+      const game = GAMES_LIST.find((item) => item.id === id);
+      return (
+        <Link key={id} href={`/games/${id}`} className="overflow-hidden rounded-xl">
+          <img
+            src={`/games/${id}.png`}
+            alt={game ? `${game.name} screenshot` : ""}
+            width={400}
+            height={400}
+            className="block aspect-square w-full object-cover transition-transform duration-300 hover:scale-105"
+          />
+        </Link>
+      );
+    })}
+  </div>
+);
+
 const GamesMain = () => {
   const categories = [...new Set(GAMES_LIST.map((game) => game.category))];
+  const [category, setCategory] = useState<string | null>(null);
+
+  useEffect(() => {
+    let saved: string | null = null;
+    try {
+      saved = sessionStorage.getItem(SCROLL_KEY);
+      sessionStorage.removeItem(SCROLL_KEY);
+    } catch {}
+    const y = Number(saved);
+    if (!saved || !Number.isFinite(y)) return;
+    // After the game screen's scroll lock is gone and the list has laid out.
+    const frame = requestAnimationFrame(() => window.scrollTo(0, y));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  const shown = category ? GAMES_LIST.filter((game) => game.category === category) : GAMES_LIST;
 
   return (
-    // A full-width page with every game, like the video editor's page: no docs sidebar.
-    <div className={`${CONTAINER} py-6 sm:py-8`}>
-      <h1 className={`mb-4 ${H1}`}>Games</h1>
-      <DocsIntro
-        lead={
-          <>
-            {GAME_COUNT} ready-made games for React Native apps and React websites, rendered by the
-            Nayan engine: Rust and wgpu on iOS and Android, WebAssembly with WebGPU or WebGL2 in
-            browsers. Each one is a single component with the same props. These docs describe the
-            engine-based release, version 1.20.0.
-          </>
-        }
+    <>
+      <PageHero
+        media={<GamesCollage />}
+        breadcrumb={[{ label: "Home", href: "/" }, { label: "Games" }]}
+        eyebrow="Games"
+        title={`${GAME_COUNT} ready-made games`}
+        titleAccent="For React Native apps and React websites"
+        lead="Puzzle, arcade, action and strategy games, each a single component with the same props, rendered by the Nayan engine."
         actions={
           <>
-            <Link
-              href="https://www.npmjs.com/package/@nayan-ui/games"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={BUTTON_SMALL}
-            >
-              <Package aria-hidden className="mr-2 h-4 w-4" />
-              View on npm
-            </Link>
-            <Link
-              href={REPO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={BUTTON_SMALL}
-            >
-              <Github aria-hidden className="mr-2 h-4 w-4" />
-              View source
-            </Link>
-            <Link href="/games/installation" className={BUTTON_SMALL}>
+            <a href="#all-games" className={BUTTON_PRIMARY}>
+              <Gamepad2 aria-hidden className="mr-2 h-5 w-5" />
+              Play a game
+            </a>
+            <Link href="/games/installation" className={BUTTON_SECONDARY}>
+              <Package aria-hidden className="mr-2 h-5 w-5" />
               Installation
-            </Link>
-            <Link href="/games/build-a-game" className={BUTTON_SMALL}>
-              Build a game
             </Link>
           </>
         }
-        facts={[
-          { value: String(GAME_COUNT), label: "Games" },
-          { value: String(GAME_CATEGORY_COUNT), label: "Categories" },
-          { value: "Web + Native", label: "Platforms" },
-          { value: "Dual", label: "Licence" },
-        ]}
+        pills={FACTS}
+        note="Free for non-commercial use · TypeScript"
       />
 
-      <SubHeader
-        title="What you get"
-        description="Every game in the package is built on the same engine and screen."
-      >
-        <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
-          {CAPABILITIES.map((capability) => {
-            const Icon = capability.icon;
-            return (
-              <div key={capability.title} className={`${CARD} p-5`}>
-                <div className="mb-3 flex items-center gap-3">
-                  <span
-                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border ${ACCENT_SOFT}`}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  <h3 className={H3}>{capability.title}</h3>
-                </div>
-                <CheckList items={capability.items} />
-              </div>
-            );
-          })}
+      <Section id="all-games" labelledBy="all-games-heading">
+        <SectionHeader
+          eyebrow="Play"
+          id="all-games-heading"
+          title="Pick a game and play"
+          lead="Open any game to play it right here, with its controls, rules and tips."
+        />
+        <div
+          className="mb-6 flex flex-wrap justify-center gap-2"
+          role="group"
+          aria-label="Filter by category"
+        >
+          {[null, ...categories].map((item) => (
+            <button
+              key={item ?? "all"}
+              type="button"
+              onClick={() => setCategory(item)}
+              aria-pressed={category === item}
+              className={`text-xs font-semibold ${PILL} ${
+                category === item
+                  ? "border-indigo-500/40 bg-indigo-500/15 text-indigo-600 dark:text-indigo-300"
+                  : item
+                    ? (categoryColors[item] ?? "")
+                    : ""
+              }`}
+            >
+              {item ?? "All"}
+            </button>
+          ))}
         </div>
-      </SubHeader>
-
-      <SubHeader
-        title={`All ${GAME_COUNT} games`}
-        description="Each one has its own page with its controls, rules and tips."
-        action={
-          <div className="hidden flex-wrap gap-1.5 sm:flex">
-            {categories.map((category) => (
-              <span
-                key={category}
-                className={`text-xs font-semibold ${PILL} ${categoryColors[category] ?? ""}`}
-              >
-                {category}
-              </span>
-            ))}
-          </div>
-        }
-      >
-        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
-          {GAMES_LIST.map((game) => (
+        <div
+          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${GRID_GAP}`}
+        >
+          {shown.map((game) => (
             <Link
               key={game.id}
               href={`/games/${game.id}`}
+              onClick={rememberScroll}
               className={`${CARD_INTERACTIVE} group overflow-hidden`}
             >
               <div className="relative overflow-hidden">
-                {SCREENSHOTS_PENDING.has(game.id) ? (
-                  <div
-                    aria-hidden
-                    className="flex aspect-square w-full items-center justify-center bg-default/40 text-7xl"
-                  >
-                    {game.emoji}
-                  </div>
-                ) : (
-                  <img
-                    src={`/games/${game.id}.png`}
-                    alt={`${game.name} screenshot`}
-                    className="aspect-square w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                )}
+                <img
+                  src={`/games/${game.id}.png`}
+                  alt={`${game.name} screenshot`}
+                  className="aspect-square w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
+                />
                 <span
                   className={`absolute right-3 top-3 rounded-full border px-2.5 py-1 text-xs font-semibold ${categoryColors[game.category]}`}
                 >
@@ -230,24 +270,78 @@ const GamesMain = () => {
                   </h3>
                 </div>
               </div>
-              <div className="p-4">
-                <p className="mb-3 text-sm leading-relaxed text-muted">{game.description}</p>
-                <ul className="flex flex-wrap gap-1.5">
-                  {game.tags.map((tag) => (
-                    <li
-                      key={tag}
-                      className="rounded-md bg-default/50 px-2 py-0.5 text-[11px] font-medium text-muted"
-                    >
-                      #{tag}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <p className="p-4 text-sm leading-relaxed text-muted">{game.description}</p>
             </Link>
           ))}
         </div>
-      </SubHeader>
-    </div>
+      </Section>
+
+      <Section id="features" labelledBy="features-heading">
+        <SectionHeader
+          eyebrow="Features"
+          id="features-heading"
+          title="Everything a game screen needs"
+          lead="Every game in the package is built on the same engine and screen."
+        />
+        <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
+          {FEATURES.map((feature) => (
+            <FeatureCard
+              key={feature.title}
+              icon={feature.icon}
+              title={feature.title}
+              body={feature.body}
+            />
+          ))}
+        </div>
+      </Section>
+
+      <Section id="how-it-works" labelledBy="how-heading">
+        <SectionHeader
+          eyebrow="How it works"
+          id="how-heading"
+          title="Add a game to your app"
+          lead="Four steps from install to a reported result."
+        />
+        <ol className={`grid sm:grid-cols-2 lg:grid-cols-4 ${GRID_GAP}`}>
+          {STEPS.map((step, index) => (
+            <li key={step.title} className={`${CARD} ${CARD_PAD}`}>
+              <span className="mb-4 flex h-8 w-8 items-center justify-center rounded-lg border border-indigo-500/25 bg-indigo-500/10 text-xs font-bold text-indigo-600 dark:text-indigo-300">
+                {index + 1}
+              </span>
+              <h3 className={`mb-2 ${H4_CARD}`}>{step.title}</h3>
+              <p className="text-sm leading-relaxed text-muted">{step.body}</p>
+            </li>
+          ))}
+        </ol>
+      </Section>
+
+      <Section id="faq" labelledBy="faq-heading">
+        <SectionHeader eyebrow="FAQ" id="faq-heading" title="Frequently asked questions" />
+        <FaqList faqs={FAQS} />
+      </Section>
+
+      <CtaPanel
+        title="Drop a game into your app"
+        lead="Install the package, render one component and get a result when the run ends."
+      >
+        <Link href="/games/installation" className={BUTTON_PRIMARY}>
+          <Package aria-hidden className="mr-2 h-5 w-5" />
+          Get started
+        </Link>
+        <Link href="/games/build-a-game" className={BUTTON_SECONDARY}>
+          <Code2 aria-hidden className="mr-2 h-5 w-5" />
+          Build a game
+        </Link>
+        <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className={BUTTON_SECONDARY}>
+          <Github aria-hidden className="mr-2 h-5 w-5" />
+          View source
+        </a>
+        <a href={NPM_URL} target="_blank" rel="noopener noreferrer" className={BUTTON_SECONDARY}>
+          <Package aria-hidden className="mr-2 h-5 w-5" />
+          npm
+        </a>
+      </CtaPanel>
+    </>
   );
 };
 
