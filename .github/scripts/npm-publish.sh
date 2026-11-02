@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Publishes the package in the current directory to npm, skipping a version that's already out.
-# Env: NPM_TOKEN, DRY_RUN ("true" to only list what would be published).
+# Auth: npm trusted publishing (GitHub OIDC); the workflow needs `id-token: write`.
+# Env: DRY_RUN ("true" to only list what would be published).
 set -euo pipefail
 
 name="$(node -p "require('./package.json').name")"
@@ -28,6 +29,5 @@ fi
 tag=latest
 case "$version" in *-*) tag="$(echo "${version#*-}" | sed 's/[^a-zA-Z].*//')"; tag="${tag:-next}" ;; esac
 
-echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
 npm publish --access public --tag "$tag"
 echo "Published $name@$version (tag: $tag)"

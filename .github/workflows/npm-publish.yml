@@ -18,14 +18,16 @@ on:
         description: "@nayan-ui/native"
         type: boolean
         default: false
-      engine:
-        description: "@nayan-ui/engine"
-        type: boolean
-        default: false
       dry_run:
         description: "Dry run (build and pack, don't publish)"
         type: boolean
         default: false
+
+# npm trusted publishing: each job exchanges a GitHub OIDC token for a short-lived npm token,
+# so no NPM token secret is stored. @nayan-ui/engine is published from the playtura repo.
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   plan:
@@ -57,10 +59,26 @@ jobs:
         package: ${{ fromJSON(needs.plan.outputs.packages) }}
     name: publish (${{ matrix.package.dir }})
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Update npm for trusted publishing
+        run: npm install -g npm@latest
+
+      - name: Cache Bun packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
 
       - name: Install dependencies
         run: bun install
@@ -71,35 +89,5 @@ jobs:
       - name: Publish to npm
         working-directory: ./packages/${{ matrix.package.dir }}
         env:
-          NPM_TOKEN: ${{ secrets.NPM_PUBLISH }}
-          DRY_RUN: ${{ inputs.dry_run }}
-        run: ../../.github/scripts/npm-publish.sh
-
-  engine:
-    if: inputs.engine
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: Install dependencies
-        run: bun install
-
-      - name: Build the Rust core (iOS xcframework, Android static libraries)
-        working-directory: ./packages/engine
-        run: |
-          export ANDROID_NDK_HOME="${ANDROID_NDK_LATEST_HOME:-${ANDROID_NDK_HOME:-}}"
-          bun run core:build:ios
-          bun run core:build:android
-
-      - name: Build
-        run: bun run engine:build
-
-      - name: Publish to npm
-        working-directory: ./packages/engine
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_PUBLISH }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: ../../.github/scripts/npm-publish.sh
