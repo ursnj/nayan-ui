@@ -1,6 +1,5 @@
 name: Publish website docker images
 on: [workflow_dispatch]
-
 jobs:
   publish_images:
     runs-on: ubuntu-latest
@@ -8,15 +7,65 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # @nayan-ui/games is built from the private playtura repo and shipped to the website as a
+      # tarball (packages/website/scripts/nayan-ui-games.tgz, referenced by packages/website/package.json).
+      # PLAYTURA_TOKEN: a fine-grained token with read access to ursnj/playtura contents.
+      - name: Checkout playtura
+        uses: actions/checkout@v4
+        with:
+          repository: ursnj/playtura
+          token: ${{ secrets.PLAYTURA_TOKEN }}
+          path: .playtura
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .playtura/.bun-version
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install playtura dependencies
+        working-directory: .playtura
+        run: bun install --frozen-lockfile
+
+      # The games build only needs the engine's built JS and type declarations (the engine itself
+      # stays an external peer). Reuse the published engine build of the same version instead of
+      # compiling the Rust/WebAssembly core here.
+      - name: Use published @nayan-ui/engine build
+        working-directory: .playtura/packages/engine
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          npm pack "@nayan-ui/engine@$version" --pack-destination "$RUNNER_TEMP"
+          tar -xzf "$RUNNER_TEMP/nayan-ui-engine-$version.tgz" -C "$RUNNER_TEMP"
+          rm -rf lib
+          cp -R "$RUNNER_TEMP/package/lib" lib
+
+      - name: Build @nayan-ui/games
+        working-directory: .playtura/packages/games
+        run: bun run build
+
+      - name: Pack @nayan-ui/games into the website build
+        working-directory: .playtura/packages/games
+        run: |
+          file="$(npm pack --silent --pack-destination "$RUNNER_TEMP")"
+          mv "$RUNNER_TEMP/$file" "$GITHUB_WORKSPACE/packages/website/scripts/nayan-ui-games.tgz"
+
+      # A fresh tarball has a new integrity hash; refresh it in bun.lock so the image's
+      # `bun install --frozen-lockfile` accepts it.
+      - name: Update lockfile for the games tarball
+        run: bun install --lockfile-only
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
       - name: Docker Authentication
         uses: docker/login-action@v3
         with:
           username: ursnj
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
       - name: Build & Publish Nayan UI Website Image
         uses: docker/build-push-action@v6
         with:

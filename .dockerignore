@@ -30,3 +30,6 @@ examples/expo-app/dist
 
 # Regenerated inside the image by the editor build
 packages/website/public/editor
+
+# playtura checkout used by the docker-publish workflow to build @nayan-ui/games
+.playtura
