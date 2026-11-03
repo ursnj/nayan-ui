@@ -34,7 +34,8 @@ function Opened({ example, onBack }: { example: Example; onBack: () => void }) {
         accessibilityRole="button"
         accessibilityLabel="All examples"
         onPress={onBack}
-        style={[styles.back, { top: insets.top + 12, right: insets.right + 16 }]}>
+        style={[styles.back, { top: insets.top + 12, right: insets.right + 16 }]}
+      >
         <Text style={styles.backText}>‹ Examples</Text>
       </Pressable>
     </View>
@@ -62,7 +63,8 @@ function Home({ onOpen }: { onOpen: (example: Example) => void }) {
               key={example.id}
               accessibilityRole="button"
               onPress={() => onOpen(example)}
-              style={({ pressed }) => [styles.card, { width: cardWidth }, pressed && styles.pressed]}>
+              style={({ pressed }) => [styles.card, { width: cardWidth }, pressed && styles.pressed]}
+            >
               <View style={[styles.cover, { backgroundColor: example.color }]}>
                 <Text style={styles.icon}>{example.icon}</Text>
               </View>

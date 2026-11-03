@@ -12,17 +12,26 @@ engine/
 │   └── src/
 │       ├── Gallery.tsx          # React Native list, open example, back button (and Android back)
 │       └── examples.ts          # the cards
-├── web/
-│   └── src/
-│       ├── main.tsx             # createRoot(...).render(<Gallery />)
-│       ├── Gallery.tsx          # React DOM grid, open example, hash routes
-│       └── examples.ts          # the cards; each example loads when first opened
-└── scripts/setup-engine.mjs
+└── web/
+    └── src/
+        ├── main.tsx             # createRoot(...).render(<Gallery />)
+        ├── Gallery.tsx          # React DOM grid, open example, hash routes
+        └── examples.ts          # the cards; each example loads when first opened
 ```
 
 | Example                   | What it is                                                                          |
 | ------------------------- | ----------------------------------------------------------------------------------- |
 | [Car Racing](#car-racing) | Overtake traffic down a three-lane road to the finish, with three lives (glTF cars) |
+
+## Create a project
+
+```bash
+npx @nayan-ui/cli new my-game -t engine
+cd my-game
+bun install
+```
+
+It's a [Bun](https://bun.sh) workspace (`web`, `mobile`, `shared`); the apps install `@nayan-ui/engine` from npm. The mobile app needs a development build (iOS, or Android API 26+); Expo Go cannot run the engine.
 
 ## Add an example
 
@@ -31,17 +40,6 @@ engine/
 3. Add a card to `mobile/src/examples.ts` and `web/src/examples.ts`: id, title, description, icon, color, tags and the screen (lazy on the web).
 
 An example fills its parent and keeps its top-right corner free for the gallery's back button.
-
-## Prepare the engine
-
-Package the engine from a Playtura checkout (built with `bun run engine:build`, plus `bun run engine:core:build:ios` / `:android` for native), then install here:
-
-```bash
-bun run setup /absolute/path/to/playtura/packages/engine
-bun install
-```
-
-Setup writes an ignored `.engine/nayan-ui-engine.tgz` that both apps install. After engine changes, rerun setup and `bun install --force`; rebuild the native app after native engine changes. Expo Go cannot run the engine.
 
 ## Run
 

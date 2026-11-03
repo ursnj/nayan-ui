@@ -28,7 +28,8 @@ export function Gallery() {
         <a
           href="#/"
           aria-label="All examples"
-          className="absolute top-3 right-4 rounded-xl bg-white/90 px-3.5 py-2 text-sm font-bold text-slate-900 shadow hover:bg-white">
+          className="absolute top-3 right-4 rounded-xl bg-white/90 px-3.5 py-2 text-sm font-bold text-slate-900 shadow hover:bg-white"
+        >
           ‹ Examples
         </a>
       </main>
@@ -47,7 +48,8 @@ export function Gallery() {
           <li key={example.id}>
             <a
               href={`#/${example.id}`}
-              className="block overflow-hidden rounded-2xl border border-slate-700 bg-slate-800 transition hover:-translate-y-0.5 hover:border-slate-500">
+              className="block overflow-hidden rounded-2xl border border-slate-700 bg-slate-800 transition hover:-translate-y-0.5 hover:border-slate-500"
+            >
               <div className="grid h-36 place-items-center text-6xl" style={{ backgroundColor: example.color }} aria-hidden>
                 {example.icon}
               </div>

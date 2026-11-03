@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@nayan-engine-example/shared": "workspace:*",
-    "@nayan-ui/engine": "file:../.engine/nayan-ui-engine.tgz",
+    "@nayan-ui/engine": "^1.0.0-beta.4",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-native-web": "^0.21.0"
