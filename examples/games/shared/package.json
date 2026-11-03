@@ -9,7 +9,6 @@
   "peerDependencies": {
     "@nayan-ui/engine": "*",
     "react": "*",
-    "react-native": "*",
-    "react-native-safe-area-context": "*"
+    "react-native": "*"
   }
 }

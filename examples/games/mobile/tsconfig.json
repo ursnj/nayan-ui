@@ -3,13 +3,7 @@
   "compilerOptions": {
     "strict": true,
     "noEmit": true,
-    "customConditions": [
-      "react-native"
-    ]
+    "customConditions": ["react-native"]
   },
-  "include": [
-    "src",
-    "expo-env.d.ts",
-    ".expo/types/**/*.ts"
-  ]
+  "include": ["src"]
 }

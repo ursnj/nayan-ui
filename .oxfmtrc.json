@@ -1,7 +1,9 @@
 {
   "overrides": [
     {
-      "files": ["examples/games/**"],
+      "files": [
+        "examples/games/**"
+      ],
       "options": {
         "printWidth": 150,
         "quoteProps": "consistent",
@@ -12,5 +14,8 @@
         "useTabs": false
       }
     }
+  ],
+  "ignorePatterns": [
+    "examples/games/shared/src/**"
   ]
 }

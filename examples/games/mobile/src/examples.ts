@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
-import { CarRacing, type ExampleProps } from '@nayan-engine-example/shared';
+import { CarRacing, type GameProps } from '@nayan-engine-example/shared';
 
-/** One card in the list; `Screen` is the shared example, opened at `/<id>`. */
+/** One card in the list; `Screen` is the shared game, opened at `/<id>`. */
 export type Example = {
   id: string;
   title: string;
@@ -9,17 +9,17 @@ export type Example = {
   icon: string;
   color: string;
   tags: string[];
-  Screen: ComponentType<ExampleProps>;
+  Screen: ComponentType<GameProps>;
 };
 
 export const EXAMPLES: Example[] = [
   {
     id: 'car-racing',
     title: 'Car Racing',
-    description: 'Overtake traffic down a three-lane road to the finish, with three lives.',
+    description: 'Dodge oncoming traffic and race through busy lanes - test your reflexes!',
     icon: '🏎️',
     color: '#E53935',
-    tags: ['glTF models', 'chase camera', 'effects', 'audio'],
+    tags: ['procedural city', 'day and night', 'effects', 'audio'],
     Screen: CarRacing
   }
 ];

@@ -15,10 +15,7 @@ export default function Home() {
   const cardWidth = (Math.min(width - 32, MAX_WIDTH) - GAP * (columns - 1)) / columns;
 
   return (
-    <ScrollView
-      style={styles.screen}
-      contentContainerStyle={[styles.home, { paddingTop: insets.top + 32, paddingBottom: insets.bottom + 32 }]}
-    >
+    <ScrollView style={styles.screen} contentContainerStyle={[styles.home, { paddingTop: insets.top + 32, paddingBottom: insets.bottom + 32 }]}>
       <View style={styles.page}>
         <Text style={styles.eyebrow}>@nayan-ui/engine</Text>
         <Text style={styles.heading}>Examples</Text>
