@@ -1,0 +1,2770 @@
+{
+  "generator": "Built-in image_gen (one original illustration per content page)",
+  "referenceImages": [
+    "public/seo/artwork/react.jpg (style only)",
+    "public/logo.webp (brand logo)"
+  ],
+  "commonPrompt": "Create a NEW original premium colorful 3D illustrated SEO social banner. Landscape 1200x630 framing. Reference image 1 is STYLE ONLY: tactile rounded clay and frosted iridescent glass, sculptural dimensional subjects, vivid saturated color, polished soft studio lighting, gentle shadows, sophisticated playful design studio quality. Reference image 2 is the exact Nayan UI LOGO to include. Make the central scene SPECIFIC to this page's function and content, not a generic category toolkit. Design a unique focused visual metaphor or detailed product illustration that makes this page's topic immediately recognizable. The subject, props and arrangement must differ from other pages. Use generous breathing room and safe margins; no tiny interface text. Only text: the specified SHORT TITLE in large elegant bold white type; bottom left the supplied colorful logo followed by 'Nayan UI'; bottom right EXACTLY 'www.nayanui.com' (leading www. mandatory). Brand and website must be clearly readable, fully visible within 55px safe margins at 1200px wide. No descriptions, subtitles, paragraphs, URLs other than www.nayanui.com, extra wording or watermark. Keep text minimal, artwork beautiful and dominant.",
+  "pages": [
+    {
+      "path": "/tags",
+      "title": "Components by Tag",
+      "category": "Browse",
+      "theme": [
+        "#6366f1",
+        "#d946ef"
+      ],
+      "description": "Find components by use case "
+    },
+    {
+      "path": "/react/components",
+      "title": "React Components",
+      "category": "React",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "54 accessible components for the web Components are reusable building blocks of a user interface that encapsulate a specific piece of functionality or UI design. Each component can represent a distinct part of the application, such as buttons, forms, modals, or navigation bars. Components help organize and structure code, making it easier to manage, maintain, and scale applications by allowing developers to reuse consistent elements across different parts of the project."
+    },
+    {
+      "path": "/react/installation",
+      "title": "Install Nayan UI for React",
+      "category": "React · Get started",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Up and running in a minute "
+    },
+    {
+      "path": "/react/tags",
+      "title": "React Component Tags",
+      "category": "React",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Find components by use case "
+    },
+    {
+      "path": "/react/accordion",
+      "title": "Accordion",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Expand and collapse sections of content An Accordion component is a UI element that allows users to expand and collapse sections of content. It is commonly used to organize information in a compact and accessible manner, displaying only the headers by default and revealing the associated content when clicked. This helps improve the readability of complex or lengthy information by reducing clutter on the page."
+    },
+    {
+      "path": "/react/alert",
+      "title": "Alert",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Success, warning and error messages at a glance An Alert component is a UI element used to display important messages or notifications to users. It can convey different types of information such as success, warning, error, or informational messages, typically styled with distinct colors and icons to highlight the message's significance. Alerts are often used to grab the user's attention and provide immediate feedback on actions or events."
+    },
+    {
+      "path": "/react/avatar",
+      "title": "Avatar",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "User photos with initials as a fallback An Avatar component shows a person or entity as a small image, with initials or an icon standing in when there is no picture to show. Avatars identify the author of a comment, the owner of a file or the member of a team, in a shape that stays recognisable at any size."
+    },
+    {
+      "path": "/react/avatar-group",
+      "title": "Avatar Group",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Stacked avatars for teams and members An Avatar Group stacks several avatars into one overlapping row and collapses the rest into a count. It answers \"who is on this?\" in the space of a single line, and is the usual way to show the members of a team, the people on a call or the collaborators on a document."
+    },
+    {
+      "path": "/react/badge",
+      "title": "Badge",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Counts and status markers on any element A Badge component is a small UI element used to display a count, status, or label associated with another element, such as an icon or button. Badges are commonly used to highlight notifications, messages, or any relevant information in a compact and visually distinct way, often appearing as small circles or rectangles with numbers or text."
+    },
+    {
+      "path": "/react/breadcrumbs",
+      "title": "Breadcrumbs",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Show users where they are in your app A Breadcrumbs component shows where the current page sits in a hierarchy and gives a way back up it. Each entry but the last is a link to an ancestor, which makes a deep section navigable without reaching for the browser's back button."
+    },
+    {
+      "path": "/react/button",
+      "title": "Button",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Accessible buttons in every variant and size A Button component is a fundamental UI element that allows users to trigger actions or events, such as submitting a form, opening a dialog, or navigating to another page. Buttons are interactive and typically styled to stand out, making it easy for users to identify and interact with them. They can come in various types, such as primary, secondary, or disabled, depending on their purpose or state."
+    },
+    {
+      "path": "/react/button-group",
+      "title": "Button Group",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Related actions grouped into one control A Button Group component is a UI element that groups multiple buttons together, allowing users to select from a set of related actions or options. It helps organize buttons in a compact, cohesive layout, typically displayed in a horizontal or vertical row. Button Groups are useful for actions that are closely related or mutually exclusive, providing a clean and structured way to present multiple controls."
+    },
+    {
+      "path": "/react/calendar",
+      "title": "Calendar",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "An accessible month view for picking dates A Calendar component lays a month out as a grid and lets a date be picked from it. Unlike a date picker it is always open, which suits a booking screen, an availability view or anywhere the surrounding dates are part of the decision."
+    },
+    {
+      "path": "/react/card",
+      "title": "Card",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Group related content and actions A Card component is a versatile UI element used to display content in a structured and visually appealing way. It typically contains related information, such as text, images, buttons, and other elements, within a bordered or shadowed container. Cards are often used for presenting individual items, like products, articles, or profiles, making the content easy to scan and interact with."
+    },
+    {
+      "path": "/react/checkbox",
+      "title": "Checkbox",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Accessible checkboxes for forms and lists A Checkbox component is a UI element that allows users to select or deselect one or more options from a list. It typically appears as a small square that can be checked (ticked) or unchecked. Checkboxes are often used in forms, settings, or filters where multiple selections are needed, and they provide a clear, binary choice for users."
+    },
+    {
+      "path": "/react/checkbox-group",
+      "title": "Checkbox Group",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Pick several options from one list A Checkbox Group ties several checkboxes to one value, so a set of independent choices is read and written as a single array. It keeps the group's label, its layout and its disabled state in one place instead of spread across the individual boxes."
+    },
+    {
+      "path": "/react/chip",
+      "title": "Chip",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Compact labels for tags, filters and choices A Chip is a compact label for a piece of metadata — a status, a version, a category. It carries a colour and a variant so several chips in a row can be told apart at a glance, and it is deliberately quieter than a badge used for counts."
+    },
+    {
+      "path": "/react/confirm-alert",
+      "title": "Confirm Alert",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Ask users to confirm before they act A Confirm Alert component is a UI element that prompts users to confirm or cancel an action before proceeding. It typically displays a message asking for confirmation, along with \"Confirm\" and \"Cancel\" buttons, ensuring that the user consciously approves or rejects the action, often used for critical tasks like deletions or irreversible changes."
+    },
+    {
+      "path": "/react/date-field",
+      "title": "Date Field",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Type a date segment by segment A Date Field takes a date typed in segments — day, month, year — with no calendar attached. Each segment validates on its own and can be stepped with the arrow keys, which makes it faster than a picker for a date somebody already knows."
+    },
+    {
+      "path": "/react/date-picker",
+      "title": "Date Picker",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Pick a date from a calendar popover A Date Picker component is a UI element that allows users to select a date from a calendar popup. It provides an intuitive interface for choosing dates with support for date ranges, min/max constraints, and various granularity levels."
+    },
+    {
+      "path": "/react/date-range-picker",
+      "title": "Date Range Picker",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Pick a start and end date in one control A Date Range Picker takes a start and an end date in one control, either typed into its segments or chosen from the calendar it opens. Reporting periods, stays and filters all need two dates that make sense together, which is what a range picker enforces."
+    },
+    {
+      "path": "/react/dialog",
+      "title": "Dialog",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Modal dialogs for focused tasks A Dialog component is a UI element that displays a pop-up window over the main content to capture user attention or request input. It is often used for tasks like confirmations, alerts, forms, or other interactions that require user feedback before proceeding. Dialogs can include buttons like \"OK\" or \"Cancel\" to confirm or dismiss actions, and typically block interaction with the underlying content until closed."
+    },
+    {
+      "path": "/react/disclosure",
+      "title": "Disclosure",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Show and hide a section of content A Disclosure is one collapsible section: a heading that opens and closes the content under it. It is the single-section counterpart to an accordion, for hiding detail that most readers will not need without sending them to another page for it."
+    },
+    {
+      "path": "/react/divider",
+      "title": "Divider",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Separate content with a clean line A Divider component is a simple UI element used to separate content within a layout, creating visual distinction between sections. It helps enhance the organization and readability of the interface by providing clear boundaries between different elements, such as text blocks, images, or other components. Dividers can be styled in various ways (solid, dashed, or dotted) and can vary in thickness and color to match the overall design of the application."
+    },
+    {
+      "path": "/react/empty-state",
+      "title": "Empty State",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Guide users when there is nothing to show An Empty State fills a list, table or panel that has nothing in it yet, with a title, an explanation and the action that would change that. A blank area reads as a broken screen; an empty state reads as a screen waiting for its first item."
+    },
+    {
+      "path": "/react/infinite-scroll",
+      "title": "Infinite Scroll",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Load more content as users scroll An Infinite Scroll component is a user interface feature that automatically loads and displays additional content as the user scrolls down a page. Instead of traditional pagination, this component creates a seamless browsing experience by continuously appending new items, such as images or articles, when the user reaches the bottom of the viewport. This enhances user engagement and keeps the content flow uninterrupted, making it ideal for applications like social media feeds, product galleries, and news websites."
+    },
+    {
+      "path": "/react/input",
+      "title": "Input",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Text fields with labels and validation An Input component is a user interface element that allows users to enter data, such as text, numbers, or selections. It typically includes various types, such as text fields, checkboxes, radio buttons, and dropdowns, providing flexibility for different data types. Input components are essential for forms and interactive applications, enabling users to submit information effectively and efficiently."
+    },
+    {
+      "path": "/react/input-otp",
+      "title": "Input OTP",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "One-time passcode entry, digit by digit An Input OTP takes a one-time code as a row of single-character slots, moving focus along as the code is typed or pasted. It is the control used for two-factor sign-in, email verification and anything else that arrives as a short numeric code."
+    },
+    {
+      "path": "/react/kbd",
+      "title": "Keyboard Key",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Show keyboard shortcuts in your UI A Keyboard Key renders a key or a shortcut the way a keyboard shows it, so instructions can name a key without quoting it as prose. It is the small styled block you see in a shortcut list, a tooltip or an empty state that suggests a command."
+    },
+    {
+      "path": "/react/link",
+      "title": "Link",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Accessible links for any destination A Link component is a UI element that allows users to navigate from one page or section to another within a web application or website. Typically styled as underlined text or buttons, links provide a clear indication of interactivity. They can point to internal or external resources and often include features like hover effects or icons to enhance user experience and accessibility."
+    },
+    {
+      "path": "/react/linkify",
+      "title": "Linkify",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Turn URLs in plain text into links A Linkify component is a UI tool that automatically detects and converts plain text URLs within a content area into clickable hyperlinks. This enhances user experience by allowing easy access to external resources without the need for manual formatting. Linkify typically recognizes various URL formats and ensures that they are presented in a visually distinct manner, making navigation seamless and intuitive."
+    },
+    {
+      "path": "/react/list-box",
+      "title": "List Box",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Selectable lists with keyboard navigation A List Box shows a set of options as a list that can be selected with the mouse or the keyboard, one at a time or several at once. Unlike a select it stays open, which suits a picker built into a panel, a file list or a settings column."
+    },
+    {
+      "path": "/react/loading",
+      "title": "Loading",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Spinners for pages, buttons and sections A Loading component is a UI element that indicates to users that a process is ongoing, such as data fetching, page loading, or background tasks. It typically features visual indicators like spinners, progress bars, or animated icons to convey that the application is busy and to enhance the user experience by preventing confusion or frustration during waiting periods."
+    },
+    {
+      "path": "/react/menu",
+      "title": "Dropdown Menu",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Menus of actions behind one trigger A Dropdown Menu component is a UI element that allows users to select an option from a list that appears when the user clicks or hovers over a button or link. This component helps save space on the interface by displaying additional options only when needed. Dropdown menus are commonly used for navigation, settings, or forms, enabling users to choose from multiple choices in a clean and organized manner."
+    },
+    {
+      "path": "/react/meter",
+      "title": "Meter",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Show a value within a known range A Meter component is a UI element that visually represents a scalar measurement within a known range, such as disk usage, battery level, or CPU load. It provides an at-a-glance indicator of how a value compares to its min and max thresholds."
+    },
+    {
+      "path": "/react/number-field",
+      "title": "Number Field",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Numeric input with increment and decrement A Number Field component is a UI element that allows users to enter and adjust numeric values using increment and decrement buttons or direct input. It supports features like min/max constraints, step values, and number formatting."
+    },
+    {
+      "path": "/react/pagination",
+      "title": "Pagination",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Move through pages of results A Pagination component walks through a result set page by page, showing the current page, its neighbours and the ends of the range with an ellipsis in between. It keeps a long list navigable without loading all of it at once."
+    },
+    {
+      "path": "/react/popover",
+      "title": "Popover",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Floating content anchored to a trigger A Popover component is a UI element that displays additional information or actions when users interact with a specific trigger, such as a button or link. It typically appears as a small overlay or tooltip that provides context, tips, or options without navigating away from the current page. Popovers enhance user experience by offering relevant content in a concise format while maintaining focus on the main interface."
+    },
+    {
+      "path": "/react/progress",
+      "title": "Progress",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Show how far a task has come A Progress component visually indicates the completion status of a task or process. It typically consists of a progress bar that fills up as the task progresses, providing users with a clear and immediate understanding of how much of the task is completed and how much remains. This component is commonly used in forms, uploads, downloads, and loading states to enhance user experience by managing expectations and keeping users informed."
+    },
+    {
+      "path": "/react/progress-circle",
+      "title": "Progress Circle",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Circular progress for tasks and uploads A Progress Circle shows how far along a task is as a ring rather than a bar, which fits a tile, a button or a dense row where a full-width bar would not. Left without a value it spins as an indeterminate indicator."
+    },
+    {
+      "path": "/react/radio-group",
+      "title": "Radio Group",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Pick exactly one option from a set A Radio Group component is a UI element that allows users to select one option from a set of mutually exclusive choices. It typically consists of multiple radio buttons, where only one button can be selected at a time. Radio groups are commonly used in forms to gather user preferences, ensuring a clear and organized way to present options for selection. They enhance user experience by providing a straightforward interface for making single-choice decisions."
+    },
+    {
+      "path": "/react/scroll-shadow",
+      "title": "Scroll Shadow",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Fade the edges to hint at more content A Scroll Shadow fades the edges of a scrollable area while there is more content beyond them, so a cut-off list looks scrollable instead of finished. The shadows appear and disappear as the content is scrolled, on either axis."
+    },
+    {
+      "path": "/react/select",
+      "title": "Select",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Pick one option from a dropdown list A Select or ComboBox component is a UI element that allows users to choose one or more options from a dropdown list. It typically displays a default value or prompt, and when clicked, it expands to show a list of available choices. Users can either select an option from the list or, in the case of a ComboBox, input custom values. This component is ideal for conserving space in forms and making it easy for users to make selections quickly."
+    },
+    {
+      "path": "/react/search-field",
+      "title": "Search Field",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "A text field built for search queries A Search Field component is a UI element that provides a text input specifically designed for search functionality. It includes a built-in search icon and clear button, allowing users to quickly enter, modify, and clear search queries."
+    },
+    {
+      "path": "/react/sheet",
+      "title": "Sheet",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Panels that slide in from the edge A Sheet component is a UI element that presents content in a sliding panel, often overlaying the main application interface. It is typically used for displaying additional information, forms, or actions without navigating away from the current view. Sheets can be swiped or tapped to expand or collapse, providing a clean and efficient way to manage user interactions and maintain focus on the main content."
+    },
+    {
+      "path": "/react/skeleton",
+      "title": "Skeleton",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Placeholder shapes while content loads A Skeleton component is a placeholder UI element that represents the layout of content before it loads. It typically features a grey or light-colored shape mimicking the structure of the actual content (such as text blocks, images, or buttons) to indicate that loading is in progress. Skeleton components enhance user experience by providing a visual cue that content is being fetched, reducing perceived loading times and preventing layout shifts."
+    },
+    {
+      "path": "/react/slider",
+      "title": "Slider",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Pick a value by dragging a handle A Slider component is a UI element that allows users to select a value from a range by sliding a handle along a track. It provides an interactive way to adjust settings, such as volume, brightness, or other continuous values, with smooth transitions. Sliders can be single or multi-valued, enabling users to make precise selections visually, enhancing the overall user experience."
+    },
+    {
+      "path": "/react/switch",
+      "title": "Switch",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Turn a setting on or off A Switch component is a UI element that allows users to toggle between two states, typically representing an on/off or enabled/disabled choice. It is visually represented as a sliding toggle or checkbox and provides immediate feedback when the user interacts with it. Switch components are commonly used for settings, preferences, and feature activations in applications, enhancing user experience by simplifying the selection process."
+    },
+    {
+      "path": "/react/switch-group",
+      "title": "Switch Group",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Several on/off settings in one group A Switch Group collects several switches under one label and one value, for a screen of settings that are each on or off. Every row names its setting and carries its own switch, and the group reports the set that is currently on."
+    },
+    {
+      "path": "/react/table",
+      "title": "Table",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Show rows of data in clear columns A Table component is a structured UI element that organizes and displays data in rows and columns, making it easy to read and compare information. Tables can include features like sorting, filtering, pagination, and inline editing, allowing users to interact with the data efficiently. They are commonly used to present datasets, such as user information, product listings, or any structured content that benefits from a grid-like layout."
+    },
+    {
+      "path": "/react/tag-group",
+      "title": "Tag Group",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "A set of tags users can select A Tag Group component is a UI element that displays a collection of tags or labels, allowing users to select, filter, or remove tags. It supports multiple selection modes and removable tags, making it ideal for categorization, filtering, and labeling interfaces."
+    },
+    {
+      "path": "/react/tabs",
+      "title": "Tabs",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Switch between views in one place A Tabs component is a UI element that allows users to switch between different views or sections of content within the same interface. Organized as a series of labeled tabs, this component enhances navigation by displaying only one section at a time, helping to reduce clutter and improve user experience. Users can easily access various related content or features by clicking on the respective tabs, making it ideal for dashboards, settings pages, or any multi-section layout."
+    },
+    {
+      "path": "/react/textarea",
+      "title": "Textarea",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Multi-line text input for longer answers A Textarea component is an input field that allows users to enter multi-line text. It provides a larger area for text input compared to a standard text input field, making it ideal for comments, feedback, or any scenario where users need to provide detailed information. Textareas can be resized, styled, and configured to support features like character limits, placeholders, and auto-resizing to enhance user experience."
+    },
+    {
+      "path": "/react/time-field",
+      "title": "Time Field",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Type a time segment by segment A Time Field takes a time typed in segments — hour, minute, and the period where the locale uses one. It reads and writes a time value rather than a string, so a schedule or a reminder gets a value it can compare and store."
+    },
+    {
+      "path": "/react/toast",
+      "title": "Toast",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Brief notifications that dismiss themselves A Toast component is a transient notification that appears on the screen to provide feedback or information to users without interrupting their workflow. Typically displayed at the top or bottom of the screen, toasts are brief messages that automatically disappear after a short duration. They are commonly used to inform users about actions such as successful submissions, updates, or alerts, enhancing the overall user experience with minimal disruption."
+    },
+    {
+      "path": "/react/toggle-button",
+      "title": "Toggle Button",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "A button that stays pressed A Toggle Button is a button that stays pressed, for a setting that belongs on a toolbar rather than in a form — bold, italic, mute, pin. It reports its state through its appearance, so a row of them reads as the current formatting."
+    },
+    {
+      "path": "/react/toolbar",
+      "title": "Toolbar",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Group related controls in one bar A Toolbar groups the controls that act on the thing below it and makes them one stop on the keyboard: arrow keys move between the controls, so a row of buttons is reached with one Tab rather than several. It can be laid out in a row or a column, joined or spaced."
+    },
+    {
+      "path": "/react/tooltip",
+      "title": "Tooltip",
+      "category": "React Component",
+      "theme": [
+        "#6366f1",
+        "#0ea5e9"
+      ],
+      "description": "Short hints on hover and focus A Tooltip component is a small, informative pop-up that appears when a user hovers over or focuses on an element, such as a button or icon. It provides additional context or explanations about that element without cluttering the interface. Tooltips enhance user experience by offering helpful hints, instructions, or details, ensuring that information is accessible without overwhelming the layout."
+    },
+    {
+      "path": "/react-native/components",
+      "title": "React Native Components",
+      "category": "React Native",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "23 components for iOS and Android Components are reusable building blocks of a user interface that encapsulate a specific piece of functionality or UI design. Each component can represent a distinct part of the application, such as buttons, forms, modals, or navigation bars. Components help organize and structure code, making it easier to manage, maintain, and scale applications by allowing developers to reuse consistent elements across different parts of the project."
+    },
+    {
+      "path": "/react-native/installation",
+      "title": "Install Nayan UI for React Native",
+      "category": "React Native · Get started",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Works with Expo and bare React Native "
+    },
+    {
+      "path": "/react-native/tags",
+      "title": "React Native Component Tags",
+      "category": "React Native",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Find native components by use case "
+    },
+    {
+      "path": "/react-native/accordion",
+      "title": "Accordion",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Expand and collapse sections of content An Accordion component allows users to expand and collapse sections of content, organizing information compactly. Built on top of heroui-native Accordion."
+    },
+    {
+      "path": "/react-native/alert",
+      "title": "Alert",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Success, warning and error messages at a glance An Alert component displays important messages or notifications to users with different severity levels. Built on top of heroui-native."
+    },
+    {
+      "path": "/react-native/button",
+      "title": "Button",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Accessible buttons in every variant and size A Button component triggers actions or events. Built on top of heroui-native Button with support for variants, sizes, colors, and loading states."
+    },
+    {
+      "path": "/react-native/button-group",
+      "title": "Button Group",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Related actions grouped into one control A Button Group component groups multiple buttons together for selecting from a set of related actions or options."
+    },
+    {
+      "path": "/react-native/card",
+      "title": "Card",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Group related content and actions A Card component displays content in a structured container. Built on top of heroui-native Card."
+    },
+    {
+      "path": "/react-native/checkbox",
+      "title": "Checkbox",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Accessible checkboxes for forms and lists A Checkbox component allows users to select or deselect options. Built on top of heroui-native Checkbox with isSelected/onSelectedChange API."
+    },
+    {
+      "path": "/react-native/dialog",
+      "title": "Dialog",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Modal dialogs for focused tasks A Dialog component displays a pop-up window for capturing user attention or input. Built on top of heroui-native Dialog."
+    },
+    {
+      "path": "/react-native/divider",
+      "title": "Divider",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Separate content with a clean line A Divider component separates content within a layout. Built on top of heroui-native Separator."
+    },
+    {
+      "path": "/react-native/input",
+      "title": "Input",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Text fields with labels and validation An Input component allows users to enter text data. Built on top of heroui-native Input."
+    },
+    {
+      "path": "/react-native/loading",
+      "title": "Loading",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Spinners for pages, buttons and sections A Loading component displays a spinner indicator while content is being loaded. Built on top of heroui-native Spinner."
+    },
+    {
+      "path": "/react-native/menu",
+      "title": "Dropdown Menu",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Menus of actions behind one trigger A Dropdown Menu component displays a list of options when triggered. Built on top of heroui-native Menu."
+    },
+    {
+      "path": "/react-native/popover",
+      "title": "Popover",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Floating content anchored to a trigger A Popover component displays additional information in a floating overlay. Built on top of heroui-native Popover."
+    },
+    {
+      "path": "/react-native/progress",
+      "title": "Progress",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Show how far a task has come A Progress component visually indicates the completion status of a task. Built on top of heroui-native Progress."
+    },
+    {
+      "path": "/react-native/radio-group",
+      "title": "Radio Group",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Pick exactly one option from a set A Radio Group component allows users to select one option from a set of mutually exclusive choices. Built on top of heroui-native RadioGroup."
+    },
+    {
+      "path": "/react-native/select",
+      "title": "Select",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Pick one option from a dropdown list A Select component allows users to choose from a dropdown list. Built on top of heroui-native Select."
+    },
+    {
+      "path": "/react-native/sheet",
+      "title": "Sheet",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Panels that slide in from the edge A Sheet component presents content in a sliding bottom panel. Built on top of heroui-native Sheet."
+    },
+    {
+      "path": "/react-native/skeleton",
+      "title": "Skeleton",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Placeholder shapes while content loads A Skeleton component is a placeholder UI element that represents the layout of content before it loads. Built on top of heroui-native Skeleton."
+    },
+    {
+      "path": "/react-native/slider",
+      "title": "Slider",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Pick a value by dragging a handle A Slider component allows users to select a value from a range by dragging a thumb along a track. Built on top of heroui-native Slider."
+    },
+    {
+      "path": "/react-native/switch",
+      "title": "Switch",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Turn a setting on or off A Switch component allows users to toggle between two states. Built on top of heroui-native Switch."
+    },
+    {
+      "path": "/react-native/tabs",
+      "title": "Tabs",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Switch between views in one place A Tabs component allows users to switch between different views or sections. Built on top of heroui-native Tabs with items-based API."
+    },
+    {
+      "path": "/react-native/textarea",
+      "title": "Textarea",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Multi-line text input for longer answers A Textarea component allows users to enter multi-line text. Built on top of heroui-native."
+    },
+    {
+      "path": "/react-native/toast",
+      "title": "Toast",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Brief notifications that dismiss themselves A Toast component displays transient notifications. Uses heroui-native useToast hook for showing toast messages."
+    },
+    {
+      "path": "/react-native/tooltip",
+      "title": "Tooltip",
+      "category": "React Native Component",
+      "theme": [
+        "#8b5cf6",
+        "#d946ef"
+      ],
+      "description": "Short hints on hover and focus A Tooltip component displays informative pop-ups when hovering or focusing on an element. Built on top of heroui-native Tooltip."
+    },
+    {
+      "path": "/tools/ai-code-reviewer",
+      "title": "AI Code Reviewer",
+      "category": "AI Tool",
+      "theme": [
+        "#d946ef",
+        "#7c3aed"
+      ],
+      "description": "AI-powered GitHub PR review using Codex & Claude Code AI-powered GitHub PR review using Codex & Claude Code"
+    },
+    {
+      "path": "/tools/ai-code-scanner",
+      "title": "AI Code Scanner",
+      "category": "AI Tool",
+      "theme": [
+        "#d946ef",
+        "#7c3aed"
+      ],
+      "description": "Scan repositories for package vulnerabilities with auto-fix Scan repositories for package vulnerabilities with auto-fix"
+    },
+    {
+      "path": "/tools/compress-image",
+      "title": "Compress Image",
+      "category": "Free Image Tool",
+      "theme": [
+        "#10b981",
+        "#0ea5e9"
+      ],
+      "description": "Shrink JPG, PNG, SVG and GIF files, keep the quality Compress JPG, PNG, SVG, and GIFs while saving space and maintaining quality"
+    },
+    {
+      "path": "/tools/resize-image",
+      "title": "Resize Image",
+      "category": "Free Image Tool",
+      "theme": [
+        "#10b981",
+        "#0ea5e9"
+      ],
+      "description": "Define your dimensions, by percent or pixel, and resize your images Define your dimensions, by percent or pixel, and resize your images"
+    },
+    {
+      "path": "/tools/crop-image",
+      "title": "Crop Image",
+      "category": "Free Image Tool",
+      "theme": [
+        "#10b981",
+        "#0ea5e9"
+      ],
+      "description": "Crop JPG, PNG, or GIFs with ease using pixels or a visual editor Crop JPG, PNG, or GIFs with ease using pixels or a visual editor"
+    },
+    {
+      "path": "/tools/convert-image",
+      "title": "Convert Image",
+      "category": "Free Image Tool",
+      "theme": [
+        "#10b981",
+        "#0ea5e9"
+      ],
+      "description": "Convert images between JPG, PNG, WebP, SVG, GIF, and other formats Convert images between JPG, PNG, WebP, SVG, GIF, and other formats"
+    },
+    {
+      "path": "/tools/watermark-image",
+      "title": "Watermark Image",
+      "category": "Free Image Tool",
+      "theme": [
+        "#10b981",
+        "#0ea5e9"
+      ],
+      "description": "Stamp text or a logo over your images Stamp an image or text over your images with custom typography and position"
+    },
+    {
+      "path": "/tools/rotate-image",
+      "title": "Rotate Image",
+      "category": "Free Image Tool",
+      "theme": [
+        "#10b981",
+        "#0ea5e9"
+      ],
+      "description": "Rotate or flip JPG, PNG, or GIF images individually or in bulk Rotate or flip JPG, PNG, or GIF images individually or in bulk"
+    },
+    {
+      "path": "/tools/image-to-base64",
+      "title": "Image to Base64",
+      "category": "Free Image Tool",
+      "theme": [
+        "#10b981",
+        "#0ea5e9"
+      ],
+      "description": "Convert images to Base64 strings or decode Base64 back into an image Convert images to Base64 strings or decode Base64 back into an image"
+    },
+    {
+      "path": "/tools/flip-image",
+      "title": "Flip Image",
+      "category": "Free Image Tool",
+      "theme": [
+        "#10b981",
+        "#0ea5e9"
+      ],
+      "description": "Flip JPG, PNG, or WebP images horizontally or vertically Flip JPG, PNG, or WebP images horizontally or vertically"
+    },
+    {
+      "path": "/tools/image-color-picker",
+      "title": "Image Color Picker",
+      "category": "Free Image Tool",
+      "theme": [
+        "#10b981",
+        "#0ea5e9"
+      ],
+      "description": "Pick exact colors and extract the palette Pick exact pixel colors from an image and extract its dominant palette"
+    },
+    {
+      "path": "/tools/image-exif-viewer",
+      "title": "Image EXIF Viewer",
+      "category": "Free Image Tool",
+      "theme": [
+        "#10b981",
+        "#0ea5e9"
+      ],
+      "description": "Camera, exposure and GPS data in your photos View camera, exposure, and GPS metadata embedded in JPEG photos"
+    },
+    {
+      "path": "/tools/favicon-generator",
+      "title": "Favicon Generator",
+      "category": "Free Image Tool",
+      "theme": [
+        "#10b981",
+        "#0ea5e9"
+      ],
+      "description": "A full favicon set, webmanifest and HTML markup Generate a full favicon set (16px to 512px) plus webmanifest and HTML markup"
+    },
+    {
+      "path": "/tools/merge-pdf",
+      "title": "Merge PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Combine multiple PDF files into a single document Combine multiple PDF files into a single document"
+    },
+    {
+      "path": "/tools/split-pdf",
+      "title": "Split PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Extract page ranges from a PDF into separate files Extract page ranges from a PDF into separate files"
+    },
+    {
+      "path": "/tools/compress-pdf",
+      "title": "Compress PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Reduce PDF file size while preserving content quality Reduce PDF file size while preserving content quality"
+    },
+    {
+      "path": "/tools/rotate-pdf",
+      "title": "Rotate PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Rotate PDF pages by 90°, 180°, or 270° Rotate PDF pages by 90°, 180°, or 270°"
+    },
+    {
+      "path": "/tools/watermark-pdf",
+      "title": "Watermark PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Add text watermarks to every page of a PDF Add text watermarks to every page of a PDF"
+    },
+    {
+      "path": "/tools/page-numbers-pdf",
+      "title": "Page Numbers",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Add page numbers to PDF documents with custom formatting Add page numbers to PDF documents with custom formatting"
+    },
+    {
+      "path": "/tools/protect-pdf",
+      "title": "Protect PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Secure PDF files with password protection Secure PDF files with password protection"
+    },
+    {
+      "path": "/tools/unlock-pdf",
+      "title": "Unlock PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Remove password protection from PDF files Remove password protection from PDF files"
+    },
+    {
+      "path": "/tools/image-to-pdf",
+      "title": "Image to PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Convert JPG, PNG, and WebP images to PDF documents Convert JPG, PNG, and WebP images to PDF documents"
+    },
+    {
+      "path": "/tools/pdf-to-image",
+      "title": "PDF to Image",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Extract PDF pages as individual image files Extract PDF pages as individual image files"
+    },
+    {
+      "path": "/tools/organize-pdf",
+      "title": "Organize PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Reorder, delete, and rearrange PDF pages Reorder, delete, and rearrange PDF pages"
+    },
+    {
+      "path": "/tools/crop-pdf",
+      "title": "Crop PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Crop margins and trim PDF page borders Crop margins and trim PDF page borders"
+    },
+    {
+      "path": "/tools/repair-pdf",
+      "title": "Repair PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Fix and recover corrupted or damaged PDF files Fix and recover corrupted or damaged PDF files"
+    },
+    {
+      "path": "/tools/html-to-pdf",
+      "title": "HTML to PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Convert HTML content to PDF documents Convert HTML content to PDF documents"
+    },
+    {
+      "path": "/tools/word-to-pdf",
+      "title": "Word to PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Convert Word documents (DOC, DOCX) to PDF format Convert Word documents (DOC, DOCX) to PDF format"
+    },
+    {
+      "path": "/tools/pdf-to-word",
+      "title": "PDF to Word",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Convert PDF files to editable Word (DOCX) documents Convert PDF files to editable Word (DOCX) documents"
+    },
+    {
+      "path": "/tools/excel-to-pdf",
+      "title": "Excel to PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Convert Excel spreadsheets (XLS, XLSX) to PDF format Convert Excel spreadsheets (XLS, XLSX) to PDF format"
+    },
+    {
+      "path": "/tools/pdf-to-excel",
+      "title": "PDF to Excel",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Convert PDF files to Excel (XLSX) spreadsheets Convert PDF files to Excel (XLSX) spreadsheets"
+    },
+    {
+      "path": "/tools/ppt-to-pdf",
+      "title": "PowerPoint to PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Convert PowerPoint presentations (PPT, PPTX) to PDF Convert PowerPoint presentations (PPT, PPTX) to PDF"
+    },
+    {
+      "path": "/tools/pdf-to-ppt",
+      "title": "PDF to PowerPoint",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Convert PDF files to PowerPoint (PPTX) presentations Convert PDF files to PowerPoint (PPTX) presentations"
+    },
+    {
+      "path": "/tools/pdf-to-markdown",
+      "title": "PDF to Markdown",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Convert PDF files to Markdown (.md) documents Convert PDF files to Markdown (.md) documents"
+    },
+    {
+      "path": "/tools/markdown-to-pdf",
+      "title": "Markdown to PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Convert Markdown content to PDF documents Convert Markdown content to PDF documents"
+    },
+    {
+      "path": "/tools/pdf-to-text",
+      "title": "PDF to Text",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Extract the real text content from any PDF Extract the real text content from any PDF"
+    },
+    {
+      "path": "/tools/pdf-metadata-editor",
+      "title": "PDF Metadata Editor",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "View and edit a PDF's title, author, subject, and keywords View and edit a PDF's title, author, subject, and keywords"
+    },
+    {
+      "path": "/tools/pdf-info",
+      "title": "PDF Info",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Page count, size, version, encryption and words Check page count, file size, version, encryption, and word count"
+    },
+    {
+      "path": "/tools/sign-pdf",
+      "title": "Sign PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Draw a signature and stamp it onto any page of a PDF Draw a signature and stamp it onto any page of a PDF"
+    },
+    {
+      "path": "/tools/extract-images-from-pdf",
+      "title": "Extract Images from PDF",
+      "category": "Free PDF Tool",
+      "theme": [
+        "#f43f5e",
+        "#f97316"
+      ],
+      "description": "Find and download every embedded image from a PDF Find and download every embedded image from a PDF"
+    },
+    {
+      "path": "/tools/json-formatter",
+      "title": "JSON Formatter",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Format and beautify JSON with customizable indentation Format and beautify JSON with customizable indentation"
+    },
+    {
+      "path": "/tools/json-minifier",
+      "title": "JSON Minifier",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Minify JSON by removing whitespace and reducing file size Minify JSON by removing whitespace and reducing file size"
+    },
+    {
+      "path": "/tools/json-validator",
+      "title": "JSON Validator",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Validate JSON syntax and analyze structure Validate JSON syntax and analyze structure"
+    },
+    {
+      "path": "/tools/json-to-csv",
+      "title": "JSON to CSV",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Convert JSON arrays to CSV format for spreadsheets Convert JSON arrays to CSV format for spreadsheets"
+    },
+    {
+      "path": "/tools/json-to-yaml",
+      "title": "JSON to YAML",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Convert JSON to YAML format for configuration files Convert JSON to YAML format for configuration files"
+    },
+    {
+      "path": "/tools/json-to-xml",
+      "title": "JSON to XML",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Convert JSON to XML format with custom root tags Convert JSON to XML format with custom root tags"
+    },
+    {
+      "path": "/tools/json-to-tsv",
+      "title": "JSON to TSV",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Convert JSON arrays to tab-separated values Convert JSON arrays to tab-separated values"
+    },
+    {
+      "path": "/tools/json-to-excel",
+      "title": "JSON to Excel",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Convert JSON data to Excel (XLSX) spreadsheets Convert JSON data to Excel (XLSX) spreadsheets"
+    },
+    {
+      "path": "/tools/csv-to-json",
+      "title": "CSV to JSON",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Convert CSV data to JSON format with header detection Convert CSV data to JSON format with header detection"
+    },
+    {
+      "path": "/tools/yaml-to-json",
+      "title": "YAML to JSON",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Convert YAML to JSON format for APIs and configs Convert YAML to JSON format for APIs and configs"
+    },
+    {
+      "path": "/tools/json-path-finder",
+      "title": "JSON Path Finder",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Query and explore JSON data with path expressions Query and explore JSON data with path expressions"
+    },
+    {
+      "path": "/tools/json-schema-validator",
+      "title": "JSON Schema Validator",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Validate JSON data against a JSON Schema definition Validate JSON data against a JSON Schema definition"
+    },
+    {
+      "path": "/tools/json-diff",
+      "title": "JSON Diff",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Compare two JSON objects and find differences Compare two JSON objects and find differences"
+    },
+    {
+      "path": "/tools/json-to-typescript",
+      "title": "JSON to TypeScript",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Generate TypeScript interfaces from JSON automatically Generate TypeScript interfaces from JSON automatically"
+    },
+    {
+      "path": "/tools/json-flatten-unflatten",
+      "title": "JSON Flatten/Unflatten",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Nested JSON to dot-notation keys, and back Flatten nested JSON into dot-notation keys, or unflatten it back"
+    },
+    {
+      "path": "/tools/json-query-string-converter",
+      "title": "JSON to Query String",
+      "category": "Free JSON Tool",
+      "theme": [
+        "#f59e0b",
+        "#ea580c"
+      ],
+      "description": "Convert JSON objects to URL query strings and back Convert JSON objects to URL query strings and back"
+    },
+    {
+      "path": "/tools/xml-formatter",
+      "title": "XML Formatter",
+      "category": "Free XML Tool",
+      "theme": [
+        "#14b8a6",
+        "#22c55e"
+      ],
+      "description": "Format and beautify XML with customizable indentation Format and beautify XML with customizable indentation"
+    },
+    {
+      "path": "/tools/xml-minifier",
+      "title": "XML Minifier",
+      "category": "Free XML Tool",
+      "theme": [
+        "#14b8a6",
+        "#22c55e"
+      ],
+      "description": "Minify XML by removing whitespace and reducing file size Minify XML by removing whitespace and reducing file size"
+    },
+    {
+      "path": "/tools/xml-validator",
+      "title": "XML Validator",
+      "category": "Free XML Tool",
+      "theme": [
+        "#14b8a6",
+        "#22c55e"
+      ],
+      "description": "Validate XML syntax and analyze structure Validate XML syntax and analyze structure"
+    },
+    {
+      "path": "/tools/xml-to-json",
+      "title": "XML to JSON",
+      "category": "Free XML Tool",
+      "theme": [
+        "#14b8a6",
+        "#22c55e"
+      ],
+      "description": "Convert XML to JSON format for modern APIs Convert XML to JSON format for modern APIs"
+    },
+    {
+      "path": "/tools/xml-to-csv",
+      "title": "XML to CSV",
+      "category": "Free XML Tool",
+      "theme": [
+        "#14b8a6",
+        "#22c55e"
+      ],
+      "description": "Convert XML records to CSV format for spreadsheets Convert XML records to CSV format for spreadsheets"
+    },
+    {
+      "path": "/tools/xml-to-yaml",
+      "title": "XML to YAML",
+      "category": "Free XML Tool",
+      "theme": [
+        "#14b8a6",
+        "#22c55e"
+      ],
+      "description": "Convert XML to YAML format for configuration files Convert XML to YAML format for configuration files"
+    },
+    {
+      "path": "/tools/xml-to-tsv",
+      "title": "XML to TSV",
+      "category": "Free XML Tool",
+      "theme": [
+        "#14b8a6",
+        "#22c55e"
+      ],
+      "description": "Convert XML records to tab-separated values Convert XML records to tab-separated values"
+    },
+    {
+      "path": "/tools/xml-to-excel",
+      "title": "XML to Excel",
+      "category": "Free XML Tool",
+      "theme": [
+        "#14b8a6",
+        "#22c55e"
+      ],
+      "description": "Convert XML data to Excel (XLSX) spreadsheets Convert XML data to Excel (XLSX) spreadsheets"
+    },
+    {
+      "path": "/tools/xpath-tester",
+      "title": "XPath Tester",
+      "category": "Free XML Tool",
+      "theme": [
+        "#14b8a6",
+        "#22c55e"
+      ],
+      "description": "Test XPath expressions and see matched nodes Test XPath expressions against XML documents and see matched nodes instantly"
+    },
+    {
+      "path": "/tools/csv-to-xml",
+      "title": "CSV to XML",
+      "category": "Free XML Tool",
+      "theme": [
+        "#14b8a6",
+        "#22c55e"
+      ],
+      "description": "Turn CSV spreadsheets into well-formed XML Convert CSV spreadsheets to well-formed XML with configurable tag names"
+    },
+    {
+      "path": "/tools/yaml-to-xml",
+      "title": "YAML to XML",
+      "category": "Free XML Tool",
+      "theme": [
+        "#14b8a6",
+        "#22c55e"
+      ],
+      "description": "Convert YAML configuration files to well-formed XML Convert YAML configuration files to well-formed XML"
+    },
+    {
+      "path": "/tools/base64-encoder-decoder",
+      "title": "Base64 Encoder/Decoder",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Encode and decode text to and from Base64 format Encode and decode text to and from Base64 format"
+    },
+    {
+      "path": "/tools/hash-generator",
+      "title": "Hash Generator",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Generate SHA-1, SHA-256, SHA-384, and SHA-512 hashes Generate SHA-1, SHA-256, SHA-384, and SHA-512 hashes"
+    },
+    {
+      "path": "/tools/regex-tester",
+      "title": "Regex Tester",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Test and debug regular expressions with real-time matching Test and debug regular expressions with real-time matching"
+    },
+    {
+      "path": "/tools/text-to-binary",
+      "title": "Text to Binary",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Convert text to binary, hex, octal, or decimal and back Convert text to binary, hex, octal, or decimal and back"
+    },
+    {
+      "path": "/tools/find-and-replace",
+      "title": "Find & Replace",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Search and replace text with regex support Search and replace text with regex support"
+    },
+    {
+      "path": "/tools/line-sorter",
+      "title": "Line Sorter",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Sort, deduplicate, and clean up lines of text Sort, deduplicate, and clean up lines of text"
+    },
+    {
+      "path": "/tools/text-compare",
+      "title": "Text Compare",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Compare two texts side by side and find differences Compare two texts side by side and find differences"
+    },
+    {
+      "path": "/tools/character-counter",
+      "title": "Character Counter",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Count characters, words, sentences, and paragraphs Count characters, words, sentences, and paragraphs"
+    },
+    {
+      "path": "/tools/word-counter",
+      "title": "Word Counter",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Analyze word frequency and vocabulary density Analyze word frequency and vocabulary density"
+    },
+    {
+      "path": "/tools/case-converter",
+      "title": "Case Converter",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Convert text between uppercase, lowercase, title case, and more Convert text between uppercase, lowercase, title case, and more"
+    },
+    {
+      "path": "/tools/lorem-ipsum-generator",
+      "title": "Lorem Ipsum Generator",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Generate placeholder text for design and development Generate placeholder text for design and development"
+    },
+    {
+      "path": "/tools/text-reverser",
+      "title": "Text Reverser",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Reverse text, words, or lines in various modes Reverse text, words, or lines in various modes"
+    },
+    {
+      "path": "/tools/slug-generator",
+      "title": "Slug Generator",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Generate URL-friendly slugs from any text Generate URL-friendly slugs from any text"
+    },
+    {
+      "path": "/tools/markdown-preview",
+      "title": "Markdown Preview",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Live preview markdown with formatting Live preview markdown with formatting"
+    },
+    {
+      "path": "/tools/rot13-caesar-cipher",
+      "title": "ROT13 / Caesar Cipher",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Encode or decode text with a classic Caesar cipher, including ROT13 Encode or decode text with a classic Caesar cipher, including ROT13"
+    },
+    {
+      "path": "/tools/morse-code-converter",
+      "title": "Morse Code Converter",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Convert text to Morse code and back Convert text to Morse code and back, with full letter, digit, and punctuation support"
+    },
+    {
+      "path": "/tools/letter-frequency-analyzer",
+      "title": "Letter Frequency Analyzer",
+      "category": "Free Text Tool",
+      "theme": [
+        "#3b82f6",
+        "#06b6d4"
+      ],
+      "description": "Count how often each letter appears Analyze how often each letter appears in your text, with counts and percentages"
+    },
+    {
+      "path": "/tools/sitemap-generator",
+      "title": "Sitemap Generator",
+      "category": "Free SEO Tool",
+      "theme": [
+        "#84cc16",
+        "#10b981"
+      ],
+      "description": "Create XML sitemaps with priority and frequency Create XML sitemaps with URLs, change frequency, and priority settings"
+    },
+    {
+      "path": "/tools/sitemap-validator",
+      "title": "Sitemap Validator",
+      "category": "Free SEO Tool",
+      "theme": [
+        "#84cc16",
+        "#10b981"
+      ],
+      "description": "Validate XML sitemap structure, URLs, and SEO compliance Validate XML sitemap structure, URLs, and SEO compliance"
+    },
+    {
+      "path": "/tools/robots-generator",
+      "title": "Robots.txt Generator",
+      "category": "Free SEO Tool",
+      "theme": [
+        "#84cc16",
+        "#10b981"
+      ],
+      "description": "Build robots.txt rules for every crawler Build robots.txt files with user-agent rules, allow/disallow paths, and sitemap directives"
+    },
+    {
+      "path": "/tools/robots-validator",
+      "title": "Robots.txt Validator",
+      "category": "Free SEO Tool",
+      "theme": [
+        "#84cc16",
+        "#10b981"
+      ],
+      "description": "Validate robots.txt syntax, directives, and crawler permissions Validate robots.txt syntax, directives, and crawler permissions"
+    },
+    {
+      "path": "/tools/meta-tag-generator",
+      "title": "Meta Tag Generator",
+      "category": "Free SEO Tool",
+      "theme": [
+        "#84cc16",
+        "#10b981"
+      ],
+      "description": "Meta, Open Graph and Twitter Card tags Generate HTML meta tags, Open Graph, and Twitter Card tags for SEO"
+    },
+    {
+      "path": "/tools/open-graph-preview",
+      "title": "Open Graph Preview",
+      "category": "Free SEO Tool",
+      "theme": [
+        "#84cc16",
+        "#10b981"
+      ],
+      "description": "See how your page looks when it is shared Preview how your page looks when shared on Facebook, Twitter, Google, and Slack"
+    },
+    {
+      "path": "/tools/url-encoder-decoder",
+      "title": "URL Encoder/Decoder",
+      "category": "Free SEO Tool",
+      "theme": [
+        "#84cc16",
+        "#10b981"
+      ],
+      "description": "Encode and decode URLs for proper formatting and debugging Encode and decode URLs for proper formatting and debugging"
+    },
+    {
+      "path": "/tools/keyword-density",
+      "title": "Keyword Density Analyzer",
+      "category": "Free SEO Tool",
+      "theme": [
+        "#84cc16",
+        "#10b981"
+      ],
+      "description": "Analyze keyword frequency and density in your content for SEO Analyze keyword frequency and density in your content for SEO"
+    },
+    {
+      "path": "/tools/serp-snippet-preview",
+      "title": "Google SERP Snippet Preview",
+      "category": "Free SEO Tool",
+      "theme": [
+        "#84cc16",
+        "#10b981"
+      ],
+      "description": "See your title and description as Google shows them Preview how your title and description will look in Google search results"
+    },
+    {
+      "path": "/tools/schema-markup-generator",
+      "title": "Schema Markup Generator",
+      "category": "Free SEO Tool",
+      "theme": [
+        "#84cc16",
+        "#10b981"
+      ],
+      "description": "JSON-LD for FAQ, Article, Product and more Generate JSON-LD structured data for FAQ, Article, Product, and more"
+    },
+    {
+      "path": "/tools/utm-campaign-builder",
+      "title": "UTM Campaign URL Builder",
+      "category": "Free SEO Tool",
+      "theme": [
+        "#84cc16",
+        "#10b981"
+      ],
+      "description": "Build correctly encoded UTM tracking links Build correctly-encoded UTM tracking URLs for your marketing campaigns"
+    },
+    {
+      "path": "/tools/uuid-generator",
+      "title": "UUID Generator",
+      "category": "Free Developer Tool",
+      "theme": [
+        "#6366f1",
+        "#06b6d4"
+      ],
+      "description": "Generate random UUIDs (v4) for development and testing Generate random UUIDs (v4) for development and testing"
+    },
+    {
+      "path": "/tools/color-converter",
+      "title": "Color Converter",
+      "category": "Free Developer Tool",
+      "theme": [
+        "#6366f1",
+        "#06b6d4"
+      ],
+      "description": "Convert colors between HEX, RGB, HSL, and RGBA formats Convert colors between HEX, RGB, HSL, and RGBA formats"
+    },
+    {
+      "path": "/tools/jwt-decoder",
+      "title": "JWT Decoder",
+      "category": "Free Developer Tool",
+      "theme": [
+        "#6366f1",
+        "#06b6d4"
+      ],
+      "description": "Decode and inspect JSON Web Tokens (JWT) Decode and inspect JSON Web Tokens (JWT)"
+    },
+    {
+      "path": "/tools/timestamp-converter",
+      "title": "Timestamp Converter",
+      "category": "Free Developer Tool",
+      "theme": [
+        "#6366f1",
+        "#06b6d4"
+      ],
+      "description": "Convert Unix timestamps to dates and vice versa Convert Unix timestamps to dates and vice versa"
+    },
+    {
+      "path": "/tools/css-minifier",
+      "title": "CSS Minifier",
+      "category": "Free Developer Tool",
+      "theme": [
+        "#6366f1",
+        "#06b6d4"
+      ],
+      "description": "Minify CSS by removing whitespace and comments Minify CSS by removing whitespace and comments"
+    },
+    {
+      "path": "/tools/html-minifier",
+      "title": "HTML Minifier",
+      "category": "Free Developer Tool",
+      "theme": [
+        "#6366f1",
+        "#06b6d4"
+      ],
+      "description": "Minify HTML by removing whitespace and comments Minify HTML by removing whitespace and comments"
+    },
+    {
+      "path": "/tools/qr-code-generator",
+      "title": "QR Code Generator",
+      "category": "Free Developer Tool",
+      "theme": [
+        "#6366f1",
+        "#06b6d4"
+      ],
+      "description": "Generate QR codes from text or URLs Generate QR codes from text or URLs"
+    },
+    {
+      "path": "/tools/password-generator",
+      "title": "Password Generator",
+      "category": "Free Developer Tool",
+      "theme": [
+        "#6366f1",
+        "#06b6d4"
+      ],
+      "description": "Strong, cryptographically secure passwords Generate strong, cryptographically secure passwords with custom length and character sets"
+    },
+    {
+      "path": "/tools/number-base-converter",
+      "title": "Number Base Converter",
+      "category": "Free Developer Tool",
+      "theme": [
+        "#6366f1",
+        "#06b6d4"
+      ],
+      "description": "Binary, octal, decimal and hex, both ways Convert numbers between binary, octal, decimal, and hexadecimal with arbitrary precision"
+    },
+    {
+      "path": "/tools/html-entity-encoder-decoder",
+      "title": "HTML Entity Encoder/Decoder",
+      "category": "Free Developer Tool",
+      "theme": [
+        "#6366f1",
+        "#06b6d4"
+      ],
+      "description": "Encode and decode HTML entities Encode text into HTML entities or decode named and numeric entities back to text"
+    },
+    {
+      "path": "/tools/css-gradient-generator",
+      "title": "CSS Gradient Generator",
+      "category": "Free Developer Tool",
+      "theme": [
+        "#6366f1",
+        "#06b6d4"
+      ],
+      "description": "Design CSS gradients visually and copy the code Design linear and radial CSS gradients visually and copy the generated CSS"
+    },
+    {
+      "path": "/tools/cron-expression-parser",
+      "title": "Cron Expression Parser",
+      "category": "Free Developer Tool",
+      "theme": [
+        "#6366f1",
+        "#06b6d4"
+      ],
+      "description": "Read, validate and preview cron schedules Parse, validate, and describe cron expressions, with next run-time predictions"
+    },
+    {
+      "path": "/game-engine/playground",
+      "title": "Engine Playground",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Write engine code and run it live in the browser Write engine code and run it live in the browser"
+    },
+    {
+      "path": "/game-engine/installation",
+      "title": "Installation",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Install the package and set up Expo, bare React Native or a browser host. Start from the template Install the package Expo: bundle 3D models Expo: Android settings Make a development build Bare React Native Guard builds without the engine TypeScript and exports Browser hosting The CLI creates a Bun workspace with an Expo app, a Vite app and the Car Racing example they share, already set up as below. Skip to your own scene, or install the package into an existing app instead. One package serves both hosts; react is a peer dependency, plus react-native for apps. expo-asset is optional and only needed to load require(...) files in Expo. Metro doesn't bundle glTF files by default. Add glb and gltf to its asset extensions in metro.config.js."
+    },
+    {
+      "path": "/game-engine/first-game",
+      "title": "Build Your First Game",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Start from the games example in the Nayan UI repo and see how its Car Racing is built. Start from the example What is in the project How Car Racing is built 1. Load the car 2. Put cars on the road 3. The screen 4. Show it on mobile 5. Show it on the web Add your own game Try it The Nayan UI repo has a ready-made games project: examples/games. It holds one complete game, Car Racing, that runs on iOS, Android and the web from the same code. The CLI copies it for you. It is the same Car Racing as in Playtura and on nayanui.com/games. The only change is the car, which is loaded from glTF files instead of built in code. Three parts. shared/ holds the game, written once in React Native. mobile/ is an Expo app that renders it. web/ is a Vite app that renders the same component through react-native-web. Car Racing is seven files in shared/src/games/car-racing. The rules have no React, the scene only draws, and the screen connects them to the shared game screen."
+    },
+    {
+      "path": "/game-engine/react",
+      "title": "React Quickstart",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Mount a scene in a React web app. Write the scene Mount it Next.js and Vite Keep the scene in plain functions so React only mounts it. useWorld calls setupScene once with a fresh world after the engine loads, and builds a new one when its deps change. useWorld returns null until the world is ready and passes start-up failures, such as the WebAssembly failing to load, to onError. GameView needs a container with a real height; paused stops updates and drawing but keeps the world. In the Next.js App Router, mark the screen \"use client\" and load it with dynamic(..., { ssr: false }) so worlds are only created in the browser. In Vite, mount it with createRoot(root).render(<Game />); React Native Web isn't needed."
+    },
+    {
+      "path": "/game-engine/react-native",
+      "title": "React Native Quickstart",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Mount a scene in a React Native development build. Write the scene Mount it Pause when the screen loses focus Keep the scene in plain functions so React only mounts it. useWorld calls setupScene once with a fresh world after the engine loads, and builds a new one when its deps change. useWorld returns null until the world is ready and passes start-up failures to onError, such as a missing native module in Expo Go. paused stops updates and drawing but keeps the world. GameView already pauses while the app is in the background. Navigators keep unfocused screens mounted, so pass paused={!focused} from your navigator's focus hook."
+    },
+    {
+      "path": "/game-engine/recipes",
+      "title": "Common Recipes",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Short, copyable solutions for everyday game tasks. Move without React state Fall and bounce Steer with a joystick Jump only when grounded Pick up on contact Tap to recolor Chase the player Pop and remove Show the score in React Delay in game time Build a model once, spawn it many times Sound and haptics on an action Confetti on a win Face the movement direction Queue per-frame moves on world.transforms from onUpdate; they apply in one native call when GameView steps the world. Each recipe returning a function is meant to be called from onUpdate. A fixed floor and a dynamic ball: physics handles gravity and the bounce. useJoystick returns a mutable state: read it in onUpdate, never mirror it into React state. groundVelocity sets X/Z speed and keeps gravity."
+    },
+    {
+      "path": "/game-engine/agent-guide",
+      "title": "AI Agent Guide",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Rules, file layout, API choices and a template for coding agents. Read first File structure One API per task Never do Game template Agent prompt Verify Start from /engine.json and the first game; check every name in the API reference. Never guess names from another engine. Rules live in plain TypeScript with no UI imports, so one file serves web and native. The hook owns the world; the screen owns layout and GameView. Each task has one way. Use it."
+    },
+    {
+      "path": "/game-engine/world-entities",
+      "title": "World & Entities",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Own a world, spawn and change entities, and dispose them safely. Lifecycle in five rules Spawn, set and despawn EntityOptions reference Rotations with quat Per-frame moves with world.transforms Parents and groups Queries, bounds and gravity Reset and dispose useWorld and GameView make a complete scene; these five rules keep it leak-free and crash-free. 1. Own the world with useWorld(capacity, setup), or create it in an effect after await warmUpEngine(); never during render or at module scope. 2. GameView steps the world right after onUpdate; call world.update(dt) yourself only to step differently, and GameView then skips its step (it watches world.updateCount). 3. Queue per-frame moves on world.transforms in onUpdate; the step applies them, so call flush() only before reading positions back. 4. Dispose the world on unmount (useWorld does) and release your subscriptions with it. 5. Check world.isDisposed instead of keeping a flag: afterwards set, despawn, has, animate, stopAnimation, impulse, clips, timers, queries and forEachCollision are no-ops, while spawn and update throw."
+    },
+    {
+      "path": "/game-engine/game-view",
+      "title": "GameView",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Draw a world, run the frame loop, choose quality and layer overlays. GameView props Frames and dt Render quality Frame statistics Overlays Pause GameView draws a RenderSource (usually a World) and calls onUpdate once a frame. Other props are read live; changing source restarts the view. On iOS and Android frames come from the display clock at 60 Hz: onUpdate steps the game and hands a copy to the engine's render thread, so JavaScript never waits on the GPU. A frame not yet drawn is replaced by a newer one, not queued; the web uses requestAnimationFrame. dt is capped at 0.1 s and is 0 until the first frame is on screen, so intros don't play unseen. Step the world yourself only for a different dt, such as slow motion. auto starts at high and steps down only while drawing can't keep up: after one second under ~33 fps, or a few seconds missing ~50 fps. It drops shadow detail first, then MSAA, then resolution, and climbs back after about ten smooth seconds. Quality can't fix a slow game loop; that shows in updateMs, not renderMs. The chosen level survives pauses and only restarts with a new source."
+    },
+    {
+      "path": "/game-engine/camera-lighting",
+      "title": "Camera & Lighting",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Aim, follow and shake the camera, and light and color the scene. Perspective and orthographic Follow and shake Directional light Background and fog Flat boards with frontLight Colors and toColor A Camera has mutable eye and target tuples and a vertical fov in radians. ortho (half the visible height in world units) makes it orthographic and overrides fov. Mutate the object from onUpdate; GameView reads it every frame. Keep a tiny offset for straight-down views so eye and target never align vertically. camera.follow = { target, offset, smoothing? } eases the target toward the entity's drawn position and keeps the eye at offset. smoothing is roughly the catch-up time in seconds (default 0.15, 0 is rigid); null returns control. camera.shake is a strength in world units that fades by itself. One directional light with ambient fill and a shadow map centred on the camera target. A small shadowExtent clips distant shadows; a large one blurs them."
+    },
+    {
+      "path": "/game-engine/physics-collisions",
+      "title": "Physics & Collisions",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Add rigid bodies, sensors, layers, impulses and raycasts. Bodies and colliders PhysicsOptions reference Steer and push Sensors, layers and masks Collision events Raycasts Impact feedback dynamic bodies move under gravity and contact, kinematic ones are moved by you and push dynamic ones, and fixed ones never move. The collider matches the mesh (models get a box) and is sized from the entity when the body is created. Later scale changes don't resize it, so set explicit sizes for gameplay volumes. set(entity, { physics: null }) removes the body. physics takes a BodyType string for defaults, or PhysicsOptions. groundVelocity sets horizontal [x, z] speed and keeps the vertical one, so a steered body still falls. impulse(entity, vec) is a one-off push for dynamic bodies: jumps, knockback."
+    },
+    {
+      "path": "/game-engine/animation",
+      "title": "Animation",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Tween, keyframe and spring entities in Rust, awaiting their completion. Animate and await AnimateOptions reference Keyframes and paths Groups and stagger Springs Stop animations world.animate(targets, to, options?) runs in Rust and returns a promise that resolves when every part finishes, is replaced or stopped, or its entity or world goes. Resolution means it ended, not that it reached the target. Each property runs on its own channel, so a piece can move while it pulses; animating a property again replaces only that one. A repeat: \"forever\" promise resolves only when stopped, replaced or despawned, so never await it. Pass an array of up to 64 Keyframes to pass through values in order. Each may set at (0..1 of the duration; default evenly spaced), and path: \"smooth\" curves through them."
+    },
+    {
+      "path": "/game-engine/skeletal-animation",
+      "title": "Skeletal Animation",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Play GLB clips per character, crossfade them and ground feet on the animated pose. Load a rig and read its clips Play, hold, crossfade and stop Ground feet on the animated pose loadModel resolves a LoadedModel whose animations list each clip's name and duration in seconds; jointCount is 0 for a static mesh. Read clip names from the asset instead of assuming one called walk. Skins hold up to 128 joints. Every entity spawned from the model has its own clip player, so characters sharing a model animate independently. world.playClip(entity, name, options) switches to a clip, crossfading from the current pose, and returns false if it can't play. Re-selecting the playing clip only changes its speed; pass time to seek. Hold a ready-screen pose with time: 0 and speed: 0, then play on Start. stopClip(entity) freezes the current pose and stopClip(entity, true) returns to the bind pose. world.sampleSkinnedVertices(entity, indices, out, after) writes model-space XYZ for chosen vertex indices into out (three floats each) and returns false when it can't sample. Reuse both arrays and query a few boot vertices of your asset; never skin the whole character in JS. In onUpdate, pass the frame's dt as after: the world steps by it right afterwards, so you read the pose about to be drawn. Scale and transform samples by the actor before comparing them with terrain."
+    },
+    {
+      "path": "/game-engine/input-picking",
+      "title": "Input & Picking",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Read taps, swipes, drags, pinches, a joystick and browser keys, and map screen points to the world. Tap, swipe and long press Drag and pinch On-screen joystick Pick, project and unproject Browser keyboard input GameView reports onTap(x, y), onSwipe(direction) and onLongPress(x, y) in points from the view's top-left, which are CSS pixels on the web (don't multiply by devicePixelRatio). A long press fires after half a second held still, and no tap follows it. Touches claimed by onOverlayTouch never reach these callbacks, and pausing the view cancels any touch in progress. onDrag receives start, move and end; an end with cancelled means a pinch or the system took the touch, so put a held piece back. onPinch reports two-finger zoom and rotation, and starting one ends any drag. useJoystick() returns a stable { x, y } object that Joystick writes on touch, each axis in -1..1 with y up, without re-rendering React. Read it in onUpdate. The stick is relative: wherever the finger lands in the pad is the centre. Render it beside GameView, not inside it, and position it with style; size is the pad diameter (default 150)."
+    },
+    {
+      "path": "/game-engine/particles",
+      "title": "Effects & Particles",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Fire ready-made effects in one call, or shape your own particles with world.burst. Ready-made effects EffectOptions Dust puffs and flashes Pop a cleared piece Custom particles with world.burst Import effects and call one function per event; each layers a few bursts (big slow pieces, small fast ones, a glow, lingering puffs) that move, fade and clean up in Rust. Particles advance with the world, so they pause with the game. Every particle takes a world slot, so size the World's capacity for the busiest moment. Effects throw on a disposed world: check world.isDisposed in callbacks that can run late. confetti, sparkle, shatter, splash, sparks and explosion share EffectOptions; position, colors, size, speed, count and lifetime are required, except colors for explosion. Sizes are world units, speeds units per second and times seconds. effects.dust makes soft puffs that swell and fade; gravity defaults to 0 so dust hangs, and positive values rise like smoke. effects.flash draws one glow at a point; channels above 1 glow, most easily via effects.hot(color)."
+    },
+    {
+      "path": "/game-engine/scoreboard-timers",
+      "title": "Scoreboards & Timers",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Track score, lives and time, and schedule delays that pause with the game. Rules and listeners Ready, start and score Scoreboard operations Game-time timers world.scoreboard keeps score, lives and the clock in Rust; read score, best, lives, seconds, shownSeconds and running. Assign handlers for the game's rules and call listen for UI that follows along: it adds handlers without replacing others and returns an unlisten function. Callbacks run from the world's step only when a value changed, handlers first and then listeners in order. best lasts for the scoreboard's life, so persist personal bests yourself. reset(lives, countdownSeconds) begins a run: score 0, those lives and a stopped clock that already shows the full countdown, which is your ready screen. resume() starts it when the player presses Start; reset actors and input yourself. Operations change state immediately; their callbacks follow on the next step. stop() and resume() affect only the clock, not the rest of the simulation."
+    },
+    {
+      "path": "/game-engine/audio-haptics",
+      "title": "Audio & Haptics",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Play sounds through the engine's mixer and add haptics that respect player settings. Load a sound bank Play, loop and stop voices Player settings and autoplay Collision sounds and haptics Haptic taps and patterns audio.load({ name: source }) returns a SoundBank at once; await bank.ready before relying on it, since plays before then are ignored and failed files are logged and skipped. Sounds are WAV (PCM or float, mono or stereo): URLs on the web, require(...) in React Native. Playing returns a Voice (or null); keep it and pass it to audio.stop when leaving. A screen owns its loops and stops them on unmount. Mirror the player's settings onto audio.enabled and haptics.enabled; both are global switches. On the web, output starts on the first click, touch or key press and suspends in hidden tabs."
+    },
+    {
+      "path": "/game-engine/drawing",
+      "title": "Drawing & Painting",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Paint with native brushes, layers and undo, and reuse the artwork inside games. Documents and canvases A paint screen with undo Brushes and tools Shapes and fills Layers and the view Save and load Export SVG and PNG Use a drawing as a game texture Paint from game input Read strokes Score what was drawn A DrawingDocument holds the artwork in the Rust core: strokes, layers, tool settings and undo history. DrawingCanvas shows a document and feeds it touch, pencil or mouse input without going through React state. new DrawingDocument(width, height, pixelRatio = 2) takes document units, the coordinates every method uses; await warmUpEngine() first (required on the web). Dispose it on unmount: after that its methods throw, so check isDisposed in late callbacks. Editing methods return the new DrawingState and onChange delivers it after each stroke, so drive buttons from state.canUndo and state.canRedo. undo(), redo() and clear() share one history with strokes and layer edits. setBrush(options) sets the whole brush at once; updateControls(partial) changes single settings (tool, color, width, shape…) and reset: true restores the defaults. Current values are in state.controls."
+    },
+    {
+      "path": "/game-engine/models-textures",
+      "title": "Models & Textures",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Load glTF models and images in parallel, recover from failures and map textures. Load assets in parallel Errors and retry Models and glTF limits Textures, tint and atlas regions Pass a URL string (or a bundler import) on the web, and require(...) or a URI in React Native; add glb and gltf to Metro's assetExts and install expo-asset for bundled Android release assets. Loaders start the engine themselves and cache by source and options, so a second call returns the same promise. On iOS and Android, loadTexture, loadModel, loadFont and audio.load decode on native background threads, so Promise.all loads a level in parallel while the loading screen animates, and meshes register with the renderer inside Rust. The web's single-threaded core decodes on the main thread, so load before play, never in onUpdate. A failed load rejects with an Error naming the loader and source (loadTexture: couldn't load …), with the original error as cause. Failures aren't cached, so calling the loader again retries; a file the core rejects discards its saved bytes, while network and start-up failures keep them. Offer a Retry action rather than retrying from onUpdate, and ignore results that arrive after unmount. loadModel reads glTF 2.0: a .glb, or a .gltf with embedded buffers; external buffer files are rejected, so export a self-contained GLB. It keeps meshes, node transforms, vertex and material colors, one base-color texture per model, skins and clips, and decodes EXT_meshopt_compression, but it isn't a general importer for every material extension. Every entity using a model draws in one instanced call, and colliders sized from it fit its bounding box. Ship third-party models with their licences."
+    },
+    {
+      "path": "/game-engine/text-fonts",
+      "title": "Text & Fonts",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Load fonts, then draw, update and measure 3D text. Load a font Spawn and update text Measure text loadFont(source, options) reads TrueType or OpenType outlines and builds a mesh per glyph; prewarm known characters with chars, and others build on first use. Characters the font lacks draw as ?, and there's no complex shaping, color emoji or fallback font. Source, depth and weight identify a shared font; a later call with other chars only adds glyphs. Font licences still apply. Spawn an entity with text and font; letters are 1 unit tall at scale 1 and the line is a single row. Setting text again reuses the existing letter entities. Each drawn letter is a child entity that counts against the World's capacity. Text is lit, shadowed geometry in a scene, and flat and unlit in an overlay. measureText(font, text, layout) returns a line's advance in ems, with the same glyph loading, spacing and fallbacks as drawing; multiply by the entity's scale for world units. Pass the letterSpacing and tabular you draw with."
+    },
+    {
+      "path": "/game-engine/procedural-geometry",
+      "title": "Procedural Geometry",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Build meshes in code from paths, profiles, tubes and merged parts. Geometry and createShape Paths and extrusion Lathe profiles Tubes Merge parts, recolor and smooth Builders return Geometry: a Float32Array of 11 floats per vertex (position, normal, RGB color, UV) and a Uint32Array of triangle indices. createShape(geometry, options) registers it as a Model for any entity's mesh, and equal geometry and options reuse the same model. Mesh ids are app-wide and never freed (about 4,080), so build each mesh once after warmUpEngine (useWorld's setup runs after it), keep it at module scope and spawn many entities from it. shapeGeometry(name, { color }) copies a built-in shape (cube, sphere, plane, cylinder, cone, capsule, torus, roundedBox) for merging. Path builds 2D outlines like SVG (x right, y down, world units) with chaining methods, and Path.fromSVG parses path data (M L H V C S Q T A Z, absolute and relative). extrude(path, options) fills it into a solid facing +Z, flipped so it stands as drawn. depth defaults to 0.2, and 0 gives a one-sided flat face. fillRule defaults to nonzero; evenodd makes every inner contour a hole. lathe(profile, options) spins a profile around the Y axis, like a potter's wheel: a Path (x is the radius, y down) or [radius, height] points. Open ends away from the axis are capped, and a sweep below 2π closes its cut faces too. Make displace equal at u = 0 and 1 to avoid a seam. Color callbacks paint vertices, so more segments, capRings or cutSteps give finer patterns at a vertex cost."
+    },
+    {
+      "path": "/game-engine/surfaces-lofts",
+      "title": "Surfaces & Lofts",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Sample parametric surfaces, loft smooth bodies and sculpt geometry. Parametric surfaces Lofts, blocks and ellipsoids Smooth curves and deformation parametricSurface(sample, options) turns (u, v) from 0 to 1 into positions, for terrain, cloth, wings and ribbons. Triangles wind by dP/du × dP/dv, so order coordinates so the front faces outward. loft(sections, options) runs a smooth closed body through rounded-rectangle cross-sections along Z: vehicle shells, cabins, shoes. It needs at least two sections in strictly increasing or decreasing z. block(w, h, d, square = 6, color?) is a rounded box with flat end caps, and ellipsoid(radii, color?, around = 16) an exact ellipsoid. All three return Geometry to merge or deform before createShape. smoothCurve(points) returns a smooth Hermite function through increasing [x, value] points, clamped past the ends, for profiles and tuning curves. deformGeometry(geometry, (position, uv) => Vec3) moves every vertex of a copy and recomputes its normals. Deform smooth surfaces before adding hard-edged parts; it can't change a registered model or keep a rig."
+    },
+    {
+      "path": "/game-engine/solid-modelling",
+      "title": "Solid Modelling",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Model solids in code, then optimize them and prepare LOD levels. Build a solid Tessellate, inspect and deform Optimize and build LOD levels A Solid is an immutable recipe: every operation returns a new Solid. Primitives are centred at the origin, and cylinders and tori stand on the Y axis. createSolid(solid, options) tessellates, optimizes and registers the recipe once, then returns the same model for the same recipe. Call it after warmUpEngine, during setup; paint takes 0..1 tuples, and white parts can be tinted per entity. solidGeometry(solid, { resolution, uv }) returns editable, unregistered Geometry: resolution is 8..128 cells across the longest side (default 48) and uv picks the planar projection 'xy' (default), 'xz' or 'yz'. Cost grows roughly cubically with resolution, so build during setup, never in onUpdate. getGeometryStats reports vertices, triangles, bytes and bounds without registering anything. deformGeometry(geometry, (position, uv) => newPosition) sculpts a copy of one smooth surface and recomputes its normals. optimizeGeometry(geometry, { ratio, error, lockBorders }) returns a cleaned copy: ratio 1 (default) only welds and reorders, lower ratios simplify within error (default 0.001), and lockBorders (default true) keeps open edges fixed. Use it on static opaque meshes only, never on skinned meshes or geometry whose vertex indices other code reads. createGeometryLods(geometry, ratios = [1, 0.5, 0.25], options) simplifies the original independently per level. There is no automatic LOD switch: register the levels once and swap an entity's mesh when its distance changes."
+    },
+    {
+      "path": "/game-engine/cache-performance",
+      "title": "Cache & Performance",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Let the engine cache assets, keep frames allocation-free and spread heavy work over frames. Automatic asset caching Clear saved assets Cache expensive factories Move many entities with world.transforms Zero-allocation frames Frames and threads Culling and background decoding Slice long setup with afterNextFrame Practical budgets You don't need an app cache: each file downloads and decodes once per session, equal geometry shares one registration, and prepared meshes are saved for later launches. Records never expire and aren't evicted; full or denied storage falls back to memory, and corrupt records rebuild. Disposing a world keeps loaded handles valid. Change the URL (for example ?v=2) when a file's contents change. clearAssetCache() removes saved geometry, original files and temporary download bytes; call it only from a user action. It rejects when storage can't be cleared, live worlds and handles keep working, and custom ProceduralStorage adapters are left alone. new ProceduralCache(revision) saves what a deterministic factory returns (models, arrays and JSON values): get(key, build) restores or builds and saves, and peek(key) restores without building (undefined when missing). Use one revision per game and prefix keys with its folder, so an update rebuilds only that game's records. The engine's store checksums records in Rust (ProceduralStorage.verified), so restores skip the JS checksum; a custom storage without verified keeps it. stats counts hits and builds, flush() awaits pending writes, and worlds, entities, textures and imported rigs never belong in it."
+    },
+    {
+      "path": "/game-engine/render-source",
+      "title": "RenderSource",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Draw your own simulation with GameView through the instance-buffer contract. Instance buffer contract Stepping and the view Draw it with GameView A RenderSource packs instances grouped by mesh: matrices holds a column-major mat4 each, colors an RGBA each, and optional regions a texture rectangle each, in the same order. Only the first count instances draw; capacity sizes the GPU buffers. ranges holds [first, count] per mesh id: opaque instances at ranges[2 * mesh], transparent ones at ranges[2 * (MAX_MESHES + mesh)]. Meshes must already be registered (built-ins after warmUpEngine, createShape or a loader). GameView calls source.update(dt) after onUpdate each frame, unless its updateCount changed during onUpdate or isDisposed is true. setView(viewProj, width, height) receives the camera of each drawn frame for your own picking. A custom source gets no physics, timers, animation or picking from World, and nativeWorld belongs only to a real World. Prefer World unless you already own a simulation. Await warmUpEngine so the built-in meshes exist, then pass the source to GameView with a Camera and Light, like a world. A custom source can also be GameView's overlay."
+    },
+    {
+      "path": "/game-engine/troubleshooting",
+      "title": "Troubleshooting",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "Find the fix for common engine problems, then check a build before shipping. Setup and rendering Worlds, frames and queries Assets, animation and feedback Production checklist Most blank screens are a missing native build, an unawaited warm-up or a view with no size. Log onError first. After dispose, cleanup calls and queries are no-ops, but spawn, update, burst and effects throw. Check world.isDisposed after every await before spawning. When a clip or asset fails, print what the model actually contains before changing code."
+    },
+    {
+      "path": "/game-engine/api-reference",
+      "title": "API Reference",
+      "category": "Game Engine Guide",
+      "theme": [
+        "#f97316",
+        "#ec4899"
+      ],
+      "description": "142 named public exports, including classes, helpers, component contracts and TypeScript data structures, audited against the shared engine entry point. Reading the reference world/World world/quat world/color world/effects world/Scoreboard world/types render/GameView render/useWorld render/light render/meshes world/TransformBatch render/quality assets/source assets/model assets/AssetCache assets/ProceduralCache assets/texture assets/modelling assets/loft assets/surface assets/shape assets/font media/audio media/haptics input/Joystick input/keyboard types drawing/DrawingDocument drawing/DrawingCanvas Every public export is listed below. Signatures come from built declarations. Gameplay APIs are shared; host styles and asset sources follow the platform guides. Use declarations to look up types. Use the runnable examples and linked guides for setup, behavior and cleanup. Usage and examples: /game-engine/world-entities. Usage and examples: /game-engine/world-entities."
+    },
+    {
+      "path": "/games/installation",
+      "title": "Install the Games",
+      "category": "Games · Docs",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Set up @nayan-ui/games in React or React Native Installation guide and setup instructions for @nayan-ui/games"
+    },
+    {
+      "path": "/games/api-reference",
+      "title": "Games API Reference",
+      "category": "Games · Docs",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Every exported component, constant and type Complete API documentation for all exported constants and types"
+    },
+    {
+      "path": "/games/build-a-game",
+      "title": "Build an Engine Game",
+      "category": "Games · Docs",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "File pattern, lifecycle and shared helpers File pattern, lifecycle and shared helpers for new engine games"
+    },
+    {
+      "path": "/games/licensing",
+      "title": "Games Licensing",
+      "category": "Games · Docs",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "License, commercial use and acknowledgments License information, commercial usage, and acknowledgments"
+    },
+    {
+      "path": "/games/block-blast",
+      "title": "Block Blast",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Block Blast is a spatial puzzle game played on a 9×9 grid. Three block shapes wait in the tray below the board; drag any of them onto the grid, and whenever a row or column is completely filled it clears with a rippling pop. Every placed block scores 50 points and every cleared line adds 500, so setting up multi-line clears pays off. Survive the five-minute timer to win, but if none of the three tray pieces fits anywhere on the board, the game is over. 9×9 board with a tray of three pieces, each slot refilled as soon as you use it 20 different shapes, from single blocks to lines, squares, L, T and S pieces Ghost preview shows where the piece will land and turns red when it doesn't fit Rows and columns the drop would complete light up before you let go Tap Start, then drag a piece from the tray at the bottom onto the grid Release over a spot where the ghost preview fits; invalid drops fly back to the tray Fill a complete row or column to clear it — several can clear at once"
+    },
+    {
+      "path": "/games/connect-em-all",
+      "title": "Connect Em All",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Connect Em All is a dot-chaining puzzle on a 7×7 board of five colors. Drag your finger through neighbouring dots of the same color — straight or diagonal — and let go once the chain has three or more dots to clear them. The dots above fall into the gaps and new ones drop in from the top, so the board never runs out. Close a loop of four or more dots and every dot of that color on the board clears at once for a bonus. Score as many points as you can before the five-minute timer ends. 7×7 board of glossy dots in five colors Chains connect horizontally, vertically and diagonally Clear chains of three or more; drag back over the last dot to undo a step Loops of four or more dots clear every dot of that color plus a 250-point bonus Tap Start, then touch a dot and drag through adjacent dots of the same color Neighbours count in all eight directions, including diagonals Drag back onto the previous dot to remove the last dot from your chain"
+    },
+    {
+      "path": "/games/tile-home",
+      "title": "Tile Home",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Tile Home is a mahjong-style triple-matching puzzle. Seventy-two raised tiles showing 12 kinds of 3D fruit are stacked across three offset layers; tiles that are still covered are shaded darker and cannot be picked. Tap an uncovered tile to send it into the seven-slot tray, where it slots in next to its own kind. Three of a kind clear for 500 points, and the SETS counter shows how many of the 24 sets remain. Clear the board within five minutes to win with a time bonus, but if the tray fills without a match, or the timer runs out, the game is over. 72 tiles — 6 of each of 12 3D fruits — stacked across three offset layers Covered tiles are shaded and lighten as the tiles above them are removed Seven-slot tray that groups each tile next to matching ones Three of a kind clear automatically for 500 points Tap Start, then tap any uncovered (unshaded) tile to send it to the tray above the board Each tile lands next to tiles of the same fruit in the tray Three matching tiles in the tray clear automatically and score 500"
+    },
+    {
+      "path": "/games/arrows",
+      "title": "Arrows",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Arrows is a directional untangling puzzle. A 12×16 board is completely tiled with bent arrows, each winding through several cells and pointing off the board in one direction. Tap an arrow whose straight path ahead to the edge is clear and it slides along its body and flies off for 500 points; tap a blocked one and it shakes red while the arrow in its way pulses amber. Every board is generated so it can always be cleared. Clear every arrow within five minutes to win with a time bonus; if time runs out, the round scores nothing. 12×16 board tiled with bent multi-cell arrows Every board is randomly generated and guaranteed solvable Blocked arrows shake red and highlight the arrow in their way 500 points per arrow cleared Tap Start, then tap any arrow on the board If nothing lies between its head and the board edge, it flies off and scores 500 If the way is blocked, the arrow shakes and the blocking arrow pulses — clear that one first"
+    },
+    {
+      "path": "/games/candy-crush",
+      "title": "Candy Crush",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Candy Crush is a timed match-3 puzzle on a 7 × 7 board of glossy 3D candies in four colors. Swipe a candy into its neighbour; the swap stays only if it lines up three or more of one color in a row or column, otherwise the candies bump and spring back. Matched candies pop for 50 points each, the candies above fall into the gaps and new ones drop in, and every cascade that follows scores 1.25× the one before. Line up five to create a color bomb that clears every candy of the color you swap it with — and you have five minutes to build the biggest score you can. 7 × 7 board of glossy 3D candies in four colors Swipe-to-swap controls: invalid swaps bump and spring back Cascades score 1.25× the previous step for growing chain combos Match five to create a color bomb that clears a whole color at double points Tap Start, then press a candy and swipe it toward a neighbouring candy to swap them The swap only sticks if it lines up 3 or more candies of the same color in a row or column Matched candies clear for 50 points each, candies above fall and new ones drop in"
+    },
+    {
+      "path": "/games/penguin-run",
+      "title": "Penguin Run",
+      "category": "Action Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Penguin Run is a 3D lane runner where a penguin dashes on its own down an ancient jungle causeway toward a finish line 1000 metres away. Swipe to switch between three lanes, jump over broken gaps in the paving and slide under spiked gateways. Every run lays out a fresh track, with a trail of coins and the occasional rare gem to collect. You have three lives — each mistake costs one and leaves you briefly untouchable — and reaching the finish line wins the run and sets the penguin dancing. 3D penguin runner on a jungle temple causeway with a chase camera A freshly generated 1000 m track on every run Three-lane swipe controls with jump and slide moves Broken gaps to jump and spiked gateways to slide under Swipe left or right to switch lanes Swipe up to jump over broken gaps in the track Swipe down to slide under spiked gateways"
+    },
+    {
+      "path": "/games/treasure-hunt",
+      "title": "Treasure Hunt",
+      "category": "Action Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Treasure Hunt is a 3D exploration adventure where a realistic, fully animated explorer roams a freshly generated wilderness of grassy hills, forests, rocks, a winding river with three bridges and open stone cave passages. Swipe and hold to walk, drag farther to run, and tap to punch the patrolling robots that chase you when they spot you. Collect all 24 diamonds and defeat all 8 robots to complete the expedition. You have five health points — each robot strike costs one, and losing them all ends the run. Realistic animated 3D explorer with walking, running and punching moves A new seeded wilderness map on every expedition Hills, forests, a river with three bridges and cave passages to explore Swipe-and-hold movement with walk and run speeds, plus tap-to-punch combat Swipe and hold to walk in a direction, drag farther to run, and release to stop Tap to punch — another finger can tap to punch while you keep moving Walk over diamonds to collect them (200 points each)"
+    },
+    {
+      "path": "/games/car-racing",
+      "title": "Car Racing",
+      "category": "Action Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Car Racing puts you behind the wheel of a red car on a curving, climbing three-lane road lined with lamps, trees, buildings and billboards. Drag across the screen to steer and weave past slower traffic: every car you pass scores 500 points. Running nose-first into the back of a car costs one of your three lives and slows you down, while touching a car alongside only shoves it aside — hit it hard enough sideways and it tumbles off the road in flames without costing you a life. Reach the finish gate at 2,000 metres with lives to spare to win. Dark mode turns the race into a night drive with glowing lamps and headlights. A 2,000-metre sprint on a curving, climbing three-lane road, with metres to the finish shown in the scoreboard Smooth, relative drag steering — the car moves by how far your finger moves, wherever you start 3 lives and 500 points for every car you pass Real physics wrecks: crashed cars tumble, slide and burn on the road Press Start to begin the race Drag left or right anywhere on the screen to steer across the road Pass cars to score 500 points each"
+    },
+    {
+      "path": "/games/bike-racing",
+      "title": "Bike Racing",
+      "category": "Action Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Bike Racing puts you on an orange motorcycle on the same curving three-lane road as Car Racing, but at a much faster pace. Your rider pulls a wheelie off the start line and leans into every turn while the traffic bikes weave gently within their lanes. Drag to steer, pass bikes for 500 points each, and avoid running your front wheel into another bike's tail, which costs one of your three lives. Side contact only shoves the other bike away, sending it skidding or crashing off the road. Reach the finish at 2,000 metres with a life left to win; dark mode rides at night. A fast 2,000-metre sprint — your bike cruises half again as fast as the car in Car Racing Relative drag steering with the bike and rider leaning into turns Traffic bikes that weave within their lanes 3 lives and 500 points for each bike you pass Press Start — your rider launches with a wheelie Drag left or right anywhere on the screen to steer and lean through traffic Pass bikes to score 500 points each"
+    },
+    {
+      "path": "/games/play-with-tua",
+      "title": "Play With Tua",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Play With Tua is a relaxed, no-pressure playground starring Tua, an animated 3D character. Start a session, then tap the scene to step through ten actions or pick one directly from the action strip: standing, waving, winking, walking, running, jumping, dancing, laughing, fighting and falling. Each action repeats until you choose another, with sound effects timed to Tua's footsteps, jumps and laughs. Drag across the scene to turn Tua and see every side. There is no winning or losing — the scoreboard simply counts how many moves you have tried. An animated 3D character with ten skeletal animations Action strip for choosing any move directly, plus tap-to-cycle Drag to rotate Tua and view the character from any angle Sound effects synced to footsteps, jumps, landings, waves and laughter Press Start Game or tap Tua to begin Tap the scene to switch to the next action Or tap an action in the strip to pick one directly"
+    },
+    {
+      "path": "/games/bubble-shooter",
+      "title": "Bubble Shooter",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Bubble Shooter puts a pyramid of 35 bubbles in four colors at the top of the board and a shooter at the bottom. Drag to aim along a dotted guide that bounces off the side walls, then let go — or simply tap where you want to shoot. A bubble sticks where it touches another bubble or the ceiling, and any group of three or more touching bubbles of one color pops for 200 points each. Clear every bubble within five minutes to win; if the timer runs out first, the game is over. Starting pyramid of 35 bubbles (9 on top, one fewer each row) in four colors Dotted aim guide that shows wall bounces and stops at the first bubble it meets Drag-to-aim and release, or tap to shoot straight at a point Bank shots off the side walls Tap Start, then drag on the board to aim the shooter (up to 72° either side of straight up) Release to fire, or tap a spot to aim and shoot there in one go Shots bounce off the side walls and stick where they touch a bubble or the ceiling"
+    },
+    {
+      "path": "/games/block-breaker",
+      "title": "Block Breaker",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Block Breaker is a classic brick-breaking arcade game. Drag anywhere on the screen to slide your paddle and keep the ball bouncing up into a wall of 40 bricks; where the ball lands on the paddle sets its rebound angle. Each brick scores 200 points plus a combo bonus for every brick broken since the ball last touched the paddle. Broken bricks sometimes drop power-ups: a wider paddle, two extra balls, or an extra life. Break every brick to win; lose all three lives or run out of the five-minute timer and the game is over. Wall of 40 bricks in 8 columns and 5 rows Relative drag control: slide anywhere and the paddle moves by the same distance Paddle angle control — hits near the edge send the ball out at up to 60° Combo scoring: 200 per brick plus 150 for each brick already broken since the last paddle touch Tap Start; the ball launches from the centre of the paddle Drag anywhere on the screen to slide the paddle left and right Bounce the ball into the bricks — each brick breaks in one hit"
+    },
+    {
+      "path": "/games/fruit-ninja",
+      "title": "Fruit Ninja",
+      "category": "Action Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Fruit Ninja is a fast slicing game set in a 3D meadow. Fruit, bombs and stars are thrown up from the bottom of the screen in waves of two; swipe through them with your finger, or tap to cut where you touch. Each fruit sliced scores 100 points, a star scores 500 and restores a life, and a bomb costs a life. Missed fruit costs nothing. Last out the two-minute timer to win; lose all three lives to bombs and the game is over. 13 kinds of 3D fruit that split into halves with juice splashes Swipe-to-slice blade trail, plus tap-to-cut Waves of two items: 18% chance of a bomb and 7% of a star on each throw 100 points per fruit, 500 per star Tap Start, then swipe across the screen to slice fruit as it flies up You can also tap directly on an item to cut it Each fruit sliced scores 100 points"
+    },
+    {
+      "path": "/games/balloon-blaster",
+      "title": "Balloon Blaster",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Balloon Blaster fills a 3D meadow sky with colorful balloons that rise from below the screen, drifting, turning and bouncing off the sides. Touch a balloon to pop it instantly for 100 points. One in five balloons is special: a multicolored balloon gives back a lost life, while a black bomb balloon costs you one. Last out the two-minute timer to win, but pop three bombs and the game is over. Colorful 3D balloons that rise, drift, spin and bounce off the edges Instant pop on touch-down for responsive tapping 100 points for every ordinary balloon Multicolored life balloons restore a lost life (up to three) Tap Start, then touch a balloon to pop it Each ordinary balloon you pop scores 100 points Pop a multicolored balloon to win back a lost life"
+    },
+    {
+      "path": "/games/flappy-bird",
+      "title": "Flappy Bird",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Flappy Bird is a one-touch arcade challenge in a 3D meadow. Tap to make the bird flap upward; between taps it falls under gravity. A new pair of green pipes arrives every 2.5 seconds with a gap to fly through, and each pair you pass scores 500 points. Brick walls run along the top and bottom of the play area. Survive for two minutes to win, but touching a pipe or a brick wall ends the run instantly. Classic one-touch control — the bird flaps the moment your finger lands 3D bird that leans with its speed, flapping and blinking as it flies Pipe pairs every 2.5 seconds with randomly placed gaps 500 points for every pipe pair passed Tap Start, then tap the screen to make the bird flap upward Between taps the bird falls with gravity Fly through the gap between each pair of pipes"
+    },
+    {
+      "path": "/games/dino-jump",
+      "title": "Dino Jump",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Dino Jump is a runner set in a 3D desert. Your dinosaur runs automatically while small and large cacti scroll toward it; tap to jump over them. Every second you survive scores 200 points, and each cactus you hit costs one of your three lives. Run into a bonus mushroom for 1,000 points and a life back. Last out the two-minute timer to win; lose all three lives and the game is over. Animated 3D dinosaur running across a scrolling desert One-tap jumping with no double jumps Small and large cacti to clear Bonus mushrooms worth 1,000 points that restore a life (up to three) Tap Start; the dinosaur starts running on its own Tap the screen to jump — you can only jump while on the ground Clear the small and large cacti coming toward you"
+    },
+    {
+      "path": "/games/snakes-and-ladders",
+      "title": "Snakes and Ladders",
+      "category": "Strategy Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Snakes and Ladders brings the classic board game to a 3D wooden 10×10 board. You race the computer: tap the die on your turn, and your pawn hops forward cell by cell. Land on one of the nine ladders to climb up, or on one of the eight snakes' heads to slide down to its tail. A six earns another roll, but three sixes in a row lose the turn, and you must land on 100 exactly. The first player to reach 100 wins. 3D 10×10 board with 8 snakes and 9 ladders Two-player race: you against a computer opponent Animated die roll, cell-by-cell pawn hops and slides along snakes and ladders Roll a six for another turn; three sixes in a row lose the turn Tap Start, then tap the die below the board on your turn Your pawn moves forward by the number rolled Land at the foot of a ladder to climb to its top"
+    },
+    {
+      "path": "/games/ludo-king",
+      "title": "Ludo King",
+      "category": "Strategy Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Ludo King is the classic dice-and-race board game, played as you (green) against an AI opponent (red) on a 3D cross-shaped board. Tap the die to roll, then tap one of your highlighted tokens to move it — a six brings a token out of your yard, and landing on an opponent's token off a safe cell sends it back home. Rolling a six, capturing a token or getting one home earns another roll, but three sixes in a row forfeit your turn. Tokens must land on the center exactly to finish, and the first side to get all four tokens home wins. Classic Ludo rules: you versus an AI opponent on a full four-color board AI opponent that weighs captures, safe cells and danger before moving Animated 3D die that tumbles and bounces to rest, with tokens hopping cell by cell Extra roll for a six, a capture or getting a token home; three sixes lose the turn Tap Start, then tap the die below the board to roll it on your turn Tap one of your highlighted green tokens to move it by the number rolled Roll a 6 to bring a token out of your yard onto its starting cell"
+    },
+    {
+      "path": "/games/dots-and-boxes",
+      "title": "Dots and Boxes",
+      "category": "Strategy Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Dots and Boxes is the classic pen-and-paper strategy game, played against an AI opponent on a 6 × 6 board of boxes (7 × 7 dots) rendered in 3D. You and the AI take turns tapping to draw a line between two neighbouring dots; closing the fourth side of a box claims it for 2,000 points and earns another line. The AI always takes a box when it can and otherwise avoids handing you one, so careful play matters. When every line is drawn, you win if you have claimed more boxes than the AI — a tie counts as a loss. Classic dots and boxes rules on a 6 × 6 box grid (7 × 7 dots) AI opponent that takes free boxes and avoids drawing a box's third side Extra turn for every box you close, so chains can be taken in one go 2,000 points per claimed box, shown live for you and the AI Tap Start, then tap between two neighbouring dots to draw a line Close the fourth side of a box to claim it in your color and score 2,000 points Claiming a box gives you another line; otherwise the turn passes to the AI"
+    },
+    {
+      "path": "/games/whack-a-mole",
+      "title": "Whack A Mole",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Whack A Mole is a quick reflex game set in a 3D meadow with nine holes arranged in a 3 × 3 grid. Furry moles pop up in random free holes — the first after a second, then every 1.05 to 1.5 seconds — and duck back down after two seconds if you don't get them. Tap a mole while it's up to bonk it for 500 points, with a burst of impact streaks and dust. There are no lives to lose: the game simply ends when the two-minute timer runs out, and your score is what you whacked. Nine holes in a 3 × 3 grid in a 3D meadow with day and night scenes Moles pop up in random free holes every 1.05 to 1.5 seconds Each mole stays up for two seconds before ducking back 500 points for every mole you whack Tap Start, then tap a mole while it is out of its hole to whack it Each mole you whack scores 500 points Moles duck back down after two seconds if you don't hit them"
+    },
+    {
+      "path": "/games/pac-man",
+      "title": "Pac-Man",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Pac-Man brings the classic maze chase to a 3D board: guide Pac-Man through a 19 × 21 maze, eat every dot and avoid Blinky, Pinky, Inky and Clyde. Each ghost has its own targeting — Blinky chases directly, Pinky aims ahead of you, Inky flanks using Blinky's position and Clyde backs off when he gets close — and they alternate between scatter and chase phases. Eat one of the power pellets and the ghosts turn blue for seven seconds, letting you eat them for points that double in a chain. Clear every dot within five minutes to win; lose all three lives or run out of time and the game is over. Classic 19 × 21 maze with dots, power pellets and side tunnels that wrap across Four ghosts with distinct targeting: chaser, ambusher, flanker and wanderer Scatter and chase phases, with ghosts released from the house on a timer Power pellets frighten ghosts for 7 seconds, flashing in the last 2 Tap Start, then swipe up, down, left or right to steer Pac-Man; the turn is taken at the next opening Eat dots for 100 points each and power pellets for 500 Touching a normal ghost costs a life and sends everyone back to their start positions"
+    },
+    {
+      "path": "/games/space-fighter",
+      "title": "Space Fighter",
+      "category": "Action Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Space Fighter is a dodging game set in 3D deep space with a drifting starfield, nebula clouds and a cratered moon. Pairs of tumbling asteroid belts fall from above, each pair leaving a gap that wanders near the middle of the screen; drag your ship left and right to slip through. Every pair you pass scores 500 points, while clipping a belt costs a life and returns your ship to the center with two seconds of blinking safety. Survive the two-minute timer to win, or lose all three lives and the game is over. Drag to steer: the ship slides left and right and banks into turns Pairs of asteroid belts fall from above with a shifting gap to fly through 500 points for every belt pair you pass Three lives, with two seconds of blinking safety after each hit Tap Start, then drag your finger left and right to move the ship Line the ship up with the gap in each falling pair of asteroid belts Each pair that passes the ship scores 500 points"
+    },
+    {
+      "path": "/games/colors-sort",
+      "title": "Colors Sort",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Colors Sort is a timed sorting puzzle with six glass tubes on a rack. Five colors of four pucks each are shuffled into five tubes, with the sixth left empty, and each tube holds up to five pucks. Tap a tube to lift its top puck, then tap another tube to drop it there — any color can go on any color as long as the tube isn't full — or tap the same tube to put it back. A tube gets a cork when it holds a single complete color, and gathering all five colors within two minutes wins, with a faster sort scoring higher. Six tubes, five colors and twenty pucks, freshly shuffled every game Each tube holds five pucks, leaving one spare slot to maneuver Simple tap-to-lift, tap-to-drop controls with smooth 3D puck moves Any puck can go on any color — only a full tube refuses a puck Tap Start, then tap a tube to lift its top puck Tap another tube to drop the puck on top, or tap the same tube to put it back A full tube (five pucks) or an empty pick-up shakes and refuses the move"
+    },
+    {
+      "path": "/games/popit-fidget",
+      "title": "Popit Fidget",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Popit Fidget recreates the popular silicone pop-it toy as a 3D sheet of 36 bubbles in a 6 × 6 grid, with a vivid color for each row. Touch a bubble and it pops the moment your finger comes down — the dome squashes flat and a dimple springs out in its place, with a pop sound and haptic. Each bubble is worth 250 points, and popping all 36 before the two-minute timer runs out wins the game, with a bonus for the time you have left. Run out of time first and the round ends. Realistic 3D pop-it sheet with 36 bubbles in a 6 × 6 grid Bubbles pop instantly on touch-down, like the real toy Satisfying squash-and-dimple animation with a burst of flecks Pop sound and light haptic on every bubble (respecting settings) Tap Start, then touch any raised bubble to pop it Each popped bubble scores 250 points and stays popped Pop all 36 bubbles to clear the sheet and win"
+    },
+    {
+      "path": "/games/word-search",
+      "title": "Word Search",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Word Search hides eight everyday words of four to six letters in a 10 × 10 grid of 3D letter tiles, picked from a list of over 1,600 words so each game is different. Words can run along rows, columns or diagonals in any of the eight directions, forwards or backwards. Drag from the first letter to the last along a straight line and release to check it; a correct word scores 1,000 points and is highlighted in its own color. Find all eight within five minutes to win, with a bonus for the time left. 10 × 10 grid of 3D letter tiles with eight hidden words each game Over 1,600 common four- to six-letter words for fresh puzzles Words hidden in all eight directions, including diagonals and backwards Drag-to-select with a selection bar that snaps to straight lines Tap Start, then look at the strip of words to find Drag from the first letter of a word to its last along a row, column or diagonal Release to check: a match scores 1,000 points and is highlighted"
+    },
+    {
+      "path": "/games/number-search",
+      "title": "Number Search",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Number Search is the digit twin of Word Search: eight numbers of four to six digits are hidden in a 10 × 10 grid of 3D digit tiles, picked from a list of over 600 familiar patterns. Numbers can run along rows, columns or diagonals in any of the eight directions, forwards or backwards. Drag along a straight line from the first digit to the last and release; any line that spells a number on the list counts, even a copy that appeared by chance, and scores 1,000 points. Find all eight within five minutes to win, with a bonus for the time left. 10 × 10 grid of 3D digit tiles with eight hidden numbers each game Over 600 recognisable four- to six-digit numbers for fresh puzzles Numbers hidden in all eight directions, including diagonals and backwards Drag-to-select with a selection bar that snaps to straight lines Tap Start, then look at the strip of numbers to find Drag from the first digit of a number to its last along a row, column or diagonal Release to check: a match scores 1,000 points and is highlighted"
+    },
+    {
+      "path": "/games/tank-1990",
+      "title": "Tank 1990",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Tank 1990 is a retro tank battle inspired by Battle City. You drive a tank across a 13×17 arena of brick and steel walls while enemy tanks roll in from the top, at most four at a time and fifteen in all. Your tank fires automatically whenever its gun is ready, so the challenge is in steering, lining up shots and protecting the base walled in steel at the bottom of the map. Destroy all fifteen enemies to win; lose all three lives, or let an enemy shell reach your base, and the battle is over. Swipe-and-hold driving with automatic firing Six hand-built arenas, picked at random and sometimes mirrored Destructible brick walls (two hits each) and indestructible steel Steel-walled base to defend — enemy shells that reach it end the game Press Start, then swipe and hold in a direction to drive your tank; lift your finger to stop Your tank fires automatically in the direction it faces whenever its gun has cooled down Shoot brick walls to open new paths — steel walls cannot be destroyed"
+    },
+    {
+      "path": "/games/nuts-and-bolts",
+      "title": "Nuts and Bolts",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Nuts and Bolts is a mechanical puzzle where eight crossing planks are bolted together on a 5×5 grid of points, with a bolt wherever planks overlap. Tap a bolt to unscrew it, then tap an empty hole to screw it back in: one of the three swap holes below the board, or an empty spot on the board. A plank with no bolt left holding it swings down and falls away. Only bolts on the topmost plank at a point can be picked up, so the order of your moves matters. Clear every plank before the two-minute clock runs out to win. Randomly generated puzzles of four horizontal and four vertical planks At least eight bolts, with each plank held by at most three Three swap holes below the board for parking bolts Layered planks — only bolts on the top plank can be unscrewed Press Start to begin the two-minute timer Tap a bolt to unscrew and lift it — only bolts on the topmost plank at that spot can be picked up Tap an empty swap hole below the board, or an empty hole on the board, to screw the bolt in there"
+    },
+    {
+      "path": "/games/stack-tower",
+      "title": "Stack Tower",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Stack Tower is a one-tap timing game where blocks slide back and forth above your tower, entering from alternate sides. Tap anywhere to drop the block where it is. Blocks keep their full width, but each one needs at least 40% of its width resting on the block below — any less and it tumbles off, ending the round. Every block placed scores 500 points, and perfect drops build a streak that earns growing bonuses. Survive the full two minutes without a miss to win. One-tap stacking with precision timing Blocks slide in from alternate sides and bounce between the edges 500 points per block, plus 250 × your perfect streak for each perfect drop “PERFECT!” feedback for drops within a few points of exact alignment Press Start and a block begins sliding above the tower Tap anywhere to drop the sliding block where it is At least 40% of the block must rest on the block below, or it falls and the round ends"
+    },
+    {
+      "path": "/games/pipe-connect",
+      "title": "Pipe Connect",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Pipe Connect is a rotation puzzle on a 7×7 grid (8×8 on tablets) packed with scrambled pipe pieces. A source sits on the left edge and a sink on the right, joined by one winding hidden path, while every other cell is filled with decoy pieces. Tap a pipe to turn it a quarter turn clockwise; water flows live through every pipe connected to the source. Get the water to the sink within two minutes to win, with a bonus for every second you save. 7×7 grid on phones, 8×8 on tablets, filled edge to edge with pipes Straight, corner and T-shaped pipe pieces A winding solvable path with decoy pieces in every other cell Water fills connected pipes as you rotate them Press Start to begin the two-minute timer Tap a pipe to rotate it 90 degrees clockwise (the source and sink stay fixed) Water flows from the source through every pipe that is properly joined to it"
+    },
+    {
+      "path": "/games/mine-sweeper",
+      "title": "Mine Sweeper",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Mine Sweeper is the classic logic puzzle: uncover every safe cell on the grid without revealing a hidden mine. The board is 9×10 on phones and 12×14 on tablets, with 5 mines hidden among the cells. Numbers show how many of the eight surrounding cells contain mines, empty cells open their neighbours automatically, and your first reveal is always safe. Clear every safe cell within three minutes to win; hitting a mine or running out of time loses. Classic Minesweeper deduction with numbered clues Tap to reveal, press and hold to flag or unflag 9×10 board on phones, 12×14 on tablets, with 5 mines Safe first reveal — mines are never placed in or around your first tap Press Start to begin the three-minute timer Tap a cell to reveal it; your first reveal is always safe A number shows how many of the eight surrounding cells hide mines"
+    },
+    {
+      "path": "/games/knife-hit",
+      "title": "Knife Hit",
+      "category": "Action Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Knife Hit is a timing game where you throw knives up into a spinning wooden log. The log starts with three knives already stuck in it, spins at a slightly varied speed each round and reverses direction now and then. Each knife that sticks scores 1,500 points, and sometimes an apple sits on the log, worth 1,000 more if a knife lands on it. Stick all eight of your knives to win, but a knife that lands too close to another one clashes and ends the game, as does running out the two-minute clock. One-tap knife throwing with precise timing Spinning log that reverses direction at random moments Three obstacle knives already in the log at the start Optional apple target worth a 1,000-point bonus Press Start, then tap anywhere to throw a knife up into the spinning log Each knife that sticks scores 1,500 points Land a knife on the apple, when there is one, for 1,000 bonus points"
+    },
+    {
+      "path": "/games/color-switch",
+      "title": "Color Switch",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Color Switch is a one-tap arcade game where you hop a ball upward through spinning four-colour rings. The ball may only cross a ring through the quarter that matches its colour, and stars between the rings switch it to a new colour. Each ring passed scores 1,000 points, and new rings keep appearing above as you climb. Survive for two minutes to win; touching the wrong colour or letting the ball drop off the bottom of the screen ends the run. One-tap hop mechanics with gravity Spinning rings split into four colour quarters Stars between rings that change the ball's colour 1,000 points for every ring passed Press Start, then tap to make the ball hop upward; gravity pulls it back down Pass through each ring only through the quarter that matches your ball's colour Collect the star between rings to switch your ball to a new colour"
+    },
+    {
+      "path": "/games/spider-solitaire",
+      "title": "Spider Solitaire",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Spider Solitaire is the classic patience card game, played here with two suits across 104 cards and ten tableau piles. Move descending runs between piles, uncover face-down cards and deal a new row from the stock when you need more cards. Whenever a complete King-to-Ace run of one suit forms, it lifts off the table by itself. Clear all eight runs to win; the clock counts up, and faster wins earn higher scores. Two-suit Spider Solitaire with 104 cards across 10 piles Tap-to-select or drag-and-drop card moves Completed King-to-Ace runs of one suit lift off automatically Face-down cards turn over when uncovered Press Start to begin; the clock counts up Tap a face-up card to pick up the run from it down, then tap another pile to place it — or drag the run there A run can be moved if it descends by one rank; place it on a card one rank higher or on an empty pile"
+    },
+    {
+      "path": "/games/maze-runner",
+      "title": "Maze Runner",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Maze Runner is a maze puzzle where you guide a rolling ball from the start in the top-left corner to the exit in the bottom-right. Every maze is a freshly generated 14×14 grid with exactly one route through. Swipe anywhere to set the ball rolling: it travels down a corridor until it hits a wall, takes the next junction open in the direction you last swiped and reverses instantly when you swipe back. Reach the exit within two minutes to win — the faster you finish, the higher your score. Randomly generated 14×14 mazes with exactly one route through Swipe controls with buffered turns at junctions Instant reversal when you swipe the opposite way One drag can chain several turns Press Start to begin the two-minute timer Swipe anywhere in a direction to roll the ball that way The ball rolls along a corridor until it reaches a wall"
+    },
+    {
+      "path": "/games/tic-tac-toe",
+      "title": "Tic Tac Toe",
+      "category": "Strategy Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Tic Tac Toe is the timeless game of noughts and crosses on a 3×3 board. You play O and always move first; the robot plays X and answers half a second later. The robot always takes a winning move when it has one, but it sometimes overlooks your threats and often plays casually instead of looking ahead, so it can be beaten. Get three in a row to win, fill the board for a draw, and finish before the two-minute clock runs out. Classic X and O on a 3×3 board You play O and always move first Forgiving robot opponent that takes wins but sometimes misses blocks Highlighted winning line Press Start to begin the two-minute clock Tap an empty cell to place your O; the robot places its X shortly after Get three of your marks in a row — horizontally, vertically or diagonally — to win"
+    },
+    {
+      "path": "/games/sliding-numbers",
+      "title": "Sliding Numbers",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Sliding Numbers is the classic sliding-tile puzzle on a wooden 3x3 board: eight colourful numbered tiles and one empty space. Tap a tile next to the gap, or swipe it toward the gap, to slide it in. Every board is shuffled by random slides from the solved position, so each puzzle is always solvable. Put tiles 1 to 8 back in reading order with the gap in the bottom-right corner within five minutes to win — the faster you solve it, the higher your score. Classic 3x3 sliding puzzle with eight numbered tiles Tap or swipe a tile to slide it into the gap Every shuffle is generated from the solved board, so it is always solvable Five-minute countdown shown in the scoreboard Press Start to begin the countdown Tap a tile beside the empty space, or swipe it toward the space, to slide it in Arrange tiles 1 to 8 in order, left to right and top to bottom"
+    },
+    {
+      "path": "/games/game-2048",
+      "title": "2048",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "This take on 2048 is played on a roomy 5x5 grid. Swipe up, down, left or right and every tile slides that way; two tiles with the same number that collide merge into one with double the value. After each swipe that moves something, a new 2 (or occasionally a 4) appears in a random empty cell. Build up to a 1024 tile within fifteen minutes to win. The round is lost if the clock runs out or the board fills with no merges left. Tile-merging puzzle on a 5x5 grid Swipe in four directions to slide every tile at once New tiles are a 2, or a 4 one time in ten Goal tile of 1024 with a fifteen-minute countdown Press Start to begin the fifteen-minute countdown Swipe up, down, left or right to slide all tiles in that direction Two tiles with the same number merge into one with double the value"
+    },
+    {
+      "path": "/games/sudoku",
+      "title": "Sudoku",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Sudoku deals a freshly generated 9x9 puzzle every game, with 36 numbers given and 45 cells to fill. Tap a cell, then tap a number key below the board to place it. Correct numbers score 200 points, plus 500 for each row, column or 3x3 box they complete; a wrong number shows in red until you replace it. The board highlights the selected cell's row, column and box and every matching number, and each key shows how many of that digit are left to place. Fill every cell inside fifteen minutes to win a 5,000-point bonus plus extra points for time saved. A new randomly generated 9x9 puzzle every game, with 36 starting clues Tap a cell, then a number key, to place a digit Wrong entries are shown in red so you can correct them Highlights for the selected cell's row, column, box and matching numbers Press Start to begin the fifteen-minute countdown Tap an empty cell to select it Tap a number key to place that number in the cell"
+    },
+    {
+      "path": "/games/snake-3d",
+      "title": "Snake 3D",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Snake 3D brings the classic snake game to a 20x20 board in 3D. The snake starts three segments long in the middle of the board and moves one cell every 300 milliseconds; swipe to turn it. Each red apple scores 1,000 points and grows the snake by one, and sometimes a spinning gold star appears worth 2,000 — eat it within ten seconds before it turns back into an ordinary apple. Hitting a wall or your own body ends the run, and so does the five-minute clock, so score as much as you can in the time you have. Classic snake on a 20x20 board with a 3D snake and food Swipe controls that buffer up to two quick turns Apples worth 1,000 points and gold bonus stars worth 2,000 Bonus stars disappear after ten seconds if not eaten Press Start to set the snake moving Swipe up, down, left or right to turn the snake Eat apples to grow by one segment and score 1,000 points"
+    },
+    {
+      "path": "/games/perfect-circle",
+      "title": "Perfect Circle",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Perfect Circle is a one-stroke precision test. After you press Start, draw a single circle around the guide ring with one finger; lifting your finger scores the stroke. Your drawing is fitted with a best-fit circle and rated on how round and consistent it is, how closely its size and centre match the guide, and how neatly the ends meet. The result is an accuracy from 0 to 100 with a verdict from Keep Trying up to Perfect, and the best-fit circle traces round so you can see how you did. Reach 80% or more to win the round. One-stroke circle drawing around an on-screen guide ring Accuracy from 0 to 100 based on roundness, size, centre and closure Win the round at 80% accuracy or higher Verdicts from \"Keep Trying!\" through \"Good!\", \"Great!\" and \"Excellent!\" to \"Perfect!\" Press Start to begin a round Put one finger down and draw a circle around the guide ring in one continuous stroke Go all the way round and finish close to where you started"
+    },
+    {
+      "path": "/games/fruit-merger",
+      "title": "Fruit Merger",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Fruit Merger is a physics-based merging puzzle. Drag to aim the fruit hanging above the glass and let go to drop it; fruits fall, roll and stack under gravity. Whenever two of the same fruit touch, they merge into the next one up a ten-fruit chain from strawberry to pumpkin, scoring that fruit's points. Create the pumpkin within 15 minutes to win, with a bonus for finishing quickly. If the settled pile stays above the top line, or the clock runs out, the game is over. Ten-fruit merge chain: strawberry, kiwi, lemon, peach, orange, apple, pomegranate, papaya, watermelon and pumpkin Real-time physics: fruits fall, bounce, roll and stack in a glass jar with rounded corners Drag to aim, release to drop, with a preview of the next fruit You drop only the four smallest fruits; everything bigger has to be merged Tap Start, then drag left or right to move the fruit at the top of the glass Lift your finger to drop it; the next fruit appears a moment later When two identical fruits touch, they merge into the next fruit in the chain"
+    },
+    {
+      "path": "/games/find-different-number",
+      "title": "Find Different Number",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Find Different Number is a fast visual search game that tests your observation skills and attention to detail. A 10×10 grid of 100 tiles shows the same two-digit number everywhere except 10 tiles, which show a look-alike with one digit swapped for a similar-looking one (such as 6 and 8, or 1 and 7). Tap all 10 different numbers within two minutes to win. Each find scores 500 points and finishing early adds a time bonus, while every wrong tap takes three seconds off the clock. 10×10 grid of 100 number tiles to scan 10 hidden look-alike numbers to find each round Look-alike digits chosen from visually similar pairs (6/8, 1/7, 3/8, 5/6 and more) Two-minute countdown with a live count of numbers left to find Press Start to begin the two-minute countdown Tap a tile you think shows a different number — taps register as soon as your finger touches down Correct finds turn green and earn 500 points"
+    },
+    {
+      "path": "/games/bluk",
+      "title": "Bluk",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Bluk is a skill-based physics jumper where you sling a block from one stone pillar to the next. Drag anywhere to aim and set the power while a dotted arc previews the jump, then let go to launch. Every safe landing scores 1,000 points, and landing in the gold sweet spot earns a PERFECT bonus that builds a combo. As your score grows, the gaps widen and the pillars get narrower — survive the two-minute timer to win, but miss a pillar and the run is over. Drag-to-aim slingshot launches with a dotted trajectory preview Physics-based jump arcs under gravity 1,000 points per landing, with a 500-point PERFECT bonus in the sweet spot Combo bonus for consecutive perfect landings Drag anywhere on the screen to aim — the farther you drag, the stronger the jump Follow the dotted line to see where your block will fly Release to launch the block toward the next pillar"
+    },
+    {
+      "path": "/games/chameleon-run",
+      "title": "Chameleon Run",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Chameleon Run is a 3D auto-runner with a color-matching twist. Your chameleon runs at a steady pace across a fresh 500 m course of floating platforms, and you must jump the gaps and switch between pink and yellow to match the platforms you land on. Yellow platforms have stripes, pink platforms have dots and white platforms are always safe. You have three lives — a wrong color or a missed jump costs one — and stars collected in a row build a bonus multiplier up to 5×. 3D auto-runner across a floating sky course A freshly generated 500 m course on every run Pink and yellow color matching, with patterned platforms (stripes and dots) and safe white platforms Swipe up to jump, swipe again in the air to double-jump Swipe up to jump; swipe up again in the air to double-jump Tap anywhere to switch between pink and yellow Match your color to the platform you are on: yellow has stripes, pink has dots, and white is always safe"
+    },
+    {
+      "path": "/games/mob-control",
+      "title": "Mob Control",
+      "category": "Strategy Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Mob Control is a crowd-battling game where your cannon automatically fires a stream of blue soldiers up the battlefield while you drag to aim it. Send your troops through blue addition and purple multiplier gates to grow your army, and steer clear of red division gates that shrink it. Red enemy soldiers pour out of three towers, and blue and red soldiers cancel each other out on contact — any that reach your cannon wear down its shield. Capture all three towers (and defeat the boss on boss levels) to clear the level and move on to the next. Drag-to-aim cannon that fires soldiers automatically Addition, multiplier and division gates, some of which drift side to side Hundreds of soldiers simulated on screen at once Three enemy towers that send out waves that grow over time Drag left and right to aim your cannon — it fires blue soldiers automatically Aim through blue addition and purple multiplier gates to grow your army; red division gates shrink it Blue and red soldiers cancel each other out when they meet"
+    },
+    {
+      "path": "/games/paper-io",
+      "title": "Paper IO",
+      "category": "Strategy Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Paper IO is a territory-conquest battle against one AI rival on a grid that fills the whole screen. Swipe to steer your character; when you leave your land you lay a trail, and coming back home captures the trail plus everything it encloses — including land the AI already owned. The AI expands its own territory the same way, and the two of you race to claim the most cells. When the two-minute timer runs out (or the board fills up), whoever owns more land wins. Territory-capture gameplay on a full-screen grid One AI rival that expands and returns home on its own Swipe to steer in four directions Enclosed areas flood-fill into your land, including the rival's cells Swipe up, down, left or right to steer your character — you keep moving in that direction Leave your land to draw a trail behind you Return to your land (or close a loop on your own trail) to capture the trail and everything it encloses"
+    },
+    {
+      "path": "/games/crossy-road",
+      "title": "Crossy Road",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Crossy Road is a 3D road-crossing challenge where you guide a pedestrian from the starting grass, across nine busy roads, to the far side. Tap to hop forward, and swipe sideways or back to dodge cars, taxis, pickups and buses that stream across each lane. Grass rest lanes after every third road give you a safe spot to plan your next move. Every road crossed scores 2,000 points and nudges the traffic a little faster — reach the far grass within two minutes to win, with a bonus for time left. 3D road-crossing board with nine roads and grass rest lanes Cars, taxis, pickups and buses moving in both directions Tap to hop forward, swipe to hop sideways or back 2,000 points per road crossed, plus a time bonus on a win Tap (or swipe up) to hop forward one lane Swipe left, right or down to hop sideways or back Dodge the cars and buses — getting hit ends the game"
+    },
+    {
+      "path": "/games/tangram",
+      "title": "Tangram",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Tangram is the ancient dissection puzzle in 3D. Seven colourful tans — two large triangles, one medium, two small, a square and a parallelogram — wait in a tray below a shaded silhouette. Drag a tan onto the silhouette and tap it to turn it 45 degrees; dropped near a free matching slot at the right angle, it snaps in for 1,000 points, while a wrong angle makes it wiggle. Fill the whole shape within two minutes to win and earn bonus points for the time saved. After a win, Next Puzzle moves you on to the next level, which turns or mirrors the silhouette. The seven classic tans: two large, one medium and two small triangles, a square and a parallelogram Drag pieces from the tray and tap to rotate them in 45-degree steps Pieces snap into place when they are near a matching slot at the right angle 1,000 points per piece placed plus a time bonus for solving Press Start to begin the two-minute countdown Drag a tan from the tray onto the shaded silhouette Tap a tan to rotate it by 45 degrees"
+    },
+    {
+      "path": "/games/checkers",
+      "title": "Checkers",
+      "category": "Strategy Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Checkers pits you, playing red, against a robot playing black on a standard 8x8 board with 12 pieces each. You move first: tap a piece to see where it can go, then tap a highlighted square. Captures are mandatory and multi-jumps chain, and a piece that reaches the far row is crowned a King that can move both forwards and backwards. The robot looks several moves ahead before answering. Capture all of the robot's pieces or leave it with no legal moves to win; you lose if you run out of pieces or moves, or if the five-minute clock expires. Classic 8x8 checkers with 12 pieces per side A robot opponent that searches five moves ahead with alpha-beta minimax Mandatory captures and chained multi-jumps Kings crowned on the far row, moving in all four diagonal directions Press Start — you play red and move first Tap one of your pieces to select it and see its legal moves Tap a highlighted square to move diagonally forward"
+    },
+    {
+      "path": "/games/memory-match",
+      "title": "Memory Match",
+      "category": "Puzzle Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Memory Match is the classic card-matching game played with 3D cards on a 5x4 grid. Twenty face-down cards hide ten pairs of fruit, shuffled for every game. Tap two cards to turn them over: a matching pair stays face up and scores 1,000 points, while a miss shows both cards for a moment before turning them back. Find all ten pairs within five minutes to win a 5,000-point bonus plus extra points for time saved; if the clock runs out first, the round is lost. Classic tap-to-flip matching on a 5x4 grid of 20 cards Ten pairs of 3D fruit, shuffled every game 1,000 points per pair, a 5,000 bonus for clearing the board and a time bonus Five-minute countdown with a pairs-found counter Press Start to begin the five-minute countdown Tap a card to flip it face up Tap a second card to find its match"
+    },
+    {
+      "path": "/games/falling-sticks",
+      "title": "Falling Sticks",
+      "category": "Arcade Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Falling Sticks is a fast-paced reflex game where colorful 3D batons tumble and spin down over a perspective meadow, and you must catch each one before it lands on the grass. Tap a stick to catch it, or swipe across the screen to catch every stick your finger passes over in one stroke. Every catch is worth 500 points, and as your score climbs the sticks fall faster and appear more often. Each stick that hits the ground costs one of your three lives — survive the full two-minute countdown to win. 3D spinning sticks falling over a lit meadow scene with real depth and shadows Tap to catch, or swipe to catch every stick along your finger's path 500 points for every stick caught Three lives — each stick that lands on the grass costs one Press Start to begin the two-minute round Tap a falling stick to catch it — tapping anywhere along its length counts Swipe across the screen to catch several sticks in a single stroke"
+    },
+    {
+      "path": "/games/reversi",
+      "title": "Reversi",
+      "category": "Strategy Game",
+      "theme": [
+        "#ec4899",
+        "#8b5cf6"
+      ],
+      "description": "Reversi brings the classic Othello duel to an 8×8 green felt board, with you playing black against a robot playing white. Place a disc so it traps one or more lines of white discs between your discs, and every trapped disc flips to black in a ripple. The robot answers after a short think, weighing strong squares like corners with a shallow look-ahead and the occasional surprise move. When neither side can move, whoever owns more discs wins — but you must finish within the five-minute clock. Classic 8×8 Reversi / Othello rules against a robot opponent Your legal moves are marked with rings on the board Animated disc flips that ripple outward from the placed disc 200 points for every disc you flip, plus a 5,000-point win bonus Tap one of the ringed cells to place a black disc — you always move first Your disc must trap at least one straight line of white discs between it and another black disc Every trapped white disc flips to black, in any of the eight directions"
+    },
+    {
+      "path": "/video-editor/start",
+      "title": "Video Editor",
+      "category": "Browser Video Editor",
+      "theme": [
+        "#ef4444",
+        "#ec4899"
+      ],
+      "description": "The full browser-based multi-track video editor. Show a cinematic preview, layered colorful video and audio timeline tracks, trimming handles, playhead, transitions and editing controls. Local editing with no uploading."
+    }
+  ]
+}

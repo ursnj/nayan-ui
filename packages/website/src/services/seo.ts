@@ -3,6 +3,8 @@ import enginePackage from "@nayan-ui/engine/package.json";
 import gamesPackage from "@nayan-ui/games/package.json";
 import reactPackage from "../../../react/package.json";
 import seoBanners from "./seo-banners.json";
+import seoArtwork from "./seo-artwork.json";
+import individualArtwork from "./seo-artwork-individual.json";
 import {
   NATIVE_COMPONENT_COUNT,
   REACT_COMPONENT_COUNT,
@@ -18,11 +20,13 @@ export const SITE_NAME = "Nayan UI";
 export const LOGO_URL = `${SITE_URL}/nayan-ui.png`;
 
 /**
- * Each page's 1200×630 social banner, made by `bun scripts/seo-banners/generate.ts` into public/seo
- * and listed in seo-banners.json (path → URL with a content hash, so share caches refresh when a
- * banner changes). A page without one uses the home page's banner.
+ * AI-generated, branded artwork in public/seo/artwork takes precedence over the legacy
+ * rendered banners. Individual pages take precedence over section artwork; tag pages
+ * use the artwork of the component or tool whose content they display.
+ * All manifests use content hashes so social previews refresh when artwork changes.
+ * Keep curated artwork separate so running the legacy generator cannot replace it.
  */
-const BANNERS: Record<string, string> = seoBanners;
+const BANNERS: Record<string, string> = { ...seoBanners, ...seoArtwork, ...individualArtwork };
 export const BANNER_WIDTH = 1200;
 export const BANNER_HEIGHT = 630;
 
