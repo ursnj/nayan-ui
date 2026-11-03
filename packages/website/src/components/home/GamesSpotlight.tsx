@@ -20,7 +20,7 @@ const GamesSpotlight = () => (
       eyebrow="Games"
       id="games-heading"
       title="Play a game, or build your own"
-      lead="The Nayan engine runs the same 3D game on iOS, Android and the web. Start from a working Car Racing project in one command."
+      lead="The Nayan Game Engine runs the same 3D game on iOS, Android and the web. Start from a working Car Racing project in one command."
     />
     <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
       <div className="space-y-5">

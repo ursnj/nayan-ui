@@ -221,8 +221,8 @@ export const engineSoftwareSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "@id": `${ENGINE_URL}#software`,
-  name: "Nayan Engine (@nayan-ui/engine)",
-  alternateName: ["@nayan-ui/engine", "Nayan Engine"],
+  name: "Nayan Game Engine (@nayan-ui/engine)",
+  alternateName: ["@nayan-ui/engine", "Nayan Game Engine"],
   applicationCategory: "DeveloperApplication",
   applicationSubCategory: "Game engine",
   operatingSystem: "iOS, Android, Web",
@@ -256,7 +256,7 @@ export const gamesSoftwareSchema = {
   applicationCategory: "GameApplication",
   operatingSystem: "iOS, Android, Web",
   description:
-    "50+ ready-made games for React Native apps and React websites, rendered by the Nayan engine.",
+    "50+ ready-made games for React Native apps and React websites, rendered by the Nayan Game Engine.",
   url: GAMES_URL,
   downloadUrl: "https://www.npmjs.com/package/@nayan-ui/games",
   softwareVersion: gamesPackage.version,
@@ -277,5 +277,5 @@ export const gamesAbout = {
 export const engineAbout = {
   "@type": "SoftwareApplication",
   "@id": `${ENGINE_URL}#software`,
-  name: "Nayan Engine",
+  name: "Nayan Game Engine",
 };

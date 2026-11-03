@@ -18,7 +18,7 @@ export function tapScene(world: World, x: number, y: number) {
 export const GettingStartedGuides: EngineGuide[] = [
   {
     slug: "overview",
-    title: "Nayan Engine",
+    title: "Nayan Game Engine",
     description: "A 3D game engine for React and React Native on one Rust core.",
     sections: [
       {

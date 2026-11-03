@@ -11,13 +11,13 @@ import {
 const URL = `${ENGINE_URL}/playground`;
 
 export const metadata = buildPageMetadata({
-  title: "Nayan Engine Playground · Live 3D Code Editor",
+  title: "Nayan Game Engine Playground · Live 3D Code Editor",
   description:
     "Write @nayan-ui/engine code in a Monaco editor with autocomplete and type checking, and run the 3D scene live in your browser. Start from an example and share a link.",
   path: "/game-engine/playground",
   ogType: "website",
   keywords:
-    "nayan engine playground, react game engine playground, live 3d code editor, webgpu playground, monaco editor, react native game engine",
+    "nayan game engine playground, react game engine playground, live 3d code editor, webgpu playground, monaco editor, react native game engine",
 });
 
 const schemas = [
@@ -29,7 +29,7 @@ const schemas = [
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: "Nayan Engine Playground",
+    name: "Nayan Game Engine Playground",
     description:
       "A live code editor for @nayan-ui/engine: edit TypeScript with autocomplete and type checking, and run the 3D scene in the browser.",
     url: URL,

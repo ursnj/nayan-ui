@@ -1,5 +1,5 @@
 // The car, loaded from glTF files, and the roadside tree, built in code. The car is Khronos' "Car
-// Concept" sample (CC-BY 4.0, from a public-domain model by Unity Fan), converted by the Nayan engine
+// Concept" sample (CC-BY 4.0, from a public-domain model by Unity Fan), converted by the Nayan Game Engine
 // example's scripts/import-car.py into three models: the body (white, so each car paints its own
 // color), the glass, and the trim (tyres, rims, lights, black panels, mirrors, plate) in its own
 // colors. Model units are metres: it sits on y = 0 facing -z, about 2.5 wide (mirrors) by 1.15 tall

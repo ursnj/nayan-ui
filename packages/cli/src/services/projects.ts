@@ -15,7 +15,7 @@ type Template = (typeof TEMPLATES)[number];
 
 const TEMPLATE_DESCRIPTIONS: Record<Template, string> = {
   expo: "React Native Application with Expo & Nayan UI",
-  games: "3D games for iOS, Android and the web with the Nayan engine",
+  games: "3D games for iOS, Android and the web with the Nayan Game Engine",
   nextjs: "React Application with Next.js & Nayan UI",
   vite: "React Application with Vite & Nayan UI",
 };

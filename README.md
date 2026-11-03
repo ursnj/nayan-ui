@@ -31,7 +31,7 @@ Reusable Component Libraries for React and React Native and Devtools to help dev
 | [examples/vite](./examples/vite)     | React + Vite + Tailwind CSS v4 + Nayan UI |
 | [examples/nextjs](./examples/nextjs) | Next.js + Tailwind CSS v4 + Nayan UI      |
 | [examples/expo](./examples/expo)     | Expo + Uniwind + Nayan UI native          |
-| [examples/games](./examples/games)   | Nayan engine games for Expo and Vite      |
+| [examples/games](./examples/games)   | Nayan Game Engine games for Expo and Vite      |
 
 ## Quick Start
 

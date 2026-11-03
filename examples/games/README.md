@@ -1,4 +1,4 @@
-# Nayan Engine games example
+# Nayan Game Engine games example
 
 A Bun workspace with one game, **Car Racing**, that runs on iOS, Android and the web from the same code. It is built on [`@nayan-ui/engine`](https://www.nayanui.com/game-engine).
 

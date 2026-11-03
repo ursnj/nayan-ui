@@ -1016,7 +1016,7 @@ export default function TextAndFonts() {
 function Title({ font }: { font: Font }) {
   const score = useRef<{ label: Entity | null; value: number }>({ label: null, value: 0 });
   const world = useWorld(256, (w) => {
-    w.spawn({ text: "Nayan Engine", font, position: [0, 1, 0], scale: 0.9, color: "#FFB400", spin: [0, 0.4, 0] });
+    w.spawn({ text: "Nayan Game Engine", font, position: [0, 1, 0], scale: 0.9, color: "#FFB400", spin: [0, 0.4, 0] });
     // tabular: every digit is as wide as the widest, so the number doesn't jitter as it changes.
     score.current.label = w.spawn({ text: "Taps: 0", font, tabular: true, position: [0, -0.8, 0], scale: 0.5, color: "white" });
   });

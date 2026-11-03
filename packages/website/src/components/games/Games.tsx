@@ -112,7 +112,7 @@ const GamesMain = () => {
         eyebrow="Games"
         title="50+ ready-made games"
         titleAccent="For React Native apps and React websites"
-        lead="Puzzle, arcade, action and strategy games, each a single component with the same props, rendered by the Nayan engine."
+        lead="Puzzle, arcade, action and strategy games, each a single component with the same props, rendered by the Nayan Game Engine."
         actions={
           <>
             <a href="#all-games" className={BUTTON_PRIMARY}>

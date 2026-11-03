@@ -6,7 +6,7 @@ export const FEATURES = [
   {
     icon: Zap,
     title: "Native engine speed",
-    body: "Rendered by the Nayan engine: Rust and wgpu on iOS and Android, WebAssembly with WebGPU or WebGL2 in browsers.",
+    body: "Rendered by the Nayan Game Engine: Rust and wgpu on iOS and Android, WebAssembly with WebGPU or WebGL2 in browsers.",
   },
   {
     icon: Smartphone,
@@ -69,6 +69,6 @@ export const FAQS = [
   },
   {
     q: "Can I build my own game the same way?",
-    a: "Yes. Build a game documents the screen, constants, game and scene files every game in the library follows, on top of the Nayan engine.",
+    a: "Yes. Build a game documents the screen, constants, game and scene files every game in the library follows, on top of the Nayan Game Engine.",
   },
 ];

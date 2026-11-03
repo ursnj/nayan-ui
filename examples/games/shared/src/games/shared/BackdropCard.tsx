@@ -1,4 +1,4 @@
-// The game background for a modal card (game over, settings), drawn by the Nayan engine from the same
+// The game background for a modal card (game over, settings), drawn by the Nayan Game Engine from the same
 // mesh as the engine games' scenes. Like the original card background it fills its parent and shows the
 // pattern from its top-left corner (the card clips it), so cards look the same in every game.
 import React, { useCallback, useEffect, useMemo, useState } from 'react';

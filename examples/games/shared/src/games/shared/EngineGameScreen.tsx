@@ -1,4 +1,4 @@
-// The Playtura game screen for Nayan engine games: the game's scene in a GameView, with Playtura's
+// The Playtura game screen for Nayan Game Engine games: the game's scene in a GameView, with Playtura's
 // scoreboard, start/stop controls and game-over card drawn by the engine (EngineHud) as its overlay,
 // the game-over banner ad and the settings modal. A game supplies its scene and what the HUD shows:
 //
@@ -300,7 +300,7 @@ export function engineGame(id: GAME_IDS, Game: React.FC<GameProps & { settings: 
                 offset={settings.offset}
                 visible={!settings.isVisible}
                 error={!!failure || !isEngineAvailable}
-                message={failure ?? (!isEngineAvailable ? 'This game needs the Nayan engine, which is not available in this build.' : undefined)}
+                message={failure ?? (!isEngineAvailable ? 'This game needs the Nayan Game Engine, which is not available in this build.' : undefined)}
               />
             }>
             <GamePlayingContext.Provider value={props.onPlayingChange}>

@@ -1,4 +1,4 @@
-// Car Racing's screen, on the Nayan engine (@nayan-ui/engine): loads the assets, builds a run, and draws
+// Car Racing's screen, on the Nayan Game Engine (@nayan-ui/engine): loads the assets, builds a run, and draws
 // Playtura's scoreboard, controls and modals over the 3D view. The rules are in CarRacingGame.ts, what
 // it draws in CarRacingScene.ts, tuning and assets in CarRacingConstants.ts.
 //

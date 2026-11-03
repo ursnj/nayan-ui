@@ -20,7 +20,7 @@ export const metadata = buildPageMetadata({
   path: "/games",
   ogType: "website",
   keywords:
-    "react native games, react games, web games, mobile games, game library, nayan engine, puzzle games, arcade games, play games online, nayan ui games",
+    "react native games, react games, web games, mobile games, game library, nayan game engine, puzzle games, arcade games, play games online, nayan ui games",
 });
 
 // Every schema below describes what the page shows: the games grid, the feature cards, the four

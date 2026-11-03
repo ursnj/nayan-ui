@@ -1,5 +1,5 @@
 // Game sound effects: short, synthesised WAVs (scripts/build-sfx.py → src/assets/sfx) played through
-// the Nayan engine's mixer, which mixes them in Rust on the audio thread, so they're instant, overlap
+// the Nayan Game Engine's mixer, which mixes them in Rust on the audio thread, so they're instant, overlap
 // freely and never queue up the way spoken phrases did. Every game's events are mapped below onto the
 // sound that fits them best (with a volume and pitch where it helps tell sounds apart).
 //

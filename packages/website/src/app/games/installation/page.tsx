@@ -15,7 +15,7 @@ export const metadata = buildPageMetadata({
     "Create a games project with the Nayan UI CLI, or install @nayan-ui/games in Expo or a React website and render games, settings, results and themes.",
   path: "/games/installation",
   keywords:
-    "react native games installation, expo games setup, next.js games, vite games, nayan engine setup, nayan ui cli, create game project",
+    "react native games installation, expo games setup, next.js games, vite games, nayan game engine setup, nayan ui cli, create game project",
 });
 
 const schemas = [

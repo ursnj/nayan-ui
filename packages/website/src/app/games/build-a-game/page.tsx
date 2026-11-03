@@ -14,7 +14,7 @@ export const metadata = buildPageMetadata({
     "Build a @nayan-ui/games game on @nayan-ui/engine: the file pattern, useEngineGame, EngineGameScreen, the scene and the lifecycle rules.",
   path: "/games/build-a-game",
   keywords:
-    "nayan engine game tutorial, react native 3d game, useEngineGame, EngineGameScreen, game lifecycle",
+    "nayan game engine game tutorial, react native 3d game, useEngineGame, EngineGameScreen, game lifecycle",
 });
 
 const schemas = [

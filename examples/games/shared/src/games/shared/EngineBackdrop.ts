@@ -1,7 +1,7 @@
 import { type Geometry, type Model } from '@nayan-ui/engine';
 import { type GamePattern, gamePattern, PATTERN_GRID_COLOR, type PatternGradient, type PatternShape } from '../../helpers/GamePatternData';
 import type { GameTheme } from '../../services/ThemeService';
-// The Playtura game background (theme color plus the rainbow pattern), built by the Nayan engine with
+// The Playtura game background (theme color plus the rainbow pattern), built by the Nayan Game Engine with
 // no original. The pattern (helpers/GamePatternData) is turned into one opaque mesh whose vertex colors are
 // what the original pattern composites to at each point: the gradients on a fine grid, the shapes and grid
 // lines layered on top with the layers under them baked in. One draw call, nothing to blend each frame.

@@ -34,7 +34,7 @@ export const gamesData: Record<string, GameData> = {
       "Rows and columns the drop would complete light up before you let go",
       "50 points per block placed and 500 per row or column cleared",
       "Five-minute timer: last it out to win",
-      "Bevelled 3D blocks with pop-and-burst clear effects on the Nayan engine",
+      "Bevelled 3D blocks with pop-and-burst clear effects on the Nayan Game Engine",
       "Offline play with optional sounds, haptics and light/dark theme",
     ],
     howToPlay: [
@@ -1492,7 +1492,7 @@ export const gamesData: Record<string, GameData> = {
       "Sideswipes shove traffic aside with sparks; scraping the guard rail slows you",
       '"NEAR MISS!" callouts for passing very close to a car without touching it',
       "Night driving in dark mode, with lit street lamps, headlights and billboards",
-      "Native 3D on the Nayan engine with engine, crash and finish sounds plus haptics",
+      "Native 3D on the Nayan Game Engine with engine, crash and finish sounds plus haptics",
     ],
     howToPlay: [
       "Press Start to begin the race",
@@ -1538,7 +1538,7 @@ export const gamesData: Record<string, GameData> = {
       "Wheelie launch, physics-driven crashes, sparks and burning wrecks",
       '"NEAR MISS!" callouts for slipping past bikes very closely',
       "Night riding in dark mode",
-      "Native 3D on the Nayan engine with sound effects and haptics",
+      "Native 3D on the Nayan Game Engine with sound effects and haptics",
     ],
     howToPlay: [
       "Press Start — your rider launches with a wheelie",

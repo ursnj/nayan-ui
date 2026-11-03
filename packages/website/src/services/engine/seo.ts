@@ -11,9 +11,9 @@ import {
 } from "@/services/seo";
 import type { EngineGuide } from "./types";
 
-const DOCS = { name: "Nayan Engine documentation", url: ENGINE_URL };
+const DOCS = { name: "Nayan Game Engine documentation", url: ENGINE_URL };
 const KEYWORDS =
-  "Nayan engine, React game engine, React Native game engine, Rust, WebAssembly, WebGPU";
+  "Nayan Game Engine, React game engine, React Native game engine, Rust, WebAssembly, WebGPU";
 
 /** A guide's own URL: the overview is the docs' home. */
 export const guideUrl = (guide: EngineGuide) =>
@@ -65,7 +65,7 @@ export function engineGuideSchemas(guide: EngineGuide) {
     schemas.push({
       "@context": "https://schema.org",
       "@type": "SoftwareSourceCode",
-      name: "Nayan engine games example (Car Racing)",
+      name: "Nayan Game Engine games example (Car Racing)",
       description:
         "A Bun workspace with Car Racing for iOS, Android and the web: shared game code, an Expo app and a Vite app.",
       codeRepository: `${REPO_URL}/tree/main/examples/games`,

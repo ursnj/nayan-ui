@@ -1,7 +1,7 @@
 export const engineNavigation = [
   {
     slug: "overview",
-    title: "Nayan Engine",
+    title: "Nayan Game Engine",
     description:
       "Build games with one engine API for React and React Native. Start with a working example.",
     link: "/game-engine",

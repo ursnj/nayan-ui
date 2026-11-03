@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router';
 import { EXAMPLES } from './examples';
 
-export const TITLE = 'Nayan Engine Games';
+export const TITLE = 'Nayan Game Engine Games';
 
 export function Home() {
   useEffect(() => void (document.title = TITLE), []);
