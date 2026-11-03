@@ -1,5 +1,5 @@
 import { Suspense, useEffect, useState } from 'react';
-import { EXAMPLES, type Example } from './examples';
+import { type Example, EXAMPLES } from './examples';
 
 const TITLE = 'Nayan Engine Examples';
 const current = () => EXAMPLES.find((example) => `#/${example.id}` === window.location.hash) ?? null;
@@ -21,15 +21,14 @@ export function Gallery() {
 
   if (open) {
     return (
-      <main className="relative h-dvh w-full overflow-hidden">
+      <main className="relative flex h-dvh w-full flex-col overflow-hidden">
         <Suspense fallback={<p className="grid h-full place-items-center text-slate-300">Loading…</p>}>
           <open.Screen />
         </Suspense>
         <a
           href="#/"
           aria-label="All examples"
-          className="absolute right-4 top-3 rounded-xl bg-white/90 px-3.5 py-2 text-sm font-bold text-slate-900 shadow hover:bg-white"
-        >
+          className="absolute top-3 right-4 rounded-xl bg-white/90 px-3.5 py-2 text-sm font-bold text-slate-900 shadow hover:bg-white">
           ‹ Examples
         </a>
       </main>
@@ -48,8 +47,7 @@ export function Gallery() {
           <li key={example.id}>
             <a
               href={`#/${example.id}`}
-              className="block overflow-hidden rounded-2xl border border-slate-700 bg-slate-800 transition hover:-translate-y-0.5 hover:border-slate-500"
-            >
+              className="block overflow-hidden rounded-2xl border border-slate-700 bg-slate-800 transition hover:-translate-y-0.5 hover:border-slate-500">
               <div className="grid h-36 place-items-center text-6xl" style={{ backgroundColor: example.color }} aria-hidden>
                 {example.icon}
               </div>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BackHandler, Pressable, ScrollView, StatusBar, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { EXAMPLES, type Example } from './examples';
+import { type Example, EXAMPLES } from './examples';
 
 /** The app: a list of examples, and the open one full screen with a back button. */
 export function Gallery() {
@@ -34,8 +34,7 @@ function Opened({ example, onBack }: { example: Example; onBack: () => void }) {
         accessibilityRole="button"
         accessibilityLabel="All examples"
         onPress={onBack}
-        style={[styles.back, { top: insets.top + 12, right: insets.right + 16 }]}
-      >
+        style={[styles.back, { top: insets.top + 12, right: insets.right + 16 }]}>
         <Text style={styles.backText}>‹ Examples</Text>
       </Pressable>
     </View>
@@ -52,10 +51,7 @@ function Home({ onOpen }: { onOpen: (example: Example) => void }) {
   const cardWidth = (Math.min(width - 32, MAX_WIDTH) - GAP * (columns - 1)) / columns;
 
   return (
-    <ScrollView
-      style={styles.screen}
-      contentContainerStyle={[styles.home, { paddingTop: insets.top + 32, paddingBottom: insets.bottom + 32 }]}
-    >
+    <ScrollView style={styles.screen} contentContainerStyle={[styles.home, { paddingTop: insets.top + 32, paddingBottom: insets.bottom + 32 }]}>
       <View style={styles.page}>
         <Text style={styles.eyebrow}>@nayan-ui/engine</Text>
         <Text style={styles.heading}>Examples</Text>
@@ -66,8 +62,7 @@ function Home({ onOpen }: { onOpen: (example: Example) => void }) {
               key={example.id}
               accessibilityRole="button"
               onPress={() => onOpen(example)}
-              style={({ pressed }) => [styles.card, { width: cardWidth }, pressed && styles.pressed]}
-            >
+              style={({ pressed }) => [styles.card, { width: cardWidth }, pressed && styles.pressed]}>
               <View style={[styles.cover, { backgroundColor: example.color }]}>
                 <Text style={styles.icon}>{example.icon}</Text>
               </View>

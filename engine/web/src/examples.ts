@@ -1,4 +1,4 @@
-import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
+import { type ComponentType, lazy, type LazyExoticComponent } from 'react';
 
 /** One card in the gallery; `Screen` is the shared example, downloaded when it's first opened. */
 export type Example = {
