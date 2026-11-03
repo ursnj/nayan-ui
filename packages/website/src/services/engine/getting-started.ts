@@ -234,6 +234,24 @@ export function Board() {
     description: "Install the package and set up Expo, bare React Native or a browser host.",
     sections: [
       {
+        id: "start-from-the-template",
+        title: "Start from the template",
+        paragraphs: [
+          "The CLI creates a Bun workspace with an Expo app, a Vite app and the Car Racing example they share, already set up as below. Skip to your own scene, or install the package into an existing app instead.",
+        ],
+        examples: [
+          {
+            title: "Create a project",
+            platform: "shell",
+            language: "bash",
+            code: `npx @nayan-ui/cli new my-game -t engine
+cd my-game
+bun install
+bun run web      # or: bun run ios / bun run android (development build)`,
+          },
+        ],
+      },
+      {
         id: "install-the-package",
         title: "Install the package",
         paragraphs: [

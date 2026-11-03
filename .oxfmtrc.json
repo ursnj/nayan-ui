@@ -1,9 +1,7 @@
 {
   "overrides": [
     {
-      "files": [
-        "engine/**"
-      ],
+      "files": ["examples/engine/**"],
       "options": {
         "printWidth": 150,
         "quoteProps": "consistent",

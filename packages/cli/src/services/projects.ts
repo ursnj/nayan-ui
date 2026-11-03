@@ -10,25 +10,26 @@ const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const TEMPLATES = ["expo", "games", "nextjs", "vite"] as const;
+const TEMPLATES = ["expo", "engine", "nextjs", "vite"] as const;
 type Template = (typeof TEMPLATES)[number];
 
 const TEMPLATE_DESCRIPTIONS: Record<Template, string> = {
   expo: "React Native Application with Expo & Nayan UI",
-  games: "React Native Games with Expo & Nayan UI",
+  engine: "3D games for iOS, Android and the web with the Nayan engine",
   nextjs: "React Application with Next.js & Nayan UI",
   vite: "React Application with Vite & Nayan UI",
 };
 
 const TEMPLATE_NEXT_STEPS: Record<Template, string[]> = {
   expo: ["npm install", "npx expo start --clear"],
-  games: ["npm install", "npx expo prebuild --clean", "npx expo run:ios"],
+  engine: ["bun install", "bun run web    # or: bun run ios / bun run android"],
   nextjs: ["npm install", "npm run dev"],
   vite: ["npm install", "npm run dev"],
 };
 
 const GITHUB_REPO = "https://github.com/ursnj/nayan-ui";
-const EXCLUDED_DIRS = ["node_modules", ".git", "dist", "build"] as const;
+// Generated or local output; `ios` and `android` are made by `expo prebuild`.
+const EXCLUDED_DIRS = ["node_modules", ".git", ".expo", "dist", "build", "ios", "android"] as const;
 const PROJECT_NAME_REGEX = /^[a-zA-Z0-9-_]+$/;
 
 export function showTemplates() {
@@ -89,7 +90,7 @@ export async function interactiveNewProject() {
 /**
  * Create a new project from a template
  * @param projectName - Name of the project to create
- * @param template - Template to use (expo, games, vite)
+ * @param template - Template to use (expo, engine, nextjs, vite)
  */
 export async function createNewProject(projectName: string, template?: string) {
   const spinner = ora("Creating new project...").start();
@@ -138,7 +139,7 @@ export async function createNewProject(projectName: string, template?: string) {
         copyDirectory(templateSource, targetDir);
         fs.rmSync(tempDir, { recursive: true, force: true });
       } catch (gitError) {
-        const localExamplesDir = path.resolve(__dirname, "../../../examples");
+        const localExamplesDir = path.resolve(__dirname, "../../../../examples"); // from dist/services
         const localTemplateDir = path.join(localExamplesDir, template);
 
         if (fs.existsSync(localTemplateDir)) {

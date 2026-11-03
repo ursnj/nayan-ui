@@ -687,7 +687,7 @@ nayan-ui validate robots -i ./robots.txt`,
       {
         icon: Rocket,
         title: "Project scaffolding",
-        body: "Create projects from the Expo, Games, Next.js and Vite templates.",
+        body: "Create projects from the Expo, Engine, Next.js and Vite templates.",
       },
       {
         icon: MapIcon,
@@ -782,7 +782,10 @@ const DevtoolsMain = () => {
         }
       />
 
-      <SubHeader title="SEO Tools" description="Generate, validate, and optimize — right in the browser.">
+      <SubHeader
+        title="SEO Tools"
+        description="Generate, validate, and optimize — right in the browser."
+      >
         <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
           {SEO_TOOLS.map((tool) => {
             const Icon = tool.icon;
@@ -832,7 +835,10 @@ const DevtoolsMain = () => {
         </div>
       </SubHeader>
 
-      <SubHeader title="Image Tools" description="Browser-based image editing — your files never leave your device.">
+      <SubHeader
+        title="Image Tools"
+        description="Browser-based image editing — your files never leave your device."
+      >
         <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
           {IMAGE_TOOLS.map((tool) => {
             const Icon = tool.icon;
@@ -857,7 +863,10 @@ const DevtoolsMain = () => {
         </div>
       </SubHeader>
 
-      <SubHeader title="PDF Tools" description="Merge, split, compress, convert, and protect PDFs — server-side processing, nothing leaves your session.">
+      <SubHeader
+        title="PDF Tools"
+        description="Merge, split, compress, convert, and protect PDFs — server-side processing, nothing leaves your session."
+      >
         <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
           {PDF_TOOLS.map((tool) => {
             const Icon = tool.icon;
@@ -882,7 +891,10 @@ const DevtoolsMain = () => {
         </div>
       </SubHeader>
 
-      <SubHeader title="JSON Tools" description="Format, validate, and convert JSON — all in your browser.">
+      <SubHeader
+        title="JSON Tools"
+        description="Format, validate, and convert JSON — all in your browser."
+      >
         <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
           {JSON_TOOLS.map((tool) => {
             const Icon = tool.icon;
@@ -907,7 +919,10 @@ const DevtoolsMain = () => {
         </div>
       </SubHeader>
 
-      <SubHeader title="XML Tools" description="Format, validate, and convert XML — all in your browser.">
+      <SubHeader
+        title="XML Tools"
+        description="Format, validate, and convert XML — all in your browser."
+      >
         <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
           {XML_TOOLS.map((tool) => {
             const Icon = tool.icon;
@@ -932,7 +947,10 @@ const DevtoolsMain = () => {
         </div>
       </SubHeader>
 
-      <SubHeader title="Text Tools" description="Compare, count, convert, and transform text — all in your browser.">
+      <SubHeader
+        title="Text Tools"
+        description="Compare, count, convert, and transform text — all in your browser."
+      >
         <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
           {TEXT_TOOLS.map((tool) => {
             const Icon = tool.icon;
@@ -957,7 +975,10 @@ const DevtoolsMain = () => {
         </div>
       </SubHeader>
 
-      <SubHeader title="Developer Tools" description="UUIDs, colors, tokens, cron, and other everyday dev utilities.">
+      <SubHeader
+        title="Developer Tools"
+        description="UUIDs, colors, tokens, cron, and other everyday dev utilities."
+      >
         <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
           {DEV_TOOLS.map((tool) => {
             const Icon = tool.icon;

@@ -1006,7 +1006,8 @@ export function play(world: World, actor: Entity, model: LoadedModel, clip: stri
         examples: [
           {
             title: "Serve a production web build",
-            description: "Vite shown; serve any framework's built output the same way, then test on real devices.",
+            description:
+              "Vite shown; serve any framework's built output the same way, then test on real devices.",
             code: `bun run build        # vite build
 bunx vite preview    # serves dist/ as production will`,
             platform: "shell",
