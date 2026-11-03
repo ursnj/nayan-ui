@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import JsonLd from "@/components/helpers/JsonLd";
 import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/seo";
+import { getMenuItemByTag } from "@/services/Utils";
 import TagDetails from "@/components/tags/TagsDetails";
 export async function generateMetadata({
   params,
@@ -13,6 +14,8 @@ export async function generateMetadata({
     title: `${title} - React Component Tag`,
     description: `Browse Nayan UI React components tagged with "${title}". Find related components, examples, and documentation.`,
     path: `/react/tags/${tag}`,
+    // The page shows the one component this tag belongs to: share its banner.
+    bannerFor: getMenuItemByTag(tag, `/react/tags/${tag}`)?.link || "/react/tags",
     keywords: `${title}, react components, nayan ui, component tag, ui library`,
   });
 }

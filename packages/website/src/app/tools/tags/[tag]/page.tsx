@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import JsonLd from "@/components/helpers/JsonLd";
 import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/seo";
+import { getMenuItemByTag } from "@/services/Utils";
 import TagDetails from "@/components/tags/TagsDetails";
 export async function generateMetadata({
   params,
@@ -13,6 +14,8 @@ export async function generateMetadata({
     title: `${title} - Developer Tools Tag`,
     description: `Browse Nayan UI developer tools tagged with "${title}". Find related tools, documentation, and CLI utilities.`,
     path: `/tools/tags/${tag}`,
+    // The page shows the one tool this tag belongs to: share its banner.
+    bannerFor: getMenuItemByTag(tag, `/tools/tags/${tag}`)?.link || "/tools",
     keywords: `${title}, tools, nayan ui, developer tools, cli utilities`,
   });
 }

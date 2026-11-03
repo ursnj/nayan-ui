@@ -4,9 +4,12 @@ import Header from "@/components/helpers/Header";
 import JsonLd from "@/components/helpers/JsonLd";
 import ThemeProvider from "@/components/helpers/ThemeProvider";
 import {
+  BANNER_HEIGHT,
+  BANNER_WIDTH,
   SITE_DESCRIPTION,
   SITE_NAME,
   SITE_URL,
+  seoBannerUrl,
   organizationSchema,
   softwareApplicationSchema,
   websiteSchema,
@@ -29,17 +32,17 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: "/banner.png",
-        width: 1200,
-        height: 630,
-        alt: `${SITE_NAME} - React & React Native Component Library`,
+        url: seoBannerUrl("/"),
+        width: BANNER_WIDTH,
+        height: BANNER_HEIGHT,
+        alt: `${SITE_NAME} - Apps and games for React & React Native`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     creator: "@nayanui",
-    images: ["/banner.png"],
+    images: [seoBannerUrl("/")],
   },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   icons: { icon: "/logo.webp" },
