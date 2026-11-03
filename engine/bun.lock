@@ -10,7 +10,7 @@
       },
     },
     "mobile": {
-      "name": "@nayan-engine-example/mobile",
+      "name": "@nayan-engine/mobile",
       "version": "1.0.0",
       "dependencies": {
         "@nayan-engine-example/shared": "workspace:*",
@@ -35,7 +35,7 @@
       },
     },
     "web": {
-      "name": "@nayan-engine-example/web",
+      "name": "@nayan-engine/web",
       "version": "1.0.0",
       "dependencies": {
         "@nayan-engine-example/shared": "workspace:*",
@@ -274,13 +274,13 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
-    "@nayan-engine-example/mobile": ["@nayan-engine-example/mobile@workspace:mobile"],
-
     "@nayan-engine-example/shared": ["@nayan-engine-example/shared@workspace:shared"],
 
-    "@nayan-engine-example/web": ["@nayan-engine-example/web@workspace:web"],
+    "@nayan-engine/mobile": ["@nayan-engine/mobile@workspace:mobile"],
 
-    "@nayan-ui/engine": ["@nayan-ui/engine@../.engine/nayan-ui-engine.tgz", { "peerDependencies": { "expo-asset": "*", "react": "*", "react-native": "*" }, "optionalPeers": ["expo-asset", "react-native"] }, "sha512-3npPu5DU0EOiHPQpns4kNvuYIdvw/+WpCDPiDUBZmsGPxVbbvVHV49/kz7H8kRWCICPCyue7/g52s19kdDeTnQ=="],
+    "@nayan-engine/web": ["@nayan-engine/web@workspace:web"],
+
+    "@nayan-ui/engine": ["@nayan-ui/engine@../.engine/nayan-ui-engine.tgz", { "peerDependencies": { "expo-asset": "*", "react": "*", "react-native": "*" }, "optionalPeers": ["expo-asset", "react-native"] }, "sha512-PFVimvi4yMI6cx1A3Vn5gaTuO44LK2J56DQI8GSJgmNmuEiyy2fHEE38QBm3zWvCDXMc3NxeC27bx2hSMIhxag=="],
 
     "@noxcturnal/noxcturnal-darwin-arm64": ["@noxcturnal/noxcturnal-darwin-arm64@0.1.11", "", { "os": "darwin", "cpu": "arm64" }, "sha512-tqvZOVmSoiJzm7QjQ+whPxCP45J2C1zCAZnzc1HhwmJrFIWw/qyA8o9Cup0aVqnjNVAN+as9GHX+DbAmkCbGlQ=="],
 

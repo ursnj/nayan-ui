@@ -20,7 +20,6 @@ const requiredFiles = [
   'lib/web/index.js',
   'lib/web/engine_core_bg.wasm',
   'lib/web/audio-worklet.js',
-  'src/index.ts',
   'src/native/spec/NativeNayanEngine.ts'
 ];
 for (const artifact of requiredFiles) {

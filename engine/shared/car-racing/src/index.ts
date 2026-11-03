@@ -1,3 +1,4 @@
 export * from './CarRacingConstants';
-export { createGame, start, setAudible, setNight, steer, tick, dispose, session, type Game, type Phase } from './CarRacingGame';
+export { createGame, type Game, type Phase } from './CarRacingGame';
+export * from './CarRacingRules';
 export { useCarRacing } from './useCarRacing';

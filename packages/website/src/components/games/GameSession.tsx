@@ -14,6 +14,7 @@ import { ArrowLeft, BookOpen, Keyboard, Settings } from "lucide-react";
 import Link from "next/link";
 import { useTheme } from "@/components/helpers/ThemeProvider";
 import { KBD } from "@/design/system";
+import { shareGameScreenshot } from "@/lib/GameSharing";
 import { resolveSiteGameTheme } from "@/lib/GameTheme";
 import GamePopover from "./GamePopover";
 import { GAME_TOOLBAR_BUTTON } from "./GameToolbar";
@@ -68,7 +69,34 @@ const GameSession = memo(function GameSession({
 
   const surface = useRef<HTMLDivElement>(null);
   const [showKeys, setShowKeys] = useState(false);
-  const paused = panelOpen || showKeys;
+
+  // Share a screenshot of the game, as Playtua's web player does: from the HUD's share button and the
+  // game-over card. The game pauses once the frame is captured, until the share sheet closes.
+  const sharing = useRef(false);
+  const [sharePaused, setSharePaused] = useState(false);
+  const [shareStatus, setShareStatus] = useState<string | null>(null);
+  const shareGame = useCallback(async () => {
+    if (sharing.current || !surface.current) return;
+    sharing.current = true;
+    setShareStatus("Preparing screenshot…");
+    try {
+      setShareStatus(
+        await shareGameScreenshot(surface.current, gameId, title, () => setSharePaused(true)),
+      );
+    } catch (error) {
+      setShareStatus(error instanceof Error ? error.message : "Unable to share. Please try again.");
+    } finally {
+      sharing.current = false;
+      setSharePaused(false);
+    }
+  }, [gameId, title]);
+  useEffect(() => {
+    if (!shareStatus || shareStatus === "Preparing screenshot…") return;
+    const timer = window.setTimeout(() => setShareStatus(null), 5000);
+    return () => window.clearTimeout(timer);
+  }, [shareStatus]);
+
+  const paused = panelOpen || showKeys || sharePaused;
   const settingsOpen = settings.isVisible;
 
   const focusSurface = useCallback(() => {
@@ -148,12 +176,6 @@ const GameSession = memo(function GameSession({
     [setTheme, focusSurface],
   );
 
-  const [canShare, setCanShare] = useState(false);
-  useEffect(() => setCanShare(typeof navigator.share === "function"), []);
-  const share = useCallback(() => {
-    navigator.share?.({ title, url: window.location.href }).catch(() => undefined);
-  }, [title]);
-
   return (
     <div className="relative flex h-full w-full overflow-hidden">
       <div
@@ -171,7 +193,8 @@ const GameSession = memo(function GameSession({
               theme: settings.theme ?? siteTheme,
             }}
             onSettingsChange={changeSettings}
-            onShare={canShare ? share : undefined}
+            onShare={shareGame}
+            onShareScreenshot={shareGame}
           />
         ) : (
           <p role="alert" className="m-auto text-muted">
@@ -257,6 +280,15 @@ const GameSession = memo(function GameSession({
           </button>
         </div>
       </div>
+
+      {shareStatus && (
+        <p
+          role="status"
+          className="pointer-events-none absolute bottom-24 left-1/2 z-20 w-max max-w-[calc(100%-32px)] -translate-x-1/2 rounded-xl border border-default bg-surface px-4 py-3 text-center text-sm text-foreground shadow-lg"
+        >
+          {shareStatus}
+        </p>
+      )}
     </div>
   );
 });

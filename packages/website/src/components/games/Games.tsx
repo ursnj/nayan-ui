@@ -31,7 +31,7 @@ import {
   H4_CARD,
   PILL,
 } from "@/design/system";
-import { GAME_CATEGORY_COUNT, GAME_COUNT } from "@/services/Counts";
+import { GAME_CATEGORY_COUNT } from "@/services/Counts";
 import { GAMES_LIST } from "@/services/GamesData";
 import { REPO_URL } from "@/services/seo";
 
@@ -57,7 +57,7 @@ const categoryColors: Record<string, string> = {
 };
 
 const FACTS = [
-  `${GAME_COUNT} games`,
+  "50+ games",
   `${GAME_CATEGORY_COUNT} categories`,
   "iOS, Android and web",
   "One props API",
@@ -190,7 +190,7 @@ const GamesMain = () => {
         media={<GamesCollage />}
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Games" }]}
         eyebrow="Games"
-        title={`${GAME_COUNT} ready-made games`}
+        title="50+ ready-made games"
         titleAccent="For React Native apps and React websites"
         lead="Puzzle, arcade, action and strategy games, each a single component with the same props, rendered by the Nayan engine."
         actions={
@@ -199,7 +199,7 @@ const GamesMain = () => {
               <Gamepad2 aria-hidden className="mr-2 h-5 w-5" />
               Play a game
             </a>
-            <Link href="/games/installation" className={BUTTON_SECONDARY}>
+            <Link href="/game-engine/installation" className={BUTTON_SECONDARY}>
               <Package aria-hidden className="mr-2 h-5 w-5" />
               Installation
             </Link>
@@ -324,7 +324,7 @@ const GamesMain = () => {
         title="Drop a game into your app"
         lead="Install the package, render one component and get a result when the run ends."
       >
-        <Link href="/games/installation" className={BUTTON_PRIMARY}>
+        <Link href="/game-engine/installation" className={BUTTON_PRIMARY}>
           <Package aria-hidden className="mr-2 h-5 w-5" />
           Get started
         </Link>
