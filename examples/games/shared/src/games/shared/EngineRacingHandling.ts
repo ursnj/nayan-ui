@@ -1,5 +1,5 @@
 /** Responsive lane targeting with filtered input and an analytically damped movement curve. */
-export type SteeringState = { d: number; target: number; lateral: number; steeringGoal?: number };
+type SteeringState = { d: number; target: number; lateral: number; steeringGoal?: number };
 export function stepSteering(state: SteeringState, goal: number, dt: number, maxSpeed = 9, response = 10.5, playing = true) {
   if (dt <= 0) return;
   if (!playing) {

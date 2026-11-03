@@ -48,9 +48,9 @@ const SHARE_PROMPT = 'Share your goals with your family and friends and challeng
 export type HudColumn = { label: string; value: string; color?: string; valueColor?: string; lives?: { count: number; max: number } };
 
 /** Top edge of the scoreboard; `offset` is the height of the host app's header, 0 when there is none. */
-export const getScoreBoardTop = (offset = 0) => (offset > 0 ? offset + 15 : 15);
+const getScoreBoardTop = (offset = 0) => (offset > 0 ? offset + 15 : 15);
 /** Insets for a React touch surface over the scene, leaving the native HUD's controls reachable. */
-export const getSceneInputInsets = (offset = 0) => ({
+const getSceneInputInsets = (offset = 0) => ({
   top: getScoreBoardTop(offset) + BOARD_HEIGHT + 10,
   bottom: ROW_PAD_V + MAIN_HEIGHT + 10 + 5
 });
@@ -60,11 +60,6 @@ export const scoreColumn = (score: number, label = 'SCORE', format: (n: number) 
   label,
   value: format(score)
 });
-/** Time as m:ss, red at or under `lowAt` seconds (0: only at zero). */
-export const timerColumn = (seconds: number, theme: GameTheme, lowAt = 30, label = 'TIMER'): HudColumn => {
-  const s = Math.max(0, Math.ceil(seconds));
-  return { label, value: formatTime(s), valueColor: s <= lowAt ? theme.DANGER : undefined };
-};
 export const livesColumn = (count: number, max: number, label = 'LIVES'): HudColumn => ({ label, value: `${count}/${max}`, lives: { count, max } });
 export const textColumn = (label: string, value: string | number, color?: string): HudColumn => ({ label, value: String(value), color });
 
@@ -74,8 +69,8 @@ const HEART_SIZE = 20;
 const HEART_GAP = 2;
 const HEART_ON = '#E53935';
 const HEART_OFF = '#2B2B2B';
-export type HudButton = 'main' | 'leaderboard' | 'share' | 'choice';
-export type HudActions = { onStart: () => void; onStop: () => void; onShare?: () => void; onShowLeaderboard?: () => void };
+type HudButton = 'main' | 'leaderboard' | 'share' | 'choice';
+type HudActions = { onStart: () => void; onStop: () => void; onShare?: () => void; onShowLeaderboard?: () => void };
 
 type Rect = { id: HudButton; x: number; y: number; w: number; h: number; root: Entity; action?: () => void };
 

@@ -211,20 +211,6 @@ export const NIGHT_SCENE = {
   GROUND: ['#3B2F2A', '#2A211E']
 } as const;
 
-/**
- * Day palette for the shared scene hills in light mode (classic keeps each game's original hills).
- * Far layers are hazier and bluer (atmospheric perspective); each layer is [ridge, base].
- */
-export const DAY_SCENE = {
-  HILL: {
-    FAR: ['#BCD8C8', '#A6CBB6'],
-    MID: ['#93C29E', '#7DB38A'],
-    NEAR: ['#74AE7E', '#5E9C69'],
-    RIM: 'rgba(255, 255, 240, 0.18)', // a hint of sunlight, not an outline
-    MIST: 'rgba(255, 255, 255, 0.28)'
-  }
-} as const;
-
 /** Built-in palettes (light / dark default to Playtura's colours). Use resolveGameTheme to get the active ones. */
 export const GAME_THEMES = {
   classic: CLASSIC_THEME,
@@ -235,7 +221,7 @@ export const GAME_THEMES = {
 type DeepPartial<T> = { [K in keyof T]?: T[K] extends readonly unknown[] ? T[K] : T[K] extends object ? DeepPartial<T[K]> : T[K] };
 
 /** Colours a host app may override per mode; anything left out keeps the built-in value. */
-export type GameThemeOverrides = Partial<Record<GameThemeMode, DeepPartial<Omit<GameTheme, 'mode' | 'isDark'>>>>;
+type GameThemeOverrides = Partial<Record<GameThemeMode, DeepPartial<Omit<GameTheme, 'mode' | 'isDark'>>>>;
 
 const mergeTheme = <T extends object>(base: T, override?: DeepPartial<T>): T => {
   if (!override) return base;
@@ -254,19 +240,6 @@ const mergeTheme = <T extends object>(base: T, override?: DeepPartial<T>): T => 
 // Active light / dark themes: the built-ins until an app calls configureGameThemes. Built once per call,
 // so each mode keeps one stable object (games cache styles and rendered elements per theme object).
 let activeThemes: Record<GameThemeMode, GameTheme> = { light: LIGHT_THEME, dark: DARK_THEME };
-
-/**
- * Override the light / dark game colours with the host app's palette. Call once at app start, before
- * any game renders (e.g. at module scope in the root layout). The classic theme is not configurable.
- *
- * configureGameThemes({ light: { BACKGROUND: '#DCE7F6', SOLID: '#0F62F2', BOARD: { CELL_HIGHLIGHT: 'rgba(15, 98, 242, 0.22)' } } });
- */
-export const configureGameThemes = (overrides: GameThemeOverrides) => {
-  activeThemes = {
-    light: mergeTheme<GameTheme>(LIGHT_THEME, overrides.light as DeepPartial<GameTheme> | undefined),
-    dark: mergeTheme<GameTheme>(DARK_THEME, overrides.dark as DeepPartial<GameTheme> | undefined)
-  };
-};
 
 /** Active theme for a settings value; games that have not opted in (or no theme passed) get `classic`. */
 export const resolveGameTheme = (mode?: GameThemeMode): GameTheme => (mode ? activeThemes[mode] : CLASSIC_THEME);

@@ -285,16 +285,3 @@ export function cardBackdropMesh(theme: GameTheme, width: number, height: number
   }
   return mesh;
 }
-
-/**
- * The background behind a centred, one-unit-per-point scene `width` x `height` (the view's size), at
- * depth `z`: the pattern starts at the view's top-left, as the original screens draw it.
- */
-export function spawnBackdrop(world: World, width: number, height: number, z: number, theme: GameTheme): Entity {
-  return world.spawn({ mesh: backdropMesh(theme), position: [-width / 2, height / 2, z], color: [1, 1, 1, 1], pickable: false });
-}
-
-/** Repaints a backdrop for a new theme. */
-export function setBackdropTheme(world: World, backdrop: Entity, theme: GameTheme) {
-  world.set(backdrop, { mesh: backdropMesh(theme) });
-}

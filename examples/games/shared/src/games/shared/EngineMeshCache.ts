@@ -35,7 +35,3 @@ export function cacheGameAsset<T>(key: string, build: () => T): T {
 export function peekGameAsset<T>(key: string): T | undefined {
   return cacheFor(key).peek<T>(key);
 }
-
-export const flushProceduralCache = async () => {
-  await Promise.all([...caches.values()].map((cache) => cache.flush()));
-};

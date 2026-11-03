@@ -68,19 +68,12 @@ function gameSoundConfigs(gameId: string): SoundConfig[] {
 /** Loads a game's effects on opening, including games excluded from homepage preloading. */
 export const preloadGameSounds = (gameId: string): void => preloadSounds(gameSoundConfigs(gameId));
 
-/** Decode only the selected games' effects, sharing each clip and leaving other banks lazy. */
-export function* warmSoundAssets(gameIds: readonly string[]): Iterable<() => Promise<unknown>> {
-  const names = new Set<SfxName>();
-  for (const id of gameIds) for (const sound of gameSoundConfigs(id)) if (sound.sfx) names.add(sound.sfx);
-  yield () => Promise.all([...names].map((name) => loadBank(name)?.ready));
-}
-
 export const playSound = (soundConfig: SoundConfig, soundEnabled: boolean, _force?: boolean): void => {
   playSoundVoice(soundConfig, soundEnabled);
 };
 
 /** For game-owned effects that must stop immediately when an action changes. */
-export const playSoundVoice = (soundConfig: SoundConfig, soundEnabled: boolean): Voice | null => {
+const playSoundVoice = (soundConfig: SoundConfig, soundEnabled: boolean): Voice | null => {
   if (!soundEnabled || !soundConfig?.sfx) return null;
   const b = loadBank(soundConfig.sfx);
   if (!b) return null;

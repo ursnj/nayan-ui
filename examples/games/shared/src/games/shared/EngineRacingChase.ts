@@ -6,7 +6,7 @@ export const createChase = () => ({
   target: [0, 0.2, 0] as Vector,
   initialized: false
 });
-export type Chase = ReturnType<typeof createChase>;
+type Chase = ReturnType<typeof createChase>;
 
 /** Filter camera offsets only: translation stays locked to the exact displayed car pose. */
 export function updateChase(chase: Chase, camera: Camera, anchor: Vec3, eye: Vec3, target: Vec3, dt: number) {

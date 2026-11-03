@@ -27,10 +27,10 @@ import { useLiveState } from './useLiveState';
 export type GamePhase = 'ready' | 'playing' | 'over';
 type Phase = GamePhase;
 /** How an ended game came out; a draw is reported as a cancel. */
-export type GameResult = 'win' | 'lose' | 'draw';
+type GameResult = 'win' | 'lose' | 'draw';
 
 /** What every engine game's state exposes to its screen. */
-export type EngineGameModel = {
+type EngineGameModel = {
   world: World | null;
   camera: Camera;
   score?: number;
@@ -44,20 +44,20 @@ export type EngineGameModel = {
 export type Feedback = (sound?: SoundConfig | null, haptic?: HapticType | null) => void;
 
 /** What a game event plays. */
-export type EventFeedback = { sound?: SoundConfig | null; haptic?: HapticType | null };
+type EventFeedback = { sound?: SoundConfig | null; haptic?: HapticType | null };
 
 /** The events a game reports through `g.onEvent(event)`. */
 type EventOf<G> = G extends { onEvent: (event: infer E) => void } ? E : never;
 
 /** The world's scoreboard (kept in Rust), as the screen shows it. */
-export type BoardState = {
+type BoardState = {
   score: number;
   /** Whole seconds shown: left on a countdown, elapsed otherwise. */
   seconds: number;
   lives: number;
 };
 
-export type EngineGameSpec<G extends EngineGameModel> = {
+type EngineGameSpec<G extends EngineGameModel> = {
   gameId: string;
   create: (theme: GameTheme) => G;
   start: (g: G) => void;

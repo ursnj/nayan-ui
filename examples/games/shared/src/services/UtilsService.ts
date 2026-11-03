@@ -31,7 +31,7 @@ export interface GameSettings {
   theme?: GameThemeMode;
 }
 
-export interface GameCompletionMetrics {
+interface GameCompletionMetrics {
   status: 'win' | 'lose' | 'cancel';
   score: string;
   additionalData?: Record<string, any>; // Optional game-specific data
@@ -59,73 +59,12 @@ export const DEFAULT_GAME_SETTINGS: GameSettings = {
 };
 
 export enum GAME_IDS {
-  WHACK_A_MOLE = 'whack-a-mole',
-  POPIT_FIDGET = 'popit-fidget',
-  FRUIT_NINJA = 'fruit-ninja',
-  BALLOON_BLASTER = 'balloon-blaster',
-  SPACE_FIGHTER = 'space-fighter',
-  MAZE_RUNNER = 'maze-runner',
-  SLIDING_NUMBERS = 'sliding-numbers',
-  GAME_2048 = 'game-2048',
-  DINO_JUMP = 'dino-jump',
-  COLORS_SORT = 'colors-sort',
-  FRUIT_MERGER = 'fruit-merger',
-  FLAPPY_BIRD = 'flappy-bird',
-  CANDY_CRUSH = 'candy-crush',
-  SNAKE_3D = 'snake-3d',
-  CAR_RACING = 'car-racing',
-  BIKE_RACING = 'bike-racing',
-  BLOCK_BLAST = 'block-blast',
-  BUBBLE_SHOOTER = 'bubble-shooter',
-  PERFECT_CIRCLE = 'perfect-circle',
-  SPIDER_SOLITAIRE = 'spider-solitaire',
-  TIC_TAC_TOE = 'tic-tac-toe',
-  PAC_MAN = 'pac-man',
-  TILE_HOME = 'tile-home',
-  WORD_SEARCH = 'word-search',
-  CONNECT_EM_ALL = 'connect-em-all',
-  NUTS_AND_BOLTS = 'nuts-and-bolts',
-  NUMBER_SEARCH = 'number-search',
-  DOTS_AND_BOXES = 'dots-and-boxes',
-  LUDO_KING = 'ludo-king',
-  TANK_1990 = 'tank-1990',
-  BLOCK_BREAKER = 'block-breaker',
-  STACK_TOWER = 'stack-tower',
-  MINE_SWEEPER = 'mine-sweeper',
-  SUDOKU = 'sudoku',
-  KNIFE_HIT = 'knife-hit',
-  COLOR_SWITCH = 'color-switch',
-  PIPE_CONNECT = 'pipe-connect',
-  ARROWS = 'arrows',
-  FIND_DIFFERENT_NUMBER = 'find-different-number',
-  SNAKES_AND_LADDERS = 'snakes-and-ladders',
-  BLUK = 'bluk',
-  CHAMELEON_RUN = 'chameleon-run',
-  MOB_CONTROL = 'mob-control',
-  PAPER_IO = 'paper-io',
-  CROSSY_ROAD = 'crossy-road',
-  TANGRAM = 'tangram',
-  CHECKERS = 'checkers',
-  MEMORY_MATCH = 'memory-match',
-  FALLING_STICKS = 'falling-sticks',
-  REVERSI = 'reversi',
-  PENGUIN_RUN = 'penguin-run',
-  PLAY_WITH_TUA = 'play-with-tua',
-  TREASURE_HUNT = 'treasure-hunt'
+  CAR_RACING = 'car-racing'
 }
 
-export type GameComponent = ComponentType<GameProps>;
+type GameComponent = ComponentType<GameProps>;
 
 export type GameCategory = 'arcade' | 'block' | 'casual' | 'action' | 'brain' | 'education' | 'puzzle' | 'racing' | 'strategy';
-
-export interface GameDefinition {
-  id: GAME_IDS;
-  title: string;
-  description: string;
-  instructions: string[];
-  categories: GameCategory[];
-  component: GameComponent;
-}
 
 export const formatTime = (seconds: number): string => {
   const mins = Math.floor(seconds / 60);
