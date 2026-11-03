@@ -1,40 +1,14 @@
-import { Suspense, useEffect, useState } from 'react';
-import { type Example, EXAMPLES } from './examples';
+import { useEffect } from 'react';
+import { Link } from 'react-router';
+import { EXAMPLES } from './examples';
 
-const TITLE = 'Nayan Engine Examples';
-const current = () => EXAMPLES.find((example) => `#/${example.id}` === window.location.hash) ?? null;
+export const TITLE = 'Nayan Engine Examples';
 
-/** The site: a grid of examples, and the open one full screen. Each example has its own URL hash. */
-export function Gallery() {
-  const [open, setOpen] = useState<Example | null>(current);
-
-  // Links, the back button and the browser's back/forward all just change the hash.
+/** The list of examples; each card opens `/<id>`. */
+export function Home() {
   useEffect(() => {
-    const sync = () => setOpen(current());
-    window.addEventListener('hashchange', sync);
-    return () => window.removeEventListener('hashchange', sync);
+    document.title = TITLE;
   }, []);
-
-  useEffect(() => {
-    document.title = open ? `${open.title} · ${TITLE}` : TITLE;
-  }, [open]);
-
-  if (open) {
-    return (
-      <main className="relative flex h-dvh w-full flex-col overflow-hidden">
-        <Suspense fallback={<p className="grid h-full place-items-center text-slate-300">Loading…</p>}>
-          <open.Screen />
-        </Suspense>
-        <a
-          href="#/"
-          aria-label="All examples"
-          className="absolute top-3 right-4 rounded-xl bg-white/90 px-3.5 py-2 text-sm font-bold text-slate-900 shadow hover:bg-white"
-        >
-          ‹ Examples
-        </a>
-      </main>
-    );
-  }
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
@@ -46,8 +20,8 @@ export function Gallery() {
       <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {EXAMPLES.map((example) => (
           <li key={example.id}>
-            <a
-              href={`#/${example.id}`}
+            <Link
+              to={`/${example.id}`}
               className="block overflow-hidden rounded-2xl border border-slate-700 bg-slate-800 transition hover:-translate-y-0.5 hover:border-slate-500"
             >
               <div className="grid h-36 place-items-center text-6xl" style={{ backgroundColor: example.color }} aria-hidden>
@@ -64,7 +38,7 @@ export function Gallery() {
                   ))}
                 </ul>
               </div>
-            </a>
+            </Link>
           </li>
         ))}
       </ul>

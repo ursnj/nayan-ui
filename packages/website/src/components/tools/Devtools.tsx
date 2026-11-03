@@ -687,7 +687,7 @@ nayan-ui validate robots -i ./robots.txt`,
       {
         icon: Rocket,
         title: "Project scaffolding",
-        body: "Create projects from the Expo, Engine, Next.js and Vite templates.",
+        body: "Create projects from the Expo, Games, Next.js and Vite templates.",
       },
       {
         icon: MapIcon,

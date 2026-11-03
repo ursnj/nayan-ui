@@ -3,6 +3,12 @@
 
 // ── Installation ──────────────────────────────────────────────────────
 
+export const createProjectCode = `npx @nayan-ui/cli new my-game -t games
+cd my-game
+bun install
+bun run web        # browser
+bun run ios        # or: bun run android (development build)`;
+
 export const installNativeCode = `npx expo install @nayan-ui/games @nayan-ui/engine expo-asset expo-modules-core expo-build-properties`;
 
 export const installWebCode = `npm install @nayan-ui/games @nayan-ui/engine react react-dom`;

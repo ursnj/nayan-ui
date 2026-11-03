@@ -10,19 +10,19 @@ const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const TEMPLATES = ["expo", "engine", "nextjs", "vite"] as const;
+const TEMPLATES = ["expo", "games", "nextjs", "vite"] as const;
 type Template = (typeof TEMPLATES)[number];
 
 const TEMPLATE_DESCRIPTIONS: Record<Template, string> = {
   expo: "React Native Application with Expo & Nayan UI",
-  engine: "3D games for iOS, Android and the web with the Nayan engine",
+  games: "3D games for iOS, Android and the web with the Nayan engine",
   nextjs: "React Application with Next.js & Nayan UI",
   vite: "React Application with Vite & Nayan UI",
 };
 
 const TEMPLATE_NEXT_STEPS: Record<Template, string[]> = {
   expo: ["npm install", "npx expo start --clear"],
-  engine: ["bun install", "bun run web    # or: bun run ios / bun run android"],
+  games: ["bun install", "bun run web    # or: bun run ios / bun run android"],
   nextjs: ["npm install", "npm run dev"],
   vite: ["npm install", "npm run dev"],
 };
@@ -90,7 +90,7 @@ export async function interactiveNewProject() {
 /**
  * Create a new project from a template
  * @param projectName - Name of the project to create
- * @param template - Template to use (expo, engine, nextjs, vite)
+ * @param template - Template to use (expo, games, nextjs, vite)
  */
 export async function createNewProject(projectName: string, template?: string) {
   const spinner = ora("Creating new project...").start();

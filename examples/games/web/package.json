@@ -11,10 +11,11 @@
   },
   "dependencies": {
     "@nayan-engine-example/shared": "workspace:*",
-    "@nayan-ui/engine": "^1.0.0-beta.4",
+    "@nayan-ui/engine": "file:/Users/ndevasan/Desktop/projects/test/nayan-ui/packages/website/scripts/nayan-ui-engine.tgz",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "react-native-web": "^0.21.0"
+    "react-native-web": "^0.21.0",
+    "react-router": "^7.18.5"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.11",

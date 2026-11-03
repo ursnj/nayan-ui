@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
-import { Platform, Pressable, StatusBar, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { GameView } from '@nayan-ui/engine';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import type { ExampleProps } from '../../types';
 import { FOG, LIGHT, LIVES, SKY } from './CarRacingConstants';
 import { useCarRacing } from './useCarRacing';
 
@@ -12,21 +13,24 @@ const FILL = { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 } as c
 
 /**
  * The whole game as one component, for React Native and (through react-native-web) the browser. It
- * fills its parent and leaves the top-right corner free for the host's back button.
+ * fills its parent; the HUD starts at `offset`, below the host's header.
  */
-export function CarRacing() {
+export function CarRacing(props: ExampleProps) {
   return (
     <SafeAreaProvider>
-      <Screen />
+      <Screen {...props} />
     </SafeAreaProvider>
   );
 }
 
-function Screen() {
+function Screen({ offset, onPlayingChange }: ExampleProps) {
   const racing = useCarRacing();
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const over = racing.phase === 'won' || racing.phase === 'lost';
+
+  const playing = racing.phase === 'playing';
+  useEffect(() => onPlayingChange?.(playing), [playing, onPlayingChange]);
 
   // In the browser, arrow keys or A/D steer while held.
   const { steer } = racing;
@@ -51,7 +55,6 @@ function Screen() {
 
   return (
     <View style={styles.screen}>
-      <StatusBar hidden />
       {racing.world && racing.game && (
         <GameView
           source={racing.world}
@@ -67,7 +70,7 @@ function Screen() {
         />
       )}
 
-      <View style={[styles.hud, { paddingTop: insets.top + 12 }]} pointerEvents="box-none">
+      <View style={[styles.hud, { paddingTop: offset ?? insets.top + 12 }]} pointerEvents="box-none">
         <View style={styles.stats} pointerEvents="none">
           <Stat label="SCORE" value={racing.score.toLocaleString()} />
           <Stat label="LIVES" value={'♥'.repeat(racing.lives) + '♡'.repeat(Math.max(0, LIVES - racing.lives))} />

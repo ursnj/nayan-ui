@@ -1,15 +1,15 @@
-import { type ComponentType, lazy, type LazyExoticComponent } from 'react';
+import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
+import type { ExampleProps } from '@nayan-engine-example/shared';
 
-/** One card in the gallery; `Screen` is the shared example, downloaded when it's first opened. */
+/** One card in the list; `Screen` is the shared example, opened at `/<id>` and downloaded then. */
 export type Example = {
-  /** Its URL hash: `#/car-racing`. */
   id: string;
   title: string;
   description: string;
   icon: string;
   color: string;
   tags: string[];
-  Screen: LazyExoticComponent<ComponentType>;
+  Screen: LazyExoticComponent<ComponentType<ExampleProps>>;
 };
 
 export const EXAMPLES: Example[] = [
@@ -23,3 +23,5 @@ export const EXAMPLES: Example[] = [
     Screen: lazy(() => import('@nayan-engine-example/shared').then((m) => ({ default: m.CarRacing })))
   }
 ];
+
+export const findExample = (id?: string) => EXAMPLES.find((example) => example.id === id);

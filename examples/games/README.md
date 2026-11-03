@@ -3,7 +3,7 @@
 Games and demos built on `@nayan-ui/engine` for iOS, Android and the browser. Each example is a React Native component in `shared/`, used unchanged by both apps: the Expo app renders it directly, the Vite app through `react-native-web`. Each app has its own gallery that lists the examples and opens one full screen. The mobile gallery is written in React Native; the web gallery is React DOM with Tailwind, and gives every example its own URL (`#/car-racing`).
 
 ```text
-engine/
+games/
 ├── shared/                      # the examples, nothing else
 │   ├── index.ts                 # exports each example's component
 │   └── car-racing/              # one folder per example: src/, assets/, tests/
@@ -26,7 +26,7 @@ engine/
 ## Create a project
 
 ```bash
-npx @nayan-ui/cli new my-game -t engine
+npx @nayan-ui/cli new my-game -t games
 cd my-game
 bun install
 ```

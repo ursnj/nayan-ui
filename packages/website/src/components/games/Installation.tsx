@@ -10,6 +10,7 @@ import {
   appJsonCode,
   catalogCode,
   clearGameAssetsCode,
+  createProjectCode,
   devBuildCode,
   endGameCode,
   installNativeCode,
@@ -65,6 +66,32 @@ const GamesInstallation = () => {
         </NLink>{" "}
         1.0.0-beta.2+ on iOS, Android and the web (1.19.0 and earlier are the Skia build).
       </p>
+
+      <div className="mb-8">
+        <h2 className={H2_DOC}>Create a project with the CLI</h2>
+        <p className={P}>
+          The{" "}
+          <NLink href="/tools" className={LINK}>
+            Nayan UI CLI
+          </NLink>{" "}
+          creates a games project in one command: a Bun workspace with an Expo app for iOS and
+          Android, a Vite app for the browser, and a Car Racing game in <code>shared/</code> that
+          both run unchanged. The engine, Metro and Vite are already set up, so add your own games
+          next to Car Racing, or install @nayan-ui/games below to bring in the ready-made ones.
+        </p>
+        <Code language="bash" code={createProjectCode} />
+        <p className={P}>
+          Needs{" "}
+          <a href="https://bun.sh" target="_blank" rel="noopener noreferrer" className={LINK}>
+            Bun
+          </a>
+          . The mobile app runs in a development build, not Expo Go; see{" "}
+          <NLink href="/games/build-a-game" className={LINK}>
+            build a game
+          </NLink>{" "}
+          for how a game is put together.
+        </p>
+      </div>
 
       <div className="mb-8">
         <h2 className={H2_DOC}>Requirements</h2>

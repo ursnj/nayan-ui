@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
-import { CarRacing } from '@nayan-engine-example/shared';
+import { CarRacing, type ExampleProps } from '@nayan-engine-example/shared';
 
-/** One card in the gallery; `Screen` is the shared example component. */
+/** One card in the list; `Screen` is the shared example, opened at `/<id>`. */
 export type Example = {
   id: string;
   title: string;
@@ -9,7 +9,7 @@ export type Example = {
   icon: string;
   color: string;
   tags: string[];
-  Screen: ComponentType;
+  Screen: ComponentType<ExampleProps>;
 };
 
 export const EXAMPLES: Example[] = [
@@ -23,3 +23,5 @@ export const EXAMPLES: Example[] = [
     Screen: CarRacing
   }
 ];
+
+export const findExample = (id?: string) => EXAMPLES.find((example) => example.id === id);

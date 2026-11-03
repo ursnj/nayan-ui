@@ -244,7 +244,7 @@ export function Board() {
             title: "Create a project",
             platform: "shell",
             language: "bash",
-            code: `npx @nayan-ui/cli new my-game -t engine
+            code: `npx @nayan-ui/cli new my-game -t games
 cd my-game
 bun install
 bun run web      # or: bun run ios / bun run android (development build)`,

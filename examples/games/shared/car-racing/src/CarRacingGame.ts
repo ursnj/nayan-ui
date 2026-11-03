@@ -29,6 +29,10 @@ type Rival = { entity: Entity; x: number; z: number; hit: boolean };
 
 export type Game = ReturnType<typeof createGame>;
 
+// Tiles kept behind the car, so the ground reaches under the camera on wide screens too.
+const BEHIND = 2;
+const tileZ = (i: number) => (BEHIND - i) * TILE;
+
 const pick = <T>(items: readonly T[]) => items[Math.floor(Math.random() * items.length)]!;
 
 export function createGame(world: World, assets: Assets, onPhase: (phase: Phase) => void, onDistance: (left: number) => void) {
@@ -40,7 +44,7 @@ export function createGame(world: World, assets: Assets, onPhase: (phase: Phase)
   // camera jump to the front, so a 1.5 km race uses the same 26 tiles.
   const tiles: Tile[] = [];
   for (let i = 0; i < TILES; i++) {
-    const z = -i * TILE;
+    const z = tileZ(i);
     const side = (s: number) => s * (ROAD_WIDTH / 2 + 3 + Math.random() * 8);
     const part = (x: number, y: number, options: Parameters<World['spawn']>[0]) => ({
       entity: world.spawn({ ...options, position: [x, y, z], pickable: false }),
@@ -138,7 +142,7 @@ export function createGame(world: World, assets: Assets, onPhase: (phase: Phase)
     audio.stop(g.engine);
     g.engine = null;
     Object.assign(g, { x: 0, z: 0, target: 0, keys: 0, safe: 0, reportedLeft: -1 });
-    tiles.forEach((tile, i) => moveTile(tile, -i * TILE));
+    tiles.forEach((tile, i) => moveTile(tile, tileZ(i)));
     rivals.forEach((r, i) => placeRival(r, -40 - i * 24));
     world.scoreboard.reset(LIVES);
     setPhase('ready');
@@ -170,7 +174,7 @@ export function createGame(world: World, assets: Assets, onPhase: (phase: Phase)
     world.transforms.transform(player, g.x, 0, g.z, turn[0], turn[1], turn[2], turn[3]);
 
     // Recycle road tiles that fall behind the camera to the front.
-    for (const tile of tiles) if (tile.z > g.z + TILE * 2) moveTile(tile, tile.z - TILES * TILE);
+    for (const tile of tiles) if (tile.z > g.z + BEHIND * TILE) moveTile(tile, tile.z - TILES * TILE);
 
     // Traffic drives ahead slower than the player: overtaking scores, touching costs a life.
     const farthest = Math.min(...rivals.map((r) => r.z));

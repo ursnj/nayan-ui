@@ -10,9 +10,18 @@
     },
     "android": {
       "package": "com.nayanui.engine",
-      "permissions": ["android.permission.VIBRATE"]
+      "permissions": [
+        "android.permission.VIBRATE"
+      ]
     },
-    "plugins": ["expo-dev-client", ["./plugins/withAndroidMinSdk", 26]],
+    "plugins": [
+      "expo-router",
+      "expo-dev-client",
+      [
+        "./plugins/withAndroidMinSdk",
+        26
+      ]
+    ],
     "userInterfaceStyle": "automatic"
   }
 }

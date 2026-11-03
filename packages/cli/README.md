@@ -4,7 +4,7 @@ Command Line Interface for Nayan UI - Create projects, generate sitemaps, and ma
 
 ## Features
 
-- 🚀 **Project Creation** - Create new projects from nayan-ui templates (Expo, Engine, Next.js, Vite)
+- 🚀 **Project Creation** - Create new projects from nayan-ui templates (Expo, Games, Next.js, Vite)
 - 🗺️ **Sitemap Generation** - Automatically crawl and generate XML sitemaps
 - 🤖 **Robots.txt Management** - Generate and validate robots.txt files
 - ✅ **Validation Tools** - Validate sitemaps and robots.txt files
@@ -49,7 +49,7 @@ nayan-ui new
 This will prompt you to:
 
 1. Enter your project name
-2. Select a template (expo, engine, nextjs, vite)
+2. Select a template (expo, games, nextjs, vite)
 
 #### Non-Interactive Mode
 
@@ -64,7 +64,7 @@ nayan-ui new my-app -t vite
 | Template | Description                                                 |
 | -------- | ----------------------------------------------------------- |
 | expo     | React Native Application with Expo & Nayan UI               |
-| engine   | 3D games for iOS, Android and the web with the Nayan engine |
+| games    | 3D games for iOS, Android and the web with the Nayan engine |
 | nextjs   | React Application with Next.js & Nayan UI                   |
 | vite     | React Application with Vite & Nayan UI                      |
 
