@@ -62,12 +62,26 @@ import {
   toolsSidebarItems,
 } from "../../src/services/Utils";
 
+/** The right-hand composition. Each kind is a small product mock-up of what the page offers. */
 export type Visual =
-  | { kind: "icon"; icon: LucideIcon }
-  | { kind: "iconGrid"; icons: LucideIcon[]; cols: number }
-  | { kind: "image"; src: string }
-  | { kind: "imageGrid"; srcs: string[] }
-  | { kind: "screen"; src: string };
+  /** A desktop app window with an abstract UI built around the icon (React components). */
+  | { kind: "app"; icon: LucideIcon; label: string }
+  /** A phone with an abstract native UI (React Native components). */
+  | { kind: "phone"; icon: LucideIcon; label: string }
+  /** A browser window with an address bar and a drop zone (tools). */
+  | { kind: "browser"; icon: LucideIcon; label: string }
+  /** A code editor (guides and docs). */
+  | { kind: "code"; icon: LucideIcon; label: string }
+  /** A terminal running the real install command. */
+  | { kind: "terminal"; icon: LucideIcon; command: string }
+  /** A phone showing a screenshot (one game). */
+  | { kind: "shot"; src: string }
+  /** Three phones fanned out (the games hub). */
+  | { kind: "shots"; srcs: string[] }
+  /** A bento grid of icon tiles (section hubs). */
+  | { kind: "bento"; icons: LucideIcon[] }
+  /** A wide app screenshot in a browser window. */
+  | { kind: "screen"; src: string; label: string };
 
 export interface BannerSpec {
   /** The page's URL path. */
@@ -75,8 +89,10 @@ export interface BannerSpec {
   /** The small label above the title: what kind of page this is. */
   eyebrow: string;
   title: string;
-  /** One short line. Two at most. */
+  /** One short line; left off the banner when it doesn't fit on one line. */
   tagline: string;
+  /** A small monospace chip over the visual, e.g. the npm package. */
+  chip?: string;
   /** Accent gradient, start and end. */
   theme: [string, string];
   visual: Visual;
@@ -244,6 +260,9 @@ const TITLE_OVERRIDES: Record<string, string> = {
   "/tools/json-query-string-converter": "JSON to Query String",
 };
 
+/** A component name as JSX, for the window tab: "Avatar Group" -> "<AvatarGroup />". */
+const jsxTag = (title: string) => `<${title.replace(/[^A-Za-z0-9]/g, "")} />`;
+
 const link = (items: any[]) => items.filter((item) => item.link && !item.isHeading);
 
 export function buildSpecs(): BannerSpec[] {
@@ -257,14 +276,10 @@ export function buildSpecs(): BannerSpec[] {
   add({
     path: "/",
     eyebrow: "Open source · MIT",
-    title: "Apps and games for React & React Native",
-    tagline: `${TOTAL_COMPONENT_COUNT} components, a 3D game engine, 50+ games and ${TOOL_COUNT} free tools`,
+    title: "Build apps and games, faster",
+    tagline: `${TOTAL_COMPONENT_COUNT} components, a game engine and ${TOOL_COUNT} tools`,
     theme: THEME.brand,
-    visual: {
-      kind: "iconGrid",
-      cols: 3,
-      icons: [LayoutGrid, Atom, Gamepad2, Clapperboard, Wrench, Terminal],
-    },
+    visual: { kind: "bento", icons: [LayoutGrid, Atom, Gamepad2, Clapperboard, Wrench, Terminal] },
   });
   add({
     path: "/contributions",
@@ -272,15 +287,15 @@ export function buildSpecs(): BannerSpec[] {
     title: "Contribute to Nayan UI",
     tagline: "Fix bugs, add features and improve the docs",
     theme: THEME.brand,
-    visual: { kind: "icon", icon: HeartHandshake },
+    visual: { kind: "code", icon: HeartHandshake, label: "CONTRIBUTING.md" },
   });
   add({
     path: "/tags",
     eyebrow: "Browse",
     title: "Components by Tag",
-    tagline: "Find React and React Native components by use case",
+    tagline: "Find components by use case",
     theme: THEME.brand,
-    visual: { kind: "icon", icon: Tags },
+    visual: { kind: "app", icon: Tags, label: "tags" },
   });
 
   // ---- React ----
@@ -290,25 +305,26 @@ export function buildSpecs(): BannerSpec[] {
       path,
       eyebrow: "React",
       title: "React Components",
-      tagline: `${REACT_COMPONENT_COUNT} accessible components on HeroUI and Tailwind CSS`,
+      tagline: `${REACT_COMPONENT_COUNT} accessible components for the web`,
       theme: THEME.react,
-      visual: { kind: "iconGrid", cols: 3, icons: reactGrid },
+      chip: "@nayan-ui/react",
+      visual: { kind: "bento", icons: reactGrid.slice(0, 6) },
     });
   add({
     path: "/react/installation",
     eyebrow: "React · Get started",
     title: "Install Nayan UI for React",
-    tagline: "Add @nayan-ui/react to your project",
+    tagline: "Up and running in a minute",
     theme: THEME.react,
-    visual: { kind: "icon", icon: Download },
+    visual: { kind: "terminal", icon: Download, command: "npm install @nayan-ui/react" },
   });
   add({
     path: "/react/tags",
     eyebrow: "React",
     title: "React Component Tags",
-    tagline: "Find components by use case and pattern",
+    tagline: "Find components by use case",
     theme: THEME.react,
-    visual: { kind: "icon", icon: Tag },
+    visual: { kind: "app", icon: Tag, label: "react/tags" },
   });
   for (const item of reactComponents)
     add({
@@ -317,7 +333,8 @@ export function buildSpecs(): BannerSpec[] {
       title: item.title,
       tagline: COMPONENT_TAGLINES[item.title] ?? missing(item.link),
       theme: THEME.react,
-      visual: { kind: "icon", icon: item.icon },
+      chip: "@nayan-ui/react",
+      visual: { kind: "app", icon: item.icon, label: jsxTag(item.title) },
     });
 
   // ---- React Native ----
@@ -327,25 +344,26 @@ export function buildSpecs(): BannerSpec[] {
       path,
       eyebrow: "React Native",
       title: "React Native Components",
-      tagline: `${NATIVE_COMPONENT_COUNT} native components for iOS and Android`,
+      tagline: `${NATIVE_COMPONENT_COUNT} components for iOS and Android`,
       theme: THEME.native,
-      visual: { kind: "iconGrid", cols: 3, icons: nativeGrid },
+      chip: "@nayan-ui/native",
+      visual: { kind: "bento", icons: nativeGrid.slice(0, 6) },
     });
   add({
     path: "/react-native/installation",
     eyebrow: "React Native · Get started",
     title: "Install Nayan UI for React Native",
-    tagline: "Add @nayan-ui/native to your Expo or React Native app",
+    tagline: "Works with Expo and bare React Native",
     theme: THEME.native,
-    visual: { kind: "icon", icon: Download },
+    visual: { kind: "terminal", icon: Download, command: "npm install @nayan-ui/native" },
   });
   add({
     path: "/react-native/tags",
     eyebrow: "React Native",
     title: "React Native Component Tags",
-    tagline: "Find native components by use case and pattern",
+    tagline: "Find native components by use case",
     theme: THEME.native,
-    visual: { kind: "icon", icon: Tag },
+    visual: { kind: "phone", icon: Tag, label: "native/tags" },
   });
   for (const item of nativeComponents)
     add({
@@ -354,7 +372,8 @@ export function buildSpecs(): BannerSpec[] {
       title: item.title,
       tagline: COMPONENT_TAGLINES[item.title] ?? missing(item.link),
       theme: THEME.native,
-      visual: { kind: "icon", icon: item.icon },
+      chip: "@nayan-ui/native",
+      visual: { kind: "phone", icon: item.icon, label: jsxTag(item.title) },
     });
 
   // ---- Tools ----
@@ -370,13 +389,9 @@ export function buildSpecs(): BannerSpec[] {
         path: "/tools",
         eyebrow: "Free · No sign-up",
         title: "Free Developer Tools",
-        tagline: `${TOOL_COUNT} tools for PDF, image, JSON, XML, text and SEO work`,
+        tagline: `${TOOL_COUNT} tools that run in your browser`,
         theme: THEME.tools,
-        visual: {
-          kind: "iconGrid",
-          cols: 3,
-          icons: [...Object.values(TOOL_CATEGORY).map((c) => c.icon), Wrench],
-        },
+        visual: { kind: "bento", icons: Object.values(TOOL_CATEGORY).slice(0, 6).map((c) => c.icon) },
       });
       continue;
     }
@@ -388,7 +403,7 @@ export function buildSpecs(): BannerSpec[] {
       title: item.title,
       tagline: TAGLINE_OVERRIDES[item.link] ?? item.description,
       theme: cat.theme,
-      visual: { kind: "icon", icon: item.icon },
+      visual: { kind: "browser", icon: item.icon, label: `nayanui.com${item.link}` },
     });
   }
 
@@ -397,7 +412,7 @@ export function buildSpecs(): BannerSpec[] {
     const isHome = item.link === "/game-engine";
     add({
       path: item.link,
-      eyebrow: isHome ? "Game engine · React & React Native" : "Game Engine Guide",
+      eyebrow: isHome ? "Game Engine" : "Game Engine Guide",
       title: isHome
         ? "Nayan Game Engine"
         : item.title === "Playground"
@@ -405,7 +420,15 @@ export function buildSpecs(): BannerSpec[] {
           : item.title,
       tagline: TAGLINE_OVERRIDES[item.link] ?? item.description,
       theme: THEME.engine,
-      visual: { kind: "icon", icon: isHome ? Atom : item.icon },
+      chip: "@nayan-ui/engine",
+      visual:
+        item.link === "/game-engine/installation"
+          ? { kind: "terminal", icon: Download, command: "npm install @nayan-ui/engine" }
+          : {
+              kind: "code",
+              icon: isHome ? Atom : item.icon,
+              label: isHome ? "game.tsx" : `${item.link.split("/").pop()}.tsx`,
+            },
     });
   }
 
@@ -436,15 +459,14 @@ export function buildSpecs(): BannerSpec[] {
     if (item.link === "/games") {
       add({
         path: "/games",
-        eyebrow: "Play free · React & React Native",
+        eyebrow: "Play free",
         title: `${Math.floor(GAME_COUNT / 10) * 10}+ Free Games`,
         tagline: "Play in the browser, or add one to your app",
         theme: THEME.games,
+        chip: "@nayan-ui/games",
         visual: {
-          kind: "imageGrid",
-          srcs: ["block-blast", "car-racing", "fruit-merger", "penguin-run"].map((id) =>
-            pub(`games/${id}.png`),
-          ),
+          kind: "shots",
+          srcs: ["car-racing", "block-blast", "penguin-run"].map((id) => pub(`games/${id}.png`)),
         },
       });
       continue;
@@ -456,7 +478,11 @@ export function buildSpecs(): BannerSpec[] {
         eyebrow: "Games · Docs",
         ...doc,
         theme: THEME.games,
-        visual: { kind: "icon", icon: doc.icon },
+        chip: "@nayan-ui/games",
+        visual:
+          item.link === "/games/installation"
+            ? { kind: "terminal", icon: doc.icon, command: "npm install @nayan-ui/games" }
+            : { kind: "code", icon: doc.icon, label: `${item.link.split("/").pop()}.md` },
       });
       continue;
     }
@@ -465,32 +491,36 @@ export function buildSpecs(): BannerSpec[] {
     if (!game) throw new Error(`No game data for ${item.link}`);
     add({
       path: item.link,
-      eyebrow: `${game.category} game · Play free`,
+      eyebrow: `${game.category} Game`,
       title: game.name,
       tagline: item.description,
       theme: THEME.games,
       visual: existsSync(pub(`games/${id}.png`))
-        ? { kind: "image", src: pub(`games/${id}.png`) }
-        : { kind: "icon", icon: Gamepad2 },
+        ? { kind: "shot", src: pub(`games/${id}.png`) }
+        : { kind: "phone", icon: Gamepad2, label: game.name },
     });
   }
 
   // ---- Video editor ----
   add({
     path: "/video-editor",
-    eyebrow: "Free online video editor",
+    eyebrow: "Free video editor",
     title: "Edit Video in Your Browser",
-    tagline: "No upload, no watermark, export up to 4K",
+    tagline: "No upload, no watermark, up to 4K",
     theme: THEME.video,
-    visual: { kind: "screen", src: pub("video-editor/editor-dark.png") },
+    visual: {
+      kind: "screen",
+      src: pub("video-editor/editor-dark.png"),
+      label: "nayanui.com/video-editor",
+    },
   });
 
   for (const spec of specs) {
     spec.title = TITLE_OVERRIDES[spec.path] ?? spec.title;
     const key =
       spec.path in ICON_OVERRIDES ? spec.path : spec.path.replace(/^\/react-native\//, "/react/");
-    if (key in ICON_OVERRIDES && spec.visual.kind === "icon")
-      spec.visual = { kind: "icon", icon: ICON_OVERRIDES[key]! };
+    if (key in ICON_OVERRIDES && "icon" in spec.visual)
+      spec.visual = { ...spec.visual, icon: ICON_OVERRIDES[key]! };
   }
   for (const [path, icon] of Object.entries(
     ICON_OVERRIDES as Record<string, LucideIcon | undefined>,
