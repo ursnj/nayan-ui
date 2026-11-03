@@ -1,34 +1,44 @@
 import JsonLd from "@/components/helpers/JsonLd";
 import Home from "@/components/home/Home";
-import {
-  NATIVE_COMPONENT_COUNT,
-  REACT_COMPONENT_COUNT,
-  TOOL_COUNT,
-  TOTAL_COMPONENT_COUNT,
-} from "@/services/Counts";
+import { PRODUCTS } from "@/components/home/Showcase";
+import { TOOL_COUNT, TOTAL_COMPONENT_COUNT } from "@/services/Counts";
 import { SITE_URL, buildPageMetadata } from "@/services/seo";
 
 export const metadata = buildPageMetadata({
-  title: "Open Source React & React Native Component Library + Free Developer Tools",
-  description: `Nayan UI is an open source component library providing ${TOTAL_COMPONENT_COUNT} accessible, customizable UI components for React and React Native — ${REACT_COMPONENT_COUNT} for the web, ${NATIVE_COMPONENT_COUNT} for mobile. Plus ${TOOL_COUNT} free online developer tools for PDFs, images, JSON, text and AI code review. Built on HeroUI and Tailwind CSS. MIT licensed.`,
+  title: "React & React Native Components, 3D Game Engine and Free Developer Tools",
+  description: `Open source React and React Native components (${TOTAL_COMPONENT_COUNT}), a 3D game engine, 50+ ready-made games, a browser video editor and ${TOOL_COUNT} free developer tools.`,
   path: "/",
   keywords:
-    "react component library, react native components, open source ui library, tailwind css components, heroui, typescript, accessibility, dark mode, free developer tools, pdf tools, image tools, json tools, ai code review, nayan ui",
+    "react component library, react native components, react game engine, react native game engine, 3d games, react native games, browser video editor, free developer tools, pdf tools, image tools, json tools, ai code review, nayan ui",
   ogType: "website",
 });
 
 const homePageSchema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Nayan UI - Open Source React & React Native Component Library + Free Developer Tools",
+  name: "Nayan UI - React & React Native Components, 3D Game Engine and Free Developer Tools",
   description: metadata.description,
   url: SITE_URL,
+  inLanguage: "en-US",
   isPartOf: { "@type": "WebSite", name: "Nayan UI", url: SITE_URL },
   about: {
     "@type": "SoftwareApplication",
     name: "Nayan UI",
     applicationCategory: "DeveloperApplication",
     operatingSystem: "Web, iOS, Android",
+  },
+  // The six products on the page, with the same names and links as their cards.
+  mainEntity: {
+    "@type": "ItemList",
+    name: "What you get",
+    numberOfItems: PRODUCTS.length,
+    itemListElement: PRODUCTS.map((product, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: product.title,
+      description: product.body,
+      url: `${SITE_URL}${product.href}`,
+    })),
   },
 };
 

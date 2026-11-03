@@ -46,12 +46,11 @@ import { TOOL_COUNT, TOTAL_COMPONENT_COUNT } from "@/services/Counts";
 import { REPO_URL } from "@/services/seo";
 import { installCode, rnInstallCode } from "@/services/ReactCodeBlocks";
 
-const gamesInstallCode = "npm install @nayan-ui/games";
-
 const INSTALLS = [
   { platform: "React", command: installCode },
   { platform: "React Native", command: rnInstallCode },
-  { platform: "Games", command: gamesInstallCode },
+  { platform: "Game engine", command: "npm install @nayan-ui/engine" },
+  { platform: "Games", command: "npx @nayan-ui/cli new my-game -t games" },
 ];
 
 const TABS = ["Buttons", "Forms", "Feedback", "Elements"] as const;
@@ -142,17 +141,17 @@ const Banner = () => {
       <div className={`${CONTAINER} py-14 sm:py-20`}>
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="text-center lg:text-left">
-            <Badge icon={Package}>Open source · Free forever</Badge>
+            <Badge icon={Package}>Open source · Free to use</Badge>
 
             <h1 className={`mt-6 ${H1_HERO}`}>
-              Components for
+              Apps and games for
               <span className={`block ${GRADIENT_TEXT}`}>React &amp; React Native</span>
             </h1>
 
             <p className={`mx-auto mt-6 max-w-xl text-lg ${LEAD} lg:mx-0`}>
-              {TOTAL_COMPONENT_COUNT} accessible, good-looking components for web and mobile, plus{" "}
-              {TOOL_COUNT} free developer tools for PDFs, images, JSON and more — everything you
-              need to start building.
+              {TOTAL_COMPONENT_COUNT} accessible components, a 3D game engine, 50+ ready-made games,
+              a video editor in your browser and {TOOL_COUNT} free developer tools, for the web and
+              mobile.
             </p>
 
             <div className="mx-auto mt-7 max-w-md divide-y divide-default overflow-hidden rounded-xl border border-default bg-surface lg:mx-0">
@@ -187,12 +186,7 @@ const Banner = () => {
                   <ArrowRight aria-hidden className="h-4 w-4" />
                 </NButton>
               </Link>
-              <a
-                href={REPO_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="sm:w-auto"
-              >
+              <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="sm:w-auto">
                 <NButton isOutline={true} className="w-full px-6 font-semibold sm:w-auto">
                   <Github aria-hidden className="h-4 w-4" />
                   View on GitHub

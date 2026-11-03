@@ -417,11 +417,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/react-native/linkify</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.nayanui.com/react-native/menu</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>

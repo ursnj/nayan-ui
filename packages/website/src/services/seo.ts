@@ -1,13 +1,19 @@
 import type { Metadata } from "next";
 import enginePackage from "@nayan-ui/engine/package.json";
 import gamesPackage from "@nayan-ui/games/package.json";
-import { TOOL_COUNT, TOTAL_COMPONENT_COUNT } from "./Counts";
+import reactPackage from "../../../react/package.json";
+import {
+  NATIVE_COMPONENT_COUNT,
+  REACT_COMPONENT_COUNT,
+  TOOL_COUNT,
+  TOTAL_COMPONENT_COUNT,
+} from "./Counts";
 
 export const SITE_URL = "https://www.nayanui.com";
 export const REPO_URL = "https://github.com/ursnj/nayan-ui";
 export const SITE_HOST = SITE_URL.replace(/^https?:\/\//, "");
 export const SITE_NAME = "Nayan UI";
-export const SITE_DESCRIPTION = `Nayan UI is an open source component library for React and React Native with ${TOTAL_COMPONENT_COUNT} accessible, production-ready UI components, plus ${TOOL_COUNT} free online developer tools for PDFs, images, JSON, text and AI code review. Built on HeroUI and Tailwind CSS.`;
+export const SITE_DESCRIPTION = `Nayan UI is an open source platform for React and React Native: ${TOTAL_COMPONENT_COUNT} accessible UI components, a 3D game engine, 50+ ready-made games, a browser video editor and ${TOOL_COUNT} free online developer tools for PDFs, images, JSON, text, SEO and AI code review.`;
 
 export const organizationSchema = {
   "@context": "https://schema.org",
@@ -34,7 +40,7 @@ export const softwareApplicationSchema = {
   description: SITE_DESCRIPTION,
   url: SITE_URL,
   downloadUrl: "https://www.npmjs.com/package/@nayan-ui/react",
-  version: "2.0.0",
+  version: reactPackage.version,
   datePublished: "2024-01-01",
   dateModified: new Date().toISOString().split("T")[0],
   author: { "@type": "Organization", name: SITE_NAME },
@@ -43,9 +49,12 @@ export const softwareApplicationSchema = {
   runtimePlatform: ["Web Browser", "React Native", "Node.js"],
   requirements: "React 18+, TypeScript 4.5+, Tailwind CSS 4.0+",
   featureList: [
-    "35 React Components",
-    "React Native Support",
-    "54 Free Developer Tools",
+    `${REACT_COMPONENT_COUNT} React Components`,
+    `${NATIVE_COMPONENT_COUNT} React Native Components`,
+    "3D Game Engine for React and React Native",
+    "50+ Ready-made Games",
+    "Browser Video Editor",
+    `${TOOL_COUNT} Free Developer Tools`,
     "PDF Tools — Merge, Split, Compress, Convert & More",
     "Image Tools — Compress, Resize, Crop, Convert, Watermark",
     "JSON Tools — Format, Validate, Convert to CSV/YAML/XML/Excel",

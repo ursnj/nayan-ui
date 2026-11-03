@@ -35,10 +35,10 @@ const FEATURES = [
 const Features = () => (
   <Section id="why" labelledBy="why-heading">
     <SectionHeader
-      eyebrow="Why Nayan UI"
+      eyebrow="Why the components"
       id="why-heading"
       title="Everything you need, nothing you don't"
-      lead="Two packages, one design language, and no licence to buy."
+      lead="Two packages, @nayan-ui/react and @nayan-ui/native, one design language, and no licence to buy."
     />
     <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
       {FEATURES.map((feature) => {

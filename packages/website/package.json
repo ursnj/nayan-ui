@@ -18,7 +18,7 @@
     "jszip": "^3.10.1",
     "lucide-react": "^0.577.0",
     "mediabunny": "^1.56.2",
-    "next": "16.3.5",
+    "next": "16.4.4",
     "pdf-lib": "^1.17.1",
     "pdf-lib-encrypt": "^1.0.3",
     "pdfjs-dist": "^4.10.38",

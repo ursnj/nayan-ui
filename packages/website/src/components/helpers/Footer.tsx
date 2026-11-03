@@ -68,8 +68,8 @@ const Footer = () => {
             </Link>
 
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
-              Open source React and React Native components, a browser video editor and a few
-              developer tools. Free forever, MIT licensed.
+              Open source React and React Native components, a 3D game engine, 50+ games, a browser
+              video editor and free developer tools.
             </p>
 
             <div className="mt-5">
