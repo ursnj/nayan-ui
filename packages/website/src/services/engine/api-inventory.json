@@ -1,0 +1,854 @@
+[
+  {
+    "name": "World",
+    "module": "world/World",
+    "typeOnly": false,
+    "guide": "world-entities"
+  },
+  {
+    "name": "isEngineAvailable",
+    "module": "world/World",
+    "typeOnly": false,
+    "guide": "world-entities"
+  },
+  {
+    "name": "quat",
+    "module": "world/quat",
+    "typeOnly": false,
+    "guide": "world-entities"
+  },
+  {
+    "name": "MutableQuat",
+    "module": "world/quat",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "toColor",
+    "module": "world/color",
+    "typeOnly": false,
+    "guide": "camera-lighting"
+  },
+  {
+    "name": "ColorInput",
+    "module": "world/color",
+    "typeOnly": true,
+    "guide": "camera-lighting"
+  },
+  {
+    "name": "effects",
+    "module": "world/effects",
+    "typeOnly": false,
+    "guide": "particles"
+  },
+  {
+    "name": "DustOptions",
+    "module": "world/effects",
+    "typeOnly": true,
+    "guide": "particles"
+  },
+  {
+    "name": "EffectOptions",
+    "module": "world/effects",
+    "typeOnly": true,
+    "guide": "particles"
+  },
+  {
+    "name": "FlashOptions",
+    "module": "world/effects",
+    "typeOnly": true,
+    "guide": "particles"
+  },
+  {
+    "name": "PopOptions",
+    "module": "world/effects",
+    "typeOnly": true,
+    "guide": "particles"
+  },
+  {
+    "name": "Scoreboard",
+    "module": "world/Scoreboard",
+    "typeOnly": false,
+    "guide": "scoreboard-timers"
+  },
+  {
+    "name": "ScoreboardHandlers",
+    "module": "world/Scoreboard",
+    "typeOnly": true,
+    "guide": "scoreboard-timers"
+  },
+  {
+    "name": "AnimateOptions",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "AnimateTarget",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "BodyType",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "Bounds",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "BurstOptions",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "CollisionInfo",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "ClipOptions",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "ScreenPlane",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "Color",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "Easing",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "Entity",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "EntityOptions",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "ImpactFeedback",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "Keyframe",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "PhysicsOptions",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "PickHit",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "Quat",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "RaycastHit",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "SpringOptions",
+    "module": "world/types",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "afterNextFrame",
+    "module": "render/GameView",
+    "typeOnly": false,
+    "guide": "game-view"
+  },
+  {
+    "name": "GameView",
+    "module": "render/GameView",
+    "typeOnly": false,
+    "guide": "game-view"
+  },
+  {
+    "name": "DragEvent",
+    "module": "render/GameView",
+    "typeOnly": true,
+    "guide": "game-view"
+  },
+  {
+    "name": "GameViewProps",
+    "module": "render/GameView",
+    "typeOnly": true,
+    "guide": "game-view"
+  },
+  {
+    "name": "GameViewStats",
+    "module": "render/GameView",
+    "typeOnly": true,
+    "guide": "game-view"
+  },
+  {
+    "name": "OverlayTouchPhase",
+    "module": "render/GameView",
+    "typeOnly": true,
+    "guide": "game-view"
+  },
+  {
+    "name": "PinchEvent",
+    "module": "render/GameView",
+    "typeOnly": true,
+    "guide": "game-view"
+  },
+  {
+    "name": "SwipeDirection",
+    "module": "render/GameView",
+    "typeOnly": true,
+    "guide": "game-view"
+  },
+  {
+    "name": "useWorld",
+    "module": "render/useWorld",
+    "typeOnly": false,
+    "guide": "world-entities"
+  },
+  {
+    "name": "WorldSetup",
+    "module": "render/useWorld",
+    "typeOnly": true,
+    "guide": "world-entities"
+  },
+  {
+    "name": "frontLight",
+    "module": "render/light",
+    "typeOnly": false,
+    "guide": "camera-lighting"
+  },
+  {
+    "name": "warmUpEngine",
+    "module": "render/meshes",
+    "typeOnly": false,
+    "guide": "cache-performance"
+  },
+  {
+    "name": "getMeshIdLimit",
+    "module": "render/meshes",
+    "typeOnly": false,
+    "guide": "cache-performance"
+  },
+  {
+    "name": "TransformBatch",
+    "module": "world/TransformBatch",
+    "typeOnly": true,
+    "guide": "cache-performance"
+  },
+  {
+    "name": "TransformOptions",
+    "module": "world/TransformBatch",
+    "typeOnly": true,
+    "guide": "cache-performance"
+  },
+  {
+    "name": "RenderQuality",
+    "module": "render/quality",
+    "typeOnly": true,
+    "guide": "game-view"
+  },
+  {
+    "name": "RenderQualitySetting",
+    "module": "render/quality",
+    "typeOnly": true,
+    "guide": "game-view"
+  },
+  {
+    "name": "AssetSource",
+    "module": "assets/source",
+    "typeOnly": true,
+    "guide": "models-textures"
+  },
+  {
+    "name": "loadModel",
+    "module": "assets/model",
+    "typeOnly": false,
+    "guide": "models-textures"
+  },
+  {
+    "name": "Model",
+    "module": "assets/model",
+    "typeOnly": true,
+    "guide": "models-textures"
+  },
+  {
+    "name": "ModelOptions",
+    "module": "assets/model",
+    "typeOnly": true,
+    "guide": "models-textures"
+  },
+  {
+    "name": "ModelClip",
+    "module": "assets/model",
+    "typeOnly": true,
+    "guide": "models-textures"
+  },
+  {
+    "name": "LoadedModel",
+    "module": "assets/model",
+    "typeOnly": true,
+    "guide": "models-textures"
+  },
+  {
+    "name": "clearAssetCache",
+    "module": "assets/AssetCache",
+    "typeOnly": false,
+    "guide": "cache-performance"
+  },
+  {
+    "name": "ProceduralCache",
+    "module": "assets/ProceduralCache",
+    "typeOnly": false,
+    "guide": "cache-performance"
+  },
+  {
+    "name": "ProceduralStorage",
+    "module": "assets/ProceduralCache",
+    "typeOnly": true,
+    "guide": "cache-performance"
+  },
+  {
+    "name": "loadTexture",
+    "module": "assets/texture",
+    "typeOnly": false,
+    "guide": "models-textures"
+  },
+  {
+    "name": "Texture",
+    "module": "assets/texture",
+    "typeOnly": true,
+    "guide": "models-textures"
+  },
+  {
+    "name": "Solid",
+    "module": "assets/modelling",
+    "typeOnly": false,
+    "guide": "solid-modelling"
+  },
+  {
+    "name": "solidGeometry",
+    "module": "assets/modelling",
+    "typeOnly": false,
+    "guide": "solid-modelling"
+  },
+  {
+    "name": "createSolid",
+    "module": "assets/modelling",
+    "typeOnly": false,
+    "guide": "solid-modelling"
+  },
+  {
+    "name": "optimizeGeometry",
+    "module": "assets/modelling",
+    "typeOnly": false,
+    "guide": "solid-modelling"
+  },
+  {
+    "name": "createGeometryLods",
+    "module": "assets/modelling",
+    "typeOnly": false,
+    "guide": "solid-modelling"
+  },
+  {
+    "name": "getGeometryStats",
+    "module": "assets/modelling",
+    "typeOnly": false,
+    "guide": "solid-modelling"
+  },
+  {
+    "name": "deformGeometry",
+    "module": "assets/modelling",
+    "typeOnly": false,
+    "guide": "solid-modelling"
+  },
+  {
+    "name": "DisplacementOptions",
+    "module": "assets/modelling",
+    "typeOnly": true,
+    "guide": "solid-modelling"
+  },
+  {
+    "name": "SolidOptions",
+    "module": "assets/modelling",
+    "typeOnly": true,
+    "guide": "solid-modelling"
+  },
+  {
+    "name": "OptimizeOptions",
+    "module": "assets/modelling",
+    "typeOnly": true,
+    "guide": "solid-modelling"
+  },
+  {
+    "name": "GeometryStats",
+    "module": "assets/modelling",
+    "typeOnly": true,
+    "guide": "solid-modelling"
+  },
+  {
+    "name": "loft",
+    "module": "assets/loft",
+    "typeOnly": false,
+    "guide": "surfaces-lofts"
+  },
+  {
+    "name": "block",
+    "module": "assets/loft",
+    "typeOnly": false,
+    "guide": "surfaces-lofts"
+  },
+  {
+    "name": "ellipsoid",
+    "module": "assets/loft",
+    "typeOnly": false,
+    "guide": "surfaces-lofts"
+  },
+  {
+    "name": "smoothCurve",
+    "module": "assets/loft",
+    "typeOnly": false,
+    "guide": "surfaces-lofts"
+  },
+  {
+    "name": "LoftSection",
+    "module": "assets/loft",
+    "typeOnly": true,
+    "guide": "surfaces-lofts"
+  },
+  {
+    "name": "LoftOptions",
+    "module": "assets/loft",
+    "typeOnly": true,
+    "guide": "surfaces-lofts"
+  },
+  {
+    "name": "parametricSurface",
+    "module": "assets/surface",
+    "typeOnly": false,
+    "guide": "surfaces-lofts"
+  },
+  {
+    "name": "ParametricSurfaceOptions",
+    "module": "assets/surface",
+    "typeOnly": true,
+    "guide": "surfaces-lofts"
+  },
+  {
+    "name": "createShape",
+    "module": "assets/shape",
+    "typeOnly": false,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "extrude",
+    "module": "assets/shape",
+    "typeOnly": false,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "lathe",
+    "module": "assets/shape",
+    "typeOnly": false,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "merge",
+    "module": "assets/shape",
+    "typeOnly": false,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "Path",
+    "module": "assets/shape",
+    "typeOnly": false,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "recolor",
+    "module": "assets/shape",
+    "typeOnly": false,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "shapeGeometry",
+    "module": "assets/shape",
+    "typeOnly": false,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "smoothNormals",
+    "module": "assets/shape",
+    "typeOnly": false,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "tube",
+    "module": "assets/shape",
+    "typeOnly": false,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "ExtrudeOptions",
+    "module": "assets/shape",
+    "typeOnly": true,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "FaceColor",
+    "module": "assets/shape",
+    "typeOnly": true,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "Geometry",
+    "module": "assets/shape",
+    "typeOnly": true,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "LatheOptions",
+    "module": "assets/shape",
+    "typeOnly": true,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "GeometryPart",
+    "module": "assets/shape",
+    "typeOnly": true,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "ShapeOptions",
+    "module": "assets/shape",
+    "typeOnly": true,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "SurfaceColor",
+    "module": "assets/shape",
+    "typeOnly": true,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "SurfacePoint",
+    "module": "assets/shape",
+    "typeOnly": true,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "TubeOptions",
+    "module": "assets/shape",
+    "typeOnly": true,
+    "guide": "procedural-geometry"
+  },
+  {
+    "name": "loadFont",
+    "module": "assets/font",
+    "typeOnly": false,
+    "guide": "text-fonts"
+  },
+  {
+    "name": "measureText",
+    "module": "assets/font",
+    "typeOnly": false,
+    "guide": "text-fonts"
+  },
+  {
+    "name": "Font",
+    "module": "assets/font",
+    "typeOnly": true,
+    "guide": "text-fonts"
+  },
+  {
+    "name": "FontOptions",
+    "module": "assets/font",
+    "typeOnly": true,
+    "guide": "text-fonts"
+  },
+  {
+    "name": "TextAlign",
+    "module": "assets/font",
+    "typeOnly": true,
+    "guide": "text-fonts"
+  },
+  {
+    "name": "TextLayout",
+    "module": "assets/font",
+    "typeOnly": true,
+    "guide": "text-fonts"
+  },
+  {
+    "name": "audio",
+    "module": "media/audio",
+    "typeOnly": false,
+    "guide": "audio-haptics"
+  },
+  {
+    "name": "AudioPlayOptions",
+    "module": "media/audio",
+    "typeOnly": true,
+    "guide": "audio-haptics"
+  },
+  {
+    "name": "Sound",
+    "module": "media/audio",
+    "typeOnly": true,
+    "guide": "audio-haptics"
+  },
+  {
+    "name": "SoundBank",
+    "module": "media/audio",
+    "typeOnly": true,
+    "guide": "audio-haptics"
+  },
+  {
+    "name": "SoundSource",
+    "module": "media/audio",
+    "typeOnly": true,
+    "guide": "audio-haptics"
+  },
+  {
+    "name": "Voice",
+    "module": "media/audio",
+    "typeOnly": true,
+    "guide": "audio-haptics"
+  },
+  {
+    "name": "haptics",
+    "module": "media/haptics",
+    "typeOnly": false,
+    "guide": "audio-haptics"
+  },
+  {
+    "name": "HapticTap",
+    "module": "media/haptics",
+    "typeOnly": true,
+    "guide": "audio-haptics"
+  },
+  {
+    "name": "Joystick",
+    "module": "input/Joystick",
+    "typeOnly": false,
+    "guide": "input-picking"
+  },
+  {
+    "name": "useJoystick",
+    "module": "input/Joystick",
+    "typeOnly": false,
+    "guide": "input-picking"
+  },
+  {
+    "name": "JoystickState",
+    "module": "input/Joystick",
+    "typeOnly": true,
+    "guide": "input-picking"
+  },
+  {
+    "name": "JoystickProps",
+    "module": "input/Joystick",
+    "typeOnly": true,
+    "guide": "input-picking"
+  },
+  {
+    "name": "createKeyboardInput",
+    "module": "input/keyboard",
+    "typeOnly": false,
+    "guide": "input-picking"
+  },
+  {
+    "name": "KeyboardInputMode",
+    "module": "input/keyboard",
+    "typeOnly": true,
+    "guide": "input-picking"
+  },
+  {
+    "name": "KeyboardInputOptions",
+    "module": "input/keyboard",
+    "typeOnly": true,
+    "guide": "input-picking"
+  },
+  {
+    "name": "MAX_MESHES",
+    "module": "types",
+    "typeOnly": false,
+    "guide": "render-source"
+  },
+  {
+    "name": "Camera",
+    "module": "types",
+    "typeOnly": true,
+    "guide": "render-source"
+  },
+  {
+    "name": "Light",
+    "module": "types",
+    "typeOnly": true,
+    "guide": "render-source"
+  },
+  {
+    "name": "RenderSource",
+    "module": "types",
+    "typeOnly": true,
+    "guide": "render-source"
+  },
+  {
+    "name": "Shape",
+    "module": "types",
+    "typeOnly": true,
+    "guide": "render-source"
+  },
+  {
+    "name": "Vec3",
+    "module": "types",
+    "typeOnly": true,
+    "guide": "render-source"
+  },
+  {
+    "name": "DrawingDocument",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": false,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingBrush",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingBrushOptions",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingControls",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingState",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingSnapshot",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "SavedDrawingPath",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingTool",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingShape",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingShapePreview",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingSymmetry",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingLayer",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingProject",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingStroke",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingSample",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingCoverageOptions",
+    "module": "drawing/DrawingDocument",
+    "typeOnly": true,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingCanvas",
+    "module": "drawing/DrawingCanvas",
+    "typeOnly": false,
+    "guide": "drawing"
+  },
+  {
+    "name": "DrawingCanvasProps",
+    "module": "drawing/DrawingCanvas",
+    "typeOnly": true,
+    "guide": "drawing"
+  }
+]

@@ -78,11 +78,7 @@ const XmlToExcel = () => {
         <NAlert type={AlertTypes.ERROR} title="Conversion Error" message={error} className="mb-4" />
       )}
 
-      <XmlMonacoEditor
-        label="Input XML"
-        value={input}
-        onChange={setInput}
-      />
+      <XmlMonacoEditor label="Input XML" value={input} onChange={setInput} />
     </div>
   );
 };

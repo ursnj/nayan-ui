@@ -12,6 +12,7 @@ Nayan UI is a comprehensive, enterprise-grade UI component library for React and
 - **Packages**:
   - `@nayan-ui/react` — React components built on HeroUI + Tailwind CSS
   - `@nayan-ui/native` — React Native components with NativeWind
+  - `@nayan-ui/engine` — shared Rust/wgpu game engine for React browsers and React Native
   - `@nayan-ui/cli` — CLI tools for SEO (sitemap, robots.txt generation)
   - `@nayan-ui/ai` — AI-powered code reviewer & vulnerability scanner CLI
   - `@nayan-ui/tools` — Tools library (video editor, PDF tools, image tools, JSON tools, XML tools, text tools)
@@ -394,3 +395,84 @@ The project follows standard open-source contribution guidelines with Prettier f
 - Optimized bundle sizes with tree shaking
 - Progressive enhancement
 - Semantic HTML structure
+
+
+## Nayan Game Engine documentation
+- Overview: https://www.nayanui.com/game-engine
+- Installation: https://www.nayanui.com/game-engine/installation
+- React browser quickstart: https://www.nayanui.com/game-engine/react
+- React Native quickstart: https://www.nayanui.com/game-engine/react-native
+- Lifecycle rules, entities and quat rotations: https://www.nayanui.com/game-engine/world-entities
+- Effects (confetti, sparkle, shatter, splash, sparks, explosion, dust, flash, pop): https://www.nayanui.com/game-engine/particles
+- Drawing and painting (DrawingDocument, DrawingCanvas, drawing in games): https://www.nayanui.com/game-engine/drawing
+- Performance (world.transforms, zero-allocation frames): https://www.nayanui.com/game-engine/cache-performance
+- Public API: https://www.nayanui.com/game-engine/api-reference
+
+The engine is one TypeScript API on a Rust core: World, GameView, physics, skeletal and tween animation,
+input/picking, procedural geometry, models, textures, fonts, audio/haptics, scoring/timers, effects and
+native 2D drawing. Web: WebAssembly with WebGPU/WebGL2. Native: JSI with Metal/Vulkan/GLES.
+
+Rules: (1) own a World with useWorld(capacity, setup), or create it in an effect after await
+warmUpEngine() and dispose it in the cleanup; (2) GameView steps the world (and an overlay) once a frame,
+right after onUpdate; call world.update(dt) yourself only to step differently; never step from
+requestAnimationFrame/setInterval; (3) queue per-frame moves on world.transforms in onUpdate; the step
+applies them (flush() only before reading back); (4) use world.isDisposed, not a custom flag; cleanup
+calls and queries are no-ops after dispose, spawn/update/burst/effects throw.
+On iOS/Android the display clock drives frames and the engine's render thread draws them; textures,
+models, fonts and sounds decode on native threads; the renderer culls off-screen instances in Rust.
+Colors are CSS strings or 0..1 tuples everywhere (toColor converts); frontLight lights flat boards.
+Scoreboard: handlers for rules, listen() for UI; reset(lives, seconds) = ready screen, resume() starts.
+Timers: world.after / cancelTimer / cancelTimers. Effects: effects.confetti/sparkle/shatter/splash/
+sparks/explosion/dust/flash, await effects.pop(world, piece) then despawn. Settings: audio.enabled,
+haptics.enabled. Mesh ids are never freed: build meshes once. afterNextFrame slices long setup work;
+ProceduralCache.peek restores saved results. Drawing: DrawingDocument + DrawingCanvas; document.texture()
+on entities, input()/strokes()/sample()/coverage() for games.
+@nayan-ui/games ships its own browser build (lib/web), so its games run in React websites too.
+
+## Practical engine examples
+- Complete game (the repo's examples/games: Car Racing on iOS, Android and the web): https://www.nayanui.com/game-engine/first-game
+- Live playground (Monaco editor with the engine's types, runs in the browser): https://www.nayanui.com/game-engine/playground
+- Common recipes: https://www.nayanui.com/game-engine/recipes
+- AI agent instructions (file structure, one API per task, never-do list, game template): https://www.nayanui.com/game-engine/agent-guide
+- Structured API usage summary: https://www.nayanui.com/engine.json
+
+Start from the games example (npx @nayan-ui/cli new my-game -t games; walkthrough at /game-engine/first-game), then the recipes. Load assets with
+loadModel, loadTexture, loadFont, audio.load, createShape and createSolid during setup; the engine caches
+and persists them (native app-private files, web IndexedDB, no eviction). No app-side asset caches.
+clearAssetCache() only from a user action. @nayan-ui/games loads each game behind its own loading screen
+and runs on the web through its bundled React Native Web adapters; see /games/installation.
+
+Public naming: use GameViewStats for rendering measurements, AudioPlayOptions for sound settings,
+GeometryPart for merged mesh parts, ParametricSurfaceOptions for sampled surfaces, and
+RenderQuality / RenderQualitySetting for renderer quality, EffectOptions / DustOptions /
+FlashOptions / PopOptions for effects, MutableQuat for reusable rotations, TransformBatch for
+world.transforms, and DrawingStroke / DrawingSample / DrawingCoverageOptions for drawing queries. Query geometry with getGeometryStats;
+build detail levels with createGeometryLods. getMeshIdLimit returns an exclusive mesh-ID boundary.
+Sample animated vertices with World.sampleSkinnedVertices. Path exposes addPolygon,
+addRoundedRect, quadraticTo and toContours. Use these names in new examples and applications.
+
+## Nayan games documentation (@nayan-ui/games)
+- Overview and all 53 games: https://www.nayanui.com/games
+- Installation (Expo dev build and React/Next.js/Vite): https://www.nayanui.com/games/installation
+- API reference: https://www.nayanui.com/games/api-reference
+- Build an engine game (file pattern, useEngineGame, EngineGameScreen, lifecycle): https://www.nayanui.com/games/build-a-game
+- Per-game controls and rules: https://www.nayanui.com/games/<game-id> (GAME_IDS values, e.g. /games/treasure-hunt)
+- Licensing (dual: free non-commercial, paid commercial): https://www.nayanui.com/games/licensing
+
+These docs describe @nayan-ui/games 1.20.0, the engine-based release (requires @nayan-ui/engine ^1.0.0-beta.2; 1.19.0 and earlier are the older Skia/Reanimated build).
+Peers: @nayan-ui/engine and react; react-native + expo-asset + expo-modules-core for native; react-dom for web.
+Native: development build (not Expo Go), New Architecture, Android minSdkVersion 26, VIBRATE permission,
+Metro assetExts include glb and gltf. Web: client-only rendering (Next.js dynamic import with ssr:false), HTTPS or localhost.
+Every game is React.FC<GameProps> from '@nayan-ui/games' (e.g. BlockBlast, TreasureHunt). For one screen that
+renders any game, import loadGameComponent, GAME_IDS, GAMES_METADATA and DEFAULT_GAME_SETTINGS from
+'@nayan-ui/games/services' (no game modules load until selected); theme helpers configureGameThemes and
+resolveGameTheme are exported only from '@nayan-ui/games/services'.
+GameSettings: isVisible opens the built-in settings modal (it closes via onSettingsChange({...settings, isVisible:false})),
+paused pauses for host overlays, enableSounds, enableHaptics, theme 'light' | 'dark' (unset = classic palette),
+offset = host header height, anchor = web popover position, enableMusic is unused.
+onEndGame({ status, score, additionalData }) fires once per run: 'win' / 'lose' at the end, 'cancel' on Stop,
+unmount mid-run, or a draw; score is a string. onPlayingChange(playing) lets hosts block back gestures during a run.
+Web keyboard: createKeyboardInput(surface, { mode }) from @nayan-ui/engine; 'drag' for racing/steering games,
+'swipe' for 2048, Snake 3D, Pac-Man, Maze Runner and Crossy Road, 'pointer' for the rest; Enter presses Start/Stop/Play Again.
+Building games inside the library: <Name>.tsx (engineGame + useEngineGame + EngineGameScreen), <Name>Constants.ts,
+<Name>Game.ts (rules, owns world.update(dt)), <Name>Scene.ts; these helpers are internal, not package exports.

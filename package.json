@@ -21,7 +21,10 @@
     "native:example": "bun run --filter @nayan-ui/native example",
     "website:dev": "bun run --filter @nayan-ui/website dev",
     "website:build": "bun run --filter @nayan-ui/website build",
-    "website:start": "bun run --filter @nayan-ui/website start"
+    "website:start": "bun run --filter @nayan-ui/website start",
+    "engine:build": "bun run --filter @nayan-ui/engine build",
+    "engine:typecheck": "bun run --filter @nayan-ui/engine typecheck",
+    "engine:example": "bun run --filter @nayan-ui/engine example"
   },
   "devDependencies": {
     "oxfmt": "^0.68.0",

@@ -1,6 +1,8 @@
+import type { GAME_IDS } from "@nayan-ui/games/services";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import GameDetail from "@/components/games/GameDetail";
+import GameExperience from "@/components/games/GameExperience";
 import JsonLd from "@/components/helpers/JsonLd";
 import { gamesData } from "@/services/GamesData";
 import { SITE_NAME, SITE_URL, buildBreadcrumbSchema } from "@/services/seo";
@@ -23,9 +25,11 @@ export async function generateMetadata({
   const url = `${SITE_URL}/games/${slug}`;
 
   return {
-    title: `${game.name} - React Native Game`,
-    description: `${game.name}: ${game.description} Part of @nayan-ui/games - a collection of ${Object.keys(gamesData).length}+ React Native games.`,
+    title: `Play ${game.name} Online · React & React Native`,
+    description: `Play ${game.name} free online. ${game.description}`,
     keywords: [
+      `play ${game.name} online`,
+      `${game.name} browser game`,
       `${game.name} react native`,
       `react native ${game.category.toLowerCase()} game`,
       ...game.tags,
@@ -41,7 +45,12 @@ export async function generateMetadata({
       type: "article",
       siteName: SITE_NAME,
       images: [
-        { url: `${SITE_URL}/games/${slug}.png`, width: 800, height: 800, alt: `${game.name} Game` },
+        {
+          url: `${SITE_URL}/games/${slug}.png`,
+          width: 512,
+          height: 512,
+          alt: `${game.name} screenshot`,
+        },
       ],
     },
     twitter: {
@@ -75,8 +84,20 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
       genre: game.category,
       gamePlatform: ["iOS", "Android", "Web"],
       url: `${SITE_URL}/games/${slug}`,
+      playMode: "SinglePlayer",
+      potentialAction: { "@type": "PlayAction", target: `${SITE_URL}/games/${slug}` },
       image: `${SITE_URL}/games/${slug}.png`,
+      screenshot: `${SITE_URL}/games/${slug}.png`,
+      inLanguage: "en-US",
+      featureList: game.features,
+      isPartOf: {
+        "@type": "CollectionPage",
+        "@id": `${SITE_URL}/games#page`,
+        name: "50+ ready-made games",
+        url: `${SITE_URL}/games`,
+      },
       author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+      publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
       applicationCategory: "GameApplication",
       operatingSystem: "iOS, Android, Web",
@@ -88,11 +109,12 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
       "@context": "https://schema.org",
       "@type": "HowTo",
       name: `How to Play ${game.name}`,
-      description: `Learn how to play ${game.name}`,
+      description: `How to play ${game.name}, in ${game.howToPlay.length} steps.`,
+      inLanguage: "en-US",
       step: game.howToPlay.map((step, index) => ({
         "@type": "HowToStep",
         position: index + 1,
-        name: `Step ${index + 1}`,
+        name: step.split(/[.;:]/)[0]!.trim(), // The step's first clause, as its short name.
         text: step,
       })),
     },
@@ -101,7 +123,14 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
   return (
     <>
       <JsonLd data={schemas} />
-      <GameDetail slug={slug} />
+      <GameExperience
+        key={slug}
+        gameId={slug as GAME_IDS}
+        title={game.name}
+        description={game.description}
+      >
+        <GameDetail slug={slug} />
+      </GameExperience>
     </>
   );
 }

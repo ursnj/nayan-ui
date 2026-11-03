@@ -1,3 +1,5 @@
+import type { LucideIcon } from "lucide-react";
+import { engineNavigation } from "./engine/navigation";
 import {
   AppWindow,
   Badge,
@@ -112,6 +114,7 @@ import {
   Pipette,
   Info,
   ImagePlus,
+  Boxes,
 } from "lucide-react";
 import {
   accordionTags,
@@ -302,13 +305,25 @@ export const isWindowDefined = () => {
   return typeof window !== "undefined";
 };
 
+export interface SidebarItem {
+  title: string;
+  description: string;
+  link: string;
+  icon?: LucideIcon;
+  isHeading?: boolean;
+  tags?: { sku: string; text: string }[];
+}
+
 // Utility function to determine which sidebar items to use based on URL path
-export const getSidebarItems = (path: string) => {
+export const getSidebarItems = (path: string): SidebarItem[] => {
   if (path.startsWith("/react-native")) {
     return reactNativeSidebarItems;
   }
   if (path.startsWith("/tools")) {
     return toolsSidebarItems;
+  }
+  if (path === "/game-engine" || path.startsWith("/game-engine/")) {
+    return engineSidebarItems;
   }
   if (path.startsWith("/games")) {
     return gamesSidebarItems;
@@ -1662,7 +1677,8 @@ export const toolsSidebarItems = [
   },
   {
     title: "Morse Code Converter",
-    description: "Convert text to Morse code and back, with full letter, digit, and punctuation support",
+    description:
+      "Convert text to Morse code and back, with full letter, digit, and punctuation support",
     link: "/tools/morse-code-converter",
     tags: morseCodeConverterTags,
     icon: Radio,
@@ -1696,7 +1712,8 @@ export const toolsSidebarItems = [
   },
   {
     title: "Robots.txt Generator",
-    description: "Build robots.txt files with user-agent rules, allow/disallow paths, and sitemap directives",
+    description:
+      "Build robots.txt files with user-agent rules, allow/disallow paths, and sitemap directives",
     link: "/tools/robots-generator",
     tags: robotsTags,
     icon: Bot,
@@ -1809,14 +1826,16 @@ export const toolsSidebarItems = [
   },
   {
     title: "Password Generator",
-    description: "Generate strong, cryptographically secure passwords with custom length and character sets",
+    description:
+      "Generate strong, cryptographically secure passwords with custom length and character sets",
     link: "/tools/password-generator",
     tags: passwordGeneratorTags,
     icon: KeyRound,
   },
   {
     title: "Number Base Converter",
-    description: "Convert numbers between binary, octal, decimal, and hexadecimal with arbitrary precision",
+    description:
+      "Convert numbers between binary, octal, decimal, and hexadecimal with arbitrary precision",
     link: "/tools/number-base-converter",
     tags: numberBaseConverterTags,
     icon: Binary,
@@ -1844,6 +1863,52 @@ export const toolsSidebarItems = [
   },
 ];
 
+const engineSidebarItem = (slug: string, title: string, icon: LucideIcon): SidebarItem => {
+  const guide = engineNavigation.find((item) => item.slug === slug);
+  if (!guide) throw new Error(`Missing engine guide: ${slug}`);
+  return { title, description: guide.description, link: guide.link, icon };
+};
+
+export const engineSidebarItems: SidebarItem[] = [
+  { title: "Get Started", description: "", link: "", isHeading: true },
+  engineSidebarItem("overview", "Overview", Gamepad2),
+  {
+    title: "Playground",
+    description: "Write engine code and run it live in the browser",
+    link: "/game-engine/playground",
+    icon: Code2,
+  },
+  engineSidebarItem("installation", "Installation", Settings),
+  engineSidebarItem("first-game", "Build Your First Game", Gamepad2),
+  engineSidebarItem("react", "React Quickstart", AppWindow),
+  engineSidebarItem("react-native", "React Native Quickstart", AppWindow),
+  engineSidebarItem("recipes", "Common Recipes", Code2),
+  engineSidebarItem("agent-guide", "AI Agent Guide", Bot),
+  { title: "Core Concepts", description: "", link: "", isHeading: true },
+  engineSidebarItem("world-entities", "World & Entities", Layers),
+  engineSidebarItem("game-view", "GameView", PanelTop),
+  engineSidebarItem("camera-lighting", "Camera & Lighting", Eye),
+  engineSidebarItem("physics-collisions", "Physics & Collisions", Gauge),
+  engineSidebarItem("animation", "Animation", RotateCw),
+  engineSidebarItem("skeletal-animation", "Skeletal Animation", Users),
+  engineSidebarItem("input-picking", "Input & Picking", SquareMousePointer),
+  engineSidebarItem("particles", "Effects & Particles", Sparkles),
+  engineSidebarItem("scoreboard-timers", "Scoreboards & Timers", Clock),
+  engineSidebarItem("audio-haptics", "Audio & Haptics", Radio),
+  engineSidebarItem("drawing", "Drawing & Painting", PenTool),
+  { title: "Assets & Geometry", description: "", link: "", isHeading: true },
+  engineSidebarItem("models-textures", "Models & Textures", Images),
+  engineSidebarItem("text-fonts", "Text & Fonts", TextCursorInput),
+  engineSidebarItem("procedural-geometry", "Procedural Geometry", PenTool),
+  engineSidebarItem("surfaces-lofts", "Surfaces & Lofts", Map),
+  engineSidebarItem("solid-modelling", "Solid Modelling", Layers),
+  { title: "Advanced", description: "", link: "", isHeading: true },
+  engineSidebarItem("cache-performance", "Cache & Performance", Gauge),
+  engineSidebarItem("render-source", "RenderSource", Code2),
+  engineSidebarItem("troubleshooting", "Troubleshooting", CircleAlert),
+  engineSidebarItem("api-reference", "API Reference", BookOpen),
+];
+
 export const gamesSidebarItems = [
   { title: "Get Started", description: "", link: "", isHeading: true },
   {
@@ -1865,6 +1930,12 @@ export const gamesSidebarItems = [
     icon: BookOpen,
   },
   {
+    title: "Build an engine game",
+    description: "File pattern, lifecycle and shared helpers for new engine games",
+    link: "/games/build-a-game",
+    icon: Wrench,
+  },
+  {
     title: "Licensing",
     description: "License information, commercial usage, and acknowledgments",
     link: "/games/licensing",
@@ -1884,15 +1955,63 @@ export const gamesSidebarItems = [
     icon: Gamepad2,
   },
   {
+    title: "Tile Home",
+    description: "Mahjong-style tile matching",
+    link: "/games/tile-home",
+    icon: Gamepad2,
+  },
+  {
+    title: "Arrows",
+    description: "Clear arrows off the board",
+    link: "/games/arrows",
+    icon: Gamepad2,
+  },
+  {
+    title: "Candy Crush",
+    description: "Match-3 candy puzzle",
+    link: "/games/candy-crush",
+    icon: Gamepad2,
+  },
+  {
+    title: "Penguin Run",
+    description: "3D lane runner",
+    link: "/games/penguin-run",
+    icon: Gamepad2,
+  },
+  {
+    title: "Treasure Hunt",
+    description: "3D wilderness exploration",
+    link: "/games/treasure-hunt",
+    icon: Gamepad2,
+  },
+  {
+    title: "Car Racing",
+    description: "Traffic dodging racer",
+    link: "/games/car-racing",
+    icon: Gamepad2,
+  },
+  {
+    title: "Bike Racing",
+    description: "High-speed motorcycle racing",
+    link: "/games/bike-racing",
+    icon: Gamepad2,
+  },
+  {
+    title: "Play With Tua",
+    description: "Playful 3D companion",
+    link: "/games/play-with-tua",
+    icon: Gamepad2,
+  },
+  {
     title: "Bubble Shooter",
     description: "Classic bubble matching puzzle",
     link: "/games/bubble-shooter",
     icon: Gamepad2,
   },
   {
-    title: "Tile Home",
-    description: "Mahjong-style tile matching",
-    link: "/games/tile-home",
+    title: "Block Breaker",
+    description: "Brick-breaking arcade",
+    link: "/games/block-breaker",
     icon: Gamepad2,
   },
   {
@@ -1902,9 +2021,9 @@ export const gamesSidebarItems = [
     icon: Gamepad2,
   },
   {
-    title: "Fruit Merger",
-    description: "Physics-based fruit merging",
-    link: "/games/fruit-merger",
+    title: "Balloon Blaster",
+    description: "Pop rising balloons",
+    link: "/games/balloon-blaster",
     icon: Gamepad2,
   },
   {
@@ -1920,15 +2039,21 @@ export const gamesSidebarItems = [
     icon: Gamepad2,
   },
   {
-    title: "Dots and Boxes",
-    description: "Strategy territory game",
-    link: "/games/dots-and-boxes",
+    title: "Snakes and Ladders",
+    description: "Classic dice board game",
+    link: "/games/snakes-and-ladders",
     icon: Gamepad2,
   },
   {
-    title: "Candy Crush",
-    description: "Match-3 candy puzzle",
-    link: "/games/candy-crush",
+    title: "Ludo King",
+    description: "Classic board game",
+    link: "/games/ludo-king",
+    icon: Gamepad2,
+  },
+  {
+    title: "Dots and Boxes",
+    description: "Strategy territory game",
+    link: "/games/dots-and-boxes",
     icon: Gamepad2,
   },
   {
@@ -1939,6 +2064,12 @@ export const gamesSidebarItems = [
   },
   { title: "Pac-Man", description: "Classic maze arcade", link: "/games/pac-man", icon: Gamepad2 },
   {
+    title: "Space Fighter",
+    description: "Space survival action",
+    link: "/games/space-fighter",
+    icon: Gamepad2,
+  },
+  {
     title: "Colors Sort",
     description: "Color sorting logic puzzle",
     link: "/games/colors-sort",
@@ -1948,18 +2079,6 @@ export const gamesSidebarItems = [
     title: "Popit Fidget",
     description: "Relaxing bubble popping",
     link: "/games/popit-fidget",
-    icon: Gamepad2,
-  },
-  {
-    title: "Balloon Blaster",
-    description: "Pop rising balloons",
-    link: "/games/balloon-blaster",
-    icon: Gamepad2,
-  },
-  {
-    title: "Space Fighter",
-    description: "Space survival action",
-    link: "/games/space-fighter",
     icon: Gamepad2,
   },
   {
@@ -1987,9 +2106,33 @@ export const gamesSidebarItems = [
     icon: Gamepad2,
   },
   {
-    title: "Ludo King",
-    description: "Classic board game",
-    link: "/games/ludo-king",
+    title: "Stack Tower",
+    description: "Precision block stacking",
+    link: "/games/stack-tower",
+    icon: Gamepad2,
+  },
+  {
+    title: "Pipe Connect",
+    description: "Pipe rotation puzzle",
+    link: "/games/pipe-connect",
+    icon: Gamepad2,
+  },
+  {
+    title: "Mine Sweeper",
+    description: "Classic logic deduction",
+    link: "/games/mine-sweeper",
+    icon: Gamepad2,
+  },
+  {
+    title: "Knife Hit",
+    description: "Knife throwing precision",
+    link: "/games/knife-hit",
+    icon: Gamepad2,
+  },
+  {
+    title: "Color Switch",
+    description: "Color matching arcade",
+    link: "/games/color-switch",
     icon: Gamepad2,
   },
   {
@@ -2011,18 +2154,6 @@ export const gamesSidebarItems = [
     icon: Gamepad2,
   },
   {
-    title: "Car Racing",
-    description: "Traffic dodging racer",
-    link: "/games/car-racing",
-    icon: Gamepad2,
-  },
-  {
-    title: "Bike Racing",
-    description: "High-speed motorcycle racing",
-    link: "/games/bike-racing",
-    icon: Gamepad2,
-  },
-  {
     title: "Sliding Numbers",
     description: "Classic sliding tile puzzle",
     link: "/games/sliding-numbers",
@@ -2032,6 +2163,12 @@ export const gamesSidebarItems = [
     title: "2048",
     description: "Addictive number merging",
     link: "/games/game-2048",
+    icon: Gamepad2,
+  },
+  {
+    title: "Sudoku",
+    description: "Classic number logic puzzle",
+    link: "/games/sudoku",
     icon: Gamepad2,
   },
   {
@@ -2047,45 +2184,9 @@ export const gamesSidebarItems = [
     icon: Gamepad2,
   },
   {
-    title: "Sudoku",
-    description: "Classic number logic puzzle",
-    link: "/games/sudoku",
-    icon: Gamepad2,
-  },
-  {
-    title: "Block Breaker",
-    description: "Brick-breaking arcade",
-    link: "/games/block-breaker",
-    icon: Gamepad2,
-  },
-  {
-    title: "Knife Hit",
-    description: "Knife throwing precision",
-    link: "/games/knife-hit",
-    icon: Gamepad2,
-  },
-  {
-    title: "Color Switch",
-    description: "Color matching arcade",
-    link: "/games/color-switch",
-    icon: Gamepad2,
-  },
-  {
-    title: "Stack Tower",
-    description: "Precision block stacking",
-    link: "/games/stack-tower",
-    icon: Gamepad2,
-  },
-  {
-    title: "Mine Sweeper",
-    description: "Classic logic deduction",
-    link: "/games/mine-sweeper",
-    icon: Gamepad2,
-  },
-  {
-    title: "Snakes and Ladders",
-    description: "Classic dice board game",
-    link: "/games/snakes-and-ladders",
+    title: "Fruit Merger",
+    description: "Physics-based fruit merging",
+    link: "/games/fruit-merger",
     icon: Gamepad2,
   },
   {
@@ -2094,29 +2195,11 @@ export const gamesSidebarItems = [
     link: "/games/find-different-number",
     icon: Gamepad2,
   },
-  {
-    title: "Arrows",
-    description: "Clear arrows off the board",
-    link: "/games/arrows",
-    icon: Gamepad2,
-  },
-  {
-    title: "Pipe Connect",
-    description: "Pipe rotation puzzle",
-    link: "/games/pipe-connect",
-    icon: Gamepad2,
-  },
   { title: "Bluk", description: "Block slinging platformer", link: "/games/bluk", icon: Gamepad2 },
   {
     title: "Chameleon Run",
     description: "Color matching runner",
     link: "/games/chameleon-run",
-    icon: Gamepad2,
-  },
-  {
-    title: "Crossy Road",
-    description: "Endless road crossing",
-    link: "/games/crossy-road",
     icon: Gamepad2,
   },
   {
@@ -2129,6 +2212,12 @@ export const gamesSidebarItems = [
     title: "Paper IO",
     description: "Territory claiming action",
     link: "/games/paper-io",
+    icon: Gamepad2,
+  },
+  {
+    title: "Crossy Road",
+    description: "Endless road crossing",
+    link: "/games/crossy-road",
     icon: Gamepad2,
   },
   { title: "Tangram", description: "Classic shape puzzle", link: "/games/tangram", icon: Gamepad2 },

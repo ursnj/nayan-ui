@@ -13,22 +13,19 @@ export interface MonacoEditorProps {
   label?: string;
 }
 
+/** A CSS variable's colour as #rrggbb, the only form Monaco themes accept (not #fff, rgb() or oklch()). */
 const resolveColor = (cssVar: string): string => {
   const raw = getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim();
   if (!raw) return "#888888";
-  if (raw.startsWith("#") || raw.startsWith("rgb")) return raw;
-  if (raw.startsWith("oklch") || raw.startsWith("hsl") || raw.startsWith("lch")) {
-    const el = document.createElement("div");
-    el.style.color = raw;
-    document.body.appendChild(el);
-    const computed = getComputedStyle(el).color;
-    document.body.removeChild(el);
-    return computed;
-  }
-  return raw;
+  const context = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+  if (!context) return "#888888";
+  context.fillStyle = raw;
+  context.fillRect(0, 0, 1, 1);
+  const [r, g, b] = context.getImageData(0, 0, 1, 1).data;
+  return `#${[r, g, b].map((value) => (value ?? 0).toString(16).padStart(2, "0")).join("")}`;
 };
 
-const buildTheme = (isDark: boolean) => {
+export const buildTheme = (isDark: boolean) => {
   const surface = resolveColor("--surface");
   const defaultColor = resolveColor("--default");
   const muted = resolveColor("--muted");
@@ -66,10 +63,17 @@ const buildTheme = (isDark: boolean) => {
   };
 };
 
-const THEME_NAME = "nayan-theme";
+export const THEME_NAME = "nayan-theme";
 
 const MonacoEditor = memo(
-  ({ value, onChange, readOnly = false, language = "plaintext", height = "500px", label }: MonacoEditorProps) => {
+  ({
+    value,
+    onChange,
+    readOnly = false,
+    language = "plaintext",
+    height = "500px",
+    label,
+  }: MonacoEditorProps) => {
     const handleMount: OnMount = useCallback((editor, monaco) => {
       const applyTheme = () => {
         const isDark = document.documentElement.classList.contains("dark");
@@ -80,7 +84,10 @@ const MonacoEditor = memo(
       applyTheme();
 
       const observer = new MutationObserver(applyTheme);
-      observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-theme"] });
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class", "data-theme"],
+      });
       editor.onDidDispose(() => observer.disconnect());
     }, []);
 
@@ -107,7 +114,11 @@ const MonacoEditor = memo(
               automaticLayout: true,
               wordWrap: "on",
               padding: { top: 12, bottom: 12 },
-              scrollbar: { verticalScrollbarSize: 8, horizontalScrollbarSize: 8, alwaysConsumeMouseWheel: false },
+              scrollbar: {
+                verticalScrollbarSize: 8,
+                horizontalScrollbarSize: 8,
+                alwaysConsumeMouseWheel: false,
+              },
               domReadOnly: readOnly,
             }}
           />

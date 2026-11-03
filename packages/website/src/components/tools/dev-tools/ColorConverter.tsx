@@ -19,8 +19,11 @@ function hexToRgb(hex: string): [number, number, number] | null {
 }
 
 function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
-  r /= 255; g /= 255; b /= 255;
-  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  r /= 255;
+  g /= 255;
+  b /= 255;
+  const max = Math.max(r, g, b),
+    min = Math.min(r, g, b);
   const l = (max + min) / 2;
   if (max === min) return [0, 0, Math.round(l * 100)];
   const d = max - min;

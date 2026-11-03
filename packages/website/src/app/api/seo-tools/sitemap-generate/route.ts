@@ -31,7 +31,13 @@ async function fetchAndParseLinks(url: string, baseOrigin: string): Promise<stri
     let m;
     while ((m = regex.exec(html)) !== null) {
       const href = m[1].trim();
-      if (!href || href.startsWith("javascript:") || href.startsWith("mailto:") || href.startsWith("tel:")) continue;
+      if (
+        !href ||
+        href.startsWith("javascript:") ||
+        href.startsWith("mailto:") ||
+        href.startsWith("tel:")
+      )
+        continue;
 
       try {
         const parsed = new URL(href, url);
@@ -49,11 +55,7 @@ async function fetchAndParseLinks(url: string, baseOrigin: string): Promise<stri
   }
 }
 
-function buildSitemapXml(
-  urls: UrlWithDepth[],
-  maxDepth: number,
-  changefreq: string,
-): string {
+function buildSitemapXml(urls: UrlWithDepth[], maxDepth: number, changefreq: string): string {
   let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
   xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n`;
   xml += `        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n`;
@@ -76,7 +78,11 @@ function buildSitemapXml(
 }
 
 function escapeXml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 export async function POST(req: NextRequest) {

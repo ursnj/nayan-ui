@@ -113,17 +113,8 @@ const JsonToXml = () => {
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <JsonMonacoEditor
-          label="Input JSON"
-          value={input}
-          onChange={setInput}
-        />
-        <JsonMonacoEditor
-          label="XML Output"
-          value={output}
-          readOnly
-          language="xml"
-        />
+        <JsonMonacoEditor label="Input JSON" value={input} onChange={setInput} />
+        <JsonMonacoEditor label="XML Output" value={output} readOnly language="xml" />
       </div>
     </div>
   );

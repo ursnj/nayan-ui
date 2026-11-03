@@ -26,19 +26,17 @@ export async function POST(req: NextRequest) {
     if (pageSpec === "all") {
       indices = Array.from({ length: total }, (_, i) => i);
     } else {
-      indices = pageSpec
-        .split(",")
-        .flatMap((p) => {
-          const trimmed = p.trim();
-          if (trimmed.includes("-")) {
-            const [s, e] = trimmed.split("-").map(Number);
-            const pages: number[] = [];
-            for (let i = Math.max(1, s); i <= Math.min(e, total); i++) pages.push(i - 1);
-            return pages;
-          }
-          const n = Number(trimmed);
-          return n >= 1 && n <= total ? [n - 1] : [];
-        });
+      indices = pageSpec.split(",").flatMap((p) => {
+        const trimmed = p.trim();
+        if (trimmed.includes("-")) {
+          const [s, e] = trimmed.split("-").map(Number);
+          const pages: number[] = [];
+          for (let i = Math.max(1, s); i <= Math.min(e, total); i++) pages.push(i - 1);
+          return pages;
+        }
+        const n = Number(trimmed);
+        return n >= 1 && n <= total ? [n - 1] : [];
+      });
     }
 
     for (const idx of indices) {

@@ -24,7 +24,8 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "Letter Frequency Analyzer",
-    description: "Analyze how often each letter appears in your text, with counts and percentages for every letter A-Z.",
+    description:
+      "Analyze how often each letter appears in your text, with counts and percentages for every letter A-Z.",
     url: `${SITE_URL}/tools/letter-frequency-analyzer`,
     keywords: "letter frequency, analyzer, cipher analysis, cryptography, text analysis",
   }),

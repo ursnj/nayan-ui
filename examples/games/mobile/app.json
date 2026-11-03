@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "Nayan Game Engine Examples",
+    "slug": "nayan-engine-examples",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "nayan-engine-examples",
+    "ios": {
+      "bundleIdentifier": "com.nayanui.engine"
+    },
+    "android": {
+      "package": "com.nayanui.engine",
+      "permissions": ["android.permission.VIBRATE"]
+    },
+    "plugins": ["expo-router", "expo-dev-client", ["./plugins/withAndroidMinSdk", 26]],
+    "userInterfaceStyle": "automatic"
+  }
+}

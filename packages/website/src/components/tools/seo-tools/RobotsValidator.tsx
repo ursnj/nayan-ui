@@ -199,7 +199,9 @@ const RobotsValidator = () => {
                 <span className="font-semibold text-danger">robots.txt has errors</span>
               </>
             )}
-            <NBadge size="sm">{result.lineCount} directive{result.lineCount !== 1 ? "s" : ""}</NBadge>
+            <NBadge size="sm">
+              {result.lineCount} directive{result.lineCount !== 1 ? "s" : ""}
+            </NBadge>
           </div>
 
           <div className="mb-3 flex flex-wrap gap-2">

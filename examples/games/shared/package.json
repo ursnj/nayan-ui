@@ -1,0 +1,14 @@
+{
+  "name": "@nayan-engine-example/shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "peerDependencies": {
+    "@nayan-ui/engine": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}

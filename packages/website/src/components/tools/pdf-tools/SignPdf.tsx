@@ -137,7 +137,10 @@ const SignPdf = () => {
         <NCard
           className={`mb-6 flex cursor-pointer flex-col items-center gap-3 border-dashed p-10 transition-colors ${dragging ? "border-accent" : ""}`}
           onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragging(true);
+          }}
           onDragLeave={() => setDragging(false)}
           onDrop={(e) => {
             e.preventDefault();
@@ -153,14 +156,20 @@ const SignPdf = () => {
             type="file"
             accept=".pdf,application/pdf"
             className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ""; }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+              e.target.value = "";
+            }}
           />
         </NCard>
       ) : (
         <>
           <NCard className="mb-4 p-3">
             <p className="truncate text-sm font-medium text-foreground">{file.name}</p>
-            <p className="text-xs text-muted">{pageCount} page{pageCount === 1 ? "" : "s"}</p>
+            <p className="text-xs text-muted">
+              {pageCount} page{pageCount === 1 ? "" : "s"}
+            </p>
           </NCard>
 
           <p className="mb-2 text-sm font-medium text-foreground">Draw your signature</p>
@@ -182,7 +191,9 @@ const SignPdf = () => {
               <Eraser className="mr-1.5 h-3.5 w-3.5" />
               Clear signature
             </NButton>
-            {!hasSignature && <span className="text-xs text-muted">Draw with your mouse or finger above</span>}
+            {!hasSignature && (
+              <span className="text-xs text-muted">Draw with your mouse or finger above</span>
+            )}
           </div>
 
           <div className="mb-5 grid gap-4 sm:grid-cols-2">
@@ -190,7 +201,9 @@ const SignPdf = () => {
               type="number"
               label="Page number"
               value={String(pageNumber)}
-              onChange={(e) => setPageNumber(Math.min(Math.max(1, Number(e.target.value) || 1), pageCount))}
+              onChange={(e) =>
+                setPageNumber(Math.min(Math.max(1, Number(e.target.value) || 1), pageCount))
+              }
               min={1}
               max={pageCount}
             />
@@ -198,7 +211,9 @@ const SignPdf = () => {
               label="Position"
               value={position}
               options={POSITION_OPTIONS}
-              onChange={(v) => { if (v) setPosition(v); }}
+              onChange={(v) => {
+                if (v) setPosition(v);
+              }}
               isSearchable={false}
             />
           </div>
@@ -214,7 +229,12 @@ const SignPdf = () => {
           />
 
           <div className="mb-5 flex flex-wrap items-center gap-3">
-            <NButton onClick={sign} isLoading={processing} loadingText="Signing…" disabled={!hasSignature}>
+            <NButton
+              onClick={sign}
+              isLoading={processing}
+              loadingText="Signing…"
+              disabled={!hasSignature}
+            >
               <PenTool className="mr-2 h-4 w-4" />
               Sign &amp; Download
             </NButton>

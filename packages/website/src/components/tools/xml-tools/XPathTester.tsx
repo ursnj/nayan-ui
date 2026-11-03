@@ -91,7 +91,7 @@ const XPathTester = () => {
 
   const copy = useCallback(() => {
     if (!run) return;
-    const text = run.kind === "nodes" ? (run.nodes ?? []).join("\n") : run.scalarValue ?? "";
+    const text = run.kind === "nodes" ? (run.nodes ?? []).join("\n") : (run.scalarValue ?? "");
     navigator.clipboard.writeText(text);
     showToast("Copied to clipboard");
   }, [run]);
@@ -130,7 +130,9 @@ const XPathTester = () => {
         </NButton>
       </div>
 
-      {error && <NAlert type={AlertTypes.ERROR} title="XPath Error" message={error} className="mb-4" />}
+      {error && (
+        <NAlert type={AlertTypes.ERROR} title="XPath Error" message={error} className="mb-4" />
+      )}
 
       <XmlMonacoEditor label="Input XML" value={xml} onChange={setXml} />
 
@@ -144,7 +146,9 @@ const XPathTester = () => {
           ) : (
             <>
               <div className="mb-2 flex items-center gap-2">
-                <NBadge size="sm">{run.nodes?.length ?? 0} match{run.nodes?.length === 1 ? "" : "es"}</NBadge>
+                <NBadge size="sm">
+                  {run.nodes?.length ?? 0} match{run.nodes?.length === 1 ? "" : "es"}
+                </NBadge>
               </div>
               {run.nodes && run.nodes.length > 0 ? (
                 <ul className="max-h-[320px] space-y-1 overflow-auto font-mono text-sm text-foreground">

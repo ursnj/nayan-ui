@@ -58,7 +58,10 @@ const ExtractImagesFromPdf = () => {
         <NCard
           className={`mb-6 flex cursor-pointer flex-col items-center gap-3 border-dashed p-10 transition-colors ${dragging ? "border-accent" : ""}`}
           onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragging(true);
+          }}
           onDragLeave={() => setDragging(false)}
           onDrop={(e) => {
             e.preventDefault();
@@ -74,7 +77,11 @@ const ExtractImagesFromPdf = () => {
             type="file"
             accept=".pdf,application/pdf"
             className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ""; }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+              e.target.value = "";
+            }}
           />
         </NCard>
       ) : (
@@ -83,7 +90,11 @@ const ExtractImagesFromPdf = () => {
             <p className="truncate text-sm font-medium text-foreground">{file.name}</p>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <NBadge size="sm">{(file.size / 1024).toFixed(1)} KB</NBadge>
-              {result && <NBadge size="sm" color="success">{result.count} image{result.count === 1 ? "" : "s"} found</NBadge>}
+              {result && (
+                <NBadge size="sm" color="success">
+                  {result.count} image{result.count === 1 ? "" : "s"} found
+                </NBadge>
+              )}
             </div>
           </NCard>
 

@@ -10,10 +10,18 @@ export const XmlFormatterContent = () => (
     </p>
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Customizable indent</strong> — choose 2 or 4 spaces.</li>
-      <li><strong>Instant formatting</strong> — runs entirely in your browser.</li>
-      <li><strong>Error detection</strong> — shows parse errors if the XML is malformed.</li>
-      <li><strong>Copy to clipboard</strong> — one click to copy the formatted output.</li>
+      <li>
+        <strong>Customizable indent</strong> — choose 2 or 4 spaces.
+      </li>
+      <li>
+        <strong>Instant formatting</strong> — runs entirely in your browser.
+      </li>
+      <li>
+        <strong>Error detection</strong> — shows parse errors if the XML is malformed.
+      </li>
+      <li>
+        <strong>Copy to clipboard</strong> — one click to copy the formatted output.
+      </li>
     </ul>
   </div>
 );
@@ -28,10 +36,19 @@ export const XmlMinifierContent = () => (
     </p>
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Size comparison</strong> — see original vs minified size and savings percentage.</li>
-      <li><strong>Lossless compression</strong> — data is preserved exactly, only whitespace is removed.</li>
-      <li><strong>Copy to clipboard</strong> — one click to copy the minified output.</li>
-      <li><strong>Client-side processing</strong> — your data never leaves your browser.</li>
+      <li>
+        <strong>Size comparison</strong> — see original vs minified size and savings percentage.
+      </li>
+      <li>
+        <strong>Lossless compression</strong> — data is preserved exactly, only whitespace is
+        removed.
+      </li>
+      <li>
+        <strong>Copy to clipboard</strong> — one click to copy the minified output.
+      </li>
+      <li>
+        <strong>Client-side processing</strong> — your data never leaves your browser.
+      </li>
     </ul>
   </div>
 );
@@ -46,10 +63,19 @@ export const XmlValidatorContent = () => (
     </p>
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Well-formedness check</strong> — detects unclosed tags, mismatched names, and illegal characters.</li>
-      <li><strong>Structure analysis</strong> — reports root tag, total elements, and maximum depth.</li>
-      <li><strong>Instant feedback</strong> — validation runs entirely in your browser.</li>
-      <li><strong>Clear error messages</strong> — pinpoints what went wrong.</li>
+      <li>
+        <strong>Well-formedness check</strong> — detects unclosed tags, mismatched names, and
+        illegal characters.
+      </li>
+      <li>
+        <strong>Structure analysis</strong> — reports root tag, total elements, and maximum depth.
+      </li>
+      <li>
+        <strong>Instant feedback</strong> — validation runs entirely in your browser.
+      </li>
+      <li>
+        <strong>Clear error messages</strong> — pinpoints what went wrong.
+      </li>
     </ul>
   </div>
 );
@@ -64,10 +90,18 @@ export const XmlToJsonContent = () => (
     </p>
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Recursive conversion</strong> — nested elements map to nested JSON objects.</li>
-      <li><strong>Array detection</strong> — repeated sibling tags become JSON arrays.</li>
-      <li><strong>Download as file</strong> — save the JSON directly to your device.</li>
-      <li><strong>Copy to clipboard</strong> — paste into your editor instantly.</li>
+      <li>
+        <strong>Recursive conversion</strong> — nested elements map to nested JSON objects.
+      </li>
+      <li>
+        <strong>Array detection</strong> — repeated sibling tags become JSON arrays.
+      </li>
+      <li>
+        <strong>Download as file</strong> — save the JSON directly to your device.
+      </li>
+      <li>
+        <strong>Copy to clipboard</strong> — paste into your editor instantly.
+      </li>
     </ul>
   </div>
 );
@@ -82,10 +116,18 @@ export const XmlToCsvContent = () => (
     </p>
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Automatic headers</strong> — column names are extracted from element tags.</li>
-      <li><strong>Proper escaping</strong> — handles commas, quotes, and newlines in values.</li>
-      <li><strong>Download as file</strong> — save the CSV directly to your device.</li>
-      <li><strong>Copy to clipboard</strong> — paste into spreadsheets instantly.</li>
+      <li>
+        <strong>Automatic headers</strong> — column names are extracted from element tags.
+      </li>
+      <li>
+        <strong>Proper escaping</strong> — handles commas, quotes, and newlines in values.
+      </li>
+      <li>
+        <strong>Download as file</strong> — save the CSV directly to your device.
+      </li>
+      <li>
+        <strong>Copy to clipboard</strong> — paste into spreadsheets instantly.
+      </li>
     </ul>
   </div>
 );
@@ -100,10 +142,18 @@ export const XmlToYamlContent = () => (
     </p>
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Clean output</strong> — proper indentation, no closing tags or brackets.</li>
-      <li><strong>Array handling</strong> — repeated elements are rendered as YAML sequences.</li>
-      <li><strong>Safe quoting</strong> — special characters are quoted automatically.</li>
-      <li><strong>Download as file</strong> — save as .yaml directly.</li>
+      <li>
+        <strong>Clean output</strong> — proper indentation, no closing tags or brackets.
+      </li>
+      <li>
+        <strong>Array handling</strong> — repeated elements are rendered as YAML sequences.
+      </li>
+      <li>
+        <strong>Safe quoting</strong> — special characters are quoted automatically.
+      </li>
+      <li>
+        <strong>Download as file</strong> — save as .yaml directly.
+      </li>
     </ul>
   </div>
 );
@@ -113,15 +163,23 @@ export const XmlToTsvContent = () => (
     <h2 className={H2_DOC}>Why Convert XML to TSV?</h2>
     <p className="mb-5 text-sm leading-relaxed text-muted">
       Tab-separated values (TSV) are ideal for pasting into spreadsheets, feeding into command-line
-      tools like <code>awk</code> and <code>cut</code>, and importing into databases. TSV avoids
-      the quoting complexity of CSV when your data contains commas.
+      tools like <code>awk</code> and <code>cut</code>, and importing into databases. TSV avoids the
+      quoting complexity of CSV when your data contains commas.
     </p>
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Automatic headers</strong> — column names from element tags.</li>
-      <li><strong>Tab-safe values</strong> — tabs and newlines in values are replaced.</li>
-      <li><strong>Download as file</strong> — save as .tsv directly.</li>
-      <li><strong>Copy to clipboard</strong> — paste into any spreadsheet.</li>
+      <li>
+        <strong>Automatic headers</strong> — column names from element tags.
+      </li>
+      <li>
+        <strong>Tab-safe values</strong> — tabs and newlines in values are replaced.
+      </li>
+      <li>
+        <strong>Download as file</strong> — save as .tsv directly.
+      </li>
+      <li>
+        <strong>Copy to clipboard</strong> — paste into any spreadsheet.
+      </li>
     </ul>
   </div>
 );
@@ -136,10 +194,18 @@ export const XmlToExcelContent = () => (
     </p>
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>XLSX output</strong> — compatible with Excel, Google Sheets, and LibreOffice Calc.</li>
-      <li><strong>Bold headers</strong> — column names are formatted as bold header row.</li>
-      <li><strong>Auto-sized columns</strong> — widths adjust to the content.</li>
-      <li><strong>Nested data handling</strong> — nested elements are JSON-stringified in cells.</li>
+      <li>
+        <strong>XLSX output</strong> — compatible with Excel, Google Sheets, and LibreOffice Calc.
+      </li>
+      <li>
+        <strong>Bold headers</strong> — column names are formatted as bold header row.
+      </li>
+      <li>
+        <strong>Auto-sized columns</strong> — widths adjust to the content.
+      </li>
+      <li>
+        <strong>Nested data handling</strong> — nested elements are JSON-stringified in cells.
+      </li>
     </ul>
   </div>
 );
@@ -154,10 +220,20 @@ export const XPathTesterContent = () => (
     </p>
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Real evaluation</strong> — runs your browser's native XPath engine, not a simulation.</li>
-      <li><strong>All result types</strong> — node-sets, strings, numbers, and booleans are all displayed correctly.</li>
-      <li><strong>Element and attribute matches</strong> — both are shown with their string value.</li>
-      <li><strong>Clear errors</strong> — invalid XML or unsupported XPath syntax is reported plainly.</li>
+      <li>
+        <strong>Real evaluation</strong> — runs your browser's native XPath engine, not a
+        simulation.
+      </li>
+      <li>
+        <strong>All result types</strong> — node-sets, strings, numbers, and booleans are all
+        displayed correctly.
+      </li>
+      <li>
+        <strong>Element and attribute matches</strong> — both are shown with their string value.
+      </li>
+      <li>
+        <strong>Clear errors</strong> — invalid XML or unsupported XPath syntax is reported plainly.
+      </li>
     </ul>
   </div>
 );
@@ -172,10 +248,20 @@ export const CsvToXmlContent = () => (
     </p>
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Quoted-field aware</strong> — correctly handles commas, quotes, and newlines inside CSV cells.</li>
-      <li><strong>Configurable tags</strong> — choose your own root and row element names.</li>
-      <li><strong>Proper escaping</strong> — special XML characters in values are escaped automatically.</li>
-      <li><strong>Download as file</strong> — save the XML directly to your device.</li>
+      <li>
+        <strong>Quoted-field aware</strong> — correctly handles commas, quotes, and newlines inside
+        CSV cells.
+      </li>
+      <li>
+        <strong>Configurable tags</strong> — choose your own root and row element names.
+      </li>
+      <li>
+        <strong>Proper escaping</strong> — special XML characters in values are escaped
+        automatically.
+      </li>
+      <li>
+        <strong>Download as file</strong> — save the XML directly to your device.
+      </li>
     </ul>
   </div>
 );
@@ -190,10 +276,18 @@ export const YamlToXmlContent = () => (
     </p>
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Nested mapping support</strong> — nested YAML objects become nested XML elements.</li>
-      <li><strong>List handling</strong> — YAML sequences become repeated sibling elements.</li>
-      <li><strong>Configurable root tag</strong> — name the document root however you like.</li>
-      <li><strong>Download as file</strong> — save the XML directly to your device.</li>
+      <li>
+        <strong>Nested mapping support</strong> — nested YAML objects become nested XML elements.
+      </li>
+      <li>
+        <strong>List handling</strong> — YAML sequences become repeated sibling elements.
+      </li>
+      <li>
+        <strong>Configurable root tag</strong> — name the document root however you like.
+      </li>
+      <li>
+        <strong>Download as file</strong> — save the XML directly to your device.
+      </li>
     </ul>
   </div>
 );

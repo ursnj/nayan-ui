@@ -24,9 +24,11 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "Compress Image",
-    description: "Compress JPG, PNG, SVG, and GIF images while saving space and maintaining quality.",
+    description:
+      "Compress JPG, PNG, SVG, and GIF images while saving space and maintaining quality.",
     url: `${SITE_URL}/tools/compress-image`,
-    keywords: "compress image, image compression, reduce image size, optimize image, image compressor",
+    keywords:
+      "compress image, image compression, reduce image size, optimize image, image compressor",
   }),
 ];
 

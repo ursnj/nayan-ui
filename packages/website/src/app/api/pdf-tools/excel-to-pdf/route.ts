@@ -29,7 +29,10 @@ export async function POST(req: NextRequest) {
     const cellPadding = 4;
     // Standard fonts only support WinAnsi (Latin-1); anything outside that
     // throws at draw time and would otherwise crash the whole conversion.
-    const toSafeText = (value: unknown) => String(value ?? "").replace(/[^\x00-\xFF]/g, "?").substring(0, 30);
+    const toSafeText = (value: unknown) =>
+      String(value ?? "")
+        .replace(/[^\x00-\xFF]/g, "?")
+        .substring(0, 30);
 
     workbook.eachSheet((worksheet) => {
       let page = doc.addPage([pageWidth, pageHeight]);

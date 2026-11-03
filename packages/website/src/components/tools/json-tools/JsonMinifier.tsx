@@ -61,7 +61,9 @@ const JsonMinifier = () => {
           <div className="flex items-center gap-2">
             <NBadge size="sm">{(stats.original / 1024).toFixed(1)} KB</NBadge>
             <span className="text-xs text-muted">→</span>
-            <NBadge size="sm" color="success">{(stats.minified / 1024).toFixed(1)} KB</NBadge>
+            <NBadge size="sm" color="success">
+              {(stats.minified / 1024).toFixed(1)} KB
+            </NBadge>
             <NBadge size="sm" color="accent">
               {Math.round((1 - stats.minified / stats.original) * 100)}% saved
             </NBadge>
@@ -74,16 +76,8 @@ const JsonMinifier = () => {
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <JsonMonacoEditor
-          label="Input JSON"
-          value={input}
-          onChange={setInput}
-        />
-        <JsonMonacoEditor
-          label="Minified Output"
-          value={output}
-          readOnly
-        />
+        <JsonMonacoEditor label="Input JSON" value={input} onChange={setInput} />
+        <JsonMonacoEditor label="Minified Output" value={output} readOnly />
       </div>
     </div>
   );

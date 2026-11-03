@@ -1,12 +1,18 @@
 import JwtDecoderPage from "@/components/tools/dev-tools/JwtDecoderPage";
 import JsonLd from "@/components/helpers/JsonLd";
-import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata, buildTechArticleSchema } from "@/services/seo";
+import {
+  SITE_URL,
+  buildBreadcrumbSchema,
+  buildPageMetadata,
+  buildTechArticleSchema,
+} from "@/services/seo";
 
 export const metadata = buildPageMetadata({
   title: "JWT Decoder",
   description: "Decode and inspect JSON Web Tokens (JWT). Free online JWT decoder by Nayan UI.",
   path: "/tools/jwt-decoder",
-  keywords: "jwt decoder, jwt parser, json web token decoder, jwt inspector, jwt token viewer, online jwt decoder, free jwt decoder, nayan ui tools",
+  keywords:
+    "jwt decoder, jwt parser, json web token decoder, jwt inspector, jwt token viewer, online jwt decoder, free jwt decoder, nayan ui tools",
 });
 
 const schemas = [

@@ -1,6 +1,11 @@
 import HtmlEntityEncoderDecoderPage from "@/components/tools/dev-tools/HtmlEntityEncoderDecoderPage";
 import JsonLd from "@/components/helpers/JsonLd";
-import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata, buildTechArticleSchema } from "@/services/seo";
+import {
+  SITE_URL,
+  buildBreadcrumbSchema,
+  buildPageMetadata,
+  buildTechArticleSchema,
+} from "@/services/seo";
 
 export const metadata = buildPageMetadata({
   title: "HTML Entity Encoder/Decoder",
@@ -19,7 +24,8 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "HTML Entity Encoder/Decoder",
-    description: "Encode text into HTML entities or decode named and numeric HTML entities back into readable text.",
+    description:
+      "Encode text into HTML entities or decode named and numeric HTML entities back into readable text.",
     url: `${SITE_URL}/tools/html-entity-encoder-decoder`,
     keywords: "html entity encoder, html entity decoder, html escape, html unescape",
   }),

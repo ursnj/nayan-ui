@@ -17,7 +17,10 @@ export async function POST(req: NextRequest) {
     const arr = Array.isArray(parsed) ? parsed : [parsed];
     const flat = arr.filter((r) => r && typeof r === "object" && !Array.isArray(r));
     if (flat.length === 0) {
-      return NextResponse.json({ error: "JSON must be an object or array of objects" }, { status: 400 });
+      return NextResponse.json(
+        { error: "JSON must be an object or array of objects" },
+        { status: 400 },
+      );
     }
 
     const keys = [...new Set(flat.flatMap(Object.keys))];
@@ -40,7 +43,12 @@ export async function POST(req: NextRequest) {
       const values: Record<string, any> = {};
       for (const key of keys) {
         const val = row[key];
-        values[key] = val === null || val === undefined ? "" : typeof val === "object" ? JSON.stringify(val) : val;
+        values[key] =
+          val === null || val === undefined
+            ? ""
+            : typeof val === "object"
+              ? JSON.stringify(val)
+              : val;
       }
       sheet.addRow(values);
     }

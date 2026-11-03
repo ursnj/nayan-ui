@@ -51,7 +51,9 @@ const UuidGenerator = () => {
         max={100}
         className="mb-4 max-w-32"
         value={String(count)}
-        onChange={(e) => setCount(Math.min(100, Math.max(1, Math.floor(Number(e.target.value)) || 1)))}
+        onChange={(e) =>
+          setCount(Math.min(100, Math.max(1, Math.floor(Number(e.target.value)) || 1)))
+        }
       />
 
       {uuids.length > 0 && (

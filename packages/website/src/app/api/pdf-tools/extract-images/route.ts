@@ -7,7 +7,10 @@ function resolveObj(page: any, objId: string): Promise<any> {
 
 // pdf.js decodes an embedded raster image into one of these pixel layouts
 // (GRAYSCALE_1BPP packs 8 pixels per byte; the others are already byte-aligned).
-function toRgba(imgData: { data: Uint8Array | Uint8ClampedArray; width: number; height: number; kind: number }, ImageKind: Record<string, number>) {
+function toRgba(
+  imgData: { data: Uint8Array | Uint8ClampedArray; width: number; height: number; kind: number },
+  ImageKind: Record<string, number>,
+) {
   const { data, width, height, kind } = imgData;
   const rgba = new Uint8ClampedArray(width * height * 4);
 
@@ -76,7 +79,8 @@ export async function POST(req: NextRequest) {
 
           for (let i = 0; i < opList.fnArray.length; i++) {
             const fn = opList.fnArray[i];
-            if (fn !== pdfjs.OPS.paintImageXObject && fn !== pdfjs.OPS.paintImageXObjectRepeat) continue;
+            if (fn !== pdfjs.OPS.paintImageXObject && fn !== pdfjs.OPS.paintImageXObjectRepeat)
+              continue;
             const objId = opList.argsArray[i][0];
             if (typeof objId !== "string" || seen.has(objId)) continue;
             seen.add(objId);
@@ -106,7 +110,10 @@ export async function POST(req: NextRequest) {
 
     if (images.length === 0) {
       return NextResponse.json(
-        { error: "No embedded raster images were found in this PDF (it may only contain text or vector graphics)." },
+        {
+          error:
+            "No embedded raster images were found in this PDF (it may only contain text or vector graphics).",
+        },
         { status: 404 },
       );
     }

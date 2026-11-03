@@ -5,12 +5,13 @@ import {
   buildBreadcrumbSchema,
   buildPageMetadata,
   buildTechArticleSchema,
+  gamesAbout,
 } from "@/services/seo";
 
 export const metadata = buildPageMetadata({
   title: "Games API Reference",
   description:
-    "Complete API documentation for @nayan-ui/games. All exported constants, types, and configuration options.",
+    "Every export of @nayan-ui/games and @nayan-ui/games/services: game components, GameProps, settings, game ids, loading, themes and sounds.",
   path: "/games/api-reference",
   keywords: "react native games api, game api reference, react native games documentation",
 });
@@ -25,6 +26,19 @@ const schemas = [
     title: "Games API Reference",
     description: "Complete API documentation for @nayan-ui/games.",
     url: `${SITE_URL}/games/api-reference`,
+    about: gamesAbout,
+    sections: [
+      "Entry points",
+      "Game components",
+      "Types",
+      "GAME_IDS",
+      "Loading",
+      "Theme",
+      "Sounds",
+      "Utilities",
+      "Not exported",
+    ],
+    isPartOf: { name: "Nayan UI games documentation", url: `${SITE_URL}/games` },
   }),
 ];
 

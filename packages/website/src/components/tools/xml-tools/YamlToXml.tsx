@@ -171,7 +171,9 @@ const YamlToXml = () => {
         </NButton>
       </div>
 
-      {error && <NAlert type={AlertTypes.ERROR} title="Invalid YAML" message={error} className="mb-4" />}
+      {error && (
+        <NAlert type={AlertTypes.ERROR} title="Invalid YAML" message={error} className="mb-4" />
+      )}
 
       <div className="grid gap-4 lg:grid-cols-2">
         <NTextarea

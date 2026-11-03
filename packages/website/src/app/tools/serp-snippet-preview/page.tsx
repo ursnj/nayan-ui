@@ -24,7 +24,8 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "Google SERP Snippet Preview",
-    description: "Preview how your page title and meta description will look in Google search results.",
+    description:
+      "Preview how your page title and meta description will look in Google search results.",
     url: `${SITE_URL}/tools/serp-snippet-preview`,
     keywords: "serp snippet preview, google search preview, meta title, meta description",
   }),

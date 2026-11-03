@@ -24,19 +24,30 @@ function randomIndex(max: number): number {
   return v % max;
 }
 
-function buildCharset(opts: { upper: boolean; lower: boolean; numbers: boolean; symbols: boolean; excludeAmbiguous: boolean }): string {
+function buildCharset(opts: {
+  upper: boolean;
+  lower: boolean;
+  numbers: boolean;
+  symbols: boolean;
+  excludeAmbiguous: boolean;
+}): string {
   let charset = "";
   if (opts.upper) charset += UPPER;
   if (opts.lower) charset += LOWER;
   if (opts.numbers) charset += NUMBERS;
   if (opts.symbols) charset += SYMBOLS;
   if (opts.excludeAmbiguous) {
-    charset = Array.from(charset).filter((c) => !AMBIGUOUS.has(c)).join("");
+    charset = Array.from(charset)
+      .filter((c) => !AMBIGUOUS.has(c))
+      .join("");
   }
   return charset;
 }
 
-function strengthLabel(bits: number): { label: string; color: "danger" | "warning" | "accent" | "success" } {
+function strengthLabel(bits: number): {
+  label: string;
+  color: "danger" | "warning" | "accent" | "success";
+} {
   if (bits < 40) return { label: "Weak", color: "danger" };
   if (bits < 60) return { label: "Fair", color: "warning" };
   if (bits < 80) return { label: "Strong", color: "accent" };
@@ -113,7 +124,11 @@ const PasswordGenerator = () => {
           <NCheck checked={upper} onChange={(v) => toggle("upper", v)} label="Uppercase (A-Z)" />
           <NCheck checked={lower} onChange={(v) => toggle("lower", v)} label="Lowercase (a-z)" />
           <NCheck checked={numbers} onChange={(v) => toggle("numbers", v)} label="Numbers (0-9)" />
-          <NCheck checked={symbols} onChange={(v) => toggle("symbols", v)} label="Symbols (!@#$...)" />
+          <NCheck
+            checked={symbols}
+            onChange={(v) => toggle("symbols", v)}
+            label="Symbols (!@#$...)"
+          />
         </div>
         <div className="mt-3">
           <NCheck

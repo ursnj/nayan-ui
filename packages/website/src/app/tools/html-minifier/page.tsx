@@ -1,12 +1,19 @@
 import HtmlMinifierPage from "@/components/tools/dev-tools/HtmlMinifierPage";
 import JsonLd from "@/components/helpers/JsonLd";
-import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata, buildTechArticleSchema } from "@/services/seo";
+import {
+  SITE_URL,
+  buildBreadcrumbSchema,
+  buildPageMetadata,
+  buildTechArticleSchema,
+} from "@/services/seo";
 
 export const metadata = buildPageMetadata({
   title: "HTML Minifier",
-  description: "Minify HTML by removing whitespace and comments. Free online HTML minifier by Nayan UI.",
+  description:
+    "Minify HTML by removing whitespace and comments. Free online HTML minifier by Nayan UI.",
   path: "/tools/html-minifier",
-  keywords: "html minifier, html compressor, minify html, online html minifier, html optimizer, html reducer, free html minifier, nayan ui tools",
+  keywords:
+    "html minifier, html compressor, minify html, online html minifier, html optimizer, html reducer, free html minifier, nayan ui tools",
 });
 
 const schemas = [

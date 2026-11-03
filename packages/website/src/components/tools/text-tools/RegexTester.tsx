@@ -40,7 +40,14 @@ const RegexTester = () => {
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <NButton isOutline onClick={() => { setPattern(""); setFlags("g"); setText(""); }}>
+        <NButton
+          isOutline
+          onClick={() => {
+            setPattern("");
+            setFlags("g");
+            setText("");
+          }}
+        >
           <Trash2 className="mr-2 h-4 w-4" />
           Clear
         </NButton>
@@ -77,7 +84,9 @@ const RegexTester = () => {
 
       {matches.length > 0 && (
         <NCard className="mt-4 p-4">
-          <label className="mb-2 block text-sm font-medium">{matches.length} Match{matches.length !== 1 ? "es" : ""}</label>
+          <label className="mb-2 block text-sm font-medium">
+            {matches.length} Match{matches.length !== 1 ? "es" : ""}
+          </label>
           <div className="space-y-2">
             {matches.map((m, i) => (
               <div key={i} className="rounded-lg bg-default/30 p-3">

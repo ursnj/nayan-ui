@@ -50,7 +50,13 @@ const TimestampConverter = () => {
           <Clock className="mr-2 h-4 w-4" />
           Use Current Time
         </NButton>
-        <NButton isOutline onClick={() => { setTimestamp(""); setDateStr(""); }}>
+        <NButton
+          isOutline
+          onClick={() => {
+            setTimestamp("");
+            setDateStr("");
+          }}
+        >
           <Trash2 className="mr-2 h-4 w-4" />
           Clear
         </NButton>
@@ -73,7 +79,11 @@ const TimestampConverter = () => {
                     <span className="text-xs font-medium capitalize text-muted">{label}</span>
                     <code className="ml-2 font-mono text-sm text-foreground">{value}</code>
                   </div>
-                  <NButton isOutline onClick={() => copy(String(value))} className="h-7 px-2 text-xs">
+                  <NButton
+                    isOutline
+                    onClick={() => copy(String(value))}
+                    className="h-7 px-2 text-xs"
+                  >
                     <ClipboardCopy className="h-3 w-3" />
                   </NButton>
                 </NCard>
@@ -97,16 +107,26 @@ const TimestampConverter = () => {
                   <span className="text-xs font-medium text-muted">Seconds</span>
                   <code className="ml-2 font-mono text-sm text-foreground">{fromDate.seconds}</code>
                 </div>
-                <NButton isOutline onClick={() => copy(String(fromDate.seconds))} className="h-7 px-2 text-xs">
+                <NButton
+                  isOutline
+                  onClick={() => copy(String(fromDate.seconds))}
+                  className="h-7 px-2 text-xs"
+                >
                   <ClipboardCopy className="h-3 w-3" />
                 </NButton>
               </NCard>
               <NCard className="flex items-center justify-between p-3">
                 <div>
                   <span className="text-xs font-medium text-muted">Milliseconds</span>
-                  <code className="ml-2 font-mono text-sm text-foreground">{fromDate.milliseconds}</code>
+                  <code className="ml-2 font-mono text-sm text-foreground">
+                    {fromDate.milliseconds}
+                  </code>
                 </div>
-                <NButton isOutline onClick={() => copy(String(fromDate.milliseconds))} className="h-7 px-2 text-xs">
+                <NButton
+                  isOutline
+                  onClick={() => copy(String(fromDate.milliseconds))}
+                  className="h-7 px-2 text-xs"
+                >
                   <ClipboardCopy className="h-3 w-3" />
                 </NButton>
               </NCard>

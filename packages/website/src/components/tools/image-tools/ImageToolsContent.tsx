@@ -7,23 +7,36 @@ export const CompressImageContent = () => (
       Large image files slow down your website, hurt SEO rankings, and increase bandwidth costs.
       Google&apos;s Core Web Vitals penalise pages with unoptimised images, making compression
       essential for any site that wants to rank well. Our free online image compressor reduces file
-      size by up to 80&nbsp;% while preserving visual quality, powered by the Sharp image
-      processing library on the server for maximum compression efficiency.
+      size by up to 80&nbsp;% while preserving visual quality, powered by the Sharp image processing
+      library on the server for maximum compression efficiency.
     </p>
 
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Batch processing</strong> — compress multiple JPG, PNG, WebP, and GIF files at once.</li>
-      <li><strong>Adjustable quality slider</strong> — fine-tune the balance between size and clarity.</li>
-      <li><strong>Server-side processing</strong> — images are processed using Sharp, a high-performance Node.js image library, for superior compression.</li>
-      <li><strong>Instant preview</strong> — see original vs compressed size and savings percentage before downloading.</li>
-      <li><strong>Drag &amp; drop</strong> — drop files straight onto the upload area for a faster workflow.</li>
+      <li>
+        <strong>Batch processing</strong> — compress multiple JPG, PNG, WebP, and GIF files at once.
+      </li>
+      <li>
+        <strong>Adjustable quality slider</strong> — fine-tune the balance between size and clarity.
+      </li>
+      <li>
+        <strong>Server-side processing</strong> — images are processed using Sharp, a
+        high-performance Node.js image library, for superior compression.
+      </li>
+      <li>
+        <strong>Instant preview</strong> — see original vs compressed size and savings percentage
+        before downloading.
+      </li>
+      <li>
+        <strong>Drag &amp; drop</strong> — drop files straight onto the upload area for a faster
+        workflow.
+      </li>
     </ul>
 
     <h2 className={H2_DOC}>How It Works</h2>
     <p className="mb-3 text-sm leading-relaxed text-muted">
-      Each image is sent to the server where Sharp re-encodes it as a JPEG at the quality level
-      you choose. Sharp uses optimised native codecs (libjpeg-turbo, libpng, libwebp) for better
+      Each image is sent to the server where Sharp re-encodes it as a JPEG at the quality level you
+      choose. Sharp uses optimised native codecs (libjpeg-turbo, libpng, libwebp) for better
       compression than browser-based methods. Lower quality values produce smaller files with
       slightly more compression artefacts, while higher values keep more detail.
     </p>
@@ -56,11 +69,24 @@ export const ResizeImageContent = () => (
 
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Resize by pixels or percentage</strong> — enter exact width and height, or scale proportionally.</li>
-      <li><strong>Maintain aspect ratio</strong> — lock the ratio so images never look stretched or squished.</li>
-      <li><strong>Batch resize</strong> — process multiple images at once with the same settings.</li>
-      <li><strong>Lanczos resampling</strong> — Sharp uses Lanczos3 interpolation for sharper, artifact-free results.</li>
-      <li><strong>Instant download</strong> — grab resized images as PNG files immediately.</li>
+      <li>
+        <strong>Resize by pixels or percentage</strong> — enter exact width and height, or scale
+        proportionally.
+      </li>
+      <li>
+        <strong>Maintain aspect ratio</strong> — lock the ratio so images never look stretched or
+        squished.
+      </li>
+      <li>
+        <strong>Batch resize</strong> — process multiple images at once with the same settings.
+      </li>
+      <li>
+        <strong>Lanczos resampling</strong> — Sharp uses Lanczos3 interpolation for sharper,
+        artifact-free results.
+      </li>
+      <li>
+        <strong>Instant download</strong> — grab resized images as PNG files immediately.
+      </li>
     </ul>
 
     <h2 className={H2_DOC}>How It Works</h2>
@@ -73,10 +99,19 @@ export const ResizeImageContent = () => (
 
     <h3 className={H3_DOC}>Recommended Sizes</h3>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Social media posts:</strong> 1200 × 630 px (Facebook / LinkedIn), 1080 × 1080 px (Instagram).</li>
-      <li><strong>Blog thumbnails:</strong> 800 × 450 px is a popular widescreen ratio.</li>
-      <li><strong>E-commerce products:</strong> 1000 × 1000 px square for consistent grid layouts.</li>
-      <li><strong>Email banners:</strong> 600 × 200 px fits most email clients.</li>
+      <li>
+        <strong>Social media posts:</strong> 1200 × 630 px (Facebook / LinkedIn), 1080 × 1080 px
+        (Instagram).
+      </li>
+      <li>
+        <strong>Blog thumbnails:</strong> 800 × 450 px is a popular widescreen ratio.
+      </li>
+      <li>
+        <strong>E-commerce products:</strong> 1000 × 1000 px square for consistent grid layouts.
+      </li>
+      <li>
+        <strong>Email banners:</strong> 600 × 200 px fits most email clients.
+      </li>
     </ul>
   </div>
 );
@@ -85,34 +120,52 @@ export const CropImageContent = () => (
   <div>
     <h2 className={H2_DOC}>Why Crop Images?</h2>
     <p className="mb-5 text-sm leading-relaxed text-muted">
-      Cropping removes unwanted edges or backgrounds and focuses the viewer on the subject.
-      Whether you need a square avatar, a widescreen banner, or a precise product shot, cropping is
-      the fastest way to reframe an image without any design software. Our tool requires no
-      installs and no accounts — just upload, crop, and download.
+      Cropping removes unwanted edges or backgrounds and focuses the viewer on the subject. Whether
+      you need a square avatar, a widescreen banner, or a precise product shot, cropping is the
+      fastest way to reframe an image without any design software. Our tool requires no installs and
+      no accounts — just upload, crop, and download.
     </p>
 
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Pixel-precise controls</strong> — set X, Y, width, and height to the exact pixel.</li>
-      <li><strong>Live preview</strong> — see the crop area highlighted in real time on a dimmed overlay.</li>
-      <li><strong>Server-side crop</strong> — Sharp extracts the selected region with pixel-perfect precision.</li>
-      <li><strong>Instant download</strong> — export the cropped region as a PNG with one click.</li>
+      <li>
+        <strong>Pixel-precise controls</strong> — set X, Y, width, and height to the exact pixel.
+      </li>
+      <li>
+        <strong>Live preview</strong> — see the crop area highlighted in real time on a dimmed
+        overlay.
+      </li>
+      <li>
+        <strong>Server-side crop</strong> — Sharp extracts the selected region with pixel-perfect
+        precision.
+      </li>
+      <li>
+        <strong>Instant download</strong> — export the cropped region as a PNG with one click.
+      </li>
     </ul>
 
     <h2 className={H2_DOC}>How It Works</h2>
     <p className="mb-3 text-sm leading-relaxed text-muted">
       After you load an image, a scaled preview shows your crop area with a semi-transparent
       overlay. Adjust the crop rectangle using pixel-precise controls. When you click
-      &ldquo;Crop&rdquo;, Sharp&apos;s extract function crops the selected region on the server
-      and returns the result as a downloadable PNG.
+      &ldquo;Crop&rdquo;, Sharp&apos;s extract function crops the selected region on the server and
+      returns the result as a downloadable PNG.
     </p>
 
     <h3 className={H3_DOC}>Common Crop Ratios</h3>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>1 : 1</strong> — profile pictures, app icons, Instagram posts.</li>
-      <li><strong>16 : 9</strong> — YouTube thumbnails, desktop wallpapers, presentations.</li>
-      <li><strong>4 : 3</strong> — classic photo prints, tablet screens.</li>
-      <li><strong>3 : 2</strong> — DSLR photo aspect ratio, landscape prints.</li>
+      <li>
+        <strong>1 : 1</strong> — profile pictures, app icons, Instagram posts.
+      </li>
+      <li>
+        <strong>16 : 9</strong> — YouTube thumbnails, desktop wallpapers, presentations.
+      </li>
+      <li>
+        <strong>4 : 3</strong> — classic photo prints, tablet screens.
+      </li>
+      <li>
+        <strong>3 : 2</strong> — DSLR photo aspect ratio, landscape prints.
+      </li>
     </ul>
   </div>
 );
@@ -123,34 +176,58 @@ export const ConvertImageContent = () => (
     <p className="mb-5 text-sm leading-relaxed text-muted">
       Different platforms and use cases require different image formats. WebP offers superior
       compression for the web, PNG is the go-to for transparent graphics, and JPEG is universally
-      supported. Our converter lets you switch between multiple formats in bulk, powered by
-      Sharp for high-fidelity format conversion.
+      supported. Our converter lets you switch between multiple formats in bulk, powered by Sharp
+      for high-fidelity format conversion.
     </p>
 
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Six formats</strong> — convert between JPG, PNG, WebP, GIF, TIFF, and AVIF.</li>
-      <li><strong>Batch conversion</strong> — convert dozens of files at once with one click.</li>
-      <li><strong>High quality</strong> — Sharp's native codecs produce superior output at any quality setting.</li>
-      <li><strong>Server-side processing</strong> — conversion is handled by Sharp for format-native encoding.</li>
-      <li><strong>Instant download</strong> — files are ready to save the moment conversion finishes.</li>
+      <li>
+        <strong>Six formats</strong> — convert between JPG, PNG, WebP, GIF, TIFF, and AVIF.
+      </li>
+      <li>
+        <strong>Batch conversion</strong> — convert dozens of files at once with one click.
+      </li>
+      <li>
+        <strong>High quality</strong> — Sharp's native codecs produce superior output at any quality
+        setting.
+      </li>
+      <li>
+        <strong>Server-side processing</strong> — conversion is handled by Sharp for format-native
+        encoding.
+      </li>
+      <li>
+        <strong>Instant download</strong> — files are ready to save the moment conversion finishes.
+      </li>
     </ul>
 
     <h2 className={H2_DOC}>How It Works</h2>
     <p className="mb-3 text-sm leading-relaxed text-muted">
       Each source image is sent to the server where Sharp converts it using format-native codecs
-      (libjpeg-turbo, libpng, libwebp, libtiff, libheif). This produces higher-quality output
-      than browser-based encoding, especially for modern formats like AVIF and TIFF.
+      (libjpeg-turbo, libpng, libwebp, libtiff, libheif). This produces higher-quality output than
+      browser-based encoding, especially for modern formats like AVIF and TIFF.
     </p>
 
     <h3 className={H3_DOC}>When to Use Each Format</h3>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>JPG</strong> — photographs and complex images where small file size matters.</li>
-      <li><strong>PNG</strong> — graphics with transparency, logos, screenshots, and icons.</li>
-      <li><strong>WebP</strong> — modern websites that want the best compression-to-quality ratio.</li>
-      <li><strong>GIF</strong> — simple animations and low-colour graphics.</li>
-      <li><strong>TIFF</strong> — high-quality images for print and professional workflows.</li>
-      <li><strong>AVIF</strong> — next-generation format with the best compression-to-quality ratio.</li>
+      <li>
+        <strong>JPG</strong> — photographs and complex images where small file size matters.
+      </li>
+      <li>
+        <strong>PNG</strong> — graphics with transparency, logos, screenshots, and icons.
+      </li>
+      <li>
+        <strong>WebP</strong> — modern websites that want the best compression-to-quality ratio.
+      </li>
+      <li>
+        <strong>GIF</strong> — simple animations and low-colour graphics.
+      </li>
+      <li>
+        <strong>TIFF</strong> — high-quality images for print and professional workflows.
+      </li>
+      <li>
+        <strong>AVIF</strong> — next-generation format with the best compression-to-quality ratio.
+      </li>
     </ul>
   </div>
 );
@@ -167,20 +244,34 @@ export const WatermarkImageContent = () => (
 
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Custom text</strong> — type any watermark text, from brand names to copyright notices.</li>
-      <li><strong>Adjustable font size</strong> — scale from subtle to prominent.</li>
-      <li><strong>Opacity control</strong> — dial in transparency from 5&nbsp;% to 100&nbsp;%.</li>
-      <li><strong>Colour picker</strong> — match your brand colour or choose white/black for contrast.</li>
-      <li><strong>Four positions</strong> — center, bottom-right, bottom-left, or tile across the entire image.</li>
-      <li><strong>Live preview</strong> — see the watermark update in real time before downloading.</li>
+      <li>
+        <strong>Custom text</strong> — type any watermark text, from brand names to copyright
+        notices.
+      </li>
+      <li>
+        <strong>Adjustable font size</strong> — scale from subtle to prominent.
+      </li>
+      <li>
+        <strong>Opacity control</strong> — dial in transparency from 5&nbsp;% to 100&nbsp;%.
+      </li>
+      <li>
+        <strong>Colour picker</strong> — match your brand colour or choose white/black for contrast.
+      </li>
+      <li>
+        <strong>Four positions</strong> — center, bottom-right, bottom-left, or tile across the
+        entire image.
+      </li>
+      <li>
+        <strong>Live preview</strong> — see the watermark update in real time before downloading.
+      </li>
     </ul>
 
     <h2 className={H2_DOC}>How It Works</h2>
     <p className="mb-3 text-sm leading-relaxed text-muted">
       A live preview shows your watermark settings in real time. When you download, Sharp composites
       an SVG text overlay onto the image on the server with your chosen font size, colour, and
-      opacity. In &ldquo;tile&rdquo; mode, the text is repeated in a grid pattern across the
-      full image. The final result is exported as a high-quality PNG.
+      opacity. In &ldquo;tile&rdquo; mode, the text is repeated in a grid pattern across the full
+      image. The final result is exported as a high-quality PNG.
     </p>
 
     <h3 className={H3_DOC}>Best Practices</h3>
@@ -205,11 +296,26 @@ export const RotateImageContent = () => (
 
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Per-image controls</strong> — rotate left, rotate right, flip horizontal, and flip vertical for each file.</li>
-      <li><strong>Batch processing</strong> — upload many images, set transforms individually, then apply all at once.</li>
-      <li><strong>Live preview</strong> — CSS transforms show the effect instantly before the final render.</li>
-      <li><strong>Lossless output</strong> — Sharp rotates and flips at full resolution without recompression artifacts.</li>
-      <li><strong>Server-side processing</strong> — Sharp handles rotation natively for pixel-perfect results.</li>
+      <li>
+        <strong>Per-image controls</strong> — rotate left, rotate right, flip horizontal, and flip
+        vertical for each file.
+      </li>
+      <li>
+        <strong>Batch processing</strong> — upload many images, set transforms individually, then
+        apply all at once.
+      </li>
+      <li>
+        <strong>Live preview</strong> — CSS transforms show the effect instantly before the final
+        render.
+      </li>
+      <li>
+        <strong>Lossless output</strong> — Sharp rotates and flips at full resolution without
+        recompression artifacts.
+      </li>
+      <li>
+        <strong>Server-side processing</strong> — Sharp handles rotation natively for pixel-perfect
+        results.
+      </li>
     </ul>
 
     <h2 className={H2_DOC}>How It Works</h2>
@@ -242,11 +348,25 @@ export const ImageToBase64Content = () => (
 
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Encode</strong> — upload any image and get both the full data URL and the raw base64 string.</li>
-      <li><strong>Decode</strong> — paste a base64 string or data URL and preview or download the resulting image.</li>
-      <li><strong>Size estimate</strong> — see the decoded byte size before you use the string.</li>
-      <li><strong>Copy to clipboard</strong> — grab either the data URL or the raw string with one click.</li>
-      <li><strong>Client-side processing</strong> — everything runs in your browser, no file is ever uploaded.</li>
+      <li>
+        <strong>Encode</strong> — upload any image and get both the full data URL and the raw base64
+        string.
+      </li>
+      <li>
+        <strong>Decode</strong> — paste a base64 string or data URL and preview or download the
+        resulting image.
+      </li>
+      <li>
+        <strong>Size estimate</strong> — see the decoded byte size before you use the string.
+      </li>
+      <li>
+        <strong>Copy to clipboard</strong> — grab either the data URL or the raw string with one
+        click.
+      </li>
+      <li>
+        <strong>Client-side processing</strong> — everything runs in your browser, no file is ever
+        uploaded.
+      </li>
     </ul>
 
     <h2 className={H2_DOC}>How It Works</h2>
@@ -259,7 +379,9 @@ export const ImageToBase64Content = () => (
 
     <h3 className={H3_DOC}>Common Use Cases</h3>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li>Embedding small icons or logos directly in CSS <code>background-image</code> rules.</li>
+      <li>
+        Embedding small icons or logos directly in CSS <code>background-image</code> rules.
+      </li>
       <li>Inlining images in HTML emails, where external image requests are often blocked.</li>
       <li>Storing a small image inside a JSON config or API payload.</li>
       <li>Decoding a base64 image string found in an API response or browser dev tools.</li>
@@ -272,25 +394,34 @@ export const FlipImageContent = () => (
     <h2 className={H2_DOC}>Why Flip Images?</h2>
     <p className="mb-5 text-sm leading-relaxed text-muted">
       Mirroring an image horizontally or vertically is useful for correcting scans, creating
-      symmetrical design elements, or fixing photos captured with a front-facing camera (which
-      often mirror the scene). This tool flips images instantly in your browser using the Canvas
-      API — no upload, no waiting on a server round-trip.
+      symmetrical design elements, or fixing photos captured with a front-facing camera (which often
+      mirror the scene). This tool flips images instantly in your browser using the Canvas API — no
+      upload, no waiting on a server round-trip.
     </p>
 
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Horizontal and vertical flip</strong> — toggle either or both independently.</li>
-      <li><strong>Instant, lossless preview</strong> — rendered live on an HTML canvas.</li>
-      <li><strong>Full resolution output</strong> — no recompression artefacts from the flip itself.</li>
-      <li><strong>Client-side processing</strong> — your image never leaves your device.</li>
+      <li>
+        <strong>Horizontal and vertical flip</strong> — toggle either or both independently.
+      </li>
+      <li>
+        <strong>Instant, lossless preview</strong> — rendered live on an HTML canvas.
+      </li>
+      <li>
+        <strong>Full resolution output</strong> — no recompression artefacts from the flip itself.
+      </li>
+      <li>
+        <strong>Client-side processing</strong> — your image never leaves your device.
+      </li>
     </ul>
 
     <h2 className={H2_DOC}>How It Works</h2>
     <p className="mb-3 text-sm leading-relaxed text-muted">
-      The image is drawn onto an HTML canvas with its context mirrored (<code>ctx.scale(-1, 1)</code>
-      for horizontal, <code>ctx.scale(1, -1)</code> for vertical) before the draw call, then exported
-      back to an image file — a lossless geometric operation that doesn&apos;t need server-side
-      processing to stay sharp.
+      The image is drawn onto an HTML canvas with its context mirrored (
+      <code>ctx.scale(-1, 1)</code>
+      for horizontal, <code>ctx.scale(1, -1)</code> for vertical) before the draw call, then
+      exported back to an image file — a lossless geometric operation that doesn&apos;t need
+      server-side processing to stay sharp.
     </p>
 
     <h3 className={H3_DOC}>Common Use Cases</h3>
@@ -314,18 +445,29 @@ export const ImageColorPickerContent = () => (
 
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Pixel-accurate colour picking</strong> — click anywhere on the image to sample its exact colour.</li>
-      <li><strong>HEX, RGB, and HSL output</strong> — copy any format with one click.</li>
-      <li><strong>Dominant palette extraction</strong> — 5&ndash;8 swatches computed from the image&apos;s actual pixel data.</li>
-      <li><strong>Client-side processing</strong> — processed entirely on an HTML canvas in your browser.</li>
+      <li>
+        <strong>Pixel-accurate colour picking</strong> — click anywhere on the image to sample its
+        exact colour.
+      </li>
+      <li>
+        <strong>HEX, RGB, and HSL output</strong> — copy any format with one click.
+      </li>
+      <li>
+        <strong>Dominant palette extraction</strong> — 5&ndash;8 swatches computed from the
+        image&apos;s actual pixel data.
+      </li>
+      <li>
+        <strong>Client-side processing</strong> — processed entirely on an HTML canvas in your
+        browser.
+      </li>
     </ul>
 
     <h2 className={H2_DOC}>How It Works</h2>
     <p className="mb-3 text-sm leading-relaxed text-muted">
       The image is drawn onto a canvas so individual pixels can be read with
       <code> getImageData()</code>. Clicking samples the single pixel under your cursor; the palette
-      is built by sampling a grid of pixels across the image, bucketing similar colours together, and
-      surfacing the most frequent buckets as representative swatches.
+      is built by sampling a grid of pixels across the image, bucketing similar colours together,
+      and surfacing the most frequent buckets as representative swatches.
     </p>
 
     <h3 className={H3_DOC}>Common Use Cases</h3>
@@ -349,10 +491,20 @@ export const ImageExifViewerContent = () => (
 
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>Camera details</strong> — make, model, exposure time, aperture, ISO, and orientation.</li>
-      <li><strong>GPS coordinates</strong> — decoded from the embedded GPS IFD when present.</li>
-      <li><strong>Graceful fallback</strong> — a clear &ldquo;no EXIF data&rdquo; message for PNGs or stripped photos.</li>
-      <li><strong>Client-side processing</strong> — your photo is parsed locally and never uploaded.</li>
+      <li>
+        <strong>Camera details</strong> — make, model, exposure time, aperture, ISO, and
+        orientation.
+      </li>
+      <li>
+        <strong>GPS coordinates</strong> — decoded from the embedded GPS IFD when present.
+      </li>
+      <li>
+        <strong>Graceful fallback</strong> — a clear &ldquo;no EXIF data&rdquo; message for PNGs or
+        stripped photos.
+      </li>
+      <li>
+        <strong>Client-side processing</strong> — your photo is parsed locally and never uploaded.
+      </li>
     </ul>
 
     <h2 className={H2_DOC}>How It Works</h2>
@@ -375,19 +527,34 @@ export const FaviconGeneratorContent = () => (
   <div>
     <h2 className={H2_DOC}>Why Generate a Favicon Set?</h2>
     <p className="mb-5 text-sm leading-relaxed text-muted">
-      Modern browsers, iOS home screens, and Android app icons each expect a different favicon
-      size. Instead of manually resizing an icon six different ways, upload one source image and
-      get every standard size packaged together, powered by Sharp on the server for crisp,
-      correctly-cropped output at every resolution.
+      Modern browsers, iOS home screens, and Android app icons each expect a different favicon size.
+      Instead of manually resizing an icon six different ways, upload one source image and get every
+      standard size packaged together, powered by Sharp on the server for crisp, correctly-cropped
+      output at every resolution.
     </p>
 
     <h2 className={H2_DOC}>Features</h2>
     <ul className="list-disc list-inside leading-relaxed mb-5 text-sm text-muted">
-      <li><strong>All standard sizes</strong> — 16×16, 32×32, 48×48, 180×180 (Apple touch icon), 192×192, and 512×512.</li>
-      <li><strong>site.webmanifest included</strong> — pre-filled with your app name and icon references.</li>
-      <li><strong>Ready-to-paste HTML</strong> — the exact <code>&lt;link&gt;</code> tags to add to your page&apos;s <code>&lt;head&gt;</code>.</li>
-      <li><strong>Server-side resizing</strong> — Sharp produces crisp, correctly-cropped output at every size.</li>
-      <li><strong>ZIP download</strong> — every file bundled together, ready to drop into your project.</li>
+      <li>
+        <strong>All standard sizes</strong> — 16×16, 32×32, 48×48, 180×180 (Apple touch icon),
+        192×192, and 512×512.
+      </li>
+      <li>
+        <strong>site.webmanifest included</strong> — pre-filled with your app name and icon
+        references.
+      </li>
+      <li>
+        <strong>Ready-to-paste HTML</strong> — the exact <code>&lt;link&gt;</code> tags to add to
+        your page&apos;s <code>&lt;head&gt;</code>.
+      </li>
+      <li>
+        <strong>Server-side resizing</strong> — Sharp produces crisp, correctly-cropped output at
+        every size.
+      </li>
+      <li>
+        <strong>ZIP download</strong> — every file bundled together, ready to drop into your
+        project.
+      </li>
     </ul>
 
     <h2 className={H2_DOC}>How It Works</h2>
@@ -405,4 +572,3 @@ export const FaviconGeneratorContent = () => (
     </ul>
   </div>
 );
-

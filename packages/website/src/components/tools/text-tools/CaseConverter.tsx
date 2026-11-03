@@ -43,7 +43,14 @@ const CONVERSIONS = [
   { label: "camelCase", fn: toCamelCase },
   { label: "snake_case", fn: toSnakeCase },
   { label: "kebab-case", fn: toKebabCase },
-  { label: "aLtErNaTiNg", fn: (s: string) => s.split("").map((c, i) => (i % 2 === 0 ? c.toLowerCase() : c.toUpperCase())).join("") },
+  {
+    label: "aLtErNaTiNg",
+    fn: (s: string) =>
+      s
+        .split("")
+        .map((c, i) => (i % 2 === 0 ? c.toLowerCase() : c.toUpperCase()))
+        .join(""),
+  },
 ];
 
 const CaseConverter = () => {
@@ -90,18 +97,8 @@ const CaseConverter = () => {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <MonacoEditor
-          label="Input Text"
-          value={input}
-          onChange={setInput}
-          height="500px"
-        />
-        <MonacoEditor
-          label="Converted Output"
-          value={output}
-          readOnly
-          height="500px"
-        />
+        <MonacoEditor label="Input Text" value={input} onChange={setInput} height="500px" />
+        <MonacoEditor label="Converted Output" value={output} readOnly height="500px" />
       </div>
     </div>
   );

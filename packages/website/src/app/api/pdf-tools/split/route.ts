@@ -13,7 +13,9 @@ function parseRanges(rangeStr: string, total: number): number[][] {
         throw new Error(`Invalid page range "${trimmed}": start page is after end page`);
       }
       if (s < 1 || e > total) {
-        throw new Error(`Page range "${trimmed}" is out of bounds — this PDF has ${total} page${total === 1 ? "" : "s"}`);
+        throw new Error(
+          `Page range "${trimmed}" is out of bounds — this PDF has ${total} page${total === 1 ? "" : "s"}`,
+        );
       }
       const pages: number[] = [];
       for (let i = s; i <= e; i++) pages.push(i - 1);
@@ -21,7 +23,9 @@ function parseRanges(rangeStr: string, total: number): number[][] {
     }
     const p = Number(trimmed);
     if (!Number.isInteger(p) || p < 1 || p > total) {
-      throw new Error(`Page "${trimmed}" is out of bounds — this PDF has ${total} page${total === 1 ? "" : "s"}`);
+      throw new Error(
+        `Page "${trimmed}" is out of bounds — this PDF has ${total} page${total === 1 ? "" : "s"}`,
+      );
     }
     return [p - 1];
   });
@@ -39,7 +43,10 @@ export async function POST(req: NextRequest) {
     const sizeError = validateFileSize(file);
     if (sizeError) return sizeError;
     if (!ranges.trim()) {
-      return NextResponse.json({ error: "Page ranges are required (e.g. 1-3,5,7-9)" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Page ranges are required (e.g. 1-3,5,7-9)" },
+        { status: 400 },
+      );
     }
 
     const { PDFDocument } = await import("pdf-lib");

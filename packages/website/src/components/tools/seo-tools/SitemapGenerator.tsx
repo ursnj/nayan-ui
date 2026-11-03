@@ -168,14 +168,14 @@ const SitemapGenerator = () => {
         </NButton>
       </div>
 
-      {error && (
-        <NCard className="mb-6 p-3 text-sm text-danger">{error}</NCard>
-      )}
+      {error && <NCard className="mb-6 p-3 text-sm text-danger">{error}</NCard>}
 
       {output && (
         <>
           <div className="mb-5 flex flex-wrap gap-2">
-            <NBadge size="sm" color="success">{urlCount} URLs discovered</NBadge>
+            <NBadge size="sm" color="success">
+              {urlCount} URLs discovered
+            </NBadge>
             <NBadge size="sm">Depth: {depth}</NBadge>
             <NBadge size="sm">Frequency: {changefreq}</NBadge>
           </div>
@@ -185,7 +185,9 @@ const SitemapGenerator = () => {
               <label className="mb-2 block text-sm font-medium">Discovered URLs</label>
               <div className="max-h-[200px] overflow-auto">
                 {discoveredUrls.map((u, i) => (
-                  <p key={i} className="truncate font-mono text-xs text-muted">{u}</p>
+                  <p key={i} className="truncate font-mono text-xs text-muted">
+                    {u}
+                  </p>
                 ))}
               </div>
             </NCard>

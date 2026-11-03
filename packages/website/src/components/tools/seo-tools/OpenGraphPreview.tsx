@@ -103,9 +103,21 @@ const OpenGraphPreview = () => {
             <NBadge size="sm">og:type = {data.type}</NBadge>
             <NBadge size="sm">twitter:card = {data.twitterCard}</NBadge>
             {data.twitterSite && <NBadge size="sm">twitter:site = {data.twitterSite}</NBadge>}
-            {!title && <NBadge size="sm" color="warning">Missing title</NBadge>}
-            {!description && <NBadge size="sm" color="warning">Missing description</NBadge>}
-            {!image && <NBadge size="sm" color="warning">Missing image</NBadge>}
+            {!title && (
+              <NBadge size="sm" color="warning">
+                Missing title
+              </NBadge>
+            )}
+            {!description && (
+              <NBadge size="sm" color="warning">
+                Missing description
+              </NBadge>
+            )}
+            {!image && (
+              <NBadge size="sm" color="warning">
+                Missing image
+              </NBadge>
+            )}
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
@@ -119,7 +131,9 @@ const OpenGraphPreview = () => {
                       src={image}
                       alt="OG preview"
                       className="h-full w-full object-cover"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = "none";
+                      }}
                     />
                   </div>
                 ) : (
@@ -149,7 +163,9 @@ const OpenGraphPreview = () => {
                       src={image}
                       alt="Twitter preview"
                       className="h-full w-full object-cover"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = "none";
+                      }}
                     />
                   </div>
                 ) : (
@@ -179,13 +195,16 @@ const OpenGraphPreview = () => {
                       src={favicon}
                       alt=""
                       className="h-4 w-4 shrink-0"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = "none";
+                      }}
                     />
                   )}
                   <p className="truncate text-xs text-muted">{data.canonical || data.url}</p>
                 </div>
                 <p className="mt-0.5 line-clamp-1 text-base font-medium text-accent">
-                  {title || "No title found"}{siteName ? ` — ${siteName}` : ""}
+                  {title || "No title found"}
+                  {siteName ? ` — ${siteName}` : ""}
                 </p>
                 <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted">
                   {description || "No description found"}
@@ -212,7 +231,9 @@ const OpenGraphPreview = () => {
                         src={image}
                         alt="Slack preview"
                         className="h-full w-full object-cover"
-                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = "none";
+                        }}
                       />
                     </div>
                   )}

@@ -90,11 +90,7 @@ const JsonValidator = () => {
         />
       )}
 
-      <JsonMonacoEditor
-        label="Input JSON"
-        value={input}
-        onChange={setInput}
-      />
+      <JsonMonacoEditor label="Input JSON" value={input} onChange={setInput} />
     </div>
   );
 };

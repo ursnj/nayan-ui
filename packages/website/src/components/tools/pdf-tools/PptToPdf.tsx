@@ -4,7 +4,8 @@ import { useCallback, useRef, useState } from "react";
 import { Download, Presentation, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, showToast } from "@nayan-ui/react";
 
-const ACCEPT = ".ppt,.pptx,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation";
+const ACCEPT =
+  ".ppt,.pptx,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation";
 
 const PptToPdf = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -55,7 +56,10 @@ const PptToPdf = () => {
         <NCard
           className={`mb-6 flex cursor-pointer flex-col items-center gap-3 border-dashed p-10 transition-colors ${dragging ? "border-accent" : ""}`}
           onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragging(true);
+          }}
           onDragLeave={() => setDragging(false)}
           onDrop={(e) => {
             e.preventDefault();
@@ -65,8 +69,19 @@ const PptToPdf = () => {
           }}
         >
           <Upload className={`h-8 w-8 ${dragging ? "text-accent" : "text-muted"}`} />
-          <p className="text-sm text-muted">Drop a PowerPoint file (.ppt, .pptx) here or click to upload</p>
-          <input ref={inputRef} type="file" accept={ACCEPT} className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
+          <p className="text-sm text-muted">
+            Drop a PowerPoint file (.ppt, .pptx) here or click to upload
+          </p>
+          <input
+            ref={inputRef}
+            type="file"
+            accept={ACCEPT}
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+            }}
+          />
         </NCard>
       ) : (
         <>
@@ -85,7 +100,13 @@ const PptToPdf = () => {
                 Download
               </NButton>
             )}
-            <NButton isOutline onClick={() => { setFile(null); setResult(null); }}>
+            <NButton
+              isOutline
+              onClick={() => {
+                setFile(null);
+                setResult(null);
+              }}
+            >
               <Trash2 className="mr-2 h-4 w-4" />
               Clear
             </NButton>

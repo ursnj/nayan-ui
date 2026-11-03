@@ -2,7 +2,16 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Download, Scaling, Trash2, Upload } from "lucide-react";
-import { NButton, NCard, NInput, NSlider, NCheck, NRadioGroup, NBadge, showToast } from "@nayan-ui/react";
+import {
+  NButton,
+  NCard,
+  NInput,
+  NSlider,
+  NCheck,
+  NRadioGroup,
+  NBadge,
+  showToast,
+} from "@nayan-ui/react";
 import { useObjectUrl } from "./useObjectUrl";
 
 interface FileEntry {
@@ -166,12 +175,7 @@ const ResizeImage = () => {
 
       {files.length > 0 && (
         <>
-          <NRadioGroup
-            label="Mode"
-            items={MODE_OPTIONS}
-            value={mode}
-            onChange={setMode}
-          />
+          <NRadioGroup label="Mode" items={MODE_OPTIONS} value={mode} onChange={setMode} />
 
           {mode === "pixels" ? (
             <div className="mb-3 flex flex-wrap items-end gap-3">
@@ -232,9 +236,13 @@ const ResizeImage = () => {
                 <div className="flex flex-col gap-1 p-3">
                   <p className="truncate text-sm font-medium text-foreground">{entry.file.name}</p>
                   <div className="flex items-center gap-2">
-                    <NBadge size="sm">{entry.width} × {entry.height}px</NBadge>
+                    <NBadge size="sm">
+                      {entry.width} × {entry.height}px
+                    </NBadge>
                     {entry.resized && (
-                      <NBadge size="sm" color="success">{formatSize(entry.resized.size)}</NBadge>
+                      <NBadge size="sm" color="success">
+                        {formatSize(entry.resized.size)}
+                      </NBadge>
                     )}
                   </div>
                 </div>

@@ -94,7 +94,10 @@ const OrganizePdf = () => {
         <NCard
           className={`mb-6 flex cursor-pointer flex-col items-center gap-3 border-dashed p-10 transition-colors ${dragging ? "border-accent" : ""}`}
           onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragging(true);
+          }}
           onDragLeave={() => setDragging(false)}
           onDrop={(e) => {
             e.preventDefault();
@@ -110,28 +113,49 @@ const OrganizePdf = () => {
             type="file"
             accept=".pdf,application/pdf"
             className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ""; }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+              e.target.value = "";
+            }}
           />
         </NCard>
       ) : (
         <>
           <NCard className="mb-4 p-3">
             <p className="truncate text-sm font-medium text-foreground">{file.name}</p>
-            <p className="text-xs text-muted">{pageCount} pages · {(file.size / 1024).toFixed(1)} KB</p>
+            <p className="text-xs text-muted">
+              {pageCount} pages · {(file.size / 1024).toFixed(1)} KB
+            </p>
           </NCard>
 
           <div className="mb-4 max-h-64 overflow-y-auto rounded border border-border">
             {pages.map((pageNum, idx) => (
-              <div key={`${pageNum}-${idx}`} className="flex items-center gap-2 border-b border-border px-3 py-2 last:border-b-0">
+              <div
+                key={`${pageNum}-${idx}`}
+                className="flex items-center gap-2 border-b border-border px-3 py-2 last:border-b-0"
+              >
                 <GripVertical className="h-4 w-4 text-muted" />
                 <span className="flex-1 text-sm text-foreground">Page {pageNum + 1}</span>
-                <button onClick={() => moveUp(idx)} className="rounded p-1 hover:bg-card" title="Move up">
+                <button
+                  onClick={() => moveUp(idx)}
+                  className="rounded p-1 hover:bg-card"
+                  title="Move up"
+                >
                   <ArrowUp className="h-3.5 w-3.5 text-muted" />
                 </button>
-                <button onClick={() => moveDown(idx)} className="rounded p-1 hover:bg-card" title="Move down">
+                <button
+                  onClick={() => moveDown(idx)}
+                  className="rounded p-1 hover:bg-card"
+                  title="Move down"
+                >
                   <ArrowDown className="h-3.5 w-3.5 text-muted" />
                 </button>
-                <button onClick={() => deletePage(pageNum)} className="rounded p-1 hover:bg-card" title="Delete page">
+                <button
+                  onClick={() => deletePage(pageNum)}
+                  className="rounded p-1 hover:bg-card"
+                  title="Delete page"
+                >
                   <Trash2 className="h-3.5 w-3.5 text-destructive" />
                 </button>
               </div>
@@ -139,7 +163,12 @@ const OrganizePdf = () => {
           </div>
 
           <div className="mb-5 flex flex-wrap items-center gap-3">
-            <NButton onClick={organize} isLoading={processing} loadingText="Organizing…" disabled={pages.length === 0}>
+            <NButton
+              onClick={organize}
+              isLoading={processing}
+              loadingText="Organizing…"
+              disabled={pages.length === 0}
+            >
               <GripVertical className="mr-2 h-4 w-4" />
               Organize PDF
             </NButton>
@@ -149,7 +178,15 @@ const OrganizePdf = () => {
                 Download
               </NButton>
             )}
-            <NButton isOutline onClick={() => { setFile(null); setResult(null); setPages([]); setDeleted([]); }}>
+            <NButton
+              isOutline
+              onClick={() => {
+                setFile(null);
+                setResult(null);
+                setPages([]);
+                setDeleted([]);
+              }}
+            >
               <Trash2 className="mr-2 h-4 w-4" />
               Clear
             </NButton>

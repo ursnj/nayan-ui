@@ -24,7 +24,8 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "PDF Info",
-    description: "Check a PDF's page count, file size, version, encryption status, and word count instantly.",
+    description:
+      "Check a PDF's page count, file size, version, encryption status, and word count instantly.",
     url: `${SITE_URL}/tools/pdf-info`,
     keywords: "pdf info, pdf stats, pdf page count, pdf file analyzer",
   }),

@@ -82,11 +82,7 @@ const JsonToExcel = () => {
         <NAlert type={AlertTypes.ERROR} title={errorTitle} message={error} className="mb-4" />
       )}
 
-      <JsonMonacoEditor
-        label="Input JSON"
-        value={input}
-        onChange={setInput}
-      />
+      <JsonMonacoEditor label="Input JSON" value={input} onChange={setInput} />
     </div>
   );
 };

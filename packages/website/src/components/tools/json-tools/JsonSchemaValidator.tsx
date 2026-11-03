@@ -15,7 +15,10 @@ function validateSchema(data: any, schema: any, path = "$"): ValidationError[] {
   if (schema.type) {
     const types = Array.isArray(schema.type) ? schema.type : [schema.type];
     const actualType = Array.isArray(data) ? "array" : data === null ? "null" : typeof data;
-    if (!types.includes(actualType) && !(actualType === "number" && types.includes("integer") && Number.isInteger(data))) {
+    if (
+      !types.includes(actualType) &&
+      !(actualType === "number" && types.includes("integer") && Number.isInteger(data))
+    ) {
       errors.push({ path, message: `Expected ${types.join("|")} but got ${actualType}` });
       return errors;
     }
@@ -33,27 +36,39 @@ function validateSchema(data: any, schema: any, path = "$"): ValidationError[] {
       errors.push({ path, message: `String length must be <= ${schema.maxLength}` });
     }
     if (schema.pattern) {
-      try { if (!new RegExp(schema.pattern).test(data)) errors.push({ path, message: `Must match pattern: ${schema.pattern}` }); } catch { /* skip */ }
+      try {
+        if (!new RegExp(schema.pattern).test(data))
+          errors.push({ path, message: `Must match pattern: ${schema.pattern}` });
+      } catch {
+        /* skip */
+      }
     }
   }
 
   if (typeof data === "number") {
-    if (schema.minimum !== undefined && data < schema.minimum) errors.push({ path, message: `Must be >= ${schema.minimum}` });
-    if (schema.maximum !== undefined && data > schema.maximum) errors.push({ path, message: `Must be <= ${schema.maximum}` });
+    if (schema.minimum !== undefined && data < schema.minimum)
+      errors.push({ path, message: `Must be >= ${schema.minimum}` });
+    if (schema.maximum !== undefined && data > schema.maximum)
+      errors.push({ path, message: `Must be <= ${schema.maximum}` });
   }
 
   if (Array.isArray(data)) {
-    if (schema.minItems !== undefined && data.length < schema.minItems) errors.push({ path, message: `Array must have >= ${schema.minItems} items` });
-    if (schema.maxItems !== undefined && data.length > schema.maxItems) errors.push({ path, message: `Array must have <= ${schema.maxItems} items` });
+    if (schema.minItems !== undefined && data.length < schema.minItems)
+      errors.push({ path, message: `Array must have >= ${schema.minItems} items` });
+    if (schema.maxItems !== undefined && data.length > schema.maxItems)
+      errors.push({ path, message: `Array must have <= ${schema.maxItems} items` });
     if (schema.items) {
-      data.forEach((item, i) => errors.push(...validateSchema(item, schema.items, `${path}[${i}]`)));
+      data.forEach((item, i) =>
+        errors.push(...validateSchema(item, schema.items, `${path}[${i}]`)),
+      );
     }
   }
 
   if (data && typeof data === "object" && !Array.isArray(data)) {
     if (schema.required) {
       for (const key of schema.required) {
-        if (!(key in data)) errors.push({ path: `${path}.${key}`, message: "Required property missing" });
+        if (!(key in data))
+          errors.push({ path: `${path}.${key}`, message: "Required property missing" });
       }
     }
     if (schema.properties) {
@@ -75,7 +90,11 @@ const JsonSchemaValidator = () => {
     try {
       const data = JSON.parse(jsonInput);
       let schema: any;
-      try { schema = JSON.parse(schemaInput); } catch { return { errors: [], parseError: "Invalid JSON Schema syntax" }; }
+      try {
+        schema = JSON.parse(schemaInput);
+      } catch {
+        return { errors: [], parseError: "Invalid JSON Schema syntax" };
+      }
       const errors = validateSchema(data, schema);
       return { errors, parseError: "" };
     } catch {
@@ -86,7 +105,13 @@ const JsonSchemaValidator = () => {
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <NButton isOutline onClick={() => { setJsonInput(""); setSchemaInput(""); }}>
+        <NButton
+          isOutline
+          onClick={() => {
+            setJsonInput("");
+            setSchemaInput("");
+          }}
+        >
           <Trash2 className="mr-2 h-4 w-4" />
           Clear
         </NButton>

@@ -192,7 +192,10 @@ const CronExpressionParser = () => {
           Parse
         </NButton>
       </div>
-      <p className="mb-4 text-xs text-muted">Fields: minute (0-59) hour (0-23) day-of-month (1-31) month (1-12) day-of-week (0-7, 0 and 7 = Sunday)</p>
+      <p className="mb-4 text-xs text-muted">
+        Fields: minute (0-59) hour (0-23) day-of-month (1-31) month (1-12) day-of-week (0-7, 0 and 7
+        = Sunday)
+      </p>
 
       {error && <p className="mb-4 text-sm text-danger">{error}</p>}
 
@@ -204,9 +207,14 @@ const CronExpressionParser = () => {
           </NCard>
 
           <NCard className="p-4">
-            <span className="text-xs font-medium uppercase text-muted">Next {result.runs.length || ""} Run{result.runs.length === 1 ? "" : "s"}</span>
+            <span className="text-xs font-medium uppercase text-muted">
+              Next {result.runs.length || ""} Run{result.runs.length === 1 ? "" : "s"}
+            </span>
             {result.runs.length === 0 ? (
-              <p className="mt-2 text-sm text-muted">No matching run found in the next 2 years &mdash; this expression may be impossible (e.g. day-of-month 31 in a month with fewer days).</p>
+              <p className="mt-2 text-sm text-muted">
+                No matching run found in the next 2 years &mdash; this expression may be impossible
+                (e.g. day-of-month 31 in a month with fewer days).
+              </p>
             ) : (
               <ul className="mt-2 space-y-1">
                 {result.runs.map((d, i) => (

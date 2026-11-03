@@ -95,17 +95,8 @@ const JsonToTsv = () => {
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <JsonMonacoEditor
-          label="Input JSON"
-          value={input}
-          onChange={setInput}
-        />
-        <JsonMonacoEditor
-          label="TSV Output"
-          value={output}
-          readOnly
-          language="plaintext"
-        />
+        <JsonMonacoEditor label="Input JSON" value={input} onChange={setInput} />
+        <JsonMonacoEditor label="TSV Output" value={output} readOnly language="plaintext" />
       </div>
     </div>
   );

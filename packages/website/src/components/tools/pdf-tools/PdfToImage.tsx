@@ -89,7 +89,10 @@ const PdfToImage = () => {
         <NCard
           className={`mb-6 flex cursor-pointer flex-col items-center gap-3 border-dashed p-10 transition-colors ${dragging ? "border-accent" : ""}`}
           onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragging(true);
+          }}
           onDragLeave={() => setDragging(false)}
           onDrop={(e) => {
             e.preventDefault();
@@ -105,7 +108,11 @@ const PdfToImage = () => {
             type="file"
             accept=".pdf,application/pdf"
             className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ""; }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+              e.target.value = "";
+            }}
           />
         </NCard>
       ) : (
@@ -120,7 +127,9 @@ const PdfToImage = () => {
             className="mb-4 max-w-52"
             value={format}
             options={FORMAT_OPTIONS}
-            onChange={(v) => { if (v) setFormat(v); }}
+            onChange={(v) => {
+              if (v) setFormat(v);
+            }}
             isSearchable={false}
           />
 
@@ -129,7 +138,13 @@ const PdfToImage = () => {
               <Image className="mr-2 h-4 w-4" />
               Extract Pages
             </NButton>
-            <NButton isOutline onClick={() => { setFile(null); setPages([]); }}>
+            <NButton
+              isOutline
+              onClick={() => {
+                setFile(null);
+                setPages([]);
+              }}
+            >
               <Trash2 className="mr-2 h-4 w-4" />
               Clear
             </NButton>
@@ -140,7 +155,9 @@ const PdfToImage = () => {
               {pages.map((page) => (
                 <NCard key={page.index} className="p-3">
                   <p className="text-sm font-medium text-foreground">Page {page.index}</p>
-                  <p className="text-xs text-muted">{Math.round(page.width)} × {Math.round(page.height)} pts</p>
+                  <p className="text-xs text-muted">
+                    {Math.round(page.width)} × {Math.round(page.height)} pts
+                  </p>
                   <NButton
                     isOutline
                     className="mt-2 w-full"

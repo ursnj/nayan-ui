@@ -17,7 +17,9 @@ const objectsToCsv = (data: any): string => {
   if (flat.length === 0) return arr.map((v) => escCsv(v)).join("\n");
   const keys = [...new Set(flat.flatMap(Object.keys))];
   const header = keys.map(escCsv).join(",");
-  const rows = flat.map((row) => keys.map((k) => escCsv(typeof row[k] === "object" ? JSON.stringify(row[k]) : row[k])).join(","));
+  const rows = flat.map((row) =>
+    keys.map((k) => escCsv(typeof row[k] === "object" ? JSON.stringify(row[k]) : row[k])).join(","),
+  );
   return [header, ...rows].join("\n");
 };
 
@@ -95,17 +97,8 @@ const XmlToCsv = () => {
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <XmlMonacoEditor
-          label="Input XML"
-          value={input}
-          onChange={setInput}
-        />
-        <XmlMonacoEditor
-          label="CSV Output"
-          value={output}
-          readOnly
-          language="plaintext"
-        />
+        <XmlMonacoEditor label="Input XML" value={input} onChange={setInput} />
+        <XmlMonacoEditor label="CSV Output" value={output} readOnly language="plaintext" />
       </div>
     </div>
   );

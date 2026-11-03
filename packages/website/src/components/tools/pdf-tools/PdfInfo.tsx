@@ -71,7 +71,10 @@ const PdfInfo = () => {
         <NCard
           className={`mb-6 flex cursor-pointer flex-col items-center gap-3 border-dashed p-10 transition-colors ${dragging ? "border-accent" : ""}`}
           onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragging(true);
+          }}
           onDragLeave={() => setDragging(false)}
           onDrop={(e) => {
             e.preventDefault();
@@ -87,7 +90,11 @@ const PdfInfo = () => {
             type="file"
             accept=".pdf,application/pdf"
             className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) analyze(f); e.target.value = ""; }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) analyze(f);
+              e.target.value = "";
+            }}
           />
         </NCard>
       ) : (
@@ -96,7 +103,11 @@ const PdfInfo = () => {
             <p className="truncate text-sm font-medium text-foreground">{file.name}</p>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <NBadge size="sm">{formatSize(file.size)}</NBadge>
-              {info?.encrypted && <NBadge size="sm" color="warning">Encrypted</NBadge>}
+              {info?.encrypted && (
+                <NBadge size="sm" color="warning">
+                  Encrypted
+                </NBadge>
+              )}
             </div>
           </NCard>
 
@@ -106,7 +117,10 @@ const PdfInfo = () => {
             <NCard className="mb-5 p-4">
               <Row label="Page count" value={String(info.pageCount)} />
               <Row label="File size" value={formatSize(info.fileSize)} />
-              <Row label="PDF version" value={info.pdfVersion ? `1.${info.pdfVersion.split(".")[1]}` : "Unknown"} />
+              <Row
+                label="PDF version"
+                value={info.pdfVersion ? `1.${info.pdfVersion.split(".")[1]}` : "Unknown"}
+              />
               <Row
                 label="Page dimensions"
                 value={`${info.pageWidth} × ${info.pageHeight} pt${info.mixedPageSizes ? " (varies by page)" : ""}`}

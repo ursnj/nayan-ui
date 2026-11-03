@@ -5,7 +5,26 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  turbopack: {
+    resolveAlias: {
+      // The games bundle imports its engine peer; resolve it from this website so the
+      // games and the page share one engine instance (one WASM core, one audio context).
+      // The engine locates engine_core_bg.wasm and audio-worklet.js, and the games their
+      // sounds/textures/models, with `new URL(..., import.meta.url)`, which Turbopack
+      // emits as static assets — no extra copying or public/ files are needed.
+      // Point at the browser build itself: aliasing the package folder makes Turbopack follow its
+      // "main" field (the React Native build, which imports react-native and expo-modules-core).
+      "@nayan-ui/engine": "./node_modules/@nayan-ui/engine/lib/web/index.js",
+    },
+  },
   output: "standalone",
+  // The engine docs moved from /engine to /game-engine; keep old links (npm README, search results) working.
+  async redirects() {
+    return [
+      { source: "/engine", destination: "/game-engine", permanent: true },
+      { source: "/engine/:slug", destination: "/game-engine/:slug", permanent: true },
+    ];
+  },
   serverExternalPackages: [
     "docx",
     "exceljs",

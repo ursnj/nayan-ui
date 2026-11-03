@@ -54,15 +54,32 @@ const HtmlToPdf = () => {
       <NTextarea
         label="HTML Content"
         value={html}
-        onChange={(e) => { setHtml(e.target.value); setResult(null); }}
+        onChange={(e) => {
+          setHtml(e.target.value);
+          setResult(null);
+        }}
         placeholder="Paste your HTML content here…"
         className="mb-4"
         rows={10}
       />
 
       <div className="mb-4 grid grid-cols-2 gap-3">
-        <NInput label="Document Title" className="mb-0" value={title} onChange={(e) => setTitle(e.target.value)} />
-        <NSelect label="Page Size" className="mb-0" value={pageSize} onChange={(val) => { if (val) setPageSize(val); }} options={PAGE_SIZES} isSearchable={false} />
+        <NInput
+          label="Document Title"
+          className="mb-0"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <NSelect
+          label="Page Size"
+          className="mb-0"
+          value={pageSize}
+          onChange={(val) => {
+            if (val) setPageSize(val);
+          }}
+          options={PAGE_SIZES}
+          isSearchable={false}
+        />
       </div>
 
       {result && (
@@ -72,7 +89,12 @@ const HtmlToPdf = () => {
       )}
 
       <div className="mb-5 flex flex-wrap items-center gap-3">
-        <NButton onClick={convert} isLoading={processing} loadingText="Converting…" disabled={!html.trim()}>
+        <NButton
+          onClick={convert}
+          isLoading={processing}
+          loadingText="Converting…"
+          disabled={!html.trim()}
+        >
           <FileText className="mr-2 h-4 w-4" />
           Convert to PDF
         </NButton>
@@ -82,7 +104,14 @@ const HtmlToPdf = () => {
             Download PDF
           </NButton>
         )}
-        <NButton isOutline onClick={() => { setHtml(""); setResult(null); setTitle("Document"); }}>
+        <NButton
+          isOutline
+          onClick={() => {
+            setHtml("");
+            setResult(null);
+            setTitle("Document");
+          }}
+        >
           <Trash2 className="mr-2 h-4 w-4" />
           Clear
         </NButton>

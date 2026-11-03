@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NSheet, THEMES } from "@nayan-ui/react";
 import { AlignJustify, Github, MoonStar, Package, Sun } from "lucide-react";
 import Link from "next/link";
@@ -13,14 +13,17 @@ const NAV = [
   { label: "Home", href: "/", match: "/" },
   { label: "React", href: "/react/installation", match: "/react" },
   { label: "React Native", href: "/react-native/installation", match: "/react-native" },
+  { label: "Game Engine", href: "/game-engine", match: "/game-engine" },
   { label: "Games", href: "/games", match: "/games" },
   { label: "Video Editor", href: "/video-editor", match: "/video-editor" },
   { label: "Tools", href: "/tools", match: "/tools" },
 ];
 
-const isActive = (pathname: string, match: string) => {
+const isActive = (pathname: string, match: string | string[]) => {
   if (match === "/") return pathname === "/";
-  return pathname === match || pathname.startsWith(`${match}/`);
+  return (Array.isArray(match) ? match : [match]).some(
+    (m) => pathname === m || pathname.startsWith(`${m}/`),
+  );
 };
 
 const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) => (
@@ -57,8 +60,22 @@ const Header = () => {
     setMounted(true);
   }, []);
 
+  // Back and forward keep the page where it was; only new navigations start at the top.
+  const historyNavigation = useRef(false);
+  useEffect(() => {
+    const onPopState = () => {
+      historyNavigation.current = true;
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
   useEffect(() => {
     setMenu(false);
+    if (historyNavigation.current) {
+      historyNavigation.current = false;
+      return;
+    }
     window.scrollTo(0, 0);
   }, [pathname]);
 

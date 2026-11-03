@@ -24,7 +24,8 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "Robots.txt Validator",
-    description: "Validate robots.txt files for correct syntax, directives, and crawler permissions.",
+    description:
+      "Validate robots.txt files for correct syntax, directives, and crawler permissions.",
     url: `${SITE_URL}/tools/robots-validator`,
     keywords: "robots.txt validator, validate robots.txt, robots.txt checker, crawler permissions",
   }),

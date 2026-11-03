@@ -1,0 +1,171 @@
+{
+  "package": "@nayan-ui/engine",
+  "documentation": "https://www.nayanui.com/game-engine",
+  "startHere": "https://www.nayanui.com/game-engine/first-game",
+  "agentGuide": "https://www.nayanui.com/game-engine/agent-guide",
+  "recipes": "https://www.nayanui.com/game-engine/recipes",
+  "reference": "https://www.nayanui.com/game-engine/api-reference",
+  "guides": {
+    "lifecycle": "https://www.nayanui.com/game-engine/world-entities",
+    "effects": "https://www.nayanui.com/game-engine/particles",
+    "drawing": "https://www.nayanui.com/game-engine/drawing",
+    "performance": "https://www.nayanui.com/game-engine/cache-performance",
+    "scoreboardTimers": "https://www.nayanui.com/game-engine/scoreboard-timers",
+    "input": "https://www.nayanui.com/game-engine/input-picking",
+    "troubleshooting": "https://www.nayanui.com/game-engine/troubleshooting"
+  },
+  "platforms": {
+    "react": {
+      "surface": "HTML canvas (WebGPU, WebGL2 fallback)",
+      "style": "CSSProperties",
+      "assets": "URL strings",
+      "initialize": "useWorld(capacity, setup); manual worlds need await warmUpEngine() first",
+      "keyboard": "createKeyboardInput(element, { mode: 'pointer' | 'drag' | 'swipe' }); dispose() on unmount"
+    },
+    "reactNative": {
+      "surface": "Development or store build; not Expo Go (guard with isEngineAvailable)",
+      "style": "ViewStyle",
+      "assets": "Metro require(...) or URI strings; add glb/gltf to Metro assetExts",
+      "initialize": "useWorld(capacity, setup)",
+      "frames": "Display clock drives GameView; a native render thread draws, JS never waits on the GPU",
+      "android": "minSdkVersion 26, VIBRATE permission; SurfaceView screenshots need captureScreen(..., { handleGLSurfaceViewOnAndroid: true })"
+    }
+  },
+  "fileStructure": {
+    "gameConstants.ts": "Tuning, colors, asset sources, loadAssets()",
+    "game.ts": "createGame(world, onHud, onEnd): rules, start/stop/reset/update/tap/dispose; no UI imports",
+    "useGame.ts": "useWorld(capacity, setup) calling createGame; setup returns game.dispose",
+    "GamePage.tsx | GameScreen.tsx": "HUD, buttons, GameView"
+  },
+  "lifecycleRules": [
+    "Own worlds with useWorld(capacity, setup); never create one in render, useMemo or module scope.",
+    "GameView steps the world right after onUpdate. Never write onUpdate={dt => world.update(dt)}; call world.update only to step differently (GameView then skips its step).",
+    "world.update flushes world.transforms first; flush() only to read back in the same frame.",
+    "Check world.isDisposed, not a custom flag. After dispose, cleanup calls and queries are no-ops; spawn, update and effects throw."
+  ],
+  "workflow": [
+    "Rules in a shared factory; useWorld setup creates it.",
+    "Input and rules in onUpdate; per-frame moves on world.transforms.",
+    "React state only for HUD values, via world.scoreboard.listen.",
+    "Ready: scoreboard.reset(lives, seconds); Start: scoreboard.resume().",
+    "Reset: cancelTimers, despawn round actors, scoreboard.reset. Report one result per run.",
+    "Pause with GameView paused. Load assets and build meshes outside the frame loop; slice long setup with afterNextFrame."
+  ],
+  "api": {
+    "create": "useWorld(capacity, setup?, deps?, onError?) -> World | null",
+    "spawn": "world.spawn(options) -> Entity",
+    "change": "world.set(entity, options) -> boolean",
+    "remove": "world.despawn(entity)",
+    "exists": "world.has(entity)",
+    "disposed": "world.isDisposed",
+    "step": "Automatic after onUpdate; world.updateCount counts steps",
+    "moveEveryFrame": "world.transforms.position(e, x, y, z) | rotation(e, qx, qy, qz, qw) | scale(e, x, y?, z?) | color(e, r, g, b, a?) | transform(e, x, y, z, qx, qy, qz, qw)",
+    "rotate": "quat.y | x | z | axisAngle | fromEuler | multiply | slerp | identity; optional out",
+    "queriesWithOut": "position | worldPosition | velocity (e, out); raycast(origin, dir, max, mask?, out?); pick(x, y, out?); toScreen(p, out?); screenToWorld(x, y, plane?, out?)",
+    "screenQueriesBeforeFirstFrame": "toScreen and screenToWorld return null before the first frame",
+    "steer": "world.set(e, { groundVelocity: [x, z] })",
+    "jump": "world.impulse(e, [0, 5, 0])",
+    "tap": "<GameView onTap={(x, y) => world.pick(x, y)} />",
+    "dragOnPlane": "world.screenToWorld(x, y, { point, normal })",
+    "collision": "world.forEachCollision((a, b, { started, sensor, speed }) => ...) in onUpdate",
+    "animate": "await world.animate(e, { position, rotation, scale, color, moveBy, turn, shake }, { duration, easing, repeat, yoyo, spring })",
+    "effects": "effects.confetti | sparkle | shatter | splash | sparks | explosion(world, EffectOptions); dust(world, DustOptions); flash(world, FlashOptions)",
+    "effectOptions": "{ position, colors, size, speed, count, lifetime, gravity?, direction?, spread?, flash? }",
+    "popClearedPiece": "await effects.pop(world, e, { scale, color? }); world.despawn(e)",
+    "glowColors": "effects.hot(color, peak?, alpha?); effects.pale(color, t, alpha?)",
+    "customParticles": "world.burst(BurstOptions); prefer effects",
+    "delay": "world.after(seconds, fn) -> id",
+    "cancelTimer": "world.cancelTimer(id)",
+    "clearTimers": "world.cancelTimers()",
+    "score": "world.scoreboard.add(points)",
+    "readyScreen": "world.scoreboard.reset(lives, countdownSeconds); resume() starts",
+    "countdown": "world.scoreboard.startCountdown(seconds, pointsPerSecond?)",
+    "soundSettings": "audio.enabled = settings.enableSounds",
+    "hapticSettings": "haptics.enabled = settings.enableHaptics",
+    "cleanup": "useWorld disposes; else world.dispose()",
+    "meshLimit": "MAX_MESHES = 4096, never freed: build meshes once",
+    "colors": "CSS strings ('#33B3FF', 'rgba(...)', transparent/black/white/red/green/blue/yellow/orange/purple/gray) or 0..1 tuples; vertex colors are tuples; toColor(css)",
+    "viewProps": "import type { GameViewProps } from \"@nayan-ui/engine\"",
+    "assetSource": "string | number (URL on web, require(...) on native)",
+    "types": "GameViewProps, GameViewStats, JoystickProps, AssetSource, AudioPlayOptions, ClipOptions, ScreenPlane, GeometryPart, EffectOptions, DustOptions, FlashOptions, PopOptions, MutableQuat, TransformBatch, DrawingStroke, DrawingSample, DrawingCoverageOptions",
+    "geometryStats": "getGeometryStats(geometry)",
+    "geometryLods": "createGeometryLods(geometry, [1, 0.5, 0.25])",
+    "meshIdScanLimit": "getMeshIdLimit()",
+    "skinnedVertices": "world.sampleSkinnedVertices(e, indices, output, nextDt)",
+    "path": "new Path().addRoundedRect(x, y, w, h, r) | addStar(cx, cy, outer, inner, points?) | quadraticTo | toContours",
+    "scoreboardUi": "const unlisten = world.scoreboard.listen({ onScore, onSecond, onLives })",
+    "flatBoards": "<GameView light={frontLight(direction, ambient)} />",
+    "afterNextFrame": "afterNextFrame(fn) -> cancel",
+    "proceduralPeek": "new ProceduralCache(revision).peek(key) | get(key, build)",
+    "skeletal": "loadModel(src).animations; world.playClip(e, name, { loop?, speed?, fade?, time? }); world.stopClip(e, reset?)",
+    "frameStats": "<GameView onStats={({ fps, updateMs, renderMs, quality, backend }) => ...} />"
+  },
+  "drawing": {
+    "create": "new DrawingDocument(width, height, pixelRatio?) after warm-up, one per screen",
+    "show": "<DrawingCanvas document={doc} mode=\"draw\" | \"move\" | \"view\" background onChange />",
+    "tools": "doc.setBrush({ brushType, color, width, opacity, ... }); updateControls; undo / redo / clear",
+    "saveLoad": "exportProject / load; exportSVG; snapshot() -> { base64, width, height }; captureDraft(revision)",
+    "gameTexture": "world.spawn({ mesh: \"plane\", texture: doc.texture() })",
+    "gameInput": "doc.input(phase 0..3, x, y, pressure, 'document'); always end or cancel a stroke",
+    "strokes": "doc.strokes({ from, tolerance }) -> DrawingStroke[]",
+    "sample": "doc.sample(x, y) -> { color, alpha } | null",
+    "coverage": "doc.coverage({ x, y, width, height, minAlpha }) -> 0..1",
+    "lifecycle": "clear() on replay; dispose() on unmount after the world; a disposed document throws (doc.isDisposed)"
+  },
+  "neverDo": [
+    "new World in render, useMemo or module scope.",
+    "onUpdate={dt => world.update(dt)}, requestAnimationFrame or setInterval loops.",
+    "setTimeout for gameplay delays (world.after).",
+    "Per-frame positions in React state.",
+    "Per-frame allocations (use out arguments).",
+    "Hand-written quaternions (quat) or particle layers (effects).",
+    "Replacing scoreboard.handlers for UI (listen).",
+    "A custom disposed flag (world.isDisposed).",
+    "Meshes per spawn or per frame.",
+    "Culling scenery in JS.",
+    "Long setup in one frame (afterNextFrame).",
+    "Invented API names; check the reference.",
+    "Testing native in Expo Go."
+  ],
+  "distinctions": {
+    "entity": "Handle to one object in one World",
+    "model": "Reusable mesh; spawn entities from it",
+    "pause": "GameView paused: no steps, same world",
+    "reset": "Your function preparing a fresh round",
+    "time": "Seconds everywhere",
+    "coordinates": "Y up; ground is X/Z; input in view points",
+    "rotation": "Quaternion [x, y, z, w] from quat; radians"
+  },
+  "verification": [
+    "Typecheck each host.",
+    "Errors are visible; the view has a real size.",
+    "Start, score, win, lose, stop, replay and unmount work; one result per run.",
+    "Nothing advances while paused.",
+    "Web runs over localhost or HTTPS.",
+    "Claim native behavior only after a development build ran."
+  ],
+  "performance": {
+    "zeroAllocation": "out arguments, quat out, world.transforms setters",
+    "batching": "world.transforms applies in one native call per step",
+    "web": "Renderer reads WASM buffers in place",
+    "drawing": "Only changed texture rows upload",
+    "frames": "Native: display clock, render thread; stale frames are replaced, not queued",
+    "culling": "Frustum culling in Rust every frame; skinned meshes never culled",
+    "loading": "Assets decode on native background threads",
+    "quality": "quality='auto' lowers shadows, then anti-aliasing, then resolution only while needed"
+  },
+  "caching": {
+    "automatic": "Rust caches prepared meshes and asset bytes",
+    "persistence": "No TTL; app-private storage on native, IndexedDB on web",
+    "fallback": "Missing or corrupt records rebuild",
+    "ownership": "New World per scene; loaded assets stay valid",
+    "advanced": "ProceduralCache(revision) for expensive deterministic factories; one revision per game",
+    "clear": "await clearAssetCache() on user action",
+    "gamesIntegration": "@nayan-ui/games loaders await engine warm-up; no expo-file-system needed"
+  },
+  "assetLoading": {
+    "initialize": "loadModel, loadTexture, loadFont and audio.load warm the core up themselves",
+    "errors": "Loaders reject with the API name, source and cause; failed sounds are skipped",
+    "ownership": "Loaded handles are session-wide; each scene disposes its own World"
+  }
+}

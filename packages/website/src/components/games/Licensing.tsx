@@ -7,192 +7,111 @@ import Sidebar from "@/components/helpers/Sidebar";
 import { getMenuItem } from "@/services/Utils";
 import { REPO_URL } from "@/services/seo";
 
+const LINK = "text-accent hover:underline";
+const EMAIL = "niranjan.devasani@gmail.com";
+
+const ACKNOWLEDGMENTS: { name: string; href: string; use: string }[] = [
+  {
+    name: "@nayan-ui/engine",
+    href: "/game-engine",
+    use: "rendering, physics, animation, audio and haptics (Rust, wgpu, WebAssembly)",
+  },
+  { name: "wgpu", href: "https://wgpu.rs/", use: "the engine's GPU layer" },
+  {
+    name: "React Native Web",
+    href: "https://necolas.github.io/react-native-web/",
+    use: "the browser build of the shared UI",
+  },
+  {
+    name: "3d-gen",
+    href: "https://github.com/olatunde85/3d-gen",
+    use: "Treasure Hunt's CC0 MakeHuman explorer, animated with CMU Graphics Lab motion capture",
+  },
+  { name: "Inter", href: "https://rsms.me/inter/", use: "HUD text" },
+  {
+    name: "react-native-builder-bob",
+    href: "https://github.com/callstack/react-native-builder-bob",
+    use: "packaging",
+  },
+];
+
 const GamesLicensing = () => {
   const pathname = usePathname();
   const component: any = getMenuItem(pathname);
 
   return (
     <Sidebar title={component?.title || "Licensing"}>
-      <div className="mb-8">
-        <div className="space-y-6">
-          <p className="text-muted">
-            This library is available under a <strong>dual licensing model</strong>:
+      <p className="text-muted text-sm mb-6">
+        @nayan-ui/games is dual licensed: free for non-commercial use, paid for commercial use.
+      </p>
+
+      <div className="mb-8 space-y-4">
+        <div className="bg-surface border-t border-r border-b border-default border-l-4 border-l-green-500 rounded-lg p-5">
+          <h3 className={H3_DOC}>Non-commercial (free)</h3>
+          <p className="text-muted text-sm">
+            Personal projects, learning, education and research, non-commercial open source,
+            portfolios and demos.
           </p>
+        </div>
 
-          <div className="bg-surface border-t border-r border-b border-default border-l-4 border-l-green-500 rounded-lg p-6">
-            <h3 className={H3_DOC}>
-              <span className="mr-2">🆓</span>
-              Non-Commercial License (Free)
-            </h3>
-            <ul className="text-muted text-sm space-y-2">
-              <li>
-                ✅ <strong>Personal projects</strong> and learning
-              </li>
-              <li>
-                ✅ <strong>Educational use</strong> and research
-              </li>
-              <li>
-                ✅ <strong>Open source projects</strong> (non-commercial)
-              </li>
-              <li>
-                ✅ <strong>Portfolio</strong> and demonstration apps
-              </li>
-            </ul>
-          </div>
-
-          <div className="bg-surface border-t border-r border-b border-default border-l-4 border-l-blue-500 rounded-lg p-6">
-            <h3 className={H3_DOC}>
-              <span className="mr-2">💼</span>
-              Commercial License (Paid)
-            </h3>
-            <p className="text-muted text-sm mb-3">Required for commercial use including:</p>
-            <ul className="text-muted text-sm space-y-2 mb-4">
-              <li>
-                🏢 <strong>Commercial applications</strong> and products
-              </li>
-              <li>
-                💰 <strong>Revenue-generating</strong> projects
-              </li>
-              <li>
-                🏪 <strong>App Store</strong> or <strong>Play Store</strong> apps with monetization
-              </li>
-              <li>
-                🏭 <strong>Enterprise</strong> and business applications
-              </li>
-            </ul>
-
-            <div className="bg-background rounded-lg p-4 mb-4">
-              <p className="text-foreground font-semibold mb-2">Commercial licensing includes:</p>
-              <ul className="text-muted text-sm space-y-1">
-                <li>• Full commercial usage rights</li>
-                <li>• Priority support and maintenance</li>
-                <li>• Custom feature development consideration</li>
-                <li>• Optional attribution removal</li>
-              </ul>
-            </div>
-
-            <div className="bg-accent/10 rounded-lg p-4">
-              <p className="text-foreground font-semibold mb-2">Get Commercial License:</p>
-              <p className="text-muted text-sm">
-                📧 Email:{" "}
-                <NLink
-                  href="mailto:niranjan.devasani@gmail.com?subject=%40nayan-ui%2Fgames%20-%20Commercial%20License%20Request"
-                  className="text-accent hover:underline"
-                >
-                  niranjan.devasani@gmail.com
-                </NLink>
-              </p>
-            </div>
-          </div>
+        <div className="bg-surface border-t border-r border-b border-default border-l-4 border-l-blue-500 rounded-lg p-5">
+          <h3 className={H3_DOC}>Commercial (paid)</h3>
+          <p className="text-muted text-sm mb-2">
+            Required for commercial products, revenue-generating projects, monetized App Store or
+            Play Store apps, and enterprise use. Includes full commercial rights, priority support
+            and maintenance, consideration for custom features, and optional attribution removal.
+          </p>
+          <p className="text-muted text-sm">
+            Request one at{" "}
+            <NLink
+              href={`mailto:${EMAIL}?subject=%40nayan-ui%2Fgames%20-%20Commercial%20License%20Request`}
+              className={LINK}
+            >
+              {EMAIL}
+            </NLink>
+            .
+          </p>
         </div>
       </div>
 
       <div className="mb-8">
-        <h2 className={H2_DOC}>
-          <span className="mr-3">🙏</span>
-          Acknowledgments
-        </h2>
-        <ul className="text-muted space-y-2">
-          <li>
-            • Built with{" "}
-            <NLink
-              href="https://shopify.github.io/react-native-skia/"
-              target="_blank"
-              className="text-accent hover:underline"
-            >
-              React Native Skia
-            </NLink>{" "}
-            for high-performance graphics
-          </li>
-          <li>
-            • Powered by{" "}
-            <NLink
-              href="https://docs.swmansion.com/react-native-reanimated/"
-              target="_blank"
-              className="text-accent hover:underline"
-            >
-              React Native Reanimated
-            </NLink>{" "}
-            for smooth animations
-          </li>
-          <li>
-            • Enhanced with{" "}
-            <NLink
-              href="https://github.com/margelo/react-native-worklets"
-              target="_blank"
-              className="text-accent hover:underline"
-            >
-              React Native Worklets
-            </NLink>{" "}
-            for high-performance JavaScript
-          </li>
-          <li>
-            • State management with{" "}
-            <NLink
-              href="https://github.com/pmndrs/zustand"
-              target="_blank"
-              className="text-accent hover:underline"
-            >
-              Zustand
-            </NLink>{" "}
-            and{" "}
-            <NLink
-              href="https://github.com/immerjs/immer"
-              target="_blank"
-              className="text-accent hover:underline"
-            >
-              Immer
-            </NLink>
-          </li>
-          <li>
-            • Created with{" "}
-            <NLink
-              href="https://github.com/callstack/react-native-builder-bob"
-              target="_blank"
-              className="text-accent hover:underline"
-            >
-              create-react-native-library
-            </NLink>
-          </li>
+        <h2 className={H2_DOC}>Acknowledgments</h2>
+        <ul className="text-muted text-sm space-y-2">
+          {ACKNOWLEDGMENTS.map((item) => (
+            <li key={item.name}>
+              •{" "}
+              <NLink
+                href={item.href}
+                target={item.href.startsWith("http") ? "_blank" : undefined}
+                className={LINK}
+              >
+                {item.name}
+              </NLink>
+              : {item.use}
+            </li>
+          ))}
         </ul>
       </div>
 
       <div className="mb-8">
-        <h2 className={H2_DOC}>
-          <span className="mr-3">📞</span>
-          Support
-        </h2>
-        <ul className="text-muted space-y-3">
-          <li className="flex items-center">
-            <span className="mr-2">📧</span>
-            <strong className="mr-2">Email:</strong>
-            <NLink
-              href="mailto:niranjan.devasani@gmail.com"
-              className="text-accent hover:underline"
-            >
-              niranjan.devasani@gmail.com
+        <h2 className={H2_DOC}>Support</h2>
+        <ul className="text-muted text-sm space-y-2">
+          <li>
+            • Email:{" "}
+            <NLink href={`mailto:${EMAIL}`} className={LINK}>
+              {EMAIL}
             </NLink>
           </li>
-          <li className="flex items-center">
-            <span className="mr-2">🐛</span>
-            <strong className="mr-2">Issues:</strong>
-            <NLink
-              href={REPO_URL}
-              target="_blank"
-              className="text-accent hover:underline"
-            >
+          <li>
+            • Issues:{" "}
+            <NLink href={REPO_URL} target="_blank" className={LINK}>
               GitHub Issues
             </NLink>
           </li>
-          <li className="flex items-center">
-            <span className="mr-2">🌐</span>
-            <strong className="mr-2">Website:</strong>
-            <NLink
-              href="https://www.nayanui.com/games"
-              target="_blank"
-              className="text-accent hover:underline"
-            >
-              https://www.nayanui.com/games
+          <li>
+            • Website:{" "}
+            <NLink href="https://www.nayanui.com/games" target="_blank" className={LINK}>
+              nayanui.com/games
             </NLink>
           </li>
         </ul>

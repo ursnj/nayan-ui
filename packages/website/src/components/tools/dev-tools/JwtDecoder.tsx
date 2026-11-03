@@ -11,7 +11,7 @@ function decodeBase64Url(str: string): string {
     atob(s)
       .split("")
       .map((c) => "%" + c.charCodeAt(0).toString(16).padStart(2, "0"))
-      .join("")
+      .join(""),
   );
 }
 
@@ -54,9 +54,7 @@ const JwtDecoder = () => {
         textareaClassName="h-[120px] resize-none font-mono text-sm"
       />
 
-      {decoded && "error" in decoded && (
-        <p className="mt-3 text-sm text-danger">{decoded.error}</p>
-      )}
+      {decoded && "error" in decoded && <p className="mt-3 text-sm text-danger">{decoded.error}</p>}
 
       {decoded && !("error" in decoded) && (
         <div className="mt-4 space-y-3">
@@ -81,10 +79,14 @@ const JwtDecoder = () => {
               <div className="flex items-center gap-2">
                 <label className="text-sm font-medium">Payload</label>
                 {decoded.isExpired === true && (
-                  <span className="rounded bg-danger/20 px-1.5 py-0.5 text-xs text-danger">Expired</span>
+                  <span className="rounded bg-danger/20 px-1.5 py-0.5 text-xs text-danger">
+                    Expired
+                  </span>
                 )}
                 {decoded.isExpired === false && (
-                  <span className="rounded bg-accent/20 px-1.5 py-0.5 text-xs text-accent">Valid</span>
+                  <span className="rounded bg-accent/20 px-1.5 py-0.5 text-xs text-accent">
+                    Valid
+                  </span>
                 )}
               </div>
               <NButton
@@ -113,7 +115,11 @@ const JwtDecoder = () => {
           <NCard className="p-4">
             <div className="mb-1.5 flex items-center justify-between">
               <label className="text-sm font-medium">Signature</label>
-              <NButton isOutline onClick={() => copy(decoded.signature)} className="h-7 px-2 text-xs">
+              <NButton
+                isOutline
+                onClick={() => copy(decoded.signature)}
+                className="h-7 px-2 text-xs"
+              >
                 <ClipboardCopy className="mr-1 h-3 w-3" />
                 Copy
               </NButton>

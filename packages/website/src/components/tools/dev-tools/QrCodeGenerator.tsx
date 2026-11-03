@@ -76,7 +76,9 @@ const QrCodeGenerator = () => {
           className="max-w-40"
           value={size}
           options={SIZE_OPTIONS}
-          onChange={(v) => { if (v) setSize(v); }}
+          onChange={(v) => {
+            if (v) setSize(v);
+          }}
           isSearchable={false}
         />
       </div>
@@ -85,7 +87,11 @@ const QrCodeGenerator = () => {
 
       {text && (
         <NCard className="flex items-center justify-center p-6" hidden={!!error}>
-          <canvas ref={canvasRef} className="rounded" style={{ maxWidth: "100%", height: "auto" }} />
+          <canvas
+            ref={canvasRef}
+            className="rounded"
+            style={{ maxWidth: "100%", height: "auto" }}
+          />
         </NCard>
       )}
     </div>

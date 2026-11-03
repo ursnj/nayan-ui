@@ -74,9 +74,16 @@ const ImageToPdf = () => {
       <NCard
         className={`mb-6 flex cursor-pointer flex-col items-center gap-3 border-dashed p-10 transition-colors ${dragging ? "border-accent" : ""}`}
         onClick={() => inputRef.current?.click()}
-        onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
         onDragLeave={() => setDragging(false)}
-        onDrop={(e) => { e.preventDefault(); setDragging(false); handleFiles(e.dataTransfer.files); }}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragging(false);
+          handleFiles(e.dataTransfer.files);
+        }}
       >
         <Upload className={`h-8 w-8 ${dragging ? "text-accent" : "text-muted"}`} />
         <p className="text-sm text-muted">Drop images here or click to upload</p>
@@ -87,7 +94,10 @@ const ImageToPdf = () => {
           accept="image/*"
           multiple
           className="hidden"
-          onChange={(e) => { handleFiles(e.target.files); e.target.value = ""; }}
+          onChange={(e) => {
+            handleFiles(e.target.files);
+            e.target.value = "";
+          }}
         />
       </NCard>
 
@@ -99,7 +109,10 @@ const ImageToPdf = () => {
                 <span className="flex-1 truncate text-sm text-foreground">{file.name}</span>
                 <span className="text-xs text-muted">{(file.size / 1024).toFixed(1)} KB</span>
                 <button
-                  onClick={() => { setFiles((prev) => prev.filter((_, idx) => idx !== i)); setResult(null); }}
+                  onClick={() => {
+                    setFiles((prev) => prev.filter((_, idx) => idx !== i));
+                    setResult(null);
+                  }}
                   className="text-muted hover:text-danger"
                   aria-label={`Remove ${file.name}`}
                 >
@@ -115,7 +128,9 @@ const ImageToPdf = () => {
               className="mb-0"
               value={orientation}
               options={ORIENTATION_OPTIONS}
-              onChange={(v) => { if (v) setOrientation(v); }}
+              onChange={(v) => {
+                if (v) setOrientation(v);
+              }}
               isSearchable={false}
             />
             <NSelect
@@ -123,7 +138,9 @@ const ImageToPdf = () => {
               className="mb-0"
               value={fit}
               options={FIT_OPTIONS}
-              onChange={(v) => { if (v) setFit(v); }}
+              onChange={(v) => {
+                if (v) setFit(v);
+              }}
               isSearchable={false}
             />
           </div>
@@ -139,7 +156,13 @@ const ImageToPdf = () => {
                 Download
               </NButton>
             )}
-            <NButton isOutline onClick={() => { setFiles([]); setResult(null); }}>
+            <NButton
+              isOutline
+              onClick={() => {
+                setFiles([]);
+                setResult(null);
+              }}
+            >
               <Trash2 className="mr-2 h-4 w-4" />
               Clear
             </NButton>

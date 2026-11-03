@@ -285,10 +285,7 @@ const Contributions = () => {
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <Github className="w-5 h-5" />
-                    <a
-                      href={REPO_URL}
-                      className="text-accent hover:underline"
-                    >
+                    <a href={REPO_URL} className="text-accent hover:underline">
                       GitHub Repository
                     </a>
                   </div>

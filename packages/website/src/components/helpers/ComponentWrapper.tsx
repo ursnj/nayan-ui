@@ -26,7 +26,6 @@ interface Props {
   extraAttributes?: { title: string; data: any[] }[];
 }
 
-
 const ComponentWrapper = (props: Props) => {
   const { children, code, attributes, extraAttributes } = props;
   const pathname = usePathname();

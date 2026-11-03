@@ -24,7 +24,8 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "PDF Metadata Editor",
-    description: "View and edit a PDF's title, author, subject, and keywords, then download the updated file.",
+    description:
+      "View and edit a PDF's title, author, subject, and keywords, then download the updated file.",
     url: `${SITE_URL}/tools/pdf-metadata-editor`,
     keywords: "pdf metadata editor, edit pdf properties, pdf document properties",
   }),

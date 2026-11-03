@@ -62,15 +62,32 @@ const MarkdownToPdf = () => {
       <NTextarea
         label="Markdown Content"
         value={markdown}
-        onChange={(e) => { setMarkdown(e.target.value); setResult(null); }}
+        onChange={(e) => {
+          setMarkdown(e.target.value);
+          setResult(null);
+        }}
         placeholder="Type or paste your Markdown content here…"
         className="mb-6"
         rows={12}
       />
 
       <div className="mb-6 grid grid-cols-2 gap-3">
-        <NInput label="Document Title" className="mb-0" value={title} onChange={(e) => setTitle(e.target.value)} />
-        <NSelect label="Page Size" className="mb-0" value={pageSize} onChange={(val) => { if (val) setPageSize(val); }} options={PAGE_SIZES} isSearchable={false} />
+        <NInput
+          label="Document Title"
+          className="mb-0"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <NSelect
+          label="Page Size"
+          className="mb-0"
+          value={pageSize}
+          onChange={(val) => {
+            if (val) setPageSize(val);
+          }}
+          options={PAGE_SIZES}
+          isSearchable={false}
+        />
       </div>
 
       {result && (
@@ -80,7 +97,12 @@ const MarkdownToPdf = () => {
       )}
 
       <div className="mb-5 flex flex-wrap items-center gap-3">
-        <NButton onClick={convert} isLoading={processing} loadingText="Converting…" disabled={!markdown.trim()}>
+        <NButton
+          onClick={convert}
+          isLoading={processing}
+          loadingText="Converting…"
+          disabled={!markdown.trim()}
+        >
           <FileText className="mr-2 h-4 w-4" />
           Convert to PDF
         </NButton>
@@ -94,11 +116,28 @@ const MarkdownToPdf = () => {
           <Upload className="mr-2 h-4 w-4" />
           Upload .md File
         </NButton>
-        <NButton isOutline onClick={() => { setMarkdown(""); setResult(null); setTitle("Document"); }}>
+        <NButton
+          isOutline
+          onClick={() => {
+            setMarkdown("");
+            setResult(null);
+            setTitle("Document");
+          }}
+        >
           <Trash2 className="mr-2 h-4 w-4" />
           Clear
         </NButton>
-        <input ref={inputRef} type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ""; }} />
+        <input
+          ref={inputRef}
+          type="file"
+          accept=".md,.markdown,.txt,text/markdown,text/plain"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) handleFile(f);
+            e.target.value = "";
+          }}
+        />
       </div>
     </div>
   );

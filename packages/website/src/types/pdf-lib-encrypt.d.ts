@@ -9,8 +9,5 @@ declare module "pdf-lib-encrypt" {
     opts?: { algo?: "aes256" | "rc4"; permissions?: number },
   ): Promise<Uint8Array>;
 
-  export function unlockInPlace(
-    pdfDoc: pdfLib.PDFDocument,
-    password: string,
-  ): Promise<boolean>;
+  export function unlockInPlace(pdfDoc: pdfLib.PDFDocument, password: string): Promise<boolean>;
 }

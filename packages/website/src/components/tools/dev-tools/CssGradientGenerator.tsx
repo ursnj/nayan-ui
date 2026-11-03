@@ -27,14 +27,19 @@ const CssGradientGenerator = () => {
 
   const gradient = useMemo(() => {
     const stopList = sortedStops.map((s) => `${s.color} ${s.pos}%`).join(", ");
-    return type === "linear" ? `linear-gradient(${angle}deg, ${stopList})` : `radial-gradient(circle, ${stopList})`;
+    return type === "linear"
+      ? `linear-gradient(${angle}deg, ${stopList})`
+      : `radial-gradient(circle, ${stopList})`;
   }, [type, angle, sortedStops]);
 
   const addStop = useCallback(() => {
     setStops((prev) => {
       if (prev.length >= 6) return prev;
       const positions = prev.map((s) => s.pos).sort((a, b) => a - b);
-      const mid = positions.length >= 2 ? Math.round((positions[0] + positions[positions.length - 1]) / 2) : 50;
+      const mid =
+        positions.length >= 2
+          ? Math.round((positions[0] + positions[positions.length - 1]) / 2)
+          : 50;
       return [...prev, { id: makeId(), color: "#ffffff", pos: mid }];
     });
   }, []);
@@ -66,7 +71,15 @@ const CssGradientGenerator = () => {
         </div>
 
         {type === "linear" && (
-          <NSlider label="Angle" value={angle} min={0} max={360} step={1} showOutput onChange={setAngle} />
+          <NSlider
+            label="Angle"
+            value={angle}
+            min={0}
+            max={360}
+            step={1}
+            showOutput
+            onChange={setAngle}
+          />
         )}
 
         <div className="mt-4 space-y-3">
@@ -109,7 +122,10 @@ const CssGradientGenerator = () => {
         </NButton>
       </NCard>
 
-      <div className="mb-4 h-32 w-full rounded-lg border border-default" style={{ backgroundImage: gradient }} />
+      <div
+        className="mb-4 h-32 w-full rounded-lg border border-default"
+        style={{ backgroundImage: gradient }}
+      />
 
       <NCard className="p-4">
         <div className="mb-1.5 flex items-center justify-between">

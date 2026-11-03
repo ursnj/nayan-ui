@@ -175,3 +175,135 @@ html {
 @utility animate-accordion-up {
   animation: accordion-up 0.2s ease-out;
 }
+
+/*
+ * Live game pages (`/games/[slug]`).
+ *
+ * The play area is fixed under the site header, so the document itself must not
+ * scroll — otherwise wheel and touch gestures over the game would move the hidden
+ * footer instead of reaching the game.
+ */
+html:has(.nyn-game-page),
+html:has(.nyn-game-page) body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* The engine's keyboard cursor is an input aid, not something to show. */
+.nyn-game-surface [data-engine-keyboard-cursor] {
+  visibility: hidden;
+}
+
+.nyn-game-surface {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nyn-game-boot-dots {
+  display: flex;
+  gap: 8px;
+  margin: 24px 0 14px;
+}
+
+.nyn-game-boot-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--color-indigo-500, #6366f1);
+  animation: nyn-game-boot-pulse 1.2s ease-in-out infinite;
+}
+
+.nyn-game-boot-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.nyn-game-boot-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes nyn-game-boot-pulse {
+  0%,
+  80%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nyn-game-boot-dots span {
+    animation: none;
+  }
+}
+
+/* The guide drawer: full height on the right, full width on phones. */
+.nyn-game-panel {
+  position: fixed;
+  inset: 0 0 0 auto;
+  margin: 0;
+  width: min(100%, 460px);
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  overflow: hidden;
+  border-width: 0 0 0 1px;
+  border-style: solid;
+  box-shadow: -16px 0 56px rgb(0 0 0 / 0.2);
+}
+
+.nyn-game-panel[open] {
+  display: flex;
+  flex-direction: column;
+  animation: nyn-game-panel-in 0.2s ease-out;
+}
+
+.nyn-game-panel::backdrop {
+  background: rgb(15 23 42 / 0.45);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.nyn-game-panel-header {
+  padding-top: max(1.25rem, env(safe-area-inset-top));
+}
+
+@keyframes nyn-game-panel-in {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nyn-game-panel[open] {
+    animation: none;
+  }
+}
+
+/* Keyboard controls popover, anchored under its toolbar button. */
+.nyn-game-popover {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  width: min(360px, calc(100vw - 32px));
+  max-height: calc(100dvh - 96px);
+  overflow: hidden;
+}
+
+.nyn-game-popover:popover-open {
+  display: flex;
+  flex-direction: column;
+}
+
+/* The games' own settings popover: frost what is behind it, like the site's other overlays. */
+[data-testid="game-settings-popover"] {
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}

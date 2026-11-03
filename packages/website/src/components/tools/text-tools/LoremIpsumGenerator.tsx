@@ -5,11 +5,17 @@ import { ClipboardCopy, Sparkles, Trash2 } from "lucide-react";
 import { NButton, NSelect, showToast } from "@nayan-ui/react";
 import MonacoEditor from "../shared/MonacoEditor";
 
-const LOREM_WORDS = "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum".split(" ");
+const LOREM_WORDS =
+  "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum".split(
+    " ",
+  );
 
 const generateSentence = (): string => {
   const len = Math.floor(Math.random() * 10) + 5;
-  const words = Array.from({ length: len }, () => LOREM_WORDS[Math.floor(Math.random() * LOREM_WORDS.length)]);
+  const words = Array.from(
+    { length: len },
+    () => LOREM_WORDS[Math.floor(Math.random() * LOREM_WORDS.length)],
+  );
   words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
   return words.join(" ") + ".";
 };
@@ -70,14 +76,18 @@ const LoremIpsumGenerator = () => {
           className="mb-0"
           value={typeOption}
           options={TYPE_OPTIONS}
-          onChange={(val) => { if (val) setTypeOption(val); }}
+          onChange={(val) => {
+            if (val) setTypeOption(val);
+          }}
         />
         <NSelect
           label="Count"
           className="mb-0"
           value={countOption}
           options={COUNT_OPTIONS}
-          onChange={(val) => { if (val) setCountOption(val); }}
+          onChange={(val) => {
+            if (val) setCountOption(val);
+          }}
         />
       </div>
       <div className="mb-4 flex flex-wrap items-center gap-3">
@@ -91,21 +101,13 @@ const LoremIpsumGenerator = () => {
             Copy
           </NButton>
         )}
-        <NButton
-          isOutline
-          onClick={() => setOutput("")}
-        >
+        <NButton isOutline onClick={() => setOutput("")}>
           <Trash2 className="mr-2 h-4 w-4" />
           Clear
         </NButton>
       </div>
 
-      <MonacoEditor
-        label="Generated Text"
-        value={output}
-        readOnly
-        height="500px"
-      />
+      <MonacoEditor label="Generated Text" value={output} readOnly height="500px" />
     </div>
   );
 };

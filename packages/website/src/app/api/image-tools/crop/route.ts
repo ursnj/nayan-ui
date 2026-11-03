@@ -21,10 +21,7 @@ export async function POST(req: NextRequest) {
 
     const sharp = (await import("sharp")).default;
     const buffer = Buffer.from(await file.arrayBuffer());
-    const result = await sharp(buffer)
-      .extract({ left, top, width, height })
-      .png()
-      .toBuffer();
+    const result = await sharp(buffer).extract({ left, top, width, height }).png().toBuffer();
 
     return new NextResponse(new Uint8Array(result), {
       status: 200,

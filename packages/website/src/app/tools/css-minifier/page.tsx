@@ -1,12 +1,19 @@
 import CssMinifierPage from "@/components/tools/dev-tools/CssMinifierPage";
 import JsonLd from "@/components/helpers/JsonLd";
-import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata, buildTechArticleSchema } from "@/services/seo";
+import {
+  SITE_URL,
+  buildBreadcrumbSchema,
+  buildPageMetadata,
+  buildTechArticleSchema,
+} from "@/services/seo";
 
 export const metadata = buildPageMetadata({
   title: "CSS Minifier",
-  description: "Minify CSS by removing whitespace and comments. Free online CSS minifier by Nayan UI.",
+  description:
+    "Minify CSS by removing whitespace and comments. Free online CSS minifier by Nayan UI.",
   path: "/tools/css-minifier",
-  keywords: "css minifier, css compressor, minify css, online css minifier, css optimizer, css reducer, free css minifier, nayan ui tools",
+  keywords:
+    "css minifier, css compressor, minify css, online css minifier, css optimizer, css reducer, free css minifier, nayan ui tools",
 });
 
 const schemas = [

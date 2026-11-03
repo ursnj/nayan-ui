@@ -84,7 +84,9 @@ const JsonFlattenUnflatten = () => {
     try {
       const parsed = JSON.parse(input);
       const result =
-        mode === "flatten" ? flatten(parsed, delimiter || ".") : unflatten(parsed, delimiter || ".");
+        mode === "flatten"
+          ? flatten(parsed, delimiter || ".")
+          : unflatten(parsed, delimiter || ".");
       return { output: JSON.stringify(result, null, 2), error: "" };
     } catch (e: any) {
       return { output: "", error: e.message || "Invalid JSON" };

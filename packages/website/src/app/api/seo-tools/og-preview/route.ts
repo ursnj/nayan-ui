@@ -15,8 +15,7 @@ export async function POST(req: NextRequest) {
 
     const res = await safeFetch(targetUrl, {
       headers: {
-        "User-Agent":
-          "Mozilla/5.0 (compatible; NayanUI-OGPreview/1.0; +https://nayanui.com)",
+        "User-Agent": "Mozilla/5.0 (compatible; NayanUI-OGPreview/1.0; +https://nayanui.com)",
         Accept: "text/html",
       },
       signal: AbortSignal.timeout(10000),
@@ -25,16 +24,13 @@ export async function POST(req: NextRequest) {
     if (!res.ok) {
       return NextResponse.json(
         { error: `Failed to fetch: ${res.status} ${res.statusText}` },
-        { status: 422 }
+        { status: 422 },
       );
     }
 
     const contentType = res.headers.get("content-type") || "";
     if (!contentType.includes("text/html")) {
-      return NextResponse.json(
-        { error: "URL does not return HTML content" },
-        { status: 422 }
-      );
+      return NextResponse.json({ error: "URL does not return HTML content" }, { status: 422 });
     }
 
     const html = await res.text();
@@ -50,10 +46,7 @@ export async function POST(req: NextRequest) {
     let m;
     while ((m = metaRegex.exec(html)) !== null) {
       const attrs = m[1];
-      const name =
-        getAttr(attrs, "property") ||
-        getAttr(attrs, "name") ||
-        "";
+      const name = getAttr(attrs, "property") || getAttr(attrs, "name") || "";
       const content = getAttr(attrs, "content") || "";
       if (name && content) {
         meta[name.toLowerCase()] = decodeEntities(content);
@@ -62,13 +55,13 @@ export async function POST(req: NextRequest) {
 
     // Extract link[rel=canonical]
     const canonicalMatch = html.match(
-      /<link\s+[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["'][^>]*\/?>/i
+      /<link\s+[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["'][^>]*\/?>/i,
     );
     if (canonicalMatch) meta.canonical = canonicalMatch[1];
 
     // Extract favicon
     const faviconMatch = html.match(
-      /<link\s+[^>]*rel=["'](?:icon|shortcut icon)["'][^>]*href=["']([^"']+)["'][^>]*\/?>/i
+      /<link\s+[^>]*rel=["'](?:icon|shortcut icon)["'][^>]*href=["']([^"']+)["'][^>]*\/?>/i,
     );
     if (faviconMatch) {
       let favicon = faviconMatch[1];
@@ -82,11 +75,7 @@ export async function POST(req: NextRequest) {
     const result = {
       url: targetUrl,
       title: meta["og:title"] || meta["twitter:title"] || meta.title || "",
-      description:
-        meta["og:description"] ||
-        meta["twitter:description"] ||
-        meta.description ||
-        "",
+      description: meta["og:description"] || meta["twitter:description"] || meta.description || "",
       image: meta["og:image"] || meta["twitter:image"] || "",
       siteName: meta["og:site_name"] || "",
       type: meta["og:type"] || "website",
@@ -104,10 +93,7 @@ export async function POST(req: NextRequest) {
     if (err.name === "TimeoutError" || err.name === "AbortError") {
       return NextResponse.json({ error: "Request timed out" }, { status: 408 });
     }
-    return NextResponse.json(
-      { error: err.message || "Failed to fetch URL" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: err.message || "Failed to fetch URL" }, { status: 500 });
   }
 }
 

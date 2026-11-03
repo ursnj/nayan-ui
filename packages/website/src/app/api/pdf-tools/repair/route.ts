@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     } catch {
       return NextResponse.json(
         { error: "The file is too corrupted to repair. The PDF structure cannot be parsed." },
-        { status: 422 }
+        { status: 422 },
       );
     }
 

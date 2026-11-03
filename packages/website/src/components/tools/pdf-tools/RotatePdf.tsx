@@ -62,7 +62,10 @@ const RotatePdf = () => {
         <NCard
           className={`mb-6 flex cursor-pointer flex-col items-center gap-3 border-dashed p-10 transition-colors ${dragging ? "border-accent" : ""}`}
           onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragging(true);
+          }}
           onDragLeave={() => setDragging(false)}
           onDrop={(e) => {
             e.preventDefault();
@@ -78,7 +81,10 @@ const RotatePdf = () => {
             type="file"
             accept=".pdf,application/pdf"
             className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+            }}
           />
         </NCard>
       ) : (
@@ -93,7 +99,9 @@ const RotatePdf = () => {
             className="mb-4 max-w-52"
             value={angle}
             options={ANGLE_OPTIONS}
-            onChange={(v) => { if (v) setAngle(v); }}
+            onChange={(v) => {
+              if (v) setAngle(v);
+            }}
             isSearchable={false}
           />
 
@@ -108,7 +116,13 @@ const RotatePdf = () => {
                 Download
               </NButton>
             )}
-            <NButton isOutline onClick={() => { setFile(null); setResult(null); }}>
+            <NButton
+              isOutline
+              onClick={() => {
+                setFile(null);
+                setResult(null);
+              }}
+            >
               <Trash2 className="mr-2 h-4 w-4" />
               Clear
             </NButton>
