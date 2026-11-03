@@ -1,4 +1,4 @@
-import { type Entity, type Geometry, type Model, type World } from '@nayan-ui/engine';
+import { type Geometry, type Model } from '@nayan-ui/engine';
 import { type GamePattern, gamePattern, PATTERN_GRID_COLOR, type PatternGradient, type PatternShape } from '../../helpers/GamePatternData';
 import type { GameTheme } from '../../services/ThemeService';
 // The Playtura game background (theme color plus the rainbow pattern), built by the Nayan engine with

@@ -1,4 +1,4 @@
-import { type ComponentType, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { Dimensions } from 'react-native';
 import { gameWidthFor } from '../games/shared/EngineGameWidth';
 
@@ -62,12 +62,4 @@ export enum GAME_IDS {
   CAR_RACING = 'car-racing'
 }
 
-type GameComponent = ComponentType<GameProps>;
-
 export type GameCategory = 'arcade' | 'block' | 'casual' | 'action' | 'brain' | 'education' | 'puzzle' | 'racing' | 'strategy';
-
-export const formatTime = (seconds: number): string => {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-};

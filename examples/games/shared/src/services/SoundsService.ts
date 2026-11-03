@@ -52,22 +52,6 @@ export const preloadSounds = (sounds?: Record<string, SoundConfig> | SoundConfig
   for (const sound of Object.values(sounds)) if (sound.sfx) loadBank(sound.sfx);
 };
 
-function gameSoundConfigs(gameId: string): SoundConfig[] {
-  const key = gameId.replace(/-/g, '_').toUpperCase();
-  const sounds = GAME_SOUNDS[key as keyof typeof GAME_SOUNDS];
-  return [
-    ...(sounds && !('sfx' in sounds) ? Object.values(sounds as Record<string, SoundConfig>) : []),
-    GAME_SOUNDS.WELL_DONE,
-    GAME_SOUNDS.TIME_UP,
-    GAME_SOUNDS.STOP,
-    GAME_SOUNDS.RESET,
-    GAME_SOUNDS.DRAW
-  ];
-}
-
-/** Loads a game's effects on opening, including games excluded from homepage preloading. */
-export const preloadGameSounds = (gameId: string): void => preloadSounds(gameSoundConfigs(gameId));
-
 export const playSound = (soundConfig: SoundConfig, soundEnabled: boolean, _force?: boolean): void => {
   playSoundVoice(soundConfig, soundEnabled);
 };
@@ -105,23 +89,9 @@ export const stopAllSounds = (): void => {
   _voices.length = 0;
 };
 
-// Car Racing's events and the shared game-screen sounds, mapped onto sound effects (trimmed from
-// the games library, which lists every game's).
+// The shared game screen's Stop and Play Again sounds (the games library maps every game's events
+// here; Car Racing plays its own sound bank, CarRacingConstants' getRacingSounds).
 export const GAME_SOUNDS = {
   STOP: { sfx: 'deselect', volume: 0.5 } as SoundConfig,
-  RESET: { sfx: 'click', volume: 0.5 } as SoundConfig,
-  DRAW: { sfx: 'draw' } as SoundConfig,
-  POP: { sfx: 'pop' } as SoundConfig,
-  SWOOSH: { sfx: 'swoosh' } as SoundConfig,
-  BOOM: { sfx: 'boom' } as SoundConfig,
-  WHOOSH: { sfx: 'whoosh' } as SoundConfig,
-  TIME_UP: { sfx: 'time_up' } as SoundConfig,
-  WELL_DONE: { sfx: 'win' } as SoundConfig,
-  CAR_RACING: {
-    START: { sfx: 'start' } as SoundConfig,
-    LANE_SWITCH: { sfx: 'swoosh', volume: 0.5 } as SoundConfig,
-    PASS: { sfx: 'coin', volume: 0.6 } as SoundConfig,
-    CRASH: { sfx: 'crash' } as SoundConfig,
-    GAME_OVER: { sfx: 'game_over' } as SoundConfig
-  }
+  RESET: { sfx: 'click', volume: 0.5 } as SoundConfig
 };

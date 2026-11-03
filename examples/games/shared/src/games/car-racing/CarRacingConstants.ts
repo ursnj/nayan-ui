@@ -150,18 +150,3 @@ export function loadAssets(): Promise<Assets> {
 export function preloadRacing() {
   loadAssets().catch(() => {}); // the game screen reports any error
 }
-
-/** Decode one texture per job before the asset bundle's cached assembly. */
-export function* warmAssets(): Iterable<() => unknown> {
-  yield loadCarMeshes;
-  yield treeMesh;
-  yield sceneryMeshes;
-  yield () => loadTexture(require('../../assets/textures/asphalt.png'));
-  yield () => loadTexture(require('../../assets/textures/facade.png'));
-  yield () => loadTexture(require('../../assets/textures/grass.png'));
-  yield () => loadTexture(require('../../assets/textures/ad_chevrons.png'));
-  yield () => loadTexture(require('../../assets/textures/ad_bubbles.png'));
-  yield () => loadTexture(require('../../assets/textures/ad_bolt.png'));
-  yield loadAssets;
-  yield () => getRacingSounds().ready;
-}

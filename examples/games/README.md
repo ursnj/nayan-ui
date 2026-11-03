@@ -7,11 +7,11 @@ games/
 ├── shared/                      # the games, nothing else
 │   ├── index.ts                 # CarRacing, GameProps, DEFAULT_GAME_SETTINGS, resolveGameTheme
 │   ├── LICENSE                  # the games library's licence, which covers src/
-│   └── src/                     # the games library's layout, so the copied code is unchanged
+│   └── src/                     # the games library's layout, keeping only what Car Racing uses
 │       ├── games/car-racing/    # the game (its car loaded from glTF, see below)
 │       ├── games/shared/        # engine game screen, HUD, loading, meshes, handling helpers
 │       ├── helpers/             # settings modal and theme
-│       ├── services/            # GameProps, themes, sounds and metadata (trimmed to Car Racing)
+│       ├── services/            # GameProps, themes, sounds and metadata (Car Racing's only)
 │       └── assets/              # its sounds, textures, HUD font and car models
 ├── mobile/src/                  # Expo Router (React Native)
 │   ├── app/
@@ -43,7 +43,7 @@ It's a [Bun](https://bun.sh) workspace (`web`, `mobile`, `shared`); the apps ins
 
 ## Add a game
 
-1. Copy the game's folder from the games library (`packages/games/src/games/<id>/`) to `shared/src/games/<id>/`, with any `games/shared/` helpers and `assets/` files it imports that aren't here yet, and its entries in `services/` (`GAME_SOUNDS`, `SFX_SOURCES`). Keep the paths, so its imports stay as they are.
+1. Copy the game's folder from the games library (`packages/games/src/games/<id>/`) to `shared/src/games/<id>/`, with the `games/shared/` helpers and `assets/` files it imports that aren't here yet. Add its id to `GAME_IDS` and its entries to the per-game tables in `services/` (`GAMES_METADATA`, `getGameTitle`, `GAME_SOUNDS`, `SFX_SOURCES`) and `EngineLoading.ts` (its loading scene), and its cache revision to `ProceduralCacheVersion.ts`. Keep the paths, so its imports stay as they are.
 2. Export its component from `shared/index.ts`.
 3. Add a card to `mobile/src/examples.ts` and `web/src/examples.ts` (lazy on the web). Its route, `/<id>`, needs nothing else; the web app's keyboard mode is `drag` in `ExamplePage.tsx`, so pick the game's mode there (`drag`, `swipe` or `pointer`).
 
@@ -66,7 +66,7 @@ bun run typecheck
 
 Playtura's Car Racing: a procedural city with day and night, traffic to weave through, rear-end crashes and side swipes, lives, a 2 km track and the shared HUD, results and settings. Swipe to steer; in the browser, the arrow keys or A/D steer and Enter starts, stops or plays again. The theme follows the system and the settings modal's Dark Mode switch (night is the dark theme).
 
-One change from Playtura: the car is loaded from glTF instead of built in code. `CarMeshes.ts` loads `assets/models/car/` (body, glass and trim, so each car still paints its own body), with the collision footprint measured from that body and the night lamps placed over its lights; everything else is as in the games library.
+One change from Playtura: the car is loaded from glTF instead of built in code. `CarMeshes.ts` loads `assets/models/car/` (body, glass and trim, so each car still paints its own body), with the collision footprint measured from that body and the night lamps placed over its lights. The rest of the game is as in the games library. The shared code around it keeps only what Car Racing uses: the library's other games, their loading scenes, sounds, metadata and theme colours, and helpers no game here calls (the `useEngineGame` lifecycle hook, asset warm-up, theme overrides) are left out.
 
 ## Licence
 

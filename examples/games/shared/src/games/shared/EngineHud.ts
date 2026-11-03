@@ -5,7 +5,7 @@
 import { type Color, type Entity, extrude, type Font, loadFont, measureText, type Model, Path, World } from '@nayan-ui/engine';
 import { PLAY_PATH, SHARE_PATH, TROPHY_PATH } from '../../helpers/IconPaths';
 import type { GameTheme } from '../../services/ThemeService';
-import { formatTime, getGameDimensions } from '../../services/UtilsService';
+import { getGameDimensions } from '../../services/UtilsService';
 import { cardBackdropMesh } from './EngineBackdrop';
 import { fitControlSubtitle } from './EngineControlText';
 import { cacheGameAsset, createGameMesh as createShape } from './EngineMeshes';
@@ -799,12 +799,4 @@ export class EngineHud {
     this.buttons.push({ id: 'main', x: mainLeft, y: cy - MAIN_HEIGHT / 2, w: mw, h: MAIN_HEIGHT, root: main });
     if (!this.playing) this.pulse(main);
   }
-}
-
-/** Reusable assets; the game loader advances one builder per frame. */
-export function* warmAssets(): Iterable<() => unknown> {
-  yield trophyMesh;
-  yield shareMesh;
-  yield playMesh;
-  yield heartMesh;
 }

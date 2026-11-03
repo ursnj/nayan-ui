@@ -1013,9 +1013,3 @@ export function spawnRaceMarkers(world: World, track: Track, startS: number, fin
   };
   return { start: place(startMesh(), startS), finish: place(finishMesh(), finishS, 'FINISH') };
 }
-
-/** Reusable assets; the game loader advances one builder per frame. */
-export function* warmAssets(): Iterable<() => unknown> {
-  yield finishMesh;
-  yield startMesh;
-}
