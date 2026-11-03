@@ -1,0 +1,93 @@
+name: Publish npm packages
+on:
+  workflow_dispatch:
+    inputs:
+      ai:
+        description: "@nayan-ui/ai"
+        type: boolean
+        default: false
+      cli:
+        description: "@nayan-ui/cli"
+        type: boolean
+        default: false
+      react:
+        description: "@nayan-ui/react"
+        type: boolean
+        default: false
+      native:
+        description: "@nayan-ui/native"
+        type: boolean
+        default: false
+      dry_run:
+        description: "Dry run (build and pack, don't publish)"
+        type: boolean
+        default: false
+
+# npm trusted publishing: each job exchanges a GitHub OIDC token for a short-lived npm token,
+# so no NPM token secret is stored. @nayan-ui/engine is published from the playtura repo.
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.pick.outputs.packages }}
+    steps:
+      - id: pick
+        env:
+          AI: ${{ inputs.ai }}
+          CLI: ${{ inputs.cli }}
+          REACT: ${{ inputs.react }}
+          NATIVE: ${{ inputs.native }}
+        run: |
+          picked=()
+          if [ "$AI" = "true" ]; then picked+=('{"dir":"ai","build":"ai:build"}'); fi
+          if [ "$CLI" = "true" ]; then picked+=('{"dir":"cli","build":"cli:build"}'); fi
+          if [ "$REACT" = "true" ]; then picked+=('{"dir":"react","build":"react:build"}'); fi
+          if [ "$NATIVE" = "true" ]; then picked+=('{"dir":"native","build":"native:build"}'); fi
+          echo "packages=[$(IFS=,; echo "${picked[*]}")]" >> "$GITHUB_OUTPUT"
+
+  publish:
+    needs: plan
+    if: needs.plan.outputs.packages != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJSON(needs.plan.outputs.packages) }}
+    name: publish (${{ matrix.package.dir }})
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Update npm for trusted publishing
+        run: npm install -g npm@latest
+
+      - name: Cache Bun packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build
+        run: bun run ${{ matrix.package.build }}
+
+      - name: Publish to npm
+        working-directory: ./packages/${{ matrix.package.dir }}
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: ../../.github/scripts/npm-publish.sh
