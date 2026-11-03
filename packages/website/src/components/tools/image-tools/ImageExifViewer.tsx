@@ -53,7 +53,11 @@ function readIfd(
   tiffStart: number,
   ifdOffset: number,
   littleEndian: boolean,
-): { entries: Map<number, ExifEntry>; nextIfdOffset: number; rawTags: Map<number, { type: number; value: number }> } {
+): {
+  entries: Map<number, ExifEntry>;
+  nextIfdOffset: number;
+  rawTags: Map<number, { type: number; value: number }>;
+} {
   const entries = new Map<number, ExifEntry>();
   const rawTags = new Map<number, { type: number; value: number }>();
   const entryCount = view.getUint16(ifdOffset, littleEndian);
@@ -64,7 +68,8 @@ function readIfd(
     const type = view.getUint16(entryOffset + 2, littleEndian) as FieldType;
     const count = view.getUint32(entryOffset + 4, littleEndian);
     const byteSize = (FIELD_BYTE_SIZE[type] || 1) * count;
-    const valueOffset = byteSize <= 4 ? entryOffset + 8 : tiffStart + view.getUint32(entryOffset + 8, littleEndian);
+    const valueOffset =
+      byteSize <= 4 ? entryOffset + 8 : tiffStart + view.getUint32(entryOffset + 8, littleEndian);
 
     let display = "";
     let numericValue: number | undefined;
@@ -80,9 +85,14 @@ function readIfd(
       display = String.fromCharCode(...bytes);
     } else if (type === 5 || type === 10) {
       // Rational / signed rational (numerator/denominator pair)
-      const num = type === 5 ? view.getUint32(valueOffset, littleEndian) : view.getInt32(valueOffset, littleEndian);
+      const num =
+        type === 5
+          ? view.getUint32(valueOffset, littleEndian)
+          : view.getInt32(valueOffset, littleEndian);
       const den =
-        type === 5 ? view.getUint32(valueOffset + 4, littleEndian) : view.getInt32(valueOffset + 4, littleEndian);
+        type === 5
+          ? view.getUint32(valueOffset + 4, littleEndian)
+          : view.getInt32(valueOffset + 4, littleEndian);
       numericValue = den !== 0 ? num / den : 0;
       if (tag === 0x829a && numericValue < 1 && num > 0) {
         // Conventional photography notation, e.g. "1/250" rather than "0.004".
@@ -128,7 +138,12 @@ function readIfd(
   return { entries, nextIfdOffset, rawTags };
 }
 
-function parseGpsIfd(view: DataView, tiffStart: number, gpsOffset: number, littleEndian: boolean): string | null {
+function parseGpsIfd(
+  view: DataView,
+  tiffStart: number,
+  gpsOffset: number,
+  littleEndian: boolean,
+): string | null {
   const entryCount = view.getUint16(gpsOffset, littleEndian);
   const coords: Record<string, { deg: number; min: number; sec: number } | string> = {};
 
@@ -138,7 +153,8 @@ function parseGpsIfd(view: DataView, tiffStart: number, gpsOffset: number, littl
     const type = view.getUint16(entryOffset + 2, littleEndian);
     const count = view.getUint32(entryOffset + 4, littleEndian);
     const byteSize = (FIELD_BYTE_SIZE[type as FieldType] || 1) * count;
-    const valueOffset = byteSize <= 4 ? entryOffset + 8 : tiffStart + view.getUint32(entryOffset + 8, littleEndian);
+    const valueOffset =
+      byteSize <= 4 ? entryOffset + 8 : tiffStart + view.getUint32(entryOffset + 8, littleEndian);
 
     if (type === 5 && count === 3 && (tag === 2 || tag === 4)) {
       const parts = [0, 1, 2].map((p) => {
@@ -182,11 +198,19 @@ function parseExif(buffer: ArrayBuffer): ExifEntry[] | null {
       );
       if (sig === "Exif") {
         const tiffStart = sigStart + 6;
-        const byteOrder = String.fromCharCode(view.getUint8(tiffStart), view.getUint8(tiffStart + 1));
+        const byteOrder = String.fromCharCode(
+          view.getUint8(tiffStart),
+          view.getUint8(tiffStart + 1),
+        );
         const littleEndian = byteOrder === "II";
         const firstIfdOffset = view.getUint32(tiffStart + 4, littleEndian);
 
-        const { entries, rawTags } = readIfd(view, tiffStart, tiffStart + firstIfdOffset, littleEndian);
+        const { entries, rawTags } = readIfd(
+          view,
+          tiffStart,
+          tiffStart + firstIfdOffset,
+          littleEndian,
+        );
 
         const exifIfdPtr = rawTags.get(0x8769);
         if (exifIfdPtr) {
@@ -297,7 +321,9 @@ const ImageExifViewer = () => {
               {entries.map((entry, i) => (
                 <NCard key={i} className="flex items-center justify-between gap-3 p-3">
                   <span className="text-sm text-muted">{entry.label}</span>
-                  <span className="truncate text-sm font-medium text-foreground">{entry.value}</span>
+                  <span className="truncate text-sm font-medium text-foreground">
+                    {entry.value}
+                  </span>
                 </NCard>
               ))}
             </div>

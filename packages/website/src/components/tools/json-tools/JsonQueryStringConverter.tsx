@@ -4,7 +4,9 @@ import { useState, useMemo, useCallback } from "react";
 import { ClipboardCopy, Trash2, ArrowDownUp } from "lucide-react";
 import { NButton, NTextarea, NCard, showToast } from "@nayan-ui/react";
 
-type JsonObject = { [k: string]: string | number | boolean | null | (string | number | boolean | null)[] };
+type JsonObject = {
+  [k: string]: string | number | boolean | null | (string | number | boolean | null)[];
+};
 
 // Array values are emitted as a repeated key: ?tag=a&tag=b — the most widely
 // interoperable convention (no bracket-notation ambiguity, and it round-trips
@@ -43,7 +45,7 @@ const JsonQueryStringConverter = () => {
       if (mode === "toQuery") {
         const parsed = JSON.parse(input);
         if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
-          return { output: "", error: "Input must be a JSON object, e.g. {\"key\": \"value\"}" };
+          return { output: "", error: 'Input must be a JSON object, e.g. {"key": "value"}' };
         }
         return { output: jsonToQueryString(parsed), error: "" };
       }
@@ -84,7 +86,7 @@ const JsonQueryStringConverter = () => {
       </div>
 
       <p className="mb-3 text-xs text-muted">
-        Array values are encoded as a repeated key — <code>{"{\"tag\":[\"a\",\"b\"]}"}</code> becomes{" "}
+        Array values are encoded as a repeated key — <code>{'{"tag":["a","b"]}'}</code> becomes{" "}
         <code>tag=a&amp;tag=b</code> — and repeated keys parse back into an array.
       </p>
 

@@ -86,11 +86,7 @@ const XmlValidator = () => {
         />
       )}
 
-      <XmlMonacoEditor
-        label="Input XML"
-        value={input}
-        onChange={setInput}
-      />
+      <XmlMonacoEditor label="Input XML" value={input} onChange={setInput} />
     </div>
   );
 };

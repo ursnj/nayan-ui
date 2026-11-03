@@ -10,9 +10,15 @@ export async function POST(req: NextRequest) {
     // Clamp to a sane range: an unvalidated fontSize <= 0 makes the tile
     // layout loops below (`spacingY = fontSizeParam + 80`, etc.) step
     // backwards forever and hang the request.
-    const fontSizeParam = Math.min(500, Math.max(6, Number.isFinite(rawFontSize) ? rawFontSize : 50));
+    const fontSizeParam = Math.min(
+      500,
+      Math.max(6, Number.isFinite(rawFontSize) ? rawFontSize : 50),
+    );
     const rawOpacity = Number(formData.get("opacity"));
-    const opacityParam = Math.min(1, Math.max(0.05, (Number.isFinite(rawOpacity) ? rawOpacity : 30) / 100));
+    const opacityParam = Math.min(
+      1,
+      Math.max(0.05, (Number.isFinite(rawOpacity) ? rawOpacity : 30) / 100),
+    );
     const rotation = Number(formData.get("rotation") || -45);
     const position = (formData.get("position") as string) || "center";
 
@@ -24,7 +30,13 @@ export async function POST(req: NextRequest) {
 
     const rawColor = ((formData.get("color") as string) || "#888888").replace("#", "");
     // Expand shorthand #rgb to #rrggbb so each channel is read from 2 hex digits.
-    const hex = rawColor.length === 3 ? rawColor.split("").map((c) => c + c).join("") : rawColor;
+    const hex =
+      rawColor.length === 3
+        ? rawColor
+            .split("")
+            .map((c) => c + c)
+            .join("")
+        : rawColor;
     const parseChannel = (slice: string) => {
       const n = parseInt(slice, 16);
       return Number.isFinite(n) ? n / 255 : 0.53; // fall back to the default gray channel

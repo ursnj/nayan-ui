@@ -1,6 +1,11 @@
 import JsonToTypescriptPage from "@/components/tools/json-tools/JsonToTypescriptPage";
 import JsonLd from "@/components/helpers/JsonLd";
-import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata, buildTechArticleSchema } from "@/services/seo";
+import {
+  SITE_URL,
+  buildBreadcrumbSchema,
+  buildPageMetadata,
+  buildTechArticleSchema,
+} from "@/services/seo";
 
 export const metadata = buildPageMetadata({
   title: "JSON to TypeScript",

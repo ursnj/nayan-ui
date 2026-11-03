@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     const margin = 50;
     const lineHeight = 14;
     const maxWidth = pageWidth - margin * 2;
-    const charsPerLine = Math.floor(maxWidth / (font.widthOfTextAtSize("M", fontSize)));
+    const charsPerLine = Math.floor(maxWidth / font.widthOfTextAtSize("M", fontSize));
 
     const wrappedLines: string[] = [];
     for (const paragraph of textContent.split("\n")) {

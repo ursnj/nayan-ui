@@ -52,18 +52,8 @@ const TextReverser = () => {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <MonacoEditor
-          label="Input Text"
-          value={input}
-          onChange={setInput}
-          height="500px"
-        />
-        <MonacoEditor
-          label="Reversed Output"
-          value={output}
-          readOnly
-          height="500px"
-        />
+        <MonacoEditor label="Input Text" value={input} onChange={setInput} height="500px" />
+        <MonacoEditor label="Reversed Output" value={output} readOnly height="500px" />
       </div>
     </div>
   );

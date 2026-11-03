@@ -11,7 +11,9 @@ const CharacterCounter = () => {
     const characters = text.length;
     const charactersNoSpaces = text.replace(/\s/g, "").length;
     const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-    const sentences = text.trim() ? (text.match(/[.!?]+/g) || []).length || (text.trim() ? 1 : 0) : 0;
+    const sentences = text.trim()
+      ? (text.match(/[.!?]+/g) || []).length || (text.trim() ? 1 : 0)
+      : 0;
     const paragraphs = text.trim() ? text.split(/\n\s*\n/).filter((p) => p.trim()).length : 0;
     const lines = text ? text.split("\n").length : 0;
     const avgWordLength = words > 0 ? (charactersNoSpaces / words).toFixed(1) : "0";
@@ -52,12 +54,7 @@ const CharacterCounter = () => {
         ))}
       </div>
 
-      <MonacoEditor
-        label="Enter your text"
-        value={text}
-        onChange={setText}
-        height="500px"
-      />
+      <MonacoEditor label="Enter your text" value={text} onChange={setText} height="500px" />
     </div>
   );
 };

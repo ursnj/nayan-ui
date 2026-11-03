@@ -24,7 +24,8 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "PDF to Text",
-    description: "Extract the real text content from any PDF file and copy or download it as plain text.",
+    description:
+      "Extract the real text content from any PDF file and copy or download it as plain text.",
     url: `${SITE_URL}/tools/pdf-to-text`,
     keywords: "pdf to text, extract text from pdf, pdf text extractor, pdf to txt",
   }),

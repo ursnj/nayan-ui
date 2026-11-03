@@ -36,7 +36,9 @@ export async function POST(req: NextRequest) {
     const { width, height } = firstPage ? firstPage.getSize() : { width: 0, height: 0 };
     const allSameSize = pages.every((p) => {
       const s = p.getSize();
-      return Math.round(s.width) === Math.round(width) && Math.round(s.height) === Math.round(height);
+      return (
+        Math.round(s.width) === Math.round(width) && Math.round(s.height) === Math.round(height)
+      );
     });
 
     // Word count requires real text extraction (slower than a pure metadata

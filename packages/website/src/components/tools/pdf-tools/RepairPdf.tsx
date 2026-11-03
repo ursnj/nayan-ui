@@ -59,7 +59,10 @@ const RepairPdf = () => {
         <NCard
           className={`mb-6 flex cursor-pointer flex-col items-center gap-3 border-dashed p-10 transition-colors ${dragging ? "border-accent" : ""}`}
           onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragging(true);
+          }}
           onDragLeave={() => setDragging(false)}
           onDrop={(e) => {
             e.preventDefault();
@@ -75,7 +78,10 @@ const RepairPdf = () => {
             type="file"
             accept=".pdf,application/pdf"
             className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+            }}
           />
         </NCard>
       ) : (
@@ -87,7 +93,9 @@ const RepairPdf = () => {
 
           {error && <p className="mb-4 text-sm text-destructive">{error}</p>}
           {result && pageCount != null && (
-            <p className="mb-4 text-sm text-green-600">✓ Repaired successfully — {pageCount} pages recovered</p>
+            <p className="mb-4 text-sm text-green-600">
+              ✓ Repaired successfully — {pageCount} pages recovered
+            </p>
           )}
 
           <div className="mb-5 flex flex-wrap items-center gap-3">
@@ -101,7 +109,15 @@ const RepairPdf = () => {
                 Download
               </NButton>
             )}
-            <NButton isOutline onClick={() => { setFile(null); setResult(null); setError(""); setPageCount(null); }}>
+            <NButton
+              isOutline
+              onClick={() => {
+                setFile(null);
+                setResult(null);
+                setError("");
+                setPageCount(null);
+              }}
+            >
               <Trash2 className="mr-2 h-4 w-4" />
               Clear
             </NButton>

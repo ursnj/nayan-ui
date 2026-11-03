@@ -140,28 +140,36 @@ const CropImage = () => {
               type="number"
               label="X"
               value={String(cropX)}
-              onChange={(e) => setCropX(clampInt(Number(e.target.value), 0, image.naturalWidth - 1))}
+              onChange={(e) =>
+                setCropX(clampInt(Number(e.target.value), 0, image.naturalWidth - 1))
+              }
               className="mb-0 w-20"
             />
             <NInput
               type="number"
               label="Y"
               value={String(cropY)}
-              onChange={(e) => setCropY(clampInt(Number(e.target.value), 0, image.naturalHeight - 1))}
+              onChange={(e) =>
+                setCropY(clampInt(Number(e.target.value), 0, image.naturalHeight - 1))
+              }
               className="mb-0 w-20"
             />
             <NInput
               type="number"
               label="W"
               value={String(cropW)}
-              onChange={(e) => setCropW(clampInt(Number(e.target.value), 1, image.naturalWidth - cropX))}
+              onChange={(e) =>
+                setCropW(clampInt(Number(e.target.value), 1, image.naturalWidth - cropX))
+              }
               className="mb-0 w-20"
             />
             <NInput
               type="number"
               label="H"
               value={String(cropH)}
-              onChange={(e) => setCropH(clampInt(Number(e.target.value), 1, image.naturalHeight - cropY))}
+              onChange={(e) =>
+                setCropH(clampInt(Number(e.target.value), 1, image.naturalHeight - cropY))
+              }
               className="mb-0 w-20"
             />
           </div>

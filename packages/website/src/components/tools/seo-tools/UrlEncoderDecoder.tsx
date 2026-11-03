@@ -81,15 +81,11 @@ const UrlEncoderDecoder = () => {
       />
 
       <div className="mt-6 mb-5 flex flex-wrap items-center gap-3">
-        <NButton onClick={encode}>
-          Encode Component
-        </NButton>
+        <NButton onClick={encode}>Encode Component</NButton>
         <NButton isOutline onClick={encodeUri}>
           Encode URI
         </NButton>
-        <NButton onClick={decode}>
-          Decode Component
-        </NButton>
+        <NButton onClick={decode}>Decode Component</NButton>
         <NButton isOutline onClick={decodeUri}>
           Decode URI
         </NButton>
@@ -111,9 +107,7 @@ const UrlEncoderDecoder = () => {
         </NButton>
       </div>
 
-      {error && (
-        <NCard className="mb-6 p-3 text-sm text-danger">{error}</NCard>
-      )}
+      {error && <NCard className="mb-6 p-3 text-sm text-danger">{error}</NCard>}
 
       {output && (
         <NCard className="p-4">

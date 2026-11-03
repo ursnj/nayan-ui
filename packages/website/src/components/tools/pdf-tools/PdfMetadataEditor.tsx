@@ -92,7 +92,10 @@ const PdfMetadataEditor = () => {
         <NCard
           className={`mb-6 flex cursor-pointer flex-col items-center gap-3 border-dashed p-10 transition-colors ${dragging ? "border-accent" : ""}`}
           onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragging(true);
+          }}
           onDragLeave={() => setDragging(false)}
           onDrop={(e) => {
             e.preventDefault();
@@ -108,7 +111,11 @@ const PdfMetadataEditor = () => {
             type="file"
             accept=".pdf,application/pdf"
             className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) readMetadata(f); e.target.value = ""; }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) readMetadata(f);
+              e.target.value = "";
+            }}
           />
         </NCard>
       ) : (
@@ -117,7 +124,11 @@ const PdfMetadataEditor = () => {
             <p className="truncate text-sm font-medium text-foreground">{file.name}</p>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <NBadge size="sm">{(file.size / 1024).toFixed(1)} KB</NBadge>
-              {meta?.encrypted && <NBadge size="sm" color="warning">Encrypted</NBadge>}
+              {meta?.encrypted && (
+                <NBadge size="sm" color="warning">
+                  Encrypted
+                </NBadge>
+              )}
             </div>
           </NCard>
 
@@ -125,9 +136,24 @@ const PdfMetadataEditor = () => {
 
           {meta && (
             <div className="mb-5 space-y-4">
-              <NInput label="Title" value={meta.title} onChange={update("title")} placeholder="Document title" />
-              <NInput label="Author" value={meta.author} onChange={update("author")} placeholder="Document author" />
-              <NInput label="Subject" value={meta.subject} onChange={update("subject")} placeholder="Document subject" />
+              <NInput
+                label="Title"
+                value={meta.title}
+                onChange={update("title")}
+                placeholder="Document title"
+              />
+              <NInput
+                label="Author"
+                value={meta.author}
+                onChange={update("author")}
+                placeholder="Document author"
+              />
+              <NInput
+                label="Subject"
+                value={meta.subject}
+                onChange={update("subject")}
+                placeholder="Document subject"
+              />
               <NInput
                 label="Keywords (comma-separated)"
                 value={meta.keywords}
@@ -138,7 +164,9 @@ const PdfMetadataEditor = () => {
                 <p className="text-xs text-muted">
                   {meta.creator && <>Creator: {meta.creator} · </>}
                   {meta.producer && <>Producer: {meta.producer} · </>}
-                  {meta.creationDate && <>Created: {new Date(meta.creationDate).toLocaleString()}</>}
+                  {meta.creationDate && (
+                    <>Created: {new Date(meta.creationDate).toLocaleString()}</>
+                  )}
                 </p>
               )}
             </div>

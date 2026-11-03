@@ -48,12 +48,7 @@ const WordCounter = () => {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <MonacoEditor
-          label="Enter your text"
-          value={text}
-          onChange={setText}
-          height="500px"
-        />
+        <MonacoEditor label="Enter your text" value={text} onChange={setText} height="500px" />
 
         <div>
           <label className="mb-1.5 block text-sm font-medium">Word Frequency (Top 30)</label>
@@ -71,7 +66,10 @@ const WordCounter = () => {
                     <span className="text-sm font-medium text-foreground">{word}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="h-2 rounded-full bg-accent/20" style={{ width: `${Math.max(20, (count / topWords[0][1]) * 100)}px` }}>
+                    <div
+                      className="h-2 rounded-full bg-accent/20"
+                      style={{ width: `${Math.max(20, (count / topWords[0][1]) * 100)}px` }}
+                    >
                       <div
                         className="h-full rounded-full bg-accent"
                         style={{ width: `${(count / topWords[0][1]) * 100}%` }}

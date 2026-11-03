@@ -24,7 +24,8 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "Morse Code Converter",
-    description: "Convert text to Morse code and back, with support for letters, digits, and punctuation.",
+    description:
+      "Convert text to Morse code and back, with support for letters, digits, and punctuation.",
     url: `${SITE_URL}/tools/morse-code-converter`,
     keywords: "morse code, converter, translator, encode, decode",
   }),

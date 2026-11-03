@@ -3,11 +3,9 @@
 import { useState, useMemo } from "react";
 import MonacoEditor from "../shared/MonacoEditor";
 
-const escHtml = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const escHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-const safeUrl = (url: string) =>
-  /^(https?:|mailto:|\/|#)/i.test(url.trim()) ? url : "#";
+const safeUrl = (url: string) => (/^(https?:|mailto:|\/|#)/i.test(url.trim()) ? url : "#");
 
 const markdownToHtml = (md: string): string => {
   let html = escHtml(md);
@@ -30,7 +28,10 @@ const markdownToHtml = (md: string): string => {
     /\[(.+?)\]\((.+?)\)/g,
     (_, text, url) => `<a href="${safeUrl(url)}" target="_blank" rel="noopener">${text}</a>`,
   );
-  html = html.replace(/!\[(.+?)\]\((.+?)\)/g, (_, alt, url) => `<img alt="${alt}" src="${safeUrl(url)}" />`);
+  html = html.replace(
+    /!\[(.+?)\]\((.+?)\)/g,
+    (_, alt, url) => `<img alt="${alt}" src="${safeUrl(url)}" />`,
+  );
 
   html = html.replace(/^- (.+)$/gm, "<li>$1</li>");
   html = html.replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`);

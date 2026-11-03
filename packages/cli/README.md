@@ -61,12 +61,12 @@ nayan-ui new my-app -t vite
 
 #### Available Templates
 
-| Template | Description                                                 |
-| -------- | ----------------------------------------------------------- |
-| expo     | React Native Application with Expo & Nayan UI               |
+| Template | Description                                                      |
+| -------- | ---------------------------------------------------------------- |
+| expo     | React Native Application with Expo & Nayan UI                    |
 | games    | 3D games for iOS, Android and the web with the Nayan Game Engine |
-| nextjs   | React Application with Next.js & Nayan UI                   |
-| vite     | React Application with Vite & Nayan UI                      |
+| nextjs   | React Application with Next.js & Nayan UI                        |
+| vite     | React Application with Vite & Nayan UI                           |
 
 ### Generate Sitemap
 

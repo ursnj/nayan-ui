@@ -29,7 +29,9 @@ const Attributes = (props: Props) => {
       title={title}
       action={
         count ? (
-          <span className="text-xs text-muted">{count === 1 ? `1 ${unit}` : `${count} ${unit}s`}</span>
+          <span className="text-xs text-muted">
+            {count === 1 ? `1 ${unit}` : `${count} ${unit}s`}
+          </span>
         ) : null
       }
     >

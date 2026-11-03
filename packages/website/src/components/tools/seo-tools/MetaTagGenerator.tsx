@@ -5,11 +5,7 @@ import { ClipboardCopy, Trash2, Tag } from "lucide-react";
 import { NButton, NCard, NInput, NTextarea, showToast } from "@nayan-ui/react";
 
 const escapeAttr = (value: string) =>
-  value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+  value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 const MetaTagGenerator = () => {
   const [title, setTitle] = useState("");
@@ -49,7 +45,9 @@ const MetaTagGenerator = () => {
 
       lines.push("");
       lines.push("<!-- Twitter -->");
-      lines.push(`<meta name="twitter:card" content="${image ? "summary_large_image" : "summary"}" />`);
+      lines.push(
+        `<meta name="twitter:card" content="${image ? "summary_large_image" : "summary"}" />`,
+      );
       if (title) lines.push(`<meta name="twitter:title" content="${t}" />`);
       if (description) lines.push(`<meta name="twitter:description" content="${d}" />`);
       if (url) lines.push(`<meta name="twitter:url" content="${u}" />`);
@@ -67,25 +65,73 @@ const MetaTagGenerator = () => {
   }, [output]);
 
   const clear = useCallback(() => {
-    setTitle(""); setDescription(""); setKeywords(""); setUrl("");
-    setImage(""); setSiteName(""); setAuthor("");
+    setTitle("");
+    setDescription("");
+    setKeywords("");
+    setUrl("");
+    setImage("");
+    setSiteName("");
+    setAuthor("");
   }, []);
 
   return (
     <div>
       <NCard className="mb-6 space-y-3 p-4">
         <div className="grid gap-3 sm:grid-cols-2">
-          <NInput label="Title" className="mb-0" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="My Awesome Website" />
-          <NInput label="Page URL" className="mb-0" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://example.com/page" />
+          <NInput
+            label="Title"
+            className="mb-0"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="My Awesome Website"
+          />
+          <NInput
+            label="Page URL"
+            className="mb-0"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://example.com/page"
+          />
         </div>
-        <NTextarea label="Description" className="mb-0" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="A brief description of your page (150-160 characters)" textareaClassName="h-[80px] resize-none text-sm" />
+        <NTextarea
+          label="Description"
+          className="mb-0"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="A brief description of your page (150-160 characters)"
+          textareaClassName="h-[80px] resize-none text-sm"
+        />
         <div className="grid gap-3 sm:grid-cols-2">
-          <NInput label="Image URL" className="mb-0" value={image} onChange={(e) => setImage(e.target.value)} placeholder="https://example.com/image.jpg" />
-          <NInput label="Site Name" className="mb-0" value={siteName} onChange={(e) => setSiteName(e.target.value)} placeholder="My Website" />
+          <NInput
+            label="Image URL"
+            className="mb-0"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+            placeholder="https://example.com/image.jpg"
+          />
+          <NInput
+            label="Site Name"
+            className="mb-0"
+            value={siteName}
+            onChange={(e) => setSiteName(e.target.value)}
+            placeholder="My Website"
+          />
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          <NInput label="Keywords" className="mb-0" value={keywords} onChange={(e) => setKeywords(e.target.value)} placeholder="keyword1, keyword2, keyword3" />
-          <NInput label="Author" className="mb-0" value={author} onChange={(e) => setAuthor(e.target.value)} placeholder="John Doe" />
+          <NInput
+            label="Keywords"
+            className="mb-0"
+            value={keywords}
+            onChange={(e) => setKeywords(e.target.value)}
+            placeholder="keyword1, keyword2, keyword3"
+          />
+          <NInput
+            label="Author"
+            className="mb-0"
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+            placeholder="John Doe"
+          />
         </div>
       </NCard>
 

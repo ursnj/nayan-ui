@@ -67,7 +67,7 @@ const ConvertImage = () => {
     setProcessing(true);
     try {
       const fmt = FORMATS.find((f) => f.value === targetFormat.value);
-      const formatKey = fmt?.ext === "jpg" ? "jpeg" : (fmt?.ext || "png");
+      const formatKey = fmt?.ext === "jpg" ? "jpeg" : fmt?.ext || "png";
       const updated = await Promise.all(
         files.map(async (entry) => {
           const form = new FormData();
@@ -173,9 +173,13 @@ const ConvertImage = () => {
                   <div className="flex items-center gap-2">
                     <NBadge size="sm">{entry.file.type.split("/")[1]?.toUpperCase()}</NBadge>
                     <span className="text-xs text-muted">→</span>
-                    <NBadge size="sm" color="accent">{targetFormat.label}</NBadge>
+                    <NBadge size="sm" color="accent">
+                      {targetFormat.label}
+                    </NBadge>
                     {entry.converted && (
-                      <NBadge size="sm" color="success">{formatSize(entry.converted.size)}</NBadge>
+                      <NBadge size="sm" color="success">
+                        {formatSize(entry.converted.size)}
+                      </NBadge>
                     )}
                   </div>
                 </div>

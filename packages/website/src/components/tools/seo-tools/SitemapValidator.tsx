@@ -20,7 +20,11 @@ const validateSitemapXml = (content: string): ValidationResult => {
 
     const parseError = doc.querySelector("parsererror");
     if (parseError) {
-      return { valid: false, urlCount: 0, errors: ["Invalid XML: " + parseError.textContent?.slice(0, 200)] };
+      return {
+        valid: false,
+        urlCount: 0,
+        errors: ["Invalid XML: " + parseError.textContent?.slice(0, 200)],
+      };
     }
 
     const urlset = doc.documentElement;
@@ -69,7 +73,9 @@ const validateSitemapXml = (content: string): ValidationResult => {
       if (priority) {
         const val = parseFloat(priority.textContent || "");
         if (isNaN(val) || val < 0 || val > 1) {
-          errors.push(`URL entry #${i + 1}: Invalid <priority> value "${priority.textContent}" (must be 0.0–1.0).`);
+          errors.push(
+            `URL entry #${i + 1}: Invalid <priority> value "${priority.textContent}" (must be 0.0–1.0).`,
+          );
         }
       }
     }
@@ -193,7 +199,9 @@ const SitemapValidator = () => {
                 <span className="font-semibold text-danger">Sitemap has errors</span>
               </>
             )}
-            <NBadge size="sm">{result.urlCount} URL{result.urlCount !== 1 ? "s" : ""}</NBadge>
+            <NBadge size="sm">
+              {result.urlCount} URL{result.urlCount !== 1 ? "s" : ""}
+            </NBadge>
           </div>
           {result.errors.length > 0 && (
             <ul className="space-y-1 text-sm text-danger">

@@ -24,7 +24,8 @@ function diffJson(a: any, b: any, path = "$"): DiffEntry[] {
     const maxLen = Math.max(a.length, b.length);
     for (let i = 0; i < maxLen; i++) {
       if (i >= a.length) diffs.push({ path: `${path}[${i}]`, type: "added", newValue: b[i] });
-      else if (i >= b.length) diffs.push({ path: `${path}[${i}]`, type: "removed", oldValue: a[i] });
+      else if (i >= b.length)
+        diffs.push({ path: `${path}[${i}]`, type: "removed", oldValue: a[i] });
       else diffs.push(...diffJson(a[i], b[i], `${path}[${i}]`));
     }
     return diffs;
@@ -72,7 +73,13 @@ const JsonDiff = () => {
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <NButton isOutline onClick={() => { setLeft(""); setRight(""); }}>
+        <NButton
+          isOutline
+          onClick={() => {
+            setLeft("");
+            setRight("");
+          }}
+        >
           <Trash2 className="mr-2 h-4 w-4" />
           Clear
         </NButton>
@@ -115,17 +122,27 @@ const JsonDiff = () => {
               <div className="space-y-1">
                 {result.diffs.map((d, i) => (
                   <div key={i} className="rounded bg-default/30 px-3 py-2 text-sm">
-                    <span className={`mr-2 text-xs font-medium ${colorMap[d.type]}`}>{labelMap[d.type]}</span>
+                    <span className={`mr-2 text-xs font-medium ${colorMap[d.type]}`}>
+                      {labelMap[d.type]}
+                    </span>
                     <code className="text-xs text-muted">{d.path}</code>
                     {d.type === "changed" && (
                       <span className="ml-2 text-foreground">
-                        <code className="text-danger line-through">{JSON.stringify(d.oldValue)}</code>
+                        <code className="text-danger line-through">
+                          {JSON.stringify(d.oldValue)}
+                        </code>
                         {" → "}
                         <code className="text-accent">{JSON.stringify(d.newValue)}</code>
                       </span>
                     )}
-                    {d.type === "added" && <code className="ml-2 text-accent">{JSON.stringify(d.newValue)}</code>}
-                    {d.type === "removed" && <code className="ml-2 text-danger line-through">{JSON.stringify(d.oldValue)}</code>}
+                    {d.type === "added" && (
+                      <code className="ml-2 text-accent">{JSON.stringify(d.newValue)}</code>
+                    )}
+                    {d.type === "removed" && (
+                      <code className="ml-2 text-danger line-through">
+                        {JSON.stringify(d.oldValue)}
+                      </code>
+                    )}
                   </div>
                 ))}
               </div>

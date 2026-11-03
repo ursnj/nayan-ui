@@ -73,7 +73,8 @@ const CssMinifier = () => {
 
       {savings && (
         <p className="mt-2 text-xs text-muted">
-          {savings.original.toLocaleString()} → {savings.min.toLocaleString()} bytes ({savings.pct}% saved)
+          {savings.original.toLocaleString()} → {savings.min.toLocaleString()} bytes ({savings.pct}%
+          saved)
         </p>
       )}
 

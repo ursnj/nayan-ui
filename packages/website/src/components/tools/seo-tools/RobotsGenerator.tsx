@@ -57,12 +57,9 @@ const RobotsGenerator = () => {
     [groups, sitemapUrl, crawlDelay],
   );
 
-  const updateGroup = useCallback(
-    (gi: number, field: keyof RuleGroup, value: string) => {
-      setGroups((prev) => prev.map((g, i) => (i === gi ? { ...g, [field]: value } : g)));
-    },
-    [],
-  );
+  const updateGroup = useCallback((gi: number, field: keyof RuleGroup, value: string) => {
+    setGroups((prev) => prev.map((g, i) => (i === gi ? { ...g, [field]: value } : g)));
+  }, []);
 
   const updatePath = useCallback(
     (gi: number, field: "allow" | "disallow", pi: number, value: string) => {
@@ -76,16 +73,12 @@ const RobotsGenerator = () => {
   );
 
   const addPath = useCallback((gi: number, field: "allow" | "disallow") => {
-    setGroups((prev) =>
-      prev.map((g, i) => (i === gi ? { ...g, [field]: [...g[field], ""] } : g)),
-    );
+    setGroups((prev) => prev.map((g, i) => (i === gi ? { ...g, [field]: [...g[field], ""] } : g)));
   }, []);
 
   const removePath = useCallback((gi: number, field: "allow" | "disallow", pi: number) => {
     setGroups((prev) =>
-      prev.map((g, i) =>
-        i === gi ? { ...g, [field]: g[field].filter((_, j) => j !== pi) } : g,
-      ),
+      prev.map((g, i) => (i === gi ? { ...g, [field]: g[field].filter((_, j) => j !== pi) } : g)),
     );
   }, []);
 
@@ -144,7 +137,11 @@ const RobotsGenerator = () => {
                     onChange={(e) => updatePath(gi, "disallow", pi, e.target.value)}
                     placeholder="/admin"
                   />
-                  <NButton isOutline onClick={() => removePath(gi, "disallow", pi)} className="shrink-0">
+                  <NButton
+                    isOutline
+                    onClick={() => removePath(gi, "disallow", pi)}
+                    className="shrink-0"
+                  >
                     <Trash2 className="h-4 w-4" />
                   </NButton>
                 </div>
@@ -163,7 +160,11 @@ const RobotsGenerator = () => {
                     onChange={(e) => updatePath(gi, "allow", pi, e.target.value)}
                     placeholder="/public"
                   />
-                  <NButton isOutline onClick={() => removePath(gi, "allow", pi)} className="shrink-0">
+                  <NButton
+                    isOutline
+                    onClick={() => removePath(gi, "allow", pi)}
+                    className="shrink-0"
+                  >
                     <Trash2 className="h-4 w-4" />
                   </NButton>
                 </div>

@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
         children.push(
           new Paragraph({
             children: [new PageBreak()],
-          })
+          }),
         );
       }
       children.push(
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
               size: 28,
             }),
           ],
-        })
+        }),
       );
       const lines = pageTexts[i].split("\n");
       for (const line of lines) {
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
                 size: 22,
               }),
             ],
-          })
+          }),
         );
       }
     }

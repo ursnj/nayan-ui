@@ -1,6 +1,11 @@
 import JsonFlattenUnflattenPage from "@/components/tools/json-tools/JsonFlattenUnflattenPage";
 import JsonLd from "@/components/helpers/JsonLd";
-import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata, buildTechArticleSchema } from "@/services/seo";
+import {
+  SITE_URL,
+  buildBreadcrumbSchema,
+  buildPageMetadata,
+  buildTechArticleSchema,
+} from "@/services/seo";
 
 export const metadata = buildPageMetadata({
   title: "JSON Flatten/Unflatten",
@@ -19,7 +24,8 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "JSON Flatten/Unflatten",
-    description: "Flatten nested JSON into dot-notation keys, or unflatten it back into nested objects.",
+    description:
+      "Flatten nested JSON into dot-notation keys, or unflatten it back into nested objects.",
     url: `${SITE_URL}/tools/json-flatten-unflatten`,
     keywords: "json flatten, json unflatten, flatten json object, dot notation json",
   }),

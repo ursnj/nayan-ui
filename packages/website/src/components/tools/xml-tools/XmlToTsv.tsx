@@ -17,7 +17,11 @@ const objectsToTsv = (data: any): string => {
   if (flat.length === 0) return arr.map((v) => escTsv(v)).join("\n");
   const keys = [...new Set(flat.flatMap(Object.keys))];
   const header = keys.join("\t");
-  const rows = flat.map((row) => keys.map((k) => escTsv(typeof row[k] === "object" ? JSON.stringify(row[k]) : row[k])).join("\t"));
+  const rows = flat.map((row) =>
+    keys
+      .map((k) => escTsv(typeof row[k] === "object" ? JSON.stringify(row[k]) : row[k]))
+      .join("\t"),
+  );
   return [header, ...rows].join("\n");
 };
 
@@ -95,17 +99,8 @@ const XmlToTsv = () => {
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <XmlMonacoEditor
-          label="Input XML"
-          value={input}
-          onChange={setInput}
-        />
-        <XmlMonacoEditor
-          label="TSV Output"
-          value={output}
-          readOnly
-          language="plaintext"
-        />
+        <XmlMonacoEditor label="Input XML" value={input} onChange={setInput} />
+        <XmlMonacoEditor label="TSV Output" value={output} readOnly language="plaintext" />
       </div>
     </div>
   );

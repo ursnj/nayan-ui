@@ -24,7 +24,8 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "Sign PDF",
-    description: "Draw your signature and stamp it onto any page of a PDF, then download the signed file.",
+    description:
+      "Draw your signature and stamp it onto any page of a PDF, then download the signed file.",
     url: `${SITE_URL}/tools/sign-pdf`,
     keywords: "sign pdf, pdf signature, esign pdf, add signature to pdf",
   }),

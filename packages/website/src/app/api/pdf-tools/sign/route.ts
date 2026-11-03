@@ -56,7 +56,8 @@ export async function POST(req: NextRequest) {
     }
 
     const pages = doc.getPages();
-    const pageIndex = Math.min(Math.max(1, Number.isInteger(pageNumberRaw) ? pageNumberRaw : 1), pages.length) - 1;
+    const pageIndex =
+      Math.min(Math.max(1, Number.isInteger(pageNumberRaw) ? pageNumberRaw : 1), pages.length) - 1;
     const page = pages[pageIndex];
     const { width: pageWidth, height: pageHeight } = page.getSize();
 

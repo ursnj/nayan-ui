@@ -21,7 +21,9 @@ const NAV = [
 
 const isActive = (pathname: string, match: string | string[]) => {
   if (match === "/") return pathname === "/";
-  return (Array.isArray(match) ? match : [match]).some((m) => pathname === m || pathname.startsWith(`${m}/`));
+  return (Array.isArray(match) ? match : [match]).some(
+    (m) => pathname === m || pathname.startsWith(`${m}/`),
+  );
 };
 
 const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) => (

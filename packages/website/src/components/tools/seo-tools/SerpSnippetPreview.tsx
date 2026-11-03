@@ -50,7 +50,8 @@ const SerpSnippetPreview = () => {
           placeholder="How to Build a Website in 2024 - Complete Guide"
         />
         <p className={`text-xs ${title.length > TITLE_LIMIT ? "text-danger" : "text-muted"}`}>
-          {title.length} / {TITLE_LIMIT} characters {title.length > TITLE_LIMIT && "(will be truncated)"}
+          {title.length} / {TITLE_LIMIT} characters{" "}
+          {title.length > TITLE_LIMIT && "(will be truncated)"}
         </p>
 
         <NInput
@@ -90,7 +91,9 @@ const SerpSnippetPreview = () => {
                 {breadcrumb.display.charAt(0) || "?"}
               </div>
               <span className={!breadcrumb.valid ? "text-[#c5221f]" : ""}>
-                {breadcrumb.valid ? breadcrumb.display : "Enter a valid URL (https://example.com/page)"}
+                {breadcrumb.valid
+                  ? breadcrumb.display
+                  : "Enter a valid URL (https://example.com/page)"}
               </span>
             </div>
           ) : (

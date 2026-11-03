@@ -25,13 +25,17 @@ function parseCsvLine(line: string, delimiter: string): string[] {
   for (let i = 0; i < line.length; i++) {
     const ch = line[i];
     if (inQuotes) {
-      if (ch === '"' && line[i + 1] === '"') { current += '"'; i++; }
-      else if (ch === '"') inQuotes = false;
+      if (ch === '"' && line[i + 1] === '"') {
+        current += '"';
+        i++;
+      } else if (ch === '"') inQuotes = false;
       else current += ch;
     } else {
       if (ch === '"') inQuotes = true;
-      else if (ch === delimiter) { result.push(current); current = ""; }
-      else current += ch;
+      else if (ch === delimiter) {
+        result.push(current);
+        current = "";
+      } else current += ch;
     }
   }
   result.push(current);
@@ -46,7 +50,11 @@ const CsvToJson = () => {
     if (!input.trim()) return { output: "", error: "" };
     try {
       const json = csvToJson(input, delimiter);
-      if (json.length === 0) return { output: "", error: "No data rows found. Ensure the CSV has a header row and at least one data row." };
+      if (json.length === 0)
+        return {
+          output: "",
+          error: "No data rows found. Ensure the CSV has a header row and at least one data row.",
+        };
       return { output: JSON.stringify(json, null, 2), error: "" };
     } catch {
       return { output: "", error: "Failed to parse CSV" };

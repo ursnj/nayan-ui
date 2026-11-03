@@ -9,8 +9,7 @@ import {
 
 export const metadata = buildPageMetadata({
   title: "Crop PDF",
-  description:
-    "Crop margins and trim PDF page borders. Free online PDF cropper by Nayan UI.",
+  description: "Crop margins and trim PDF page borders. Free online PDF cropper by Nayan UI.",
   path: "/tools/crop-pdf",
   keywords:
     "crop pdf, trim pdf margins, resize pdf pages, pdf margin cutter, pdf page cropper, cut pdf borders, pdf trim tool, remove pdf margins, pdf whitespace remover, adjust pdf page size, nayan ui tools",

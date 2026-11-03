@@ -27,7 +27,8 @@ const schemas = [
     description:
       "AI-powered vulnerability scanning for GitHub repositories with auto-fix capabilities.",
     url: `${SITE_URL}/tools/ai-code-scanner`,
-    keywords: "vulnerability scanner, security scanning, dependency scanning, ai code scanner, auto fix",
+    keywords:
+      "vulnerability scanner, security scanning, dependency scanning, ai code scanner, auto fix",
   }),
 ];
 

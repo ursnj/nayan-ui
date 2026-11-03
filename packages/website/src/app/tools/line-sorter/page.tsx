@@ -1,12 +1,19 @@
 import LineSorterPage from "@/components/tools/text-tools/LineSorterPage";
 import JsonLd from "@/components/helpers/JsonLd";
-import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata, buildTechArticleSchema } from "@/services/seo";
+import {
+  SITE_URL,
+  buildBreadcrumbSchema,
+  buildPageMetadata,
+  buildTechArticleSchema,
+} from "@/services/seo";
 
 export const metadata = buildPageMetadata({
   title: "Line Sorter",
-  description: "Sort, deduplicate, and clean up lines of text. Free online line sorter by Nayan UI.",
+  description:
+    "Sort, deduplicate, and clean up lines of text. Free online line sorter by Nayan UI.",
   path: "/tools/line-sorter",
-  keywords: "line sorter, sort lines online, text line sorter, alphabetical sorter, remove duplicate lines, line sorting tool, free line sorter, nayan ui tools",
+  keywords:
+    "line sorter, sort lines online, text line sorter, alphabetical sorter, remove duplicate lines, line sorting tool, free line sorter, nayan ui tools",
 });
 
 const schemas = [

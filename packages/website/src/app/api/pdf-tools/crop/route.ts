@@ -27,10 +27,16 @@ export async function POST(req: NextRequest) {
       }
     }
     if (left + right >= 100) {
-      return NextResponse.json({ error: "Left and right margins must add up to less than 100%." }, { status: 400 });
+      return NextResponse.json(
+        { error: "Left and right margins must add up to less than 100%." },
+        { status: 400 },
+      );
     }
     if (top + bottom >= 100) {
-      return NextResponse.json({ error: "Top and bottom margins must add up to less than 100%." }, { status: 400 });
+      return NextResponse.json(
+        { error: "Top and bottom margins must add up to less than 100%." },
+        { status: 400 },
+      );
     }
 
     const { PDFDocument } = await import("pdf-lib");
@@ -54,7 +60,12 @@ export async function POST(req: NextRequest) {
       const cropTop = (top / 100) * height;
       const cropBottom = (bottom / 100) * height;
 
-      page.setCropBox(cropLeft, cropBottom, width - cropLeft - cropRight, height - cropTop - cropBottom);
+      page.setCropBox(
+        cropLeft,
+        cropBottom,
+        width - cropLeft - cropRight,
+        height - cropTop - cropBottom,
+      );
     }
 
     const result = await doc.save();

@@ -21,10 +21,7 @@ export async function POST(req: NextRequest) {
 
     const zip = new JSZip();
     for (const size of SIZES) {
-      const png = await sharp(buffer)
-        .resize(size, size, { fit: "cover" })
-        .png()
-        .toBuffer();
+      const png = await sharp(buffer).resize(size, size, { fit: "cover" }).png().toBuffer();
       zip.file(`favicon-${size}x${size}.png`, png);
     }
 

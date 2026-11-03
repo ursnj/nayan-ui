@@ -72,12 +72,18 @@ const LineSorter = () => {
         className="mb-4 max-w-72"
         value={sortMode}
         options={SORT_OPTIONS}
-        onChange={(v) => { if (v) setSortMode(v); }}
+        onChange={(v) => {
+          if (v) setSortMode(v);
+        }}
         isSearchable={false}
       />
 
       <div className="mb-4 flex flex-wrap gap-6">
-        <NCheck label="Remove duplicates" checked={removeDuplicates} onChange={setRemoveDuplicates} />
+        <NCheck
+          label="Remove duplicates"
+          checked={removeDuplicates}
+          onChange={setRemoveDuplicates}
+        />
         <NCheck label="Remove empty lines" checked={removeEmpty} onChange={setRemoveEmpty} />
         <NCheck label="Trim whitespace" checked={trimLines} onChange={setTrimLines} />
       </div>
@@ -92,7 +98,9 @@ const LineSorter = () => {
 
       {output && (
         <NCard className="mt-4 p-4">
-          <label className="mb-1.5 block text-sm font-medium">Sorted Output ({output.split("\n").length} lines)</label>
+          <label className="mb-1.5 block text-sm font-medium">
+            Sorted Output ({output.split("\n").length} lines)
+          </label>
           <pre className="max-h-[300px] overflow-auto whitespace-pre-wrap rounded-lg bg-default/30 p-3 font-mono text-sm text-foreground">
             {output}
           </pre>

@@ -1,12 +1,19 @@
 import JsonPathFinderPage from "@/components/tools/json-tools/JsonPathFinderPage";
 import JsonLd from "@/components/helpers/JsonLd";
-import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata, buildTechArticleSchema } from "@/services/seo";
+import {
+  SITE_URL,
+  buildBreadcrumbSchema,
+  buildPageMetadata,
+  buildTechArticleSchema,
+} from "@/services/seo";
 
 export const metadata = buildPageMetadata({
   title: "JSON Path Finder",
-  description: "Query and explore JSON data with path expressions. Free online JSON Path tool by Nayan UI.",
+  description:
+    "Query and explore JSON data with path expressions. Free online JSON Path tool by Nayan UI.",
   path: "/tools/json-path-finder",
-  keywords: "json path finder, jsonpath tool, json query, json path tester, json explorer, online jsonpath, free json path finder, nayan ui tools",
+  keywords:
+    "json path finder, jsonpath tool, json query, json path tester, json explorer, online jsonpath, free json path finder, nayan ui tools",
 });
 
 const schemas = [

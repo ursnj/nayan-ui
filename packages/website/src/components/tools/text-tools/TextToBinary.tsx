@@ -33,7 +33,14 @@ const TextToBinary = () => {
         return { output: result, error: "" };
       } else {
         const parts = input.trim().split(/\s+/);
-        const base = format.value === "binary" ? 2 : format.value === "hex" ? 16 : format.value === "octal" ? 8 : 10;
+        const base =
+          format.value === "binary"
+            ? 2
+            : format.value === "hex"
+              ? 16
+              : format.value === "octal"
+                ? 8
+                : 10;
         const codes = parts.map((p) => parseInt(p, base));
         if (codes.some((n) => Number.isNaN(n))) {
           return { output: "", error: `Invalid ${format.label.toLowerCase()} value` };
@@ -75,7 +82,9 @@ const TextToBinary = () => {
         className="mb-4 max-w-52"
         value={format}
         options={FORMAT_OPTIONS}
-        onChange={(v) => { if (v) setFormat(v); }}
+        onChange={(v) => {
+          if (v) setFormat(v);
+        }}
         isSearchable={false}
       />
 
@@ -83,7 +92,11 @@ const TextToBinary = () => {
         label={mode === "encode" ? "Text Input" : `${format.label} Input`}
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        placeholder={mode === "encode" ? "Enter text to convert..." : `Enter ${format.value} values separated by spaces...`}
+        placeholder={
+          mode === "encode"
+            ? "Enter text to convert..."
+            : `Enter ${format.value} values separated by spaces...`
+        }
         textareaClassName="h-[200px] resize-none font-mono text-sm"
       />
 
@@ -91,7 +104,9 @@ const TextToBinary = () => {
 
       {output && (
         <NCard className="mt-4 p-4">
-          <label className="mb-1.5 block text-sm font-medium">{mode === "encode" ? `${format.label} Output` : "Decoded Text"}</label>
+          <label className="mb-1.5 block text-sm font-medium">
+            {mode === "encode" ? `${format.label} Output` : "Decoded Text"}
+          </label>
           <pre className="whitespace-pre-wrap break-all rounded-lg bg-default/30 p-3 font-mono text-sm text-foreground">
             {output}
           </pre>

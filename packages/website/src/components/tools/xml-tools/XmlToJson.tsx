@@ -79,17 +79,8 @@ const XmlToJson = () => {
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <XmlMonacoEditor
-          label="Input XML"
-          value={input}
-          onChange={setInput}
-        />
-        <XmlMonacoEditor
-          label="JSON Output"
-          value={output}
-          readOnly
-          language="json"
-        />
+        <XmlMonacoEditor label="Input XML" value={input} onChange={setInput} />
+        <XmlMonacoEditor label="JSON Output" value={output} readOnly language="json" />
       </div>
     </div>
   );

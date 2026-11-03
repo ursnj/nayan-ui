@@ -35,10 +35,7 @@ const SlugGenerator = () => {
             Copy Slug
           </NButton>
         )}
-        <NButton
-          isOutline
-          onClick={() => setInput("")}
-        >
+        <NButton isOutline onClick={() => setInput("")}>
           <Trash2 className="mr-2 h-4 w-4" />
           Clear
         </NButton>

@@ -67,7 +67,9 @@ const LetterFrequencyAnalyzer = () => {
           <label className="mb-1.5 block text-sm font-medium">Letter Frequency (A-Z)</label>
           <div className="max-h-[500px] overflow-auto rounded-lg border border-default bg-surface">
             {totalLetters === 0 ? (
-              <p className="p-4 text-center text-sm text-muted">Enter text to see letter frequency</p>
+              <p className="p-4 text-center text-sm text-muted">
+                Enter text to see letter frequency
+              </p>
             ) : (
               rows.map((row) => (
                 <div

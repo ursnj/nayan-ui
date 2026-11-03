@@ -42,7 +42,9 @@ const XmlFormatter = () => {
         className="mb-4 max-w-52"
         value={indentOption}
         options={INDENT_OPTIONS}
-        onChange={(val) => { if (val) setIndentOption(val); }}
+        onChange={(val) => {
+          if (val) setIndentOption(val);
+        }}
       />
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <NButton onClick={format}>
@@ -73,16 +75,8 @@ const XmlFormatter = () => {
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <XmlMonacoEditor
-          label="Input XML"
-          value={input}
-          onChange={setInput}
-        />
-        <XmlMonacoEditor
-          label="Formatted Output"
-          value={output}
-          readOnly
-        />
+        <XmlMonacoEditor label="Input XML" value={input} onChange={setInput} />
+        <XmlMonacoEditor label="Formatted Output" value={output} readOnly />
       </div>
     </div>
   );

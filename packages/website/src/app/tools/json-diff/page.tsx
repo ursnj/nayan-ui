@@ -1,12 +1,19 @@
 import JsonDiffPage from "@/components/tools/json-tools/JsonDiffPage";
 import JsonLd from "@/components/helpers/JsonLd";
-import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata, buildTechArticleSchema } from "@/services/seo";
+import {
+  SITE_URL,
+  buildBreadcrumbSchema,
+  buildPageMetadata,
+  buildTechArticleSchema,
+} from "@/services/seo";
 
 export const metadata = buildPageMetadata({
   title: "JSON Diff",
-  description: "Compare two JSON objects and find differences. Free online JSON diff tool by Nayan UI.",
+  description:
+    "Compare two JSON objects and find differences. Free online JSON diff tool by Nayan UI.",
   path: "/tools/json-diff",
-  keywords: "json diff, json compare, compare json, json difference, json diff tool, online json diff, free json diff, nayan ui tools",
+  keywords:
+    "json diff, json compare, compare json, json difference, json diff tool, online json diff, free json diff, nayan ui tools",
 });
 
 const schemas = [

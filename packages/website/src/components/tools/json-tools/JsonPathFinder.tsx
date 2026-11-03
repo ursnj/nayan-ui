@@ -83,7 +83,13 @@ const JsonPathFinder = () => {
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <NButton isOutline onClick={() => { setInput(""); setPath("$"); }}>
+        <NButton
+          isOutline
+          onClick={() => {
+            setInput("");
+            setPath("$");
+          }}
+        >
           <Trash2 className="mr-2 h-4 w-4" />
           Clear
         </NButton>
@@ -115,14 +121,32 @@ const JsonPathFinder = () => {
           {result && result.values.length > 0 && (
             <NCard className="mt-4 p-4">
               <div className="mb-1.5 flex items-center justify-between">
-                <label className="text-sm font-medium">{result.values.length} Result{result.values.length !== 1 ? "s" : ""}</label>
-                <NButton isOutline onClick={() => copy(JSON.stringify(result.values.length === 1 ? result.values[0] : result.values, null, 2))} className="h-7 px-2 text-xs">
+                <label className="text-sm font-medium">
+                  {result.values.length} Result{result.values.length !== 1 ? "s" : ""}
+                </label>
+                <NButton
+                  isOutline
+                  onClick={() =>
+                    copy(
+                      JSON.stringify(
+                        result.values.length === 1 ? result.values[0] : result.values,
+                        null,
+                        2,
+                      ),
+                    )
+                  }
+                  className="h-7 px-2 text-xs"
+                >
                   <ClipboardCopy className="mr-1 h-3 w-3" />
                   Copy
                 </NButton>
               </div>
               <pre className="max-h-[300px] overflow-auto whitespace-pre-wrap rounded-lg bg-default/30 p-3 font-mono text-sm text-foreground">
-                {JSON.stringify(result.values.length === 1 ? result.values[0] : result.values, null, 2)}
+                {JSON.stringify(
+                  result.values.length === 1 ? result.values[0] : result.values,
+                  null,
+                  2,
+                )}
               </pre>
             </NCard>
           )}
@@ -133,7 +157,10 @@ const JsonPathFinder = () => {
           )}
 
           <NCard className="mt-4 p-4">
-            <label className="mb-1.5 block text-sm font-medium">Available Paths ({allPaths.length}{allPaths.length >= 500 ? "+" : ""})</label>
+            <label className="mb-1.5 block text-sm font-medium">
+              Available Paths ({allPaths.length}
+              {allPaths.length >= 500 ? "+" : ""})
+            </label>
             <div className="max-h-[200px] overflow-auto rounded-lg bg-default/30 p-3">
               {allPaths.map((p, i) => (
                 <button

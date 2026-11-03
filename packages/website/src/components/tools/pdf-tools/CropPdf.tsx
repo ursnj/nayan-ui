@@ -64,7 +64,10 @@ const CropPdf = () => {
         <NCard
           className={`mb-6 flex cursor-pointer flex-col items-center gap-3 border-dashed p-10 transition-colors ${dragging ? "border-accent" : ""}`}
           onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragging(true);
+          }}
           onDragLeave={() => setDragging(false)}
           onDrop={(e) => {
             e.preventDefault();
@@ -80,7 +83,10 @@ const CropPdf = () => {
             type="file"
             accept=".pdf,application/pdf"
             className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+            }}
           />
         </NCard>
       ) : (
@@ -91,16 +97,50 @@ const CropPdf = () => {
           </NCard>
 
           <div className="mb-4 grid grid-cols-2 gap-3">
-            <NInput type="number" label="Top (%)" className="mb-0" value={top} onChange={(e) => setTop(e.target.value)} min="0" max="50" />
-            <NInput type="number" label="Right (%)" className="mb-0" value={right} onChange={(e) => setRight(e.target.value)} min="0" max="50" />
-            <NInput type="number" label="Bottom (%)" className="mb-0" value={bottom} onChange={(e) => setBottom(e.target.value)} min="0" max="50" />
-            <NInput type="number" label="Left (%)" className="mb-0" value={left} onChange={(e) => setLeft(e.target.value)} min="0" max="50" />
+            <NInput
+              type="number"
+              label="Top (%)"
+              className="mb-0"
+              value={top}
+              onChange={(e) => setTop(e.target.value)}
+              min="0"
+              max="50"
+            />
+            <NInput
+              type="number"
+              label="Right (%)"
+              className="mb-0"
+              value={right}
+              onChange={(e) => setRight(e.target.value)}
+              min="0"
+              max="50"
+            />
+            <NInput
+              type="number"
+              label="Bottom (%)"
+              className="mb-0"
+              value={bottom}
+              onChange={(e) => setBottom(e.target.value)}
+              min="0"
+              max="50"
+            />
+            <NInput
+              type="number"
+              label="Left (%)"
+              className="mb-0"
+              value={left}
+              onChange={(e) => setLeft(e.target.value)}
+              min="0"
+              max="50"
+            />
           </div>
 
           <NSelect
             label="Apply to"
             value={applyTo}
-            onChange={(val) => { if (val) setApplyTo(val); }}
+            onChange={(val) => {
+              if (val) setApplyTo(val);
+            }}
             options={PAGE_OPTIONS}
             className="mb-4 max-w-52"
             isSearchable={false}
@@ -117,7 +157,13 @@ const CropPdf = () => {
                 Download
               </NButton>
             )}
-            <NButton isOutline onClick={() => { setFile(null); setResult(null); }}>
+            <NButton
+              isOutline
+              onClick={() => {
+                setFile(null);
+                setResult(null);
+              }}
+            >
               <Trash2 className="mr-2 h-4 w-4" />
               Clear
             </NButton>

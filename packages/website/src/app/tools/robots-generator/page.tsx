@@ -24,7 +24,8 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "Robots.txt Generator",
-    description: "Build robots.txt files with user-agent rules, allow/disallow paths, and sitemap directives.",
+    description:
+      "Build robots.txt files with user-agent rules, allow/disallow paths, and sitemap directives.",
     url: `${SITE_URL}/tools/robots-generator`,
     keywords: "robots.txt generator, search engine crawling, seo tools, robots.txt creator",
   }),

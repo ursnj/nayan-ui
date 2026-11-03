@@ -11,7 +11,7 @@ import {
 const URL = `${ENGINE_URL}/playground`;
 
 export const metadata = buildPageMetadata({
-  title: "Nayan Game Engine Playground · Live 3D Code Editor",
+  title: "Nayan Game Engine Playground · Live Editor",
   description:
     "Write @nayan-ui/engine code in a Monaco editor with autocomplete and type checking, and run the 3D scene live in your browser. Start from an example and share a link.",
   path: "/game-engine/playground",

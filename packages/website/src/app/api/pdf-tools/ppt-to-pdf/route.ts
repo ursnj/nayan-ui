@@ -49,7 +49,10 @@ export async function POST(req: NextRequest) {
       const page = doc.addPage([pageWidth, pageHeight]);
 
       page.drawRectangle({
-        x: 0, y: 0, width: pageWidth, height: pageHeight,
+        x: 0,
+        y: 0,
+        width: pageWidth,
+        height: pageHeight,
         color: rgb(1, 1, 1),
       });
 

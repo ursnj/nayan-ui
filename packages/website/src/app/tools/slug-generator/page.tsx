@@ -9,8 +9,7 @@ import {
 
 export const metadata = buildPageMetadata({
   title: "Slug Generator",
-  description:
-    "Generate URL-friendly slugs from any text. Free online slug generator by Nayan UI.",
+  description: "Generate URL-friendly slugs from any text. Free online slug generator by Nayan UI.",
   path: "/tools/slug-generator",
   keywords:
     "slug generator, url slug generator, seo slug, permalink generator, text to slug, friendly url generator, url-friendly slug, slug maker, seo friendly url, clean url generator, blog slug, cms slug tool, free slug generator, nayan ui tools",

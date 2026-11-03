@@ -1,7 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Download, FlipHorizontal, FlipVertical, RotateCcw, RotateCw, Trash2, Upload } from "lucide-react";
+import {
+  Download,
+  FlipHorizontal,
+  FlipVertical,
+  RotateCcw,
+  RotateCw,
+  Trash2,
+  Upload,
+} from "lucide-react";
 import { NButton, NCard, NTooltip, NBadge, showToast } from "@nayan-ui/react";
 import { useObjectUrl } from "./useObjectUrl";
 
@@ -67,12 +75,9 @@ const RotateImage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const updateEntry = useCallback(
-    (index: number, update: Partial<FileEntry>) => {
-      setFiles((prev) => prev.map((e, i) => (i === index ? { ...e, ...update } : e)));
-    },
-    [],
-  );
+  const updateEntry = useCallback((index: number, update: Partial<FileEntry>) => {
+    setFiles((prev) => prev.map((e, i) => (i === index ? { ...e, ...update } : e)));
+  }, []);
 
   const applyAll = useCallback(async () => {
     setProcessing(true);
@@ -168,12 +173,22 @@ const RotateImage = () => {
                 </div>
                 <div className="flex items-center justify-between gap-2 p-3">
                   <div className="flex min-w-0 flex-col gap-1">
-                    <p className="truncate text-sm font-medium text-foreground">{entry.file.name}</p>
+                    <p className="truncate text-sm font-medium text-foreground">
+                      {entry.file.name}
+                    </p>
                     {(entry.rotation !== 0 || entry.flipH || entry.flipV) && (
                       <div className="flex gap-1">
                         {entry.rotation !== 0 && <NBadge size="sm">{entry.rotation}°</NBadge>}
-                        {entry.flipH && <NBadge size="sm" color="accent">Flip H</NBadge>}
-                        {entry.flipV && <NBadge size="sm" color="accent">Flip V</NBadge>}
+                        {entry.flipH && (
+                          <NBadge size="sm" color="accent">
+                            Flip H
+                          </NBadge>
+                        )}
+                        {entry.flipV && (
+                          <NBadge size="sm" color="accent">
+                            Flip V
+                          </NBadge>
+                        )}
                       </div>
                     )}
                   </div>
@@ -183,7 +198,10 @@ const RotateImage = () => {
                         isOutline
                         className="h-8 w-8 min-w-0 p-0"
                         onClick={() =>
-                          updateEntry(i, { rotation: (entry.rotation - 90 + 360) % 360, result: undefined })
+                          updateEntry(i, {
+                            rotation: (entry.rotation - 90 + 360) % 360,
+                            result: undefined,
+                          })
                         }
                       >
                         <RotateCcw className="h-4 w-4" />
@@ -194,7 +212,10 @@ const RotateImage = () => {
                         isOutline
                         className="h-8 w-8 min-w-0 p-0"
                         onClick={() =>
-                          updateEntry(i, { rotation: (entry.rotation + 90) % 360, result: undefined })
+                          updateEntry(i, {
+                            rotation: (entry.rotation + 90) % 360,
+                            result: undefined,
+                          })
                         }
                       >
                         <RotateCw className="h-4 w-4" />

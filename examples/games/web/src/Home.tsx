@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 import { Link } from 'react-router';
 import { EXAMPLES } from './examples';
 
-export const TITLE = 'Nayan Game Engine Games';
+export const TITLE = 'Nayan Game Engine';
 
 export function Home() {
-  useEffect(() => void (document.title = TITLE), []);
+  useEffect(() => void (document.title = `Games · ${TITLE}`), []);
   return (
     <main className="mx-auto max-w-2xl space-y-3 px-4 py-10">
       <h1 className="mb-6 text-4xl font-extrabold text-white">Games</h1>

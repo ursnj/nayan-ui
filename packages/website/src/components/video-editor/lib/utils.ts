@@ -55,7 +55,8 @@ export const formatTimecode = (timeUs: number, withFrames = false, fps = 30): st
   const hours = Math.floor(wholeSeconds / 3600);
   const minutes = Math.floor((wholeSeconds % 3600) / 60);
   const seconds = wholeSeconds % 60;
-  const base = hours > 0 ? `${pad(hours)}:${pad(minutes)}:${pad(seconds)}` : `${pad(minutes)}:${pad(seconds)}`;
+  const base =
+    hours > 0 ? `${pad(hours)}:${pad(minutes)}:${pad(seconds)}` : `${pad(minutes)}:${pad(seconds)}`;
   if (!withFrames) return base;
   const safeFps = Math.max(1, fps);
   const frame = Math.min(safeFps - 1, Math.floor((totalSeconds - wholeSeconds) * safeFps));

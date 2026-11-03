@@ -12,32 +12,51 @@ const toYaml = (data: any, indent = 0): string => {
   if (typeof data === "boolean") return data ? "true" : "false";
   if (typeof data === "number") return String(data);
   if (typeof data === "string") {
-    if (data.includes("\n")) return `|\n${data.split("\n").map((l) => pad + "  " + l).join("\n")}`;
-    if (/[:{}\[\],&*?|>!'"%@`#]/.test(data) || data === "" || data === "true" || data === "false" || data === "null" || !isNaN(Number(data))) return JSON.stringify(data);
+    if (data.includes("\n"))
+      return `|\n${data
+        .split("\n")
+        .map((l) => pad + "  " + l)
+        .join("\n")}`;
+    if (
+      /[:{}\[\],&*?|>!'"%@`#]/.test(data) ||
+      data === "" ||
+      data === "true" ||
+      data === "false" ||
+      data === "null" ||
+      !isNaN(Number(data))
+    )
+      return JSON.stringify(data);
     return data;
   }
   if (Array.isArray(data)) {
     if (data.length === 0) return "[]";
-    return data.map((item) => {
-      const val = toYaml(item, indent + 1);
-      if (typeof item === "object" && item !== null) {
-        const lines = val.split("\n");
-        return `${pad}- ${lines[0]}\n${lines.slice(1).map((l) => pad + "  " + l).join("\n")}`.trimEnd();
-      }
-      return `${pad}- ${val}`;
-    }).join("\n");
+    return data
+      .map((item) => {
+        const val = toYaml(item, indent + 1);
+        if (typeof item === "object" && item !== null) {
+          const lines = val.split("\n");
+          return `${pad}- ${lines[0]}\n${lines
+            .slice(1)
+            .map((l) => pad + "  " + l)
+            .join("\n")}`.trimEnd();
+        }
+        return `${pad}- ${val}`;
+      })
+      .join("\n");
   }
   if (typeof data === "object") {
     const entries = Object.entries(data);
     if (entries.length === 0) return "{}";
-    return entries.map(([key, val]) => {
-      const yamlKey = /[:{}\[\],&*?|>!'"%@`#\s]/.test(key) ? JSON.stringify(key) : key;
-      if (typeof val === "object" && val !== null) {
-        const nested = toYaml(val, indent + 1);
-        return `${pad}${yamlKey}:\n${nested}`;
-      }
-      return `${pad}${yamlKey}: ${toYaml(val, indent + 1)}`;
-    }).join("\n");
+    return entries
+      .map(([key, val]) => {
+        const yamlKey = /[:{}\[\],&*?|>!'"%@`#\s]/.test(key) ? JSON.stringify(key) : key;
+        if (typeof val === "object" && val !== null) {
+          const nested = toYaml(val, indent + 1);
+          return `${pad}${yamlKey}:\n${nested}`;
+        }
+        return `${pad}${yamlKey}: ${toYaml(val, indent + 1)}`;
+      })
+      .join("\n");
   }
   return String(data);
 };
@@ -114,17 +133,8 @@ const XmlToYaml = () => {
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <XmlMonacoEditor
-          label="Input XML"
-          value={input}
-          onChange={setInput}
-        />
-        <XmlMonacoEditor
-          label="YAML Output"
-          value={output}
-          readOnly
-          language="yaml"
-        />
+        <XmlMonacoEditor label="Input XML" value={input} onChange={setInput} />
+        <XmlMonacoEditor label="YAML Output" value={output} readOnly language="yaml" />
       </div>
     </div>
   );

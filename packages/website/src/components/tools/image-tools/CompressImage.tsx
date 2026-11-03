@@ -163,7 +163,9 @@ const CompressImage = () => {
                     {entry.compressedSize != null && (
                       <>
                         <span className="text-xs text-muted">→</span>
-                        <NBadge size="sm" color="success">{formatSize(entry.compressedSize)}</NBadge>
+                        <NBadge size="sm" color="success">
+                          {formatSize(entry.compressedSize)}
+                        </NBadge>
                         <NBadge size="sm" color="accent">
                           {Math.round((1 - entry.compressedSize / entry.originalSize) * 100)}% saved
                         </NBadge>

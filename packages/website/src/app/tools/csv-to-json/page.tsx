@@ -1,12 +1,19 @@
 import CsvToJsonPage from "@/components/tools/json-tools/CsvToJsonPage";
 import JsonLd from "@/components/helpers/JsonLd";
-import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata, buildTechArticleSchema } from "@/services/seo";
+import {
+  SITE_URL,
+  buildBreadcrumbSchema,
+  buildPageMetadata,
+  buildTechArticleSchema,
+} from "@/services/seo";
 
 export const metadata = buildPageMetadata({
   title: "CSV to JSON",
-  description: "Convert CSV data to JSON format with header detection. Free online CSV to JSON converter by Nayan UI.",
+  description:
+    "Convert CSV data to JSON format with header detection. Free online CSV to JSON converter by Nayan UI.",
   path: "/tools/csv-to-json",
-  keywords: "csv to json, csv json converter, convert csv to json, online csv to json, csv parser, csv to json tool, free csv to json, nayan ui tools",
+  keywords:
+    "csv to json, csv json converter, convert csv to json, online csv to json, csv parser, csv to json tool, free csv to json, nayan ui tools",
 });
 
 const schemas = [

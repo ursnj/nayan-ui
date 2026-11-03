@@ -62,7 +62,9 @@ const XmlMinifier = () => {
           <div className="flex items-center gap-2">
             <NBadge size="sm">{(stats.original / 1024).toFixed(1)} KB</NBadge>
             <span className="text-xs text-muted">→</span>
-            <NBadge size="sm" color="success">{(stats.minified / 1024).toFixed(1)} KB</NBadge>
+            <NBadge size="sm" color="success">
+              {(stats.minified / 1024).toFixed(1)} KB
+            </NBadge>
             <NBadge size="sm" color="accent">
               {Math.round((1 - stats.minified / stats.original) * 100)}% saved
             </NBadge>
@@ -75,16 +77,8 @@ const XmlMinifier = () => {
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <XmlMonacoEditor
-          label="Input XML"
-          value={input}
-          onChange={setInput}
-        />
-        <XmlMonacoEditor
-          label="Minified Output"
-          value={output}
-          readOnly
-        />
+        <XmlMonacoEditor label="Input XML" value={input} onChange={setInput} />
+        <XmlMonacoEditor label="Minified Output" value={output} readOnly />
       </div>
     </div>
   );

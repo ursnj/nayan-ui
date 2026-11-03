@@ -124,7 +124,8 @@ export async function renderPdfPageToImage(
       const viewport = page.getViewport({ scale: dpi / 72 });
       const canvas = createCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
       const ctx = canvas.getContext("2d");
-      await page.render({ canvasContext: ctx as unknown as CanvasRenderingContext2D, viewport }).promise;
+      await page.render({ canvasContext: ctx as unknown as CanvasRenderingContext2D, viewport })
+        .promise;
       return format === "jpeg" ? await canvas.encode("jpeg") : await canvas.encode("png");
     } finally {
       await page.cleanup();

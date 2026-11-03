@@ -15,7 +15,9 @@ const FindAndReplace = () => {
     if (!text || !find) return { result: text, count: 0 };
     try {
       const flags = caseSensitive ? "g" : "gi";
-      const regex = useRegex ? new RegExp(find, flags) : new RegExp(find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), flags);
+      const regex = useRegex
+        ? new RegExp(find, flags)
+        : new RegExp(find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), flags);
       let c = 0;
       const r = text.replace(regex, () => {
         c++;
@@ -54,15 +56,32 @@ const FindAndReplace = () => {
             Copy Result
           </NButton>
         )}
-        <NButton isOutline onClick={() => { setText(""); setFind(""); setReplace(""); }}>
+        <NButton
+          isOutline
+          onClick={() => {
+            setText("");
+            setFind("");
+            setReplace("");
+          }}
+        >
           <Trash2 className="mr-2 h-4 w-4" />
           Clear
         </NButton>
       </div>
 
       <div className="mb-4 grid gap-3 sm:grid-cols-2">
-        <NInput label="Find" value={find} onChange={(e) => setFind(e.target.value)} placeholder="Search text..." />
-        <NInput label="Replace with" value={replace} onChange={(e) => setReplace(e.target.value)} placeholder="Replacement text..." />
+        <NInput
+          label="Find"
+          value={find}
+          onChange={(e) => setFind(e.target.value)}
+          placeholder="Search text..."
+        />
+        <NInput
+          label="Replace with"
+          value={replace}
+          onChange={(e) => setReplace(e.target.value)}
+          placeholder="Replacement text..."
+        />
       </div>
 
       <div className="mb-4 flex gap-6">
@@ -80,7 +99,9 @@ const FindAndReplace = () => {
 
       {find && text && (
         <NCard className="mt-4 p-4">
-          <label className="mb-1.5 block text-sm font-medium">Preview ({count} match{count !== 1 ? "es" : ""})</label>
+          <label className="mb-1.5 block text-sm font-medium">
+            Preview ({count} match{count !== 1 ? "es" : ""})
+          </label>
           <pre className="max-h-[300px] overflow-auto whitespace-pre-wrap break-all rounded-lg bg-default/30 p-3 font-mono text-sm text-foreground">
             {result}
           </pre>

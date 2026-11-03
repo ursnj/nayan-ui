@@ -1,12 +1,19 @@
 import ColorConverterPage from "@/components/tools/dev-tools/ColorConverterPage";
 import JsonLd from "@/components/helpers/JsonLd";
-import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata, buildTechArticleSchema } from "@/services/seo";
+import {
+  SITE_URL,
+  buildBreadcrumbSchema,
+  buildPageMetadata,
+  buildTechArticleSchema,
+} from "@/services/seo";
 
 export const metadata = buildPageMetadata({
   title: "Color Converter",
-  description: "Convert colors between HEX, RGB, HSL, and RGBA formats. Free online color converter by Nayan UI.",
+  description:
+    "Convert colors between HEX, RGB, HSL, and RGBA formats. Free online color converter by Nayan UI.",
   path: "/tools/color-converter",
-  keywords: "color converter, hex to rgb, rgb to hex, hex to hsl, color picker, color format converter, free color converter, nayan ui tools",
+  keywords:
+    "color converter, hex to rgb, rgb to hex, hex to hsl, color picker, color format converter, free color converter, nayan ui tools",
 });
 
 const schemas = [

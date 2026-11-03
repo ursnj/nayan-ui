@@ -72,9 +72,7 @@ export const formatXml = (xml: string, indent: number): string => {
   const { protected: guarded, restore } = protectCdata(xml);
   let formatted = "";
   let depth = 0;
-  const lines = guarded
-    .replace(/(>)\s*(<)/g, "$1\n$2")
-    .split("\n");
+  const lines = guarded.replace(/(>)\s*(<)/g, "$1\n$2").split("\n");
 
   for (const rawLine of lines) {
     const line = rawLine.trim();
@@ -85,7 +83,13 @@ export const formatXml = (xml: string, indent: number): string => {
     }
     formatted += PADDING.repeat(Math.max(depth, 0)) + line + "\n";
 
-    if (line.startsWith("<") && !line.startsWith("</") && !line.startsWith("<?") && !line.endsWith("/>") && !/<\/[^>]+>$/.test(line)) {
+    if (
+      line.startsWith("<") &&
+      !line.startsWith("</") &&
+      !line.startsWith("<?") &&
+      !line.endsWith("/>") &&
+      !/<\/[^>]+>$/.test(line)
+    ) {
       depth++;
     }
   }
@@ -114,7 +118,9 @@ export const objectToXml = (data: any, tag: string, indent = ""): string => {
   if (data === null || data === undefined) return `${indent}<${safeTag} />`;
   if (typeof data !== "object") {
     const text = String(data);
-    return text === "" ? `${indent}<${safeTag} />` : `${indent}<${safeTag}>${escXml(text)}</${safeTag}>`;
+    return text === ""
+      ? `${indent}<${safeTag} />`
+      : `${indent}<${safeTag}>${escXml(text)}</${safeTag}>`;
   }
   if (Array.isArray(data)) {
     if (data.length === 0) return `${indent}<${safeTag} />`;

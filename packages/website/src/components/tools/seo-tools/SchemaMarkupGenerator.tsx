@@ -110,7 +110,8 @@ const SchemaMarkupGenerator = () => {
     if (schemaType === "LocalBusiness") {
       const obj: Record<string, unknown> = {};
       if (businessName) obj.name = businessName;
-      const hasAddress = streetAddress || addressLocality || addressRegion || postalCode || addressCountry;
+      const hasAddress =
+        streetAddress || addressLocality || addressRegion || postalCode || addressCountry;
       if (hasAddress) {
         obj.address = {
           "@type": "PostalAddress",
@@ -160,9 +161,7 @@ const SchemaMarkupGenerator = () => {
 
   const output = useMemo(() => {
     const pretty = JSON.stringify(jsonLd, null, 2);
-    return wrapScriptTag
-      ? `<script type="application/ld+json">\n${pretty}\n</script>`
-      : pretty;
+    return wrapScriptTag ? `<script type="application/ld+json">\n${pretty}\n</script>` : pretty;
   }, [jsonLd, wrapScriptTag]);
 
   const copy = useCallback(() => {
@@ -180,7 +179,9 @@ const SchemaMarkupGenerator = () => {
           className="max-w-xs"
           value={type}
           options={TYPE_OPTIONS}
-          onChange={(v) => { if (v) setType(v); }}
+          onChange={(v) => {
+            if (v) setType(v);
+          }}
           isSearchable={false}
         />
 
@@ -206,7 +207,9 @@ const SchemaMarkupGenerator = () => {
                   value={qa.question}
                   onChange={(e) =>
                     setFaqItems((items) =>
-                      items.map((item, idx) => (idx === i ? { ...item, question: e.target.value } : item)),
+                      items.map((item, idx) =>
+                        idx === i ? { ...item, question: e.target.value } : item,
+                      ),
                     )
                   }
                   placeholder="What is your return policy?"
@@ -216,7 +219,9 @@ const SchemaMarkupGenerator = () => {
                   value={qa.answer}
                   onChange={(e) =>
                     setFaqItems((items) =>
-                      items.map((item, idx) => (idx === i ? { ...item, answer: e.target.value } : item)),
+                      items.map((item, idx) =>
+                        idx === i ? { ...item, answer: e.target.value } : item,
+                      ),
                     )
                   }
                   placeholder="We accept returns within 30 days of purchase."
@@ -233,33 +238,135 @@ const SchemaMarkupGenerator = () => {
 
         {schemaType === "Article" && (
           <div className="grid gap-3 sm:grid-cols-2">
-            <NInput label="Headline" className="mb-0" value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder="10 Tips for Better SEO" />
-            <NInput label="Author Name" className="mb-0" value={authorName} onChange={(e) => setAuthorName(e.target.value)} placeholder="Jane Doe" />
-            <NInput label="Date Published" className="mb-0" value={datePublished} onChange={(e) => setDatePublished(e.target.value)} placeholder="2024-01-15" />
-            <NInput label="Image URL" className="mb-0" value={articleImage} onChange={(e) => setArticleImage(e.target.value)} placeholder="https://example.com/image.jpg" />
+            <NInput
+              label="Headline"
+              className="mb-0"
+              value={headline}
+              onChange={(e) => setHeadline(e.target.value)}
+              placeholder="10 Tips for Better SEO"
+            />
+            <NInput
+              label="Author Name"
+              className="mb-0"
+              value={authorName}
+              onChange={(e) => setAuthorName(e.target.value)}
+              placeholder="Jane Doe"
+            />
+            <NInput
+              label="Date Published"
+              className="mb-0"
+              value={datePublished}
+              onChange={(e) => setDatePublished(e.target.value)}
+              placeholder="2024-01-15"
+            />
+            <NInput
+              label="Image URL"
+              className="mb-0"
+              value={articleImage}
+              onChange={(e) => setArticleImage(e.target.value)}
+              placeholder="https://example.com/image.jpg"
+            />
           </div>
         )}
 
         {schemaType === "Product" && (
           <div className="grid gap-3 sm:grid-cols-2">
-            <NInput label="Product Name" className="mb-0" value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Wireless Headphones" />
-            <NInput label="Image URL" className="mb-0" value={productImage} onChange={(e) => setProductImage(e.target.value)} placeholder="https://example.com/product.jpg" />
-            <NInput label="Price" className="mb-0" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="99.99" />
-            <NInput label="Currency" className="mb-0" value={priceCurrency} onChange={(e) => setPriceCurrency(e.target.value)} placeholder="USD" />
-            <NInput label="Rating Value (optional)" className="mb-0" value={ratingValue} onChange={(e) => setRatingValue(e.target.value)} placeholder="4.5" />
-            <NInput label="Review Count (optional)" className="mb-0" value={reviewCount} onChange={(e) => setReviewCount(e.target.value)} placeholder="120" />
+            <NInput
+              label="Product Name"
+              className="mb-0"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+              placeholder="Wireless Headphones"
+            />
+            <NInput
+              label="Image URL"
+              className="mb-0"
+              value={productImage}
+              onChange={(e) => setProductImage(e.target.value)}
+              placeholder="https://example.com/product.jpg"
+            />
+            <NInput
+              label="Price"
+              className="mb-0"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="99.99"
+            />
+            <NInput
+              label="Currency"
+              className="mb-0"
+              value={priceCurrency}
+              onChange={(e) => setPriceCurrency(e.target.value)}
+              placeholder="USD"
+            />
+            <NInput
+              label="Rating Value (optional)"
+              className="mb-0"
+              value={ratingValue}
+              onChange={(e) => setRatingValue(e.target.value)}
+              placeholder="4.5"
+            />
+            <NInput
+              label="Review Count (optional)"
+              className="mb-0"
+              value={reviewCount}
+              onChange={(e) => setReviewCount(e.target.value)}
+              placeholder="120"
+            />
           </div>
         )}
 
         {schemaType === "LocalBusiness" && (
           <div className="grid gap-3 sm:grid-cols-2">
-            <NInput label="Business Name" className="mb-0" value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="Joe's Pizza" />
-            <NInput label="Telephone" className="mb-0" value={telephone} onChange={(e) => setTelephone(e.target.value)} placeholder="+1-555-123-4567" />
-            <NInput label="Street Address" className="mb-0" value={streetAddress} onChange={(e) => setStreetAddress(e.target.value)} placeholder="123 Main St" />
-            <NInput label="City" className="mb-0" value={addressLocality} onChange={(e) => setAddressLocality(e.target.value)} placeholder="Springfield" />
-            <NInput label="State/Region" className="mb-0" value={addressRegion} onChange={(e) => setAddressRegion(e.target.value)} placeholder="IL" />
-            <NInput label="Postal Code" className="mb-0" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} placeholder="62701" />
-            <NInput label="Country" className="mb-0" value={addressCountry} onChange={(e) => setAddressCountry(e.target.value)} placeholder="US" />
+            <NInput
+              label="Business Name"
+              className="mb-0"
+              value={businessName}
+              onChange={(e) => setBusinessName(e.target.value)}
+              placeholder="Joe's Pizza"
+            />
+            <NInput
+              label="Telephone"
+              className="mb-0"
+              value={telephone}
+              onChange={(e) => setTelephone(e.target.value)}
+              placeholder="+1-555-123-4567"
+            />
+            <NInput
+              label="Street Address"
+              className="mb-0"
+              value={streetAddress}
+              onChange={(e) => setStreetAddress(e.target.value)}
+              placeholder="123 Main St"
+            />
+            <NInput
+              label="City"
+              className="mb-0"
+              value={addressLocality}
+              onChange={(e) => setAddressLocality(e.target.value)}
+              placeholder="Springfield"
+            />
+            <NInput
+              label="State/Region"
+              className="mb-0"
+              value={addressRegion}
+              onChange={(e) => setAddressRegion(e.target.value)}
+              placeholder="IL"
+            />
+            <NInput
+              label="Postal Code"
+              className="mb-0"
+              value={postalCode}
+              onChange={(e) => setPostalCode(e.target.value)}
+              placeholder="62701"
+            />
+            <NInput
+              label="Country"
+              className="mb-0"
+              value={addressCountry}
+              onChange={(e) => setAddressCountry(e.target.value)}
+              placeholder="US"
+            />
           </div>
         )}
 
@@ -272,7 +379,11 @@ const SchemaMarkupGenerator = () => {
                   className="mb-0 flex-1"
                   value={c.name}
                   onChange={(e) =>
-                    setCrumbs((items) => items.map((item, idx) => (idx === i ? { ...item, name: e.target.value } : item)))
+                    setCrumbs((items) =>
+                      items.map((item, idx) =>
+                        idx === i ? { ...item, name: e.target.value } : item,
+                      ),
+                    )
                   }
                   placeholder="Home"
                 />
@@ -281,7 +392,11 @@ const SchemaMarkupGenerator = () => {
                   className="mb-0 flex-1"
                   value={c.url}
                   onChange={(e) =>
-                    setCrumbs((items) => items.map((item, idx) => (idx === i ? { ...item, url: e.target.value } : item)))
+                    setCrumbs((items) =>
+                      items.map((item, idx) =>
+                        idx === i ? { ...item, url: e.target.value } : item,
+                      ),
+                    )
                   }
                   placeholder="https://example.com/"
                 />

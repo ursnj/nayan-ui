@@ -43,7 +43,9 @@ const JsonFormatter = () => {
         className="mb-4 max-w-52"
         value={indentOption}
         options={INDENT_OPTIONS}
-        onChange={(val) => { if (val) setIndentOption(val); }}
+        onChange={(val) => {
+          if (val) setIndentOption(val);
+        }}
       />
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <NButton onClick={format}>
@@ -74,16 +76,8 @@ const JsonFormatter = () => {
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <JsonMonacoEditor
-          label="Input JSON"
-          value={input}
-          onChange={setInput}
-        />
-        <JsonMonacoEditor
-          label="Formatted Output"
-          value={output}
-          readOnly
-        />
+        <JsonMonacoEditor label="Input JSON" value={input} onChange={setInput} />
+        <JsonMonacoEditor label="Formatted Output" value={output} readOnly />
       </div>
     </div>
   );

@@ -32,7 +32,8 @@ export async function POST(req: NextRequest) {
     const font = await doc.embedFont(StandardFonts.Helvetica);
     const boldFont = await doc.embedFont(StandardFonts.HelveticaBold);
     const charsPerLine = Math.floor(maxWidth / font.widthOfTextAtSize("M", bodyFontSize));
-    const charsPerLineFor = (size: number) => Math.floor(maxWidth / boldFont.widthOfTextAtSize("M", size));
+    const charsPerLineFor = (size: number) =>
+      Math.floor(maxWidth / boldFont.widthOfTextAtSize("M", size));
 
     const wrapText = (text: string, maxChars: number): string[] => {
       if (text.length <= maxChars) return [text];
@@ -70,24 +71,43 @@ export async function POST(req: NextRequest) {
         const headingFontSize = level === 3 ? h3FontSize : level === 2 ? h2FontSize : h1FontSize;
         const headingText = line.slice(level + 1);
         wrapText(headingText, charsPerLineFor(headingFontSize)).forEach((w, idx) => {
-          items.push({ text: w, fontSize: headingFontSize, font: boldFont, spacingBefore: idx === 0 ? headingSpacing : 0 });
+          items.push({
+            text: w,
+            fontSize: headingFontSize,
+            font: boldFont,
+            spacingBefore: idx === 0 ? headingSpacing : 0,
+          });
         });
       } else if (line === "---" || line === "***" || line === "___") {
-        items.push({ text: "————————————————————————————", fontSize: bodyFontSize, font, spacingBefore: 4 });
+        items.push({
+          text: "————————————————————————————",
+          fontSize: bodyFontSize,
+          font,
+          spacingBefore: 4,
+        });
       } else if (line.startsWith("- ") || line.startsWith("* ")) {
-        const stripped = line.replace(/\*\*(.+?)\*\*/g, "$1").replace(/\*(.+?)\*/g, "$1").replace(/`(.+?)`/g, "$1");
+        const stripped = line
+          .replace(/\*\*(.+?)\*\*/g, "$1")
+          .replace(/\*(.+?)\*/g, "$1")
+          .replace(/`(.+?)`/g, "$1");
         const wrapped = wrapText("• " + stripped.slice(2), charsPerLine);
         for (const w of wrapped) {
           items.push({ text: w, fontSize: bodyFontSize, font, spacingBefore: 0 });
         }
       } else if (/^\d+\. /.test(line)) {
-        const stripped = line.replace(/\*\*(.+?)\*\*/g, "$1").replace(/\*(.+?)\*/g, "$1").replace(/`(.+?)`/g, "$1");
+        const stripped = line
+          .replace(/\*\*(.+?)\*\*/g, "$1")
+          .replace(/\*(.+?)\*/g, "$1")
+          .replace(/`(.+?)`/g, "$1");
         const wrapped = wrapText(stripped, charsPerLine);
         for (const w of wrapped) {
           items.push({ text: w, fontSize: bodyFontSize, font, spacingBefore: 0 });
         }
       } else if (line.startsWith("> ")) {
-        const stripped = line.slice(2).replace(/\*\*(.+?)\*\*/g, "$1").replace(/\*(.+?)\*/g, "$1");
+        const stripped = line
+          .slice(2)
+          .replace(/\*\*(.+?)\*\*/g, "$1")
+          .replace(/\*(.+?)\*/g, "$1");
         const wrapped = wrapText("| " + stripped, charsPerLine);
         for (const w of wrapped) {
           items.push({ text: w, fontSize: bodyFontSize, font, spacingBefore: 0 });
@@ -95,7 +115,12 @@ export async function POST(req: NextRequest) {
       } else if (line.trim() === "") {
         items.push({ text: "", fontSize: bodyFontSize, font, spacingBefore: 0 });
       } else {
-        const stripped = line.replace(/\*\*(.+?)\*\*/g, "$1").replace(/\*(.+?)\*/g, "$1").replace(/~~(.+?)~~/g, "$1").replace(/`(.+?)`/g, "$1").replace(/\[(.+?)\]\(.+?\)/g, "$1");
+        const stripped = line
+          .replace(/\*\*(.+?)\*\*/g, "$1")
+          .replace(/\*(.+?)\*/g, "$1")
+          .replace(/~~(.+?)~~/g, "$1")
+          .replace(/`(.+?)`/g, "$1")
+          .replace(/\[(.+?)\]\(.+?\)/g, "$1");
         const wrapped = wrapText(stripped, charsPerLine);
         for (const w of wrapped) {
           items.push({ text: w, fontSize: bodyFontSize, font, spacingBefore: 0 });

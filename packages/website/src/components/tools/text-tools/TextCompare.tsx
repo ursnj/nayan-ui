@@ -52,7 +52,9 @@ const TextCompare = () => {
   const [left, setLeft] = useState("");
   const [right, setRight] = useState("");
   const [diff, setDiff] = useState<DiffLine[] | null>(null);
-  const [stats, setStats] = useState<{ added: number; removed: number; unchanged: number } | null>(null);
+  const [stats, setStats] = useState<{ added: number; removed: number; unchanged: number } | null>(
+    null,
+  );
 
   const compare = useCallback(() => {
     const linesA = left.split("\n").length;
@@ -99,18 +101,8 @@ const TextCompare = () => {
       </div>
 
       <div className="mb-4 grid gap-4 lg:grid-cols-2">
-        <MonacoEditor
-          label="Original Text"
-          value={left}
-          onChange={setLeft}
-          height="500px"
-        />
-        <MonacoEditor
-          label="Modified Text"
-          value={right}
-          onChange={setRight}
-          height="500px"
-        />
+        <MonacoEditor label="Original Text" value={left} onChange={setLeft} height="500px" />
+        <MonacoEditor label="Modified Text" value={right} onChange={setRight} height="500px" />
       </div>
 
       {diff && (

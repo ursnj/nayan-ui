@@ -1,12 +1,19 @@
 import YamlToJsonPage from "@/components/tools/json-tools/YamlToJsonPage";
 import JsonLd from "@/components/helpers/JsonLd";
-import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata, buildTechArticleSchema } from "@/services/seo";
+import {
+  SITE_URL,
+  buildBreadcrumbSchema,
+  buildPageMetadata,
+  buildTechArticleSchema,
+} from "@/services/seo";
 
 export const metadata = buildPageMetadata({
   title: "YAML to JSON",
-  description: "Convert YAML to JSON format for APIs and configs. Free online YAML to JSON converter by Nayan UI.",
+  description:
+    "Convert YAML to JSON format for APIs and configs. Free online YAML to JSON converter by Nayan UI.",
   path: "/tools/yaml-to-json",
-  keywords: "yaml to json, yaml json converter, convert yaml to json, online yaml to json, yaml parser, yml to json, free yaml to json, nayan ui tools",
+  keywords:
+    "yaml to json, yaml json converter, convert yaml to json, online yaml to json, yaml parser, yml to json, free yaml to json, nayan ui tools",
 });
 
 const schemas = [

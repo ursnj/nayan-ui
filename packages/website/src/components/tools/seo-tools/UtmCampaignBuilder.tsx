@@ -66,13 +66,43 @@ const UtmCampaignBuilder = () => {
           placeholder="https://example.com/landing-page"
         />
         <div className="grid gap-3 sm:grid-cols-2">
-          <NInput label="Campaign Source (utm_source)" className="mb-0" value={source} onChange={(e) => setSource(e.target.value)} placeholder="newsletter" />
-          <NInput label="Campaign Medium (utm_medium)" className="mb-0" value={medium} onChange={(e) => setMedium(e.target.value)} placeholder="email" />
+          <NInput
+            label="Campaign Source (utm_source)"
+            className="mb-0"
+            value={source}
+            onChange={(e) => setSource(e.target.value)}
+            placeholder="newsletter"
+          />
+          <NInput
+            label="Campaign Medium (utm_medium)"
+            className="mb-0"
+            value={medium}
+            onChange={(e) => setMedium(e.target.value)}
+            placeholder="email"
+          />
         </div>
-        <NInput label="Campaign Name (utm_campaign)" className="mb-0" value={campaign} onChange={(e) => setCampaign(e.target.value)} placeholder="spring_sale" />
+        <NInput
+          label="Campaign Name (utm_campaign)"
+          className="mb-0"
+          value={campaign}
+          onChange={(e) => setCampaign(e.target.value)}
+          placeholder="spring_sale"
+        />
         <div className="grid gap-3 sm:grid-cols-2">
-          <NInput label="Campaign Term (optional)" className="mb-0" value={term} onChange={(e) => setTerm(e.target.value)} placeholder="running shoes" />
-          <NInput label="Campaign Content (optional)" className="mb-0" value={content} onChange={(e) => setContent(e.target.value)} placeholder="header banner" />
+          <NInput
+            label="Campaign Term (optional)"
+            className="mb-0"
+            value={term}
+            onChange={(e) => setTerm(e.target.value)}
+            placeholder="running shoes"
+          />
+          <NInput
+            label="Campaign Content (optional)"
+            className="mb-0"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="header banner"
+          />
         </div>
       </NCard>
 

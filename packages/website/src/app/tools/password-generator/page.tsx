@@ -1,6 +1,11 @@
 import PasswordGeneratorPage from "@/components/tools/dev-tools/PasswordGeneratorPage";
 import JsonLd from "@/components/helpers/JsonLd";
-import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata, buildTechArticleSchema } from "@/services/seo";
+import {
+  SITE_URL,
+  buildBreadcrumbSchema,
+  buildPageMetadata,
+  buildTechArticleSchema,
+} from "@/services/seo";
 
 export const metadata = buildPageMetadata({
   title: "Password Generator",
@@ -19,7 +24,8 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "Password Generator",
-    description: "Generate strong, cryptographically secure passwords with customizable length and character sets.",
+    description:
+      "Generate strong, cryptographically secure passwords with customizable length and character sets.",
     url: `${SITE_URL}/tools/password-generator`,
     keywords: "password generator, secure password, random password, password strength",
   }),

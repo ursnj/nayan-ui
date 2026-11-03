@@ -9,8 +9,7 @@ import {
 
 export const metadata = buildPageMetadata({
   title: "Rotate PDF",
-  description:
-    "Rotate PDF pages by 90°, 180°, or 270°. Free online PDF rotator by Nayan UI.",
+  description: "Rotate PDF pages by 90°, 180°, or 270°. Free online PDF rotator by Nayan UI.",
   path: "/tools/rotate-pdf",
   keywords:
     "rotate pdf, pdf rotator, rotate pdf pages, rotate pdf online, free pdf rotator, rotate pdf 90 degrees, flip pdf, turn pdf sideways, pdf page rotation, rotate pdf pages free, nayan ui tools",

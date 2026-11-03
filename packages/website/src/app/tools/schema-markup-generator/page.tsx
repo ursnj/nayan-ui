@@ -24,7 +24,8 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "Schema Markup Generator",
-    description: "Generate valid JSON-LD structured data for FAQ, Article, Product, Local Business, and Breadcrumb schema types.",
+    description:
+      "Generate valid JSON-LD structured data for FAQ, Article, Product, Local Business, and Breadcrumb schema types.",
     url: `${SITE_URL}/tools/schema-markup-generator`,
     keywords: "schema markup generator, json-ld, structured data, faq schema, product schema",
   }),

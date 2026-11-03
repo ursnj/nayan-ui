@@ -54,19 +54,22 @@ function encodeHtml(input: string, encodeNonAscii: boolean): string {
 }
 
 function decodeHtml(input: string): string {
-  return input.replace(/&(#x[0-9a-fA-F]+|#[0-9]+|[a-zA-Z][a-zA-Z0-9]*);/g, (match, body: string) => {
-    if (body[0] === "#") {
-      const isHex = body[1] === "x" || body[1] === "X";
-      const num = isHex ? parseInt(body.slice(2), 16) : parseInt(body.slice(1), 10);
-      if (Number.isNaN(num)) return match;
-      try {
-        return String.fromCodePoint(num);
-      } catch {
-        return match;
+  return input.replace(
+    /&(#x[0-9a-fA-F]+|#[0-9]+|[a-zA-Z][a-zA-Z0-9]*);/g,
+    (match, body: string) => {
+      if (body[0] === "#") {
+        const isHex = body[1] === "x" || body[1] === "X";
+        const num = isHex ? parseInt(body.slice(2), 16) : parseInt(body.slice(1), 10);
+        if (Number.isNaN(num)) return match;
+        try {
+          return String.fromCodePoint(num);
+        } catch {
+          return match;
+        }
       }
-    }
-    return Object.prototype.hasOwnProperty.call(NAMED_DECODE, body) ? NAMED_DECODE[body] : match;
-  });
+      return Object.prototype.hasOwnProperty.call(NAMED_DECODE, body) ? NAMED_DECODE[body] : match;
+    },
+  );
 }
 
 const HtmlEntityEncoderDecoder = () => {
@@ -113,7 +116,9 @@ const HtmlEntityEncoderDecoder = () => {
         label={mode === "encode" ? "Text / HTML" : "HTML Entities"}
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        placeholder={mode === "encode" ? '<div class="test">Café</div>' : "&lt;div&gt;Caf&#233;&lt;/div&gt;"}
+        placeholder={
+          mode === "encode" ? '<div class="test">Café</div>' : "&lt;div&gt;Caf&#233;&lt;/div&gt;"
+        }
         textareaClassName="h-[160px] resize-none font-mono text-sm"
       />
 

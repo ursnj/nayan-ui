@@ -47,8 +47,16 @@ const HashGenerator = () => {
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <NButton onClick={generate} isLoading={generating} loadingText="Generating…">Generate Hashes</NButton>
-        <NButton isOutline onClick={() => { setInput(""); setHashes({}); }}>
+        <NButton onClick={generate} isLoading={generating} loadingText="Generating…">
+          Generate Hashes
+        </NButton>
+        <NButton
+          isOutline
+          onClick={() => {
+            setInput("");
+            setHashes({});
+          }}
+        >
           <Trash2 className="mr-2 h-4 w-4" />
           Clear
         </NButton>

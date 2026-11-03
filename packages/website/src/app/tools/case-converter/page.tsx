@@ -24,7 +24,8 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "Case Converter",
-    description: "Convert text between uppercase, lowercase, title case, camelCase, snake_case, and more.",
+    description:
+      "Convert text between uppercase, lowercase, title case, camelCase, snake_case, and more.",
     url: `${SITE_URL}/tools/case-converter`,
     keywords: "case converter, uppercase, lowercase, title case, camelCase, snake_case, kebab-case",
   }),

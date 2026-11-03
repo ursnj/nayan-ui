@@ -40,9 +40,7 @@ const Base64EncoderDecoder = () => {
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <NButton onClick={process}>
-          {mode === "encode" ? "Encode" : "Decode"}
-        </NButton>
+        <NButton onClick={process}>{mode === "encode" ? "Encode" : "Decode"}</NButton>
         <NButton isOutline onClick={swap}>
           <ArrowDownUp className="mr-2 h-4 w-4" />
           {mode === "encode" ? "Switch to Decode" : "Switch to Encode"}
@@ -53,7 +51,14 @@ const Base64EncoderDecoder = () => {
             Copy
           </NButton>
         )}
-        <NButton isOutline onClick={() => { setInput(""); setOutput(""); setError(""); }}>
+        <NButton
+          isOutline
+          onClick={() => {
+            setInput("");
+            setOutput("");
+            setError("");
+          }}
+        >
           <Trash2 className="mr-2 h-4 w-4" />
           Clear
         </NButton>
@@ -71,7 +76,9 @@ const Base64EncoderDecoder = () => {
 
       {output && (
         <NCard className="mt-4 p-4">
-          <label className="mb-1.5 block text-sm font-medium">{mode === "encode" ? "Base64 Output" : "Decoded Text"}</label>
+          <label className="mb-1.5 block text-sm font-medium">
+            {mode === "encode" ? "Base64 Output" : "Decoded Text"}
+          </label>
           <pre className="whitespace-pre-wrap break-all rounded-lg bg-default/30 p-3 font-mono text-sm text-foreground">
             {output}
           </pre>
