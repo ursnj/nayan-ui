@@ -1872,6 +1872,12 @@ const engineSidebarItem = (slug: string, title: string, icon: LucideIcon): Sideb
 export const engineSidebarItems: SidebarItem[] = [
   { title: "Get Started", description: "", link: "", isHeading: true },
   engineSidebarItem("overview", "Overview", Gamepad2),
+  {
+    title: "Playground",
+    description: "Write engine code and run it live in the browser",
+    link: "/game-engine/playground",
+    icon: Code2,
+  },
   engineSidebarItem("installation", "Installation", Settings),
   engineSidebarItem("first-game", "Build Your First Game", Gamepad2),
   engineSidebarItem("react", "React Quickstart", AppWindow),
@@ -2240,5 +2246,3 @@ export const gamesSidebarItems = [
     icon: Gamepad2,
   },
 ];
-
-

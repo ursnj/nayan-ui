@@ -431,6 +431,7 @@ on entities, input()/strokes()/sample()/coverage() for games.
 
 ## Practical engine examples
 - Complete game (the repo's examples/games: Car Racing on iOS, Android and the web): https://www.nayanui.com/game-engine/first-game
+- Live playground (Monaco editor with the engine's types, runs in the browser): https://www.nayanui.com/game-engine/playground
 - Common recipes: https://www.nayanui.com/game-engine/recipes
 - AI agent instructions (file structure, one API per task, never-do list, game template): https://www.nayanui.com/game-engine/agent-guide
 - Structured API usage summary: https://www.nayanui.com/engine.json
