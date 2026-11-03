@@ -523,7 +523,7 @@ const BUTTON = { padding: "4px 10px", borderRadius: 8, border: "none", backgroun
     title: "Memory match",
     category: "Games",
     code: `import { useRef, useState } from "react";
-import { createShape, effects, frontLight, GameView, quat, shapeGeometry, useWorld, type Entity, type Model, type Shape, type World } from "@nayan-ui/engine";
+import { createShape, effects, frontLight, GameView, merge, quat, shapeGeometry, useWorld, type Entity, type Model, type Shape, type World } from "@nayan-ui/engine";
 
 // Six pairs: a symbol shape and its colour on each card's face.
 const SYMBOLS: { shape: Shape; color: string }[] = [
@@ -536,7 +536,17 @@ const SYMBOLS: { shape: Shape; color: string }[] = [
 ];
 type Card = { entity: Entity; symbol: number; open: boolean; matched: boolean };
 
-let card: Model | undefined; // one glossy card mesh
+// One card mesh at its real size: a blue body, a patterned back (+z) and a white face (-z).
+let card: Model | undefined;
+const buildCard = () =>
+  createShape(
+    merge([
+      { geometry: shapeGeometry("roundedBox", { color: [0.18, 0.29, 0.54] }), scale: [1.55, 2.1, 0.12] },
+      { geometry: shapeGeometry("roundedBox", { color: [0.24, 0.37, 0.69] }), position: [0, 0, 0.065], scale: [1.1, 1.6, 0.02] },
+      { geometry: shapeGeometry("roundedBox", { color: [0.98, 0.98, 0.96] }), position: [0, 0, -0.065], scale: [1.42, 1.95, 0.02] },
+    ]),
+    { shine: 0.4 },
+  );
 
 // Each card has a patterned back and a white face with a symbol. Find all six pairs.
 export default function MemoryMatch() {
@@ -551,16 +561,14 @@ function Table({ onRestart }: { onRestart: () => void }) {
   const [won, setWon] = useState(false);
 
   const world = useWorld(128, (w) => {
-    card ??= createShape(shapeGeometry("roundedBox"), { shine: 0.4 });
+    card ??= buildCard();
     w.spawn({ mesh: "plane", position: [0, 0, -0.3], rotation: quat.x(Math.PI / 2), scale: [11, 1, 9], color: "#1F5A3A" }); // the felt table
     const symbols = [0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
     cards.current = symbols.map((symbol, i) => {
-      // The card's body shows its back (facing the camera); its face is on the other side.
-      const entity = w.spawn({ mesh: card!, position: [((i % 4) - 1.5) * 1.95, (1 - Math.floor(i / 4)) * 2.5, 0], scale: [1.55, 2.1, 0.12], color: "#2F4A8A" });
-      w.spawn({ mesh: card!, parent: entity, position: [0, 0, 0.55], scale: [0.7, 0.75, 0.2], color: "#3D5FB0", pickable: false }); // back pattern
-      w.spawn({ mesh: card!, parent: entity, position: [0, 0, -0.55], scale: [0.92, 0.94, 0.2], color: "#FAFAF5", pickable: false }); // white face
+      // The back faces the camera; the face, with its symbol just in front of it, is on the other side.
+      const entity = w.spawn({ mesh: card!, position: [((i % 4) - 1.5) * 1.95, (1 - Math.floor(i / 4)) * 2.5, 0] });
       const { shape, color } = SYMBOLS[symbol]!;
-      w.spawn({ mesh: shape, parent: entity, position: [0, 0, -2.2], rotation: shape === "torus" ? quat.x(Math.PI / 2) : undefined, scale: [0.4, 0.3, 3], color, pickable: false });
+      w.spawn({ mesh: shape, parent: entity, position: [0, 0, -0.3], rotation: shape === "torus" ? quat.x(Math.PI / 2) : undefined, scale: 0.65, color, pickable: false });
       return { entity, symbol, open: false, matched: false };
     });
   });
@@ -580,7 +588,7 @@ function Table({ onRestart }: { onRestart: () => void }) {
       if (a.symbol === b.symbol) {
         a.matched = b.matched = true;
         for (const c2 of [a, b]) {
-          w.animate(c2.entity, { scale: [1.7, 2.3, 0.12] }, { duration: 0.15, yoyo: true, repeat: 1 });
+          w.animate(c2.entity, { scale: 1.1 }, { duration: 0.15, yoyo: true, repeat: 1 });
           effects.sparkle(w, { position: w.position(c2.entity) ?? [0, 0, 0], colors: SYMBOLS[c2.symbol]!.color, size: 0.08, speed: 3, count: 14, lifetime: 0.6 });
         }
         if (cards.current.every((c2) => c2.matched)) {
@@ -673,6 +681,7 @@ function Track({ onRestart }: { onRestart: () => void }) {
     const m = (meshes ??= buildMeshes());
     w.spawn({ mesh: "plane", scale: [60, 1, 3], color: "#C8A26B" }); // the dirt track
     w.spawn({ mesh: "plane", position: [0, -0.01, -6], scale: [60, 1, 10], color: "#4F8A3F" }); // grass behind it
+    w.spawn({ mesh: "plane", position: [0, -0.01, 6.5], scale: [60, 1, 10], color: "#5C9A49" }); // and in front
     s.hero = w.spawn({ mesh: m.hero, position: [PLAYER_X, 0.5, 0] });
     s.obstacles = [9, 16, 23].map((x, i) => {
       const o = OBSTACLES[i % OBSTACLES.length]!;
