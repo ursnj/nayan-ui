@@ -5,7 +5,14 @@ import GameDetail from "@/components/games/GameDetail";
 import GameExperience from "@/components/games/GameExperience";
 import JsonLd from "@/components/helpers/JsonLd";
 import { gamesData } from "@/services/GamesData";
-import { SITE_NAME, SITE_URL, buildBreadcrumbSchema } from "@/services/seo";
+import {
+  BANNER_HEIGHT,
+  BANNER_WIDTH,
+  SITE_NAME,
+  SITE_URL,
+  buildBreadcrumbSchema,
+  seoBannerUrl,
+} from "@/services/seo";
 export async function generateStaticParams() {
   return Object.keys(gamesData).map((slug) => ({ slug }));
 }
@@ -23,6 +30,7 @@ export async function generateMetadata({
   }
 
   const url = `${SITE_URL}/games/${slug}`;
+  const banner = seoBannerUrl(`/games/${slug}`);
 
   return {
     title: `Play ${game.name} Online · React & React Native`,
@@ -46,18 +54,18 @@ export async function generateMetadata({
       siteName: SITE_NAME,
       images: [
         {
-          url: `${SITE_URL}/games/${slug}.png`,
-          width: 512,
-          height: 512,
-          alt: `${game.name} screenshot`,
+          url: banner,
+          width: BANNER_WIDTH,
+          height: BANNER_HEIGHT,
+          alt: `Play ${game.name} free online`,
         },
       ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: `${SITE_NAME} - ${game.name}`,
       description: `${game.name}: ${game.description}`,
-      images: [`${SITE_URL}/games/${slug}.png`],
+      images: [{ url: banner, alt: `Play ${game.name} free online` }],
     },
   };
 }
@@ -86,7 +94,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
       url: `${SITE_URL}/games/${slug}`,
       playMode: "SinglePlayer",
       potentialAction: { "@type": "PlayAction", target: `${SITE_URL}/games/${slug}` },
-      image: `${SITE_URL}/games/${slug}.png`,
+      image: [`${SITE_URL}/games/${slug}.png`, seoBannerUrl(`/games/${slug}`)],
       screenshot: `${SITE_URL}/games/${slug}.png`,
       inLanguage: "en-US",
       featureList: game.features,

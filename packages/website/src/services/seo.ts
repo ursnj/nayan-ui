@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import enginePackage from "@nayan-ui/engine/package.json";
 import gamesPackage from "@nayan-ui/games/package.json";
 import reactPackage from "../../../react/package.json";
+import seoBanners from "./seo-banners.json";
 import {
   NATIVE_COMPONENT_COUNT,
   REACT_COMPONENT_COUNT,
@@ -13,6 +14,22 @@ export const SITE_URL = "https://www.nayanui.com";
 export const REPO_URL = "https://github.com/ursnj/nayan-ui";
 export const SITE_HOST = SITE_URL.replace(/^https?:\/\//, "");
 export const SITE_NAME = "Nayan UI";
+/** The brand mark, for `logo` in structured data. */
+export const LOGO_URL = `${SITE_URL}/nayan-ui.png`;
+
+/**
+ * Each page's 1200×630 social banner, made by `bun scripts/seo-banners/generate.ts` into public/seo
+ * and listed in seo-banners.json (path → URL with a content hash, so share caches refresh when a
+ * banner changes). A page without one uses the home page's banner.
+ */
+const BANNERS: Record<string, string> = seoBanners;
+export const BANNER_WIDTH = 1200;
+export const BANNER_HEIGHT = 630;
+
+export function seoBannerUrl(path: string) {
+  return `${SITE_URL}${BANNERS[path] ?? BANNERS["/"]}`;
+}
+
 export const SITE_DESCRIPTION = `Nayan UI is an open source platform for React and React Native: ${TOTAL_COMPONENT_COUNT} accessible UI components, a 3D game engine, 50+ ready-made games, a browser video editor and ${TOOL_COUNT} free online developer tools for PDFs, images, JSON, text, SEO and AI code review.`;
 
 export const organizationSchema = {
@@ -20,7 +37,8 @@ export const organizationSchema = {
   "@type": "Organization",
   name: SITE_NAME,
   url: SITE_URL,
-  logo: `${SITE_URL}/banner.png`,
+  logo: LOGO_URL,
+  image: seoBannerUrl("/"),
   description: SITE_DESCRIPTION,
   foundingDate: "2024",
   sameAs: [REPO_URL, "https://www.npmjs.com/org/nayan-ui"],
@@ -106,6 +124,7 @@ export function buildTechArticleSchema(opts: {
   /** The documentation set it belongs to (name and URL). */
   isPartOf?: { name: string; url: string };
 }) {
+  const path = opts.url.startsWith(SITE_URL) ? opts.url.slice(SITE_URL.length) || "/" : "/";
   return {
     "@context": "https://schema.org",
     "@type": "TechArticle",
@@ -118,7 +137,13 @@ export function buildTechArticleSchema(opts: {
     publisher: {
       "@type": "Organization",
       name: SITE_NAME,
-      logo: { "@type": "ImageObject", url: `${SITE_URL}/banner.png` },
+      logo: { "@type": "ImageObject", url: LOGO_URL },
+    },
+    image: {
+      "@type": "ImageObject",
+      url: seoBannerUrl(path),
+      width: BANNER_WIDTH,
+      height: BANNER_HEIGHT,
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": opts.url },
     keywords: opts.keywords,
@@ -137,18 +162,19 @@ export function buildPageMetadata(opts: {
   path: string;
   keywords?: string;
   ogType?: string;
-  /** Preview image for social cards (a path on this site). Default: the site banner. */
-  image?: { path: string; width?: number; height?: number; alt?: string };
+  /**
+   * Whose social banner to show, when the page has none of its own: a tag page shows its
+   * component's. Default: the page's own banner (see seoBannerUrl).
+   */
+  bannerFor?: string;
 }): Metadata {
   const url = `${SITE_URL}${opts.path}`;
-  const image = opts.image
-    ? {
-        url: `${SITE_URL}${opts.image.path}`,
-        width: opts.image.width,
-        height: opts.image.height,
-        alt: opts.image.alt,
-      }
-    : { url: `${SITE_URL}/banner.png` };
+  const image = {
+    url: seoBannerUrl(opts.bannerFor ?? opts.path),
+    width: BANNER_WIDTH,
+    height: BANNER_HEIGHT,
+    alt: `${SITE_NAME} - ${opts.title}`,
+  };
   return {
     title: opts.title,
     description: opts.description,
@@ -168,7 +194,7 @@ export function buildPageMetadata(opts: {
       card: "summary_large_image",
       title: `${SITE_NAME} - ${opts.title}`,
       description: opts.description,
-      images: [image.url],
+      images: [{ url: image.url, alt: image.alt }],
     },
   };
 }
