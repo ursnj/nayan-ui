@@ -19,7 +19,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const guide = findGuide(slug);
   if (!guide) notFound();
   return buildPageMetadata({
-    title: `${guide.title} · Nayan Game Engine`,
+    // The brand suffix only where the title stays short enough for search results.
+    title: guide.title.length <= 40 ? `${guide.title} · Nayan Game Engine` : guide.title,
     // Short guide descriptions get the engine's context, so the search snippet says what it is.
     description:
       guide.description.length < 110
