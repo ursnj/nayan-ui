@@ -1005,11 +1005,10 @@ export function play(world: World, actor: Entity, model: LoadedModel, clip: stri
         },
         examples: [
           {
-            title: "Build and serve the web example",
-            code: `bun run engine:build:web
-bun run engine:test:web
-bun run engine:example web:build
-python3 -m http.server 8080 --directory packages/engine/example/web/dist`,
+            title: "Serve a production web build",
+            description: "Vite shown; serve any framework's built output the same way, then test on real devices.",
+            code: `bun run build        # vite build
+bunx vite preview    # serves dist/ as production will`,
             platform: "shell",
             language: "bash",
           },

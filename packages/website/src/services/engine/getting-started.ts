@@ -395,29 +395,6 @@ export function EngineGate({ children }: { children: ReactNode }) {
           },
         ],
       },
-      {
-        id: "build-from-source",
-        title: "Build from source",
-        paragraphs: [
-          "Only needed to change the engine itself. Run these in the Playtura repository that contains packages/engine.",
-        ],
-        examples: [
-          {
-            title: "Source build commands",
-            platform: "shell",
-            language: "bash",
-            code: `rustup target add wasm32-unknown-unknown
-cargo install wasm-bindgen-cli --locked --version 0.2.129
-brew install llvm lld              # macOS: meshoptimizer needs a full LLVM
-bun run engine:build:web
-bun run engine:test:web
-bun run engine:example web
-bun run engine:core:build:ios      # after Rust changes
-bun run engine:core:build:android
-bun run engine:codegen             # after changing the TurboModule spec`,
-          },
-        ],
-      },
     ],
   },
   {

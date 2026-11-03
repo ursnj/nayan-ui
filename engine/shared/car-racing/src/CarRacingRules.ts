@@ -1,5 +1,5 @@
 // Pure rules, with no engine import, so they test anywhere.
-export const CAR = { width: 1.9, length: 4.2 };
+export const CAR = { width: 2.3, length: 4.4 }; // the car model's footprint, mirrors included
 
 /** True when two cars at these centres touch. */
 export const touching = (ax: number, az: number, bx: number, bz: number) =>

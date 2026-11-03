@@ -1,7 +1,8 @@
 // Car Racing's rules, with no React: `createGame(world, assets)` builds the road, cars and camera in a
 // world that `useWorld` owns; `tick` is the game's per-frame work (GameView steps the world after it).
-import { audio, effects, haptics, quat, type Camera, type Entity, type MutableQuat, type Voice, type World } from '@nayan-ui/engine';
+import { audio, type Camera, type ColorInput, effects, type Entity, haptics, type MutableQuat, quat, type Voice, type World } from '@nayan-ui/engine';
 import {
+  type Assets,
   EDGE,
   LANES,
   LATERAL_SPEED,
@@ -15,10 +16,9 @@ import {
   TRACK_LENGTH,
   TRAFFIC,
   TRAFFIC_COLORS,
-  TRAFFIC_SPEED,
-  type Assets
+  TRAFFIC_SPEED
 } from './CarRacingConstants';
-import { racingMeshes } from './CarRacingMeshes';
+import { treeMesh } from './CarRacingMeshes';
 import { metresLeft, touching } from './CarRacingRules';
 
 export type Phase = 'ready' | 'playing' | 'won' | 'lost';
@@ -32,7 +32,7 @@ export type Game = ReturnType<typeof createGame>;
 const pick = <T>(items: readonly T[]) => items[Math.floor(Math.random() * items.length)]!;
 
 export function createGame(world: World, assets: Assets, onPhase: (phase: Phase) => void, onDistance: (left: number) => void) {
-  const { car, tree } = racingMeshes();
+  const tree = treeMesh();
   const camera: Camera = { eye: [0, 4, 9], target: [0, 1, -6], fov: 0.95 };
   const turn: MutableQuat = [0, 0, 0, 1]; // Scratch for the steering tilt, reused every frame.
 
@@ -65,9 +65,17 @@ export function createGame(world: World, assets: Assets, onPhase: (phase: Phase)
   };
   const finish = world.spawn({ mesh: 'cube', color: 'white', position: [0, 0.02, -TRACK_LENGTH], scale: [ROAD_WIDTH, 0.04, 1.2] });
 
-  const player = world.spawn({ mesh: car, color: PLAYER_COLOR, position: [0, 0, 0] });
+  // A car is an empty root that moves, with the three model parts attached; only the paint is tinted.
+  const spawnCar = (color: ColorInput) => {
+    const root = world.spawn({ mesh: 'none' });
+    world.spawn({ mesh: assets.car.body, parent: root, color, pickable: false });
+    world.spawn({ mesh: assets.car.glass, parent: root, pickable: false });
+    world.spawn({ mesh: assets.car.trim, parent: root, pickable: false });
+    return root;
+  };
+  const player = spawnCar(PLAYER_COLOR);
   const rivals: Rival[] = Array.from({ length: TRAFFIC }, () => ({
-    entity: world.spawn({ mesh: car, color: pick(TRAFFIC_COLORS) }),
+    entity: spawnCar(pick(TRAFFIC_COLORS)),
     x: 0,
     z: 0,
     hit: false

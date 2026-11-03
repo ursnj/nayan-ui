@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "Nayan Car Racing",
-    "slug": "nayan-car-racing",
+    "name": "Nayan Engine Examples",
+    "slug": "nayan-engine-examples",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "nayan-car-racing",
+    "scheme": "nayan-engine-examples",
     "ios": {
-      "bundleIdentifier": "dev.nayan.example.racing"
+      "bundleIdentifier": "com.nayanui.engine"
     },
     "android": {
-      "package": "dev.nayan.example.racing",
+      "package": "com.nayanui.engine",
       "permissions": ["android.permission.VIBRATE"]
     },
     "plugins": ["expo-dev-client", ["./plugins/withAndroidMinSdk", 26]],

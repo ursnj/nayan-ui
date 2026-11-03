@@ -1,4 +1,15 @@
-import { audio, loadTexture, type Light, type SoundBank, type SoundSource, type Texture } from '@nayan-ui/engine';
+import {
+  type AssetSource,
+  audio,
+  type Light,
+  loadModel,
+  loadTexture,
+  type Model,
+  type SoundBank,
+  type SoundSource,
+  type Texture
+} from '@nayan-ui/engine';
+import { sources } from './CarRacingAssets';
 
 // Tuning. Forward is -z; x is across the road.
 export const LANES = [-3.4, 0, 3.4];
@@ -24,20 +35,36 @@ export const TRAFFIC_COLORS = ['#1E88E5', '#43A047', '#FDD835', '#8E24AA', '#FB8
 
 export type SoundName = 'engine' | 'point' | 'hit' | 'win' | 'die';
 
-/** Where each host gets its files: URLs in the browser, Metro `require(...)` on React Native. */
+/** Where the files come from: Metro `require(...)` on React Native, Vite URLs on the web (`CarRacingAssets.web.ts`). */
 export type AssetSources = {
-  textures: Record<'asphalt' | 'grass', string | number>;
+  car: Record<CarPart, AssetSource>;
+  textures: Record<'asphalt' | 'grass', AssetSource>;
   sounds: Record<SoundName, SoundSource>;
 };
 
-export type Assets = { asphalt: Texture; grass: Texture; sounds: SoundBank<SoundName> };
+/** Khronos' Car Concept in three models: white paint each car tints, glossy windows, and trim. */
+export type CarPart = 'body' | 'glass' | 'trim';
+export type Assets = { car: Record<CarPart, Model>; asphalt: Texture; grass: Texture; sounds: SoundBank<SoundName> };
 
 let loading: Promise<Assets> | undefined;
 
-/** Loads once per app: textures decode on native background threads, sounds in the Rust mixer. */
-export function loadAssets(sources: AssetSources): Promise<Assets> {
-  loading ??= Promise.all([loadTexture(sources.textures.asphalt), loadTexture(sources.textures.grass)]).then(
-    ([asphalt, grass]) => ({ asphalt, grass, sounds: audio.load(sources.sounds) })
-  );
+/**
+ * Loads once per app: models and textures decode on native background threads, sounds in the Rust
+ * mixer. The car stands on y = 0 facing -z (`center: false` keeps that origin).
+ */
+export function loadAssets(): Promise<Assets> {
+  loading ??= Promise.all([
+    loadModel(sources.car.body, { center: false, shine: 0.85 }),
+    loadModel(sources.car.glass, { center: false, shine: 0.95 }),
+    loadModel(sources.car.trim, { center: false, shine: 0.25 }),
+    loadTexture(sources.textures.asphalt),
+    loadTexture(sources.textures.grass)
+  ]).then(([body, glass, trim, asphalt, grass]) => ({
+    car: { body, glass, trim },
+    asphalt,
+    grass,
+    sounds: audio.load(sources.sounds)
+  }));
+  loading.catch(() => (loading = undefined)); // a failed load is retried next time
   return loading;
 }

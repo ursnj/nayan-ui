@@ -1,13 +1,9 @@
 @import 'tailwindcss';
 
-@source "../../shared/*/src";
-
 html,
-body,
-#root {
-  height: 100%;
+body {
   margin: 0;
-  overflow: hidden;
+  min-height: 100%;
   background: #0f172a;
   font-family: system-ui, sans-serif;
 }

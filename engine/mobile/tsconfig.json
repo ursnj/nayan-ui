@@ -3,7 +3,12 @@
   "compilerOptions": {
     "strict": true,
     "noEmit": true,
-    "customConditions": ["react-native"]
+    "customConditions": [
+      "react-native"
+    ]
   },
-  "include": ["**/*.ts", "**/*.tsx", "../shared/*/src/**/*.ts", "../shared/*/src/**/*.tsx"]
+  "include": [
+    "index.ts",
+    "src"
+  ]
 }

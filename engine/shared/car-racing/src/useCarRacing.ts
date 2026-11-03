@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { audio, useWorld, type DragEvent } from '@nayan-ui/engine';
-import { CAPACITY, LIVES, TRACK_LENGTH, loadAssets, type AssetSources, type Assets } from './CarRacingConstants';
+import { audio, type DragEvent, useWorld } from '@nayan-ui/engine';
+import { type Assets, CAPACITY, LIVES, loadAssets, TRACK_LENGTH } from './CarRacingConstants';
 import { createGame, type Game, type Phase } from './CarRacingGame';
 
-/** The race for one screen: assets, the world (via useWorld), HUD state and input. Both hosts share it. */
-export function useCarRacing(sources: AssetSources) {
+/** The race for the screen: assets, the world (via useWorld), HUD state and input. */
+export function useCarRacing() {
   const [assets, setAssets] = useState<Assets | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [game, setGame] = useState<Game | null>(null);
@@ -17,14 +17,14 @@ export function useCarRacing(sources: AssetSources) {
 
   useEffect(() => {
     let active = true;
-    loadAssets(sources).then(
+    loadAssets().then(
       (loaded) => active && setAssets(loaded),
       (e: unknown) => active && setError(e instanceof Error ? e.message : String(e))
     );
     return () => {
       active = false;
     };
-  }, [sources]);
+  }, []);
 
   // useWorld warms the engine up, creates the world, runs this setup and disposes it on unmount.
   const world = useWorld(
@@ -76,9 +76,12 @@ export function useCarRacing(sources: AssetSources) {
     muted,
     update: useCallback((dt: number) => game?.tick(dt), [game]),
     drag,
-    steer: (direction: number) => {
-      if (game) game.keys = direction;
-    },
+    steer: useCallback(
+      (direction: number) => {
+        if (game) game.keys = direction;
+      },
+      [game]
+    ),
     start: () => {
       setPaused(false);
       game?.start();
