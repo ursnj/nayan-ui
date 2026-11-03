@@ -57,7 +57,10 @@ jobs:
       # A fresh tarball has a new integrity hash; refresh it in bun.lock so the image's
       # `bun install --frozen-lockfile` accepts it.
       - name: Update lockfile for the games tarball
-        run: bun install --lockfile-only
+        run: |
+          sed -i '/^    "@nayan-ui\/games": \[/d' bun.lock
+          bun install --lockfile-only
+          grep '"@nayan-ui/games": \[' bun.lock
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
