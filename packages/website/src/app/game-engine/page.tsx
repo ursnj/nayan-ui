@@ -1,24 +1,26 @@
 import EngineDocumentation from "@/components/engine/EngineDocumentation";
 import JsonLd from "@/components/helpers/JsonLd";
 import { engineGuides } from "@/services/engine/guides";
-import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/seo";
+import { engineGuideSchemas } from "@/services/engine/seo";
+import { buildPageMetadata } from "@/services/seo";
+
+const guide = engineGuides[0]!; // The overview.
+
 export const metadata = buildPageMetadata({
-  title: "Nayan Engine · React and React Native",
+  title: "Nayan Engine: 3D Games for React & React Native",
   description:
-    "Build React browser and React Native games with one TypeScript API, a shared Rust core, WebGPU, WebGL2, Metal and Vulkan. Detailed guides and code examples.",
+    "A 3D game engine for React and React Native: one TypeScript API on a Rust core with WebGPU, WebGL2, Metal and Vulkan, physics, audio and guides.",
   path: "/game-engine",
-  keywords: "React game engine, React Native game engine, Nayan engine, WASM, wgpu, 3D games",
+  ogType: "website",
+  keywords:
+    "React game engine, React Native game engine, Nayan engine, 3D game engine, WebAssembly, wgpu, WebGPU, Rust, 3D games",
 });
+
 export default function EnginePage() {
   return (
     <>
-      <JsonLd
-        data={buildBreadcrumbSchema([
-          { name: "Home", url: SITE_URL },
-          { name: "Game Engine", url: `${SITE_URL}/game-engine` },
-        ])}
-      />
-      <EngineDocumentation guide={engineGuides[0]} />
+      <JsonLd data={engineGuideSchemas(guide)} />
+      <EngineDocumentation guide={guide} />
     </>
   );
 }

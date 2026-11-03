@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import enginePackage from "@nayan-ui/engine/package.json";
+import gamesPackage from "@nayan-ui/games/package.json";
 import { TOOL_COUNT, TOTAL_COMPONENT_COUNT } from "./Counts";
 
 export const SITE_URL = "https://www.nayanui.com";
@@ -88,6 +90,12 @@ export function buildTechArticleSchema(opts: {
   description: string;
   url: string;
   keywords?: string;
+  /** What the article documents. Default: the React component library. */
+  about?: Record<string, unknown>;
+  /** The article's section headings, in order. */
+  sections?: string[];
+  /** The documentation set it belongs to (name and URL). */
+  isPartOf?: { name: string; url: string };
 }) {
   return {
     "@context": "https://schema.org",
@@ -105,7 +113,12 @@ export function buildTechArticleSchema(opts: {
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": opts.url },
     keywords: opts.keywords,
-    about: { "@type": "Thing", name: "React Component Library" },
+    inLanguage: "en-US",
+    about: opts.about ?? { "@type": "Thing", name: "React Component Library" },
+    ...(opts.sections?.length ? { articleSection: opts.sections } : {}),
+    ...(opts.isPartOf
+      ? { isPartOf: { "@type": "WebSite", name: opts.isPartOf.name, url: opts.isPartOf.url } }
+      : {}),
   };
 }
 
@@ -115,8 +128,18 @@ export function buildPageMetadata(opts: {
   path: string;
   keywords?: string;
   ogType?: string;
+  /** Preview image for social cards (a path on this site). Default: the site banner. */
+  image?: { path: string; width?: number; height?: number; alt?: string };
 }): Metadata {
   const url = `${SITE_URL}${opts.path}`;
+  const image = opts.image
+    ? {
+        url: `${SITE_URL}${opts.image.path}`,
+        width: opts.image.width,
+        height: opts.image.height,
+        alt: opts.image.alt,
+      }
+    : { url: `${SITE_URL}/banner.png` };
   return {
     title: opts.title,
     description: opts.description,
@@ -130,13 +153,120 @@ export function buildPageMetadata(opts: {
       url,
       type: (opts.ogType as any) || "article",
       siteName: SITE_NAME,
-      images: [{ url: `${SITE_URL}/banner.png` }],
+      images: [image],
     },
     twitter: {
       card: "summary_large_image",
       title: `${SITE_NAME} - ${opts.title}`,
       description: opts.description,
-      images: [`${SITE_URL}/banner.png`],
+      images: [image.url],
     },
   };
 }
+
+/** FAQPage for questions shown on the page (the answers must match the visible text). */
+export function buildFaqSchema(faqs: { q: string; a: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.q,
+      acceptedAnswer: { "@type": "Answer", text: faq.a },
+    })),
+  };
+}
+
+/** HowTo for numbered steps shown on the page. */
+export function buildHowToSchema(opts: {
+  name: string;
+  description: string;
+  steps: { name: string; text: string; url?: string }[];
+  tools?: string[];
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: opts.name,
+    description: opts.description,
+    inLanguage: "en-US",
+    estimatedCost: { "@type": "MonetaryAmount", currency: "USD", value: "0" },
+    ...(opts.tools?.length
+      ? { tool: opts.tools.map((name) => ({ "@type": "HowToTool", name })) }
+      : {}),
+    step: opts.steps.map((step, index) => ({
+      "@type": "HowToStep",
+      position: index + 1,
+      name: step.name,
+      text: step.text,
+      ...(step.url ? { url: step.url } : {}),
+    })),
+  };
+}
+
+export const ENGINE_URL = `${SITE_URL}/game-engine`;
+export const GAMES_URL = `${SITE_URL}/games`;
+
+/** @nayan-ui/engine as a software product (version from the installed package). */
+export const engineSoftwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": `${ENGINE_URL}#software`,
+  name: "Nayan Engine (@nayan-ui/engine)",
+  alternateName: ["@nayan-ui/engine", "Nayan Engine"],
+  applicationCategory: "DeveloperApplication",
+  applicationSubCategory: "Game engine",
+  operatingSystem: "iOS, Android, Web",
+  description:
+    "A 3D game engine for React and React Native with one TypeScript API and a shared Rust core: wgpu rendering (Metal, Vulkan, WebGPU, WebGL2), physics, animation, particles, audio and drawing.",
+  url: ENGINE_URL,
+  downloadUrl: "https://www.npmjs.com/package/@nayan-ui/engine",
+  softwareVersion: enginePackage.version,
+  license: "https://opensource.org/licenses/MIT",
+  isAccessibleForFree: true,
+  programmingLanguage: ["TypeScript", "Rust"],
+  runtimePlatform: ["React", "React Native", "WebAssembly"],
+  author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  featureList: [
+    "One TypeScript API for iOS, Android and React websites",
+    "Rust core: wgpu rendering with Metal, Vulkan, WebGPU and WebGL2",
+    "Physics, animation, skeletal glTF clips and particles",
+    "glTF models, textures, fonts and procedural geometry",
+    "Audio mixer and native haptics",
+    "Scoreboard, timers and effects for games",
+  ],
+};
+
+/** @nayan-ui/games as a software product (version from the installed package). */
+export const gamesSoftwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": `${GAMES_URL}#software`,
+  name: "@nayan-ui/games",
+  applicationCategory: "GameApplication",
+  operatingSystem: "iOS, Android, Web",
+  description:
+    "50+ ready-made games for React Native apps and React websites, rendered by the Nayan engine.",
+  url: GAMES_URL,
+  downloadUrl: "https://www.npmjs.com/package/@nayan-ui/games",
+  softwareVersion: gamesPackage.version,
+  license: `${GAMES_URL}/licensing`,
+  isAccessibleForFree: true,
+  author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+};
+
+/** Short reference to the games package, for `about` in its documentation pages. */
+export const gamesAbout = {
+  "@type": "SoftwareApplication",
+  "@id": `${GAMES_URL}#software`,
+  name: "@nayan-ui/games",
+};
+
+/** Short reference to the engine, for `about` in its documentation pages. */
+export const engineAbout = {
+  "@type": "SoftwareApplication",
+  "@id": `${ENGINE_URL}#software`,
+  name: "Nayan Engine",
+};

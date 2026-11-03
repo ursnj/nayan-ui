@@ -7,27 +7,16 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style="light" />
-      <Stack
-        screenOptions={{
-          contentStyle: { backgroundColor: COLORS.background },
-          headerStyle: { backgroundColor: COLORS.background },
-          headerTintColor: COLORS.text
-        }}
-      >
-        <Stack.Screen name="index" options={{ headerShown: false, title: 'Examples' }} />
+      <Stack screenOptions={{ contentStyle: { backgroundColor: COLORS.background } }}>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen
           name="[id]"
-          // From the route params, so the title is in place on the first frame. The header floats
-          // over the game, which fills the whole screen and starts its HUD below it; [id].tsx adds
-          // the game-themed background and the settings button.
           options={({ route }) => ({
-            title: findExample((route.params as { id?: string } | undefined)?.id)?.title ?? 'Example',
-            headerTitleAlign: 'center',
+            title: findExample((route.params as { id?: string }).id)?.title ?? 'Game',
             headerTransparent: true,
-            headerShadowVisible: false,
+            headerTitleAlign: 'center',
             headerBackButtonDisplayMode: 'minimal',
-            headerStyle: { backgroundColor: 'transparent' },
-            headerBlurEffect: 'none'
+            headerShadowVisible: false
           })}
         />
       </Stack>

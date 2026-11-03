@@ -25,8 +25,8 @@ export async function generateMetadata({
   const url = `${SITE_URL}/games/${slug}`;
 
   return {
-    title: `Play ${game.name} Online - React & React Native Game`,
-    description: `Play ${game.name} free in your browser. ${game.description} Part of @nayan-ui/games - a collection of ${Object.keys(gamesData).length}+ React Native games.`,
+    title: `Play ${game.name} Online · React & React Native`,
+    description: `Play ${game.name} free online. ${game.description}`,
     keywords: [
       `play ${game.name} online`,
       `${game.name} browser game`,
@@ -45,7 +45,12 @@ export async function generateMetadata({
       type: "article",
       siteName: SITE_NAME,
       images: [
-        { url: `${SITE_URL}/games/${slug}.png`, width: 800, height: 800, alt: `${game.name} Game` },
+        {
+          url: `${SITE_URL}/games/${slug}.png`,
+          width: 512,
+          height: 512,
+          alt: `${game.name} screenshot`,
+        },
       ],
     },
     twitter: {
@@ -82,7 +87,17 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
       playMode: "SinglePlayer",
       potentialAction: { "@type": "PlayAction", target: `${SITE_URL}/games/${slug}` },
       image: `${SITE_URL}/games/${slug}.png`,
+      screenshot: `${SITE_URL}/games/${slug}.png`,
+      inLanguage: "en-US",
+      featureList: game.features,
+      isPartOf: {
+        "@type": "CollectionPage",
+        "@id": `${SITE_URL}/games#page`,
+        name: "50+ ready-made games",
+        url: `${SITE_URL}/games`,
+      },
       author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+      publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
       applicationCategory: "GameApplication",
       operatingSystem: "iOS, Android, Web",
@@ -94,11 +109,12 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
       "@context": "https://schema.org",
       "@type": "HowTo",
       name: `How to Play ${game.name}`,
-      description: `Learn how to play ${game.name}`,
+      description: `How to play ${game.name}, in ${game.howToPlay.length} steps.`,
+      inLanguage: "en-US",
       step: game.howToPlay.map((step, index) => ({
         "@type": "HowToStep",
         position: index + 1,
-        name: `Step ${index + 1}`,
+        name: step.split(/[.;:]/)[0]!.trim(), // The step's first clause, as its short name.
         text: step,
       })),
     },

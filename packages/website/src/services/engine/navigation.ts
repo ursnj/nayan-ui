@@ -15,7 +15,7 @@ export const engineNavigation = [
   {
     slug: "first-game",
     title: "Build your first game",
-    description: "Build a complete tap game with scoring, a countdown, pause and replay.",
+    description: "Start from the repo's games example and see how its Car Racing is built.",
     link: "/game-engine/first-game",
   },
   {

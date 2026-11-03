@@ -156,7 +156,7 @@
       "dependencies": {
         "@monaco-editor/react": "^4.7.0",
         "@napi-rs/canvas": "^0.1.68",
-        "@nayan-ui/engine": "file:./scripts/nayan-ui-engine.tgz",
+        "@nayan-ui/engine": "^1.0.0-beta.4",
         "@nayan-ui/games": "file:./scripts/nayan-ui-games.tgz",
         "@nayan-ui/react": "workspace:*",
         "docx": "^9.5.0",
@@ -649,7 +649,7 @@
 
     "@nayan-ui/cli": ["@nayan-ui/cli@workspace:packages/cli"],
 
-    "@nayan-ui/engine": ["@nayan-ui/engine@./scripts/nayan-ui-engine.tgz", { "peerDependencies": { "expo-asset": "*", "react": "*", "react-native": "*" }, "optionalPeers": ["expo-asset", "react-native"] }, "sha512-PFVimvi4yMI6cx1A3Vn5gaTuO44LK2J56DQI8GSJgmNmuEiyy2fHEE38QBm3zWvCDXMc3NxeC27bx2hSMIhxag=="],
+    "@nayan-ui/engine": ["@nayan-ui/engine@1.0.0-beta.4", "", { "peerDependencies": { "expo-asset": "*", "react": "*", "react-native": "*" }, "optionalPeers": ["expo-asset", "react-native"] }, "sha512-ystravZGJJZ4lKO0dyxMgaHJZezAdsEUSbW9b7pjz33G/SPGxTcsVMjmMqdciOzcT0uNW6O8x6IcSXiypWYmiQ=="],
 
     "@nayan-ui/games": ["@nayan-ui/games@./scripts/nayan-ui-games.tgz", { "peerDependencies": { "@nayan-ui/engine": "^1.0.0-beta.2", "expo-asset": "*", "expo-modules-core": "*", "react": "*", "react-dom": "*", "react-native": "*" }, "optionalPeers": ["expo-asset", "expo-modules-core", "react-dom", "react-native"] }, "sha512-Dvel74b+pNQnvL+ZaCz326Th8Wfn2cLZuzfUoqIHENtfUVIE3pDD7vN/xNKf2nzzck2aGeUvC/IgqI//NgfIxw=="],
 
@@ -2214,8 +2214,6 @@
     "@nayan-ui/cli/commander": ["commander@12.1.0", "", {}, "sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA=="],
 
     "@nayan-ui/cli/ora": ["ora@8.2.0", "", { "dependencies": { "chalk": "^5.3.0", "cli-cursor": "^5.0.0", "cli-spinners": "^2.9.2", "is-interactive": "^2.0.0", "is-unicode-supported": "^2.0.0", "log-symbols": "^6.0.0", "stdin-discarder": "^0.2.2", "string-width": "^7.2.0", "strip-ansi": "^7.1.0" } }, "sha512-weP+BZ8MVNnlCm8c0Qdc1WSWq4Qn7I+9CJGm7Qali6g44e/PUzbjNqJX5NJ9ljlNMosfJvg1fKEGILklK9cwnw=="],
-
-    "@nayan-ui/games/@nayan-ui/engine": ["@nayan-ui/engine@1.0.0-beta.3", "", { "peerDependencies": { "expo-asset": "*", "react": "*", "react-native": "*" }, "optionalPeers": ["expo-asset", "react-native"] }, "sha512-2RqGUuk9CpDblO8n4/fIJ9PoNl9Cr9o5ihz9S6PLt8SP3OpPmgtgRkPZ7GkUe0o/Qfixpj6JFMWQ/3/4bFWJnQ=="],
 
     "@nayan-ui/native/typescript": ["typescript@6.0.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw=="],
 

@@ -430,12 +430,12 @@ on entities, input()/strokes()/sample()/coverage() for games.
 @nayan-ui/games ships its own browser build (lib/web), so its games run in React websites too.
 
 ## Practical engine examples
-- Complete game (shared rules and both platform screens): https://www.nayanui.com/game-engine/first-game
+- Complete game (the repo's examples/games: Car Racing on iOS, Android and the web): https://www.nayanui.com/game-engine/first-game
 - Common recipes: https://www.nayanui.com/game-engine/recipes
 - AI agent instructions (file structure, one API per task, never-do list, game template): https://www.nayanui.com/game-engine/agent-guide
 - Structured API usage summary: https://www.nayanui.com/engine.json
 
-Start with the tap-to-collect game (/game-engine/first-game), then the recipes. Load assets with
+Start from the games example (npx @nayan-ui/cli new my-game -t games; walkthrough at /game-engine/first-game), then the recipes. Load assets with
 loadModel, loadTexture, loadFont, audio.load, createShape and createSolid during setup; the engine caches
 and persists them (native app-private files, web IndexedDB, no eviction). No app-side asset caches.
 clearAssetCache() only from a user action. @nayan-ui/games loads each game behind its own loading screen

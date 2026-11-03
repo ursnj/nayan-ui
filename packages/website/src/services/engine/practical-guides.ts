@@ -4,219 +4,313 @@ export const PracticalGuides: EngineGuide[] = [
   {
     slug: "first-game",
     title: "Build your first game",
-    description: "A complete tap game with a countdown, scoring, pause and replay.",
+    description:
+      "Start from the games example in the Nayan UI repo and see how its Car Racing is built.",
     sections: [
       {
-        id: "what-you-will-build",
-        title: "What you will build",
+        id: "start-from-the-example",
+        title: "Start from the example",
         paragraphs: [
-          "Five spinning cubes and a 15-second clock: tap them all to win, run out of time to lose. Built-in shapes only, so there are no assets to download.",
-          "Three files: shared rules, a hook that owns the world, and one screen for your host (React or React Native).",
+          "The Nayan UI repo has a ready-made games project: examples/games. It holds one complete game, Car Racing, that runs on iOS, Android and the web from the same code. The CLI copies it for you.",
+          "It is the same Car Racing as in Playtura and on nayanui.com/games. The only change is the car, which is loaded from glTF files instead of built in code.",
         ],
         examples: [
           {
-            title: "Files",
-            code: `src/game/
-  tapGame.ts         # rules: no React or platform imports
-  useTapGame.ts      # owns the world (useWorld)
-  TapGamePage.tsx    # React screen
-  TapGameScreen.tsx  # or the React Native screen`,
+            title: "Create and run it",
+            platform: "shell",
+            language: "bash",
+            code: `npx @nayan-ui/cli new my-game -t games   # copy examples/games into ./my-game
+cd my-game                               # go into the project
+bun install                              # install the apps and @nayan-ui/engine from npm
+bun run web                              # play in the browser at http://127.0.0.1:5173
+bun run ios                              # or: bun run android (a development build, not Expo Go)`,
+          },
+        ],
+        note: "Source: github.com/ursnj/nayan-ui/tree/main/examples/games. Its README has the same walkthrough.",
+      },
+      {
+        id: "project-layout",
+        title: "What is in the project",
+        paragraphs: [
+          "Three parts. shared/ holds the game, written once in React Native. mobile/ is an Expo app that renders it. web/ is a Vite app that renders the same component through react-native-web.",
+        ],
+        examples: [
+          {
+            title: "Project layout",
             platform: "shared",
             language: "text",
+            code: `my-game/
+├── shared/                     # the game, used by both apps
+│   ├── index.ts                # exports CarRacing, GameProps, DEFAULT_GAME_SETTINGS
+│   └── src/
+│       ├── games/car-racing/   # the Car Racing game
+│       ├── games/shared/       # the game screen: scoreboard, buttons, loading, results
+│       ├── helpers/            # the settings modal and themes
+│       ├── services/           # GameProps, game ids, themes, sounds
+│       └── assets/             # car models, textures, sounds, font
+├── mobile/src/                 # Expo app (Expo Router)
+│   ├── app/index.tsx           # route /: the list of games
+│   ├── app/[id].tsx            # route /car-racing: the game, full screen
+│   └── examples.ts             # the list of games
+└── web/src/                    # Vite app (React Router)
+    ├── Home.tsx                # route /: the list of games
+    ├── GamePage.tsx            # route /car-racing: the game, full screen
+    └── examples.ts             # the list of games`,
           },
         ],
       },
       {
-        id: "rules",
-        title: "1. The rules",
+        id: "how-car-racing-is-built",
+        title: "How Car Racing is built",
         paragraphs: [
-          "createTapGame fills a world and returns the round's actions. The scoreboard keeps score and runs the countdown in Rust: handlers hold the rule (time up loses), listen feeds the UI.",
-          "There is no frame loop: GameView steps the world, which spins the cubes and advances the clock.",
+          "Car Racing is seven files in shared/src/games/car-racing. The rules have no React, the scene only draws, and the screen connects them to the shared game screen.",
         ],
+        table: {
+          headers: ["File", "What it does"],
+          rows: [
+            [
+              "CarRacing.tsx",
+              "The screen: loads the assets, starts a run and passes the scene, scoreboard and buttons to EngineGameScreen.",
+            ],
+            [
+              "CarRacingConstants.ts",
+              "Tuning (speed, lives, track length), colours, lights and loadAssets().",
+            ],
+            [
+              "CarRacingGame.ts",
+              "The rules: steering, traffic, crashes, scoring, lives, the finish line and the camera.",
+            ],
+            [
+              "CarRacingScene.ts",
+              "What it draws: the curving road, the cars, the city and the horizon.",
+            ],
+            [
+              "CarRacingScenery.ts",
+              "Small roadside meshes: benches, bins, planters, shelters and signs.",
+            ],
+            ["CarRacingFacade.ts", "Which building windows light up at night."],
+            ["CarMeshes.ts", "Loads the car's glTF models and builds the roadside tree."],
+          ],
+        },
         examples: [
           {
-            title: "tapGame.ts",
-            code: `import { effects, type Camera, type Entity, type World } from "@nayan-ui/engine";
-
-export type Status = "ready" | "playing" | "win" | "lose" | "cancel";
-export interface TapView { status: Status; score: number; seconds: number; left: number }
-
-const ROUND_SECONDS = 15;
-const SPOTS = [[-2, 1.5], [0, 1.5], [2, 1.5], [-1, -1], [1, -1]] as const;
-const GREEN = "#33D973";
-export const camera: Camera = { eye: [0, 0, 12], target: [0, 0, 0], fov: 1, ortho: 5 };
-
-export function createTapGame(world: World, onView: (view: TapView) => void) {
-  const targets = new Set<Entity>();
-  let status: Status = "ready";
-  const publish = () => onView({ status, score: world.scoreboard.score,
-    seconds: world.scoreboard.shownSeconds, left: targets.size });
-
-  function finish(result: "win" | "lose" | "cancel") {
-    if (status !== "playing") return; // A round ends once.
-    status = result;
-    world.scoreboard.stop();
-    publish();
-  }
-  function reset() {
-    for (const target of targets) world.despawn(target);
-    targets.clear();
-    for (const [x, y] of SPOTS)
-      targets.add(world.spawn({ mesh: "cube", position: [x, y, 0], scale: 0.9, color: GREEN, spin: [0, 0.5, 0] }));
-    world.scoreboard.reset(0, ROUND_SECONDS); // Ready screen: full, stopped countdown.
-    status = "ready";
-    publish();
-  }
-
-  world.scoreboard.handlers = { onTimeUp: () => finish("lose") }; // The rule.
-  world.scoreboard.listen({ onSecond: publish }); // The UI.
-  reset();
-
-  return {
-    reset,
-    stop: () => finish("cancel"),
-    start() {
-      if (status === "playing") return;
-      if (status !== "ready") reset();
-      status = "playing";
-      world.scoreboard.resume();
-      publish();
-    },
-    tap(x: number, y: number) {
-      const hit = status === "playing" ? world.pick(x, y) : null;
-      if (!hit || !targets.delete(hit.entity)) return;
-      const piece = hit.entity;
-      world.scoreboard.add(100);
-      void effects.pop(world, piece, { scale: 0.9, color: GREEN }).then(() => world.despawn(piece));
-      if (targets.size === 0) finish("win");
-      else publish();
-    },
-  };
-}
-export type TapGame = ReturnType<typeof createTapGame>;`,
+            title: "shared/index.ts",
+            description: "What both apps import from the shared package.",
             platform: "shared",
-            language: "tsx",
+            language: "typescript",
+            code: `// The game: a component that takes GameProps.
+export { CarRacing } from "./src/games/car-racing/CarRacing";
+// Its props and default settings.
+export { DEFAULT_GAME_SETTINGS, type GameProps, type GameSettings } from "./src/services/UtilsService";
+// Theme colours, so an app can paint its header to match.
+export { resolveGameTheme } from "./src/services/ThemeService";`,
           },
         ],
+        note: "Engine features used: World and GameView, loadModel, loadTexture, procedural meshes (merge, lathe, tube, block, ellipsoid), the scoreboard, effects, audio and haptics.",
       },
       {
-        id: "hook",
-        title: "2. Own the world",
+        id: "load-the-car",
+        title: "1. Load the car",
         paragraphs: [
-          "useWorld warms the engine up, creates the world, runs setup and disposes it on unmount (Strict Mode safe). It returns null until ready and reports start-up failures to onError.",
+          "The car is three glTF models: a white body that each car paints its own colour, the glass, and the trim. They load once per app, on native background threads, and every car reuses them.",
         ],
         examples: [
           {
-            title: "useTapGame.ts",
-            code: `import { useState } from "react";
-import { useWorld } from "@nayan-ui/engine";
-import { createTapGame, type TapGame, type TapView } from "./tapGame";
+            title: "shared/src/games/car-racing/CarMeshes.ts",
+            platform: "shared",
+            language: "typescript",
+            code: `let car: Promise<CarMeshes> | undefined; // Loaded once, then shared by every run.
 
-export function useTapGame() {
-  const [game, setGame] = useState<TapGame | null>(null);
-  const [view, setView] = useState<TapView | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const world = useWorld(32, (w) => setGame(createTapGame(w, setView)), [], (e) => setError(e.message));
-  return { world, game, view, error };
+export function loadCarMeshes(): Promise<CarMeshes> {
+  car ??= Promise.all([ // Start loading only on the first call.
+    // White paint: each car tints it.
+    loadModel(require("../../assets/models/car/car_body.glb"), { center: false, shine: 0.85 }),
+    // Windows, glossier.
+    loadModel(require("../../assets/models/car/car_glass.glb"), { center: false, shine: 0.95 }),
+    // Tyres, lights, mirrors in their own colours.
+    loadModel(require("../../assets/models/car/car_trim.glb"), { center: false, shine: 0.25 }),
+  ]).then(([body, glass, trim]) => ({ body, glass, trim })); // One object with the three models.
+  car.catch(() => (car = undefined)); // If loading fails, try again next time.
+  return car; // Every caller gets the same promise.
 }`,
-            platform: "shared",
-            language: "tsx",
           },
         ],
       },
       {
-        id: "screen",
+        id: "spawn-a-car",
+        title: "2. Put cars on the road",
+        paragraphs: [
+          "Each car is an invisible root entity with the three models attached. The game moves only the root; the body takes the car's colour.",
+        ],
+        examples: [
+          {
+            title: "shared/src/games/car-racing/CarRacingScene.ts",
+            platform: "shared",
+            language: "typescript",
+            code: `export function spawnCar(world: World, a: Assets, paint: Color, position: Vec3, night: boolean) {
+  const model = a.car; // The loaded body, glass and trim.
+  const root = world.spawn({ mesh: "none", position }); // An invisible root: the game moves this.
+  // The models sit with their wheels on the ground.
+  const offset: Vec3 = [0, -model.size[1] / 2, 0];
+  // The paint, in this car's colour.
+  const body = world.spawn({ mesh: model.body, parent: root, position: offset, color: paint });
+  const glass = world.spawn({ mesh: model.glass, parent: root, position: offset }); // The windows.
+  // Tyres, lights and the rest.
+  const trim = world.spawn({ mesh: model.trim, parent: root, position: offset });
+  // Everything the game needs to move or restyle it.
+  const car = { root, body, glass, trim, lights: [] as Entity[] };
+  // At night, glowing headlights and a tail-light bar.
+  setCarNight(world, car, night, model.size[1]);
+  return car;
+}`,
+          },
+        ],
+      },
+      {
+        id: "the-screen",
         title: "3. The screen",
         paragraphs: [
-          "The screen holds the HUD, the buttons and GameView. paused suspends stepping and drawing, so the clock freezes; taps are ignored while paused.",
+          "CarRacing.tsx hands the run to EngineGameScreen, the shared game screen. It renders the GameView, the scoreboard, the Start/Stop button, the results card and the settings modal, so the game itself only supplies the scene and its numbers.",
         ],
         examples: [
           {
-            title: "TapGamePage.tsx",
-            description: "React (Vite or a Next.js client page). The container needs a height.",
-            code: `"use client";
-import { useState } from "react";
-import { GameView } from "@nayan-ui/engine";
-import { camera } from "./tapGame";
-import { useTapGame } from "./useTapGame";
+            title: "shared/src/games/car-racing/CarRacing.tsx (part)",
+            platform: "shared",
+            language: "typescript",
+            code: `<EngineGameScreen
+  gameId={GAME_IDS.CAR_RACING} // Picks the game's title, loading scene and sounds.
+  settings={settings} // Sounds, haptics, theme and where the scoreboard starts (from the app).
+  onSettingsChange={onSettingsChange} // The settings modal saves its changes here.
+  source={game.world} // The engine world this run draws.
+  camera={game.camera} // The chase camera behind the player's car.
+  light={night ? NIGHT_LIGHT : DAY_LIGHT} // Day or night lighting.
+  background={night ? NIGHT_SKY : SKY} // The sky colour.
+  onUpdate={onUpdate} // Runs the rules every frame (tick).
+  onDrag={onDrag} // Dragging steers the car.
+  // The scoreboard.
+  columns={[scoreColumn(score), livesColumn(lives, LIVES), textColumn("TRACK", \`\${left} m\`)]}
+  playing={phase === "playing"} // Shows Start or Stop.
+  onStart={handleStartGame} // Start pressed.
+  onStop={handleStopGame} // Stop pressed: report a cancel and start a fresh run.
+  // The results card.
+  gameOver={
+    showResults // After the crash or the finish has been seen:
+      ? { title: won ? "FINISHED!" : "CRASHED!", score, buttonText: "Race Again!", onPlayAgain: handleResetGame }
+      : null // No results card during the race.
+  }
+/>`,
+          },
+        ],
+      },
+      {
+        id: "host-on-mobile",
+        title: "4. Show it on mobile",
+        paragraphs: [
+          "The Expo app opens each game at /<id> with Expo Router. The header floats over the game, and settings.offset tells the game to start its scoreboard below it.",
+        ],
+        examples: [
+          {
+            title: "mobile/src/app/[id].tsx (part)",
+            platform: "native",
+            language: "typescript",
+            code: `const { id } = useLocalSearchParams<{ id: string }>(); // The route's id: "car-racing".
+const example = findExample(id); // The game for that id, from examples.ts.
+const headerHeight = useHeaderHeight(); // The header's height, status bar included.
+// What the game reads.
+const [settings, setSettings] = useState<GameSettings>({ ...DEFAULT_GAME_SETTINGS, theme: deviceTheme });
 
-export default function TapGamePage() {
-  const { world, game, view, error } = useTapGame();
-  const [paused, setPaused] = useState(false);
-  if (error) return <p role="alert">{error}</p>;
-  if (!world || !game || !view) return <p>Loading…</p>;
-  const playing = view.status === "playing";
-  const act = (action: () => void) => () => { setPaused(false); action(); };
-  return (
-    <main style={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
-      <p>{view.status} · Score {view.score} · Time {view.seconds} · Left {view.left}</p>
-      <div style={{ display: "flex", gap: 8 }}>
-        <button disabled={playing} onClick={act(game.start)}>Start</button>
-        <button disabled={!playing} onClick={act(game.stop)}>Stop</button>
-        <button disabled={!playing} onClick={() => setPaused((p) => !p)}>{paused ? "Resume" : "Pause"}</button>
-        <button onClick={act(game.reset)}>Reset</button>
-      </div>
-      <GameView source={world} camera={camera} paused={paused}
-        onTap={paused ? undefined : game.tap} style={{ flex: 1, minHeight: 0 }} />
-    </main>
-  );
-}`,
+return (
+  <example.Screen
+    settings={{ ...settings, offset: headerHeight }} // The scoreboard starts below the header.
+    onSettingsChange={setSettings} // The settings modal saves its changes here.
+    // No swipe-back mid-race.
+    onPlayingChange={(playing) => navigation.setOptions({ gestureEnabled: !playing })}
+  />
+);`,
+          },
+        ],
+      },
+      {
+        id: "host-on-the-web",
+        title: "5. Show it on the web",
+        paragraphs: [
+          "The Vite app opens each game at /<id> with React Router. react-native-web renders the game's React Native code, and createKeyboardInput turns keys into the same gestures as touch.",
+        ],
+        examples: [
+          {
+            title: "web/src/GamePage.tsx (part)",
             platform: "react",
-            language: "tsx",
+            language: "typescript",
+            code: `const example = findExample(useParams().id); // The game for this route's id.
+// Scoreboard below the toolbar.
+const [settings, setSettings] = useState<GameSettings>({ ...DEFAULT_GAME_SETTINGS, offset: 70 });
+
+useEffect(() => {
+  // Arrow keys and A/D drag, so they steer.
+  const keyboard = createKeyboardInput(surface.current!, { mode: "drag" });
+  return () => keyboard.dispose(); // Stop listening when the page closes.
+}, []);
+
+return (
+  <div ref={surface} tabIndex={0}> {/* The game draws here; tabIndex lets it take the keys. */}
+    <Suspense fallback={<p>Loading…</p>}> {/* Shown while the game's code downloads. */}
+      {/* The same component as on mobile. */}
+      <example.Screen settings={settings} onSettingsChange={setSettings} />
+    </Suspense>
+  </div>
+);`,
           },
           {
-            title: "TapGameScreen.tsx",
-            description: "React Native, in a development build (not Expo Go). Mount it in a flex: 1 parent.",
-            code: `import { useState } from "react";
-import { Button, Text, View } from "react-native";
-import { GameView } from "@nayan-ui/engine";
-import { camera } from "./tapGame";
-import { useTapGame } from "./useTapGame";
-
-export default function TapGameScreen() {
-  const { world, game, view, error } = useTapGame();
-  const [paused, setPaused] = useState(false);
-  if (error) return <Text accessibilityRole="alert">{error}</Text>;
-  if (!world || !game || !view) return <Text>Loading…</Text>;
-  const playing = view.status === "playing";
-  const act = (action: () => void) => () => { setPaused(false); action(); };
-  return (
-    <View style={{ flex: 1 }}>
-      <Text>{view.status} · Score {view.score} · Time {view.seconds} · Left {view.left}</Text>
-      <View style={{ flexDirection: "row", gap: 8 }}>
-        <Button title="Start" disabled={playing} onPress={act(game.start)} />
-        <Button title="Stop" disabled={!playing} onPress={act(game.stop)} />
-        <Button title={paused ? "Resume" : "Pause"} disabled={!playing} onPress={() => setPaused((p) => !p)} />
-        <Button title="Reset" onPress={act(game.reset)} />
-      </View>
-      <GameView source={world} camera={camera} paused={paused}
-        onTap={paused ? undefined : game.tap} style={{ flex: 1 }} />
-    </View>
-  );
-}`,
-            platform: "native",
-            language: "tsx",
+            title: "web/vite.config.ts (part)",
+            description: "The browser build's two changes to the shared React Native code.",
+            platform: "react",
+            language: "typescript",
+            code: `resolve: {
+  // React Native components render as HTML.
+  alias: [{ find: /^react-native$/, replacement: "react-native-web" }],
+  // A file's .web.ts version wins in the browser.
+  extensions: [".web.tsx", ".web.ts", ".tsx", ".ts", ".js"],
+},
+// Plus a small plugin: require("./engine.wav") becomes a URL that Vite copies into the build.`,
+          },
+        ],
+      },
+      {
+        id: "add-your-game",
+        title: "Add your own game",
+        paragraphs: [
+          "Put the game in shared/ and list it in both apps. Each app then gives it a route at /<id> with no other changes.",
+        ],
+        examples: [
+          {
+            title: "Steps",
+            platform: "shared",
+            language: "text",
+            code: `1. Write the game in shared/src/games/<id>/ (copy car-racing as a starting point).
+2. Add its id to GAME_IDS in shared/src/services/UtilsService.ts.
+3. Add its title and instructions to GAMES_METADATA in shared/src/services/GamesMetadata.ts.
+4. Export its component from shared/index.ts.
+5. Add { id, title, description, Screen } to mobile/src/examples.ts and web/src/examples.ts.
+6. Run bun run typecheck, then bun run web and bun run ios.`,
           },
         ],
       },
       {
         id: "try-it",
         title: "Try it",
-        paragraphs: [
-          "Run through the checklist; each line is one expected result. Then change one thing: fewer ROUND_SECONDS, more SPOTS, or confetti in finish('win') (see Recipes).",
-        ],
+        paragraphs: ["Each line is one expected result."],
         examples: [
           {
             title: "Checklist",
-            code: `[ ] Ready: score 0, time 15, left 5, cubes spinning
-[ ] Start, tap two cubes: each pops, score +100
-[ ] Pause: time and taps frozen; Resume continues
-[ ] Tap all five: status win, score 500
-[ ] Start again: five fresh cubes, full clock
-[ ] Wait out the clock: status lose
-[ ] Stop mid-round: status cancel; Reset: back to ready`,
             platform: "shared",
             language: "text",
+            code: `[ ] The list shows Car Racing; opening it shows the loading scene, then the race
+[ ] Start: the car drives; drag (or arrow keys / A D) to steer
+[ ] Pass a car: the score goes up
+[ ] Hit a car from behind: one heart is lost; side swipes only slow you down
+[ ] Settings: Dark Mode switches to the night city with lit windows and headlights
+[ ] Finish the 2000 m track, or lose all lives: the results card shows; Race Again starts over
+[ ] Back (header arrow, toolbar button or browser back): returns to the list`,
           },
         ],
       },
@@ -377,7 +471,9 @@ export function TapToPaint({ world }: { world: World }) {
       {
         id: "chase",
         title: "Chase the player",
-        paragraphs: ["Set follow once and the engine steers the chaser along the ground; follow: null stops it."],
+        paragraphs: [
+          "Set follow once and the engine steers the chaser along the ground; follow: null stops it.",
+        ],
         examples: [
           {
             title: "Chaser",
@@ -589,8 +685,16 @@ export function makeFacing(world: World, model: Entity, stick: JoystickState) {
         table: {
           headers: ["File", "Contains", "Never"],
           rows: [
-            ["gameConstants.ts", "Tuning, colors, asset sources, loadAssets()", "Worlds or entities"],
-            ["game.ts", "createGame(world, …): rules and round actions", "React, DOM, react-native"],
+            [
+              "gameConstants.ts",
+              "Tuning, colors, asset sources, loadAssets()",
+              "Worlds or entities",
+            ],
+            [
+              "game.ts",
+              "createGame(world, …): rules and round actions",
+              "React, DOM, react-native",
+            ],
             ["useGame.ts", "useWorld + createGame", "Rules or per-frame state"],
             ["GameScreen.tsx / GamePage.tsx", "HUD, buttons, GameView", "Its own frame loop"],
           ],
@@ -625,9 +729,15 @@ export function makeFacing(world: World, model: Entity, stick: JoystickState) {
             ["Collisions", "world.forEachCollision in onUpdate"],
             ["Tap / drag", "onTap + world.pick; onDrag + world.screenToWorld"],
             ["Tweens", "await world.animate(e, target, options)"],
-            ["Effects", "effects.confetti / sparkle / shatter / splash / sparks / explosion / dust / flash"],
+            [
+              "Effects",
+              "effects.confetti / sparkle / shatter / splash / sparks / explosion / dust / flash",
+            ],
             ["Clear a piece", "await effects.pop(world, e, { scale }); world.despawn(e)"],
-            ["Score, lives, clock", "scoreboard.reset(lives, seconds), resume(), add(); handlers = rules, listen = UI"],
+            [
+              "Score, lives, clock",
+              "scoreboard.reset(lives, seconds), resume(), add(); handlers = rules, listen = UI",
+            ],
             ["Delays", "world.after(s, fn); cancelTimer(id); cancelTimers() on reset"],
             ["Colors", "'#33B3FF' or 0..1 tuples; toColor for numbers"],
             ["Flat boards", "light={frontLight(direction, ambient)}"],
