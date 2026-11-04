@@ -7,3 +7,98 @@ body {
   background: #0f172a;
   font-family: system-ui, sans-serif;
 }
+
+.game-toolbar {
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+}
+
+.game-toolbar-button {
+  pointer-events: auto;
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--game-border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--game-surface) 80%, transparent);
+  color: var(--game-text);
+  box-shadow: 0 10px 15px -3px #0000001a;
+  backdrop-filter: blur(12px);
+  transition:
+    color 150ms,
+    border-color 150ms;
+  cursor: pointer;
+}
+
+@media (min-width: 640px) {
+  .game-toolbar-button {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+.game-toolbar-button:hover,
+.game-toolbar-button[aria-expanded='true'] {
+  color: var(--game-accent);
+  border-color: color-mix(in srgb, var(--game-accent) 40%, transparent);
+}
+
+.game-toolbar-button:focus-visible,
+.game-popover-close:focus-visible {
+  outline: 2px solid var(--game-accent);
+  outline-offset: 2px;
+}
+
+.game-keyboard-popover {
+  pointer-events: auto;
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  width: min(360px, calc(100vw - 32px));
+  max-height: calc(100dvh - 96px);
+  overflow: hidden;
+  padding: 20px;
+  border: 1px solid var(--game-border);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--game-surface) 90%, transparent);
+  color: var(--game-text);
+  box-shadow: 0 25px 50px -12px #0003;
+  backdrop-filter: blur(20px);
+}
+
+.game-keyboard-popover:popover-open {
+  display: flex;
+  flex-direction: column;
+}
+
+.game-popover-close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.game-popover-close:hover {
+  background: var(--game-border);
+}
+
+.game-keyboard-popover kbd {
+  display: inline-block;
+  min-width: 24px;
+  padding: 2px 6px;
+  border: 1px solid var(--game-border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--game-surface);
+  font-size: 12px;
+  text-align: center;
+}
+
+[data-testid='game-settings-popover'] {
+  backdrop-filter: blur(20px);
+}

@@ -50,7 +50,7 @@ games/
 2. **Each app lists its games.** `examples.ts` holds `{ id, title, description, Screen }` for each game. The list screen shows them, and each opens at `/<id>`.
 3. **Each app hosts the game full screen.**
    - Mobile (`app/[id].tsx`): a transparent header with a back arrow, the title and a settings button. `settings.offset` is the header's height, so the scoreboard starts below it. Swipe-back is off during a race.
-   - Web (`GamePage.tsx`): a floating back button and settings button. Arrow keys or A/D steer, and Enter presses Start/Stop.
+   - Web (`GamePage.tsx`): the website's floating Back, Keyboard Controls and Settings toolbar. The scoreboard sits beside it on wide screens and below it on phones. Arrow keys or A/D steer, and Enter presses Start/Stop. Opening the keyboard guide pauses the race; dismiss it or press Escape to resume.
 4. **Assets use `require(...)`.** Metro bundles them on mobile. On the web, the plugin in `web/vite.config.ts` turns each `require` into a URL.
 
 ## How Car Racing is built
