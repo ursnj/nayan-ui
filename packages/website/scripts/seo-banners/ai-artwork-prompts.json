@@ -29,7 +29,7 @@
     {
       "path": "/react/installation",
       "title": "Install Nayan UI for React",
-      "category": "React · Get started",
+      "category": "React \u00b7 Get started",
       "theme": [
         "#6366f1",
         "#0ea5e9"
@@ -174,7 +174,7 @@
         "#6366f1",
         "#0ea5e9"
       ],
-      "description": "Compact labels for tags, filters and choices A Chip is a compact label for a piece of metadata — a status, a version, a category. It carries a colour and a variant so several chips in a row can be told apart at a glance, and it is deliberately quieter than a badge used for counts."
+      "description": "Compact labels for tags, filters and choices A Chip is a compact label for a piece of metadata \u2014 a status, a version, a category. It carries a colour and a variant so several chips in a row can be told apart at a glance, and it is deliberately quieter than a badge used for counts."
     },
     {
       "path": "/react/confirm-alert",
@@ -194,7 +194,7 @@
         "#6366f1",
         "#0ea5e9"
       ],
-      "description": "Type a date segment by segment A Date Field takes a date typed in segments — day, month, year — with no calendar attached. Each segment validates on its own and can be stepped with the arrow keys, which makes it faster than a picker for a date somebody already knows."
+      "description": "Type a date segment by segment A Date Field takes a date typed in segments \u2014 day, month, year \u2014 with no calendar attached. Each segment validates on its own and can be stepped with the arrow keys, which makes it faster than a picker for a date somebody already knows."
     },
     {
       "path": "/react/date-picker",
@@ -544,7 +544,7 @@
         "#6366f1",
         "#0ea5e9"
       ],
-      "description": "Type a time segment by segment A Time Field takes a time typed in segments — hour, minute, and the period where the locale uses one. It reads and writes a time value rather than a string, so a schedule or a reminder gets a value it can compare and store."
+      "description": "Type a time segment by segment A Time Field takes a time typed in segments \u2014 hour, minute, and the period where the locale uses one. It reads and writes a time value rather than a string, so a schedule or a reminder gets a value it can compare and store."
     },
     {
       "path": "/react/toast",
@@ -564,7 +564,7 @@
         "#6366f1",
         "#0ea5e9"
       ],
-      "description": "A button that stays pressed A Toggle Button is a button that stays pressed, for a setting that belongs on a toolbar rather than in a form — bold, italic, mute, pin. It reports its state through its appearance, so a row of them reads as the current formatting."
+      "description": "A button that stays pressed A Toggle Button is a button that stays pressed, for a setting that belongs on a toolbar rather than in a form \u2014 bold, italic, mute, pin. It reports its state through its appearance, so a row of them reads as the current formatting."
     },
     {
       "path": "/react/toolbar",
@@ -599,7 +599,7 @@
     {
       "path": "/react-native/installation",
       "title": "Install Nayan UI for React Native",
-      "category": "React Native · Get started",
+      "category": "React Native \u00b7 Get started",
       "theme": [
         "#8b5cf6",
         "#d946ef"
@@ -1014,7 +1014,7 @@
         "#f43f5e",
         "#f97316"
       ],
-      "description": "Rotate PDF pages by 90°, 180°, or 270° Rotate PDF pages by 90°, 180°, or 270°"
+      "description": "Rotate PDF pages by 90\u00b0, 180\u00b0, or 270\u00b0 Rotate PDF pages by 90\u00b0, 180\u00b0, or 270\u00b0"
     },
     {
       "path": "/tools/watermark-pdf",
@@ -2094,7 +2094,7 @@
         "#f97316",
         "#ec4899"
       ],
-      "description": "Paint with native brushes, layers and undo, and reuse the artwork inside games. Documents and canvases A paint screen with undo Brushes and tools Shapes and fills Layers and the view Save and load Export SVG and PNG Use a drawing as a game texture Paint from game input Read strokes Score what was drawn A DrawingDocument holds the artwork in the Rust core: strokes, layers, tool settings and undo history. DrawingCanvas shows a document and feeds it touch, pencil or mouse input without going through React state. new DrawingDocument(width, height, pixelRatio = 2) takes document units, the coordinates every method uses; await warmUpEngine() first (required on the web). Dispose it on unmount: after that its methods throw, so check isDisposed in late callbacks. Editing methods return the new DrawingState and onChange delivers it after each stroke, so drive buttons from state.canUndo and state.canRedo. undo(), redo() and clear() share one history with strokes and layer edits. setBrush(options) sets the whole brush at once; updateControls(partial) changes single settings (tool, color, width, shape…) and reset: true restores the defaults. Current values are in state.controls."
+      "description": "Paint with native brushes, layers and undo, and reuse the artwork inside games. Documents and canvases A paint screen with undo Brushes and tools Shapes and fills Layers and the view Save and load Export SVG and PNG Use a drawing as a game texture Paint from game input Read strokes Score what was drawn A DrawingDocument holds the artwork in the Rust core: strokes, layers, tool settings and undo history. DrawingCanvas shows a document and feeds it touch, pencil or mouse input without going through React state. new DrawingDocument(width, height, pixelRatio = 2) takes document units, the coordinates every method uses; await warmUpEngine() first (required on the web). Dispose it on unmount: after that its methods throw, so check isDisposed in late callbacks. Editing methods return the new DrawingState and onChange delivers it after each stroke, so drive buttons from state.canUndo and state.canRedo. undo(), redo() and clear() share one history with strokes and layer edits. setBrush(options) sets the whole brush at once; updateControls(partial) changes single settings (tool, color, width, shape\u2026) and reset: true restores the defaults. Current values are in state.controls."
     },
     {
       "path": "/game-engine/models-textures",
@@ -2104,7 +2104,7 @@
         "#f97316",
         "#ec4899"
       ],
-      "description": "Load glTF models and images in parallel, recover from failures and map textures. Load assets in parallel Errors and retry Models and glTF limits Textures, tint and atlas regions Pass a URL string (or a bundler import) on the web, and require(...) or a URI in React Native; add glb and gltf to Metro's assetExts and install expo-asset for bundled Android release assets. Loaders start the engine themselves and cache by source and options, so a second call returns the same promise. On iOS and Android, loadTexture, loadModel, loadFont and audio.load decode on native background threads, so Promise.all loads a level in parallel while the loading screen animates, and meshes register with the renderer inside Rust. The web's single-threaded core decodes on the main thread, so load before play, never in onUpdate. A failed load rejects with an Error naming the loader and source (loadTexture: couldn't load …), with the original error as cause. Failures aren't cached, so calling the loader again retries; a file the core rejects discards its saved bytes, while network and start-up failures keep them. Offer a Retry action rather than retrying from onUpdate, and ignore results that arrive after unmount. loadModel reads glTF 2.0: a .glb, or a .gltf with embedded buffers; external buffer files are rejected, so export a self-contained GLB. It keeps meshes, node transforms, vertex and material colors, one base-color texture per model, skins and clips, and decodes EXT_meshopt_compression, but it isn't a general importer for every material extension. Every entity using a model draws in one instanced call, and colliders sized from it fit its bounding box. Ship third-party models with their licences."
+      "description": "Load glTF models and images in parallel, recover from failures and map textures. Load assets in parallel Errors and retry Models and glTF limits Textures, tint and atlas regions Pass a URL string (or a bundler import) on the web, and require(...) or a URI in React Native; add glb and gltf to Metro's assetExts and install expo-asset for bundled Android release assets. Loaders start the engine themselves and cache by source and options, so a second call returns the same promise. On iOS and Android, loadTexture, loadModel, loadFont and audio.load decode on native background threads, so Promise.all loads a level in parallel while the loading screen animates, and meshes register with the renderer inside Rust. The web's single-threaded core decodes on the main thread, so load before play, never in onUpdate. A failed load rejects with an Error naming the loader and source (loadTexture: couldn't load \u2026), with the original error as cause. Failures aren't cached, so calling the loader again retries; a file the core rejects discards its saved bytes, while network and start-up failures keep them. Offer a Retry action rather than retrying from onUpdate, and ignore results that arrive after unmount. loadModel reads glTF 2.0: a .glb, or a .gltf with embedded buffers; external buffer files are rejected, so export a self-contained GLB. It keeps meshes, node transforms, vertex and material colors, one base-color texture per model, skins and clips, and decodes EXT_meshopt_compression, but it isn't a general importer for every material extension. Every entity using a model draws in one instanced call, and colliders sized from it fit its bounding box. Ship third-party models with their licences."
     },
     {
       "path": "/game-engine/text-fonts",
@@ -2124,7 +2124,7 @@
         "#f97316",
         "#ec4899"
       ],
-      "description": "Build meshes in code from paths, profiles, tubes and merged parts. Geometry and createShape Paths and extrusion Lathe profiles Tubes Merge parts, recolor and smooth Builders return Geometry: a Float32Array of 11 floats per vertex (position, normal, RGB color, UV) and a Uint32Array of triangle indices. createShape(geometry, options) registers it as a Model for any entity's mesh, and equal geometry and options reuse the same model. Mesh ids are app-wide and never freed (about 4,080), so build each mesh once after warmUpEngine (useWorld's setup runs after it), keep it at module scope and spawn many entities from it. shapeGeometry(name, { color }) copies a built-in shape (cube, sphere, plane, cylinder, cone, capsule, torus, roundedBox) for merging. Path builds 2D outlines like SVG (x right, y down, world units) with chaining methods, and Path.fromSVG parses path data (M L H V C S Q T A Z, absolute and relative). extrude(path, options) fills it into a solid facing +Z, flipped so it stands as drawn. depth defaults to 0.2, and 0 gives a one-sided flat face. fillRule defaults to nonzero; evenodd makes every inner contour a hole. lathe(profile, options) spins a profile around the Y axis, like a potter's wheel: a Path (x is the radius, y down) or [radius, height] points. Open ends away from the axis are capped, and a sweep below 2π closes its cut faces too. Make displace equal at u = 0 and 1 to avoid a seam. Color callbacks paint vertices, so more segments, capRings or cutSteps give finer patterns at a vertex cost."
+      "description": "Build meshes in code from paths, profiles, tubes and merged parts. Geometry and createShape Paths and extrusion Lathe profiles Tubes Merge parts, recolor and smooth Builders return Geometry: a Float32Array of 11 floats per vertex (position, normal, RGB color, UV) and a Uint32Array of triangle indices. createShape(geometry, options) registers it as a Model for any entity's mesh, and equal geometry and options reuse the same model. Mesh ids are app-wide and never freed (about 4,080), so build each mesh once after warmUpEngine (useWorld's setup runs after it), keep it at module scope and spawn many entities from it. shapeGeometry(name, { color }) copies a built-in shape (cube, sphere, plane, cylinder, cone, capsule, torus, roundedBox) for merging. Path builds 2D outlines like SVG (x right, y down, world units) with chaining methods, and Path.fromSVG parses path data (M L H V C S Q T A Z, absolute and relative). extrude(path, options) fills it into a solid facing +Z, flipped so it stands as drawn. depth defaults to 0.2, and 0 gives a one-sided flat face. fillRule defaults to nonzero; evenodd makes every inner contour a hole. lathe(profile, options) spins a profile around the Y axis, like a potter's wheel: a Path (x is the radius, y down) or [radius, height] points. Open ends away from the axis are capped, and a sweep below 2\u03c0 closes its cut faces too. Make displace equal at u = 0 and 1 to avoid a seam. Color callbacks paint vertices, so more segments, capRings or cutSteps give finer patterns at a vertex cost."
     },
     {
       "path": "/game-engine/surfaces-lofts",
@@ -2134,7 +2134,7 @@
         "#f97316",
         "#ec4899"
       ],
-      "description": "Sample parametric surfaces, loft smooth bodies and sculpt geometry. Parametric surfaces Lofts, blocks and ellipsoids Smooth curves and deformation parametricSurface(sample, options) turns (u, v) from 0 to 1 into positions, for terrain, cloth, wings and ribbons. Triangles wind by dP/du × dP/dv, so order coordinates so the front faces outward. loft(sections, options) runs a smooth closed body through rounded-rectangle cross-sections along Z: vehicle shells, cabins, shoes. It needs at least two sections in strictly increasing or decreasing z. block(w, h, d, square = 6, color?) is a rounded box with flat end caps, and ellipsoid(radii, color?, around = 16) an exact ellipsoid. All three return Geometry to merge or deform before createShape. smoothCurve(points) returns a smooth Hermite function through increasing [x, value] points, clamped past the ends, for profiles and tuning curves. deformGeometry(geometry, (position, uv) => Vec3) moves every vertex of a copy and recomputes its normals. Deform smooth surfaces before adding hard-edged parts; it can't change a registered model or keep a rig."
+      "description": "Sample parametric surfaces, loft smooth bodies and sculpt geometry. Parametric surfaces Lofts, blocks and ellipsoids Smooth curves and deformation parametricSurface(sample, options) turns (u, v) from 0 to 1 into positions, for terrain, cloth, wings and ribbons. Triangles wind by dP/du \u00d7 dP/dv, so order coordinates so the front faces outward. loft(sections, options) runs a smooth closed body through rounded-rectangle cross-sections along Z: vehicle shells, cabins, shoes. It needs at least two sections in strictly increasing or decreasing z. block(w, h, d, square = 6, color?) is a rounded box with flat end caps, and ellipsoid(radii, color?, around = 16) an exact ellipsoid. All three return Geometry to merge or deform before createShape. smoothCurve(points) returns a smooth Hermite function through increasing [x, value] points, clamped past the ends, for profiles and tuning curves. deformGeometry(geometry, (position, uv) => Vec3) moves every vertex of a copy and recomputes its normals. Deform smooth surfaces before adding hard-edged parts; it can't change a registered model or keep a rig."
     },
     {
       "path": "/game-engine/solid-modelling",
@@ -2189,7 +2189,7 @@
     {
       "path": "/games/installation",
       "title": "Install the Games",
-      "category": "Games · Docs",
+      "category": "Games \u00b7 Docs",
       "theme": [
         "#ec4899",
         "#8b5cf6"
@@ -2199,7 +2199,7 @@
     {
       "path": "/games/api-reference",
       "title": "Games API Reference",
-      "category": "Games · Docs",
+      "category": "Games \u00b7 Docs",
       "theme": [
         "#ec4899",
         "#8b5cf6"
@@ -2209,7 +2209,7 @@
     {
       "path": "/games/build-a-game",
       "title": "Build an Engine Game",
-      "category": "Games · Docs",
+      "category": "Games \u00b7 Docs",
       "theme": [
         "#ec4899",
         "#8b5cf6"
@@ -2219,7 +2219,7 @@
     {
       "path": "/games/licensing",
       "title": "Games Licensing",
-      "category": "Games · Docs",
+      "category": "Games \u00b7 Docs",
       "theme": [
         "#ec4899",
         "#8b5cf6"
@@ -2234,7 +2234,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Block Blast is a spatial puzzle game played on a 9×9 grid. Three block shapes wait in the tray below the board; drag any of them onto the grid, and whenever a row or column is completely filled it clears with a rippling pop. Every placed block scores 50 points and every cleared line adds 500, so setting up multi-line clears pays off. Survive the five-minute timer to win, but if none of the three tray pieces fits anywhere on the board, the game is over. 9×9 board with a tray of three pieces, each slot refilled as soon as you use it 20 different shapes, from single blocks to lines, squares, L, T and S pieces Ghost preview shows where the piece will land and turns red when it doesn't fit Rows and columns the drop would complete light up before you let go Tap Start, then drag a piece from the tray at the bottom onto the grid Release over a spot where the ghost preview fits; invalid drops fly back to the tray Fill a complete row or column to clear it — several can clear at once"
+      "description": "Block Blast is a spatial puzzle game played on a 9\u00d79 grid. Three block shapes wait in the tray below the board; drag any of them onto the grid, and whenever a row or column is completely filled it clears with a rippling pop. Every placed block scores 50 points and every cleared line adds 500, so setting up multi-line clears pays off. Survive the five-minute timer to win, but if none of the three tray pieces fits anywhere on the board, the game is over. 9\u00d79 board with a tray of three pieces, each slot refilled as soon as you use it 20 different shapes, from single blocks to lines, squares, L, T and S pieces Ghost preview shows where the piece will land and turns red when it doesn't fit Rows and columns the drop would complete light up before you let go Tap Start, then drag a piece from the tray at the bottom onto the grid Release over a spot where the ghost preview fits; invalid drops fly back to the tray Fill a complete row or column to clear it \u2014 several can clear at once"
     },
     {
       "path": "/games/connect-em-all",
@@ -2244,7 +2244,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Connect Em All is a dot-chaining puzzle on a 7×7 board of five colors. Drag your finger through neighbouring dots of the same color — straight or diagonal — and let go once the chain has three or more dots to clear them. The dots above fall into the gaps and new ones drop in from the top, so the board never runs out. Close a loop of four or more dots and every dot of that color on the board clears at once for a bonus. Score as many points as you can before the five-minute timer ends. 7×7 board of glossy dots in five colors Chains connect horizontally, vertically and diagonally Clear chains of three or more; drag back over the last dot to undo a step Loops of four or more dots clear every dot of that color plus a 250-point bonus Tap Start, then touch a dot and drag through adjacent dots of the same color Neighbours count in all eight directions, including diagonals Drag back onto the previous dot to remove the last dot from your chain"
+      "description": "Connect Em All is a dot-chaining puzzle on a 7\u00d77 board of five colors. Drag your finger through neighbouring dots of the same color \u2014 straight or diagonal \u2014 and let go once the chain has three or more dots to clear them. The dots above fall into the gaps and new ones drop in from the top, so the board never runs out. Close a loop of four or more dots and every dot of that color on the board clears at once for a bonus. Score as many points as you can before the five-minute timer ends. 7\u00d77 board of glossy dots in five colors Chains connect horizontally, vertically and diagonally Clear chains of three or more; drag back over the last dot to undo a step Loops of four or more dots clear every dot of that color plus a 250-point bonus Tap Start, then touch a dot and drag through adjacent dots of the same color Neighbours count in all eight directions, including diagonals Drag back onto the previous dot to remove the last dot from your chain"
     },
     {
       "path": "/games/tile-home",
@@ -2254,7 +2254,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Tile Home is a mahjong-style triple-matching puzzle. Seventy-two raised tiles showing 12 kinds of 3D fruit are stacked across three offset layers; tiles that are still covered are shaded darker and cannot be picked. Tap an uncovered tile to send it into the seven-slot tray, where it slots in next to its own kind. Three of a kind clear for 500 points, and the SETS counter shows how many of the 24 sets remain. Clear the board within five minutes to win with a time bonus, but if the tray fills without a match, or the timer runs out, the game is over. 72 tiles — 6 of each of 12 3D fruits — stacked across three offset layers Covered tiles are shaded and lighten as the tiles above them are removed Seven-slot tray that groups each tile next to matching ones Three of a kind clear automatically for 500 points Tap Start, then tap any uncovered (unshaded) tile to send it to the tray above the board Each tile lands next to tiles of the same fruit in the tray Three matching tiles in the tray clear automatically and score 500"
+      "description": "Tile Home is a mahjong-style triple-matching puzzle. Seventy-two raised tiles showing 12 kinds of 3D fruit are stacked across three offset layers; tiles that are still covered are shaded darker and cannot be picked. Tap an uncovered tile to send it into the seven-slot tray, where it slots in next to its own kind. Three of a kind clear for 500 points, and the SETS counter shows how many of the 24 sets remain. Clear the board within five minutes to win with a time bonus, but if the tray fills without a match, or the timer runs out, the game is over. 72 tiles \u2014 6 of each of 12 3D fruits \u2014 stacked across three offset layers Covered tiles are shaded and lighten as the tiles above them are removed Seven-slot tray that groups each tile next to matching ones Three of a kind clear automatically for 500 points Tap Start, then tap any uncovered (unshaded) tile to send it to the tray above the board Each tile lands next to tiles of the same fruit in the tray Three matching tiles in the tray clear automatically and score 500"
     },
     {
       "path": "/games/arrows",
@@ -2264,7 +2264,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Arrows is a directional untangling puzzle. A 12×16 board is completely tiled with bent arrows, each winding through several cells and pointing off the board in one direction. Tap an arrow whose straight path ahead to the edge is clear and it slides along its body and flies off for 500 points; tap a blocked one and it shakes red while the arrow in its way pulses amber. Every board is generated so it can always be cleared. Clear every arrow within five minutes to win with a time bonus; if time runs out, the round scores nothing. 12×16 board tiled with bent multi-cell arrows Every board is randomly generated and guaranteed solvable Blocked arrows shake red and highlight the arrow in their way 500 points per arrow cleared Tap Start, then tap any arrow on the board If nothing lies between its head and the board edge, it flies off and scores 500 If the way is blocked, the arrow shakes and the blocking arrow pulses — clear that one first"
+      "description": "Arrows is a directional untangling puzzle. A 12\u00d716 board is completely tiled with bent arrows, each winding through several cells and pointing off the board in one direction. Tap an arrow whose straight path ahead to the edge is clear and it slides along its body and flies off for 500 points; tap a blocked one and it shakes red while the arrow in its way pulses amber. Every board is generated so it can always be cleared. Clear every arrow within five minutes to win with a time bonus; if time runs out, the round scores nothing. 12\u00d716 board tiled with bent multi-cell arrows Every board is randomly generated and guaranteed solvable Blocked arrows shake red and highlight the arrow in their way 500 points per arrow cleared Tap Start, then tap any arrow on the board If nothing lies between its head and the board edge, it flies off and scores 500 If the way is blocked, the arrow shakes and the blocking arrow pulses \u2014 clear that one first"
     },
     {
       "path": "/games/candy-crush",
@@ -2274,7 +2274,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Candy Crush is a timed match-3 puzzle on a 7 × 7 board of glossy 3D candies in four colors. Swipe a candy into its neighbour; the swap stays only if it lines up three or more of one color in a row or column, otherwise the candies bump and spring back. Matched candies pop for 50 points each, the candies above fall into the gaps and new ones drop in, and every cascade that follows scores 1.25× the one before. Line up five to create a color bomb that clears every candy of the color you swap it with — and you have five minutes to build the biggest score you can. 7 × 7 board of glossy 3D candies in four colors Swipe-to-swap controls: invalid swaps bump and spring back Cascades score 1.25× the previous step for growing chain combos Match five to create a color bomb that clears a whole color at double points Tap Start, then press a candy and swipe it toward a neighbouring candy to swap them The swap only sticks if it lines up 3 or more candies of the same color in a row or column Matched candies clear for 50 points each, candies above fall and new ones drop in"
+      "description": "Candy Crush is a timed match-3 puzzle on a 7 \u00d7 7 board of glossy 3D candies in four colors. Swipe a candy into its neighbour; the swap stays only if it lines up three or more of one color in a row or column, otherwise the candies bump and spring back. Matched candies pop for 50 points each, the candies above fall into the gaps and new ones drop in, and every cascade that follows scores 1.25\u00d7 the one before. Line up five to create a color bomb that clears every candy of the color you swap it with \u2014 and you have five minutes to build the biggest score you can. 7 \u00d7 7 board of glossy 3D candies in four colors Swipe-to-swap controls: invalid swaps bump and spring back Cascades score 1.25\u00d7 the previous step for growing chain combos Match five to create a color bomb that clears a whole color at double points Tap Start, then press a candy and swipe it toward a neighbouring candy to swap them The swap only sticks if it lines up 3 or more candies of the same color in a row or column Matched candies clear for 50 points each, candies above fall and new ones drop in"
     },
     {
       "path": "/games/penguin-run",
@@ -2284,7 +2284,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Penguin Run is a 3D lane runner where a penguin dashes on its own down an ancient jungle causeway toward a finish line 1000 metres away. Swipe to switch between three lanes, jump over broken gaps in the paving and slide under spiked gateways. Every run lays out a fresh track, with a trail of coins and the occasional rare gem to collect. You have three lives — each mistake costs one and leaves you briefly untouchable — and reaching the finish line wins the run and sets the penguin dancing. 3D penguin runner on a jungle temple causeway with a chase camera A freshly generated 1000 m track on every run Three-lane swipe controls with jump and slide moves Broken gaps to jump and spiked gateways to slide under Swipe left or right to switch lanes Swipe up to jump over broken gaps in the track Swipe down to slide under spiked gateways"
+      "description": "Penguin Run is a 3D lane runner where a penguin dashes on its own down an ancient jungle causeway toward a finish line 1000 metres away. Swipe to switch between three lanes, jump over broken gaps in the paving and slide under spiked gateways. Every run lays out a fresh track, with a trail of coins and the occasional rare gem to collect. You have three lives \u2014 each mistake costs one and leaves you briefly untouchable \u2014 and reaching the finish line wins the run and sets the penguin dancing. 3D penguin runner on a jungle temple causeway with a chase camera A freshly generated 1000 m track on every run Three-lane swipe controls with jump and slide moves Broken gaps to jump and spiked gateways to slide under Swipe left or right to switch lanes Swipe up to jump over broken gaps in the track Swipe down to slide under spiked gateways"
     },
     {
       "path": "/games/treasure-hunt",
@@ -2294,7 +2294,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Treasure Hunt is a 3D exploration adventure where a realistic, fully animated explorer roams a freshly generated wilderness of grassy hills, forests, rocks, a winding river with three bridges and open stone cave passages. Swipe and hold to walk, drag farther to run, and tap to punch the patrolling robots that chase you when they spot you. Collect all 24 diamonds and defeat all 8 robots to complete the expedition. You have five health points — each robot strike costs one, and losing them all ends the run. Realistic animated 3D explorer with walking, running and punching moves A new seeded wilderness map on every expedition Hills, forests, a river with three bridges and cave passages to explore Swipe-and-hold movement with walk and run speeds, plus tap-to-punch combat Swipe and hold to walk in a direction, drag farther to run, and release to stop Tap to punch — another finger can tap to punch while you keep moving Walk over diamonds to collect them (200 points each)"
+      "description": "Treasure Hunt is a 3D exploration adventure where a realistic, fully animated explorer roams a freshly generated wilderness of grassy hills, forests, rocks, a winding river with three bridges and open stone cave passages. Swipe and hold to walk, drag farther to run, and tap to punch the patrolling robots that chase you when they spot you. Collect all 24 diamonds and defeat all 8 robots to complete the expedition. You have five health points \u2014 each robot strike costs one, and losing them all ends the run. Realistic animated 3D explorer with walking, running and punching moves A new seeded wilderness map on every expedition Hills, forests, a river with three bridges and cave passages to explore Swipe-and-hold movement with walk and run speeds, plus tap-to-punch combat Swipe and hold to walk in a direction, drag farther to run, and release to stop Tap to punch \u2014 another finger can tap to punch while you keep moving Walk over diamonds to collect them (200 points each)"
     },
     {
       "path": "/games/car-racing",
@@ -2304,7 +2304,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Car Racing puts you behind the wheel of a red car on a curving, climbing three-lane road lined with lamps, trees, buildings and billboards. Drag across the screen to steer and weave past slower traffic: every car you pass scores 500 points. Running nose-first into the back of a car costs one of your three lives and slows you down, while touching a car alongside only shoves it aside — hit it hard enough sideways and it tumbles off the road in flames without costing you a life. Reach the finish gate at 2,000 metres with lives to spare to win. Dark mode turns the race into a night drive with glowing lamps and headlights. A 2,000-metre sprint on a curving, climbing three-lane road, with metres to the finish shown in the scoreboard Smooth, relative drag steering — the car moves by how far your finger moves, wherever you start 3 lives and 500 points for every car you pass Real physics wrecks: crashed cars tumble, slide and burn on the road Press Start to begin the race Drag left or right anywhere on the screen to steer across the road Pass cars to score 500 points each"
+      "description": "Car Racing puts you behind the wheel of a red car on a curving, climbing three-lane road lined with lamps, trees, buildings and billboards. Drag across the screen to steer and weave past slower traffic: every car you pass scores 500 points. Running nose-first into the back of a car costs one of your three lives and slows you down, while touching a car alongside only shoves it aside \u2014 hit it hard enough sideways and it tumbles off the road in flames without costing you a life. Reach the finish gate at 2,000 metres with lives to spare to win. Dark mode turns the race into a night drive with glowing lamps and headlights. A 2,000-metre sprint on a curving, climbing three-lane road, with metres to the finish shown in the scoreboard Smooth, relative drag steering \u2014 the car moves by how far your finger moves, wherever you start 3 lives and 500 points for every car you pass Real physics wrecks: crashed cars tumble, slide and burn on the road Press Start to begin the race Drag left or right anywhere on the screen to steer across the road Pass cars to score 500 points each"
     },
     {
       "path": "/games/bike-racing",
@@ -2314,7 +2314,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Bike Racing puts you on an orange motorcycle on the same curving three-lane road as Car Racing, but at a much faster pace. Your rider pulls a wheelie off the start line and leans into every turn while the traffic bikes weave gently within their lanes. Drag to steer, pass bikes for 500 points each, and avoid running your front wheel into another bike's tail, which costs one of your three lives. Side contact only shoves the other bike away, sending it skidding or crashing off the road. Reach the finish at 2,000 metres with a life left to win; dark mode rides at night. A fast 2,000-metre sprint — your bike cruises half again as fast as the car in Car Racing Relative drag steering with the bike and rider leaning into turns Traffic bikes that weave within their lanes 3 lives and 500 points for each bike you pass Press Start — your rider launches with a wheelie Drag left or right anywhere on the screen to steer and lean through traffic Pass bikes to score 500 points each"
+      "description": "Bike Racing puts you on an orange motorcycle on the same curving three-lane road as Car Racing, but at a much faster pace. Your rider pulls a wheelie off the start line and leans into every turn while the traffic bikes weave gently within their lanes. Drag to steer, pass bikes for 500 points each, and avoid running your front wheel into another bike's tail, which costs one of your three lives. Side contact only shoves the other bike away, sending it skidding or crashing off the road. Reach the finish at 2,000 metres with a life left to win; dark mode rides at night. A fast 2,000-metre sprint \u2014 your bike cruises half again as fast as the car in Car Racing Relative drag steering with the bike and rider leaning into turns Traffic bikes that weave within their lanes 3 lives and 500 points for each bike you pass Press Start \u2014 your rider launches with a wheelie Drag left or right anywhere on the screen to steer and lean through traffic Pass bikes to score 500 points each"
     },
     {
       "path": "/games/play-with-tua",
@@ -2324,7 +2324,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Play With Tua is a relaxed, no-pressure playground starring Tua, an animated 3D character. Start a session, then tap the scene to step through ten actions or pick one directly from the action strip: standing, waving, winking, walking, running, jumping, dancing, laughing, fighting and falling. Each action repeats until you choose another, with sound effects timed to Tua's footsteps, jumps and laughs. Drag across the scene to turn Tua and see every side. There is no winning or losing — the scoreboard simply counts how many moves you have tried. An animated 3D character with ten skeletal animations Action strip for choosing any move directly, plus tap-to-cycle Drag to rotate Tua and view the character from any angle Sound effects synced to footsteps, jumps, landings, waves and laughter Press Start Game or tap Tua to begin Tap the scene to switch to the next action Or tap an action in the strip to pick one directly"
+      "description": "Play With Tua is a relaxed, no-pressure playground starring Tua, an animated 3D character. Start a session, then tap the scene to step through ten actions or pick one directly from the action strip: standing, waving, winking, walking, running, jumping, dancing, laughing, fighting and falling. Each action repeats until you choose another, with sound effects timed to Tua's footsteps, jumps and laughs. Drag across the scene to turn Tua and see every side. There is no winning or losing \u2014 the scoreboard simply counts how many moves you have tried. An animated 3D character with ten skeletal animations Action strip for choosing any move directly, plus tap-to-cycle Drag to rotate Tua and view the character from any angle Sound effects synced to footsteps, jumps, landings, waves and laughter Press Start Game or tap Tua to begin Tap the scene to switch to the next action Or tap an action in the strip to pick one directly"
     },
     {
       "path": "/games/bubble-shooter",
@@ -2334,7 +2334,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Bubble Shooter puts a pyramid of 35 bubbles in four colors at the top of the board and a shooter at the bottom. Drag to aim along a dotted guide that bounces off the side walls, then let go — or simply tap where you want to shoot. A bubble sticks where it touches another bubble or the ceiling, and any group of three or more touching bubbles of one color pops for 200 points each. Clear every bubble within five minutes to win; if the timer runs out first, the game is over. Starting pyramid of 35 bubbles (9 on top, one fewer each row) in four colors Dotted aim guide that shows wall bounces and stops at the first bubble it meets Drag-to-aim and release, or tap to shoot straight at a point Bank shots off the side walls Tap Start, then drag on the board to aim the shooter (up to 72° either side of straight up) Release to fire, or tap a spot to aim and shoot there in one go Shots bounce off the side walls and stick where they touch a bubble or the ceiling"
+      "description": "Bubble Shooter puts a pyramid of 35 bubbles in four colors at the top of the board and a shooter at the bottom. Drag to aim along a dotted guide that bounces off the side walls, then let go \u2014 or simply tap where you want to shoot. A bubble sticks where it touches another bubble or the ceiling, and any group of three or more touching bubbles of one color pops for 200 points each. Clear every bubble within five minutes to win; if the timer runs out first, the game is over. Starting pyramid of 35 bubbles (9 on top, one fewer each row) in four colors Dotted aim guide that shows wall bounces and stops at the first bubble it meets Drag-to-aim and release, or tap to shoot straight at a point Bank shots off the side walls Tap Start, then drag on the board to aim the shooter (up to 72\u00b0 either side of straight up) Release to fire, or tap a spot to aim and shoot there in one go Shots bounce off the side walls and stick where they touch a bubble or the ceiling"
     },
     {
       "path": "/games/block-breaker",
@@ -2344,7 +2344,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Block Breaker is a classic brick-breaking arcade game. Drag anywhere on the screen to slide your paddle and keep the ball bouncing up into a wall of 40 bricks; where the ball lands on the paddle sets its rebound angle. Each brick scores 200 points plus a combo bonus for every brick broken since the ball last touched the paddle. Broken bricks sometimes drop power-ups: a wider paddle, two extra balls, or an extra life. Break every brick to win; lose all three lives or run out of the five-minute timer and the game is over. Wall of 40 bricks in 8 columns and 5 rows Relative drag control: slide anywhere and the paddle moves by the same distance Paddle angle control — hits near the edge send the ball out at up to 60° Combo scoring: 200 per brick plus 150 for each brick already broken since the last paddle touch Tap Start; the ball launches from the centre of the paddle Drag anywhere on the screen to slide the paddle left and right Bounce the ball into the bricks — each brick breaks in one hit"
+      "description": "Block Breaker is a classic brick-breaking arcade game. Drag anywhere on the screen to slide your paddle and keep the ball bouncing up into a wall of 40 bricks; where the ball lands on the paddle sets its rebound angle. Each brick scores 200 points plus a combo bonus for every brick broken since the ball last touched the paddle. Broken bricks sometimes drop power-ups: a wider paddle, two extra balls, or an extra life. Break every brick to win; lose all three lives or run out of the five-minute timer and the game is over. Wall of 40 bricks in 8 columns and 5 rows Relative drag control: slide anywhere and the paddle moves by the same distance Paddle angle control \u2014 hits near the edge send the ball out at up to 60\u00b0 Combo scoring: 200 per brick plus 150 for each brick already broken since the last paddle touch Tap Start; the ball launches from the centre of the paddle Drag anywhere on the screen to slide the paddle left and right Bounce the ball into the bricks \u2014 each brick breaks in one hit"
     },
     {
       "path": "/games/fruit-ninja",
@@ -2374,7 +2374,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Flappy Bird is a one-touch arcade challenge in a 3D meadow. Tap to make the bird flap upward; between taps it falls under gravity. A new pair of green pipes arrives every 2.5 seconds with a gap to fly through, and each pair you pass scores 500 points. Brick walls run along the top and bottom of the play area. Survive for two minutes to win, but touching a pipe or a brick wall ends the run instantly. Classic one-touch control — the bird flaps the moment your finger lands 3D bird that leans with its speed, flapping and blinking as it flies Pipe pairs every 2.5 seconds with randomly placed gaps 500 points for every pipe pair passed Tap Start, then tap the screen to make the bird flap upward Between taps the bird falls with gravity Fly through the gap between each pair of pipes"
+      "description": "Flappy Bird is a one-touch arcade challenge in a 3D meadow. Tap to make the bird flap upward; between taps it falls under gravity. A new pair of green pipes arrives every 2.5 seconds with a gap to fly through, and each pair you pass scores 500 points. Brick walls run along the top and bottom of the play area. Survive for two minutes to win, but touching a pipe or a brick wall ends the run instantly. Classic one-touch control \u2014 the bird flaps the moment your finger lands 3D bird that leans with its speed, flapping and blinking as it flies Pipe pairs every 2.5 seconds with randomly placed gaps 500 points for every pipe pair passed Tap Start, then tap the screen to make the bird flap upward Between taps the bird falls with gravity Fly through the gap between each pair of pipes"
     },
     {
       "path": "/games/dino-jump",
@@ -2384,7 +2384,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Dino Jump is a runner set in a 3D desert. Your dinosaur runs automatically while small and large cacti scroll toward it; tap to jump over them. Every second you survive scores 200 points, and each cactus you hit costs one of your three lives. Run into a bonus mushroom for 1,000 points and a life back. Last out the two-minute timer to win; lose all three lives and the game is over. Animated 3D dinosaur running across a scrolling desert One-tap jumping with no double jumps Small and large cacti to clear Bonus mushrooms worth 1,000 points that restore a life (up to three) Tap Start; the dinosaur starts running on its own Tap the screen to jump — you can only jump while on the ground Clear the small and large cacti coming toward you"
+      "description": "Dino Jump is a runner set in a 3D desert. Your dinosaur runs automatically while small and large cacti scroll toward it; tap to jump over them. Every second you survive scores 200 points, and each cactus you hit costs one of your three lives. Run into a bonus mushroom for 1,000 points and a life back. Last out the two-minute timer to win; lose all three lives and the game is over. Animated 3D dinosaur running across a scrolling desert One-tap jumping with no double jumps Small and large cacti to clear Bonus mushrooms worth 1,000 points that restore a life (up to three) Tap Start; the dinosaur starts running on its own Tap the screen to jump \u2014 you can only jump while on the ground Clear the small and large cacti coming toward you"
     },
     {
       "path": "/games/snakes-and-ladders",
@@ -2394,7 +2394,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Snakes and Ladders brings the classic board game to a 3D wooden 10×10 board. You race the computer: tap the die on your turn, and your pawn hops forward cell by cell. Land on one of the nine ladders to climb up, or on one of the eight snakes' heads to slide down to its tail. A six earns another roll, but three sixes in a row lose the turn, and you must land on 100 exactly. The first player to reach 100 wins. 3D 10×10 board with 8 snakes and 9 ladders Two-player race: you against a computer opponent Animated die roll, cell-by-cell pawn hops and slides along snakes and ladders Roll a six for another turn; three sixes in a row lose the turn Tap Start, then tap the die below the board on your turn Your pawn moves forward by the number rolled Land at the foot of a ladder to climb to its top"
+      "description": "Snakes and Ladders brings the classic board game to a 3D wooden 10\u00d710 board. You race the computer: tap the die on your turn, and your pawn hops forward cell by cell. Land on one of the nine ladders to climb up, or on one of the eight snakes' heads to slide down to its tail. A six earns another roll, but three sixes in a row lose the turn, and you must land on 100 exactly. The first player to reach 100 wins. 3D 10\u00d710 board with 8 snakes and 9 ladders Two-player race: you against a computer opponent Animated die roll, cell-by-cell pawn hops and slides along snakes and ladders Roll a six for another turn; three sixes in a row lose the turn Tap Start, then tap the die below the board on your turn Your pawn moves forward by the number rolled Land at the foot of a ladder to climb to its top"
     },
     {
       "path": "/games/ludo-king",
@@ -2404,7 +2404,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Ludo King is the classic dice-and-race board game, played as you (green) against an AI opponent (red) on a 3D cross-shaped board. Tap the die to roll, then tap one of your highlighted tokens to move it — a six brings a token out of your yard, and landing on an opponent's token off a safe cell sends it back home. Rolling a six, capturing a token or getting one home earns another roll, but three sixes in a row forfeit your turn. Tokens must land on the center exactly to finish, and the first side to get all four tokens home wins. Classic Ludo rules: you versus an AI opponent on a full four-color board AI opponent that weighs captures, safe cells and danger before moving Animated 3D die that tumbles and bounces to rest, with tokens hopping cell by cell Extra roll for a six, a capture or getting a token home; three sixes lose the turn Tap Start, then tap the die below the board to roll it on your turn Tap one of your highlighted green tokens to move it by the number rolled Roll a 6 to bring a token out of your yard onto its starting cell"
+      "description": "Ludo King is the classic dice-and-race board game, played as you (green) against an AI opponent (red) on a 3D cross-shaped board. Tap the die to roll, then tap one of your highlighted tokens to move it \u2014 a six brings a token out of your yard, and landing on an opponent's token off a safe cell sends it back home. Rolling a six, capturing a token or getting one home earns another roll, but three sixes in a row forfeit your turn. Tokens must land on the center exactly to finish, and the first side to get all four tokens home wins. Classic Ludo rules: you versus an AI opponent on a full four-color board AI opponent that weighs captures, safe cells and danger before moving Animated 3D die that tumbles and bounces to rest, with tokens hopping cell by cell Extra roll for a six, a capture or getting a token home; three sixes lose the turn Tap Start, then tap the die below the board to roll it on your turn Tap one of your highlighted green tokens to move it by the number rolled Roll a 6 to bring a token out of your yard onto its starting cell"
     },
     {
       "path": "/games/dots-and-boxes",
@@ -2414,7 +2414,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Dots and Boxes is the classic pen-and-paper strategy game, played against an AI opponent on a 6 × 6 board of boxes (7 × 7 dots) rendered in 3D. You and the AI take turns tapping to draw a line between two neighbouring dots; closing the fourth side of a box claims it for 2,000 points and earns another line. The AI always takes a box when it can and otherwise avoids handing you one, so careful play matters. When every line is drawn, you win if you have claimed more boxes than the AI — a tie counts as a loss. Classic dots and boxes rules on a 6 × 6 box grid (7 × 7 dots) AI opponent that takes free boxes and avoids drawing a box's third side Extra turn for every box you close, so chains can be taken in one go 2,000 points per claimed box, shown live for you and the AI Tap Start, then tap between two neighbouring dots to draw a line Close the fourth side of a box to claim it in your color and score 2,000 points Claiming a box gives you another line; otherwise the turn passes to the AI"
+      "description": "Dots and Boxes is the classic pen-and-paper strategy game, played against an AI opponent on a 6 \u00d7 6 board of boxes (7 \u00d7 7 dots) rendered in 3D. You and the AI take turns tapping to draw a line between two neighbouring dots; closing the fourth side of a box claims it for 2,000 points and earns another line. The AI always takes a box when it can and otherwise avoids handing you one, so careful play matters. When every line is drawn, you win if you have claimed more boxes than the AI \u2014 a tie counts as a loss. Classic dots and boxes rules on a 6 \u00d7 6 box grid (7 \u00d7 7 dots) AI opponent that takes free boxes and avoids drawing a box's third side Extra turn for every box you close, so chains can be taken in one go 2,000 points per claimed box, shown live for you and the AI Tap Start, then tap between two neighbouring dots to draw a line Close the fourth side of a box to claim it in your color and score 2,000 points Claiming a box gives you another line; otherwise the turn passes to the AI"
     },
     {
       "path": "/games/whack-a-mole",
@@ -2424,7 +2424,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Whack A Mole is a quick reflex game set in a 3D meadow with nine holes arranged in a 3 × 3 grid. Furry moles pop up in random free holes — the first after a second, then every 1.05 to 1.5 seconds — and duck back down after two seconds if you don't get them. Tap a mole while it's up to bonk it for 500 points, with a burst of impact streaks and dust. There are no lives to lose: the game simply ends when the two-minute timer runs out, and your score is what you whacked. Nine holes in a 3 × 3 grid in a 3D meadow with day and night scenes Moles pop up in random free holes every 1.05 to 1.5 seconds Each mole stays up for two seconds before ducking back 500 points for every mole you whack Tap Start, then tap a mole while it is out of its hole to whack it Each mole you whack scores 500 points Moles duck back down after two seconds if you don't hit them"
+      "description": "Whack A Mole is a quick reflex game set in a 3D meadow with nine holes arranged in a 3 \u00d7 3 grid. Furry moles pop up in random free holes \u2014 the first after a second, then every 1.05 to 1.5 seconds \u2014 and duck back down after two seconds if you don't get them. Tap a mole while it's up to bonk it for 500 points, with a burst of impact streaks and dust. There are no lives to lose: the game simply ends when the two-minute timer runs out, and your score is what you whacked. Nine holes in a 3 \u00d7 3 grid in a 3D meadow with day and night scenes Moles pop up in random free holes every 1.05 to 1.5 seconds Each mole stays up for two seconds before ducking back 500 points for every mole you whack Tap Start, then tap a mole while it is out of its hole to whack it Each mole you whack scores 500 points Moles duck back down after two seconds if you don't hit them"
     },
     {
       "path": "/games/pac-man",
@@ -2434,7 +2434,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Pac-Man brings the classic maze chase to a 3D board: guide Pac-Man through a 19 × 21 maze, eat every dot and avoid Blinky, Pinky, Inky and Clyde. Each ghost has its own targeting — Blinky chases directly, Pinky aims ahead of you, Inky flanks using Blinky's position and Clyde backs off when he gets close — and they alternate between scatter and chase phases. Eat one of the power pellets and the ghosts turn blue for seven seconds, letting you eat them for points that double in a chain. Clear every dot within five minutes to win; lose all three lives or run out of time and the game is over. Classic 19 × 21 maze with dots, power pellets and side tunnels that wrap across Four ghosts with distinct targeting: chaser, ambusher, flanker and wanderer Scatter and chase phases, with ghosts released from the house on a timer Power pellets frighten ghosts for 7 seconds, flashing in the last 2 Tap Start, then swipe up, down, left or right to steer Pac-Man; the turn is taken at the next opening Eat dots for 100 points each and power pellets for 500 Touching a normal ghost costs a life and sends everyone back to their start positions"
+      "description": "Pac-Man brings the classic maze chase to a 3D board: guide Pac-Man through a 19 \u00d7 21 maze, eat every dot and avoid Blinky, Pinky, Inky and Clyde. Each ghost has its own targeting \u2014 Blinky chases directly, Pinky aims ahead of you, Inky flanks using Blinky's position and Clyde backs off when he gets close \u2014 and they alternate between scatter and chase phases. Eat one of the power pellets and the ghosts turn blue for seven seconds, letting you eat them for points that double in a chain. Clear every dot within five minutes to win; lose all three lives or run out of time and the game is over. Classic 19 \u00d7 21 maze with dots, power pellets and side tunnels that wrap across Four ghosts with distinct targeting: chaser, ambusher, flanker and wanderer Scatter and chase phases, with ghosts released from the house on a timer Power pellets frighten ghosts for 7 seconds, flashing in the last 2 Tap Start, then swipe up, down, left or right to steer Pac-Man; the turn is taken at the next opening Eat dots for 100 points each and power pellets for 500 Touching a normal ghost costs a life and sends everyone back to their start positions"
     },
     {
       "path": "/games/space-fighter",
@@ -2454,7 +2454,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Colors Sort is a timed sorting puzzle with six glass tubes on a rack. Five colors of four pucks each are shuffled into five tubes, with the sixth left empty, and each tube holds up to five pucks. Tap a tube to lift its top puck, then tap another tube to drop it there — any color can go on any color as long as the tube isn't full — or tap the same tube to put it back. A tube gets a cork when it holds a single complete color, and gathering all five colors within two minutes wins, with a faster sort scoring higher. Six tubes, five colors and twenty pucks, freshly shuffled every game Each tube holds five pucks, leaving one spare slot to maneuver Simple tap-to-lift, tap-to-drop controls with smooth 3D puck moves Any puck can go on any color — only a full tube refuses a puck Tap Start, then tap a tube to lift its top puck Tap another tube to drop the puck on top, or tap the same tube to put it back A full tube (five pucks) or an empty pick-up shakes and refuses the move"
+      "description": "Colors Sort is a timed sorting puzzle with six glass tubes on a rack. Five colors of four pucks each are shuffled into five tubes, with the sixth left empty, and each tube holds up to five pucks. Tap a tube to lift its top puck, then tap another tube to drop it there \u2014 any color can go on any color as long as the tube isn't full \u2014 or tap the same tube to put it back. A tube gets a cork when it holds a single complete color, and gathering all five colors within two minutes wins, with a faster sort scoring higher. Six tubes, five colors and twenty pucks, freshly shuffled every game Each tube holds five pucks, leaving one spare slot to maneuver Simple tap-to-lift, tap-to-drop controls with smooth 3D puck moves Any puck can go on any color \u2014 only a full tube refuses a puck Tap Start, then tap a tube to lift its top puck Tap another tube to drop the puck on top, or tap the same tube to put it back A full tube (five pucks) or an empty pick-up shakes and refuses the move"
     },
     {
       "path": "/games/popit-fidget",
@@ -2464,7 +2464,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Popit Fidget recreates the popular silicone pop-it toy as a 3D sheet of 36 bubbles in a 6 × 6 grid, with a vivid color for each row. Touch a bubble and it pops the moment your finger comes down — the dome squashes flat and a dimple springs out in its place, with a pop sound and haptic. Each bubble is worth 250 points, and popping all 36 before the two-minute timer runs out wins the game, with a bonus for the time you have left. Run out of time first and the round ends. Realistic 3D pop-it sheet with 36 bubbles in a 6 × 6 grid Bubbles pop instantly on touch-down, like the real toy Satisfying squash-and-dimple animation with a burst of flecks Pop sound and light haptic on every bubble (respecting settings) Tap Start, then touch any raised bubble to pop it Each popped bubble scores 250 points and stays popped Pop all 36 bubbles to clear the sheet and win"
+      "description": "Popit Fidget recreates the popular silicone pop-it toy as a 3D sheet of 36 bubbles in a 6 \u00d7 6 grid, with a vivid color for each row. Touch a bubble and it pops the moment your finger comes down \u2014 the dome squashes flat and a dimple springs out in its place, with a pop sound and haptic. Each bubble is worth 250 points, and popping all 36 before the two-minute timer runs out wins the game, with a bonus for the time you have left. Run out of time first and the round ends. Realistic 3D pop-it sheet with 36 bubbles in a 6 \u00d7 6 grid Bubbles pop instantly on touch-down, like the real toy Satisfying squash-and-dimple animation with a burst of flecks Pop sound and light haptic on every bubble (respecting settings) Tap Start, then touch any raised bubble to pop it Each popped bubble scores 250 points and stays popped Pop all 36 bubbles to clear the sheet and win"
     },
     {
       "path": "/games/word-search",
@@ -2474,7 +2474,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Word Search hides eight everyday words of four to six letters in a 10 × 10 grid of 3D letter tiles, picked from a list of over 1,600 words so each game is different. Words can run along rows, columns or diagonals in any of the eight directions, forwards or backwards. Drag from the first letter to the last along a straight line and release to check it; a correct word scores 1,000 points and is highlighted in its own color. Find all eight within five minutes to win, with a bonus for the time left. 10 × 10 grid of 3D letter tiles with eight hidden words each game Over 1,600 common four- to six-letter words for fresh puzzles Words hidden in all eight directions, including diagonals and backwards Drag-to-select with a selection bar that snaps to straight lines Tap Start, then look at the strip of words to find Drag from the first letter of a word to its last along a row, column or diagonal Release to check: a match scores 1,000 points and is highlighted"
+      "description": "Word Search hides eight everyday words of four to six letters in a 10 \u00d7 10 grid of 3D letter tiles, picked from a list of over 1,600 words so each game is different. Words can run along rows, columns or diagonals in any of the eight directions, forwards or backwards. Drag from the first letter to the last along a straight line and release to check it; a correct word scores 1,000 points and is highlighted in its own color. Find all eight within five minutes to win, with a bonus for the time left. 10 \u00d7 10 grid of 3D letter tiles with eight hidden words each game Over 1,600 common four- to six-letter words for fresh puzzles Words hidden in all eight directions, including diagonals and backwards Drag-to-select with a selection bar that snaps to straight lines Tap Start, then look at the strip of words to find Drag from the first letter of a word to its last along a row, column or diagonal Release to check: a match scores 1,000 points and is highlighted"
     },
     {
       "path": "/games/number-search",
@@ -2484,7 +2484,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Number Search is the digit twin of Word Search: eight numbers of four to six digits are hidden in a 10 × 10 grid of 3D digit tiles, picked from a list of over 600 familiar patterns. Numbers can run along rows, columns or diagonals in any of the eight directions, forwards or backwards. Drag along a straight line from the first digit to the last and release; any line that spells a number on the list counts, even a copy that appeared by chance, and scores 1,000 points. Find all eight within five minutes to win, with a bonus for the time left. 10 × 10 grid of 3D digit tiles with eight hidden numbers each game Over 600 recognisable four- to six-digit numbers for fresh puzzles Numbers hidden in all eight directions, including diagonals and backwards Drag-to-select with a selection bar that snaps to straight lines Tap Start, then look at the strip of numbers to find Drag from the first digit of a number to its last along a row, column or diagonal Release to check: a match scores 1,000 points and is highlighted"
+      "description": "Number Search is the digit twin of Word Search: eight numbers of four to six digits are hidden in a 10 \u00d7 10 grid of 3D digit tiles, picked from a list of over 600 familiar patterns. Numbers can run along rows, columns or diagonals in any of the eight directions, forwards or backwards. Drag along a straight line from the first digit to the last and release; any line that spells a number on the list counts, even a copy that appeared by chance, and scores 1,000 points. Find all eight within five minutes to win, with a bonus for the time left. 10 \u00d7 10 grid of 3D digit tiles with eight hidden numbers each game Over 600 recognisable four- to six-digit numbers for fresh puzzles Numbers hidden in all eight directions, including diagonals and backwards Drag-to-select with a selection bar that snaps to straight lines Tap Start, then look at the strip of numbers to find Drag from the first digit of a number to its last along a row, column or diagonal Release to check: a match scores 1,000 points and is highlighted"
     },
     {
       "path": "/games/tank-1990",
@@ -2494,7 +2494,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Tank 1990 is a retro tank battle inspired by Battle City. You drive a tank across a 13×17 arena of brick and steel walls while enemy tanks roll in from the top, at most four at a time and fifteen in all. Your tank fires automatically whenever its gun is ready, so the challenge is in steering, lining up shots and protecting the base walled in steel at the bottom of the map. Destroy all fifteen enemies to win; lose all three lives, or let an enemy shell reach your base, and the battle is over. Swipe-and-hold driving with automatic firing Six hand-built arenas, picked at random and sometimes mirrored Destructible brick walls (two hits each) and indestructible steel Steel-walled base to defend — enemy shells that reach it end the game Press Start, then swipe and hold in a direction to drive your tank; lift your finger to stop Your tank fires automatically in the direction it faces whenever its gun has cooled down Shoot brick walls to open new paths — steel walls cannot be destroyed"
+      "description": "Tank 1990 is a retro tank battle inspired by Battle City. You drive a tank across a 13\u00d717 arena of brick and steel walls while enemy tanks roll in from the top, at most four at a time and fifteen in all. Your tank fires automatically whenever its gun is ready, so the challenge is in steering, lining up shots and protecting the base walled in steel at the bottom of the map. Destroy all fifteen enemies to win; lose all three lives, or let an enemy shell reach your base, and the battle is over. Swipe-and-hold driving with automatic firing Six hand-built arenas, picked at random and sometimes mirrored Destructible brick walls (two hits each) and indestructible steel Steel-walled base to defend \u2014 enemy shells that reach it end the game Press Start, then swipe and hold in a direction to drive your tank; lift your finger to stop Your tank fires automatically in the direction it faces whenever its gun has cooled down Shoot brick walls to open new paths \u2014 steel walls cannot be destroyed"
     },
     {
       "path": "/games/nuts-and-bolts",
@@ -2504,7 +2504,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Nuts and Bolts is a mechanical puzzle where eight crossing planks are bolted together on a 5×5 grid of points, with a bolt wherever planks overlap. Tap a bolt to unscrew it, then tap an empty hole to screw it back in: one of the three swap holes below the board, or an empty spot on the board. A plank with no bolt left holding it swings down and falls away. Only bolts on the topmost plank at a point can be picked up, so the order of your moves matters. Clear every plank before the two-minute clock runs out to win. Randomly generated puzzles of four horizontal and four vertical planks At least eight bolts, with each plank held by at most three Three swap holes below the board for parking bolts Layered planks — only bolts on the top plank can be unscrewed Press Start to begin the two-minute timer Tap a bolt to unscrew and lift it — only bolts on the topmost plank at that spot can be picked up Tap an empty swap hole below the board, or an empty hole on the board, to screw the bolt in there"
+      "description": "Nuts and Bolts is a mechanical puzzle where eight crossing planks are bolted together on a 5\u00d75 grid of points, with a bolt wherever planks overlap. Tap a bolt to unscrew it, then tap an empty hole to screw it back in: one of the three swap holes below the board, or an empty spot on the board. A plank with no bolt left holding it swings down and falls away. Only bolts on the topmost plank at a point can be picked up, so the order of your moves matters. Clear every plank before the two-minute clock runs out to win. Randomly generated puzzles of four horizontal and four vertical planks At least eight bolts, with each plank held by at most three Three swap holes below the board for parking bolts Layered planks \u2014 only bolts on the top plank can be unscrewed Press Start to begin the two-minute timer Tap a bolt to unscrew and lift it \u2014 only bolts on the topmost plank at that spot can be picked up Tap an empty swap hole below the board, or an empty hole on the board, to screw the bolt in there"
     },
     {
       "path": "/games/stack-tower",
@@ -2514,7 +2514,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Stack Tower is a one-tap timing game where blocks slide back and forth above your tower, entering from alternate sides. Tap anywhere to drop the block where it is. Blocks keep their full width, but each one needs at least 40% of its width resting on the block below — any less and it tumbles off, ending the round. Every block placed scores 500 points, and perfect drops build a streak that earns growing bonuses. Survive the full two minutes without a miss to win. One-tap stacking with precision timing Blocks slide in from alternate sides and bounce between the edges 500 points per block, plus 250 × your perfect streak for each perfect drop “PERFECT!” feedback for drops within a few points of exact alignment Press Start and a block begins sliding above the tower Tap anywhere to drop the sliding block where it is At least 40% of the block must rest on the block below, or it falls and the round ends"
+      "description": "Stack Tower is a one-tap timing game where blocks slide back and forth above your tower, entering from alternate sides. Tap anywhere to drop the block where it is. Blocks keep their full width, but each one needs at least 40% of its width resting on the block below \u2014 any less and it tumbles off, ending the round. Every block placed scores 500 points, and perfect drops build a streak that earns growing bonuses. Survive the full two minutes without a miss to win. One-tap stacking with precision timing Blocks slide in from alternate sides and bounce between the edges 500 points per block, plus 250 \u00d7 your perfect streak for each perfect drop \u201cPERFECT!\u201d feedback for drops within a few points of exact alignment Press Start and a block begins sliding above the tower Tap anywhere to drop the sliding block where it is At least 40% of the block must rest on the block below, or it falls and the round ends"
     },
     {
       "path": "/games/pipe-connect",
@@ -2524,7 +2524,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Pipe Connect is a rotation puzzle on a 7×7 grid (8×8 on tablets) packed with scrambled pipe pieces. A source sits on the left edge and a sink on the right, joined by one winding hidden path, while every other cell is filled with decoy pieces. Tap a pipe to turn it a quarter turn clockwise; water flows live through every pipe connected to the source. Get the water to the sink within two minutes to win, with a bonus for every second you save. 7×7 grid on phones, 8×8 on tablets, filled edge to edge with pipes Straight, corner and T-shaped pipe pieces A winding solvable path with decoy pieces in every other cell Water fills connected pipes as you rotate them Press Start to begin the two-minute timer Tap a pipe to rotate it 90 degrees clockwise (the source and sink stay fixed) Water flows from the source through every pipe that is properly joined to it"
+      "description": "Pipe Connect is a rotation puzzle on a 7\u00d77 grid (8\u00d78 on tablets) packed with scrambled pipe pieces. A source sits on the left edge and a sink on the right, joined by one winding hidden path, while every other cell is filled with decoy pieces. Tap a pipe to turn it a quarter turn clockwise; water flows live through every pipe connected to the source. Get the water to the sink within two minutes to win, with a bonus for every second you save. 7\u00d77 grid on phones, 8\u00d78 on tablets, filled edge to edge with pipes Straight, corner and T-shaped pipe pieces A winding solvable path with decoy pieces in every other cell Water fills connected pipes as you rotate them Press Start to begin the two-minute timer Tap a pipe to rotate it 90 degrees clockwise (the source and sink stay fixed) Water flows from the source through every pipe that is properly joined to it"
     },
     {
       "path": "/games/mine-sweeper",
@@ -2534,7 +2534,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Mine Sweeper is the classic logic puzzle: uncover every safe cell on the grid without revealing a hidden mine. The board is 9×10 on phones and 12×14 on tablets, with 5 mines hidden among the cells. Numbers show how many of the eight surrounding cells contain mines, empty cells open their neighbours automatically, and your first reveal is always safe. Clear every safe cell within three minutes to win; hitting a mine or running out of time loses. Classic Minesweeper deduction with numbered clues Tap to reveal, press and hold to flag or unflag 9×10 board on phones, 12×14 on tablets, with 5 mines Safe first reveal — mines are never placed in or around your first tap Press Start to begin the three-minute timer Tap a cell to reveal it; your first reveal is always safe A number shows how many of the eight surrounding cells hide mines"
+      "description": "Mine Sweeper is the classic logic puzzle: uncover every safe cell on the grid without revealing a hidden mine. The board is 9\u00d710 on phones and 12\u00d714 on tablets, with 5 mines hidden among the cells. Numbers show how many of the eight surrounding cells contain mines, empty cells open their neighbours automatically, and your first reveal is always safe. Clear every safe cell within three minutes to win; hitting a mine or running out of time loses. Classic Minesweeper deduction with numbered clues Tap to reveal, press and hold to flag or unflag 9\u00d710 board on phones, 12\u00d714 on tablets, with 5 mines Safe first reveal \u2014 mines are never placed in or around your first tap Press Start to begin the three-minute timer Tap a cell to reveal it; your first reveal is always safe A number shows how many of the eight surrounding cells hide mines"
     },
     {
       "path": "/games/knife-hit",
@@ -2564,7 +2564,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Spider Solitaire is the classic patience card game, played here with two suits across 104 cards and ten tableau piles. Move descending runs between piles, uncover face-down cards and deal a new row from the stock when you need more cards. Whenever a complete King-to-Ace run of one suit forms, it lifts off the table by itself. Clear all eight runs to win; the clock counts up, and faster wins earn higher scores. Two-suit Spider Solitaire with 104 cards across 10 piles Tap-to-select or drag-and-drop card moves Completed King-to-Ace runs of one suit lift off automatically Face-down cards turn over when uncovered Press Start to begin; the clock counts up Tap a face-up card to pick up the run from it down, then tap another pile to place it — or drag the run there A run can be moved if it descends by one rank; place it on a card one rank higher or on an empty pile"
+      "description": "Spider Solitaire is the classic patience card game, played here with two suits across 104 cards and ten tableau piles. Move descending runs between piles, uncover face-down cards and deal a new row from the stock when you need more cards. Whenever a complete King-to-Ace run of one suit forms, it lifts off the table by itself. Clear all eight runs to win; the clock counts up, and faster wins earn higher scores. Two-suit Spider Solitaire with 104 cards across 10 piles Tap-to-select or drag-and-drop card moves Completed King-to-Ace runs of one suit lift off automatically Face-down cards turn over when uncovered Press Start to begin; the clock counts up Tap a face-up card to pick up the run from it down, then tap another pile to place it \u2014 or drag the run there A run can be moved if it descends by one rank; place it on a card one rank higher or on an empty pile"
     },
     {
       "path": "/games/maze-runner",
@@ -2574,7 +2574,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Maze Runner is a maze puzzle where you guide a rolling ball from the start in the top-left corner to the exit in the bottom-right. Every maze is a freshly generated 14×14 grid with exactly one route through. Swipe anywhere to set the ball rolling: it travels down a corridor until it hits a wall, takes the next junction open in the direction you last swiped and reverses instantly when you swipe back. Reach the exit within two minutes to win — the faster you finish, the higher your score. Randomly generated 14×14 mazes with exactly one route through Swipe controls with buffered turns at junctions Instant reversal when you swipe the opposite way One drag can chain several turns Press Start to begin the two-minute timer Swipe anywhere in a direction to roll the ball that way The ball rolls along a corridor until it reaches a wall"
+      "description": "Maze Runner is a maze puzzle where you guide a rolling ball from the start in the top-left corner to the exit in the bottom-right. Every maze is a freshly generated 14\u00d714 grid with exactly one route through. Swipe anywhere to set the ball rolling: it travels down a corridor until it hits a wall, takes the next junction open in the direction you last swiped and reverses instantly when you swipe back. Reach the exit within two minutes to win \u2014 the faster you finish, the higher your score. Randomly generated 14\u00d714 mazes with exactly one route through Swipe controls with buffered turns at junctions Instant reversal when you swipe the opposite way One drag can chain several turns Press Start to begin the two-minute timer Swipe anywhere in a direction to roll the ball that way The ball rolls along a corridor until it reaches a wall"
     },
     {
       "path": "/games/tic-tac-toe",
@@ -2584,7 +2584,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Tic Tac Toe is the timeless game of noughts and crosses on a 3×3 board. You play O and always move first; the robot plays X and answers half a second later. The robot always takes a winning move when it has one, but it sometimes overlooks your threats and often plays casually instead of looking ahead, so it can be beaten. Get three in a row to win, fill the board for a draw, and finish before the two-minute clock runs out. Classic X and O on a 3×3 board You play O and always move first Forgiving robot opponent that takes wins but sometimes misses blocks Highlighted winning line Press Start to begin the two-minute clock Tap an empty cell to place your O; the robot places its X shortly after Get three of your marks in a row — horizontally, vertically or diagonally — to win"
+      "description": "Tic Tac Toe is the timeless game of noughts and crosses on a 3\u00d73 board. You play O and always move first; the robot plays X and answers half a second later. The robot always takes a winning move when it has one, but it sometimes overlooks your threats and often plays casually instead of looking ahead, so it can be beaten. Get three in a row to win, fill the board for a draw, and finish before the two-minute clock runs out. Classic X and O on a 3\u00d73 board You play O and always move first Forgiving robot opponent that takes wins but sometimes misses blocks Highlighted winning line Press Start to begin the two-minute clock Tap an empty cell to place your O; the robot places its X shortly after Get three of your marks in a row \u2014 horizontally, vertically or diagonally \u2014 to win"
     },
     {
       "path": "/games/sliding-numbers",
@@ -2594,7 +2594,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Sliding Numbers is the classic sliding-tile puzzle on a wooden 3x3 board: eight colourful numbered tiles and one empty space. Tap a tile next to the gap, or swipe it toward the gap, to slide it in. Every board is shuffled by random slides from the solved position, so each puzzle is always solvable. Put tiles 1 to 8 back in reading order with the gap in the bottom-right corner within five minutes to win — the faster you solve it, the higher your score. Classic 3x3 sliding puzzle with eight numbered tiles Tap or swipe a tile to slide it into the gap Every shuffle is generated from the solved board, so it is always solvable Five-minute countdown shown in the scoreboard Press Start to begin the countdown Tap a tile beside the empty space, or swipe it toward the space, to slide it in Arrange tiles 1 to 8 in order, left to right and top to bottom"
+      "description": "Sliding Numbers is the classic sliding-tile puzzle on a wooden 3x3 board: eight colourful numbered tiles and one empty space. Tap a tile next to the gap, or swipe it toward the gap, to slide it in. Every board is shuffled by random slides from the solved position, so each puzzle is always solvable. Put tiles 1 to 8 back in reading order with the gap in the bottom-right corner within five minutes to win \u2014 the faster you solve it, the higher your score. Classic 3x3 sliding puzzle with eight numbered tiles Tap or swipe a tile to slide it into the gap Every shuffle is generated from the solved board, so it is always solvable Five-minute countdown shown in the scoreboard Press Start to begin the countdown Tap a tile beside the empty space, or swipe it toward the space, to slide it in Arrange tiles 1 to 8 in order, left to right and top to bottom"
     },
     {
       "path": "/games/game-2048",
@@ -2624,7 +2624,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Snake 3D brings the classic snake game to a 20x20 board in 3D. The snake starts three segments long in the middle of the board and moves one cell every 300 milliseconds; swipe to turn it. Each red apple scores 1,000 points and grows the snake by one, and sometimes a spinning gold star appears worth 2,000 — eat it within ten seconds before it turns back into an ordinary apple. Hitting a wall or your own body ends the run, and so does the five-minute clock, so score as much as you can in the time you have. Classic snake on a 20x20 board with a 3D snake and food Swipe controls that buffer up to two quick turns Apples worth 1,000 points and gold bonus stars worth 2,000 Bonus stars disappear after ten seconds if not eaten Press Start to set the snake moving Swipe up, down, left or right to turn the snake Eat apples to grow by one segment and score 1,000 points"
+      "description": "Snake 3D brings the classic snake game to a 20x20 board in 3D. The snake starts three segments long in the middle of the board and moves one cell every 300 milliseconds; swipe to turn it. Each red apple scores 1,000 points and grows the snake by one, and sometimes a spinning gold star appears worth 2,000 \u2014 eat it within ten seconds before it turns back into an ordinary apple. Hitting a wall or your own body ends the run, and so does the five-minute clock, so score as much as you can in the time you have. Classic snake on a 20x20 board with a 3D snake and food Swipe controls that buffer up to two quick turns Apples worth 1,000 points and gold bonus stars worth 2,000 Bonus stars disappear after ten seconds if not eaten Press Start to set the snake moving Swipe up, down, left or right to turn the snake Eat apples to grow by one segment and score 1,000 points"
     },
     {
       "path": "/games/perfect-circle",
@@ -2654,7 +2654,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Find Different Number is a fast visual search game that tests your observation skills and attention to detail. A 10×10 grid of 100 tiles shows the same two-digit number everywhere except 10 tiles, which show a look-alike with one digit swapped for a similar-looking one (such as 6 and 8, or 1 and 7). Tap all 10 different numbers within two minutes to win. Each find scores 500 points and finishing early adds a time bonus, while every wrong tap takes three seconds off the clock. 10×10 grid of 100 number tiles to scan 10 hidden look-alike numbers to find each round Look-alike digits chosen from visually similar pairs (6/8, 1/7, 3/8, 5/6 and more) Two-minute countdown with a live count of numbers left to find Press Start to begin the two-minute countdown Tap a tile you think shows a different number — taps register as soon as your finger touches down Correct finds turn green and earn 500 points"
+      "description": "Find Different Number is a fast visual search game that tests your observation skills and attention to detail. A 10\u00d710 grid of 100 tiles shows the same two-digit number everywhere except 10 tiles, which show a look-alike with one digit swapped for a similar-looking one (such as 6 and 8, or 1 and 7). Tap all 10 different numbers within two minutes to win. Each find scores 500 points and finishing early adds a time bonus, while every wrong tap takes three seconds off the clock. 10\u00d710 grid of 100 number tiles to scan 10 hidden look-alike numbers to find each round Look-alike digits chosen from visually similar pairs (6/8, 1/7, 3/8, 5/6 and more) Two-minute countdown with a live count of numbers left to find Press Start to begin the two-minute countdown Tap a tile you think shows a different number \u2014 taps register as soon as your finger touches down Correct finds turn green and earn 500 points"
     },
     {
       "path": "/games/bluk",
@@ -2664,7 +2664,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Bluk is a skill-based physics jumper where you sling a block from one stone pillar to the next. Drag anywhere to aim and set the power while a dotted arc previews the jump, then let go to launch. Every safe landing scores 1,000 points, and landing in the gold sweet spot earns a PERFECT bonus that builds a combo. As your score grows, the gaps widen and the pillars get narrower — survive the two-minute timer to win, but miss a pillar and the run is over. Drag-to-aim slingshot launches with a dotted trajectory preview Physics-based jump arcs under gravity 1,000 points per landing, with a 500-point PERFECT bonus in the sweet spot Combo bonus for consecutive perfect landings Drag anywhere on the screen to aim — the farther you drag, the stronger the jump Follow the dotted line to see where your block will fly Release to launch the block toward the next pillar"
+      "description": "Bluk is a skill-based physics jumper where you sling a block from one stone pillar to the next. Drag anywhere to aim and set the power while a dotted arc previews the jump, then let go to launch. Every safe landing scores 1,000 points, and landing in the gold sweet spot earns a PERFECT bonus that builds a combo. As your score grows, the gaps widen and the pillars get narrower \u2014 survive the two-minute timer to win, but miss a pillar and the run is over. Drag-to-aim slingshot launches with a dotted trajectory preview Physics-based jump arcs under gravity 1,000 points per landing, with a 500-point PERFECT bonus in the sweet spot Combo bonus for consecutive perfect landings Drag anywhere on the screen to aim \u2014 the farther you drag, the stronger the jump Follow the dotted line to see where your block will fly Release to launch the block toward the next pillar"
     },
     {
       "path": "/games/chameleon-run",
@@ -2674,7 +2674,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Chameleon Run is a 3D auto-runner with a color-matching twist. Your chameleon runs at a steady pace across a fresh 500 m course of floating platforms, and you must jump the gaps and switch between pink and yellow to match the platforms you land on. Yellow platforms have stripes, pink platforms have dots and white platforms are always safe. You have three lives — a wrong color or a missed jump costs one — and stars collected in a row build a bonus multiplier up to 5×. 3D auto-runner across a floating sky course A freshly generated 500 m course on every run Pink and yellow color matching, with patterned platforms (stripes and dots) and safe white platforms Swipe up to jump, swipe again in the air to double-jump Swipe up to jump; swipe up again in the air to double-jump Tap anywhere to switch between pink and yellow Match your color to the platform you are on: yellow has stripes, pink has dots, and white is always safe"
+      "description": "Chameleon Run is a 3D auto-runner with a color-matching twist. Your chameleon runs at a steady pace across a fresh 500 m course of floating platforms, and you must jump the gaps and switch between pink and yellow to match the platforms you land on. Yellow platforms have stripes, pink platforms have dots and white platforms are always safe. You have three lives \u2014 a wrong color or a missed jump costs one \u2014 and stars collected in a row build a bonus multiplier up to 5\u00d7. 3D auto-runner across a floating sky course A freshly generated 500 m course on every run Pink and yellow color matching, with patterned platforms (stripes and dots) and safe white platforms Swipe up to jump, swipe again in the air to double-jump Swipe up to jump; swipe up again in the air to double-jump Tap anywhere to switch between pink and yellow Match your color to the platform you are on: yellow has stripes, pink has dots, and white is always safe"
     },
     {
       "path": "/games/mob-control",
@@ -2684,7 +2684,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Mob Control is a crowd-battling game where your cannon automatically fires a stream of blue soldiers up the battlefield while you drag to aim it. Send your troops through blue addition and purple multiplier gates to grow your army, and steer clear of red division gates that shrink it. Red enemy soldiers pour out of three towers, and blue and red soldiers cancel each other out on contact — any that reach your cannon wear down its shield. Capture all three towers (and defeat the boss on boss levels) to clear the level and move on to the next. Drag-to-aim cannon that fires soldiers automatically Addition, multiplier and division gates, some of which drift side to side Hundreds of soldiers simulated on screen at once Three enemy towers that send out waves that grow over time Drag left and right to aim your cannon — it fires blue soldiers automatically Aim through blue addition and purple multiplier gates to grow your army; red division gates shrink it Blue and red soldiers cancel each other out when they meet"
+      "description": "Mob Control is a crowd-battling game where your cannon automatically fires a stream of blue soldiers up the battlefield while you drag to aim it. Send your troops through blue addition and purple multiplier gates to grow your army, and steer clear of red division gates that shrink it. Red enemy soldiers pour out of three towers, and blue and red soldiers cancel each other out on contact \u2014 any that reach your cannon wear down its shield. Capture all three towers (and defeat the boss on boss levels) to clear the level and move on to the next. Drag-to-aim cannon that fires soldiers automatically Addition, multiplier and division gates, some of which drift side to side Hundreds of soldiers simulated on screen at once Three enemy towers that send out waves that grow over time Drag left and right to aim your cannon \u2014 it fires blue soldiers automatically Aim through blue addition and purple multiplier gates to grow your army; red division gates shrink it Blue and red soldiers cancel each other out when they meet"
     },
     {
       "path": "/games/paper-io",
@@ -2694,7 +2694,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Paper IO is a territory-conquest battle against one AI rival on a grid that fills the whole screen. Swipe to steer your character; when you leave your land you lay a trail, and coming back home captures the trail plus everything it encloses — including land the AI already owned. The AI expands its own territory the same way, and the two of you race to claim the most cells. When the two-minute timer runs out (or the board fills up), whoever owns more land wins. Territory-capture gameplay on a full-screen grid One AI rival that expands and returns home on its own Swipe to steer in four directions Enclosed areas flood-fill into your land, including the rival's cells Swipe up, down, left or right to steer your character — you keep moving in that direction Leave your land to draw a trail behind you Return to your land (or close a loop on your own trail) to capture the trail and everything it encloses"
+      "description": "Paper IO is a territory-conquest battle against one AI rival on a grid that fills the whole screen. Swipe to steer your character; when you leave your land you lay a trail, and coming back home captures the trail plus everything it encloses \u2014 including land the AI already owned. The AI expands its own territory the same way, and the two of you race to claim the most cells. When the two-minute timer runs out (or the board fills up), whoever owns more land wins. Territory-capture gameplay on a full-screen grid One AI rival that expands and returns home on its own Swipe to steer in four directions Enclosed areas flood-fill into your land, including the rival's cells Swipe up, down, left or right to steer your character \u2014 you keep moving in that direction Leave your land to draw a trail behind you Return to your land (or close a loop on your own trail) to capture the trail and everything it encloses"
     },
     {
       "path": "/games/crossy-road",
@@ -2704,7 +2704,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Crossy Road is a 3D road-crossing challenge where you guide a pedestrian from the starting grass, across nine busy roads, to the far side. Tap to hop forward, and swipe sideways or back to dodge cars, taxis, pickups and buses that stream across each lane. Grass rest lanes after every third road give you a safe spot to plan your next move. Every road crossed scores 2,000 points and nudges the traffic a little faster — reach the far grass within two minutes to win, with a bonus for time left. 3D road-crossing board with nine roads and grass rest lanes Cars, taxis, pickups and buses moving in both directions Tap to hop forward, swipe to hop sideways or back 2,000 points per road crossed, plus a time bonus on a win Tap (or swipe up) to hop forward one lane Swipe left, right or down to hop sideways or back Dodge the cars and buses — getting hit ends the game"
+      "description": "Crossy Road is a 3D road-crossing challenge where you guide a pedestrian from the starting grass, across nine busy roads, to the far side. Tap to hop forward, and swipe sideways or back to dodge cars, taxis, pickups and buses that stream across each lane. Grass rest lanes after every third road give you a safe spot to plan your next move. Every road crossed scores 2,000 points and nudges the traffic a little faster \u2014 reach the far grass within two minutes to win, with a bonus for time left. 3D road-crossing board with nine roads and grass rest lanes Cars, taxis, pickups and buses moving in both directions Tap to hop forward, swipe to hop sideways or back 2,000 points per road crossed, plus a time bonus on a win Tap (or swipe up) to hop forward one lane Swipe left, right or down to hop sideways or back Dodge the cars and buses \u2014 getting hit ends the game"
     },
     {
       "path": "/games/tangram",
@@ -2714,7 +2714,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Tangram is the ancient dissection puzzle in 3D. Seven colourful tans — two large triangles, one medium, two small, a square and a parallelogram — wait in a tray below a shaded silhouette. Drag a tan onto the silhouette and tap it to turn it 45 degrees; dropped near a free matching slot at the right angle, it snaps in for 1,000 points, while a wrong angle makes it wiggle. Fill the whole shape within two minutes to win and earn bonus points for the time saved. After a win, Next Puzzle moves you on to the next level, which turns or mirrors the silhouette. The seven classic tans: two large, one medium and two small triangles, a square and a parallelogram Drag pieces from the tray and tap to rotate them in 45-degree steps Pieces snap into place when they are near a matching slot at the right angle 1,000 points per piece placed plus a time bonus for solving Press Start to begin the two-minute countdown Drag a tan from the tray onto the shaded silhouette Tap a tan to rotate it by 45 degrees"
+      "description": "Tangram is the ancient dissection puzzle in 3D. Seven colourful tans \u2014 two large triangles, one medium, two small, a square and a parallelogram \u2014 wait in a tray below a shaded silhouette. Drag a tan onto the silhouette and tap it to turn it 45 degrees; dropped near a free matching slot at the right angle, it snaps in for 1,000 points, while a wrong angle makes it wiggle. Fill the whole shape within two minutes to win and earn bonus points for the time saved. After a win, Next Puzzle moves you on to the next level, which turns or mirrors the silhouette. The seven classic tans: two large, one medium and two small triangles, a square and a parallelogram Drag pieces from the tray and tap to rotate them in 45-degree steps Pieces snap into place when they are near a matching slot at the right angle 1,000 points per piece placed plus a time bonus for solving Press Start to begin the two-minute countdown Drag a tan from the tray onto the shaded silhouette Tap a tan to rotate it by 45 degrees"
     },
     {
       "path": "/games/checkers",
@@ -2724,7 +2724,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Checkers pits you, playing red, against a robot playing black on a standard 8x8 board with 12 pieces each. You move first: tap a piece to see where it can go, then tap a highlighted square. Captures are mandatory and multi-jumps chain, and a piece that reaches the far row is crowned a King that can move both forwards and backwards. The robot looks several moves ahead before answering. Capture all of the robot's pieces or leave it with no legal moves to win; you lose if you run out of pieces or moves, or if the five-minute clock expires. Classic 8x8 checkers with 12 pieces per side A robot opponent that searches five moves ahead with alpha-beta minimax Mandatory captures and chained multi-jumps Kings crowned on the far row, moving in all four diagonal directions Press Start — you play red and move first Tap one of your pieces to select it and see its legal moves Tap a highlighted square to move diagonally forward"
+      "description": "Checkers pits you, playing red, against a robot playing black on a standard 8x8 board with 12 pieces each. You move first: tap a piece to see where it can go, then tap a highlighted square. Captures are mandatory and multi-jumps chain, and a piece that reaches the far row is crowned a King that can move both forwards and backwards. The robot looks several moves ahead before answering. Capture all of the robot's pieces or leave it with no legal moves to win; you lose if you run out of pieces or moves, or if the five-minute clock expires. Classic 8x8 checkers with 12 pieces per side A robot opponent that searches five moves ahead with alpha-beta minimax Mandatory captures and chained multi-jumps Kings crowned on the far row, moving in all four diagonal directions Press Start \u2014 you play red and move first Tap one of your pieces to select it and see its legal moves Tap a highlighted square to move diagonally forward"
     },
     {
       "path": "/games/memory-match",
@@ -2744,7 +2744,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Falling Sticks is a fast-paced reflex game where colorful 3D batons tumble and spin down over a perspective meadow, and you must catch each one before it lands on the grass. Tap a stick to catch it, or swipe across the screen to catch every stick your finger passes over in one stroke. Every catch is worth 500 points, and as your score climbs the sticks fall faster and appear more often. Each stick that hits the ground costs one of your three lives — survive the full two-minute countdown to win. 3D spinning sticks falling over a lit meadow scene with real depth and shadows Tap to catch, or swipe to catch every stick along your finger's path 500 points for every stick caught Three lives — each stick that lands on the grass costs one Press Start to begin the two-minute round Tap a falling stick to catch it — tapping anywhere along its length counts Swipe across the screen to catch several sticks in a single stroke"
+      "description": "Falling Sticks is a fast-paced reflex game where colorful 3D batons tumble and spin down over a perspective meadow, and you must catch each one before it lands on the grass. Tap a stick to catch it, or swipe across the screen to catch every stick your finger passes over in one stroke. Every catch is worth 500 points, and as your score climbs the sticks fall faster and appear more often. Each stick that hits the ground costs one of your three lives \u2014 survive the full two-minute countdown to win. 3D spinning sticks falling over a lit meadow scene with real depth and shadows Tap to catch, or swipe to catch every stick along your finger's path 500 points for every stick caught Three lives \u2014 each stick that lands on the grass costs one Press Start to begin the two-minute round Tap a falling stick to catch it \u2014 tapping anywhere along its length counts Swipe across the screen to catch several sticks in a single stroke"
     },
     {
       "path": "/games/reversi",
@@ -2754,7 +2754,7 @@
         "#ec4899",
         "#8b5cf6"
       ],
-      "description": "Reversi brings the classic Othello duel to an 8×8 green felt board, with you playing black against a robot playing white. Place a disc so it traps one or more lines of white discs between your discs, and every trapped disc flips to black in a ripple. The robot answers after a short think, weighing strong squares like corners with a shallow look-ahead and the occasional surprise move. When neither side can move, whoever owns more discs wins — but you must finish within the five-minute clock. Classic 8×8 Reversi / Othello rules against a robot opponent Your legal moves are marked with rings on the board Animated disc flips that ripple outward from the placed disc 200 points for every disc you flip, plus a 5,000-point win bonus Tap one of the ringed cells to place a black disc — you always move first Your disc must trap at least one straight line of white discs between it and another black disc Every trapped white disc flips to black, in any of the eight directions"
+      "description": "Reversi brings the classic Othello duel to an 8\u00d78 green felt board, with you playing black against a robot playing white. Place a disc so it traps one or more lines of white discs between your discs, and every trapped disc flips to black in a ripple. The robot answers after a short think, weighing strong squares like corners with a shallow look-ahead and the occasional surprise move. When neither side can move, whoever owns more discs wins \u2014 but you must finish within the five-minute clock. Classic 8\u00d78 Reversi / Othello rules against a robot opponent Your legal moves are marked with rings on the board Animated disc flips that ripple outward from the placed disc 200 points for every disc you flip, plus a 5,000-point win bonus Tap one of the ringed cells to place a black disc \u2014 you always move first Your disc must trap at least one straight line of white discs between it and another black disc Every trapped white disc flips to black, in any of the eight directions"
     },
     {
       "path": "/video-editor/start",
@@ -2765,6 +2765,33 @@
         "#ec4899"
       ],
       "description": "The full browser-based multi-track video editor. Show a cinematic preview, layered colorful video and audio timeline tracks, trimming handles, playhead, transitions and editing controls. Local editing with no uploading."
+    }
+  ],
+  "finalTextConstraint": "Do not draw readable code snippets, data rows, body copy, labels or example URLs. Represent code and document content with abstract short colored bars and simple braces. The only readable text must be the short page title, Nayan UI, and exactly www.nayanui.com. Keep the illustration dominant and spacious.",
+  "refinements": [
+    {
+      "path": "/tools/json-formatter",
+      "prompt": "Use case: precise-object-edit. Image 1 is the edit target, an existing SEO banner. Make this one targeted refinement: Replace all readable JSON field names, values and example code inside BOTH glass document panels with short colorful abstract bars. Keep the left bars compact on one line and the right bars neatly indented in multiple lines, with simple curly braces. No readable code. Preserve the exact composition, title typography and spelling, background, palette, lighting, beautiful 3D clay/glass style, Nayan UI colorful logo and name at bottom left, and EXACT www.nayanui.com at bottom right. Keep landscape 1200x630 framing. Only readable text: original short title, Nayan UI, www.nayanui.com. Do not add other wording. Keep everything outside the specified change unchanged."
+    },
+    {
+      "path": "/tools/json-validator",
+      "prompt": "Use case: precise-object-edit. Image 1 is the edit target, an existing SEO banner. Make this one targeted refinement: Replace all readable example JSON field names and values inside the LEFT glass code panel with short colorful abstract indented bars framed by simple curly braces. No readable code. Preserve the exact composition, title typography and spelling, background, palette, lighting, beautiful 3D clay/glass style, Nayan UI colorful logo and name at bottom left, and EXACT www.nayanui.com at bottom right. Keep landscape 1200x630 framing. Only readable text: original short title, Nayan UI, www.nayanui.com. Do not add other wording. Keep everything outside the specified change unchanged."
+    },
+    {
+      "path": "/react/linkify",
+      "prompt": "Use case: precise-object-edit. Image 1 is the edit target, an existing SEO banner. Make this one targeted refinement: Remove BOTH instances of 'Check https://react.dev' from the central interface. Replace the upper row with three short abstract gray rounded text bars. Replace the lower row with one gray bar plus two bright blue underlined bars, showing text becoming a clickable link. No readable demo text or extra URL. Preserve the exact composition, title typography and spelling, background, palette, lighting, beautiful 3D clay/glass style, Nayan UI colorful logo and name at bottom left, and EXACT www.nayanui.com at bottom right. Keep landscape 1200x630 framing. Only readable text: original short title, Nayan UI, www.nayanui.com. Do not add other wording. Keep everything outside the specified change unchanged."
+    },
+    {
+      "path": "/tools/xml-to-csv",
+      "prompt": "Use case: precise-object-edit. Image 1 is the edit target, an existing SEO banner. Make this one targeted refinement: Replace ONLY the green curly brace symbols on the LEFT source document with a sculptural green XML angle-bracket and slash symbol </>. This source is XML. Keep the right CSV grid. Preserve the exact composition, title typography and spelling, background, palette, lighting, beautiful 3D clay/glass style, Nayan UI colorful logo and name at bottom left, and EXACT www.nayanui.com at bottom right. Keep landscape 1200x630 framing. Only readable text: original short title, Nayan UI, www.nayanui.com. Do not add other wording. Keep everything outside the specified change unchanged."
+    },
+    {
+      "path": "/tools/xml-to-yaml",
+      "prompt": "Use case: precise-object-edit. Image 1 is the edit target, an existing SEO banner. Make this one targeted refinement: Replace ONLY the green curly braces and bars on the RIGHT destination document with a tidy YAML-like hierarchy of indented colorful short bars with tiny round bullet/dash marks. No curly braces on the right. Keep the left XML </> symbol. Preserve the exact composition, title typography and spelling, background, palette, lighting, beautiful 3D clay/glass style, Nayan UI colorful logo and name at bottom left, and EXACT www.nayanui.com at bottom right. Keep landscape 1200x630 framing. Only readable text: original short title, Nayan UI, www.nayanui.com. Do not add other wording. Keep everything outside the specified change unchanged."
+    },
+    {
+      "path": "/tools/url-encoder-decoder",
+      "prompt": "Use case: precise-object-edit. Image 1 is the edit target, an existing SEO banner. Make this one targeted refinement: Replace the two padlocks above the source and destination document panels with a sculptural percent-sign badge and an angle-bracket/slash symbol badge respectively. The topic is percent encoding and decoding of URLs. Preserve the central chain link, arrows, document bars and all other details. Preserve the exact composition, title typography and spelling, background, palette, lighting, beautiful 3D clay/glass style, Nayan UI colorful logo and name at bottom left, and EXACT www.nayanui.com at bottom right. Keep landscape 1200x630 framing. Only readable text: original short title, Nayan UI, www.nayanui.com. Do not add other wording. Keep everything outside the specified change unchanged."
     }
   ]
 }
