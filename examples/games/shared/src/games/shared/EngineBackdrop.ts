@@ -1,4 +1,4 @@
-import { type Geometry, type Model } from '@nayan-ui/engine';
+import { type Entity, type Geometry, type Model, type World } from '@nayan-ui/engine';
 import { type GamePattern, gamePattern, PATTERN_GRID_COLOR, type PatternGradient, type PatternShape } from '../../helpers/GamePatternData';
 import type { GameTheme } from '../../services/ThemeService';
 // The Playtura game background (theme color plus the rainbow pattern), built by the Nayan Game Engine with
@@ -284,4 +284,20 @@ export function cardBackdropMesh(theme: GameTheme, width: number, height: number
     meshes.set(key, mesh);
   }
   return mesh;
+}
+
+/**
+ * The background behind a centred, one-unit-per-point scene `width` x `height` (the view's size), at
+ * depth `z`: the pattern starts at the view's top-left, as the original screens draw it. It's `still`
+ * (drawn once into the world's cached backdrop image, shared/EngineScenery): its full-screen layers
+ * cost a tile GPU some 10 ms a frame at full quality otherwise. A game whose camera keeps moving
+ * (following its player) passes `still: false`; under a scaled root, place it with `placeTiltedBackdrop`'s `unit`.
+ */
+export function spawnBackdrop(world: World, width: number, height: number, z: number, theme: GameTheme, still = true): Entity {
+  return world.spawn({ mesh: backdropMesh(theme), position: [-width / 2, height / 2, z], color: [1, 1, 1, 1], pickable: false, still });
+}
+
+/** Repaints a backdrop for a new theme (a still one is drawn again). */
+export function setBackdropTheme(world: World, backdrop: Entity, theme: GameTheme) {
+  world.set(backdrop, { mesh: backdropMesh(theme) });
 }

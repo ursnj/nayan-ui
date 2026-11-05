@@ -150,3 +150,23 @@ export function loadAssets(): Promise<Assets> {
 export function preloadRacing() {
   loadAssets().catch(() => {}); // the game screen reports any error
 }
+
+/**
+ * The game loader's jobs, run a few per frame behind the loading screen: the car's glTF models decode on
+ * native threads while the roadside models build here, then one texture per job before the cached assembly.
+ */
+export function* warmAssets(): Iterable<() => unknown> {
+  yield () => {
+    void loadCarMeshes();
+  };
+  yield treeMesh;
+  yield sceneryMeshes;
+  yield () => loadTexture(require('../../assets/textures/asphalt.png'));
+  yield () => loadTexture(require('../../assets/textures/facade.png'));
+  yield () => loadTexture(require('../../assets/textures/grass.png'));
+  yield () => loadTexture(require('../../assets/textures/ad_chevrons.png'));
+  yield () => loadTexture(require('../../assets/textures/ad_bubbles.png'));
+  yield () => loadTexture(require('../../assets/textures/ad_bolt.png'));
+  yield loadAssets;
+  yield () => getRacingSounds().ready;
+}

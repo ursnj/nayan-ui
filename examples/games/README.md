@@ -52,6 +52,8 @@ games/
    - Mobile (`app/[id].tsx`): a transparent header with a back arrow, the title and a settings button. `settings.offset` is the header's height, so the scoreboard starts below it. Swipe-back is off during a race.
    - Web (`GamePage.tsx`): the website's floating Back, Keyboard Controls and Settings toolbar. The scoreboard sits beside it on wide screens and below it on phones. Arrow keys or A/D steer, and Enter presses Start/Stop. Opening the keyboard guide pauses the race; dismiss it or press Escape to resume.
 4. **Assets use `require(...)`.** Metro bundles them on mobile. On the web, the plugin in `web/vite.config.ts` turns each `require` into a URL.
+5. **A loader prepares the game before it mounts.** `shared/index.ts` wraps `CarRacing` in `withGameLoading` (`games/shared/EngineGameLoader.tsx`), as the games library does. Behind the loading screen, `services/GameAssetLoader.ts` runs the game's `warmAssets()` jobs (`services/GameAssets.ts`), a few per frame within a 10 ms budget, right after each frame is drawn. No single long job freezes the loading animation, which matters most on Android's Hermes. Later visits in the same session skip it.
+6. **Quality adapts to the game in play.** `EngineGameScreen` passes `qualityKey` (the game's id) and `adaptQuality={playing && !isOver}` to `GameView`. The engine's auto quality judges only real play, not the ready screen or results card, and later visits start at the level it settled on. In development, each second's stats are logged as `[engine] … fps, update … ms, publish … ms, render … ms, <quality>, <backend>, playing|idle, <game id>`.
 
 ## How Car Racing is built
 
@@ -60,7 +62,7 @@ All files are in `shared/src/games/car-racing/`.
 | File                    | What it does                                                                                                    |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------- |
 | `CarRacing.tsx`         | The screen. Loads the assets, starts a run, and passes the scene, scoreboard and buttons to `EngineGameScreen`. |
-| `CarRacingConstants.ts` | Tuning (speed, lives, track length), colours and lights, and `loadAssets()`.                                    |
+| `CarRacingConstants.ts` | Tuning (speed, lives, track length), colours and lights, `loadAssets()` and the loader's `warmAssets()` jobs.   |
 | `CarRacingGame.ts`      | The rules, no React: steering, traffic, crashes, scoring, lives, the finish line and the camera.                |
 | `CarRacingScene.ts`     | What it draws: the curving road, the cars, the city and the horizon.                                            |
 | `CarRacingScenery.ts`   | Small roadside meshes: benches, bins, planters, shelters and signs.                                             |
@@ -78,8 +80,9 @@ Engine features it uses: `World` and `GameView` (through `EngineGameScreen`), `l
    - `getGameTitle` in `services/GamesConstants.ts`
    - its sounds in `services/SoundsService.ts` and `services/SfxSources.ts`
    - its loading scene in `games/shared/EngineLoading.ts`
+   - its `warmAssets()` jobs in `GAME_ASSETS` in `services/GameAssets.ts`
    - its cache revision in `games/shared/ProceduralCacheVersion.ts`
-3. Export the game from `shared/index.ts`.
+3. Export the game from `shared/index.ts`, wrapped in `withGameLoading(GAME_IDS.<ID>, () => Game)`.
 4. Add it to `mobile/src/examples.ts` and `web/src/examples.ts`.
 5. On the web, set its keyboard `mode` in `GamePage.tsx`: `drag` for steering games, `swipe` for grid games, `pointer` for everything else.
 

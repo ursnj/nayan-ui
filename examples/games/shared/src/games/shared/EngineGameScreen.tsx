@@ -26,8 +26,14 @@ import { useGameResource } from './useGameResource';
 let soundOwner: object | undefined;
 
 /** Dev builds: once a second, where the frame time goes (JS update vs native render). */
-const logStats = (s: { fps: number; updateMs: number; renderMs: number; quality: string; backend: string }) =>
-  console.log(`[engine] ${s.fps.toFixed(0)} fps, update ${s.updateMs.toFixed(2)} ms, render ${s.renderMs.toFixed(2)} ms, ${s.quality}, ${s.backend}`);
+const logStats = (
+  s: { fps: number; updateMs: number; publishMs: number; renderMs: number; quality: string; backend: string },
+  gameId: string,
+  inPlay: boolean
+) =>
+  console.log(
+    `[engine] ${s.fps.toFixed(0)} fps, update ${s.updateMs.toFixed(2)} ms, publish ${s.publishMs.toFixed(2)} ms, render ${s.renderMs.toFixed(2)} ms, ${s.quality}, ${s.backend}, ${inPlay ? 'playing' : 'idle'}, ${gameId}`
+  );
 
 /** Everything GameView takes, but the HUD's overlay and the frame hooks this screen owns. */
 type SceneProps = Omit<React.ComponentProps<typeof GameView>, 'overlay' | 'onOverlayTouch' | 'onUpdate' | 'onStats' | 'background' | 'source'> & {
@@ -235,12 +241,15 @@ export const EngineGameScreen: React.FC<EngineGameScreenProps> = ({
           // Settings keep drawing a frozen world so its theme can update while the panel stays open.
           paused={scene.paused || !!errorMessage || (settings.paused && playing) || !active}
           source={source}
+          qualityKey={gameId}
+          // Quality adapts to the game in play, not to the ready screen or results card over it
+          adaptQuality={playing && !isOver}
           background={backgroundProp ?? theme.BACKGROUND}
           onUpdate={update}
           overlay={hud.world}
           onOverlayTouch={hud.touch}
           onPrimaryAction={() => hud.activatePrimary()}
-          onStats={__DEV__ ? logStats : undefined}
+          onStats={__DEV__ ? (stats) => logStats(stats, gameId, playing && !isOver) : undefined}
         />
       ) : null}
       {isOver ? null : children}

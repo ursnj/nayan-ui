@@ -31,7 +31,16 @@ export function cacheGameAsset<T>(key: string, build: () => T): T {
   return cacheFor(key).get(key, build);
 }
 
+/** The engine storage key for a record the native core saves itself under this game's cache revision. */
+export function gameStorageKey(key: string): string {
+  return cacheFor(key).storageKey(key);
+}
+
 /** A saved asset from this or an earlier launch, or undefined: nothing is built. */
 export function peekGameAsset<T>(key: string): T | undefined {
   return cacheFor(key).peek<T>(key);
 }
+
+export const flushProceduralCache = async () => {
+  await Promise.all([...caches.values()].map((cache) => cache.flush()));
+};

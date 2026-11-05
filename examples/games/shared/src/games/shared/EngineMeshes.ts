@@ -2,7 +2,7 @@
 // Factory caches additionally skip JS model construction. Ratio 1 preserves the
 // authored surfaces, normals, colours and UV seams while welding and improving GPU cache reuse.
 import { createShape, type Geometry, type Model, type ShapeOptions } from '@nayan-ui/engine';
-import { cacheGameAsset, peekGameAsset } from './EngineMeshCache';
+import { cacheGameAsset, gameStorageKey, peekGameAsset } from './EngineMeshCache';
 
 export function createGameMesh(geometry: Geometry, options: ShapeOptions = {}): Model {
   return createShape(geometry, { ...options, optimize: options.optimize ?? true });
@@ -21,4 +21,4 @@ export function meshCache(prefix: string) {
   return <T = Model>(key: string, build: () => T): T => cacheGameAsset(prefix + key, build);
 }
 
-export { cacheGameAsset, peekGameAsset };
+export { cacheGameAsset, gameStorageKey, peekGameAsset };

@@ -2,7 +2,7 @@
 // floating shapes, large decorations and a faint 40pt grid, in window points and drawing order.
 // Shared seeded geometry and colors keep the engine scenes and website pattern consistent.
 
-const PATTERN_RAINBOW = [
+export const PATTERN_RAINBOW = [
   '#E91E63',
   '#F44336',
   '#FF5722',
@@ -30,7 +30,7 @@ export type PatternShape =
   | { kind: 'rrect'; x: number; y: number; w: number; h: number; r: number; color: string }
   | { kind: 'diamond'; cx: number; cy: number; size: number; color: string };
 
-type PatternLine = { x: number; y: number; w: number; h: number };
+export type PatternLine = { x: number; y: number; w: number; h: number };
 
 export type GamePattern = {
   width: number;

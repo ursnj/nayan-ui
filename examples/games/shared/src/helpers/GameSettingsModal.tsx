@@ -8,7 +8,7 @@ import { isThemedGame } from '../services/ThemeService';
 import { type GAME_IDS, type GameSettings, isTablet } from '../services/UtilsService';
 import { createThemedStyles, useGameTheme } from './GameTheme';
 
-interface GameSettingsProps {
+export interface GameSettingsProps {
   gameId: string;
   settings: GameSettings;
   onSettingsChange?: (settings: GameSettings) => void;
