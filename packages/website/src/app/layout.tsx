@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import Footer from "@/components/helpers/Footer";
 import Header from "@/components/helpers/Header";
 import JsonLd from "@/components/helpers/JsonLd";
@@ -66,6 +67,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="mt-[60px]">{children}</main>
           <Footer />
         </ThemeProvider>
+        <Script id="microsoft-clarity" strategy="afterInteractive">
+          {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","sz9iu23mcr");`}
+        </Script>
       </body>
     </html>
   );
