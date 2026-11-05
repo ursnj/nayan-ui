@@ -126,6 +126,12 @@ export const engineNavigation = [
     link: "/game-engine/surfaces-lofts",
   },
   {
+    slug: "procedural-worlds",
+    title: "Procedural worlds, field graphs and mesh recipes",
+    description: "Generate seeded terrain, scatter and walkable worlds natively, and query them.",
+    link: "/game-engine/procedural-worlds",
+  },
+  {
     slug: "solid-modelling",
     title: "Solid modelling, optimization and LOD",
     description: "Build solids, combine shapes and prepare optimized geometry.",

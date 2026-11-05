@@ -37,6 +37,7 @@ import {
   Loader,
   LoaderCircle,
   Map,
+  Mountain,
   MessageSquare,
   MessageSquareDot,
   MessageSquareText,
@@ -1901,6 +1902,7 @@ export const engineSidebarItems: SidebarItem[] = [
   engineSidebarItem("text-fonts", "Text & Fonts", TextCursorInput),
   engineSidebarItem("procedural-geometry", "Procedural Geometry", PenTool),
   engineSidebarItem("surfaces-lofts", "Surfaces & Lofts", Map),
+  engineSidebarItem("procedural-worlds", "Procedural Worlds", Mountain),
   engineSidebarItem("solid-modelling", "Solid Modelling", Layers),
   { title: "Advanced", description: "", link: "", isHeading: true },
   engineSidebarItem("cache-performance", "Cache & Performance", Gauge),
@@ -1982,6 +1984,12 @@ export const gamesSidebarItems = [
     title: "Treasure Hunt",
     description: "3D wilderness exploration",
     link: "/games/treasure-hunt",
+    icon: Gamepad2,
+  },
+  {
+    title: "Boxing Arena",
+    description: "3D boxing duel",
+    link: "/games/boxing-arena",
     icon: Gamepad2,
   },
   {

@@ -150,7 +150,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createKeyboardInput, type KeyboardInputMode } from '@nayan-ui/engine';
 import { DEFAULT_GAME_SETTINGS, loadGameComponent, type GAME_IDS, type GameSettings } from '@nayan-ui/games/services';
 
-const DRAG = new Set(['car-racing', 'bike-racing', 'penguin-run', 'treasure-hunt', 'tank-1990', 'mob-control', 'paper-io', 'space-fighter']);
+const DRAG = new Set(['car-racing', 'bike-racing', 'penguin-run', 'treasure-hunt', 'boxing-arena', 'tank-1990', 'mob-control', 'paper-io', 'space-fighter']);
 const SWIPE = new Set(['game-2048', 'snake-3d', 'pac-man', 'maze-runner', 'crossy-road']);
 
 export default function GameSession({ gameId, panelOpen = false }: { gameId: GAME_IDS; panelOpen?: boolean }) {
@@ -352,7 +352,7 @@ export const gameIdsEnumCode = `enum GAME_IDS {
   CHECKERS = 'checkers',                  MEMORY_MATCH = 'memory-match',
   FALLING_STICKS = 'falling-sticks',      REVERSI = 'reversi',
   PENGUIN_RUN = 'penguin-run',            PLAY_WITH_TUA = 'play-with-tua',
-  TREASURE_HUNT = 'treasure-hunt'
+  TREASURE_HUNT = 'treasure-hunt',       BOXING_ARENA = 'boxing-arena'
 }`;
 
 export const loadersCode = `loadGameComponent(gameId: GAME_IDS | null | undefined): ComponentType<GameProps> | null; // lazy, null if unknown

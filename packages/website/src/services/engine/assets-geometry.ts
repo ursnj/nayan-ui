@@ -722,6 +722,61 @@ export function addCard(world: World, card: Model, atlas: Texture) {
         ],
         note: "Textured, imported and skinned models stay in their loader caches. ProceduralCache saves static untextured geometry only, without texture bindings or skeletons.",
       },
+      {
+        id: "bake-models-into-pictures",
+        title: "Bake models into pictures",
+        paragraphs: [
+          "Something that only ever faces the camera (a tile, an icon, a card) doesn't need its triangles every frame. bakeModel(model, options) draws it once in the native core, seen from +z, orthographic and shaded under options.light as the renderer would shade it, supersampled into a texture with a transparent background. One quad then shows what took thousands of triangles, with smooth edges at every quality level.",
+          "Show the picture on the built-in plane turned to face +z, scaled to 2 × extent, under a frontLight (which shows camera-facing surfaces at exactly their color). Keep it opaque: cut-out edges get alpha-to-coverage under MSAA, while translucent draws aren't depth-sorted. Darken a covered tile by tinting it, not with a translucent layer.",
+          "parts draws several models together (a tile and the fruit on it), each scaled, moved and tinted like an entity; frame fixes the square drawn so every picture in a set lines up. With a key (a ProceduralCache.storageKey, so an app update bakes again) the picture is kept in the engine's cache: check isBakeKept(key) on later visits and call bakeModel(null, { size, light, key }) to restore it without building the models at all.",
+        ],
+        table: {
+          headers: ["BakeOptions", "Meaning"],
+          rows: [
+            ["size", "Picture width and height in pixels: about the size it's shown at."],
+            ["light", "The scene's Light, as passed to GameView."],
+            ["background", "What glossy models reflect. Default black."],
+            ["shine", "Glossiness 0..1. Default: the model's own."],
+            ["supersample", "Samples per pixel along each side. Default 4."],
+            ["padding", "Empty margin as a fraction of the larger side. Default 0.04."],
+            ["parts", "Several { model, position, scale, color, shine } drawn together."],
+            ["frame", "{ center, extent }: the square of x/y to draw."],
+            ["key", "Keep the picture in the engine cache; pair with isBakeKept."],
+          ],
+        },
+        examples: [
+          {
+            title: "A tile drawn as one picture, kept between launches",
+            description:
+              "Run during setup, after warmUpEngine. The first visit bakes the tile from its model; later visits restore the picture from the cache and never build the model.",
+            code: `import { bakeModel, frontLight, isBakeKept, ProceduralCache, quat, type BakedModel, type Model, type World } from "@nayan-ui/engine";
+
+const cache = new ProceduralCache("tiles:1");
+// Pass the same light to GameView, so the pictures match the scene.
+export const light = frontLight([-0.4, 0.6, 1], 0.55);
+
+export function tilePicture(build: () => Model): BakedModel {
+  const key = cache.storageKey("tiles/picture:apple");
+  if (isBakeKept(key)) return bakeModel(null, { size: 256, light, key });
+  return bakeModel(build(), { size: 256, light, supersample: 6, key });
+}
+
+export function showTile(world: World, picture: BakedModel, x: number, y: number, covered: boolean) {
+  const side = 2 * picture.extent;
+  return world.spawn({
+    mesh: "plane",
+    texture: picture.texture,
+    position: [x, y, 0],
+    rotation: quat.x(Math.PI / 2), // the plane lies in x/z: turn it to face +z
+    scale: [side, 1, side],
+    color: covered ? [0.55, 0.55, 0.55, 1] : [1, 1, 1, 1], // tint, never a translucent layer
+  });
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
     ],
   },
   {

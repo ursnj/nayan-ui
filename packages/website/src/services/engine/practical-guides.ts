@@ -796,6 +796,11 @@ export function Slider() {
             ["spawn / effects after dispose", "Check world.isDisposed after an await"],
             ["Meshes per spawn or per frame", "Build once, reuse (ids are never freed)"],
             ["Culling scenery in JS", "Nothing: Rust culls every frame"],
+            ["Drawing still scenery live every frame", "still: true or world.backdropLayer"],
+            [
+              "Moving the camera every frame over a still backdrop",
+              "Hold it still until play needs it to move",
+            ],
             ["A long job in one frame", "Slice it with afterNextFrame"],
             ["Reporting a result twice", "Guard finish() with the status"],
             ["Unsupported color names ('pink')", "Hex or rgba strings"],

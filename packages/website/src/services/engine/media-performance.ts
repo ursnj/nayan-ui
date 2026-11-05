@@ -83,7 +83,8 @@ export function createRock(seed: number) {
         title: "Optimize and build LOD levels",
         paragraphs: [
           "optimizeGeometry(geometry, { ratio, error, lockBorders }) returns a cleaned copy: ratio 1 (default) only welds and reorders, lower ratios simplify within error (default 0.001), and lockBorders (default true) keeps open edges fixed. Use it on static opaque meshes only, never on skinned meshes or geometry whose vertex indices other code reads.",
-          "createGeometryLods(geometry, ratios = [1, 0.5, 0.25], options) simplifies the original independently per level. There is no automatic LOD switch: register the levels once and swap an entity's mesh when its distance changes.",
+          "On iOS and Android you rarely need levels of your own: every static mesh of at least 1,500 triangles gets coarser index buffers from a background thread, and each instance draws the coarsest whose error stays under half a pixel on screen (in the shadow pass, at the shadow map's resolution). Skinned meshes, and meshes built mostly of two-sided surfaces (leaf and card clouds, which simplification folds away at no measured error), are never simplified. The web draws full meshes.",
+          "createGeometryLods(geometry, ratios = [1, 0.5, 0.25], options) simplifies the original independently per level, for a mesh you want to swap yourself: a far tree that becomes a billboard, or a web scene that must stay light. Register the levels once and swap an entity's mesh when its distance changes.",
         ],
         examples: [
           {
@@ -631,10 +632,50 @@ export function Scene() {
         ],
       },
       {
+        id: "still-scenery-backdrop",
+        title: "Still scenery and the backdrop layer",
+        paragraphs: [
+          "Scenery that never moves (a sky, hills and a forest, a board's patterned background) doesn't need drawing every frame. Spawn it with still: true, or spawn a whole scene into world.backdropLayer(capacity) and step that layer once with update(0). GameView draws the layer once into a cached image behind the scene and reuses it, redrawing only when the layer steps, the camera moves, or the light, size or quality change. A heavy still scene then costs one full-screen image a frame: a meadow game went from 19 to 60 fps on a low-end Android tablet.",
+          "A still entity keeps a stand-in in its world, so set and despawn work as usual, but it can't have a parent, physics, text or animations, and it can't be picked. Backdrop pixels are drawn behind every live entity and receive no live shadows, so keep anything that moves, or that a live piece passes behind or sinks into (holes, the ground a runner stands on), in the world. A camera that moves every frame redraws the cache every frame, so hold the camera still while you can and only shake it for real events.",
+          "GameView reads source.backdrop by default; pass the backdrop prop to draw another RenderSource there. The layer is disposed with its world.",
+        ],
+        examples: [
+          {
+            title: "A still forest behind live players",
+            description:
+              "Run once when the scene is built. The trees are drawn into the cached backdrop; the player stays a live entity in front of them.",
+            code: `import type { Entity, Model, World } from "@nayan-ui/engine";
+
+export function buildScene(world: World, tree: Model) {
+  const forest = world.backdropLayer(256);
+  for (let i = 0; i < 120; i++) {
+    const angle = (i / 120) * Math.PI * 2;
+    const distance = 18 + (i % 5) * 4;
+    forest.spawn({ mesh: tree, position: [Math.cos(angle) * distance, 0, Math.sin(angle) * distance], color: "#6b8f4e" });
+  }
+  forest.update(0); // writes the layer's matrices and tells GameView to draw it again
+  // A single still piece can live in the world itself
+  world.spawn({ mesh: "plane", position: [0, -0.01, 0], scale: [80, 1, 80], color: "#a3b86c", still: true });
+  return world.spawn({ mesh: "capsule", position: [0, 1, 0], color: "#33B3FF" }); // live, drawn in front
+}
+
+export function replaceForest(world: World, previous: Entity[], spawn: (layer: World) => Entity[]) {
+  const layer = world.backdropLayer();
+  for (const e of previous) layer.despawn(e);
+  const next = spawn(layer);
+  layer.update(0);
+  return next;
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
         id: "culling-and-background-loading",
         title: "Culling and background decoding",
         paragraphs: [
-          "Rust frustum-culls every instance against the camera, and shadow casters against the light's box, every frame; skinned meshes are never culled. Don't cull scenery in JS.",
+          "Rust frustum-culls every instance against the camera, and shadow casters against the light's box, every frame; skinned meshes are never culled. Don't cull scenery in JS. An instance scaled to 0 (a pooled piece put away) is never drawn, small built-in spheres draw with coarser stand-ins, and opaque instances are drawn nearest first so the depth test rejects hidden pixels before shading. Static textures get mip chains and are sampled trilinearly.",
           "loadTexture, loadModel, loadFont and audio.load decode on native background threads, and loaded meshes register with the renderer inside Rust. Start loads together so they decode in parallel.",
         ],
         examples: [

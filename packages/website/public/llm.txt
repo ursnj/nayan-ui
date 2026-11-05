@@ -405,7 +405,8 @@ The project follows standard open-source contribution guidelines with Prettier f
 - Lifecycle rules, entities and quat rotations: https://www.nayanui.com/game-engine/world-entities
 - Effects (confetti, sparkle, shatter, splash, sparks, explosion, dust, flash, pop): https://www.nayanui.com/game-engine/particles
 - Drawing and painting (DrawingDocument, DrawingCanvas, drawing in games): https://www.nayanui.com/game-engine/drawing
-- Performance (world.transforms, zero-allocation frames): https://www.nayanui.com/game-engine/cache-performance
+- Procedural worlds (FieldGraph, WorldRecipe, generateWorldAsync, generateMesh, native ground and move queries): https://www.nayanui.com/game-engine/procedural-worlds
+- Performance (world.transforms, still scenery and the backdrop layer, culling, zero-allocation frames): https://www.nayanui.com/game-engine/cache-performance
 - Public API: https://www.nayanui.com/game-engine/api-reference
 
 The engine is one TypeScript API on a Rust core: World, GameView, physics, skeletal and tween animation,

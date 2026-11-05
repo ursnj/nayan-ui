@@ -375,16 +375,17 @@ export function SlowMotion({ world, slow }: { world: World; slow: boolean }) {
         id: "quality",
         title: "Render quality",
         paragraphs: [
-          "auto starts at high and steps down only while drawing can't keep up: after one second under ~33 fps, or a few seconds missing ~50 fps. It drops shadow detail first, then MSAA, then resolution, and climbs back after about ten smooth seconds.",
-          "Quality can't fix a slow game loop; that shows in updateMs, not renderMs. The chosen level survives pauses and only restarts with a new source.",
+          "auto starts at high and steps down only while drawing can't keep up: after one second under ~33 fps, or three seconds missing ~50 fps while drawing takes most of the frame (a slow game loop isn't helped by drawing less, and shows in updateMs). It drops shadow-edge filtering first, then shadows and MSAA, then resolution. It climbs back after ten smooth seconds, or after two when the render thread uses at most 10 ms a frame; a level that fails again soon after being restored becomes the ceiling, so it never bounces.",
+          "qualityKey (a game's id) remembers the level auto settles on in the engine's durable store, so every later view with that key, after restarts too, starts there instead of at high. adaptQuality={false} while what's on screen isn't the game in play (a ready screen, a menu, a results card): its cost says nothing about the game and would otherwise be remembered for the next visit.",
+          "Shadows are drawn only from full-resolution maps: a low-resolution map's smeared edges look worse than none. Lower levels skip the shadow pass instead. A level's pixel cap shrinks only the scene, which is stretched over the full-resolution screen before the overlay draws, so HUD text stays crisp; lowest smooths that stretch with FXAA.",
         ],
         table: {
-          headers: ["Level", "Pixel ratio cap", "MSAA", "Shadow map"],
+          headers: ["Level", "Pixel cap", "MSAA", "Shadows"],
           rows: [
-            ["high", "3", "4×", "2048, soft"],
-            ["medium", "3", "4×", "1024, soft"],
-            ["low", "3", "off", "1024, hard"],
-            ["lowest", "2", "off", "512, hard"],
+            ["high", "ratio 3", "4×", "2048 map, soft (hardware 2×2 PCF, four taps)"],
+            ["medium", "ratio 3", "4×", "2048 map, one filtered tap"],
+            ["low", "ratio 3", "off", "off"],
+            ["lowest", "ratio 2, 0.8 MP, FXAA", "off", "off"],
           ],
         },
         examples: [
@@ -395,6 +396,18 @@ export function SlowMotion({ world, slow }: { world: World; slow: boolean }) {
 export function Game({ world, saver }: { world: World; saver: boolean }) {
   const quality: RenderQualitySetting = saver ? "low" : "auto";
   return <GameView source={world} quality={quality} style={{ flex: 1 }} />;
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+          {
+            title: "Adapt to the game in play, and remember it per game",
+            description:
+              "Use in a game screen with a ready screen and a results card. Auto quality only judges frames while the game is played, and the next visit starts at the level it settled on.",
+            code: `import { GameView, type World } from "@nayan-ui/engine";
+
+export function GameScreen({ world, gameId, playing, over }: { world: World; gameId: string; playing: boolean; over: boolean }) {
+  return <GameView source={world} qualityKey={gameId} adaptQuality={playing && !over} style={{ flex: 1 }} />;
 }`,
             platform: "shared",
             language: "tsx",
@@ -412,6 +425,10 @@ export function Game({ world, saver }: { world: World; saver: boolean }) {
           rows: [
             ["fps", "Frames per second (presented frames on native)."],
             ["updateMs", "Mean milliseconds in onUpdate and the step."],
+            [
+              "publishMs",
+              "Mean JS-thread milliseconds handing the frame and overlay to the renderer (copying only, with a render thread).",
+            ],
             ["renderMs", "Mean milliseconds drawing (render thread on native, CPU side on web)."],
             ["quality", "Level drawn with; with auto, where it settled so far."],
             ["backend", "metal, vulkan or gl on native; webgpu or gl on the web."],

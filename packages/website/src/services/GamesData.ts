@@ -2136,6 +2136,47 @@ export const gamesData: Record<string, GameData> = {
     tags: ["adventure", "3d", "exploration", "combat", "open-world", "action"],
     relatedGames: ["maze-runner", "penguin-run", "tank-1990", "space-fighter"],
   },
+  "boxing-arena": {
+    id: "boxing-arena",
+    name: "Boxing Arena",
+    emoji: "🥊",
+    category: "Action",
+    description:
+      "A 3D boxing duel on a forest stage - choose Tibo or Poteto and knock out your opponent!",
+    longDescription:
+      "Boxing Arena is a 3D boxing duel between two fully animated boxers on a raised canvas stage in a forest clearing. Choose Tibo or Poteto and face the other as an AI opponent over a 60-second bout. Drag to step in and back off, tap to jab, swipe up for a heavier cross, swipe down to dodge and hold to block. Blows land only where a fist actually meets the opponent's body, and every punch and blocked blow costs stamina. Knock your opponent out, or have more health when the bell rings, to win.",
+    features: [
+      "Two fully animated 3D boxers, Tibo and Poteto",
+      "Jabs, crosses, blocks and dodges, all limited by stamina",
+      "Hits read from where the animated fists really meet the body",
+      "A raised canvas stage in a forest clearing, with day and night lighting",
+      "Gesture controls: drag, tap, swipe and hold",
+      "An AI opponent that blocks, dodges and counters",
+    ],
+    howToPlay: [
+      "Choose Tibo or Poteto, then press Start Game to begin the 60-second bout",
+      "Drag left or right to step in and back off",
+      "Tap to throw a quick jab; swipe up for a stronger, longer-reaching cross",
+      "Swipe down to dodge back, or hold your finger down to block",
+      "Each clean hit takes 5 health and scores 200 points; a blocked blow costs the defender stamina instead",
+      "Knock your opponent out, or have more health at the bell, to win; an even bout is a draw",
+    ],
+    tips: [
+      "Block when your opponent winds up, then counter while it recovers",
+      "A cross costs more than twice the stamina of a jab - save it for an opening",
+      "Back off to recover stamina when you run low; a tired boxer can't punch or hold a guard",
+      "Winning early earns a bonus for every second left on the clock",
+    ],
+    benefits: [
+      "Improves timing and reaction speed",
+      "Teaches managing a limited resource under pressure",
+      "Rewards reading an opponent and choosing the right moment",
+    ],
+    difficulty: "Medium",
+    ageRating: "Everyone",
+    tags: ["action", "3d", "fighting", "arcade"],
+    relatedGames: ["treasure-hunt", "penguin-run", "mob-control"],
+  },
   bluk: {
     id: "bluk",
     name: "Bluk",

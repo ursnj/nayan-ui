@@ -348,9 +348,39 @@
     "guide": "cache-performance"
   },
   {
+    "name": "bakeModel",
+    "module": "assets/texture",
+    "typeOnly": false,
+    "guide": "models-textures"
+  },
+  {
+    "name": "isBakeKept",
+    "module": "assets/texture",
+    "typeOnly": false,
+    "guide": "models-textures"
+  },
+  {
     "name": "loadTexture",
     "module": "assets/texture",
     "typeOnly": false,
+    "guide": "models-textures"
+  },
+  {
+    "name": "BakedModel",
+    "module": "assets/texture",
+    "typeOnly": true,
+    "guide": "models-textures"
+  },
+  {
+    "name": "BakeOptions",
+    "module": "assets/texture",
+    "typeOnly": true,
+    "guide": "models-textures"
+  },
+  {
+    "name": "BakePart",
+    "module": "assets/texture",
+    "typeOnly": true,
     "guide": "models-textures"
   },
   {
@@ -472,6 +502,156 @@
     "module": "assets/surface",
     "typeOnly": true,
     "guide": "surfaces-lofts"
+  },
+  {
+    "name": "faceColor",
+    "module": "assets/procedural",
+    "typeOnly": false,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "FieldFunction",
+    "module": "assets/procedural",
+    "typeOnly": false,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "FieldGraph",
+    "module": "assets/procedural",
+    "typeOnly": false,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "FieldRef",
+    "module": "assets/procedural",
+    "typeOnly": false,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "generateMesh",
+    "module": "assets/procedural",
+    "typeOnly": false,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "generateWorld",
+    "module": "assets/procedural",
+    "typeOnly": false,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "generateWorldAsync",
+    "module": "assets/procedural",
+    "typeOnly": false,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "isWorldKept",
+    "module": "assets/procedural",
+    "typeOnly": false,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "ProceduralWorld",
+    "module": "assets/procedural",
+    "typeOnly": false,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "sectionColor",
+    "module": "assets/procedural",
+    "typeOnly": false,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "surfaceColor",
+    "module": "assets/procedural",
+    "typeOnly": false,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "surfaceDisplacement",
+    "module": "assets/procedural",
+    "typeOnly": false,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "FieldInput",
+    "module": "assets/procedural",
+    "typeOnly": true,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "FieldShape",
+    "module": "assets/procedural",
+    "typeOnly": true,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "ItemSolid",
+    "module": "assets/procedural",
+    "typeOnly": true,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "MeshPart",
+    "module": "assets/procedural",
+    "typeOnly": true,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "MeshRecipe",
+    "module": "assets/procedural",
+    "typeOnly": true,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "ScatterFilter",
+    "module": "assets/procedural",
+    "typeOnly": true,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "ScatterLayer",
+    "module": "assets/procedural",
+    "typeOnly": true,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "SolidRecipe",
+    "module": "assets/procedural",
+    "typeOnly": true,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "Spot",
+    "module": "assets/procedural",
+    "typeOnly": true,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "TerrainRecipe",
+    "module": "assets/procedural",
+    "typeOnly": true,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "WorldOptions",
+    "module": "assets/procedural",
+    "typeOnly": true,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "WorldRecipe",
+    "module": "assets/procedural",
+    "typeOnly": true,
+    "guide": "procedural-worlds"
+  },
+  {
+    "name": "WorldStep",
+    "module": "assets/procedural",
+    "typeOnly": true,
+    "guide": "procedural-worlds"
   },
   {
     "name": "createShape",

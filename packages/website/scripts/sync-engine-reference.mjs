@@ -38,6 +38,7 @@ const targets = {
   "assets/loft": "surfaces-lofts",
   "assets/surface": "surfaces-lofts",
   "assets/shape": "procedural-geometry",
+  "assets/procedural": "procedural-worlds",
   "assets/font": "text-fonts",
   "media/audio": "audio-haptics",
   "media/haptics": "audio-haptics",

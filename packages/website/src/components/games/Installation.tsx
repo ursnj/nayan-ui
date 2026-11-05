@@ -47,7 +47,7 @@ const SETTINGS_ROWS: Row[] = [
 const KEYBOARD_ROWS: Row[] = [
   [
     "drag",
-    "Arrows / WASD steer, Space taps: car-racing, bike-racing, penguin-run, treasure-hunt, tank-1990, mob-control, paper-io, space-fighter.",
+    "Arrows / WASD steer, Space taps: car-racing, bike-racing, penguin-run, treasure-hunt, boxing-arena, tank-1990, mob-control, paper-io, space-fighter.",
   ],
   ["swipe", "Arrows / WASD swipe: game-2048, snake-3d, pac-man, maze-runner, crossy-road."],
   ["pointer", "Arrows / WASD move a cursor, Space selects (hold to drag): every other game."],

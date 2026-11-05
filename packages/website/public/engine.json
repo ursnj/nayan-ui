@@ -12,7 +12,8 @@
     "performance": "https://www.nayanui.com/game-engine/cache-performance",
     "scoreboardTimers": "https://www.nayanui.com/game-engine/scoreboard-timers",
     "input": "https://www.nayanui.com/game-engine/input-picking",
-    "troubleshooting": "https://www.nayanui.com/game-engine/troubleshooting"
+    "troubleshooting": "https://www.nayanui.com/game-engine/troubleshooting",
+    "proceduralWorlds": "https://www.nayanui.com/game-engine/procedural-worlds"
   },
   "platforms": {
     "react": {
@@ -123,6 +124,8 @@
     "A custom disposed flag (world.isDisposed).",
     "Meshes per spawn or per frame.",
     "Culling scenery in JS.",
+    "Drawing still scenery live every frame (still: true, world.backdropLayer).",
+    "Moving the camera every frame over a still backdrop.",
     "Long setup in one frame (afterNextFrame).",
     "Invented API names; check the reference.",
     "Testing native in Expo Go."
@@ -152,7 +155,10 @@
     "frames": "Native: display clock, render thread; stale frames are replaced, not queued",
     "culling": "Frustum culling in Rust every frame; skinned meshes never culled",
     "loading": "Assets decode on native background threads",
-    "quality": "quality='auto' lowers shadows, then anti-aliasing, then resolution only while needed"
+    "quality": "quality='auto' drops shadow filtering, then shadows and anti-aliasing, then resolution, only while drawing can't keep up; qualityKey remembers the level per game; adaptQuality={false} on ready screens, menus and results",
+    "backdrop": "Still scenery (still: true or world.backdropLayer, stepped once with update(0)) is drawn once into a cached image and redrawn only when the layer steps or the camera, light, size or quality change",
+    "lod": "Native: static meshes of 1,500+ triangles get automatic LOD within half a pixel; skinned and two-sided (leaf/card) meshes stay whole; the web draws full meshes",
+    "bake": "bakeModel draws camera-facing models (tiles, icons) once into a picture shown on a plane; key + isBakeKept restore it without building the models"
   },
   "caching": {
     "automatic": "Rust caches prepared meshes and asset bytes",

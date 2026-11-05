@@ -32,6 +32,7 @@ const DRAG_GAMES = new Set([
   "bike-racing",
   "penguin-run",
   "treasure-hunt",
+  "boxing-arena",
   "tank-1990",
   "mob-control",
   "paper-io",

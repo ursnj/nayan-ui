@@ -6643,6 +6643,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.nayanui.com/games/boxing-arena</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.nayanui.com/games/block-breaker</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -6759,6 +6764,11 @@
   </url>
   <url>
     <loc>https://www.nayanui.com/game-engine/surfaces-lofts</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/game-engine/procedural-worlds</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
