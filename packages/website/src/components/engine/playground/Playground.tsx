@@ -253,7 +253,7 @@ export default function Playground() {
     } catch {}
   }, [code]);
 
-  // The example the editor opened with (Bouncing ball on a first visit); none for edited or shared code.
+  // The starter selected for this editing session; shared or saved custom code may have none.
   const [selected, setSelected] = useState<Option | null>(
     () =>
       OPTIONS.find(
@@ -261,6 +261,7 @@ export default function Playground() {
           PLAYGROUND_EXAMPLES.find((example) => example.id === option.value)?.code === code,
       ) ?? null,
   );
+  const activeExample = PLAYGROUND_EXAMPLES.find((example) => example.id === selected?.value);
   const loadExample = (id: string) => {
     const example = PLAYGROUND_EXAMPLES.find((item) => item.id === id);
     if (!example) return;
@@ -323,7 +324,8 @@ export default function Playground() {
             className="mb-0"
             aria-label="Load an example"
             placeholder="Load an example…"
-            isSearchable={false}
+            isSearchable
+            isDisabled={!ready}
             options={GROUPS as unknown as Option[]}
             value={selected}
             onChange={(option: Option | null) => option && loadExample(option.value)}
@@ -342,9 +344,10 @@ export default function Playground() {
         </button>
         <button
           type="button"
-          onClick={() => loadExample(PLAYGROUND_EXAMPLES[0]!.id)}
+          onClick={() => loadExample(selected?.value ?? PLAYGROUND_EXAMPLES[0]!.id)}
+          disabled={!ready}
           className={button}
-          title="Back to the first example"
+          title="Restore the selected example"
         >
           <RotateCcw aria-hidden className="h-4 w-4" /> Reset
         </button>
@@ -406,8 +409,17 @@ export default function Playground() {
                 aria-hidden
                 className={`h-2 w-2 rounded-full ${Preview ? "bg-emerald-500" : "bg-slate-400"}`}
               />
-              Preview
+              <span className="truncate">{activeExample?.title ?? "Preview"}</span>
+              {activeExample && (
+                <span className="ml-auto shrink-0 text-muted">{activeExample.category}</span>
+              )}
             </div>
+            {activeExample && (
+              <div className="shrink-0 border-b border-default px-4 py-3 text-sm">
+                <p className="text-foreground">{activeExample.description}</p>
+                <p className="mt-1 text-xs text-muted">{activeExample.instruction}</p>
+              </div>
+            )}
             <div className="relative flex min-h-0 flex-1 bg-slate-900">
               {Preview ? (
                 <Boundary key={run} onError={(error) => log("error", error)}>
