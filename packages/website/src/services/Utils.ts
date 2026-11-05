@@ -2006,7 +2006,7 @@ export const gamesSidebarItems = [
   },
   {
     title: "Talking Tua",
-    description: "Playful 3D companion",
+    description: "A friend who talks back",
     link: "/games/talking-tua",
     icon: Gamepad2,
   },

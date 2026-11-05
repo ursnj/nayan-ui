@@ -42,6 +42,7 @@ const targets = {
   "assets/font": "text-fonts",
   "media/audio": "audio-haptics",
   "media/haptics": "audio-haptics",
+  "media/microphone": "audio-haptics",
   "input/Joystick": "input-picking",
   "input/keyboard": "input-picking",
   types: "render-source",

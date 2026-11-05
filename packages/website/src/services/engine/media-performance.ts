@@ -338,6 +338,86 @@ export function applySettings(settings: { enableSounds: boolean; enableHaptics: 
         ],
       },
       {
+        id: "microphone",
+        title: "Record from the microphone",
+        paragraphs: [
+          "microphone keeps the last few seconds of input in the Rust core (maxSeconds, default 10) and reports how loud it is now. microphone.level runs 0 (-60 dBFS or quieter) to 1 (full scale), rises at once and falls back over ~0.15 s, and is cheap enough to read every frame to notice speech starting and stopping. microphone.take(seconds, { skipEnd }) turns the stretch that ended skipEnd seconds ago into an ordinary Sound, with its duration and loudness over time, and forgets what was heard. Play it through the mixer at any pitch (a character repeating you in a squeaky voice), then free it with audio.release. Nothing leaves the device.",
+          "Ask first: requestPermission() shows the system prompt once and resolves to whether recording is allowed. iOS needs NSMicrophoneUsageDescription and switches the audio session to play-and-record (to the speaker) while listening, back to ambient after stop(). Android needs android.permission.RECORD_AUDIO in the app's manifest and asks through the current activity. The web asks through getUserMedia with echo cancellation, over HTTPS or localhost, on a page whose Permissions-Policy allows the microphone. state is 'failed' when there's no microphone or no permission; stop() releases it and turns the system's recording indicator off.",
+          "A microphone hears the game's own sounds too. Ignore input while the game talks and for a moment after, and take the recording only after the pause that follows speech.",
+        ],
+        table: {
+          headers: ["API", "What it does"],
+          rows: [
+            ["microphone.supported", "Whether this build can record (false on older app builds)."],
+            ["microphone.permission", "'granted', 'undetermined' or 'denied'."],
+            [
+              "microphone.requestPermission()",
+              "The system prompt the first time; resolves to true when allowed.",
+            ],
+            ["microphone.start({ maxSeconds })", "Starts listening (asynchronously: see state)."],
+            ["microphone.state", "'off', 'starting', 'listening' or 'failed'."],
+            ["microphone.level / microphone.held", "Loudness now (0..1); seconds of input held."],
+            [
+              "microphone.take(seconds, { skipEnd, levelsPerSecond })",
+              "A Recording: { sound, duration, levels, levelsPerSecond }, or null.",
+            ],
+            [
+              "audio.release(sound) / audio.duration(sound) / audio.levels(sound, perSecond)",
+              "Free a runtime sound; its length; its loudness over time (any sound).",
+            ],
+          ],
+        },
+        examples: [
+          {
+            title: "A character that repeats you",
+            description:
+              "Call listen() when the player turns talking on and step(dt) every frame. When someone speaks and pauses, the character repeats them faster and higher, and doesn't listen to itself meanwhile.",
+            code: `import { audio, microphone, type Recording } from "@nayan-ui/engine";
+
+const SPEAKING = 0.45;
+let heard = 0,
+  quiet = 0,
+  deafFor = 0;
+let speaking: Recording | null = null;
+
+export async function listen(): Promise<boolean> {
+  if (!(await microphone.requestPermission())) return false;
+  return microphone.start({ maxSeconds: 8 });
+}
+
+export function step(dt: number) {
+  if (deafFor > 0) {
+    deafFor -= dt;
+    if (deafFor <= 0 && speaking) {
+      audio.release(speaking.sound);
+      speaking = null;
+      microphone.take(); // drop what was heard while talking
+    }
+    return;
+  }
+  const level = microphone.level;
+  if (heard === 0 && level < SPEAKING) return;
+  heard += dt;
+  quiet = level < SPEAKING ? quiet + dt : 0;
+  if (quiet < 0.7) return;
+  // Speech then a pause: repeat it without the pause, then stay deaf while talking
+  const take = microphone.take(heard + 0.25 - (quiet - 0.1), { skipEnd: quiet - 0.1 });
+  heard = quiet = 0;
+  if (!take) return;
+  audio.play(take.sound, { pitch: 1.7, volume: 1.3 });
+  speaking = take;
+  deafFor = take.duration / 1.7 + 0.45;
+}
+
+export function stopListening() {
+  microphone.stop();
+}`,
+            platform: "shared",
+            language: "tsx",
+          },
+        ],
+      },
+      {
         id: "impact-feedback",
         title: "Collision sounds and haptics",
         paragraphs: [

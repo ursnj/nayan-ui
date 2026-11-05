@@ -834,6 +834,42 @@
     "guide": "audio-haptics"
   },
   {
+    "name": "microphone",
+    "module": "media/microphone",
+    "typeOnly": false,
+    "guide": "audio-haptics"
+  },
+  {
+    "name": "MicrophoneOptions",
+    "module": "media/microphone",
+    "typeOnly": true,
+    "guide": "audio-haptics"
+  },
+  {
+    "name": "MicrophonePermission",
+    "module": "media/microphone",
+    "typeOnly": true,
+    "guide": "audio-haptics"
+  },
+  {
+    "name": "MicrophoneState",
+    "module": "media/microphone",
+    "typeOnly": true,
+    "guide": "audio-haptics"
+  },
+  {
+    "name": "Recording",
+    "module": "media/microphone",
+    "typeOnly": true,
+    "guide": "audio-haptics"
+  },
+  {
+    "name": "TakeOptions",
+    "module": "media/microphone",
+    "typeOnly": true,
+    "guide": "audio-haptics"
+  },
+  {
     "name": "haptics",
     "module": "media/haptics",
     "typeOnly": false,

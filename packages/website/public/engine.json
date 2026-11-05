@@ -99,7 +99,8 @@
     "afterNextFrame": "afterNextFrame(fn) -> cancel",
     "proceduralPeek": "new ProceduralCache(revision).peek(key) | get(key, build)",
     "skeletal": "loadModel(src).animations; world.playClip(e, name, { loop?, speed?, fade?, time? }); world.stopClip(e, reset?)",
-    "frameStats": "<GameView onStats={({ fps, updateMs, renderMs, quality, backend }) => ...} />"
+    "frameStats": "<GameView onStats={({ fps, updateMs, renderMs, quality, backend }) => ...} />",
+    "microphone": "microphone.requestPermission() then microphone.start(); microphone.level each frame; microphone.take(seconds, { skipEnd }) -> { sound, duration, levels } to play (any pitch) then audio.release(sound); microphone.stop()"
   },
   "drawing": {
     "create": "new DrawingDocument(width, height, pixelRatio?) after warm-up, one per screen",

@@ -3,7 +3,7 @@ import type { EngineGuide } from "./types";
 export const apiReferenceGuide: EngineGuide = {
   "slug": "api-reference",
   "title": "Public API reference",
-  "description": "172 named public exports, including classes, helpers, component contracts and TypeScript data structures, audited against the shared engine entry point.",
+  "description": "178 named public exports, including classes, helpers, component contracts and TypeScript data structures, audited against the shared engine entry point.",
   "sections": [
     {
       "id": "reading-the-reference",
@@ -3422,6 +3422,19 @@ export declare const audio: {
     /** Plays a sound (low latency: mixed in Rust on the audio thread). Returns null if it couldn't play. */
     play(sound: Sound, { volume: v, pan, pitch, loop }?: AudioPlayOptions): Voice | null;
     stop(voice: Voice | null | undefined): void;
+    /**
+     * Frees a sound's samples, for sounds made at runtime (a \`microphone.take\` recording, once played).
+     * Its id then plays nothing; voices already playing it finish first. Don't release a bank's sounds.
+     */
+    release(sound: Sound | null | undefined): void;
+    /** A sound's length in seconds (0 if unknown or released). */
+    duration(sound: Sound): number;
+    /**
+     * A sound's loudness (RMS, 0..1) over time, one value per \`1 / perSecond\` seconds from its start:
+     * drive a talking mouth, a bobbing body or a meter from it while the sound plays (at \`pitch\` p,
+     * value i plays at i / (perSecond * p) seconds).
+     */
+    levels(sound: Sound, perSecond?: number): Float32Array;
     muted: boolean;
     /** The inverse of \`muted\`, matching \`haptics.enabled\` (e.g. \`audio.enabled = settings.enableSounds\`). */
     enabled: boolean;
@@ -3429,6 +3442,113 @@ export declare const audio: {
     volume: number;
     /** True once the device's audio output is running. */
     readonly running: boolean;
+};`
+        }
+      ]
+    },
+    {
+      "id": "media-microphone",
+      "title": "media/microphone",
+      "paragraphs": [
+        "Usage and examples: /game-engine/audio-haptics."
+      ],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "microphone",
+            "Runtime API",
+            "/game-engine/audio-haptics"
+          ],
+          [
+            "MicrophoneOptions",
+            "TypeScript type",
+            "/game-engine/audio-haptics"
+          ],
+          [
+            "MicrophonePermission",
+            "TypeScript type",
+            "/game-engine/audio-haptics"
+          ],
+          [
+            "MicrophoneState",
+            "TypeScript type",
+            "/game-engine/audio-haptics"
+          ],
+          [
+            "Recording",
+            "TypeScript type",
+            "/game-engine/audio-haptics"
+          ],
+          [
+            "TakeOptions",
+            "TypeScript type",
+            "/game-engine/audio-haptics"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "media/microphone declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export type MicrophoneState = 'off' | 'starting' | 'listening' | 'failed';
+
+export type MicrophonePermission = 'granted' | 'undetermined' | 'denied';
+
+/** What \`microphone.take\` returns: a sound to play, how long it lasts and its loudness over time. */
+export type Recording = {
+    sound: Sound;
+    /** Seconds at pitch 1. */
+    duration: number;
+    /** RMS loudness, \`levelsPerSecond\` values a second (see \`audio.levels\`). */
+    levels: Float32Array;
+    levelsPerSecond: number;
+};
+
+export type MicrophoneOptions = {
+    /** Seconds of input kept (0.5..30). Default 10. */
+    maxSeconds?: number;
+};
+
+export type TakeOptions = {
+    /** Leave out the last \`skipEnd\` seconds (the silence after someone stops talking). Default 0. */
+    skipEnd?: number;
+    /** Loudness values per second in \`levels\`. Default 30. */
+    levelsPerSecond?: number;
+};
+
+export declare const microphone: {
+    /** Whether this engine build can record (false on older app builds and without a native module). */
+    readonly supported: boolean;
+    /** Whether the app may record. On Android, 'undetermined' also covers a denial (it can't tell). */
+    readonly permission: MicrophonePermission;
+    /** Shows the system prompt the first time (answering at once after that); true if recording is allowed. */
+    requestPermission(): Promise<boolean>;
+    /** Starts listening (asynchronously: see \`state\`). Ask for the permission first. */
+    start({ maxSeconds }?: MicrophoneOptions): boolean;
+    /** Stops listening and releases the microphone (its system indicator turns off); forgets what was heard. */
+    stop(): void;
+    /** 'failed' when there's no microphone, no permission or the input couldn't open. */
+    readonly state: MicrophoneState;
+    /**
+     * How loud the input is now: 0 at -60 dBFS or quieter, 1 at full scale; speech close to a phone
+     * is usually 0.4..0.8, a quiet room under 0.3. Rises at once and falls back over ~0.15 s. Cheap
+     * enough to read every frame.
+     */
+    readonly level: number;
+    /** Seconds of input held (up to \`maxSeconds\`), since starting or the last \`take\`. */
+    readonly held: number;
+    /**
+     * The last \`seconds\` of input (ending \`skipEnd\` seconds ago) as a new Sound, and forgets
+     * everything heard so far so the next take starts fresh. Null if nothing was heard. Release the
+     * sound with \`audio.release\` once it has played: each take holds its samples until then.
+     */
+    take(seconds?: number, { skipEnd, levelsPerSecond }?: TakeOptions): Recording | null;
 };`
         }
       ]
