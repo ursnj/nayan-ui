@@ -1587,17 +1587,18 @@ export const gamesData: Record<string, GameData> = {
     ],
     howToPlay: [
       "Press Start Game or tap Tua to begin",
-      "Tap Talk and allow the microphone, then speak and pause: Tua repeats you",
+      "Allow the microphone, then speak and pause: Tua repeats you (there are no buttons)",
       "Poke Tua's head, belly, hands or feet; three quick head taps knock it over",
-      "Rub back and forth over Tua to tickle it, or swipe fast for a play fight",
-      "Tap Feed and drag the fruit to Tua's mouth; tap Toot, Sneeze or Dance for more",
+      "Tap Tua's nose to make it sneeze, or poke its belly twice to make it toot",
+      "Rub back and forth to tickle, swipe fast for a play fight or long-press for a dance party",
+      "Tap the fruit bowl and drag the fruit to Tua's mouth",
       "Tap the floor to send Tua walking, drag beside Tua to turn it and pinch to zoom",
     ],
     tips: [
       "Speak clearly, then pause: Tua waits until you have finished",
       "Feed Tua four fruits in a row and see what happens",
       "Leave Tua alone for a while, then tap it to wake it up",
-      "Turn Talk off when you're done to release the microphone",
+      "Press Stop when you're done: the microphone is released at once",
     ],
     benefits: [
       "Encourages children to speak and listen back to their own words",
