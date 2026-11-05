@@ -2005,9 +2005,9 @@ export const gamesSidebarItems = [
     icon: Gamepad2,
   },
   {
-    title: "Play With Tua",
+    title: "Talking Tua",
     description: "Playful 3D companion",
-    link: "/games/play-with-tua",
+    link: "/games/talking-tua",
     icon: Gamepad2,
   },
   {

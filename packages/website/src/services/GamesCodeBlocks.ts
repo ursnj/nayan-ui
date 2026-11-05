@@ -32,7 +32,7 @@ export const appJsonCode = `{
 export const metroConfigCode = `const { getDefaultConfig } = require('expo/metro-config');
 
 const config = getDefaultConfig(__dirname);
-config.resolver.assetExts.push('glb', 'gltf'); // Treasure Hunt and Play with Tua load models
+config.resolver.assetExts.push('glb', 'gltf'); // Treasure Hunt and talking tua load models
 module.exports = config;`;
 
 export const devBuildCode = `npx expo prebuild
@@ -240,7 +240,7 @@ export const rootExportsCode = `import {
   CrossyRoad, DinoJump, DotsAndBoxes, FallingSticks, FindDifferentNumber, FlappyBird,
   FruitMerger, FruitNinja, Game2048, KnifeHit, LudoKing, MazeRunner, MemoryMatch,
   MineSweeper, MobControl, NumberSearch, NutsAndBolts, PacMan, PaperIo, PenguinRun,
-  PerfectCircle, PipeConnect, PlayWithTua, PopitFidget, Reversi, SlidingNumbers, Snake3D,
+  PerfectCircle, PipeConnect, TalkingTua, PopitFidget, Reversi, SlidingNumbers, Snake3D,
   SnakesAndLadders, SpaceFighter, SpiderSolitaire, StackTower, Sudoku, Tangram, Tank1990,
   TicTacToe, TileHome, TreasureHunt, WhackAMole, WordSearch,
 
@@ -351,7 +351,7 @@ export const gameIdsEnumCode = `enum GAME_IDS {
   CROSSY_ROAD = 'crossy-road',            TANGRAM = 'tangram',
   CHECKERS = 'checkers',                  MEMORY_MATCH = 'memory-match',
   FALLING_STICKS = 'falling-sticks',      REVERSI = 'reversi',
-  PENGUIN_RUN = 'penguin-run',            PLAY_WITH_TUA = 'play-with-tua',
+  PENGUIN_RUN = 'penguin-run',            TALKING_TUA = 'talking-tua',
   TREASURE_HUNT = 'treasure-hunt',       BOXING_ARENA = 'boxing-arena'
 }`;
 

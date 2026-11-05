@@ -1567,15 +1567,15 @@ export const gamesData: Record<string, GameData> = {
     tags: ["racing", "motorcycle", "traffic", "3d", "reflex", "fast-paced"],
     relatedGames: ["car-racing", "penguin-run", "space-fighter", "crossy-road"],
   },
-  "play-with-tua": {
-    id: "play-with-tua",
-    name: "Play With Tua",
+  "talking-tua": {
+    id: "talking-tua",
+    name: "Talking Tua",
     emoji: "🧸",
     category: "Arcade",
     description:
-      "Play with Tua, a fully animated 3D companion — make Tua dance, wave, laugh, jump and more, and turn Tua around to see every side.",
+      "talking tua, a fully animated 3D companion — make Tua dance, wave, laugh, jump and more, and turn Tua around to see every side.",
     longDescription:
-      "Play With Tua is a relaxed, no-pressure playground starring Tua, an animated 3D character. Start a session, then tap the scene to step through ten actions or pick one directly from the action strip: standing, waving, winking, walking, running, jumping, dancing, laughing, fighting and falling. Each action repeats until you choose another, with sound effects timed to Tua's footsteps, jumps and laughs. Drag across the scene to turn Tua and see every side. There is no winning or losing — the scoreboard simply counts how many moves you have tried.",
+      "Talking Tua is a relaxed, no-pressure playground starring Tua, an animated 3D character. Start a session, then tap the scene to step through ten actions or pick one directly from the action strip: standing, waving, winking, walking, running, jumping, dancing, laughing, fighting and falling. Each action repeats until you choose another, with sound effects timed to Tua's footsteps, jumps and laughs. Drag across the scene to turn Tua and see every side. There is no winning or losing — the scoreboard simply counts how many moves you have tried.",
     features: [
       "An animated 3D character with ten skeletal animations",
       "Action strip for choosing any move directly, plus tap-to-cycle",
@@ -2413,7 +2413,7 @@ export const GAME_ORDER: readonly string[] = [
   "treasure-hunt",
   "car-racing",
   "bike-racing",
-  "play-with-tua",
+  "talking-tua",
   "bubble-shooter",
   "block-breaker",
   "fruit-ninja",

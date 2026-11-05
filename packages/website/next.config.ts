@@ -23,6 +23,8 @@ const nextConfig: NextConfig = {
     return [
       { source: "/engine", destination: "/game-engine", permanent: true },
       { source: "/engine/:slug", destination: "/game-engine/:slug", permanent: true },
+      // Play With Tua was renamed Talking Tua.
+      { source: "/games/play-with-tua", destination: "/games/talking-tua", permanent: true },
     ];
   },
   serverExternalPackages: [

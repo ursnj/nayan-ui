@@ -62,7 +62,7 @@ const ENTRY_ROWS: Row[] = [
 const CALLBACK_ROWS: Row[] = [
   [
     "onEndGame",
-    "Once per run: win / lose at the end, cancel on Stop, unmount mid-run or a draw. additionalData: Treasure Hunt { gems, defeated, seconds }, Play with Tua { action, moves }.",
+    "Once per run: win / lose at the end, cancel on Stop, unmount mid-run or a draw. additionalData: Treasure Hunt { gems, defeated, seconds }, talking tua { action, moves }.",
   ],
   ["onPlayingChange", "true when a run starts (and while paused), false when it stops or ends."],
   ["onSettingsChange", "Modal switches (sounds, haptics, Dark Mode) and close (isVisible: false)."],
