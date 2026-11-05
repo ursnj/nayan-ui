@@ -1,5 +1,5 @@
 import { type ComponentType, createElement, memo, useEffect, useRef, useState } from 'react';
-import { AppState } from 'react-native';
+import { isGameActive, subscribeGameActivity } from './GameLifecycle';
 import { GameSettingsModal } from '../../helpers/GameSettingsModal';
 import { GameThemeProvider } from '../../helpers/GameTheme';
 import { GameAssetLoader } from '../../services/GameAssetLoader';
@@ -51,15 +51,15 @@ export function withGameLoading(id: GAME_IDS, load: () => ComponentType<GameProp
       session.name = id;
       loading.current = session;
       const sync = () => {
-        if (AppState.currentState === 'active' && !failed.current) session.start();
+        if (isGameActive() && !failed.current) session.start();
         else session.pause();
       };
-      const app = AppState.addEventListener('change', sync);
+      const app = subscribeGameActivity(sync);
       sync();
       return () => {
         session.dispose();
         loading.current = null;
-        app.remove();
+        app();
       };
     }, [Game, settings.theme]);
     // Settings remain available while loading.
@@ -79,7 +79,7 @@ export function withGameLoading(id: GAME_IDS, load: () => ComponentType<GameProp
               onRetry={() => {
                 failed.current = false;
                 setError(false);
-                if (AppState.currentState === 'active') loading.current?.start();
+                if (isGameActive()) loading.current?.start();
               }}
             />
           }>

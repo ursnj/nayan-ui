@@ -1,11 +1,8 @@
 import { type ReactNode } from 'react';
-import { Dimensions } from 'react-native';
+import { getScreenDimensions } from './ScreenDimensions';
 import { gameWidthFor } from '../games/shared/EngineGameWidth';
 
-export function getScreenDimensions(): { width: number; height: number } {
-  const { width, height } = Dimensions.get('window');
-  return { width, height };
-}
+export { getScreenDimensions } from './ScreenDimensions';
 
 export const isTablet = getScreenDimensions().width > 640;
 

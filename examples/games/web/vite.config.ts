@@ -24,9 +24,8 @@ function metroRequires(): Plugin {
 export default defineConfig({
   plugins: [metroRequires(), tailwindcss()],
   resolve: {
-    alias: [{ find: /^react-native$/, replacement: 'react-native-web' }],
     extensions: ['.web.tsx', '.web.ts', '.tsx', '.ts', '.mjs', '.js', '.json'],
-    dedupe: ['react', 'react-dom', 'react-native-web', '@nayan-ui/engine']
+    dedupe: ['react', 'react-dom', '@nayan-ui/engine']
   },
   define: {
     '__DEV__': JSON.stringify(process.env.NODE_ENV !== 'production'),

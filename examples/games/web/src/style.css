@@ -102,3 +102,7 @@ body {
 [data-testid='game-settings-popover'] {
   backdrop-filter: blur(20px);
 }
+
+dialog[data-testid='game-settings-popover']::backdrop {
+  background: transparent;
+}

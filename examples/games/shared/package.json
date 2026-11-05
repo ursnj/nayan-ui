@@ -6,9 +6,21 @@
   "exports": {
     ".": "./index.ts"
   },
+  "devDependencies": {
+    "@types/react-dom": "^19.2.0"
+  },
   "peerDependencies": {
     "@nayan-ui/engine": "*",
     "react": "*",
+    "react-dom": "*",
     "react-native": "*"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
   }
 }

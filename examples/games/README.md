@@ -2,9 +2,9 @@
 
 A Bun workspace with one game, **Car Racing**, that runs on iOS, Android and the web from the same code. It is built on [`@nayan-ui/engine`](https://www.nayanui.com/game-engine).
 
-- The game lives in `shared/`. It is a React Native component.
+- The game logic and engine scenes live in `shared/`, with platform-specific screen helpers.
 - `mobile/` is an Expo app. It renders the game with React Native.
-- `web/` is a Vite app. It renders the same game through `react-native-web`.
+- `web/` is a Vite app using React and React DOM, with no React Native dependencies. It selects the `.web.ts` / `.web.tsx` helpers for DOM layout, browser visibility, loading transitions and settings.
 
 Car Racing is copied from the Playtura games library, so it plays exactly as it does in Playtura and on [nayanui.com/games](https://www.nayanui.com/games/car-racing). The one change is the car: it is loaded from glTF files instead of built in code.
 
