@@ -105,6 +105,7 @@ packages/
   website/   @nayan-ui/website — nayanui.com (Next.js)
 examples/    vite, nextjs, expo, games starter projects
 .github/     publish workflows (npm + Docker)
+scripts/     local publish scripts (Docker)
 ```
 
 ## Development
@@ -134,6 +135,7 @@ bun install
 
 - **npm packages** — run the **Publish npm packages** workflow and select the packages to release (supports dry run). Uses npm trusted publishing, no token required.
 - **Website** — run the **Publish website docker images** workflow to build and push `ursnj/nayanui:latest`. Requires the `PLAYTURA_TOKEN` and `DOCKER_HUB_TOKEN` repository secrets.
+  Or publish it from your machine with `bun run docker:publish` (needs Docker, a playtura checkout at `../playtura` or `--playtura <dir>`, and `docker login` as ursnj; `--dry-run` builds and checks without pushing, `--help` lists the options).
 
 ## Documentation
 

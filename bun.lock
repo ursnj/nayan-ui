@@ -156,7 +156,7 @@
       "dependencies": {
         "@monaco-editor/react": "^4.7.0",
         "@napi-rs/canvas": "^0.1.68",
-        "@nayan-ui/engine": "^1.0.0-beta.4",
+        "@nayan-ui/engine": "^1.0.0-beta.6",
         "@nayan-ui/games": "file:./scripts/nayan-ui-games.tgz",
         "@nayan-ui/react": "workspace:*",
         "docx": "^9.5.0",
@@ -676,7 +676,7 @@
 
     "@nayan-ui/cli": ["@nayan-ui/cli@workspace:packages/cli"],
 
-    "@nayan-ui/engine": ["@nayan-ui/engine@1.0.0-beta.4", "", { "peerDependencies": { "expo-asset": "*", "react": "*", "react-native": "*" }, "optionalPeers": ["expo-asset", "react-native"] }, "sha512-ystravZGJJZ4lKO0dyxMgaHJZezAdsEUSbW9b7pjz33G/SPGxTcsVMjmMqdciOzcT0uNW6O8x6IcSXiypWYmiQ=="],
+    "@nayan-ui/engine": ["@nayan-ui/engine@1.0.0-beta.7", "", { "peerDependencies": { "expo-asset": "*", "react": "*", "react-native": "*" }, "optionalPeers": ["expo-asset", "react-native"] }, "sha512-VyFptctW4KYxQuYE0YQ+ZZkX048dA3Iox/IuqIGRwo1XZWAMQC8zS0m7zBDpYsG/Y6z2SRgUTm10XzB9zlIiHA=="],
 
     "@nayan-ui/games": ["@nayan-ui/games@./scripts/nayan-ui-games.tgz", { "peerDependencies": { "@nayan-ui/engine": "^1.0.0-beta.2", "expo-asset": "*", "expo-modules-core": "*", "react": "*", "react-dom": "*", "react-native": "*" }, "optionalPeers": ["expo-asset", "expo-modules-core", "react-dom", "react-native"] }, "sha512-Dvel74b+pNQnvL+ZaCz326Th8Wfn2cLZuzfUoqIHENtfUVIE3pDD7vN/xNKf2nzzck2aGeUvC/IgqI//NgfIxw=="],
 

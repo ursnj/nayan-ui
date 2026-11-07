@@ -24,7 +24,8 @@
     "website:start": "bun run --filter @nayan-ui/website start",
     "engine:build": "bun run --filter @nayan-ui/engine build",
     "engine:typecheck": "bun run --filter @nayan-ui/engine typecheck",
-    "engine:example": "bun run --filter @nayan-ui/engine example"
+    "engine:example": "bun run --filter @nayan-ui/engine example",
+    "docker:publish": "scripts/docker-publish.sh"
   },
   "devDependencies": {
     "oxfmt": "^0.68.0",
