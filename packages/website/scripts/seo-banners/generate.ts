@@ -891,7 +891,7 @@ async function compress(rgba: Buffer): Promise<{ png: Buffer; method: string }> 
     method: "oxipng",
     make: async () => {
       const png = await sharp(rgb, rgbRaw).png({ compressionLevel: 9, adaptiveFiltering: true }).toBuffer();
-      return Buffer.from(await losslessCompressPng(png, { level: 6 }));
+      return Buffer.from(await losslessCompressPng(png));
     },
   });
 

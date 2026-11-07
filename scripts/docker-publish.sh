@@ -70,6 +70,7 @@ docker buildx version >/dev/null 2>&1 || fail 'docker buildx is required'
 command -v bun >/dev/null 2>&1 || fail 'Bun is required'
 command -v node >/dev/null 2>&1 || fail 'Node.js is required'
 command -v npm >/dev/null 2>&1 || fail 'npm is required'
+command -v openssl >/dev/null 2>&1 || fail 'openssl is required'
 [ -n "$PLAYTURA" ] && git -C "$PLAYTURA" rev-parse --git-dir >/dev/null 2>&1 ||
   fail "no playtura checkout at '$PLAYTURA': clone ursnj/playtura there or pass --playtura <dir>"
 PLAYTURA="$(cd "$PLAYTURA" && pwd)"
@@ -124,13 +125,19 @@ step 'Preparing the build context'
 CONTEXT="$WORK/context"
 export_repo "$CONTEXT" "$ALLOW_DIRTY"
 cp "$GAMES_TGZ" "$CONTEXT/packages/website/scripts/nayan-ui-games.tgz"
-# A fresh tarball has a new integrity hash: refresh its bun.lock entry so the image's
-# `bun install --frozen-lockfile` accepts it
-grep -v '^    "@nayan-ui/games": \[' "$CONTEXT/bun.lock" >"$WORK/bun.lock"
+# A fresh tarball has a new integrity hash (bun's is the tarball's SHA-512): rewrite it in the
+# @nayan-ui/games entry so the image's `bun install --frozen-lockfile` accepts the tarball. Only
+# that hash changes: dropping the entry and re-resolving would make bun discard the whole lockfile
+# and re-resolve every dependency.
+GAMES_ENTRY='^    "@nayan-ui/games": \['
+grep -q "$GAMES_ENTRY" "$CONTEXT/bun.lock" || fail 'bun.lock has no @nayan-ui/games entry'
+INTEGRITY="sha512-$(openssl dgst -sha512 -binary "$GAMES_TGZ" | base64 | tr -d '\n')"
+awk -v hash="$INTEGRITY" '/^    "@nayan-ui\/games": \[/ { sub(/sha512-[A-Za-z0-9+\/=]+/, hash) } { print }' \
+  "$CONTEXT/bun.lock" >"$WORK/bun.lock"
 mv "$WORK/bun.lock" "$CONTEXT/bun.lock"
-(cd "$CONTEXT" && bun install --lockfile-only)
-grep -q '^    "@nayan-ui/games": \[' "$CONTEXT/bun.lock" ||
-  fail 'bun.lock has no @nayan-ui/games entry after refreshing it'
+grep "$GAMES_ENTRY" "$CONTEXT/bun.lock" | grep -qF "\"$INTEGRITY\"" ||
+  fail "couldn't update the @nayan-ui/games integrity in bun.lock"
+echo "bun.lock: @nayan-ui/games $INTEGRITY"
 
 # ── Build and check ────────────────────────────────────────────────────────────────────────
 
