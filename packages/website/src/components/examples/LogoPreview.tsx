@@ -27,7 +27,7 @@ type ExportJob = {
 const FPS = 15;
 const FRAME_COUNT = 8 * FPS;
 
-export default function LogoPreview({ logo }: { logo: LogoId }) {
+export default function LogoPreview({ logo }: { logo?: LogoId } = {}) {
   const [controls, setControls] = useState<Controls | null>(null);
   const [captureTime, setCaptureTime] = useState<number>();
   const job = useRef<ExportJob | null>(null);
@@ -46,7 +46,11 @@ export default function LogoPreview({ logo }: { logo: LogoId }) {
           [0.5, 1, 1.5, 2].includes(speed) &&
           Number.isSafeInteger(replay)
         ) {
-          const nextLogo = LOGOS.find((item) => item.id === event.data.logo)?.id ?? logo;
+          const nextLogo =
+            event.data.logo === undefined
+              ? logo
+              : LOGOS.find((item) => item.id === event.data.logo)?.id;
+          if (!nextLogo) return;
           if (job.current && job.current.logo !== nextLogo) {
             job.current = null;
             abort.current?.abort();
@@ -64,6 +68,8 @@ export default function LogoPreview({ logo }: { logo: LogoId }) {
         }
       }
       if (event.data?.type === "logo-export" && !job.current) {
+        const selectedLogo = controlsRef.current?.logo;
+        if (!selectedLogo) return;
         const source = document.querySelector("canvas");
         if (!source || source.clientWidth <= 0 || source.clientHeight <= 0) {
           send({ type: "logo-export-error", message: "Open the preview before exporting." });
@@ -83,7 +89,7 @@ export default function LogoPreview({ logo }: { logo: LogoId }) {
         }
         context.imageSmoothingQuality = "high";
         job.current = {
-          logo: controlsRef.current?.logo ?? logo,
+          logo: selectedLogo,
           index: 0,
           pending: false,
           frames: [],

@@ -6,7 +6,7 @@ export default function LogoPlayerPage() {
   return (
     <>
       <style>{`html, body { margin: 0; overflow: hidden; } body header, body footer { display: none !important; } body main { margin: 0 !important; }`}</style>
-      <LogoPreview logo="microsoft" />
+      <LogoPreview />
     </>
   );
 }

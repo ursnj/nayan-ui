@@ -14,7 +14,7 @@ export const metadata = buildPageMetadata({
   path: "/game-engine/examples/logo-animation",
 });
 
-// Each complete example supplies the same model and animation used by the shared playground engine.
+// Full standalone sources include the Nayan UI mark from public/nayan-ui.png.
 const sources = Object.fromEntries(
   LOGOS.map((logo) => [
     logo.id,

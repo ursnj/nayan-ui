@@ -27,6 +27,7 @@ import * as twitch from "./logos/twitch";
 import * as opera from "./logos/opera";
 import * as xbox from "./logos/xbox";
 import * as stackoverflow from "./logos/stackoverflow";
+import * as nayanUI from "./logos/nayan-ui";
 
 type LogoModule = {
   buildLogo: () => microsoft.Piece[];
@@ -63,9 +64,15 @@ const MODULES: Record<LogoId, LogoModule> = {
   opera,
   xbox,
   stackoverflow,
+  "nayan-ui": nayanUI,
 };
 type Group = { pieces: microsoft.Piece[]; entities: Entity[] };
-type Session = { world: World; groups: Map<LogoId, Group> };
+type Session = {
+  world: World;
+  assets: Map<LogoId, microsoft.Piece[]>;
+  active: Group | null;
+  selected: LogoId | null;
+};
 let startup: Promise<Session> | undefined;
 
 // Owned by this playground's browser session, rather than by the selected logo.
@@ -73,7 +80,7 @@ function startEngine(): Promise<Session> {
   return (startup ??= warmUpEngine().then(() => {
     // Prepare all meshes before allocating the world's native transform buffers.
     const prepared = LOGOS.map((logo) => ({ id: logo.id, pieces: MODULES[logo.id].buildLogo() }));
-    const world = new World(192);
+    const world = new World(Math.max(16, ...prepared.map((group) => group.pieces.length + 1)));
     world.spawn({
       mesh: "plane",
       position: [0, 0, -0.5],
@@ -82,14 +89,8 @@ function startEngine(): Promise<Session> {
       color: "#162038",
       pickable: false,
     });
-    const groups = new Map<LogoId, Group>();
-    for (const { id, pieces } of prepared) {
-      const entities = pieces.map((piece) =>
-        world.spawn({ mesh: piece.mesh, color: piece.color, scale: 0 }),
-      );
-      groups.set(id, { pieces, entities });
-    }
-    return { world, groups };
+    const assets = new Map(prepared.map(({ id, pieces }) => [id, pieces]));
+    return { world, assets, active: null, selected: null };
   }));
 }
 
@@ -120,7 +121,6 @@ export default function SharedLogoRuntime({
   const surface = useRef<HTMLDivElement>(null);
   const backdrop = useRef<HTMLDivElement>(null);
   const backgroundSampled = useRef(false);
-  const selected = useRef<LogoId | null>(null);
   const elapsed = useRef(0);
   const displayTime = useRef(3);
   const lastReplay = useRef(replay);
@@ -144,7 +144,7 @@ export default function SharedLogoRuntime({
   }, []);
 
   if (!session) return null;
-  const { world, groups } = session;
+  const { world, assets } = session;
   return (
     <div ref={backdrop} style={{ width: "100%", height: "100%", backgroundColor: "#11192c" }}>
       <div ref={surface} style={{ width: "100%", height: "100%" }}>
@@ -159,10 +159,14 @@ export default function SharedLogoRuntime({
           style={{ width: "100%", height: "100%" }}
           onError={onError}
           onUpdate={(dt) => {
-            if (selected.current !== logo) {
-              const previous = selected.current && groups.get(selected.current);
-              previous && previous.entities.forEach((entity) => world.set(entity, { scale: 0 }));
-              selected.current = logo;
+            if (session.selected !== logo) {
+              session.active?.entities.forEach((entity) => world.despawn(entity));
+              const pieces = assets.get(logo)!;
+              const entities = pieces.map((piece) =>
+                world.spawn({ mesh: piece.mesh, color: piece.color }),
+              );
+              session.active = { pieces, entities };
+              session.selected = logo;
               elapsed.current = 0;
               displayTime.current = playing ? 0 : 3;
               lastReplay.current = replay;
@@ -171,7 +175,7 @@ export default function SharedLogoRuntime({
                 delete surface.current.dataset.revealWidth;
               }
             }
-            const group = groups.get(logo)!;
+            const group = session.active!;
             if (lastReplay.current !== replay) {
               elapsed.current = 0;
               displayTime.current = 0;

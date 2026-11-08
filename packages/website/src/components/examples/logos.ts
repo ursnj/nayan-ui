@@ -119,6 +119,11 @@ export const LOGOS = [
     name: "Stack Overflow",
     description: "Five orange bars fan upward from a stack while a gray bracket anchors the mark.",
   },
+  {
+    id: "nayan-ui",
+    name: "Nayan UI",
+    description: "Gradient code brackets close around a rising slash to form the Nayan UI mark.",
+  },
 ] as const;
 
 export type LogoId = (typeof LOGOS)[number]["id"];
