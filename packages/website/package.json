@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "bun run sitemap:generate && next build",
     "start": "next start --port 7100",
-    "seo:banners": "bun scripts/seo-banners/generate.ts"
+    "seo:banners": "bun scripts/seo-banners/generate.ts",
+    "sitemap:generate": "bun scripts/sync-sitemap.ts",
+    "sitemap:check": "bun scripts/sync-sitemap.ts --check"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
