@@ -21,6 +21,8 @@ const nextConfig: NextConfig = {
   // The engine docs moved from /engine to /game-engine; keep old links (npm README, search results) working.
   async redirects() {
     return [
+      { source: "/examples", destination: "/game-engine/examples", permanent: true },
+      { source: "/examples/:path+", destination: "/game-engine/examples/:path+", permanent: true },
       { source: "/engine", destination: "/game-engine", permanent: true },
       { source: "/engine/:slug", destination: "/game-engine/:slug", permanent: true },
       // Play With Tua was renamed Talking Tua.

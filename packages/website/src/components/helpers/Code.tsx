@@ -11,9 +11,19 @@ interface Props {
   hasDemo?: boolean;
   /** Shown in the frame's header bar — a file name reads better than a language. */
   filename?: string;
+  embedded?: boolean;
+  maxHeight?: string;
+  showHeader?: boolean;
 }
 
-const Code = ({ code, language = "tsx", filename }: Props) => {
+const Code = ({
+  code,
+  language = "tsx",
+  filename,
+  embedded = false,
+  maxHeight,
+  showHeader = true,
+}: Props) => {
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -39,34 +49,45 @@ const Code = ({ code, language = "tsx", filename }: Props) => {
   };
 
   return (
-    <div className="w-full min-w-0 overflow-hidden rounded-xl border border-default bg-surface">
-      <div className="flex items-center justify-between gap-3 border-b border-default bg-surface px-3 py-2">
-        <span className="truncate font-mono text-xs text-muted">{filename ?? language}</span>
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-default bg-surface px-2 py-1 text-xs font-medium text-muted transition-colors hover:text-foreground"
-          aria-live="polite"
-        >
-          {copied ? (
-            <>
-              <Check aria-hidden className="h-3.5 w-3.5 text-emerald-500" />
-              Copied
-            </>
-          ) : (
-            <>
-              <Copy aria-hidden className="h-3.5 w-3.5" />
-              Copy
-            </>
-          )}
-        </button>
+    <div
+      className={`w-full min-w-0 overflow-hidden bg-surface ${embedded ? "" : "rounded-xl border border-default"}`}
+    >
+      {showHeader && (
+        <div className="flex items-center justify-between gap-3 border-b border-default bg-surface px-3 py-2">
+          <span className="truncate font-mono text-xs text-muted">{filename ?? language}</span>
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-default bg-surface px-2 py-1 text-xs font-medium text-muted transition-colors hover:text-foreground"
+            aria-live="polite"
+          >
+            {copied ? (
+              <>
+                <Check aria-hidden className="h-3.5 w-3.5 text-emerald-500" />
+                Copied
+              </>
+            ) : (
+              <>
+                <Copy aria-hidden className="h-3.5 w-3.5" />
+                Copy
+              </>
+            )}
+          </button>
+        </div>
+      )}
+      <div
+        className="overflow-auto"
+        style={{ maxHeight }}
+        tabIndex={maxHeight ? 0 : undefined}
+        aria-label={maxHeight ? `${filename ?? language} source code` : undefined}
+      >
+        <NCode
+          code={code}
+          language={language}
+          theme={mounted ? theme : THEMES.LIGHT}
+          className="min-w-0 [&_pre]:max-w-full [&_pre]:rounded-none [&_pre]:border-0"
+        />
       </div>
-      <NCode
-        code={code}
-        language={language}
-        theme={mounted ? theme : THEMES.LIGHT}
-        className="min-w-0 [&_pre]:max-w-full [&_pre]:rounded-none [&_pre]:border-0"
-      />
     </div>
   );
 };
