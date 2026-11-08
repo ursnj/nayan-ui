@@ -23,6 +23,7 @@ function LogoSection({
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [replay, setReplay] = useState(0);
+  const [frameReady, setFrameReady] = useState(false);
   const [copied, setCopied] = useState(false);
   const preview = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLIFrameElement>(null);
@@ -65,18 +66,20 @@ function LogoSection({
   }, [view, logo.id, onVisibility]);
 
   useEffect(() => {
+    setFrameReady(false);
+  }, [active, view]);
+
+  useEffect(() => {
     const sendControls = () =>
       frame.current?.contentWindow?.postMessage(
         { type: "logo-controls", playing, speed, replay },
         window.location.origin,
       );
     const ready = (event: MessageEvent) => {
-      if (
-        event.source === frame.current?.contentWindow &&
-        event.origin === window.location.origin &&
-        event.data?.type === "logo-ready"
-      )
-        sendControls();
+      if (event.source !== frame.current?.contentWindow || event.origin !== window.location.origin)
+        return;
+      if (event.data?.type === "logo-ready") sendControls();
+      if (event.data?.type === "logo-rendered") setFrameReady(true);
     };
     window.addEventListener("message", ready);
     sendControls();
@@ -159,14 +162,20 @@ function LogoSection({
               width={902}
               height={460}
               loading="lazy"
+              aria-hidden={active && frameReady}
               className="absolute inset-0 h-full w-full object-contain"
             />
+            {active && !frameReady ? (
+              <span role="status" className="sr-only">
+                Loading logo preview…
+              </span>
+            ) : null}
             {view === "preview" && active ? (
               <iframe
                 ref={frame}
                 src={`/logo-preview/${logo.id}`}
                 title={`${logo.name} animated preview`}
-                className="relative h-full w-full border-0"
+                className={`relative h-full w-full border-0 ${frameReady ? "opacity-100" : "opacity-0"}`}
               />
             ) : null}
           </div>
@@ -236,7 +245,14 @@ export default function LogoAnimation({ sources }: { sources: Record<LogoId, str
     const visible = [...ratios.current.entries()]
       .filter(([, value]) => value > 0)
       .sort((a, b) => b[1] - a[1]);
-    setActiveLogo(visible[0]?.[0] ?? null);
+    setActiveLogo((current) => {
+      const candidate = visible[0];
+      if (!candidate) return null;
+      const currentRatio = current ? (ratios.current.get(current) ?? 0) : 0;
+      // Keep the current preview through small scroll movements near a section boundary.
+      if (current && currentRatio > 0.2 && candidate[1] < currentRatio + 0.2) return current;
+      return candidate[0];
+    });
   }, []);
   return (
     <div className="space-y-10">

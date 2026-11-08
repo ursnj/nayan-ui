@@ -6,14 +6,19 @@ import {
   Path,
   createShape,
   extrude,
-  quat,
   World,
   warmUpEngine,
   type Entity,
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = { mesh: Model; color: string; x: number; y: number; z: number };
+type Piece = {
+  mesh: Model;
+  color: string;
+  x: number;
+  y: number;
+  z: number;
+};
 
 // Build each outline once during setup. Path uses screen coordinates (Y down).
 function piece(outline: Path, color: string, z = 0): Piece {
@@ -44,21 +49,22 @@ function buildLogo(): Piece[] {
   ];
 }
 
-// Assemble, hold, scatter, and hold again over an eight-second loop.
+// Two upright ribbons extend upward before the diagonal ribbon stretches across.
 function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
   const phase = time % 8;
-  const ease = (t: number) => 1 - Math.pow(1 - t, 3);
-  const clamp = (t: number) => Math.max(0, Math.min(1, t));
+  const smooth = (value: number) => {
+    const t = Math.max(0, Math.min(1, value));
+    return t * t * (3 - 2 * t);
+  };
+  const progress = (delay: number, duration: number) =>
+    smooth((phase - 0.1 - delay) / duration) * (1 - smooth((phase - 6.1 - delay * 0.25) / 0.9));
   entities.forEach((entity, index) => {
     const part = pieces[index];
-    const arrival = clamp((phase - index * 0.1) / 1.6);
-    const departure = clamp((phase - 5.2 - index * 0.08) / 1.4);
-    const spread = 1 - ease(arrival) + ease(departure);
-    const angle = (index * Math.PI * 2) / pieces.length + Math.PI / 4;
+    const p = progress(index === 2 ? 0.45 : index * 0.18, 1.1);
+    const grow = Math.max(0.001, p);
     world.set(entity, {
-      position: [part.x + Math.cos(angle) * spread, part.y + Math.sin(angle) * spread, part.z],
-      rotation: quat.multiply(quat.y(spread * Math.PI * 2), quat.z((spread * Math.PI) / 2)),
-      scale: 1 - spread * 0.35,
+      position: [part.x + (index === 2 ? (1 - p) * 0.55 : 0), part.y - (1 - p) * 1.15, part.z],
+      scale: index === 2 ? [grow, grow, 1] : [1, grow, 1],
     });
   });
 }
@@ -67,14 +73,18 @@ export default function NetflixLogoScene({
   playing = true,
   speed = 1,
   replay = 0,
+  onReady,
 }: {
   playing?: boolean;
   speed?: number;
   replay?: number;
+  onReady?: () => void;
 } = {}) {
   const [error, setError] = useState(false);
   const group = useRef<{ entities: Entity[]; pieces: Piece[] }>({ entities: [], pieces: [] });
   const elapsed = useRef(0);
+  const started = useRef(false);
+  const presented = useRef(false);
   const lastReplay = useRef(replay);
   const [world, setWorld] = useState<World | null>(null);
   useEffect(() => {
@@ -93,7 +103,10 @@ export default function NetflixLogoScene({
         setWorld(w);
       })
       .catch(() => {
-        if (!cancelled) setError(true);
+        if (!cancelled) {
+          setError(true);
+          onReady?.();
+        }
       });
     return () => {
       cancelled = true;
@@ -119,25 +132,38 @@ export default function NetflixLogoScene({
     );
 
   return (
-    <GameView
-      source={world}
-      camera={{ eye: [0, 0, 6.5], target: [0, 0, 0], fov: 0.8 }}
-      background="#0B1020"
-      light={{ direction: [0, 0, 1], ambient: 0.8, shadows: false }}
-      style={{ width: "100%", height: "100%" }}
-      onError={() => setError(true)}
-      onUpdate={(dt) => {
-        const { entities, pieces } = group.current;
-        if (lastReplay.current !== replay) {
-          elapsed.current = 0;
-          lastReplay.current = replay;
-          drawLogo(world, entities, pieces, 0);
-        }
-        if (playing) {
-          elapsed.current += dt * speed;
-          drawLogo(world, entities, pieces, elapsed.current);
-        }
-      }}
-    />
+    <div style={{ width: "100%", height: "100%" }}>
+      <GameView
+        source={world}
+        camera={{ eye: [0, 0, 6.5], target: [0, 0, 0], fov: 0.8 }}
+        background="#0B1020"
+        light={{ direction: [0, 0, 1], ambient: 0.8, shadows: false }}
+        style={{ width: "100%", height: "100%" }}
+        onError={() => {
+          setError(true);
+          onReady?.();
+        }}
+        onUpdate={(dt) => {
+          const { entities, pieces } = group.current;
+          if (!presented.current && dt > 0) {
+            presented.current = true;
+            onReady?.();
+          }
+          if (!started.current) {
+            started.current = true;
+            drawLogo(world, entities, pieces, playing ? 0 : 3);
+          }
+          if (lastReplay.current !== replay) {
+            elapsed.current = 0;
+            lastReplay.current = replay;
+            drawLogo(world, entities, pieces, 0);
+          }
+          if (playing) {
+            elapsed.current += dt * speed;
+            drawLogo(world, entities, pieces, elapsed.current);
+          }
+        }}
+      />
+    </div>
   );
 }

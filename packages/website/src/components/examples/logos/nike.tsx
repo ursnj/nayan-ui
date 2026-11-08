@@ -6,14 +6,19 @@ import {
   Path,
   createShape,
   extrude,
-  quat,
   World,
   warmUpEngine,
   type Entity,
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = { mesh: Model; color: string; x: number; y: number; z: number };
+type Piece = {
+  mesh: Model;
+  color: string;
+  x: number;
+  y: number;
+  z: number;
+};
 
 // Build each outline once during setup. Path uses screen coordinates (Y down).
 function piece(outline: Path, color: string, z = 0): Piece {
@@ -38,21 +43,33 @@ function buildLogo(): Piece[] {
   ];
 }
 
-// Assemble, hold, scatter, and hold again over an eight-second loop.
-function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
+// The swoosh draws across the screen from its heel to its tip.
+function drawLogo(
+  world: World,
+  entities: Entity[],
+  pieces: Piece[],
+  time: number,
+  surface?: HTMLDivElement | null,
+) {
   const phase = time % 8;
-  const ease = (t: number) => 1 - Math.pow(1 - t, 3);
-  const clamp = (t: number) => Math.max(0, Math.min(1, t));
+  const smooth = (value: number) => {
+    const t = Math.max(0, Math.min(1, value));
+    return t * t * (3 - 2 * t);
+  };
+  const progress = (delay: number, duration: number) =>
+    smooth((phase - 0.1 - delay) / duration) * (1 - smooth((phase - 6.1 - delay * 0.25) / 0.9));
   entities.forEach((entity, index) => {
     const part = pieces[index];
-    const arrival = clamp((phase - index * 0.1) / 1.6);
-    const departure = clamp((phase - 5.2 - index * 0.08) / 1.4);
-    const spread = 1 - ease(arrival) + ease(departure);
-    const angle = (index * Math.PI * 2) / pieces.length + Math.PI / 4;
+    const p = progress(0.1, 1.5);
+    if (surface) {
+      // Reveal the actual silhouette without stretching its proportions.
+      const pixelsPerUnit = surface.clientHeight / (2 * 6.5 * Math.tan(0.8 / 2));
+      const edge = (0.5 - p) * (part.mesh.size[0] + 0.04) * pixelsPerUnit;
+      surface.style.clipPath = p === 1 ? "none" : `inset(0 calc(50% + ${edge}px) 0 0)`;
+    }
     world.set(entity, {
-      position: [part.x + Math.cos(angle) * spread, part.y + Math.sin(angle) * spread, part.z],
-      rotation: quat.multiply(quat.y(spread * Math.PI * 2), quat.z((spread * Math.PI) / 2)),
-      scale: 1 - spread * 0.35,
+      position: [part.x, part.y, part.z],
+      scale: 1,
     });
   });
 }
@@ -61,14 +78,19 @@ export default function NikeLogoScene({
   playing = true,
   speed = 1,
   replay = 0,
+  onReady,
 }: {
   playing?: boolean;
   speed?: number;
   replay?: number;
+  onReady?: () => void;
 } = {}) {
   const [error, setError] = useState(false);
   const group = useRef<{ entities: Entity[]; pieces: Piece[] }>({ entities: [], pieces: [] });
   const elapsed = useRef(0);
+  const surface = useRef<HTMLDivElement>(null);
+  const started = useRef(false);
+  const presented = useRef(false);
   const lastReplay = useRef(replay);
   const [world, setWorld] = useState<World | null>(null);
   useEffect(() => {
@@ -87,7 +109,10 @@ export default function NikeLogoScene({
         setWorld(w);
       })
       .catch(() => {
-        if (!cancelled) setError(true);
+        if (!cancelled) {
+          setError(true);
+          onReady?.();
+        }
       });
     return () => {
       cancelled = true;
@@ -113,25 +138,38 @@ export default function NikeLogoScene({
     );
 
   return (
-    <GameView
-      source={world}
-      camera={{ eye: [0, 0, 6.5], target: [0, 0, 0], fov: 0.8 }}
-      background="#0B1020"
-      light={{ direction: [0, 0, 1], ambient: 0.8, shadows: false }}
-      style={{ width: "100%", height: "100%" }}
-      onError={() => setError(true)}
-      onUpdate={(dt) => {
-        const { entities, pieces } = group.current;
-        if (lastReplay.current !== replay) {
-          elapsed.current = 0;
-          lastReplay.current = replay;
-          drawLogo(world, entities, pieces, 0);
-        }
-        if (playing) {
-          elapsed.current += dt * speed;
-          drawLogo(world, entities, pieces, elapsed.current);
-        }
-      }}
-    />
+    <div ref={surface} style={{ width: "100%", height: "100%" }}>
+      <GameView
+        source={world}
+        camera={{ eye: [0, 0, 6.5], target: [0, 0, 0], fov: 0.8 }}
+        background="#0B1020"
+        light={{ direction: [0, 0, 1], ambient: 0.8, shadows: false }}
+        style={{ width: "100%", height: "100%" }}
+        onError={() => {
+          setError(true);
+          onReady?.();
+        }}
+        onUpdate={(dt) => {
+          const { entities, pieces } = group.current;
+          if (!presented.current && dt > 0) {
+            presented.current = true;
+            onReady?.();
+          }
+          if (!started.current) {
+            started.current = true;
+            drawLogo(world, entities, pieces, playing ? 0 : 3, surface.current);
+          }
+          if (lastReplay.current !== replay) {
+            elapsed.current = 0;
+            lastReplay.current = replay;
+            drawLogo(world, entities, pieces, 0, surface.current);
+          }
+          if (playing) {
+            elapsed.current += dt * speed;
+            drawLogo(world, entities, pieces, elapsed.current, surface.current);
+          }
+        }}
+      />
+    </div>
   );
 }

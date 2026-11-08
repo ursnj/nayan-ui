@@ -4,11 +4,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import type { LogoId } from "./logos";
 
-const loading = () => (
-  <div role="status" className="flex h-full items-center justify-center text-sm text-slate-300">
-    Loading Nayan Game Engine…
-  </div>
-);
+const loading = () => null;
 const SCENES = {
   mercedes: dynamic(() => import("./logos/mercedes"), { ssr: false, loading }),
   cisco: dynamic(() => import("./logos/cisco"), { ssr: false, loading }),
@@ -31,7 +27,11 @@ const SCENES = {
 };
 
 export default function LogoPreview({ logo }: { logo: LogoId }) {
-  const [controls, setControls] = useState({ playing: false, speed: 1, replay: 0 });
+  const [controls, setControls] = useState<{
+    playing: boolean;
+    speed: number;
+    replay: number;
+  } | null>(null);
   useEffect(() => {
     const receive = (event: MessageEvent) => {
       if (
@@ -55,7 +55,16 @@ export default function LogoPreview({ logo }: { logo: LogoId }) {
   const Scene = SCENES[logo];
   return (
     <div className="h-dvh bg-[#0B1020]">
-      <Scene {...controls} />
+      {controls ? (
+        <Scene
+          {...controls}
+          onReady={() =>
+            window.parent.postMessage({ type: "logo-rendered" }, window.location.origin)
+          }
+        />
+      ) : (
+        loading()
+      )}
     </div>
   );
 }
