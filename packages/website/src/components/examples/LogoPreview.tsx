@@ -6,6 +6,12 @@ import type { LogoId } from "./logos";
 
 const loading = () => null;
 const SCENES = {
+  telegram: dynamic(() => import("./logos/telegram"), { ssr: false, loading }),
+  zoom: dynamic(() => import("./logos/zoom"), { ssr: false, loading }),
+  twitch: dynamic(() => import("./logos/twitch"), { ssr: false, loading }),
+  opera: dynamic(() => import("./logos/opera"), { ssr: false, loading }),
+  xbox: dynamic(() => import("./logos/xbox"), { ssr: false, loading }),
+  stackoverflow: dynamic(() => import("./logos/stackoverflow"), { ssr: false, loading }),
   mercedes: dynamic(() => import("./logos/mercedes"), { ssr: false, loading }),
   cisco: dynamic(() => import("./logos/cisco"), { ssr: false, loading }),
   spotify: dynamic(() => import("./logos/spotify"), { ssr: false, loading }),

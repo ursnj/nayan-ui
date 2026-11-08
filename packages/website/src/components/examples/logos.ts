@@ -89,6 +89,36 @@ export const LOGOS = [
     name: "BMW",
     description: "The rim turns forward while four colored quadrants rotate into their slots.",
   },
+  {
+    id: "telegram",
+    name: "Telegram",
+    description: "A paper plane banks into a blue disc and settles with its folded wing.",
+  },
+  {
+    id: "zoom",
+    name: "Zoom",
+    description: "The blue badge opens, its camera body extends, and the lens folds into position.",
+  },
+  {
+    id: "twitch",
+    name: "Twitch",
+    description: "A purple chat badge builds in layers, then its two eyes give a quick blink.",
+  },
+  {
+    id: "opera",
+    name: "Opera",
+    description: "An extruded red O turns smoothly onto its face like a polished ring.",
+  },
+  {
+    id: "xbox",
+    name: "Xbox",
+    description: "A green disc turns forward as two white blades cross into the Xbox mark.",
+  },
+  {
+    id: "stackoverflow",
+    name: "Stack Overflow",
+    description: "Five orange bars fan upward from a stack while a gray bracket anchors the mark.",
+  },
 ] as const;
 
 export type LogoId = (typeof LOGOS)[number]["id"];

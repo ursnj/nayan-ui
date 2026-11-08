@@ -1,3 +1,4 @@
+import { LOGOS } from "@/components/examples/logos";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import Sidebar from "@/components/helpers/Sidebar";
@@ -40,8 +41,8 @@ export default function ExamplesPage() {
               Logo Animation <ArrowUpRight aria-hidden className="h-5 w-5 text-muted" />
             </h2>
             <p className="text-sm leading-relaxed text-muted">
-              Animate 18 famous logos, including Microsoft, Google, Cisco, and Nike, with 3D shapes
-              and Nayan Game Engine.
+              Animate {LOGOS.length} famous logos, including Microsoft, Google, Cisco, and Nike,
+              with 3D shapes and Nayan Game Engine.
             </p>
           </div>
         </Link>

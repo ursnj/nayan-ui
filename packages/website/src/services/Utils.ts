@@ -1894,7 +1894,7 @@ export const engineSidebarItems: SidebarItem[] = [
   },
   {
     title: "Logo Animation",
-    description: "18 animated company logos, including Microsoft, Google and Cisco",
+    description: "Animated company logos, including Microsoft, Google, Cisco and Telegram",
     link: "/game-engine/examples/logo-animation",
     icon: RotateCw,
   },

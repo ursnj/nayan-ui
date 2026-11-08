@@ -10,12 +10,11 @@ import path from "node:path";
 
 export const metadata = buildPageMetadata({
   title: "Company Logo Animations with Nayan Game Engine",
-  description:
-    "Explore 18 animated company logos including Microsoft, Google, Cisco, Nike and Spotify. Explore a live React example built with Nayan Game Engine, with playback controls and source code.",
+  description: `Explore ${LOGOS.length} animated company logos including Microsoft, Google, Cisco, Telegram and Xbox. Try live React examples built with Nayan Game Engine, with playback controls and source code.`,
   path: "/game-engine/examples/logo-animation",
 });
 
-// Complete source includes fixed high-quality rendering for playback and WebP capture.
+// Complete source includes all company marks, fixed high-quality rendering, and WebP capture.
 const sources = Object.fromEntries(
   LOGOS.map((logo) => [
     logo.id,
