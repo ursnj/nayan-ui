@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   GameView,
-  World,
-  warmUpEngine,
+  type World,
+  useWorld,
   quat,
   createShape,
   tube,
@@ -145,43 +145,30 @@ export default function NayanUILogoScene({
   const started = useRef(false);
   const presented = useRef(false);
   const lastReplay = useRef(replay);
-  const [world, setWorld] = useState<World | null>(null);
-  useEffect(() => {
-    let cancelled = false;
-    let created: World | null = null;
-    void warmUpEngine()
-      .then(() => {
-        if (cancelled) return;
-        const pieces = buildLogo();
-        const w = new World(16);
-        created = w;
-        // Keep a neutral backdrop behind the solid logo pieces.
-        w.spawn({
-          mesh: "plane",
-          position: [0, 0, -0.5],
-          rotation: quat.x(Math.PI / 2),
-          scale: [100, 1, 100],
-          color: "#162038",
-          pickable: false,
-        });
-        elapsed.current = 0;
-        const entities = pieces.map((part) => w.spawn({ mesh: part.mesh, color: part.color }));
-        group.current = { pieces, entities };
-        drawLogo(w, entities, pieces, 3);
-        setWorld(w);
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setError(true);
-          onReady?.();
-        }
+  const world = useWorld(
+    16,
+    (w) => {
+      const pieces = buildLogo();
+      // Keep a neutral backdrop behind the solid logo pieces.
+      w.spawn({
+        mesh: "plane",
+        position: [0, 0, -0.5],
+        rotation: quat.x(Math.PI / 2),
+        scale: [100, 1, 100],
+        color: "#162038",
+        pickable: false,
       });
-    return () => {
-      cancelled = true;
-      // Let GameView stop its renderer before releasing the world it reads.
-      queueMicrotask(() => created?.dispose());
-    };
-  }, []);
+      elapsed.current = 0;
+      const entities = pieces.map((part) => w.spawn({ mesh: part.mesh, color: part.color }));
+      group.current = { pieces, entities };
+      drawLogo(w, entities, pieces, 3);
+    },
+    [],
+    () => {
+      setError(true);
+      onReady?.();
+    },
+  );
 
   if (error)
     return (

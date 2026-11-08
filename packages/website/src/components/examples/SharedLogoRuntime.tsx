@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { GameView, World, warmUpEngine, type Camera, type Entity } from "@nayan-ui/engine";
-import { LOGOS, type LogoId } from "./logos";
+import { useEffect, useRef } from "react";
+import { GameView, useWorld, type World, type Camera, type Entity } from "@nayan-ui/engine";
+import { type LogoId } from "./logos";
 import * as microsoft from "./logos/microsoft";
 import * as google from "./logos/google";
 import * as slack from "./logos/slack";
@@ -68,23 +68,12 @@ const MODULES: Record<LogoId, LogoModule> = {
 };
 type Group = { pieces: microsoft.Piece[]; entities: Entity[] };
 type Session = {
-  world: World;
   assets: Map<LogoId, microsoft.Piece[]>;
   active: Group | null;
   selected: LogoId | null;
 };
-let startup: Promise<Session> | undefined;
-
-// Owned by this playground's browser session, rather than by the selected logo.
-function startEngine(): Promise<Session> {
-  return (startup ??= warmUpEngine().then(() => {
-    // Prepare all meshes before allocating the world's native transform buffers.
-    const prepared = LOGOS.map((logo) => ({ id: logo.id, pieces: MODULES[logo.id].buildLogo() }));
-    const world = new World(Math.max(16, ...prepared.map((group) => group.pieces.length + 1)));
-    const assets = new Map(prepared.map(({ id, pieces }) => [id, pieces]));
-    return { world, assets, active: null, selected: null };
-  }));
-}
+// Prepared models are reused across selections and visits; worlds belong to useWorld.
+const cachedAssets = new Map<LogoId, microsoft.Piece[]>();
 
 type Props = {
   logo: LogoId;
@@ -115,7 +104,7 @@ export default function SharedLogoRuntime({
   onReady,
   onError,
 }: Props) {
-  const [session, setSession] = useState<Session | null>(null);
+  const session = useRef<Session>({ assets: cachedAssets, active: null, selected: null }).current;
   const surface = useRef<HTMLDivElement>(null);
   const elapsed = useRef(0);
   const displayTime = useRef(3);
@@ -133,22 +122,10 @@ export default function SharedLogoRuntime({
     camera.eye = [0, 0, 6.5];
   }, [logo, rotateView, viewReset, camera]);
 
-  useEffect(() => {
-    let active = true;
-    void startEngine()
-      .then((value) => {
-        if (active) setSession(value);
-      })
-      .catch(() => {
-        if (active) errorCallback.current();
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
+  const world = useWorld(256, undefined, [], () => errorCallback.current());
 
-  if (!session) return null;
-  const { world, assets } = session;
+  if (!world) return null;
+  const { assets } = session;
   return (
     <div style={{ width: "100%", height: "100%", backgroundColor: background }}>
       <div
@@ -207,7 +184,11 @@ export default function SharedLogoRuntime({
             ];
             if (session.selected !== logo) {
               session.active?.entities.forEach((entity) => world.despawn(entity));
-              const pieces = assets.get(logo)!;
+              let pieces = assets.get(logo);
+              if (!pieces) {
+                pieces = MODULES[logo].buildLogo();
+                assets.set(logo, pieces);
+              }
               const entities = pieces.map((piece) =>
                 world.spawn({ mesh: piece.mesh, color: piece.color }),
               );
