@@ -15,7 +15,7 @@ export const metadata = buildPageMetadata({
   path: "/game-engine/examples/logo-animation",
 });
 
-// Complete source includes persistent playback state and the exact frames used for WebP exports.
+// Complete source includes fixed high-quality rendering for playback and WebP capture.
 const sources = Object.fromEntries(
   LOGOS.map((logo) => [
     logo.id,

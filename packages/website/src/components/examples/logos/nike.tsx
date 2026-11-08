@@ -105,6 +105,8 @@ export default function NikeLogoScene({
   const displayTime = useRef(3);
   const camera = useRef<Camera>({ eye: [0, 0, 6.5], target: [0, 0, 0], fov: 0.8 }).current;
   const surface = useRef<HTMLDivElement>(null);
+  const backdrop = useRef<HTMLDivElement>(null);
+  const backgroundSampled = useRef(false);
   const started = useRef(false);
   const presented = useRef(false);
   const lastReplay = useRef(replay);
@@ -163,45 +165,67 @@ export default function NikeLogoScene({
     );
 
   return (
-    <div ref={surface} style={{ width: "100%", height: "100%" }}>
-      <GameView
-        source={world}
-        paused={!rendering}
-        quality="high"
-        camera={camera}
-        background="#0B1020"
-        light={{ direction: [-3, 5, 7], ambient: 0.42, shadows: false }}
-        style={{ width: "100%", height: "100%" }}
-        onError={() => {
-          setError(true);
-          onReady?.();
-        }}
-        onUpdate={(dt) => {
-          const { entities, pieces } = group.current;
-          if (!presented.current && dt > 0) {
-            presented.current = true;
+    <div ref={backdrop} style={{ width: "100%", height: "100%", backgroundColor: "#11192c" }}>
+      <div ref={surface} style={{ width: "100%", height: "100%" }}>
+        <GameView
+          source={world}
+          paused={!rendering}
+          quality="high"
+          adaptQuality={false}
+          camera={camera}
+          background="#0B1020"
+          light={{ direction: [-3, 5, 7], ambient: 0.42, shadows: false }}
+          style={{ width: "100%", height: "100%" }}
+          onError={() => {
+            setError(true);
             onReady?.();
-          }
-          if (!started.current) {
-            started.current = true;
-            displayTime.current = playing ? 0 : 3;
-          }
-          if (lastReplay.current !== replay) {
-            elapsed.current = 0;
-            displayTime.current = 0;
-            lastReplay.current = replay;
-          }
-          if (captureTime === undefined && playing) {
-            elapsed.current += dt * speed;
-            displayTime.current = elapsed.current;
-          }
-          drawLogo(world, entities, pieces, captureTime ?? displayTime.current, surface.current);
-          if (captureTime !== undefined) {
-            const renderedTime = captureTime;
-            queueMicrotask(() => onFrame?.(renderedTime));
-          }
-        }}
-      />
+          }}
+          onUpdate={(dt) => {
+            const { entities, pieces } = group.current;
+            if (!backgroundSampled.current && dt > 0) {
+              queueMicrotask(() => {
+                // Preserve the rendered stage color outside the swoosh's reveal mask.
+                try {
+                  const canvas = surface.current?.querySelector("canvas");
+                  const sample = document.createElement("canvas");
+                  sample.width = sample.height = 1;
+                  const context = sample.getContext("2d");
+                  if (!canvas || !context || !backdrop.current) return;
+                  context.drawImage(canvas, 0, 0, 1, 1, 0, 0, 1, 1);
+                  const [r, g, b, alpha] = context.getImageData(0, 0, 1, 1).data;
+                  if (alpha !== 255) return;
+                  backdrop.current.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+                  backgroundSampled.current = true;
+                } catch {
+                  /* Keep the solid fallback if readback is unavailable. */
+                }
+              });
+            }
+            if (!presented.current && dt > 0) {
+              presented.current = true;
+              onReady?.();
+            }
+            if (!started.current) {
+              started.current = true;
+              displayTime.current = playing ? 0 : 3;
+            }
+            if (lastReplay.current !== replay) {
+              elapsed.current = 0;
+              displayTime.current = 0;
+              lastReplay.current = replay;
+            }
+            if (captureTime === undefined && playing) {
+              elapsed.current += dt * speed;
+              displayTime.current = elapsed.current;
+            }
+            drawLogo(world, entities, pieces, captureTime ?? displayTime.current, surface.current);
+            if (captureTime !== undefined) {
+              const renderedTime = captureTime;
+              queueMicrotask(() => onFrame?.(renderedTime));
+            }
+          }}
+        />
+      </div>
     </div>
   );
 }

@@ -193,6 +193,7 @@ export default function SlackLogoScene({
         source={world}
         paused={!rendering}
         quality="high"
+        adaptQuality={false}
         camera={camera}
         background="#0B1020"
         light={{ direction: [-3, 5, 7], ambient: 0.42, shadows: false }}
