@@ -305,7 +305,7 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
 
 export default function LogoAnimation({ sources }: { sources: Record<LogoId, string> }) {
   const [selected, setSelected] = useState<LogoId>("microsoft");
-  const logo = LOGOS.find((item) => item.id === selected)!;
+  const logo = LOGOS.find((item) => item.id === selected) ?? LOGOS[0];
   return (
     <div className="space-y-6">
       <div role="group" aria-label="Choose company logo" className="flex flex-wrap gap-2">
@@ -313,7 +313,7 @@ export default function LogoAnimation({ sources }: { sources: Record<LogoId, str
           <button
             key={item.id}
             type="button"
-            aria-pressed={selected === item.id}
+            aria-pressed={logo.id === item.id}
             aria-controls="logo-stage"
             onClick={() => setSelected(item.id)}
             className={`${BUTTON_SMALL} ${selected === item.id ? "border-indigo-500/40 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300" : "text-muted"}`}

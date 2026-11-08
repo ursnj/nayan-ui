@@ -6,6 +6,7 @@ import {
   Path,
   createShape,
   extrude,
+  parametricSurface,
   recolor,
   smoothNormals,
   quat,
@@ -25,7 +26,7 @@ export type Piece = {
   z: number;
 };
 
-// Tessellate the exact silhouette into a closed, rounded solid, including any holes.
+// Closed, continuous surfaces keep glossy highlights free of triangulation seams.
 function roundedLogoGeometry(outline: Path, depth: number): Geometry {
   type Point = [number, number];
   const contours = outline
@@ -40,6 +41,67 @@ function roundedLogoGeometry(outline: Path, depth: number): Geometry {
       return points;
     })
     .filter((points) => points.length >= 3);
+  const ellipse = (points: Point[]) => {
+    const xs = points.map(([x]) => x),
+      ys = points.map(([, y]) => y);
+    const left = Math.min(...xs),
+      right = Math.max(...xs),
+      bottom = Math.min(...ys),
+      top = Math.max(...ys);
+    const x = (left + right) / 2,
+      y = (bottom + top) / 2,
+      rx = (right - left) / 2,
+      ry = (top - bottom) / 2;
+    if (points.length < 24 || rx < 1e-5 || ry < 1e-5) return null;
+    return points.every(
+      ([px, py]) => Math.abs(((px - x) / rx) ** 2 + ((py - y) / ry) ** 2 - 1) < 0.002,
+    )
+      ? { x, y, rx, ry }
+      : null;
+  };
+  const rounded = contours.map(ellipse);
+  if (rounded.length === 1 && rounded[0]) {
+    const { x, y, rx, ry } = rounded[0];
+    return parametricSurface(
+      (u, v) => {
+        const around = u * Math.PI * 2,
+          latitude = v * Math.PI;
+        return [
+          x + rx * Math.sin(latitude) * Math.cos(around),
+          y + ry * Math.cos(latitude),
+          (depth / 2) * Math.sin(latitude) * Math.sin(around),
+        ];
+      },
+      { uSegments: 192, vSegments: 96, wrapU: true },
+    );
+  }
+  if (rounded.length === 2 && rounded[0] && rounded[1]) {
+    const [outer, inner] = [...rounded].sort((a, b) => b!.rx - a!.rx) as NonNullable<
+      ReturnType<typeof ellipse>
+    >[];
+    if (
+      Math.hypot(outer.x - inner.x, outer.y - inner.y) < 1e-5 &&
+      outer.rx > inner.rx &&
+      outer.ry > inner.ry
+    ) {
+      return parametricSurface(
+        (u, v) => {
+          const around = u * Math.PI * 2,
+            section = v * Math.PI * 2;
+          return [
+            outer.x +
+              ((outer.rx + inner.rx) / 2 + ((outer.rx - inner.rx) / 2) * Math.cos(section)) *
+                Math.cos(around),
+            outer.y +
+              ((outer.ry + inner.ry) / 2 + ((outer.ry - inner.ry) / 2) * Math.cos(section)) *
+                Math.sin(around),
+            (depth / 2) * Math.sin(section),
+          ];
+        },
+        { uSegments: 256, vSegments: 64, wrapU: true, wrapV: true },
+      );
+    }
+  }
   const contains = (points: Point[], x: number, y: number) => {
     let inside = false;
     for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
@@ -61,8 +123,8 @@ function roundedLogoGeometry(outline: Path, depth: number): Geometry {
     return points.map(([x, y], i) => {
       const next = points[(i + 1) % points.length],
         dx = next[0] - x,
-        dy = next[1] - y;
-      const length = Math.max(1e-10, Math.hypot(dx, dy));
+        dy = next[1] - y,
+        length = Math.max(1e-10, Math.hypot(dx, dy));
       return {
         x,
         y,
@@ -86,8 +148,8 @@ function roundedLogoGeometry(outline: Path, depth: number): Geometry {
         Math.min(1, ((x - edge.x) * edge.dx + (y - edge.y) * edge.dy) / edge.length2),
       );
       const dx = x - edge.x - t * edge.dx,
-        dy = y - edge.y - t * edge.dy;
-      const d = dx * dx + dy * dy;
+        dy = y - edge.y - t * edge.dy,
+        d = dx * dx + dy * dy;
       if (d < best - 1e-12) {
         best = d;
         gx = dx;
@@ -99,8 +161,8 @@ function roundedLogoGeometry(outline: Path, depth: number): Geometry {
         ny += edge.ny;
       }
     }
-    const d = Math.sqrt(best);
-    const length = Math.max(1e-10, Math.hypot(nx, ny));
+    const d = Math.sqrt(best),
+      length = Math.max(1e-10, Math.hypot(nx, ny));
     return {
       d: d < 1e-6 ? 0 : d,
       nx: d > 1e-6 ? -gx / d : nx / length,
@@ -109,92 +171,113 @@ function roundedLogoGeometry(outline: Path, depth: number): Geometry {
   };
   const flat = extrude(outline, { depth: 0, fillRule: "evenodd" });
   const points: Point[] = [],
-    faces: number[] = [],
+    samples: ReturnType<typeof distance>[] = [],
     lookup = new Map<string, number>();
-  const vertex = (point: Point) => {
-    const key = `${Math.round(point[0] * 1e7)},${Math.round(point[1] * 1e7)}`;
+  const vertex = (x: number, y: number) => {
+    const key = `${Math.round(x * 1e7)},${Math.round(y * 1e7)}`;
     let index = lookup.get(key);
     if (index === undefined) {
       index = points.length;
-      points.push(point);
+      points.push([x, y]);
+      samples.push(distance(x, y));
       lookup.set(key, index);
     }
     return index;
   };
-  const length2 = (a: Point, b: Point) => (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2;
-  const subdivide = (a: Point, b: Point, c: Point, level = 0) => {
-    const lengths = [length2(a, b), length2(b, c), length2(c, a)];
-    const longest = Math.max(...lengths);
-    if (longest <= 0.12 ** 2 || level >= 18) {
-      const ids = [vertex(a), vertex(b), vertex(c)];
-      if ((b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]) < 0)
-        [ids[1], ids[2]] = [ids[2], ids[1]];
-      faces.push(...ids);
-      return;
-    }
-    if (lengths[1] === longest) [a, b, c] = [b, c, a];
-    else if (lengths[2] === longest) [a, b, c] = [c, a, b];
-    const middle: Point = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-    subdivide(a, middle, c, level + 1);
-    subdivide(middle, b, c, level + 1);
-  };
+  let faces: number[] = [];
+  const uniqueFaces = new Set<string>();
   for (let i = 0; i < flat.indices.length; i += 3) {
-    const triangle = [0, 1, 2].map((j) => {
+    const ids = [0, 1, 2].map((j) => {
       const offset = flat.indices[i + j] * 11;
-      return [flat.vertices[offset], flat.vertices[offset + 1]] as Point;
+      return vertex(flat.vertices[offset], flat.vertices[offset + 1]);
     });
-    subdivide(triangle[0], triangle[1], triangle[2]);
+    const key = [...ids].sort((a, b) => a - b).join(",");
+    if (uniqueFaces.has(key)) continue;
+    uniqueFaces.add(key);
+    const [a, b, c] = ids.map((id) => points[id]);
+    if ((b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]) < 0)
+      [ids[1], ids[2]] = [ids[2], ids[1]];
+    faces.push(...ids);
   }
-  const samples = points.map(([x, y]) => distance(x, y));
-  const radius = Math.max(
-    0.001,
-    Math.min(
-      0.22,
-      samples.reduce((max, sample) => Math.max(max, sample.d), 0),
-    ),
-  );
+  const [left, top, right, bottom] = outline.bounds()!;
+  let clearance = 0;
+  for (let ix = 0; ix < 40; ix++)
+    for (let iy = 0; iy < 40; iy++) {
+      const x = left + ((right - left) * (ix + 0.5)) / 40,
+        y = -bottom + ((bottom - top) * (iy + 0.5)) / 40;
+      if (contours.reduce((count, contour) => count + Number(contains(contour, x, y)), 0) % 2)
+        clearance = Math.max(clearance, distance(x, y).d);
+    }
+  const radius = Math.max(0.001, Math.min(0.22, clearance));
   const height = (index: number) => {
     const t = Math.min(1, samples[index].d / radius);
     return (depth / 2) * Math.sqrt(Math.max(0, t * (2 - t)));
   };
-  const refined: number[] = [];
-  const refine = (a: number, b: number, c: number, level = 0) => {
-    const pairs = [
-      [a, b],
-      [b, c],
-      [c, a],
-    ];
-    const middles = pairs.map(([u, v]) => {
-      const point: Point = [(points[u][0] + points[v][0]) / 2, (points[u][1] + points[v][1]) / 2];
-      const index = vertex(point);
-      samples[index] ??= distance(...point);
-      return index;
-    });
-    const errors = pairs.map(([u, v], i) =>
-      Math.abs(height(middles[i]) - (height(u) + height(v)) / 2),
-    );
-    const worst = Math.max(...errors);
-    if (worst < 0.0015 || level >= 14) {
-      refined.push(a, b, c);
-      return;
+  const edgeKey = (a: number, b: number) => (a < b ? `${a},${b}` : `${b},${a}`);
+  // Split an edge on every adjoining triangle together, so no T-junction can crack the surface.
+  for (let pass = 0; pass < 18; pass++) {
+    const split = new Map<string, number>(),
+      visited = new Set<string>();
+    for (let i = 0; i < faces.length; i += 3)
+      for (let j = 0; j < 3; j++) {
+        const a = faces[i + j],
+          b = faces[i + ((j + 1) % 3)],
+          key = edgeKey(a, b);
+        if (visited.has(key)) continue;
+        visited.add(key);
+        const [ax, ay] = points[a],
+          [bx, by] = points[b],
+          middle = vertex((ax + bx) / 2, (ay + by) / 2);
+        if (
+          (ax - bx) ** 2 + (ay - by) ** 2 > 0.08 ** 2 ||
+          Math.abs(height(middle) - (height(a) + height(b)) / 2) > 0.0008
+        )
+          split.set(key, middle);
+      }
+    if (!split.size) break;
+    const next: number[] = [];
+    for (let i = 0; i < faces.length; i += 3) {
+      let a = faces[i],
+        b = faces[i + 1],
+        c = faces[i + 2];
+      const ab = split.get(edgeKey(a, b)),
+        bc = split.get(edgeKey(b, c)),
+        ca = split.get(edgeKey(c, a));
+      const mask =
+        Number(ab !== undefined) + Number(bc !== undefined) * 2 + Number(ca !== undefined) * 4;
+      if (mask === 0) next.push(a, b, c);
+      else if (mask === 7) next.push(a, ab!, ca!, ab!, b, bc!, ca!, bc!, c, ab!, bc!, ca!);
+      else if (mask === 1 || mask === 2 || mask === 4) {
+        const middle = mask === 1 ? ab! : mask === 2 ? bc! : ca!;
+        if (mask === 2) [a, b, c] = [b, c, a];
+        else if (mask === 4) [a, b, c] = [c, a, b];
+        next.push(a, middle, c, middle, b, c);
+      } else {
+        let first = ab!,
+          second = bc!;
+        if (mask === 6) {
+          [a, b, c] = [b, c, a];
+          first = bc!;
+          second = ca!;
+        } else if (mask === 5) {
+          [a, b, c] = [c, a, b];
+          first = ca!;
+          second = ab!;
+        }
+        next.push(a, first, c, first, second, c, first, b, second);
+      }
     }
-    const edge = errors.indexOf(worst),
-      middle = middles[edge];
-    if (edge === 1) [a, b, c] = [b, c, a];
-    else if (edge === 2) [a, b, c] = [c, a, b];
-    refine(a, middle, c, level + 1);
-    refine(middle, b, c, level + 1);
-  };
-  for (let i = 0; i < faces.length; i += 3) refine(faces[i], faces[i + 1], faces[i + 2]);
+    faces = next;
+  }
   const vertices: number[] = [],
-    indices = [...refined];
+    indices = [...faces];
   for (const side of [1, -1])
     points.forEach(([x, y], i) => {
       const sample = samples[i],
-        t = Math.min(1, sample.d / radius);
-      const round = Math.sqrt(Math.max(0, t * (2 - t)));
-      const slope = (depth / 2 / radius) * (1 - t);
-      const length = Math.max(1e-10, Math.hypot(slope, round));
+        t = Math.min(1, sample.d / radius),
+        round = Math.sqrt(Math.max(0, t * (2 - t))),
+        slope = (depth / 2 / radius) * (1 - t),
+        length = Math.max(1e-10, Math.hypot(slope, round));
       vertices.push(
         x,
         y,
@@ -209,28 +292,24 @@ function roundedLogoGeometry(outline: Path, depth: number): Geometry {
         y,
       );
     });
-  for (let i = 0; i < refined.length; i += 3)
+  for (let i = 0; i < faces.length; i += 3)
     indices.push(
-      refined[i] + points.length,
-      refined[i + 2] + points.length,
-      refined[i + 1] + points.length,
+      faces[i] + points.length,
+      faces[i + 2] + points.length,
+      faces[i + 1] + points.length,
     );
-  // A narrow side wall separates the two faces at the silhouette and prevents depth fighting.
   const borders = new Map<string, { a: number; b: number; count: number }>();
-  for (let i = 0; i < refined.length; i += 3) {
+  for (let i = 0; i < faces.length; i += 3)
     for (let j = 0; j < 3; j++) {
-      const a = refined[i + j],
-        b = refined[i + ((j + 1) % 3)];
-      const key = a < b ? `${a},${b}` : `${b},${a}`;
-      const border = borders.get(key);
+      const a = faces[i + j],
+        b = faces[i + ((j + 1) % 3)],
+        key = edgeKey(a, b),
+        border = borders.get(key);
       if (border) border.count++;
       else borders.set(key, { a, b, count: 1 });
     }
-  }
-  for (const { a, b, count } of borders.values()) {
-    if (count !== 1 || samples[a].d !== 0 || samples[b].d !== 0) continue;
-    indices.push(a, b + points.length, b, a, a + points.length, b + points.length);
-  }
+  for (const { a, b, count } of borders.values())
+    if (count === 1) indices.push(a, b + points.length, b, a, a + points.length, b + points.length);
   return smoothNormals({ vertices: new Float32Array(vertices), indices: new Uint32Array(indices) });
 }
 
