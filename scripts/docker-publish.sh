@@ -115,7 +115,7 @@ step 'Refreshing engine type declarations from source'
 # The published engine may lag behind playtura HEAD: regenerate TypeScript declarations from the
 # local source so the games build sees every API the source defines (e.g. audio.shift). The
 # published lib already has the compiled JS and WASM core; only the .d.ts files need updating.
-(cd "$WORK/playtura/packages/engine" && bun x tsc -p tsconfig.build.json --declaration --emitDeclarationOnly --noEmit false --outDir lib/typescript)
+(cd "$WORK/playtura/packages/engine" && bun x tsc -p tsconfig.build.json --declaration --emitDeclarationOnly --noEmit false --noCheck --outDir lib/typescript)
 echo 'Engine declarations rebuilt from source'
 
 step 'Building @nayan-ui/games'
