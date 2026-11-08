@@ -156,7 +156,7 @@
       "dependencies": {
         "@monaco-editor/react": "^4.7.0",
         "@napi-rs/canvas": "^0.1.68",
-        "@nayan-ui/engine": "^1.0.0-beta.6",
+        "@nayan-ui/engine": "^1.0.0-beta.7",
         "@nayan-ui/games": "file:./scripts/nayan-ui-games.tgz",
         "@nayan-ui/react": "workspace:*",
         "docx": "^9.5.0",

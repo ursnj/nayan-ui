@@ -4,14 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "bun run sitemap:generate && next build",
     "start": "next start --port 7100",
-    "seo:banners": "bun scripts/seo-banners/generate.ts"
+    "seo:banners": "bun scripts/seo-banners/generate.ts",
+    "sitemap:generate": "bun scripts/sync-sitemap.ts",
+    "sitemap:check": "bun scripts/sync-sitemap.ts --check"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "@napi-rs/canvas": "^0.1.68",
-    "@nayan-ui/engine": "^1.0.0-beta.6",
+    "@nayan-ui/engine": "^1.0.0-beta.7",
     "@nayan-ui/games": "file:./scripts/nayan-ui-games.tgz",
     "@nayan-ui/react": "workspace:*",
     "docx": "^9.5.0",
