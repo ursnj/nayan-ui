@@ -12,7 +12,7 @@ export const metadata = buildPageMetadata({
     "Playtura’s procedural 3D penguin, with ten native keyframe animations: idle, walk, run, jump, slide, punch, jab, hit, dance and dying. Interactive React example with complete source code.",
   path: "/game-engine/examples/penguin-animation",
 });
-// The complete scene includes Playtura's procedural meshes, rig, ten clips, and useWorld setup.
+// The complete scene includes procedural meshes, attached hip/heel joints, ten clips and useWorld.
 const source = readFileSync(
   path.join(process.cwd(), "src/components/examples/penguin-animation/PenguinScene.tsx"),
   "utf8",

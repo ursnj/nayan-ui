@@ -294,6 +294,27 @@ export function footMesh(): Model {
   return footMeshUncached();
 }
 
+// A separate shaft follows the hip and heel. It must not inherit the foot's toe pitch.
+let legModel: Model | null = null;
+function legMesh(): Model {
+  return (legModel ??= createShape(
+    tube(
+      [
+        [0, 0, 0],
+        [0, 1, 0],
+      ],
+      {
+        radius: 0.5,
+        sides: 20,
+        color: surfaceColor((f, { v }) =>
+          mixF(f, ORANGE_DARK, NAVY, f.clamp(f.div(f.sub(v, 0.15), 0.55), 0, 1)),
+        ),
+      },
+    ),
+    { center: false, optimize: true, shine: 0.35 },
+  ));
+}
+
 function footMeshUncached(): Model {
   if (footModel) return footModel;
   const sphere = shapeGeometry("sphere");
@@ -313,30 +334,8 @@ function footMeshUncached(): Model {
     scale: 0.048,
     color: rgba(ORANGE),
   }));
-  // A short, stout leg from the heel up into the body (its top hidden inside it): orange at the ankle,
-  // feathered navy above, so the foot always reads as joined on, even mid-step
-  const leg: GeometryPart = {
-    geometry: tube(
-      [
-        [0, 0.04, 0.02],
-        [0, 0.12, 0.0],
-        [0, 0.22, -0.01],
-      ],
-      {
-        radius: (t) => 0.045 + t * 0.04,
-        sides: 12,
-        color: surfaceColor((f, { v }) => {
-          // Orange toes up to v = 0.35, then the navy leg.
-          const toes = mixF(f, ORANGE_DARK, ORANGE, f.mul(v, 2));
-          const pick = (k: 0 | 1 | 2) => f.select(f.sub(0.35, v), NAVY[k], toes[k]);
-          return [pick(0), pick(1), pick(2)];
-        }),
-      },
-    ),
-  };
   footModel = createShape(
     merge([
-      leg,
       {
         geometry: sphere,
         position: [0, 0.03, 0.05],
@@ -361,13 +360,14 @@ export function* warmAssets(): Iterable<() => unknown> {
   yield footMesh;
   yield () => flipperMesh(-1);
   yield () => flipperMesh(1);
+  yield legMesh;
 }
 
 // The procedural penguin and animation library copied from Playtura’s Penguin Run. We rig
 // this example as attached entities: a root on
 // the ground (moves and turns the whole bird), a pelvis (waddle, lean, crouch), the one-piece body
 // (head, face, eyes, beak, belly, tufts and tail in one mesh), two flippers hinged at the
-// shoulders and two feet. Every clip runs as keyframes in the engine's Rust core: no per-frame JS.
+// shoulders and two feet. Clips run in the native core; two small leg connectors follow the joints.
 //
 //   const p = spawnPenguin(world, [0, 0, 0], 1.6);
 //   playPenguin(world, p, 'walk');            // loops until another clip
@@ -410,6 +410,11 @@ export type Penguin = {
   flipperR: Entity;
   footL: Entity;
   footR: Entity;
+  hipJoints: [Entity, Entity];
+  heelJoints: [Entity, Entity];
+  legs: [Entity, Entity];
+  size: number;
+  jointPositions: { hip: [number, number, number]; heel: [number, number, number] };
   /** Where the root stands (ground x), kept in step with root moves. */
   x: number;
   /** The yaw the root faces, radians (0 looks at the camera). */
@@ -442,6 +447,7 @@ export function preparePenguin() {
   flipperMesh(-1);
   flipperMesh(1);
   footMesh();
+  legMesh();
 }
 
 // ── Rig ───────────────────────────────────────────────────────────────
@@ -495,6 +501,25 @@ export function spawnPenguin(
     color: tint,
     pickable: false,
   });
+  const hipJoints = [-1, 1].map((side) =>
+    world.spawn({
+      mesh: "none",
+      parent: pelvis,
+      position: [side * FOOT[0], -0.23, FOOT[2] - 0.02],
+      pickable: false,
+    }),
+  ) as [Entity, Entity];
+  const heelJoints = [footL, footR].map((foot) =>
+    world.spawn({
+      mesh: "none",
+      parent: foot,
+      position: [0, 0.04, 0.018],
+      pickable: false,
+    }),
+  ) as [Entity, Entity];
+  const legs = [-1, 1].map(() =>
+    world.spawn({ mesh: legMesh(), color: tint, scale: 0, pickable: false }),
+  ) as [Entity, Entity];
   return {
     root,
     pelvis,
@@ -503,10 +528,35 @@ export function spawnPenguin(
     flipperR,
     footL,
     footR,
+    hipJoints,
+    heelJoints,
+    legs,
+    size,
+    jointPositions: { hip: [0, 0, 0], heel: [0, 0, 0] },
     x: position[0],
     yaw: 0,
     anim: null,
   };
+}
+
+/** Keep each leg attached to the body while its foot lifts and pitches independently. */
+export function alignPenguinLegs(world: World, p: Penguin) {
+  for (let i = 0; i < 2; i++) {
+    const hip = world.worldPosition(p.hipJoints[i], p.jointPositions.hip);
+    const heel = world.worldPosition(p.heelJoints[i], p.jointPositions.heel);
+    if (!hip || !heel) continue;
+    const x = hip[0] - heel[0],
+      y = hip[1] - heel[1],
+      z = hip[2] - heel[2];
+    const length = Math.hypot(x, y, z),
+      q = Math.hypot(z, x, length + y);
+    const rotation: Quat = q > 1e-6 ? [z / q, 0, -x / q, (length + y) / q] : quat.x(Math.PI);
+    world.set(p.legs[i], {
+      position: heel,
+      rotation,
+      scale: length > 1e-6 ? [0.07 * p.size, length, 0.07 * p.size] : 0,
+    });
+  }
 }
 
 const parts = (p: Penguin) => [p.pelvis, p.flipperL, p.flipperR, p.footL, p.footR];
@@ -1415,6 +1465,8 @@ export default function PenguinScene({
               // Calling update here also lets orbit controls work while animation is paused.
               world.update(playing ? dt * speed : 0);
             }
+            alignPenguinLegs(world, p);
+            world.update(0);
             command.current = { action, replay };
             if (!presented.current) {
               presented.current = true;
