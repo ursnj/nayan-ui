@@ -11,6 +11,7 @@ const SharedLogoRuntime = dynamic(() => import("./SharedLogoRuntime"), {
 
 type Controls = {
   logo: LogoId;
+  background: string;
   playing: boolean;
   rendering: boolean;
   speed: number;
@@ -18,6 +19,7 @@ type Controls = {
 };
 type ExportJob = {
   logo: LogoId;
+  background: string;
   index: number;
   pending: boolean;
   frames: Blob[];
@@ -58,6 +60,12 @@ export default function LogoPreview({ logo }: { logo?: LogoId } = {}) {
           }
           const next = {
             logo: nextLogo,
+            background:
+              typeof event.data.background === "string" &&
+              /^(#[\da-f]{3,8}|rgba?\([\d.,\s]+\))$/i.test(event.data.background) &&
+              CSS.supports("color", event.data.background)
+                ? event.data.background
+                : getComputedStyle(document.body).backgroundColor,
             playing,
             speed,
             replay,
@@ -90,6 +98,7 @@ export default function LogoPreview({ logo }: { logo?: LogoId } = {}) {
         context.imageSmoothingQuality = "high";
         job.current = {
           logo: selectedLogo,
+          background: controlsRef.current!.background,
           index: 0,
           pending: false,
           frames: [],
@@ -197,11 +206,16 @@ export default function LogoPreview({ logo }: { logo?: LogoId } = {}) {
       message: error instanceof Error ? error.message : "WebP export failed.",
     });
   };
+  const background =
+    captureTime !== undefined
+      ? (job.current?.background ?? controls?.background)
+      : controls?.background;
   return (
-    <div className="h-dvh bg-[#0B1020]">
+    <div className="h-dvh bg-background" style={{ backgroundColor: background }}>
       {controls ? (
         <SharedLogoRuntime
           {...controls}
+          background={background!}
           rendering={captureTime !== undefined || controls.rendering}
           captureTime={captureTime}
           onFrame={captureFrame}

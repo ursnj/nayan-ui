@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { GameView, World, warmUpEngine, quat, type Camera, type Entity } from "@nayan-ui/engine";
+import { GameView, World, warmUpEngine, type Camera, type Entity } from "@nayan-ui/engine";
 import { LOGOS, type LogoId } from "./logos";
 import * as microsoft from "./logos/microsoft";
 import * as google from "./logos/google";
@@ -81,14 +81,6 @@ function startEngine(): Promise<Session> {
     // Prepare all meshes before allocating the world's native transform buffers.
     const prepared = LOGOS.map((logo) => ({ id: logo.id, pieces: MODULES[logo.id].buildLogo() }));
     const world = new World(Math.max(16, ...prepared.map((group) => group.pieces.length + 1)));
-    world.spawn({
-      mesh: "plane",
-      position: [0, 0, -0.5],
-      rotation: quat.x(Math.PI / 2),
-      scale: [100, 1, 100],
-      color: "#162038",
-      pickable: false,
-    });
     const assets = new Map(prepared.map(({ id, pieces }) => [id, pieces]));
     return { world, assets, active: null, selected: null };
   }));
@@ -96,6 +88,7 @@ function startEngine(): Promise<Session> {
 
 type Props = {
   logo: LogoId;
+  background: string;
   playing: boolean;
   rendering: boolean;
   speed: number;
@@ -108,6 +101,7 @@ type Props = {
 
 export default function SharedLogoRuntime({
   logo,
+  background,
   playing,
   rendering,
   speed,
@@ -119,8 +113,6 @@ export default function SharedLogoRuntime({
 }: Props) {
   const [session, setSession] = useState<Session | null>(null);
   const surface = useRef<HTMLDivElement>(null);
-  const backdrop = useRef<HTMLDivElement>(null);
-  const backgroundSampled = useRef(false);
   const elapsed = useRef(0);
   const displayTime = useRef(3);
   const lastReplay = useRef(replay);
@@ -147,7 +139,7 @@ export default function SharedLogoRuntime({
   if (!session) return null;
   const { world, assets } = session;
   return (
-    <div ref={backdrop} style={{ width: "100%", height: "100%", backgroundColor: "#11192c" }}>
+    <div style={{ width: "100%", height: "100%", backgroundColor: background }}>
       <div ref={surface} style={{ width: "100%", height: "100%" }}>
         <GameView
           source={world}
@@ -155,7 +147,7 @@ export default function SharedLogoRuntime({
           quality="high"
           adaptQuality={false}
           paused={!rendering}
-          background="#0B1020"
+          background={background}
           light={{ direction: [-3, 5, 7], ambient: 0.42, shadows: false }}
           style={{ width: "100%", height: "100%" }}
           onError={onError}
@@ -193,24 +185,6 @@ export default function SharedLogoRuntime({
               captureTime ?? displayTime.current,
               surface.current,
             );
-            if (!backgroundSampled.current && dt > 0)
-              queueMicrotask(() => {
-                try {
-                  const canvas = surface.current?.querySelector("canvas");
-                  const sample = document.createElement("canvas");
-                  sample.width = sample.height = 1;
-                  const context = sample.getContext("2d");
-                  if (!canvas || !context || !backdrop.current) return;
-                  context.drawImage(canvas, 0, 0, 1, 1, 0, 0, 1, 1);
-                  const [r, g, b, alpha] = context.getImageData(0, 0, 1, 1).data;
-                  if (alpha === 255) {
-                    backdrop.current.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-                    backgroundSampled.current = true;
-                  }
-                } catch {
-                  /* The fixed background is retained if readback is unavailable. */
-                }
-              });
             if (captureTime !== undefined) {
               const time = captureTime;
               if (capturePass.current.time !== time) capturePass.current = { time, frames: 0 };

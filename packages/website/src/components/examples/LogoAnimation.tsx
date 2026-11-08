@@ -81,6 +81,9 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
           speed,
           replay,
           rendering: active && view === "preview",
+          background: preview.current
+            ? getComputedStyle(preview.current).backgroundColor
+            : getComputedStyle(document.body).backgroundColor,
         },
         window.location.origin,
       );
@@ -112,8 +115,16 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
       }
     };
     window.addEventListener("message", ready);
+    const themeObserver = new MutationObserver(sendControls);
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
     sendControls();
-    return () => window.removeEventListener("message", ready);
+    return () => {
+      window.removeEventListener("message", ready);
+      themeObserver.disconnect();
+    };
   }, [active, playing, speed, replay, view, logo.id]);
 
   const exportAnimation = () => {
@@ -228,12 +239,12 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
           <div
             ref={preview}
             aria-label={`${logo.name} logo animation`}
-            className="relative h-[300px] bg-[#0B1020] sm:h-[380px]"
+            className="relative h-[300px] bg-background sm:h-[380px]"
           >
             {active && !frameReady && !initialized ? (
               <div
                 role="status"
-                className="absolute inset-0 flex items-center justify-center text-sm text-slate-300"
+                className="absolute inset-0 flex items-center justify-center text-sm text-muted"
               >
                 Loading Nayan Game Engine…
               </div>
