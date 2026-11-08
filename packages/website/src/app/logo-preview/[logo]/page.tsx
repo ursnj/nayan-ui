@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import LogoPreview from "@/components/examples/LogoPreview";
-import { LOGOS } from "@/components/examples/logos";
+import LogoPreview from "@/components/examples/logo-animation/LogoPreview";
+import { LOGOS } from "@/components/examples/logo-animation/logos";
 
 export const metadata = { title: "Logo preview", robots: { index: false, follow: false } };
 

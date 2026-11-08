@@ -1,5 +1,5 @@
-import { LOGOS, type LogoId } from "@/components/examples/logos";
-import LogoAnimation from "@/components/examples/LogoAnimation";
+import { LOGOS, type LogoId } from "@/components/examples/logo-animation/logos";
+import LogoAnimation from "@/components/examples/logo-animation/LogoAnimation";
 import Code from "@/components/helpers/Code";
 import Link from "next/link";
 import Sidebar from "@/components/helpers/Sidebar";
@@ -19,7 +19,7 @@ const sources = Object.fromEntries(
   LOGOS.map((logo) => [
     logo.id,
     readFileSync(
-      path.join(process.cwd(), "src/components/examples/logos", `${logo.id}.tsx`),
+      path.join(process.cwd(), "src/components/examples/logo-animation/logos", `${logo.id}.tsx`),
       "utf8",
     ),
   ]),

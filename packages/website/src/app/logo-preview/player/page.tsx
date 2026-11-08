@@ -1,4 +1,4 @@
-import LogoPreview from "@/components/examples/LogoPreview";
+import LogoPreview from "@/components/examples/logo-animation/LogoPreview";
 
 export const metadata = { title: "Logo animation player", robots: { index: false, follow: false } };
 
