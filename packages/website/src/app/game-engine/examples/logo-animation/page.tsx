@@ -14,7 +14,7 @@ export const metadata = buildPageMetadata({
   path: "/game-engine/examples/logo-animation",
 });
 
-// Full standalone sources include the Nayan UI mark from public/nayan-ui.png.
+// Full standalone sources match the rounded, smooth solids shown in the shared engine preview.
 const sources = Object.fromEntries(
   LOGOS.map((logo) => [
     logo.id,

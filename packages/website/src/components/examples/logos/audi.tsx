@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import {
   GameView,
-  Path,
   createShape,
-  extrude,
+  tube,
+  merge,
   quat,
   World,
   warmUpEngine,
@@ -30,24 +30,26 @@ function circle(cx: number, cy: number, radius: number): [number, number][] {
   });
 }
 
-// Build each outline once during setup. Path uses screen coordinates (Y down).
-function piece(outline: Path, color: string, z = 0): Piece {
-  const [left, top, right, bottom] = outline.bounds()!;
-  return {
-    mesh: createShape(extrude(outline, { depth: z >= 0.1 ? 0.12 : 0.38, fillRule: "evenodd" }), {
-      shine: 0.72,
-    }),
-    color,
-    x: (left + right) / 2,
-    y: -(top + bottom) / 2,
-    z: z >= 0.1 ? 0.28 + z * 0.3 : z,
-  };
-}
-
+// Closed circular sweeps keep the silhouette and reflections smooth at every angle.
 export function buildLogo(): Piece[] {
-  return [-0.96, -0.32, 0.32, 0.96].map((x) =>
-    piece(new Path().addPolygon(circle(x, 0, 0.48)).addPolygon(circle(x, 0, 0.4)), "#E6E8ED"),
+  const mesh = createShape(
+    merge([
+      {
+        geometry: tube(
+          circle(0, 0, 0.44).map(([x, y]) => [x, y, 0] as [number, number, number]),
+          {
+            radius: 0.04,
+            sides: 64,
+            smoothness: 2,
+            closed: true,
+          },
+        ),
+        scale: [1, 1, 2.2],
+      },
+    ]),
+    { shine: 0.8, optimize: true },
   );
+  return [-0.96, -0.32, 0.32, 0.96].map((x) => ({ mesh, color: "#E6E8ED", x, y: 0, z: 0 }));
 }
 
 // Silver rings glide in from alternating sides and interlock.
@@ -102,6 +104,7 @@ export default function AudiLogoScene({
     void warmUpEngine()
       .then(() => {
         if (cancelled) return;
+        const pieces = buildLogo();
         const w = new World(16);
         created = w;
         // Keep a neutral backdrop behind the solid logo pieces.
@@ -114,7 +117,6 @@ export default function AudiLogoScene({
           pickable: false,
         });
         elapsed.current = 0;
-        const pieces = buildLogo();
         const entities = pieces.map((part) => w.spawn({ mesh: part.mesh, color: part.color }));
         group.current = { pieces, entities };
         drawLogo(w, entities, pieces, 3);
