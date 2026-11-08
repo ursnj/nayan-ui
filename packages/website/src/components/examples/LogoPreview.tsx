@@ -2,38 +2,22 @@
 
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import type { LogoId } from "./logos";
+import { LOGOS, type LogoId } from "./logos";
 
-const loading = () => null;
-const SCENES = {
-  telegram: dynamic(() => import("./logos/telegram"), { ssr: false, loading }),
-  zoom: dynamic(() => import("./logos/zoom"), { ssr: false, loading }),
-  twitch: dynamic(() => import("./logos/twitch"), { ssr: false, loading }),
-  opera: dynamic(() => import("./logos/opera"), { ssr: false, loading }),
-  xbox: dynamic(() => import("./logos/xbox"), { ssr: false, loading }),
-  stackoverflow: dynamic(() => import("./logos/stackoverflow"), { ssr: false, loading }),
-  mercedes: dynamic(() => import("./logos/mercedes"), { ssr: false, loading }),
-  cisco: dynamic(() => import("./logos/cisco"), { ssr: false, loading }),
-  spotify: dynamic(() => import("./logos/spotify"), { ssr: false, loading }),
-  microsoft: dynamic(() => import("./logos/microsoft"), { ssr: false, loading }),
-  dropbox: dynamic(() => import("./logos/dropbox"), { ssr: false, loading }),
-  figma: dynamic(() => import("./logos/figma"), { ssr: false, loading }),
-  target: dynamic(() => import("./logos/target"), { ssr: false, loading }),
-  nike: dynamic(() => import("./logos/nike"), { ssr: false, loading }),
-  linkedin: dynamic(() => import("./logos/linkedin"), { ssr: false, loading }),
-  slack: dynamic(() => import("./logos/slack"), { ssr: false, loading }),
-  mitsubishi: dynamic(() => import("./logos/mitsubishi"), { ssr: false, loading }),
-  netflix: dynamic(() => import("./logos/netflix"), { ssr: false, loading }),
-  audi: dynamic(() => import("./logos/audi"), { ssr: false, loading }),
-  adidas: dynamic(() => import("./logos/adidas"), { ssr: false, loading }),
-  youtube: dynamic(() => import("./logos/youtube"), { ssr: false, loading }),
-  bmw: dynamic(() => import("./logos/bmw"), { ssr: false, loading }),
-  google: dynamic(() => import("./logos/google"), { ssr: false, loading }),
-  mastercard: dynamic(() => import("./logos/mastercard"), { ssr: false, loading }),
+const SharedLogoRuntime = dynamic(() => import("./SharedLogoRuntime"), {
+  ssr: false,
+  loading: () => null,
+});
+
+type Controls = {
+  logo: LogoId;
+  playing: boolean;
+  rendering: boolean;
+  speed: number;
+  replay: number;
 };
-
-type Controls = { playing: boolean; rendering: boolean; speed: number; replay: number };
 type ExportJob = {
+  logo: LogoId;
   index: number;
   pending: boolean;
   frames: Blob[];
@@ -47,6 +31,7 @@ export default function LogoPreview({ logo }: { logo: LogoId }) {
   const [controls, setControls] = useState<Controls | null>(null);
   const [captureTime, setCaptureTime] = useState<number>();
   const job = useRef<ExportJob | null>(null);
+  const controlsRef = useRef<Controls | null>(null);
   const abort = useRef<AbortController | null>(null);
   const send = (message: object, transfer: Transferable[] = []) =>
     window.parent.postMessage(message, window.location.origin, transfer);
@@ -60,8 +45,23 @@ export default function LogoPreview({ logo }: { logo: LogoId }) {
           typeof playing === "boolean" &&
           [0.5, 1, 1.5, 2].includes(speed) &&
           Number.isSafeInteger(replay)
-        )
-          setControls({ playing, speed, replay, rendering: event.data.rendering !== false });
+        ) {
+          const nextLogo = LOGOS.find((item) => item.id === event.data.logo)?.id ?? logo;
+          if (job.current && job.current.logo !== nextLogo) {
+            job.current = null;
+            abort.current?.abort();
+            setCaptureTime(undefined);
+          }
+          const next = {
+            logo: nextLogo,
+            playing,
+            speed,
+            replay,
+            rendering: event.data.rendering !== false,
+          };
+          controlsRef.current = next;
+          setControls(next);
+        }
       }
       if (event.data?.type === "logo-export" && !job.current) {
         const source = document.querySelector("canvas");
@@ -82,7 +82,14 @@ export default function LogoPreview({ logo }: { logo: LogoId }) {
           return;
         }
         context.imageSmoothingQuality = "high";
-        job.current = { index: 0, pending: false, frames: [], canvas, context };
+        job.current = {
+          logo: controlsRef.current?.logo ?? logo,
+          index: 0,
+          pending: false,
+          frames: [],
+          canvas,
+          context,
+        };
         setCaptureTime(0);
       }
     };
@@ -164,10 +171,11 @@ export default function LogoPreview({ logo }: { logo: LogoId }) {
             throw new Error(error.error || "WebP export failed.");
           }
           const data = await response.arrayBuffer();
-          send({ type: "logo-export-complete", data }, [data]);
+          if (job.current !== current) return;
+          send({ type: "logo-export-complete", logo: current.logo, data }, [data]);
           job.current = null;
         } catch (error) {
-          fail(error);
+          if (job.current === current) fail(error);
         }
       }, "image/png");
     } catch (error) {
@@ -183,16 +191,21 @@ export default function LogoPreview({ logo }: { logo: LogoId }) {
       message: error instanceof Error ? error.message : "WebP export failed.",
     });
   };
-  const Scene = SCENES[logo];
   return (
     <div className="h-dvh bg-[#0B1020]">
       {controls ? (
-        <Scene
+        <SharedLogoRuntime
           {...controls}
           rendering={captureTime !== undefined || controls.rendering}
           captureTime={captureTime}
           onFrame={captureFrame}
           onReady={() => send({ type: "logo-rendered" })}
+          onError={() =>
+            send({
+              type: "logo-export-error",
+              message: "The engine could not start. Please reload the page.",
+            })
+          }
         />
       ) : null}
     </div>

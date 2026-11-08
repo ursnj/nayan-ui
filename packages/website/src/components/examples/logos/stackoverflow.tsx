@@ -14,7 +14,7 @@ import {
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = {
+export type Piece = {
   mesh: Model;
   color: string;
   x: number;
@@ -49,7 +49,7 @@ function bar(cx: number, cy: number, angle: number): Path {
   );
 }
 
-function buildLogo(): Piece[] {
+export function buildLogo(): Piece[] {
   return [
     piece(
       new Path().addPolygon([
@@ -71,7 +71,7 @@ function buildLogo(): Piece[] {
 }
 
 // Five orange bars fan upward from a stack while a gray bracket anchors the mark.
-function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
+export function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
   const phase = time % 8;
   const ease = (value: number) => {
     const t = Math.max(0, Math.min(1, value));

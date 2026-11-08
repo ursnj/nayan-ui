@@ -14,7 +14,7 @@ import {
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = {
+export type Piece = {
   mesh: Model;
   color: string;
   x: number;
@@ -55,7 +55,7 @@ function roundedRect(x: number, y: number, width: number, height: number, radius
   return new Path().addPolygon(points);
 }
 
-function buildLogo(): Piece[] {
+export function buildLogo(): Piece[] {
   return [
     piece(roundedRect(-1.2, -1.05, 2.4, 2.1, 0.42), "#2D8CFF"),
     piece(roundedRect(-0.83, -0.5, 1.15, 1, 0.18), "#FFFFFF", 0.16),
@@ -73,7 +73,7 @@ function buildLogo(): Piece[] {
 }
 
 // The blue badge opens, its camera body extends, and the lens folds into position.
-function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
+export function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
   const phase = time % 8;
   const ease = (value: number) => {
     const t = Math.max(0, Math.min(1, value));

@@ -14,7 +14,7 @@ import {
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = {
+export type Piece = {
   mesh: Model;
   color: string;
   x: number;
@@ -44,7 +44,7 @@ function piece(outline: Path, color: string, z = 0): Piece {
   };
 }
 
-function buildLogo(): Piece[] {
+export function buildLogo(): Piece[] {
   {
     const lens: [number, number][] = [];
     const angle = Math.acos(0.48);
@@ -65,14 +65,15 @@ function buildLogo(): Piece[] {
 }
 
 // Two circles slide together and their orange intersection opens between them.
-function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
+export function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
   const phase = time % 8;
   const smooth = (value: number) => {
     const t = Math.max(0, Math.min(1, value));
     return t * t * (3 - 2 * t);
   };
   const progress = (delay: number, duration: number) =>
-    smooth((phase - 0.1 - delay) / duration) * (1 - smooth((phase - 6.1 - delay * 0.25) / 0.9));
+    smooth((phase - 0.1 - delay) / duration) *
+    (1 - smooth((phase - 6.1 - Math.max(0, 0.35 - delay * 0.3)) / 0.9));
   entities.forEach((entity, index) => {
     const part = pieces[index];
     const p = progress(index === 2 ? 0.75 : 0, 1.15);

@@ -14,7 +14,7 @@ import {
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = {
+export type Piece = {
   mesh: Model;
   color: string;
   x: number;
@@ -36,7 +36,7 @@ function piece(outline: Path, color: string, z = 0): Piece {
   };
 }
 
-function buildLogo(): Piece[] {
+export function buildLogo(): Piece[] {
   return [
     piece(
       Path.fromSVG(
@@ -48,7 +48,7 @@ function buildLogo(): Piece[] {
 }
 
 // The swoosh draws across the screen from its heel to its tip.
-function drawLogo(
+export function drawLogo(
   world: World,
   entities: Entity[],
   pieces: Piece[],

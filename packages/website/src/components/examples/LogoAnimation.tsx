@@ -10,7 +10,6 @@ type Logo = (typeof LOGOS)[number];
 
 function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
   const [active, setActive] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [view, setView] = useState<"preview" | "code">("preview");
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
@@ -45,14 +44,23 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
     const onChange = () => setPlaying(!preference.matches);
     preference.addEventListener("change", onChange);
     return () => preference.removeEventListener("change", onChange);
-  }, []);
+  }, [logo.id]);
+
+  useEffect(() => {
+    setView("preview");
+    setSpeed(1);
+    setReplay(0);
+    setCopied(false);
+    setExporting(false);
+    setProgress(0);
+    setExportError("");
+  }, [logo.id]);
 
   useEffect(() => {
     if (view !== "preview" || !preview.current) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
         setActive(entry.isIntersecting);
-        if (entry.isIntersecting) setMounted(true);
       },
       { rootMargin: "100px 0px" },
     );
@@ -66,7 +74,14 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
   useEffect(() => {
     const sendControls = () =>
       frame.current?.contentWindow?.postMessage(
-        { type: "logo-controls", playing, speed, replay, rendering: active && view === "preview" },
+        {
+          type: "logo-controls",
+          logo: logo.id,
+          playing,
+          speed,
+          replay,
+          rendering: active && view === "preview",
+        },
         window.location.origin,
       );
     const ready = (event: MessageEvent) => {
@@ -82,7 +97,11 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
         setExporting(false);
         setExportError(event.data.message);
       }
-      if (event.data?.type === "logo-export-complete" && event.data.data instanceof ArrayBuffer) {
+      if (
+        event.data?.type === "logo-export-complete" &&
+        event.data.logo === logo.id &&
+        event.data.data instanceof ArrayBuffer
+      ) {
         const url = URL.createObjectURL(new Blob([event.data.data], { type: "image/webp" }));
         const link = document.createElement("a");
         link.href = url;
@@ -95,7 +114,7 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
     window.addEventListener("message", ready);
     sendControls();
     return () => window.removeEventListener("message", ready);
-  }, [active, playing, speed, replay, view]);
+  }, [active, playing, speed, replay, view, logo.id]);
 
   const exportAnimation = () => {
     setView("preview");
@@ -219,14 +238,12 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
                 Loading Nayan Game Engine…
               </div>
             ) : null}
-            {mounted ? (
-              <iframe
-                ref={frame}
-                src={`/logo-preview/${logo.id}`}
-                title={`${logo.name} animated preview`}
-                className={`relative h-full w-full border-0 ${frameReady ? "opacity-100" : "opacity-0"}`}
-              />
-            ) : null}
+            <iframe
+              ref={frame}
+              src="/logo-preview/player"
+              title={`${logo.name} animated preview`}
+              className={`relative h-full w-full border-0 ${frameReady ? "opacity-100" : "opacity-0"}`}
+            />
           </div>
           <div className="flex flex-wrap items-center gap-3 border-t border-default p-4">
             <button type="button" className={BUTTON_SMALL} onClick={() => setPlaying(!playing)}>
@@ -305,7 +322,7 @@ export default function LogoAnimation({ sources }: { sources: Record<LogoId, str
           </button>
         ))}
       </div>
-      <SelectedLogo key={logo.id} logo={logo} code={sources[logo.id]} />
+      <SelectedLogo logo={logo} code={sources[logo.id]} />
     </div>
   );
 }

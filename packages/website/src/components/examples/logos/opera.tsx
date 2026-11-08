@@ -14,7 +14,7 @@ import {
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = {
+export type Piece = {
   mesh: Model;
   color: string;
   x: number;
@@ -43,7 +43,7 @@ function circle(cx: number, cy: number, radiusX: number, radiusY = radiusX): [nu
   });
 }
 
-function buildLogo(): Piece[] {
+export function buildLogo(): Piece[] {
   return [
     piece(
       new Path().addPolygon(circle(0, 0, 0.95, 1.2)).addPolygon(circle(0, 0, 0.56, 0.89)),
@@ -53,7 +53,7 @@ function buildLogo(): Piece[] {
 }
 
 // An extruded red O turns smoothly onto its face like a polished ring.
-function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
+export function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
   const phase = time % 8;
   const ease = (value: number) => {
     const t = Math.max(0, Math.min(1, value));

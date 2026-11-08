@@ -14,7 +14,7 @@ import {
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = {
+export type Piece = {
   mesh: Model;
   color: string;
   x: number;
@@ -57,7 +57,7 @@ function crossBand(angle: number): Path {
   return new Path().addPolygon(points);
 }
 
-function buildLogo(): Piece[] {
+export function buildLogo(): Piece[] {
   return [
     piece(new Path().addPolygon(circle(0, 0, 1.2)), "#107C10"),
     piece(crossBand(Math.PI / 4), "#FFFFFF", 0.16),
@@ -66,7 +66,7 @@ function buildLogo(): Piece[] {
 }
 
 // A green disc turns forward as two white blades cross into the Xbox mark.
-function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
+export function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
   const phase = time % 8;
   const ease = (value: number) => {
     const t = Math.max(0, Math.min(1, value));

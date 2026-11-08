@@ -14,7 +14,7 @@ import {
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = {
+export type Piece = {
   mesh: Model;
   color: string;
   x: number;
@@ -36,7 +36,7 @@ function piece(outline: Path, color: string, z = 0): Piece {
   };
 }
 
-function buildLogo(): Piece[] {
+export function buildLogo(): Piece[] {
   return [
     piece(new Path().addRect(-1.04, -1.04, 1, 1), "#F25022"),
     piece(new Path().addRect(0.04, -1.04, 1, 1), "#7FBA00"),
@@ -46,7 +46,7 @@ function buildLogo(): Piece[] {
 }
 
 // Tiles glide inward from four corners and settle into the window.
-function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
+export function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
   const phase = time % 8;
   const smooth = (value: number) => {
     const t = Math.max(0, Math.min(1, value));

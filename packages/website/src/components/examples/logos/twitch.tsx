@@ -14,7 +14,7 @@ import {
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = {
+export type Piece = {
   mesh: Model;
   color: string;
   x: number;
@@ -36,7 +36,7 @@ function piece(outline: Path, color: string, z = 0): Piece {
   };
 }
 
-function buildLogo(): Piece[] {
+export function buildLogo(): Piece[] {
   return [
     piece(
       new Path().addPolygon([
@@ -72,7 +72,7 @@ function buildLogo(): Piece[] {
 }
 
 // A purple chat badge builds in layers, then its two eyes give a quick blink.
-function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
+export function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
   const phase = time % 8;
   const ease = (value: number) => {
     const t = Math.max(0, Math.min(1, value));
@@ -91,7 +91,7 @@ function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: numbe
       scale:
         index > 1
           ? [1, Math.max(0.001, p) * (1 - blink * 0.85), Math.max(0.001, p)]
-          : [1, Math.max(0.001, p), 1],
+          : [1, Math.max(0.001, p), index === 1 ? Math.max(0.001, p) : 1],
     });
   });
 }

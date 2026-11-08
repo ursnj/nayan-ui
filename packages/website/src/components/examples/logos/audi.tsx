@@ -14,7 +14,7 @@ import {
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = {
+export type Piece = {
   mesh: Model;
   color: string;
   x: number;
@@ -44,14 +44,14 @@ function piece(outline: Path, color: string, z = 0): Piece {
   };
 }
 
-function buildLogo(): Piece[] {
+export function buildLogo(): Piece[] {
   return [-0.96, -0.32, 0.32, 0.96].map((x) =>
     piece(new Path().addPolygon(circle(x, 0, 0.48)).addPolygon(circle(x, 0, 0.4)), "#E6E8ED"),
   );
 }
 
 // Silver rings glide in from alternating sides and interlock.
-function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
+export function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
   const phase = time % 8;
   const smooth = (value: number) => {
     const t = Math.max(0, Math.min(1, value));

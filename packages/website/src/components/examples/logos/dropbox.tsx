@@ -14,7 +14,7 @@ import {
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = {
+export type Piece = {
   mesh: Model;
   color: string;
   x: number;
@@ -36,7 +36,7 @@ function piece(outline: Path, color: string, z = 0): Piece {
   };
 }
 
-function buildLogo(): Piece[] {
+export function buildLogo(): Piece[] {
   return [
     [
       [-0.6, -1.0],
@@ -72,7 +72,7 @@ function buildLogo(): Piece[] {
 }
 
 // Four box flaps unfold in 3D and the base drops underneath them.
-function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
+export function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
   const phase = time % 8;
   const smooth = (value: number) => {
     const t = Math.max(0, Math.min(1, value));

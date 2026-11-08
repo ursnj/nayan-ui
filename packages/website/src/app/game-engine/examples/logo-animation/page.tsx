@@ -14,7 +14,7 @@ export const metadata = buildPageMetadata({
   path: "/game-engine/examples/logo-animation",
 });
 
-// Complete source includes all company marks, fixed high-quality rendering, and WebP capture.
+// Each complete example supplies the same model and animation used by the shared playground engine.
 const sources = Object.fromEntries(
   LOGOS.map((logo) => [
     logo.id,

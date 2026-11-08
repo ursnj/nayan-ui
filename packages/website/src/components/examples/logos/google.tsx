@@ -14,7 +14,7 @@ import {
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = {
+export type Piece = {
   mesh: Model;
   color: string;
   x: number;
@@ -50,7 +50,7 @@ function arc(start: number, end: number, outer = 1.15, inner = 0.72) {
   return new Path().addPolygon(points);
 }
 
-function buildLogo(): Piece[] {
+export function buildLogo(): Piece[] {
   return [
     piece(arc(0, 60), "#4285F4"),
     piece(arc(60, 140), "#34A853"),
@@ -61,14 +61,15 @@ function buildLogo(): Piece[] {
 }
 
 // Colored arcs sweep around the center, then the crossbar extends.
-function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
+export function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
   const phase = time % 8;
   const smooth = (value: number) => {
     const t = Math.max(0, Math.min(1, value));
     return t * t * (3 - 2 * t);
   };
   const progress = (delay: number, duration: number) =>
-    smooth((phase - 0.1 - delay) / duration) * (1 - smooth((phase - 6.1 - delay * 0.25) / 0.9));
+    smooth((phase - 0.1 - delay) / duration) *
+    (1 - smooth((phase - 6.1 - Math.max(0, 0.35 - delay * 0.3)) / 0.9));
   entities.forEach((entity, index) => {
     const part = pieces[index];
     const p = progress(index === 4 ? 0.65 : index * 0.08, 1.15);

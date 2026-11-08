@@ -14,7 +14,7 @@ import {
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = {
+export type Piece = {
   mesh: Model;
   color: string;
   x: number;
@@ -44,7 +44,7 @@ function piece(outline: Path, color: string, z = 0): Piece {
   };
 }
 
-function buildLogo(): Piece[] {
+export function buildLogo(): Piece[] {
   return [
     piece(Path.fromSVG("M0 -1.2 H-.4 A.4 .4 0 0 0 -.4 -.4 H0 Z"), "#F24E1E"),
     piece(Path.fromSVG("M0 -1.2 H.4 A.4 .4 0 0 1 .4 -.4 H0 Z"), "#FF7262"),
@@ -55,7 +55,7 @@ function buildLogo(): Piece[] {
 }
 
 // Five modules drop into their slots with a gentle snap and bounce.
-function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
+export function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
   const phase = time % 8;
   const smooth = (value: number) => {
     const t = Math.max(0, Math.min(1, value));

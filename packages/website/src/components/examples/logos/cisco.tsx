@@ -14,7 +14,7 @@ import {
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = {
+export type Piece = {
   mesh: Model;
   color: string;
   x: number;
@@ -55,14 +55,14 @@ function piece(outline: Path, color: string, z = 0): Piece {
   };
 }
 
-function buildLogo(): Piece[] {
+export function buildLogo(): Piece[] {
   return [0.4, 0.75, 1.25, 0.8, 0.45, 0.8, 1.25, 0.75, 0.4].map((height, index) =>
     piece(roundedRect(-1.26 + index * 0.3, -height / 2, 0.12, height, 0.06), "#1BA0D7"),
   );
 }
 
 // Bridge bars grow in a wave, then respond like an audio equalizer.
-function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
+export function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
   const phase = time % 8;
   const smooth = (value: number) => {
     const t = Math.max(0, Math.min(1, value));

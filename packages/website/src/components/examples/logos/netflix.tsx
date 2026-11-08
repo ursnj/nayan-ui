@@ -14,7 +14,7 @@ import {
   type Model,
 } from "@nayan-ui/engine";
 
-type Piece = {
+export type Piece = {
   mesh: Model;
   color: string;
   x: number;
@@ -36,7 +36,7 @@ function piece(outline: Path, color: string, z = 0): Piece {
   };
 }
 
-function buildLogo(): Piece[] {
+export function buildLogo(): Piece[] {
   return [
     piece(new Path().addRect(-0.77, -1.15, 0.45, 2.3), "#B20710"),
     piece(new Path().addRect(0.32, -1.15, 0.45, 2.3), "#B20710"),
@@ -54,14 +54,15 @@ function buildLogo(): Piece[] {
 }
 
 // Two upright ribbons extend upward before the diagonal ribbon stretches across.
-function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
+export function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
   const phase = time % 8;
   const smooth = (value: number) => {
     const t = Math.max(0, Math.min(1, value));
     return t * t * (3 - 2 * t);
   };
   const progress = (delay: number, duration: number) =>
-    smooth((phase - 0.1 - delay) / duration) * (1 - smooth((phase - 6.1 - delay * 0.25) / 0.9));
+    smooth((phase - 0.1 - delay) / duration) *
+    (1 - smooth((phase - 6.1 - Math.max(0, 0.35 - delay * 0.3)) / 0.9));
   entities.forEach((entity, index) => {
     const part = pieces[index];
     const p = progress(index === 2 ? 0.45 : index * 0.18, 1.1);
