@@ -10,6 +10,7 @@ import {
   World,
   warmUpEngine,
   type Entity,
+  type Camera,
   type Model,
 } from "@nayan-ui/engine";
 
@@ -21,21 +22,31 @@ type Piece = {
   z: number;
 };
 
+// Dense contours keep circular silhouettes smooth at high pixel densities.
+function circle(cx: number, cy: number, radius: number): [number, number][] {
+  return Array.from({ length: 192 }, (_, index) => {
+    const angle = (index / 192) * Math.PI * 2;
+    return [cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius];
+  });
+}
+
 // Build each outline once during setup. Path uses screen coordinates (Y down).
 function piece(outline: Path, color: string, z = 0): Piece {
   const [left, top, right, bottom] = outline.bounds()!;
   return {
-    mesh: createShape(extrude(outline, { depth: 0.14, fillRule: "evenodd" })),
+    mesh: createShape(extrude(outline, { depth: z >= 0.1 ? 0.12 : 0.38, fillRule: "evenodd" }), {
+      shine: 0.72,
+    }),
     color,
     x: (left + right) / 2,
     y: -(top + bottom) / 2,
-    z,
+    z: z >= 0.1 ? 0.28 + z * 0.3 : z,
   };
 }
 
 function buildLogo(): Piece[] {
   return [
-    piece(new Path().addCircle(0, 0, 1.2).addCircle(0, 0, 1.1), "#DDE2E8"),
+    piece(new Path().addPolygon(circle(0, 0, 1.2)).addPolygon(circle(0, 0, 1.1)), "#DDE2E8"),
     piece(
       new Path().addPolygon([
         [0, -1.12],
@@ -64,7 +75,7 @@ function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: numbe
     const part = pieces[index];
     const p = progress(index * 0.25, index === 0 ? 1 : 1.4);
     world.set(entity, {
-      position: [part.x, part.y, part.z],
+      position: [part.x, part.y, part.z + (1 - p) * 0.65],
       rotation: index === 0 ? quat.y(((1 - p) * Math.PI) / 2) : quat.z(((1 - p) * Math.PI * 2) / 3),
       scale: index === 0 ? 0.9 + p * 0.1 : Math.max(0.001, p),
     });
@@ -73,18 +84,26 @@ function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: numbe
 
 export default function MercedesLogoScene({
   playing = true,
+  rendering = true,
   speed = 1,
   replay = 0,
   onReady,
+  captureTime,
+  onFrame,
 }: {
   playing?: boolean;
+  rendering?: boolean;
   speed?: number;
   replay?: number;
   onReady?: () => void;
+  captureTime?: number;
+  onFrame?: (time: number) => void;
 } = {}) {
   const [error, setError] = useState(false);
   const group = useRef<{ entities: Entity[]; pieces: Piece[] }>({ entities: [], pieces: [] });
   const elapsed = useRef(0);
+  const displayTime = useRef(3);
+  const camera = useRef<Camera>({ eye: [0, 0, 6.5], target: [0, 0, 0], fov: 0.8 }).current;
   const started = useRef(false);
   const presented = useRef(false);
   const lastReplay = useRef(replay);
@@ -97,6 +116,15 @@ export default function MercedesLogoScene({
         if (cancelled) return;
         const w = new World(16);
         created = w;
+        // Keep a neutral backdrop behind the solid logo pieces.
+        w.spawn({
+          mesh: "plane",
+          position: [0, 0, -0.5],
+          rotation: quat.x(Math.PI / 2),
+          scale: [100, 1, 100],
+          color: "#162038",
+          pickable: false,
+        });
         elapsed.current = 0;
         const pieces = buildLogo();
         const entities = pieces.map((part) => w.spawn({ mesh: part.mesh, color: part.color }));
@@ -137,9 +165,11 @@ export default function MercedesLogoScene({
     <div style={{ width: "100%", height: "100%" }}>
       <GameView
         source={world}
-        camera={{ eye: [0, 0, 6.5], target: [0, 0, 0], fov: 0.8 }}
+        paused={!rendering}
+        quality="high"
+        camera={camera}
         background="#0B1020"
-        light={{ direction: [0, 0, 1], ambient: 0.8, shadows: false }}
+        light={{ direction: [-3, 5, 7], ambient: 0.42, shadows: false }}
         style={{ width: "100%", height: "100%" }}
         onError={() => {
           setError(true);
@@ -153,16 +183,21 @@ export default function MercedesLogoScene({
           }
           if (!started.current) {
             started.current = true;
-            drawLogo(world, entities, pieces, playing ? 0 : 3);
+            displayTime.current = playing ? 0 : 3;
           }
           if (lastReplay.current !== replay) {
             elapsed.current = 0;
+            displayTime.current = 0;
             lastReplay.current = replay;
-            drawLogo(world, entities, pieces, 0);
           }
-          if (playing) {
+          if (captureTime === undefined && playing) {
             elapsed.current += dt * speed;
-            drawLogo(world, entities, pieces, elapsed.current);
+            displayTime.current = elapsed.current;
+          }
+          drawLogo(world, entities, pieces, captureTime ?? displayTime.current);
+          if (captureTime !== undefined) {
+            const renderedTime = captureTime;
+            queueMicrotask(() => onFrame?.(renderedTime));
           }
         }}
       />

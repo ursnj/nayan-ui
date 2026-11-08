@@ -15,7 +15,7 @@ export const metadata = buildPageMetadata({
   path: "/game-engine/examples/logo-animation",
 });
 
-// Copyable source comes from each independently implemented logo animation.
+// Complete source includes persistent playback state and the exact frames used for WebP exports.
 const sources = Object.fromEntries(
   LOGOS.map((logo) => [
     logo.id,
@@ -31,7 +31,8 @@ export default function LogoAnimationPage() {
     <Sidebar title="Logo Animation">
       <p className={`mb-8 mt-4 max-w-2xl ${LEAD}`}>
         Explore {LOGOS.length} famous company logos, brought to life with 3D shapes. Each logo has
-        its own signature animation, preview, playback controls, and complete code example.
+        its own signature animation. Choose a company below to preview it, see the complete code, or
+        export an animated WebP.
       </p>
       <LogoAnimation sources={sources} />
       <section id="setup" className="mt-12 scroll-mt-24 space-y-4" aria-labelledby="source-heading">

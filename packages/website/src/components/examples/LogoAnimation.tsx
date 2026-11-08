@@ -1,30 +1,26 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { Check, Copy, Pause, Play, RotateCcw } from "lucide-react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { Check, Copy, Download, Pause, Play, RotateCcw } from "lucide-react";
 import Code from "@/components/helpers/Code";
 import { LOGOS, type LogoId } from "./logos";
 import { BUTTON_SMALL, CARD } from "@/design/system";
 
 type Logo = (typeof LOGOS)[number];
 
-function LogoSection({
-  logo,
-  code,
-  active,
-  onVisibility,
-}: {
-  logo: Logo;
-  code: string;
-  active: boolean;
-  onVisibility: (id: LogoId, ratio: number) => void;
-}) {
+function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
+  const [active, setActive] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [view, setView] = useState<"preview" | "code">("preview");
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [replay, setReplay] = useState(0);
   const [frameReady, setFrameReady] = useState(false);
+  const [initialized, setInitialized] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [exportError, setExportError] = useState("");
   const preview = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLIFrameElement>(null);
 
@@ -53,40 +49,68 @@ function LogoSection({
 
   useEffect(() => {
     if (view !== "preview" || !preview.current) return;
-    // Only visible previews own a GPU surface; a long page must not exhaust browser contexts.
     const observer = new IntersectionObserver(
-      ([entry]) => onVisibility(logo.id, entry.intersectionRatio),
-      { threshold: [0, 0.25, 0.5, 0.75, 1] },
+      ([entry]) => {
+        setActive(entry.isIntersecting);
+        if (entry.isIntersecting) setMounted(true);
+      },
+      { rootMargin: "100px 0px" },
     );
     observer.observe(preview.current);
     return () => {
       observer.disconnect();
-      onVisibility(logo.id, 0);
+      setActive(false);
     };
-  }, [view, logo.id, onVisibility]);
-
-  useEffect(() => {
-    setFrameReady(false);
-  }, [active, view]);
+  }, [view]);
 
   useEffect(() => {
     const sendControls = () =>
       frame.current?.contentWindow?.postMessage(
-        { type: "logo-controls", playing, speed, replay },
+        { type: "logo-controls", playing, speed, replay, rendering: active && view === "preview" },
         window.location.origin,
       );
     const ready = (event: MessageEvent) => {
       if (event.source !== frame.current?.contentWindow || event.origin !== window.location.origin)
         return;
       if (event.data?.type === "logo-ready") sendControls();
-      if (event.data?.type === "logo-rendered") setFrameReady(true);
+      if (event.data?.type === "logo-rendered") {
+        setFrameReady(true);
+        setInitialized(true);
+      }
+      if (event.data?.type === "logo-export-progress") setProgress(event.data.progress);
+      if (event.data?.type === "logo-export-error") {
+        setExporting(false);
+        setExportError(event.data.message);
+      }
+      if (event.data?.type === "logo-export-complete" && event.data.data instanceof ArrayBuffer) {
+        const url = URL.createObjectURL(new Blob([event.data.data], { type: "image/webp" }));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${logo.id}-animation.webp`;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        setExporting(false);
+      }
     };
     window.addEventListener("message", ready);
     sendControls();
     return () => window.removeEventListener("message", ready);
   }, [active, playing, speed, replay, view]);
 
+  const exportAnimation = () => {
+    setView("preview");
+    setExporting(true);
+    setProgress(0);
+    setExportError("");
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() =>
+        frame.current?.contentWindow?.postMessage({ type: "logo-export" }, window.location.origin),
+      ),
+    );
+  };
+
   const switchTab = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (exporting) return;
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
     const next =
@@ -102,15 +126,19 @@ function LogoSection({
   };
 
   return (
-    <section id={logo.id} aria-labelledby={`${logo.id}-heading`} className="scroll-mt-24 space-y-4">
+    <section
+      id="logo-stage"
+      aria-labelledby={`${logo.id}-heading`}
+      className="scroll-mt-24 space-y-4"
+    >
       <div>
         <h2 id={`${logo.id}-heading`} className="text-xl font-semibold text-foreground">
           {logo.name}
         </h2>
         <p className="mt-2 text-sm text-muted">{logo.description}</p>
       </div>
-      <div className={`${CARD} overflow-hidden`}>
-        <div className="flex items-center justify-between gap-2 border-b border-default p-2">
+      <div className={`${CARD} relative overflow-hidden`}>
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-default p-2">
           <div role="tablist" aria-label={`${logo.name} example`} className="flex gap-1">
             {(["preview", "code"] as const).map((tab) => (
               <button
@@ -121,6 +149,7 @@ function LogoSection({
                 aria-selected={view === tab}
                 aria-controls={`${logo.id}-${tab}-panel`}
                 tabIndex={view === tab ? 0 : -1}
+                disabled={exporting}
                 onKeyDown={switchTab}
                 onClick={() => setView(tab)}
                 className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${view === tab ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-300" : "text-muted hover:bg-default/50 hover:text-foreground"}`}
@@ -129,48 +158,68 @@ function LogoSection({
               </button>
             ))}
           </div>
-          <button
-            type="button"
-            onClick={copyCode}
-            aria-label={`Copy ${logo.name} code`}
-            aria-live="polite"
-            className={`${BUTTON_SMALL} gap-1.5 text-muted`}
-          >
-            {copied ? (
-              <Check aria-hidden className="h-3.5 w-3.5 text-emerald-500" />
-            ) : (
-              <Copy aria-hidden className="h-3.5 w-3.5" />
-            )}
-            {copied ? "Copied" : "Copy"}
-          </button>
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              type="button"
+              onClick={exportAnimation}
+              disabled={!frameReady || exporting}
+              aria-label={`Export ${logo.name} animated WebP`}
+              aria-busy={exporting}
+              title="Download an 8-second looping animated WebP (15 fps)"
+              className={`${BUTTON_SMALL} gap-1.5 text-muted`}
+            >
+              <Download aria-hidden className="h-3.5 w-3.5" />
+              {exporting ? (progress === 100 ? "Encoding…" : `${progress}%`) : "WebP"}
+            </button>
+            <button
+              type="button"
+              onClick={copyCode}
+              aria-label={`Copy ${logo.name} code`}
+              aria-live="polite"
+              className={`${BUTTON_SMALL} gap-1.5 text-muted`}
+            >
+              {copied ? (
+                <Check aria-hidden className="h-3.5 w-3.5 text-emerald-500" />
+              ) : (
+                <Copy aria-hidden className="h-3.5 w-3.5" />
+              )}
+              {copied ? "Copied" : "Copy"}
+            </button>
+          </div>
         </div>
+        {exportError ? (
+          <p
+            role="alert"
+            className="border-b border-default px-4 py-2 text-sm text-red-600 dark:text-red-400"
+          >
+            {exportError}
+          </p>
+        ) : null}
         <div
           role="tabpanel"
           id={`${logo.id}-preview-panel`}
           aria-labelledby={`${logo.id}-preview-tab`}
-          hidden={view !== "preview"}
-          tabIndex={0}
+          aria-hidden={view !== "preview"}
+          inert={view !== "preview"}
+          className={
+            view === "preview" ? "" : "pointer-events-none invisible absolute inset-x-0 top-0"
+          }
+          tabIndex={view === "preview" ? 0 : -1}
         >
           <div
             ref={preview}
             aria-label={`${logo.name} logo animation`}
             className="relative h-[300px] bg-[#0B1020] sm:h-[380px]"
           >
-            <img
-              src={`/logo-previews/${logo.id}.png`}
-              alt={`${logo.name} logo`}
-              width={902}
-              height={460}
-              loading="lazy"
-              aria-hidden={active && frameReady}
-              className="absolute inset-0 h-full w-full object-contain"
-            />
-            {active && !frameReady ? (
-              <span role="status" className="sr-only">
-                Loading logo preview…
-              </span>
+            {active && !frameReady && !initialized ? (
+              <div
+                role="status"
+                className="absolute inset-0 flex items-center justify-center text-sm text-slate-300"
+              >
+                Loading Nayan Game Engine…
+              </div>
             ) : null}
-            {view === "preview" && active ? (
+            {mounted ? (
               <iframe
                 ref={frame}
                 src={`/logo-preview/${logo.id}`}
@@ -238,40 +287,25 @@ function LogoSection({
 }
 
 export default function LogoAnimation({ sources }: { sources: Record<LogoId, string> }) {
-  const [activeLogo, setActiveLogo] = useState<LogoId | null>(null);
-  const ratios = useRef(new Map<LogoId, number>());
-  const onVisibility = useCallback((id: LogoId, ratio: number) => {
-    ratios.current.set(id, ratio);
-    const visible = [...ratios.current.entries()]
-      .filter(([, value]) => value > 0)
-      .sort((a, b) => b[1] - a[1]);
-    setActiveLogo((current) => {
-      const candidate = visible[0];
-      if (!candidate) return null;
-      const currentRatio = current ? (ratios.current.get(current) ?? 0) : 0;
-      // Keep the current preview through small scroll movements near a section boundary.
-      if (current && currentRatio > 0.2 && candidate[1] < currentRatio + 0.2) return current;
-      return candidate[0];
-    });
-  }, []);
+  const [selected, setSelected] = useState<LogoId>("microsoft");
+  const logo = LOGOS.find((item) => item.id === selected)!;
   return (
-    <div className="space-y-10">
-      <nav aria-label="Jump to logo" className="flex flex-wrap gap-2">
-        {LOGOS.map((logo) => (
-          <a key={logo.id} href={`#${logo.id}`} className={`${BUTTON_SMALL} text-muted`}>
-            {logo.name}
-          </a>
+    <div className="space-y-6">
+      <div role="group" aria-label="Choose company logo" className="flex flex-wrap gap-2">
+        {LOGOS.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            aria-pressed={selected === item.id}
+            aria-controls="logo-stage"
+            onClick={() => setSelected(item.id)}
+            className={`${BUTTON_SMALL} ${selected === item.id ? "border-indigo-500/40 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300" : "text-muted"}`}
+          >
+            {item.name}
+          </button>
         ))}
-      </nav>
-      {LOGOS.map((logo) => (
-        <LogoSection
-          key={logo.id}
-          logo={logo}
-          code={sources[logo.id]}
-          active={activeLogo === logo.id}
-          onVisibility={onVisibility}
-        />
-      ))}
+      </div>
+      <SelectedLogo key={logo.id} logo={logo} code={sources[logo.id]} />
     </div>
   );
 }
