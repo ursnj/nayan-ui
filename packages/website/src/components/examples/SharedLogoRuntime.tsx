@@ -125,6 +125,7 @@ export default function SharedLogoRuntime({
   const displayTime = useRef(3);
   const lastReplay = useRef(replay);
   const presented = useRef(false);
+  const capturePass = useRef({ time: -1, frames: 0 });
   const camera = useRef<Camera>({ eye: [0, 0, 6.5], target: [0, 0, 0], fov: 0.8 }).current;
   const errorCallback = useRef(onError);
   errorCallback.current = onError;
@@ -212,7 +213,9 @@ export default function SharedLogoRuntime({
               });
             if (captureTime !== undefined) {
               const time = captureTime;
-              queueMicrotask(() => onFrame(time));
+              if (capturePass.current.time !== time) capturePass.current = { time, frames: 0 };
+              // Present the deterministic pose twice before reading a high-quality GPU frame.
+              if (++capturePass.current.frames >= 2) queueMicrotask(() => onFrame(time));
             }
             if (!presented.current && dt > 0) {
               presented.current = true;

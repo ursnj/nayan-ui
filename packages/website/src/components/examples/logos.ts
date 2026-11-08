@@ -7,7 +7,7 @@ export const LOGOS = [
   {
     id: "google",
     name: "Google",
-    description: "Colored arcs sweep around the center, then the crossbar extends.",
+    description: "A continuous glossy G turns forward with smoothly blended color transitions.",
   },
   {
     id: "slack",

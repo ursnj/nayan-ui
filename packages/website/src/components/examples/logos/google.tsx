@@ -6,6 +6,7 @@ import {
   Path,
   createShape,
   extrude,
+  recolor,
   smoothNormals,
   quat,
   World,
@@ -233,75 +234,72 @@ function roundedLogoGeometry(outline: Path, depth: number): Geometry {
   return smoothNormals({ vertices: new Float32Array(vertices), indices: new Uint32Array(indices) });
 }
 
-// Rounded front/back faces catch studio highlights even with the camera straight on.
-function piece(outline: Path, color: string, z = 0): Piece {
-  const [left, top, right, bottom] = outline.bounds()!;
-  return {
-    mesh: createShape(roundedLogoGeometry(outline, z >= 0.1 ? 0.14 : 0.48), {
-      shine: 0.78,
-      optimize: true,
-    }),
-    color,
-    x: (left + right) / 2,
-    y: -(top + bottom) / 2,
-    z: z >= 0.1 ? 0.28 + z * 0.3 : z,
-  };
-}
-
-function arc(start: number, end: number, outer = 1.15, inner = 0.72) {
-  const points: [number, number][] = [];
-  for (const [radius, from, to] of [
-    [outer, start, end],
-    [inner, end, start],
-  ]) {
-    for (let step = 0; step <= 48; step++) {
-      const angle = ((from + ((to - from) * step) / 48) * Math.PI) / 180;
-      points.push([Math.cos(angle) * radius, Math.sin(angle) * radius]);
-    }
-  }
-  return new Path().addPolygon(points);
-}
-
+// One outline and one mesh: color transitions never become seams between separate solids.
 export function buildLogo(): Piece[] {
+  const outer = 1.15,
+    inner = 0.72;
+  const points: [number, number][] = [];
+  for (let i = 0; i <= 252; i++) {
+    const angle = (315 * (1 - i / 252) * Math.PI) / 180;
+    points.push([Math.cos(angle) * outer, Math.sin(angle) * outer]);
+  }
+  points.push([outer, -0.18], [0, -0.18], [0, 0.22]);
+  const innerStart = (Math.asin(0.22 / inner) * 180) / Math.PI;
+  for (let i = 0; i <= 240; i++) {
+    const angle = ((innerStart + ((315 - innerStart) * i) / 240) * Math.PI) / 180;
+    points.push([Math.cos(angle) * inner, Math.sin(angle) * inner]);
+  }
+  const outline = new Path().addPolygon(points);
+  const geometry = roundedLogoGeometry(outline, 0.48);
+  const colors = ["#4285F4", "#34A853", "#FBBC05", "#EA4335"].map((hex) =>
+    [1, 3, 5].map((offset) => parseInt(hex.slice(offset, offset + 2), 16) / 255),
+  );
+  recolor(geometry, ({ position: [x, y] }) => {
+    if (x >= 0 && y >= -0.22 && y <= 0.18) return colors[0] as [number, number, number];
+    const angle = ((Math.atan2(-y, x) * 180) / Math.PI + 360) % 360;
+    const transitions = [60, 140, 200];
+    for (let i = 0; i < transitions.length; i++) {
+      const delta = angle - transitions[i];
+      if (Math.abs(delta) <= 7) {
+        const t = (delta + 7) / 14,
+          blend = t * t * (3 - 2 * t);
+        return colors[i].map((channel, j) => channel * (1 - blend) + colors[i + 1][j] * blend) as [
+          number,
+          number,
+          number,
+        ];
+      }
+    }
+    return colors[angle < 60 || angle > 315 ? 0 : angle < 140 ? 1 : angle < 200 ? 2 : 3] as [
+      number,
+      number,
+      number,
+    ];
+  });
   return [
-    piece(arc(0, 60), "#4285F4"),
-    piece(arc(60, 140), "#34A853"),
-    piece(arc(140, 200), "#FBBC05"),
-    piece(arc(200, 315), "#EA4335"),
-    piece(new Path().addRect(0, -0.18, 1.15, 0.4), "#4285F4", 0.01),
+    {
+      mesh: createShape(geometry, { shine: 0.78, optimize: true }),
+      color: "#FFFFFF",
+      x: 0,
+      y: 0,
+      z: 0,
+    },
   ];
 }
 
-// Colored arcs sweep around the center, then the crossbar extends.
+// The continuous G rolls gently forward and rises into place as one polished object.
 export function drawLogo(world: World, entities: Entity[], pieces: Piece[], time: number) {
   const phase = time % 8;
-  const smooth = (value: number) => {
+  const ease = (value: number) => {
     const t = Math.max(0, Math.min(1, value));
-    return t * t * (3 - 2 * t);
+    return t * t * t * (t * (t * 6 - 15) + 10);
   };
-  const progress = (delay: number, duration: number) =>
-    smooth((phase - 0.1 - delay) / duration) *
-    (1 - smooth((phase - 6.1 - Math.max(0, 0.35 - delay * 0.3)) / 0.9));
-  entities.forEach((entity, index) => {
-    const part = pieces[index];
-    const p = progress(index === 4 ? 0.65 : index * 0.08, 1.15);
-    if (index === 4) {
-      world.set(entity, {
-        position: [part.x * p, part.y, part.z + (1 - p) * 0.55],
-        scale: [Math.max(0.001, p), 1, 1],
-      });
-    } else {
-      const angle = (1 - p) * (-0.8 + index * 0.12);
-      world.set(entity, {
-        position: [
-          part.x * Math.cos(angle) - part.y * Math.sin(angle),
-          part.x * Math.sin(angle) + part.y * Math.cos(angle),
-          part.z + (1 - p) * 0.55,
-        ],
-        rotation: quat.z(angle),
-        scale: Math.max(0.001, p),
-      });
-    }
+  const p = ease((phase - 0.12) / 1.25) * (1 - ease((phase - 6.35) / 0.85));
+  const part = pieces[0];
+  world.set(entities[0], {
+    position: [part.x, part.y - (1 - p) * 0.3, part.z + (1 - p) * 0.5],
+    rotation: quat.y((1 - p) * -0.7),
+    scale: p,
   });
 }
 

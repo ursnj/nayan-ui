@@ -14,7 +14,7 @@ export const metadata = buildPageMetadata({
   path: "/game-engine/examples/logo-animation",
 });
 
-// Full standalone sources match the rounded, smooth solids shown in the shared engine preview.
+// Complete standalone sources include the continuous Google G and the Playtua controller.
 const sources = Object.fromEntries(
   LOGOS.map((logo) => [
     logo.id,
