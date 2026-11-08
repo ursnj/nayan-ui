@@ -93,6 +93,8 @@ type Props = {
   rendering: boolean;
   speed: number;
   replay: number;
+  rotateView: boolean;
+  viewReset: number;
   captureTime?: number;
   onFrame: (time: number) => void;
   onReady: () => void;
@@ -106,6 +108,8 @@ export default function SharedLogoRuntime({
   rendering,
   speed,
   replay,
+  rotateView,
+  viewReset,
   captureTime,
   onFrame,
   onReady,
@@ -119,8 +123,15 @@ export default function SharedLogoRuntime({
   const presented = useRef(false);
   const capturePass = useRef({ time: -1, frames: 0 });
   const camera = useRef<Camera>({ eye: [0, 0, 6.5], target: [0, 0, 0], fov: 0.8 }).current;
+  const orbit = useRef({ yaw: 0, pitch: 0 });
+  const dragStart = useRef({ yaw: 0, pitch: 0 });
   const errorCallback = useRef(onError);
   errorCallback.current = onError;
+
+  useEffect(() => {
+    orbit.current = { yaw: 0, pitch: 0 };
+    camera.eye = [0, 0, 6.5];
+  }, [logo, rotateView, viewReset, camera]);
 
   useEffect(() => {
     let active = true;
@@ -140,7 +151,26 @@ export default function SharedLogoRuntime({
   const { world, assets } = session;
   return (
     <div style={{ width: "100%", height: "100%", backgroundColor: background }}>
-      <div ref={surface} style={{ width: "100%", height: "100%" }}>
+      <div
+        ref={surface}
+        role={rotateView ? "group" : undefined}
+        aria-label={
+          rotateView ? "Rotate logo: drag or use arrow keys; Home returns to front view" : undefined
+        }
+        tabIndex={rotateView ? 0 : -1}
+        style={{ width: "100%", height: "100%", cursor: rotateView ? "grab" : "default" }}
+        onKeyDown={(event) => {
+          if (!rotateView || captureTime !== undefined) return;
+          const angle = orbit.current;
+          if (event.key === "Home") orbit.current = { yaw: 0, pitch: 0 };
+          else if (event.key === "ArrowLeft") angle.yaw -= 0.12;
+          else if (event.key === "ArrowRight") angle.yaw += 0.12;
+          else if (event.key === "ArrowUp") angle.pitch = Math.min(1.25, angle.pitch + 0.12);
+          else if (event.key === "ArrowDown") angle.pitch = Math.max(-1.25, angle.pitch - 0.12);
+          else return;
+          event.preventDefault();
+        }}
+      >
         <GameView
           source={world}
           camera={camera}
@@ -151,7 +181,30 @@ export default function SharedLogoRuntime({
           light={{ direction: [-3, 5, 7], ambient: 0.42, shadows: false }}
           style={{ width: "100%", height: "100%" }}
           onError={onError}
+          onDrag={
+            rotateView
+              ? (event) => {
+                  if (captureTime !== undefined) return;
+                  if (event.phase === "start") dragStart.current = { ...orbit.current };
+                  if (event.phase === "move") {
+                    orbit.current = {
+                      yaw: dragStart.current.yaw - event.dx * 0.009,
+                      pitch: Math.max(
+                        -1.25,
+                        Math.min(1.25, dragStart.current.pitch + event.dy * 0.009),
+                      ),
+                    };
+                  }
+                }
+              : undefined
+          }
           onUpdate={(dt) => {
+            const { yaw, pitch } = orbit.current;
+            camera.eye = [
+              6.5 * Math.sin(yaw) * Math.cos(pitch),
+              6.5 * Math.sin(pitch),
+              6.5 * Math.cos(yaw) * Math.cos(pitch),
+            ];
             if (session.selected !== logo) {
               session.active?.entities.forEach((entity) => world.despawn(entity));
               const pieces = assets.get(logo)!;

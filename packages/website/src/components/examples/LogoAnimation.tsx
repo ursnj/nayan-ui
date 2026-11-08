@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { Check, Copy, Download, Pause, Play, RotateCcw } from "lucide-react";
+import { Check, Copy, Download, Orbit, Pause, Play, RotateCcw } from "lucide-react";
 import Code from "@/components/helpers/Code";
 import { LOGOS, type LogoId } from "./logos";
 import { BUTTON_SMALL, CARD } from "@/design/system";
@@ -14,6 +14,8 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [replay, setReplay] = useState(0);
+  const [rotateView, setRotateView] = useState(false);
+  const [viewReset, setViewReset] = useState(0);
   const [frameReady, setFrameReady] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -50,6 +52,8 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
     setView("preview");
     setSpeed(1);
     setReplay(0);
+    setRotateView(false);
+    setViewReset(0);
     setCopied(false);
     setExporting(false);
     setProgress(0);
@@ -80,6 +84,8 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
           playing,
           speed,
           replay,
+          rotateView,
+          viewReset,
           rendering: active && view === "preview",
           background: preview.current
             ? getComputedStyle(preview.current).backgroundColor
@@ -125,7 +131,7 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
       window.removeEventListener("message", ready);
       themeObserver.disconnect();
     };
-  }, [active, playing, speed, replay, view, logo.id]);
+  }, [active, playing, speed, replay, rotateView, viewReset, view, logo.id]);
 
   const exportAnimation = () => {
     setView("preview");
@@ -275,6 +281,30 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
             >
               <RotateCcw aria-hidden className="mr-2 h-4 w-4" /> Replay
             </button>
+            <button
+              type="button"
+              aria-pressed={rotateView}
+              aria-controls={`${logo.id}-preview-panel`}
+              disabled={!frameReady || exporting}
+              title="Drag the preview to look around the 3D logo"
+              className={`${BUTTON_SMALL} ${rotateView ? "border-indigo-500/40 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300" : ""}`}
+              onClick={() => setRotateView((value) => !value)}
+            >
+              <Orbit aria-hidden className="mr-2 h-4 w-4" /> Rotate view
+            </button>
+            {rotateView ? (
+              <>
+                <button
+                  type="button"
+                  className={BUTTON_SMALL}
+                  disabled={exporting}
+                  onClick={() => setViewReset((value) => value + 1)}
+                >
+                  Front view
+                </button>
+                <span className="text-xs text-muted">Drag or use arrow keys. Home resets.</span>
+              </>
+            ) : null}
             <label className="ml-auto flex items-center gap-2 text-sm text-muted">
               Speed
               <select

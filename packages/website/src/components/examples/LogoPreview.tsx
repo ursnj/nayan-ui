@@ -16,6 +16,8 @@ type Controls = {
   rendering: boolean;
   speed: number;
   replay: number;
+  rotateView: boolean;
+  viewReset: number;
 };
 type ExportJob = {
   logo: LogoId;
@@ -69,6 +71,8 @@ export default function LogoPreview({ logo }: { logo?: LogoId } = {}) {
             playing,
             speed,
             replay,
+            rotateView: event.data.rotateView === true,
+            viewReset: Number.isSafeInteger(event.data.viewReset) ? event.data.viewReset : 0,
             rendering: event.data.rendering !== false,
           };
           controlsRef.current = next;
