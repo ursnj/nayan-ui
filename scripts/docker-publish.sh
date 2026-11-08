@@ -111,6 +111,13 @@ rm -rf "$WORK/playtura/packages/engine/lib"
 cp -R "$WORK/engine/package/lib" "$WORK/playtura/packages/engine/lib"
 echo "@nayan-ui/engine@$ENGINE_VERSION"
 
+step 'Refreshing engine type declarations from source'
+# The published engine may lag behind playtura HEAD: regenerate TypeScript declarations from the
+# local source so the games build sees every API the source defines (e.g. audio.shift). The
+# published lib already has the compiled JS and WASM core; only the .d.ts files need updating.
+(cd "$WORK/playtura/packages/engine" && bun x tsc -p tsconfig.build.json --declaration --emitDeclarationOnly --noEmit false --outDir lib/typescript)
+echo 'Engine declarations rebuilt from source'
+
 step 'Building @nayan-ui/games'
 (cd "$WORK/playtura/packages/games" && bun run build)
 
