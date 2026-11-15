@@ -73,4 +73,5 @@ ENV HOSTNAME="0.0.0.0"
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
     CMD wget -q -O /dev/null http://127.0.0.1:7100/api/health || exit 1
 
-CMD ["node", "packages/website/server.js"]
+# --expose-gc: the tools collect garbage before refusing a job for lack of memory (helpers.ts).
+CMD ["node", "--expose-gc", "packages/website/server.js"]
