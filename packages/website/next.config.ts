@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // No in-memory copy of rendered pages: the server reads its prerendered pages from disk, which
+  // the OS caches anyway. Browsing every page took the server to 344 MB with the default 50 MB
+  // cache and 231 MB without it, with no slower pages, which matters in a 512 MB container.
+  cacheMaxMemorySize: 0,
   transpilePackages: ["@nayan-ui/react", "@nayan-ui/tools"],
   images: {
     unoptimized: true,
