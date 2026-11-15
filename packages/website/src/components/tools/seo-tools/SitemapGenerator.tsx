@@ -18,7 +18,6 @@ const CHANGEFREQ_OPTIONS = [
 const MAX_URLS_OPTIONS = [
   { value: "500", label: "500" },
   { value: "1000", label: "1,000" },
-  { value: "2000", label: "2,000" },
 ];
 
 const DEPTH_OPTIONS = [

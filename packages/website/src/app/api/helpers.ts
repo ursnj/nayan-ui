@@ -31,8 +31,13 @@ export interface ToolLimit {
   heavy: boolean;
 }
 
-// No tool accepts more than 10 MB of files, single or combined.
-export const MAX_UPLOAD = 10 * MB;
+// The tools share a 512 MB container with the website and games, which come first: every limit
+// below keeps one tool job to roughly 100 MB, and only one runs at a time.
+
+// No tool accepts more than 5 MB of files, single or combined.
+export const MAX_UPLOAD = 5 * MB;
+// Images: 12 MP (4000 × 3000) decodes to ~48 MB of RGBA.
+export const MAX_IMAGE_PIXELS = 12_000_000;
 // Multipart boundaries and the small form fields that travel with a file.
 const FORM_OVERHEAD = 1 * MB;
 const upload = (
@@ -44,14 +49,13 @@ const upload = (
   requestBytes: (extra.totalBytes ?? fileBytes) + FORM_OVERHEAD,
 });
 
-// Images: 25 MP covers 24 MP cameras and phones; decoded RGBA that is ~100 MB per image.
-const IMAGE = upload(MAX_UPLOAD, { maxPixels: 25_000_000, maxSide: 8000, heavy: true });
+const IMAGE = upload(MAX_UPLOAD, { maxPixels: MAX_IMAGE_PIXELS, maxSide: 6000, heavy: true });
 // PDF edits with pdf-lib (the whole document is parsed and rewritten).
-const PDF_EDIT = upload(MAX_UPLOAD, { maxPages: 500, heavy: true });
+const PDF_EDIT = upload(MAX_UPLOAD, { maxPages: 200, heavy: true });
 // PDF text conversions with pdf.js (every page is laid out and its text extracted).
-const PDF_TEXT = upload(MAX_UPLOAD, { maxPages: 200, heavy: true });
+const PDF_TEXT = upload(MAX_UPLOAD, { maxPages: 100, heavy: true });
 // Office documents are zips; their XML is inflated and parsed in memory.
-const OFFICE = upload(MAX_UPLOAD, { maxUnzippedBytes: 50 * MB, heavy: true });
+const OFFICE = upload(MAX_UPLOAD, { maxUnzippedBytes: 20 * MB, heavy: true });
 
 export const TOOL_LIMITS = {
   "image-tools/resize": IMAGE,
@@ -60,18 +64,18 @@ export const TOOL_LIMITS = {
   "image-tools/crop": IMAGE,
   "image-tools/rotate": IMAGE,
   "image-tools/watermark": IMAGE,
-  "image-tools/favicon": upload(5 * MB, { maxPixels: 25_000_000, heavy: true }),
+  "image-tools/favicon": upload(5 * MB, { maxPixels: MAX_IMAGE_PIXELS, heavy: true }),
 
   "pdf-tools/image-to-pdf": upload(MAX_UPLOAD, {
     totalBytes: MAX_UPLOAD,
-    maxFiles: 20,
-    maxPixels: 25_000_000,
+    maxFiles: 10,
+    maxPixels: MAX_IMAGE_PIXELS,
     heavy: true,
   }),
   "pdf-tools/merge": upload(MAX_UPLOAD, {
     totalBytes: MAX_UPLOAD,
-    maxFiles: 10,
-    maxPages: 500,
+    maxFiles: 5,
+    maxPages: 200,
     heavy: true,
   }),
   "pdf-tools/compress": PDF_EDIT,
@@ -94,31 +98,31 @@ export const TOOL_LIMITS = {
   "pdf-tools/pdf-to-word": PDF_TEXT,
   "pdf-tools/pdf-to-excel": PDF_TEXT,
   "pdf-tools/pdf-to-ppt": PDF_TEXT,
-  // One page at up to 300 DPI, capped at 25 MP (A4 at 300 DPI is ~8.7 MP).
+  // One page at up to 200 DPI, capped at 12 MP (A4 at 200 DPI is ~3.9 MP).
   "pdf-tools/pdf-to-image": upload(MAX_UPLOAD, {
-    maxPages: 500,
-    maxPixels: 25_000_000,
+    maxPages: 200,
+    maxPixels: MAX_IMAGE_PIXELS,
     heavy: true,
   }),
   // Every embedded image is decoded; images over the pixel limit are skipped.
   "pdf-tools/extract-images": upload(MAX_UPLOAD, {
-    maxPages: 100,
-    maxPixels: 25_000_000,
+    maxPages: 30,
+    maxPixels: MAX_IMAGE_PIXELS,
     heavy: true,
   }),
 
   "pdf-tools/word-to-pdf": OFFICE,
   "pdf-tools/ppt-to-pdf": OFFICE,
   // exceljs keeps every cell as an object, far larger than the XML it came from.
-  "pdf-tools/excel-to-pdf": upload(MAX_UPLOAD, { maxUnzippedBytes: 25 * MB, heavy: true }),
-  "pdf-tools/html-to-pdf": { requestBytes: 1 * MB, heavy: true },
-  "pdf-tools/markdown-to-pdf": { requestBytes: 1 * MB, heavy: true },
+  "pdf-tools/excel-to-pdf": upload(MAX_UPLOAD, { maxUnzippedBytes: 10 * MB, heavy: true }),
+  "pdf-tools/html-to-pdf": { requestBytes: 512 * KB, heavy: true },
+  "pdf-tools/markdown-to-pdf": { requestBytes: 512 * KB, heavy: true },
 
-  "json-tools/json-to-excel": { requestBytes: 5 * MB, heavy: true },
+  "json-tools/json-to-excel": { requestBytes: 2 * MB, heavy: true },
 
-  "seo-tools/fetch-url": { requestBytes: 16 * KB, responseBytes: 2 * MB, heavy: false },
-  "seo-tools/og-preview": { requestBytes: 16 * KB, responseBytes: 1 * MB, heavy: false },
-  "seo-tools/sitemap-generate": { requestBytes: 16 * KB, responseBytes: 2 * MB, heavy: false },
+  "seo-tools/fetch-url": { requestBytes: 16 * KB, responseBytes: 1 * MB, heavy: false },
+  "seo-tools/og-preview": { requestBytes: 16 * KB, responseBytes: 512 * KB, heavy: false },
+  "seo-tools/sitemap-generate": { requestBytes: 16 * KB, responseBytes: 1 * MB, heavy: false },
 
   // Its own rules (2–120 PNG frames of at most 640 × 360, MAX_UPLOAD in all) are checked in the route.
   "examples/logo-webp": { requestBytes: MAX_UPLOAD + FORM_OVERHEAD, heavy: true },
@@ -127,10 +131,10 @@ export const TOOL_LIMITS = {
 export type ToolName = keyof typeof TOOL_LIMITS;
 
 // JSON to Excel: rows and columns of one sheet.
-export const JSON_TO_EXCEL_MAX_ROWS = 20_000;
-export const JSON_TO_EXCEL_MAX_COLUMNS = 200;
+export const JSON_TO_EXCEL_MAX_ROWS = 10_000;
+export const JSON_TO_EXCEL_MAX_COLUMNS = 100;
 // Sitemap generator: most URLs one crawl collects.
-export const SITEMAP_MAX_URLS = 2000;
+export const SITEMAP_MAX_URLS = 1000;
 
 export const mb = (bytes: number) => `${Math.round((bytes / MB) * 10) / 10} MB`;
 
@@ -239,15 +243,32 @@ interface ToolState {
 
 // One state per process: route bundles may each load this module.
 const state: ToolState = ((globalThis as { __nayanTools?: ToolState }).__nayanTools ??= {
-  // Heavy jobs at once (each can use 100–200 MB) and how many may wait, up to a minute, for one.
-  jobs: new Slots(env("TOOLS_MAX_JOBS", 2), env("TOOLS_MAX_QUEUE", 10), 60_000),
-  // Sitemap crawls run for up to two minutes each; no queue.
-  crawls: new Slots(env("TOOLS_MAX_CRAWLS", 2), 0, 0),
+  // One heavy job at a time (each can use ~100 MB); a few may wait, up to 30 seconds, for it.
+  jobs: new Slots(env("TOOLS_MAX_JOBS", 1), env("TOOLS_MAX_QUEUE", 3), 30_000),
+  // A sitemap crawl runs for up to two minutes; one at a time, no queue.
+  crawls: new Slots(env("TOOLS_MAX_CRAWLS", 1), 0, 0),
   uploadBytes: 0,
   nextStart: new Map(),
 });
 // Request bodies being received or waiting for a slot, all held in memory.
-const UPLOAD_BUDGET = env("TOOLS_UPLOAD_BUDGET_MB", 100) * MB;
+const UPLOAD_BUDGET = env("TOOLS_UPLOAD_BUDGET_MB", 25) * MB;
+// Above this resident memory (the whole server, native libraries included) no new tool job
+// starts, so pages and games always have room: 512 MB container − ~100 MB for one job − headroom.
+const MAX_RSS = env("TOOLS_MAX_RSS_MB", 320) * MB;
+let lastCollect = 0;
+/**
+ * Whether memory is too high for another tool job. Memory a finished job left behind is often
+ * just uncollected garbage, so when over the limit it collects once (at most every two seconds;
+ * the server runs with --expose-gc) and looks again before turning the job away.
+ */
+function memoryHigh(): boolean {
+  if (process.memoryUsage.rss() <= MAX_RSS) return false;
+  const collect = (globalThis as { gc?: () => void }).gc;
+  if (!collect || Date.now() - lastCollect < 2000) return true;
+  lastCollect = Date.now();
+  collect();
+  return process.memoryUsage.rss() > MAX_RSS;
+}
 
 const busy = () =>
   errorResponse(503, "The tools are busy right now. Please try again in a few seconds.", {
@@ -342,6 +363,7 @@ export function guardTool(name: ToolName, handler: (req: NextRequest) => Promise
     const refused = await waitForTurn(name);
     if (refused) return refused;
 
+    if (limit.heavy && memoryHigh()) return busy();
     const reserved = declared > 0 ? declared : limit.requestBytes;
     if (state.uploadBytes + reserved > UPLOAD_BUDGET) return busy();
     state.uploadBytes += reserved;
@@ -351,7 +373,7 @@ export function guardTool(name: ToolName, handler: (req: NextRequest) => Promise
       if (body.truncated) return tooLarge();
       if (limit.heavy) {
         release = await state.jobs.acquire();
-        if (!release) return busy();
+        if (!release || memoryHigh()) return busy();
       }
       const buffered = new NextRequest(req.url, {
         method: req.method,

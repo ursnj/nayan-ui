@@ -1,5 +1,5 @@
 import type { TextItem } from "pdfjs-dist/types/src/display/api";
-import { ToolLimitError } from "../helpers";
+import { MAX_IMAGE_PIXELS, ToolLimitError } from "../helpers";
 
 // Resolved lazily, on first actual use, via `process.getBuiltinModule("module")`
 // rather than `import { createRequire } from "node:module"` or
@@ -102,9 +102,6 @@ async function loadPdf(bytes: Uint8Array, maxImagePixels = MAX_IMAGE_PIXELS) {
   });
   return loadingTask.promise;
 }
-
-/** Largest embedded image pdf.js decodes for text or page rendering (100 MB as RGBA). */
-const MAX_IMAGE_PIXELS = 25_000_000;
 
 function checkPages(pdf: { numPages: number }, maxPages: number | undefined) {
   if (maxPages && pdf.numPages > maxPages) {

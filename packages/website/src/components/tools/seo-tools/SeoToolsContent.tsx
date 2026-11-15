@@ -26,7 +26,7 @@ export const SitemapGeneratorContent = () => (
         hourly, daily, weekly, etc.).
       </li>
       <li>
-        <strong>Max URL limit</strong> — cap the crawl at 500, 1,000 or 2,000 URLs.
+        <strong>Max URL limit</strong> — cap the crawl at 500 or 1,000 URLs.
       </li>
       <li>
         <strong>Live XML preview</strong> — see the generated sitemap update in real time.

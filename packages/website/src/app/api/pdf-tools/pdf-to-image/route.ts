@@ -35,8 +35,8 @@ async function handle(req: NextRequest) {
       if (!Number.isInteger(pageNumber) || pageNumber < 1) {
         return NextResponse.json({ error: "A valid page number is required" }, { status: 400 });
       }
-      // 300 DPI is print quality; higher multiplies memory (an A4 page at 600 DPI is ~140 MB).
-      const safeDpi = Math.min(300, Math.max(36, Number.isFinite(dpi) ? dpi : 150));
+      // At most 200 DPI: memory grows with its square (an A4 page at 600 DPI is ~140 MB).
+      const safeDpi = Math.min(200, Math.max(36, Number.isFinite(dpi) ? dpi : 150));
 
       let image: Buffer;
       try {
