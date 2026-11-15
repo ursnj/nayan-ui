@@ -13,6 +13,7 @@ import {
   showToast,
 } from "@nayan-ui/react";
 import { useObjectUrl } from "./useObjectUrl";
+import { toolFetch } from "@/lib/ToolFetch";
 
 interface FileEntry {
   file: File;
@@ -114,7 +115,7 @@ const ResizeImage = () => {
           form.append("width", String(w));
           form.append("height", String(h));
           form.append("fit", keepAspect ? "inside" : "fill");
-          const res = await fetch("/api/image-tools/resize", { method: "POST", body: form });
+          const res = await toolFetch("/api/image-tools/resize", { method: "POST", body: form });
           if (!res.ok) {
             const data = await res.json().catch(() => ({ error: "Resize failed" }));
             throw new Error(data.error || `Server error ${res.status}`);

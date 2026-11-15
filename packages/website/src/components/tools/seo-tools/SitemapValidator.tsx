@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef } from "react";
 import { CheckCircle, XCircle, Upload, Trash2, Link as LinkIcon } from "lucide-react";
 import { NButton, NCard, NInput, NTextarea, NBadge } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 interface ValidationResult {
   valid: boolean;
@@ -110,7 +111,7 @@ const SitemapValidator = () => {
     setLoading(true);
     setResult(null);
     try {
-      const res = await fetch("/api/seo-tools/fetch-url", {
+      const res = await toolFetch("/api/seo-tools/fetch-url", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: remoteUrl.trim() }),

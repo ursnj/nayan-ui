@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { TOOL_LIMITS, ToolLimitError, guardTool, readTextLimited } from "../../helpers";
 import { BlockedUrlError, safeFetch } from "../_ssrf-guard";
 
-export async function POST(req: NextRequest) {
+const LIMIT = TOOL_LIMITS["seo-tools/fetch-url"];
+
+async function handle(req: NextRequest) {
   try {
     const { url } = await req.json();
     if (!url || typeof url !== "string") {
@@ -26,9 +29,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const content = await res.text();
+    const content = await readTextLimited(res, LIMIT.responseBytes);
     return NextResponse.json({ content });
   } catch (err: any) {
+    if (err instanceof ToolLimitError) return err.response();
     if (err instanceof BlockedUrlError) {
       return NextResponse.json({ error: err.message }, { status: 400 });
     }
@@ -38,3 +42,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: err.message || "Failed to fetch URL" }, { status: 500 });
   }
 }
+
+export const POST = guardTool("seo-tools/fetch-url", handle);

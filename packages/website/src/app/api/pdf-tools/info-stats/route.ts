@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateFileSize } from "../../helpers";
+import {
+  TOOL_LIMITS,
+  ToolLimitError,
+  guardTool,
+  validateFileSize,
+  validatePageCount,
+} from "../../helpers";
 import { extractPdfPageTexts } from "../_pdfText";
+
+const LIMIT = TOOL_LIMITS["pdf-tools/info-stats"];
 
 function detectPdfVersion(bytes: Uint8Array): string | null {
   // The PDF version is declared in the literal header of the first ~16 bytes,
@@ -10,7 +18,7 @@ function detectPdfVersion(bytes: Uint8Array): string | null {
   return match ? match[1] : null;
 }
 
-export async function POST(req: NextRequest) {
+async function handle(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -18,7 +26,7 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "PDF file is required" }, { status: 400 });
     }
-    const sizeError = validateFileSize(file);
+    const sizeError = validateFileSize(file, LIMIT.fileBytes);
     if (sizeError) return sizeError;
 
     const bytes = new Uint8Array(await file.arrayBuffer());
@@ -27,6 +35,8 @@ export async function POST(req: NextRequest) {
     let doc;
     try {
       doc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+      const pageError = validatePageCount(doc.getPageCount(), LIMIT.maxPages);
+      if (pageError) return pageError;
     } catch {
       return NextResponse.json({ error: "The file is not a valid PDF" }, { status: 422 });
     }
@@ -45,7 +55,7 @@ export async function POST(req: NextRequest) {
     // read) — that tradeoff is disclosed to the user rather than faked.
     let wordCount = 0;
     try {
-      const pageTexts = await extractPdfPageTexts(bytes);
+      const pageTexts = await extractPdfPageTexts(bytes, LIMIT.maxPages);
       // The "No extractable text on this page..." fallback sentence would
       // otherwise pollute the word count on scanned pages — strip it first.
       wordCount = pageTexts
@@ -72,7 +82,10 @@ export async function POST(req: NextRequest) {
       wordCount,
     });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "Failed to read PDF info";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = guardTool("pdf-tools/info-stats", handle);

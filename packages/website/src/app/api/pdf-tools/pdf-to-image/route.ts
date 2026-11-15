@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateFileSize } from "../../helpers";
+import {
+  TOOL_LIMITS,
+  ToolLimitError,
+  guardTool,
+  validateFileSize,
+  validatePageCount,
+} from "../../helpers";
 import { renderPdfPageToImage } from "../_pdfText";
 
-export async function POST(req: NextRequest) {
+const LIMIT = TOOL_LIMITS["pdf-tools/pdf-to-image"];
+
+async function handle(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -14,7 +22,7 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "PDF file is required" }, { status: 400 });
     }
-    const sizeError = validateFileSize(file);
+    const sizeError = validateFileSize(file, LIMIT.fileBytes);
     if (sizeError) return sizeError;
 
     const bytes = new Uint8Array(await file.arrayBuffer());
@@ -27,12 +35,18 @@ export async function POST(req: NextRequest) {
       if (!Number.isInteger(pageNumber) || pageNumber < 1) {
         return NextResponse.json({ error: "A valid page number is required" }, { status: 400 });
       }
-      const safeDpi = Math.min(600, Math.max(36, Number.isFinite(dpi) ? dpi : 150));
+      // 300 DPI is print quality; higher multiplies memory (an A4 page at 600 DPI is ~140 MB).
+      const safeDpi = Math.min(300, Math.max(36, Number.isFinite(dpi) ? dpi : 150));
 
       let image: Buffer;
       try {
-        image = await renderPdfPageToImage(bytes, pageNumber, { dpi: safeDpi, format });
+        image = await renderPdfPageToImage(bytes, pageNumber, {
+          dpi: safeDpi,
+          format,
+          maxPixels: LIMIT.maxPixels,
+        });
       } catch (err) {
+        if (err instanceof ToolLimitError) return err.response();
         const message = err instanceof Error ? err.message : "Failed to render page";
         return NextResponse.json({ error: message }, { status: 422 });
       }
@@ -48,6 +62,8 @@ export async function POST(req: NextRequest) {
 
     const { PDFDocument } = await import("pdf-lib");
     const doc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+    const pageError = validatePageCount(doc.getPageCount(), LIMIT.maxPages);
+    if (pageError) return pageError;
     const total = doc.getPageCount();
 
     const pages: { width: number; height: number; index: number }[] = [];
@@ -64,7 +80,10 @@ export async function POST(req: NextRequest) {
       dpi,
     });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "PDF to image conversion failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = guardTool("pdf-tools/pdf-to-image", handle);

@@ -1,4 +1,5 @@
 import type { TextItem } from "pdfjs-dist/types/src/display/api";
+import { ToolLimitError } from "../helpers";
 
 // Resolved lazily, on first actual use, via `process.getBuiltinModule("module")`
 // rather than `import { createRequire } from "node:module"` or
@@ -22,12 +23,29 @@ import type { TextItem } from "pdfjs-dist/types/src/display/api";
 // code (node_utils.js, see e.g. its NodeCanvasFactory) uses internally to
 // load `@napi-rs/canvas` for the same reason, so it's proven to work in
 // this exact bundling environment, not just a guess.
+//
+// In the standalone server there is no node_modules/pdfjs-dist to resolve: Next reaches the
+// externalized package through a hashed link in .next/node_modules (pdfjs-dist-<hash>, kept by the
+// file tracer), so that's where the fonts are found when the normal lookup fails.
 let standardFontDataUrl: string | undefined;
 function getStandardFontDataUrl(): string {
   if (!standardFontDataUrl) {
-    const nodeRequire = process.getBuiltinModule("module").createRequire(import.meta.url);
-    const pdfjsEntry = nodeRequire.resolve("pdfjs-dist/legacy/build/pdf.mjs");
-    standardFontDataUrl = `${pdfjsEntry.slice(0, pdfjsEntry.lastIndexOf("/legacy/"))}/standard_fonts/`;
+    let pdfjsRoot: string;
+    try {
+      const nodeRequire = process.getBuiltinModule("module").createRequire(import.meta.url);
+      const pdfjsEntry = nodeRequire.resolve("pdfjs-dist/legacy/build/pdf.mjs");
+      pdfjsRoot = pdfjsEntry.slice(0, pdfjsEntry.lastIndexOf("/legacy/"));
+    } catch (err) {
+      const fs = process.getBuiltinModule("fs");
+      const path = process.getBuiltinModule("path");
+      const linked = path.join(process.cwd(), ".next", "node_modules");
+      const name = fs.existsSync(linked)
+        ? fs.readdirSync(linked).find((entry) => entry.startsWith("pdfjs-dist-"))
+        : undefined;
+      if (!name) throw err;
+      pdfjsRoot = fs.realpathSync(path.join(linked, name));
+    }
+    standardFontDataUrl = `${pdfjsRoot}/standard_fonts/`;
   }
   return standardFontDataUrl;
 }
@@ -66,7 +84,9 @@ function itemsToLines(items: TextItem[]): string {
 // leaving non-embedded standard fonts (e.g. pdf-lib's StandardFonts.*, used
 // throughout this app's own PDF generators) with no way to produce glyphs at
 // all. Flipping useSystemFonts off restores the bundled-substitute path.
-async function loadPdf(bytes: Uint8Array) {
+//
+// `maxImageSize` makes pdf.js skip embedded images over the pixel limit instead of decoding them.
+async function loadPdf(bytes: Uint8Array, maxImagePixels = MAX_IMAGE_PIXELS) {
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
   // pdf.js transfers the input buffer to its (same-thread, fake) worker via
   // postMessage, which detaches it — always hand it a private copy so the
@@ -78,15 +98,26 @@ async function loadPdf(bytes: Uint8Array) {
     useSystemFonts: false,
     disableFontFace: true,
     standardFontDataUrl: getStandardFontDataUrl(),
+    maxImageSize: maxImagePixels,
   });
   return loadingTask.promise;
 }
 
+/** Largest embedded image pdf.js decodes for text or page rendering (100 MB as RGBA). */
+const MAX_IMAGE_PIXELS = 25_000_000;
+
+function checkPages(pdf: { numPages: number }, maxPages: number | undefined) {
+  if (maxPages && pdf.numPages > maxPages) {
+    throw new ToolLimitError(`This PDF has ${pdf.numPages} pages. The maximum is ${maxPages}.`);
+  }
+}
+
 export const NO_TEXT_FALLBACK = "No extractable text on this page (likely a scanned image).";
 
-export async function extractPdfPageTexts(bytes: Uint8Array): Promise<string[]> {
+export async function extractPdfPageTexts(bytes: Uint8Array, maxPages?: number): Promise<string[]> {
   const pdf = await loadPdf(bytes);
   try {
+    checkPages(pdf, maxPages);
     const pageTexts: string[] = [];
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
@@ -108,7 +139,7 @@ export async function extractPdfPageTexts(bytes: Uint8Array): Promise<string[]> 
 export async function renderPdfPageToImage(
   bytes: Uint8Array,
   pageNumber: number,
-  options: { dpi?: number; format?: "png" | "jpeg" } = {},
+  options: { dpi?: number; format?: "png" | "jpeg"; maxPixels?: number } = {},
 ): Promise<Buffer> {
   const { createCanvas } = await import("@napi-rs/canvas");
   const dpi = options.dpi ?? 150;
@@ -121,7 +152,10 @@ export async function renderPdfPageToImage(
     }
     const page = await pdf.getPage(pageNumber);
     try {
-      const viewport = page.getViewport({ scale: dpi / 72 });
+      // Lower the resolution of an unusually large page so its canvas stays within maxPixels.
+      const base = page.getViewport({ scale: 1 });
+      const maxScale = Math.sqrt((options.maxPixels ?? Infinity) / (base.width * base.height));
+      const viewport = page.getViewport({ scale: Math.min(dpi / 72, maxScale) });
       const canvas = createCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
       const ctx = canvas.getContext("2d");
       await page.render({ canvasContext: ctx as unknown as CanvasRenderingContext2D, viewport })

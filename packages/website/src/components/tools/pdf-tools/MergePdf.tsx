@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { Download, Merge, Trash2, Upload, GripVertical } from "lucide-react";
 import { NButton, NCard, showToast } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const MergePdf = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -47,7 +48,7 @@ const MergePdf = () => {
     try {
       const form = new FormData();
       files.forEach((f) => form.append("files", f));
-      const res = await fetch("/api/pdf-tools/merge", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/merge", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Merge failed" }));
         throw new Error(data.error);

@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { Download, Sheet, Trash2 } from "lucide-react";
 import { NButton, NAlert, AlertTypes } from "@nayan-ui/react";
 import JsonMonacoEditor from "./JsonMonacoEditor";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const JsonToExcel = () => {
   const [input, setInput] = useState("");
@@ -24,7 +25,7 @@ const JsonToExcel = () => {
     }
     setProcessing(true);
     try {
-      const res = await fetch("/api/json-tools/json-to-excel", {
+      const res = await toolFetch("/api/json-tools/json-to-excel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: input,

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Crop, Download, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NInput, showToast } from "@nayan-ui/react";
 import { useObjectUrl } from "./useObjectUrl";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const clampInt = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, Math.round(Number.isFinite(value) ? value : min)));
@@ -80,7 +81,7 @@ const CropImage = () => {
       form.append("top", String(cropY));
       form.append("width", String(cropW));
       form.append("height", String(cropH));
-      const res = await fetch("/api/image-tools/crop", { method: "POST", body: form });
+      const res = await toolFetch("/api/image-tools/crop", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Crop failed" }));
         throw new Error(data.error || `Server error ${res.status}`);

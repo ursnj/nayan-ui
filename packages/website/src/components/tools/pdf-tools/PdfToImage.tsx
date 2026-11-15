@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { Download, Image, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NSelect, showToast } from "@nayan-ui/react";
 import type { ReactSelectOption } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const FORMAT_OPTIONS: ReactSelectOption[] = [
   { label: "PNG", value: "png" },
@@ -36,7 +37,7 @@ const PdfToImage = () => {
       const form = new FormData();
       form.append("file", file);
       form.append("format", format.value);
-      const res = await fetch("/api/pdf-tools/pdf-to-image", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/pdf-to-image", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Analysis failed" }));
         throw new Error(data.error);
@@ -61,7 +62,7 @@ const PdfToImage = () => {
         form.append("file", file);
         form.append("page", String(pageIndex));
         form.append("format", format.value);
-        const res = await fetch("/api/pdf-tools/pdf-to-image", { method: "POST", body: form });
+        const res = await toolFetch("/api/pdf-tools/pdf-to-image", { method: "POST", body: form });
         if (!res.ok) {
           const data = await res.json().catch(() => ({ error: "Failed to render page" }));
           throw new Error(data.error || "Failed to render page");

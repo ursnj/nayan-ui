@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Eraser, PenTool, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NInput, NSlider, NSelect, showToast } from "@nayan-ui/react";
 import type { ReactSelectOption } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const POSITION_OPTIONS: ReactSelectOption[] = [
   { label: "Bottom right", value: "bottom-right" },
@@ -32,7 +33,7 @@ const SignPdf = () => {
     try {
       const form = new FormData();
       form.append("file", f);
-      const res = await fetch("/api/pdf-tools/info", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/info", { method: "POST", body: form });
       if (res.ok) {
         const data = await res.json();
         setPageCount(data.pageCount || 1);
@@ -106,7 +107,7 @@ const SignPdf = () => {
       form.append("page", String(pageNumber));
       form.append("position", position.value);
       form.append("width", String(width));
-      const res = await fetch("/api/pdf-tools/sign", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/sign", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Signing failed" }));
         throw new Error(data.error);

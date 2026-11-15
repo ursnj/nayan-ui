@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateFileSize } from "../../helpers";
+import {
+  TOOL_LIMITS,
+  ToolLimitError,
+  checkImage,
+  guardTool,
+  imageInput,
+  loadSharp,
+  validateFileSize,
+} from "../../helpers";
+
+const LIMIT = TOOL_LIMITS["image-tools/favicon"];
 
 const SIZES = [16, 32, 48, 180, 192, 512];
 
-export async function POST(req: NextRequest) {
+async function handle(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -12,16 +22,20 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "File is required" }, { status: 400 });
     }
-    const sizeError = validateFileSize(file);
+    const sizeError = validateFileSize(file, LIMIT.fileBytes);
     if (sizeError) return sizeError;
 
-    const sharp = (await import("sharp")).default;
+    const sharp = await loadSharp();
     const JSZip = (await import("jszip")).default;
     const buffer = Buffer.from(await file.arrayBuffer());
+    await checkImage(buffer, LIMIT);
 
     const zip = new JSZip();
     for (const size of SIZES) {
-      const png = await sharp(buffer).resize(size, size, { fit: "cover" }).png().toBuffer();
+      const png = await sharp(buffer, imageInput(LIMIT))
+        .resize(size, size, { fit: "cover" })
+        .png()
+        .toBuffer();
       zip.file(`favicon-${size}x${size}.png`, png);
     }
 
@@ -57,7 +71,10 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "Favicon generation failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = guardTool("image-tools/favicon", handle);

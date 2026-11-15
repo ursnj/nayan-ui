@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { MAX_UPLOAD, ToolLimitError, guardTool, mb } from "../../helpers";
 import sharp from "sharp";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-export async function POST(request: NextRequest) {
+async function handle(request: NextRequest) {
   try {
     const form = await request.formData();
     const files = form.getAll("frames");
@@ -13,10 +14,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Provide 2–120 frames at 10–30 fps." }, { status: 400 });
     if (
       files.some((file) => !(file instanceof File)) ||
-      files.reduce((total, file) => total + (file as File).size, 0) > 16 * 1024 * 1024
+      files.reduce((total, file) => total + (file as File).size, 0) > MAX_UPLOAD
     )
       return NextResponse.json(
-        { error: "Animation frames must be files totaling at most 16 MB." },
+        { error: `Animation frames must be files totaling at most ${mb(MAX_UPLOAD)}.` },
         { status: 400 },
       );
 
@@ -65,10 +66,13 @@ export async function POST(request: NextRequest) {
         "Cache-Control": "no-store",
       },
     });
-  } catch {
+  } catch (err) {
+    if (err instanceof ToolLimitError) return err.response();
     return NextResponse.json(
       { error: "The animation could not be encoded. Please try exporting again." },
       { status: 500 },
     );
   }
 }
+
+export const POST = guardTool("examples/logo-webp", handle);

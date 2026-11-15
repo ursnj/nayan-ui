@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { Download, Images, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NBadge, showToast } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const ExtractImagesFromPdf = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -22,7 +23,7 @@ const ExtractImagesFromPdf = () => {
     try {
       const form = new FormData();
       form.append("file", file);
-      const res = await fetch("/api/pdf-tools/extract-images", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/extract-images", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Image extraction failed" }));
         throw new Error(data.error);

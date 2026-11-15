@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { Download, Lock, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NInput, showToast } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const ProtectPdf = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -24,7 +25,7 @@ const ProtectPdf = () => {
       const form = new FormData();
       form.append("file", file);
       form.append("password", password);
-      const res = await fetch("/api/pdf-tools/protect", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/protect", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Protection failed" }));
         throw new Error(data.error);

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Download, FileImage, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NSelect, NBadge, showToast } from "@nayan-ui/react";
 import type { ReactSelectOption } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 // Keep in sync with SUPPORTED_FORMATS in the /api/image-tools/convert route.
 // BMP is intentionally excluded: sharp/libvips cannot encode to BMP.
@@ -73,7 +74,7 @@ const ConvertImage = () => {
           const form = new FormData();
           form.append("file", entry.file);
           form.append("format", formatKey);
-          const res = await fetch("/api/image-tools/convert", { method: "POST", body: form });
+          const res = await toolFetch("/api/image-tools/convert", { method: "POST", body: form });
           if (!res.ok) {
             const data = await res.json().catch(() => ({ error: "Conversion failed" }));
             throw new Error(data.error || `Server error ${res.status}`);

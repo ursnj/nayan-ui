@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { Download, Hash, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NInput, NSelect, showToast } from "@nayan-ui/react";
 import type { ReactSelectOption } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const POSITION_OPTIONS: ReactSelectOption[] = [
   { label: "Bottom center", value: "bottom-center" },
@@ -40,7 +41,7 @@ const PageNumbersPdf = () => {
       form.append("position", position.value);
       form.append("fontSize", String(fontSize));
       form.append("startFrom", String(startFrom));
-      const res = await fetch("/api/pdf-tools/page-numbers", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/page-numbers", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Failed" }));
         throw new Error(data.error);

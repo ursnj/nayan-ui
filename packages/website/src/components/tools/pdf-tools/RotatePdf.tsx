@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { Download, RotateCw, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NSelect, showToast } from "@nayan-ui/react";
 import type { ReactSelectOption } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const ANGLE_OPTIONS: ReactSelectOption[] = [
   { label: "90° clockwise", value: "90" },
@@ -32,7 +33,7 @@ const RotatePdf = () => {
       form.append("file", file);
       form.append("angle", angle.value);
       form.append("pages", "all");
-      const res = await fetch("/api/pdf-tools/rotate", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/rotate", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Rotation failed" }));
         throw new Error(data.error);

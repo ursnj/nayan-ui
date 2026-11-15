@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateFileSize } from "../../helpers";
+import {
+  TOOL_LIMITS,
+  ToolLimitError,
+  guardTool,
+  validateFileSize,
+  validatePageCount,
+} from "../../helpers";
+
+const LIMIT = TOOL_LIMITS["pdf-tools/split"];
 
 function parseRanges(rangeStr: string, total: number): number[][] {
   return rangeStr.split(",").map((part) => {
@@ -31,7 +39,7 @@ function parseRanges(rangeStr: string, total: number): number[][] {
   });
 }
 
-export async function POST(req: NextRequest) {
+async function handle(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -40,7 +48,7 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "PDF file is required" }, { status: 400 });
     }
-    const sizeError = validateFileSize(file);
+    const sizeError = validateFileSize(file, LIMIT.fileBytes);
     if (sizeError) return sizeError;
     if (!ranges.trim()) {
       return NextResponse.json(
@@ -52,11 +60,14 @@ export async function POST(req: NextRequest) {
     const { PDFDocument } = await import("pdf-lib");
     const bytes = new Uint8Array(await file.arrayBuffer());
     const src = await PDFDocument.load(bytes, { ignoreEncryption: true });
+    const pageError = validatePageCount(src.getPageCount(), LIMIT.maxPages);
+    if (pageError) return pageError;
     const total = src.getPageCount();
     let groups: number[][];
     try {
       groups = parseRanges(ranges, total);
     } catch (err) {
+      if (err instanceof ToolLimitError) return err.response();
       const message = err instanceof Error ? err.message : "Invalid page ranges";
       return NextResponse.json({ error: message }, { status: 400 });
     }
@@ -89,7 +100,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ parts, total });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "Split failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = guardTool("pdf-tools/split", handle);

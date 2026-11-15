@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  JSON_TO_EXCEL_MAX_COLUMNS,
+  JSON_TO_EXCEL_MAX_ROWS,
+  ToolLimitError,
+  guardTool,
+} from "../../helpers";
 
-export async function POST(req: NextRequest) {
+async function handle(req: NextRequest) {
   try {
     const body = await req.text();
     if (!body.trim()) {
@@ -23,7 +29,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (flat.length > JSON_TO_EXCEL_MAX_ROWS) {
+      return NextResponse.json(
+        { error: `Too many rows (${flat.length}). The maximum is ${JSON_TO_EXCEL_MAX_ROWS}.` },
+        { status: 413 },
+      );
+    }
+
     const keys = [...new Set(flat.flatMap(Object.keys))];
+    if (keys.length > JSON_TO_EXCEL_MAX_COLUMNS) {
+      return NextResponse.json(
+        {
+          error: `Too many columns (${keys.length}). The maximum is ${JSON_TO_EXCEL_MAX_COLUMNS}.`,
+        },
+        { status: 413 },
+      );
+    }
 
     const ExcelJS = await import("exceljs");
     const workbook = new ExcelJS.Workbook();
@@ -63,7 +84,10 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "Conversion failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = guardTool("json-tools/json-to-excel", handle);

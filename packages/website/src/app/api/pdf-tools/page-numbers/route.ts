@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateFileSize } from "../../helpers";
+import {
+  TOOL_LIMITS,
+  ToolLimitError,
+  guardTool,
+  validateFileSize,
+  validatePageCount,
+} from "../../helpers";
 
-export async function POST(req: NextRequest) {
+const LIMIT = TOOL_LIMITS["pdf-tools/page-numbers"];
+
+async function handle(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -13,12 +21,14 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "PDF file is required" }, { status: 400 });
     }
-    const sizeError = validateFileSize(file);
+    const sizeError = validateFileSize(file, LIMIT.fileBytes);
     if (sizeError) return sizeError;
 
     const { PDFDocument, rgb, StandardFonts } = await import("pdf-lib");
     const bytes = new Uint8Array(await file.arrayBuffer());
     const doc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+    const pageError = validatePageCount(doc.getPageCount(), LIMIT.maxPages);
+    if (pageError) return pageError;
     const font = await doc.embedFont(StandardFonts.Helvetica);
     const pages = doc.getPages();
     const total = pages.length;
@@ -68,7 +78,10 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "Page numbering failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = guardTool("pdf-tools/page-numbers", handle);

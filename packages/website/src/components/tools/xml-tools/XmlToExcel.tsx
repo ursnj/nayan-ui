@@ -5,6 +5,7 @@ import { Download, Sheet, Trash2 } from "lucide-react";
 import { NButton, NAlert, AlertTypes } from "@nayan-ui/react";
 import XmlMonacoEditor from "./XmlMonacoEditor";
 import { parseXml, xmlToObject } from "./xmlHelpers";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const XmlToExcel = () => {
   const [input, setInput] = useState("");
@@ -21,7 +22,7 @@ const XmlToExcel = () => {
       const obj = xmlToObject(doc.documentElement);
       const children = Object.values(obj);
       const rows = children.length === 1 && Array.isArray(children[0]) ? children[0] : [obj];
-      const res = await fetch("/api/json-tools/json-to-excel", {
+      const res = await toolFetch("/api/json-tools/json-to-excel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(rows),

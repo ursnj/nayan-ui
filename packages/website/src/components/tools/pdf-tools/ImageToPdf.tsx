@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { Download, FileUp, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NSelect, showToast } from "@nayan-ui/react";
 import type { ReactSelectOption } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const ORIENTATION_OPTIONS: ReactSelectOption[] = [
   { label: "Portrait", value: "portrait" },
@@ -45,7 +46,7 @@ const ImageToPdf = () => {
       files.forEach((f) => form.append("files", f));
       form.append("orientation", orientation.value);
       form.append("fit", fit.value);
-      const res = await fetch("/api/pdf-tools/image-to-pdf", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/image-to-pdf", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Conversion failed" }));
         throw new Error(data.error);

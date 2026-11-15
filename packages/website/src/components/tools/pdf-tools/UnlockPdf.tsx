@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { Download, Unlock, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NInput } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const UnlockPdf = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -27,7 +28,7 @@ const UnlockPdf = () => {
       const form = new FormData();
       form.append("file", file);
       form.append("password", password);
-      const res = await fetch("/api/pdf-tools/unlock", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/unlock", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Unlock failed" }));
         setError(data.error || "Unlock failed");

@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { ClipboardCopy, Download, FileText, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NBadge, NTextarea, showToast } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const formatSize = (bytes: number) => {
   if (bytes < 1024) return `${bytes} B`;
@@ -28,7 +29,7 @@ const PdfToText = () => {
     try {
       const form = new FormData();
       form.append("file", file);
-      const res = await fetch("/api/pdf-tools/pdf-to-text", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/pdf-to-text", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Text extraction failed" }));
         throw new Error(data.error);

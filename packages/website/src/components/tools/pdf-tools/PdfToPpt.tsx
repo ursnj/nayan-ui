@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { Download, Presentation, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, showToast } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const PdfToPpt = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -22,7 +23,7 @@ const PdfToPpt = () => {
     try {
       const form = new FormData();
       form.append("file", file);
-      const res = await fetch("/api/pdf-tools/pdf-to-ppt", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/pdf-to-ppt", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Conversion failed" }));
         throw new Error(data.error);

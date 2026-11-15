@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { LOGOS, type LogoId } from "./logos";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const SharedLogoRuntime = dynamic(() => import("./SharedLogoRuntime"), {
   ssr: false,
@@ -180,7 +181,7 @@ export default function LogoPreview({ logo }: { logo?: LogoId } = {}) {
           current.frames.forEach((frame, index) => form.append("frames", frame, `${index}.png`));
           form.append("fps", String(FPS));
           abort.current = new AbortController();
-          const response = await fetch("/api/examples/logo-webp", {
+          const response = await toolFetch("/api/examples/logo-webp", {
             method: "POST",
             body: form,
             signal: abort.current.signal,

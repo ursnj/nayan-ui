@@ -31,14 +31,18 @@ RUN bun run --filter @nayan-ui/react build
 # Build website (Next.js)
 RUN bun run --filter @nayan-ui/website build
 
-# Production image, copy all the files and run next
-FROM oven/bun:1-alpine AS runner
+# Production image, copy all the files and run next.
+# Node, not Bun: Node returns memory after a burst of tool requests (about 200 MiB against Bun
+# --smol's 290 MiB in the same test) and is what sharp, @napi-rs/canvas and Next.js support.
+FROM node:24-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN apk add --no-cache libc6-compat && \
+# fontconfig and a font: the image watermark draws its text through SVG, which needs both
+# ("Fontconfig error: Cannot load default config file" and no text without them).
+RUN apk add --no-cache libc6-compat fontconfig ttf-dejavu && \
     addgroup --system --gid 1001 bunjs && \
     adduser --system --uid 1001 nextjs
 
@@ -64,4 +68,9 @@ EXPOSE 7100
 ENV PORT=7100
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["bun", "--smol", "run", "packages/website/server.js"]
+# Swarm replaces a task that stops answering. /api/health does no work, so it answers even while
+# every tool slot is busy.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD wget -q -O /dev/null http://127.0.0.1:7100/api/health || exit 1
+
+CMD ["node", "packages/website/server.js"]

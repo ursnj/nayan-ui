@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateFileSize } from "../../helpers";
+import {
+  TOOL_LIMITS,
+  ToolLimitError,
+  guardTool,
+  validateFileSize,
+  validatePageCount,
+} from "../../helpers";
 
-export async function POST(req: NextRequest) {
+const LIMIT = TOOL_LIMITS["pdf-tools/rotate"];
+
+async function handle(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -11,7 +19,7 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "PDF file is required" }, { status: 400 });
     }
-    const sizeError = validateFileSize(file);
+    const sizeError = validateFileSize(file, LIMIT.fileBytes);
     if (sizeError) return sizeError;
     if (![90, 180, 270].includes(angle)) {
       return NextResponse.json({ error: "Angle must be 90, 180, or 270" }, { status: 400 });
@@ -20,6 +28,8 @@ export async function POST(req: NextRequest) {
     const { PDFDocument, degrees } = await import("pdf-lib");
     const bytes = new Uint8Array(await file.arrayBuffer());
     const doc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+    const pageError = validatePageCount(doc.getPageCount(), LIMIT.maxPages);
+    if (pageError) return pageError;
     const total = doc.getPageCount();
 
     let indices: number[];
@@ -55,7 +65,10 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "Rotation failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = guardTool("pdf-tools/rotate", handle);

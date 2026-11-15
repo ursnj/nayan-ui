@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Download, ImageDown, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NSlider, NBadge, showToast } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 interface FileEntry {
   file: File;
@@ -58,7 +59,7 @@ const CompressImage = () => {
           const form = new FormData();
           form.append("file", entry.file);
           form.append("quality", String(quality));
-          const res = await fetch("/api/image-tools/compress", { method: "POST", body: form });
+          const res = await toolFetch("/api/image-tools/compress", { method: "POST", body: form });
           if (!res.ok) {
             const data = await res.json().catch(() => ({ error: "Compression failed" }));
             throw new Error(data.error || `Server error ${res.status}`);

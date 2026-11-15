@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { Download, FileDown, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NBadge, showToast } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const formatSize = (bytes: number) => {
   if (bytes < 1024) return `${bytes} B`;
@@ -32,7 +33,7 @@ const CompressPdf = () => {
     try {
       const form = new FormData();
       form.append("file", file);
-      const res = await fetch("/api/pdf-tools/compress", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/compress", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Compression failed" }));
         throw new Error(data.error);

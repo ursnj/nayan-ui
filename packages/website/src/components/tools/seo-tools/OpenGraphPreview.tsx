@@ -3,6 +3,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { Search, Loader2, AlertCircle } from "lucide-react";
 import { NButton, NCard, NInput, NBadge } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 interface OgData {
   url: string;
@@ -38,7 +39,7 @@ const OpenGraphPreview = () => {
     setError("");
     setData(null);
     try {
-      const res = await fetch("/api/seo-tools/og-preview", {
+      const res = await toolFetch("/api/seo-tools/og-preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: url.trim() }),

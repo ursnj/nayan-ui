@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { ClipboardCopy, Download, Globe, Loader2, Trash2 } from "lucide-react";
 import { NButton, NCard, NInput, NSelect, NBadge, showToast } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const CHANGEFREQ_OPTIONS = [
   { value: "always", label: "Always" },
@@ -18,8 +19,6 @@ const MAX_URLS_OPTIONS = [
   { value: "500", label: "500" },
   { value: "1000", label: "1,000" },
   { value: "2000", label: "2,000" },
-  { value: "5000", label: "5,000" },
-  { value: "10000", label: "10,000" },
 ];
 
 const DEPTH_OPTIONS = [
@@ -36,7 +35,7 @@ const SitemapGenerator = () => {
   const [website, setWebsite] = useState("");
   const [depth, setDepth] = useState("10");
   const [changefreq, setChangefreq] = useState("daily");
-  const [maxUrls, setMaxUrls] = useState("5000");
+  const [maxUrls, setMaxUrls] = useState("1000");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [output, setOutput] = useState("");
@@ -51,7 +50,7 @@ const SitemapGenerator = () => {
     setUrlCount(0);
     setDiscoveredUrls([]);
     try {
-      const res = await fetch("/api/seo-tools/sitemap-generate", {
+      const res = await toolFetch("/api/seo-tools/sitemap-generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

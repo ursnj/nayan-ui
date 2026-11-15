@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateFileSize } from "../../helpers";
+import {
+  TOOL_LIMITS,
+  ToolLimitError,
+  guardTool,
+  validateFileSize,
+  validatePageCount,
+} from "../../helpers";
 
-export async function POST(req: NextRequest) {
+const LIMIT = TOOL_LIMITS["pdf-tools/protect"];
+
+async function handle(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -10,7 +18,7 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "PDF file is required" }, { status: 400 });
     }
-    const sizeError = validateFileSize(file);
+    const sizeError = validateFileSize(file, LIMIT.fileBytes);
     if (sizeError) return sizeError;
     if (!password) {
       return NextResponse.json({ error: "Password is required" }, { status: 400 });
@@ -24,6 +32,8 @@ export async function POST(req: NextRequest) {
 
     // Re-serialize through pdf-lib first to normalise the document
     const doc = await pdfLib.PDFDocument.load(bytes, { ignoreEncryption: true });
+    const pageError = validatePageCount(doc.getPageCount(), LIMIT.maxPages);
+    if (pageError) return pageError;
     const plain = await doc.save();
 
     // AES-256 encryption — viewer will prompt for password
@@ -37,7 +47,10 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "Protection failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = guardTool("pdf-tools/protect", handle);

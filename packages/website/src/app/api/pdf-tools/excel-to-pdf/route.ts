@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateFileSize } from "../../helpers";
+import { TOOL_LIMITS, ToolLimitError, checkZip, guardTool, validateFileSize } from "../../helpers";
 
-export async function POST(req: NextRequest) {
+const LIMIT = TOOL_LIMITS["pdf-tools/excel-to-pdf"];
+
+async function handle(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -9,10 +11,16 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "Excel file is required" }, { status: 400 });
     }
-    const sizeError = validateFileSize(file);
+    const sizeError = validateFileSize(file, LIMIT.fileBytes);
     if (sizeError) return sizeError;
 
     const arrayBuf = await file.arrayBuffer();
+    if (!(await checkZip(Buffer.from(arrayBuf), LIMIT))) {
+      return NextResponse.json(
+        { error: "The file is not a valid Excel workbook" },
+        { status: 422 },
+      );
+    }
     const ExcelJS = await import("exceljs");
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(arrayBuf);
@@ -97,7 +105,10 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "Conversion failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = guardTool("pdf-tools/excel-to-pdf", handle);

@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  SITEMAP_MAX_URLS,
+  TOOL_LIMITS,
+  ToolLimitError,
+  guardTool,
+  readTextLimited,
+  withCrawlSlot,
+} from "../../helpers";
 import { assertPublicHttpUrl, BlockedUrlError, safeFetch } from "../_ssrf-guard";
+
+const LIMIT = TOOL_LIMITS["seo-tools/sitemap-generate"];
 
 interface UrlWithDepth {
   url: string;
@@ -8,7 +18,7 @@ interface UrlWithDepth {
 
 const CONCURRENCY = 10;
 const PER_PAGE_TIMEOUT = 30000;
-const OVERALL_TIMEOUT = 180000; // 180s hard limit
+const OVERALL_TIMEOUT = 120000; // 120s hard limit
 
 async function fetchAndParseLinks(url: string, baseOrigin: string): Promise<string[]> {
   try {
@@ -24,7 +34,8 @@ async function fetchAndParseLinks(url: string, baseOrigin: string): Promise<stri
     const contentType = res.headers.get("content-type") || "";
     if (!contentType.includes("text/html")) return [];
 
-    const html = await res.text();
+    // Links beyond the first 2 MB of a page are ignored.
+    const html = await readTextLimited(res, LIMIT.responseBytes, true);
     const links: string[] = [];
 
     const regex = /<a\s+[^>]*href=["']([^"'#]*?)["'][^>]*>/gi;
@@ -85,7 +96,7 @@ function escapeXml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-export async function POST(req: NextRequest) {
+async function crawl(req: NextRequest) {
   try {
     const body = await req.json();
     const { website, depth: maxDepth = 10, changefreq = "daily", maxUrls = 5000 } = body;
@@ -104,7 +115,7 @@ export async function POST(req: NextRequest) {
     const queue: UrlWithDepth[] = [{ url: baseUrl, depth: 0 }];
     visited.add(baseUrl);
 
-    const cap = Math.min(Math.max(maxUrls, 1), 10000);
+    const cap = Math.min(Math.max(Number(maxUrls) || 1, 1), SITEMAP_MAX_URLS);
     const deadline = Date.now() + OVERALL_TIMEOUT;
 
     // BFS with concurrency
@@ -152,9 +163,15 @@ export async function POST(req: NextRequest) {
       urls: urlsWithDepth.map((u) => u.url),
     });
   } catch (err: any) {
+    if (err instanceof ToolLimitError) return err.response();
     if (err instanceof BlockedUrlError) {
       return NextResponse.json({ error: err.message }, { status: 400 });
     }
     return NextResponse.json({ error: err.message || "Crawl failed" }, { status: 500 });
   }
 }
+
+// A crawl runs for up to two minutes: only a couple run at once.
+const handle = (req: NextRequest) => withCrawlSlot(() => crawl(req));
+
+export const POST = guardTool("seo-tools/sitemap-generate", handle);

@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateFileSize } from "../../helpers";
+import {
+  TOOL_LIMITS,
+  ToolLimitError,
+  guardTool,
+  validateFileSize,
+  validatePageCount,
+} from "../../helpers";
 import { extractPdfPageTexts } from "../_pdfText";
 
-export async function POST(req: NextRequest) {
+const LIMIT = TOOL_LIMITS["pdf-tools/pdf-to-markdown"];
+
+async function handle(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -10,12 +18,14 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "PDF file is required" }, { status: 400 });
     }
-    const sizeError = validateFileSize(file);
+    const sizeError = validateFileSize(file, LIMIT.fileBytes);
     if (sizeError) return sizeError;
 
     const { PDFDocument } = await import("pdf-lib");
     const bytes = new Uint8Array(await file.arrayBuffer());
     const pdfDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+    const pageError = validatePageCount(pdfDoc.getPageCount(), LIMIT.maxPages);
+    if (pageError) return pageError;
     const pages = pdfDoc.getPages();
     const totalPages = pages.length;
     const docTitle = pdfDoc.getTitle() || file.name.replace(/\.[^.]+$/, "");
@@ -34,7 +44,7 @@ export async function POST(req: NextRequest) {
     lines.push("---");
     lines.push("");
 
-    const pageTexts = await extractPdfPageTexts(bytes);
+    const pageTexts = await extractPdfPageTexts(bytes, LIMIT.maxPages);
 
     for (let i = 0; i < totalPages; i++) {
       const page = pages[i];
@@ -63,7 +73,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ markdown });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "Conversion failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = guardTool("pdf-tools/pdf-to-markdown", handle);

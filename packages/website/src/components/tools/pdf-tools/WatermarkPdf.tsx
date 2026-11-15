@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { Download, Stamp, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NInput, NSlider, NSelect, showToast } from "@nayan-ui/react";
 import type { ReactSelectOption } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const POSITION_OPTIONS: ReactSelectOption[] = [
   { label: "Center (diagonal)", value: "center" },
@@ -43,7 +44,7 @@ const WatermarkPdf = () => {
       form.append("color", color);
       form.append("position", position.value);
       form.append("rotation", position.value === "center" ? "-45" : "0");
-      const res = await fetch("/api/pdf-tools/watermark", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/watermark", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Watermark failed" }));
         throw new Error(data.error);

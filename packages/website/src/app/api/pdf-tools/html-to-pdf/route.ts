@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ToolLimitError, guardTool } from "../../helpers";
 
-export async function POST(req: NextRequest) {
+async function handle(req: NextRequest) {
   try {
     const formData = await req.formData();
     const htmlContent = formData.get("html") as string | null;
@@ -100,7 +101,10 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "Conversion failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = guardTool("pdf-tools/html-to-pdf", handle);

@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { Download, Trash2, Upload, Wrench } from "lucide-react";
 import { NButton, NCard } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const RepairPdf = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -27,7 +28,7 @@ const RepairPdf = () => {
     try {
       const form = new FormData();
       form.append("file", file);
-      const res = await fetch("/api/pdf-tools/repair", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/repair", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Repair failed" }));
         setError(data.error);

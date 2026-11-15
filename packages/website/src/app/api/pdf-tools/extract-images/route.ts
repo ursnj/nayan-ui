@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateFileSize } from "../../helpers";
+import {
+  TOOL_LIMITS,
+  ToolLimitError,
+  guardTool,
+  validateFileSize,
+  validatePageCount,
+} from "../../helpers";
+
+const LIMIT = TOOL_LIMITS["pdf-tools/extract-images"];
 
 function resolveObj(page: any, objId: string): Promise<any> {
   return new Promise((resolve) => page.objs.get(objId, resolve));
@@ -43,7 +51,7 @@ function toRgba(
   return rgba;
 }
 
-export async function POST(req: NextRequest) {
+async function handle(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -51,7 +59,7 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "PDF file is required" }, { status: 400 });
     }
-    const sizeError = validateFileSize(file);
+    const sizeError = validateFileSize(file, LIMIT.fileBytes);
     if (sizeError) return sizeError;
 
     const bytes = new Uint8Array(await file.arrayBuffer());
@@ -64,12 +72,16 @@ export async function POST(req: NextRequest) {
       isEvalSupported: false,
       useSystemFonts: false,
       disableFontFace: true,
+      // Embedded images over the pixel limit are skipped instead of decoded.
+      maxImageSize: LIMIT.maxPixels,
     });
     const pdf = await loadingTask.promise;
 
     const images: { pageNumber: number; buffer: Buffer; index: number }[] = [];
 
     try {
+      const pageError = validatePageCount(pdf.numPages, LIMIT.maxPages);
+      if (pageError) return pageError;
       for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
         const page = await pdf.getPage(pageNumber);
         try {
@@ -135,7 +147,10 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "Image extraction failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = guardTool("pdf-tools/extract-images", handle);

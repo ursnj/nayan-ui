@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NBadge, showToast } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 interface PdfInfoData {
   pageCount: number;
@@ -45,7 +46,7 @@ const PdfInfo = () => {
     try {
       const form = new FormData();
       form.append("file", f);
-      const res = await fetch("/api/pdf-tools/info-stats", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/info-stats", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Failed to analyze PDF" }));
         throw new Error(data.error);

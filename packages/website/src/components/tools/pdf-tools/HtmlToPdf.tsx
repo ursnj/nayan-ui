@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { Download, FileText, Trash2 } from "lucide-react";
 import { NButton, NCard, NInput, NSelect, NTextarea, showToast } from "@nayan-ui/react";
 import type { ReactSelectOption } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const PAGE_SIZES: ReactSelectOption[] = [
   { label: "A4", value: "a4" },
@@ -26,7 +27,7 @@ const HtmlToPdf = () => {
       form.append("html", html);
       form.append("title", title);
       form.append("pageSize", pageSize.value);
-      const res = await fetch("/api/pdf-tools/html-to-pdf", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/html-to-pdf", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Conversion failed" }));
         throw new Error(data.error);

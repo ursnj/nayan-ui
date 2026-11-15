@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateFileSize } from "../../helpers";
+import {
+  TOOL_LIMITS,
+  ToolLimitError,
+  checkImage,
+  guardTool,
+  imageInput,
+  loadSharp,
+  validateFileSize,
+} from "../../helpers";
 
-export async function POST(req: NextRequest) {
+const LIMIT = TOOL_LIMITS["image-tools/rotate"];
+
+async function handle(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -12,12 +22,13 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "File is required" }, { status: 400 });
     }
-    const sizeError = validateFileSize(file);
+    const sizeError = validateFileSize(file, LIMIT.fileBytes);
     if (sizeError) return sizeError;
 
-    const sharp = (await import("sharp")).default;
+    const sharp = await loadSharp();
     const buffer = Buffer.from(await file.arrayBuffer());
-    let pipeline = sharp(buffer);
+    await checkImage(buffer, LIMIT);
+    let pipeline = sharp(buffer, imageInput(LIMIT));
 
     if (rotation) {
       pipeline = pipeline.rotate(rotation);
@@ -39,7 +50,10 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "Rotate failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = guardTool("image-tools/rotate", handle);

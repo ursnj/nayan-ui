@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { ArrowDown, ArrowUp, Download, GripVertical, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, showToast } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const OrganizePdf = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -21,7 +22,7 @@ const OrganizePdf = () => {
     try {
       const form = new FormData();
       form.append("file", f);
-      const res = await fetch("/api/pdf-tools/info", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/info", { method: "POST", body: form });
       if (!res.ok) throw new Error();
       const data = await res.json();
       const count = data.pageCount as number;
@@ -65,7 +66,7 @@ const OrganizePdf = () => {
       form.append("file", file);
       form.append("pageOrder", JSON.stringify(pages));
       form.append("deletedPages", JSON.stringify(deleted));
-      const res = await fetch("/api/pdf-tools/organize", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/organize", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Organization failed" }));
         throw new Error(data.error);

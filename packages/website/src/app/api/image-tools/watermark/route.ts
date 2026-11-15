@@ -1,12 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateFileSize } from "../../helpers";
+import {
+  TOOL_LIMITS,
+  ToolLimitError,
+  checkImage,
+  guardTool,
+  imageInput,
+  loadSharp,
+  validateFileSize,
+} from "../../helpers";
 
-export async function POST(req: NextRequest) {
+const LIMIT = TOOL_LIMITS["image-tools/watermark"];
+
+async function handle(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
-    const text = (formData.get("text") as string) || "Watermark";
-    const fontSize = Number(formData.get("fontSize") || 48);
+    // Bounded so the tiled overlay stays a reasonable number of text elements.
+    const text = ((formData.get("text") as string) || "Watermark").slice(0, 200);
+    const fontSize = Math.min(1000, Math.max(8, Number(formData.get("fontSize") || 48) || 48));
     const opacity = Number(formData.get("opacity") || 30) / 100;
     const position = (formData.get("position") as string) || "center";
     const color = (formData.get("color") as string) || "#ffffff";
@@ -14,14 +25,12 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "File is required" }, { status: 400 });
     }
-    const sizeError = validateFileSize(file);
+    const sizeError = validateFileSize(file, LIMIT.fileBytes);
     if (sizeError) return sizeError;
 
-    const sharp = (await import("sharp")).default;
+    const sharp = await loadSharp();
     const buffer = Buffer.from(await file.arrayBuffer());
-    const meta = await sharp(buffer).metadata();
-    const imgW = meta.width || 800;
-    const imgH = meta.height || 600;
+    const { width: imgW, height: imgH } = await checkImage(buffer, LIMIT);
 
     // Parse hex color to RGB
     const hex = color.replace("#", "");
@@ -64,7 +73,7 @@ export async function POST(req: NextRequest) {
       `<svg xmlns="http://www.w3.org/2000/svg" width="${imgW}" height="${imgH}">${svgTexts}</svg>`,
     );
 
-    const result = await sharp(buffer)
+    const result = await sharp(buffer, imageInput(LIMIT))
       .composite([{ input: svgOverlay, top: 0, left: 0 }])
       .png()
       .toBuffer();
@@ -77,6 +86,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "Watermark failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
@@ -90,3 +100,5 @@ function escapeXml(str: string): string {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
 }
+
+export const POST = guardTool("image-tools/watermark", handle);

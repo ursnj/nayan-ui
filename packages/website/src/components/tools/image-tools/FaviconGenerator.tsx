@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Download, ImagePlus, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NInput, showToast } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const PREVIEW_SIZES = [16, 32, 48, 180, 192, 512];
 
@@ -74,7 +75,7 @@ const FaviconGenerator = () => {
       const form = new FormData();
       form.append("file", file);
       form.append("name", appName);
-      const res = await fetch("/api/image-tools/favicon", { method: "POST", body: form });
+      const res = await toolFetch("/api/image-tools/favicon", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Favicon generation failed" }));
         throw new Error(data.error || `Server error ${res.status}`);

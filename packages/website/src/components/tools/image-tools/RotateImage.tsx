@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { NButton, NCard, NTooltip, NBadge, showToast } from "@nayan-ui/react";
 import { useObjectUrl } from "./useObjectUrl";
+import { toolFetch } from "@/lib/ToolFetch";
 
 interface FileEntry {
   file: File;
@@ -89,7 +90,7 @@ const RotateImage = () => {
           form.append("rotation", String(entry.rotation));
           form.append("flipH", String(entry.flipH));
           form.append("flipV", String(entry.flipV));
-          const res = await fetch("/api/image-tools/rotate", { method: "POST", body: form });
+          const res = await toolFetch("/api/image-tools/rotate", { method: "POST", body: form });
           if (!res.ok) {
             const data = await res.json().catch(() => ({ error: "Rotate failed" }));
             throw new Error(data.error || `Server error ${res.status}`);

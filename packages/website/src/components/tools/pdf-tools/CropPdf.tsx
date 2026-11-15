@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { Crop, Download, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NInput, NSelect, showToast } from "@nayan-ui/react";
 import type { ReactSelectOption } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const PAGE_OPTIONS: ReactSelectOption[] = [{ label: "All Pages", value: "all" }];
 
@@ -35,7 +36,7 @@ const CropPdf = () => {
       form.append("bottom", bottom);
       form.append("left", left);
       form.append("applyTo", applyTo.value);
-      const res = await fetch("/api/pdf-tools/crop", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/crop", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Cropping failed" }));
         throw new Error(data.error);

@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateFileSize } from "../../helpers";
+import {
+  TOOL_LIMITS,
+  ToolLimitError,
+  checkImage,
+  guardTool,
+  imageInput,
+  loadSharp,
+  validateFileSize,
+} from "../../helpers";
 
-export async function POST(req: NextRequest) {
+const LIMIT = TOOL_LIMITS["image-tools/compress"];
+
+async function handle(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -10,14 +20,12 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "File is required" }, { status: 400 });
     }
-    const sizeError = validateFileSize(file);
+    const sizeError = validateFileSize(file, LIMIT.fileBytes);
     if (sizeError) return sizeError;
 
-    const sharp = (await import("sharp")).default;
+    const sharp = await loadSharp();
     const buffer = Buffer.from(await file.arrayBuffer());
-    const pipeline = sharp(buffer);
-    const meta = await pipeline.metadata();
-    const hasAlpha = meta.hasAlpha ?? false;
+    const { hasAlpha } = await checkImage(buffer, LIMIT);
     const q = Math.min(100, Math.max(1, quality));
 
     let result: Buffer;
@@ -25,11 +33,11 @@ export async function POST(req: NextRequest) {
     let ext: string;
 
     if (hasAlpha) {
-      result = await sharp(buffer).webp({ quality: q }).toBuffer();
+      result = await sharp(buffer, imageInput(LIMIT)).webp({ quality: q }).toBuffer();
       contentType = "image/webp";
       ext = "webp";
     } else {
-      result = await sharp(buffer).jpeg({ quality: q }).toBuffer();
+      result = await sharp(buffer, imageInput(LIMIT)).jpeg({ quality: q }).toBuffer();
       contentType = "image/jpeg";
       ext = "jpg";
     }
@@ -44,7 +52,10 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "Compression failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = guardTool("image-tools/compress", handle);

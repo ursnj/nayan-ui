@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { TOOL_LIMITS, ToolLimitError, guardTool, readTextLimited } from "../../helpers";
 import { BlockedUrlError, safeFetch } from "../_ssrf-guard";
 
-export async function POST(req: NextRequest) {
+const LIMIT = TOOL_LIMITS["seo-tools/og-preview"];
+
+async function handle(req: NextRequest) {
   try {
     const { url } = await req.json();
     if (!url || typeof url !== "string") {
@@ -33,7 +36,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "URL does not return HTML content" }, { status: 422 });
     }
 
-    const html = await res.text();
+    // The tags it reads are in the page's head: a longer page is cut rather than refused.
+    const html = await readTextLimited(res, LIMIT.responseBytes, true);
 
     const meta: Record<string, string> = {};
 
@@ -87,6 +91,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(result);
   } catch (err: any) {
+    if (err instanceof ToolLimitError) return err.response();
     if (err instanceof BlockedUrlError) {
       return NextResponse.json({ error: err.message }, { status: 400 });
     }
@@ -113,3 +118,5 @@ function decodeEntities(str: string): string {
     .replace(/&#x27;/g, "'")
     .replace(/&#x2F;/g, "/");
 }
+
+export const POST = guardTool("seo-tools/og-preview", handle);

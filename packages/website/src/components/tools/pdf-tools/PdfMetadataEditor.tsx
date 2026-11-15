@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { Download, FileSignature, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NBadge, NInput, showToast } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 interface Metadata {
   title: string;
@@ -31,7 +32,7 @@ const PdfMetadataEditor = () => {
       const form = new FormData();
       form.append("file", f);
       form.append("action", "read");
-      const res = await fetch("/api/pdf-tools/metadata", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/metadata", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Failed to read metadata" }));
         throw new Error(data.error);
@@ -57,7 +58,7 @@ const PdfMetadataEditor = () => {
       form.append("author", meta.author);
       form.append("subject", meta.subject);
       form.append("keywords", meta.keywords);
-      const res = await fetch("/api/pdf-tools/metadata", { method: "POST", body: form });
+      const res = await toolFetch("/api/pdf-tools/metadata", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Failed to save metadata" }));
         throw new Error(data.error);

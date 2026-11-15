@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateFileSize } from "../../helpers";
+import {
+  TOOL_LIMITS,
+  ToolLimitError,
+  checkImage,
+  guardTool,
+  imageInput,
+  loadSharp,
+  validateFileSize,
+} from "../../helpers";
+
+const LIMIT = TOOL_LIMITS["image-tools/convert"];
 
 const SUPPORTED_FORMATS: Record<string, { mime: string; ext: string }> = {
   jpeg: { mime: "image/jpeg", ext: "jpg" },
@@ -10,7 +20,7 @@ const SUPPORTED_FORMATS: Record<string, { mime: string; ext: string }> = {
   avif: { mime: "image/avif", ext: "avif" },
 };
 
-export async function POST(req: NextRequest) {
+async function handle(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -19,7 +29,7 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "File is required" }, { status: 400 });
     }
-    const sizeError = validateFileSize(file);
+    const sizeError = validateFileSize(file, LIMIT.fileBytes);
     if (sizeError) return sizeError;
 
     const fmt = SUPPORTED_FORMATS[format];
@@ -30,9 +40,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const sharp = (await import("sharp")).default;
+    const sharp = await loadSharp();
     const buffer = Buffer.from(await file.arrayBuffer());
-    const result = await sharp(buffer)
+    await checkImage(buffer, LIMIT);
+    const result = await sharp(buffer, imageInput(LIMIT))
       .toFormat(format as keyof import("sharp").FormatEnum, { quality: 92 })
       .toBuffer();
 
@@ -46,7 +57,10 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err: unknown) {
+    if (err instanceof ToolLimitError) return err.response();
     const message = err instanceof Error ? err.message : "Conversion failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = guardTool("image-tools/convert", handle);

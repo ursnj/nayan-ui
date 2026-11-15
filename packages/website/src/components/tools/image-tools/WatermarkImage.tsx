@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Download, Stamp, Trash2, Upload } from "lucide-react";
 import { NButton, NCard, NInput, NSlider, NSelect, showToast } from "@nayan-ui/react";
 import type { ReactSelectOption } from "@nayan-ui/react";
+import { toolFetch } from "@/lib/ToolFetch";
 
 const POSITION_OPTIONS: ReactSelectOption[] = [
   { label: "Center", value: "center" },
@@ -100,7 +101,7 @@ const WatermarkImage = () => {
       form.append("opacity", String(opacity));
       form.append("position", position.value);
       form.append("color", color);
-      const res = await fetch("/api/image-tools/watermark", { method: "POST", body: form });
+      const res = await toolFetch("/api/image-tools/watermark", { method: "POST", body: form });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: "Watermark failed" }));
         throw new Error(data.error || `Server error ${res.status}`);
