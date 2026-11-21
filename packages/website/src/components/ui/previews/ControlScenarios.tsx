@@ -143,12 +143,12 @@ export const controlScenarios = {
     'Missing image fallback',
     element('NImage', {
       src: '/nayan-ui/missing-demo.webp',
-      fallback: '/logo.webp',
+      fallbackSource: '/logo.webp',
       alt: 'Nayan UI fallback',
       width: 112,
       height: 84,
       className: 'rounded-lg border border-border'
-    })
+    } satisfies Engine.NImageProps)
   ),
   'input-otp': sample('Four-digit PIN', element('NInputOtp', { label: 'Device PIN', placeholder: '0000', maxLength: 4, keyboardType: 'number-pad' })),
   kbd: sample(
