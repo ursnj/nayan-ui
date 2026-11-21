@@ -1,6 +1,6 @@
 @import "@nayan-ui/react/styles.css";
 
-@source '../../../node_modules/@nayan-ui/react/dist';
+@source '../../../../../node_modules/@nayan-ui/react/dist';
 
 /*
  * Tailwind's automatic content detection doesn't reach this directory when
