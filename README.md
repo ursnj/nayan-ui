@@ -39,7 +39,7 @@ its tarball for the website, which uses the published npm version of the engine.
 Install just the engine dependencies from a clean checkout:
 
 ```sh
-bun install --frozen-lockfile --filter @nayan-ui/engine
+bun install --frozen-lockfile --filter @nayan-ui/engine --linker hoisted
 ```
 
 The [engine workflow](./.github/workflows/engine.yml) runs on engine changes pushed to

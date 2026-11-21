@@ -2777,10 +2777,12 @@ examples live beside their implementations. `shared/android`, `shared/ios`, and
 SDK build, packaging, and codegen tools live under `scripts/`.
 
 From the Nayan UI repository root, install the engine dependencies and use the
-workspace scripts below. The filtered install works in a public checkout.
+workspace scripts below. The filtered install works in a public checkout. Its
+hoisted workspace link lets the generated icon modules resolve the package's
+platform-specific exports during bundle tests.
 
 ```sh
-bun install --frozen-lockfile --filter @nayan-ui/engine
+bun install --frozen-lockfile --filter @nayan-ui/engine --linker hoisted
 bun run engine:typecheck
 bun run engine:test
 bun run engine:test:integration

@@ -2,6 +2,7 @@ import {
   createElement,
   type CSSProperties,
   type PointerEvent,
+  type ReactElement,
   type Ref,
   useCallback,
   useEffect,
@@ -393,7 +394,7 @@ export function IconHost({
   accessibilityLabel,
   strokeWidth,
   fillRule
-}: IconHostProps) {
+}: IconHostProps): ReactElement {
   const label = accessibilityLabel ?? (onPress ? name : undefined);
   const shared = {
     id,

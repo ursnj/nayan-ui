@@ -10,7 +10,7 @@ mock.module('react-native', () => ({
   Image: { resolveAssetSource: () => null }
 }));
 const payloads = new Map<string, Uint8Array>([
-  ['model.glb', new Uint8Array(await readFile(new URL('../../../../../games/src/assets/models/explorer/explorer.glb', import.meta.url)))],
+  ['model.glb', new Uint8Array(await readFile(new URL('../../../../native/tests/fixtures/animated-triangle.glb', import.meta.url)))],
   ['image.png', new Uint8Array(await readFile(new URL('./share.png', import.meta.url)))],
   ['font.ttf', new Uint8Array(await readFile(new URL('../../../../native/core/tests/fixtures/Inter-Bold.ttf', import.meta.url)))]
 ]);

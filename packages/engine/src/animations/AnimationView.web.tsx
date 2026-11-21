@@ -1,7 +1,7 @@
 'use client';
 
 import { reducedMotionQuery } from '../native/reducedMotion.web';
-import { type ComponentPropsWithoutRef, createElement, type Ref, useRef } from 'react';
+import { type ComponentPropsWithoutRef, createElement, type ReactElement, type Ref, useRef } from 'react';
 import { browserSpring } from './spring';
 import {
   angleKeys,
@@ -60,7 +60,7 @@ function styleValue(key: keyof ViewAnimationValues, value: number): string {
   return String(value);
 }
 
-export function AnimationView({ ref, initial, animatedStyle, style, ...props }: AnimationViewProps) {
+export function AnimationView({ ref, initial, animatedStyle, style, ...props }: AnimationViewProps): ReactElement {
   const element = useRef<HTMLDivElement>(null);
   const reducedMotion = () => !!element.current?.ownerDocument.defaultView?.matchMedia?.(reducedMotionQuery).matches;
   const initialStyle = useRef<React.CSSProperties | null>(null);
