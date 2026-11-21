@@ -24,7 +24,7 @@ on:
         default: false
 
 # npm trusted publishing: each job exchanges a GitHub OIDC token for a short-lived npm token,
-# so no NPM token secret is stored. @nayan-ui/engine is published from the playtura repo.
+# so no NPM token secret is stored. The engine has a separate build and pack workflow.
 permissions:
   contents: read
   id-token: write

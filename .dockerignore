@@ -5,6 +5,9 @@ node_modules
 # Build output is produced inside the image; copying a local one in risks
 # baking a stale bundle.
 **/dist
+packages/engine/lib
+packages/engine/native/core/build
+packages/engine/native/core/target
 .git
 .gitignore
 README.md

@@ -1,0 +1,4 @@
+# Keep local Gradle and CMake output out of the published engine package.
+build/
+.gradle/
+.cxx/

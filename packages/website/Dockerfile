@@ -12,6 +12,7 @@ COPY packages/cli/package.json ./packages/cli/package.json
 COPY packages/react/package.json ./packages/react/package.json
 COPY packages/native/package.json ./packages/native/package.json
 COPY packages/native/example/package.json ./packages/native/example/package.json
+COPY packages/engine/package.json ./packages/engine/package.json
 COPY packages/website/package.json ./packages/website/package.json
 # @nayan-ui/games tarball, built from playtura by the docker-publish workflow
 COPY packages/website/scripts/nayan-ui-games.tgz ./packages/website/scripts/nayan-ui-games.tgz

@@ -25,12 +25,28 @@ Reusable component libraries for React and React Native, a game engine with free
 | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
 | [@nayan-ui/react](./packages/react)                              | [![npm](https://badge.fury.io/js/@nayan-ui%2Freact.svg)](https://www.npmjs.com/package/@nayan-ui/react)   | React component library built on HeroUI + Tailwind CSS v4       |
 | [@nayan-ui/native](./packages/native)                            | [![npm](https://badge.fury.io/js/@nayan-ui%2Fnative.svg)](https://www.npmjs.com/package/@nayan-ui/native) | React Native component library built on HeroUI Native + Uniwind |
-| [@nayan-ui/engine](https://www.npmjs.com/package/@nayan-ui/engine) | [![npm](https://badge.fury.io/js/@nayan-ui%2Fengine.svg)](https://www.npmjs.com/package/@nayan-ui/engine) | Game engine for React Native and web                          |
+| [@nayan-ui/engine](./packages/engine)                            | [![npm](https://badge.fury.io/js/@nayan-ui%2Fengine.svg)](https://www.npmjs.com/package/@nayan-ui/engine) | Game engine for React Native and web                          |
 | @nayan-ui/games                                                  | Private                                                                                                   | Games built on the Nayan engine (private, not published to npm) |
 | [@nayan-ui/cli](./packages/cli)                                  | [![npm](https://badge.fury.io/js/@nayan-ui%2Fcli.svg)](https://www.npmjs.com/package/@nayan-ui/cli)       | CLI for project scaffolding, sitemap & robots.txt generation    |
 | [@nayan-ui/ai](./packages/ai)                                    | [![npm](https://badge.fury.io/js/@nayan-ui%2Fai.svg)](https://www.npmjs.com/package/@nayan-ui/ai)         | AI-powered code reviewer using Codex & Claude Code agents       |
 
-> `@nayan-ui/engine` and `@nayan-ui/games` are developed in a separate repository. `@nayan-ui/games` is a **private package**: it is not published to npm and is bundled into the website as a tarball (`packages/website/scripts/nayan-ui-games.tgz`) by the Docker publish workflow.
+The engine source and SDK documentation live in [packages/engine](./packages/engine).
+The private `@nayan-ui/games` package comes from Playtura. The Docker publish workflow builds
+its tarball for the website, which uses the published npm version of the engine.
+
+## Engine development
+
+Install just the engine dependencies from a clean checkout:
+
+```sh
+bun install --frozen-lockfile --filter @nayan-ui/engine
+```
+
+The [engine workflow](./.github/workflows/engine.yml) runs on engine changes pushed to
+`refactor-nayan-ui` or `main`. It builds iOS, Android and WebAssembly libraries, runs the
+Rust and TypeScript tests, and attaches the checked npm tarball as a workflow artifact.
+See the [engine README](./packages/engine/README.md#development-and-verification) for
+local build prerequisites and commands.
 
 ## Website
 

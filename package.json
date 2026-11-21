@@ -24,7 +24,17 @@
     "website:start": "bun run --filter @nayan-ui/website start",
     "engine:build": "bun run --filter @nayan-ui/engine build",
     "engine:typecheck": "bun run --filter @nayan-ui/engine typecheck",
-    "engine:example": "bun run --filter @nayan-ui/engine example",
+    "engine:test": "bun run --filter @nayan-ui/engine test",
+    "engine:test:integration": "bun run --filter @nayan-ui/engine test:integration",
+    "engine:test:web": "bun run --filter @nayan-ui/engine test:web",
+    "engine:test:coverage": "bun run --filter @nayan-ui/engine test:coverage",
+    "engine:core:test": "bun run --filter @nayan-ui/engine core:test",
+    "engine:core:build": "bun run --filter @nayan-ui/engine core:build",
+    "engine:core:build:ios": "bun run --filter @nayan-ui/engine core:build:ios",
+    "engine:core:build:android": "bun run --filter @nayan-ui/engine core:build:android",
+    "engine:core:build:web": "bun run --filter @nayan-ui/engine core:build:web",
+    "engine:build:web": "bun run --filter @nayan-ui/engine build:web",
+    "engine:codegen": "bun run --filter @nayan-ui/engine codegen",
     "docker:publish": "scripts/docker-publish.sh"
   },
   "devDependencies": {
