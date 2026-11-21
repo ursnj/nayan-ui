@@ -1,46 +1,25 @@
 'use client';
 
 import { useState, type ComponentType, type ReactNode } from 'react';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import * as Engine from '@nayan-ui/engine/components';
-import { BrowserFrame } from '@/design/Primitives';
-import Code from '@/components/helpers/Code';
 import Sidebar from '@/components/helpers/Sidebar';
 import SubHeader from '@/components/helpers/SubHeader';
 import TagsList from '@/components/helpers/TagsList';
 import { getMenuItem } from '@/services/Utils';
-import { componentSource, standaloneExamples } from '@/services/engine/component-examples';
+import { componentSource } from '@/services/engine/component-examples';
 import { findComponentReference } from '@/services/engine/component-reference';
 import { tagsForReference } from '@/services/engine/reference-tags';
-import { SITE_HOST } from '@/services/seo';
 import { familiarExample } from './previews/FamiliarExamples';
 import { hostExample } from './previews/HostExamples';
 import { legacyComponentAlternatives, legacyExample } from './previews/LegacyExamples';
-import type { SpecializedSlug } from './previews/SpecializedExamples';
 import type { ComponentPreview } from './previews/types';
-import PreviewSurface from './previews/PreviewSurface';
-
-const SpecializedExample = dynamic(() => import('./previews/SpecializedExamples'), {
-  ssr: false,
-  loading: () => (
-    <p className="component-host-demo" role="status">
-      Preparing preview…
-    </p>
-  )
-});
-
-const specializedHeights = {
-  'animation-view': 280,
-  'drawing-canvas': 340,
-  'game-view': 300,
-  joystick: 280,
-  'markdown-view': 280,
-  'video-player': 280
-} satisfies Record<SpecializedSlug, number>;
+import LiveExample from '@/components/helpers/LiveExample';
+import { additionalExample } from './previews/AdditionalExamples';
+import { specializedExample } from './previews/SpecializedScenarios';
 
 type Control = keyof typeof Engine;
-type Spec = { control: Control; text?: string; props?: Record<string, unknown>; result?: string; height?: number };
+type Spec = { control: Control; text?: string; props?: Record<string, unknown>; result?: string; height?: number; note?: string };
 
 const items = [
   { value: 'beginner', label: 'Beginner' },
@@ -54,7 +33,11 @@ const examples: Record<string, Spec> = {
   'close-button': { control: 'NCloseButton', props: { accessibilityLabel: 'Close panel' }, result: 'Panel closed.' },
   code: { control: 'NCode', props: { code: 'bun add @nayan-ui/engine' } },
   'date-picker': { control: 'NDatePicker', props: { label: 'Date' }, height: 380 },
-  icon: { control: 'NIcon', props: { paths: 'M4 12l5 5L20 6', strokeWidth: 2, size: 32 } },
+  icon: {
+    control: 'NIcon',
+    props: { name: 'circle-check', size: 32 },
+    note: 'Pass a built-in icon name. For the full Lucide catalog, import NIcon from @nayan-ui/engine/icons/catalog.'
+  },
   image: { control: 'NImage', props: { src: '/logo.webp', alt: 'Nayan Engine', width: 96, height: 68 } },
   'input-otp': { control: 'NInputOtp', props: { label: 'Verification code', maxLength: 6, keyboardType: 'number-pad', placeholder: '000000' } },
   kbd: { control: 'NKbd', text: 'Enter' },
@@ -94,17 +77,9 @@ export function componentPreview(slug: string): ComponentPreview | undefined {
   const preview = familiarExample(slug) ?? hostExample(slug) ?? legacyExample(slug);
   if (preview) return preview;
 
-  if (Object.hasOwn(specializedHeights, slug)) {
-    const specialized = slug as SpecializedSlug;
-    const { code, note } = standaloneExamples[specialized]!;
-    return {
-      source: code,
-      note,
-      render: <SpecializedExample slug={specialized} />,
-      height: specializedHeights[specialized],
-      host: true
-    };
-  }
+  const media = specializedExample(slug);
+  if (media) return media;
+
   if (slug === 'carousel') {
     return {
       height: 244,
@@ -229,9 +204,11 @@ export function componentPreview(slug: string): ComponentPreview | undefined {
     source: componentSource(
       spec.result ? `${spec.control}, NText` : spec.control,
       `<${spec.control}${attrs}${trigger}${child}${feedback}`,
-      spec.result ? 'const [pressed, setPressed] = useState(false);' : undefined
+      spec.result ? 'const [pressed, setPressed] = useState(false);' : undefined,
+      Math.max(280, spec.height ?? 0)
     ),
     render: spec.result ? <ActionPreview control={Control} spec={spec} /> : <Control {...spec.props}>{spec.text}</Control>,
+    note: spec.note,
     height: spec.height
   };
 }
@@ -299,18 +276,17 @@ export function EngineComponentExample({ slug, path = `/${slug}` }: { slug: stri
   const preview = componentPreview(slug);
   if (!preview) return null;
 
+  const basic = { title: 'Overview', ...preview };
+  const additional = additionalExample(slug);
   return (
-    <>
-      <SubHeader title="Live example">
-        <BrowserFrame label={`${SITE_HOST}${path}`} compact padded={false} className="component-preview-frame">
-          <div className="docs-live-preview workbench-grid" data-component-preview={slug}>
-            <PreviewSurface key={slug} preview={preview} />
-          </div>
-        </BrowserFrame>
-      </SubHeader>
-      <SubHeader title="Usage" description={preview.note}>
-        <Code code={preview.source} filename="Example.tsx" />
-      </SubHeader>
-    </>
+    <SubHeader title="Live examples" id="live-example">
+      <LiveExample
+        key={path}
+
+        codeAnchor="usage"
+        previewId={slug}
+        examples={additional ? [basic, additional] : [basic]}
+      />
+    </SubHeader>
   );
 }

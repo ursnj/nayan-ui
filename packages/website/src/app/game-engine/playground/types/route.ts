@@ -36,6 +36,17 @@ export async function GET() {
     path: "file:///node_modules/@nayan-ui/engine/index.d.ts",
     content: 'export * from "./lib/web/types/src/index";\n',
   });
+  // The same editor also runs the focused imports used in component reference examples.
+  for (const entry of ["components", "animations", "drawing", "games", "markdown", "video"]) {
+    libs.push({
+      path: `file:///node_modules/@nayan-ui/engine/${entry}.d.ts`,
+      content: `export * from "./lib/web/types/src/${entry}/index";\n`,
+    });
+  }
+  libs.push({
+    path: "file:///node_modules/@nayan-ui/engine/icons/catalog.d.ts",
+    content: 'export * from "../lib/web/types/src/components/icons/index";\n',
+  });
 
   const react = packageDir("@types/react");
   for (const name of ["index.d.ts", "global.d.ts", "jsx-runtime.d.ts"])

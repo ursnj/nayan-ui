@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Component, type ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as jsxRuntime from "react/jsx-runtime";
 import * as engine from "@nayan-ui/engine";
 import { BookOpen, Check, Play, RotateCcw, Share2 } from "@/design/Icons";
@@ -9,6 +9,8 @@ import Link from "next/link";
 import { NSelect } from "@/components/ui";
 import CodeEditor from "./CodeEditor";
 import { createCompiler } from "./compiler";
+import { evaluateExample } from "./evaluate";
+import PreviewBoundary from "./PreviewBoundary";
 import { PLAYGROUND_CATEGORIES, PLAYGROUND_EXAMPLES } from "./examples";
 
 type Log = { level: "error" | "warn" | "log"; text: string };
@@ -77,29 +79,6 @@ function initialCode() {
   return PLAYGROUND_EXAMPLES[0]!.code;
 }
 
-/** Catches render errors in the user's component, so a bug shows in the panel instead of breaking the page. */
-class Boundary extends Component<
-  { onError: (error: Error) => void; children: ReactNode },
-  { error: Error | null }
-> {
-  state = { error: null as Error | null };
-  static getDerivedStateFromError(error: Error) {
-    return { error };
-  }
-  componentDidCatch(error: Error) {
-    this.props.onError(error);
-  }
-  render() {
-    return this.state.error ? (
-      <p className="m-auto max-w-md p-6 text-center text-sm text-red-500">
-        {this.state.error.message}
-      </p>
-    ) : (
-      this.props.children
-    );
-  }
-}
-
 export default function Playground() {
   const [startingCode] = useState(initialCode);
   const [code, setCode] = useState(startingCode);
@@ -129,27 +108,15 @@ export default function Playground() {
     try {
       const js = await currentCompiler.compile(source);
       if (compiler.current !== currentCompiler || request !== runRequest.current) return;
-      const module = { exports: {} as Record<string, unknown> };
-      const require = (name: string) => {
-        if (name in MODULES) return MODULES[name];
-        throw new Error(`Only "@nayan-ui/engine" and "react" can be imported here, not "${name}".`);
-      };
-      const console = {
+      const output = {
+        ...console,
         log: (...args: unknown[]) => log("log", ...args),
         info: (...args: unknown[]) => log("log", ...args),
         warn: (...args: unknown[]) => log("warn", ...args),
         error: (...args: unknown[]) => log("error", ...args),
       };
-      new Function("require", "module", "exports", "console", js)(
-        require,
-        module,
-        module.exports,
-        console,
-      );
-      const component = module.exports.default;
-      if (typeof component !== "function")
-        throw new Error("Export a React component as the default export.");
-      setPreview(() => component as React.ComponentType);
+      const component = evaluateExample(js, MODULES, output);
+      setPreview(() => component);
       setRun((value) => value + 1);
     } catch (error) {
       if (compiler.current !== currentCompiler || request !== runRequest.current) return;
@@ -347,11 +314,11 @@ export default function Playground() {
             )}
             <div className="relative flex min-h-0 flex-1 bg-slate-900">
               {Preview ? (
-                <Boundary key={run} onError={(error) => log("error", error)}>
+                <PreviewBoundary key={run} onError={(error) => log("error", error)}>
                   <div className="flex flex-1">
                     <Preview />
                   </div>
-                </Boundary>
+                </PreviewBoundary>
               ) : (
                 <p className="m-auto text-sm text-slate-400">
                   {ready ? "Run the code to see it here." : "Loading the editor…"}

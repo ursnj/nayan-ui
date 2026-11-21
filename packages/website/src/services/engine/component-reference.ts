@@ -22,7 +22,7 @@ const components = [
   ['divider', 'Divider', 'NDivider', 'Separate groups of content with a rule.'],
   ['drawer', 'Drawer', 'NDrawer', 'Reveal a panel from the edge of a screen.'],
   ['empty-state', 'Empty State', 'NEmptyState', 'Explain an empty list or a search with no results.'],
-  ['icon', 'Icon', 'NIcon', 'Render an engine icon at a chosen size.'],
+  ['icon', 'Icon', 'NIcon', 'Render an icon by name at a chosen size.'],
   ['image', 'Image', 'NImage', 'Render a local or remote image with a text alternative.'],
   ['input', 'Input', 'NInput', 'Collect a single line of text.'],
   ['input-otp', 'OTP Input', 'NInputOtp', 'Collect a short verification code.'],

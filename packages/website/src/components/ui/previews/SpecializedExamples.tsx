@@ -8,7 +8,7 @@ import { GameView, Joystick, useJoystick, useWorld, warmUpEngine, type Camera, t
 import { NMarkdown } from '@nayan-ui/engine/markdown';
 import { VideoPlayer } from '@nayan-ui/engine/video';
 
-function AnimationDemo() {
+function AnimationDemo({ alternate }: DemoProps) {
   const opacity = useSharedValue(1);
   const style = useAnimatedStyle({ opacity });
   const [faded, setFaded] = useState(false);
@@ -20,7 +20,7 @@ function AnimationDemo() {
       <NButton
         className="component-host-button"
         onPress={() => {
-          opacity.value = withTiming(faded ? 1 : 0.4);
+          opacity.value = withTiming(faded ? 1 : 0.4, { duration: alternate ? 1000 : 250 });
           setFaded(!faded);
         }}
       >
@@ -30,7 +30,7 @@ function AnimationDemo() {
   );
 }
 
-function DrawingDemo() {
+function DrawingDemo({ alternate }: DemoProps) {
   const [document, setDocument] = useState<DrawingDocument>();
   const [error, setError] = useState('');
   useEffect(() => {
@@ -40,7 +40,7 @@ function DrawingDemo() {
       .then(() => {
         if (!active) return;
         drawing = new DrawingDocument(320, 240);
-        drawing.setBrush({ brushType: 'MARKER', color: '#1864e8', width: 8, opacity: 1 });
+        drawing.setBrush({ brushType: 'MARKER', color: alternate ? '#bf2786' : '#1864e8', width: alternate ? 16 : 8, opacity: 1 });
         setDocument(drawing);
       })
       .catch((cause: unknown) => {
@@ -50,7 +50,7 @@ function DrawingDemo() {
       active = false;
       drawing?.dispose();
     };
-  }, []);
+  }, [alternate]);
   if (error)
     return (
       <p role="status" className="component-host-demo">
@@ -71,9 +71,9 @@ function DrawingDemo() {
   );
 }
 
-function GameViewDemo() {
+function GameViewDemo({ alternate: perspective }: DemoProps) {
   const cube = useRef<Entity | null>(null);
-  const camera: Camera = { eye: [3, 2, 4], target: [0, 0, 0], fov: 0.65, ortho: 1.25 };
+  const camera: Camera = { eye: [3, 2, 4], target: [0, 0, 0], fov: 0.65, ortho: perspective ? undefined : 1.25 };
   const [alternate, setAlternate] = useState(false);
   const [error, setError] = useState('');
   const world = useWorld(
@@ -110,7 +110,7 @@ function GameViewDemo() {
   );
 }
 
-function JoystickDemo() {
+function JoystickDemo({ alternate }: DemoProps) {
   const stick = useJoystick();
   const [position, setPosition] = useState('0.00, 0.00');
   useEffect(() => {
@@ -124,7 +124,7 @@ function JoystickDemo() {
   }, [stick]);
   return (
     <div className="component-host-demo component-joystick-demo">
-      <Joystick state={stick} size={120} />
+      <Joystick state={stick} size={alternate ? 84 : 120} style={{ background: '#2e1853', borderColor: '#8655d8' }} />
       <NText tag="p">X, Y: {position}</NText>
     </div>
   );
@@ -133,26 +133,30 @@ function JoystickDemo() {
 const markdown =
   '## Release notes\n\nThis preview renders **Markdown** with engine components.\n\n- Interfaces for the web and native\n- Inline code like `useWorld`';
 
-function MarkdownDemo() {
+function MarkdownDemo({ alternate }: DemoProps) {
   return (
     <NPage className="p-4">
-      <NMarkdown source={markdown} blockSpacing={12} />
+      <NMarkdown source={alternate ? markdownTaskList : markdown} blockSpacing={12} />
     </NPage>
   );
 }
 
-function VideoDemo() {
+function VideoDemo({ alternate }: DemoProps) {
   return (
     <VideoPlayer
       source="/engine-ui/reference-orbit.mp4"
       controls
       muted
       accessibilityLabel="Orbit sample clip"
-      contentFit="contain"
+      loop={alternate}
+      contentFit={alternate ? 'cover' : 'contain'}
       style={{ width: '100%', height: '100%', backgroundColor: '#171e31' }}
     />
   );
 }
+
+export const markdownTaskList = '## Launch notes\n\n> Ship small, test often.\n\n1. Build the app\n2. Review the release\n3. Publish';
+type DemoProps = { alternate?: boolean };
 
 const demos = {
   'animation-view': AnimationDemo,
@@ -161,11 +165,11 @@ const demos = {
   joystick: JoystickDemo,
   'markdown-view': MarkdownDemo,
   'video-player': VideoDemo
-} satisfies Record<string, ComponentType>;
+} satisfies Record<string, ComponentType<DemoProps>>;
 
 export type SpecializedSlug = keyof typeof demos;
 
-export default function SpecializedExamples({ slug }: { slug: SpecializedSlug }) {
+export default function SpecializedExamples({ slug, alternate }: DemoProps & { slug: SpecializedSlug }) {
   const Demo = demos[slug];
-  return <Demo />;
+  return <Demo alternate={alternate} />;
 }

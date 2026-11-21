@@ -5,6 +5,7 @@ import ts from 'typescript';
 import * as engineComponents from '@nayan-ui/engine/components';
 import enginePackage from '@nayan-ui/engine/package.json';
 import { componentPreview } from '@/components/ui/EngineComponentDoc';
+import { additionalExample } from '@/components/ui/previews/AdditionalExamples';
 import { legacyComponentAlternatives } from '@/components/ui/previews/LegacyExamples';
 import { componentReferences } from './component-reference';
 import { moduleReferences } from './module-reference';
@@ -29,6 +30,15 @@ test('the Code preview and its example pass the command to the engine renderer',
   expect(preview?.source).toContain('code={"bun add @nayan-ui/engine"}');
 });
 
+test('the Icon previews use named icons in their live views and editable examples', () => {
+  const preview = componentPreview('icon');
+  expect(preview?.render).toMatchObject({ props: { name: 'circle-check' } });
+  for (const example of [preview, additionalExample('icon')]) {
+    expect(example?.source).toContain('<NIcon name={"circle-check"}');
+    expect(example?.source).not.toContain('paths=');
+  }
+});
+
 test('each reference entry has valid example code for the built engine package', () => {
   const examples: [string, string][] = [];
   for (const { slug, symbol } of componentReferences) {
@@ -36,6 +46,11 @@ test('each reference entry has valid example code for the built engine package',
     expect(preview?.render, slug).toBeTruthy();
     expect(preview?.source, slug).toContain(symbol);
     examples.push([`${slug}.tsx`, preview!.source]);
+    const additional = additionalExample(slug);
+    expect(additional?.render, slug).toBeTruthy();
+    expect(additional?.source, slug).toContain(symbol);
+    expect(additional?.source, slug).not.toBe(preview!.source);
+    examples.push([`${slug}-additional.tsx`, additional!.source]);
   }
   for (const [slug, alternative] of Object.entries(legacyComponentAlternatives)) {
     const preview = componentPreview(slug);
@@ -46,6 +61,10 @@ test('each reference entry has valid example code for the built engine package',
     expect(preview?.render, slug).toBeTruthy();
     expect(preview?.source, slug).toContain('@nayan-ui/engine/components');
     examples.push([`legacy-${slug}.tsx`, preview!.source]);
+    const additional = additionalExample(slug);
+    expect(additional?.render, slug).toBeTruthy();
+    expect(additional?.source, slug).not.toBe(preview!.source);
+    examples.push([`legacy-${slug}-additional.tsx`, additional!.source]);
   }
   for (const { entry, slug, code, filename } of moduleReferences) {
     if (!entry.includes('*') && entry !== './app.plugin.js') expect(code, slug).toContain(`@nayan-ui/engine/${entry.slice(2)}`);

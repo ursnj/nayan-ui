@@ -21,6 +21,7 @@ import {
   NTheme,
   NView
 } from '@nayan-ui/engine/components';
+import { SearchIcon } from '@nayan-ui/engine/icons/components/search';
 import { componentSource } from '@/services/engine/component-examples';
 import { AccordionRows, DisclosureRow } from './DisclosureExamples';
 import { RadioOption, RadioOptions } from './RadioExamples';
@@ -66,13 +67,12 @@ function Buttons() {
 }
 
 const alerts = [
-  { title: 'Default', type: 'default', tone: 'text-muted', icon: 'M12 8v4m0 4h.01' },
-  { title: 'Info', type: 'info', tone: 'text-accent', icon: 'M12 11v5m0-8h.01' },
-  { title: 'Success', type: 'success', tone: 'text-success', icon: 'M8 12 2.5 2.5L16 9' },
-  { title: 'Warning', type: 'warning', tone: 'text-warning', icon: 'M12 7v6m0 4h.01' },
-  { title: 'Error', type: 'error', tone: 'text-danger', icon: 'M9 9 6 6m0-6-6 6' }
+  { title: 'Default', type: 'default', tone: 'text-muted', icon: 'info' },
+  { title: 'Info', type: 'info', tone: 'text-accent', icon: 'info' },
+  { title: 'Success', type: 'success', tone: 'text-success', icon: 'circle-check' },
+  { title: 'Warning', type: 'warning', tone: 'text-warning', icon: 'triangle-alert' },
+  { title: 'Error', type: 'error', tone: 'text-danger', icon: 'circle-x' }
 ];
-const outlineIcon = 'M21 12a9 9 0 1 0-18 0 9 9 0 0 0 18 0Z';
 
 function Alerts() {
   const [dismissed, setDismissed] = useState<string[]>([]);
@@ -82,7 +82,7 @@ function Alerts() {
         .filter(({ type }) => !dismissed.includes(type))
         .map(({ title, type, tone, icon }) => (
           <NAlert key={type} type={type} className="flex w-full flex-row items-center gap-3 rounded-xl border border-border bg-surface px-3 py-2">
-            <NIcon paths={`${outlineIcon} ${icon}`} className={tone} size={21} strokeWidth={1.8} />
+            <NIcon name={icon} className={tone} size={21} strokeWidth={1.8} />
             <NView className="flex min-w-0 flex-1 flex-col gap-1">
               <NText tag="p" className="text-sm font-semibold">
                 {title}
@@ -272,7 +272,7 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
       'NAlert, NButton, NIcon, NText',
       `{alerts.filter(({ type }) => !dismissed.includes(type)).map(({ title, type, tone, icon }) => (
             <NAlert key={type} type={type} className="flex w-full flex-row items-center gap-3 rounded-xl border border-border bg-surface px-3 py-2">
-              <NIcon paths={\`\${outlineIcon} \${icon}\`} className={tone} size={21} strokeWidth={1.8} />
+              <NIcon name={icon} className={tone} size={21} strokeWidth={1.8} />
               <NView className="flex min-w-0 flex-1 flex-col gap-1">
                 <NText className="text-sm font-semibold">{title}</NText>
                 <NText className="text-sm text-muted">New version available!</NText>
@@ -282,8 +282,7 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
             </NAlert>
           ))}
           {dismissed.length > 0 && <NButton isOutline onPress={() => setDismissed([])}>Restore alerts</NButton>}`,
-      `const outlineIcon = ${JSON.stringify(outlineIcon)};
-  const alerts = ${JSON.stringify(alerts, null, 2)};
+      `const alerts = ${JSON.stringify(alerts, null, 2)};
   const [dismissed, setDismissed] = useState<string[]>([]);`
     )
   },
@@ -364,7 +363,7 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
     render: (
       <NEmptyState className="flex w-full flex-col items-center gap-2 rounded-xl border border-border bg-surface p-5">
         <NView className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/15">
-          <NIcon size={20} strokeWidth={2} className="text-accent" paths="M21 21l-5-5M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />
+          <SearchIcon size={20} className="text-accent" />
         </NView>
         <NText tag="p" className="font-semibold">
           No results

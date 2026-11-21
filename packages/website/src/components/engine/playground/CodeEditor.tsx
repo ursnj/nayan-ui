@@ -3,13 +3,14 @@ import { CodeText } from '@/components/helpers/Code';
 import type { Completion } from './compiler';
 
 interface Props {
+  label?: string;
   code: string;
   onChange: (code: string) => void;
   onRun: (code: string) => void;
   onComplete: (code: string, position: number) => Promise<Completion[]>;
 }
 
-export default function CodeEditor({ code, onChange, onRun, onComplete }: Props) {
+export default function CodeEditor({ label = 'Playground source code', code, onChange, onRun, onComplete }: Props) {
   const input = useRef<HTMLTextAreaElement>(null);
   const highlight = useRef<HTMLPreElement>(null);
   const sequence = useRef(0);
@@ -79,7 +80,7 @@ export default function CodeEditor({ code, onChange, onRun, onComplete }: Props)
       </pre>
       <textarea
         ref={input}
-        aria-label="Playground source code"
+        aria-label={label}
         aria-autocomplete="list"
         aria-controls={active ? listId : undefined}
         aria-activedescendant={active ? `${listId}-${active.index}` : undefined}

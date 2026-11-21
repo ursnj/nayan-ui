@@ -1,7 +1,8 @@
 'use client';
 
 import { useId } from 'react';
-import { NDisclosure, NIcon, NText, NView } from '@nayan-ui/engine/components';
+import { NDisclosure, NText, NView } from '@nayan-ui/engine/components';
+import { ChevronDownIcon } from '@nayan-ui/engine/icons/components/chevron-down';
 
 const questions = [
   { title: 'What is Nayan UI?', text: 'Nayan Engine provides UI components, games and tools for React and React Native.' },
@@ -14,7 +15,7 @@ function Item({ title, text, group }: { title: string; text: string; group?: str
     <NDisclosure name={group} className="component-disclosure">
       <NText tag="summary" className="component-disclosure-trigger">
         {title}
-        <NIcon paths="m6 9 6 6 6-6" size={16} strokeWidth={2} />
+        <ChevronDownIcon size={16} />
       </NText>
       <NText tag="p" className="component-disclosure-body">
         {text}

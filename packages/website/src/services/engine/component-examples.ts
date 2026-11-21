@@ -1,4 +1,4 @@
-export function componentSource(imports: string, body: string, state = '') {
+export function componentSource(imports: string, body: string, state = '', height = 280) {
   const names = [...new Set([...imports.split(', '), 'NPage', 'NTheme', 'NView'])].join(', ');
   return `'use client';
 
@@ -7,7 +7,7 @@ ${state ? "import { useState } from 'react';\n" : ''}
 export default function Example() {
 ${state ? `  ${state}\n` : ''}  return (
     <NTheme defaultTheme="system">
-      <NView style={{ height: 280, display: 'flex', flexDirection: 'column' }}>
+      <NView style={{ height: ${height}, display: 'flex', flexDirection: 'column' }}>
         <NPage className="gap-3 p-5">
           ${body}
         </NPage>
@@ -180,11 +180,32 @@ export default function Example() {
   },
   joystick: {
     note: 'Read the mutable stick coordinates inside the game loop. Both axes range from −1 to 1.',
-    code: `import { Joystick, useJoystick } from '@nayan-ui/engine/games';
+    code: `'use client';
+
+import { useEffect, useState } from 'react';
+import { Joystick, useJoystick } from '@nayan-ui/engine/games';
+import { NText, NView } from '@nayan-ui/engine/components';
 
 export default function Controls() {
   const stick = useJoystick();
-  return <Joystick state={stick} size={120} />;
+  const [position, setPosition] = useState('0.00, 0.00');
+
+  useEffect(() => {
+    let frame: number;
+    function sample() {
+      setPosition(stick.x.toFixed(2) + ', ' + stick.y.toFixed(2));
+      frame = requestAnimationFrame(sample);
+    }
+    frame = requestAnimationFrame(sample);
+    return () => cancelAnimationFrame(frame);
+  }, [stick]);
+
+  return (
+    <NView style={{ padding: 16, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 12 }}>
+      <Joystick state={stick} size={120} style={{ background: '#2e1853', borderColor: '#8655d8' }} />
+      <NText tag="p">X, Y: {position}</NText>
+    </NView>
+  );
 }`
   },
   keyboard: {

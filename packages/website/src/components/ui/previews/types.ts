@@ -8,3 +8,7 @@ export interface ComponentPreview {
   styled?: boolean;
   note?: string;
 }
+
+export interface NamedComponentPreview extends ComponentPreview {
+  title: string;
+}
