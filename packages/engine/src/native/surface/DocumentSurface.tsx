@@ -4,7 +4,7 @@ import { EngineSurface } from './EngineSurface';
 import type { DocumentSurfaceProps } from './types';
 
 /** Native coalesced finger/Pencil/stylus input, with pinch zoom and pan, bypasses the JS thread. */
-function renderDocumentSurface<Change>({
+function DocumentSurfaceView<Change>({
   document,
   mode = 'draw',
   background = '#ffffff',
@@ -37,4 +37,4 @@ function renderDocumentSurface<Change>({
   );
 }
 
-export const DocumentSurface = memo(renderDocumentSurface) as typeof renderDocumentSurface;
+export const DocumentSurface = memo(DocumentSurfaceView) as typeof DocumentSurfaceView;

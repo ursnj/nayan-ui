@@ -10,7 +10,9 @@
     "sitemap:generate": "bun scripts/sync-sitemap.ts",
     "sitemap:check": "bun scripts/sync-sitemap.ts --check",
     "styles": "bun run engine:prepare && bun scripts/compile-component-styles.ts",
-    "engine:prepare": "test -f ../engine/lib/web/styles/index.js || bun run --cwd ../engine build:web"
+    "engine:prepare": "test -f ../engine/lib/web/styles/index.js || bun run --cwd ../engine build:web",
+    "typecheck": "bun run styles && bun check",
+    "test": "bun test scripts src"
   },
   "dependencies": {
     "@heroui/react": "^3.2.6",
@@ -38,6 +40,7 @@
   "devDependencies": {
     "@napi-rs/image": "1.16.0",
     "@tailwindcss/postcss": "^4",
+    "@types/bun": "^1.4.4",
     "@types/node": "^20",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^19",

@@ -43,7 +43,7 @@ export default function LogoAnimationPage() {
           React app. Each example includes its geometry, animation loop, and engine setup. Render
           the component inside a container with a fixed height.
         </p>
-        <Code code="npm install @nayan-ui/engine" language="bash" filename="Terminal" />
+        <Code code="bun add @nayan-ui/engine" language="bash" filename="Terminal" />
         <p className="text-sm text-muted">
           Learn more about{" "}
           <Link

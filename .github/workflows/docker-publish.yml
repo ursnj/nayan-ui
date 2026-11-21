@@ -20,7 +20,11 @@ jobs:
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version-file: .playtura/.bun-version
+          bun-version-file: .bun-version
+
+      - name: Read Docker Bun version
+        id: runtime
+        run: printf 'bun=%s\n' "$(tr -d '[:space:]' < .bun-version)" >> "$GITHUB_OUTPUT"
 
       - name: Set up Node.js
         uses: actions/setup-node@v5
@@ -38,7 +42,7 @@ jobs:
       - name: Use published @nayan-ui/engine build
         working-directory: .playtura/packages/engine
         run: |
-          version="$(node -p "require('./package.json').version")"
+          version="$(bun -p "require('./package.json').version")"
           npm pack "@nayan-ui/engine@$version" --pack-destination "$RUNNER_TEMP"
           tar -xzf "$RUNNER_TEMP/nayan-ui-engine-$version.tgz" -C "$RUNNER_TEMP"
           rm -rf lib
@@ -75,6 +79,7 @@ jobs:
           context: .
           file: packages/website/Dockerfile
           platforms: linux/amd64
+          build-args: BUN_VERSION=${{ steps.runtime.outputs.bun }}
           push: true
           tags: ursnj/nayanui:latest
           cache-from: type=gha

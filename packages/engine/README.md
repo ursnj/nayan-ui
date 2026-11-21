@@ -41,7 +41,7 @@ adapters for text editing, accessibility, permissions and OS services.
 ## Install
 
 ```sh
-npm install @nayan-ui/engine
+bun add @nayan-ui/engine
 ```
 
 Peer dependencies: `react`, plus `react-native` for native apps. Rust UI surfaces also
@@ -69,7 +69,7 @@ Bundled files load through the engine; no Expo asset or font peer is required.
    }
    ```
 
-3. Make a development build with `npx expo run:ios` or `npx expo run:android`, or use EAS. The default setup uses the prebuilt libraries. Explicit feature profiles need Rust on the build host.
+3. Make a development build with `bunx expo run:ios` or `bunx expo run:android`, or use EAS. The default setup uses the prebuilt libraries. Explicit feature profiles need Rust on the build host.
 
 Bare React Native apps autolink the same way: run `pod install` in `ios/` and set `minSdkVersion` 26 in Gradle.
 
@@ -231,7 +231,7 @@ UUIDs use Web Crypto. Cargo enables `components` for `markdown`, `audio` for
 }
 ```
 
-Run `npx expo prebuild` and then `npx expo run:ios` or `npx expo run:android`.
+Run `bunx expo prebuild` and then `bunx expo run:ios` or `bunx expo run:android`.
 Cargo runs from the native build using Rust and the platform SDK. Include `image-picker` in an
 explicit feature list to enable the picker and its camera configuration.
 Include `video` to enable native `VideoPlayer` playback and Android Media3.
@@ -2760,7 +2760,7 @@ The repository's publish checks verify the actual npm inventory. Run the same
 check from `packages/engine` after building the distribution.
 
 ```sh
-npm pack --ignore-scripts --dry-run --json | node scripts/check-package.mjs --pack-json
+npm pack --ignore-scripts --dry-run --json | bun scripts/check-package.mjs --pack-json
 ```
 
 ## Development and verification
@@ -2782,7 +2782,7 @@ hoisted workspace link lets the generated icon modules resolve the package's
 platform-specific exports during bundle tests.
 
 ```sh
-bun install --frozen-lockfile --filter @nayan-ui/engine --linker hoisted
+bun install --frozen-lockfile --filter @nayan-ui/engine
 bun run engine:typecheck
 bun run engine:test
 bun run engine:test:integration

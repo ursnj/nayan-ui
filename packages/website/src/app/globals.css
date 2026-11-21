@@ -1,7 +1,7 @@
 @import "@nayan-ui/react/styles.css";
 @import "./engine-theme.css";
 
-@source '../../node_modules/@nayan-ui/react/src';
+@source '../../../../node_modules/@nayan-ui/react/src';
 
 body {
   color: var(--foreground);

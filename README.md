@@ -33,7 +33,7 @@ its tarball for the website, which builds and uses the engine from this workspac
 Install just the engine dependencies from a clean checkout:
 
 ```sh
-bun install --frozen-lockfile --filter @nayan-ui/engine --linker hoisted
+bun install --frozen-lockfile --filter @nayan-ui/engine
 ```
 
 The [engine workflow](./.github/workflows/npm-publish.yml) runs on engine changes pushed to
@@ -59,18 +59,15 @@ The website dev and production commands build the browser engine when needed and
 | Example | Description |
 | --- | --- |
 | [packages/example](./packages/example) | Interactive web and mobile examples for the local engine |
-| [examples/games](./examples/games) | Nayan Game Engine games for Expo and Vite |
-| [examples/vite](./examples/vite) | Vite example using the published React library |
-| [examples/nextjs](./examples/nextjs) | Next.js example using the published React library |
-| [examples/expo](./examples/expo) | Expo example using the published React Native library |
 
 ## Quick Start
 
 ```bash
 git clone --depth 1 https://github.com/ursnj/nayan-ui.git
-cd nayan-ui/examples/games
-bun install
-bun run web
+cd nayan-ui
+bun install --frozen-lockfile --filter @nayan-ui/engine --filter @nayan-ui/example --filter '@nayan-example/*'
+bun run engine:build
+bun run example web
 ```
 
 ## Repository Structure
@@ -79,17 +76,18 @@ bun run web
 packages/
   engine/    @nayan-ui/engine  — Game engine and components
   website/   @nayan-ui/website — nayanui.com (Next.js)
-examples/    vite, nextjs, expo, games starter projects
+  example/   @nayan-ui/example — Engine demos for Expo and web
 .github/     engine CI and website image publishing
 scripts/     local publish scripts (Docker)
 ```
 
 ## Development
 
-This is a [Bun](https://bun.sh) workspace monorepo. A full install needs the website's Playtura games tarball. For engine-only work, use the filtered installation above.
+This monorepo uses the Bun channel in `.bun-version` and a hoisted workspace layout for Expo and Metro. The full checks need the website's Playtura games tarball and the generated engine package. For engine-only work, use the filtered install above.
 
 ```bash
-bun install
+bun install --frozen-lockfile
+bun run engine:build
 ```
 
 | Command                     | Description                              |
@@ -100,7 +98,11 @@ bun install
 | `bun run website:dev`       | Run the website in development           |
 | `bun run website:build`     | Production build of the website          |
 | `bun run website:start`     | Serve the production build on port 7100  |
-| `bun run format`            | Format the codebase with oxfmt           |
+| `bun run format`            | Format the codebase with Bun            |
+| `bun run format:check`      | Check formatting without writing files   |
+| `bun run lint`              | Run Bun lint across the monorepo          |
+| `bun run typecheck`         | Check the engine, examples, and website   |
+| `bun run test`              | Run the engine and website Bun tests     |
 | `bun run clean`             | Remove `node_modules` and build outputs  |
 
 ## Publishing

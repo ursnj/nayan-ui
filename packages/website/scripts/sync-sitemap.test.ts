@@ -1,5 +1,4 @@
-import { test, afterEach } from "node:test";
-import assert from "node:assert/strict";
+import { afterEach, expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -32,7 +31,7 @@ test("new example pages are discovered without listing them manually; private an
     "@panel/page.tsx": "export default function Panel() {}",
     "api/data/route.ts": "export function GET() {}",
   });
-  assert.deepEqual(collectPublicPaths(root), ["/", "/about", "/game-engine/examples/new-example"]);
+  expect(collectPublicPaths(root)).toEqual(["/", "/about", "/game-engine/examples/new-example"]);
 });
 
 test("tag URLs require a current component owner with a real public page", () => {
@@ -42,21 +41,21 @@ test("tag URLs require a current component owner with a real public page", () =>
     "react-native/tags/[tag]/page.tsx": "export default function Tag() {}",
   });
   const paths = collectPublicPaths(root);
-  assert.ok(paths.includes("/react/tags/react-button"));
-  assert.ok(!paths.some((path) => path.startsWith("/react-native/tags/")));
-  assert.ok(!paths.includes("/react/tags/react-accordion"));
+  expect(paths).toContain("/react/tags/react-button");
+  expect(paths.some((path) => path.startsWith("/react-native/tags/"))).toBe(false);
+  expect(paths).not.toContain("/react/tags/react-accordion");
 });
 
 test("a new dynamic route cannot silently disappear from the sitemap", () => {
   const root = fixture({ "blog/[slug]/page.tsx": "export default function Post() {}" });
-  assert.throws(() => collectPublicPaths(root), /Add sitemap handling.*\/blog\/\[slug\]/);
+  expect(() => collectPublicPaths(root)).toThrow(/Add sitemap handling.*\/blog\/\[slug\]/);
 });
 
 test("XML output is deterministic, unique and escaped", () => {
   const paths = ["/tools/paint&draw", "/", "/tools/paint&draw"];
   const xml = renderSitemap(paths);
-  assert.equal(xml, renderSitemap([...paths].reverse()));
-  assert.equal(xml.match(/<loc>/g)?.length, 2);
-  assert.ok(xml.includes("/tools/paint&amp;draw</loc>"));
-  assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
+  expect(xml).toBe(renderSitemap([...paths].reverse()));
+  expect(xml.match(/<loc>/g)).toHaveLength(2);
+  expect(xml).toContain("/tools/paint&amp;draw</loc>");
+  expect(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>')).toBe(true);
 });

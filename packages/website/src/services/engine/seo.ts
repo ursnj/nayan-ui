@@ -68,7 +68,7 @@ export function engineGuideSchemas(guide: EngineGuide) {
       name: "Nayan Game Engine games example (Car Racing)",
       description:
         "A Bun workspace with Car Racing for iOS, Android and the web: shared game code, an Expo app and a Vite app.",
-      codeRepository: `${REPO_URL}/tree/main/examples/games`,
+      codeRepository: `${REPO_URL}/tree/main/packages/example`,
       programmingLanguage: ["TypeScript", "React", "React Native"],
       runtimePlatform: ["iOS", "Android", "Web"],
       targetProduct: engineAbout,

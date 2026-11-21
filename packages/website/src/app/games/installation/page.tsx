@@ -50,7 +50,7 @@ const schemas = [
       { name: "Get the example", text: "Clone https://github.com/ursnj/nayan-ui.git." },
       {
         name: "Install",
-        text: "In nayan-ui/examples/games, run bun install to install the apps and @nayan-ui/engine.",
+        text: "From the repository root, install the filtered Bun workspaces, run bun run engine:build, then open packages/example.",
       },
       { name: "Play in the browser", text: "Run bun run web." },
       {

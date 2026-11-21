@@ -1,0 +1,40 @@
+[install]
+# Expo and Metro use the same hoisted workspace layout as Playtura.
+linker = "hoisted"
+
+[fmt]
+printWidth = 150
+singleQuote = true
+trailingComma = "none"
+ignorePatterns = [
+  "**/node_modules/",
+  "**/.git/",
+  "**/.expo/",
+  "**/.next/",
+  "**/dist/",
+  "**/build/",
+  "**/target/",
+  "**/coverage/",
+  "packages/example/mobile/ios/",
+  "packages/example/mobile/android/",
+  "packages/engine/lib/",
+  "**/shared/cpp/generated/",
+  "**/expo-env.d.ts",
+  "**/next-env.d.ts",
+  "packages/website/public/engine-ui/site-styles.json",
+  "packages/website/src/app/engine-styles.ts",
+  "packages/website/src/app/engine.css",
+  "**/*.lock"
+]
+
+[lint]
+ignorePatterns = [
+  "**/.next/**",
+  "**/dist/**",
+  "packages/engine/lib/**",
+  "packages/engine/native/core/build/**",
+  "**/shared/cpp/generated/**",
+  "packages/example/mobile/ios/**",
+  "packages/example/mobile/android/**",
+  "packages/website/src/app/engine-styles.ts"
+]

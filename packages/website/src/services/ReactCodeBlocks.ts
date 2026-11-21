@@ -1,6 +1,6 @@
-export const installCode = `npm install @nayan-ui/react`;
-export const rnInstallCode = `npm install @nayan-ui/native`;
-export const rnPeerDepsCode = `npm install react-native-reanimated react-native-gesture-handler react-native-safe-area-context react-native-screens react-native-svg react-native-worklets`;
+export const installCode = `bun add @nayan-ui/react`;
+export const rnInstallCode = `bun add @nayan-ui/native`;
+export const rnPeerDepsCode = `bun add react-native-reanimated react-native-gesture-handler react-native-safe-area-context react-native-screens react-native-svg react-native-worklets`;
 
 export const tailwindCode = `// No tailwind.config.js needed with Tailwind v4!
 // HeroUI styles handle theming automatically.

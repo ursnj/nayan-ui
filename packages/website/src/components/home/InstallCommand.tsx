@@ -5,7 +5,7 @@ import { Check, Copy, Terminal } from "lucide-react";
 import { clipboard } from "@nayan-ui/engine/clipboard";
 import { NPress, NText, NView } from "@nayan-ui/engine/components";
 
-const COMMAND = "npm install @nayan-ui/engine";
+const COMMAND = "bun add @nayan-ui/engine";
 
 export default function InstallCommand() {
   const [copied, setCopied] = useState(false);

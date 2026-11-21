@@ -3,7 +3,7 @@ import { attachCanvas, detachCanvas } from '../NativeNayanEngine.web';
 import { prepareEngine } from '../prepare';
 import type { DocumentSurfaceProps } from './types';
 
-function renderDocumentSurface<Change>({
+function DocumentSurfaceView<Change>({
   document: drawing,
   mode = 'draw',
   background = '#ffffff',
@@ -221,4 +221,4 @@ function renderDocumentSurface<Change>({
   );
 }
 
-export const DocumentSurface = memo(renderDocumentSurface) as typeof renderDocumentSurface;
+export const DocumentSurface = memo(DocumentSurfaceView) as typeof DocumentSurfaceView;

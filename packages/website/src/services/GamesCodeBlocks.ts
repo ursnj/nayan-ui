@@ -4,16 +4,18 @@
 // ── Installation ──────────────────────────────────────────────────────
 
 export const gamesExampleSetupCode = `git clone --depth 1 https://github.com/ursnj/nayan-ui.git
-cd nayan-ui/examples/games
-bun install`;
+cd nayan-ui
+bun install --frozen-lockfile --filter @nayan-ui/engine --filter @nayan-ui/example --filter '@nayan-example/*'
+bun run engine:build
+cd packages/example`;
 
 export const createProjectCode = `${gamesExampleSetupCode}
 bun run web        # browser
 bun run ios        # or: bun run android (development build)`;
 
-export const installNativeCode = `npx expo install @nayan-ui/games @nayan-ui/engine expo-asset expo-modules-core expo-build-properties`;
+export const installNativeCode = `bunx expo install --bun @nayan-ui/games @nayan-ui/engine expo-asset expo-modules-core expo-build-properties`;
 
-export const installWebCode = `npm install @nayan-ui/games @nayan-ui/engine react react-dom`;
+export const installWebCode = `bun add @nayan-ui/games @nayan-ui/engine react react-dom`;
 
 export const peerDepsCode = `"peerDependencies": {
   "@nayan-ui/engine": "^1.0.0-beta.2",
@@ -37,8 +39,8 @@ const config = getDefaultConfig(__dirname);
 config.resolver.assetExts.push('glb', 'gltf'); // Treasure Hunt and talking tua load models
 module.exports = config;`;
 
-export const devBuildCode = `npx expo prebuild
-npx expo run:ios       # or: npx expo run:android`;
+export const devBuildCode = `bunx expo prebuild
+bunx expo run:ios       # or: bunx expo run:android`;
 
 export const warmUpCode = `import { useEffect } from 'react';
 import { warmUpGameFonts, warmUpGames } from '@nayan-ui/games/services';

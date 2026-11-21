@@ -1,3 +1,5 @@
+ARG BUN_VERSION=canary
+
 # The website and its game bundle use the workspace engine.
 FROM rust:1.99-bookworm AS engine-wasm
 WORKDIR /app/packages/engine
@@ -10,12 +12,12 @@ COPY packages/engine/native ./native
 RUN native/core/scripts/build-web.sh
 
 # Install dependencies only when needed
-FROM oven/bun:1-alpine AS deps
+FROM oven/bun:${BUN_VERSION}-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Copy monorepo root files for workspace resolution
-COPY package.json bun.lock ./
+COPY package.json bun.lock bunfig.toml ./
 
 # Copy all workspace package.json files
 COPY packages/engine/package.json ./packages/engine/package.json
@@ -29,7 +31,7 @@ COPY packages/website/scripts/nayan-ui-games.tgz ./packages/website/scripts/naya
 RUN bun install --frozen-lockfile
 
 # Rebuild the source code only when needed
-FROM oven/bun:1-alpine AS builder
+FROM oven/bun:${BUN_VERSION}-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app ./
 COPY . .

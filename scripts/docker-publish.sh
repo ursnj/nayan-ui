@@ -86,7 +86,7 @@ require_latest_code "$ALLOW_DIRTY" "$STRICT"
   warn "playtura has uncommitted changes: they are not in this build (games come from its HEAD)"
 
 # The games are built against the published engine of the version playtura declares: publish it first
-ENGINE_VERSION="$(git -C "$PLAYTURA" show HEAD:packages/engine/package.json | node -p "JSON.parse(require('fs').readFileSync(0)).version")"
+ENGINE_VERSION="$(git -C "$PLAYTURA" show HEAD:packages/engine/package.json | bun -e 'console.log(JSON.parse(await Bun.stdin.text()).version)')"
 npm view "@nayan-ui/engine@$ENGINE_VERSION" version 2>/dev/null | grep -q . ||
   fail "@nayan-ui/engine@$ENGINE_VERSION (playtura HEAD) is not on npm: publish it first (in playtura: bun run engine:publish)"
 
@@ -153,6 +153,7 @@ fresh=()
 [ "$FRESH" = true ] && fresh=(--no-cache)
 # --pull: the current base image (oven/bun), not one cached here
 docker buildx build --pull ${fresh[@]+"${fresh[@]}"} --platform "$PLATFORM" \
+  --build-arg "BUN_VERSION=$(tr -d '[:space:]' < "$CONTEXT/.bun-version")" \
   --file "$CONTEXT/packages/website/Dockerfile" --tag "$IMAGE" --load "$CONTEXT"
 
 step "Checking $IMAGE"

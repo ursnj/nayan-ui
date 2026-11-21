@@ -13,10 +13,6 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.resolve(__dirname, "../.."),
   turbopack: {
     root: path.resolve(__dirname, "../.."),
-    resolveAlias: {
-      // Keep the website and the linked games on one engine instance.
-      "@nayan-ui/engine": "./node_modules/@nayan-ui/engine",
-    },
   },
   output: "standalone",
   // The engine docs moved from /engine to /game-engine; keep old links (npm README, search results) working.

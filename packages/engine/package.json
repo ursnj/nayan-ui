@@ -701,13 +701,13 @@
     "test": "bun test --isolate src",
     "test:integration": "bun test --isolate native/tests",
     "test:coverage": "bun test --isolate --coverage src native/tests && bun scripts/check-coverage.mjs",
-    "codegen": "node scripts/codegen-cxx.js",
+    "codegen": "bun scripts/codegen-cxx.js",
     "lint": "bun lint --no-script .",
     "lint:fix": "bun lint --no-script --fix .",
     "core:build:web": "native/core/scripts/build-web.sh",
     "build:web": "bun run core:build:web && bun scripts/build-web.mjs",
     "test:web": "bun test native/tests/web.test.ts",
-    "prepack": "node scripts/check-package.mjs"
+    "prepack": "bun scripts/check-package.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

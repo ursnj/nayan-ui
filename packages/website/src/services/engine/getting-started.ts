@@ -294,14 +294,14 @@ bun run web      # or: bun run ios / bun run android (development build)`,
             title: "React (web)",
             platform: "react",
             language: "bash",
-            code: `npm install @nayan-ui/engine react react-dom`,
+            code: `bun add @nayan-ui/engine react react-dom`,
           },
           {
             title: "React Native (Expo)",
             platform: "native",
             language: "bash",
-            code: `npm install @nayan-ui/engine
-npx expo install expo-asset expo-build-properties`,
+            code: `bun add @nayan-ui/engine
+bunx expo install --bun expo-asset expo-build-properties`,
           },
         ],
       },
@@ -355,8 +355,8 @@ module.exports = config;`,
             title: "Build and run",
             platform: "native",
             language: "bash",
-            code: `npx expo run:ios
-npx expo run:android
+            code: `bunx expo run:ios
+bunx expo run:android
 # or in the cloud:
 eas build --profile development`,
           },
@@ -373,7 +373,7 @@ eas build --profile development`,
             title: "Bare setup",
             platform: "native",
             language: "bash",
-            code: `npm install @nayan-ui/engine
+            code: `bun add @nayan-ui/engine
 cd ios && pod install && cd ..
 # android/build.gradle:            minSdkVersion = 26
 # android/app/src/main/AndroidManifest.xml:

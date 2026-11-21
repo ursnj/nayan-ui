@@ -183,7 +183,7 @@ const Contributions = () => {
                       <br />
                       cd nayan-ui
                       <br />
-                      bun install --frozen-lockfile --filter @nayan-ui/engine --linker hoisted
+                      bun install --frozen-lockfile --filter @nayan-ui/engine
                     </div>
                   </div>
                 </div>

@@ -12,7 +12,7 @@ export const PracticalGuides: EngineGuide[] = [
         id: "start-from-the-example",
         title: "Start from the example",
         paragraphs: [
-          "The Nayan UI repo includes a complete Car Racing game in examples/games. The same game code runs on iOS, Android and the web.",
+          "The Nayan UI repo includes a complete Car Racing game in packages/example. The same game code runs on iOS, Android and the web.",
           "It is the same Car Racing as in Playtura and on nayanui.com/games. The only change is the car, which is loaded from glTF files instead of built in code.",
         ],
         examples: [
@@ -25,7 +25,7 @@ bun run web # play in the browser at http://127.0.0.1:5173
 bun run ios # or: bun run android (requires a development build)`,
           },
         ],
-        note: "Source: github.com/ursnj/nayan-ui/tree/main/examples/games. Its README has the same walkthrough.",
+        note: "Source: github.com/ursnj/nayan-ui/tree/main/packages/example. Its README has the same walkthrough.",
       },
       {
         id: "project-layout",
@@ -38,7 +38,7 @@ bun run ios # or: bun run android (requires a development build)`,
             title: "Project layout",
             platform: "shared",
             language: "text",
-            code: `examples/games/
+            code: `packages/example/
 ├── shared/                     # the game, used by both apps
 │   ├── index.ts                # exports CarRacing, GameProps, DEFAULT_GAME_SETTINGS
 │   └── src/

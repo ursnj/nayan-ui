@@ -1,6 +1,6 @@
 # Nayan Engine examples
 
-This workspace uses the local [Nayan engine](../engine). It includes 49 interactive examples shared by an Expo app and a Vite app, plus Car Racing as a complete game. The [standalone games starter](../../examples/games) uses the published engine.
+This workspace uses the local [Nayan engine](../engine). It includes 49 interactive examples shared by an Expo app and a Vite app, plus Car Racing as a complete game.
 
 ## Run the examples
 
