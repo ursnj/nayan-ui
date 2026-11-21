@@ -19,7 +19,7 @@
     "@nayan-ui/engine": "workspace:*",
     "@nayan-ui/games": "file:./scripts/nayan-ui-games.tgz",
     "mediabunny": "^1.66.2",
-    "next": "16.4.4",
+    "next": "16.4.6",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "zustand": "^5.0.15"

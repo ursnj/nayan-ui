@@ -26,7 +26,7 @@ COPY packages/example/mobile/package.json ./packages/example/mobile/package.json
 COPY packages/example/shared/package.json ./packages/example/shared/package.json
 COPY packages/example/web/package.json ./packages/example/web/package.json
 COPY packages/website/package.json ./packages/website/package.json
-# @nayan-ui/games tarball, built from playtura by the docker-publish workflow
+# The checked-in games tarball is pinned by bun.lock.
 COPY packages/website/scripts/nayan-ui-games.tgz ./packages/website/scripts/nayan-ui-games.tgz
 RUN bun install --frozen-lockfile
 

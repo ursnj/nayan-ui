@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { Check, Copy, Download, Orbit, Pause, Play, RotateCcw } from "@/design/Icons";
+import { Check, Copy, Orbit, Pause, Play, RotateCcw } from "@/design/Icons";
 import Code from "@/components/helpers/Code";
 import { LOGOS, type LogoId } from "./logos";
 import { BUTTON_SMALL, CARD } from "@/design/system";
@@ -19,9 +19,7 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
   const [frameReady, setFrameReady] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [exporting, setExporting] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [exportError, setExportError] = useState("");
+  const [previewError, setPreviewError] = useState("");
   const preview = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLIFrameElement>(null);
 
@@ -55,9 +53,7 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
     setRotateView(false);
     setViewReset(0);
     setCopied(false);
-    setExporting(false);
-    setProgress(0);
-    setExportError("");
+    setPreviewError("");
   }, [logo.id]);
 
   useEffect(() => {
@@ -100,25 +96,9 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
       if (event.data?.type === "logo-rendered") {
         setFrameReady(true);
         setInitialized(true);
+        setPreviewError("");
       }
-      if (event.data?.type === "logo-export-progress") setProgress(event.data.progress);
-      if (event.data?.type === "logo-export-error") {
-        setExporting(false);
-        setExportError(event.data.message);
-      }
-      if (
-        event.data?.type === "logo-export-complete" &&
-        event.data.logo === logo.id &&
-        event.data.data instanceof ArrayBuffer
-      ) {
-        const url = URL.createObjectURL(new Blob([event.data.data], { type: "image/webp" }));
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `${logo.id}-animation.webp`;
-        link.click();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        setExporting(false);
-      }
+      if (event.data?.type === "logo-error") setPreviewError(event.data.message);
     };
     window.addEventListener("message", ready);
     const themeObserver = new MutationObserver(sendControls);
@@ -133,20 +113,7 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
     };
   }, [active, playing, speed, replay, rotateView, viewReset, view, logo.id]);
 
-  const exportAnimation = () => {
-    setView("preview");
-    setExporting(true);
-    setProgress(0);
-    setExportError("");
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() =>
-        frame.current?.contentWindow?.postMessage({ type: "logo-export" }, window.location.origin),
-      ),
-    );
-  };
-
   const switchTab = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (exporting) return;
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
     const next =
@@ -185,7 +152,6 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
                 aria-selected={view === tab}
                 aria-controls={`${logo.id}-${tab}-panel`}
                 tabIndex={view === tab ? 0 : -1}
-                disabled={exporting}
                 onKeyDown={switchTab}
                 onClick={() => setView(tab)}
                 className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${view === tab ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-300" : "text-muted hover:bg-default/50 hover:text-foreground"}`}
@@ -195,18 +161,6 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
             ))}
           </div>
           <div className="ml-auto flex items-center gap-2">
-            <button
-              type="button"
-              onClick={exportAnimation}
-              disabled={!frameReady || exporting}
-              aria-label={`Export ${logo.name} animated WebP`}
-              aria-busy={exporting}
-              title="Download an 8-second looping animated WebP (15 fps)"
-              className={`${BUTTON_SMALL} gap-1.5 text-muted`}
-            >
-              <Download aria-hidden className="h-3.5 w-3.5" />
-              {exporting ? (progress === 100 ? "Encoding…" : `${progress}%`) : "WebP"}
-            </button>
             <button
               type="button"
               onClick={copyCode}
@@ -223,12 +177,12 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
             </button>
           </div>
         </div>
-        {exportError ? (
+        {previewError ? (
           <p
             role="alert"
             className="border-b border-default px-4 py-2 text-sm text-red-600 dark:text-red-400"
           >
-            {exportError}
+            {previewError}
           </p>
         ) : null}
         <div
@@ -247,7 +201,7 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
             aria-label={`${logo.name} logo animation`}
             className="relative h-[300px] bg-background sm:h-[380px]"
           >
-            {active && !frameReady && !initialized ? (
+            {active && !frameReady && !initialized && !previewError ? (
               <div
                 role="status"
                 className="absolute inset-0 flex items-center justify-center text-sm text-muted"
@@ -285,7 +239,7 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
               type="button"
               aria-pressed={rotateView}
               aria-controls={`${logo.id}-preview-panel`}
-              disabled={!frameReady || exporting}
+              disabled={!frameReady}
               title="Drag the preview to look around the 3D logo"
               className={`${BUTTON_SMALL} ${rotateView ? "border-indigo-500/40 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300" : ""}`}
               onClick={() => setRotateView((value) => !value)}
@@ -297,7 +251,6 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
                 <button
                   type="button"
                   className={BUTTON_SMALL}
-                  disabled={exporting}
                   onClick={() => setViewReset((value) => value + 1)}
                 >
                   Front view

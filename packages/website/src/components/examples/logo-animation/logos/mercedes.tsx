@@ -404,16 +404,12 @@ export default function MercedesLogoScene({
   speed = 1,
   replay = 0,
   onReady,
-  captureTime,
-  onFrame,
 }: {
   playing?: boolean;
   rendering?: boolean;
   speed?: number;
   replay?: number;
   onReady?: () => void;
-  captureTime?: number;
-  onFrame?: (time: number) => void;
 } = {}) {
   const [error, setError] = useState(false);
   const group = useRef<{ entities: Entity[]; pieces: Piece[] }>({ entities: [], pieces: [] });
@@ -494,15 +490,11 @@ export default function MercedesLogoScene({
             displayTime.current = 0;
             lastReplay.current = replay;
           }
-          if (captureTime === undefined && playing) {
+          if (playing) {
             elapsed.current += dt * speed;
             displayTime.current = elapsed.current;
           }
-          drawLogo(world, entities, pieces, captureTime ?? displayTime.current);
-          if (captureTime !== undefined) {
-            const renderedTime = captureTime;
-            queueMicrotask(() => onFrame?.(renderedTime));
-          }
+          drawLogo(world, entities, pieces, displayTime.current);
         }}
       />
     </div>

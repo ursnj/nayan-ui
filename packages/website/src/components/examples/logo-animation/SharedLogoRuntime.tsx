@@ -84,8 +84,6 @@ type Props = {
   replay: number;
   rotateView: boolean;
   viewReset: number;
-  captureTime?: number;
-  onFrame: (time: number) => void;
   onReady: () => void;
   onError: () => void;
 };
@@ -99,8 +97,6 @@ export default function SharedLogoRuntime({
   replay,
   rotateView,
   viewReset,
-  captureTime,
-  onFrame,
   onReady,
   onError,
 }: Props) {
@@ -110,7 +106,6 @@ export default function SharedLogoRuntime({
   const displayTime = useRef(3);
   const lastReplay = useRef(replay);
   const presented = useRef(false);
-  const capturePass = useRef({ time: -1, frames: 0 });
   const camera = useRef<Camera>({ eye: [0, 0, 6.5], target: [0, 0, 0], fov: 0.8 }).current;
   const orbit = useRef({ yaw: 0, pitch: 0 });
   const dragStart = useRef({ yaw: 0, pitch: 0 });
@@ -137,7 +132,7 @@ export default function SharedLogoRuntime({
         tabIndex={rotateView ? 0 : -1}
         style={{ width: "100%", height: "100%", cursor: rotateView ? "grab" : "default" }}
         onKeyDown={(event) => {
-          if (!rotateView || captureTime !== undefined) return;
+          if (!rotateView) return;
           const angle = orbit.current;
           if (event.key === "Home") orbit.current = { yaw: 0, pitch: 0 };
           else if (event.key === "ArrowLeft") angle.yaw -= 0.12;
@@ -161,7 +156,6 @@ export default function SharedLogoRuntime({
           onDrag={
             rotateView
               ? (event) => {
-                  if (captureTime !== undefined) return;
                   if (event.phase === "start") dragStart.current = { ...orbit.current };
                   if (event.phase === "move") {
                     orbit.current = {
@@ -197,10 +191,7 @@ export default function SharedLogoRuntime({
               elapsed.current = 0;
               displayTime.current = playing ? 0 : 3;
               lastReplay.current = replay;
-              if (surface.current) {
-                surface.current.style.clipPath = "none";
-                delete surface.current.dataset.revealWidth;
-              }
+              if (surface.current) surface.current.style.clipPath = "none";
             }
             const group = session.active!;
             if (lastReplay.current !== replay) {
@@ -208,7 +199,7 @@ export default function SharedLogoRuntime({
               displayTime.current = 0;
               lastReplay.current = replay;
             }
-            if (captureTime === undefined && playing) {
+            if (playing) {
               elapsed.current += dt * speed;
               displayTime.current = elapsed.current;
             }
@@ -216,15 +207,9 @@ export default function SharedLogoRuntime({
               world,
               group.entities,
               group.pieces,
-              captureTime ?? displayTime.current,
+              displayTime.current,
               surface.current,
             );
-            if (captureTime !== undefined) {
-              const time = captureTime;
-              if (capturePass.current.time !== time) capturePass.current = { time, frames: 0 };
-              // Present the deterministic pose twice before reading a high-quality GPU frame.
-              if (++capturePass.current.frames >= 2) queueMicrotask(() => onFrame(time));
-            }
             if (!presented.current && dt > 0) {
               presented.current = true;
               onReady();

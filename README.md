@@ -11,7 +11,7 @@ Game engine and components for React and React Native, with playable games and d
 ## Highlights
 
 - **Game engine and components** — `@nayan-ui/engine` for Expo and web, with 3D rendering, physics, and cross-platform UI
-- **Playable games** — the private `@nayan-ui/games` library powers [nayanui.com/games](https://www.nayanui.com/games)
+- **Playable games** — the vendored `@nayan-ui/games` package powers [nayanui.com/games](https://www.nayanui.com/games)
 - **Developer guides** — PDF, image, JSON, XML, text and SEO documentation plus a browser video editor at [nayanui.com](https://www.nayanui.com)
 
 ---
@@ -22,11 +22,10 @@ Game engine and components for React and React Native, with playable games and d
 | --- | --- | --- |
 | [@nayan-ui/engine](./packages/engine) | [![npm](https://badge.fury.io/js/@nayan-ui%2Fengine.svg)](https://www.npmjs.com/package/@nayan-ui/engine) | Game engine for React Native and web |
 | [@nayan-ui/website](./packages/website) | Private | Nayan UI website and documentation |
-| @nayan-ui/games | Private | Games built on the Nayan engine |
+| @nayan-ui/games | Local archive | Games built on the Nayan engine |
 
 The engine source and SDK documentation live in [packages/engine](./packages/engine).
-The private `@nayan-ui/games` package comes from Playtura. The Docker publish workflow builds
-its tarball for the website, which builds and uses the engine from this workspace.
+The website installs `@nayan-ui/games` from a [checked-in tarball](./packages/website/scripts/nayan-ui-games.tgz) and uses the engine from this workspace.
 
 ## Engine development
 
@@ -53,6 +52,17 @@ bun run website:dev
 ```
 
 The website dev and production commands build the browser engine when needed and compile the browser and preview stylesheets. Run `bun run engine:build:web` after changing the engine source.
+
+### Updating the games archive
+
+Obtain a built `@nayan-ui/games` package archive, then run these commands from the repository root.
+
+```sh
+cp /path/to/nayan-ui-games-version.tgz packages/website/scripts/nayan-ui-games.tgz
+bun update --cwd=packages/website --ignore-scripts @nayan-ui/games
+```
+
+Commit the archive and the updated `bun.lock` together. Local and CI Docker builds install that exact archive with Bun’s frozen lockfile. The games license is included in the archive.
 
 ## Examples
 
@@ -83,7 +93,7 @@ scripts/     local publish scripts (Docker)
 
 ## Development
 
-This monorepo uses the Bun channel in `.bun-version` and a hoisted workspace layout for Expo and Metro. The full checks need the website's Playtura games tarball and the generated engine package. For engine-only work, use the filtered install above.
+This monorepo uses the Bun channel in `.bun-version` and a hoisted workspace layout for Expo and Metro. The full checks need the checked-in games archive and the generated engine package. For engine-only work, use the filtered install above.
 
 ```bash
 bun install --frozen-lockfile
@@ -105,11 +115,14 @@ bun run engine:build
 | `bun run test`              | Run the engine and website Bun tests     |
 | `bun run clean`             | Remove `node_modules` and build outputs  |
 
+Install the Git hooks from the repository root with `bunx lefthook install`.
+Pre-commit checks formatting and lint on staged files. When the games archive or lockfile changes, it checks that their staged versions match.
+
 ## Publishing
 
 - **Engine package** — download the verified npm tarball from a successful **Build engine** workflow run.
-- **Website** — run the **Publish website docker images** workflow to build and push `ursnj/nayanui:latest`. Requires the `PLAYTURA_TOKEN` and `DOCKER_HUB_TOKEN` repository secrets.
-  Or publish it from your machine with `bun run docker:publish` (needs Docker, a playtura checkout at `../playtura` or `--playtura <dir>`, and `docker login` as ursnj; `--dry-run` builds and checks without pushing, `--help` lists the options).
+- **Website** — run the **Publish website docker images** workflow to build and push `ursnj/nayanui:latest`. Requires the `DOCKER_HUB_TOKEN` repository secret.
+  Or publish it from your machine with `bun run docker:publish` (needs Docker and `docker login` as ursnj; `--dry-run` builds and checks without pushing, `--help` lists the options).
 
 ## Documentation
 
