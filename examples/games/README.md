@@ -11,11 +11,11 @@ Car Racing is copied from the Playtura games library, so it plays exactly as it 
 ## Quick start
 
 ```bash
-npx @nayan-ui/cli new my-game -t games   # create the project
-cd my-game
-bun install                              # install the apps and the engine from npm
-bun run web                              # play in the browser
-bun run ios                              # or: bun run android (needs a development build, not Expo Go)
+git clone --depth 1 https://github.com/ursnj/nayan-ui.git
+cd nayan-ui/examples/games
+bun install
+bun run web
+bun run ios # or: bun run android (requires a development build)
 ```
 
 ## Project layout

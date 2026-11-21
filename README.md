@@ -1,8 +1,8 @@
 # Nayan UI
 
-Reusable component libraries for React and React Native, a game engine with free games, developer CLIs, and 70+ free online tools — all in one monorepo.
+Game engine and components for React and React Native, with playable games and free online tools.
 
-[![License](https://img.shields.io/npm/l/@nayan-ui/react.svg)](https://github.com/ursnj/nayan-ui/blob/main/LICENSE)
+[![License](https://img.shields.io/npm/l/@nayan-ui/engine.svg)](./packages/engine)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 [![Website](https://img.shields.io/badge/docs-nayanui.com-black.svg)](https://www.nayanui.com)
 
@@ -10,25 +10,19 @@ Reusable component libraries for React and React Native, a game engine with free
 
 ## Highlights
 
-- **React components** — accessible, themeable components built on HeroUI + Tailwind CSS v4
-- **React Native components** — matching API built on HeroUI Native + Uniwind
-- **Game engine & games** — `@nayan-ui/engine` for Expo and web, plus private `@nayan-ui/games` playable on [nayanui.com/games](https://www.nayanui.com/games)
-- **CLI** — scaffold Vite / Expo / games projects, generate sitemaps and robots.txt
-- **AI code reviewer** — PR reviews, vulnerability scans and auto-fixes with Codex or Claude Code
+- **Game engine and components** — `@nayan-ui/engine` for Expo and web, with 3D rendering, physics, and cross-platform UI
+- **Playable games** — the private `@nayan-ui/games` library powers [nayanui.com/games](https://www.nayanui.com/games)
 - **Online tools** — PDF, image, JSON, XML, text, SEO and developer tools plus a browser video editor at [nayanui.com](https://www.nayanui.com)
 
 ---
 
 ## Packages
 
-| Package                                                          | Version                                                                                                   | Description                                                     |
-| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| [@nayan-ui/react](./packages/react)                              | [![npm](https://badge.fury.io/js/@nayan-ui%2Freact.svg)](https://www.npmjs.com/package/@nayan-ui/react)   | React component library built on HeroUI + Tailwind CSS v4       |
-| [@nayan-ui/native](./packages/native)                            | [![npm](https://badge.fury.io/js/@nayan-ui%2Fnative.svg)](https://www.npmjs.com/package/@nayan-ui/native) | React Native component library built on HeroUI Native + Uniwind |
-| [@nayan-ui/engine](./packages/engine)                            | [![npm](https://badge.fury.io/js/@nayan-ui%2Fengine.svg)](https://www.npmjs.com/package/@nayan-ui/engine) | Game engine for React Native and web                          |
-| @nayan-ui/games                                                  | Private                                                                                                   | Games built on the Nayan engine (private, not published to npm) |
-| [@nayan-ui/cli](./packages/cli)                                  | [![npm](https://badge.fury.io/js/@nayan-ui%2Fcli.svg)](https://www.npmjs.com/package/@nayan-ui/cli)       | CLI for project scaffolding, sitemap & robots.txt generation    |
-| [@nayan-ui/ai](./packages/ai)                                    | [![npm](https://badge.fury.io/js/@nayan-ui%2Fai.svg)](https://www.npmjs.com/package/@nayan-ui/ai)         | AI-powered code reviewer using Codex & Claude Code agents       |
+| Package | Version | Description |
+| --- | --- | --- |
+| [@nayan-ui/engine](./packages/engine) | [![npm](https://badge.fury.io/js/@nayan-ui%2Fengine.svg)](https://www.npmjs.com/package/@nayan-ui/engine) | Game engine for React Native and web |
+| [@nayan-ui/website](./packages/website) | Private | Nayan UI website and documentation |
+| @nayan-ui/games | Private | Games built on the Nayan engine |
 
 The engine source and SDK documentation live in [packages/engine](./packages/engine).
 The private `@nayan-ui/games` package comes from Playtura. The Docker publish workflow builds
@@ -42,7 +36,7 @@ Install just the engine dependencies from a clean checkout:
 bun install --frozen-lockfile --filter @nayan-ui/engine --linker hoisted
 ```
 
-The [engine workflow](./.github/workflows/engine.yml) runs on engine changes pushed to
+The [engine workflow](./.github/workflows/npm-publish.yml) runs on engine changes pushed to
 `refactor-nayan-ui` or `main`. It builds iOS, Android and WebAssembly libraries, runs the
 Rust and TypeScript tests, and attaches the checked npm tarball as a workflow artifact.
 See the [engine README](./packages/engine/README.md#development-and-verification) for
@@ -50,83 +44,40 @@ local build prerequisites and commands.
 
 ## Website
 
-[packages/website](./packages/website) (`@nayan-ui/website`) is the Next.js app behind [www.nayanui.com](https://www.nayanui.com). It hosts the component docs, games, devtools docs, the online tools and the video editor. It ships as the Docker image `ursnj/nayanui` (port `7100`).
+[packages/website](./packages/website) (`@nayan-ui/website`) is the Next.js app behind [www.nayanui.com](https://www.nayanui.com). It hosts the component docs, games, devtools docs, the online tools and the video editor. It ships as the Docker image `ursnj/nayanui` (port `7100`). Existing site components use the published `@nayan-ui/react` package.
 
 ## Examples
 
-| Example                              | Description                               |
-| ------------------------------------ | ----------------------------------------- |
-| [examples/vite](./examples/vite)     | React + Vite + Tailwind CSS v4 + Nayan UI |
-| [examples/nextjs](./examples/nextjs) | Next.js + Tailwind CSS v4 + Nayan UI      |
-| [examples/expo](./examples/expo)     | Expo + Uniwind + Nayan UI native          |
-| [examples/games](./examples/games)   | Nayan Game Engine games for Expo and Vite |
+| Example | Description |
+| --- | --- |
+| [examples/games](./examples/games) | Nayan Game Engine games for Expo and Vite |
+| [examples/vite](./examples/vite) | Vite example using the published React library |
+| [examples/nextjs](./examples/nextjs) | Next.js example using the published React library |
+| [examples/expo](./examples/expo) | Expo example using the published React Native library |
 
 ## Quick Start
 
-### React (Vite)
-
 ```bash
-npx @nayan-ui/cli new my-app -t vite
-cd my-app
-npm install
-npm run dev
-```
-
-### React (Next.js)
-
-```bash
-npx create-next-app@latest my-app
-cd my-app
-npm install @nayan-ui/react
-npm install -D @tailwindcss/postcss tailwindcss
-npm run dev
-```
-
-See [examples/nextjs](./examples/nextjs) for full setup with `transpilePackages` and `@tailwindcss/postcss`.
-
-### React Native (Expo)
-
-```bash
-npx @nayan-ui/cli new my-app -t expo
-cd my-app
-npm install
-npx expo start
-```
-
-### Game engine (Expo + Vite)
-
-```bash
-npx @nayan-ui/cli new my-game -t games
-cd my-game
+git clone --depth 1 https://github.com/ursnj/nayan-ui.git
+cd nayan-ui/examples/games
 bun install
 bun run web
-```
-
-### AI code reviewer
-
-```bash
-npm install -g @nayan-ui/ai
-nayan-ai review   # review a pull request
-nayan-ai scan     # scan dependencies for vulnerabilities
 ```
 
 ## Repository Structure
 
 ```
 packages/
-  react/     @nayan-ui/react   — React component library
-  native/    @nayan-ui/native  — React Native component library (+ example app)
-  cli/       @nayan-ui/cli     — scaffolding & SEO CLI
-  ai/        @nayan-ui/ai      — AI code reviewer CLI
+  engine/    @nayan-ui/engine  — Game engine and components
   website/   @nayan-ui/website — nayanui.com (Next.js)
 examples/    vite, nextjs, expo, games starter projects
-.github/     publish workflows (npm + Docker)
+.github/     engine CI and website image publishing
 scripts/     local publish scripts (Docker)
 ```
 
 ## Development
 
-This is a [Bun](https://bun.sh) workspace monorepo.
+This is a [Bun](https://bun.sh) workspace monorepo. A full install needs the website's Playtura games tarball. For engine-only work, use the filtered installation above.
 
 ```bash
 bun install
@@ -134,13 +85,9 @@ bun install
 
 | Command                     | Description                              |
 | --------------------------- | ---------------------------------------- |
-| `bun run react:dev`         | Watch-build the React package            |
-| `bun run react:build`       | Build the React package                  |
-| `bun run native:build`      | Build the Native package                 |
-| `bun run native:typecheck`  | Type-check the Native package            |
-| `bun run native:example`    | Run the Native example app               |
-| `bun run cli:build`         | Build the CLI                            |
-| `bun run ai:build`          | Build the AI reviewer                    |
+| `bun run engine:build`      | Build the engine package                 |
+| `bun run engine:typecheck`  | Type-check the engine                     |
+| `bun run engine:test`       | Run the engine unit tests                 |
 | `bun run website:dev`       | Run the website in development           |
 | `bun run website:build`     | Production build of the website          |
 | `bun run website:start`     | Serve the production build on port 7100  |
@@ -149,7 +96,7 @@ bun install
 
 ## Publishing
 
-- **npm packages** — run the **Publish npm packages** workflow and select the packages to release (supports dry run). Uses npm trusted publishing, no token required.
+- **Engine package** — download the verified npm tarball from a successful **Build engine** workflow run.
 - **Website** — run the **Publish website docker images** workflow to build and push `ursnj/nayanui:latest`. Requires the `PLAYTURA_TOKEN` and `DOCKER_HUB_TOKEN` repository secrets.
   Or publish it from your machine with `bun run docker:publish` (needs Docker, a playtura checkout at `../playtura` or `--playtura <dir>`, and `docker login` as ursnj; `--dry-run` builds and checks without pushing, `--help` lists the options).
 

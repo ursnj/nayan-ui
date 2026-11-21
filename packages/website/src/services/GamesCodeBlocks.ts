@@ -3,9 +3,11 @@
 
 // ── Installation ──────────────────────────────────────────────────────
 
-export const createProjectCode = `npx @nayan-ui/cli new my-game -t games
-cd my-game
-bun install
+export const gamesExampleSetupCode = `git clone --depth 1 https://github.com/ursnj/nayan-ui.git
+cd nayan-ui/examples/games
+bun install`;
+
+export const createProjectCode = `${gamesExampleSetupCode}
 bun run web        # browser
 bun run ios        # or: bun run android (development build)`;
 

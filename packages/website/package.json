@@ -15,7 +15,7 @@
     "@napi-rs/canvas": "^0.1.68",
     "@nayan-ui/engine": "https://registry.npmjs.org/@nayan-ui/engine/-/engine-1.0.0-beta.7.tgz",
     "@nayan-ui/games": "file:./scripts/nayan-ui-games.tgz",
-    "@nayan-ui/react": "workspace:*",
+    "@nayan-ui/react": "2.1.0",
     "docx": "^9.5.0",
     "exceljs": "^4.4.0",
     "jszip": "^3.10.1",

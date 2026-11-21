@@ -12,7 +12,7 @@ import {
 export const metadata = buildPageMetadata({
   title: "Games Installation",
   description:
-    "Create a games project with the Nayan UI CLI, or install @nayan-ui/games in Expo or a React website and render games, settings, results and themes.",
+    "Run the games example, or install @nayan-ui/games in Expo or a React website and render games, settings, results and themes.",
   path: "/games/installation",
   keywords:
     "react native games installation, expo games setup, next.js games, vite games, nayan game engine setup, nayan ui cli, create game project",
@@ -30,7 +30,7 @@ const schemas = [
     url: `${SITE_URL}/games/installation`,
     about: gamesAbout,
     sections: [
-      "Create a project with the CLI",
+      "Start with the games example",
       "Requirements",
       "React Native (Expo)",
       "React in the browser (Next.js, Vite)",
@@ -41,17 +41,16 @@ const schemas = [
     ],
     isPartOf: { name: "Nayan UI games documentation", url: `${SITE_URL}/games` },
   }),
-  // The "Create a project with the CLI" section's commands.
   buildHowToSchema({
-    name: "Create a games project with the Nayan UI CLI",
+    name: "Run the Nayan UI games example",
     description:
-      "Create a Bun workspace with an Expo app, a Vite app and the Car Racing game they share, then run it.",
-    tools: ["Node.js (npx)", "Bun"],
+      "Run the Car Racing game shared by the Expo and Vite apps in the games example.",
+    tools: ["Git", "Bun"],
     steps: [
-      { name: "Create the project", text: "Run npx @nayan-ui/cli new my-game -t games." },
+      { name: "Get the example", text: "Clone https://github.com/ursnj/nayan-ui.git." },
       {
         name: "Install",
-        text: "In my-game, run bun install to install the apps and @nayan-ui/engine.",
+        text: "In nayan-ui/examples/games, run bun install to install the apps and @nayan-ui/engine.",
       },
       { name: "Play in the browser", text: "Run bun run web." },
       {

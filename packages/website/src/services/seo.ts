@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import enginePackage from "@nayan-ui/engine/package.json";
 import gamesPackage from "@nayan-ui/games/package.json";
-import reactPackage from "../../../react/package.json";
 import seoBanners from "./seo-banners.json";
 import seoArtwork from "./seo-artwork.json";
 import individualArtwork from "./seo-artwork-individual.json";
@@ -61,8 +60,8 @@ export const softwareApplicationSchema = {
   operatingSystem: "Web, iOS, Android",
   description: SITE_DESCRIPTION,
   url: SITE_URL,
-  downloadUrl: "https://www.npmjs.com/package/@nayan-ui/react",
-  version: reactPackage.version,
+  downloadUrl: "https://www.npmjs.com/package/@nayan-ui/engine",
+  version: enginePackage.version,
   datePublished: "2024-01-01",
   dateModified: new Date().toISOString().split("T")[0],
   author: { "@type": "Organization", name: SITE_NAME },

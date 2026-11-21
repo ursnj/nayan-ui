@@ -68,16 +68,11 @@ const GamesInstallation = () => {
       </p>
 
       <div className="mb-8">
-        <h2 className={H2_DOC}>Create a project with the CLI</h2>
+        <h2 className={H2_DOC}>Start with the games example</h2>
         <p className={P}>
-          The{" "}
-          <NLink href="/tools" className={LINK}>
-            Nayan UI CLI
-          </NLink>{" "}
-          creates a games project in one command: a Bun workspace with an Expo app for iOS and
-          Android, a Vite app for the browser, and a Car Racing game in <code>shared/</code> that
-          both run unchanged. The engine, Metro and Vite are already set up, so add your own games
-          next to Car Racing, or install @nayan-ui/games below to bring in the ready-made ones.
+          The example includes an Expo app for iOS and Android, a Vite app for the browser, and a
+          Car Racing game in <code>shared/</code>. Both apps are ready to run from the same Bun
+          workspace.
         </p>
         <Code language="bash" code={createProjectCode} />
         <p className={P}>

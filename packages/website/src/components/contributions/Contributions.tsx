@@ -181,9 +181,9 @@ const Contributions = () => {
                     <div className="bg-background p-3 rounded-md font-mono text-sm overflow-x-auto">
                       git clone https://github.com/your-username/nayan-ui.git
                       <br />
-                      cd nayan
+                      cd nayan-ui
                       <br />
-                      yarn install
+                      bun install --frozen-lockfile --filter @nayan-ui/engine --linker hoisted
                     </div>
                   </div>
                 </div>

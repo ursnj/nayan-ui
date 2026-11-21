@@ -2802,7 +2802,7 @@ and environment variables documented in their test files. Use
 `engine:test:coverage` to check measured source coverage and find runtime
 modules absent from the report.
 
-The [Build engine workflow](../../.github/workflows/engine.yml) builds and tests
+The [Build engine workflow](../../.github/workflows/npm-publish.yml) builds and tests
 the distribution on standard GitHub-hosted runners. Download the
 `nayan-ui-engine` artifact from a successful run to get the checked npm tarball.
 

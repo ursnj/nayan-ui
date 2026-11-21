@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@nayan-engine-example/shared": "workspace:*",
-    "@nayan-ui/engine": "^1.0.0-beta.4",
+    "@nayan-ui/engine": "^1.0.0-beta.7",
     "expo": "^58.0.0",
     "expo-asset": "~58.0.5",
     "expo-constants": "~58.0.14",

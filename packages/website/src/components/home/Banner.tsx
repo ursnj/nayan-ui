@@ -50,7 +50,6 @@ const INSTALLS = [
   { platform: "React", command: installCode },
   { platform: "React Native", command: rnInstallCode },
   { platform: "Game engine", command: "npm install @nayan-ui/engine" },
-  { platform: "Games", command: "npx @nayan-ui/cli new my-game -t games" },
 ];
 
 const TABS = ["Buttons", "Forms", "Feedback", "Elements"] as const;

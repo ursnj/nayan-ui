@@ -2,6 +2,7 @@ import { ArrowRight, Gamepad2, Rocket } from "lucide-react";
 import Link from "next/link";
 import { Section, SectionHeader } from "@/design/Primitives";
 import { BODY, BUTTON_PRIMARY, BUTTON_SECONDARY, CARD } from "@/design/system";
+import { gamesExampleSetupCode } from "@/services/GamesCodeBlocks";
 import { GAMES_LIST } from "@/services/GamesData";
 
 const SHOWN = [
@@ -12,15 +13,13 @@ const SHOWN = [
   "bubble-shooter",
   "candy-crush",
 ];
-const CREATE = "npx @nayan-ui/cli new my-game -t games";
-
 const GamesSpotlight = () => (
   <Section id="games" labelledBy="games-heading">
     <SectionHeader
       eyebrow="Games"
       id="games-heading"
       title="Play a game, or build your own"
-      lead="The Nayan Game Engine runs the same 3D game on iOS, Android and the web. Start from a working Car Racing project in one command."
+      lead="The Nayan Game Engine runs the same 3D game on iOS, Android and the web. Start from the working Car Racing example."
     />
     <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
       <div className="space-y-5">
@@ -29,7 +28,7 @@ const GamesSpotlight = () => (
             Terminal
           </div>
           <pre className="overflow-x-auto px-4 py-3 font-mono text-sm text-foreground">
-            <code>{`${CREATE}\ncd my-game && bun install\nbun run web`}</code>
+            <code>{`${gamesExampleSetupCode}\nbun run web`}</code>
           </pre>
         </div>
         <p className={BODY}>

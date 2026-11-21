@@ -1,3 +1,4 @@
+import { gamesExampleSetupCode } from "../GamesCodeBlocks";
 import type { EngineGuide } from "./types";
 
 const sceneTs = `import type { Camera, World } from "@nayan-ui/engine";
@@ -237,16 +238,14 @@ export function Board() {
         id: "start-from-the-template",
         title: "Start from the template",
         paragraphs: [
-          "The CLI creates a Bun workspace with an Expo app, a Vite app and the Car Racing example they share, already set up as below. Skip to your own scene, or install the package into an existing app instead.",
+          "The games example is a Bun workspace with an Expo app, a Vite app and the Car Racing game they share. You can also install the engine into an existing app.",
         ],
         examples: [
           {
             title: "Create a project",
             platform: "shell",
             language: "bash",
-            code: `npx @nayan-ui/cli new my-game -t games
-cd my-game
-bun install
+            code: `${gamesExampleSetupCode}
 bun run web      # or: bun run ios / bun run android (development build)`,
           },
         ],

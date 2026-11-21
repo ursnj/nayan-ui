@@ -7,11 +7,6 @@ WORKDIR /app
 COPY package.json bun.lock ./
 
 # Copy all workspace package.json files
-COPY packages/ai/package.json ./packages/ai/package.json
-COPY packages/cli/package.json ./packages/cli/package.json
-COPY packages/react/package.json ./packages/react/package.json
-COPY packages/native/package.json ./packages/native/package.json
-COPY packages/native/example/package.json ./packages/native/example/package.json
 COPY packages/engine/package.json ./packages/engine/package.json
 COPY packages/website/package.json ./packages/website/package.json
 # @nayan-ui/games tarball, built from playtura by the docker-publish workflow
@@ -25,9 +20,6 @@ COPY --from=deps /app ./
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
-
-# Build React package first (required for website build)
-RUN bun run --filter @nayan-ui/react build
 
 # Build website (Next.js)
 RUN bun run --filter @nayan-ui/website build

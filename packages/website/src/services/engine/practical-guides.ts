@@ -1,3 +1,4 @@
+import { gamesExampleSetupCode } from "../GamesCodeBlocks";
 import type { EngineGuide } from "./types";
 
 export const PracticalGuides: EngineGuide[] = [
@@ -11,7 +12,7 @@ export const PracticalGuides: EngineGuide[] = [
         id: "start-from-the-example",
         title: "Start from the example",
         paragraphs: [
-          "The Nayan UI repo has a ready-made games project: examples/games. It holds one complete game, Car Racing, that runs on iOS, Android and the web from the same code. The CLI copies it for you.",
+          "The Nayan UI repo includes a complete Car Racing game in examples/games. The same game code runs on iOS, Android and the web.",
           "It is the same Car Racing as in Playtura and on nayanui.com/games. The only change is the car, which is loaded from glTF files instead of built in code.",
         ],
         examples: [
@@ -19,11 +20,9 @@ export const PracticalGuides: EngineGuide[] = [
             title: "Create and run it",
             platform: "shell",
             language: "bash",
-            code: `npx @nayan-ui/cli new my-game -t games   # copy examples/games into ./my-game
-cd my-game                               # go into the project
-bun install                              # install the apps and @nayan-ui/engine from npm
-bun run web                              # play in the browser at http://127.0.0.1:5173
-bun run ios                              # or: bun run android (a development build, not Expo Go)`,
+            code: `${gamesExampleSetupCode}
+bun run web # play in the browser at http://127.0.0.1:5173
+bun run ios # or: bun run android (requires a development build)`,
           },
         ],
         note: "Source: github.com/ursnj/nayan-ui/tree/main/examples/games. Its README has the same walkthrough.",
@@ -39,7 +38,7 @@ bun run ios                              # or: bun run android (a development bu
             title: "Project layout",
             platform: "shared",
             language: "text",
-            code: `my-game/
+            code: `examples/games/
 ├── shared/                     # the game, used by both apps
 │   ├── index.ts                # exports CarRacing, GameProps, DEFAULT_GAME_SETTINGS
 │   └── src/

@@ -438,7 +438,7 @@ on entities, input()/strokes()/sample()/coverage() for games.
 - AI agent instructions (file structure, one API per task, never-do list, game template): https://www.nayanui.com/game-engine/agent-guide
 - Structured API usage summary: https://www.nayanui.com/engine.json
 
-Start from the games example (npx @nayan-ui/cli new my-game -t games; walkthrough at /game-engine/first-game), then the recipes. Load assets with
+Start from examples/games in the GitHub repository (walkthrough at /game-engine/first-game), then the recipes. Load assets with
 loadModel, loadTexture, loadFont, audio.load, createShape and createSolid during setup; the engine caches
 and persists them (native app-private files, web IndexedDB, no eviction). No app-side asset caches.
 clearAssetCache() only from a user action. @nayan-ui/games loads each game behind its own loading screen
