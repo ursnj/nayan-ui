@@ -50,5 +50,18 @@ export async function GET() {
       "export interface Properties<TLength = string | 0, TTime = string> { [property: string]: string | number | undefined }\n",
   });
 
+  const compiler = packageDir("typescript");
+  const standardLibraries = new Set<string>();
+  async function addStandardLibrary(name: string) {
+    if (standardLibraries.has(name)) return;
+    standardLibraries.add(name);
+    const content = await readFile(join(/* turbopackIgnore: true */ compiler, "lib", name), "utf8");
+    libs.push({ path: `file:///node_modules/typescript/lib/${name}`, content });
+    await Promise.all([...content.matchAll(/<reference lib="([\w.]+)"\s*\/>/g)].map(([, lib]) =>
+      addStandardLibrary(`lib.${lib}.d.ts`)
+    ));
+  }
+  await addStandardLibrary("lib.es2020.full.d.ts");
+
   return Response.json({ libs });
 }

@@ -1,17 +1,74 @@
 'use client';
 
 import { useState, type ComponentType, type ReactNode } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import * as Engine from '@nayan-ui/engine/components';
 import Code from '@/components/helpers/Code';
 import Sidebar from '@/components/helpers/Sidebar';
 import SubHeader from '@/components/helpers/SubHeader';
+import TagsList from '@/components/helpers/TagsList';
 import { getMenuItem } from '@/services/Utils';
 import { componentSource, standaloneExamples } from '@/services/engine/component-examples';
 import { findComponentReference } from '@/services/engine/component-reference';
+import { tagsForReference } from '@/services/engine/reference-tags';
+import { familiarExample } from './previews/FamiliarExamples';
+import { hostExample } from './previews/HostExamples';
+import { legacyComponentAlternatives, legacyExample } from './previews/LegacyExamples';
+import type { SpecializedSlug } from './previews/SpecializedExamples';
+import type { ComponentPreview } from './previews/types';
+
+const SpecializedExample = dynamic(() => import('./previews/SpecializedExamples'), {
+  ssr: false,
+  loading: () => (
+    <p className="component-host-demo" role="status">
+      Preparing preview…
+    </p>
+  )
+});
+
+const specializedHeights = {
+  'animation-view': 280,
+  'drawing-canvas': 340,
+  'game-view': 300,
+  joystick: 280,
+  'markdown-view': 280,
+  'video-player': 280
+} satisfies Record<SpecializedSlug, number>;
+
+const previewThemes = {
+  light: {
+    accent: '#0e63ee',
+    action: '#0e63ee',
+    'action-foreground': '#ffffff',
+    'accent-foreground': '#ffffff',
+    background: '#f8fafc',
+    foreground: '#0f172a',
+    surface: '#ffffff',
+    default: '#e2e8f0',
+    'field-background': '#ffffff',
+    'field-border': '#cbd5e1',
+    border: '#cbd5e1',
+    focus: '#0e63ee'
+  },
+  dark: {
+    accent: '#70a7ff',
+    action: '#70a7ff',
+    'action-foreground': '#101c35',
+    'accent-foreground': '#101c35',
+    background: '#111827',
+    foreground: '#f1f5f9',
+    surface: '#1e293b',
+    default: '#334155',
+    'field-background': '#1e293b',
+    'field-border': '#475569',
+    border: '#475569',
+    focus: '#70a7ff'
+  }
+} satisfies Engine.NThemeProps['themes'];
 
 type Control = keyof typeof Engine;
-type Spec = { control: Control; text?: string; props?: Record<string, unknown> };
+type Spec = { control: Control; text?: string; props?: Record<string, unknown>; result?: string; height?: number };
 
 const items = [
   { value: 'beginner', label: 'Beginner' },
@@ -19,46 +76,37 @@ const items = [
 ];
 
 const examples: Record<string, Spec> = {
-  'action-item': { control: 'NActionItem', props: { name: 'Open document', description: 'View the latest draft.' } },
+  'action-item': { control: 'NActionItem', props: { name: 'Open document', description: 'View the latest draft.' }, result: 'Document opened.' },
   avatar: { control: 'NImage', props: { src: '/logo.webp', alt: 'Nayan Engine', width: 48, height: 48, className: 'rounded-full' } },
-  alert: { control: 'NAlert', props: { title: 'Ready', description: 'Your changes have been saved.' } },
-  badge: { control: 'NBadge', text: 'New' },
-  button: { control: 'NButton', text: 'Continue' },
   'button-group': { control: 'NButtonGroup', props: { items, defaultValue: 'beginner' } },
-  card: { control: 'NCard', text: 'A themed surface for related content.', props: { className: 'p-4' } },
-  'close-button': { control: 'NCloseButton', props: { accessibilityLabel: 'Close panel' } },
+  card: { control: 'NCard', text: 'This is a sample card.', props: { className: 'w-full rounded-xl border border-border bg-surface p-4' } },
+  'close-button': { control: 'NCloseButton', props: { accessibilityLabel: 'Close panel' }, result: 'Panel closed.' },
   code: { control: 'NCode', text: 'bun add @nayan-ui/engine' },
-  checkbox: { control: 'NCheck', props: { label: 'Send notifications', defaultValue: true } },
-  chip: { control: 'NChip', text: 'Engine' },
-  'date-picker': { control: 'NDatePicker', props: { label: 'Date' } },
+  'date-picker': { control: 'NDatePicker', props: { label: 'Date' }, height: 380 },
   disclosure: { control: 'NDisclosure', props: { title: 'Details' }, text: 'Expand the section to show its content.' },
   divider: { control: 'NDivider' },
   'empty-state': { control: 'NEmptyState', props: { title: 'No results', description: 'Try a different search.' } },
   icon: { control: 'NIcon', props: { paths: 'M4 12l5 5L20 6', strokeWidth: 2, size: 32 } },
   image: { control: 'NImage', props: { src: '/logo.webp', alt: 'Nayan Engine', width: 96, height: 68 } },
-  input: { control: 'NInput', props: { label: 'Display name', placeholder: 'Ada' } },
   'input-otp': { control: 'NInputOtp', props: { label: 'Verification code', maxLength: 6 } },
   kbd: { control: 'NKbd', text: 'Enter' },
   link: { control: 'NLink', props: { href: '/game-engine' }, text: 'Engine documentation' },
   linkify: { control: 'NLinkify', props: { text: 'Find the documentation at https://www.nayanui.com/game-engine.' } },
   loading: { control: 'NLoading', props: { label: 'Loading data…' } },
-  'menu-item': { control: 'NMenuItem', text: 'Open file' },
+  'menu-item': { control: 'NMenuItem', text: 'Open file', result: 'File opened.' },
   'number-field': { control: 'NNumberField', props: { label: 'Amount', defaultValue: 2, min: 0, max: 10 } },
   press: {
     control: 'NPress',
-    props: { accessibilityLabel: 'Press the custom control', className: 'rounded-lg bg-accent px-4 py-2 text-accent-foreground' },
-    text: 'Press me'
+    props: { accessibilityLabel: 'Press the custom control', className: 'self-start rounded-xl bg-accent px-4 py-2 text-accent-foreground' },
+    text: 'Press me',
+    result: 'Custom control pressed.'
   },
-  progress: { control: 'NProgress', props: { label: 'Progress', value: 65, max: 100 } },
   radio: { control: 'NRadio', props: { label: 'Beginner', value: 'beginner', isSelected: true } },
   required: { control: 'NRequired', props: { isRequired: true } },
   'radio-group': { control: 'NRadioGroup', props: { label: 'Experience', items, defaultValue: 'beginner' } },
   'search-field': { control: 'NSearchField', props: { label: 'Search', placeholder: 'Search examples' } },
   select: { control: 'NSelect', props: { label: 'Experience', options: items, defaultValue: 'beginner' } },
-  skeleton: { control: 'NSkeleton', props: { className: 'h-12 w-full rounded-xl' } },
   slider: { control: 'NSlider', props: { label: 'Volume', defaultValue: 50, min: 0, max: 100 } },
-  switch: { control: 'NSwitch', props: { label: 'Enable sound', defaultValue: true } },
-  tabs: { control: 'NTabs', props: { items, defaultValue: 'beginner' } },
   text: { control: 'NText', props: { className: 'text-xl font-semibold' }, text: 'Heading text' },
   view: { control: 'NView', props: { style: { width: 140, height: 64, backgroundColor: '#555ee6', borderRadius: 12 } } },
   pattern: {
@@ -69,48 +117,27 @@ const examples: Record<string, Spec> = {
   'toggle-button': { control: 'NToggleButton', text: 'Toggle' }
 };
 
-const related: Record<string, string> = {
-  menu: 'menu-item',
-  'avatar-group': 'avatar',
-  breadcrumbs: 'link',
-  calendar: 'date-picker',
-  'checkbox-group': 'checkbox',
-  'date-field': 'date-picker',
-  'date-range-picker': 'date-picker',
-  'infinite-scroll': 'list',
-  'list-box': 'select',
-  meter: 'progress',
-  pagination: 'list',
-  popover: 'select',
-  'progress-circle': 'progress',
-  'switch-group': 'switch',
-  table: 'list',
-  'tag-group': 'chip',
-  'time-field': 'input',
-  toolbar: 'button-group'
-};
-
-const dialogNames = { dialog: 'NDialog', sheet: 'NSheet', 'confirm-alert': 'NConfirm' } as const;
+const dialogNames = {
+  dialog: { control: 'NDialog', action: 'Open Dialog', title: 'Example dialog' },
+  sheet: { control: 'NSheet', action: 'Open Sheet', title: 'Example sheet' },
+  'confirm-alert': { control: 'NConfirm', action: 'Show Confirm Alert', title: 'Are you absolutely sure?' }
+} as const;
+const confirmation = 'This will delete the example item.';
 type DialogName = keyof typeof dialogNames;
 
-export function componentPreview(slug: string) {
-  if (slug === 'accordion') {
+export function componentPreview(slug: string): ComponentPreview | undefined {
+  const preview = familiarExample(slug) ?? hostExample(slug) ?? legacyExample(slug);
+  if (preview) return preview;
+
+  if (Object.hasOwn(specializedHeights, slug)) {
+    const specialized = slug as SpecializedSlug;
+    const { code, note } = standaloneExamples[specialized]!;
     return {
-      source: componentSource(
-        'NDisclosure, NText',
-        `<NDisclosure title="Installation"><NText>Install the engine with Bun.</NText></NDisclosure>
-          <NDisclosure title="Platforms"><NText>Build for the web, iOS and Android.</NText></NDisclosure>`
-      ),
-      render: (
-        <>
-          <Engine.NDisclosure title="Installation">
-            <Engine.NText>Install the engine with Bun.</Engine.NText>
-          </Engine.NDisclosure>
-          <Engine.NDisclosure title="Platforms">
-            <Engine.NText>Build for the web, iOS and Android.</Engine.NText>
-          </Engine.NDisclosure>
-        </>
-      )
+      source: code,
+      note,
+      render: <SpecializedExample slug={specialized} />,
+      height: specializedHeights[specialized],
+      host: true
     };
   }
   if (slug === 'carousel') {
@@ -196,16 +223,19 @@ export function componentPreview(slug: string) {
       render: <Engine.NButton onPress={() => Engine.NToast.success('Changes saved')}>Show toast</Engine.NButton>
     };
   if (Object.hasOwn(dialogNames, slug)) {
-    const name = dialogNames[slug as DialogName];
-    const body = name === 'NConfirm' ? ' onResult={(confirmed) => console.log(confirmed)} />' : `><NText>Details appear here.</NText></${name}>`;
+    const { control, action, title } = dialogNames[slug as DialogName];
+    const body =
+      control === 'NConfirm'
+        ? ` description="${confirmation}" onResult={(confirmed) => NToast.show(confirmed ? 'Confirmed' : 'Cancelled')} />`
+        : `><NText>Details appear here.</NText></${control}>`;
     return {
       source: componentSource(
-        `NButton, ${name}${name === 'NConfirm' ? '' : ', NText'}`,
-        `<NButton onPress={() => setOpen(true)}>Open</NButton>
-        <${name} isOpen={open} onOpenChange={setOpen} title="Details"${body}`,
+        `NButton, ${control}, ${control === 'NConfirm' ? 'NToast' : 'NText'}`,
+        `<NButton onPress={() => setOpen(true)}>${action}</NButton>
+        <${control} isOpen={open} onOpenChange={setOpen} title="${title}"${body}`,
         'const [open, setOpen] = useState(false);'
       ),
-      render: <Presentation name={name} />
+      render: <Presentation kind={slug as DialogName} />
     };
   }
   const spec = examples[slug];
@@ -214,25 +244,42 @@ export function componentPreview(slug: string) {
   const attrs = Object.entries(spec.props ?? {})
     .map(([key, value]) => ` ${key}={${JSON.stringify(value)}}`)
     .join('');
+  const trigger = spec.result ? ' onPress={() => setPressed(true)}' : '';
+  const child = spec.text ? `>${spec.text}</${spec.control}>` : ' />';
+  const feedback = spec.result ? `\n          {pressed && <NText>${spec.result}</NText>}` : '';
   return {
-    source: componentSource(spec.control, `<${spec.control}${attrs}${spec.text ? `>${spec.text}</${spec.control}>` : ' />'}`),
-    render: <Control {...spec.props}>{spec.text}</Control>
+    source: componentSource(
+      spec.result ? `${spec.control}, NText` : spec.control,
+      `<${spec.control}${attrs}${trigger}${child}${feedback}`,
+      spec.result ? 'const [pressed, setPressed] = useState(false);' : undefined
+    ),
+    render: spec.result ? <ActionPreview control={Control} spec={spec} /> : <Control {...spec.props}>{spec.text}</Control>,
+    height: spec.height
   };
 }
 
-function Presentation({ name }: { name: (typeof dialogNames)[DialogName] }) {
-  const [open, setOpen] = useState(false);
-  const props = { isOpen: open, onOpenChange: setOpen, title: 'Details' };
-  const Overlay = name === 'NSheet' ? Engine.NSheet : Engine.NDialog;
+function ActionPreview({ control: Control, spec }: { control: ComponentType<Record<string, unknown> & { children?: ReactNode }>; spec: Spec }) {
+  const [pressed, setPressed] = useState(false);
   return (
     <>
-      <Engine.NButton onPress={() => setOpen(true)}>Open {name === 'NSheet' ? 'sheet' : 'dialog'}</Engine.NButton>
-      {name === 'NConfirm' ? (
-        <Engine.NConfirm
-          {...props}
-          description="Confirm this action?"
-          onResult={(confirmed) => Engine.NToast.show(confirmed ? 'Confirmed' : 'Cancelled')}
-        />
+      <Control {...spec.props} onPress={() => setPressed(true)}>
+        {spec.text}
+      </Control>
+      {pressed && <Engine.NText>{spec.result}</Engine.NText>}
+    </>
+  );
+}
+
+function Presentation({ kind }: { kind: DialogName }) {
+  const [open, setOpen] = useState(false);
+  const { control, action, title } = dialogNames[kind];
+  const props = { isOpen: open, onOpenChange: setOpen, title };
+  const Overlay = control === 'NSheet' ? Engine.NSheet : Engine.NDialog;
+  return (
+    <>
+      <Engine.NButton onPress={() => setOpen(true)}>{action}</Engine.NButton>
+      {control === 'NConfirm' ? (
+        <Engine.NConfirm {...props} description={confirmation} onResult={(confirmed) => Engine.NToast.show(confirmed ? 'Confirmed' : 'Cancelled')} />
       ) : (
         <Overlay {...props}>
           <Engine.NText>Details appear here.</Engine.NText>
@@ -245,47 +292,68 @@ function Presentation({ name }: { name: (typeof dialogNames)[DialogName] }) {
 export default function EngineComponentDoc({ path }: { path: string }) {
   const item = getMenuItem(path);
   const slug = path.substring(path.lastIndexOf('/') + 1);
-  const alternative = related[slug];
-  const previewSlug = alternative ?? slug;
-  const reference = findComponentReference(slug) ?? findComponentReference(previewSlug);
+  const alternative = legacyComponentAlternatives[slug as keyof typeof legacyComponentAlternatives];
+  const reference = findComponentReference(alternative ?? (slug === 'avatar' ? 'image' : slug));
   const quickstart = path.startsWith('/react-native/') ? '/game-engine/react-native' : '/game-engine/react';
+  const tags = tagsForReference(path);
 
   return (
     <Sidebar title={item?.title ?? 'Components'}>
-      {alternative && (
-        <p className="mb-4 text-muted">This example uses the engine’s {alternative.replaceAll('-', ' ')} control as a starting point.</p>
-      )}
-      <EngineComponentExample slug={previewSlug} />
+      <EngineComponentExample slug={slug} />
       {reference && (
         <Link href={reference.path} className="mb-4 block text-accent hover:underline">
           Engine reference for {reference.title}
         </Link>
       )}
-      <Link href={quickstart} className="text-accent hover:underline">
+      <Link href={quickstart} className="mb-6 block text-accent hover:underline">
         Set up engine components
       </Link>
+      {tags.length > 0 && (
+        <SubHeader title="Tags">
+          <TagsList tags={tags} />
+        </SubHeader>
+      )}
     </Sidebar>
   );
 }
 
 export function EngineComponentExample({ slug }: { slug: string }) {
   const preview = componentPreview(slug);
-  const example = standaloneExamples[slug];
-  const code = preview?.source ?? example?.code;
-  if (!code) return null;
+  if (!preview) return null;
 
   return (
     <>
-      {preview && (
-        <SubHeader title="Live example">
-          <div className="docs-live-preview flex h-64 flex-col overflow-hidden rounded-xl border border-border bg-surface">
-            <Engine.NPage className="gap-3 p-5 sm:p-6">{preview.render}</Engine.NPage>
-          </div>
-        </SubHeader>
-      )}
-      <SubHeader title="Usage" description={example?.note}>
-        <Code code={code} filename="Example.tsx" />
+      <SubHeader title="Live example">
+        <div
+          className="docs-live-preview flex min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-surface"
+          data-component-preview={slug}
+          style={{ height: preview.height ?? 256 }}
+        >
+          <ExampleStage key={slug} preview={preview} />
+        </div>
+      </SubHeader>
+      <SubHeader title="Usage" description={preview.note}>
+        <Code code={preview.source} filename="Example.tsx" />
       </SubHeader>
     </>
+  );
+}
+
+function ExampleStage({ preview }: { preview: ComponentPreview }) {
+  const [rendererError, setRendererError] = useState(false);
+  return (
+    <Engine.NTheme themes={previewThemes}>
+      {preview.host ? (
+        preview.render
+      ) : rendererError ? (
+        <p className="component-host-demo" role="status">
+          The engine renderer could not start in this browser.
+        </p>
+      ) : (
+        <Engine.NPage className="gap-3 p-4" onError={() => setRendererError(true)}>
+          {preview.render}
+        </Engine.NPage>
+      )}
+    </Engine.NTheme>
   );
 }

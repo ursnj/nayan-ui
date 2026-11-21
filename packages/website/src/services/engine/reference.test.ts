@@ -5,8 +5,8 @@ import ts from 'typescript';
 import * as engineComponents from '@nayan-ui/engine/components';
 import enginePackage from '@nayan-ui/engine/package.json';
 import { componentPreview } from '@/components/ui/EngineComponentDoc';
+import { legacyComponentAlternatives } from '@/components/ui/previews/LegacyExamples';
 import { componentReferences } from './component-reference';
-import { standaloneExamples } from './component-examples';
 import { moduleReferences } from './module-reference';
 
 test('the reference covers the component exports and public engine entry points', () => {
@@ -25,11 +25,21 @@ test('the reference covers the component exports and public engine entry points'
 
 test('each reference entry has valid example code for the built engine package', () => {
   const examples: [string, string][] = [];
-  for (const { slug, symbol, module } of componentReferences) {
-    const code = componentPreview(slug)?.source ?? standaloneExamples[slug]?.code ?? moduleReferences.find((entry) => entry.slug === module)?.code;
-    expect(code, slug).toBeTruthy();
-    expect(code, slug).toContain(symbol);
-    examples.push([`${slug}.tsx`, code!]);
+  for (const { slug, symbol } of componentReferences) {
+    const preview = componentPreview(slug);
+    expect(preview?.render, slug).toBeTruthy();
+    expect(preview?.source, slug).toContain(symbol);
+    examples.push([`${slug}.tsx`, preview!.source]);
+  }
+  for (const [slug, alternative] of Object.entries(legacyComponentAlternatives)) {
+    const preview = componentPreview(slug);
+    expect(
+      componentReferences.some((entry) => entry.slug === alternative),
+      slug
+    ).toBe(true);
+    expect(preview?.render, slug).toBeTruthy();
+    expect(preview?.source, slug).toContain('@nayan-ui/engine/components');
+    examples.push([`legacy-${slug}.tsx`, preview!.source]);
   }
   for (const { entry, slug, code, filename } of moduleReferences) {
     if (!entry.includes('*') && entry !== './app.plugin.js') expect(code, slug).toContain(`@nayan-ui/engine/${entry.slice(2)}`);

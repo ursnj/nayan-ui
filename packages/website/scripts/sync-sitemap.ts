@@ -5,23 +5,13 @@ import { gamesData } from "../src/services/GamesData";
 import { componentReferences } from "../src/services/engine/component-reference";
 import { moduleReferences } from "../src/services/engine/module-reference";
 import { engineNavigation } from "../src/services/engine/navigation";
+import { referenceTags } from "../src/services/engine/reference-tags";
 import { SITE_URL } from "../src/services/seo";
-import {
-  getMenuItemByTag,
-  reactSidebarItems,
-  reactNativeSidebarItems,
-  toolsSidebarItems,
-  type SidebarItem,
-} from "../src/services/Utils";
+import { getMenuItemByTag, toolsSidebarItems } from "../src/services/Utils";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const APP = join(ROOT, "src/app");
 const OUTPUT = join(ROOT, "public/sitemap.xml");
-const TAGS: Record<string, readonly SidebarItem[]> = {
-  "/react/tags/[tag]": reactSidebarItems,
-  "/react-native/tags/[tag]": reactNativeSidebarItems,
-  "/tools/tags/[tag]": toolsSidebarItems,
-};
 const noindex = (file: string) =>
   existsSync(file) && /\brobots\s*:\s*\{[^}]*\bindex\s*:\s*false/.test(readFileSync(file, "utf8"));
 
@@ -56,19 +46,21 @@ export function collectPublicPaths(app = APP): string[] {
       }
     } else if (route === "/games/[slug]") {
       Object.keys(gamesData).forEach((slug) => paths.add(`/games/${slug}`));
-    } else if (!(route in TAGS)) {
+    } else if (route !== "/tags/[tag]" && route !== "/tools/tags/[tag]") {
       throw new Error(`Add sitemap handling for the new dynamic page: ${route}`);
     }
   }
-  for (const route of dynamic) {
-    const items = TAGS[route];
-    if (!items) continue;
-    const prefix = route.slice(0, -"[tag]".length);
-    for (const item of items) {
+  if (dynamic.has("/tags/[tag]")) {
+    for (const { sku, entries } of referenceTags) {
+      if (entries.some(({ path }) => paths.has(path))) paths.add(`/tags/${encodeURIComponent(sku)}`);
+    }
+  }
+  if (dynamic.has("/tools/tags/[tag]")) {
+    for (const item of toolsSidebarItems) {
       if (!paths.has(item.link)) continue;
       for (const tag of item.tags ?? []) {
-        const owner = getMenuItemByTag(tag.sku, prefix);
-        if (owner && paths.has(owner.link)) paths.add(`${prefix}${encodeURIComponent(tag.sku)}`);
+        const owner = getMenuItemByTag(tag.sku, "/tools");
+        if (owner && paths.has(owner.link)) paths.add(`/tools/tags/${encodeURIComponent(tag.sku)}`);
       }
     }
   }
@@ -86,7 +78,7 @@ export function renderSitemap(paths: readonly string[]): string {
   const urls = [...new Set(paths)].sort().map((path) => {
     const hub =
       path === "/" ||
-      ["/react", "/react-native", "/components", "/modules", "/games", "/tools", "/game-engine", "/video-editor"].includes(
+      ["/react", "/react-native", "/components", "/modules", "/tags", "/games", "/tools", "/game-engine", "/video-editor"].includes(
         path,
       );
     const tag = path.includes("/tags/");

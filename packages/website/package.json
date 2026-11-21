@@ -14,7 +14,6 @@
     "test": "bun test scripts src"
   },
   "dependencies": {
-    "@monaco-editor/react": "^4.7.0",
     "@nayan-ui/engine": "workspace:*",
     "@nayan-ui/games": "file:./scripts/nayan-ui-games.tgz",
     "mediabunny": "^1.66.2",

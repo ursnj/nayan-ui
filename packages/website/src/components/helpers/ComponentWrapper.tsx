@@ -7,6 +7,7 @@ import { BrowserFrame, PhoneFrame } from "@/design/Primitives";
 import { CARD, LEAD } from "@/design/system";
 import TagsList from "@/components/helpers/TagsList";
 import { getMenuItem, getSidebarItems } from "@/services/Utils";
+import { tagsForReference } from "@/services/engine/reference-tags";
 import { REPO_URL, SITE_HOST } from "@/services/seo";
 import Attributes from "./Attributes";
 import Code from "./Code";
@@ -102,7 +103,7 @@ const ComponentWrapper = (props: Props) => {
       ))}
 
       <SubHeader title="Tags" description="Other components solving nearby problems.">
-        <TagsList type={type} tags={component.tags} />
+        <TagsList tags={tagsForReference(pathname)} />
       </SubHeader>
 
       {previous || next ? (

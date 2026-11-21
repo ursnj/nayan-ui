@@ -21,6 +21,8 @@ const nextConfig: NextConfig = {
       { source: '/examples/:path+', destination: '/game-engine/examples/:path+', permanent: true },
       { source: '/engine', destination: '/game-engine', permanent: true },
       { source: '/engine/:slug', destination: '/game-engine/:slug', permanent: true },
+      { source: '/react/tags/:tag*', destination: '/tags/:tag*', permanent: true },
+      { source: '/react-native/tags/:tag*', destination: '/tags/:tag*', permanent: true },
       // Play With Tua was renamed Talking Tua.
       { source: '/games/play-with-tua', destination: '/games/talking-tua', permanent: true }
     ];

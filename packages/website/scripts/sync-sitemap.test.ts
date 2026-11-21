@@ -2,6 +2,9 @@ import { afterEach, expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
+import { componentReferences } from "../src/services/engine/component-reference";
+import { moduleReferences } from "../src/services/engine/module-reference";
+import { findReferenceTag, referenceTopics, tagsForReference } from "../src/services/engine/reference-tags";
 import { collectPublicPaths, renderSitemap } from "./sync-sitemap";
 
 const fixtures: string[] = [];
@@ -34,16 +37,34 @@ test("new example pages are discovered without listing them manually; private an
   expect(collectPublicPaths(root)).toEqual(["/", "/about", "/game-engine/examples/new-example"]);
 });
 
-test("tag URLs require a current component owner with a real public page", () => {
+test("shared tag URLs include both platforms and modules with current public pages", () => {
   const root = fixture({
-    "react/button/page.tsx": "export default function Button() {}",
-    "react/tags/[tag]/page.tsx": "export default function Tag() {}",
-    "react-native/tags/[tag]/page.tsx": "export default function Tag() {}",
+    "button/page.tsx": "export default function Button() {}",
+    "modules/games/page.tsx": "export default function GameModule() {}",
+    "tags/[tag]/page.tsx": "export default function Tag() {}",
   });
   const paths = collectPublicPaths(root);
-  expect(paths).toContain("/react/tags/react-button");
-  expect(paths.some((path) => path.startsWith("/react-native/tags/"))).toBe(false);
-  expect(paths).not.toContain("/react/tags/react-accordion");
+  expect(paths).toEqual(expect.arrayContaining([
+    "/tags/button", "/tags/react-button", "/tags/react-native-button", "/tags/game-development", "/tags/games",
+  ]));
+  expect(paths.some((path) => /^\/react(?:-native)?\/tags/.test(path))).toBe(false);
+  expect(paths).not.toContain("/tags/react-accordion");
+});
+
+test("every engine reference has a topic and both platform docs share the same component tags", () => {
+  const topics = new Set(referenceTopics.map(({ sku }) => sku));
+  for (const { path } of [...componentReferences, ...moduleReferences]) {
+    const tags = tagsForReference(path);
+    expect(tags.some(({ sku }) => topics.has(sku))).toBe(true);
+    expect(new Set(tags.map(({ sku }) => sku)).size).toBe(tags.length);
+  }
+  const buttonTags = tagsForReference("/button");
+  expect(tagsForReference("/react/button")).toEqual(buttonTags);
+  expect(tagsForReference("/react-native/button")).toEqual(buttonTags);
+  expect(buttonTags.map(({ sku }) => sku)).toEqual(expect.arrayContaining(["react-button", "react-native-button"]));
+  expect(findReferenceTag("game-development")?.entries.map(({ path }) => path)).toEqual(
+    expect.arrayContaining(["/game-view", "/modules/games"]),
+  );
 });
 
 test("a new dynamic route cannot silently disappear from the sitemap", () => {

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { clipboard } from '@nayan-ui/engine/clipboard';
-import { NPress } from '@nayan-ui/engine/components';
+import { NCode, NPress } from '@nayan-ui/engine/components';
 import { Check, Code2, Copy } from '@/design/Icons';
 
 interface Props {
@@ -43,9 +43,13 @@ function colorCode(code: string, language: string) {
   return parts;
 }
 
+export function CodeText({ code, language = 'tsx' }: { code: string; language?: string }) {
+  const formatted = useMemo(() => colorCode(code, language), [code, language]);
+  return <NCode tag="code">{formatted}</NCode>;
+}
+
 export default function Code({ code, language = 'tsx', filename, embedded = false, maxHeight, showHeader = true, tone }: Props) {
   const [copied, setCopied] = useState(false);
-  const formatted = useMemo(() => colorCode(code, language), [code, language]);
 
   useEffect(() => {
     if (!copied) return;
@@ -78,7 +82,7 @@ export default function Code({ code, language = 'tsx', filename, embedded = fals
       )}
       <div className="site-code-scroll" style={{ maxHeight }} tabIndex={0} aria-label={`${filename ?? language} source code`}>
         <pre>
-          <code>{formatted}</code>
+          <CodeText code={code} language={language} />
         </pre>
       </div>
     </div>

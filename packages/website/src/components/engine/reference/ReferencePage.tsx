@@ -4,10 +4,11 @@ import { BUTTON_SMALL } from '@/design/system';
 import Code from '@/components/helpers/Code';
 import Sidebar from '@/components/helpers/Sidebar';
 import SubHeader from '@/components/helpers/SubHeader';
+import TagsList from '@/components/helpers/TagsList';
 import { EngineComponentExample } from '@/components/ui/EngineComponentDoc';
-import { standaloneExamples } from '@/services/engine/component-examples';
 import { componentReferences } from '@/services/engine/component-reference';
 import { moduleReferences } from '@/services/engine/module-reference';
+import { tagsForReference } from '@/services/engine/reference-tags';
 import ReferenceDirectory from './ReferenceDirectory';
 
 type Group = 'components' | 'modules';
@@ -16,8 +17,7 @@ type ReferenceEntry = (typeof componentReferences)[number] | (typeof moduleRefer
 export const referenceGroups = {
   components: {
     title: 'Engine Components',
-    description:
-      'Find controls, layout primitives and hooks for React and React Native. Open a reference page to copy engine code and try available previews.',
+    description: 'Try controls, layout primitives and hooks in live previews, then copy engine code for React and React Native.',
     importPath: '@nayan-ui/engine/components',
     items: componentReferences
   },
@@ -38,6 +38,7 @@ function referenceNavigation(group: Group) {
     items: [
       { title: 'Components', description: referenceGroups.components.description, link: '/components' },
       { title: 'Modules', description: referenceGroups.modules.description, link: '/modules' },
+      { title: 'Tags', description: 'Browse components and modules by topic.', link: '/tags' },
       { title, description: '', link: '', isHeading: true },
       ...items.map((item) => ({ title: item.title, description: item.description, link: item.path }))
     ]
@@ -75,7 +76,6 @@ export function ReferenceIndex({ group }: { group: Group }) {
 export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
   const group = 'symbol' in entry ? 'components' : 'modules';
   const module = 'symbol' in entry ? moduleReferences.find(({ slug }) => slug === entry.module) : undefined;
-  const standalone = 'symbol' in entry && module ? (standaloneExamples[entry.slug] ?? module) : undefined;
 
   return (
     <Sidebar title={entry.title} reference={referenceNavigation(group)}>
@@ -86,13 +86,7 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
             Engine API <code className="ml-1 font-semibold text-accent">{entry.symbol}</code>
             <span className="ml-2 break-all font-mono text-xs">{entry.importPath}</span>
           </p>
-          {standalone ? (
-            <SubHeader title="Usage" description={standalone.note}>
-              <Code code={standalone.code} filename="Example.tsx" />
-            </SubHeader>
-          ) : (
-            <EngineComponentExample slug={entry.slug} />
-          )}
+          <EngineComponentExample slug={entry.slug} />
           {module && (
             <Link href={module.path} className="mb-4 block text-sm font-medium text-accent hover:underline">
               {module.title} module
@@ -119,6 +113,9 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
           ) : null}
         </>
       )}
+      <SubHeader title="Tags">
+        <TagsList tags={tagsForReference(entry.path)} />
+      </SubHeader>
     </Sidebar>
   );
 }

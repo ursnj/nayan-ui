@@ -18,6 +18,28 @@ ${state ? `  ${state}\n` : ''}  return (
 }
 
 export const standaloneExamples: Record<string, { code: string; note?: string }> = {
+  'animation-view': {
+    code: `'use client';
+
+import { useState } from 'react';
+import { AnimationView, useAnimatedStyle, useSharedValue, withTiming } from '@nayan-ui/engine/animations';
+import { NButton, NText, NView } from '@nayan-ui/engine/components';
+
+export default function Example() {
+  const opacity = useSharedValue(1);
+  const style = useAnimatedStyle({ opacity });
+  const [faded, setFaded] = useState(false);
+  return (
+    <NView>
+      <AnimationView animatedStyle={style}><NText>Animated view</NText></AnimationView>
+      <NButton onPress={() => {
+        opacity.value = withTiming(faded ? 1 : 0.4);
+        setFaded(!faded);
+      }}>{faded ? 'Fade in' : 'Fade out'}</NButton>
+    </NView>
+  );
+}`
+  },
   blur: {
     note: 'Blur depends on platform support. For a native view target, pass the ref from NBlurTarget as blurTarget.',
     code: `import { NBlur, NText, NView } from '@nayan-ui/engine/components';
@@ -91,6 +113,71 @@ export default function Example() {
   );
 }`
   },
+  'drawing-canvas': {
+    code: `'use client';
+
+import { useEffect, useState } from 'react';
+import { DrawingCanvas, DrawingDocument } from '@nayan-ui/engine/drawing';
+import { warmUpEngine } from '@nayan-ui/engine/games';
+import { NButton, NLoading, NText, NView } from '@nayan-ui/engine/components';
+
+export default function Example() {
+  const [document, setDocument] = useState<DrawingDocument>();
+  const [error, setError] = useState('');
+  useEffect(() => {
+    let active = true;
+    let drawing: DrawingDocument | undefined;
+    void warmUpEngine().then(() => {
+      if (!active) return;
+      drawing = new DrawingDocument(320, 240);
+      drawing.setBrush({ brushType: 'MARKER', color: '#1864e8', width: 8, opacity: 1 });
+      setDocument(drawing);
+    }).catch((cause: unknown) => {
+      if (active) setError(String(cause));
+    });
+    return () => { active = false; drawing?.dispose(); };
+  }, []);
+  if (error) return <NText>{error}</NText>;
+  if (!document) return <NLoading label="Preparing drawing canvas" />;
+  return (
+    <NView>
+      <NView style={{ width: '100%', height: 206 }}>
+        <DrawingCanvas document={document} mode="draw" />
+      </NView>
+      <NButton onPress={() => document.clear()}>Clear drawing</NButton>
+    </NView>
+  );
+}`
+  },
+  'game-view': {
+    code: `'use client';
+
+import { useRef, useState } from 'react';
+import { GameView, useWorld, type Camera, type Entity } from '@nayan-ui/engine/games';
+import { NButton, NView } from '@nayan-ui/engine/components';
+
+export default function Example() {
+  const cube = useRef<Entity | null>(null);
+  const camera: Camera = { eye: [3, 2, 4], target: [0, 0, 0], fov: 0.65, ortho: 1.25 };
+  const [alternate, setAlternate] = useState(false);
+  const world = useWorld(32, (world) => {
+    cube.current = world.spawn({ mesh: 'cube', color: '#699cff' });
+  });
+  if (!world) return null;
+  return (
+    <NView>
+      <NView style={{ width: '100%', height: 206 }}>
+        <GameView source={world} camera={camera} style={{ width: '100%', height: '100%' }} />
+      </NView>
+      <NButton onPress={() => {
+        if (cube.current === null) return;
+        world.set(cube.current, { color: alternate ? '#699cff' : '#48d9a5' });
+        setAlternate(!alternate);
+      }}>{alternate ? 'Show blue cube' : 'Show green cube'}</NButton>
+    </NView>
+  );
+}`
+  },
   joystick: {
     note: 'Read the mutable stick coordinates inside the game loop. Both axes range from −1 to 1.',
     code: `import { Joystick, useJoystick } from '@nayan-ui/engine/games';
@@ -111,6 +198,21 @@ export default function Example() {
         <NPage><NInput label="Name" /></NPage>
       </NKeyboard>
     </NView>
+  );
+}`
+  },
+  'markdown-view': {
+    code: `'use client';
+
+import { NPage } from '@nayan-ui/engine/components';
+import { NMarkdown } from '@nayan-ui/engine/markdown';
+
+export default function Example() {
+  const source = '## Release notes\\n\\nThis preview renders **Markdown** with engine components.';
+  return (
+    <NPage style={{ height: 240 }}>
+      <NMarkdown source={source} blockSpacing={12} />
+    </NPage>
   );
 }`
   },
@@ -176,18 +278,6 @@ export default function Example() {
       `<NScrollView>
             {Array.from({ length: 18 }, (_, index) => <NText key={index}>Item {index + 1}</NText>)}
           </NScrollView>`
-    )
-  },
-  'tabs-content': {
-    code: componentSource(
-      'NTabs, NTabsContent, NText',
-      `<NTabs
-            items={[{ label: 'Overview', value: 'overview' }, { label: 'Details', value: 'details' }]}
-            value={tab}
-            onValueChange={setTab}
-          />
-          <NTabsContent><NText>{tab === 'overview' ? 'Summary' : 'Details go here'}</NText></NTabsContent>`,
-      "const [tab, setTab] = useState('overview');"
     )
   },
   theme: {
@@ -277,6 +367,17 @@ function Mode() {
 
 export default function Example() {
   return <NTheme defaultTheme="system"><Mode /></NTheme>;
+}`
+  },
+  'video-player': {
+    note: 'Serve a video file from your app and pass its URL to VideoPlayer.',
+    code: `import { VideoPlayer } from '@nayan-ui/engine/video';
+
+export default function Example() {
+  return (
+    <VideoPlayer source="/engine-ui/reference-orbit.mp4" controls muted contentFit="contain"
+      accessibilityLabel="Orbit sample clip" style={{ width: '100%', height: 240 }} />
+  );
 }`
   }
 };

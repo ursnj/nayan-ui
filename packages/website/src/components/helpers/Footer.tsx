@@ -16,7 +16,7 @@ const GROUPS = [
       { label: 'React components', href: '/react/components' },
       { label: 'React Native installation', href: '/game-engine/react-native' },
       { label: 'React Native components', href: '/react-native/components' },
-      { label: 'Component tags', href: '/tags' }
+      { label: 'Component and module tags', href: '/tags' }
     ]
   },
   {

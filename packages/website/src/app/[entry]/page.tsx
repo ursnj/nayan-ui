@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { ReferencePage } from '@/components/engine/reference/ReferencePage';
 import { componentReferences } from '@/services/engine/component-reference';
 import { moduleReferences } from '@/services/engine/module-reference';
+import { tagsForReference } from '@/services/engine/reference-tags';
 import { buildPageMetadata } from '@/services/seo';
 
 const entries = [...componentReferences, ...moduleReferences].filter(({ path }) => path.split('/').length === 2);
@@ -21,7 +22,12 @@ async function getEntry({ params }: Props) {
 
 export async function generateMetadata(props: Props) {
   const entry = await getEntry(props);
-  return buildPageMetadata({ title: `${entry.title} · Engine Reference`, description: entry.description, path: entry.path });
+  return buildPageMetadata({
+    title: `${entry.title} · Engine Reference`,
+    description: entry.description,
+    path: entry.path,
+    keywords: tagsForReference(entry.path).map(({ text }) => text).join(', ')
+  });
 }
 
 export default async function EngineReferenceEntryPage(props: Props) {

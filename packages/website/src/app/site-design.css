@@ -664,9 +664,159 @@ html:has(.fullscreen-workspace) .site-main {
 }
 
 .docs-live-preview {
-  background-image: radial-gradient(circle, var(--site-grid-line) 1px, transparent 1px);
-  background-position: center;
-  background-size: 16px 16px;
+  --preview-accent: #0e63ee;
+  --preview-accent-text: #ffffff;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.dark .docs-live-preview {
+  --preview-accent: #70a7ff;
+  --preview-accent-text: #101c35;
+  background: #111827;
+  color: #f1f5f9;
+}
+
+.component-host-demo {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.component-host-button {
+  flex: none;
+  border-radius: 9999px;
+  background: var(--preview-accent);
+  color: var(--preview-accent-text);
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.component-host-button:focus-visible {
+  outline: 2px solid var(--preview-accent);
+  outline-offset: 3px;
+}
+
+.component-blur-scene {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-height: 9rem;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: repeating-linear-gradient(135deg, #234099 0 12px, #446cdb 12px 24px);
+}
+
+.component-blur-panel {
+  position: absolute;
+  inset: 25% 12%;
+  display: grid;
+  place-items: center;
+  border: 1px solid #ffffff66;
+  border-radius: 0.75rem;
+  background: #14285d44;
+}
+
+.component-animation-block {
+  border-radius: 0.75rem;
+  background: var(--preview-accent);
+  color: var(--preview-accent-text);
+  padding: 1.5rem;
+}
+
+.component-media-surface {
+  width: 100%;
+  height: 206px;
+  flex: none;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.component-popup-trigger {
+  position: relative;
+}
+
+.component-popup {
+  position: absolute;
+  z-index: 1;
+  inset: calc(100% + 0.5rem) auto auto 0;
+  min-width: max-content;
+  border: 1px solid currentColor;
+  border-color: color-mix(in srgb, currentColor 20%, transparent);
+  border-radius: 0.65rem;
+  background: #ffffff;
+  box-shadow: 0 6px 18px #0f172a20;
+  padding: 0.65rem;
+}
+
+.dark .component-popup {
+  background: #1e293b;
+}
+
+.component-popup-item {
+  display: block;
+  width: 100%;
+  border-radius: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  text-align: start;
+  cursor: pointer;
+}
+
+.component-popup-item:hover,
+.component-popup-item:focus-visible {
+  background: color-mix(in srgb, var(--preview-accent) 16%, transparent);
+}
+
+.component-table-wrapper {
+  overflow: auto;
+  margin: 1rem;
+  border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  border-radius: 0.75rem;
+}
+
+.component-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  text-align: start;
+}
+
+.component-table :is(th, td) {
+  padding: 0.65rem 0.75rem;
+  text-align: start;
+}
+
+.component-table th,
+.component-table tr:nth-child(even) {
+  background: color-mix(in srgb, currentColor 6%, transparent);
+}
+
+.component-host-input {
+  min-height: 2.75rem;
+  border: 1px solid color-mix(in srgb, currentColor 24%, transparent);
+  border-radius: 0.65rem;
+  background: color-mix(in srgb, currentColor 4%, transparent);
+  padding: 0.45rem 0.75rem;
+}
+
+.component-progress-circle {
+  display: grid;
+  width: 5.25rem;
+  height: 5.25rem;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f8fafc 60%, transparent 62%), conic-gradient(var(--preview-accent) 72%, #cbd5e1 0);
+  font-weight: 600;
+}
+
+.dark .component-progress-circle {
+  background: radial-gradient(circle, #111827 60%, transparent 62%), conic-gradient(var(--preview-accent) 72%, #475569 0);
 }
 
 @media (max-width: 420px) {
