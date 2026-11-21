@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -9,16 +10,12 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  outputFileTracingRoot: path.resolve(__dirname, "../.."),
   turbopack: {
+    root: path.resolve(__dirname, "../.."),
     resolveAlias: {
-      // The games bundle imports its engine peer; resolve it from this website so the
-      // games and the page share one engine instance (one WASM core, one audio context).
-      // The engine locates engine_core_bg.wasm and audio-worklet.js, and the games their
-      // sounds/textures/models, with `new URL(..., import.meta.url)`, which Turbopack
-      // emits as static assets — no extra copying or public/ files are needed.
-      // Point at the browser build itself: aliasing the package folder makes Turbopack follow its
-      // "main" field (the React Native build, which imports react-native and expo-modules-core).
-      "@nayan-ui/engine": "./node_modules/@nayan-ui/engine/lib/web/index.js",
+      // Keep the website and the linked games on one engine instance.
+      "@nayan-ui/engine": "./node_modules/@nayan-ui/engine",
     },
   },
   output: "standalone",

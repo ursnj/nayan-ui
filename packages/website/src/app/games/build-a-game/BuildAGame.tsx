@@ -1,6 +1,6 @@
 "use client";
 
-import { NLink } from "@nayan-ui/react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CheckList } from "@/design/Primitives";
 import { H2_DOC, H3_DOC } from "@/design/system";
@@ -134,14 +134,14 @@ const BuildAGame = () => {
     <Sidebar title={component?.title || "Build an engine game"}>
       <p className={P}>
         Library games pair plain TypeScript rules on a{" "}
-        <NLink href="/game-engine" className={LINK}>
+        <Link href="/game-engine" className={LINK}>
           @nayan-ui/engine
-        </NLink>{" "}
+        </Link>{" "}
         world with a small screen on the shared HUD. These modules are internal, so use this pattern
         in the library or a fork; for your own app, follow the{" "}
-        <NLink href="/game-engine/first-game" className={LINK}>
+        <Link href="/game-engine/first-game" className={LINK}>
           engine game guide
-        </NLink>{" "}
+        </Link>{" "}
         and the lifecycle rules below.
       </p>
 

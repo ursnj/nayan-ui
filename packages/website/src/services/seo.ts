@@ -4,12 +4,7 @@ import gamesPackage from "@nayan-ui/games/package.json";
 import seoBanners from "./seo-banners.json";
 import seoArtwork from "./seo-artwork.json";
 import individualArtwork from "./seo-artwork-individual.json";
-import {
-  NATIVE_COMPONENT_COUNT,
-  REACT_COMPONENT_COUNT,
-  TOOL_COUNT,
-  TOTAL_COMPONENT_COUNT,
-} from "./Counts";
+import { NATIVE_COMPONENT_COUNT, REACT_COMPONENT_COUNT, TOOL_COUNT } from "./Counts";
 
 export const SITE_URL = "https://www.nayanui.com";
 export const REPO_URL = "https://github.com/ursnj/nayan-ui";
@@ -33,7 +28,7 @@ export function seoBannerUrl(path: string) {
   return `${SITE_URL}${BANNERS[path] ?? BANNERS["/"]}`;
 }
 
-export const SITE_DESCRIPTION = `Nayan UI is an open source platform for React and React Native: ${TOTAL_COMPONENT_COUNT} accessible UI components, a 3D game engine, 50+ ready-made games, a browser video editor and ${TOOL_COUNT} free online developer tools for PDFs, images, JSON, text, SEO and AI code review.`;
+export const SITE_DESCRIPTION = `Nayan UI provides an open source engine for cross-platform interfaces and 3D games in React and React Native, plus 50+ playable games, a browser video editor and ${TOOL_COUNT} free developer tools.`;
 
 export const organizationSchema = {
   "@context": "https://schema.org",
@@ -70,6 +65,7 @@ export const softwareApplicationSchema = {
   runtimePlatform: ["Web Browser", "React Native", "Node.js"],
   requirements: "React 18+, TypeScript 4.5+, Tailwind CSS 4.0+",
   featureList: [
+    "Cross-platform engine UI components",
     `${REACT_COMPONENT_COUNT} React Components`,
     `${NATIVE_COMPONENT_COUNT} React Native Components`,
     "3D Game Engine for React and React Native",

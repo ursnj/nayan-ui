@@ -20,7 +20,7 @@ export const GettingStartedGuides: EngineGuide[] = [
   {
     slug: "overview",
     title: "Nayan Game Engine",
-    description: "A 3D game engine for React and React Native on one Rust core.",
+    description: "Cross-platform UI and 3D games for React and React Native on one Rust core.",
     sections: [
       {
         id: "what-it-is",
@@ -42,6 +42,39 @@ export function BouncingBall() {
     w.spawn({ mesh: "sphere", position: [0, 5, 0], color: "#3399FF", physics: { type: "dynamic", bounce: 0.6 } });
   });
   return world && <GameView source={world} camera={{ eye: [0, 4, 8], target: [0, 0, 0], fov: 1 }} style={{ flex: 1 }} />;
+}`,
+          },
+        ],
+      },
+      {
+        id: "ui-components",
+        title: "Interface components",
+        paragraphs: [
+          "Import interface controls from @nayan-ui/engine/components. NTheme shares the theme preference across React and React Native, and ComponentsRoot renders its children through the Rust UI engine.",
+          "On the web, keep a semantic HTML preview visible until onReady fires. Keep that preview available if onError fires so users can still interact without a graphics adapter.",
+        ],
+        examples: [
+          {
+            title: "Counter.tsx",
+            description: "A themed engine surface with one interactive control.",
+            platform: "shared",
+            language: "tsx",
+            code: `import { useState } from "react";
+import { ComponentsRoot, NButton, NText, NTheme, NView } from "@nayan-ui/engine/components";
+
+export function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <NTheme defaultTheme="system">
+      <ComponentsRoot style={{ height: 220 }}>
+        <NView className="gap-3 p-4">
+          <NText>Count: {count}</NText>
+          <NButton onPress={() => setCount((value) => value + 1)}>Add one</NButton>
+        </NView>
+      </ComponentsRoot>
+    </NTheme>
+  );
 }`,
           },
         ],

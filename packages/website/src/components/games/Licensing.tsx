@@ -1,6 +1,6 @@
 "use client";
 
-import { NLink } from "@nayan-ui/react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { H2_DOC, H3_DOC } from "@/design/system";
 import Sidebar from "@/components/helpers/Sidebar";
@@ -63,12 +63,12 @@ const GamesLicensing = () => {
           </p>
           <p className="text-muted text-sm">
             Request one at{" "}
-            <NLink
+            <Link
               href={`mailto:${EMAIL}?subject=%40nayan-ui%2Fgames%20-%20Commercial%20License%20Request`}
               className={LINK}
             >
               {EMAIL}
-            </NLink>
+            </Link>
             .
           </p>
         </div>
@@ -80,13 +80,13 @@ const GamesLicensing = () => {
           {ACKNOWLEDGMENTS.map((item) => (
             <li key={item.name}>
               •{" "}
-              <NLink
+              <Link
                 href={item.href}
                 target={item.href.startsWith("http") ? "_blank" : undefined}
                 className={LINK}
               >
                 {item.name}
-              </NLink>
+              </Link>
               : {item.use}
             </li>
           ))}
@@ -98,21 +98,21 @@ const GamesLicensing = () => {
         <ul className="text-muted text-sm space-y-2">
           <li>
             • Email:{" "}
-            <NLink href={`mailto:${EMAIL}`} className={LINK}>
+            <Link href={`mailto:${EMAIL}`} className={LINK}>
               {EMAIL}
-            </NLink>
+            </Link>
           </li>
           <li>
             • Issues:{" "}
-            <NLink href={REPO_URL} target="_blank" className={LINK}>
+            <Link href={REPO_URL} target="_blank" className={LINK}>
               GitHub Issues
-            </NLink>
+            </Link>
           </li>
           <li>
             • Website:{" "}
-            <NLink href="https://www.nayanui.com/games" target="_blank" className={LINK}>
+            <Link href="https://www.nayanui.com/games" target="_blank" className={LINK}>
               nayanui.com/games
-            </NLink>
+            </Link>
           </li>
         </ul>
       </div>

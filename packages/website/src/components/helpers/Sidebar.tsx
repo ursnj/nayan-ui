@@ -2,6 +2,7 @@
 
 import { ReactNode, useMemo, useState } from "react";
 import { Menu, Search, X } from "lucide-react";
+import { NInput, NPress, NText, NView } from "@nayan-ui/engine/components";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Breadcrumb } from "@/design/Primitives";
@@ -50,27 +51,26 @@ const SidebarNav = ({
   <>
     <div className="border-b border-default p-3">
       <label className="relative block">
-        <span className="sr-only">Filter pages</span>
         <Search
           aria-hidden
           className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted"
         />
-        <input
+        <NInput
           type="search"
+          accessibilityLabel="Filter pages"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChangeText={setQuery}
           placeholder="Filter..."
           className="w-full rounded-lg border border-default bg-background py-1.5 pl-8 pr-8 text-sm text-foreground outline-none transition-colors placeholder:text-muted focus:border-indigo-500/50"
         />
         {query ? (
-          <button
-            type="button"
-            onClick={() => setQuery("")}
+          <NPress
+            onPress={() => setQuery("")}
             aria-label="Clear filter"
             className="absolute right-2 top-1/2 -translate-y-1/2 text-muted transition-colors hover:text-foreground"
           >
             <X className="h-3.5 w-3.5" />
-          </button>
+          </NPress>
         ) : null}
       </label>
     </div>
@@ -168,7 +168,7 @@ const Sidebar = (props: Props) => {
   if (props.title) breadcrumb.push({ label: props.title });
 
   return (
-    <div className={`${CONTAINER} py-6 sm:py-8`}>
+    <NView tag="div" className={`${CONTAINER} py-6 sm:py-8`}>
       <div className="grid grid-cols-12 gap-6 lg:gap-8">
         {/* Desktop sidebar */}
         <nav aria-label="Documentation" className="col-span-12 hidden md:block md:col-span-3">
@@ -186,14 +186,14 @@ const Sidebar = (props: Props) => {
         <div className="content col-span-12 min-w-0 md:col-span-9">
           {/* Mobile sidebar toggle */}
           <div className="mb-4 md:hidden">
-            <button
-              type="button"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="inline-flex items-center gap-2 rounded-lg border border-default bg-surface px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-default/50"
+            <NPress
+              onPress={() => setMobileOpen((open) => !open)}
+              aria-expanded={mobileOpen}
+              className="inline-flex flex-row items-center gap-2 rounded-lg border border-default bg-surface px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-default/50"
             >
               <Menu className="h-4 w-4" />
               Navigation
-            </button>
+            </NPress>
           </div>
 
           {/* Mobile sidebar drawer */}
@@ -214,11 +214,15 @@ const Sidebar = (props: Props) => {
           ) : null}
 
           <Breadcrumb items={breadcrumb} />
-          {props.title && <h1 className={`mb-4 ${H1}`}>{props.title}</h1>}
+          {props.title && (
+            <NText tag="h1" className={`mb-4 ${H1}`}>
+              {props.title}
+            </NText>
+          )}
           <div>{props.children}</div>
         </div>
       </div>
-    </div>
+    </NView>
   );
 };
 

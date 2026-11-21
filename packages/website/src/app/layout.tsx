@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { NView } from "@nayan-ui/engine/components";
 import Script from "next/script";
 import Footer from "@/components/helpers/Footer";
 import Header from "@/components/helpers/Header";
@@ -19,7 +20,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: `${SITE_NAME} - Open Source React & React Native Component Library`,
+    default: `${SITE_NAME} - Open Source Engine for React & React Native`,
     template: `${SITE_NAME} - %s`,
   },
   description: SITE_DESCRIPTION,
@@ -56,7 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('THEME');if(t){t=JSON.parse(t)}if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark');document.documentElement.style.colorScheme='dark';document.documentElement.setAttribute('data-theme','dark')}else{document.documentElement.classList.add('light');document.documentElement.style.colorScheme='light';document.documentElement.setAttribute('data-theme','light')}}catch(e){}})()`,
+            __html: `(function(){try{var t=localStorage.getItem('THEME');if(t){t=JSON.parse(t)}if(t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark');document.documentElement.style.colorScheme='dark';document.documentElement.setAttribute('data-theme','dark')}else{document.documentElement.classList.add('light');document.documentElement.style.colorScheme='light';document.documentElement.setAttribute('data-theme','light')}}catch(e){}})()`,
           }}
         />
         <JsonLd data={[organizationSchema, softwareApplicationSchema, websiteSchema]} />
@@ -64,7 +65,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ThemeProvider>
           <Header />
-          <main className="mt-[60px]">{children}</main>
+          <NView tag="main" className="mt-[60px]">
+            {children}
+          </NView>
           <Footer />
         </ThemeProvider>
         <Script id="microsoft-clarity" strategy="afterInteractive">

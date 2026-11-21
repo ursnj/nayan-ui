@@ -5,7 +5,8 @@
   "description": "Game engine and components for React and React Native.",
   "license": "ISC",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "packages/example/*"
   ],
   "scripts": {
     "format": "oxfmt",

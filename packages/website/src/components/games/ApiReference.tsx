@@ -1,6 +1,6 @@
 "use client";
 
-import { NLink } from "@nayan-ui/react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { H2_DOC, H3_DOC } from "@/design/system";
 import Code from "@/components/helpers/Code";
@@ -130,9 +130,9 @@ const GamesApiReference = () => {
         <h2 className={H2_DOC}>Theme</h2>
         <p className={P}>
           Services entry only; usage in{" "}
-          <NLink href="/games/installation" className={LINK}>
+          <Link href="/games/installation" className={LINK}>
             Installation → Theme
-          </NLink>
+          </Link>
           .
         </p>
         <Code code={themeApiCode} />
@@ -153,9 +153,9 @@ const GamesApiReference = () => {
         <h2 className={H2_DOC}>Not exported</h2>
         <p className={P}>
           engineGame, useEngineGame, EngineGameScreen, EngineHud and src/games/shared are internal;{" "}
-          <NLink href="/games/build-a-game" className={LINK}>
+          <Link href="/games/build-a-game" className={LINK}>
             Build an engine game
-          </NLink>{" "}
+          </Link>{" "}
           covers them.
         </p>
       </div>

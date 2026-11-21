@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { clipboard } from "@nayan-ui/engine/clipboard";
+import { NPress } from "@nayan-ui/engine/components";
 import { NCode, THEMES } from "@nayan-ui/react";
 import { Check, Copy } from "lucide-react";
 import { useTheme } from "@/components/helpers/ThemeProvider";
@@ -40,7 +42,7 @@ const Code = ({
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(code);
+      await clipboard.setString(code);
       setCopied(true);
     } catch {
       // A denied clipboard permission is not worth interrupting the page for;
@@ -55,10 +57,9 @@ const Code = ({
       {showHeader && (
         <div className="flex items-center justify-between gap-3 border-b border-default bg-surface px-3 py-2">
           <span className="truncate font-mono text-xs text-muted">{filename ?? language}</span>
-          <button
-            type="button"
-            onClick={handleCopy}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-default bg-surface px-2 py-1 text-xs font-medium text-muted transition-colors hover:text-foreground"
+          <NPress
+            onPress={handleCopy}
+            className="inline-flex shrink-0 items-center gap-1.5 flex-row rounded-md border border-default bg-surface px-2 py-1 text-xs font-medium text-muted transition-colors hover:text-foreground"
             aria-live="polite"
           >
             {copied ? (
@@ -72,7 +73,7 @@ const Code = ({
                 Copy
               </>
             )}
-          </button>
+          </NPress>
         </div>
       )}
       <div
@@ -84,7 +85,7 @@ const Code = ({
         <NCode
           code={code}
           language={language}
-          theme={mounted ? theme : THEMES.LIGHT}
+          theme={mounted && theme === "dark" ? THEMES.DARK : THEMES.LIGHT}
           className="min-w-0 [&_pre]:max-w-full [&_pre]:rounded-none [&_pre]:border-0"
         />
       </div>

@@ -3,17 +3,20 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "bun run sitemap:generate && next build",
+    "dev": "bun run engine:prepare && bun scripts/compile-component-styles.ts --dev",
+    "build": "bun run styles && bun run sitemap:generate && next build",
     "start": "next start --port 7100",
     "seo:banners": "bun scripts/seo-banners/generate.ts",
     "sitemap:generate": "bun scripts/sync-sitemap.ts",
-    "sitemap:check": "bun scripts/sync-sitemap.ts --check"
+    "sitemap:check": "bun scripts/sync-sitemap.ts --check",
+    "styles": "bun run engine:prepare && bun scripts/compile-component-styles.ts",
+    "engine:prepare": "test -f ../engine/lib/web/styles/index.js || bun run --cwd ../engine build:web"
   },
   "dependencies": {
+    "@heroui/react": "^3.2.6",
     "@monaco-editor/react": "^4.7.0",
     "@napi-rs/canvas": "^0.1.68",
-    "@nayan-ui/engine": "https://registry.npmjs.org/@nayan-ui/engine/-/engine-1.0.0-beta.7.tgz",
+    "@nayan-ui/engine": "workspace:*",
     "@nayan-ui/games": "file:./scripts/nayan-ui-games.tgz",
     "@nayan-ui/react": "2.1.0",
     "docx": "^9.5.0",
@@ -39,6 +42,7 @@
     "@types/qrcode": "^1.5.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "lightningcss": "^1.30.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

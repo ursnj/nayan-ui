@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { NSheet, THEMES } from "@nayan-ui/react";
-import { AlignJustify, Github, MoonStar, Package, Sun } from "lucide-react";
+import { NImage, NPress, NText, NView } from "@nayan-ui/engine/components";
+import { AlignJustify, Github, MoonStar, Package, Sun, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CONTAINER } from "@/design/system";
@@ -11,9 +11,9 @@ import { useTheme } from "@/components/helpers/ThemeProvider";
 
 const NAV = [
   { label: "Home", href: "/", match: "/" },
+  { label: "Game Engine", href: "/game-engine", match: "/game-engine" },
   { label: "React", href: "/react/installation", match: "/react" },
   { label: "React Native", href: "/react-native/installation", match: "/react-native" },
-  { label: "Game Engine", href: "/game-engine", match: "/game-engine" },
   { label: "Games", href: "/games", match: "/games" },
   { label: "Video Editor", href: "/video-editor", match: "/video-editor" },
   { label: "Tools", href: "/tools", match: "/tools" },
@@ -27,11 +27,11 @@ const isActive = (pathname: string, match: string | string[]) => {
 };
 
 const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) => (
-  <ul className="flex flex-col gap-1 md:flex-row md:items-center">
+  <ul className="flex flex-col gap-1 lg:flex-row lg:items-center">
     {NAV.map((item) => {
       const active = isActive(pathname, item.match);
       return (
-        <li key={item.href} className="w-full md:w-auto">
+        <li key={item.href} className="w-full lg:w-auto">
           <Link
             href={item.href}
             onClick={onNavigate}
@@ -52,7 +52,8 @@ const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
 
 const Header = () => {
   const pathname = usePathname();
-  const [menu, setMenu] = useState(false);
+  const menu = useRef<HTMLDialogElement>(null);
+  const closeMenu = () => menu.current?.close();
   const { theme, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -71,7 +72,7 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    setMenu(false);
+    menu.current?.close();
     if (historyNavigation.current) {
       historyNavigation.current = false;
       return;
@@ -80,28 +81,48 @@ const Header = () => {
   }, [pathname]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-default bg-surface/80 backdrop-blur-md">
+    <NView
+      tag="header"
+      className="fixed inset-x-0 top-0 z-40 border-b border-default bg-surface/80 backdrop-blur-md"
+    >
       <div className={CONTAINER}>
-        <NSheet isOpen={menu} title="Nayan UI" onCloseSheet={() => setMenu(false)}>
-          <NavLinks pathname={pathname} onNavigate={() => setMenu(false)} />
-        </NSheet>
+        <dialog
+          id="site-menu"
+          ref={menu}
+          aria-labelledby="site-menu-title"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) closeMenu();
+          }}
+          className="fixed inset-x-0 top-auto bottom-0 m-0 max-h-[85dvh] w-full max-w-none rounded-t-2xl border border-default bg-surface p-0 text-foreground backdrop:bg-black/50"
+        >
+          <NView tag="div" className="p-4">
+            <NView tag="div" className="mb-3 flex items-center justify-between">
+              <NText tag="h2" id="site-menu-title" className="font-bold">
+                Nayan UI
+              </NText>
+              <NPress
+                onPress={closeMenu}
+                aria-label="Close menu"
+                className="rounded-lg p-2 hover:bg-default/60"
+              >
+                <X className="h-5 w-5" />
+              </NPress>
+            </NView>
+            <nav aria-label="Mobile">
+              <NavLinks pathname={pathname} onNavigate={closeMenu} />
+            </nav>
+          </NView>
+        </dialog>
 
         <nav aria-label="Main" className="flex h-[59px] items-center justify-between gap-6">
           <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <img
-              src="/logo.webp"
-              fetchPriority="high"
-              alt=""
-              width={32}
-              height={32}
-              className="h-8 w-8"
-            />
+            <NImage src="/logo.webp" priority alt="" width={32} height={32} className="h-8 w-8" />
             <span className="hidden whitespace-nowrap text-base font-bold text-foreground sm:inline">
               Nayan UI
             </span>
           </Link>
 
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <NavLinks pathname={pathname} />
           </div>
 
@@ -126,33 +147,33 @@ const Header = () => {
             >
               <Github className="h-[18px] w-[18px]" />
             </Link>
-            <button
-              type="button"
-              onClick={toggleTheme}
+            <NPress
+              onPress={toggleTheme}
               title="Switch theme"
               aria-label="Switch theme"
               className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground"
             >
               {!mounted ? (
                 <span className="block h-[18px] w-[18px]" />
-              ) : theme === THEMES.DARK ? (
+              ) : theme === "dark" ? (
                 <Sun className="h-[18px] w-[18px]" />
               ) : (
                 <MoonStar className="h-[18px] w-[18px]" />
               )}
-            </button>
-            <button
-              type="button"
-              onClick={() => setMenu(true)}
+            </NPress>
+            <NPress
+              onPress={() => menu.current?.showModal()}
+              aria-haspopup="dialog"
+              aria-controls="site-menu"
               aria-label="Open menu"
-              className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground md:hidden"
+              className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground lg:hidden"
             >
               <AlignJustify className="h-5 w-5" />
-            </button>
+            </NPress>
           </div>
         </nav>
       </div>
-    </header>
+    </NView>
   );
 };
 

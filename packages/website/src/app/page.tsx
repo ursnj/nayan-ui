@@ -1,12 +1,12 @@
 import JsonLd from "@/components/helpers/JsonLd";
 import Home from "@/components/home/Home";
 import { PRODUCTS } from "@/components/home/Showcase";
-import { TOOL_COUNT, TOTAL_COMPONENT_COUNT } from "@/services/Counts";
+import { TOOL_COUNT } from "@/services/Counts";
 import { SITE_URL, buildPageMetadata } from "@/services/seo";
 
 export const metadata = buildPageMetadata({
-  title: "React & React Native Components, 3D Game Engine and Free Developer Tools",
-  description: `Open source React and React Native components (${TOTAL_COMPONENT_COUNT}), a 3D game engine, 50+ ready-made games, a browser video editor and ${TOOL_COUNT} free developer tools.`,
+  title: "Nayan Engine, Games and Free Developer Tools",
+  description: `Build cross-platform UI and 3D games with Nayan Engine for React and React Native. Play 50+ games and explore a browser video editor and ${TOOL_COUNT} free developer tools.`,
   path: "/",
   keywords:
     "react component library, react native components, react game engine, react native game engine, 3d games, react native games, browser video editor, free developer tools, pdf tools, image tools, json tools, ai code review, nayan ui",
@@ -16,7 +16,7 @@ export const metadata = buildPageMetadata({
 const homePageSchema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Nayan UI - React & React Native Components, 3D Game Engine and Free Developer Tools",
+  name: "Nayan UI – Engine, Games and Free Developer Tools",
   description: metadata.description,
   url: SITE_URL,
   inLanguage: "en-US",

@@ -1,14 +1,13 @@
 import { Accessibility, Blocks, Paintbrush, Smartphone, Sparkles } from "lucide-react";
 import { Section, SectionHeader } from "@/design/Primitives";
 import { ACCENT_SOFT, BODY, CARD, CARD_PAD, GRID_GAP, H3 } from "@/design/system";
-import { TOTAL_COMPONENT_COUNT } from "@/services/Counts";
 
 const FEATURES = [
   {
     icon: Blocks,
     span: "lg:col-span-2",
-    title: `${TOTAL_COMPONENT_COUNT} components, ready to ship`,
-    body: "Buttons, forms, tables, dialogs, sheets, menus, date pickers — enough to build a real application rather than a demo. Every one arrives styled, accessible and documented, so the first thing you write is your feature, not a dropdown.",
+    title: "One set of UI components",
+    body: "Build screens with engine buttons, inputs, dialogs, sheets, date pickers and other controls on web, iOS and Android.",
   },
   {
     icon: Smartphone,
@@ -37,8 +36,7 @@ const Features = () => (
     <SectionHeader
       eyebrow="Why the components"
       id="why-heading"
-      title="Everything you need, nothing you don't"
-      lead="Two packages, @nayan-ui/react and @nayan-ui/native, one design language, and no licence to buy."
+      title="Build with engine components"
     />
     <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
       {FEATURES.map((feature) => {

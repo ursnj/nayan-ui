@@ -138,6 +138,14 @@ for (const platform of ["react", "native"] as const) {
         ),
       ],
       "@nayan-ui/engine/web": [join(engine, "lib/web/types/src/index.d.ts")],
+      "@nayan-ui/engine/components": [
+        join(
+          engine,
+          platform === "react"
+            ? "lib/web/types/src/components/index.d.ts"
+            : "lib/typescript/src/components/index.d.ts",
+        ),
+      ],
       react: [join(monorepo, "node_modules/@types/react/index.d.ts")],
       "react/jsx-runtime": [join(monorepo, "node_modules/@types/react/jsx-runtime.d.ts")],
       "react-native": [nativeTypes],

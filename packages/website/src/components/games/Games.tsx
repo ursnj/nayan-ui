@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { NImage, NPress, NText } from "@nayan-ui/engine/components";
 import { Code2, Gamepad2, Github, Package } from "lucide-react";
 import Link from "next/link";
 import {
@@ -72,7 +73,7 @@ const GamesCollage = () => (
       const game = GAMES_LIST.find((item) => item.id === id);
       return (
         <Link key={id} href={`/games/${id}`} className="overflow-hidden rounded-xl">
-          <img
+          <NImage
             src={`/games/${id}.png`}
             alt={game ? `${game.name} screenshot` : ""}
             width={400}
@@ -142,10 +143,9 @@ const GamesMain = () => {
           aria-label="Filter by category"
         >
           {[null, ...categories].map((item) => (
-            <button
+            <NPress
               key={item ?? "all"}
-              type="button"
-              onClick={() => setCategory(item)}
+              onPress={() => setCategory(item)}
               aria-pressed={category === item}
               className={`text-xs font-semibold ${PILL} ${
                 category === item
@@ -156,7 +156,7 @@ const GamesMain = () => {
               }`}
             >
               {item ?? "All"}
-            </button>
+            </NPress>
           ))}
         </div>
         <div
@@ -170,7 +170,7 @@ const GamesMain = () => {
               className={`${CARD_INTERACTIVE} group overflow-hidden`}
             >
               <div className="relative overflow-hidden">
-                <img
+                <NImage
                   src={`/games/${game.id}.png`}
                   alt={`${game.name} screenshot`}
                   className="aspect-square w-full object-contain transition-transform duration-300 group-hover:scale-105"
@@ -190,7 +190,9 @@ const GamesMain = () => {
                   </h3>
                 </div>
               </div>
-              <p className="p-4 text-sm leading-relaxed text-muted">{game.description}</p>
+              <NText tag="p" className="p-4 text-sm leading-relaxed text-muted">
+                {game.description}
+              </NText>
             </Link>
           ))}
         </div>

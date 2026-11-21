@@ -9,7 +9,6 @@ import {
   type GameSettings,
   loadGameComponent,
 } from "@nayan-ui/games/services";
-import { THEMES } from "@nayan-ui/react";
 import { ArrowLeft, BookOpen, Keyboard, Settings } from "lucide-react";
 import Link from "next/link";
 import { useTheme } from "@/components/helpers/ThemeProvider";
@@ -53,7 +52,7 @@ const GameSession = memo(function GameSession({
 }: GameSessionProps) {
   const Game = useMemo(() => loadGameComponent(gameId), [gameId]);
   const { theme, setTheme } = useTheme();
-  const siteTheme = theme === THEMES.DARK ? "dark" : "light";
+  const siteTheme = theme;
   const [settings, setSettings] = useState<GameSettings>(() => ({
     ...DEFAULT_GAME_SETTINGS,
     theme: siteTheme,
@@ -170,7 +169,7 @@ const GameSession = memo(function GameSession({
     (next: GameSettings) => {
       flushSync(() => {
         setSettings(next);
-        if (next.theme) setTheme(next.theme === "dark" ? THEMES.DARK : THEMES.LIGHT);
+        if (next.theme) setTheme(next.theme);
       });
       if (!next.isVisible) focusSurface();
     },

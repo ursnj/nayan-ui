@@ -26,7 +26,7 @@ Game engine and components for React and React Native, with playable games and f
 
 The engine source and SDK documentation live in [packages/engine](./packages/engine).
 The private `@nayan-ui/games` package comes from Playtura. The Docker publish workflow builds
-its tarball for the website, which uses the published npm version of the engine.
+its tarball for the website, which builds and uses the engine from this workspace.
 
 ## Engine development
 
@@ -44,12 +44,21 @@ local build prerequisites and commands.
 
 ## Website
 
-[packages/website](./packages/website) (`@nayan-ui/website`) is the Next.js app behind [www.nayanui.com](https://www.nayanui.com). It hosts the component docs, games, devtools docs, the online tools and the video editor. It ships as the Docker image `ursnj/nayanui` (port `7100`). Existing site components use the published `@nayan-ui/react` package.
+[packages/website](./packages/website) (`@nayan-ui/website`) is the Next.js app behind [www.nayanui.com](https://www.nayanui.com). It hosts the component docs, games, devtools docs, the online tools and the video editor. It ships as the Docker image `ursnj/nayanui` (port `7100`). The shared site UI and live homepage preview use the workspace engine. Published component demos and browser tools retain their existing controls.
+
+With the website dependencies installed and the Rust/WASM prerequisites from the engine README available, run:
+
+```sh
+bun run website:dev
+```
+
+The website dev and production commands build the browser engine when needed and compile the preview stylesheet. Run `bun run engine:build:web` after changing the engine source.
 
 ## Examples
 
 | Example | Description |
 | --- | --- |
+| [packages/example](./packages/example) | Interactive web and mobile examples for the local engine |
 | [examples/games](./examples/games) | Nayan Game Engine games for Expo and Vite |
 | [examples/vite](./examples/vite) | Vite example using the published React library |
 | [examples/nextjs](./examples/nextjs) | Next.js example using the published React library |

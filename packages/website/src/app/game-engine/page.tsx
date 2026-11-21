@@ -9,7 +9,7 @@ const guide = engineGuides[0]!; // The overview.
 export const metadata = buildPageMetadata({
   title: "Nayan Game Engine for React and React Native",
   description:
-    "A 3D game engine for React and React Native: one TypeScript API on a Rust core with WebGPU, WebGL2, Metal and Vulkan, physics, audio and guides.",
+    "Build UI and 3D games for React and React Native on a Rust core with WebGPU, WebGL2, Metal, Vulkan, physics and audio.",
   path: "/game-engine",
   ogType: "website",
   keywords:

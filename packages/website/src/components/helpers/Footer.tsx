@@ -1,5 +1,6 @@
 import { Github, Package } from "lucide-react";
 import Link from "next/link";
+import { NImage, NText, NView } from "@nayan-ui/engine/components";
 import { CONTAINER, PILL_INTERACTIVE } from "@/design/system";
 import { REPO_URL } from "@/services/seo";
 
@@ -7,11 +8,11 @@ const GROUPS = [
   {
     title: "Documentation",
     links: [
+      { label: "Nayan Engine", href: "/game-engine" },
       { label: "React installation", href: "/react/installation" },
       { label: "React components", href: "/react/components" },
       { label: "React Native installation", href: "/react-native/installation" },
       { label: "React Native components", href: "/react-native/components" },
-      { label: "Game Engine", href: "/game-engine" },
       { label: "Component tags", href: "/tags" },
     ],
   },
@@ -51,12 +52,12 @@ const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-20 border-t border-default bg-surface/50">
-      <div className={`${CONTAINER} py-14`}>
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
-          <div className="sm:col-span-2">
+    <NView tag="footer" className="mt-20 border-t border-default bg-surface/50">
+      <NView tag="div" className={`${CONTAINER} py-14`}>
+        <NView tag="div" className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
+          <NView tag="div" className="sm:col-span-2">
             <Link href="/" className="inline-flex items-center gap-2.5">
-              <img
+              <NImage
                 src="/logo.webp"
                 alt=""
                 width={32}
@@ -67,16 +68,19 @@ const Footer = () => {
               <span className="text-base font-bold text-foreground">Nayan UI</span>
             </Link>
 
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
-              Open source React and React Native components, a 3D game engine, 50+ games, a browser
-              video editor and free developer tools.
-            </p>
+            <NText tag="p" className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
+              An open source engine for cross-platform UI and 3D games, plus 50+ playable games, a
+              browser video editor and free developer tools.
+            </NText>
 
-            <div className="mt-5">
-              <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted">
+            <NView tag="div" className="mt-5">
+              <NText
+                tag="p"
+                className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted"
+              >
                 <Package aria-hidden className="h-3.5 w-3.5" />
                 On npm
-              </p>
+              </NText>
               <ul className="flex flex-wrap gap-1.5">
                 {PACKAGES.map((pkg) => (
                   <li key={pkg.label}>
@@ -91,7 +95,7 @@ const Footer = () => {
                   </li>
                 ))}
               </ul>
-            </div>
+            </NView>
 
             <Link
               href={REPO_URL}
@@ -102,16 +106,17 @@ const Footer = () => {
               <Github aria-hidden className="h-4 w-4" />
               Star on GitHub
             </Link>
-          </div>
+          </NView>
 
           {GROUPS.map((group) => (
-            <nav key={group.title} aria-labelledby={`footer-${slug(group.title)}`}>
-              <h2
+            <NView tag="nav" key={group.title} aria-labelledby={`footer-${slug(group.title)}`}>
+              <NText
+                tag="h2"
                 id={`footer-${slug(group.title)}`}
                 className="mb-3 text-xs font-semibold uppercase tracking-wider text-foreground"
               >
                 {group.title}
-              </h2>
+              </NText>
               <ul className="space-y-2.5">
                 {group.links.map((link) => (
                   <li key={link.href}>
@@ -125,22 +130,25 @@ const Footer = () => {
                   </li>
                 ))}
               </ul>
-            </nav>
+            </NView>
           ))}
-        </div>
+        </NView>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-default pt-6 text-sm text-muted sm:flex-row">
-          <p>© {year} Nayan UI</p>
-          <div className="flex items-center gap-4">
+        <NView
+          tag="div"
+          className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-default pt-6 text-sm text-muted sm:flex-row"
+        >
+          <NText tag="p">© {year} Nayan UI</NText>
+          <NView tag="div" className="flex items-center gap-4">
             <Link href={REPO_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
               MIT License
             </Link>
             <span aria-hidden>·</span>
-            <p>Made in India</p>
-          </div>
-        </div>
-      </div>
-    </footer>
+            <NText tag="p">Made in India</NText>
+          </NView>
+        </NView>
+      </NView>
+    </NView>
   );
 };
 

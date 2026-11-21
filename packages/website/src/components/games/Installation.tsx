@@ -1,6 +1,6 @@
 "use client";
 
-import { NLink } from "@nayan-ui/react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CheckList } from "@/design/Primitives";
 import { H2_DOC, H3_DOC, KBD } from "@/design/system";
@@ -61,9 +61,9 @@ const GamesInstallation = () => {
     <Sidebar title={component?.title || "Installation"}>
       <p className={P}>
         @nayan-ui/games 1.20.0+ renders 53 games with{" "}
-        <NLink href="/game-engine" className={LINK}>
+        <Link href="/game-engine" className={LINK}>
           @nayan-ui/engine
-        </NLink>{" "}
+        </Link>{" "}
         1.0.0-beta.2+ on iOS, Android and the web (1.19.0 and earlier are the Skia build).
       </p>
 
@@ -81,9 +81,9 @@ const GamesInstallation = () => {
             Bun
           </a>
           . The mobile app runs in a development build, not Expo Go; see{" "}
-          <NLink href="/games/build-a-game" className={LINK}>
+          <Link href="/games/build-a-game" className={LINK}>
             build a game
-          </NLink>{" "}
+          </Link>{" "}
           for how a game is put together.
         </p>
       </div>
@@ -112,9 +112,9 @@ const GamesInstallation = () => {
         <h3 className={H3_DOC}>Development build</h3>
         <p className={P}>
           Rebuild after upgrading the engine. For bare apps, see the{" "}
-          <NLink href="/game-engine/installation" className={LINK}>
+          <Link href="/game-engine/installation" className={LINK}>
             engine installation guide
-          </NLink>
+          </Link>
           .
         </p>
         <Code language="bash" code={devBuildCode} />
@@ -217,9 +217,9 @@ const GamesInstallation = () => {
         <h3 className={H3_DOC}>Clear saved assets</h3>
         <p className={P}>
           Prepared geometry is saved on disk (IndexedDB on the web) and rebuilds after clearing. See{" "}
-          <NLink href="/game-engine/cache-performance" className={LINK}>
+          <Link href="/game-engine/cache-performance" className={LINK}>
             engine caching
-          </NLink>
+          </Link>
           .
         </p>
         <Code code={clearGameAssetsCode} />
@@ -227,17 +227,17 @@ const GamesInstallation = () => {
 
       <p className={P}>
         Next:{" "}
-        <NLink href="/games/api-reference" className={LINK}>
+        <Link href="/games/api-reference" className={LINK}>
           API reference
-        </NLink>
+        </Link>
         ,{" "}
-        <NLink href="/games/build-a-game" className={LINK}>
+        <Link href="/games/build-a-game" className={LINK}>
           build an engine game
-        </NLink>
+        </Link>
         , or a game page such as{" "}
-        <NLink href="/games/treasure-hunt" className={LINK}>
+        <Link href="/games/treasure-hunt" className={LINK}>
           Treasure Hunt
-        </NLink>
+        </Link>
         .
       </p>
     </Sidebar>

@@ -18,8 +18,8 @@ import {
 } from "@/services/Counts";
 
 const STATS = [
-  { value: String(REACT_COMPONENT_COUNT), label: "React components" },
-  { value: String(NATIVE_COMPONENT_COUNT), label: "React Native components" },
+  { value: String(REACT_COMPONENT_COUNT), label: "Published React components" },
+  { value: String(NATIVE_COMPONENT_COUNT), label: "Published React Native components" },
   { value: "50+", label: "Ready-made games" },
   { value: String(TOOL_COUNT), label: "Free developer tools" },
 ];
@@ -27,18 +27,18 @@ const STATS = [
 /** Exported for the homepage's structured data (app/page.tsx), so the list there matches. */
 export const PRODUCTS = [
   {
-    icon: LayoutGrid,
-    title: "Component library",
-    body: `${TOTAL_COMPONENT_COUNT} accessible components for React and React Native, each with a live example and a full list of its options.`,
-    href: "/react/components",
-    action: "Browse components",
+    icon: Atom,
+    title: "Nayan Engine",
+    body: "Build cross-platform UI and 3D games for iOS, Android and the web with Rust rendering, physics, glTF models, sound and haptics.",
+    href: "/game-engine",
+    action: "Explore the engine",
   },
   {
-    icon: Atom,
-    title: "Game engine",
-    body: "Build 3D games for iOS, Android and the web from one TypeScript API: WebGPU, WebGL2, Metal and Vulkan rendering, physics, glTF models, sound and haptics.",
-    href: "/game-engine",
-    action: "Build your first game",
+    icon: LayoutGrid,
+    title: "Component library archives",
+    body: `Browse ${TOTAL_COMPONENT_COUNT} documented components from the published React and React Native libraries.`,
+    href: "/react/components",
+    action: "Browse components",
   },
   {
     icon: Gamepad2,
@@ -76,7 +76,7 @@ const Showcase = () => (
       eyebrow="What you get"
       id="what-heading"
       title="More than a component library"
-      lead="Six things, all free to use: components for React and React Native, a 3D game engine, ready-made games, a video editor, developer tools and a CLI. Start with whichever one you came for."
+      lead="Explore Nayan Engine, ready-made games, the video editor, developer tools, and documentation for the published component libraries."
     />
 
     <StatGrid stats={STATS} className="mb-8" />
@@ -110,7 +110,7 @@ const Showcase = () => (
     </div>
 
     <div className="mt-8 flex justify-center">
-      <Link href="/react/installation" className={BUTTON_SECONDARY}>
+      <Link href="/game-engine" className={BUTTON_SECONDARY}>
         Read the documentation
         <ArrowRight aria-hidden className="ml-2 h-4 w-4" />
       </Link>
