@@ -1,14 +1,17 @@
 export function componentSource(imports: string, body: string, state = '', height = 280, pageClassName = 'gap-3 p-5') {
-  const names = [...new Set([...imports.split(', '), 'NPage', 'NTheme', 'NView'])].join(', ');
+  const controls = imports.split(', ');
+  // Popups are drawn inside the page surface and need room outside the trigger.
+  const fitContent = !controls.some((name) => name === 'NDatePicker' || name === 'NSelect' || name === 'NTooltip');
+  const names = [...new Set([...controls, 'NPage', 'NTheme', 'NView'])].join(', ');
   return `'use client';
 
 import { ${names} } from 'nayan-ui/components';
-${state ? "import { useState } from 'react';\n" : ''}
+${state || fitContent ? "import { useState } from 'react';\n" : ''}
 export default function Example() {
-${state ? `  ${state}\n` : ''}  return (
+${state ? `  ${state}\n` : ''}${fitContent ? `  const [previewHeight, setPreviewHeight] = useState(${height});\n` : ''}  return (
     <NTheme defaultTheme="system">
-      <NView style={{ height: ${height}, display: 'flex', flexDirection: 'column' }}>
-        <NPage className="${pageClassName}">
+      <NView style={{ height: ${fitContent ? 'previewHeight' : height}, display: 'flex', flexDirection: 'column' }}>
+        <NPage className="${pageClassName}" safeArea={false}${fitContent ? ' onContentSizeChange={(_, height) => setPreviewHeight(Math.ceil(height))}' : ''}>
           ${body}
         </NPage>
       </NView>

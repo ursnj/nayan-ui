@@ -43,11 +43,18 @@ test('every component reference has public attributes, methods or a hook return 
   const { attributes, components } = componentAttributes;
   expect(Object.keys(components).sort()).toEqual([...new Set(componentReferences.map(({ symbol }) => symbol))].sort());
   for (const [name, api] of Object.entries(components)) {
-    const ids = [...api.props, ...api.shared, ...api.methods, ...api.value];
+    const ids = [...api.props, ...api.methods, ...api.value];
     expect(ids.length, name).toBeGreaterThan(0);
     expect(ids.every((id) => attributes[id]?.type), name).toBe(true);
   }
   const imageProps = components.NImage.props.map((id) => attributes[id]?.name);
+  expect(components.NButton.props.map((id) => attributes[id]?.name)).toEqual([
+    'disabled', 'className', 'isOutline', 'isLoading', 'loadingText', 'children', 'onPress'
+  ]);
+  expect(components.NInput.props.map((id) => attributes[id]).find((prop) => prop?.name === 'type')).toMatchObject({
+    type: 'string',
+    required: false
+  });
   expect(imageProps).toContain('fallbackSource');
   expect(imageProps).toContain('onLoad');
   expect(components.GameView.props.some((id) => attributes[id]?.name === 'source' && attributes[id]?.required)).toBe(true);

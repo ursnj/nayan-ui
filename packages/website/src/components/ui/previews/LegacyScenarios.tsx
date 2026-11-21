@@ -7,14 +7,7 @@ import type { NamedComponentPreview } from './types';
 const row = { className: 'w-full flex-row flex-wrap items-center gap-3' };
 const panel = { className: 'w-full gap-3 rounded-xl border border-border bg-surface p-4' };
 
-function browser(
-  title: string,
-  imports: string,
-  state: string,
-  body: string,
-  render: ReactNode,
-  height: number | 'auto' = 176
-): NamedComponentPreview {
+function browser(title: string, imports: string, state: string, body: string, render: ReactNode, height?: number | 'auto'): NamedComponentPreview {
   return {
     title,
     host: true,

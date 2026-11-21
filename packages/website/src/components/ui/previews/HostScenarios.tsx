@@ -3,7 +3,7 @@ import * as E from 'nayan-ui/components';
 import { scenario } from './scenario';
 import type { NamedComponentPreview } from './types';
 
-function host(title: string, imports: string, code: string, render: ReactNode, height = 180): NamedComponentPreview {
+function host(title: string, imports: string, code: string, render: ReactNode, height?: number): NamedComponentPreview {
   return { title, source: `'use client';\n\nimport { ${imports} } from 'nayan-ui/components';\n${code}`, render, host: true, height };
 }
 

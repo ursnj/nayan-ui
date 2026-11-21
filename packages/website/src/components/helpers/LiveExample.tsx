@@ -14,9 +14,30 @@ import type { NamedComponentPreview } from '@/components/ui/previews/types';
 
 const island = 'rounded-xl border border-border bg-surface shadow-sm';
 const paneTitle = 'border-b border-border p-3 text-xs font-semibold text-muted';
-const paneSize = 'h-[19rem] min-w-0';
 const toolbarButton = 'inline-flex min-h-8 flex-row items-center justify-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold disabled:opacity-50';
 const secondaryButton = `${toolbarButton} text-muted hover:text-foreground`;
+// These examples use the viewport for floating controls or content that fills the surface.
+const viewportExamples = new Set([
+  'calendar',
+  'components-root',
+  'date-picker',
+  'date-range-picker',
+  'drawer',
+  'keyboard',
+  'markdown-view',
+  'menu',
+  'page',
+  'popover',
+  'refresh-control',
+  'scroll-view',
+  'select',
+  'theme',
+  'toast-host',
+  'tooltip',
+  'use-drawer',
+  'use-keyboard',
+  'use-theme'
+]);
 
 export type LiveExampleScenario = NamedComponentPreview;
 
@@ -150,6 +171,8 @@ function ExampleWorkspace({
   }
 
   const Output = output?.component;
+  const keepViewport = previewId !== undefined && viewportExamples.has(previewId);
+  const keepEditedViewport = keepViewport && example.host;
   return (
     <NView
       tag="div"
@@ -185,7 +208,7 @@ function ExampleWorkspace({
           <NText tag="div" className={`${paneTitle} font-mono`}>
             Example.tsx
           </NText>
-          <NView tag="div" className={`component-workbench-editor ${paneSize}`}>
+          <NView tag="div" className="component-workbench-editor h-[19rem] min-w-0">
             <CodeEditor
               label="Example source code"
               code={code}
@@ -195,25 +218,26 @@ function ExampleWorkspace({
             />
           </NView>
         </NView>
-        <NView tag="section" className={`${island} component-workbench-preview min-w-0 overflow-hidden`} aria-label="Live preview">
+        <NView tag="section" className={`${island} component-workbench-preview min-w-0 self-start overflow-hidden`} aria-label="Live preview">
           <NText tag="div" className={paneTitle}>
             Preview
           </NText>
           <NView
             tag="div"
-            className={`${paneSize} docs-live-preview workbench-grid flex justify-center overflow-auto [scrollbar-width:thin]`}
+            className="docs-live-preview workbench-grid flex min-w-0 justify-center overflow-auto [scrollbar-width:thin]"
             data-component-preview={previewId}
           >
             {Output && output ? (
               <PreviewSurface
                 fullWidth={previewId === 'video-player'}
+                keepViewport={keepEditedViewport}
                 preview={{
                   ...example,
                   host: true,
-                  height: 'auto',
+                  height: keepEditedViewport ? example.height : 'auto',
                   render: (
                     <PreviewBoundary key={output.run} onError={(cause) => setError(cause.message)}>
-                      <NView tag="div" className="component-edited-preview flex min-h-[11rem] min-w-0 flex-col">
+                      <NView tag="div" className={`component-edited-preview flex min-w-0 flex-col${keepEditedViewport ? ' flex-1' : ''}`}>
                         <Output />
                       </NView>
                     </PreviewBoundary>
@@ -221,7 +245,7 @@ function ExampleWorkspace({
                 }}
               />
             ) : (
-              <PreviewSurface preview={example} fullWidth={previewId === 'video-player'} />
+              <PreviewSurface preview={example} fullWidth={previewId === 'video-player'} keepViewport={keepViewport} />
             )}
           </NView>
         </NView>

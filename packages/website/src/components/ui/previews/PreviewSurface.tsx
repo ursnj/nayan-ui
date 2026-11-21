@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { NText, NView, NPage, NTheme, type NThemeProps } from 'nayan-ui/components';
 import { stylesheet } from '@/app/nayan-ui-styles';
 import type { ComponentPreview } from './types';
@@ -78,10 +78,25 @@ const controls = {
   NMenuItem: { className: 'rounded-lg px-3 text-sm font-medium' }
 } satisfies NThemeProps['components'];
 
-export default function PreviewSurface({ preview, fullWidth }: { preview: ComponentPreview; fullWidth?: boolean }) {
+export default function PreviewSurface({
+  preview,
+  fullWidth,
+  keepViewport
+}: {
+  preview: ComponentPreview;
+  fullWidth?: boolean;
+  keepViewport?: boolean;
+}) {
   const [themes, setThemes] = useState(siteThemes);
-  const height = preview.height ?? (preview.host ? 246 : 168);
+  const [contentHeight, setContentHeight] = useState<number>();
   const [error, setError] = useState(false);
+  const fitPage = !preview.host && !keepViewport;
+  const defaultHeight = keepViewport ? 246 : preview.host ? 'auto' : 200;
+  const height = (fitPage ? contentHeight : undefined) ?? preview.height ?? defaultHeight;
+
+  const onContentSizeChange = useCallback((_width: number, height: number) => {
+    setContentHeight(Math.ceil(height));
+  }, []);
 
   useEffect(() => {
     setThemes(getSiteThemes());
@@ -103,7 +118,13 @@ export default function PreviewSurface({ preview, fullWidth }: { preview: Compon
     );
   else
     content = (
-      <NPage className={preview.styled ? 'engine-preview-content flex flex-col gap-4' : 'gap-4 p-5'} onError={() => setError(true)}>
+      // The inline page's padding is independent of the browser's safe area.
+      <NPage
+        className={preview.styled ? 'engine-preview-content flex flex-col gap-4' : 'gap-4 p-5'}
+        safeArea={false}
+        onContentSizeChange={fitPage ? onContentSizeChange : undefined}
+        onError={() => setError(true)}
+      >
         {preview.render}
       </NPage>
     );
@@ -113,7 +134,7 @@ export default function PreviewSurface({ preview, fullWidth }: { preview: Compon
       tag="div"
       className="component-preview-surface relative flex min-w-0 flex-col"
       inert={preview.host && !themes}
-      style={{ width: fullWidth ? '100%' : 'min(100%, 36rem)', height: height === 'auto' ? height : `clamp(12.5rem, ${height}px, 100%)` }}
+      style={{ width: fullWidth ? '100%' : 'min(100%, 36rem)', height }}
     >
       <NTheme themes={themes} components={controls} radius={10} stylesheet={preview.styled ? stylesheet : undefined}>
         {content}

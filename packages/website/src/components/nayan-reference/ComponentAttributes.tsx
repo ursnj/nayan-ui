@@ -2,7 +2,13 @@ import { NText, NView } from 'nayan-ui/components';
 import SubHeader from '@/components/helpers/SubHeader';
 import reference from '@/services/nayan-ui/component-attributes.json';
 
-type Attribute = (typeof reference.attributes)[number];
+interface Attribute {
+  name: string;
+  type: string;
+  required: boolean;
+  details?: string;
+  defaultValue?: string;
+}
 type Symbol = keyof typeof reference.components;
 type Api = (typeof reference.components)[Symbol];
 const nativeApis: Partial<Record<Symbol, Api>> = reference.native;
@@ -42,21 +48,15 @@ function AttributeTable({ rows, label, showPresence = false }: { rows: number[];
 }
 
 function AttributeGroups({ api, symbol, native }: { api: Api; symbol: Symbol; native?: boolean }) {
-  const { props, shared, methods, value } = api;
+  const { props, methods, value } = api;
   const hook = symbol.startsWith('use');
   const title = native ? 'React Native attributes' : hook ? 'Parameters' : 'Attributes';
 
   return (
     <>
-      {(hook || props.length > 0 || shared.length > 0) && (
+      {(hook || props.length > 0) && (
         <SubHeader title={title} description={symbol === 'NView' && !native ? 'A web tag also accepts the HTML attributes for that element.' : undefined}>
           {props.length > 0 && <AttributeTable rows={props} showPresence label={`${symbol} ${title.toLowerCase()}`} />}
-          {shared.length > 0 && (
-            <details className={props.length ? 'mt-3 rounded-xl border border-default p-3' : undefined} open={!props.length}>
-              <summary className="mb-3 cursor-pointer text-sm font-semibold">Inherited attributes ({shared.length})</summary>
-              <AttributeTable rows={shared} showPresence label={`${symbol} inherited attributes`} />
-            </details>
-          )}
           {hook && props.length === 0 && <NText tag="p" className="text-sm text-muted">This hook takes no parameters.</NText>}
         </SubHeader>
       )}

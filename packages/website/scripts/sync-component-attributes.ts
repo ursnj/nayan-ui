@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 import enginePackage from 'nayan-ui/package.json';
+import { componentAttributeNames } from '../src/services/nayan-ui/component-attribute-names';
 import { componentReferences } from '../src/services/nayan-ui/component-reference';
 
 type ReferenceModule = (typeof componentReferences)[number]['module'];
@@ -57,7 +58,6 @@ interface Attribute {
 
 interface ComponentApi {
   props: number[];
-  shared: number[];
   methods: number[];
   value: number[];
 }
@@ -111,7 +111,9 @@ function componentApis(entries: Map<ReferenceModule, string>, platform: Platform
     const type = checker.getTypeOfSymbolAtLocation(symbol, declaration);
     // React ComponentType can be a union of constructors and callable components.
     const members = type.isUnion() ? type.types : [type];
+    // Prefer the general overload when it shares a prop with a specialized one.
     const signatures = members.flatMap((member) => member.getCallSignatures())
+      .reverse()
       .sort((first, second) => (first.typeParameters?.length ?? 0) - (second.typeParameters?.length ?? 0));
     const props = new Map<string, ts.Symbol>();
     const hook = name.startsWith('use');
@@ -126,11 +128,16 @@ function componentApis(entries: Map<ReferenceModule, string>, platform: Platform
       }
     }
 
-    const allProps = [...props.values()].sort((a, b) => a.name.localeCompare(b.name, 'en'));
-    const isShared = (prop: ts.Symbol) => !hook && (shared.has(prop.declarations?.[0]) || !isEngineMember(prop));
+    const names = componentAttributeNames[name];
+    const selected = names
+      ? names.flatMap((prop) => {
+          const field = props.get(prop);
+          return field ? [field] : [];
+        })
+      : [...props.values()].filter((prop) => hook || (isEngineMember(prop) && !shared.has(prop.declarations?.[0])))
+          .sort((a, b) => a.name.localeCompare(b.name, 'en'));
     components[name] = {
-      props: rows(allProps.filter((prop) => !isShared(prop)), declaration),
-      shared: rows(allProps.filter(isShared), declaration),
+      props: rows(selected, declaration),
       methods: rows(type.getProperties().filter(isEngineMember), declaration),
       value: rows(hook ? signatures[0]?.getReturnType().getProperties() ?? [] : [], declaration)
     };
@@ -140,6 +147,12 @@ function componentApis(entries: Map<ReferenceModule, string>, platform: Platform
 
 const web = componentApis(webEntries, 'web');
 const native = componentApis(nativeEntries, 'native');
+for (const [name, props] of Object.entries(componentAttributeNames)) {
+  const documented = new Set([...web[name]!.props, ...native[name]!.props].map((id) => attributes[id]!.name));
+  for (const prop of props) {
+    if (!documented.has(prop)) throw new Error(`Unknown documented attribute ${name}.${prop}`);
+  }
+}
 const nativeAlternatives = Object.entries(native).filter(([name, api]) => JSON.stringify(web[name]) !== JSON.stringify(api));
 const serializeApis = (entries: [string, ComponentApi][]) => entries.map(([name, api]) => `    ${JSON.stringify(name)}: ${JSON.stringify(api)}`).join(',\n');
 const json = [
