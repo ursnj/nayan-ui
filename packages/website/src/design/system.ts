@@ -1,11 +1,9 @@
 export const ACCENT_TEXT = 'text-accent';
 export const ACCENT_SOFT = 'border-accent/20 bg-accent/8 text-accent';
 
-export const H1 = 'text-[clamp(2.25rem,5vw,3.5rem)] font-semibold leading-[1.06] tracking-[-0.055em]';
+export const H1 = 'text-[clamp(2.25rem,5vw,3.5rem)] font-semibold leading-[1.06] tracking-[-0.057em]';
 
-export const H1_HERO = 'text-[clamp(2.75rem,6vw,5.5rem)] font-semibold leading-[0.99] tracking-[-0.065em]';
-
-export const H2 = 'text-[clamp(1.85rem,3.6vw,3rem)] font-semibold leading-[1.08] tracking-[-0.045em]';
+export const H2 = 'text-[clamp(2rem,4.4vw,3.6rem)] font-semibold leading-[1.08] tracking-[-0.045em]';
 
 export const H3 = 'text-base font-semibold leading-snug tracking-[-0.025em] text-foreground sm:text-lg';
 
@@ -30,10 +28,10 @@ export const HEADER_GAP = 'mb-7 sm:mb-9';
 export const GRID_GAP = 'gap-4 sm:gap-5';
 export const SCROLL_MT = 'scroll-mt-5';
 
-const BUTTON_BASE = 'inline-flex min-h-10 items-center justify-center rounded-lg font-semibold transition-colors disabled:opacity-60';
+const BUTTON_BASE = 'inline-flex min-h-10 items-center justify-center rounded-xl font-semibold transition-colors disabled:opacity-60';
 
-export const BUTTON_PRIMARY = `${BUTTON_BASE} bg-accent px-5 py-3 text-sm text-accent-foreground hover:bg-accent/85`;
-export const BUTTON_SECONDARY = `${BUTTON_BASE} border border-border bg-surface px-5 py-3 text-sm text-foreground hover:border-accent/35 hover:bg-surface-secondary`;
+export const BUTTON_PRIMARY = `${BUTTON_BASE} bg-accent gap-2 px-5 py-3 text-sm text-accent-foreground hover:bg-accent/85`;
+export const BUTTON_SECONDARY = `${BUTTON_BASE} border border-border bg-surface gap-2 px-5 py-3 text-sm text-foreground hover:border-accent/35 hover:bg-surface-secondary`;
 export const BUTTON_SMALL = `${BUTTON_BASE} border border-border bg-surface px-3 py-1.5 text-sm hover:bg-surface-secondary`;
 
 export const PILL = 'rounded-md border border-border bg-surface px-2.5 py-1 text-xs font-medium text-foreground';

@@ -1,7 +1,8 @@
 'use client';
 
 import { type ReactNode, useState } from 'react';
-import { Braces, Code2 } from '@/design/Icons';
+import { ArrowUpRight, Braces, Code2 } from '@/design/Icons';
+import Link from 'next/link';
 import { ComponentsRoot, NButton, NInput, NLoading, NPress, NText, NView } from '@nayan-ui/engine/components';
 import { stylesheet } from '@/app/engine-styles';
 import { BUTTON_SMALL } from '@/design/system';
@@ -15,6 +16,8 @@ const snippets: Record<Tab, string> = {
   Feedback: '<NLoading size={20} />',
   Elements: '<NText>Stable</NText>'
 };
+
+const references: Record<Tab, string> = { Buttons: '/button', Forms: '/input', Feedback: '/loading', Elements: '/text' };
 
 const action = 'rounded-lg bg-accent px-4 py-2 text-accent-foreground';
 const row = 'flex flex-row flex-wrap items-center gap-3';
@@ -144,6 +147,9 @@ export default function EnginePreview() {
       <div className="workbench-source">
         <Code2 aria-hidden size={16} className="shrink-0 text-accent" />
         <code className="min-w-0 overflow-x-auto whitespace-nowrap">{snippets[tab]}</code>
+        <Link href={references[tab]} className="workbench-doc-link">
+          Docs <ArrowUpRight aria-hidden size={13} />
+        </Link>
       </div>
     </section>
   );

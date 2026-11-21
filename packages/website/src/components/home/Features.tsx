@@ -1,43 +1,32 @@
-import { Accessibility, Blocks, Paintbrush, Smartphone } from '@/design/Icons';
-import { Section, SectionHeader } from '@/design/Primitives';
-import { BODY, H3 } from '@/design/system';
-
-const FEATURES = [
-  {
-    icon: Blocks,
-    title: 'UI building blocks',
-    body: 'Compose screens with buttons, dialogs, sheets, date pickers and other controls.'
-  },
-  {
-    icon: Smartphone,
-    title: 'One API across platforms',
-    body: 'Share component props and interaction patterns across React and React Native.'
-  },
-  {
-    icon: Accessibility,
-    title: 'Accessible interactions',
-    body: 'Use built-in keyboard navigation, focus management and screen-reader labels.'
-  },
-  {
-    icon: Paintbrush,
-    title: 'Theme with tokens',
-    body: 'Customize light and dark palettes, with utility classes for individual controls.'
-  }
-];
+import { ArrowRight, Braces, Smartphone } from '@/design/Icons';
+import { Section } from '@/design/Primitives';
+import { BUTTON_SECONDARY, H2 } from '@/design/system';
+import Link from 'next/link';
+import EnginePreview from './EnginePreview';
 
 export default function Features() {
   return (
-    <Section id="why" labelledBy="why-heading">
-      <SectionHeader id="why-heading" title="Build with engine components" />
-      <div className="grid gap-x-6 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
-        {FEATURES.map(({ icon: Icon, title, body }) => (
-          <article key={title} className="border-t border-border pt-5">
-            <Icon aria-hidden size={22} strokeWidth={1.7} className="mb-3 text-accent" />
-            <h3 className={H3}>{title}</h3>
-            <p className={`mt-2 ${BODY}`}>{body}</p>
-          </article>
-        ))}
-      </div>
-    </Section>
+    <div className="home-demo-section">
+      <Section id="why" labelledBy="why-heading" className="home-demo-layout">
+        <div className="home-demo-copy">
+          <h2 id="why-heading" className={H2}>
+            Try the components
+          </h2>
+          <p>Use the live preview to try buttons, forms, feedback and labels. Open the reference to copy a complete example.</p>
+          <ul className="home-demo-details">
+            <li>
+              <Smartphone aria-hidden size={19} /> Shared controls for React and React Native
+            </li>
+            <li>
+              <Braces aria-hidden size={19} /> Theme tokens for light and dark mode
+            </li>
+          </ul>
+          <Link href="/components" className={BUTTON_SECONDARY}>
+            Browse components <ArrowRight aria-hidden size={17} />
+          </Link>
+        </div>
+        <EnginePreview />
+      </Section>
+    </div>
   );
 }

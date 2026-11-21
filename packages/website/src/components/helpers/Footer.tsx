@@ -11,6 +11,7 @@ const GROUPS = [
       { label: 'Nayan Engine', href: '/game-engine' },
       { label: 'Engine components', href: '/components' },
       { label: 'Engine modules', href: '/modules' },
+      { label: 'Playground', href: '/game-engine/playground' },
       { label: 'React installation', href: '/game-engine/react' },
       { label: 'React components', href: '/react/components' },
       { label: 'React Native installation', href: '/game-engine/react-native' },
@@ -59,7 +60,7 @@ const Footer = () => {
             </Link>
 
             <NText tag="p" className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
-              An open source engine for cross-platform UI and 3D games, plus 50+ playable games, a browser video editor and developer tool guides.
+              Open source tools for building interfaces and 3D games with React and React Native.
             </NText>
 
             <NView tag="div" className="mt-5">

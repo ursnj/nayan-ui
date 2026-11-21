@@ -10,44 +10,43 @@ import { REPO_URL } from "@/services/seo";
 import { useTheme } from "@/components/helpers/ThemeProvider";
 
 const NAV = [
-  { label: "Engine", href: "/game-engine", match: "/game-engine" },
-  { label: "React", href: "/game-engine/react", match: ["/react", "/game-engine/react"] },
-  { label: "React Native", href: "/game-engine/react-native", match: ["/react-native", "/game-engine/react-native"] },
-  { label: "Games", href: "/games", match: "/games" },
-  { label: "Video Editor", href: "/video-editor", match: "/video-editor" },
-  { label: "Tools", href: "/tools", match: "/tools" },
+  { label: "Home", href: "/" },
+  { label: "Components", href: "/components" },
+  { label: "Modules", href: "/modules" },
+  { label: "Game Engine", href: "/game-engine" },
+  { label: "Games", href: "/games" },
+  { label: "Playground", href: "/game-engine/playground" },
+  { label: "Video Editor", href: "/video-editor" },
 ];
 
-const isActive = (pathname: string, match: string | string[]) => {
-  if (match === "/game-engine" && /^\/game-engine\/react(?:-native)?(?:\/|$)/.test(pathname)) return false;
-  return (Array.isArray(match) ? match : [match]).some(
-    (m) => pathname === m || pathname.startsWith(`${m}/`),
+const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) => {
+  const activeHref = NAV.filter(({ href }) => pathname === href || pathname.startsWith(`${href}/`))
+    .sort((first, second) => second.href.length - first.href.length)[0]?.href;
+
+  return (
+    <ul className="site-nav-list">
+      {NAV.map(({ label, href }) => {
+        const active = href === activeHref;
+        return (
+          <li key={href} className="site-nav-item">
+            <Link
+              href={href}
+              onClick={onNavigate}
+              aria-current={active ? "page" : undefined}
+              className={`site-nav-link block text-sm font-medium whitespace-nowrap transition-colors ${
+                active
+                  ? "bg-accent/10 text-accent"
+                  : "text-muted hover:bg-default/60 hover:text-foreground"
+              }`}
+            >
+              {label}
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
   );
 };
-
-const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) => (
-  <ul className="flex flex-col gap-1 lg:flex-row lg:items-center">
-    {NAV.map((item) => {
-      const active = isActive(pathname, item.match);
-      return (
-        <li key={item.href} className="w-full lg:w-auto">
-          <Link
-            href={item.href}
-            onClick={onNavigate}
-            aria-current={active ? "page" : undefined}
-            className={`block rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
-              active
-                ? "bg-accent/10 text-accent"
-                : "text-muted hover:bg-default/60 hover:text-foreground"
-            }`}
-          >
-            {item.label}
-          </Link>
-        </li>
-      );
-    })}
-  </ul>
-);
 
 const Header = () => {
   const pathname = usePathname();
@@ -121,11 +120,11 @@ const Header = () => {
             </span>
           </Link>
 
-          <div className="hidden lg:block">
+          <div className="site-desktop-nav">
             <NavLinks pathname={pathname} />
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="site-header-actions">
             <Link
               href="https://www.npmjs.com/package/@nayan-ui/engine"
               target="_blank"
@@ -165,7 +164,7 @@ const Header = () => {
               aria-haspopup="dialog"
               aria-controls="site-menu"
               aria-label="Open menu"
-              className="inline-grid site-header-action lg:hidden"
+              className="inline-grid site-header-action site-mobile-toggle"
             >
               <AlignJustify className="h-5 w-5" />
             </NPress>

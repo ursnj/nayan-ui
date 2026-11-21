@@ -1,7 +1,6 @@
 import Link from 'next/link';
-import { ArrowUpRight } from '@/design/Icons';
 import { DocsIntro } from '@/design/Primitives';
-import { BUTTON_SMALL, CARD_INTERACTIVE, H3 } from '@/design/system';
+import { BUTTON_SMALL } from '@/design/system';
 import Code from '@/components/helpers/Code';
 import Sidebar from '@/components/helpers/Sidebar';
 import SubHeader from '@/components/helpers/SubHeader';
@@ -9,6 +8,7 @@ import { EngineComponentExample } from '@/components/ui/EngineComponentDoc';
 import { standaloneExamples } from '@/services/engine/component-examples';
 import { componentReferences } from '@/services/engine/component-reference';
 import { moduleReferences } from '@/services/engine/module-reference';
+import ReferenceDirectory from './ReferenceDirectory';
 
 type Group = 'components' | 'modules';
 type ReferenceEntry = (typeof componentReferences)[number] | (typeof moduleReferences)[number];
@@ -16,13 +16,15 @@ type ReferenceEntry = (typeof componentReferences)[number] | (typeof moduleRefer
 export const referenceGroups = {
   components: {
     title: 'Engine Components',
-    description: 'Browse engine controls, layout primitives and hooks for React and React Native.',
+    description:
+      'Find controls, layout primitives and hooks for React and React Native. Open a reference page to copy engine code and try available previews.',
     importPath: '@nayan-ui/engine/components',
     items: componentReferences
   },
   modules: {
     title: 'Engine Modules',
-    description: 'Browse the engine’s focused entry points for games, drawing, media, storage and platform services.',
+    description:
+      'Import games, drawing, media, storage and platform services from their individual engine entry points. Each reference includes an example.',
     importPath: '@nayan-ui/engine/modules',
     items: moduleReferences
   }
@@ -53,20 +55,15 @@ export function ReferenceIndex({ group }: { group: Group }) {
     <Sidebar title={title} reference={referenceNavigation(group)}>
       <DocsIntro lead={description} />
       <SubHeader title={group === 'components' ? 'Components and hooks' : 'Module entry points'}>
-        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {items.map((item) => (
-            <li key={item.path}>
-              <Link href={item.path} className={`${CARD_INTERACTIVE} flex h-full flex-col p-4`}>
-                <span className="flex items-start justify-between gap-2">
-                  <span className={H3}>{item.title}</span>
-                  <ArrowUpRight aria-hidden size={16} className="shrink-0 text-accent" />
-                </span>
-                <code className="mt-1 text-xs break-all text-accent">{'symbol' in item ? item.symbol : item.importPath}</code>
-                <span className="mt-2 text-sm text-muted">{item.description}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <ReferenceDirectory
+          kind={group}
+          items={items.map(({ title, description, path, ...item }) => ({
+            title,
+            description,
+            path,
+            api: 'symbol' in item ? item.symbol : item.importPath
+          }))}
+        />
       </SubHeader>
       <SubHeader title="Package entry">
         <Code code={code} filename={importPath} />
@@ -85,7 +82,7 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
       <DocsIntro lead={entry.description} />
       {'symbol' in entry ? (
         <>
-          <p className="mb-6 text-sm text-muted">
+          <p className="reference-api">
             Engine API <code className="ml-1 font-semibold text-accent">{entry.symbol}</code>
             <span className="ml-2 break-all font-mono text-xs">{entry.importPath}</span>
           </p>

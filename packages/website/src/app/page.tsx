@@ -5,8 +5,8 @@ import { TOOL_COUNT } from '@/services/Counts';
 import { SITE_URL, buildPageMetadata } from '@/services/seo';
 
 export const metadata = buildPageMetadata({
-  title: 'Nayan Engine, Games and Developer Guides',
-  description: `Build cross-platform UI and 3D games with Nayan Engine for React and React Native. Play 50+ games and explore a browser video editor and ${TOOL_COUNT} developer tool guides.`,
+  title: 'Nayan Engine for React and React Native',
+  description: `Build cross-platform UI and 3D games with Nayan Engine. Try live components, copy TypeScript examples, play 50+ games and explore ${TOOL_COUNT} developer guides.`,
   path: '/',
   keywords:
     'react component library, react native components, react game engine, react native game engine, 3d games, react native games, browser video editor, developer guides, pdf tools, image tools, json tools, ai code review, nayan ui',

@@ -78,6 +78,7 @@ export const SectionHeader = ({
 );
 
 interface PageHeroProps {
+  tone?: "violet" | "peach" | "pink" | "mint";
   eyebrow?: string;
   title: string;
   /** Supporting line beneath the title. */
@@ -96,6 +97,7 @@ interface PageHeroProps {
 }
 
 export const PageHero = ({
+  tone,
   eyebrow,
   title,
   titleAccent,
@@ -107,7 +109,7 @@ export const PageHero = ({
   media,
   children,
 }: PageHeroProps) => (
-  <section className="site-page-hero">
+  <section className="site-page-hero" data-tone={tone}>
     <div className={`${CONTAINER} py-8 sm:pb-14 sm:pt-9`}>
       {breadcrumb ? <Breadcrumb items={breadcrumb} /> : null}
       <div className={media ? "grid min-w-0 items-center gap-8 md:grid-cols-2 lg:gap-14" : ""}>
@@ -115,7 +117,7 @@ export const PageHero = ({
           {eyebrow ? <p className={`mb-3 ${EYEBROW}`}>{eyebrow}</p> : null}
           <h1 className={H1}>{title}</h1>
           {titleAccent ? (
-            <p className="mt-3 text-lg font-semibold leading-snug tracking-tight text-accent sm:text-2xl">
+            <p className="site-page-subtitle mt-3 text-lg font-semibold leading-snug tracking-tight sm:text-2xl">
               {titleAccent}
             </p>
           ) : null}

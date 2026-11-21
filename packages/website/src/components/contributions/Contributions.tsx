@@ -9,6 +9,7 @@ const Contributions = () => {
   return (
     <>
       <PageHero
+        tone="mint"
         title="Contribute to Nayan UI"
         lead="Help build the engine, improve the docs, or report an issue."
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Contributing" }]}

@@ -33,7 +33,7 @@ import { DESTINATIONS, EDITOR_URL, FACTS, FAQS, SOURCE_URL, STEPS } from "./cont
 const FEATURES = [
   {
     icon: Layers,
-    title: "Layer as much as you like",
+    title: "Multi-track timeline",
     body: "Stack video, music, voice-over and titles on as many tracks as you need, and move any of it without disturbing the rest.",
   },
   {
@@ -43,7 +43,7 @@ const FEATURES = [
   },
   {
     icon: Palette,
-    title: "Make it look good",
+    title: "Colour presets and adjustments",
     body: "Fifteen one-click looks, from warm and sunny to cold and cinematic, each with a dial so you can take it as far as you want.",
   },
   {
@@ -58,7 +58,7 @@ const FEATURES = [
   },
   {
     icon: Volume2,
-    title: "Sound that stays put",
+    title: "Audio controls",
     body: "Balance your levels, fade music under speech, slow a clip down or run it backwards — and the audio never drifts out of step.",
   },
 ];
@@ -85,11 +85,12 @@ const EditorScreenshot = () => (
 const VideoEditorMain = () => (
   <>
     <PageHero
+      tone="pink"
       media={<EditorScreenshot />}
       breadcrumb={[{ label: "Home", href: "/" }, { label: "Video Editor" }]}
-      title="Edit video in your browser"
-      titleAccent="Free editor with up to 4K export"
-      lead="Trim clips, stack tracks, grade colour and add captions. Your footage stays on your device."
+      title="Cut, colour and export"
+      titleAccent="A free video editor in your browser"
+      lead="Build your cut on a multi-track timeline, add captions and export up to 4K. Your footage stays on your device."
       actions={
         <>
           <a href={EDITOR_URL} target="_blank" rel="noopener noreferrer" className={BUTTON_PRIMARY}>

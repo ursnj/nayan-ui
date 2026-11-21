@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { NImage, NPress, NText } from "@nayan-ui/engine/components";
 import { ArrowUpRight, Code2, Gamepad2, Github, Package } from "@/design/Icons";
 import Link from "next/link";
+import CatalogSearch from "@/components/helpers/CatalogSearch";
 import {
   CtaPanel,
   FaqList,
@@ -73,13 +74,13 @@ const GamesCollage = () => (
     {HERO_GAMES.map((id) => {
       const game = GAMES_LIST.find((item) => item.id === id);
       return (
-        <Link key={id} href={`/games/${id}`} onClick={rememberScroll} aria-label={`Play ${game?.name ?? id}`} className="overflow-hidden rounded-lg">
+        <Link key={id} href={`/games/${id}`} onClick={rememberScroll} aria-label={`Play ${game?.name ?? id}`} data-genre={game?.category} className="game-thumbnail overflow-hidden rounded-lg">
           <NImage
             src={`/games/${id}.png`}
             alt=""
             width={400}
             height={400}
-            className="block aspect-square w-full object-cover transition-transform duration-300 hover:scale-105"
+            className="block aspect-square w-full object-contain p-1.5 transition-transform duration-300 hover:scale-105"
           />
         </Link>
       );
@@ -90,6 +91,7 @@ const GamesCollage = () => (
 const GamesMain = () => {
   const categories = [...new Set(GAMES_LIST.map((game) => game.category))];
   const [category, setCategory] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     let saved: string | null = null;
@@ -104,16 +106,18 @@ const GamesMain = () => {
     return () => cancelAnimationFrame(frame);
   }, []);
 
-  const shown = category ? GAMES_LIST.filter((game) => game.category === category) : GAMES_LIST;
+  const term = query.trim().toLowerCase();
+  const shown = GAMES_LIST.filter((game) => (!category || game.category === category) && game.name.toLowerCase().includes(term));
 
   return (
     <>
       <PageHero
+        tone="peach"
         media={<GamesCollage />}
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Games" }]}
-        title="Play 50+ games"
-        titleAccent="Built with Nayan Engine"
-        lead="Play puzzle, arcade, action and strategy games in your browser. Add any game to a React or React Native app as a single component."
+        title="Play right in your browser"
+        titleAccent="50+ games built with Nayan Engine"
+        lead="Pick a puzzle, race through a city or play an arcade round. Each game can also run as a component in a React or React Native app."
         actions={
           <>
             <a href="#all-games" className={BUTTON_PRIMARY}>
@@ -132,7 +136,8 @@ const GamesMain = () => {
 
       <Section id="all-games" labelledBy="all-games-heading">
         <SectionHeader id="all-games-heading" title="Game library" />
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+        <div className="catalog-controls">
+          <CatalogSearch label="Search games" value={query} onChange={setQuery} />
           <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by category">
             {[null, ...categories].map((item) => (
               <NPress
@@ -145,8 +150,9 @@ const GamesMain = () => {
               </NPress>
             ))}
           </div>
-          <p aria-live="polite" className="font-mono text-xs text-muted">{shown.length} games</p>
+          <p aria-live="polite" className="catalog-count">{shown.length} {shown.length === 1 ? "game" : "games"}</p>
         </div>
+        {!shown.length && <p className="catalog-empty">No games match your search and category.</p>}
         <div className={`grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${GRID_GAP}`}>
           {shown.map((game) => (
             <Link
@@ -155,7 +161,7 @@ const GamesMain = () => {
               onClick={rememberScroll}
               className={`${CARD_INTERACTIVE} group min-w-0 overflow-hidden`}
             >
-              <div className="overflow-hidden border-b border-border bg-surface-secondary/45">
+              <div data-genre={game.category} className="game-thumbnail overflow-hidden border-b border-border">
                 <NImage
                   src={`/games/${game.id}.png`}
                   alt=""

@@ -10,7 +10,7 @@ const SPOTLIGHT = ['car-racing', 'treasure-hunt', 'block-blast'];
 
 export default function GamesSpotlight() {
   return (
-    <div className="border-y border-border bg-surface-secondary/50">
+    <div className="home-games-section">
       <Section id="games" labelledBy="games-heading">
         <div className="mb-7 flex flex-wrap items-end justify-between gap-5 sm:mb-9">
           <div className="max-w-xl">
@@ -18,7 +18,7 @@ export default function GamesSpotlight() {
             <h2 id="games-heading" className={H2}>
               Play in your browser
             </h2>
-            <p className={`mt-3 ${LEAD}`}>Pick from over 50 games built with Nayan Engine.</p>
+            <p className={`mt-3 ${LEAD}`}>Play a quick round or see how a complete game is built.</p>
           </div>
           <Link href="/games" className={BUTTON_SECONDARY}>
             Browse all games <ArrowRight aria-hidden size={16} className="ml-2" />
@@ -30,7 +30,7 @@ export default function GamesSpotlight() {
             if (!game) return null;
 
             return (
-              <Link key={id} href={`/games/${id}`} className="game-spotlight-card group">
+              <Link key={id} href={`/games/${id}`} data-genre={game.category} className="game-spotlight-card group">
                 <NImage
                   src={`/games/${id}.png`}
                   alt=""
@@ -41,7 +41,7 @@ export default function GamesSpotlight() {
                 />
                 <span className="game-spotlight-label">
                   <span>
-                    <span className="block font-mono text-xs text-white/85">{game.category}</span>
+                    <span className="game-spotlight-genre">{game.category}</span>
                     <span className="mt-1 block text-lg font-semibold tracking-tight sm:text-2xl">{game.name}</span>
                   </span>
                   <ArrowUpRight aria-hidden size={19} />

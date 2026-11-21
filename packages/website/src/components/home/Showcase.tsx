@@ -1,7 +1,9 @@
-import { ArrowUpRight, Atom, Clapperboard, Gamepad2, LayoutGrid, Boxes, Wrench } from '@/design/Icons';
+import { Atom, Boxes, Clapperboard, Gamepad2, LayoutGrid, Wrench, ArrowUpRight } from '@/design/Icons';
 import Link from 'next/link';
-import { Section, SectionHeader } from '@/design/Primitives';
-import { ACCENT_SOFT, BODY, CARD_INTERACTIVE, GRID_GAP, H3 } from '@/design/system';
+import { Section } from '@/design/Primitives';
+import { H2 } from '@/design/system';
+import { componentReferences } from '@/services/engine/component-reference';
+import { moduleReferences } from '@/services/engine/module-reference';
 import { TOOL_COUNT } from '@/services/Counts';
 
 /** Shared with the homepage's structured data. */
@@ -9,61 +11,68 @@ export const PRODUCTS = [
   {
     icon: Atom,
     title: 'Nayan Engine',
-    body: 'Build with Rust rendering, physics, glTF models, spatial audio and haptics.',
-    href: '/game-engine'
+    body: 'Render 3D scenes, add physics, load glTF models and make objects respond to input.',
+    href: '/game-engine',
+    tone: 'violet'
   },
   {
     icon: LayoutGrid,
-    title: 'Engine components',
-    body: 'Browse controls and hooks with React and React Native examples.',
-    href: '/components'
+    title: 'Components',
+    body: `${componentReferences.length} controls, hooks and examples for building interfaces.`,
+    href: '/components',
+    tone: 'lime'
   },
   {
     icon: Boxes,
-    title: 'Engine modules',
-    body: 'Explore storage, audio, drawing, platform services and more.',
-    href: '/modules'
+    title: 'Modules',
+    body: `${moduleReferences.length} entry points for tasks like storage, audio and drawing.`,
+    href: '/modules',
+    tone: 'peach'
   },
   {
     icon: Gamepad2,
     title: 'Games',
-    body: 'Play 50+ puzzle, arcade, action and strategy games in your browser.',
-    href: '/games'
+    body: 'Play 50+ arcade, action, strategy and puzzle games in your browser.',
+    href: '/games',
+    tone: 'pink'
   },
   {
     icon: Clapperboard,
-    title: 'Video editor',
-    body: 'Cut, grade and export up to 4K in your browser, with your footage on your device.',
-    href: '/video-editor'
+    title: 'Video Editor',
+    body: 'Trim clips, layer tracks and export up to 4K. Your footage stays on your device.',
+    href: '/video-editor',
+    tone: 'blue'
   },
   {
     icon: Wrench,
-    title: 'Developer tools',
+    title: 'Developer Tools',
     body: `Browse ${TOOL_COUNT} guides for PDFs, images, structured data, text and SEO.`,
-    href: '/tools'
+    href: '/tools',
+    tone: 'mint'
   }
 ];
 
 export default function Showcase() {
   return (
-    <Section id="what-you-get" labelledBy="what-heading">
-      <SectionHeader id="what-heading" title="Explore Nayan UI" />
-      <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
-        {PRODUCTS.map((product) => {
-          const Icon = product.icon;
-          return (
-            <Link key={product.href} href={product.href} className={`${CARD_INTERACTIVE} product-card group p-5 sm:p-6`}>
-              <div className="mb-6 flex items-start justify-between">
-                <span className={`inline-flex h-11 w-11 items-center justify-center rounded-lg border ${ACCENT_SOFT}`}>
-                  <Icon aria-hidden size={21} strokeWidth={1.7} />
-                </span>
-                <ArrowUpRight aria-hidden size={19} className="text-muted transition-colors group-hover:text-accent" />
-              </div>
-              <h3 className={H3}>{product.title}</h3>
-              <p className={`mt-2 max-w-xs ${BODY}`}>{product.body}</p>
-            </Link>
-          );
-        })}
+    <Section id="what-you-get" labelledBy="what-heading" className="home-catalog">
+      <h2 id="what-heading" className={H2}>
+        Explore Nayan UI
+      </h2>
+      <div className="home-product-grid">
+        {PRODUCTS.map(({ href, title, body, tone, icon: Icon }) => (
+          <Link key={href} href={href} data-tone={tone} className="home-product">
+            <div className="home-product-top">
+              <span className="home-product-icon">
+                <Icon aria-hidden size={25} strokeWidth={1.7} />
+              </span>
+              <ArrowUpRight aria-hidden size={21} className="home-product-arrow" />
+            </div>
+            <div>
+              <h3>{title}</h3>
+              <p>{body}</p>
+            </div>
+          </Link>
+        ))}
       </div>
     </Section>
   );

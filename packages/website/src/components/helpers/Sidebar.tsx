@@ -135,6 +135,16 @@ const SidebarNav = ({
   </>
 );
 
+const DOCS_TONES: Record<string, string> = {
+  'game-engine': 'violet',
+  components: 'lime',
+  modules: 'peach',
+  react: 'blue',
+  'react-native': 'pink',
+  tools: 'mint',
+  games: 'peach'
+};
+
 const Sidebar = (props: Props) => {
   const pathname = usePathname();
   const sidebarItems = props.reference?.items ?? getSidebarItems(pathname);
@@ -214,7 +224,10 @@ const Sidebar = (props: Props) => {
             </nav>
           ) : null}
 
-          <header className={props.title ? "site-docs-heading mb-6 sm:mb-8" : undefined}>
+          <header
+            className={props.title ? "site-docs-heading mb-6 sm:mb-8" : undefined}
+            data-tone={DOCS_TONES[props.reference?.href.slice(1) ?? section]}
+          >
             <Breadcrumb items={breadcrumb} />
             {props.title && <NText tag="h1" className={H1}>{props.title}</NText>}
           </header>

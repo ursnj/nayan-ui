@@ -20,7 +20,7 @@ export const GettingStartedGuides: EngineGuide[] = [
   {
     slug: "overview",
     title: "Nayan Game Engine",
-    description: "Cross-platform UI and 3D games for React and React Native on one Rust core.",
+    description: "Build an interface, a 3D scene or both. Nayan Engine runs the same TypeScript API on the web, iOS and Android.",
     sections: [
       {
         id: "what-it-is",

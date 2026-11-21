@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "@/design/Icons";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Blocks, Boxes, Code2 } from "@/design/Icons";
 import { DocsIntro } from "@/design/Primitives";
 import Code from "@/components/helpers/Code";
 import Sidebar from "@/components/helpers/Sidebar";
@@ -7,6 +7,12 @@ import SubHeader from "@/components/helpers/SubHeader";
 import { ACCENT_TEXT, CARD, H3_DOC } from "@/design/system";
 import { engineNavigation } from "@/services/engine/navigation";
 import type { EngineGuide } from "@/services/engine/types";
+
+const referenceLinks = [
+  { href: "/components", label: "Components", tone: "lime", icon: Blocks },
+  { href: "/modules", label: "Modules", tone: "peach", icon: Boxes },
+  { href: "/game-engine/playground", label: "Playground", tone: "violet", icon: Code2 },
+];
 
 const platformLabels = {
   shared: "React and React Native · shared engine API",
@@ -23,6 +29,17 @@ export default function EngineDocumentation({ guide }: { guide: EngineGuide }) {
     <Sidebar title={guide.title}>
       <article className="min-w-0 [overflow-wrap:anywhere]">
         <DocsIntro lead={guide.description} />
+        {guide.slug === "overview" && (
+          <nav aria-label="Engine reference and playground" className="site-category-grid">
+            {referenceLinks.map(({ href, label, tone, icon: Icon }) => (
+              <Link key={href} href={href} data-tone={tone} className="site-category-link">
+                <Icon aria-hidden size={19} />
+                <span>{label}</span>
+                <ArrowUpRight aria-hidden size={15} />
+              </Link>
+            ))}
+          </nav>
+        )}
         {guide.sections.map((section) => (
           <SubHeader
             key={section.id}

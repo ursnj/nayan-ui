@@ -1,5 +1,6 @@
 import {
   ArrowRight,
+  ArrowUpRight,
   Bot,
   Bug,
   Crop,
@@ -67,7 +68,7 @@ import {
 } from '@/design/Icons';
 import Link from 'next/link';
 import { DocsIntro } from '@/design/Primitives';
-import { ACCENT_SOFT, BUTTON_SMALL, CARD, CARD_INTERACTIVE, GRID_GAP, H3, PILL_INTERACTIVE } from '@/design/system';
+import { ACCENT_SOFT, BUTTON_SMALL, CARD, CARD_INTERACTIVE, GRID_GAP, H3 } from '@/design/system';
 import Code from '@/components/helpers/Code';
 import Sidebar from '@/components/helpers/Sidebar';
 import SubHeader from '@/components/helpers/SubHeader';
@@ -737,21 +738,21 @@ nayan-ai scan <repo-url> -t ghp_xxx --llm claude`,
 ];
 
 const TOOL_GROUPS = [
-  { id: 'seo-tools', label: 'SEO', description: 'Sitemaps, crawl directives, metadata, and URLs.', tools: SEO_TOOLS },
-  { id: 'ai-tools', label: 'AI', description: 'Code review and dependency scanning.', tools: AI_TOOLS },
-  { id: 'image-tools', label: 'Image', description: 'Edit and convert images.', tools: IMAGE_TOOLS },
-  { id: 'pdf-tools', label: 'PDF', description: 'Merge, split, compress, convert, and protect PDFs.', tools: PDF_TOOLS },
-  { id: 'json-tools', label: 'JSON', description: 'Format, validate, and convert JSON.', tools: JSON_TOOLS },
-  { id: 'xml-tools', label: 'XML', description: 'Format, validate, and convert XML.', tools: XML_TOOLS },
-  { id: 'text-tools', label: 'Text', description: 'Compare, count, convert, and transform text.', tools: TEXT_TOOLS },
-  { id: 'developer-tools', label: 'Developer', description: 'UUIDs, colors, tokens, cron, and other utilities.', tools: DEV_TOOLS }
+  { id: 'seo-tools', tone: 'mint', icon: Globe, label: 'SEO', description: 'Sitemaps, crawl directives, metadata, and URLs.', tools: SEO_TOOLS },
+  { id: 'ai-tools', tone: 'violet', icon: Bot, label: 'AI', description: 'Code review and dependency scanning.', tools: AI_TOOLS },
+  { id: 'image-tools', tone: 'pink', icon: Image, label: 'Image', description: 'Edit and convert images.', tools: IMAGE_TOOLS },
+  { id: 'pdf-tools', tone: 'peach', icon: FileText, label: 'PDF', description: 'Merge, split, compress, convert, and protect PDFs.', tools: PDF_TOOLS },
+  { id: 'json-tools', tone: 'lime', icon: Braces, label: 'JSON', description: 'Format, validate, and convert JSON.', tools: JSON_TOOLS },
+  { id: 'xml-tools', tone: 'blue', icon: Code2, label: 'XML', description: 'Format, validate, and convert XML.', tools: XML_TOOLS },
+  { id: 'text-tools', tone: 'pink', icon: WholeWord, label: 'Text', description: 'Compare, count, convert, and transform text.', tools: TEXT_TOOLS },
+  { id: 'developer-tools', tone: 'violet', icon: Wrench, label: 'Developer', description: 'UUIDs, colors, tokens, cron, and other utilities.', tools: DEV_TOOLS }
 ];
 
 const DevtoolsMain = () => {
   return (
     <Sidebar title="Developer Tools">
       <DocsIntro
-        lead="Guides for PDFs, images, JSON, XML, text, and SEO. Find command examples for the Nayan UI CLI and the AI code review and dependency scanning package."
+        lead="Find a guide by file format or task. The command-line examples cover scaffolding, SEO, code review and dependency checks."
         actions={
           <>
             <Link href="https://www.npmjs.com/package/@nayan-ui/cli" target="_blank" rel="noopener noreferrer" className={BUTTON_SMALL}>
@@ -770,20 +771,28 @@ const DevtoolsMain = () => {
         }
       />
 
-      <nav aria-label="Tool categories" className="mb-8 flex flex-wrap gap-2">
-        {TOOL_GROUPS.map(({ id, label }) => (
-          <a key={id} href={`#${id}`} className={`${PILL_INTERACTIVE} inline-flex min-h-8 items-center px-3`}>{label}</a>
+      <nav aria-label="Tool categories" className="site-category-grid">
+        {TOOL_GROUPS.map(({ id, label, tone, icon: Icon }) => (
+          <a key={id} href={`#${id}`} data-tone={tone} className="site-category-link">
+            <Icon aria-hidden size={19} />
+            <span>{label}</span>
+            <ArrowUpRight aria-hidden size={15} />
+          </a>
         ))}
-        <a href="#nayan-ui-cli" className={`${PILL_INTERACTIVE} inline-flex min-h-8 items-center px-3`}>Command line</a>
+        <a href="#nayan-ui-cli" data-tone="blue" className="site-category-link">
+          <Keyboard aria-hidden size={19} />
+          <span>Command line</span>
+          <ArrowUpRight aria-hidden size={15} />
+        </a>
       </nav>
 
-      {TOOL_GROUPS.map(({ id, label, description, tools }) => (
+      {TOOL_GROUPS.map(({ id, label, description, tone, tools }) => (
         <SubHeader key={id} id={id} title={`${label} Tools`} description={description}>
           <div className={`grid sm:grid-cols-2 xl:grid-cols-3 ${GRID_GAP}`}>
             {tools.map(({ href, icon: Icon, title, body }) => (
-              <Link key={href} href={href} className={`${CARD_INTERACTIVE} group block p-4 sm:p-5`}>
+              <Link key={href} href={href} data-tone={tone} className={`${CARD_INTERACTIVE} catalog-entry group block p-4 sm:p-5`}>
                 <div className="mb-3 flex items-center justify-between gap-3">
-                  <span className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border ${ACCENT_SOFT}`}>
+                  <span className="catalog-entry-icon">
                     <Icon aria-hidden size={18} />
                   </span>
                   <ArrowRight aria-hidden size={16} className="shrink-0 text-muted transition-colors group-hover:text-accent" />
