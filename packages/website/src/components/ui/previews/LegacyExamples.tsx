@@ -13,11 +13,11 @@ import {
   NMenuItem,
   NPress,
   NProgress,
-  NSwitch,
   NText,
   NView
 } from '@nayan-ui/engine/components';
 import { componentSource } from '@/services/engine/component-examples';
+import SwitchRows from './SwitchRows';
 import type { ComponentPreview } from './types';
 
 const row = 'flex-row flex-wrap items-center gap-2';
@@ -400,14 +400,9 @@ export default function Example() {
 }`
   },
   'switch-group': {
-    render: (
-      <>
-        <NText className="font-semibold">Notifications</NText>
-        <NSwitch label="Email updates" defaultValue />
-        <NSwitch label="Push notifications" />
-        <NSwitch label="Weekly summary" />
-      </>
-    ),
+    host: true,
+    height: 206,
+    render: <SwitchRows options={[{ label: 'Email updates', enabled: true }, { label: 'Push notifications' }, { label: 'Weekly summary' }]} />,
     source: componentSource(
       'NSwitch, NText',
       `<NText>Notifications</NText>

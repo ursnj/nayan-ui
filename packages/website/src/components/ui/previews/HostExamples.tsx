@@ -102,9 +102,12 @@ function DrawerDemo() {
     <NDrawer
       width={240}
       accessibilityLabel="Example navigation drawer"
+      drawerStyle={{ backgroundColor: 'var(--overlay)', borderRight: '1px solid var(--border)' }}
       drawerContent={
         <div className="component-host-demo">
-          <NText tag="p">Navigation</NText>
+          <NText tag="p" className="text-sm font-semibold">
+            Navigation
+          </NText>
           <DrawerButton dismiss />
         </div>
       }
@@ -282,9 +285,9 @@ const hosts: Record<string, { demo: ComponentType; host?: boolean; height?: numb
   blur: { demo: Blur, host: true },
   'blur-target': { demo: () => <Blur sampleTarget />, host: true },
   'components-root': { demo: RootDemo, host: true },
-  confetti: { demo: ConfettiDemo },
+  confetti: { demo: ConfettiDemo, height: 246 },
   drawer: { demo: DrawerDemo, host: true },
-  keyboard: { demo: KeyboardDemo, host: true },
+  keyboard: { demo: KeyboardDemo, host: true, height: 278 },
   page: { demo: PageDemo, host: true },
   'platform-view': { demo: PlatformDemo },
   'refresh-control': { demo: RefreshDemo },
@@ -295,7 +298,7 @@ const hosts: Record<string, { demo: ComponentType; host?: boolean; height?: numb
   theme: { demo: ThemeDemo, host: true },
   'toast-host': { demo: ToastHostDemo, host: true },
   'use-drawer': { demo: DrawerDemo, host: true },
-  'use-keyboard': { demo: KeyboardDemo, host: true },
+  'use-keyboard': { demo: KeyboardDemo, host: true, height: 278 },
   'use-safe-area-frame': { demo: SafeAreaFrameDemo, host: true },
   'use-safe-area-insets': { demo: SafeAreaDemo, host: true },
   'use-theme': { demo: ThemeDemo, host: true }

@@ -23,6 +23,12 @@ test('the reference covers the component exports and public engine entry points'
   }
 });
 
+test('the Code preview and its example pass the command to the engine renderer', () => {
+  const preview = componentPreview('code');
+  expect(preview?.render).toMatchObject({ props: { code: 'bun add @nayan-ui/engine' } });
+  expect(preview?.source).toContain('code={"bun add @nayan-ui/engine"}');
+});
+
 test('each reference entry has valid example code for the built engine package', () => {
   const examples: [string, string][] = [];
   for (const { slug, symbol } of componentReferences) {

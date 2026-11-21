@@ -4,14 +4,13 @@ import * as React from "react";
 import { Component, type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import * as jsxRuntime from "react/jsx-runtime";
 import * as engine from "@nayan-ui/engine";
-import Editor, { type Monaco, type OnMount } from "@monaco-editor/react";
 import { BookOpen, Check, Play, RotateCcw, Share2 } from "@/design/Icons";
 import Link from "next/link";
 import { NSelect } from "@/components/ui";
-import { buildTheme, THEME_NAME } from "./monacoTheme";
+import CodeEditor from "./CodeEditor";
+import { createCompiler } from "./compiler";
 import { PLAYGROUND_CATEGORIES, PLAYGROUND_EXAMPLES } from "./examples";
 
-type Editor = Parameters<OnMount>[0];
 type Log = { level: "error" | "warn" | "log"; text: string };
 type Option = { value: string; label: string };
 
@@ -24,10 +23,6 @@ const GROUPS = PLAYGROUND_CATEGORIES.map((category) => ({
 }));
 const OPTIONS: Option[] = GROUPS.flatMap((group) => group.options);
 
-/** The picker at the buttons' 32 px (NSelect's control is 40 px by default), its menu above the editor. */
-
-
-const FILE = "file:///Playground.tsx";
 const STORAGE_KEY = "nyn-engine-playground";
 /** What the code may import: the engine and React, the same instances the page uses. */
 const MODULES: Record<string, unknown> = {
@@ -82,9 +77,6 @@ function initialCode() {
   return PLAYGROUND_EXAMPLES[0]!.code;
 }
 
-/** Monaco's TypeScript API (monaco.typescript in newer releases, languages.typescript before). */
-const typescriptOf = (monaco: Monaco) => (monaco as any).typescript ?? monaco.languages.typescript;
-
 /** Catches render errors in the user's component, so a bug shows in the panel instead of breaking the page. */
 class Boundary extends Component<
   { onError: (error: Error) => void; children: ReactNode },
@@ -109,17 +101,16 @@ class Boundary extends Component<
 }
 
 export default function Playground() {
-  const [code, setCode] = useState<string>(() =>
-    typeof window === "undefined" ? PLAYGROUND_EXAMPLES[0]!.code : initialCode(),
-  );
+  const [startingCode] = useState(initialCode);
+  const [code, setCode] = useState(startingCode);
   const [Preview, setPreview] = useState<React.ComponentType | null>(null);
   const [run, setRun] = useState(0);
   const [logs, setLogs] = useState<Log[]>([]);
   const [problems, setProblems] = useState<string[]>([]);
   const [ready, setReady] = useState(false);
   const [shared, setShared] = useState<"copied" | "failed" | null>(null);
-  const editorRef = useRef<Editor | null>(null);
-  const monacoRef = useRef<Monaco | null>(null);
+  const compiler = useRef<ReturnType<typeof createCompiler> | null>(null);
+  const runRequest = useRef(0);
 
   const log = useCallback((level: Log["level"], ...args: unknown[]) => {
     const text = args
@@ -130,18 +121,14 @@ export default function Playground() {
     setLogs((current) => [...current.slice(-49), { level, text }]);
   }, []);
 
-  /** Compile the editor's code with Monaco's TypeScript worker, then run it and show its default export. */
-  const execute = useCallback(async () => {
-    const monaco = monacoRef.current;
-    const model = editorRef.current?.getModel();
-    if (!monaco || !model) return;
+  const execute = useCallback(async (source: string) => {
+    const currentCompiler = compiler.current;
+    if (!currentCompiler) return;
+    const request = ++runRequest.current;
     setLogs([]);
     try {
-      const worker = await typescriptOf(monaco).getTypeScriptWorker();
-      const client = await worker(model.uri);
-      const output = await client.getEmitOutput(model.uri.toString());
-      const js: string | undefined = output.outputFiles[0]?.text;
-      if (!js) throw new Error("Nothing to run.");
+      const js = await currentCompiler.compile(source);
+      if (compiler.current !== currentCompiler || request !== runRequest.current) return;
       const module = { exports: {} as Record<string, unknown> };
       const require = (name: string) => {
         if (name in MODULES) return MODULES[name];
@@ -165,75 +152,45 @@ export default function Playground() {
       setPreview(() => component as React.ComponentType);
       setRun((value) => value + 1);
     } catch (error) {
+      if (compiler.current !== currentCompiler || request !== runRequest.current) return;
       setPreview(null);
       log("error", error);
     }
   }, [log]);
 
-  const handleMount: OnMount = useCallback(
-    (editor, monaco) => {
-      editorRef.current = editor;
-      monacoRef.current = monaco;
-
-      const applyTheme = () => {
-        monaco.editor.defineTheme(
-          THEME_NAME,
-          buildTheme(document.documentElement.classList.contains("dark")),
-        );
-        monaco.editor.setTheme(THEME_NAME);
+  useEffect(() => {
+    try {
+      const currentCompiler = createCompiler();
+      compiler.current = currentCompiler;
+      setReady(true);
+      void execute(startingCode);
+      return () => {
+        compiler.current = null;
+        currentCompiler.dispose();
       };
-      applyTheme();
-      const observer = new MutationObserver(applyTheme);
-      observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ["class", "data-theme"],
-      });
-      editor.onDidDispose(() => observer.disconnect());
+    } catch (error) {
+      log("error", error);
+    }
+  }, [execute, log, startingCode]);
 
-      const ts = typescriptOf(monaco);
-      ts.typescriptDefaults.setCompilerOptions({
-        target: ts.ScriptTarget.ES2020,
-        module: ts.ModuleKind.CommonJS,
-        moduleResolution: ts.ModuleResolutionKind.NodeJs,
-        jsx: ts.JsxEmit.ReactJSX,
-        strict: true,
-        esModuleInterop: true,
-        allowNonTsExtensions: true,
-        skipLibCheck: true,
-        lib: ["es2020", "dom"],
-      });
-      // Problems in the code show in the editor and the panel; the engine's own files aren't checked.
-      monaco.editor.onDidChangeMarkers(() => {
-        type Marker = { severity: number; startLineNumber: number; message: string };
-        const markers: Marker[] = monaco.editor.getModelMarkers({
-          resource: monaco.Uri.parse(FILE),
-        });
-        setProblems(
-          markers
-            .filter((m) => m.severity >= monaco.MarkerSeverity.Error)
-            .map((m) => `Line ${m.startLineNumber}: ${m.message}`),
-        );
-      });
+  useEffect(() => {
+    const currentCompiler = compiler.current;
+    if (!currentCompiler) return;
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      currentCompiler.check(code).then(
+        (messages) => { if (!cancelled) setProblems(messages); },
+        (error: Error) => { if (!cancelled) setProblems([error.message]); },
+      );
+    }, 300);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [code]);
 
-      // Ctrl/Cmd + Enter runs the code.
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => void execute());
-
-      // The engine's and React's types, for autocomplete and type checking; then the first run.
-      fetch("/game-engine/playground/types")
-        .then(
-          (response) => response.json() as Promise<{ libs: { path: string; content: string }[] }>,
-        )
-        .then(({ libs }) => {
-          for (const lib of libs) ts.typescriptDefaults.addExtraLib(lib.content, lib.path);
-        })
-        .catch(() => log("warn", "Could not load the engine's types; autocomplete is limited."))
-        .finally(() => {
-          setReady(true);
-          void execute();
-        });
-    },
-    [execute, log],
-  );
+  const complete = (source: string, position: number) =>
+    compiler.current?.complete(source, position) ?? Promise.resolve([]);
 
   // Keep the last edit for the next visit.
   useEffect(() => {
@@ -256,8 +213,7 @@ export default function Playground() {
     if (!example) return;
     setSelected(OPTIONS.find((option) => option.value === id) ?? null);
     setCode(example.code);
-    editorRef.current?.setValue(example.code);
-    void execute();
+    void execute(example.code);
   };
 
   // The link carries the code in its #hash. It goes in the address bar too, so it can be copied by hand.
@@ -275,7 +231,7 @@ export default function Playground() {
   useEffect(() => {
     const open = () => {
       const incoming = sharedCode();
-      if (!incoming || incoming === editorRef.current?.getValue()) return;
+      if (!incoming) return;
       setCode(incoming);
       setSelected(
         OPTIONS.find(
@@ -283,8 +239,7 @@ export default function Playground() {
             PLAYGROUND_EXAMPLES.find((example) => example.id === option.value)?.code === incoming,
         ) ?? null,
       );
-      editorRef.current?.setValue(incoming);
-      void execute();
+      void execute(incoming);
     };
     window.addEventListener("hashchange", open);
     return () => window.removeEventListener("hashchange", open);
@@ -298,7 +253,7 @@ export default function Playground() {
     "flex h-8 shrink-0 items-center gap-2 border-b border-default px-3 text-xs font-medium text-muted";
 
   return (
-    <div className="flex h-[calc(100dvh-var(--site-header-height))] flex-col gap-2 bg-background p-2">
+    <div className="engine-playground flex flex-col gap-2 bg-background p-2">
       <div className={`${island} flex flex-wrap items-center gap-2 px-2 py-1.5`}>
         <h1 className="mx-1 flex h-8 items-center gap-2 text-sm font-semibold">
           <span
@@ -320,7 +275,7 @@ export default function Playground() {
         </div>
         <button
           type="button"
-          onClick={() => void execute()}
+          onClick={() => void execute(code)}
           disabled={!ready}
           className={`${button} border-transparent bg-accent text-accent-foreground hover:bg-accent/85 hover:border-transparent`}
           title="Run (Ctrl/Cmd + Enter)"
@@ -365,22 +320,7 @@ export default function Playground() {
             <span className="ml-auto hidden sm:inline">TypeScript · @nayan-ui/engine</span>
           </div>
           <div className="min-h-0 flex-1">
-            <Editor
-              path={FILE}
-              defaultLanguage="typescript"
-              value={code}
-              onChange={(value) => setCode(value ?? "")}
-              onMount={handleMount}
-              options={{
-                minimap: { enabled: false },
-                fontSize: 13,
-                fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace",
-                tabSize: 2,
-                automaticLayout: true,
-                scrollBeyondLastLine: false,
-                padding: { top: 12, bottom: 12 },
-              }}
-            />
+            <CodeEditor code={code} onChange={setCode} onRun={execute} onComplete={complete} />
           </div>
         </section>
 
@@ -435,7 +375,7 @@ export default function Playground() {
             <div className="overflow-y-auto px-3 py-1.5 font-mono text-xs" aria-live="polite">
               {problems.length === 0 && logs.length === 0 ? (
                 <p className="text-muted">
-                  No problems. Edit the code, then press Run or Ctrl/Cmd + Enter.
+                  No problems. Press Ctrl/Cmd + Enter to run or Ctrl/Cmd + Space for suggestions.
                 </p>
               ) : (
                 <>

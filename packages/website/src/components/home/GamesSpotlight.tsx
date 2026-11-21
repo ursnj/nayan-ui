@@ -1,6 +1,6 @@
 import { ArrowRight, ArrowUpRight, Box } from '@/design/Icons';
 import Link from 'next/link';
-import { NImage } from '@nayan-ui/engine/components';
+import { NCode, NImage } from '@nayan-ui/engine/components';
 import { Section } from '@/design/Primitives';
 import { BODY, BUTTON_SECONDARY, CARD, EYEBROW, H2, H3, LEAD } from '@/design/system';
 import { gamesExampleSetupCode } from '@/services/GamesCodeBlocks';
@@ -66,7 +66,7 @@ export default function GamesSpotlight() {
             tabIndex={0}
             aria-label="Car Racing setup commands"
           >
-            <code>{`${gamesExampleSetupCode}\nbun run web`}</code>
+            <NCode tag="code">{`${gamesExampleSetupCode}\nbun run web`}</NCode>
           </pre>
         </div>
       </Section>

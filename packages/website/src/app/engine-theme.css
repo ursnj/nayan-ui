@@ -96,14 +96,71 @@
   padding: 20px;
   color: var(--foreground);
 }
+.engine-preview-action {
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.engine-preview-action:hover {
+  background-color: color-mix(in srgb, var(--accent) 86%, var(--surface));
+}
+
+.engine-preview-action:disabled {
+  opacity: 0.5;
+}
+
+.engine-preview-action:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.engine-preview-action-outline {
+  border-color: var(--border);
+  background-color: var(--surface);
+  color: var(--foreground);
+}
+
+.engine-preview-action-outline:hover {
+  background-color: var(--surface-secondary);
+}
+
+.engine-preview-action-ghost {
+  background-color: transparent;
+  color: var(--accent);
+}
+
+.engine-preview-action-ghost:hover {
+  background-color: var(--surface-secondary);
+}
+
+.engine-preview-action-danger {
+  background-color: var(--danger);
+  color: var(--danger-foreground);
+}
+
+.engine-preview-action-danger:hover {
+  background-color: var(--danger);
+  opacity: 0.9;
+}
+
 .engine-preview-input {
   width: 100%;
+  height: 44px;
   min-height: 44px;
-  padding: 10px 12px;
+  padding: 0 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background-color: var(--field-background);
   color: var(--foreground);
+  font-size: 14px;
 }
 .engine-preview-input:focus-visible {
   outline: 2px solid var(--accent);

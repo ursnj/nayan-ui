@@ -19,7 +19,7 @@ const snippets: Record<Tab, string> = {
 
 const references: Record<Tab, string> = { Buttons: '/button', Forms: '/input', Feedback: '/loading', Elements: '/text' };
 
-const action = 'rounded-lg bg-accent px-4 py-2 text-accent-foreground';
+const action = 'engine-preview-action';
 const row = 'flex flex-row flex-wrap items-center gap-3';
 
 export default function EnginePreview() {

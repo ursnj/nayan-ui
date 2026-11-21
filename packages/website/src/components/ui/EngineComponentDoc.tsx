@@ -4,6 +4,7 @@ import { useState, type ComponentType, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import * as Engine from '@nayan-ui/engine/components';
+import { BrowserFrame } from '@/design/Primitives';
 import Code from '@/components/helpers/Code';
 import Sidebar from '@/components/helpers/Sidebar';
 import SubHeader from '@/components/helpers/SubHeader';
@@ -12,11 +13,13 @@ import { getMenuItem } from '@/services/Utils';
 import { componentSource, standaloneExamples } from '@/services/engine/component-examples';
 import { findComponentReference } from '@/services/engine/component-reference';
 import { tagsForReference } from '@/services/engine/reference-tags';
+import { SITE_HOST } from '@/services/seo';
 import { familiarExample } from './previews/FamiliarExamples';
 import { hostExample } from './previews/HostExamples';
 import { legacyComponentAlternatives, legacyExample } from './previews/LegacyExamples';
 import type { SpecializedSlug } from './previews/SpecializedExamples';
 import type { ComponentPreview } from './previews/types';
+import PreviewSurface from './previews/PreviewSurface';
 
 const SpecializedExample = dynamic(() => import('./previews/SpecializedExamples'), {
   ssr: false,
@@ -36,37 +39,6 @@ const specializedHeights = {
   'video-player': 280
 } satisfies Record<SpecializedSlug, number>;
 
-const previewThemes = {
-  light: {
-    accent: '#0e63ee',
-    action: '#0e63ee',
-    'action-foreground': '#ffffff',
-    'accent-foreground': '#ffffff',
-    background: '#f8fafc',
-    foreground: '#0f172a',
-    surface: '#ffffff',
-    default: '#e2e8f0',
-    'field-background': '#ffffff',
-    'field-border': '#cbd5e1',
-    border: '#cbd5e1',
-    focus: '#0e63ee'
-  },
-  dark: {
-    accent: '#70a7ff',
-    action: '#70a7ff',
-    'action-foreground': '#101c35',
-    'accent-foreground': '#101c35',
-    background: '#111827',
-    foreground: '#f1f5f9',
-    surface: '#1e293b',
-    default: '#334155',
-    'field-background': '#1e293b',
-    'field-border': '#475569',
-    border: '#475569',
-    focus: '#70a7ff'
-  }
-} satisfies Engine.NThemeProps['themes'];
-
 type Control = keyof typeof Engine;
 type Spec = { control: Control; text?: string; props?: Record<string, unknown>; result?: string; height?: number };
 
@@ -78,17 +50,13 @@ const items = [
 const examples: Record<string, Spec> = {
   'action-item': { control: 'NActionItem', props: { name: 'Open document', description: 'View the latest draft.' }, result: 'Document opened.' },
   avatar: { control: 'NImage', props: { src: '/logo.webp', alt: 'Nayan Engine', width: 48, height: 48, className: 'rounded-full' } },
-  'button-group': { control: 'NButtonGroup', props: { items, defaultValue: 'beginner' } },
   card: { control: 'NCard', text: 'This is a sample card.', props: { className: 'w-full rounded-xl border border-border bg-surface p-4' } },
   'close-button': { control: 'NCloseButton', props: { accessibilityLabel: 'Close panel' }, result: 'Panel closed.' },
-  code: { control: 'NCode', text: 'bun add @nayan-ui/engine' },
+  code: { control: 'NCode', props: { code: 'bun add @nayan-ui/engine' } },
   'date-picker': { control: 'NDatePicker', props: { label: 'Date' }, height: 380 },
-  disclosure: { control: 'NDisclosure', props: { title: 'Details' }, text: 'Expand the section to show its content.' },
-  divider: { control: 'NDivider' },
-  'empty-state': { control: 'NEmptyState', props: { title: 'No results', description: 'Try a different search.' } },
   icon: { control: 'NIcon', props: { paths: 'M4 12l5 5L20 6', strokeWidth: 2, size: 32 } },
   image: { control: 'NImage', props: { src: '/logo.webp', alt: 'Nayan Engine', width: 96, height: 68 } },
-  'input-otp': { control: 'NInputOtp', props: { label: 'Verification code', maxLength: 6 } },
+  'input-otp': { control: 'NInputOtp', props: { label: 'Verification code', maxLength: 6, keyboardType: 'number-pad', placeholder: '000000' } },
   kbd: { control: 'NKbd', text: 'Enter' },
   link: { control: 'NLink', props: { href: '/game-engine' }, text: 'Engine documentation' },
   linkify: { control: 'NLinkify', props: { text: 'Find the documentation at https://www.nayanui.com/game-engine.' } },
@@ -101,19 +69,16 @@ const examples: Record<string, Spec> = {
     text: 'Press me',
     result: 'Custom control pressed.'
   },
-  radio: { control: 'NRadio', props: { label: 'Beginner', value: 'beginner', isSelected: true } },
-  required: { control: 'NRequired', props: { isRequired: true } },
-  'radio-group': { control: 'NRadioGroup', props: { label: 'Experience', items, defaultValue: 'beginner' } },
   'search-field': { control: 'NSearchField', props: { label: 'Search', placeholder: 'Search examples' } },
-  select: { control: 'NSelect', props: { label: 'Experience', options: items, defaultValue: 'beginner' } },
-  slider: { control: 'NSlider', props: { label: 'Volume', defaultValue: 50, min: 0, max: 100 } },
-  text: { control: 'NText', props: { className: 'text-xl font-semibold' }, text: 'Heading text' },
-  view: { control: 'NView', props: { style: { width: 140, height: 64, backgroundColor: '#555ee6', borderRadius: 12 } } },
+  select: { control: 'NSelect', props: { label: 'Experience', options: items, defaultValue: 'beginner', className: 'w-full' }, height: 244 },
+  slider: { control: 'NSlider', props: { label: 'Volume', defaultValue: 50, min: 0, max: 100, showOutput: true } },
+  text: { control: 'NText', props: { className: 'text-xl font-semibold tracking-tight' }, text: 'Heading text' },
+  view: { control: 'NView', props: { className: 'h-16 w-36 rounded-xl border border-accent/25 bg-accent/15' } },
   pattern: {
     control: 'NPattern',
     props: { style: { width: 180, height: 120 }, recipe: { shapes: [{ kind: 'circle', cx: 90, cy: 60, r: 40, color: '#555ee6' }] } }
   },
-  textarea: { control: 'NTextarea', props: { label: 'Notes', placeholder: 'Add a note' } },
+  textarea: { control: 'NTextarea', props: { label: 'Notes', placeholder: 'Add a note' }, height: 200 },
   'toggle-button': { control: 'NToggleButton', text: 'Toggle' }
 };
 
@@ -142,20 +107,27 @@ export function componentPreview(slug: string): ComponentPreview | undefined {
   }
   if (slug === 'carousel') {
     return {
+      height: 244,
       source: componentSource(
         'NCarousel, NText, NView',
-        `<NCarousel height={140}>
-            <NView className="h-full w-full p-4"><NText>First slide</NText></NView>
-            <NView className="h-full w-full p-4"><NText>Second slide</NText></NView>
+        `<NCarousel height={156}>
+            <NView className="h-24 w-full rounded-xl border border-border bg-surface p-4">
+              <NText className="font-semibold">First slide</NText>
+            </NView>
+            <NView className="h-24 w-full rounded-xl border border-border bg-surface p-4">
+              <NText className="font-semibold">Second slide</NText>
+            </NView>
           </NCarousel>`
       ),
       render: (
-        <Engine.NCarousel height={140}>
-          <Engine.NView className="h-full w-full p-4">
-            <Engine.NText>First slide</Engine.NText>
+        <Engine.NCarousel height={156}>
+          <Engine.NView className="h-24 w-full rounded-xl border border-accent/15 bg-surface p-4">
+            <Engine.NText className="font-semibold">First slide</Engine.NText>
+            <Engine.NText className="text-sm text-muted">Swipe or select a page to continue.</Engine.NText>
           </Engine.NView>
-          <Engine.NView className="h-full w-full p-4">
-            <Engine.NText>Second slide</Engine.NText>
+          <Engine.NView className="h-24 w-full rounded-xl border border-accent/15 bg-surface p-4">
+            <Engine.NText className="font-semibold">Second slide</Engine.NText>
+            <Engine.NText className="text-sm text-muted">Use the page controls to go back.</Engine.NText>
           </Engine.NView>
         </Engine.NCarousel>
       )
@@ -177,6 +149,7 @@ export function componentPreview(slug: string): ComponentPreview | undefined {
   }
   if (slug === 'list')
     return {
+      height: 198,
       source: componentSource(
         'NList, NText',
         `<NList data={['Beginner', 'Advanced']} height={140} itemSize={40}
@@ -188,7 +161,11 @@ export function componentPreview(slug: string): ComponentPreview | undefined {
           height={140}
           itemSize={40}
           keyExtractor={(item) => item.value}
-          renderItem={({ item }) => <Engine.NText className="p-2">{item.label}</Engine.NText>}
+          renderItem={({ item }) => (
+            <Engine.NView className="mx-1 my-0.5 w-full rounded-lg border border-border bg-surface px-3 py-2">
+              <Engine.NText className="text-sm font-medium">{item.label}</Engine.NText>
+            </Engine.NView>
+          )}
         />
       )
     };
@@ -203,6 +180,7 @@ export function componentPreview(slug: string): ComponentPreview | undefined {
     };
   if (slug === 'scroll-shadow')
     return {
+      height: 190,
       source: componentSource(
         'NScrollShadow, NText',
         `<NScrollShadow height={120}>
@@ -299,7 +277,7 @@ export default function EngineComponentDoc({ path }: { path: string }) {
 
   return (
     <Sidebar title={item?.title ?? 'Components'}>
-      <EngineComponentExample slug={slug} />
+      <EngineComponentExample slug={slug} path={path} />
       {reference && (
         <Link href={reference.path} className="mb-4 block text-accent hover:underline">
           Engine reference for {reference.title}
@@ -317,43 +295,22 @@ export default function EngineComponentDoc({ path }: { path: string }) {
   );
 }
 
-export function EngineComponentExample({ slug }: { slug: string }) {
+export function EngineComponentExample({ slug, path = `/${slug}` }: { slug: string; path?: string }) {
   const preview = componentPreview(slug);
   if (!preview) return null;
 
   return (
     <>
       <SubHeader title="Live example">
-        <div
-          className="docs-live-preview flex min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-surface"
-          data-component-preview={slug}
-          style={{ height: preview.height ?? 256 }}
-        >
-          <ExampleStage key={slug} preview={preview} />
-        </div>
+        <BrowserFrame label={`${SITE_HOST}${path}`} compact padded={false} className="component-preview-frame">
+          <div className="docs-live-preview workbench-grid" data-component-preview={slug}>
+            <PreviewSurface key={slug} preview={preview} />
+          </div>
+        </BrowserFrame>
       </SubHeader>
       <SubHeader title="Usage" description={preview.note}>
         <Code code={preview.source} filename="Example.tsx" />
       </SubHeader>
     </>
-  );
-}
-
-function ExampleStage({ preview }: { preview: ComponentPreview }) {
-  const [rendererError, setRendererError] = useState(false);
-  return (
-    <Engine.NTheme themes={previewThemes}>
-      {preview.host ? (
-        preview.render
-      ) : rendererError ? (
-        <p className="component-host-demo" role="status">
-          The engine renderer could not start in this browser.
-        </p>
-      ) : (
-        <Engine.NPage className="gap-3 p-4" onError={() => setRendererError(true)}>
-          {preview.render}
-        </Engine.NPage>
-      )}
-    </Engine.NTheme>
   );
 }

@@ -227,6 +227,8 @@ interface BrowserFrameProps {
   label?: string;
   /** Set false to lay out the body padding yourself. */
   padded?: boolean;
+  /** Size the viewport to its content. */
+  compact?: boolean;
   className?: string;
   children: ReactNode;
 }
@@ -234,6 +236,7 @@ interface BrowserFrameProps {
 export const BrowserFrame = ({
   label,
   padded = true,
+  compact = false,
   className = "",
   children,
 }: BrowserFrameProps) => (
@@ -241,12 +244,12 @@ export const BrowserFrame = ({
     <NView
       tag="div"
       aria-hidden
-      className="flex items-center gap-3 border-b border-default bg-surface px-3 py-2.5"
+      className="browser-frame-toolbar flex items-center gap-3 border-b border-default px-3 py-2.5"
     >
-      <span className="flex shrink-0 items-center gap-1.5">
-        <span className="h-2.5 w-2.5 rounded-full bg-default" />
-        <span className="h-2.5 w-2.5 rounded-full bg-default" />
-        <span className="h-2.5 w-2.5 rounded-full bg-default" />
+      <span className="browser-frame-dots flex shrink-0 items-center gap-1.5">
+        <span />
+        <span />
+        <span />
       </span>
       {label ? (
         <span className="min-w-0 flex-1 truncate rounded-md border border-default bg-background px-2.5 py-1 text-center font-mono text-[11px] text-muted">
@@ -258,7 +261,7 @@ export const BrowserFrame = ({
     <NView tag="div" className="bg-surface p-2 sm:p-3">
       <NView
         tag="div"
-        className={`min-h-[20rem] overflow-hidden rounded-xl border border-default bg-background ${padded ? "p-6 sm:p-8" : ""}`}
+        className={`overflow-hidden rounded-xl border border-default bg-background ${compact ? "" : "min-h-[20rem]"} ${padded ? "p-6 sm:p-8" : ""}`}
       >
         {children}
       </NView>
