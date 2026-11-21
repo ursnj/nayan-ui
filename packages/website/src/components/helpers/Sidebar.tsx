@@ -6,7 +6,7 @@ import { NInput, NPress, NText, NView } from "@nayan-ui/engine/components";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Breadcrumb } from "@/design/Primitives";
-import { CONTAINER, H1 } from "@/design/system";
+import { H1 } from "@/design/system";
 import { getSidebarItems, type SidebarItem } from "@/services/Utils";
 
 interface Props {
@@ -76,7 +76,7 @@ const SidebarNav = ({
       </label>
     </div>
 
-    <div className="site-docs-list overflow-y-auto p-2">
+    <div className="site-docs-list overflow-y-auto p-3">
       {items.length === 0 ? (
         <p className="px-2 py-6 text-center text-xs text-muted">
           Nothing matches &ldquo;{query}&rdquo;.
@@ -90,7 +90,7 @@ const SidebarNav = ({
             return (
               <div
                 key={item.link || `heading-${index}`}
-                className="flex items-center justify-between px-2.5 pb-1 pt-5 first:pt-2"
+                className="flex items-center justify-between px-2.5 pb-1 pt-3 first:pt-0"
               >
                 <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-muted">
                   {item.title}
@@ -135,16 +135,6 @@ const SidebarNav = ({
   </>
 );
 
-const DOCS_TONES: Record<string, string> = {
-  'game-engine': 'violet',
-  components: 'lime',
-  modules: 'peach',
-  react: 'blue',
-  'react-native': 'pink',
-  tools: 'mint',
-  games: 'peach'
-};
-
 const Sidebar = (props: Props) => {
   const pathname = usePathname();
   const sidebarItems = props.reference?.items ?? getSidebarItems(pathname);
@@ -179,8 +169,8 @@ const Sidebar = (props: Props) => {
   if (props.title) breadcrumb.push({ label: props.title });
 
   return (
-    <NView tag="div" className={`${CONTAINER} py-5 sm:py-8`}>
-      <div className="grid gap-6 md:grid-cols-[13rem_minmax(0,1fr)] lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-10 xl:gap-14">
+    <NView tag="div" className="mx-auto w-full max-w-[82rem] p-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-[13rem_minmax(0,1fr)] lg:grid-cols-[15rem_minmax(0,1fr)]">
         {/* Desktop sidebar */}
         <nav aria-label="Documentation" className="hidden md:block">
           <div className="site-docs-navigation sticky rounded-xl border border-border bg-surface">
@@ -194,9 +184,9 @@ const Sidebar = (props: Props) => {
           </div>
         </nav>
 
-        <div className="content min-w-0">
+        <div className="content grid min-w-0 grid-cols-1 content-start gap-3">
           {/* Mobile sidebar toggle */}
-          <div className="mb-5 md:hidden">
+          <div className="md:hidden">
             <NPress
               onPress={() => setMobileOpen((open) => !open)}
               aria-expanded={mobileOpen}
@@ -211,7 +201,7 @@ const Sidebar = (props: Props) => {
           {mobileOpen ? (
             <nav
               aria-label="Documentation"
-              className="mb-6 rounded-xl border border-border bg-surface md:hidden"
+              className="rounded-xl border border-border bg-surface md:hidden"
             >
               <SidebarNav
                 items={items}
@@ -224,11 +214,8 @@ const Sidebar = (props: Props) => {
             </nav>
           ) : null}
 
-          <header
-            className={props.title ? "site-docs-heading mb-6 sm:mb-8" : undefined}
-            data-tone={DOCS_TONES[props.reference?.href.slice(1) ?? section]}
-          >
-            <Breadcrumb items={breadcrumb} />
+          <header className="site-docs-heading grid gap-3">
+            <Breadcrumb items={breadcrumb} className="" />
             {props.title && <NText tag="h1" className={H1}>{props.title}</NText>}
           </header>
           <div>{props.children}</div>

@@ -3,12 +3,12 @@
 import { ArrowLeft, ArrowRight, Github } from "@/design/Icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BrowserFrame, PhoneFrame } from "@/design/Primitives";
+import { PhoneFrame } from "@/design/Primitives";
 import { CARD, LEAD } from "@/design/system";
 import TagsList from "@/components/helpers/TagsList";
 import { getMenuItem, getSidebarItems } from "@/services/Utils";
 import { tagsForReference } from "@/services/engine/reference-tags";
-import { REPO_URL, SITE_HOST } from "@/services/seo";
+import { REPO_URL } from "@/services/seo";
 import Attributes from "./Attributes";
 import Code from "./Code";
 import Sidebar from "./Sidebar";
@@ -42,10 +42,7 @@ const ComponentWrapper = (props: Props) => {
   const sourceUrl = REPO_URL;
 
   /*
-   * React Native pages show a screenshot of the example app in a phone rather
-   * than a browser window: the components render to native views, so there is
-   * nothing to run here. `screenshot` names the pair captured for this page;
-   * pages without one keep the written explanation.
+   * `screenshot` names the light and dark captures for the native example app.
    */
   const slug = pathname.split("/").pop() ?? "";
   const screenshot: string | undefined =
@@ -70,9 +67,7 @@ const ComponentWrapper = (props: Props) => {
             alt={`${component.title} running in the Nayan UI example app`}
           />
         ) : (
-          <BrowserFrame label={`${SITE_HOST}${pathname}`} padded={false}>
-            <div className="space-y-4 p-6 [&>*]:max-w-full sm:p-8">{children}</div>
-          </BrowserFrame>
+          <div className="space-y-4 [&>*]:max-w-full">{children}</div>
         )}
       </SubHeader>
 

@@ -32,7 +32,7 @@ export default function ReferenceDirectory({ kind, items }: Props) {
               <Link
                 href={path}
                 data-tone={kind === 'components' ? 'violet' : 'peach'}
-                className={`${CARD_INTERACTIVE} catalog-entry flex h-full flex-col p-4`}
+                className={`${CARD_INTERACTIVE} catalog-entry flex h-full flex-col p-3`}
               >
                 <span className="catalog-entry-top">
                   <span className="catalog-entry-icon">

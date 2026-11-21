@@ -23,8 +23,8 @@ const SubHeader = (props: Props) => {
   const id = props.id ?? slug(props.title);
 
   return (
-    <section className={`mb-10 sm:mb-12 ${SCROLL_MT}`} aria-labelledby={id}>
-      <div className="mb-4 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-b border-border pb-3">
+    <section className={`mb-3 grid grid-cols-1 gap-3 ${SCROLL_MT}`} aria-labelledby={id}>
+      <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border pb-3">
         <h2
           id={id}
           className="group flex items-center gap-2 text-xl font-semibold tracking-tight text-foreground"
@@ -41,7 +41,7 @@ const SubHeader = (props: Props) => {
         {props.action ? <div className="shrink-0">{props.action}</div> : null}
       </div>
       {props.description ? (
-        <p className="mb-5 max-w-3xl text-sm leading-relaxed text-muted">{props.description}</p>
+        <p className="max-w-3xl text-sm leading-relaxed text-muted">{props.description}</p>
       ) : null}
       <div className="leading-relaxed">{props.children}</div>
     </section>

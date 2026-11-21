@@ -88,11 +88,11 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
           </p>
           <EngineComponentExample slug={entry.slug} />
           {module && (
-            <Link href={module.path} className="mb-4 block text-sm font-medium text-accent hover:underline">
+            <Link href={module.path} className="mb-3 block text-sm font-medium text-accent hover:underline">
               {module.title} module
             </Link>
           )}
-          <div className="flex flex-wrap gap-2">
+          <div className="mb-3 flex flex-wrap gap-3">
             <Link href="/game-engine/react" className={BUTTON_SMALL}>
               React setup
             </Link>
@@ -107,7 +107,7 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
             <Code code={entry.code} filename={entry.filename ?? entry.importPath} language={entry.filename?.endsWith('.js') ? 'javascript' : 'tsx'} />
           </SubHeader>
           {entry.guide ? (
-            <Link href={entry.guide} className={BUTTON_SMALL}>
+            <Link href={entry.guide} className={`${BUTTON_SMALL} mb-3`}>
               Related guide
             </Link>
           ) : null}

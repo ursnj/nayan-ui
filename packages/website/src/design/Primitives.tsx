@@ -149,17 +149,17 @@ interface DocsIntroProps {
 }
 
 export const DocsIntro = ({ lead, actions, facts }: DocsIntroProps) => (
-  <NView tag="div" className="mb-9">
+  <NView tag="div" className="mb-3 grid gap-3">
     <NText tag="p" className={`max-w-3xl text-base ${LEAD}`}>
       {lead}
     </NText>
     {actions ? (
-      <NView tag="div" className="mt-6 flex flex-wrap gap-3">
+      <NView tag="div" className="flex flex-wrap gap-3">
         {actions}
       </NView>
     ) : null}
     {facts?.length ? (
-      <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3 border-t border-default pt-5">
+      <dl className="flex flex-wrap gap-3 border-t border-default pt-3">
         {facts.map((fact) => (
           <NView tag="div" key={fact.label}>
             <dd className="text-xl font-bold text-foreground">{fact.value}</dd>
@@ -172,8 +172,14 @@ export const DocsIntro = ({ lead, actions, facts }: DocsIntroProps) => (
 );
 
 /** The trail above a page title. Mirrors the BreadcrumbList in structured data. */
-export const Breadcrumb = ({ items }: { items: { label: string; href?: string }[] }) => (
-  <nav aria-label="Breadcrumb" className="mb-5 text-xs text-muted sm:mb-6">
+export const Breadcrumb = ({
+  items,
+  className = "mb-5 sm:mb-6",
+}: {
+  items: { label: string; href?: string }[];
+  className?: string;
+}) => (
+  <nav aria-label="Breadcrumb" className={`text-xs text-muted ${className}`}>
     <ol className="flex flex-wrap items-center gap-2">
       {items.map((item, index) => {
         const last = index === items.length - 1;

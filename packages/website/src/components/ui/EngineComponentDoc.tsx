@@ -256,11 +256,11 @@ export default function EngineComponentDoc({ path }: { path: string }) {
     <Sidebar title={item?.title ?? 'Components'}>
       <EngineComponentExample slug={slug} path={path} />
       {reference && (
-        <Link href={reference.path} className="mb-4 block text-accent hover:underline">
+        <Link href={reference.path} className="mb-3 block text-accent hover:underline">
           Engine reference for {reference.title}
         </Link>
       )}
-      <Link href={quickstart} className="mb-6 block text-accent hover:underline">
+      <Link href={quickstart} className="mb-3 block text-accent hover:underline">
         Set up engine components
       </Link>
       {tags.length > 0 && (
@@ -282,7 +282,6 @@ export function EngineComponentExample({ slug, path = `/${slug}` }: { slug: stri
     <SubHeader title="Live examples" id="live-example">
       <LiveExample
         key={path}
-
         codeAnchor="usage"
         previewId={slug}
         examples={additional ? [basic, additional] : [basic]}
