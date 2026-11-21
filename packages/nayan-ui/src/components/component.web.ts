@@ -1,16 +1,17 @@
-import { type ComponentType, createElement, useContext } from 'react';
-import { ComponentRenderContext } from './ThemeContext';
+import { type ComponentType, createElement } from 'react';
 import type { ComponentProps } from './types';
+import { useComponentRenderer } from './useComponentRenderer';
 
 /** Semantic HTML is a server/loading fallback; the active renderer always emits Rust host nodes. */
 export function component<P = ComponentProps>(name: string): ComponentType<P> {
   const Control = (properties: P) => {
-    const rendering = useContext(ComponentRenderContext);
+    const rendering = useComponentRenderer(name);
     const props = properties as Record<string, any>;
     if (rendering) return createElement(name, props);
     const { tag, children, onPress, onChangeText, accessibilityLabel, source, src, ...rest } = props;
     const defaults: Record<string, string> = {
       NButton: 'button',
+      NActionItem: 'button',
       NPress: 'button',
       NLink: 'a',
       NText: 'span',
@@ -105,10 +106,10 @@ export function component<P = ComponentProps>(name: string): ComponentType<P> {
         element,
         {
           ...attributes,
-          'role': attributes.role ?? 'status',
+          role: attributes.role ?? 'status',
           'aria-label': accessibilityLabel ?? props.label ?? 'Loading',
           'aria-busy': props.animating !== false,
-          'style': {
+          style: {
             display: 'inline-flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -129,7 +130,7 @@ export function component<P = ComponentProps>(name: string): ComponentType<P> {
           {
             'aria-hidden': true,
             'data-nayan-loading-ring': true,
-            'style': {
+            style: {
               display: 'block',
               width: size,
               height: size,
@@ -223,14 +224,14 @@ export function component<P = ComponentProps>(name: string): ComponentType<P> {
         'svg',
         {
           ...attributes,
-          'width': props.size ?? 24,
-          'height': props.size ?? 24,
-          'viewBox': Array.isArray(props.viewBox) ? props.viewBox.join(' ') : `0 0 ${props.viewBox ?? 24} ${props.viewBox ?? 24}`,
-          'fill': props.strokeWidth ? 'none' : (props.color ?? 'currentColor'),
-          'stroke': props.strokeWidth ? (props.color ?? 'currentColor') : undefined,
-          'strokeWidth': props.strokeWidth,
-          'strokeLinecap': 'round',
-          'strokeLinejoin': 'round',
+          width: props.size ?? 24,
+          height: props.size ?? 24,
+          viewBox: Array.isArray(props.viewBox) ? props.viewBox.join(' ') : `0 0 ${props.viewBox ?? 24} ${props.viewBox ?? 24}`,
+          fill: props.strokeWidth ? 'none' : (props.color ?? 'currentColor'),
+          stroke: props.strokeWidth ? (props.color ?? 'currentColor') : undefined,
+          strokeWidth: props.strokeWidth,
+          strokeLinecap: 'round',
+          strokeLinejoin: 'round',
           'aria-hidden': !accessibilityLabel
         },
         ...(typeof props.paths === 'string' ? [props.paths] : (props.paths ?? [])).map((d: string, index: number) =>

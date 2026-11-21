@@ -7,7 +7,7 @@ import { ComponentHost, type ComponentHostStyle, inputEventValue, openLink, sele
 import { ContextBridge, useSurfaceContextValues } from './contextBridge';
 import { ComponentAttachmentContext } from './NPlatformView';
 import { createComponentRenderer } from './reconciler';
-import { ComponentThemeContext } from './ThemeContext';
+import { ComponentRenderContext, ComponentThemeContext, PlatformRenderContext } from './ThemeContext';
 import type { ComponentSnapshot } from './types';
 
 export interface ComponentsRootProps {
@@ -42,7 +42,12 @@ export interface ComponentsRootProps {
 }
 
 /** One wgpu surface for layout/chrome, with direct platform editors in its input bounds. */
-export function ComponentsRoot({
+export function ComponentsRoot(props: ComponentsRootProps) {
+  if (useContext(ComponentRenderContext)) return props.children;
+  return <ComponentSurface {...props} />;
+}
+
+function ComponentSurface({
   active = true,
   scrollKey,
   stylesheet: suppliedStylesheet,
@@ -329,6 +334,10 @@ export function ComponentsRoot({
       scrollableOverlays={scrollableOverlays}
     />
   ) : serverFallback ? (
-    createElement('div', { 'style': { height: '100dvh', overflow: 'hidden' }, 'data-engine-fallback': true }, children)
+    createElement(
+      'div',
+      { style: { height: '100dvh', overflow: 'hidden' }, 'data-engine-fallback': true },
+      createElement(PlatformRenderContext.Provider, { value: true }, children)
+    )
   ) : null;
 }

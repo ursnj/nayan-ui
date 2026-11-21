@@ -20,8 +20,7 @@ function NativeView(props: { children?: ReactNode; ref?: Ref<NViewNativeRef>; te
   return <div>{props.children}</div>;
 }
 mock.module('react-native', () => ({ View: NativeView, Text: NativeView, useWindowDimensions: () => viewport }));
-const { NView } = await import('../NView');
-const { NText } = await import('../NText');
+const { ViewHost, TextHost } = await import('../PlatformHost');
 const dom = await installReactTestEnvironment();
 afterAll(() => dom.cleanup());
 
@@ -36,7 +35,7 @@ test('native views preserve Yoga percentages, layout events, measurement and exp
   const onLayout = mock(() => {});
   try {
     await act(() =>
-      root.render(<NView ref={ref} testID="layout" className="w-full flex-1 items-stretch overflow-hidden rounded-xl px-4" onLayout={onLayout} />)
+      root.render(<ViewHost ref={ref} testID="layout" className="w-full flex-1 items-stretch overflow-hidden rounded-xl px-4" onLayout={onLayout} />)
     );
     expect(flatten(propsById.get('layout')!.style)).toMatchObject({
       width: '100%',
@@ -51,7 +50,7 @@ test('native views preserve Yoga percentages, layout events, measurement and exp
     expect(onLayout).toHaveBeenCalledTimes(1);
     expect(ref.current?.measureInWindow).toBe(measured);
     await act(() =>
-      root.render(<NView ref={ref} testID="layout" className="w-full flex-1 px-4" width={180} style={[{ width: 120 }, { padding: 7, flex: 3 }]} />)
+      root.render(<ViewHost ref={ref} testID="layout" className="w-full flex-1 px-4" width={180} style={[{ width: 120 }, { padding: 7, flex: 3 }]} />)
     );
     expect(flatten(propsById.get('layout')!.style)).toMatchObject({ width: 120, paddingLeft: 7, paddingRight: 7, flexGrow: 3, flexBasis: 0 });
   } finally {
@@ -70,9 +69,9 @@ test('SDK asset registration receives actual native view and text refs through t
     await act(() =>
       root.render(
         <Asset>
-          <NView className="p-4">
-            <NText>Call to action</NText>
-          </NView>
+          <ViewHost className="p-4">
+            <TextHost>Call to action</TextHost>
+          </ViewHost>
         </Asset>
       )
     );
@@ -81,7 +80,7 @@ test('SDK asset registration receives actual native view and text refs through t
     await act(() =>
       root.render(
         <Asset>
-          <NText className="text-sm leading-5">Headline</NText>
+          <TextHost className="text-sm leading-5">Headline</TextHost>
         </Asset>
       )
     );
@@ -97,7 +96,7 @@ test('native class styles follow theme and responsive width without a surface', 
   const root = dom.createRoot(document.createElement('div'));
   const render = (accent: string) => (
     <ComponentThemeContext.Provider value={{ theme: 'dark', colors: { accent }, components: { NView: { className: 'items-center' } } }}>
-      <NView testID="responsive" className="bg-accent w-full md:w-1/2 dark:rounded-xl" />
+      <ViewHost testID="responsive" className="bg-accent w-full md:w-1/2 dark:rounded-xl" />
     </ComponentThemeContext.Provider>
   );
   try {
@@ -114,11 +113,11 @@ test('native class styles follow theme and responsive width without a surface', 
     await act(() =>
       root.render(
         <ComponentThemeContext.Provider value={{ components: { NView: { className: 'px-4' } }, textProps: { allowFontScaling: false } }}>
-          <NView testID="defaults" />
-          <NText testID="scaled">Default</NText>
-          <NText testID="override" allowFontScaling>
+          <ViewHost testID="defaults" />
+          <TextHost testID="scaled">Default</TextHost>
+          <TextHost testID="override" allowFontScaling>
             Accessible
-          </NText>
+          </TextHost>
         </ComponentThemeContext.Provider>
       )
     );

@@ -1,9 +1,9 @@
 'use client';
 
-import { createElement, useCallback, useContext, useRef, useState } from 'react';
+import { createElement, useCallback, useRef, useState } from 'react';
 import { PressHost } from './PlatformHost';
 import { type NPressProps, pressEvent } from './press';
-import { ComponentRenderContext } from './ThemeContext';
+import { useComponentRenderer } from './useComponentRenderer';
 
 export type { NPressProps, NPressState, NPressEvent, NPressRef } from './press';
 
@@ -68,5 +68,5 @@ function EnginePress({
 
 /** One press API for native views, browser buttons and Rust-rendered UI. */
 export function NPress(props: NPressProps) {
-  return createElement(useContext(ComponentRenderContext) ? EnginePress : PressHost, props);
+  return createElement(useComponentRenderer('NPress') ? EnginePress : PressHost, props);
 }

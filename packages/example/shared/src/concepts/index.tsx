@@ -1,11 +1,12 @@
 import type { ComponentType } from "react";
 import { Component, type ReactNode } from "react";
-import { NTheme } from "nayan-ui/components";
 import type { ConceptId } from "../catalog";
 import * as components from "./ComponentDemos";
 import { DemoText } from "./Demo";
 import * as games from "./GameDemos";
 import * as services from "./ServiceDemos";
+
+export { DrawerContent as ConceptDrawerContent } from "./ComponentDemos";
 
 const demos = {
   world: games.WorldDemo,
@@ -70,13 +71,7 @@ class DemoErrorBoundary extends Component<{ children: ReactNode }, { error?: Err
   }
 }
 
-export function ConceptPreview({ id }: { id: ConceptId }) {
+export function ConceptPreview({ id, systemBars }: { id: ConceptId; systemBars?: { hidden: boolean; onToggle: () => void } }) {
   const Demo = demos[id];
-  return (
-    <DemoErrorBoundary key={id}>
-      <NTheme defaultTheme="dark" systemBars={false}>
-        <Demo />
-      </NTheme>
-    </DemoErrorBoundary>
-  );
+  return <DemoErrorBoundary key={id}>{id === 'system-bars' ? <components.SystemBarsDemo {...systemBars} /> : <Demo />}</DemoErrorBoundary>;
 }

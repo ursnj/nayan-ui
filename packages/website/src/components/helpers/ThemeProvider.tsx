@@ -1,7 +1,7 @@
 "use client";
 
 import { type ReactNode, useEffect, useState } from "react";
-import { NTheme, type NThemeMode, useNTheme } from "nayan-ui/components";
+import { NPlatformView, NTheme, type NThemeMode, useNTheme } from 'nayan-ui/components';
 
 const STORAGE_KEY = "THEME";
 
@@ -25,13 +25,13 @@ export function useTheme() {
 }
 
 export default function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<NThemeMode>("system");
+  const [theme, setTheme] = useState<NThemeMode>('system');
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null");
-      if (saved === "light" || saved === "dark") setTheme(saved);
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null');
+      if (saved === 'light' || saved === 'dark') setTheme(saved);
     } catch {
       // Use the browser preference when the saved value is unavailable.
     }
@@ -50,7 +50,7 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
   return (
     <NTheme theme={theme} onThemeChange={changeTheme}>
       {ready && <SiteAppearance />}
-      {children}
+      <NPlatformView>{children}</NPlatformView>
     </NTheme>
   );
 }

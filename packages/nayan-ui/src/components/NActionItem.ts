@@ -1,6 +1,7 @@
 'use client';
 
 import { createElement, type ReactNode } from 'react';
+import { component } from './component';
 import { NIcon } from './NIcon';
 import { NText } from './NText';
 import { NView } from './NView';
@@ -12,6 +13,8 @@ export interface NActionItemProps extends ComponentProps {
   titleClassName?: string;
 }
 
+const ActionItem = /* @__PURE__ */ component<ComponentProps>('NActionItem');
+
 export function NActionItem({
   name,
   description,
@@ -22,7 +25,7 @@ export function NActionItem({
   ...props
 }: NActionItemProps) {
   return createElement(
-    'NActionItem',
+    ActionItem,
     { ...props, name },
     icon,
     createElement(

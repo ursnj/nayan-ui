@@ -11,7 +11,6 @@ import {
 import {
   NAlert,
   NBlur,
-  NBlurTarget,
   NBadge,
   NButton,
   NCard,
@@ -20,7 +19,6 @@ import {
   NConfetti,
   NDisclosure,
   NConfirm,
-  NDrawer,
   NImage,
   NInput,
   NList,
@@ -34,15 +32,13 @@ import {
   NSlider,
   NSwitch,
   NText,
-  NTheme,
   NToast,
   NView,
   useNDrawer,
   useNSafeAreaInsets,
   useNTheme,
-  type NBlurTargetRef,
-  type NListRef,
-} from "nayan-ui/components";
+  type NListRef
+} from 'nayan-ui/components';
 import { device } from "nayan-ui/device";
 import { SparklesIcon } from "nayan-ui/icons/components/sparkles";
 import { NMarkdown, parseFrontMatter } from "nayan-ui/markdown";
@@ -71,22 +67,15 @@ export function ThemeDemo() {
   );
 }
 
-export function SystemBarsDemo() {
-  const [hidden, setHidden] = useState(false);
-  const browser = device.getEnvironment() === "browser";
+export function SystemBarsDemo({ hidden = false, onToggle }: { hidden?: boolean; onToggle?: () => void }) {
+  const browser = device.getEnvironment() === 'browser';
   return (
-    <NTheme systemBars={{ statusBarStyle: "light", statusBarHidden: hidden }}>
-      <DemoPanel>
-        <DemoText>
-          {browser
-            ? "System bars are available in the native app."
-            : "This screen owns its status-bar setting while mounted."}
-        </DemoText>
-        <DemoButton disabled={browser} onPress={() => setHidden(!hidden)}>
-          {hidden ? "Show status bar" : "Hide status bar"}
-        </DemoButton>
-      </DemoPanel>
-    </NTheme>
+    <DemoPanel>
+      <DemoText>{browser ? 'System bars are available in the native app.' : 'This screen owns its status-bar setting while mounted.'}</DemoText>
+      <DemoButton disabled={browser || !onToggle} onPress={() => onToggle?.()}>
+        {hidden ? 'Show status bar' : 'Hide status bar'}
+      </DemoButton>
+    </DemoPanel>
   );
 }
 
@@ -101,7 +90,7 @@ export function ControlsDemo() {
   const [selected, setSelected] = useState<string[]>(["music"]);
   return (
     <DemoSurface height={440}>
-      <NSwitch label="Enable audio" value={enabled} onValueChange={setEnabled} />
+      <NSwitch label="Enable audio" checked={enabled} onValueChange={setEnabled} />
       <NSelect
         label="Audio tracks"
         options={controls}
@@ -127,29 +116,20 @@ const modes = [
 ];
 
 export function FormsDemo() {
-  const [name, setName] = useState("");
-  const [level, setLevel] = useState<string | null>("beginner");
+  const [name, setName] = useState('');
+  const [level, setLevel] = useState<string | null>('beginner');
   const [volume, setVolume] = useState(50);
   const [notifications, setNotifications] = useState(false);
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState('');
   return (
-    <DemoSurface keyboard height={530}>
+    <DemoSurface height={530}>
       <NInput label="Display name" placeholder="Ada" value={name} onValueChange={setName} />
-      <NSelect
-        label="Experience"
-        options={modes}
-        value={level}
-        onChangeOptions={(option) => setLevel(option?.value ?? null)}
-      />
+      <NSelect label="Experience" options={modes} value={level} onChangeOptions={(option) => setLevel(option?.value ?? null)} />
       <NSlider label="Volume" min={0} max={100} value={volume} onChange={setVolume} />
-      <NCheck label="Send notifications" value={notifications} onChange={setNotifications} />
+      <NCheck label="Send notifications" checked={notifications} onChange={setNotifications} />
       <NButton
         disabled={!name.trim()}
-        onPress={() =>
-          setResult(
-            `${name.trim()} · ${level ?? "No level"} · volume ${volume} · notifications ${notifications ? "on" : "off"}`,
-          )
-        }
+        onPress={() => setResult(`${name.trim()} · ${level ?? 'No level'} · volume ${volume} · notifications ${notifications ? 'on' : 'off'}`)}
       >
         Submit profile
       </NButton>
@@ -282,7 +262,7 @@ export function CarouselDemo() {
   );
 }
 
-function DrawerContent() {
+export function DrawerContent() {
   const { close } = useNDrawer();
   return (
     <DemoPanel>
@@ -292,23 +272,13 @@ function DrawerContent() {
   );
 }
 
-function DrawerBody() {
+export function DrawerDemo() {
   const { open, isOpen } = useNDrawer();
   return (
     <DemoPanel>
       <DemoText>{isOpen ? "Drawer is open." : "Drawer is closed."}</DemoText>
       <DemoButton onPress={open}>Open drawer</DemoButton>
     </DemoPanel>
-  );
-}
-
-export function DrawerDemo() {
-  return (
-    <NView style={{ height: 245, overflow: "hidden", borderRadius: 14 }}>
-      <NDrawer width={245} drawerContent={<DrawerContent />}>
-        <DrawerBody />
-      </NDrawer>
-    </NView>
   );
 }
 
@@ -325,7 +295,6 @@ export function SafeAreaDemo() {
 }
 
 export function InteropDemo() {
-  const target = useRef<NBlurTargetRef>(null);
   const [blur, setBlur] = useState(true);
   const [taps, setTaps] = useState(0);
   return (
@@ -336,37 +305,26 @@ export function InteropDemo() {
           <NText>Named Lucide icon and bundled image</NText>
         </NView>
         <NImage source={texture} className="h-16 w-full rounded-lg" />
-        <NPlatformView id="counter" style={{ width: "100%", height: 52 }}>
-          <DemoButton
-            onPress={() => setTaps((value) => value + 1)}
-          >{`Platform taps: ${taps}`}</DemoButton>
-        </NPlatformView>
+        <DemoButton onPress={() => setTaps((value) => value + 1)}>{`Taps: ${taps}`}</DemoButton>
       </DemoSurface>
       <DemoPanel>
-        <NView style={{ height: 100, overflow: "hidden", borderRadius: 8 }}>
-          <NBlurTarget ref={target} style={{ flex: 1, backgroundColor: "#1d4ed8" }}>
-            <NText style={{ fontSize: 42, color: "#facc15", fontWeight: "900" }}>BACKGROUND</NText>
-          </NBlurTarget>
+        <NView style={{ height: 100, overflow: 'hidden', borderRadius: 8 }}>
+          <NView className="absolute inset-0" style={{ backgroundColor: '#1d4ed8' }}>
+            <NText style={{ fontSize: 42, color: '#facc15', fontWeight: '900' }}>BACKGROUND</NText>
+          </NView>
           <NBlur
-            blurTarget={target}
             enabled={blur}
             intensity={55}
+            className="absolute inset-2"
             style={{
-              position: "absolute",
-              top: 8,
-              bottom: 8,
-              left: 8,
-              right: 8,
-              justifyContent: "center",
-              paddingHorizontal: 12,
+              justifyContent: 'center',
+              paddingHorizontal: 12
             }}
           >
-            <NText style={{ color: "white" }}>Sharp foreground</NText>
+            <NText style={{ color: 'white' }}>Sharp foreground</NText>
           </NBlur>
         </NView>
-        <DemoButton onPress={() => setBlur(!blur)}>
-          {blur ? "Disable blur" : "Enable blur"}
-        </DemoButton>
+        <DemoButton onPress={() => setBlur(!blur)}>{blur ? 'Disable blur' : 'Enable blur'}</DemoButton>
       </DemoPanel>
     </>
   );
@@ -379,19 +337,9 @@ export function ViewAnimationDemo() {
   const [moved, setMoved] = useState(false);
   return (
     <DemoPanel>
-      <AnimationView ref={view} animatedStyle={animatedStyle} style={{ width: 96, height: 72 }}>
-        <NView
-          style={{
-            flex: 1,
-            backgroundColor: "#818cf8",
-            borderRadius: 12,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <NText style={{ color: "#101331", fontWeight: "700" }}>Animate</NText>
-        </NView>
-      </AnimationView>
+      <NPlatformView style={{ width: '100%', height: 72 }}>
+        <AnimationView ref={view} animatedStyle={animatedStyle} style={{ width: 96, height: 72, backgroundColor: '#818cf8', borderRadius: 12 }} />
+      </NPlatformView>
       <DemoControls>
         <DemoButton
           onPress={() => {
@@ -399,9 +347,9 @@ export function ViewAnimationDemo() {
             setMoved(!moved);
           }}
         >
-          {moved ? "Spring back" : "Spring right"}
+          {moved ? 'Spring back' : 'Spring right'}
         </DemoButton>
-        <DemoButton onPress={() => animations.playView(view, "pulse")}>Play pulse</DemoButton>
+        <DemoButton onPress={() => animations.playView(view, 'pulse')}>Play pulse</DemoButton>
       </DemoControls>
     </DemoPanel>
   );
@@ -450,36 +398,17 @@ export function SharedElementDemo() {
 
   return (
     <DemoPanel>
-      <NView
-        style={{
-          height: 144,
-          alignItems: expanded ? "flex-end" : "flex-start",
-          justifyContent: "center",
-        }}
-      >
+      <NPlatformView className={expanded ? 'self-end' : 'self-start'} style={{ height: expanded ? 126 : 70, width: expanded ? 230 : 120 }}>
         <AnimationView
           key={String(expanded)}
           ref={view}
           initial={{ opacity: transitioning ? 0 : 1 }}
-          style={{ width: expanded ? 230 : 120, height: expanded ? 126 : 70 }}
-        >
-          <NView
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: 14,
-              backgroundColor: "#3b5998",
-            }}
-          >
-            <NText style={{ color: "white", fontWeight: "700" }}>
-              {expanded ? "Expanded card" : "Compact card"}
-            </NText>
-          </NView>
-        </AnimationView>
-      </NView>
+          style={{ width: '100%', height: '100%', borderRadius: 14, backgroundColor: '#3b5998' }}
+        />
+      </NPlatformView>
+      <DemoText>{expanded ? 'Expanded card' : 'Compact card'}</DemoText>
       <DemoButton disabled={transitioning} onPress={() => void changeLayout()}>
-        {expanded ? "Collapse card" : "Expand card"}
+        {expanded ? 'Collapse card' : 'Expand card'}
       </DemoButton>
       {error && <DemoText>{error}</DemoText>}
     </DemoPanel>

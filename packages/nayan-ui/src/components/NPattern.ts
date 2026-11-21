@@ -1,10 +1,9 @@
 'use client';
 
-import { createElement, useContext } from 'react';
-import { component } from './component';
+import { createElement } from 'react';
 import { PatternHost } from './PatternHost';
-import { ComponentRenderContext } from './ThemeContext';
 import type { ComponentProps } from './types';
+import { useComponentRenderer } from './useComponentRenderer';
 
 /** Logical points, a viewport-relative percentage, or a bounded percentage plus point offset. */
 export type NPatternLength = number | `${number}%` | { percent: number; offset?: number; min?: number; maxInset?: number };
@@ -41,9 +40,7 @@ export interface NPatternProps extends ComponentProps {
   onError?: (error: Error) => void;
 }
 
-const Host = /* @__PURE__ */ component<NPatternProps>('NPattern');
-
-/** Rust vectors in ComponentsRoot; a cached Rust-rendered image in native navigation and blur targets. */
+/** Rust vectors in ComponentsRoot. */
 export function NPattern(props: NPatternProps) {
-  return createElement(useContext(ComponentRenderContext) ? Host : PatternHost, props);
+  return useComponentRenderer('NPattern') ? createElement('NPattern', props) : createElement(PatternHost, props);
 }

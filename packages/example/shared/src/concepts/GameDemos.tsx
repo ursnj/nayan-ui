@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { animations } from "nayan-ui/animations";
 import { prepareCore } from "nayan-ui/core";
-import { NView } from "nayan-ui/components";
+import { NPlatformView } from 'nayan-ui/components';
 import { DrawingCanvas, DrawingDocument } from "nayan-ui/drawing";
 import {
   createShape,
@@ -35,17 +35,11 @@ type SceneProps = Pick<
   "onUpdate" | "onTap" | "onSwipe" | "onStats" | "quality" | "paused" | "light"
 >;
 
-function Scene({
-  world,
-  error,
-  setError,
-  flat,
-  ...props
-}: SceneProps & ReturnType<typeof useScene> & { flat?: boolean }) {
+function Scene({ world, error, setError, flat, ...props }: SceneProps & ReturnType<typeof useScene> & { flat?: boolean }) {
   if (error) return <DemoText>{error}</DemoText>;
   if (!world) return <DemoText>Preparing the game world…</DemoText>;
   return (
-    <NView style={viewport}>
+    <NPlatformView style={viewport}>
       <GameView
         {...props}
         source={world}
@@ -54,7 +48,7 @@ function Scene({
         background="#0f172a"
         style={{ flex: 1 }}
       />
-    </NView>
+    </NPlatformView>
   );
 }
 
@@ -593,7 +587,7 @@ export function DrawingDemo() {
       .then(() => {
         if (!active) return;
         document = new DrawingDocument(512, 512);
-        document.setBrush({ brushType: "MARKER", color: "#2563eb", width: 12, opacity: 1 });
+        document.setBrush({ brushType: 'MARKER', color: '#2563eb', width: 12, opacity: 1 });
         setPaper(document);
       })
       .catch((cause) => {
@@ -608,30 +602,30 @@ export function DrawingDemo() {
   if (!paper) return <DemoText>Preparing the canvas…</DemoText>;
   return (
     <DemoPanel>
-      <NView style={viewport}>
+      <NPlatformView style={viewport}>
         <DrawingCanvas document={paper} mode="draw" style={{ flex: 1 }} />
-      </NView>
+      </NPlatformView>
       <ActionDemo
         actions={[
           {
-            label: "Undo",
-            run: () => (paper.undo() ? "Undid the last edit." : "Nothing to undo."),
+            label: 'Undo',
+            run: () => (paper.undo() ? 'Undid the last edit.' : 'Nothing to undo.')
           },
           {
-            label: "Redo",
-            run: () => (paper.redo() ? "Restored the last edit." : "Nothing to redo."),
+            label: 'Redo',
+            run: () => (paper.redo() ? 'Restored the last edit.' : 'Nothing to redo.')
           },
           {
-            label: "Clear",
+            label: 'Clear',
             run: () => {
               paper.clear();
-              return "Canvas cleared.";
-            },
+              return 'Canvas cleared.';
+            }
           },
           {
-            label: "Export SVG",
-            run: () => `SVG contains ${paper.exportSVG().length} characters.`,
-          },
+            label: 'Export SVG',
+            run: () => `SVG contains ${paper.exportSVG().length} characters.`
+          }
         ]}
       />
     </DemoPanel>

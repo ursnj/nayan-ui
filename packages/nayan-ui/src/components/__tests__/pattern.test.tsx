@@ -16,7 +16,7 @@ mock.module('react-native', () => ({
   Image: (props: Record<string, unknown>) => createElement('img', { 'data-props': JSON.stringify(props) })
 }));
 const { patternImage } = await import('../patternImage');
-const { NPattern } = await import('../NPattern');
+const { PatternHost } = await import('../PatternHost');
 const dom = await installReactTestEnvironment();
 afterAll(() => dom.cleanup());
 const recipe: NPatternRecipe = { shapes: [{ kind: 'circle', cx: '50%', cy: '50%', r: 12, color: '#ff000080' }] };
@@ -45,7 +45,7 @@ test('native backgrounds are noninteractive, hidden from accessibility, and upda
   const container = document.createElement('div');
   const root = dom.createRoot(container);
   try {
-    await act(async () => root.render(<NPattern recipe={recipe} width={320} height={720} />));
+    await act(async () => root.render(<PatternHost recipe={recipe} width={320} height={720} />));
     let image = JSON.parse(container.querySelector('img')!.getAttribute('data-props')!);
     expect(image.source.uri).toBe('data:image/png;base64,320x720');
     const view = JSON.parse(container.querySelector('div')!.getAttribute('data-props')!);
@@ -53,7 +53,7 @@ test('native backgrounds are noninteractive, hidden from accessibility, and upda
     expect(view.accessible).toBe(false);
     expect(view.importantForAccessibility).toBe('no-hide-descendants');
     expect(image.fadeDuration).toBe(0);
-    await act(async () => root.render(<NPattern recipe={recipe} width={720} height={320} />));
+    await act(async () => root.render(<PatternHost recipe={recipe} width={720} height={320} />));
     image = JSON.parse(container.querySelector('img')!.getAttribute('data-props')!);
     expect(image.source.uri).toBe('data:image/png;base64,720x320');
   } finally {

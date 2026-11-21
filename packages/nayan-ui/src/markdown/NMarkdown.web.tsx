@@ -2,7 +2,7 @@
 
 import { createElement, useContext } from 'react';
 import { component } from '../components/component';
-import { ComponentRenderContext } from '../components/ThemeContext';
+import { ComponentRenderContext, PlatformRenderContext } from '../components/ThemeContext';
 import type { ComponentNode, ComponentStyle, ComponentStyleProp } from '../components/types';
 import type { NMarkdownProps } from './types';
 const Host = /* @__PURE__ */ component<NMarkdownProps>('NMarkdown');
@@ -12,7 +12,11 @@ const Link = /* @__PURE__ */ component('NLink');
 const Image = /* @__PURE__ */ component('NImage');
 
 function cssStyle(value: ComponentStyleProp): ComponentStyle {
-  const style: ComponentStyle = Array.isArray(value) ? Object.assign({}, ...value.map(cssStyle)) : value && typeof value === 'object' ? { ...value } : {};
+  const style: ComponentStyle = Array.isArray(value)
+    ? Object.assign({}, ...value.map(cssStyle))
+    : value && typeof value === 'object'
+      ? { ...value }
+      : {};
   if (typeof style.lineHeight === 'number') style.lineHeight = `${style.lineHeight}px`;
   return style;
 }
@@ -35,9 +39,11 @@ function renderNode(node: ComponentNode, props: NMarkdownProps): React.ReactNode
 /** The browser fallback keeps headings/links available to search engines; active pixels stay in Rust. */
 export function NMarkdown({ children, source, ...props }: NMarkdownProps) {
   const rendering = useContext(ComponentRenderContext);
+  const platform = useContext(PlatformRenderContext);
   const markdown = source ?? children ?? '';
   if (rendering) return createElement(Host, { ...props, source: markdown });
-  return createElement(
+  if (!platform && !props.document) throw new Error('NMarkdown requires an app-level NPage or ComponentsRoot');
+  const markup = createElement(
     View,
     {
       ...props,
@@ -56,4 +62,5 @@ export function NMarkdown({ children, source, ...props }: NMarkdownProps) {
       ? props.document.map((node) => renderNode(node, props))
       : createElement('pre', { style: { margin: 0, whiteSpace: 'pre-wrap' } }, markdown)
   );
+  return platform ? markup : createElement(PlatformRenderContext.Provider, { value: true }, markup);
 }

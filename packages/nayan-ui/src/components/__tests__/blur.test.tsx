@@ -2,10 +2,13 @@ import { act, createRef } from 'react';
 import { afterAll, expect, mock, test } from 'bun:test';
 import { installDom } from '../../__tests__/dom';
 import type { NBlurTargetRef } from '../NBlur';
+import { PlatformRenderContext } from '../ThemeContext';
 
 const dom = installDom();
 const web = await import('../BlurHost.web');
 mock.module('../BlurHost', () => web);
+const renderer = await import('../useComponentRenderer.web');
+mock.module('../useComponentRenderer', () => renderer);
 const { NBlur, NBlurTarget } = await import('../NBlur');
 const { createRoot } = await import('react-dom/client');
 afterAll(() => dom.cleanup());
@@ -19,14 +22,14 @@ test('browser blur preserves semantic tags, foreground content and composed styl
     </NBlur>
   );
   try {
-    await act(() => root.render(render(true)));
+    await act(() => root.render(<PlatformRenderContext.Provider value>{render(true)}</PlatformRenderContext.Provider>));
     const panel = element.querySelector('aside')!;
     const button = panel.querySelector('button');
     expect(panel.style.backdropFilter).toBe('blur(12px)');
     expect(panel.style.borderRadius).toBe('18px');
     expect(panel.style.overflow).toBe('hidden');
     expect(panel.getAttribute('aria-label')).toBe('Frosted panel');
-    await act(() => root.render(render(false)));
+    await act(() => root.render(<PlatformRenderContext.Provider value>{render(false)}</PlatformRenderContext.Provider>));
     expect(panel.style.backdropFilter).toBe('blur(0px)');
     expect(panel.querySelector('button')).toBe(button);
     expect(button?.textContent).toBe('Sharp foreground');
@@ -47,12 +50,12 @@ test('targets release their refs on unmount and strength stays finite for invali
     ]) {
       await act(() =>
         root.render(
-          <>
+          <PlatformRenderContext.Provider value>
             <NBlurTarget ref={target} style={{ flex: 1 }}>
               Backdrop
             </NBlurTarget>
             <NBlur intensity={intensity} blurTarget={target} />
-          </>
+          </PlatformRenderContext.Provider>
         )
       );
       expect(target.current).not.toBeNull();

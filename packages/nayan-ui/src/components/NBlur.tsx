@@ -1,11 +1,10 @@
 'use client';
 
-import { useContext } from 'react';
 import type { RefObject } from 'react';
 import { BlurHost, BlurTargetHost, type NBlurTargetProps, type NBlurTargetRef } from './BlurHost';
 import { NView } from './NView';
-import { ComponentRenderContext } from './ThemeContext';
 import type { ComponentProps, ComponentStyle } from './types';
+import { useComponentRenderer } from './useComponentRenderer';
 
 export interface NBlurProps extends ComponentProps {
   /** Blur strength from 0 to 100. Defaults to 50. */
@@ -25,7 +24,7 @@ function flatten(style: ComponentProps['style']): ComponentStyle {
 
 /** One blur API: Rust GPU panels inside ComponentsRoot, platform backdrops around native/browser content. */
 export function NBlur({ intensity = 50, radius, tint = 'default', enabled = true, blurTarget, style, ...props }: NBlurProps) {
-  const rendering = useContext(ComponentRenderContext);
+  const rendering = useComponentRenderer('NBlur');
   const requested = radius ?? Math.min(100, Math.max(0, intensity)) * 0.2;
   const blur = enabled && Number.isFinite(requested) ? Math.min(64, Math.max(0, requested)) : 0;
   const material = blur > 0 ? tint : 'default';

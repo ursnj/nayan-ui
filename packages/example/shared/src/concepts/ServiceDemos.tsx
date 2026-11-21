@@ -4,6 +4,7 @@ import { audio, type Sound, type Voice } from "nayan-ui/audio";
 import { camera } from "nayan-ui/camera";
 import { capture } from "nayan-ui/capture";
 import { clipboard } from "nayan-ui/clipboard";
+import { NPlatformView } from 'nayan-ui/components';
 import { device } from "nayan-ui/device";
 import { files } from "nayan-ui/files";
 import { warmUpEngine } from "nayan-ui/games";
@@ -393,21 +394,24 @@ export function HapticsDemo() {
 
 export function VideoDemo() {
   const player = useRef<VideoPlayerHandle>(null);
-  const [status, setStatus] = useState<VideoStatus>("loading");
+  const [status, setStatus] = useState<VideoStatus>('loading');
   const [time, setTime] = useState(0);
   const [error, setError] = useState<string>();
   return (
     <DemoPanel>
-      <VideoPlayer
-        ref={player}
-        source={orbitClip}
-        controls
-        muted
-        accessibilityLabel="Orbit sample clip"
-        onStatusChange={setStatus}
-        onProgress={({ currentTime }) => setTime(currentTime)}
-        onError={(error) => setError(error.message)}
-      />
+      <NPlatformView style={{ width: '100%', height: 220 }}>
+        <VideoPlayer
+          ref={player}
+          source={orbitClip}
+          controls
+          muted
+          style={{ width: '100%', height: '100%' }}
+          accessibilityLabel="Orbit sample clip"
+          onStatusChange={setStatus}
+          onProgress={({ currentTime }) => setTime(currentTime)}
+          onError={(error) => setError(error.message)}
+        />
+      </NPlatformView>
       <DemoControls>
         <DemoButton onPress={() => player.current?.seek(0)}>Back to start</DemoButton>
       </DemoControls>

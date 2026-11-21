@@ -10,6 +10,8 @@ import { ComponentRenderContext } from './ThemeContext';
 import type { ComponentProps } from './types';
 
 export interface NPageProps extends PropsWithChildren<Pick<ComponentProps, 'className' | 'style'>> {
+  /** Pause the surface while its screen is inactive. */
+  active?: boolean;
   keyboard?: boolean;
   /** Protect the end of the page's scroll content. Defaults to true on native. */
   safeArea?: boolean;
@@ -34,10 +36,16 @@ function PageContent({ children, className, style, safeArea, showsVerticalScroll
 }
 
 /** A screen surface with a platform keyboard and presentation host. All content is rendered by Rust. */
-export function NPage({
+export function NPage(props: NPageProps) {
+  if (useContext(ComponentRenderContext)) return <PageContent {...props} safeArea={props.safeArea ?? true} />;
+  return <PageSurface {...props} />;
+}
+
+function PageSurface({
   children,
   className = '',
   style,
+  active = true,
   keyboard = false,
   safeArea = true,
   background = 'transparent',
@@ -45,7 +53,6 @@ export function NPage({
   onContentSizeChange,
   onError
 }: NPageProps) {
-  const rendering = useContext(ComponentRenderContext);
   const [portals, setPortals] = useState<ReadonlyMap<string, React.ReactNode>>(() => new Map());
 
   const portal = useCallback(
@@ -70,16 +77,15 @@ export function NPage({
     </PageContext.Provider>
   );
 
-  if (rendering)
-    return (
-      <PageContent className={className} style={style} safeArea={safeArea} showsVerticalScrollIndicator={showsVerticalScrollIndicator}>
-        {children}
-      </PageContent>
-    );
-
   return (
     <PageHost keyboard={keyboard}>
-      <ComponentsRoot onError={onError} onContentSizeChange={onContentSizeChange} background={background} style={{ flex: 1, minHeight: 0 }}>
+      <ComponentsRoot
+        active={active}
+        onError={onError}
+        onContentSizeChange={onContentSizeChange}
+        background={background}
+        style={{ flex: 1, minHeight: 0 }}
+      >
         {content}
       </ComponentsRoot>
       {[...portals].map(([id, element]) => (

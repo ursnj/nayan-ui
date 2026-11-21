@@ -21,6 +21,7 @@ mock.module('react-native', () => ({
 }));
 const { iconImage, requestIcon } = await import('../iconImage');
 const { NIcon } = await import('../icons');
+const { IconHost: NativeIcon } = await import('../PlatformHost');
 const { IconHost: WebIcon } = await import('../PlatformHost.web');
 const { ComponentRenderContext } = await import('../ThemeContext');
 const dom = await installReactTestEnvironment();
@@ -94,7 +95,19 @@ test('native navigation uses tinted Images at device density with press and acce
   const pressed = mock(() => {});
   const calls = spyOn(native, 'iconRequest');
   try {
-    await act(() => root.render(<NIcon name="house" size={24} color="#123456" onPress={pressed} accessibilityLabel="Home" />));
+    await act(() =>
+      root.render(
+        <NativeIcon
+          name="house"
+          outline={lucideIcon('house')}
+          strokeWidth={2}
+          size={24}
+          color="#123456"
+          onPress={pressed}
+          accessibilityLabel="Home"
+        />
+      )
+    );
     await act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 30));
     });

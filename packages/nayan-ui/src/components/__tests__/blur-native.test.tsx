@@ -14,7 +14,7 @@ mock.module('react-native', () => ({
     return <div>{props.children}</div>;
   }
 }));
-const { NBlur, NBlurTarget } = await import('../NBlur');
+const { BlurHost, BlurTargetHost } = await import('../BlurHost');
 const { createRoot } = await import('react-dom/client');
 afterAll(() => dom.cleanup());
 
@@ -24,11 +24,11 @@ test('native blur resolves targets after commit, switches routes and keeps child
   const second = createRef<NBlurTargetRef>();
   const render = (alternate: boolean, enabled = true) => (
     <>
-      <NBlurTarget ref={first}>First backdrop</NBlurTarget>
-      <NBlurTarget ref={second}>Second backdrop</NBlurTarget>
-      <NBlur blurTarget={alternate ? second : first} intensity={45} tint="dark" enabled={enabled}>
+      <BlurTargetHost ref={first}>First backdrop</BlurTargetHost>
+      <BlurTargetHost ref={second}>Second backdrop</BlurTargetHost>
+      <BlurHost blurTarget={alternate ? second : first} radius={enabled ? 9 : 0} tint={enabled ? 'dark' : 'default'} enabled={enabled}>
         <span>Foreground</span>
-      </NBlur>
+      </BlurHost>
     </>
   );
   try {

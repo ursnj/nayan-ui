@@ -1,12 +1,12 @@
 'use client';
 
 import { createElement, useContext, useEffect, useMemo } from 'react';
-import { component } from './component';
 import type { IconOutline } from './iconImage';
 import { NPress } from './NPress';
 import { IconHost } from './PlatformHost';
-import { ComponentRenderContext, ComponentThemeContext } from './ThemeContext';
+import { ComponentThemeContext } from './ThemeContext';
 import type { ComponentProps } from './types';
+import { useComponentRenderer } from './useComponentRenderer';
 
 export interface NIconProps extends Pick<ComponentProps, 'id' | 'className' | 'style' | 'width' | 'height' | 'accessibilityLabel'> {
   /** SVG path data, drawn in order. */
@@ -31,13 +31,11 @@ export interface IconHostProps extends NIconProps {
   outline?: IconOutline;
 }
 
-const Host = /* @__PURE__ */ component<NIconProps>('NIcon');
-
-/** Rust vector icon in ComponentsRoot; cached native Image or browser SVG in platform views. */
+/** Rust vector icon in ComponentsRoot, with SVG for explicit browser HTML. */
 export function createIcon(resolveIcon: (name: string) => IconOutline | undefined) {
   return function NIcon({ name, paths, viewBox, strokeWidth, onPress, onError, ...props }: NIconProps) {
     const theme = useContext(ComponentThemeContext);
-    const rendering = useContext(ComponentRenderContext);
+    const rendering = useComponentRenderer('NIcon');
     const literal = !!name && /[^\x20-\x7e]/.test(name);
     const named = useMemo(() => (name && !literal ? resolveIcon(name) : undefined), [name, literal]);
     const outline = useMemo(
@@ -58,7 +56,7 @@ export function createIcon(resolveIcon: (name: string) => IconOutline | undefine
         onPress,
         onError
       });
-    const icon = createElement(Host, { ...outline, ...props, strokeWidth: stroke, name });
+    const icon = createElement('NIcon', { ...outline, ...props, strokeWidth: stroke, name });
     return onPress ? createElement(NPress, { onPress, accessibilityLabel: props.accessibilityLabel ?? name }, icon) : icon;
   };
 }

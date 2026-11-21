@@ -1,13 +1,10 @@
 'use client';
 
-import { createElement, type Ref, useContext } from 'react';
+import { createElement, type Ref } from 'react';
 import type { TextInstance, TextProps } from 'react-native';
-import { component } from './component';
 import { TextHost as PlatformText } from './PlatformHost';
-import { ComponentRenderContext } from './ThemeContext';
 import type { ComponentProps } from './types';
-const TextHost = component<ComponentProps>('NText');
-const LinkHost = component<ComponentProps>('NLink');
+import { useComponentRenderer } from './useComponentRenderer';
 
 export type NTextProps = ComponentProps &
   Omit<TextProps, keyof ComponentProps | 'ref'> & {
@@ -15,6 +12,6 @@ export type NTextProps = ComponentProps &
   };
 
 export function NText({ onPress, ...props }: NTextProps) {
-  if (!useContext(ComponentRenderContext)) return createElement(PlatformText, { ...props, onPress });
-  return createElement(onPress ? LinkHost : TextHost, { ...props, onPress });
+  if (!useComponentRenderer('NText')) return createElement(PlatformText, { ...props, onPress });
+  return createElement(onPress ? 'NLink' : 'NText', { ...props, onPress });
 }

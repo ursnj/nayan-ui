@@ -1,79 +1,53 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Link } from "expo-router";
+import { type Href, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { NPress, NText, NView } from 'nayan-ui/components';
 import { APP_TITLE, carRacing, conceptGroups } from "@nayan-example/shared/catalog";
+import { AppPage } from '../AppUI';
 import { COLORS } from "../theme";
 
-function ExampleLink({
-  title,
-  description,
-  href,
-  featured,
-}: {
-  title: string;
-  description: string;
-  href: string;
-  featured?: boolean;
-}) {
+function ExampleLink({ title, description, open, featured }: { title: string; description: string; open: () => void; featured?: boolean }) {
   return (
-    <Link href={href} asChild>
-      <Pressable
-        accessibilityRole="link"
-        style={({ pressed }) => [
-          styles.card,
-          featured && styles.feature,
-          pressed && styles.pressed,
-        ]}
-      >
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
-      </Pressable>
-    </Link>
+    <NPress
+      onPress={open}
+      accessibilityRole="link"
+      accessibilityLabel={title}
+      className="w-full gap-1 rounded-xl border p-4"
+      style={({ pressed }) => ({
+        backgroundColor: featured ? '#263d60' : COLORS.surface,
+        borderColor: featured ? '#385a82' : COLORS.border,
+        opacity: pressed ? 0.78 : 1
+      })}
+    >
+      <NText className="text-lg font-bold" style={{ color: COLORS.text }}>
+        {title}
+      </NText>
+      <NText className="text-sm" style={{ color: COLORS.muted }}>
+        {description}
+      </NText>
+    </NPress>
   );
 }
 
 export default function Home() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+  const open = (href: Href) => () => router.push(href);
   return (
-    <ScrollView
-      contentContainerStyle={[
-        styles.list,
-        { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 },
-      ]}
-    >
-      <Text accessibilityRole="header" style={styles.heading}>
+    <AppPage className="gap-4 px-4 pb-6" style={{ paddingTop: insets.top + 24 }}>
+      <NText accessibilityRole="header" className="text-3xl font-extrabold" style={{ color: COLORS.text }}>
         {APP_TITLE}
-      </Text>
-      <ExampleLink {...carRacing} href={`/${carRacing.id}`} featured />
+      </NText>
+      <ExampleLink {...carRacing} open={open(`/${carRacing.id}`)} featured />
       {conceptGroups.map((group) => (
-        <View key={group.title} style={styles.section}>
-          <Text accessibilityRole="header" style={styles.sectionTitle}>
+        <NView key={group.title} className="mt-2 w-full gap-2.5">
+          <NText accessibilityRole="header" className="font-bold" style={{ color: COLORS.muted }}>
             {group.title}
-          </Text>
+          </NText>
           {group.examples.map((example) => (
-            <ExampleLink key={example.id} {...example} href={`/concepts/${example.id}`} />
+            <ExampleLink key={example.id} {...example} open={open(`/concepts/${example.id}`)} />
           ))}
-        </View>
+        </NView>
       ))}
-    </ScrollView>
+    </AppPage>
   );
 }
-
-const styles = StyleSheet.create({
-  list: { paddingHorizontal: 16, gap: 16 },
-  heading: { color: COLORS.text, fontSize: 32, fontWeight: "800", marginBottom: 8 },
-  section: { gap: 10, marginTop: 6 },
-  sectionTitle: { color: COLORS.text, fontSize: 20, fontWeight: "700" },
-  card: {
-    backgroundColor: COLORS.surface,
-    borderColor: COLORS.border,
-    borderWidth: 1,
-    borderRadius: 14,
-    padding: 16,
-    gap: 6,
-  },
-  feature: { borderColor: "#385a82", backgroundColor: "#263d60" },
-  pressed: { opacity: 0.78 },
-  title: { color: COLORS.text, fontSize: 17, fontWeight: "700" },
-  description: { color: COLORS.muted, fontSize: 14, lineHeight: 20 },
-});

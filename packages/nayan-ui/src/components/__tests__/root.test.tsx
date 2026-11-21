@@ -1,5 +1,6 @@
 import { act, createContext, type PropsWithChildren, useContext, useEffect } from 'react';
 import { afterAll, expect, mock, test } from 'bun:test';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { installDom } from '../../__tests__/dom';
 import { NButton } from '../NButton';
 import { NImage } from '../NImage';
@@ -7,6 +8,7 @@ import { NInput } from '../NInput';
 import { NLinkify } from '../NLinkify';
 import { NSelect } from '../NSelect';
 import { NText } from '../NText';
+import { NView } from '../NView';
 import { SafeAreaFrameContext, SafeAreaInsetsContext, useNSafeAreaFrame, useNSafeAreaInsets } from '../safeAreaContext';
 import { DrawerContext } from '../theme/contexts';
 import type { ComponentNode, ComponentSemantic, ComponentSnapshot } from '../types';
@@ -79,6 +81,40 @@ async function flush() {
     await new Promise((resolve) => setTimeout(resolve, 35));
   });
 }
+
+test('visual controls require an app renderer without starting a standalone surface', () => {
+  expect(() => renderToStaticMarkup(<NView />)).toThrow('NView requires an app-level NPage or ComponentsRoot');
+  expect(() => renderToStaticMarkup(<NButton>Action</NButton>)).toThrow('NButton requires an app-level NPage or ComponentsRoot');
+});
+
+test('nested ComponentsRoot uses the app document and keeps it when paused', async () => {
+  const root = createRoot(document.createElement('div'));
+  const nestedReady = mock(() => {});
+  const render = (active: boolean) => (
+    <ComponentsRoot active={active}>
+      <NView>
+        <ComponentsRoot onReady={nestedReady}>
+          <NButton id="nested">Action</NButton>
+        </ComponentsRoot>
+      </NView>
+    </ComponentsRoot>
+  );
+  try {
+    await act(() => root.render(render(true)));
+    await flush();
+    const document = host.document;
+    expect(trees[0]?.children[0]?.props.id).toBe('nested');
+    expect(nestedReady).not.toHaveBeenCalled();
+    await act(() => root.render(render(false)));
+    await flush();
+    expect(host.active).toBe(false);
+    expect(host.document).toBe(document);
+    expect(trees[0]?.children[0]?.props.id).toBe('nested');
+  } finally {
+    await act(() => root.unmount());
+    await flush();
+  }
+});
 
 test('navigation and temporary pauses retain the document and reset scrolling only for a new route', async () => {
   const root = createRoot(document.createElement('div'));
@@ -431,7 +467,8 @@ test('theme hooks inside an engine surface update the owning root without serial
           defaultTheme="light"
           persistence={{ storage }}
           palettes={{ light: { accent: '#123456', chartOpacity: 0.4 }, dark: { accent: '#abcdef', chartOpacity: 0.2 } }}
-          components={({ isDarkMode }) => ({ NCard: { className: isDarkMode ? 'shadow-lg' : 'shadow-sm' } })}>
+          components={({ isDarkMode }) => ({ NCard: { className: isDarkMode ? 'shadow-lg' : 'shadow-sm' } })}
+        >
           <ComponentsRoot>
             <Controls />
           </ComponentsRoot>

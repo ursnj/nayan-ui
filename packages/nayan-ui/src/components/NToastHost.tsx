@@ -2,8 +2,7 @@ import { useContext, useEffect, useState, useSyncExternalStore } from 'react';
 import { ComponentsRoot } from './ComponentsRoot';
 import { NPlatformView } from './NPlatformView';
 import { NToastContent } from './NToastContent';
-import { NView } from './NView';
-import { announcePlatformMessage, usePlatformOverlayEnvironment } from './PlatformHost';
+import { announcePlatformMessage, usePlatformOverlayEnvironment, ViewHost } from './PlatformHost';
 import { SafeAreaInsetsContext } from './safeAreaContext';
 import { useToastHostOwnership } from './ThemeServices';
 import { toastStore } from './toastService';
@@ -36,24 +35,26 @@ export function NToastHost({ top, maxWidth = 480 }: NToastHostProps) {
   const style = { position: viewport.position, top: top ?? (insets?.top ?? 0) + 12, left: inset, right: inset, height: visibleHeight, zIndex: 10000 };
   return (
     <NPlatformView style={style}>
-      <NView
+      <ViewHost
         className="absolute z-[10000]"
         style={style}
         {...(viewport.position === 'fixed'
           ? {
-              'role': 'status',
+              role: 'status',
               'aria-label': [toast.title, toast.message].filter(Boolean).join('. '),
               'aria-live': toast.type === 'error' ? ('assertive' as const) : ('polite' as const),
               'aria-atomic': true
             }
-          : {})}>
+          : {})}
+      >
         <ComponentsRoot
           background="transparent"
           style={{ flex: 1, minHeight: 0 }}
-          onContentSizeChange={(_width, height) => setHeight(Math.max(64, Math.ceil(height)))}>
+          onContentSizeChange={(_width, height) => setHeight(Math.max(64, Math.ceil(height)))}
+        >
           <NToastContent toast={toast} />
         </ComponentsRoot>
-      </NView>
+      </ViewHost>
     </NPlatformView>
   );
 }

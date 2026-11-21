@@ -12,12 +12,10 @@ import {
   useImperativeHandle
 } from 'react';
 import type { StyleProp, View, ViewProps, ViewStyle } from 'react-native';
-import { component } from './component';
 import { ViewHost } from './PlatformHost';
 import { ComponentRuntimeContext } from './runtime';
-import { ComponentRenderContext } from './ThemeContext';
 import type { ComponentProps } from './types';
-const Host = component<ComponentProps>('NView');
+import { useComponentRenderer } from './useComponentRenderer';
 
 export interface NViewRef {
   captureImage(uri: string, screen: { width: number; height: number }): Promise<{ base64: string; width: number; height: number }>;
@@ -47,7 +45,7 @@ export function NView<Tag extends keyof JSX.IntrinsicElements>(props: TaggedView
 export function NView(props: NViewProps): ReactElement;
 export function NView({ entrance, ...props }: NViewProps | TaggedViewProps<keyof JSX.IntrinsicElements>) {
   const view = props as NViewProps;
-  return useContext(ComponentRenderContext) ? createElement(EngineView, { ...view, entrance }) : createElement(ViewHost, view);
+  return useComponentRenderer('NView') ? createElement(EngineView, { ...view, entrance }) : createElement(ViewHost, view);
 }
 
 function EngineView({ ref, id, ...props }: NViewProps) {
@@ -66,5 +64,5 @@ function EngineView({ ref, id, ...props }: NViewProps) {
     [runtime, key]
   );
 
-  return createElement(Host, { ...props, id: key } as ComponentProps);
+  return createElement('NView', { ...props, id: key } as ComponentProps);
 }

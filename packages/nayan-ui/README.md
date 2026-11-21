@@ -103,25 +103,29 @@ APIs and image hosts remain subject to browser CORS and platform permissions.
 
 ### App UI
 
-Use one `NTheme` at your app root. This screen renders inside an `NPage` with
-a bounded height. A native screen can use `style={{ flex: 1 }}` to fill its
-navigation container.
+Mount `NTheme` at the app root and place a shared `NPage` or `ComponentsRoot` at the app rendering boundary. Visual controls share that Rust document. Size the platform container around the surface and pass `active={false}` to pause a hidden screen while retaining its document.
 
 ```tsx
 import { useState } from 'react';
-import { NButton, NCard, NPage, NText, NTheme } from 'nayan-ui/components';
+import { ComponentsRoot, NButton, NCard, NText, NTheme } from 'nayan-ui/components';
 
-export function WelcomeScreen() {
+function WelcomeScreen() {
   const [count, setCount] = useState(0);
   return (
+    <NCard className="m-4 gap-3 p-4">
+      <NText className="text-xl font-semibold">Welcome</NText>
+      <NText>Count {count}</NText>
+      <NButton onPress={() => setCount((value) => value + 1)}>Increment</NButton>
+    </NCard>
+  );
+}
+
+export function App() {
+  return (
     <NTheme defaultTheme="system">
-      <NPage style={{ width: '100%', height: 360 }}>
-        <NCard className="m-4 gap-3 p-4">
-          <NText className="text-xl font-semibold">Welcome</NText>
-          <NText>Count {count}</NText>
-          <NButton onPress={() => setCount((value) => value + 1)}>Increment</NButton>
-        </NCard>
-      </NPage>
+      <ComponentsRoot style={{ height: 360, flex: undefined }}>
+        <WelcomeScreen />
+      </ComponentsRoot>
     </NTheme>
   );
 }
@@ -931,13 +935,7 @@ The calendar and toast service also use Rust state and engine rendering. SDK-own
 
 ### Platform primitives and interop
 
-`NPress` is also usable outside `ComponentsRoot`, in native navigation headers and regular
-browser layouts. It forwards native `Pressable` props and refs on mobile, and
-renders an accessible `button` on web (default `type="button"`). Both support
-disabled controls, pressed `style`/`children` functions, long presses, hover/focus
-callbacks, hit slop and press cancellation. Native-specific options such as
-`android_ripple` pass through to React Native. Browser classes use the host's CSS;
-the reset has zero specificity so Tailwind utilities can override it.
+`NPress` uses the app surface for hit testing, disabled state, press lifecycle callbacks, and pressed styles.
 
 ```tsx
 import { GemIcon } from 'nayan-ui/icons/components/gem';
@@ -949,22 +947,9 @@ import { NPress, NText } from 'nayan-ui/components';
 </NPress>;
 ```
 
-Outside `ComponentsRoot`, native `NPress`, `NText` and `NIcon` reuse the same Rust utility
-resolver and theme tokens without creating a surface or GPU world. Resolved
-classes are cached across press-state changes and refreshed for theme/viewport
-changes; inline styles remain available as overrides. Inside `ComponentsRoot`, Rust owns
-hit-testing and sends lifecycle updates only when requested; ordinary presses
-retain their single-event path. Rebuild the core and native app for the new
-class/lifecycle support. Refs outside `ComponentsRoot` address the native View or DOM button;
-inside it they identify the Rust widget instead of a platform View.
+The parent app surface owns layout, drawing and event delivery. Press lifecycle updates are sent only when requested.
 
-`NView`, `NText`, `NPress` and `NIcon` share the platform host outside a Rust
-surface. Native view refs retain measurement and SDK integration; browser `NView`
-accepts semantic tags such as `section`, `header` and `form`. A browser form's
-`onSubmit(values)` receives string fields; handle file values through the file input.
-Classes outside a browser surface need generated or application CSS. Inside a
-surface, the Rust layout backend resolves them. Browser clickable controls use
-a pointer cursor, while disabled controls retain their disabled cursor/semantics.
+On the web, an app can explicitly wrap an HTML shell in `NPlatformView` for browser layout. Its semantic tags use the host stylesheet. The server fallback of `ComponentsRoot` can also serve HTML while WASM starts.
 
 For an SDK view or browser-owned attachment within a page, place it explicitly:
 
@@ -1031,36 +1016,17 @@ assistive technology. Native library/camera selection uses `imagePicker` from
 
 ### Blur
 
-`NBlur` renders a frosted container with sharp foreground children. Inside `NPage`/`ComponentsRoot`
-it uses the existing Rust GPU backdrop filter; around native navigation or browser content it
-uses a platform adapter. Import `NBlur`, `NBlurTarget` and `NBlurTargetRef` from the shared `/components` entry.
+`NBlur` renders a frosted container with sharp foreground children inside `NPage` or `ComponentsRoot`. The GPU filter samples the background within that surface. An explicit browser layout can use the same component with browser backdrop filtering.
 
 ```tsx
-const target = useRef<NBlurTargetRef>(null);
-
-<>
-  <NBlurTarget ref={target} style={{ flex: 1 }}>
-    <Screen />
-  </NBlurTarget>
-  <NBlur blurTarget={target} intensity={45} tint="dark" style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
-    <Toolbar />
+<NView className="h-20 bg-accent">
+  <NBlur className="absolute inset-0" intensity={45} tint="dark">
+    <NText>Toolbar</NText>
   </NBlur>
-</>;
+</NView>
 ```
 
-Use a target containing the background, outside the blur's foreground, for Android navigation overlays.
-`intensity` is bounded to 0–100; `radius` overrides it in logical points (iOS maps it to system material
-strength). `enabled={false}` removes the effect without unmounting children. Style arrays and rounded
-clipping are supported. iOS uses `UIVisualEffectView` and respects Reduce Transparency; browser content
-uses CSS backdrop filtering, including Safari's prefix. Android 12+ uses `RenderEffect`; earlier Android
-versions run a reusable, linear-time Rust filter on a worker thread. Captures include a blur halo and
-are downsampled to at most 131,072 working pixels. Engine `SurfaceView` content is copied only for the
-intersecting region through `PixelCopy`, independently of the engine render thread. Android UI-only
-surfaces use `TextureView` so native drawers, blur and SDK overlays can cover them; their backdrop
-samples use bounded, cached bitmap readback. Games and drawing canvases keep the existing direct
-`SurfaceView` path. There are no JS
-frame timers or per-frame bridge calls. Capture stops when detached and skips offscreen/background
-views. Native applications must be rebuilt after adding the engine's native blur adapter.
+`intensity` is bounded to 0–100, and `radius` overrides it in logical points. `enabled={false}` removes the effect without unmounting children.
 
 ### Loading indicators
 
@@ -1469,22 +1435,13 @@ Rust/display-clock implementation. The modal window and keyboard remain platform
 
 ### Tailwind-style customization in Rust
 
-`NView`, `NText`, `NPress` and `NIcon` share one platform adapter outside
-`ComponentsRoot`. On native, `NView` remains a Fabric view: layout events, accessibility,
-measurement and SDK refs still reach the actual native element. Its classes use
-the Rust resolver without initializing a renderer. Within `ComponentsRoot`, the same
-components use the existing single Rust surface and layout system. There is no
-host file for each basic control.
+`NView`, `NText`, `NPress` and `NIcon` share the Rust surface and layout system. Browser and native accessibility elements mirror the resulting controls. Use a platform view ref on an explicit SDK attachment when the SDK needs platform measurement.
 
 Use `className` for static layout and palette tokens. Keep runtime measurements,
 computed data colors and unsupported shadow/layer properties in `style`; explicit
 styles override classes. `NTheme textProps={{ allowFontScaling: false }}` can
 scope native text defaults without changing React Native globals; individual
-`NText` props override them. Native percentage sizes remain parent-relative in Yoga,
-while responsive variants use the window width. Native `NView` refs can use
-`NViewNativeRef`; `NViewRef.captureImage` remains available inside an engine
-surface. Browser platform content uses semantic DOM elements and the host's CSS
-for its classes, without importing React Native Web or starting WASM.
+`NText` props override them. Engine layout resolves percentage sizes relative to their container. `NViewRef.captureImage` captures the Rust view bounds. An explicit browser shell uses semantic DOM and its stylesheet.
 
 `className` accepts a supported Tailwind utility subset on both React and React
 Native. No CSS, Tailwind or NativeWind runtime is installed or evaluated. Rust
@@ -1870,13 +1827,7 @@ Use Lucide's kebab-case names; PascalCase names such as `Gamepad2` also work.
 24-unit grid, 2-unit strokes and rounded caps/joins. The named icon set is fixed;
 icon-font loaders and theme icon registries are no longer public APIs.
 
-Rust draws vectors inside `ComponentsRoot`; outside it, native navigation uses cached PNG
-masks tinted by React Native Image and browser navigation uses inline SVG.
-Only requested outlines are sent to the renderer. Unknown names show a question-mark
-icon and report through `onError` when supplied. Existing explicit path artwork and
-Unicode symbols remain supported. Native PNG masks are bounded to 512 pixels and
-the 256 most recent variants. No extra render surface, Expo font registration or
-react-native-svg is needed. Lucide does not include brand logos.
+Rust draws the requested vector on the app surface. Explicit browser HTML uses inline SVG. Unknown names show a question-mark icon and report through `onError` when supplied. Explicit paths and Unicode symbols are supported. Lucide does not include brand logos.
 
 The vendored source includes the upstream ISC and Feather MIT notices in
 `src/components/icons/LICENSE.lucide`. Maintainers can reproduce it with

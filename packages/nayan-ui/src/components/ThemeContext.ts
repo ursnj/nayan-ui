@@ -15,3 +15,4 @@ export interface ComponentThemeValue extends Omit<NThemeProps, 'children' | 'com
   toggleTheme?: () => void;
 }
 export const ComponentRenderContext = /* @__PURE__ */ createContext(false);
+export const PlatformRenderContext = /* @__PURE__ */ createContext(false);

@@ -1,5 +1,5 @@
 import { useRef, useState, type ReactNode } from "react";
-import { NPage, NPress, NText, NView } from "nayan-ui/components";
+import { NPress, NText, NView } from 'nayan-ui/components';
 
 const text = "#e2e8f0";
 const muted = "#aebed2";
@@ -46,29 +46,11 @@ export function DemoControls({ children }: { children: ReactNode }) {
   return <NView style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>{children}</NView>;
 }
 
-export function DemoSurface({
-  children,
-  height = 440,
-  keyboard,
-}: {
-  children: ReactNode;
-  height?: number;
-  keyboard?: boolean;
-}) {
-  const [error, setError] = useState<string>();
+export function DemoSurface({ children, height = 440 }: { children: ReactNode; height?: number }) {
   return (
-    <>
-      <NView style={{ width: "100%", height }}>
-        <NPage
-          keyboard={keyboard}
-          className="gap-4 p-4"
-          onError={(cause) => setError(cause.message)}
-        >
-          {children}
-        </NPage>
-      </NView>
-      {error && <DemoText>{error}</DemoText>}
-    </>
+    <NView className="w-full gap-4 p-4" style={{ minHeight: height }}>
+      {children}
+    </NView>
   );
 }
 
