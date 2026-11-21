@@ -38,14 +38,16 @@ test('engine utilities preserve responsive, state, arbitrary-value and theme cla
     expect(result.css).toContain(value);
 });
 
-test('the engine produces matching browser CSS and Rust rules, and keeps repeated builds deterministic', async () => {
+test.each([[true], [false]])('the engine produces matching CSS and Rust rules with CSS lowering set to %s', async (lowerCss) => {
   const directory = await mkdtemp(path.join(tmpdir(), 'nayan-styles-'));
   try {
     await writeFile(path.join(directory, 'package.json'), '{}');
-    const dependency = createRequire(import.meta.url).resolve('lightningcss');
-    const packageRoot = path.resolve(path.dirname(dependency), '..');
-    await mkdir(path.join(directory, 'node_modules'));
-    await symlink(packageRoot, path.join(directory, 'node_modules', 'lightningcss'), 'dir');
+    if (lowerCss) {
+      const dependency = createRequire(import.meta.url).resolve('lightningcss');
+      const packageRoot = path.resolve(path.dirname(dependency), '..');
+      await mkdir(path.join(directory, 'node_modules'));
+      await symlink(packageRoot, path.join(directory, 'node_modules', 'lightningcss'), 'dir');
+    }
     await mkdir(path.join(directory, 'src'));
     await writeFile(
       path.join(directory, 'src/page.tsx'),
@@ -58,14 +60,15 @@ test('the engine produces matching browser CSS and Rust rules, and keeps repeate
       content: ['src'],
       output: 'public/engine/styles.json',
       cssOutput: 'src/engine.css',
-      manifest: 'src/engine-styles.ts'
+      manifest: 'src/engine-styles.ts',
+      lowerCss
     };
     await buildStyles(options);
     const json = await readFile(path.join(directory, options.output), 'utf8');
     const css = await readFile(path.join(directory, options.cssOutput), 'utf8');
     const manifest = await readFile(path.join(directory, options.manifest), 'utf8');
     expect(css).not.toContain('@import "tailwindcss"');
-    expect(css).toContain('padding: 12px');
+    expect(css).toMatch(/padding:\s*12px/);
     const sheet = JSON.parse(json);
     expect(
       sheet.rules.some((r: { parts: { tests: string[][] }[] }) => r.parts.some((p) => p.tests.some((t) => t[0] === 'class' && t[1] === 'p-3')))

@@ -112,7 +112,7 @@ const Header = () => {
           </NView>
         </dialog>
 
-        <nav aria-label="Main" className="site-header-row flex items-center justify-between gap-3 lg:gap-6">
+        <div className="site-header-row flex items-center justify-between gap-3 lg:gap-6">
           <Link href="/" aria-label="Nayan UI home" className="flex shrink-0 items-center gap-2.5">
             <NImage src="/logo.webp" priority alt="" width={32} height={32} className="site-logo h-8 w-8" />
             <span className="whitespace-nowrap text-lg font-bold tracking-[-0.045em] text-foreground">
@@ -120,9 +120,9 @@ const Header = () => {
             </span>
           </Link>
 
-          <div className="site-desktop-nav">
+          <nav aria-label="Main" className="site-desktop-nav">
             <NavLinks pathname={pathname} />
-          </div>
+          </nav>
 
           <div className="site-header-actions">
             <Link
@@ -169,7 +169,7 @@ const Header = () => {
               <AlignJustify className="h-5 w-5" />
             </NPress>
           </div>
-        </nav>
+        </div>
       </div>
     </NView>
   );

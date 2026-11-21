@@ -16,6 +16,8 @@ export interface EngineStylesOptions {
   content: readonly string[];
   output: string;
   cssOutput: string;
+  /** Set to false when the source already uses flat CSS rules. */
+  lowerCss?: boolean;
   font?: string;
   manifest?: string;
   publicPath?: string;
@@ -79,15 +81,18 @@ export async function buildStyles(options: EngineStylesOptions) {
     }
   }
   const utilities = compileUtilities([...classes]);
-  const { Features, transform } = createRequire(path.join(root, 'package.json'))('lightningcss') as typeof import('lightningcss');
   const source = await readFile(input, 'utf8');
-  const lowered = transform({
-    filename: input,
-    code: Buffer.from(`${enginePreflight}\n${source}\n@layer utilities{${utilities.css}}`),
-    targets: { chrome: 100 << 16, safari: 15 << 16 },
-    include: Features.Nesting,
-    minify: false
-  }).code.toString();
+  let css = `${enginePreflight}\n${source}\n@layer utilities{${utilities.css}}`;
+  if (options.lowerCss !== false) {
+    const { Features, transform } = createRequire(path.join(root, 'package.json'))('lightningcss') as typeof import('lightningcss');
+    css = transform({
+      filename: input,
+      code: Buffer.from(css),
+      targets: { chrome: 100 << 16, safari: 15 << 16 },
+      include: Features.Nesting,
+      minify: false
+    }).code.toString();
+  }
   const rules: unknown[] = [];
   function selector(value: string): CompiledSelector[] {
     const result: CompiledSelector[] = [];
@@ -154,7 +159,10 @@ export async function buildStyles(options: EngineStylesOptions) {
     }).processSync(value);
     return result;
   }
-  postcss.parse(lowered).walkRules((rule) => {
+  postcss.parse(css).walkRules((rule) => {
+    if (options.lowerCss === false && rule.some((node) => node.type === 'rule' || node.type === 'atrule')) {
+      throw new Error(`lowerCss: false requires flat CSS rules. Found nesting in ${rule.selector}.`);
+    }
     const media: string[] = [];
     let layer = 4;
     let parent = rule.parent;
@@ -184,7 +192,7 @@ export async function buildStyles(options: EngineStylesOptions) {
   const stylesheet = { version: 1, rules, ...(options.font ? { font: (await readFile(path.resolve(root, options.font))).toString('base64') } : {}) };
   const json = JSON.stringify(stylesheet);
   await writeChanged(path.resolve(root, options.output), json);
-  await writeChanged(path.resolve(root, options.cssOutput), lowered);
+  await writeChanged(path.resolve(root, options.cssOutput), css);
   if (options.manifest) {
     const version = createHash('sha256').update(json).digest('hex').slice(0, 16);
     await writeChanged(

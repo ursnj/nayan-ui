@@ -46,7 +46,7 @@ bun add @nayan-ui/engine
 
 Peer dependencies: `react`, plus `react-native` for native apps. Rust UI surfaces also
 need `react-reconciler@^0.34.0` with a compatible React version (the current UI build uses
-React 19.3). Install `lightningcss` as a development dependency only when using `/styles`.
+React 19.3). Install `lightningcss` as a development dependency when using the default CSS lowering in `/styles`.
 The latter two peers are optional for consumers that do not use those features.
 Bundled files load through the engine; no Expo asset or font peer is required.
 
@@ -1560,8 +1560,9 @@ Import the generated CSS in the application layout and use the generated
 `stylesheet` URL for `ComponentsRoot`. The build emits matching browser CSS and Rust
 stylesheet rules from one source. Application CSS supplies theme variables and
 design rules; the engine supplies the reset and supported utility classes.
-Install `lightningcss` as a development dependency for CSS lowering. Tailwind,
-its PostCSS plugin and a separate Tailwind configuration are unnecessary.
+Install `lightningcss` as a development dependency for CSS lowering, or set
+`lowerCss: false` if your source already uses flat CSS rules. The engine generates
+the utility rules without Tailwind or a Tailwind configuration.
 
 The Rust compiler supports responsive and interaction variants, flex, grid
 template tracks and spans, `grid-flow-*`, `auto-rows-*`, `auto-cols-*`, spacing,
@@ -1581,6 +1582,7 @@ from browser and game entry points.
 | `source`     | Application CSS containing theme variables and design rules                                   |
 | `content`    | Files/directories scanned for complete utility names; shared engine UI source is also scanned |
 | `cssOutput`  | Generated browser CSS, including the engine reset and supported utility rules                 |
+| `lowerCss`   | Lower CSS nesting and syntax for older browsers (default true). False requires flat CSS rules |
 | `output`     | Generated JSON rules read by the Rust stylesheet layout backend                               |
 | `manifest`   | Optional TypeScript file exporting the content-versioned `stylesheet` URL                     |
 | `publicPath` | Public URL for JSON rules; defaults to `/engine/site-styles.json`                             |

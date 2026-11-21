@@ -6,11 +6,10 @@
     "dev": "bun run engine:prepare && bun scripts/compile-component-styles.ts --dev",
     "build": "bun run styles && bun run sitemap:generate && next build && bun scripts/prune-standalone.ts",
     "start": "next start --port 7100",
-    "seo:banners": "bun scripts/seo-banners/generate.ts",
     "sitemap:generate": "bun scripts/sync-sitemap.ts",
     "sitemap:check": "bun scripts/sync-sitemap.ts --check",
     "styles": "bun run engine:prepare && bun scripts/compile-component-styles.ts",
-    "engine:prepare": "test -f ../engine/lib/web/styles/index.js || bun run --cwd ../engine build:web",
+    "engine:prepare": "test ../engine/lib/web/styles/index.js -nt ../engine/src/styles/index.ts || bun run --cwd ../engine build:web",
     "typecheck": "bun run styles && bun check",
     "test": "bun test scripts src"
   },
@@ -25,12 +24,10 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
-    "@napi-rs/canvas": "^0.1.68",
     "@types/node": "^24.0.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "bun-types": "^1.4.4",
-    "lightningcss": "^1.30.1",
     "typescript": "~6.0.3"
   }
 }

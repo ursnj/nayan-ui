@@ -6,6 +6,7 @@ const options: EngineStylesOptions = {
   output: "public/engine-ui/site-styles.json",
   publicPath: "/engine-ui/site-styles.json",
   cssOutput: "src/app/engine.css",
+  lowerCss: false,
   manifest: "src/app/engine-styles.ts",
 };
 

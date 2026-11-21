@@ -14,11 +14,9 @@ export const SITE_NAME = 'Nayan UI';
 export const LOGO_URL = `${SITE_URL}/nayan-ui.png`;
 
 /**
- * AI-generated, branded artwork in public/seo/artwork takes precedence over the legacy
- * rendered banners. Individual pages take precedence over section artwork; tag pages
- * use the artwork of the component or tool whose content they display.
- * All manifests use content hashes so social previews refresh when artwork changes.
- * Keep curated artwork separate so running the legacy generator cannot replace it.
+ * Social previews use checked-in images. Individual artwork takes precedence over
+ * section artwork and the base banners. Tag pages use the artwork of the component
+ * or tool whose content they display. Content hashes refresh previews after an image changes.
  */
 const BANNERS: Record<string, string> = { ...seoBanners, ...seoArtwork, ...individualArtwork };
 export const BANNER_WIDTH = 1200;
