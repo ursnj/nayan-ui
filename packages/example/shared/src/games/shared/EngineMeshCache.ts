@@ -1,6 +1,6 @@
 // Keep only recipe identity here. The engine owns durable storage, validation and recovery.
 // Completed records have no expiry/eviction; this cache skips entire expensive JS factories.
-import { ProceduralCache } from '@nayan-ui/engine';
+import { ProceduralCache } from 'nayan-ui';
 import * as versions from './ProceduralCacheVersion';
 
 const { PROCEDURAL_CACHE_VERSION } = versions;

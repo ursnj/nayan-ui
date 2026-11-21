@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { NImage, NPress, NText, NView } from "@nayan-ui/engine/components";
+import { NImage, NPress, NText, NView } from "nayan-ui/components";
 import { AlignJustify, Github, MoonStar, Package, Sun, X } from "@/design/Icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -24,11 +24,11 @@ const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
     .sort((first, second) => second.href.length - first.href.length)[0]?.href;
 
   return (
-    <ul className="site-nav-list">
+    <NView tag="ul" className="site-nav-list">
       {NAV.map(({ label, href }) => {
         const active = href === activeHref;
         return (
-          <li key={href} className="site-nav-item">
+          <NView tag="li" key={href} className="site-nav-item">
             <Link
               href={href}
               onClick={onNavigate}
@@ -41,10 +41,10 @@ const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
             >
               {label}
             </Link>
-          </li>
+          </NView>
         );
       })}
-    </ul>
+    </NView>
   );
 };
 
@@ -83,8 +83,8 @@ const Header = () => {
       tag="header"
       className="site-header fixed inset-x-0 top-0 z-40 border-b border-border backdrop-blur-xl"
     >
-      <div className={CONTAINER}>
-        <dialog
+      <NView tag="div" className={CONTAINER}>
+        <NView tag="dialog"
           id="site-menu"
           ref={menu}
           aria-labelledby="site-menu-title"
@@ -106,31 +106,31 @@ const Header = () => {
                 <X className="h-5 w-5" />
               </NPress>
             </NView>
-            <nav aria-label="Mobile">
+            <NView tag="nav" aria-label="Mobile">
               <NavLinks pathname={pathname} onNavigate={closeMenu} />
-            </nav>
+            </NView>
           </NView>
-        </dialog>
+        </NView>
 
-        <div className="site-header-row flex items-center justify-between gap-3 lg:gap-6">
+        <NView tag="div" className="site-header-row flex items-center justify-between gap-3 lg:gap-6">
           <Link href="/" aria-label="Nayan UI home" className="flex shrink-0 items-center gap-2.5">
             <NImage src="/logo.webp" priority alt="" width={32} height={32} className="site-logo h-8 w-8" />
-            <span className="whitespace-nowrap text-lg font-bold tracking-[-0.045em] text-foreground">
+            <NText tag="span" className="whitespace-nowrap text-lg font-bold tracking-[-0.045em] text-foreground">
               Nayan UI
-            </span>
+            </NText>
           </Link>
 
-          <nav aria-label="Main" className="site-desktop-nav">
+          <NView tag="nav" aria-label="Main" className="site-desktop-nav">
             <NavLinks pathname={pathname} />
-          </nav>
+          </NView>
 
-          <div className="site-header-actions">
+          <NView tag="div" className="site-header-actions">
             <Link
-              href="https://www.npmjs.com/package/@nayan-ui/engine"
+              href="https://www.npmjs.com/package/nayan-ui"
               target="_blank"
               rel="noopener noreferrer"
-              title="Nayan Engine on npm"
-              aria-label="Nayan Engine on npm"
+              title="Nayan UI on npm"
+              aria-label="Nayan UI on npm"
               className="inline-grid site-header-action"
             >
               <Package className="h-[18px] w-[18px]" />
@@ -152,7 +152,7 @@ const Header = () => {
               className="inline-grid site-header-action"
             >
               {!mounted ? (
-                <span className="block h-[18px] w-[18px]" />
+                <NText tag="span" className="block h-[18px] w-[18px]" />
               ) : theme === "dark" ? (
                 <Sun className="h-[18px] w-[18px]" />
               ) : (
@@ -168,9 +168,9 @@ const Header = () => {
             >
               <AlignJustify className="h-5 w-5" />
             </NPress>
-          </div>
-        </div>
-      </div>
+          </NView>
+        </NView>
+      </NView>
     </NView>
   );
 };

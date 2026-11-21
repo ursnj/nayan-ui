@@ -1,13 +1,14 @@
 "use client";
 
+import { NView } from 'nayan-ui/components';
 import dynamic from "next/dynamic";
 
-const VideoEditor = dynamic(() => import("@/components/video-editor/App"), {
+const VideoEditor = dynamic(() => import("@/components/nayan-video-editor/App"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-screen items-center justify-center bg-background text-foreground">
+    <NView tag="div" className="flex h-screen items-center justify-center bg-background text-foreground">
       Loading editor…
-    </div>
+    </NView>
   ),
 });
 

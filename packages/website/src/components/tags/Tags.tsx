@@ -1,3 +1,4 @@
+import { NView, NText } from 'nayan-ui/components';
 import Link from 'next/link';
 import { DocsIntro } from '@/design/Primitives';
 import { ArrowRight, Boxes, Code2 } from '@/design/Icons';
@@ -5,40 +6,40 @@ import { ACCENT_SOFT, CARD, H4_CARD } from '@/design/system';
 import Sidebar from '@/components/helpers/Sidebar';
 import SubHeader from '@/components/helpers/SubHeader';
 import TagsList from '@/components/helpers/TagsList';
-import { referenceTopics, taggedComponents, taggedModules, type TaggedReference } from '@/services/engine/reference-tags';
+import { referenceTopics, taggedComponents, taggedModules, type TaggedReference } from '@/services/nayan-ui/reference-tags';
 
 const tagNavigation = {
   title: 'Tags',
   href: '/tags',
   items: [
     { title: 'Tags', description: 'Browse by topic.', link: '/tags' },
-    { title: 'Components', description: 'Component and hook reference.', link: '/components' },
-    { title: 'Modules', description: 'Engine module reference.', link: '/modules' }
+    { title: 'Nayan Components', description: 'Component and hook reference.', link: '/components' },
+    { title: 'Nayan Modules', description: 'Engine module reference.', link: '/modules' }
   ]
 };
 
 function TagEntries({ entries, showTags = false }: { entries: readonly TaggedReference[]; showTags?: boolean }) {
   return (
-    <ul className={showTags ? 'space-y-3' : 'grid gap-3 sm:grid-cols-2 lg:grid-cols-3'}>
+    <NView tag="ul" className={showTags ? 'space-y-3' : 'grid gap-3 sm:grid-cols-2 lg:grid-cols-3'}>
       {entries.map(({ path, title, description, kind, tags, nativePath }) => {
         const Icon = kind === 'component' ? Code2 : Boxes;
         return (
-          <li key={path} className={`${CARD} p-4`}>
+          <NView tag="li" key={path} className={`${CARD} p-4`}>
             <Link href={path} className="group flex items-center gap-3">
-              <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${ACCENT_SOFT}`}>
+              <NText tag="span" className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${ACCENT_SOFT}`}>
                 <Icon aria-hidden size={16} />
-              </span>
-              <span className={`${H4_CARD} group-hover:text-accent`}>{title}</span>
+              </NText>
+              <NText tag="span" className={`${H4_CARD} group-hover:text-accent`}>{title}</NText>
               <ArrowRight aria-hidden className="ml-auto shrink-0 text-muted group-hover:text-accent" size={16} />
             </Link>
             {showTags ? (
-              <div className="mt-3">
+              <NView tag="div" className="mt-3">
                 <TagsList tags={tags} />
-              </div>
+              </NView>
             ) : (
               <>
-                <p className="mt-2 text-sm text-muted">{description}</p>
-                <p className="mt-3 text-xs font-medium text-muted">{kind === 'component' ? 'Component' : 'Module'}</p>
+                <NText tag="p" className="mt-2 text-sm text-muted">{description}</NText>
+                <NText tag="p" className="mt-3 text-xs font-medium text-muted">{kind === 'component' ? 'Component' : 'Module'}</NText>
               </>
             )}
             {nativePath && (
@@ -46,10 +47,10 @@ function TagEntries({ entries, showTags = false }: { entries: readonly TaggedRef
                 React Native docs
               </Link>
             )}
-          </li>
+          </NView>
         );
       })}
-    </ul>
+    </NView>
   );
 }
 

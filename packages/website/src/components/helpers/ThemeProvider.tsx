@@ -1,7 +1,7 @@
 "use client";
 
 import { type ReactNode, useEffect, useState } from "react";
-import { NTheme, type NThemeMode, useNTheme } from "@nayan-ui/engine/components";
+import { NTheme, type NThemeMode, useNTheme } from "nayan-ui/components";
 
 const STORAGE_KEY = "THEME";
 

@@ -2,7 +2,7 @@
 
 import { ReactNode, useMemo, useState } from "react";
 import { Menu, Search, X } from "@/design/Icons";
-import { NInput, NPress, NText, NView } from "@nayan-ui/engine/components";
+import { NInput, NPress, NText, NView } from "nayan-ui/components";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Breadcrumb } from "@/design/Primitives";
@@ -19,8 +19,8 @@ interface Props {
 const SECTION_LABELS: Record<string, string> = {
   react: "React",
   "react-native": "React Native",
-  games: "Games",
-  "game-engine": "Game Engine",
+  games: "Nayan Games",
+  "game-engine": "Nayan Game Engine",
   tools: "Tools",
 };
 
@@ -50,8 +50,8 @@ const SidebarNav = ({
   onNavigate?: () => void;
 }) => (
   <>
-    <div className="border-b border-border p-3">
-      <label className="relative block">
+    <NView tag="div" className="border-b border-border p-3">
+      <NView tag="label" className="relative block">
         <Search
           aria-hidden
           className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted"
@@ -73,14 +73,18 @@ const SidebarNav = ({
             <X className="h-3.5 w-3.5" />
           </NPress>
         ) : null}
-      </label>
-    </div>
+      </NView>
+    </NView>
 
-    <div className="site-docs-list overflow-y-auto p-3">
+    <NView
+      tag="div"
+      className="site-docs-list overflow-y-auto p-3 [overscroll-behavior-y:contain] [scrollbar-width:thin]"
+      style={{ maxHeight: 'calc(100dvh - var(--site-header-height) - 5.25rem)' }}
+    >
       {items.length === 0 ? (
-        <p className="px-2 py-6 text-center text-xs text-muted">
+        <NText tag="p" className="px-2 py-6 text-center text-xs text-muted">
           Nothing matches &ldquo;{query}&rdquo;.
-        </p>
+        </NText>
       ) : (
         items.map((item, index) => {
           const Icon = item.icon;
@@ -88,19 +92,19 @@ const SidebarNav = ({
           if (item.isHeading) {
             const childCount = countChildren(allItems, allItems.indexOf(item));
             return (
-              <div
+              <NView tag="div"
                 key={item.link || `heading-${index}`}
                 className="flex items-center justify-between px-2.5 pb-1 pt-3 first:pt-0"
               >
-                <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-muted">
-                  {item.title}
-                </span>
+                <NText tag="span" className="font-mono text-[11px] font-semibold uppercase tracking-wider text-muted">
+                  {item.navTitle ?? item.title}
+                </NText>
                 {childCount > 0 ? (
-                  <span className="rounded-full bg-default/60 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-muted">
+                  <NText tag="span" className="rounded-full bg-default/60 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-muted">
                     {childCount}
-                  </span>
+                  </NText>
                 ) : null}
-              </div>
+              </NView>
             );
           }
 
@@ -126,12 +130,12 @@ const SidebarNav = ({
                   }`}
                 />
               ) : null}
-              <span className="truncate">{item.title}</span>
+              <NText tag="span" className="truncate">{item.title}</NText>
             </Link>
           );
         })
       )}
-    </div>
+    </NView>
   </>
 );
 
@@ -163,17 +167,21 @@ const Sidebar = (props: Props) => {
   const sectionLabel = props.reference?.title ?? SECTION_LABELS[section];
 
   const breadcrumb: { label: string; href?: string }[] = [{ label: "Home", href: "/" }];
-  // A section's own landing page (e.g. "Game Engine" at /game-engine) shows its title once.
+  // A section's own landing page (e.g. "Nayan Game Engine" at /game-engine) shows its title once.
   if (sectionLabel && sectionLabel !== props.title)
     breadcrumb.push({ label: sectionLabel, href: props.reference?.href ?? `/${section}` });
   if (props.title) breadcrumb.push({ label: props.title });
 
   return (
     <NView tag="div" className="mx-auto w-full max-w-[82rem] p-3">
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-[13rem_minmax(0,1fr)] lg:grid-cols-[15rem_minmax(0,1fr)]">
+      <NView tag="div" className="grid grid-cols-1 gap-3 md:grid-cols-[13rem_minmax(0,1fr)] lg:grid-cols-[15rem_minmax(0,1fr)]">
         {/* Desktop sidebar */}
-        <nav aria-label="Documentation" className="hidden md:block">
-          <div className="site-docs-navigation sticky rounded-xl border border-border bg-surface">
+        <NView tag="nav" aria-label="Documentation" className="hidden md:block">
+          <NView
+            tag="div"
+            className="site-docs-navigation sticky rounded-xl border border-border bg-surface"
+            style={{ top: 'calc(var(--site-header-height) + 0.75rem)' }}
+          >
             <SidebarNav
               items={items}
               allItems={sidebarItems}
@@ -181,12 +189,12 @@ const Sidebar = (props: Props) => {
               query={query}
               setQuery={setQuery}
             />
-          </div>
-        </nav>
+          </NView>
+        </NView>
 
-        <div className="content grid min-w-0 grid-cols-1 content-start gap-3">
+        <NView tag="div" className="content grid min-w-0 grid-cols-1 content-start gap-3">
           {/* Mobile sidebar toggle */}
-          <div className="md:hidden">
+          <NView tag="div" className="md:hidden">
             <NPress
               onPress={() => setMobileOpen((open) => !open)}
               aria-expanded={mobileOpen}
@@ -195,11 +203,11 @@ const Sidebar = (props: Props) => {
               <Menu className="h-4 w-4" />
               Browse pages
             </NPress>
-          </div>
+          </NView>
 
           {/* Mobile sidebar drawer */}
           {mobileOpen ? (
-            <nav
+            <NView tag="nav"
               aria-label="Documentation"
               className="rounded-xl border border-border bg-surface md:hidden"
             >
@@ -211,16 +219,16 @@ const Sidebar = (props: Props) => {
                 setQuery={setQuery}
                 onNavigate={() => setMobileOpen(false)}
               />
-            </nav>
+            </NView>
           ) : null}
 
-          <header className="site-docs-heading grid gap-3">
+          <NView tag="header" className="site-docs-heading grid gap-3">
             <Breadcrumb items={breadcrumb} className="" />
             {props.title && <NText tag="h1" className={H1}>{props.title}</NText>}
-          </header>
-          <div>{props.children}</div>
-        </div>
-      </div>
+          </NView>
+          <NView tag="div">{props.children}</NView>
+        </NView>
+      </NView>
     </NView>
   );
 };

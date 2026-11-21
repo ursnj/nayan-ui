@@ -1,7 +1,7 @@
 'use client';
 
 import { useId, useState } from 'react';
-import { NRadio, NRadioGroup, NText, NView } from '@nayan-ui/engine/components';
+import { NRadio, NRadioGroup, NText, NView } from 'nayan-ui/components';
 
 function Option({
   group,

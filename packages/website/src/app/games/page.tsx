@@ -1,5 +1,5 @@
-import Games from "@/components/games/Games";
-import { FAQS, FEATURES, STEPS } from "@/components/games/content";
+import Games from "@/components/nayan-games/NayanGames";
+import { FAQS, FEATURES, STEPS } from "@/components/nayan-games/content";
 import JsonLd from "@/components/helpers/JsonLd";
 import { GAMES_LIST } from "@/services/GamesData";
 import {
@@ -14,7 +14,7 @@ import {
 } from "@/services/seo";
 
 export const metadata = buildPageMetadata({
-  title: "50+ Free Games for React & React Native",
+  title: "Nayan Games · 50+ Games for React and React Native",
   description:
     "Play 50+ free puzzle, arcade, action and strategy games online, and add them to React Native apps and React websites with one component each.",
   path: "/games",
@@ -28,7 +28,7 @@ export const metadata = buildPageMetadata({
 const schemas = [
   buildBreadcrumbSchema([
     { name: "Home", url: SITE_URL },
-    { name: "Games", url: GAMES_URL },
+    { name: "Nayan Games", url: GAMES_URL },
   ]),
   {
     "@context": "https://schema.org",
@@ -43,7 +43,7 @@ const schemas = [
     about: { "@id": `${GAMES_URL}#software` },
     mainEntity: {
       "@type": "ItemList",
-      name: "Games",
+      name: "Nayan Games",
       numberOfItems: GAMES_LIST.length,
       itemListElement: GAMES_LIST.map((game, index) => ({
         "@type": "ListItem",
@@ -61,7 +61,7 @@ const schemas = [
   buildHowToSchema({
     name: "Add a game to your app",
     description: "Four steps from install to a reported result.",
-    tools: ["@nayan-ui/games", "@nayan-ui/engine"],
+    tools: ["@nayan-ui/games", "nayan-ui"],
     steps: STEPS.map((step) => ({
       name: step.title,
       text: step.body,

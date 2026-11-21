@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/time-field", "react");
@@ -9,7 +9,7 @@ export default function TimeFieldPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <EngineComponentDoc path="/react/time-field" />
+      <NayanComponentDoc path="/react/time-field" />
     </>
   );
 }

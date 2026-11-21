@@ -1,3 +1,4 @@
+import { NView, NText } from 'nayan-ui/components';
 import { ReactNode } from "react";
 import { Link2 } from "@/design/Icons";
 import { SCROLL_MT } from "@/design/system";
@@ -23,28 +24,28 @@ const SubHeader = (props: Props) => {
   const id = props.id ?? slug(props.title);
 
   return (
-    <section className={`mb-3 grid grid-cols-1 gap-3 ${SCROLL_MT}`} aria-labelledby={id}>
-      <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border pb-3">
-        <h2
+    <NView tag="section" className={`mb-3 grid grid-cols-1 gap-3 ${SCROLL_MT}`} aria-labelledby={id}>
+      <NView tag="div" className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border pb-3">
+        <NText tag="h2"
           id={id}
           className="group flex items-center gap-2 text-xl font-semibold tracking-tight text-foreground"
         >
           {props.title}
-          <a
+          <NView tag="a"
             href={`#${id}`}
             aria-label={`Link to ${props.title}`}
             className="text-muted transition-colors hover:text-accent sm:opacity-0 sm:focus-visible:opacity-100 sm:group-hover:opacity-100"
           >
             <Link2 className="h-3.5 w-3.5" />
-          </a>
-        </h2>
-        {props.action ? <div className="shrink-0">{props.action}</div> : null}
-      </div>
+          </NView>
+        </NText>
+        {props.action ? <NView tag="div" className="shrink-0">{props.action}</NView> : null}
+      </NView>
       {props.description ? (
-        <p className="max-w-3xl text-sm leading-relaxed text-muted">{props.description}</p>
+        <NText tag="p" className="max-w-3xl text-sm leading-relaxed text-muted">{props.description}</NText>
       ) : null}
-      <div className="leading-relaxed">{props.children}</div>
-    </section>
+      <NView tag="div" className="leading-relaxed">{props.children}</NView>
+    </NView>
   );
 };
 

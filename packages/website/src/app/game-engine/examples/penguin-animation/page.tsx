@@ -1,3 +1,4 @@
+import { NText, NView } from 'nayan-ui/components';
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import Link from "next/link";
@@ -21,23 +22,23 @@ const source = readFileSync(
 export default function PenguinAnimationPage() {
   return (
     <Sidebar title="Penguin Animation">
-      <p className={`mb-8 mt-4 max-w-2xl ${LEAD}`}>
+      <NText tag="p" className={`mb-8 mt-4 max-w-2xl ${LEAD}`}>
         The penguin from Playtura’s Penguin Run, built entirely with Nayan Game Engine’s procedural
         geometry. Try all ten animations, slow down the action, or drag the scene to see it from
         every angle.
-      </p>
+      </NText>
       <PenguinAnimation source={source} />
-      <section className="mt-12 space-y-4" aria-labelledby="penguin-setup-heading">
-        <h2 id="penguin-setup-heading" className={H2}>
+      <NView tag="section" className="mt-12 space-y-4" aria-labelledby="penguin-setup-heading">
+        <NText tag="h2" id="penguin-setup-heading" className={H2}>
           Build your own penguin scene
-        </h2>
-        <p className={LEAD}>
-          Install <code>@nayan-ui/engine</code>, copy the complete scene from the Code tab, and
+        </NText>
+        <NText tag="p" className={LEAD}>
+          Install <NText tag="code">nayan-ui</NText>, copy the complete scene from the Code tab, and
           render it in a container with a fixed height. Every mesh, color, rig part, and animation
-          is included. <code>useWorld</code> handles engine startup and cleanup, and native
+          is included. <NText tag="code">useWorld</NText> handles engine startup and cleanup, and native
           keyframes animate the penguin.
-        </p>
-        <p className="text-sm text-muted">
+        </NText>
+        <NText tag="p" className="text-sm text-muted">
           Explore{" "}
           <Link
             href="/game-engine/surfaces-lofts"
@@ -53,8 +54,8 @@ export default function PenguinAnimationPage() {
             keyframe animations
           </Link>{" "}
           to create your own characters.
-        </p>
-      </section>
+        </NText>
+      </NView>
     </Sidebar>
   );
 }

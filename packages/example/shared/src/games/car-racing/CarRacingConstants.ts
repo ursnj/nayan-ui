@@ -10,7 +10,7 @@ import {
   type Texture,
   type Vec3,
   warmUpEngine
-} from '@nayan-ui/engine';
+} from 'nayan-ui';
 import { loadHudFonts } from '../shared/EngineHud';
 import { loadCarMeshes, treeMesh } from './CarMeshes';
 import { type SceneryMeshes, sceneryMeshes } from './CarRacingScenery';

@@ -1,4 +1,4 @@
-import type { Vec3 } from '@nayan-ui/engine';
+import type { Vec3 } from 'nayan-ui';
 
 // The bundled 64x128 facade has 8-pixel columns and 10-pixel rows. The final row is clipped;
 // these masks identify the complete warm-lit windows in that exact texture (top row first).

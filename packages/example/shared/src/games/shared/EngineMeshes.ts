@@ -1,7 +1,7 @@
 // The engine owns mesh hashing, preparation, registration and persistent storage in Rust.
 // Factory caches additionally skip JS model construction. Ratio 1 preserves the
 // authored surfaces, normals, colours and UV seams while welding and improving GPU cache reuse.
-import { createShape, type Geometry, type Model, type ShapeOptions } from '@nayan-ui/engine';
+import { createShape, type Geometry, type Model, type ShapeOptions } from 'nayan-ui';
 import { cacheGameAsset, gameStorageKey, peekGameAsset } from './EngineMeshCache';
 
 export function createGameMesh(geometry: Geometry, options: ShapeOptions = {}): Model {

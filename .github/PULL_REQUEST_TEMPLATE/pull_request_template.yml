@@ -8,7 +8,7 @@ body:
       description: Select the package this PR is related to
       options:
         - label: Nayan UI CLI
-        - label: Nayan UI Games
+        - label: Nayan Games
         - label: Nayan UI Website
         - label: Nayan UI React JS
         - label: Nayan UI React Native

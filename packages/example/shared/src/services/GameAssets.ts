@@ -1,7 +1,7 @@
 // What the game loader (GameAssetLoader) prepares before a game mounts, a few jobs per frame behind the
 // loading screen, so no single long job freezes it (Android's Hermes stalls far longer than desktop
 // JavaScript suggests). Trimmed from the games library's GameAssets.ts to Car Racing.
-import { isEngineAvailable, warmUpEngine } from '@nayan-ui/engine';
+import { isEngineAvailable, warmUpEngine } from 'nayan-ui';
 import { warmAssets as warmCarRacing } from '../games/car-racing/CarRacingConstants';
 import { warmAssets as warmCarRacingScene } from '../games/car-racing/CarRacingScene';
 import { loadHudFonts, warmAssets as warmHud } from '../games/shared/EngineHud';

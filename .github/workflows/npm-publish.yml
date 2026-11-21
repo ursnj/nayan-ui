@@ -1,10 +1,10 @@
-name: Build engine
+name: Build nayan-ui
 
 on:
   push:
     branches: [refactor-nayan-ui, main]
     paths:
-      - packages/engine/**
+      - packages/nayan-ui/**
       - bun.lock
       - bunfig.toml
       - .bun-version
@@ -32,8 +32,8 @@ jobs:
         id: core-cache
         uses: actions/cache@v4
         with:
-          path: packages/engine/native/core/build
-          key: engine-core-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('packages/engine/native/core/**', 'packages/engine/native/*/rust/**', '.github/workflows/npm-publish.yml') }}
+          path: packages/nayan-ui/native/core/build
+          key: engine-core-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('packages/nayan-ui/native/core/**', 'packages/nayan-ui/native/*/rust/**', '.github/workflows/npm-publish.yml') }}
 
       - name: Set up Android SDK
         if: steps.core-cache.outputs.cache-hit != 'true'
@@ -59,16 +59,16 @@ jobs:
         if: steps.core-cache.outputs.cache-hit != 'true'
         uses: Swatinem/rust-cache@v2
         with:
-          workspaces: packages/engine/native/core -> target
+          workspaces: packages/nayan-ui/native/core -> target
           cache-on-failure: true
 
       - name: Test Rust core
         if: steps.core-cache.outputs.cache-hit != 'true'
-        run: cargo test --locked --manifest-path packages/engine/native/core/Cargo.toml
+        run: cargo test --locked --manifest-path packages/nayan-ui/native/core/Cargo.toml
 
       - name: Install matching wasm-bindgen CLI
         if: steps.core-cache.outputs.cache-hit != 'true'
-        working-directory: packages/engine
+        working-directory: packages/nayan-ui
         run: |
           version="$(awk '/^name = "wasm-bindgen"$/ { getline; print $3; exit }' native/core/Cargo.lock | tr -d '"')"
           if ! wasm-bindgen --version | grep -Fxq "wasm-bindgen $version"; then
@@ -77,7 +77,7 @@ jobs:
 
       - name: Build iOS, Android and WebAssembly libraries
         if: steps.core-cache.outputs.cache-hit != 'true'
-        working-directory: packages/engine
+        working-directory: packages/nayan-ui
         run: |
           native/core/scripts/build-ios.sh
           native/core/scripts/build-android.sh
@@ -87,7 +87,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: engine-core
-          path: packages/engine/native/core/build
+          path: packages/nayan-ui/native/core/build
           if-no-files-found: error
           retention-days: 1
 
@@ -113,15 +113,15 @@ jobs:
           key: engine-bun-${{ runner.os }}-${{ hashFiles('.bun-version', 'bun.lock', 'bunfig.toml') }}
 
       - name: Install engine dependencies
-        run: bun install --frozen-lockfile --filter @nayan-ui/engine
+        run: bun install --frozen-lockfile --filter nayan-ui
 
       - uses: actions/download-artifact@v4
         with:
           name: engine-core
-          path: packages/engine/native/core/build
+          path: packages/nayan-ui/native/core/build
 
       - name: Build the JavaScript package
-        working-directory: packages/engine
+        working-directory: packages/nayan-ui
         run: |
           bun scripts/build-web.mjs
           bun x bob build
@@ -133,14 +133,14 @@ jobs:
           bun run engine:test:integration
 
       - name: Validate and pack the npm package
-        working-directory: packages/engine
+        working-directory: packages/nayan-ui
         run: |
           npm pack --ignore-scripts --dry-run --json | bun scripts/check-package.mjs --pack-json
           npm pack --pack-destination "$RUNNER_TEMP"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: nayan-ui-engine
-          path: ${{ runner.temp }}/nayan-ui-engine-*.tgz
+          name: nayan-ui
+          path: ${{ runner.temp }}/nayan-ui-*.tgz
           if-no-files-found: error
           retention-days: 7

@@ -1,8 +1,8 @@
 import type { GAME_IDS } from "@nayan-ui/games/services";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import GameDetail from "@/components/games/GameDetail";
-import GameExperience from "@/components/games/GameExperience";
+import GameDetail from "@/components/nayan-games/GameDetail";
+import GameExperience from "@/components/nayan-games/GameExperience";
 import JsonLd from "@/components/helpers/JsonLd";
 import { gamesData } from "@/services/GamesData";
 import {
@@ -81,7 +81,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
   const schemas = [
     buildBreadcrumbSchema([
       { name: "Home", url: SITE_URL },
-      { name: "Games", url: `${SITE_URL}/games` },
+      { name: "Nayan Games", url: `${SITE_URL}/games` },
       { name: game.name, url: `${SITE_URL}/games/${slug}` },
     ]),
     {

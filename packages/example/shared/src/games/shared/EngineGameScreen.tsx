@@ -10,7 +10,7 @@
 //   });
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { AppState, BackHandler, type LayoutChangeEvent, StyleSheet, Text, View } from 'react-native';
-import { audio, GameView, isEngineAvailable, warmUpEngine, World } from '@nayan-ui/engine';
+import { audio, GameView, isEngineAvailable, warmUpEngine, World } from 'nayan-ui';
 import { GameSettingsModal, GameThemeProvider } from '../../helpers';
 import { GAMES_METADATA } from '../../services/GamesMetadata';
 import { GAME_SOUNDS, playSound, preloadSounds, stopAllSounds } from '../../services/SoundsService';

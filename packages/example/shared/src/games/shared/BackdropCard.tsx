@@ -3,7 +3,7 @@
 // pattern from its top-left corner (the card clips it), so cards look the same in every game.
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { type LayoutChangeEvent, StyleSheet, View } from 'react-native';
-import { type Camera, GameView, isEngineAvailable, World } from '@nayan-ui/engine';
+import { type Camera, GameView, isEngineAvailable, World } from 'nayan-ui';
 import { useGameTheme } from '../../helpers/GameTheme';
 import { BACKDROP_LIGHT, backdropMesh } from './EngineBackdrop';
 import { toRgb } from './EngineUtils';

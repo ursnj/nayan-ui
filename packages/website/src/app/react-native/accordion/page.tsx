@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNAccordionPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <EngineComponentDoc path="/react-native/accordion" />
+      <NayanComponentDoc path="/react-native/accordion" />
     </>
   );
 }

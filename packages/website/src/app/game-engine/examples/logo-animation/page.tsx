@@ -1,3 +1,4 @@
+import { NText, NView } from 'nayan-ui/components';
 import { LOGOS, type LogoId } from "@/components/examples/logo-animation/logos";
 import LogoAnimation from "@/components/examples/logo-animation/LogoAnimation";
 import Code from "@/components/helpers/Code";
@@ -28,23 +29,23 @@ const sources = Object.fromEntries(
 export default function LogoAnimationPage() {
   return (
     <Sidebar title="Logo Animation">
-      <p className={`mb-8 mt-4 max-w-2xl ${LEAD}`}>
+      <NText tag="p" className={`mb-8 mt-4 max-w-2xl ${LEAD}`}>
         Explore {LOGOS.length} famous company logos, brought to life with 3D shapes. Each logo has
         its own signature animation. Choose a company below to preview its animation and read the
         complete source code.
-      </p>
+      </NText>
       <LogoAnimation sources={sources} />
-      <section id="setup" className="mt-12 scroll-mt-24 space-y-4" aria-labelledby="source-heading">
-        <h2 id="source-heading" className={H2}>
+      <NView tag="section" id="setup" className="mt-12 scroll-mt-24 space-y-4" aria-labelledby="source-heading">
+        <NText tag="h2" id="source-heading" className={H2}>
           Build it with Nayan Game Engine
-        </h2>
-        <p className={LEAD}>
+        </NText>
+        <NText tag="p" className={LEAD}>
           Install the engine, then copy the complete component from a logo’s Code tab into your
           React app. Each example includes its geometry, animation loop, and engine setup. Render
           the component inside a container with a fixed height.
-        </p>
-        <Code code="bun add @nayan-ui/engine" language="bash" filename="Terminal" />
-        <p className="text-sm text-muted">
+        </NText>
+        <Code code="bun add nayan-ui" language="bash" filename="Terminal" />
+        <NText tag="p" className="text-sm text-muted">
           Learn more about{" "}
           <Link
             href="/game-engine/world-entities"
@@ -60,12 +61,12 @@ export default function LogoAnimationPage() {
             GameView
           </Link>
           .
-        </p>
-        <p className="text-xs text-muted">
+        </NText>
+        <NText tag="p" className="text-xs text-muted">
           Company names and logos belong to their respective owners. These independent examples
           demonstrate animation with Nayan Game Engine.
-        </p>
-      </section>
+        </NText>
+      </NView>
     </Sidebar>
   );
 }

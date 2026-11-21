@@ -1,7 +1,7 @@
 // Car Racing's rules, with no React: build a run with `createGame`, then `start` it and `tick` it every
 // frame. Traffic, crashes, sideswipes, scoring, the autoplay bot and the camera. The screen listens
 // through the `on…` hooks.
-import { audio, type Camera, effects, type Entity, haptics, type Vec3, type Voice, World } from '@nayan-ui/engine';
+import { audio, type Camera, effects, type Entity, haptics, type Vec3, type Voice, World } from 'nayan-ui';
 import { playBankSound } from '../../services/SoundsService';
 import { frontHit, overlapAcross } from '../shared/EngineFootprint';
 import type { HudFeedback } from '../shared/EngineHud';

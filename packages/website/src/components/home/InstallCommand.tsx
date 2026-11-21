@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { Check, Copy, Terminal } from '@/design/Icons';
-import { clipboard } from '@nayan-ui/engine/clipboard';
-import { NPress, NText, NView } from '@nayan-ui/engine/components';
+import { clipboard } from 'nayan-ui/clipboard';
+import { NPress, NText, NView } from 'nayan-ui/components';
 
-const COMMAND = 'bun add @nayan-ui/engine';
+const COMMAND = 'bun add nayan-ui';
 
 export default function InstallCommand() {
   const [copied, setCopied] = useState(false);

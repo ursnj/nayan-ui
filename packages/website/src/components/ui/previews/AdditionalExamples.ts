@@ -1,4 +1,4 @@
-import type { componentReferences } from '@/services/engine/component-reference';
+import type { componentReferences } from '@/services/nayan-ui/component-reference';
 import type { legacyComponentAlternatives } from './LegacyExamples';
 import { controlScenarios } from './ControlScenarios';
 import { interactiveScenarios } from './InteractiveScenarios';

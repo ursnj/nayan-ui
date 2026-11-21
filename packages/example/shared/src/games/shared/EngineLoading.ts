@@ -11,7 +11,7 @@ import {
   type Model,
   Path,
   World
-} from '@nayan-ui/engine';
+} from 'nayan-ui';
 import { GAMES_METADATA } from '../../services/GamesMetadata';
 import { GAME_IDS, type GameThemeMode } from '../../services/UtilsService';
 import { cacheGameAsset, createGameMesh } from './EngineMeshes';

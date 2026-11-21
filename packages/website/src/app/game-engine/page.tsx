@@ -1,7 +1,7 @@
-import EngineDocumentation from "@/components/engine/EngineDocumentation";
+import NayanGameEngineDocumentation from "@/components/nayan-game-engine/NayanGameEngineDocumentation";
 import JsonLd from "@/components/helpers/JsonLd";
-import { engineGuides } from "@/services/engine/guides";
-import { engineGuideSchemas } from "@/services/engine/seo";
+import { engineGuides } from "@/services/nayan-ui/guides";
+import { engineGuideSchemas } from "@/services/nayan-ui/seo";
 import { buildPageMetadata } from "@/services/seo";
 
 const guide = engineGuides[0]!; // The overview.
@@ -20,7 +20,7 @@ export default function EnginePage() {
   return (
     <>
       <JsonLd data={engineGuideSchemas(guide)} />
-      <EngineDocumentation guide={guide} />
+      <NayanGameEngineDocumentation guide={guide} />
     </>
   );
 }

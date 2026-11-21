@@ -1,4 +1,4 @@
-import GamesInstallation from "@/components/games/Installation";
+import GamesInstallation from "@/components/nayan-games/Installation";
 import JsonLd from "@/components/helpers/JsonLd";
 import {
   SITE_URL,
@@ -21,7 +21,7 @@ export const metadata = buildPageMetadata({
 const schemas = [
   buildBreadcrumbSchema([
     { name: "Home", url: SITE_URL },
-    { name: "Games", url: `${SITE_URL}/games` },
+    { name: "Nayan Games", url: `${SITE_URL}/games` },
     { name: "Installation", url: `${SITE_URL}/games/installation` },
   ]),
   buildTechArticleSchema({
@@ -39,7 +39,7 @@ const schemas = [
       "Theme",
       "Assets",
     ],
-    isPartOf: { name: "Nayan UI games documentation", url: `${SITE_URL}/games` },
+    isPartOf: { name: "Nayan Games documentation", url: `${SITE_URL}/games` },
   }),
   buildHowToSchema({
     name: "Run the Nayan UI games example",

@@ -1,19 +1,19 @@
 'use client';
 
 import { useEffect, useRef, useState, type ComponentType } from 'react';
-import { AnimationView, useAnimatedStyle, useSharedValue, withTiming } from '@nayan-ui/engine/animations';
-import { NButton, NLoading, NPage, NText } from '@nayan-ui/engine/components';
-import { DrawingCanvas, DrawingDocument } from '@nayan-ui/engine/drawing';
-import { GameView, Joystick, useJoystick, useWorld, warmUpEngine, type Camera, type Entity } from '@nayan-ui/engine/games';
-import { NMarkdown } from '@nayan-ui/engine/markdown';
-import { VideoPlayer } from '@nayan-ui/engine/video';
+import { AnimationView, useAnimatedStyle, useSharedValue, withTiming } from 'nayan-ui/animations';
+import { NView, NButton, NLoading, NPage, NText } from 'nayan-ui/components';
+import { DrawingCanvas, DrawingDocument } from 'nayan-ui/drawing';
+import { GameView, Joystick, useJoystick, useWorld, warmUpEngine, type Camera, type Entity } from 'nayan-ui/games';
+import { NMarkdown } from 'nayan-ui/markdown';
+import { VideoPlayer } from 'nayan-ui/video';
 
 function AnimationDemo({ alternate }: DemoProps) {
   const opacity = useSharedValue(1);
   const style = useAnimatedStyle({ opacity });
   const [faded, setFaded] = useState(false);
   return (
-    <div className="component-host-demo">
+    <NView tag="div" className="component-host-demo">
       <AnimationView animatedStyle={style} className="component-animation-block">
         <NText>Animated view</NText>
       </AnimationView>
@@ -26,7 +26,7 @@ function AnimationDemo({ alternate }: DemoProps) {
       >
         {faded ? 'Fade in' : 'Fade out'}
       </NButton>
-    </div>
+    </NView>
   );
 }
 
@@ -53,21 +53,21 @@ function DrawingDemo({ alternate }: DemoProps) {
   }, [alternate]);
   if (error)
     return (
-      <p role="status" className="component-host-demo">
+      <NText tag="p" role="status" className="component-host-demo">
         {error}
-      </p>
+      </NText>
     );
   if (!document) return <NLoading label="Preparing drawing canvas" />;
   return (
-    <div className="component-host-demo">
+    <NView tag="div" className="component-host-demo">
       <NText tag="p">Draw on the canvas.</NText>
-      <div className="component-media-surface">
+      <NView tag="div" className="component-media-surface">
         <DrawingCanvas document={document} mode="draw" />
-      </div>
+      </NView>
       <NButton className="component-host-button" onPress={() => document.clear()}>
         Clear drawing
       </NButton>
-    </div>
+    </NView>
   );
 }
 
@@ -86,16 +86,16 @@ function GameViewDemo({ alternate: perspective }: DemoProps) {
   );
   if (error)
     return (
-      <p role="status" className="component-host-demo">
+      <NText tag="p" role="status" className="component-host-demo">
         {error}
-      </p>
+      </NText>
     );
   if (!world) return <NLoading label="Preparing scene" />;
   return (
-    <div className="component-host-demo">
-      <div className="component-media-surface">
+    <NView tag="div" className="component-host-demo">
+      <NView tag="div" className="component-media-surface">
         <GameView source={world} camera={camera} style={{ width: '100%', height: '100%' }} onError={(cause) => setError(cause.message)} />
-      </div>
+      </NView>
       <NButton
         className="component-host-button"
         onPress={() => {
@@ -106,7 +106,7 @@ function GameViewDemo({ alternate: perspective }: DemoProps) {
       >
         {alternate ? 'Show blue cube' : 'Show green cube'}
       </NButton>
-    </div>
+    </NView>
   );
 }
 
@@ -123,10 +123,10 @@ function JoystickDemo({ alternate }: DemoProps) {
     return () => cancelAnimationFrame(frame);
   }, [stick]);
   return (
-    <div className="component-host-demo component-joystick-demo">
+    <NView tag="div" className="component-host-demo component-joystick-demo">
       <Joystick state={stick} size={alternate ? 84 : 120} style={{ background: '#2e1853', borderColor: '#8655d8' }} />
       <NText tag="p">X, Y: {position}</NText>
-    </div>
+    </NView>
   );
 }
 
@@ -144,7 +144,7 @@ function MarkdownDemo({ alternate }: DemoProps) {
 function VideoDemo({ alternate }: DemoProps) {
   return (
     <VideoPlayer
-      source="/engine-ui/reference-orbit.mp4"
+      source="/nayan-ui/reference-orbit.mp4"
       controls
       muted
       accessibilityLabel="Orbit sample clip"

@@ -1,7 +1,8 @@
 "use client";
 
+import { NView } from 'nayan-ui/components';
 import { useEffect, useRef } from "react";
-import { GameView, useWorld, type World, type Camera, type Entity } from "@nayan-ui/engine";
+import { GameView, useWorld, type World, type Camera, type Entity } from "nayan-ui";
 import { type LogoId } from "./logos";
 import * as microsoft from "./logos/microsoft";
 import * as google from "./logos/google";
@@ -122,8 +123,8 @@ export default function SharedLogoRuntime({
   if (!world) return null;
   const { assets } = session;
   return (
-    <div style={{ width: "100%", height: "100%", backgroundColor: background }}>
-      <div
+    <NView tag="div" style={{ width: "100%", height: "100%", backgroundColor: background }}>
+      <NView tag="div"
         ref={surface}
         role={rotateView ? "group" : undefined}
         aria-label={
@@ -216,7 +217,7 @@ export default function SharedLogoRuntime({
             }
           }}
         />
-      </div>
-    </div>
+      </NView>
+    </NView>
   );
 }

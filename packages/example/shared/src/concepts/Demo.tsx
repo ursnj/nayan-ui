@@ -1,5 +1,5 @@
 import { useRef, useState, type ReactNode } from "react";
-import { NPage, NPress, NText, NView } from "@nayan-ui/engine/components";
+import { NPage, NPress, NText, NView } from "nayan-ui/components";
 
 const text = "#e2e8f0";
 const muted = "#aebed2";

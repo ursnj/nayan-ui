@@ -1,186 +1,187 @@
+import { NView, NText } from 'nayan-ui/components';
 import { H2_DOC, H3_DOC } from "@/design/system";
 import Code from "@/components/helpers/Code";
 
 const AICodeScanner = () => {
   return (
-    <div>
-      <div className="mb-10 max-w-3xl text-base leading-relaxed text-muted">
+    <NView tag="div">
+      <NView tag="div" className="mb-10 max-w-3xl text-base leading-relaxed text-muted">
         Scan GitHub repositories for package vulnerabilities using native security tools combined
         with AI-powered analysis. Supports auto-fix with automatic PR creation.
-      </div>
+      </NView>
 
-      <h2 className={H2_DOC}>Installation</h2>
-      <div className="mb-5">Install the AI CLI globally:</div>
+      <NText tag="h2" className={H2_DOC}>Installation</NText>
+      <NView tag="div" className="mb-5">Install the AI CLI globally:</NView>
       <Code language="bash" code={`npm install -g @nayan-ui/ai`} />
-      <div className="mb-5 mt-5">Or use directly with npx:</div>
+      <NView tag="div" className="mb-5 mt-5">Or use directly with npx:</NView>
       <Code language="bash" code={`npx @nayan-ui/ai scan <repo-url> --token ghp_xxx`} />
 
-      <h2 className={H2_DOC}>Prerequisites</h2>
-      <div className="mb-5">
-        <strong>Codex CLI</strong> (default LLM) — login first:
-      </div>
+      <NText tag="h2" className={H2_DOC}>Prerequisites</NText>
+      <NView tag="div" className="mb-5">
+        <NText tag="strong">Codex CLI</NText> (default LLM) — login first:
+      </NView>
       <Code language="bash" code={`npx @openai/codex login`} />
-      <div className="mb-5 mt-5">
-        <strong>Claude Code CLI</strong> (optional) — if using <code>--llm claude</code>:
-      </div>
+      <NView tag="div" className="mb-5 mt-5">
+        <NText tag="strong">Claude Code CLI</NText> (optional) — if using <NText tag="code">--llm claude</NText>:
+      </NView>
       <Code language="bash" code={`claude login`} />
 
-      <h2 className={H2_DOC}>Usage</h2>
-      <div className="mb-5">Basic scan — detect and analyze all projects in the repo:</div>
+      <NText tag="h2" className={H2_DOC}>Usage</NText>
+      <NView tag="div" className="mb-5">Basic scan — detect and analyze all projects in the repo:</NView>
       <Code language="bash" code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx`} />
 
-      <div className="mb-5 mt-5">Scan specific paths in the repo:</div>
+      <NView tag="div" className="mb-5 mt-5">Scan specific paths in the repo:</NView>
       <Code
         language="bash"
         code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx --paths packages/api,packages/web`}
       />
 
-      <div className="mb-5 mt-5">Auto-fix vulnerabilities and create a PR:</div>
+      <NView tag="div" className="mb-5 mt-5">Auto-fix vulnerabilities and create a PR:</NView>
       <Code
         language="bash"
         code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx --fix`}
       />
 
-      <div className="mb-5 mt-5">Auto-fix with custom branch name:</div>
+      <NView tag="div" className="mb-5 mt-5">Auto-fix with custom branch name:</NView>
       <Code
         language="bash"
         code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx --fix --branch nayan-ai/security-updates`}
       />
 
-      <div className="mb-5 mt-5">Use Claude Code instead of Codex:</div>
+      <NView tag="div" className="mb-5 mt-5">Use Claude Code instead of Codex:</NView>
       <Code
         language="bash"
         code={`nayan-ai scan https://github.com/owner/repo --token ghp_xxx --llm claude`}
       />
 
-      <h2 className={H2_DOC}>Options</h2>
-      <div className="overflow-x-auto mb-5">
-        <table className="w-full text-sm border border-default rounded-lg">
-          <thead>
-            <tr className="bg-default/30">
-              <th className="text-left p-3 border-b border-default">Option</th>
-              <th className="text-left p-3 border-b border-default">Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="p-3 border-b border-default font-mono text-xs">-t, --token</td>
-              <td className="p-3 border-b border-default">
+      <NText tag="h2" className={H2_DOC}>Options</NText>
+      <NView tag="div" className="overflow-x-auto mb-5">
+        <NView tag="table" className="w-full text-sm border border-default rounded-lg">
+          <NView tag="thead">
+            <NView tag="tr" className="bg-default/30">
+              <NView tag="th" className="text-left p-3 border-b border-default">Option</NView>
+              <NView tag="th" className="text-left p-3 border-b border-default">Description</NView>
+            </NView>
+          </NView>
+          <NView tag="tbody">
+            <NView tag="tr">
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">-t, --token</NView>
+              <NView tag="td" className="p-3 border-b border-default">
                 GitHub personal access token (required)
-              </td>
-            </tr>
-            <tr>
-              <td className="p-3 border-b border-default font-mono text-xs">-l, --llm</td>
-              <td className="p-3 border-b border-default">
-                LLM provider: <code>codex</code> (default) or <code>claude</code>
-              </td>
-            </tr>
-            <tr>
-              <td className="p-3 border-b border-default font-mono text-xs">-p, --paths</td>
-              <td className="p-3 border-b border-default">
+              </NView>
+            </NView>
+            <NView tag="tr">
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">-l, --llm</NView>
+              <NView tag="td" className="p-3 border-b border-default">
+                LLM provider: <NText tag="code">codex</NText> (default) or <NText tag="code">claude</NText>
+              </NView>
+            </NView>
+            <NView tag="tr">
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">-p, --paths</NView>
+              <NView tag="td" className="p-3 border-b border-default">
                 Comma-separated list of paths to scan for projects
-              </td>
-            </tr>
-            <tr>
-              <td className="p-3 border-b border-default font-mono text-xs">-f, --fix</td>
-              <td className="p-3 border-b border-default">
+              </NView>
+            </NView>
+            <NView tag="tr">
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">-f, --fix</NView>
+              <NView tag="td" className="p-3 border-b border-default">
                 Auto-fix vulnerabilities and create a PR
-              </td>
-            </tr>
-            <tr>
-              <td className="p-3 font-mono text-xs">-b, --branch</td>
-              <td className="p-3">
+              </NView>
+            </NView>
+            <NView tag="tr">
+              <NView tag="td" className="p-3 font-mono text-xs">-b, --branch</NView>
+              <NView tag="td" className="p-3">
                 Branch name for fix PR (default: nayan-ai/security-fixes-&lt;timestamp&gt;)
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </NView>
+            </NView>
+          </NView>
+        </NView>
+      </NView>
 
-      <h2 className={H2_DOC}>Supported Project Types</h2>
-      <div className="overflow-x-auto mb-5">
-        <table className="w-full text-sm border border-default rounded-lg">
-          <thead>
-            <tr className="bg-default/30">
-              <th className="text-left p-3 border-b border-default">Type</th>
-              <th className="text-left p-3 border-b border-default">Manifest</th>
-              <th className="text-left p-3 border-b border-default">Native Scanner</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="p-3 border-b border-default font-semibold">npm</td>
-              <td className="p-3 border-b border-default font-mono text-xs">package.json</td>
-              <td className="p-3 border-b border-default font-mono text-xs">npm audit</td>
-            </tr>
-            <tr>
-              <td className="p-3 border-b border-default font-semibold">Python</td>
-              <td className="p-3 border-b border-default font-mono text-xs">requirements.txt</td>
-              <td className="p-3 border-b border-default font-mono text-xs">pip-audit</td>
-            </tr>
-            <tr>
-              <td className="p-3 border-b border-default font-semibold">Go</td>
-              <td className="p-3 border-b border-default font-mono text-xs">go.mod</td>
-              <td className="p-3 border-b border-default font-mono text-xs">govulncheck</td>
-            </tr>
-            <tr>
-              <td className="p-3 border-b border-default font-semibold">Rust</td>
-              <td className="p-3 border-b border-default font-mono text-xs">Cargo.toml</td>
-              <td className="p-3 border-b border-default font-mono text-xs">cargo audit</td>
-            </tr>
-            <tr>
-              <td className="p-3 border-b border-default font-semibold">Ruby</td>
-              <td className="p-3 border-b border-default font-mono text-xs">Gemfile</td>
-              <td className="p-3 border-b border-default font-mono text-xs">bundle audit</td>
-            </tr>
-            <tr>
-              <td className="p-3 border-b border-default font-semibold">PHP</td>
-              <td className="p-3 border-b border-default font-mono text-xs">composer.json</td>
-              <td className="p-3 border-b border-default font-mono text-xs">composer audit</td>
-            </tr>
-            <tr>
-              <td className="p-3 border-b border-default font-semibold">Java</td>
-              <td className="p-3 border-b border-default font-mono text-xs">pom.xml</td>
-              <td className="p-3 border-b border-default font-mono text-xs">
+      <NText tag="h2" className={H2_DOC}>Supported Project Types</NText>
+      <NView tag="div" className="overflow-x-auto mb-5">
+        <NView tag="table" className="w-full text-sm border border-default rounded-lg">
+          <NView tag="thead">
+            <NView tag="tr" className="bg-default/30">
+              <NView tag="th" className="text-left p-3 border-b border-default">Type</NView>
+              <NView tag="th" className="text-left p-3 border-b border-default">Manifest</NView>
+              <NView tag="th" className="text-left p-3 border-b border-default">Native Scanner</NView>
+            </NView>
+          </NView>
+          <NView tag="tbody">
+            <NView tag="tr">
+              <NView tag="td" className="p-3 border-b border-default font-semibold">npm</NView>
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">package.json</NView>
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">npm audit</NView>
+            </NView>
+            <NView tag="tr">
+              <NView tag="td" className="p-3 border-b border-default font-semibold">Python</NView>
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">requirements.txt</NView>
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">pip-audit</NView>
+            </NView>
+            <NView tag="tr">
+              <NView tag="td" className="p-3 border-b border-default font-semibold">Go</NView>
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">go.mod</NView>
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">govulncheck</NView>
+            </NView>
+            <NView tag="tr">
+              <NView tag="td" className="p-3 border-b border-default font-semibold">Rust</NView>
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">Cargo.toml</NView>
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">cargo audit</NView>
+            </NView>
+            <NView tag="tr">
+              <NView tag="td" className="p-3 border-b border-default font-semibold">Ruby</NView>
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">Gemfile</NView>
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">bundle audit</NView>
+            </NView>
+            <NView tag="tr">
+              <NView tag="td" className="p-3 border-b border-default font-semibold">PHP</NView>
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">composer.json</NView>
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">composer audit</NView>
+            </NView>
+            <NView tag="tr">
+              <NView tag="td" className="p-3 border-b border-default font-semibold">Java</NView>
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">pom.xml</NView>
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">
                 mvn dependency-check
-              </td>
-            </tr>
-            <tr>
-              <td className="p-3 font-semibold">.NET</td>
-              <td className="p-3 font-mono text-xs">*.csproj</td>
-              <td className="p-3 font-mono text-xs">dotnet list --vulnerable</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </NView>
+            </NView>
+            <NView tag="tr">
+              <NView tag="td" className="p-3 font-semibold">.NET</NView>
+              <NView tag="td" className="p-3 font-mono text-xs">*.csproj</NView>
+              <NView tag="td" className="p-3 font-mono text-xs">dotnet list --vulnerable</NView>
+            </NView>
+          </NView>
+        </NView>
+      </NView>
 
-      <h2 className={H2_DOC}>Auto-Fix Workflow</h2>
-      <div className="mb-5">
-        When using <code>--fix</code>, Nayan AI will:
-      </div>
-      <div className="grid sm:grid-cols-2 gap-4 mb-5">
-        <div className="bg-surface border border-default rounded-lg p-4">
-          <h3 className={H3_DOC}>1. Analyze</h3>
-          <p className="text-sm text-muted">Analyze vulnerabilities and generate fixes using AI</p>
-        </div>
-        <div className="bg-surface border border-default rounded-lg p-4">
-          <h3 className={H3_DOC}>2. Create Branch</h3>
-          <p className="text-sm text-muted">Create a new branch with the security fixes</p>
-        </div>
-        <div className="bg-surface border border-default rounded-lg p-4">
-          <h3 className={H3_DOC}>3. Update Files</h3>
-          <p className="text-sm text-muted">
+      <NText tag="h2" className={H2_DOC}>Auto-Fix Workflow</NText>
+      <NView tag="div" className="mb-5">
+        When using <NText tag="code">--fix</NText>, Nayan AI will:
+      </NView>
+      <NView tag="div" className="grid sm:grid-cols-2 gap-4 mb-5">
+        <NView tag="div" className="bg-surface border border-default rounded-lg p-4">
+          <NText tag="h3" className={H3_DOC}>1. Analyze</NText>
+          <NText tag="p" className="text-sm text-muted">Analyze vulnerabilities and generate fixes using AI</NText>
+        </NView>
+        <NView tag="div" className="bg-surface border border-default rounded-lg p-4">
+          <NText tag="h3" className={H3_DOC}>2. Create Branch</NText>
+          <NText tag="p" className="text-sm text-muted">Create a new branch with the security fixes</NText>
+        </NView>
+        <NView tag="div" className="bg-surface border border-default rounded-lg p-4">
+          <NText tag="h3" className={H3_DOC}>3. Update Files</NText>
+          <NText tag="p" className="text-sm text-muted">
             Update manifest files (package.json, requirements.txt, etc.)
-          </p>
-        </div>
-        <div className="bg-surface border border-default rounded-lg p-4">
-          <h3 className={H3_DOC}>4. Create PR</h3>
-          <p className="text-sm text-muted">
+          </NText>
+        </NView>
+        <NView tag="div" className="bg-surface border border-default rounded-lg p-4">
+          <NText tag="h3" className={H3_DOC}>4. Create PR</NText>
+          <NText tag="p" className="text-sm text-muted">
             Commit, push, and create a Pull Request with detailed description
-          </p>
-        </div>
-      </div>
-    </div>
+          </NText>
+        </NView>
+      </NView>
+    </NView>
   );
 };
 

@@ -2,7 +2,7 @@
 // columns, start/stop button and trophy/share buttons as ScoreBoardContainer and GameControlButton, but
 // rendered in Rust with the scene, so React re-renders nothing while a game runs. Overlay space is in
 // points from the view's top-left, y up (screen y is negated), z toward the viewer.
-import { type Color, type Entity, extrude, type Font, loadFont, measureText, type Model, Path, World } from '@nayan-ui/engine';
+import { type Color, type Entity, extrude, type Font, loadFont, measureText, type Model, Path, World } from 'nayan-ui';
 import { PLAY_PATH, SHARE_PATH, TROPHY_PATH } from '../../helpers/IconPaths';
 import type { GameTheme } from '../../services/ThemeService';
 import { formatTime, getGameDimensions } from '../../services/UtilsService';

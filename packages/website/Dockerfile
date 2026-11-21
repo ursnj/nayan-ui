@@ -2,13 +2,13 @@ ARG BUN_VERSION=canary
 
 # The website and its game bundle use the workspace engine.
 FROM rust:1.99-bookworm AS engine-wasm
-WORKDIR /app/packages/engine
+WORKDIR /app/packages/nayan-ui
 RUN apt-get update && apt-get install -y --no-install-recommends clang && rm -rf /var/lib/apt/lists/*
-COPY packages/engine/native/core/Cargo.lock /tmp/nayan-engine-Cargo.lock
+COPY packages/nayan-ui/native/core/Cargo.lock /tmp/nayan-engine-Cargo.lock
 RUN rustup target add wasm32-unknown-unknown && \
     version="$(awk '/^name = "wasm-bindgen"$/ { getline; print $3; exit }' /tmp/nayan-engine-Cargo.lock | tr -d '"')" && \
     cargo install wasm-bindgen-cli --locked --version "$version"
-COPY packages/engine/native ./native
+COPY packages/nayan-ui/native ./native
 RUN native/core/scripts/build-web.sh
 
 # Install dependencies only when needed
@@ -20,7 +20,7 @@ WORKDIR /app
 COPY package.json bun.lock bunfig.toml ./
 
 # Copy all workspace package.json files
-COPY packages/engine/package.json ./packages/engine/package.json
+COPY packages/nayan-ui/package.json ./packages/nayan-ui/package.json
 COPY packages/example/package.json ./packages/example/package.json
 COPY packages/example/mobile/package.json ./packages/example/mobile/package.json
 COPY packages/example/shared/package.json ./packages/example/shared/package.json
@@ -38,8 +38,8 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY --from=engine-wasm /app/packages/engine/native/core/build/web ./packages/engine/native/core/build/web
-RUN cd packages/engine && bun scripts/build-web.mjs
+COPY --from=engine-wasm /app/packages/nayan-ui/native/core/build/web ./packages/nayan-ui/native/core/build/web
+RUN cd packages/nayan-ui && bun scripts/build-web.mjs
 
 # Build website (Next.js)
 RUN bun run --filter @nayan-ui/website build

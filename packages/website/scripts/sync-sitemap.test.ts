@@ -2,9 +2,9 @@ import { afterEach, expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { componentReferences } from "../src/services/engine/component-reference";
-import { moduleReferences } from "../src/services/engine/module-reference";
-import { findReferenceTag, referenceTopics, tagsForReference } from "../src/services/engine/reference-tags";
+import { componentReferences } from "../src/services/nayan-ui/component-reference";
+import { moduleReferences } from "../src/services/nayan-ui/module-reference";
+import { findReferenceTag, referenceTopics, tagsForReference } from "../src/services/nayan-ui/reference-tags";
 import { collectPublicPaths, renderSitemap } from "./sync-sitemap";
 
 const fixtures: string[] = [];

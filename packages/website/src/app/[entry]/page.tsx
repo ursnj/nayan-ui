@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
-import { ReferencePage } from '@/components/engine/reference/ReferencePage';
-import { componentReferences } from '@/services/engine/component-reference';
-import { moduleReferences } from '@/services/engine/module-reference';
-import { tagsForReference } from '@/services/engine/reference-tags';
+import { ReferencePage } from '@/components/nayan-reference/ReferencePage';
+import { componentReferences } from '@/services/nayan-ui/component-reference';
+import { moduleReferences } from '@/services/nayan-ui/module-reference';
+import { tagsForReference } from '@/services/nayan-ui/reference-tags';
 import { buildPageMetadata } from '@/services/seo';
 
 const entries = [...componentReferences, ...moduleReferences].filter(({ path }) => path.split('/').length === 2);

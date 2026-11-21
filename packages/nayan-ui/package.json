@@ -1,0 +1,777 @@
+{
+  "name": "nayan-ui",
+  "version": "1.0.0-beta.1",
+  "description": "Nayan Components, Nayan Modules and Nayan Game Engine for React and React Native. Cross-platform UI, Rust and wgpu rendering, Rapier physics, animation, media and application services.",
+  "keywords": [
+    "3d",
+    "android",
+    "drawing",
+    "game-engine",
+    "ios",
+    "metal",
+    "nayan-ui",
+    "particles",
+    "physics",
+    "rapier",
+    "react",
+    "react-game-engine",
+    "react-native",
+    "react-native-game-engine",
+    "rust",
+    "vulkan",
+    "web",
+    "webassembly",
+    "webgl",
+    "webgpu",
+    "wgpu"
+  ],
+  "homepage": "https://www.nayanui.com/game-engine",
+  "bugs": {
+    "url": "https://github.com/ursnj/nayan-ui/issues"
+  },
+  "license": "MIT",
+  "author": "Niranjan Devasani <niranjan.devasani@gmail.com> (https://github.com/ursnj)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ursnj/nayan-ui.git",
+    "directory": "packages/nayan-ui"
+  },
+  "files": [
+    "src/**/*.{ts,tsx,js}",
+    "src/components/icons/LICENSE.lucide",
+    "lib/module/**/*.{js,d.ts}",
+    "lib/module/package.json",
+    "lib/module/components/icons/LICENSE.lucide",
+    "lib/typescript/**/*.d.ts",
+    "lib/typescript/package.json",
+    "lib/web/**/*.{js,d.ts}",
+    "lib/web/engine_core_bg.wasm",
+    "lib/web/components/icons/{named,paths}/package.json",
+    "lib/web/components/icons/paths/LICENSE.lucide",
+    "shared/cpp/**/*.{h,cpp}",
+    "shared/ios/**/*.{h,m,mm,xcprivacy}",
+    "shared/android/{CMakeLists.txt,NayanEngineSpec.h,build.gradle,proguard-rules.pro}",
+    "shared/android/codegen/CMakeLists.txt",
+    "shared/android/src/main/**/*.{java,xml}",
+    "native/*/rust/**/*.{rs,wgsl}",
+    "native/*/cpp/**/*.{h,cpp}",
+    "native/*/ios/**/*.{h,m,mm}",
+    "native/*/android/**/*.{java,xml}",
+    "native/drawing/THIRD_PARTY_LICENSES.txt",
+    "NayanEngine.podspec",
+    "react-native.config.js",
+    "app.plugin.js",
+    "scripts/expo-plugin.cjs",
+    "native/core/.cargo/config.toml",
+    "native/core/Cargo.toml",
+    "native/core/Cargo.lock",
+    "native/core/src/**/*.rs",
+    "native/core/scripts/{features,rust-toolchain,profile-ios,build-android,build-web}.sh",
+    "native/core/include/engine_core.h",
+    "native/core/build/EngineCore.xcframework/Info.plist",
+    "native/core/build/EngineCore.xcframework/{ios-arm64,ios-arm64-simulator}/libengine_core.a",
+    "native/core/build/android/{arm64-v8a,armeabi-v7a,x86_64,x86}/libengine_core.a",
+    "!**/.*",
+    "!**/*.map",
+    "!**/{__tests__,__mocks__,__fixtures__}/**",
+    "!native/*/rust/**/tests.rs",
+    "!src/styles/**",
+    "!lib/module/styles/**",
+    "!lib/typescript/src/styles/**",
+    "scripts/features.cjs"
+  ],
+  "sideEffects": false,
+  "main": "./lib/module/index.js",
+  "browser": "./lib/web/index.js",
+  "types": "./lib/web/types/src/index.d.ts",
+  "exports": {
+    ".": {
+      "react-native": {
+        "source": "./src/index.ts",
+        "types": "./lib/typescript/src/index.d.ts",
+        "default": "./lib/module/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/index.ts",
+        "types": "./lib/typescript/src/index.d.ts",
+        "default": "./lib/module/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/index.d.ts",
+        "default": "./lib/web/index.js"
+      },
+      "source": "./src/index.ts",
+      "types": "./lib/web/types/src/index.d.ts",
+      "default": "./lib/web/index.js"
+    },
+    "./package.json": "./package.json",
+    "./app.plugin.js": "./app.plugin.js",
+    "./web": {
+      "types": "./lib/web/types/src/index.d.ts",
+      "default": "./lib/web/index.js"
+    },
+    "./components": {
+      "react-native": {
+        "source": "./src/components/index.ts",
+        "types": "./lib/typescript/src/components/index.d.ts",
+        "default": "./lib/module/components/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/components/index.ts",
+        "types": "./lib/typescript/src/components/index.d.ts",
+        "default": "./lib/module/components/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/components/index.d.ts",
+        "default": "./lib/web/components/index.js"
+      },
+      "types": "./lib/web/types/src/components/index.d.ts",
+      "default": "./lib/web/components/index.js"
+    },
+    "./core": {
+      "react-native": {
+        "source": "./src/native/core.ts",
+        "types": "./lib/typescript/src/native/core.d.ts",
+        "default": "./lib/module/native/core.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/native/core.ts",
+        "types": "./lib/typescript/src/native/core.d.ts",
+        "default": "./lib/module/native/core.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/native/core.d.ts",
+        "default": "./lib/web/native/core.js"
+      },
+      "types": "./lib/web/types/src/native/core.d.ts",
+      "default": "./lib/web/native/core.js"
+    },
+    "./games": {
+      "react-native": {
+        "source": "./src/games/index.ts",
+        "types": "./lib/typescript/src/games/index.d.ts",
+        "default": "./lib/module/games/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/games/index.ts",
+        "types": "./lib/typescript/src/games/index.d.ts",
+        "default": "./lib/module/games/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/games/index.d.ts",
+        "default": "./lib/web/games/index.js"
+      },
+      "types": "./lib/web/types/src/games/index.d.ts",
+      "default": "./lib/web/games/index.js"
+    },
+    "./animations": {
+      "react-native": {
+        "source": "./src/animations/index.ts",
+        "types": "./lib/typescript/src/animations/index.d.ts",
+        "default": "./lib/module/animations/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/animations/index.ts",
+        "types": "./lib/typescript/src/animations/index.d.ts",
+        "default": "./lib/module/animations/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/animations/index.d.ts",
+        "default": "./lib/web/animations/index.js"
+      },
+      "types": "./lib/web/types/src/animations/index.d.ts",
+      "default": "./lib/web/animations/index.js"
+    },
+    "./drawing": {
+      "react-native": {
+        "source": "./src/drawing/index.ts",
+        "types": "./lib/typescript/src/drawing/index.d.ts",
+        "default": "./lib/module/drawing/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/drawing/index.ts",
+        "types": "./lib/typescript/src/drawing/index.d.ts",
+        "default": "./lib/module/drawing/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/drawing/index.d.ts",
+        "default": "./lib/web/drawing/index.js"
+      },
+      "types": "./lib/web/types/src/drawing/index.d.ts",
+      "default": "./lib/web/drawing/index.js"
+    },
+    "./modules": {
+      "react-native": {
+        "source": "./src/index.ts",
+        "types": "./lib/typescript/src/index.d.ts",
+        "default": "./lib/module/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/index.ts",
+        "types": "./lib/typescript/src/index.d.ts",
+        "default": "./lib/module/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/index.d.ts",
+        "default": "./lib/web/index.js"
+      },
+      "types": "./lib/web/types/src/index.d.ts",
+      "default": "./lib/web/index.js"
+    },
+    "./assets": {
+      "react-native": {
+        "source": "./src/assets/index.ts",
+        "types": "./lib/typescript/src/assets/index.d.ts",
+        "default": "./lib/module/assets/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/assets/index.ts",
+        "types": "./lib/typescript/src/assets/index.d.ts",
+        "default": "./lib/module/assets/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/assets/index.d.ts",
+        "default": "./lib/web/assets/index.js"
+      },
+      "types": "./lib/web/types/src/assets/index.d.ts",
+      "default": "./lib/web/assets/index.js"
+    },
+    "./audio": {
+      "react-native": {
+        "source": "./src/audio/index.ts",
+        "types": "./lib/typescript/src/audio/index.d.ts",
+        "default": "./lib/module/audio/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/audio/index.ts",
+        "types": "./lib/typescript/src/audio/index.d.ts",
+        "default": "./lib/module/audio/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/audio/index.d.ts",
+        "default": "./lib/web/audio/index.js"
+      },
+      "types": "./lib/web/types/src/audio/index.d.ts",
+      "default": "./lib/web/audio/index.js"
+    },
+    "./camera": {
+      "react-native": {
+        "source": "./src/camera/index.ts",
+        "types": "./lib/typescript/src/camera/index.d.ts",
+        "default": "./lib/module/camera/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/camera/index.ts",
+        "types": "./lib/typescript/src/camera/index.d.ts",
+        "default": "./lib/module/camera/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/camera/index.d.ts",
+        "default": "./lib/web/camera/index.js"
+      },
+      "types": "./lib/web/types/src/camera/index.d.ts",
+      "default": "./lib/web/camera/index.js"
+    },
+    "./capture": {
+      "react-native": {
+        "source": "./src/capture/index.ts",
+        "types": "./lib/typescript/src/capture/index.d.ts",
+        "default": "./lib/module/capture/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/capture/index.ts",
+        "types": "./lib/typescript/src/capture/index.d.ts",
+        "default": "./lib/module/capture/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/capture/index.d.ts",
+        "default": "./lib/web/capture/index.js"
+      },
+      "types": "./lib/web/types/src/capture/index.d.ts",
+      "default": "./lib/web/capture/index.js"
+    },
+    "./clipboard": {
+      "react-native": {
+        "source": "./src/clipboard/index.ts",
+        "types": "./lib/typescript/src/clipboard/index.d.ts",
+        "default": "./lib/module/clipboard/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/clipboard/index.ts",
+        "types": "./lib/typescript/src/clipboard/index.d.ts",
+        "default": "./lib/module/clipboard/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/clipboard/index.d.ts",
+        "default": "./lib/web/clipboard/index.js"
+      },
+      "types": "./lib/web/types/src/clipboard/index.d.ts",
+      "default": "./lib/web/clipboard/index.js"
+    },
+    "./device": {
+      "react-native": {
+        "source": "./src/device/index.ts",
+        "types": "./lib/typescript/src/device/index.d.ts",
+        "default": "./lib/module/device/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/device/index.ts",
+        "types": "./lib/typescript/src/device/index.d.ts",
+        "default": "./lib/module/device/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/device/index.d.ts",
+        "default": "./lib/web/device/index.js"
+      },
+      "types": "./lib/web/types/src/device/index.d.ts",
+      "default": "./lib/web/device/index.js"
+    },
+    "./files": {
+      "react-native": {
+        "source": "./src/files/index.ts",
+        "types": "./lib/typescript/src/files/index.d.ts",
+        "default": "./lib/module/files/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/files/index.ts",
+        "types": "./lib/typescript/src/files/index.d.ts",
+        "default": "./lib/module/files/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/files/index.d.ts",
+        "default": "./lib/web/files/index.js"
+      },
+      "types": "./lib/web/types/src/files/index.d.ts",
+      "default": "./lib/web/files/index.js"
+    },
+    "./haptics": {
+      "react-native": {
+        "source": "./src/haptics/index.ts",
+        "types": "./lib/typescript/src/haptics/index.d.ts",
+        "default": "./lib/module/haptics/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/haptics/index.ts",
+        "types": "./lib/typescript/src/haptics/index.d.ts",
+        "default": "./lib/module/haptics/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/haptics/index.d.ts",
+        "default": "./lib/web/haptics/index.js"
+      },
+      "types": "./lib/web/types/src/haptics/index.d.ts",
+      "default": "./lib/web/haptics/index.js"
+    },
+    "./image-picker": {
+      "react-native": {
+        "source": "./src/image-picker/index.ts",
+        "types": "./lib/typescript/src/image-picker/index.d.ts",
+        "default": "./lib/module/image-picker/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/image-picker/index.ts",
+        "types": "./lib/typescript/src/image-picker/index.d.ts",
+        "default": "./lib/module/image-picker/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/image-picker/index.d.ts",
+        "default": "./lib/web/image-picker/index.js"
+      },
+      "types": "./lib/web/types/src/image-picker/index.d.ts",
+      "default": "./lib/web/image-picker/index.js"
+    },
+    "./keep-awake": {
+      "react-native": {
+        "source": "./src/keep-awake/index.ts",
+        "types": "./lib/typescript/src/keep-awake/index.d.ts",
+        "default": "./lib/module/keep-awake/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/keep-awake/index.ts",
+        "types": "./lib/typescript/src/keep-awake/index.d.ts",
+        "default": "./lib/module/keep-awake/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/keep-awake/index.d.ts",
+        "default": "./lib/web/keep-awake/index.js"
+      },
+      "types": "./lib/web/types/src/keep-awake/index.d.ts",
+      "default": "./lib/web/keep-awake/index.js"
+    },
+    "./location": {
+      "react-native": {
+        "source": "./src/location/index.ts",
+        "types": "./lib/typescript/src/location/index.d.ts",
+        "default": "./lib/module/location/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/location/index.ts",
+        "types": "./lib/typescript/src/location/index.d.ts",
+        "default": "./lib/module/location/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/location/index.d.ts",
+        "default": "./lib/web/location/index.js"
+      },
+      "types": "./lib/web/types/src/location/index.d.ts",
+      "default": "./lib/web/location/index.js"
+    },
+    "./microphone": {
+      "react-native": {
+        "source": "./src/microphone/index.ts",
+        "types": "./lib/typescript/src/microphone/index.d.ts",
+        "default": "./lib/module/microphone/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/microphone/index.ts",
+        "types": "./lib/typescript/src/microphone/index.d.ts",
+        "default": "./lib/module/microphone/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/microphone/index.d.ts",
+        "default": "./lib/web/microphone/index.js"
+      },
+      "types": "./lib/web/types/src/microphone/index.d.ts",
+      "default": "./lib/web/microphone/index.js"
+    },
+    "./network": {
+      "react-native": {
+        "source": "./src/network/index.ts",
+        "types": "./lib/typescript/src/network/index.d.ts",
+        "default": "./lib/module/network/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/network/index.ts",
+        "types": "./lib/typescript/src/network/index.d.ts",
+        "default": "./lib/module/network/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/network/index.d.ts",
+        "default": "./lib/web/network/index.js"
+      },
+      "types": "./lib/web/types/src/network/index.d.ts",
+      "default": "./lib/web/network/index.js"
+    },
+    "./permissions": {
+      "react-native": {
+        "source": "./src/permissions/index.ts",
+        "types": "./lib/typescript/src/permissions/index.d.ts",
+        "default": "./lib/module/permissions/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/permissions/index.ts",
+        "types": "./lib/typescript/src/permissions/index.d.ts",
+        "default": "./lib/module/permissions/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/permissions/index.d.ts",
+        "default": "./lib/web/permissions/index.js"
+      },
+      "types": "./lib/web/types/src/permissions/index.d.ts",
+      "default": "./lib/web/permissions/index.js"
+    },
+    "./review": {
+      "react-native": {
+        "source": "./src/review/index.ts",
+        "types": "./lib/typescript/src/review/index.d.ts",
+        "default": "./lib/module/review/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/review/index.ts",
+        "types": "./lib/typescript/src/review/index.d.ts",
+        "default": "./lib/module/review/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/review/index.d.ts",
+        "default": "./lib/web/review/index.js"
+      },
+      "types": "./lib/web/types/src/review/index.d.ts",
+      "default": "./lib/web/review/index.js"
+    },
+    "./sharing": {
+      "react-native": {
+        "source": "./src/sharing/index.ts",
+        "types": "./lib/typescript/src/sharing/index.d.ts",
+        "default": "./lib/module/sharing/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/sharing/index.ts",
+        "types": "./lib/typescript/src/sharing/index.d.ts",
+        "default": "./lib/module/sharing/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/sharing/index.d.ts",
+        "default": "./lib/web/sharing/index.js"
+      },
+      "types": "./lib/web/types/src/sharing/index.d.ts",
+      "default": "./lib/web/sharing/index.js"
+    },
+    "./sqlite": {
+      "react-native": {
+        "source": "./src/sqlite/index.ts",
+        "types": "./lib/typescript/src/sqlite/index.d.ts",
+        "default": "./lib/module/sqlite/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/sqlite/index.ts",
+        "types": "./lib/typescript/src/sqlite/index.d.ts",
+        "default": "./lib/module/sqlite/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/sqlite/index.d.ts",
+        "default": "./lib/web/sqlite/index.js"
+      },
+      "types": "./lib/web/types/src/sqlite/index.d.ts",
+      "default": "./lib/web/sqlite/index.js"
+    },
+    "./storage": {
+      "react-native": {
+        "source": "./src/storage/index.ts",
+        "types": "./lib/typescript/src/storage/index.d.ts",
+        "default": "./lib/module/storage/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/storage/index.ts",
+        "types": "./lib/typescript/src/storage/index.d.ts",
+        "default": "./lib/module/storage/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/storage/index.d.ts",
+        "default": "./lib/web/storage/index.js"
+      },
+      "types": "./lib/web/types/src/storage/index.d.ts",
+      "default": "./lib/web/storage/index.js"
+    },
+    "./tts": {
+      "react-native": {
+        "source": "./src/tts/index.ts",
+        "types": "./lib/typescript/src/tts/index.d.ts",
+        "default": "./lib/module/tts/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/tts/index.ts",
+        "types": "./lib/typescript/src/tts/index.d.ts",
+        "default": "./lib/module/tts/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/tts/index.d.ts",
+        "default": "./lib/web/tts/index.js"
+      },
+      "types": "./lib/web/types/src/tts/index.d.ts",
+      "default": "./lib/web/tts/index.js"
+    },
+    "./uuid": {
+      "react-native": {
+        "source": "./src/uuid/index.ts",
+        "types": "./lib/typescript/src/uuid/index.d.ts",
+        "default": "./lib/module/uuid/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/uuid/index.ts",
+        "types": "./lib/typescript/src/uuid/index.d.ts",
+        "default": "./lib/module/uuid/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/uuid/index.d.ts",
+        "default": "./lib/web/uuid/index.js"
+      },
+      "types": "./lib/web/types/src/uuid/index.d.ts",
+      "default": "./lib/web/uuid/index.js"
+    },
+    "./icons": {
+      "react-native": {
+        "source": "./lib/web/components/icons/named/native-source.js",
+        "types": "./lib/web/components/icons/named/native.d.ts",
+        "default": "./lib/web/components/icons/named/native.js"
+      },
+      "react-native-strict-api": {
+        "source": "./lib/web/components/icons/named/native-source.js",
+        "types": "./lib/web/components/icons/named/native.d.ts",
+        "default": "./lib/web/components/icons/named/native.js"
+      },
+      "browser": {
+        "types": "./lib/web/components/icons/named/web.d.ts",
+        "default": "./lib/web/components/icons/named/web.js"
+      },
+      "types": "./lib/web/components/icons/named/web.d.ts",
+      "default": "./lib/web/components/icons/named/web.js"
+    },
+    "./icons/catalog": {
+      "react-native": {
+        "source": "./src/components/icons/index.ts",
+        "types": "./lib/typescript/src/components/icons/index.d.ts",
+        "default": "./lib/module/components/icons/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/components/icons/index.ts",
+        "types": "./lib/typescript/src/components/icons/index.d.ts",
+        "default": "./lib/module/components/icons/index.js"
+      },
+      "types": "./lib/web/types/src/components/icons/index.d.ts",
+      "default": "./lib/web/components/icons/index.js"
+    },
+    "./icons/outline": {
+      "react-native": {
+        "source": "./src/components/icons/outline.ts",
+        "types": "./lib/typescript/src/components/icons/outline.d.ts",
+        "default": "./lib/module/components/icons/outline.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/components/icons/outline.ts",
+        "types": "./lib/typescript/src/components/icons/outline.d.ts",
+        "default": "./lib/module/components/icons/outline.js"
+      },
+      "types": "./lib/web/types/src/components/icons/outline.d.ts",
+      "default": "./lib/web/components/icons/outline.js"
+    },
+    "./icons/named": {
+      "types": "./lib/web/components/icons/named/index.d.ts",
+      "default": "./lib/web/components/icons/named/index.js"
+    },
+    "./icons/components/*": {
+      "types": "./lib/web/components/icons/named/components/*.d.ts",
+      "default": "./lib/web/components/icons/named/components/*.js"
+    },
+    "./icons/*": {
+      "types": "./lib/web/components/icons/paths/*.d.ts",
+      "default": "./lib/web/components/icons/paths/*.js"
+    },
+    "./video": {
+      "react-native": {
+        "source": "./src/video/index.ts",
+        "types": "./lib/typescript/src/video/index.d.ts",
+        "default": "./lib/module/video/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/video/index.ts",
+        "types": "./lib/typescript/src/video/index.d.ts",
+        "default": "./lib/module/video/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/video/index.d.ts",
+        "default": "./lib/web/video/index.js"
+      },
+      "types": "./lib/web/types/src/video/index.d.ts",
+      "default": "./lib/web/video/index.js"
+    },
+    "./markdown": {
+      "react-server": {
+        "types": "./lib/web/types/src/markdown/index.d.ts",
+        "default": "./lib/web/markdown/server.js"
+      },
+      "react-native": {
+        "source": "./src/markdown/index.ts",
+        "types": "./lib/typescript/src/markdown/index.d.ts",
+        "default": "./lib/module/markdown/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/markdown/index.ts",
+        "types": "./lib/typescript/src/markdown/index.d.ts",
+        "default": "./lib/module/markdown/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/markdown/index.d.ts",
+        "default": "./lib/web/markdown/index.js"
+      },
+      "node": {
+        "types": "./lib/web/types/src/markdown/index.d.ts",
+        "default": "./lib/web/markdown/server.js"
+      },
+      "types": "./lib/web/types/src/markdown/index.d.ts",
+      "default": "./lib/web/markdown/index.js"
+    },
+    "./styles": {
+      "types": "./lib/web/types/src/styles/index.d.ts",
+      "default": "./lib/web/styles/index.js"
+    },
+    "./wasm-runtime": "./lib/web/wasm-runtime.js"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "clean": "del-cli lib",
+    "build": "bun run build:web && bob build",
+    "typecheck": "bun check && bun check -p tsconfig.test.json",
+    "core:test": "cargo test --manifest-path native/core/Cargo.toml",
+    "core:bench": "cargo run --release --example bench --manifest-path native/core/Cargo.toml",
+    "core:build": "native/core/scripts/build-ios.sh && native/core/scripts/build-android.sh",
+    "core:build:ios": "native/core/scripts/build-ios.sh",
+    "core:build:android": "native/core/scripts/build-android.sh",
+    "test": "bun test --isolate src",
+    "test:integration": "bun test --isolate native/tests",
+    "test:coverage": "bun test --isolate --coverage src native/tests && bun scripts/check-coverage.mjs",
+    "codegen": "bun scripts/codegen-cxx.js",
+    "lint": "bun lint --no-script .",
+    "lint:fix": "bun lint --no-script --fix .",
+    "core:build:web": "native/core/scripts/build-web.sh",
+    "build:web": "bun run core:build:web && bun scripts/build-web.mjs",
+    "test:web": "bun test native/tests/web.test.ts",
+    "prepack": "bun scripts/check-package.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "~19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/react-reconciler": "^0.33.0",
+    "bun-types": "latest",
+    "del-cli": "^7.0.0",
+    "expo": "^58.0.17",
+    "fake-indexeddb": "^6.2.6",
+    "happy-dom": "^21.0.4",
+    "lightningcss": "^1.30.1",
+    "postcss": "^8.5.31",
+    "postcss-selector-parser": "^6.0.10",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-native": "0.88.0",
+    "react-native-builder-bob": "^0.43.1",
+    "react-reconciler": "^0.34.0",
+    "typescript": "~6.0.3"
+  },
+  "peerDependencies": {
+    "lightningcss": "^1.30.1",
+    "react": "*",
+    "react-native": "*",
+    "react-reconciler": "^0.34.0"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    },
+    "react-reconciler": {
+      "optional": true
+    },
+    "lightningcss": {
+      "optional": true
+    }
+  },
+  "codegenConfig": {
+    "name": "NayanEngineSpec",
+    "type": "modules",
+    "jsSrcsDir": "src/native",
+    "ios": {
+      "modulesProvider": {
+        "NativeNayanEngine": "NayanEngineProvider"
+      }
+    }
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      [
+        "module",
+        {
+          "esm": true
+        }
+      ],
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  }
+}

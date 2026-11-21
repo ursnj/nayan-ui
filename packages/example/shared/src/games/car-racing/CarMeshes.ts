@@ -4,7 +4,7 @@
 // color), the glass, and the trim (tyres, rims, lights, black panels, mirrors, plate) in its own
 // colors. Model units are metres: it sits on y = 0 facing -z, about 2.5 wide (mirrors) by 1.15 tall
 // by 4.36 long.
-import { type Color, lathe, loadModel, merge, type Model, type Vec3 } from '@nayan-ui/engine';
+import { type Color, lathe, loadModel, merge, type Model, type Vec3 } from 'nayan-ui';
 
 type GeometryPart = Parameters<typeof merge>[0][number];
 import type { Footprint } from '../shared/EngineFootprint';

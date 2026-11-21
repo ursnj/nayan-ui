@@ -5,9 +5,73 @@
     "": {
       "name": "@nayan-ui/root",
     },
-    "packages/engine": {
-      "name": "@nayan-ui/engine",
-      "version": "1.0.0-beta.7",
+    "packages/example": {
+      "name": "@nayan-ui/example",
+      "version": "1.0.0",
+      "devDependencies": {
+        "@types/react": "~19.3.0",
+        "typescript": "~6.0.3",
+      },
+    },
+    "packages/example/mobile": {
+      "name": "@nayan-example/mobile",
+      "version": "1.0.0",
+      "dependencies": {
+        "@nayan-example/shared": "workspace:*",
+        "expo": "^58.0.0",
+        "expo-asset": "~58.0.5",
+        "expo-constants": "~58.0.14",
+        "expo-dev-client": "~58.0.6",
+        "expo-linking": "~58.0.15",
+        "expo-router": "~58.0.29",
+        "expo-status-bar": "~58.0.4",
+        "nayan-ui": "workspace:*",
+        "react": "19.3.0",
+        "react-native": "0.88.0",
+        "react-native-safe-area-context": "~5.10.1",
+        "react-native-screens": "~4.30.1",
+      },
+      "devDependencies": {
+        "babel-preset-expo": "~58.0.10",
+      },
+    },
+    "packages/example/shared": {
+      "name": "@nayan-example/shared",
+      "version": "1.0.0",
+      "devDependencies": {
+        "@types/react-dom": "^19.2.0",
+      },
+      "peerDependencies": {
+        "nayan-ui": "*",
+        "react": "*",
+        "react-dom": "*",
+        "react-native": "*",
+      },
+      "optionalPeers": [
+        "react-dom",
+        "react-native",
+      ],
+    },
+    "packages/example/web": {
+      "name": "@nayan-example/web",
+      "version": "1.0.0",
+      "dependencies": {
+        "@nayan-example/shared": "workspace:*",
+        "nayan-ui": "workspace:*",
+        "react": "19.3.0",
+        "react-dom": "19.3.0",
+        "react-router": "^7.18.5",
+      },
+      "devDependencies": {
+        "@tailwindcss/vite": "^4.1.11",
+        "@types/react-dom": "^19.2.0",
+        "tailwindcss": "^4.1.11",
+        "vite": "^8.3.4",
+      },
+    },
+    "packages/nayan-ui": {
+      "name": "nayan-ui",
+      "version": "1.0.0-beta.1",
       "devDependencies": {
         "@types/node": "^24.0.0",
         "@types/react": "~19.3.0",
@@ -40,77 +104,13 @@
         "react-reconciler",
       ],
     },
-    "packages/example": {
-      "name": "@nayan-ui/example",
-      "version": "1.0.0",
-      "devDependencies": {
-        "@types/react": "~19.3.0",
-        "typescript": "~6.0.3",
-      },
-    },
-    "packages/example/mobile": {
-      "name": "@nayan-example/mobile",
-      "version": "1.0.0",
-      "dependencies": {
-        "@nayan-example/shared": "workspace:*",
-        "@nayan-ui/engine": "workspace:*",
-        "expo": "^58.0.0",
-        "expo-asset": "~58.0.5",
-        "expo-constants": "~58.0.14",
-        "expo-dev-client": "~58.0.6",
-        "expo-linking": "~58.0.15",
-        "expo-router": "~58.0.29",
-        "expo-status-bar": "~58.0.4",
-        "react": "19.3.0",
-        "react-native": "0.88.0",
-        "react-native-safe-area-context": "~5.10.1",
-        "react-native-screens": "~4.30.1",
-      },
-      "devDependencies": {
-        "babel-preset-expo": "~58.0.10",
-      },
-    },
-    "packages/example/shared": {
-      "name": "@nayan-example/shared",
-      "version": "1.0.0",
-      "devDependencies": {
-        "@types/react-dom": "^19.2.0",
-      },
-      "peerDependencies": {
-        "@nayan-ui/engine": "*",
-        "react": "*",
-        "react-dom": "*",
-        "react-native": "*",
-      },
-      "optionalPeers": [
-        "react-dom",
-        "react-native",
-      ],
-    },
-    "packages/example/web": {
-      "name": "@nayan-example/web",
-      "version": "1.0.0",
-      "dependencies": {
-        "@nayan-example/shared": "workspace:*",
-        "@nayan-ui/engine": "workspace:*",
-        "react": "19.3.0",
-        "react-dom": "19.3.0",
-        "react-router": "^7.18.5",
-      },
-      "devDependencies": {
-        "@tailwindcss/vite": "^4.1.11",
-        "@types/react-dom": "^19.2.0",
-        "tailwindcss": "^4.1.11",
-        "vite": "^8.3.4",
-      },
-    },
     "packages/website": {
       "name": "@nayan-ui/website",
       "version": "1.0.0",
       "dependencies": {
-        "@nayan-ui/engine": "workspace:*",
         "@nayan-ui/games": "file:./scripts/nayan-ui-games.tgz",
         "mediabunny": "^1.66.2",
+        "nayan-ui": "workspace:*",
         "next": "16.4.6",
         "react": "^19.3.0",
         "react-dom": "^19.3.0",
@@ -516,11 +516,9 @@
 
     "@nayan-example/web": ["@nayan-example/web@workspace:packages/example/web"],
 
-    "@nayan-ui/engine": ["@nayan-ui/engine@workspace:packages/engine"],
-
     "@nayan-ui/example": ["@nayan-ui/example@workspace:packages/example"],
 
-    "@nayan-ui/games": ["@nayan-ui/games@./scripts/nayan-ui-games.tgz", { "peerDependencies": { "@nayan-ui/engine": "^1.0.0-beta.2", "expo-asset": "*", "expo-modules-core": "*", "react": "*", "react-dom": "*", "react-native": "*" }, "optionalPeers": ["expo-asset", "expo-modules-core", "react-dom", "react-native"] }, "sha512-Dvel74b+pNQnvL+ZaCz326Th8Wfn2cLZuzfUoqIHENtfUVIE3pDD7vN/xNKf2nzzck2aGeUvC/IgqI//NgfIxw=="],
+    "@nayan-ui/games": ["@nayan-ui/games@./scripts/nayan-ui-games.tgz", { "peerDependencies": { "expo-asset": "*", "expo-modules-core": "*", "nayan-ui": "^1.0.0-beta.2", "react": "*", "react-dom": "*", "react-native": "*" }, "optionalPeers": ["expo-asset", "expo-modules-core", "react-dom", "react-native"] }, "sha512-gDrQW83BgEMWjnGsJ6M+NZJmaRTELdw/LPa61kcgXCHJtrMToFkuhuSzj1+icn4+tq0yO+6AW1zDTbDc5Ib7yw=="],
 
     "@nayan-ui/website": ["@nayan-ui/website@workspace:packages/website"],
 
@@ -1153,6 +1151,8 @@
     "multitars": ["multitars@1.0.2", "", {}, "sha512-6GwVw5eLi9sThdtlS4PKwC7yRLaf45pYhIEzKBHdKxi+YOXGKFX8acIniH+Uh/+k9mS2lQOupTccjoe5r0/1IQ=="],
 
     "nanoid": ["nanoid@3.3.20", "", { "bin": { "nanoid": "bin/nanoid.cjs" } }, "sha512-uKdg2G3GNCKQn9byYOpxbGqrT2fGO5KRt5J/8b3pok8rT6qxGWF6hxMyJiEYtAf+FVyYuD9hRaDqX5uPFYJ4ZQ=="],
+
+    "nayan-ui": ["nayan-ui@workspace:packages/nayan-ui"],
 
     "negotiator": ["negotiator@0.6.3", "", {}, "sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg=="],
 

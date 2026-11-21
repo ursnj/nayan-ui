@@ -2,7 +2,7 @@
 
 Game engine and components for React and React Native, with playable games and developer guides.
 
-[![License](https://img.shields.io/npm/l/@nayan-ui/engine.svg)](./packages/engine)
+[![License](https://img.shields.io/npm/l/nayan-ui.svg)](./packages/nayan-ui)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 [![Website](https://img.shields.io/badge/docs-nayanui.com-black.svg)](https://www.nayanui.com)
 
@@ -10,9 +10,10 @@ Game engine and components for React and React Native, with playable games and d
 
 ## Highlights
 
-- **Game engine and components** — `@nayan-ui/engine` for Expo and web, with 3D rendering, physics, and cross-platform UI
-- **Playable games** — the vendored `@nayan-ui/games` package powers [nayanui.com/games](https://www.nayanui.com/games)
-- **Developer guides** — PDF, image, JSON, XML, text and SEO documentation plus a browser video editor at [nayanui.com](https://www.nayanui.com)
+- [Nayan Components](https://www.nayanui.com/components) and [Nayan Modules](https://www.nayanui.com/modules) provide cross-platform UI and services.
+- [Nayan Game Engine](https://www.nayanui.com/game-engine) provides 3D rendering and physics. Try it in [Nayan Playground](https://www.nayanui.com/game-engine/playground).
+- [Nayan Games](https://www.nayanui.com/games) offers playable games from `@nayan-ui/games`.
+- [Nayan Video Editor](https://www.nayanui.com/video-editor) edits and exports video in the browser.
 
 ---
 
@@ -20,11 +21,11 @@ Game engine and components for React and React Native, with playable games and d
 
 | Package | Version | Description |
 | --- | --- | --- |
-| [@nayan-ui/engine](./packages/engine) | [![npm](https://badge.fury.io/js/@nayan-ui%2Fengine.svg)](https://www.npmjs.com/package/@nayan-ui/engine) | Game engine for React Native and web |
+| [nayan-ui](./packages/nayan-ui) | [![npm](https://badge.fury.io/js/nayan-ui.svg)](https://www.npmjs.com/package/nayan-ui) | Game engine for React Native and web |
 | [@nayan-ui/website](./packages/website) | Private | Nayan UI website and documentation |
-| @nayan-ui/games | Local archive | Games built on the Nayan engine |
+| @nayan-ui/games | Local archive | Nayan Games |
 
-The engine source and SDK documentation live in [packages/engine](./packages/engine).
+The engine source and SDK documentation live in [packages/nayan-ui](./packages/nayan-ui).
 The website installs `@nayan-ui/games` from a [checked-in tarball](./packages/website/scripts/nayan-ui-games.tgz) and uses the engine from this workspace.
 
 ## Engine development
@@ -32,13 +33,13 @@ The website installs `@nayan-ui/games` from a [checked-in tarball](./packages/we
 Install just the engine dependencies from a clean checkout:
 
 ```sh
-bun install --frozen-lockfile --filter @nayan-ui/engine
+bun install --frozen-lockfile --filter nayan-ui
 ```
 
 The [engine workflow](./.github/workflows/npm-publish.yml) runs on engine changes pushed to
 `refactor-nayan-ui` or `main`. It builds iOS, Android and WebAssembly libraries, runs the
 Rust and TypeScript tests, and attaches the checked npm tarball as a workflow artifact.
-See the [engine README](./packages/engine/README.md#development-and-verification) for
+See the [engine README](./packages/nayan-ui/README.md#development-and-verification) for
 local build prerequisites and commands.
 
 ## Website
@@ -55,7 +56,7 @@ The website dev and production commands build the browser engine when needed and
 
 ### Updating the games archive
 
-Obtain a built `@nayan-ui/games` package archive, then run these commands from the repository root.
+Obtain a built `@nayan-ui/games` package archive that declares `nayan-ui` as its engine peer dependency, then run these commands from the repository root.
 
 ```sh
 cp /path/to/nayan-ui-games-version.tgz packages/website/scripts/nayan-ui-games.tgz
@@ -75,7 +76,7 @@ Commit the archive and the updated `bun.lock` together. Local and CI Docker buil
 ```bash
 git clone --depth 1 https://github.com/ursnj/nayan-ui.git
 cd nayan-ui
-bun install --frozen-lockfile --filter @nayan-ui/engine --filter @nayan-ui/example --filter '@nayan-example/*'
+bun install --frozen-lockfile --filter nayan-ui --filter @nayan-ui/example --filter '@nayan-example/*'
 bun run engine:build
 bun run example web
 ```
@@ -84,7 +85,7 @@ bun run example web
 
 ```
 packages/
-  engine/    @nayan-ui/engine  — Game engine and components
+  nayan-ui/  nayan-ui  — Game engine and components
   website/   @nayan-ui/website — nayanui.com (Next.js)
   example/   @nayan-ui/example — Engine demos for Expo and web
 .github/     engine CI and website image publishing

@@ -1,13 +1,13 @@
 'use client';
 
 import { useId } from 'react';
-import { NDisclosure, NText, NView } from '@nayan-ui/engine/components';
-import { ChevronDownIcon } from '@nayan-ui/engine/icons/components/chevron-down';
+import { NDisclosure, NText, NView } from 'nayan-ui/components';
+import { ChevronDownIcon } from 'nayan-ui/icons/components/chevron-down';
 
 const questions = [
-  { title: 'What is Nayan UI?', text: 'Nayan Engine provides UI components, games and tools for React and React Native.' },
+  { title: 'What is Nayan UI?', text: 'Nayan UI provides UI components, games and tools for React and React Native.' },
   { title: 'How to install?', text: 'Install the engine with Bun.' },
-  { title: 'Is it free?', text: 'Yes. Nayan Engine is free and open source.' }
+  { title: 'Is it free?', text: 'Yes. Nayan UI is free and open source.' }
 ];
 
 function Item({ title, text, group }: { title: string; text: string; group?: string }) {

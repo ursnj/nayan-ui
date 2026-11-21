@@ -4,7 +4,7 @@
 // sound that fits them best (with a volume and pitch where it helps tell sounds apart).
 //
 // Games call playSound(GAME_SOUNDS.<GAME>.<EVENT>, settings.enableSounds) as before.
-import type { AudioPlayOptions, SoundBank, Voice } from '@nayan-ui/engine';
+import type { AudioPlayOptions, SoundBank, Voice } from 'nayan-ui';
 import { SFX_SOURCES, type SfxName } from './SfxSources';
 
 export interface SoundConfig {
@@ -27,7 +27,7 @@ export interface SoundConfig {
 // Keep the engine out of the home screen's metadata import. Each decoded sound is shared
 // across games, but opening one game should not fetch and decode every game's effects.
 const banks = new Map<SfxName, SoundBank<SfxName>>();
-const engine = (): typeof import('@nayan-ui/engine') => require('@nayan-ui/engine');
+const engine = (): typeof import('nayan-ui') => require('nayan-ui');
 const loadBank = (name: SfxName): SoundBank<SfxName> | null => {
   const { audio, isEngineAvailable } = engine();
   if (!isEngineAvailable) return null;

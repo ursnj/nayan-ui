@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import Link from "next/link";
-import { NText, NView } from "@nayan-ui/engine/components";
+import { NImage, NText, NView } from "nayan-ui/components";
 import {
   ACCENT_SOFT,
   BODY,
@@ -109,34 +109,34 @@ export const PageHero = ({
   media,
   children,
 }: PageHeroProps) => (
-  <section className="site-page-hero" data-tone={tone}>
-    <div className={`${CONTAINER} py-8 sm:pb-14 sm:pt-9`}>
+  <NView tag="section" className="site-page-hero" data-tone={tone}>
+    <NView tag="div" className={`${CONTAINER} py-8 sm:pb-14 sm:pt-9`}>
       {breadcrumb ? <Breadcrumb items={breadcrumb} /> : null}
-      <div className={media ? "grid min-w-0 items-center gap-8 md:grid-cols-2 lg:gap-14" : ""}>
-        <div className="min-w-0 max-w-2xl">
-          {eyebrow ? <p className={`mb-3 ${EYEBROW}`}>{eyebrow}</p> : null}
-          <h1 className={H1}>{title}</h1>
+      <NView tag="div" className={media ? "grid min-w-0 items-center gap-8 md:grid-cols-2 lg:gap-14" : ""}>
+        <NView tag="div" className="min-w-0 max-w-2xl">
+          {eyebrow ? <NText tag="p" className={`mb-3 ${EYEBROW}`}>{eyebrow}</NText> : null}
+          <NText tag="h1" className={H1}>{title}</NText>
           {titleAccent ? (
-            <p className="site-page-subtitle mt-3 text-lg font-semibold leading-snug tracking-tight sm:text-2xl">
+            <NText tag="p" className="site-page-subtitle mt-3 text-lg font-semibold leading-snug tracking-tight sm:text-2xl">
               {titleAccent}
-            </p>
+            </NText>
           ) : null}
-          {lead ? <p className={`mt-4 max-w-xl ${LEAD}`}>{lead}</p> : null}
-          {actions ? <div className="mt-6 flex flex-wrap gap-2.5 sm:gap-3">{actions}</div> : null}
+          {lead ? <NText tag="p" className={`mt-4 max-w-xl ${LEAD}`}>{lead}</NText> : null}
+          {actions ? <NView tag="div" className="mt-6 flex flex-wrap gap-2.5 sm:gap-3">{actions}</NView> : null}
           {pills?.length ? (
-            <ul className="mt-5 flex flex-wrap gap-2">
+            <NView tag="ul" className="mt-5 flex flex-wrap gap-2">
               {pills.map((pill) => (
-                <li key={pill} className={PILL}>{pill}</li>
+                <NView tag="li" key={pill} className={PILL}>{pill}</NView>
               ))}
-            </ul>
+            </NView>
           ) : null}
-          {note ? <p className="mt-4 text-xs text-muted">{note}</p> : null}
-        </div>
+          {note ? <NText tag="p" className="mt-4 text-xs text-muted">{note}</NText> : null}
+        </NView>
         {media}
-      </div>
+      </NView>
       {children}
-    </div>
-  </section>
+    </NView>
+  </NView>
 );
 
 interface DocsIntroProps {
@@ -159,14 +159,14 @@ export const DocsIntro = ({ lead, actions, facts }: DocsIntroProps) => (
       </NView>
     ) : null}
     {facts?.length ? (
-      <dl className="flex flex-wrap gap-3 border-t border-default pt-3">
+      <NView tag="dl" className="flex flex-wrap gap-3 border-t border-default pt-3">
         {facts.map((fact) => (
           <NView tag="div" key={fact.label}>
-            <dd className="text-xl font-bold text-foreground">{fact.value}</dd>
-            <dt className="text-xs text-muted">{fact.label}</dt>
+            <NText tag="dd" className="text-xl font-bold text-foreground">{fact.value}</NText>
+            <NText tag="dt" className="text-xs text-muted">{fact.label}</NText>
           </NView>
         ))}
-      </dl>
+      </NView>
     ) : null}
   </NView>
 );
@@ -179,30 +179,30 @@ export const Breadcrumb = ({
   items: { label: string; href?: string }[];
   className?: string;
 }) => (
-  <nav aria-label="Breadcrumb" className={`text-xs text-muted ${className}`}>
-    <ol className="flex flex-wrap items-center gap-2">
+  <NView tag="nav" aria-label="Breadcrumb" className={`text-xs text-muted ${className}`}>
+    <NView tag="ol" className="flex flex-wrap items-center gap-2">
       {items.map((item, index) => {
         const last = index === items.length - 1;
         return (
-          <li key={item.label} className="flex items-center gap-2">
+          <NView tag="li" key={item.label} className="flex items-center gap-2">
             {item.href && !last ? (
               <Link href={item.href} className="transition-colors hover:text-foreground">
                 {item.label}
               </Link>
             ) : (
-              <span
+              <NText tag="span"
                 className={last ? "font-medium text-foreground" : ""}
                 aria-current={last ? "page" : undefined}
               >
                 {item.label}
-              </span>
+              </NText>
             )}
-            {last ? null : <span aria-hidden>/</span>}
-          </li>
+            {last ? null : <NText tag="span" aria-hidden>/</NText>}
+          </NView>
         );
       })}
-    </ol>
-  </nav>
+    </NView>
+  </NView>
 );
 
 interface CardProps {
@@ -252,15 +252,15 @@ export const BrowserFrame = ({
       aria-hidden
       className="browser-frame-toolbar flex items-center gap-3 border-b border-default px-3 py-2.5"
     >
-      <span className="browser-frame-dots flex shrink-0 items-center gap-1.5">
-        <span />
-        <span />
-        <span />
-      </span>
+      <NText tag="span" className="browser-frame-dots flex shrink-0 items-center gap-1.5">
+        <NText tag="span" />
+        <NText tag="span" />
+        <NText tag="span" />
+      </NText>
       {label ? (
-        <span className="min-w-0 flex-1 truncate rounded-md border border-default bg-background px-2.5 py-1 text-center font-mono text-[11px] text-muted">
+        <NText tag="span" className="min-w-0 flex-1 truncate rounded-md border border-default bg-background px-2.5 py-1 text-center font-mono text-[11px] text-muted">
           {label}
-        </span>
+        </NText>
       ) : null}
     </NView>
 
@@ -304,7 +304,7 @@ export const PhoneFrame = ({ light, dark, alt, className = "" }: PhoneFrameProps
         tag="div"
         className="flex items-center justify-between px-5 py-1.5 text-[10px] font-semibold text-foreground/70"
       >
-        <span>9:41</span>
+        <NText tag="span">9:41</NText>
         <NView tag="div" className="flex items-center gap-1">
           <svg width="14" height="10" viewBox="0 0 14 10" fill="currentColor">
             <rect x="0" y="6" width="2.5" height="4" rx="0.5" />
@@ -331,14 +331,14 @@ export const PhoneFrame = ({ light, dark, alt, className = "" }: PhoneFrameProps
           </svg>
         </NView>
       </NView>
-      <img
+      <NImage
         src={light}
         alt={alt}
         width={520}
         height={1000}
         className="block aspect-[520/1000] w-full dark:hidden"
       />
-      <img
+      <NImage
         src={dark}
         alt={alt}
         width={520}
@@ -371,11 +371,11 @@ export const FeatureCard = ({
     className={`${CARD} ${CARD_PAD} transition-colors duration-200 hover:border-accent/30 ${className}`}
   >
     {Icon ? (
-      <span
+      <NText tag="span"
         className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl border ${ACCENT_SOFT}`}
       >
         <Icon className="h-5 w-5" />
-      </span>
+      </NText>
     ) : null}
     <NText tag="h3" className={`mb-2 ${H3}`}>
       {title}
@@ -384,33 +384,33 @@ export const FeatureCard = ({
       {body}
     </NText>
     {chips?.length ? (
-      <ul className="mt-4 flex flex-wrap gap-1.5">
+      <NView tag="ul" className="mt-4 flex flex-wrap gap-1.5">
         {chips.map((chip) => (
-          <li
+          <NView tag="li"
             key={chip}
             className="rounded-md border border-default bg-background px-2 py-0.5 text-[11px] font-medium text-muted"
           >
             {chip}
-          </li>
+          </NView>
         ))}
-      </ul>
+      </NView>
     ) : null}
   </NView>
 );
 
 /** A checked list. The accent dot is the only colour, so the text stays readable. */
 export const CheckList = ({ items, className = "" }: { items: string[]; className?: string }) => (
-  <ul className={`space-y-2 ${className}`}>
+  <NView tag="ul" className={`space-y-2 ${className}`}>
     {items.map((item) => (
-      <li key={item} className="flex items-start gap-2.5 text-sm text-muted">
-        <span
+      <NView tag="li" key={item} className="flex items-start gap-2.5 text-sm text-muted">
+        <NText tag="span"
           aria-hidden
           className="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
         />
-        <span>{item}</span>
-      </li>
+        <NText tag="span">{item}</NText>
+      </NView>
     ))}
-  </ul>
+  </NView>
 );
 
 interface StatGridProps {
@@ -420,24 +420,24 @@ interface StatGridProps {
 
 /** Numbers, as a definition list — the label defines the value it sits under. */
 export const StatGrid = ({ stats, className = "" }: StatGridProps) => (
-  <dl
+  <NView tag="dl"
     className={`grid grid-cols-2 gap-3 sm:gap-4 ${stats.length % 3 === 0 ? "md:grid-cols-3" : "md:grid-cols-4"} ${className}`}
   >
     {stats.map((stat) => (
       <NView tag="div" key={stat.label} className={`${CARD} p-4 text-center`}>
-        <dt className="sr-only">{stat.label}</dt>
-        <dd>
-          <span className={`block text-2xl font-bold sm:text-3xl ${ACCENT_TEXT}`}>
+        <NText tag="dt" className="sr-only">{stat.label}</NText>
+        <NText tag="dd">
+          <NText tag="span" className={`block text-2xl font-bold sm:text-3xl ${ACCENT_TEXT}`}>
             {stat.value}
-          </span>
-          <span className="mt-1 block text-sm font-semibold text-foreground">{stat.label}</span>
+          </NText>
+          <NText tag="span" className="mt-1 block text-sm font-semibold text-foreground">{stat.label}</NText>
           {stat.detail ? (
-            <span className="mt-0.5 block text-xs text-muted">{stat.detail}</span>
+            <NText tag="span" className="mt-0.5 block text-xs text-muted">{stat.detail}</NText>
           ) : null}
-        </dd>
+        </NText>
       </NView>
     ))}
-  </dl>
+  </NView>
 );
 
 /** A badge for the top of a hero — one fact, stated small. */
@@ -448,12 +448,12 @@ export const Badge = ({
   icon?: React.ComponentType<{ className?: string }>;
   children: ReactNode;
 }) => (
-  <span
+  <NText tag="span"
     className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${ACCENT_SOFT}`}
   >
     {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
     {children}
-  </span>
+  </NText>
 );
 
 export const FactList = ({
@@ -463,16 +463,16 @@ export const FactList = ({
   facts: { label: string; value: string }[];
   className?: string;
 }) => (
-  <dl className={`${CARD} divide-y divide-default ${className}`}>
+  <NView tag="dl" className={`${CARD} divide-y divide-default ${className}`}>
     {facts.map((fact) => (
       <NView tag="div" key={fact.label} className="flex flex-col gap-1 p-4 sm:flex-row sm:gap-6">
-        <dt className="w-20 shrink-0 text-xs font-semibold uppercase tracking-wider text-muted">
+        <NText tag="dt" className="w-20 shrink-0 text-xs font-semibold uppercase tracking-wider text-muted">
           {fact.label}
-        </dt>
-        <dd className="text-sm text-foreground">{fact.value}</dd>
+        </NText>
+        <NText tag="dd" className="text-sm text-foreground">{fact.value}</NText>
       </NView>
     ))}
-  </dl>
+  </NView>
 );
 
 export const FaqList = ({
@@ -484,20 +484,20 @@ export const FaqList = ({
 }) => (
   <NView tag="div" className={`mx-auto grid max-w-4xl gap-3 md:grid-cols-2 ${className}`}>
     {faqs.map((faq) => (
-      <details key={faq.q} className={`group ${CARD} transition-colors open:border-accent/30`}>
-        <summary className="flex cursor-pointer list-none items-start justify-between gap-3 p-5 [&::-webkit-details-marker]:hidden">
+      <NView tag="details" key={faq.q} className={`group ${CARD} transition-colors open:border-accent/30`}>
+        <NView tag="summary" className="flex cursor-pointer list-none items-start justify-between gap-3 p-5 [&::-webkit-details-marker]:hidden">
           <NText tag="h3" className="text-sm font-semibold leading-snug text-foreground">
             {faq.q}
           </NText>
-          <span
+          <NText tag="span"
             aria-hidden
             className="mt-1 h-2 w-2 shrink-0 rotate-45 border-b-2 border-r-2 border-muted transition-transform duration-200 group-open:-rotate-[135deg]"
           />
-        </summary>
+        </NView>
         <NText tag="p" className={`px-5 pb-5 ${BODY}`}>
           {faq.a}
         </NText>
-      </details>
+      </NView>
     ))}
   </NView>
 );
@@ -509,13 +509,13 @@ interface CtaPanelProps {
 }
 
 export const CtaPanel = ({ title, lead, children }: CtaPanelProps) => (
-  <div className={`${CONTAINER} pb-12 sm:pb-16`}>
-    <section className="site-cta grid items-end gap-6 lg:grid-cols-[minmax(0,1fr)_auto]">
-      <div>
-        <h2 className={H2}>{title}</h2>
-        <p className={`mt-3 max-w-xl ${LEAD}`}>{lead}</p>
-      </div>
-      <div className="flex flex-wrap gap-2.5">{children}</div>
-    </section>
-  </div>
+  <NView tag="div" className={`${CONTAINER} pb-12 sm:pb-16`}>
+    <NView tag="section" className="site-cta grid items-end gap-6 lg:grid-cols-[minmax(0,1fr)_auto]">
+      <NView tag="div">
+        <NText tag="h2" className={H2}>{title}</NText>
+        <NText tag="p" className={`mt-3 max-w-xl ${LEAD}`}>{lead}</NText>
+      </NView>
+      <NView tag="div" className="flex flex-wrap gap-2.5">{children}</NView>
+    </NView>
+  </NView>
 );

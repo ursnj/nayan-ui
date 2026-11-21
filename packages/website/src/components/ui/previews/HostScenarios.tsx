@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import * as E from '@nayan-ui/engine/components';
+import * as E from 'nayan-ui/components';
 import { scenario } from './scenario';
 import type { NamedComponentPreview } from './types';
 
 function host(title: string, imports: string, code: string, render: ReactNode, height = 180): NamedComponentPreview {
-  return { title, source: `'use client';\n\nimport { ${imports} } from '@nayan-ui/engine/components';\n${code}`, render, host: true, height };
+  return { title, source: `'use client';\n\nimport { ${imports} } from 'nayan-ui/components';\n${code}`, render, host: true, height };
 }
 
 function BlurExample({ target }: { target: boolean }) {
@@ -52,23 +52,23 @@ export default function Example() {
 function DrawerContent() {
   const { close } = E.useNDrawer();
   return (
-    <div className="component-host-demo">
+    <E.NView tag="div" className="component-host-demo">
       <E.NText>Workspace shortcuts</E.NText>
       <E.NButton className="component-host-button" onPress={close}>
         Done
       </E.NButton>
-    </div>
+    </E.NView>
   );
 }
 
 function DrawerTrigger({ toggle }: { toggle: boolean }) {
   const drawer = E.useNDrawer();
   return (
-    <div className="component-host-demo">
+    <E.NView tag="div" className="component-host-demo">
       <E.NButton className="component-host-button" onPress={toggle ? drawer.toggle : drawer.open}>
         {toggle ? 'Toggle shortcuts' : 'Open shortcuts'}
       </E.NButton>
-    </div>
+    </E.NView>
   );
 }
 
@@ -153,9 +153,9 @@ function SafeMeasurements({ variant }: { variant: 'frame' | 'insets' }) {
   const insets = E.useNSafeAreaInsets();
   const info = variant === 'frame' ? `${Math.round(frame.width)} × ${Math.round(frame.height)} px` : `Bottom inset: ${insets.bottom} px`;
   return (
-    <div className="component-host-demo">
+    <E.NView tag="div" className="component-host-demo">
       <E.NText>{info}</E.NText>
-    </div>
+    </E.NView>
   );
 }
 
@@ -163,9 +163,9 @@ function SafeListener() {
   const [width, setWidth] = useState(0);
   return (
     <E.NSafeAreaListener onChange={({ frame }) => setWidth(Math.round(frame.width))}>
-      <div className="component-host-demo">
+      <E.NView tag="div" className="component-host-demo">
         <E.NText>Available width: {width} px</E.NText>
-      </div>
+      </E.NView>
     </E.NSafeAreaListener>
   );
 }
@@ -332,14 +332,18 @@ export default function Example() {
   ),
   'platform-view': scenario(
     'Browser-native range control',
-    'NPlatformView',
+    'NPlatformView, NText',
     `<NPlatformView style={{ height: 60 }}>
-            <label>Zoom <input type="range" min="75" max="150" defaultValue="100" /></label>
+            <NView tag="label" className="flex items-center gap-3">
+              <NText>Zoom</NText>
+              <NView tag="input" className="accent-[var(--accent)]" type="range" min={75} max={150} defaultValue={100} />
+            </NView>
           </NPlatformView>`,
     <E.NPlatformView style={{ height: 60 }}>
-      <label className="flex items-center gap-3">
-        Zoom <input className="accent-[var(--accent)]" type="range" min="75" max="150" defaultValue="100" />
-      </label>
+      <E.NView tag="label" className="flex items-center gap-3">
+        <E.NText>Zoom</E.NText>
+        <E.NView tag="input" className="accent-[var(--accent)]" type="range" min={75} max={150} defaultValue={100} />
+      </E.NView>
     </E.NPlatformView>
   ),
   'refresh-control': host(
@@ -408,12 +412,12 @@ export default function Example() {
 export default function Example() {
   return <NTheme toasts={false}><NView><NToastHost top={80} maxWidth={300} /><NButton onPress={() => NToast.success('Synced')}>Show toast</NButton></NView></NTheme>;
 }`,
-    <div className="component-host-demo">
+    <E.NView tag="div" className="component-host-demo">
       <E.NToastHost top={80} maxWidth={300} />
       <E.NButton className="component-host-button" onPress={() => E.NToast.success('Synced')}>
         Show toast
       </E.NButton>
-    </div>
+    </E.NView>
   )
 };
 

@@ -12,7 +12,7 @@ import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, use
 import type { CSSProperties } from 'react';
 import { isGameActive, subscribeGameActivity } from './GameLifecycle';
 import { useElementSize } from './useElementSize';
-import { audio, GameView, isEngineAvailable, warmUpEngine, World } from '@nayan-ui/engine';
+import { audio, GameView, isEngineAvailable, warmUpEngine, World } from 'nayan-ui';
 import { GameSettingsModal, GameThemeProvider } from '../../helpers';
 import { GAMES_METADATA } from '../../services/GamesMetadata';
 import { GAME_SOUNDS, playSound, preloadSounds, stopAllSounds } from '../../services/SoundsService';

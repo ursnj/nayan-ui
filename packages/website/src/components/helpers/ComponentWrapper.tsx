@@ -1,5 +1,6 @@
 "use client";
 
+import { NText, NView } from 'nayan-ui/components';
 import { ArrowLeft, ArrowRight, Github } from "@/design/Icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -7,7 +8,7 @@ import { PhoneFrame } from "@/design/Primitives";
 import { CARD, LEAD } from "@/design/system";
 import TagsList from "@/components/helpers/TagsList";
 import { getMenuItem, getSidebarItems } from "@/services/Utils";
-import { tagsForReference } from "@/services/engine/reference-tags";
+import { tagsForReference } from "@/services/nayan-ui/reference-tags";
 import { REPO_URL } from "@/services/seo";
 import Attributes from "./Attributes";
 import Code from "./Code";
@@ -50,7 +51,7 @@ const ComponentWrapper = (props: Props) => {
 
   return (
     <Sidebar title={component.title}>
-      <p className={`mb-8 max-w-3xl ${LEAD}`}>{component.description}</p>
+      <NText tag="p" className={`mb-8 max-w-3xl ${LEAD}`}>{component.description}</NText>
 
       <SubHeader
         title="Demo"
@@ -67,7 +68,7 @@ const ComponentWrapper = (props: Props) => {
             alt={`${component.title} running in the Nayan UI example app`}
           />
         ) : (
-          <div className="space-y-4 [&>*]:max-w-full">{children}</div>
+          <NView tag="div" className="space-y-4 [&>*]:max-w-full">{children}</NView>
         )}
       </SubHeader>
 
@@ -102,7 +103,7 @@ const ComponentWrapper = (props: Props) => {
       </SubHeader>
 
       {previous || next ? (
-        <nav
+        <NView tag="nav"
           aria-label="Component navigation"
           className="mt-12 grid gap-3 border-t border-default pt-6 sm:grid-cols-2"
         >
@@ -111,34 +112,34 @@ const ComponentWrapper = (props: Props) => {
               href={previous.link}
               className={`${CARD} group flex flex-col p-4 transition-colors hover:border-accent/30`}
             >
-              <span className="flex items-center gap-1.5 text-xs text-muted">
+              <NText tag="span" className="flex items-center gap-1.5 text-xs text-muted">
                 <ArrowLeft
                   aria-hidden
                   className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5"
                 />
                 Previous
-              </span>
-              <span className="mt-1 text-sm font-semibold text-foreground">{previous.title}</span>
+              </NText>
+              <NText tag="span" className="mt-1 text-sm font-semibold text-foreground">{previous.title}</NText>
             </Link>
           ) : (
-            <span aria-hidden />
+            <NText tag="span" aria-hidden />
           )}
           {next ? (
             <Link
               href={next.link}
               className={`${CARD} group flex flex-col items-end p-4 text-right transition-colors hover:border-accent/30 sm:col-start-2`}
             >
-              <span className="flex items-center gap-1.5 text-xs text-muted">
+              <NText tag="span" className="flex items-center gap-1.5 text-xs text-muted">
                 Next
                 <ArrowRight
                   aria-hidden
                   className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
                 />
-              </span>
-              <span className="mt-1 text-sm font-semibold text-foreground">{next.title}</span>
+              </NText>
+              <NText tag="span" className="mt-1 text-sm font-semibold text-foreground">{next.title}</NText>
             </Link>
           ) : null}
-        </nav>
+        </NView>
       ) : null}
     </Sidebar>
   );

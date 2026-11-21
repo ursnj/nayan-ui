@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { clipboard } from '@nayan-ui/engine/clipboard';
-import { NCode, NPress, NText, NView } from '@nayan-ui/engine/components';
+import { clipboard } from 'nayan-ui/clipboard';
+import { NCode, NPress, NText, NView } from 'nayan-ui/components';
 import { Check, Code2, Copy } from '@/design/Icons';
 
 interface Props {
@@ -67,21 +67,39 @@ export default function Code({ code, language = 'tsx', filename, embedded = fals
   }
 
   return (
-    <NView tag="div" data-code-tone={tone} data-code-embedded={embedded || undefined} className="site-code-block">
+    <NView
+      tag="div"
+      data-code-tone={tone}
+      data-code-embedded={embedded || undefined}
+      className={`site-code-block w-full min-w-0 overflow-hidden bg-[var(--code-bg)] [color:var(--code-fg)] ${embedded ? '' : 'rounded-[0.95rem] border border-[var(--code-line)]'}`}
+    >
       {showHeader && (
-        <NView tag="div" className="site-code-header">
-          <NText tag="span">
-            <Code2 aria-hidden size={16} />
+        <NView
+          tag="div"
+          className="site-code-header flex items-center justify-between gap-3 border-b border-[var(--code-line)] bg-[var(--code-header)] px-3 py-1.5 text-xs [color:var(--code-muted)]"
+        >
+          <NText tag="span" className="flex min-w-0 items-center gap-2 overflow-hidden font-mono whitespace-nowrap">
+            <Code2 aria-hidden size={16} className="shrink-0" />
             {filename ?? language}
           </NText>
-          <NPress onPress={copyCode} className="site-code-copy" aria-live="polite">
+          <NPress
+            onPress={copyCode}
+            className="site-code-copy flex shrink-0 flex-row items-center gap-1.5 rounded-md border border-[var(--code-line)] px-2 py-1 text-xs font-semibold [color:var(--code-fg)] hover:bg-[var(--code-bg)]"
+            aria-live="polite"
+          >
             {copied ? <Check aria-hidden size={15} /> : <Copy aria-hidden size={15} />}
             {copied ? 'Copied' : 'Copy'}
           </NPress>
         </NView>
       )}
-      <NView tag="div" className="site-code-scroll" style={{ maxHeight }} tabIndex={0} aria-label={`${filename ?? language} source code`}>
-        <NView tag="pre">
+      <NView
+        tag="div"
+        className="site-code-scroll overflow-auto focus-visible:[outline-offset:-3px]"
+        style={{ maxHeight }}
+        tabIndex={0}
+        aria-label={`${filename ?? language} source code`}
+      >
+        <NView tag="pre" className="min-w-[max-content] px-4 py-3.5 text-[0.85rem] leading-[1.62]">
           <CodeText code={code} language={language} />
         </NView>
       </NView>

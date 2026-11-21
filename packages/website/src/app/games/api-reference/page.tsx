@@ -1,4 +1,4 @@
-import ApiReference from "@/components/games/ApiReference";
+import ApiReference from "@/components/nayan-games/ApiReference";
 import JsonLd from "@/components/helpers/JsonLd";
 import {
   SITE_URL,
@@ -19,7 +19,7 @@ export const metadata = buildPageMetadata({
 const schemas = [
   buildBreadcrumbSchema([
     { name: "Home", url: SITE_URL },
-    { name: "Games", url: `${SITE_URL}/games` },
+    { name: "Nayan Games", url: `${SITE_URL}/games` },
     { name: "API Reference", url: `${SITE_URL}/games/api-reference` },
   ]),
   buildTechArticleSchema({
@@ -38,7 +38,7 @@ const schemas = [
       "Utilities",
       "Not exported",
     ],
-    isPartOf: { name: "Nayan UI games documentation", url: `${SITE_URL}/games` },
+    isPartOf: { name: "Nayan Games documentation", url: `${SITE_URL}/games` },
   }),
 ];
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { NText, NView } from 'nayan-ui/components';
 import SubHeader from "./SubHeader";
 
 interface Props {
@@ -28,20 +29,20 @@ const Attributes = (props: Props) => {
       title={title}
       action={
         count ? (
-          <span className="text-xs text-muted">
+          <NText tag="span" className="text-xs text-muted">
             {count === 1 ? `1 ${unit}` : `${count} ${unit}s`}
-          </span>
+          </NText>
         ) : null
       }
     >
-      <div className="overflow-hidden rounded-xl border border-default bg-surface">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-surface-secondary"><tr>{columns.map((column) => <th scope="col" key={column.name} className={`${column.className} p-3`}>{column.title}</th>)}</tr></thead>
-            <tbody>{data.map((row, index) => <tr key={index} className="border-t border-default">{columns.map((column) => <td key={column.name} className="p-3 align-top">{row[column.name as keyof typeof row]}</td>)}</tr>)}</tbody>
-          </table>
-        </div>
-      </div>
+      <NView tag="div" className="overflow-hidden rounded-xl border border-default bg-surface">
+        <NView tag="div" className="overflow-x-auto">
+          <NView tag="table" className="w-full text-left text-sm">
+            <NView tag="thead" className="bg-surface-secondary"><NView tag="tr">{columns.map((column) => <NView tag="th" scope="col" key={column.name} className={`${column.className} p-3`}>{column.title}</NView>)}</NView></NView>
+            <NView tag="tbody">{data.map((row, index) => <NView tag="tr" key={index} className="border-t border-default">{columns.map((column) => <NView tag="td" key={column.name} className="p-3 align-top">{row[column.name as keyof typeof row]}</NView>)}</NView>)}</NView>
+          </NView>
+        </NView>
+      </NView>
     </SubHeader>
   );
 };

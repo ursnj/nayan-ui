@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import * as E from '@nayan-ui/engine/components';
+import * as E from 'nayan-ui/components';
 import { scenario } from './scenario';
 import type { NamedComponentPreview } from './types';
 

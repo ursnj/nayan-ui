@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, ActivityIndicator, type LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
-import { type Font, GameView, isEngineAvailable, warmUpEngine } from '@nayan-ui/engine';
+import { type Font, GameView, isEngineAvailable, warmUpEngine } from 'nayan-ui';
 import { GAMES_METADATA } from '../../services/GamesMetadata';
 import { resolveGameTheme } from '../../services/ThemeService';
 import type { GAME_IDS, GameThemeMode } from '../../services/UtilsService';

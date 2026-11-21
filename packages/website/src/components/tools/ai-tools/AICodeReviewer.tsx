@@ -1,128 +1,129 @@
+import { NView, NText } from 'nayan-ui/components';
 import { H2_DOC, H3_DOC } from "@/design/system";
 import Code from "@/components/helpers/Code";
 
 const AICodeReviewer = () => {
   return (
-    <div>
-      <div className="mb-10 max-w-3xl text-base leading-relaxed text-muted">
-        A CLI tool that uses <strong>Codex</strong> or <strong>Claude Code</strong> to review GitHub
+    <NView tag="div">
+      <NView tag="div" className="mb-10 max-w-3xl text-base leading-relaxed text-muted">
+        A CLI tool that uses <NText tag="strong">Codex</NText> or <NText tag="strong">Claude Code</NText> to review GitHub
         Pull Requests with AI-powered agentic analysis. It performs deep code review including bug
         detection, security analysis, performance checks, error handling, and test coverage.
-      </div>
+      </NView>
 
-      <h2 className={H2_DOC}>Installation</h2>
-      <div className="mb-5">Install the AI CLI globally:</div>
+      <NText tag="h2" className={H2_DOC}>Installation</NText>
+      <NView tag="div" className="mb-5">Install the AI CLI globally:</NView>
       <Code language="bash" code={`npm install -g @nayan-ui/ai`} />
-      <div className="mb-5 mt-5">Or use directly with npx:</div>
+      <NView tag="div" className="mb-5 mt-5">Or use directly with npx:</NView>
       <Code language="bash" code={`npx @nayan-ui/ai review <pr-url> --token ghp_xxx`} />
 
-      <h2 className={H2_DOC}>Prerequisites</h2>
-      <div className="mb-5">
-        <strong>Codex CLI</strong> (default LLM) — login first:
-      </div>
+      <NText tag="h2" className={H2_DOC}>Prerequisites</NText>
+      <NView tag="div" className="mb-5">
+        <NText tag="strong">Codex CLI</NText> (default LLM) — login first:
+      </NView>
       <Code language="bash" code={`npx @openai/codex login`} />
-      <div className="mb-5 mt-5">
-        <strong>Claude Code CLI</strong> (optional) — if using <code>--llm claude</code>:
-      </div>
+      <NView tag="div" className="mb-5 mt-5">
+        <NText tag="strong">Claude Code CLI</NText> (optional) — if using <NText tag="code">--llm claude</NText>:
+      </NView>
       <Code language="bash" code={`claude login`} />
 
-      <h2 className={H2_DOC}>Usage</h2>
-      <div className="mb-5">Review a GitHub Pull Request for code issues:</div>
+      <NText tag="h2" className={H2_DOC}>Usage</NText>
+      <NView tag="div" className="mb-5">Review a GitHub Pull Request for code issues:</NView>
       <Code
         language="bash"
         code={`nayan-ai review https://github.com/owner/repo/pull/123 --token ghp_xxx`}
       />
 
-      <div className="mb-5 mt-5">Dry run (analyze without posting comments):</div>
+      <NView tag="div" className="mb-5 mt-5">Dry run (analyze without posting comments):</NView>
       <Code
         language="bash"
         code={`nayan-ai review https://github.com/owner/repo/pull/123 --token ghp_xxx --dry`}
       />
 
-      <div className="mb-5 mt-5">Post inline comments on files instead of summary:</div>
+      <NView tag="div" className="mb-5 mt-5">Post inline comments on files instead of summary:</NView>
       <Code
         language="bash"
         code={`nayan-ai review https://github.com/owner/repo/pull/123 --token ghp_xxx --inline`}
       />
 
-      <div className="mb-5 mt-5">Use Claude Code instead of Codex:</div>
+      <NView tag="div" className="mb-5 mt-5">Use Claude Code instead of Codex:</NView>
       <Code
         language="bash"
         code={`nayan-ai review https://github.com/owner/repo/pull/123 --token ghp_xxx --llm claude`}
       />
 
-      <h2 className={H2_DOC}>Options</h2>
-      <div className="overflow-x-auto mb-5">
-        <table className="w-full text-sm border border-default rounded-lg">
-          <thead>
-            <tr className="bg-default/30">
-              <th className="text-left p-3 border-b border-default">Option</th>
-              <th className="text-left p-3 border-b border-default">Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="p-3 border-b border-default font-mono text-xs">-t, --token</td>
-              <td className="p-3 border-b border-default">
+      <NText tag="h2" className={H2_DOC}>Options</NText>
+      <NView tag="div" className="overflow-x-auto mb-5">
+        <NView tag="table" className="w-full text-sm border border-default rounded-lg">
+          <NView tag="thead">
+            <NView tag="tr" className="bg-default/30">
+              <NView tag="th" className="text-left p-3 border-b border-default">Option</NView>
+              <NView tag="th" className="text-left p-3 border-b border-default">Description</NView>
+            </NView>
+          </NView>
+          <NView tag="tbody">
+            <NView tag="tr">
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">-t, --token</NView>
+              <NView tag="td" className="p-3 border-b border-default">
                 GitHub personal access token (required)
-              </td>
-            </tr>
-            <tr>
-              <td className="p-3 border-b border-default font-mono text-xs">-l, --llm</td>
-              <td className="p-3 border-b border-default">
-                LLM provider: <code>codex</code> (default) or <code>claude</code>
-              </td>
-            </tr>
-            <tr>
-              <td className="p-3 border-b border-default font-mono text-xs">-d, --dry</td>
-              <td className="p-3 border-b border-default">
+              </NView>
+            </NView>
+            <NView tag="tr">
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">-l, --llm</NView>
+              <NView tag="td" className="p-3 border-b border-default">
+                LLM provider: <NText tag="code">codex</NText> (default) or <NText tag="code">claude</NText>
+              </NView>
+            </NView>
+            <NView tag="tr">
+              <NView tag="td" className="p-3 border-b border-default font-mono text-xs">-d, --dry</NView>
+              <NView tag="td" className="p-3 border-b border-default">
                 Analyze without posting comments to GitHub
-              </td>
-            </tr>
-            <tr>
-              <td className="p-3 font-mono text-xs">-i, --inline</td>
-              <td className="p-3">Post inline comments on files instead of summary</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </NView>
+            </NView>
+            <NView tag="tr">
+              <NView tag="td" className="p-3 font-mono text-xs">-i, --inline</NView>
+              <NView tag="td" className="p-3">Post inline comments on files instead of summary</NView>
+            </NView>
+          </NView>
+        </NView>
+      </NView>
 
-      <h2 className={H2_DOC}>What It Checks</h2>
-      <div className="grid sm:grid-cols-2 gap-4 mb-5">
-        <div className="bg-surface border border-default rounded-lg p-4">
-          <h3 className={H3_DOC}>Bug Detection</h3>
-          <p className="text-sm text-muted">
+      <NText tag="h2" className={H2_DOC}>What It Checks</NText>
+      <NView tag="div" className="grid sm:grid-cols-2 gap-4 mb-5">
+        <NView tag="div" className="bg-surface border border-default rounded-lg p-4">
+          <NText tag="h3" className={H3_DOC}>Bug Detection</NText>
+          <NText tag="p" className="text-sm text-muted">
             Logic errors, null pointer issues, race conditions, and edge cases
-          </p>
-        </div>
-        <div className="bg-surface border border-default rounded-lg p-4">
-          <h3 className={H3_DOC}>Security Analysis</h3>
-          <p className="text-sm text-muted">
+          </NText>
+        </NView>
+        <NView tag="div" className="bg-surface border border-default rounded-lg p-4">
+          <NText tag="h3" className={H3_DOC}>Security Analysis</NText>
+          <NText tag="p" className="text-sm text-muted">
             SQL injection, XSS, hardcoded secrets, and auth issues
-          </p>
-        </div>
-        <div className="bg-surface border border-default rounded-lg p-4">
-          <h3 className={H3_DOC}>Performance Checks</h3>
-          <p className="text-sm text-muted">
+          </NText>
+        </NView>
+        <NView tag="div" className="bg-surface border border-default rounded-lg p-4">
+          <NText tag="h3" className={H3_DOC}>Performance Checks</NText>
+          <NText tag="p" className="text-sm text-muted">
             Memory leaks, N+1 queries, and unnecessary computations
-          </p>
-        </div>
-        <div className="bg-surface border border-default rounded-lg p-4">
-          <h3 className={H3_DOC}>Error Handling</h3>
-          <p className="text-sm text-muted">
+          </NText>
+        </NView>
+        <NView tag="div" className="bg-surface border border-default rounded-lg p-4">
+          <NText tag="h3" className={H3_DOC}>Error Handling</NText>
+          <NText tag="p" className="text-sm text-muted">
             Missing try/catch, unhandled promises, and silent failures
-          </p>
-        </div>
-        <div className="bg-surface border border-default rounded-lg p-4">
-          <h3 className={H3_DOC}>Test Coverage</h3>
-          <p className="text-sm text-muted">Checks if tests are added for new functionality</p>
-        </div>
-        <div className="bg-surface border border-default rounded-lg p-4">
-          <h3 className={H3_DOC}>Summary Report</h3>
-          <p className="text-sm text-muted">Provides an overview of all issues found in the PR</p>
-        </div>
-      </div>
-    </div>
+          </NText>
+        </NView>
+        <NView tag="div" className="bg-surface border border-default rounded-lg p-4">
+          <NText tag="h3" className={H3_DOC}>Test Coverage</NText>
+          <NText tag="p" className="text-sm text-muted">Checks if tests are added for new functionality</NText>
+        </NView>
+        <NView tag="div" className="bg-surface border border-default rounded-lg p-4">
+          <NText tag="h3" className={H3_DOC}>Summary Report</NText>
+          <NText tag="p" className="text-sm text-muted">Provides an overview of all issues found in the PR</NText>
+        </NView>
+      </NView>
+    </NView>
   );
 };
 

@@ -1,6 +1,6 @@
 // Small reusable detail meshes layered onto the original scenery. Model registration is done
 // during asset loading; recycling road segments only instances these cached meshes.
-import { type Color, ellipsoid, type Geometry, merge, type Model, type Vec3 } from '@nayan-ui/engine';
+import { type Color, ellipsoid, type Geometry, merge, type Model, type Vec3 } from 'nayan-ui';
 import { cacheGameAsset, createGameMesh } from '../shared/EngineMeshes';
 import { facadeWindowQuads } from './CarRacingFacade';
 

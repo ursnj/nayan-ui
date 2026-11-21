@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { animations } from "@nayan-ui/engine/animations";
-import { prepareCore } from "@nayan-ui/engine/core";
-import { NView } from "@nayan-ui/engine/components";
-import { DrawingCanvas, DrawingDocument } from "@nayan-ui/engine/drawing";
+import { animations } from "nayan-ui/animations";
+import { prepareCore } from "nayan-ui/core";
+import { NView } from "nayan-ui/components";
+import { DrawingCanvas, DrawingDocument } from "nayan-ui/drawing";
 import {
   createShape,
   effects,
@@ -21,7 +21,7 @@ import {
   type Entity,
   type GameViewProps,
   type WorldSetup,
-} from "@nayan-ui/engine/games";
+} from "nayan-ui/games";
 import { ActionDemo, DemoButton, DemoControls, DemoPanel, DemoText } from "./Demo";
 
 const blue = "#60a5fa";

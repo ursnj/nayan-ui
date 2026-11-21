@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
-import { NPage, NTheme, type NThemeProps } from '@nayan-ui/engine/components';
-import { stylesheet } from '@/app/engine-styles';
+import { useEffect, useState, type ReactNode } from 'react';
+import { NText, NView, NPage, NTheme, type NThemeProps } from 'nayan-ui/components';
+import { stylesheet } from '@/app/nayan-ui-styles';
 import type { ComponentPreview } from './types';
 
 type Themes = NonNullable<NThemeProps['themes']>;
@@ -78,7 +78,7 @@ const controls = {
   NMenuItem: { className: 'rounded-lg px-3 text-sm font-medium' }
 } satisfies NThemeProps['components'];
 
-export default function PreviewSurface({ preview }: { preview: ComponentPreview }) {
+export default function PreviewSurface({ preview, fullWidth }: { preview: ComponentPreview; fullWidth?: boolean }) {
   const [themes, setThemes] = useState(siteThemes);
   const height = preview.height ?? (preview.host ? 246 : 168);
   const [error, setError] = useState(false);
@@ -91,15 +91,15 @@ export default function PreviewSurface({ preview }: { preview: ComponentPreview 
   if (preview.host) content = preview.render;
   else if (!themes)
     content = (
-      <p className="component-host-demo text-sm text-muted" role="status">
+      <NText tag="p" className="component-host-demo text-sm text-muted" role="status">
         Preparing preview…
-      </p>
+      </NText>
     );
   else if (error)
     content = (
-      <p className="component-host-demo text-sm text-muted" role="status">
+      <NText tag="p" className="component-host-demo text-sm text-muted" role="status">
         The engine renderer could not start in this browser.
-      </p>
+      </NText>
     );
   else
     content = (
@@ -109,14 +109,15 @@ export default function PreviewSurface({ preview }: { preview: ComponentPreview 
     );
 
   return (
-    <div
-      className="component-preview-surface"
+    <NView
+      tag="div"
+      className="component-preview-surface relative flex min-w-0 flex-col"
       inert={preview.host && !themes}
-      style={height === 'auto' ? { height } : ({ '--component-preview-height': `${height}px` } as CSSProperties)}
+      style={{ width: fullWidth ? '100%' : 'min(100%, 36rem)', height: height === 'auto' ? height : `clamp(12.5rem, ${height}px, 100%)` }}
     >
       <NTheme themes={themes} components={controls} radius={10} stylesheet={preview.styled ? stylesheet : undefined}>
         {content}
       </NTheme>
-    </div>
+    </NView>
   );
 }

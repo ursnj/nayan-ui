@@ -1,4 +1,4 @@
-import { ReferenceIndex, referenceGroups } from '@/components/engine/reference/ReferencePage';
+import { ReferenceIndex, referenceGroups } from '@/components/nayan-reference/ReferencePage';
 import { buildPageMetadata } from '@/services/seo';
 
 export const metadata = buildPageMetadata({

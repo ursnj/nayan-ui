@@ -1,4 +1,4 @@
-import { compileUtilities } from "@nayan-ui/engine/styles";
+import { compileUtilities } from "nayan-ui/styles";
 
 const result = compileUtilities([
   "p-4",

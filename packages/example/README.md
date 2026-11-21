@@ -1,18 +1,18 @@
 # Nayan Engine examples
 
-This workspace uses the local [Nayan engine](../engine). It includes 49 interactive examples shared by an Expo app and a Vite app, plus Car Racing as a complete game.
+This workspace uses the local [Nayan engine](../nayan-ui). It includes 49 interactive examples shared by an Expo app and a Vite app, plus Car Racing as a complete game.
 
 ## Run the examples
 
 From the repository root, install the engine and example workspaces. This filtered install works without the website's private games tarball.
 
 ```sh
-bun install --frozen-lockfile --filter @nayan-ui/engine --filter @nayan-ui/example --filter '@nayan-example/*'
+bun install --frozen-lockfile --filter nayan-ui --filter @nayan-ui/example --filter '@nayan-example/*'
 bun run engine:build
 bun run --filter @nayan-ui/example web
 ```
 
-The engine build needs the Rust WebAssembly target, the matching `wasm-bindgen-cli`, and a WebAssembly-capable C/C++ toolchain. See the [engine build prerequisites](../engine/README.md#development-and-verification).
+The engine build needs the Rust WebAssembly target, the matching `wasm-bindgen-cli`, and a WebAssembly-capable C/C++ toolchain. See the [engine build prerequisites](../nayan-ui/README.md#development-and-verification).
 
 For mobile, use the iOS or Android SDK and an Expo development build. The first build compiles the engine's native libraries. Open it on a supported simulator, emulator, or device from the repository root.
 

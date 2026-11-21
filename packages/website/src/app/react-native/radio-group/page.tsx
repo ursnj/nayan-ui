@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNRadioGroupPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <EngineComponentDoc path="/react-native/radio-group" />
+      <NayanComponentDoc path="/react-native/radio-group" />
     </>
   );
 }

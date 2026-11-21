@@ -2,19 +2,24 @@
 
 ## Project Overview
 
-Nayan UI is the home of Nayan Engine, its React and React Native component examples, browser games, developer tools, and a browser video editor.
+The `nayan-ui` package provides cross-platform interfaces, application services, and 3D games for React and React Native.
 
-- Engine documentation: https://www.nayanui.com/game-engine
+- Nayan Components: https://www.nayanui.com/components
+- Nayan Modules: https://www.nayanui.com/modules
+- Nayan Game Engine: https://www.nayanui.com/game-engine
+- Nayan Games: https://www.nayanui.com/games
+- Nayan Playground: https://www.nayanui.com/game-engine/playground
+- Nayan Video Editor: https://www.nayanui.com/video-editor
 - React quickstart: https://www.nayanui.com/game-engine/react
 - React Native quickstart: https://www.nayanui.com/game-engine/react-native
 - Interactive repository examples: https://github.com/ursnj/nayan-ui/tree/main/packages/example
 
-## Components
+## Nayan Components
 
-Install the engine with `bun add @nayan-ui/engine`. Import controls from `@nayan-ui/engine/components`, mount an `NTheme` at the app root, and render engine controls in `NPage` or `ComponentsRoot`. Native apps need a development build.
+Install the engine with `bun add nayan-ui`. Import controls from `nayan-ui/components`, mount an `NTheme` at the app root, and render engine controls in `NPage` or `ComponentsRoot`. Native apps need a development build.
 
 ```tsx
-import { NButton, NPage, NText, NTheme } from '@nayan-ui/engine/components';
+import { NButton, NPage, NText, NTheme } from 'nayan-ui/components';
 
 export default function App() {
   return (
@@ -112,7 +117,7 @@ The documentation at https://www.nayanui.com/tools covers PDF and image workflow
 - LLM providers: Codex (default) and Claude Code
 - Supports: npm, Python, Go, Rust, Ruby, PHP, Java, .NET, Scala
 
-## Video Editor
+## Nayan Video Editor
 
 **Page**: https://www.nayanui.com/video-editor
 **App**: https://www.nayanui.com/video-editor/start
@@ -224,7 +229,7 @@ on entities, input()/strokes()/sample()/coverage() for games.
 - Live playground (TypeScript editor with the engine's types, runs in the browser): https://www.nayanui.com/game-engine/playground
 - Common recipes: https://www.nayanui.com/game-engine/recipes
 - AI agent instructions (file structure, one API per task, never-do list, game template): https://www.nayanui.com/game-engine/agent-guide
-- Structured API usage summary: https://www.nayanui.com/engine.json
+- Structured API usage summary: https://www.nayanui.com/nayan-game-engine.json
 
 Start from packages/example in the GitHub repository (walkthrough at /game-engine/first-game), then the recipes. Load assets with
 loadModel, loadTexture, loadFont, audio.load, createShape and createSolid during setup; the engine caches
@@ -241,7 +246,7 @@ build detail levels with createGeometryLods. getMeshIdLimit returns an exclusive
 Sample animated vertices with World.sampleSkinnedVertices. Path exposes addPolygon,
 addRoundedRect, quadraticTo and toContours. Use these names in new examples and applications.
 
-## Nayan games documentation (@nayan-ui/games)
+## Nayan Games documentation (@nayan-ui/games)
 - Overview and all 53 games: https://www.nayanui.com/games
 - Installation (Expo dev build and React/Next.js/Vite): https://www.nayanui.com/games/installation
 - API reference: https://www.nayanui.com/games/api-reference
@@ -249,8 +254,8 @@ addRoundedRect, quadraticTo and toContours. Use these names in new examples and 
 - Per-game controls and rules: https://www.nayanui.com/games/<game-id> (GAME_IDS values, e.g. /games/treasure-hunt)
 - Licensing (dual: free non-commercial, paid commercial): https://www.nayanui.com/games/licensing
 
-These docs describe @nayan-ui/games 1.20.0, the engine-based release (requires @nayan-ui/engine ^1.0.0-beta.2; 1.19.0 and earlier are the older Skia/Reanimated build).
-Peers: @nayan-ui/engine and react; react-native + expo-asset + expo-modules-core for native; react-dom for web.
+These docs describe the bundled @nayan-ui/games 1.22.0 build, which uses nayan-ui ^1.0.0-beta.2.
+Peers: nayan-ui and react; react-native + expo-asset + expo-modules-core for native; react-dom for web.
 Native: development build (not Expo Go), New Architecture, Android minSdkVersion 26, VIBRATE permission,
 Metro assetExts include glb and gltf. Web: client-only rendering (Next.js dynamic import with ssr:false), HTTPS or localhost.
 Every game is React.FC<GameProps> from '@nayan-ui/games' (e.g. BlockBlast, TreasureHunt). For one screen that
@@ -262,7 +267,7 @@ paused pauses for host overlays, enableSounds, enableHaptics, theme 'light' | 'd
 offset = host header height, anchor = web popover position, enableMusic is unused.
 onEndGame({ status, score, additionalData }) fires once per run: 'win' / 'lose' at the end, 'cancel' on Stop,
 unmount mid-run, or a draw; score is a string. onPlayingChange(playing) lets hosts block back gestures during a run.
-Web keyboard: createKeyboardInput(surface, { mode }) from @nayan-ui/engine; 'drag' for racing/steering games,
+Web keyboard: createKeyboardInput(surface, { mode }) from nayan-ui; 'drag' for racing/steering games,
 'swipe' for 2048, Snake 3D, Pac-Man, Maze Runner and Crossy Road, 'pointer' for the rest; Enter presses Start/Stop/Play Again.
 Building games inside the library: <Name>.tsx (engineGame + useEngineGame + EngineGameScreen), <Name>Constants.ts,
 <Name>Game.ts (rules, owns world.update(dt)), <Name>Scene.ts; these helpers are internal, not package exports.

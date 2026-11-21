@@ -1918,7 +1918,7 @@
     },
     {
       "path": "/game-engine/playground",
-      "title": "Engine Playground",
+      "title": "Nayan Playground",
       "category": "Game Engine Guide",
       "theme": [
         "#f97316",
@@ -1984,7 +1984,7 @@
         "#f97316",
         "#ec4899"
       ],
-      "description": "Rules, file layout, API choices and a template for coding agents. Read first File structure One API per task Never do Game template Agent prompt Verify Start from /engine.json and the first game; check every name in the API reference. Never guess names from another engine. Rules live in plain TypeScript with no UI imports, so one file serves web and native. The hook owns the world; the screen owns layout and GameView. Each task has one way. Use it."
+      "description": "Rules, file layout, API choices and a template for coding agents. Read first File structure One API per task Never do Game template Agent prompt Verify Start from /nayan-game-engine.json and the first game; check every name in the API reference. Never guess names from another engine. Rules live in plain TypeScript with no UI imports, so one file serves web and native. The hook owns the world; the screen owns layout and GameView. Each task has one way. Use it."
     },
     {
       "path": "/game-engine/world-entities",
@@ -2758,8 +2758,8 @@
     },
     {
       "path": "/video-editor/start",
-      "title": "Video Editor",
-      "category": "Browser Video Editor",
+      "title": "Nayan Video Editor",
+      "category": "Nayan Video Editor",
       "theme": [
         "#ef4444",
         "#ec4899"

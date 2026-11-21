@@ -1,5 +1,6 @@
 "use client";
 
+import { NView } from 'nayan-ui/components';
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { LOGOS, type LogoId } from "./logos";
@@ -62,7 +63,7 @@ export default function LogoPreview({ logo }: { logo?: LogoId } = {}) {
   }, [logo]);
 
   return (
-    <div className="h-dvh bg-background" style={{ backgroundColor: controls?.background }}>
+    <NView tag="div" className="h-dvh bg-background" style={{ backgroundColor: controls?.background }}>
       {controls ? (
         <SharedLogoRuntime
           {...controls}
@@ -75,6 +76,6 @@ export default function LogoPreview({ logo }: { logo?: LogoId } = {}) {
           }
         />
       ) : null}
-    </div>
+    </NView>
   );
 }

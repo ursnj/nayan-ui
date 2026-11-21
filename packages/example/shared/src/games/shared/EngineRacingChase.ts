@@ -1,4 +1,4 @@
-import type { Camera, Vec3 } from '@nayan-ui/engine';
+import type { Camera, Vec3 } from 'nayan-ui';
 
 type Vector = [number, number, number];
 export const createChase = () => ({

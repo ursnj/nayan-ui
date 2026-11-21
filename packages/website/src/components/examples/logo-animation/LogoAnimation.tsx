@@ -1,5 +1,6 @@
 "use client";
 
+import { NView, NText } from 'nayan-ui/components';
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { Check, Copy, Orbit, Pause, Play, RotateCcw } from "@/design/Icons";
 import Code from "@/components/helpers/Code";
@@ -129,22 +130,22 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
   };
 
   return (
-    <section
+    <NView tag="section"
       id="logo-stage"
       aria-labelledby={`${logo.id}-heading`}
       className="scroll-mt-24 space-y-4"
     >
-      <div>
-        <h2 id={`${logo.id}-heading`} className="text-xl font-semibold text-foreground">
+      <NView tag="div">
+        <NText tag="h2" id={`${logo.id}-heading`} className="text-xl font-semibold text-foreground">
           {logo.name}
-        </h2>
-        <p className="mt-2 text-sm text-muted">{logo.description}</p>
-      </div>
-      <div className={`${CARD} relative overflow-hidden`}>
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-default p-2">
-          <div role="tablist" aria-label={`${logo.name} example`} className="flex gap-1">
+        </NText>
+        <NText tag="p" className="mt-2 text-sm text-muted">{logo.description}</NText>
+      </NView>
+      <NView tag="div" className={`${CARD} relative overflow-hidden`}>
+        <NView tag="div" className="flex flex-wrap items-center justify-between gap-2 border-b border-default p-2">
+          <NView tag="div" role="tablist" aria-label={`${logo.name} example`} className="flex gap-1">
             {(["preview", "code"] as const).map((tab) => (
-              <button
+              <NView tag="button"
                 key={tab}
                 type="button"
                 role="tab"
@@ -157,11 +158,11 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
                 className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${view === tab ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-300" : "text-muted hover:bg-default/50 hover:text-foreground"}`}
               >
                 {tab === "preview" ? "Preview" : "Code"}
-              </button>
+              </NView>
             ))}
-          </div>
-          <div className="ml-auto flex items-center gap-2">
-            <button
+          </NView>
+          <NView tag="div" className="ml-auto flex items-center gap-2">
+            <NView tag="button"
               type="button"
               onClick={copyCode}
               aria-label={`Copy ${logo.name} code`}
@@ -174,18 +175,18 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
                 <Copy aria-hidden className="h-3.5 w-3.5" />
               )}
               {copied ? "Copied" : "Copy"}
-            </button>
-          </div>
-        </div>
+            </NView>
+          </NView>
+        </NView>
         {previewError ? (
-          <p
+          <NText tag="p"
             role="alert"
             className="border-b border-default px-4 py-2 text-sm text-red-600 dark:text-red-400"
           >
             {previewError}
-          </p>
+          </NText>
         ) : null}
-        <div
+        <NView tag="div"
           role="tabpanel"
           id={`${logo.id}-preview-panel`}
           aria-labelledby={`${logo.id}-preview-tab`}
@@ -196,36 +197,36 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
           }
           tabIndex={view === "preview" ? 0 : -1}
         >
-          <div
+          <NView tag="div"
             ref={preview}
             aria-label={`${logo.name} logo animation`}
             className="relative h-[300px] bg-background sm:h-[380px]"
           >
             {active && !frameReady && !initialized && !previewError ? (
-              <div
+              <NView tag="div"
                 role="status"
                 className="absolute inset-0 flex items-center justify-center text-sm text-muted"
               >
                 Loading Nayan Game Engine…
-              </div>
+              </NView>
             ) : null}
-            <iframe
+            <NView tag="iframe"
               ref={frame}
               src="/logo-preview/player"
               title={`${logo.name} animated preview`}
               className={`relative h-full w-full border-0 ${frameReady ? "opacity-100" : "opacity-0"}`}
             />
-          </div>
-          <div className="flex flex-wrap items-center gap-3 border-t border-default p-4">
-            <button type="button" className={BUTTON_SMALL} onClick={() => setPlaying(!playing)}>
+          </NView>
+          <NView tag="div" className="flex flex-wrap items-center gap-3 border-t border-default p-4">
+            <NView tag="button" type="button" className={BUTTON_SMALL} onClick={() => setPlaying(!playing)}>
               {playing ? (
                 <Pause aria-hidden className="mr-2 h-4 w-4" />
               ) : (
                 <Play aria-hidden className="mr-2 h-4 w-4" />
               )}
               {playing ? "Pause" : "Play"}
-            </button>
-            <button
+            </NView>
+            <NView tag="button"
               type="button"
               className={BUTTON_SMALL}
               onClick={() => {
@@ -234,8 +235,8 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
               }}
             >
               <RotateCcw aria-hidden className="mr-2 h-4 w-4" /> Replay
-            </button>
-            <button
+            </NView>
+            <NView tag="button"
               type="button"
               aria-pressed={rotateView}
               aria-controls={`${logo.id}-preview-panel`}
@@ -245,36 +246,36 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
               onClick={() => setRotateView((value) => !value)}
             >
               <Orbit aria-hidden className="mr-2 h-4 w-4" /> Rotate view
-            </button>
+            </NView>
             {rotateView ? (
               <>
-                <button
+                <NView tag="button"
                   type="button"
                   className={BUTTON_SMALL}
                   onClick={() => setViewReset((value) => value + 1)}
                 >
                   Front view
-                </button>
-                <span className="text-xs text-muted">Drag or use arrow keys. Home resets.</span>
+                </NView>
+                <NText tag="span" className="text-xs text-muted">Drag or use arrow keys. Home resets.</NText>
               </>
             ) : null}
-            <label className="ml-auto flex items-center gap-2 text-sm text-muted">
+            <NView tag="label" className="ml-auto flex items-center gap-2 text-sm text-muted">
               Speed
-              <select
+              <NView<'select'> tag="select"
                 aria-label={`${logo.name} animation speed`}
                 value={speed}
                 onChange={(event) => setSpeed(Number(event.target.value))}
                 className="rounded-lg border border-default bg-surface px-2 py-1.5 text-foreground"
               >
-                <option value={0.5}>0.5×</option>
-                <option value={1}>1×</option>
-                <option value={1.5}>1.5×</option>
-                <option value={2}>2×</option>
-              </select>
-            </label>
-          </div>
-        </div>
-        <div
+                <NView tag="option" value={0.5}>0.5×</NView>
+                <NView tag="option" value={1}>1×</NView>
+                <NView tag="option" value={1.5}>1.5×</NView>
+                <NView tag="option" value={2}>2×</NView>
+              </NView>
+            </NView>
+          </NView>
+        </NView>
+        <NView tag="div"
           role="tabpanel"
           id={`${logo.id}-code-panel`}
           aria-labelledby={`${logo.id}-code-tab`}
@@ -291,9 +292,9 @@ function SelectedLogo({ logo, code }: { logo: Logo; code: string }) {
               filename={`${logo.name.replace(/[^a-zA-Z0-9]/g, "")}LogoScene.tsx`}
             />
           ) : null}
-        </div>
-      </div>
-    </section>
+        </NView>
+      </NView>
+    </NView>
   );
 }
 
@@ -301,10 +302,10 @@ export default function LogoAnimation({ sources }: { sources: Record<LogoId, str
   const [selected, setSelected] = useState<LogoId>("microsoft");
   const logo = LOGOS.find((item) => item.id === selected) ?? LOGOS[0];
   return (
-    <div className="space-y-6">
-      <div role="group" aria-label="Choose company logo" className="flex flex-wrap gap-2">
+    <NView tag="div" className="space-y-6">
+      <NView tag="div" role="group" aria-label="Choose company logo" className="flex flex-wrap gap-2">
         {LOGOS.map((item) => (
-          <button
+          <NView tag="button"
             key={item.id}
             type="button"
             aria-pressed={logo.id === item.id}
@@ -313,10 +314,10 @@ export default function LogoAnimation({ sources }: { sources: Record<LogoId, str
             className={`${BUTTON_SMALL} ${selected === item.id ? "border-indigo-500/40 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300" : "text-muted"}`}
           >
             {item.name}
-          </button>
+          </NView>
         ))}
-      </div>
+      </NView>
       <SelectedLogo logo={logo} code={sources[logo.id]} />
-    </div>
+    </NView>
   );
 }

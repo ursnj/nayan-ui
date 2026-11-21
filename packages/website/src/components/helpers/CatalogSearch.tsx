@@ -1,6 +1,6 @@
 'use client';
 
-import { NInput } from '@nayan-ui/engine/components';
+import { NView, NInput } from 'nayan-ui/components';
 import { Search } from '@/design/Icons';
 
 interface Props {
@@ -11,9 +11,9 @@ interface Props {
 
 export default function CatalogSearch({ label, value, onChange }: Props) {
   return (
-    <label className="catalog-search">
+    <NView tag="label" className="catalog-search">
       <Search aria-hidden size={18} />
       <NInput type="search" accessibilityLabel={label} placeholder={label} value={value} onChangeText={onChange} />
-    </label>
+    </NView>
   );
 }

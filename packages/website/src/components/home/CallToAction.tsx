@@ -7,7 +7,7 @@ import { REPO_URL } from '@/services/seo';
 export default function CallToAction() {
   return (
     <CtaPanel
-      title="Get started with Nayan Engine"
+      title="Get started with Nayan UI"
       lead="Follow the installation guide for React or React Native. The engine is open source and MIT licensed."
     >
       <Link href="/game-engine/installation" className={BUTTON_PRIMARY}>

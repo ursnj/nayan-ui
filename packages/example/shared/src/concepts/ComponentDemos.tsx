@@ -7,7 +7,7 @@ import {
   withSpring,
   type AnimationViewRef,
   type SharedElementSnapshot,
-} from "@nayan-ui/engine/animations";
+} from "nayan-ui/animations";
 import {
   NAlert,
   NBlur,
@@ -42,10 +42,10 @@ import {
   useNTheme,
   type NBlurTargetRef,
   type NListRef,
-} from "@nayan-ui/engine/components";
-import { device } from "@nayan-ui/engine/device";
-import { SparklesIcon } from "@nayan-ui/engine/icons/components/sparkles";
-import { NMarkdown, parseFrontMatter } from "@nayan-ui/engine/markdown";
+} from "nayan-ui/components";
+import { device } from "nayan-ui/device";
+import { SparklesIcon } from "nayan-ui/icons/components/sparkles";
+import { NMarkdown, parseFrontMatter } from "nayan-ui/markdown";
 import { DemoButton, DemoControls, DemoPanel, DemoSurface, DemoText } from "./Demo";
 
 const texture = require("../assets/textures/grass.png");

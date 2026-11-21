@@ -10,7 +10,7 @@ import {
   NView,
   type ComponentInputProps,
   type ComponentOption
-} from '@nayan-ui/engine/components';
+} from 'nayan-ui/components';
 import { useId, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { cn } from './controls';
 
@@ -30,9 +30,9 @@ function Frame({ id, label, labelClassName, wrapperClassName, error, helperText,
   return (
     <NView className={cn('min-w-0', wrapperClassName)}>
       {label && (
-        <label htmlFor={id} className={cn('mb-1 block text-sm font-medium', labelClassName)}>
+        <NView tag="label" htmlFor={id} className={cn('mb-1 block text-sm font-medium', labelClassName)}>
           {label}
-        </label>
+        </NView>
       )}
       {children}
       {(error || helperText) && (
@@ -176,10 +176,10 @@ export function NCheck({
   const generated = useId();
   const inputId = id ?? generated;
   return (
-    <label htmlFor={inputId} className={cn('flex cursor-pointer items-center gap-2 text-sm', className)}>
+    <NView tag="label" htmlFor={inputId} className={cn('flex cursor-pointer items-center gap-2 text-sm', className)}>
       <EngineCheck {...props} id={inputId} checked={checked} disabled={disabled} onChange={onChange} className="size-4 accent-accent" />
       {label ?? children}
-    </label>
+    </NView>
   );
 }
 
@@ -235,9 +235,9 @@ export function NSlider({
         className={cn('w-full min-w-0 accent-accent', sliderClassName)}
       />
       {showOutput && (
-        <output htmlFor={inputId} className="text-xs text-muted">
+        <NView tag="output" htmlFor={inputId} className="text-xs text-muted">
           {output?.(current) ?? current}
-        </output>
+        </NView>
       )}
     </Frame>
   );
@@ -328,12 +328,12 @@ export function NRadioGroup({
 }) {
   const name = useId();
   return (
-    <fieldset className={className}>
-      {label && <legend className="mb-1 text-sm font-medium">{label}</legend>}
-      <div className={cn('flex gap-2', orientation === 'horizontal' ? 'flex-row' : 'flex-col')}>
+    <NView tag="fieldset" className={className}>
+      {label && <NView tag="legend" className="mb-1 text-sm font-medium">{label}</NView>}
+      <NView tag="div" className={cn('flex gap-2', orientation === 'horizontal' ? 'flex-row' : 'flex-col')}>
         {items.map((item) => (
-          <label key={item.value} className="flex items-center gap-2 text-sm">
-            <input
+          <NView tag="label" key={item.value} className="flex items-center gap-2 text-sm">
+            <NView tag="input"
               type="radio"
               name={name}
               value={item.value}
@@ -343,9 +343,9 @@ export function NRadioGroup({
               className="accent-accent"
             />
             {item.label}
-          </label>
+          </NView>
         ))}
-      </div>
-    </fieldset>
+      </NView>
+    </NView>
   );
 }

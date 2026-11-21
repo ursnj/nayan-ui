@@ -24,7 +24,7 @@ const timing: LoadTiming = {
   afterPaint(run) {
     // On the engine's display clock where there's a GameView (the loading screen is one): the work
     // runs right after each frame leaves, every refresh.
-    const engine = require('@nayan-ui/engine') as { afterNextFrame?: (fn: () => void) => () => void };
+    const engine = require('nayan-ui') as { afterNextFrame?: (fn: () => void) => () => void };
     if (typeof engine.afterNextFrame === 'function') return engine.afterNextFrame(run);
     let cancelled = false;
     const soon = typeof setImmediate === 'function' ? (fn: () => void) => setImmediate(fn) : (fn: () => void) => setTimeout(fn, 0);

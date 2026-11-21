@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import enginePackage from '@nayan-ui/engine/package.json';
+import enginePackage from 'nayan-ui/package.json';
 import gamesPackage from '@nayan-ui/games/package.json';
 import seoBanners from './seo-banners.json';
 import seoArtwork from './seo-artwork.json';
@@ -53,7 +53,7 @@ export const softwareApplicationSchema = {
   operatingSystem: 'Web, iOS, Android',
   description: SITE_DESCRIPTION,
   url: SITE_URL,
-  downloadUrl: 'https://www.npmjs.com/package/@nayan-ui/engine',
+  downloadUrl: 'https://www.npmjs.com/package/nayan-ui',
   version: enginePackage.version,
   datePublished: '2024-01-01',
   dateModified: new Date().toISOString().split('T')[0],
@@ -68,7 +68,7 @@ export const softwareApplicationSchema = {
     `${NATIVE_COMPONENT_COUNT} React Native Components`,
     '3D Game Engine for React and React Native',
     '50+ Ready-made Games',
-    'Browser Video Editor',
+    'Nayan Video Editor',
     `${TOOL_COUNT} Developer Tool Guides`,
     'PDF Tools — Merge, Split, Compress, Convert & More',
     'Image Tools — Compress, Resize, Crop, Convert, Watermark',
@@ -233,20 +233,20 @@ export function buildHowToSchema(opts: {
 export const ENGINE_URL = `${SITE_URL}/game-engine`;
 export const GAMES_URL = `${SITE_URL}/games`;
 
-/** @nayan-ui/engine as a software product (version from the installed package). */
+/** nayan-ui as a software product (version from the installed package). */
 export const engineSoftwareSchema = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   '@id': `${ENGINE_URL}#software`,
-  name: 'Nayan Game Engine (@nayan-ui/engine)',
-  alternateName: ['@nayan-ui/engine', 'Nayan Game Engine'],
+  name: 'Nayan Game Engine (nayan-ui)',
+  alternateName: ['nayan-ui', 'Nayan Game Engine'],
   applicationCategory: 'DeveloperApplication',
   applicationSubCategory: 'Game engine',
   operatingSystem: 'iOS, Android, Web',
   description:
     'A 3D game engine for React and React Native with one TypeScript API and a shared Rust core: wgpu rendering (Metal, Vulkan, WebGPU, WebGL2), physics, animation, particles, audio and drawing.',
   url: ENGINE_URL,
-  downloadUrl: 'https://www.npmjs.com/package/@nayan-ui/engine',
+  downloadUrl: 'https://www.npmjs.com/package/nayan-ui',
   softwareVersion: enginePackage.version,
   license: 'https://opensource.org/licenses/MIT',
   isAccessibleForFree: true,
@@ -269,7 +269,8 @@ export const gamesSoftwareSchema = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   '@id': `${GAMES_URL}#software`,
-  name: '@nayan-ui/games',
+  name: 'Nayan Games',
+  alternateName: '@nayan-ui/games',
   applicationCategory: 'GameApplication',
   operatingSystem: 'iOS, Android, Web',
   description: '50+ ready-made games for React Native apps and React websites, rendered by the Nayan Game Engine.',
@@ -286,7 +287,7 @@ export const gamesSoftwareSchema = {
 export const gamesAbout = {
   '@type': 'SoftwareApplication',
   '@id': `${GAMES_URL}#software`,
-  name: '@nayan-ui/games'
+  name: 'Nayan Games'
 };
 
 /** Short reference to the engine, for `about` in its documentation pages. */

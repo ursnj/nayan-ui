@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import * as E from '@nayan-ui/engine/components';
+import * as E from 'nayan-ui/components';
 import { element as e, sample } from './ControlScenarios';
 import { scenario } from './scenario';
 import type { NamedComponentPreview } from './types';
@@ -20,7 +20,7 @@ function browser(
     host: true,
     height,
     render,
-    source: `'use client';\n\nimport { ${imports} } from '@nayan-ui/engine/components';${state ? "\nimport { useState } from 'react';" : ''}
+    source: `'use client';\n\nimport { ${imports} } from 'nayan-ui/components';${state ? "\nimport { useState } from 'react';" : ''}
 
 export default function Example() {
   ${state ? `${state}\n  ` : ''}return (
@@ -33,7 +33,7 @@ export default function Example() {
 function Field({ time }: { time: boolean }) {
   const id = time ? 'opening-time' : 'deadline-date';
   return (
-    <div className="component-host-demo">
+    <E.NView tag="div" className="component-host-demo">
       <E.NText tag="label" htmlFor={id}>
         {time ? 'Opening time' : 'Deadline'}
       </E.NText>
@@ -46,7 +46,7 @@ function Field({ time }: { time: boolean }) {
         defaultValue={time ? '09:00' : '2026-01-15'}
         step={time ? 900 : 1}
       />
-    </div>
+    </E.NView>
   );
 }
 
@@ -78,7 +78,7 @@ function Range() {
 function Circle() {
   const [value, setValue] = useState(25);
   return (
-    <div className="component-host-demo">
+    <E.NView tag="div" className="component-host-demo">
       <E.NView
         className="component-progress-circle"
         style={{
@@ -93,13 +93,13 @@ function Circle() {
       <E.NButton className="component-host-button" onPress={() => setValue(value === 100 ? 0 : value + 25)}>
         Advance upload
       </E.NButton>
-    </div>
+    </E.NView>
   );
 }
 
 function Popup({ menu }: { menu: boolean }) {
   return (
-    <div className="component-host-demo">
+    <E.NView tag="div" className="component-host-demo">
       <E.NView tag="details" className="component-disclosure-list">
         <E.NText tag="summary" className="component-disclosure-trigger">
           {menu ? 'More actions' : 'About this setting'}
@@ -116,7 +116,7 @@ function Popup({ menu }: { menu: boolean }) {
           </E.NText>
         )}
       </E.NView>
-    </div>
+    </E.NView>
   );
 }
 
@@ -143,7 +143,7 @@ function ScoreTable() {
   const [ascending, setAscending] = useState(false);
   const ordered = [...scores].sort((a, b) => (ascending ? a[1] - b[1] : b[1] - a[1]));
   return (
-    <div className="component-host-demo">
+    <E.NView tag="div" className="component-host-demo">
       <E.NButton className="component-host-button" onPress={() => setAscending(!ascending)}>
         {ascending ? 'Lowest first' : 'Highest first'}
       </E.NButton>
@@ -163,7 +163,7 @@ function ScoreTable() {
           ))}
         </E.NView>
       </E.NView>
-    </div>
+    </E.NView>
   );
 }
 
@@ -225,7 +225,7 @@ export const legacyScenarios = {
     e('NView', row, [
       e('NLink', { href: '/' }, 'Home'),
       e('NText', {}, '›'),
-      e('NLink', { href: '/game-engine' }, 'Game Engine'),
+      e('NLink', { href: '/game-engine' }, 'Nayan Game Engine'),
       e('NText', {}, '›'),
       e('NText', { className: 'font-semibold' }, 'Examples')
     ])

@@ -14,8 +14,8 @@ function metroRequires(): Plugin {
         /require\((['"])([^'"]+\.(?:wav|png|ttf|glb|mp4))\1\)/g,
         (_, _quote, path) => `new URL(${JSON.stringify(path)}, import.meta.url).href`
       );
-      if (out.includes("require('@nayan-ui/engine')"))
-        out = `import * as __engine from '@nayan-ui/engine';\n` + out.replaceAll("require('@nayan-ui/engine')", '__engine');
+      if (out.includes("require('nayan-ui')"))
+        out = `import * as __engine from 'nayan-ui';\n` + out.replaceAll("require('nayan-ui')", '__engine');
       return out === code ? undefined : { code: out, map: null };
     }
   };
@@ -25,7 +25,7 @@ export default defineConfig({
   plugins: [metroRequires(), tailwindcss()],
   resolve: {
     extensions: ['.web.tsx', '.web.ts', '.tsx', '.ts', '.mjs', '.js', '.json'],
-    dedupe: ['react', 'react-dom', '@nayan-ui/engine']
+    dedupe: ['react', 'react-dom', 'nayan-ui']
   },
   define: {
     '__DEV__': JSON.stringify(process.env.NODE_ENV !== 'production'),

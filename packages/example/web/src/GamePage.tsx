@@ -7,7 +7,7 @@ import {
   useState,
   type CSSProperties,
 } from "react";
-import { createKeyboardInput } from "@nayan-ui/engine/games";
+import { createKeyboardInput } from "nayan-ui/games";
 import { DEFAULT_GAME_SETTINGS, type GameSettings } from "@nayan-example/shared/settings";
 import { Link, Navigate, useParams } from "react-router";
 import { APP_TITLE, carRacing } from "@nayan-example/shared/catalog";

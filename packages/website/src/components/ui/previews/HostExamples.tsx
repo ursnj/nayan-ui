@@ -29,8 +29,8 @@ import {
   useNTheme,
   NDrawer,
   type NBlurTargetRef
-} from '@nayan-ui/engine/components';
-import { standaloneExamples } from '@/services/engine/component-examples';
+} from 'nayan-ui/components';
+import { standaloneExamples } from '@/services/nayan-ui/component-examples';
 import type { ComponentPreview } from './types';
 
 function Blur({ sampleTarget = false }: { sampleTarget?: boolean }) {
@@ -38,17 +38,17 @@ function Blur({ sampleTarget = false }: { sampleTarget?: boolean }) {
   const [enabled, setEnabled] = useState(true);
   const background = <NText style={{ color: '#fde68a', fontSize: 26, fontWeight: '700' }}>Colour and texture</NText>;
   return (
-    <div className="component-host-demo">
-      <div className="component-blur-scene">
+    <NView tag="div" className="component-host-demo">
+      <NView tag="div" className="component-blur-scene">
         {sampleTarget ? <NBlurTarget ref={target}>{background}</NBlurTarget> : background}
         <NBlur blurTarget={sampleTarget ? target : undefined} intensity={56} enabled={enabled} tint="dark" className="component-blur-panel">
           <NText style={{ color: 'white' }}>Sharp foreground</NText>
         </NBlur>
-      </div>
+      </NView>
       <NButton className="component-host-button" onPress={() => setEnabled(!enabled)}>
         {enabled ? 'Turn blur off' : 'Turn blur on'}
       </NButton>
-    </div>
+    </NView>
   );
 }
 
@@ -104,17 +104,17 @@ function DrawerDemo() {
       accessibilityLabel="Example navigation drawer"
       drawerStyle={{ backgroundColor: 'var(--overlay)', borderRight: '1px solid var(--border)' }}
       drawerContent={
-        <div className="component-host-demo">
+        <NView tag="div" className="component-host-demo">
           <NText tag="p" className="text-sm font-semibold">
             Navigation
           </NText>
           <DrawerButton dismiss />
-        </div>
+        </NView>
       }
     >
-      <div className="component-host-demo">
+      <NView tag="div" className="component-host-demo">
         <DrawerButton />
-      </div>
+      </NView>
     </NDrawer>
   );
 }
@@ -205,12 +205,12 @@ function SafeAreaDemo() {
 function SafeAreaMeasurements() {
   const { width, height } = useNSafeAreaFrame();
   return (
-    <div className="component-host-demo">
+    <NView tag="div" className="component-host-demo">
       <NText tag="p">
         Frame {Math.round(width)} × {Math.round(height)}
       </NText>
       <SafeAreaInsets />
-    </div>
+    </NView>
   );
 }
 
@@ -226,12 +226,12 @@ function SafeAreaListenerDemo() {
   const [frame, setFrame] = useState('Measuring the preview…');
   return (
     <NSafeAreaListener onChange={({ frame }) => setFrame(`Observed ${Math.round(frame.width)} × ${Math.round(frame.height)}`)}>
-      <div className="component-host-demo">
+      <NView tag="div" className="component-host-demo">
         <NText tag="p" aria-live="polite">
           {frame}
         </NText>
         <NText tag="p">Resize the viewport to update the measurement.</NText>
-      </div>
+      </NView>
     </NSafeAreaListener>
   );
 }
@@ -272,12 +272,12 @@ function ThemeDemo() {
 
 function ToastHostDemo() {
   return (
-    <div className="component-host-demo">
+    <NView tag="div" className="component-host-demo">
       <NButton className="component-host-button" onPress={() => NToast.success('Changes saved')}>
         Show toast
       </NButton>
       <NToastHost top={76} />
-    </div>
+    </NView>
   );
 }
 

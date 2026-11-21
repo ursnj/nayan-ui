@@ -1,3 +1,4 @@
+import { NView, NText } from 'nayan-ui/components';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -771,74 +772,74 @@ const DevtoolsMain = () => {
         }
       />
 
-      <nav aria-label="Tool categories" className="site-category-grid">
+      <NView tag="nav" aria-label="Tool categories" className="site-category-grid">
         {TOOL_GROUPS.map(({ id, label, tone, icon: Icon }) => (
-          <a key={id} href={`#${id}`} data-tone={tone} className="site-category-link">
+          <NView tag="a" key={id} href={`#${id}`} data-tone={tone} className="site-category-link">
             <Icon aria-hidden size={19} />
-            <span>{label}</span>
+            <NText tag="span">{label}</NText>
             <ArrowUpRight aria-hidden size={15} />
-          </a>
+          </NView>
         ))}
-        <a href="#nayan-ui-cli" data-tone="blue" className="site-category-link">
+        <NView tag="a" href="#nayan-ui-cli" data-tone="blue" className="site-category-link">
           <Keyboard aria-hidden size={19} />
-          <span>Command line</span>
+          <NText tag="span">Command line</NText>
           <ArrowUpRight aria-hidden size={15} />
-        </a>
-      </nav>
+        </NView>
+      </NView>
 
       {TOOL_GROUPS.map(({ id, label, description, tone, tools }) => (
         <SubHeader key={id} id={id} title={`${label} Tools`} description={description}>
-          <div className={`grid sm:grid-cols-2 xl:grid-cols-3 ${GRID_GAP}`}>
+          <NView tag="div" className={`grid sm:grid-cols-2 xl:grid-cols-3 ${GRID_GAP}`}>
             {tools.map(({ href, icon: Icon, title, body }) => (
               <Link key={href} href={href} data-tone={tone} className={`${CARD_INTERACTIVE} catalog-entry group block p-4 sm:p-5`}>
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <span className="catalog-entry-icon">
+                <NView tag="div" className="mb-3 flex items-center justify-between gap-3">
+                  <NText tag="span" className="catalog-entry-icon">
                     <Icon aria-hidden size={18} />
-                  </span>
+                  </NText>
                   <ArrowRight aria-hidden size={16} className="shrink-0 text-muted transition-colors group-hover:text-accent" />
-                </div>
-                <h3 className={H3}>{title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted">{body}</p>
+                </NView>
+                <NText tag="h3" className={H3}>{title}</NText>
+                <NText tag="p" className="mt-1.5 text-sm leading-relaxed text-muted">{body}</NText>
               </Link>
             ))}
-          </div>
+          </NView>
         </SubHeader>
       ))}
 
       {PACKAGES.map((pkg) => (
         <SubHeader key={pkg.name} title={pkg.name} description={pkg.lead}>
-          <div className="grid min-w-0 gap-5 lg:grid-cols-2">
-            <div className="min-w-0 space-y-4">
-              <div>
-                <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted">Install</h4>
+          <NView tag="div" className="grid min-w-0 gap-5 lg:grid-cols-2">
+            <NView tag="div" className="min-w-0 space-y-4">
+              <NView tag="div">
+                <NText tag="h4" className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted">Install</NText>
                 <Code code={pkg.install} language="bash" filename="terminal" />
-              </div>
-              <div>
-                <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted">Commands</h4>
+              </NView>
+              <NView tag="div">
+                <NText tag="h4" className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted">Commands</NText>
                 <Code code={pkg.commands} language="bash" filename="terminal" />
-              </div>
-            </div>
+              </NView>
+            </NView>
 
-            <div className={`${CARD} p-5`}>
-              <h4 className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted">What it does</h4>
-              <ul className="space-y-4">
+            <NView tag="div" className={`${CARD} p-5`}>
+              <NText tag="h4" className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted">What it does</NText>
+              <NView tag="ul" className="space-y-4">
                 {pkg.features.map((feature) => {
                   const Icon = feature.icon;
                   return (
-                    <li key={feature.title} className="flex items-start gap-3">
-                      <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${ACCENT_SOFT}`}>
+                    <NView tag="li" key={feature.title} className="flex items-start gap-3">
+                      <NText tag="span" className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${ACCENT_SOFT}`}>
                         <Icon className="h-4 w-4" />
-                      </span>
-                      <span>
-                        <span className="block text-sm font-semibold text-foreground">{feature.title}</span>
-                        <span className="mt-0.5 block text-sm leading-relaxed text-muted">{feature.body}</span>
-                      </span>
-                    </li>
+                      </NText>
+                      <NText tag="span">
+                        <NText tag="span" className="block text-sm font-semibold text-foreground">{feature.title}</NText>
+                        <NText tag="span" className="mt-0.5 block text-sm leading-relaxed text-muted">{feature.body}</NText>
+                      </NText>
+                    </NView>
                   );
                 })}
-              </ul>
-            </div>
-          </div>
+              </NView>
+            </NView>
+          </NView>
         </SubHeader>
       ))}
     </Sidebar>

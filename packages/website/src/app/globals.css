@@ -1,7 +1,7 @@
-@import './engine.css';
+@import './nayan-ui.css';
 @import './browser-utilities.css';
 @import './site-design.css';
-@import '../components/video-editor/index.css';
+@import '../components/nayan-video-editor/index.css';
 
 body {
   color: var(--foreground);

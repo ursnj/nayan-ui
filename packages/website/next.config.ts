@@ -14,17 +14,34 @@ const nextConfig: NextConfig = {
     root: path.resolve(__dirname, '../..')
   },
   output: 'standalone',
-  // The engine docs moved from /engine to /game-engine; keep old links (npm README, search results) working.
+  // Keep published documentation, shared games and saved playground links working.
   async redirects() {
     return [
-      { source: '/examples', destination: '/game-engine/examples', permanent: true },
-      { source: '/examples/:path+', destination: '/game-engine/examples/:path+', permanent: true },
-      { source: '/engine', destination: '/game-engine', permanent: true },
-      { source: '/engine/:slug', destination: '/game-engine/:slug', permanent: true },
+      { source: '/examples/:path*', destination: '/game-engine/examples/:path*', permanent: true },
+      { source: '/engine/:path*', destination: '/game-engine/:path*', permanent: true },
+      { source: '/playground', destination: '/game-engine/playground', permanent: true },
+      { source: '/playground/types', destination: '/game-engine/playground/types', permanent: true },
+      { source: '/nayan-components', destination: '/components', permanent: true },
+      { source: '/nayan-modules/:path*', destination: '/modules/:path*', permanent: true },
+      { source: '/nayan-game-engine/:path*', destination: '/game-engine/:path*', permanent: true },
+      { source: '/nayan-playground', destination: '/game-engine/playground', permanent: true },
+      { source: '/nayan-playground/types', destination: '/game-engine/playground/types', permanent: true },
+      { source: '/nayan-playground/:path+', destination: '/playground/:path+', permanent: true },
+      { source: '/nayan-video-editor/:path*', destination: '/video-editor/:path*', permanent: true },
       { source: '/react/tags/:tag*', destination: '/tags/:tag*', permanent: true },
       { source: '/react-native/tags/:tag*', destination: '/tags/:tag*', permanent: true },
       // Play With Tua was renamed Talking Tua.
-      { source: '/games/play-with-tua', destination: '/games/talking-tua', permanent: true }
+      { source: '/games/play-with-tua', destination: '/games/talking-tua', permanent: true },
+      { source: '/nayan-games/play-with-tua', destination: '/games/talking-tua', permanent: true },
+      { source: '/nayan-games/:path*', destination: '/games/:path*', permanent: true },
+      { source: '/engine-ui/:path*', destination: '/nayan-ui/:path*', permanent: true },
+      { source: '/engine.json', destination: '/nayan-game-engine.json', permanent: true },
+      { source: '/seo/game-engine/playground.png', destination: '/seo/nayan-playground.png', permanent: true },
+      { source: '/seo/artwork/pages/game-engine/playground.jpg', destination: '/seo/artwork/pages/nayan-playground.jpg', permanent: true },
+      { source: '/seo/artwork/games.jpg', destination: '/seo/artwork/nayan-games.jpg', permanent: true },
+      { source: '/seo/:product(game-engine|games|video-editor).png', destination: '/seo/nayan-:product.png', permanent: true },
+      { source: '/seo/:product(game-engine|games|video-editor)/:path*', destination: '/seo/nayan-:product/:path*', permanent: true },
+      { source: '/seo/artwork/pages/:product(game-engine|games|video-editor)/:path*', destination: '/seo/artwork/pages/nayan-:product/:path*', permanent: true }
     ];
   }
 };

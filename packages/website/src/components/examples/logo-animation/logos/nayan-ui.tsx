@@ -1,5 +1,6 @@
 "use client";
 
+import { NView } from 'nayan-ui/components';
 import { useRef, useState } from "react";
 import {
   GameView,
@@ -14,7 +15,7 @@ import {
   type Model,
   type Entity,
   type Camera,
-} from "@nayan-ui/engine";
+} from "nayan-ui";
 
 export type Piece = { mesh: Model; color: string; x: number; y: number; z: number };
 type Point = [number, number, number];
@@ -168,22 +169,22 @@ export default function NayanUILogoScene({
 
   if (error)
     return (
-      <div
+      <NView tag="div"
         role="alert"
         className="flex h-full items-center justify-center px-6 text-center text-sm text-slate-300"
       >
         The 3D preview could not start. Try a browser with WebGPU or WebGL2 enabled.
-      </div>
+      </NView>
     );
   if (!world)
     return (
-      <div role="status" className="flex h-full items-center justify-center text-sm text-slate-300">
+      <NView tag="div" role="status" className="flex h-full items-center justify-center text-sm text-slate-300">
         Loading Nayan Game Engine…
-      </div>
+      </NView>
     );
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
+    <NView tag="div" style={{ width: "100%", height: "100%" }}>
       <GameView
         source={world}
         paused={!rendering}
@@ -219,6 +220,6 @@ export default function NayanUILogoScene({
           drawLogo(world, entities, pieces, displayTime.current);
         }}
       />
-    </div>
+    </NView>
   );
 }

@@ -1,6 +1,6 @@
 import { Github, Package } from '@/design/Icons';
 import Link from 'next/link';
-import { NImage, NText, NView } from '@nayan-ui/engine/components';
+import { NImage, NText, NView } from 'nayan-ui/components';
 import { CONTAINER, PILL_INTERACTIVE } from '@/design/system';
 import { REPO_URL } from '@/services/seo';
 
@@ -8,9 +8,9 @@ const GROUPS = [
   {
     title: 'Documentation',
     links: [
-      { label: 'Nayan Engine', href: '/game-engine' },
-      { label: 'Engine components', href: '/components' },
-      { label: 'Engine modules', href: '/modules' },
+      { label: 'Game Engine', href: '/game-engine' },
+      { label: 'Components', href: '/components' },
+      { label: 'Modules', href: '/modules' },
       { label: 'Playground', href: '/game-engine/playground' },
       { label: 'React installation', href: '/game-engine/react' },
       { label: 'React components', href: '/react/components' },
@@ -39,7 +39,7 @@ const GROUPS = [
 ];
 
 const PACKAGES = [
-  { label: 'engine', href: 'https://www.npmjs.com/package/@nayan-ui/engine' },
+  { label: 'nayan-ui', href: 'https://www.npmjs.com/package/nayan-ui' },
   { label: 'cli', href: 'https://www.npmjs.com/package/@nayan-ui/cli' },
   { label: 'ai', href: 'https://www.npmjs.com/package/@nayan-ui/ai' }
 ];
@@ -56,7 +56,7 @@ const Footer = () => {
           <NView tag="div" className="sm:col-span-2">
             <Link href="/" className="inline-flex items-center gap-2.5">
               <NImage src="/logo.webp" alt="" width={32} height={32} className="site-logo h-8 w-8" loading="lazy" />
-              <span className="text-lg font-bold tracking-[-0.045em] text-foreground">Nayan UI</span>
+              <NText tag="span" className="text-lg font-bold tracking-[-0.045em] text-foreground">Nayan UI</NText>
             </Link>
 
             <NText tag="p" className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
@@ -68,15 +68,15 @@ const Footer = () => {
                 <Package aria-hidden className="h-3.5 w-3.5" />
                 On npm
               </NText>
-              <ul className="flex flex-wrap gap-1.5">
+              <NView tag="ul" className="flex flex-wrap gap-1.5">
                 {PACKAGES.map((pkg) => (
-                  <li key={pkg.label}>
+                  <NView tag="li" key={pkg.label}>
                     <Link href={pkg.href} target="_blank" rel="noopener noreferrer" className={`${PILL_INTERACTIVE} font-mono`}>
                       {pkg.label}
                     </Link>
-                  </li>
+                  </NView>
                 ))}
-              </ul>
+              </NView>
             </NView>
 
             <Link
@@ -95,15 +95,15 @@ const Footer = () => {
               <NText tag="h2" className="mb-3 text-xs font-semibold uppercase tracking-wider text-foreground">
                 {group.title}
               </NText>
-              <ul className="space-y-2.5">
+              <NView tag="ul" className="space-y-2.5">
                 {group.links.map((link) => (
-                  <li key={link.href}>
+                  <NView tag="li" key={link.href}>
                     <Link href={link.href} {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})} className={linkClass}>
                       {link.label}
                     </Link>
-                  </li>
+                  </NView>
                 ))}
-              </ul>
+              </NView>
             </NView>
           ))}
         </NView>
@@ -117,7 +117,7 @@ const Footer = () => {
             <Link href={REPO_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
               MIT License
             </Link>
-            <span aria-hidden>·</span>
+            <NText tag="span" aria-hidden>·</NText>
             <NText tag="p">Made in India</NText>
           </NView>
         </NView>

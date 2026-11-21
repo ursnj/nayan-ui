@@ -1,5 +1,5 @@
 import type { SiteIcon } from "@/design/Icons";
-import { engineNavigation } from "./engine/navigation";
+import { engineNavigation } from "./nayan-ui/navigation";
 import {
   AppWindow,
   Badge,
@@ -309,6 +309,7 @@ export const isWindowDefined = () => {
 
 export interface SidebarItem {
   title: string;
+  navTitle?: string;
   description: string;
   link: string;
   icon?: SiteIcon;
@@ -351,7 +352,8 @@ export const reactSidebarItems = [
   { title: "Get Started", description: "", link: "", isHeading: true },
   { title: "Installation", description: "", link: "/react/installation", icon: Settings },
   {
-    title: "Components",
+    title: "Nayan Components",
+    navTitle: "Components",
     description:
       "Components are reusable building blocks of a user interface that encapsulate a specific piece of functionality or UI design. Each component can represent a distinct part of the application, such as buttons, forms, modals, or navigation bars. Components help organize and structure code, making it easier to manage, maintain, and scale applications by allowing developers to reuse consistent elements across different parts of the project.",
     link: "/react/components",
@@ -849,7 +851,8 @@ export const reactNativeSidebarItems = [
   { title: "Get Started", description: "", link: "", isHeading: true },
   { title: "Installation", description: "", link: "/react-native/installation", icon: Settings },
   {
-    title: "Components",
+    title: "Nayan Components",
+    navTitle: "Components",
     description:
       "Components are reusable building blocks of a user interface that encapsulate a specific piece of functionality or UI design. Each component can represent a distinct part of the application, such as buttons, forms, modals, or navigation bars. Components help organize and structure code, making it easier to manage, maintain, and scale applications by allowing developers to reuse consistent elements across different parts of the project.",
     link: "/react-native/components",

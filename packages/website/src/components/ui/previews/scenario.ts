@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { componentSource } from '@/services/engine/component-examples';
+import { componentSource } from '@/services/nayan-ui/component-examples';
 import type { NamedComponentPreview } from './types';
 
 export function scenario(title: string, imports: string, jsx: string, render: ReactNode, state?: string, height?: number): NamedComponentPreview {

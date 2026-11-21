@@ -13,7 +13,7 @@ import {
   tube,
   type Vec3,
   type World
-} from '@nayan-ui/engine';
+} from 'nayan-ui';
 
 type GeometryPart = Parameters<typeof merge>[0][number];
 import { createGameMesh as createShape, meshCache } from '../shared/EngineMeshes';

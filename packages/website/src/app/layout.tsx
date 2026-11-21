@@ -1,3 +1,4 @@
+import { NView } from 'nayan-ui/components';
 import type { Metadata } from "next";
 import Script from "next/script";
 import Footer from "@/components/helpers/Footer";
@@ -63,11 +64,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <ThemeProvider>
-          <a href="#main-content" className="site-skip-link">Skip to content</a>
+          <NView tag="a" href="#main-content" className="site-skip-link">Skip to content</NView>
           <Header />
-          <main id="main-content" className="site-main" tabIndex={-1}>
+          <NView tag="main" id="main-content" className="site-main" tabIndex={-1}>
             {children}
-          </main>
+          </NView>
           <Footer />
         </ThemeProvider>
         <Script id="microsoft-clarity" strategy="afterInteractive">

@@ -8,7 +8,7 @@ import {
   NText,
   NToast,
   NView
-} from '@nayan-ui/engine/components';
+} from 'nayan-ui/components';
 import {
   useEffect,
   useId,
@@ -131,7 +131,7 @@ export function NBadge({
 
 export const NChip = NBadge;
 export const NKbd = ({ children, className }: { children?: ReactNode; className?: string }) => (
-  <kbd className={cn('rounded border border-default bg-default px-1.5 py-0.5 font-mono text-xs', className)}>{children}</kbd>
+  <NText tag="kbd" className={cn('rounded border border-default bg-default px-1.5 py-0.5 font-mono text-xs', className)}>{children}</NText>
 );
 
 export const AlertTypes = { DEFAULT: 'default', INFO: 'accent', SUCCESS: 'success', WARNING: 'warning', ERROR: 'danger', DANGER: 'danger' } as const;
@@ -163,11 +163,11 @@ export function NAlert({
       className={cn('flex flex-row items-start gap-2 rounded-lg p-3 text-sm', toneClass[type], className)}
     >
       {icon}
-      <div className="min-w-0 flex-1">
-        {title && <div className={cn('font-semibold', titleClassName)}>{title}</div>}
+      <NView tag="div" className="min-w-0 flex-1">
+        {title && <NView tag="div" className={cn('font-semibold', titleClassName)}>{title}</NView>}
         {message}
         {children}
-      </div>
+      </NView>
       {actions}
       {onClose && (
         <NButton isOutline onClick={onClose} aria-label="Dismiss message">
@@ -227,30 +227,30 @@ export function NProgress({
   className?: string;
 }) {
   return (
-    <div className={className}>
+    <NView tag="div" className={className}>
       {showLabel && (
-        <div className="text-sm">
+        <NView tag="div" className="text-sm">
           {label} {Math.round(value)}%
-        </div>
+        </NView>
       )}
       <EngineProgress className="w-full accent-accent" max={100} value={value} aria-label={label ?? 'Progress'} />
-    </div>
+    </NView>
   );
 }
 
 export function NTooltip({ message, children }: { message: ReactNode; children: ReactNode; placement?: string }) {
   const id = useId();
   return (
-    <span className="group/tooltip relative inline-flex" aria-describedby={id}>
-      <span
+    <NText tag="span" className="group/tooltip relative inline-flex" aria-describedby={id}>
+      <NText tag="span"
         id={id}
         role="tooltip"
         className="pointer-events-none absolute bottom-full left-1/2 z-50 hidden -translate-x-1/2 whitespace-nowrap rounded bg-overlay px-2 py-1 text-xs text-foreground shadow-md group-hover/tooltip:block group-focus-within/tooltip:block"
       >
         {message}
-      </span>
+      </NText>
       {children}
-    </span>
+    </NText>
   );
 }
 
@@ -277,13 +277,13 @@ export function NEmptyState({
 }) {
   return (
     <NView className={cn('flex flex-col items-center gap-2 p-4 text-center', className)}>
-      {icon && <div className={iconClassName}>{icon}</div>}
+      {icon && <NView tag="div" className={iconClassName}>{icon}</NView>}
       <NText className={cn('font-semibold', titleClassName)}>{title}</NText>
-      {message && <div className={messageClassName}>{message}</div>}
-      <div>
+      {message && <NView tag="div" className={messageClassName}>{message}</NView>}
+      <NView tag="div">
         {actions}
         {children}
-      </div>
+      </NView>
     </NView>
   );
 }
@@ -400,7 +400,7 @@ export function NDialog({
     else if (!isOpen && dialog?.open) dialog.close();
   }, [isOpen]);
   return (
-    <dialog
+    <NView tag="dialog"
       ref={ref}
       aria-labelledby={id}
       onCancel={(event) => {
@@ -415,18 +415,18 @@ export function NDialog({
     >
       {isOpen && (
         <>
-          <header className={cn('flex items-center justify-between gap-3 border-b border-default p-4', headerClassName)}>
-            <h2 id={id} className={cn('font-semibold', titleClassName)}>
+          <NView tag="header" className={cn('flex items-center justify-between gap-3 border-b border-default p-4', headerClassName)}>
+            <NText tag="h2" id={id} className={cn('font-semibold', titleClassName)}>
               {title}
-            </h2>
+            </NText>
             <NButton isOutline aria-label="Close dialog" onClick={onClose}>
               ×
             </NButton>
-          </header>
-          <div className={cn('p-4', contentClassName)}>{children}</div>
+          </NView>
+          <NView tag="div" className={cn('p-4', contentClassName)}>{children}</NView>
         </>
       )}
-    </dialog>
+    </NView>
   );
 }
 
@@ -453,13 +453,13 @@ export function NConfirmAlert({
   };
   return (
     <NDialog isOpen={isOpen} onClose={() => answer(false)} title={title} size="sm">
-      <p>{message}</p>
-      <div className="mt-4 flex justify-end gap-2">
+      <NText tag="p">{message}</NText>
+      <NView tag="div" className="mt-4 flex justify-end gap-2">
         <NButton isOutline onClick={() => answer(false)}>
           {cancelText}
         </NButton>
         <NButton onClick={() => answer(true)}>{confirmText}</NButton>
-      </div>
+      </NView>
     </NDialog>
   );
 }

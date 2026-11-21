@@ -1,5 +1,6 @@
 "use client";
 
+import { NView, NText } from 'nayan-ui/components';
 import { ArrowRight } from "@/design/Icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -25,33 +26,33 @@ const Components = () => {
         ]}
       />
 
-      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <NView tag="ul" className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {items.map((item: any) => {
           const Icon = item.icon;
           return (
-            <li key={item.link}>
+            <NView tag="li" key={item.link}>
               <Link
                 href={item.link}
                 className={`${CARD_INTERACTIVE} group flex h-full flex-col p-4`}
               >
-                <span className="mb-1.5 flex items-center gap-2.5">
+                <NText tag="span" className="mb-1.5 flex items-center gap-2.5">
                   {Icon ? (
                     <Icon className="h-4 w-4 shrink-0 text-accent" />
                   ) : null}
-                  <span className={H4_CARD}>{item.title}</span>
+                  <NText tag="span" className={H4_CARD}>{item.title}</NText>
                   <ArrowRight
                     aria-hidden
                     className="ml-auto h-3.5 w-3.5 shrink-0 text-muted transition-transform group-hover:translate-x-0.5"
                   />
-                </span>
-                <span className="line-clamp-2 text-sm leading-relaxed text-muted">
+                </NText>
+                <NText tag="span" className="line-clamp-2 text-sm leading-relaxed text-muted">
                   {item.description}
-                </span>
+                </NText>
               </Link>
-            </li>
+            </NView>
           );
         })}
-      </ul>
+      </NView>
     </Sidebar>
   );
 };

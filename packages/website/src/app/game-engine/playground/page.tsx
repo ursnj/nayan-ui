@@ -1,4 +1,4 @@
-import PlaygroundLoader from "@/components/engine/playground/PlaygroundLoader";
+import NayanPlaygroundLoader from "@/components/nayan-playground/NayanPlaygroundLoader";
 import JsonLd from "@/components/helpers/JsonLd";
 import {
   ENGINE_URL,
@@ -8,12 +8,12 @@ import {
   engineAbout,
 } from "@/services/seo";
 
-const URL = `${ENGINE_URL}/playground`;
+const URL = `${SITE_URL}/game-engine/playground`;
 
 export const metadata = buildPageMetadata({
-  title: "Nayan Game Engine Playground · Live Editor",
+  title: "Nayan Playground · Live Editor",
   description:
-    "Write @nayan-ui/engine code with TypeScript suggestions and diagnostics, and run the 3D scene live in your browser. Start from an example and share a link.",
+    "Write nayan-ui code with TypeScript suggestions and diagnostics, and run the 3D scene live in your browser. Start from an example and share a link.",
   path: "/game-engine/playground",
   ogType: "website",
   keywords:
@@ -23,15 +23,15 @@ export const metadata = buildPageMetadata({
 const schemas = [
   buildBreadcrumbSchema([
     { name: "Home", url: SITE_URL },
-    { name: "Game Engine", url: ENGINE_URL },
-    { name: "Playground", url: URL },
+    { name: "Nayan Game Engine", url: ENGINE_URL },
+    { name: "Nayan Playground", url: URL },
   ]),
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: "Nayan Game Engine Playground",
+    name: "Nayan Playground",
     description:
-      "A live code editor for @nayan-ui/engine: edit TypeScript with autocomplete and type checking, and run the 3D scene in the browser.",
+      "A live code editor for nayan-ui: edit TypeScript with autocomplete and type checking, and run the 3D scene in the browser.",
     url: URL,
     applicationCategory: "DeveloperApplication",
     operatingSystem: "Web Browser",
@@ -52,7 +52,7 @@ export default function PlaygroundPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <PlaygroundLoader />
+      <NayanPlaygroundLoader />
     </>
   );
 }

@@ -3,7 +3,7 @@ import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/s
 import Tags from "@/components/tags/Tags";
 export const metadata = buildPageMetadata({
   title: "Component and Module Tags",
-  description: "Browse React and React Native components and Nayan Engine modules by topic.",
+  description: "Browse React and React Native components and Nayan UI modules by topic.",
   path: "/tags",
   keywords: "nayan ui tags, react components, react native components, engine modules, component topics",
 });

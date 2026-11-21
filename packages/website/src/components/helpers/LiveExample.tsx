@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState, type ComponentType } from 'react';
-import { NPress, NText, NView } from '@nayan-ui/engine/components';
-import { clipboard } from '@nayan-ui/engine/clipboard';
+import { NPress, NText, NView } from 'nayan-ui/components';
+import { clipboard } from 'nayan-ui/clipboard';
 import { Play, RotateCcw, Copy, Check } from '@/design/Icons';
-import CodeEditor from '@/components/engine/playground/CodeEditor';
-import { createCompiler } from '@/components/engine/playground/compiler';
-import { evaluateExample } from '@/components/engine/playground/evaluate';
-import PreviewBoundary from '@/components/engine/playground/PreviewBoundary';
+import CodeEditor from '@/components/nayan-playground/CodeEditor';
+import { createCompiler } from '@/components/nayan-playground/compiler';
+import { evaluateExample } from '@/components/nayan-playground/evaluate';
+import PreviewBoundary from '@/components/nayan-playground/PreviewBoundary';
 import PreviewSurface from '@/components/ui/previews/PreviewSurface';
 import { exampleModules } from '@/components/ui/previews/exampleModules';
 import type { NamedComponentPreview } from '@/components/ui/previews/types';
@@ -15,8 +15,8 @@ import type { NamedComponentPreview } from '@/components/ui/previews/types';
 const island = 'rounded-xl border border-border bg-surface shadow-sm';
 const paneTitle = 'border-b border-border p-3 text-xs font-semibold text-muted';
 const paneSize = 'h-[19rem] min-w-0';
-const toolbarButton =
-  'inline-flex min-h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-muted hover:text-foreground disabled:opacity-50';
+const toolbarButton = 'inline-flex min-h-8 flex-row items-center justify-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold disabled:opacity-50';
+const secondaryButton = `${toolbarButton} text-muted hover:text-foreground`;
 
 export type LiveExampleScenario = NamedComponentPreview;
 
@@ -63,7 +63,7 @@ export default function LiveExample({ examples, codeAnchor, previewId }: Props) 
                 key={title}
                 type="button"
                 aria-pressed={index === selected}
-                className={`${toolbarButton} ${index === selected ? 'bg-accent/10 text-accent' : ''}`}
+                className={index === selected ? `${toolbarButton} bg-accent/10 text-accent` : secondaryButton}
                 onPress={() => setSelected(index)}
               >
                 {title}
@@ -161,20 +161,15 @@ function ExampleWorkspace({
       <NView tag="div" className={`${island} component-workbench-toolbar flex flex-wrap items-center justify-between gap-3 p-3`}>
         {options}
         <NView tag="div" className="component-workbench-actions ml-auto flex flex-wrap gap-1 rounded-lg bg-surface-secondary p-0.5">
-          <NPress
-            type="button"
-            className={`${toolbarButton} bg-accent text-accent-foreground hover:text-accent-foreground`}
-            onPress={() => void run(code)}
-            disabled={running}
-          >
+          <NPress type="button" className={`${toolbarButton} bg-accent text-accent-foreground`} onPress={() => void run(code)} disabled={running}>
             <Play size={14} aria-hidden />
             {running ? 'Running…' : 'Run'}
           </NPress>
-          <NPress type="button" className={toolbarButton} onPress={reset} disabled={code === example.source && !output && !error && !running}>
+          <NPress type="button" className={secondaryButton} onPress={reset} disabled={code === example.source && !output && !error && !running}>
             <RotateCcw size={14} aria-hidden />
             Reset
           </NPress>
-          <NPress type="button" className={toolbarButton} onPress={copy} aria-live="polite">
+          <NPress type="button" className={secondaryButton} onPress={copy} aria-live="polite">
             {copied ? <Check size={14} aria-hidden /> : <Copy size={14} aria-hidden />}
             {copied ? 'Copied' : 'Copy'}
           </NPress>
@@ -211,6 +206,7 @@ function ExampleWorkspace({
           >
             {Output && output ? (
               <PreviewSurface
+                fullWidth={previewId === 'video-player'}
                 preview={{
                   ...example,
                   host: true,
@@ -226,7 +222,7 @@ function ExampleWorkspace({
                 }}
               />
             ) : (
-              <PreviewSurface preview={example} />
+              <PreviewSurface preview={example} fullWidth={previewId === 'video-player'} />
             )}
           </NView>
         </NView>

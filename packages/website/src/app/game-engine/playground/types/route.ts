@@ -29,24 +29,31 @@ export async function GET() {
   const add = async (path: string, file: string) =>
     libs.push({ path, content: await readFile(/* turbopackIgnore: true */ file, "utf8") });
 
-  const engine = packageDir("@nayan-ui/engine");
+  const engine = packageDir("nayan-ui");
   for (const file of await declarations(join(/* turbopackIgnore: true */ engine, "lib/web/types")))
-    await add(`file:///node_modules/@nayan-ui/engine/${relative(engine, file)}`, file);
+    await add(`file:///node_modules/nayan-ui/${relative(engine, file)}`, file);
   libs.push({
-    path: "file:///node_modules/@nayan-ui/engine/index.d.ts",
+    path: "file:///node_modules/nayan-ui/index.d.ts",
     content: 'export * from "./lib/web/types/src/index";\n',
   });
   // The same editor also runs the focused imports used in component reference examples.
   for (const entry of ["components", "animations", "drawing", "games", "markdown", "video"]) {
     libs.push({
-      path: `file:///node_modules/@nayan-ui/engine/${entry}.d.ts`,
+      path: `file:///node_modules/nayan-ui/${entry}.d.ts`,
       content: `export * from "./lib/web/types/src/${entry}/index";\n`,
     });
   }
   libs.push({
-    path: "file:///node_modules/@nayan-ui/engine/icons/catalog.d.ts",
+    path: "file:///node_modules/nayan-ui/icons/catalog.d.ts",
     content: 'export * from "../lib/web/types/src/components/icons/index";\n',
   });
+  // Previously shared examples still use the old package name.
+  for (const entry of ["", "/components", "/animations", "/drawing", "/games", "/markdown", "/video", "/icons/catalog"]) {
+    libs.push({
+      path: `file:///node_modules/@nayan-ui/engine${entry || "/index"}.d.ts`,
+      content: `export * from "nayan-ui${entry}";\n`,
+    });
+  }
 
   const react = packageDir("@types/react");
   for (const name of ["index.d.ts", "global.d.ts", "jsx-runtime.d.ts"])

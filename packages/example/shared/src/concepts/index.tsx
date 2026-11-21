@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
 import { Component, type ReactNode } from "react";
-import { NTheme } from "@nayan-ui/engine/components";
+import { NTheme } from "nayan-ui/components";
 import type { ConceptId } from "../catalog";
 import * as components from "./ComponentDemos";
 import { DemoText } from "./Demo";

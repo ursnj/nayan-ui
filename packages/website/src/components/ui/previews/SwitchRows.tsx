@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { NSwitch, NText, NView } from '@nayan-ui/engine/components';
+import { NSwitch, NText, NView } from 'nayan-ui/components';
 
 interface SwitchOption {
   label: string;

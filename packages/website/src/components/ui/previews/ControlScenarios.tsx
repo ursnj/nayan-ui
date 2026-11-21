@@ -1,6 +1,6 @@
 import { createElement, type ComponentType, type ReactNode } from 'react';
-import * as Engine from '@nayan-ui/engine/components';
-import { componentSource } from '@/services/engine/component-examples';
+import * as Engine from 'nayan-ui/components';
+import { componentSource } from '@/services/nayan-ui/component-examples';
 import type { NamedComponentPreview } from './types';
 
 type Control = keyof typeof Engine;
@@ -59,6 +59,7 @@ export const controlScenarios = {
             name="Export report"
             description="Available when the report is ready."
             icon={<NIcon name="download" size={20} className="text-muted" />}
+            className="w-full bg-surface"
             disabled
           />`
     ),
@@ -67,6 +68,7 @@ export const controlScenarios = {
         name="Export report"
         description="Available when the report is ready."
         icon={<Engine.NIcon name="download" size={20} className="text-muted" />}
+        className="w-full bg-surface"
         disabled
       />
     )
@@ -140,9 +142,9 @@ export const controlScenarios = {
   image: sample(
     'Missing image fallback',
     element('NImage', {
-      src: '/engine-ui/missing-demo.webp',
+      src: '/nayan-ui/missing-demo.webp',
       fallback: '/logo.webp',
-      alt: 'Nayan Engine fallback',
+      alt: 'Nayan UI fallback',
       width: 112,
       height: 84,
       className: 'rounded-lg border border-border'

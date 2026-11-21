@@ -5,12 +5,12 @@ node_modules
 # Build output is produced inside the image; copying a local one in risks
 # baking a stale bundle.
 **/dist
-packages/engine/lib
-packages/engine/native/core/build
-packages/engine/native/core/target
-packages/website/public/engine-ui/site-styles.json
-packages/website/src/app/engine.css
-packages/website/src/app/engine-styles.ts
+packages/nayan-ui/lib
+packages/nayan-ui/native/core/build
+packages/nayan-ui/native/core/target
+packages/website/public/nayan-ui/site-styles.json
+packages/website/src/app/nayan-ui.css
+packages/website/src/app/nayan-ui-styles.ts
 .git
 .gitignore
 README.md

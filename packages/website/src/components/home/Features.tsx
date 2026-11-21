@@ -1,32 +1,33 @@
+import { NView, NText } from 'nayan-ui/components';
 import { ArrowRight, Braces, Smartphone } from '@/design/Icons';
 import { Section } from '@/design/Primitives';
 import { BUTTON_SECONDARY, H2 } from '@/design/system';
 import Link from 'next/link';
-import EnginePreview from './EnginePreview';
+import NayanComponentsPreview from './NayanComponentsPreview';
 
 export default function Features() {
   return (
-    <div className="home-demo-section">
+    <NView tag="div" className="home-demo-section">
       <Section id="why" labelledBy="why-heading" className="home-demo-layout">
-        <div className="home-demo-copy">
-          <h2 id="why-heading" className={H2}>
+        <NView tag="div" className="home-demo-copy">
+          <NText tag="h2" id="why-heading" className={H2}>
             Try the components
-          </h2>
-          <p>Use the live preview to try buttons, forms, feedback and labels. Open the reference to copy a complete example.</p>
-          <ul className="home-demo-details">
-            <li>
+          </NText>
+          <NText tag="p">Use the live preview to try buttons, forms, feedback and labels. Open the reference to copy a complete example.</NText>
+          <NView tag="ul" className="home-demo-details">
+            <NView tag="li">
               <Smartphone aria-hidden size={19} /> Shared controls for React and React Native
-            </li>
-            <li>
+            </NView>
+            <NView tag="li">
               <Braces aria-hidden size={19} /> Theme tokens for light and dark mode
-            </li>
-          </ul>
+            </NView>
+          </NView>
           <Link href="/components" className={BUTTON_SECONDARY}>
             Browse components <ArrowRight aria-hidden size={17} />
           </Link>
-        </div>
-        <EnginePreview />
+        </NView>
+        <NayanComponentsPreview />
       </Section>
-    </div>
+    </NView>
   );
 }

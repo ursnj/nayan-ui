@@ -1,3 +1,4 @@
+import { NView } from 'nayan-ui/components';
 import Link from "next/link";
 import { PILL_INTERACTIVE } from "@/design/system";
 
@@ -7,9 +8,9 @@ interface Props {
 }
 
 const TagsList = ({ type, tags }: Props) => (
-  <ul className="flex flex-row flex-wrap items-center gap-2">
+  <NView tag="ul" className="flex flex-row flex-wrap items-center gap-2">
     {tags.map((tag) => (
-      <li key={tag.sku}>
+      <NView tag="li" key={tag.sku}>
         <Link
           href={`${type === "tools" ? "/tools/tags" : "/tags"}/${encodeURIComponent(tag.sku)}`}
           prefetch={type === "tools" ? undefined : false}
@@ -17,9 +18,9 @@ const TagsList = ({ type, tags }: Props) => (
         >
           {tag.text}
         </Link>
-      </li>
+      </NView>
     ))}
-  </ul>
+  </NView>
 );
 
 export default TagsList;

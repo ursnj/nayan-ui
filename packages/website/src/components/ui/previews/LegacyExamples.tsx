@@ -15,8 +15,8 @@ import {
   NProgress,
   NText,
   NView
-} from '@nayan-ui/engine/components';
-import { componentSource } from '@/services/engine/component-examples';
+} from 'nayan-ui/components';
+import { componentSource } from '@/services/nayan-ui/component-examples';
 import SwitchRows from './SwitchRows';
 import type { ComponentPreview } from './types';
 
@@ -32,7 +32,7 @@ const avatars = [
 
 const breadcrumbs = [
   { label: 'Home', href: '/' },
-  { label: 'Components', href: '/components' },
+  { label: 'Nayan Components', href: '/components' },
   { label: 'Breadcrumbs', href: '' }
 ];
 
@@ -76,8 +76,8 @@ function Popup({ menu }: { menu: boolean }) {
   }, [open]);
 
   return (
-    <div className="component-host-demo">
-      <div className="component-popup-trigger" ref={root}>
+    <NView tag="div" className="component-host-demo">
+      <NView tag="div" className="component-popup-trigger" ref={root}>
         <NButton
           className={hostButton}
           {...{ 'aria-expanded': open, 'aria-controls': open ? id : undefined, ref: trigger }}
@@ -107,9 +107,9 @@ function Popup({ menu }: { menu: boolean }) {
             )}
           </NCard>
         )}
-      </div>
+      </NView>
       {selected && <NText role="status">{selected} selected</NText>}
-    </div>
+    </NView>
   );
 }
 
@@ -302,12 +302,12 @@ const legacyExamples = {
   'date-field': {
     host: true,
     render: (
-      <div className="component-host-demo">
+      <NView tag="div" className="component-host-demo">
         <NText tag="label" htmlFor="example-date">
           Date
         </NText>
         <NInput id="example-date" type="date" className="component-host-input" />
-      </div>
+      </NView>
     ),
     source: fieldSource('date', 'Date')
   },
@@ -386,7 +386,7 @@ const legacyExamples = {
         </NView>
       </NView>
     ),
-    source: `import { NText, NView } from '@nayan-ui/engine/components';
+    source: `import { NText, NView } from 'nayan-ui/components';
 
 export default function Example() {
   const value = 72;
@@ -414,7 +414,7 @@ export default function Example() {
   table: {
     host: true,
     render: <Table />,
-    source: `import { NText, NView } from '@nayan-ui/engine/components';
+    source: `import { NText, NView } from 'nayan-ui/components';
 
 const columns = ${JSON.stringify(columns)};
 const people = ${JSON.stringify(people, null, 2)};
@@ -453,12 +453,12 @@ export default function Example() {
   'time-field': {
     host: true,
     render: (
-      <div className="component-host-demo">
+      <NView tag="div" className="component-host-demo">
         <NText tag="label" htmlFor="example-time">
           Time
         </NText>
         <NInput id="example-time" type="time" className="component-host-input" />
-      </div>
+      </NView>
     ),
     source: fieldSource('time', 'Time')
   },
@@ -478,7 +478,7 @@ export default function Example() {
 } satisfies Record<string, ComponentPreview>;
 
 function fieldSource(type: 'date' | 'time', label: string) {
-  return `import { NInput, NText, NView } from '@nayan-ui/engine/components';
+  return `import { NInput, NText, NView } from 'nayan-ui/components';
 
 export default function Example() {
   return (
@@ -500,7 +500,7 @@ function popupSource(menu: boolean) {
   return `'use client';
 
 import { useState } from 'react';
-import { NButton, NCard, ${menu ? 'NMenuItem' : 'NText'}, NView } from '@nayan-ui/engine/components';
+import { NButton, NCard, ${menu ? 'NMenuItem' : 'NText'}, NView } from 'nayan-ui/components';
 
 export default function Example() {
   const [open, setOpen] = useState(false);

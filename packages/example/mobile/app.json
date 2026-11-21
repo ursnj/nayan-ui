@@ -26,7 +26,7 @@
         26
       ],
       [
-        "@nayan-ui/engine",
+        "nayan-ui",
         {
           "imagePicker": true,
           "systemTheme": true,

@@ -20,9 +20,9 @@ import {
   NText,
   NTheme,
   NView
-} from '@nayan-ui/engine/components';
-import { SearchIcon } from '@nayan-ui/engine/icons/components/search';
-import { componentSource } from '@/services/engine/component-examples';
+} from 'nayan-ui/components';
+import { SearchIcon } from 'nayan-ui/icons/components/search';
+import { componentSource } from '@/services/nayan-ui/component-examples';
 import { AccordionRows, DisclosureRow } from './DisclosureExamples';
 import { RadioOption, RadioOptions } from './RadioExamples';
 import SwitchRows from './SwitchRows';
@@ -110,9 +110,9 @@ function Alerts() {
 }
 
 const questions = [
-  { title: 'What is Nayan UI?', text: 'Nayan Engine provides UI components, games and tools for React and React Native.' },
+  { title: 'What is Nayan UI?', text: 'Nayan UI provides UI components, games and tools for React and React Native.' },
   { title: 'How to install?', text: 'Install the engine with Bun.' },
-  { title: 'Is it free?', text: 'Yes. Nayan Engine is free and open source.' }
+  { title: 'Is it free?', text: 'Yes. Nayan UI is free and open source.' }
 ];
 
 const selectionThemes = {

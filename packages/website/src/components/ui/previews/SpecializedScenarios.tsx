@@ -1,14 +1,15 @@
+import { NText } from 'nayan-ui/components';
 import dynamic from 'next/dynamic';
-import { standaloneExamples } from '@/services/engine/component-examples';
+import { standaloneExamples } from '@/services/nayan-ui/component-examples';
 import type { SpecializedSlug } from './SpecializedExamples';
 import type { ComponentPreview, NamedComponentPreview } from './types';
 
 const SpecializedExample = dynamic(() => import('./SpecializedExamples'), {
   ssr: false,
   loading: () => (
-    <p className="component-host-demo" role="status">
+    <NText tag="p" className="component-host-demo" role="status">
       Preparing preview…
-    </p>
+    </NText>
   )
 });
 
@@ -52,8 +53,8 @@ export const specializedScenarios = {
     'Quotes and numbered lists',
     `'use client';
 
-import { NPage } from '@nayan-ui/engine/components';
-import { NMarkdown } from '@nayan-ui/engine/markdown';
+import { NPage } from 'nayan-ui/components';
+import { NMarkdown } from 'nayan-ui/markdown';
 
 const source = '## Launch notes\\n\\n> Ship small, test often.\\n\\n1. Build the app\\n2. Review the release\\n3. Publish';
 

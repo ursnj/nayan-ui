@@ -1,11 +1,11 @@
-// Car Racing's screen, on the Nayan Game Engine (@nayan-ui/engine): loads the assets, builds a run, and draws
+// Car Racing's screen, on the Nayan Game Engine (nayan-ui): loads the assets, builds a run, and draws
 // Playtura's scoreboard, controls and modals over the 3D view. The rules are in CarRacingGame.ts, what
 // it draws in CarRacingScene.ts, tuning and assets in CarRacingConstants.ts.
 //
 // The engine runs the simulation (physics, particles, audio, haptics) in its Rust core; GameView's
 // `onUpdate` advances the shared engine simulation and HUD once per frame.
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { type DragEvent, haptics } from '@nayan-ui/engine';
+import { type DragEvent, haptics } from 'nayan-ui';
 import { resolveGameTheme } from '../../services/ThemeService';
 import { GAME_IDS, type GameProps } from '../../services/UtilsService';
 import { engineGame, EngineGameScreen } from '../shared/EngineGameScreen';
