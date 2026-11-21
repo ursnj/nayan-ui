@@ -1,6 +1,10 @@
 import { useId, useRef, useState, type KeyboardEvent } from 'react';
+import { NView } from '@nayan-ui/engine/components';
 import { CodeText } from '@/components/helpers/Code';
 import type { Completion } from './compiler';
+
+const editorLayer =
+  'absolute inset-0 m-0 h-full w-full rounded-none border-0 px-4 py-3 font-mono text-[13px] leading-[1.62] whitespace-pre [letter-spacing:normal] [tab-size:2] [scrollbar-width:thin]';
 
 interface Props {
   label?: string;
@@ -74,17 +78,18 @@ export default function CodeEditor({ label = 'Playground source code', code, onC
   }
 
   return (
-    <div className="site-code-block site-code-editor" data-code-embedded>
-      <pre ref={highlight} className="site-code-editor-highlight" aria-hidden="true">
+    <NView tag="div" className="site-code-block site-code-editor relative h-full" data-code-embedded>
+      <NView tag="pre" ref={highlight} className={`site-code-editor-highlight pointer-events-none overflow-hidden ${editorLayer}`} aria-hidden="true">
         <CodeText code={`${code}\n`} />
-      </pre>
-      <textarea
+      </NView>
+      <NView
+        tag="textarea"
         ref={input}
         aria-label={label}
         aria-autocomplete="list"
         aria-controls={active ? listId : undefined}
         aria-activedescendant={active ? `${listId}-${active.index}` : undefined}
-        className="site-code-editor-input"
+        className={`site-code-editor-input resize-none overflow-auto bg-transparent text-transparent [caret-color:var(--code-fg)] focus-visible:[outline-offset:-2px] ${editorLayer}`}
         value={code}
         spellCheck={false}
         autoComplete="off"
@@ -109,21 +114,29 @@ export default function CodeEditor({ label = 'Playground source code', code, onC
         }}
       />
       {active && (
-        <ul id={listId} role="listbox" aria-label="Code suggestions" className="site-code-suggestions">
+        <NView
+          tag="ul"
+          id={listId}
+          role="listbox"
+          aria-label="Code suggestions"
+          className="site-code-suggestions absolute right-3 bottom-3 z-[1] max-h-[min(12rem,48%)] min-w-[min(15rem,90%)] max-w-[calc(100%-1.5rem)] overflow-auto rounded-lg border border-[var(--code-line)] bg-[var(--code-bg)] font-mono text-[13px] shadow-md"
+        >
           {active.items.map((item, index) => (
-            <li
+            <NView
+              tag="li"
               key={index}
               id={`${listId}-${index}`}
               role="option"
               aria-selected={index === active.index}
+              className={`cursor-pointer px-2.5 py-1 hover:bg-[var(--code-header)] ${index === active.index ? 'bg-[var(--code-header)]' : ''}`}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => insert(item)}
             >
               {item.label}
-            </li>
+            </NView>
           ))}
-        </ul>
+        </NView>
       )}
-    </div>
+    </NView>
   );
 }

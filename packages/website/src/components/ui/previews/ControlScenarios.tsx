@@ -51,15 +51,26 @@ const directions = [
 ];
 
 export const controlScenarios = {
-  'action-item': sample(
-    'Disabled action',
-    element('NActionItem', {
-      name: 'Export report',
-      description: 'Available when the report is ready.',
-      disabled: true,
-      className: 'w-full bg-surface'
-    })
-  ),
+  'action-item': {
+    title: 'Disabled action',
+    source: componentSource(
+      'NActionItem, NIcon',
+      `<NActionItem
+            name="Export report"
+            description="Available when the report is ready."
+            icon={<NIcon name="download" size={20} className="text-muted" />}
+            disabled
+          />`
+    ),
+    render: (
+      <Engine.NActionItem
+        name="Export report"
+        description="Available when the report is ready."
+        icon={<Engine.NIcon name="download" size={20} className="text-muted" />}
+        disabled
+      />
+    )
+  },
   avatar: sample(
     'Initials placeholder',
     element('NView', { className: 'h-14 w-14 items-center justify-center rounded-full bg-accent/15', accessibilityLabel: 'Avery Chen' }, [

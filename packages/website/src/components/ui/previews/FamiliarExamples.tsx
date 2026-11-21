@@ -67,11 +67,11 @@ function Buttons() {
 }
 
 const alerts = [
-  { title: 'Default', type: 'default', tone: 'text-muted', icon: 'info' },
-  { title: 'Info', type: 'info', tone: 'text-accent', icon: 'info' },
-  { title: 'Success', type: 'success', tone: 'text-success', icon: 'circle-check' },
-  { title: 'Warning', type: 'warning', tone: 'text-warning', icon: 'triangle-alert' },
-  { title: 'Error', type: 'error', tone: 'text-danger', icon: 'circle-x' }
+  { title: 'Default', type: 'default', tone: 'text-muted', icon: 'info', message: 'Review your notification settings.' },
+  { title: 'Info', type: 'info', tone: 'text-accent', icon: 'info', message: 'New version available!' },
+  { title: 'Success', type: 'success', tone: 'text-success', icon: 'circle-check', message: 'Your changes were saved.' },
+  { title: 'Warning', type: 'warning', tone: 'text-warning', icon: 'triangle-alert', message: 'Your session expires soon.' },
+  { title: 'Error', type: 'error', tone: 'text-danger', icon: 'circle-x', message: 'Could not save your changes.' }
 ];
 
 function Alerts() {
@@ -80,7 +80,7 @@ function Alerts() {
     <>
       {alerts
         .filter(({ type }) => !dismissed.includes(type))
-        .map(({ title, type, tone, icon }) => (
+        .map(({ title, type, tone, icon, message }) => (
           <NAlert key={type} type={type} className="flex w-full flex-row items-center gap-3 rounded-xl border border-border bg-surface px-3 py-2">
             <NIcon name={icon} className={tone} size={21} strokeWidth={1.8} />
             <NView className="flex min-w-0 flex-1 flex-col gap-1">
@@ -88,7 +88,7 @@ function Alerts() {
                 {title}
               </NText>
               <NText tag="p" className="text-sm text-muted">
-                New version available!
+                {message}
               </NText>
             </NView>
             <NButton
@@ -270,12 +270,12 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
     render: <Alerts />,
     source: componentSource(
       'NAlert, NButton, NIcon, NText',
-      `{alerts.filter(({ type }) => !dismissed.includes(type)).map(({ title, type, tone, icon }) => (
+      `{alerts.filter(({ type }) => !dismissed.includes(type)).map(({ title, type, tone, icon, message }) => (
             <NAlert key={type} type={type} className="flex w-full flex-row items-center gap-3 rounded-xl border border-border bg-surface px-3 py-2">
               <NIcon name={icon} className={tone} size={21} strokeWidth={1.8} />
               <NView className="flex min-w-0 flex-1 flex-col gap-1">
                 <NText className="text-sm font-semibold">{title}</NText>
-                <NText className="text-sm text-muted">New version available!</NText>
+                <NText className="text-sm text-muted">{message}</NText>
               </NView>
               <NButton className="rounded-lg bg-transparent text-accent" accessibilityLabel={\`Dismiss \${title.toLowerCase()} alert\`}
                 onPress={() => setDismissed((previous) => [...previous, type])}>×</NButton>

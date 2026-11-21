@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type ComponentType } from 'react';
+import { NPress, NText, NView } from '@nayan-ui/engine/components';
 import { clipboard } from '@nayan-ui/engine/clipboard';
 import { Play, RotateCcw, Copy, Check } from '@/design/Icons';
 import CodeEditor from '@/components/engine/playground/CodeEditor';
@@ -10,6 +11,12 @@ import PreviewBoundary from '@/components/engine/playground/PreviewBoundary';
 import PreviewSurface from '@/components/ui/previews/PreviewSurface';
 import { exampleModules } from '@/components/ui/previews/exampleModules';
 import type { NamedComponentPreview } from '@/components/ui/previews/types';
+
+const island = 'rounded-xl border border-border bg-surface shadow-sm';
+const paneTitle = 'border-b border-border p-3 text-xs font-semibold text-muted';
+const paneSize = 'h-[19rem] min-w-0';
+const toolbarButton =
+  'inline-flex min-h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-muted hover:text-foreground disabled:opacity-50';
 
 export type LiveExampleScenario = NamedComponentPreview;
 
@@ -50,13 +57,19 @@ export default function LiveExample({ examples, codeAnchor, previewId }: Props) 
       previewId={previewId}
       options={
         examples.length > 1 && (
-          <div className="component-example-picker" role="group" aria-label="Choose an example">
+          <NView tag="div" className="component-example-picker flex flex-wrap gap-1" role="group" aria-label="Choose an example">
             {examples.map(({ title }, index) => (
-              <button key={title} type="button" aria-pressed={index === selected} onClick={() => setSelected(index)}>
+              <NPress
+                key={title}
+                type="button"
+                aria-pressed={index === selected}
+                className={`${toolbarButton} ${index === selected ? 'bg-accent/10 text-accent' : ''}`}
+                onPress={() => setSelected(index)}
+              >
                 {title}
-              </button>
+              </NPress>
             ))}
-          </div>
+          </NView>
         )
       }
     />
@@ -138,31 +151,46 @@ function ExampleWorkspace({
 
   const Output = output?.component;
   return (
-    <div className="component-workbench" id={codeAnchor} inert={!ready}>
-      <div className="component-workbench-toolbar">
+    <NView
+      tag="div"
+      className="component-workbench grid min-w-0 gap-3"
+      id={codeAnchor}
+      inert={!ready}
+      style={{ scrollMarginTop: 'calc(var(--site-header-height) + 1rem)' }}
+    >
+      <NView tag="div" className={`${island} component-workbench-toolbar flex flex-wrap items-center justify-between gap-3 p-3`}>
         {options}
-        <div className="component-workbench-actions">
-          <button type="button" className="component-workbench-run" onClick={() => void run(code)} disabled={running}>
+        <NView tag="div" className="component-workbench-actions ml-auto flex flex-wrap gap-1 rounded-lg bg-surface-secondary p-0.5">
+          <NPress
+            type="button"
+            className={`${toolbarButton} bg-accent text-accent-foreground hover:text-accent-foreground`}
+            onPress={() => void run(code)}
+            disabled={running}
+          >
             <Play size={14} aria-hidden />
             {running ? 'Running…' : 'Run'}
-          </button>
-          <button type="button" onClick={reset} disabled={code === example.source && !output && !error && !running}>
+          </NPress>
+          <NPress type="button" className={toolbarButton} onPress={reset} disabled={code === example.source && !output && !error && !running}>
             <RotateCcw size={14} aria-hidden />
             Reset
-          </button>
-          <button type="button" onClick={copy} aria-live="polite">
+          </NPress>
+          <NPress type="button" className={toolbarButton} onPress={copy} aria-live="polite">
             {copied ? <Check size={14} aria-hidden /> : <Copy size={14} aria-hidden />}
             {copied ? 'Copied' : 'Copy'}
-          </button>
-        </div>
-      </div>
-      {example.note && <p className="component-workbench-note">{example.note}</p>}
-      <div className="component-workbench-panes">
-        <section className="component-workbench-code" aria-label="Editable code">
-          <div className="component-workbench-pane-title">
-            <span className="font-mono">Example.tsx</span>
-          </div>
-          <div className="component-workbench-editor">
+          </NPress>
+        </NView>
+      </NView>
+      {example.note && (
+        <NText tag="p" className="text-sm text-muted">
+          {example.note}
+        </NText>
+      )}
+      <NView tag="div" className="component-workbench-panes grid min-w-0 gap-3 min-[1050px]:grid-cols-2">
+        <NView tag="section" className={`${island} component-workbench-code min-w-0 overflow-hidden`} aria-label="Editable code">
+          <NText tag="div" className={`${paneTitle} font-mono`}>
+            Example.tsx
+          </NText>
+          <NView tag="div" className={`component-workbench-editor ${paneSize}`}>
             <CodeEditor
               label="Example source code"
               code={code}
@@ -170,11 +198,17 @@ function ExampleWorkspace({
               onRun={run}
               onComplete={(source, position) => getCompiler().complete(source, position)}
             />
-          </div>
-        </section>
-        <section className="component-workbench-preview" aria-label="Live preview">
-          <div className="component-workbench-pane-title">Preview</div>
-          <div className="docs-live-preview workbench-grid" data-component-preview={previewId}>
+          </NView>
+        </NView>
+        <NView tag="section" className={`${island} component-workbench-preview min-w-0 overflow-hidden`} aria-label="Live preview">
+          <NText tag="div" className={paneTitle}>
+            Preview
+          </NText>
+          <NView
+            tag="div"
+            className={`${paneSize} docs-live-preview workbench-grid flex justify-center overflow-auto [scrollbar-width:thin]`}
+            data-component-preview={previewId}
+          >
             {Output && output ? (
               <PreviewSurface
                 preview={{
@@ -184,9 +218,9 @@ function ExampleWorkspace({
                   height: 'auto',
                   render: (
                     <PreviewBoundary key={output.run} onError={(cause) => setError(cause.message)}>
-                      <div className="component-edited-preview">
+                      <NView tag="div" className="component-edited-preview flex min-h-[11rem] min-w-0 flex-col">
                         <Output />
-                      </div>
+                      </NView>
                     </PreviewBoundary>
                   )
                 }}
@@ -194,14 +228,14 @@ function ExampleWorkspace({
             ) : (
               <PreviewSurface preview={example} />
             )}
-          </div>
-        </section>
-      </div>
+          </NView>
+        </NView>
+      </NView>
       {error && (
-        <p className="component-workbench-error" role="alert">
+        <NText tag="p" className="component-workbench-error max-h-36 overflow-auto whitespace-pre-wrap break-words text-xs text-danger" role="alert">
           {error}
-        </p>
+        </NText>
       )}
-    </div>
+    </NView>
   );
 }

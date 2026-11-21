@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { clipboard } from '@nayan-ui/engine/clipboard';
-import { NCode, NPress } from '@nayan-ui/engine/components';
+import { NCode, NPress, NText, NView } from '@nayan-ui/engine/components';
 import { Check, Code2, Copy } from '@/design/Icons';
 
 interface Props {
@@ -32,9 +32,9 @@ function colorCode(code: string, language: string) {
     if (start > cursor) parts.push(code.slice(cursor, start));
     const kind = tokenStyles[match.slice(1).findIndex(Boolean)];
     parts.push(
-      <span key={start} className={`code-token-${kind}`}>
+      <NText tag="span" key={start} className={`code-token-${kind}`}>
         {match[0]}
-      </span>
+      </NText>
     );
     cursor = start + match[0].length;
   }
@@ -67,24 +67,24 @@ export default function Code({ code, language = 'tsx', filename, embedded = fals
   }
 
   return (
-    <div data-code-tone={tone} data-code-embedded={embedded || undefined} className="site-code-block">
+    <NView tag="div" data-code-tone={tone} data-code-embedded={embedded || undefined} className="site-code-block">
       {showHeader && (
-        <div className="site-code-header">
-          <span>
+        <NView tag="div" className="site-code-header">
+          <NText tag="span">
             <Code2 aria-hidden size={16} />
             {filename ?? language}
-          </span>
+          </NText>
           <NPress onPress={copyCode} className="site-code-copy" aria-live="polite">
             {copied ? <Check aria-hidden size={15} /> : <Copy aria-hidden size={15} />}
             {copied ? 'Copied' : 'Copy'}
           </NPress>
-        </div>
+        </NView>
       )}
-      <div className="site-code-scroll" style={{ maxHeight }} tabIndex={0} aria-label={`${filename ?? language} source code`}>
-        <pre>
+      <NView tag="div" className="site-code-scroll" style={{ maxHeight }} tabIndex={0} aria-label={`${filename ?? language} source code`}>
+        <NView tag="pre">
           <CodeText code={code} language={language} />
-        </pre>
-      </div>
-    </div>
+        </NView>
+      </NView>
+    </NView>
   );
 }

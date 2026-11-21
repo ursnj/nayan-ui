@@ -27,7 +27,6 @@ const items = [
 ];
 
 const examples: Record<string, Spec> = {
-  'action-item': { control: 'NActionItem', props: { name: 'Open document', description: 'View the latest draft.' }, result: 'Document opened.' },
   avatar: { control: 'NImage', props: { src: '/logo.webp', alt: 'Nayan Engine', width: 48, height: 48, className: 'rounded-full' } },
   card: { control: 'NCard', text: 'This is a sample card.', props: { className: 'w-full rounded-xl border border-border bg-surface p-4' } },
   'close-button': { control: 'NCloseButton', props: { accessibilityLabel: 'Close panel' }, result: 'Panel closed.' },
@@ -79,6 +78,23 @@ export function componentPreview(slug: string): ComponentPreview | undefined {
 
   const media = specializedExample(slug);
   if (media) return media;
+
+  if (slug === 'action-item') {
+    return {
+      source: componentSource(
+        'NActionItem, NIcon, NText',
+        `<NActionItem
+            name="Open document"
+            description="View the latest draft."
+            icon={<NIcon name="file-text" size={20} className="text-accent" />}
+            onPress={() => setOpened(true)}
+          />
+          {opened && <NText>Document opened.</NText>}`,
+        'const [opened, setOpened] = useState(false);'
+      ),
+      render: <ActionItemPreview />
+    };
+  }
 
   if (slug === 'carousel') {
     return {
@@ -211,6 +227,21 @@ export function componentPreview(slug: string): ComponentPreview | undefined {
     note: spec.note,
     height: spec.height
   };
+}
+
+function ActionItemPreview() {
+  const [opened, setOpened] = useState(false);
+  return (
+    <>
+      <Engine.NActionItem
+        name="Open document"
+        description="View the latest draft."
+        icon={<Engine.NIcon name="file-text" size={20} className="text-accent" />}
+        onPress={() => setOpened(true)}
+      />
+      {opened && <Engine.NText>Document opened.</Engine.NText>}
+    </>
+  );
 }
 
 function ActionPreview({ control: Control, spec }: { control: ComponentType<Record<string, unknown> & { children?: ReactNode }>; spec: Spec }) {
