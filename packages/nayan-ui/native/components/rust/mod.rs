@@ -1431,7 +1431,8 @@ impl ComponentDocument {
                     let shadow = resolved.shadow.map(|_| [(); 4].map(|_| ui.painter().add(egui::Shape::Noop)));
                     let gradient = resolved.gradient().map(|gradient| (gradient, ui.painter().add(egui::Shape::Noop)));
                     let rendered = frame.show(ui, |ui| {
-                        if let Some(width) = resolved.width {
+                        let badge = n.kind == "NBadge";
+                        if let Some(width) = resolved.width.or(resolved.min_width.filter(|_| badge)) {
                             let inset = if control {
                                 0.
                             } else {
@@ -1439,11 +1440,17 @@ impl ComponentDocument {
                             };
                             ui.set_min_width((width - inset).max(0.));
                         }
-                        if let Some(height) = resolved.height.filter(|_| !control && !resolved.horizontal) {
+                        if let Some(height) = resolved
+                            .height
+                            .or(resolved.min_height.filter(|_| badge))
+                            .filter(|_| !control && (!resolved.horizontal || badge))
+                        {
                             let inset = resolved.padding.top + resolved.padding.bottom + resolved.border_width * 2.;
                             ui.set_min_height((height - inset).max(0.));
                         }
-                        if resolved.horizontal {
+                        if badge {
+                            self.node(ui, n, &resolved);
+                        } else if resolved.horizontal {
                             let height = (self.preferred_height(n, ui.available_width())
                                 - resolved.padding.top
                                 - resolved.padding.bottom
@@ -1459,7 +1466,7 @@ impl ComponentDocument {
                             // would stretch their frame toward the parent's anchor.
                             let leaf = matches!(
                                 n.kind.as_str(),
-                                "NText" | "NLink" | "NChip" | "NBadge" | "NRequired" | "NKbd" | "NCode" | "NIcon" | "NImage"
+                                "NText" | "NLink" | "NChip" | "NRequired" | "NKbd" | "NCode" | "NIcon" | "NImage"
                             );
                             let layout = if matches!(n.kind.as_str(), "NText" | "NLink") {
                                 (*ui.layout()).with_cross_justify(false)
@@ -1557,7 +1564,7 @@ impl ComponentDocument {
         if let Some(height) = style.height {
             return height + style.margin.top + style.margin.bottom;
         }
-        if matches!(node.kind.as_str(), "NText" | "NLink") {
+        if matches!(node.kind.as_str(), "NText" | "NLink" | "NBadge") {
             return self.measured_text_height(node, &style, width);
         }
         if node.kind == "NLoading" {
@@ -1685,25 +1692,41 @@ impl ComponentDocument {
                 } else {
                     egui::Label::new(caption)
                 };
-                if let Some(align) = resolved.text_align {
+                let badge = n.kind == "NBadge";
+                let text_align = resolved.text_align.or(badge.then_some(egui::Align::Center));
+                if let Some(align) = text_align {
                     label = label.halign(align);
                 }
-                let response = if let Some(shadow) = resolved.text_shadow {
-                    let (pos, galley, response) = label.layout_in_ui(ui);
+                let response = if badge || resolved.text_shadow.is_some() {
+                    let (mut pos, galley, mut response) = label.layout_in_ui(ui);
+                    if badge {
+                        let align = egui::Align2([text_align.unwrap_or(egui::Align::Center), egui::Align::Center]);
+                        let label_rect = align.align_size_within_rect(galley.size(), ui.min_rect());
+                        pos = label_rect.min - galley.rect.min.to_vec2();
+                        response.rect = label_rect;
+                        response.interact_rect = label_rect.intersect(ui.clip_rect());
+                    }
                     if ui.is_rect_visible(response.rect) {
                         let painter = ui.painter();
-                        // A soft halo: rings of faint copies stand in for the platform's blurred shadow.
-                        let rings = (shadow.radius / 2.).ceil().clamp(1., 4.) as usize;
-                        for ring in 1..=rings {
-                            let distance = shadow.radius * ring as f32 / rings as f32 / 2.;
-                            let color = shadow.color.gamma_multiply(0.5 / rings as f32);
-                            for step in 0..8 {
-                                let offset = shadow.offset + distance * Vec2::angled(step as f32 * std::f32::consts::FRAC_PI_4);
-                                painter.galley_with_override_text_color(pos + offset, galley.clone(), color);
+                        if let Some(shadow) = resolved.text_shadow {
+                            // A soft halo: rings of faint copies stand in for the platform's blurred shadow.
+                            let rings = (shadow.radius / 2.).ceil().clamp(1., 4.) as usize;
+                            for ring in 1..=rings {
+                                let distance = shadow.radius * ring as f32 / rings as f32 / 2.;
+                                let color = shadow.color.gamma_multiply(0.5 / rings as f32);
+                                for step in 0..8 {
+                                    let offset = shadow.offset + distance * Vec2::angled(step as f32 * std::f32::consts::FRAC_PI_4);
+                                    painter.galley_with_override_text_color(pos + offset, galley.clone(), color);
+                                }
                             }
+                            painter.galley_with_override_text_color(pos + shadow.offset, galley.clone(), shadow.color.gamma_multiply(0.5));
                         }
-                        painter.galley_with_override_text_color(pos + shadow.offset, galley.clone(), shadow.color.gamma_multiply(0.5));
-                        painter.galley(pos, galley, ui.visuals().text_color());
+                        let color = ui.visuals().text_color();
+                        if badge && ui.style().interaction.selectable_labels && resolved.text_shadow.is_none() {
+                            egui::text_selection::LabelSelectionState::label_text_selection(ui, &response, pos, galley, color, egui::Stroke::NONE);
+                        } else {
+                            painter.galley(pos, galley, color);
+                        }
                     }
                     response
                 } else {

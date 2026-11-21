@@ -15,6 +15,7 @@ export function component<P = ComponentProps>(name: string): ComponentType<P> {
       NPress: 'button',
       NLink: 'a',
       NText: 'span',
+      NBadge: 'span',
       NInput: 'input',
       NSearchField: 'input',
       NTextarea: 'textarea',
@@ -84,6 +85,17 @@ export function component<P = ComponentProps>(name: string): ComponentType<P> {
     }
     if (accessibilityLabel) attributes['aria-label'] = accessibilityLabel;
     if (props.selectable === false) attributes.style = { ...props.style, userSelect: 'none' };
+    if (name === 'NBadge') {
+      attributes.style = {
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        width: props.width,
+        height: props.height,
+        ...(attributes.style as object | undefined)
+      };
+    }
     // Bootstrap HTML must paint before WASM exists. Inside a ComponentsRoot the early return above
     // keeps loading animation, geometry and accessibility owned by Rust.
     if (name === 'NLoading') {

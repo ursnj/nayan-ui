@@ -53,6 +53,38 @@ fn painted_text_bounds(shape: &egui::Shape, text: &str) -> Option<Rect> {
 }
 
 #[test]
+fn badge_text_is_centered_in_intrinsic_and_fixed_boxes() {
+    for native in [false, true] {
+        for class in [
+            "rounded-md px-2 py-1",
+            "rounded-md w-32 h-12 px-2 py-1",
+            "rounded-md min-w-32 min-h-12 px-2 py-1",
+        ] {
+            let mut doc = ComponentDocument::default();
+            doc.command(&json!({"action":"environment","native":native,"fontScale":1.5})).unwrap();
+            doc.set_tree(&json!([{"id":"row","kind":"NView","props":{"className":"flex-row flex-wrap items-center gap-2"},"children":[
+                {"id":"badge","kind":"NBadge","props":{"className":class},"children":[{"id":"label","kind":"NText","props":{"text":"Update gy"}}]},
+                {"id":"neighbor","kind":"NBadge","props":{"className":"rounded-md px-2 py-1","text":"Second"}}
+            ]}]))
+            .unwrap();
+            let output = doc.frame(400., 300., 2.);
+            let label = output
+                .shapes
+                .iter()
+                .find_map(|shape| painted_text_bounds(&shape.shape, "Update gy"))
+                .unwrap();
+            output.drop_without_applying_deltas();
+            let badge = bounds(&doc, "badge");
+            assert!(
+                (badge.center() - label.center()).length() <= 1.,
+                "native={native}, class={class}: label={label:?}, badge={badge:?}"
+            );
+            assert!(bounds(&doc, "neighbor").left() >= badge.right() + 7., "class={class}: badges overlap");
+        }
+    }
+}
+
+#[test]
 fn single_line_values_and_placeholders_are_centered_inside_the_field() {
     for native in [false, true] {
         for height in [48., 72.] {

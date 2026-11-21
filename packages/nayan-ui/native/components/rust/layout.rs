@@ -52,7 +52,9 @@ impl ComponentDocument {
     }
 
     fn text_size(&self, node: &Node, style: &style::Style, width: f32) -> Vec2 {
-        if let Some(job) = self.rich_text_job(node, style, width, Color32::WHITE, None) {
+        if matches!(node.kind.as_str(), "NText" | "NLink")
+            && let Some(job) = self.rich_text_job(node, style, width, Color32::WHITE, None)
+        {
             return self.context.fonts_mut(|fonts| fonts.layout_job(job).size());
         }
         let scale = self.font_scale.max(1.);
@@ -80,7 +82,7 @@ impl ComponentDocument {
             return width + s.margin.left + s.margin.right;
         }
         let content = match node.kind.as_str() {
-            "NText" | "NLink" => self.text_size(node, &s, 1_000_000.).x,
+            "NText" | "NLink" | "NBadge" => self.text_size(node, &s, 1_000_000.).x,
             "NLoading" => loading::measure(&self.context, node, &s, available, self.font_scale).0.x,
             "NIcon" => numeric(&node.props, &["size"], 24.) as f32,
             "NImage" => s.height.unwrap_or(64.),
@@ -98,11 +100,12 @@ impl ComponentDocument {
     }
 
     pub(super) fn measured_text_height(&self, node: &Node, s: &style::Style, width: f32) -> f32 {
-        self.text_size(node, s, (width - s.padding.left - s.padding.right).max(1.)).y
-            + s.margin.top
-            + s.margin.bottom
-            + s.padding.top
-            + s.padding.bottom
+        let badge = node.kind == "NBadge";
+        let border = if badge { s.border_width * 2. } else { 0. };
+        let text_height = self.text_size(node, s, (width - s.padding.left - s.padding.right - border).max(1.)).y;
+        let height = text_height + s.padding.top + s.padding.bottom + border;
+        let height = if badge { height.max(s.min_height.unwrap_or(0.)) } else { height };
+        height + s.margin.top + s.margin.bottom
     }
 
     pub(super) fn flow_row(&mut self, ui: &mut egui::Ui, n: &Node, resolved: &style::Style) -> bool {
