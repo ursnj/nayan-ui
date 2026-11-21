@@ -73,6 +73,9 @@ const alerts = [
   { title: 'Warning', type: 'warning', tone: 'text-warning', icon: 'triangle-alert', message: 'Your session expires soon.' },
   { title: 'Error', type: 'error', tone: 'text-danger', icon: 'circle-x', message: 'Could not save your changes.' }
 ];
+const dismissAlertClass = 'h-11 w-11 rounded-lg border-0 bg-transparent p-0 text-sm font-semibold text-accent hover:bg-surface-secondary';
+const restoreAlertsClass =
+  'min-h-11 self-start rounded-lg border border-border bg-surface px-3 py-2 text-sm font-semibold text-foreground hover:bg-surface-secondary';
 
 function Alerts() {
   const [dismissed, setDismissed] = useState<string[]>([]);
@@ -92,7 +95,7 @@ function Alerts() {
               </NText>
             </NView>
             <NButton
-              className="engine-preview-action engine-preview-action-ghost w-11"
+              className={dismissAlertClass}
               accessibilityLabel={`Dismiss ${title.toLowerCase()} alert`}
               onPress={() => setDismissed((previous) => [...previous, type])}
             >
@@ -101,7 +104,7 @@ function Alerts() {
           </NAlert>
         ))}
       {dismissed.length > 0 && (
-        <NButton className={`${outlineButton} self-start`} onPress={() => setDismissed([])}>
+        <NButton className={restoreAlertsClass} onPress={() => setDismissed([])}>
           Restore alerts
         </NButton>
       )}
@@ -274,16 +277,18 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
             <NAlert key={type} type={type} className="flex w-full flex-row items-center gap-3 rounded-xl border border-border bg-surface px-3 py-2">
               <NIcon name={icon} className={tone} size={21} strokeWidth={1.8} />
               <NView className="flex min-w-0 flex-1 flex-col gap-1">
-                <NText className="text-sm font-semibold">{title}</NText>
-                <NText className="text-sm text-muted">{message}</NText>
+                <NText tag="p" className="text-sm font-semibold">{title}</NText>
+                <NText tag="p" className="text-sm text-muted">{message}</NText>
               </NView>
-              <NButton className="rounded-lg bg-transparent text-accent" accessibilityLabel={\`Dismiss \${title.toLowerCase()} alert\`}
+              <NButton className="${dismissAlertClass}" accessibilityLabel={\`Dismiss \${title.toLowerCase()} alert\`}
                 onPress={() => setDismissed((previous) => [...previous, type])}>×</NButton>
             </NAlert>
           ))}
-          {dismissed.length > 0 && <NButton isOutline onPress={() => setDismissed([])}>Restore alerts</NButton>}`,
+          {dismissed.length > 0 && <NButton className="${restoreAlertsClass}" onPress={() => setDismissed([])}>Restore alerts</NButton>}`,
       `const alerts = ${JSON.stringify(alerts, null, 2)};
-  const [dismissed, setDismissed] = useState<string[]>([]);`
+  const [dismissed, setDismissed] = useState<string[]>([]);`,
+      304,
+      'flex flex-col gap-4 p-5'
     )
   },
   accordion: {

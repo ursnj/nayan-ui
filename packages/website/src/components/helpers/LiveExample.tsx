@@ -210,7 +210,6 @@ function ExampleWorkspace({
                 preview={{
                   ...example,
                   host: true,
-                  styled: false,
                   height: 'auto',
                   render: (
                     <PreviewBoundary key={output.run} onError={(cause) => setError(cause.message)}>

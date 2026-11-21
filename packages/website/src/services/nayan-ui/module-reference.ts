@@ -1,3 +1,5 @@
+import { moduleVariations } from './module-variations';
+
 interface ModuleExample {
   slug: string;
   title: string;
@@ -9,7 +11,7 @@ interface ModuleExample {
   filename?: string;
 }
 
-const modules: readonly ModuleExample[] = [
+const modules = [
   {
     slug: 'animations',
     title: 'Animations',
@@ -536,10 +538,13 @@ export async function preload() {
 console.log(metadata.name, metadata.version);`,
     filename: 'version.ts'
   }
-];
+] as const satisfies readonly ModuleExample[];
 
-export const moduleReferences = modules.map((module) => ({
+export type ModuleSlug = (typeof modules)[number]['slug'];
+
+export const moduleReferences = modules.map((module: ModuleExample & { slug: ModuleSlug }) => ({
   ...module,
+  variations: moduleVariations[module.slug],
   path: module.slug === 'games' ? '/modules/games' : `/${module.slug}`,
   importPath: `nayan-ui/${module.entry.slice(2)}`
 }));

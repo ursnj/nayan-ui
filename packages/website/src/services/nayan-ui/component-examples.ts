@@ -1,4 +1,4 @@
-export function componentSource(imports: string, body: string, state = '', height = 280) {
+export function componentSource(imports: string, body: string, state = '', height = 280, pageClassName = 'gap-3 p-5') {
   const names = [...new Set([...imports.split(', '), 'NPage', 'NTheme', 'NView'])].join(', ');
   return `'use client';
 
@@ -8,7 +8,7 @@ export default function Example() {
 ${state ? `  ${state}\n` : ''}  return (
     <NTheme defaultTheme="system">
       <NView style={{ height: ${height}, display: 'flex', flexDirection: 'column' }}>
-        <NPage className="gap-3 p-5">
+        <NPage className="${pageClassName}">
           ${body}
         </NPage>
       </NView>

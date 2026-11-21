@@ -2003,13 +2003,30 @@ impl ComponentDocument {
             "NSelect" => self.select(ui, n, resolved, false),
             "NTabsContent" => self.nodes(ui, &n.children),
             "NAlert" | "NEmptyState" => {
-                egui::Frame::group(ui.style()).show(ui, |ui| {
-                    ui.heading(label);
-                    if let Some(s) = p["message"].as_str().or_else(|| p["description"].as_str()) {
-                        ui.label(s);
-                    }
-                    self.nodes(ui, &n.children);
-                });
+                let alert = n.kind == "NAlert";
+                let message = ["message", "description"]
+                    .iter()
+                    .find_map(|key| p[*key].as_str().filter(|text| !alert || !text.is_empty()));
+                let heading = if alert {
+                    ["label", "title", "name", "text", "fallback", "alt"]
+                        .iter()
+                        .find_map(|key| p[*key].as_str().filter(|text| !text.is_empty()))
+                } else {
+                    Some(label.as_str())
+                };
+                if alert && heading.is_none() && message.is_none() {
+                    self.container(ui, n, resolved);
+                } else {
+                    egui::Frame::group(ui.style()).show(ui, |ui| {
+                        if let Some(heading) = heading {
+                            ui.heading(heading);
+                        }
+                        if let Some(message) = message {
+                            ui.label(message);
+                        }
+                        self.nodes(ui, &n.children);
+                    });
+                }
             }
             "NSkeleton" | "NSkeletonGroup" => {
                 let (rect, _) = ui.allocate_exact_size(

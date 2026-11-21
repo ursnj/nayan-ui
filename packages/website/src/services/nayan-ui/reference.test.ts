@@ -4,11 +4,11 @@ import { join } from 'node:path';
 import ts from 'typescript';
 import * as engineComponents from 'nayan-ui/components';
 import enginePackage from 'nayan-ui/package.json';
-import { componentPreview } from '@/components/ui/NayanComponentDoc';
+import { componentPreview } from '@/components/ui/ComponentExamples';
 import { additionalExample } from '@/components/ui/previews/AdditionalExamples';
-import { legacyComponentAlternatives } from '@/components/ui/previews/LegacyExamples';
-import { componentReferences } from './component-reference';
+import { componentReferences, legacyComponentAlternatives } from './component-reference';
 import { moduleReferences } from './module-reference';
+import componentAttributes from './component-attributes.json';
 
 test('the reference covers the component exports and public engine entry points', () => {
   expect(Object.keys(engineComponents).sort()).toEqual(
@@ -39,6 +39,23 @@ test('the Icon previews use named icons in their live views and editable example
   }
 });
 
+test('every component reference has public attributes, methods or a hook return value', () => {
+  const { attributes, components } = componentAttributes;
+  expect(Object.keys(components).sort()).toEqual([...new Set(componentReferences.map(({ symbol }) => symbol))].sort());
+  for (const [name, api] of Object.entries(components)) {
+    const ids = [...api.props, ...api.shared, ...api.methods, ...api.value];
+    expect(ids.length, name).toBeGreaterThan(0);
+    expect(ids.every((id) => attributes[id]?.type), name).toBe(true);
+  }
+  const imageProps = components.NImage.props.map((id) => attributes[id]?.name);
+  expect(imageProps).toContain('fallbackSource');
+  expect(imageProps).toContain('onLoad');
+  expect(components.GameView.props.some((id) => attributes[id]?.name === 'source' && attributes[id]?.required)).toBe(true);
+  expect(componentAttributes.native.VideoPlayer.props.some((id) =>
+    attributes[id]?.name === 'source' && attributes[id]?.type.includes('number')
+  )).toBe(true);
+});
+
 test('each reference entry has valid example code for the built engine package', () => {
   const examples: [string, string][] = [];
   for (const { slug, symbol } of componentReferences) {
@@ -66,9 +83,14 @@ test('each reference entry has valid example code for the built engine package',
     expect(additional?.source, slug).not.toBe(preview!.source);
     examples.push([`legacy-${slug}-additional.tsx`, additional!.source]);
   }
-  for (const { entry, slug, code, filename } of moduleReferences) {
+  for (const { entry, slug, code, filename, variations } of moduleReferences) {
     if (!entry.includes('*') && entry !== './app.plugin.js') expect(code, slug).toContain(`nayan-ui/${entry.slice(2)}`);
     examples.push([filename ?? `${slug}.tsx`, code]);
+    expect(variations.length, slug).toBeGreaterThan(0);
+    for (const [index, variation] of variations.entries()) {
+      expect(variation.code, slug).not.toBe(code);
+      examples.push([`${slug}-variation-${index + 1}-${variation.filename ?? 'Example.tsx'}`, variation.code]);
+    }
   }
 
   const options: ts.CompilerOptions = {

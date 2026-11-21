@@ -53,6 +53,39 @@ fn painted_text_bounds(shape: &egui::Shape, text: &str) -> Option<Rect> {
 }
 
 #[test]
+fn alerts_paint_custom_content_and_message_only_alerts_once() {
+    let mut doc = ComponentDocument::default();
+    doc.set_tree(&json!([
+        {"id":"custom","kind":"NAlert","props":{"className":"flex-row gap-3"},"children":[
+            {"id":"title","kind":"NText","props":{"text":"Notice"}},
+            {"id":"details","kind":"NText","props":{"text":"Save a backup."}}
+        ]},
+        {"id":"message","kind":"NAlert","props":{"message":"Upload complete."}},
+        {"id":"standard","kind":"NAlert","props":{"title":"Warning","description":"Session expires soon."}}
+    ]))
+    .unwrap();
+    let output = doc.frame(480., 400., 1.);
+    let paint_count = |text| {
+        output
+            .shapes
+            .iter()
+            .filter(|shape| painted_text_bounds(&shape.shape, text).is_some())
+            .count()
+    };
+    let counts = [
+        "Notice",
+        "Save a backup.",
+        "NoticeSave a backup.",
+        "Upload complete.",
+        "Warning",
+        "Session expires soon.",
+    ]
+    .map(paint_count);
+    output.drop_without_applying_deltas();
+    assert_eq!(counts, [1, 1, 0, 1, 1, 1]);
+}
+
+#[test]
 fn badge_text_is_centered_in_intrinsic_and_fixed_boxes() {
     for native in [false, true] {
         for class in [

@@ -96,3 +96,24 @@ export const componentReferences = [...components.map((item) => [...item, 'compo
 export function findComponentReference(slug: string) {
   return componentReferences.find((item) => item.slug === slug);
 }
+
+export const legacyComponentAlternatives = {
+  menu: 'menu-item',
+  'avatar-group': 'view',
+  breadcrumbs: 'link',
+  calendar: 'date-picker',
+  'checkbox-group': 'checkbox',
+  'date-field': 'input',
+  'date-range-picker': 'date-picker',
+  'infinite-scroll': 'list',
+  'list-box': 'checkbox',
+  meter: 'progress',
+  pagination: 'button',
+  popover: 'card',
+  'progress-circle': 'progress',
+  'switch-group': 'switch',
+  table: 'view',
+  'tag-group': 'chip',
+  'time-field': 'input',
+  toolbar: 'button'
+} as const;

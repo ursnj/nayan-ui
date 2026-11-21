@@ -517,27 +517,6 @@ export default function Example() {
 }`;
 }
 
-export const legacyComponentAlternatives = {
-  menu: 'menu-item',
-  'avatar-group': 'view',
-  breadcrumbs: 'link',
-  calendar: 'date-picker',
-  'checkbox-group': 'checkbox',
-  'date-field': 'input',
-  'date-range-picker': 'date-picker',
-  'infinite-scroll': 'list',
-  'list-box': 'checkbox',
-  meter: 'progress',
-  pagination: 'button',
-  popover: 'card',
-  'progress-circle': 'progress',
-  'switch-group': 'switch',
-  table: 'view',
-  'tag-group': 'chip',
-  'time-field': 'input',
-  toolbar: 'button'
-} satisfies Record<keyof typeof legacyExamples, string>;
-
 export function legacyExample(slug: string): ComponentPreview | undefined {
   return Object.hasOwn(legacyExamples, slug) ? legacyExamples[slug as keyof typeof legacyExamples] : undefined;
 }

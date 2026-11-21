@@ -6,11 +6,12 @@ import Code from '@/components/helpers/Code';
 import Sidebar from '@/components/helpers/Sidebar';
 import SubHeader from '@/components/helpers/SubHeader';
 import TagsList from '@/components/helpers/TagsList';
-import { EngineComponentExample } from '@/components/ui/NayanComponentDoc';
+import { EngineComponentExample } from '@/components/ui/ComponentExamples';
 import { componentReferences } from '@/services/nayan-ui/component-reference';
 import { moduleReferences } from '@/services/nayan-ui/module-reference';
 import { tagsForReference } from '@/services/nayan-ui/reference-tags';
 import ReferenceDirectory from './ReferenceDirectory';
+import ComponentAttributes from './ComponentAttributes';
 
 type Group = 'components' | 'modules';
 type ReferenceEntry = (typeof componentReferences)[number] | (typeof moduleReferences)[number];
@@ -27,7 +28,7 @@ export const referenceGroups = {
     title: 'Nayan Modules',
     navTitle: 'Modules',
     description:
-      'Import games, drawing, media, storage and platform services from their individual engine entry points. Each reference includes an example.',
+      'Import games, drawing, media, storage and platform services from their individual engine entry points. Each reference includes usage examples.',
     importPath: 'nayan-ui/modules',
     items: moduleReferences
   }
@@ -90,6 +91,7 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
             <NText tag="span" className="ml-2 break-all font-mono text-xs">{entry.importPath}</NText>
           </NText>
           <EngineComponentExample slug={entry.slug} />
+          <ComponentAttributes symbol={entry.symbol} />
           {module && (
             <Link href={module.path} className="mb-3 block text-sm font-medium text-accent hover:underline">
               {module.title} module
@@ -106,8 +108,18 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
         </>
       ) : (
         <>
-          <SubHeader title="Usage" description={entry.note}>
-            <Code code={entry.code} filename={entry.filename ?? entry.importPath} language={entry.filename?.endsWith('.js') ? 'javascript' : 'tsx'} />
+          <SubHeader title="Examples" id="usage">
+            <NView tag="div" className="grid min-w-0 gap-6">
+              {[{ title: 'Quick start', code: entry.code, note: entry.note, filename: entry.filename }, ...entry.variations].map(
+                ({ title, code, note, filename }) => (
+                  <NView tag="section" key={title} className="grid min-w-0 gap-2" aria-label={title}>
+                    <NText tag="h3" className="font-semibold">{title}</NText>
+                    {note && <NText tag="p" className="text-sm text-muted">{note}</NText>}
+                    <Code code={code} filename={filename ?? entry.importPath} language={filename?.endsWith('.js') ? 'javascript' : 'tsx'} />
+                  </NView>
+                )
+              )}
+            </NView>
           </SubHeader>
           {entry.guide ? (
             <Link href={entry.guide} className={`${BUTTON_SMALL} mb-3`}>
