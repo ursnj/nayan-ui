@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { NView } from "@nayan-ui/engine/components";
 import Script from "next/script";
 import Footer from "@/components/helpers/Footer";
 import Header from "@/components/helpers/Header";
@@ -25,7 +24,7 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   keywords:
-    "React Component Library, React Native Components, React Reusable Components, React UI Library, Tailwind CSS Components, HeroUI Components, TypeScript UI Library, Accessibility, Dark Mode, Open Source, Nayan UI",
+    "React Component Library, React Native Components, React Reusable Components, React UI Library, Tailwind CSS Components, TypeScript UI Library, Accessibility, Dark Mode, Open Source, Nayan UI",
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: SITE_URL },
   openGraph: {
@@ -64,10 +63,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <ThemeProvider>
+          <a href="#main-content" className="site-skip-link">Skip to content</a>
           <Header />
-          <NView tag="main" className="mt-[60px]">
+          <main id="main-content" className="site-main" tabIndex={-1}>
             {children}
-          </NView>
+          </main>
           <Footer />
         </ThemeProvider>
         <Script id="microsoft-clarity" strategy="afterInteractive">

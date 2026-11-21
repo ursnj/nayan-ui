@@ -925,8 +925,7 @@ attachment boundary inside an engine UI tree.
 | Status and loading              | `NProgress`, `NLoading`, `NChip`, `NBadge`, `NAlert`, `NEmptyState`, `NSkeleton`, `NSkeletonGroup`, `NConfetti`, `NToastHost` and the `NToast` service |
 | Presentations and native chrome | `NSheet`, `NDialog`, `NConfirm`, `NKeyboard`, `NBlur`, `NBlurTarget`, `NSafeArea`, `NSafeAreaProvider`, `NSafeAreaListener`                            |
 
-These experimental controls expose the shared API documented here; they are not complete replacements for the existing `@nayan-ui/react` and `@nayan-ui/native`
-libraries. Sheets, dialogs and confirmations currently use controlled `isOpen` /
+The engine exposes these controls through one shared API. Sheets, dialogs and confirmations use controlled `isOpen` /
 `onOpenChange` props and a platform presentation host with Rust-rendered content.
 The calendar and toast service also use Rust state and engine rendering. SDK-owned surfaces retain their platform integrations.
 

@@ -2,7 +2,7 @@ import { buildStyles, developStyles, type EngineStylesOptions } from "@nayan-ui/
 
 const options: EngineStylesOptions = {
   source: "src/app/engine-theme.css",
-  content: ["src/components/home"],
+  content: ["src"],
   output: "public/engine-ui/site-styles.json",
   publicPath: "/engine-ui/site-styles.json",
   cssOutput: "src/app/engine.css",

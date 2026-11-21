@@ -4,8 +4,7 @@
 //   bun scripts/seo-banners/generate.ts            # every page
 //   bun scripts/seo-banners/generate.ts /react/button /games   # only these pages
 //
-// Compression is lossless: each banner is re-encoded several ways and only an encoding whose
-// decoded pixels are identical to the render is kept (the smallest one).
+// Use a more compact RGB encoding when the canvas PNG exceeds the share-preview size cap.
 import {
   createCanvas,
   GlobalFonts,
@@ -19,11 +18,10 @@ import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { losslessCompressPng } from "@napi-rs/image";
-import sharp from "sharp";
-import type { LucideIcon } from "lucide-react";
+import type { SiteIcon } from "../../src/design/Icons";
 import { getMenuItemByTag } from "../../src/services/Utils";
 import { buildSpecs, type BannerSpec } from "./pages";
+import { compactPng } from "./png";
 
 const W = 1200;
 const H = 630;
@@ -141,17 +139,20 @@ function balance(ctx: SKRSContext2D, text: string, maxWidth: number): string[] |
   return best;
 }
 
-const iconCache = new Map<string, Image>();
-/** A Lucide icon as an image, drawn with the given stroke colour. */
-async function iconImage(icon: LucideIcon, size: number, color: string, strokeWidth = 1.75) {
-  const key = `${icon.displayName}|${size}|${color}|${strokeWidth}`;
-  const cached = iconCache.get(key);
+const iconCache = new WeakMap<SiteIcon, Map<string, Image>>();
+/** A site icon as an image, drawn with the given stroke colour. */
+async function iconImage(icon: SiteIcon, size: number, color: string, strokeWidth = 1.75) {
+  let variants = iconCache.get(icon);
+  if (!variants) {
+    variants = new Map();
+    iconCache.set(icon, variants);
+  }
+  const key = `${size}|${color}|${strokeWidth}`;
+  const cached = variants.get(key);
   if (cached) return cached;
-  const svg = renderToStaticMarkup(
-    createElement(icon, { size, color, strokeWidth, absoluteStrokeWidth: false }),
-  );
+  const svg = renderToStaticMarkup(createElement(icon, { size, color, strokeWidth }));
   const image = await loadImage(Buffer.from(svg));
-  iconCache.set(key, image);
+  variants.set(key, image);
   return image;
 }
 
@@ -161,10 +162,14 @@ async function fileImage(file: string, background = false) {
   const key = `${file}|${background}`;
   const cached = imageCache.get(key);
   if (cached) return cached;
-  // Decode through sharp, so any format (webp, palette PNG) loads the same way.
-  let pipeline = sharp(file);
-  if (background) pipeline = pipeline.resize({ width: 300 }).blur(6).modulate({ brightness: 0.6 });
-  const image = await loadImage(await pipeline.png().toBuffer());
+  let image = await loadImage(file);
+  if (background) {
+    const canvas = createCanvas(300, Math.max(1, Math.round(image.height * 300 / image.width)));
+    const context = canvas.getContext("2d");
+    context.filter = "blur(6px) brightness(60%)";
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    image = await loadImage(await canvas.encode("png"));
+  }
   imageCache.set(key, image);
   return image;
 }
@@ -296,7 +301,7 @@ async function badge(
   cx: number,
   cy: number,
   size: number,
-  icon: LucideIcon,
+  icon: SiteIcon,
   theme: [string, string],
 ) {
   const x = cx - size / 2;
@@ -851,63 +856,6 @@ async function render(spec: BannerSpec) {
   return canvas;
 }
 
-// ---------------------------------------------------------------------------------------------
-// Lossless compression
-
-async function compress(rgba: Buffer): Promise<{ png: Buffer; method: string }> {
-  // Every banner is opaque; drop the alpha channel so the PNG stores RGB only (exact: alpha is 255).
-  const raw = { raw: { width: W, height: H, channels: 4 as const } };
-  const rgb = await sharp(rgba, raw).removeAlpha().raw().toBuffer();
-  const rgbRaw = { raw: { width: W, height: H, channels: 3 as const } };
-
-  const unique = new Set<number>();
-  for (let i = 0; i < rgb.length && unique.size <= 256; i += 3)
-    unique.add((rgb[i]! << 16) | (rgb[i + 1]! << 8) | rgb[i + 2]!);
-
-  const candidates: { method: string; make: () => Promise<Buffer> }[] = [
-    {
-      method: "rgb/adaptive",
-      make: () =>
-        sharp(rgb, rgbRaw).png({ compressionLevel: 9, adaptiveFiltering: true }).toBuffer(),
-    },
-    {
-      method: "rgb/none",
-      make: () =>
-        sharp(rgb, rgbRaw).png({ compressionLevel: 9, adaptiveFiltering: false }).toBuffer(),
-    },
-  ];
-  // A palette is lossless only when the image has 256 colours or fewer; verified below regardless.
-  if (unique.size <= 256)
-    candidates.push({
-      method: "palette",
-      make: () =>
-        sharp(rgb, rgbRaw)
-          .png({ compressionLevel: 9, palette: true, colours: unique.size, dither: 0, effort: 10 })
-          .toBuffer(),
-    });
-
-  // oxipng re-optimises the best zlib encoding (filters and deflate), typically 5-10% smaller.
-  candidates.push({
-    method: "oxipng",
-    make: async () => {
-      const png = await sharp(rgb, rgbRaw).png({ compressionLevel: 9, adaptiveFiltering: true }).toBuffer();
-      return Buffer.from(await losslessCompressPng(png));
-    },
-  });
-
-  let best: { png: Buffer; method: string } | null = null;
-  for (const candidate of candidates) {
-    const png = await candidate.make();
-    const decoded = await sharp(png).removeAlpha().raw().toBuffer();
-    if (!decoded.equals(rgb)) continue; // Not lossless: discard.
-    if (!best || png.length < best.png.length) best = { png, method: candidate.method };
-  }
-  if (!best) throw new Error("No lossless encoding reproduced the render");
-  return best;
-}
-
-// ---------------------------------------------------------------------------------------------
-
 async function main() {
   const only = process.argv.slice(2);
   const specs = buildSpecs();
@@ -923,26 +871,25 @@ async function main() {
   } catch {}
 
   let rendered = 0;
-  let before = 0;
-  let after = 0;
+  let bytes = 0;
   for (const spec of specs) {
     if (only.length && !only.includes(spec.path)) continue;
     const canvas = await render(spec);
-    const original = canvas.toBuffer("image/png");
-    const data = canvas.getContext("2d").getImageData(0, 0, W, H).data;
-    const { png, method } = await compress(
-      Buffer.from(data.buffer, data.byteOffset, data.byteLength),
-    );
+    let png = await canvas.encode("png");
+    if (png.length > MAX_BYTES) {
+      const pixels = canvas.getContext("2d").getImageData(0, 0, W, H).data;
+      const compact = compactPng(pixels, W, H);
+      if (compact && compact.length < png.length) png = compact;
+    }
     const file = bannerFile(spec.path);
     mkdirSync(dirname(join(ROOT, "public", file)), { recursive: true });
     writeFileSync(join(ROOT, "public", file), png);
     const hash = createHash("sha1").update(png).digest("hex").slice(0, 8);
     manifest[spec.path] = `${file}?v=${hash}`;
     rendered++;
-    before += original.length;
-    after += png.length;
+    bytes += png.length;
     if (only.length)
-      console.log(`${spec.path} -> ${file} ${(png.length / 1024).toFixed(1)} KB (${method})`);
+      console.log(`${spec.path} -> ${file} ${(png.length / 1024).toFixed(1)} KB`);
   }
 
   // Drop entries for pages that no longer exist; keep the file sorted for readable diffs.
@@ -954,7 +901,7 @@ async function main() {
   writeFileSync(MANIFEST, `${JSON.stringify(sorted, null, 2)}\n`);
   if (rendered)
     console.log(
-      `${rendered} banners: ${(before / 1024 / 1024).toFixed(2)} MB rendered -> ${(after / 1024 / 1024).toFixed(2)} MB lossless (${Math.round((1 - after / before) * 100)}% smaller)`,
+      `${rendered} banners: ${(bytes / 1024 / 1024).toFixed(2)} MB of lossless PNGs`,
     );
   checkCoverage(sorted);
 }

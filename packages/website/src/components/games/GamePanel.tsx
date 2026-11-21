@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { ReactNode } from "react";
-import { X } from "lucide-react";
+import { X } from "@/design/Icons";
 import { EYEBROW } from "@/design/system";
 
 interface GamePanelProps {

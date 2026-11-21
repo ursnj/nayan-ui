@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Textarea from "@/components/react/components/Textarea";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/textarea", "react");
@@ -9,7 +9,7 @@ export default function TextareaPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Textarea />
+      <EngineComponentDoc path="/react/textarea" />
     </>
   );
 }

@@ -13,8 +13,8 @@ import {
   Type as TypeIcon,
   Volume2,
   Wand2,
-} from "lucide-react";
-import { NBadge, NChip, cn } from "@nayan-ui/react";
+} from "@/design/Icons";
+import { NBadge, NChip, cn } from "@/components/ui";
 import { formatTimecode } from "../../lib/utils";
 import { primarySelectedClip, useEditor } from "../../store/editor";
 import {

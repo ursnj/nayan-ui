@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
-import { NButton, NConfirmAlert, NDialog, NInput, showToast } from "@nayan-ui/react";
-import { DialogSize } from "@nayan-ui/react";
+import { NButton, NConfirmAlert, NDialog, NInput, showToast } from "@/components/ui";
+import { DialogSize } from "@/components/ui";
 import {
   Clapperboard,
   Download,
@@ -14,7 +14,7 @@ import {
   Settings,
   Sun,
   Undo2,
-} from "lucide-react";
+} from "@/design/Icons";
 import { BUNDLE_EXTENSION, BundleError, readBundle, writeBundle } from "../../lib/projectBundle";
 import { MOD_LABEL, useCommand } from "../../lib/shortcuts";
 import { download } from "../../lib/utils";

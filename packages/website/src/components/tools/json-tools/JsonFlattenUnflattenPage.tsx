@@ -1,22 +1,12 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-import Sidebar from "@/components/helpers/Sidebar";
-import SubHeader from "@/components/helpers/SubHeader";
-import TagsList from "@/components/helpers/TagsList";
-import { jsonFlattenUnflattenTags } from "@/services/Tags";
-import { getMenuItem } from "@/services/Utils";
-import { JsonFlattenUnflatten } from "@/components/tools";
-import { JsonFlattenUnflattenContent } from "./JsonToolsContent";
+import Sidebar from '@/components/helpers/Sidebar';
+import SubHeader from '@/components/helpers/SubHeader';
+import TagsList from '@/components/helpers/TagsList';
+import { jsonFlattenUnflattenTags } from '@/services/Tags';
+import { JsonFlattenUnflattenContent } from './JsonToolsContent';
 
 const JsonFlattenUnflattenPage = () => {
-  const pathname = usePathname();
-  const component: any = getMenuItem(pathname);
-
   return (
-    <Sidebar title={component?.title || "JSON Flatten/Unflatten"}>
-      <JsonFlattenUnflatten />
-
+    <Sidebar title="JSON Flatten/Unflatten">
       <JsonFlattenUnflattenContent />
 
       <SubHeader title="Tags">

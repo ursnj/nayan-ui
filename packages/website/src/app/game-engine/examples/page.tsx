@@ -1,6 +1,6 @@
 import { LOGOS } from "@/components/examples/logo-animation/logos";
 import Link from "next/link";
-import { ArrowUpRight, Bird } from "lucide-react";
+import { ArrowUpRight, Bird } from "@/design/Icons";
 import Sidebar from "@/components/helpers/Sidebar";
 import { CARD_INTERACTIVE, EYEBROW, LEAD, PILL } from "@/design/system";
 import { buildPageMetadata } from "@/services/seo";

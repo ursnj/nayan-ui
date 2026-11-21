@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNSheet from "@/components/react-native/components/Sheet";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNSheetPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNSheet />
+      <EngineComponentDoc path="/react-native/sheet" />
     </>
   );
 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "@/design/Icons";
 import { DocsIntro } from "@/design/Primitives";
 import Code from "@/components/helpers/Code";
 import Sidebar from "@/components/helpers/Sidebar";
@@ -63,7 +63,7 @@ export default function EngineDocumentation({ guide }: { guide: EngineGuide }) {
                           ) : (
                             <td key={j} className="px-4 py-3 leading-6 text-muted align-top">
                               {cell.startsWith("/game-engine") ? (
-                                <Link className="text-indigo-600 dark:text-indigo-400" href={cell}>
+                                <Link className="text-accent hover:underline" href={cell}>
                                   {cell}
                                 </Link>
                               ) : (
@@ -93,7 +93,7 @@ export default function EngineDocumentation({ guide }: { guide: EngineGuide }) {
               </div>
             ))}
             {section.note && (
-              <aside className="rounded-xl border border-indigo-500/20 bg-indigo-500/5 p-4 text-sm leading-7 text-foreground">
+              <aside className="rounded-xl border border-accent/20 bg-accent/5 p-4 text-sm leading-7 text-foreground">
                 {section.note}
               </aside>
             )}
@@ -106,7 +106,7 @@ export default function EngineDocumentation({ guide }: { guide: EngineGuide }) {
           {previous ? (
             <Link
               href={previous.link}
-              className={`${CARD} group flex flex-col p-4 transition-colors hover:border-indigo-500/30`}
+              className={`${CARD} group flex flex-col p-4 transition-colors hover:border-accent/30`}
             >
               <span className="flex items-center gap-1.5 text-xs text-muted">
                 <ArrowLeft className="h-3.5 w-3.5" /> Previous
@@ -119,7 +119,7 @@ export default function EngineDocumentation({ guide }: { guide: EngineGuide }) {
           {next && (
             <Link
               href={next.link}
-              className={`${CARD} group flex flex-col items-end p-4 text-right transition-colors hover:border-indigo-500/30`}
+              className={`${CARD} group flex flex-col items-end p-4 text-right transition-colors hover:border-accent/30`}
             >
               <span className="flex items-center gap-1.5 text-xs text-muted">
                 Next <ArrowRight className="h-3.5 w-3.5" />

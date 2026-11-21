@@ -1,11 +1,10 @@
 "use client";
 
-import { NTable } from "@nayan-ui/react";
 import SubHeader from "./SubHeader";
 
 interface Props {
   title?: string;
-  data: any[];
+  data: Array<Partial<Record<"name" | "type" | "default" | "details", React.ReactNode>>>;
   /** Column titles for tables that aren't props, e.g. methods ({ type: "Returns" }). */
   headers?: { name?: string; type?: string; default?: string };
   /** What a row is, for the count badge. Default "prop". */
@@ -37,7 +36,10 @@ const Attributes = (props: Props) => {
     >
       <div className="overflow-hidden rounded-xl border border-default bg-surface">
         <div className="overflow-x-auto">
-          <NTable columns={columns} data={data} />
+          <table className="w-full text-left text-sm">
+            <thead className="bg-surface-secondary"><tr>{columns.map((column) => <th scope="col" key={column.name} className={`${column.className} p-3`}>{column.title}</th>)}</tr></thead>
+            <tbody>{data.map((row, index) => <tr key={index} className="border-t border-default">{columns.map((column) => <td key={column.name} className="p-3 align-top">{row[column.name as keyof typeof row]}</td>)}</tr>)}</tbody>
+          </table>
         </div>
       </div>
     </SubHeader>

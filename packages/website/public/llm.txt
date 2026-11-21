@@ -1,250 +1,38 @@
-# Nayan UI - Component Library & Developer Tools
+# Nayan UI
 
 ## Project Overview
-Nayan UI is a comprehensive, enterprise-grade UI component library for React and React Native applications, plus a full suite of 50+ free online developer tools. It provides 58 documented components — 35 for React and 23 for React Native — with TypeScript-first development, CSS-variable theming, and cross-platform compatibility.
 
-**Website**: https://www.nayanui.com
-**Repository**: https://github.com/ursnj/nayan-ui
-**License**: ISC
+Nayan UI is the home of Nayan Engine, its React and React Native component examples, browser games, developer tools, and a browser video editor.
 
-## Architecture
-- **Monorepo Structure**: Yarn workspaces
-- **Packages**:
-  - `@nayan-ui/react` — React components built on HeroUI + Tailwind CSS
-  - `@nayan-ui/native` — React Native components with NativeWind
-  - `@nayan-ui/engine` — shared Rust/wgpu game engine for React browsers and React Native
-  - `@nayan-ui/cli` — CLI tools for SEO (sitemap, robots.txt generation)
-  - `@nayan-ui/ai` — AI-powered code reviewer & vulnerability scanner CLI
-  - `@nayan-ui/tools` — Tools library (video editor, PDF tools, image tools, JSON tools, XML tools, text tools)
-  - `@nayan-ui/website` — Next.js documentation website (this site)
+- Engine documentation: https://www.nayanui.com/game-engine
+- React quickstart: https://www.nayanui.com/game-engine/react
+- React Native quickstart: https://www.nayanui.com/game-engine/react-native
+- Interactive repository examples: https://github.com/ursnj/nayan-ui/tree/main/packages/example
 
-## Technology Stack
-- **Website**: Next.js 15, React 19, TypeScript, Tailwind CSS v4, HeroUI
-- **React Package**: React 19, TypeScript, HeroUI, Tailwind CSS, Vite
-- **React Native**: React Native 0.80+, NativeWind, Expo SDK 53+
-- **Build Tools**: Vite, Next.js, react-native-builder-bob, TypeScript
-- **Styling**: Tailwind CSS, HeroUI design tokens, CSS variables for theming
-- **Icons**: Lucide React (React), Lucide React Native (React Native)
-- **Development**: Yarn workspaces, Husky, Prettier
+## Components
 
-## Component Categories
+Install the engine with `bun add @nayan-ui/engine`. Import controls from `@nayan-ui/engine/components`, mount an `NTheme` at the app root, and render engine controls in `NPage` or `ComponentsRoot`. Native apps need a development build.
 
-### Form Controls
-- **NButton**: Multiple variants (default, destructive, outline, secondary, ghost, link), sizes, loading states, icons
-- **NInput**: Text inputs with validation states, icons, helper text, various input types
-- **NTextarea**: Multi-line text input with character limits, auto-resize, validation
-- **NCheckbox**: Single and group checkboxes with custom styling
-- **NRadioGroup**: Radio button groups with horizontal/vertical layouts
-- **NSwitch**: Toggle switches with sizes and custom styling
-- **NSelect**: Single/multi-select dropdowns with search, creation, loading states
-- **NSlider**: Range sliders with marks, vertical orientation, custom styling
-- **NDatePicker**: Date/time/datetime picker with custom icons (React Native only)
-- **NColorPicker**: Color selection component (React Native only)
-
-### Layout & Navigation
-- **NCard**: Content containers with headers, footers, custom styling
-- **NAccordion**: Collapsible content sections with single/multiple expansion
-- **NDivider**: Horizontal/vertical separators with custom styling
-- **NTabs**: Tabbed interfaces with icons, vertical layout, full-width options
-- **NSheet**: Bottom sheets and side panels with different sizes
-- **NDialog**: Modal dialogs with various sizes and content types
-- **NMenu**: Context menus and dropdown menus with nested items, separators
-
-### Feedback & Display
-- **NAlert**: Notification alerts with types (success, error, warning, info), actions, dismissible
-- **NToast**: Toast notifications with different types, actions, positioning
-- **NProgress**: Progress bars with labels, animations, custom styling
-- **NBadge**: Status badges with colors, sizes, notification dots
-- **NLoading**: Loading spinners with sizes, colors, contextual usage
-- **NSkeleton**: Loading placeholders for content (lines, avatars, cards)
-- **NTooltip**: Hover tooltips with positioning and custom content
-
-### Data Display
-- **NTable**: Data tables with sorting, pagination, custom cell renderers
-- **NInfiniteScroll**: Infinite scrolling lists with pull-to-refresh
-
-### Utility & Navigation
-- **NLink**: Navigation links with external/internal routing, accessibility
-- **NLinkify**: Automatic URL/email detection and linking in text
-- **NPopover**: Floating content containers with positioning
-- **NConfirmAlert**: Confirmation dialogs for destructive actions
-
-### Theming & Customization
-- **NTheme**: Theme provider with light/dark mode support
-- **NThemeToggle**: Theme switching component (React Native only)
-
-## Key Features
-
-### Design System
-- **Enterprise-class UI**: Professional design with consistent spacing, typography, colors
-- **TypeScript-first**: Full type safety with comprehensive interfaces
-- **Accessibility**: WCAG compliance with proper ARIA labels, keyboard navigation
-- **Responsive**: Mobile-first design with responsive breakpoints
-- **Dark Mode**: Built-in dark mode support with smooth transitions
-
-### Customization
-- **Tailwind CSS Integration**: Full utility class support for styling
-- **CSS Variables**: Theme customization through CSS custom properties
-- **Component Variants**: Multiple style variants for different use cases
-- **Custom Icons**: Support for Lucide, Expo, and custom icon components
-- **Flexible Styling**: className props on all components for custom styling
-
-### Performance
-- **60fps Performance**: Optimized for smooth animations and interactions
-- **Tree Shaking**: Only import components you use
-- **Bundle Size**: Minimal bundle impact with efficient code splitting
-- **React.memo**: Performance optimization to prevent unnecessary re-renders
-
-## Installation & Setup
-
-### React Package
-```bash
-npm install @nayan-ui/react
-# or
-yarn add @nayan-ui/react
-```
-
-**Peer Dependencies**: react, react-dom, tailwindcss
-
-### React Native Package
-```bash
-npm install @nayan-ui/native
-# or
-yarn add @nayan-ui/native
-```
-
-**Peer Dependencies**: react, react-native, nativewind, tailwindcss
-
-### CLI Tools
-```bash
-npm install -g @nayan-ui/cli
-# Usage: nayan create sitemap, nayan validate robots
-```
-
-## Theme Configuration
-
-### React Theme Setup
-```typescript
-import { NTheme, THEMES } from '@nayan-ui/react';
-
-const themeColors = {
-  light: {
-    primary: '#3b82f6',
-    background: '#ffffff',
-    foreground: '#0f172a'
-  },
-  dark: {
-    primary: '#60a5fa',
-    background: '#0f172a',
-    foreground: '#f8fafc'
-  }
-};
-
-function App() {
-  return (
-    <NTheme theme={THEMES.light} themeColors={themeColors}>
-      {/* Your app content */}
-    </NTheme>
-  );
-}
-```
-
-### React Native Theme Setup
-```typescript
-import { NTheme, THEMES, useNTheme } from '@nayan-ui/native';
+```tsx
+import { NButton, NPage, NText, NTheme } from '@nayan-ui/engine/components';
 
 export default function App() {
-  const { theme } = useNTheme();
-  
   return (
-    <NTheme theme={theme || THEMES.light} themeColors={themeColors}>
-      {/* Your app content */}
+    <NTheme defaultTheme="system">
+      <NPage className="gap-3 p-4" style={{ height: 300 }}>
+        <NText>Welcome</NText>
+        <NButton onPress={() => console.log('Continue')}>Continue</NButton>
+      </NPage>
     </NTheme>
   );
 }
 ```
 
-## Development Workflow
+Use `useNTheme` for appearance, `NToast` for feedback, and feature-specific imports for storage, media, permissions, and rendering.
 
-### Local Development
-```bash
-# Start website with hot reload
-yarn start:website:watch
+## Developer Tool Guides
 
-# Build packages
-yarn build:react
-yarn build:react-native
-
-# Clean all dependencies
-yarn clean
-```
-
-### Website Structure
-- **src/react/components/**: React component examples and documentation
-- **src/react-native/components/**: React Native component examples
-- **src/home/**: Homepage content and navigation
-- **src/services/**: Utility functions and helpers
-- **public/**: Static assets and sitemap
-
-## Component Usage Patterns
-
-### Basic Component Usage
-```typescript
-import { NButton, NInput, NCard } from '@nayan-ui/react';
-
-function MyComponent() {
-  return (
-    <NCard>
-      <NInput placeholder="Enter text" />
-      <NButton variant="default" size="md">
-        Submit
-      </NButton>
-    </NCard>
-  );
-}
-```
-
-### Advanced Theming
-```typescript
-import { NButton } from '@nayan-ui/react';
-
-function CustomButton() {
-  return (
-    <NButton 
-      variant="outline"
-      className="bg-gradient-to-r from-blue-500 to-purple-600 text-white border-none"
-    >
-      Custom Styled Button
-    </NButton>
-  );
-}
-```
-
-### Form Integration
-```typescript
-import { useForm } from 'react-hook-form';
-import { NFormInput, NButton } from '@nayan-ui/react';
-
-function ContactForm() {
-  const { control, handleSubmit } = useForm();
-  
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <NFormInput
-        control={control}
-        name="email"
-        label="Email"
-        rules={{ required: 'Email is required' }}
-      />
-      <NButton type="submit">Submit</NButton>
-    </form>
-  );
-}
-```
-
-## Free Online Developer Tools
-
-Nayan UI provides 50+ free online tools at https://www.nayanui.com/tools — all tools run in the browser or via server-side processing with no signup required.
+The documentation at https://www.nayanui.com/tools covers PDF and image workflows, structured data, text processing, SEO, and command-line tools.
 
 ### PDF Tools (20 tools)
 - **Merge PDF** — Combine multiple PDF files into one document

@@ -1,4 +1,4 @@
-import { cn } from "@nayan-ui/react";
+import { cn } from "@/components/ui";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 

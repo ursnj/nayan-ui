@@ -9,8 +9,8 @@ import {
   NToggleButton,
   NTooltip,
   cn,
-} from "@nayan-ui/react";
-import { ChevronDown, RotateCcw } from "lucide-react";
+} from "@/components/ui";
+import { ChevronDown, RotateCcw } from "@/design/Icons";
 import { useEditor } from "../store/editor";
 
 interface SectionProps {

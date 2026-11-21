@@ -1,90 +1,41 @@
-/** The one accent, for text. */
-export const ACCENT_TEXT = "text-indigo-600 dark:text-indigo-400";
+export const ACCENT_TEXT = 'text-accent';
+export const ACCENT_SOFT = 'border-accent/20 bg-accent/8 text-accent';
 
-/** Accent on a tinted ground — badges, active chips, numbered markers. */
-export const ACCENT_SOFT =
-  "border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300";
+export const H1 = 'text-[clamp(2.25rem,5vw,3.5rem)] font-semibold leading-[1.06] tracking-[-0.055em]';
 
-/** The headline gradient. Hero headlines and primary buttons only. */
-export const GRADIENT_TEXT =
-  "bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 bg-clip-text text-transparent";
+export const H1_HERO = 'text-[clamp(2.75rem,6vw,5.5rem)] font-semibold leading-[0.99] tracking-[-0.065em]';
 
-/** The primary button's fill, matching the headline gradient. */
-export const GRADIENT_FILL = "bg-gradient-to-r from-indigo-500 to-violet-500";
+export const H2 = 'text-[clamp(1.85rem,3.6vw,3rem)] font-semibold leading-[1.08] tracking-[-0.045em]';
 
-/** Page title. One per page. */
-export const H1 = "text-3xl font-bold tracking-tight sm:text-4xl";
+export const H3 = 'text-base font-semibold leading-snug tracking-[-0.025em] text-foreground sm:text-lg';
 
-/** Marketing page title, where the page is the pitch. */
-export const H1_HERO = "text-3xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl";
+export const EYEBROW = 'font-mono text-xs font-semibold uppercase tracking-[0.12em] text-accent';
 
-/** Section heading. */
-export const H2 = "text-2xl font-bold tracking-tight sm:text-3xl";
+export const H2_DOC = 'mb-4 mt-10 border-b border-default pb-3 text-xl font-semibold tracking-tight text-foreground';
+export const H3_DOC = 'mb-2 mt-6 text-base font-semibold tracking-tight text-foreground';
+export const H4_CARD = 'text-sm font-semibold text-foreground';
 
-/** Card and subsection heading. */
-export const H3 = "text-base font-semibold text-foreground sm:text-lg";
+export const LEAD = 'leading-relaxed text-muted';
+export const BODY = 'text-sm leading-relaxed text-muted';
 
-/** The small capitalised label above a section heading. */
-export const EYEBROW = `text-xs font-semibold uppercase tracking-[0.2em] ${ACCENT_TEXT}`;
+export const CARD = 'rounded-2xl border border-border bg-surface';
+export const CARD_INTERACTIVE = `${CARD} transition-[border-color,box-shadow] duration-200 hover:border-accent/40 hover:shadow-md hover:shadow-accent/5`;
 
-export const H2_DOC =
-  "mb-4 mt-10 border-b border-default pb-2 text-sm font-semibold uppercase tracking-wider text-muted";
+export const WELL = 'rounded-xl border border-border bg-background';
+export const CARD_PAD = 'p-5 sm:p-6';
 
-export const H3_DOC = "mb-2 mt-6 text-sm font-semibold text-foreground";
+export const CONTAINER = 'mx-auto w-full max-w-[82rem] px-5 sm:px-8 lg:px-10';
+export const SECTION_Y = 'py-12 sm:py-20';
+export const HEADER_GAP = 'mb-7 sm:mb-9';
+export const GRID_GAP = 'gap-4 sm:gap-5';
+export const SCROLL_MT = 'scroll-mt-5';
 
-export const H4_CARD = "text-sm font-semibold text-foreground";
+const BUTTON_BASE = 'inline-flex min-h-10 items-center justify-center rounded-lg font-semibold transition-colors disabled:opacity-60';
 
-/** The sentence under a heading. Never more than a couple of lines. */
-export const LEAD = "text-muted leading-relaxed";
+export const BUTTON_PRIMARY = `${BUTTON_BASE} bg-accent px-5 py-3 text-sm text-accent-foreground hover:bg-accent/85`;
+export const BUTTON_SECONDARY = `${BUTTON_BASE} border border-border bg-surface px-5 py-3 text-sm text-foreground hover:border-accent/35 hover:bg-surface-secondary`;
+export const BUTTON_SMALL = `${BUTTON_BASE} border border-border bg-surface px-3 py-1.5 text-sm hover:bg-surface-secondary`;
 
-/** Body copy inside a card. */
-export const BODY = "text-sm leading-relaxed text-muted";
-
-/** A panel. The site's default container for anything that is not prose. */
-export const CARD = "rounded-2xl border border-default bg-surface";
-
-/** A panel that responds to the pointer, for cards that are links. */
-export const CARD_INTERACTIVE = `${CARD} transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-500/30 hover:shadow-lg`;
-
-/** A well — a recessed area inside a card, for code, previews and examples. */
-export const WELL = "rounded-xl border border-default bg-background";
-
-/** Standard padding for a card. */
-export const CARD_PAD = "p-5 sm:p-6";
-
-/** The page gutter. Identical on every page, including the docs. */
-export const CONTAINER = "container mx-auto px-4 sm:px-6 lg:px-8";
-
-/** Vertical space between landing-page sections. */
-export const SECTION_Y = "py-12 sm:py-16";
-
-/** Space under a section header, before its content. */
-export const HEADER_GAP = "mb-8 sm:mb-10";
-
-/** The grid gap used site-wide, so cards line up across sections. */
-export const GRID_GAP = "gap-4 sm:gap-5";
-
-export const SCROLL_MT = "scroll-mt-24";
-
-const BUTTON_BASE =
-  "inline-flex items-center justify-center rounded-xl font-semibold transition-all disabled:opacity-60";
-
-/** The one primary action on a page. */
-export const BUTTON_PRIMARY = `${BUTTON_BASE} ${GRADIENT_FILL} px-6 py-3 text-white shadow-lg shadow-indigo-500/25 hover:from-indigo-600 hover:to-violet-600`;
-
-/** Everything alongside a primary action. */
-export const BUTTON_SECONDARY = `${BUTTON_BASE} border border-default bg-surface/70 px-6 py-3 text-foreground backdrop-blur hover:bg-default/50`;
-
-/** Compact variant, for headers and toolbars. */
-export const BUTTON_SMALL = `${BUTTON_BASE} border border-default bg-surface px-3 py-1.5 text-sm hover:bg-default/50`;
-
-/** A neutral, non-interactive label. Tags, formats, counts. */
-export const PILL =
-  "rounded-lg border border-default bg-background px-2.5 py-1 text-xs font-medium text-foreground";
-
-/** A pill that links somewhere. */
-export const PILL_INTERACTIVE = `${PILL} transition-colors hover:border-indigo-500/40 hover:text-indigo-600 dark:hover:text-indigo-400`;
-
-/** Inline keyboard key. */
-export const KBD =
-  "rounded-md border border-default bg-background px-1.5 py-0.5 font-mono text-[11px] font-medium text-foreground";
+export const PILL = 'rounded-md border border-border bg-surface px-2.5 py-1 text-xs font-medium text-foreground';
+export const PILL_INTERACTIVE = `${PILL} transition-colors hover:border-accent/40 hover:text-accent`;
+export const KBD = 'rounded-md border border-border bg-background px-1.5 py-0.5 font-mono text-[11px] font-medium text-foreground';

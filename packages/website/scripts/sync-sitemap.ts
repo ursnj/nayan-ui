@@ -2,6 +2,8 @@ import { readdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { gamesData } from "../src/services/GamesData";
+import { componentReferences } from "../src/services/engine/component-reference";
+import { moduleReferences } from "../src/services/engine/module-reference";
 import { engineNavigation } from "../src/services/engine/navigation";
 import { SITE_URL } from "../src/services/seo";
 import {
@@ -48,6 +50,10 @@ export function collectPublicPaths(app = APP): string[] {
   for (const route of dynamic) {
     if (route === "/game-engine/[slug]") {
       engineNavigation.forEach((guide) => paths.add(guide.link));
+    } else if (route === "/[entry]") {
+      for (const entry of [...componentReferences, ...moduleReferences]) {
+        if (entry.path.split("/").length === 2) paths.add(entry.path);
+      }
     } else if (route === "/games/[slug]") {
       Object.keys(gamesData).forEach((slug) => paths.add(`/games/${slug}`));
     } else if (!(route in TAGS)) {
@@ -80,7 +86,7 @@ export function renderSitemap(paths: readonly string[]): string {
   const urls = [...new Set(paths)].sort().map((path) => {
     const hub =
       path === "/" ||
-      ["/react", "/react-native", "/games", "/tools", "/game-engine", "/video-editor"].includes(
+      ["/react", "/react-native", "/components", "/modules", "/games", "/tools", "/game-engine", "/video-editor"].includes(
         path,
       );
     const tag = path.includes("/tags/");

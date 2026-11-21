@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Accordion from "@/components/react/components/Accordion";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/accordion", "react");
@@ -9,7 +9,7 @@ export default function AccordionPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Accordion />
+      <EngineComponentDoc path="/react/accordion" />
     </>
   );
 }

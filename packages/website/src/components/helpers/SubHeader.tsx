@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Link2 } from "lucide-react";
+import { Link2 } from "@/design/Icons";
 import { SCROLL_MT } from "@/design/system";
 
 interface Props {
@@ -23,17 +23,17 @@ const SubHeader = (props: Props) => {
   const id = props.id ?? slug(props.title);
 
   return (
-    <section className={`mb-10 ${SCROLL_MT}`} aria-labelledby={id}>
-      <div className="mb-3 flex items-baseline justify-between gap-4 border-b border-default pb-2">
+    <section className={`mb-10 sm:mb-12 ${SCROLL_MT}`} aria-labelledby={id}>
+      <div className="mb-4 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-b border-border pb-3">
         <h2
           id={id}
-          className="group flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-muted"
+          className="group flex items-center gap-2 text-xl font-semibold tracking-tight text-foreground"
         >
           {props.title}
           <a
             href={`#${id}`}
             aria-label={`Link to ${props.title}`}
-            className="text-muted opacity-0 transition-opacity hover:text-indigo-600 focus-visible:opacity-100 group-hover:opacity-100 dark:hover:text-indigo-400"
+            className="text-muted transition-colors hover:text-accent sm:opacity-0 sm:focus-visible:opacity-100 sm:group-hover:opacity-100"
           >
             <Link2 className="h-3.5 w-3.5" />
           </a>
@@ -41,7 +41,7 @@ const SubHeader = (props: Props) => {
         {props.action ? <div className="shrink-0">{props.action}</div> : null}
       </div>
       {props.description ? (
-        <p className="mb-4 text-sm leading-relaxed text-muted">{props.description}</p>
+        <p className="mb-5 max-w-3xl text-sm leading-relaxed text-muted">{props.description}</p>
       ) : null}
       <div className="leading-relaxed">{props.children}</div>
     </section>

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { NImage, NPress, NText, NView } from "@nayan-ui/engine/components";
-import { AlignJustify, Github, MoonStar, Package, Sun, X } from "lucide-react";
+import { AlignJustify, Github, MoonStar, Package, Sun, X } from "@/design/Icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CONTAINER } from "@/design/system";
@@ -10,17 +10,16 @@ import { REPO_URL } from "@/services/seo";
 import { useTheme } from "@/components/helpers/ThemeProvider";
 
 const NAV = [
-  { label: "Home", href: "/", match: "/" },
-  { label: "Game Engine", href: "/game-engine", match: "/game-engine" },
-  { label: "React", href: "/react/installation", match: "/react" },
-  { label: "React Native", href: "/react-native/installation", match: "/react-native" },
+  { label: "Engine", href: "/game-engine", match: "/game-engine" },
+  { label: "React", href: "/game-engine/react", match: ["/react", "/game-engine/react"] },
+  { label: "React Native", href: "/game-engine/react-native", match: ["/react-native", "/game-engine/react-native"] },
   { label: "Games", href: "/games", match: "/games" },
   { label: "Video Editor", href: "/video-editor", match: "/video-editor" },
   { label: "Tools", href: "/tools", match: "/tools" },
 ];
 
 const isActive = (pathname: string, match: string | string[]) => {
-  if (match === "/") return pathname === "/";
+  if (match === "/game-engine" && /^\/game-engine\/react(?:-native)?(?:\/|$)/.test(pathname)) return false;
   return (Array.isArray(match) ? match : [match]).some(
     (m) => pathname === m || pathname.startsWith(`${m}/`),
   );
@@ -36,9 +35,9 @@ const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
             href={item.href}
             onClick={onNavigate}
             aria-current={active ? "page" : undefined}
-            className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+            className={`block rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
               active
-                ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                ? "bg-accent/10 text-accent"
                 : "text-muted hover:bg-default/60 hover:text-foreground"
             }`}
           >
@@ -83,7 +82,7 @@ const Header = () => {
   return (
     <NView
       tag="header"
-      className="fixed inset-x-0 top-0 z-40 border-b border-default bg-surface/80 backdrop-blur-md"
+      className="site-header fixed inset-x-0 top-0 z-40 border-b border-border backdrop-blur-xl"
     >
       <div className={CONTAINER}>
         <dialog
@@ -93,7 +92,7 @@ const Header = () => {
           onClick={(event) => {
             if (event.target === event.currentTarget) closeMenu();
           }}
-          className="fixed inset-x-0 top-auto bottom-0 m-0 max-h-[85dvh] w-full max-w-none rounded-t-2xl border border-default bg-surface p-0 text-foreground backdrop:bg-black/50"
+          className="fixed inset-x-0 top-auto bottom-0 m-0 max-h-[85dvh] w-full max-w-none rounded-t-2xl border border-border bg-surface p-0 text-foreground backdrop:bg-black/50"
         >
           <NView tag="div" className="p-4">
             <NView tag="div" className="mb-3 flex items-center justify-between">
@@ -114,10 +113,10 @@ const Header = () => {
           </NView>
         </dialog>
 
-        <nav aria-label="Main" className="flex h-[59px] items-center justify-between gap-6">
-          <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <NImage src="/logo.webp" priority alt="" width={32} height={32} className="h-8 w-8" />
-            <span className="hidden whitespace-nowrap text-base font-bold text-foreground sm:inline">
+        <nav aria-label="Main" className="site-header-row flex items-center justify-between gap-3 lg:gap-6">
+          <Link href="/" aria-label="Nayan UI home" className="flex shrink-0 items-center gap-2.5">
+            <NImage src="/logo.webp" priority alt="" width={32} height={32} className="site-logo h-8 w-8" />
+            <span className="whitespace-nowrap text-lg font-bold tracking-[-0.045em] text-foreground">
               Nayan UI
             </span>
           </Link>
@@ -128,12 +127,12 @@ const Header = () => {
 
           <div className="flex items-center gap-1">
             <Link
-              href="https://www.npmjs.com/~ursnj"
+              href="https://www.npmjs.com/package/@nayan-ui/engine"
               target="_blank"
               rel="noopener noreferrer"
-              title="Nayan UI packages on npm"
-              aria-label="Nayan UI packages on npm"
-              className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground"
+              title="Nayan Engine on npm"
+              aria-label="Nayan Engine on npm"
+              className="inline-grid site-header-action"
             >
               <Package className="h-[18px] w-[18px]" />
             </Link>
@@ -143,7 +142,7 @@ const Header = () => {
               rel="noopener noreferrer"
               title="Nayan UI on GitHub"
               aria-label="Nayan UI on GitHub"
-              className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground"
+              className="inline-grid site-header-action"
             >
               <Github className="h-[18px] w-[18px]" />
             </Link>
@@ -151,7 +150,7 @@ const Header = () => {
               onPress={toggleTheme}
               title="Switch theme"
               aria-label="Switch theme"
-              className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground"
+              className="inline-grid site-header-action"
             >
               {!mounted ? (
                 <span className="block h-[18px] w-[18px]" />
@@ -166,7 +165,7 @@ const Header = () => {
               aria-haspopup="dialog"
               aria-controls="site-menu"
               aria-label="Open menu"
-              className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground lg:hidden"
+              className="inline-grid site-header-action lg:hidden"
             >
               <AlignJustify className="h-5 w-5" />
             </NPress>

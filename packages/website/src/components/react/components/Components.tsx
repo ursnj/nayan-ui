@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@/design/Icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DocsIntro } from "@/design/Primitives";
@@ -20,12 +20,12 @@ const Components = () => {
         facts={[
           {
             value: String(items.length),
-            label: "Components, each with a live demo and prop table",
+            label: "Component examples using the engine",
           },
         ]}
       />
 
-      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {items.map((item: any) => {
           const Icon = item.icon;
           return (
@@ -36,7 +36,7 @@ const Components = () => {
               >
                 <span className="mb-1.5 flex items-center gap-2.5">
                   {Icon ? (
-                    <Icon className="h-4 w-4 shrink-0 text-indigo-600 dark:text-indigo-400" />
+                    <Icon className="h-4 w-4 shrink-0 text-accent" />
                   ) : null}
                   <span className={H4_CARD}>{item.title}</span>
                   <ArrowRight

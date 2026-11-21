@@ -2,98 +2,98 @@
 [data-theme="light"] {
   color-scheme: light;
 
-  --background: hsl(214 45% 95%);
-  --foreground: hsl(222 47% 11%);
+  --background: hsl(225 33% 97%);
+  --foreground: hsl(231 39% 12%);
 
   --surface: hsl(0 0% 100%);
-  --surface-foreground: hsl(222 47% 11%);
-  --surface-secondary: hsl(214 40% 96%);
-  --surface-secondary-foreground: hsl(222 47% 11%);
-  --surface-tertiary: hsl(214 35% 93%);
-  --surface-tertiary-foreground: hsl(222 47% 11%);
+  --surface-foreground: hsl(231 39% 12%);
+  --surface-secondary: hsl(228 38% 95%);
+  --surface-secondary-foreground: hsl(231 39% 12%);
+  --surface-tertiary: hsl(228 31% 92%);
+  --surface-tertiary-foreground: hsl(231 39% 12%);
 
   --overlay: hsl(0 0% 100%);
-  --overlay-foreground: hsl(222 47% 11%);
+  --overlay-foreground: hsl(231 39% 12%);
 
-  --muted: hsl(215 16% 47%);
+  --muted: hsl(229 13% 41%);
 
-  --default: hsl(214 35% 90%);
-  --default-foreground: hsl(222 47% 11%);
+  --default: hsl(228 27% 89%);
+  --default-foreground: hsl(231 39% 12%);
 
-  --accent: hsl(217 91% 50%);
+  --accent: hsl(239 71% 51%);
   --accent-foreground: hsl(0 0% 100%);
 
   --field-background: hsl(0 0% 100%);
-  --field-foreground: hsl(222 47% 11%);
-  --field-placeholder: hsl(215 16% 47%);
+  --field-foreground: hsl(231 39% 12%);
+  --field-placeholder: hsl(229 13% 41%);
 
   --success: hsl(142 71% 45%);
-  --success-foreground: hsl(222 47% 11%);
+  --success-foreground: hsl(231 39% 12%);
 
   --warning: hsl(38 92% 50%);
-  --warning-foreground: hsl(222 47% 11%);
+  --warning-foreground: hsl(231 39% 12%);
 
   --danger: hsl(0 84% 60%);
   --danger-foreground: hsl(0 0% 100%);
 
-  --border: hsl(214 35% 86%);
-  --separator: hsl(214 25% 76%);
-  --focus: hsl(217 91% 50%);
-  --link: hsl(222 47% 11%);
+  --border: hsl(229 25% 87%);
+  --separator: hsl(229 22% 75%);
+  --focus: hsl(239 71% 51%);
+  --link: var(--accent);
 
   --segment: hsl(0 0% 100%);
-  --segment-foreground: hsl(222 47% 11%);
+  --segment-foreground: hsl(231 39% 12%);
 }
 
 .dark,
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --background: hsl(222 47% 11%);
-  --foreground: hsl(210 40% 98%);
+  --background: hsl(232 36% 8%);
+  --foreground: hsl(227 42% 96%);
 
-  --surface: hsl(217 33% 22%);
-  --surface-foreground: hsl(210 40% 98%);
-  --surface-secondary: hsl(217 30% 26%);
-  --surface-secondary-foreground: hsl(210 40% 98%);
-  --surface-tertiary: hsl(217 28% 30%);
-  --surface-tertiary-foreground: hsl(210 40% 98%);
+  --surface: hsl(231 27% 13%);
+  --surface-foreground: hsl(227 42% 96%);
+  --surface-secondary: hsl(231 24% 17%);
+  --surface-secondary-foreground: hsl(227 42% 96%);
+  --surface-tertiary: hsl(231 21% 21%);
+  --surface-tertiary-foreground: hsl(227 42% 96%);
 
-  --overlay: hsl(217 33% 22%);
-  --overlay-foreground: hsl(210 40% 98%);
+  --overlay: hsl(231 27% 13%);
+  --overlay-foreground: hsl(227 42% 96%);
 
-  --muted: hsl(215 20% 65%);
+  --muted: hsl(228 17% 69%);
 
-  --default: hsl(217 33% 26%);
-  --default-foreground: hsl(210 40% 98%);
+  --default: hsl(231 19% 23%);
+  --default-foreground: hsl(227 42% 96%);
 
-  --accent: hsl(217 91% 60%);
-  --accent-foreground: hsl(210 40% 98%);
+  --accent: hsl(235 100% 79%);
+  --accent-foreground: hsl(231 39% 12%);
 
-  --field-background: hsl(217 33% 22%);
-  --field-foreground: hsl(210 40% 98%);
-  --field-placeholder: hsl(215 20% 65%);
+  --field-background: hsl(231 27% 13%);
+  --field-foreground: hsl(227 42% 96%);
+  --field-placeholder: hsl(228 17% 69%);
 
   --success: hsl(142 71% 45%);
-  --success-foreground: hsl(222 47% 11%);
+  --success-foreground: hsl(231 39% 12%);
 
   --warning: hsl(38 92% 55%);
-  --warning-foreground: hsl(222 47% 11%);
+  --warning-foreground: hsl(231 39% 12%);
 
   --danger: hsl(0 72% 51%);
-  --danger-foreground: hsl(210 40% 98%);
+  --danger-foreground: hsl(227 42% 96%);
 
-  --border: hsl(217 33% 28%);
-  --separator: hsl(217 25% 38%);
-  --focus: hsl(217 91% 60%);
-  --link: hsl(210 40% 98%);
+  --border: hsl(231 17% 25%);
+  --separator: hsl(231 16% 42%);
+  --focus: hsl(235 100% 79%);
+  --link: var(--accent);
 
-  --segment: hsl(217 28% 34%);
-  --segment-foreground: hsl(210 40% 98%);
+  --segment: hsl(231 20% 20%);
+  --segment-foreground: hsl(227 42% 96%);
 }
 
 .engine-preview-content {
-  padding: 16px;
+  padding: 20px;
   color: var(--foreground);
 }
 .engine-preview-input {

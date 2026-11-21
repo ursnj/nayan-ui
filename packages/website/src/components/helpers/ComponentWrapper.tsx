@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Github } from "lucide-react";
+import { ArrowLeft, ArrowRight, Github } from "@/design/Icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrowserFrame, PhoneFrame } from "@/design/Primitives";
@@ -113,7 +113,7 @@ const ComponentWrapper = (props: Props) => {
           {previous ? (
             <Link
               href={previous.link}
-              className={`${CARD} group flex flex-col p-4 transition-colors hover:border-indigo-500/30`}
+              className={`${CARD} group flex flex-col p-4 transition-colors hover:border-accent/30`}
             >
               <span className="flex items-center gap-1.5 text-xs text-muted">
                 <ArrowLeft
@@ -130,7 +130,7 @@ const ComponentWrapper = (props: Props) => {
           {next ? (
             <Link
               href={next.link}
-              className={`${CARD} group flex flex-col items-end p-4 text-right transition-colors hover:border-indigo-500/30 sm:col-start-2`}
+              className={`${CARD} group flex flex-col items-end p-4 text-right transition-colors hover:border-accent/30 sm:col-start-2`}
             >
               <span className="flex items-center gap-1.5 text-xs text-muted">
                 Next

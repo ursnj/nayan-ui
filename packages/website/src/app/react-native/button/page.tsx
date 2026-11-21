@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNButton from "@/components/react-native/components/Button";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNButtonPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNButton />
+      <EngineComponentDoc path="/react-native/button" />
     </>
   );
 }

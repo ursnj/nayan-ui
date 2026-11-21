@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Tooltip from "@/components/react/components/Tooltip";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/tooltip", "react");
@@ -9,7 +9,7 @@ export default function TooltipPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Tooltip />
+      <EngineComponentDoc path="/react/tooltip" />
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { NButton, cn } from "@nayan-ui/react";
+import { NButton, cn } from "@/components/ui";
 import {
   Copy,
   Expand,
@@ -20,7 +20,7 @@ import {
   Ungroup,
   ZoomIn,
   ZoomOut,
-} from "lucide-react";
+} from "@/design/Icons";
 import { player, seekTo } from "../../engine/playerInstance";
 import { MOD_LABEL, useCommand } from "../../lib/shortcuts";
 import { clamp } from "../../lib/utils";

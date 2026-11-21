@@ -1,6 +1,6 @@
 "use client";
 
-import { Smartphone } from "lucide-react";
+import { Smartphone } from "@/design/Icons";
 import Link from "next/link";
 import { ACCENT_SOFT, BUTTON_SMALL } from "@/design/system";
 

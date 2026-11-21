@@ -1,6 +1,6 @@
 # Nayan UI
 
-Game engine and components for React and React Native, with playable games and free online tools.
+Game engine and components for React and React Native, with playable games and developer guides.
 
 [![License](https://img.shields.io/npm/l/@nayan-ui/engine.svg)](./packages/engine)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
@@ -12,7 +12,7 @@ Game engine and components for React and React Native, with playable games and f
 
 - **Game engine and components** — `@nayan-ui/engine` for Expo and web, with 3D rendering, physics, and cross-platform UI
 - **Playable games** — the private `@nayan-ui/games` library powers [nayanui.com/games](https://www.nayanui.com/games)
-- **Online tools** — PDF, image, JSON, XML, text, SEO and developer tools plus a browser video editor at [nayanui.com](https://www.nayanui.com)
+- **Developer guides** — PDF, image, JSON, XML, text and SEO documentation plus a browser video editor at [nayanui.com](https://www.nayanui.com)
 
 ---
 
@@ -44,7 +44,7 @@ local build prerequisites and commands.
 
 ## Website
 
-[packages/website](./packages/website) (`@nayan-ui/website`) is the Next.js app behind [www.nayanui.com](https://www.nayanui.com). It hosts the component docs, games, devtools docs, the online tools and the video editor. It ships as the Docker image `ursnj/nayanui` (port `7100`). The shared site UI and live homepage preview use the workspace engine. Published component demos and browser tools retain their existing controls.
+[packages/website](./packages/website) (`@nayan-ui/website`) is the Next.js app behind [www.nayanui.com](https://www.nayanui.com). It hosts the component docs, games, developer tool guides and the video editor. It ships as the Docker image `ursnj/nayanui` (port `7100`). Site components, demos, and tooling use the workspace engine.
 
 With the website dependencies installed and the Rust/WASM prerequisites from the engine README available, run:
 
@@ -52,7 +52,7 @@ With the website dependencies installed and the Rust/WASM prerequisites from the
 bun run website:dev
 ```
 
-The website dev and production commands build the browser engine when needed and compile the preview stylesheet. Run `bun run engine:build:web` after changing the engine source.
+The website dev and production commands build the browser engine when needed and compile the browser and preview stylesheets. Run `bun run engine:build:web` after changing the engine source.
 
 ## Examples
 

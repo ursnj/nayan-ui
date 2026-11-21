@@ -1,98 +1,84 @@
-"use client";
+'use client';
 
-import { type ReactNode, useState } from "react";
-import {
-  ComponentsRoot,
-  NButton,
-  NInput,
-  NLoading,
-  NPress,
-  NText,
-  NView,
-} from "@nayan-ui/engine/components";
-import { stylesheet } from "@/app/engine-styles";
-import { BUTTON_SMALL } from "@/design/system";
+import { type ReactNode, useState } from 'react';
+import { Braces, Code2 } from '@/design/Icons';
+import { ComponentsRoot, NButton, NInput, NLoading, NPress, NText, NView } from '@nayan-ui/engine/components';
+import { stylesheet } from '@/app/engine-styles';
+import { BUTTON_SMALL } from '@/design/system';
 
-const TABS = ["Buttons", "Forms", "Feedback", "Elements"] as const;
+const TABS = ['Buttons', 'Forms', 'Feedback', 'Elements'] as const;
 type Tab = (typeof TABS)[number];
 
-const action = "rounded-lg bg-accent px-4 py-2 text-accent-foreground";
-const row = "flex flex-row flex-wrap items-center gap-3";
+const snippets: Record<Tab, string> = {
+  Buttons: '<NButton onPress={increment}>Primary</NButton>',
+  Forms: '<NInput value={name} onChangeText={setName} />',
+  Feedback: '<NLoading size={20} />',
+  Elements: '<NText>Stable</NText>'
+};
+
+const action = 'rounded-lg bg-accent px-4 py-2 text-accent-foreground';
+const row = 'flex flex-row flex-wrap items-center gap-3';
 
 export default function EnginePreview() {
-  const [tab, setTab] = useState<Tab>("Buttons");
-  const [name, setName] = useState("");
+  const [tab, setTab] = useState<Tab>('Buttons');
+  const [name, setName] = useState('');
   const [loading, setLoading] = useState(true);
   const [clicks, setClicks] = useState(0);
-  const [status, setStatus] = useState<"loading" | "ready" | "fallback">("loading");
+  const [status, setStatus] = useState<'loading' | 'ready' | 'fallback'>('loading');
 
   let content: ReactNode;
   switch (tab) {
-    case "Buttons":
+    case 'Buttons':
       content = (
         <>
           <NText tag="p" className="text-sm text-muted">
-            Try the primary button
+            Press the button to update the count.
           </NText>
           <NView tag="div" className={row}>
-            <NButton
-              type="button"
-              onPress={() => setClicks((count) => count + 1)}
-              className={action}
-            >
+            <NButton type="button" onPress={() => setClicks((count) => count + 1)} className={action}>
               Primary
             </NButton>
             <NButton type="button" onPress={() => setClicks(0)} className={BUTTON_SMALL}>
               Reset
             </NButton>
           </NView>
-          <NText tag="p" className="text-sm text-muted">
-            {clicks === 1 ? "1 press" : `${clicks} presses`}
+          <NText tag="p" aria-live="polite" className="font-mono text-xs font-semibold text-accent">
+            {clicks === 1 ? '1 press' : `${clicks} presses`}
           </NText>
         </>
       );
       break;
-    case "Forms":
+    case 'Forms':
       content = (
         <>
           <NText tag="p" className="text-sm font-semibold">
             Display name
           </NText>
-          <NInput
-            value={name}
-            onChangeText={setName}
-            accessibilityLabel="Display name"
-            placeholder="Your name"
-            className="engine-preview-input"
-          />
+          <NInput value={name} onChangeText={setName} accessibilityLabel="Display name" placeholder="Your name" className="engine-preview-input" />
           <NText tag="p" className="text-sm text-muted">
-            {name.trim() ? `Hello, ${name.trim()}` : "Type a name to preview it here."}
+            {name.trim() ? `Hello, ${name.trim()}` : 'Type a name to preview it here.'}
           </NText>
         </>
       );
       break;
-    case "Feedback":
+    case 'Feedback':
       content = (
         <>
           <NView tag="div" className={row}>
             {loading && <NLoading size={20} />}
             <NText tag="p" className="text-sm">
-              {loading ? "Loading preview" : "Preview complete"}
+              {loading ? 'Loading preview' : 'Preview complete'}
             </NText>
           </NView>
           <NView tag="div" className={row}>
-            <NButton
-              type="button"
-              onPress={() => setLoading((pending) => !pending)}
-              className={action}
-            >
-              {loading ? "Complete" : "Restart"}
+            <NButton type="button" onPress={() => setLoading((pending) => !pending)} className={action}>
+              {loading ? 'Complete' : 'Restart'}
             </NButton>
           </NView>
         </>
       );
       break;
-    case "Elements":
+    case 'Elements':
       content = (
         <>
           <NText tag="p" className="text-sm font-semibold">
@@ -114,64 +100,51 @@ export default function EnginePreview() {
   );
 
   return (
-    <NView
-      tag="section"
-      aria-label="Engine component preview"
-      className="min-w-0 overflow-hidden rounded-2xl border border-default bg-surface shadow-xl shadow-indigo-500/5"
-    >
-      <NView
-        tag="div"
-        className="flex items-center justify-between gap-3 border-b border-default px-4 py-3"
-      >
-        <NText className="font-mono text-xs text-muted">@nayan-ui/engine</NText>
-        <NText className="text-xs text-muted">Component preview</NText>
-      </NView>
-      <NView tag="div" className="px-4 pt-4">
-        <NView
-          tag="div"
-          role="group"
-          aria-label="Component examples"
-          className="grid grid-cols-2 gap-1 sm:grid-cols-4"
-        >
-          {TABS.map((item) => (
-            <NPress
-              key={item}
-              aria-pressed={tab === item}
-              onPress={() => setTab(item)}
-              className={`${BUTTON_SMALL} flex-row px-1 aria-pressed:border-accent aria-pressed:text-accent`}
-            >
-              {item}
-            </NPress>
-          ))}
-        </NView>
-      </NView>
-      <NView
-        tag="div"
-        className="relative m-4 h-[260px] overflow-hidden rounded-xl border border-default bg-background"
-        data-engine-preview={status}
-      >
-        {status !== "ready" && preview}
-        {status !== "fallback" && (
+    <section aria-label="Engine component preview" className="workbench-frame">
+      <header className="workbench-title">
+        <span className="flex min-w-0 items-center gap-2.5">
+          <Braces aria-hidden size={17} className="shrink-0 text-accent" />
+          <span className="truncate font-mono text-xs font-semibold sm:text-sm">@nayan-ui/engine</span>
+        </span>
+        <span className="flex shrink-0 items-center gap-2 text-xs font-medium text-muted">
+          <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-success" />
+          Live preview
+        </span>
+      </header>
+      <div role="group" aria-label="Component examples" className="workbench-tabs">
+        {TABS.map((item) => (
+          <NPress key={item} aria-pressed={tab === item} onPress={() => setTab(item)} className="workbench-tab">
+            {item}
+          </NPress>
+        ))}
+      </div>
+      <div className="workbench-stage" data-engine-preview={status}>
+        {status !== 'ready' && preview}
+        {status !== 'fallback' && (
           <div
-            className={`engine-preview-surface absolute inset-0 ${status === "ready" ? "" : "invisible"}`}
-            inert={status !== "ready"}
+            className={`engine-preview-surface absolute inset-0 ${status === 'ready' ? '' : 'invisible'}`}
+            inert={status !== 'ready'}
             onWheelCapture={(event) => event.stopPropagation()}
           >
             <ComponentsRoot
               background="transparent"
               stylesheet={stylesheet}
-              style={{ height: "100%", width: "100%", minHeight: 0 }}
-              onReady={() => setStatus("ready")}
+              style={{ height: '100%', width: '100%', minHeight: 0 }}
+              onReady={() => setStatus('ready')}
               onError={(error) => {
-                if (process.env.NODE_ENV === "development") console.warn("Engine preview:", error);
-                setStatus("fallback");
+                if (process.env.NODE_ENV === 'development') console.warn('Engine preview:', error);
+                setStatus('fallback');
               }}
             >
               {preview}
             </ComponentsRoot>
           </div>
         )}
-      </NView>
-    </NView>
+      </div>
+      <div className="workbench-source">
+        <Code2 aria-hidden size={16} className="shrink-0 text-accent" />
+        <code className="min-w-0 overflow-x-auto whitespace-nowrap">{snippets[tab]}</code>
+      </div>
+    </section>
   );
 }

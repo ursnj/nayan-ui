@@ -51,6 +51,19 @@ test("a new dynamic route cannot silently disappear from the sitemap", () => {
   expect(() => collectPublicPaths(root)).toThrow(/Add sitemap handling.*\/blog\/\[slug\]/);
 });
 
+test("root engine references are added alongside existing component and game routes", () => {
+  const root = fixture({
+    "[entry]/page.tsx": "export default function Reference() {}",
+    "react/alert/page.tsx": "export default function Alert() {}",
+    "react-native/accordion/page.tsx": "export default function Accordion() {}",
+    "modules/games/page.tsx": "export default function GameRuntime() {}",
+    "games/page.tsx": "export default function Games() {}",
+  });
+  expect(collectPublicPaths(root)).toEqual(expect.arrayContaining([
+    "/alert", "/confirm-alert", "/accordion", "/storage", "/react/alert", "/react-native/accordion", "/games", "/modules/games"
+  ]));
+});
+
 test("XML output is deterministic, unique and escaped", () => {
   const paths = ["/tools/paint&draw", "/", "/tools/paint&draw"];
   const xml = renderSitemap(paths);

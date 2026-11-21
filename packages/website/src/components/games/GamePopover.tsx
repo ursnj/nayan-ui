@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { X } from "lucide-react";
+import { X } from "@/design/Icons";
 import { GAME_TOOLBAR_BUTTON } from "./GameToolbar";
 
 interface GamePopoverProps {

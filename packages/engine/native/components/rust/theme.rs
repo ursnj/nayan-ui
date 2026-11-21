@@ -1,4 +1,4 @@
-//! HeroUI semantic defaults shared by @nayan-ui/react and @nayan-ui/native.
+//! Shared semantic color defaults for the engine’s browser and native components.
 //! sRGB values converted from their OKLCH tokens; Nayan uses an 8-point base radius.
 use super::*;
 use std::collections::BTreeMap;

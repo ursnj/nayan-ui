@@ -5,7 +5,7 @@ import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/s
 export const metadata = buildPageMetadata({
   title: "React Components",
   description:
-    "Browse 35 React UI components from Nayan UI. Buttons, forms, modals, tables, navigation and more. Built on HeroUI and Tailwind CSS.",
+    "Browse Nayan Engine UI examples for React. Explore controls, layouts, forms, and feedback.",
   path: "/react",
   keywords: "react components, nayan ui, ui library, tailwind css react, heroui components",
 });

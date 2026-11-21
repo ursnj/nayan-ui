@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Pagination from "@/components/react/components/Pagination";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/pagination", "react");
@@ -9,7 +9,7 @@ export default function PaginationPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Pagination />
+      <EngineComponentDoc path="/react/pagination" />
     </>
   );
 }

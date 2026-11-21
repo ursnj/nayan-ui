@@ -3,7 +3,7 @@
 //
 // Tag pages (/react/tags/*, /react-native/tags/*, /tools/tags/*) are not listed: each renders the
 // one component or tool it belongs to, so it reuses that page's banner (see src/services/seo.ts).
-import type { LucideIcon } from "lucide-react";
+import type { SiteIcon } from "../../src/design/Icons";
 import {
   AlignLeft,
   Atom,
@@ -42,7 +42,7 @@ import {
   Terminal,
   Type,
   Wrench,
-} from "lucide-react";
+} from "../../src/design/Icons";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -65,21 +65,21 @@ import {
 /** The right-hand composition. Each kind is a small product mock-up of what the page offers. */
 export type Visual =
   /** A desktop app window with an abstract UI built around the icon (React components). */
-  | { kind: "app"; icon: LucideIcon; label: string }
+  | { kind: "app"; icon: SiteIcon; label: string }
   /** A phone with an abstract native UI (React Native components). */
-  | { kind: "phone"; icon: LucideIcon; label: string }
+  | { kind: "phone"; icon: SiteIcon; label: string }
   /** A browser window with an address bar and a drop zone (tools). */
-  | { kind: "browser"; icon: LucideIcon; label: string }
+  | { kind: "browser"; icon: SiteIcon; label: string }
   /** A code editor (guides and docs). */
-  | { kind: "code"; icon: LucideIcon; label: string }
+  | { kind: "code"; icon: SiteIcon; label: string }
   /** A terminal running the real install command. */
-  | { kind: "terminal"; icon: LucideIcon; command: string }
+  | { kind: "terminal"; icon: SiteIcon; command: string }
   /** A phone showing a screenshot (one game). */
   | { kind: "shot"; src: string }
   /** Three phones fanned out (the games hub). */
   | { kind: "shots"; srcs: string[] }
   /** A bento grid of icon tiles (section hubs). */
-  | { kind: "bento"; icons: LucideIcon[] }
+  | { kind: "bento"; icons: SiteIcon[] }
   /** A wide app screenshot in a browser window. */
   | { kind: "screen"; src: string; label: string };
 
@@ -112,7 +112,7 @@ const THEME = {
 } satisfies Record<string, [string, string]>;
 
 /** Tool categories (the sidebar headings): label, accent and the icon for the tools overview. */
-const TOOL_CATEGORY: Record<string, { label: string; theme: [string, string]; icon: LucideIcon }> =
+const TOOL_CATEGORY: Record<string, { label: string; theme: [string, string]; icon: SiteIcon }> =
   {
     "AI Tools": { label: "AI Tool", theme: ["#d946ef", "#7c3aed"], icon: Sparkles },
     "Image Tools": { label: "Free Image Tool", theme: ["#10b981", "#0ea5e9"], icon: ImageIcon },
@@ -232,7 +232,7 @@ const TAGLINE_OVERRIDES: Record<string, string> = {
  * React Native page of the same component). Divider and Breadcrumbs are both
  * a slash, three engine guides are all </>: this keeps neighbouring banners from looking the same.
  */
-const ICON_OVERRIDES: Record<string, LucideIcon> = {
+const ICON_OVERRIDES: Record<string, SiteIcon> = {
   "/react/breadcrumbs": ChevronsRight,
   "/react/divider": SeparatorHorizontal,
   "/react/pagination": Ellipsis,
@@ -307,7 +307,7 @@ export function buildSpecs(): BannerSpec[] {
       title: "React Components",
       tagline: `${REACT_COMPONENT_COUNT} accessible components for the web`,
       theme: THEME.react,
-      chip: "@nayan-ui/react",
+      chip: "@nayan-ui/engine",
       visual: { kind: "bento", icons: reactGrid.slice(0, 6) },
     });
   add({
@@ -316,7 +316,7 @@ export function buildSpecs(): BannerSpec[] {
     title: "Install Nayan UI for React",
     tagline: "Up and running in a minute",
     theme: THEME.react,
-    visual: { kind: "terminal", icon: Download, command: "npm install @nayan-ui/react" },
+    visual: { kind: "terminal", icon: Download, command: "bun add @nayan-ui/engine" },
   });
   add({
     path: "/react/tags",
@@ -333,7 +333,7 @@ export function buildSpecs(): BannerSpec[] {
       title: item.title,
       tagline: COMPONENT_TAGLINES[item.title] ?? missing(item.link),
       theme: THEME.react,
-      chip: "@nayan-ui/react",
+      chip: "@nayan-ui/engine",
       visual: { kind: "app", icon: item.icon, label: jsxTag(item.title) },
     });
 
@@ -346,7 +346,7 @@ export function buildSpecs(): BannerSpec[] {
       title: "React Native Components",
       tagline: `${NATIVE_COMPONENT_COUNT} components for iOS and Android`,
       theme: THEME.native,
-      chip: "@nayan-ui/native",
+      chip: "@nayan-ui/engine",
       visual: { kind: "bento", icons: nativeGrid.slice(0, 6) },
     });
   add({
@@ -355,7 +355,7 @@ export function buildSpecs(): BannerSpec[] {
     title: "Install Nayan UI for React Native",
     tagline: "Works with Expo and bare React Native",
     theme: THEME.native,
-    visual: { kind: "terminal", icon: Download, command: "npm install @nayan-ui/native" },
+    visual: { kind: "terminal", icon: Download, command: "bun add @nayan-ui/engine" },
   });
   add({
     path: "/react-native/tags",
@@ -372,7 +372,7 @@ export function buildSpecs(): BannerSpec[] {
       title: item.title,
       tagline: COMPONENT_TAGLINES[item.title] ?? missing(item.link),
       theme: THEME.native,
-      chip: "@nayan-ui/native",
+      chip: "@nayan-ui/engine",
       visual: { kind: "phone", icon: item.icon, label: jsxTag(item.title) },
     });
 
@@ -433,7 +433,7 @@ export function buildSpecs(): BannerSpec[] {
   }
 
   // ---- Games ----
-  const GAMES_DOCS: Record<string, { title: string; tagline: string; icon: LucideIcon }> = {
+  const GAMES_DOCS: Record<string, { title: string; tagline: string; icon: SiteIcon }> = {
     "/games/installation": {
       title: "Install the Games",
       tagline: "Set up @nayan-ui/games in React or React Native",
@@ -523,10 +523,10 @@ export function buildSpecs(): BannerSpec[] {
       spec.visual = { ...spec.visual, icon: ICON_OVERRIDES[key]! };
   }
   for (const [path, icon] of Object.entries(
-    ICON_OVERRIDES as Record<string, LucideIcon | undefined>,
+    ICON_OVERRIDES as Record<string, SiteIcon | undefined>,
   ))
     if (icon === undefined)
-      throw new Error(`The banner icon for ${path} is not a lucide-react export`);
+      throw new Error(`The banner icon for ${path} is missing from the site icon catalogue`);
   return specs;
 }
 

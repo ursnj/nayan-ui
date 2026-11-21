@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNTextarea from "@/components/react-native/components/Textarea";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNTextareaPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNTextarea />
+      <EngineComponentDoc path="/react-native/textarea" />
     </>
   );
 }

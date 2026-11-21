@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import { NButton, NButtonGroup, NLoading, NSearchField, showToast } from "@nayan-ui/react";
-import { Film, Image as ImageIcon, Music, Plus, Trash2, Upload } from "lucide-react";
+import { NButton, NButtonGroup, NLoading, NSearchField, showToast } from "@/components/ui";
+import { Film, Image as ImageIcon, Music, Plus, Trash2, Upload } from "@/design/Icons";
 import { formatBytes, formatDuration } from "../../lib/utils";
 import {
   MEDIA_ACCEPT,

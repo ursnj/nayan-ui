@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Alert from "@/components/react/components/Alert";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/alert", "react");
@@ -9,7 +9,7 @@ export default function AlertPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Alert />
+      <EngineComponentDoc path="/react/alert" />
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { DialogSize, NDialog, NKbd } from "@nayan-ui/react";
+import { DialogSize, NDialog, NKbd } from "@/components/ui";
 import { CONTEXTUAL_KEYS, SHORTCUTS } from "../../lib/shortcuts";
 import type { KeyRow, ShortcutGroup } from "../../lib/shortcuts";
 

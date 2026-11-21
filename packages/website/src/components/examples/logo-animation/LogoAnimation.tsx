@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { Check, Copy, Download, Orbit, Pause, Play, RotateCcw } from "lucide-react";
+import { Check, Copy, Download, Orbit, Pause, Play, RotateCcw } from "@/design/Icons";
 import Code from "@/components/helpers/Code";
 import { LOGOS, type LogoId } from "./logos";
 import { BUTTON_SMALL, CARD } from "@/design/system";

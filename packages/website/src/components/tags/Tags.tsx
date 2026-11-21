@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@/design/Icons";
 import Link from "next/link";
 import { DocsIntro } from "@/design/Primitives";
 import { CARD, H4_CARD } from "@/design/system";
@@ -43,7 +43,7 @@ const Tags = () => (
                 <h3 className={H4_CARD}>{component.title}</h3>
                 <Link
                   href={component.link}
-                  className="group inline-flex shrink-0 items-center gap-1 text-xs font-medium text-muted transition-colors hover:text-indigo-600 dark:hover:text-indigo-400"
+                  className="group inline-flex shrink-0 items-center gap-1 text-xs font-medium text-muted transition-colors hover:text-accent"
                 >
                   Docs
                   <ArrowRight

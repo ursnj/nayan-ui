@@ -1,22 +1,12 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-import Sidebar from "@/components/helpers/Sidebar";
-import SubHeader from "@/components/helpers/SubHeader";
-import TagsList from "@/components/helpers/TagsList";
-import { convertImageTags } from "@/services/Tags";
-import { getMenuItem } from "@/services/Utils";
-import { ConvertImage } from "@/components/tools";
-import { ConvertImageContent } from "./ImageToolsContent";
+import Sidebar from '@/components/helpers/Sidebar';
+import SubHeader from '@/components/helpers/SubHeader';
+import TagsList from '@/components/helpers/TagsList';
+import { convertImageTags } from '@/services/Tags';
+import { ConvertImageContent } from './ImageToolsContent';
 
 const ConvertImagePage = () => {
-  const pathname = usePathname();
-  const component: any = getMenuItem(pathname);
-
   return (
-    <Sidebar title={component?.title || "Convert Image"}>
-      <ConvertImage />
-
+    <Sidebar title="Convert Image">
       <ConvertImageContent />
 
       <SubHeader title="Tags">

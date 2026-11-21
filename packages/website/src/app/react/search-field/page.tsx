@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import SearchField from "@/components/react/components/SearchField";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/search-field", "react");
@@ -9,7 +9,7 @@ export default function SearchFieldPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <SearchField />
+      <EngineComponentDoc path="/react/search-field" />
     </>
   );
 }

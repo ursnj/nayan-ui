@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNSelect from "@/components/react-native/components/Select";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNSelectPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNSelect />
+      <EngineComponentDoc path="/react-native/select" />
     </>
   );
 }

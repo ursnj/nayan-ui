@@ -9,7 +9,7 @@ import {
   CARD_PAD,
   CONTAINER,
   EYEBROW,
-  GRADIENT_TEXT,
+  ACCENT_TEXT,
   H1,
   H2,
   H3,
@@ -55,7 +55,7 @@ export const SectionHeader = ({
   title,
   id,
   lead,
-  align = "center",
+  align = "left",
 }: SectionHeaderProps) => (
   <NView
     tag="header"
@@ -80,7 +80,7 @@ export const SectionHeader = ({
 interface PageHeroProps {
   eyebrow?: string;
   title: string;
-  /** Rendered in the headline gradient, on its own line. */
+  /** Supporting line beneath the title. */
   titleAccent?: string;
   lead?: ReactNode;
   /** Buttons. */
@@ -107,77 +107,34 @@ export const PageHero = ({
   media,
   children,
 }: PageHeroProps) => (
-  <NView tag="section" className="relative overflow-hidden">
-    <NView tag="div" aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-      <NView
-        tag="div"
-        className="absolute inset-0 bg-gradient-to-b from-indigo-500/[0.07] to-transparent"
-      />
-      <NView
-        tag="div"
-        className="absolute -top-28 left-1/2 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-indigo-500/10 blur-3xl"
-      />
-    </NView>
-
-    <NView tag="div" className={`${CONTAINER} pb-10 pt-10 sm:pt-14`}>
+  <section className="site-page-hero">
+    <div className={`${CONTAINER} py-8 sm:pb-14 sm:pt-9`}>
       {breadcrumb ? <Breadcrumb items={breadcrumb} /> : null}
-
-      <NView tag="div" className={media ? "grid items-center gap-10 lg:grid-cols-2 lg:gap-14" : ""}>
-        <NView
-          tag="div"
-          className={media ? "text-center lg:text-left" : "mx-auto max-w-3xl text-center"}
-        >
-          {eyebrow ? (
-            <NText tag="p" className={`mb-3 ${EYEBROW}`}>
-              {eyebrow}
-            </NText>
+      <div className={media ? "grid min-w-0 items-center gap-8 md:grid-cols-2 lg:gap-14" : ""}>
+        <div className="min-w-0 max-w-2xl">
+          {eyebrow ? <p className={`mb-3 ${EYEBROW}`}>{eyebrow}</p> : null}
+          <h1 className={H1}>{title}</h1>
+          {titleAccent ? (
+            <p className="mt-3 text-lg font-semibold leading-snug tracking-tight text-accent sm:text-2xl">
+              {titleAccent}
+            </p>
           ) : null}
-          <NText tag="h1" className={H1}>
-            {title}
-            {titleAccent ? (
-              <span className={`mt-1 block ${GRADIENT_TEXT}`}>{titleAccent}</span>
-            ) : null}
-          </NText>
-          {lead ? (
-            <NText
-              tag="p"
-              className={`mt-5 max-w-2xl text-base ${LEAD} ${media ? "mx-auto lg:mx-0" : "mx-auto"}`}
-            >
-              {lead}
-            </NText>
-          ) : null}
-          {actions ? (
-            <NView
-              tag="div"
-              className={`mt-7 flex flex-col gap-3 sm:flex-row ${media ? "justify-center lg:justify-start" : "justify-center"}`}
-            >
-              {actions}
-            </NView>
-          ) : null}
+          {lead ? <p className={`mt-4 max-w-xl ${LEAD}`}>{lead}</p> : null}
+          {actions ? <div className="mt-6 flex flex-wrap gap-2.5 sm:gap-3">{actions}</div> : null}
           {pills?.length ? (
-            <ul
-              className={`mt-5 flex flex-wrap gap-2 ${media ? "justify-center lg:justify-start" : "justify-center"}`}
-            >
+            <ul className="mt-5 flex flex-wrap gap-2">
               {pills.map((pill) => (
-                <li key={pill} className={`text-xs font-semibold ${PILL}`}>
-                  {pill}
-                </li>
+                <li key={pill} className={PILL}>{pill}</li>
               ))}
             </ul>
           ) : null}
-          {note ? (
-            <NText tag="p" className="mt-5 text-xs text-muted">
-              {note}
-            </NText>
-          ) : null}
-        </NView>
-
+          {note ? <p className="mt-4 text-xs text-muted">{note}</p> : null}
+        </div>
         {media}
-      </NView>
-
+      </div>
       {children}
-    </NView>
-  </NView>
+    </div>
+  </section>
 );
 
 interface DocsIntroProps {
@@ -190,7 +147,7 @@ interface DocsIntroProps {
 }
 
 export const DocsIntro = ({ lead, actions, facts }: DocsIntroProps) => (
-  <NView tag="div" className="mb-10">
+  <NView tag="div" className="mb-9">
     <NText tag="p" className={`max-w-3xl text-base ${LEAD}`}>
       {lead}
     </NText>
@@ -214,7 +171,7 @@ export const DocsIntro = ({ lead, actions, facts }: DocsIntroProps) => (
 
 /** The trail above a page title. Mirrors the BreadcrumbList in structured data. */
 export const Breadcrumb = ({ items }: { items: { label: string; href?: string }[] }) => (
-  <nav aria-label="Breadcrumb" className="mb-8 text-xs text-muted">
+  <nav aria-label="Breadcrumb" className="mb-5 text-xs text-muted sm:mb-6">
     <ol className="flex flex-wrap items-center gap-2">
       {items.map((item, index) => {
         const last = index === items.length - 1;
@@ -242,7 +199,7 @@ export const Breadcrumb = ({ items }: { items: { label: string; href?: string }[
 
 interface CardProps {
   className?: string;
-  /** Adds hover lift and an accent border. For cards that are links. */
+  /** Adds hover styles for cards that act as links. */
   interactive?: boolean;
   /** Set false to lay out the padding yourself. */
   padded?: boolean;
@@ -319,12 +276,8 @@ interface PhoneFrameProps {
 /**
  * A phone around a screenshot, for components that cannot run in a browser.
  *
- * The two images are swapped by CSS rather than JavaScript, the same way the
- * video editor's hero works: HeroUI defines Tailwind's `dark:` variant against
- * the class `NTheme` puts on `<html>`, so the screenshot follows the site's
- * theme with no client component and no flash of the wrong one. Only the
- * matching image is displayed, and `display: none` keeps the other out of the
- * accessibility tree, so a screen reader is read one description.
+ * CSS shows the screenshot that matches the root theme class. The hidden
+ * image stays out of the accessibility tree.
  *
  * The screen's aspect ratio is the capture's own, 520x1000, so nothing is
  * cropped or stretched: the app's header and its left-hand padding survive,
@@ -333,7 +286,7 @@ interface PhoneFrameProps {
 export const PhoneFrame = ({ light, dark, alt, className = "" }: PhoneFrameProps) => (
   <NView
     tag="div"
-    className={`w-[260px] rounded-[2.25rem] border border-default bg-surface p-2.5 shadow-xl shadow-indigo-500/5 ${className}`}
+    className={`w-[260px] rounded-[2.25rem] border border-default bg-surface p-2.5 shadow-xl shadow-accent/5 ${className}`}
   >
     <NView tag="div" className="overflow-hidden rounded-[1.75rem] border border-default bg-surface">
       <NView
@@ -404,7 +357,7 @@ export const FeatureCard = ({
 }: FeatureCardProps) => (
   <NView
     tag="article"
-    className={`${CARD} ${CARD_PAD} transition-colors duration-200 hover:border-indigo-500/30 ${className}`}
+    className={`${CARD} ${CARD_PAD} transition-colors duration-200 hover:border-accent/30 ${className}`}
   >
     {Icon ? (
       <span
@@ -441,7 +394,7 @@ export const CheckList = ({ items, className = "" }: { items: string[]; classNam
       <li key={item} className="flex items-start gap-2.5 text-sm text-muted">
         <span
           aria-hidden
-          className="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500"
+          className="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
         />
         <span>{item}</span>
       </li>
@@ -463,7 +416,7 @@ export const StatGrid = ({ stats, className = "" }: StatGridProps) => (
       <NView tag="div" key={stat.label} className={`${CARD} p-4 text-center`}>
         <dt className="sr-only">{stat.label}</dt>
         <dd>
-          <span className={`block text-2xl font-bold sm:text-3xl ${GRADIENT_TEXT}`}>
+          <span className={`block text-2xl font-bold sm:text-3xl ${ACCENT_TEXT}`}>
             {stat.value}
           </span>
           <span className="mt-1 block text-sm font-semibold text-foreground">{stat.label}</span>
@@ -520,7 +473,7 @@ export const FaqList = ({
 }) => (
   <NView tag="div" className={`mx-auto grid max-w-4xl gap-3 md:grid-cols-2 ${className}`}>
     {faqs.map((faq) => (
-      <details key={faq.q} className={`group ${CARD} transition-colors open:border-indigo-500/30`}>
+      <details key={faq.q} className={`group ${CARD} transition-colors open:border-accent/30`}>
         <summary className="flex cursor-pointer list-none items-start justify-between gap-3 p-5 [&::-webkit-details-marker]:hidden">
           <NText tag="h3" className="text-sm font-semibold leading-snug text-foreground">
             {faq.q}
@@ -545,35 +498,13 @@ interface CtaPanelProps {
 }
 
 export const CtaPanel = ({ title, lead, children }: CtaPanelProps) => (
-  <NView tag="div" className={`${CONTAINER} pb-16`}>
-    <NView tag="div" className="relative overflow-hidden rounded-3xl border border-indigo-500/20">
-      <NView
-        tag="div"
-        aria-hidden
-        className="absolute inset-0 bg-gradient-to-br from-indigo-600/15 via-violet-600/10 to-fuchsia-600/15"
-      />
-      <NView
-        tag="div"
-        aria-hidden
-        className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-fuchsia-500/20 blur-3xl"
-      />
-      <NView
-        tag="div"
-        aria-hidden
-        className="absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-indigo-500/20 blur-3xl"
-      />
-
-      <NView tag="div" className="relative px-6 py-14 text-center sm:px-10 sm:py-16">
-        <NText tag="h2" className={H2}>
-          <span className={GRADIENT_TEXT}>{title}</span>
-        </NText>
-        <NText tag="p" className="mx-auto mt-4 max-w-xl text-muted">
-          {lead}
-        </NText>
-        <NView tag="div" className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          {children}
-        </NView>
-      </NView>
-    </NView>
-  </NView>
+  <div className={`${CONTAINER} pb-12 sm:pb-16`}>
+    <section className="site-cta grid items-end gap-6 lg:grid-cols-[minmax(0,1fr)_auto]">
+      <div>
+        <h2 className={H2}>{title}</h2>
+        <p className={`mt-3 max-w-xl ${LEAD}`}>{lead}</p>
+      </div>
+      <div className="flex flex-wrap gap-2.5">{children}</div>
+    </section>
+  </div>
 );

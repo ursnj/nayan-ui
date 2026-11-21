@@ -1,5 +1,5 @@
-import { NButton, cn, showToast } from "@nayan-ui/react";
-import { Sparkles } from "lucide-react";
+import { NButton, cn, showToast } from "@/components/ui";
+import { Sparkles } from "@/design/Icons";
 import { TRANSITION_PREVIEW_GRADIENT } from "../../engine/transitions";
 import { TEXT_PRESETS } from "../../lib/factories";
 import { useEditor } from "../../store/editor";

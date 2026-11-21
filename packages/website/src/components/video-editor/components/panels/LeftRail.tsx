@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { cn } from "@nayan-ui/react";
-import { Blend, FolderOpen, Image as ImageIcon, Sparkles, Type } from "lucide-react";
+import { cn } from "@/components/ui";
+import { Blend, FolderOpen, Image as ImageIcon, Sparkles, Type } from "@/design/Icons";
 import { BackgroundPanel, EffectsPanel, TextPanel, TransitionsPanel } from "./LibraryPanels";
 import { MediaPanel } from "./MediaPanel";
 

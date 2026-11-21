@@ -5,10 +5,10 @@ import { Component, type ReactNode, useCallback, useEffect, useRef, useState } f
 import * as jsxRuntime from "react/jsx-runtime";
 import * as engine from "@nayan-ui/engine";
 import Editor, { type Monaco, type OnMount } from "@monaco-editor/react";
-import { BookOpen, Check, Play, RotateCcw, Share2 } from "lucide-react";
+import { BookOpen, Check, Play, RotateCcw, Share2 } from "@/design/Icons";
 import Link from "next/link";
-import { NSelect } from "@nayan-ui/react";
-import { buildTheme, THEME_NAME } from "@/components/tools/shared/MonacoEditor";
+import { NSelect } from "@/components/ui";
+import { buildTheme, THEME_NAME } from "./monacoTheme";
 import { PLAYGROUND_CATEGORIES, PLAYGROUND_EXAMPLES } from "./examples";
 
 type Editor = Parameters<OnMount>[0];
@@ -25,18 +25,7 @@ const GROUPS = PLAYGROUND_CATEGORIES.map((category) => ({
 const OPTIONS: Option[] = GROUPS.flatMap((group) => group.options);
 
 /** The picker at the buttons' 32 px (NSelect's control is 40 px by default), its menu above the editor. */
-const SELECT_STYLES = {
-  control: (base: object) => ({
-    ...base,
-    minHeight: 32,
-    height: 32,
-    backgroundColor: "var(--background)",
-  }), // the buttons' fill
-  valueContainer: (base: object) => ({ ...base, paddingTop: 0, paddingBottom: 0 }),
-  indicatorsContainer: (base: object) => ({ ...base, height: 30 }),
-  dropdownIndicator: (base: object) => ({ ...base, paddingTop: 0, paddingBottom: 0 }),
-  menuPortal: (base: object) => ({ ...base, zIndex: 60 }),
-};
+
 
 const FILE = "file:///Playground.tsx";
 const STORAGE_KEY = "nyn-engine-playground";
@@ -302,42 +291,38 @@ export default function Playground() {
   }, [execute]);
 
   // Island layout: the toolbar, editor, preview and console are separate floating cards.
-  const island = "rounded-2xl border border-default bg-surface shadow-sm";
+  const island = "rounded-xl border border-border bg-surface shadow-sm";
   const button =
-    "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-default bg-background px-3 text-sm font-medium leading-none transition-colors hover:border-indigo-500/40 disabled:opacity-50";
+    "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-default bg-background px-3 text-sm font-medium leading-none transition-colors hover:border-accent/40 disabled:opacity-50";
   const panelHeader =
     "flex h-8 shrink-0 items-center gap-2 border-b border-default px-3 text-xs font-medium text-muted";
 
   return (
-    <div className="flex h-[calc(100dvh-60px)] flex-col gap-2 bg-background p-2">
+    <div className="flex h-[calc(100dvh-var(--site-header-height))] flex-col gap-2 bg-background p-2">
       <div className={`${island} flex flex-wrap items-center gap-2 px-2 py-1.5`}>
         <h1 className="mx-1 flex h-8 items-center gap-2 text-sm font-semibold">
           <span
             aria-hidden
-            className="h-2 w-2 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500"
+            className="h-2 w-2 rounded-full bg-accent"
           />
           Engine playground
         </h1>
         <div className="w-52">
-          {/* NSelect's control is h-10 in the library: shrunk to the buttons' 32 px, with no bottom margin. */}
           <NSelect
             className="mb-0"
             aria-label="Load an example"
             placeholder="Load an example…"
-            isSearchable
-            isDisabled={!ready}
-            options={GROUPS as unknown as Option[]}
+            disabled={!ready}
+            options={OPTIONS}
             value={selected}
             onChange={(option: Option | null) => option && loadExample(option.value)}
-            menuPortalTarget={document.body}
-            styles={SELECT_STYLES}
           />
         </div>
         <button
           type="button"
           onClick={() => void execute()}
           disabled={!ready}
-          className={`${button} border-transparent bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-sm shadow-indigo-500/25 hover:border-transparent`}
+          className={`${button} border-transparent bg-accent text-accent-foreground hover:bg-accent/85 hover:border-transparent`}
           title="Run (Ctrl/Cmd + Enter)"
         >
           <Play aria-hidden className="h-4 w-4" /> Run

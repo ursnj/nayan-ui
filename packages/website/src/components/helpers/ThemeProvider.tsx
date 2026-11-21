@@ -1,7 +1,6 @@
 "use client";
 
 import { type ReactNode, useEffect, useState } from "react";
-import { Toast } from "@heroui/react";
 import { NTheme, type NThemeMode, useNTheme } from "@nayan-ui/engine/components";
 
 const STORAGE_KEY = "THEME";
@@ -49,10 +48,9 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <NTheme theme={theme} onThemeChange={changeTheme} toasts={false}>
+    <NTheme theme={theme} onThemeChange={changeTheme}>
       {ready && <SiteAppearance />}
       {children}
-      <Toast.Provider />
     </NTheme>
   );
 }

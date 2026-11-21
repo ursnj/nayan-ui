@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNSkeleton from "@/components/react-native/components/Skeleton";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNSkeletonPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNSkeleton />
+      <EngineComponentDoc path="/react-native/skeleton" />
     </>
   );
 }

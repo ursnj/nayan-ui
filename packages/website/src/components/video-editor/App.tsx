@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { NTheme, THEMES, showToast, useLocalStorage } from "@nayan-ui/react";
+import { createStorage, useStorage } from "@nayan-ui/engine/storage";
+import { useTheme } from "@/components/helpers/ThemeProvider";
+import { showToast } from "@/components/ui";
 import { ExportDialog } from "./components/ExportDialog";
 import { Inspector } from "./components/inspector/Inspector";
 import { LeftRail } from "./components/panels/LeftRail";
@@ -27,21 +29,38 @@ const MIN_STAGE_HEIGHT = 220;
 /** Matches the divider in SplitPane. */
 const SPLIT_GUTTER = 8;
 
+const editorStorage = createStorage({ id: "nayan-video-editor" });
+
+function usePanelSize(key: string, fallback: number) {
+  const entry = useStorage(key, fallback, editorStorage);
+  useEffect(() => {
+    if (editorStorage.contains(key)) return;
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw === null) return;
+      const value: unknown = JSON.parse(raw);
+      if (typeof value === "number" && Number.isFinite(value)) editorStorage.set(key, value);
+    } catch {
+      // An unreadable preference falls back to the default panel size.
+    }
+  }, [key]);
+  return entry;
+}
+
 function App() {
-  const [storedTheme, setTheme] = useLocalStorage("THEME", THEMES.DARK);
-  const theme = storedTheme ?? THEMES.DARK;
+  const { theme, setTheme, toggleTheme } = useTheme();
 
   const [exportOpen, setExportOpen] = useState(false);
 
-  const [libraryWidth, setLibraryWidth] = useLocalStorage(
+  const [libraryWidth, setLibraryWidth] = usePanelSize(
     "EDITOR_LIBRARY_W",
     DEFAULT_LIBRARY_WIDTH,
   );
-  const [inspectorWidth, setInspectorWidth] = useLocalStorage(
+  const [inspectorWidth, setInspectorWidth] = usePanelSize(
     "EDITOR_INSPECTOR_W",
     DEFAULT_INSPECTOR_WIDTH,
   );
-  const [timelineHeight, setTimelineHeight] = useLocalStorage(
+  const [timelineHeight, setTimelineHeight] = usePanelSize(
     "EDITOR_TIMELINE_H",
     DEFAULT_TIMELINE_HEIGHT,
   );
@@ -62,7 +81,7 @@ function App() {
     setLibraryWidth(DEFAULT_LIBRARY_WIDTH);
     setInspectorWidth(DEFAULT_INSPECTOR_WIDTH);
     setTimelineHeight(DEFAULT_TIMELINE_HEIGHT);
-    setTheme(THEMES.DARK);
+    setTheme("dark");
     showToast("Panel sizes and theme are back to how the editor ships.", "Layout reset");
   }, [setInspectorWidth, setLibraryWidth, setTheme, setTimelineHeight]);
 
@@ -77,19 +96,19 @@ function App() {
 
   if (!hasRoom) {
     return (
-      <NTheme theme={theme} className="h-full">
+      <div className="h-full">
         <SmallScreenNotice />
         <LeaveGuard />
-      </NTheme>
+      </div>
     );
   }
 
   return (
-    <NTheme theme={theme} className="h-full">
-      <div className="flex h-screen flex-col gap-2 overflow-hidden bg-background p-2">
+    <div className="h-full">
+      <div className="flex h-dvh flex-col gap-2 overflow-hidden bg-background p-2">
         <TopBar
           theme={theme}
-          onToggleTheme={() => setTheme(theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK)}
+          onToggleTheme={toggleTheme}
           onExport={() => setExportOpen(true)}
           onShowShortcuts={() => setHelpOpen(true)}
           onResetPreferences={resetPreferences}
@@ -138,7 +157,7 @@ function App() {
       <ExportDialog isOpen={exportOpen} onClose={() => setExportOpen(false)} />
       <ShortcutsDialog isOpen={helpOpen} onClose={() => setHelpOpen(false)} />
       <LeaveGuard />
-    </NTheme>
+    </div>
   );
 }
 

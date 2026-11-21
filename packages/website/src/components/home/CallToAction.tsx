@@ -1,26 +1,22 @@
-import { Code, Gamepad2, Wrench } from "lucide-react";
-import Link from "next/link";
-import { CtaPanel } from "@/design/Primitives";
-import { BUTTON_PRIMARY, BUTTON_SECONDARY } from "@/design/system";
+import { ArrowRight, Github } from '@/design/Icons';
+import Link from 'next/link';
+import { CtaPanel } from '@/design/Primitives';
+import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/design/system';
+import { REPO_URL } from '@/services/seo';
 
-const CallToAction = () => (
-  <CtaPanel
-    title="Free, and staying that way"
-    lead="The components, game engine, video editor and tools are MIT licensed, with no accounts and no paid tier; the ready-made games are free for non-commercial use. If something is missing, the issue tracker is the place to say so."
-  >
-    <Link href="/game-engine/installation" className={BUTTON_PRIMARY}>
-      <Code aria-hidden className="mr-2 h-4 w-4" />
-      Install the engine
-    </Link>
-    <Link href="/game-engine/first-game" className={BUTTON_SECONDARY}>
-      <Gamepad2 aria-hidden className="mr-2 h-4 w-4" />
-      Build a game
-    </Link>
-    <Link href="/tools" className={BUTTON_SECONDARY}>
-      <Wrench aria-hidden className="mr-2 h-4 w-4" />
-      Try the tools
-    </Link>
-  </CtaPanel>
-);
-
-export default CallToAction;
+export default function CallToAction() {
+  return (
+    <CtaPanel
+      title="Get started with Nayan Engine"
+      lead="Follow the installation guide for React or React Native. The engine is open source and MIT licensed."
+    >
+      <Link href="/game-engine/installation" className={BUTTON_PRIMARY}>
+        Install the engine <ArrowRight aria-hidden size={16} className="ml-2" />
+      </Link>
+      <Link href={REPO_URL} target="_blank" rel="noopener noreferrer" className={BUTTON_SECONDARY}>
+        <Github aria-hidden size={16} className="mr-2" />
+        View source
+      </Link>
+    </CtaPanel>
+  );
+}

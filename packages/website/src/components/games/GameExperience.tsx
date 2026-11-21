@@ -17,7 +17,7 @@ interface GameExperienceProps {
 }
 
 /**
- * The full-height play area under the site header, with the game's guide in a side panel.
+ * The fullscreen play area, with the game's guide in a side panel.
  * `/games/<id>#game-guide` opens the guide directly.
  */
 export default function GameExperience({

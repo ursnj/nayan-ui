@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { NInput, NSlider, cn } from "@nayan-ui/react";
+import { NInput, NSlider, cn } from "@/components/ui";
 import {
   ChevronDown,
   ChevronUp,
@@ -12,7 +12,7 @@ import {
   Trash2,
   Volume2,
   VolumeX,
-} from "lucide-react";
+} from "@/design/Icons";
 import { useHeldInteraction } from "../../lib/shortcuts";
 import { clamp } from "../../lib/utils";
 import { useEditor } from "../../store/editor";

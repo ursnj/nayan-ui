@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Toast from "@/components/react/components/Toast";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/toast", "react");
@@ -9,7 +9,7 @@ export default function ToastPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Toast />
+      <EngineComponentDoc path="/react/toast" />
     </>
   );
 }

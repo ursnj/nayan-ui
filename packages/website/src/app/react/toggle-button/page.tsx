@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import ToggleButton from "@/components/react/components/ToggleButton";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/toggle-button", "react");
@@ -9,7 +9,7 @@ export default function ToggleButtonPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <ToggleButton />
+      <EngineComponentDoc path="/react/toggle-button" />
     </>
   );
 }

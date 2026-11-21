@@ -1,67 +1,43 @@
-import { Accessibility, Blocks, Paintbrush, Smartphone, Sparkles } from "lucide-react";
-import { Section, SectionHeader } from "@/design/Primitives";
-import { ACCENT_SOFT, BODY, CARD, CARD_PAD, GRID_GAP, H3 } from "@/design/system";
+import { Accessibility, Blocks, Paintbrush, Smartphone } from '@/design/Icons';
+import { Section, SectionHeader } from '@/design/Primitives';
+import { BODY, H3 } from '@/design/system';
 
 const FEATURES = [
   {
     icon: Blocks,
-    span: "lg:col-span-2",
-    title: "One set of UI components",
-    body: "Build screens with engine buttons, inputs, dialogs, sheets, date pickers and other controls on web, iOS and Android.",
+    title: 'UI building blocks',
+    body: 'Compose screens with buttons, dialogs, sheets, date pickers and other controls.'
   },
   {
     icon: Smartphone,
-    title: "Web and mobile, one API",
-    body: "The same prop names and the same design language on React and React Native, so moving between them costs you nothing.",
+    title: 'One API across platforms',
+    body: 'Share component props and interaction patterns across React and React Native.'
   },
   {
     icon: Accessibility,
-    title: "Accessible out of the box",
-    body: "Keyboard navigation, focus management and screen-reader labels are already handled — not left as an exercise for later.",
+    title: 'Accessible interactions',
+    body: 'Use built-in keyboard navigation, focus management and screen-reader labels.'
   },
   {
     icon: Paintbrush,
-    title: "Looks like your product",
-    body: "Restyle everything from one set of colour tokens — including a dark theme that was designed, not inverted. Or override a single instance with a utility class.",
-  },
-  {
-    icon: Sparkles,
-    title: "Free, and staying free",
-    body: "MIT licensed with no paid tier, no seat count and nothing held back. Use it in client work without asking anyone.",
-  },
+    title: 'Theme with tokens',
+    body: 'Customize light and dark palettes, with utility classes for individual controls.'
+  }
 ];
 
-const Features = () => (
-  <Section id="why" labelledBy="why-heading">
-    <SectionHeader
-      eyebrow="Why the components"
-      id="why-heading"
-      title="Build with engine components"
-    />
-    <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
-      {FEATURES.map((feature) => {
-        const Icon = feature.icon;
-        return (
-          <article
-            key={feature.title}
-            className={`group ${CARD} ${CARD_PAD} relative overflow-hidden transition-colors duration-200 hover:border-indigo-500/30 ${feature.span ?? ""}`}
-          >
-            <span
-              aria-hidden
-              className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-500/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-            />
-            <span
-              className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl border ${ACCENT_SOFT}`}
-            >
-              <Icon className="h-5 w-5" />
-            </span>
-            <h3 className={`mb-2 ${H3}`}>{feature.title}</h3>
-            <p className={BODY}>{feature.body}</p>
+export default function Features() {
+  return (
+    <Section id="why" labelledBy="why-heading">
+      <SectionHeader id="why-heading" title="Build with engine components" />
+      <div className="grid gap-x-6 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
+        {FEATURES.map(({ icon: Icon, title, body }) => (
+          <article key={title} className="border-t border-border pt-5">
+            <Icon aria-hidden size={22} strokeWidth={1.7} className="mb-3 text-accent" />
+            <h3 className={H3}>{title}</h3>
+            <p className={`mt-2 ${BODY}`}>{body}</p>
           </article>
-        );
-      })}
-    </div>
-  </Section>
-);
-
-export default Features;
+        ))}
+      </div>
+    </Section>
+  );
+}

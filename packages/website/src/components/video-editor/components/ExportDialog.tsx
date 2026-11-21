@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { AlertTypes, NAlert, NButton, NDialog, NLink, NProgress, showToast } from "@nayan-ui/react";
-import { DialogSize } from "@nayan-ui/react";
-import { Download, X } from "lucide-react";
+import { AlertTypes, NAlert, NButton, NDialog, NLink, NProgress, showToast } from "@/components/ui";
+import { DialogSize } from "@/components/ui";
+import { Download, X } from "@/design/Icons";
 import {
   END_CREDIT_SECONDS,
   END_CREDIT_TITLE,

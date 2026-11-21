@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Menu from "@/components/react/components/Menu";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/menu", "react");
@@ -9,7 +9,7 @@ export default function MenuPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Menu />
+      <EngineComponentDoc path="/react/menu" />
     </>
   );
 }

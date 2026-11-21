@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Disclosure from "@/components/react/components/Disclosure";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/disclosure", "react");
@@ -9,7 +9,7 @@ export default function DisclosurePage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Disclosure />
+      <EngineComponentDoc path="/react/disclosure" />
     </>
   );
 }

@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Breadcrumbs from "@/components/react/components/Breadcrumbs";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/breadcrumbs", "react");
@@ -9,7 +9,7 @@ export default function BreadcrumbsPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Breadcrumbs />
+      <EngineComponentDoc path="/react/breadcrumbs" />
     </>
   );
 }

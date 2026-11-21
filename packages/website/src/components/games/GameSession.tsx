@@ -9,7 +9,7 @@ import {
   type GameSettings,
   loadGameComponent,
 } from "@nayan-ui/games/services";
-import { ArrowLeft, BookOpen, Keyboard, Settings } from "lucide-react";
+import { ArrowLeft, BookOpen, Keyboard, Settings } from "@/design/Icons";
 import Link from "next/link";
 import { useTheme } from "@/components/helpers/ThemeProvider";
 import { KBD } from "@/design/system";

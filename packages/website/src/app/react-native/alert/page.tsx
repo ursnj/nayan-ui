@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNAlert from "@/components/react-native/components/Alert";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNAlertPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNAlert />
+      <EngineComponentDoc path="/react-native/alert" />
     </>
   );
 }

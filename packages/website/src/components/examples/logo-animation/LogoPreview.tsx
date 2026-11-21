@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { LOGOS, type LogoId } from "./logos";
-import { toolFetch } from "@/lib/ToolFetch";
+import { animatedWebp } from "./animatedWebp";
 
 const SharedLogoRuntime = dynamic(() => import("./SharedLogoRuntime"), {
   ssr: false,
@@ -37,7 +37,6 @@ export default function LogoPreview({ logo }: { logo?: LogoId } = {}) {
   const [captureTime, setCaptureTime] = useState<number>();
   const job = useRef<ExportJob | null>(null);
   const controlsRef = useRef<Controls | null>(null);
-  const abort = useRef<AbortController | null>(null);
   const send = (message: object, transfer: Transferable[] = []) =>
     window.parent.postMessage(message, window.location.origin, transfer);
 
@@ -58,7 +57,6 @@ export default function LogoPreview({ logo }: { logo?: LogoId } = {}) {
           if (!nextLogo) return;
           if (job.current && job.current.logo !== nextLogo) {
             job.current = null;
-            abort.current?.abort();
             setCaptureTime(undefined);
           }
           const next = {
@@ -117,7 +115,7 @@ export default function LogoPreview({ logo }: { logo?: LogoId } = {}) {
     send({ type: "logo-ready" });
     return () => {
       window.removeEventListener("message", receive);
-      abort.current?.abort();
+      job.current = null;
     };
   }, []);
 
@@ -177,27 +175,14 @@ export default function LogoPreview({ logo }: { logo?: LogoId } = {}) {
             return;
           }
           setCaptureTime(undefined);
-          const form = new FormData();
-          current.frames.forEach((frame, index) => form.append("frames", frame, `${index}.png`));
-          form.append("fps", String(FPS));
-          abort.current = new AbortController();
-          const response = await toolFetch("/api/examples/logo-webp", {
-            method: "POST",
-            body: form,
-            signal: abort.current.signal,
-          });
-          if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || "WebP export failed.");
-          }
-          const data = await response.arrayBuffer();
+          const data = await animatedWebp(current.frames, canvas.width, canvas.height, FPS);
           if (job.current !== current) return;
           send({ type: "logo-export-complete", logo: current.logo, data }, [data]);
           job.current = null;
         } catch (error) {
           if (job.current === current) fail(error);
         }
-      }, "image/png");
+      }, "image/webp", 1);
     } catch (error) {
       fail(error);
     }

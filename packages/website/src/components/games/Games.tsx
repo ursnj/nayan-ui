@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { NImage, NPress, NText } from "@nayan-ui/engine/components";
-import { Code2, Gamepad2, Github, Package } from "lucide-react";
+import { ArrowUpRight, Code2, Gamepad2, Github, Package } from "@/design/Icons";
 import Link from "next/link";
 import {
   CtaPanel,
@@ -13,6 +13,7 @@ import {
   SectionHeader,
 } from "@/design/Primitives";
 import {
+  ACCENT_SOFT,
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
   CARD,
@@ -67,15 +68,15 @@ const HERO_GAMES = [
 
 const GamesCollage = () => (
   <div
-    className={`${CARD} grid grid-cols-3 gap-1.5 overflow-hidden p-1.5 shadow-xl shadow-indigo-500/5 lg:translate-x-4 lg:scale-110`}
+    className={`site-hero-media grid grid-cols-3 gap-1.5 overflow-hidden p-1.5 sm:gap-2 sm:p-2`}
   >
     {HERO_GAMES.map((id) => {
       const game = GAMES_LIST.find((item) => item.id === id);
       return (
-        <Link key={id} href={`/games/${id}`} className="overflow-hidden rounded-xl">
+        <Link key={id} href={`/games/${id}`} onClick={rememberScroll} aria-label={`Play ${game?.name ?? id}`} className="overflow-hidden rounded-lg">
           <NImage
             src={`/games/${id}.png`}
-            alt={game ? `${game.name} screenshot` : ""}
+            alt=""
             width={400}
             height={400}
             className="block aspect-square w-full object-cover transition-transform duration-300 hover:scale-105"
@@ -110,10 +111,9 @@ const GamesMain = () => {
       <PageHero
         media={<GamesCollage />}
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Games" }]}
-        eyebrow="Games"
-        title="50+ ready-made games"
-        titleAccent="For React Native apps and React websites"
-        lead="Puzzle, arcade, action and strategy games, each a single component with the same props, rendered by the Nayan Game Engine."
+        title="Play 50+ games"
+        titleAccent="Built with Nayan Engine"
+        lead="Play puzzle, arcade, action and strategy games in your browser. Add any game to a React or React Native app as a single component."
         actions={
           <>
             <a href="#all-games" className={BUTTON_PRIMARY}>
@@ -131,68 +131,52 @@ const GamesMain = () => {
       />
 
       <Section id="all-games" labelledBy="all-games-heading">
-        <SectionHeader
-          eyebrow="Play"
-          id="all-games-heading"
-          title="Pick a game and play"
-          lead="Open any game to play it right here, with its controls, rules and tips."
-        />
-        <div
-          className="mb-6 flex flex-wrap justify-center gap-2"
-          role="group"
-          aria-label="Filter by category"
-        >
-          {[null, ...categories].map((item) => (
-            <NPress
-              key={item ?? "all"}
-              onPress={() => setCategory(item)}
-              aria-pressed={category === item}
-              className={`text-xs font-semibold ${PILL} ${
-                category === item
-                  ? "border-indigo-500/40 bg-indigo-500/15 text-indigo-600 dark:text-indigo-300"
-                  : item
-                    ? (categoryColors[item] ?? "")
-                    : ""
-              }`}
-            >
-              {item ?? "All"}
-            </NPress>
-          ))}
+        <SectionHeader id="all-games-heading" title="Game library" />
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by category">
+            {[null, ...categories].map((item) => (
+              <NPress
+                key={item ?? "all"}
+                onPress={() => setCategory(item)}
+                aria-pressed={category === item}
+                className={`${PILL} min-h-8 px-3 transition-colors hover:border-accent/35 aria-pressed:border-accent/30 aria-pressed:bg-accent/10 aria-pressed:text-accent`}
+              >
+                {item ?? "All"}
+              </NPress>
+            ))}
+          </div>
+          <p aria-live="polite" className="font-mono text-xs text-muted">{shown.length} games</p>
         </div>
-        <div
-          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${GRID_GAP}`}
-        >
+        <div className={`grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${GRID_GAP}`}>
           {shown.map((game) => (
             <Link
               key={game.id}
               href={`/games/${game.id}`}
               onClick={rememberScroll}
-              className={`${CARD_INTERACTIVE} group overflow-hidden`}
+              className={`${CARD_INTERACTIVE} group min-w-0 overflow-hidden`}
             >
-              <div className="relative overflow-hidden">
+              <div className="overflow-hidden border-b border-border bg-surface-secondary/45">
                 <NImage
                   src={`/games/${game.id}.png`}
-                  alt={`${game.name} screenshot`}
-                  className="aspect-square w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                  alt=""
+                  width={512}
+                  height={512}
+                  className="block aspect-[4/3] w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
                   loading="lazy"
                 />
-                <span
-                  className={`absolute right-3 top-3 rounded-full border px-2.5 py-1 text-xs font-semibold ${categoryColors[game.category]}`}
-                >
-                  {game.category}
-                </span>
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 pt-10">
-                  <h3 className="flex items-center gap-2 text-base font-bold text-white">
-                    <span aria-hidden className="text-lg">
-                      {game.emoji}
-                    </span>
-                    {game.name}
-                  </h3>
-                </div>
               </div>
-              <NText tag="p" className="p-4 text-sm leading-relaxed text-muted">
-                {game.description}
-              </NText>
+              <div className="p-4">
+                <p className={`mb-2 w-fit rounded-md border px-1.5 py-0.5 font-mono text-[11px] font-medium ${categoryColors[game.category]}`}>
+                  {game.category}
+                </p>
+                <div className="flex items-center justify-between gap-2">
+                  <h3 className="text-lg font-semibold tracking-tight">{game.name}</h3>
+                  <ArrowUpRight aria-hidden size={17} className="shrink-0 text-muted group-hover:text-accent" />
+                </div>
+                <NText tag="p" className="mt-1.5 text-sm leading-relaxed text-muted">
+                  {game.description}
+                </NText>
+              </div>
             </Link>
           ))}
         </div>
@@ -227,7 +211,7 @@ const GamesMain = () => {
         <ol className={`grid sm:grid-cols-2 lg:grid-cols-4 ${GRID_GAP}`}>
           {STEPS.map((step, index) => (
             <li key={step.title} className={`${CARD} ${CARD_PAD}`}>
-              <span className="mb-4 flex h-8 w-8 items-center justify-center rounded-lg border border-indigo-500/25 bg-indigo-500/10 text-xs font-bold text-indigo-600 dark:text-indigo-300">
+              <span className={`mb-4 flex h-8 w-8 items-center justify-center rounded-lg border font-mono text-xs font-semibold ${ACCENT_SOFT}`}>
                 {index + 1}
               </span>
               <h3 className={`mb-2 ${H4_CARD}`}>{step.title}</h3>

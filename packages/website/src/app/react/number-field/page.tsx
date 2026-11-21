@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import NumberField from "@/components/react/components/NumberField";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/number-field", "react");
@@ -9,7 +9,7 @@ export default function NumberFieldPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <NumberField />
+      <EngineComponentDoc path="/react/number-field" />
     </>
   );
 }

@@ -1,0 +1,291 @@
+:root {
+  --site-header-height: 4rem;
+  --site-grid-line: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.site-main {
+  min-height: 70vh;
+  padding-top: var(--site-header-height);
+}
+
+.site-main:focus {
+  outline: none;
+}
+
+.site-header {
+  background: color-mix(in srgb, var(--background) 90%, transparent);
+}
+
+.site-header-row {
+  height: calc(var(--site-header-height) - 1px);
+}
+
+.site-logo {
+  object-fit: contain;
+}
+
+.site-header-action {
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 0.5rem;
+  color: var(--muted);
+  transition:
+    color 150ms,
+    background-color 150ms;
+}
+
+.site-header-action:hover {
+  color: var(--foreground);
+  background-color: var(--surface-tertiary);
+}
+
+.site-skip-link {
+  position: fixed;
+  z-index: 60;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.625rem 1rem;
+  transform: translateY(calc(-100% - 1rem));
+  border-radius: 0.5rem;
+  background: var(--accent);
+  color: var(--accent-foreground);
+  font-weight: 600;
+}
+
+.site-skip-link:focus {
+  transform: none;
+}
+
+html:has(.fullscreen-workspace) :is(.site-header, .site-footer, .site-skip-link) {
+  display: none;
+}
+
+html:has(.fullscreen-workspace) .site-main {
+  min-height: 0;
+  padding-top: 0;
+}
+
+@layer base {
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+}
+
+.home-hero {
+  background: radial-gradient(ellipse at 86% 12%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 56%), var(--background);
+}
+
+.home-platforms a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.home-platforms a:hover {
+  color: var(--accent);
+}
+
+.home-workbench {
+  --workbench-grid: rgb(255 255 255 / 0.12);
+  position: relative;
+  padding: clamp(0.65rem, 3vw, 2.6rem);
+  border: 1px solid #6366e7;
+  border-radius: clamp(1rem, 2vw, 1.75rem);
+  background: radial-gradient(ellipse at 96% 3%, #7670ff, transparent 48%), linear-gradient(145deg, #4149db 5%, #2c2e91 100%);
+  isolation: isolate;
+}
+
+.home-workbench::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background-image: linear-gradient(var(--workbench-grid) 1px, transparent 1px), linear-gradient(90deg, var(--workbench-grid) 1px, transparent 1px);
+  background-size: 25px 25px;
+  background-position: center;
+  mask-image: linear-gradient(140deg, black, transparent 84%);
+  content: '';
+  pointer-events: none;
+}
+
+.workbench-frame {
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--foreground) 14%, var(--surface));
+  border-radius: 0.9rem;
+  background: var(--surface);
+  color: var(--foreground);
+  box-shadow: 0 20px 48px rgb(14 16 70 / 0.35);
+}
+
+.workbench-title,
+.workbench-source {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.85rem clamp(0.7rem, 2vw, 1rem);
+}
+
+.workbench-title {
+  border-bottom: 1px solid var(--border);
+}
+
+.workbench-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.15rem;
+  padding: 0.35rem;
+  margin: 0.7rem 0.7rem 0;
+  border-radius: 0.55rem;
+  background: var(--surface-secondary);
+}
+
+.workbench-tab {
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0;
+  min-height: 2.15rem;
+  border: 1px solid transparent;
+  border-radius: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  transition:
+    color 150ms,
+    background-color 150ms;
+}
+
+.workbench-tab:hover,
+.workbench-tab[aria-pressed='true'] {
+  color: var(--accent);
+}
+
+.workbench-tab[aria-pressed='true'] {
+  border-color: var(--border);
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgb(16 20 44 / 0.08);
+}
+
+.workbench-stage {
+  position: relative;
+  overflow: hidden;
+  height: 11rem;
+  margin: 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 0.65rem;
+  background:
+    radial-gradient(circle, var(--site-grid-line) 1px, transparent 1px) center / 15px 15px,
+    var(--background);
+}
+
+.workbench-source {
+  justify-content: flex-start;
+  border-top: 1px solid var(--border);
+  background: var(--surface-secondary);
+  color: var(--foreground);
+  font-size: 0.73rem;
+}
+
+.product-card {
+  background-image: linear-gradient(135deg, color-mix(in srgb, var(--accent) 4%, transparent), transparent 48%);
+}
+
+.game-spotlight-card {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  min-height: 10rem;
+  aspect-ratio: 2;
+  border-radius: 0.9rem;
+  background: radial-gradient(ellipse at 50% 28%, var(--surface), var(--surface-tertiary));
+  color: #fff;
+}
+
+.game-spotlight-label {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 2rem 1rem 0.85rem;
+  background: linear-gradient(transparent, rgb(9 11 24 / 0.92));
+}
+
+.site-page-hero {
+  border-bottom: 1px solid var(--border);
+  background: radial-gradient(ellipse at 83% 18%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 58%), var(--background);
+}
+
+.site-hero-media {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  background: var(--surface);
+  box-shadow: 0 18px 44px color-mix(in srgb, var(--accent) 9%, transparent);
+}
+
+.site-cta {
+  padding: clamp(1.5rem, 5vw, 3.5rem);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  background: radial-gradient(ellipse at 98% 0, color-mix(in srgb, var(--accent) 14%, transparent), transparent 65%), var(--surface);
+}
+
+.site-footer {
+  background-color: var(--surface-secondary);
+}
+
+.site-docs-navigation {
+  top: calc(var(--site-header-height) + 1rem);
+}
+
+.site-docs-list {
+  max-height: calc(100dvh - var(--site-header-height) - 5.25rem);
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+}
+
+.site-docs-filter::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.site-docs-heading {
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.site-code-block {
+  box-shadow: 0 1px 2px rgb(16 20 44 / 0.04);
+}
+
+@media (min-width: 640px) {
+  .workbench-tabs {
+    margin: 0.85rem 1rem 0;
+  }
+
+  .workbench-stage {
+    height: 12rem;
+    margin: 0.85rem 1rem;
+  }
+
+  .game-spotlight-card {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (min-width: 1024px) {
+  .game-spotlight-label {
+    padding: 3rem 1.35rem 1.1rem;
+  }
+}
+
+.docs-live-preview {
+  background-image: radial-gradient(circle, var(--site-grid-line) 1px, transparent 1px);
+  background-position: center;
+  background-size: 16px 16px;
+}

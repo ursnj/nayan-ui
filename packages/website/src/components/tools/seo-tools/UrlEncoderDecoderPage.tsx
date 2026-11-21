@@ -1,22 +1,12 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-import Sidebar from "@/components/helpers/Sidebar";
-import SubHeader from "@/components/helpers/SubHeader";
-import TagsList from "@/components/helpers/TagsList";
-import { urlEncoderDecoderTags } from "@/services/Tags";
-import { getMenuItem } from "@/services/Utils";
-import { UrlEncoderDecoder } from "@/components/tools";
-import { UrlEncoderDecoderContent } from "./SeoToolsContent";
+import Sidebar from '@/components/helpers/Sidebar';
+import SubHeader from '@/components/helpers/SubHeader';
+import TagsList from '@/components/helpers/TagsList';
+import { urlEncoderDecoderTags } from '@/services/Tags';
+import { UrlEncoderDecoderContent } from './SeoToolsContent';
 
 const UrlEncoderDecoderPage = () => {
-  const pathname = usePathname();
-  const component: any = getMenuItem(pathname);
-
   return (
-    <Sidebar title={component?.title || "URL Encoder/Decoder"}>
-      <UrlEncoderDecoder />
-
+    <Sidebar title="URL Encoder/Decoder">
       <UrlEncoderDecoderContent />
 
       <SubHeader title="Tags">

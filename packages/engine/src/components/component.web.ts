@@ -20,6 +20,8 @@ export function component<P = ComponentProps>(name: string): ComponentType<P> {
       NImage: 'img',
       NIcon: 'span',
       NCheck: 'input',
+      NSlider: 'input',
+      NProgress: 'progress',
       NSelect: 'select',
       NDisclosure: 'details'
     };
@@ -28,6 +30,23 @@ export function component<P = ComponentProps>(name: string): ComponentType<P> {
     for (const [key, value] of Object.entries(rest)) {
       if (
         key === 'className' ||
+        key === 'ref' ||
+        key === 'target' ||
+        key === 'rel' ||
+        key === 'download' ||
+        key === 'readOnly' ||
+        key === 'required' ||
+        key === 'tabIndex' ||
+        key === 'min' ||
+        key === 'max' ||
+        key === 'step' ||
+        key === 'rows' ||
+        key === 'cols' ||
+        key === 'pattern' ||
+        key === 'autoComplete' ||
+        key === 'autoFocus' ||
+        key === 'inputMode' ||
+        key === 'minLength' ||
         key === 'style' ||
         key === 'id' ||
         key === 'role' ||
@@ -145,6 +164,12 @@ export function component<P = ComponentProps>(name: string): ComponentType<P> {
     if (onChangeText) attributes.onChange = (event: { target: { value: string } }) => onChangeText(event.target.value);
     if (props.onValueChange && ['NInput', 'NSearchField', 'NTextarea'].includes(name))
       attributes.onChange = (event: { target: { value: string } }) => props.onValueChange(event.target.value);
+    if (name === 'NSlider') {
+      attributes.type = 'range';
+      attributes.onChange = (event: { currentTarget: HTMLInputElement }) =>
+        (props.onValueChange ?? props.onChange)?.(event.currentTarget.valueAsNumber);
+    }
+    if (name === 'NProgress') attributes['aria-label'] ??= props.label;
     if (name === 'NCheck') {
       attributes.type = 'checkbox';
       if (props.onChange) attributes.onChange = (event: { target: { checked: boolean } }) => props.onChange(event.target.checked);

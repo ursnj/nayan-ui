@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { NButton, NSlider, NTooltip } from "@nayan-ui/react";
+import { NButton, NSlider, NTooltip } from "@/components/ui";
 import {
   Camera,
   ChevronLeft,
@@ -16,7 +16,7 @@ import {
   Square,
   Volume2,
   VolumeX,
-} from "lucide-react";
+} from "@/design/Icons";
 import { player, seekTo, stepFrames, togglePlayback } from "../../engine/playerInstance";
 import { clamp, download, formatTimecode } from "../../lib/utils";
 import { primarySelectedClip, timelineDurationUs, useEditor } from "../../store/editor";

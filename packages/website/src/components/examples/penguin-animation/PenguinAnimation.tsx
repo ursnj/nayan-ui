@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { Check, Copy, Pause, Play, RotateCcw } from "lucide-react";
+import { Check, Copy, Pause, Play, RotateCcw } from "@/design/Icons";
 import Code from "@/components/helpers/Code";
 import { BUTTON_SMALL, CARD } from "@/design/system";
 import { useTheme } from "@/components/helpers/ThemeProvider";

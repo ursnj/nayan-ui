@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNInput from "@/components/react-native/components/Input";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNInputPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNInput />
+      <EngineComponentDoc path="/react-native/input" />
     </>
   );
 }

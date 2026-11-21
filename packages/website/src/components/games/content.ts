@@ -1,6 +1,6 @@
 // Shared with the structured data in app/games/page.tsx: an FAQPage or HowTo that disagrees with the
 // visible copy is a violation, so both read these.
-import { Code2, Settings2, Smartphone, Sparkles, Volume2, Zap } from "lucide-react";
+import { Code2, Settings2, Smartphone, Sparkles, Volume2, Zap } from "@/design/Icons";
 
 export const FEATURES = [
   {

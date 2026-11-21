@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Loading from "@/components/react/components/Loading";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/loading", "react");
@@ -9,7 +9,7 @@ export default function LoadingPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Loading />
+      <EngineComponentDoc path="/react/loading" />
     </>
   );
 }

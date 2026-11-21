@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import ScrollShadow from "@/components/react/components/ScrollShadow";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/scroll-shadow", "react");
@@ -9,7 +9,7 @@ export default function ScrollShadowPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <ScrollShadow />
+      <EngineComponentDoc path="/react/scroll-shadow" />
     </>
   );
 }

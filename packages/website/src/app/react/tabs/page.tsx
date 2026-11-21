@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Tabs from "@/components/react/components/Tabs";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/tabs", "react");
@@ -9,7 +9,7 @@ export default function TabsPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Tabs />
+      <EngineComponentDoc path="/react/tabs" />
     </>
   );
 }

@@ -1,54 +1,50 @@
-"use client";
-
-import { AlertTypes, NAlert, NBadge, NButton, NCard } from "@nayan-ui/react";
-import { BookOpen, Bug, Code, GitPullRequest, Github, Heart, Lightbulb, Users } from "lucide-react";
-import { GRADIENT_TEXT, H1, H2, H3, H4_CARD } from "@/design/system";
+import { AlertTypes, NAlert, NCard } from "@/components/ui";
+import { BookOpen, Bug, Code, GitPullRequest, Github, Heart, Lightbulb, Users } from "@/design/Icons";
+import { PageHero } from "@/design/Primitives";
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, CONTAINER, H2, H3, H4_CARD, LEAD } from "@/design/system";
 import { TOTAL_COMPONENT_COUNT } from "@/services/Counts";
 import { REPO_URL } from "@/services/seo";
 
 const Contributions = () => {
   return (
     <>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="space-y-8">
-          <div className="relative overflow-hidden rounded-2xl bg-surface border border-default text-center py-8 sm:py-10 px-4 sm:px-6">
-            <div className="relative">
-              <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
-                <Heart className="w-7 h-7 text-current" />
-              </div>
-              <h1 className={`${H1} mb-3`}>Open Source Contributions</h1>
-              <p className="text-base sm:text-lg text-muted max-w-2xl mx-auto">
-                Nayan UI is an open source project and we welcome contributions from the community.
-                Whether you're fixing bugs, adding features, or improving documentation, every
-                contribution matters!
-              </p>
-            </div>
-          </div>
-
+      <PageHero
+        title="Contribute to Nayan UI"
+        lead="Help build the engine, improve the docs, or report an issue."
+        breadcrumb={[{ label: "Home", href: "/" }, { label: "Contributing" }]}
+        actions={
+          <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className={BUTTON_PRIMARY}>
+            <Github aria-hidden className="mr-2 h-4 w-4" />
+            View on GitHub
+          </a>
+        }
+      />
+      <div className={`${CONTAINER} py-10 sm:py-14`}>
+        <div className="space-y-10 sm:space-y-14">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             <NCard className="p-5 text-center">
-              <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+              <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                 <Code className="w-5 h-5 text-current" />
               </div>
               <div className="text-2xl font-bold">{TOTAL_COMPONENT_COUNT}</div>
               <div className="text-xs text-muted">Components</div>
             </NCard>
             <NCard className="p-5 text-center">
-              <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+              <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                 <Users className="w-5 h-5 text-current" />
               </div>
               <div className="text-2xl font-bold">2</div>
               <div className="text-xs text-muted">Platforms</div>
             </NCard>
             <NCard className="p-5 text-center">
-              <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+              <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                 <GitPullRequest className="w-5 h-5 text-current" />
               </div>
               <div className="text-2xl font-bold">Open</div>
               <div className="text-xs text-muted">To pull requests</div>
             </NCard>
             <NCard className="p-5 text-center">
-              <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+              <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                 <Github className="w-5 h-5 text-current" />
               </div>
               <div className="text-2xl font-bold">MIT</div>
@@ -61,7 +57,7 @@ const Contributions = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               <NCard className="p-6 hover:shadow-xl transition-all duration-300 group">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                     <Bug className="w-5 h-5 text-current" />
                   </div>
                   <h3 className={H3}>Report Bugs</h3>
@@ -76,7 +72,7 @@ const Contributions = () => {
 
               <NCard className="p-6 hover:shadow-xl transition-all duration-300 group">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                     <Lightbulb className="w-5 h-5 text-current" />
                   </div>
                   <h3 className={H3}>Suggest Features</h3>
@@ -92,7 +88,7 @@ const Contributions = () => {
 
               <NCard className="p-6 hover:shadow-xl transition-all duration-300 group">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                     <Code className="w-5 h-5 text-current" />
                   </div>
                   <h3 className={H3}>Write Code</h3>
@@ -108,7 +104,7 @@ const Contributions = () => {
 
               <NCard className="p-6 hover:shadow-xl transition-all duration-300 group">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                     <BookOpen className="w-5 h-5 text-current" />
                   </div>
                   <h3 className={H3}>Improve Docs</h3>
@@ -123,7 +119,7 @@ const Contributions = () => {
 
               <NCard className="p-6 hover:shadow-xl transition-all duration-300 group">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                     <Users className="w-5 h-5 text-current" />
                   </div>
                   <h3 className={H3}>Help Others</h3>
@@ -139,7 +135,7 @@ const Contributions = () => {
 
               <NCard className="p-6 hover:shadow-xl transition-all duration-300 group">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                     <Heart className="w-5 h-5 text-current" />
                   </div>
                   <h3 className={H3}>Spread the Word</h3>
@@ -160,7 +156,7 @@ const Contributions = () => {
             <NCard className="p-6">
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                     1
                   </div>
                   <div>
@@ -172,7 +168,7 @@ const Contributions = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                     2
                   </div>
                   <div>
@@ -189,7 +185,7 @@ const Contributions = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                     3
                   </div>
                   <div>
@@ -202,7 +198,7 @@ const Contributions = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                     4
                   </div>
                   <div>
@@ -214,7 +210,7 @@ const Contributions = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center border border-indigo-500/25 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                     5
                   </div>
                   <div>
@@ -313,44 +309,16 @@ const Contributions = () => {
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-3xl border border-indigo-500/20 px-4 py-12 text-center sm:px-6">
-            <div
-              aria-hidden
-              className="absolute inset-0 bg-gradient-to-br from-indigo-600/15 via-violet-600/10 to-fuchsia-600/15"
-            />
-            <div
-              aria-hidden
-              className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-fuchsia-500/20 blur-3xl"
-            />
-            <div
-              aria-hidden
-              className="absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-indigo-500/20 blur-3xl"
-            />
-            <div className="relative">
-              <h2 className={`${H2} mb-4`}>
-                <span className={GRADIENT_TEXT}>Ready to contribute?</span>
-              </h2>
-              <p className="mx-auto mb-6 max-w-2xl text-muted">
-                Join our growing community of developers and help make Nayan UI better for everyone!
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <NButton
-                  onClick={() => window.open(REPO_URL, "_blank")}
-                  className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-2.5 font-semibold text-white shadow-lg shadow-indigo-500/25 hover:from-indigo-600 hover:to-violet-600"
-                >
-                  <Github className="w-4 h-4" />
-                  View on GitHub
-                </NButton>
-                <NButton
-                  onClick={() => window.open(REPO_URL, "_blank")}
-                  className="flex items-center gap-2 border border-default bg-surface/70 px-6 py-2.5 font-semibold text-foreground backdrop-blur hover:bg-default/50"
-                >
-                  <Bug className="w-4 h-4" />
-                  Report Issues
-                </NButton>
-              </div>
+          <section className="site-cta flex flex-wrap items-end justify-between gap-5">
+            <div>
+              <h2 className={H2}>Help improve Nayan UI</h2>
+              <p className={`mt-3 ${LEAD}`}>Browse open issues or share what you’d like us to improve.</p>
             </div>
-          </div>
+            <a href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer" className={BUTTON_SECONDARY}>
+              <Bug aria-hidden className="mr-2 h-4 w-4" />
+              View issues
+            </a>
+          </section>
         </div>
       </div>
     </>

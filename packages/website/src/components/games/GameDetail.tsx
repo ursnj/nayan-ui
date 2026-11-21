@@ -1,4 +1,4 @@
-import { ArrowRight, Award, Check, Lightbulb } from "lucide-react";
+import { ArrowRight, Award, Check, Lightbulb } from "@/design/Icons";
 import Link from "next/link";
 import { ACCENT_SOFT, ACCENT_TEXT, BODY, CARD, H2_DOC, PILL, WELL } from "@/design/system";
 import { gamesData } from "@/services/GamesData";

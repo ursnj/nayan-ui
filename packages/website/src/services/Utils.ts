@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react";
+import type { SiteIcon } from "@/design/Icons";
 import { engineNavigation } from "./engine/navigation";
 import {
   AppWindow,
@@ -117,7 +117,7 @@ import {
   Info,
   ImagePlus,
   Boxes,
-} from "lucide-react";
+} from "@/design/Icons";
 import {
   accordionTags,
   aiReviewTags,
@@ -311,7 +311,7 @@ export interface SidebarItem {
   title: string;
   description: string;
   link: string;
-  icon?: LucideIcon;
+  icon?: SiteIcon;
   isHeading?: boolean;
   tags?: { sku: string; text: string }[];
 }
@@ -1865,7 +1865,7 @@ export const toolsSidebarItems = [
   },
 ];
 
-const engineSidebarItem = (slug: string, title: string, icon: LucideIcon): SidebarItem => {
+const engineSidebarItem = (slug: string, title: string, icon: SiteIcon): SidebarItem => {
   const guide = engineNavigation.find((item) => item.slug === slug);
   if (!guide) throw new Error(`Missing engine guide: ${slug}`);
   return { title, description: guide.description, link: guide.link, icon };
@@ -1874,6 +1874,8 @@ const engineSidebarItem = (slug: string, title: string, icon: LucideIcon): Sideb
 export const engineSidebarItems: SidebarItem[] = [
   { title: "Get Started", description: "", link: "", isHeading: true },
   engineSidebarItem("overview", "Overview", Gamepad2),
+  { title: "Components", description: "Engine UI controls and hooks", link: "/components", icon: Grid3x3 },
+  { title: "Modules", description: "Engine module entry points", link: "/modules", icon: FileCode },
   {
     title: "Playground",
     description: "Write engine code and run it live in the browser",

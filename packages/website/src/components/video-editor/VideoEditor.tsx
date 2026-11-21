@@ -8,7 +8,7 @@ import {
   Type,
   Volume2,
   Wand2,
-} from "lucide-react";
+} from "@/design/Icons";
 import Link from "next/link";
 import {
   CtaPanel,
@@ -19,6 +19,7 @@ import {
   SectionHeader,
 } from "@/design/Primitives";
 import {
+  ACCENT_SOFT,
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
   CARD,
@@ -63,22 +64,20 @@ const FEATURES = [
 ];
 
 const EditorScreenshot = () => (
-  <div
-    className={`${CARD} overflow-hidden p-1.5 shadow-xl shadow-indigo-500/5 lg:scale-110 lg:translate-x-4`}
-  >
+  <div className="site-hero-media min-w-0 overflow-hidden p-1.5 sm:p-2">
     <img
       src="/video-editor/editor-light.png"
       alt="The Nayan UI video editor: a media library on the left, the preview in the middle, clip properties on the right and a multi-track timeline along the bottom."
       width={1600}
       height={1000}
-      className="block w-full rounded-xl dark:hidden"
+      className="block w-full rounded-lg dark:hidden"
     />
     <img
       src="/video-editor/editor-dark.png"
       alt="The Nayan UI video editor: a media library on the left, the preview in the middle, clip properties on the right and a multi-track timeline along the bottom."
       width={1600}
       height={1000}
-      className="hidden w-full rounded-xl dark:block"
+      className="hidden w-full rounded-lg dark:block"
     />
   </div>
 );
@@ -88,10 +87,9 @@ const VideoEditorMain = () => (
     <PageHero
       media={<EditorScreenshot />}
       breadcrumb={[{ label: "Home", href: "/" }, { label: "Video Editor" }]}
-      eyebrow="Video Editor"
-      title="Free online video editor"
-      titleAccent="No upload, no account, no watermark"
-      lead="Edit video in a browser tab — trim, layer, colour, caption and export, all the way up to 4K. Your footage stays on your own computer the whole time."
+      title="Edit video in your browser"
+      titleAccent="Free editor with up to 4K export"
+      lead="Trim clips, stack tracks, grade colour and add captions. Your footage stays on your device."
       actions={
         <>
           <a href={EDITOR_URL} target="_blank" rel="noopener noreferrer" className={BUTTON_PRIMARY}>
@@ -110,15 +108,14 @@ const VideoEditorMain = () => (
         </>
       }
       pills={FACTS}
-      note="Free forever · MIT licensed · Works offline · Nothing leaves your device"
+      note="MIT licensed · Works offline"
     />
 
     <Section id="features" labelledBy="features-heading">
       <SectionHeader
         eyebrow="Features"
         id="features-heading"
-        title="Everything a real edit needs"
-        lead="Not a trimmer with a few sliders. The things you actually need to finish a video."
+        title="Timeline, colour and sound"
       />
       <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
         {FEATURES.map((feature) => (
@@ -142,7 +139,7 @@ const VideoEditorMain = () => (
       <ol className={`grid sm:grid-cols-2 lg:grid-cols-4 ${GRID_GAP}`}>
         {STEPS.map((step, index) => (
           <li key={step.title} className={`${CARD} ${CARD_PAD}`}>
-            <span className="mb-4 flex h-8 w-8 items-center justify-center rounded-lg border border-indigo-500/25 bg-indigo-500/10 text-xs font-bold text-indigo-600 dark:text-indigo-300">
+            <span className={`mb-4 flex h-8 w-8 items-center justify-center rounded-lg border font-mono text-xs font-semibold ${ACCENT_SOFT}`}>
               {index + 1}
             </span>
             <h3 className={`mb-2 ${H4_CARD}`}>{step.title}</h3>

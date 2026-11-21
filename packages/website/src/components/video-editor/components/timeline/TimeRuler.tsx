@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { cn } from "@nayan-ui/react";
+import { cn } from "@/components/ui";
 import { pickTickInterval } from "../../lib/utils";
 import { useEditor } from "../../store/editor";
 import { US } from "../../types";

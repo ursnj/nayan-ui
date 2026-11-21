@@ -1,16 +1,17 @@
 "use client";
 
 import { ReactNode, useMemo, useState } from "react";
-import { Menu, Search, X } from "lucide-react";
+import { Menu, Search, X } from "@/design/Icons";
 import { NInput, NPress, NText, NView } from "@nayan-ui/engine/components";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Breadcrumb } from "@/design/Primitives";
 import { CONTAINER, H1 } from "@/design/system";
-import { getSidebarItems } from "@/services/Utils";
+import { getSidebarItems, type SidebarItem } from "@/services/Utils";
 
 interface Props {
   title?: string;
+  reference?: { title: string; href: string; items: SidebarItem[] };
   children: ReactNode;
 }
 
@@ -24,7 +25,7 @@ const SECTION_LABELS: Record<string, string> = {
 };
 
 /** Counts the non-heading items that belong to a heading (until the next heading). */
-const countChildren = (items: any[], headingIndex: number) => {
+const countChildren = (items: SidebarItem[], headingIndex: number) => {
   let count = 0;
   for (let i = headingIndex + 1; i < items.length; i++) {
     if (items[i].isHeading) break;
@@ -41,15 +42,15 @@ const SidebarNav = ({
   setQuery,
   onNavigate,
 }: {
-  items: any[];
-  allItems: any[];
+  items: SidebarItem[];
+  allItems: SidebarItem[];
   pathname: string;
   query: string;
   setQuery: (q: string) => void;
   onNavigate?: () => void;
 }) => (
   <>
-    <div className="border-b border-default p-3">
+    <div className="border-b border-border p-3">
       <label className="relative block">
         <Search
           aria-hidden
@@ -60,8 +61,8 @@ const SidebarNav = ({
           accessibilityLabel="Filter pages"
           value={query}
           onChangeText={setQuery}
-          placeholder="Filter..."
-          className="w-full rounded-lg border border-default bg-background py-1.5 pl-8 pr-8 text-sm text-foreground outline-none transition-colors placeholder:text-muted focus:border-indigo-500/50"
+          placeholder="Filter pages…"
+          className="site-docs-filter w-full rounded-lg border border-default bg-background py-1.5 pl-8 pr-8 text-sm text-foreground outline-none transition-colors placeholder:text-muted focus:border-accent/60"
         />
         {query ? (
           <NPress
@@ -75,14 +76,14 @@ const SidebarNav = ({
       </label>
     </div>
 
-    <div className="max-h-[calc(100vh-11rem)] overflow-y-auto p-2">
+    <div className="site-docs-list overflow-y-auto p-2">
       {items.length === 0 ? (
         <p className="px-2 py-6 text-center text-xs text-muted">
           Nothing matches &ldquo;{query}&rdquo;.
         </p>
       ) : (
-        items.map((item: any, index: number) => {
-          const Icon = item.icon as any;
+        items.map((item, index) => {
+          const Icon = item.icon;
 
           if (item.isHeading) {
             const childCount = countChildren(allItems, allItems.indexOf(item));
@@ -91,7 +92,7 @@ const SidebarNav = ({
                 key={item.link || `heading-${index}`}
                 className="flex items-center justify-between px-2.5 pb-1 pt-5 first:pt-2"
               >
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-muted">
                   {item.title}
                 </span>
                 {childCount > 0 ? (
@@ -112,7 +113,7 @@ const SidebarNav = ({
               aria-current={active ? "page" : undefined}
               className={`group flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] transition-colors ${
                 active
-                  ? "bg-indigo-500/10 font-medium text-indigo-600 dark:text-indigo-400"
+                  ? "bg-accent/10 font-semibold text-accent"
                   : "text-muted hover:bg-default/50 hover:text-foreground"
               }`}
             >
@@ -120,7 +121,7 @@ const SidebarNav = ({
                 <Icon
                   className={`h-4 w-4 shrink-0 transition-colors ${
                     active
-                      ? "text-indigo-500 dark:text-indigo-400"
+                      ? "text-accent"
                       : "text-muted/60 group-hover:text-foreground"
                   }`}
                 />
@@ -136,7 +137,7 @@ const SidebarNav = ({
 
 const Sidebar = (props: Props) => {
   const pathname = usePathname();
-  const sidebarItems = getSidebarItems(pathname);
+  const sidebarItems = props.reference?.items ?? getSidebarItems(pathname);
   const [query, setQuery] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -159,20 +160,20 @@ const Sidebar = (props: Props) => {
   }, [query, sidebarItems]);
 
   const section = pathname.split("/")[1];
-  const sectionLabel = SECTION_LABELS[section];
+  const sectionLabel = props.reference?.title ?? SECTION_LABELS[section];
 
   const breadcrumb: { label: string; href?: string }[] = [{ label: "Home", href: "/" }];
   // A section's own landing page (e.g. "Game Engine" at /game-engine) shows its title once.
   if (sectionLabel && sectionLabel !== props.title)
-    breadcrumb.push({ label: sectionLabel, href: `/${section}` });
+    breadcrumb.push({ label: sectionLabel, href: props.reference?.href ?? `/${section}` });
   if (props.title) breadcrumb.push({ label: props.title });
 
   return (
-    <NView tag="div" className={`${CONTAINER} py-6 sm:py-8`}>
-      <div className="grid grid-cols-12 gap-6 lg:gap-8">
+    <NView tag="div" className={`${CONTAINER} py-5 sm:py-8`}>
+      <div className="grid gap-6 md:grid-cols-[13rem_minmax(0,1fr)] lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-10 xl:gap-14">
         {/* Desktop sidebar */}
-        <nav aria-label="Documentation" className="col-span-12 hidden md:block md:col-span-3">
-          <div className="sticky top-[76px] rounded-2xl border border-default bg-surface">
+        <nav aria-label="Documentation" className="hidden md:block">
+          <div className="site-docs-navigation sticky rounded-xl border border-border bg-surface">
             <SidebarNav
               items={items}
               allItems={sidebarItems}
@@ -183,16 +184,16 @@ const Sidebar = (props: Props) => {
           </div>
         </nav>
 
-        <div className="content col-span-12 min-w-0 md:col-span-9">
+        <div className="content min-w-0">
           {/* Mobile sidebar toggle */}
-          <div className="mb-4 md:hidden">
+          <div className="mb-5 md:hidden">
             <NPress
               onPress={() => setMobileOpen((open) => !open)}
               aria-expanded={mobileOpen}
               className="inline-flex flex-row items-center gap-2 rounded-lg border border-default bg-surface px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-default/50"
             >
               <Menu className="h-4 w-4" />
-              Navigation
+              Browse pages
             </NPress>
           </div>
 
@@ -200,7 +201,7 @@ const Sidebar = (props: Props) => {
           {mobileOpen ? (
             <nav
               aria-label="Documentation"
-              className="mb-6 rounded-2xl border border-default bg-surface md:hidden"
+              className="mb-6 rounded-xl border border-border bg-surface md:hidden"
             >
               <SidebarNav
                 items={items}
@@ -213,12 +214,10 @@ const Sidebar = (props: Props) => {
             </nav>
           ) : null}
 
-          <Breadcrumb items={breadcrumb} />
-          {props.title && (
-            <NText tag="h1" className={`mb-4 ${H1}`}>
-              {props.title}
-            </NText>
-          )}
+          <header className={props.title ? "site-docs-heading mb-6 sm:mb-8" : undefined}>
+            <Breadcrumb items={breadcrumb} />
+            {props.title && <NText tag="h1" className={H1}>{props.title}</NText>}
+          </header>
           <div>{props.children}</div>
         </div>
       </div>

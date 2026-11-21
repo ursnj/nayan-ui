@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { cn } from "@nayan-ui/react";
+import { cn } from "@/components/ui";
 import { clamp } from "../../lib/utils";
 
 /** Width of the divider strip, in px — `w-2` / `h-2` below. */

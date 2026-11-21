@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { NAlert } from "@nayan-ui/react";
-import { AlertTypes } from "@nayan-ui/react";
-import { Clapperboard, Monitor } from "lucide-react";
+import { NAlert } from "@/components/ui";
+import { AlertTypes } from "@/components/ui";
+import { Clapperboard, Monitor } from "@/design/Icons";
 import { MIN_APP_WIDTH } from "../../lib/viewport";
 
 /** Shown in place of the editor when the window is too narrow for it. */
@@ -15,7 +15,7 @@ export const SmallScreenNotice = () => {
   }, []);
 
   return (
-    <div className="flex h-screen items-center justify-center bg-background p-6">
+    <div className="flex min-h-dvh items-center justify-center bg-background p-6">
       <div className="w-full max-w-md text-center">
         <div className="mb-5 flex items-center justify-center gap-2">
           <Clapperboard className="h-6 w-6 text-accent" />

@@ -3,9 +3,7 @@
 import { useEffect, useState } from "react";
 import { clipboard } from "@nayan-ui/engine/clipboard";
 import { NPress } from "@nayan-ui/engine/components";
-import { NCode, THEMES } from "@nayan-ui/react";
-import { Check, Copy } from "lucide-react";
-import { useTheme } from "@/components/helpers/ThemeProvider";
+import { Check, Copy } from "@/design/Icons";
 
 interface Props {
   code: string;
@@ -26,13 +24,7 @@ const Code = ({
   maxHeight,
   showHeader = true,
 }: Props) => {
-  const { theme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (!copied) return;
@@ -52,10 +44,10 @@ const Code = ({
 
   return (
     <div
-      className={`w-full min-w-0 overflow-hidden bg-surface ${embedded ? "" : "rounded-xl border border-default"}`}
+      className={`site-code-block w-full min-w-0 overflow-hidden bg-surface ${embedded ? "" : "rounded-xl border border-border"}`}
     >
       {showHeader && (
-        <div className="flex items-center justify-between gap-3 border-b border-default bg-surface px-3 py-2">
+        <div className="flex items-center justify-between gap-3 border-b border-border bg-surface-secondary px-4 py-2">
           <span className="truncate font-mono text-xs text-muted">{filename ?? language}</span>
           <NPress
             onPress={handleCopy}
@@ -79,15 +71,12 @@ const Code = ({
       <div
         className="overflow-auto"
         style={{ maxHeight }}
-        tabIndex={maxHeight ? 0 : undefined}
-        aria-label={maxHeight ? `${filename ?? language} source code` : undefined}
+        tabIndex={0}
+        aria-label={`${filename ?? language} source code`}
       >
-        <NCode
-          code={code}
-          language={language}
-          theme={mounted && theme === "dark" ? THEMES.DARK : THEMES.LIGHT}
-          className="min-w-0 [&_pre]:max-w-full [&_pre]:rounded-none [&_pre]:border-0"
-        />
+        <pre className="m-0 min-w-max bg-surface p-4 text-sm leading-relaxed">
+          <code>{code}</code>
+        </pre>
       </div>
     </div>
   );

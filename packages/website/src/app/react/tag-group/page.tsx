@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import TagGroup from "@/components/react/components/TagGroup";
+import EngineComponentDoc from "@/components/ui/EngineComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/tag-group", "react");
@@ -9,7 +9,7 @@ export default function TagGroupPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <TagGroup />
+      <EngineComponentDoc path="/react/tag-group" />
     </>
   );
 }
