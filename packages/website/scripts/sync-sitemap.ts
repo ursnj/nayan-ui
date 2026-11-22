@@ -40,10 +40,11 @@ export function collectPublicPaths(app = APP): string[] {
   for (const route of dynamic) {
     if (route === "/game-engine/[slug]") {
       engineNavigation.forEach((guide) => paths.add(guide.link));
-    } else if (route === "/components/[entry]") {
+    } else if (route === "/[entry]") {
       componentReferences.forEach(({ path }) => paths.add(path));
-    } else if (route === "/modules/[entry]") {
-      moduleReferences.forEach(({ path }) => paths.add(path));
+      moduleReferences.forEach(({ slug, path }) => {
+        if (slug !== "games") paths.add(path);
+      });
     } else if (route === "/games/[slug]") {
       Object.keys(gamesData).forEach((slug) => paths.add(`/games/${slug}`));
     } else if (route !== "/tags/[tag]" && route !== "/tools/tags/[tag]") {

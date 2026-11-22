@@ -12,7 +12,7 @@ import { getSidebarItems, type SidebarItem } from "@/services/Utils";
 interface Props {
   title?: string;
   componentDocumentation?: boolean;
-  reference?: { title: string; href: string; items: SidebarItem[] };
+  reference?: { title: string; href: string; items: SidebarItem[]; currentPath?: string };
   children: ReactNode;
 }
 
@@ -141,7 +141,8 @@ const SidebarNav = ({
 );
 
 const Sidebar = (props: Props) => {
-  const pathname = usePathname();
+  const routePath = usePathname();
+  const pathname = props.reference?.currentPath ?? routePath;
   const sidebarItems = props.reference?.items ?? getSidebarItems(pathname);
   const [query, setQuery] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);

@@ -3,9 +3,6 @@ import type { NextConfig } from 'next';
 import { componentReferences } from './src/services/nayan-ui/component-reference';
 import { moduleReferences } from './src/services/nayan-ui/module-reference';
 
-// The games module already used its prefixed route. /games is the playable game catalog.
-const legacyReferences = [...componentReferences, ...moduleReferences.filter(({ slug }) => slug !== 'games')];
-
 const nextConfig: NextConfig = {
   // No in-memory copy of rendered pages: the server reads its prerendered pages from disk, which
   // the OS caches anyway. Browsing every page took the server to 344 MB with the default 50 MB
@@ -19,9 +16,14 @@ const nextConfig: NextConfig = {
     root: path.resolve(__dirname, '../..')
   },
   output: 'standalone',
-  // Some browsers still have the original permanent redirect from /playground cached.
   async rewrites() {
-    return [{ source: '/game-engine/playground/:path*', destination: '/playground/:path*' }];
+    return [
+      // Some browsers still have the original permanent redirect from /playground cached.
+      { source: '/game-engine/playground/:path*', destination: '/playground/:path*' },
+      // /modules/games already has a page and /games is the playable game catalog.
+      ...[...componentReferences, ...moduleReferences.filter(({ slug }) => slug !== 'games')]
+        .map(({ slug, path }) => ({ source: path, destination: `/${slug}` }))
+    ];
   },
   // Keep published documentation, shared games and saved playground links working.
   async redirects() {
@@ -31,8 +33,6 @@ const nextConfig: NextConfig = {
       { source: '/engine/:path*', destination: '/game-engine/:path*', permanent: true },
       { source: '/nayan-components', destination: '/components', permanent: true },
       { source: '/nayan-modules/:path*', destination: '/modules/:path*', permanent: true },
-      { source: '/user-interface', destination: '/components', permanent: true },
-      ...legacyReferences.map(({ slug, path }) => ({ source: `/${slug}`, destination: path, permanent: true })),
       { source: '/nayan-game-engine/:path*', destination: '/game-engine/:path*', permanent: true },
       { source: '/nayan-playground/:path*', destination: '/playground/:path*', permanent: true },
       { source: '/nayan-video-editor/:path*', destination: '/video-editor/:path*', permanent: true },

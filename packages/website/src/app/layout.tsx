@@ -6,6 +6,7 @@ import Header from "@/components/helpers/Header";
 import JsonLd from "@/components/helpers/JsonLd";
 import ThemeProvider from "@/components/helpers/ThemeProvider";
 import { browserStylesVersion } from "./nayan-ui-styles";
+import { moduleReferences } from "@/services/nayan-ui/module-reference";
 import {
   BANNER_HEIGHT,
   BANNER_WIDTH,
@@ -17,6 +18,8 @@ import {
   softwareApplicationSchema,
   websiteSchema,
 } from "@/services/seo";
+
+const moduleSlugs = moduleReferences.map(({ slug }) => slug);
 
 export const metadata: Metadata = {
   title: {
@@ -66,7 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ThemeProvider>
           <NView tag="a" href="#main-content" className="site-skip-link">Skip to content</NView>
-          <Header />
+          <Header moduleSlugs={moduleSlugs} />
           <NView tag="main" id="main-content" className="site-main min-h-[70vh] pt-[var(--site-header-height)] focus:outline-none" tabIndex={-1}>
             {children}
           </NView>

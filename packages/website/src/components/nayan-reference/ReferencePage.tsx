@@ -1,6 +1,5 @@
 import { NText, NView } from 'nayan-ui/components';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import { DocsIntro } from '@/design/Primitives';
 import { BUTTON_SMALL } from '@/design/system';
 import Code from '@/components/helpers/Code';
@@ -11,36 +10,11 @@ import { EngineComponentExample } from '@/components/ui/ComponentExamples';
 import { componentReferences } from '@/services/nayan-ui/component-reference';
 import { moduleReferences } from '@/services/nayan-ui/module-reference';
 import { tagsForReference } from '@/services/nayan-ui/reference-tags';
-import { buildPageMetadata } from '@/services/seo';
 import ReferenceDirectory from './ReferenceDirectory';
 import ComponentAttributes from './ComponentAttributes';
 
 type Group = 'components' | 'modules';
 type ReferenceEntry = (typeof componentReferences)[number] | (typeof moduleReferences)[number];
-
-export function referenceRoute(entries: readonly ReferenceEntry[]) {
-  type Props = { params: Promise<{ entry: string }> };
-  async function getEntry({ params }: Props) {
-    const { entry } = await params;
-    return entries.find(({ slug }) => slug === entry) ?? notFound();
-  }
-
-  return {
-    generateStaticParams: () => entries.map(({ slug }) => ({ entry: slug })),
-    async generateMetadata(props: Props) {
-      const entry = await getEntry(props);
-      return buildPageMetadata({
-        title: `${entry.title} · Engine Reference`,
-        description: entry.description,
-        path: entry.path,
-        keywords: tagsForReference(entry.path).map(({ text }) => text).join(', ')
-      });
-    },
-    async Page(props: Props) {
-      return <ReferencePage entry={await getEntry(props)} />;
-    }
-  };
-}
 
 export const referenceGroups = {
   components: {
@@ -64,12 +38,13 @@ const referenceSections = {
   modules: [{ title: 'Modules', kind: 'modules', items: moduleReferences }]
 } as const;
 
-function referenceNavigation(group: Group) {
+function referenceNavigation(group: Group, currentPath?: string) {
   const { title, description } = referenceGroups[group];
   const href = `/${group}`;
   return {
     title,
     href,
+    currentPath,
     items: [
       { title: 'Overview', description, link: href },
       ...(group === 'components' ? [
@@ -121,7 +96,7 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
   const module = 'symbol' in entry ? moduleReferences.find(({ slug }) => slug === entry.module) : undefined;
 
   return (
-    <Sidebar title={entry.title} reference={referenceNavigation(group)} componentDocumentation={group === 'components'}>
+    <Sidebar title={entry.title} reference={referenceNavigation(group, entry.path)} componentDocumentation={group === 'components'}>
       <DocsIntro lead={entry.description} />
       {'symbol' in entry ? (
         <>

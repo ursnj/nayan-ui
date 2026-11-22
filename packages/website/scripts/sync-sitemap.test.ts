@@ -72,12 +72,12 @@ test("a new dynamic route cannot silently disappear from the sitemap", () => {
   expect(() => collectPublicPaths(root)).toThrow(/Add sitemap handling.*\/blog\/\[slug\]/);
 });
 
-test("reference URLs use section prefixes alongside existing component and game routes", () => {
+test("reference aliases are listed alongside existing component and game routes", () => {
   const root = fixture({
-    "components/[entry]/page.tsx": "export default function ComponentReference() {}",
-    "modules/[entry]/page.tsx": "export default function ModuleReference() {}",
+    "[entry]/page.tsx": "export default function Reference() {}",
     "react/alert/page.tsx": "export default function Alert() {}",
     "react-native/accordion/page.tsx": "export default function Accordion() {}",
+    "modules/games/page.tsx": "export default function GameRuntime() {}",
     "games/page.tsx": "export default function Games() {}",
   });
   const paths = collectPublicPaths(root);

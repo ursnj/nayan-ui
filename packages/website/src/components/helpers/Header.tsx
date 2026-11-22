@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { NImage, NPress, NText, NView } from "nayan-ui/components";
 import { AlignJustify, Github, MoonStar, Package, Sun, X } from "@/design/Icons";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { CONTAINER } from "@/design/system";
 import { REPO_URL } from "@/services/seo";
 import { useTheme } from "@/components/helpers/ThemeProvider";
@@ -44,8 +44,11 @@ const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
   );
 };
 
-const Header = () => {
+const Header = ({ moduleSlugs }: { moduleSlugs: readonly string[] }) => {
   const pathname = usePathname();
+  const { entry } = useParams<{ entry?: string }>();
+  // A rewritten reference and its original URL have the same route parameter.
+  const navPath = entry ? `/${moduleSlugs.includes(entry) ? "modules" : "components"}/${entry}` : pathname;
   const menu = useRef<HTMLDialogElement>(null);
   const closeMenu = () => menu.current?.close();
   const { theme, toggleTheme } = useTheme();
@@ -103,7 +106,7 @@ const Header = () => {
               </NPress>
             </NView>
             <NView tag="nav" aria-label="Mobile">
-              <NavLinks pathname={pathname} onNavigate={closeMenu} />
+              <NavLinks pathname={navPath} onNavigate={closeMenu} />
             </NView>
           </NView>
         </NView>
@@ -117,7 +120,7 @@ const Header = () => {
           </Link>
 
           <NView tag="nav" aria-label="Main" className="site-desktop-nav">
-            <NavLinks pathname={pathname} />
+            <NavLinks pathname={navPath} />
           </NView>
 
           <NView tag="div" className="site-header-actions">
