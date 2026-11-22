@@ -247,6 +247,8 @@ export function PresentationHost({
             onTouchEnd={sheet && swipeable ? endDrag : undefined}
             onTouchCancel={sheet && swipeable ? cancelDrag : undefined}
             accessibilityViewIsModal
+            accessibilityElementsHidden={!ready}
+            importantForAccessibility={ready ? 'auto' : 'no-hide-descendants'}
             pointerEvents={ready ? 'auto' : 'none'}
             style={{
               height,

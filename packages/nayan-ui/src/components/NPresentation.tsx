@@ -91,7 +91,7 @@ function Presentation({
   const bottomInset = sheet ? Math.max(16, theme?.presentationInsets?.bottom ?? 0) : 0;
   const dismissible = controlledOpen === undefined || typeof onOpenChange === 'function';
   const swipeable = sheet && isSwipeable && dismissible;
-  const chromeHeight = sheet ? (swipeable ? 33 : 17) + bottomInset : 0;
+  const chromeHeight = sheet ? (swipeable ? 33 : 17) + bottomInset : 2;
   const screenLimit = Math.max(1, Math.min(window.height * 0.9, window.height - (theme?.presentationInsets?.top ?? 0) - 16));
   const requested = snapPoints?.[0];
   const requestedHeight =
@@ -104,7 +104,7 @@ function Presentation({
     requestedHeight != null && Number.isFinite(requestedHeight) && requestedHeight > 0 ? Math.min(screenLimit, requestedHeight) : screenLimit;
   const height = sheet
     ? Math.min(sheetLimit, fitContent ? (contentHeight == null ? sheetLimit : contentHeight + chromeHeight) : sheetLimit)
-    : Math.min(window.height * 0.7, Math.max(120, contentHeight ?? 220));
+    : Math.min(window.height * 0.7, contentHeight === null ? 220 : contentHeight + chromeHeight);
 
   const dragAreaHeight = Math.min(height, title || description ? 112 : 32);
 
@@ -122,12 +122,13 @@ function Presentation({
               dismissible={dismissible}
               swipeable={swipeable}
               dragAreaHeight={dragAreaHeight}
-              ready={!sheet || !fitContent || contentHeight !== null}
+              ready={contentHeight !== null || (sheet && !fitContent)}
               border={palette.border}
               background={surfaceBackground}
               onClose={() => changeOpen(false)}
               backdrop={(!sheet || blurred) && Background ? <Background /> : undefined}>
               <NPage
+                safeArea={sheet}
                 showsVerticalScrollIndicator={showsVerticalScrollIndicator}
                 keyboard={!sheet}
                 background={sheet ? surfaceBackground : undefined}

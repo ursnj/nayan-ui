@@ -13,6 +13,7 @@ let measure: ((width: number, height: number) => void) | undefined;
 let modalHeight = 0;
 let pageIndicator: boolean | undefined;
 let pageBackground: string | undefined;
+let pageSafeArea: boolean | undefined;
 let modalProps: {
   height: number;
   ready?: boolean;
@@ -30,15 +31,18 @@ mock.module('../NPage', () => ({
     children,
     onContentSizeChange,
     showsVerticalScrollIndicator,
-    background
+    background,
+    safeArea
   }: {
     children?: ReactNode;
     onContentSizeChange?: (width: number, height: number) => void;
     showsVerticalScrollIndicator?: boolean;
     background?: string;
+    safeArea?: boolean;
   }) => {
     pageIndicator = showsVerticalScrollIndicator;
     pageBackground = background;
+    pageSafeArea = safeArea;
     measure = onContentSizeChange;
     return <Box>{children}</Box>;
   }
@@ -303,15 +307,27 @@ test('confirmations report the selected result and close through their controlle
   }
 });
 
-test('confirmation height follows Rust content measurements and stays within the screen', async () => {
+test('confirmations show the measured height on first open and remeasure when reopened', async () => {
   const root = createRoot(document.createElement('div'));
+  const confirmation = (isOpen: boolean) => <NConfirm title="Log out?" description="Are you sure?" isOpen={isOpen} onResult={() => {}} />;
   try {
-    await act(() => root.render(<NConfirm title="Log out?" description="Are you sure?" isOpen onResult={() => {}} />));
+    await act(() => root.render(confirmation(true)));
     expect(modalHeight).toBe(220);
+    expect(modalProps.ready).toBe(false);
+    expect(pageSafeArea).toBe(false);
     await act(() => measure?.(358, 184));
-    expect(modalHeight).toBe(184);
+    expect(modalHeight).toBe(186);
+    expect(modalProps.ready).toBe(true);
+    await act(() => measure?.(358, 112));
+    expect(modalHeight).toBe(114);
     await act(() => measure?.(358, 1200));
     expect(modalHeight).toBeCloseTo(844 * 0.7);
+    await act(() => root.render(confirmation(false)));
+    await act(() => root.render(confirmation(true)));
+    expect(modalProps.ready).toBe(false);
+    await act(() => measure?.(358, 112));
+    expect(modalProps.ready).toBe(true);
+    expect(modalHeight).toBe(114);
   } finally {
     await act(() => root.unmount());
   }

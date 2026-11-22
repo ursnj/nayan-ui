@@ -186,6 +186,7 @@ function BrowserPresentation({
       <div
         ref={panel}
         data-nayan-presentation={sheet ? 'sheet' : 'dialog'}
+        inert={!ready}
         onPointerDownCapture={(event) => {
           if (!event.isPrimary) {
             if (drag.current?.active) settle(false);

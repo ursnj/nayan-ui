@@ -16,7 +16,7 @@ import { exampleModules } from '@/components/ui/previews/exampleModules';
 import type { NamedComponentPreview } from '@/components/ui/previews/types';
 
 const island = 'rounded-xl border border-border bg-surface shadow-sm';
-const paneHeight = 'h-[28rem]';
+const paneHeight = 'h-[30rem]';
 const paneTitle = 'border-b border-border p-3 text-xs font-semibold text-muted';
 const toolbarButton = 'inline-flex min-h-8 flex-row items-center justify-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold disabled:opacity-50';
 const secondaryButton = `${toolbarButton} text-muted hover:text-foreground`;
