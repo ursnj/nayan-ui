@@ -437,8 +437,8 @@ export default function NikeLogoScene({
     );
 
   return (
-    <NView tag="div" ref={backdrop} style={{ width: "100%", height: "100%", backgroundColor: "#11192c" }}>
-      <NView tag="div" ref={surface} style={{ width: "100%", height: "100%" }}>
+    <NView tag="div" ref={backdrop} className="w-full h-full bg-[#11192c]">
+      <NView tag="div" ref={surface} className="w-full h-full">
         <GameView
           source={world}
           paused={!rendering}

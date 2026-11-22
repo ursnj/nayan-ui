@@ -100,7 +100,7 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
       <DocsIntro lead={entry.description} />
       {'symbol' in entry ? (
         <>
-          <NText tag="p" className="reference-api">
+          <NText tag="p" className="reference-api w-fit max-w-full [margin-bottom:0.75rem] [padding:0.75rem] [border-radius:0.65rem] [background:var(--surface-secondary)] text-muted [font-size:0.83rem]">
             Engine API <NText tag="code" className="ml-1 font-semibold text-accent">{entry.symbol}</NText>
             <NText tag="span" className="ml-2 break-all font-mono text-xs">{entry.importPath}</NText>
           </NText>

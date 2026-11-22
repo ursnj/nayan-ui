@@ -57,7 +57,7 @@ export default function GamePopover({ title, icon, onOpenChange, children }: Gam
         popover="auto"
         role="dialog"
         aria-labelledby={`${id}-title`}
-        className="nyn-game-popover rounded-2xl border border-default bg-surface/90 p-5 text-foreground shadow-2xl shadow-black/20 backdrop-blur-xl"
+        className="nyn-game-popover fixed [inset:auto] m-0 [width:min(360px,_calc(100vw_-_32px))] [max-height:calc(100dvh_-_96px)] overflow-hidden [&:popover-open]:flex [&:popover-open]:flex-col rounded-2xl border border-default bg-surface/90 p-5 text-foreground shadow-2xl shadow-black/20 backdrop-blur-xl"
         style={anchor}
         onBeforeToggle={(event) => {
           if (event.newState !== "open") return;

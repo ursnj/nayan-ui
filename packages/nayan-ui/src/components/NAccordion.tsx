@@ -59,7 +59,7 @@ export function NAccordion<T extends AccordionListItem>({
     currentOpenItems.current = openItems;
   }, [openItems]);
   const surface = variant === 'surface';
-  const container = surface ? 'gap-2' : 'gap-0 overflow-hidden rounded-xl border border-border bg-surface';
+  const container = surface ? 'gap-2' : 'gap-0 overflow-hidden rounded-lg border border-border bg-surface';
 
   function toggle(key: string) {
     const current = currentOpenItems.current;
@@ -75,11 +75,11 @@ export function NAccordion<T extends AccordionListItem>({
       {entries.map(({ item: { title, message, disabled }, key }, index) => {
         const panelId = `${id}-panel-${index}`;
         const isOpen = openItems.includes(key);
-        const panel = surface ? 'overflow-hidden rounded-xl border border-border bg-surface-secondary' : index > 0 ? 'border-t border-border' : '';
+        const panel = surface ? 'overflow-hidden rounded-lg border border-border bg-surface-secondary' : index > 0 ? 'border-t border-border' : '';
         return (
           <NView key={key} className={`gap-0 ${panel} ${itemClassName}`}>
             <NPress
-              className={`flex w-full min-h-12 flex-row items-center justify-between gap-3 px-3.5 py-2.5 hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-50 ${triggerClassName}`}
+              className={`flex w-full min-h-[52px] flex-row items-center justify-between gap-3 px-3.5 py-2.5 hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-50 ${triggerClassName}`}
               disabled={disabled}
               accessibilityRole="button"
               accessibilityState={{ expanded: isOpen, disabled }}
@@ -87,7 +87,7 @@ export function NAccordion<T extends AccordionListItem>({
               onPress={() => toggle(key)}
             >
               {typeof title === 'string' || typeof title === 'number' ? (
-                <NText className="min-w-0 shrink text-sm font-semibold text-foreground">{title}</NText>
+                <NText className="min-w-0 shrink text-sm font-medium text-foreground">{title}</NText>
               ) : (
                 title
               )}

@@ -1,5 +1,6 @@
 'use client';
 
+import { PREVIEW_STACK, PREVIEW_BUTTON } from '@/design/system';
 import { useEffect, useRef, useState, type ComponentType } from 'react';
 import {
   ComponentsRoot,
@@ -36,16 +37,16 @@ import type { ComponentPreview } from './types';
 function Blur({ sampleTarget = false }: { sampleTarget?: boolean }) {
   const target = useRef<NBlurTargetRef>(null);
   const [enabled, setEnabled] = useState(true);
-  const background = <NText style={{ color: '#fde68a', fontSize: 26, fontWeight: '700' }}>Colour and texture</NText>;
+  const background = <NText className="[color:#fde68a] text-[26px] font-bold">Colour and texture</NText>;
   return (
-    <NView tag="div" className="component-host-demo">
-      <NView tag="div" className="component-blur-scene">
+    <NView tag="div" className={PREVIEW_STACK}>
+      <NView tag="div" className="component-blur-scene relative grid w-full [min-height:9rem] [place-items:center] overflow-hidden [border-radius:0.75rem] [background:repeating-linear-gradient(135deg,_#432079_0_12px,_#7649c2_12px_24px)]">
         {sampleTarget ? <NBlurTarget ref={target}>{background}</NBlurTarget> : background}
-        <NBlur blurTarget={sampleTarget ? target : undefined} intensity={56} enabled={enabled} tint="dark" className="component-blur-panel">
-          <NText style={{ color: 'white' }}>Sharp foreground</NText>
+        <NBlur blurTarget={sampleTarget ? target : undefined} intensity={56} enabled={enabled} tint="dark" className="component-blur-panel absolute [inset:25%_12%] grid [place-items:center] [border:1px_solid_#ffffff66] [border-radius:0.75rem] [background:#24104455]">
+          <NText className="text-white">Sharp foreground</NText>
         </NBlur>
       </NView>
-      <NButton className="component-host-button" onPress={() => setEnabled(!enabled)}>
+      <NButton className={PREVIEW_BUTTON} onPress={() => setEnabled(!enabled)}>
         {enabled ? 'Turn blur off' : 'Turn blur on'}
       </NButton>
     </NView>
@@ -81,9 +82,9 @@ function PageDemo() {
 function ConfettiDemo() {
   const [run, setRun] = useState(0);
   return (
-    <NView style={{ height: 200 }} className="items-start gap-3">
+    <NView className="items-start gap-3 h-[200px]">
       <NButton onPress={() => setRun((value) => value + 1)}>Celebrate</NButton>
-      <NConfetti run={run} count={24} className="w-full" style={{ height: 140 }} />
+      <NConfetti run={run} count={24} className="w-full h-[140px]" />
     </NView>
   );
 }
@@ -91,7 +92,7 @@ function ConfettiDemo() {
 function DrawerButton({ dismiss = false }: { dismiss?: boolean }) {
   const { open, close } = useNDrawer();
   return (
-    <NButton className="component-host-button" onPress={dismiss ? close : open}>
+    <NButton className={PREVIEW_BUTTON} onPress={dismiss ? close : open}>
       {dismiss ? 'Close drawer' : 'Open drawer'}
     </NButton>
   );
@@ -104,7 +105,7 @@ function DrawerDemo() {
       accessibilityLabel="Example navigation drawer"
       drawerStyle={{ backgroundColor: 'var(--overlay)', borderRight: '1px solid var(--border)' }}
       drawerContent={
-        <NView tag="div" className="component-host-demo">
+        <NView tag="div" className={PREVIEW_STACK}>
           <NText tag="p" className="text-sm font-semibold">
             Navigation
           </NText>
@@ -112,7 +113,7 @@ function DrawerDemo() {
         </NView>
       }
     >
-      <NView tag="div" className="component-host-demo">
+      <NView tag="div" className={PREVIEW_STACK}>
         <DrawerButton />
       </NView>
     </NDrawer>
@@ -146,8 +147,8 @@ function KeyboardDemo() {
 function PlatformDemo() {
   const [count, setCount] = useState(0);
   return (
-    <NPlatformView style={{ height: 62 }}>
-      <NButton className="component-host-button" onPress={() => setCount((value) => value + 1)}>
+    <NPlatformView className="h-[62px]">
+      <NButton className={PREVIEW_BUTTON} onPress={() => setCount((value) => value + 1)}>
         Platform presses: {count}
       </NButton>
     </NPlatformView>
@@ -194,7 +195,7 @@ function SafeAreaInsets() {
 function SafeAreaDemo() {
   return (
     <NSafeAreaProvider>
-      <NSafeArea mode="padding" className="component-host-demo">
+      <NSafeArea mode="padding" className={PREVIEW_STACK}>
         <NText tag="p">Content inside the safe area</NText>
         <SafeAreaInsets />
       </NSafeArea>
@@ -205,7 +206,7 @@ function SafeAreaDemo() {
 function SafeAreaMeasurements() {
   const { width, height } = useNSafeAreaFrame();
   return (
-    <NView tag="div" className="component-host-demo">
+    <NView tag="div" className={PREVIEW_STACK}>
       <NText tag="p">
         Frame {Math.round(width)} × {Math.round(height)}
       </NText>
@@ -226,7 +227,7 @@ function SafeAreaListenerDemo() {
   const [frame, setFrame] = useState('Measuring the preview…');
   return (
     <NSafeAreaListener onChange={({ frame }) => setFrame(`Observed ${Math.round(frame.width)} × ${Math.round(frame.height)}`)}>
-      <NView tag="div" className="component-host-demo">
+      <NView tag="div" className={PREVIEW_STACK}>
         <NText tag="p" aria-live="polite">
           {frame}
         </NText>
@@ -272,8 +273,8 @@ function ThemeDemo() {
 
 function ToastHostDemo() {
   return (
-    <NView tag="div" className="component-host-demo">
-      <NButton className="component-host-button" onPress={() => NToast.success('Changes saved')}>
+    <NView tag="div" className={PREVIEW_STACK}>
+      <NButton className={PREVIEW_BUTTON} onPress={() => NToast.success('Changes saved')}>
         Show toast
       </NButton>
       <NToastHost top={76} />

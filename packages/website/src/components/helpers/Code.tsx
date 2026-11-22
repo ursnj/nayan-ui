@@ -17,7 +17,7 @@ interface Props {
 }
 
 const typedLanguages = new Set(['js', 'jsx', 'ts', 'tsx', 'javascript', 'typescript']);
-const tokenStyles = ['comment', 'string', 'keyword', 'number', 'name'];
+const tokenStyles = ['text-(--code-muted)', 'text-(--code-string)', 'text-(--code-keyword)', 'text-(--code-number)', 'text-(--code-name)'];
 const tokens =
   /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`)|(\b(?:as|async|await|const|export|false|from|function|if|import|let|new|null|return|true|type|undefined)\b)|(\b\d+(?:\.\d+)?\b)|(\b[A-Z][A-Za-z0-9_]*\b)/g;
 
@@ -32,7 +32,7 @@ function colorCode(code: string, language: string) {
     if (start > cursor) parts.push(code.slice(cursor, start));
     const kind = tokenStyles[match.slice(1).findIndex(Boolean)];
     parts.push(
-      <NText tag="span" key={start} className={`code-token-${kind}`}>
+      <NText tag="span" key={start} className={kind}>
         {match[0]}
       </NText>
     );
@@ -71,7 +71,7 @@ export default function Code({ code, language = 'tsx', filename, embedded = fals
       tag="div"
       data-code-tone={tone}
       data-code-embedded={embedded || undefined}
-      className={`site-code-block w-full min-w-0 overflow-hidden bg-[var(--code-bg)] [color:var(--code-fg)] ${embedded ? '' : 'rounded-[0.95rem] border border-[var(--code-line)]'}`}
+      className={`site-code-block [--code-bg:#fff] [--code-fg:#2b1a43] [--code-header:#f2eafb] [--code-muted:#615371] [--code-line:#e1d5ee] [--code-keyword:#6b21a8] [--code-string:#166353] [--code-name:#24449c] [--code-number:#9a4418] dark:[--code-bg:#211634] dark:[--code-fg:#f1e9ff] dark:[--code-header:#2b1d43] dark:[--code-muted:#c6b5d9] dark:[--code-line:#493760] dark:[--code-keyword:#eca9ff] dark:[--code-string:#cde98d] dark:[--code-name:#b9bcff] dark:[--code-number:#ffba8a] [&[data-code-tone=ink]]:[--code-bg:#211634] [&[data-code-tone=ink]]:[--code-fg:#f1e9ff] [&[data-code-tone=ink]]:[--code-header:#2b1d43] [&[data-code-tone=ink]]:[--code-muted:#c6b5d9] [&[data-code-tone=ink]]:[--code-line:#493760] [&[data-code-tone=ink]]:[--code-keyword:#eca9ff] [&[data-code-tone=ink]]:[--code-string:#cde98d] [&[data-code-tone=ink]]:[--code-name:#b9bcff] [&[data-code-tone=ink]]:[--code-number:#ffba8a] w-full min-w-0 overflow-hidden bg-[var(--code-bg)] [color:var(--code-fg)] ${embedded ? '' : 'rounded-[0.95rem] border border-[var(--code-line)]'}`}
     >
       {showHeader && (
         <NView

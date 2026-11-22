@@ -23,6 +23,12 @@ test('toColor multiplies alpha and returns a fresh tuple each time', () => {
   expect(toColor('#123456')[0]).toBeCloseTo(0x12 / 255);
 });
 
+test('toColor reads theme HSL values and preserves their alpha', () => {
+  expect(bytes(toColor('hsl(266 39% 9%)'))).toEqual([22, 14, 32, 255]);
+  expect(bytes(toColor('hsl(-120deg 100% 50% / 50%)'))).toEqual([0, 0, 255, 128]);
+  expect(toColor('hsla(0.5turn, 100%, 50%, 0.25)')).toEqual([0, 1, 1, 0.25]);
+});
+
 test('invalid colors throw a helpful error', () => {
   expect(() => toColor('#12345')).toThrow('is not a color');
   expect(() => toColor('blu')).toThrow("'#RRGGBB'");

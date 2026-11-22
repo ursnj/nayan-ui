@@ -38,7 +38,7 @@ export default function GamePanel({ title, label, open, onClose, children }: Gam
   return (
     <NView tag="dialog"
       ref={dialog}
-      className="nyn-game-panel border-default bg-surface/95 text-foreground backdrop-blur-xl"
+      className="nyn-game-panel fixed [inset:0_0_0_auto] m-0 [width:min(100%,_460px)] h-dvh max-w-none [max-height:none] p-0 overflow-hidden [border-width:0_0_0_1px] [border-style:solid] [box-shadow:-16px_0_56px_rgb(0_0_0_/_0.2)] open:flex open:flex-col open:animate-game-panel backdrop:[background:rgb(15_23_42_/_0.45)] backdrop:[-webkit-backdrop-filter:blur(2px)] backdrop:[backdrop-filter:blur(2px)] motion-reduce:open:[animation:none] border-default bg-surface/95 text-foreground backdrop-blur-xl"
       aria-label={`${title} ${label}`}
       onKeyDown={(event) => {
         if (event.key !== "Tab") return;
@@ -71,7 +71,7 @@ export default function GamePanel({ title, label, open, onClose, children }: Gam
           onClose();
       }}
     >
-      <NView tag="header" className="nyn-game-panel-header flex shrink-0 items-start justify-between gap-4 border-b border-default px-5 pb-4 sm:px-6">
+      <NView tag="header" className="nyn-game-panel-header [padding-top:max(1.25rem,_env(safe-area-inset-top))] flex shrink-0 items-start justify-between gap-4 border-b border-default px-5 pb-4 sm:px-6">
         <NView tag="div" className="min-w-0">
           <NText tag="p" className={EYEBROW}>{label}</NText>
           <NText tag="h2" className="mt-1.5 truncate text-xl font-bold tracking-tight text-foreground">

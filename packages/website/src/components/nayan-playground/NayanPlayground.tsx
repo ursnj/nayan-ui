@@ -221,7 +221,7 @@ export default function NayanPlayground() {
     "flex h-8 shrink-0 items-center gap-2 border-b border-default px-3 text-xs font-medium text-muted";
 
   return (
-    <NView tag="div" className="engine-playground flex flex-col gap-2 bg-background p-2">
+    <NView tag="div" className="engine-playground [height:calc(100dvh_-_var(--site-header-height))] flex flex-col gap-2 bg-background p-2">
       <NView tag="div" className={`${island} flex flex-wrap items-center gap-2 px-2 py-1.5`}>
         <NText tag="h1" className="mx-1 flex h-8 items-center gap-2 text-sm font-semibold">
           <NText tag="span"

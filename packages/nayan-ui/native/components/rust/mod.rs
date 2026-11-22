@@ -968,22 +968,34 @@ impl ComponentDocument {
     }
 
     fn semantic(&mut self, ui: &egui::Ui, n: &Node, response: &Response, value: Value) {
-        self.focus_outline(ui.painter(), response, response.rect, ui.visuals().widgets.active.corner_radius);
+        let stroke_kind = if matches!(n.kind.as_str(), "NInput" | "NTextarea" | "NSearchField" | "NInputOtp") {
+            egui::StrokeKind::Inside
+        } else {
+            egui::StrokeKind::Outside
+        };
+        self.focus_outline(
+            ui.painter(),
+            response,
+            response.rect,
+            ui.visuals().widgets.active.corner_radius,
+            stroke_kind,
+        );
         self.record_semantic(n, response, value);
     }
 
     // Use the painted box for the keyboard indicator, independently of the hit target.
-    fn focus_outline(&self, painter: &egui::Painter, response: &Response, bounds: Rect, corners: egui::CornerRadius) {
+    fn focus_outline(&self, painter: &egui::Painter, response: &Response, bounds: Rect, corners: egui::CornerRadius, stroke_kind: egui::StrokeKind) {
         if !response.enabled() || !response.has_focus() || !bounds.is_positive() {
             return;
         }
         let clip = self.interaction_clip.unwrap_or(painter.clip_rect());
         let radius = corners.at_most((bounds.width().min(bounds.height()) * 0.5) as u8);
+        let gap = if stroke_kind == egui::StrokeKind::Outside { 2 } else { 0 };
         painter.with_clip_rect(clip).with_layer_id(response.layer_id).rect_stroke(
-            bounds.expand(2.),
-            radius + 2,
+            bounds.expand(f32::from(gap)),
+            radius + gap,
             egui::Stroke::new(2., self.palette.get("focus")),
-            egui::StrokeKind::Outside,
+            stroke_kind,
         );
     }
 
@@ -1512,7 +1524,7 @@ impl ComponentDocument {
                         } else if response.clicked() {
                             self.click(&n.id);
                         }
-                        self.focus_outline(ui.painter(), &response, bounds, resolved.corner_radius());
+                        self.focus_outline(ui.painter(), &response, bounds, resolved.corner_radius(), egui::StrokeKind::Outside);
                         self.record_semantic(n, &response, Value::Null);
                     }
 
@@ -1771,7 +1783,7 @@ impl ComponentDocument {
                         caption = caption.color(color);
                     }
                 }
-                let height = resolved.height.unwrap_or(if self.native { 48. } else { 44. }).max(44.);
+                let height = resolved.height.unwrap_or(if self.native { 48. } else { 36. }).max(if self.native { 44. } else { 32. });
                 let font = ui.style().override_font_id.clone().unwrap_or(egui::FontId::proportional(16.));
                 let measured = ui.painter().layout_no_wrap(label, font, ui.visuals().text_color()).size().x + ui.spacing().button_padding.x * 2.;
                 let width = resolved.width.unwrap_or(measured.max(44.)).min(ui.available_width());
@@ -1799,7 +1811,21 @@ impl ComponentDocument {
                     )
                     .as_bool()
                     .unwrap_or(false);
-                let response = if n.kind == "NToggleButton" {
+                let response = if n.kind == "NSwitch" {
+                    let font = ui.style().override_font_id.clone().unwrap_or(egui::FontId::proportional(14.));
+                    let caption = ui.painter().layout(label, font, ui.visuals().text_color(), (ui.available_width() - 44.).max(0.));
+                    let (rect, response) = ui.allocate_exact_size(Vec2::new(44. + caption.size().x, caption.size().y.max(32.)), egui::Sense::click());
+                    if response.clicked() {
+                        value = !value;
+                    }
+                    let track = Rect::from_center_size(Pos2::new(rect.left() + 18., rect.center().y), Vec2::new(36., 20.));
+                    let color = self.palette.get(if value { "accent" } else { "default" });
+                    ui.painter().rect_filled(track, 8., if response.enabled() { color } else { color.gamma_multiply(0.5) });
+                    ui.painter().circle_filled(Pos2::new(if value { track.right() - 10. } else { track.left() + 10. }, track.center().y), 8., Color32::WHITE);
+                    let position = Pos2::new(track.right() + 8., rect.center().y - caption.size().y * 0.5);
+                    ui.painter().galley(position, caption, ui.visuals().text_color());
+                    response
+                } else if n.kind == "NToggleButton" {
                     let r = ui.selectable_label(value, label);
                     if r.clicked() {
                         value = !value;
@@ -1808,7 +1834,7 @@ impl ComponentDocument {
                 } else {
                     ui.checkbox(&mut value, label)
                 };
-                if response.changed() || (n.kind == "NToggleButton" && response.clicked()) {
+                if response.changed() || (matches!(n.kind.as_str(), "NSwitch" | "NToggleButton") && response.clicked()) {
                     self.values.insert(n.id.clone(), json!(value));
                     self.change(&n.id, json!(value));
                 }
@@ -1828,11 +1854,18 @@ impl ComponentDocument {
                 let mut platform_value = String::new();
                 let buffer = if self.platform_inputs { &mut platform_value } else { &mut value };
                 let multiline = n.kind == "NTextarea" || p["multiline"] == true;
+                let otp = n.kind == "NInputOtp";
                 let mut edit = if multiline {
                     egui::TextEdit::multiline(buffer)
                 } else {
                     egui::TextEdit::singleline(buffer)
                 };
+                let visuals = ui.visuals();
+                let field_frame = egui::Frame::new()
+                    .fill(visuals.text_edit_bg_color())
+                    .corner_radius(resolved.corner_radius())
+                    .inner_margin(resolved.padding.margin())
+                    .apply_stroke_and_expansion_without_layout_shift(visuals.widgets.inactive.bg_stroke, 0.);
                 edit = edit
                     .id(egui::Id::unique(&n.id))
                     .hint_text(if self.platform_inputs {
@@ -1843,22 +1876,34 @@ impl ComponentDocument {
                     .password(p["type"] == "password" || p["secureTextEntry"] == true)
                     .interactive(!flag(p, &["isReadOnly", "readOnly"]))
                     .align(if multiline { egui::Align2::LEFT_TOP } else { egui::Align2::LEFT_CENTER })
-                    .margin(resolved.padding.margin());
+                    .frame(if otp { egui::Frame::NONE } else { field_frame });
+                if otp {
+                    edit = edit.text_color(Color32::TRANSPARENT);
+                }
                 if let Some(limit) = p["maxLength"].as_u64() {
                     edit = edit.char_limit(limit as usize);
                 }
+                let width = if otp {
+                    let slots = otp_slots(n);
+                    let separators = otp_separators(n, slots).len() as f32;
+                    (slots as f32 * 46. - 6. + separators * 12.).min(ui.available_width())
+                } else {
+                    ui.available_width()
+                };
                 let size = Vec2::new(
-                    resolved.width.unwrap_or(ui.available_width()),
+                    resolved.width.unwrap_or(width).max(0.),
                     resolved
                         .height
                         .unwrap_or(if multiline {
-                            if self.native { 128. } else { 100. }
+                            if self.native { 128. } else { 58. }
                         } else if self.native {
                             48.
+                        } else if otp {
+                            40.
                         } else {
-                            44.
+                            38.
                         })
-                        .max(44.),
+                        .max(if self.native { 44. } else { 32. }),
                 );
                 let original_cursor = ui.visuals().text_cursor.stroke;
                 if self.platform_inputs {
@@ -1874,6 +1919,9 @@ impl ComponentDocument {
                 if response.changed() && !self.platform_inputs {
                     self.values.insert(n.id.clone(), json!(value));
                     self.change(&n.id, json!(value));
+                }
+                if otp {
+                    self.paint_otp(ui, n, &response, &value);
                 }
                 self.semantic(ui, n, &response, json!(value));
                 self.input_editor(n, &resolved, resolved.padding);
@@ -1898,20 +1946,27 @@ impl ComponentDocument {
                     ui.add(egui::Slider::new(&mut value, min..=max).step_by(step).show_value(false))
                 } else {
                     let size = ui.style().override_font_id.as_ref().map_or(16., |font| font.size);
-                    let characters = (ui.available_width() / (size * 0.6)).max(6.) as usize;
-                    ui.add(
-                        egui::DragValue::new(&mut value)
-                            .range(min..=max)
-                            .speed(step)
-                            .custom_formatter(move |value, _| {
-                                let formatted = value.to_string();
-                                if formatted.len() > characters {
-                                    format!("{value:.2e}")
-                                } else {
-                                    formatted
-                                }
-                            }),
-                    )
+                    let characters = ((ui.available_width() - 72.) / (size * 0.6)).max(6.) as usize;
+                    ui.horizontal(|ui| {
+                        let previous = value;
+                        let decrease = ui.add_enabled(value > min, egui::Button::new("−").min_size(Vec2::new(32., 32.)));
+                        if decrease.clicked() {
+                            value = (value - step).max(min);
+                        }
+                        let edit = ui.add(egui::DragValue::new(&mut value).range(min..=max).speed(step).custom_formatter(move |value, _| {
+                            let formatted = value.to_string();
+                            if formatted.len() > characters { format!("{value:.2e}") } else { formatted }
+                        }));
+                        let increase = ui.add_enabled(value < max, egui::Button::new("+").min_size(Vec2::new(32., 32.)));
+                        if increase.clicked() {
+                            value = (value + step).min(max);
+                        }
+                        let mut response = edit.union(decrease).union(increase);
+                        if value != previous {
+                            response.mark_changed();
+                        }
+                        response
+                    }).inner
                 };
                 if n.kind == "NSlider" && p["showOutput"] != false {
                     ui.label(value.to_string());
@@ -1932,9 +1987,9 @@ impl ComponentDocument {
                     .as_str()
                     .and_then(|name| self.palette.color(name).or_else(|| theme::parse_color(name)));
                 let height = match p["size"].as_str() {
-                    Some("sm") => 8.,
+                    Some("sm") => 4.,
                     Some("lg") => 16.,
-                    _ => 12.,
+                    _ => 8.,
                 };
                 let response = ui.add(
                     egui::ProgressBar::new(value as f32 / 100.)
@@ -1970,13 +2025,14 @@ impl ComponentDocument {
                 response.on_hover_text(string(&p["message"]));
             }
             "NScrollShadow" => {
-                if p["orientation"] == "horizontal" {
+                let horizontal = p["orientation"] == "horizontal";
+                if horizontal {
                     ui.style_mut().always_scroll_the_only_direction = false;
                 }
-                let area = if p["orientation"] == "horizontal" {
+                let area = if horizontal {
                     egui::ScrollArea::horizontal()
                 } else {
-                    egui::ScrollArea::both()
+                    egui::ScrollArea::vertical()
                 };
                 let height = resolved
                     .height
@@ -1995,8 +2051,18 @@ impl ComponentDocument {
                 if output.content_size.x > output.inner_rect.width() {
                     self.register_scroll_target(ui, output.id, output.inner_rect, true);
                 }
-                if p["orientation"] != "horizontal" && output.content_size.y > output.inner_rect.height() {
+                if !horizontal && output.content_size.y > output.inner_rect.height() {
                     self.register_scroll_target(ui, output.id, output.inner_rect, false);
+                }
+                let rect = output.inner_rect;
+                let offset = output.state.clamped_offset();
+                let remaining = output.content_size - rect.size() - offset;
+                let (leading, trailing) = if horizontal { (offset.x, remaining.x) } else { (offset.y, remaining.y) };
+                let color = resolved.background.unwrap_or_else(|| self.palette.get("background"));
+                for (at_start, distance) in [(true, leading), (false, trailing)] {
+                    if distance > 0.5 {
+                        ui.painter().add(scroll_edge(rect, horizontal, at_start, distance.min(12.), color));
+                    }
                 }
             }
             "NRadio" | "NRadioGroup" | "NButtonGroup" | "NTabs" => self.selection(ui, n),
@@ -2035,9 +2101,39 @@ impl ComponentDocument {
                     Vec2::new(resolved.width.unwrap_or(ui.available_width()), resolved.height.unwrap_or(24.)),
                     egui::Sense::hover(),
                 );
-                ui.painter().rect_filled(rect, 4., Color32::from_gray(110));
+                ui.painter().rect_filled(rect, resolved.corner_radius(), resolved.background.unwrap_or_else(|| self.palette.get("default")));
             }
             _ => unreachable!("validated UI kind"),
+        }
+    }
+
+    fn paint_otp(&self, ui: &egui::Ui, node: &Node, response: &Response, value: &str) {
+        let slots = otp_slots(node);
+        let separators = otp_separators(node, slots);
+        let gap = 6_f32.min(response.rect.width() / (slots as f32 * 3.));
+        let separator_width = gap * 2.;
+        let width = ((response.rect.width() + gap - separator_width * separators.len() as f32) / slots as f32 - gap).max(0.);
+        let secret = flag(&node.props, &["secureTextEntry"]) || node.props["type"] == "password";
+        let active = value.chars().count().min(slots - 1);
+        let appearance = if response.enabled() { 1. } else { 0.55 };
+        let mut characters = value.chars();
+        let font = ui.style().override_font_id.clone().unwrap_or(egui::FontId::proportional(16.));
+        let mut pos = response.rect.min;
+        for index in 0..slots {
+            let rect = Rect::from_min_size(pos, Vec2::new(width, response.rect.height()));
+            ui.painter().rect_filled(rect, 8., self.palette.get("field-background").gamma_multiply(appearance));
+            let border = self.palette.get(if response.has_focus() && index == active { "focus" } else { "border" });
+            ui.painter().rect_stroke(rect, 8., egui::Stroke::new(1., border.gamma_multiply(appearance)), egui::StrokeKind::Inside);
+            if let Some(character) = characters.next() {
+                ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, if secret { '•' } else { character }, font.clone(), ui.visuals().text_color());
+            }
+            pos.x += width + gap;
+            if separators.contains(&index) {
+                let center = Pos2::new(rect.right() + (gap + separator_width) * 0.5, rect.center().y);
+                let half = Vec2::new(separator_width * 0.25, 0.);
+                ui.painter().line_segment([center - half, center + half], egui::Stroke::new(1.5, self.palette.get("muted")));
+                pos.x += separator_width;
+            }
         }
     }
 
@@ -2052,13 +2148,16 @@ impl ComponentDocument {
             for (index, item) in items.iter().enumerate() {
                 let value = item.get("value").cloned().unwrap_or_else(|| item.clone());
                 let label = item["label"].as_str().map(str::to_owned).unwrap_or_else(|| string(item));
-                let response = ui.add_enabled(
-                    !flag(item, &["disabled", "isDisabled"]),
-                    egui::Button::new(&label).wrap().selected(selected == value || selected == *item),
-                );
+                let enabled = !flag(item, &["disabled", "isDisabled"]);
+                let checked = selected == value || selected == *item;
+                let response = if matches!(n.kind.as_str(), "NRadio" | "NRadioGroup") {
+                    ui.add_enabled(enabled, egui::RadioButton::new(checked, &label))
+                } else {
+                    ui.add_enabled(enabled, egui::Button::new(&label).wrap().selected(checked))
+                };
                 let mut entry = n.clone();
                 entry.id = format!("{}:option:{}", n.id, index);
-                entry.props = json!({"label":label});
+                entry.props = json!({"label":label,"_selected":checked});
                 self.semantic(ui, &entry, &response, value.clone());
                 if response.clicked() {
                     let result = value;
@@ -2067,7 +2166,7 @@ impl ComponentDocument {
                 }
             }
         };
-        if matches!(n.kind.as_str(), "NTabs" | "NButtonGroup") {
+        if matches!(n.kind.as_str(), "NTabs" | "NButtonGroup") || p["orientation"] == "horizontal" {
             ui.horizontal_wrapped(&mut render);
         } else {
             render(ui);
@@ -2080,6 +2179,38 @@ impl ComponentDocument {
             }
         }
     }
+}
+
+fn otp_slots(node: &Node) -> usize {
+    node.props["maxLength"].as_u64().unwrap_or(6).clamp(1, 32) as usize
+}
+
+fn otp_separators(node: &Node, slots: usize) -> HashSet<usize> {
+    node.props["separatorIndices"].as_array().into_iter().flatten()
+        .filter_map(Value::as_u64)
+        .filter(|index| *index < slots as u64 - 1)
+        .map(|index| index as usize)
+        .collect()
+}
+
+fn scroll_edge(rect: Rect, horizontal: bool, at_start: bool, depth: f32, color: Color32) -> egui::Shape {
+    let axis = if horizontal { Vec2::X } else { Vec2::Y };
+    let offset = axis * depth.min(if horizontal { rect.width() } else { rect.height() });
+    let (start, end) = match (horizontal, at_start) {
+        (true, true) => (rect.left_top(), rect.left_bottom()),
+        (true, false) => (rect.right_top(), rect.right_bottom()),
+        (false, true) => (rect.left_top(), rect.right_top()),
+        (false, false) => (rect.left_bottom(), rect.right_bottom()),
+    };
+    let inward = if at_start { offset } else { -offset };
+    let mut mesh = egui::Mesh::default();
+    mesh.colored_vertex(start, color);
+    mesh.colored_vertex(end, color);
+    mesh.colored_vertex(end + inward, Color32::TRANSPARENT);
+    mesh.colored_vertex(start + inward, Color32::TRANSPARENT);
+    mesh.add_triangle(0, 1, 2);
+    mesh.add_triangle(0, 2, 3);
+    egui::Shape::mesh(mesh)
 }
 
 #[cfg(test)]

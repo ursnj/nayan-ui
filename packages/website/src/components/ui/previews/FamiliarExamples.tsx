@@ -1,5 +1,6 @@
 'use client';
 
+import { PREVIEW_STACK } from '@/design/system';
 import { useState } from 'react';
 import {
   NAlert,
@@ -10,7 +11,9 @@ import {
   NChip,
   NDivider,
   NEmptyState,
+  NIcon,
   NInput,
+  NInputOtp,
   NProgress,
   NRequired,
   NSkeleton,
@@ -19,21 +22,41 @@ import {
   NText,
   NView
 } from 'nayan-ui/components';
-import { SearchIcon } from 'nayan-ui/icons/components/search';
 import { componentSource } from '@/services/nayan-ui/component-examples';
 import { AccordionRows, accordionSource } from './AccordionExamples';
-import { RadioOption, RadioOptions } from './RadioExamples';
-import SwitchRows from './SwitchRows';
+import { RadioOption, RadioOptions, radioGroupSource, radioSource } from './RadioExamples';
+import SwitchRows, { switchSource } from './SwitchRows';
 import type { ComponentPreview } from './types';
 
-const buttonStyles = 'engine-preview-action';
-const outlineButton = 'engine-preview-action engine-preview-action-outline';
+const buttonBase = 'min-h-9 rounded-lg border px-4 text-center text-sm font-medium whitespace-nowrap disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent';
+const buttonStyles = `${buttonBase} border-transparent bg-accent text-accent-foreground hover:bg-[color-mix(in_srgb,var(--accent)_86%,var(--surface))]`;
+const outlineButton = `${buttonBase} border-border bg-transparent text-foreground hover:bg-surface-secondary`;
 const row = 'flex flex-row flex-wrap items-center gap-2';
+const switches = [{ label: 'Airplane Mode' }, { label: 'Wi-Fi', enabled: true }, { label: 'Bluetooth (disabled)', disabled: true }];
+
+function VerificationCode() {
+  const [code, setCode] = useState('');
+  return (
+    <>
+      <NText className="text-sm font-medium">Six digits, split into two groups</NText>
+      <NInputOtp
+        accessibilityLabel="Verification code"
+        maxLength={6}
+        separatorIndices={[2]}
+        value={code}
+        onChange={setCode}
+        inputMode="numeric"
+        autoComplete="one-time-code"
+      />
+      <NText className="text-sm text-muted">Value: {code || 'Empty'}</NText>
+    </>
+  );
+}
 
 function Buttons() {
   const [pressed, setPressed] = useState('');
   return (
-    <NView className="component-host-demo">
+    <NView className={PREVIEW_STACK}>
       <NView className={row}>
         <NButton className={buttonStyles} onPress={() => setPressed('Primary')}>
           Primary
@@ -41,7 +64,9 @@ function Buttons() {
         <NButton className={outlineButton} isOutline onPress={() => setPressed('Outline')}>
           Outline
         </NButton>
-        <NButton className={buttonStyles} isLoading>Save</NButton>
+        <NButton className={buttonStyles} isLoading>
+          Save
+        </NButton>
         <NButton className={buttonStyles} disabled>
           Disabled
         </NButton>
@@ -70,13 +95,7 @@ function Alerts() {
       {alerts
         .filter(({ type }) => !dismissed.includes(type))
         .map(({ title, type, message }) => (
-          <NAlert
-            key={type}
-            type={type}
-            title={title}
-            message={message}
-            onClose={() => setDismissed((previous) => [...previous, type])}
-          />
+          <NAlert key={type} type={type} title={title} message={message} onClose={() => setDismissed((previous) => [...previous, type])} />
         ))}
       {dismissed.length > 0 && (
         <NButton className={restoreAlertsClass} onPress={() => setDismissed([])}>
@@ -120,7 +139,7 @@ function ButtonGroup() {
     <>
       <NButtonGroup items={alignments} value={alignment} onValueChange={setAlignment} />
       <NView className="w-full rounded-lg border border-border bg-surface p-3">
-        <NText className="text-sm text-muted" style={{ textAlign: alignment as 'left' | 'center' | 'right' }}>
+        <NText className={`text-sm text-muted ${alignment === 'center' ? 'text-center' : alignment === 'right' ? 'text-right' : 'text-left'}`}>
           Text alignment
         </NText>
       </NView>
@@ -188,7 +207,9 @@ const tabsPreview = {
     `<NTabs items={tabs} value={tab} onValueChange={setTab}>
             {tabs.map(({ value, text }) => (
               <NTabsContent key={value} item={value}>
-                <NView className="w-full rounded-xl border border-border bg-surface p-3"><NText>{text}</NText></NView>
+                <NView className="mt-2 w-full rounded-xl border border-border bg-surface p-3">
+                  <NText className="text-sm text-muted">{text}</NText>
+                </NView>
               </NTabsContent>
             ))}
           </NTabs>`,
@@ -203,7 +224,7 @@ function badgeAndChipExample(chip: boolean): ComponentPreview {
     render: <BadgeAndChip chip={chip} />,
     source: componentSource(
       `${name}, NText`,
-      `<NText>Colors</NText>
+      `<NText className="font-semibold">Colors</NText>
           <NView className="${row}">
             <${name} color="default">Default</${name}>
             <${name} color="accent">Accent</${name}>
@@ -211,13 +232,13 @@ function badgeAndChipExample(chip: boolean): ComponentPreview {
             <${name} color="warning">Warning</${name}>
             <${name} color="danger">Danger</${name}>
           </NView>
-          <NText>Variants</NText>
+          <NText className="font-semibold">Variants</NText>
           <NView className="${row}">
             <${name} color="accent" variant="primary">Primary</${name}>
             <${name} color="accent" variant="secondary">Secondary</${name}>${chip ? `\n            <${name} color="accent" variant="tertiary">Tertiary</${name}>` : ''}
             <${name} color="accent" variant="soft">Soft</${name}>
           </NView>
-          <NText>Sizes</NText>
+          <NText className="font-semibold">Sizes</NText>
           <NView className="${row}">
             <${name} color="accent" size="sm">Small</${name}>
             <${name} color="accent" size="md">Medium</${name}>
@@ -254,20 +275,13 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
     host: true,
     height: 'auto',
     render: <RadioOption />,
-    source: componentSource('NRadio', `<NRadio items={[{ label: 'Beginner', value: 'beginner' }]} />`)
+    source: radioSource
   },
   'radio-group': {
     host: true,
     height: 'auto',
     render: <RadioOptions />,
-    source: componentSource(
-      'NRadioGroup',
-      `<NRadioGroup label="Experience" defaultValue="beginner" items={[
-            { label: 'Beginner', value: 'beginner' },
-            { label: 'Advanced', value: 'advanced' },
-            { label: 'Expert (disabled)', value: 'expert', disabled: true }
-          ]} />`
-    )
+    source: radioGroupSource
   },
   badge: badgeAndChipExample(false),
   'button-group': {
@@ -275,7 +289,9 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
     source: componentSource(
       'NButtonGroup, NText',
       `<NButtonGroup items={alignments} value={alignment} onValueChange={setAlignment} />
-          <NText>Alignment: {alignment}</NText>`,
+          <NView className="w-full rounded-lg border border-border bg-surface p-3">
+            <NText className={\`text-sm text-muted \${alignment === 'center' ? 'text-center' : alignment === 'right' ? 'text-right' : 'text-left'}\`}>Text alignment</NText>
+          </NView>`,
       `const alignments = ${JSON.stringify(alignments)};
   const [alignment, setAlignment] = useState('left');`
     )
@@ -290,9 +306,11 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
     ),
     source: componentSource(
       'NDivider, NText',
-      `<NText>Overview</NText>
-          <NDivider />
-          <NText>Additional details</NText>`
+      `<NView className="w-full gap-3 rounded-xl border border-border bg-surface px-4 py-3">
+            <NText className="text-sm font-semibold">Overview</NText>
+            <NDivider />
+            <NText className="text-sm text-muted">Additional details</NText>
+          </NView>`
     )
   },
   'empty-state': {
@@ -300,7 +318,7 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
     render: (
       <NEmptyState className="flex w-full flex-col items-center gap-2 rounded-xl border border-border bg-surface p-5">
         <NView className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/15">
-          <SearchIcon size={20} className="text-accent" />
+          <NIcon name="search" size={20} className="text-accent" />
         </NView>
         <NText tag="p" className="font-semibold">
           No results
@@ -310,7 +328,16 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
         </NText>
       </NEmptyState>
     ),
-    source: componentSource('NEmptyState', '<NEmptyState title="No results" description="Try a different search." />')
+    source: componentSource(
+      'NEmptyState, NIcon, NText, NView',
+      `<NEmptyState className="flex w-full flex-col items-center gap-2 rounded-xl border border-border bg-surface p-5">
+            <NView className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/15">
+              <NIcon name="search" size={20} className="text-accent" />
+            </NView>
+            <NText tag="p" className="font-semibold">No results</NText>
+            <NText tag="p" className="text-center text-sm text-muted">Try a different search.</NText>
+          </NEmptyState>`
+    )
   },
   required: {
     render: (
@@ -324,8 +351,13 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
     ),
     source: componentSource(
       'NInput, NRequired, NText',
-      `<NView className="${row}"><NText>Display name</NText><NRequired isRequired /></NView>
-          <NInput accessibilityLabel="Display name" required placeholder="Your name" />`
+      `<NView className="w-full gap-2">
+            <NView className="${row}">
+              <NText className="text-sm font-semibold">Display name</NText>
+              <NRequired isRequired className="text-danger" />
+            </NView>
+            <NInput accessibilityLabel="Display name" required placeholder="Your name" />
+          </NView>`
     )
   },
   checkbox: {
@@ -356,27 +388,44 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
     host: true,
     height: 'auto',
     render: <Buttons />,
-    source: componentSource(
-      'NButton, NText',
-      `<NView className="${row}">
-            <NButton className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground" onPress={() => setPressed('Primary')}>Primary</NButton>
-            <NButton className="rounded-lg px-4 py-2 text-sm font-semibold" isOutline onPress={() => setPressed('Outline')}>Outline</NButton>
-            <NButton isLoading>Save</NButton>
-            <NButton className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground" disabled>Disabled</NButton>
-          </NView>
-          <NText tag="p" className="font-mono text-xs font-semibold text-accent">{pressed ? \`\${pressed} pressed\` : 'Press a button to see the result.'}</NText>`,
-      "const [pressed, setPressed] = useState('');"
-    )
+    source: `import { useState } from 'react';
+import { NButton, NText, NView } from 'nayan-ui/components';
+
+export default function Example() {
+  const [pressed, setPressed] = useState('');
+  return (
+    <NView className="${PREVIEW_STACK}">
+      <NView className="${row}">
+        <NButton className="${buttonStyles}" onPress={() => setPressed('Primary')}>Primary</NButton>
+        <NButton className="${outlineButton}" isOutline onPress={() => setPressed('Outline')}>Outline</NButton>
+        <NButton className="${buttonStyles}" isLoading>Save</NButton>
+        <NButton className="${buttonStyles}" disabled>Disabled</NButton>
+      </NView>
+      <NText tag="p" className="font-mono text-xs font-semibold text-accent">
+        {pressed ? \`\${pressed} pressed\` : 'Press a button to see the result.'}
+      </NText>
+    </NView>
+  );
+}`
   },
   chip: badgeAndChipExample(true),
   input: {
-    render: (
-      <NInput id="email-example" label="Email" type="email" placeholder="you@example.com" helperText="Use your work email address." />
-    ),
+    render: <NInput id="email-example" label="Email" type="email" placeholder="you@example.com" helperText="Use your work email address." />,
     source: componentSource(
       'NInput',
       `<NInput id="email-example" label="Email" type="email" placeholder="you@example.com"
             helperText="Use your work email address." />`
+    )
+  },
+  'input-otp': {
+    render: <VerificationCode />,
+    source: componentSource(
+      'NInputOtp, NText',
+      `<NText className="text-sm font-medium">Six digits, split into two groups</NText>
+          <NInputOtp accessibilityLabel="Verification code" maxLength={6} separatorIndices={[2]} value={code} onChange={setCode}
+            inputMode="numeric" autoComplete="one-time-code" />
+          <NText className="text-sm text-muted">Value: {code || 'Empty'}</NText>`,
+      "const [code, setCode] = useState('');"
     )
   },
   progress: {
@@ -391,9 +440,9 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
     ),
     source: componentSource(
       'NProgress, NText',
-      `<NText>Bar only</NText>
+      `<NText className="font-semibold">Bar only</NText>
           <NProgress value={30} />
-          <NText>With a visible label</NText>
+          <NText className="font-semibold">With a visible label</NText>
           <NProgress value={72} label="Uploading" showLabel />`
     )
   },
@@ -415,16 +464,8 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
   },
   switch: {
     host: true,
-    height: 206,
-    render: (
-      <SwitchRows options={[{ label: 'Airplane Mode' }, { label: 'Wi-Fi', enabled: true }, { label: 'Bluetooth (disabled)', disabled: true }]} />
-    ),
-    source: componentSource(
-      'NSwitch',
-      `<NSwitch label="Airplane Mode" defaultValue={false} />
-          <NSwitch label="Wi-Fi" defaultValue />
-          <NSwitch label="Bluetooth (disabled)" disabled />`
-    )
+    render: <SwitchRows options={switches} />,
+    source: switchSource(switches)
   },
   tabs: tabsPreview,
   'tabs-content': tabsPreview

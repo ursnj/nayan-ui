@@ -1,5 +1,4 @@
-import type { EngineStyleRecipes } from 'nayan-ui/styles';
-
+// Semantic colors passed to the engine surfaces. The browser uses the same palettes in globals.css.
 export const siteThemes = {
   light: {
     background: 'hsl(264 56% 98%)',
@@ -67,35 +66,69 @@ export const siteThemes = {
   }
 } as const;
 
-function themeUtilities(mode: keyof typeof siteThemes) {
-  const colors = Object.entries(siteThemes[mode]).map(([token, color]) => `[--${token}:${color.replace(/ /g, '_')}]`);
-  return [`[color-scheme:${mode}]`, ...colors].join(' ');
-}
-
-export default {
-  rules: [
-    { selector: ':root, [data-theme=light]', utilities: themeUtilities('light') },
-    { selector: '.dark, [data-theme=dark]', utilities: themeUtilities('dark') },
-    {
-      selector: '.engine-preview-action',
-      utilities:
-        'min-h-11 [padding:8px_14px] [border:1px_solid_transparent] rounded-lg bg-accent text-accent-foreground [font-size:14px] font-semibold text-center whitespace-nowrap'
-    },
-    { selector: '.engine-preview-action:hover', utilities: '[background-color:color-mix(in_srgb,_var(--accent)_86%,_var(--surface))]' },
-    { selector: '.engine-preview-action:disabled', utilities: 'opacity-50' },
-    { selector: '.engine-preview-action:focus-visible', utilities: '[outline:2px_solid_var(--accent)] [outline-offset:2px]' },
-    { selector: '.engine-preview-action-outline', utilities: '[border-color:var(--border)] bg-surface text-foreground' },
-    { selector: '.engine-preview-action-outline:hover', utilities: 'bg-surface-secondary' },
-    { selector: '.engine-preview-action-ghost', utilities: 'bg-transparent text-accent' },
-    { selector: '.engine-preview-action-ghost:hover', utilities: 'bg-surface-secondary' },
-    { selector: '.engine-preview-action-danger', utilities: 'bg-danger text-danger-foreground' },
-    { selector: '.engine-preview-action-danger:hover', utilities: 'bg-danger [opacity:0.9]' },
-    {
-      selector: '.engine-preview-input',
-      utilities:
-        'w-full h-11 min-h-11 [padding:0_12px] [border:1px_solid_var(--border)] rounded-lg bg-field-background text-foreground [font-size:14px]'
-    },
-    { selector: '.engine-preview-input:focus-visible', utilities: '[outline:2px_solid_var(--accent)]' },
-    { selector: '.engine-preview-surface canvas', utilities: '[touch-action:pan-y]!' }
-  ]
-} satisfies EngineStyleRecipes;
+export const documentationThemes = {
+  light: {
+    background: '#edf1f8',
+    foreground: '#0f1729',
+    surface: '#fff',
+    'surface-foreground': '#0f1729',
+    'surface-secondary': '#f1f4f9',
+    'surface-secondary-foreground': '#0f1729',
+    'surface-tertiary': '#e7ecf3',
+    'surface-tertiary-foreground': '#0f1729',
+    overlay: '#fff',
+    'overlay-foreground': '#0f1729',
+    muted: '#65758b',
+    default: '#dde4ee',
+    'default-foreground': '#0f1729',
+    accent: '#0b64f4',
+    'accent-foreground': '#fff',
+    'field-background': '#fff',
+    'field-foreground': '#0f1729',
+    'field-placeholder': '#65758b',
+    success: '#21c45d',
+    'success-foreground': '#0f1729',
+    warning: '#f59f0a',
+    'warning-foreground': '#0f1729',
+    danger: '#ef4343',
+    'danger-foreground': '#fff',
+    border: '#cfdae8',
+    separator: '#b3c0d1',
+    focus: '#0b64f4',
+    link: '#0f1729',
+    segment: '#fff',
+    'segment-foreground': '#0f1729'
+  },
+  dark: {
+    background: '#0f1729',
+    foreground: '#f8fafc',
+    surface: '#26344b',
+    'surface-foreground': '#f8fafc',
+    'surface-secondary': '#2e3e56',
+    'surface-secondary-foreground': '#f8fafc',
+    'surface-tertiary': '#374862',
+    'surface-tertiary-foreground': '#f8fafc',
+    overlay: '#26344b',
+    'overlay-foreground': '#f8fafc',
+    muted: '#94a3b8',
+    default: '#2c3d58',
+    'default-foreground': '#f8fafc',
+    accent: '#3c83f6',
+    'accent-foreground': '#f8fafc',
+    'field-background': '#26344b',
+    'field-foreground': '#f8fafc',
+    'field-placeholder': '#94a3b8',
+    success: '#21c45d',
+    'success-foreground': '#0f1729',
+    warning: '#f6a823',
+    'warning-foreground': '#0f1729',
+    danger: '#dc2828',
+    'danger-foreground': '#f8fafc',
+    border: '#30425f',
+    separator: '#495b79',
+    focus: '#3c83f6',
+    link: '#f8fafc',
+    segment: '#3e516f',
+    'segment-foreground': '#f8fafc'
+  }
+} as const;

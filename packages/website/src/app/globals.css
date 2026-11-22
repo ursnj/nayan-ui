@@ -1,0 +1,217 @@
+@import 'tailwindcss' source(none);
+@source "..";
+@source "../../../nayan-ui/src/components";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: Inter, "Avenir Next", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --animate-game-boot: game-boot-pulse 1.2s ease-in-out infinite;
+  --animate-game-panel: game-panel-in 0.2s ease-out;
+  --animate-editor-in: editor-fade-in 140ms ease-out;
+
+  @keyframes game-boot-pulse {
+    0%,
+    80%,
+    100% {
+      opacity: 0.35;
+      transform: translateY(0);
+    }
+    40% {
+      opacity: 1;
+      transform: translateY(-5px);
+    }
+  }
+
+  @keyframes game-panel-in {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+  }
+
+  @keyframes editor-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-surface-secondary-foreground: var(--surface-secondary-foreground);
+  --color-surface-tertiary: var(--surface-tertiary);
+  --color-surface-tertiary-foreground: var(--surface-tertiary-foreground);
+  --color-overlay: var(--overlay);
+  --color-overlay-foreground: var(--overlay-foreground);
+  --color-muted: var(--muted);
+  --color-default: var(--default);
+  --color-default-foreground: var(--default-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-field-background: var(--field-background);
+  --color-field-foreground: var(--field-foreground);
+  --color-field-placeholder: var(--field-placeholder);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-border: var(--border);
+  --color-separator: var(--separator);
+  --color-focus: var(--focus);
+  --color-link: var(--link);
+  --color-segment: var(--segment);
+  --color-segment-foreground: var(--segment-foreground);
+  --color-editor-canvas: var(--editor-canvas);
+  --color-editor-chrome: var(--editor-chrome);
+  --color-editor-panel: var(--editor-panel);
+  --color-editor-ruler: var(--editor-ruler);
+  --color-editor-track: var(--editor-track);
+  --color-editor-track-alt: var(--editor-track-alt);
+  --color-playhead: var(--playhead);
+}
+
+@utility site-light {
+  color-scheme: light;
+  --background: hsl(264 56% 98%);
+  --foreground: hsl(268 40% 13%);
+  --surface: hsl(0 0% 100%);
+  --surface-foreground: hsl(268 40% 13%);
+  --surface-secondary: hsl(264 54% 95%);
+  --surface-secondary-foreground: hsl(268 40% 13%);
+  --surface-tertiary: hsl(267 48% 91%);
+  --surface-tertiary-foreground: hsl(268 40% 13%);
+  --overlay: hsl(0 0% 100%);
+  --overlay-foreground: hsl(268 40% 13%);
+  --muted: hsl(265 15% 39%);
+  --default: hsl(263 37% 90%);
+  --default-foreground: hsl(268 40% 13%);
+  --accent: hsl(265 77% 49%);
+  --accent-foreground: hsl(0 0% 100%);
+  --field-background: hsl(0 0% 100%);
+  --field-foreground: hsl(268 40% 13%);
+  --field-placeholder: hsl(265 15% 39%);
+  --success: hsl(142 71% 45%);
+  --success-foreground: hsl(268 40% 13%);
+  --warning: hsl(38 92% 50%);
+  --warning-foreground: hsl(268 40% 13%);
+  --danger: hsl(0 84% 60%);
+  --danger-foreground: hsl(0 0% 100%);
+  --border: hsl(264 32% 86%);
+  --separator: hsl(264 26% 75%);
+  --focus: hsl(265 77% 49%);
+  --link: var(--accent);
+  --segment: hsl(0 0% 100%);
+  --segment-foreground: hsl(268 40% 13%);
+}
+
+@utility site-dark {
+  color-scheme: dark;
+  --background: hsl(266 39% 9%);
+  --foreground: hsl(265 48% 96%);
+  --surface: hsl(266 30% 14%);
+  --surface-foreground: hsl(265 48% 96%);
+  --surface-secondary: hsl(266 28% 18%);
+  --surface-secondary-foreground: hsl(265 48% 96%);
+  --surface-tertiary: hsl(266 26% 23%);
+  --surface-tertiary-foreground: hsl(265 48% 96%);
+  --overlay: hsl(266 30% 14%);
+  --overlay-foreground: hsl(265 48% 96%);
+  --muted: hsl(266 19% 72%);
+  --default: hsl(266 22% 25%);
+  --default-foreground: hsl(265 48% 96%);
+  --accent: hsl(263 100% 80%);
+  --accent-foreground: hsl(268 40% 13%);
+  --field-background: hsl(266 30% 14%);
+  --field-foreground: hsl(265 48% 96%);
+  --field-placeholder: hsl(266 19% 72%);
+  --success: hsl(142 71% 45%);
+  --success-foreground: hsl(268 40% 13%);
+  --warning: hsl(38 92% 55%);
+  --warning-foreground: hsl(268 40% 13%);
+  --danger: hsl(0 72% 51%);
+  --danger-foreground: hsl(265 48% 96%);
+  --border: hsl(266 23% 27%);
+  --separator: hsl(266 19% 42%);
+  --focus: hsl(263 100% 80%);
+  --link: var(--accent);
+  --segment: hsl(266 22% 22%);
+  --segment-foreground: hsl(265 48% 96%);
+}
+
+@utility docs-light {
+  --background: #edf1f8;
+  --foreground: #0f1729;
+  --surface: #fff;
+  --surface-foreground: #0f1729;
+  --surface-secondary: #f1f4f9;
+  --surface-secondary-foreground: #0f1729;
+  --surface-tertiary: #e7ecf3;
+  --surface-tertiary-foreground: #0f1729;
+  --overlay: #fff;
+  --overlay-foreground: #0f1729;
+  --muted: #65758b;
+  --default: #dde4ee;
+  --default-foreground: #0f1729;
+  --accent: #0b64f4;
+  --accent-foreground: #fff;
+  --field-background: #fff;
+  --field-foreground: #0f1729;
+  --field-placeholder: #65758b;
+  --success: #21c45d;
+  --success-foreground: #0f1729;
+  --warning: #f59f0a;
+  --warning-foreground: #0f1729;
+  --danger: #ef4343;
+  --danger-foreground: #fff;
+  --border: #cfdae8;
+  --separator: #b3c0d1;
+  --focus: #0b64f4;
+  --link: #0f1729;
+  --segment: #fff;
+  --segment-foreground: #0f1729;
+}
+
+@utility docs-dark {
+  --background: #0f1729;
+  --foreground: #f8fafc;
+  --surface: #26344b;
+  --surface-foreground: #f8fafc;
+  --surface-secondary: #2e3e56;
+  --surface-secondary-foreground: #f8fafc;
+  --surface-tertiary: #374862;
+  --surface-tertiary-foreground: #f8fafc;
+  --overlay: #26344b;
+  --overlay-foreground: #f8fafc;
+  --muted: #94a3b8;
+  --default: #2c3d58;
+  --default-foreground: #f8fafc;
+  --accent: #3c83f6;
+  --accent-foreground: #f8fafc;
+  --field-background: #26344b;
+  --field-foreground: #f8fafc;
+  --field-placeholder: #94a3b8;
+  --success: #21c45d;
+  --success-foreground: #0f1729;
+  --warning: #f6a823;
+  --warning-foreground: #0f1729;
+  --danger: #dc2828;
+  --danger-foreground: #f8fafc;
+  --border: #30425f;
+  --separator: #495b79;
+  --focus: #3c83f6;
+  --link: #f8fafc;
+  --segment: #3e516f;
+  --segment-foreground: #f8fafc;
+}

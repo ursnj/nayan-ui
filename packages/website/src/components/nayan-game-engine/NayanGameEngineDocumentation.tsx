@@ -31,9 +31,9 @@ export default function NayanGameEngineDocumentation({ guide }: { guide: EngineG
       <NView tag="article" className="min-w-0 [overflow-wrap:anywhere]">
         <DocsIntro lead={guide.description} />
         {guide.slug === "overview" && (
-          <NView tag="nav" aria-label="Engine reference and playground" className="site-category-grid">
+          <NView tag="nav" aria-label="Engine reference and playground" className="site-category-grid grid [grid-template-columns:repeat(auto-fit,_minmax(min(100%,_8.25rem),_1fr))] [gap:0.6rem] [margin-bottom:1.85rem]">
             {referenceLinks.map(({ href, label, tone, icon: Icon }) => (
-              <Link key={href} href={href} data-tone={tone} className="site-category-link">
+              <Link key={href} href={href} data-tone={tone} className="site-category-link flex items-center [gap:0.48rem] [min-height:2.95rem] [padding:0.55rem_0.65rem] [border:1px_solid_color-mix(in_srgb,_var(--tone-ink)_15%,_transparent)] [border-radius:0.7rem] [background:var(--tone-paper)] [color:var(--tone-ink)] [font-size:0.82rem] [font-weight:680] hover:[border-color:var(--tone-ink)] [&_svg]:shrink-0 [&_svg:last-child]:ml-auto">
                 <Icon aria-hidden size={19} />
                 <NText tag="span">{label}</NText>
                 <ArrowUpRight aria-hidden size={15} />

@@ -20,9 +20,9 @@ export default function ReferenceDirectory({ kind, items }: Props) {
 
   return (
     <>
-      <NView tag="div" className="catalog-controls">
+      <NView tag="div" className="catalog-controls flex flex-wrap items-center [gap:0.75rem] [margin-bottom:0.75rem]">
         <CatalogSearch label={`Search ${kind}`} value={query} onChange={setQuery} />
-        <NText tag="p" className="catalog-count" aria-live="polite">
+        <NText tag="p" className="catalog-count ml-auto text-muted [font-family:var(--font-mono,_monospace)] [font-size:0.75rem]" aria-live="polite">
           {matches.length} {matches.length === 1 ? 'result' : 'results'}
         </NText>
       </NView>
@@ -34,8 +34,8 @@ export default function ReferenceDirectory({ kind, items }: Props) {
                 href={path}
                 className={`${CARD_INTERACTIVE} flex h-full flex-col p-3`}
               >
-                <NText tag="span" className="catalog-entry-top">
-                  <NText tag="span" className="catalog-entry-icon">
+                <NText tag="span" className="catalog-entry-top flex items-center justify-between [gap:0.55rem] [margin-bottom:0.68rem] [color:var(--tone-ink,_var(--accent))]">
+                  <NText tag="span" className="catalog-entry-icon inline-flex justify-center items-center shrink-0 [width:2.15rem] [height:2.15rem] [border-radius:0.62rem] [background:var(--tone-paper,_var(--surface-secondary))] [color:var(--tone-ink,_var(--accent))]">
                     <Icon aria-hidden size={18} />
                   </NText>
                   <ArrowUpRight aria-hidden size={16} />
@@ -48,7 +48,7 @@ export default function ReferenceDirectory({ kind, items }: Props) {
           ))}
         </NView>
       ) : (
-        <NText tag="p" className="catalog-empty">No results for “{query.trim()}”.</NText>
+        <NText tag="p" className="catalog-empty [padding:1.5rem] [border:1px_dashed_var(--border)] [border-radius:0.8rem] text-muted">No results for “{query.trim()}”.</NText>
       )}
     </>
   );

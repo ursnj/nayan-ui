@@ -372,7 +372,7 @@ export const ColorField = ({
               onClick={() => onChange("transparent")}
               aria-label="Set transparent"
               className={cn(
-                "checkerboard h-[var(--field-height)] w-8 shrink-0 rounded border transition-colors",
+                "checkerboard [background-image:linear-gradient(45deg,_hsl(0_0%_50%_/_0.18)_25%,_transparent_25%),_linear-gradient(-45deg,_hsl(0_0%_50%_/_0.18)_25%,_transparent_25%),_linear-gradient(45deg,_transparent_75%,_hsl(0_0%_50%_/_0.18)_75%),_linear-gradient(-45deg,_transparent_75%,_hsl(0_0%_50%_/_0.18)_75%)] [background-size:16px_16px] [background-position:0_0,_0_8px,_8px_-8px,_-8px_0] h-[var(--field-height)] w-8 shrink-0 rounded border transition-colors",
                 value === "transparent" ? "border-accent" : "border-border",
               )}
             />

@@ -195,7 +195,7 @@ const AssetCard = ({
         data-clarity-mask="true"
         className="group relative cursor-grab overflow-hidden rounded-lg border border-border bg-surface-secondary transition-all hover:border-accent hover:[box-shadow:var(--elevation)] active:cursor-grabbing"
       >
-        <NView tag="div" className="checkerboard relative aspect-video w-full overflow-hidden bg-surface-tertiary">
+        <NView tag="div" className="checkerboard [background-image:linear-gradient(45deg,_hsl(0_0%_50%_/_0.18)_25%,_transparent_25%),_linear-gradient(-45deg,_hsl(0_0%_50%_/_0.18)_25%,_transparent_25%),_linear-gradient(45deg,_transparent_75%,_hsl(0_0%_50%_/_0.18)_75%),_linear-gradient(-45deg,_transparent_75%,_hsl(0_0%_50%_/_0.18)_75%)] [background-size:16px_16px] [background-position:0_0,_0_8px,_8px_-8px,_-8px_0] relative aspect-video w-full overflow-hidden bg-surface-tertiary">
           {asset.thumbnail ? (
             <NImage
               src={asset.thumbnail}

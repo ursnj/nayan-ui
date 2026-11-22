@@ -69,12 +69,12 @@ const HERO_GAMES = [
 
 const GamesCollage = () => (
   <NView tag="div"
-    className={`site-hero-media grid grid-cols-3 gap-1.5 overflow-hidden p-1.5 sm:gap-2 sm:p-2`}
+    className={`site-hero-media relative [border:1px_solid_var(--border)] [border-radius:1.5rem] [background:color-mix(in_srgb,_var(--tone-paper,_var(--surface-secondary))_48%,_var(--surface))] [box-shadow:0_18px_44px_color-mix(in_srgb,_var(--tone,_var(--accent))_15%,_transparent)] grid grid-cols-3 gap-1.5 overflow-hidden p-1.5 sm:gap-2 sm:p-2`}
   >
     {HERO_GAMES.map((id) => {
       const game = GAMES_LIST.find((item) => item.id === id);
       return (
-        <Link key={id} href={`/games/${id}`} onClick={rememberScroll} aria-label={`Play ${game?.name ?? id}`} data-genre={game?.category} className="game-thumbnail overflow-hidden rounded-lg">
+        <Link key={id} href={`/games/${id}`} onClick={rememberScroll} aria-label={`Play ${game?.name ?? id}`} data-genre={game?.category} className="game-thumbnail [background:radial-gradient(ellipse_at_50%_45%,_var(--tone-paper,_var(--surface-secondary)),_var(--surface-secondary))] overflow-hidden rounded-lg">
           <NImage
             src={`/games/${id}.png`}
             alt=""
@@ -136,7 +136,7 @@ const GamesMain = () => {
 
       <Section id="all-games" labelledBy="all-games-heading">
         <SectionHeader id="all-games-heading" title="Game library" />
-        <NView tag="div" className="catalog-controls">
+        <NView tag="div" className="catalog-controls flex flex-wrap items-center [gap:0.75rem] [margin-bottom:0.75rem]">
           <CatalogSearch label="Search games" value={query} onChange={setQuery} />
           <NView tag="div" className="flex flex-wrap gap-2" role="group" aria-label="Filter by category">
             {[null, ...categories].map((item) => (
@@ -150,9 +150,9 @@ const GamesMain = () => {
               </NPress>
             ))}
           </NView>
-          <NText tag="p" aria-live="polite" className="catalog-count">{shown.length} {shown.length === 1 ? "game" : "games"}</NText>
+          <NText tag="p" aria-live="polite" className="catalog-count ml-auto text-muted [font-family:var(--font-mono,_monospace)] [font-size:0.75rem]">{shown.length} {shown.length === 1 ? "game" : "games"}</NText>
         </NView>
-        {!shown.length && <NText tag="p" className="catalog-empty">No games match your search and category.</NText>}
+        {!shown.length && <NText tag="p" className="catalog-empty [padding:1.5rem] [border:1px_dashed_var(--border)] [border-radius:0.8rem] text-muted">No games match your search and category.</NText>}
         <NView tag="div" className={`grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${GRID_GAP}`}>
           {shown.map((game) => (
             <Link
@@ -161,7 +161,7 @@ const GamesMain = () => {
               onClick={rememberScroll}
               className={`${CARD_INTERACTIVE} group min-w-0 overflow-hidden`}
             >
-              <NView tag="div" data-genre={game.category} className="game-thumbnail overflow-hidden border-b border-border">
+              <NView tag="div" data-genre={game.category} className="game-thumbnail [background:radial-gradient(ellipse_at_50%_45%,_var(--tone-paper,_var(--surface-secondary)),_var(--surface-secondary))] overflow-hidden border-b border-border">
                 <NImage
                   src={`/games/${game.id}.png`}
                   alt=""

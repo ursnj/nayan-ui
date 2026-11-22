@@ -10,7 +10,7 @@ const SPOTLIGHT = ['car-racing', 'treasure-hunt', 'block-blast'];
 
 export default function GamesSpotlight() {
   return (
-    <NView tag="div" className="home-games-section">
+    <NView tag="div" className="home-games-section [border-bottom:1px_solid_var(--border)]">
       <Section id="games" labelledBy="games-heading">
         <NView tag="div" className="mb-7 flex flex-wrap items-end justify-between gap-5 sm:mb-9">
           <NView tag="div" className="max-w-xl">
@@ -30,7 +30,7 @@ export default function GamesSpotlight() {
             if (!game) return null;
 
             return (
-              <Link key={id} href={`/games/${id}`} data-genre={game.category} className="game-spotlight-card group">
+              <Link key={id} href={`/games/${id}`} data-genre={game.category} className="game-spotlight-card relative flex items-end overflow-hidden [min-height:13.5rem] [aspect-ratio:5_/_4] [border:1px_solid_color-mix(in_srgb,_var(--tone-ink,_var(--accent))_18%,_transparent)] [border-radius:1.3rem] [background:var(--tone-paper,_var(--surface-tertiary))] [&_img]:[height:calc(100%_-_3.7rem)] sm:[aspect-ratio:1] motion-reduce:[&_img]:[transform:none]! motion-reduce:[&_img]:[transition:none]! group">
                 <NImage
                   src={`/games/${id}.png`}
                   alt=""
@@ -39,9 +39,9 @@ export default function GamesSpotlight() {
                   loading="lazy"
                   className="absolute inset-0 block h-full w-full object-contain p-2 sm:p-3 transition-transform duration-300 group-hover:scale-105"
                 />
-                <NText tag="span" className="game-spotlight-label">
+                <NText tag="span" className="game-spotlight-label relative flex items-end justify-between [gap:0.5rem] w-full [padding:0.78rem_0.95rem] [background:color-mix(in_srgb,_var(--surface)_49%,_var(--tone-paper,_var(--surface-secondary)))] text-foreground">
                   <NText tag="span">
-                    <NText tag="span" className="game-spotlight-genre">{game.category}</NText>
+                    <NText tag="span" className="game-spotlight-genre block [color:var(--tone-ink,_var(--accent))] [font-family:var(--font-mono,_monospace)] [font-size:0.68rem] [font-weight:650]">{game.category}</NText>
                     <NText tag="span" className="mt-1 block text-lg font-semibold tracking-tight sm:text-2xl">{game.name}</NText>
                   </NText>
                   <ArrowUpRight aria-hidden size={19} />

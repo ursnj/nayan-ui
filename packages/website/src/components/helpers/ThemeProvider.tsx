@@ -2,6 +2,7 @@
 
 import { type ReactNode, useEffect, useState } from "react";
 import { NPlatformView, NTheme, type NThemeMode, useNTheme } from 'nayan-ui/components';
+import { siteThemes } from '@/design/palettes';
 
 const STORAGE_KEY = "THEME";
 
@@ -11,7 +12,6 @@ function SiteAppearance() {
   useEffect(() => {
     const root = document.documentElement;
     root.dataset.theme = resolvedTheme;
-    root.style.colorScheme = resolvedTheme;
     root.classList.toggle("dark", resolvedTheme === "dark");
     root.classList.toggle("light", resolvedTheme === "light");
   }, [resolvedTheme]);
@@ -48,7 +48,7 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <NTheme theme={theme} onThemeChange={changeTheme}>
+    <NTheme theme={theme} themes={siteThemes} onThemeChange={changeTheme}>
       {ready && <SiteAppearance />}
       <NPlatformView>{children}</NPlatformView>
     </NTheme>

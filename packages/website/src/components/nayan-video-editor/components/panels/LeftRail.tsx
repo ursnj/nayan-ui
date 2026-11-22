@@ -1,3 +1,4 @@
+import { EDITOR_PANEL } from '@/design/system';
 import { NView, NText } from 'nayan-ui/components';
 import { useState } from "react";
 import { cn } from "@/components/ui";
@@ -19,7 +20,7 @@ export const LeftRail = () => {
   const [active, setActive] = useState<PanelId>("media");
 
   return (
-    <NView tag="div" className="island flex h-full min-h-0">
+    <NView tag="div" className={`${EDITOR_PANEL} flex h-full min-h-0`}>
       <NView tag="nav"
         aria-label="Editor panels"
         className="flex w-14 shrink-0 flex-col gap-1 border-r border-border bg-editor-chrome py-2"

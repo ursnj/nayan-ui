@@ -22,6 +22,11 @@ export const CARD_INTERACTIVE = `${CARD} transition-[border-color,box-shadow] du
 export const WELL = 'rounded-xl border border-border bg-background';
 export const CARD_PAD = 'p-5 sm:p-6';
 
+export const PREVIEW_STACK = 'flex min-w-0 flex-col items-start gap-3.5 p-5 text-foreground';
+export const PREVIEW_BUTTON =
+  'inline-flex min-h-9 flex-none items-center justify-center gap-1.5 rounded-lg bg-accent px-4 text-sm font-medium text-accent-foreground cursor-pointer hover:bg-[color-mix(in_srgb,var(--accent)_86%,var(--surface))] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent';
+export const EDITOR_PANEL = 'overflow-hidden rounded-xl border border-border bg-editor-panel shadow-(--elevation)';
+
 export const CONTAINER = 'mx-auto w-full max-w-[82rem] px-5 sm:px-8 lg:px-10';
 export const SECTION_Y = 'py-12 sm:py-20';
 export const HEADER_GAP = 'mb-7 sm:mb-9';

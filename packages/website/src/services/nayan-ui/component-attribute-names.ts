@@ -62,7 +62,7 @@ export const componentAttributeNames: Partial<Record<ComponentSymbol, readonly s
     'disabled', 'type'
   ],
   NInputOtp: [
-    'maxLength', 'value', 'defaultValue', 'onChange', 'disabled', 'pattern',
+    'maxLength', 'value', 'defaultValue', 'onChange', 'disabled', 'pattern', 'separatorIndices',
     'className', 'accessibilityLabel'
   ],
   NKbd: ['children', 'className'],

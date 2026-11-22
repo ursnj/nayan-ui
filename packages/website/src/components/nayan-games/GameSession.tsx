@@ -182,7 +182,7 @@ const GameSession = memo(function GameSession({
       <NView tag="div"
         ref={surface}
         tabIndex={0}
-        className="nyn-game-surface relative flex h-full w-full overflow-hidden outline-none"
+        className="nyn-game-surface [&_[data-engine-keyboard-cursor]]:invisible [touch-action:none] [-webkit-user-select:none] [user-select:none] [-webkit-tap-highlight-color:transparent] relative flex h-full w-full overflow-hidden outline-none"
         aria-label={`${title} game`}
       >
         {Game ? (

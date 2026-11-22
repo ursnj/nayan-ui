@@ -50,7 +50,7 @@ const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <NView tag="footer" className="site-footer border-t border-border">
+    <NView tag="footer" className="site-footer [background:radial-gradient(ellipse_at_6%_6%,_color-mix(in_srgb,_var(--accent)_10%,_transparent),_transparent_66%),_var(--surface-secondary)] border-t border-border">
       <NView tag="div" className={`${CONTAINER} py-14`}>
         <NView tag="div" className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
           <NView tag="div" className="sm:col-span-2">

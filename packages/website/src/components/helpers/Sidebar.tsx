@@ -63,7 +63,7 @@ const SidebarNav = ({
           value={query}
           onChangeText={setQuery}
           placeholder="Filter pages…"
-          className="site-docs-filter w-full rounded-lg border border-default bg-background py-1.5 pl-8 pr-8 text-sm text-foreground outline-none transition-colors placeholder:text-muted focus:border-accent/60"
+          className="site-docs-filter [&::-webkit-search-cancel-button]:[appearance:none] w-full rounded-lg border border-default bg-background py-1.5 pl-8 pr-8 text-sm text-foreground outline-none transition-colors placeholder:text-muted focus:border-accent/60"
         />
         {query ? (
           <NPress
@@ -79,8 +79,7 @@ const SidebarNav = ({
 
     <NView
       tag="div"
-      className="site-docs-list overflow-y-auto p-3 [overscroll-behavior-y:contain] [scrollbar-width:thin]"
-      style={{ maxHeight: 'calc(100dvh - var(--site-header-height) - 5.25rem)' }}
+      className="site-docs-list overflow-y-auto p-3 [overscroll-behavior-y:contain] [scrollbar-width:thin] max-h-[calc(100dvh_-_var(--site-header-height)_-_5.25rem)]"
     >
       {items.length === 0 ? (
         <NText tag="p" className="px-2 py-6 text-center text-xs text-muted">
@@ -175,14 +174,13 @@ const Sidebar = (props: Props) => {
   if (props.title) breadcrumb.push({ label: props.title });
 
   return (
-    <NView tag="div" className={`mx-auto w-full max-w-[82rem] p-3${props.componentDocumentation ? " component-documentation" : ""}`}>
+    <NView tag="div" className={`mx-auto w-full max-w-[82rem] p-3${props.componentDocumentation ? " component-documentation [max-width:78rem] [padding:1.5rem_1rem] [&_.browser-frame-dots_>_span]:[background:var(--default)] [&_.site-docs-heading_h1]:[font-size:clamp(1.875rem,_3vw,_2.25rem)] [&_.site-docs-heading_h1]:[letter-spacing:-0.045em] lg:[&_>_div]:[grid-template-columns:17.5rem_minmax(0,_1fr)] lg:[&_>_div]:[gap:2rem]" : ""}`}>
       <NView tag="div" className="grid grid-cols-1 gap-3 md:grid-cols-[13rem_minmax(0,1fr)] lg:grid-cols-[15rem_minmax(0,1fr)]">
         {/* Desktop sidebar */}
         <NView tag="nav" aria-label="Documentation" className="hidden md:block">
           <NView
             tag="div"
-            className="site-docs-navigation sticky rounded-xl border border-border bg-surface"
-            style={{ top: 'calc(var(--site-header-height) + 0.75rem)' }}
+            className="site-docs-navigation sticky rounded-xl border border-border bg-surface top-[calc(var(--site-header-height)_+_0.75rem)]"
           >
             <SidebarNav
               items={items}

@@ -1,3 +1,4 @@
+import { PREVIEW_STACK } from '@/design/system';
 import { NText } from 'nayan-ui/components';
 import dynamic from 'next/dynamic';
 import { standaloneExamples } from '@/services/nayan-ui/component-examples';
@@ -7,7 +8,7 @@ import type { ComponentPreview, NamedComponentPreview } from './types';
 const SpecializedExample = dynamic(() => import('./SpecializedExamples'), {
   ssr: false,
   loading: () => (
-    <NText tag="p" className="component-host-demo" role="status">
+    <NText tag="p" className={PREVIEW_STACK} role="status">
       Preparing preview…
     </NText>
   )
@@ -59,7 +60,7 @@ import { NMarkdown } from 'nayan-ui/markdown';
 const source = '## Launch notes\\n\\n> Ship small, test often.\\n\\n1. Build the app\\n2. Review the release\\n3. Publish';
 
 export default function Example() {
-  return <NPage style={{ height: 260 }}><NMarkdown source={source} blockSpacing={12} /></NPage>;
+  return <NPage className="p-4"><NMarkdown source={source} blockSpacing={12} /></NPage>;
 }`
   ),
   'video-player': media('video-player', 'Loop with cover fit', original('video-player').replace('contentFit="contain"', 'loop contentFit="cover"'))

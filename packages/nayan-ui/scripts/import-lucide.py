@@ -65,7 +65,10 @@ def path(element):
 
 src = Path(__file__).resolve().parents[1] / 'src'
 target = src / 'components/icons'
-control_icons = ('chevron-down', 'chevron-right', 'chevron-up', 'circle-check', 'circle-question-mark', 'circle-x', 'download', 'file-text', 'info', 'triangle-alert', 'x')
+control_icons = (
+    'chevron-down', 'chevron-right', 'chevron-up', 'circle-check', 'circle-question-mark', 'circle-x',
+    'download', 'file-text', 'info', 'plus', 'search', 'triangle-alert', 'x',
+)
 controls = src / 'components/controlIcons.ts'
 target.mkdir(parents=True, exist_ok=True)
 with tarfile.open(fileobj=io.BytesIO(archive), mode='r:gz') as package:

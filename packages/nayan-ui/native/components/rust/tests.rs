@@ -58,11 +58,14 @@ fn focus_outline_follows_painted_bounds_and_corners_in_both_renderers() {
     for (stylesheet, kind) in [
         (false, "NPress"),
         (false, "NButton"),
+        (false, "NInput"),
+        (false, "NTextarea"),
         (true, "NPress"),
         (true, "NButton"),
         (true, "NInput"),
         (true, "NSelect"),
     ] {
+        let input = matches!(kind, "NInput" | "NTextarea");
         let mut doc = ComponentDocument::default();
         if stylesheet {
             doc.command(&json!({"action":"stylesheet","stylesheet":{"rules":[]}})).unwrap();
@@ -71,7 +74,8 @@ fn focus_outline_follows_painted_bounds_and_corners_in_both_renderers() {
             &mut doc,
             json!([{"id":"root","kind":"NView","props":{"style":{"padding":32}},"children":[
                 {"id":"control","kind":kind,"props":{"hitSlop":14,"options":["First","Second"],"style":{
-                    "width":140,"height":44,"padding":10,"backgroundColor":"#228866","borderRadius":16,"borderTopLeftRadius":4
+                    "width":140,"height":44,"padding":10,"backgroundColor":"#228866","borderRadius":16,"borderTopLeftRadius":4,
+                    "borderWidth":3,"borderColor":"#445566"
                 }}}
             ]}]),
         );
@@ -80,6 +84,16 @@ fn focus_outline_follows_painted_bounds_and_corners_in_both_renderers() {
         if kind == "NPress" {
             assert!(hit_width > 140., "hit slop should still expand the interaction bounds");
         }
+        let unfocused = doc.frame(390., 500., 1.);
+        let chrome = unfocused
+            .shapes
+            .iter()
+            .find_map(|shape| match &shape.shape {
+                egui::Shape::Rect(rect) if rect.fill == fill => Some((rect.rect, rect.corner_radius, rect.stroke)),
+                _ => None,
+            })
+            .unwrap();
+        unfocused.drop_without_applying_deltas();
         doc.command(&json!({"action":"focus","id":"control"})).unwrap();
         let output = doc.frame(390., 500., 1.);
         let rect_shapes = output.shapes.iter().filter_map(|shape| match &shape.shape {
@@ -89,8 +103,17 @@ fn focus_outline_follows_painted_bounds_and_corners_in_both_renderers() {
         let painted = rect_shapes.clone().find(|rect| rect.fill == fill).unwrap();
         let mut outlines = rect_shapes.filter(|rect| rect.stroke.width == 2. && rect.stroke.color == doc.palette.get("focus"));
         let outline = outlines.next().unwrap();
-        assert_eq!(outline.rect, painted.rect.expand(2.), "stylesheet={stylesheet} kind={kind}");
-        assert_eq!(outline.corner_radius, painted.corner_radius + 2, "stylesheet={stylesheet} kind={kind}");
+        let gap = if input { 0 } else { 2 };
+        assert_eq!(outline.rect, painted.rect.expand(f32::from(gap)), "stylesheet={stylesheet} kind={kind}");
+        assert_eq!(outline.corner_radius, painted.corner_radius + gap, "stylesheet={stylesheet} kind={kind}");
+        if input {
+            assert_eq!(outline.stroke_kind, egui::StrokeKind::Inside);
+            assert_eq!(
+                (painted.rect, painted.corner_radius, painted.stroke),
+                chrome,
+                "focus should preserve the field chrome"
+            );
+        }
         assert!(outlines.next().is_none(), "only one focus outline should be painted");
         output.drop_without_applying_deltas();
     }

@@ -463,7 +463,7 @@ export default function SlackLogoScene({
     );
 
   return (
-    <NView tag="div" style={{ width: "100%", height: "100%" }}>
+    <NView tag="div" className="w-full h-full">
       <GameView
         source={world}
         paused={!rendering}

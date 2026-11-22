@@ -772,15 +772,15 @@ const DevtoolsMain = () => {
         }
       />
 
-      <NView tag="nav" aria-label="Tool categories" className="site-category-grid">
+      <NView tag="nav" aria-label="Tool categories" className="site-category-grid grid [grid-template-columns:repeat(auto-fit,_minmax(min(100%,_8.25rem),_1fr))] [gap:0.6rem] [margin-bottom:1.85rem]">
         {TOOL_GROUPS.map(({ id, label, tone, icon: Icon }) => (
-          <NView tag="a" key={id} href={`#${id}`} data-tone={tone} className="site-category-link">
+          <NView tag="a" key={id} href={`#${id}`} data-tone={tone} className="site-category-link flex items-center [gap:0.48rem] [min-height:2.95rem] [padding:0.55rem_0.65rem] [border:1px_solid_color-mix(in_srgb,_var(--tone-ink)_15%,_transparent)] [border-radius:0.7rem] [background:var(--tone-paper)] [color:var(--tone-ink)] [font-size:0.82rem] [font-weight:680] hover:[border-color:var(--tone-ink)] [&_svg]:shrink-0 [&_svg:last-child]:ml-auto">
             <Icon aria-hidden size={19} />
             <NText tag="span">{label}</NText>
             <ArrowUpRight aria-hidden size={15} />
           </NView>
         ))}
-        <NView tag="a" href="#nayan-ui-cli" data-tone="blue" className="site-category-link">
+        <NView tag="a" href="#nayan-ui-cli" data-tone="blue" className="site-category-link flex items-center [gap:0.48rem] [min-height:2.95rem] [padding:0.55rem_0.65rem] [border:1px_solid_color-mix(in_srgb,_var(--tone-ink)_15%,_transparent)] [border-radius:0.7rem] [background:var(--tone-paper)] [color:var(--tone-ink)] [font-size:0.82rem] [font-weight:680] hover:[border-color:var(--tone-ink)] [&_svg]:shrink-0 [&_svg:last-child]:ml-auto">
           <Keyboard aria-hidden size={19} />
           <NText tag="span">Command line</NText>
           <ArrowUpRight aria-hidden size={15} />
@@ -791,9 +791,9 @@ const DevtoolsMain = () => {
         <SubHeader key={id} id={id} title={`${label} Tools`} description={description}>
           <NView tag="div" className={`grid sm:grid-cols-2 xl:grid-cols-3 ${GRID_GAP}`}>
             {tools.map(({ href, icon: Icon, title, body }) => (
-              <Link key={href} href={href} data-tone={tone} className={`${CARD_INTERACTIVE} catalog-entry group block p-4 sm:p-5`}>
+              <Link key={href} href={href} data-tone={tone} className={`${CARD_INTERACTIVE} catalog-entry [background:linear-gradient(140deg,_color-mix(in_srgb,_var(--tone-paper,_var(--surface-secondary))_34%,_var(--surface)),_var(--surface)_74%)] group block p-4 sm:p-5`}>
                 <NView tag="div" className="mb-3 flex items-center justify-between gap-3">
-                  <NText tag="span" className="catalog-entry-icon">
+                  <NText tag="span" className="catalog-entry-icon inline-flex justify-center items-center shrink-0 [width:2.15rem] [height:2.15rem] [border-radius:0.62rem] [background:var(--tone-paper,_var(--surface-secondary))] [color:var(--tone-ink,_var(--accent))]">
                     <Icon aria-hidden size={18} />
                   </NText>
                   <ArrowRight aria-hidden size={16} className="shrink-0 text-muted transition-colors group-hover:text-accent" />

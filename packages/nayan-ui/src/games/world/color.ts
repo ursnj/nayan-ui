@@ -9,6 +9,7 @@ type Rgba = readonly [number, number, number, number];
 
 const HEX = /^#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
 const RGB = /^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+%?)\s*)?\)$/i;
+const HSL = /^hsla?\(\s*(-?\d*\.?\d+)(deg|turn|rad|grad)?(?:\s*,\s*|\s+)(\d*\.?\d+)%(?:\s*,\s*|\s+)(\d*\.?\d+)%(?:\s*[,/]\s*(\d*\.?\d+%?))?\s*\)$/i;
 const NAMED: Record<string, Rgba> = {
   transparent: [0, 0, 0, 0],
   black: [0, 0, 0, 1],
@@ -43,7 +44,21 @@ function parse(css: string): Rgba {
     const alpha = rgb[4] === undefined ? 1 : rgb[4].endsWith('%') ? parseFloat(rgb[4]) / 100 : Number(rgb[4]);
     return [Number(rgb[1]) / 255, Number(rgb[2]) / 255, Number(rgb[3]) / 255, alpha];
   }
-  throw new Error(`nayan-ui: "${css}" is not a color (use '#RRGGBB', '#RGB', '#RRGGBBAA', 'rgb(…)', 'rgba(…)' or a 0..1 tuple)`);
+  const hsl = HSL.exec(text);
+  if (hsl) {
+    const [, angle, unit, saturation, lightness, opacity] = hsl;
+    const hue =
+      (((Number(angle) * ({ turn: 360, rad: 180 / Math.PI, grad: 0.9 }[unit?.toLowerCase() as 'turn' | 'rad' | 'grad'] ?? 1)) % 360) + 360) % 360;
+    const light = Math.min(100, Number(lightness)) / 100;
+    const chroma = (Math.min(light, 1 - light) * Math.min(100, Number(saturation))) / 100;
+    const channel = (offset: number) => {
+      const phase = (offset + hue / 30) % 12;
+      return light - chroma * Math.max(-1, Math.min(phase - 3, 9 - phase, 1));
+    };
+    const alpha = opacity === undefined ? 1 : Math.min(1, Number.parseFloat(opacity) / (opacity.endsWith('%') ? 100 : 1));
+    return [channel(0), channel(8), channel(4), alpha];
+  }
+  throw new Error(`nayan-ui: "${css}" is not a color (use '#RRGGBB', '#RGB', '#RRGGBBAA', 'rgb(…)', 'rgba(…)', 'hsl(…)' or a 0..1 tuple)`);
 }
 
 /**

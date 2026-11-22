@@ -1,3 +1,4 @@
+import { PREVIEW_STACK, PREVIEW_BUTTON } from '@/design/system';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import * as E from 'nayan-ui/components';
 import { scenario } from './scenario';
@@ -10,21 +11,21 @@ function host(title: string, imports: string, code: string, render: ReactNode, h
 function BlurExample({ target }: { target: boolean }) {
   const ref = useRef<E.NBlurTargetRef>(null);
   return (
-    <E.NView style={{ position: 'relative', height: 160, overflow: 'hidden', backgroundColor: '#5b21b6' }}>
+    <E.NView className="relative h-[160px] overflow-hidden bg-[#5b21b6]">
       {target ? (
         <E.NBlurTarget ref={ref}>
-          <E.NText style={{ padding: 20, color: '#fff' }}>Source layer</E.NText>
+          <E.NText className="p-[20px] [color:#fff]">Source layer</E.NText>
         </E.NBlurTarget>
       ) : (
-        <E.NText style={{ padding: 20, color: '#fff' }}>Sharp background text</E.NText>
+        <E.NText className="p-[20px] [color:#fff]">Sharp background text</E.NText>
       )}
       <E.NBlur
         blurTarget={target ? ref : undefined}
         radius={8}
         tint="light"
-        style={{ position: 'absolute', top: 28, left: 12, right: 12, padding: 16, borderRadius: 12 }}
+        className="absolute top-[28px] left-[12px] right-[12px] p-[16px] rounded-[12px]"
       >
-        <E.NText style={{ color: '#171022' }}>Light material</E.NText>
+        <E.NText className="[color:#171022]">Light material</E.NText>
       </E.NBlur>
     </E.NView>
   );
@@ -37,10 +38,10 @@ function blurScenario(target: boolean) {
     `${target ? "import { useRef } from 'react';\n" : ''}
 export default function Example() {
   ${target ? 'const target = useRef<NBlurTargetRef>(null);\n  ' : ''}return (
-    <NView style={{ position: 'relative', height: 160, overflow: 'hidden', backgroundColor: '#5b21b6' }}>
-      ${target ? '<NBlurTarget ref={target}><NText style={{ padding: 20, color: "#fff" }}>Source layer</NText></NBlurTarget>' : '<NText style={{ padding: 20, color: "#fff" }}>Sharp background text</NText>'}
-      <NBlur ${target ? 'blurTarget={target} ' : ''}radius={8} tint="light" style={{ position: 'absolute', top: 28, left: 12, right: 12, padding: 16, borderRadius: 12 }}>
-        <NText style={{ color: '#171022' }}>Light material</NText>
+    <NView className="relative h-[160px] overflow-hidden bg-[#5b21b6]">
+      ${target ? '<NBlurTarget ref={target}><NText className="p-[20px] [color:#fff]">Source layer</NText></NBlurTarget>' : '<NText className="p-[20px] [color:#fff]">Sharp background text</NText>'}
+      <NBlur ${target ? 'blurTarget={target} ' : ''}radius={8} tint="light" className="absolute top-[28px] left-[12px] right-[12px] p-[16px] rounded-[12px]">
+        <NText className="[color:#171022]">Light material</NText>
       </NBlur>
     </NView>
   );
@@ -52,9 +53,9 @@ export default function Example() {
 function DrawerContent() {
   const { close } = E.useNDrawer();
   return (
-    <E.NView tag="div" className="component-host-demo">
+    <E.NView tag="div" className={PREVIEW_STACK}>
       <E.NText>Workspace shortcuts</E.NText>
-      <E.NButton className="component-host-button" onPress={close}>
+      <E.NButton className={PREVIEW_BUTTON} onPress={close}>
         Done
       </E.NButton>
     </E.NView>
@@ -64,8 +65,8 @@ function DrawerContent() {
 function DrawerTrigger({ toggle }: { toggle: boolean }) {
   const drawer = E.useNDrawer();
   return (
-    <E.NView tag="div" className="component-host-demo">
-      <E.NButton className="component-host-button" onPress={toggle ? drawer.toggle : drawer.open}>
+    <E.NView tag="div" className={PREVIEW_STACK}>
+      <E.NButton className={PREVIEW_BUTTON} onPress={toggle ? drawer.toggle : drawer.open}>
         {toggle ? 'Toggle shortcuts' : 'Open shortcuts'}
       </E.NButton>
     </E.NView>
@@ -89,7 +90,7 @@ function Trigger() {
 
 export default function Example() {
   return (
-    <NView style={{ height: 220 }}>
+    <NView className="h-[220px]">
       <NDrawer side="right" width={210} drawerContent={<Shortcuts />} drawerStyle={{ backgroundColor: '#ede8fa', color: '#191126' }}>
         <Trigger />
       </NDrawer>
@@ -153,7 +154,7 @@ function SafeMeasurements({ variant }: { variant: 'frame' | 'insets' }) {
   const insets = E.useNSafeAreaInsets();
   const info = variant === 'frame' ? `${Math.round(frame.width)} × ${Math.round(frame.height)} px` : `Bottom inset: ${insets.bottom} px`;
   return (
-    <E.NView tag="div" className="component-host-demo">
+    <E.NView tag="div" className={PREVIEW_STACK}>
       <E.NText>{info}</E.NText>
     </E.NView>
   );
@@ -163,7 +164,7 @@ function SafeListener() {
   const [width, setWidth] = useState(0);
   return (
     <E.NSafeAreaListener onChange={({ frame }) => setWidth(Math.round(frame.width))}>
-      <E.NView tag="div" className="component-host-demo">
+      <E.NView tag="div" className={PREVIEW_STACK}>
         <E.NText>Available width: {width} px</E.NText>
       </E.NView>
     </E.NSafeAreaListener>
@@ -298,10 +299,10 @@ export const hostScenarios = {
     'ComponentsRoot, NTheme, NText',
     `
 export default function Example() {
-  return <NTheme><ComponentsRoot background="#281a41" style={{ height: 140 }}><NText style={{ padding: 20, color: '#fff' }}>Custom surface</NText></ComponentsRoot></NTheme>;
+  return <NTheme><ComponentsRoot background="#281a41" style={{ height: 140 }}><NText className="p-[20px] [color:#fff]">Custom surface</NText></ComponentsRoot></NTheme>;
 }`,
     <E.ComponentsRoot background="#281a41" style={{ height: 140, minHeight: 0, flex: 'none' }}>
-      <E.NText style={{ padding: 20, color: '#fff' }}>Custom surface</E.NText>
+      <E.NText className="p-[20px] [color:#fff]">Custom surface</E.NText>
     </E.ComponentsRoot>
   ),
   confetti: scenario(
@@ -333,13 +334,13 @@ export default function Example() {
   'platform-view': scenario(
     'Browser-native range control',
     'NPlatformView, NText',
-    `<NPlatformView style={{ height: 60 }}>
+    `<NPlatformView className="h-[60px]">
             <NView tag="label" className="flex items-center gap-3">
               <NText>Zoom</NText>
               <NView tag="input" className="accent-[var(--accent)]" type="range" min={75} max={150} defaultValue={100} />
             </NView>
           </NPlatformView>`,
-    <E.NPlatformView style={{ height: 60 }}>
+    <E.NPlatformView className="h-[60px]">
       <E.NView tag="label" className="flex items-center gap-3">
         <E.NText>Zoom</E.NText>
         <E.NView tag="input" className="accent-[var(--accent)]" type="range" min={75} max={150} defaultValue={100} />
@@ -381,9 +382,9 @@ export default function Example() {
     'NSafeArea, NText',
     `
 export default function Example() {
-  return <NSafeArea edges={{ bottom: 'maximum' }} style={{ padding: 16 }}><NText>Bottom toolbar spacing</NText></NSafeArea>;
+  return <NSafeArea edges={{ bottom: 'maximum' }} className="p-[16px]"><NText>Bottom toolbar spacing</NText></NSafeArea>;
 }`,
-    <E.NSafeArea edges={{ bottom: 'maximum' }} style={{ padding: 16 }}>
+    <E.NSafeArea edges={{ bottom: 'maximum' }} className="p-[16px]">
       <E.NText>Bottom toolbar spacing</E.NText>
     </E.NSafeArea>
   ),
@@ -412,9 +413,9 @@ export default function Example() {
 export default function Example() {
   return <NTheme toasts={false}><NView><NToastHost top={80} maxWidth={300} /><NButton onPress={() => NToast.success('Synced')}>Show toast</NButton></NView></NTheme>;
 }`,
-    <E.NView tag="div" className="component-host-demo">
+    <E.NView tag="div" className={PREVIEW_STACK}>
       <E.NToastHost top={80} maxWidth={300} />
-      <E.NButton className="component-host-button" onPress={() => E.NToast.success('Synced')}>
+      <E.NButton className={PREVIEW_BUTTON} onPress={() => E.NToast.success('Synced')}>
         Show toast
       </E.NButton>
     </E.NView>

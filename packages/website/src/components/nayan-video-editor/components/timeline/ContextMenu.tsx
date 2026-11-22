@@ -60,7 +60,7 @@ export const ContextMenu = ({ x, y, items, onClose }: ContextMenuProps) => {
       ref={ref}
       role="menu"
       style={{ left: position.left, top: position.top }}
-      className="animate-in fixed z-[100] min-w-52 rounded-lg border border-border bg-overlay p-1 elevate-lg"
+      className="animate-in animate-editor-in fixed z-[100] min-w-52 rounded-lg border border-border bg-overlay p-1 elevate-lg [box-shadow:var(--elevation-lg)]"
     >
       {items.map((item, index) => (
         <NView tag="div" key={`${item.label}-${index}`}>

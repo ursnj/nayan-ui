@@ -109,7 +109,7 @@ export const PageHero = ({
   media,
   children,
 }: PageHeroProps) => (
-  <NView tag="section" className="site-page-hero" data-tone={tone}>
+  <NView tag="section" className="site-page-hero [border-bottom:1px_solid_var(--border)] [background:radial-gradient(ellipse_at_79%_0%,_var(--tone-paper,_var(--surface-tertiary)),_transparent_72%),_var(--background)]" data-tone={tone}>
     <NView tag="div" className={`${CONTAINER} py-8 sm:pb-14 sm:pt-9`}>
       {breadcrumb ? <Breadcrumb items={breadcrumb} /> : null}
       <NView tag="div" className={media ? "grid min-w-0 items-center gap-8 md:grid-cols-2 lg:gap-14" : ""}>
@@ -117,7 +117,7 @@ export const PageHero = ({
           {eyebrow ? <NText tag="p" className={`mb-3 ${EYEBROW}`}>{eyebrow}</NText> : null}
           <NText tag="h1" className={H1}>{title}</NText>
           {titleAccent ? (
-            <NText tag="p" className="site-page-subtitle mt-3 text-lg font-semibold leading-snug tracking-tight sm:text-2xl">
+            <NText tag="p" className="site-page-subtitle [color:var(--tone-ink,_var(--accent))] mt-3 text-lg font-semibold leading-snug tracking-tight sm:text-2xl">
               {titleAccent}
             </NText>
           ) : null}
@@ -250,9 +250,9 @@ export const BrowserFrame = ({
     <NView
       tag="div"
       aria-hidden
-      className="browser-frame-toolbar flex shrink-0 items-center gap-3 border-b border-default px-3 py-2.5"
+      className="browser-frame-toolbar [background:linear-gradient(180deg,_var(--surface),_var(--surface-secondary))] flex shrink-0 items-center gap-3 border-b border-default px-3 py-2.5"
     >
-      <NText tag="span" className="browser-frame-dots flex shrink-0 items-center gap-1.5">
+      <NText tag="span" className="browser-frame-dots [&_>_span]:[width:0.55rem] [&_>_span]:[height:0.55rem] [&_>_span]:[border-radius:50%] [&_>_span]:[background:#e96e7b] [&_>_span:nth-child(2)]:[background:#e8aa52] [&_>_span:nth-child(3)]:[background:#55b985] flex shrink-0 items-center gap-1.5">
         <NText tag="span" />
         <NText tag="span" />
         <NText tag="span" />
@@ -510,7 +510,7 @@ interface CtaPanelProps {
 
 export const CtaPanel = ({ title, lead, children }: CtaPanelProps) => (
   <NView tag="div" className={`${CONTAINER} pb-12 sm:pb-16`}>
-    <NView tag="section" className="site-cta grid items-end gap-6 lg:grid-cols-[minmax(0,1fr)_auto]">
+    <NView tag="section" className="site-cta [padding:clamp(1.5rem,_5vw,_3.5rem)] [border:1px_solid_var(--border)] [border-radius:1.5rem] [background:linear-gradient(125deg,_var(--surface),_var(--surface-tertiary))] grid items-end gap-6 lg:grid-cols-[minmax(0,1fr)_auto]">
       <NView tag="div">
         <NText tag="h2" className={H2}>{title}</NText>
         <NText tag="p" className={`mt-3 max-w-xl ${LEAD}`}>{lead}</NText>

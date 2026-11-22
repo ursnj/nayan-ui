@@ -1,7 +1,8 @@
-export function componentSource(imports: string, body: string, state = '', height = 280, pageClassName = 'gap-3 p-5') {
+import { PREVIEW_STACK, PREVIEW_BUTTON } from '@/design/system';
+export function componentSource(imports: string, body: string, state = '', height = 280, pageClassName = 'gap-4 p-5') {
   const controls = imports.split(', ');
   // Popups are drawn inside the page surface and need room outside the trigger.
-  const fitContent = !controls.some((name) => name === 'NDatePicker' || name === 'NSelect' || name === 'NTooltip');
+  const fitContent = !controls.some((name) => ['NDatePicker', 'NSelect', 'NTooltip', 'NScrollView'].includes(name));
   const names = [...new Set([...controls, 'NPage', 'NTheme', 'NView'])].join(', ');
   return `'use client';
 
@@ -10,12 +11,104 @@ ${state || fitContent ? "import { useState } from 'react';\n" : ''}
 export default function Example() {
 ${state ? `  ${state}\n` : ''}${fitContent ? `  const [previewHeight, setPreviewHeight] = useState(${height});\n` : ''}  return (
     <NTheme>
-      <NView style={{ height: ${fitContent ? 'previewHeight' : height}, display: 'flex', flexDirection: 'column' }}>
+      <NView className="flex flex-col" style={{ height: ${fitContent ? 'previewHeight' : height} }}>
         <NPage className="${pageClassName}" safeArea={false}${fitContent ? ' onContentSizeChange={(_, height) => setPreviewHeight(Math.ceil(height))}' : ''}>
           ${body}
         </NPage>
       </NView>
     </NTheme>
+  );
+}`;
+}
+
+const counterCode = `function Counter() {
+  const [count, setCount] = useState(0);
+  return (
+    <NView className="gap-3 p-4">
+      <NText>Pressed {count} times</NText>
+      <NButton onPress={() => setCount((value) => value + 1)}>Continue</NButton>
+    </NView>
+  );
+}`;
+
+const drawerCode = `import { NButton, NDrawer, NText, NView, useNDrawer } from 'nayan-ui/components';
+
+function DrawerButton({ dismiss = false }: { dismiss?: boolean }) {
+  const { open, close } = useNDrawer();
+  return <NButton className="${PREVIEW_BUTTON}" onPress={dismiss ? close : open}>{dismiss ? 'Close drawer' : 'Open drawer'}</NButton>;
+}
+
+export default function Example() {
+  return (
+    <NDrawer width={240} accessibilityLabel="Example navigation drawer"
+      drawerStyle={{ backgroundColor: 'var(--overlay)', borderRight: '1px solid var(--border)' }}
+      drawerContent={<NView className="${PREVIEW_STACK}"><NText className="text-sm font-semibold">Navigation</NText><DrawerButton dismiss /></NView>}>
+      <NView className="${PREVIEW_STACK}"><DrawerButton /></NView>
+    </NDrawer>
+  );
+}`;
+
+const keyboardCode = `import { NButton, NInput, NKeyboard, NPage, NText, NView, useNKeyboard } from 'nayan-ui/components';
+
+function KeyboardStatus() {
+  const keyboard = useNKeyboard();
+  return (
+    <>
+      <NText>{keyboard.visible ? \`Keyboard open · \${Math.round(keyboard.height)} px\` : keyboard.focusedInput ? 'Editing a field' : 'Keyboard closed'}</NText>
+      <NButton onPress={keyboard.dismiss}>Done</NButton>
+    </>
+  );
+}
+
+export default function Example() {
+  return (
+    <NView className="h-[278px]">
+      <NKeyboard>
+        <NPage className="gap-3 p-4">
+          <NInput label="Name" placeholder="Ada" />
+          <NInput label="Email" type="email" placeholder="ada@example.com" />
+          <KeyboardStatus />
+        </NPage>
+      </NKeyboard>
+    </NView>
+  );
+}`;
+
+const themeCode = `import { NButton, NCard, NPage, NText, NTheme, useNTheme } from 'nayan-ui/components';
+
+function ThemeControls() {
+  const { resolvedTheme, toggleTheme } = useNTheme();
+  return (
+    <NCard className="gap-3 border border-border bg-surface p-4">
+      <NText className="text-foreground">Preview theme: {resolvedTheme}</NText>
+      <NButton onPress={toggleTheme}>Switch preview theme</NButton>
+    </NCard>
+  );
+}
+
+export default function Example() {
+  return <NTheme defaultTheme="system"><NPage className="p-4"><ThemeControls /></NPage></NTheme>;
+}`;
+
+function blurCode(target: boolean) {
+  return `import { ${target ? 'useRef, ' : ''}useState } from 'react';
+import { NBlur, ${target ? 'NBlurTarget, type NBlurTargetRef, ' : ''}NButton, NText, NView } from 'nayan-ui/components';
+
+export default function Example() {
+  ${target ? 'const target = useRef<NBlurTargetRef>(null);\n  ' : ''}const [enabled, setEnabled] = useState(true);
+  const background = <NText className="[color:#fde68a] text-[26px] font-bold">Colour and texture</NText>;
+  return (
+    <NView className="${PREVIEW_STACK}">
+      <NView className="component-blur-scene relative grid w-full [min-height:9rem] [place-items:center] overflow-hidden [border-radius:0.75rem] [background:repeating-linear-gradient(135deg,_#432079_0_12px,_#7649c2_12px_24px)]">
+        ${target ? '<NBlurTarget ref={target}>{background}</NBlurTarget>' : '{background}'}
+        <NBlur ${target ? 'blurTarget={target} ' : ''}intensity={56} enabled={enabled} tint="dark" className="component-blur-panel absolute [inset:25%_12%] grid [place-items:center] [border:1px_solid_#ffffff66] [border-radius:0.75rem] [background:#24104455]">
+          <NText className="text-white">Sharp foreground</NText>
+        </NBlur>
+      </NView>
+      <NButton className="${PREVIEW_BUTTON}" onPress={() => setEnabled(!enabled)}>
+        {enabled ? 'Turn blur off' : 'Turn blur on'}
+      </NButton>
+    </NView>
   );
 }`;
 }
@@ -33,9 +126,9 @@ export default function Example() {
   const style = useAnimatedStyle({ opacity });
   const [faded, setFaded] = useState(false);
   return (
-    <NView>
-      <AnimationView animatedStyle={style}><NText>Animated view</NText></AnimationView>
-      <NButton onPress={() => {
+    <NView className="${PREVIEW_STACK}">
+      <AnimationView animatedStyle={style} className="component-animation-block [border-radius:0.75rem] [border:1px_solid_color-mix(in_srgb,_var(--accent)_22%,_var(--surface))] [background:color-mix(in_srgb,_var(--accent)_12%,_var(--surface))] text-foreground [padding:1.5rem]"><NText>Animated view</NText></AnimationView>
+      <NButton className="${PREVIEW_BUTTON}" onPress={() => {
         opacity.value = withTiming(faded ? 1 : 0.4);
         setFaded(!faded);
       }}>{faded ? 'Fade in' : 'Fade out'}</NButton>
@@ -45,76 +138,37 @@ export default function Example() {
   },
   blur: {
     note: 'Blur depends on platform support. For a native view target, pass the ref from NBlurTarget as blurTarget.',
-    code: `import { NBlur, NText, NView } from 'nayan-ui/components';
-
-export default function Example() {
-  return (
-    <NView style={{ height: 180, backgroundColor: '#3158aa' }}>
-      <NBlur intensity={45} tint="dark" style={{ padding: 16 }}>
-        <NText style={{ color: '#ffffff' }}>Blurred panel</NText>
-      </NBlur>
-    </NView>
-  );
-}`
+    code: blurCode(false)
   },
   'blur-target': {
-    code: `import { useRef } from 'react';
-import { NBlur, NBlurTarget, NText, NView, type NBlurTargetRef } from 'nayan-ui/components';
-
-export default function Example() {
-  const target = useRef<NBlurTargetRef>(null);
-  return (
-    <NView style={{ height: 180 }}>
-      <NBlurTarget ref={target} style={{ flex: 1, backgroundColor: '#4865d8' }}>
-        <NText>Content behind the overlay</NText>
-      </NBlurTarget>
-      <NBlur blurTarget={target} intensity={45} style={{ padding: 16 }}>
-        <NText>Overlay</NText>
-      </NBlur>
-    </NView>
-  );
-}`
+    code: blurCode(true)
   },
   'components-root': {
     note: 'Mount a root per rendering surface. Pass a stylesheet generated by the Styles Compiler when using custom utilities.',
-    code: `import { ComponentsRoot, NButton, NTheme } from 'nayan-ui/components';
+    code: `import { useState } from 'react';
+import { ComponentsRoot, NButton, NText, NView } from 'nayan-ui/components';
+
+${counterCode}
 
 export default function Example() {
   return (
-    <NTheme defaultTheme="system">
-      <ComponentsRoot style={{ height: 180 }} background="transparent">
-        <NButton onPress={() => console.log('Pressed')}>Continue</NButton>
-      </ComponentsRoot>
-    </NTheme>
+    <ComponentsRoot style={{ flex: 1, minHeight: 0 }} background="transparent"><Counter /></ComponentsRoot>
   );
 }`
   },
   confetti: {
     code: componentSource(
       'NButton, NConfetti',
-      `<NButton onPress={() => setRun((value) => value + 1)}>Celebrate</NButton>
-          <NConfetti run={run} count={24} />`,
+      `<NView className="items-start gap-3 h-[200px]">
+            <NButton onPress={() => setRun((value) => value + 1)}>Celebrate</NButton>
+            <NConfetti run={run} count={24} className="w-full h-[140px]" />
+          </NView>`,
       'const [run, setRun] = useState(0);'
     )
   },
   drawer: {
     note: 'Mount NDrawer outside ComponentsRoot. The open state can be controlled by the screen or by useNDrawer.',
-    code: `import { NButton, NDrawer, NText, NView, useNDrawer } from 'nayan-ui/components';
-
-function OpenButton() {
-  const { open } = useNDrawer();
-  return <NButton onPress={open}>Open drawer</NButton>;
-}
-
-export default function Example() {
-  return (
-    <NView style={{ height: 260, overflow: 'hidden' }}>
-      <NDrawer width={220} drawerContent={<NText>Navigation</NText>}>
-        <OpenButton />
-      </NDrawer>
-    </NView>
-  );
-}`
+    code: drawerCode
   },
   'drawing-canvas': {
     code: `'use client';
@@ -143,11 +197,12 @@ export default function Example() {
   if (error) return <NText>{error}</NText>;
   if (!document) return <NLoading label="Preparing drawing canvas" />;
   return (
-    <NView>
-      <NView style={{ width: '100%', height: 206 }}>
+    <NView className="${PREVIEW_STACK}">
+      <NText tag="p">Draw on the canvas.</NText>
+      <NView className="component-media-surface w-full [height:206px] [flex:none] overflow-hidden [border:1px_solid_var(--border)] [border-radius:0.75rem]">
         <DrawingCanvas document={document} mode="draw" />
       </NView>
-      <NButton onPress={() => document.clear()}>Clear drawing</NButton>
+      <NButton className="${PREVIEW_BUTTON}" onPress={() => document.clear()}>Clear drawing</NButton>
     </NView>
   );
 }`
@@ -157,22 +212,24 @@ export default function Example() {
 
 import { useRef, useState } from 'react';
 import { GameView, useWorld, type Camera, type Entity } from 'nayan-ui/games';
-import { NButton, NView } from 'nayan-ui/components';
+import { NButton, NLoading, NText, NView } from 'nayan-ui/components';
 
 export default function Example() {
   const cube = useRef<Entity | null>(null);
   const camera: Camera = { eye: [3, 2, 4], target: [0, 0, 0], fov: 0.65, ortho: 1.25 };
   const [alternate, setAlternate] = useState(false);
+  const [error, setError] = useState('');
   const world = useWorld(32, (world) => {
     cube.current = world.spawn({ mesh: 'cube', color: '#699cff' });
-  });
-  if (!world) return null;
+  }, [], (cause) => setError(cause.message));
+  if (error) return <NText tag="p" role="status" className="${PREVIEW_STACK}">{error}</NText>;
+  if (!world) return <NLoading label="Preparing scene" />;
   return (
-    <NView>
-      <NView style={{ width: '100%', height: 206 }}>
-        <GameView source={world} camera={camera} style={{ width: '100%', height: '100%' }} />
+    <NView className="${PREVIEW_STACK}">
+      <NView className="component-media-surface w-full [height:206px] [flex:none] overflow-hidden [border:1px_solid_var(--border)] [border-radius:0.75rem]">
+        <GameView source={world} camera={camera} style={{ width: '100%', height: '100%' }} onError={(cause) => setError(cause.message)} />
       </NView>
-      <NButton onPress={() => {
+      <NButton className="${PREVIEW_BUTTON}" onPress={() => {
         if (cube.current === null) return;
         world.set(cube.current, { color: alternate ? '#699cff' : '#48d9a5' });
         setAlternate(!alternate);
@@ -204,7 +261,7 @@ export default function Controls() {
   }, [stick]);
 
   return (
-    <NView style={{ padding: 16, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 12 }}>
+    <NView className="${PREVIEW_STACK}">
       <Joystick state={stick} size={120} style={{ background: '#2e1853', borderColor: '#8655d8' }} />
       <NText tag="p">X, Y: {position}</NText>
     </NView>
@@ -213,17 +270,7 @@ export default function Controls() {
   },
   keyboard: {
     note: 'Use NKeyboard around an engine form on devices with a software keyboard.',
-    code: `import { NInput, NKeyboard, NPage, NView } from 'nayan-ui/components';
-
-export default function Example() {
-  return (
-    <NView style={{ height: 280, display: 'flex', flexDirection: 'column' }}>
-      <NKeyboard toolbar>
-        <NPage><NInput label="Name" /></NPage>
-      </NKeyboard>
-    </NView>
-  );
-}`
+    code: keyboardCode
   },
   'markdown-view': {
     code: `'use client';
@@ -232,32 +279,51 @@ import { NPage } from 'nayan-ui/components';
 import { NMarkdown } from 'nayan-ui/markdown';
 
 export default function Example() {
-  const source = '## Release notes\\n\\nThis preview renders **Markdown** with engine components.';
+  const source = '## Release notes\\n\\nThis preview renders **Markdown** with engine components.\\n\\n- Interfaces for the web and native\\n- Inline code like \`useWorld\`';
   return (
-    <NPage style={{ height: 240 }}>
+    <NPage className="p-4">
       <NMarkdown source={source} blockSpacing={12} />
     </NPage>
   );
 }`
   },
   page: {
-    code: componentSource('NText', '<NText>Screen content</NText>')
+    code: `import { useState } from 'react';
+import { NButton, NPage, NText, NView } from 'nayan-ui/components';
+
+${counterCode}
+
+export default function Example() {
+  return <NPage><Counter /></NPage>;
+}`
   },
   'platform-view': {
     note: 'The child is rendered by the host platform. Supply a web element on React or a React Native view on native.',
-    code: componentSource('NPlatformView, NText', '<NPlatformView style={{ height: 56 }}><NText>Browser content</NText></NPlatformView>')
+    code: componentSource(
+      'NPlatformView, NButton',
+      `<NPlatformView className="h-[62px]">
+            <NButton className="${PREVIEW_BUTTON}" onPress={() => setCount((value) => value + 1)}>Platform presses: {count}</NButton>
+          </NPlatformView>`,
+      'const [count, setCount] = useState(0);'
+    )
   },
   'refresh-control': {
     code: componentSource(
-      'NRefreshControl, NScrollView, NText',
+      'NRefreshControl, NScrollView, NText, NButton',
       `<NScrollView refreshControl={<NRefreshControl refreshing={refreshing} onRefresh={refresh} />}>
-            <NText>Pull down to refresh</NText>
+            <NView className="gap-3 p-3">
+              <NText>{refreshing ? 'Refreshing…' : \`Refresh complete: \${updates}\`}</NText>
+              <NButton onPress={refresh} disabled={refreshing}>Refresh</NButton>
+            </NView>
           </NScrollView>`,
       `const [refreshing, setRefreshing] = useState(false);
+  const [updates, setUpdates] = useState(0);
   function refresh() {
+    if (refreshing) return;
     setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 500);
-  }`
+    setTimeout(() => { setUpdates((value) => value + 1); setRefreshing(false); }, 450);
+  }`,
+      246
     )
   },
   'safe-area': {
@@ -300,62 +366,33 @@ export default function Example() {
     code: componentSource(
       'NScrollView, NText',
       `<NScrollView>
-            {Array.from({ length: 18 }, (_, index) => <NText key={index}>Item {index + 1}</NText>)}
-          </NScrollView>`
+            {Array.from({ length: 18 }, (_, index) => <NText key={index} className="border-b border-border py-2">Item {index + 1}</NText>)}
+          </NScrollView>`,
+      '',
+      246
     )
   },
   theme: {
-    code: `import { NTheme, NText } from 'nayan-ui/components';
-
-export default function Example() {
-  return <NTheme defaultTheme="system"><NText>Uses the system colour mode</NText></NTheme>;
-}`
+    code: themeCode
   },
   'toast-host': {
     note: 'Mount a host once near the root of the app, then enqueue toasts from user actions.',
-    code: `import { NButton, NTheme, NToast, NToastHost } from 'nayan-ui/components';
+    code: `import { NButton, NToast, NToastHost, NView } from 'nayan-ui/components';
 
 export default function Example() {
   return (
-    <NTheme defaultTheme="system">
-      <NButton onPress={() => NToast.success('Changes saved')}>Save</NButton>
-      <NToastHost />
-    </NTheme>
+    <NView className="${PREVIEW_STACK}">
+      <NButton className="${PREVIEW_BUTTON}" onPress={() => NToast.success('Changes saved')}>Show toast</NButton>
+      <NToastHost top={76} />
+    </NView>
   );
 }`
   },
   'use-drawer': {
-    code: `import { NButton, NDrawer, NText, useNDrawer } from 'nayan-ui/components';
-
-function MenuButton() {
-  const { toggle } = useNDrawer();
-  return <NButton onPress={toggle}>Toggle menu</NButton>;
-}
-
-export default function Example() {
-  return <NDrawer drawerContent={<NText>Menu</NText>}><MenuButton /></NDrawer>;
-}`
+    code: drawerCode
   },
   'use-keyboard': {
-    code: `import { NInput, NKeyboard, NPage, NText, NView, useNKeyboard } from 'nayan-ui/components';
-
-function KeyboardStatus() {
-  const keyboard = useNKeyboard();
-  return <NText>{keyboard.visible ? 'Keyboard open' : 'Keyboard closed'}</NText>;
-}
-
-export default function Example() {
-  return (
-    <NView style={{ height: 280, display: 'flex', flexDirection: 'column' }}>
-      <NKeyboard>
-        <NPage>
-          <NInput label="Name" />
-          <KeyboardStatus />
-        </NPage>
-      </NKeyboard>
-    </NView>
-  );
-}`
+    code: keyboardCode
   },
   'use-safe-area-frame': {
     code: `import { NSafeAreaProvider, NText, useNSafeAreaFrame } from 'nayan-ui/components';
@@ -382,16 +419,7 @@ export default function Example() {
 }`
   },
   'use-theme': {
-    code: `import { NText, NTheme, useNTheme } from 'nayan-ui/components';
-
-function Mode() {
-  const theme = useNTheme();
-  return <NText>Colour mode {theme.resolvedTheme}</NText>;
-}
-
-export default function Example() {
-  return <NTheme defaultTheme="system"><Mode /></NTheme>;
-}`
+    code: themeCode
   },
   'video-player': {
     note: 'Serve a video file from your app and pass its URL to VideoPlayer.',
@@ -400,7 +428,7 @@ export default function Example() {
 export default function Example() {
   return (
     <VideoPlayer source="/nayan-ui/reference-orbit.mp4" controls muted contentFit="contain"
-      accessibilityLabel="Orbit sample clip" style={{ width: '100%', height: 240 }} />
+      accessibilityLabel="Orbit sample clip" style={{ width: '100%', height: '100%', backgroundColor: '#171e31' }} />
   );
 }`
   }

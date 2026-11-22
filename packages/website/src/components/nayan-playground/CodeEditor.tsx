@@ -80,10 +80,10 @@ export default function CodeEditor({ label = 'Playground source code', code, onC
   return (
     <NView
       tag="div"
-      className="site-code-block site-code-editor relative h-full w-full min-w-0 overflow-hidden bg-[var(--code-bg)] [color:var(--code-fg)]"
+      className="site-code-block [--code-bg:#fff] [--code-fg:#2b1a43] [--code-header:#f2eafb] [--code-muted:#615371] [--code-line:#e1d5ee] [--code-keyword:#6b21a8] [--code-string:#166353] [--code-name:#24449c] [--code-number:#9a4418] dark:[--code-bg:#211634] dark:[--code-fg:#f1e9ff] dark:[--code-header:#2b1d43] dark:[--code-muted:#c6b5d9] dark:[--code-line:#493760] dark:[--code-keyword:#eca9ff] dark:[--code-string:#cde98d] dark:[--code-name:#b9bcff] dark:[--code-number:#ffba8a] [&[data-code-tone=ink]]:[--code-bg:#211634] [&[data-code-tone=ink]]:[--code-fg:#f1e9ff] [&[data-code-tone=ink]]:[--code-header:#2b1d43] [&[data-code-tone=ink]]:[--code-muted:#c6b5d9] [&[data-code-tone=ink]]:[--code-line:#493760] [&[data-code-tone=ink]]:[--code-keyword:#eca9ff] [&[data-code-tone=ink]]:[--code-string:#cde98d] [&[data-code-tone=ink]]:[--code-name:#b9bcff] [&[data-code-tone=ink]]:[--code-number:#ffba8a] site-code-editor [&_code]:[font:inherit] relative h-full w-full min-w-0 overflow-hidden bg-[var(--code-bg)] [color:var(--code-fg)]"
       data-code-embedded
     >
-      <NView tag="pre" ref={highlight} className={`site-code-editor-highlight pointer-events-none overflow-hidden ${editorLayer}`} aria-hidden="true">
+      <NView tag="pre" ref={highlight} className={`site-code-editor-highlight forced-colors:invisible pointer-events-none overflow-hidden ${editorLayer}`} aria-hidden="true">
         <CodeText code={`${code}\n`} />
       </NView>
       <NView<'textarea'>
@@ -93,7 +93,7 @@ export default function CodeEditor({ label = 'Playground source code', code, onC
         aria-autocomplete="list"
         aria-controls={active ? listId : undefined}
         aria-activedescendant={active ? `${listId}-${active.index}` : undefined}
-        className={`site-code-editor-input resize-none overflow-auto bg-transparent text-transparent [caret-color:var(--code-fg)] focus-visible:[outline-offset:-2px] ${editorLayer}`}
+        className={`site-code-editor-input selection:[background:color-mix(in_srgb,_var(--accent)_25%,_transparent)] selection:text-transparent forced-colors:[color:CanvasText] forced-colors:[caret-color:auto] forced-colors:selection:[background:Highlight] forced-colors:selection:[color:HighlightText] resize-none overflow-auto bg-transparent text-transparent [caret-color:var(--code-fg)] focus-visible:[outline-offset:-2px] ${editorLayer}`}
         value={code}
         spellCheck={false}
         autoComplete="off"

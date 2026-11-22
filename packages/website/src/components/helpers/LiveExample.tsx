@@ -10,8 +10,7 @@ import { evaluateExample } from '@/components/nayan-playground/evaluate';
 import PreviewBoundary from '@/components/nayan-playground/PreviewBoundary';
 import PreviewSurface from '@/components/ui/previews/PreviewSurface';
 import { BrowserFrame } from '@/design/Primitives';
-import { documentationThemes } from '@/design/documentationStyles';
-import { siteThemes } from '@/design/themeStyles';
+import { documentationThemes } from '@/design/palettes';
 import { exampleModules } from '@/components/ui/previews/exampleModules';
 import type { NamedComponentPreview } from '@/components/ui/previews/types';
 
@@ -20,10 +19,6 @@ const paneHeight = 'h-[30rem]';
 const paneTitle = 'border-b border-border p-3 text-xs font-semibold text-muted';
 const toolbarButton = 'inline-flex min-h-8 flex-row items-center justify-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold disabled:opacity-50';
 const secondaryButton = `${toolbarButton} text-muted hover:text-foreground`;
-const sitePreviewThemes = {
-  light: { ...siteThemes.light, link: siteThemes.light.accent },
-  dark: { ...siteThemes.dark, link: siteThemes.dark.accent }
-};
 // These examples use the viewport for floating controls or content that fills the surface.
 const viewportExamples = new Set([
   'calendar',
@@ -44,17 +39,14 @@ const viewportExamples = new Set([
   'tooltip',
   'use-drawer',
   'use-keyboard',
-  'use-theme'
+  'use-theme',
+  'video-player'
 ]);
 
 export type LiveExampleScenario = NamedComponentPreview;
 
 function scrollsPreview(target: EventTarget, region: HTMLDivElement) {
-  return (
-    region.scrollHeight > region.clientHeight &&
-    target instanceof HTMLCanvasElement &&
-    target.hasAttribute('data-nayan-component-canvas')
-  );
+  return region.scrollHeight > region.clientHeight && target instanceof HTMLCanvasElement && target.hasAttribute('data-nayan-component-canvas');
 }
 
 function PreviewViewport({ id, children }: { id?: string; children: ReactNode }) {
@@ -75,17 +67,14 @@ function PreviewViewport({ id, children }: { id?: string; children: ReactNode })
     <NView
       tag="div"
       ref={viewport}
-      className="docs-live-preview flex min-h-0 min-w-0 flex-1 items-start justify-center overflow-auto [scrollbar-width:thin] focus-visible:[outline-offset:-3px]"
+      className="docs-live-preview docs-light dark:docs-dark flex min-h-0 min-w-0 flex-1 items-start justify-center overflow-auto bg-background text-foreground [scrollbar-width:thin] focus-visible:[outline-offset:-3px] data-[preview-scrollable]:[&_canvas[data-nayan-component-canvas]]:touch-pan-y!"
       role="region"
       aria-label="Preview content"
       tabIndex={0}
       data-component-preview={id}
       onWheelCapture={(event) => {
         const { target, currentTarget, deltaX, deltaY, ctrlKey, metaKey, shiftKey } = event;
-        if (
-          !ctrlKey && !metaKey && !shiftKey && Math.abs(deltaY) > Math.abs(deltaX) &&
-          scrollsPreview(target, currentTarget)
-        ) {
+        if (!ctrlKey && !metaKey && !shiftKey && Math.abs(deltaY) > Math.abs(deltaX) && scrollsPreview(target, currentTarget)) {
           // Let the browser scroll the frame before the canvas can consume the wheel event.
           event.stopPropagation();
         }
@@ -93,10 +82,8 @@ function PreviewViewport({ id, children }: { id?: string; children: ReactNode })
       onKeyDownCapture={(event) => {
         if (!('key' in event)) return;
         const { target, currentTarget, key } = event;
-        if (
-          ['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown'].includes(key) &&
-          scrollsPreview(target, currentTarget)
-        ) event.stopPropagation();
+        if (['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown'].includes(key) && scrollsPreview(target, currentTarget))
+          event.stopPropagation();
       }}
     >
       {children}
@@ -238,16 +225,14 @@ function ExampleWorkspace({
   }
 
   const Output = output?.component;
-  const previewThemes = /^\/react(?:-native)?\//.test(previewPath) ? documentationThemes : sitePreviewThemes;
   const keepViewport = previewId !== undefined && viewportExamples.has(previewId);
   const keepEditedViewport = keepViewport && example.host;
   return (
     <NView
       tag="div"
-      className="component-workbench @container grid min-w-0 gap-3"
+      className="component-workbench @container grid min-w-0 gap-3 scroll-mt-[calc(var(--site-header-height)_+_1rem)]"
       id={codeAnchor}
       inert={!ready}
-      style={{ scrollMarginTop: 'calc(var(--site-header-height) + 1rem)' }}
     >
       <NView tag="div" className={`${island} component-workbench-toolbar flex flex-wrap items-center justify-between gap-3 p-3`}>
         {options}
@@ -272,7 +257,11 @@ function ExampleWorkspace({
         </NText>
       )}
       <NView tag="div" className="component-workbench-panes grid min-w-0 grid-cols-1 items-start gap-3 @[672px]:grid-cols-2">
-        <NView tag="section" className={`${island} ${paneHeight} component-workbench-code flex min-w-0 flex-col overflow-hidden`} aria-label="Editable code">
+        <NView
+          tag="section"
+          className={`${island} ${paneHeight} component-workbench-code flex min-w-0 flex-col overflow-hidden`}
+          aria-label="Editable code"
+        >
           <NText tag="div" className={`${paneTitle} shrink-0 font-mono`}>
             Example.tsx
           </NText>
@@ -291,7 +280,7 @@ function ExampleWorkspace({
             <PreviewViewport id={previewId}>
               {Output && output ? (
                 <PreviewSurface
-                  themes={previewThemes}
+                  themes={documentationThemes}
                   fullWidth={previewId === 'video-player'}
                   keepViewport={keepEditedViewport}
                   preview={{
@@ -308,7 +297,7 @@ function ExampleWorkspace({
                   }}
                 />
               ) : (
-                <PreviewSurface themes={previewThemes} preview={example} fullWidth={previewId === 'video-player'} keepViewport={keepViewport} />
+                <PreviewSurface themes={documentationThemes} preview={example} fullWidth={previewId === 'video-player'} keepViewport={keepViewport} />
               )}
             </PreviewViewport>
           </BrowserFrame>

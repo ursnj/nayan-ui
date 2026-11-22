@@ -16,10 +16,11 @@ impl ComponentDocument {
             .unwrap_or(self.palette.get("muted"));
         let size = style.text_size.unwrap_or(16.);
         let rect = self.layout_rects.get(&node.id).copied().unwrap_or(Rect::NOTHING);
+        let otp = node.kind == "NInputOtp";
         let mut editor = json!({
             "rect":[rect.left(),rect.top(),rect.width(),rect.height()],
-            "color":color(style.foreground.unwrap_or(self.palette.get("field-foreground"))),
-            "placeholderColor":color(placeholder), "placeholder":node.props["placeholder"].as_str().unwrap_or(""),
+            "color":color(if otp { Color32::TRANSPARENT } else { style.foreground.unwrap_or(self.palette.get("field-foreground")) }),
+            "placeholderColor":color(placeholder), "placeholder":if otp { "" } else { node.props["placeholder"].as_str().unwrap_or("") },
             "fontSize":size, "fontWeight":style.weight.unwrap_or(if style.medium { 500 } else { 400 }).to_string(),
             "lineHeight":style.line_height.map_or(size*1.5, |height| height.points(size)),
             "padding":[padding.top,padding.right,padding.bottom,padding.left],

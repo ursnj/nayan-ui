@@ -186,7 +186,8 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
       onTouchEnd={() => {
         if (!overlayDrag.current?.captured) overlayDrag.current = null;
       }}
-      onResponderTerminationRequest={() => !overlayDrag.current?.captured}>
+      onResponderTerminationRequest={() => !overlayDrag.current?.captured}
+    >
       <DocumentSurface
         active={active}
         document={document}
@@ -218,6 +219,7 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
             );
           if (!screenReader || (hasPopup && !popupRoots.some((prefix) => node.id.startsWith(prefix)))) return null;
           const multiOption = Boolean(node.selectOwner && node.multiple);
+          const radio = node.kind === 'NRadio' || node.kind === 'NRadioGroup';
           const toggle = multiOption || ['NCheck', 'NSwitch', 'NToggleButton'].includes(node.kind);
           const adjustable = ['NSlider', 'NNumberField', 'NCarousel'].includes(node.kind);
           const list = node.kind === 'NList';
@@ -243,15 +245,17 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
                           ? 'image'
                           : adjustable
                             ? 'adjustable'
-                            : toggle
-                              ? node.kind === 'NSwitch'
-                                ? 'switch'
-                                : 'checkbox'
-                              : button
-                                ? 'button'
-                                : node.kind === 'NProgress' || node.kind === 'NLoading'
-                                  ? 'progressbar'
-                                  : 'text'
+                            : radio
+                              ? 'radio'
+                              : toggle
+                                ? node.kind === 'NSwitch'
+                                  ? 'switch'
+                                  : 'checkbox'
+                                : button
+                                  ? 'button'
+                                  : node.kind === 'NProgress' || node.kind === 'NLoading'
+                                    ? 'progressbar'
+                                    : 'text'
               }
               accessibilityLabel={node.label || (node.kind === 'NCloseButton' ? 'Close' : undefined)}
               accessibilityValue={
@@ -286,8 +290,8 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
               accessibilityState={{
                 busy: node.kind === 'NLoading' ? node.value !== false : undefined,
                 disabled: node.disabled,
-                checked: multiOption ? node.selected : toggle ? Boolean(node.value) : undefined,
-                selected: node.selected,
+                checked: multiOption || radio ? node.selected : toggle ? Boolean(node.value) : undefined,
+                selected: radio ? undefined : node.selected,
                 expanded: node.expanded
               }}
               onAccessibilityTap={list ? undefined : () => document.request({ action: 'activate', id: node.id })}
@@ -318,7 +322,8 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
                   }
                 : undefined
             }
-            style={{ position: 'absolute', left: clipLeft, top: clipTop, width: clipWidth, height: clipHeight, overflow: 'hidden' }}>
+            style={{ position: 'absolute', left: clipLeft, top: clipTop, width: clipWidth, height: clipHeight, overflow: 'hidden' }}
+          >
             <View pointerEvents="box-none" style={{ position: 'absolute', left: left - clipLeft, top: top - clipTop, width, height }}>
               {overlays[id]}
             </View>

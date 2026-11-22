@@ -1,5 +1,6 @@
 'use client';
 
+import { PREVIEW_STACK, PREVIEW_BUTTON } from '@/design/system';
 import { useEffect, useRef, useState, type ComponentType } from 'react';
 import { AnimationView, useAnimatedStyle, useSharedValue, withTiming } from 'nayan-ui/animations';
 import { NView, NButton, NLoading, NPage, NText } from 'nayan-ui/components';
@@ -13,12 +14,12 @@ function AnimationDemo({ alternate }: DemoProps) {
   const style = useAnimatedStyle({ opacity });
   const [faded, setFaded] = useState(false);
   return (
-    <NView tag="div" className="component-host-demo">
-      <AnimationView animatedStyle={style} className="component-animation-block">
+    <NView tag="div" className={PREVIEW_STACK}>
+      <AnimationView animatedStyle={style} className="component-animation-block [border-radius:0.75rem] [border:1px_solid_color-mix(in_srgb,_var(--accent)_22%,_var(--surface))] [background:color-mix(in_srgb,_var(--accent)_12%,_var(--surface))] text-foreground [padding:1.5rem]">
         <NText>Animated view</NText>
       </AnimationView>
       <NButton
-        className="component-host-button"
+        className={PREVIEW_BUTTON}
         onPress={() => {
           opacity.value = withTiming(faded ? 1 : 0.4, { duration: alternate ? 1000 : 250 });
           setFaded(!faded);
@@ -53,18 +54,18 @@ function DrawingDemo({ alternate }: DemoProps) {
   }, [alternate]);
   if (error)
     return (
-      <NText tag="p" role="status" className="component-host-demo">
+      <NText tag="p" role="status" className={PREVIEW_STACK}>
         {error}
       </NText>
     );
   if (!document) return <NLoading label="Preparing drawing canvas" />;
   return (
-    <NView tag="div" className="component-host-demo">
+    <NView tag="div" className={PREVIEW_STACK}>
       <NText tag="p">Draw on the canvas.</NText>
-      <NView tag="div" className="component-media-surface">
+      <NView tag="div" className="component-media-surface w-full [height:206px] [flex:none] overflow-hidden [border:1px_solid_var(--border)] [border-radius:0.75rem]">
         <DrawingCanvas document={document} mode="draw" />
       </NView>
-      <NButton className="component-host-button" onPress={() => document.clear()}>
+      <NButton className={PREVIEW_BUTTON} onPress={() => document.clear()}>
         Clear drawing
       </NButton>
     </NView>
@@ -86,18 +87,18 @@ function GameViewDemo({ alternate: perspective }: DemoProps) {
   );
   if (error)
     return (
-      <NText tag="p" role="status" className="component-host-demo">
+      <NText tag="p" role="status" className={PREVIEW_STACK}>
         {error}
       </NText>
     );
   if (!world) return <NLoading label="Preparing scene" />;
   return (
-    <NView tag="div" className="component-host-demo">
-      <NView tag="div" className="component-media-surface">
+    <NView tag="div" className={PREVIEW_STACK}>
+      <NView tag="div" className="component-media-surface w-full [height:206px] [flex:none] overflow-hidden [border:1px_solid_var(--border)] [border-radius:0.75rem]">
         <GameView source={world} camera={camera} style={{ width: '100%', height: '100%' }} onError={(cause) => setError(cause.message)} />
       </NView>
       <NButton
-        className="component-host-button"
+        className={PREVIEW_BUTTON}
         onPress={() => {
           if (cube.current === null) return;
           world.set(cube.current, { color: alternate ? '#699cff' : '#48d9a5' });
@@ -123,7 +124,7 @@ function JoystickDemo({ alternate }: DemoProps) {
     return () => cancelAnimationFrame(frame);
   }, [stick]);
   return (
-    <NView tag="div" className="component-host-demo component-joystick-demo">
+    <NView tag="div" className={PREVIEW_STACK}>
       <Joystick state={stick} size={alternate ? 84 : 120} style={{ background: '#2e1853', borderColor: '#8655d8' }} />
       <NText tag="p">X, Y: {position}</NText>
     </NView>

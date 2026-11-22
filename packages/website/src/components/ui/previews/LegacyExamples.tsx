@@ -1,27 +1,15 @@
 'use client';
 
+import { PREVIEW_STACK, PREVIEW_BUTTON } from '@/design/system';
 import { useEffect, useId, useRef, useState } from 'react';
-import {
-  NButton,
-  NCard,
-  NCheck,
-  NChip,
-  NDatePicker,
-  NInput,
-  NLink,
-  NList,
-  NMenuItem,
-  NPress,
-  NProgress,
-  NText,
-  NView
-} from 'nayan-ui/components';
+import { NButton, NCard, NCheck, NChip, NDatePicker, NInput, NLink, NList, NMenuItem, NPress, NText, NView } from 'nayan-ui/components';
 import { componentSource } from '@/services/nayan-ui/component-examples';
-import SwitchRows from './SwitchRows';
+import { element, sample } from './ControlScenarios';
+import SwitchRows, { switchSource } from './SwitchRows';
 import type { ComponentPreview } from './types';
 
 const row = 'flex-row flex-wrap items-center gap-2';
-const hostButton = 'component-host-button';
+const hostButton = PREVIEW_BUTTON;
 
 const avatars = [
   { name: 'Ada', initials: 'AL', backgroundColor: '#dbeafe', color: '#1e3a8a' },
@@ -49,6 +37,48 @@ const files = [
   { label: 'Archive.zip', detail: '18 MB · Archive', disabled: true }
 ];
 const labels = ['Design', 'Development', 'Documentation'];
+const subscriptions = [{ label: 'Release notes', enabled: true }, { label: 'Security alerts' }, { label: 'Weekly digest' }];
+const defaultAvatar = 'h-10 w-10 items-center justify-center rounded-full';
+const avatarLabel = 'text-sm font-medium';
+
+const avatarPreview = sample(
+  'Overview',
+  element('NView', { className: 'gap-3' }, [
+    element('NText', { className: 'font-semibold' }, 'Colors'),
+    element('NView', { className: row }, [
+      element('NView', { className: `${defaultAvatar} bg-default` }, [element('NText', { className: avatarLabel }, 'ND')]),
+      element('NView', { className: `${defaultAvatar} bg-accent/15` }, [element('NText', { className: `${avatarLabel} text-accent` }, 'AK')]),
+      element('NView', { className: `${defaultAvatar} bg-success/20` }, [element('NText', { className: `${avatarLabel} text-foreground` }, 'RS')]),
+      element('NView', { className: `${defaultAvatar} bg-warning/20` }, [element('NText', { className: `${avatarLabel} text-foreground` }, 'JP')]),
+      element('NView', { className: `${defaultAvatar} bg-danger/20` }, [element('NText', { className: `${avatarLabel} text-foreground` }, 'MM')])
+    ]),
+    element('NText', { className: 'font-semibold' }, 'Sizes'),
+    element('NView', { className: row }, [
+      element('NView', { className: 'h-8 w-8 items-center justify-center rounded-full bg-accent/15' }, [
+        element('NText', { className: 'text-xs font-medium text-accent' }, 'SM')
+      ]),
+      element('NImage', { src: '/logo.webp', alt: 'Nayan UI', width: 40, height: 40, className: 'rounded-full' }),
+      element('NView', { className: 'h-12 w-12 items-center justify-center rounded-full bg-accent/15' }, [
+        element('NText', { className: 'text-base font-medium text-accent' }, 'LG')
+      ])
+    ])
+  ])
+);
+
+const meterPreview = sample(
+  'Overview',
+  element('NView', { className: 'gap-3' }, [
+    element('NText', { className: 'font-semibold' }, 'Colors'),
+    element('NProgress', { color: 'accent', label: 'Storage', value: 30, showLabel: true }),
+    element('NProgress', { color: 'success', label: 'Battery', value: 60, showLabel: true }),
+    element('NProgress', { color: 'warning', label: 'Memory', value: 80, showLabel: true }),
+    element('NProgress', { color: 'danger', label: 'CPU', value: 95, showLabel: true }),
+    element('NText', { className: 'font-semibold' }, 'Sizes'),
+    element('NProgress', { label: 'Small', size: 'sm', value: 50, showLabel: true }),
+    element('NProgress', { label: 'Medium', size: 'md', value: 50, showLabel: true }),
+    element('NProgress', { label: 'Large', size: 'lg', value: 50, showLabel: true })
+  ])
+);
 
 function Popup({ menu }: { menu: boolean }) {
   const id = useId();
@@ -76,8 +106,8 @@ function Popup({ menu }: { menu: boolean }) {
   }, [open]);
 
   return (
-    <NView tag="div" className="component-host-demo">
-      <NView tag="div" className="component-popup-trigger" ref={root}>
+    <NView tag="div" className={PREVIEW_STACK}>
+      <NView tag="div" className="component-popup-trigger relative" ref={root}>
         <NButton
           className={hostButton}
           {...{ 'aria-expanded': open, 'aria-controls': open ? id : undefined, ref: trigger }}
@@ -86,13 +116,13 @@ function Popup({ menu }: { menu: boolean }) {
           {menu ? 'Open Menu' : 'Open Popover'}
         </NButton>
         {open && (
-          <NCard id={id} className="component-popup" role="group" accessibilityLabel={menu ? 'File actions' : 'Popover'}>
+          <NCard id={id} className="component-popup absolute [z-index:1] [inset:calc(100%_+_0.5rem)_auto_auto_0] [min-width:max-content] [border:1px_solid_var(--border)] [border-radius:0.65rem] [background:var(--overlay)] [box-shadow:0_6px_18px_color-mix(in_srgb,_var(--foreground)_13%,_transparent)] [padding:0.65rem]" role="group" accessibilityLabel={menu ? 'File actions' : 'Popover'}>
             {menu ? (
               commands.map((command) => (
                 <NMenuItem
                   key={command}
                   tag="button"
-                  className="component-popup-item"
+                  className="component-popup-item block w-full [border-radius:0.35rem] [padding:0.25rem_0.5rem] [text-align:start] cursor-pointer hover:[background:color-mix(in_srgb,_var(--accent)_12%,_var(--surface))] focus-visible:[background:color-mix(in_srgb,_var(--accent)_12%,_var(--surface))]"
                   onClick={() => {
                     setSelected(command);
                     setOpen(false);
@@ -187,8 +217,8 @@ function Toolbar() {
 
 function Table() {
   return (
-    <NView className="component-table-wrapper">
-      <NView tag="table" className="component-table" accessibilityLabel="Team members">
+    <NView className="component-table-wrapper overflow-auto [margin:1.25rem] [border:1px_solid_var(--border)] [border-radius:0.75rem] [background:var(--surface)]">
+      <NView tag="table" className="component-table w-full [border-collapse:collapse] [font-size:0.875rem] [line-height:1.4] [text-align:start] [&_:is(th,td)]:[padding:0.65rem_0.75rem] [&_:is(th,td)]:[text-align:start] [&_th]:[background:var(--surface-secondary)] [&_tr:nth-child(even)]:[background:var(--surface-secondary)]" accessibilityLabel="Team members">
         <NView tag="thead">
           <NView tag="tr">
             {columns.map((column) => (
@@ -215,6 +245,7 @@ function Table() {
 }
 
 const legacyExamples = {
+  avatar: avatarPreview,
   menu: {
     host: true,
     render: <Popup menu />,
@@ -302,11 +333,11 @@ const legacyExamples = {
   'date-field': {
     host: true,
     render: (
-      <NView tag="div" className="component-host-demo">
+      <NView tag="div" className={PREVIEW_STACK}>
         <NText tag="label" htmlFor="example-date">
           Date
         </NText>
-        <NInput id="example-date" type="date" className="component-host-input" />
+        <NInput id="example-date" type="date" className="component-host-input [min-height:2.75rem] [border:1px_solid_var(--border)] [border-radius:0.5rem] [background:var(--field-background)] [padding:0.45rem_0.75rem]" />
       </NView>
     ),
     source: fieldSource('date', 'Date')
@@ -358,10 +389,7 @@ const legacyExamples = {
       `const files = ${JSON.stringify(files, null, 2)};`
     )
   },
-  meter: {
-    render: <NProgress color="warning" label="Storage used" value={75} showLabel />,
-    source: componentSource('NProgress', '<NProgress color="warning" label="Storage used" value={75} showLabel />')
-  },
+  meter: meterPreview,
   pagination: {
     render: <Pagination />,
     source: componentSource(
@@ -370,7 +398,7 @@ const legacyExamples = {
           <NView className="${row}">
             <NButton isOutline disabled={page === 1} onPress={() => setPage(page - 1)}>Previous</NButton>
             {[1, 2, 3].map((number) => (
-              <NButton key={number} isOutline={page !== number} onPress={() => setPage(number)}>{number}</NButton>
+              <NButton key={number} isOutline={page !== number} accessibilityLabel={\`Page \${number}\`} onPress={() => setPage(number)}>{number}</NButton>
             ))}
             <NButton isOutline disabled={page === 3} onPress={() => setPage(page + 1)}>Next</NButton>
           </NView>`,
@@ -380,8 +408,8 @@ const legacyExamples = {
   'progress-circle': {
     host: true,
     render: (
-      <NView className="component-host-demo">
-        <NView tag="div" className="component-progress-circle" role="progressbar" accessibilityLabel="Upload progress" {...{ 'aria-valuenow': 72 }}>
+      <NView className={PREVIEW_STACK}>
+        <NView tag="div" className="component-progress-circle grid [width:5.25rem] [height:5.25rem] [place-items:center] [border-radius:50%] [background:radial-gradient(circle,_var(--background)_60%,_transparent_62%),_conic-gradient(var(--accent)_72%,_var(--default)_0)] font-semibold" role="progressbar" accessibilityLabel="Upload progress" {...{ 'aria-valuenow': 72 }}>
           <NText>72%</NText>
         </NView>
       </NView>
@@ -389,27 +417,19 @@ const legacyExamples = {
     source: `import { NText, NView } from 'nayan-ui/components';
 
 export default function Example() {
-  const value = 72;
   return (
-    <NView role="progressbar" accessibilityLabel="Upload progress" {...{ 'aria-valuenow': value }}
-      style={{ width: 84, height: 84, borderRadius: '50%', display: 'grid', placeItems: 'center',
-        background: \`radial-gradient(circle, white 60%, transparent 62%), conic-gradient(#0e63ee \${value}%, #e2e8f0 0)\` }}>
-      <NText>{value}%</NText>
+    <NView className="${PREVIEW_STACK}">
+      <NView tag="div" className="component-progress-circle grid [width:5.25rem] [height:5.25rem] [place-items:center] [border-radius:50%] [background:radial-gradient(circle,_var(--background)_60%,_transparent_62%),_conic-gradient(var(--accent)_72%,_var(--default)_0)] font-semibold" role="progressbar" accessibilityLabel="Upload progress" {...{ 'aria-valuenow': 72 }}>
+        <NText>72%</NText>
+      </NView>
     </NView>
   );
 }`
   },
   'switch-group': {
     host: true,
-    height: 206,
-    render: <SwitchRows options={[{ label: 'Email updates', enabled: true }, { label: 'Push notifications' }, { label: 'Weekly summary' }]} />,
-    source: componentSource(
-      'NSwitch, NText',
-      `<NText>Notifications</NText>
-          <NSwitch label="Email updates" defaultValue />
-          <NSwitch label="Push notifications" />
-          <NSwitch label="Weekly summary" />`
-    )
+    render: <SwitchRows options={subscriptions} label="Email me about" />,
+    source: switchSource(subscriptions, 'Email me about')
   },
   table: {
     host: true,
@@ -421,14 +441,16 @@ const people = ${JSON.stringify(people, null, 2)};
 
 export default function Example() {
   return (
-    <NView tag="table" accessibilityLabel="Team members">
-      <NView tag="thead">
-        <NView tag="tr">{columns.map((column) => <NText tag="th" key={column}>{column}</NText>)}</NView>
-      </NView>
-      <NView tag="tbody">
-        {people.map((person) => (
-          <NView tag="tr" key={person[1]}>{person.map((cell) => <NText tag="td" key={cell}>{cell}</NText>)}</NView>
-        ))}
+    <NView className="component-table-wrapper overflow-auto [margin:1.25rem] [border:1px_solid_var(--border)] [border-radius:0.75rem] [background:var(--surface)]">
+      <NView tag="table" className="component-table w-full [border-collapse:collapse] [font-size:0.875rem] [line-height:1.4] [text-align:start] [&_:is(th,td)]:[padding:0.65rem_0.75rem] [&_:is(th,td)]:[text-align:start] [&_th]:[background:var(--surface-secondary)] [&_tr:nth-child(even)]:[background:var(--surface-secondary)]" accessibilityLabel="Team members">
+        <NView tag="thead">
+          <NView tag="tr">{columns.map((column) => <NText tag="th" key={column}>{column}</NText>)}</NView>
+        </NView>
+        <NView tag="tbody">
+          {people.map((person) => (
+            <NView tag="tr" key={person[1]}>{person.map((cell) => <NText tag="td" key={cell}>{cell}</NText>)}</NView>
+          ))}
+        </NView>
       </NView>
     </NView>
   );
@@ -446,18 +468,18 @@ export default function Example() {
               </NPress>
             ))}
           </NView>
-          {tags.length < labels.length && <NButton isOutline onPress={() => setTags(labels)}>Restore tags</NButton>}`,
+          {tags.length < labels.length && <NButton className="self-start" isOutline onPress={() => setTags(labels)}>Restore tags</NButton>}`,
       `const labels = ${JSON.stringify(labels)};\n  const [tags, setTags] = useState(labels);`
     )
   },
   'time-field': {
     host: true,
     render: (
-      <NView tag="div" className="component-host-demo">
+      <NView tag="div" className={PREVIEW_STACK}>
         <NText tag="label" htmlFor="example-time">
           Time
         </NText>
-        <NInput id="example-time" type="time" className="component-host-input" />
+        <NInput id="example-time" type="time" className="component-host-input [min-height:2.75rem] [border:1px_solid_var(--border)] [border-radius:0.5rem] [background:var(--field-background)] [padding:0.45rem_0.75rem]" />
       </NView>
     ),
     source: fieldSource('time', 'Time')
@@ -505,10 +527,10 @@ import { NButton, NCard, ${menu ? 'NMenuItem' : 'NText'}, NView } from 'nayan-ui
 export default function Example() {
   const [open, setOpen] = useState(false);
   return (
-    <NView style={{ position: 'relative' }}>
+    <NView className="relative">
       <NButton onPress={() => setOpen(!open)} {...{ 'aria-expanded': open }}>${action}</NButton>
       {open && (
-        <NCard style={{ position: 'absolute', top: '100%', padding: 12 }}>
+        <NCard className="absolute top-full p-3">
           ${content}
         </NCard>
       )}

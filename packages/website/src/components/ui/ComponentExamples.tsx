@@ -21,8 +21,7 @@ const items = [
 ];
 
 const examples: Record<string, Spec> = {
-  avatar: { control: 'NImage', props: { src: '/logo.webp', alt: 'Nayan UI', width: 48, height: 48, className: 'rounded-full' } },
-  card: { control: 'NCard', text: 'This is a sample card.', props: { className: 'w-full rounded-xl border border-border bg-surface p-4' } },
+  card: { control: 'NCard', text: 'This is a sample card.', props: { className: 'w-full rounded-lg border border-border bg-surface px-4 py-3' } },
   'close-button': { control: 'NCloseButton', props: { accessibilityLabel: 'Close panel' }, result: 'Panel closed.' },
   code: { control: 'NCode', props: { code: 'bun add nayan-ui' } },
   'date-picker': { control: 'NDatePicker', props: { label: 'Date' }, height: 380 },
@@ -32,7 +31,6 @@ const examples: Record<string, Spec> = {
     note: 'Pass a built-in icon name. For the full Lucide catalog, import NIcon from nayan-ui/icons/catalog.'
   },
   image: { control: 'NImage', props: { src: '/logo.webp', alt: 'Nayan UI', width: 96, height: 68 } },
-  'input-otp': { control: 'NInputOtp', props: { label: 'Verification code', maxLength: 6, keyboardType: 'number-pad', placeholder: '000000' } },
   kbd: { control: 'NKbd', text: 'Enter' },
   link: { control: 'NLink', props: { href: '/game-engine' }, text: 'Engine documentation' },
   linkify: { control: 'NLinkify', props: { text: 'Find the documentation at https://www.nayanui.com/game-engine.' } },
@@ -54,12 +52,12 @@ const examples: Record<string, Spec> = {
     control: 'NPattern',
     props: { style: { width: 180, height: 120 }, recipe: { shapes: [{ kind: 'circle', cx: 90, cy: 60, r: 40, color: '#555ee6' }] } }
   },
-  textarea: { control: 'NTextarea', props: { label: 'Notes', placeholder: 'Add a note' }, height: 200 },
+  textarea: { control: 'NTextarea', props: { label: 'Message', placeholder: 'Enter your message' }, height: 200 },
   'toggle-button': { control: 'NToggleButton', text: 'Toggle' }
 };
 
 const dialogNames = {
-  dialog: { control: 'NDialog', action: 'Open Dialog', title: 'Example dialog' },
+  dialog: { control: 'NDialog', action: 'Show Dialog', title: 'Example dialog' },
   sheet: { control: 'NSheet', action: 'Open Sheet', title: 'Example sheet' },
   'confirm-alert': { control: 'NConfirm', action: 'Show Confirm Alert', title: 'Are you absolutely sure?' }
 } as const;
@@ -96,11 +94,13 @@ export function componentPreview(slug: string): ComponentPreview | undefined {
       source: componentSource(
         'NCarousel, NText, NView',
         `<NCarousel height={156}>
-            <NView className="h-24 w-full rounded-xl border border-border bg-surface p-4">
+            <NView className="h-24 w-full rounded-xl border border-accent/15 bg-surface p-4">
               <NText className="font-semibold">First slide</NText>
+              <NText className="text-sm text-muted">Swipe or select a page to continue.</NText>
             </NView>
-            <NView className="h-24 w-full rounded-xl border border-border bg-surface p-4">
+            <NView className="h-24 w-full rounded-xl border border-accent/15 bg-surface p-4">
               <NText className="font-semibold">Second slide</NText>
+              <NText className="text-sm text-muted">Use the page controls to go back.</NText>
             </NView>
           </NCarousel>`
       ),
@@ -169,7 +169,7 @@ export function componentPreview(slug: string): ComponentPreview | undefined {
       source: componentSource(
         'NScrollShadow, NText',
         `<NScrollShadow height={120}>
-          {Array.from({ length: 12 }, (_, index) => <NText key={index}>Row {index + 1}</NText>)}
+            {Array.from({ length: 12 }, (_, index) => <NText key={index} className="border-b border-border py-2">Row {index + 1}</NText>)}
         </NScrollShadow>`
       ),
       render: (

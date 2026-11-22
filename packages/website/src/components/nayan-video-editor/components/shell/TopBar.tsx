@@ -1,3 +1,4 @@
+import { EDITOR_PANEL } from '@/design/system';
 import { NView, NText } from 'nayan-ui/components';
 import { useCallback, useRef, useState } from "react";
 import { NButton, NConfirmAlert, NDialog, NInput, showToast } from "@/components/ui";
@@ -148,7 +149,7 @@ export const TopBar = ({
   };
 
   return (
-    <NView tag="header" className="island flex shrink-0 items-center gap-2 px-3 py-2">
+    <NView tag="header" className={`${EDITOR_PANEL} flex shrink-0 items-center gap-2 px-3 py-2`}>
       <NView tag="a" href="/" className="flex shrink-0 items-center gap-2">
         <Clapperboard className="h-5 w-5 text-accent" />
         <NText tag="span" className="hidden whitespace-nowrap text-sm font-semibold tracking-tight text-foreground xl:inline">

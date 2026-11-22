@@ -31,7 +31,7 @@ function GameBootLoader() {
       <NText tag="p" className="relative mt-7 text-2xl font-bold tracking-tight text-foreground">
         {game.title}
       </NText>
-      <NView tag="div" className="nyn-game-boot-dots relative" aria-hidden="true">
+      <NView tag="div" className="nyn-game-boot-dots flex gap-2 [margin:24px_0_14px] [&_span]:w-2 [&_span]:h-2 [&_span]:rounded-full [&_span]:[background:var(--color-indigo-500,_#6366f1)] [&_span]:animate-game-boot [&_span:nth-child(2)]:[animation-delay:0.15s] [&_span:nth-child(3)]:[animation-delay:0.3s] motion-reduce:[&_span]:[animation:none] relative" aria-hidden="true">
         <NText tag="span" />
         <NText tag="span" />
         <NText tag="span" />

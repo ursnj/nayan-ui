@@ -4,7 +4,6 @@ import { type ReactNode, useState } from 'react';
 import { ArrowUpRight, Braces, Code2 } from '@/design/Icons';
 import Link from 'next/link';
 import { ComponentsRoot, NButton, NInput, NLoading, NPress, NText, NView } from 'nayan-ui/components';
-import { stylesheet } from '@/app/nayan-ui-styles';
 import { BUTTON_SMALL } from '@/design/system';
 
 const TABS = ['Buttons', 'Forms', 'Feedback', 'Elements'] as const;
@@ -24,7 +23,7 @@ const references: Record<Tab, string> = {
   Elements: '/components/text'
 };
 
-const action = 'engine-preview-action';
+const action = 'engine-preview-action min-h-9 [padding:0_16px] [border:1px_solid_transparent] rounded-lg bg-accent text-accent-foreground [font-size:14px] font-medium text-center whitespace-nowrap hover:[background-color:color-mix(in_srgb,_var(--accent)_86%,_var(--surface))] disabled:opacity-50 focus-visible:[outline:2px_solid_var(--accent)] focus-visible:[outline-offset:2px]';
 const row = 'flex flex-row flex-wrap items-center gap-3';
 
 export default function NayanComponentsPreview() {
@@ -62,7 +61,7 @@ export default function NayanComponentsPreview() {
           <NText tag="p" className="text-sm font-semibold">
             Display name
           </NText>
-          <NInput value={name} onChangeText={setName} accessibilityLabel="Display name" placeholder="Your name" className="engine-preview-input" />
+          <NInput value={name} onChangeText={setName} accessibilityLabel="Display name" placeholder="Your name" className="engine-preview-input w-full h-11 min-h-11 [padding:0_12px] [border:1px_solid_var(--border)] rounded-lg bg-field-background text-foreground [font-size:14px] focus-visible:[outline:2px_solid_var(--accent)]" />
           <NText tag="p" className="text-sm text-muted">
             {name.trim() ? `Hello, ${name.trim()}` : 'Type a name to preview it here.'}
           </NText>
@@ -108,8 +107,8 @@ export default function NayanComponentsPreview() {
   );
 
   return (
-    <NView tag="section" aria-label="Engine component preview" className="workbench-frame">
-      <NView tag="header" className="workbench-title">
+    <NView tag="section" aria-label="Engine component preview" className="workbench-frame overflow-hidden [border:1px_solid_color-mix(in_srgb,_var(--foreground)_14%,_var(--surface))] min-w-0 [border-radius:1.35rem] [background:var(--surface)] text-foreground [box-shadow:0_15px_44px_color-mix(in_srgb,_var(--accent)_14%,_transparent)]">
+      <NView tag="header" className="workbench-title flex items-center justify-between [gap:0.6rem] [padding:0.85rem_clamp(0.7rem,_2vw,_1rem)] [border-bottom:1px_solid_var(--border)]">
         <NText tag="span" className="flex min-w-0 items-center gap-2.5">
           <Braces aria-hidden size={17} className="shrink-0 text-accent" />
           <NText tag="span" className="truncate font-mono text-xs font-semibold sm:text-sm">nayan-ui</NText>
@@ -119,24 +118,23 @@ export default function NayanComponentsPreview() {
           Live preview
         </NText>
       </NView>
-      <NView tag="div" role="group" aria-label="Component examples" className="workbench-tabs">
+      <NView tag="div" role="group" aria-label="Component examples" className="workbench-tabs grid grid-cols-4 [gap:0.15rem] [padding:0.35rem] [margin:0.7rem_0.7rem_0] [border-radius:0.55rem] [background:var(--surface-secondary)] sm:[margin:0.85rem_1rem_0]">
         {TABS.map((item) => (
-          <NPress key={item} aria-pressed={tab === item} onPress={() => setTab(item)} className="workbench-tab">
+          <NPress key={item} aria-pressed={tab === item} onPress={() => setTab(item)} className="workbench-tab items-center justify-center [padding:0.45rem_0] [min-height:2.15rem] [border:1px_solid_transparent] [border-radius:0.35rem] [font-size:0.75rem] font-semibold text-muted [transition:color_150ms,_background-color_150ms] hover:text-accent [&[aria-pressed=true]]:text-accent [&[aria-pressed=true]]:[border-color:var(--border)] [&[aria-pressed=true]]:[background:var(--surface)] [&[aria-pressed=true]]:[box-shadow:0_1px_2px_rgb(16_20_44_/_0.08)]">
             {item}
           </NPress>
         ))}
       </NView>
-      <NView tag="div" className="workbench-stage" data-engine-preview={status}>
+      <NView tag="div" className="workbench-stage relative overflow-hidden [height:11rem] [margin:0.7rem] [border:1px_solid_var(--border)] [border-radius:0.65rem] [background:radial-gradient(circle,_var(--site-grid-line)_1px,_transparent_1px)_center_/_15px_15px,_var(--background)] sm:[height:12rem] sm:[margin:0.85rem_1rem]" data-engine-preview={status}>
         {status !== 'ready' && preview}
         {status !== 'fallback' && (
           <NView tag="div"
-            className={`engine-preview-surface absolute inset-0 ${status === 'ready' ? '' : 'invisible'}`}
+            className={`engine-preview-surface [&_canvas]:[touch-action:pan-y]! absolute inset-0 ${status === 'ready' ? '' : 'invisible'}`}
             inert={status !== 'ready'}
             onWheelCapture={(event) => event.stopPropagation()}
           >
             <ComponentsRoot
               background="transparent"
-              stylesheet={stylesheet}
               style={{ height: '100%', width: '100%', minHeight: 0 }}
               onReady={() => setStatus('ready')}
               onError={(error) => {
@@ -149,10 +147,10 @@ export default function NayanComponentsPreview() {
           </NView>
         )}
       </NView>
-      <NView tag="div" className="workbench-source">
+      <NView tag="div" className="workbench-source flex items-center justify-between [gap:0.6rem] [padding:0.85rem_clamp(0.7rem,_2vw,_1rem)] [justify-content:flex-start] [border-top:1px_solid_var(--border)] [background:var(--surface-secondary)] text-foreground [font-size:0.73rem]">
         <Code2 aria-hidden size={16} className="shrink-0 text-accent" />
         <NText tag="code" className="min-w-0 overflow-x-auto whitespace-nowrap">{snippets[tab]}</NText>
-        <Link href={references[tab]} className="workbench-doc-link">
+        <Link href={references[tab]} className="workbench-doc-link flex items-center [gap:0.2rem] shrink-0 ml-auto text-accent [font-size:0.75rem] [font-weight:650] hover:[text-decoration:underline]">
           Docs <ArrowUpRight aria-hidden size={13} />
         </Link>
       </NView>

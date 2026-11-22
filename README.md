@@ -52,7 +52,7 @@ With the website dependencies installed and the Rust/WASM prerequisites from the
 bun run website:dev
 ```
 
-The website dev and production commands build the browser engine when needed and compile the browser and preview stylesheets. Run `bun run engine:build:web` after changing the engine source.
+The website dev and production commands build the browser engine when needed. Next.js compiles the website's Tailwind utilities. Run `bun run engine:build:web` after changing the engine source.
 
 ### Updating the games archive
 

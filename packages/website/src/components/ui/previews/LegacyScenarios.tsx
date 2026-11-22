@@ -1,3 +1,4 @@
+import { PREVIEW_STACK, PREVIEW_BUTTON } from '@/design/system';
 import { useState, type ReactNode } from 'react';
 import * as E from 'nayan-ui/components';
 import { element as e, sample } from './ControlScenarios';
@@ -26,12 +27,12 @@ export default function Example() {
 function Field({ time }: { time: boolean }) {
   const id = time ? 'opening-time' : 'deadline-date';
   return (
-    <E.NView tag="div" className="component-host-demo">
+    <E.NView tag="div" className={PREVIEW_STACK}>
       <E.NText tag="label" htmlFor={id}>
         {time ? 'Opening time' : 'Deadline'}
       </E.NText>
       <E.NInput
-        className="component-host-input"
+        className="component-host-input [min-height:2.75rem] [border:1px_solid_var(--border)] [border-radius:0.5rem] [background:var(--field-background)] [padding:0.45rem_0.75rem]"
         id={id}
         type={time ? 'time' : 'date'}
         min={time ? '08:00' : '2026-01-01'}
@@ -71,9 +72,9 @@ function Range() {
 function Circle() {
   const [value, setValue] = useState(25);
   return (
-    <E.NView tag="div" className="component-host-demo">
+    <E.NView tag="div" className={PREVIEW_STACK}>
       <E.NView
-        className="component-progress-circle"
+        className="component-progress-circle grid [width:5.25rem] [height:5.25rem] [place-items:center] [border-radius:50%] [background:radial-gradient(circle,_var(--background)_60%,_transparent_62%),_conic-gradient(var(--accent)_72%,_var(--default)_0)] font-semibold"
         style={{
           background: `radial-gradient(circle, var(--background) 60%, transparent 62%), conic-gradient(var(--accent) ${value}%, var(--default) 0)`
         }}
@@ -83,7 +84,7 @@ function Circle() {
       >
         <E.NText>{value}%</E.NText>
       </E.NView>
-      <E.NButton className="component-host-button" onPress={() => setValue(value === 100 ? 0 : value + 25)}>
+      <E.NButton className={PREVIEW_BUTTON} onPress={() => setValue(value === 100 ? 0 : value + 25)}>
         Advance upload
       </E.NButton>
     </E.NView>
@@ -92,19 +93,19 @@ function Circle() {
 
 function Popup({ menu }: { menu: boolean }) {
   return (
-    <E.NView tag="div" className="component-host-demo">
-      <E.NView tag="details" className="component-disclosure-list">
-        <E.NText tag="summary" className="component-disclosure-trigger">
+    <E.NView tag="div" className={PREVIEW_STACK}>
+      <E.NView tag="details" className="component-disclosure-list overflow-hidden [border:1px_solid_var(--border)] [border-radius:0.85rem] [background:var(--surface)]">
+        <E.NText tag="summary" className="component-disclosure-trigger flex [min-height:3rem] items-center [gap:0.75rem] [padding:0.65rem_0.875rem] [font-size:0.875rem] font-semibold cursor-pointer justify-between [list-style:none] [&::-webkit-details-marker]:hidden hover:[background:var(--surface-secondary)] focus-visible:[outline:2px_solid_var(--accent)] focus-visible:[outline-offset:-2px]">
           {menu ? 'More actions' : 'About this setting'}
         </E.NText>
         {menu ? (
-          <E.NView className="component-host-demo">
+          <E.NView className={PREVIEW_STACK}>
             <E.NMenuItem tag="button" disabled>
               Export (unavailable)
             </E.NMenuItem>
           </E.NView>
         ) : (
-          <E.NText tag="p" className="component-disclosure-body">
+          <E.NText tag="p" className="component-disclosure-body [padding:0_0.875rem_0.875rem] text-muted [font-size:0.875rem] [line-height:1.5]">
             Display names are visible to teammates.
           </E.NText>
         )}
@@ -136,11 +137,11 @@ function ScoreTable() {
   const [ascending, setAscending] = useState(false);
   const ordered = [...scores].sort((a, b) => (ascending ? a[1] - b[1] : b[1] - a[1]));
   return (
-    <E.NView tag="div" className="component-host-demo">
-      <E.NButton className="component-host-button" onPress={() => setAscending(!ascending)}>
+    <E.NView tag="div" className={PREVIEW_STACK}>
+      <E.NButton className={PREVIEW_BUTTON} onPress={() => setAscending(!ascending)}>
         {ascending ? 'Lowest first' : 'Highest first'}
       </E.NButton>
-      <E.NView tag="table" className="component-table" accessibilityLabel="Leaderboard">
+      <E.NView tag="table" className="component-table w-full [border-collapse:collapse] [font-size:0.875rem] [line-height:1.4] [text-align:start] [&_:is(th,td)]:[padding:0.65rem_0.75rem] [&_:is(th,td)]:[text-align:start] [&_th]:[background:var(--surface-secondary)] [&_tr:nth-child(even)]:[background:var(--surface-secondary)]" accessibilityLabel="Leaderboard">
         <E.NView tag="thead">
           <E.NView tag="tr">
             <E.NText tag="th">Player</E.NText>
@@ -287,13 +288,12 @@ export const legacyScenarios = {
     'Advance circular progress',
     'NView, NText, NButton',
     'const [value, setValue] = useState(25);',
-    `<NView>
-      <NView role="progressbar" accessibilityLabel="Upload progress" {...{ 'aria-valuenow': value }}
-        style={{ width: 80, height: 80, borderRadius: '50%', display: 'grid', placeItems: 'center',
-          background: 'radial-gradient(circle, white 60%, transparent 62%), conic-gradient(#7c3aed ' + value + '%, #ddd 0)', color: '#211634' }}>
+    `<NView className="${PREVIEW_STACK}">
+      <NView className="component-progress-circle grid [width:5.25rem] [height:5.25rem] [place-items:center] [border-radius:50%] [background:radial-gradient(circle,_var(--background)_60%,_transparent_62%),_conic-gradient(var(--accent)_72%,_var(--default)_0)] font-semibold" role="progressbar" accessibilityLabel="Upload progress" {...{ 'aria-valuenow': value }}
+        style={{ background: \`radial-gradient(circle, var(--background) 60%, transparent 62%), conic-gradient(var(--accent) \${value}%, var(--default) 0)\` }}>
         <NText>{value}%</NText>
       </NView>
-      <NButton onPress={() => setValue(value === 100 ? 0 : value + 25)}>Advance upload</NButton>
+      <NButton className="${PREVIEW_BUTTON}" onPress={() => setValue(value === 100 ? 0 : value + 25)}>Advance upload</NButton>
     </NView>`,
     <Circle />,
     206

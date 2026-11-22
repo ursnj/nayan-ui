@@ -356,7 +356,7 @@ impl Document {
             let mut child = ui.new_child(egui::UiBuilder::new().max_rect(content));
             child.set_clip_rect(child_clip);
             let response = self.input(doc, &mut child, index, content);
-            doc.focus_outline(&painter, &response, rect, corners);
+            doc.focus_outline(&painter, &response, rect, corners, egui::StrokeKind::Inside);
         } else if node.kind == "NSelect" {
             let disabled = flag(&node.props, &["disabled", "isDisabled", "isLoading", "readOnly", "isReadOnly"]);
             let outer = ui.interact(
@@ -408,7 +408,7 @@ impl Document {
                 }
             }
             let response = doc.select(&mut child, node, &paint, true);
-            doc.focus_outline(&painter, &response, rect, corners);
+            doc.focus_outline(&painter, &response, rect, corners, egui::StrokeKind::Outside);
             doc.palette = palette;
             if let Some(root) = doc.semantics.iter_mut().find(|entry| entry.id == node.id) {
                 let hit = rect.intersect(child_clip);
@@ -490,7 +490,7 @@ impl Document {
                 egui::Sense::click(),
             );
             if !flag(&node.props, &["disabled", "isDisabled"]) {
-                doc.focus_outline(&painter, &response, rect, corners);
+                doc.focus_outline(&painter, &response, rect, corners, egui::StrokeKind::Outside);
             }
             if response.contains_pointer() {
                 let disabled = flag(&node.props, &["disabled", "isDisabled"])

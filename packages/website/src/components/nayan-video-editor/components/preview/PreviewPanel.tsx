@@ -1,3 +1,4 @@
+import { EDITOR_PANEL } from '@/design/system';
 import { NView, NText } from 'nayan-ui/components';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { NButton, NSlider, NTooltip } from "@/components/ui";
@@ -102,7 +103,7 @@ export const PreviewPanel = () => {
     showOverlay && selected !== null && selected.kind !== "audio" && displaySize.width > 0;
 
   return (
-    <NView tag="section" className="island @container flex min-h-0 min-w-0 flex-1 flex-col">
+    <NView tag="section" className={`${EDITOR_PANEL} @container flex min-h-0 min-w-0 flex-1 flex-col`}>
       <NView tag="div" className="flex items-center gap-1 border-b border-border bg-editor-panel px-2 py-1">
         <IconButton
           label="Transform handles"
@@ -139,7 +140,7 @@ export const PreviewPanel = () => {
       >
         <NView tag="div"
           ref={frameRef}
-          className="checkerboard relative max-h-full max-w-full overflow-hidden"
+          className="checkerboard [background-image:linear-gradient(45deg,_hsl(0_0%_50%_/_0.18)_25%,_transparent_25%),_linear-gradient(-45deg,_hsl(0_0%_50%_/_0.18)_25%,_transparent_25%),_linear-gradient(45deg,_transparent_75%,_hsl(0_0%_50%_/_0.18)_75%),_linear-gradient(-45deg,_transparent_75%,_hsl(0_0%_50%_/_0.18)_75%)] [background-size:16px_16px] [background-position:0_0,_0_8px,_8px_-8px,_-8px_0] relative max-h-full max-w-full overflow-hidden"
           style={{ aspectRatio: `${project.width} / ${project.height}` }}
         >
           <NView tag="canvas"

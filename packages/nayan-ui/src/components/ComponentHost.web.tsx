@@ -166,7 +166,8 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
       onPointerCancel={() => {
         if (overlayDrag.current?.captured) document.cancel();
         overlayDrag.current = null;
-      }}>
+      }}
+    >
       <DocumentSurface
         active={active}
         background="transparent"
@@ -237,6 +238,7 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
             node.id.includes(':option:')
           ) {
             const toggle = ['NCheck', 'NSwitch', 'NToggleButton'].includes(node.kind);
+            const radio = node.kind === 'NRadio' || node.kind === 'NRadioGroup';
 
             return (
               <Fragment key={node.id}>
@@ -250,26 +252,29 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
                       ? 'option'
                       : node.kind === 'NSelect'
                         ? 'combobox'
-                        : node.kind === 'NSwitch'
-                          ? 'switch'
-                          : node.kind === 'NCheck'
-                            ? 'checkbox'
-                            : node.kind === 'NLink'
-                              ? 'link'
-                              : undefined
+                        : radio
+                          ? 'radio'
+                          : node.kind === 'NSwitch'
+                            ? 'switch'
+                            : node.kind === 'NCheck'
+                              ? 'checkbox'
+                              : node.kind === 'NLink'
+                                ? 'link'
+                                : undefined
                   }
                   aria-expanded={node.kind === 'NSelect' && !node.selectOwner ? (node.expanded ?? false) : node.expanded}
                   aria-haspopup={node.kind === 'NSelect' && !node.selectOwner ? 'listbox' : undefined}
                   aria-controls={node.kind === 'NSelect' && node.expanded ? `${semanticId(node.id)}-listbox` : undefined}
                   aria-activedescendant={node.activeDescendant ? semanticId(node.activeDescendant) : undefined}
-                  aria-selected={node.selected}
+                  aria-selected={radio ? undefined : node.selected}
                   tabIndex={node.selectOwner ? -1 : 0}
                   aria-pressed={node.kind === 'NToggleButton' ? Boolean(node.value) : undefined}
-                  aria-checked={toggle && node.kind !== 'NToggleButton' ? Boolean(node.value) : undefined}
+                  aria-checked={radio ? (node.selected ?? false) : toggle && node.kind !== 'NToggleButton' ? Boolean(node.value) : undefined}
                   disabled={node.disabled}
                   style={style}
                   onFocus={focus}
-                  onClick={() => document.request({ action: 'activate', id: node.id })}>
+                  onClick={() => document.request({ action: 'activate', id: node.id })}
+                >
                   {node.kind === 'NSelect' && !node.selectOwner ? node.valueLabel : null}
                 </button>
                 {node.kind === 'NSelect' && node.expanded && (
@@ -363,7 +368,8 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
               aria-hidden={node.kind === 'NImage' && !node.label ? true : undefined}
               aria-valuemin={node.kind === 'NProgress' ? 0 : undefined}
               aria-valuemax={node.kind === 'NProgress' ? 100 : undefined}
-              aria-valuenow={node.kind === 'NProgress' ? Number(node.value) : undefined}>
+              aria-valuenow={node.kind === 'NProgress' ? Number(node.value) : undefined}
+            >
               {node.label}
             </span>
           );
@@ -406,7 +412,8 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
               width: clipWidth,
               height: clipHeight,
               overflow: 'hidden'
-            }}>
+            }}
+          >
             <div style={{ display: 'flex', flexDirection: 'column', position: 'absolute', left: left - clipLeft, top: top - clipTop, width, height }}>
               {overlays[id]}
             </div>
@@ -481,28 +488,28 @@ function BrowserTextField({
         style={
           {
             ...style,
-            'left': left - node.rect[0],
-            'top': top - node.rect[1],
+            left: left - node.rect[0],
+            top: top - node.rect[1],
             width,
             height,
-            'opacity': editor ? 1 : 0,
-            'pointerEvents': blocked ? 'none' : 'auto',
-            'color': editor?.color,
-            'background': 'transparent',
-            'border': 0,
-            'outline': 0,
-            'borderRadius': 0,
-            'boxSizing': 'border-box',
-            'resize': 'none',
-            'fontFamily': 'inherit',
-            'fontSize': editor?.fontSize ?? 16,
-            'fontWeight': editor?.fontWeight as CSSProperties['fontWeight'],
-            'lineHeight': editor ? `${editor.lineHeight}px` : undefined,
-            'textAlign': editor?.textAlign,
-            'paddingTop': editor?.padding[0] ?? 0,
-            'paddingRight': editor?.padding[1] ?? 0,
-            'paddingBottom': editor?.padding[2] ?? 0,
-            'paddingLeft': editor?.padding[3] ?? 0,
+            opacity: editor ? 1 : 0,
+            pointerEvents: blocked ? 'none' : 'auto',
+            color: editor?.color,
+            background: 'transparent',
+            border: 0,
+            outline: 0,
+            borderRadius: 0,
+            boxSizing: 'border-box',
+            resize: 'none',
+            fontFamily: 'inherit',
+            fontSize: editor?.fontSize ?? 16,
+            fontWeight: editor?.fontWeight as CSSProperties['fontWeight'],
+            lineHeight: editor ? `${editor.lineHeight}px` : undefined,
+            textAlign: editor?.textAlign,
+            paddingTop: editor?.padding[0] ?? 0,
+            paddingRight: editor?.padding[1] ?? 0,
+            paddingBottom: editor?.padding[2] ?? 0,
+            paddingLeft: editor?.padding[3] ?? 0,
             '--nayan-placeholder': editor?.placeholderColor
           } as CSSProperties
         }

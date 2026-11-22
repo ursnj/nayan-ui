@@ -65,7 +65,7 @@ const FEATURES = [
 ];
 
 const EditorScreenshot = () => (
-  <NView tag="div" className="site-hero-media min-w-0 overflow-hidden p-1.5 sm:p-2">
+  <NView tag="div" className="site-hero-media relative [border:1px_solid_var(--border)] [border-radius:1.5rem] [background:color-mix(in_srgb,_var(--tone-paper,_var(--surface-secondary))_48%,_var(--surface))] [box-shadow:0_18px_44px_color-mix(in_srgb,_var(--tone,_var(--accent))_15%,_transparent)] min-w-0 overflow-hidden p-1.5 sm:p-2">
     <NImage
       src="/video-editor/editor-light.png"
       alt="The Nayan Video Editor: a media library on the left, the preview in the middle, clip properties on the right and a multi-track timeline along the bottom."

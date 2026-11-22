@@ -1,22 +1,23 @@
 'use client';
 
+import { PREVIEW_STACK } from '@/design/system';
 import { useCallback, useState, type ReactNode } from 'react';
 import { NText, NView, NPage, NTheme, type NThemeProps } from 'nayan-ui/components';
 import type { ComponentPreview } from './types';
 
 const controls = {
-  NButton: { className: 'rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90' },
+  NButton: { className: 'min-h-9 rounded-lg px-4 py-0 text-sm font-medium hover:opacity-90' },
   NCloseButton: { className: 'rounded-lg bg-transparent text-sm text-muted hover:bg-default' },
   NLink: { className: 'font-medium text-accent' },
-  NInput: { className: 'rounded-lg text-sm' },
+  NInput: { className: 'min-h-[38px] rounded-lg px-3 py-1 text-sm' },
   NInputOtp: { className: 'rounded-lg text-sm' },
-  NNumberField: { className: 'rounded-lg text-sm' },
-  NSearchField: { className: 'rounded-lg text-sm' },
-  NTextarea: { className: 'rounded-lg text-sm' },
-  NSelect: { className: 'rounded-lg text-sm' },
-  NTabs: { className: 'rounded-md px-3 py-1 text-sm font-semibold' },
-  NButtonGroup: { className: 'rounded-md px-3 py-1 text-sm font-semibold' },
-  NCard: { className: 'rounded-xl' },
+  NNumberField: { className: 'min-h-9 rounded-lg text-sm' },
+  NSearchField: { className: 'min-h-9 rounded-lg text-sm' },
+  NTextarea: { className: 'min-h-[58px] rounded-lg text-sm' },
+  NSelect: { className: 'min-h-9 rounded-lg text-sm' },
+  NTabs: { className: 'min-h-8 rounded-lg px-3 py-1 text-sm font-medium' },
+  NButtonGroup: { className: 'min-h-9 rounded-lg px-3 py-1 text-sm font-medium' },
+  NCard: { className: 'rounded-lg' },
   NMenuItem: { className: 'rounded-lg px-3 text-sm font-medium' }
 } satisfies NThemeProps['components'];
 
@@ -45,19 +46,14 @@ export default function PreviewSurface({
   if (preview.host) content = preview.render;
   else if (error)
     content = (
-      <NText tag="p" className="component-host-demo text-sm text-muted" role="status">
+      <NText tag="p" className={`${PREVIEW_STACK} text-sm text-muted`} role="status">
         The engine renderer could not start in this browser.
       </NText>
     );
   else
     content = (
       // The inline page's padding is independent of the browser's safe area.
-      <NPage
-        className="gap-4 p-5"
-        safeArea={false}
-        onContentSizeChange={fitPage ? onContentSizeChange : undefined}
-        onError={() => setError(true)}
-      >
+      <NPage className="gap-4 p-5" safeArea={false} onContentSizeChange={fitPage ? onContentSizeChange : undefined} onError={() => setError(true)}>
         {preview.render}
       </NPage>
     );
@@ -65,8 +61,8 @@ export default function PreviewSurface({
   return (
     <NView
       tag="div"
-      className="component-preview-surface relative flex min-w-0 flex-col"
-      style={{ width: fullWidth ? '100%' : 'min(100%, 52rem)', height }}
+      className={`component-preview-surface relative flex w-full min-w-0 flex-col ${fullWidth ? '' : 'max-w-[52rem]'}`}
+      style={{ height }}
     >
       <NTheme themes={themes} components={controls} radius={8}>
         {content}

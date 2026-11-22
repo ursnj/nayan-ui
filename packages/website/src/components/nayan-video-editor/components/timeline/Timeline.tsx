@@ -1,3 +1,4 @@
+import { EDITOR_PANEL } from '@/design/system';
 import { NView, NText } from 'nayan-ui/components';
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { NButton, cn } from "@/components/ui";
@@ -581,7 +582,7 @@ export const Timeline = () => {
   }, [clips, selectedIds]);
 
   return (
-    <NView tag="section" className="island isolate flex h-full min-h-0 flex-col">
+    <NView tag="section" className={`${EDITOR_PANEL} isolate flex h-full min-h-0 flex-col`}>
       <TimelineToolbar
         snapEnabled={snapEnabled}
         rippleEnabled={rippleEnabled}

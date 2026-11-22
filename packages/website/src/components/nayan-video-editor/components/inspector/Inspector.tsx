@@ -1,3 +1,4 @@
+import { EDITOR_PANEL } from '@/design/system';
 import { NView, NText } from 'nayan-ui/components';
 import { useCallback } from "react";
 import {
@@ -126,7 +127,7 @@ export const Inspector = () => {
   );
 
   return (
-    <NView tag="aside" className="island flex h-full min-h-0 flex-col">
+    <NView tag="aside" className={`${EDITOR_PANEL} flex h-full min-h-0 flex-col`}>
       <NView tag="header" className="flex items-center gap-2 border-b border-border px-3 py-2.5">
         <NText tag="h2" className="flex-1 text-[11px] font-semibold uppercase tracking-wider text-muted">
           Properties

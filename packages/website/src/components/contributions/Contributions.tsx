@@ -311,7 +311,7 @@ const Contributions = () => {
             </NView>
           </NView>
 
-          <NView tag="section" className="site-cta flex flex-wrap items-end justify-between gap-5">
+          <NView tag="section" className="site-cta [padding:clamp(1.5rem,_5vw,_3.5rem)] [border:1px_solid_var(--border)] [border-radius:1.5rem] [background:linear-gradient(125deg,_var(--surface),_var(--surface-tertiary))] flex flex-wrap items-end justify-between gap-5">
             <NView tag="div">
               <NText tag="h2" className={H2}>Help improve Nayan UI</NText>
               <NText tag="p" className={`mt-3 ${LEAD}`}>Browse open issues or share what you’d like us to improve.</NText>
