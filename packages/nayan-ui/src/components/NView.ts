@@ -45,7 +45,7 @@ export function NView<Tag extends keyof JSX.IntrinsicElements>(props: TaggedView
 export function NView(props: NViewProps): ReactElement;
 export function NView({ entrance, ...props }: NViewProps | TaggedViewProps<keyof JSX.IntrinsicElements>) {
   const view = props as NViewProps;
-  return useComponentRenderer('NView') ? createElement(EngineView, { ...view, entrance }) : createElement(ViewHost, view);
+  return useComponentRenderer('NView', true) ? createElement(EngineView, { ...view, entrance }) : createElement(ViewHost, view);
 }
 
 function EngineView({ ref, id, ...props }: NViewProps) {

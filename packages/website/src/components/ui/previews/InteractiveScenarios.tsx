@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import * as E from 'nayan-ui/components';
 import { controlledAccordion } from './AccordionExamples';
+import { controlledCarousel } from './CarouselExamples';
 import { scenario } from './scenario';
 import type { NamedComponentPreview } from './types';
 
@@ -26,7 +27,6 @@ function RecoveryAlert() {
 
 const products = ['Sketchbook', 'Pencil', 'Marker', 'Ruler'];
 const names = ['Overview', 'Activity', 'Members'];
-const slides = ['Personal', 'Team', 'Studio'];
 
 function Search() {
   const [query, setQuery] = useState('');
@@ -54,12 +54,16 @@ function Email() {
   );
 }
 
+const dismissButtonClass = 'h-9 w-9 items-center justify-center rounded-lg hover:bg-default';
+
 function Dismiss() {
   const [open, setOpen] = useState(true);
   return open ? (
     <E.NView className="flex-row items-center gap-3">
       <E.NText>New message</E.NText>
-      <E.NCloseButton accessibilityLabel="Dismiss message" onPress={() => setOpen(false)} />
+      <E.NPress className={dismissButtonClass} accessibilityLabel="Dismiss message" onPress={() => setOpen(false)}>
+        <E.NText className="text-xl">×</E.NText>
+      </E.NPress>
     </E.NView>
   ) : (
     <E.NButton onPress={() => setOpen(true)}>Restore message</E.NButton>
@@ -110,24 +114,6 @@ function tabScenario(title: string, defaultTab: string) {
             ))}
           </NTabs>`,
     <ProjectTabs defaultTab={defaultTab} />
-  );
-}
-
-function ControlledCarousel() {
-  const [index, setIndex] = useState(0);
-  return (
-    <>
-      <E.NCarousel height={124} value={index} onValueChange={setIndex}>
-        {slides.map((plan) => (
-          <E.NView className="h-20 w-full rounded-xl border border-border bg-surface p-3" key={plan}>
-            <E.NText>{plan} plan</E.NText>
-          </E.NView>
-        ))}
-      </E.NCarousel>
-      <E.NButton isOutline onPress={() => setIndex((index + 1) % slides.length)}>
-        Next plan
-      </E.NButton>
-    </>
   );
 }
 
@@ -233,27 +219,7 @@ export const interactiveScenarios = {
     <Counter />,
     'const [count, setCount] = useState(0);'
   ),
-  carousel: scenario(
-    'Advance with a button',
-    'NCarousel, NText, NButton',
-    `<NCarousel height={124} value={index} onValueChange={setIndex}>
-            {slides.map((plan) => <NView className="h-20 w-full rounded-xl border border-border bg-surface p-3" key={plan}><NText>{plan} plan</NText></NView>)}
-          </NCarousel>
-          <NButton isOutline onPress={() => setIndex((index + 1) % slides.length)}>Next plan</NButton>`,
-    <ControlledCarousel />,
-    `const slides = ${JSON.stringify(slides)};\n  const [index, setIndex] = useState(0);`,
-    242
-  ),
-  'close-button': scenario(
-    'Dismiss and restore',
-    'NCloseButton, NText, NButton',
-    `{open
-            ? <NView className="flex-row items-center gap-3"><NText>New message</NText>
-                <NCloseButton accessibilityLabel="Dismiss message" onPress={() => setOpen(false)} /></NView>
-            : <NButton onPress={() => setOpen(true)}>Restore message</NButton>}`,
-    <Dismiss />,
-    'const [open, setOpen] = useState(true);'
-  ),
+  carousel: controlledCarousel,
   'confirm-alert': presentationScenario('confirm-alert'),
   'date-picker': scenario(
     'Restrict available dates',
@@ -282,13 +248,20 @@ export const interactiveScenarios = {
     216
   ),
   press: scenario(
-    'Custom counter target',
-    'NPress, NText',
-    `<NPress className="w-36 rounded-xl bg-accent px-3 py-2" accessibilityLabel="Count presses" onPress={() => setCount(count + 1)}>
-            <NText className="text-accent-foreground">Presses: {count}</NText>
-          </NPress>`,
-    <PressCounter />,
-    'const [count, setCount] = useState(0);'
+    'Dismiss and restore',
+    'NPress, NText, NButton, NView',
+    `{open ? (
+            <NView className="flex-row items-center gap-3">
+              <NText>New message</NText>
+              <NPress className="${dismissButtonClass}" accessibilityLabel="Dismiss message" onPress={() => setOpen(false)}>
+                <NText className="text-xl">×</NText>
+              </NPress>
+            </NView>
+          ) : (
+            <NButton onPress={() => setOpen(true)}>Restore message</NButton>
+          )}`,
+    <Dismiss />,
+    'const [open, setOpen] = useState(true);'
   ),
   progress: scenario(
     'Controlled upload',
@@ -332,12 +305,3 @@ export const interactiveScenarios = {
     </E.NView>
   )
 };
-
-function PressCounter() {
-  const [count, setCount] = useState(0);
-  return (
-    <E.NPress className="w-36 rounded-xl bg-accent px-3 py-2" accessibilityLabel="Count presses" onPress={() => setCount(count + 1)}>
-      <E.NText className="text-accent-foreground">Presses: {count}</E.NText>
-    </E.NPress>
-  );
-}

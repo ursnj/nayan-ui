@@ -4,6 +4,7 @@ import { useState, type ComponentType, type ReactNode } from 'react';
 import * as Engine from 'nayan-ui/components';
 import SubHeader from '@/components/helpers/SubHeader';
 import { componentSource } from '@/services/nayan-ui/component-examples';
+import { carouselOverview } from './previews/CarouselExamples';
 import { familiarExample } from './previews/FamiliarExamples';
 import { hostExample } from './previews/HostExamples';
 import { legacyExample } from './previews/LegacyExamples';
@@ -22,7 +23,6 @@ const items = [
 
 const examples: Record<string, Spec> = {
   card: { control: 'NCard', text: 'This is a sample card.', props: { className: 'w-full rounded-lg border border-border bg-surface px-4 py-3' } },
-  'close-button': { control: 'NCloseButton', props: { accessibilityLabel: 'Close panel' }, result: 'Panel closed.' },
   code: { control: 'NCode', props: { code: 'bun add nayan-ui' } },
   'date-picker': { control: 'NDatePicker', props: { label: 'Date' }, height: 380 },
   icon: {
@@ -88,36 +88,8 @@ export function componentPreview(slug: string): ComponentPreview | undefined {
     };
   }
 
-  if (slug === 'carousel') {
-    return {
-      height: 244,
-      source: componentSource(
-        'NCarousel, NText, NView',
-        `<NCarousel height={156}>
-            <NView className="h-24 w-full rounded-xl border border-accent/15 bg-surface p-4">
-              <NText className="font-semibold">First slide</NText>
-              <NText className="text-sm text-muted">Swipe or select a page to continue.</NText>
-            </NView>
-            <NView className="h-24 w-full rounded-xl border border-accent/15 bg-surface p-4">
-              <NText className="font-semibold">Second slide</NText>
-              <NText className="text-sm text-muted">Use the page controls to go back.</NText>
-            </NView>
-          </NCarousel>`
-      ),
-      render: (
-        <Engine.NCarousel height={156}>
-          <Engine.NView className="h-24 w-full rounded-xl border border-accent/15 bg-surface p-4">
-            <Engine.NText className="font-semibold">First slide</Engine.NText>
-            <Engine.NText className="text-sm text-muted">Swipe or select a page to continue.</Engine.NText>
-          </Engine.NView>
-          <Engine.NView className="h-24 w-full rounded-xl border border-accent/15 bg-surface p-4">
-            <Engine.NText className="font-semibold">Second slide</Engine.NText>
-            <Engine.NText className="text-sm text-muted">Use the page controls to go back.</Engine.NText>
-          </Engine.NView>
-        </Engine.NCarousel>
-      )
-    };
-  }
+  if (slug === 'carousel') return carouselOverview;
+
   if (slug === 'skeleton-group') {
     return {
       source: componentSource(

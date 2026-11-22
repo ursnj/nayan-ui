@@ -417,8 +417,8 @@ await buildStyles({
   lowerCss: false,
   publicPath: '/nayan-ui/styles.json'
 });`,
-    note: 'Export your utility recipes from src/theme.ts. Run this in a Bun build script and pass the generated stylesheet URL to ComponentsRoot.',
-    guide: '/components/components-root'
+    note: 'Export your utility recipes from src/theme.ts. Run this in a Bun build script and pass the generated stylesheet URL to NTheme.',
+    guide: '/components/theme'
   },
   {
     slug: 'icons',

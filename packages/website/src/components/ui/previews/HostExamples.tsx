@@ -1,17 +1,14 @@
 'use client';
 
 import { PREVIEW_STACK, PREVIEW_BUTTON } from '@/design/system';
-import { useEffect, useRef, useState, type ComponentType } from 'react';
+import { useEffect, useState, type ComponentType } from 'react';
 import {
-  ComponentsRoot,
   NBlur,
-  NBlurTarget,
   NButton,
   NCard,
   NConfetti,
   NInput,
   NKeyboard,
-  NPage,
   NPlatformView,
   NRefreshControl,
   NSafeArea,
@@ -28,21 +25,19 @@ import {
   useNSafeAreaFrame,
   useNSafeAreaInsets,
   useNTheme,
-  NDrawer,
-  type NBlurTargetRef
+  NDrawer
 } from 'nayan-ui/components';
 import { standaloneExamples } from '@/services/nayan-ui/component-examples';
 import type { ComponentPreview } from './types';
 
-function Blur({ sampleTarget = false }: { sampleTarget?: boolean }) {
-  const target = useRef<NBlurTargetRef>(null);
+function Blur() {
   const [enabled, setEnabled] = useState(true);
   const background = <NText className="[color:#fde68a] text-[26px] font-bold">Colour and texture</NText>;
   return (
     <NView tag="div" className={PREVIEW_STACK}>
       <NView tag="div" className="component-blur-scene relative grid w-full [min-height:9rem] [place-items:center] overflow-hidden [border-radius:0.75rem] [background:repeating-linear-gradient(135deg,_#432079_0_12px,_#7649c2_12px_24px)]">
-        {sampleTarget ? <NBlurTarget ref={target}>{background}</NBlurTarget> : background}
-        <NBlur blurTarget={sampleTarget ? target : undefined} intensity={56} enabled={enabled} tint="dark" className="component-blur-panel absolute [inset:25%_12%] grid [place-items:center] [border:1px_solid_#ffffff66] [border-radius:0.75rem] [background:#24104455]">
+        {background}
+        <NBlur intensity={56} enabled={enabled} tint="dark" className="component-blur-panel absolute [inset:25%_12%] grid [place-items:center] [border:1px_solid_#ffffff66] [border-radius:0.75rem] [background:#24104455]">
           <NText className="text-white">Sharp foreground</NText>
         </NBlur>
       </NView>
@@ -50,32 +45,6 @@ function Blur({ sampleTarget = false }: { sampleTarget?: boolean }) {
         {enabled ? 'Turn blur off' : 'Turn blur on'}
       </NButton>
     </NView>
-  );
-}
-
-function CounterContent() {
-  const [count, setCount] = useState(0);
-  return (
-    <NView className="gap-3 p-4">
-      <NText>Pressed {count} times</NText>
-      <NButton onPress={() => setCount((value) => value + 1)}>Continue</NButton>
-    </NView>
-  );
-}
-
-function RootDemo() {
-  return (
-    <ComponentsRoot background="transparent" style={{ flex: 1, minHeight: 0 }}>
-      <CounterContent />
-    </ComponentsRoot>
-  );
-}
-
-function PageDemo() {
-  return (
-    <NPage>
-      <CounterContent />
-    </NPage>
   );
 }
 
@@ -135,11 +104,11 @@ function KeyboardStatus() {
 function KeyboardDemo() {
   return (
     <NKeyboard>
-      <NPage className="gap-3 p-4">
+      <NTheme className="gap-3 p-4">
         <NInput label="Name" placeholder="Ada" />
         <NInput label="Email" type="email" placeholder="ada@example.com" />
         <KeyboardStatus />
-      </NPage>
+      </NTheme>
     </NKeyboard>
   );
 }
@@ -263,10 +232,8 @@ function ThemeControls() {
 
 function ThemeDemo() {
   return (
-    <NTheme defaultTheme="system">
-      <NPage className="bg-background p-4">
-        <ThemeControls />
-      </NPage>
+    <NTheme defaultTheme="system" className="bg-background p-4" surface={{ style: { height: 180 } }}>
+      <ThemeControls />
     </NTheme>
   );
 }
@@ -284,12 +251,9 @@ function ToastHostDemo() {
 
 const hosts: Record<string, { demo: ComponentType; host?: boolean; height?: number }> = {
   blur: { demo: Blur, host: true },
-  'blur-target': { demo: () => <Blur sampleTarget />, host: true },
-  'components-root': { demo: RootDemo, host: true },
   confetti: { demo: ConfettiDemo, height: 246 },
   drawer: { demo: DrawerDemo, host: true },
   keyboard: { demo: KeyboardDemo, host: true, height: 278 },
-  page: { demo: PageDemo, host: true },
   'platform-view': { demo: PlatformDemo },
   'refresh-control': { demo: RefreshDemo },
   'safe-area': { demo: SafeAreaDemo, host: true },

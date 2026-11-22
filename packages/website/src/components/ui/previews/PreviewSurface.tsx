@@ -2,12 +2,11 @@
 
 import { PREVIEW_STACK } from '@/design/system';
 import { useCallback, useState, type ReactNode } from 'react';
-import { NText, NView, NPage, NTheme, type NThemeProps } from 'nayan-ui/components';
+import { NText, NView, NTheme, type NThemeProps } from 'nayan-ui/components';
 import type { ComponentPreview } from './types';
 
 const controls = {
   NButton: { className: 'min-h-9 rounded-lg px-4 py-0 text-sm font-medium hover:opacity-90' },
-  NCloseButton: { className: 'rounded-lg bg-transparent text-sm text-muted hover:bg-default' },
   NLink: { className: 'font-medium text-accent' },
   NInput: { className: 'min-h-[38px] rounded-lg px-3 py-1 text-sm' },
   NInputOtp: { className: 'rounded-lg text-sm' },
@@ -50,13 +49,7 @@ export default function PreviewSurface({
         The engine renderer could not start in this browser.
       </NText>
     );
-  else
-    content = (
-      // The inline page's padding is independent of the browser's safe area.
-      <NPage className="gap-4 p-5" safeArea={false} onContentSizeChange={fitPage ? onContentSizeChange : undefined} onError={() => setError(true)}>
-        {preview.render}
-      </NPage>
-    );
+  else content = preview.render;
 
   return (
     <NView
@@ -64,7 +57,14 @@ export default function PreviewSurface({
       className={`component-preview-surface relative flex w-full min-w-0 flex-col ${fullWidth ? '' : 'max-w-[52rem]'}`}
       style={{ height }}
     >
-      <NTheme themes={themes} components={controls} radius={8}>
+      <NTheme
+        themes={themes}
+        components={controls}
+        radius={8}
+        className="gap-4 p-5"
+        safeArea={false}
+        surface={preview.host || error ? false : { onContentSizeChange: fitPage ? onContentSizeChange : undefined, onError: () => setError(true) }}
+      >
         {content}
       </NTheme>
     </NView>

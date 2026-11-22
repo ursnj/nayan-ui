@@ -1,15 +1,18 @@
 import { act, createRef } from 'react';
 import { afterAll, expect, mock, test } from 'bun:test';
 import { installDom } from '../../__tests__/dom';
-import type { NBlurTargetRef } from '../NBlur';
+import type { NViewNativeRef } from '../NView';
 import { PlatformRenderContext } from '../ThemeContext';
 
 const dom = installDom();
 const web = await import('../BlurHost.web');
 mock.module('../BlurHost', () => web);
+const platform = await import('../PlatformHost.web');
+mock.module('../PlatformHost', () => platform);
 const renderer = await import('../useComponentRenderer.web');
 mock.module('../useComponentRenderer', () => renderer);
-const { NBlur, NBlurTarget } = await import('../NBlur');
+const { NBlur } = await import('../NBlur');
+const { NView } = await import('../NView');
 const { createRoot } = await import('react-dom/client');
 afterAll(() => dom.cleanup());
 
@@ -41,7 +44,7 @@ test('browser blur preserves semantic tags, foreground content and composed styl
 test('targets release their refs on unmount and strength stays finite for invalid user values', async () => {
   const element = document.createElement('div');
   const root = createRoot(element);
-  const target = createRef<NBlurTargetRef>();
+  const target = createRef<NViewNativeRef>();
   try {
     for (const [intensity, expected] of [
       [200, 20],
@@ -51,15 +54,15 @@ test('targets release their refs on unmount and strength stays finite for invali
       await act(() =>
         root.render(
           <PlatformRenderContext.Provider value>
-            <NBlurTarget ref={target} style={{ flex: 1 }}>
+            <NView ref={target} id="backdrop" collapsable={false} className="flex-1">
               Backdrop
-            </NBlurTarget>
+            </NView>
             <NBlur intensity={intensity} blurTarget={target} />
           </PlatformRenderContext.Provider>
         )
       );
       expect(target.current).not.toBeNull();
-      expect(element.firstElementChild?.textContent).toBe('Backdrop');
+      expect(element.querySelector('#backdrop')?.textContent).toBe('Backdrop');
       expect((element.lastElementChild as HTMLElement).style.backdropFilter).toBe(`blur(${expected}px)`);
     }
   } finally {

@@ -44,7 +44,7 @@ const topics = [
   {
     sku: 'actions',
     text: 'Actions',
-    slugs: ['action-item', 'button', 'button-group', 'close-button', 'menu-item', 'press', 'toggle-button', 'toolbar', 'clipboard', 'sharing']
+    slugs: ['action-item', 'button', 'button-group', 'menu-item', 'press', 'toggle-button', 'toolbar', 'clipboard', 'sharing']
   },
   {
     sku: 'feedback',
@@ -79,7 +79,6 @@ const topics = [
       'linkify',
       'menu',
       'menu-item',
-      'page',
       'pagination',
       'tabs',
       'tabs-content',
@@ -91,13 +90,12 @@ const topics = [
     text: 'Layout',
     slugs: [
       'card',
-      'components-root',
       'divider',
-      'page',
       'platform-view',
       'safe-area',
       'safe-area-listener',
       'safe-area-provider',
+      'theme',
       'use-safe-area-frame',
       'use-safe-area-insets',
       'view'
@@ -112,7 +110,7 @@ const topics = [
   {
     sku: 'visual-design',
     text: 'Visual Design',
-    slugs: ['blur', 'blur-target', 'confetti', 'drawing', 'drawing-canvas', 'pattern', 'styles', 'theme', 'use-theme']
+    slugs: ['blur', 'confetti', 'drawing', 'drawing-canvas', 'pattern', 'styles', 'theme', 'use-theme']
   },
   {
     sku: 'icon-libraries',
@@ -151,7 +149,6 @@ const topics = [
     sku: 'platform-integration',
     text: 'Platform Integration',
     slugs: [
-      'components-root',
       'core',
       'device',
       'expo-plugin',
@@ -160,6 +157,7 @@ const topics = [
       'platform-view',
       'safe-area',
       'styles',
+      'theme',
       'wasm-runtime',
       'web'
     ]

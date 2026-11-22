@@ -2,8 +2,8 @@
 
 import { createElement, type ReactNode } from 'react';
 import { component } from './component';
-import { NButton } from './NButton';
 import { NIcon } from './NIcon';
+import { NPress } from './NPress';
 import { NText } from './NText';
 import { NView } from './NView';
 import type { ComponentProps } from './types';
@@ -29,7 +29,18 @@ const tones = {
 } as const;
 
 export function NAlert({
-  type, title, message, description, icon, actions, onClose, titleClassName, messageClassName, closeClassName, children, ...props
+  type,
+  title,
+  message,
+  description,
+  icon,
+  actions,
+  onClose,
+  titleClassName,
+  messageClassName,
+  closeClassName,
+  children,
+  ...props
 }: NAlertProps) {
   const body = message ?? description;
   const hasContent = title != null || body != null;
@@ -38,9 +49,27 @@ export function NAlert({
   }
   const status = type === 'accent' ? 'info' : type === 'danger' ? 'error' : type;
   const tone = status && Object.hasOwn(tones, status) ? tones[status as keyof typeof tones] : tones.default;
-  const indicator = icon === undefined && hasContent
-    ? createElement(NIcon, { name: tone.icon, size: 16, className: tone.className })
-    : icon;
+  const hasHeaderControls = actions != null || !!onClose;
+  const indicator =
+    icon === undefined && hasContent
+      ? createElement(NIcon, { name: tone.icon, size: 16, className: hasHeaderControls ? `mt-1 ${tone.className}` : tone.className })
+      : icon;
+  const titleText =
+    title != null
+      ? createElement(
+          NText,
+          { className: `text-sm font-medium ${hasHeaderControls ? 'leading-6 ' : ''}${tone.className} ${titleClassName ?? ''}` },
+          title
+        )
+      : null;
+  const bodyText =
+    body != null
+      ? createElement(
+          NText,
+          { className: `text-sm text-muted ${hasHeaderControls && !titleText ? 'leading-6 ' : ''}${messageClassName ?? ''}` },
+          body
+        )
+      : null;
   return createElement(
     Alert,
     {
@@ -53,16 +82,27 @@ export function NAlert({
     createElement(
       NView,
       { className: 'flex min-w-0 flex-1 flex-col gap-1' },
-      title != null && createElement(NText, { className: `text-sm font-medium ${tone.className} ${titleClassName ?? ''}` }, title),
-      body != null && createElement(NText, { className: `text-sm text-muted ${messageClassName ?? ''}` }, body),
+      hasHeaderControls
+        ? createElement(
+            NView,
+            { className: 'flex w-full flex-row items-start gap-3' },
+            createElement(NView, { className: 'flex min-w-0 flex-1 flex-col' }, titleText ?? bodyText),
+            actions,
+            onClose &&
+              createElement(
+                NPress,
+                {
+                  type: 'button',
+                  accessibilityLabel: typeof title === 'string' ? `Dismiss ${title.toLowerCase()} alert` : 'Dismiss alert',
+                  onPress: onClose,
+                  className: `flex h-6 w-6 shrink-0 flex-row items-center justify-center rounded-md bg-transparent p-0 text-muted hover:text-foreground ${closeClassName ?? ''}`
+                },
+                createElement(NIcon, { name: 'x', size: 16 })
+              )
+          )
+        : titleText,
+      (!hasHeaderControls || titleText) && bodyText,
       children
-    ),
-    actions,
-    onClose && createElement(NButton, {
-      type: 'button',
-      accessibilityLabel: typeof title === 'string' ? `Dismiss ${title.toLowerCase()} alert` : 'Dismiss alert',
-      onPress: onClose,
-      className: `h-6 w-6 shrink-0 rounded-lg bg-default p-0 text-sm text-muted hover:bg-surface-secondary ${closeClassName ?? ''}`
-    }, '×')
+    )
   );
 }

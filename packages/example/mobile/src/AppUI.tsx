@@ -1,22 +1,23 @@
 import { useIsFocused } from 'expo-router';
 import { type PropsWithChildren } from 'react';
-import { NPage, type NPageProps, NTheme, type SystemBarsOptions } from 'nayan-ui/components';
+import { NTheme, type NThemeProps, type SystemBarsOptions } from 'nayan-ui/components';
 import { COLORS } from './theme';
 
 export function AppUI({ children }: PropsWithChildren) {
   return (
-    <NTheme defaultTheme="dark" systemBars={false}>
+    <NTheme defaultTheme="dark" systemBars={false} surface={false}>
       {children}
     </NTheme>
   );
 }
 
-export function AppPage({ children, systemBars, ...props }: NPageProps & { systemBars?: SystemBarsOptions }) {
+type AppPageProps = Pick<NThemeProps, 'children' | 'className' | 'style'> & { keyboard?: boolean; systemBars?: SystemBarsOptions };
+
+export function AppPage({ children, keyboard, systemBars, ...props }: AppPageProps) {
   const focused = useIsFocused();
-  const page = (
-    <NPage active={focused} background={COLORS.background} {...props}>
+  return (
+    <NTheme surface={{ active: focused, background: COLORS.background, keyboard }} systemBars={focused && systemBars} {...props}>
       {children}
-    </NPage>
+    </NTheme>
   );
-  return systemBars ? <NTheme systemBars={focused ? systemBars : false}>{page}</NTheme> : page;
 }

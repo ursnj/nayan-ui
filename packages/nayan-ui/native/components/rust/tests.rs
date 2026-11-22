@@ -883,7 +883,6 @@ fn every_implemented_component_fits_phone_tablet_and_desktop_widths_with_large_t
         "NText",
         "NButton",
         "NPress",
-        "NCloseButton",
         "NCheck",
         "NSwitch",
         "NToggleButton",

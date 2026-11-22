@@ -3,7 +3,7 @@
 import { PREVIEW_STACK, PREVIEW_BUTTON } from '@/design/system';
 import { useEffect, useRef, useState, type ComponentType } from 'react';
 import { AnimationView, useAnimatedStyle, useSharedValue, withTiming } from 'nayan-ui/animations';
-import { NView, NButton, NLoading, NPage, NText } from 'nayan-ui/components';
+import { NView, NButton, NLoading, NTheme, NText } from 'nayan-ui/components';
 import { DrawingCanvas, DrawingDocument } from 'nayan-ui/drawing';
 import { GameView, Joystick, useJoystick, useWorld, warmUpEngine, type Camera, type Entity } from 'nayan-ui/games';
 import { NMarkdown } from 'nayan-ui/markdown';
@@ -136,9 +136,9 @@ const markdown =
 
 function MarkdownDemo({ alternate }: DemoProps) {
   return (
-    <NPage className="p-4">
+    <NTheme className="p-4">
       <NMarkdown source={alternate ? markdownTaskList : markdown} blockSpacing={12} />
-    </NPage>
+    </NTheme>
   );
 }
 

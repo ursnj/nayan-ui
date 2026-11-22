@@ -6,8 +6,21 @@ const dom = await installReactTestEnvironment();
 const { hydrateRoot } = await import('react-dom/client');
 const { renderToString } = await import('react-dom/server');
 // Resolve the published browser entry, including its real platform color-scheme adapter.
-const { NTheme, useNTheme } = await import('nayan-ui/components');
+const { NText, NTheme, useNTheme } = await import('nayan-ui/components');
 afterAll(() => dom.cleanup());
+
+test('NTheme reserves a browser viewport and renders one semantic fallback across nested scopes', () => {
+  const markup = renderToString(
+    <NTheme surface={{ serverFallback: true }} safeArea={false} toasts={false}>
+      <NTheme theme="dark">
+        <NText tag="h1">A themed screen</NText>
+      </NTheme>
+    </NTheme>
+  );
+  expect(markup).toContain('height:100dvh');
+  expect(markup).toContain('>A themed screen</h1>');
+  expect(markup.match(/data-engine-fallback/g)).toHaveLength(1);
+});
 
 test('the published browser theme hydrates consistently, follows system changes and exposes the same controls', async () => {
   let scheme: 'light' | 'dark' = 'dark';
@@ -30,7 +43,7 @@ test('the published browser theme hydrates consistently, follows system changes 
     return <span data-theme={state.resolvedTheme}>{state.theme}</span>;
   }
   const app = (
-    <NTheme safeArea={false} toasts={false}>
+    <NTheme surface={false} safeArea={false} toasts={false}>
       <Controls />
     </NTheme>
   );

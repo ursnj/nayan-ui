@@ -31,7 +31,7 @@ export function useNDrawer(): NDrawerControls {
   if (!value) throw new Error('useNDrawer requires an NDrawer');
   return value;
 }
-/** Platform content with Rust-owned gestures and animation. Mount outside a ComponentsRoot. */
+/** Platform content with Rust-owned gestures and animation. Mount around a screen or navigator. */
 export function NDrawer({
   children,
   drawerContent,

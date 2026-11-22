@@ -97,7 +97,11 @@ export function NAccordion<T extends AccordionListItem>({
                 className={`${isOpen ? 'text-accent' : 'text-muted'} ${indicatorClassName}`}
               />
             </NPress>
-            <NView id={panelId} className={`gap-0 px-3.5 pb-3.5 ${contentClassName}`} style={isOpen ? undefined : { display: 'none' }}>
+            <NView
+              id={panelId}
+              className={isOpen ? `gap-0 px-3.5 pb-3.5 ${contentClassName}` : 'hidden'}
+              style={isOpen ? undefined : { display: 'none' }}
+            >
               {isOpen &&
                 (typeof message === 'string' || typeof message === 'number' ? <NText className="text-sm text-muted">{message}</NText> : message)}
             </NView>

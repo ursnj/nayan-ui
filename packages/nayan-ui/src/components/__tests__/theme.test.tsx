@@ -14,6 +14,7 @@ let value: ComponentThemeValue | null = null;
 const metrics = { top: 48, right: 0, bottom: 34, left: 0 };
 const frame = { x: 0, y: 0, width: 390, height: 844 };
 mock.module('../themeSystemBars', () => ({ useThemeSystemBars() {} }));
+mock.module('../NPage', () => ({ NPage: () => { throw Error('A provider-only theme mounted a screen'); } }));
 mock.module('../PlatformHost', () => ({
   usePlatformColorScheme: () => scheme
 }));
@@ -72,8 +73,8 @@ afterAll(() => dom.cleanup());
 
 test('one root theme owns measurements and presentation insets; nested themes and scheme changes retain application state', async () => {
   const render = () => (
-    <NTheme theme="system">
-      <NTheme>
+    <NTheme surface={false} theme="system">
+      <NTheme surface={false}>
         <Content />
       </NTheme>
     </NTheme>
@@ -95,7 +96,7 @@ test('an existing framework provider is reused and explicit presentation setting
     root!.render(
       <SafeAreaInsetsContext.Provider value={metrics}>
         <SafeAreaFrameContext.Provider value={frame}>
-          <NTheme presentationInsets={{ bottom: 12 }}>
+          <NTheme surface={false} presentationInsets={{ bottom: 12 }}>
             <Content />
           </NTheme>
         </SafeAreaFrameContext.Provider>
@@ -111,12 +112,12 @@ test('nested palettes, component defaults and registered contexts inherit withou
     locale = createContext('en');
   await act(() =>
     root!.render(
-      <NTheme
+      <NTheme surface={false}
         colors={{ foreground: '#111111', accent: '#222222' }}
         themes={{ dark: { foreground: '#eeeeee', accent: '#333333' } }}
         contexts={[session]}
         components={{ NText: { className: 'text-sm', style: { opacity: 0.8 } }, NCard: { className: 'rounded-xl' } }}>
-        <NTheme colors={{ accent: '#abcdef' }} contexts={[locale, session]} components={{ NText: { className: 'font-bold' } }}>
+        <NTheme surface={false} colors={{ accent: '#abcdef' }} contexts={[locale, session]} components={{ NText: { className: 'font-bold' } }}>
           <Content />
         </NTheme>
       </NTheme>
@@ -132,8 +133,8 @@ test('nested palettes, component defaults and registered contexts inherit withou
 test('toasts are mounted lazily once per root theme and the root options configure their host', async () => {
   await act(() =>
     root!.render(
-      <NTheme toasts={{ maxWidth: 360 }}>
-        <NTheme>
+      <NTheme surface={false} toasts={{ maxWidth: 360 }}>
+        <NTheme surface={false}>
           <Content />
         </NTheme>
       </NTheme>
@@ -149,7 +150,7 @@ test('toasts are mounted lazily once per root theme and the root options configu
 test('legacy explicit hosts suppress the automatic outlet and advanced setup can opt out', async () => {
   await act(() =>
     root!.render(
-      <NTheme>
+      <NTheme surface={false}>
         <Content />
         <NToastHost maxWidth={320} />
       </NTheme>
@@ -161,7 +162,7 @@ test('legacy explicit hosts suppress the automatic outlet and advanced setup can
   expect(container.querySelector('[data-toast]')?.getAttribute('data-width')).toBe('320');
   await act(() =>
     root!.render(
-      <NTheme safeArea={false} toasts={false}>
+      <NTheme surface={false} safeArea={false} toasts={false}>
         <Content />
       </NTheme>
     )
@@ -178,7 +179,7 @@ test('useNTheme manages an uncontrolled preference, follows system changes and r
   }
   const changed = mock((_theme: string) => {});
   const render = () => (
-    <NTheme onThemeChange={changed} themes={{ light: { background: '#eeeeee' }, dark: { background: '#111111' } }}>
+    <NTheme surface={false} onThemeChange={changed} themes={{ light: { background: '#eeeeee' }, dark: { background: '#111111' } }}>
       <Controls />
     </NTheme>
   );
@@ -216,7 +217,7 @@ test('controlled themes notify their owner and change only when new props arrive
   }
   const changed = mock((_theme: string) => {});
   const render = (theme: 'light' | 'dark') => (
-    <NTheme theme={theme} onThemeChange={changed}>
+    <NTheme surface={false} theme={theme} onThemeChange={changed}>
       <Controls />
     </NTheme>
   );
@@ -237,16 +238,16 @@ test('palette-only nested scopes update their owner while explicit scopes and se
   await act(() =>
     root!.render(
       <>
-        <NTheme defaultTheme="light">
+        <NTheme surface={false} defaultTheme="light">
           <Controls id="root" />
-          <NTheme colors={{ accent: '#abcdef' }}>
+          <NTheme surface={false} colors={{ accent: '#abcdef' }}>
             <Controls id="nested" />
           </NTheme>
-          <NTheme defaultTheme="dark">
+          <NTheme surface={false} defaultTheme="dark">
             <Controls id="isolated" />
           </NTheme>
         </NTheme>
-        <NTheme defaultTheme="light">
+        <NTheme surface={false} defaultTheme="light">
           <Controls id="other" />
         </NTheme>
       </>
@@ -303,7 +304,7 @@ test('persisted preferences restore on first client render, track external write
     return <Content />;
   }
   const render = () => (
-    <NTheme persistence={{ storage, key: 'appearance', encoding: 'json' }}>
+    <NTheme surface={false} persistence={{ storage, key: 'appearance', encoding: 'json' }}>
       <Controls />
     </NTheme>
   );
@@ -338,13 +339,13 @@ test('invalid preferences recover to the default and namespaces, subscriptions a
   }
   const render = (key = 'appearance') => (
     <>
-      <NTheme defaultTheme="dark" persistence={{ storage, key, encoding: 'json' }}>
+      <NTheme surface={false} defaultTheme="dark" persistence={{ storage, key, encoding: 'json' }}>
         <Controls id="one" />
       </NTheme>
-      <NTheme persistence={{ storage, key: 'other' }}>
+      <NTheme surface={false} persistence={{ storage, key: 'other' }}>
         <Controls id="other" />
       </NTheme>
-      <NTheme theme="light" persistence={{ storage, key: 'controlled' }} onThemeChange={changed}>
+      <NTheme surface={false} theme="light" persistence={{ storage, key: 'controlled' }} onThemeChange={changed}>
         <Controls id="controlled" />
       </NTheme>
     </>
@@ -379,7 +380,7 @@ test('SSR uses the deterministic default without accessing client storage', asyn
   }
   expect(
     renderToString(
-      <NTheme defaultTheme="light" persistence={{ storage }}>
+      <NTheme surface={false} defaultTheme="light" persistence={{ storage }}>
         <Controls />
       </NTheme>
     )
@@ -395,7 +396,7 @@ test('custom palettes feed camelCase hook tokens, semantic renderer colors and a
   }
   await act(() =>
     root!.render(
-      <NTheme
+      <NTheme surface={false}
         defaultTheme="light"
         palettes={{
           light: { accent: '#123456', accentForeground: '#ffffff', surface: '#111111', patternOpacity: 0.4 },
@@ -403,7 +404,7 @@ test('custom palettes feed camelCase hook tokens, semantic renderer colors and a
         }}
         colors={{ surface: '#998877' }}
         components={({ isDarkMode, palette }) => ({ NCard: { style: { opacity: isDarkMode ? 0.5 : 1, color: palette.accent as string } } })}>
-        <NTheme colors={{ 'accent-foreground': '#eeeeee' }}>
+        <NTheme surface={false} colors={{ 'accent-foreground': '#eeeeee' }}>
           <Controls />
         </NTheme>
       </NTheme>

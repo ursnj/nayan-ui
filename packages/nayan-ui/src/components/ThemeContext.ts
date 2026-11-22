@@ -6,7 +6,7 @@ export { ComponentThemeContext, SystemBarsDepthContext } from './theme/contexts'
 
 export type NThemeMode = 'light' | 'dark' | 'system';
 
-export interface ComponentThemeValue extends Omit<NThemeProps, 'children' | 'components'> {
+export interface ComponentThemeValue extends Omit<NThemeProps, 'children' | 'components' | 'surface'> {
   components?: ComponentProps['components'];
   fontData?: ThemeFontData;
   systemTheme?: 'light' | 'dark';
@@ -15,4 +15,5 @@ export interface ComponentThemeValue extends Omit<NThemeProps, 'children' | 'com
   toggleTheme?: () => void;
 }
 export const ComponentRenderContext = /* @__PURE__ */ createContext(false);
+export const ComponentFallbackContext = /* @__PURE__ */ createContext(false);
 export const PlatformRenderContext = /* @__PURE__ */ createContext(false);

@@ -432,7 +432,7 @@ impl Style {
                 };
                 result.background = Some(palette.get("surface"));
             }
-            "NButton" | "NCloseButton" => {
+            "NButton" => {
                 if palette.native {
                     result.radius = palette.radius * 1.5;
                     result.medium = true;

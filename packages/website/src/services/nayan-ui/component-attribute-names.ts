@@ -21,8 +21,8 @@ export const componentAttributeNames: Partial<Record<ComponentSymbol, readonly s
   NBadge: ['children', 'color', 'variant', 'size', 'className', 'role'],
   NButton: ['disabled', 'className', 'isOutline', 'isLoading', 'loadingText', 'leftIcon', 'rightIcon', 'children', 'onPress'],
   NButtonGroup: [
-    'className', 'items', 'selected', 'disabled', 'onChange', 'ariaLabel',
-    'value', 'defaultValue', 'size'
+    'className', 'buttonClassName', 'items', 'selected', 'disabled', 'onChange', 'keyExtractor', 'renderButton', 'ariaLabel',
+    'value', 'defaultValue', 'onValueChange', 'getKey', 'renderItem', 'size'
   ],
   NCard: ['className', 'children', 'onClick'],
   NCarousel: [
@@ -34,7 +34,6 @@ export const componentAttributeNames: Partial<Record<ComponentSymbol, readonly s
     'onChange', 'children', 'required', 'label'
   ],
   NChip: ['children', 'size', 'color', 'variant', 'className'],
-  NCloseButton: ['onPress', 'disabled', 'accessibilityLabel', 'className'],
   NCode: ['code', 'children', 'className'],
   NConfirm: [
     'isOpen', 'description', 'title', 'className', 'titleClassName', 'descriptionClassName',
@@ -79,10 +78,6 @@ export const componentAttributeNames: Partial<Record<ComponentSymbol, readonly s
   NNumberField: [
     'value', 'defaultValue', 'onChange', 'minValue', 'maxValue', 'step',
     'disabled', 'isInvalid', 'className', 'label'
-  ],
-  NPage: [
-    'children', 'className', 'style', 'background', 'keyboard', 'safeArea',
-    'showsVerticalScrollIndicator', 'onError'
   ],
   NPattern: ['recipe', 'style', 'className', 'onError'],
   NPlatformView: ['children', 'className', 'style', 'accessibilityLabel'],
@@ -143,7 +138,7 @@ export const componentAttributeNames: Partial<Record<ComponentSymbol, readonly s
     'onChange', 'value', 'defaultValue', 'placeholder', 'rows', 'maxLength'
   ],
   NTheme: [
-    'children', 'defaultTheme', 'themes', 'colors', 'components', 'radius',
+    'children', 'className', 'style', 'surface', 'safeArea', 'defaultTheme', 'themes', 'colors', 'components', 'radius',
     'stylesheet', 'fonts', 'persistence', 'onThemeChange'
   ],
   NToggleButton: [

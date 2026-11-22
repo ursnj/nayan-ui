@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { expect, mock, test } from 'bun:test';
 import { NAccordion } from '../NAccordion';
 import { NButton } from '../NButton';
+import { NButtonGroup } from '../NButtonGroup';
 import { NScrollView } from '../NScrollView';
 import { NText } from '../NText';
 import { NView } from '../NView';
@@ -89,11 +90,15 @@ test('accordion expansion follows controlled props and preserves multiple batche
   );
   const triggers = () => nodes[0]!.children.map((item) => item.children[0]!);
   const expansion = () => triggers().map((trigger) => trigger.props._expanded);
+  const bodies = () => nodes[0]!.children.map((item) => item.children[1]!.props.className);
   const press = (index: number) => (renderer.handlers.get(triggers()[index]!.id)!.onPress as () => void)();
   try {
     renderer.render(<NAccordion items={items} expanded={true} onExpandedChange={onExpandedChange} />);
     await flush();
     expect(expansion()).toEqual([false, true, false]);
+    expect(bodies()[0]).toBe('hidden');
+    expect(bodies()[1]).toContain('pb-3.5');
+    expect(bodies()[2]).toBe('hidden');
     press(0);
     press(1);
     await flush();
@@ -123,6 +128,52 @@ test('accordion expansion follows controlled props and preserves multiple batche
     await flush();
     expect(expansion()).toEqual([false, false, false]);
     expect(onExpandedChange.mock.calls).toEqual([[false]]);
+  } finally {
+    renderer.dispose();
+    await flush();
+  }
+});
+
+test('button group emits connected segments and preserves controlled and uncontrolled selection', async () => {
+  const items = [
+    { label: 'First', value: 'first' },
+    { label: 'Second', value: 'second' },
+    { label: 'Third', value: 'third', disabled: true }
+  ];
+  const onChange = mock((_value: string) => {});
+  let nodes: ComponentNode[] = [];
+  const renderer = createComponentRenderer(
+    (next) => {
+      nodes = next;
+    },
+    (error) => {
+      throw error;
+    }
+  );
+  const segments = () => nodes[0]!.children[0]!.children;
+  const selection = () => segments().map((segment) => segment.props._selected);
+  const press = (index: number) => (renderer.handlers.get(segments()[index]!.id)!.onPress as () => void)();
+  try {
+    renderer.render(<NButtonGroup items={items} selected={{ ...items[0]! }} onChange={onChange} />);
+    await flush();
+    expect(selection()).toEqual([true, false, false]);
+    expect(segments().map((segment) => String(segment.props.className).match(/rounded-[lr]-full/g))).toEqual([
+      ['rounded-l-full'],
+      null,
+      ['rounded-r-full']
+    ]);
+    press(2);
+    press(1);
+    await flush();
+    expect(onChange.mock.calls).toEqual([['second']]);
+    expect(selection()).toEqual([true, false, false]);
+
+    renderer.render(<NButtonGroup key="uncontrolled" options={items} defaultValue="first" onValueChange={onChange} />);
+    await flush();
+    press(1);
+    await flush();
+    expect(selection()).toEqual([false, true, false]);
+    expect(onChange.mock.calls).toEqual([['second'], ['second']]);
   } finally {
     renderer.dispose();
     await flush();

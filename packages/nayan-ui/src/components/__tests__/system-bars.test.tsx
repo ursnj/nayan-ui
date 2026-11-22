@@ -22,6 +22,7 @@ mock.module('react-native', () => ({
 }));
 mock.module('../../native/NativeNayanEngine', () => ({ default: engine }));
 mock.module('../NSafeArea', () => ({ NSafeAreaProvider: ({ children }: import('react').PropsWithChildren) => children }));
+mock.module('../NPage', () => ({ NPage: () => { throw Error('A provider-only theme mounted a screen'); } }));
 const { NTheme } = await import('../NTheme');
 const { ComponentRenderContext } = await import('../ThemeContext');
 const dom = installDom();
@@ -49,8 +50,8 @@ afterAll(() => dom.cleanup());
 
 test('root NTheme registers a stable Rust scope; palette-only nested themes do not override system bars', async () => {
   await render(
-    <NTheme theme="dark">
-      <NTheme theme="light">
+    <NTheme surface={false} theme="dark">
+      <NTheme surface={false} theme="light">
         <span>UI</span>
       </NTheme>
     </NTheme>
@@ -59,8 +60,8 @@ test('root NTheme registers a stable Rust scope; palette-only nested themes do n
   const [id, configuration] = engine.systemBarsSet.mock.calls[0]!;
   expect(JSON.parse(configuration)).toEqual({ depth: 0, theme: 'dark', options: {}, systemDark: false });
   await render(
-    <NTheme theme="light">
-      <NTheme theme="dark">
+    <NTheme surface={false} theme="light">
+      <NTheme surface={false} theme="dark">
         <span>UI</span>
       </NTheme>
     </NTheme>
@@ -83,8 +84,8 @@ test('focused screen scopes release immediately on blur without a React rerender
     }
   };
   const Screen = ({ theme }: { theme: 'light' | 'dark' }) => (
-    <NTheme theme="light">
-      <NTheme systemBars={{ theme, navigationBarHidden: true }} navigation={navigation}>
+    <NTheme surface={false} theme="light">
+      <NTheme surface={false} systemBars={{ theme, navigationBarHidden: true }} navigation={navigation}>
         <span>Game</span>
       </NTheme>
     </NTheme>
@@ -114,14 +115,14 @@ test('focused screen scopes release immediately on blur without a React rerender
 
 test('system appearance and foreground return update the existing scope; opting out releases it', async () => {
   await render(
-    <NTheme theme="system">
+    <NTheme surface={false} theme="system">
       <span>UI</span>
     </NTheme>
   );
   const id = engine.systemBarsSet.mock.calls[0]![0];
   scheme = 'dark';
   await render(
-    <NTheme theme="system">
+    <NTheme surface={false} theme="system">
       <span>UI</span>
     </NTheme>
   );
@@ -131,7 +132,7 @@ test('system appearance and foreground return update the existing scope; opting 
   expect(engine.systemBarsSet).toHaveBeenCalledTimes(count + 1);
   expect(engine.systemBarsSet.mock.calls.at(-1)![0]).toBe(id);
   await render(
-    <NTheme theme="dark" systemBars={false}>
+    <NTheme surface={false} theme="dark" systemBars={false}>
       <span>UI</span>
     </NTheme>
   );
@@ -144,7 +145,7 @@ test('serialized Rust-renderer themes never create a second native system-bar ow
   try {
     await render(
       <ComponentRenderContext.Provider value={true}>
-        <NTheme theme="dark" systemBars>
+        <NTheme surface={false} theme="dark" systemBars>
           <span>UI</span>
         </NTheme>
       </ComponentRenderContext.Provider>
@@ -158,7 +159,7 @@ test('serialized Rust-renderer themes never create a second native system-bar ow
 test('current native builds receive palette variants for window backgrounds without replacing the Rust scope', async () => {
   engine.systemThemeSet = systemThemeSet;
   await render(
-    <NTheme theme="system" colors={{ background: '#123456' }} themes={{ dark: { background: '#654321' } }}>
+    <NTheme surface={false} theme="system" colors={{ background: '#123456' }} themes={{ dark: { background: '#654321' } }}>
       <span>UI</span>
     </NTheme>
   );
@@ -166,7 +167,7 @@ test('current native builds receive palette variants for window backgrounds with
   const [id, configuration] = systemThemeSet.mock.calls[0]!;
   expect(JSON.parse(configuration)).toMatchObject({ colors: { background: '#123456' }, themes: { dark: { background: '#654321' } } });
   await render(
-    <NTheme theme="system" colors={{ background: '#abcdef' }}>
+    <NTheme surface={false} theme="system" colors={{ background: '#abcdef' }}>
       <span>UI</span>
     </NTheme>
   );
@@ -176,7 +177,7 @@ test('current native builds receive palette variants for window backgrounds with
 
 test('older builds retain the original bar schema when a shared app supplies window colors', async () => {
   await render(
-    <NTheme theme="dark" colors={{ background: '#123456' }}>
+    <NTheme surface={false} theme="dark" colors={{ background: '#123456' }}>
       <span>UI</span>
     </NTheme>
   );

@@ -54,13 +54,13 @@ export const specializedScenarios = {
     'Quotes and numbered lists',
     `'use client';
 
-import { NPage } from 'nayan-ui/components';
+import { NTheme } from 'nayan-ui/components';
 import { NMarkdown } from 'nayan-ui/markdown';
 
 const source = '## Launch notes\\n\\n> Ship small, test often.\\n\\n1. Build the app\\n2. Review the release\\n3. Publish';
 
 export default function Example() {
-  return <NPage className="p-4"><NMarkdown source={source} blockSpacing={12} /></NPage>;
+  return <NTheme className="p-4"><NMarkdown source={source} blockSpacing={12} /></NTheme>;
 }`
   ),
   'video-player': media('video-player', 'Loop with cover fit', original('video-player').replace('contentFit="contain"', 'loop contentFit="cover"'))

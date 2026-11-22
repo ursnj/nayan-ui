@@ -90,8 +90,7 @@ export function EngineScreen() {
 
 `useWorld` loads the WebAssembly core for you; imperative game APIs await
 `warmUpEngine()` first. Serve the shipped WASM asset along with the browser entry,
-using HTTPS or localhost. `NPage`/`ComponentsRoot` initialize UI internally and need a bounded
-viewport. Plain browser layouts can use the engine's [class compiler](#compiling-website-classes-without-tailwind).
+using HTTPS or localhost. `NTheme` initializes the UI and sizes a standalone browser screen to the viewport. Plain browser layouts can use the engine's [class compiler](#compiling-website-classes-without-tailwind).
 
 For React Server Components, keep interactive theme/page controls in a client component.
 `NMarkdown` and `parseFrontMatter` use the same public Markdown import on the server;
@@ -103,11 +102,11 @@ APIs and image hosts remain subject to browser CORS and platform permissions.
 
 ### App UI
 
-Mount `NTheme` at the app root and place a shared `NPage` or `ComponentsRoot` at the app rendering boundary. Visual controls share that Rust document. Size the platform container around the surface and pass `active={false}` to pause a hidden screen while retaining its document.
+Wrap the screen in `NTheme`. Its controls share one Rust document. Set `surface={{ active: false }}` to pause a hidden screen while retaining its document. Use `surface={false}` when the root theme wraps an existing platform navigator, then wrap each engine screen in `NTheme`.
 
 ```tsx
 import { useState } from 'react';
-import { ComponentsRoot, NButton, NCard, NText, NTheme } from 'nayan-ui/components';
+import { NButton, NCard, NText, NTheme } from 'nayan-ui/components';
 
 function WelcomeScreen() {
   const [count, setCount] = useState(0);
@@ -122,10 +121,8 @@ function WelcomeScreen() {
 
 export function App() {
   return (
-    <NTheme defaultTheme="system">
-      <ComponentsRoot style={{ height: 360, flex: undefined }}>
-        <WelcomeScreen />
-      </ComponentsRoot>
+    <NTheme defaultTheme="system" surface={{ style: { height: 360 } }}>
+      <WelcomeScreen />
     </NTheme>
   );
 }
@@ -185,7 +182,7 @@ requirements in [Shared modules](#shared-modules).
 
 | Area | Engine responsibility |
 | --- | --- |
-| `GameView`, `DrawingCanvas`, `ComponentsRoot` | Rust and wgpu paint games, drawing documents and component trees. Canvas entrances animate within this render path. |
+| `GameView`, `DrawingCanvas`, `NTheme` | Rust and wgpu paint games, drawing documents and component trees. Canvas entrances animate within this render path. |
 | Platform views and shared elements | `AnimationView` and shared-element transitions animate the platform view. React Native uses its native driver, and browsers use the Web Animations API. |
 | Component fallback and overlays | Browser HTML/SVG and React Native views host semantic fallbacks, text editors, accessibility and embedded platform controls. |
 | Video, camera and capture | Playback, preview and capture use operating system or browser media facilities. |
@@ -285,7 +282,7 @@ custom WASM profiles for bundler verification.
 | ------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | Game worlds and procedural/game assets            | `useWorld` prepares automatically; imperative use awaits `warmUpEngine()`                          | Installed native bridge; `useWorld` owns lifecycle                            |
 | `DrawingDocument` | Await `warmUpEngine()` before constructing a document | Installed native bridge with `drawing` enabled |
-| `NPage`, `ComponentsRoot`, drawer and safe-area providers | Public components prepare their required core internally                                           | Updated development/store build                                               |
+| `NTheme`, drawer and safe-area providers | Public components prepare their required core internally                                           | Updated development/store build                                               |
 | `uuid()`                                          | Ready when browser secure randomness is available                                          | Ready after native module registration; the same `prepareUuid()` call is safe |
 | Audio, microphone and haptics                     | Sound asset loading prepares its bridge; prepare the engine before direct recording/feedback calls | Installed native bridge; request microphone permission before recording       |
 | `NMarkdown`                                       | Its surface or server binding prepares parsing                                                     | Render inside the engine UI surface                                           |
@@ -386,9 +383,9 @@ const turn = animations.playView(ref, {
 
 `viewPresets` lists the available entrances, exits, and attention effects. Pass a preset name or a custom sequence to `animations.playView`. Set the wrapper's `initial` from `viewPresets.fadeIn.initial`, for example, to keep an entrance hidden before playback starts. `repeat` counts additional runs. `yoyo` plays alternating runs in reverse and requires an initial value for each animated property.
 
-`AnimationView` is a React Native view or a browser `div`. Use it around `NView`, `NText`, and other React content in the platform view tree, or around a whole `ComponentsRoot`. The wrapper owns the animated properties. React Native uses the native driver and web uses the Web Animations API. Browsers without `CSS.registerProperty` apply individual translation, stretch, 3D rotation, and skew changes immediately. The system reduced-motion preference applies by default.
+`AnimationView` is a React Native view or a browser `div`. Use it around `NView`, `NText`, and other React content in the platform view tree, or around a whole `NTheme` screen. The wrapper owns the animated properties. React Native uses the native driver and web uses the Web Animations API. Browsers without `CSS.registerProperty` apply individual translation, stretch, 3D rotation, and skew changes immediately. The system reduced-motion preference applies by default.
 
-Inside a browser `ComponentsRoot` with a compiled stylesheet, `entrance={{ duration: 460, delay: 55, opacity: 0.2, translateY: 22 }}` reveals a block once a portion of it is visible. Rust fades and moves the component toward its resting layout and keeps the layout cached. Set `replay: true` to reveal it again after it fully leaves the viewport. Hosts that hide the surface while loading can set `entrancesReady={false}` until they reveal it. Reduced motion displays the final position immediately. The semantic HTML fallback renders its normal resting state.
+Inside an `NTheme` browser screen with a compiled stylesheet, `entrance={{ duration: 460, delay: 55, opacity: 0.2, translateY: 22 }}` reveals a block once a portion of it is visible. Rust fades and moves the component toward its resting layout and keeps the layout cached. Set `replay: true` to reveal it again after it fully leaves the viewport. Hosts that hide the surface while loading can set `surface.entrancesReady` to false until they reveal it. Reduced motion displays the final position immediately. The semantic HTML fallback renders its normal resting state.
 
 #### Shared elements
 
@@ -673,30 +670,27 @@ and drawing. Text fields use the native/browser editor for immediate typing,
 selection and IME composition, with their labels and chrome drawn by Rust.
 Charts and data tables are outside this implementation.
 
-Install `react-reconciler@^0.34.0` alongside React 19.3 when using `ComponentsRoot`.
+Install `react-reconciler@^0.34.0` alongside React 19.3 when rendering a screen with `NTheme`.
 Game-only applications do not need this optional peer.
 
 ```tsx
-import { NCard, NCheck, NInput, NSlider, NTheme, ComponentsRoot } from 'nayan-ui/components';
+import { NCard, NCheck, NInput, NSlider, NTheme } from 'nayan-ui/components';
 
 export function Preferences() {
   return (
-    <NTheme theme="light">
-      <ComponentsRoot style={{ height: 480, width: '100%' }} onError={console.error}>
-        <NCard className="p-4">
-          <NInput label="Name" defaultValue="Ada" />
-          <NCheck label="Notifications" defaultChecked />
-          <NSlider label="Volume" defaultValue={30} onChange={console.log} />
-        </NCard>
-      </ComponentsRoot>
+    <NTheme theme="light" surface={{ style: { height: 480, width: '100%' }, onError: console.error }}>
+      <NCard className="p-4">
+        <NInput label="Name" defaultValue="Ada" />
+        <NCheck label="Notifications" defaultChecked />
+        <NSlider label="Volume" defaultValue={30} onChange={console.log} />
+      </NCard>
     </NTheme>
   );
 }
 ```
 
-Use `ComponentsRoot` with a bounded size on web. Its children use the engine's React
-renderer, so custom components, hooks and keyed children work. Prefer one root
-`NTheme` above navigation, screens and games. It supplies safe-area measurements when
+Give an embedded screen a bounded size with `surface.style` or its host layout. Custom
+components, hooks and keyed children work inside the screen. The root `NTheme` supplies safe-area measurements when
 no provider exists, derives sheet insets and lazily hosts toasts. Nested themes inherit
 configuration without duplicating these services. `safeArea={false}` and `toasts={false}`
 allow custom hosting.
@@ -779,17 +773,17 @@ wrapper remains supported for integrations that need to construct providers expl
 ### Application contexts and game surfaces
 
 Games use the same application boundary. `GameView` inherits the theme background
-unless an explicit `background` is supplied. Inside `NPage` or `ComponentsRoot`, it automatically
+unless an explicit `background` is supplied. Inside an `NTheme` screen, it automatically
 creates the platform surface and carries registered contexts to it. Game components
 can use the same session, query and navigation contexts as other screens.
 
 ```tsx
 import { GameView, useWorld } from 'nayan-ui/games';
-import { NPage, NTheme } from 'nayan-ui/components';
+import { NTheme } from 'nayan-ui/components';
 
 function GameScreen() {
   const world = useWorld(100, setupWorld, []);
-  return <NPage className="flex-1">{world && <GameView source={world} />}</NPage>;
+  return world && <GameView source={world} />;
 }
 
 <NTheme defaultTheme="system" contexts={[SessionContext]}>
@@ -797,28 +791,27 @@ function GameScreen() {
 </NTheme>;
 ```
 
-`NTheme` configures the application; `NPage` supplies a screen's layout and rendering
-surface. `useWorld` manages game warm-up and disposal. Theme setup alone does not
+`NTheme` configures the application and owns the screen’s layout and rendering surface. `useWorld` manages game warm-up and disposal. Theme setup alone does not
 create a game world or start its frame loop.
 
 Import the public names directly, without an app-local UI barrel:
 
 ```tsx
 import { UserIcon } from 'nayan-ui/icons/components/user';
-import { NCard, NPage, NText, NTheme } from 'nayan-ui/components';
+import { NCard, NText, NTheme } from 'nayan-ui/components';
 
-<NTheme theme="dark" colors={appColors} contexts={[SessionContext, QueryClientContext]}>
+<NTheme surface={false} theme="dark" colors={appColors} contexts={[SessionContext, QueryClientContext]}>
   <Navigation />
 </NTheme>;
 
 function Details() {
   return (
-    <NPage>
+    <NTheme>
       <NCard>
         <UserIcon />
         <NText>Profile</NText>
       </NCard>
-    </NPage>
+    </NTheme>
   );
 }
 ```
@@ -838,15 +831,15 @@ navigation-bar icons. Rust resolves automatic icon contrast from `theme`, handle
 `system` appearance, prioritizes nested scopes and restores the latest parent
 configuration when a scope leaves. Ordinary nested palette themes do not change
 global system bars. Use `systemBars={false}` to opt out.
-Mount system-bar providers above `ComponentsRoot` or navigation; serialized palette nodes
+Configure system bars on the root or screen-level `NTheme`; serialized palette nodes
 inside a Rust-rendered surface do not create additional global bar owners.
 
 ```tsx
 // App root: both bars follow the theme automatically.
-<NTheme theme={theme}>{children}</NTheme>;
+<NTheme theme={theme} surface={false}>{children}</NTheme>;
 
 // Optional focused-screen override; the rest of its UI keeps the inherited palette.
-<NTheme systemBars={{ theme: 'dark' }} navigation={navigation}>
+<NTheme systemBars={{ theme: 'dark' }} navigation={navigation} surface={false}>
   <Game />
 </NTheme>;
 ```
@@ -900,13 +893,12 @@ NAYAN_ANDROID_SYSTEM_THEME_TEST=1 bun test packages/nayan-ui/native/tests/system
 
 ### Pages and component catalog
 
-`NPage` and `NSheet` accept `showsVerticalScrollIndicator={false}` to hide their
-page indicator while keeping scrolling and sheet gestures available. Other pages
+Set `surface={{ showsVerticalScrollIndicator: false }}` on `NTheme`, or `showsVerticalScrollIndicator={false}` on `NSheet`, to hide the indicator while keeping scrolling and sheet gestures available. Other pages
 keep their default indicator behavior. This option requires rebuilding the native core and app.
 Sheets can also opt into their `NTheme`'s `presentationBackground` with `blurred`;
 the panel and engine canvas then stay transparent over that clipped backdrop.
 
-`NPage` automatically measures its native viewport and protects the bottom of its
+`NTheme` automatically measures its native screen viewport and protects the bottom of its
 primary scroll content. `NList` and vertical `NScrollView` keep the full viewport;
 the inset scrolls away with the final item. Plain forms receive it on their content.
 Rust uses the larger of existing bottom padding and the remaining system inset.
@@ -914,25 +906,27 @@ Tab screens whose viewport ends above the tab bar receive no additional inset,
 and nested rows, horizontal lists and presentations do not inherit it again.
 Use `safeArea={false}` when a screen manages its own content insets.
 
-Use `NPage` for a screen surface with keyboard avoidance and a host for controlled presentations.
+Use `surface={{ keyboard: true }}` on `NTheme` to enable keyboard avoidance. Screens host their controlled presentations automatically.
 DOM elements and React Native visual elements require the explicit `NPlatformView`
 attachment boundary inside an engine UI tree.
 
 | Area                            | Public components                                                                                                                                      |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| App and layout                  | `NTheme`, `NPage`, `ComponentsRoot`, `NView`, `NCard`, `NPlatformView`, `NDivider`                                                                             |
+| App and layout                  | `NTheme`, `NView`, `NCard`, `NPlatformView`, `NDivider`                                                                             |
 | Scrolling and navigation UI     | `NScrollView`, `NScrollShadow`, `NRefreshControl`, `NList`, `NCarousel`, `NDrawer`, `NTabs`, `NTabsContent`                                            |
 | Content and feedback            | `NText`, `NImage`, `NPattern`, `NLink`, `NLinkify`, `NCode`, `NKbd`, `NTooltip`, `NAccordion`, `NRequired`                                            |
 | Optional content entries        | `NIcon` and named components from `/icons`, `NMarkdown` from `/markdown`                                                                            |
-| Actions and choices             | `NButton`, `NPress`, `NCloseButton`, `NCheck`, `NSwitch`, `NToggleButton`, `NRadio`, `NRadioGroup`, `NButtonGroup`, `NActionItem`, `NMenuItem`         |
+| Actions and choices             | `NButton`, `NPress`, `NCheck`, `NSwitch`, `NToggleButton`, `NRadio`, `NRadioGroup`, `NButtonGroup`, `NActionItem`, `NMenuItem`                         |
 | Fields                          | `NInput`, `NTextarea`, `NSearchField`, `NInputOtp`, `NSlider`, `NNumberField`, `NSelect`, `NDatePicker`                                                |
 | Status and loading              | `NProgress`, `NLoading`, `NChip`, `NBadge`, `NAlert`, `NEmptyState`, `NSkeleton`, `NSkeletonGroup`, `NConfetti`, `NToastHost` and the `NToast` service |
-| Presentations and native chrome | `NSheet`, `NDialog`, `NConfirm`, `NKeyboard`, `NBlur`, `NBlurTarget`, `NSafeArea`, `NSafeAreaProvider`, `NSafeAreaListener`                            |
+| Presentations and native chrome | `NSheet`, `NDialog`, `NConfirm`, `NKeyboard`, `NBlur`, `NSafeArea`, `NSafeAreaProvider`, `NSafeAreaListener`                                           |
 
 The engine exposes these controls through one shared API. Sheets, dialogs and confirmations use controlled `isOpen` /
 `onOpenChange` props and a platform presentation host with Rust-rendered content.
 Use `NAccordion` with one item for a single collapsible panel. Pass `defaultExpanded` to open it initially or use
 `expanded` and `onExpandedChange` to control whether the accordion is open.
+`NBlur` blurs the backdrop by default. To sample a specific Android view, put the source `NView` and its `NBlur`
+overlay in an `NPlatformView`, set `collapsable={false}` on the source, and pass its ref as `blurTarget`.
 The calendar and toast service also use Rust state and engine rendering. SDK-owned surfaces retain their platform integrations.
 
 ### Platform primitives and interop
@@ -950,8 +944,9 @@ import { NPress, NText } from 'nayan-ui/components';
 ```
 
 The parent app surface owns layout, drawing and event delivery. Press lifecycle updates are sent only when requested.
+For a close control, give `NPress` an `accessibilityLabel` and render an icon or `×` as its content.
 
-On the web, an app can explicitly wrap an HTML shell in `NPlatformView` for browser layout. Its semantic tags use the host stylesheet. The server fallback of `ComponentsRoot` can also serve HTML while WASM starts.
+On the web, an app can explicitly wrap an HTML shell in `NPlatformView` for browser layout. Its semantic tags use the host stylesheet. `NTheme` can also serve HTML while WASM starts with `surface={{ serverFallback: true }}`.
 
 For an SDK view or browser-owned attachment within a page, place it explicitly:
 
@@ -961,7 +956,7 @@ For an SDK view or browser-owned attachment within a page, place it explicitly:
 </NPlatformView>
 ```
 
-Rust positions and clips the attachment using its node bounds. `ComponentsRoot.overlays`
+Rust positions and clips the attachment using its node bounds. `NTheme`’s `surface.overlays`
 supports advanced keyed attachments, and `scrollableOverlays` forwards vertical
 drags while leaving native taps available. Registered application contexts cross
 these boundaries too. `GameView` handles its own attachment when used inside a page.
@@ -973,7 +968,7 @@ these boundaries too. `GameView` handles its own attachment when used inside a p
 UTC timezone shifts. Rust owns Gregorian validation, disabled dates, month/year
 navigation and selection; the default range is 1900–2100.
 
-Wrap a form's `NPage` or `ComponentsRoot` in `<NKeyboard>` to coordinate keyboard
+Wrap a form’s `NTheme` in `<NKeyboard>` to coordinate keyboard
 avoidance and a themed Previous/Next/Done toolbar. Import `NKeyboard` and
 `useNKeyboard` from `nayan-ui/components`; no keyboard-controller package is needed.
 `useNKeyboard()` exposes `visible`, `height`, `focusedInput`, `hasPrevious`,
@@ -982,11 +977,11 @@ avoidance and a themed Previous/Next/Done toolbar. Import `NKeyboard` and
 
 ```tsx
 <NKeyboard doneLabel="Done">
-  <NPage>
+  <NTheme>
     <NInput id="name" label="Name" />
     <NInput id="mobile" label="Mobile" keyboardType="numeric" />
     <NTextarea id="about" label="About" />
-  </NPage>
+  </NTheme>
 </NKeyboard>
 ```
 
@@ -1000,7 +995,7 @@ uses iOS keyboard transition events and Android `adjustResize`, without per-fram
 JavaScript animation. Hosts should retain `adjustResize` on Android; a measured
 overlap fallback handles an unresized window without padding an already resized one twice. The browser
 keeps its own keyboard/accessory UI and uses VisualViewport for visibility.
-`NPage keyboard` uses this avoidance with its toolbar hidden and reuses an outer
+`NTheme` with `surface={{ keyboard: true }}` uses this avoidance with its toolbar hidden and reuses an outer
 `NKeyboard` scope. This covers form avoidance and navigation; worklet keyboard
 animations and interactive keyboard-dismiss gestures are outside this API.
 
@@ -1018,7 +1013,7 @@ assistive technology. Native library/camera selection uses `imagePicker` from
 
 ### Blur
 
-`NBlur` renders a frosted container with sharp foreground children inside `NPage` or `ComponentsRoot`. The GPU filter samples the background within that surface. An explicit browser layout can use the same component with browser backdrop filtering.
+`NBlur` renders a frosted container with sharp foreground children inside an `NTheme` screen. The GPU filter samples the background within that surface. An explicit browser layout can use the same component with browser backdrop filtering.
 
 ```tsx
 <NView className="h-20 bg-accent">
@@ -1037,16 +1032,16 @@ Use `size="small" | "medium" | "large"` (20/32/48 points) or a numeric diameter,
 `color`, optional `strokeWidth`, and an optional visible `label` beneath the ring.
 `animating={false}` pauses it; system reduced motion shows a static ring.
 For a screen or sheet loader, use `<NLoading fill label="Loading games…" />` inside
-`NPage` or `ComponentsRoot`. It centers within the remaining visible area below preceding content.
+an `NTheme` screen. It centers within the remaining visible area below preceding content.
 For a compact section or pagination footer, use `className="w-full py-6"` instead.
 Animation uses the engine clock without JavaScript timers.
 
 Outside a browser surface, the same `NLoading` component emits a semantic bootstrap
 spinner that can paint before WASM finishes loading. Put it in a bounded loader
 container for immediate feedback; a surface's `onReady` signals when its first UI
-snapshot has arrived. `ComponentsRoot serverFallback` retains semantic fallback children
-during server rendering and initial warm-up. Reuse a retained surface with `active`
-and a route `scrollKey` when navigation should preserve the surface lifecycle.
+snapshot has arrived. `surface={{ serverFallback: true }}` on `NTheme` retains semantic fallback children
+during server rendering and initial warm-up. Reuse a retained surface with the `surface.active`
+and `surface.scrollKey` options when navigation should preserve the surface lifecycle.
 
 ### Toasts
 
@@ -1074,7 +1069,7 @@ so messages remain visible above dialogs.
 
 ### Component confetti
 
-`NConfetti` is a decorative Rust-painted burst inside `NPage`/`ComponentsRoot`. Increment a
+`NConfetti` is a decorative Rust-painted burst inside an `NTheme` screen. Increment a
 positive `run` value to start another celebration; zero is idle. The application
 chooses when to celebrate, while the engine clock owns particle motion and expiry.
 
@@ -1162,14 +1157,14 @@ The Markdown module renders CommonMark with tables, task lists and strikethrough
 on web and React Native. Add the `markdown` feature to a scoped Rust build.
 
 ```tsx
-import { NPage } from 'nayan-ui/components';
+import { NTheme } from 'nayan-ui/components';
 import { NMarkdown } from 'nayan-ui/markdown';
 
 export function ArticleScreen({ source }: { source: string }) {
   return (
-    <NPage style={{ width: '100%', height: 480 }}>
+    <NTheme surface={{ style: { width: '100%', height: 480 } }}>
       <NMarkdown source={source} blockSpacing={12} styles={{ h2: { fontSize: 24, lineHeight: 32 } }} />
-    </NPage>
+    </NTheme>
   );
 }
 ```
@@ -1263,7 +1258,7 @@ primary load callbacks. `onLoad` reports intrinsic source dimensions.
 Mark visible, important images with `priority` to load them before ordinary
 images. Browser HTML also uses eager loading and high fetch priority for these
 images, and respects `loading="lazy"` for other images. Browser hosts replacing
-already-visible HTML can set `ComponentsRoot.initialImageWaitMs` to keep the
+already-visible HTML can set `surface.initialImageWaitMs` on `NTheme` to keep the
 fallback visible while the first priority images decode, up to the specified
 deadline.
 
@@ -1325,7 +1320,7 @@ once, using the exported `NThemeFonts` type, to supply your own regular and opti
 bold typefaces to Rust-rendered UI:
 
 ```tsx
-import { NPage, NText, NTheme, type NThemeFonts } from 'nayan-ui/components';
+import { NText, NTheme, type NThemeFonts } from 'nayan-ui/components';
 
 const fonts: NThemeFonts = {
   regular: 'https://cdn.example.com/fonts/Interface-Regular.ttf',
@@ -1333,9 +1328,7 @@ const fonts: NThemeFonts = {
 };
 
 <NTheme fonts={fonts}>
-  <NPage>
-    <NText className="font-semibold">Shared application typography</NText>
-  </NPage>
+  <NText className="font-semibold">Shared application typography</NText>
 </NTheme>;
 ```
 
@@ -1352,7 +1345,7 @@ platform-owned text need their platform font registration. Load failures are log
 invalid font data reported by a surface reaches its `onError` callback.
 
 CSS-style `style.boxShadow` values are supported on container frames.
-`ComponentsRoot.overlays` can place an SDK-owned platform view at a named Rust node's bounds;
+`NTheme`’s `surface.overlays` can place an SDK-owned platform view at a named Rust node's bounds;
 see [platform interop](#platform-primitives-and-interop).
 
 ### Decorative backgrounds
@@ -1379,7 +1372,7 @@ const background: NPatternRecipe = {
 <NPattern recipe={background} className="h-64 w-full" />;
 ```
 
-Outside `ComponentsRoot`, native navigation can use `<NPattern recipe={background}
+Outside the engine screen, native navigation can use `<NPattern recipe={background}
 width={width} height={height} onError={console.error} />`. Rust renders a transparent
 PNG on the existing native worker; native Image displays it without a frame loop or
 `react-native-svg`. Identical recipes, dimensions and densities share work and a
@@ -1399,22 +1392,22 @@ bottom edge, use rounded top corners, and support handle/header drag-to-dismiss 
 `onOpenChange` callback cannot be dismissed by the backdrop or drag handle.
 `NTheme` derives presentation insets from its safe-area provider; an explicit
 `presentationInsets={{ top, bottom }}` remains available for custom layouts. Native sheet keyboards resize the available body;
-the handle remains outside the scrolling content. `NPage background` sets an
+the handle remains outside the scrolling content. `surface.background` on `NTheme` sets an
 opaque surface clear color for modal content.
 
 ```tsx
 import { useState } from 'react';
-import { NButton, NPage, NSheet, NText } from 'nayan-ui/components';
+import { NButton, NSheet, NText, NTheme } from 'nayan-ui/components';
 
 function DetailsScreen() {
   const [open, setOpen] = useState(false);
   return (
-    <NPage className="gap-3 p-3">
+    <NTheme className="gap-3 p-3">
       <NButton onPress={() => setOpen(true)}>Show details</NButton>
       <NSheet isOpen={open} onOpenChange={setOpen} title="Details" snapPoints={['80%']} showCloseButton={false}>
         <NText>The handle and header still support drag-to-close.</NText>
       </NSheet>
-    </NPage>
+    </NTheme>
   );
 }
 ```
@@ -1496,11 +1489,11 @@ Hover depends on platform pointer events; touch controls do not retain hover on 
 The runtime supports the utility subset above and ignores unknown classes. Use
 `NTheme.fonts` for shared typefaces. Web platform components forward `className`
 to the DOM, so an application can use its own Tailwind-generated CSS there. Inside
-a browser `ComponentsRoot`, CSS grid uses the compiled engine stylesheet described below.
+an `NTheme` browser screen, CSS grid uses the compiled engine stylesheet described below.
 
 ### Compiling website classes without Tailwind
 
-Browser platform elements outside `ComponentsRoot` can use the engine's build-time class
+Browser platform elements outside a rendered screen can use the engine's build-time class
 compiler. Import it from `nayan-ui/styles` in a Node/Bun build script:
 
 ```ts
@@ -1530,7 +1523,7 @@ export default {
 
 Serve the generated `browserStyles` string as a stylesheet and use
 `browserStylesVersion` in its URL for caching. Pass the generated `stylesheet`
-URL to `ComponentsRoot` for Rust layout. Use `browserOnly: true` for recipes
+URL to `NTheme` for Rust layout. Use `browserOnly: true` for recipes
 that target browser behavior. Projects with a CSS input can still use
 `source` and `cssOutput`. Install `lightningcss` when CSS lowering is enabled.
 
@@ -1540,7 +1533,7 @@ sizes, typography, palette/theme colors, borders, gradients and common decorativ
 utilities. `compileUtilities(classes)` returns `unsupported` tokens
 for explicit compatibility checks. This compiler is a supported subset rather
 than a replacement for arbitrary Tailwind plugins. Keep complete class names
-in scanned source files; dynamic strings inside `ComponentsRoot` continue to use its
+in scanned source files; dynamic strings inside an engine screen continue to use its
 runtime Rust resolver described above. `developStyles(options, command)` watches
 sources and regenerates both outputs before starting the development command.
 The compiler and CSS parsers are a separate Node build entry and are excluded
@@ -1560,8 +1553,7 @@ from browser and game entry points.
 | `font`       | Optional font file embedded in the JSON stylesheet                                            |
 
 `buildStyles()` returns `{ rules, utilities }`. Load the browser stylesheet once in the
-application layout and set `NTheme stylesheet={stylesheet}` or pass it directly to
-`ComponentsRoot`. Generated files should not be edited manually. With `developStyles`, the
+application layout and set `stylesheet={stylesheet}` on `NTheme`. Generated files should not be edited manually. With `developStyles`, the
 build happens before the supplied development command starts, and source edits
 regenerate outputs. Use static complete classes such as `p-3` and `md:grid-cols-2`;
 constructing `p-${size}` at runtime does not give the source scanner the final name.
@@ -1577,8 +1569,8 @@ place captions above their editors, disclosure headers wrap, groups can wrap,
 and the root scrolls vertically when content is taller than the surface.
 
 Breakpoints use the engine surface's logical width, which may differ from the
-browser window width when `ComponentsRoot` is embedded in a smaller panel. Resizing keeps
-Rust-owned control values. Give the outer `ComponentsRoot` a bounded responsive size
+browser window width when a screen is embedded in a smaller panel. Resizing keeps
+Rust-owned control values. Give the screen’s layout a bounded responsive size
 (`flex: 1` natively, or a bounded height and fluid width on web). Fixed widths,
 large minimum widths and intentionally non-wrapping custom rows can still cause
 overflow; this is not a full CSS flexbox/grid implementation. Native keyboard,
@@ -1620,9 +1612,9 @@ snapshot and forwards imperative scroll intents; it does not calculate list
 geometry or notification policy.
 
 ```tsx
-import { NCard, NList, NText, ComponentsRoot } from 'nayan-ui/components';
+import { NCard, NList, NText, NTheme } from 'nayan-ui/components';
 
-<ComponentsRoot style={{ height: 520 }}>
+<NTheme surface={{ style: { height: 520 } }}>
   <NList
     data={players}
     itemSize={64}
@@ -1636,7 +1628,7 @@ import { NCard, NList, NText, ComponentsRoot } from 'nayan-ui/components';
     ListEmptyComponent={<NText>No players yet.</NText>}
     onEndReached={() => loadNextPage()}
   />
-</ComponentsRoot>;
+</NTheme>;
 ```
 
 | Prop                                        | Behavior                                                                                                    |
@@ -1674,7 +1666,7 @@ in this mode. `fillViewport` uses the remaining screen height (default for measu
 Rust-owned pull-to-refresh detection. Horizontal lists and animated imperative scrolling
 are not implemented. Fixed-height row content is clipped to `itemSize`. Platform `overlays` inside rows are clipped
 to the visible list area, below its sticky header. Pass their IDs in
-`ComponentsRoot.scrollableOverlays` to forward vertical drags to the list while preserving
+`surface.scrollableOverlays` on `NTheme` to forward vertical drags to the list while preserving
 native taps (for example, native ad SDK views). Large scroll jumps while JavaScript is busy
 can briefly expose rows before their React descriptions arrive. Browser arrow,
 Page Up/Down and Home/End keys and native accessibility paging scroll the Rust
@@ -1703,7 +1695,7 @@ All four edges default to additive padding. Select edges with an array, or use
 `edges={{ bottom: 'maximum' }}` with `style={{ paddingBottom: 16 }}` to keep at
 least 16 points below content. `mode="margin"` applies the same rules to margins;
 `'off'` preserves existing spacing. Use numeric `style` spacing outside a
-`ComponentsRoot`; inside a `ComponentsRoot`, Rust also resolves class-based spacing and the hooks
+an engine screen; inside one, Rust also resolves class-based spacing and the hooks
 inherit their app provider. `NSafeAreaListener` reports local geometry without
 creating a new context. Add a provider around independently positioned native
 modal content when it needs its own frame. Insets exclude the software keyboard;
@@ -1717,7 +1709,7 @@ compatibility adapter in its own Metro config; other apps are unaffected.
 ### Drawer
 
 `NDrawer` presents a side panel around native React content or browser DOM content.
-Mount it outside `ComponentsRoot`, around your existing navigator. Routing, headers, tabs,
+Mount it around your existing navigator or around an `NTheme` screen. Routing, headers, tabs,
 deep links and screen state remain with the host router.
 
 ```tsx
@@ -2487,7 +2479,7 @@ AVKit on iOS, Media3 with a SurfaceView on Android, and HTML video on the web
 own decoding, frame presentation and controls. The module needs no engine
 warm-up. Players pause when the app or page goes into the background and release
 their media on unmount. Use `NPlatformView` to place the player inside a Rust
-`ComponentsRoot`. Reinstall iOS pods and rebuild native hosts to register the video view.
+an `NTheme` screen. Reinstall iOS pods and rebuild native hosts to register the video view.
 
 ### Clipboard
 
@@ -2818,10 +2810,10 @@ The root import remains available for compatibility; prefer the feature entries.
 | Out of mesh ids                                      | A mesh is being created per spawn or per frame: build it once and reuse it (`getMeshIdLimit()`).                                   |
 | Browser UUID generation reports unavailable secure randomness | Check that Web Crypto is available in the runtime. |
 | A web UI surface has zero height                     | Give the surface and its container bounded dimensions; a `flex: 1` child alone cannot size an unbounded browser page.              |
-| Website classes differ during initial loading        | Import the generated engine CSS at the app layout and use the matching generated stylesheet manifest for `NTheme`/`ComponentsRoot`.        |
+| Website classes differ during initial loading        | Import the generated engine CSS at the app layout and use the matching generated stylesheet manifest for `NTheme`.        |
 | An app context disappears inside a page or sheet     | Register its React context object in the root `NTheme contexts`; keep its value provider above the relevant surface.               |
 | A sheet cannot be dragged closed                     | Provide controlled `isOpen` and `onOpenChange`, keep `isSwipeable` enabled, and drag its handle/header after its content is ready. |
-| Extra space remains below scroll content             | Let `NPage` own the bottom content inset, or use `safeArea={false}` when the host deliberately supplies its own.                   |
+| Extra space remains below scroll content             | Let `NTheme` own the bottom content inset, or use `safeArea={false}` when the host deliberately supplies its own.                   |
 | A Markdown metadata block fails to parse             | `parseFrontMatter` accepts JSON objects between `---` lines; retain double quotes and migrate YAML-specific syntax.                |
 | A native API is missing after a package update       | Rebuild the affected Rust/native code, regenerate the bridge if its spec changed, reinstall pods and rebuild the host app.         |
 

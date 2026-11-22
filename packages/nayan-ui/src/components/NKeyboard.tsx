@@ -57,7 +57,7 @@ function KeyboardToolbar({ label }: { label: string }) {
 function KeyboardRoot({ children, enabled = true, toolbar = true, keyboardVerticalOffset, doneLabel = 'Done', style }: NKeyboardProps) {
   const rendering = useContext(ComponentRenderContext);
   const [controller] = useState(() => new KeyboardStore(dismissKeyboard));
-  if (rendering) throw new Error('NKeyboard must wrap NPage or ComponentsRoot, outside the engine-rendered tree');
+  if (rendering) throw new Error('NKeyboard must wrap the NTheme screen on the platform');
   return (
     <KeyboardContext.Provider value={controller}>
       <KeyboardHost

@@ -3,33 +3,22 @@ export function componentSource(imports: string, body: string, state = '', heigh
   const controls = imports.split(', ');
   // Popups are drawn inside the page surface and need room outside the trigger.
   const fitContent = !controls.some((name) => ['NDatePicker', 'NSelect', 'NTooltip', 'NScrollView'].includes(name));
-  const names = [...new Set([...controls, 'NPage', 'NTheme', 'NView'])].join(', ');
+  const names = [...new Set([...controls, 'NTheme', 'NView'])].join(', ');
+  const viewport = fitContent
+    ? 'style: { height: previewHeight }, onContentSizeChange: (_, height) => setPreviewHeight(Math.ceil(height))'
+    : `style: { height: ${height} }`;
   return `'use client';
 
 import { ${names} } from 'nayan-ui/components';
 ${state || fitContent ? "import { useState } from 'react';\n" : ''}
 export default function Example() {
 ${state ? `  ${state}\n` : ''}${fitContent ? `  const [previewHeight, setPreviewHeight] = useState(${height});\n` : ''}  return (
-    <NTheme>
-      <NView className="flex flex-col" style={{ height: ${fitContent ? 'previewHeight' : height} }}>
-        <NPage className="${pageClassName}" safeArea={false}${fitContent ? ' onContentSizeChange={(_, height) => setPreviewHeight(Math.ceil(height))}' : ''}>
-          ${body}
-        </NPage>
-      </NView>
+    <NTheme className="${pageClassName}" safeArea={false} surface={{ ${viewport} }}>
+      ${body}
     </NTheme>
   );
 }`;
 }
-
-const counterCode = `function Counter() {
-  const [count, setCount] = useState(0);
-  return (
-    <NView className="gap-3 p-4">
-      <NText>Pressed {count} times</NText>
-      <NButton onPress={() => setCount((value) => value + 1)}>Continue</NButton>
-    </NView>
-  );
-}`;
 
 const drawerCode = `import { NButton, NDrawer, NText, NView, useNDrawer } from 'nayan-ui/components';
 
@@ -48,7 +37,7 @@ export default function Example() {
   );
 }`;
 
-const keyboardCode = `import { NButton, NInput, NKeyboard, NPage, NText, NView, useNKeyboard } from 'nayan-ui/components';
+const keyboardCode = `import { NButton, NInput, NKeyboard, NText, NTheme, NView, useNKeyboard } from 'nayan-ui/components';
 
 function KeyboardStatus() {
   const keyboard = useNKeyboard();
@@ -64,17 +53,17 @@ export default function Example() {
   return (
     <NView className="h-[278px]">
       <NKeyboard>
-        <NPage className="gap-3 p-4">
+        <NTheme className="gap-3 p-4">
           <NInput label="Name" placeholder="Ada" />
           <NInput label="Email" type="email" placeholder="ada@example.com" />
           <KeyboardStatus />
-        </NPage>
+        </NTheme>
       </NKeyboard>
     </NView>
   );
 }`;
 
-const themeCode = `import { NButton, NCard, NPage, NText, NTheme, useNTheme } from 'nayan-ui/components';
+const themeCode = `import { NButton, NCard, NText, NTheme, useNTheme } from 'nayan-ui/components';
 
 function ThemeControls() {
   const { resolvedTheme, toggleTheme } = useNTheme();
@@ -87,21 +76,20 @@ function ThemeControls() {
 }
 
 export default function Example() {
-  return <NTheme defaultTheme="system"><NPage className="bg-background p-4"><ThemeControls /></NPage></NTheme>;
+  return <NTheme defaultTheme="system" className="bg-background p-4" surface={{ style: { height: 180 } }}><ThemeControls /></NTheme>;
 }`;
 
-function blurCode(target: boolean) {
-  return `import { ${target ? 'useRef, ' : ''}useState } from 'react';
-import { NBlur, ${target ? 'NBlurTarget, type NBlurTargetRef, ' : ''}NButton, NText, NView } from 'nayan-ui/components';
+const blurCode = `import { useState } from 'react';
+import { NBlur, NButton, NText, NView } from 'nayan-ui/components';
 
 export default function Example() {
-  ${target ? 'const target = useRef<NBlurTargetRef>(null);\n  ' : ''}const [enabled, setEnabled] = useState(true);
+  const [enabled, setEnabled] = useState(true);
   const background = <NText className="[color:#fde68a] text-[26px] font-bold">Colour and texture</NText>;
   return (
     <NView className="${PREVIEW_STACK}">
       <NView className="component-blur-scene relative grid w-full [min-height:9rem] [place-items:center] overflow-hidden [border-radius:0.75rem] [background:repeating-linear-gradient(135deg,_#432079_0_12px,_#7649c2_12px_24px)]">
-        ${target ? '<NBlurTarget ref={target}>{background}</NBlurTarget>' : '{background}'}
-        <NBlur ${target ? 'blurTarget={target} ' : ''}intensity={56} enabled={enabled} tint="dark" className="component-blur-panel absolute [inset:25%_12%] grid [place-items:center] [border:1px_solid_#ffffff66] [border-radius:0.75rem] [background:#24104455]">
+        {background}
+        <NBlur intensity={56} enabled={enabled} tint="dark" className="component-blur-panel absolute [inset:25%_12%] grid [place-items:center] [border:1px_solid_#ffffff66] [border-radius:0.75rem] [background:#24104455]">
           <NText className="text-white">Sharp foreground</NText>
         </NBlur>
       </NView>
@@ -111,7 +99,6 @@ export default function Example() {
     </NView>
   );
 }`;
-}
 
 export const standaloneExamples: Record<string, { code: string; note?: string }> = {
   'animation-view': {
@@ -137,24 +124,8 @@ export default function Example() {
 }`
   },
   blur: {
-    note: 'Blur depends on platform support. For a native view target, pass the ref from NBlurTarget as blurTarget.',
-    code: blurCode(false)
-  },
-  'blur-target': {
-    code: blurCode(true)
-  },
-  'components-root': {
-    note: 'Mount a root per rendering surface. Pass a stylesheet generated by the Styles Compiler when using custom utilities.',
-    code: `import { useState } from 'react';
-import { ComponentsRoot, NButton, NText, NView } from 'nayan-ui/components';
-
-${counterCode}
-
-export default function Example() {
-  return (
-    <ComponentsRoot style={{ flex: 1, minHeight: 0 }} background="transparent"><Counter /></ComponentsRoot>
-  );
-}`
+    note: 'NBlur samples the backdrop automatically. On Android, use an NView ref with collapsable={false} to sample a specific native source.',
+    code: blurCode
   },
   confetti: {
     code: componentSource(
@@ -167,7 +138,7 @@ export default function Example() {
     )
   },
   drawer: {
-    note: 'Mount NDrawer outside ComponentsRoot. The open state can be controlled by the screen or by useNDrawer.',
+    note: 'Mount NDrawer around a screen or navigator. The open state can be controlled by the screen or by useNDrawer.',
     code: drawerCode
   },
   'drawing-canvas': {
@@ -275,26 +246,16 @@ export default function Controls() {
   'markdown-view': {
     code: `'use client';
 
-import { NPage } from 'nayan-ui/components';
+import { NTheme } from 'nayan-ui/components';
 import { NMarkdown } from 'nayan-ui/markdown';
 
 export default function Example() {
   const source = '## Release notes\\n\\nThis preview renders **Markdown** with engine components.\\n\\n- Interfaces for the web and native\\n- Inline code like \`useWorld\`';
   return (
-    <NPage className="p-4">
+    <NTheme className="p-4">
       <NMarkdown source={source} blockSpacing={12} />
-    </NPage>
+    </NTheme>
   );
-}`
-  },
-  page: {
-    code: `import { useState } from 'react';
-import { NButton, NPage, NText, NView } from 'nayan-ui/components';
-
-${counterCode}
-
-export default function Example() {
-  return <NPage><Counter /></NPage>;
 }`
   },
   'platform-view': {
@@ -373,6 +334,7 @@ export default function Example() {
     )
   },
   theme: {
+    note: 'NTheme mounts the screen for you. Use surface={false} around an existing navigator or browser layout. A nested theme inside a rendered screen scopes the theme without opening another viewport.',
     code: themeCode
   },
   'toast-host': {

@@ -1,6 +1,5 @@
 'use client';
 
-export { ComponentsRoot, type ComponentsRootProps } from './ComponentsRoot';
 export type {
   ComponentProps,
   ComponentThemeColor,
@@ -17,7 +16,7 @@ export type { NThemeFonts } from './theme/fonts';
 export type { NThemeMode } from './ThemeContext';
 export type { NThemePalette, NThemeAppearance, NThemePersistence } from './theme/types';
 export { NCard, type NCardProps } from './NCard';
-export { NBlur, NBlurTarget, type NBlurProps, type NBlurTargetProps, type NBlurTargetRef } from './NBlur';
+export { NBlur, type NBlurProps } from './NBlur';
 export { NConfetti, type NConfettiProps } from './NConfetti';
 export { NCarousel, type NCarouselProps } from './NCarousel';
 export { NDrawer, useNDrawer, type NDrawerProps, type NDrawerControls } from './NDrawer';
@@ -26,7 +25,6 @@ export { NImage, type NImageProps, type NImageSource, type NImageLoadEvent, type
 export { NText, type NTextProps } from './NText';
 export { NButton, type NButtonProps } from './NButton';
 export { NPress, type NPressProps, type NPressState, type NPressEvent, type NPressRef } from './NPress';
-export { NCloseButton, type NCloseButtonProps } from './NCloseButton';
 export { NCheck, type NCheckProps } from './NCheck';
 export { NSwitch, type NSwitchProps } from './NSwitch';
 export { NToggleButton, type NToggleButtonProps } from './NToggleButton';
@@ -68,7 +66,6 @@ export { NScrollView, type NScrollViewProps } from './NScrollView';
 export { NRefreshControl, type NRefreshControlProps } from './NRefreshControl';
 export { NLinkify, type NLinkifyProps } from './NLinkify';
 
-export { NPage, type NPageProps } from './NPage';
 export {
   NSafeArea,
   NSafeAreaProvider,

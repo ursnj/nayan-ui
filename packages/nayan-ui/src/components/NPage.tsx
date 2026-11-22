@@ -1,7 +1,7 @@
 'use client';
 
 import { Fragment, type PropsWithChildren, useCallback, useContext, useMemo, useState } from 'react';
-import { ComponentsRoot } from './ComponentsRoot';
+import { ComponentsRoot, type ComponentsRootProps } from './ComponentsRoot';
 import { NView } from './NView';
 import { PageHost } from './PageHost';
 import { SafeAreaInsetsContext } from './safeAreaContext';
@@ -10,6 +10,9 @@ import { ComponentRenderContext } from './ThemeContext';
 import type { ComponentProps } from './types';
 
 export interface NPageProps extends PropsWithChildren<Pick<ComponentProps, 'className' | 'style'>> {
+  fillViewport?: boolean;
+  viewportStyle?: ComponentsRootProps['style'];
+  surface?: Omit<ComponentsRootProps, 'children' | 'style' | 'stylesheet'>;
   /** Pause the surface while its screen is inactive. */
   active?: boolean;
   keyboard?: boolean;
@@ -45,6 +48,9 @@ function PageSurface({
   children,
   className = '',
   style,
+  fillViewport,
+  viewportStyle,
+  surface,
   active = true,
   keyboard = false,
   safeArea = true,
@@ -78,13 +84,14 @@ function PageSurface({
   );
 
   return (
-    <PageHost keyboard={keyboard}>
+    <PageHost keyboard={keyboard} fillViewport={fillViewport} style={viewportStyle}>
       <ComponentsRoot
         active={active}
         onError={onError}
         onContentSizeChange={onContentSizeChange}
         background={background}
         style={{ flex: 1, minHeight: 0 }}
+        {...surface}
       >
         {content}
       </ComponentsRoot>

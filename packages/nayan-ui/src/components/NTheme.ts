@@ -2,7 +2,9 @@
 
 import { type ComponentType, createElement, type PropsWithChildren, useContext, useMemo } from 'react';
 import type { TextProps } from 'react-native';
+import type { ComponentsRootProps } from './ComponentsRoot';
 import type { NThemeContext } from './contextBridge';
+import { NPage, type NPageProps } from './NPage';
 import { NSafeAreaProvider } from './NSafeArea';
 import type { NToastHostProps } from './NToastHost';
 import { usePlatformColorScheme } from './PlatformHost';
@@ -13,6 +15,7 @@ import { paletteColors, resolvedPalette } from './theme/palette';
 import type { NThemeAppearance, NThemePalette, NThemePersistence } from './theme/types';
 import { useThemeControl } from './theme/useThemeControl';
 import {
+  ComponentFallbackContext,
   ComponentRenderContext,
   ComponentThemeContext,
   type ComponentThemeValue,
@@ -30,7 +33,12 @@ function SystemBarsController({ configuration, navigation }: { configuration: Th
   return null;
 }
 
+type NThemeSurfaceOptions = Omit<ComponentsRootProps, 'children' | 'stylesheet'> &
+  Pick<NPageProps, 'keyboard' | 'showsVerticalScrollIndicator'>;
+
 export interface NThemeProps extends Omit<ComponentProps, 'components'> {
+  /** Screen viewport and rendering options. Set false around an existing navigator or platform layout. */
+  surface?: false | NThemeSurfaceOptions;
   /** Shared application tokens. CamelCase color names also configure semantic renderer tokens. */
   palette?: Partial<NThemePalette>;
   /** Light/dark application tokens, resolved with the selected preference. */
@@ -67,7 +75,7 @@ export interface NThemeProps extends Omit<ComponentProps, 'components'> {
   textProps?: Pick<TextProps, 'allowFontScaling' | 'maxFontSizeMultiplier' | 'minimumFontScale' | 'adjustsFontSizeToFit'>;
 }
 
-/** Configure all descendant surfaces at the app root, or scope a theme inside a UI tree. */
+/** Render a themed screen, supply a theme to a host layout, or scope it inside an existing screen. */
 export function NTheme(props: NThemeProps) {
   const parent = useContext(ComponentThemeContext);
   const rendering = useContext(ComponentRenderContext);
@@ -85,8 +93,9 @@ function PlatformTheme(props: NThemeProps) {
   return !parent && props.safeArea !== false && (!insets || !frame) ? createElement(NSafeAreaProvider, null, content) : content;
 }
 
-function ThemeScope({ children, systemTheme, ...props }: NThemeProps & { systemTheme: 'light' | 'dark' }) {
+function ThemeScope({ children, systemTheme, surface, ...props }: NThemeProps & { systemTheme: 'light' | 'dark' }) {
   const rendering = useContext(ComponentRenderContext);
+  const fallback = useContext(ComponentFallbackContext);
   const parent = useContext(ComponentThemeContext);
   const { theme, resolvedTheme, setTheme, toggleTheme } = useThemeControl(props, parent, systemTheme);
   const fontData = useThemeFonts(props.fonts, parent?.fontData);
@@ -220,6 +229,22 @@ function ThemeScope({ children, systemTheme, ...props }: NThemeProps & { systemT
 
   const managesBars = !rendering && (props.systemBars === true || typeof props.systemBars === 'object' || (!parent && props.systemBars !== false));
 
+  let screen = children;
+  if (!rendering && !fallback && surface !== false) {
+    const { style: viewportStyle, keyboard, showsVerticalScrollIndicator, ...options } = surface ?? {};
+    screen = createElement(NPage, {
+      children,
+      className: props.className,
+      style: props.style,
+      safeArea: props.safeArea,
+      keyboard,
+      showsVerticalScrollIndicator,
+      fillViewport: !parent && viewportStyle === undefined,
+      viewportStyle,
+      surface: options
+    });
+  }
+
   const content = rendering
     ? createElement(
         ComponentThemeContext.Provider,
@@ -251,7 +276,7 @@ function ThemeScope({ children, systemTheme, ...props }: NThemeProps & { systemT
           children
         )
       )
-    : createElement(ComponentThemeContext.Provider, { value }, parent ? children : createElement(ThemeServices, { toasts: props.toasts }, children));
+    : createElement(ComponentThemeContext.Provider, { value }, parent ? screen : createElement(ThemeServices, { toasts: props.toasts }, screen));
   return createElement(
     SystemBarsDepth.Provider,
     { value: depth + 1 },

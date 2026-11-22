@@ -106,7 +106,7 @@ export function ListBridge<T>({
   const contentSafeArea = useContext(PageContentInsetsContext);
   const generatedId = useId();
   const id = container.id ?? generatedId;
-  if (!runtime) throw new Error('NList must be rendered inside an engine ComponentsRoot');
+  if (!runtime) throw new Error('NList must be rendered inside an NTheme screen');
   const refresh = refreshControl?.props;
   onRefresh = onRefresh ?? refresh?.onRefresh;
   refreshing = refreshing ?? refresh?.refreshing;

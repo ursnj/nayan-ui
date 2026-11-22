@@ -20,7 +20,7 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById('root')!).render(
-  <NTheme defaultTheme="dark" systemBars={false}>
+  <NTheme defaultTheme="dark" systemBars={false} surface={false}>
     <NPlatformView>
       <NView tag="style">{browserStyles}</NView>
       <RouterProvider router={router} />

@@ -225,7 +225,6 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
             [
               'NButton',
               'NPress',
-              'NCloseButton',
               'NLink',
               'NMenuItem',
               'NActionItem',
@@ -246,7 +245,7 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
                   id={semanticId(node.id)}
                   data-engine-node={node.id}
                   type="button"
-                  aria-label={node.label || (node.kind === 'NCloseButton' ? 'Close' : node.kind.slice(1))}
+                  aria-label={node.label || node.kind.slice(1)}
                   role={
                     node.selectOwner
                       ? 'option'
@@ -266,9 +265,9 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
                   aria-haspopup={node.kind === 'NSelect' && !node.selectOwner ? 'listbox' : undefined}
                   aria-controls={node.kind === 'NSelect' && node.expanded ? `${semanticId(node.id)}-listbox` : undefined}
                   aria-activedescendant={node.activeDescendant ? semanticId(node.activeDescendant) : undefined}
-                  aria-selected={radio ? undefined : node.selected}
+                  aria-selected={radio || node.kind === 'NPress' ? undefined : node.selected}
                   tabIndex={node.selectOwner ? -1 : 0}
-                  aria-pressed={node.kind === 'NToggleButton' ? Boolean(node.value) : undefined}
+                  aria-pressed={node.kind === 'NToggleButton' ? Boolean(node.value) : node.kind === 'NPress' ? node.selected : undefined}
                   aria-checked={radio ? (node.selected ?? false) : toggle && node.kind !== 'NToggleButton' ? Boolean(node.value) : undefined}
                   disabled={node.disabled}
                   style={style}

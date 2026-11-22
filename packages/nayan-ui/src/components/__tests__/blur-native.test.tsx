@@ -1,49 +1,65 @@
 import { act, createRef, type ReactNode } from 'react';
 import { afterAll, expect, mock, test } from 'bun:test';
 import { installDom } from '../../__tests__/dom';
-import type { NBlurTargetRef } from '../NBlur';
+import type { NViewNativeRef } from '../NView';
 
 const dom = installDom();
 const frames: { targetTag: number; blurRadius: number; enabled: boolean; tint: string }[] = [];
 mock.module('react-native', () => ({
   useWindowDimensions: () => ({ width: 390, height: 844 }),
-  View: ({ ref, children }: { ref?: import('react').Ref<HTMLDivElement>; children?: ReactNode }) => <div ref={ref}>{children}</div>,
+  View: ({ ref, children, collapsable }: { ref?: import('react').Ref<HTMLDivElement>; children?: ReactNode; collapsable?: boolean }) => (
+    <div ref={ref} data-native-target={collapsable === false}>
+      {children}
+    </div>
+  ),
   findNodeHandle: (node: HTMLElement) => (node.textContent === 'First backdrop' ? 41 : 42),
   requireNativeComponent: () => (props: (typeof frames)[number] & { children?: ReactNode }) => {
     frames.push(props);
     return <div>{props.children}</div>;
   }
 }));
-const { BlurHost, BlurTargetHost } = await import('../BlurHost');
+const { NBlur } = await import('../NBlur');
+const { NView } = await import('../NView');
+const { NPlatformView } = await import('../NPlatformView');
 const { createRoot } = await import('react-dom/client');
 afterAll(() => dom.cleanup());
 
-test('native blur resolves targets after commit, switches routes and keeps children mounted when disabled', async () => {
-  const root = createRoot(document.createElement('div'));
-  const first = createRef<NBlurTargetRef>();
-  const second = createRef<NBlurTargetRef>();
-  const render = (alternate: boolean, enabled = true) => (
-    <>
-      <BlurTargetHost ref={first}>First backdrop</BlurTargetHost>
-      <BlurTargetHost ref={second}>Second backdrop</BlurTargetHost>
-      <BlurHost blurTarget={alternate ? second : first} radius={enabled ? 9 : 0} tint={enabled ? 'dark' : 'default'} enabled={enabled}>
+test('native blur samples the backdrop or a ref to a retained platform view', async () => {
+  const element = document.createElement('div');
+  const root = createRoot(element);
+  const target = createRef<NViewNativeRef>();
+  const render = (backdrop?: string, enabled = true) => (
+    <NPlatformView>
+      {backdrop && (
+        <NView key={backdrop} ref={target} collapsable={false}>
+          {backdrop}
+        </NView>
+      )}
+      <NBlur blurTarget={backdrop ? target : undefined} radius={9} tint="dark" enabled={enabled}>
         <span>Foreground</span>
-      </BlurHost>
-    </>
+      </NBlur>
+    </NPlatformView>
   );
   try {
-    await act(() => root.render(render(false)));
+    await act(() => root.render(render()));
+    expect(frames.at(-1)?.targetTag).toBe(-1);
+    const foreground = element.querySelector('span');
+    await act(() => root.render(render('First backdrop')));
     expect(frames.at(-1)?.targetTag).toBe(41);
     expect(frames.at(-1)?.blurRadius).toBe(9);
-    await act(() => root.render(render(true)));
+    expect(element.querySelector('[data-native-target=true]')?.textContent).toBe('First backdrop');
+    await act(() => root.render(render('Second backdrop')));
     expect(frames.at(-1)?.targetTag).toBe(42);
-    await act(() => root.render(render(true, false)));
+    await act(() => root.render(render('Second backdrop', false)));
     expect(frames.at(-1)?.enabled).toBe(false);
     expect(frames.at(-1)?.blurRadius).toBe(0);
     expect(frames.at(-1)?.tint).toBe('default');
+    expect(element.querySelector('span')).toBe(foreground);
+    await act(() => root.render(render()));
+    expect(frames.at(-1)?.targetTag).toBe(-1);
+    expect(target.current).toBeNull();
   } finally {
     await act(() => root.unmount());
   }
-  expect(first.current).toBeNull();
-  expect(second.current).toBeNull();
+  expect(target.current).toBeNull();
 });

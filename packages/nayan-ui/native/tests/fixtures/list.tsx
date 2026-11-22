@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ComponentsRoot, NCard, NList, type NListRenderItemInfo, NPress, NText, NTheme } from 'nayan-ui/components';
+import { NCard, NList, type NListRenderItemInfo, NPress, NText, NTheme } from 'nayan-ui/components';
 
 const players = Array.from({ length: 100_000 }, (_, index) => ({ id: String(index), name: `Player ${index + 1}` }));
 const keyExtractor = (player: (typeof players)[number]) => player.id;
@@ -34,30 +34,29 @@ function Example() {
     []
   );
   return (
-    <ComponentsRoot
-      style={{ width: '100%', maxWidth: 480, height: 660 }}
-      onError={(error) => {
-        document.body.dataset.error = error.message;
+    <NTheme
+      theme="dark" colors={{ background: '#0f1423', surface: '#192136', border: '#2b3650' }} className="gap-4 p-5"
+      surface={{
+        style: { width: '100%', maxWidth: 480, height: 660 },
+        onError: (error) => { document.body.dataset.error = error.message; }
       }}>
-      <NTheme theme="dark" colors={{ background: '#0f1423', surface: '#192136', border: '#2b3650' }} className="gap-4 p-5">
-        <NText className="text-2xl font-medium">Players</NText>
-        <NText className="text-sm text-[#9aa9c4]">100,000 players. One small render window.</NText>
-        <NCard className="w-full gap-0 rounded-2xl border p-0">
-          <NList
-            id="players"
-            accessibilityLabel="Player list"
-            data={players}
-            itemSize={64}
-            height={456}
-            keyExtractor={keyExtractor}
-            renderItem={renderItem}
-            onVisibleRangeChange={({ first, last }) => setRange(`Showing ${first + 1}–${last + 1} of 100,000`)}
-          />
-        </NCard>
-        <NText className="text-sm text-[#9aa9c4]">{range}</NText>
-        <NText className="text-sm">{`Selected: ${selected}`}</NText>
-      </NTheme>
-    </ComponentsRoot>
+      <NText className="text-2xl font-medium">Players</NText>
+      <NText className="text-sm text-[#9aa9c4]">100,000 players. One small render window.</NText>
+      <NCard className="w-full gap-0 rounded-2xl border p-0">
+        <NList
+          id="players"
+          accessibilityLabel="Player list"
+          data={players}
+          itemSize={64}
+          height={456}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+          onVisibleRangeChange={({ first, last }) => setRange(`Showing ${first + 1}–${last + 1} of 100,000`)}
+        />
+      </NCard>
+      <NText className="text-sm text-[#9aa9c4]">{range}</NText>
+      <NText className="text-sm">{`Selected: ${selected}`}</NText>
+    </NTheme>
   );
 }
 createRoot(document.getElementById('root')!).render(<Example />);

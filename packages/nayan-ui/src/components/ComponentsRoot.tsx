@@ -7,7 +7,7 @@ import { ComponentHost, type ComponentHostStyle, inputEventValue, openLink, sele
 import { ContextBridge, useSurfaceContextValues } from './contextBridge';
 import { ComponentAttachmentContext } from './NPlatformView';
 import { createComponentRenderer } from './reconciler';
-import { ComponentRenderContext, ComponentThemeContext, PlatformRenderContext } from './ThemeContext';
+import { ComponentFallbackContext, ComponentRenderContext, ComponentThemeContext, PlatformRenderContext } from './ThemeContext';
 import type { ComponentSnapshot } from './types';
 
 export interface ComponentsRootProps {
@@ -336,8 +336,12 @@ function ComponentSurface({
   ) : serverFallback ? (
     createElement(
       'div',
-      { style: { height: '100dvh', overflow: 'hidden' }, 'data-engine-fallback': true },
-      createElement(PlatformRenderContext.Provider, { value: true }, children)
+      { style: { flex: 1, minHeight: 0, overflow: 'auto' }, 'data-engine-fallback': true },
+      createElement(
+        ComponentFallbackContext.Provider,
+        { value: true },
+        createElement(PlatformRenderContext.Provider, { value: true }, children)
+      )
     )
   ) : null;
 }

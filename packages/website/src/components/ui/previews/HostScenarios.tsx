@@ -8,45 +8,42 @@ function host(title: string, imports: string, code: string, render: ReactNode, h
   return { title, source: `'use client';\n\nimport { ${imports} } from 'nayan-ui/components';\n${code}`, render, host: true, height };
 }
 
-function BlurExample({ target }: { target: boolean }) {
-  const ref = useRef<E.NBlurTargetRef>(null);
+function BlurExample() {
+  const ref = useRef<E.NViewNativeRef>(null);
   return (
-    <E.NView className="relative h-[160px] overflow-hidden bg-[#5b21b6]">
-      {target ? (
-        <E.NBlurTarget ref={ref}>
-          <E.NText className="p-[20px] [color:#fff]">Source layer</E.NText>
-        </E.NBlurTarget>
-      ) : (
-        <E.NText className="p-[20px] [color:#fff]">Sharp background text</E.NText>
-      )}
-      <E.NBlur
-        blurTarget={target ? ref : undefined}
-        radius={8}
-        tint="light"
-        className="absolute top-[28px] left-[12px] right-[12px] p-[16px] rounded-[12px]"
-      >
-        <E.NText className="[color:#171022]">Light material</E.NText>
-      </E.NBlur>
-    </E.NView>
+    <E.NPlatformView className="h-40">
+      <E.NView className="relative h-40 overflow-hidden bg-[#5b21b6]">
+        <E.NView ref={ref} collapsable={false} className="flex-1 flex-row items-center justify-evenly gap-3 p-5" accessibilityLabel="Source layer">
+          <E.NView className="h-20 w-12 rounded-lg bg-amber-300" />
+          <E.NView className="h-20 w-12 rounded-lg bg-sky-300" />
+        </E.NView>
+        <E.NBlur blurTarget={ref} radius={8} tint="light" className="absolute top-7 inset-x-3 h-24 rounded-xl" accessibilityLabel="Blurred overlay" />
+      </E.NView>
+    </E.NPlatformView>
   );
 }
 
-function blurScenario(target: boolean) {
+function blurScenario() {
   return host(
-    target ? 'Separate the sampled layer' : 'Light tint and custom radius',
-    target ? 'NBlur, NBlurTarget, NText, NView, type NBlurTargetRef' : 'NBlur, NText, NView',
-    `${target ? "import { useRef } from 'react';\n" : ''}
+    'Android source view',
+    'NBlur, NPlatformView, NView, type NViewNativeRef',
+    `import { useRef } from 'react';
+
 export default function Example() {
-  ${target ? 'const target = useRef<NBlurTargetRef>(null);\n  ' : ''}return (
-    <NView className="relative h-[160px] overflow-hidden bg-[#5b21b6]">
-      ${target ? '<NBlurTarget ref={target}><NText className="p-[20px] [color:#fff]">Source layer</NText></NBlurTarget>' : '<NText className="p-[20px] [color:#fff]">Sharp background text</NText>'}
-      <NBlur ${target ? 'blurTarget={target} ' : ''}radius={8} tint="light" className="absolute top-[28px] left-[12px] right-[12px] p-[16px] rounded-[12px]">
-        <NText className="[color:#171022]">Light material</NText>
-      </NBlur>
-    </NView>
+  const target = useRef<NViewNativeRef>(null);
+  return (
+    <NPlatformView className="h-40">
+      <NView className="relative h-40 overflow-hidden bg-[#5b21b6]">
+        <NView ref={target} collapsable={false} className="flex-1 flex-row items-center justify-evenly gap-3 p-5" accessibilityLabel="Source layer">
+          <NView className="h-20 w-12 rounded-lg bg-amber-300" />
+          <NView className="h-20 w-12 rounded-lg bg-sky-300" />
+        </NView>
+        <NBlur blurTarget={target} radius={8} tint="light" className="absolute top-7 inset-x-3 h-24 rounded-xl" accessibilityLabel="Blurred overlay" />
+      </NView>
+    </NPlatformView>
   );
 }`,
-    <BlurExample target={target} />
+    <BlurExample />
   );
 }
 
@@ -127,7 +124,7 @@ function KeyboardSteps() {
 function keyboardScenario(toolbar: boolean) {
   return host(
     toolbar ? 'Custom Done label' : 'Move between fields',
-    'NKeyboard, useNKeyboard, NPage, NInput, NButton, NView',
+    'NKeyboard, useNKeyboard, NTheme, NInput, NButton, NView',
     `
 function Fields() {
   const keyboard = useNKeyboard();
@@ -144,12 +141,12 @@ function Fields() {
 }
 
 export default function Example() {
-  return <NKeyboard toolbar={${toolbar}} doneLabel="Finish"><NPage className="gap-3 p-4"><Fields /></NPage></NKeyboard>;
+  return <NKeyboard toolbar={${toolbar}} doneLabel="Finish"><NTheme className="gap-3 p-4"><Fields /></NTheme></NKeyboard>;
 }`,
     <E.NKeyboard toolbar={toolbar} doneLabel="Finish">
-      <E.NPage className="gap-3 p-4">
+      <E.NTheme className="gap-3 p-4">
         <KeyboardSteps />
-      </E.NPage>
+      </E.NTheme>
     </E.NKeyboard>,
     260
   );
@@ -219,10 +216,8 @@ const scopedThemePage = 'gap-3 bg-background p-4';
 
 function ThemeExample() {
   return (
-    <E.NTheme defaultTheme="light">
-      <E.NPage className={scopedThemePage}>
-        <ThemeReadout />
-      </E.NPage>
+    <E.NTheme defaultTheme="light" className={scopedThemePage} surface={{ style: { height: 180 } }}>
+      <ThemeReadout />
     </E.NTheme>
   );
 }
@@ -300,19 +295,7 @@ function scrollScenario(shadow: boolean) {
 }
 
 export const hostScenarios = {
-  blur: blurScenario(false),
-  'blur-target': blurScenario(true),
-  'components-root': host(
-    'Own the surface background',
-    'ComponentsRoot, NTheme, NText',
-    `
-export default function Example() {
-  return <NTheme><ComponentsRoot background="#281a41" style={{ height: 140 }}><NText className="p-[20px] [color:#fff]">Custom surface</NText></ComponentsRoot></NTheme>;
-}`,
-    <E.ComponentsRoot background="#281a41" style={{ height: 140, minHeight: 0, flex: 'none' }}>
-      <E.NText className="p-[20px] [color:#fff]">Custom surface</E.NText>
-    </E.ComponentsRoot>
-  ),
+  blur: blurScenario(),
   confetti: scenario(
     'Celebrate with more particles',
     'NButton, NConfetti',
@@ -326,19 +309,6 @@ export default function Example() {
   'use-drawer': drawerScenario(true),
   keyboard: keyboardScenario(true),
   'use-keyboard': keyboardScenario(false),
-  page: host(
-    'Screen with keyboard support',
-    'NPage, NInput, NText',
-    `
-export default function Example() {
-  return <NPage keyboard className="gap-3 p-5"><NText>Send a message</NText><NInput label="Message" placeholder="Write a note" /></NPage>;
-}`,
-    <E.NPage keyboard className="gap-3 p-5">
-      <E.NText>Send a message</E.NText>
-      <E.NInput label="Message" placeholder="Write a note" />
-    </E.NPage>,
-    200
-  ),
   'platform-view': scenario(
     'Browser-native range control',
     'NPlatformView, NText',
@@ -357,7 +327,7 @@ export default function Example() {
   ),
   'refresh-control': host(
     'Refresh and count updates',
-    'NPage, NScrollView, NRefreshControl, NText, NButton',
+    'NTheme, NScrollView, NRefreshControl, NText, NButton',
     `import { useEffect, useState } from 'react';
 
 export default function Example() {
@@ -372,17 +342,17 @@ export default function Example() {
     return () => clearTimeout(id);
   }, [refreshing]);
   return (
-    <NPage className="p-5">
+    <NTheme className="p-5">
       <NScrollView refreshControl={<NRefreshControl refreshing={refreshing} onRefresh={() => setRefreshing(true)} />}>
         <NText>Refreshes: {updates}</NText>
         <NButton disabled={refreshing} onPress={() => setRefreshing(true)}>{refreshing ? 'Refreshing…' : 'Refresh data'}</NButton>
       </NScrollView>
-    </NPage>
+    </NTheme>
   );
 }`,
-    <E.NPage className="p-5">
+    <E.NTheme className="p-5">
       <Refresh />
-    </E.NPage>,
+    </E.NTheme>,
     230
   ),
   'safe-area': host(
@@ -433,7 +403,7 @@ export default function Example() {
 function themeScenario(title: string) {
   return host(
     title,
-    'NTheme, useNTheme, NPage, NButton, NText, NView',
+    'NTheme, useNTheme, NButton, NText, NView',
     `
 function Picker() {
   const { resolvedTheme, setTheme } = useNTheme();
@@ -449,7 +419,7 @@ function Picker() {
 }
 
 export default function Example() {
-  return <NTheme defaultTheme="light"><NPage className="${scopedThemePage}"><Picker /></NPage></NTheme>;
+  return <NTheme defaultTheme="light" className="${scopedThemePage}" surface={{ style: { height: 180 } }}><Picker /></NTheme>;
 }`,
     <ThemeExample />
   );

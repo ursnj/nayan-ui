@@ -48,6 +48,7 @@ function EnginePress({
   return createElement('NPress', {
     ...props,
     _expanded: props['aria-expanded'] ?? props.accessibilityState?.expanded,
+    _selected: props['aria-pressed'],
     disabled: blocked,
     style: typeof style === 'function' ? style(state) : style,
     observePress: observe,

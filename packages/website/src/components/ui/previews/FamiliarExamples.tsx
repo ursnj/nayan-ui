@@ -127,22 +127,14 @@ function Tabs() {
   );
 }
 
-const alignments = [
-  { label: 'Left', value: 'left' },
-  { label: 'Center', value: 'center' },
-  { label: 'Right', value: 'right' }
-];
+const plans = ['Startup', 'Business', 'Enterprise'];
 
 function ButtonGroup() {
-  const [alignment, setAlignment] = useState('left');
+  const [plan, setPlan] = useState(plans[0]);
   return (
     <>
-      <NButtonGroup items={alignments} value={alignment} onValueChange={setAlignment} />
-      <NView className="w-full rounded-lg border border-border bg-surface p-3">
-        <NText className={`text-sm text-muted ${alignment === 'center' ? 'text-center' : alignment === 'right' ? 'text-right' : 'text-left'}`}>
-          Text alignment
-        </NText>
-      </NView>
+      <NButtonGroup items={plans} selected={plan} onChange={setPlan} ariaLabel="Subscription plans" className="max-w-[18rem]" />
+      <NText className="text-sm text-muted">Selected plan: {plan}</NText>
     </>
   );
 }
@@ -288,12 +280,10 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
     render: <ButtonGroup />,
     source: componentSource(
       'NButtonGroup, NText',
-      `<NButtonGroup items={alignments} value={alignment} onValueChange={setAlignment} />
-          <NView className="w-full rounded-lg border border-border bg-surface p-3">
-            <NText className={\`text-sm text-muted \${alignment === 'center' ? 'text-center' : alignment === 'right' ? 'text-right' : 'text-left'}\`}>Text alignment</NText>
-          </NView>`,
-      `const alignments = ${JSON.stringify(alignments)};
-  const [alignment, setAlignment] = useState('left');`
+      `<NButtonGroup items={plans} selected={plan} onChange={setPlan} ariaLabel="Subscription plans" className="max-w-[18rem]" />
+          <NText className="text-sm text-muted">Selected plan: {plan}</NText>`,
+      `const plans = ${JSON.stringify(plans)};
+  const [plan, setPlan] = useState(plans[0]);`
     )
   },
   divider: {

@@ -224,7 +224,7 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
           const adjustable = ['NSlider', 'NNumberField', 'NCarousel'].includes(node.kind);
           const list = node.kind === 'NList';
           const button =
-            ['NButton', 'NPress', 'NCloseButton', 'NLink', 'NMenuItem', 'NActionItem', 'NSelect', 'NDatePicker'].includes(node.kind) ||
+            ['NButton', 'NPress', 'NLink', 'NMenuItem', 'NActionItem', 'NSelect', 'NDatePicker'].includes(node.kind) ||
             node.id.includes(':option:');
 
           return (
@@ -257,7 +257,7 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
                                     ? 'progressbar'
                                     : 'text'
               }
-              accessibilityLabel={node.label || (node.kind === 'NCloseButton' ? 'Close' : undefined)}
+              accessibilityLabel={node.label || undefined}
               accessibilityValue={
                 node.kind === 'NSelect' && !node.selectOwner
                   ? { text: node.valueLabel ?? '' }

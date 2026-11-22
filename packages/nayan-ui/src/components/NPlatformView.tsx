@@ -28,7 +28,7 @@ function PlatformAttachment({ children, id, ...props }: ComponentProps) {
     [values, children]
   );
   useEffect(() => {
-    if (!register) throw new Error('NPlatformView requires a ComponentsRoot');
+    if (!register) throw new Error('NPlatformView requires an NTheme screen');
     register(key, content);
     return () => register(key, null);
   }, [register, key, content]);

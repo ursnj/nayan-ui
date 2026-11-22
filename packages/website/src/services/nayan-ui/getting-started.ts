@@ -50,8 +50,8 @@ export function BouncingBall() {
         id: "ui-components",
         title: "Interface components",
         paragraphs: [
-          "Import interface controls from nayan-ui/components. NTheme shares the theme preference across React and React Native, and ComponentsRoot renders its children through the Rust UI engine.",
-          "On the web, keep a semantic HTML preview visible until onReady fires. Keep that preview available if onError fires so users can still interact without a graphics adapter.",
+          "Import interface controls from nayan-ui/components. NTheme renders the screen through the Rust UI engine and shares the theme preference across React and React Native.",
+          "Use NTheme with surface={false} around an existing navigator or browser layout. Place NTheme around each engine screen inside that layout.",
         ],
         examples: [
           {
@@ -60,19 +60,15 @@ export function BouncingBall() {
             platform: "shared",
             language: "tsx",
             code: `import { useState } from "react";
-import { ComponentsRoot, NButton, NText, NTheme, NView } from "nayan-ui/components";
+import { NButton, NText, NTheme } from "nayan-ui/components";
 
 export function Counter() {
   const [count, setCount] = useState(0);
 
   return (
-    <NTheme defaultTheme="system">
-      <ComponentsRoot style={{ height: 220 }}>
-        <NView className="gap-3 p-4">
-          <NText>Count: {count}</NText>
-          <NButton onPress={() => setCount((value) => value + 1)}>Add one</NButton>
-        </NView>
-      </ComponentsRoot>
+    <NTheme defaultTheme="system" className="gap-3 p-4" surface={{ style: { height: 220 } }}>
+      <NText>Count: {count}</NText>
+      <NButton onPress={() => setCount((value) => value + 1)}>Add one</NButton>
     </NTheme>
   );
 }`,

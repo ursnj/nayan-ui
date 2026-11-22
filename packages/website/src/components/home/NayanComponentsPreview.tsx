@@ -3,7 +3,7 @@
 import { type ReactNode, useState } from 'react';
 import { ArrowUpRight, Braces, Code2 } from '@/design/Icons';
 import Link from 'next/link';
-import { ComponentsRoot, NButton, NInput, NLoading, NPress, NText, NView } from 'nayan-ui/components';
+import { NButton, NInput, NLoading, NPress, NText, NTheme, NView } from 'nayan-ui/components';
 import { BUTTON_SMALL } from '@/design/system';
 
 const TABS = ['Buttons', 'Forms', 'Feedback', 'Elements'] as const;
@@ -133,17 +133,19 @@ export default function NayanComponentsPreview() {
             inert={status !== 'ready'}
             onWheelCapture={(event) => event.stopPropagation()}
           >
-            <ComponentsRoot
-              background="transparent"
-              style={{ height: '100%', width: '100%', minHeight: 0 }}
-              onReady={() => setStatus('ready')}
-              onError={(error) => {
-                if (process.env.NODE_ENV === 'development') console.warn('Engine preview:', error);
-                setStatus('fallback');
+            <NTheme
+              surface={{
+                background: 'transparent',
+                style: { height: '100%', width: '100%' },
+                onReady: () => setStatus('ready'),
+                onError: (error) => {
+                  if (process.env.NODE_ENV === 'development') console.warn('Engine preview:', error);
+                  setStatus('fallback');
+                }
               }}
             >
               {preview}
-            </ComponentsRoot>
+            </NTheme>
           </NView>
         )}
       </NView>

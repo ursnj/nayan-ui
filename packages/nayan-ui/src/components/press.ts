@@ -30,6 +30,7 @@ export interface NPressProps extends Omit<PressableProps, 'children' | 'style'> 
   'popoverTarget'?: string;
   'popoverTargetAction'?: 'toggle' | 'show' | 'hide';
   'aria-describedby'?: string;
+  'aria-pressed'?: boolean;
 }
 
 /** Flatten the shared style arrays without importing a native styling runtime on the web. */

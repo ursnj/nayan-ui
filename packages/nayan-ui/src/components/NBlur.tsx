@@ -1,8 +1,8 @@
 'use client';
 
 import type { RefObject } from 'react';
-import { BlurHost, BlurTargetHost, type NBlurTargetProps, type NBlurTargetRef } from './BlurHost';
-import { NView } from './NView';
+import { BlurHost } from './BlurHost';
+import { NView, type NViewNativeRef } from './NView';
 import type { ComponentProps, ComponentStyle } from './types';
 import { useComponentRenderer } from './useComponentRenderer';
 
@@ -12,8 +12,8 @@ export interface NBlurProps extends ComponentProps {
   /** Blur radius in logical points; overrides intensity (100 = 20 points). */
   radius?: number;
   tint?: 'default' | 'light' | 'dark';
-  /** Android source, outside this blur's foreground. Ignored by iOS and the browser. */
-  blurTarget?: RefObject<NBlurTargetRef | null>;
+  /** Optional Android source view. Pass a ref to an NView with collapsable={false} inside NPlatformView. */
+  blurTarget?: RefObject<NViewNativeRef | null>;
   /** Disable the effect while keeping children visible. */
   enabled?: boolean;
 }
@@ -24,7 +24,7 @@ function flatten(style: ComponentProps['style']): ComponentStyle {
 
 /** One blur API: Rust GPU panels inside ComponentsRoot, platform backdrops around native/browser content. */
 export function NBlur({ intensity = 50, radius, tint = 'default', enabled = true, blurTarget, style, ...props }: NBlurProps) {
-  const rendering = useComponentRenderer('NBlur');
+  const rendering = useComponentRenderer('NBlur', true);
   const requested = radius ?? Math.min(100, Math.max(0, intensity)) * 0.2;
   const blur = enabled && Number.isFinite(requested) ? Math.min(64, Math.max(0, requested)) : 0;
   const material = blur > 0 ? tint : 'default';
@@ -42,7 +42,3 @@ export function NBlur({ intensity = 50, radius, tint = 'default', enabled = true
   }
   return <BlurHost {...props} style={style} radius={blur} tint={material} blurTarget={blurTarget} enabled={enabled} />;
 }
-
-/** A non-collapsing platform container that Android can sample without capturing its overlay. */
-export const NBlurTarget = BlurTargetHost;
-export type { NBlurTargetProps, NBlurTargetRef };

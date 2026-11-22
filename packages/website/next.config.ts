@@ -21,6 +21,9 @@ const nextConfig: NextConfig = {
       // Some browsers still have the original permanent redirect from /playground cached.
       { source: '/game-engine/playground/:path*', destination: '/playground/:path*' },
       ...['/disclosure', '/components/disclosure', '/react/disclosure'].map((source) => ({ source, destination: '/accordion' })),
+      ...['/blur-target', '/components/blur-target'].map((source) => ({ source, destination: '/blur' })),
+      ...['/close-button', '/components/close-button'].map((source) => ({ source, destination: '/press' })),
+      ...['/components-root', '/components/components-root', '/page', '/components/page'].map((source) => ({ source, destination: '/theme' })),
       // /modules/games already has a page and /games is the playable game catalog.
       ...[...componentReferences, ...moduleReferences.filter(({ slug }) => slug !== 'games')]
         .map(({ slug, path }) => ({ source: path, destination: `/${slug}` }))

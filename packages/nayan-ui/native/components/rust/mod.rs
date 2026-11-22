@@ -201,7 +201,6 @@ fn text(n: &Node) -> String {
         match n.kind.as_str() {
             "NProgress" => "Progress".into(),
             "NLoading" => "Loading".into(),
-            "NCloseButton" => "Close".into(),
             _ => value,
         }
     } else {
@@ -324,7 +323,6 @@ impl ComponentDocument {
                         | "NText"
                         | "NButton"
                         | "NPress"
-                        | "NCloseButton"
                         | "NCheck"
                         | "NSwitch"
                         | "NToggleButton"
@@ -579,7 +577,6 @@ impl ComponentDocument {
                                 node.kind.as_str(),
                                 "NButton"
                                     | "NPress"
-                                    | "NCloseButton"
                                     | "NCheck"
                                     | "NSwitch"
                                     | "NSelect"
@@ -1012,7 +1009,6 @@ impl ComponentDocument {
                 n.kind.as_str(),
                 "NButton"
                     | "NPress"
-                    | "NCloseButton"
                     | "NLink"
                     | "NMenuItem"
                     | "NActionItem"
@@ -1445,7 +1441,7 @@ impl ComponentDocument {
                     let control = !complex_button(n)
                         && matches!(
                             n.kind.as_str(),
-                            "NButton" | "NCloseButton" | "NMenuItem" | "NImage" | "NInput" | "NTextarea" | "NSearchField" | "NInputOtp" | "NSelect"
+                            "NButton" | "NMenuItem" | "NImage" | "NInput" | "NTextarea" | "NSearchField" | "NInputOtp" | "NSelect"
                         );
                     let backdrop = (resolved.backdrop_blur > 0.).then(|| ui.painter().add(egui::Shape::Noop));
                     let frame = resolved.frame(control);
@@ -1758,11 +1754,9 @@ impl ComponentDocument {
             }
             "NPress" | "NActionItem" => self.container(ui, n, resolved),
             "NButton" if complex_button(n) => self.container(ui, n, resolved),
-            "NButton" | "NCloseButton" | "NMenuItem" => {
+            "NButton" | "NMenuItem" => {
                 let label = if flag(p, &["isLoading"]) {
                     p["loadingText"].as_str().unwrap_or("Loading…").into()
-                } else if n.kind == "NCloseButton" {
-                    "×".into()
                 } else {
                     label
                 };
@@ -1832,7 +1826,7 @@ impl ComponentDocument {
                     }
                     r
                 } else {
-                    ui.checkbox(&mut value, label)
+                    self.checkbox(ui, &label, &mut value)
                 };
                 if response.changed() || (matches!(n.kind.as_str(), "NSwitch" | "NToggleButton") && response.clicked()) {
                     self.values.insert(n.id.clone(), json!(value));
@@ -2105,6 +2099,57 @@ impl ComponentDocument {
             }
             _ => unreachable!("validated UI kind"),
         }
+    }
+
+    fn checkbox(&self, ui: &mut egui::Ui, label: &str, checked: &mut bool) -> Response {
+        let size = 16_f32.min(ui.available_width().max(0.));
+        let gap = if label.is_empty() { 0. } else { 12. };
+        let font = ui
+            .style()
+            .override_font_id
+            .clone()
+            .unwrap_or_else(|| egui::FontId::proportional(14. * self.font_scale.max(1.)));
+        let label_color = if ui.is_enabled() {
+            ui.visuals().text_color()
+        } else {
+            self.palette.get("muted")
+        };
+        let text = ui
+            .painter()
+            .layout(label.to_owned(), font, label_color, (ui.available_width() - size - gap).max(1.));
+        let (rect, mut response) = ui.allocate_exact_size(Vec2::new(size + gap + text.size().x, text.size().y.max(24.)), egui::Sense::click());
+        if response.clicked() {
+            *checked = !*checked;
+            response.mark_changed();
+        }
+
+        let bounds = Rect::from_center_size(Pos2::new(rect.left() + size / 2., rect.center().y), Vec2::splat(size));
+        let corners = egui::CornerRadius::same(4);
+        let border = if response.hovered() {
+            self.palette.get("accent")
+        } else {
+            self.palette.get("border")
+        };
+        let painter = ui.painter();
+        if *checked {
+            painter.rect_filled(bounds, corners, self.palette.get("accent"));
+            let at = |x, y| bounds.min + Vec2::new(x * size, y * size);
+            painter.add(egui::Shape::line(
+                vec![at(0.25, 0.50), at(0.44, 0.67), at(0.75, 0.33)],
+                egui::Stroke::new(1.5, self.palette.get("accent-foreground")),
+            ));
+        } else {
+            painter.rect(
+                bounds,
+                corners,
+                self.palette.get("surface"),
+                egui::Stroke::new(1., border),
+                egui::StrokeKind::Inside,
+            );
+        }
+        self.focus_outline(painter, &response, bounds, corners, egui::StrokeKind::Outside);
+        painter.galley(Pos2::new(bounds.right() + gap, rect.center().y - text.size().y / 2.), text, label_color);
+        response
     }
 
     fn paint_otp(&self, ui: &egui::Ui, node: &Node, response: &Response, value: &str) {

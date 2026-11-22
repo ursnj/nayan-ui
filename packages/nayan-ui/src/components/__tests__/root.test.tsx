@@ -27,7 +27,7 @@ let snapshot: ComponentSnapshot;
 let host: { document: unknown; active?: boolean };
 const dispatched: Record<string, unknown>[] = [];
 mock.module('../themeSystemBars', () => ({ useThemeSystemBars() {} }));
-const { NTheme } = await import('../NTheme');
+mock.module('../PageHost', () => ({ PageHost: ({ children }: PropsWithChildren) => children }));
 
 mock.module('../../native/prepare', () => ({ prepareEngine: async () => {} }));
 
@@ -73,6 +73,7 @@ mock.module('../ComponentHost', () => ({
 const dom = installDom();
 const { createRoot } = await import('react-dom/client');
 const { ComponentsRoot } = await import('../ComponentsRoot');
+const { NTheme } = await import('../NTheme');
 
 afterAll(() => dom.cleanup());
 
@@ -83,8 +84,8 @@ async function flush() {
 }
 
 test('visual controls require an app renderer without starting a standalone surface', () => {
-  expect(() => renderToStaticMarkup(<NView />)).toThrow('NView requires an app-level NPage or ComponentsRoot');
-  expect(() => renderToStaticMarkup(<NButton>Action</NButton>)).toThrow('NButton requires an app-level NPage or ComponentsRoot');
+  expect(() => renderToStaticMarkup(<NView />)).toThrow('NView requires an NTheme screen');
+  expect(() => renderToStaticMarkup(<NButton>Action</NButton>)).toThrow('NButton requires an NTheme screen');
 });
 
 test('nested ComponentsRoot uses the app document and keeps it when paused', async () => {
@@ -342,7 +343,7 @@ test('image lifecycle events preserve native/web payloads and late snapshots can
   }
 });
 
-test('one app theme bridges services and named icons into every independent surface', async () => {
+test('NTheme creates a screen and bridges app services and named icons into it', async () => {
   const Services = createContext('missing');
   const Providers = ({ children }: PropsWithChildren) => <Services.Provider value="connected">{children}</Services.Provider>;
   function Content() {
@@ -355,13 +356,12 @@ test('one app theme bridges services and named icons into every independent surf
   }
   const root = createRoot(document.createElement('div'));
   const colors = { foreground: '#123456' };
+  const nestedReady = mock(() => {});
   try {
     await act(() =>
       root.render(
-        <NTheme theme="dark" colors={colors} providers={Providers}>
-          <ComponentsRoot>
-            <Content />
-          </ComponentsRoot>
+        <NTheme theme="dark" className="p-4" colors={colors} providers={Providers}>
+          <Content />
         </NTheme>
       )
     );
@@ -369,23 +369,29 @@ test('one app theme bridges services and named icons into every independent surf
     expect(trees[0]?.kind).toBe('NTheme');
     expect(trees[0]?.props.colors).toEqual(colors);
     const json = JSON.stringify(trees);
+    const document = host.document;
     expect(json).toContain('connected');
+    expect(trees[0]?.children[0]?.props.className).toBe('p-4');
     expect(json).toContain('house');
     expect(json).toContain('strokeWidth');
     expect(json).not.toContain('iconFont');
     expect(json).not.toContain('providers');
     await act(() =>
       root.render(
-        <NTheme theme="light" colors={{ foreground: '#654321' }} providers={Providers}>
-          <ComponentsRoot>
+        <NTheme theme="light" surface={{ active: false }} colors={{ foreground: '#654321' }} providers={Providers}>
+          <NTheme className="gap-2" surface={{ onReady: nestedReady }}>
             <Content />
-          </ComponentsRoot>
+          </NTheme>
         </NTheme>
       )
     );
     await flush();
     expect(trees[0]?.props.theme).toBe('light');
     expect(trees[0]?.props.colors).toEqual({ foreground: '#654321' });
+    expect(host.document).toBe(document);
+    expect(host.active).toBe(false);
+    expect(trees[0]?.children[0]?.children[0]?.kind).toBe('NTheme');
+    expect(nestedReady).not.toHaveBeenCalled();
   } finally {
     await act(() => root.unmount());
     await flush();
@@ -410,12 +416,12 @@ test('registered application contexts capture the nearest provider and update wi
   }
   const root = createRoot(document.createElement('div'));
   const app = (session: string) => (
-    <NTheme contexts={contexts}>
+    <NTheme surface={false} contexts={contexts}>
       <Session.Provider value={session}>
         <DrawerContext.Provider value={{ isOpen: session === 'signed-in', open() {}, close() {}, toggle() {} }}>
-          <ComponentsRoot>
+          <NTheme>
             <Content />
-          </ComponentsRoot>
+          </NTheme>
         </DrawerContext.Provider>
       </Session.Provider>
     </NTheme>
@@ -424,7 +430,7 @@ test('registered application contexts capture the nearest provider and update wi
     await act(() => root.render(app('signed-in')));
     await flush();
     const document = host.document;
-    const node = trees[0]?.children?.[0]?.id;
+    const node = trees[0]?.children?.[0]?.children[0]?.id;
     expect(JSON.stringify(trees)).toContain('signed-in');
     expect(JSON.stringify(trees)).toContain('open');
     expect(JSON.stringify(trees)).not.toContain('contexts');
@@ -432,7 +438,7 @@ test('registered application contexts capture the nearest provider and update wi
     await flush();
     expect(JSON.stringify(trees)).toContain('signed-out');
     expect(JSON.stringify(trees)).toContain('closed');
-    expect(trees[0]?.children?.[0]?.id).toBe(node);
+    expect(trees[0]?.children?.[0]?.children[0]?.id).toBe(node);
     expect(host.document).toBe(document);
     expect(mounts).toBe(1);
   } finally {
@@ -469,9 +475,7 @@ test('theme hooks inside an engine surface update the owning root without serial
           palettes={{ light: { accent: '#123456', chartOpacity: 0.4 }, dark: { accent: '#abcdef', chartOpacity: 0.2 } }}
           components={({ isDarkMode }) => ({ NCard: { className: isDarkMode ? 'shadow-lg' : 'shadow-sm' } })}
         >
-          <ComponentsRoot>
-            <Controls />
-          </ComponentsRoot>
+          <Controls />
         </NTheme>
       )
     );

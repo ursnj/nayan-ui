@@ -48,7 +48,7 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <NTheme theme={theme} themes={siteThemes} onThemeChange={changeTheme}>
+    <NTheme surface={false} theme={theme} themes={siteThemes} onThemeChange={changeTheme}>
       {ready && <SiteAppearance />}
       <NPlatformView>{children}</NPlatformView>
     </NTheme>

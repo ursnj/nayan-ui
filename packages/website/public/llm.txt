@@ -16,18 +16,16 @@ The `nayan-ui` package provides cross-platform interfaces, application services,
 
 ## Nayan Components
 
-Install the engine with `bun add nayan-ui`. Import controls from `nayan-ui/components`, mount an `NTheme` at the app root, and render engine controls in `NPage` or `ComponentsRoot`. Native apps need a development build.
+Install the engine with `bun add nayan-ui`. Import controls from `nayan-ui/components` and render them inside `NTheme`. Native apps need a development build.
 
 ```tsx
-import { NButton, NPage, NText, NTheme } from 'nayan-ui/components';
+import { NButton, NText, NTheme } from 'nayan-ui/components';
 
 export default function App() {
   return (
-    <NTheme defaultTheme="system">
-      <NPage className="gap-3 p-4" style={{ height: 300 }}>
-        <NText>Welcome</NText>
-        <NButton onPress={() => console.log('Continue')}>Continue</NButton>
-      </NPage>
+    <NTheme defaultTheme="system" className="gap-3 p-4" surface={{ style: { height: 300 } }}>
+      <NText>Welcome</NText>
+      <NButton onPress={() => console.log('Continue')}>Continue</NButton>
     </NTheme>
   );
 }

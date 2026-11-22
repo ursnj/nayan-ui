@@ -42,11 +42,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/components/blur-target</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.nayanui.com/components/button</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -77,17 +72,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/components/close-button</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.nayanui.com/components/code</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.nayanui.com/components/components-root</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -203,11 +188,6 @@
   </url>
   <url>
     <loc>https://www.nayanui.com/components/number-field</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.nayanui.com/components/page</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -1647,11 +1627,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/tags/blur-target</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://www.nayanui.com/tags/breadcrumbs</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -1817,11 +1792,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/tags/close-button</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://www.nayanui.com/tags/code</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -1838,11 +1808,6 @@
   </url>
   <url>
     <loc>https://www.nayanui.com/tags/collapsible-ui-react</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.nayanui.com/tags/components-root</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -3158,11 +3123,6 @@
   </url>
   <url>
     <loc>https://www.nayanui.com/tags/package-metadata</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.nayanui.com/tags/page</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

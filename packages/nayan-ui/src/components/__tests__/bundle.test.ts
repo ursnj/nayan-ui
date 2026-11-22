@@ -67,8 +67,8 @@ test('NPattern exposes only the component facade without game, image or renderin
     expect(js).not.toContain(marker);
 });
 
-test('ComponentsRoot uses the shared surface transport without the drawing editor or world wrapper', async () => {
-  const js = await bundle('export {ComponentsRoot} from "nayan-ui/components";');
+test('NTheme uses the shared surface transport without the drawing editor or world wrapper', async () => {
+  const js = await bundle('export {NTheme} from "nayan-ui/components";');
   expect(js).toContain('react-reconciler');
   for (const marker of ['DrawingDocument', 'exportSVG', 'captureDraft', 'setEditingEnabled', 'class World', 'react-native'])
     expect(js).not.toContain(marker);
@@ -109,7 +109,7 @@ test('NLoading is one shared facade without JS animation or platform-specific lo
 });
 
 test('NBlur uses the browser/Rust adapter without importing native capture, game runtime or Expo', async () => {
-  const js = await bundle('export {NBlur, NBlurTarget} from "nayan-ui/components";');
+  const js = await bundle('export {NBlur} from "nayan-ui/components";');
   expect(js).toContain('backdropFilter');
   for (const marker of ['react-native', 'expo-blur', 'requireNativeComponent', 'DrawingCanvas', 'react-reconciler', '.wasm'])
     expect(js).not.toContain(marker);

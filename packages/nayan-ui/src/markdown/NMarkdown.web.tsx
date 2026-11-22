@@ -42,7 +42,7 @@ export function NMarkdown({ children, source, ...props }: NMarkdownProps) {
   const platform = useContext(PlatformRenderContext);
   const markdown = source ?? children ?? '';
   if (rendering) return createElement(Host, { ...props, source: markdown });
-  if (!platform && !props.document) throw new Error('NMarkdown requires an app-level NPage or ComponentsRoot');
+  if (!platform && !props.document) throw new Error('NMarkdown requires an NTheme screen');
   const markup = createElement(
     View,
     {

@@ -26,7 +26,7 @@ impl Document {
                 || item.css.get("clip").is_some_and(|v| v.replace(' ', "") == "rect(0,0,0,0)")
                 || matches!(
                     item.node.kind.as_str(),
-                    "NButton" | "NPress" | "NCloseButton" | "NCheck" | "NSwitch" | "NSelect" | "NDatePicker" | "NMenuItem" | "NActionItem"
+                    "NButton" | "NPress" | "NCheck" | "NSwitch" | "NSelect" | "NDatePicker" | "NMenuItem" | "NActionItem"
                 )
                 || item.node.props["aria-hidden"] == "true"
                 || matches!(item.tag.as_str(), "script" | "style" | "noscript" | "head" | "meta" | "title")
