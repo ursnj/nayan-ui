@@ -1,8 +1,9 @@
-name: Build nayan-ui
+name: Build and publish nayan-ui
 
 on:
   push:
     branches: [refactor-nayan-ui, main]
+    tags: ['v*']
     paths:
       - packages/nayan-ui/**
       - bun.lock
@@ -144,3 +145,37 @@ jobs:
           path: ${{ runner.temp }}/nayan-ui-*.tgz
           if-no-files-found: error
           retention-days: 7
+
+  publish:
+    if: github.repository == 'ursnj/nayan-ui' && github.event_name == 'push' && github.ref_type == 'tag'
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: nayan-ui
+          path: ${{ runner.temp }}/npm-package
+
+      - name: Publish the tested tarball to npm
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          tarball="$RUNNER_TEMP/npm-package/nayan-ui-$version.tgz"
+          if [[ ! -f "$tarball" ]]; then
+            echo '::error::The Git tag must match the version in packages/nayan-ui/package.json, prefixed with v.'
+            exit 1
+          fi
+
+          dist_tag=latest
+          if [[ "${version%%+*}" == *-* ]]; then
+            dist_tag=beta
+          fi
+          npm publish "$tarball" --access public --tag "$dist_tag" --ignore-scripts
