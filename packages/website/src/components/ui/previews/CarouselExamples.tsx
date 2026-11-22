@@ -15,9 +15,9 @@ const indicatorInset = 20;
 const slideClass = 'relative w-full gap-0 rounded-xl bg-surface-secondary';
 const imageClass = 'w-full rounded-xl';
 const backdropClass = 'absolute inset-x-0 bottom-0 h-44 rounded-b-xl bg-linear-to-t from-black/95 to-transparent';
-const captionClass = 'absolute inset-x-0 bottom-9 items-center gap-1 px-4';
+const captionClass = 'absolute inset-x-0 bottom-8 h-12 items-center gap-1';
 const titleClass = 'text-center text-xl font-semibold text-white';
-const descriptionClass = 'text-center text-sm text-white';
+const descriptionClass = 'text-center text-xs text-white';
 const photoUrl = (photo: string) => `https://images.unsplash.com/photo-${photo}?auto=format&fit=crop&w=800&h=560&q=78`;
 
 function PhotoCarousel({ controlled = false }: { controlled?: boolean }) {
@@ -37,8 +37,12 @@ function PhotoCarousel({ controlled = false }: { controlled?: boolean }) {
             <NImage src={photoUrl(photo)} alt={title} height={height} className={imageClass} contentFit="cover" />
             <NView className={backdropClass} />
             <NView className={captionClass}>
-              <NText className={titleClass}>{title}</NText>
-              <NText className={descriptionClass}>{caption}</NText>
+              <NText className={titleClass} numberOfLines={1}>
+                {title}
+              </NText>
+              <NText className={descriptionClass} numberOfLines={1}>
+                {caption}
+              </NText>
             </NView>
           </NView>
         ))}
@@ -64,8 +68,8 @@ function carouselSource(controlled: boolean) {
                 />
                 <NView className="${backdropClass}" />
                 <NView className="${captionClass}">
-                  <NText className="${titleClass}">{title}</NText>
-                  <NText className="${descriptionClass}">{caption}</NText>
+                  <NText className="${titleClass}" numberOfLines={1}>{title}</NText>
+                  <NText className="${descriptionClass}" numberOfLines={1}>{caption}</NText>
                 </NView>
               </NView>
             ))}
