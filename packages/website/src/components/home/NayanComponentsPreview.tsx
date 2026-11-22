@@ -17,7 +17,12 @@ const snippets: Record<Tab, string> = {
   Elements: '<NText>Stable</NText>'
 };
 
-const references: Record<Tab, string> = { Buttons: '/button', Forms: '/input', Feedback: '/loading', Elements: '/text' };
+const references: Record<Tab, string> = {
+  Buttons: '/components/button',
+  Forms: '/components/input',
+  Feedback: '/components/loading',
+  Elements: '/components/text'
+};
 
 const action = 'engine-preview-action';
 const row = 'flex flex-row flex-wrap items-center gap-3';
@@ -97,7 +102,7 @@ export default function NayanComponentsPreview() {
       break;
   }
   const preview = (
-    <NView tag="div" className="engine-preview-content flex flex-col gap-4">
+    <NView tag="div" className="flex flex-col gap-4 p-5 text-foreground">
       {content}
     </NView>
   );

@@ -1,11 +1,16 @@
 import { buildStyles, developStyles, type EngineStylesOptions } from "nayan-ui/styles";
 
 const options: EngineStylesOptions = {
-  source: "src/app/nayan-ui-theme.css",
+  recipeFiles: [
+    "src/design/themeStyles.ts",
+    "src/design/siteStyles.ts",
+    "src/design/documentationStyles.ts",
+    "src/components/nayan-video-editor/styles.ts",
+    "src/design/documentStyles.ts"
+  ],
   content: ["src"],
   output: "public/nayan-ui/site-styles.json",
   publicPath: "/nayan-ui/site-styles.json",
-  cssOutput: "src/app/nayan-ui.css",
   lowerCss: false,
   manifest: "src/app/nayan-ui-styles.ts",
 };

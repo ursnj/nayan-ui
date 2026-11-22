@@ -5,6 +5,7 @@ import Footer from "@/components/helpers/Footer";
 import Header from "@/components/helpers/Header";
 import JsonLd from "@/components/helpers/JsonLd";
 import ThemeProvider from "@/components/helpers/ThemeProvider";
+import { browserStylesVersion } from "./nayan-ui-styles";
 import {
   BANNER_HEIGHT,
   BANNER_WIDTH,
@@ -16,7 +17,6 @@ import {
   softwareApplicationSchema,
   websiteSchema,
 } from "@/services/seo";
-import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
@@ -55,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="stylesheet" href={`/nayan-ui/styles?v=${browserStylesVersion}`} />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('THEME');if(t){t=JSON.parse(t)}if(t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark');document.documentElement.style.colorScheme='dark';document.documentElement.setAttribute('data-theme','dark')}else{document.documentElement.classList.add('light');document.documentElement.style.colorScheme='light';document.documentElement.setAttribute('data-theme','light')}}catch(e){}})()`,
@@ -66,7 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <NView tag="a" href="#main-content" className="site-skip-link">Skip to content</NView>
           <Header />
-          <NView tag="main" id="main-content" className="site-main" tabIndex={-1}>
+          <NView tag="main" id="main-content" className="site-main min-h-[70vh] pt-[var(--site-header-height)] focus:outline-none" tabIndex={-1}>
             {children}
           </NView>
           <Footer />

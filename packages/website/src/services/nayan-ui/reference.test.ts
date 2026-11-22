@@ -1,6 +1,8 @@
 import { expect, test } from 'bun:test';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { createElement, type ReactElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import ts from 'typescript';
 import * as engineComponents from 'nayan-ui/components';
 import enginePackage from 'nayan-ui/package.json';
@@ -19,8 +21,12 @@ test('the reference covers the component exports and public engine entry points'
   const entries = [...componentReferences, ...moduleReferences];
   const paths = entries.map(({ path }) => path);
   expect(new Set(paths).size).toBe(paths.length);
-  for (const path of paths.filter((path) => /^\/[^/]+$/.test(path))) {
-    expect(existsSync(new URL(`../../app${path}`, import.meta.url))).toBe(false);
+  expect(componentReferences.every(({ path, slug }) => path === `/components/${slug}`)).toBe(true);
+  expect(moduleReferences.every(({ path, slug }) => path === `/modules/${slug}`)).toBe(true);
+  const legacyEntries = entries.filter(({ slug }) => slug !== 'games');
+  expect(new Set(legacyEntries.map(({ slug }) => slug)).size).toBe(legacyEntries.length);
+  for (const { slug } of legacyEntries) {
+    expect(existsSync(new URL(`../../app/${slug}`, import.meta.url)), slug).toBe(false);
   }
 });
 
@@ -49,7 +55,7 @@ test('every component reference has public attributes, methods or a hook return 
   }
   const imageProps = components.NImage.props.map((id) => attributes[id]?.name);
   expect(components.NButton.props.map((id) => attributes[id]?.name)).toEqual([
-    'disabled', 'className', 'isOutline', 'isLoading', 'loadingText', 'children', 'onPress'
+    'disabled', 'className', 'isOutline', 'isLoading', 'loadingText', 'leftIcon', 'rightIcon', 'children', 'onPress'
   ]);
   expect(components.NInput.props.map((id) => attributes[id]).find((prop) => prop?.name === 'type')).toMatchObject({
     type: 'string',
@@ -61,6 +67,35 @@ test('every component reference has public attributes, methods or a hook return 
   expect(componentAttributes.native.VideoPlayer.props.some((id) =>
     attributes[id]?.name === 'source' && attributes[id]?.type.includes('number')
   )).toBe(true);
+});
+
+test('buttons and alerts render the documented content slots in browser HTML', async () => {
+  const engine = new URL('../../../../nayan-ui/', import.meta.url);
+  const browser = await import(new URL(enginePackage.exports['./components'].browser.default, engine).href) as typeof engineComponents;
+  const render = (node: ReactElement) => renderToStaticMarkup(createElement(browser.NPlatformView, null, node));
+  const pending = render(createElement(browser.NButton, { isLoading: true, loadingText: 'Saving' }, 'Save'));
+  expect(pending).toContain('disabled=""');
+  expect(pending).toContain('aria-busy="true"');
+  expect(pending).toContain('>Saving</button>');
+
+  const button = render(createElement(browser.NButton, {
+    leftIcon: createElement('span', null, 'Before'),
+    rightIcon: createElement('span', null, 'After')
+  }, 'Continue'));
+  expect(button).toContain('<span>Before</span>Continue<span>After</span>');
+
+  const alert = render(createElement(browser.NAlert, {
+    type: 'success',
+    title: 'Saved',
+    message: 'Your draft was saved.',
+    onClose() {},
+    actions: createElement('span', null, 'Undo'),
+    titleClassName: 'custom-title'
+  }));
+  expect(alert).toContain('custom-title');
+  expect(alert).toContain('aria-label="Dismiss saved alert"');
+  expect(alert).toContain('>Undo</span>');
+  expect(alert.split('Your draft was saved.')).toHaveLength(2);
 });
 
 test('each reference entry has valid example code for the built engine package', () => {

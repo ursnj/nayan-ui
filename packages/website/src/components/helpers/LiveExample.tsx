@@ -9,6 +9,7 @@ import { createCompiler } from '@/components/nayan-playground/compiler';
 import { evaluateExample } from '@/components/nayan-playground/evaluate';
 import PreviewBoundary from '@/components/nayan-playground/PreviewBoundary';
 import PreviewSurface from '@/components/ui/previews/PreviewSurface';
+import { BrowserFrame } from '@/design/Primitives';
 import { exampleModules } from '@/components/ui/previews/exampleModules';
 import type { NamedComponentPreview } from '@/components/ui/previews/types';
 
@@ -45,9 +46,10 @@ interface Props {
   examples: readonly [LiveExampleScenario, ...LiveExampleScenario[]];
   codeAnchor?: string;
   previewId?: string;
+  previewPath: string;
 }
 
-export default function LiveExample({ examples, codeAnchor, previewId }: Props) {
+export default function LiveExample({ examples, codeAnchor, previewId, previewPath }: Props) {
   const [selected, setSelected] = useState(0);
   const [drafts, setDrafts] = useState<Readonly<Record<number, string>>>({});
   const [ready, setReady] = useState(false);
@@ -76,6 +78,7 @@ export default function LiveExample({ examples, codeAnchor, previewId }: Props) 
       getCompiler={getCompiler}
       codeAnchor={codeAnchor}
       previewId={previewId}
+      previewPath={previewPath}
       options={
         examples.length > 1 && (
           <NView tag="div" className="component-example-picker flex flex-wrap gap-1" role="group" aria-label="Choose an example">
@@ -105,6 +108,7 @@ function ExampleWorkspace({
   getCompiler,
   codeAnchor,
   previewId,
+  previewPath,
   options
 }: {
   ready: boolean;
@@ -114,6 +118,7 @@ function ExampleWorkspace({
   getCompiler: () => ReturnType<typeof createCompiler>;
   codeAnchor?: string;
   previewId?: string;
+  previewPath: string;
   options: React.ReactNode;
 }) {
   const request = useRef(0);
@@ -203,28 +208,11 @@ function ExampleWorkspace({
           {example.note}
         </NText>
       )}
-      <NView tag="div" className="component-workbench-panes grid min-w-0 gap-3 min-[1050px]:grid-cols-2">
-        <NView tag="section" className={`${island} component-workbench-code min-w-0 overflow-hidden`} aria-label="Editable code">
-          <NText tag="div" className={`${paneTitle} font-mono`}>
-            Example.tsx
-          </NText>
-          <NView tag="div" className="component-workbench-editor h-[19rem] min-w-0">
-            <CodeEditor
-              label="Example source code"
-              code={code}
-              onChange={onChange}
-              onRun={run}
-              onComplete={(source, position) => getCompiler().complete(source, position)}
-            />
-          </NView>
-        </NView>
-        <NView tag="section" className={`${island} component-workbench-preview min-w-0 self-start overflow-hidden`} aria-label="Live preview">
-          <NText tag="div" className={paneTitle}>
-            Preview
-          </NText>
+      <NView tag="section" className="component-workbench-preview min-w-0 overflow-hidden" aria-label="Live preview">
+        <BrowserFrame label={`nayanui.com${previewPath}`} padded={false} compact>
           <NView
             tag="div"
-            className="docs-live-preview workbench-grid flex min-w-0 justify-center overflow-auto [scrollbar-width:thin]"
+            className="docs-live-preview flex min-w-0 justify-center overflow-auto [scrollbar-width:thin]"
             data-component-preview={previewId}
           >
             {Output && output ? (
@@ -248,6 +236,20 @@ function ExampleWorkspace({
               <PreviewSurface preview={example} fullWidth={previewId === 'video-player'} keepViewport={keepViewport} />
             )}
           </NView>
+        </BrowserFrame>
+      </NView>
+      <NView tag="section" className={`${island} component-workbench-code min-w-0 overflow-hidden`} aria-label="Editable code">
+        <NText tag="div" className={`${paneTitle} font-mono`}>
+          Example.tsx
+        </NText>
+        <NView tag="div" className="component-workbench-editor h-[19rem] min-w-0">
+          <CodeEditor
+            label="Example source code"
+            code={code}
+            onChange={onChange}
+            onRun={run}
+            onComplete={(source, position) => getCompiler().complete(source, position)}
+          />
         </NView>
       </NView>
       {error && (

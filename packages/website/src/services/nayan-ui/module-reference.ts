@@ -410,14 +410,15 @@ export function Article({ source }: { source: string }) {
     code: `import { buildStyles } from 'nayan-ui/styles';
 
 await buildStyles({
-  source: 'src/theme.css',
+  recipeFiles: ['src/theme.ts'],
   content: ['src'],
   output: 'public/nayan-ui/styles.json',
-  cssOutput: 'src/engine.css',
+  manifest: 'src/engine-styles.ts',
+  lowerCss: false,
   publicPath: '/nayan-ui/styles.json'
 });`,
-    note: 'Run this in a Bun or Node build script. Pass the generated stylesheet URL to ComponentsRoot on the web.',
-    guide: '/components-root'
+    note: 'Export your utility recipes from src/theme.ts. Run this in a Bun build script and pass the generated stylesheet URL to ComponentsRoot.',
+    guide: '/components/components-root'
   },
   {
     slug: 'icons',
@@ -511,7 +512,7 @@ export async function preload() {
   return import('nayan-ui/wasm-runtime');
 }`,
     note: 'For application code, prepareCore initializes the runtime and handles browser asset loading.',
-    guide: '/core'
+    guide: '/modules/core'
   },
   {
     slug: 'expo-plugin',
@@ -545,6 +546,6 @@ export type ModuleSlug = (typeof modules)[number]['slug'];
 export const moduleReferences = modules.map((module: ModuleExample & { slug: ModuleSlug }) => ({
   ...module,
   variations: moduleVariations[module.slug],
-  path: module.slug === 'games' ? '/modules/games' : `/${module.slug}`,
+  path: `/modules/${module.slug}`,
   importPath: `nayan-ui/${module.entry.slice(2)}`
 }));

@@ -102,7 +102,7 @@ export const ClipView = memo(
         className={cn(
           "group absolute top-1 select-none overflow-hidden rounded-md border text-left transition-shadow",
           locked ? "cursor-not-allowed" : "cursor-grab active:cursor-grabbing",
-          selected ? "z-20 border-accent ring-2 ring-accent/70 elevate" : "z-10 hover:elevate",
+          selected ? "z-20 border-accent ring-2 ring-accent/70 elevate" : "z-10 hover:[box-shadow:var(--elevation)]",
         )}
       >
         <NView tag="div" style={{ height: rowHeight - 8 }} className="relative w-full">

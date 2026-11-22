@@ -11,7 +11,7 @@ Game engine and components for React and React Native, with playable games and d
 ## Highlights
 
 - [Nayan Components](https://www.nayanui.com/components) and [Nayan Modules](https://www.nayanui.com/modules) provide cross-platform UI and services.
-- [Nayan Game Engine](https://www.nayanui.com/game-engine) provides 3D rendering and physics. Try it in [Nayan Playground](https://www.nayanui.com/game-engine/playground).
+- [Nayan Game Engine](https://www.nayanui.com/game-engine) provides 3D rendering and physics. Try it in [Nayan Playground](https://www.nayanui.com/playground).
 - [Nayan Games](https://www.nayanui.com/games) offers playable games from `@nayan-ui/games`.
 - [Nayan Video Editor](https://www.nayanui.com/video-editor) edits and exports video in the browser.
 

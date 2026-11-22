@@ -89,7 +89,7 @@ export const componentReferences = [...components.map((item) => [...item, 'compo
     description,
     module,
     importPath: `nayan-ui/${module}`,
-    path: `/${slug}`
+    path: `/components/${slug}`
   }))
   .sort((first, second) => first.title.localeCompare(second.title));
 

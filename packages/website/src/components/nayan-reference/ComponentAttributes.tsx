@@ -22,7 +22,7 @@ function AttributeTable({ rows, label, showPresence = false }: { rows: number[];
           <NView tag="tr">
             <NView tag="th" scope="col" className="p-3">Name</NView>
             <NView tag="th" scope="col" className="p-3">Type</NView>
-            {showPresence && <NView tag="th" scope="col" className="p-3">Required</NView>}
+            {showPresence && <NView tag="th" scope="col" className="p-3">Default</NView>}
             <NView tag="th" scope="col" className="p-3">Details</NView>
           </NView>
         </NView>
@@ -33,10 +33,13 @@ function AttributeTable({ rows, label, showPresence = false }: { rows: number[];
               <NView tag="tr" key={id} className="border-t border-default align-top">
                 <NView tag="th" scope="row" className="p-3 font-mono text-xs font-semibold">{name}</NView>
                 <NView tag="td" className="min-w-32 break-words p-3 font-mono text-xs [overflow-wrap:anywhere]">{type}</NView>
-                {showPresence && <NView tag="td" className="p-3 text-xs">{required ? 'Yes' : 'No'}</NView>}
+                {showPresence && (
+                  <NView tag="td" className="p-3 text-xs">
+                    {defaultValue ? <NText tag="code">{defaultValue}</NText> : required ? 'Required' : 'Optional'}
+                  </NView>
+                )}
                 <NView tag="td" className="min-w-32 p-3 text-sm text-muted">
                   {details}
-                  {defaultValue && <NText tag="span" className="block">Defaults to <NText tag="code">{defaultValue}</NText>.</NText>}
                 </NView>
               </NView>
             );

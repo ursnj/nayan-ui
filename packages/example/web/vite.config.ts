@@ -1,4 +1,3 @@
-import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, type Plugin } from 'vite';
 
@@ -22,7 +21,7 @@ function metroRequires(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [metroRequires(), tailwindcss()],
+  plugins: [metroRequires()],
   resolve: {
     extensions: ['.web.tsx', '.web.ts', '.tsx', '.ts', '.mjs', '.js', '.json'],
     dedupe: ['react', 'react-dom', 'nayan-ui']

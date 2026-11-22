@@ -11,6 +11,7 @@ import { getSidebarItems, type SidebarItem } from "@/services/Utils";
 
 interface Props {
   title?: string;
+  componentDocumentation?: boolean;
   reference?: { title: string; href: string; items: SidebarItem[] };
   children: ReactNode;
 }
@@ -173,7 +174,7 @@ const Sidebar = (props: Props) => {
   if (props.title) breadcrumb.push({ label: props.title });
 
   return (
-    <NView tag="div" className="mx-auto w-full max-w-[82rem] p-3">
+    <NView tag="div" className={`mx-auto w-full max-w-[82rem] p-3${props.componentDocumentation ? " component-documentation" : ""}`}>
       <NView tag="div" className="grid grid-cols-1 gap-3 md:grid-cols-[13rem_minmax(0,1fr)] lg:grid-cols-[15rem_minmax(0,1fr)]">
         {/* Desktop sidebar */}
         <NView tag="nav" aria-label="Documentation" className="hidden md:block">

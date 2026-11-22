@@ -15,28 +15,24 @@ const NAV = [
   { label: "Modules", href: "/modules" },
   { label: "Game Engine", href: "/game-engine" },
   { label: "Games", href: "/games" },
-  { label: "Playground", href: "/game-engine/playground" },
+  { label: "Playground", href: "/playground" },
   { label: "Video Editor", href: "/video-editor" },
 ];
 
 const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) => {
-  const activeHref = NAV.filter(({ href }) => pathname === href || pathname.startsWith(`${href}/`))
-    .sort((first, second) => second.href.length - first.href.length)[0]?.href;
-
+  const sectionPath = /^\/react(?:-native)?(?:\/|$)/.test(pathname) ? "/components" : pathname;
   return (
     <NView tag="ul" className="site-nav-list">
       {NAV.map(({ label, href }) => {
-        const active = href === activeHref;
+        const active = sectionPath === href || sectionPath.startsWith(`${href}/`);
         return (
           <NView tag="li" key={href} className="site-nav-item">
             <Link
               href={href}
               onClick={onNavigate}
-              aria-current={active ? "page" : undefined}
+              aria-current={pathname === href ? "page" : active ? "location" : undefined}
               className={`site-nav-link block text-sm font-medium whitespace-nowrap transition-colors ${
-                active
-                  ? "bg-accent/10 text-accent"
-                  : "text-muted hover:bg-default/60 hover:text-foreground"
+                active ? "bg-accent/10 text-accent" : "text-muted hover:bg-default/60 hover:text-foreground"
               }`}
             >
               {label}
@@ -75,7 +71,7 @@ const Header = () => {
       historyNavigation.current = false;
       return;
     }
-    window.scrollTo(0, 0);
+    if (!window.location.hash) window.scrollTo(0, 0);
   }, [pathname]);
 
   return (
@@ -114,7 +110,7 @@ const Header = () => {
 
         <NView tag="div" className="site-header-row flex items-center justify-between gap-3 lg:gap-6">
           <Link href="/" aria-label="Nayan UI home" className="flex shrink-0 items-center gap-2.5">
-            <NImage src="/logo.webp" priority alt="" width={32} height={32} className="site-logo h-8 w-8" />
+            <NImage src="/logo.webp" priority alt="" width={32} height={32} className="h-8 w-8 object-contain" />
             <NText tag="span" className="whitespace-nowrap text-lg font-bold tracking-[-0.045em] text-foreground">
               Nayan UI
             </NText>

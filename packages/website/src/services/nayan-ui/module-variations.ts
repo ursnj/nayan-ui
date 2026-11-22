@@ -670,10 +670,10 @@ export function inspectClasses(classes: readonly string[]) {
       code: `import { developStyles } from 'nayan-ui/styles';
 
 await developStyles({
-  source: 'src/theme.css',
+  recipeFiles: ['src/theme.ts'],
   content: ['src'],
   output: 'public/nayan-ui/styles.json',
-  cssOutput: 'src/engine.css',
+  lowerCss: false,
   publicPath: '/nayan-ui/styles.json',
   manifest: 'src/engine-styles.ts'
 }, ['bun', 'run', 'next', 'dev']);`

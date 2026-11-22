@@ -4,10 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1",
+    "dev": "bun scripts/styles.ts --dev",
     "build": "bun run typecheck && vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "typecheck": "bun check"
+    "typecheck": "bun run styles && bun check",
+    "styles": "bun scripts/styles.ts"
   },
   "dependencies": {
     "@nayan-example/shared": "workspace:*",
@@ -17,9 +18,7 @@
     "react-router": "^7.18.5"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.1.11",
     "@types/react-dom": "^19.2.0",
-    "tailwindcss": "^4.1.11",
     "vite": "^8.3.4"
   }
 }

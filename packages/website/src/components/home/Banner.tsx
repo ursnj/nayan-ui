@@ -31,7 +31,7 @@ export default function Banner() {
               <Link href="/game-engine/installation" className={BUTTON_PRIMARY}>
                 Start building <ArrowRight aria-hidden size={17} />
               </Link>
-              <Link href="/game-engine/playground" className={BUTTON_SECONDARY}>
+              <Link href="/playground" className={BUTTON_SECONDARY}>
                 <Play aria-hidden size={16} /> Try the playground
               </Link>
             </NView>

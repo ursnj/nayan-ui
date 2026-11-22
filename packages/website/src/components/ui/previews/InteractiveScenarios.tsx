@@ -7,7 +7,7 @@ function Counter() {
   const [count, setCount] = useState(0);
   return (
     <>
-      <E.NButton onPress={() => setCount(count + 1)}>Add one</E.NButton>
+      <E.NButton leftIcon={<E.NIcon name="plus" size={16} />} onPress={() => setCount(count + 1)}>Add one</E.NButton>
       <E.NText>Count: {count}</E.NText>
     </>
   );
@@ -248,8 +248,8 @@ export const interactiveScenarios = {
   ),
   button: scenario(
     'Click counter',
-    'NButton, NText',
-    `<NButton onPress={() => setCount(count + 1)}>Add one</NButton>
+    'NButton, NIcon, NText',
+    `<NButton leftIcon={<NIcon name="plus" size={16} />} onPress={() => setCount(count + 1)}>Add one</NButton>
           <NText>Count: {count}</NText>`,
     <Counter />,
     'const [count, setCount] = useState(0);'

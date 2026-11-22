@@ -269,7 +269,7 @@ function Presentation({ kind }: { kind: DialogName }) {
   );
 }
 
-export function EngineComponentExample({ slug, path = `/${slug}` }: { slug: string; path?: string }) {
+export function EngineComponentExample({ slug, path }: { slug: string; path: string }) {
   const preview = componentPreview(slug);
   if (!preview) return null;
 
@@ -277,7 +277,7 @@ export function EngineComponentExample({ slug, path = `/${slug}` }: { slug: stri
   const additional = additionalExample(slug);
   return (
     <SubHeader title="Live examples" id="live-example">
-      <LiveExample key={path} codeAnchor="usage" previewId={slug} examples={additional ? [basic, additional] : [basic]} />
+      <LiveExample key={path} codeAnchor="usage" previewId={slug} previewPath={path} examples={additional ? [basic, additional] : [basic]} />
     </SubHeader>
   );
 }

@@ -189,7 +189,7 @@ export const TextPanel = () => {
             key={preset.name}
             type="button"
             onClick={() => addTextClip(preset.preset)}
-            className="group flex aspect-video flex-col items-center justify-center gap-1 rounded-lg border border-border bg-surface-secondary transition-all hover:border-accent hover:elevate"
+            className="group flex aspect-video flex-col items-center justify-center gap-1 rounded-lg border border-border bg-surface-secondary transition-all hover:border-accent hover:[box-shadow:var(--elevation)]"
           >
             <NText tag="span"
               className="text-foreground transition-transform group-hover:scale-110"
@@ -256,7 +256,7 @@ export const TransitionsPanel = () => {
               onClick={() => apply(kind)}
               aria-pressed={active}
               className={cn(
-                "overflow-hidden rounded-lg border transition-all hover:elevate",
+                "overflow-hidden rounded-lg border transition-all hover:[box-shadow:var(--elevation)]",
                 active ? "border-accent ring-1 ring-accent" : "border-border hover:border-accent",
               )}
             >
@@ -326,7 +326,7 @@ export const EffectsPanel = () => {
                 })
               }
               title={preset.name}
-              className="group overflow-hidden rounded-lg border border-border transition-all hover:border-accent hover:elevate"
+              className="group overflow-hidden rounded-lg border border-border transition-all hover:border-accent hover:[box-shadow:var(--elevation)]"
             >
               <NText tag="span"
                 className="block h-12 w-full"

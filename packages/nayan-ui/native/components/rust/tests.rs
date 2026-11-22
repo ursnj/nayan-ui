@@ -118,6 +118,31 @@ fn badge_text_is_centered_in_intrinsic_and_fixed_boxes() {
 }
 
 #[test]
+fn badge_and_chip_variants_use_theme_colors_and_sizes() {
+    let palette = theme::Palette::new(false);
+    for kind in ["NBadge", "NChip"] {
+        let large = style::Style::resolve(
+            kind,
+            &json!({"color":"accent","variant":"primary","size":"lg"}),
+            &palette,
+            style::Conditions::default(),
+            Vec2::new(400., 300.),
+        );
+        let soft = style::Style::resolve(
+            kind,
+            &json!({"color":"accent","variant":"soft","size":"sm"}),
+            &palette,
+            style::Conditions::default(),
+            Vec2::new(400., 300.),
+        );
+        assert_eq!(large.background, Some(palette.get("accent")));
+        assert_eq!(large.min_height, Some(32.));
+        assert_eq!(soft.background, Some(palette.get("accent").gamma_multiply(0.15)));
+        assert_eq!(soft.min_height, Some(20.));
+    }
+}
+
+#[test]
 fn single_line_values_and_placeholders_are_centered_inside_the_field() {
     for native in [false, true] {
         for height in [48., 72.] {

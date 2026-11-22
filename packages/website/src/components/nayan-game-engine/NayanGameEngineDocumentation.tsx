@@ -12,7 +12,7 @@ import type { EngineGuide } from "@/services/nayan-ui/types";
 const referenceLinks = [
   { href: "/components", label: "Components", tone: "lime", icon: Blocks },
   { href: "/modules", label: "Modules", tone: "peach", icon: Boxes },
-  { href: "/game-engine/playground", label: "Playground", tone: "violet", icon: Code2 },
+  { href: "/playground", label: "Playground", tone: "violet", icon: Code2 },
 ];
 
 const platformLabels = {

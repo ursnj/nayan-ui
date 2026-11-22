@@ -24,7 +24,7 @@ function diagnosticMessages(diagnostics: readonly ts.Diagnostic[]) {
 }
 
 async function createLanguageService() {
-  const response = await fetch('/game-engine/playground/types');
+  const response = await fetch('/playground/types');
   if (!response.ok) throw new Error('Could not load TypeScript declarations.');
   const { libs } = (await response.json()) as { libs: { path: string; content: string }[] };
   const files = new Map(libs.map(({ path, content }) => [path.replace(/^file:\/\//, ''), content]));

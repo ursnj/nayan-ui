@@ -1,68 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 import { NText, NView, NPage, NTheme, type NThemeProps } from 'nayan-ui/components';
-import { stylesheet } from '@/app/nayan-ui-styles';
+import { documentationThemes } from '@/design/documentationStyles';
 import type { ComponentPreview } from './types';
 
-type Themes = NonNullable<NThemeProps['themes']>;
-type Color = keyof NonNullable<Themes['light']>;
-
-const themeTokens: readonly Color[] = [
-  'background',
-  'foreground',
-  'surface',
-  'surface-foreground',
-  'surface-secondary',
-  'surface-tertiary',
-  'overlay',
-  'overlay-foreground',
-  'muted',
-  'default',
-  'default-foreground',
-  'accent',
-  'accent-foreground',
-  'field-background',
-  'field-foreground',
-  'field-placeholder',
-  'success',
-  'success-foreground',
-  'warning',
-  'warning-foreground',
-  'danger',
-  'danger-foreground',
-  'border',
-  'separator',
-  'focus',
-  'link'
-];
-
-let siteThemes: Themes | undefined;
-
-function getSiteThemes(): Themes {
-  if (siteThemes) return siteThemes;
-  // Resolve the same CSS custom properties that paint the home workbench to browser RGB values.
-  const probe = document.createElement('span');
-  probe.hidden = true;
-  document.body.append(probe);
-  function colors(mode: 'light' | 'dark') {
-    probe.dataset.theme = mode;
-    const entries = themeTokens.map((token) => {
-      probe.style.color = `var(--${token})`;
-      return [token, getComputedStyle(probe).color] as const;
-    });
-    return Object.fromEntries(entries) as NonNullable<Themes['light']>;
-  }
-  try {
-    siteThemes = { light: colors('light'), dark: colors('dark') };
-    return siteThemes;
-  } finally {
-    probe.remove();
-  }
-}
-
 const controls = {
-  NButton: { className: 'rounded-lg px-3 py-2 text-sm font-semibold hover:opacity-90' },
+  NButton: { className: 'rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90' },
   NCloseButton: { className: 'rounded-lg bg-transparent text-sm text-muted hover:bg-default' },
   NLink: { className: 'font-medium text-accent' },
   NInput: { className: 'rounded-lg text-sm' },
@@ -87,7 +31,6 @@ export default function PreviewSurface({
   fullWidth?: boolean;
   keepViewport?: boolean;
 }) {
-  const [themes, setThemes] = useState(siteThemes);
   const [contentHeight, setContentHeight] = useState<number>();
   const [error, setError] = useState(false);
   const fitPage = !preview.host && !keepViewport;
@@ -98,18 +41,8 @@ export default function PreviewSurface({
     setContentHeight(Math.ceil(height));
   }, []);
 
-  useEffect(() => {
-    setThemes(getSiteThemes());
-  }, []);
-
   let content: ReactNode;
   if (preview.host) content = preview.render;
-  else if (!themes)
-    content = (
-      <NText tag="p" className="component-host-demo text-sm text-muted" role="status">
-        Preparing preview…
-      </NText>
-    );
   else if (error)
     content = (
       <NText tag="p" className="component-host-demo text-sm text-muted" role="status">
@@ -120,7 +53,7 @@ export default function PreviewSurface({
     content = (
       // The inline page's padding is independent of the browser's safe area.
       <NPage
-        className={preview.styled ? 'engine-preview-content flex flex-col gap-4' : 'gap-4 p-5'}
+        className="gap-4 p-5"
         safeArea={false}
         onContentSizeChange={fitPage ? onContentSizeChange : undefined}
         onError={() => setError(true)}
@@ -133,10 +66,9 @@ export default function PreviewSurface({
     <NView
       tag="div"
       className="component-preview-surface relative flex min-w-0 flex-col"
-      inert={preview.host && !themes}
-      style={{ width: fullWidth ? '100%' : 'min(100%, 36rem)', height }}
+      style={{ width: fullWidth ? '100%' : 'min(100%, 52rem)', height }}
     >
-      <NTheme themes={themes} components={controls} radius={10} stylesheet={preview.styled ? stylesheet : undefined}>
+      <NTheme themes={documentationThemes} components={controls} radius={8}>
         {content}
       </NTheme>
     </NView>

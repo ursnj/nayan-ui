@@ -8,7 +8,7 @@ import { ArrowUpRight, Boxes, Code2 } from '@/design/Icons';
 import { CARD_INTERACTIVE, H3 } from '@/design/system';
 
 interface Props {
-  kind: 'components' | 'modules';
+  kind: 'components' | 'hooks' | 'modules';
   items: { path: string; title: string; description: string; api: string }[];
 }
 
@@ -16,7 +16,7 @@ export default function ReferenceDirectory({ kind, items }: Props) {
   const [query, setQuery] = useState('');
   const term = query.trim().toLowerCase();
   const matches = items.filter(({ title, description, api }) => `${title} ${description} ${api}`.toLowerCase().includes(term));
-  const Icon = kind === 'components' ? Code2 : Boxes;
+  const Icon = kind === 'modules' ? Boxes : Code2;
 
   return (
     <>
@@ -32,7 +32,7 @@ export default function ReferenceDirectory({ kind, items }: Props) {
             <NView tag="li" key={path}>
               <Link
                 href={path}
-                data-tone={kind === 'components' ? 'violet' : 'peach'}
+                data-tone={kind === 'modules' ? 'peach' : 'violet'}
                 className={`${CARD_INTERACTIVE} catalog-entry flex h-full flex-col p-3`}
               >
                 <NText tag="span" className="catalog-entry-top">

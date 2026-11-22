@@ -15,13 +15,13 @@ const Components = () => {
   const items = getSidebarItems(pathname).filter((item: any) => item.isComponent);
 
   return (
-    <Sidebar title={component?.title || "Components"}>
+    <Sidebar title={component?.title || "Components"} componentDocumentation>
       <DocsIntro
         lead={component?.description}
         facts={[
           {
             value: String(items.length),
-            label: "Component examples using the engine",
+            label: "Components with live examples and attribute tables",
           },
         ]}
       />

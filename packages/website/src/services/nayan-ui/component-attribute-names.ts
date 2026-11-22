@@ -10,9 +10,12 @@ export const componentAttributeNames: Partial<Record<ComponentSymbol, readonly s
     'name', 'description', 'icon', 'showArrow', 'onPress', 'disabled',
     'className', 'titleClassName'
   ],
-  NAlert: ['type', 'message', 'title', 'className', 'role', 'children', 'description'],
+  NAlert: [
+    'type', 'message', 'title', 'icon', 'actions', 'className', 'titleClassName',
+    'messageClassName', 'closeClassName', 'onClose', 'role', 'children', 'description'
+  ],
   NBadge: ['children', 'color', 'variant', 'size', 'className', 'role'],
-  NButton: ['disabled', 'className', 'isOutline', 'isLoading', 'loadingText', 'children', 'onPress'],
+  NButton: ['disabled', 'className', 'isOutline', 'isLoading', 'loadingText', 'leftIcon', 'rightIcon', 'children', 'onPress'],
   NButtonGroup: [
     'className', 'items', 'selected', 'disabled', 'onChange', 'ariaLabel',
     'value', 'defaultValue', 'size'
@@ -153,4 +156,47 @@ export const componentAttributeNames: Partial<Record<ComponentSymbol, readonly s
     'source', 'controls', 'autoPlay', 'loop', 'muted', 'volume',
     'contentFit', 'style', 'ref', 'onStatusChange', 'onProgress', 'onError'
   ]
+};
+
+export const componentAttributeNotes: Partial<Record<ComponentSymbol, Record<string, { details?: string; defaultValue?: string }>>> = {
+  NButton: {
+    disabled: { details: 'Prevents interaction.', defaultValue: 'false' },
+    isOutline: { details: 'Uses a transparent background with an outline.', defaultValue: 'false' },
+    isLoading: { details: 'Shows the loading label and disables the button.', defaultValue: 'false' },
+    loadingText: { details: 'Label shown while the button is loading.', defaultValue: 'Loading…' },
+    children: { details: 'The button label or content.' },
+    onPress: { details: 'Called when the user activates the button.' }
+  },
+  NAlert: {
+    type: { details: 'Sets the indicator and title color. Use default, info, success, warning, or error.', defaultValue: 'default' },
+    message: { details: 'Detail text below the title.' },
+    title: { details: 'A short heading for the alert.' },
+    actions: { details: 'Additional controls beside the message.' },
+    titleClassName: { details: 'Classes applied to the title.' },
+    messageClassName: { details: 'Classes applied to the message.' },
+    closeClassName: { details: 'Classes applied to the close button.' },
+    onClose: { details: 'Adds a close button and runs when it is pressed.' }
+  },
+  NBadge: {
+    color: { details: 'Use default, accent, success, warning, or danger.', defaultValue: 'default' },
+    variant: { details: 'Use primary, secondary, or soft.', defaultValue: 'soft' },
+    size: { details: 'Use sm, md, or lg.', defaultValue: 'md' }
+  },
+  NChip: {
+    color: { details: 'Use default, accent, success, warning, or danger.', defaultValue: 'default' },
+    variant: { details: 'Use primary, secondary, tertiary, or soft.', defaultValue: 'secondary' },
+    size: { details: 'Use sm, md, or lg.', defaultValue: 'md' }
+  },
+  NInput: {
+    label: { details: 'Visible label above the input.' },
+    containerClassName: { details: 'Classes for the field container.' },
+    helperText: { details: 'A hint shown below the field.' },
+    error: { details: 'An error message shown below the field.' }
+  },
+  NProgress: {
+    value: { details: 'Progress from 0 to 100.', defaultValue: '0' },
+    showLabel: { details: 'Displays the label and percentage above the track.', defaultValue: 'false' },
+    color: { details: 'The fill color. Accepts a theme token or a CSS color.', defaultValue: 'accent' },
+    size: { details: 'Use sm, md, or lg for the height of the track.', defaultValue: 'md' }
+  }
 };

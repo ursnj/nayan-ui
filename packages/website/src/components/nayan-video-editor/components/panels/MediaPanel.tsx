@@ -193,7 +193,7 @@ const AssetCard = ({
         }}
         title={asset.name}
         data-clarity-mask="true"
-        className="group relative cursor-grab overflow-hidden rounded-lg border border-border bg-surface-secondary transition-all hover:border-accent hover:elevate active:cursor-grabbing"
+        className="group relative cursor-grab overflow-hidden rounded-lg border border-border bg-surface-secondary transition-all hover:border-accent hover:[box-shadow:var(--elevation)] active:cursor-grabbing"
       >
         <NView tag="div" className="checkerboard relative aspect-video w-full overflow-hidden bg-surface-tertiary">
           {asset.thumbnail ? (

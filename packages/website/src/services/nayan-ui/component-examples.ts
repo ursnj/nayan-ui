@@ -9,7 +9,7 @@ import { ${names} } from 'nayan-ui/components';
 ${state || fitContent ? "import { useState } from 'react';\n" : ''}
 export default function Example() {
 ${state ? `  ${state}\n` : ''}${fitContent ? `  const [previewHeight, setPreviewHeight] = useState(${height});\n` : ''}  return (
-    <NTheme defaultTheme="system">
+    <NTheme>
       <NView style={{ height: ${fitContent ? 'previewHeight' : height}, display: 'flex', flexDirection: 'column' }}>
         <NPage className="${pageClassName}" safeArea={false}${fitContent ? ' onContentSizeChange={(_, height) => setPreviewHeight(Math.ceil(height))}' : ''}>
           ${body}

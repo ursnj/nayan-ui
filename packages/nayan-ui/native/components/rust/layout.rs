@@ -82,7 +82,7 @@ impl ComponentDocument {
             return width + s.margin.left + s.margin.right;
         }
         let content = match node.kind.as_str() {
-            "NText" | "NLink" | "NBadge" => self.text_size(node, &s, 1_000_000.).x,
+            "NText" | "NLink" | "NBadge" | "NChip" => self.text_size(node, &s, 1_000_000.).x,
             "NLoading" => loading::measure(&self.context, node, &s, available, self.font_scale).0.x,
             "NIcon" => numeric(&node.props, &["size"], 24.) as f32,
             "NImage" => s.height.unwrap_or(64.),
@@ -100,7 +100,7 @@ impl ComponentDocument {
     }
 
     pub(super) fn measured_text_height(&self, node: &Node, s: &style::Style, width: f32) -> f32 {
-        let badge = node.kind == "NBadge";
+        let badge = matches!(node.kind.as_str(), "NBadge" | "NChip");
         let border = if badge { s.border_width * 2. } else { 0. };
         let text_height = self.text_size(node, s, (width - s.padding.left - s.padding.right - border).max(1.)).y;
         let height = text_height + s.padding.top + s.padding.bottom + border;

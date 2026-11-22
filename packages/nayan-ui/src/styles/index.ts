@@ -6,21 +6,38 @@ import { existsSync, watch } from 'node:fs';
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import postcss from 'postcss';
 import selectorParser from 'postcss-selector-parser';
 import { compile_utilities, initSync } from '../../native/core/build/web/engine_core.js';
 
 export interface EngineStylesOptions {
   root?: string;
-  source: string;
+  source?: string;
+  /** TypeScript or JavaScript modules exporting engine style recipes. */
+  recipeFiles?: readonly string[];
   content: readonly string[];
-  output: string;
-  cssOutput: string;
+  output?: string;
+  cssOutput?: string;
   /** Set to false when the source already uses flat CSS rules. */
   lowerCss?: boolean;
   font?: string;
   manifest?: string;
   publicPath?: string;
+}
+
+export interface EngineStyleRecipe {
+  selector: string;
+  utilities: string;
+  layer?: 'base' | 'components' | 'utilities';
+  media?: string;
+  browserOnly?: boolean;
+}
+
+export interface EngineStyleRecipes {
+  rules: readonly EngineStyleRecipe[];
+  browserOnly?: boolean;
+  keyframes?: Readonly<Record<string, Readonly<Record<string, string>>>>;
 }
 const require = createRequire(import.meta.url);
 const engineRoot = path.dirname(require.resolve('nayan-ui/package.json'));
@@ -68,25 +85,81 @@ async function writeChanged(file: string, contents: string) {
   await mkdir(path.dirname(file), { recursive: true });
   await writeFile(file, contents);
 }
+
+async function loadRecipes(root: string, files: readonly string[]) {
+  const sources = await Promise.all(
+    files.map(async (file) => {
+      const url = pathToFileURL(path.resolve(root, file));
+      url.searchParams.set(
+        'v',
+        createHash('sha256')
+          .update(await readFile(url))
+          .digest('hex')
+      );
+      const { default: source } = (await import(url.href)) as { default: EngineStyleRecipes };
+      return source;
+    })
+  );
+  const rules = sources.flatMap((source) => source.rules.map((rule) => ({ ...rule, browserOnly: rule.browserOnly ?? source.browserOnly })));
+  const keyframes = Object.assign({}, ...sources.map((source) => source.keyframes)) as NonNullable<EngineStyleRecipes['keyframes']>;
+  const tokens = (utilities: string) => utilities.trim().split(/\s+/).filter(Boolean);
+  const classes = rules.flatMap(({ utilities }) => tokens(utilities));
+  for (const frames of Object.values(keyframes)) {
+    for (const utilities of Object.values(frames)) classes.push(...tokens(utilities));
+  }
+  const compiled = compileUtilities(classes);
+  const bodies = new Map<string, string>();
+  postcss.parse(compiled.css).walkRules((rule) => {
+    if (rule.parent?.type !== 'root') return;
+    const first = selectorParser().astSync(rule.selector).first;
+    if (first.nodes.length === 1 && first.first.type === 'class') bodies.set(first.first.value, rule.nodes.join(';') + ';');
+  });
+  const body = (utilities: string) =>
+    tokens(utilities)
+      .map((utility) => {
+        const result = bodies.get(utility);
+        if (!result) throw new Error(`Unsupported utility "${utility}" in an engine style recipe.`);
+        return result;
+      })
+      .join('');
+  const browser = rules.map(({ selector, utilities, layer, media }) => {
+    let rule = `${selector}{${body(utilities)}}`;
+    if (media) rule = `@media ${media}{${rule}}`;
+    if (layer) rule = `@layer ${layer}{${rule}}`;
+    return rule;
+  });
+  const engine = browser.filter((_, index) => !rules[index]?.browserOnly);
+  const animations = Object.entries(keyframes).map(
+    ([name, frames]) =>
+      `@keyframes ${name}{${Object.entries(frames)
+        .map(([step, utilities]) => `${step}{${body(utilities)}}`)
+        .join('')}}`
+  );
+  return { browser: [...browser, ...animations].join('\n'), engine: engine.join('\n') };
+}
+
 export async function buildStyles(options: EngineStylesOptions) {
   const root = path.resolve(options.root ?? process.cwd());
-  const input = path.resolve(root, options.source);
+  const input = options.source && path.resolve(root, options.source);
   const files = (await Promise.all([...options.content.map((p) => path.resolve(root, p)), engineComponents].map(sourceFiles))).flat();
+  const excluded = new Set([...(options.recipeFiles ?? []), ...(options.manifest ? [options.manifest] : [])].map((file) => path.resolve(root, file)));
   const classes = new Set<string>();
   for (const file of files) {
+    if (excluded.has(file)) continue;
     const source = await readFile(file, 'utf8');
-    for (const match of source.matchAll(/[^\s"'`<>={}$;]+/g)) {
+    for (const match of source.matchAll(/(?:[^\s"'`<>={}$;\[\]]|\[[^\s"'`{}$;]*\])+/g)) {
       const word = match[0].replace(/[,;]+$/, '');
-      if (word.length <= 2048 && /^(?:!?-?[a-z][a-z0-9-]*|\[)/.test(word) && !word.includes('\\') && !word.includes('://')) classes.add(word);
+      if (word.length <= 2048 && /^(?:!?-?[a-z][a-z0-9-]*|\[|@)/.test(word) && !word.includes('\\') && !word.includes('://')) classes.add(word);
     }
   }
   const utilities = compileUtilities([...classes]);
-  const source = await readFile(input, 'utf8');
+  const source = input ? await readFile(input, 'utf8') : '';
+  const recipes = options.recipeFiles?.length ? await loadRecipes(root, options.recipeFiles) : { browser: '', engine: '' };
   let css = `${enginePreflight}\n${source}\n@layer utilities{${utilities.css}}`;
   if (options.lowerCss !== false) {
     const { Features, transform } = createRequire(path.join(root, 'package.json'))('lightningcss') as typeof import('lightningcss');
     css = transform({
-      filename: input,
+      filename: input || 'engine-styles.css',
       code: Buffer.from(css),
       targets: { chrome: 100 << 16, safari: 15 << 16 },
       include: Features.Nesting,
@@ -159,7 +232,7 @@ export async function buildStyles(options: EngineStylesOptions) {
     }).processSync(value);
     return result;
   }
-  postcss.parse(css).walkRules((rule) => {
+  postcss.parse(`${css}\n${recipes.engine}`).walkRules((rule) => {
     if (options.lowerCss === false && rule.some((node) => node.type === 'rule' || node.type === 'atrule')) {
       throw new Error(`lowerCss: false requires flat CSS rules. Found nesting in ${rule.selector}.`);
     }
@@ -171,7 +244,7 @@ export async function buildStyles(options: EngineStylesOptions) {
       if (parent.type === 'atrule') {
         if (parent.name === 'media') media.push(parent.params);
         if (parent.name === 'layer') layer = ['theme', 'base', 'components', 'utilities'].indexOf(parent.params);
-        if (['keyframes', '-webkit-keyframes', 'property'].includes(parent.name)) skip = true;
+        if (['keyframes', '-webkit-keyframes', 'property', 'container'].includes(parent.name)) skip = true;
         if (parent.name === 'supports' && !parent.params.includes('color-mix') && !parent.params.includes('contain-intrinsic-size')) skip = true;
       }
       parent = parent.parent;
@@ -191,13 +264,22 @@ export async function buildStyles(options: EngineStylesOptions) {
 
   const stylesheet = { version: 1, rules, ...(options.font ? { font: (await readFile(path.resolve(root, options.font))).toString('base64') } : {}) };
   const json = JSON.stringify(stylesheet);
-  await writeChanged(path.resolve(root, options.output), json);
-  await writeChanged(path.resolve(root, options.cssOutput), css);
+  if (options.output) await writeChanged(path.resolve(root, options.output), json);
+  const browserCss = `${css}\n${recipes.browser}`;
+  if (options.cssOutput) await writeChanged(path.resolve(root, options.cssOutput), browserCss);
   if (options.manifest) {
     const version = createHash('sha256').update(json).digest('hex').slice(0, 16);
     await writeChanged(
       path.resolve(root, options.manifest),
-      `// Generated by nayan-ui/styles.\nexport const stylesheet = ${JSON.stringify(`${options.publicPath ?? '/engine/site-styles.json'}?v=${version}`)};\n`
+      [
+        '// Generated by nayan-ui/styles.',
+        options.output && `export const stylesheet = ${JSON.stringify(`${options.publicPath ?? '/engine/site-styles.json'}?v=${version}`)};`,
+        !options.cssOutput && `export const browserStyles = ${JSON.stringify(browserCss)};`,
+        !options.cssOutput && `export const browserStylesVersion = "${createHash('sha256').update(browserCss).digest('hex').slice(0, 16)}";`,
+        ''
+      ]
+        .filter((line) => line !== false && line !== undefined)
+        .join('\n')
     );
   }
   return { rules: rules.length, utilities: utilities.supported.length };
@@ -225,7 +307,7 @@ export async function developStyles(options: EngineStylesOptions, command: reado
   const directories = new Set([
     ...options.content.map((p) => path.resolve(root, p)),
     engineComponents,
-    path.dirname(path.resolve(root, options.source))
+    ...[options.source, ...(options.recipeFiles ?? [])].filter((file): file is string => !!file).map((file) => path.dirname(path.resolve(root, file)))
   ]);
   const watchers = [...directories].map((directory) =>
     watch(directory, { recursive: true }, (_event, file) => {

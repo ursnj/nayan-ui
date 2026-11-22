@@ -11,7 +11,7 @@ const GROUPS = [
       { label: 'Game Engine', href: '/game-engine' },
       { label: 'Components', href: '/components' },
       { label: 'Modules', href: '/modules' },
-      { label: 'Playground', href: '/game-engine/playground' },
+      { label: 'Playground', href: '/playground' },
       { label: 'React installation', href: '/game-engine/react' },
       { label: 'React components', href: '/react/components' },
       { label: 'React Native installation', href: '/game-engine/react-native' },
@@ -55,7 +55,7 @@ const Footer = () => {
         <NView tag="div" className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
           <NView tag="div" className="sm:col-span-2">
             <Link href="/" className="inline-flex items-center gap-2.5">
-              <NImage src="/logo.webp" alt="" width={32} height={32} className="site-logo h-8 w-8" loading="lazy" />
+              <NImage src="/logo.webp" alt="" width={32} height={32} className="h-8 w-8 object-contain" loading="lazy" />
               <NText tag="span" className="text-lg font-bold tracking-[-0.045em] text-foreground">Nayan UI</NText>
             </Link>
 

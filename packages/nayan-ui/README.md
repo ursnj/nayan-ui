@@ -1505,21 +1505,32 @@ compiler. Import it from `nayan-ui/styles` in a Node/Bun build script:
 import { buildStyles } from 'nayan-ui/styles';
 
 await buildStyles({
-  source: 'src/app/globals.css',
+  recipeFiles: ['src/theme.ts'],
   content: ['src'],
   output: 'public/engine/site-styles.json',
-  cssOutput: 'src/app/nayan-ui.css',
-  manifest: 'src/app/nayan-ui-styles.ts'
+  manifest: 'src/app/nayan-ui-styles.ts',
+  lowerCss: false
 });
 ```
 
-Import the generated CSS in the application layout and use the generated
-`stylesheet` URL for `ComponentsRoot`. The build emits matching browser CSS and Rust
-stylesheet rules from one source. Application CSS supplies theme variables and
-design rules; the engine supplies the reset and supported utility classes.
-Install `lightningcss` as a development dependency for CSS lowering, or set
-`lowerCss: false` if your source already uses flat CSS rules. The engine generates
-the utility rules without Tailwind or a Tailwind configuration.
+A recipe module groups engine utilities under reusable selectors:
+
+```ts
+import type { EngineStyleRecipes } from 'nayan-ui/styles';
+
+export default {
+  rules: [
+    { selector: ':root', utilities: '[--accent:#6f3ef4]' },
+    { selector: '.project-card', utilities: 'rounded-xl bg-surface p-4' }
+  ]
+} satisfies EngineStyleRecipes;
+```
+
+Serve the generated `browserStyles` string as a stylesheet and use
+`browserStylesVersion` in its URL for caching. Pass the generated `stylesheet`
+URL to `ComponentsRoot` for Rust layout. Use `browserOnly: true` for recipes
+that target browser behavior. Projects with a CSS input can still use
+`source` and `cssOutput`. Install `lightningcss` when CSS lowering is enabled.
 
 The Rust compiler supports responsive and interaction variants, flex, grid
 template tracks and spans, `grid-flow-*`, `auto-rows-*`, `auto-cols-*`, spacing,
@@ -1536,16 +1547,17 @@ from browser and game entry points.
 | Option       | Purpose                                                                                       |
 | ------------ | --------------------------------------------------------------------------------------------- |
 | `root`       | Project directory; defaults to the current working directory                                  |
-| `source`     | Application CSS containing theme variables and design rules                                   |
+| `source`     | Optional application CSS input                                                               |
+| `recipeFiles` | TypeScript or JavaScript modules exporting utility recipes                                   |
 | `content`    | Files/directories scanned for complete utility names; shared engine UI source is also scanned |
-| `cssOutput`  | Generated browser CSS, including the engine reset and supported utility rules                 |
+| `cssOutput`  | Optional browser stylesheet file                                                            |
 | `lowerCss`   | Lower CSS nesting and syntax for older browsers (default true). False requires flat CSS rules |
 | `output`     | Generated JSON rules read by the Rust stylesheet layout backend                               |
-| `manifest`   | Optional TypeScript file exporting the content-versioned `stylesheet` URL                     |
+| `manifest`   | TypeScript output with the JSON URL and browser styles when `cssOutput` is omitted            |
 | `publicPath` | Public URL for JSON rules; defaults to `/engine/site-styles.json`                             |
 | `font`       | Optional font file embedded in the JSON stylesheet                                            |
 
-`buildStyles()` returns `{ rules, utilities }`. Import its generated CSS once in the
+`buildStyles()` returns `{ rules, utilities }`. Load the browser stylesheet once in the
 application layout and set `NTheme stylesheet={stylesheet}` or pass it directly to
 `ComponentsRoot`. Generated files should not be edited manually. With `developStyles`, the
 build happens before the supplied development command starts, and source edits

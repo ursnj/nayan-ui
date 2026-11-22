@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 import enginePackage from 'nayan-ui/package.json';
-import { componentAttributeNames } from '../src/services/nayan-ui/component-attribute-names';
+import { componentAttributeNames, componentAttributeNotes } from '../src/services/nayan-ui/component-attribute-names';
 import { componentReferences } from '../src/services/nayan-ui/component-reference';
 
 type ReferenceModule = (typeof componentReferences)[number]['module'];
@@ -84,9 +84,9 @@ function describe(symbol: ts.Symbol, location: ts.Node): Attribute {
 const attributes: Attribute[] = [];
 const rowIds = new Map<string, number>();
 
-function rows(symbols: readonly ts.Symbol[], location: ts.Node) {
+function rows(symbols: readonly ts.Symbol[], location: ts.Node, notes?: Record<string, { details?: string; defaultValue?: string }>) {
   return symbols.map((symbol) => {
-    const row = describe(symbol, location);
+    const row = { ...describe(symbol, location), ...notes?.[symbol.name] };
     const key = JSON.stringify(row);
     const existing = rowIds.get(key);
     if (existing !== undefined) return existing;
@@ -137,7 +137,7 @@ function componentApis(entries: Map<ReferenceModule, string>, platform: Platform
       : [...props.values()].filter((prop) => hook || (isEngineMember(prop) && !shared.has(prop.declarations?.[0])))
           .sort((a, b) => a.name.localeCompare(b.name, 'en'));
     components[name] = {
-      props: rows(selected, declaration),
+      props: rows(selected, declaration, componentAttributeNotes[name]),
       methods: rows(type.getProperties().filter(isEngineMember), declaration),
       value: rows(hook ? signatures[0]?.getReturnType().getProperties() ?? [] : [], declaration)
     };

@@ -1,5 +1,6 @@
 import { NText, NView } from 'nayan-ui/components';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { DocsIntro } from '@/design/Primitives';
 import { BUTTON_SMALL } from '@/design/system';
 import Code from '@/components/helpers/Code';
@@ -10,66 +11,104 @@ import { EngineComponentExample } from '@/components/ui/ComponentExamples';
 import { componentReferences } from '@/services/nayan-ui/component-reference';
 import { moduleReferences } from '@/services/nayan-ui/module-reference';
 import { tagsForReference } from '@/services/nayan-ui/reference-tags';
+import { buildPageMetadata } from '@/services/seo';
 import ReferenceDirectory from './ReferenceDirectory';
 import ComponentAttributes from './ComponentAttributes';
 
 type Group = 'components' | 'modules';
 type ReferenceEntry = (typeof componentReferences)[number] | (typeof moduleReferences)[number];
 
+export function referenceRoute(entries: readonly ReferenceEntry[]) {
+  type Props = { params: Promise<{ entry: string }> };
+  async function getEntry({ params }: Props) {
+    const { entry } = await params;
+    return entries.find(({ slug }) => slug === entry) ?? notFound();
+  }
+
+  return {
+    generateStaticParams: () => entries.map(({ slug }) => ({ entry: slug })),
+    async generateMetadata(props: Props) {
+      const entry = await getEntry(props);
+      return buildPageMetadata({
+        title: `${entry.title} · Engine Reference`,
+        description: entry.description,
+        path: entry.path,
+        keywords: tagsForReference(entry.path).map(({ text }) => text).join(', ')
+      });
+    },
+    async Page(props: Props) {
+      return <ReferencePage entry={await getEntry(props)} />;
+    }
+  };
+}
+
 export const referenceGroups = {
   components: {
     title: 'Nayan Components',
-    navTitle: 'Components',
     description: 'Try controls, layout primitives and hooks in live previews, then copy engine code for React and React Native.',
-    importPath: 'nayan-ui/components',
-    items: componentReferences
+    importPath: 'nayan-ui/components'
   },
   modules: {
     title: 'Nayan Modules',
-    navTitle: 'Modules',
     description:
       'Import games, drawing, media, storage and platform services from their individual engine entry points. Each reference includes usage examples.',
-    importPath: 'nayan-ui/modules',
-    items: moduleReferences
+    importPath: 'nayan-ui/modules'
   }
 };
 
+const referenceSections = {
+  components: [
+    { title: 'Components', kind: 'components', items: componentReferences.filter(({ symbol }) => !symbol.startsWith('use')) },
+    { title: 'Hooks', kind: 'hooks', items: componentReferences.filter(({ symbol }) => symbol.startsWith('use')) }
+  ],
+  modules: [{ title: 'Modules', kind: 'modules', items: moduleReferences }]
+} as const;
+
 function referenceNavigation(group: Group) {
-  const { title, navTitle, items } = referenceGroups[group];
+  const { title, description } = referenceGroups[group];
+  const href = `/${group}`;
   return {
     title,
-    href: `/${group}`,
+    href,
     items: [
-      { title: referenceGroups.components.navTitle, description: referenceGroups.components.description, link: '/components' },
-      { title: referenceGroups.modules.navTitle, description: referenceGroups.modules.description, link: '/modules' },
-      { title: 'Tags', description: 'Browse components and modules by topic.', link: '/tags' },
-      { title: navTitle, description: '', link: '', isHeading: true },
-      ...items.map((item) => ({ title: item.title, description: item.description, link: item.path }))
+      { title: 'Overview', description, link: href },
+      ...(group === 'components' ? [
+        { title: 'Hooks', description: 'Browse hook references.', link: '/components#hooks' },
+        { title: 'React components', description: 'Browse the React component catalog.', link: '/react/components' },
+        { title: 'React Native components', description: 'Browse the React Native component catalog.', link: '/react-native/components' }
+      ] : []),
+      { title: 'Tags', description: 'Browse components, hooks and modules by topic.', link: '/tags' },
+      ...referenceSections[group].flatMap(({ title, items }) => [
+        { title, description: '', link: '', isHeading: true },
+        ...items.map(({ title, description, path }) => ({ title, description, link: path }))
+      ])
     ]
   };
 }
 
 export function ReferenceIndex({ group }: { group: Group }) {
-  const { title, description, items, importPath } = referenceGroups[group];
+  const { title, description, importPath } = referenceGroups[group];
   const code =
     group === 'components'
       ? 'import { NAlert } from \'nayan-ui/components\';\n\nexport function SavedAlert() {\n  return <NAlert title="Saved" />;\n}'
       : "import { prepareUuid, uuid } from 'nayan-ui/modules';\n\nexport async function newId() {\n  await prepareUuid();\n  return uuid();\n}";
 
   return (
-    <Sidebar title={title} reference={referenceNavigation(group)}>
+    <Sidebar title={title} reference={referenceNavigation(group)} componentDocumentation={group === 'components'}>
       <DocsIntro lead={description} />
-      <SubHeader title={group === 'components' ? 'Components and hooks' : 'Module entry points'}>
-        <ReferenceDirectory
-          kind={group}
-          items={items.map(({ title, description, path, ...item }) => ({
-            title,
-            description,
-            path,
-            api: 'symbol' in item ? item.symbol : item.importPath
-          }))}
-        />
-      </SubHeader>
+      {referenceSections[group].map(({ title, kind, items }) => (
+        <SubHeader title={title} key={kind}>
+          <ReferenceDirectory
+            kind={kind}
+            items={items.map(({ title, description, path, ...item }) => ({
+              title,
+              description,
+              path,
+              api: 'symbol' in item ? item.symbol : item.importPath
+            }))}
+          />
+        </SubHeader>
+      ))}
       <SubHeader title="Package entry">
         <Code code={code} filename={importPath} />
       </SubHeader>
@@ -82,7 +121,7 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
   const module = 'symbol' in entry ? moduleReferences.find(({ slug }) => slug === entry.module) : undefined;
 
   return (
-    <Sidebar title={entry.title} reference={referenceNavigation(group)}>
+    <Sidebar title={entry.title} reference={referenceNavigation(group)} componentDocumentation={group === 'components'}>
       <DocsIntro lead={entry.description} />
       {'symbol' in entry ? (
         <>
@@ -90,7 +129,7 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
             Engine API <NText tag="code" className="ml-1 font-semibold text-accent">{entry.symbol}</NText>
             <NText tag="span" className="ml-2 break-all font-mono text-xs">{entry.importPath}</NText>
           </NText>
-          <EngineComponentExample slug={entry.slug} />
+          <EngineComponentExample slug={entry.slug} path={entry.path} />
           <ComponentAttributes symbol={entry.symbol} />
           {module && (
             <Link href={module.path} className="mb-3 block text-sm font-medium text-accent hover:underline">

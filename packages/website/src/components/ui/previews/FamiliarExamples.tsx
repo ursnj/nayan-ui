@@ -10,7 +10,6 @@ import {
   NChip,
   NDivider,
   NEmptyState,
-  NIcon,
   NInput,
   NProgress,
   NRequired,
@@ -18,7 +17,6 @@ import {
   NTabs,
   NTabsContent,
   NText,
-  NTheme,
   NView
 } from 'nayan-ui/components';
 import { SearchIcon } from 'nayan-ui/icons/components/search';
@@ -40,21 +38,10 @@ function Buttons() {
         <NButton className={buttonStyles} onPress={() => setPressed('Primary')}>
           Primary
         </NButton>
-        <NButton className={`${outlineButton} bg-surface-secondary`} onPress={() => setPressed('Secondary')}>
-          Secondary
-        </NButton>
         <NButton className={outlineButton} isOutline onPress={() => setPressed('Outline')}>
           Outline
         </NButton>
-        <NButton className={`${buttonStyles} engine-preview-action-danger`} onPress={() => setPressed('Danger')}>
-          Danger
-        </NButton>
-        <NButton className={`${buttonStyles} engine-preview-action-ghost`} onPress={() => setPressed('Ghost')}>
-          Ghost
-        </NButton>
-        <NButton className={buttonStyles} isLoading disabled>
-          Loading…
-        </NButton>
+        <NButton className={buttonStyles} isLoading>Save</NButton>
         <NButton className={buttonStyles} disabled>
           Disabled
         </NButton>
@@ -67,13 +54,12 @@ function Buttons() {
 }
 
 const alerts = [
-  { title: 'Default', type: 'default', tone: 'text-muted', icon: 'info', message: 'Review your notification settings.' },
-  { title: 'Info', type: 'info', tone: 'text-accent', icon: 'info', message: 'New version available!' },
-  { title: 'Success', type: 'success', tone: 'text-success', icon: 'circle-check', message: 'Your changes were saved.' },
-  { title: 'Warning', type: 'warning', tone: 'text-warning', icon: 'triangle-alert', message: 'Your session expires soon.' },
-  { title: 'Error', type: 'error', tone: 'text-danger', icon: 'circle-x', message: 'Could not save your changes.' }
+  { title: 'Alert', type: 'default', message: 'Review your notification settings.' },
+  { title: 'Information', type: 'info', message: 'New version available!' },
+  { title: 'Success', type: 'success', message: 'Your changes were saved.' },
+  { title: 'Warning', type: 'warning', message: 'Your session expires soon.' },
+  { title: 'Error', type: 'error', message: 'Could not save your changes.' }
 ];
-const dismissAlertClass = 'h-11 w-11 rounded-lg border-0 bg-transparent p-0 text-sm font-semibold text-accent hover:bg-surface-secondary';
 const restoreAlertsClass =
   'min-h-11 self-start rounded-lg border border-border bg-surface px-3 py-2 text-sm font-semibold text-foreground hover:bg-surface-secondary';
 
@@ -83,25 +69,14 @@ function Alerts() {
     <>
       {alerts
         .filter(({ type }) => !dismissed.includes(type))
-        .map(({ title, type, tone, icon, message }) => (
-          <NAlert key={type} type={type} className="flex w-full flex-row items-center gap-3 rounded-xl border border-border bg-surface px-3 py-2">
-            <NIcon name={icon} className={tone} size={21} strokeWidth={1.8} />
-            <NView className="flex min-w-0 flex-1 flex-col gap-1">
-              <NText tag="p" className="text-sm font-semibold">
-                {title}
-              </NText>
-              <NText tag="p" className="text-sm text-muted">
-                {message}
-              </NText>
-            </NView>
-            <NButton
-              className={dismissAlertClass}
-              accessibilityLabel={`Dismiss ${title.toLowerCase()} alert`}
-              onPress={() => setDismissed((previous) => [...previous, type])}
-            >
-              ×
-            </NButton>
-          </NAlert>
+        .map(({ title, type, message }) => (
+          <NAlert
+            key={type}
+            type={type}
+            title={title}
+            message={message}
+            onClose={() => setDismissed((previous) => [...previous, type])}
+          />
         ))}
       {dismissed.length > 0 && (
         <NButton className={restoreAlertsClass} onPress={() => setDismissed([])}>
@@ -118,11 +93,6 @@ const questions = [
   { title: 'Is it free?', text: 'Yes. Nayan UI is free and open source.' }
 ];
 
-const selectionThemes = {
-  light: { accent: '#eadefc' },
-  dark: { accent: '#443364' }
-};
-
 const tabs = [
   { label: 'Account', value: 'account', text: 'Account settings content.' },
   { label: 'Security', value: 'security', text: 'Security settings content.' },
@@ -132,17 +102,15 @@ const tabs = [
 function Tabs() {
   const [tab, setTab] = useState('account');
   return (
-    <NTheme themes={selectionThemes}>
-      <NTabs items={tabs} value={tab} onValueChange={setTab}>
-        {tabs.map(({ value, text }) => (
-          <NTabsContent key={value} item={value}>
-            <NView className="mt-2 w-full rounded-xl border border-border bg-surface p-3">
-              <NText className="text-sm text-muted">{text}</NText>
-            </NView>
-          </NTabsContent>
-        ))}
-      </NTabs>
-    </NTheme>
+    <NTabs items={tabs} value={tab} onValueChange={setTab}>
+      {tabs.map(({ value, text }) => (
+        <NTabsContent key={value} item={value}>
+          <NView className="mt-2 w-full rounded-xl border border-border bg-surface p-3">
+            <NText className="text-sm text-muted">{text}</NText>
+          </NView>
+        </NTabsContent>
+      ))}
+    </NTabs>
   );
 }
 
@@ -155,64 +123,63 @@ const alignments = [
 function ButtonGroup() {
   const [alignment, setAlignment] = useState('left');
   return (
-    <NTheme themes={selectionThemes}>
+    <>
       <NButtonGroup items={alignments} value={alignment} onValueChange={setAlignment} />
       <NView className="w-full rounded-lg border border-border bg-surface p-3">
         <NText className="text-sm text-muted" style={{ textAlign: alignment as 'left' | 'center' | 'right' }}>
           Text alignment
         </NText>
       </NView>
-    </NTheme>
+    </>
   );
 }
 
 const tones = [
-  { color: 'default', label: 'Default', classes: 'bg-default text-default-foreground' },
-  { color: 'accent', label: 'Accent', classes: 'bg-accent text-accent-foreground' },
-  { color: 'success', label: 'Success', classes: 'bg-success text-success-foreground' },
-  { color: 'warning', label: 'Warning', classes: 'bg-warning text-warning-foreground' },
-  { color: 'danger', label: 'Danger', classes: 'bg-danger text-danger-foreground' }
+  { color: 'default', label: 'Default' },
+  { color: 'accent', label: 'Accent' },
+  { color: 'success', label: 'Success' },
+  { color: 'warning', label: 'Warning' },
+  { color: 'danger', label: 'Danger' }
 ];
 
 function BadgeAndChip({ chip }: { chip: boolean }) {
   const Control = chip ? NChip : NBadge;
-  const shape = chip ? 'rounded-full' : 'rounded-md';
   return (
     <>
       <NText className="font-semibold">Colors</NText>
       <NView className={row}>
-        {tones.map(({ color, label, classes }) => (
-          <Control key={color} color={color} className={`${shape} ${classes} px-2 py-1`}>
+        {tones.map(({ color, label }) => (
+          <Control key={color} color={color}>
             {label}
           </Control>
         ))}
       </NView>
       <NText className="font-semibold">Variants</NText>
       <NView className={row}>
-        <Control color="accent" variant="primary" className={`${shape} bg-accent px-2 py-1 text-accent-foreground`}>
+        <Control color="accent" variant="primary">
           Primary
         </Control>
-        <Control color="accent" variant="secondary" className={`${shape} border border-accent px-2 py-1 text-accent`}>
+        <Control color="accent" variant="secondary">
           Secondary
         </Control>
         {chip && (
-          <Control color="accent" variant="tertiary" className={`${shape} px-2 py-1 text-accent`}>
+          <Control color="accent" variant="tertiary">
             Tertiary
           </Control>
         )}
-        <Control color="accent" variant="soft" className={`${shape} bg-default px-2 py-1 text-accent`}>
+        <Control color="accent" variant="soft">
           Soft
         </Control>
       </NView>
       <NText className="font-semibold">Sizes</NText>
       <NView className={row}>
-        <Control color="accent" size="sm" className={`${shape} bg-accent px-2 py-1 text-xs text-accent-foreground`}>
+        <Control color="accent" size="sm">
           Small
         </Control>
-        <Control color="accent" size="md" className={`${shape} bg-accent px-3 py-1 text-sm text-accent-foreground`}>
+        <Control color="accent" size="md">
           Medium
         </Control>
-        <Control color="accent" size="lg" className={`${shape} bg-accent px-3 py-2 text-base text-accent-foreground`}>
+        <Control color="accent" size="lg">
           Large
         </Control>
       </NView>
@@ -269,20 +236,12 @@ function badgeAndChipExample(chip: boolean): ComponentPreview {
 const examples: Readonly<Record<string, ComponentPreview>> = {
   alert: {
     height: 428,
-    styled: true,
     render: <Alerts />,
     source: componentSource(
-      'NAlert, NButton, NIcon, NText',
-      `{alerts.filter(({ type }) => !dismissed.includes(type)).map(({ title, type, tone, icon, message }) => (
-            <NAlert key={type} type={type} className="flex w-full flex-row items-center gap-3 rounded-xl border border-border bg-surface px-3 py-2">
-              <NIcon name={icon} className={tone} size={21} strokeWidth={1.8} />
-              <NView className="flex min-w-0 flex-1 flex-col gap-1">
-                <NText tag="p" className="text-sm font-semibold">{title}</NText>
-                <NText tag="p" className="text-sm text-muted">{message}</NText>
-              </NView>
-              <NButton className="${dismissAlertClass}" accessibilityLabel={\`Dismiss \${title.toLowerCase()} alert\`}
-                onPress={() => setDismissed((previous) => [...previous, type])}>×</NButton>
-            </NAlert>
+      'NAlert, NButton',
+      `{alerts.filter(({ type }) => !dismissed.includes(type)).map(({ title, type, message }) => (
+            <NAlert key={type} type={type} title={title} message={message}
+              onClose={() => setDismissed((previous) => [...previous, type])} />
           ))}
           {dismissed.length > 0 && <NButton className="${restoreAlertsClass}" onPress={() => setDismissed([])}>Restore alerts</NButton>}`,
       `const alerts = ${JSON.stringify(alerts, null, 2)};
@@ -363,7 +322,6 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
     )
   },
   'empty-state': {
-    styled: true,
     height: 200,
     render: (
       <NEmptyState className="flex w-full flex-col items-center gap-2 rounded-xl border border-border bg-surface p-5">
@@ -428,11 +386,8 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
       'NButton, NText',
       `<NView className="${row}">
             <NButton className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground" onPress={() => setPressed('Primary')}>Primary</NButton>
-            <NButton className="rounded-lg bg-default px-4 py-2 text-sm font-semibold text-default-foreground" onPress={() => setPressed('Secondary')}>Secondary</NButton>
             <NButton className="rounded-lg px-4 py-2 text-sm font-semibold" isOutline onPress={() => setPressed('Outline')}>Outline</NButton>
-            <NButton className="rounded-lg bg-danger px-4 py-2 text-sm font-semibold text-danger-foreground" onPress={() => setPressed('Danger')}>Danger</NButton>
-            <NButton className="rounded-lg bg-transparent px-4 py-2 text-sm font-semibold text-accent" onPress={() => setPressed('Ghost')}>Ghost</NButton>
-            <NButton className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground" isLoading disabled>Loading…</NButton>
+            <NButton isLoading>Save</NButton>
             <NButton className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground" disabled>Disabled</NButton>
           </NView>
           <NText tag="p" className="font-mono text-xs font-semibold text-accent">{pressed ? \`\${pressed} pressed\` : 'Press a button to see the result.'}</NText>`,
@@ -441,22 +396,13 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
   },
   chip: badgeAndChipExample(true),
   input: {
-    styled: true,
     render: (
-      <NView className="flex w-full flex-col gap-2">
-        <NText tag="label" htmlFor="email-example" className="text-sm font-semibold">
-          Email
-        </NText>
-        <NInput id="email-example" accessibilityLabel="Email" type="email" placeholder="you@example.com" className="engine-preview-input" />
-      </NView>
+      <NInput id="email-example" label="Email" type="email" placeholder="you@example.com" helperText="Use your work email address." />
     ),
     source: componentSource(
-      'NInput, NText',
-      `<NView className="flex w-full flex-col gap-2">
-            <NText tag="label" htmlFor="email-example" className="text-sm font-semibold">Email</NText>
-            <NInput id="email-example" accessibilityLabel="Email" type="email" placeholder="you@example.com"
-              className="w-full rounded-lg border border-border bg-field-background px-3 py-2 text-sm" />
-          </NView>`
+      'NInput',
+      `<NInput id="email-example" label="Email" type="email" placeholder="you@example.com"
+            helperText="Use your work email address." />`
     )
   },
   progress: {

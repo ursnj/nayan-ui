@@ -1431,7 +1431,7 @@ impl ComponentDocument {
                     let shadow = resolved.shadow.map(|_| [(); 4].map(|_| ui.painter().add(egui::Shape::Noop)));
                     let gradient = resolved.gradient().map(|gradient| (gradient, ui.painter().add(egui::Shape::Noop)));
                     let rendered = frame.show(ui, |ui| {
-                        let badge = n.kind == "NBadge";
+                        let badge = matches!(n.kind.as_str(), "NBadge" | "NChip");
                         if let Some(width) = resolved.width.or(resolved.min_width.filter(|_| badge)) {
                             let inset = if control {
                                 0.
@@ -1564,7 +1564,7 @@ impl ComponentDocument {
         if let Some(height) = style.height {
             return height + style.margin.top + style.margin.bottom;
         }
-        if matches!(node.kind.as_str(), "NText" | "NLink" | "NBadge") {
+        if matches!(node.kind.as_str(), "NText" | "NLink" | "NBadge" | "NChip") {
             return self.measured_text_height(node, &style, width);
         }
         if node.kind == "NLoading" {
@@ -1692,7 +1692,7 @@ impl ComponentDocument {
                 } else {
                     egui::Label::new(caption)
                 };
-                let badge = n.kind == "NBadge";
+                let badge = matches!(n.kind.as_str(), "NBadge" | "NChip");
                 let text_align = resolved.text_align.or(badge.then_some(egui::Align::Center));
                 if let Some(align) = text_align {
                     label = label.halign(align);
@@ -1918,11 +1918,17 @@ impl ComponentDocument {
                     ui.label(format!("{} — {}%", if label.is_empty() { "Progress" } else { &label }, value));
                 }
                 ui.visuals_mut().extreme_bg_color = resolved.background.unwrap_or_else(|| self.palette.get("default"));
+                let color = p["color"].as_str().and_then(|name| self.palette.color(name).or_else(|| theme::parse_color(name)));
+                let height = match p["size"].as_str() {
+                    Some("sm") => 8.,
+                    Some("lg") => 16.,
+                    _ => 12.,
+                };
                 let response = ui.add(
                     egui::ProgressBar::new(value as f32 / 100.)
-                        .fill(self.palette.get("accent"))
+                        .fill(color.unwrap_or_else(|| self.palette.get("accent")))
                         .desired_width(resolved.width.unwrap_or(ui.available_width()))
-                        .desired_height(resolved.height.unwrap_or(8.)),
+                        .desired_height(resolved.height.unwrap_or(height)),
                 );
                 self.semantic(n, &response, json!(value));
             }

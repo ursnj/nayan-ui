@@ -386,6 +386,39 @@ impl Style {
                     bottom: 12.,
                 };
             }
+            "NBadge" | "NChip" => {
+                let name = props["color"].as_str().unwrap_or("default");
+                let tone = palette.color(name).unwrap_or_else(|| palette.get("default"));
+                let foreground = palette
+                    .color(&format!("{name}-foreground"))
+                    .unwrap_or_else(|| palette.get("foreground"));
+                let variant = props["variant"].as_str().unwrap_or(if kind == "NBadge" { "soft" } else { "secondary" });
+                result.background = Some(match variant {
+                    "primary" => tone,
+                    "tertiary" => Color32::TRANSPARENT,
+                    "soft" => tone.gamma_multiply(if name == "default" { 0.5 } else { 0.15 }),
+                    _ => palette.get("default"),
+                });
+                result.foreground = Some(if variant == "primary" || name == "default" {
+                    foreground
+                } else {
+                    let midpoint = |first: u8, second: u8| ((u16::from(first) + u16::from(second)) / 2) as u8;
+                    let foreground = palette.get("foreground");
+                    Color32::from_rgb(
+                        midpoint(tone.r(), foreground.r()),
+                        midpoint(tone.g(), foreground.g()),
+                        midpoint(tone.b(), foreground.b()),
+                    )
+                });
+                let (size, height) = match props["size"].as_str() {
+                    Some("sm") => (12., 20.),
+                    Some("lg") => (16., 32.),
+                    _ => (14., 28.),
+                };
+                result.text_size = Some(size);
+                result.min_height = Some(height);
+                result.padding = Edges { left: 10., right: 10., top: 2., bottom: 2. };
+            }
             "NActionItem" => {
                 result.radius = 12.;
                 result.horizontal = true;

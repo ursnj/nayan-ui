@@ -39,7 +39,7 @@ test("new example pages are discovered without listing them manually; private an
 
 test("shared tag URLs include both platforms and modules with current public pages", () => {
   const root = fixture({
-    "button/page.tsx": "export default function Button() {}",
+    "components/button/page.tsx": "export default function Button() {}",
     "modules/games/page.tsx": "export default function GameModule() {}",
     "tags/[tag]/page.tsx": "export default function Tag() {}",
   });
@@ -58,12 +58,12 @@ test("every engine reference has a topic and both platform docs share the same c
     expect(tags.some(({ sku }) => topics.has(sku))).toBe(true);
     expect(new Set(tags.map(({ sku }) => sku)).size).toBe(tags.length);
   }
-  const buttonTags = tagsForReference("/button");
+  const buttonTags = tagsForReference("/components/button");
   expect(tagsForReference("/react/button")).toEqual(buttonTags);
   expect(tagsForReference("/react-native/button")).toEqual(buttonTags);
   expect(buttonTags.map(({ sku }) => sku)).toEqual(expect.arrayContaining(["react-button", "react-native-button"]));
   expect(findReferenceTag("game-development")?.entries.map(({ path }) => path)).toEqual(
-    expect.arrayContaining(["/game-view", "/modules/games"]),
+    expect.arrayContaining(["/components/game-view", "/modules/games"]),
   );
 });
 
@@ -72,17 +72,21 @@ test("a new dynamic route cannot silently disappear from the sitemap", () => {
   expect(() => collectPublicPaths(root)).toThrow(/Add sitemap handling.*\/blog\/\[slug\]/);
 });
 
-test("root engine references are added alongside existing component and game routes", () => {
+test("reference URLs use section prefixes alongside existing component and game routes", () => {
   const root = fixture({
-    "[entry]/page.tsx": "export default function Reference() {}",
+    "components/[entry]/page.tsx": "export default function ComponentReference() {}",
+    "modules/[entry]/page.tsx": "export default function ModuleReference() {}",
     "react/alert/page.tsx": "export default function Alert() {}",
     "react-native/accordion/page.tsx": "export default function Accordion() {}",
-    "modules/games/page.tsx": "export default function GameRuntime() {}",
     "games/page.tsx": "export default function Games() {}",
   });
-  expect(collectPublicPaths(root)).toEqual(expect.arrayContaining([
-    "/alert", "/confirm-alert", "/accordion", "/storage", "/react/alert", "/react-native/accordion", "/games", "/modules/games"
+  const paths = collectPublicPaths(root);
+  expect(paths).toEqual(expect.arrayContaining([
+    "/components/alert", "/components/confirm-alert", "/components/accordion", "/components/use-theme",
+    "/modules/camera", "/modules/storage", "/modules/games", "/react/alert", "/react-native/accordion", "/games"
   ]));
+  expect(paths).not.toContain("/alert");
+  expect(paths).not.toContain("/camera");
 });
 
 test("XML output is deterministic, unique and escaped", () => {
@@ -92,4 +96,11 @@ test("XML output is deterministic, unique and escaped", () => {
   expect(xml.match(/<loc>/g)).toHaveLength(2);
   expect(xml).toContain("/tools/paint&amp;draw</loc>");
   expect(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>')).toBe(true);
+});
+
+test("only the canonical playground page is listed in the sitemap", () => {
+  const paths = collectPublicPaths();
+  expect(paths).toContain("/playground");
+  expect(paths).not.toContain("/game-engine/playground");
+  expect(paths).not.toContain("/playground/types");
 });

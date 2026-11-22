@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Sidebar from '@/components/helpers/Sidebar';
 import SubHeader from '@/components/helpers/SubHeader';
 import TagsList from '@/components/helpers/TagsList';
+import { DocsIntro } from '@/design/Primitives';
 import ComponentAttributes from '@/components/nayan-reference/ComponentAttributes';
 import { getMenuItem } from '@/services/Utils';
 import { findComponentReference, legacyComponentAlternatives } from '@/services/nayan-ui/component-reference';
@@ -18,7 +19,8 @@ export default function NayanComponentDoc({ path }: { path: string }) {
   const tags = tagsForReference(path);
 
   return (
-    <Sidebar title={item?.title ?? 'Components'}>
+    <Sidebar title={item?.title ?? 'Components'} componentDocumentation>
+      {item?.description && <DocsIntro lead={item.description} />}
       <EngineComponentExample slug={slug} path={path} />
       {reference && (
         <>

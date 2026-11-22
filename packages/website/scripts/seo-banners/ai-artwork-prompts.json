@@ -1917,7 +1917,7 @@
       "description": "Read, validate and preview cron schedules Parse, validate, and describe cron expressions, with next run-time predictions"
     },
     {
-      "path": "/game-engine/playground",
+      "path": "/playground",
       "title": "Nayan Playground",
       "category": "Game Engine Guide",
       "theme": [

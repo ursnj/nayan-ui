@@ -38,10 +38,18 @@ fn length(value: &str) -> Option<String> {
     })
 }
 fn color(value: &str) -> Option<String> {
+    let opacity = |value: &str| {
+        let number = if let Some(value) = arbitrary(value) {
+            value.parse::<f32>().ok()? * 100.
+        } else {
+            value.parse::<f32>().ok()?
+        };
+        number.is_finite().then_some(number)
+    };
     let (value, alpha) = value
         .rsplit_once('/')
-        .filter(|(_, a)| a.parse::<f32>().is_ok())
-        .map_or((value, None), |(v, a)| (v, a.parse::<f32>().ok()));
+        .and_then(|(v, alpha)| opacity(alpha).map(|alpha| (v, Some(alpha))))
+        .unwrap_or((value, None));
     let color = if let Some(c) = arbitrary(value) {
         c
     } else if value == "current" {
@@ -124,10 +132,20 @@ fn declarations(class: &str) -> Option<String> {
         "transition-opacity"=>Some("transition-property:opacity;transition-duration:150ms;".into()),
         "transition-shadow"=>Some("transition-property:box-shadow;transition-duration:150ms;".into()),
         "transition-transform"=>Some("transition-property:transform,translate,scale,rotate;transition-duration:150ms;".into()),
+        "transition-none"=>Some("transition:none;".into()),
         "transform"|"scale-3d"|"filter"|"backdrop-filter"=>Some(String::new()),
         "grayscale"=>Some("filter:grayscale(1);".into()), "blur"=>Some("filter:blur(8px);".into()),
+        "blur-3xl"=>Some("filter:blur(64px);".into()), "drop-shadow"=>Some("filter:drop-shadow(0 1px 2px rgb(0 0 0 / 10%));".into()),
         "resize"=>Some("resize:both;".into()), "resize-none"=>Some("resize:none;".into()),
         "container"=>Some("width:100%;".into()),
+        "@container"=>Some("container-type:inline-size;".into()),
+        "align-top"=>Some("vertical-align:top;".into()),
+        "place-items-center"=>Some("place-items:center;".into()),
+        "rounded-r"=>Some("border-top-right-radius:4px;border-bottom-right-radius:4px;".into()),
+        "select-none"=>Some("user-select:none;".into()), "select-text"=>Some("user-select:text;".into()),
+        "touch-none"=>Some("touch-action:none;".into()),
+        "overscroll-contain"=>Some("overscroll-behavior:contain;".into()),
+        "divide-y"=>Some("border-bottom-width:1px;".into()),
         _=>None,
     };
     if exact.is_some() {
@@ -158,6 +176,14 @@ fn declarations(class: &str) -> Option<String> {
                 "pointer",
                 "not-allowed",
                 "default",
+                "grab",
+                "grabbing",
+                "move",
+                "col-resize",
+                "row-resize",
+                "ew-resize",
+                "nesw-resize",
+                "nwse-resize",
                 "normal",
                 "nowrap",
                 "pre",
@@ -263,6 +289,7 @@ fn declarations(class: &str) -> Option<String> {
         ("w-", &["width"][..]),
         ("h-", &["height"][..]),
         ("size-", &["width", "height"][..]),
+        ("scroll-mt-", &["scroll-margin-top"][..]),
     ] {
         if let Some(v) = class.strip_prefix(prefix) {
             let value = if prefix == "max-w-" {
@@ -411,7 +438,37 @@ fn declarations(class: &str) -> Option<String> {
         return n.is_finite().then(|| declaration("opacity", (n / 100.).clamp(0., 1.).to_string()));
     }
     if let Some(v) = class.strip_prefix("z-") {
-        return Some(declaration("z-index", v.parse::<i32>().ok()?.to_string()));
+        let value = arbitrary(v).or_else(|| v.parse::<i32>().ok().map(|index| index.to_string()))?;
+        return Some(declaration("z-index", signed(value)));
+    }
+    if let Some(v) = class.strip_prefix("col-start-") {
+        return Some(declaration("grid-column-start", v.parse::<u16>().ok()?.to_string()));
+    }
+    if let Some(v) = class.strip_prefix("rotate-") {
+        let value = arbitrary(v).or_else(|| v.parse::<i32>().ok().map(|angle| format!("{angle}deg")))?;
+        return Some(declaration("rotate", signed(value)));
+    }
+    if let Some(v) = class.strip_prefix("outline-") {
+        return Some(format!("outline-style:solid;outline-width:{}px;", v.parse::<u16>().ok()?));
+    }
+    if let Some(v) = class.strip_prefix("backdrop-blur-") {
+        let value = match v {
+            "sm" => "4px".into(),
+            "md" => "12px".into(),
+            "lg" => "16px".into(),
+            "xl" => "24px".into(),
+            _ => arbitrary(v)?,
+        };
+        return Some(declaration("backdrop-filter", format!("blur({value})")));
+    }
+    if let Some(v) = class.strip_prefix("brightness-") {
+        let value = v.parse::<u16>().ok()?;
+        return Some(declaration("filter", format!("brightness({value}%)")));
+    }
+    if let Some(v) = class.strip_prefix("transition-").and_then(arbitrary) {
+        return Some(format!(
+            "transition-property:{v};transition-duration:150ms;transition-timing-function:ease;"
+        ));
     }
     if let Some(v) = class.strip_prefix("line-clamp-") {
         let n = v.parse::<u16>().ok()?;
@@ -559,6 +616,7 @@ fn rule(class: &str) -> Option<(u32, String)> {
     }
     let mut selector = format!(".{}", escape(class));
     let mut media = Vec::new();
+    let mut container = None;
     let mut order = 0;
     for variant in segments {
         let breakpoint = match variant {
@@ -585,12 +643,36 @@ fn rule(class: &str) -> Option<(u32, String)> {
             order += 100;
             continue;
         }
+        if let Some(value) = variant.strip_prefix('@').and_then(arbitrary) {
+            let width = value.strip_suffix("px")?.parse::<u32>().ok()?;
+            container = Some(width);
+            order += width * 100;
+            continue;
+        }
+        if let Some(group) = variant.strip_prefix("group-") {
+            let (state, name) = group.split_once('/').map_or((group, None), |(state, name)| (state, Some(name)));
+            let marker = name.map_or_else(|| "group".into(), |name| format!("group/{name}"));
+            let state = match state {
+                "hover" => ":hover",
+                "focus-within" => ":focus-within",
+                "open" => "[open]",
+                _ => return None,
+            };
+            selector = format!(".{}{state} {selector}", escape(&marker));
+            order += 20;
+            continue;
+        }
+        if let Some(value) = arbitrary(variant).filter(|value| value.starts_with('&')) {
+            selector = value.replace('&', &selector);
+            order += 20;
+            continue;
+        }
         match variant {
             "dark" => {
                 selector = format!(":where(.dark,[data-theme=dark]) {selector}");
                 order += 10;
             }
-            "hover" | "focus" | "focus-visible" | "active" | "disabled" | "checked" | "empty" => {
+            "hover" | "focus" | "focus-within" | "focus-visible" | "active" | "disabled" | "checked" | "empty" | "popover-open" => {
                 selector += &format!(":{variant}");
                 if variant == "hover" {
                     media.push("(hover:hover)".into());
@@ -613,13 +695,14 @@ fn rule(class: &str) -> Option<(u32, String)> {
                 selector += ":nth-child(even)";
                 order += 20;
             }
-            "group-hover" => {
-                selector = format!(".group:hover {selector}");
+            "aria-expanded" => {
+                selector += "[aria-expanded=true]";
                 order += 20;
             }
             "motion-safe" => media.push("(prefers-reduced-motion:no-preference)".into()),
             "motion-reduce" => media.push("(prefers-reduced-motion:reduce)".into()),
             "placeholder" => selector += "::placeholder",
+            "backdrop" => selector += "::backdrop",
             _ => return None,
         }
     }
@@ -646,7 +729,7 @@ fn rule(class: &str) -> Option<(u32, String)> {
     {
         order += 2;
     }
-    if spacing.is_some() {
+    if spacing.is_some() || utility == "divide-y" {
         selector += " > :not(:last-child)";
     }
     if utility.starts_with("rounded-") {
@@ -665,6 +748,14 @@ fn rule(class: &str) -> Option<(u32, String)> {
         };
     }
     let mut css = format!("{selector}{{{body}}}");
+    if utility == "container" {
+        for width in [640, 768, 1024, 1280, 1536] {
+            css += &format!("@media (min-width:{width}px){{{selector}{{max-width:{width}px;}}}}");
+        }
+    }
+    if let Some(width) = container {
+        css = format!("@container (min-width:{width}px){{{css}}}");
+    }
     for condition in media.into_iter().rev() {
         css = format!("@media {condition}{{{css}}}");
     }

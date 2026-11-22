@@ -1882,7 +1882,7 @@ export const engineSidebarItems: SidebarItem[] = [
   {
     title: "Playground",
     description: "Write engine code and run it live in the browser",
-    link: "/game-engine/playground",
+    link: "/playground",
     icon: Code2,
   },
   engineSidebarItem("installation", "Installation", Settings),
