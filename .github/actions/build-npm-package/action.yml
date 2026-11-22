@@ -78,6 +78,4 @@ runs:
     - name: Validate and pack the npm package
       shell: bash
       working-directory: packages/nayan-ui
-      run: |
-        npm pack --ignore-scripts --dry-run --json | bun scripts/check-package.mjs --pack-json
-        npm pack --pack-destination "$RUNNER_TEMP"
+      run: npm pack --ignore-scripts --json --pack-destination "$RUNNER_TEMP" | bun scripts/check-package.mjs --pack-json
