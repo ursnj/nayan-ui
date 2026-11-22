@@ -1,6 +1,14 @@
 name: Build and test the npm package
 description: Build the engine and write the validated tarball to the runner's temporary directory.
 
+outputs:
+  tarball:
+    description: Path to the validated npm tarball.
+    value: ${{ steps.pack.outputs.tarball }}
+  dist-tag:
+    description: npm distribution tag for the package version.
+    value: ${{ steps.pack.outputs.dist-tag }}
+
 runs:
   using: composite
   steps:
@@ -76,6 +84,16 @@ runs:
         bun run engine:test:integration
 
     - name: Validate and pack the npm package
+      id: pack
       shell: bash
       working-directory: packages/nayan-ui
-      run: npm pack --ignore-scripts --json --pack-destination "$RUNNER_TEMP" | bun scripts/check-package.mjs --pack-json
+      run: |
+        npm pack --ignore-scripts --json --pack-destination "$RUNNER_TEMP" | bun scripts/check-package.mjs --pack-json
+
+        version="$(node -p "require('./package.json').version")"
+        dist_tag=latest
+        if [[ "${version%%+*}" == *-* ]]; then
+          dist_tag=beta
+        fi
+        echo "tarball=$RUNNER_TEMP/nayan-ui-$version.tgz" >> "$GITHUB_OUTPUT"
+        echo "dist-tag=$dist_tag" >> "$GITHUB_OUTPUT"

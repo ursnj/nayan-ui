@@ -1,29 +1,23 @@
 name: Build and publish nayan-ui
 
 on:
-  push:
-    branches: [refactor-nayan-ui, main]
-    tags: ['v*']
-    paths:
-      - packages/nayan-ui/**
-      - bun.lock
-      - bunfig.toml
-      - .bun-version
-      - package.json
-      - .github/workflows/npm-publish.yml
-      - .github/actions/build-npm-package/**
   workflow_dispatch:
+    inputs:
+      command:
+        description: Package operation
+        type: choice
+        required: true
+        default: validate
+        options:
+          - validate
+          - publish
 
 permissions:
   contents: read
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  build:
-    if: toJSON(github.event.repository.private) == 'false' && (github.event_name != 'push' || github.ref_type != 'tag')
+  validate:
+    if: toJSON(github.event.repository.private) == 'false' && inputs.command == 'validate'
     runs-on: macos-15
     timeout-minutes: 120
     steps:
@@ -31,11 +25,25 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/build-npm-package
+        id: package
+
+      - name: Dry-run npm publishing
+        shell: bash
+        env:
+          TARBALL: ${{ steps.package.outputs.tarball }}
+          DIST_TAG: ${{ steps.package.outputs.dist-tag }}
+        run: npm publish "$TARBALL" --access public --tag "$DIST_TAG" --ignore-scripts --dry-run --loglevel=warn
 
   publish:
-    if: toJSON(github.event.repository.private) == 'false' && github.repository == 'ursnj/nayan-ui' && github.event_name == 'push' && github.ref_type == 'tag'
+    if: >-
+      toJSON(github.event.repository.private) == 'false' &&
+      github.repository == 'ursnj/nayan-ui' &&
+      inputs.command == 'publish'
     runs-on: macos-15
     timeout-minutes: 120
+    concurrency:
+      group: nayan-ui-npm-publish
+      cancel-in-progress: false
     permissions:
       contents: read
       id-token: write
@@ -44,18 +52,11 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/build-npm-package
+        id: package
 
       - name: Publish the tested tarball to npm
-        run: |
-          version="${GITHUB_REF_NAME#v}"
-          tarball="$RUNNER_TEMP/nayan-ui-$version.tgz"
-          if [[ ! -f "$tarball" ]]; then
-            echo '::error::The Git tag must match the version in packages/nayan-ui/package.json, prefixed with v.'
-            exit 1
-          fi
-
-          dist_tag=latest
-          if [[ "${version%%+*}" == *-* ]]; then
-            dist_tag=beta
-          fi
-          npm publish "$tarball" --access public --tag "$dist_tag" --ignore-scripts
+        shell: bash
+        env:
+          TARBALL: ${{ steps.package.outputs.tarball }}
+          DIST_TAG: ${{ steps.package.outputs.dist-tag }}
+        run: npm publish "$TARBALL" --access public --tag "$DIST_TAG" --ignore-scripts --loglevel=warn
