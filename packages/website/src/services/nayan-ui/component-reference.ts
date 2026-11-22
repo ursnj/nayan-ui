@@ -1,3 +1,5 @@
+import { ALL_PLATFORMS, NATIVE_PLATFORMS, WEB_PLATFORMS } from './reference-platforms';
+
 const components = [
   ['action-item', 'Action Item', 'NActionItem', 'Render a pressable row for an action such as opening a document.'],
   ['accordion', 'Accordion', 'NAccordion', 'Expand a single section or group related panels with single or multiple expansion.'],
@@ -83,6 +85,7 @@ export const componentReferences = [...components.map((item) => [...item, 'compo
     symbol,
     description,
     module,
+    platforms: ALL_PLATFORMS,
     importPath: `nayan-ui/${module}`,
     path: `/components/${slug}`
   }))
@@ -90,6 +93,11 @@ export const componentReferences = [...components.map((item) => [...item, 'compo
 
 export function findComponentReference(slug: string) {
   return componentReferences.find((item) => item.slug === slug);
+}
+
+export function legacyComponentPlatforms(path: string) {
+  const slug = path.slice(path.lastIndexOf('/') + 1);
+  return findComponentReference(slug)?.platforms ?? (path.startsWith('/react-native/') ? NATIVE_PLATFORMS : WEB_PLATFORMS);
 }
 
 export const legacyComponentAlternatives = {

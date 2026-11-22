@@ -66,7 +66,7 @@ export const componentAttributeNames: Partial<Record<ComponentSymbol, readonly s
   ],
   NKbd: ['children', 'className'],
   NLink: ['href', 'children', 'className', 'target', 'rel'],
-  NLinkify: ['text', 'children', 'className', 'linkStyle', 'onPress'],
+  NLinkify: ['children', 'className', 'linkStyle', 'onPress', 'text'],
   NList: [
     'data', 'renderItem', 'keyExtractor', 'height', 'itemSize', 'estimatedItemSize',
     'numColumns', 'onEndReached', 'onEndReachedThreshold', 'ListEmptyComponent', 'onRefresh', 'refreshing',

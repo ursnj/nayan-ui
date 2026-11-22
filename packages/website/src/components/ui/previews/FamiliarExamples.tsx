@@ -305,9 +305,7 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
   },
   'empty-state': {
     height: 200,
-    render: (
-      <NEmptyState title="No results" description="Try a different search." icon={<NIcon name="search" size={22} className="text-accent" />} />
-    ),
+    render: <NEmptyState title="No results" description="Try a different search." icon={<NIcon name="search" size={22} className="text-accent" />} />,
     source: componentSource(
       'NEmptyState, NIcon',
       `<NEmptyState

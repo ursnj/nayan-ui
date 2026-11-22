@@ -169,7 +169,7 @@ export const controlScenarios = {
     ])
   ),
   link: sample('In-page link', element('NLink', { href: '#usage', className: 'text-accent' }, 'Jump to the editor')),
-  linkify: sample('Email and web addresses', element('NLinkify', { text: 'Support: help@example.com · Docs: https://www.nayanui.com/components' })),
+  linkify: sample('Email and web addresses', element('NLinkify', {}, 'Support: help@example.com · Docs: https://www.nayanui.com/components')),
   loading: sample(
     'Loading inside a card',
     element('NCard', panel, [

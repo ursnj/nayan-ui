@@ -8,4 +8,4 @@ export type { NLinkifyProps } from './linkifyTypes';
 const Host = /* @__PURE__ */ component<NLinkifyProps & { linkify: boolean }>('NText');
 
 /** Link detection, text layout and hit testing are implemented in Rust. */
-export const NLinkify = (props: NLinkifyProps) => createElement(Host, { ...props, linkify: true });
+export const NLinkify = ({ children, text, ...props }: NLinkifyProps) => createElement(Host, { ...props, linkify: true }, children ?? text);

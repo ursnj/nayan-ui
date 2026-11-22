@@ -11,6 +11,7 @@ import { getSidebarItems, type SidebarItem } from "@/services/Utils";
 
 interface Props {
   title?: string;
+  beforeTitle?: ReactNode;
   componentDocumentation?: boolean;
   reference?: { title: string; href: string; items: SidebarItem[]; currentPath?: string };
   children: ReactNode;
@@ -224,6 +225,7 @@ const Sidebar = (props: Props) => {
 
           <NView tag="header" className="site-docs-heading grid gap-3">
             <Breadcrumb items={breadcrumb} className="" />
+            {props.beforeTitle}
             {props.title && <NText tag="h1" className={H1}>{props.title}</NText>}
           </NView>
           <NView tag="div">{props.children}</NView>

@@ -223,7 +223,7 @@ test('horizontal scrolling preserves content spacing independently of its viewpo
   await flush();
 });
 
-test('web linkify sends link classes to Rust without styling the surrounding paragraph', async () => {
+test('web linkify sends children and link classes to Rust and accepts legacy text', async () => {
   const { NLinkify } = await import('../NLinkify.web');
   let nodes: ComponentNode[] = [];
   const renderer = createComponentRenderer(
@@ -236,15 +236,20 @@ test('web linkify sends link classes to Rust without styling the surrounding par
   );
   try {
     renderer.render(
-      <NLinkify id="about" className="custom-link">
-        Visit www.example.org.
-      </NLinkify>
+      <>
+        <NLinkify id="about" className="custom-link" text="Unused fallback">
+          Visit www.example.org.
+        </NLinkify>
+        <NLinkify id="legacy" text="Email help@example.org." />
+      </>
     );
     await flush();
     expect(nodes[0]?.props.linkify).toBe(true);
     expect(nodes[0]?.props.linkClassName).toBe('custom-link');
     expect(nodes[0]?.props.className).toBeUndefined();
+    expect(nodes[0]?.props.text).toBeUndefined();
     expect(nodes[0]?.children[0]?.props.text).toBe('Visit www.example.org.');
+    expect(nodes[1]?.children[0]?.props.text).toBe('Email help@example.org.');
   } finally {
     renderer.dispose();
     await flush();

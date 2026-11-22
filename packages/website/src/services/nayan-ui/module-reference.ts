@@ -1,10 +1,12 @@
 import { moduleVariations } from './module-variations';
+import { ALL_PLATFORMS, NATIVE_PLATFORMS, WEB_PLATFORMS, type ReferencePlatform } from './reference-platforms';
 
 interface ModuleExample {
   slug: string;
   title: string;
   entry: string;
   description: string;
+  platforms?: readonly ReferencePlatform[];
   code: string;
   note?: string;
   guide?: string;
@@ -301,6 +303,7 @@ export async function requestCameraAccess() {
     title: 'Store Review',
     entry: './review',
     description: 'Ask a supported app store to show its native review prompt.',
+    platforms: NATIVE_PLATFORMS,
     code: `import { review } from 'nayan-ui/review';
 
 export async function askForReview() {
@@ -496,6 +499,7 @@ export function CheckIcon() {
     title: 'Web Entry Point',
     entry: './web',
     description: 'Use the browser compatibility entry for an explicitly web-only consumer.',
+    platforms: WEB_PLATFORMS,
     code: `import { warmUpEngine } from 'nayan-ui/web';
 
 export async function preload() {
@@ -508,6 +512,7 @@ export async function preload() {
     title: 'WebAssembly Runtime',
     entry: './wasm-runtime',
     description: 'Resolve the low-level WebAssembly runtime module in a browser build.',
+    platforms: WEB_PLATFORMS,
     code: `export async function loadRuntime() {
   return import('nayan-ui/wasm-runtime');
 }`,
@@ -519,6 +524,7 @@ export async function preload() {
     title: 'Expo Plugin',
     entry: './app.plugin.js',
     description: 'Configure native engine capabilities in an Expo app before building a development client.',
+    platforms: NATIVE_PLATFORMS,
     code: `export default {
   expo: {
     name: 'My app',
@@ -545,6 +551,7 @@ export type ModuleSlug = (typeof modules)[number]['slug'];
 
 export const moduleReferences = modules.map((module: ModuleExample & { slug: ModuleSlug }) => ({
   ...module,
+  platforms: module.platforms ?? ALL_PLATFORMS,
   variations: moduleVariations[module.slug],
   path: `/modules/${module.slug}`,
   importPath: `nayan-ui/${module.entry.slice(2)}`

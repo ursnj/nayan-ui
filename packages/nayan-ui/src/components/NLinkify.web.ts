@@ -8,4 +8,5 @@ export type { NLinkifyProps } from './linkifyTypes';
 const Host = /* @__PURE__ */ component<Omit<NLinkifyProps, 'className'> & { linkify: boolean; linkClassName?: string }>('NText');
 
 /** Match the React library: className styles detected links, while plain text inherits its parent. */
-export const NLinkify = ({ className, ...props }: NLinkifyProps) => createElement(Host, { ...props, linkify: true, linkClassName: className });
+export const NLinkify = ({ children, text, className, ...props }: NLinkifyProps) =>
+  createElement(Host, { ...props, linkify: true, linkClassName: className }, children ?? text);

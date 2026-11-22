@@ -1212,7 +1212,7 @@ retain valid JSON quotes; do not let a YAML formatter rewrite them to single quo
 
 `NLinkify` recognizes HTTP(S), `www.` addresses and emails, preserves surrounding
 punctuation, and keeps existing links intact. Wrapped links have per-line hit
-areas and accessible link semantics. Detected links use the primary (`accent`)
+areas and accessible link semantics. Pass the text as children. Detected links use the primary (`accent`)
 theme color without underlines. Its optional `onPress(url, text)` overrides
 opening the detected link; `linkStyle` customizes link text. On web, `className`
 styles only detected links, matching the React library.

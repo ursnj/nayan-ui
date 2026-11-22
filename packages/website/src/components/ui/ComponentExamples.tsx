@@ -33,7 +33,7 @@ const examples: Record<string, Spec> = {
   image: { control: 'NImage', props: { src: '/logo.webp', alt: 'Nayan UI', width: 96, height: 68 } },
   kbd: { control: 'NKbd', text: 'Enter' },
   link: { control: 'NLink', props: { href: '/game-engine' }, text: 'Engine documentation' },
-  linkify: { control: 'NLinkify', props: { text: 'Find the documentation at https://www.nayanui.com/game-engine.' } },
+  linkify: { control: 'NLinkify', text: 'Find the documentation at https://www.nayanui.com/game-engine.' },
   loading: { control: 'NLoading', props: { label: 'Loading data…' } },
   'menu-item': { control: 'NMenuItem', text: 'Open file', result: 'File opened.' },
   'number-field': { control: 'NNumberField', props: { label: 'Amount', defaultValue: 2, min: 0, max: 10 } },

@@ -4,19 +4,20 @@ import { NView, NText } from 'nayan-ui/components';
 import { useState } from 'react';
 import Link from 'next/link';
 import CatalogSearch from '@/components/helpers/CatalogSearch';
-import { ArrowUpRight, Boxes, Code2 } from '@/design/Icons';
+import { ArrowUpRight } from '@/design/Icons';
 import { CARD_INTERACTIVE, H3 } from '@/design/system';
+import type { ReferencePlatform } from '@/services/nayan-ui/reference-platforms';
+import PlatformPills from './PlatformPills';
 
 interface Props {
   kind: 'components' | 'hooks' | 'modules';
-  items: { path: string; title: string; description: string; api: string }[];
+  items: { path: string; title: string; description: string; api: string; platforms: readonly ReferencePlatform[] }[];
 }
 
 export default function ReferenceDirectory({ kind, items }: Props) {
   const [query, setQuery] = useState('');
   const term = query.trim().toLowerCase();
   const matches = items.filter(({ title, description, api }) => `${title} ${description} ${api}`.toLowerCase().includes(term));
-  const Icon = kind === 'modules' ? Boxes : Code2;
 
   return (
     <>
@@ -28,21 +29,22 @@ export default function ReferenceDirectory({ kind, items }: Props) {
       </NView>
       {matches.length ? (
         <NView tag="ul" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {matches.map(({ path, title, description, api }) => (
+          {matches.map(({ path, title, description, api, platforms }) => (
             <NView tag="li" key={path}>
-              <Link
-                href={path}
-                className={`${CARD_INTERACTIVE} flex h-full flex-col p-3`}
-              >
-                <NText tag="span" className="catalog-entry-top flex items-center justify-between [gap:0.55rem] [margin-bottom:0.68rem] [color:var(--tone-ink,_var(--accent))]">
-                  <NText tag="span" className="catalog-entry-icon inline-flex justify-center items-center shrink-0 [width:2.15rem] [height:2.15rem] [border-radius:0.62rem] [background:var(--tone-paper,_var(--surface-secondary))] [color:var(--tone-ink,_var(--accent))]">
-                    <Icon aria-hidden size={18} />
-                  </NText>
-                  <ArrowUpRight aria-hidden size={16} />
+              <Link href={path} className={`${CARD_INTERACTIVE} flex h-full flex-col p-3`}>
+                <NView tag="div" className="mb-3 flex items-start justify-between gap-2">
+                  <PlatformPills platforms={platforms} />
+                  <ArrowUpRight aria-hidden size={16} className="mt-1 shrink-0 text-accent" />
+                </NView>
+                <NText tag="span" className={H3}>
+                  {title}
                 </NText>
-                <NText tag="span" className={H3}>{title}</NText>
-                <NText tag="code" className="mt-1 text-xs break-all text-accent">{api}</NText>
-                <NText tag="span" className="mt-2 text-sm text-muted">{description}</NText>
+                <NText tag="span" className="mt-1 text-sm text-muted">
+                  {description}
+                </NText>
+                <NText tag="code" className="mt-2 break-all text-xs text-accent">
+                  {api}
+                </NText>
               </Link>
             </NView>
           ))}

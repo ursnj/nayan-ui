@@ -12,6 +12,7 @@ import { moduleReferences } from '@/services/nayan-ui/module-reference';
 import { tagsForReference } from '@/services/nayan-ui/reference-tags';
 import ReferenceDirectory from './ReferenceDirectory';
 import ComponentAttributes from './ComponentAttributes';
+import PlatformPills from './PlatformPills';
 
 type Group = 'components' | 'modules';
 type ReferenceEntry = (typeof componentReferences)[number] | (typeof moduleReferences)[number];
@@ -75,10 +76,11 @@ export function ReferenceIndex({ group }: { group: Group }) {
         <SubHeader title={title} key={kind}>
           <ReferenceDirectory
             kind={kind}
-            items={items.map(({ title, description, path, ...item }) => ({
+            items={items.map(({ title, description, path, platforms, ...item }) => ({
               title,
               description,
               path,
+              platforms,
               api: 'symbol' in item ? item.symbol : item.importPath
             }))}
           />
@@ -96,7 +98,7 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
   const module = 'symbol' in entry ? moduleReferences.find(({ slug }) => slug === entry.module) : undefined;
 
   return (
-    <Sidebar title={entry.title} reference={referenceNavigation(group, entry.path)}>
+    <Sidebar title={entry.title} beforeTitle={<PlatformPills platforms={entry.platforms} />} reference={referenceNavigation(group, entry.path)}>
       <DocsIntro lead={entry.description} />
       {'symbol' in entry ? (
         <>

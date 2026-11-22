@@ -56,7 +56,7 @@ export function NEmptyState({
     (heading || body) &&
       createElement(
         NView,
-        { className: 'flex max-w-80 flex-col items-center gap-1' },
+        { className: 'flex flex-col items-center gap-1' },
         heading &&
           createElement(NText, { tag: 'h3', className: `text-center text-base font-semibold text-foreground ${titleClassName ?? ''}` }, heading),
         body &&
