@@ -69,7 +69,7 @@ export function ReferenceIndex({ group }: { group: Group }) {
       : "import { prepareUuid, uuid } from 'nayan-ui/modules';\n\nexport async function newId() {\n  await prepareUuid();\n  return uuid();\n}";
 
   return (
-    <Sidebar title={title} reference={referenceNavigation(group)} componentDocumentation={group === 'components'}>
+    <Sidebar title={title} reference={referenceNavigation(group)}>
       <DocsIntro lead={description} />
       {referenceSections[group].map(({ title, kind, items }) => (
         <SubHeader title={title} key={kind}>

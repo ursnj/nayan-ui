@@ -32,8 +32,7 @@ export default function ReferenceDirectory({ kind, items }: Props) {
             <NView tag="li" key={path}>
               <Link
                 href={path}
-                data-tone={kind === 'modules' ? 'peach' : 'violet'}
-                className={`${CARD_INTERACTIVE} catalog-entry flex h-full flex-col p-3`}
+                className={`${CARD_INTERACTIVE} flex h-full flex-col p-3`}
               >
                 <NText tag="span" className="catalog-entry-top">
                   <NText tag="span" className="catalog-entry-icon">
