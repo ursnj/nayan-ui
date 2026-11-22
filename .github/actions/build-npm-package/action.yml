@@ -5,9 +5,6 @@ outputs:
   tarball:
     description: Path to the validated npm tarball.
     value: ${{ steps.pack.outputs.tarball }}
-  dist-tag:
-    description: npm distribution tag for the package version.
-    value: ${{ steps.pack.outputs.dist-tag }}
 
 runs:
   using: composite
@@ -52,9 +49,4 @@ runs:
         npm pack --ignore-scripts --json --pack-destination "$RUNNER_TEMP" | bun scripts/check-package.mjs --pack-json
 
         version="$(node -p "require('./package.json').version")"
-        dist_tag=latest
-        if [[ "${version%%+*}" == *-* ]]; then
-          dist_tag=beta
-        fi
         echo "tarball=$RUNNER_TEMP/nayan-ui-$version.tgz" >> "$GITHUB_OUTPUT"
-        echo "dist-tag=$dist_tag" >> "$GITHUB_OUTPUT"

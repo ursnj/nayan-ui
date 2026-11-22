@@ -126,7 +126,7 @@ Pre-commit checks formatting and lint on staged files. When the games archive or
 
 ## Publishing
 
-- **Engine package** — download the verified npm tarball from a successful **Build engine** workflow run.
+- **Engine package** — manually run **Build and publish nayan-ui**. Choose **validate** for a dry run and a verified tarball, or **publish** to release to npm. Leave **Publish as beta** unchecked for `latest`, or check it for `beta`. The package version comes from `packages/nayan-ui/package.json`.
 - **Website** — run the **Publish website docker images** workflow to build and push `ursnj/nayanui:latest`. Requires the `DOCKER_HUB_TOKEN` repository secret.
   Or publish it from your machine with `bun run docker:publish` (needs Docker and `docker login` as ursnj; `--dry-run` builds and checks without pushing, `--help` lists the options).
 

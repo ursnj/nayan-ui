@@ -11,6 +11,10 @@ on:
         options:
           - validate
           - publish
+      beta:
+        description: Publish as beta
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -18,6 +22,7 @@ permissions:
 env:
   RUST_VERSION: '1.99.0'
   ANDROID_NDK_VERSION: '27.1.12297006'
+  NPM_DIST_TAG: ${{ inputs.beta && 'beta' || 'latest' }}
 
 jobs:
   build-core:
@@ -164,7 +169,6 @@ jobs:
     timeout-minutes: 20
     outputs:
       tarball: ${{ steps.package.outputs.tarball }}
-      dist-tag: ${{ steps.package.outputs.dist-tag }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -179,12 +183,11 @@ jobs:
       - uses: ./.github/actions/build-npm-package
         id: package
 
-      - name: Dry-run npm publishing
+      - name: Dry-run npm publishing (${{ env.NPM_DIST_TAG }})
         if: inputs.command == 'validate'
         env:
           TARBALL: ${{ steps.package.outputs.tarball }}
-          DIST_TAG: ${{ steps.package.outputs.dist-tag }}
-        run: npm publish "$TARBALL" --access public --tag "$DIST_TAG" --ignore-scripts --dry-run --loglevel=warn
+        run: npm publish "$TARBALL" --access public --tag "$NPM_DIST_TAG" --ignore-scripts --dry-run --loglevel=warn
 
       - uses: actions/upload-artifact@v4
         with:
@@ -221,8 +224,7 @@ jobs:
           name: nayan-ui
           path: ${{ runner.temp }}/npm-package
 
-      - name: Publish the tested tarball to npm
+      - name: Publish the tested tarball to npm (${{ env.NPM_DIST_TAG }})
         env:
           PACKAGED_TARBALL: ${{ needs.package.outputs.tarball }}
-          DIST_TAG: ${{ needs.package.outputs.dist-tag }}
-        run: npm publish "$RUNNER_TEMP/npm-package/${PACKAGED_TARBALL##*/}" --access public --tag "$DIST_TAG" --ignore-scripts --loglevel=warn
+        run: npm publish "$RUNNER_TEMP/npm-package/${PACKAGED_TARBALL##*/}" --access public --tag "$NPM_DIST_TAG" --ignore-scripts --loglevel=warn
