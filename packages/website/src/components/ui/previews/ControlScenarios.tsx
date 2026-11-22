@@ -41,6 +41,28 @@ export function sample(title: string, node: Node, height?: number): NamedCompone
   return { title, source: componentSource([...names].join(', '), source), render: renderNode(node), height };
 }
 
+export const avatarInitialsClass = 'rounded-full p-0 text-center';
+
+function breadcrumbExample(title: string, items: readonly { label: string; href?: string }[]) {
+  return sample(
+    title,
+    element(
+      'NText',
+      { className: 'text-sm leading-6 text-muted' },
+      items.flatMap(({ label, href }, index) => [
+        ...(index === 0 ? [] : [element('NText', { 'aria-hidden': true }, ' ›\u00a0')]),
+        href ? element('NLink', { href, className: 'text-accent' }, label) : element('NText', { className: 'font-semibold text-foreground' }, label)
+      ])
+    )
+  );
+}
+
+export const breadcrumbOverview = breadcrumbExample('Overview', [
+  { label: 'Home', href: '/' },
+  { label: 'Nayan Components', href: '/components' },
+  { label: 'Breadcrumbs' }
+]);
+
 const row = { className: 'w-full flex-row flex-wrap items-center gap-3' };
 const panel = { className: 'w-full gap-3 rounded-xl border border-border bg-surface p-4' };
 const label = { className: 'text-sm font-semibold' };
@@ -76,9 +98,7 @@ export const controlScenarios = {
   },
   avatar: sample(
     'Initials placeholder',
-    element('NView', { className: 'h-14 w-14 items-center justify-center rounded-full bg-accent/15', accessibilityLabel: 'Avery Chen' }, [
-      element('NText', { className: 'text-lg font-semibold text-accent' }, 'AC')
-    ])
+    element('NBadge', { width: 56, height: 56, className: `${avatarInitialsClass} bg-accent/15 text-lg font-semibold text-accent`, accessibilityLabel: 'Avery Chen' }, 'AC')
   ),
   badge: sample(
     'Release status',
@@ -87,6 +107,11 @@ export const controlScenarios = {
       element('NBadge', { color: 'success', className: 'rounded-md bg-success/20 px-2 py-1 text-sm' }, 'Published')
     ])
   ),
+  breadcrumbs: breadcrumbExample('Longer location trail', [
+    { label: 'Home', href: '/' },
+    { label: 'Nayan Game Engine', href: '/game-engine' },
+    { label: 'Examples' }
+  ]),
   'button-group': sample('Disabled option', element('NButtonGroup', { items: directions, defaultValue: 'draft' })),
   card: sample(
     'Project summary',

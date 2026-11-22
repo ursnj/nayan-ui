@@ -18,7 +18,6 @@ const topics = [
     text: 'Forms',
     slugs: [
       'button',
-      'calendar',
       'checkbox',
       'input',
       'input-otp',
@@ -32,7 +31,6 @@ const topics = [
       'switch',
       'textarea',
       'date-picker',
-      'date-field',
       'date-range-picker',
       'time-field',
       'checkbox-group',

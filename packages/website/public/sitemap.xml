@@ -1197,11 +1197,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/react/calendar</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.nayanui.com/react/card</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -1228,11 +1223,6 @@
   </url>
   <url>
     <loc>https://www.nayanui.com/react/confirm-alert</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.nayanui.com/react/date-field</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

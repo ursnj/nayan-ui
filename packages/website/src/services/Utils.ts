@@ -5,8 +5,6 @@ import {
   Badge,
   BookOpen,
   Bot,
-  Calendar,
-  CalendarCheck,
   CalendarDays,
   CalendarRange,
   CircleAlert,
@@ -430,15 +428,6 @@ export const reactSidebarItems = [
     isComponent: true,
   },
   {
-    title: "Calendar",
-    description:
-      "A Calendar component lays a month out as a grid and lets a date be picked from it. Unlike a date picker it is always open, which suits a booking screen, an availability view or anywhere the surrounding dates are part of the decision.",
-    link: "/react/calendar",
-    tags: calendarTags,
-    icon: Calendar,
-    isComponent: true,
-  },
-  {
     title: "Card",
     description:
       "A Card component is a versatile UI element used to display content in a structured and visually appealing way. It typically contains related information, such as text, images, buttons, and other elements, within a bordered or shadowed container. Cards are often used for presenting individual items, like products, articles, or profiles, making the content easy to scan and interact with.",
@@ -484,20 +473,15 @@ export const reactSidebarItems = [
     isComponent: true,
   },
   {
-    title: "Date Field",
-    description:
-      "A Date Field takes a date typed in segments — day, month, year — with no calendar attached. Each segment validates on its own and can be stepped with the arrow keys, which makes it faster than a picker for a date somebody already knows.",
-    link: "/react/date-field",
-    tags: dateFieldTags,
-    icon: CalendarCheck,
-    isComponent: true,
-  },
-  {
     title: "Date Picker",
     description:
-      "A Date Picker component is a UI element that allows users to select a date from a calendar popup. It provides an intuitive interface for choosing dates with support for date ranges, min/max constraints, and various granularity levels.",
+      "Choose a date from a calendar with month and year navigation. Set a minimum or maximum date to limit the available options.",
     link: "/react/date-picker",
-    tags: datePickerTags,
+    tags: [
+      ...new globalThis.Map([...datePickerTags, ...calendarTags, ...dateFieldTags].map((tag) => [tag.sku, tag])).values(),
+      { sku: "calendar", text: "Calendar" },
+      { sku: "date-field", text: "Date Field" },
+    ],
     icon: CalendarDays,
     isComponent: true,
   },

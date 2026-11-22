@@ -32,6 +32,9 @@ const nextConfig: NextConfig = {
   // Keep published documentation, shared games and saved playground links working.
   async redirects() {
     return [
+      ...['', '/components', '/react', '/react-native'].flatMap((prefix) =>
+        ['calendar', 'date-field'].map((slug) => ({ source: `${prefix}/${slug}`, destination: '/components/date-picker', permanent: true }))
+      ),
       { source: '/examples/:path*', destination: '/game-engine/examples/:path*', permanent: true },
       { source: '/:legacy(engine|nayan-game-engine)/playground/:path*', destination: '/playground/:path*', permanent: true },
       { source: '/engine/:path*', destination: '/game-engine/:path*', permanent: true },

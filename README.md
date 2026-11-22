@@ -47,6 +47,21 @@ Both commands run the platform builds in parallel and reuse cached binaries when
 Download the tested `nayan-ui` artifact from a successful run. See the
 [engine README](./packages/nayan-ui/README.md#development-and-verification) for local builds.
 
+### First npm release
+
+Publish the tested tarball once from an npm account with two-factor authentication.
+Download and unzip the workflow's `nayan-ui` artifact, then run the following from that directory.
+
+```sh
+npm login --registry=https://registry.npmjs.org
+npm publish ./nayan-ui-1.0.0-beta.1.tgz --access public --tag beta --ignore-scripts
+```
+
+In the new package's npm settings, add a GitHub Actions trusted publisher with owner `ursnj`,
+repository `nayan-ui`, and workflow `npm-publish.yml`. Leave the environment blank and enable
+`npm publish`. Use a new package version for the first GitHub Actions release.
+[npm Trusted Publishing settings](https://docs.npmjs.com/trusted-publishers/#step-1-add-a-first-trusted-publisher-on-npmjscom)
+
 ## Website
 
 [packages/website](./packages/website) (`@nayan-ui/website`) is the Next.js app behind [www.nayanui.com](https://www.nayanui.com). It hosts the component docs, games, developer tool guides and the video editor. It ships as the Docker image `ursnj/nayanui` (port `7100`). Site components, demos, and tooling use the workspace engine.

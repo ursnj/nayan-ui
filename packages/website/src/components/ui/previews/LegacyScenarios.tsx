@@ -1,7 +1,7 @@
 import { PREVIEW_STACK, PREVIEW_BUTTON, PREVIEW_FIELD } from '@/design/system';
 import { useState, type ReactNode } from 'react';
 import * as E from 'nayan-ui/components';
-import { element as e, sample } from './ControlScenarios';
+import { avatarInitialsClass, element as e, sample } from './ControlScenarios';
 import { scenario } from './scenario';
 import type { NamedComponentPreview } from './types';
 
@@ -24,37 +24,14 @@ export default function Example() {
   };
 }
 
-function Field({ time }: { time: boolean }) {
-  const id = time ? 'opening-time' : 'deadline-date';
+function TimeField() {
   return (
     <E.NView tag="div" className={PREVIEW_STACK}>
-      <E.NText tag="label" htmlFor={id}>
-        {time ? 'Opening time' : 'Deadline'}
+      <E.NText tag="label" htmlFor="opening-time">
+        Opening time
       </E.NText>
-      <E.NInput
-        className={PREVIEW_FIELD}
-        id={id}
-        type={time ? 'time' : 'date'}
-        min={time ? '08:00' : '2026-01-01'}
-        max={time ? '18:00' : '2026-01-31'}
-        defaultValue={time ? '09:00' : '2026-01-15'}
-        step={time ? 900 : 1}
-      />
+      <E.NInput className={PREVIEW_FIELD} id="opening-time" type="time" min="08:00" max="18:00" defaultValue="09:00" step={900} />
     </E.NView>
-  );
-}
-
-function fieldScenario(time: boolean) {
-  return browser(
-    time ? '15-minute time slots' : 'Limit dates to one month',
-    'NView, NText, NInput',
-    '',
-    `<NView className="${PREVIEW_STACK}">
-      <NText tag="label" htmlFor="example-field">${time ? 'Opening time' : 'Deadline'}</NText>
-      <NInput className="${PREVIEW_FIELD}" id="example-field" type="${time ? 'time' : 'date'}" min="${time ? '08:00' : '2026-01-01'}" max="${time ? '18:00' : '2026-01-31'}"
-        defaultValue="${time ? '09:00' : '2026-01-15'}" step={${time ? 900 : 1}} />
-    </NView>`,
-    <Field time={time} />
   );
 }
 
@@ -217,30 +194,10 @@ export const legacyScenarios = {
     'Team with a count badge',
     e('NView', row, [
       ...['AC', 'RP', 'SJ'].map((initials) =>
-        e('NView', { className: 'h-10 w-10 justify-center items-center rounded-full bg-accent/15' }, [
-          e('NText', { className: 'text-sm font-semibold text-accent' }, initials)
-        ])
+        e('NBadge', { width: 40, height: 40, className: `${avatarInitialsClass} bg-accent/15 text-sm font-semibold text-accent` }, initials)
       ),
       e('NBadge', { className: 'rounded-full bg-default px-2 py-1 text-sm' }, '+4')
     ])
-  ),
-  breadcrumbs: sample(
-    'Longer location trail',
-    e('NView', row, [
-      e('NLink', { href: '/' }, 'Home'),
-      e('NText', {}, '›'),
-      e('NLink', { href: '/game-engine' }, 'Nayan Game Engine'),
-      e('NText', {}, '›'),
-      e('NText', { className: 'font-semibold' }, 'Examples')
-    ])
-  ),
-  calendar: scenario(
-    'Minimum selectable date',
-    'NDatePicker',
-    '<NDatePicker label="Start of term" defaultValue={new Date(2026, 8, 1)} minimumDate={new Date(2026, 8, 1)} />',
-    <E.NDatePicker label="Start of term" defaultValue={new Date(2026, 8, 1)} minimumDate={new Date(2026, 8, 1)} />,
-    undefined,
-    374
   ),
   'checkbox-group': sample(
     'Delivery preferences',
@@ -251,7 +208,6 @@ export const legacyScenarios = {
     ]),
     225
   ),
-  'date-field': fieldScenario(false),
   'date-range-picker': scenario(
     'Keep start and end in order',
     'NDatePicker',
@@ -343,7 +299,16 @@ export const legacyScenarios = {
       e('NChip', { className: 'rounded-full bg-default px-3 py-1 text-sm' }, 'Release notes')
     ])
   ),
-  'time-field': fieldScenario(true),
+  'time-field': browser(
+    '15-minute time slots',
+    'NView, NText, NInput',
+    '',
+    `<NView className="${PREVIEW_STACK}">
+      <NText tag="label" htmlFor="opening-time">Opening time</NText>
+      <NInput className="${PREVIEW_FIELD}" id="opening-time" type="time" min="08:00" max="18:00" defaultValue="09:00" step={900} />
+    </NView>`,
+    <TimeField />
+  ),
   toolbar: sample(
     'A toolbar with a disabled action',
     e('NView', { ...row, accessibilityRole: 'toolbar', accessibilityLabel: 'History' }, [

@@ -25,11 +25,39 @@ env:
   NPM_DIST_TAG: ${{ inputs.beta && 'beta' || 'latest' }}
 
 jobs:
-  build-core:
-    name: Build core (${{ matrix.platform }})
+  check-publish:
+    name: Check npm package
     if: >-
       toJSON(github.event.repository.private) == 'false' &&
-      (inputs.command == 'validate' || (inputs.command == 'publish' && github.repository == 'ursnj/nayan-ui'))
+      github.repository == 'ursnj/nayan-ui' &&
+      inputs.command == 'publish'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Check that the package exists for Trusted Publishing
+        run: |
+          status="$(curl --head --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            --header 'Cache-Control: no-cache' \
+            --connect-timeout 5 --max-time 15 --retry 2 https://registry.npmjs.org/nayan-ui)"
+          case "$status" in
+            200) ;;
+            404)
+              echo '::error::npm has no public package record for nayan-ui. Publish the first tested tarball from an authenticated npm account, then configure Trusted Publishing for npm-publish.yml.'
+              exit 1
+              ;;
+            *)
+              echo "::error::Could not verify nayan-ui on npm (HTTP $status)."
+              exit 1
+              ;;
+          esac
+
+  build-core:
+    name: Build core (${{ matrix.platform }})
+    needs: check-publish
+    if: >-
+      !cancelled() &&
+      toJSON(github.event.repository.private) == 'false' &&
+      (inputs.command == 'validate' || needs.check-publish.result == 'success')
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
     strategy:
@@ -142,9 +170,11 @@ jobs:
 
   test-core:
     name: Test Rust core
+    needs: check-publish
     if: >-
+      !cancelled() &&
       toJSON(github.event.repository.private) == 'false' &&
-      (inputs.command == 'validate' || (inputs.command == 'publish' && github.repository == 'ursnj/nayan-ui'))
+      (inputs.command == 'validate' || needs.check-publish.result == 'success')
     runs-on: macos-15
     timeout-minutes: 30
     env:
@@ -165,6 +195,10 @@ jobs:
 
   package:
     needs: [build-core, test-core]
+    if: >-
+      !cancelled() &&
+      needs.build-core.result == 'success' &&
+      needs.test-core.result == 'success'
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     outputs:
@@ -213,7 +247,7 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org

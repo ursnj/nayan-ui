@@ -104,3 +104,16 @@ test("only the canonical playground page is listed in the sitemap", () => {
   expect(paths).not.toContain("/game-engine/playground");
   expect(paths).not.toContain("/playground/types");
 });
+
+test("only Date Picker is listed for single-date controls and the old tags link to it", () => {
+  const paths = collectPublicPaths();
+  expect(paths).toContain("/components/date-picker");
+  for (const slug of ["calendar", "date-field"]) {
+    expect(paths).not.toContain(`/react/${slug}`);
+    expect(paths).not.toContain(`/components/${slug}`);
+    for (const tag of [slug, `react-${slug}`]) {
+      expect(paths).toContain(`/tags/${tag}`);
+      expect(findReferenceTag(tag)?.entries.map(({ path }) => path)).toEqual(["/components/date-picker"]);
+    }
+  }
+});

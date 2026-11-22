@@ -2,9 +2,9 @@
 
 import { PREVIEW_STACK, PREVIEW_BUTTON, PREVIEW_FIELD } from '@/design/system';
 import { useEffect, useId, useRef, useState } from 'react';
-import { NButton, NCard, NCheck, NChip, NDatePicker, NInput, NLink, NList, NMenuItem, NPress, NText, NView } from 'nayan-ui/components';
+import { NBadge, NButton, NCard, NCheck, NChip, NDatePicker, NInput, NLink, NList, NMenuItem, NPress, NText, NView } from 'nayan-ui/components';
 import { componentSource } from '@/services/nayan-ui/component-examples';
-import { element, sample } from './ControlScenarios';
+import { avatarInitialsClass, breadcrumbOverview, element, sample } from './ControlScenarios';
 import SwitchRows, { switchSource } from './SwitchRows';
 import type { ComponentPreview } from './types';
 
@@ -21,12 +21,6 @@ const avatars = [
   { name: 'Two more members', initials: '+2', backgroundColor: '#e2e8f0', color: '#1e293b' }
 ];
 
-const breadcrumbs = [
-  { label: 'Home', href: '/' },
-  { label: 'Nayan Components', href: '/components' },
-  { label: 'Breadcrumbs', href: '' }
-];
-
 const people = [
   ['Alice', 'alice@example.com', 'Admin'],
   ['Bob', 'bob@example.com', 'Member'],
@@ -41,29 +35,28 @@ const files = [
 ];
 const labels = ['Design', 'Development', 'Documentation'];
 const subscriptions = [{ label: 'Release notes', enabled: true }, { label: 'Security alerts' }, { label: 'Weekly digest' }];
-const defaultAvatar = 'h-10 w-10 items-center justify-center rounded-full';
-const avatarLabel = 'text-sm font-medium';
+const avatarLabel = `${avatarInitialsClass} text-sm font-medium`;
+
+function initialsBadge(initials: string, className: string, size = 40) {
+  return element('NBadge', { width: size, height: size, className: `${avatarInitialsClass} font-medium ${className}` }, initials);
+}
 
 const avatarPreview = sample(
   'Overview',
   element('NView', { className: 'gap-3' }, [
     element('NText', { className: 'font-semibold' }, 'Colors'),
     element('NView', { className: row }, [
-      element('NView', { className: `${defaultAvatar} bg-default` }, [element('NText', { className: avatarLabel }, 'ND')]),
-      element('NView', { className: `${defaultAvatar} bg-accent/15` }, [element('NText', { className: `${avatarLabel} text-accent` }, 'AK')]),
-      element('NView', { className: `${defaultAvatar} bg-success/20` }, [element('NText', { className: `${avatarLabel} text-foreground` }, 'RS')]),
-      element('NView', { className: `${defaultAvatar} bg-warning/20` }, [element('NText', { className: `${avatarLabel} text-foreground` }, 'JP')]),
-      element('NView', { className: `${defaultAvatar} bg-danger/20` }, [element('NText', { className: `${avatarLabel} text-foreground` }, 'MM')])
+      initialsBadge('ND', 'bg-default text-sm text-foreground'),
+      initialsBadge('AK', 'bg-accent/15 text-sm text-accent'),
+      initialsBadge('RS', 'bg-success/20 text-sm text-foreground'),
+      initialsBadge('JP', 'bg-warning/20 text-sm text-foreground'),
+      initialsBadge('MM', 'bg-danger/20 text-sm text-foreground')
     ]),
     element('NText', { className: 'font-semibold' }, 'Sizes'),
     element('NView', { className: row }, [
-      element('NView', { className: 'h-8 w-8 items-center justify-center rounded-full bg-accent/15' }, [
-        element('NText', { className: 'text-xs font-medium text-accent' }, 'SM')
-      ]),
+      initialsBadge('SM', 'bg-accent/15 text-xs text-accent', 32),
       element('NImage', { src: '/logo.webp', alt: 'Nayan UI', width: 40, height: 40, className: 'rounded-full' }),
-      element('NView', { className: 'h-12 w-12 items-center justify-center rounded-full bg-accent/15' }, [
-        element('NText', { className: 'text-base font-medium text-accent' }, 'LG')
-      ])
+      initialsBadge('LG', 'bg-accent/15 text-base text-accent', 48)
     ])
   ])
 );
@@ -263,59 +256,25 @@ const legacyExamples = {
     render: (
       <NView className={row} accessibilityLabel="Project members">
         {avatars.map(({ name, initials, color, backgroundColor }) => (
-          <NView key={name} accessibilityLabel={name} className="h-10 w-10 items-center justify-center rounded-full" style={{ backgroundColor }}>
-            <NText className="text-xs font-semibold" style={{ color }}>
-              {initials}
-            </NText>
-          </NView>
+          <NBadge key={name} accessibilityLabel={name} width={40} height={40} className={avatarLabel} style={{ backgroundColor, color }}>
+            {initials}
+          </NBadge>
         ))}
       </NView>
     ),
     source: componentSource(
-      'NView, NText',
+      'NView, NBadge',
       `<NView className="${row}" accessibilityLabel="Project members">
             {avatars.map(({ name, initials, color, backgroundColor }) => (
-              <NView key={name} accessibilityLabel={name} className="h-10 w-10 items-center justify-center rounded-full" style={{ backgroundColor }}>
-                <NText style={{ color }}>{initials}</NText>
-              </NView>
+              <NBadge key={name} accessibilityLabel={name} width={40} height={40} className="${avatarLabel}" style={{ backgroundColor, color }}>
+                {initials}
+              </NBadge>
             ))}
           </NView>`,
       `const avatars = ${JSON.stringify(avatars, null, 2)};`
     )
   },
-  breadcrumbs: {
-    render: (
-      <NView className={row} accessibilityLabel="Breadcrumbs">
-        {breadcrumbs.map(({ label, href }) =>
-          href ? (
-            <NView key={label} className={row}>
-              <NLink href={href}>{label}</NLink>
-              <NText>/</NText>
-            </NView>
-          ) : (
-            <NText className="font-semibold" key={label}>
-              {label}
-            </NText>
-          )
-        )}
-      </NView>
-    ),
-    source: componentSource(
-      'NLink, NText',
-      `<NView className="${row}" accessibilityLabel="Breadcrumbs">
-            {breadcrumbs.map(({ label, href }) => href
-              ? <NView key={label} className="${row}"><NLink href={href}>{label}</NLink><NText>/</NText></NView>
-              : <NText key={label}>{label}</NText>
-            )}
-          </NView>`,
-      `const breadcrumbs = ${JSON.stringify(breadcrumbs, null, 2)};`
-    )
-  },
-  calendar: {
-    height: 390,
-    render: <NDatePicker label="Choose a day" defaultValue={new Date(2026, 10, 21)} />,
-    source: componentSource('NDatePicker', '<NDatePicker label="Choose a day" defaultValue={new Date(2026, 10, 21)} />')
-  },
+  breadcrumbs: breadcrumbOverview,
   'checkbox-group': {
     render: (
       <>
@@ -332,18 +291,6 @@ const legacyExamples = {
           <NCheck label="Development" />
           <NCheck label="Documentation" />`
     )
-  },
-  'date-field': {
-    host: true,
-    render: (
-      <NView tag="div" className={PREVIEW_STACK}>
-        <NText tag="label" htmlFor="example-date">
-          Date
-        </NText>
-        <NInput id="example-date" type="date" className={PREVIEW_FIELD} />
-      </NView>
-    ),
-    source: fieldSource('date', 'Date')
   },
   'date-range-picker': {
     height: 440,
@@ -485,7 +432,7 @@ export default function Example() {
         <NInput id="example-time" type="time" className={PREVIEW_FIELD} />
       </NView>
     ),
-    source: fieldSource('time', 'Time')
+    source: timeFieldSource()
   },
   toolbar: {
     render: <Toolbar />,
@@ -502,14 +449,14 @@ export default function Example() {
   }
 } satisfies Record<string, ComponentPreview>;
 
-function fieldSource(type: 'date' | 'time', label: string) {
+function timeFieldSource() {
   return `import { NInput, NText, NView } from 'nayan-ui/components';
 
 export default function Example() {
   return (
     <NView className="${PREVIEW_STACK}">
-      <NText tag="label" htmlFor="example-${type}">${label}</NText>
-      <NInput id="example-${type}" type="${type}" className="${PREVIEW_FIELD}" />
+      <NText tag="label" htmlFor="example-time">Time</NText>
+      <NInput id="example-time" type="time" className="${PREVIEW_FIELD}" />
     </NView>
   );
 }`;
