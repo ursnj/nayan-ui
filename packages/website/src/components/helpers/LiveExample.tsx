@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type ComponentType } from 'react';
+import { useEffect, useRef, useState, type ComponentType, type ReactNode } from 'react';
 import { NPress, NText, NView } from 'nayan-ui/components';
 import { clipboard } from 'nayan-ui/clipboard';
 import { Play, RotateCcw, Copy, Check } from '@/design/Icons';
@@ -16,6 +16,7 @@ import { exampleModules } from '@/components/ui/previews/exampleModules';
 import type { NamedComponentPreview } from '@/components/ui/previews/types';
 
 const island = 'rounded-xl border border-border bg-surface shadow-sm';
+const paneHeight = 'h-[28rem]';
 const paneTitle = 'border-b border-border p-3 text-xs font-semibold text-muted';
 const toolbarButton = 'inline-flex min-h-8 flex-row items-center justify-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold disabled:opacity-50';
 const secondaryButton = `${toolbarButton} text-muted hover:text-foreground`;
@@ -47,6 +48,61 @@ const viewportExamples = new Set([
 ]);
 
 export type LiveExampleScenario = NamedComponentPreview;
+
+function scrollsPreview(target: EventTarget, region: HTMLDivElement) {
+  return (
+    region.scrollHeight > region.clientHeight &&
+    target instanceof HTMLCanvasElement &&
+    target.hasAttribute('data-nayan-component-canvas')
+  );
+}
+
+function PreviewViewport({ id, children }: { id?: string; children: ReactNode }) {
+  const viewport = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const region = viewport.current;
+    if (!region) return;
+    const update = () => region.toggleAttribute('data-preview-scrollable', region.scrollHeight > region.clientHeight);
+    const observer = new ResizeObserver(update);
+    observer.observe(region);
+    if (region.firstElementChild) observer.observe(region.firstElementChild);
+    update();
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <NView
+      tag="div"
+      ref={viewport}
+      className="docs-live-preview flex min-h-0 min-w-0 flex-1 items-start justify-center overflow-auto [scrollbar-width:thin] focus-visible:[outline-offset:-3px]"
+      role="region"
+      aria-label="Preview content"
+      tabIndex={0}
+      data-component-preview={id}
+      onWheelCapture={(event) => {
+        const { target, currentTarget, deltaX, deltaY, ctrlKey, metaKey, shiftKey } = event;
+        if (
+          !ctrlKey && !metaKey && !shiftKey && Math.abs(deltaY) > Math.abs(deltaX) &&
+          scrollsPreview(target, currentTarget)
+        ) {
+          // Let the browser scroll the frame before the canvas can consume the wheel event.
+          event.stopPropagation();
+        }
+      }}
+      onKeyDownCapture={(event) => {
+        if (!('key' in event)) return;
+        const { target, currentTarget, key } = event;
+        if (
+          ['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown'].includes(key) &&
+          scrollsPreview(target, currentTarget)
+        ) event.stopPropagation();
+      }}
+    >
+      {children}
+    </NView>
+  );
+}
 
 interface Props {
   examples: readonly [LiveExampleScenario, ...LiveExampleScenario[]];
@@ -188,7 +244,7 @@ function ExampleWorkspace({
   return (
     <NView
       tag="div"
-      className="component-workbench grid min-w-0 gap-3"
+      className="component-workbench @container grid min-w-0 gap-3"
       id={codeAnchor}
       inert={!ready}
       style={{ scrollMarginTop: 'calc(var(--site-header-height) + 1rem)' }}
@@ -215,49 +271,47 @@ function ExampleWorkspace({
           {example.note}
         </NText>
       )}
-      <NView tag="section" className="component-workbench-preview min-w-0 overflow-hidden" aria-label="Live preview">
-        <BrowserFrame label={`nayanui.com${previewPath}`} padded={false} compact>
-          <NView
-            tag="div"
-            className="docs-live-preview flex min-w-0 justify-center overflow-auto [scrollbar-width:thin]"
-            data-component-preview={previewId}
-          >
-            {Output && output ? (
-              <PreviewSurface
-                themes={previewThemes}
-                fullWidth={previewId === 'video-player'}
-                keepViewport={keepEditedViewport}
-                preview={{
-                  ...example,
-                  host: true,
-                  height: keepEditedViewport ? example.height : 'auto',
-                  render: (
-                    <PreviewBoundary key={output.run} onError={(cause) => setError(cause.message)}>
-                      <NView tag="div" className={`component-edited-preview flex min-w-0 flex-col${keepEditedViewport ? ' flex-1' : ''}`}>
-                        <Output />
-                      </NView>
-                    </PreviewBoundary>
-                  )
-                }}
-              />
-            ) : (
-              <PreviewSurface themes={previewThemes} preview={example} fullWidth={previewId === 'video-player'} keepViewport={keepViewport} />
-            )}
+      <NView tag="div" className="component-workbench-panes grid min-w-0 grid-cols-1 items-start gap-3 @[672px]:grid-cols-2">
+        <NView tag="section" className={`${island} ${paneHeight} component-workbench-code flex min-w-0 flex-col overflow-hidden`} aria-label="Editable code">
+          <NText tag="div" className={`${paneTitle} shrink-0 font-mono`}>
+            Example.tsx
+          </NText>
+          <NView tag="div" className="component-workbench-editor min-h-0 min-w-0 flex-1">
+            <CodeEditor
+              label="Example source code"
+              code={code}
+              onChange={onChange}
+              onRun={run}
+              onComplete={(source, position) => getCompiler().complete(source, position)}
+            />
           </NView>
-        </BrowserFrame>
-      </NView>
-      <NView tag="section" className={`${island} component-workbench-code min-w-0 overflow-hidden`} aria-label="Editable code">
-        <NText tag="div" className={`${paneTitle} font-mono`}>
-          Example.tsx
-        </NText>
-        <NView tag="div" className="component-workbench-editor h-[19rem] min-w-0">
-          <CodeEditor
-            label="Example source code"
-            code={code}
-            onChange={onChange}
-            onRun={run}
-            onComplete={(source, position) => getCompiler().complete(source, position)}
-          />
+        </NView>
+        <NView tag="section" className={`${paneHeight} component-workbench-preview min-w-0 overflow-hidden`} aria-label="Live preview">
+          <BrowserFrame label={`nayanui.com${previewPath}`} className="h-full" padded={false} compact>
+            <PreviewViewport id={previewId}>
+              {Output && output ? (
+                <PreviewSurface
+                  themes={previewThemes}
+                  fullWidth={previewId === 'video-player'}
+                  keepViewport={keepEditedViewport}
+                  preview={{
+                    ...example,
+                    host: true,
+                    height: keepEditedViewport ? example.height : 'auto',
+                    render: (
+                      <PreviewBoundary key={output.run} onError={(cause) => setError(cause.message)}>
+                        <NView tag="div" className={`component-edited-preview flex min-w-0 flex-col${keepEditedViewport ? ' flex-1' : ''}`}>
+                          <Output />
+                        </NView>
+                      </PreviewBoundary>
+                    )
+                  }}
+                />
+              ) : (
+                <PreviewSurface themes={previewThemes} preview={example} fullWidth={previewId === 'video-player'} keepViewport={keepViewport} />
+              )}
+            </PreviewViewport>
+          </BrowserFrame>
         </NView>
       </NView>
       {error && (

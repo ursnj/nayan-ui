@@ -247,6 +247,10 @@ export default {
     { selector: '.browser-frame-dots > span', utilities: '[width:0.55rem] [height:0.55rem] [border-radius:50%] [background:#e96e7b]' },
     { selector: '.browser-frame-dots > span:nth-child(2)', utilities: '[background:#e8aa52]' },
     { selector: '.browser-frame-dots > span:nth-child(3)', utilities: '[background:#55b985]' },
+    {
+      selector: '.docs-live-preview[data-preview-scrollable] canvas[data-nayan-component-canvas]',
+      utilities: '[touch-action:pan-y]!'
+    },
     { selector: '.component-host-demo', utilities: 'flex min-w-0 flex-col items-start [gap:0.875rem] [padding:1.25rem] text-foreground' },
     {
       selector: '.component-host-button',

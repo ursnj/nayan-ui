@@ -204,6 +204,7 @@ function DocumentSurfaceView<Change>({
   return (
     <canvas
       ref={ref}
+      data-nayan-component-canvas={mode === 'components' ? '' : undefined}
       tabIndex={0}
       aria-label={error ? `Drawing unavailable: ${error}` : 'Drawing canvas'}
       title={error || undefined}

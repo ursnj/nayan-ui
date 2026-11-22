@@ -246,11 +246,11 @@ export const BrowserFrame = ({
   className = "",
   children,
 }: BrowserFrameProps) => (
-  <NView tag="div" className={`${CARD} overflow-hidden ${className}`}>
+  <NView tag="div" className={`${CARD} flex flex-col overflow-hidden ${className}`}>
     <NView
       tag="div"
       aria-hidden
-      className="browser-frame-toolbar flex items-center gap-3 border-b border-default px-3 py-2.5"
+      className="browser-frame-toolbar flex shrink-0 items-center gap-3 border-b border-default px-3 py-2.5"
     >
       <NText tag="span" className="browser-frame-dots flex shrink-0 items-center gap-1.5">
         <NText tag="span" />
@@ -264,10 +264,10 @@ export const BrowserFrame = ({
       ) : null}
     </NView>
 
-    <NView tag="div" className="bg-surface p-2 sm:p-3">
+    <NView tag="div" className="flex min-h-0 flex-1 flex-col bg-surface p-2 sm:p-3">
       <NView
         tag="div"
-        className={`overflow-hidden rounded-xl border border-default bg-background ${compact ? "" : "min-h-[20rem]"} ${padded ? "p-6 sm:p-8" : ""}`}
+        className={`flex flex-1 flex-col overflow-hidden rounded-xl border border-default bg-background ${compact ? "min-h-0" : "min-h-[20rem]"} ${padded ? "p-6 sm:p-8" : ""}`}
       >
         {children}
       </NView>
