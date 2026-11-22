@@ -27,6 +27,7 @@ mod select;
 mod style;
 pub(crate) mod surface;
 pub(crate) mod system_bars;
+mod tabs;
 mod text_selection;
 mod theme;
 pub(crate) mod toast;
@@ -588,6 +589,7 @@ impl ComponentDocument {
                                     | "NSlider"
                                     | "NMenuItem"
                                     | "NActionItem"
+                                    | "NTabs"
                             )
                         });
                 let cleared = json!({"phase":"clear"});
@@ -1017,6 +1019,7 @@ impl ComponentDocument {
                     | "NCheck"
                     | "NSwitch"
                     | "NToggleButton"
+                    | "NTabs"
                     | "NRadio"
                     | "NSlider"
                     | "NNumberField"
@@ -2059,11 +2062,12 @@ impl ComponentDocument {
                     }
                 }
             }
-            "NRadio" | "NRadioGroup" | "NButtonGroup" | "NTabs" => self.selection(ui, n),
+            "NRadio" | "NRadioGroup" | "NButtonGroup" => self.selection(ui, n),
+            "NTabs" => self.tabs(ui, n),
             "NSelect" => {
                 self.select(ui, n, resolved, false);
             }
-            "NTabsContent" => self.nodes(ui, &n.children),
+            "NTabsContent" => self.container(ui, n, resolved),
             "NAlert" | "NEmptyState" => {
                 let message = ["message", "description"]
                     .iter()
@@ -2206,17 +2210,10 @@ impl ComponentDocument {
                 }
             }
         };
-        if matches!(n.kind.as_str(), "NTabs" | "NButtonGroup") || p["orientation"] == "horizontal" {
+        if n.kind == "NButtonGroup" || p["orientation"] == "horizontal" {
             ui.horizontal_wrapped(&mut render);
         } else {
             render(ui);
-        }
-        if n.kind == "NTabs" {
-            for child in &n.children {
-                if child.kind != "NTabsContent" || child.props["item"] == selected {
-                    self.nodes(ui, std::slice::from_ref(child));
-                }
-            }
         }
     }
 }

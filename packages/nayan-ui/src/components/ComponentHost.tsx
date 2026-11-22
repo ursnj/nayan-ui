@@ -224,8 +224,7 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
           const adjustable = ['NSlider', 'NNumberField', 'NCarousel'].includes(node.kind);
           const list = node.kind === 'NList';
           const button =
-            ['NButton', 'NPress', 'NLink', 'NMenuItem', 'NActionItem', 'NSelect', 'NDatePicker'].includes(node.kind) ||
-            node.id.includes(':option:');
+            ['NButton', 'NPress', 'NLink', 'NMenuItem', 'NActionItem', 'NSelect', 'NDatePicker'].includes(node.kind) || node.id.includes(':option:');
 
           return (
             <View
@@ -237,25 +236,29 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
                   ? 'header'
                   : node.kind === 'NLink'
                     ? 'link'
-                    : node.kind === 'NSelect' && !node.selectOwner
-                      ? 'combobox'
-                      : list
-                        ? 'list'
-                        : node.kind === 'NImage'
-                          ? 'image'
-                          : adjustable
-                            ? 'adjustable'
-                            : radio
-                              ? 'radio'
-                              : toggle
-                                ? node.kind === 'NSwitch'
-                                  ? 'switch'
-                                  : 'checkbox'
-                                : button
-                                  ? 'button'
-                                  : node.kind === 'NProgress' || node.kind === 'NLoading'
-                                    ? 'progressbar'
-                                    : 'text'
+                    : node.kind === 'NTabs'
+                      ? 'tab'
+                      : node.kind === 'NTabsList'
+                        ? 'tablist'
+                        : node.kind === 'NSelect' && !node.selectOwner
+                          ? 'combobox'
+                          : list
+                            ? 'list'
+                            : node.kind === 'NImage'
+                              ? 'image'
+                              : adjustable
+                                ? 'adjustable'
+                                : radio
+                                  ? 'radio'
+                                  : toggle
+                                    ? node.kind === 'NSwitch'
+                                      ? 'switch'
+                                      : 'checkbox'
+                                    : button
+                                      ? 'button'
+                                      : node.kind === 'NProgress' || node.kind === 'NLoading'
+                                        ? 'progressbar'
+                                        : 'text'
               }
               accessibilityLabel={node.label || undefined}
               accessibilityValue={

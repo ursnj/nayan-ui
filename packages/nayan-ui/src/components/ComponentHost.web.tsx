@@ -38,6 +38,15 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
   );
   const popupField = (id: string) => openPopups.some((root) => id.startsWith(`${root.id}:`));
   const semanticId = (id: string) => `nayan-${document.id}-${id}`;
+  const tabLists = new Map(snapshot.nodes.filter(({ kind }) => kind === 'NTabsList').map((node) => [node.id, node]));
+  const tabsByList = new Map<string, ComponentSemantic[]>();
+  for (const node of snapshot.nodes) {
+    if (node.kind !== 'NTabs') continue;
+    const owner = node.id.slice(0, node.id.lastIndexOf(':option:'));
+    const tabs = tabsByList.get(owner) ?? [];
+    tabs.push(node);
+    tabsByList.set(owner, tabs);
+  }
   const { host, mirror, copyEvents, ...textSelection } = useTextSelection(document, snapshot, active);
   const presentation = useContext(PresentationGestureContext);
   useEffect(
@@ -205,6 +214,21 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
           const select = openSelects.find((root) => node.id.startsWith(`${root.id}:`));
           const style: CSSProperties = { position: 'absolute', left, top, width, height, opacity: 0, margin: 0, padding: 0, pointerEvents: 'none' };
           const focus = () => document.request({ action: 'focus', id: node.id });
+          if (node.kind === 'NTabsList') {
+            return (
+              <div
+                key={node.id}
+                role="tablist"
+                aria-label={node.label}
+                aria-orientation={node.value === 'vertical' ? 'vertical' : 'horizontal'}
+                aria-owns={tabsByList
+                  .get(node.id)
+                  ?.map((tab) => semanticId(tab.id))
+                  .join(' ')}
+                style={style}
+              />
+            );
+          }
           if (['NInput', 'NTextarea', 'NSearchField', 'NInputOtp'].includes(node.kind)) {
             return (
               <BrowserTextField
@@ -222,22 +246,17 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
             );
           }
           if (
-            [
-              'NButton',
-              'NPress',
-              'NLink',
-              'NMenuItem',
-              'NActionItem',
-              'NSelect',
-              'NDatePicker',
-              'NCheck',
-              'NSwitch',
-              'NToggleButton'
-            ].includes(node.kind) ||
+            ['NButton', 'NPress', 'NLink', 'NMenuItem', 'NActionItem', 'NSelect', 'NDatePicker', 'NCheck', 'NSwitch', 'NToggleButton'].includes(
+              node.kind
+            ) ||
             node.id.includes(':option:')
           ) {
             const toggle = ['NCheck', 'NSwitch', 'NToggleButton'].includes(node.kind);
             const radio = node.kind === 'NRadio' || node.kind === 'NRadioGroup';
+            const tab = node.kind === 'NTabs';
+            const owner = tab ? node.id.slice(0, node.id.lastIndexOf(':option:')) : '';
+            const enabledTabs = tabsByList.get(owner)?.filter(({ disabled }) => !disabled) ?? [];
+            const tabbable = enabledTabs.find(({ selected }) => selected) ?? enabledTabs[0];
 
             return (
               <Fragment key={node.id}>
@@ -247,31 +266,55 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
                   type="button"
                   aria-label={node.label || node.kind.slice(1)}
                   role={
-                    node.selectOwner
-                      ? 'option'
-                      : node.kind === 'NSelect'
-                        ? 'combobox'
-                        : radio
-                          ? 'radio'
-                          : node.kind === 'NSwitch'
-                            ? 'switch'
-                            : node.kind === 'NCheck'
-                              ? 'checkbox'
-                              : node.kind === 'NLink'
-                                ? 'link'
-                                : undefined
+                    tab
+                      ? 'tab'
+                      : node.selectOwner
+                        ? 'option'
+                        : node.kind === 'NSelect'
+                          ? 'combobox'
+                          : radio
+                            ? 'radio'
+                            : node.kind === 'NSwitch'
+                              ? 'switch'
+                              : node.kind === 'NCheck'
+                                ? 'checkbox'
+                                : node.kind === 'NLink'
+                                  ? 'link'
+                                  : undefined
                   }
                   aria-expanded={node.kind === 'NSelect' && !node.selectOwner ? (node.expanded ?? false) : node.expanded}
                   aria-haspopup={node.kind === 'NSelect' && !node.selectOwner ? 'listbox' : undefined}
                   aria-controls={node.kind === 'NSelect' && node.expanded ? `${semanticId(node.id)}-listbox` : undefined}
                   aria-activedescendant={node.activeDescendant ? semanticId(node.activeDescendant) : undefined}
                   aria-selected={radio || node.kind === 'NPress' ? undefined : node.selected}
-                  tabIndex={node.selectOwner ? -1 : 0}
+                  tabIndex={node.selectOwner || (tab && node !== tabbable) ? -1 : 0}
                   aria-pressed={node.kind === 'NToggleButton' ? Boolean(node.value) : node.kind === 'NPress' ? node.selected : undefined}
                   aria-checked={radio ? (node.selected ?? false) : toggle && node.kind !== 'NToggleButton' ? Boolean(node.value) : undefined}
                   disabled={node.disabled}
                   style={style}
                   onFocus={focus}
+                  onKeyDown={
+                    tab
+                      ? (event) => {
+                          const vertical = tabLists.get(owner)?.value === 'vertical';
+                          const previous = vertical ? 'ArrowUp' : 'ArrowLeft';
+                          const next = vertical ? 'ArrowDown' : 'ArrowRight';
+                          const index = enabledTabs.indexOf(node);
+                          if (index < 0 || ![previous, next, 'Home', 'End'].includes(event.key)) return;
+                          event.preventDefault();
+                          event.stopPropagation();
+                          const target =
+                            event.key === 'Home'
+                              ? 0
+                              : event.key === 'End'
+                                ? enabledTabs.length - 1
+                                : (index + (event.key === next ? 1 : -1) + enabledTabs.length) % enabledTabs.length;
+                          const option = enabledTabs[target]!;
+                          window.document.getElementById(semanticId(option.id))?.focus({ preventScroll: true });
+                          if (!option.selected) document.request({ action: 'activate', id: option.id });
+                        }
+                      : undefined
+                  }
                   onClick={() => document.request({ action: 'activate', id: node.id })}
                 >
                   {node.kind === 'NSelect' && !node.selectOwner ? node.valueLabel : null}

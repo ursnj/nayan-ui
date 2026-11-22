@@ -14,7 +14,6 @@ const controls = {
   NSearchField: { className: 'min-h-9 rounded-lg text-sm' },
   NTextarea: { className: 'min-h-[58px] rounded-lg text-sm' },
   NSelect: { className: 'min-h-9 rounded-lg text-sm' },
-  NTabs: { className: 'min-h-8 rounded-lg px-3 py-1 text-sm font-medium' },
   NButtonGroup: { className: 'min-h-9 rounded-lg px-3 py-1 text-sm font-medium' },
   NCard: { className: 'rounded-lg' },
   NMenuItem: { className: 'rounded-lg px-3 text-sm font-medium' }

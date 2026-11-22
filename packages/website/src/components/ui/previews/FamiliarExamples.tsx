@@ -115,12 +115,10 @@ const tabs = [
 function Tabs() {
   const [tab, setTab] = useState('account');
   return (
-    <NTabs items={tabs} value={tab} onValueChange={setTab}>
+    <NTabs ariaLabel="Settings" isFull items={tabs} value={tab} onValueChange={setTab}>
       {tabs.map(({ value, text }) => (
-        <NTabsContent key={value} item={value}>
-          <NView className="mt-2 w-full rounded-xl border border-border bg-surface p-3">
-            <NText className="text-sm text-muted">{text}</NText>
-          </NView>
+        <NTabsContent key={value} item={value} className="px-1">
+          <NText className="text-sm">{text}</NText>
         </NTabsContent>
       ))}
     </NTabs>
@@ -196,12 +194,10 @@ const tabsPreview = {
   render: <Tabs />,
   source: componentSource(
     'NTabs, NTabsContent, NText',
-    `<NTabs items={tabs} value={tab} onValueChange={setTab}>
+    `<NTabs ariaLabel="Settings" isFull items={tabs} value={tab} onValueChange={setTab}>
             {tabs.map(({ value, text }) => (
-              <NTabsContent key={value} item={value}>
-                <NView className="mt-2 w-full rounded-xl border border-border bg-surface p-3">
-                  <NText className="text-sm text-muted">{text}</NText>
-                </NView>
+              <NTabsContent key={value} item={value} className="px-1">
+                <NText className="text-sm">{text}</NText>
               </NTabsContent>
             ))}
           </NTabs>`,

@@ -4,6 +4,8 @@ import { NAccordion } from '../NAccordion';
 import { NButton } from '../NButton';
 import { NButtonGroup } from '../NButtonGroup';
 import { NScrollView } from '../NScrollView';
+import { NTabs } from '../NTabs';
+import { NTabsContent } from '../NTabsContent';
 import { NText } from '../NText';
 import { NView } from '../NView';
 import { createComponentRenderer } from '../reconciler';
@@ -221,6 +223,31 @@ test('horizontal scrolling preserves content spacing independently of its viewpo
   expect(nodes[0]?.children[0]?.children).toHaveLength(2);
   renderer.dispose();
   await flush();
+});
+
+test('tabs send item content as panels and keep explicitly supplied panels', async () => {
+  let nodes: ComponentNode[] = [];
+  const renderer = createComponentRenderer((next) => { nodes = next; }, (error) => { throw error; });
+  try {
+    renderer.render(
+      <NTabs items={[
+        { label: 'Account', value: 'account', content: <NText>Account settings</NText> },
+        { label: 'Security', value: 'security', content: 'Fallback content', disabled: true }
+      ]}>
+        <NTabsContent item="security">Security settings</NTabsContent>
+      </NTabs>
+    );
+    await flush();
+    const tabs = nodes[0]!;
+    expect(tabs.props.items).toEqual([{ label: 'Account', value: 'account' }, { label: 'Security', value: 'security', disabled: true }]);
+    expect(tabs.children.map(({ kind, props, children }) => [kind, props.item, children[0]?.props.text ?? children[0]?.children[0]?.props.text])).toEqual([
+      ['NTabsContent', 'security', 'Security settings'],
+      ['NTabsContent', 'account', 'Account settings']
+    ]);
+  } finally {
+    renderer.dispose();
+    await flush();
+  }
 });
 
 test('web linkify sends children and link classes to Rust and accepts legacy text', async () => {

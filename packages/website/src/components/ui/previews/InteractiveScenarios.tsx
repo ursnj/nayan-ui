@@ -92,28 +92,31 @@ function WiFi() {
   );
 }
 
-function ProjectTabs({ defaultTab }: { defaultTab: string }) {
+const projectTabs = names.map((name) => ({ label: name, value: name, disabled: name === 'Members' }));
+
+function ProjectTabs({ defaultTab, vertical }: { defaultTab: string; vertical: boolean }) {
   return (
-    <E.NTabs items={names} defaultValue={defaultTab}>
+    <E.NTabs ariaLabel="Project" variant="secondary" orientation={vertical ? 'vertical' : 'horizontal'} items={vertical ? names : projectTabs} defaultValue={defaultTab}>
       {names.map((name) => (
         <E.NTabsContent item={name} key={name}>
-          <E.NText>{name} for this project</E.NText>
+          <E.NText className="text-sm">{name} for this project</E.NText>
         </E.NTabsContent>
       ))}
     </E.NTabs>
   );
 }
 
-function tabScenario(title: string, defaultTab: string) {
+function tabScenario(title: string, defaultTab: string, vertical = false) {
   return scenario(
     title,
     'NTabs, NTabsContent, NText',
-    `<NTabs items={['Overview', 'Activity', 'Members']} defaultValue="${defaultTab}">
-            {['Overview', 'Activity', 'Members'].map((name) => (
-              <NTabsContent item={name} key={name}><NText>{name} for this project</NText></NTabsContent>
+    `<NTabs ariaLabel="Project" variant="secondary"${vertical ? ' orientation="vertical"' : ''} items={items} defaultValue="${defaultTab}">
+            {names.map((name) => (
+              <NTabsContent item={name} key={name}><NText className="text-sm">{name} for this project</NText></NTabsContent>
             ))}
           </NTabs>`,
-    <ProjectTabs defaultTab={defaultTab} />
+    <ProjectTabs defaultTab={defaultTab} vertical={vertical} />,
+    `const names = ${JSON.stringify(names)};\n  const items = ${vertical ? 'names' : "names.map((name) => ({ label: name, value: name, disabled: name === 'Members' }))"};`
   );
 }
 
@@ -289,7 +292,7 @@ export const interactiveScenarios = {
     'const [enabled, setEnabled] = useState(false);'
   ),
   tabs: tabScenario('Project tabs', 'Activity'),
-  'tabs-content': tabScenario('Select initial content', 'Members'),
+  'tabs-content': tabScenario('Select initial content', 'Members', true),
   toast: scenario(
     'Warning and success',
     'NButton, NToast',

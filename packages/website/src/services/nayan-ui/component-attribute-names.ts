@@ -125,8 +125,9 @@ export const componentAttributeNames: Partial<Record<ComponentSymbol, readonly s
     'id', 'checked', 'disabled', 'value'
   ],
   NTabs: [
-    'items', 'children', 'selected', 'className', 'onChange', 'ariaLabel',
-    'id', 'value', 'defaultValue', 'orientation'
+    'items', 'children', 'value', 'selected', 'defaultValue', 'onValueChange', 'onChange',
+    'variant', 'orientation', 'isFull', 'className', 'listClassName', 'tabClassName', 'itemClassName',
+    'triggerClassName', 'activeItemClassName', 'contentClassName', 'ariaLabel', 'id'
   ],
   NTabsContent: ['item', 'children', 'className'],
   NText: [
