@@ -21,7 +21,7 @@ import {
 } from 'nayan-ui/components';
 import { SearchIcon } from 'nayan-ui/icons/components/search';
 import { componentSource } from '@/services/nayan-ui/component-examples';
-import { AccordionRows, DisclosureRow } from './DisclosureExamples';
+import { AccordionRows, DisclosureRow, accordionSource, disclosureSource } from './DisclosureExamples';
 import { RadioOption, RadioOptions } from './RadioExamples';
 import SwitchRows from './SwitchRows';
 import type { ComponentPreview } from './types';
@@ -86,12 +86,6 @@ function Alerts() {
     </>
   );
 }
-
-const questions = [
-  { title: 'What is Nayan UI?', text: 'Nayan UI provides UI components, games and tools for React and React Native.' },
-  { title: 'How to install?', text: 'Install the engine with Bun.' },
-  { title: 'Is it free?', text: 'Yes. Nayan UI is free and open source.' }
-];
 
 const tabs = [
   { label: 'Account', value: 'account', text: 'Account settings content.' },
@@ -254,27 +248,13 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
     host: true,
     height: 'auto',
     render: <AccordionRows />,
-    source: componentSource(
-      'NDisclosure, NText',
-      `<NText>Single</NText>
-          {questions.map(({ title, text }) => (
-            <NDisclosure key={title} title={title} expanded={selected === title}
-              onExpandedChange={(open) => setSelected(open ? title : null)}>
-              <NText>{text}</NText>
-            </NDisclosure>
-          ))}
-          <NText>Multiple</NText>
-          {questions.map(({ title, text }) => (
-            <NDisclosure key={title} title={title}><NText>{text}</NText></NDisclosure>
-          ))}`,
-      `const questions = ${JSON.stringify(questions, null, 2)};\n  const [selected, setSelected] = useState<string | null>(null);`
-    )
+    source: accordionSource
   },
   disclosure: {
     host: true,
     height: 'auto',
     render: <DisclosureRow />,
-    source: componentSource('NDisclosure, NText', '<NDisclosure title="Details"><NText>Expand the section to show its content.</NText></NDisclosure>')
+    source: disclosureSource
   },
   radio: {
     host: true,

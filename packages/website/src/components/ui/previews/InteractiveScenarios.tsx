@@ -13,6 +13,9 @@ function Counter() {
   );
 }
 
+const disclosurePanel = 'w-full rounded-xl border border-border bg-surface px-3';
+const disclosureBody = 'pb-3 text-sm text-muted';
+
 function ManagedDisclosure() {
   const [open, setOpen] = useState(false);
   return (
@@ -20,8 +23,8 @@ function ManagedDisclosure() {
       <E.NButton isOutline onPress={() => setOpen(!open)}>
         {open ? 'Collapse details' : 'Expand details'}
       </E.NButton>
-      <E.NDisclosure title="Delivery details" expanded={open} onExpandedChange={setOpen}>
-        <E.NText>Free pickup is available.</E.NText>
+      <E.NDisclosure className={disclosurePanel} title="Delivery details" expanded={open} onExpandedChange={setOpen}>
+        <E.NText className={disclosureBody}>Free pickup is available.</E.NText>
       </E.NDisclosure>
     </>
   );
@@ -231,7 +234,9 @@ export const interactiveScenarios = {
     'Controlled disclosure',
     'NButton, NDisclosure, NText',
     `<NButton isOutline onPress={() => setOpen(!open)}>{open ? 'Collapse details' : 'Expand details'}</NButton>
-          <NDisclosure title="Delivery details" expanded={open} onExpandedChange={setOpen}><NText>Free pickup is available.</NText></NDisclosure>`,
+          <NDisclosure className="${disclosurePanel}" title="Delivery details" expanded={open} onExpandedChange={setOpen}>
+            <NText className="${disclosureBody}">Free pickup is available.</NText>
+          </NDisclosure>`,
     <ManagedDisclosure />,
     'const [open, setOpen] = useState(false);',
     195

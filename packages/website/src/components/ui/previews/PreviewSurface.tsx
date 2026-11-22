@@ -2,7 +2,6 @@
 
 import { useCallback, useState, type ReactNode } from 'react';
 import { NText, NView, NPage, NTheme, type NThemeProps } from 'nayan-ui/components';
-import { documentationThemes } from '@/design/documentationStyles';
 import type { ComponentPreview } from './types';
 
 const controls = {
@@ -24,10 +23,12 @@ const controls = {
 
 export default function PreviewSurface({
   preview,
+  themes,
   fullWidth,
   keepViewport
 }: {
   preview: ComponentPreview;
+  themes: NonNullable<NThemeProps['themes']>;
   fullWidth?: boolean;
   keepViewport?: boolean;
 }) {
@@ -68,7 +69,7 @@ export default function PreviewSurface({
       className="component-preview-surface relative flex min-w-0 flex-col"
       style={{ width: fullWidth ? '100%' : 'min(100%, 52rem)', height }}
     >
-      <NTheme themes={documentationThemes} components={controls} radius={8}>
+      <NTheme themes={themes} components={controls} radius={8}>
         {content}
       </NTheme>
     </NView>

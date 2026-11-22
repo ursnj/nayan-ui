@@ -10,6 +10,8 @@ import { evaluateExample } from '@/components/nayan-playground/evaluate';
 import PreviewBoundary from '@/components/nayan-playground/PreviewBoundary';
 import PreviewSurface from '@/components/ui/previews/PreviewSurface';
 import { BrowserFrame } from '@/design/Primitives';
+import { documentationThemes } from '@/design/documentationStyles';
+import { siteThemes } from '@/design/themeStyles';
 import { exampleModules } from '@/components/ui/previews/exampleModules';
 import type { NamedComponentPreview } from '@/components/ui/previews/types';
 
@@ -17,6 +19,10 @@ const island = 'rounded-xl border border-border bg-surface shadow-sm';
 const paneTitle = 'border-b border-border p-3 text-xs font-semibold text-muted';
 const toolbarButton = 'inline-flex min-h-8 flex-row items-center justify-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold disabled:opacity-50';
 const secondaryButton = `${toolbarButton} text-muted hover:text-foreground`;
+const sitePreviewThemes = {
+  light: { ...siteThemes.light, link: siteThemes.light.accent },
+  dark: { ...siteThemes.dark, link: siteThemes.dark.accent }
+};
 // These examples use the viewport for floating controls or content that fills the surface.
 const viewportExamples = new Set([
   'calendar',
@@ -176,6 +182,7 @@ function ExampleWorkspace({
   }
 
   const Output = output?.component;
+  const previewThemes = /^\/react(?:-native)?\//.test(previewPath) ? documentationThemes : sitePreviewThemes;
   const keepViewport = previewId !== undefined && viewportExamples.has(previewId);
   const keepEditedViewport = keepViewport && example.host;
   return (
@@ -217,6 +224,7 @@ function ExampleWorkspace({
           >
             {Output && output ? (
               <PreviewSurface
+                themes={previewThemes}
                 fullWidth={previewId === 'video-player'}
                 keepViewport={keepEditedViewport}
                 preview={{
@@ -233,7 +241,7 @@ function ExampleWorkspace({
                 }}
               />
             ) : (
-              <PreviewSurface preview={example} fullWidth={previewId === 'video-player'} keepViewport={keepViewport} />
+              <PreviewSurface themes={previewThemes} preview={example} fullWidth={previewId === 'video-player'} keepViewport={keepViewport} />
             )}
           </NView>
         </BrowserFrame>

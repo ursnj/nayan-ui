@@ -116,7 +116,7 @@ export const controlScenarios = {
   ),
   disclosure: sample(
     'Open by default',
-    element('NDisclosure', { title: 'Release details', defaultExpanded: true }, [
+    element('NDisclosure', { className: 'w-full rounded-xl border border-border bg-surface px-3', title: 'Release details', defaultExpanded: true }, [
       element('NText', muted, 'Includes keyboard navigation improvements.')
     ])
   ),

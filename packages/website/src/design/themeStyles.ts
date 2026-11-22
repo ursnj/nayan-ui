@@ -1,6 +1,6 @@
 import type { EngineStyleRecipes } from 'nayan-ui/styles';
 
-const siteThemes = {
+export const siteThemes = {
   light: {
     background: 'hsl(264 56% 98%)',
     foreground: 'hsl(268 40% 13%)',

@@ -96,7 +96,7 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
   const module = 'symbol' in entry ? moduleReferences.find(({ slug }) => slug === entry.module) : undefined;
 
   return (
-    <Sidebar title={entry.title} reference={referenceNavigation(group, entry.path)} componentDocumentation={group === 'components'}>
+    <Sidebar title={entry.title} reference={referenceNavigation(group, entry.path)}>
       <DocsIntro lead={entry.description} />
       {'symbol' in entry ? (
         <>
