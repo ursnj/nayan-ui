@@ -306,27 +306,15 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
   'empty-state': {
     height: 200,
     render: (
-      <NEmptyState className="flex w-full flex-col items-center gap-2 rounded-xl border border-border bg-surface p-5">
-        <NView className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/15">
-          <NIcon name="search" size={20} className="text-accent" />
-        </NView>
-        <NText tag="p" className="font-semibold">
-          No results
-        </NText>
-        <NText tag="p" className="text-center text-sm text-muted">
-          Try a different search.
-        </NText>
-      </NEmptyState>
+      <NEmptyState title="No results" description="Try a different search." icon={<NIcon name="search" size={22} className="text-accent" />} />
     ),
     source: componentSource(
-      'NEmptyState, NIcon, NText, NView',
-      `<NEmptyState className="flex w-full flex-col items-center gap-2 rounded-xl border border-border bg-surface p-5">
-            <NView className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/15">
-              <NIcon name="search" size={20} className="text-accent" />
-            </NView>
-            <NText tag="p" className="font-semibold">No results</NText>
-            <NText tag="p" className="text-center text-sm text-muted">Try a different search.</NText>
-          </NEmptyState>`
+      'NEmptyState, NIcon',
+      `<NEmptyState
+            title="No results"
+            description="Try a different search."
+            icon={<NIcon name="search" size={22} className="text-accent" />}
+          />`
     )
   },
   required: {

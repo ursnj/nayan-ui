@@ -1,6 +1,7 @@
 import { createElement, type ComponentType, type ReactNode } from 'react';
 import * as Engine from 'nayan-ui/components';
 import { componentSource } from '@/services/nayan-ui/component-examples';
+import { scenario } from './scenario';
 import type { NamedComponentPreview } from './types';
 
 type Control = keyof typeof Engine;
@@ -125,7 +126,20 @@ export const controlScenarios = {
     ]),
     232
   ),
-  'empty-state': sample('Offline state', element('NEmptyState', { title: 'You’re offline', description: 'Reconnect to load the latest changes.' })),
+  'empty-state': scenario(
+    'Offline state',
+    'NEmptyState, NIcon',
+    `<NEmptyState
+            title="You’re offline"
+            description="Reconnect to load the latest changes."
+            icon={<NIcon name="triangle-alert" size={22} className="text-accent" />}
+          />`,
+    <Engine.NEmptyState
+      title="You’re offline"
+      description="Reconnect to load the latest changes."
+      icon={<Engine.NIcon name="triangle-alert" size={22} className="text-accent" />}
+    />
+  ),
   icon: sample(
     'Icon with a text label',
     element('NView', row, [

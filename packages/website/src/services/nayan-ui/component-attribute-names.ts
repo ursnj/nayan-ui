@@ -49,7 +49,7 @@ export const componentAttributeNames: Partial<Record<ComponentSymbol, readonly s
     'children', 'onOpenChange', 'trigger', 'showCloseButton'
   ],
   NDivider: ['className', 'orientation', 'children'],
-  NEmptyState: ['title', 'message', 'className', 'children'],
+  NEmptyState: ['title', 'description', 'message', 'icon', 'actions', 'className', 'iconClassName', 'titleClassName', 'messageClassName', 'children'],
   NIcon: ['name', 'size', 'color', 'strokeWidth', 'accessibilityLabel', 'className', 'onPress'],
   NImage: [
     'src', 'alt', 'fallbackSource', 'width', 'height', 'className',

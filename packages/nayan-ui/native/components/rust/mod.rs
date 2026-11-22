@@ -2065,18 +2065,13 @@ impl ComponentDocument {
             }
             "NTabsContent" => self.nodes(ui, &n.children),
             "NAlert" | "NEmptyState" => {
-                let alert = n.kind == "NAlert";
                 let message = ["message", "description"]
                     .iter()
-                    .find_map(|key| p[*key].as_str().filter(|text| !alert || !text.is_empty()));
-                let heading = if alert {
-                    ["label", "title", "name", "text", "fallback", "alt"]
-                        .iter()
-                        .find_map(|key| p[*key].as_str().filter(|text| !text.is_empty()))
-                } else {
-                    Some(label.as_str())
-                };
-                if alert && heading.is_none() && message.is_none() {
+                    .find_map(|key| p[*key].as_str().filter(|text| !text.is_empty()));
+                let heading = ["label", "title", "name", "text", "fallback", "alt"]
+                    .iter()
+                    .find_map(|key| p[*key].as_str().filter(|text| !text.is_empty()));
+                if heading.is_none() && message.is_none() {
                     self.container(ui, n, resolved);
                 } else {
                     egui::Frame::group(ui.style()).show(ui, |ui| {

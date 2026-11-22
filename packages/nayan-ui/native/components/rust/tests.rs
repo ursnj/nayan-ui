@@ -120,7 +120,7 @@ fn focus_outline_follows_painted_bounds_and_corners_in_both_renderers() {
 }
 
 #[test]
-fn alerts_paint_custom_content_and_message_only_alerts_once() {
+fn alerts_and_empty_states_paint_custom_and_plain_content_once() {
     let mut doc = ComponentDocument::default();
     doc.set_tree(&json!([
         {"id":"custom","kind":"NAlert","props":{"className":"flex-row gap-3"},"children":[
@@ -128,7 +128,13 @@ fn alerts_paint_custom_content_and_message_only_alerts_once() {
             {"id":"details","kind":"NText","props":{"text":"Save a backup."}}
         ]},
         {"id":"message","kind":"NAlert","props":{"message":"Upload complete."}},
-        {"id":"standard","kind":"NAlert","props":{"title":"Warning","description":"Session expires soon."}}
+        {"id":"standard","kind":"NAlert","props":{"title":"Warning","description":"Session expires soon."}},
+        {"id":"empty-custom","kind":"NEmptyState","props":{"className":"items-center gap-2"},"children":[
+            {"id":"empty-title","kind":"NText","props":{"text":"No results"}},
+            {"id":"empty-details","kind":"NText","props":{"text":"Try a different search."}}
+        ]},
+        {"id":"empty-message","kind":"NEmptyState","props":{"message":"No files."}},
+        {"id":"empty-legacy","kind":"NEmptyState","props":{"title":"No drafts","description":"Create a draft."}}
     ]))
     .unwrap();
     let output = doc.frame(480., 400., 1.);
@@ -146,10 +152,16 @@ fn alerts_paint_custom_content_and_message_only_alerts_once() {
         "Upload complete.",
         "Warning",
         "Session expires soon.",
+        "No results",
+        "Try a different search.",
+        "No resultsTry a different search.",
+        "No files.",
+        "No drafts",
+        "Create a draft.",
     ]
     .map(paint_count);
     output.drop_without_applying_deltas();
-    assert_eq!(counts, [1, 1, 0, 1, 1, 1]);
+    assert_eq!(counts, [1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1]);
 }
 
 #[test]
