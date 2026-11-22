@@ -272,7 +272,7 @@
     {"name":"selected","type":"string","required":false},
     {"name":"onValueChange","type":"((value: string) => void)","required":false},
     {"name":"variant","type":"\"primary\" | \"secondary\"","required":false,"details":"Primary uses a rounded track. Secondary marks the active tab with an underline."},
-    {"name":"isFull","type":"boolean","required":false,"details":"Fill the horizontal tab list with equal-width tabs."},
+    {"name":"isFull","type":"boolean","required":false,"details":"Fill the available width of a horizontal tab list."},
     {"name":"listClassName","type":"string","required":false},
     {"name":"tabClassName","type":"string","required":false},
     {"name":"itemClassName","type":"string","required":false,"details":"Alias for tabClassName."},
