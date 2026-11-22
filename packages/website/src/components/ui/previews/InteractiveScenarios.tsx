@@ -96,7 +96,13 @@ const projectTabs = names.map((name) => ({ label: name, value: name, disabled: n
 
 function ProjectTabs({ defaultTab, vertical }: { defaultTab: string; vertical: boolean }) {
   return (
-    <E.NTabs ariaLabel="Project" variant="secondary" orientation={vertical ? 'vertical' : 'horizontal'} items={vertical ? names : projectTabs} defaultValue={defaultTab}>
+    <E.NTabs
+      ariaLabel="Project"
+      variant="secondary"
+      orientation={vertical ? 'vertical' : 'horizontal'}
+      items={vertical ? names : projectTabs}
+      defaultValue={defaultTab}
+    >
       {names.map((name) => (
         <E.NTabsContent item={name} key={name}>
           <E.NText className="text-sm">{name} for this project</E.NText>

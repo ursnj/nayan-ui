@@ -13,7 +13,7 @@ export interface NTabsItem extends ComponentOption {
 export interface NTabsProps extends Omit<ComponentControlProps<string>, 'items' | 'options' | 'variant'> {
   items?: readonly (string | NTabsItem)[];
   options?: readonly (string | NTabsItem)[];
-  /** Fill the horizontal tab list with equal-width tabs. */
+  /** Fill the available width of a horizontal tab list. */
   isFull?: boolean;
   /** Primary uses a rounded track. Secondary marks the active tab with an underline. */
   variant?: 'primary' | 'secondary';

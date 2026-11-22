@@ -97,7 +97,7 @@ impl ComponentDocument {
                 let label = entry["label"].as_str().map(str::to_owned).unwrap_or_else(|| string(entry));
                 let is_selected = &value == selected || entry == selected;
                 let appearance = match (secondary, is_selected) {
-                    (false, true) => "rounded-md bg-surface text-foreground bg-segment text-segment-foreground shadow-sm",
+                    (false, true) => "rounded-md bg-surface text-foreground bg-segment text-segment-foreground shadow-sm dark:bg-foreground/12",
                     (true, true) => "rounded-none text-foreground",
                     _ => "rounded-md text-muted",
                 };
@@ -178,14 +178,17 @@ impl ComponentDocument {
         };
         self.record_semantic(&group, &track_response, json!(if vertical { "vertical" } else { "horizontal" }));
         let content_width = (width - padding.left - padding.right - if vertical { 0. } else { gaps }).max(0.);
+        let equal_width = content_width / tabs.len() as f32;
+        let use_equal_widths = is_full && tabs.iter().all(|tab| equal_width >= tab.text_width + 4.);
+        let width_scale = content_width / tab_width.max(1.);
         let mut position = track.min + Vec2::new(padding.left, padding.top);
         for (index, tab) in tabs.iter().enumerate() {
             let width = if vertical {
                 content_width
-            } else if is_full {
-                content_width / tabs.len() as f32
+            } else if use_equal_widths {
+                equal_width
             } else {
-                tab.size.x * (content_width / tab_width.max(1.)).min(1.)
+                tab.size.x * if is_full { width_scale } else { width_scale.min(1.) }
             };
             let size = Vec2::new(width, if vertical { tab.size.y } else { row_height });
             let rect = Rect::from_min_size(position, size);
