@@ -1,4 +1,4 @@
-import { PREVIEW_STACK, PREVIEW_BUTTON } from '@/design/system';
+import { PREVIEW_STACK, PREVIEW_BUTTON, PREVIEW_FIELD } from '@/design/system';
 import { useState, type ReactNode } from 'react';
 import * as E from 'nayan-ui/components';
 import { element as e, sample } from './ControlScenarios';
@@ -32,7 +32,7 @@ function Field({ time }: { time: boolean }) {
         {time ? 'Opening time' : 'Deadline'}
       </E.NText>
       <E.NInput
-        className="component-host-input [min-height:2.75rem] [border:1px_solid_var(--border)] [border-radius:0.5rem] [background:var(--field-background)] [padding:0.45rem_0.75rem]"
+        className={PREVIEW_FIELD}
         id={id}
         type={time ? 'time' : 'date'}
         min={time ? '08:00' : '2026-01-01'}
@@ -49,9 +49,9 @@ function fieldScenario(time: boolean) {
     time ? '15-minute time slots' : 'Limit dates to one month',
     'NView, NText, NInput',
     '',
-    `<NView>
+    `<NView className="${PREVIEW_STACK}">
       <NText tag="label" htmlFor="example-field">${time ? 'Opening time' : 'Deadline'}</NText>
-      <NInput id="example-field" type="${time ? 'time' : 'date'}" min="${time ? '08:00' : '2026-01-01'}" max="${time ? '18:00' : '2026-01-31'}"
+      <NInput className="${PREVIEW_FIELD}" id="example-field" type="${time ? 'time' : 'date'}" min="${time ? '08:00' : '2026-01-01'}" max="${time ? '18:00' : '2026-01-31'}"
         defaultValue="${time ? '09:00' : '2026-01-15'}" step={${time ? 900 : 1}} />
     </NView>`,
     <Field time={time} />
@@ -91,11 +91,16 @@ function Circle() {
   );
 }
 
+const disclosure = 'component-disclosure-list overflow-hidden rounded-[0.85rem] border border-border bg-surface';
+const disclosureTrigger =
+  'component-disclosure-trigger flex min-h-12 items-center gap-3 px-3.5 py-[0.65rem] text-sm font-semibold cursor-pointer justify-between [list-style:none] [&::-webkit-details-marker]:hidden hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-accent focus-visible:-outline-offset-2';
+const disclosureBody = 'component-disclosure-body px-3.5 pb-3.5 text-sm leading-normal text-muted';
+
 function Popup({ menu }: { menu: boolean }) {
   return (
     <E.NView tag="div" className={PREVIEW_STACK}>
-      <E.NView tag="details" className="component-disclosure-list overflow-hidden [border:1px_solid_var(--border)] [border-radius:0.85rem] [background:var(--surface)]">
-        <E.NText tag="summary" className="component-disclosure-trigger flex [min-height:3rem] items-center [gap:0.75rem] [padding:0.65rem_0.875rem] [font-size:0.875rem] font-semibold cursor-pointer justify-between [list-style:none] [&::-webkit-details-marker]:hidden hover:[background:var(--surface-secondary)] focus-visible:[outline:2px_solid_var(--accent)] focus-visible:[outline-offset:-2px]">
+      <E.NView tag="details" className={disclosure}>
+        <E.NText tag="summary" className={disclosureTrigger}>
           {menu ? 'More actions' : 'About this setting'}
         </E.NText>
         {menu ? (
@@ -105,7 +110,7 @@ function Popup({ menu }: { menu: boolean }) {
             </E.NMenuItem>
           </E.NView>
         ) : (
-          <E.NText tag="p" className="component-disclosure-body [padding:0_0.875rem_0.875rem] text-muted [font-size:0.875rem] [line-height:1.5]">
+          <E.NText tag="p" className={disclosureBody}>
             Display names are visible to teammates.
           </E.NText>
         )}
@@ -119,9 +124,11 @@ function popupScenario(menu: boolean) {
     menu ? 'Disabled action inside a menu' : 'Inline help popover',
     `NView, NText${menu ? ', NMenuItem' : ''}`,
     '',
-    `<NView tag="details">
-      <NText tag="summary">${menu ? 'More actions' : 'About this setting'}</NText>
-      ${menu ? '<NMenuItem tag="button" disabled>Export (unavailable)</NMenuItem>' : '<NText tag="p">Display names are visible to teammates.</NText>'}
+    `<NView className="${PREVIEW_STACK}">
+      <NView tag="details" className="${disclosure}">
+        <NText tag="summary" className="${disclosureTrigger}">${menu ? 'More actions' : 'About this setting'}</NText>
+        ${menu ? `<NView className="${PREVIEW_STACK}"><NMenuItem tag="button" disabled>Export (unavailable)</NMenuItem></NView>` : `<NText tag="p" className="${disclosureBody}">Display names are visible to teammates.</NText>`}
+      </NView>
     </NView>`,
     <Popup menu={menu} />,
     'auto'
@@ -133,6 +140,9 @@ const scores = [
   ['Avery', 72],
   ['Sam', 95]
 ] as const;
+const tableStyles =
+  'component-table w-full [border-collapse:collapse] [font-size:0.875rem] [line-height:1.4] [text-align:start] [&_:is(th,td)]:[padding:0.65rem_0.75rem] [&_:is(th,td)]:[text-align:start] [&_th]:[background:var(--surface-secondary)] [&_tr:nth-child(even)]:[background:var(--surface-secondary)]';
+
 function ScoreTable() {
   const [ascending, setAscending] = useState(false);
   const ordered = [...scores].sort((a, b) => (ascending ? a[1] - b[1] : b[1] - a[1]));
@@ -141,7 +151,7 @@ function ScoreTable() {
       <E.NButton className={PREVIEW_BUTTON} onPress={() => setAscending(!ascending)}>
         {ascending ? 'Lowest first' : 'Highest first'}
       </E.NButton>
-      <E.NView tag="table" className="component-table w-full [border-collapse:collapse] [font-size:0.875rem] [line-height:1.4] [text-align:start] [&_:is(th,td)]:[padding:0.65rem_0.75rem] [&_:is(th,td)]:[text-align:start] [&_th]:[background:var(--surface-secondary)] [&_tr:nth-child(even)]:[background:var(--surface-secondary)]" accessibilityLabel="Leaderboard">
+      <E.NView tag="table" className={tableStyles} accessibilityLabel="Leaderboard">
         <E.NView tag="thead">
           <E.NView tag="tr">
             <E.NText tag="th">Player</E.NText>
@@ -313,9 +323,9 @@ export const legacyScenarios = {
     `const [ascending, setAscending] = useState(false);
   const scores = ${JSON.stringify(scores)} as const;
   const ordered = [...scores].sort((a, b) => ascending ? a[1] - b[1] : b[1] - a[1]);`,
-    `<NView>
-      <NButton onPress={() => setAscending(!ascending)}>{ascending ? 'Lowest first' : 'Highest first'}</NButton>
-      <NView tag="table" accessibilityLabel="Leaderboard">
+    `<NView className="${PREVIEW_STACK}">
+      <NButton className="${PREVIEW_BUTTON}" onPress={() => setAscending(!ascending)}>{ascending ? 'Lowest first' : 'Highest first'}</NButton>
+      <NView tag="table" className="${tableStyles}" accessibilityLabel="Leaderboard">
         <NView tag="thead"><NView tag="tr"><NText tag="th">Player</NText><NText tag="th">Score</NText></NView></NView>
         <NView tag="tbody">{ordered.map(([name, score]) => (
           <NView tag="tr" key={name}><NText tag="td">{name}</NText><NText tag="td">{score}</NText></NView>

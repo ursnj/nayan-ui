@@ -25,6 +25,8 @@ export const CARD_PAD = 'p-5 sm:p-6';
 export const PREVIEW_STACK = 'flex min-w-0 flex-col items-start gap-3.5 p-5 text-foreground';
 export const PREVIEW_BUTTON =
   'inline-flex min-h-9 flex-none items-center justify-center gap-1.5 rounded-lg bg-accent px-4 text-sm font-medium text-accent-foreground cursor-pointer hover:bg-[color-mix(in_srgb,var(--accent)_86%,var(--surface))] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent';
+export const PREVIEW_FIELD =
+  'component-host-input min-h-11 rounded-lg border border-border bg-field-background px-3 py-[0.45rem] text-field-foreground';
 export const EDITOR_PANEL = 'overflow-hidden rounded-xl border border-border bg-editor-panel shadow-(--elevation)';
 
 export const CONTAINER = 'mx-auto w-full max-w-[82rem] px-5 sm:px-8 lg:px-10';

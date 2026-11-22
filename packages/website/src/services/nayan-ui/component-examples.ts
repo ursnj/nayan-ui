@@ -87,7 +87,7 @@ function ThemeControls() {
 }
 
 export default function Example() {
-  return <NTheme defaultTheme="system"><NPage className="p-4"><ThemeControls /></NPage></NTheme>;
+  return <NTheme defaultTheme="system"><NPage className="bg-background p-4"><ThemeControls /></NPage></NTheme>;
 }`;
 
 function blurCode(target: boolean) {

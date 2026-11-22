@@ -1,6 +1,6 @@
 'use client';
 
-import { PREVIEW_STACK, PREVIEW_BUTTON } from '@/design/system';
+import { PREVIEW_STACK, PREVIEW_BUTTON, PREVIEW_FIELD } from '@/design/system';
 import { useEffect, useId, useRef, useState } from 'react';
 import { NButton, NCard, NCheck, NChip, NDatePicker, NInput, NLink, NList, NMenuItem, NPress, NText, NView } from 'nayan-ui/components';
 import { componentSource } from '@/services/nayan-ui/component-examples';
@@ -9,7 +9,10 @@ import SwitchRows, { switchSource } from './SwitchRows';
 import type { ComponentPreview } from './types';
 
 const row = 'flex-row flex-wrap items-center gap-2';
-const hostButton = PREVIEW_BUTTON;
+const popup =
+  'component-popup absolute [z-index:1] [inset:calc(100%_+_0.5rem)_auto_auto_0] [min-width:max-content] [border:1px_solid_var(--border)] [border-radius:0.65rem] [background:var(--overlay)] [box-shadow:0_6px_18px_color-mix(in_srgb,_var(--foreground)_13%,_transparent)] [padding:0.65rem]';
+const popupItem =
+  'component-popup-item block w-full [border-radius:0.35rem] [padding:0.25rem_0.5rem] [text-align:start] cursor-pointer hover:[background:color-mix(in_srgb,_var(--accent)_12%,_var(--surface))] focus-visible:[background:color-mix(in_srgb,_var(--accent)_12%,_var(--surface))]';
 
 const avatars = [
   { name: 'Ada', initials: 'AL', backgroundColor: '#dbeafe', color: '#1e3a8a' },
@@ -109,20 +112,20 @@ function Popup({ menu }: { menu: boolean }) {
     <NView tag="div" className={PREVIEW_STACK}>
       <NView tag="div" className="component-popup-trigger relative" ref={root}>
         <NButton
-          className={hostButton}
+          className={PREVIEW_BUTTON}
           {...{ 'aria-expanded': open, 'aria-controls': open ? id : undefined, ref: trigger }}
           onPress={() => setOpen(!open)}
         >
           {menu ? 'Open Menu' : 'Open Popover'}
         </NButton>
         {open && (
-          <NCard id={id} className="component-popup absolute [z-index:1] [inset:calc(100%_+_0.5rem)_auto_auto_0] [min-width:max-content] [border:1px_solid_var(--border)] [border-radius:0.65rem] [background:var(--overlay)] [box-shadow:0_6px_18px_color-mix(in_srgb,_var(--foreground)_13%,_transparent)] [padding:0.65rem]" role="group" accessibilityLabel={menu ? 'File actions' : 'Popover'}>
+          <NCard id={id} className={popup} role="group" accessibilityLabel={menu ? 'File actions' : 'Popover'}>
             {menu ? (
               commands.map((command) => (
                 <NMenuItem
                   key={command}
                   tag="button"
-                  className="component-popup-item block w-full [border-radius:0.35rem] [padding:0.25rem_0.5rem] [text-align:start] cursor-pointer hover:[background:color-mix(in_srgb,_var(--accent)_12%,_var(--surface))] focus-visible:[background:color-mix(in_srgb,_var(--accent)_12%,_var(--surface))]"
+                  className={popupItem}
                   onClick={() => {
                     setSelected(command);
                     setOpen(false);
@@ -337,7 +340,7 @@ const legacyExamples = {
         <NText tag="label" htmlFor="example-date">
           Date
         </NText>
-        <NInput id="example-date" type="date" className="component-host-input [min-height:2.75rem] [border:1px_solid_var(--border)] [border-radius:0.5rem] [background:var(--field-background)] [padding:0.45rem_0.75rem]" />
+        <NInput id="example-date" type="date" className={PREVIEW_FIELD} />
       </NView>
     ),
     source: fieldSource('date', 'Date')
@@ -479,7 +482,7 @@ export default function Example() {
         <NText tag="label" htmlFor="example-time">
           Time
         </NText>
-        <NInput id="example-time" type="time" className="component-host-input [min-height:2.75rem] [border:1px_solid_var(--border)] [border-radius:0.5rem] [background:var(--field-background)] [padding:0.45rem_0.75rem]" />
+        <NInput id="example-time" type="time" className={PREVIEW_FIELD} />
       </NView>
     ),
     source: fieldSource('time', 'Time')
@@ -504,9 +507,9 @@ function fieldSource(type: 'date' | 'time', label: string) {
 
 export default function Example() {
   return (
-    <NView>
+    <NView className="${PREVIEW_STACK}">
       <NText tag="label" htmlFor="example-${type}">${label}</NText>
-      <NInput id="example-${type}" type="${type}" />
+      <NInput id="example-${type}" type="${type}" className="${PREVIEW_FIELD}" />
     </NView>
   );
 }`;
@@ -515,8 +518,8 @@ export default function Example() {
 function popupSource(menu: boolean) {
   const action = menu ? 'Open Menu' : 'Open Popover';
   const content = menu
-    ? `{['Cut', 'Copy', 'Paste'].map((action) => (
-            <NMenuItem tag="button" key={action} onClick={() => setOpen(false)}>{action}</NMenuItem>
+    ? `{${JSON.stringify(commands)}.map((action) => (
+            <NMenuItem tag="button" key={action} className="${popupItem}" onClick={() => setOpen(false)}>{action}</NMenuItem>
           ))}`
     : '<NText>This is popover content.</NText>';
   return `'use client';
@@ -527,13 +530,15 @@ import { NButton, NCard, ${menu ? 'NMenuItem' : 'NText'}, NView } from 'nayan-ui
 export default function Example() {
   const [open, setOpen] = useState(false);
   return (
-    <NView className="relative">
-      <NButton onPress={() => setOpen(!open)} {...{ 'aria-expanded': open }}>${action}</NButton>
-      {open && (
-        <NCard className="absolute top-full p-3">
-          ${content}
-        </NCard>
-      )}
+    <NView className="${PREVIEW_STACK}">
+      <NView className="component-popup-trigger relative">
+        <NButton className="${PREVIEW_BUTTON}" onPress={() => setOpen(!open)} {...{ 'aria-expanded': open }}>${action}</NButton>
+        {open && (
+          <NCard className="${popup}" role="group" accessibilityLabel="${menu ? 'File actions' : 'Popover'}">
+            ${content}
+          </NCard>
+        )}
+      </NView>
     </NView>
   );
 }`;

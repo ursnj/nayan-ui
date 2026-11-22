@@ -264,7 +264,7 @@ function ThemeControls() {
 function ThemeDemo() {
   return (
     <NTheme defaultTheme="system">
-      <NPage className="p-4">
+      <NPage className="bg-background p-4">
         <ThemeControls />
       </NPage>
     </NTheme>

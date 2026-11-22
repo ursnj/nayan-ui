@@ -73,6 +73,8 @@ function DrawerTrigger({ toggle }: { toggle: boolean }) {
   );
 }
 
+const drawerStyle = { backgroundColor: 'var(--overlay)', color: 'var(--overlay-foreground)' };
+
 function drawerScenario(toggle: boolean) {
   return host(
     toggle ? 'Toggle from a toolbar' : 'Right-side drawer',
@@ -80,24 +82,28 @@ function drawerScenario(toggle: boolean) {
     `
 function Shortcuts() {
   const { close } = useNDrawer();
-  return <NView><NText>Workspace shortcuts</NText><NButton onPress={close}>Done</NButton></NView>;
+  return <NView className="${PREVIEW_STACK}"><NText>Workspace shortcuts</NText><NButton className="${PREVIEW_BUTTON}" onPress={close}>Done</NButton></NView>;
 }
 
 function Trigger() {
   const drawer = useNDrawer();
-  return <NButton onPress={drawer.${toggle ? 'toggle' : 'open'}}>${toggle ? 'Toggle shortcuts' : 'Open shortcuts'}</NButton>;
+  return (
+    <NView className="${PREVIEW_STACK}">
+      <NButton className="${PREVIEW_BUTTON}" onPress={drawer.${toggle ? 'toggle' : 'open'}}>${toggle ? 'Toggle shortcuts' : 'Open shortcuts'}</NButton>
+    </NView>
+  );
 }
 
 export default function Example() {
   return (
     <NView className="h-[220px]">
-      <NDrawer side="right" width={210} drawerContent={<Shortcuts />} drawerStyle={{ backgroundColor: '#ede8fa', color: '#191126' }}>
+      <NDrawer side="right" width={210} drawerContent={<Shortcuts />} drawerStyle={${JSON.stringify(drawerStyle)}}>
         <Trigger />
       </NDrawer>
     </NView>
   );
 }`,
-    <E.NDrawer side="right" width={210} drawerStyle={{ backgroundColor: 'var(--surface)' }} drawerContent={<DrawerContent />}>
+    <E.NDrawer side="right" width={210} drawerStyle={drawerStyle} drawerContent={<DrawerContent />}>
       <DrawerTrigger toggle={toggle} />
     </E.NDrawer>,
     220
@@ -209,10 +215,12 @@ function ThemeReadout() {
   );
 }
 
+const scopedThemePage = 'gap-3 bg-background p-4';
+
 function ThemeExample() {
   return (
     <E.NTheme defaultTheme="light">
-      <E.NPage className="gap-3 p-4">
+      <E.NPage className={scopedThemePage}>
         <ThemeReadout />
       </E.NPage>
     </E.NTheme>
@@ -411,7 +419,7 @@ export default function Example() {
     'NTheme, NToastHost, NToast, NButton, NView',
     `
 export default function Example() {
-  return <NTheme toasts={false}><NView><NToastHost top={80} maxWidth={300} /><NButton onPress={() => NToast.success('Synced')}>Show toast</NButton></NView></NTheme>;
+  return <NTheme toasts={false}><NView className="${PREVIEW_STACK}"><NToastHost top={80} maxWidth={300} /><NButton className="${PREVIEW_BUTTON}" onPress={() => NToast.success('Synced')}>Show toast</NButton></NView></NTheme>;
 }`,
     <E.NView tag="div" className={PREVIEW_STACK}>
       <E.NToastHost top={80} maxWidth={300} />
@@ -441,7 +449,7 @@ function Picker() {
 }
 
 export default function Example() {
-  return <NTheme defaultTheme="light"><NPage className="gap-3 p-4"><Picker /></NPage></NTheme>;
+  return <NTheme defaultTheme="light"><NPage className="${scopedThemePage}"><Picker /></NPage></NTheme>;
 }`,
     <ThemeExample />
   );
