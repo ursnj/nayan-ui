@@ -55,7 +55,7 @@ export const metadata: Metadata = {
 };
 
 const documentUtilities = [
-  'site-light dark:site-dark [&:has(.component-documentation)]:docs-light [&.dark:has(.component-documentation)]:docs-dark',
+  'site-light dark:site-dark',
   '[--site-header-height:4.25rem]',
   '[--site-grid-line:color-mix(in_srgb,_var(--accent)_8%,_transparent)]',
   '[&:has(.fullscreen-workspace)_:is(.site-header,.site-footer,.site-skip-link)]:hidden',

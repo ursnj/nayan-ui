@@ -22,12 +22,10 @@ const controls = {
 
 export default function PreviewSurface({
   preview,
-  themes,
   fullWidth,
   keepViewport
 }: {
   preview: ComponentPreview;
-  themes: NonNullable<NThemeProps['themes']>;
   fullWidth?: boolean;
   keepViewport?: boolean;
 }) {
@@ -58,7 +56,6 @@ export default function PreviewSurface({
       style={{ height }}
     >
       <NTheme
-        themes={themes}
         components={controls}
         radius={8}
         className="gap-4 p-5"

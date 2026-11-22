@@ -30,9 +30,9 @@ export interface NButtonGroupProps<T = string> extends Omit<ComponentControlProp
 }
 
 const sizes = {
-  sm: 'px-2 py-1.5 text-xs',
-  md: 'px-3 py-2.5 text-sm',
-  lg: 'px-4 py-3 text-base'
+  sm: { padding: 'px-2 py-1.5', text: 'text-xs' },
+  md: { padding: 'px-3 py-2.5', text: 'text-sm' },
+  lg: { padding: 'px-4 py-3', text: 'text-base' }
 };
 
 function option(item: unknown): item is ComponentOption {
@@ -108,13 +108,17 @@ export function NButtonGroup<T = string>({
               disabled={inactive}
               aria-pressed={active}
               accessibilityState={{ selected: active, disabled: inactive }}
-              className={`flex min-w-0 flex-1 flex-row items-center justify-center rounded-none ${edge} ${scale} font-medium disabled:opacity-50 ${active ? 'bg-accent/15 text-accent' : 'text-foreground hover:bg-surface-secondary'} ${buttonClassName}`}
+              className={`flex min-w-0 flex-1 flex-row items-center justify-center rounded-none ${edge} ${scale.padding} ${scale.text} font-medium disabled:opacity-50 ${active ? 'bg-accent/15 text-accent' : 'text-foreground hover:bg-surface-secondary'} ${buttonClassName}`}
               onPress={() => {
                 if (controlled === undefined) setUncontrolled(() => selection);
                 (onChange ?? onValueChange)?.(selection);
               }}
             >
-              {typeof content === 'string' || typeof content === 'number' ? <NText className="text-center">{content}</NText> : content}
+              {typeof content === 'string' || typeof content === 'number' ? (
+                <NText className={`text-center font-medium ${scale.text}`}>{content}</NText>
+              ) : (
+                content
+              )}
             </NPress>
           );
         })}

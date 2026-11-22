@@ -14,7 +14,7 @@ args=()
 for t in "${TARGETS[@]}"; do
   # Only the staticlib: Cargo skips the release profile's LTO when the rlib (for tests and the
   # bench) is built alongside it.
-  cargo rustc ${ENGINE_FEATURE_ARGS[@]+"${ENGINE_FEATURE_ARGS[@]}"} --release --lib --crate-type staticlib --target "$t"
+  cargo rustc --locked ${ENGINE_FEATURE_ARGS[@]+"${ENGINE_FEATURE_ARGS[@]}"} --release --lib --crate-type staticlib --target "$t"
   # Cargo's `strip` setting doesn't apply to static libraries. Drop debug info and local symbols
   # (exported engine_* functions stay): ~22 MB -> ~6 MB per slice.
   mkdir "$staging/$t"

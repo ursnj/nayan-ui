@@ -1,5 +1,5 @@
 name: Build and test the npm package
-description: Build the engine and write the validated tarball to the runner's temporary directory.
+description: Package the platform binaries with the tested JavaScript build.
 
 outputs:
   tarball:
@@ -12,58 +12,19 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Set up Android SDK
-      uses: android-actions/setup-android@v3
-      with:
-        packages: platform-tools
-
-    - name: Install Android NDK and WebAssembly compiler
-      shell: bash
-      run: |
-        sdkmanager "ndk;27.1.12297006"
-        echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.1.12297006" >> "$GITHUB_ENV"
-        brew install llvm lld
-
-    - name: Set up Rust toolchain
-      shell: bash
-      run: |
-        rustup update stable --no-self-update
-        rustup default stable
-        rustup target add wasm32-unknown-unknown
-
-    - name: Test Rust core
-      shell: bash
-      env:
-        CARGO_PROFILE_TEST_DEBUG: '0'
-      run: cargo test --locked --manifest-path packages/nayan-ui/native/core/Cargo.toml
-
-    - name: Install matching wasm-bindgen CLI
-      shell: bash
-      working-directory: packages/nayan-ui
-      run: |
-        version="$(awk '/^name = "wasm-bindgen"$/ { getline; print $3; exit }' native/core/Cargo.lock | tr -d '"')"
-        if ! wasm-bindgen --version | grep -Fxq "wasm-bindgen $version"; then
-          cargo install wasm-bindgen-cli --locked --version "$version"
-        fi
-
-    - name: Build iOS, Android and WebAssembly libraries
-      shell: bash
-      working-directory: packages/nayan-ui
-      run: |
-        native/core/scripts/build-ios.sh
-        native/core/scripts/build-android.sh
-        native/core/scripts/build-web.sh
-
     - uses: oven-sh/setup-bun@v2
       with:
         bun-version-file: .bun-version
-        no-cache: 'true'
 
     - uses: actions/setup-node@v5
       with:
         node-version: 24
-        registry-url: https://registry.npmjs.org
         package-manager-cache: false
+
+    - uses: actions/cache@v4
+      with:
+        path: ~/.bun/install/cache
+        key: npm-bun-${{ runner.os }}-${{ hashFiles('.bun-version', 'bun.lock', 'bunfig.toml') }}
 
     - name: Install engine dependencies
       shell: bash

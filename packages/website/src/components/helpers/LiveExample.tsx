@@ -10,7 +10,6 @@ import { evaluateExample } from '@/components/nayan-playground/evaluate';
 import PreviewBoundary from '@/components/nayan-playground/PreviewBoundary';
 import PreviewSurface from '@/components/ui/previews/PreviewSurface';
 import { BrowserFrame } from '@/design/Primitives';
-import { documentationThemes } from '@/design/palettes';
 import { exampleModules } from '@/components/ui/previews/exampleModules';
 import type { NamedComponentPreview } from '@/components/ui/previews/types';
 
@@ -67,7 +66,7 @@ function PreviewViewport({ id, children }: { id?: string; children: ReactNode })
     <NView
       tag="div"
       ref={viewport}
-      className="docs-live-preview docs-light dark:docs-dark flex min-h-0 min-w-0 flex-1 items-start justify-center overflow-auto bg-background text-foreground [scrollbar-width:thin] focus-visible:[outline-offset:-3px] data-[preview-scrollable]:[&_canvas[data-nayan-component-canvas]]:touch-pan-y!"
+      className="docs-live-preview flex min-h-0 min-w-0 flex-1 items-start justify-center overflow-auto bg-background text-foreground [scrollbar-width:thin] focus-visible:[outline-offset:-3px] data-[preview-scrollable]:[&_canvas[data-nayan-component-canvas]]:touch-pan-y!"
       role="region"
       aria-label="Preview content"
       tabIndex={0}
@@ -280,7 +279,6 @@ function ExampleWorkspace({
             <PreviewViewport id={previewId}>
               {Output && output ? (
                 <PreviewSurface
-                  themes={documentationThemes}
                   fullWidth={previewId === 'video-player'}
                   keepViewport={keepEditedViewport}
                   preview={{
@@ -297,7 +295,7 @@ function ExampleWorkspace({
                   }}
                 />
               ) : (
-                <PreviewSurface themes={documentationThemes} preview={example} fullWidth={previewId === 'video-player'} keepViewport={keepViewport} />
+                <PreviewSurface preview={example} fullWidth={previewId === 'video-player'} keepViewport={keepViewport} />
               )}
             </PreviewViewport>
           </BrowserFrame>

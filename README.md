@@ -43,7 +43,8 @@ Select the branch and choose an operation.
 - `publish` builds, tests, and publishes the version in `packages/nayan-ui/package.json`
   through npm Trusted Publishing.
 
-Both commands use a standard macOS runner and keep the tarball on the runner. See the
+Both commands run the platform builds in parallel and reuse cached binaries when the Rust inputs match.
+Download the tested `nayan-ui` artifact from a successful run. See the
 [engine README](./packages/nayan-ui/README.md#development-and-verification) for local builds.
 
 ## Website
