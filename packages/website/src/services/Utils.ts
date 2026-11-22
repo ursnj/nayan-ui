@@ -9,7 +9,6 @@ import {
   CalendarCheck,
   CalendarDays,
   CalendarRange,
-  ChevronsUpDown,
   CircleAlert,
   CircleCheck,
   CircleDot,
@@ -139,7 +138,6 @@ import {
   datePickerTags,
   dateRangePickerTags,
   dialogTags,
-  disclosureTags,
   dividerTags,
   emptyStateTags,
   infiniteScrollTags,
@@ -519,15 +517,6 @@ export const reactSidebarItems = [
     link: "/react/dialog",
     tags: dialogTags,
     icon: MessageSquare,
-    isComponent: true,
-  },
-  {
-    title: "Disclosure",
-    description:
-      "A Disclosure is one collapsible section: a heading that opens and closes the content under it. It is the single-section counterpart to an accordion, for hiding detail that most readers will not need without sending them to another page for it.",
-    link: "/react/disclosure",
-    tags: disclosureTags,
-    icon: ChevronsUpDown,
     isComponent: true,
   },
   {

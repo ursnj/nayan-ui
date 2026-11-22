@@ -270,7 +270,8 @@ impl Document {
         let node = item.styled.as_ref().expect("CSS paint nodes are prepared with layout");
         let content = item.content.translate(origin.to_vec2());
         let container = item.children.iter().any(|i| !self.boxes[*i].inline);
-        let summary = item.tag == "summary";
+        let details = item.parent.filter(|parent| item.tag == "summary" && self.boxes[*parent].tag == "details");
+        let summary = details.is_some();
         let label_target = if item.tag == "label" {
             node.props["htmlFor"]
                 .as_str()
@@ -326,7 +327,7 @@ impl Document {
                 .galley(Pos2::new(x, y), galley.clone(), paint.foreground.unwrap_or(doc.palette.get("foreground")));
             if !interactive {
                 let response = ui.interact(rect.intersect(clip), egui::Id::unique(&node.id), egui::Sense::hover());
-                doc.semantic(node, &response, Value::Null);
+                doc.semantic(ui, node, &response, Value::Null);
             }
             if !interactive {
                 doc.inline_links(ui, &galley, origin, targets, child_clip);
@@ -349,12 +350,13 @@ impl Document {
             }
             if node.props["accessibilityLabel"].is_string() || node.props["aria-label"].is_string() {
                 let response = ui.interact(icon_rect, egui::Id::unique(&node.id), egui::Sense::hover());
-                doc.semantic(node, &response, Value::Null);
+                doc.semantic(ui, node, &response, Value::Null);
             }
         } else if matches!(node.kind.as_str(), "NInput" | "NTextarea" | "NSearchField") {
             let mut child = ui.new_child(egui::UiBuilder::new().max_rect(content));
             child.set_clip_rect(child_clip);
-            self.input(doc, &mut child, index, content);
+            let response = self.input(doc, &mut child, index, content);
+            doc.focus_outline(&painter, &response, rect, corners);
         } else if node.kind == "NSelect" {
             let disabled = flag(&node.props, &["disabled", "isDisabled", "isLoading", "readOnly", "isReadOnly"]);
             let outer = ui.interact(
@@ -405,7 +407,8 @@ impl Document {
                     doc.palette.inherit_color(name, if name == "surface" { color.to_opaque() } else { color });
                 }
             }
-            doc.select(&mut child, node, &paint, true);
+            let response = doc.select(&mut child, node, &paint, true);
+            doc.focus_outline(&painter, &response, rect, corners);
             doc.palette = palette;
             if let Some(root) = doc.semantics.iter_mut().find(|entry| entry.id == node.id) {
                 let hit = rect.intersect(child_clip);
@@ -486,6 +489,9 @@ impl Document {
                 egui::Id::unique(&node.id),
                 egui::Sense::click(),
             );
+            if !flag(&node.props, &["disabled", "isDisabled"]) {
+                doc.focus_outline(&painter, &response, rect, corners);
+            }
             if response.contains_pointer() {
                 let disabled = flag(&node.props, &["disabled", "isDisabled"])
                     || label_target.is_some_and(|i| flag(&self.boxes[i].node.props, &["disabled", "isDisabled"]));
@@ -501,13 +507,11 @@ impl Document {
                 response.clicked() && !flag(&node.props, &["disabled", "isDisabled"])
             };
             if clicked {
-                if summary {
-                    if let Some(parent) = item.parent {
-                        let disclosure = &self.boxes[parent].node;
-                        let expanded = doc.value(disclosure, &["expanded", "isExpanded", "open"], json!(false)) != true;
-                        doc.values.insert(disclosure.id.clone(), json!(expanded));
-                        doc.change(&disclosure.id, json!(expanded));
-                    }
+                if let Some(parent) = details {
+                    let details = &self.boxes[parent].node;
+                    let expanded = !Self::expanded(doc, details);
+                    doc.values.insert(details.id.clone(), json!(expanded));
+                    doc.change(&details.id, json!(expanded));
                 } else if let Some(target) = label_target {
                     let target = &self.boxes[target].node;
                     if matches!(target.kind.as_str(), "NCheck" | "NSwitch") {
@@ -524,15 +528,15 @@ impl Document {
                     self.submit(doc, &node.id);
                 }
             }
-            if summary {
-                if let Some(parent) = item.parent {
-                    let mut disclosure = self.boxes[parent].node.clone();
-                    disclosure.props["label"] = json!(text(node));
-                    let expanded = Self::expanded(doc, &disclosure);
-                    doc.semantic(&disclosure, &response, json!(expanded));
-                }
+            if let Some(parent) = details {
+                let mut details = self.boxes[parent].node.clone();
+                let expanded = Self::expanded(doc, &details);
+                details.kind = "NPress".into();
+                details.props["label"] = json!(text(node));
+                details.props["_expanded"] = json!(expanded);
+                doc.record_semantic(&details, &response, json!(expanded));
             } else {
-                doc.semantic(node, &response, Value::Null);
+                doc.record_semantic(node, &response, Value::Null);
             }
         }
         if angle != 0. {

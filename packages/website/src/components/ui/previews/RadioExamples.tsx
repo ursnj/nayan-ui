@@ -39,7 +39,7 @@ export function RadioOptions() {
   const [selected, setSelected] = useState('beginner');
   return (
     <NRadioGroup tag="fieldset" className="component-radio-group">
-      <NText tag="legend" className="component-disclosure-label">
+      <NText tag="legend" className="text-sm font-semibold text-foreground">
         Experience
       </NText>
       <NView className="component-disclosure-list">

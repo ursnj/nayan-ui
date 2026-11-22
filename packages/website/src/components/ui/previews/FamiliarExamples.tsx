@@ -21,7 +21,7 @@ import {
 } from 'nayan-ui/components';
 import { SearchIcon } from 'nayan-ui/icons/components/search';
 import { componentSource } from '@/services/nayan-ui/component-examples';
-import { AccordionRows, DisclosureRow, accordionSource, disclosureSource } from './DisclosureExamples';
+import { AccordionRows, accordionSource } from './AccordionExamples';
 import { RadioOption, RadioOptions } from './RadioExamples';
 import SwitchRows from './SwitchRows';
 import type { ComponentPreview } from './types';
@@ -249,12 +249,6 @@ const examples: Readonly<Record<string, ComponentPreview>> = {
     height: 'auto',
     render: <AccordionRows />,
     source: accordionSource
-  },
-  disclosure: {
-    host: true,
-    height: 'auto',
-    render: <DisclosureRow />,
-    source: disclosureSource
   },
   radio: {
     host: true,

@@ -160,7 +160,7 @@ impl ComponentDocument {
                 };
                 ui.horizontal(|ui| {
                     let previous = ui.add_enabled(can_previous, egui::Button::new("‹").min_size(Vec2::new(44., height)));
-                    self.date_semantic(node, "previous", previous_label, &previous, Value::Null);
+                    self.date_semantic(ui, node, "previous", previous_label, &previous, Value::Null);
                     if previous.clicked() {
                         match view.mode {
                             CalendarMode::Days if view.month == 1 => {
@@ -179,7 +179,7 @@ impl ComponentDocument {
                             .truncate()
                             .selected(view.mode == CalendarMode::Months),
                     );
-                    self.date_semantic(node, "month", "Choose month", &month, json!(view.month));
+                    self.date_semantic(ui, node, "month", "Choose month", &month, json!(view.month));
                     if month.clicked() {
                         view.mode = CalendarMode::Months;
                     }
@@ -189,13 +189,13 @@ impl ComponentDocument {
                             .truncate()
                             .selected(view.mode == CalendarMode::Years),
                     );
-                    self.date_semantic(node, "year", "Choose year", &year, json!(view.year));
+                    self.date_semantic(ui, node, "year", "Choose year", &year, json!(view.year));
                     if year.clicked() {
                         view.mode = CalendarMode::Years;
                         view.year_page = min.year + (view.year - min.year) / 12 * 12;
                     }
                     let next = ui.add_enabled(can_next, egui::Button::new("›").min_size(Vec2::new(44., height)));
-                    self.date_semantic(node, "next", next_label, &next, Value::Null);
+                    self.date_semantic(ui, node, "next", next_label, &next, Value::Null);
                     if next.clicked() {
                         match view.mode {
                             CalendarMode::Days if view.month == 12 => {
@@ -246,7 +246,7 @@ impl ComponentDocument {
                                             ui.add_sized([cell, height], egui::Button::new(&label).truncate().selected(active))
                                         })
                                         .inner;
-                                    self.date_semantic(node, &id, &label, &response, value);
+                                    self.date_semantic(ui, node, &id, &label, &response, value);
                                     if response.clicked() {
                                         if months {
                                             view.month = month;
@@ -298,6 +298,7 @@ impl ComponentDocument {
                                             })
                                             .inner;
                                         self.date_semantic(
+                                            ui,
                                             node,
                                             &date.iso(),
                                             &format!("{} {} {}", day, MONTHS[date.month as usize - 1], date.year),
@@ -323,11 +324,12 @@ impl ComponentDocument {
         }
         let mut accessible = node.clone();
         accessible.props["accessibilityLabel"] = json!(format!("{}: {}", node.props["label"].as_str().unwrap_or("Choose date"), label));
-        self.semantic(&accessible, &shown.response, json!(selected.iso()));
+        self.semantic(ui, &accessible, &shown.response, json!(selected.iso()));
         ui.ctx().data_mut(|data| data.insert_temp(key, view));
     }
-    fn date_semantic(&mut self, node: &Node, id: &str, label: &str, response: &Response, value: Value) {
+    fn date_semantic(&mut self, ui: &egui::Ui, node: &Node, id: &str, label: &str, response: &Response, value: Value) {
         self.semantic(
+            ui,
             &Node {
                 id: format!("{}:{id}", node.id),
                 kind: "NButton".into(),

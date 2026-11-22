@@ -9,6 +9,7 @@ import {
   type SharedElementSnapshot,
 } from "nayan-ui/animations";
 import {
+  NAccordion,
   NAlert,
   NBlur,
   NBadge,
@@ -17,7 +18,6 @@ import {
   NCarousel,
   NCheck,
   NConfetti,
-  NDisclosure,
   NConfirm,
   NImage,
   NInput,
@@ -101,11 +101,10 @@ export function ControlsDemo() {
         onValueChange={setSelected}
       />
       <NBadge>{enabled ? `${selected.length} selected` : "Audio disabled"}</NBadge>
-      <NDisclosure title="About audio tracks">
-        <NText selectable>
-          Choose any combination of sound categories. The app stores the selected keys.
-        </NText>
-      </NDisclosure>
+      <NAccordion items={[{
+        title: "About audio tracks",
+        message: <NText selectable>Choose any combination of sound categories. The app stores the selected keys.</NText>
+      }]} />
     </DemoSurface>
   );
 }

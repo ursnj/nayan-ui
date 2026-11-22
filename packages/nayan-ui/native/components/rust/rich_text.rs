@@ -249,7 +249,7 @@ impl ComponentDocument {
         }
         let (pos, galley, response) = label.layout_in_ui(ui);
         ui.painter().galley(pos, galley.clone(), ui.visuals().text_color());
-        self.semantic(node, &response, Value::Null);
+        self.semantic(ui, node, &response, Value::Null);
         self.inline_links(ui, &galley, pos, targets, ui.clip_rect());
         true
     }
@@ -288,7 +288,7 @@ impl ComponentDocument {
                             self.click(&target.node.id);
                         }
                     }
-                    self.semantic(&node, &hit, json!(target.href));
+                    self.semantic(ui, &node, &hit, json!(target.href));
                 }
             }
         }

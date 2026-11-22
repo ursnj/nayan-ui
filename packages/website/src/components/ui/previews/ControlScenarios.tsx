@@ -114,12 +114,6 @@ export const controlScenarios = {
       element('NCode', { code: 'bun run dev', className: 'rounded-md bg-default px-2 py-1 text-sm' })
     ])
   ),
-  disclosure: sample(
-    'Open by default',
-    element('NDisclosure', { className: 'w-full rounded-xl border border-border bg-surface px-3', title: 'Release details', defaultExpanded: true }, [
-      element('NText', muted, 'Includes keyboard navigation improvements.')
-    ])
-  ),
   divider: sample(
     'Grouped settings',
     element('NView', panel, [

@@ -112,11 +112,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/components/disclosure</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.nayanui.com/components/divider</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -1277,11 +1272,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.nayanui.com/react/disclosure</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.nayanui.com/react/divider</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -2148,11 +2138,6 @@
   </url>
   <url>
     <loc>https://www.nayanui.com/tags/dialog-ui-component</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.nayanui.com/tags/disclosure</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

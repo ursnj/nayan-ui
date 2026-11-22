@@ -227,16 +227,6 @@
       "description": "Modal dialogs for focused tasks A Dialog component is a UI element that displays a pop-up window over the main content to capture user attention or request input. It is often used for tasks like confirmations, alerts, forms, or other interactions that require user feedback before proceeding. Dialogs can include buttons like \"OK\" or \"Cancel\" to confirm or dismiss actions, and typically block interaction with the underlying content until closed."
     },
     {
-      "path": "/react/disclosure",
-      "title": "Disclosure",
-      "category": "React Component",
-      "theme": [
-        "#6366f1",
-        "#0ea5e9"
-      ],
-      "description": "Show and hide a section of content A Disclosure is one collapsible section: a heading that opens and closes the content under it. It is the single-section counterpart to an accordion, for hiding detail that most readers will not need without sending them to another page for it."
-    },
-    {
       "path": "/react/divider",
       "title": "Divider",
       "category": "React Component",

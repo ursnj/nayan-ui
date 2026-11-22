@@ -222,7 +222,7 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
           const adjustable = ['NSlider', 'NNumberField', 'NCarousel'].includes(node.kind);
           const list = node.kind === 'NList';
           const button =
-            ['NButton', 'NPress', 'NCloseButton', 'NLink', 'NMenuItem', 'NActionItem', 'NSelect', 'NDatePicker', 'NDisclosure'].includes(node.kind) ||
+            ['NButton', 'NPress', 'NCloseButton', 'NLink', 'NMenuItem', 'NActionItem', 'NSelect', 'NDatePicker'].includes(node.kind) ||
             node.id.includes(':option:');
 
           return (
@@ -288,7 +288,7 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
                 disabled: node.disabled,
                 checked: multiOption ? node.selected : toggle ? Boolean(node.value) : undefined,
                 selected: node.selected,
-                expanded: node.expanded ?? (node.kind === 'NDisclosure' ? Boolean(node.value) : undefined)
+                expanded: node.expanded
               }}
               onAccessibilityTap={list ? undefined : () => document.request({ action: 'activate', id: node.id })}
               style={style}

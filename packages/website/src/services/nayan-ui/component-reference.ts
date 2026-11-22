@@ -1,6 +1,6 @@
 const components = [
   ['action-item', 'Action Item', 'NActionItem', 'Render a pressable row for an action such as opening a document.'],
-  ['accordion', 'Accordion', 'NDisclosure', 'Group disclosure panels so readers can expand related sections.'],
+  ['accordion', 'Accordion', 'NAccordion', 'Expand a single section or group related panels with single or multiple expansion.'],
   ['alert', 'Alert', 'NAlert', 'Show a status message with a title and optional description.'],
   ['badge', 'Badge', 'NBadge', 'Add a short status label to an interface.'],
   ['blur', 'Blur', 'NBlur', 'Place a translucent blur surface over content.'],
@@ -18,7 +18,6 @@ const components = [
   ['confirm-alert', 'Confirm Alert', 'NConfirm', 'Ask the user to confirm or cancel an action.'],
   ['date-picker', 'Date Picker', 'NDatePicker', 'Collect a date with a themed picker.'],
   ['dialog', 'Dialog', 'NDialog', 'Open a modal with focused content and a dismiss action.'],
-  ['disclosure', 'Disclosure', 'NDisclosure', 'Expand or collapse a single section.'],
   ['divider', 'Divider', 'NDivider', 'Separate groups of content with a rule.'],
   ['drawer', 'Drawer', 'NDrawer', 'Reveal a panel from the edge of a screen.'],
   ['empty-state', 'Empty State', 'NEmptyState', 'Explain an empty list or a search with no results.'],

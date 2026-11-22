@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import * as E from 'nayan-ui/components';
+import { controlledAccordion } from './AccordionExamples';
 import { scenario } from './scenario';
 import type { NamedComponentPreview } from './types';
 
@@ -9,23 +10,6 @@ function Counter() {
     <>
       <E.NButton leftIcon={<E.NIcon name="plus" size={16} />} onPress={() => setCount(count + 1)}>Add one</E.NButton>
       <E.NText>Count: {count}</E.NText>
-    </>
-  );
-}
-
-const disclosurePanel = 'w-full rounded-xl border border-border bg-surface px-3';
-const disclosureBody = 'pb-3 text-sm text-muted';
-
-function ManagedDisclosure() {
-  const [open, setOpen] = useState(false);
-  return (
-    <>
-      <E.NButton isOutline onPress={() => setOpen(!open)}>
-        {open ? 'Collapse details' : 'Expand details'}
-      </E.NButton>
-      <E.NDisclosure className={disclosurePanel} title="Delivery details" expanded={open} onExpandedChange={setOpen}>
-        <E.NText className={disclosureBody}>Free pickup is available.</E.NText>
-      </E.NDisclosure>
     </>
   );
 }
@@ -230,17 +214,7 @@ function presentationScenario(kind: Presentation): NamedComponentPreview {
 const calendarDate = new Date(2026, 0, 15);
 
 export const interactiveScenarios = {
-  accordion: scenario(
-    'Controlled disclosure',
-    'NButton, NDisclosure, NText',
-    `<NButton isOutline onPress={() => setOpen(!open)}>{open ? 'Collapse details' : 'Expand details'}</NButton>
-          <NDisclosure className="${disclosurePanel}" title="Delivery details" expanded={open} onExpandedChange={setOpen}>
-            <NText className="${disclosureBody}">Free pickup is available.</NText>
-          </NDisclosure>`,
-    <ManagedDisclosure />,
-    'const [open, setOpen] = useState(false);',
-    195
-  ),
+  accordion: controlledAccordion,
   alert: scenario(
     'Recover from an error',
     'NAlert, NButton',

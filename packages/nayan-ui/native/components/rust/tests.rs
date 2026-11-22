@@ -53,6 +53,50 @@ fn painted_text_bounds(shape: &egui::Shape, text: &str) -> Option<Rect> {
 }
 
 #[test]
+fn focus_outline_follows_painted_bounds_and_corners_in_both_renderers() {
+    let fill = Color32::from_rgb(34, 136, 102);
+    for (stylesheet, kind) in [
+        (false, "NPress"),
+        (false, "NButton"),
+        (true, "NPress"),
+        (true, "NButton"),
+        (true, "NInput"),
+        (true, "NSelect"),
+    ] {
+        let mut doc = ComponentDocument::default();
+        if stylesheet {
+            doc.command(&json!({"action":"stylesheet","stylesheet":{"rules":[]}})).unwrap();
+        }
+        tree(
+            &mut doc,
+            json!([{"id":"root","kind":"NView","props":{"style":{"padding":32}},"children":[
+                {"id":"control","kind":kind,"props":{"hitSlop":14,"options":["First","Second"],"style":{
+                    "width":140,"height":44,"padding":10,"backgroundColor":"#228866","borderRadius":16,"borderTopLeftRadius":4
+                }}}
+            ]}]),
+        );
+        frame(&mut doc);
+        let hit_width = doc.semantics.iter().find(|node| node.id == "control").unwrap().rect[2];
+        if kind == "NPress" {
+            assert!(hit_width > 140., "hit slop should still expand the interaction bounds");
+        }
+        doc.command(&json!({"action":"focus","id":"control"})).unwrap();
+        let output = doc.frame(390., 500., 1.);
+        let rect_shapes = output.shapes.iter().filter_map(|shape| match &shape.shape {
+            egui::Shape::Rect(rect) => Some(rect),
+            _ => None,
+        });
+        let painted = rect_shapes.clone().find(|rect| rect.fill == fill).unwrap();
+        let mut outlines = rect_shapes.filter(|rect| rect.stroke.width == 2. && rect.stroke.color == doc.palette.get("focus"));
+        let outline = outlines.next().unwrap();
+        assert_eq!(outline.rect, painted.rect.expand(2.), "stylesheet={stylesheet} kind={kind}");
+        assert_eq!(outline.corner_radius, painted.corner_radius + 2, "stylesheet={stylesheet} kind={kind}");
+        assert!(outlines.next().is_none(), "only one focus outline should be painted");
+        output.drop_without_applying_deltas();
+    }
+}
+
+#[test]
 fn alerts_paint_custom_content_and_message_only_alerts_once() {
     let mut doc = ComponentDocument::default();
     doc.set_tree(&json!([
@@ -837,7 +881,6 @@ fn every_implemented_component_fits_phone_tablet_and_desktop_widths_with_large_t
         "NLink",
         "NTooltip",
         "NScrollShadow",
-        "NDisclosure",
         "NRadio",
         "NRadioGroup",
         "NButtonGroup",
@@ -900,18 +943,6 @@ fn resizing_preserves_control_values_and_updates_responsive_breakpoints() {
     ui.frame(240., 400., 1.).drop_without_applying_deltas();
     assert!(ui.layout_bounds("input").unwrap()[2] <= 240.);
     assert_eq!(ui.semantics[0].value, "Grace");
-}
-
-#[test]
-fn disclosure_wraps_and_keeps_expansion_state_in_rust() {
-    let mut ui = ComponentDocument::default();
-    ui.set_tree(&json!([{"id":"disclosure","kind":"NDisclosure","props":{"title":"A long disclosure header that must wrap","defaultExpanded":false},"children":[{"id":"child","kind":"NText","props":{"text":"Content"}}]}])).unwrap();
-    ui.frame(240., 600., 1.).drop_without_applying_deltas();
-    assert_eq!(ui.semantics[0].value, false);
-    ui.command(&json!({"action":"activate","id":"disclosure"})).unwrap();
-    ui.frame(240., 600., 1.).drop_without_applying_deltas();
-    assert_eq!(ui.semantics[0].value, true);
-    assert!(ui.events.iter().any(|event| event["id"] == "disclosure" && event["value"] == true));
 }
 
 #[test]

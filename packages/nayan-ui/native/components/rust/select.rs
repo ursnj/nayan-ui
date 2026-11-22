@@ -72,7 +72,7 @@ impl ComponentDocument {
         }
     }
 
-    pub(super) fn select(&mut self, ui: &mut egui::Ui, n: &Node, resolved: &style::Style, framed: bool) {
+    pub(super) fn select(&mut self, ui: &mut egui::Ui, n: &Node, resolved: &style::Style, framed: bool) -> Response {
         let disabled = flag(&n.props, &["disabled", "isDisabled", "isLoading", "readOnly", "isReadOnly"]);
         ui.add_enabled_ui(!disabled, |ui| {
             let radius = resolved.corner_radius();
@@ -97,11 +97,12 @@ impl ComponentDocument {
             if framed {
                 ui.spacing_mut().interact_size.y = ui.available_height().max(1.);
             }
-            self.select_enabled(ui, n);
-        });
+            self.select_enabled(ui, n, framed)
+        })
+        .inner
     }
 
-    fn select_enabled(&mut self, ui: &mut egui::Ui, n: &Node) {
+    fn select_enabled(&mut self, ui: &mut egui::Ui, n: &Node, framed: bool) -> Response {
         let p = &n.props;
         let items: Vec<_> = p["options"]
             .as_array()
@@ -146,7 +147,7 @@ impl ComponentDocument {
         // The horizontal row scopes widget IDs; use the same scope for lookup and drawing.
         let mut changed = None;
         let keys = self.select_keys.remove(&n.id).unwrap_or_default();
-        ui.horizontal(|ui| {
+        let response = ui.horizontal(|ui| {
             let combo_id = ui.make_persistent_id(egui::IdSalt::new(&n.id));
             let popup_id = combo_id.with("popup");
             let mut open = egui::Popup::is_id_open(ui.ctx(), popup_id);
@@ -332,6 +333,7 @@ impl ComponentDocument {
                                 children: vec![],
                             };
                         self.semantic(
+                            ui,
                             &search,
                             &response,
                             json!(query),
@@ -365,7 +367,7 @@ impl ComponentDocument {
                             props: json!({"label":label(item),"_selectOwner":n.id,"_selected":selected,"_multiple":multi}),
                             children: vec![],
                         };
-                        self.semantic(&entry, &response, item.clone());
+                        self.semantic(ui, &entry, &response, item.clone());
                         if response.clicked() || (choose && active == Some(index) && response.enabled()) {
                             self.values.insert(cursor_id.clone(), json!(index));
                             if multi {
@@ -425,10 +427,15 @@ impl ComponentDocument {
             } else {
                 Value::Null
             };
-            self.semantic(&root, &combo.response, value.clone());
+            if framed {
+                self.record_semantic(&root, &combo.response, value.clone());
+            } else {
+                self.semantic(ui, &root, &combo.response, value.clone());
+            }
             let clear_response = clear_response.borrow_mut().take();
             if let Some(response) = clear_response {
                 self.semantic(
+                    ui,
                     &Node {
                         id: format!("{}:clear", n.id),
                         kind: "NButton".into(),
@@ -442,7 +449,8 @@ impl ComponentDocument {
                     changed = Some(if multi { json!([]) } else { Value::Null });
                 }
             }
-        });
+            combo.response
+        }).inner;
         // Root first, options after: platform semantics and foreground hit testing agree.
         if let Some(at) = self.semantics[semantic_start..].iter().position(|node| node.id == n.id) {
             let root = self.semantics.remove(semantic_start + at);
@@ -452,6 +460,7 @@ impl ComponentDocument {
             self.values.insert(n.id.clone(), value.clone());
             self.change(&n.id, value);
         }
+        response
     }
 }
 

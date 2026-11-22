@@ -20,6 +20,7 @@ const nextConfig: NextConfig = {
     return [
       // Some browsers still have the original permanent redirect from /playground cached.
       { source: '/game-engine/playground/:path*', destination: '/playground/:path*' },
+      ...['/disclosure', '/components/disclosure', '/react/disclosure'].map((source) => ({ source, destination: '/accordion' })),
       // /modules/games already has a page and /games is the playable game catalog.
       ...[...componentReferences, ...moduleReferences.filter(({ slug }) => slug !== 'games')]
         .map(({ slug, path }) => ({ source: path, destination: `/${slug}` }))

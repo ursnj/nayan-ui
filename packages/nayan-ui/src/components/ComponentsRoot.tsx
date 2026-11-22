@@ -296,7 +296,7 @@ function ComponentSurface({
           else if (typeof props.href === 'string') navigate(props.href);
         } else {
           const kind = props.__uiKind;
-          const name = ['onChangeOptions', 'onChange', 'onValueChange', 'onChangeText', 'onSelectedChange', 'onExpandedChange'].find(
+          const name = ['onChangeOptions', 'onChange', 'onValueChange', 'onChangeText', 'onSelectedChange'].find(
             (key) => typeof props[key] === 'function'
           );
           if (name) {

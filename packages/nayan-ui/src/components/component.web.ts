@@ -24,8 +24,7 @@ export function component<P = ComponentProps>(name: string): ComponentType<P> {
       NCheck: 'input',
       NSlider: 'input',
       NProgress: 'progress',
-      NSelect: 'select',
-      NDisclosure: 'details'
+      NSelect: 'select'
     };
     const element = tag ?? defaults[name] ?? 'div';
     const attributes: Record<string, unknown> = {};
@@ -72,7 +71,6 @@ export function component<P = ComponentProps>(name: string): ComponentType<P> {
             'onValueChange',
             'onChangeOptions',
             'onChangeText',
-            'onExpandedChange',
             'onSelectedChange',
             'onLoadStart',
             'onLoadEnd',

@@ -14,7 +14,9 @@ export function NToastContent({ toast }: { toast: NonNullable<ToastState['toast'
   return (
     <NView className="w-full p-2">
       <NView
-        className="bg-background border-border min-h-16 w-full flex-row items-start gap-3 rounded-2xl border p-3"
+        className={`bg-background border-border min-h-16 w-full flex-row gap-3 rounded-2xl border p-3 ${
+          toast.title || toast.actionLabel ? 'items-start' : 'items-center'
+        }`}
         style={{ boxShadow: '0px 6px 16px -6px rgba(0,0,0,0.28)' }}>
         <NView className={`h-9 w-9 items-center justify-center rounded-full p-2 ${status.background}`}>
           <NIcon name={status.icon} size={20} className={status.color} />

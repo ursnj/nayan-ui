@@ -1,7 +1,7 @@
 use super::*;
 
 impl Document {
-    pub(super) fn input(&self, doc: &mut ComponentDocument, ui: &mut egui::Ui, index: usize, rect: Rect) {
+    pub(super) fn input(&self, doc: &mut ComponentDocument, ui: &mut egui::Ui, index: usize, rect: Rect) -> Response {
         let item = &self.boxes[index];
         let n = &item.node;
         let p = &n.props;
@@ -42,10 +42,11 @@ impl Document {
             doc.values.insert(n.id.clone(), json!(value));
             doc.change(&n.id, json!(value));
         }
-        doc.semantic(n, &response, json!(value));
+        doc.record_semantic(n, &response, json!(value));
         doc.input_editor(n, &item.paint, style::Edges::default());
         if response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) && !multiline {
             self.submit(doc, &n.id);
         }
+        response
     }
 }

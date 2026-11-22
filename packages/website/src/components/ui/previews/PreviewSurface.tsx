@@ -16,7 +16,6 @@ const controls = {
   NSelect: { className: 'rounded-lg text-sm' },
   NTabs: { className: 'rounded-md px-3 py-1 text-sm font-semibold' },
   NButtonGroup: { className: 'rounded-md px-3 py-1 text-sm font-semibold' },
-  NDisclosure: { className: 'text-sm font-semibold' },
   NCard: { className: 'rounded-xl' },
   NMenuItem: { className: 'rounded-lg px-3 text-sm font-medium' }
 } satisfies NThemeProps['components'];

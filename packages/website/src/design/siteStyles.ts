@@ -340,15 +340,12 @@ export default {
       utilities: '[transition:none]',
       media: '(prefers-reduced-motion: reduce)'
     },
-    { selector: '.component-disclosure-layout', utilities: 'grid [gap:0.75rem] [margin:1.25rem]' },
-    { selector: '.component-disclosure-label', utilities: 'text-foreground [font-size:0.875rem] font-semibold' },
     {
       selector: '.component-disclosure-list',
       utilities: 'overflow-hidden [border:1px_solid_var(--border)] [border-radius:0.85rem] [background:var(--surface)]'
     },
-    { selector: '.component-disclosure-layout > .component-disclosure-list + .component-disclosure-label', utilities: '[margin-top:0.4rem]' },
     {
-      selector: '.component-disclosure + .component-disclosure, .component-radio-option + .component-radio-option',
+      selector: '.component-radio-option + .component-radio-option',
       utilities: '[border-top:1px_solid_var(--border)]'
     },
     {
@@ -357,8 +354,6 @@ export default {
     },
     { selector: '.component-disclosure-trigger', utilities: 'justify-between [list-style:none]' },
     { selector: '.component-disclosure-trigger::-webkit-details-marker', utilities: 'hidden' },
-    { selector: '.component-disclosure-trigger svg', utilities: '[flex:none] text-muted' },
-    { selector: '.component-disclosure[open] .component-disclosure-trigger svg', utilities: '[transform:rotate(180deg)] text-accent' },
     {
       selector: '.component-disclosure-trigger:hover, .component-radio-option:hover:has(input:not(:disabled))',
       utilities: '[background:var(--surface-secondary)]'

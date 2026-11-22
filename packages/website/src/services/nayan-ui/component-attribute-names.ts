@@ -6,6 +6,10 @@ type ComponentSymbol = (typeof componentReferences)[number]['symbol'];
 // Controls with a dedicated props type can use their own declared fields by default.
 export const componentAttributeNames: Partial<Record<ComponentSymbol, readonly string[]>> = {
   AnimationView: ['children', 'animatedStyle', 'initial', 'style', 'ref', 'accessibilityLabel'],
+  NAccordion: [
+    'items', 'type', 'defaultExpanded', 'expanded', 'onExpandedChange', 'variant',
+    'className', 'itemClassName', 'triggerClassName', 'contentClassName', 'indicatorClassName'
+  ],
   NActionItem: [
     'name', 'description', 'icon', 'showArrow', 'onPress', 'disabled',
     'className', 'titleClassName'
@@ -44,10 +48,6 @@ export const componentAttributeNames: Partial<Record<ComponentSymbol, readonly s
   NDialog: [
     'isOpen', 'title', 'maxWidth', 'className', 'titleClassName', 'contentClassName',
     'children', 'onOpenChange', 'trigger', 'showCloseButton'
-  ],
-  NDisclosure: [
-    'title', 'children', 'defaultExpanded', 'expanded', 'onExpandedChange', 'disabled',
-    'className'
   ],
   NDivider: ['className', 'orientation', 'children'],
   NEmptyState: ['title', 'message', 'className', 'children'],

@@ -351,7 +351,7 @@ impl ComponentDocument {
         }
         self.flow_lists.insert(node.id.clone(), state);
         let response = ui.interact(output.inner_rect, egui::Id::unique((&node.id, "flow-viewport")), egui::Sense::hover());
-        self.semantic(node, &response, current);
+        self.semantic(ui, node, &response, current);
     }
 
     fn measure_flow_part(&mut self, ui: &mut egui::Ui, node: &Node, origin: Pos2, width: f32, clip: Rect) -> f32 {

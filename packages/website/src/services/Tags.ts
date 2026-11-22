@@ -30,6 +30,12 @@ export const accordionTags = [
   { sku: "accordion-responsive-design", text: "Accordion Responsive Design" },
   { sku: "react-accordion-typescript", text: "React Accordion TypeScript" },
   { sku: "accordion-component-design-system", text: "Accordion Component Design System" },
+  { sku: "react-disclosure", text: "React Disclosure" },
+  { sku: "react-collapsible", text: "React Collapsible" },
+  { sku: "react-expandable-section", text: "React Expandable Section" },
+  { sku: "react-show-hide", text: "React Show Hide" },
+  { sku: "react-disclosure-component", text: "React Disclosure Component" },
+  { sku: "react-toggle-content", text: "React Toggle Content" },
 ];
 
 export const alertTags = [
@@ -1651,15 +1657,6 @@ export const dateRangePickerTags = [
   { sku: "react-start-end-date", text: "React Start End Date" },
   { sku: "react-date-range-component", text: "React Date Range Component" },
   { sku: "react-period-picker", text: "React Period Picker" },
-];
-
-export const disclosureTags = [
-  { sku: "react-disclosure", text: "React Disclosure" },
-  { sku: "react-collapsible", text: "React Collapsible" },
-  { sku: "react-expandable-section", text: "React Expandable Section" },
-  { sku: "react-show-hide", text: "React Show Hide" },
-  { sku: "react-disclosure-component", text: "React Disclosure Component" },
-  { sku: "react-toggle-content", text: "React Toggle Content" },
 ];
 
 export const emptyStateTags = [

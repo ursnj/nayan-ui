@@ -10,7 +10,7 @@ import { toastStore } from './toastService';
 export interface NToastHostProps {
   /** Absolute top offset. Defaults to the top safe area plus 12 points. */
   top?: number;
-  /** Centered width limit on tablets and desktop; defaults to 480 points. */
+  /** Width limit on larger screens; defaults to 480 points. */
   maxWidth?: number;
 }
 let announced: number | undefined;
@@ -31,8 +31,11 @@ export function NToastHost({ top, maxWidth = 480 }: NToastHostProps) {
   if (!toast) return null;
   const limit = Number.isFinite(maxWidth) && maxWidth > 0 ? maxWidth : 480;
   const inset = Math.max(8, (viewport.width - limit) / 2);
+  const alignRight = viewport.position === 'fixed' && viewport.width >= 768;
+  const right = alignRight ? 12 : inset;
+  const left = alignRight ? Math.max(12, viewport.width - right - limit) : inset;
   const visibleHeight = Math.min(height, viewport.height > 0 ? viewport.height * 0.4 : height);
-  const style = { position: viewport.position, top: top ?? (insets?.top ?? 0) + 12, left: inset, right: inset, height: visibleHeight, zIndex: 10000 };
+  const style = { position: viewport.position, top: top ?? (insets?.top ?? 0) + 12, left, right, height: visibleHeight, zIndex: 10000 };
   return (
     <NPlatformView style={style}>
       <ViewHost

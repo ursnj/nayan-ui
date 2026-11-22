@@ -131,9 +131,6 @@ export interface ComponentProps {
   'code'?: string;
   'fallback'?: string;
   'alt'?: string;
-  'defaultExpanded'?: boolean;
-  'expanded'?: boolean;
-  'onExpandedChange'?: (expanded: boolean) => void;
   'separator'?: boolean;
   'hasSeparator'?: boolean;
   'accessibilityLabel'?: string;

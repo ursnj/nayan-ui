@@ -964,7 +964,7 @@ impl ComponentDocument {
             self.change(&node.id, event);
         }
         let response = ui.interact(output.inner_rect, egui::Id::unique((&node.id, "list-viewport")), egui::Sense::hover());
-        self.semantic(node, &response, range);
+        self.semantic(ui, node, &response, range);
     }
 
     fn list_part(&mut self, ui: &mut egui::Ui, node: &Node, rect: Rect, clip: Rect) {

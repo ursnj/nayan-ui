@@ -363,7 +363,7 @@ impl ComponentDocument {
                     props: json!({"accessibilityLabel":format!("Slide {} of {}",index+1,count)}),
                     children: vec![],
                 };
-                self.semantic(&button, &response, Value::Null);
+                self.semantic(ui, &button, &response, Value::Null);
                 if response.clicked() {
                     state.slide(index, now);
                     self.values.insert(node.id.clone(), json!(index));
@@ -381,7 +381,7 @@ impl ComponentDocument {
         accessible.props["min"] = json!(0);
         accessible.props["max"] = json!(count - 1);
         accessible.props["step"] = json!(1);
-        self.semantic(&accessible, &response, json!(state.index.unwrap_or(0)));
+        self.semantic(ui, &accessible, &response, json!(state.index.unwrap_or(0)));
         if response.has_focus() && ui.is_enabled() {
             let current = state.index.unwrap_or(0);
             let next = ui.input(|input| {

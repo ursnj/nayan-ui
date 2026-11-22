@@ -259,7 +259,7 @@ impl Document {
     }
     fn inline_content(&mut self, doc: &ComponentDocument) {
         for i in 0..self.boxes.len() {
-            if self.boxes[i].node.kind == "NDisclosure" && !Self::expanded(doc, &self.boxes[i].node) {
+            if self.boxes[i].tag == "details" && !Self::expanded(doc, &self.boxes[i].node) {
                 for child in self.boxes[i].children.clone() {
                     if self.boxes[child].tag != "summary" {
                         self.boxes[child].css.insert("display".into(), "none".into());
@@ -304,7 +304,7 @@ impl Document {
             "attr" => {
                 let key = test[1].as_str().unwrap_or("");
                 let expected = test[3].as_str().unwrap_or("");
-                let actual = if key == "open" && n.kind == "NDisclosure" {
+                let actual = if key == "open" && item.tag == "details" {
                     if Self::expanded(doc, n) { "true".into() } else { String::new() }
                 } else if key == "data-theme" && item.parent.is_none() {
                     if self.dark { "dark".into() } else { "light".into() }

@@ -922,7 +922,7 @@ attachment boundary inside an engine UI tree.
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | App and layout                  | `NTheme`, `NPage`, `ComponentsRoot`, `NView`, `NCard`, `NPlatformView`, `NDivider`                                                                             |
 | Scrolling and navigation UI     | `NScrollView`, `NScrollShadow`, `NRefreshControl`, `NList`, `NCarousel`, `NDrawer`, `NTabs`, `NTabsContent`                                            |
-| Content and feedback            | `NText`, `NImage`, `NPattern`, `NLink`, `NLinkify`, `NCode`, `NKbd`, `NTooltip`, `NDisclosure`, `NRequired`                                           |
+| Content and feedback            | `NText`, `NImage`, `NPattern`, `NLink`, `NLinkify`, `NCode`, `NKbd`, `NTooltip`, `NAccordion`, `NRequired`                                            |
 | Optional content entries        | `NIcon` and named components from `/icons`, `NMarkdown` from `/markdown`                                                                            |
 | Actions and choices             | `NButton`, `NPress`, `NCloseButton`, `NCheck`, `NSwitch`, `NToggleButton`, `NRadio`, `NRadioGroup`, `NButtonGroup`, `NActionItem`, `NMenuItem`         |
 | Fields                          | `NInput`, `NTextarea`, `NSearchField`, `NInputOtp`, `NSlider`, `NNumberField`, `NSelect`, `NDatePicker`                                                |
@@ -931,6 +931,8 @@ attachment boundary inside an engine UI tree.
 
 The engine exposes these controls through one shared API. Sheets, dialogs and confirmations use controlled `isOpen` /
 `onOpenChange` props and a platform presentation host with Rust-rendered content.
+Use `NAccordion` with one item for a single collapsible panel. Pass `defaultExpanded` to open it initially or use
+`expanded` and `onExpandedChange` to control whether the accordion is open.
 The calendar and toast service also use Rust state and engine rendering. SDK-owned surfaces retain their platform integrations.
 
 ### Platform primitives and interop

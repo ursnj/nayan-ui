@@ -53,7 +53,7 @@ fn rendered_hover_cursors_follow_click_targets_without_relayout_and_reset_on_lea
             {"id":"field","kind":"NInput","props":{"className":"control","placeholder":"Name"}},
             {"id":"check","kind":"NCheck","props":{"label":"Remember"}},
             {"id":"label","kind":"NText","props":{"tag":"label","htmlFor":"check","text":"Toggle checkbox","className":"control"}},
-            {"id":"disclosure","kind":"NDisclosure","children":[{"id":"summary","kind":"NText","props":{"tag":"summary","text":"Show details","className":"control"}}]},
+            {"id":"details","kind":"NView","props":{"tag":"details"},"children":[{"id":"summary","kind":"NText","props":{"tag":"summary","text":"Show details","className":"control"}}]},
             {"id":"plain","kind":"NText","props":{"text":"Plain content","className":"control"}}
         ]}]),
         390.,
@@ -514,17 +514,19 @@ fn responsive_grid_spans_fill_the_row() {
     assert_eq!(box_for(&doc, "right").rect.top(), 56.);
 }
 #[test]
-fn disclosure_expansion_and_anchor_scrolling_are_owned_by_rust() {
+fn details_expansion_and_anchor_scrolling_are_owned_by_rust() {
     let mut doc = draw(
         vec![],
-        json!([{"id":"faq","kind":"NDisclosure","props":{"tag":"details"},"children":[{"id":"summary","kind":"NText","props":{"tag":"summary","text":"How does it work?"}},{"id":"answer","kind":"NText","props":{"tag":"p","text":"An answer that starts collapsed."}}]},{"id":"spacer","kind":"NView","props":{"style":{"height":1500}}},{"id":"target","kind":"NText","props":{"text":"The linked section"}}]),
+        json!([{"id":"faq","kind":"NView","props":{"tag":"details","open":true},"children":[{"id":"summary","kind":"NText","props":{"tag":"summary","text":"How does it work?"}},{"id":"answer","kind":"NText","props":{"tag":"p","text":"The answer."}}]},{"id":"spacer","kind":"NView","props":{"style":{"height":1500}}},{"id":"target","kind":"NText","props":{"text":"The linked section"}}]),
         390.,
     );
-    assert!(box_for(&doc, "answer").paint.hidden);
+    assert!(!box_for(&doc, "answer").paint.hidden);
+    assert_eq!(doc.semantics.iter().find(|node| node.id == "faq").unwrap().expanded, Some(true));
     doc.command(&json!({"action":"activate","id":"faq"})).unwrap();
     doc.frame(390., 1000., 1.).drop_without_applying_deltas();
     doc.frame(390., 1000., 1.).drop_without_applying_deltas();
-    assert!(!box_for(&doc, "answer").paint.hidden);
+    assert!(box_for(&doc, "answer").paint.hidden);
+    assert_eq!(doc.semantics.iter().find(|node| node.id == "faq").unwrap().expanded, Some(false));
     doc.command(&json!({"action":"scrollToId","id":"target"})).unwrap();
     doc.frame(390., 1000., 1.).drop_without_applying_deltas();
     doc.frame(390., 1000., 1.).drop_without_applying_deltas();

@@ -74,7 +74,6 @@ const topics = [
       'accordion',
       'breadcrumbs',
       'carousel',
-      'disclosure',
       'drawer',
       'link',
       'linkify',

@@ -47,7 +47,7 @@ export { NCode, type NCodeProps } from './NCode';
 export { NLink, type NLinkProps } from './NLink';
 export { NTooltip, type NTooltipProps } from './NTooltip';
 export { NScrollShadow, type NScrollShadowProps } from './NScrollShadow';
-export { NDisclosure, type NDisclosureProps } from './NDisclosure';
+export { NAccordion, type NAccordionProps, type AccordionListItem } from './NAccordion';
 export { NRadio, type NRadioProps } from './NRadio';
 export { NRadioGroup, type NRadioGroupProps } from './NRadioGroup';
 export { NButtonGroup, type NButtonGroupProps } from './NButtonGroup';

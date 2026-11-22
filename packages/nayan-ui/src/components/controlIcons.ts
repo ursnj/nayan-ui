@@ -48,7 +48,9 @@
 import type { IconOutline } from './iconImage';
 
 const paths = {
+  'chevron-down': ['m6 9 6 6 6-6'],
   'chevron-right': ['m9 18 6-6-6-6'],
+  'chevron-up': ['m18 15-6-6-6 6'],
   'circle-check': ['M2 12a10 10 0 1 0 20 0a10 10 0 1 0 -20 0Z', 'm16 9-5.5 5.5L8 12'],
   'circle-question-mark': ['M2 12a10 10 0 1 0 20 0a10 10 0 1 0 -20 0Z', 'M9 9.5a3 2.5 0 016 0c0 2-2 2-3 3.5', 'M12 17h.01'],
   'circle-x': ['M2 12a10 10 0 1 0 20 0a10 10 0 1 0 -20 0Z', 'm15 9-6 6', 'm9 9 6 6'],

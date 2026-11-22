@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { expect, mock, test } from 'bun:test';
+import { NAccordion } from '../NAccordion';
 import { NButton } from '../NButton';
 import { NScrollView } from '../NScrollView';
 import { NText } from '../NText';
@@ -68,6 +69,64 @@ test('keyed children retain their IDs when moved or updated', async () => {
   expect(nodes[0]?.children[0]?.props.text).toBe('B2');
   renderer.dispose();
   await flush();
+});
+
+test('accordion expansion follows controlled props and preserves multiple batched presses', async () => {
+  const items = [
+    { id: 'unavailable', title: 'Unavailable', message: 'Disabled panel', disabled: true },
+    { id: 'first', title: 'First', message: 'First panel' },
+    { id: 'second', title: 'Second', message: 'Second panel' }
+  ];
+  const onExpandedChange = mock((_expanded: boolean) => {});
+  let nodes: ComponentNode[] = [];
+  const renderer = createComponentRenderer(
+    (next) => {
+      nodes = next;
+    },
+    (error) => {
+      throw error;
+    }
+  );
+  const triggers = () => nodes[0]!.children.map((item) => item.children[0]!);
+  const expansion = () => triggers().map((trigger) => trigger.props._expanded);
+  const press = (index: number) => (renderer.handlers.get(triggers()[index]!.id)!.onPress as () => void)();
+  try {
+    renderer.render(<NAccordion items={items} expanded={true} onExpandedChange={onExpandedChange} />);
+    await flush();
+    expect(expansion()).toEqual([false, true, false]);
+    press(0);
+    press(1);
+    await flush();
+    expect(onExpandedChange.mock.calls).toEqual([[false]]);
+    expect(expansion()).toEqual([false, true, false]);
+
+    renderer.render(<NAccordion items={items} expanded={false} onExpandedChange={onExpandedChange} />);
+    await flush();
+    press(2);
+    await flush();
+    expect(onExpandedChange.mock.calls).toEqual([[false], [true]]);
+    expect(expansion()).toEqual([false, false, false]);
+    renderer.render(<NAccordion items={items} expanded={true} />);
+    await flush();
+    expect(expansion()).toEqual([false, false, true]);
+
+    onExpandedChange.mockClear();
+    renderer.render(<NAccordion key="uncontrolled" items={items} type="multiple" defaultExpanded onExpandedChange={onExpandedChange} />);
+    await flush();
+    expect(expansion()).toEqual([false, true, false]);
+    press(2);
+    press(1);
+    await flush();
+    expect(expansion()).toEqual([false, false, true]);
+    expect(onExpandedChange).not.toHaveBeenCalled();
+    press(2);
+    await flush();
+    expect(expansion()).toEqual([false, false, false]);
+    expect(onExpandedChange.mock.calls).toEqual([[false]]);
+  } finally {
+    renderer.dispose();
+    await flush();
+  }
 });
 
 test('Unicode icon names reach Rust without changing the public component syntax', async () => {

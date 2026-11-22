@@ -345,7 +345,6 @@ impl ComponentDocument {
                         | "NLink"
                         | "NTooltip"
                         | "NScrollShadow"
-                        | "NDisclosure"
                         | "NRadio"
                         | "NRadioGroup"
                         | "NButtonGroup"
@@ -968,19 +967,29 @@ impl ComponentDocument {
             .clone()
     }
 
-    fn semantic(&mut self, n: &Node, response: &Response, value: Value) {
+    fn semantic(&mut self, ui: &egui::Ui, n: &Node, response: &Response, value: Value) {
+        self.focus_outline(ui.painter(), response, response.rect, ui.visuals().widgets.active.corner_radius);
+        self.record_semantic(n, response, value);
+    }
+
+    // Use the painted box for the keyboard indicator, independently of the hit target.
+    fn focus_outline(&self, painter: &egui::Painter, response: &Response, bounds: Rect, corners: egui::CornerRadius) {
+        if !response.enabled() || !response.has_focus() || !bounds.is_positive() {
+            return;
+        }
+        let clip = self.interaction_clip.unwrap_or(painter.clip_rect());
+        let radius = corners.at_most((bounds.width().min(bounds.height()) * 0.5) as u8);
+        painter.with_clip_rect(clip).with_layer_id(response.layer_id).rect_stroke(
+            bounds.expand(2.),
+            radius + 2,
+            egui::Stroke::new(2., self.palette.get("focus")),
+            egui::StrokeKind::Outside,
+        );
+    }
+
+    fn record_semantic(&mut self, n: &Node, response: &Response, value: Value) {
         self.input_semantic(n, response);
         self.layout_rects.insert(n.id.clone(), response.rect);
-        // Platform semantics are invisible; keyboard focus must remain visible in the GPU pass,
-        // including when callers override a control's base background/border utilities.
-        if response.has_focus() {
-            response.ctx.layer_painter(response.layer_id).rect_stroke(
-                response.rect.expand(2.),
-                self.palette.radius + 2.,
-                egui::Stroke::new(2., self.palette.get("focus")),
-                egui::StrokeKind::Outside,
-            );
-        }
         let rect = response.rect.intersect(response.interact_rect).intersect(response.ctx.viewport_rect());
         let rect = self.interaction_clip.map_or(rect, |clip| rect.intersect(clip));
         if !rect.is_positive() {
@@ -997,7 +1006,6 @@ impl ComponentDocument {
                     | "NActionItem"
                     | "NSelect"
                     | "NDatePicker"
-                    | "NDisclosure"
                     | "NCheck"
                     | "NSwitch"
                     | "NToggleButton"
@@ -1235,6 +1243,7 @@ impl ComponentDocument {
             })
             .inner;
         self.semantic(
+            ui,
             &Node {
                 id: text_selection::COPY_ID.into(),
                 kind: "NButton".into(),
@@ -1503,7 +1512,8 @@ impl ComponentDocument {
                         } else if response.clicked() {
                             self.click(&n.id);
                         }
-                        self.semantic(n, &response, Value::Null);
+                        self.focus_outline(ui.painter(), &response, bounds, resolved.corner_radius());
+                        self.record_semantic(n, &response, Value::Null);
                     }
 
                     if let (Some(indices), Some((shadow, spread))) = (shadow, resolved.shadow) {
@@ -1648,12 +1658,12 @@ impl ComponentDocument {
                     .iter()
                     .any(|key| p[*key].as_str().is_some_and(|label| !label.is_empty()))
                 {
-                    self.semantic(n, &response, Value::Null);
+                    self.semantic(ui, n, &response, Value::Null);
                 }
             }
             "NImage" => {
                 let (response, value) = self.images.paint(ui, n, resolved);
-                self.semantic(n, &response, value);
+                self.semantic(ui, n, &response, value);
             }
             "NText" | "NChip" | "NBadge" | "NRequired" | "NKbd" | "NCode" => {
                 if n.kind == "NText" && self.rich_text(ui, n, resolved) {
@@ -1732,7 +1742,7 @@ impl ComponentDocument {
                 } else {
                     ui.add(label)
                 };
-                self.semantic(n, &response, Value::Null);
+                self.semantic(ui, n, &response, Value::Null);
             }
             "NPress" | "NActionItem" => self.container(ui, n, resolved),
             "NButton" if complex_button(n) => self.container(ui, n, resolved),
@@ -1775,7 +1785,7 @@ impl ComponentDocument {
                 if response.clicked() {
                     self.click(&n.id);
                 }
-                self.semantic(n, &response, Value::Null);
+                self.semantic(ui, n, &response, Value::Null);
                 if flag(p, &["separator", "hasSeparator"]) {
                     ui.separator();
                 }
@@ -1802,7 +1812,7 @@ impl ComponentDocument {
                     self.values.insert(n.id.clone(), json!(value));
                     self.change(&n.id, json!(value));
                 }
-                self.semantic(n, &response, json!(value));
+                self.semantic(ui, n, &response, json!(value));
             }
             "NInput" | "NTextarea" | "NSearchField" | "NInputOtp" => {
                 ui.spacing_mut().item_spacing.y = if self.native { 6. } else { ui.spacing().item_spacing.y };
@@ -1865,7 +1875,7 @@ impl ComponentDocument {
                     self.values.insert(n.id.clone(), json!(value));
                     self.change(&n.id, json!(value));
                 }
-                self.semantic(n, &response, json!(value));
+                self.semantic(ui, n, &response, json!(value));
                 self.input_editor(n, &resolved, resolved.padding);
                 for key in ["helperText", "description", "error", "errorMessage"] {
                     if let Some(s) = p[key].as_str() {
@@ -1910,7 +1920,7 @@ impl ComponentDocument {
                     self.values.insert(n.id.clone(), json!(value));
                     self.change(&n.id, json!(value));
                 }
-                self.semantic(n, &response, json!(value));
+                self.semantic(ui, n, &response, json!(value));
             }
             "NProgress" => {
                 let value = numeric(p, &["value"], 0.).clamp(0., 100.);
@@ -1918,7 +1928,9 @@ impl ComponentDocument {
                     ui.label(format!("{} — {}%", if label.is_empty() { "Progress" } else { &label }, value));
                 }
                 ui.visuals_mut().extreme_bg_color = resolved.background.unwrap_or_else(|| self.palette.get("default"));
-                let color = p["color"].as_str().and_then(|name| self.palette.color(name).or_else(|| theme::parse_color(name)));
+                let color = p["color"]
+                    .as_str()
+                    .and_then(|name| self.palette.color(name).or_else(|| theme::parse_color(name)));
                 let height = match p["size"].as_str() {
                     Some("sm") => 8.,
                     Some("lg") => 16.,
@@ -1930,7 +1942,7 @@ impl ComponentDocument {
                         .desired_width(resolved.width.unwrap_or(ui.available_width()))
                         .desired_height(resolved.height.unwrap_or(height)),
                 );
-                self.semantic(n, &response, json!(value));
+                self.semantic(ui, n, &response, json!(value));
             }
             "NLoading" => self.loading(ui, n, resolved),
             "NDivider" => {
@@ -1951,7 +1963,7 @@ impl ComponentDocument {
                 if response.clicked() {
                     self.click(&n.id);
                 }
-                self.semantic(n, &response, p["href"].clone());
+                self.semantic(ui, n, &response, p["href"].clone());
             }
             "NTooltip" => {
                 let response = ui.scope(|ui| self.nodes(ui, &n.children)).response;
@@ -1987,26 +1999,10 @@ impl ComponentDocument {
                     self.register_scroll_target(ui, output.id, output.inner_rect, false);
                 }
             }
-            "NDisclosure" => {
-                let mut state = egui::collapsing_header::CollapsingState::load_with_default_open(
-                    ui.ctx(),
-                    ui.make_persistent_id("disclosure"),
-                    p["defaultExpanded"] == true,
-                );
-                if let Some(expanded) = p["expanded"].as_bool() {
-                    state.set_open(expanded);
-                }
-                let heading = format!("{} {}", if state.is_open() { "▾" } else { "▸" }, label);
-                let response = ui.add(egui::Button::new(heading).wrap().frame(false).min_size(Vec2::new(44., 44.)));
-                if response.clicked() {
-                    state.toggle(ui);
-                    self.change(&n.id, json!(state.is_open()));
-                }
-                self.semantic(n, &response, json!(state.is_open()));
-                state.show_body_indented(&response, ui, |ui| self.nodes(ui, &n.children));
-            }
             "NRadio" | "NRadioGroup" | "NButtonGroup" | "NTabs" => self.selection(ui, n),
-            "NSelect" => self.select(ui, n, resolved, false),
+            "NSelect" => {
+                self.select(ui, n, resolved, false);
+            }
             "NTabsContent" => self.nodes(ui, &n.children),
             "NAlert" | "NEmptyState" => {
                 let alert = n.kind == "NAlert";
@@ -2063,7 +2059,7 @@ impl ComponentDocument {
                 let mut entry = n.clone();
                 entry.id = format!("{}:option:{}", n.id, index);
                 entry.props = json!({"label":label});
-                self.semantic(&entry, &response, value.clone());
+                self.semantic(ui, &entry, &response, value.clone());
                 if response.clicked() {
                     let result = value;
                     self.values.insert(n.id.clone(), result.clone());

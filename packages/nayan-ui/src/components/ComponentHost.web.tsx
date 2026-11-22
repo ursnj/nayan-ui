@@ -230,7 +230,6 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
               'NActionItem',
               'NSelect',
               'NDatePicker',
-              'NDisclosure',
               'NCheck',
               'NSwitch',
               'NToggleButton'
@@ -259,15 +258,9 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
                               ? 'link'
                               : undefined
                   }
-                  aria-expanded={
-                    node.kind === 'NSelect' && !node.selectOwner
-                      ? (node.expanded ?? false)
-                      : node.kind === 'NDisclosure'
-                        ? Boolean(node.value)
-                        : undefined
-                  }
+                  aria-expanded={node.kind === 'NSelect' && !node.selectOwner ? (node.expanded ?? false) : node.expanded}
                   aria-haspopup={node.kind === 'NSelect' && !node.selectOwner ? 'listbox' : undefined}
-                  aria-controls={node.expanded ? `${semanticId(node.id)}-listbox` : undefined}
+                  aria-controls={node.kind === 'NSelect' && node.expanded ? `${semanticId(node.id)}-listbox` : undefined}
                   aria-activedescendant={node.activeDescendant ? semanticId(node.activeDescendant) : undefined}
                   aria-selected={node.selected}
                   tabIndex={node.selectOwner ? -1 : 0}
@@ -279,7 +272,7 @@ export function ComponentHost({ active = true, document, snapshot, onSnapshot, s
                   onClick={() => document.request({ action: 'activate', id: node.id })}>
                   {node.kind === 'NSelect' && !node.selectOwner ? node.valueLabel : null}
                 </button>
-                {node.expanded && (
+                {node.kind === 'NSelect' && node.expanded && (
                   <div
                     id={`${semanticId(node.id)}-listbox`}
                     role="listbox"

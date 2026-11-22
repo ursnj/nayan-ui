@@ -128,7 +128,7 @@ impl ComponentDocument {
                 ui.ctx().request_repaint();
             }
         }
-        self.semantic(node, &response, json!(animating));
+        self.semantic(ui, node, &response, json!(animating));
     }
 }
 
