@@ -287,7 +287,10 @@ function ExampleWorkspace({
                     height: keepEditedViewport ? example.height : 'auto',
                     render: (
                       <PreviewBoundary key={output.run} onError={(cause) => setError(cause.message)}>
-                        <NView tag="div" className={`component-edited-preview flex min-w-0 flex-col${keepEditedViewport ? ' flex-1' : ''}`}>
+                        <NView
+                          tag="div"
+                          className={`component-edited-preview flex min-w-0 flex-col${keepEditedViewport || example.fillViewport ? ' min-h-0 flex-1' : ''}`}
+                        >
                           <Output />
                         </NView>
                       </PreviewBoundary>

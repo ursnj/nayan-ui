@@ -1,4 +1,4 @@
-import { PREVIEW_STACK, PREVIEW_BUTTON } from '@/design/system';
+import { DRAWING_PREVIEW_LAYOUT, DRAWING_PREVIEW_SURFACE, PREVIEW_STACK, PREVIEW_BUTTON } from '@/design/system';
 export function componentSource(imports: string, body: string, state = '', height = 280, pageClassName = 'gap-4 p-5') {
   const controls = imports.split(', ');
   // Popups are drawn inside the page surface and need room outside the trigger.
@@ -158,6 +158,7 @@ export default function Example() {
     void warmUpEngine().then(() => {
       if (!active) return;
       drawing = new DrawingDocument(320, 240);
+      drawing.setViewFit('cover');
       drawing.setBrush({ brushType: 'MARKER', color: '#1864e8', width: 8, opacity: 1 });
       setDocument(drawing);
     }).catch((cause: unknown) => {
@@ -168,10 +169,10 @@ export default function Example() {
   if (error) return <NText>{error}</NText>;
   if (!document) return <NLoading label="Preparing drawing canvas" />;
   return (
-    <NView className="${PREVIEW_STACK}">
-      <NText tag="p">Draw on the canvas.</NText>
-      <NView className="component-media-surface w-full [height:206px] [flex:none] overflow-hidden [border:1px_solid_var(--border)] [border-radius:0.75rem]">
-        <DrawingCanvas document={document} mode="draw" />
+    <NView className="${DRAWING_PREVIEW_LAYOUT}">
+      <NText tag="p" className="shrink-0">Draw on the canvas.</NText>
+      <NView className="${DRAWING_PREVIEW_SURFACE}">
+        <DrawingCanvas document={document} mode="draw" style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }} />
       </NView>
       <NButton className="${PREVIEW_BUTTON}" onPress={() => document.clear()}>Clear drawing</NButton>
     </NView>

@@ -4165,8 +4165,8 @@ export declare class DrawingDocument {
     clear(): DrawingState;
     invalidateView(): DrawingState;
     resetView(): DrawingState;
-    /** Fit the full artwork or fill the viewport width without changing saved dimensions. */
-    setViewFit(fit: 'contain' | 'width'): DrawingState;
+    /** Fit the full artwork or fill the viewport width or area without changing saved dimensions. */
+    setViewFit(fit: 'contain' | 'width' | 'cover'): DrawingState;
     finish(): DrawingState;
     cancel(): DrawingState;
     /**

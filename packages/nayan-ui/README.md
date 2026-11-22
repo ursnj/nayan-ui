@@ -652,7 +652,7 @@ In a game, pass `paper.texture()` as the entity's `texture` to paint on a 3D obj
 | `shapeCatalog`, `addShape`, `fill`                  | Shape previews/insertion and bounded color filling                                                   |
 | `load`, `exportPaths`, `exportSVG`, `exportProject` | SVG-compatible paths or a versioned full editable project; failed imports leave existing art intact  |
 | `snapshot`, `captureDraft`, `setEditingEnabled`     | PNG output, revision/idleness-aware autosave and explicit editing ownership                          |
-| `setViewFit`, `resetView`, `transform`              | Fit artwork or fill width, reset, pan and zoom without changing saved dimensions                     |
+| `setViewFit`, `resetView`, `transform`              | Fit artwork or fill the viewport width or area, reset, pan and zoom without changing saved dimensions |
 | `input`, `strokes`, `sample`, `coverage`            | Game-owned input, committed geometry, composited color and ink coverage queries                      |
 
 Use `DrawingCanvas mode="draw" | "move" | "view"` with `active`, `onChange` and

@@ -23,6 +23,8 @@ export const WELL = 'rounded-xl border border-border bg-background';
 export const CARD_PAD = 'p-5 sm:p-6';
 
 export const PREVIEW_STACK = 'flex min-w-0 flex-col items-start gap-3.5 p-5 text-foreground';
+export const DRAWING_PREVIEW_LAYOUT = 'flex min-h-0 w-full flex-1 flex-col items-start gap-3 p-3 text-foreground';
+export const DRAWING_PREVIEW_SURFACE = 'relative min-h-0 w-full flex-1 overflow-hidden rounded-xl border border-border';
 export const PREVIEW_BUTTON =
   'inline-flex min-h-9 flex-none items-center justify-center gap-1.5 rounded-lg bg-accent px-4 text-sm font-medium text-accent-foreground cursor-pointer hover:bg-[color-mix(in_srgb,var(--accent)_86%,var(--surface))] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent';
 export const PREVIEW_FIELD =

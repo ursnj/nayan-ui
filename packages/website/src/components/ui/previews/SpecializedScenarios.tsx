@@ -14,24 +14,24 @@ const SpecializedExample = dynamic(() => import('./SpecializedExamples'), {
   )
 });
 
-const heights = {
-  'animation-view': 280,
-  'drawing-canvas': 340,
-  'game-view': 300,
-  joystick: 280,
-  'markdown-view': 280,
-  'video-player': 280
-} satisfies Record<SpecializedSlug, number>;
+const layouts = {
+  'animation-view': { height: 280 },
+  'drawing-canvas': { fillViewport: true },
+  'game-view': { height: 300 },
+  joystick: { height: 280 },
+  'markdown-view': { height: 280 },
+  'video-player': { height: 280 }
+} satisfies Record<SpecializedSlug, Pick<ComponentPreview, 'height' | 'fillViewport'>>;
 
 export function specializedExample(slug: string): ComponentPreview | undefined {
-  if (!Object.hasOwn(heights, slug)) return;
+  if (!Object.hasOwn(layouts, slug)) return;
   const entry = slug as SpecializedSlug;
   const { code, note } = standaloneExamples[entry]!;
-  return { source: code, note, render: <SpecializedExample slug={entry} />, height: heights[entry], host: true };
+  return { ...layouts[entry], source: code, note, render: <SpecializedExample slug={entry} />, host: true };
 }
 
 function media(slug: SpecializedSlug, title: string, source: string): NamedComponentPreview {
-  return { title, source, render: <SpecializedExample slug={slug} alternate />, height: heights[slug], host: true };
+  return { ...layouts[slug], title, source, render: <SpecializedExample slug={slug} alternate />, host: true };
 }
 
 const original = (slug: SpecializedSlug) => standaloneExamples[slug]!.code;

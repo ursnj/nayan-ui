@@ -31,9 +31,10 @@ export default function PreviewSurface({
 }) {
   const [contentHeight, setContentHeight] = useState<number>();
   const [error, setError] = useState(false);
-  const fitPage = !preview.host && !keepViewport;
+  const fitPage = !preview.host && !keepViewport && !preview.fillViewport;
   const defaultHeight = keepViewport ? 246 : preview.host ? 'auto' : 200;
   const height = (fitPage ? contentHeight : undefined) ?? preview.height ?? defaultHeight;
+  const sizing = preview.fillViewport ? 'h-full min-h-0' : fullWidth ? '' : 'max-w-[52rem]';
 
   const onContentSizeChange = useCallback((_width: number, height: number) => {
     setContentHeight(Math.ceil(height));
@@ -52,8 +53,8 @@ export default function PreviewSurface({
   return (
     <NView
       tag="div"
-      className={`component-preview-surface relative flex w-full min-w-0 flex-col ${fullWidth ? '' : 'max-w-[52rem]'}`}
-      style={{ height }}
+      className={`component-preview-surface relative flex w-full min-w-0 flex-col ${sizing}`}
+      style={preview.fillViewport ? undefined : { height }}
     >
       <NTheme
         components={controls}

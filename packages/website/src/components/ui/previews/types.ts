@@ -5,6 +5,7 @@ export interface ComponentPreview {
   render: ReactNode;
   height?: number | 'auto';
   host?: boolean;
+  fillViewport?: boolean;
   note?: string;
 }
 

@@ -248,8 +248,8 @@ export class DrawingDocument {
   resetView() {
     return this.call<DrawingState>({ op: 'resetView' });
   }
-  /** Fit the full artwork or fill the viewport width without changing saved dimensions. */
-  setViewFit(fit: 'contain' | 'width') {
+  /** Fit the full artwork or fill the viewport width or area without changing saved dimensions. */
+  setViewFit(fit: 'contain' | 'width' | 'cover') {
     return this.call<DrawingState>({ op: 'viewFit', fit });
   }
   finish() {

@@ -1,6 +1,6 @@
 'use client';
 
-import { PREVIEW_STACK, PREVIEW_BUTTON } from '@/design/system';
+import { DRAWING_PREVIEW_LAYOUT, DRAWING_PREVIEW_SURFACE, PREVIEW_STACK, PREVIEW_BUTTON } from '@/design/system';
 import { useEffect, useRef, useState, type ComponentType } from 'react';
 import { AnimationView, useAnimatedStyle, useSharedValue, withTiming } from 'nayan-ui/animations';
 import { NView, NButton, NLoading, NTheme, NText } from 'nayan-ui/components';
@@ -41,6 +41,7 @@ function DrawingDemo({ alternate }: DemoProps) {
       .then(() => {
         if (!active) return;
         drawing = new DrawingDocument(320, 240);
+        drawing.setViewFit('cover');
         drawing.setBrush({ brushType: 'MARKER', color: alternate ? '#bf2786' : '#1864e8', width: alternate ? 16 : 8, opacity: 1 });
         setDocument(drawing);
       })
@@ -60,10 +61,12 @@ function DrawingDemo({ alternate }: DemoProps) {
     );
   if (!document) return <NLoading label="Preparing drawing canvas" />;
   return (
-    <NView tag="div" className={PREVIEW_STACK}>
-      <NText tag="p">Draw on the canvas.</NText>
-      <NView tag="div" className="component-media-surface w-full [height:206px] [flex:none] overflow-hidden [border:1px_solid_var(--border)] [border-radius:0.75rem]">
-        <DrawingCanvas document={document} mode="draw" />
+    <NView tag="div" className={DRAWING_PREVIEW_LAYOUT}>
+      <NText tag="p" className="shrink-0">
+        Draw on the canvas.
+      </NText>
+      <NView tag="div" className={DRAWING_PREVIEW_SURFACE}>
+        <DrawingCanvas document={document} mode="draw" style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }} />
       </NView>
       <NButton className={PREVIEW_BUTTON} onPress={() => document.clear()}>
         Clear drawing

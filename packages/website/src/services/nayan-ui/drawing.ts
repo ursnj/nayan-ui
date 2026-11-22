@@ -187,7 +187,7 @@ export function decorate(drawing: DrawingDocument) {
         title: "Layers and the view",
         paragraphs: [
           "layer(action, options?) adds, duplicates, selects, updates, moves, deletes or clears a layer (up to 16), each with a name, visible, locked and opacity. Pass id to target a layer other than the active one; layer edits undo like strokes.",
-          "setViewFit('contain' | 'width'), resetView() and transform(dx, dy, scale?) change only the view, never saved coordinates.",
+          "Use setViewFit('cover') to fill the viewport at the default zoom. The 'contain' and 'width' modes show the full artwork or match the viewport width. View changes preserve saved coordinates.",
         ],
         examples: [
           {

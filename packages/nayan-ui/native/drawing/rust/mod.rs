@@ -44,13 +44,21 @@ pub struct Document {
     pub zoom: f32,
     pub offset: [f32; 2],
     pub viewport: [f32; 2],
-    fit_width: bool,
+    view_fit: ViewFit,
     pub background: [f32; 3],
     last_present: u64,
     paint_version: u64,
     texture: Option<u32>,
     texture_version: u64,
 }
+
+#[derive(PartialEq, Eq)]
+enum ViewFit {
+    Contain,
+    Width,
+    Cover,
+}
+
 impl Document {
     pub fn new(width: f32, height: f32, ratio: f32) -> Result<Self, String> {
         if !width.is_finite() || !height.is_finite() || width < 1. || height < 1. || width > 16384. || height > 16384. || !ratio.is_finite() {
@@ -82,7 +90,7 @@ impl Document {
             zoom: 1.,
             offset: [0., 0.],
             viewport: [width, height],
-            fit_width: false,
+            view_fit: ViewFit::Contain,
             background: [1.; 3],
             last_present: u64::MAX,
             paint_version: 0,
@@ -136,10 +144,11 @@ impl Document {
     /// Shared by the renderer and touch mapping so the visible paper is always drawable.
     pub fn view_scale(&self) -> f32 {
         let width = self.viewport[0] / self.width;
-        if self.fit_width {
-            width
-        } else {
-            width.min(self.viewport[1] / self.height)
+        let height = self.viewport[1] / self.height;
+        match self.view_fit {
+            ViewFit::Contain => width.min(height),
+            ViewFit::Width => width,
+            ViewFit::Cover => width.max(height),
         }
     }
     fn clamp_offset(&mut self) {
@@ -468,14 +477,15 @@ impl Document {
                 Ok(self.summary())
             }
             "viewFit" => {
-                let fit_width = match v["fit"].as_str() {
-                    Some("width") => true,
-                    Some("contain") => false,
+                let fit = match v["fit"].as_str() {
+                    Some("contain") => ViewFit::Contain,
+                    Some("width") => ViewFit::Width,
+                    Some("cover") => ViewFit::Cover,
                     _ => return Err("Invalid drawing view fit".into()),
                 };
-                if self.fit_width != fit_width {
+                if self.view_fit != fit {
                     self.finish();
-                    self.fit_width = fit_width;
+                    self.view_fit = fit;
                     self.zoom = 1.;
                     self.offset = [0., 0.];
                     self.paint_version += 1;

@@ -214,6 +214,23 @@ fn width_fit_keeps_phone_and_tablet_edges_drawable_without_changing_artwork() {
     }
 }
 #[test]
+fn cover_fit_keeps_the_whole_view_drawable_when_the_viewport_resizes() {
+    let mut d = doc();
+    d.load(&json!([path("M20 20L100 100", "orange")])).unwrap();
+    let project = d.project();
+    d.command(json!({"op":"viewFit","fit":"cover"})).unwrap();
+    for [width, height] in [[256., 128.], [128., 256.]] {
+        d.viewport = [width, height];
+        for [x, y] in [[0., 0.], [width, height]] {
+            let [local_x, local_y] = d.local(x, y);
+            assert!((0. ..=d.width).contains(&local_x));
+            assert!((0. ..=d.height).contains(&local_y));
+        }
+        assert_eq!(d.project(), project);
+    }
+}
+
+#[test]
 fn width_fit_pan_reaches_entire_tall_drawing_at_base_zoom_and_stays_within_reach() {
     let mut d = Document::new(128., 256., 1.).unwrap();
     d.viewport = [256., 128.];
@@ -264,7 +281,7 @@ fn invalid_view_fit_is_atomic_and_contain_stays_available() {
     d.command(json!({"op":"viewFit","fit":"width"})).unwrap();
     d.transform(0., 10., 2.);
     assert!(d.command(json!({"op":"viewFit","fit":"invalid"})).is_err());
-    assert!(d.fit_width);
+    assert!(matches!(d.view_fit, ViewFit::Width));
     assert_eq!(d.zoom, 2.);
     assert_eq!(d.offset, [0., 10.]);
     d.command(json!({"op":"viewFit","fit":"contain"})).unwrap();
