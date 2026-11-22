@@ -37,10 +37,12 @@ bun install --frozen-lockfile --filter nayan-ui
 ```
 
 The [engine workflow](./.github/workflows/npm-publish.yml) runs on engine changes pushed to
-`refactor-nayan-ui` or `main`. It builds iOS, Android and WebAssembly libraries, runs the
-Rust and TypeScript tests, and attaches the checked npm tarball as a workflow artifact.
+`refactor-nayan-ui` or `main`, and on manual runs. It builds iOS, Android and WebAssembly
+libraries, runs the Rust and TypeScript tests, and validates the npm tarball on a standard
+macOS runner. The tarball stays on the runner. Pushing a `v` tag that matches the package
+version builds, tests, and publishes the tarball to npm through Trusted Publishing.
 See the [engine README](./packages/nayan-ui/README.md#development-and-verification) for
-local build prerequisites and commands.
+local build prerequisites and commands to build the package before running `npm pack`.
 
 ## Website
 

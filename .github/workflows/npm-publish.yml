@@ -11,6 +11,7 @@ on:
       - .bun-version
       - package.json
       - .github/workflows/npm-publish.yml
+      - .github/actions/build-npm-package/**
   workflow_dispatch:
 
 permissions:
@@ -21,154 +22,33 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-core:
+  build:
+    if: toJSON(github.event.repository.private) == 'false' && (github.event_name != 'push' || github.ref_type != 'tag')
     runs-on: macos-15
-    timeout-minutes: 90
-    env:
-      CARGO_PROFILE_TEST_DEBUG: '0'
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v5
-
-      - name: Restore tested core build
-        id: core-cache
-        uses: actions/cache@v4
         with:
-          path: packages/nayan-ui/native/core/build
-          key: engine-core-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('packages/nayan-ui/native/core/**', 'packages/nayan-ui/native/*/rust/**', '.github/workflows/npm-publish.yml') }}
-
-      - name: Set up Android SDK
-        if: steps.core-cache.outputs.cache-hit != 'true'
-        uses: android-actions/setup-android@v3
-        with:
-          packages: platform-tools
-
-      - name: Install Android NDK and WebAssembly compiler
-        if: steps.core-cache.outputs.cache-hit != 'true'
-        run: |
-          sdkmanager "ndk;27.1.12297006"
-          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.1.12297006" >> "$GITHUB_ENV"
-          brew install llvm lld
-
-      - name: Set up Rust toolchain
-        if: steps.core-cache.outputs.cache-hit != 'true'
-        run: |
-          rustup update stable --no-self-update
-          rustup default stable
-          rustup target add wasm32-unknown-unknown
-
-      - name: Cache Cargo dependencies
-        if: steps.core-cache.outputs.cache-hit != 'true'
-        uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: packages/nayan-ui/native/core -> target
-          cache-on-failure: true
-
-      - name: Test Rust core
-        if: steps.core-cache.outputs.cache-hit != 'true'
-        run: cargo test --locked --manifest-path packages/nayan-ui/native/core/Cargo.toml
-
-      - name: Install matching wasm-bindgen CLI
-        if: steps.core-cache.outputs.cache-hit != 'true'
-        working-directory: packages/nayan-ui
-        run: |
-          version="$(awk '/^name = "wasm-bindgen"$/ { getline; print $3; exit }' native/core/Cargo.lock | tr -d '"')"
-          if ! wasm-bindgen --version | grep -Fxq "wasm-bindgen $version"; then
-            cargo install wasm-bindgen-cli --locked --version "$version"
-          fi
-
-      - name: Build iOS, Android and WebAssembly libraries
-        if: steps.core-cache.outputs.cache-hit != 'true'
-        working-directory: packages/nayan-ui
-        run: |
-          native/core/scripts/build-ios.sh
-          native/core/scripts/build-android.sh
-          native/core/scripts/build-web.sh
-
-      - name: Share core build with the packaging job
-        uses: actions/upload-artifact@v4
-        with:
-          name: engine-core
-          path: packages/nayan-ui/native/core/build
-          if-no-files-found: error
-          retention-days: 1
-
-  package:
-    needs: build-core
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: .bun-version
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 24
-          package-manager-cache: false
-
-      - uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: engine-bun-${{ runner.os }}-${{ hashFiles('.bun-version', 'bun.lock', 'bunfig.toml') }}
-
-      - name: Install engine dependencies
-        run: bun install --frozen-lockfile --filter nayan-ui
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: engine-core
-          path: packages/nayan-ui/native/core/build
-
-      - name: Build the JavaScript package
-        working-directory: packages/nayan-ui
-        run: |
-          bun scripts/build-web.mjs
-          bun x bob build
-
-      - name: Check types and run engine tests
-        run: |
-          bun run engine:typecheck
-          bun run engine:test
-          bun run engine:test:integration
-
-      - name: Validate and pack the npm package
-        working-directory: packages/nayan-ui
-        run: |
-          npm pack --ignore-scripts --dry-run --json | bun scripts/check-package.mjs --pack-json
-          npm pack --pack-destination "$RUNNER_TEMP"
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: nayan-ui
-          path: ${{ runner.temp }}/nayan-ui-*.tgz
-          if-no-files-found: error
-          retention-days: 7
+          persist-credentials: false
+      - uses: ./.github/actions/build-npm-package
 
   publish:
-    if: github.repository == 'ursnj/nayan-ui' && github.event_name == 'push' && github.ref_type == 'tag'
-    needs: package
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    if: toJSON(github.event.repository.private) == 'false' && github.repository == 'ursnj/nayan-ui' && github.event_name == 'push' && github.ref_type == 'tag'
+    runs-on: macos-15
+    timeout-minutes: 120
     permissions:
+      contents: read
       id-token: write
     steps:
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v5
         with:
-          node-version: 24
-          registry-url: https://registry.npmjs.org
-          package-manager-cache: false
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: nayan-ui
-          path: ${{ runner.temp }}/npm-package
+          persist-credentials: false
+      - uses: ./.github/actions/build-npm-package
 
       - name: Publish the tested tarball to npm
         run: |
           version="${GITHUB_REF_NAME#v}"
-          tarball="$RUNNER_TEMP/npm-package/nayan-ui-$version.tgz"
+          tarball="$RUNNER_TEMP/nayan-ui-$version.tgz"
           if [[ ! -f "$tarball" ]]; then
             echo '::error::The Git tag must match the version in packages/nayan-ui/package.json, prefixed with v.'
             exit 1
