@@ -8,13 +8,13 @@ import {
   engineAbout,
 } from "@/services/seo";
 
-const URL = `${SITE_URL}/game-engine/playground`;
+const URL = `${SITE_URL}/playground`;
 
 export const metadata = buildPageMetadata({
   title: "Nayan Playground · Live Editor",
   description:
     "Write nayan-ui code with TypeScript suggestions and diagnostics, and run the 3D scene live in your browser. Start from an example and share a link.",
-  path: "/game-engine/playground",
+  path: "/playground",
   ogType: "website",
   keywords:
     "nayan game engine playground, react game engine playground, live 3d code editor, webgpu playground, typescript editor, react native game engine",
