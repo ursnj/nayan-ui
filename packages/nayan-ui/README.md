@@ -8,17 +8,17 @@ Import the public modules you use and select which Rust features your app
 compiles. iOS, Android and WebAssembly share the Rust runtime and use platform
 adapters for text editing, accessibility, permissions and OS services.
 
-**[Documentation](https://www.nayanui.com/game-engine)** · **[First game tutorial](https://www.nayanui.com/game-engine/first-game)** · **[API reference](https://www.nayanui.com/game-engine/api-reference)** · **[Guide for AI agents](https://www.nayanui.com/game-engine/agent-guide)** · **[Prebuilt games](https://www.nayanui.com/games)**
+**[Components](#rust-components-experimental)** · **[Modules](#shared-modules)** · **[Game engine](https://www.nayanui.com/game-engine)** · **[First game tutorial](https://www.nayanui.com/game-engine/first-game)** · **[Game playground](https://www.nayanui.com/game-engine/playground)** · **[Prebuilt games](https://www.nayanui.com/games)**
 
 ## Contents
 
 - **Start here** · [Platforms](#platforms) · [Install](#install) · [Quick start](#quick-start)
 - **Choose features** · [Package entry points](#package-entry-points) · [Compiled Rust features](#selecting-compiled-rust-features) · [Initialization](#initialization)
 - **Games and drawing** · [World basics](#core-concepts) · [Game guides](#guides) · [Performance](#performance) · [Drawing](#drawing)
-- **Components** · [Component overview](#rust-components-experimental) · [Theming](#application-theming) · [Forms](#forms-and-keyboard) · [Lists](#virtualized-lists) · [Safe areas](#safe-areas) · [Drawer](#drawer) · [Dialogs and sheets](#sheets-dialogs-and-confirmations)
+- **Components** · [Component overview](#rust-components-experimental) · [Theming](#application-theming) · [Forms](#forms-and-keyboard) · [Tabs and button groups](#tabs-and-button-groups) · [Alerts and empty states](#alerts-and-empty-states) · [Lists](#virtualized-lists) · [Safe areas](#safe-areas) · [Drawer](#drawer) · [Dialogs and sheets](#sheets-dialogs-and-confirmations)
 - **Styling and content** · [Tailwind utilities](#tailwind-style-customization-in-rust) · [Web stylesheet compiler](#compiling-website-classes-without-tailwind) · [Responsive layouts](#responsive-layout-contract) · [Fonts](#unicode-and-fonts) · [Icons](#icons) · [Markdown](#markdown-and-json-frontmatter) · [Accessibility](#accessibility-and-platform-integration)
 - **Application services** · [Module reference](#shared-modules) · [Assets](#asset-loading) · [Files](#private-files) · [Storage](#application-storage) · [SQLite](#sqlite) · [Network](#connectivity) · [Permissions](#permissions) · [Location](#location) · [Audio](#audio-playback) · [Video](#video)
-- **Packaging and help** · [Bundle and binary size](#bundle-and-binary-size) · [Development and verification](#development-and-verification) · [Troubleshooting](#troubleshooting) · [Prebuilt games](#prebuilt-games) · [Learn more](#learn-more)
+- **Packaging and help** · [Bundle and binary size](#bundle-and-binary-size) · [Development and verification](#development-and-verification) · [Publishing](#publishing-the-package) · [Troubleshooting](#troubleshooting) · [Prebuilt games](#prebuilt-games) · [Learn more](#learn-more)
 
 ## Features
 
@@ -40,9 +40,18 @@ adapters for text editing, accessibility, permissions and OS services.
 
 ## Install
 
+Install the release tagged `latest` with Bun or npm.
+
 ```sh
 bun add nayan-ui
 ```
+
+```sh
+npm install nayan-ui
+```
+
+When a preview is published under the `beta` tag, install it with `bun add nayan-ui@beta`
+or `npm install nayan-ui@beta`. You can also install a specific published version by number.
 
 Peer dependencies: `react`, plus `react-native` for native apps. Rust UI surfaces also
 need `react-reconciler@^0.34.0` with a compatible React version (the current UI build uses
@@ -161,7 +170,7 @@ uses. Each entry has platform-specific JavaScript and TypeScript declarations.
 | `nayan-ui/games` | 3D rendering, meshes, glTF models, worlds, physics, input, and procedural geometry. |
 | `nayan-ui/animations` | React view animations, Rust-backed entity tweens, and skeletal clips. |
 | `nayan-ui/drawing` | Drawing documents, canvases, and drawing types. |
-| `nayan-ui/components` | App components, themes, rendering surfaces, safe areas, drawer, keyboard, toasts, and `NIcon` for the seven built-in control icons, custom SVG paths, and Unicode symbols. |
+| `nayan-ui/components` | App components, themes, rendering surfaces, safe areas, drawer, keyboard, toasts, and `NIcon` for built-in control icons, custom SVG paths, and Unicode symbols. |
 | `nayan-ui/icons` | Named Lucide components, outlines, and `NIcon` for runtime name lookup. |
 | `nayan-ui/markdown` | Dedicated Markdown module with rendering, frontmatter parsing, and types. |
 | `nayan-ui/styles` | Node/Bun utility stylesheet tools. |
@@ -607,7 +616,8 @@ Keep these habits:
 A native paint canvas, also usable as a live texture inside games.
 
 Use the `drawing` feature with a scoped build. On the browser, await
-`warmUpEngine()` before creating a `DrawingDocument`.
+`warmUpEngine()` before creating a `DrawingDocument`. Mount `SketchPad` inside a
+flex parent with a bounded height so its canvas can fill the available area.
 
 ```tsx
 import { useEffect, useState } from 'react';
@@ -623,6 +633,7 @@ export function SketchPad() {
       .then(() => {
         if (!active) return;
         document = new DrawingDocument(512, 512);
+        document.setViewFit('cover');
         document.setBrush({ brushType: 'MARKER', color: '#e53935', width: 12, opacity: 1 });
         setPaper(document);
       })
@@ -635,7 +646,7 @@ export function SketchPad() {
     };
   }, []);
 
-  return paper && !paper.isDisposed ? <DrawingCanvas document={paper} mode="draw" style={{ width: '100%', height: 400 }} /> : null;
+  return paper && !paper.isDisposed ? <DrawingCanvas document={paper} mode="draw" style={{ flex: 1, minHeight: 0 }} /> : null;
 }
 ```
 
@@ -655,6 +666,11 @@ In a game, pass `paper.texture()` as the entity's `texture` to paint on a 3D obj
 | `setViewFit`, `resetView`, `transform`              | Fit artwork or fill the viewport width or area, reset, pan and zoom without changing saved dimensions |
 | `input`, `strokes`, `sample`, `coverage`            | Game-owned input, committed geometry, composited color and ink coverage queries                      |
 
+`setViewFit('contain')` keeps the entire drawing visible. Use `'width'` to fit the
+viewport's width or `'cover'` to fill both dimensions. The viewport can crop the
+edges in cover mode. Fitting changes the view while retaining the document's saved
+dimensions and strokes.
+
 Use `DrawingCanvas mode="draw" | "move" | "view"` with `active`, `onChange` and
 `onError`. Native coalesced pointer/stylus samples and rendering stay on the engine
 path; React consumes change snapshots for controls rather than tracking live stroke
@@ -665,8 +681,8 @@ texture UVs scaled by paper dimensions. `coverage()` returns a 0..1 painted frac
 
 Import the UI controls from `nayan-ui/components`. They share the engine's Rust core,
 wgpu device, queue and platform surface. React reconciles descriptions and invokes
-application callbacks; Rust/egui owns layout, widget state, hit testing, text layout
-and drawing. Text fields use the native/browser editor for immediate typing,
+application callbacks. Rust/egui owns layout, hit testing, text layout and drawing,
+and manages state for its widgets. Text fields use the native/browser editor for immediate typing,
 selection and IME composition, with their labels and chrome drawn by Rust.
 Charts and data tables are outside this implementation.
 
@@ -923,11 +939,79 @@ attachment boundary inside an engine UI tree.
 
 The engine exposes these controls through one shared API. Sheets, dialogs and confirmations use controlled `isOpen` /
 `onOpenChange` props and a platform presentation host with Rust-rendered content.
+Use `NImage` for a photo avatar or a circular `NBadge` for initials. Build a
+breadcrumb trail with `NLink` for parent pages and `NText` for the current page.
 Use `NAccordion` with one item for a single collapsible panel. Pass `defaultExpanded` to open it initially or use
 `expanded` and `onExpandedChange` to control whether the accordion is open.
 `NBlur` blurs the backdrop by default. To sample a specific Android view, put the source `NView` and its `NBlur`
 overlay in an `NPlatformView`, set `collapsable={false}` on the source, and pass its ref as `blurTarget`.
-The calendar and toast service also use Rust state and engine rendering. SDK-owned surfaces retain their platform integrations.
+The date picker and toast service also use Rust state and engine rendering. SDK-owned surfaces retain their platform integrations.
+
+### Tabs and button groups
+
+`NTabs` accepts strings or items with `label`, `value`, optional `disabled` and
+optional `content`. Match `NTabsContent`'s `item` to the option's `value` to
+provide a separate panel or override inline content. `defaultValue` initializes
+the selection. Use `value` and `onValueChange` for controlled tabs.
+
+```tsx
+import { NButtonGroup, NText, NTabs, NTabsContent, NTheme } from 'nayan-ui/components';
+
+export function ProjectTabs() {
+  return (
+    <NTheme>
+      <NTabs
+        ariaLabel="Project sections"
+        items={[
+          { label: 'Overview', value: 'overview', content: <NText>Project activity</NText> },
+          { label: 'Settings', value: 'settings' }
+        ]}
+        defaultValue="overview"
+        variant="secondary"
+        isFull
+      >
+        <NTabsContent item="settings">
+          <NButtonGroup label="Visibility" items={['Private', 'Public']} defaultValue="Private" size="sm" />
+        </NTabsContent>
+      </NTabs>
+    </NTheme>
+  );
+}
+```
+
+The default `primary` variant uses a rounded track. `secondary` uses an active
+indicator. Use `orientation="vertical"` for a side tab list and `isFull` to fill
+the width of a horizontal list. Style the list, triggers, active trigger and panel
+with `listClassName`, `tabClassName`, `activeItemClassName` and `contentClassName`.
+
+`NButtonGroup` joins its segments into a single track with rounded outer edges.
+It accepts plain labels or options with `label` and `value`, and supports `size`
+values `sm`, `md` and `lg`. Use `selected` or `value` with `onChange` or
+`onValueChange` to control the selection. Use `renderButton` and `keyExtractor`
+for custom items.
+
+### Alerts and empty states
+
+`NAlert` provides a status icon, accepts `title` and `message` as React content,
+and can render `actions` beside the title. Set `icon={null}` to hide the default
+icon. Pass `onClose` to render a dismiss control and update application state
+in the callback to remove the alert.
+
+`NEmptyState` places a centered icon above its `title` and `description`, with
+optional `actions` below. Pass `icon` to customize the visual or `icon={null}`
+to hide it. Use children to supply your own layout.
+
+```tsx
+<NEmptyState
+  title="No drawings yet"
+  description="Create a drawing to start your collection."
+  actions={<NButton onPress={createDrawing}>New drawing</NButton>}
+/>
+```
+
+`NActionItem` places its optional `icon` before `name` and `description`. Add
+`onPress` to handle activation and set `showArrow={false}` to hide the trailing
+chevron.
 
 ### Platform primitives and interop
 
@@ -963,10 +1047,15 @@ these boundaries too. `GameView` handles its own attachment when used inside a p
 
 ### Forms and keyboard
 
-`NDatePicker` accepts `value`/`defaultValue` as `Date`, `minimumDate`,
+Use `NDatePicker` for date entry and calendar selection. It accepts `value` and
+`defaultValue` as `Date`, `minimumDate`,
 `maximumDate` and `onChange`. The bridge transports local calendar days, avoiding
 UTC timezone shifts. Rust owns Gregorian validation, disabled dates, month/year
-navigation and selection; the default range is 1900–2100.
+navigation and selection. The default range is 1900–2100.
+
+```tsx
+<NDatePicker label="Start date" defaultValue={new Date(2026, 0, 1)} onChange={setStartDate} />
+```
 
 Wrap a form’s `NTheme` in `<NKeyboard>` to coordinate keyboard
 avoidance and a themed Previous/Next/Done toolbar. Import `NKeyboard` and
@@ -1091,8 +1180,9 @@ callbacks. Controlled props carry application data while Rust retains the contro
 layout, validation and interaction rules. Outside a surface, platform primitives
 retain their normal native/DOM interactions as described in the interop guide.
 
-Widget state, initial defaults, page selection, focus, pressed/expanded states,
-interaction transitions and numeric stepping/clamping belong to Rust. TypeScript
+Rust handles focus, interaction transitions and numeric stepping/clamping for its
+widgets. Composite components can manage their own state. `NButtonGroup` keeps
+its uncontrolled selection in React and renders its segments with `NPress`. TypeScript
 exports components, prop types and focused platform/theme hooks. Hosts retain
 lifecycle references and a read-only Rust snapshot for accessibility/IME, and
 forward input and accessibility actions. Theme preference/persistence, React
@@ -1115,8 +1205,8 @@ keep web `onChange(event)` with `event.target.value` and native `onChange(text)`
 `NSelect` returns an option on web and a string on native. The web input event is a
 value notification, not a DOM `SyntheticEvent` or a DOM ref. Other prop details
 are defined by the exported engine types; unsupported legacy props are not
-implicitly emulated. `NCode` currently renders plain monospace text, and
-`NScrollShadow` provides scrolling without gradient shadows.
+implicitly emulated. `NCode` renders plain monospace text. `NScrollShadow` can
+show edge shadows where more content is available to scroll.
 
 ### Single and multi-select
 
@@ -1212,7 +1302,8 @@ retain valid JSON quotes; do not let a YAML formatter rewrite them to single quo
 
 `NLinkify` recognizes HTTP(S), `www.` addresses and emails, preserves surrounding
 punctuation, and keeps existing links intact. Wrapped links have per-line hit
-areas and accessible link semantics. Pass the text as children. Detected links use the primary (`accent`)
+areas and accessible link semantics. Pass the text as children. The deprecated
+`text` prop is a fallback when children are omitted. Detected links use the primary (`accent`)
 theme color without underlines. Its optional `onPress(url, text)` overrides
 opening the detected link; `linkStyle` customizes link text. On web, `className`
 styles only detected links, matching the React library.
@@ -2760,10 +2851,6 @@ and environment variables documented in their test files. Use
 `engine:test:coverage` to check measured source coverage and find runtime
 modules absent from the report.
 
-The [Build engine workflow](../../.github/workflows/npm-publish.yml) builds and tests
-the distribution on standard GitHub-hosted runners. Download the
-`nayan-ui` artifact from a successful run to get the checked npm tarball.
-
 Browser builds need the Rust `wasm32-unknown-unknown` target, matching
 `wasm-bindgen-cli` (currently 0.2.129 in Cargo), and a WASM-capable C/C++ toolchain
 for mesh optimization. Native distribution builds also need Xcode or the Android
@@ -2799,6 +2886,25 @@ Rust crate is `native/core/Cargo.toml`. `scripts/` holds SDK build tools and
 `lib/` is generated package output.
 The root import remains available for compatibility; prefer the feature entries.
 
+### Publishing the package
+
+Run [Build and publish nayan-ui](https://github.com/ursnj/nayan-ui/actions/workflows/npm-publish.yml)
+from GitHub Actions. The workflow uses a manual trigger. Set the intended version in
+`packages/nayan-ui/package.json` before starting a release.
+
+- Choose `validate` to build iOS, Android and WebAssembly artifacts, run the Rust
+  and Bun package checks, verify the npm inventory and dry-run publishing. The
+  `nayan-ui` artifact contains the checked tarball.
+- Choose `publish` to build, check and publish that run's tarball to npm. The
+  **Publish as beta** checkbox selects the `beta` dist-tag. Leave it unchecked
+  for the default `latest` tag. The checkbox selects the install channel independently
+  of the version in `package.json`. [npm dist-tags](https://docs.npmjs.com/adding-dist-tags-to-packages/)
+
+Publishing uses npm Trusted Publishing from the public `ursnj/nayan-ui` repository.
+Configure the trusted publisher for `npm-publish.yml` on the existing npm package.
+For a new package, publish the first tested tarball from an authenticated npm
+maintainer account to create the package record. [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/)
+
 ## Troubleshooting
 
 | Symptom                                              | Fix                                                                                                                                |
@@ -2830,6 +2936,7 @@ The root import remains available for compatibility; prefer the feature entries.
 | Topic                                 | Guide                                                                                                               |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Build a complete game step by step    | [First game](https://www.nayanui.com/game-engine/first-game)                                                        |
+| Browse engine methods and options     | [Game engine API reference](https://www.nayanui.com/game-engine/api-reference)                                    |
 | Copy-paste solutions                  | [Recipes](https://www.nayanui.com/game-engine/recipes)                                                              |
 | Worlds, entities, rotations, disposal | [World & entities](https://www.nayanui.com/game-engine/world-entities)                                              |
 | Effects and particles                 | [Effects](https://www.nayanui.com/game-engine/particles)                                                            |
