@@ -12,7 +12,7 @@ import {
 export const metadata = buildPageMetadata({
   title: "Games Installation",
   description:
-    "Run the games example, or install @nayan-ui/games in Expo or a React website and render games, settings, results and themes.",
+    "Run the games example, or install nayan-games in Expo or a React website and render games, settings, results and themes.",
   path: "/games/installation",
   keywords:
     "react native games installation, expo games setup, next.js games, vite games, nayan game engine setup, nayan ui cli, create game project",
@@ -26,7 +26,7 @@ const schemas = [
   ]),
   buildTechArticleSchema({
     title: "Games Installation",
-    description: "Installation guide and setup instructions for @nayan-ui/games.",
+    description: "Installation guide and setup instructions for nayan-games.",
     url: `${SITE_URL}/games/installation`,
     about: gamesAbout,
     sections: [

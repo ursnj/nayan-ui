@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "nayan-ui": "workspace:*",
-    "@nayan-ui/games": "file:./scripts/nayan-ui-games.tgz",
+    "nayan-games": "file:./scripts/nayan-games.tgz",
     "mediabunny": "^1.66.2",
     "next": "16.4.6",
     "react": "^19.3.0",

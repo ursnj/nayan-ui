@@ -43,7 +43,7 @@ const GamesLicensing = () => {
   return (
     <Sidebar title={component?.title || "Licensing"}>
       <NText tag="p" className="text-muted text-sm mb-6">
-        @nayan-ui/games is dual licensed: free for non-commercial use, paid for commercial use.
+        nayan-games is dual licensed: free for non-commercial use, paid for commercial use.
       </NText>
 
       <NView tag="div" className="mb-8 space-y-4">
@@ -65,7 +65,7 @@ const GamesLicensing = () => {
           <NText tag="p" className="text-muted text-sm">
             Request one at{" "}
             <Link
-              href={`mailto:${EMAIL}?subject=%40nayan-ui%2Fgames%20-%20Commercial%20License%20Request`}
+              href={`mailto:${EMAIL}?subject=nayan-games%20-%20Commercial%20License%20Request`}
               className={LINK}
             >
               {EMAIL}

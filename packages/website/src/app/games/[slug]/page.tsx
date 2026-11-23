@@ -1,4 +1,4 @@
-import type { GAME_IDS } from "@nayan-ui/games/services";
+import type { GAME_IDS } from "nayan-games/services";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import GameDetail from "@/components/nayan-games/GameDetail";

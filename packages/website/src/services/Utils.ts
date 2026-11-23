@@ -1919,7 +1919,7 @@ export const gamesSidebarItems = [
   },
   {
     title: "Installation",
-    description: "Installation guide and setup instructions for @nayan-ui/games",
+    description: "Installation guide and setup instructions for nayan-games",
     link: "/games/installation",
     icon: Download,
   },

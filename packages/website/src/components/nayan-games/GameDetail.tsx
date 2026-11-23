@@ -151,7 +151,7 @@ const GameDetail = ({ slug }: Props) => {
             Add {game.name} to your app
           </NText>
           <NText tag="span" className="block text-xs text-muted">
-            Install @nayan-ui/games for React and React Native
+            Install nayan-games for React and React Native
           </NText>
         </NText>
         <ArrowRight aria-hidden className={`size-4 shrink-0 ${ACCENT_TEXT}`} />

@@ -12,7 +12,7 @@ Game engine and components for React and React Native, with playable games and d
 
 - [Nayan Components](https://www.nayanui.com/components) and [Nayan Modules](https://www.nayanui.com/modules) provide cross-platform UI and services.
 - [Nayan Game Engine](https://www.nayanui.com/game-engine) provides 3D rendering and physics. Try it in [Nayan Playground](https://www.nayanui.com/playground).
-- [Nayan Games](https://www.nayanui.com/games) offers playable games from `@nayan-ui/games`.
+- [Nayan Games](https://www.nayanui.com/games) offers playable games from `nayan-games`.
 - [Nayan Video Editor](https://www.nayanui.com/video-editor) edits and exports video in the browser.
 
 ---
@@ -23,10 +23,10 @@ Game engine and components for React and React Native, with playable games and d
 | --- | --- | --- |
 | [nayan-ui](./packages/nayan-ui) | [![npm](https://badge.fury.io/js/nayan-ui.svg)](https://www.npmjs.com/package/nayan-ui) | Game engine for React Native and web |
 | [@nayan-ui/website](./packages/website) | Private | Nayan UI website and documentation |
-| @nayan-ui/games | Local archive | Nayan Games |
+| nayan-games | Local archive | Nayan Games |
 
 The engine source and SDK documentation live in [packages/nayan-ui](./packages/nayan-ui).
-The website installs `@nayan-ui/games` from a [checked-in tarball](./packages/website/scripts/nayan-ui-games.tgz) and uses the engine from this workspace.
+The website installs `nayan-games` from a [checked-in tarball](./packages/website/scripts/nayan-games.tgz) and uses the engine from this workspace.
 
 ## Engine development
 
@@ -76,11 +76,11 @@ The website dev and production commands build the browser engine when needed. Ne
 
 ### Updating the games archive
 
-Obtain a built `@nayan-ui/games` package archive that declares `nayan-ui` as its engine peer dependency, then run these commands from the repository root.
+Obtain a built `nayan-games` package archive that declares `nayan-ui` as its engine peer dependency, then run these commands from the repository root.
 
 ```sh
-cp /path/to/nayan-ui-games-version.tgz packages/website/scripts/nayan-ui-games.tgz
-bun update --cwd=packages/website --ignore-scripts @nayan-ui/games
+cp /path/to/nayan-games-version.tgz packages/website/scripts/nayan-games.tgz
+bun update --cwd=packages/website --ignore-scripts nayan-games
 ```
 
 Commit the archive and the updated `bun.lock` together. Local and CI Docker builds install that exact archive with Bun’s frozen lockfile. The games license is included in the archive.

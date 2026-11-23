@@ -3,7 +3,7 @@
 import { NView, NText } from 'nayan-ui/components';
 import { useCallback, useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import type { GAME_IDS } from "@nayan-ui/games/services";
+import type { GAME_IDS } from "nayan-games/services";
 import GamePanel from "./GamePanel";
 import GamePlayer from "./GamePlayer";
 

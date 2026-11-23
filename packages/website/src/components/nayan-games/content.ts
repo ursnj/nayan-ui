@@ -38,7 +38,7 @@ export const FEATURES = [
 export const STEPS = [
   {
     title: "Install",
-    body: "Add @nayan-ui/games and nayan-ui to an Expo development build or a React website.",
+    body: "Add nayan-games and nayan-ui to an Expo development build or a React website.",
   },
   {
     title: "Render a game",

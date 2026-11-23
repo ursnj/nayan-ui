@@ -106,8 +106,8 @@
       "name": "@nayan-ui/website",
       "version": "1.0.0",
       "dependencies": {
-        "@nayan-ui/games": "file:./scripts/nayan-ui-games.tgz",
         "mediabunny": "^1.66.2",
+        "nayan-games": "file:./scripts/nayan-games.tgz",
         "nayan-ui": "workspace:*",
         "next": "16.4.6",
         "react": "^19.3.0",
@@ -520,8 +520,6 @@
     "@nayan-example/web": ["@nayan-example/web@workspace:packages/example/web"],
 
     "@nayan-ui/example": ["@nayan-ui/example@workspace:packages/example"],
-
-    "@nayan-ui/games": ["@nayan-ui/games@./scripts/nayan-ui-games.tgz", { "peerDependencies": { "expo-asset": "*", "expo-modules-core": "*", "nayan-ui": "^1.0.0-beta.2", "react": "*", "react-dom": "*", "react-native": "*" }, "optionalPeers": ["expo-asset", "expo-modules-core", "react-dom", "react-native"] }, "sha512-gDrQW83BgEMWjnGsJ6M+NZJmaRTELdw/LPa61kcgXCHJtrMToFkuhuSzj1+icn4+tq0yO+6AW1zDTbDc5Ib7yw=="],
 
     "@nayan-ui/website": ["@nayan-ui/website@workspace:packages/website"],
 
@@ -1154,6 +1152,8 @@
     "multitars": ["multitars@1.0.2", "", {}, "sha512-6GwVw5eLi9sThdtlS4PKwC7yRLaf45pYhIEzKBHdKxi+YOXGKFX8acIniH+Uh/+k9mS2lQOupTccjoe5r0/1IQ=="],
 
     "nanoid": ["nanoid@3.3.20", "", { "bin": { "nanoid": "bin/nanoid.cjs" } }, "sha512-uKdg2G3GNCKQn9byYOpxbGqrT2fGO5KRt5J/8b3pok8rT6qxGWF6hxMyJiEYtAf+FVyYuD9hRaDqX5uPFYJ4ZQ=="],
+
+    "nayan-games": ["nayan-games@./scripts/nayan-games.tgz", { "peerDependencies": { "nayan-ui": "^1.0.0-beta.2", "react": "*", "react-dom": "*", "react-native": "*" }, "optionalPeers": ["react-dom", "react-native"] }, "sha512-NMV8//6EN/YgzY0sx0jqAbWinT7nVt5g1Iwwv13mRjJFoddyxVmbOPhWexxiiOaCtjHvDvDLwFquePKnia8a+A=="],
 
     "nayan-ui": ["nayan-ui@workspace:packages/nayan-ui"],
 

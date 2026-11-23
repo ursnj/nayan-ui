@@ -61,7 +61,7 @@ const GamesInstallation = () => {
   return (
     <Sidebar title={component?.title || "Installation"}>
       <NText tag="p" className={P}>
-        @nayan-ui/games 1.20.0+ renders 53 games with{" "}
+        nayan-games 1.20.0+ renders 53 games with{" "}
         <Link href="/game-engine" className={LINK}>
           nayan-ui
         </Link>{" "}
@@ -131,7 +131,7 @@ const GamesInstallation = () => {
         </NText>
         <Code code={nativeScreenCode} filename="app/games/[id].tsx" />
         <NText tag="h3" className={H3_DOC}>Catalog</NText>
-        <NText tag="p" className={P}>Metadata from @nayan-ui/games/services loads no game modules.</NText>
+        <NText tag="p" className={P}>Metadata from nayan-games/services loads no game modules.</NText>
         <Code code={catalogCode} filename="GameCatalog.tsx" />
       </NView>
 

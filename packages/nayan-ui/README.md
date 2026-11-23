@@ -2929,9 +2929,9 @@ maintainer account to create the package record. [npm Trusted Publishing](https:
 
 ## Prebuilt games
 
-[@nayan-ui/games](https://www.nayanui.com/games) offers ready-made 3D games built on this engine. Each is one component with the same props.
+[nayan-games](https://www.nayanui.com/games) offers ready-made 3D games built on this engine. Each is one component with the same props.
 
-`@nayan-ui/games` is a **private package**. To use it in your application or website, reach out to [niranjan.devasani@gmail.com](mailto:niranjan.devasani@gmail.com).
+`nayan-games` is a **private package**. To use it in your application or website, reach out to [niranjan.devasani@gmail.com](mailto:niranjan.devasani@gmail.com).
 
 **[Play them in your browser](https://www.nayanui.com/games)**
 

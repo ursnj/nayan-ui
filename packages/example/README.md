@@ -119,6 +119,6 @@ When you host the web build, serve `index.html` for every path so links like `/c
 
 ## Licence
 
-- The copied Car Racing code and game assets come from the Playtura games library (`@nayan-ui/games`) and keeps its dual licence ([shared/LICENSE](./shared/LICENSE)): free for non-commercial use, paid for commercial use.
+- The copied Car Racing code and game assets come from the Playtura games library (`nayan-games`) and keeps its dual licence ([shared/LICENSE](./shared/LICENSE)): free for non-commercial use, paid for commercial use.
 - The car is Khronos' Car Concept glTF sample, licensed CC BY 4.0 ([attribution](./shared/src/assets/models/car/ATTRIBUTION.md)).
 - The textures and sounds come from the games library. The scoreboard font is Inter.

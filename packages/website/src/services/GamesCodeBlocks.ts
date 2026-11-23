@@ -1,4 +1,4 @@
-// Code samples for the @nayan-ui/games docs. Every sample matches the library source
+// Code samples for the nayan-games docs. Every sample matches the library source
 // (packages/games/src) of the engine-based release.
 
 // ── Installation ──────────────────────────────────────────────────────
@@ -13,9 +13,9 @@ export const createProjectCode = `${gamesExampleSetupCode}
 bun run web        # browser
 bun run ios        # or: bun run android (development build)`;
 
-export const installNativeCode = `bunx expo install --bun @nayan-ui/games nayan-ui expo-asset expo-modules-core expo-build-properties`;
+export const installNativeCode = `bunx expo install --bun nayan-games nayan-ui expo-asset expo-modules-core expo-build-properties`;
 
-export const installWebCode = `bun add @nayan-ui/games nayan-ui react react-dom`;
+export const installWebCode = `bun add nayan-games nayan-ui react react-dom`;
 
 export const peerDepsCode = `"peerDependencies": {
   "nayan-ui": "^1.0.0-beta.2",
@@ -43,7 +43,7 @@ export const devBuildCode = `bunx expo prebuild
 bunx expo run:ios       # or: bunx expo run:android`;
 
 export const warmUpCode = `import { useEffect } from 'react';
-import { warmUpGameFonts, warmUpGames } from '@nayan-ui/games/services';
+import { warmUpGameFonts, warmUpGames } from 'nayan-games/services';
 
 export default function RootLayout() {
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function RootLayout() {
 
 export const simpleUsageCode = `import { useState } from 'react';
 import { View } from 'react-native';
-import { BlockBlast, DEFAULT_GAME_SETTINGS, type GameSettings } from '@nayan-ui/games';
+import { BlockBlast, DEFAULT_GAME_SETTINGS, type GameSettings } from 'nayan-games';
 
 export default function BlockBlastScreen() {
   const [settings, setSettings] = useState<GameSettings>(DEFAULT_GAME_SETTINGS);
@@ -75,7 +75,7 @@ export const nativeScreenCode = `import { useLayoutEffect, useState } from 'reac
 import { Pressable, Text, useColorScheme, View } from 'react-native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { useHeaderHeight } from '@react-navigation/elements';
-import { DEFAULT_GAME_SETTINGS, GAME_IDS, GAMES_METADATA, loadGameComponent, type GameSettings } from '@nayan-ui/games/services';
+import { DEFAULT_GAME_SETTINGS, GAME_IDS, GAMES_METADATA, loadGameComponent, type GameSettings } from 'nayan-games/services';
 
 const isGameId = (id?: string): id is GAME_IDS => (Object.values(GAME_IDS) as string[]).includes(id ?? '');
 
@@ -116,7 +116,7 @@ export default function GameScreen() {
 
 export const catalogCode = `import { FlatList, Pressable, Text } from 'react-native';
 import { router } from 'expo-router';
-import { GAMES_METADATA_LIST } from '@nayan-ui/games/services';
+import { GAMES_METADATA_LIST } from 'nayan-games/services';
 
 export function GameCatalog() {
   return (
@@ -137,7 +137,7 @@ export function GameCatalog() {
 
 export const webNextPlayerCode = `'use client';
 import dynamic from 'next/dynamic';
-import type { GAME_IDS } from '@nayan-ui/games/services';
+import type { GAME_IDS } from 'nayan-games/services';
 import { NText, NView } from "nayan-ui/components";
 
 const GameSession = dynamic(() => import('./GameSession'), { ssr: false, loading: () => <NText tag="p">Loading…</NText> });
@@ -153,7 +153,7 @@ export default function GamePlayer({ gameId }: { gameId: GAME_IDS }) {
 export const webSessionCode = `'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createKeyboardInput, type KeyboardInputMode } from 'nayan-ui';
-import { DEFAULT_GAME_SETTINGS, loadGameComponent, type GAME_IDS, type GameSettings } from '@nayan-ui/games/services';
+import { DEFAULT_GAME_SETTINGS, loadGameComponent, type GAME_IDS, type GameSettings } from 'nayan-games/services';
 import { NText, NView } from "nayan-ui/components";
 
 const DRAG = new Set(['car-racing', 'bike-racing', 'penguin-run', 'treasure-hunt', 'boxing-arena', 'tank-1990', 'mob-control', 'paper-io', 'space-fighter']);
@@ -186,7 +186,7 @@ export default function GameSession({ gameId, panelOpen = false }: { gameId: GAM
 }`;
 
 export const webDirectImportCode = `import { useState } from 'react';
-import { DEFAULT_GAME_SETTINGS, Sudoku, type GameSettings } from '@nayan-ui/games';
+import { DEFAULT_GAME_SETTINGS, Sudoku, type GameSettings } from 'nayan-games';
 import { NView } from "nayan-ui/components";
 
 export function SudokuPage() {
@@ -206,14 +206,14 @@ export const pauseCode = `// Pause under your own sheet or panel (no modal)
 // Open the built-in settings modal (also pauses)
 setSettings((s) => ({ ...s, isVisible: true }));`;
 
-export const endGameCode = `import type { GameCompletionMetrics } from '@nayan-ui/games';
+export const endGameCode = `import type { GameCompletionMetrics } from 'nayan-games';
 
 function handleEndGame({ status, score, additionalData }: GameCompletionMetrics) {
   if (status === 'cancel') return;   // Stop, leaving mid-run, or a draw
   saveResult({ status, score: Number(score) || 0, ...additionalData });
 }`;
 
-export const themeCode = `import { configureGameThemes, resolveGameTheme } from '@nayan-ui/games/services';
+export const themeCode = `import { configureGameThemes, resolveGameTheme } from 'nayan-games/services';
 
 // Once at app start, before any game renders
 configureGameThemes({
@@ -258,7 +258,7 @@ export const rootExportsCode = `import {
   type GameComponent, type GameDefinition, type GameCategory, // UtilsService
   GAME_SOUNDS, playSound, playSoundVoice, playBankSound, stopAllSounds,
   preloadSounds, preloadGameSounds, warmSoundAssets, type SoundConfig // SoundsService
-} from '@nayan-ui/games';`;
+} from 'nayan-games';`;
 
 export const servicesExportsCode = `import {
   loadGameComponent, warmUpGames, warmUpGameFonts, getGameAssetWarmupStatus,
@@ -267,9 +267,9 @@ export const servicesExportsCode = `import {
   NIGHT_SCENE, DAY_SCENE, type GameTheme, type GameThemeOverrides,
   gamePattern, PATTERN_GRID_COLOR,
   // plus everything from GamesMetadata, SoundsService and UtilsService
-} from '@nayan-ui/games/services';`;
+} from 'nayan-games/services';`;
 
-export const gameComponentCode = `import { Sudoku, type GameCompletionMetrics } from '@nayan-ui/games';
+export const gameComponentCode = `import { Sudoku, type GameCompletionMetrics } from 'nayan-games';
 
 <View style={{ flex: 1 }}>
   <Sudoku settings={settings} onSettingsChange={setSettings} onEndGame={(m: GameCompletionMetrics) => save(m)} />

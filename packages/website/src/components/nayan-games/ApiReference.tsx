@@ -51,11 +51,11 @@ const Table = ({ head, rows }: { head: Row; rows: Row[] }) => (
 
 const ENTRY_ROWS: Row[] = [
   [
-    "@nayan-ui/games",
+    "nayan-games",
     "Game components, GAMES / GAMES_LIST / GAMES_MAPPING (import every game), metadata, sounds, types.",
   ],
   [
-    "@nayan-ui/games/services",
+    "nayan-games/services",
     "No components: loadGameComponent, warm-up, theme helpers, metadata, sounds, GAME_IDS, types.",
   ],
 ];
@@ -83,16 +83,16 @@ const GamesApiReference = () => {
   return (
     <Sidebar title={component?.title || "API Reference"}>
       <NText tag="p" className={P}>
-        Every export of @nayan-ui/games 1.22.0; each entry resolves to <NText tag="code">lib/module</NText> in
+        Every export of nayan-games 1.22.0; each entry resolves to <NText tag="code">lib/module</NText> in
         React Native and <NText tag="code">lib/web</NText> in browsers.
       </NText>
 
       <NView tag="div" className="mb-8">
         <NText tag="h2" className={H2_DOC}>Entry points</NText>
         <Table head={["Import", "Contains"]} rows={ENTRY_ROWS} />
-        <NText tag="h3" className={H3_DOC}>@nayan-ui/games</NText>
+        <NText tag="h3" className={H3_DOC}>nayan-games</NText>
         <Code code={rootExportsCode} />
-        <NText tag="h3" className={H3_DOC}>@nayan-ui/games/services</NText>
+        <NText tag="h3" className={H3_DOC}>nayan-games/services</NText>
         <Code code={servicesExportsCode} />
       </NView>
 

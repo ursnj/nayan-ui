@@ -9,7 +9,7 @@
 #   bun run docker:publish --yes                # push without asking
 #
 # The build context is exported from git. By default it uses HEAD, including the checked-in
-# @nayan-ui/games tarball and bun.lock. With --allow-dirty it uses a snapshot of the working
+# nayan-games tarball and bun.lock. With --allow-dirty it uses a snapshot of the working
 # tree while excluding ignored files.
 #
 # The image is built for linux/amd64 and inspected before pushing. Requires Docker and, for
@@ -64,7 +64,7 @@ echo "Building $IMAGE ($PLATFORM) from nayan-ui $(git rev-parse --short HEAD)"
 step 'Preparing the build context'
 CONTEXT="$WORK/context"
 export_repo "$CONTEXT" "$ALLOW_DIRTY"
-GAMES_TGZ=packages/website/scripts/nayan-ui-games.tgz
+GAMES_TGZ=packages/website/scripts/nayan-games.tgz
 [ -s "$CONTEXT/$GAMES_TGZ" ] ||
   fail "Missing $GAMES_TGZ in the build context. Add the games archive to the repository."
 

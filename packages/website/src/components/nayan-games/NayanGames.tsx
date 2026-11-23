@@ -29,7 +29,7 @@ import { GAMES_LIST } from "@/services/GamesData";
 import { FAQS, FEATURES, STEPS } from "./content";
 import { REPO_URL } from "@/services/seo";
 
-const NPM_URL = "https://www.npmjs.com/package/@nayan-ui/games";
+const NPM_URL = "https://www.npmjs.com/package/nayan-games";
 
 /**
  * Where the list was scrolled when a game was opened. A game screen locks page scrolling while it

@@ -61,7 +61,7 @@ const schemas = [
   buildHowToSchema({
     name: "Add a game to your app",
     description: "Four steps from install to a reported result.",
-    tools: ["@nayan-ui/games", "nayan-ui"],
+    tools: ["nayan-games", "nayan-ui"],
     steps: STEPS.map((step) => ({
       name: step.title,
       text: step.body,

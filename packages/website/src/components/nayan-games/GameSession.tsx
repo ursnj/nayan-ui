@@ -9,7 +9,7 @@ import {
   type GAME_IDS,
   type GameSettings,
   loadGameComponent,
-} from "@nayan-ui/games/services";
+} from "nayan-games/services";
 import { ArrowLeft, BookOpen, Keyboard, Settings } from "@/design/Icons";
 import Link from "next/link";
 import { useTheme } from "@/components/helpers/ThemeProvider";

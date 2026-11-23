@@ -168,7 +168,7 @@
     "ownership": "New World per scene; loaded assets stay valid",
     "advanced": "ProceduralCache(revision) for expensive deterministic factories; one revision per game",
     "clear": "await clearAssetCache() on user action",
-    "gamesIntegration": "@nayan-ui/games loaders await engine warm-up; no expo-file-system needed"
+    "gamesIntegration": "nayan-games loaders await engine warm-up; no expo-file-system needed"
   },
   "assetLoading": {
     "initialize": "loadModel, loadTexture, loadFont and audio.load warm the core up themselves",

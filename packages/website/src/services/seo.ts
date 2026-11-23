@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import enginePackage from 'nayan-ui/package.json';
-import gamesPackage from '@nayan-ui/games/package.json';
+import gamesPackage from 'nayan-games/package.json';
 import seoBanners from './seo-banners.json';
 import seoArtwork from './seo-artwork.json';
 import individualArtwork from './seo-artwork-individual.json';
@@ -264,18 +264,18 @@ export const engineSoftwareSchema = {
   ]
 };
 
-/** @nayan-ui/games as a software product (version from the installed package). */
+/** nayan-games as a software product (version from the installed package). */
 export const gamesSoftwareSchema = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   '@id': `${GAMES_URL}#software`,
   name: 'Nayan Games',
-  alternateName: '@nayan-ui/games',
+  alternateName: 'nayan-games',
   applicationCategory: 'GameApplication',
   operatingSystem: 'iOS, Android, Web',
   description: '50+ ready-made games for React Native apps and React websites, rendered by the Nayan Game Engine.',
   url: GAMES_URL,
-  downloadUrl: 'https://www.npmjs.com/package/@nayan-ui/games',
+  downloadUrl: 'https://www.npmjs.com/package/nayan-games',
   softwareVersion: gamesPackage.version,
   license: `${GAMES_URL}/licensing`,
   isAccessibleForFree: true,
