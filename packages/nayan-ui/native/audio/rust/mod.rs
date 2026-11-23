@@ -160,11 +160,21 @@ pub fn set_volume(volume: f32) {
 }
 
 pub fn set_muted(muted: bool) {
-    system().muted.store(muted, Ordering::Relaxed);
     #[cfg(all(target_os = "ios", not(test)))]
-    if !muted {
-        output::retry_failed_open();
+    {
+        let was_muted = system().muted.swap(muted, Ordering::Relaxed);
+        if muted {
+            return;
+        }
+        if was_muted {
+            // iOS can end an interruption without resuming the existing Audio Unit.
+            output::restart();
+        } else {
+            output::retry_failed_open();
+        }
     }
+    #[cfg(not(all(target_os = "ios", not(test))))]
+    system().muted.store(muted, Ordering::Relaxed);
 }
 
 /// True once the output stream is playing (false on devices without audio output).

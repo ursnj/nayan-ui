@@ -43,7 +43,7 @@ pub fn start(consumer: rtrb::Consumer<Command>, volume: Arc<AtomicU32>, muted: A
     }
 }
 
-/// Reopens the output on the current route (iOS, after the microphone changes the session).
+/// Reopens the output on the current route after a session change.
 #[cfg_attr(not(target_os = "ios"), allow(dead_code))]
 pub fn restart() {
     if let Some(thread) = OUTPUT.get() {

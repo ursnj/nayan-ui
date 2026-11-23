@@ -483,7 +483,7 @@ impl ComponentDocument {
                 columns(p),
             );
         }
-        if let Some(mut event) = state.callbacks.notification(&current) {
+        if let Some(mut event) = state.callbacks.window_notification(&current, &node.children, self.elapsed) {
             event["refreshRequested"] = json!(refresh);
             self.change(&node.id, event);
         } else if refresh {

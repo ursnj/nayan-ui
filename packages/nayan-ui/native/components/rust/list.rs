@@ -10,6 +10,7 @@ pub(super) struct ListState {
     reached_count: Option<usize>,
     visible: Option<(i64, i64)>,
     pinned: Option<bool>,
+    window_checked_at: f64,
 }
 
 #[cfg(test)]
@@ -41,6 +42,57 @@ mod tests {
 
     fn range(doc: &ComponentDocument) -> Value {
         doc.semantics.iter().find(|node| node.id == "list").unwrap().value.clone()
+    }
+
+    #[test]
+    fn lists_request_missing_visible_rows_again_without_another_touch() {
+        for variable in [false, true] {
+            let mut doc = ComponentDocument::default();
+            let props = json!({"itemCount":100,"itemSize":40,"height":200,"overscan":3,"variableSize":variable});
+            let mount = |doc: &mut ComponentDocument, start: u64, end: u64| {
+                let children: Vec<_> = (start..end)
+                    .map(|index| json!({"id":format!("row-{index}"),"kind":"NListItem","props":{"index":index,"height":40}}))
+                    .collect();
+                doc.set_tree(&json!([{"id":"list","kind":"NList","props":props,"children":children}]))
+                    .unwrap();
+            };
+            mount(&mut doc, 0, 12);
+            frame(&mut doc);
+            doc.take_snapshot();
+
+            doc.command(&json!({"action":"listScroll","id":"list","offset":2000})).unwrap();
+            frame(&mut doc);
+            assert_eq!(range(&doc)["first"], 50);
+            assert!(doc.layout_bounds("row-50").is_none());
+            // Drop the scroll update before React can mount any of the new rows.
+            let dropped = doc.take_snapshot();
+            assert!(dropped["events"].as_array().unwrap().iter().any(|e| e["id"] == "list"));
+
+            for _ in 0..12 {
+                doc.frame(400., 600., 1.).drop_without_applying_deltas();
+            }
+            let update = doc.take_snapshot();
+            let events = update["events"].as_array().unwrap();
+            let retry = events
+                .iter()
+                .find(|event| event["id"] == "list")
+                .expect("the missing visible rows must be requested again");
+            assert_eq!(retry["value"]["first"], 50);
+            assert_ne!(retry["value"]["visibleChanged"], true);
+            assert_ne!(retry["value"]["endReached"], true);
+            assert_ne!(retry["value"]["headerPinnedChanged"], true);
+            assert!(events.len() <= 2, "retries must be throttled");
+
+            let retry = &retry["value"];
+            mount(&mut doc, retry["start"].as_u64().unwrap(), retry["end"].as_u64().unwrap());
+            frame(&mut doc);
+            doc.take_snapshot();
+            for _ in 0..12 {
+                doc.frame(400., 600., 1.).drop_without_applying_deltas();
+            }
+            assert!(doc.layout_bounds("row-50").is_some());
+            assert!(doc.take_snapshot()["events"].as_array().unwrap().is_empty());
+        }
     }
 
     #[test]
@@ -733,6 +785,30 @@ fn range_at(props: &Value, offset: f32, viewport: f32, initial: bool) -> Value {
 }
 
 impl ListState {
+    pub(super) fn window_notification(&mut self, range: &Value, children: &[Node], now: f64) -> Option<Value> {
+        if let Some(event) = self.notification(range) {
+            self.window_checked_at = now;
+            return Some(event);
+        }
+        if now - self.window_checked_at < 0.1 {
+            return None;
+        }
+        self.window_checked_at = now;
+        let first = range["first"].as_u64()?;
+        let last = range["last"].as_u64()?;
+        let expected = last.checked_sub(first)? + 1;
+        let mounted = children
+            .iter()
+            .filter(|node| node.kind == "NListItem" && node.props["index"].as_u64().is_some_and(|index| (first..=last).contains(&index)))
+            .count() as u64;
+        if mounted >= expected {
+            return None;
+        }
+        // The native range may have reached JS before its matching rows were committed.
+        // Reissue only the range, without repeating visibility or pagination callbacks.
+        Some(range.clone())
+    }
+
     pub(super) fn retain_window(&self, range: &mut Value, overscan: usize, columns: usize) {
         let (Some(previous), Some(first), Some(last)) = (
             self.range.as_ref(),
@@ -1016,7 +1092,7 @@ impl ComponentDocument {
         if !commanded {
             state.retain_window(&mut range, props["overscan"].as_u64().unwrap_or(6) as usize, 1);
         }
-        if let Some(event) = state.notification(&range) {
+        if let Some(event) = state.window_notification(&range, &node.children, self.elapsed) {
             self.change(&node.id, event);
         }
         let response = ui.interact(output.inner_rect, egui::Id::unique((&node.id, "list-viewport")), egui::Sense::hover());
