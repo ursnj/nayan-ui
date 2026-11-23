@@ -224,6 +224,30 @@ mod tests {
     }
 
     #[test]
+    fn mounted_window_batches_scroll_updates_without_delaying_visibility_or_jumps() {
+        let props = json!({"itemCount":100,"itemSize":40,"overscan":4,"height":200});
+        let mut state = ListState::default();
+        let first = range_at(&props, 400., 200., false);
+        state.notification(&first).unwrap();
+        for offset in [440., 480.] {
+            let mut range = range_at(&props, offset, 200., false);
+            state.retain_window(&mut range, 4, 1);
+            let update = state.notification(&range).unwrap();
+            assert_eq!(update["start"], first["start"]);
+            assert_eq!(update["end"], first["end"]);
+            assert_eq!(update["first"], json!((offset / 40.) as usize));
+            assert_eq!(update["visibleChanged"], true);
+        }
+        for offset in [520., 2400., 0.] {
+            let expected = range_at(&props, offset, 200., false);
+            let mut range = expected.clone();
+            state.retain_window(&mut range, 4, 1);
+            assert_eq!(range, expected);
+            state.notification(&range).unwrap();
+        }
+    }
+
+    #[test]
     fn a_fling_travels_as_far_on_120_hz_displays_as_on_60_hz() {
         let fling = |dt: f64| {
             let mut doc = ComponentDocument::default();
@@ -709,6 +733,34 @@ fn range_at(props: &Value, offset: f32, viewport: f32, initial: bool) -> Value {
 }
 
 impl ListState {
+    pub(super) fn retain_window(&self, range: &mut Value, overscan: usize, columns: usize) {
+        let (Some(previous), Some(first), Some(last)) = (
+            self.range.as_ref(),
+            range["first"].as_u64(),
+            range["last"].as_u64(),
+        ) else {
+            return;
+        };
+        if overscan < 2 || previous["configuration"] != range["configuration"] {
+            return;
+        }
+        let start = previous["start"].as_u64().unwrap_or(0);
+        let end = previous["end"].as_u64().unwrap_or(0);
+        let next_start = range["start"].as_u64().unwrap_or(0);
+        let next_end = range["end"].as_u64().unwrap_or(0);
+        let count = range["itemCount"].as_u64().unwrap_or(0);
+        // Move the window in batches while a buffer still surrounds the visible rows.
+        // Never let the larger startup window become permanent.
+        let buffer = (overscan / 2 * columns) as u64;
+        if start <= first.saturating_sub(buffer)
+            && end >= (last + 1 + buffer).min(count)
+            && end.saturating_sub(start) <= next_end.saturating_sub(next_start)
+        {
+            range["start"] = json!(start);
+            range["end"] = json!(end);
+        }
+    }
+
     pub(super) fn notification(&mut self, range: &Value) -> Option<Value> {
         let count = range["itemCount"].as_u64().unwrap_or(0) as usize;
         let near_end = range["nearEnd"] == true;
@@ -864,7 +916,8 @@ impl ComponentDocument {
                 egui::scroll_area::ScrollBarVisibility::VisibleWhenNeeded
             });
         let requested = state.requested_offset.take();
-        if requested.is_some() || state.command != Some(sequence) {
+        let commanded = requested.is_some() || state.command != Some(sequence);
+        if commanded {
             state.command = Some(sequence);
             let offset = requested.unwrap_or_else(|| {
                 node.props["scrollOffset"]
@@ -960,6 +1013,9 @@ impl ComponentDocument {
         let state = self.lists.get_mut(&node.id).unwrap();
         state.offset = range["offset"].as_f64().unwrap_or(0.) as f32;
         state.viewport = range["viewportHeight"].as_f64().map(|v| v as f32);
+        if !commanded {
+            state.retain_window(&mut range, props["overscan"].as_u64().unwrap_or(6) as usize, 1);
+        }
         if let Some(event) = state.notification(&range) {
             self.change(&node.id, event);
         }

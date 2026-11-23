@@ -125,8 +125,10 @@ pub fn play(sound: u32, volume: f32, pan: f32, pitch: f32, looping: bool) -> Opt
         pitch: pitch.clamp(0.1, 4.0),
         looping,
     };
-    system.producer.lock().ok()?.push(command).ok()?;
-    Some(id)
+    let queued = system.producer.lock().ok()?.push(command).is_ok();
+    #[cfg(all(target_os = "ios", not(test)))]
+    output::retry_failed_open();
+    queued.then_some(id)
 }
 
 pub fn stop(voice: u64) {
@@ -159,6 +161,10 @@ pub fn set_volume(volume: f32) {
 
 pub fn set_muted(muted: bool) {
     system().muted.store(muted, Ordering::Relaxed);
+    #[cfg(all(target_os = "ios", not(test)))]
+    if !muted {
+        output::retry_failed_open();
+    }
 }
 
 /// True once the output stream is playing (false on devices without audio output).

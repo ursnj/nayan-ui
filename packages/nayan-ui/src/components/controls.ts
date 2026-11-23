@@ -9,7 +9,8 @@ export type {
   ComponentInputProps,
   ComponentTextChange
 } from './types';
-export { NTheme, type NThemeProps, type SystemBarsOptions, type SystemBarsNavigation } from './NTheme';
+export { NTheme, type NThemeProps, useNSystemBars, type SystemBarsOptions, type SystemBarsNavigation } from './NTheme';
+export { NPage, type NPageProps } from './NPage';
 export type { NThemeContext } from './contextBridge';
 export { useNTheme, type NThemeState } from './useNTheme';
 export type { NThemeFonts } from './theme/fonts';

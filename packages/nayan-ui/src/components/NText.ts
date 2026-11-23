@@ -12,6 +12,6 @@ export type NTextProps = ComponentProps &
   };
 
 export function NText({ onPress, ...props }: NTextProps) {
-  if (!useComponentRenderer('NText')) return createElement(PlatformText, { ...props, onPress });
+  if (!useComponentRenderer('NText', true)) return createElement(PlatformText, { ...props, onPress });
   return createElement(onPress ? 'NLink' : 'NText', { ...props, onPress });
 }

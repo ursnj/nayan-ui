@@ -10,6 +10,8 @@ use std::thread::Thread;
 /// The output thread, and whether it should reopen its stream (a new audio route).
 static OUTPUT: OnceLock<Thread> = OnceLock::new();
 static REOPEN: AtomicBool = AtomicBool::new(false);
+#[cfg(target_os = "ios")]
+static OPEN_FAILED: AtomicBool = AtomicBool::new(false);
 
 /// Opens the default output on a dedicated thread that owns the stream for the app's lifetime
 /// (cpal streams aren't `Send` on every platform), reopening it when `restart` asks. Failures
@@ -28,6 +30,8 @@ pub fn start(consumer: rtrb::Consumer<Command>, volume: Arc<AtomicU32>, muted: A
         loop {
             let stream = open(&mixer);
             running.store(stream.is_some(), Ordering::Relaxed);
+            #[cfg(target_os = "ios")]
+            OPEN_FAILED.store(stream.is_none(), Ordering::Relaxed);
             while !REOPEN.swap(false, Ordering::Relaxed) {
                 std::thread::park(); // keep `stream` alive
             }
@@ -48,7 +52,20 @@ pub fn restart() {
     }
 }
 
+/// A foreground app or a new playback request can recover from an unavailable audio route.
+#[cfg(target_os = "ios")]
+pub fn retry_failed_open() {
+    if OPEN_FAILED.load(Ordering::Relaxed) {
+        restart();
+    }
+}
+
 fn open(mixer: &Arc<Mutex<Mixer>>) -> Option<cpal::Stream> {
+    // Read the hardware format only after iOS has activated the current session and route.
+    #[cfg(target_os = "ios")]
+    if !ios::activate_session() {
+        return None;
+    }
     let device = cpal::default_host().default_output_device()?;
     let supported = device.default_output_config().ok()?;
     let format = supported.sample_format();
@@ -106,5 +123,10 @@ mod ios {
                 let _ = AVAudioSession::sharedInstance().setCategory_error(ambient);
             }
         }
+    }
+
+    pub fn activate_session() -> bool {
+        // SAFETY: the audio session is a process-wide singleton.
+        unsafe { AVAudioSession::sharedInstance().setActive_error(true).is_ok() }
     }
 }

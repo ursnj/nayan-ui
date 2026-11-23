@@ -79,6 +79,9 @@ pub(super) struct FlowListState {
     footer: f32,
     requested: Option<f32>,
     initialized: bool,
+    tree_changed: bool,
+    header_changed: bool,
+    changed_groups: HashSet<usize>,
     pull_start: Option<Pos2>,
     pull_ready: bool,
     pin_end: bool,
@@ -112,6 +115,65 @@ fn config(p: &Value) -> String {
 }
 
 impl FlowListState {
+    pub(super) fn update_tree(&mut self, id: &str, previous: &[Node], next: &[Node]) {
+        fn path<'a>(nodes: &'a [Node], id: &str, parents: &mut Vec<&'a Node>) -> bool {
+            for node in nodes {
+                parents.push(node);
+                if node.id == id || path(&node.children, id, parents) {
+                    return true;
+                }
+                parents.pop();
+            }
+            false
+        }
+
+        let mut previous_path = Vec::new();
+        let mut next_path = Vec::new();
+        if !path(previous, id, &mut previous_path) || !path(next, id, &mut next_path) {
+            self.tree_changed = true;
+            return;
+        }
+        let previous = previous_path.pop().unwrap();
+        let next = next_path.pop().unwrap();
+        if previous.props != next.props
+            || previous_path.len() != next_path.len()
+            || previous_path.iter().zip(&next_path).any(|(old, new)| {
+                old.id != new.id || old.kind != new.kind || old.props != new.props
+            })
+        {
+            self.tree_changed = true;
+            return;
+        }
+        self.header_changed |= previous.children.iter().find(|n| n.kind == "NListHeader")
+            != next.children.iter().find(|n| n.kind == "NListHeader");
+
+        let mut previous_rows: HashMap<_, _> = previous
+            .children
+            .iter()
+            .filter(|row| row.kind == "NListItem")
+            .map(|row| (row.id.as_str(), row))
+            .collect();
+        let columns = columns(&next.props);
+        for row in next.children.iter().filter(|row| row.kind == "NListItem") {
+            let old_row = previous_rows.remove(row.id.as_str());
+            if old_row != Some(row) {
+                self.changed_groups.extend(
+                    old_row
+                        .into_iter()
+                        .chain(std::iter::once(row))
+                        .filter_map(|n| n.props["index"].as_u64())
+                        .map(|index| index as usize / columns),
+                );
+            }
+        }
+        self.changed_groups.extend(
+            previous_rows
+                .values()
+                .filter_map(|n| n.props["index"].as_u64())
+                .map(|index| index as usize / columns),
+        );
+    }
+
     pub(super) fn invalidate_measurements(&mut self) {
         self.width = -1.;
     }
@@ -125,7 +187,9 @@ impl FlowListState {
             self.width = width;
             self.content_key = key.into();
         }
-        self.header = self.header.max(numeric(p, &["headerSize"], 0.) as f32 + list::content_insets(p).top);
+        self.header = self
+            .header
+            .max(numeric(p, &["headerSize"], 0.) as f32 + list::content_insets(p).top);
         self.footer = self.footer.max(list::content_insets(p).bottom);
         self.metrics.reset(rows(p), estimate(p));
     }
@@ -136,10 +200,15 @@ impl FlowListState {
         let total = header + self.metrics.prefix(self.metrics.count) + self.footer;
         let offset = offset.clamp(0., (total - height).max(0.));
         let first = self.metrics.index((offset - header).max(0.));
-        let last = self.metrics.index((offset + height - header - 0.01).max(0.));
+        let last = self
+            .metrics
+            .index((offset + height - header - 0.01).max(0.));
         let overscan = p["overscan"].as_u64().unwrap_or(4) as usize;
         let end = if initial {
-            (first + (p["initialNumToRender"].as_u64().unwrap_or(12) as usize).div_ceil(columns(p)) + overscan).min(self.metrics.count)
+            (first
+                + (p["initialNumToRender"].as_u64().unwrap_or(12) as usize).div_ceil(columns(p))
+                + overscan)
+                .min(self.metrics.count)
         } else {
             (last + 1 + overscan).min(self.metrics.count)
         };
@@ -151,9 +220,16 @@ impl FlowListState {
 impl ComponentDocument {
     pub(super) fn plan_flow_list(&self, id: &str, p: &Value) -> Value {
         if let Some(state) = self.flow_lists.get(id) {
-            let mut view = state.range(p, state.requested.unwrap_or(state.offset), state.viewport.max(1.), false);
+            let mut view = state.range(
+                p,
+                state.requested.unwrap_or(state.offset),
+                state.viewport.max(1.),
+                false,
+            );
             // Reconcile a changed dataset in Rust before React materializes any row.
-            if state.metrics.count != rows(p) || state.content_key != p["contentKey"].as_str().unwrap_or("") {
+            if state.metrics.count != rows(p)
+                || state.content_key != p["contentKey"].as_str().unwrap_or("")
+            {
                 let mut fresh = FlowListState::default();
                 fresh.metrics = state.metrics.clone();
                 fresh.width = state.width;
@@ -164,7 +240,11 @@ impl ComponentDocument {
                 fresh.viewport = state.viewport;
                 view = fresh.range(
                     p,
-                    if state.content_key == fresh.content_key { state.offset } else { 0. },
+                    if state.content_key == fresh.content_key {
+                        state.offset
+                    } else {
+                        0.
+                    },
                     state.viewport.max(1.),
                     false,
                 );
@@ -177,7 +257,12 @@ impl ComponentDocument {
         }
     }
 
-    pub(super) fn scroll_flow_list(&mut self, id: &str, p: &Value, command: &Value) -> Result<(), String> {
+    pub(super) fn scroll_flow_list(
+        &mut self,
+        id: &str,
+        p: &Value,
+        command: &Value,
+    ) -> Result<(), String> {
         let state = self.flow_lists.entry(id.into()).or_default();
         state.sync(p, state.width);
         let height = if state.viewport > 0. {
@@ -195,7 +280,8 @@ impl ComponentDocument {
                 let index = command["index"]
                     .as_u64()
                     .filter(|n| *n < p["itemCount"].as_u64().unwrap_or(0))
-                    .ok_or("NList scroll index is out of range")? as usize;
+                    .ok_or("NList scroll index is out of range")?
+                    as usize;
                 let position = command
                     .get("viewPosition")
                     .map(|v| {
@@ -205,7 +291,8 @@ impl ComponentDocument {
                     })
                     .transpose()?
                     .unwrap_or(0.) as f32;
-                state.header + state.metrics.prefix(index / columns(p)) - (height - estimate(p)).max(0.) * position
+                state.header + state.metrics.prefix(index / columns(p))
+                    - (height - estimate(p)).max(0.) * position
             }
             "offset" => command["offset"]
                 .as_f64()
@@ -220,7 +307,14 @@ impl ComponentDocument {
         Ok(())
     }
 
-    pub(super) fn flow_list(&mut self, ui: &mut egui::Ui, node: &Node, resolved: &style::Style, p: &Value, content: &style::Style) {
+    pub(super) fn flow_list(
+        &mut self,
+        ui: &mut egui::Ui,
+        node: &Node,
+        resolved: &style::Style,
+        p: &Value,
+        content: &style::Style,
+    ) {
         let padding = list::content_insets(p);
         let height = resolved
             .height
@@ -235,6 +329,9 @@ impl ComponentDocument {
         let width = (ui.available_width() - padding.left - padding.right).max(1.);
         let mut state = self.flow_lists.remove(&node.id).unwrap_or_default();
         state.sync(p, width);
+        let tree_changed = std::mem::take(&mut state.tree_changed);
+        let header_changed = std::mem::take(&mut state.header_changed);
+        let changed_groups = std::mem::take(&mut state.changed_groups);
         state.viewport = height;
         if ui.input(|i| i.pointer.any_pressed()) {
             state.pin_end = false;
@@ -247,33 +344,49 @@ impl ComponentDocument {
         if p["showsVerticalScrollIndicator"] == false {
             area = area.scroll_bar_visibility(egui::scroll_area::ScrollBarVisibility::AlwaysHidden);
         }
-        if let Some(offset) = state.requested.take() {
+        let requested = state.requested.take();
+        if let Some(offset) = requested {
             area = area.vertical_scroll_offset(offset);
         } else if state.pin_end {
-            area = area.vertical_scroll_offset((state.header + state.metrics.prefix(state.metrics.count) + state.footer - height).max(0.));
+            area = area.vertical_scroll_offset(
+                (state.header + state.metrics.prefix(state.metrics.count) + state.footer - height)
+                    .max(0.),
+            );
         }
         let mut current = Value::Null;
         let output = area.show_viewport(ui, |ui, viewport| {
             content.frame(false).show(ui, |ui| {
                 ui.spacing_mut().item_spacing.y = 0.;
                 let origin = ui.max_rect().min - Vec2::new(0., padding.top);
+                let clip = ui.clip_rect();
                 if let Some(header) = node.children.iter().find(|n| n.kind == "NListHeader") {
-                    let header_height = if p["headerSize"].as_f64().unwrap_or(0.) > 0. {
-                        p["headerSize"].as_f64().unwrap() as f32
+                    let top = origin + Vec2::new(0., padding.top);
+                    let cached = (state.header - padding.top).max(0.);
+                    let measured = if tree_changed
+                        || header_changed
+                        || cached == 0.
+                        || flow_part_visible(top.y, cached, clip)
+                    {
+                        self.measure_flow_part(ui, header, top, width, clip)
                     } else {
-                        self.measure_flow_part(ui, header, origin + Vec2::new(0., padding.top), width, ui.clip_rect())
+                        self.forget_list_bounds(std::slice::from_ref(header));
+                        cached
                     };
-                    if p["headerSize"].as_f64().unwrap_or(0.) > 0. {
-                        self.measure_flow_part(ui, header, origin + Vec2::new(0., padding.top), width, ui.clip_rect());
-                    }
-                    state.header = padding.top + header_height;
+                    let explicit = numeric(p, &["headerSize"], 0.) as f32;
+                    state.header = padding.top + if explicit > 0. { explicit } else { measured };
                 } else {
                     state.header = padding.top;
                 }
                 let mut total = state.header + state.metrics.prefix(state.metrics.count);
                 if state.metrics.count == 0 {
                     if let Some(empty) = node.children.iter().find(|n| n.kind == "NListEmpty") {
-                        total += self.measure_flow_part(ui, empty, origin + Vec2::new(0., state.header), width, ui.clip_rect());
+                        total += self.measure_flow_part(
+                            ui,
+                            empty,
+                            origin + Vec2::new(0., state.header),
+                            width,
+                            ui.clip_rect(),
+                        );
                     }
                 }
                 let mut group_heights: BTreeMap<usize, f32> = BTreeMap::new();
@@ -288,23 +401,42 @@ impl ComponentDocument {
                     let group = index / columns(p);
                     let cell_width = width / columns(p) as f32;
                     let top = state.header + state.metrics.prefix(group);
+                    let origin = origin + Vec2::new((index % columns(p)) as f32 * cell_width, top);
+                    // Keep prefix sums for measured rows outside the viewport. A tree update
+                    // can change a row's height even when the user is looking elsewhere.
+                    if !tree_changed
+                        && !changed_groups.contains(&group)
+                        && !group_heights.contains_key(&group)
+                        && state
+                            .metrics
+                            .values
+                            .get(&group)
+                            .is_some_and(|height| !flow_part_visible(origin.y, *height, clip))
+                    {
+                        self.forget_list_bounds(std::slice::from_ref(row));
+                        continue;
+                    }
                     let measured = self
-                        .measure_flow_part(
-                            ui,
-                            row,
-                            origin + Vec2::new((index % columns(p)) as f32 * cell_width, top),
-                            cell_width,
-                            ui.clip_rect(),
-                        )
+                        .measure_flow_part(ui, row, origin, cell_width, clip)
                         .clamp(1., 16384.);
-                    let measured = group_heights.entry(group).and_modify(|h| *h = h.max(measured)).or_insert(measured);
+                    let measured = group_heights
+                        .entry(group)
+                        .and_modify(|h| *h = h.max(measured))
+                        .or_insert(measured);
                     state.metrics.set(group, *measured);
                 }
                 if state.metrics.count > 0 {
                     total = state.header + state.metrics.prefix(state.metrics.count);
                 }
                 if let Some(footer) = node.children.iter().find(|n| n.kind == "NListFooter") {
-                    state.footer = padding.bottom + self.measure_flow_part(ui, footer, origin + Vec2::new(0., total), width, ui.clip_rect());
+                    state.footer = padding.bottom
+                        + self.measure_flow_part(
+                            ui,
+                            footer,
+                            origin + Vec2::new(0., total),
+                            width,
+                            ui.clip_rect(),
+                        );
                 } else {
                     state.footer = padding.bottom;
                 }
@@ -320,7 +452,10 @@ impl ComponentDocument {
         let mut refresh = false;
         ui.input(|input| {
             if input.pointer.any_pressed() && state.offset <= 0.5 && p["refreshing"] != true {
-                state.pull_start = input.pointer.interact_pos().filter(|pos| output.inner_rect.contains(*pos));
+                state.pull_start = input
+                    .pointer
+                    .interact_pos()
+                    .filter(|pos| output.inner_rect.contains(*pos));
                 state.pull_ready = false;
             }
             if let (Some(start), Some(pos)) = (state.pull_start, input.pointer.interact_pos()) {
@@ -341,6 +476,13 @@ impl ComponentDocument {
                 egui::Stroke::new(2., self.palette.get("accent")),
             );
         }
+        if requested.is_none() {
+            state.callbacks.retain_window(
+                &mut current,
+                p["overscan"].as_u64().unwrap_or(4) as usize,
+                columns(p),
+            );
+        }
         if let Some(mut event) = state.callbacks.notification(&current) {
             event["refreshRequested"] = json!(refresh);
             self.change(&node.id, event);
@@ -350,11 +492,22 @@ impl ComponentDocument {
             self.change(&node.id, event);
         }
         self.flow_lists.insert(node.id.clone(), state);
-        let response = ui.interact(output.inner_rect, egui::Id::unique((&node.id, "flow-viewport")), egui::Sense::hover());
+        let response = ui.interact(
+            output.inner_rect,
+            egui::Id::unique((&node.id, "flow-viewport")),
+            egui::Sense::hover(),
+        );
         self.semantic(ui, node, &response, current);
     }
 
-    fn measure_flow_part(&mut self, ui: &mut egui::Ui, node: &Node, origin: Pos2, width: f32, clip: Rect) -> f32 {
+    fn measure_flow_part(
+        &mut self,
+        ui: &mut egui::Ui,
+        node: &Node,
+        origin: Pos2,
+        width: f32,
+        clip: Rect,
+    ) -> f32 {
         let mut child = ui.new_child(
             egui::UiBuilder::new()
                 .max_rect(Rect::from_min_size(origin, Vec2::new(width, 16384.)))
@@ -366,9 +519,60 @@ impl ComponentDocument {
     }
 }
 
+fn flow_part_visible(top: f32, height: f32, clip: Rect) -> bool {
+    top <= clip.max.y && top + height >= clip.min.y
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn cached_offscreen_rows_skip_layout_and_keep_scroll_geometry() {
+        for columns in [1, 2] {
+            let tree = |last_height: f32| {
+                let mut children =
+                    vec![json!({"id":"header","kind":"NListHeader","props":{"height":72}})];
+                children.extend((0..16).map(|i| {
+                    let height = if i == 15 { last_height } else { 100. };
+                    json!({"id":format!("row-{i}"),"kind":"NListItem","props":{"index":i,"height":height}})
+                }));
+                json!([{"id":"list","kind":"NList","props":{
+                    "itemCount":16,"itemSize":100,"numColumns":columns,"variableSize":true,"height":220
+                },"children":children}])
+            };
+            let mut doc = ComponentDocument::default();
+            doc.set_tree(&tree(100.)).unwrap();
+            doc.frame(360., 260., 1.).drop_without_applying_deltas();
+            doc.frame(360., 260., 1.).drop_without_applying_deltas();
+            assert!(doc.layout_bounds("row-15").is_none());
+            let metrics = &doc.flow_lists["list"].metrics;
+            assert_eq!(metrics.values.len(), metrics.count);
+            let before = metrics.prefix(metrics.count);
+
+            doc.set_tree(&tree(160.)).unwrap();
+            doc.frame(360., 260., 1.).drop_without_applying_deltas();
+            let metrics = &doc.flow_lists["list"].metrics;
+            assert!((metrics.prefix(metrics.count) - before - 60.).abs() < 0.1);
+
+            doc.command(&json!({"action":"listScroll","id":"list","kind":"end"}))
+                .unwrap();
+            doc.frame(360., 260., 1.).drop_without_applying_deltas();
+            doc.frame(360., 260., 1.).drop_without_applying_deltas();
+            assert!(doc.layout_bounds("header").is_none());
+            let [_, y, _, height] = doc.layout_bounds("row-15").unwrap();
+            assert!(y < 220. && y + height > 0.);
+
+            let mut shifted = tree(160.);
+            shifted[0]["children"].as_array_mut().unwrap().drain(1..3);
+            doc.set_tree(&shifted).unwrap();
+            doc.frame(360., 260., 1.).drop_without_applying_deltas();
+            assert!(doc.layout_bounds("header").is_none());
+            assert!(doc.layout_bounds("row-4").is_none());
+            assert!(doc.layout_bounds("row-15").is_some());
+        }
+    }
+
     #[test]
     fn measured_prefix_sums_handle_growth_shrinkage_and_large_jumps() {
         let mut h = Heights::default();

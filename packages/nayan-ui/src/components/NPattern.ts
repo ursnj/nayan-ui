@@ -40,7 +40,7 @@ export interface NPatternProps extends ComponentProps {
   onError?: (error: Error) => void;
 }
 
-/** Rust vectors in ComponentsRoot. */
+/** Rust vectors on engine surfaces and a cached native image in NPlatformView. */
 export function NPattern(props: NPatternProps) {
-  return useComponentRenderer('NPattern') ? createElement('NPattern', props) : createElement(PatternHost, props);
+  return useComponentRenderer('NPattern', true) ? createElement('NPattern', props) : createElement(PatternHost, props);
 }

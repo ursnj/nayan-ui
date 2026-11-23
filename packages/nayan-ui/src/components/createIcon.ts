@@ -35,7 +35,7 @@ export interface IconHostProps extends NIconProps {
 export function createIcon(resolveIcon: (name: string) => IconOutline | undefined) {
   return function NIcon({ name, paths, viewBox, strokeWidth, onPress, onError, ...props }: NIconProps) {
     const theme = useContext(ComponentThemeContext);
-    const rendering = useComponentRenderer('NIcon');
+    const rendering = useComponentRenderer('NIcon', true);
     const literal = !!name && /[^\x20-\x7e]/.test(name);
     const named = useMemo(() => (name && !literal ? resolveIcon(name) : undefined), [name, literal]);
     const outline = useMemo(

@@ -70,5 +70,5 @@ function EnginePress({
 
 /** One press API for native views, browser buttons and Rust-rendered UI. */
 export function NPress(props: NPressProps) {
-  return createElement(useComponentRenderer('NPress') ? EnginePress : PressHost, props);
+  return createElement(useComponentRenderer('NPress', true) ? EnginePress : PressHost, props);
 }

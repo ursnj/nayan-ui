@@ -1,5 +1,6 @@
 package com.nayanui.engine;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -15,6 +16,7 @@ import android.view.PixelCopy;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.views.view.ReactViewGroup;
 import java.nio.ByteBuffer;
 import java.util.WeakHashMap;
@@ -49,7 +51,7 @@ public final class EngineBlurView extends ReactViewGroup {
   private Gpu gpu;
   private boolean gpuReady;
   private boolean captureWarning;
-  private Rect captureWindow = new Rect();
+  private final Rect captureArea = new Rect();
   private final Runnable tick = new Runnable() {
     @Override public void run() {
       if (!attached) return;
@@ -136,9 +138,15 @@ public final class EngineBlurView extends ReactViewGroup {
     if (busy || getWidth() == 0 || getHeight() == 0) return;
     View root = getRootView();
     View target = targetTag < 0 ? root : root.findViewById(targetTag);
+    // A transparent React Native modal has its own window, while its explicit source can
+    // live in the activity underneath it.
+    if (target == null && getContext() instanceof ReactContext) {
+      Activity activity = ((ReactContext) getContext()).getCurrentActivity();
+      if (activity != null) target = activity.findViewById(targetTag);
+    }
     if (target == null || !target.isShown() || target == this) return;
-    getLocationInWindow(position);
-    target.getLocationInWindow(sourcePosition);
+    getLocationOnScreen(position);
+    target.getLocationOnScreen(sourcePosition);
     float density = getResources().getDisplayMetrics().density;
     halo = (int) Math.ceil(radius * density * 3) + 2;
     int fullWidth = getWidth() + halo * 2, fullHeight = getHeight() + halo * 2;
@@ -151,7 +159,7 @@ public final class EngineBlurView extends ReactViewGroup {
       workingHeight = Math.max(1, (int) Math.ceil(fullHeight / scale));
     }
     final int width = workingWidth, height = workingHeight;
-    captureWindow.set(position[0] - halo, position[1] - halo, position[0] + getWidth() + halo, position[1] + getHeight() + halo);
+    captureArea.set(position[0] - halo, position[1] - halo, position[0] + getWidth() + halo, position[1] + getHeight() + halo);
     if (spare == null || spare.getWidth() != width || spare.getHeight() != height) {
       spare = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
       bytes = null;
@@ -252,8 +260,8 @@ public final class EngineBlurView extends ReactViewGroup {
     long lastCopy;
     void draw(EngineBlurView owner, Canvas canvas, SurfaceView surface) {
       int[] location = new int[2];
-      surface.getLocationInWindow(location);
-      Rect crop = new Rect(owner.captureWindow);
+      surface.getLocationOnScreen(location);
+      Rect crop = new Rect(owner.captureArea);
       crop.offset(-location[0], -location[1]);
       if (!crop.intersect(0, 0, surface.getWidth(), surface.getHeight())) return;
       if (image != null) canvas.drawBitmap(image, null, new RectF(source), owner.paint);

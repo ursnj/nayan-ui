@@ -1,6 +1,31 @@
 use super::*;
 
 #[test]
+fn component_defaults_and_layout_sizes_keep_their_precedence() {
+    let palette = theme::Palette::configure(
+        &theme::Palette::new(true),
+        &json!({"components":{"NView":{
+            "className":"p-2 dark:p-4 md:dark:p-6",
+            "style":{"width":240,"height":72,"paddingRight":18}
+        }}}),
+        true,
+    );
+    let props = json!({"className":"p-3 dark:p-5","style":{"width":null,"paddingRight":12},"width":200});
+    let conditions = style::Conditions {
+        dark: true,
+        viewport: 800.,
+        ..Default::default()
+    };
+    let sized = style::Style::resolve_sized("NView", &props, &palette, conditions, Vec2::splat(400.), [Some(180.), Some(60.)]);
+    assert_eq!(sized.width, Some(180.));
+    assert_eq!(sized.height, Some(72.));
+    assert_eq!(sized.padding.top, 24.);
+    assert_eq!(sized.padding.right, 12.);
+    let without_layout_size = style::Style::resolve("NView", &props, &palette, conditions, Vec2::splat(400.));
+    assert_eq!(without_layout_size.width, Some(200.));
+}
+
+#[test]
 fn card_shadows_never_paint_inside_translucent_surfaces() {
     for native in [false, true] {
         for (surface, shadow) in [

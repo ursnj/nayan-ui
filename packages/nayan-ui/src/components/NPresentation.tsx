@@ -1,4 +1,16 @@
-import { cloneElement, isValidElement, type ReactElement, type ReactNode, useCallback, useContext, useEffect, useId, useMemo, useState } from 'react';
+import {
+  cloneElement,
+  isValidElement,
+  type ComponentType,
+  type ReactElement,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useId,
+  useMemo,
+  useState
+} from 'react';
 import { ContextBridge, useSurfaceContextValues } from './contextBridge';
 import { NButton } from './NButton';
 import { NPage } from './NPage';
@@ -33,6 +45,8 @@ export interface OverlayProps {
   showsVerticalScrollIndicator?: boolean;
   /** Use the theme's translucent presentation background inside the panel. */
   blurred?: boolean;
+  /** Override the theme's platform backdrop for this presentation. */
+  presentationBackground?: ComponentType;
 }
 
 /** OS modal ownership is a platform adapter; its content uses the shared Rust components. */
@@ -54,6 +68,7 @@ function Presentation({
   showCloseButton = true,
   showsVerticalScrollIndicator,
   blurred = false,
+  presentationBackground,
   fitContent = true,
   snapPoints
 }: OverlayProps & { sheet?: boolean }) {
@@ -76,7 +91,7 @@ function Presentation({
     border: colors.border ?? 'transparent',
     sheetSurface: sheet ? (colors.background ?? (mode === 'dark' ? '#18181b' : '#fff')) : (colors.surface ?? '#fff')
   };
-  const Background = theme?.presentationBackground;
+  const Background = presentationBackground ?? theme?.presentationBackground;
   const surfaceBackground = sheet && blurred && Background ? 'transparent' : palette.sheetSurface;
   const window = usePresentationSize();
 

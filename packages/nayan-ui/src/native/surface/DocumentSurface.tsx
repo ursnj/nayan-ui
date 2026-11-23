@@ -18,12 +18,14 @@ function DocumentSurfaceView<Change>({
     (event: { nativeEvent: { state: string; documentId: number } }) => {
       if (!active || document.isDisposed || event.nativeEvent.documentId !== document.id) return;
       try {
-        onChange?.(JSON.parse(event.nativeEvent.state));
+        const state = JSON.parse(event.nativeEvent.state);
+        // Native callbacks carry the Rust envelope directly; readChange() unwraps it on the web.
+        onChange?.(mode === 'components' && state?.components ? { ui: state.components } : state);
       } catch (failure) {
         onError?.(failure instanceof Error ? failure : new Error(String(failure)));
       }
     },
-    [onChange, onError, active, document]
+    [onChange, onError, active, document, mode]
   );
   return (
     <EngineSurface

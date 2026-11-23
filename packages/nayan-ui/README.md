@@ -1027,7 +1027,8 @@ import { NPress, NText } from 'nayan-ui/components';
 </NPress>;
 ```
 
-The parent app surface owns layout, drawing and event delivery. Press lifecycle updates are sent only when requested.
+On an engine surface, the surface owns layout, drawing and event delivery. Press lifecycle updates are sent only when requested.
+Wrap native navigation UI in `NPlatformView` to use the platform implementations of `NPress`, `NText`, `NIcon` (including named icons), and `NPattern`.
 For a close control, give `NPress` an `accessibilityLabel` and render an icon or `×` as its content.
 
 On the web, an app can explicitly wrap an HTML shell in `NPlatformView` for browser layout. Its semantic tags use the host stylesheet. `NTheme` can also serve HTML while WASM starts with `surface={{ serverFallback: true }}`.
@@ -1384,8 +1385,10 @@ does not emit a second primary lifecycle. Change `source` or `recyclingKey` to
 retry. Rust rejects stale results after a source changes or a view unmounts.
 
 `cachePolicy` accepts `none`, `memory`, `disk` and `memory-disk` (default).
-The decoded shared memory cache has a 32 MiB budget; mounted images retain their
-own resources. Disk policies use the engine asset cache; `memory` does not read or write disk.
+The decoded shared memory cache has a 32 MiB budget. Each Rust surface can also
+retain up to 64 recently painted, unmounted images under a 16 MiB pixel and GPU
+texture budget. When an image returns at the same size, it can reuse its uploaded
+texture. Disk policies use the engine asset cache. `memory` does not read or write disk.
 Switching to a disk-backed policy saves available in-memory source bytes without
 downloading them again. These saved bytes are reused on later launches or reloads.
 Use versioned URLs for immutable cached content, or `source.cache="reload"` to
@@ -1695,10 +1698,10 @@ native keyboard/IME device validation remains required before production use.
 
 `NList` supports fixed-height rows and Rust-measured variable-height rows, including grids. Rust owns scrolling,
 initial/visible ranges, scroll targeting and clamping, end thresholds, callback
-deduplication, viewport clipping and row placement. React mounts only the requested window plus
-`overscan` rows on each side; the dataset stays in JavaScript. Per-pixel scrolling
-does not invoke application row renderers, and retained rows are memoized by stable
-item key. The private React adapter retains only a read-only Rust row-window
+deduplication, viewport clipping and row placement. Rust uses `overscan` to buffer
+rows around the viewport and moves the mounted window in batches. Visible-range
+callbacks still report the rows on screen as they change. The dataset stays in JavaScript,
+and retained rows are memoized by stable item key. The private React adapter retains only a read-only Rust row-window
 snapshot and forwards imperative scroll intents; it does not calculate list
 geometry or notification policy.
 

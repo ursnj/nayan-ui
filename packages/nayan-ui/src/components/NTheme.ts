@@ -33,6 +33,18 @@ function SystemBarsController({ configuration, navigation }: { configuration: Th
   return null;
 }
 
+/** Override native system bars for a focused view using the current application theme. */
+export function useNSystemBars(options: SystemBarsOptions | false, navigation?: SystemBarsNavigation): void {
+  const theme = useContext(ComponentThemeContext);
+  const rendering = useContext(ComponentRenderContext);
+  const depth = useContext(SystemBarsDepth);
+  useThemeSystemBars(
+    !rendering && options !== false,
+    { depth, theme: theme?.theme ?? undefined, colors: theme?.colors, themes: theme?.themes, options: options || {} },
+    navigation
+  );
+}
+
 type NThemeSurfaceOptions = Omit<ComponentsRootProps, 'children' | 'stylesheet'> &
   Pick<NPageProps, 'keyboard' | 'showsVerticalScrollIndicator'>;
 

@@ -11,16 +11,30 @@ const measured = mock(() => {});
 let viewport = { width: 390, height: 844 };
 let nativeTag = 1;
 const propsById = new Map<string, Record<string, unknown>>();
-function NativeView(props: { children?: ReactNode; ref?: Ref<NViewNativeRef>; testID?: string; onLayout?: () => void }) {
+type LayoutEvent = { nativeEvent: { layout: { width: number; height: number } } };
+function NativeView(props: { children?: ReactNode; ref?: Ref<NViewNativeRef>; testID?: string; onLayout?: (event: LayoutEvent) => void }) {
   const node = useRef({ measureInWindow: measured, nativeTag: nativeTag++ });
   useImperativeHandle(props.ref, () => node.current as unknown as NViewNativeRef, []);
   propsById.set(props.testID ?? 'view', props);
   const onLayout = props.onLayout;
-  useLayoutEffect(() => onLayout?.(), [onLayout]);
+  useLayoutEffect(() => onLayout?.({ nativeEvent: { layout: { width: 0, height: 0 } } }), [onLayout]);
   return <div>{props.children}</div>;
 }
-mock.module('react-native', () => ({ View: NativeView, Text: NativeView, useWindowDimensions: () => viewport }));
+mock.module('react-native', () => ({
+  View: NativeView,
+  Text: NativeView,
+  Image: NativeView,
+  StyleSheet: { absoluteFill: {} },
+  Pressable: ({ children, onPress }: { children?: ReactNode; onPress?: () => void }) => <button onClick={onPress}>{children}</button>,
+  PixelRatio: { get: () => 1 },
+  useWindowDimensions: () => viewport
+}));
 const { ViewHost, TextHost } = await import('../PlatformHost');
+const { NIcon } = await import('../NIcon');
+const { NPattern } = await import('../NPattern');
+const { NPlatformView } = await import('../NPlatformView');
+const { NPress } = await import('../NPress');
+const { NText } = await import('../NText');
 const dom = await installReactTestEnvironment();
 afterAll(() => dom.cleanup());
 
@@ -126,6 +140,32 @@ test('native class styles follow theme and responsive width without a surface', 
     expect(propsById.get('override')!.allowFontScaling).toBe(true);
   } finally {
     viewport = { width: 390, height: 844 };
+    await act(() => root.unmount());
+  }
+});
+
+test('native navigation controls render inside NPlatformView', async () => {
+  const element = document.createElement('div');
+  const root = dom.createRoot(element);
+  const onPress = mock(() => {});
+  try {
+    await act(() =>
+      root.render(
+        <NPlatformView>
+          <NPattern recipe={{}} testID="navigation-pattern" />
+          <NPress onPress={onPress}>
+            <NIcon name="★" />
+            <NText>Premium</NText>
+          </NPress>
+        </NPlatformView>
+      )
+    );
+    expect(propsById.get('navigation-pattern')?.pointerEvents).toBe('none');
+    const button = element.querySelector('button');
+    expect(button?.textContent).toBe('★Premium');
+    await act(() => button?.click());
+    expect(onPress).toHaveBeenCalledTimes(1);
+  } finally {
     await act(() => root.unmount());
   }
 });

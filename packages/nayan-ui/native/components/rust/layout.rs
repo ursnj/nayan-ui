@@ -76,19 +76,21 @@ impl ComponentDocument {
         self.context.fonts_mut(|fonts| fonts.layout_job(job).size())
     }
 
-    pub(super) fn intrinsic_width(&self, node: &Node, available: f32) -> f32 {
-        let s = self.measure_style(node, available);
+    fn intrinsic_width(&self, node: &Node, s: &style::Style, available: f32) -> f32 {
         if let Some(width) = s.width {
             return width + s.margin.left + s.margin.right;
         }
         let content = match node.kind.as_str() {
-            "NText" | "NLink" | "NBadge" | "NChip" => self.text_size(node, &s, 1_000_000.).x,
+            "NText" | "NLink" | "NBadge" | "NChip" => self.text_size(node, s, 1_000_000.).x,
             "NLoading" => loading::measure(&self.context, node, &s, available, self.font_scale).0.x,
             "NIcon" => numeric(&node.props, &["size"], 24.) as f32,
             "NImage" => s.height.unwrap_or(64.),
             "NInput" | "NTextarea" => available,
             _ => {
-                let children = node.children.iter().filter(|n| !absolute(n)).map(|n| self.intrinsic_width(n, available));
+                let children = node.children.iter().filter(|n| !absolute(n)).map(|n| {
+                    let style = self.measure_style(n, available);
+                    self.intrinsic_width(n, &style, available)
+                });
                 if s.horizontal { children.sum() } else { children.fold(0., f32::max) }
             }
         };
@@ -108,8 +110,7 @@ impl ComponentDocument {
         height + s.margin.top + s.margin.bottom
     }
 
-    pub(super) fn flow_row(&mut self, ui: &mut egui::Ui, n: &Node, resolved: &style::Style) -> bool {
-        let flow: Vec<_> = n.children.iter().filter(|n| !absolute(n)).collect();
+    pub(super) fn flow_row(&mut self, ui: &mut egui::Ui, flow: &[&Node], resolved: &style::Style) -> bool {
         let available = ui.available_width().max(0.);
         let styles: Vec<_> = flow.iter().map(|n| self.measure_style(n, available)).collect();
         if !resolved.wrap && !resolved.justify_between && !styles.iter().any(|s| s.grow > 0.) {
@@ -117,25 +118,21 @@ impl ComponentDocument {
         }
         let gap = resolved.gap.map_or(ui.spacing().item_spacing.x, |v| v.x);
         let gaps = gap * flow.len().saturating_sub(1) as f32;
-        let fixed: f32 = flow
-            .iter()
-            .zip(&styles)
-            .filter(|(_, s)| s.grow == 0.)
-            .map(|(n, _)| self.intrinsic_width(n, available))
-            .sum();
-        let grow: f32 = styles.iter().map(|s| s.grow).sum();
         let mut widths: Vec<_> = flow
             .iter()
             .zip(&styles)
-            .map(|(n, s)| {
-                if s.grow > 0. {
-                    (available - fixed - gaps).max(0.) * s.grow / grow
-                } else {
-                    self.intrinsic_width(n, available)
-                }
-            })
+            .map(|(n, s)| if s.grow == 0. { self.intrinsic_width(n, s, available) } else { 0. })
             .collect();
-        if !resolved.wrap && grow == 0. && fixed + gaps > available {
+        let fixed: f32 = widths.iter().sum();
+        let grow: f32 = styles.iter().map(|s| s.grow).sum();
+        if grow > 0. {
+            let free = (available - fixed - gaps).max(0.);
+            for (width, style) in widths.iter_mut().zip(&styles) {
+                if style.grow > 0. {
+                    *width = free * style.grow / grow;
+                }
+            }
+        } else if !resolved.wrap && fixed + gaps > available {
             let rigid: f32 = widths.iter().zip(&styles).filter(|(_, s)| s.width.is_some()).map(|(w, _)| *w).sum();
             let flexible = (fixed - rigid).max(1.);
             for (w, s) in widths.iter_mut().zip(&styles) {
@@ -184,13 +181,11 @@ impl ComponentDocument {
                 0.
             };
             let rect = Rect::from_min_size(Pos2::new(x, y + offset), Vec2::new(*width, height.max(0.)));
-            let mut child = (*node).clone();
-            child.props["width"] = json!((width - s.margin.left - s.margin.right).max(0.));
-            if resolved.stretch && !resolved.wrap && s.height.is_none() {
-                child.props["height"] = json!((line_height - s.margin.top - s.margin.bottom).max(0.));
-            }
+            let content_width = (width - s.margin.left - s.margin.right).max(0.);
+            let content_height = (resolved.stretch && !resolved.wrap && s.height.is_none())
+                .then(|| (line_height - s.margin.top - s.margin.bottom).max(0.));
             let mut child_ui = ui.new_child(egui::UiBuilder::new().max_rect(rect).layout(egui::Layout::top_down(egui::Align::Min)));
-            self.one(&mut child_ui, &child);
+            self.one_sized(&mut child_ui, node, [Some(content_width), content_height]);
             bottom = bottom.max(child_ui.min_rect().bottom()).max(y + line_height);
             x += width + gap + distributed;
         }

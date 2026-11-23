@@ -6,6 +6,8 @@ use std::sync::{
     atomic::{AtomicU64, Ordering},
 };
 const CACHE_BYTES: usize = 32 * 1024 * 1024;
+const RETAINED_IMAGE_BYTES: usize = 16 * 1024 * 1024;
+const MAX_RETAINED_IMAGES: usize = 64;
 static NEXT_REQUEST: AtomicU64 = AtomicU64::new(1);
 struct CachedImage {
     image: Arc<Image>,
@@ -76,6 +78,22 @@ struct Resource {
     state: State,
     mask: Option<egui::TextureHandle>,
     target: Option<Target>,
+    last_painted: u64,
+}
+
+impl Resource {
+    fn retained_bytes(&self) -> Option<usize> {
+        let State::Ready(image, texture) = &self.state else {
+            return None;
+        };
+        let textures = usize::from(texture.is_some()) + usize::from(self.mask.is_some());
+        let bytes = image.rgba.len() * (1 + textures);
+        (textures > 0
+            && bytes <= RETAINED_IMAGE_BYTES
+            && matches!(self.policy.as_str(), "memory" | "memory-disk")
+            && self.source["cache"] != "reload")
+            .then_some(bytes)
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
@@ -184,6 +202,7 @@ pub(super) struct Images {
     events: Vec<ImageEvent>,
     references_changed: bool,
     request_revision: u64,
+    paint_clock: u64,
 }
 
 impl Images {
@@ -226,6 +245,7 @@ impl Images {
                     state,
                     mask: None,
                     target,
+                    last_painted: 0,
                 },
             );
         }
@@ -416,6 +436,7 @@ impl Images {
                 *texture = None;
             }
         }
+        self.references_changed = true;
     }
 
     pub fn events(&mut self) -> Vec<ImageEvent> {
@@ -470,14 +491,42 @@ impl Images {
             })
             .flatten()
             .collect();
+        let mut retained_count = 0;
+        let mut retained_bytes = 0;
         let revision = &mut self.request_revision;
         self.resources.retain(|key, resource| {
-            let referenced = used.contains(key.as_str());
-            if !referenced && resource.started && matches!(resource.state, State::Pending) {
+            if used.contains(key.as_str()) {
+                return true;
+            }
+            // A row can leave the React window and return in the same fling. Keep its
+            // uploaded texture in this document, where the texture ID is still valid.
+            if let Some(bytes) = resource.retained_bytes() {
+                retained_bytes += bytes;
+                retained_count += 1;
+                return true;
+            }
+            if resource.started && matches!(resource.state, State::Pending) {
                 *revision = revision.wrapping_add(1);
             }
-            referenced
+            false
         });
+        if retained_bytes > RETAINED_IMAGE_BYTES || retained_count > MAX_RETAINED_IMAGES {
+            let mut retained: Vec<_> = self
+                .resources
+                .iter()
+                .filter(|(key, _)| !used.contains(key.as_str()))
+                .filter_map(|(key, resource)| Some((resource.last_painted, resource.retained_bytes()?, key.clone())))
+                .collect();
+            retained.sort_unstable_by_key(|entry| entry.0);
+            for (_, bytes, key) in retained {
+                if retained_bytes <= RETAINED_IMAGE_BYTES && retained_count <= MAX_RETAINED_IMAGES {
+                    break;
+                }
+                self.resources.remove(&key);
+                retained_bytes -= bytes;
+                retained_count -= 1;
+            }
+        }
         // Prioritize after the entire visible layout has registered its images.
         self.schedule();
     }
@@ -506,11 +555,15 @@ impl Images {
             })
             .max(0.);
         let (rect, response) = ui.allocate_exact_size(Vec2::new(width, height), egui::Sense::hover());
-        if rect.intersects(ui.clip_rect()) && rect.is_positive() {
+        let visible = rect.intersects(ui.clip_rect()) && rect.is_positive();
+        if visible {
             self.prepare(&node.id, Target::layout(rect.size(), ui.ctx().pixels_per_point(), &node.props));
         }
         let widget = self.widgets.get(&node.id);
         let status = widget.map_or("empty", |w| w.status);
+        if !visible {
+            return (response, json!({"status":status,"width":natural.x,"height":natural.y}));
+        }
         let chosen = widget.and_then(|w| {
             w.displayed.as_ref().or(match status {
                 "loaded" => w.primary.as_ref(),
@@ -522,6 +575,8 @@ impl Images {
         let tinted = tint.is_some();
         let image = chosen.and_then(|key| self.resources.get_mut(key)).and_then(|r| match &mut r.state {
             State::Ready(image, texture) => {
+                self.paint_clock += 1;
+                r.last_painted = self.paint_clock;
                 let target = if tinted { &mut r.mask } else { texture };
                 let texture = target.get_or_insert_with(|| {
                     let mask = tinted.then(|| image.rgba.chunks_exact(4).flat_map(|p| [255, 255, 255, p[3]]).collect::<Vec<u8>>());
@@ -759,6 +814,53 @@ mod tests {
             if expect_request {
                 next.complete(next.requests()[0]["request"].as_u64().unwrap(), Some(pixels()), None);
             }
+        }
+    }
+    #[test]
+    fn remounted_list_images_reuse_the_uploaded_texture_when_cached() {
+        for (policy, directive, retained) in [
+            ("memory-disk", "default", true),
+            ("none", "default", false),
+            ("memory", "reload", false),
+        ] {
+            let mut doc = ComponentDocument::default();
+            let mut nodes = tree(
+                "",
+                json!({
+                    "source":{"uri":format!("remount-{policy}-{directive}"),"cache":directive},
+                    "cachePolicy":policy,"recyclingKey":"same-item","width":64,"height":64
+                }),
+            );
+            let set = |doc: &mut ComponentDocument, nodes: &[Node]| {
+                doc.set_tree(&json!(nodes)).unwrap();
+            };
+            set(&mut doc, &nodes);
+            doc.frame(400., 600., 1.).drop_without_applying_deltas();
+            let request = doc.images.requests()[0]["request"].as_u64().unwrap();
+            doc.images.complete(request, Some(pixels()), None);
+            let output = doc.frame(400., 600., 1.);
+            let texture = output
+                .textures_delta
+                .set
+                .iter()
+                .find_map(|(id, _)| (*id != egui::TextureId::default()).then_some(*id))
+                .unwrap();
+            output.drop_without_applying_deltas();
+
+            set(&mut doc, &[]);
+            let output = doc.frame(400., 600., 1.);
+            let freed = output.textures_delta.free.contains(&texture);
+            output.drop_without_applying_deltas();
+            assert_eq!(freed, !retained);
+            // A remounted React item can receive a new host ID while its source stays stable.
+            nodes[0].id = "remounted-image".into();
+            set(&mut doc, &nodes);
+            let output = doc.frame(400., 600., 1.);
+            let uploaded = !output.textures_delta.set.is_empty();
+            output.drop_without_applying_deltas();
+            assert!(!uploaded);
+            assert_eq!(doc.images.requests().is_empty(), retained);
+            assert_eq!(doc.images.widgets["remounted-image"].status, if retained { "loaded" } else { "loading" });
         }
     }
     #[test]

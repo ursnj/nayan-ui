@@ -41,7 +41,7 @@ use std::{
     sync::Arc,
 };
 
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Node {
     pub id: String,
@@ -455,6 +455,9 @@ impl ComponentDocument {
         self.layout_clips.retain(|id, _| ids.contains(id));
         self.lists.retain(|id, _| ids.contains(id));
         self.flow_lists.retain(|id, _| ids.contains(id));
+        for (id, list) in &mut self.flow_lists {
+            list.update_tree(id, &self.tree, &tree);
+        }
         self.carousels.retain(|id, _| ids.contains(id));
         self.confetti.retain(|id, _| ids.contains(id));
         self.row_widths.retain(|id, _| ids.contains(id));
@@ -601,6 +604,7 @@ impl ComponentDocument {
             }
             "tree" => self.set_tree(&v["nodes"])?,
             "environment" => {
+                let layout_environment = (self.font_scale, self.native, self.dark);
                 if let Some(platform) = v["platformInputs"].as_bool() {
                     self.platform_inputs = platform;
                 }
@@ -620,6 +624,11 @@ impl ComponentDocument {
                 }
                 if let Some(dark) = v["dark"].as_bool() {
                     self.dark = dark;
+                }
+                if layout_environment != (self.font_scale, self.native, self.dark) {
+                    for list in self.flow_lists.values_mut() {
+                        list.invalidate_measurements();
+                    }
                 }
                 if let Some(reduced) = v["reducedMotion"].as_bool() {
                     self.reduced_motion = reduced;
@@ -1280,7 +1289,7 @@ impl ComponentDocument {
                 Vec2::new(resolved.width.unwrap_or(ui.available_width()), resolved.height.unwrap_or(0.)),
                 egui::Sense::hover(),
             );
-        } else if resolved.horizontal && self.flow_row(ui, n, resolved) {
+        } else if resolved.horizontal && self.flow_row(ui, &flow, resolved) {
             // Flexible rows have already allocated their exact children.
         } else {
             // egui places a row's widgets from its start; justify uses the width measured last frame.
@@ -1329,13 +1338,8 @@ impl ComponentDocument {
                     bottom.map_or(containing.bottom(), |v| containing.bottom() - v),
                 ),
             );
-            let mut placed = child.clone();
-            if left.is_some() && right.is_some() && style.width.is_none() {
-                placed.props["width"] = json!(rect.width().max(0.));
-            }
-            if top.is_some() && bottom.is_some() && style.height.is_none() {
-                placed.props["height"] = json!(rect.height().max(0.));
-            }
+            let width = (left.is_some() && right.is_some() && style.width.is_none()).then(|| rect.width().max(0.));
+            let height = (top.is_some() && bottom.is_some() && style.height.is_none()).then(|| rect.height().max(0.));
             let mut builder = egui::UiBuilder::new().layout(egui::Layout::top_down(egui::Align::Min));
             // Right- or bottom-aligned egui layouts stretch a box to that edge, so boxes anchored only
             // there are placed at their own size: declared, or measured on the previous frame.
@@ -1353,7 +1357,7 @@ impl ComponentDocument {
                 }
             }
             let mut child_ui = ui.new_child(builder.max_rect(rect));
-            self.one(&mut child_ui, &placed);
+            self.one_sized(&mut child_ui, child, [width, height]);
         }
     }
 
@@ -1398,6 +1402,10 @@ impl ComponentDocument {
     }
 
     fn one(&mut self, ui: &mut egui::Ui, n: &Node) {
+        self.one_sized(ui, n, [None; 2]);
+    }
+
+    fn one_sized(&mut self, ui: &mut egui::Ui, n: &Node, size: [Option<f32>; 2]) {
         ui.push_id(&n.id, |ui| {
             let saved = if n.kind == "NTheme" {
                 let palette = theme::Palette::configure(&self.palette, &n.props, self.dark);
@@ -1431,12 +1439,13 @@ impl ComponentDocument {
                 active: hovered && ui.input(|i| i.pointer.any_down()),
                 viewport: ui.ctx().viewport_rect().width(),
             };
-            let resolved = style::Style::resolve(
+            let resolved = style::Style::resolve_sized(
                 &n.kind,
                 &n.props,
                 &self.palette,
                 conditions,
                 Vec2::new(ui.available_width(), ui.available_height().min(ui.ctx().viewport_rect().height())),
+                size,
             );
             if !resolved.hidden {
                 ui.add_enabled_ui(!disabled, |ui| {

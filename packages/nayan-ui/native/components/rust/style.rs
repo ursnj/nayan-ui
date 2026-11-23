@@ -346,23 +346,26 @@ pub(super) fn variant(class: &str, c: Conditions) -> Option<&str> {
 
 impl Style {
     pub fn resolve(kind: &str, props: &Value, palette: &theme::Palette, conditions: Conditions, available: Vec2) -> Self {
-        let merged;
-        let props = if let Some(defaults) = palette.components.get(kind) {
-            let mut value = props.clone();
-            value["className"] = serde_json::json!(format!(
-                "{} {}",
-                defaults["className"].as_str().unwrap_or(""),
-                props["className"].as_str().unwrap_or("")
-            ));
-            let mut style = defaults["style"].as_object().cloned().unwrap_or_default();
-            if let Some(explicit) = props["style"].as_object() {
-                style.extend(explicit.clone());
-            }
-            value["style"] = Value::Object(style);
-            merged = value;
-            &merged
-        } else {
-            props
+        Self::resolve_sized(kind, props, palette, conditions, available, [None; 2])
+    }
+
+    pub(super) fn resolve_sized(
+        kind: &str,
+        props: &Value,
+        palette: &theme::Palette,
+        conditions: Conditions,
+        available: Vec2,
+        size: [Option<f32>; 2],
+    ) -> Self {
+        // Inline values override component defaults, including explicit nulls.
+        let defaults = palette.components.get(kind);
+        let default_style = defaults.and_then(|props| props["style"].as_object());
+        let inline_style = props["style"].as_object();
+        let style = |key: &str| {
+            inline_style
+                .and_then(|values| values.get(key))
+                .or_else(|| default_style.and_then(|values| values.get(key)))
+                .unwrap_or(&Value::Null)
         };
         let mut result = Self {
             radius: palette.radius,
@@ -475,9 +478,23 @@ impl Style {
             result.border = Some(palette.get("border"));
             result.border_width = 1.;
         }
-        let mut classes: Vec<_> = props["className"].as_str().unwrap_or("").split_whitespace().collect();
-        classes.sort_by_key(|s| s.split('[').next().unwrap_or(s).matches(':').count());
+        let theme_classes = defaults.and_then(|value| value["className"].as_str()).unwrap_or("");
+        let classes = theme_classes
+            .split_whitespace()
+            .chain(props["className"].as_str().unwrap_or("").split_whitespace());
+        let mut variants = Vec::new();
         for class in classes {
+            let priority = class.bytes().take_while(|&byte| byte != b'[').filter(|&byte| byte == b':').count();
+            if priority == 0 {
+                if let Some(class) = variant(class, conditions) {
+                    result.utility(class, palette, available);
+                }
+            } else {
+                variants.push((priority, class));
+            }
+        }
+        variants.sort_by_key(|&(priority, _)| priority);
+        for (_, class) in variants {
             if let Some(class) = variant(class, conditions) {
                 result.utility(class, palette, available);
             }
@@ -521,7 +538,7 @@ impl Style {
             ("fontSize", "text"),
             ("lineHeight", "leading"),
         ] {
-            let value = &props["style"][key];
+            let value = style(key);
             if let Some(n) = value.as_f64().filter(|v| v.is_finite()) {
                 result.utility(&format!("{prefix}-[{n}px]"), palette, available);
             } else if let Some(v) = value.as_str() {
@@ -551,42 +568,44 @@ impl Style {
                 ][..],
             ),
         ] {
-            if let Some(v) = props["style"][key].as_str() {
+            if let Some(v) = style(key).as_str() {
                 if let Some((_, class)) = values.iter().find(|(name, _)| *name == v) {
                     result.utility(class, palette, available);
                 }
             }
         }
-        if let Some(grow) = props["style"]["flexGrow"].as_f64().or_else(|| props["style"]["flex"].as_f64()) {
+        if let Some(grow) = style("flexGrow").as_f64().or_else(|| style("flex").as_f64()) {
             result.grow = grow.clamp(0., 16384.) as f32;
         }
-        if let Some(v) = props["style"]["aspectRatio"].as_f64().filter(|v| v.is_finite() && *v > 0.) {
+        if let Some(v) = style("aspectRatio").as_f64().filter(|v| v.is_finite() && *v > 0.) {
             result.aspect_ratio = Some(v as f32);
         }
-        if let Some(v) = props["style"]["color"].as_str().and_then(theme::parse_color) {
+        if let Some(v) = style("color").as_str().and_then(theme::parse_color) {
             result.foreground = Some(v);
         }
-        if let Some(v) = props["style"]["fontWeight"]
+        if let Some(v) = style("fontWeight")
             .as_u64()
-            .or_else(|| props["style"]["fontWeight"].as_str().and_then(|v| v.parse().ok()))
+            .or_else(|| style("fontWeight").as_str().and_then(|v| v.parse().ok()))
         {
             result.weight = Some(v.clamp(100, 900) as u16);
         }
 
         // Explicit numeric style props override class utilities, consistently on both platforms.
-        result.width = props["style"]["width"]
+        result.width = style("width")
             .as_f64()
+            .or_else(|| size[0].map(f64::from))
             .or_else(|| props["width"].as_f64())
             .filter(|v| v.is_finite())
             .map(|v| v as f32)
             .or(result.width);
-        result.height = props["style"]["height"]
+        result.height = style("height")
             .as_f64()
+            .or_else(|| size[1].map(f64::from))
             .or_else(|| props["height"].as_f64())
             .filter(|v| v.is_finite())
             .map(|v| v as f32)
             .or(result.height);
-        if let Some(filter) = props["style"]["backdropFilter"].as_str() {
+        if let Some(filter) = style("backdropFilter").as_str() {
             result.backdrop_blur = filter
                 .strip_prefix("blur(")
                 .and_then(|v| v.strip_suffix(')'))
@@ -594,7 +613,7 @@ impl Style {
                 .unwrap_or(0.)
                 .clamp(0., 64.);
         }
-        if let Some(shadow) = props["style"]["boxShadow"].as_str() {
+        if let Some(shadow) = style("boxShadow").as_str() {
             let parts: Vec<_> = shadow.split_whitespace().collect();
             if parts.len() >= 5 {
                 let lengths: Option<Vec<f32>> = parts[..4].iter().map(|part| number(part.trim_end_matches("px"))).collect();
@@ -611,40 +630,40 @@ impl Style {
                 }
             }
         }
-        if let Some(v) = props["style"]["borderRadius"].as_f64() {
+        if let Some(v) = style("borderRadius").as_f64() {
             result.radius = (v as f32).clamp(0., 255.);
         }
-        if let Some(v) = props["style"]["borderWidth"].as_f64() {
+        if let Some(v) = style("borderWidth").as_f64() {
             result.border_width = (v as f32).clamp(0., 32.);
         }
-        if let Some(v) = props["style"]["borderColor"].as_str().and_then(theme::parse_color) {
+        if let Some(v) = style("borderColor").as_str().and_then(theme::parse_color) {
             result.border = Some(v);
         }
-        if let Some(v) = props["style"]["backgroundColor"].as_str().and_then(theme::parse_color) {
+        if let Some(v) = style("backgroundColor").as_str().and_then(theme::parse_color) {
             result.background = Some(v);
         }
-        if let Some(v) = props["style"]["opacity"].as_f64() {
+        if let Some(v) = style("opacity").as_f64() {
             result.opacity = (v as f32).clamp(0., 1.);
             result.opacity_set = true;
         }
-        if let Some(color) = props["style"]["textShadowColor"].as_str().and_then(theme::parse_color) {
-            let offset = &props["style"]["textShadowOffset"];
+        if let Some(color) = style("textShadowColor").as_str().and_then(theme::parse_color) {
+            let offset = style("textShadowOffset");
             result.text_shadow = Some(TextShadow {
                 color,
                 offset: Vec2::new(
                     offset["width"].as_f64().unwrap_or(0.).clamp(-64., 64.) as f32,
                     offset["height"].as_f64().unwrap_or(0.).clamp(-64., 64.) as f32,
                 ),
-                radius: props["style"]["textShadowRadius"].as_f64().unwrap_or(0.).clamp(0., 64.) as f32,
+                radius: style("textShadowRadius").as_f64().unwrap_or(0.).clamp(0., 64.) as f32,
             });
         }
-        if let Some(align) = props["style"]["textAlign"].as_str().and_then(text_align) {
+        if let Some(align) = style("textAlign").as_str().and_then(text_align) {
             result.text_align = Some(align);
         }
-        if let Some(value) = props["style"]["letterSpacing"].as_f64() {
+        if let Some(value) = style("letterSpacing").as_f64() {
             result.tracking = Some(Length::Points(value as f32));
         }
-        if let Some(value) = props["style"]["textTransform"].as_str().and_then(TextTransform::parse) {
+        if let Some(value) = style("textTransform").as_str().and_then(TextTransform::parse) {
             result.text_transform = Some(value);
         }
         if props["safeArea"].is_object() {

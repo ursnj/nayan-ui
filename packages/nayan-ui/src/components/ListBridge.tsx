@@ -195,7 +195,10 @@ export function ListBridge<T>({
 
   const onRange = (next: ComponentListPlan) => {
     if (next.configuration !== baseline.configuration) return;
-    setSnapshot({ baseline, value: next });
+    setSnapshot((previous) => {
+      const mounted = previous.baseline === baseline ? previous.value : baseline;
+      return mounted.start === next.start && mounted.end === next.end ? previous : { baseline, value: next };
+    });
     if (next.headerPinnedChanged) onStickyHeaderChange?.(next.headerPinned ?? false);
     if (next.refreshRequested) onRefresh?.();
     if (next.visibleChanged) onVisibleRangeChange?.({ first: next.first, last: next.last });
