@@ -5,6 +5,7 @@
 @interface NayanEngineBlurView : RCTView
 @property (nonatomic, assign) CGFloat blurRadius;
 @property (nonatomic, copy) NSString *tint;
+@property (nonatomic, copy) NSString *material;
 @property (nonatomic, assign) BOOL enabled;
 @property (nonatomic, assign) NSInteger targetTag;
 @end
@@ -53,6 +54,11 @@
   [self refreshBlur];
 }
 
+- (void)setMaterial:(NSString *)value {
+  _material = [value copy];
+  [self refreshBlur];
+}
+
 - (void)setEnabled:(BOOL)value {
   _enabled = value;
   [self refreshBlur];
@@ -68,7 +74,12 @@
     _backdrop.backgroundColor = [_tint isEqualToString:@"dark"] ? UIColor.blackColor : [_tint isEqualToString:@"light"] ? UIColor.whiteColor : UIColor.systemBackgroundColor;
     return;
   }
-  UIBlurEffectStyle style = [_tint isEqualToString:@"dark"] ? UIBlurEffectStyleSystemMaterialDark : [_tint isEqualToString:@"light"] ? UIBlurEffectStyleSystemMaterialLight : UIBlurEffectStyleSystemMaterial;
+  const BOOL dark = [_tint isEqualToString:@"dark"];
+  const BOOL light = [_tint isEqualToString:@"light"];
+  const BOOL ultraThin = [_material isEqualToString:@"ultraThin"];
+  UIBlurEffectStyle style = ultraThin
+    ? (dark ? UIBlurEffectStyleSystemUltraThinMaterialDark : light ? UIBlurEffectStyleSystemUltraThinMaterialLight : UIBlurEffectStyleSystemUltraThinMaterial)
+    : (dark ? UIBlurEffectStyleSystemMaterialDark : light ? UIBlurEffectStyleSystemMaterialLight : UIBlurEffectStyleSystemMaterial);
   __weak UIVisualEffectView *backdrop = _backdrop;
   _animator = [[UIViewPropertyAnimator alloc] initWithDuration:1 curve:UIViewAnimationCurveLinear animations:^{
     backdrop.effect = [UIBlurEffect effectWithStyle:style];
@@ -92,6 +103,7 @@ RCT_EXPORT_MODULE(NayanEngineBlur)
 - (UIView *)view { return [NayanEngineBlurView new]; }
 RCT_EXPORT_VIEW_PROPERTY(blurRadius, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(tint, NSString)
+RCT_EXPORT_VIEW_PROPERTY(material, NSString)
 RCT_EXPORT_VIEW_PROPERTY(enabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(targetTag, NSInteger)
 @end

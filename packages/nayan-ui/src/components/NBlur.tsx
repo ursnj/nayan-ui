@@ -12,6 +12,8 @@ export interface NBlurProps extends ComponentProps {
   /** Blur radius in logical points; overrides intensity (100 = 20 points). */
   radius?: number;
   tint?: 'default' | 'light' | 'dark';
+  /** UIKit backdrop material. Other platforms use the configured radius and tint. */
+  material?: 'regular' | 'ultraThin';
   /** Optional Android source view. Pass a ref to an NView with collapsable={false} inside NPlatformView. */
   blurTarget?: RefObject<NViewNativeRef | null>;
   /** Disable the effect while keeping children visible. */
@@ -23,22 +25,22 @@ function flatten(style: ComponentProps['style']): ComponentStyle {
 }
 
 /** One blur API: Rust GPU panels inside ComponentsRoot, platform backdrops around native/browser content. */
-export function NBlur({ intensity = 50, radius, tint = 'default', enabled = true, blurTarget, style, ...props }: NBlurProps) {
+export function NBlur({ intensity = 50, radius, tint = 'default', material, enabled = true, blurTarget, style, ...props }: NBlurProps) {
   const rendering = useComponentRenderer('NBlur', true);
   const requested = radius ?? Math.min(100, Math.max(0, intensity)) * 0.2;
   const blur = enabled && Number.isFinite(requested) ? Math.min(64, Math.max(0, requested)) : 0;
-  const material = blur > 0 ? tint : 'default';
+  const resolvedTint = blur > 0 ? tint : 'default';
   if (rendering) {
     return (
       <NView
         {...props}
         style={{
-          ...(material === 'dark' ? { backgroundColor: '#00000033' } : material === 'light' ? { backgroundColor: '#ffffff33' } : {}),
+          ...(resolvedTint === 'dark' ? { backgroundColor: '#00000033' } : resolvedTint === 'light' ? { backgroundColor: '#ffffff33' } : {}),
           ...flatten(style),
           backdropFilter: `blur(${blur}px)`
         }}
       />
     );
   }
-  return <BlurHost {...props} style={style} radius={blur} tint={material} blurTarget={blurTarget} enabled={enabled} />;
+  return <BlurHost {...props} style={style} radius={blur} tint={resolvedTint} material={material} blurTarget={blurTarget} enabled={enabled} />;
 }

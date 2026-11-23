@@ -20,7 +20,15 @@ test('browser blur preserves semantic tags, foreground content and composed styl
   const element = document.createElement('div');
   const root = createRoot(element);
   const render = (enabled: boolean) => (
-    <NBlur tag="aside" radius={12} enabled={enabled} tint="dark" style={[{ borderRadius: 18 }, { overflow: 'hidden' }]} aria-label="Frosted panel">
+    <NBlur
+      tag="aside"
+      radius={12}
+      enabled={enabled}
+      tint="dark"
+      material="ultraThin"
+      style={[{ borderRadius: 18 }, { overflow: 'hidden' }]}
+      aria-label="Frosted panel"
+    >
       <button type="button">Sharp foreground</button>
     </NBlur>
   );
@@ -32,6 +40,7 @@ test('browser blur preserves semantic tags, foreground content and composed styl
     expect(panel.style.borderRadius).toBe('18px');
     expect(panel.style.overflow).toBe('hidden');
     expect(panel.getAttribute('aria-label')).toBe('Frosted panel');
+    expect(panel.hasAttribute('material')).toBe(false);
     await act(() => root.render(<PlatformRenderContext.Provider value>{render(false)}</PlatformRenderContext.Provider>));
     expect(panel.style.backdropFilter).toBe('blur(0px)');
     expect(panel.querySelector('button')).toBe(button);

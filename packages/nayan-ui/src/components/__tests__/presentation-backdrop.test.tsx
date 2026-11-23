@@ -87,12 +87,22 @@ beforeEach(() => {
 });
 
 test('the stationary scrim fades independently while a sheet waits for content measurement', async () => {
-  const root = createRoot(document.createElement('div'));
+  const container = document.createElement('div');
+  const root = createRoot(container);
   try {
     const render = (ready: boolean) =>
       act(async () =>
         root.render(
-          <PresentationHost sheet ready={ready} height={220} width={402} border="#444" background="#222" onClose={() => {}}>
+          <PresentationHost
+            sheet
+            ready={ready}
+            height={220}
+            width={402}
+            border="#444"
+            background="#222"
+            onClose={() => {}}
+            backdrop={<div data-panel-backdrop />}
+          >
             Content
           </PresentationHost>
         )
@@ -104,11 +114,14 @@ test('the stationary scrim fades independently while a sheet waits for content m
     expect(timing.mock.calls[0]?.[1]).toMatchObject({ toValue: 1, duration: 200, useNativeDriver: true });
     expect(scrim.style?.transform).toBeUndefined();
     expect(spring).not.toHaveBeenCalled();
+    expect(container.querySelector('[data-panel-backdrop]')).toBeNull();
+    expect(container.textContent).toBe('Content');
     await render(true);
     expect(spring).toHaveBeenCalledTimes(1);
     expect(timing).toHaveBeenCalledTimes(1);
     expect(scrim.style?.transform).toBeUndefined();
     expect(panel.style?.transform).toBeDefined();
+    expect(container.querySelector('[data-panel-backdrop]')).not.toBeNull();
   } finally {
     await act(async () => root.unmount());
   }

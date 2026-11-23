@@ -945,6 +945,7 @@ Use `NAccordion` with one item for a single collapsible panel. Pass `defaultExpa
 `expanded` and `onExpandedChange` to control whether the accordion is open.
 `NBlur` blurs the backdrop by default. To sample a specific Android view, put the source `NView` and its `NBlur`
 overlay in an `NPlatformView`, set `collapsable={false}` on the source, and pass its ref as `blurTarget`.
+On an iOS platform view, `material="ultraThin"` lets more of the backdrop show through the blur.
 The date picker and toast service also use Rust state and engine rendering. SDK-owned surfaces retain their platform integrations.
 
 ### Tabs and button groups

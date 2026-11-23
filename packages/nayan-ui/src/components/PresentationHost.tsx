@@ -67,6 +67,8 @@ export function PresentationHost({
   current.current = { height, onClose, swipeable, sheet, dismissible, ready, dragAreaHeight };
   const reducedMotion = useRef(false);
   const alive = useRef(true);
+  // UIKit can resolve a blur at full strength when its parent has zero opacity.
+  const showBackdrop = Platform.OS !== 'ios' || ready;
 
   useEffect(() => {
     let active = true;
@@ -267,9 +269,10 @@ export function PresentationHost({
               transform: sheet ? [{ translateY: translation }] : undefined,
               paddingBottom: sheet ? bottomInset : 0
             }}>
-            {backdrop ?? (
-              <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: background }} />
-            )}
+            {showBackdrop &&
+              (backdrop ?? (
+                <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: background }} />
+              ))}
             {sheet && (
               <View
                 accessible={false}

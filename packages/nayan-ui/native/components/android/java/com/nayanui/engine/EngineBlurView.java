@@ -137,13 +137,18 @@ public final class EngineBlurView extends ReactViewGroup {
   private void capture() {
     if (busy || getWidth() == 0 || getHeight() == 0) return;
     View root = getRootView();
-    View target = targetTag < 0 ? root : root.findViewById(targetTag);
-    // A transparent React Native modal has its own window, while its explicit source can
-    // live in the activity underneath it.
+    View target = targetTag < 0 ? null : root.findViewById(targetTag);
+    // A transparent modal has its own window. Sample the activity while an explicit
+    // target is mounting so the modal never samples its own content.
     if (target == null && getContext() instanceof ReactContext) {
       Activity activity = ((ReactContext) getContext()).getCurrentActivity();
-      if (activity != null) target = activity.findViewById(targetTag);
+      if (activity != null) {
+        if (targetTag >= 0) target = activity.findViewById(targetTag);
+        View content = activity.findViewById(android.R.id.content);
+        if (target == null && content != null && content.getRootView() != root) target = content;
+      }
     }
+    if (target == null && targetTag < 0) target = root;
     if (target == null || !target.isShown() || target == this) return;
     getLocationOnScreen(position);
     target.getLocationOnScreen(sourcePosition);

@@ -18,7 +18,7 @@ import { NPress } from './NPress';
 import { NText } from './NText';
 import { NView } from './NView';
 import { PresentationHost, usePresentationSize } from './PresentationHost';
-import { PageContext } from './theme/contexts';
+import { PageContext, SafeAreaInsetsContext } from './theme/contexts';
 import { ComponentThemeContext } from './ThemeContext';
 
 export interface OverlayProps {
@@ -84,6 +84,7 @@ function Presentation({
   const page = useContext(PageContext);
   const id = useId();
   const theme = useContext(ComponentThemeContext);
+  const insets = useContext(SafeAreaInsetsContext);
   const contextValues = useSurfaceContextValues(theme?.contexts);
   const mode = theme?.resolvedTheme ?? (theme?.theme === 'dark' ? 'dark' : 'light');
   const colors = { ...theme?.colors, ...theme?.themes?.[mode] };
@@ -103,10 +104,11 @@ function Presentation({
   useEffect(() => {
     if (!isOpen) setContentHeight(null);
   }, [isOpen]);
-  const bottomInset = sheet ? Math.max(16, theme?.presentationInsets?.bottom ?? 0) : 0;
+  // Reserve the home-indicator space at the end of the sheet's root scroller.
+  const bottomPadding = sheet ? Math.max(16, theme?.presentationInsets?.bottom ?? 0, insets?.bottom ?? 0) : 0;
   const dismissible = controlledOpen === undefined || typeof onOpenChange === 'function';
   const swipeable = sheet && isSwipeable && dismissible;
-  const chromeHeight = sheet ? (swipeable ? 33 : 17) + bottomInset : 2;
+  const chromeHeight = sheet ? (swipeable ? 33 : 17) : 2;
   const screenLimit = Math.max(1, Math.min(window.height * 0.9, window.height - (theme?.presentationInsets?.top ?? 0) - 16));
   const requested = snapPoints?.[0];
   const requestedHeight =
@@ -132,7 +134,7 @@ function Presentation({
               sheet={sheet}
               height={height}
               width={Math.min(sheet ? window.width : window.width - 32, maxWidth ?? (sheet ? 640 : 425))}
-              bottomInset={bottomInset}
+              bottomInset={0}
               handleColor={colors.muted}
               dismissible={dismissible}
               swipeable={swipeable}
@@ -143,12 +145,13 @@ function Presentation({
               onClose={() => changeOpen(false)}
               backdrop={(!sheet || blurred) && Background ? <Background /> : undefined}>
               <NPage
-                safeArea={sheet}
+                safeArea={false}
                 showsVerticalScrollIndicator={showsVerticalScrollIndicator}
                 keyboard={!sheet}
                 background={sheet ? surfaceBackground : undefined}
                 onContentSizeChange={onContentSizeChange}
-                className={`${sheet ? 'gap-0 px-5 pt-1 pb-4' : 'gap-0 px-4 py-3'} ${className}`}>
+                style={sheet ? { paddingBottom: bottomPadding } : undefined}
+                className={`${sheet ? 'gap-0 px-5 pt-1' : 'gap-0 px-4 py-3'} ${className}`}>
                 {(!sheet || title || description) && (
                   <NView className={`nayan-presentation-header w-full flex-row items-center justify-between ${sheet ? 'mb-4 gap-3' : 'mb-3'}`}>
                     <NView className="flex-1">
@@ -180,7 +183,7 @@ function Presentation({
       height,
       window.width,
       maxWidth,
-      bottomInset,
+      bottomPadding,
       dismissible,
       showCloseButton,
       showsVerticalScrollIndicator,

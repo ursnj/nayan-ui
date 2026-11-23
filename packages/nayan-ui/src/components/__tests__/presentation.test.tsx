@@ -14,6 +14,7 @@ let modalHeight = 0;
 let pageIndicator: boolean | undefined;
 let pageBackground: string | undefined;
 let pageSafeArea: boolean | undefined;
+let pageStyle: { paddingBottom?: number } | undefined;
 let modalProps: {
   height: number;
   ready?: boolean;
@@ -32,17 +33,20 @@ mock.module('../NPage', () => ({
     onContentSizeChange,
     showsVerticalScrollIndicator,
     background,
-    safeArea
+    safeArea,
+    style
   }: {
     children?: ReactNode;
     onContentSizeChange?: (width: number, height: number) => void;
     showsVerticalScrollIndicator?: boolean;
     background?: string;
     safeArea?: boolean;
+    style?: { paddingBottom?: number };
   }) => {
     pageIndicator = showsVerticalScrollIndicator;
     pageBackground = background;
     pageSafeArea = safeArea;
+    pageStyle = style;
     measure = onContentSizeChange;
     return <Box>{children}</Box>;
   }
@@ -315,6 +319,7 @@ test('confirmations show the measured height on first open and remeasure when re
     expect(modalHeight).toBe(220);
     expect(modalProps.ready).toBe(false);
     expect(pageSafeArea).toBe(false);
+    expect(pageStyle).toBeUndefined();
     await act(() => measure?.(358, 184));
     expect(modalHeight).toBe(186);
     expect(modalProps.ready).toBe(true);
@@ -333,7 +338,7 @@ test('confirmations show the measured height on first open and remeasure when re
   }
 });
 
-test('sheets fit changing Rust content measurements, include safe area, and cap tall content', async () => {
+test('sheets include bottom safe area once in measured scroll content and cap tall content', async () => {
   const root = createRoot(document.createElement('div'));
   try {
     await act(() =>
@@ -347,13 +352,15 @@ test('sheets fit changing Rust content measurements, include safe area, and cap 
     );
     expect(modalProps.ready).toBe(false);
     expect(modalProps.swipeable).toBe(true);
-    expect(modalProps.bottomInset).toBe(34);
-    await act(() => measure?.(350, 180));
+    expect(modalProps.bottomInset).toBe(0);
+    expect(pageSafeArea).toBe(false);
+    expect(pageStyle).toEqual({ paddingBottom: 34 });
+    await act(() => measure?.(350, 180 + 34));
     expect(modalProps.ready).toBe(true);
     expect(modalHeight).toBe(180 + 32 + 34 + 1);
-    await act(() => measure?.(350, 320));
+    await act(() => measure?.(350, 320 + 34));
     expect(modalHeight).toBe(320 + 32 + 34 + 1);
-    await act(() => measure?.(350, 120));
+    await act(() => measure?.(350, 120 + 34));
     expect(modalHeight).toBe(120 + 32 + 34 + 1);
     await act(() => measure?.(350, 1600));
     expect(modalHeight).toBeCloseTo(844 * 0.9);
@@ -372,7 +379,8 @@ test('snap points cap content fitting and fixed sizing remains available explici
         </NSheet>
       )
     );
-    await act(() => measure?.(350, 100));
+    expect(pageStyle).toEqual({ paddingBottom: 16 });
+    await act(() => measure?.(350, 100 + 16));
     expect(modalHeight).toBe(149);
     await act(() => measure?.(350, 1600));
     expect(modalHeight).toBeCloseTo(844 * 0.8);
@@ -383,7 +391,7 @@ test('snap points cap content fitting and fixed sizing remains available explici
         </NSheet>
       )
     );
-    await act(() => measure?.(350, 100));
+    await act(() => measure?.(350, 100 + 16));
     expect(modalHeight).toBeCloseTo(844 * 0.8);
   } finally {
     await act(() => root.unmount());
@@ -401,7 +409,7 @@ test('sheets remeasure each visit, ignore invalid measurements, and respect dism
       )
     );
     expect(modalProps.swipeable).toBe(false);
-    await act(() => measure?.(350, 100));
+    await act(() => measure?.(350, 100 + 16));
     expect(modalHeight).toBe(133);
     for (const invalid of [0, -1, NaN, Infinity]) {
       await act(() => measure?.(350, invalid));
@@ -411,7 +419,7 @@ test('sheets remeasure each visit, ignore invalid measurements, and respect dism
     await act(() => root.render(<NSheet isOpen>New content</NSheet>));
     expect(modalProps.ready).toBe(false);
     expect(modalProps.swipeable).toBe(false);
-    await act(() => measure?.(350, 200));
+    await act(() => measure?.(350, 200 + 16));
     expect(modalHeight).toBe(233);
   } finally {
     await act(() => root.unmount());

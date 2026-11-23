@@ -10,6 +10,7 @@ export function BlurHost({
   tag = 'div',
   radius = 10,
   tint = 'default',
+  material: _material,
   blurTarget: _target,
   enabled: _enabled,
   style,
