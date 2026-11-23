@@ -26,7 +26,6 @@ const GROUPS = PLAYGROUND_CATEGORIES.map((category) => ({
 const OPTIONS: Option[] = GROUPS.flatMap((group) => group.options);
 
 const STORAGE_KEY = "nyn-engine-playground";
-const PLAYGROUND_PATH = "/playground";
 const encode = (code: string) => btoa(unescape(encodeURIComponent(code)));
 const decode = (text: string) => decodeURIComponent(escape(atob(text)));
 
@@ -124,9 +123,6 @@ export default function NayanPlayground() {
   }, [log]);
 
   useEffect(() => {
-    const { pathname, search, hash } = window.location;
-    if (pathname !== PLAYGROUND_PATH) window.history.replaceState(null, "", PLAYGROUND_PATH + search + hash);
-
     try {
       const currentCompiler = createCompiler();
       compiler.current = currentCompiler;
@@ -186,12 +182,13 @@ export default function NayanPlayground() {
 
   // The link carries the code in its #hash. It goes in the address bar too, so it can be copied by hand.
   const share = async () => {
-    const url = `${window.location.origin}${PLAYGROUND_PATH}#code=${encodeURIComponent(encode(code))}`;
+    const url = new URL(window.location.href);
+    url.hash = `code=${encodeURIComponent(encode(code))}`;
     window.history.replaceState(null, "", url);
-    const copied = await copyText(url);
+    const copied = await copyText(url.href);
     setShared(copied ? "copied" : "failed");
     if (!copied)
-      log("warn", "Couldn't copy the link automatically; copy it from the address bar:", url);
+      log("warn", "Couldn't copy the link automatically. Copy it from the address bar.", url.href);
     setTimeout(() => setShared(null), 2500);
   };
 

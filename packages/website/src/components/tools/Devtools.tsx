@@ -199,7 +199,7 @@ const IMAGE_TOOLS = [
   {
     icon: Globe,
     title: 'HTML to image',
-    body: 'Convert webpages to JPG or PNG by entering a URL.',
+    body: 'Capture a full webpage or part of it as a PNG or JPEG.',
     href: '/tools/html-to-image'
   },
   {

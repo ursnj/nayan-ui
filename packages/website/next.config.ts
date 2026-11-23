@@ -1,7 +1,6 @@
 import path from 'node:path';
 import type { NextConfig } from 'next';
-import { componentReferences } from './src/services/nayan-ui/component-reference';
-import { moduleReferences } from './src/services/nayan-ui/module-reference';
+import { pageRewrites } from './src/services/site-routes';
 
 const nextConfig: NextConfig = {
   // No in-memory copy of rendered pages: the server reads its prerendered pages from disk, which
@@ -16,47 +15,19 @@ const nextConfig: NextConfig = {
     root: path.resolve(__dirname, '../..')
   },
   output: 'standalone',
+  skipTrailingSlashRedirect: true,
   async rewrites() {
     return [
-      // Some browsers still have the original permanent redirect from /playground cached.
-      { source: '/game-engine/playground/:path*', destination: '/playground/:path*' },
-      ...['/disclosure', '/components/disclosure', '/react/disclosure'].map((source) => ({ source, destination: '/accordion' })),
-      ...['/blur-target', '/components/blur-target'].map((source) => ({ source, destination: '/blur' })),
-      ...['/close-button', '/components/close-button'].map((source) => ({ source, destination: '/press' })),
-      ...['/components-root', '/components/components-root', '/page', '/components/page'].map((source) => ({ source, destination: '/theme' })),
-      // /modules/games already has a page and /games is the playable game catalog.
-      ...[...componentReferences, ...moduleReferences.filter(({ slug }) => slug !== 'games')]
-        .map(({ slug, path }) => ({ source: path, destination: `/${slug}` }))
-    ];
-  },
-  // Keep published documentation, shared games and saved playground links working.
-  async redirects() {
-    return [
-      ...['', '/components', '/react', '/react-native'].flatMap((prefix) =>
-        ['calendar', 'date-field'].map((slug) => ({ source: `${prefix}/${slug}`, destination: '/components/date-picker', permanent: true }))
-      ),
-      { source: '/examples/:path*', destination: '/game-engine/examples/:path*', permanent: true },
-      { source: '/:legacy(engine|nayan-game-engine)/playground/:path*', destination: '/playground/:path*', permanent: true },
-      { source: '/engine/:path*', destination: '/game-engine/:path*', permanent: true },
-      { source: '/nayan-components', destination: '/components', permanent: true },
-      { source: '/nayan-modules/:path*', destination: '/modules/:path*', permanent: true },
-      { source: '/nayan-game-engine/:path*', destination: '/game-engine/:path*', permanent: true },
-      { source: '/nayan-playground/:path*', destination: '/playground/:path*', permanent: true },
-      { source: '/nayan-video-editor/:path*', destination: '/video-editor/:path*', permanent: true },
-      { source: '/react/tags/:tag*', destination: '/tags/:tag*', permanent: true },
-      { source: '/react-native/tags/:tag*', destination: '/tags/:tag*', permanent: true },
-      // Play With Tua was renamed Talking Tua.
-      { source: '/games/play-with-tua', destination: '/games/talking-tua', permanent: true },
-      { source: '/nayan-games/play-with-tua', destination: '/games/talking-tua', permanent: true },
-      { source: '/nayan-games/:path*', destination: '/games/:path*', permanent: true },
-      { source: '/engine-ui/:path*', destination: '/nayan-ui/:path*', permanent: true },
-      { source: '/engine.json', destination: '/nayan-game-engine.json', permanent: true },
-      { source: '/seo/game-engine/playground.png', destination: '/seo/nayan-playground.png', permanent: true },
-      { source: '/seo/artwork/pages/game-engine/playground.jpg', destination: '/seo/artwork/pages/nayan-playground.jpg', permanent: true },
-      { source: '/seo/artwork/games.jpg', destination: '/seo/artwork/nayan-games.jpg', permanent: true },
-      { source: '/seo/:product(game-engine|games|video-editor).png', destination: '/seo/nayan-:product.png', permanent: true },
-      { source: '/seo/:product(game-engine|games|video-editor)/:path*', destination: '/seo/nayan-:product/:path*', permanent: true },
-      { source: '/seo/artwork/pages/:product(game-engine|games|video-editor)/:path*', destination: '/seo/artwork/pages/nayan-:product/:path*', permanent: true }
+      { source: '/game-engine/playground/:path+', destination: '/playground/:path*' },
+      ...pageRewrites,
+      { source: '/engine-ui/:path*', destination: '/nayan-ui/:path*' },
+      { source: '/engine.json', destination: '/nayan-game-engine.json' },
+      { source: '/seo/game-engine/playground.png', destination: '/seo/nayan-playground.png' },
+      { source: '/seo/artwork/pages/game-engine/playground.jpg', destination: '/seo/artwork/pages/nayan-playground.jpg' },
+      { source: '/seo/artwork/games.jpg', destination: '/seo/artwork/nayan-games.jpg' },
+      { source: '/seo/:product(game-engine|games|video-editor).png', destination: '/seo/nayan-:product.png' },
+      { source: '/seo/:product(game-engine|games|video-editor)/:path*', destination: '/seo/nayan-:product/:path*' },
+      { source: '/seo/artwork/pages/:product(game-engine|games|video-editor)/:path*', destination: '/seo/artwork/pages/nayan-:product/:path*' }
     ];
   }
 };

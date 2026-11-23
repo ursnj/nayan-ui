@@ -89,6 +89,7 @@ const topics = [
     slugs: [
       'card',
       'divider',
+      'page',
       'platform-view',
       'safe-area',
       'safe-area-listener',
@@ -156,6 +157,7 @@ const topics = [
       'safe-area',
       'styles',
       'theme',
+      'use-system-bars',
       'wasm-runtime',
       'web'
     ]

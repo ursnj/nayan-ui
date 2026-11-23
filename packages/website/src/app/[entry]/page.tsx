@@ -1,33 +1,22 @@
 import { notFound } from 'next/navigation';
 import { ReferencePage } from '@/components/nayan-reference/ReferencePage';
-import { componentReferences } from '@/services/nayan-ui/component-reference';
-import { moduleReferences } from '@/services/nayan-ui/module-reference';
-import { tagsForReference } from '@/services/nayan-ui/reference-tags';
-import { buildPageMetadata } from '@/services/seo';
-
-const entries = [...componentReferences, ...moduleReferences.filter(({ slug }) => slug !== 'games')];
+import { referenceEntries, referenceEntryMetadata } from '@/services/nayan-ui/reference-entry';
 
 export const dynamicParams = false;
 
 type Props = { params: Promise<{ entry: string }> };
 
 export function generateStaticParams() {
-  return entries.map(({ slug }) => ({ entry: slug }));
+  return referenceEntries.map(({ slug }) => ({ entry: slug }));
 }
 
 async function getEntry({ params }: Props) {
   const { entry } = await params;
-  return entries.find(({ slug }) => slug === entry) ?? notFound();
+  return referenceEntries.find(({ slug }) => slug === entry) ?? notFound();
 }
 
 export async function generateMetadata(props: Props) {
-  const entry = await getEntry(props);
-  return buildPageMetadata({
-    title: `${entry.title} · Engine Reference`,
-    description: entry.description,
-    path: entry.path,
-    keywords: tagsForReference(entry.path).map(({ text }) => text).join(', ')
-  });
+  return referenceEntryMetadata(await getEntry(props));
 }
 
 export default async function EngineReferenceEntryPage(props: Props) {

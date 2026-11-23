@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PILL_INTERACTIVE } from "@/design/system";
 
 interface Props {
-  type?: "tools";
+  type?: "tools" | "react" | "react-native";
   tags: readonly { sku: string; text: string }[];
 }
 
@@ -12,7 +12,7 @@ const TagsList = ({ type, tags }: Props) => (
     {tags.map((tag) => (
       <NView tag="li" key={tag.sku}>
         <Link
-          href={`${type === "tools" ? "/tools/tags" : "/tags"}/${encodeURIComponent(tag.sku)}`}
+          href={`${type ? `/${type}/tags` : "/tags"}/${encodeURIComponent(tag.sku)}`}
           prefetch={type === "tools" ? undefined : false}
           className={PILL_INTERACTIVE}
         >

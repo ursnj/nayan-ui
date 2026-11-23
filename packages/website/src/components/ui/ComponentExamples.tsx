@@ -12,6 +12,7 @@ import type { ComponentPreview } from './previews/types';
 import LiveExample from '@/components/helpers/LiveExample';
 import { additionalExample } from './previews/AdditionalExamples';
 import { specializedExample } from './previews/SpecializedScenarios';
+import { pageExample, systemBarsExample } from './previews/PageExamples';
 
 type Control = keyof typeof Engine;
 type Spec = { control: Control; text?: string; props?: Record<string, unknown>; result?: string; height?: number; note?: string };
@@ -23,7 +24,9 @@ const items = [
 
 const examples: Record<string, Spec> = {
   card: { control: 'NCard', text: 'This is a sample card.', props: { className: 'w-full rounded-lg border border-border bg-surface px-4 py-3' } },
+  calendar: { control: 'NDatePicker', props: { label: 'Booking date' }, height: 380 },
   code: { control: 'NCode', props: { code: 'bun add nayan-ui' } },
+  'date-field': { control: 'NInput', props: { label: 'Start date', type: 'date' } },
   'date-picker': { control: 'NDatePicker', props: { label: 'Date' }, height: 380 },
   icon: {
     control: 'NIcon',
@@ -62,14 +65,27 @@ const dialogNames = {
   'confirm-alert': { control: 'NConfirm', action: 'Show Confirm Alert', title: 'Are you absolutely sure?' }
 } as const;
 const confirmation = 'This will delete the example item.';
+const disclosureItems = [{ title: 'Shipping details', message: 'Orders ship within two business days.' }];
 type DialogName = keyof typeof dialogNames;
 
 export function componentPreview(slug: string): ComponentPreview | undefined {
+  if (slug === 'page') return pageExample;
+  if (slug === 'use-system-bars') return systemBarsExample;
+
   const preview = familiarExample(slug) ?? hostExample(slug) ?? legacyExample(slug);
   if (preview) return preview;
 
   const media = specializedExample(slug);
   if (media) return media;
+
+  if (slug === 'disclosure') {
+    return {
+      host: true,
+      height: 'auto',
+      source: componentSource('NAccordion', `<NAccordion items={${JSON.stringify(disclosureItems)}} />`),
+      render: <Engine.NAccordion items={disclosureItems} />
+    };
+  }
 
   if (slug === 'action-item') {
     return {

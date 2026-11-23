@@ -30,12 +30,6 @@ export const accordionTags = [
   { sku: "accordion-responsive-design", text: "Accordion Responsive Design" },
   { sku: "react-accordion-typescript", text: "React Accordion TypeScript" },
   { sku: "accordion-component-design-system", text: "Accordion Component Design System" },
-  { sku: "react-disclosure", text: "React Disclosure" },
-  { sku: "react-collapsible", text: "React Collapsible" },
-  { sku: "react-expandable-section", text: "React Expandable Section" },
-  { sku: "react-show-hide", text: "React Show Hide" },
-  { sku: "react-disclosure-component", text: "React Disclosure Component" },
-  { sku: "react-toggle-content", text: "React Toggle Content" },
 ];
 
 export const alertTags = [
@@ -1659,6 +1653,15 @@ export const dateRangePickerTags = [
   { sku: "react-period-picker", text: "React Period Picker" },
 ];
 
+export const disclosureTags = [
+  { sku: "react-disclosure", text: "React Disclosure" },
+  { sku: "react-collapsible", text: "React Collapsible" },
+  { sku: "react-expandable-section", text: "React Expandable Section" },
+  { sku: "react-show-hide", text: "React Show Hide" },
+  { sku: "react-disclosure-component", text: "React Disclosure Component" },
+  { sku: "react-toggle-content", text: "React Toggle Content" },
+];
+
 export const emptyStateTags = [
   { sku: "react-empty-state", text: "React Empty State" },
   { sku: "react-no-data", text: "React No Data" },
@@ -1855,7 +1858,6 @@ export const htmlToImageTags = [
   { sku: "website-to-image", text: "Website to Image" },
   { sku: "html-to-jpg", text: "HTML to JPG" },
   { sku: "html-to-png", text: "HTML to PNG" },
-  { sku: "html-to-svg", text: "HTML to SVG" },
   { sku: "webpage-capture", text: "Webpage Capture" },
   { sku: "website-screenshot-tool", text: "Website Screenshot Tool" },
   { sku: "free-screenshot-tool", text: "Free Screenshot Tool" },

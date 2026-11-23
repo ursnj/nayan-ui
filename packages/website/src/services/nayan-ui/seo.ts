@@ -5,6 +5,7 @@ import {
   SITE_URL,
   buildBreadcrumbSchema,
   buildHowToSchema,
+  buildPageMetadata,
   buildTechArticleSchema,
   engineAbout,
   engineSoftwareSchema,
@@ -23,8 +24,7 @@ export const guideUrl = (guide: EngineGuide) =>
 export const guideKeywords = (guide: EngineGuide) => `${guide.title}, ${KEYWORDS}, documentation`;
 
 /** Breadcrumb, TechArticle and, where the guide has them, its numbered steps and source code. */
-export function engineGuideSchemas(guide: EngineGuide) {
-  const url = guideUrl(guide);
+export function engineGuideSchemas(guide: EngineGuide, url = guideUrl(guide)) {
   const crumbs = [
     { name: "Home", url: SITE_URL },
     { name: "Nayan Game Engine", url: ENGINE_URL },
@@ -75,4 +75,19 @@ export function engineGuideSchemas(guide: EngineGuide) {
       url,
     });
   return schemas;
+}
+
+export function engineGuideMetadata(guide: EngineGuide, path = new URL(guideUrl(guide)).pathname) {
+  return buildPageMetadata({
+    // The brand suffix only where the title stays short enough for search results.
+    title: guide.title.length <= 40 ? `${guide.title} · Nayan Game Engine` : guide.title,
+    // Short guide descriptions get the engine's context, so the search snippet says what it is.
+    description:
+      guide.description.length < 110
+        ? `${guide.description} Nayan Game Engine docs for React and React Native games.`
+        : guide.description,
+    path,
+    bannerFor: new URL(guideUrl(guide)).pathname,
+    keywords: guideKeywords(guide),
+  });
 }

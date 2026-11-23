@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { Breadcrumb } from "@/design/Primitives";
 import { H1 } from "@/design/system";
 import { getSidebarItems, type SidebarItem } from "@/services/Utils";
+import { resolvePagePath } from "@/services/site-routes";
 
 interface Props {
   title?: string;
@@ -142,7 +143,7 @@ const SidebarNav = ({
 
 const Sidebar = (props: Props) => {
   const routePath = usePathname();
-  const pathname = props.reference?.currentPath ?? routePath;
+  const pathname = props.reference?.currentPath ?? resolvePagePath(routePath);
   const sidebarItems = props.reference?.items ?? getSidebarItems(pathname);
   const [query, setQuery] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);

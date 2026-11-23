@@ -140,8 +140,13 @@ export const componentAttributeNames: Partial<Record<ComponentSymbol, readonly s
   ],
   NTheme: [
     'children', 'className', 'style', 'surface', 'safeArea', 'defaultTheme', 'themes', 'colors', 'components', 'radius',
-    'stylesheet', 'fonts', 'persistence', 'onThemeChange'
+    'stylesheet', 'fonts', 'persistence', 'onThemeChange', 'systemBars', 'navigation'
   ],
+  NPage: [
+    'children', 'className', 'style', 'fillViewport', 'viewportStyle', 'surface', 'active', 'keyboard',
+    'safeArea', 'showsVerticalScrollIndicator', 'background', 'onContentSizeChange', 'onError'
+  ],
+  useNSystemBars: ['options', 'navigation'],
   NToggleButton: [
     'children', 'isSelected', 'defaultSelected', 'disabled', 'variant', 'size',
     'onChange', 'className', 'accessibilityLabel'
@@ -155,6 +160,10 @@ export const componentAttributeNames: Partial<Record<ComponentSymbol, readonly s
 };
 
 export const componentAttributeNotes: Partial<Record<ComponentSymbol, Record<string, { details?: string; defaultValue?: string }>>> = {
+  useNSystemBars: {
+    options: { details: 'Set the system bar appearance or pass false to restore the surrounding theme settings.' },
+    navigation: { details: 'Limit the override to the focused screen using a React Navigation-compatible focus source.' }
+  },
   NButton: {
     disabled: { details: 'Prevents interaction.', defaultValue: 'false' },
     isOutline: { details: 'Uses a transparent background with an outline.', defaultValue: 'false' },

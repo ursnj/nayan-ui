@@ -32,6 +32,7 @@ const components = [
   ['loading', 'Loading', 'NLoading', 'Show when work is in progress.'],
   ['menu-item', 'Menu Item', 'NMenuItem', 'Add an action to a menu.'],
   ['number-field', 'Number Field', 'NNumberField', 'Collect a number within optional bounds.'],
+  ['page', 'Page', 'NPage', 'Render a screen surface with optional keyboard handling, safe-area insets and viewport sizing.'],
   ['pattern', 'Pattern', 'NPattern', 'Draw a decorative vector pattern behind content.'],
   ['platform-view', 'Platform View', 'NPlatformView', 'Embed platform-rendered content in an engine surface.'],
   ['press', 'Press', 'NPress', 'Make custom content respond to presses.'],
@@ -65,6 +66,7 @@ const components = [
   ['use-keyboard', 'useNKeyboard', 'useNKeyboard', 'Read software keyboard visibility and dimensions.'],
   ['use-safe-area-frame', 'useNSafeAreaFrame', 'useNSafeAreaFrame', 'Read the safe area provider’s frame.'],
   ['use-safe-area-insets', 'useNSafeAreaInsets', 'useNSafeAreaInsets', 'Read the distances from each edge of the screen.'],
+  ['use-system-bars', 'useNSystemBars', 'useNSystemBars', 'Set the status bar appearance on iOS and Android and the navigation bar appearance on Android for the focused screen.'],
   ['use-theme', 'useNTheme', 'useNTheme', 'Read or change the active engine theme.'],
   ['view', 'View', 'NView', 'Lay out and style a group of engine children.']
 ] as const;
@@ -85,7 +87,7 @@ export const componentReferences = [...components.map((item) => [...item, 'compo
     symbol,
     description,
     module,
-    platforms: ALL_PLATFORMS,
+    platforms: slug === 'use-system-bars' ? NATIVE_PLATFORMS : ALL_PLATFORMS,
     importPath: `nayan-ui/${module}`,
     path: `/components/${slug}`
   }))
@@ -104,8 +106,11 @@ export const legacyComponentAlternatives = {
   menu: 'menu-item',
   'avatar-group': 'view',
   breadcrumbs: 'link',
+  calendar: 'date-picker',
   'checkbox-group': 'checkbox',
+  'date-field': 'input',
   'date-range-picker': 'date-picker',
+  disclosure: 'accordion',
   'infinite-scroll': 'list',
   'list-box': 'checkbox',
   meter: 'progress',

@@ -1,12 +1,16 @@
 import type { SiteIcon } from "@/design/Icons";
 import { engineNavigation } from "./nayan-ui/navigation";
+import { resolvePagePath } from "./site-routes";
 import {
   AppWindow,
   Badge,
   BookOpen,
   Bot,
+  Calendar,
+  CalendarCheck,
   CalendarDays,
   CalendarRange,
+  ChevronsUpDown,
   CircleAlert,
   CircleCheck,
   CircleDot,
@@ -136,6 +140,7 @@ import {
   datePickerTags,
   dateRangePickerTags,
   dialogTags,
+  disclosureTags,
   dividerTags,
   emptyStateTags,
   infiniteScrollTags,
@@ -206,6 +211,7 @@ import {
   convertImageTags,
   watermarkImageTags,
   rotateImageTags,
+  htmlToImageTags,
   mergePdfTags,
   splitPdfTags,
   compressPdfTags,
@@ -332,8 +338,8 @@ export const getSidebarItems = (path: string): SidebarItem[] => {
 
 // Updated getMenuItem to work with both React and React Native
 export const getMenuItem = (path: string) => {
-  const sidebarItems = getSidebarItems(path);
-  return sidebarItems.find((item) => item.link === path);
+  const resolved = resolvePagePath(path);
+  return getSidebarItems(resolved).find((item) => item.link === resolved);
 };
 
 // Updated getMenuItemByTag to work with both React and React Native
@@ -428,6 +434,15 @@ export const reactSidebarItems = [
     isComponent: true,
   },
   {
+    title: "Calendar",
+    description:
+      "A Calendar component lays a month out as a grid and lets a date be picked from it. Unlike a date picker it is always open, which suits a booking screen, an availability view or anywhere the surrounding dates are part of the decision.",
+    link: "/react/calendar",
+    tags: calendarTags,
+    icon: Calendar,
+    isComponent: true,
+  },
+  {
     title: "Card",
     description:
       "A Card component is a versatile UI element used to display content in a structured and visually appealing way. It typically contains related information, such as text, images, buttons, and other elements, within a bordered or shadowed container. Cards are often used for presenting individual items, like products, articles, or profiles, making the content easy to scan and interact with.",
@@ -473,15 +488,20 @@ export const reactSidebarItems = [
     isComponent: true,
   },
   {
+    title: "Date Field",
+    description:
+      "A date field lets users enter a known date in day, month, and year segments. The browser supplies the input format and may offer a calendar. The field value uses YYYY-MM-DD.",
+    link: "/react/date-field",
+    tags: dateFieldTags,
+    icon: CalendarCheck,
+    isComponent: true,
+  },
+  {
     title: "Date Picker",
     description:
       "Choose a date from a calendar with month and year navigation. Set a minimum or maximum date to limit the available options.",
     link: "/react/date-picker",
-    tags: [
-      ...new globalThis.Map([...datePickerTags, ...calendarTags, ...dateFieldTags].map((tag) => [tag.sku, tag])).values(),
-      { sku: "calendar", text: "Calendar" },
-      { sku: "date-field", text: "Date Field" },
-    ],
+    tags: datePickerTags,
     icon: CalendarDays,
     isComponent: true,
   },
@@ -501,6 +521,15 @@ export const reactSidebarItems = [
     link: "/react/dialog",
     tags: dialogTags,
     icon: MessageSquare,
+    isComponent: true,
+  },
+  {
+    title: "Disclosure",
+    description:
+      "A Disclosure is one collapsible section: a heading that opens and closes the content under it. It is the single-section counterpart to an accordion, for hiding detail that most readers will not need without sending them to another page for it.",
+    link: "/react/disclosure",
+    tags: disclosureTags,
+    icon: ChevronsUpDown,
     isComponent: true,
   },
   {
@@ -1115,6 +1144,13 @@ export const toolsSidebarItems = [
     link: "/tools/rotate-image",
     tags: rotateImageTags,
     icon: RotateCw,
+  },
+  {
+    title: "HTML to Image",
+    description: "Capture a webpage as a PNG and convert the screenshot to JPEG when needed.",
+    link: "/tools/html-to-image",
+    tags: htmlToImageTags,
+    icon: Image,
   },
   {
     title: "Image to Base64",

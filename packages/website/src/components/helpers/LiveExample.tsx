@@ -20,6 +20,7 @@ const toolbarButton = 'inline-flex min-h-8 flex-row items-center justify-center 
 const secondaryButton = `${toolbarButton} text-muted hover:text-foreground`;
 // These examples use the viewport for floating controls or content that fills the surface.
 const viewportExamples = new Set([
+  'calendar',
   'components-root',
   'date-picker',
   'date-range-picker',

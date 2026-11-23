@@ -65,7 +65,8 @@ interface ComponentApi {
 function describe(symbol: ts.Symbol, location: ts.Node): Attribute {
   const declaration = symbol.valueDeclaration ?? symbol.declarations?.[0] ?? location;
   const type = checker.getTypeOfSymbolAtLocation(symbol, declaration);
-  const required = !(symbol.flags & ts.SymbolFlags.Optional);
+  const optionalParameter = ts.isParameter(declaration) && (declaration.questionToken || declaration.initializer);
+  const required = !(symbol.flags & ts.SymbolFlags.Optional) && !optionalParameter;
   const docs = ts.displayPartsToString(symbol.getDocumentationComment(checker));
   const tags = symbol.getJsDocTags(checker);
   const defaultValue = tags.find(({ name }) => name === 'default' || name === 'defaultValue');

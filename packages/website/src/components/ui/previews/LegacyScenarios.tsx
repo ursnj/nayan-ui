@@ -189,6 +189,13 @@ function NumberedPages() {
 }
 
 export const legacyScenarios = {
+  'date-field': sample('Prefilled date', e('NInput', { label: 'Start date', type: 'date', defaultValue: '2026-01-15' })),
+  disclosure: scenario(
+    'Initially expanded',
+    'NAccordion',
+    '<NAccordion defaultExpanded items={[{ title: "Pickup details", message: "Bring your order confirmation." }]} />',
+    <E.NAccordion defaultExpanded items={[{ title: 'Pickup details', message: 'Bring your order confirmation.' }]} />
+  ),
   menu: popupScenario(true),
   'avatar-group': sample(
     'Team with a count badge',

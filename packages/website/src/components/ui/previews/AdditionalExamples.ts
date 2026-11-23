@@ -3,6 +3,7 @@ import { controlScenarios } from './ControlScenarios';
 import { interactiveScenarios } from './InteractiveScenarios';
 import { hostScenarios } from './HostScenarios';
 import { legacyScenarios } from './LegacyScenarios';
+import { pageFormExample, systemBarsToggleExample } from './PageExamples';
 import { specializedScenarios } from './SpecializedScenarios';
 import type { NamedComponentPreview } from './types';
 
@@ -13,7 +14,10 @@ const examples = {
   ...interactiveScenarios,
   ...hostScenarios,
   ...legacyScenarios,
-  ...specializedScenarios
+  ...specializedScenarios,
+  calendar: interactiveScenarios['date-picker'],
+  page: pageFormExample,
+  'use-system-bars': systemBarsToggleExample
 } satisfies Record<Slug, NamedComponentPreview>;
 
 export function additionalExample(slug: string): NamedComponentPreview | undefined {

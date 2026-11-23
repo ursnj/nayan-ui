@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { CONTAINER } from "@/design/system";
 import { REPO_URL } from "@/services/seo";
+import { resolvePagePath } from "@/services/site-routes";
 import { useTheme } from "@/components/helpers/ThemeProvider";
 
 const NAV = [
@@ -47,8 +48,8 @@ const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
 const Header = ({ moduleSlugs }: { moduleSlugs: readonly string[] }) => {
   const pathname = usePathname();
   const { entry } = useParams<{ entry?: string }>();
-  // A rewritten reference and its original URL have the same route parameter.
-  const navPath = entry ? `/${moduleSlugs.includes(entry) ? "modules" : "components"}/${entry}` : pathname;
+  // A reference and its original URL have the same route parameter.
+  const navPath = entry ? `/${moduleSlugs.includes(entry) ? "modules" : "components"}/${entry}` : resolvePagePath(pathname);
   const menu = useRef<HTMLDialogElement>(null);
   const closeMenu = () => menu.current?.close();
   const { theme, toggleTheme } = useTheme();

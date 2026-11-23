@@ -72,9 +72,11 @@ test("a new dynamic route cannot silently disappear from the sitemap", () => {
   expect(() => collectPublicPaths(root)).toThrow(/Add sitemap handling.*\/blog\/\[slug\]/);
 });
 
-test("reference aliases are listed alongside existing component and game routes", () => {
+test("reference pages are listed alongside existing component and game routes", () => {
   const root = fixture({
     "[entry]/page.tsx": "export default function Reference() {}",
+    "components/[entry]/page.tsx": "export default function ComponentReference() {}",
+    "modules/[entry]/page.tsx": "export default function ModuleReference() {}",
     "react/alert/page.tsx": "export default function Alert() {}",
     "react-native/accordion/page.tsx": "export default function Accordion() {}",
     "modules/games/page.tsx": "export default function GameRuntime() {}",
@@ -98,22 +100,23 @@ test("XML output is deterministic, unique and escaped", () => {
   expect(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>')).toBe(true);
 });
 
-test("only the canonical playground page is listed in the sitemap", () => {
+test("both playground addresses are listed in the sitemap", () => {
   const paths = collectPublicPaths();
   expect(paths).toContain("/playground");
-  expect(paths).not.toContain("/game-engine/playground");
+  expect(paths).toContain("/game-engine/playground");
   expect(paths).not.toContain("/playground/types");
 });
 
-test("only Date Picker is listed for single-date controls and the old tags link to it", () => {
+test("published platform documentation and tags are listed alongside the unified reference", () => {
   const paths = collectPublicPaths();
-  expect(paths).toContain("/components/date-picker");
-  for (const slug of ["calendar", "date-field"]) {
-    expect(paths).not.toContain(`/react/${slug}`);
-    expect(paths).not.toContain(`/components/${slug}`);
-    for (const tag of [slug, `react-${slug}`]) {
-      expect(paths).toContain(`/tags/${tag}`);
-      expect(findReferenceTag(tag)?.entries.map(({ path }) => path)).toEqual(["/components/date-picker"]);
-    }
+  expect(paths).toEqual(expect.arrayContaining([
+    "/components/date-picker", "/react/installation", "/react-native/installation",
+    "/react/tags", "/react-native/tags", "/react-native/tags/react-native-accordion"
+  ]));
+  expect(paths).not.toContain("/react-native/tags/react-disclosure");
+  for (const slug of ["calendar", "date-field", "disclosure"]) {
+    const path = `/react/${slug}`;
+    expect(paths).toEqual(expect.arrayContaining([path, `/react/tags/react-${slug}`, `/tags/react-${slug}`]));
+    expect(findReferenceTag(`react-${slug}`)?.entries.map((entry) => entry.path)).toContain(path);
   }
 });

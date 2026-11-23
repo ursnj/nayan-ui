@@ -7,11 +7,22 @@ import { moduleReferences } from "../src/services/nayan-ui/module-reference";
 import { engineNavigation } from "../src/services/nayan-ui/navigation";
 import { referenceTags } from "../src/services/nayan-ui/reference-tags";
 import { SITE_URL } from "../src/services/seo";
-import { getMenuItemByTag, toolsSidebarItems } from "../src/services/Utils";
+import {
+  getMenuItemByTag,
+  reactNativeSidebarItems,
+  reactSidebarItems,
+  toolsSidebarItems,
+  type SidebarItem,
+} from "../src/services/Utils";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const APP = join(ROOT, "src/app");
 const OUTPUT = join(ROOT, "public/sitemap.xml");
+const PLATFORM_TAG_ROUTES: Record<string, readonly SidebarItem[]> = {
+  "/react/tags/[tag]": reactSidebarItems,
+  "/react-native/tags/[tag]": reactNativeSidebarItems,
+  "/tools/tags/[tag]": toolsSidebarItems,
+};
 const noindex = (file: string) =>
   existsSync(file) && /\brobots\s*:\s*\{[^}]*\bindex\s*:\s*false/.test(readFileSync(file, "utf8"));
 
@@ -40,14 +51,15 @@ export function collectPublicPaths(app = APP): string[] {
   for (const route of dynamic) {
     if (route === "/game-engine/[slug]") {
       engineNavigation.forEach((guide) => paths.add(guide.link));
-    } else if (route === "/[entry]") {
+    } else if (route === "/components/[entry]") {
       componentReferences.forEach(({ path }) => paths.add(path));
+    } else if (route === "/modules/[entry]") {
       moduleReferences.forEach(({ slug, path }) => {
         if (slug !== "games") paths.add(path);
       });
     } else if (route === "/games/[slug]") {
       Object.keys(gamesData).forEach((slug) => paths.add(`/games/${slug}`));
-    } else if (route !== "/tags/[tag]" && route !== "/tools/tags/[tag]") {
+    } else if (route !== "/[entry]" && route !== "/tags/[tag]" && !(route in PLATFORM_TAG_ROUTES)) {
       throw new Error(`Add sitemap handling for the new dynamic page: ${route}`);
     }
   }
@@ -56,12 +68,15 @@ export function collectPublicPaths(app = APP): string[] {
       if (entries.some(({ path }) => paths.has(path))) paths.add(`/tags/${encodeURIComponent(sku)}`);
     }
   }
-  if (dynamic.has("/tools/tags/[tag]")) {
-    for (const item of toolsSidebarItems) {
+  for (const route of dynamic) {
+    const items = PLATFORM_TAG_ROUTES[route];
+    if (!items) continue;
+    const prefix = route.slice(0, -"[tag]".length);
+    for (const item of items) {
       if (!paths.has(item.link)) continue;
       for (const tag of item.tags ?? []) {
-        const owner = getMenuItemByTag(tag.sku, "/tools");
-        if (owner && paths.has(owner.link)) paths.add(`/tools/tags/${encodeURIComponent(tag.sku)}`);
+        const owner = getMenuItemByTag(tag.sku, prefix);
+        if (owner && paths.has(owner.link)) paths.add(`${prefix}${encodeURIComponent(tag.sku)}`);
       }
     }
   }
