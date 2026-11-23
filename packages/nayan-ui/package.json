@@ -1,6 +1,6 @@
 {
   "name": "nayan-ui",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "description": "Nayan Components, Nayan Modules and Nayan Game Engine for React and React Native. Cross-platform UI, Rust and wgpu rendering, Rapier physics, animation, media and application services.",
   "keywords": [
     "3d",
