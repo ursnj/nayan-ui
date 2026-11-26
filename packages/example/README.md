@@ -26,13 +26,13 @@ bun run engine:core:build:android
 bun run example android
 ```
 
-Once the development build is installed, start Metro with `bun run example mobile`. The [Expo config](mobile/app.json) registers the Nayan UI plugin and targets Android API 26 or newer.
+After installing the development build, you can start Metro with `bun run example mobile` and open the installed app on your simulator or device. The [Expo config](mobile/app.json) registers the Nayan UI plugin and targets Android API 26 or newer.
 
 ## Customize the landing page
 
 - The shared landing page uses Nayan UI’s built-in utilities. Nayan UI compiles them to CSS for the browser and resolves them at runtime on mobile. [Landing.tsx](shared/src/Landing.tsx)
 - Both apps pass the same light and dark palettes to `NTheme`. It follows the system on first launch and saves the selected mode through `nayan-ui/storage`. The web stylesheet uses those same palette values. [theme.ts](shared/src/theme.ts)
 - [web/src/main.tsx](web/src/main.tsx) uses `NTheme` and `NPlatformView` to render the landing page as browser HTML.
-- [mobile/src/app/_layout.tsx](mobile/src/app/_layout.tsx) configures the Expo navigator and root theme. [mobile/src/app/index.tsx](mobile/src/app/index.tsx) is the only screen.
+- The mobile entry registers the landing page directly with Expo. `NTheme` provides the root theme and safe-area handling. [mobile/src/main.tsx](mobile/src/main.tsx)
 
 Run `bun run example:typecheck` to check both apps and `bun run example web:build` to create the web build in `web/dist`.

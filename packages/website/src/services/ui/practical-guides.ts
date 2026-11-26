@@ -28,7 +28,7 @@ bun run web`,
         id: "project-layout",
         title: "Find the shared landing page",
         paragraphs: [
-          "Both apps import shared/src/Landing.tsx. The web entry is web/src/main.tsx and the mobile entry is mobile/src/app/index.tsx.",
+          "Both apps import shared/src/Landing.tsx. The web entry is web/src/main.tsx and the mobile entry is mobile/src/main.tsx.",
         ],
       },
       {

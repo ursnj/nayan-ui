@@ -2,9 +2,9 @@
   "name": "@nayan-ui/mobile",
   "version": "1.0.0",
   "private": true,
-  "main": "expo-router/entry",
+  "main": "./src/main.tsx",
   "scripts": {
-    "start": "expo start --dev-client",
+    "start": "expo start",
     "prebuild": "expo prebuild",
     "ios": "expo run:ios",
     "android": "expo run:android",
@@ -14,14 +14,8 @@
     "@nayan-ui/shared": "workspace:*",
     "nayan-ui": "workspace:*",
     "expo": "^58.0.0",
-    "expo-constants": "~58.0.14",
-    "expo-dev-client": "~58.0.6",
-    "expo-linking": "~58.0.15",
-    "expo-router": "~58.0.29",
     "react": "19.3.0",
     "react-native": "0.88.0",
-    "react-native-safe-area-context": "~5.10.1",
-    "react-native-screens": "~4.30.1",
     "react-reconciler": "^0.34.0"
   },
   "devDependencies": {

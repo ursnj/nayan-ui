@@ -12,8 +12,6 @@
       "package": "com.nayanui.example"
     },
     "plugins": [
-      "expo-router",
-      "expo-dev-client",
       ["./plugins/withAndroidMinSdk", 26],
       [
         "nayan-ui",
