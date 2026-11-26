@@ -756,6 +756,10 @@ const DevtoolsMain = () => {
         lead="Find a guide by file format or task. The command-line examples cover scaffolding, SEO, code review and dependency checks."
         actions={
           <>
+            <Link href="/game-engine/installation#start-from-the-template" className={BUTTON_SMALL}>
+              <Rocket aria-hidden className="mr-2 h-4 w-4" />
+              Starter CLI
+            </Link>
             <Link href="https://www.npmjs.com/package/@nayan-ui/cli" target="_blank" rel="noopener noreferrer" className={BUTTON_SMALL}>
               <Package aria-hidden className="mr-2 h-4 w-4" />
               @nayan-ui/cli

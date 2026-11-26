@@ -12,7 +12,7 @@ adapters for text editing, accessibility, permissions and OS services.
 
 ## Contents
 
-- **Start here** · [Platforms](#platforms) · [Install](#install) · [Quick start](#quick-start)
+- **Start here** · [Platforms](#platforms) · [Install](#install) · [Create a starter project](#create-a-starter-project) · [Quick start](#quick-start)
 - **Choose features** · [Package entry points](#package-entry-points) · [Compiled Rust features](#selecting-compiled-rust-features) · [Initialization](#initialization)
 - **Games and drawing** · [World basics](#core-concepts) · [Game guides](#guides) · [Performance](#performance) · [Drawing](#drawing)
 - **Components** · [Component overview](#rust-components-experimental) · [Theming](#application-theming) · [Forms](#forms-and-keyboard) · [Tabs and button groups](#tabs-and-button-groups) · [Alerts and empty states](#alerts-and-empty-states) · [Lists](#virtualized-lists) · [Safe areas](#safe-areas) · [Drawer](#drawer) · [Dialogs and sheets](#sheets-dialogs-and-confirmations)
@@ -108,6 +108,21 @@ do not add a `/server` import. Standalone/traced server deployments must retain
 APIs and image hosts remain subject to browser CORS and platform permissions.
 
 ## Quick start
+
+### Create a starter project
+
+The starter CLI ships with `nayan-ui` starting in `1.0.0-beta.6`. Use Node.js with npm to run the CLI and Bun to install and run the generated project.
+
+```sh
+npx nayan-ui@1.0.0-beta.6 new my-app
+cd my-app
+bun install --frozen-lockfile
+bun run web
+```
+
+The command creates a standalone Bun workspace with a Vite app in `web/`, an Expo app in `mobile/`, and a shared landing page and theme in `shared/`. For a native development build, install the platform SDK and run `bun run ios` or `bun run android` from the project root. Set your app's iOS bundle identifier and Android package in `mobile/app.json` before distributing it.
+
+You can also use the [starter template from the repository](https://github.com/ursnj/nayan-ui/tree/main/templates/nayan-ui), then run the same Bun install and start commands from `templates/nayan-ui`.
 
 ### App UI
 

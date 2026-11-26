@@ -89,7 +89,7 @@ Commit the archive and the updated `bun.lock` together. The website publishing w
 
 The [Nayan UI starter](./templates/nayan-ui) is a standalone Bun project for web, iOS, and Android. It uses `nayan-ui@1.0.0-beta.5` from npm.
 
-Once a version of `nayan-ui` containing the CLI is published, use that version with `npx nayan-ui@<version> new my-app`. The command creates the workspace and sets its project name. Run `bun install --frozen-lockfile` and `bun run web` in the new directory. Before distributing a mobile app, set its iOS bundle identifier and Android package in `mobile/app.json`.
+The [starter CLI instructions](./packages/nayan-ui/README.md#create-a-starter-project) cover creating a new project from npm and running it on web, iOS, or Android.
 
 ## Quick Start
 

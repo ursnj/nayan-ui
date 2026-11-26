@@ -266,17 +266,27 @@ export function Board() {
     sections: [
       {
         id: "start-from-the-template",
-        title: "Start from the template",
+        title: "Create a starter project",
         paragraphs: [
-          "The Nayan UI starter is a Bun workspace with an Expo app, a Vite app and a shared landing page. You can also install the engine into an existing app.",
+          "The starter CLI ships with nayan-ui starting in 1.0.0-beta.6. Use Node.js with npm to run the CLI and Bun to install and run the generated workspace.",
+          "The project includes a Vite app, an Expo app, and a shared landing page and theme. With the platform SDK installed, run bun run ios or bun run android from the project root to make a native development build.",
         ],
         examples: [
           {
-            title: "Create a project",
+            title: "Create a project with the CLI",
+            platform: "shell",
+            language: "bash",
+            code: `npx nayan-ui@1.0.0-beta.6 new my-app
+cd my-app
+bun install --frozen-lockfile
+bun run web`,
+          },
+          {
+            title: "Use the template from GitHub",
             platform: "shell",
             language: "bash",
             code: `${starterSetupCode}
-bun run web      # or: bun run ios / bun run android (development build)`,
+bun run web`,
           },
         ],
       },
