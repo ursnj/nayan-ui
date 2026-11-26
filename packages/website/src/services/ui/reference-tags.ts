@@ -128,6 +128,7 @@ const topics = [
     sku: 'device-services',
     text: 'Device Services',
     slugs: [
+      'contacts',
       'camera',
       'capture',
       'clipboard',

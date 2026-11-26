@@ -475,6 +475,24 @@
       "types": "./lib/web/types/src/permissions/index.d.ts",
       "default": "./lib/web/permissions/index.js"
     },
+    "./contacts": {
+      "react-native": {
+        "source": "./src/contacts/index.ts",
+        "types": "./lib/typescript/src/contacts/index.d.ts",
+        "default": "./lib/module/contacts/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/contacts/index.ts",
+        "types": "./lib/typescript/src/contacts/index.d.ts",
+        "default": "./lib/module/contacts/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/contacts/index.d.ts",
+        "default": "./lib/web/contacts/index.js"
+      },
+      "types": "./lib/web/types/src/contacts/index.d.ts",
+      "default": "./lib/web/contacts/index.js"
+    },
     "./auth": {
       "react-native": {
         "source": "./src/auth/index.ts",

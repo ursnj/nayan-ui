@@ -9,7 +9,8 @@ if features && (!features.is_a?(String) || !features.match?(/\A(?:[a-z-]+(?:,[a-
 end
 image_picker = features ? features.split(",").include?("image-picker") : ENV.fetch("NAYAN_ENGINE_IMAGE_PICKER", properties.fetch("nayanEngine.imagePicker", "false")) == "true"
 location = features.nil? || features.split(",").include?("location")
-permissions = location || features.split(",").include?("permissions")
+contacts = features.nil? || features.split(",").include?("contacts")
+permissions = location || contacts || features.split(",").include?("permissions")
 video = features.nil? || features.split(",").include?("video")
 review = features.nil? || features.split(",").include?("review")
 
@@ -30,6 +31,7 @@ Pod::Spec.new do |s|
   excluded << "native/image-picker/ios/ImagePicker.{h,mm}" unless image_picker
   excluded << "native/permissions/ios/Permissions.{h,mm}" unless permissions
   excluded << "native/location/ios/Location.{h,mm}" unless location
+  excluded << "native/contacts/ios/Contacts.{h,mm}" unless contacts
   excluded << "native/video/ios/NayanEngineVideo.mm" unless video
   excluded << "native/review/ios/StoreReview.{h,mm}" unless review
   s.exclude_files = excluded
@@ -61,7 +63,7 @@ Pod::Spec.new do |s|
 
   target_settings = {
     "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/native/core/include\" \"$(PODS_TARGET_SRCROOT)/shared/cpp\" \"$(PODS_TARGET_SRCROOT)/native\"",
-    "GCC_PREPROCESSOR_DEFINITIONS" => "$(inherited) NAYAN_ENGINE_IMAGE_PICKER=#{image_picker ? 1 : 0} NAYAN_ENGINE_PERMISSIONS=#{permissions ? 1 : 0} NAYAN_ENGINE_LOCATION=#{location ? 1 : 0} NAYAN_ENGINE_REVIEW=#{review ? 1 : 0}",
+    "GCC_PREPROCESSOR_DEFINITIONS" => "$(inherited) NAYAN_ENGINE_IMAGE_PICKER=#{image_picker ? 1 : 0} NAYAN_ENGINE_PERMISSIONS=#{permissions ? 1 : 0} NAYAN_ENGINE_LOCATION=#{location ? 1 : 0} NAYAN_ENGINE_REVIEW=#{review ? 1 : 0} NAYAN_ENGINE_CONTACTS=#{contacts ? 1 : 0}",
     "CLANG_CXX_LANGUAGE_STANDARD" => "c++20"
   }
 

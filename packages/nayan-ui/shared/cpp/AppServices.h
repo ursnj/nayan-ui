@@ -17,6 +17,13 @@ inline std::string locationPosition(std::string_view sample) {
   engine_drawing_result_free(raw);
   return result;
 }
+inline std::string contactsPage(std::string_view query, std::string_view rows) {
+  auto *raw = engine_contacts_page(reinterpret_cast<const uint8_t *>(query.data()), query.size(),
+      reinterpret_cast<const uint8_t *>(rows.data()), rows.size());
+  std::string result(raw);
+  engine_drawing_result_free(raw);
+  return result;
+}
 bool hasImagePicker();
 void requestAppServices(std::string command, AppCompletion completed);
 }

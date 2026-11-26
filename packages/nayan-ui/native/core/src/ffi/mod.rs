@@ -26,6 +26,10 @@ pub mod render;
 pub mod safe_area;
 #[path = "../../../auth/rust/ffi.rs"]
 pub mod auth;
+#[path = "../../../contacts/rust/ffi.rs"]
+pub mod contacts;
+#[path = "../../../image-picker/rust/color.rs"]
+mod image_color;
 #[cfg(not(target_arch = "wasm32"))]
 #[path = "../../../sqlite/rust/ffi/sqlite.rs"]
 pub mod sqlite;

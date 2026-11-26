@@ -481,6 +481,19 @@ export async function reviewAction(openStorePage: () => void) {
       note: 'Invoke this from an explicit review action. A supported platform may still decline to show its prompt.'
     }
   ],
+  contacts: [
+    {
+      title: 'Create a contact',
+      code: `import { contacts } from 'nayan-ui/contacts';
+
+export async function addAda() {
+  const { read, write } = await contacts.requestPermissions({ write: true });
+  if ([read, write].some(({ status }) => status !== 'granted' && status !== 'limited')) return null;
+  return contacts.create({ givenName: 'Ada', familyName: 'Lovelace' });
+}`,
+      note: 'A patch preserves omitted fields. Supply null to clear text or an empty array to clear phones or emails.'
+    }
+  ],
   auth: [
     {
       title: 'Read a Google or Apple callback',

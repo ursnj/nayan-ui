@@ -1,4 +1,5 @@
-import { afterEach, beforeEach, expect, mock, spyOn, test } from 'bun:test';
+import { afterEach, beforeAll, beforeEach, expect, mock, spyOn, test } from 'bun:test';
+import { initSync } from '../../../native/core/build/web/engine_core.js';
 import { installDom } from '../../__tests__/dom';
 import * as camera from '../../camera/platform.web';
 import { imagePicker } from '../imagePicker.web';
@@ -7,6 +8,11 @@ import type { ImagePickerOptions } from '../types';
 const globals = ['HTMLInputElement', 'HTMLDialogElement', 'createImageBitmap'] as const;
 let dom: ReturnType<typeof installDom>;
 let original: (PropertyDescriptor | undefined)[];
+
+beforeAll(async () => {
+  const module = await Bun.file(new URL('../../../native/core/build/web/engine_core_bg.wasm', import.meta.url)).arrayBuffer();
+  initSync({ module });
+});
 
 beforeEach(() => {
   dom = installDom();

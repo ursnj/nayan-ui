@@ -198,6 +198,7 @@ uses. Each entry has platform-specific JavaScript and TypeScript declarations.
 | Media and sharing | `/video`, `/camera`, `/image-picker`, `/capture`, `/sharing`, `/clipboard` |
 | App lifecycle | `/keep-awake`, `/review` |
 | Identity | [`/auth`](#auth) |
+| Address book | [`/contacts`](#contacts) |
 
 Each service path starts with `nayan-ui`. The root, `/web` and
 `/modules` are compatibility entries. Find usage examples and platform
@@ -292,7 +293,7 @@ the same alias in the worker build.
 
 The supported feature names are `games`, `drawing`, `components`, `markdown`, `storage`, `uuid`,
 `image-picker`, `audio`, `microphone`, `haptics`, `tts`, `keep-awake`,
-`review`, `permissions`, `sqlite`, `video`, `location` and `auth`.
+`review`, `permissions`, `sqlite`, `video`, `location`, `auth` and `contacts`.
 `games` owns 3D rendering, glTF loading, meshes, glyphs and procedural worlds.
 The native build links the shared bridge and small platform adapters. Browser
 storage, UUIDs, image picking and video use browser facilities, and named icons
@@ -1992,6 +1993,7 @@ requests and `/network` for connection status and optional endpoint checks.
 | [`/keep-awake`](#keep-awake) | Tagged leases, foreground ownership and a React hook | The browser requires support and a visible document. |
 | [`/review`](#store-review) | Request a native store review | The store decides whether to show a prompt. |
 | [`/auth`](#auth) | Google and Apple OAuth requests and callback validation | Android, iOS, and web use the same Rust flow. The app's backend exchanges codes and creates sessions. |
+| [`/contacts`](#contacts) | Search, page, create, edit, and remove contacts | iOS and Android use the device address book. Web stores the app's address book in IndexedDB. |
 | [`/components` safe areas](#safe-areas) | Providers, measurements, listeners, edge modes and spacing | Native uses numeric insets. Web supports CSS environment values. |
 
 ### Asset loading
@@ -2760,6 +2762,40 @@ Call `startSignIn` from a sign-in button. Use React Native's `Linking.openURL` t
 When the provider calls back, look up the saved transaction and consume it once. `auth.readCallback(transaction, { url, body })` validates the return URL, state, and response format where the Rust engine is available. Supply the full URL including its query for Google and the raw form body for Apple. It returns `success` with an authorization code, `cancelled`, or `denied`. Invalid callbacks reject. Your backend must perform these checks before exchanging the code, even if the app validates a callback too.
 
 Exchange codes on your backend using the registered client and exact return URL, with the saved PKCE verifier for Google. Keep the Google client secret and Apple signing key on the server. Verify each ID token's signature, issuer, audience, expiry, and nonce before creating an app session. Use the verified issuer and subject to identify the account. Return control to the native app through a verified app link with a short-lived, single-use handoff. [Google OpenID Connect](https://developers.google.com/identity/openid-connect/openid-connect) · [Apple token validation](https://developer.apple.com/documentation/signinwithapplerestapi/generate-and-validate-tokens)
+
+#### Contacts
+
+Use `nayan-ui/contacts` to list, search, read, create, update, and remove contacts. The shared Rust logic validates fields and searches and pages results across all platforms. Names, company, job title, and labeled phone numbers and email addresses are supported. Include `contacts` when selecting a custom Rust feature profile.
+
+On Android and iOS, add the Expo plugin option `contactsPermission` and rebuild the app. For bare projects, declare `READ_CONTACTS` and `WRITE_CONTACTS` in the Android manifest and `NSContactsUsageDescription` in the iOS Info.plist. The `getPermissions()` and `requestPermissions()` calls return read and write status, including limited access on iOS. [Expo Contacts setup](https://docs.expo.dev/versions/latest/sdk/contacts/#configuration-in-app-config) · [Apple contact access](https://developer.apple.com/documentation/contacts/accessing-the-contact-store)
+
+```json
+{
+  "expo": {
+    "plugins": [["nayan-ui", { "contactsPermission": "Allow this app to manage your contacts." }]]
+  }
+}
+```
+
+```ts
+import { contacts } from 'nayan-ui/contacts';
+
+export async function searchContacts(search: string, offset = 0) {
+  const { read } = await contacts.requestPermissions();
+  if (read.status !== 'granted' && read.status !== 'limited') return null;
+  return contacts.list({ search, offset, limit: 25 });
+}
+
+export async function addContact() {
+  const { read, write } = await contacts.requestPermissions({ write: true });
+  if ([read, write].some(({ status }) => status !== 'granted' && status !== 'limited')) return null;
+  return contacts.create({ givenName: 'Ada', familyName: 'Lovelace', phones: [{ label: 'work', number: '+1 555 0100' }] });
+}
+```
+
+Call permission requests from a user action. Use `update(id, patch)` to change only the fields you supply. Pass `null` to clear text and `[]` to clear a phone or email list. `get` and `update` return `null` for missing contacts, and `remove` returns whether it deleted a contact. Android linked or read-only contacts can be managed in the device Contacts app.
+
+In browsers, the same API manages an app-owned address book in IndexedDB, scoped to the current origin. Browser sites can only access individual device contacts through supported picker APIs. [Web Contact Picker](https://developer.chrome.com/docs/capabilities/web-apis/contact-picker)
 
 #### Store review
 

@@ -9,6 +9,14 @@ mod image_picker;
 
 pub fn prepare(owner: u64, #[allow(unused_mut)] mut value: Value) -> Result<Value, String> {
     let action = value["action"].as_str().ok_or("Missing app service action")?.to_owned();
+    #[cfg(feature = "contacts")]
+    if action.starts_with("contacts.") {
+        return crate::contacts::prepare(value);
+    }
+    #[cfg(not(feature = "contacts"))]
+    if action.starts_with("contacts.") {
+        return Err("Contacts were disabled in this engine build".into());
+    }
     let validation: Result<(), &str> = match action.as_str() {
         #[cfg(feature = "keep-awake")]
         "awake.activate" | "awake.deactivate" => {
@@ -85,10 +93,9 @@ pub fn release(owner: u64) -> Value {
     let active = false;
     json!({"action":"cleanup","owner":owner.to_string(),"active":active})
 }
-#[cfg(test)]
+#[cfg(all(test, feature = "image-picker"))]
 mod tests {
     use super::*;
-    #[cfg(feature = "image-picker")]
     #[test]
     fn validates_picker_combinations_and_preserves_generic_options() {
         let value = prepare(

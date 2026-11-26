@@ -882,6 +882,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.nayanui.com/modules/contacts</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.nayanui.com/modules/core</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -7903,6 +7908,11 @@
   </url>
   <url>
     <loc>https://www.nayanui.com/tags/confirmation-ui-library</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tags/contacts</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

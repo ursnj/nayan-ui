@@ -12,7 +12,7 @@ crate-type = ["staticlib", "rlib", "cdylib"]
 [features]
 default = [
     "games", "components", "markdown", "drawing", "storage", "uuid", "image-picker",
-    "audio", "microphone", "haptics", "tts", "keep-awake", "review", "permissions", "sqlite", "video", "location", "auth",
+    "audio", "microphone", "haptics", "tts", "keep-awake", "review", "permissions", "sqlite", "video", "location", "auth", "contacts",
 ]
 audio = ["dep:cpal", "dep:hound", "dep:rtrb", "dep:objc2-avf-audio", "dep:ndk-context"]
 microphone = ["audio", "dep:block2"]
@@ -22,6 +22,7 @@ keep-awake = []
 review = []
 permissions = []
 auth = ["dep:base64", "dep:getrandom", "dep:sha2", "dep:subtle", "dep:url"]
+contacts = ["permissions", "dep:uuid"]
 location = ["permissions"]
 sqlite = ["dep:rusqlite", "dep:sha2", "dep:sqlite-wasm-rs", "dep:sqlite-wasm-vfs"]
 video = []

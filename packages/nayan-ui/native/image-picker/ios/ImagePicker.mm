@@ -16,17 +16,12 @@ NSDictionary *saveImage(UIImage *image,NSDictionary *options){NSFileManager *man
 
 CIImage *applyPhotoColor(CIImage *image, NSInteger preset, CGFloat brightness) {
   if (preset == 0 && brightness == 1) return image;
-  static const CGFloat matrices[][9] = {
-    {1, 0, 0, 0, 1, 0, 0, 0, 1},
-    {.213, .715, .072, .213, .715, .072, .213, .715, .072},
-    {.393, .769, .189, .349, .686, .168, .272, .534, .131},
-    {1.3148, -.286, -.0288, -.0852, 1.114, -.0288, -.0852, -.286, 1.3712}
-  };
-  const CGFloat *rgb = matrices[preset];
+  double rgb[9];
+  engine_image_color_matrix(static_cast<uint32_t>(preset), brightness, rgb);
   return [image imageByApplyingFilter:@"CIColorMatrix" withInputParameters:@{
-    @"inputRVector": [CIVector vectorWithX:rgb[0] * brightness Y:rgb[1] * brightness Z:rgb[2] * brightness W:0],
-    @"inputGVector": [CIVector vectorWithX:rgb[3] * brightness Y:rgb[4] * brightness Z:rgb[5] * brightness W:0],
-    @"inputBVector": [CIVector vectorWithX:rgb[6] * brightness Y:rgb[7] * brightness Z:rgb[8] * brightness W:0]
+    @"inputRVector": [CIVector vectorWithX:rgb[0] Y:rgb[1] Z:rgb[2] W:0],
+    @"inputGVector": [CIVector vectorWithX:rgb[3] Y:rgb[4] Z:rgb[5] W:0],
+    @"inputBVector": [CIVector vectorWithX:rgb[6] Y:rgb[7] Z:rgb[8] W:0]
   }];
 }
 

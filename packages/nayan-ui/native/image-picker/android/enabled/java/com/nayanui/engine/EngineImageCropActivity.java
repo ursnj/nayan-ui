@@ -33,12 +33,7 @@ import org.json.JSONObject;
 /** Image editor with native gestures and color adjustments. */
 public final class EngineImageCropActivity extends Activity {
   private static final String[] FILTERS = {"Original", "Black and white", "Sepia", "Vivid"};
-  private static final float[][] COLOR_MATRICES = {
-    {1, 0, 0, 0, 1, 0, 0, 0, 1},
-    {.213f, .715f, .072f, .213f, .715f, .072f, .213f, .715f, .072f},
-    {.393f, .769f, .189f, .349f, .686f, .168f, .272f, .534f, .131f},
-    {1.3148f, -.286f, -.0288f, -.0852f, 1.114f, -.0288f, -.0852f, -.286f, 1.3712f}
-  };
+  private static native float[] nativeColorMatrix(int preset, float brightness);
   private static WeakReference<EngineImageCropActivity> current = new WeakReference<>(null);
   private final ArrayList<Button> buttons = new ArrayList<>();
   private Bitmap bitmap;
@@ -170,11 +165,11 @@ public final class EngineImageCropActivity extends Activity {
     int selected = Math.max(0, filter.getSelectedItemPosition());
     float gain = .5f + brightness.getProgress() / 100f;
     if (selected == 0 && gain == 1) return null;
-    float[] rgb = COLOR_MATRICES[selected];
+    float[] rgb = nativeColorMatrix(selected, gain);
     return new ColorMatrixColorFilter(new float[]{
-      rgb[0] * gain, rgb[1] * gain, rgb[2] * gain, 0, 0,
-      rgb[3] * gain, rgb[4] * gain, rgb[5] * gain, 0, 0,
-      rgb[6] * gain, rgb[7] * gain, rgb[8] * gain, 0, 0,
+      rgb[0], rgb[1], rgb[2], 0, 0,
+      rgb[3], rgb[4], rgb[5], 0, 0,
+      rgb[6], rgb[7], rgb[8], 0, 0,
       0, 0, 0, 1, 0
     });
   }

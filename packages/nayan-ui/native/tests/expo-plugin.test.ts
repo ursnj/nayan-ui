@@ -5,6 +5,7 @@ const withEngine: ConfigPlugin<{
   imagePicker?: boolean;
   features?: string[];
   locationPermission?: string;
+  contactsPermission?: string;
 } | void> = require('../../app.plugin.js');
 
 test('image picker selection is persisted to both native build configurations', async () => {
@@ -79,6 +80,22 @@ test('location host declarations are opt-in and require the matching Rust featur
   expect(() => withEngine(host, { features: ['permissions'], locationPermission })).toThrow('requires the location feature');
 });
 
+test('contacts permissions are opt-in and require the contacts feature in a custom profile', async () => {
+  const host = { name: 'Host', slug: 'host' };
+  const contactsPermission = 'Allow Host to manage the contacts you select.';
+  const configured = withEngine({ ...host }, { features: ['contacts'], contactsPermission }) as ExportedConfig;
+  expect(configured.android?.permissions).toEqual(['android.permission.READ_CONTACTS', 'android.permission.WRITE_CONTACTS']);
+  const plist = await configured.mods!.ios!.infoPlist!({
+    ...configured,
+    modRawConfig: configured,
+    modResults: {},
+    modRequest: { projectRoot: '/tmp/host', platformProjectRoot: '/tmp/host/ios', platform: 'ios', modName: 'infoPlist', introspect: true }
+  });
+  expect(plist.modResults.NSContactsUsageDescription).toBe(contactsPermission);
+  expect(withEngine(host).android?.permissions).toBeUndefined();
+  expect(() => withEngine(host, { features: ['permissions'], contactsPermission })).toThrow('requires the contacts feature');
+});
+
 test('engine Expo plugin configures iOS app-level status bars while preserving other plist entries', async () => {
   const configured = withEngine({ name: 'Host', slug: 'host' }) as ExportedConfig;
   const run = configured.mods!.ios!.infoPlist!;
@@ -123,7 +140,7 @@ test('Android manifest carries the native startup appearance and background with
       manifest: {
         $: { 'xmlns:android': 'http://schemas.android.com/apk/res/android' },
         queries: [],
-        application: [{ '$': { 'android:name': '.MainApplication' }, 'meta-data': [{ $: { 'android:name': 'other', 'android:value': 'kept' } }] }]
+        application: [{ $: { 'android:name': '.MainApplication' }, 'meta-data': [{ $: { 'android:name': 'other', 'android:value': 'kept' } }] }]
       }
     },
     modRequest: { projectRoot: '/tmp/host', platformProjectRoot: '/tmp/host/android', platform: 'android', modName: 'manifest', introspect: true }

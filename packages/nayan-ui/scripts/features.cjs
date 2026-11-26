@@ -15,6 +15,7 @@ const supported = new Set([
   'review',
   'permissions',
   'auth',
+  'contacts',
   'sqlite',
   'video',
   'location'

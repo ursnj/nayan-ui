@@ -25,6 +25,12 @@
 #if NAYAN_ENGINE_IMAGE_PICKER
 #include "image-picker/ios/ImagePicker.h"
 #endif
+#ifndef NAYAN_ENGINE_CONTACTS
+#define NAYAN_ENGINE_CONTACTS 1
+#endif
+#if NAYAN_ENGINE_CONTACTS
+#include "contacts/ios/Contacts.h"
+#endif
 
 namespace {
 #if NAYAN_ENGINE_IMAGE_PICKER || NAYAN_ENGINE_REVIEW
@@ -59,6 +65,12 @@ void requestAppServices(std::string raw,AppCompletion completed){dispatch_async(
 #if NAYAN_ENGINE_LOCATION
  if ([action hasPrefix:@"location."]) {
    requestLocation(value, completed);
+   return;
+ }
+#endif
+#if NAYAN_ENGINE_CONTACTS
+ if ([action hasPrefix:@"contacts."]) {
+   requestContacts(value, completed);
    return;
  }
 #endif

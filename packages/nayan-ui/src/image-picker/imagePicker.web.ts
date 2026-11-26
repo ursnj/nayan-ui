@@ -1,32 +1,21 @@
+import { image_filter_rgba } from '../../native/core/build/web/engine_core.js';
 import { stopMediaStream } from '../native/mediaStream.web';
+import { prepareWasm } from '../native/wasm.web';
 import { imageOptions } from './options';
 import type { CameraPermission, ImagePickerOptions, ImagePickerResult, PickedImage } from './types';
 const owned = new Set<string>();
 let busy = false;
 type PhotoSource = ImageBitmap | HTMLImageElement | HTMLCanvasElement;
-const colorPresets = [
-  { label: 'Original', matrix: [1, 0, 0, 0, 1, 0, 0, 0, 1] },
-  { label: 'Black and white', matrix: [0.213, 0.715, 0.072, 0.213, 0.715, 0.072, 0.213, 0.715, 0.072] },
-  { label: 'Sepia', matrix: [0.393, 0.769, 0.189, 0.349, 0.686, 0.168, 0.272, 0.534, 0.131] },
-  { label: 'Vivid', matrix: [1.3148, -0.286, -0.0288, -0.0852, 1.114, -0.0288, -0.0852, -0.286, 1.3712] }
-] as const;
+const colorPresets = ['Original', 'Black and white', 'Sepia', 'Vivid'] as const;
 
 function applyColor(drawing: CanvasRenderingContext2D, preset: number, brightness: number) {
   if (preset === 0 && brightness === 1) return;
-  const [rr, rg, rb, gr, gg, gb, br, bg, bb] = colorPresets[preset]!.matrix;
   const { width, height } = drawing.canvas;
   // A large export only needs one strip of pixels in JavaScript at a time.
   for (let top = 0; top < height; top += 64) {
     const pixels = drawing.getImageData(0, top, width, Math.min(64, height - top));
     const { data } = pixels;
-    for (let i = 0; i < data.length; i += 4) {
-      const r = data[i]!,
-        g = data[i + 1]!,
-        b = data[i + 2]!;
-      data[i] = (rr * r + rg * g + rb * b) * brightness;
-      data[i + 1] = (gr * r + gg * g + gb * b) * brightness;
-      data[i + 2] = (br * r + bg * g + bb * b) * brightness;
-    }
+    image_filter_rgba(new Uint8Array(data.buffer, data.byteOffset, data.byteLength), preset, brightness);
     drawing.putImageData(pixels, 0, top);
   }
 }
@@ -48,6 +37,7 @@ function encode(canvas: HTMLCanvasElement, type: string, quality: number): Promi
   );
 }
 async function editPhoto(image: PhotoSource, options: ReturnType<typeof imageOptions>): Promise<HTMLCanvasElement | null> {
+  await prepareWasm();
   return new Promise((resolve, reject) => {
     const previous = document.activeElement as HTMLElement | null;
     const dialog = document.createElement('dialog');
@@ -177,7 +167,7 @@ async function editPhoto(image: PhotoSource, options: ReturnType<typeof imageOpt
     const adjustmentRow = document.createElement('div');
     adjustmentRow.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:0 0 16px';
     const filter = document.createElement('select');
-    for (const { label } of colorPresets) {
+    for (const label of colorPresets) {
       const option = document.createElement('option');
       option.textContent = label;
       filter.append(option);

@@ -27,6 +27,9 @@ pub mod ffi;
 #[cfg(feature = "auth")]
 #[path = "../../auth/rust/oauth.rs"]
 mod auth;
+#[cfg(feature = "contacts")]
+#[path = "../../contacts/rust/contacts.rs"]
+mod contacts;
 #[cfg(any(feature = "games", feature = "sqlite"))]
 #[path = "support/fingerprint.rs"]
 mod fingerprint;

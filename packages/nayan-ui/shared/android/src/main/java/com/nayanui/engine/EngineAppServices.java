@@ -34,6 +34,11 @@ public final class EngineAppServices implements LifecycleEventListener {
         JSONObject value = root.has("value") ? root.getJSONObject("value") : root;
         if (current == null) { nativeCompleted(token,"","App service context is unavailable"); return; }
         String action = value.getString("action");
+        if (action.startsWith("contacts.")) {
+          EngineContacts.request(current.context, value, (result, error) -> nativeCompleted(token, result, error),
+              (options, rows) -> nativeContactsListed(token, options, rows));
+          return;
+        }
         if (action.equals("location.available")) {
           nativeCompleted(token, Boolean.toString(current.location.isAvailable()), "");
           return;
@@ -92,6 +97,7 @@ public final class EngineAppServices implements LifecycleEventListener {
     else nativeCompleted(token, "{\"error\":" + JSONObject.quote(error) + "}", "");
   }
   private static native void nativeLocationCompleted(long token, String sample);
+  private static native void nativeContactsListed(long token, String options, String rows);
   private static native void nativeCompleted(long token, String value, String error);
   private static native void nativePermissionCompleted(long token, String observation);
 }

@@ -19,7 +19,8 @@ def imagePicker = features == null
 def video = enabled("video")
 def review = enabled("review")
 def location = enabled("location")
-def permissions = location || enabled("permissions")
+def contacts = enabled("contacts")
+def permissions = location || contacts || enabled("permissions")
 
 android {
   namespace "com.nayanui.engine"
@@ -34,7 +35,7 @@ android {
     ["assets", "capture", "clipboard", "files", "keep-awake", "microphone", "network", "sharing", "components"].each { feature ->
       java.srcDir("../../native/${feature}/android/java")
     }
-    ["image-picker": imagePicker, video: video, location: location, permissions: permissions, review: review].each { feature, included ->
+    ["image-picker": imagePicker, video: video, location: location, contacts: contacts, permissions: permissions, review: review].each { feature, included ->
       java.srcDir("../../native/${feature}/android/${included ? 'enabled' : 'disabled'}/java")
     }
     if (enabled("tts")) java.srcDir("../../native/tts/android/java")

@@ -49,6 +49,8 @@ export type { CapturedImage } from './capture/index';
 export { keepAwake, useKeepAwake } from './keep-awake/index';
 export { review } from './review/index';
 export { auth } from './auth/index';
+export { contacts } from './contacts/index';
+export type { Contact, ContactEmail, ContactFields, ContactPage, ContactPatch, ContactPhone, ContactQuery, ContactsAccess } from './contacts/index';
 export type { SignInCallback, SignInCallbackResult, SignInOptions, SignInProvider, SignInRequest, SignInTransaction } from './auth/index';
 export { imagePicker } from './image-picker/index';
 export type { ImagePickerOptions, ImagePickerResult, PickedImage, CameraPermission } from './image-picker/index';

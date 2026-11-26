@@ -58,4 +58,21 @@ extern "C" JNIEXPORT void JNICALL Java_com_nayanui_engine_EngineAppServices_nati
     JNIEnv *, jclass, jlong token, jstring sample) {
   finishAppServices(token, nayan::locationPosition(facebook::jni::wrap_alias(sample)->toStdString()), {});
 }
+
+extern "C" JNIEXPORT void JNICALL Java_com_nayanui_engine_EngineAppServices_nativeContactsListed(
+    JNIEnv *, jclass, jlong token, jstring options, jstring rows) {
+  finishAppServices(token, nayan::contactsPage(facebook::jni::wrap_alias(options)->toStdString(),
+      facebook::jni::wrap_alias(rows)->toStdString()), {});
+}
+
+extern "C" JNIEXPORT jfloatArray JNICALL Java_com_nayanui_engine_EngineImageCropActivity_nativeColorMatrix(
+    JNIEnv *env, jclass, jint preset, jfloat brightness) {
+  double matrix[9];
+  engine_image_color_matrix(static_cast<uint32_t>(preset), brightness, matrix);
+  jfloat values[9];
+  for (size_t i = 0; i < 9; ++i) values[i] = static_cast<jfloat>(matrix[i]);
+  auto output = env->NewFloatArray(9);
+  if (output) env->SetFloatArrayRegion(output, 0, 9, values);
+  return output;
+}
 #endif

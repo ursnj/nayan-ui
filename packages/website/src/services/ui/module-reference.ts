@@ -83,6 +83,21 @@ export async function captureSize() {
     note: 'Call from a user action. Capture requires a supported camera, camera permission, and a secure context on the web.'
   },
   {
+    slug: 'contacts',
+    title: 'Contacts',
+    entry: './contacts',
+    description: 'Search and manage device contacts on Android and iOS, or an app-owned address book on the web.',
+    code: `import { contacts } from 'nayan-ui/contacts';
+
+export async function searchContacts(search: string, offset = 0) {
+  const { read } = await contacts.requestPermissions();
+  if (read.status !== 'granted' && read.status !== 'limited') return null;
+  return contacts.list({ search, offset, limit: 25 });
+}`,
+    note: 'For Expo, set contactsPermission on the nayan-ui plugin and rebuild. Browsers persist their app-owned contacts in IndexedDB.',
+    guide: 'https://github.com/ursnj/nayan-ui/blob/main/packages/nayan-ui/README.md#contacts'
+  },
+  {
     slug: 'capture',
     title: 'Screen Capture',
     entry: './capture',

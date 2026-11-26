@@ -26,7 +26,14 @@ function background(config, platform) {
 /** NTheme owns the app's status bar; individual navigation controllers do not override it. */
 module.exports = function withNayanEngine(
   config,
-  { systemTheme = false, features, imagePicker = false, cameraPermission = 'Allow this app to take photos.', locationPermission } = {}
+  {
+    systemTheme = false,
+    features,
+    imagePicker = false,
+    cameraPermission = 'Allow this app to take photos.',
+    locationPermission,
+    contactsPermission
+  } = {}
 ) {
   const pickerKey = 'nayanEngine.imagePicker';
   const featuresKey = 'nayanEngine.features';
@@ -37,6 +44,12 @@ module.exports = function withNayanEngine(
   }
   if (locationPermission && profile !== undefined && !profile.split(',').includes('location')) {
     throw new Error('Nayan Engine locationPermission requires the location feature.');
+  }
+  if (contactsPermission !== undefined && (typeof contactsPermission !== 'string' || !contactsPermission.trim())) {
+    throw new Error('Nayan Engine contactsPermission must be a non-empty usage description.');
+  }
+  if (contactsPermission && profile !== undefined && !profile.split(',').includes('contacts')) {
+    throw new Error('Nayan Engine contactsPermission requires the contacts feature.');
   }
   if (profile !== undefined && systemTheme && !profile.split(',').some((feature) => feature === 'components' || feature === 'markdown')) {
     throw new Error('Nayan Engine systemTheme requires the components or markdown feature.');
@@ -57,6 +70,7 @@ module.exports = function withNayanEngine(
     mod.modResults.UIViewControllerBasedStatusBarAppearance = false;
     if (usesPicker) mod.modResults.NSCameraUsageDescription = cameraPermission;
     if (locationPermission) mod.modResults.NSLocationWhenInUseUsageDescription = locationPermission;
+    if (contactsPermission) mod.modResults.NSContactsUsageDescription = contactsPermission;
     if (systemTheme) {
       mod.modResults.NayanEngineSystemThemeEnabled = true;
       mod.modResults.UIUserInterfaceStyle = { light: 'Light', dark: 'Dark', automatic: 'Automatic' }[style(mod, 'ios')];
@@ -66,6 +80,8 @@ module.exports = function withNayanEngine(
     return mod;
   });
   if (usesPicker) config = AndroidConfig.Permissions.withPermissions(config, ['android.permission.CAMERA']);
+  if (contactsPermission)
+    config = AndroidConfig.Permissions.withPermissions(config, ['android.permission.READ_CONTACTS', 'android.permission.WRITE_CONTACTS']);
   if (locationPermission)
     config = AndroidConfig.Permissions.withPermissions(config, [
       'android.permission.ACCESS_COARSE_LOCATION',
