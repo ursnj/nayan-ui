@@ -5,4 +5,4 @@
 ## Verification
 
 <!-- List the checks you ran and their results. Include a screenshot or recording for visible changes if it helps. -->
-<!-- If you have write access, comment `test` on this pull request to run full Nayan UI verification. -->
+<!-- With write access, comment `test` to verify this PR or `merge` to verify and merge after @ursnj approves it. -->

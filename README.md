@@ -135,7 +135,7 @@ bun run engine:build
 | `bun run test`              | Run the engine and website Bun tests     |
 | `bun run clean`             | Remove `node_modules` and build outputs  |
 
-On an open pull request, a collaborator with write access can post `test` as a standalone comment. GitHub Actions verifies the current PR commit with the same library builds and checks used for npm releases and posts the results with a link to the logs.
+On an open pull request, a collaborator with write access can post `test` as a standalone comment. GitHub Actions verifies the current PR commit with the same library builds and checks used for npm releases and posts the results with a link to the logs. Use `merge` to also merge the verified commit after @ursnj approves it and GitHub's merge requirements are met.
 
 ## Publishing
 

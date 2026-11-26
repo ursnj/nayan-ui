@@ -29,20 +29,22 @@ env:
   NPM_DIST_TAG: ${{ inputs.beta && 'beta' || 'latest' }}
 
 jobs:
-  resolve-test:
-    name: Resolve PR test request
+  resolve-pr:
+    name: Resolve PR command
     if: >-
       github.event_name == 'issue_comment' &&
       github.event.issue.pull_request &&
       github.event.issue.state == 'open' &&
-      github.event.comment.body == 'test'
+      (github.event.comment.body == 'test' || github.event.comment.body == 'merge')
     runs-on: ubuntu-24.04
     timeout-minutes: 2
     permissions:
       pull-requests: read
     outputs:
+      command: ${{ steps.request.outputs.command }}
       sha: ${{ steps.request.outputs.sha }}
       repository: ${{ steps.request.outputs.repository }}
+      base-ref: ${{ steps.request.outputs.base-ref }}
     steps:
       - name: Check access and resolve the PR head
         id: request
@@ -50,7 +52,7 @@ jobs:
         with:
           script: |
             const { comment } = context.payload;
-            if (comment.body !== 'test') return;
+            if (!['test', 'merge'].includes(comment.body)) return;
             const username = comment.user.login;
             const access = await github.rest.repos.getCollaboratorPermissionLevel({ ...context.repo, username }).catch(error => {
               if (error.status === 404) return null;
@@ -60,8 +62,10 @@ jobs:
 
             const { data: pr } = await github.rest.pulls.get({ ...context.repo, pull_number: context.issue.number });
             if (pr.state !== 'open' || !pr.head.repo) return;
+            core.setOutput('command', comment.body);
             core.setOutput('sha', pr.head.sha);
             core.setOutput('repository', pr.head.repo.full_name);
+            core.setOutput('base-ref', pr.base.ref);
 
   check-publish:
     name: Check npm package
@@ -92,10 +96,10 @@ jobs:
 
   build-core:
     name: Build core (${{ matrix.platform }})
-    needs: [check-publish, resolve-test]
+    needs: [check-publish, resolve-pr]
     if: >-
       !cancelled() &&
-      (needs.resolve-test.outputs.sha != '' ||
+      (needs.resolve-pr.outputs.sha != '' ||
       (toJSON(github.event.repository.private) == 'false' &&
       (inputs.command == 'validate' || needs.check-publish.result == 'success')))
     runs-on: ${{ matrix.runner }}
@@ -129,8 +133,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          repository: ${{ needs.resolve-test.outputs.repository || github.repository }}
-          ref: ${{ needs.resolve-test.outputs.sha || github.sha }}
+          repository: ${{ needs.resolve-pr.outputs.repository || github.repository }}
+          ref: ${{ needs.resolve-pr.outputs.sha || github.sha }}
           persist-credentials: false
 
       - name: Restore compiled platform binaries
@@ -214,10 +218,10 @@ jobs:
 
   test-core:
     name: Test Rust core
-    needs: [check-publish, resolve-test]
+    needs: [check-publish, resolve-pr]
     if: >-
       !cancelled() &&
-      (needs.resolve-test.outputs.sha != '' ||
+      (needs.resolve-pr.outputs.sha != '' ||
       (toJSON(github.event.repository.private) == 'false' &&
       (inputs.command == 'validate' || needs.check-publish.result == 'success')))
     runs-on: macos-15
@@ -227,8 +231,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          repository: ${{ needs.resolve-test.outputs.repository || github.repository }}
-          ref: ${{ needs.resolve-test.outputs.sha || github.sha }}
+          repository: ${{ needs.resolve-pr.outputs.repository || github.repository }}
+          ref: ${{ needs.resolve-pr.outputs.sha || github.sha }}
           persist-credentials: false
       - name: Set up Rust toolchain
         run: |
@@ -242,11 +246,11 @@ jobs:
       - run: cargo test --locked --manifest-path packages/nayan-ui/native/core/Cargo.toml
 
   package:
-    needs: [build-core, test-core, resolve-test]
+    needs: [build-core, test-core, resolve-pr]
     if: >-
       !cancelled() &&
       needs.build-core.result == 'success' &&
-      (needs.test-core.result == 'success' || needs.resolve-test.outputs.sha != '')
+      (needs.test-core.result == 'success' || needs.resolve-pr.outputs.sha != '')
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     outputs:
@@ -254,8 +258,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          repository: ${{ needs.resolve-test.outputs.repository || github.repository }}
-          ref: ${{ needs.resolve-test.outputs.sha || github.sha }}
+          repository: ${{ needs.resolve-pr.outputs.repository || github.repository }}
+          ref: ${{ needs.resolve-pr.outputs.sha || github.sha }}
           persist-credentials: false
 
       - uses: actions/download-artifact@v4
@@ -315,10 +319,81 @@ jobs:
           PACKAGED_TARBALL: ${{ needs.package.outputs.tarball }}
         run: npm publish "$RUNNER_TEMP/npm-package/${PACKAGED_TARBALL##*/}" --access public --tag "$NPM_DIST_TAG" --ignore-scripts --loglevel=warn
 
-  report-test:
+  merge-pr:
+    name: Merge the verified pull request
+    needs: [resolve-pr, build-core, test-core, package]
+    if: >-
+      !cancelled() &&
+      github.event_name == 'issue_comment' &&
+      needs.resolve-pr.outputs.command == 'merge' &&
+      needs.build-core.result == 'success' &&
+      needs.test-core.result == 'success' &&
+      needs.package.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    permissions:
+      contents: write
+      pull-requests: read
+    outputs:
+      message: ${{ steps.merge.outputs.message }}
+    steps:
+      - id: merge
+        uses: actions/github-script@v8
+        env:
+          HEAD_SHA: ${{ needs.resolve-pr.outputs.sha }}
+          BASE_REF: ${{ needs.resolve-pr.outputs.base-ref }}
+        with:
+          script: |
+            function blockMerge(message) {
+              core.setOutput('message', message);
+              core.setFailed(message);
+            }
+
+            const request = { ...context.repo, pull_number: context.issue.number };
+            const sha = process.env.HEAD_SHA;
+            const { data: pr } = await github.rest.pulls.get(request);
+            if (pr.merged) {
+              core.setOutput('message', 'This pull request was already merged.');
+              return;
+            }
+            if (pr.state !== 'open' || pr.draft) {
+              return blockMerge('The pull request must be open and ready for review.');
+            }
+            if (pr.head.sha !== sha || pr.base.ref !== process.env.BASE_REF) {
+              return blockMerge('The head commit or target branch changed. Comment `merge` again to revalidate.');
+            }
+            if (pr.user?.login.toLowerCase() === 'ursnj') {
+              return blockMerge('GitHub requires a reviewer other than the author. @ursnj can merge this pull request directly on GitHub.');
+            }
+
+            const reviews = await github.paginate(github.rest.pulls.listReviews, { ...request, per_page: 100 });
+            const ownerReview = reviews.findLast(review =>
+              review.user?.login.toLowerCase() === 'ursnj' &&
+              ['APPROVED', 'CHANGES_REQUESTED', 'DISMISSED'].includes(review.state)
+            );
+            if (ownerReview?.state !== 'APPROVED' || ownerReview.commit_id !== sha) {
+              return blockMerge('The verified commit needs an approving review from @ursnj.');
+            }
+
+            try {
+              const { data: result } = await github.rest.pulls.merge({ ...request, sha });
+              if (!result.merged) return blockMerge('GitHub could not merge this pull request. Check the merge requirements on the pull request.');
+              core.setOutput('message', `Merged as \`${result.sha}\`.`);
+            } catch (error) {
+              if (error.status === 409) {
+                return blockMerge('The head commit changed. Comment `merge` again to revalidate.');
+              }
+              if ([403, 405, 422].includes(error.status)) {
+                core.info(error.message);
+                return blockMerge('GitHub declined the merge. Check the merge requirements on the pull request.');
+              }
+              throw error;
+            }
+
+  report-pr:
     name: Report verification on pull request
-    needs: [resolve-test, build-core, test-core, package]
-    if: always() && github.event_name == 'issue_comment' && needs.resolve-test.outputs.sha != ''
+    needs: [resolve-pr, build-core, test-core, package, merge-pr]
+    if: always() && github.event_name == 'issue_comment' && needs.resolve-pr.outputs.sha != ''
     runs-on: ubuntu-24.04
     timeout-minutes: 2
     permissions:
@@ -326,10 +401,12 @@ jobs:
     steps:
       - uses: actions/github-script@v8
         env:
-          HEAD_SHA: ${{ needs.resolve-test.outputs.sha }}
+          HEAD_SHA: ${{ needs.resolve-pr.outputs.sha }}
+          COMMAND: ${{ needs.resolve-pr.outputs.command }}
           BUILD_RESULT: ${{ needs.build-core.result }}
           RUST_RESULT: ${{ needs.test-core.result }}
           PACKAGE_RESULT: ${{ needs.package.result }}
+          MERGE_MESSAGE: ${{ needs.merge-pr.outputs.message }}
         with:
           script: |
             const checks = [
@@ -343,7 +420,10 @@ jobs:
               `**Nayan UI verification ${passed ? 'passed' : 'did not pass'}** for \`${process.env.HEAD_SHA}\`.`,
               '',
               ...checks.map(([name, status]) => `- ${name}: ${status}`),
-              '',
-              `[View workflow logs](${run})`,
-            ].join('\n');
-            await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body });
+            ];
+            if (process.env.COMMAND === 'merge') {
+              const message = process.env.MERGE_MESSAGE || (passed ? 'The merge could not complete. See the workflow logs.' : 'Merge skipped because verification failed.');
+              body.push('', message);
+            }
+            body.push('', `[View workflow logs](${run})`);
+            await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body: body.join('\n') });
