@@ -5,10 +5,10 @@ import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/s
 export const metadata = buildPageMetadata({
   title: "React Native Components",
   description:
-    "Browse Nayan UI UI examples for React Native. Explore controls, layouts, forms, and feedback.",
+    "Explore Nayan UI components for React Native, including shared themes, controls, layouts and forms for iOS and Android.",
   path: "/react-native",
   keywords:
-    "react native components, nayan ui react native, mobile ui library, ios components, android components, heroui native",
+    "react native components, nayan ui react native, mobile ui library, ios components, android components",
 });
 
 const schemas = [

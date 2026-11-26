@@ -5,7 +5,7 @@ import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/s
 export const metadata = buildPageMetadata({
   title: "Contributions - Open Source Contributors",
   description:
-    "Meet the contributors behind Nayan UI. Learn how to contribute to the open source React and React Native component library.",
+    "Contribute to Nayan UI’s engine, components, modules, or website. See local verification and pull request review steps.",
   path: "/contributions",
   keywords:
     "nayan ui contributors, open source, contribute to nayan ui, react component library contributors",

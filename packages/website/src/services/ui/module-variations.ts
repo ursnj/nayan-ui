@@ -241,7 +241,7 @@ export function restoreSketch(document: DrawingDocument, project: string) {
   ],
   files: [
     {
-      title: 'Inspect and clean up cached binary files',
+      title: 'Save and inspect private binary files',
       code: `import { files } from 'nayan-ui/files';
 
 export async function updateCache(bytes: Uint8Array) {
@@ -345,6 +345,28 @@ export async function selectAttachments() {
   };
 }`,
       note: 'Release the cached files or blob URLs after the attachments are uploaded or removed.'
+    },
+    {
+      title: 'Save a picked PDF to private storage',
+      code: `import { assets } from 'nayan-ui/assets';
+import { documentPicker } from 'nayan-ui/document-picker';
+import { files } from 'nayan-ui/files';
+
+export async function importPdf() {
+  const result = await documentPicker.getDocumentAsync({ type: 'application/pdf' });
+  if (result.canceled) return false;
+  const [pdf] = result.assets;
+  if (!pdf) return false;
+  try {
+    const bytes = pdf.file ? await pdf.file.arrayBuffer() : await assets.read(pdf.uri);
+    const directory = await files.openDirectory('imports');
+    await directory.write('latest.pdf', bytes);
+    return true;
+  } finally {
+    await documentPicker.release(pdf.uri);
+  }
+}`,
+      note: 'The picker uses a cache copy on native. This example replaces latest.pdf and uses the 64 MiB limit of private files.'
     }
   ],
   'image-picker': [
@@ -360,7 +382,7 @@ export async function pickGallery() {
 }`
     },
     {
-      title: 'Capture and crop a profile image',
+      title: 'Capture and edit a profile image',
       code: `import { imagePicker } from 'nayan-ui/image-picker';
 
 export async function takeProfilePhoto() {
@@ -507,7 +529,24 @@ export async function addAda() {
   if ([read, write].some(({ status }) => status !== 'granted' && status !== 'limited')) return null;
   return contacts.create({ givenName: 'Ada', familyName: 'Lovelace' });
 }`,
-      note: 'A patch preserves omitted fields. Supply null to clear text or an empty array to clear phones or emails.'
+      note: 'Call from a user action. On native, edits are scoped to the contacts and permissions the OS grants.'
+    },
+    {
+      title: 'Edit and remove contacts by ID',
+      code: `import { contacts } from 'nayan-ui/contacts';
+
+export async function clearWorkDetails(id: string) {
+  const { write } = await contacts.getPermissions();
+  if (write.status !== 'granted' && write.status !== 'limited') return null;
+  return contacts.update(id, { company: null, jobTitle: null, emails: [] });
+}
+
+export async function deleteContact(id: string) {
+  const { write } = await contacts.getPermissions();
+  if (write.status !== 'granted' && write.status !== 'limited') return false;
+  return contacts.remove(id);
+}`,
+      note: 'Omitted fields are preserved. Use null to clear a text field or an empty array to clear phones or emails. remove() returns false when the contact is missing.'
     }
   ],
   auth: [
@@ -568,6 +607,21 @@ export function findNote(title: string) {
     }
   ],
   storage: [
+    {
+      title: 'Open and rotate an encrypted store on iOS or Android',
+      code: `import { createStorage } from 'nayan-ui/storage';
+
+export function openSessionStorage(encryptionKey: string) {
+  return createStorage({ id: 'session', encryptionKey, encryptionType: 'AES-256' });
+}
+
+export function rotateSessionStorage(currentKey: string, nextKey: string) {
+  const session = openSessionStorage(currentKey);
+  session.encrypt(nextKey, 'AES-256');
+  return session.isEncrypted;
+}`,
+      note: 'Pass an app-managed, cryptographically random key. AES-256 requires at least 32 UTF-8 bytes. Keep both keys until rotation succeeds and pass the new key on future opens.'
+    },
     {
       title: 'Store JSON and subscribe to changes',
       code: `import { createStorage } from 'nayan-ui/storage';
@@ -810,20 +864,19 @@ export function BrowserScene() {
   ],
   'expo-plugin': [
     {
-      title: 'Configure native camera and microphone usage',
+      title: 'Enable photo capture, contacts, and system theme',
       filename: 'app.config.js',
       code: `export default {
   expo: {
     name: 'Capture notes',
     slug: 'capture-notes',
-    plugins: ['nayan-ui'],
-    ios: {
-      infoPlist: {
-        NSCameraUsageDescription: 'Take photos for your notes.',
-        NSMicrophoneUsageDescription: 'Record audio for your notes.'
-      }
-    },
-    android: { permissions: ['android.permission.CAMERA', 'android.permission.RECORD_AUDIO'] }
+    userInterfaceStyle: 'automatic',
+    plugins: [['nayan-ui', {
+      systemTheme: true,
+      imagePicker: true,
+      cameraPermission: 'Take photos for your notes.',
+      contactsPermission: 'Choose and manage contacts.'
+    }]]
   }
 };`,
       note: 'Build a new development client after changing native declarations.'

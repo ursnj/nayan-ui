@@ -1,4 +1,4 @@
-import { starterSetupCode } from "../GamesCodeBlocks";
+import { starterCliCode, starterCliNote, starterSetupCode } from "../GamesCodeBlocks";
 import type { EngineGuide } from "./types";
 
 export const PracticalGuides: EngineGuide[] = [
@@ -12,10 +12,17 @@ export const PracticalGuides: EngineGuide[] = [
         title: "Run the starter app",
         paragraphs: [
           "The Nayan UI starter runs the same landing page in Vite on the web and Expo on iOS and Android.",
+          starterCliNote,
         ],
         examples: [
           {
-            title: "Run the starter in a browser",
+            title: "Create the workspace with the CLI",
+            platform: "shell",
+            language: "bash",
+            code: `${starterCliCode}\nbun run web`,
+          },
+          {
+            title: "Run the repository template in a browser",
             platform: "shell",
             language: "bash",
             code: `${starterSetupCode}

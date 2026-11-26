@@ -21,6 +21,8 @@ import {
   pauseCode,
   peerDepsCode,
   simpleUsageCode,
+  starterCliCode,
+  starterCliNote,
   themeCode,
   warmUpCode,
   webDirectImportCode,
@@ -71,9 +73,11 @@ const GamesInstallation = () => {
       <NView tag="div" className="mb-8">
         <NText tag="h2" className={H2_DOC}>Start with the Nayan UI starter</NText>
         <NText tag="p" className={P}>
-          The Nayan UI starter includes an Expo app for iOS and Android, a Vite app for the browser, and a shared landing page. Run either app from the same Bun workspace, then follow the installation steps below to add games.
+          The Nayan UI starter includes an Expo app for iOS and Android, a Vite app for the browser, and a shared landing page and theme. Run either app from the same Bun workspace, then install nayan-games to add the game library.
         </NText>
-        <Code language="bash" code={createProjectCode} />
+        <Code language="bash" code={`${starterCliCode}\nbun run web`} filename="Starter CLI" />
+        <NText tag="p" className={P}>{starterCliNote}</NText>
+        <Code language="bash" code={createProjectCode} filename="Repository template" />
         <NText tag="p" className={P}>
           Needs{" "}
           <NView tag="a" href="https://bun.sh" target="_blank" rel="noopener noreferrer" className={LINK}>

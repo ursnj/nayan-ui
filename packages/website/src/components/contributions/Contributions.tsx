@@ -35,7 +35,7 @@ const Contributions = () => {
               <NView tag="div" className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center border border-accent/20 bg-accent/8 text-accent">
                 <Users className="w-5 h-5 text-current" />
               </NView>
-              <NView tag="div" className="text-2xl font-bold">2</NView>
+              <NView tag="div" className="text-2xl font-bold">3</NView>
               <NView tag="div" className="text-xs text-muted">Platforms</NView>
             </NCard>
             <NCard className="p-5 text-center">
@@ -181,7 +181,7 @@ const Contributions = () => {
                       <NView tag="br" />
                       cd nayan-ui
                       <NView tag="br" />
-                      bun install --frozen-lockfile --filter nayan-ui
+                      bun install --frozen-lockfile
                     </NView>
                   </NView>
                 </NView>
@@ -233,8 +233,8 @@ const Contributions = () => {
               <NAlert type={AlertTypes.INFO}>
                 <NView tag="div">
                   <NText tag="p" className="text-sm">
-                    We use ESLint and Prettier for code formatting. Formatting and linting will be
-                    auto corrected based on the configuration file.
+                    Run <NText tag="code">bun run quality</NText> from the repository root to check formatting, lint, types, and tests.
+                    For website changes, also run <NText tag="code">bun run website:build</NText> to verify production routes and regenerate the sitemap.
                   </NText>
                 </NView>
               </NAlert>
@@ -266,7 +266,8 @@ const Contributions = () => {
                     <NView tag="li">• Add screenshots for UI changes</NView>
                     <NView tag="li">• Ensure all tests pass</NView>
                     <NView tag="li">• Keep pull requests focused and atomic</NView>
-                    <NView tag="li">• Be responsive to code review feedback</NView>
+                    <NView tag="li">• Collaborators with write access can comment <NText tag="code">test</NText> to run library verification and post the results.</NView>
+                    <NView tag="li">• <NText tag="code">merge</NText> verifies the PR and merges after @ursnj approves it and GitHub’s merge requirements pass. @ursnj can merge their own PR directly on GitHub.</NView>
                   </NView>
                 </NCard>
               </NView>

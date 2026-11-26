@@ -1,1070 +1,1670 @@
 [
   {
     "name": "World",
-    "module": "world/World",
+    "module": "games/world/World",
     "typeOnly": false,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "isEngineAvailable",
-    "module": "world/World",
+    "module": "games/world/World",
     "typeOnly": false,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "quat",
-    "module": "world/quat",
+    "module": "games/world/quat",
     "typeOnly": false,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "MutableQuat",
-    "module": "world/quat",
+    "module": "games/world/quat",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "toColor",
-    "module": "world/color",
+    "module": "games/world/color",
     "typeOnly": false,
-    "guide": "camera-lighting"
+    "guide": "/game-engine/camera-lighting"
   },
   {
     "name": "ColorInput",
-    "module": "world/color",
+    "module": "games/world/color",
     "typeOnly": true,
-    "guide": "camera-lighting"
+    "guide": "/game-engine/camera-lighting"
   },
   {
     "name": "effects",
-    "module": "world/effects",
+    "module": "games/world/effects",
     "typeOnly": false,
-    "guide": "particles"
+    "guide": "/game-engine/particles"
   },
   {
     "name": "DustOptions",
-    "module": "world/effects",
+    "module": "games/world/effects",
     "typeOnly": true,
-    "guide": "particles"
+    "guide": "/game-engine/particles"
   },
   {
     "name": "EffectOptions",
-    "module": "world/effects",
+    "module": "games/world/effects",
     "typeOnly": true,
-    "guide": "particles"
+    "guide": "/game-engine/particles"
   },
   {
     "name": "FlashOptions",
-    "module": "world/effects",
+    "module": "games/world/effects",
     "typeOnly": true,
-    "guide": "particles"
+    "guide": "/game-engine/particles"
   },
   {
     "name": "PopOptions",
-    "module": "world/effects",
+    "module": "games/world/effects",
     "typeOnly": true,
-    "guide": "particles"
+    "guide": "/game-engine/particles"
   },
   {
     "name": "Scoreboard",
-    "module": "world/Scoreboard",
+    "module": "games/world/Scoreboard",
     "typeOnly": false,
-    "guide": "scoreboard-timers"
+    "guide": "/game-engine/scoreboard-timers"
   },
   {
     "name": "ScoreboardHandlers",
-    "module": "world/Scoreboard",
+    "module": "games/world/Scoreboard",
     "typeOnly": true,
-    "guide": "scoreboard-timers"
+    "guide": "/game-engine/scoreboard-timers"
   },
   {
     "name": "AnimateOptions",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "AnimateTarget",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "BodyType",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "Bounds",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "BurstOptions",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "CollisionInfo",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "ClipOptions",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "ScreenPlane",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "Color",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "Easing",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "Entity",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "EntityOptions",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "ImpactFeedback",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "Keyframe",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "PhysicsOptions",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "PickHit",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "Quat",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "RaycastHit",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "SpringOptions",
-    "module": "world/types",
+    "module": "games/world/types",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "afterNextFrame",
-    "module": "render/GameView",
+    "module": "games/render/GameView",
     "typeOnly": false,
-    "guide": "game-view"
+    "guide": "/game-engine/game-view"
   },
   {
     "name": "GameView",
-    "module": "render/GameView",
+    "module": "games/render/GameView",
     "typeOnly": false,
-    "guide": "game-view"
+    "guide": "/game-engine/game-view"
   },
   {
     "name": "DragEvent",
-    "module": "render/GameView",
+    "module": "games/render/GameView",
     "typeOnly": true,
-    "guide": "game-view"
+    "guide": "/game-engine/game-view"
   },
   {
     "name": "GameViewProps",
-    "module": "render/GameView",
+    "module": "games/render/GameView",
     "typeOnly": true,
-    "guide": "game-view"
+    "guide": "/game-engine/game-view"
   },
   {
     "name": "GameViewStats",
-    "module": "render/GameView",
+    "module": "games/render/GameView",
     "typeOnly": true,
-    "guide": "game-view"
+    "guide": "/game-engine/game-view"
   },
   {
     "name": "OverlayTouchPhase",
-    "module": "render/GameView",
+    "module": "games/render/GameView",
     "typeOnly": true,
-    "guide": "game-view"
+    "guide": "/game-engine/game-view"
   },
   {
     "name": "PinchEvent",
-    "module": "render/GameView",
+    "module": "games/render/GameView",
     "typeOnly": true,
-    "guide": "game-view"
+    "guide": "/game-engine/game-view"
   },
   {
     "name": "SwipeDirection",
-    "module": "render/GameView",
+    "module": "games/render/GameView",
     "typeOnly": true,
-    "guide": "game-view"
+    "guide": "/game-engine/game-view"
   },
   {
     "name": "useWorld",
-    "module": "render/useWorld",
+    "module": "games/render/useWorld",
     "typeOnly": false,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "WorldSetup",
-    "module": "render/useWorld",
+    "module": "games/render/useWorld",
     "typeOnly": true,
-    "guide": "world-entities"
+    "guide": "/game-engine/world-entities"
   },
   {
     "name": "frontLight",
-    "module": "render/light",
+    "module": "games/render/light",
     "typeOnly": false,
-    "guide": "camera-lighting"
+    "guide": "/game-engine/camera-lighting"
   },
   {
     "name": "warmUpEngine",
-    "module": "render/meshes",
+    "module": "games/render/meshes",
     "typeOnly": false,
-    "guide": "cache-performance"
+    "guide": "/game-engine/cache-performance"
   },
   {
     "name": "getMeshIdLimit",
-    "module": "render/meshes",
+    "module": "games/render/meshes",
     "typeOnly": false,
-    "guide": "cache-performance"
+    "guide": "/game-engine/cache-performance"
   },
   {
     "name": "TransformBatch",
-    "module": "world/TransformBatch",
+    "module": "games/world/TransformBatch",
     "typeOnly": true,
-    "guide": "cache-performance"
+    "guide": "/game-engine/cache-performance"
   },
   {
     "name": "TransformOptions",
-    "module": "world/TransformBatch",
+    "module": "games/world/TransformBatch",
     "typeOnly": true,
-    "guide": "cache-performance"
+    "guide": "/game-engine/cache-performance"
   },
   {
     "name": "RenderQuality",
-    "module": "render/quality",
+    "module": "games/render/quality",
     "typeOnly": true,
-    "guide": "game-view"
+    "guide": "/game-engine/game-view"
   },
   {
     "name": "RenderQualitySetting",
-    "module": "render/quality",
+    "module": "games/render/quality",
     "typeOnly": true,
-    "guide": "game-view"
+    "guide": "/game-engine/game-view"
   },
   {
     "name": "AssetSource",
-    "module": "assets/source",
+    "module": "assets/index",
     "typeOnly": true,
-    "guide": "models-textures"
+    "guide": "/modules/assets"
+  },
+  {
+    "name": "assets",
+    "module": "assets/index",
+    "typeOnly": false,
+    "guide": "/modules/assets"
+  },
+  {
+    "name": "AssetInfo",
+    "module": "assets/index",
+    "typeOnly": true,
+    "guide": "/modules/assets"
+  },
+  {
+    "name": "LoadedAsset",
+    "module": "assets/index",
+    "typeOnly": true,
+    "guide": "/modules/assets"
+  },
+  {
+    "name": "AssetLoadOptions",
+    "module": "assets/index",
+    "typeOnly": true,
+    "guide": "/modules/assets"
   },
   {
     "name": "loadModel",
-    "module": "assets/model",
+    "module": "games/assets/model",
     "typeOnly": false,
-    "guide": "models-textures"
+    "guide": "/game-engine/models-textures"
   },
   {
     "name": "Model",
-    "module": "assets/model",
+    "module": "games/assets/model",
     "typeOnly": true,
-    "guide": "models-textures"
+    "guide": "/game-engine/models-textures"
   },
   {
     "name": "ModelOptions",
-    "module": "assets/model",
+    "module": "games/assets/model",
     "typeOnly": true,
-    "guide": "models-textures"
+    "guide": "/game-engine/models-textures"
   },
   {
     "name": "ModelClip",
-    "module": "assets/model",
+    "module": "games/assets/model",
     "typeOnly": true,
-    "guide": "models-textures"
+    "guide": "/game-engine/models-textures"
   },
   {
     "name": "LoadedModel",
-    "module": "assets/model",
+    "module": "games/assets/model",
     "typeOnly": true,
-    "guide": "models-textures"
+    "guide": "/game-engine/models-textures"
   },
   {
     "name": "clearAssetCache",
     "module": "assets/AssetCache",
     "typeOnly": false,
-    "guide": "cache-performance"
+    "guide": "/game-engine/cache-performance"
   },
   {
     "name": "ProceduralCache",
-    "module": "assets/ProceduralCache",
+    "module": "games/assets/ProceduralCache",
     "typeOnly": false,
-    "guide": "cache-performance"
+    "guide": "/game-engine/cache-performance"
   },
   {
     "name": "ProceduralStorage",
-    "module": "assets/ProceduralCache",
+    "module": "games/assets/ProceduralCache",
     "typeOnly": true,
-    "guide": "cache-performance"
+    "guide": "/game-engine/cache-performance"
   },
   {
     "name": "bakeModel",
-    "module": "assets/texture",
+    "module": "games/assets/texture",
     "typeOnly": false,
-    "guide": "models-textures"
+    "guide": "/game-engine/models-textures"
   },
   {
     "name": "isBakeKept",
-    "module": "assets/texture",
+    "module": "games/assets/texture",
     "typeOnly": false,
-    "guide": "models-textures"
+    "guide": "/game-engine/models-textures"
   },
   {
     "name": "loadTexture",
-    "module": "assets/texture",
+    "module": "games/assets/texture",
     "typeOnly": false,
-    "guide": "models-textures"
+    "guide": "/game-engine/models-textures"
   },
   {
     "name": "BakedModel",
-    "module": "assets/texture",
+    "module": "games/assets/texture",
     "typeOnly": true,
-    "guide": "models-textures"
+    "guide": "/game-engine/models-textures"
   },
   {
     "name": "BakeOptions",
-    "module": "assets/texture",
+    "module": "games/assets/texture",
     "typeOnly": true,
-    "guide": "models-textures"
+    "guide": "/game-engine/models-textures"
   },
   {
     "name": "BakePart",
-    "module": "assets/texture",
+    "module": "games/assets/texture",
     "typeOnly": true,
-    "guide": "models-textures"
+    "guide": "/game-engine/models-textures"
   },
   {
     "name": "Texture",
-    "module": "assets/texture",
+    "module": "games/assets/texture",
     "typeOnly": true,
-    "guide": "models-textures"
+    "guide": "/game-engine/models-textures"
   },
   {
     "name": "Solid",
-    "module": "assets/modelling",
+    "module": "games/assets/modelling",
     "typeOnly": false,
-    "guide": "solid-modelling"
+    "guide": "/game-engine/solid-modelling"
   },
   {
     "name": "solidGeometry",
-    "module": "assets/modelling",
+    "module": "games/assets/modelling",
     "typeOnly": false,
-    "guide": "solid-modelling"
+    "guide": "/game-engine/solid-modelling"
   },
   {
     "name": "createSolid",
-    "module": "assets/modelling",
+    "module": "games/assets/modelling",
     "typeOnly": false,
-    "guide": "solid-modelling"
+    "guide": "/game-engine/solid-modelling"
   },
   {
     "name": "optimizeGeometry",
-    "module": "assets/modelling",
+    "module": "games/assets/modelling",
     "typeOnly": false,
-    "guide": "solid-modelling"
+    "guide": "/game-engine/solid-modelling"
   },
   {
     "name": "createGeometryLods",
-    "module": "assets/modelling",
+    "module": "games/assets/modelling",
     "typeOnly": false,
-    "guide": "solid-modelling"
+    "guide": "/game-engine/solid-modelling"
   },
   {
     "name": "getGeometryStats",
-    "module": "assets/modelling",
+    "module": "games/assets/modelling",
     "typeOnly": false,
-    "guide": "solid-modelling"
+    "guide": "/game-engine/solid-modelling"
   },
   {
     "name": "deformGeometry",
-    "module": "assets/modelling",
+    "module": "games/assets/modelling",
     "typeOnly": false,
-    "guide": "solid-modelling"
+    "guide": "/game-engine/solid-modelling"
   },
   {
     "name": "DisplacementOptions",
-    "module": "assets/modelling",
+    "module": "games/assets/modelling",
     "typeOnly": true,
-    "guide": "solid-modelling"
+    "guide": "/game-engine/solid-modelling"
   },
   {
     "name": "SolidOptions",
-    "module": "assets/modelling",
+    "module": "games/assets/modelling",
     "typeOnly": true,
-    "guide": "solid-modelling"
+    "guide": "/game-engine/solid-modelling"
   },
   {
     "name": "OptimizeOptions",
-    "module": "assets/modelling",
+    "module": "games/assets/modelling",
     "typeOnly": true,
-    "guide": "solid-modelling"
+    "guide": "/game-engine/solid-modelling"
   },
   {
     "name": "GeometryStats",
-    "module": "assets/modelling",
+    "module": "games/assets/modelling",
     "typeOnly": true,
-    "guide": "solid-modelling"
+    "guide": "/game-engine/solid-modelling"
   },
   {
     "name": "loft",
-    "module": "assets/loft",
+    "module": "games/assets/loft",
     "typeOnly": false,
-    "guide": "surfaces-lofts"
+    "guide": "/game-engine/surfaces-lofts"
   },
   {
     "name": "block",
-    "module": "assets/loft",
+    "module": "games/assets/loft",
     "typeOnly": false,
-    "guide": "surfaces-lofts"
+    "guide": "/game-engine/surfaces-lofts"
   },
   {
     "name": "ellipsoid",
-    "module": "assets/loft",
+    "module": "games/assets/loft",
     "typeOnly": false,
-    "guide": "surfaces-lofts"
+    "guide": "/game-engine/surfaces-lofts"
   },
   {
     "name": "smoothCurve",
-    "module": "assets/loft",
+    "module": "games/assets/loft",
     "typeOnly": false,
-    "guide": "surfaces-lofts"
+    "guide": "/game-engine/surfaces-lofts"
   },
   {
     "name": "LoftSection",
-    "module": "assets/loft",
+    "module": "games/assets/loft",
     "typeOnly": true,
-    "guide": "surfaces-lofts"
+    "guide": "/game-engine/surfaces-lofts"
   },
   {
     "name": "LoftOptions",
-    "module": "assets/loft",
+    "module": "games/assets/loft",
     "typeOnly": true,
-    "guide": "surfaces-lofts"
+    "guide": "/game-engine/surfaces-lofts"
   },
   {
     "name": "parametricSurface",
-    "module": "assets/surface",
+    "module": "games/assets/surface",
     "typeOnly": false,
-    "guide": "surfaces-lofts"
+    "guide": "/game-engine/surfaces-lofts"
   },
   {
     "name": "ParametricSurfaceOptions",
-    "module": "assets/surface",
+    "module": "games/assets/surface",
     "typeOnly": true,
-    "guide": "surfaces-lofts"
+    "guide": "/game-engine/surfaces-lofts"
   },
   {
     "name": "faceColor",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": false,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "FieldFunction",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": false,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "FieldGraph",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": false,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "FieldRef",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": false,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "generateMesh",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": false,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "generateWorld",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": false,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "generateWorldAsync",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": false,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "isWorldKept",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": false,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "ProceduralWorld",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": false,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "sectionColor",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": false,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "surfaceColor",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": false,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "surfaceDisplacement",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": false,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "FieldInput",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": true,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "FieldShape",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": true,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "ItemSolid",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": true,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "MeshPart",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": true,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "MeshRecipe",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": true,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "ScatterFilter",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": true,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "ScatterLayer",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": true,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "SolidRecipe",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": true,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "Spot",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": true,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "TerrainRecipe",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": true,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "WorldOptions",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": true,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "WorldRecipe",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": true,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "WorldStep",
-    "module": "assets/procedural",
+    "module": "games/assets/procedural",
     "typeOnly": true,
-    "guide": "procedural-worlds"
+    "guide": "/game-engine/procedural-worlds"
   },
   {
     "name": "createShape",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": false,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "extrude",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": false,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "lathe",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": false,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "merge",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": false,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "Path",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": false,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "recolor",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": false,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "shapeGeometry",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": false,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "smoothNormals",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": false,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "tube",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": false,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "ExtrudeOptions",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": true,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "FaceColor",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": true,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "Geometry",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": true,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "LatheOptions",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": true,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "GeometryPart",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": true,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "ShapeOptions",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": true,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "SurfaceColor",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": true,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "SurfacePoint",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": true,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "TubeOptions",
-    "module": "assets/shape",
+    "module": "games/assets/shape",
     "typeOnly": true,
-    "guide": "procedural-geometry"
+    "guide": "/game-engine/procedural-geometry"
   },
   {
     "name": "loadFont",
-    "module": "assets/font",
+    "module": "games/assets/font",
     "typeOnly": false,
-    "guide": "text-fonts"
+    "guide": "/game-engine/text-fonts"
   },
   {
     "name": "measureText",
-    "module": "assets/font",
+    "module": "games/assets/font",
     "typeOnly": false,
-    "guide": "text-fonts"
+    "guide": "/game-engine/text-fonts"
   },
   {
     "name": "Font",
-    "module": "assets/font",
+    "module": "games/assets/font",
     "typeOnly": true,
-    "guide": "text-fonts"
+    "guide": "/game-engine/text-fonts"
   },
   {
     "name": "FontOptions",
-    "module": "assets/font",
+    "module": "games/assets/font",
     "typeOnly": true,
-    "guide": "text-fonts"
+    "guide": "/game-engine/text-fonts"
   },
   {
     "name": "TextAlign",
-    "module": "assets/font",
+    "module": "games/assets/font",
     "typeOnly": true,
-    "guide": "text-fonts"
+    "guide": "/game-engine/text-fonts"
   },
   {
     "name": "TextLayout",
-    "module": "assets/font",
+    "module": "games/assets/font",
     "typeOnly": true,
-    "guide": "text-fonts"
-  },
-  {
-    "name": "audio",
-    "module": "media/audio",
-    "typeOnly": false,
-    "guide": "audio-haptics"
-  },
-  {
-    "name": "AudioPlayOptions",
-    "module": "media/audio",
-    "typeOnly": true,
-    "guide": "audio-haptics"
-  },
-  {
-    "name": "Sound",
-    "module": "media/audio",
-    "typeOnly": true,
-    "guide": "audio-haptics"
-  },
-  {
-    "name": "SoundBank",
-    "module": "media/audio",
-    "typeOnly": true,
-    "guide": "audio-haptics"
-  },
-  {
-    "name": "SoundSource",
-    "module": "media/audio",
-    "typeOnly": true,
-    "guide": "audio-haptics"
-  },
-  {
-    "name": "Voice",
-    "module": "media/audio",
-    "typeOnly": true,
-    "guide": "audio-haptics"
-  },
-  {
-    "name": "microphone",
-    "module": "media/microphone",
-    "typeOnly": false,
-    "guide": "audio-haptics"
-  },
-  {
-    "name": "MicrophoneOptions",
-    "module": "media/microphone",
-    "typeOnly": true,
-    "guide": "audio-haptics"
-  },
-  {
-    "name": "MicrophonePermission",
-    "module": "media/microphone",
-    "typeOnly": true,
-    "guide": "audio-haptics"
-  },
-  {
-    "name": "MicrophoneState",
-    "module": "media/microphone",
-    "typeOnly": true,
-    "guide": "audio-haptics"
-  },
-  {
-    "name": "Recording",
-    "module": "media/microphone",
-    "typeOnly": true,
-    "guide": "audio-haptics"
-  },
-  {
-    "name": "TakeOptions",
-    "module": "media/microphone",
-    "typeOnly": true,
-    "guide": "audio-haptics"
-  },
-  {
-    "name": "haptics",
-    "module": "media/haptics",
-    "typeOnly": false,
-    "guide": "audio-haptics"
-  },
-  {
-    "name": "HapticTap",
-    "module": "media/haptics",
-    "typeOnly": true,
-    "guide": "audio-haptics"
+    "guide": "/game-engine/text-fonts"
   },
   {
     "name": "Joystick",
-    "module": "input/Joystick",
+    "module": "games/input/Joystick",
     "typeOnly": false,
-    "guide": "input-picking"
+    "guide": "/game-engine/input-picking"
   },
   {
     "name": "useJoystick",
-    "module": "input/Joystick",
+    "module": "games/input/Joystick",
     "typeOnly": false,
-    "guide": "input-picking"
+    "guide": "/game-engine/input-picking"
   },
   {
     "name": "JoystickState",
-    "module": "input/Joystick",
+    "module": "games/input/Joystick",
     "typeOnly": true,
-    "guide": "input-picking"
+    "guide": "/game-engine/input-picking"
   },
   {
     "name": "JoystickProps",
-    "module": "input/Joystick",
+    "module": "games/input/Joystick",
     "typeOnly": true,
-    "guide": "input-picking"
+    "guide": "/game-engine/input-picking"
   },
   {
     "name": "createKeyboardInput",
-    "module": "input/keyboard",
+    "module": "games/input/keyboard",
     "typeOnly": false,
-    "guide": "input-picking"
+    "guide": "/game-engine/input-picking"
   },
   {
     "name": "KeyboardInputMode",
-    "module": "input/keyboard",
+    "module": "games/input/keyboard",
     "typeOnly": true,
-    "guide": "input-picking"
+    "guide": "/game-engine/input-picking"
   },
   {
     "name": "KeyboardInputOptions",
-    "module": "input/keyboard",
+    "module": "games/input/keyboard",
     "typeOnly": true,
-    "guide": "input-picking"
+    "guide": "/game-engine/input-picking"
   },
   {
     "name": "MAX_MESHES",
-    "module": "types",
+    "module": "games/types",
     "typeOnly": false,
-    "guide": "render-source"
+    "guide": "/game-engine/render-source"
   },
   {
     "name": "Camera",
-    "module": "types",
+    "module": "games/types",
     "typeOnly": true,
-    "guide": "render-source"
+    "guide": "/game-engine/render-source"
   },
   {
     "name": "Light",
-    "module": "types",
+    "module": "games/types",
     "typeOnly": true,
-    "guide": "render-source"
+    "guide": "/game-engine/render-source"
   },
   {
     "name": "RenderSource",
-    "module": "types",
+    "module": "games/types",
     "typeOnly": true,
-    "guide": "render-source"
+    "guide": "/game-engine/render-source"
   },
   {
     "name": "Shape",
-    "module": "types",
+    "module": "games/types",
     "typeOnly": true,
-    "guide": "render-source"
+    "guide": "/game-engine/render-source"
   },
   {
     "name": "Vec3",
-    "module": "types",
+    "module": "games/types",
     "typeOnly": true,
-    "guide": "render-source"
+    "guide": "/game-engine/render-source"
   },
   {
     "name": "DrawingDocument",
     "module": "drawing/DrawingDocument",
     "typeOnly": false,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingBrush",
     "module": "drawing/DrawingDocument",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingBrushOptions",
     "module": "drawing/DrawingDocument",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingControls",
     "module": "drawing/DrawingDocument",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingState",
     "module": "drawing/DrawingDocument",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingSnapshot",
     "module": "drawing/DrawingDocument",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "SavedDrawingPath",
     "module": "drawing/DrawingDocument",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingTool",
     "module": "drawing/DrawingDocument",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingShape",
     "module": "drawing/DrawingDocument",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingShapePreview",
     "module": "drawing/DrawingDocument",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingSymmetry",
     "module": "drawing/DrawingDocument",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingLayer",
     "module": "drawing/DrawingDocument",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingProject",
     "module": "drawing/DrawingDocument",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingStroke",
     "module": "drawing/DrawingDocument",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingSample",
     "module": "drawing/DrawingDocument",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingCoverageOptions",
     "module": "drawing/DrawingDocument",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingCanvas",
     "module": "drawing/DrawingCanvas",
     "typeOnly": false,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
   },
   {
     "name": "DrawingCanvasProps",
     "module": "drawing/DrawingCanvas",
     "typeOnly": true,
-    "guide": "drawing"
+    "guide": "/game-engine/drawing"
+  },
+  {
+    "name": "animations",
+    "module": "animations/index",
+    "typeOnly": false,
+    "guide": "/modules/animations"
+  },
+  {
+    "name": "files",
+    "module": "files/index",
+    "typeOnly": false,
+    "guide": "/modules/files"
+  },
+  {
+    "name": "FileDirectory",
+    "module": "files/index",
+    "typeOnly": true,
+    "guide": "/modules/files"
+  },
+  {
+    "name": "FileInfo",
+    "module": "files/index",
+    "typeOnly": true,
+    "guide": "/modules/files"
+  },
+  {
+    "name": "TemporaryFileOptions",
+    "module": "files/index",
+    "typeOnly": true,
+    "guide": "/modules/files"
+  },
+  {
+    "name": "device",
+    "module": "device/index",
+    "typeOnly": false,
+    "guide": "/modules/device"
+  },
+  {
+    "name": "DeviceEnvironment",
+    "module": "device/index",
+    "typeOnly": true,
+    "guide": "/modules/device"
+  },
+  {
+    "name": "audio",
+    "module": "audio/index",
+    "typeOnly": false,
+    "guide": "/modules/audio"
+  },
+  {
+    "name": "SoundBank",
+    "module": "audio/index",
+    "typeOnly": false,
+    "guide": "/modules/audio"
+  },
+  {
+    "name": "AudioPlayOptions",
+    "module": "audio/index",
+    "typeOnly": true,
+    "guide": "/modules/audio"
+  },
+  {
+    "name": "AudioShiftOptions",
+    "module": "audio/index",
+    "typeOnly": true,
+    "guide": "/modules/audio"
+  },
+  {
+    "name": "Sound",
+    "module": "audio/index",
+    "typeOnly": true,
+    "guide": "/modules/audio"
+  },
+  {
+    "name": "SoundSource",
+    "module": "audio/index",
+    "typeOnly": true,
+    "guide": "/modules/audio"
+  },
+  {
+    "name": "Voice",
+    "module": "audio/index",
+    "typeOnly": true,
+    "guide": "/modules/audio"
+  },
+  {
+    "name": "clipboard",
+    "module": "clipboard/index",
+    "typeOnly": false,
+    "guide": "/modules/clipboard"
+  },
+  {
+    "name": "haptics",
+    "module": "haptics/index",
+    "typeOnly": false,
+    "guide": "/modules/haptics"
+  },
+  {
+    "name": "HapticTap",
+    "module": "haptics/index",
+    "typeOnly": true,
+    "guide": "/modules/haptics"
+  },
+  {
+    "name": "permissions",
+    "module": "permissions/index",
+    "typeOnly": false,
+    "guide": "/modules/permissions"
+  },
+  {
+    "name": "permissionNames",
+    "module": "permissions/index",
+    "typeOnly": false,
+    "guide": "/modules/permissions"
+  },
+  {
+    "name": "AndroidPermission",
+    "module": "permissions/index",
+    "typeOnly": true,
+    "guide": "/modules/permissions"
+  },
+  {
+    "name": "Permission",
+    "module": "permissions/index",
+    "typeOnly": true,
+    "guide": "/modules/permissions"
+  },
+  {
+    "name": "PermissionResult",
+    "module": "permissions/index",
+    "typeOnly": true,
+    "guide": "/modules/permissions"
+  },
+  {
+    "name": "PermissionStatus",
+    "module": "permissions/index",
+    "typeOnly": true,
+    "guide": "/modules/permissions"
+  },
+  {
+    "name": "location",
+    "module": "location/index",
+    "typeOnly": false,
+    "guide": "/modules/location"
+  },
+  {
+    "name": "LocationError",
+    "module": "location/index",
+    "typeOnly": false,
+    "guide": "/modules/location"
+  },
+  {
+    "name": "LocationErrorCode",
+    "module": "location/index",
+    "typeOnly": true,
+    "guide": "/modules/location"
+  },
+  {
+    "name": "LocationOptions",
+    "module": "location/index",
+    "typeOnly": true,
+    "guide": "/modules/location"
+  },
+  {
+    "name": "LocationPosition",
+    "module": "location/index",
+    "typeOnly": true,
+    "guide": "/modules/location"
+  },
+  {
+    "name": "LocationWatchOptions",
+    "module": "location/index",
+    "typeOnly": true,
+    "guide": "/modules/location"
+  },
+  {
+    "name": "camera",
+    "module": "camera/index",
+    "typeOnly": false,
+    "guide": "/modules/camera"
+  },
+  {
+    "name": "CameraPhoto",
+    "module": "camera/index",
+    "typeOnly": true,
+    "guide": "/modules/camera"
+  },
+  {
+    "name": "CameraPhotoOptions",
+    "module": "camera/index",
+    "typeOnly": true,
+    "guide": "/modules/camera"
+  },
+  {
+    "name": "documentPicker",
+    "module": "document-picker/index",
+    "typeOnly": false,
+    "guide": "/modules/document-picker"
+  },
+  {
+    "name": "DocumentPickerAsset",
+    "module": "document-picker/index",
+    "typeOnly": true,
+    "guide": "/modules/document-picker"
+  },
+  {
+    "name": "DocumentPickerCanceledResult",
+    "module": "document-picker/index",
+    "typeOnly": true,
+    "guide": "/modules/document-picker"
+  },
+  {
+    "name": "DocumentPickerOptions",
+    "module": "document-picker/index",
+    "typeOnly": true,
+    "guide": "/modules/document-picker"
+  },
+  {
+    "name": "DocumentPickerResult",
+    "module": "document-picker/index",
+    "typeOnly": true,
+    "guide": "/modules/document-picker"
+  },
+  {
+    "name": "DocumentPickerSuccessResult",
+    "module": "document-picker/index",
+    "typeOnly": true,
+    "guide": "/modules/document-picker"
+  },
+  {
+    "name": "VideoPlayer",
+    "module": "video/index",
+    "typeOnly": false,
+    "guide": "/modules/video"
+  },
+  {
+    "name": "VideoContentFit",
+    "module": "video/index",
+    "typeOnly": true,
+    "guide": "/modules/video"
+  },
+  {
+    "name": "VideoPlayerHandle",
+    "module": "video/index",
+    "typeOnly": true,
+    "guide": "/modules/video"
+  },
+  {
+    "name": "VideoPlayerProps",
+    "module": "video/index",
+    "typeOnly": true,
+    "guide": "/modules/video"
+  },
+  {
+    "name": "VideoProgress",
+    "module": "video/index",
+    "typeOnly": true,
+    "guide": "/modules/video"
+  },
+  {
+    "name": "VideoSource",
+    "module": "video/index",
+    "typeOnly": true,
+    "guide": "/modules/video"
+  },
+  {
+    "name": "VideoStatus",
+    "module": "video/index",
+    "typeOnly": true,
+    "guide": "/modules/video"
+  },
+  {
+    "name": "sqlite",
+    "module": "sqlite/index",
+    "typeOnly": false,
+    "guide": "/modules/sqlite"
+  },
+  {
+    "name": "SQLiteDatabase",
+    "module": "sqlite/index",
+    "typeOnly": true,
+    "guide": "/modules/sqlite"
+  },
+  {
+    "name": "SQLiteQueryResult",
+    "module": "sqlite/index",
+    "typeOnly": true,
+    "guide": "/modules/sqlite"
+  },
+  {
+    "name": "SQLiteRunResult",
+    "module": "sqlite/index",
+    "typeOnly": true,
+    "guide": "/modules/sqlite"
+  },
+  {
+    "name": "SQLiteStatement",
+    "module": "sqlite/index",
+    "typeOnly": true,
+    "guide": "/modules/sqlite"
+  },
+  {
+    "name": "SQLiteValue",
+    "module": "sqlite/index",
+    "typeOnly": true,
+    "guide": "/modules/sqlite"
+  },
+  {
+    "name": "microphone",
+    "module": "microphone/index",
+    "typeOnly": false,
+    "guide": "/modules/microphone"
+  },
+  {
+    "name": "MicrophoneOptions",
+    "module": "microphone/index",
+    "typeOnly": true,
+    "guide": "/modules/microphone"
+  },
+  {
+    "name": "MicrophonePermission",
+    "module": "microphone/index",
+    "typeOnly": true,
+    "guide": "/modules/microphone"
+  },
+  {
+    "name": "MicrophoneState",
+    "module": "microphone/index",
+    "typeOnly": true,
+    "guide": "/modules/microphone"
+  },
+  {
+    "name": "Recording",
+    "module": "microphone/index",
+    "typeOnly": true,
+    "guide": "/modules/microphone"
+  },
+  {
+    "name": "TakeOptions",
+    "module": "microphone/index",
+    "typeOnly": true,
+    "guide": "/modules/microphone"
+  },
+  {
+    "name": "createStorage",
+    "module": "storage/index",
+    "typeOnly": false,
+    "guide": "/modules/storage"
+  },
+  {
+    "name": "createStoragePersister",
+    "module": "storage/index",
+    "typeOnly": false,
+    "guide": "/modules/storage"
+  },
+  {
+    "name": "Storage",
+    "module": "storage/index",
+    "typeOnly": true,
+    "guide": "/modules/storage"
+  },
+  {
+    "name": "StoragePersister",
+    "module": "storage/index",
+    "typeOnly": true,
+    "guide": "/modules/storage"
+  },
+  {
+    "name": "StoragePersisterOptions",
+    "module": "storage/index",
+    "typeOnly": true,
+    "guide": "/modules/storage"
+  },
+  {
+    "name": "StorageConfiguration",
+    "module": "storage/index",
+    "typeOnly": true,
+    "guide": "/modules/storage"
+  },
+  {
+    "name": "StorageEncryptionType",
+    "module": "storage/index",
+    "typeOnly": true,
+    "guide": "/modules/storage"
+  },
+  {
+    "name": "StorageValue",
+    "module": "storage/index",
+    "typeOnly": true,
+    "guide": "/modules/storage"
+  },
+  {
+    "name": "StoragePrimitive",
+    "module": "storage/index",
+    "typeOnly": true,
+    "guide": "/modules/storage"
+  },
+  {
+    "name": "StorageJSON",
+    "module": "storage/index",
+    "typeOnly": true,
+    "guide": "/modules/storage"
+  },
+  {
+    "name": "StorageSetter",
+    "module": "storage/index",
+    "typeOnly": true,
+    "guide": "/modules/storage"
+  },
+  {
+    "name": "useStorage",
+    "module": "storage/index",
+    "typeOnly": false,
+    "guide": "/modules/storage"
+  },
+  {
+    "name": "useStorageJSON",
+    "module": "storage/index",
+    "typeOnly": false,
+    "guide": "/modules/storage"
+  },
+  {
+    "name": "speech",
+    "module": "tts/index",
+    "typeOnly": false,
+    "guide": "/modules/tts"
+  },
+  {
+    "name": "SpeechOptions",
+    "module": "tts/index",
+    "typeOnly": true,
+    "guide": "/modules/tts"
+  },
+  {
+    "name": "SpeechVoice",
+    "module": "tts/index",
+    "typeOnly": true,
+    "guide": "/modules/tts"
+  },
+  {
+    "name": "uuid",
+    "module": "uuid/index",
+    "typeOnly": false,
+    "guide": "/modules/uuid"
+  },
+  {
+    "name": "prepareUuid",
+    "module": "uuid/index",
+    "typeOnly": false,
+    "guide": "/modules/uuid"
+  },
+  {
+    "name": "network",
+    "module": "network/index",
+    "typeOnly": false,
+    "guide": "/modules/network"
+  },
+  {
+    "name": "useOnline",
+    "module": "network/index",
+    "typeOnly": false,
+    "guide": "/modules/network"
+  },
+  {
+    "name": "checkReachability",
+    "module": "network/index",
+    "typeOnly": false,
+    "guide": "/modules/network"
+  },
+  {
+    "name": "NetworkListener",
+    "module": "network/index",
+    "typeOnly": true,
+    "guide": "/modules/network"
+  },
+  {
+    "name": "NetworkWaitOptions",
+    "module": "network/index",
+    "typeOnly": true,
+    "guide": "/modules/network"
+  },
+  {
+    "name": "OnlineState",
+    "module": "network/index",
+    "typeOnly": true,
+    "guide": "/modules/network"
+  },
+  {
+    "name": "ReachabilityOptions",
+    "module": "network/index",
+    "typeOnly": true,
+    "guide": "/modules/network"
+  },
+  {
+    "name": "sharing",
+    "module": "sharing/index",
+    "typeOnly": false,
+    "guide": "/modules/sharing"
+  },
+  {
+    "name": "SharingOptions",
+    "module": "sharing/index",
+    "typeOnly": true,
+    "guide": "/modules/sharing"
+  },
+  {
+    "name": "capture",
+    "module": "capture/index",
+    "typeOnly": false,
+    "guide": "/modules/capture"
+  },
+  {
+    "name": "CapturedImage",
+    "module": "capture/index",
+    "typeOnly": true,
+    "guide": "/modules/capture"
+  },
+  {
+    "name": "keepAwake",
+    "module": "keep-awake/index",
+    "typeOnly": false,
+    "guide": "/modules/keep-awake"
+  },
+  {
+    "name": "useKeepAwake",
+    "module": "keep-awake/index",
+    "typeOnly": false,
+    "guide": "/modules/keep-awake"
+  },
+  {
+    "name": "review",
+    "module": "review/index",
+    "typeOnly": false,
+    "guide": "/modules/review"
+  },
+  {
+    "name": "auth",
+    "module": "auth/index",
+    "typeOnly": false,
+    "guide": "/modules/auth"
+  },
+  {
+    "name": "SignInCallback",
+    "module": "auth/index",
+    "typeOnly": true,
+    "guide": "/modules/auth"
+  },
+  {
+    "name": "SignInCallbackResult",
+    "module": "auth/index",
+    "typeOnly": true,
+    "guide": "/modules/auth"
+  },
+  {
+    "name": "SignInOptions",
+    "module": "auth/index",
+    "typeOnly": true,
+    "guide": "/modules/auth"
+  },
+  {
+    "name": "SignInProvider",
+    "module": "auth/index",
+    "typeOnly": true,
+    "guide": "/modules/auth"
+  },
+  {
+    "name": "SignInRequest",
+    "module": "auth/index",
+    "typeOnly": true,
+    "guide": "/modules/auth"
+  },
+  {
+    "name": "SignInTransaction",
+    "module": "auth/index",
+    "typeOnly": true,
+    "guide": "/modules/auth"
+  },
+  {
+    "name": "contacts",
+    "module": "contacts/index",
+    "typeOnly": false,
+    "guide": "/modules/contacts"
+  },
+  {
+    "name": "Contact",
+    "module": "contacts/index",
+    "typeOnly": true,
+    "guide": "/modules/contacts"
+  },
+  {
+    "name": "ContactEmail",
+    "module": "contacts/index",
+    "typeOnly": true,
+    "guide": "/modules/contacts"
+  },
+  {
+    "name": "ContactFields",
+    "module": "contacts/index",
+    "typeOnly": true,
+    "guide": "/modules/contacts"
+  },
+  {
+    "name": "ContactPage",
+    "module": "contacts/index",
+    "typeOnly": true,
+    "guide": "/modules/contacts"
+  },
+  {
+    "name": "ContactPatch",
+    "module": "contacts/index",
+    "typeOnly": true,
+    "guide": "/modules/contacts"
+  },
+  {
+    "name": "ContactPhone",
+    "module": "contacts/index",
+    "typeOnly": true,
+    "guide": "/modules/contacts"
+  },
+  {
+    "name": "ContactQuery",
+    "module": "contacts/index",
+    "typeOnly": true,
+    "guide": "/modules/contacts"
+  },
+  {
+    "name": "ContactsAccess",
+    "module": "contacts/index",
+    "typeOnly": true,
+    "guide": "/modules/contacts"
+  },
+  {
+    "name": "imagePicker",
+    "module": "image-picker/index",
+    "typeOnly": false,
+    "guide": "/modules/image-picker"
+  },
+  {
+    "name": "ImagePickerOptions",
+    "module": "image-picker/index",
+    "typeOnly": true,
+    "guide": "/modules/image-picker"
+  },
+  {
+    "name": "ImagePickerResult",
+    "module": "image-picker/index",
+    "typeOnly": true,
+    "guide": "/modules/image-picker"
+  },
+  {
+    "name": "PickedImage",
+    "module": "image-picker/index",
+    "typeOnly": true,
+    "guide": "/modules/image-picker"
+  },
+  {
+    "name": "CameraPermission",
+    "module": "image-picker/index",
+    "typeOnly": true,
+    "guide": "/modules/image-picker"
   }
 ]

@@ -80,7 +80,7 @@ export default function NayanGameEngineDocumentation({ guide }: { guide: EngineG
                             </NView>
                           ) : (
                             <NView tag="td" key={j} className="px-4 py-3 leading-6 text-muted align-top">
-                              {cell.startsWith("/game-engine") ? (
+                              {cell.startsWith("/game-engine") || cell.startsWith("/modules/") ? (
                                 <Link className="text-accent hover:underline" href={cell}>
                                   {cell}
                                 </Link>

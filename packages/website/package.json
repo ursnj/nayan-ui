@@ -8,8 +8,8 @@
     "start": "next start --port 7100",
     "sitemap:generate": "bun scripts/sync-sitemap.ts",
     "sitemap:check": "bun scripts/sync-sitemap.ts --check",
-    "reference:generate": "bun run engine:prepare && bun run --cwd ../nayan-ui bob build --target typescript && bun scripts/sync-component-attributes.ts",
-    "reference:check": "bun scripts/sync-component-attributes.ts --check",
+    "reference:generate": "bun run engine:prepare && bun run --cwd ../nayan-ui bob build --target typescript && bun scripts/sync-component-attributes.ts && bun scripts/sync-nayan-reference.mjs ../nayan-ui",
+    "reference:check": "bun scripts/sync-component-attributes.ts --check && bun scripts/sync-nayan-reference.mjs ../nayan-ui --check",
     "engine:prepare": "(test -s ../nayan-ui/lib/web/engine_core_bg.wasm && test ../nayan-ui/lib/web/components/index.js -nt ../nayan-ui/src/components/index.ts) || bun run --cwd ../nayan-ui build:web",
     "typecheck": "bun run engine:prepare && bun check",
     "test": "bun test scripts src"

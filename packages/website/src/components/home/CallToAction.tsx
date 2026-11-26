@@ -8,10 +8,10 @@ export default function CallToAction() {
   return (
     <CtaPanel
       title="Get started with Nayan UI"
-      lead="Follow the installation guide for React or React Native. The engine is open source and MIT licensed."
+      lead="Create a starter workspace with a shared landing page and theme for React and Expo."
     >
-      <Link href="/game-engine/installation" className={BUTTON_PRIMARY}>
-        Install the engine <ArrowRight aria-hidden size={16} className="ml-2" />
+      <Link href="/game-engine/installation#start-from-the-template" className={BUTTON_PRIMARY}>
+        Create a starter project <ArrowRight aria-hidden size={16} className="ml-2" />
       </Link>
       <Link href={REPO_URL} target="_blank" rel="noopener noreferrer" className={BUTTON_SECONDARY}>
         <Github aria-hidden size={16} className="mr-2" />

@@ -6,7 +6,7 @@ import { SITE_URL, buildPageMetadata } from '@/services/seo';
 
 export const metadata = buildPageMetadata({
   title: 'Nayan UI for React and React Native',
-  description: `Build cross-platform UI and 3D games with Nayan UI. Try live components, copy TypeScript examples, play 50+ games and explore ${TOOL_COUNT} developer guides.`,
+  description: `Build UI and 3D games for web, iOS and Android. Explore shared modules, try live components, play 50+ games and browse ${TOOL_COUNT} developer guides.`,
   path: '/',
   keywords:
     'react component library, react native components, react game engine, react native game engine, 3d games, react native games, browser video editor, developer guides, pdf tools, image tools, json tools, ai code review, nayan ui',

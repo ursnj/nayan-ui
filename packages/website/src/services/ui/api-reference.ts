@@ -3,13 +3,13 @@ import type { EngineGuide } from "./types";
 export const apiReferenceGuide: EngineGuide = {
   "slug": "api-reference",
   "title": "Public API reference",
-  "description": "178 named public exports, including classes, helpers, component contracts and TypeScript data structures, audited against the shared engine entry point.",
+  "description": "278 named exports from the nayan-ui compatibility entry, with links to game engine guides and focused module references.",
   "sections": [
     {
       "id": "reading-the-reference",
       "title": "Reading the reference",
       "paragraphs": [
-        "Every public export is listed below. Signatures come from built declarations. Gameplay APIs are shared; host styles and asset sources follow the platform guides.",
+        "This index lists the exports of the nayan-ui compatibility entry. Signatures come from the built browser declarations. Use the focused module references for each platform’s behavior and additional subpath exports.",
         "Use declarations to look up types. Use the runnable examples and linked guides for setup, behavior and cleanup."
       ],
       "examples": [
@@ -32,9 +32,7 @@ export function Ball() {
     {
       "id": "world-World",
       "title": "world/World",
-      "paragraphs": [
-        "Usage and examples: /game-engine/world-entities."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -59,10 +57,7 @@ export function Ball() {
           "title": "world/World declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `/** True when the engine's native code is linked into this build (it is not in Expo Go). */
-export declare const isEngineAvailable: boolean;
-
-/**
+          "code": `/**
  * A game world, simulated by the Rust core: entities, motion, Rapier physics, collisions,
  * animations and raycasts at a fixed 60 Hz, with rendering smoothed between steps. Pass it to \`<GameView>\`.
  *
@@ -275,16 +270,17 @@ export declare class World implements RenderSource {
      * calls and queries are no-ops (see \`isDisposed\`); \`spawn\` and \`update\` throw.
      */
     dispose(): void;
-}`
+}
+
+/** True when the engine's native code is linked into this build (it is not in Expo Go). */
+export declare const isEngineAvailable: boolean;`
         }
       ]
     },
     {
       "id": "world-quat",
       "title": "world/quat",
-      "paragraphs": [
-        "Usage and examples: /game-engine/world-entities."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -309,15 +305,7 @@ export declare class World implements RenderSource {
           "title": "world/quat declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `/** A writable quaternion; pass one as \`out\` to reuse it instead of allocating. */
-export type MutableQuat = [
-    number,
-    number,
-    number,
-    number
-];
-
-/**
+          "code": `/**
  * Quaternion helpers for \`rotation\` options, keyframes and geometry parts ([x, y, z, w]). Every
  * function takes an optional \`out\` so per-frame code can reuse one array instead of allocating.
  *
@@ -343,16 +331,22 @@ export declare const quat: {
     fromEuler(x: number, y: number, z: number, out?: MutableQuat): MutableQuat;
     /** Shortest-path interpolation from \`a\` (t = 0) to \`b\` (t = 1). */
     slerp(a: Quat, b: Quat, t: number, out?: MutableQuat): MutableQuat;
-};`
+};
+
+/** A writable quaternion; pass one as \`out\` to reuse it instead of allocating. */
+export type MutableQuat = [
+    number,
+    number,
+    number,
+    number
+];`
         }
       ]
     },
     {
       "id": "world-color",
       "title": "world/color",
-      "paragraphs": [
-        "Usage and examples: /game-engine/camera-lighting."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -377,10 +371,7 @@ export declare const quat: {
           "title": "world/color declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `/** A color as an option takes it: \`[r, g, b]\` / \`[r, g, b, a]\` (0..1, channels above 1 glow) or a CSS string. */
-export type ColorInput = Color | string;
-
-/**
+          "code": `/**
  * Any color input as an \`[r, g, b, a]\` tuple (0..1), with its alpha multiplied by \`alpha\`. Use it when
  * you need the numbers (to brighten, mix or fade a theme color); options take strings directly.
  *
@@ -394,16 +385,17 @@ export declare function toColor(color: ColorInput, alpha?: number): [
     number,
     number,
     number
-];`
+];
+
+/** A color as an option takes it: \`[r, g, b]\` / \`[r, g, b, a]\` (0..1, channels above 1 glow) or a CSS string. */
+export type ColorInput = Color | string;`
         }
       ]
     },
     {
       "id": "world-effects",
       "title": "world/effects",
-      "paragraphs": [
-        "Usage and examples: /game-engine/particles."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -443,97 +435,7 @@ export declare function toColor(color: ColorInput, alpha?: number): [
           "title": "world/effects declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `/** Shared options of the layered effects (confetti, sparkle, shatter, splash, sparks, explosion). */
-export type EffectOptions = {
-    position: Vec3;
-    /** One color (CSS string or tuple), or several to pick from at random. */
-    colors: ColorInput | readonly ColorInput[];
-    /** Typical particle size. */
-    size: number;
-    /** Top speed. */
-    speed: number;
-    /** About how many particles (a few extra go to the flash and puffs). */
-    count: number;
-    /** Seconds. */
-    lifetime: number;
-    /** Vertical acceleration (negative falls). Default 0. */
-    gravity?: number;
-    /** Main direction. Default up. */
-    direction?: Vec3;
-    /** Half-angle of the cone around \`direction\`. Default π (every direction). */
-    spread?: number;
-    /** A brief glow at the source. Default true. */
-    flash?: boolean;
-};
-
-/** A soft cloud of puffs that swell and fade: landing dust, kicked-up sand, sawdust, steam, muzzle smoke. */
-export type DustOptions = {
-    position: Vec3;
-    /** Start color (alpha is how thick it looks), or several to pick from. */
-    color: ColorInput | readonly ColorInput[];
-    /** Puff size at the start. */
-    size: number;
-    /** Top speed. */
-    speed: number;
-    count: number;
-    /** Seconds. */
-    lifetime: number;
-    /** Default up. */
-    direction?: Vec3;
-    /** Half-angle around \`direction\`. Default π. */
-    spread?: number;
-    /** Default 0 (dust hangs; positive rises like smoke). */
-    gravity?: number;
-    /** How much each puff grows by the end. Default 2. */
-    endSize?: number;
-    /** Color at the end. Default: a single \`color\` faded to transparent; several colors keep theirs. */
-    endColor?: ColorInput;
-    /** Default "puff" (blended); "flame" adds light instead. */
-    mesh?: BurstOptions['mesh'];
-};
-
-/** One glow that swells and fades at a point: a hit, a strike, a muzzle flash. */
-export type FlashOptions = {
-    position: Vec3;
-    /** Use channels above 1 to glow (see \`effects.hot\`). */
-    color: ColorInput;
-    size: number;
-    /** Seconds. Default 0.22. */
-    lifetime?: number;
-    /** How much it grows by the end. Default 2.2. */
-    endSize?: number;
-    /** Default: \`color\` faded to transparent. */
-    endColor?: ColorInput;
-    /** Default "flame" (adds light); "sphere" or "puff" for a solid or soft flash. */
-    mesh?: BurstOptions['mesh'];
-    /** Glows drawn at once (slightly scattered when \`speed\` > 0). Default 1. */
-    count?: number;
-    /** Default 0. */
-    speed?: number;
-};
-
-/** The cleared-piece pop: swell, flash white, settle, shrink away. */
-export type PopOptions = {
-    /** Its scale at rest (what it has now): one number, or per axis. */
-    scale: number | Vec3;
-    /** Its color at rest, to return to after the white flash. Omit to flash \`flash\` only (or nothing). */
-    color?: ColorInput;
-    /** Parts to flash white as well (a group's visible children, whose rest color is white). */
-    flash?: readonly Entity[];
-    /** Seconds before it starts. Default 0. */
-    delay?: number;
-    /** Seconds it takes. Default \`effects.POP_TIME\`. */
-    duration?: number;
-};
-
-type Rgba = [
-    number,
-    number,
-    number,
-    number
-];
-
-/**
+          "code": `/**
  * Ready-made effects. Each is one call; particles then live, fall, shrink and recolor in Rust.
  *
  * \`\`\`ts
@@ -569,6 +471,89 @@ export declare const effects: {
     hot: typeof hot;
     /** Part way (\`t\`, 0..1) to white. */
     pale: typeof pale;
+};
+
+/** A soft cloud of puffs that swell and fade: landing dust, kicked-up sand, sawdust, steam, muzzle smoke. */
+export type DustOptions = {
+    position: Vec3;
+    /** Start color (alpha is how thick it looks), or several to pick from. */
+    color: ColorInput | readonly ColorInput[];
+    /** Puff size at the start. */
+    size: number;
+    /** Top speed. */
+    speed: number;
+    count: number;
+    /** Seconds. */
+    lifetime: number;
+    /** Default up. */
+    direction?: Vec3;
+    /** Half-angle around \`direction\`. Default π. */
+    spread?: number;
+    /** Default 0 (dust hangs; positive rises like smoke). */
+    gravity?: number;
+    /** How much each puff grows by the end. Default 2. */
+    endSize?: number;
+    /** Color at the end. Default: a single \`color\` faded to transparent; several colors keep theirs. */
+    endColor?: ColorInput;
+    /** Default "puff" (blended); "flame" adds light instead. */
+    mesh?: BurstOptions['mesh'];
+};
+
+/** Shared options of the layered effects (confetti, sparkle, shatter, splash, sparks, explosion). */
+export type EffectOptions = {
+    position: Vec3;
+    /** One color (CSS string or tuple), or several to pick from at random. */
+    colors: ColorInput | readonly ColorInput[];
+    /** Typical particle size. */
+    size: number;
+    /** Top speed. */
+    speed: number;
+    /** About how many particles (a few extra go to the flash and puffs). */
+    count: number;
+    /** Seconds. */
+    lifetime: number;
+    /** Vertical acceleration (negative falls). Default 0. */
+    gravity?: number;
+    /** Main direction. Default up. */
+    direction?: Vec3;
+    /** Half-angle of the cone around \`direction\`. Default π (every direction). */
+    spread?: number;
+    /** A brief glow at the source. Default true. */
+    flash?: boolean;
+};
+
+/** One glow that swells and fades at a point: a hit, a strike, a muzzle flash. */
+export type FlashOptions = {
+    position: Vec3;
+    /** Use channels above 1 to glow (see \`effects.hot\`). */
+    color: ColorInput;
+    size: number;
+    /** Seconds. Default 0.22. */
+    lifetime?: number;
+    /** How much it grows by the end. Default 2.2. */
+    endSize?: number;
+    /** Default: \`color\` faded to transparent. */
+    endColor?: ColorInput;
+    /** Default "flame" (adds light); "sphere" or "puff" for a solid or soft flash. */
+    mesh?: BurstOptions['mesh'];
+    /** Glows drawn at once (slightly scattered when \`speed\` > 0). Default 1. */
+    count?: number;
+    /** Default 0. */
+    speed?: number;
+};
+
+/** The cleared-piece pop: swell, flash white, settle, shrink away. */
+export type PopOptions = {
+    /** Its scale at rest (what it has now): one number, or per axis. */
+    scale: number | Vec3;
+    /** Its color at rest, to return to after the white flash. Omit to flash \`flash\` only (or nothing). */
+    color?: ColorInput;
+    /** Parts to flash white as well (a group's visible children, whose rest color is white). */
+    flash?: readonly Entity[];
+    /** Seconds before it starts. Default 0. */
+    delay?: number;
+    /** Seconds it takes. Default \`effects.POP_TIME\`. */
+    duration?: number;
 };`
         }
       ]
@@ -576,9 +561,7 @@ export declare const effects: {
     {
       "id": "world-Scoreboard",
       "title": "world/Scoreboard",
-      "paragraphs": [
-        "Usage and examples: /game-engine/scoreboard-timers."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -603,19 +586,7 @@ export declare const effects: {
           "title": "world/Scoreboard declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `export type ScoreboardHandlers = {
-    /** The score changed (points, time-based points, reset). */
-    onScore?: (score: number) => void;
-    onLives?: (lives: number) => void;
-    /** The whole seconds shown changed: time left for a countdown, elapsed otherwise. */
-    onSecond?: (seconds: number) => void;
-    /** A countdown reached 0 (the clock stops). */
-    onTimeUp?: () => void;
-    /** Lives went from above 0 to 0. */
-    onLivesOut?: () => void;
-};
-
-/**
+          "code": `/**
  * Score, lives and the game clock, kept and advanced in Rust by \`world.update\`: countdowns, elapsed
  * time and time-based points (survival, distance) cost no JS per frame. Handlers run from \`update\`
  * only when something they show changed. Set \`handlers\` for the game's own rules, and \`listen\` for
@@ -672,16 +643,26 @@ export declare class Scoreboard {
     listen(handlers: ScoreboardHandlers): () => void;
     /** @internal Runs handlers for what changed since the last call. */
     dispatch(): void;
-}`
+}
+
+export type ScoreboardHandlers = {
+    /** The score changed (points, time-based points, reset). */
+    onScore?: (score: number) => void;
+    onLives?: (lives: number) => void;
+    /** The whole seconds shown changed: time left for a countdown, elapsed otherwise. */
+    onSecond?: (seconds: number) => void;
+    /** A countdown reached 0 (the clock stops). */
+    onTimeUp?: () => void;
+    /** Lives went from above 0 to 0. */
+    onLivesOut?: () => void;
+};`
         }
       ]
     },
     {
       "id": "world-types",
       "title": "world/types",
-      "paragraphs": [
-        "Usage and examples: /game-engine/world-entities."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -791,28 +772,91 @@ export declare class Scoreboard {
           "title": "world/types declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `/** Opaque entity handle. Handles of despawned entities are safely ignored. */
-export type Entity = number & {
-    readonly __entity: unique symbol;
+          "code": `export type AnimateOptions = {
+    /** Seconds (ignored by springs). Default 0.3. */
+    duration?: number;
+    /** Seconds before it starts. Default 0. */
+    delay?: number;
+    /** Default "easeOut". "back" overshoots, "bounce" bounces, "elastic" springs. */
+    easing?: Easing;
+    /** Extra runs after the first, or "forever". Default 0. */
+    repeat?: number | 'forever';
+    /** Every other run plays backwards (pulses, ping-pong). */
+    yoyo?: boolean;
+    /** With several entities: extra delay for each next one, in seconds (waves, board reveals). */
+    stagger?: number;
+    /** "smooth" moves along a curve through the keyframes (arcs, hops) instead of straight lines. */
+    path?: 'linear' | 'smooth';
+    /**
+     * Physically simulated motion instead of a fixed duration: true (smooth), "bouncy", or your own
+     * settings. Interrupting a spring with another keeps its speed, so it never jerks.
+     */
+    spring?: boolean | 'bouncy' | SpringOptions;
 };
 
-export type Color = readonly [
-    number,
-    number,
-    number
-] | readonly [
-    number,
-    number,
-    number,
-    number
+/** What \`animate\` changes. Anything left out stays as it is (and keeps any animation it already has). */
+export type AnimateTarget = {
+    position?: Vec3;
+    rotation?: Quat;
+    scale?: Vec3 | number;
+    /** A CSS color or a 0..1 tuple. */
+    color?: ColorInput;
+    /** Move by this offset from where the animation starts (instead of to a \`position\`). */
+    moveBy?: Vec3;
+    /** Turn by these angles (radians around x, y, z) from the starting rotation. 2π spins once; more spins more. */
+    turn?: Vec3;
+    /** Shake by up to this distance, fading out. Only the drawn position shakes (hits, wrong moves). */
+    shake?: number;
+};
+
+/**
+ * - \`dynamic\`: moved by physics (gravity, collisions, impulses).
+ * - \`kinematic\`: moved by you; pushes dynamic bodies out of the way.
+ * - \`fixed\`: never moves (floors, walls).
+ */
+export type BodyType = 'dynamic' | 'kinematic' | 'fixed';
+
+export type Bounds = readonly [
+    minX: number,
+    minZ: number,
+    maxX: number,
+    maxZ: number
 ];
 
-export type Quat = readonly [
-    number,
-    number,
-    number,
-    number
-];
+export type BurstOptions = {
+    position: Vec3;
+    /** How many particles. Default 16. */
+    count?: number;
+    /** Main direction. Default up. */
+    direction?: Vec3;
+    /** Half-angle of the cone around \`direction\`, in radians. Default π (every direction). */
+    spread?: number;
+    /** Default "cube". */
+    mesh?: Shape | Model;
+    /** Particle size. Default 0.15. */
+    size?: number;
+    /** Top speed. Default 5. */
+    speed?: number;
+    /** Seconds. Default 0.8. */
+    lifetime?: number;
+    /** Vertical acceleration. Default -9.81 (falls); 0 floats. */
+    gravity?: number;
+    /** One color (CSS string or tuple), or up to 4 to pick from at random. Default white. */
+    color?: ColorInput | readonly ColorInput[];
+    /** Size at the end of each particle's life, as a multiple of its start size: above 1 grows (smoke), below shrinks (embers). Default 1. */
+    endSize?: number;
+    /** Color every particle shifts to over its life, e.g. flame to dark red; an alpha below 1 fades it out. Default: keeps its color. */
+    endColor?: ColorInput;
+};
+
+export type CollisionInfo = {
+    /** True when the touch started; false when it ended. */
+    started: boolean;
+    /** A sensor was involved. */
+    sensor: boolean;
+    /** Impact speed (0 when a touch ends). */
+    speed: number;
+};
 
 /** Playback for one entity using a skeletal animation embedded in a loaded model. */
 export interface ClipOptions {
@@ -832,61 +876,22 @@ export interface ScreenPlane {
     normal?: Vec3;
 }
 
-/**
- * - \`dynamic\`: moved by physics (gravity, collisions, impulses).
- * - \`kinematic\`: moved by you; pushes dynamic bodies out of the way.
- * - \`fixed\`: never moves (floors, walls).
- */
-export type BodyType = 'dynamic' | 'kinematic' | 'fixed';
+export type Color = readonly [
+    number,
+    number,
+    number
+] | readonly [
+    number,
+    number,
+    number,
+    number
+];
 
-export type PhysicsOptions = {
-    type: BodyType;
-    /** Default: matches the mesh (spheres get a ball, cylinders a cylinder, ...; anything else a box). */
-    shape?: 'ball' | 'box' | 'cylinder' | 'capsule' | 'cone';
-    /** Ball, cylinder, capsule or cone radius. Default: from the entity's size. */
-    radius?: number;
-    /** Cylinder, capsule or cone height (total). Default: from the entity's size. */
-    height?: number;
-    /** Box size (full width, height, depth). Default: the entity's size. */
-    size?: Vec3;
-    /** Layer bits this collider is on. Default 1. */
-    layer?: number;
-    /** Layers it interacts with. Either side's mask is enough. Default: all. */
-    mask?: number;
-    /** Reports touches but doesn't push: pickups, trigger zones. */
-    sensor?: boolean;
-    /** How grippy, default 0.5. */
-    friction?: number;
-    /** Bounciness 0..1, default 0. */
-    bounce?: number;
-    /** Mass per volume, default 1. */
-    density?: number;
-    /** Slows movement over time (air resistance), default 0. */
-    drag?: number;
-    /** Slows spinning over time, default 0.05. */
-    angularDrag?: number;
-    /** Multiplier on world gravity, default 1. */
-    gravityScale?: number;
-    /** Stays upright: never tumbles. */
-    upright?: boolean;
-    /** Stops fast, small bodies passing through walls. */
-    ccd?: boolean;
-    /** 2D games: stays in its XY plane (moves in x/y, spins only around z). Keep the camera looking down -z. */
-    planar?: boolean;
-};
+export type Easing = 'linear' | 'easeIn' | 'easeOut' | 'easeInOut' | 'back' | 'bounce' | 'elastic';
 
-/** Sound/haptic the core plays by itself when the entity hits something solid. */
-export type ImpactFeedback = {
-    /** A loaded sound, e.g. \`sfx.get("bump")\`. Omit for haptics only. */
-    sound?: Sound;
-    /** Slower impacts are silent. Default 1. */
-    minSpeed?: number;
-    /** Full volume and strength at this speed. Default 10. */
-    maxSpeed?: number;
-    /** Volume at full strength, 0..2. Default 1. */
-    volume?: number;
-    /** Vibration at full strength, 0..1. Default 0 (none). */
-    haptic?: number;
+/** Opaque entity handle. Handles of despawned entities are safely ignored. */
+export type Entity = number & {
+    readonly __entity: unique symbol;
 };
 
 /**
@@ -965,21 +970,18 @@ export type EntityOptions = {
     still?: boolean;
 };
 
-export type Easing = 'linear' | 'easeIn' | 'easeOut' | 'easeInOut' | 'back' | 'bounce' | 'elastic';
-
-/** What \`animate\` changes. Anything left out stays as it is (and keeps any animation it already has). */
-export type AnimateTarget = {
-    position?: Vec3;
-    rotation?: Quat;
-    scale?: Vec3 | number;
-    /** A CSS color or a 0..1 tuple. */
-    color?: ColorInput;
-    /** Move by this offset from where the animation starts (instead of to a \`position\`). */
-    moveBy?: Vec3;
-    /** Turn by these angles (radians around x, y, z) from the starting rotation. 2π spins once; more spins more. */
-    turn?: Vec3;
-    /** Shake by up to this distance, fading out. Only the drawn position shakes (hits, wrong moves). */
-    shake?: number;
+/** Sound/haptic the core plays by itself when the entity hits something solid. */
+export type ImpactFeedback = {
+    /** A loaded sound, e.g. \`sfx.get("bump")\`. Omit for haptics only. */
+    sound?: Sound;
+    /** Slower impacts are silent. Default 1. */
+    minSpeed?: number;
+    /** Full volume and strength at this speed. Default 10. */
+    maxSpeed?: number;
+    /** Volume at full strength, 0..2. Default 1. */
+    volume?: number;
+    /** Vibration at full strength, 0..1. Default 0 (none). */
+    haptic?: number;
 };
 
 /** A step of a keyframed animation: values to pass through, and when (0..1 of the duration; default evenly spaced). */
@@ -987,71 +989,59 @@ export type Keyframe = AnimateTarget & {
     at?: number;
 };
 
-export type SpringOptions = {
-    /** How strongly it pulls toward the target. Default 170. */
-    stiffness?: number;
-    /** How quickly it calms down. Lower bounces more. Default 26 (no overshoot). */
-    damping?: number;
-    /** Heavier moves slower and swings further. Default 1. */
-    mass?: number;
+export type PhysicsOptions = {
+    type: BodyType;
+    /** Default: matches the mesh (spheres get a ball, cylinders a cylinder, ...; anything else a box). */
+    shape?: 'ball' | 'box' | 'cylinder' | 'capsule' | 'cone';
+    /** Ball, cylinder, capsule or cone radius. Default: from the entity's size. */
+    radius?: number;
+    /** Cylinder, capsule or cone height (total). Default: from the entity's size. */
+    height?: number;
+    /** Box size (full width, height, depth). Default: the entity's size. */
+    size?: Vec3;
+    /** Layer bits this collider is on. Default 1. */
+    layer?: number;
+    /** Layers it interacts with. Either side's mask is enough. Default: all. */
+    mask?: number;
+    /** Reports touches but doesn't push: pickups, trigger zones. */
+    sensor?: boolean;
+    /** How grippy, default 0.5. */
+    friction?: number;
+    /** Bounciness 0..1, default 0. */
+    bounce?: number;
+    /** Mass per volume, default 1. */
+    density?: number;
+    /** Slows movement over time (air resistance), default 0. */
+    drag?: number;
+    /** Slows spinning over time, default 0.05. */
+    angularDrag?: number;
+    /** Multiplier on world gravity, default 1. */
+    gravityScale?: number;
+    /** Stays upright: never tumbles. */
+    upright?: boolean;
+    /** Stops fast, small bodies passing through walls. */
+    ccd?: boolean;
+    /** 2D games: stays in its XY plane (moves in x/y, spins only around z). Keep the camera looking down -z. */
+    planar?: boolean;
 };
 
-export type AnimateOptions = {
-    /** Seconds (ignored by springs). Default 0.3. */
-    duration?: number;
-    /** Seconds before it starts. Default 0. */
-    delay?: number;
-    /** Default "easeOut". "back" overshoots, "bounce" bounces, "elastic" springs. */
-    easing?: Easing;
-    /** Extra runs after the first, or "forever". Default 0. */
-    repeat?: number | 'forever';
-    /** Every other run plays backwards (pulses, ping-pong). */
-    yoyo?: boolean;
-    /** With several entities: extra delay for each next one, in seconds (waves, board reveals). */
-    stagger?: number;
-    /** "smooth" moves along a curve through the keyframes (arcs, hops) instead of straight lines. */
-    path?: 'linear' | 'smooth';
-    /**
-     * Physically simulated motion instead of a fixed duration: true (smooth), "bouncy", or your own
-     * settings. Interrupting a spring with another keeps its speed, so it never jerks.
-     */
-    spring?: boolean | 'bouncy' | SpringOptions;
+export type PickHit = {
+    entity: Entity;
+    /** Where the tap ray hit the entity's bounding box, in world space. */
+    point: [
+        number,
+        number,
+        number
+    ];
+    distance: number;
 };
 
-export type BurstOptions = {
-    position: Vec3;
-    /** How many particles. Default 16. */
-    count?: number;
-    /** Main direction. Default up. */
-    direction?: Vec3;
-    /** Half-angle of the cone around \`direction\`, in radians. Default π (every direction). */
-    spread?: number;
-    /** Default "cube". */
-    mesh?: Shape | Model;
-    /** Particle size. Default 0.15. */
-    size?: number;
-    /** Top speed. Default 5. */
-    speed?: number;
-    /** Seconds. Default 0.8. */
-    lifetime?: number;
-    /** Vertical acceleration. Default -9.81 (falls); 0 floats. */
-    gravity?: number;
-    /** One color (CSS string or tuple), or up to 4 to pick from at random. Default white. */
-    color?: ColorInput | readonly ColorInput[];
-    /** Size at the end of each particle's life, as a multiple of its start size: above 1 grows (smoke), below shrinks (embers). Default 1. */
-    endSize?: number;
-    /** Color every particle shifts to over its life, e.g. flame to dark red; an alpha below 1 fades it out. Default: keeps its color. */
-    endColor?: ColorInput;
-};
-
-export type CollisionInfo = {
-    /** True when the touch started; false when it ended. */
-    started: boolean;
-    /** A sensor was involved. */
-    sensor: boolean;
-    /** Impact speed (0 when a touch ends). */
-    speed: number;
-};
+export type Quat = readonly [
+    number,
+    number,
+    number,
+    number
+];
 
 export type RaycastHit = {
     entity: Entity;
@@ -1068,32 +1058,21 @@ export type RaycastHit = {
     ];
 };
 
-export type PickHit = {
-    entity: Entity;
-    /** Where the tap ray hit the entity's bounding box, in world space. */
-    point: [
-        number,
-        number,
-        number
-    ];
-    distance: number;
-};
-
-export type Bounds = readonly [
-    minX: number,
-    minZ: number,
-    maxX: number,
-    maxZ: number
-];`
+export type SpringOptions = {
+    /** How strongly it pulls toward the target. Default 170. */
+    stiffness?: number;
+    /** How quickly it calms down. Lower bounces more. Default 26 (no overshoot). */
+    damping?: number;
+    /** Heavier moves slower and swings further. Default 1. */
+    mass?: number;
+};`
         }
       ]
     },
     {
       "id": "render-GameView",
       "title": "render/GameView",
-      "paragraphs": [
-        "Usage and examples: /game-engine/game-view."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -1160,26 +1139,7 @@ export type Bounds = readonly [
  */
 export declare function afterNextFrame(fn: () => void): () => void;
 
-export type GameViewStats = {
-    fps: number;
-    /** Mean time spent in \`onUpdate\` and stepping the worlds per frame, in milliseconds. */
-    updateMs: number;
-    /**
-     * Mean JS-thread time per frame spent handing the frame and overlay to the renderer, in
-     * milliseconds. With a render thread this is copying only; otherwise it includes drawing.
-     */
-    publishMs: number;
-    /** Average milliseconds per frame spent drawing (CPU side, including waiting on the GPU). */
-    renderMs: number;
-    /** The quality level drawn with (with \`quality="auto"\`, the one it settled on so far). */
-    quality: RenderQuality;
-    /** The graphics API drawing: "vulkan", "gl" (OpenGL ES) or "metal". */
-    backend: string;
-};
-
-export type SwipeDirection = 'left' | 'right' | 'up' | 'down';
-
-export type OverlayTouchPhase = 'start' | 'move' | 'end' | 'cancel';
+export declare function GameView(props: GameViewProps): import("react").JSX.Element;
 
 export type DragEvent = {
     phase: 'start' | 'move' | 'end';
@@ -1191,17 +1151,6 @@ export type DragEvent = {
     dy: number;
     /** On "end": the drag was interrupted (a second finger started a pinch, or the system took the touch). Put a held piece back. */
     cancelled?: boolean;
-};
-
-export type PinchEvent = {
-    phase: 'start' | 'move' | 'end';
-    /** Finger spread relative to the start: 2 = twice as far apart (zoom in). */
-    scale: number;
-    /** Radians the two fingers turned since the start, clockwise on screen. */
-    rotation: number;
-    /** Midpoint between the fingers in the view, in points. */
-    x: number;
-    y: number;
 };
 
 export type GameViewProps = {
@@ -1217,7 +1166,7 @@ export type GameViewProps = {
     /** Mutate this object (e.g. \`camera.eye\`) from \`onUpdate\`; it is read every frame. */
     camera?: Camera;
     light?: Light;
-    /** Sky / clear color: a CSS color or linear 0..1 RGB (alpha ignored). Also the fog color. Default dark navy. */
+    /** Screen/fog color: CSS or linear 0..1 RGB (alpha ignored). Defaults to NTheme's background, then dark navy. */
     background?: ColorInput;
     /** Distance fog density towards \`background\` (e.g. 0.02). Default 0 (off). */
     fog?: number;
@@ -1281,16 +1230,46 @@ export type GameViewProps = {
     onError?: (error: Error) => void;
 };
 
-export declare function GameView(props: GameViewProps): import("react").JSX.Element;`
+export type GameViewStats = {
+    fps: number;
+    /** Mean time spent in \`onUpdate\` and stepping the worlds per frame, in milliseconds. */
+    updateMs: number;
+    /**
+     * Mean JS-thread time per frame spent handing the frame and overlay to the renderer, in
+     * milliseconds. With a render thread this is copying only; otherwise it includes drawing.
+     */
+    publishMs: number;
+    /** Average milliseconds per frame spent drawing (CPU side, including waiting on the GPU). */
+    renderMs: number;
+    /** The quality level drawn with (with \`quality="auto"\`, the one it settled on so far). */
+    quality: RenderQuality;
+    /** The 3D scene's resolution per axis relative to the screen's: 1, or less under a pixel budget. */
+    sceneScale: number;
+    /** The graphics API drawing: "vulkan", "gl" (OpenGL ES) or "metal". */
+    backend: string;
+};
+
+export type OverlayTouchPhase = 'start' | 'move' | 'end' | 'cancel';
+
+export type PinchEvent = {
+    phase: 'start' | 'move' | 'end';
+    /** Finger spread relative to the start: 2 = twice as far apart (zoom in). */
+    scale: number;
+    /** Radians the two fingers turned since the start, clockwise on screen. */
+    rotation: number;
+    /** Midpoint between the fingers in the view, in points. */
+    x: number;
+    y: number;
+};
+
+export type SwipeDirection = 'left' | 'right' | 'up' | 'down';`
         }
       ]
     },
     {
       "id": "render-useWorld",
       "title": "render/useWorld",
-      "paragraphs": [
-        "Usage and examples: /game-engine/world-entities."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -1315,10 +1294,7 @@ export declare function GameView(props: GameViewProps): import("react").JSX.Elem
           "title": "render/useWorld declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `/** What \`useWorld\`'s setup may return: a cleanup, run just before the world is disposed. */
-export type WorldSetup = (world: World) => void | (() => void);
-
-/**
+          "code": `/**
  * A \`World\` owned by a component: the engine is warmed up (needed on the web, cheap on mobile), the
  * world is created with \`capacity\` entity slots and handed to \`setup\` to fill, and it is disposed on
  * unmount. A change in \`deps\` replaces it with a fresh one. Returns null until it's ready (one frame),
@@ -1332,16 +1308,17 @@ export type WorldSetup = (world: World) => void | (() => void);
  * return world && <GameView source={world} style={{ flex: 1 }} />;
  * \`\`\`
  */
-export declare function useWorld(capacity: number, setup?: WorldSetup, deps?: DependencyList, onError?: (error: Error) => void): World | null;`
+export declare function useWorld(capacity: number, setup?: WorldSetup, deps?: DependencyList, onError?: (error: Error) => void): World | null;
+
+/** What \`useWorld\`'s setup may return: a cleanup, run just before the world is disposed. */
+export type WorldSetup = (world: World) => void | (() => void);`
         }
       ]
     },
     {
       "id": "render-light",
       "title": "render/light",
-      "paragraphs": [
-        "Usage and examples: /game-engine/camera-lighting."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -1381,9 +1358,7 @@ export declare function frontLight(direction: [
     {
       "id": "render-meshes",
       "title": "render/meshes",
-      "paragraphs": [
-        "Usage and examples: /game-engine/cache-performance."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -1408,30 +1383,22 @@ export declare function frontLight(direction: [
           "title": "render/meshes declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `type V3 = readonly [
-    number,
-    number,
-    number
-];
-
-/** One past the highest mesh id in use: per-frame scans of a source's ranges stop here. */
-export declare const getMeshIdLimit: () => number;
-
-/**
+          "code": `/**
  * Initializes the shared core and built-in meshes. Await before using the engine on the web.
  * Mobile initialization remains synchronous and also warms the GPU on a background thread.
  * Repeat calls reuse initialization and mesh registration.
  */
-export declare function warmUpEngine(): Promise<void>;`
+export declare function warmUpEngine(): Promise<void>;
+
+/** One past the highest mesh id in use: per-frame scans of a source's ranges stop here. */
+export declare const getMeshIdLimit: () => number;`
         }
       ]
     },
     {
       "id": "world-TransformBatch",
       "title": "world/TransformBatch",
-      "paragraphs": [
-        "Usage and examples: /game-engine/cache-performance."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -1456,9 +1423,7 @@ export declare function warmUpEngine(): Promise<void>;`
           "title": "world/TransformBatch declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `export type TransformOptions = Pick<EntityOptions, 'position' | 'rotation' | 'scale' | 'color'>;
-
-/**
+          "code": `/**
  * Explicit draw-only updates, applied in one native call by \`flush()\`. \`world.update\` flushes
  * \`world.transforms\` before stepping; flush yourself before reading positions or animating. Records and scratch storage are reused; values are
  * copied when queued, never retained by reference. The scalar methods (\`position\`, \`rotation\`,
@@ -1487,16 +1452,16 @@ export declare class TransformBatch {
     set(entity: Entity, options: TransformOptions): void;
     flush(): number;
     clear(): void;
-}`
+}
+
+export type TransformOptions = Pick<EntityOptions, 'position' | 'rotation' | 'scale' | 'color'>;`
         }
       ]
     },
     {
       "id": "render-quality",
       "title": "render/quality",
-      "paragraphs": [
-        "Usage and examples: /game-engine/game-view."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -1529,11 +1494,9 @@ export type RenderQualitySetting = RenderQuality | 'auto';`
       ]
     },
     {
-      "id": "assets-source",
-      "title": "assets/source",
-      "paragraphs": [
-        "Usage and examples: /game-engine/models-textures."
-      ],
+      "id": "assets",
+      "title": "assets",
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -1544,26 +1507,73 @@ export type RenderQualitySetting = RenderQuality | 'auto';`
           [
             "AssetSource",
             "TypeScript type",
-            "/game-engine/models-textures"
+            "/modules/assets"
+          ],
+          [
+            "assets",
+            "Runtime API",
+            "/modules/assets"
+          ],
+          [
+            "AssetInfo",
+            "TypeScript type",
+            "/modules/assets"
+          ],
+          [
+            "LoadedAsset",
+            "TypeScript type",
+            "/modules/assets"
+          ],
+          [
+            "AssetLoadOptions",
+            "TypeScript type",
+            "/modules/assets"
           ]
         ]
       },
       "examples": [
         {
-          "title": "assets/source declarations",
+          "title": "assets declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `/** Browser assets use URLs (including URLs emitted by Vite/webpack imports). */
-export type AssetSource = number | string;`
+          "code": `/** A Metro require(...) identifier on native, or a URL on any platform. */
+export type AssetSource = number | string;
+
+export declare const assets: {
+    resolve: (source: import("./types").AssetSource) => import("./types").AssetInfo;
+    load: (source: import("./types").AssetSource, options?: import("./types").AssetLoadOptions) => Promise<import("./types").LoadedAsset>;
+    read(source: import("./types").AssetSource, options?: import("./types").AssetLoadOptions): Promise<ArrayBuffer>;
+    prefetch(sources: readonly import("./types").AssetSource[]): Promise<void>;
+    evict(source: import("./types").AssetSource): Promise<void>;
+};
+
+export interface AssetInfo {
+    uri: string;
+    name: string;
+    type: string;
+    hash?: string;
+    width?: number;
+    height?: number;
+    scale?: number;
+    /** Includes the bundled content hash and density, so app upgrades cannot reuse stale bytes. */
+    cacheKey: string;
+}
+
+export interface LoadedAsset extends AssetInfo {
+    bytes: ArrayBuffer;
+}
+
+export interface AssetLoadOptions {
+    /** Ignore retained/persisted bytes and load the source again. */
+    reload?: boolean;
+}`
         }
       ]
     },
     {
       "id": "assets-model",
       "title": "assets/model",
-      "paragraphs": [
-        "Usage and examples: /game-engine/models-textures."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -1603,7 +1613,27 @@ export type AssetSource = number | string;`
           "title": "assets/model declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `export type ModelOptions = {
+          "code": `/**
+ * Initializes the engine automatically. Loads a glTF model once; pass it as an entity's \`mesh\`. Meshes, node transforms, material colors
+ * and the base color texture are kept (one texture per model); skeletal animation clips are available through \`animations\` and \`World.playClip\`.
+ * Every entity using the model is drawn in one instanced draw call.
+ *
+ * \`\`\`ts
+ * const tree = await loadModel(require("./assets/tree.glb"), { fit: 2 });
+ * world.spawn({ mesh: tree, position: [0, 1, 0], physics: "fixed" });
+ * \`\`\`
+ */
+export declare function loadModel(source: AssetSource, options?: ModelOptions): Promise<LoadedModel>;
+
+/** A loaded model: pass it as an entity's \`mesh\`. Colliders sized from the mesh fit its bounding box. */
+export type Model = {
+    /** Bounding box size [x, y, z] at scale 1 (after \`fit\`). */
+    readonly size: Vec3;
+    /** Mesh id in the core. */
+    readonly id: number;
+};
+
+export type ModelOptions = {
     /** Move the model's bounding box center to the origin, so \`position\` is its middle. Default true. */
     center?: boolean;
     /** Scale it so its largest side is this long (e.g. 1 to match the built-in shapes). Default: keep its size. */
@@ -1615,14 +1645,6 @@ export type AssetSource = number | string;`
     shine?: number;
 };
 
-/** A loaded model: pass it as an entity's \`mesh\`. Colliders sized from the mesh fit its bounding box. */
-export type Model = {
-    /** Bounding box size [x, y, z] at scale 1 (after \`fit\`). */
-    readonly size: Vec3;
-    /** Mesh id in the core. */
-    readonly id: number;
-};
-
 /** An animation embedded in a loaded GLB. */
 export type ModelClip = {
     readonly name: string;
@@ -1632,28 +1654,14 @@ export type ModelClip = {
 export type LoadedModel = Model & {
     readonly animations: readonly ModelClip[];
     readonly jointCount: number;
-};
-
-/**
- * Initializes the engine automatically. Loads a glTF model once; pass it as an entity's \`mesh\`. Meshes, node transforms, material colors
- * and the base color texture are kept (one texture per model); skeletal animation clips are available through \`animations\` and \`World.playClip\`.
- * Every entity using the model is drawn in one instanced draw call.
- *
- * \`\`\`ts
- * const tree = await loadModel(require("./assets/tree.glb"), { fit: 2 });
- * world.spawn({ mesh: tree, position: [0, 1, 0], physics: "fixed" });
- * \`\`\`
- */
-export declare function loadModel(source: AssetSource, options?: ModelOptions): Promise<LoadedModel>;`
+};`
         }
       ]
     },
     {
       "id": "assets-AssetCache",
       "title": "assets/AssetCache",
-      "paragraphs": [
-        "Usage and examples: /game-engine/cache-performance."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -1687,9 +1695,7 @@ export declare function clearAssetCache(): Promise<void>;`
     {
       "id": "assets-ProceduralCache",
       "title": "assets/ProceduralCache",
-      "paragraphs": [
-        "Usage and examples: /game-engine/cache-performance."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -1714,19 +1720,7 @@ export declare function clearAssetCache(): Promise<void>;`
           "title": "assets/ProceduralCache declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `/** Optional storage override. The engine selects a best-effort platform cache by default. */
-export interface ProceduralStorage {
-    read(key: string): Uint8Array | null;
-    write(key: string, bytes: Uint8Array): void | Promise<void>;
-    /**
-     * The store itself verifies every record's integrity (the engine's own Rust store checksums each
-     * one with SHA-256), so the cache needn't checksum and scan them again in JS. Geometry is still
-     * validated by the core when it's registered.
-     */
-    readonly verified?: boolean;
-}
-
-/**
+          "code": `/**
  * Persists the output of a deterministic model factory, including nested model arrays/objects.
  * Hits register saved vertices directly: no procedural tessellation, painting or optimization.
  * Imported/skinned/textured models are intentionally excluded; their own loaders retain their rigs.
@@ -1751,6 +1745,18 @@ export declare class ProceduralCache {
      */
     peek<T>(key: string): T | undefined;
     get<T>(key: string, build: () => T): T;
+}
+
+/** Optional storage override. The engine selects a best-effort platform cache by default. */
+export interface ProceduralStorage {
+    read(key: string): Uint8Array | null;
+    write(key: string, bytes: Uint8Array): void | Promise<void>;
+    /**
+     * The store itself verifies every record's integrity (the engine's own Rust store checksums each
+     * one with SHA-256), so the cache needn't checksum and scan them again in JS. Geometry is still
+     * validated by the core when it's registered.
+     */
+    readonly verified?: boolean;
 }`
         }
       ]
@@ -1758,9 +1764,7 @@ export declare class ProceduralCache {
     {
       "id": "assets-texture",
       "title": "assets/texture",
-      "paragraphs": [
-        "Usage and examples: /game-engine/models-textures."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -1810,12 +1814,20 @@ export declare class ProceduralCache {
           "title": "assets/texture declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `/** A loaded image. Pass it as an entity's \`texture\`. */
-export type Texture = {
+          "code": `/**
+ * Draws a model once, in the native core, into an anti-aliased picture with a transparent
+ * background: seen from +z (orthographic), shaded as the renderer shades it under \`light\`. Show it
+ * instead of the model where it only ever faces the camera (icons, tiles, cards): on the built-in
+ * \`"plane"\` turned to face +z, scaled to \`2 * extent\`, under a \`frontLight\` (which shows camera-facing
+ * surfaces at exactly their color), with an alpha just below 1 so its soft edges blend. One quad
+ * then draws what took thousands of triangles, with smooth edges at every quality level.
+ */
+export declare function bakeModel(model: {
     readonly id: number;
-    readonly width: number;
-    readonly height: number;
-};
+} | number | null, options: BakeOptions): BakedModel;
+
+/** Whether a picture was kept under \`key\` by \`bakeModel\` (so it can be restored without its models). */
+export declare function isBakeKept(key: string): boolean;
 
 /**
  * Initializes the engine automatically. Loads a PNG or JPEG once (up to 4096 x 4096). Use it on any entity: \`{ mesh: "cube", texture }\`.
@@ -1827,6 +1839,18 @@ export type Texture = {
  * \`\`\`
  */
 export declare function loadTexture(source: AssetSource): Promise<Texture>;
+
+/** A model's baked picture: its texture, and the square of the model's x/y it covers. */
+export type BakedModel = {
+    texture: Texture;
+    /** The square's centre, in model units. */
+    center: [
+        x: number,
+        y: number
+    ];
+    /** Half the square's side, in model units. */
+    extent: number;
+};
 
 export type BakeOptions = {
     /** The picture's width and height in pixels: about the size it's shown at (textures have no mipmaps). */
@@ -1881,41 +1905,19 @@ export type BakePart = {
     shine?: number;
 };
 
-/** A model's baked picture: its texture, and the square of the model's x/y it covers. */
-export type BakedModel = {
-    texture: Texture;
-    /** The square's centre, in model units. */
-    center: [
-        x: number,
-        y: number
-    ];
-    /** Half the square's side, in model units. */
-    extent: number;
-};
-
-/**
- * Draws a model once, in the native core, into an anti-aliased picture with a transparent
- * background: seen from +z (orthographic), shaded as the renderer shades it under \`light\`. Show it
- * instead of the model where it only ever faces the camera (icons, tiles, cards): on the built-in
- * \`"plane"\` turned to face +z, scaled to \`2 * extent\`, under a \`frontLight\` (which shows camera-facing
- * surfaces at exactly their color), with an alpha just below 1 so its soft edges blend. One quad
- * then draws what took thousands of triangles, with smooth edges at every quality level.
- */
-export declare function bakeModel(model: {
+/** A loaded image. Pass it as an entity's \`texture\`. */
+export type Texture = {
     readonly id: number;
-} | number | null, options: BakeOptions): BakedModel;
-
-/** Whether a picture was kept under \`key\` by \`bakeModel\` (so it can be restored without its models). */
-export declare function isBakeKept(key: string): boolean;`
+    readonly width: number;
+    readonly height: number;
+};`
         }
       ]
     },
     {
       "id": "assets-modelling",
       "title": "assets/modelling",
-      "paragraphs": [
-        "Usage and examples: /game-engine/solid-modelling."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -1985,62 +1987,7 @@ export declare function isBakeKept(key: string): boolean;`
           "title": "assets/modelling declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `type Node = {
-    readonly kind: 'sphere';
-    readonly radius: number;
-} | {
-    readonly kind: 'ellipsoid';
-    readonly radii: Vec3;
-} | {
-    readonly kind: 'box';
-    readonly size: Vec3;
-    readonly radius: number;
-} | {
-    readonly kind: 'capsule';
-    readonly start: Vec3;
-    readonly end: Vec3;
-    readonly radius: number;
-} | {
-    readonly kind: 'cylinder';
-    readonly radius: number;
-    readonly height: number;
-} | {
-    readonly kind: 'torus';
-    readonly radius: number;
-    readonly tube: number;
-} | {
-    readonly kind: 'union';
-    readonly a: Node;
-    readonly b: Node;
-    readonly blend: number;
-} | {
-    readonly kind: 'subtract' | 'intersect';
-    readonly a: Node;
-    readonly b: Node;
-} | {
-    readonly kind: 'transform';
-    readonly child: Node;
-    readonly position: Vec3;
-    readonly rotation: Quat;
-    readonly scale: Vec3;
-} | {
-    readonly kind: 'paint';
-    readonly child: Node;
-    readonly color: Color;
-} | {
-    readonly kind: 'shell';
-    readonly child: Node;
-    readonly thickness: number;
-} | {
-    readonly kind: 'displace';
-    readonly child: Node;
-    readonly amplitude: number;
-    readonly frequency: number;
-    readonly seed: number;
-    readonly octaves: number;
-};
-
-/**
+          "code": `/**
  * An immutable, code-authored solid. Join primitives into a single surface, blend organic forms,
  * drill holes, hollow shells and add reproducible rock/terrain detail before tessellating once.
  * Distances use world units; primitives are centered at the origin, cylinders/tori use the Y axis.
@@ -2078,21 +2025,6 @@ export declare class Solid {
     toJSON(): Node;
 }
 
-export interface DisplacementOptions {
-    amplitude: number;
-    frequency?: number;
-    seed?: number;
-    /** 1..6 octaves. Default 3. */
-    octaves?: number;
-}
-
-export interface SolidOptions {
-    /** Cells across the longest dimension, 8..128. Default 48. Higher costs cubic sampling work. */
-    resolution?: number;
-    /** Planar UV projection. Use parametricSurface/loft for explicitly authored UVs. Default xy. */
-    uv?: 'xy' | 'xz' | 'yz';
-}
-
 /** Tessellates into editable, unregistered geometry. Prefer createSolid() for automatic model reuse. */
 export declare function solidGeometry(solid: Solid, options?: SolidOptions): Geometry;
 
@@ -2103,15 +2035,6 @@ export declare function solidGeometry(solid: Solid, options?: SolidOptions): Geo
  * is available; storage failure falls back to building. Call after warmUpEngine(), before spawning a run.
  */
 export declare function createSolid(solid: Solid, options?: SolidOptions & ShapeOptions): Model;
-
-export interface OptimizeOptions {
-    /** Target triangle fraction in (0,1]. Default 1: lossless cleanup, welding and GPU cache ordering. */
-    ratio?: number;
-    /** Maximum relative error, 0..1, against the largest dimension, with attribute error included. Default 0.001. */
-    error?: number;
-    /** Keep open borders fixed, useful for separately generated terrain chunks. Default true. */
-    lockBorders?: boolean;
-}
 
 /**
  * Returns new geometry, preserving the input and its normal/color/UV seams. Removes degenerate
@@ -2127,6 +2050,39 @@ export declare function optimizeGeometry(geometry: Geometry, options?: OptimizeO
  */
 export declare function createGeometryLods(geometry: Geometry, ratios?: readonly number[], options?: Omit<OptimizeOptions, 'ratio'>): Geometry[];
 
+/** Cheap counts and bounds without registering a mesh. */
+export declare function getGeometryStats(geometry: Geometry): GeometryStats;
+
+/** Copies/sculpts one smooth surface and updates its normals. Deform hard-edged parts separately. */
+export declare function deformGeometry(geometry: Geometry, deform: (position: Vec3, uv: readonly [
+    number,
+    number
+]) => Vec3): Geometry;
+
+export interface DisplacementOptions {
+    amplitude: number;
+    frequency?: number;
+    seed?: number;
+    /** 1..6 octaves. Default 3. */
+    octaves?: number;
+}
+
+export interface SolidOptions {
+    /** Cells across the longest dimension, 8..128. Default 48. Higher costs cubic sampling work. */
+    resolution?: number;
+    /** Planar UV projection. Use parametricSurface/loft for explicitly authored UVs. Default xy. */
+    uv?: 'xy' | 'xz' | 'yz';
+}
+
+export interface OptimizeOptions {
+    /** Target triangle fraction in (0,1]. Default 1: lossless cleanup, welding and GPU cache ordering. */
+    ratio?: number;
+    /** Maximum relative error, 0..1, against the largest dimension, with attribute error included. Default 0.001. */
+    error?: number;
+    /** Keep open borders fixed, useful for separately generated terrain chunks. Default true. */
+    lockBorders?: boolean;
+}
+
 export interface GeometryStats {
     vertices: number;
     triangles: number;
@@ -2137,25 +2093,14 @@ export interface GeometryStats {
         max: Vec3;
         size: Vec3;
     } | null;
-}
-
-/** Cheap counts and bounds without registering a mesh. */
-export declare function getGeometryStats(geometry: Geometry): GeometryStats;
-
-/** Copies/sculpts one smooth surface and updates its normals. Deform hard-edged parts separately. */
-export declare function deformGeometry(geometry: Geometry, deform: (position: Vec3, uv: readonly [
-    number,
-    number
-]) => Vec3): Geometry;`
+}`
         }
       ]
     },
     {
       "id": "assets-loft",
       "title": "assets/loft",
-      "paragraphs": [
-        "Usage and examples: /game-engine/surfaces-lofts."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -2200,25 +2145,7 @@ export declare function deformGeometry(geometry: Geometry, deform: (position: Ve
           "title": "assets/loft declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `export interface LoftSection {
-    z: number;
-    bottom: number;
-    top: number;
-    /** Half the width at the lower corners. */
-    width: number;
-    topWidth?: number;
-    /** Superellipse exponent, 2 = oval, larger values = boxier corners. Default 4. */
-    square?: number;
-}
-
-export interface LoftOptions {
-    around?: number;
-    smoothness?: number;
-    /** One color, a function of position and normal, or a \`surfaceColor\` field function (native). */
-    color?: Color | ((position: Vec3, normal: Vec3) => Color) | FieldFunction;
-}
-
-/**
+          "code": `/**
  * Smooth closed body through rounded rectangular cross sections along Z. Useful for vehicle
  * shells, cabins, shoes and fairings. Caps have separate flat normals and planar UVs; sides have
  * continuous longitudinal UVs and a welded seam. Input sections may increase or decrease in Z.
@@ -2235,16 +2162,32 @@ export declare function ellipsoid(radii: Vec3, color?: LoftOptions['color'], aro
 export declare function smoothCurve(points: readonly (readonly [
     number,
     number
-])[]): (x: number) => number;`
+])[]): (x: number) => number;
+
+export interface LoftSection {
+    z: number;
+    bottom: number;
+    top: number;
+    /** Half the width at the lower corners. */
+    width: number;
+    topWidth?: number;
+    /** Superellipse exponent, 2 = oval, larger values = boxier corners. Default 4. */
+    square?: number;
+}
+
+export interface LoftOptions {
+    around?: number;
+    smoothness?: number;
+    /** One color, a function of position and normal, or a \`surfaceColor\` field function (native). */
+    color?: Color | ((position: Vec3, normal: Vec3) => Color) | FieldFunction;
+}`
         }
       ]
     },
     {
       "id": "assets-surface",
       "title": "assets/surface",
-      "paragraphs": [
-        "Usage and examples: /game-engine/surfaces-lofts."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -2269,30 +2212,28 @@ export declare function smoothCurve(points: readonly (readonly [
           "title": "assets/surface declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `export interface ParametricSurfaceOptions {
+          "code": `/**
+ * Samples an arbitrary surface on u/v in [0,1]. Winding follows dP/du cross dP/dv.
+ * Use for terrain, cloth, wings, twisted ribbons and custom mathematical forms. Wrapped edges
+ * retain texture seams; coincident pole vertices share normals. Degenerate triangles are omitted.
+ */
+export declare function parametricSurface(sample: (u: number, v: number) => Vec3, options?: ParametricSurfaceOptions): Geometry;
+
+export interface ParametricSurfaceOptions {
     uSegments?: number;
     vSegments?: number;
     /** Match the first/last positions and smooth their normals, keeping separate 0/1 UVs. */
     wrapU?: boolean;
     wrapV?: boolean;
     color?: SurfaceColor;
-}
-
-/**
- * Samples an arbitrary surface on u/v in [0,1]. Winding follows dP/du cross dP/dv.
- * Use for terrain, cloth, wings, twisted ribbons and custom mathematical forms. Wrapped edges
- * retain texture seams; coincident pole vertices share normals. Degenerate triangles are omitted.
- */
-export declare function parametricSurface(sample: (u: number, v: number) => Vec3, options?: ParametricSurfaceOptions): Geometry;`
+}`
         }
       ]
     },
     {
       "id": "assets-procedural",
       "title": "assets/procedural",
-      "paragraphs": [
-        "Usage and examples: /game-engine/procedural-worlds."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -2432,43 +2373,23 @@ export declare function parametricSurface(sample: (u: number, v: number) => Vec3
           "title": "assets/procedural declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `/** A node of a field graph. Plain numbers are constants wherever a field is expected. */
-export declare class FieldRef {
-    readonly id: number;
-    constructor(id: number);
+          "code": `/** A color across a round end face: \`r\` from its center (0) to its rim (1), \`angle\` around it (radians). */
+export declare const faceColor: (build: (f: FieldGraph, p: Inputs<"r" | "angle">) => Color3) => FieldFunction;
+
+/**
+ * A function of named inputs written as a field graph, for model options that would otherwise call
+ * a JS function per vertex: \`lathe\`/\`tube\`/\`loft\` colors and \`lathe\` displacement, \`recolor\`. Build
+ * one with \`surfaceColor\`, \`faceColor\`, \`sectionColor\` or \`surfaceDisplacement\`.
+ */
+export declare class FieldFunction {
+    readonly fields: FieldGraph;
+    readonly outputs: number;
+    constructor(fields: FieldGraph, outputs: number);
+    toJSON(): {
+        fields: FieldGraph;
+        out: string[];
+    };
 }
-
-export type FieldInput = FieldRef | number;
-
-/** A 2D primitive in a field's (x, z) plane; \`offset\` is subtracted from its distance, \`width\` is its fade length. */
-export type FieldShape = {
-    kind: 'point';
-    x: number;
-    z: number;
-    offset?: number;
-    width?: number;
-} | {
-    kind: 'segment';
-    ax: number;
-    az: number;
-    bx: number;
-    bz: number;
-    offset?: number;
-    width?: number;
-} | {
-    kind: 'box';
-    x: number;
-    z: number;
-    halfX: number;
-    halfZ: number;
-    yaw?: number;
-    offset?: number;
-    width?: number;
-};
-
-type Node = {
-    op: string;
-} & Record<string, unknown>;
 
 /**
  * Builds a field graph: generic math and geometry nodes evaluated by the native core. Shared nodes
@@ -2551,279 +2472,23 @@ export declare class FieldGraph {
     };
 }
 
-type Inputs<K extends string> = {
-    readonly [P in K]: FieldRef;
-};
-
-type Color3 = readonly [
-    FieldInput,
-    FieldInput,
-    FieldInput
-];
-
-/**
- * A function of named inputs written as a field graph, for model options that would otherwise call
- * a JS function per vertex: \`lathe\`/\`tube\`/\`loft\` colors and \`lathe\` displacement, \`recolor\`. Build
- * one with \`surfaceColor\`, \`faceColor\`, \`sectionColor\` or \`surfaceDisplacement\`.
- */
-export declare class FieldFunction {
-    readonly fields: FieldGraph;
-    readonly outputs: number;
-    constructor(fields: FieldGraph, outputs: number);
-    toJSON(): {
-        fields: FieldGraph;
-        out: string[];
-    };
+/** A node of a field graph. Plain numbers are constants wherever a field is expected. */
+export declare class FieldRef {
+    readonly id: number;
+    constructor(id: number);
 }
 
-/**
- * A color of each surface point: \`u\`, \`v\` (texture coordinates; around and along a lathe or tube),
- * position \`x\`, \`y\`, \`z\` and normal \`nx\`, \`ny\`, \`nz\`. Returns [r, g, b].
- */
-export declare const surfaceColor: (build: (f: FieldGraph, p: Inputs<"u" | "v" | "x" | "y" | "z" | "nx" | "ny" | "nz">) => Color3) => FieldFunction;
+/** Builds a procedural mesh (parametric surfaces and seeded cards) in the native core. */
+export declare function generateMesh(recipe: MeshRecipe): MeshGeometry;
 
-/** A color across a round end face: \`r\` from its center (0) to its rim (1), \`angle\` around it (radians). */
-export declare const faceColor: (build: (f: FieldGraph, p: Inputs<"r" | "angle">) => Color3) => FieldFunction;
+/** Generates (or restores, see \`WorldOptions.key\`) a world on this thread. */
+export declare function generateWorld(recipe: WorldRecipe, options?: WorldOptions): ProceduralWorld;
 
-/** A color across a lathe's cut face: \`r\` from the axis (0) to the skin (1) at that height, and the height \`y\`. */
-export declare const sectionColor: (build: (f: FieldGraph, p: Inputs<"r" | "y">) => Color3) => FieldFunction;
+/** \`generateWorld\` on a background native thread (the web core builds at once). */
+export declare function generateWorldAsync(recipe: WorldRecipe, options?: WorldOptions): Promise<ProceduralWorld>;
 
-/** A lathe's displacement along its normal at (\`u\` around, \`v\` down the profile). */
-export declare const surfaceDisplacement: (build: (f: FieldGraph, p: Inputs<"u" | "v">) => FieldInput) => FieldFunction;
-
-type Three = readonly [
-    string,
-    string,
-    string
-];
-
-export type MeshPart = {
-    kind: 'surface';
-    rows: number;
-    cols: number;
-    position: Three;
-    normal: Three;
-    uv: readonly [
-        string,
-        string
-    ];
-    color: Three;
-    double?: boolean;
-    flip?: boolean;
-} | {
-    kind: 'cards';
-    count: number;
-    seed: number;
-    randoms: number;
-    /** [cu, cv, texU, texV] per corner (3 or 4): center + right·cu + up·cv. */
-    corners: readonly (readonly [
-        number,
-        number,
-        number,
-        number
-    ])[];
-    center: Three;
-    right: Three;
-    up: Three;
-    normal: Three;
-    color: Three;
-    double?: boolean;
-};
-
-export interface MeshRecipe {
-    fields: FieldGraph;
-    parts: readonly MeshPart[];
-}
-
-export interface TerrainRecipe {
-    /** Grid lines along both axes, ascending. */
-    axis: readonly number[];
-    height: string;
-    normalStep?: number;
-    uvSize?: readonly [
-        number,
-        number
-    ];
-    shade?: string;
-    tint?: readonly [
-        number,
-        number,
-        number
-    ];
-    /** Tested in order: a point belongs to the first region whose field is <= 0. */
-    regions?: readonly {
-        field: string;
-        surface: number;
-        material: number;
-    }[];
-    fallback: {
-        surface: number;
-        material: number;
-    };
-    materials: number;
-}
-
-export type SolidRecipe = {
-    kind: 'box';
-    x: number;
-    z: number;
-    halfX: number;
-    halfZ: number;
-    yaw?: number;
-    bottom: number;
-    top: number;
-    frame?: Frame;
-} | {
-    kind: 'circle';
-    x: number;
-    z: number;
-    radius: number;
-    bottom: number;
-    top: number;
-    frame?: Frame;
-} | {
-    kind: 'hull';
-    template: number;
-    x: number;
-    y: number;
-    z: number;
-    scale: readonly [
-        number,
-        number,
-        number
-    ];
-    yaw?: number;
-    frame?: Frame;
-};
-
-export type ScatterFilter = {
-    kind: 'field';
-    field: string;
-    min?: number;
-    max?: number;
-} | {
-    kind: 'walkable';
-    radius: number;
-} | {
-    kind: 'surface';
-    surfaces: readonly number[];
-} | {
-    kind: 'spawn';
-    minDistance: number;
-};
-
-export type ItemSolid = {
-    kind: 'none';
-} | {
-    kind: 'circle';
-    radius: string;
-    bottom: string;
-    top: string;
-} | {
-    kind: 'hull';
-    template: string;
-    scale: Three;
-    y: string;
-    yaw: string;
-};
-
-export interface ScatterLayer {
-    name: string;
-    count: number;
-    randoms?: number;
-    /** Layers with the same salt draw the same random values (paired scenery); by default each step has its own. */
-    salt?: number;
-    source?: 'none' | 'reachable' | {
-        anchors: readonly (readonly number[])[];
-    };
-    frame?: Frame;
-    x: string;
-    z: string;
-    filters?: readonly ScatterFilter[];
-    y: string;
-    attributes?: readonly string[];
-    solid?: {
-        variant?: string;
-        shapes: readonly ItemSolid[];
-    };
-}
-
-export type WorldStep = {
-    kind: 'spawn';
-    near: readonly [
-        number,
-        number
-    ];
-    rings: number;
-    samples: number;
-    radius: number;
-    surfaces?: readonly number[];
-} | ({
-    kind: 'scatter';
-} & ScatterLayer) | {
-    kind: 'reach';
-    cell: number;
-    steps: number;
-    radius: number;
-    extent: number;
-} | {
-    kind: 'pick';
-    groups: readonly {
-        name: string;
-        count: number;
-        spacing: number;
-        fromSpawn?: number;
-    }[];
-    attempts?: number;
-} | {
-    kind: 'overview';
-    size: number;
-    extent: number;
-};
-
-export interface WorldRecipe {
-    seed: number;
-    /** Turns the local frame (fields, platforms, local solids) into the world. */
-    rotation?: number;
-    fields: FieldGraph;
-    terrain: TerrainRecipe;
-    platforms?: readonly {
-        x: number;
-        z: number;
-        halfX: number;
-        halfZ: number;
-        y: number;
-        surface: number;
-    }[];
-    /** Mesh recipes whose convex hulls are solid templates (rendered rocks block exactly their outline). */
-    templates?: readonly MeshRecipe[];
-    solids?: readonly SolidRecipe[];
-    walk: {
-        boundary: number;
-        clearance: string;
-        footprint?: number;
-        step?: readonly [
-            number,
-            number
-        ];
-        height: number;
-        lift?: number;
-        cell?: number;
-    };
-    steps: readonly WorldStep[];
-}
-
-export interface WorldOptions {
-    /** Saves the world under this storage key, and restores one saved there from the same recipe. */
-    key?: string;
-    /** Also builds the terrain meshes (on the build's thread with \`generateWorldAsync\`). */
-    prepareTerrain?: boolean;
-}
-
-export interface Spot {
-    x: number;
-    z: number;
-}
+/** Whether a world was saved under \`key\` (cheap: doesn't read the world). */
+export declare function isWorldKept(key: string): boolean;
 
 /** A generated world held by the native core; queries take world coordinates. */
 export declare class ProceduralWorld {
@@ -2877,26 +2542,280 @@ export declare class ProceduralWorld {
     dispose(): void;
 }
 
-/** Generates (or restores, see \`WorldOptions.key\`) a world on this thread. */
-export declare function generateWorld(recipe: WorldRecipe, options?: WorldOptions): ProceduralWorld;
+/** A color across a lathe's cut face: \`r\` from the axis (0) to the skin (1) at that height, and the height \`y\`. */
+export declare const sectionColor: (build: (f: FieldGraph, p: Inputs<"r" | "y">) => Color3) => FieldFunction;
 
-/** \`generateWorld\` on a background native thread (the web core builds at once). */
-export declare function generateWorldAsync(recipe: WorldRecipe, options?: WorldOptions): Promise<ProceduralWorld>;
+/**
+ * A color of each surface point: \`u\`, \`v\` (texture coordinates; around and along a lathe or tube),
+ * position \`x\`, \`y\`, \`z\` and normal \`nx\`, \`ny\`, \`nz\`. Returns [r, g, b].
+ */
+export declare const surfaceColor: (build: (f: FieldGraph, p: Inputs<"u" | "v" | "x" | "y" | "z" | "nx" | "ny" | "nz">) => Color3) => FieldFunction;
 
-/** Whether a world was saved under \`key\` (cheap: doesn't read the world). */
-export declare function isWorldKept(key: string): boolean;
+/** A lathe's displacement along its normal at (\`u\` around, \`v\` down the profile). */
+export declare const surfaceDisplacement: (build: (f: FieldGraph, p: Inputs<"u" | "v">) => FieldInput) => FieldFunction;
 
-/** Builds a procedural mesh (parametric surfaces and seeded cards) in the native core. */
-export declare function generateMesh(recipe: MeshRecipe): MeshGeometry;`
+export type FieldInput = FieldRef | number;
+
+/** A 2D primitive in a field's (x, z) plane; \`offset\` is subtracted from its distance, \`width\` is its fade length. */
+export type FieldShape = {
+    kind: 'point';
+    x: number;
+    z: number;
+    offset?: number;
+    width?: number;
+} | {
+    kind: 'segment';
+    ax: number;
+    az: number;
+    bx: number;
+    bz: number;
+    offset?: number;
+    width?: number;
+} | {
+    kind: 'box';
+    x: number;
+    z: number;
+    halfX: number;
+    halfZ: number;
+    yaw?: number;
+    offset?: number;
+    width?: number;
+};
+
+export type ItemSolid = {
+    kind: 'none';
+} | {
+    kind: 'circle';
+    radius: string;
+    bottom: string;
+    top: string;
+} | {
+    kind: 'hull';
+    template: string;
+    scale: Three;
+    y: string;
+    yaw: string;
+};
+
+export type MeshPart = {
+    kind: 'surface';
+    rows: number;
+    cols: number;
+    position: Three;
+    normal: Three;
+    uv: readonly [
+        string,
+        string
+    ];
+    color: Three;
+    double?: boolean;
+    flip?: boolean;
+} | {
+    kind: 'cards';
+    count: number;
+    seed: number;
+    randoms: number;
+    /** [cu, cv, texU, texV] per corner (3 or 4): center + right·cu + up·cv. */
+    corners: readonly (readonly [
+        number,
+        number,
+        number,
+        number
+    ])[];
+    center: Three;
+    right: Three;
+    up: Three;
+    normal: Three;
+    color: Three;
+    double?: boolean;
+};
+
+export interface MeshRecipe {
+    fields: FieldGraph;
+    parts: readonly MeshPart[];
+}
+
+export type ScatterFilter = {
+    kind: 'field';
+    field: string;
+    min?: number;
+    max?: number;
+} | {
+    kind: 'walkable';
+    radius: number;
+} | {
+    kind: 'surface';
+    surfaces: readonly number[];
+} | {
+    kind: 'spawn';
+    minDistance: number;
+};
+
+export interface ScatterLayer {
+    name: string;
+    count: number;
+    randoms?: number;
+    /** Layers with the same salt draw the same random values (paired scenery); by default each step has its own. */
+    salt?: number;
+    source?: 'none' | 'reachable' | {
+        anchors: readonly (readonly number[])[];
+    };
+    frame?: Frame;
+    x: string;
+    z: string;
+    filters?: readonly ScatterFilter[];
+    y: string;
+    attributes?: readonly string[];
+    solid?: {
+        variant?: string;
+        shapes: readonly ItemSolid[];
+    };
+}
+
+export type SolidRecipe = {
+    kind: 'box';
+    x: number;
+    z: number;
+    halfX: number;
+    halfZ: number;
+    yaw?: number;
+    bottom: number;
+    top: number;
+    frame?: Frame;
+} | {
+    kind: 'circle';
+    x: number;
+    z: number;
+    radius: number;
+    bottom: number;
+    top: number;
+    frame?: Frame;
+} | {
+    kind: 'hull';
+    template: number;
+    x: number;
+    y: number;
+    z: number;
+    scale: readonly [
+        number,
+        number,
+        number
+    ];
+    yaw?: number;
+    frame?: Frame;
+};
+
+export interface Spot {
+    x: number;
+    z: number;
+}
+
+export interface TerrainRecipe {
+    /** Grid lines along both axes, ascending. */
+    axis: readonly number[];
+    height: string;
+    normalStep?: number;
+    uvSize?: readonly [
+        number,
+        number
+    ];
+    shade?: string;
+    tint?: readonly [
+        number,
+        number,
+        number
+    ];
+    /** Tested in order: a point belongs to the first region whose field is <= 0. */
+    regions?: readonly {
+        field: string;
+        surface: number;
+        material: number;
+    }[];
+    fallback: {
+        surface: number;
+        material: number;
+    };
+    materials: number;
+}
+
+export interface WorldOptions {
+    /** Saves the world under this storage key, and restores one saved there from the same recipe. */
+    key?: string;
+    /** Also builds the terrain meshes (on the build's thread with \`generateWorldAsync\`). */
+    prepareTerrain?: boolean;
+}
+
+export interface WorldRecipe {
+    seed: number;
+    /** Turns the local frame (fields, platforms, local solids) into the world. */
+    rotation?: number;
+    fields: FieldGraph;
+    terrain: TerrainRecipe;
+    platforms?: readonly {
+        x: number;
+        z: number;
+        halfX: number;
+        halfZ: number;
+        y: number;
+        surface: number;
+    }[];
+    /** Mesh recipes whose convex hulls are solid templates (rendered rocks block exactly their outline). */
+    templates?: readonly MeshRecipe[];
+    solids?: readonly SolidRecipe[];
+    walk: {
+        boundary: number;
+        clearance: string;
+        footprint?: number;
+        step?: readonly [
+            number,
+            number
+        ];
+        height: number;
+        lift?: number;
+        cell?: number;
+    };
+    steps: readonly WorldStep[];
+}
+
+export type WorldStep = {
+    kind: 'spawn';
+    near: readonly [
+        number,
+        number
+    ];
+    rings: number;
+    samples: number;
+    radius: number;
+    surfaces?: readonly number[];
+} | ({
+    kind: 'scatter';
+} & ScatterLayer) | {
+    kind: 'reach';
+    cell: number;
+    steps: number;
+    radius: number;
+    extent: number;
+} | {
+    kind: 'pick';
+    groups: readonly {
+        name: string;
+        count: number;
+        spacing: number;
+        fromSpawn?: number;
+    }[];
+    attempts?: number;
+} | {
+    kind: 'overview';
+    size: number;
+    extent: number;
+};`
         }
       ]
     },
     {
       "id": "assets-shape",
       "title": "assets/shape",
-      "paragraphs": [
-        "Usage and examples: /game-engine/procedural-geometry."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -3001,10 +2920,42 @@ export declare function generateMesh(recipe: MeshRecipe): MeshGeometry;`
           "title": "assets/shape declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `type P2 = [
+          "code": `/**
+ * Registers geometry as a mesh: pass the result as an entity's \`mesh\` (or a burst's), with any
+ * \`texture\`, physics and picking. Colliders default to a box holding the shape. Mesh ids are
+ * shared by models, fonts and shapes (about 4,080) and live for the whole app. Equal geometry/options
+ * automatically reuse preparation and registration; input buffers may still be edited for a later
+ * call. Material variants remain independent. Build geometry during scene setup, outside onUpdate.
+ *
+ * \`\`\`ts
+ * const orange = createShape(lathe(orangeProfile, { color: [1, 0.55, 0.1] }), { fit: 1, shine: 0.3 });
+ * world.spawn({ mesh: orange, position: [0, 2, 0], physics: "dynamic" });
+ * \`\`\`
+ */
+export declare function createShape(geometry: Geometry, options?: ShapeOptions): Model;
+
+/**
+ * A 2D path filled and pushed into a solid, facing +Z: badges, coins, leaves, hearts, stars, logos,
+ * fruit slices. Holes follow the fill rule. Textures map across the front face.
+ */
+export declare function extrude(path: Path, options?: ExtrudeOptions): Geometry;
+
+/**
+ * Spins a profile around the vertical axis, like a potter's wheel: fruit (apples, oranges, lemons,
+ * pears, cherries), vases, bottles, bowls, chess pieces, spinning tops. The profile is a \`Path\`
+ * (x = distance from the axis, y down, as drawn) or [radius, height] points (y up), top to bottom.
+ * Open ends away from the axis are capped. With \`sweep\` < TAU the cut faces are closed too.
+ */
+export declare function lathe(profile: Path | readonly (readonly [
     number,
     number
-];
+])[], options?: LatheOptions): Geometry;
+
+/**
+ * Bakes parts into one geometry, each scaled, rotated, moved and colored. One mesh draws in one
+ * instanced call and moves, spins and slices as one entity.
+ */
+export declare function merge(parts: readonly GeometryPart[]): Geometry;
 
 /**
  * A 2D outline, built like an SVG path: x right, y down. Solids made from it
@@ -3068,15 +3019,28 @@ export declare class Path {
 }
 
 /**
- * Shape geometry, before it's registered: 11 floats per vertex (position, normal, color, uv) and
- * triangle indices. Builders return it; \`merge\` combines it; \`createShape\` turns it into a mesh.
+ * Recolors geometry point by point (in place, and returned): two-tone leaves, painted tips, stripes on
+ * an extrusion. \`u\` and \`v\` are the texture coordinates there.
  */
-export type Geometry = MeshGeometry;
+export declare function recolor(geometry: Geometry, color: ((p: SurfacePoint) => Color) | FieldFunction): Geometry;
 
 /** A built-in shape's geometry (unit-sized, centered), to \`merge\` with others. */
 export declare function shapeGeometry(shape: Exclude<Shape, 'none' | 'puff' | 'flame'>, options?: {
     color?: Color;
 }): Geometry;
+
+/**
+ * Recomputes corner-angle-weighted normals in place, welding UV seams and poles at 1e-5 units.
+ * Uses Rust when available. Call on a sculpted surface before merging caps or other hard edges:
+ * coincident vertices share a normal. Degenerate faces leave the original normals intact.
+ */
+export declare function smoothNormals(g: Geometry): Geometry;
+
+/**
+ * A tube along a smooth curve through \`points\`: bananas, stems, chillies, worms, snakes, ropes,
+ * pipes, tentacles, candy canes.
+ */
+export declare function tube(points: readonly Vec3[], options?: TubeOptions): Geometry;
 
 export type ExtrudeOptions = {
     /** How deep, in the path's units. 0 = a flat, one-sided face (facing +Z). Default 0.2. */
@@ -3087,28 +3051,14 @@ export type ExtrudeOptions = {
     color?: Color;
 };
 
-/**
- * A 2D path filled and pushed into a solid, facing +Z: badges, coins, leaves, hearts, stars, logos,
- * fruit slices. Holes follow the fill rule. Textures map across the front face.
- */
-export declare function extrude(path: Path, options?: ExtrudeOptions): Geometry;
-
-/** Where a color function is asked about: \`u\` around (0..1), \`v\` along (0..1), and the surface there. */
-export type SurfacePoint = {
-    u: number;
-    v: number;
-    position: Vec3;
-    normal: Vec3;
-};
-
-/**
- * A flat color, or one per point of the surface: blushes, stripes, speckles, spots. Prefer a
- * \`surfaceColor\` field function (evaluated by the native core) to a JS function for detailed models.
- */
-export type SurfaceColor = Color | ((p: SurfacePoint) => Color) | FieldFunction;
-
 /** A flat color, or one per point of a round face (\`faceColor\`): \`r\` from its center (0) to its rim (1), \`angle\` around it. */
 export type FaceColor = Color | ((r: number, angle: number) => Color) | FieldFunction;
+
+/**
+ * Shape geometry, before it's registered: 11 floats per vertex (position, normal, color, uv) and
+ * triangle indices. Builders return it; \`merge\` combines it; \`createShape\` turns it into a mesh.
+ */
+export type Geometry = MeshGeometry;
 
 export type LatheOptions = {
     /** Steps around the axis. Default 32. */
@@ -3136,29 +3086,40 @@ export type LatheOptions = {
     cutSteps?: number;
 };
 
-/**
- * Recolors geometry point by point (in place, and returned): two-tone leaves, painted tips, stripes on
- * an extrusion. \`u\` and \`v\` are the texture coordinates there.
- */
-export declare function recolor(geometry: Geometry, color: ((p: SurfacePoint) => Color) | FieldFunction): Geometry;
+export type GeometryPart = {
+    geometry: Geometry;
+    position?: Vec3;
+    /** A quaternion [x, y, z, w], as entities use. */
+    rotation?: Quat;
+    scale?: Vec3 | number;
+    /** Multiplies the part's vertex colors: an apple's red body, brown stem and green leaf in one mesh. */
+    color?: Color;
+};
+
+export type ShapeOptions = {
+    /** Clean/optimize before upload, or simplify within an error bound. Built once, then shared. Default false. */
+    optimize?: boolean | OptimizeOptions;
+    /** Move the bounding box's center to the origin, so \`position\` is the middle. Default true. */
+    center?: boolean;
+    /** Scale so the largest side is this long (1 matches the built-in shapes). Default: keep the size. */
+    fit?: number;
+    /** How glossy, 0..1 (as for models): around 0.6 for a waxy apple, 0.85 for glass. Default 0. */
+    shine?: number;
+};
 
 /**
- * Recomputes corner-angle-weighted normals in place, welding UV seams and poles at 1e-5 units.
- * Uses Rust when available. Call on a sculpted surface before merging caps or other hard edges:
- * coincident vertices share a normal. Degenerate faces leave the original normals intact.
+ * A flat color, or one per point of the surface: blushes, stripes, speckles, spots. Prefer a
+ * \`surfaceColor\` field function (evaluated by the native core) to a JS function for detailed models.
  */
-export declare function smoothNormals(g: Geometry): Geometry;
+export type SurfaceColor = Color | ((p: SurfacePoint) => Color) | FieldFunction;
 
-/**
- * Spins a profile around the vertical axis, like a potter's wheel: fruit (apples, oranges, lemons,
- * pears, cherries), vases, bottles, bowls, chess pieces, spinning tops. The profile is a \`Path\`
- * (x = distance from the axis, y down, as drawn) or [radius, height] points (y up), top to bottom.
- * Open ends away from the axis are capped. With \`sweep\` < TAU the cut faces are closed too.
- */
-export declare function lathe(profile: Path | readonly (readonly [
-    number,
-    number
-])[], options?: LatheOptions): Geometry;
+/** Where a color function is asked about: \`u\` around (0..1), \`v\` along (0..1), and the surface there. */
+export type SurfacePoint = {
+    u: number;
+    v: number;
+    position: Vec3;
+    normal: Vec3;
+};
 
 export type TubeOptions = {
     /** Radius, or a function of t (0 at the first point, 1 at the last) for tapering: bananas, horns, tails. Default 0.1. */
@@ -3180,63 +3141,14 @@ export type TubeOptions = {
     color?: SurfaceColor;
     /** Color of the end caps (the face of a cut banana). Default \`color\`. */
     capColor?: FaceColor;
-};
-
-/**
- * A tube along a smooth curve through \`points\`: bananas, stems, chillies, worms, snakes, ropes,
- * pipes, tentacles, candy canes.
- */
-export declare function tube(points: readonly Vec3[], options?: TubeOptions): Geometry;
-
-export type GeometryPart = {
-    geometry: Geometry;
-    position?: Vec3;
-    /** A quaternion [x, y, z, w], as entities use. */
-    rotation?: Quat;
-    scale?: Vec3 | number;
-    /** Multiplies the part's vertex colors: an apple's red body, brown stem and green leaf in one mesh. */
-    color?: Color;
-};
-
-/**
- * Bakes parts into one geometry, each scaled, rotated, moved and colored. One mesh draws in one
- * instanced call and moves, spins and slices as one entity.
- */
-export declare function merge(parts: readonly GeometryPart[]): Geometry;
-
-export type ShapeOptions = {
-    /** Clean/optimize before upload, or simplify within an error bound. Built once, then shared. Default false. */
-    optimize?: boolean | OptimizeOptions;
-    /** Move the bounding box's center to the origin, so \`position\` is the middle. Default true. */
-    center?: boolean;
-    /** Scale so the largest side is this long (1 matches the built-in shapes). Default: keep the size. */
-    fit?: number;
-    /** How glossy, 0..1 (as for models): around 0.6 for a waxy apple, 0.85 for glass. Default 0. */
-    shine?: number;
-};
-
-/**
- * Registers geometry as a mesh: pass the result as an entity's \`mesh\` (or a burst's), with any
- * \`texture\`, physics and picking. Colliders default to a box holding the shape. Mesh ids are
- * shared by models, fonts and shapes (about 4,080) and live for the whole app. Equal geometry/options
- * automatically reuse preparation and registration; input buffers may still be edited for a later
- * call. Material variants remain independent. Build geometry during scene setup, outside onUpdate.
- *
- * \`\`\`ts
- * const orange = createShape(lathe(orangeProfile, { color: [1, 0.55, 0.1] }), { fit: 1, shine: 0.3 });
- * world.spawn({ mesh: orange, position: [0, 2, 0], physics: "dynamic" });
- * \`\`\`
- */
-export declare function createShape(geometry: Geometry, options?: ShapeOptions): Model;`
+};`
         }
       ]
     },
     {
       "id": "assets-font",
       "title": "assets/font",
-      "paragraphs": [
-        "Usage and examples: /game-engine/text-fonts."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -3281,31 +3193,7 @@ export declare function createShape(geometry: Geometry, options?: ShapeOptions):
           "title": "assets/font declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `export type FontOptions = {
-    /** How deep letters are extruded, as a fraction of the font size. 0 = flat. Default 0.2. */
-    depth?: number;
-    /** Characters to prewarm (space and ? are always included). Other font-supported characters load
-     * once when text is measured or laid out. Fewer = faster startup and fewer unused meshes. Default: DEFAULT_CHARS. */
-    chars?: string;
-    /** Weight (e.g. 400, 600) for a variable font, such as the device's system font. Default: the font's own. */
-    weight?: number;
-};
-
-type Glyph = {
-    mesh: number;
-    advance: number;
-};
-
-/** A loaded font. Use it on an entity with \`text\`: \`{ text: "2048", font }\`. */
-export type Font = {
-    readonly id: number;
-    /** Height of capital letters at scale 1. */
-    readonly capHeight: number;
-    /** Cached mesh (-1 = nothing drawn, e.g. space) and advance per character. Grows as text is used. */
-    readonly glyphs: ReadonlyMap<string, Glyph>;
-};
-
-/**
+          "code": `/**
  * Initializes the engine automatically. Loads a TrueType / OpenType font (.ttf / .otf) for 3D text. The source/depth/weight are cached independently of the requested prewarm characters. Letters are real meshes: lit, shadowed,
  * and every copy of a letter on screen is drawn in one call. At scale 1, letters are 1 unit tall (em).
  * Additional Unicode glyphs are built on demand from the same font and cached. The font must contain
@@ -3318,6 +3206,28 @@ export type Font = {
  */
 export declare function loadFont(source: AssetSource, options?: FontOptions): Promise<Font>;
 
+/** A line's advance in ems, with the same Unicode glyph loading, spacing and fallbacks as rendering. */
+export declare function measureText(font: Font, text: string, options?: TextLayout): number;
+
+/** A loaded font. Use it on an entity with \`text\`: \`{ text: "2048", font }\`. */
+export type Font = {
+    readonly id: number;
+    /** Height of capital letters at scale 1. */
+    readonly capHeight: number;
+    /** Cached mesh (-1 = nothing drawn, e.g. space) and advance per character. Grows as text is used. */
+    readonly glyphs: ReadonlyMap<string, Glyph>;
+};
+
+export type FontOptions = {
+    /** How deep letters are extruded, as a fraction of the font size. 0 = flat. Default 0.2. */
+    depth?: number;
+    /** Characters to prewarm (space and ? are always included). Other font-supported characters load
+     * once when text is measured or laid out. Fewer = faster startup and fewer unused meshes. Default: DEFAULT_CHARS. */
+    chars?: string;
+    /** Weight (e.g. 400, 600) for a variable font, such as the device's system font. Default: the font's own. */
+    weight?: number;
+};
+
 export type TextAlign = 'left' | 'center' | 'right';
 
 export type TextLayout = {
@@ -3325,285 +3235,6 @@ export type TextLayout = {
     letterSpacing?: number;
     /** Digits all as wide as the widest, so changing numbers (scores, timers) don't shift. Default false. */
     tabular?: boolean;
-};
-
-/** A line's advance in ems, with the same Unicode glyph loading, spacing and fallbacks as rendering. */
-export declare function measureText(font: Font, text: string, options?: TextLayout): number;`
-        }
-      ]
-    },
-    {
-      "id": "media-audio",
-      "title": "media/audio",
-      "paragraphs": [
-        "Usage and examples: /game-engine/audio-haptics."
-      ],
-      "table": {
-        "headers": [
-          "Export",
-          "Kind",
-          "Guide"
-        ],
-        "rows": [
-          [
-            "audio",
-            "Runtime API",
-            "/game-engine/audio-haptics"
-          ],
-          [
-            "AudioPlayOptions",
-            "TypeScript type",
-            "/game-engine/audio-haptics"
-          ],
-          [
-            "Sound",
-            "TypeScript type",
-            "/game-engine/audio-haptics"
-          ],
-          [
-            "SoundBank",
-            "TypeScript type",
-            "/game-engine/audio-haptics"
-          ],
-          [
-            "SoundSource",
-            "TypeScript type",
-            "/game-engine/audio-haptics"
-          ],
-          [
-            "Voice",
-            "TypeScript type",
-            "/game-engine/audio-haptics"
-          ]
-        ]
-      },
-      "examples": [
-        {
-          "title": "media/audio declarations",
-          "platform": "shared",
-          "language": "typescript",
-          "code": `/** A decoded sound in the core's mixer. */
-export type Sound = number & {
-    readonly __sound: unique symbol;
-};
-
-/** A playing instance of a sound (for \`audio.stop\`). */
-export type Voice = number & {
-    readonly __voice: unique symbol;
-};
-
-export type AudioPlayOptions = {
-    /** 0..2. Default 1. */
-    volume?: number;
-    /** -1 left .. 1 right. Default 0. */
-    pan?: number;
-    /** Playback speed (also shifts pitch). Default 1. */
-    pitch?: number;
-    /** Repeat until stopped (music, engines, ambience). */
-    loop?: boolean;
-};
-
-/** A \`require("./file.wav")\` asset, or a URI. WAV, PCM or float, mono or stereo. */
-export type SoundSource = AssetSource;
-
-/** Named sounds. Plays are ignored until \`ready\` resolves (usually a few milliseconds). */
-export declare class SoundBank<K extends string> {
-    /** Resolves when every sound has loaded (failures are logged and skipped). */
-    readonly ready: Promise<void>;
-    constructor(sources: Record<K, SoundSource>);
-    /** The sound, once loaded (e.g. for an entity's \`impact.sound\`). */
-    get(name: K): Sound | undefined;
-    play(name: K, options?: AudioPlayOptions): Voice | null;
-}
-
-export declare const audio: {
-    /** Initializes the engine and loads named sounds into its mixer. Each asset decodes once per session. */
-    load<K extends string>(sources: Record<K, SoundSource>): SoundBank<K>;
-    /** Plays a sound (low latency: mixed in Rust on the audio thread). Returns null if it couldn't play. */
-    play(sound: Sound, { volume: v, pan, pitch, loop }?: AudioPlayOptions): Voice | null;
-    stop(voice: Voice | null | undefined): void;
-    /**
-     * Frees a sound's samples, for sounds made at runtime (a \`microphone.take\` recording, once played).
-     * Its id then plays nothing; voices already playing it finish first. Don't release a bank's sounds.
-     */
-    release(sound: Sound | null | undefined): void;
-    /** A sound's length in seconds (0 if unknown or released). */
-    duration(sound: Sound): number;
-    /**
-     * A sound's loudness (RMS, 0..1) over time, one value per \`1 / perSecond\` seconds from its start:
-     * drive a talking mouth, a bobbing body or a meter from it while the sound plays (at \`pitch\` p,
-     * value i plays at i / (perSecond * p) seconds).
-     */
-    levels(sound: Sound, perSecond?: number): Float32Array;
-    muted: boolean;
-    /** The inverse of \`muted\`, matching \`haptics.enabled\` (e.g. \`audio.enabled = settings.enableSounds\`). */
-    enabled: boolean;
-    /** Master volume, 0..2. */
-    volume: number;
-    /** True once the device's audio output is running. */
-    readonly running: boolean;
-};`
-        }
-      ]
-    },
-    {
-      "id": "media-microphone",
-      "title": "media/microphone",
-      "paragraphs": [
-        "Usage and examples: /game-engine/audio-haptics."
-      ],
-      "table": {
-        "headers": [
-          "Export",
-          "Kind",
-          "Guide"
-        ],
-        "rows": [
-          [
-            "microphone",
-            "Runtime API",
-            "/game-engine/audio-haptics"
-          ],
-          [
-            "MicrophoneOptions",
-            "TypeScript type",
-            "/game-engine/audio-haptics"
-          ],
-          [
-            "MicrophonePermission",
-            "TypeScript type",
-            "/game-engine/audio-haptics"
-          ],
-          [
-            "MicrophoneState",
-            "TypeScript type",
-            "/game-engine/audio-haptics"
-          ],
-          [
-            "Recording",
-            "TypeScript type",
-            "/game-engine/audio-haptics"
-          ],
-          [
-            "TakeOptions",
-            "TypeScript type",
-            "/game-engine/audio-haptics"
-          ]
-        ]
-      },
-      "examples": [
-        {
-          "title": "media/microphone declarations",
-          "platform": "shared",
-          "language": "typescript",
-          "code": `export type MicrophoneState = 'off' | 'starting' | 'listening' | 'failed';
-
-export type MicrophonePermission = 'granted' | 'undetermined' | 'denied';
-
-/** What \`microphone.take\` returns: a sound to play, how long it lasts and its loudness over time. */
-export type Recording = {
-    sound: Sound;
-    /** Seconds at pitch 1. */
-    duration: number;
-    /** RMS loudness, \`levelsPerSecond\` values a second (see \`audio.levels\`). */
-    levels: Float32Array;
-    levelsPerSecond: number;
-};
-
-export type MicrophoneOptions = {
-    /** Seconds of input kept (0.5..30). Default 10. */
-    maxSeconds?: number;
-};
-
-export type TakeOptions = {
-    /** Leave out the last \`skipEnd\` seconds (the silence after someone stops talking). Default 0. */
-    skipEnd?: number;
-    /** Loudness values per second in \`levels\`. Default 30. */
-    levelsPerSecond?: number;
-};
-
-export declare const microphone: {
-    /** Whether this engine build can record (false on older app builds and without a native module). */
-    readonly supported: boolean;
-    /** Whether the app may record. On Android, 'undetermined' also covers a denial (it can't tell). */
-    readonly permission: MicrophonePermission;
-    /** Shows the system prompt the first time (answering at once after that); true if recording is allowed. */
-    requestPermission(): Promise<boolean>;
-    /** Starts listening (asynchronously: see \`state\`). Ask for the permission first. */
-    start({ maxSeconds }?: MicrophoneOptions): boolean;
-    /** Stops listening and releases the microphone (its system indicator turns off); forgets what was heard. */
-    stop(): void;
-    /** 'failed' when there's no microphone, no permission or the input couldn't open. */
-    readonly state: MicrophoneState;
-    /**
-     * How loud the input is now: 0 at -60 dBFS or quieter, 1 at full scale; speech close to a phone
-     * is usually 0.4..0.8, a quiet room under 0.3. Rises at once and falls back over ~0.15 s. Cheap
-     * enough to read every frame.
-     */
-    readonly level: number;
-    /** Seconds of input held (up to \`maxSeconds\`), since starting or the last \`take\`. */
-    readonly held: number;
-    /**
-     * The last \`seconds\` of input (ending \`skipEnd\` seconds ago) as a new Sound, and forgets
-     * everything heard so far so the next take starts fresh. Null if nothing was heard. Release the
-     * sound with \`audio.release\` once it has played: each take holds its samples until then.
-     */
-    take(seconds?: number, { skipEnd, levelsPerSecond }?: TakeOptions): Recording | null;
-};`
-        }
-      ]
-    },
-    {
-      "id": "media-haptics",
-      "title": "media/haptics",
-      "paragraphs": [
-        "Usage and examples: /game-engine/audio-haptics."
-      ],
-      "table": {
-        "headers": [
-          "Export",
-          "Kind",
-          "Guide"
-        ],
-        "rows": [
-          [
-            "haptics",
-            "Runtime API",
-            "/game-engine/audio-haptics"
-          ],
-          [
-            "HapticTap",
-            "TypeScript type",
-            "/game-engine/audio-haptics"
-          ]
-        ]
-      },
-      "examples": [
-        {
-          "title": "media/haptics declarations",
-          "platform": "shared",
-          "language": "typescript",
-          "code": `export type HapticTap = {
-    /** Seconds from now. */
-    time: number;
-    /** 0..1 */
-    intensity: number;
-    /** 0 (dull thud) .. 1 (crisp click). */
-    sharpness: number;
-};
-
-export declare const haptics: {
-    /** Set false to silence all haptics (e.g. a settings toggle). */
-    enabled: boolean;
-    /** True if the device has a haptic actuator (false on simulators). */
-    readonly supported: boolean;
-    /** A single tap. Rapid repeats (< 35 ms apart) are dropped so collisions don't buzz. */
-    impact(intensity?: number, sharpness?: number): void;
-    /** A light, crisp tick for UI selection. */
-    selection(): void;
-    notify(type: "success" | "warning" | "error"): void;
-    /** Any sequence of taps. */
-    play(taps: readonly HapticTap[]): void;
 };`
         }
       ]
@@ -3611,9 +3242,7 @@ export declare const haptics: {
     {
       "id": "input-Joystick",
       "title": "input/Joystick",
-      "paragraphs": [
-        "Usage and examples: /game-engine/input-picking."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -3648,29 +3277,27 @@ export declare const haptics: {
           "title": "input/Joystick declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `export type JoystickState = {
+          "code": `export declare function Joystick({ state, size, style }: JoystickProps): import("react").JSX.Element;
+
+export declare function useJoystick(): JoystickState;
+
+export type JoystickState = {
     x: number;
     y: number;
 };
-
-export declare function useJoystick(): JoystickState;
 
 export interface JoystickProps {
     state: JoystickState;
     size?: number;
     style?: CSSProperties;
-}
-
-export declare function Joystick({ state, size, style }: JoystickProps): import("react").JSX.Element;`
+}`
         }
       ]
     },
     {
       "id": "input-keyboard",
       "title": "input/keyboard",
-      "paragraphs": [
-        "Usage and examples: /game-engine/input-picking."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -3700,7 +3327,13 @@ export declare function Joystick({ state, size, style }: JoystickProps): import(
           "title": "input/keyboard declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `export type KeyboardInputMode = 'pointer' | 'drag' | 'swipe';
+          "code": `/** Browser keyboard adapter. Reuses pointer input, including engine gestures and raw contact surfaces. */
+export declare function createKeyboardInput(surface: HTMLElement, options?: KeyboardInputOptions): {
+    cancel: () => void;
+    dispose(): void;
+};
+
+export type KeyboardInputMode = 'pointer' | 'drag' | 'swipe';
 
 export interface KeyboardInputOptions {
     mode?: KeyboardInputMode;
@@ -3710,22 +3343,14 @@ export interface KeyboardInputOptions {
         x: number;
         y: number;
     };
-}
-
-/** Browser keyboard adapter. Reuses pointer input, including engine gestures and raw contact surfaces. */
-export declare function createKeyboardInput(surface: HTMLElement, options?: KeyboardInputOptions): {
-    cancel: () => void;
-    dispose(): void;
-};`
+}`
         }
       ]
     },
     {
       "id": "types",
       "title": "types",
-      "paragraphs": [
-        "Usage and examples: /game-engine/render-source."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -3770,14 +3395,62 @@ export declare function createKeyboardInput(surface: HTMLElement, options?: Keyb
           "title": "types declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `export type Vec3 = readonly [
-    number,
-    number,
-    number
-];
-
-/** Number of mesh ids: built-in shapes (0..15), then loaded models, glyphs and textured variants. */
+          "code": `/** Number of mesh ids: built-in shapes (0..15), then loaded models, glyphs and textured variants. */
 export declare const MAX_MESHES = 4096;
+
+export type Camera = {
+    eye: [
+        number,
+        number,
+        number
+    ];
+    target: [
+        number,
+        number,
+        number
+    ];
+    /** Vertical field of view in radians (ignored when \`ortho\` is set). */
+    fov: number;
+    /** Orthographic: half the visible height in world units. Board and puzzle games look flat and tidy. */
+    ortho?: number;
+    /**
+     * Chase an entity: each frame the target moves toward it and the eye keeps \`offset\` from the target.
+     * \`smoothing\` is roughly the seconds it takes to catch up (0 = rigid, default 0.15).
+     */
+    follow?: {
+        target: Entity;
+        offset: Vec3;
+        smoothing?: number;
+    } | null;
+    /** Shake strength in world units (e.g. 0.3 for a hit). Fades out by itself. */
+    shake?: number;
+};
+
+export type Light = {
+    /** Direction *towards* the light. Need not be normalized. */
+    direction: [
+        number,
+        number,
+        number
+    ];
+    /** 0..1 ambient term. */
+    ambient: number;
+    /**
+     * Cast shadows (one directional shadow map centred on the camera target). Default true.
+     * \`'backdrop'\`: only the cached backdrop layer draws its shadow map (and its own shadows); live
+     * entities still receive those shadows but cast none, so a frame skips the shadow pass. For scenes
+     * whose ground is all backdrop, where live shadows would land on nothing that shows them.
+     */
+    shadows?: boolean | 'backdrop';
+    /** Half-size in world units of the shadowed area around the camera target. Default 30. */
+    shadowExtent?: number;
+    /**
+     * Color and brightness of the light, multiplying both sun and ambient: e.g. [0.35, 0.38, 0.6] for
+     * moonlight, or a CSS color. Glowing colors (channels above 1) aren't affected. Alpha, if given, is
+     * ignored. Default [1, 1, 1].
+     */
+    color?: ColorInput;
+};
 
 /** What the renderer draws. \`World\` implements it; so can any custom simulation. */
 export interface RenderSource {
@@ -3821,63 +3494,18 @@ export interface RenderSource {
  */
 export type Shape = 'cube' | 'sphere' | 'plane' | 'cylinder' | 'cone' | 'capsule' | 'torus' | 'roundedBox' | 'puff' | 'flame' | 'none';
 
-export type Camera = {
-    eye: [
-        number,
-        number,
-        number
-    ];
-    target: [
-        number,
-        number,
-        number
-    ];
-    /** Vertical field of view in radians (ignored when \`ortho\` is set). */
-    fov: number;
-    /** Orthographic: half the visible height in world units. Board and puzzle games look flat and tidy. */
-    ortho?: number;
-    /**
-     * Chase an entity: each frame the target moves toward it and the eye keeps \`offset\` from the target.
-     * \`smoothing\` is roughly the seconds it takes to catch up (0 = rigid, default 0.15).
-     */
-    follow?: {
-        target: Entity;
-        offset: Vec3;
-        smoothing?: number;
-    } | null;
-    /** Shake strength in world units (e.g. 0.3 for a hit). Fades out by itself. */
-    shake?: number;
-};
-
-export type Light = {
-    /** Direction *towards* the light. Need not be normalized. */
-    direction: [
-        number,
-        number,
-        number
-    ];
-    /** 0..1 ambient term. */
-    ambient: number;
-    /** Cast shadows (one directional shadow map centred on the camera target). Default true. */
-    shadows?: boolean;
-    /** Half-size in world units of the shadowed area around the camera target. Default 30. */
-    shadowExtent?: number;
-    /**
-     * Color and brightness of the light, multiplying both sun and ambient: e.g. [0.35, 0.38, 0.6] for
-     * moonlight, or a CSS color. Glowing colors (channels above 1) aren't affected. Alpha, if given, is
-     * ignored. Default [1, 1, 1].
-     */
-    color?: ColorInput;
-};`
+export type Vec3 = readonly [
+    number,
+    number,
+    number
+];`
         }
       ]
     },
     {
       "id": "drawing-DrawingDocument",
       "title": "drawing/DrawingDocument",
-      "paragraphs": [
-        "Usage and examples: /game-engine/drawing."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -3972,153 +3600,7 @@ export type Light = {
           "title": "drawing/DrawingDocument declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `export type DrawingBrush = 'NORMAL' | 'MARKER' | 'PENCIL' | 'CALLIGRAPHY' | 'WATERCOLOR' | 'NEON' | 'CRAYON' | 'SPRINKLING';
-
-export type DrawingShape = 'line' | 'arrow' | 'rectangle' | 'square' | 'rounded-rectangle' | 'circle' | 'ellipse' | 'triangle' | 'right-triangle' | 'diamond' | 'pentagon' | 'hexagon' | 'octagon' | 'star' | 'heart' | 'trapezoid' | 'parallelogram' | 'cross' | 'speech-bubble' | 'cloud';
-
-export interface DrawingShapePreview {
-    kind: DrawingShape;
-    name: string;
-    path: string;
-    filledPath: string;
-    canFill: boolean;
-}
-
-export type DrawingTool = 'brush' | 'fill' | 'picker' | DrawingShape;
-
-export type DrawingSymmetry = 'none' | 'vertical' | 'horizontal' | 'both';
-
-export interface DrawingLayer {
-    id: number;
-    name: string;
-    visible: boolean;
-    locked: boolean;
-    opacity: number;
-}
-
-export interface DrawingProject {
-    version: 2;
-    width: number;
-    height: number;
-    activeLayer: number;
-    layers: DrawingLayer[];
-    paths: SavedDrawingPath[];
-}
-
-export interface DrawingBrushOptions {
-    brushType: DrawingBrush;
-    color: string;
-    width: number;
-    opacity: number;
-    isEraser?: boolean;
-    pressure?: boolean;
-    smoothing?: number;
-    tool?: DrawingTool;
-    symmetry?: DrawingSymmetry;
-    filled?: boolean;
-    tolerance?: number;
-}
-
-export interface DrawingState {
-    controls: DrawingControls;
-    count: number;
-    canUndo: boolean;
-    canRedo: boolean;
-    revision: number;
-    width: number;
-    height: number;
-    pixelWidth: number;
-    pixelHeight: number;
-    zoom: number;
-    layers: DrawingLayer[];
-    activeLayer: number;
-    editable: boolean;
-    isDrawing: boolean;
-    tool: DrawingTool | null;
-    pickedColor: string | null;
-    error: string | null;
-}
-
-/** Native document settings; React may display this snapshot but never owns the tool state. */
-export interface DrawingControls {
-    tool: 'brush' | 'eraser' | 'move' | 'shape';
-    brushType: DrawingBrush;
-    color: string;
-    width: number;
-    opacity: number;
-    shape: DrawingShape;
-    filled: boolean;
-    pressure: boolean;
-    smoothing: number;
-}
-
-export interface DrawingSnapshot {
-    base64: string;
-    width: number;
-    height: number;
-}
-
-/** A committed stroke's geometry in document coordinates, for colliders, tracing and scoring. */
-export interface DrawingStroke {
-    /** Position in the document's stroke list; pass \`index + 1\` as \`from\` to read only newer strokes. */
-    index: number;
-    layerId: number;
-    color: string;
-    /** Painted width in document units, including the brush's width factor. */
-    width: number;
-    opacity: number;
-    isEraser: boolean;
-    brushType: string;
-    /** \`fill\`: \`outline\` is the painted shape. \`stroke\`: \`outline\` is the centreline. */
-    style: 'fill' | 'stroke';
-    /** [x, y, width, height] of the painted outline. */
-    bounds: [
-        number,
-        number,
-        number,
-        number
-    ];
-    /**
-     * Smoothed gesture centrelines as flat [x0, y0, x1, y1, ...] arrays: one per symmetry copy, for
-     * brush strokes drawn this session. Empty for loaded strokes, fills and shapes; use \`outline\`.
-     */
-    lines: number[][];
-    /** Flattened contours of the painted path as flat [x0, y0, ...] arrays. */
-    outline: {
-        points: number[];
-        closed: boolean;
-    }[];
-}
-
-/** The composited ink under a document point (straight alpha; transparent paper is alpha 0). */
-export interface DrawingSample {
-    color: string;
-    alpha: number;
-}
-
-export interface DrawingCoverageOptions {
-    /** Document rectangle to measure; defaults to the whole paper. */
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-    /** Minimum ink alpha (0..1) that counts as painted. Default 0.5. */
-    minAlpha?: number;
-}
-
-export interface SavedDrawingPath {
-    path: string;
-    color: string;
-    width: number | string;
-    opacity?: number;
-    style?: 'fill' | 'stroke';
-    isEraser?: boolean;
-    brushType?: string;
-    touchPoints?: unknown[] | null;
-    [key: string]: unknown;
-}
-
-/**
+          "code": `/**
  * A native art document. Touches and live rendering never subscribe to React state.
  *
  * Games use the same document without \`DrawingCanvas\`: bind \`texture()\` to any entity, feed
@@ -4196,6 +3678,152 @@ export declare class DrawingDocument {
     /** Browser presentation; iOS and Android use native display clocks with automatic suspension. */
     present(width: number, height: number, background?: string, pixelRatio?: number): boolean;
     dispose(): void;
+}
+
+export type DrawingBrush = 'NORMAL' | 'MARKER' | 'PENCIL' | 'CALLIGRAPHY' | 'WATERCOLOR' | 'NEON' | 'CRAYON' | 'SPRINKLING';
+
+export interface DrawingBrushOptions {
+    brushType: DrawingBrush;
+    color: string;
+    width: number;
+    opacity: number;
+    isEraser?: boolean;
+    pressure?: boolean;
+    smoothing?: number;
+    tool?: DrawingTool;
+    symmetry?: DrawingSymmetry;
+    filled?: boolean;
+    tolerance?: number;
+}
+
+/** Native document settings; React may display this snapshot but never owns the tool state. */
+export interface DrawingControls {
+    tool: 'brush' | 'eraser' | 'move' | 'shape';
+    brushType: DrawingBrush;
+    color: string;
+    width: number;
+    opacity: number;
+    shape: DrawingShape;
+    filled: boolean;
+    pressure: boolean;
+    smoothing: number;
+}
+
+export interface DrawingState {
+    controls: DrawingControls;
+    count: number;
+    canUndo: boolean;
+    canRedo: boolean;
+    revision: number;
+    width: number;
+    height: number;
+    pixelWidth: number;
+    pixelHeight: number;
+    zoom: number;
+    layers: DrawingLayer[];
+    activeLayer: number;
+    editable: boolean;
+    isDrawing: boolean;
+    tool: DrawingTool | null;
+    pickedColor: string | null;
+    error: string | null;
+}
+
+export interface DrawingSnapshot {
+    base64: string;
+    width: number;
+    height: number;
+}
+
+export interface SavedDrawingPath {
+    path: string;
+    color: string;
+    width: number | string;
+    opacity?: number;
+    style?: 'fill' | 'stroke';
+    isEraser?: boolean;
+    brushType?: string;
+    touchPoints?: unknown[] | null;
+    [key: string]: unknown;
+}
+
+export type DrawingTool = 'brush' | 'fill' | 'picker' | DrawingShape;
+
+export type DrawingShape = 'line' | 'arrow' | 'rectangle' | 'square' | 'rounded-rectangle' | 'circle' | 'ellipse' | 'triangle' | 'right-triangle' | 'diamond' | 'pentagon' | 'hexagon' | 'octagon' | 'star' | 'heart' | 'trapezoid' | 'parallelogram' | 'cross' | 'speech-bubble' | 'cloud';
+
+export interface DrawingShapePreview {
+    kind: DrawingShape;
+    name: string;
+    path: string;
+    filledPath: string;
+    canFill: boolean;
+}
+
+export type DrawingSymmetry = 'none' | 'vertical' | 'horizontal' | 'both';
+
+export interface DrawingLayer {
+    id: number;
+    name: string;
+    visible: boolean;
+    locked: boolean;
+    opacity: number;
+}
+
+export interface DrawingProject {
+    version: 2;
+    width: number;
+    height: number;
+    activeLayer: number;
+    layers: DrawingLayer[];
+    paths: SavedDrawingPath[];
+}
+
+/** A committed stroke's geometry in document coordinates, for colliders, tracing and scoring. */
+export interface DrawingStroke {
+    /** Position in the document's stroke list; pass \`index + 1\` as \`from\` to read only newer strokes. */
+    index: number;
+    layerId: number;
+    color: string;
+    /** Painted width in document units, including the brush's width factor. */
+    width: number;
+    opacity: number;
+    isEraser: boolean;
+    brushType: string;
+    /** \`fill\`: \`outline\` is the painted shape. \`stroke\`: \`outline\` is the centreline. */
+    style: 'fill' | 'stroke';
+    /** [x, y, width, height] of the painted outline. */
+    bounds: [
+        number,
+        number,
+        number,
+        number
+    ];
+    /**
+     * Smoothed gesture centrelines as flat [x0, y0, x1, y1, ...] arrays: one per symmetry copy, for
+     * brush strokes drawn this session. Empty for loaded strokes, fills and shapes; use \`outline\`.
+     */
+    lines: number[][];
+    /** Flattened contours of the painted path as flat [x0, y0, ...] arrays. */
+    outline: {
+        points: number[];
+        closed: boolean;
+    }[];
+}
+
+/** The composited ink under a document point (straight alpha; transparent paper is alpha 0). */
+export interface DrawingSample {
+    color: string;
+    alpha: number;
+}
+
+export interface DrawingCoverageOptions {
+    /** Document rectangle to measure; defaults to the whole paper. */
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+    /** Minimum ink alpha (0..1) that counts as painted. Default 0.5. */
+    minAlpha?: number;
 }`
         }
       ]
@@ -4203,9 +3831,7 @@ export declare class DrawingDocument {
     {
       "id": "drawing-DrawingCanvas",
       "title": "drawing/DrawingCanvas",
-      "paragraphs": [
-        "Usage and examples: /game-engine/drawing."
-      ],
+      "paragraphs": [],
       "table": {
         "headers": [
           "Export",
@@ -4230,16 +3856,1934 @@ export declare class DrawingDocument {
           "title": "drawing/DrawingCanvas declarations",
           "platform": "shared",
           "language": "typescript",
-          "code": `export declare const DrawingCanvas: import("react").MemoExoticComponent<({ document: drawing, mode, background, active, onError, onChange, style }: DrawingCanvasProps) => import("react").JSX.Element>;
+          "code": `export declare const DrawingCanvas: (props: DrawingCanvasProps) => ReturnType<typeof DocumentSurface>;
 
-export interface DrawingCanvasProps {
-    document: DrawingDocument;
-    mode?: 'draw' | 'move' | 'view';
-    background?: string;
-    active?: boolean;
-    onChange?: (state: DrawingState) => void;
-    onError?: (error: Error) => void;
-    style?: ViewStyle;
+export type DrawingCanvasProps = DocumentSurfaceProps<DrawingState>;`
+        }
+      ]
+    },
+    {
+      "id": "animations",
+      "title": "animations",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "animations",
+            "Runtime API",
+            "/modules/animations"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "animations declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `/** Animation controls for React views and Rust-backed game entities. */
+export declare const animations: {
+    /** Animate a mounted AnimationView. Pass its ref or its current handle. */
+    animateView(view: AnimationViewTarget, to: Partial<ViewAnimationValues>, options?: ViewAnimationOptions): import("./view").ViewAnimationHandle;
+    /** Play a preset or a custom sequence with optional delay, repeat and reverse playback. */
+    playView(view: AnimationViewTarget, preset: ViewAnimationPreset | ViewAnimationSequence, options?: ViewPlaybackOptions): import("./view").ViewAnimationHandle;
+    captureSharedElement: typeof captureSharedElement;
+    transitionSharedElement: typeof transitionSharedElement;
+    /** Tween one or more entities. Resolves when the last track finishes, is replaced, or is stopped. */
+    animate(world: World, targets: Entity | readonly Entity[], to: AnimateTarget | readonly Keyframe[], options?: AnimateOptions): Promise<void>;
+    /** Stops an entity's tweens at their current values. */
+    stopAnimation(world: World, entity: Entity): void;
+    /** Plays a named glTF clip with optional looping, speed, seeking and crossfade. */
+    playClip(world: World, entity: Entity, clip: string, options?: ClipOptions): boolean;
+    /** Holds the current skeletal pose, or returns to the bind pose with reset. */
+    stopClip(world: World, entity: Entity, reset?: boolean): boolean;
+};`
+        }
+      ]
+    },
+    {
+      "id": "files",
+      "title": "files",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "files",
+            "Runtime API",
+            "/modules/files"
+          ],
+          [
+            "FileDirectory",
+            "TypeScript type",
+            "/modules/files"
+          ],
+          [
+            "FileInfo",
+            "TypeScript type",
+            "/modules/files"
+          ],
+          [
+            "TemporaryFileOptions",
+            "TypeScript type",
+            "/modules/files"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "files declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `/** App-private files and engine-owned temporary files. */
+export declare const files: {
+    /** Opens a persistent directory, independent of the temporary file cache. */
+    openDirectory(namespace?: string): Promise<FileDirectory>;
+    writeTemporary(base64: string, options?: TemporaryFileOptions): Promise<string>;
+    /** Idempotent for missing files. Native paths are scoped to engine temp files; browsers revoke only owned URLs. */
+    removeTemporary(uri: string): Promise<void>;
+};
+
+/** A private, persistent namespace for files owned by the app. */
+export interface FileDirectory {
+    write(name: string, bytes: ArrayBuffer | ArrayBufferView): Promise<void>;
+    writeText(name: string, text: string): Promise<void>;
+    /** Undefined when a file is missing. An empty file returns a zero-length buffer. */
+    read(name: string): Promise<ArrayBuffer | undefined>;
+    readText(name: string): Promise<string | undefined>;
+    stat(name: string): Promise<FileInfo | undefined>;
+    list(): Promise<FileInfo[]>;
+    /** True if a file existed and was deleted. */
+    remove(name: string): Promise<boolean>;
+}
+
+export interface FileInfo {
+    name: string;
+    /** Bytes on disk. */
+    size: number;
+    /** Milliseconds since the Unix epoch. */
+    modifiedAt: number;
+}
+
+export interface TemporaryFileOptions {
+    /** Display filename; a unique prefix prevents concurrent writes from colliding. */
+    fileName?: string;
+    /** Browser Blob content type; native consumers can infer it from the filename. */
+    mimeType?: string;
+}`
+        }
+      ]
+    },
+    {
+      "id": "device",
+      "title": "device",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "device",
+            "Runtime API",
+            "/modules/device"
+          ],
+          [
+            "DeviceEnvironment",
+            "TypeScript type",
+            "/modules/device"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "device declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `/** Synchronous platform utilities. No permissions, engine warm-up or render surface needed. */
+export declare const device: {
+    getEnvironment: typeof getDeviceEnvironment;
+    isPhysicalDevice(): boolean;
+    /** Android emulators and Apple simulators; browsers return false. */
+    isVirtualDevice(): boolean;
+};
+
+/** Browser hosts do not expose reliable physical-versus-virtual hardware detection. */
+export type DeviceEnvironment = 'physical' | 'emulator' | 'simulator' | 'browser';`
+        }
+      ]
+    },
+    {
+      "id": "audio",
+      "title": "audio",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "audio",
+            "Runtime API",
+            "/modules/audio"
+          ],
+          [
+            "SoundBank",
+            "Runtime API",
+            "/modules/audio"
+          ],
+          [
+            "AudioPlayOptions",
+            "TypeScript type",
+            "/modules/audio"
+          ],
+          [
+            "AudioShiftOptions",
+            "TypeScript type",
+            "/modules/audio"
+          ],
+          [
+            "Sound",
+            "TypeScript type",
+            "/modules/audio"
+          ],
+          [
+            "SoundSource",
+            "TypeScript type",
+            "/modules/audio"
+          ],
+          [
+            "Voice",
+            "TypeScript type",
+            "/modules/audio"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "audio declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export declare const audio: {
+    /** Initializes the engine and loads named sounds into its mixer. Each asset decodes once per session. */
+    load<K extends string>(sources: Record<K, SoundSource>): SoundBank<K>;
+    /** Loads one session-cached WAV asset. Rejects when loading or decoding fails. */
+    loadSound: typeof loadSound;
+    /** Decodes owned WAV bytes. Call release when finished with the returned sound. */
+    decodeWav(data: ArrayBuffer | ArrayBufferView): Promise<Sound>;
+    /** Plays a sound (low latency: mixed in Rust on the audio thread). Returns null if it couldn't play. */
+    play(sound: Sound, { volume: v, pan, pitch, loop }?: AudioPlayOptions): Voice | null;
+    stop(voice: Voice | null | undefined): void;
+    /** Whether this build has live voice control, including stopAll. */
+    readonly canControlVoices: boolean;
+    /** These controls return whether the mixer accepted the command. */
+    pause(voice: Voice): boolean;
+    resume(voice: Voice): boolean;
+    /** Seek in seconds at the sound's original speed. */
+    seek(voice: Voice, seconds: number): boolean;
+    setVoiceMix(voice: Voice, volume: number, pan?: number): boolean;
+    /** Stops every voice in the engine mixer, including loops and paused voices. */
+    stopAll(): boolean;
+    /**
+     * Frees a sound's samples, for sounds made at runtime (a \`microphone.take\` recording, once played).
+     * Its id then plays nothing; voices already playing it finish first. Don't release a bank's sounds.
+     */
+    release(sound: Sound | null | undefined): void;
+    /** A sound's length in seconds (0 if unknown or released). */
+    duration(sound: Sound): number;
+    /**
+     * A sound's loudness (RMS, 0..1) over time, one value per \`1 / perSecond\` seconds from its start:
+     * drive a talking mouth, a bobbing body or a meter from it while the sound plays (at \`pitch\` p,
+     * value i plays at i / (perSecond * p) seconds).
+     */
+    levels(sound: Sound, perSecond?: number): Float32Array;
+    /**
+     * A new sound made from \`sound\`: \`pitch\` times higher and \`tempo\` times faster (0.25..4 each), so a
+     * recorded voice can go up without racing (\`play\`'s \`pitch\` changes both together). For a voice
+     * from the \`microphone\`: \`clean\` first removes rumble and turns the room down between words, and
+     * \`loudness\` (an RMS level, 0.2 is about -14 dBFS) levels the speech itself, at most 30 dB louder,
+     * under a soft limiter. Made in Rust on the calling thread (a few milliseconds a second of audio);
+     * free it with \`release\` once played. Null if it can't be made, including on app builds older
+     * than this method.
+     */
+    shift(sound: Sound, { pitch, tempo, loudness, clean }?: AudioShiftOptions): Sound | null;
+    /** Whether \`shift\` is available (the app's native build has it). */
+    readonly canShift: boolean;
+    muted: boolean;
+    /** The inverse of \`muted\`, matching \`haptics.enabled\` (e.g. \`audio.enabled = settings.enableSounds\`). */
+    enabled: boolean;
+    /** Master volume, 0..2. */
+    volume: number;
+    /** True once the device's audio output is running. */
+    readonly running: boolean;
+};
+
+/** Named sounds. Plays are ignored until \`ready\` resolves (usually a few milliseconds). */
+export declare class SoundBank<K extends string> {
+    /** Resolves when every sound has loaded (failures are logged and skipped). */
+    readonly ready: Promise<void>;
+    constructor(sources: Record<K, SoundSource>);
+    /** The sound, once loaded (e.g. for an entity's \`impact.sound\`). */
+    get(name: K): Sound | undefined;
+    play(name: K, options?: AudioPlayOptions): Voice | null;
+}
+
+export type AudioPlayOptions = {
+    /** 0..2. Default 1. */
+    volume?: number;
+    /** -1 left .. 1 right. Default 0. */
+    pan?: number;
+    /** Playback speed (also shifts pitch). Default 1. */
+    pitch?: number;
+    /** Repeat until stopped (music, engines, ambience). */
+    loop?: boolean;
+};
+
+/** \`audio.shift\`: a new sound with its pitch and tempo changed separately (each 0.25..4). */
+export type AudioShiftOptions = {
+    /** Frequency ratio: 2 is an octave up. Default 1. */
+    pitch?: number;
+    /** Speed ratio: 1.1 is 10% quicker. Default 1. */
+    tempo?: number;
+    /** Speech RMS to level to (0.2 is about -14 dBFS), at most 30 dB louder; 0 leaves the level. */
+    loudness?: number;
+    /** Turn rumble (below 100 Hz) and the room between words down first (a microphone take). */
+    clean?: boolean;
+};
+
+/** A decoded sound in the core's mixer. */
+export type Sound = number & {
+    readonly __sound: unique symbol;
+};
+
+/** A \`require("./file.wav")\` asset, or a URI. WAV, PCM or float, mono or stereo. */
+export type SoundSource = AssetSource;
+
+/** A playing instance of a sound (for \`audio.stop\`). */
+export type Voice = number & {
+    readonly __voice: unique symbol;
+};`
+        }
+      ]
+    },
+    {
+      "id": "clipboard",
+      "title": "clipboard",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "clipboard",
+            "Runtime API",
+            "/modules/clipboard"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "clipboard declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `/** Text and HTML clipboard access. Call from a user action; platform access errors reject. */
+export declare const clipboard: {
+    /** API availability does not imply clipboard read permission. */
+    isAvailable(): boolean;
+    /** Checks for nonempty text; reading may require permission or trigger an OS prompt. */
+    hasString(): Promise<boolean>;
+    /** Clears the native clipboard; browsers replace its content with empty text. */
+    clear(): Promise<void>;
+    /** Supply a plain-text alternative for applications that cannot paste HTML. */
+    setHTML(html: string, text: string): Promise<void>;
+    /** Returns empty text when no HTML representation exists. Browsers may sanitize HTML. */
+    getHTML(): Promise<string>;
+    setString(text: string): Promise<void>;
+    getString(): Promise<string>;
+};`
+        }
+      ]
+    },
+    {
+      "id": "haptics",
+      "title": "haptics",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "haptics",
+            "Runtime API",
+            "/modules/haptics"
+          ],
+          [
+            "HapticTap",
+            "TypeScript type",
+            "/modules/haptics"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "haptics declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export declare const haptics: {
+    /** Set false to silence all haptics (e.g. a settings toggle). */
+    enabled: boolean;
+    /** True if the device has a haptic actuator (false on simulators). */
+    readonly supported: boolean;
+    /** A single tap. Rapid repeats (< 35 ms apart) are dropped so collisions don't buzz. */
+    impact(intensity?: number, sharpness?: number): void;
+    /** A light, crisp tick for UI selection. */
+    selection(): void;
+    notify(type: "success" | "warning" | "error"): void;
+    /** Any sequence of taps. */
+    play(taps: readonly HapticTap[]): void;
+};
+
+export type HapticTap = {
+    /** Seconds from now. */
+    time: number;
+    /** 0..1 */
+    intensity: number;
+    /** 0 (dull thud) .. 1 (crisp click). */
+    sharpness: number;
+};`
+        }
+      ]
+    },
+    {
+      "id": "permissions",
+      "title": "permissions",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "permissions",
+            "Runtime API",
+            "/modules/permissions"
+          ],
+          [
+            "permissionNames",
+            "Runtime API",
+            "/modules/permissions"
+          ],
+          [
+            "AndroidPermission",
+            "TypeScript type",
+            "/modules/permissions"
+          ],
+          [
+            "Permission",
+            "TypeScript type",
+            "/modules/permissions"
+          ],
+          [
+            "PermissionResult",
+            "TypeScript type",
+            "/modules/permissions"
+          ],
+          [
+            "PermissionStatus",
+            "TypeScript type",
+            "/modules/permissions"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "permissions declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export declare const permissions: {
+    /** Reads the current permission without prompting. */
+    check: typeof check;
+    /** Opens the app's settings or a supported permission-specific screen. */
+    openSettings: typeof openSettings;
+    /** Requests access. Call from a user action in the foreground. */
+    request: typeof requestPermission;
+    checkMany(names: readonly Permission[]): Promise<Map<Permission, PermissionResult>>;
+    /** Request permissions in order, with one prompt at a time. Call from a user action. */
+    requestMany(names: readonly Permission[]): Promise<Map<Permission, PermissionResult>>;
+};
+
+export declare const permissionNames: readonly [
+    "camera",
+    "microphone",
+    "notifications",
+    "location",
+    "location-coarse",
+    "location-background",
+    "photos",
+    "photos-add",
+    "videos",
+    "media-audio",
+    "media-location",
+    "storage-read",
+    "storage-write",
+    "contacts",
+    "contacts-write",
+    "calendars",
+    "calendars-write",
+    "reminders",
+    "bluetooth",
+    "bluetooth-scan",
+    "bluetooth-advertise",
+    "nearby-wifi",
+    "local-network",
+    "motion",
+    "body-sensors",
+    "body-sensors-background",
+    "speech-recognition",
+    "tracking",
+    "music-library",
+    "homekit",
+    "siri",
+    "phone",
+    "call-phone",
+    "call-log",
+    "read-sms",
+    "receive-sms",
+    "send-sms",
+    "overlay",
+    "write-settings",
+    "exact-alarms",
+    "all-files-access",
+    "install-packages",
+    "notification-listener",
+    "do-not-disturb",
+    "usage-access",
+    "battery-optimization",
+    "clipboard-read",
+    "clipboard-write",
+    "persistent-storage"
+];
+
+/** Android manifest permission, including permissions declared by the host or a vendor. */
+export type AndroidPermission = \`android:\${string}\`;
+
+export type Permission = (typeof permissionNames)[number] | AndroidPermission;
+
+export interface PermissionResult {
+    status: PermissionStatus;
+    /** Whether the platform can display a permission prompt. Null means it could not tell. */
+    canAskAgain: boolean | null;
+    /** Opening a system settings screen is required for this kind of access. */
+    requiresSettings?: true;
+}
+
+export type PermissionStatus = 'granted' | 'limited' | 'prompt' | 'denied' | 'unknown' | 'unavailable';`
+        }
+      ]
+    },
+    {
+      "id": "location",
+      "title": "location",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "location",
+            "Runtime API",
+            "/modules/location"
+          ],
+          [
+            "LocationError",
+            "Runtime API",
+            "/modules/location"
+          ],
+          [
+            "LocationErrorCode",
+            "TypeScript type",
+            "/modules/location"
+          ],
+          [
+            "LocationOptions",
+            "TypeScript type",
+            "/modules/location"
+          ],
+          [
+            "LocationPosition",
+            "TypeScript type",
+            "/modules/location"
+          ],
+          [
+            "LocationWatchOptions",
+            "TypeScript type",
+            "/modules/location"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "location declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export declare const location: {
+    /** Reports whether the platform provider and engine feature are available. */
+    isAvailable: typeof isAvailable;
+    getPermission: (accuracy?: "precise" | "approximate") => Promise<import("..").PermissionResult>;
+    requestPermission: (accuracy?: "precise" | "approximate") => Promise<import("..").PermissionResult>;
+    getCurrentPosition(options?: LocationOptions): Promise<LocationPosition>;
+    /** Delivers the first foreground fix and subsequent updates. Call the returned function to unsubscribe. */
+    subscribe: typeof watchPosition;
+    /** Alias for subscribe. */
+    watchPosition: typeof watchPosition;
+};
+
+export declare class LocationError extends Error {
+    readonly code: LocationErrorCode;
+    constructor(code: LocationErrorCode, cause?: unknown);
+}
+
+export type LocationErrorCode = 'permission-denied' | 'unavailable' | 'timeout' | 'aborted';
+
+export interface LocationOptions {
+    /** Ask the OS for a more accurate fix when available. Default: false. */
+    highAccuracy?: boolean;
+    /** Deadline for the first fix in milliseconds. Default: 15000. */
+    timeoutMs?: number;
+    signal?: AbortSignal;
+}
+
+export interface LocationPosition {
+    latitude: number;
+    longitude: number;
+    /** Horizontal uncertainty in meters. */
+    accuracy: number;
+    /** Milliseconds since the Unix epoch. */
+    timestamp: number;
+    /** Meters above the provider's reference surface. */
+    altitude: number | null;
+    /** Vertical uncertainty in meters. */
+    altitudeAccuracy: number | null;
+    /** Direction of travel in degrees clockwise from true north. */
+    heading: number | null;
+    /** Meters per second. */
+    speed: number | null;
+}
+
+export interface LocationWatchOptions extends LocationOptions {
+    /** Called once for a terminal error or cancellation through the signal. */
+    onError?: (error: LocationError) => void;
+}`
+        }
+      ]
+    },
+    {
+      "id": "camera",
+      "title": "camera",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "camera",
+            "Runtime API",
+            "/modules/camera"
+          ],
+          [
+            "CameraPhoto",
+            "TypeScript type",
+            "/modules/camera"
+          ],
+          [
+            "CameraPhotoOptions",
+            "TypeScript type",
+            "/modules/camera"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "camera declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export declare const camera: {
+    /** Whether the platform provides a photo capture flow. */
+    isAvailable: typeof isAvailable;
+    getPermission: () => Promise<import("..").PermissionResult>;
+    requestPermission: () => Promise<import("..").PermissionResult>;
+    /** Open the photo capture flow. Returns null when the user cancels. */
+    takePhoto: typeof takePhoto;
+    release: (uri: string) => Promise<void>;
+};
+
+export type CameraPhoto = PickedImage;
+
+export interface CameraPhotoOptions extends Omit<ImagePickerOptions, 'multiple' | 'selectionLimit'> {
+    /** Open the image picker editor after capture. If both options are set, allowsEditing takes precedence. */
+    allowEditing?: boolean;
+}`
+        }
+      ]
+    },
+    {
+      "id": "document-picker",
+      "title": "document-picker",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "documentPicker",
+            "Runtime API",
+            "/modules/document-picker"
+          ],
+          [
+            "DocumentPickerAsset",
+            "TypeScript type",
+            "/modules/document-picker"
+          ],
+          [
+            "DocumentPickerCanceledResult",
+            "TypeScript type",
+            "/modules/document-picker"
+          ],
+          [
+            "DocumentPickerOptions",
+            "TypeScript type",
+            "/modules/document-picker"
+          ],
+          [
+            "DocumentPickerResult",
+            "TypeScript type",
+            "/modules/document-picker"
+          ],
+          [
+            "DocumentPickerSuccessResult",
+            "TypeScript type",
+            "/modules/document-picker"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "document-picker declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export declare const documentPicker: {
+    getDocumentAsync: typeof getDocumentAsync;
+    isAvailable: typeof isAvailable;
+    release: typeof release;
+};
+
+export interface DocumentPickerAsset {
+    uri: string;
+    name: string;
+    mimeType?: string;
+    size?: number;
+    lastModified: number;
+    file?: File;
+    base64?: string;
+}
+
+export interface DocumentPickerCanceledResult {
+    canceled: true;
+    assets: null;
+    output?: null;
+}
+
+export interface DocumentPickerOptions {
+    /** MIME types such as application/pdf or image/*. Defaults to accepting every file type. */
+    type?: string | readonly string[];
+    multiple?: boolean;
+    /** Copy into app-owned cache on iOS and Android. Defaults to true. */
+    copyToCacheDirectory?: boolean;
+    /** Include a data URL alongside the browser file and blob URI. Defaults to false. */
+    base64?: boolean;
+}
+
+export type DocumentPickerResult = DocumentPickerSuccessResult | DocumentPickerCanceledResult;
+
+export interface DocumentPickerSuccessResult {
+    canceled: false;
+    assets: DocumentPickerAsset[];
+    output?: FileList;
+}`
+        }
+      ]
+    },
+    {
+      "id": "video",
+      "title": "video",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "VideoPlayer",
+            "Runtime API",
+            "/modules/video"
+          ],
+          [
+            "VideoContentFit",
+            "TypeScript type",
+            "/modules/video"
+          ],
+          [
+            "VideoPlayerHandle",
+            "TypeScript type",
+            "/modules/video"
+          ],
+          [
+            "VideoPlayerProps",
+            "TypeScript type",
+            "/modules/video"
+          ],
+          [
+            "VideoProgress",
+            "TypeScript type",
+            "/modules/video"
+          ],
+          [
+            "VideoSource",
+            "TypeScript type",
+            "/modules/video"
+          ],
+          [
+            "VideoStatus",
+            "TypeScript type",
+            "/modules/video"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "video declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export declare const VideoPlayer: import("react").ForwardRefExoticComponent<VideoPlayerProps & import("react").RefAttributes<VideoPlayerHandle>>;
+
+export type VideoContentFit = 'contain' | 'cover' | 'fill';
+
+export interface VideoPlayerHandle {
+    play(): void;
+    pause(): void;
+    /** Seek to a nonnegative position in seconds. */
+    seek(seconds: number): void;
+}
+
+export interface VideoPlayerProps extends VideoOptions {
+    source: VideoSource;
+    style?: CSSProperties;
+}
+
+export interface VideoProgress {
+    currentTime: number;
+    /** Seconds, or null before the duration is known and for live streams. */
+    duration: number | null;
+}
+
+export type VideoSource = string | {
+    uri: string;
+    mimeType?: string;
+};
+
+export type VideoStatus = 'loading' | 'ready' | 'playing' | 'paused' | 'buffering' | 'ended' | 'error';`
+        }
+      ]
+    },
+    {
+      "id": "sqlite",
+      "title": "sqlite",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "sqlite",
+            "Runtime API",
+            "/modules/sqlite"
+          ],
+          [
+            "SQLiteDatabase",
+            "TypeScript type",
+            "/modules/sqlite"
+          ],
+          [
+            "SQLiteQueryResult",
+            "TypeScript type",
+            "/modules/sqlite"
+          ],
+          [
+            "SQLiteRunResult",
+            "TypeScript type",
+            "/modules/sqlite"
+          ],
+          [
+            "SQLiteStatement",
+            "TypeScript type",
+            "/modules/sqlite"
+          ],
+          [
+            "SQLiteValue",
+            "TypeScript type",
+            "/modules/sqlite"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "sqlite declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export declare const sqlite: {
+    open: typeof open;
+    /** Closes the connection after the callback settles. Use batch for a transaction. */
+    withDatabase<T>(name: string | undefined, run: (database: SQLiteDatabase) => T | Promise<T>): Promise<T>;
+};
+
+export interface SQLiteDatabase {
+    /** Execute one statement that returns no rows. Bind positional values with placeholders. */
+    run(sql: string, params?: readonly SQLiteValue[]): Promise<SQLiteRunResult>;
+    /** Read rows from a single read-only statement. */
+    query(sql: string, params?: readonly SQLiteValue[]): Promise<SQLiteQueryResult>;
+    /** Read the first row in column order. Use LIMIT 1 when the query may match many rows. */
+    get(sql: string, params?: readonly SQLiteValue[]): Promise<SQLiteValue[] | undefined>;
+    /** Execute statements in a single transaction. An error rolls back the entire batch. */
+    batch(statements: readonly SQLiteStatement[]): Promise<SQLiteRunResult[]>;
+    close(): Promise<void>;
+}
+
+export interface SQLiteQueryResult {
+    columns: string[];
+    /** Cells in column order, preserving duplicate column names. */
+    rows: SQLiteValue[][];
+}
+
+export interface SQLiteRunResult {
+    /** Rows directly affected by the statement. */
+    changes: number;
+}
+
+export interface SQLiteStatement {
+    sql: string;
+    params?: readonly SQLiteValue[];
+}
+
+export type SQLiteValue = null | string | number | bigint | Uint8Array;`
+        }
+      ]
+    },
+    {
+      "id": "microphone",
+      "title": "microphone",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "microphone",
+            "Runtime API",
+            "/modules/microphone"
+          ],
+          [
+            "MicrophoneOptions",
+            "TypeScript type",
+            "/modules/microphone"
+          ],
+          [
+            "MicrophonePermission",
+            "TypeScript type",
+            "/modules/microphone"
+          ],
+          [
+            "MicrophoneState",
+            "TypeScript type",
+            "/modules/microphone"
+          ],
+          [
+            "Recording",
+            "TypeScript type",
+            "/modules/microphone"
+          ],
+          [
+            "TakeOptions",
+            "TypeScript type",
+            "/modules/microphone"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "microphone declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export declare const microphone: {
+    /** Whether this engine build can record (false on older app builds and without a native module). */
+    readonly supported: boolean;
+    /** Whether the app may record. On Android, 'undetermined' also covers a denial (it can't tell). */
+    readonly permission: MicrophonePermission;
+    /** Shows the system prompt the first time (answering at once after that); true if recording is allowed. */
+    requestPermission(): Promise<boolean>;
+    /** Starts listening (asynchronously: see \`state\`). Ask for the permission first. */
+    start({ maxSeconds }?: MicrophoneOptions): boolean;
+    /** Stops listening and releases the microphone (its system indicator turns off); forgets what was heard. */
+    stop(): void;
+    /** 'failed' when there's no microphone, no permission or the input couldn't open. */
+    readonly state: MicrophoneState;
+    /**
+     * How loud the input is now: 0 at -60 dBFS or quieter, 1 at full scale; speech close to a phone
+     * is usually 0.4..0.8, a quiet room under 0.3. Rises at once and falls back over ~0.15 s. Cheap
+     * enough to read every frame.
+     */
+    readonly level: number;
+    /** Seconds of input held (up to \`maxSeconds\`), since starting or the last \`take\`. */
+    readonly held: number;
+    /**
+     * The last \`seconds\` of input (ending \`skipEnd\` seconds ago) as a new Sound, and forgets
+     * everything heard so far so the next take starts fresh. Null if nothing was heard. Release the
+     * sound with \`audio.release\` once it has played: each take holds its samples until then.
+     */
+    take(seconds?: number, { skipEnd, levelsPerSecond }?: TakeOptions): Recording | null;
+};
+
+export type MicrophoneOptions = {
+    /** Seconds of input kept (0.5..30). Default 10. */
+    maxSeconds?: number;
+};
+
+export type MicrophonePermission = 'granted' | 'undetermined' | 'denied';
+
+export type MicrophoneState = 'off' | 'starting' | 'listening' | 'failed';
+
+/** What \`microphone.take\` returns: a sound to play, how long it lasts and its loudness over time. */
+export type Recording = {
+    sound: Sound;
+    /** Seconds at pitch 1. */
+    duration: number;
+    /** RMS loudness, \`levelsPerSecond\` values a second (see \`audio.levels\`). */
+    levels: Float32Array;
+    levelsPerSecond: number;
+};
+
+export type TakeOptions = {
+    /** Leave out the last \`skipEnd\` seconds (the silence after someone stops talking). Default 0. */
+    skipEnd?: number;
+    /** Loudness values per second in \`levels\`. Default 30. */
+    levelsPerSecond?: number;
+};`
+        }
+      ]
+    },
+    {
+      "id": "storage",
+      "title": "storage",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "createStorage",
+            "Runtime API",
+            "/modules/storage"
+          ],
+          [
+            "createStoragePersister",
+            "Runtime API",
+            "/modules/storage"
+          ],
+          [
+            "Storage",
+            "TypeScript type",
+            "/modules/storage"
+          ],
+          [
+            "StoragePersister",
+            "TypeScript type",
+            "/modules/storage"
+          ],
+          [
+            "StoragePersisterOptions",
+            "TypeScript type",
+            "/modules/storage"
+          ],
+          [
+            "StorageConfiguration",
+            "TypeScript type",
+            "/modules/storage"
+          ],
+          [
+            "StorageEncryptionType",
+            "TypeScript type",
+            "/modules/storage"
+          ],
+          [
+            "StorageValue",
+            "TypeScript type",
+            "/modules/storage"
+          ],
+          [
+            "StoragePrimitive",
+            "TypeScript type",
+            "/modules/storage"
+          ],
+          [
+            "StorageJSON",
+            "TypeScript type",
+            "/modules/storage"
+          ],
+          [
+            "StorageSetter",
+            "TypeScript type",
+            "/modules/storage"
+          ],
+          [
+            "useStorage",
+            "Runtime API",
+            "/modules/storage"
+          ],
+          [
+            "useStorageJSON",
+            "Runtime API",
+            "/modules/storage"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "storage declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `/** Native uses a Rust memory-mapped store; browsers use localStorage synchronously without engine warm-up. */
+export declare function createStorage({ id, encryptionKey, encryptionType }?: StorageConfiguration): Storage;
+
+/** Compatible with TanStack's Persister interface, without depending on TanStack or AsyncStorage. */
+export declare function createStoragePersister<T = unknown>(options?: StoragePersisterOptions<T>): StoragePersister<T>;
+
+/** Synchronous namespaced storage, independent of the engine's asset cache. */
+export interface Storage {
+    readonly id: string;
+    readonly isEncrypted: boolean;
+    /** Encrypt or rotate this native store's key. Defaults to AES-128. */
+    encrypt(key: string, type?: StorageEncryptionType): void;
+    /** Rewrite this native store as plaintext. */
+    decrypt(): void;
+    set(key: string, value: StorageValue | ArrayBufferView): void;
+    getBuffer(key: string): ArrayBuffer | undefined;
+    setJSON(key: string, value: unknown): void;
+    /** Parses stored JSON; malformed JSON throws instead of silently discarding data. */
+    getJSON<T = StorageJSON>(key: string): T | undefined;
+    getString(key: string): string | undefined;
+    getNumber(key: string): number | undefined;
+    getBoolean(key: string): boolean | undefined;
+    contains(key: string): boolean;
+    remove(key: string): boolean;
+    /** Alias used by existing storage adapters. */
+    delete(key: string): void;
+    getAllKeys(): string[];
+    clearAll(): void;
+    /** Persist buffered native writes. Browser writes are already synchronous. */
+    flush(): void;
+    /** React to writes, removals and clears, including other instances of this ID. */
+    subscribe(changed: (key: string) => void): () => void;
+}
+
+export interface StoragePersister<T> {
+    persistClient(value: T): Promise<void>;
+    restoreClient(): Promise<T | undefined>;
+    removeClient(): Promise<void>;
+    /** Write the latest queued snapshot and make it durable. */
+    flush(): Promise<void>;
+}
+
+export interface StoragePersisterOptions<T> {
+    storage?: Pick<Storage, 'getString' | 'set' | 'remove' | 'flush'>;
+    key?: string;
+    throttleTime?: number;
+    serialize?: (value: T) => string | Promise<string>;
+    deserialize?: (value: string) => T | Promise<T>;
+    /** Handle background persistence failures; without a handler the write promise rejects. */
+    onError?: (error: unknown) => void;
+}
+
+export interface StorageConfiguration {
+    id?: string;
+    /** App-managed, high-entropy secret for native encryption. Supply the same key on every open. */
+    encryptionKey?: string;
+    /** Defaults to AES-128 for new encrypted stores. Existing encrypted stores remember their type. */
+    encryptionType?: StorageEncryptionType;
+}
+
+export type StorageEncryptionType = 'AES-128' | 'AES-256';
+
+export type StorageValue = StoragePrimitive | ArrayBuffer;
+
+export type StoragePrimitive = string | number | boolean;
+
+/** Plain JSON data. Dates, functions, undefined and cyclic objects are not JSON values. */
+export type StorageJSON = null | boolean | number | string | readonly StorageJSON[] | {
+    readonly [key: string]: StorageJSON;
+};
+
+export type StorageSetter<T> = (next: T | undefined | ((current: T) => T | undefined)) => void;
+
+/** Read a typed preference reactively; passing undefined to the setter removes it. */
+export declare function useStorage<T extends StoragePrimitive>(key: string, defaultValue: T, storage?: Storage): [
+    StorageState<T>,
+    StorageSetter<StorageState<T>>
+];
+
+/** Reactive JSON data. Subscriptions compare stored strings so snapshots stay stable. */
+export declare function useStorageJSON<T>(key: string, defaultValue: T, storage?: Storage): [
+    T,
+    StorageSetter<T>
+];`
+        }
+      ]
+    },
+    {
+      "id": "tts",
+      "title": "tts",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "speech",
+            "Runtime API",
+            "/modules/tts"
+          ],
+          [
+            "SpeechOptions",
+            "TypeScript type",
+            "/modules/tts"
+          ],
+          [
+            "SpeechVoice",
+            "TypeScript type",
+            "/modules/tts"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "tts declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `/** System text-to-speech. Independent of the engine mixer, microphone and asset loading. */
+export declare const speech: {
+    /** API availability; installed voices and Android TTS initialization may still fail. */
+    readonly supported: boolean;
+    /**
+     * Queues text using the system synthesizer. Resolves when queued, not when speech finishes.
+     * No audio files are created. Call stop on leaving a screen to cancel its queued speech.
+     */
+    speak(text: string, options?: SpeechOptions): Promise<void>;
+    /** Stops current speech and clears the entire speech queue. */
+    stop(): Promise<void>;
+    /** iOS and web only; rejects on Android, which has no system pause API. */
+    pause(): Promise<void>;
+    /** iOS and web only; rejects on Android. */
+    resume(): Promise<void>;
+    /** Includes speech paused on iOS/web. */
+    isSpeakingAsync(): Promise<boolean>;
+    getAvailableVoicesAsync(): Promise<SpeechVoice[]>;
+};
+
+export type SpeechOptions = {
+    /** BCP 47 language tag, such as en-US or hi-IN. Defaults to the system language. */
+    language?: string;
+    /** Identifier returned by getAvailableVoicesAsync. */
+    voice?: string;
+    /** Speed relative to the platform default, 0.1..2. Default 1. */
+    rate?: number;
+    /** Pitch multiplier, 0.5..2. Default 1. */
+    pitch?: number;
+    /** Loudness, 0..1. Default 1. */
+    volume?: number;
+};
+
+export type SpeechVoice = {
+    identifier: string;
+    name: string;
+    language: string;
+    quality: 'Default' | 'Enhanced';
+};`
+        }
+      ]
+    },
+    {
+      "id": "uuid",
+      "title": "uuid",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "uuid",
+            "Runtime API",
+            "/modules/uuid"
+          ],
+          [
+            "prepareUuid",
+            "Runtime API",
+            "/modules/uuid"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "uuid declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `/** A lowercase, hyphenated UUID v4 using the browser's secure random generator. */
+export declare function uuid(): string;
+
+/** Check for secure random generation. Browser UUIDs need no engine warm-up. */
+export declare function prepareUuid(): Promise<void>;`
+        }
+      ]
+    },
+    {
+      "id": "network",
+      "title": "network",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "network",
+            "Runtime API",
+            "/modules/network"
+          ],
+          [
+            "useOnline",
+            "Runtime API",
+            "/modules/network"
+          ],
+          [
+            "checkReachability",
+            "Runtime API",
+            "/modules/network"
+          ],
+          [
+            "NetworkListener",
+            "TypeScript type",
+            "/modules/network"
+          ],
+          [
+            "NetworkWaitOptions",
+            "TypeScript type",
+            "/modules/network"
+          ],
+          [
+            "OnlineState",
+            "TypeScript type",
+            "/modules/network"
+          ],
+          [
+            "ReachabilityOptions",
+            "TypeScript type",
+            "/modules/network"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "network declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `/** Shared, event-driven connection status. No polling, network requests or engine warm-up. */
+export declare const network: {
+    fetch: () => Promise<OnlineState>;
+    subscribe: typeof subscribe;
+    /** Resolves true on a reported connection or false at the deadline. Aborts reject. */
+    waitForOnline({ timeoutMs, signal }?: NetworkWaitOptions): Promise<boolean>;
+};
+
+export declare function useOnline(): OnlineState;
+
+/** Explicit opt-in endpoint check, independent of passive connection monitoring. */
+export declare function checkReachability(options: ReachabilityOptions): Promise<boolean>;
+
+export type NetworkListener = (online: OnlineState) => void;
+
+export interface NetworkWaitOptions {
+    /** Deadline in milliseconds. Defaults to 30 seconds. */
+    timeoutMs?: number;
+    signal?: AbortSignal;
+}
+
+/** null means the platform has not reported connectivity yet (or cannot determine it). */
+export type OnlineState = boolean | null;
+
+/** An explicit application-owned health endpoint. No vendor endpoint is contacted. */
+export interface ReachabilityOptions {
+    url: string;
+    method?: 'GET' | 'HEAD';
+    timeout?: number;
+    signal?: AbortSignal;
+    headers?: Record<string, string>;
+    /** Default: a 2xx response. Use 204 for endpoints designed for captive portal detection. */
+    expectedStatus?: number;
+}`
+        }
+      ]
+    },
+    {
+      "id": "sharing",
+      "title": "sharing",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "sharing",
+            "Runtime API",
+            "/modules/sharing"
+          ],
+          [
+            "SharingOptions",
+            "TypeScript type",
+            "/modules/sharing"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "sharing declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `/** Outbound sharing only. Resolution means the share flow finished, including dismissal. */
+export declare const sharing: {
+    isAvailable(): Promise<boolean>;
+    share(options: SharingOptions): Promise<void>;
+};
+
+export interface SharingOptions {
+    /** Webpage URL, shared as a link rather than downloaded as a file. */
+    url?: string;
+    /** Local file/content URI, native bundled resource name, or HTTP(S) file URL. */
+    uri?: string;
+    /** Preloaded browser File; avoids fetching after a Safari user gesture. */
+    file?: File;
+    text?: string;
+    title?: string;
+    mimeType?: string;
+    fileName?: string;
+    /** iOS popover anchor in the presenting view's points; defaults to its center. */
+    anchor?: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    };
+}`
+        }
+      ]
+    },
+    {
+      "id": "capture",
+      "title": "capture",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "capture",
+            "Runtime API",
+            "/modules/capture"
+          ],
+          [
+            "CapturedImage",
+            "TypeScript type",
+            "/modules/capture"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "capture declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export declare const capture: {
+    isAvailable(): Promise<boolean>;
+    screen(): Promise<CapturedImage>;
+    release(uri: string): Promise<void>;
+};
+
+export interface CapturedImage {
+    /** Engine-owned PNG file URI (native) or object URL (web). Release when finished. */
+    uri: string;
+    /** Image dimensions in pixels. */
+    width: number;
+    height: number;
+    /** Pixels per native window point; browser media frames use pixel coordinates (1). */
+    scale: number;
+}`
+        }
+      ]
+    },
+    {
+      "id": "keep-awake",
+      "title": "keep-awake",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "keepAwake",
+            "Runtime API",
+            "/modules/keep-awake"
+          ],
+          [
+            "useKeepAwake",
+            "Runtime API",
+            "/modules/keep-awake"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "keep-awake declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export declare const keepAwake: {
+    isAvailable: () => boolean;
+    activate(tag?: string): Promise<void>;
+    deactivate(tag?: string): Promise<void>;
+};
+
+/** Scoped to this hook instance; pass false when a retained navigation screen loses focus. */
+export declare function useKeepAwake(active?: boolean, onError?: (error: unknown) => void): void;`
+        }
+      ]
+    },
+    {
+      "id": "review",
+      "title": "review",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "review",
+            "Runtime API",
+            "/modules/review"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "review declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export declare const review: {
+    isAvailable(): Promise<boolean>;
+    requestReview(): Promise<void>;
+};`
+        }
+      ]
+    },
+    {
+      "id": "auth",
+      "title": "auth",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "auth",
+            "Runtime API",
+            "/modules/auth"
+          ],
+          [
+            "SignInCallback",
+            "TypeScript type",
+            "/modules/auth"
+          ],
+          [
+            "SignInCallbackResult",
+            "TypeScript type",
+            "/modules/auth"
+          ],
+          [
+            "SignInOptions",
+            "TypeScript type",
+            "/modules/auth"
+          ],
+          [
+            "SignInProvider",
+            "TypeScript type",
+            "/modules/auth"
+          ],
+          [
+            "SignInRequest",
+            "TypeScript type",
+            "/modules/auth"
+          ],
+          [
+            "SignInTransaction",
+            "TypeScript type",
+            "/modules/auth"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "auth declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export declare const auth: {
+    /** Create a fresh transaction before opening the authorization URL in the system browser. */
+    createRequest(provider: SignInProvider, options: SignInOptions): Promise<SignInRequest>;
+    /** Parse the provider callback against the saved transaction. Exchange the code on your backend. */
+    readCallback({ provider, redirectUri, state }: SignInTransaction, callback: SignInCallback): Promise<SignInCallbackResult>;
+};
+
+export interface SignInCallback {
+    /** HTTPS callback URL, including the query for Google. */
+    url: string;
+    /** Raw application/x-www-form-urlencoded POST body for Apple. */
+    body?: string;
+}
+
+export type SignInCallbackResult = {
+    status: 'success';
+    code: string;
+} | {
+    status: 'cancelled';
+} | {
+    status: 'denied';
+};
+
+export interface SignInOptions {
+    /** Google web OAuth client ID or Apple Services ID. */
+    clientId: string;
+    /** Provider-registered HTTPS callback on your backend. */
+    redirectUri: string;
+}
+
+export type SignInProvider = 'google' | 'apple';
+
+export type SignInRequest = SignInTransaction & {
+    authorizationUrl: string;
+    /** Match against the nonce claim of the verified ID token on your backend. */
+    nonce: string;
+} & ({
+    provider: 'google';
+    codeVerifier: string;
+} | {
+    provider: 'apple';
+    codeVerifier?: never;
+});
+
+export interface SignInTransaction {
+    provider: SignInProvider;
+    redirectUri: string;
+    /** Store with the pending session and consume it once on the backend. */
+    state: string;
+}`
+        }
+      ]
+    },
+    {
+      "id": "contacts",
+      "title": "contacts",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "contacts",
+            "Runtime API",
+            "/modules/contacts"
+          ],
+          [
+            "Contact",
+            "TypeScript type",
+            "/modules/contacts"
+          ],
+          [
+            "ContactEmail",
+            "TypeScript type",
+            "/modules/contacts"
+          ],
+          [
+            "ContactFields",
+            "TypeScript type",
+            "/modules/contacts"
+          ],
+          [
+            "ContactPage",
+            "TypeScript type",
+            "/modules/contacts"
+          ],
+          [
+            "ContactPatch",
+            "TypeScript type",
+            "/modules/contacts"
+          ],
+          [
+            "ContactPhone",
+            "TypeScript type",
+            "/modules/contacts"
+          ],
+          [
+            "ContactQuery",
+            "TypeScript type",
+            "/modules/contacts"
+          ],
+          [
+            "ContactsAccess",
+            "TypeScript type",
+            "/modules/contacts"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "contacts declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export declare const contacts: {
+    isAvailable: typeof isAvailable;
+    getPermissions: () => Promise<import("./types").ContactsAccess>;
+    /** Ask from a user action. Pass write: true before creating, editing, or deleting device contacts. */
+    requestPermissions: ({ write }?: {
+        write?: boolean | undefined;
+    }) => Promise<import("./types").ContactsAccess>;
+    list: (options?: ContactQuery) => Promise<ContactPage>;
+    get: (id: string) => Promise<Contact | null>;
+    create: (fields: ContactFields) => Promise<Contact>;
+    update: (id: string, fields: ContactPatch) => Promise<Contact | null>;
+    remove: (id: string) => Promise<boolean>;
+};
+
+export interface Contact extends ContactFields {
+    /** Opaque ID scoped to the current address book. */
+    id: string;
+    phones: ContactPhone[];
+    emails: ContactEmail[];
+}
+
+export interface ContactEmail {
+    email: string;
+    label?: string;
+}
+
+export interface ContactFields {
+    givenName?: string;
+    middleName?: string;
+    familyName?: string;
+    company?: string;
+    jobTitle?: string;
+    phones?: ContactPhone[];
+    emails?: ContactEmail[];
+}
+
+export interface ContactPage {
+    data: Contact[];
+    total: number;
+    hasNextPage: boolean;
+}
+
+/** Omit a field to preserve it. Use null to clear text or [] to clear phones or emails. */
+export type ContactPatch = {
+    [Field in Exclude<keyof ContactFields, 'phones' | 'emails'>]?: string | null;
+} & Pick<ContactFields, 'phones' | 'emails'>;
+
+export interface ContactPhone {
+    number: string;
+    label?: string;
+}
+
+export interface ContactQuery {
+    search?: string;
+    offset?: number;
+    limit?: number;
+}
+
+export interface ContactsAccess {
+    source: 'device' | 'app';
+    read: PermissionResult;
+    write: PermissionResult;
+}`
+        }
+      ]
+    },
+    {
+      "id": "image-picker",
+      "title": "image-picker",
+      "paragraphs": [],
+      "table": {
+        "headers": [
+          "Export",
+          "Kind",
+          "Guide"
+        ],
+        "rows": [
+          [
+            "imagePicker",
+            "Runtime API",
+            "/modules/image-picker"
+          ],
+          [
+            "ImagePickerOptions",
+            "TypeScript type",
+            "/modules/image-picker"
+          ],
+          [
+            "ImagePickerResult",
+            "TypeScript type",
+            "/modules/image-picker"
+          ],
+          [
+            "PickedImage",
+            "TypeScript type",
+            "/modules/image-picker"
+          ],
+          [
+            "CameraPermission",
+            "TypeScript type",
+            "/modules/image-picker"
+          ]
+        ]
+      },
+      "examples": [
+        {
+          "title": "image-picker declarations",
+          "platform": "shared",
+          "language": "typescript",
+          "code": `export declare const imagePicker: {
+    isAvailable: () => boolean;
+    getCameraPermission(): Promise<CameraPermission>;
+    requestCameraPermission(): Promise<CameraPermission>;
+    pickFromLibrary: (options?: ImagePickerOptions) => Promise<ImagePickerResult>;
+    launchCamera: (options?: ImagePickerOptions) => Promise<ImagePickerResult>;
+    release(uri: string): Promise<void>;
+};
+
+export interface ImagePickerOptions {
+    /** Open the editor to crop, rotate, flip, apply a filter or adjust brightness. */
+    allowsEditing?: boolean;
+    /** Crop ratio; defaults to square. Editing supports a single image. */
+    aspect?: readonly [
+        number,
+        number
+    ];
+    quality?: number;
+    format?: 'jpeg' | 'png';
+    /** Maximum decoded/output dimension; default 4096, maximum 8192. */
+    maxDimension?: number;
+    multiple?: boolean;
+    selectionLimit?: number;
+    base64?: boolean;
+}
+
+export type ImagePickerResult = {
+    canceled: true;
+    assets: null;
+} | {
+    canceled: false;
+    assets: PickedImage[];
+};
+
+export interface PickedImage {
+    uri: string;
+    width: number;
+    height: number;
+    fileName: string;
+    mimeType: string;
+    fileSize: number;
+    base64?: string;
+}
+
+export interface CameraPermission {
+    status: 'granted' | 'denied' | 'undetermined';
+    canAskAgain: boolean;
 }`
         }
       ]

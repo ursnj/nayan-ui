@@ -26,7 +26,7 @@ export function seoBannerUrl(path: string) {
   return `${SITE_URL}${BANNERS[path] ?? BANNERS['/']}`;
 }
 
-export const SITE_DESCRIPTION = `Nayan UI provides an open source engine for cross-platform interfaces and 3D games in React and React Native, plus 50+ playable games, a browser video editor and ${TOOL_COUNT} developer tool guides.`;
+export const SITE_DESCRIPTION = `Nayan UI provides an open source engine and app modules for React and React Native, plus 50+ playable games, a browser video editor and ${TOOL_COUNT} developer tool guides.`;
 
 export const organizationSchema = {
   '@context': 'https://schema.org',
@@ -61,7 +61,7 @@ export const softwareApplicationSchema = {
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   programmingLanguage: ['TypeScript', 'JavaScript', 'React', 'React Native'],
   runtimePlatform: ['Web Browser', 'React Native', 'Node.js'],
-  requirements: 'React 18+, TypeScript 4.5+, Tailwind CSS 4.0+',
+  requirements: 'React for web or a React Native development build for iOS and Android',
   featureList: [
     'Cross-platform engine UI components',
     `${REACT_COMPONENT_COUNT} React Components`,
@@ -77,10 +77,12 @@ export const softwareApplicationSchema = {
     'Text Tools — Compare, Count, Convert Case, Generate Slugs',
     'AI Code Review & Vulnerability Scanning',
     'TypeScript First',
-    'Tailwind CSS Integration',
-    'HeroUI Foundation',
+    'Built-in utility classes and shared theme tokens',
+    'Camera, image editing and document picking',
+    'Google and Apple sign-in and contacts',
+    'App-private files and optional native storage encryption',
     'Dark Mode Support',
-    'Accessibility Compliant',
+    'Accessibility support',
     'MIT Licensed'
   ]
 };
@@ -173,7 +175,7 @@ export function buildPageMetadata(opts: {
   return {
     title: opts.title,
     description: opts.description,
-    keywords: opts.keywords || 'React Component Library, React Native, UI Library, Nayan UI, Tailwind CSS, HeroUI, TypeScript, Accessibility',
+    keywords: opts.keywords || 'React Component Library, React Native, UI Library, Nayan UI, TypeScript, utility classes, accessibility',
     alternates: { canonical: url },
     openGraph: {
       title: `${SITE_NAME} - ${opts.title}`,

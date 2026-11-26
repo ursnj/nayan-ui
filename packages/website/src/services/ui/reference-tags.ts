@@ -145,7 +145,7 @@ const topics = [
       'sharing'
     ]
   },
-  { sku: 'data-storage', text: 'Data Storage', slugs: ['assets', 'files', 'network', 'sqlite', 'storage', 'uuid'] },
+  { sku: 'data-storage', text: 'Data Storage', slugs: ['assets', 'document-picker', 'files', 'network', 'sqlite', 'storage', 'uuid'] },
   {
     sku: 'platform-integration',
     text: 'Platform Integration',

@@ -1,21 +1,24 @@
 // Refresh the API snapshot from a built engine checkout; never import the engine at website runtime.
-// Usage: bun scripts/sync-nayan-reference.mjs /absolute/path/to/playtura/packages/engine
+// Usage from the repository root: bun packages/website/scripts/sync-nayan-reference.mjs packages/nayan-ui
 import ts from "typescript";
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { resolve, dirname } from "node:path";
+import { readFileSync, writeFileSync } from "node:fs";
+import { resolve, dirname, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 const engine = process.argv[2];
+const check = process.argv.includes("--check");
 if (!engine)
   throw new Error("Pass the engine package directory after building its browser declarations.");
 const website = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const entry = resolve(engine, "src/index.ts");
 const root = resolve(engine, "lib/web/types/src");
-const source = ts.createSourceFile(
-  entry,
-  readFileSync(entry, "utf8"),
-  ts.ScriptTarget.Latest,
-  true,
-);
+const entry = resolve(root, "index.d.ts");
+const program = ts.createProgram([entry], {
+  module: ts.ModuleKind.ESNext,
+  moduleResolution: ts.ModuleResolutionKind.Bundler,
+  skipLibCheck: true,
+});
+const checker = program.getTypeChecker();
+const source = program.getSourceFile(entry);
+if (!source) throw new Error(`Build the browser declarations first; missing ${entry}`);
 const targets = {
   "world/World": "world-entities",
   "world/quat": "world-entities",
@@ -40,35 +43,56 @@ const targets = {
   "assets/shape": "procedural-geometry",
   "assets/procedural": "procedural-worlds",
   "assets/font": "text-fonts",
-  "media/audio": "audio-haptics",
-  "media/haptics": "audio-haptics",
-  "media/microphone": "audio-haptics",
   "input/Joystick": "input-picking",
   "input/keyboard": "input-picking",
   types: "render-source",
   "drawing/DrawingDocument": "drawing",
   "drawing/DrawingCanvas": "drawing",
 };
-const groups = new Map();
-for (const statement of source.statements) {
-  if (
-    !ts.isExportDeclaration(statement) ||
-    !statement.moduleSpecifier ||
-    !statement.exportClause ||
-    !ts.isNamedExports(statement.exportClause)
-  )
-    continue;
-  const module = statement.moduleSpecifier.text.replace(/^\.\//, "");
-  if (!targets[module]) throw new Error(`Assign a detailed guide to new engine module ${module}`);
-  const group = groups.get(module) ?? [];
-  for (const element of statement.exportClause.elements)
-    group.push({
-      name: element.name.text,
-      local: element.propertyName?.text ?? element.name.text,
-      typeOnly: statement.isTypeOnly || element.isTypeOnly,
-    });
-  groups.set(module, group);
+function guideFor(module) {
+  const target = targets[module.replace(/^games\//, "")];
+  if (target) return `/game-engine/${target}`;
+  if (/^[a-z-]+\/index$/.test(module)) return `/modules/${module.slice(0, -6)}`;
+  throw new Error(`Assign a detailed guide to new engine module ${module}`);
 }
+
+// Follow star exports such as games and drawing. A named root export is authoritative
+// when more than one entry exports the same name.
+const exportsByName = new Map();
+const visited = new Set();
+function collect(file) {
+  if (visited.has(file)) return;
+  visited.add(file);
+  for (const statement of file.statements) {
+    if (!ts.isExportDeclaration(statement) || !statement.moduleSpecifier) continue;
+    const imported = checker.getSymbolAtLocation(statement.moduleSpecifier)?.declarations?.find(ts.isSourceFile);
+    if (!imported) throw new Error(`Could not resolve ${statement.moduleSpecifier.getText(file)} from ${file.fileName}`);
+    if (!statement.exportClause) {
+      collect(imported);
+      continue;
+    }
+    if (!ts.isNamedExports(statement.exportClause)) continue;
+    const module = relative(root, imported.fileName).split(sep).join("/").replace(/\.d\.ts$/, "");
+    for (const element of statement.exportClause.elements) {
+      const alias = checker.getSymbolAtLocation(element.name);
+      const symbol = alias && (alias.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(alias) : alias);
+      const declarations = symbol?.getDeclarations();
+      if (!declarations?.length) throw new Error(`Could not resolve the declaration for ${element.name.text}`);
+      exportsByName.set(element.name.text, {
+        name: element.name.text,
+        typeOnly: statement.isTypeOnly || element.isTypeOnly,
+        module,
+        declarations,
+      });
+    }
+  }
+}
+collect(source);
+const publicNames = checker.getExportsOfModule(checker.getSymbolAtLocation(source)).map((item) => item.name);
+if (publicNames.length !== exportsByName.size || publicNames.some((name) => !exportsByName.has(name))) {
+  throw new Error("The API inventory differs from the built compatibility entry.");
+}
+const groups = Map.groupBy(exportsByName.values(), (item) => item.module);
 const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
 const members = [];
 const sections = [
@@ -76,7 +100,7 @@ const sections = [
     id: "reading-the-reference",
     title: "Reading the reference",
     paragraphs: [
-      "Every public export is listed below. Signatures come from built declarations. Gameplay APIs are shared; host styles and asset sources follow the platform guides.",
+      "This index lists the exports of the nayan-ui compatibility entry. Signatures come from the built browser declarations. Use the focused module references for each platform’s behavior and additional subpath exports.",
       "Use declarations to look up types. Use the runnable examples and linked guides for setup, behavior and cleanup.",
     ],
     examples: [
@@ -98,47 +122,13 @@ export function Ball() {
   },
 ];
 for (const [module, symbols] of groups) {
-  const path = resolve(root, `${module}.d.ts`);
-  if (!existsSync(path))
-    throw new Error(`Build the engine browser declarations first; missing ${path}`);
-  const file = ts.createSourceFile(path, readFileSync(path, "utf8"), ts.ScriptTarget.Latest, true);
+  const guide = guideFor(module);
+  const heading = module.replace(/^games\//, "").replace(/\/index$/, "");
   const declarations = [];
-  // Public types re-exported from a sibling file (export type { X } from "./types") are printed from there.
-  const statements = [...file.statements];
-  for (const statement of file.statements) {
-    if (
-      !ts.isExportDeclaration(statement) ||
-      !statement.moduleSpecifier ||
-      !statement.exportClause ||
-      !ts.isNamedExports(statement.exportClause)
-    )
-      continue;
-    const names = statement.exportClause.elements.map((e) => (e.propertyName ?? e.name).text);
-    if (!symbols.some((symbol) => names.includes(symbol.local))) continue;
-    const target = resolve(dirname(path), `${statement.moduleSpecifier.text}.d.ts`);
-    if (!existsSync(target)) continue;
-    const other = ts.createSourceFile(
-      target,
-      readFileSync(target, "utf8"),
-      ts.ScriptTarget.Latest,
-      true,
-    );
-    statements.push(...other.statements.filter((s) => names.includes(s.name?.text)));
-  }
-  for (const statement of statements) {
-    if (ts.isImportDeclaration(statement) || ts.isExportDeclaration(statement)) continue;
-    const name = statement.name?.text;
-    const vars = ts.isVariableStatement(statement)
-      ? statement.declarationList.declarations.map((d) => d.name.getText(file))
-      : [];
-    const publicItem = symbols.some(
-      (symbol) => symbol.local === name || vars.includes(symbol.local),
-    );
-    // Local Props/Node support types make the exported function signatures readable.
-    const supportType =
-      (ts.isTypeAliasDeclaration(statement) || ts.isInterfaceDeclaration(statement)) &&
-      !statement.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword);
-    if (!publicItem && !supportType) continue;
+  const publicDeclarations = new Set(symbols.flatMap((item) => item.declarations).map((node) => {
+    return ts.isVariableDeclaration(node) ? node.parent.parent : node;
+  }));
+  for (const statement of publicDeclarations) {
     let node = statement;
     if (ts.isClassDeclaration(statement)) {
       node = ts.factory.updateClassDeclaration(
@@ -160,22 +150,22 @@ for (const [module, symbols] of groups) {
     declarations.push(printer.printNode(ts.EmitHint.Unspecified, node, statement.getSourceFile()));
   }
   for (const symbol of symbols)
-    members.push({ name: symbol.name, module, typeOnly: symbol.typeOnly, guide: targets[module] });
+    members.push({ name: symbol.name, module, typeOnly: symbol.typeOnly, guide });
   sections.push({
-    id: module.replaceAll("/", "-"),
-    title: module,
-    paragraphs: [`Usage and examples: /game-engine/${targets[module]}.`],
+    id: heading.replaceAll("/", "-"),
+    title: heading,
+    paragraphs: [],
     table: {
       headers: ["Export", "Kind", "Guide"],
       rows: symbols.map((s) => [
         s.name,
         s.typeOnly ? "TypeScript type" : "Runtime API",
-        `/game-engine/${targets[module]}`,
+        guide,
       ]),
     },
     examples: [
       {
-        title: `${module} declarations`,
+        title: `${heading} declarations`,
         platform: "shared",
         language: "typescript",
         code: declarations.join("\n\n"),
@@ -186,7 +176,7 @@ for (const [module, symbols] of groups) {
 const value = {
   slug: "api-reference",
   title: "Public API reference",
-  description: `${members.length} named public exports, including classes, helpers, component contracts and TypeScript data structures, audited against the shared engine entry point.`,
+  description: `${members.length} named exports from the nayan-ui compatibility entry, with links to game engine guides and focused module references.`,
   sections,
 };
 let text = JSON.stringify(value, null, 2);
@@ -198,12 +188,15 @@ for (const section of sections)
         example.code.replaceAll("\\", "\\\\").replaceAll("`", "\\`").replaceAll("${", "\\${") +
         "`",
     );
-writeFileSync(
-  resolve(website, "src/services/ui/api-reference.ts"),
-  `// Generated by scripts/sync-nayan-reference.mjs from the audited engine declarations.\nimport type { EngineGuide } from "./types";\nexport const apiReferenceGuide: EngineGuide = ${text};\n`,
-);
-writeFileSync(
-  resolve(website, "src/services/ui/api-inventory.json"),
-  JSON.stringify(members, null, 2) + "\n",
-);
-console.log(`Documented ${members.length} exports from ${groups.size} engine modules.`);
+for (const [file, contents] of [
+  ["api-reference.ts", `// Generated by scripts/sync-nayan-reference.mjs from the audited engine declarations.\nimport type { EngineGuide } from "./types";\nexport const apiReferenceGuide: EngineGuide = ${text};\n`],
+  ["api-inventory.json", JSON.stringify(members, null, 2) + "\n"],
+]) {
+  const path = resolve(website, "src/services/ui", file);
+  if (check) {
+    if (readFileSync(path, "utf8") !== contents) throw new Error(`${file} is out of date. Run reference:generate.`);
+  } else {
+    writeFileSync(path, contents);
+  }
+}
+console.log(`${check ? "Checked" : "Documented"} ${members.length} exports from ${groups.size} engine modules.`);

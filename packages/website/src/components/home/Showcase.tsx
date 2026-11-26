@@ -26,7 +26,7 @@ export const PRODUCTS = [
   {
     icon: Boxes,
     title: 'Nayan Modules',
-    body: `${moduleReferences.length} entry points for tasks like storage, audio and drawing.`,
+    body: `${moduleReferences.length} entry points for media picking, contacts, sign-in, files, storage, and more.`,
     href: '/modules',
     tone: 'peach'
   },

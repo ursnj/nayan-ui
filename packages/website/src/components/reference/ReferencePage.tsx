@@ -1,4 +1,5 @@
 import { NText, NView } from 'nayan-ui/components';
+import enginePackage from 'nayan-ui/package.json';
 import Link from 'next/link';
 import { DocsIntro } from '@/design/Primitives';
 import { BUTTON_SMALL } from '@/design/system';
@@ -10,6 +11,7 @@ import { EngineComponentExample } from '@/components/ui/ComponentExamples';
 import { componentReferences } from '@/services/ui/component-reference';
 import { moduleReferences } from '@/services/ui/module-reference';
 import { tagsForReference } from '@/services/ui/reference-tags';
+import { REPO_URL } from '@/services/seo';
 import ReferenceDirectory from './ReferenceDirectory';
 import ComponentAttributes from './ComponentAttributes';
 import PlatformPills from './PlatformPills';
@@ -26,7 +28,7 @@ export const referenceGroups = {
   modules: {
     title: 'Nayan Modules',
     description:
-      'Import games, drawing, media, storage and platform services from their individual engine entry points. Each reference includes usage examples.',
+      'Find focused imports and platform requirements for camera and document picking, sign-in, contacts, files, storage, games, and more.',
     importPath: 'nayan-ui/modules'
   }
 };
@@ -72,6 +74,11 @@ export function ReferenceIndex({ group }: { group: Group }) {
   return (
     <Sidebar title={title} reference={referenceNavigation(group)}>
       <DocsIntro lead={description} />
+      {group === 'modules' && (
+        <NText tag="p" className="mb-4 text-sm text-muted">
+          These examples track nayan-ui {enginePackage.version}. Check the installed package version when using a new entry point.
+        </NText>
+      )}
       {referenceSections[group].map(({ title, kind, items }) => (
         <SubHeader title={title} key={kind}>
           <ReferenceDirectory
@@ -107,6 +114,14 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
             <NText tag="span" className="ml-2 break-all font-mono text-xs">{entry.importPath}</NText>
           </NText>
           <EngineComponentExample slug={entry.slug} path={entry.path} />
+          {entry.slug === 'theme' && (
+            <SubHeader title="Share a theme across platforms" id="shared-starter-theme">
+              <NText tag="p" className="mb-3 text-sm text-muted">
+                The starter defines its light and dark palettes in shared/src/theme.ts, persists the theme choice through nayan-ui/storage, and passes the same theme to NTheme in Expo and Vite. Browser layouts apply the matching data-theme attribute and generated CSS variables.
+              </NText>
+              <Link href={`${REPO_URL}/blob/main/templates/nayan-ui/shared/src/theme.ts`} className={BUTTON_SMALL}>View the full starter palette</Link>
+            </SubHeader>
+          )}
           <ComponentAttributes symbol={entry.symbol} />
           {module && (
             <Link href={module.path} className="mb-3 block text-sm font-medium text-accent hover:underline">
@@ -114,16 +129,23 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
             </Link>
           )}
           <NView tag="div" className="mb-3 flex flex-wrap gap-3">
-            <Link href="/game-engine/react" className={BUTTON_SMALL}>
+            <Link href="/react/installation" className={BUTTON_SMALL}>
               React setup
             </Link>
-            <Link href="/game-engine/react-native" className={BUTTON_SMALL}>
+            <Link href="/react-native/installation" className={BUTTON_SMALL}>
               React Native setup
             </Link>
           </NView>
         </>
       ) : (
         <>
+          {entry.details && (
+            <SubHeader title="API notes" id="api-notes">
+              <NView tag="ul" className="grid list-disc gap-2 pl-5 text-sm text-muted">
+                {entry.details.map((detail) => <NText tag="li" key={detail}>{detail}</NText>)}
+              </NView>
+            </SubHeader>
+          )}
           <SubHeader title="Examples" id="usage">
             <NView tag="div" className="grid min-w-0 gap-6">
               {[{ title: 'Quick start', code: entry.code, note: entry.note, filename: entry.filename }, ...entry.variations].map(
@@ -137,11 +159,12 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
               )}
             </NView>
           </SubHeader>
-          {entry.guide ? (
-            <Link href={entry.guide} className={`${BUTTON_SMALL} mb-3`}>
-              Related guide
-            </Link>
-          ) : null}
+          {(entry.guide || entry.related) && (
+            <NView tag="nav" aria-label="Related documentation" className="mb-3 flex flex-wrap gap-3">
+              {entry.related?.map(({ label, href }) => <Link href={href} key={href} className={BUTTON_SMALL}>{label}</Link>)}
+              {entry.guide && <Link href={entry.guide} className={BUTTON_SMALL}>Related guide</Link>}
+            </NView>
+          )}
         </>
       )}
       <SubHeader title="Tags">

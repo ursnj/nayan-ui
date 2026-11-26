@@ -16,7 +16,7 @@ export default function NayanComponentDoc({ path }: { path: string }) {
   const alternative = legacyComponentAlternatives[slug as keyof typeof legacyComponentAlternatives];
   const reference = findComponentReference(alternative ?? (slug === 'avatar' ? 'image' : slug));
   const native = path.startsWith('/react-native/');
-  const quickstart = native ? '/game-engine/react-native' : '/game-engine/react';
+  const quickstart = native ? '/react-native/installation' : '/react/installation';
   const tags = tagsForReference(path);
 
   return (

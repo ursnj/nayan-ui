@@ -85,7 +85,8 @@ test("reference pages are listed alongside existing component and game routes", 
   const paths = collectPublicPaths(root);
   expect(paths).toEqual(expect.arrayContaining([
     "/components/alert", "/components/confirm-alert", "/components/accordion", "/components/use-theme",
-    "/modules/camera", "/modules/storage", "/modules/games", "/react/alert", "/react-native/accordion", "/games"
+    "/modules/auth", "/modules/camera", "/modules/contacts", "/modules/document-picker", "/modules/files",
+    "/modules/image-picker", "/modules/storage", "/modules/games", "/react/alert", "/react-native/accordion", "/games"
   ]));
   expect(paths).not.toContain("/alert");
   expect(paths).not.toContain("/camera");

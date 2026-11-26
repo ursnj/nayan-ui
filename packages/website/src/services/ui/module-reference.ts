@@ -9,6 +9,8 @@ interface ModuleExample {
   platforms?: readonly ReferencePlatform[];
   code: string;
   note?: string;
+  details?: readonly string[];
+  related?: readonly { label: string; href: string }[];
   guide?: string;
   filename?: string;
 }
@@ -68,7 +70,7 @@ export async function playSound(uri: string) {
     slug: 'camera',
     title: 'Camera',
     entry: './camera',
-    description: 'Open the camera capture flow and read a photo’s URI and dimensions.',
+    description: 'Capture a photo and optionally crop, rotate, flip, or apply a filter before saving.',
     code: `import { camera } from 'nayan-ui/camera';
 
 export async function captureSize() {
@@ -80,7 +82,13 @@ export async function captureSize() {
     await camera.release(photo.uri);
   }
 }`,
-    note: 'Call from a user action. Capture requires a supported camera, camera permission, and a secure context on the web.'
+    note: 'Call from a user action. Expo apps enable the image picker in the nayan-ui plugin and rebuild. Web camera capture requires a supported secure context.',
+    details: [
+      'Use getPermission() and requestPermission() to check and request camera access. The camera opens a system capture view on mobile and a live preview in browsers.',
+      'Set allowEditing: true to open the photo editor after capture. Crop defaults to square. Use aspect to choose another ratio. The existing allowsEditing option takes precedence when both spellings are provided.',
+      'Canceling either capture or editing returns null. Release the temporary URI after use. The browser stops its media stream when the camera preview closes.'
+    ],
+    related: [{ label: 'Image picker and filters', href: '/modules/image-picker' }, { label: 'Expo configuration', href: '/modules/expo-plugin' }]
   },
   {
     slug: 'document-picker',
@@ -100,7 +108,13 @@ export async function getPdfName() {
     await documentPicker.release(pdf.uri);
   }
 }`,
-    note: 'Call from a user action on the web. Native feature profiles must include document-picker.'
+    note: 'Call from a user action on the web. Include document-picker in custom native feature profiles and rebuild the app.',
+    details: [
+      'Filter by MIME type and use multiple: true to select several files. Each asset includes a URI, name and last-modified timestamp, plus size and MIME type when available. Cancellation returns { canceled: true, assets: null }.',
+      'Native builds copy into app cache by default. With copyToCacheDirectory: false, Android returns the provider content URI and iOS returns the system-imported file URL. Release app-owned cache copies when finished.',
+      'Browser results include File objects and a FileList. Use base64: true when you need a data URL and release the owned blob URIs after use.'
+    ],
+    related: [{ label: 'Save documents in app-private files', href: '/modules/files' }, { label: 'Read bytes from a URI', href: '/modules/assets' }]
   },
   {
     slug: 'contacts',
@@ -115,6 +129,12 @@ export async function searchContacts(search: string, offset = 0) {
   return contacts.list({ search, offset, limit: 25 });
 }`,
     note: 'For Expo, set contactsPermission on the nayan-ui plugin and rebuild. Browsers persist their app-owned contacts in IndexedDB.',
+    details: [
+      'Call getPermissions() to check access or requestPermissions({ write: true }) from a user action before editing device contacts. iOS can grant limited access to selected contacts.',
+      'Search by name, company, job title, phone or email. Pass offset and limit to list() and use hasNextPage to fetch more results.',
+      'Manage a contact by its opaque ID with get(), update() and remove(). Android linked or read-only contacts can be managed in the system Contacts app.'
+    ],
+    related: [{ label: 'Expo contacts permissions', href: '/modules/expo-plugin' }],
     guide: 'https://github.com/ursnj/nayan-ui/blob/main/packages/nayan-ui/README.md#contacts'
   },
   {
@@ -204,14 +224,21 @@ export function Sketch() {
     slug: 'files',
     title: 'Files',
     entry: './files',
-    description: 'Read and write application files or create temporary files for sharing.',
+    description: 'Save app-private text and binary files, inspect metadata, and create temporary file URIs for sharing.',
     code: `import { files } from 'nayan-ui/files';
 
 export async function saveNote(text: string) {
   const directory = await files.openDirectory('notes');
   await directory.writeText('note.txt', text);
   return directory.readText('note.txt');
-}`
+}`,
+    details: [
+      'openDirectory() creates a persistent, flat namespace. Use write() and read() for bytes, writeText() and readText() for UTF-8, and stat(), list() and remove() to manage its files. Missing reads or metadata return undefined.',
+      'Private files are limited to 64 MiB each. Browsers use IndexedDB and follow its storage quota. Persistent files are addressed by namespace and filename.',
+      'For a shareable URI, writeTemporary() accepts padded Base64 up to 64 MiB and returns a native file URI or an owned browser Blob URL. Remove it after the consumer finishes.',
+      'The API is focused on app-owned files. Nested paths, copy and move, seekable handles, file streams and transfer tasks are outside its current scope.'
+    ],
+    related: [{ label: 'Pick documents', href: '/modules/document-picker' }, { label: 'Share a temporary URI', href: '/modules/sharing' }]
   },
   {
     slug: 'games',
@@ -244,11 +271,11 @@ export function confirmSelection() {
     slug: 'image-picker',
     title: 'Image Picker',
     entry: './image-picker',
-    description: 'Let users choose an image from their library and inspect the selected asset.',
+    description: 'Pick photos and edit a single image with cropping, rotation, flipping, filters, and brightness.',
     code: `import { imagePicker } from 'nayan-ui/image-picker';
 
 export async function selectImage() {
-  const result = await imagePicker.pickFromLibrary({ maxDimension: 1024 });
+  const result = await imagePicker.pickFromLibrary({ allowsEditing: true, aspect: [1, 1], maxDimension: 1024 });
   if (result.canceled) return null;
   const [image] = result.assets;
   try {
@@ -256,7 +283,13 @@ export async function selectImage() {
   } finally {
     await imagePicker.release(image.uri);
   }
-}`
+}`,
+    details: [
+      'Use allowsEditing to open the editor for a single image. It supports crop, rotate, horizontal flip, brightness, and Original, Black and white, Sepia and Vivid presets.',
+      'Pick several images with multiple and selectionLimit. For output, choose JPEG or PNG and set maxDimension to bound the image size.',
+      'Treat returned assets as temporary and call release() once you have uploaded, copied or finished displaying them. On web, camera capture through the picker is a device hint. Use the Camera module for a live preview.'
+    ],
+    related: [{ label: 'Live camera capture', href: '/modules/camera' }, { label: 'Expo configuration', href: '/modules/expo-plugin' }]
   },
   {
     slug: 'keep-awake',
@@ -350,7 +383,7 @@ export async function askForReview() {
     slug: 'auth',
     title: 'Auth',
     entry: './auth',
-    description: 'Start Google or Apple sign-in in the browser from Android, iOS, or web. The Rust core generates and validates OAuth transactions.',
+    description: 'Start Google or Apple sign-in in the system browser and validate OAuth callback data using the Rust core.',
     code: `import { auth, type SignInOptions, type SignInProvider, type SignInRequest } from 'nayan-ui/auth';
 
 export async function startSignIn(
@@ -364,6 +397,11 @@ export async function startSignIn(
   await openBrowser(request.authorizationUrl);
 }`,
     note: 'Use a Google Web application client ID or Apple Services ID and an HTTPS return URL registered with the provider. The backend binds the pending request to the initiating session, verifies the callback, exchanges the code, and verifies the ID token before creating a session.',
+    details: [
+      'createRequest() creates state and nonce values for both providers. Google also uses S256 PKCE and returns a codeVerifier for the backend exchange.',
+      'Pass the full Google callback URL including its query, or the Apple callback URL and raw form-encoded POST body. readCallback() returns success, cancelled or denied and rejects invalid callbacks.',
+      'Keep provider secrets on the backend. Consume each transaction once and verify the ID token signature, issuer, audience, expiry and nonce before issuing an app session.'
+    ],
     guide: 'https://github.com/ursnj/nayan-ui/blob/main/packages/nayan-ui/README.md#auth'
   },
   {
@@ -402,7 +440,7 @@ export async function firstNote(title: string) {
     slug: 'storage',
     title: 'Storage',
     entry: './storage',
-    description: 'Persist small settings with a named store and read them reactively.',
+    description: 'Persist settings, values and query caches in named stores. Android and iOS also support opt-in encryption at rest.',
     code: `import { createStorage, useStorage } from 'nayan-ui/storage';
 import { NSwitch } from 'nayan-ui/components';
 
@@ -413,7 +451,13 @@ export function SoundSetting() {
   return <NSwitch label="Sound" value={enabled} onValueChange={setEnabled} />;
 }`,
     note: 'On iOS and Android, supply an app-managed encryptionKey for encrypted storage. Browsers support ordinary storage only.',
-    guide: 'https://github.com/ursnj/nayan-ui/blob/main/packages/nayan-ui/README.md#encrypted-storage'
+    details: [
+      'Store strings, numbers, booleans, bytes or JSON. useStorage() and useStorageJSON() subscribe to changes. Native writes are buffered until flush() or a lifecycle flush.',
+      'Native encryption supports AES-128 and AES-256. A matching key is required on every reopen. Use isEncrypted to inspect the mode, encrypt(newKey, type) to rotate, or decrypt() to rewrite the store as plaintext.',
+      'The application generates and protects the key. Browser storage uses localStorage and rejects encryption requests.'
+    ],
+    guide: 'https://github.com/ursnj/nayan-ui/blob/main/packages/nayan-ui/README.md#encrypted-storage',
+    related: [{ label: 'Store larger binary files', href: '/modules/files' }, { label: 'Query a SQLite database', href: '/modules/sqlite' }]
   },
   {
     slug: 'tts',
@@ -590,7 +634,12 @@ export async function preload() {
   }
 };`,
     filename: 'app.config.js',
-    guide: '/game-engine/react-native'
+    details: [
+      'Set imagePicker: true and supply cameraPermission to customize the camera usage text. Set contactsPermission and locationPermission to configure the corresponding Android permissions and iOS usage descriptions.',
+      'Set systemTheme: true to match the app’s startup appearance to its Expo configuration. Custom profiles must include the features your options enable. Rebuild after applying native configuration.'
+    ],
+    guide: '/react-native/installation',
+    related: [{ label: 'Contacts', href: '/modules/contacts' }, { label: 'Camera', href: '/modules/camera' }, { label: 'Theme', href: '/components/theme' }]
   },
   {
     slug: 'package-metadata',

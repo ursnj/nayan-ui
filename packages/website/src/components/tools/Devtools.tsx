@@ -68,6 +68,7 @@ import {
   QrCode
 } from '@/design/Icons';
 import Link from 'next/link';
+import { starterCliCode, starterCliNote } from '@/services/GamesCodeBlocks';
 import { DocsIntro } from '@/design/Primitives';
 import { ACCENT_SOFT, BUTTON_SMALL, CARD, CARD_INTERACTIVE, GRID_GAP, H3 } from '@/design/system';
 import Code from '@/components/helpers/Code';
@@ -672,20 +673,13 @@ const DEV_TOOLS = [
 const PACKAGES = [
   {
     name: '@nayan-ui/cli',
-    lead: 'Scaffold new projects from templates, generate XML sitemaps by crawling a site, and create or validate robots.txt files.',
-    install: 'npm install -g @nayan-ui/cli\n\n# or, without installing\nnpx @nayan-ui/cli [command]',
-    commands: `nayan-ui new
-nayan-ui new my-app -t expo
-nayan-ui create sitemap -w https://example.com
-nayan-ui create robots -d /admin
-nayan-ui validate sitemap -i ./sitemap.xml
-nayan-ui validate robots -i ./robots.txt`,
+    lead: 'Generate or validate XML sitemaps and robots.txt files from the terminal.',
+    install: 'npm install -g @nayan-ui/cli',
+    commands: `nayan create sitemap -w https://example.com
+nayan create robots -d /admin
+nayan validate sitemap -i ./sitemap.xml
+nayan validate robots -i ./robots.txt`,
     features: [
-      {
-        icon: Rocket,
-        title: 'Project scaffolding',
-        body: 'Create projects from the Expo, Games, Next.js and Vite templates.'
-      },
       {
         icon: MapIcon,
         title: 'Sitemaps',
@@ -784,7 +778,7 @@ const DevtoolsMain = () => {
             <ArrowUpRight aria-hidden size={15} />
           </NView>
         ))}
-        <NView tag="a" href="#nayan-ui-cli" data-tone="blue" className="site-category-link flex items-center [gap:0.48rem] [min-height:2.95rem] [padding:0.55rem_0.65rem] [border:1px_solid_color-mix(in_srgb,_var(--tone-ink)_15%,_transparent)] [border-radius:0.7rem] [background:var(--tone-paper)] [color:var(--tone-ink)] [font-size:0.82rem] [font-weight:680] hover:[border-color:var(--tone-ink)] [&_svg]:shrink-0 [&_svg:last-child]:ml-auto">
+        <NView tag="a" href="#starter-cli" data-tone="blue" className="site-category-link flex items-center [gap:0.48rem] [min-height:2.95rem] [padding:0.55rem_0.65rem] [border:1px_solid_color-mix(in_srgb,_var(--tone-ink)_15%,_transparent)] [border-radius:0.7rem] [background:var(--tone-paper)] [color:var(--tone-ink)] [font-size:0.82rem] [font-weight:680] hover:[border-color:var(--tone-ink)] [&_svg]:shrink-0 [&_svg:last-child]:ml-auto">
           <Keyboard aria-hidden size={19} />
           <NText tag="span">Command line</NText>
           <ArrowUpRight aria-hidden size={15} />
@@ -810,6 +804,10 @@ const DevtoolsMain = () => {
         </SubHeader>
       ))}
 
+      <SubHeader title="Nayan UI starter CLI" id="starter-cli" description={starterCliNote}>
+        <Code code={`${starterCliCode}\nbun run web`} language="bash" filename="Terminal" />
+        <Link href="/game-engine/installation#start-from-the-template" className={BUTTON_SMALL}>Starter template and native commands</Link>
+      </SubHeader>
       {PACKAGES.map((pkg) => (
         <SubHeader key={pkg.name} title={pkg.name} description={pkg.lead}>
           <NView tag="div" className="grid min-w-0 gap-5 lg:grid-cols-2">

@@ -12,9 +12,9 @@ const GROUPS = [
       { label: 'Components', href: '/components' },
       { label: 'Modules', href: '/modules' },
       { label: 'Playground', href: '/playground' },
-      { label: 'React installation', href: '/game-engine/react' },
+      { label: 'React installation', href: '/react/installation' },
       { label: 'React components', href: '/react/components' },
-      { label: 'React Native installation', href: '/game-engine/react-native' },
+      { label: 'React Native installation', href: '/react-native/installation' },
       { label: 'React Native components', href: '/react-native/components' },
       { label: 'Component and module tags', href: '/tags' }
     ]

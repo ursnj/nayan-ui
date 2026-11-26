@@ -7,6 +7,12 @@ export const starterSetupCode = `git clone --depth 1 https://github.com/ursnj/na
 cd nayan-ui/templates/nayan-ui
 bun install --frozen-lockfile`;
 
+export const starterCliCode = `npx nayan-ui@1.0.0-beta.6 new my-app
+cd my-app
+bun install --frozen-lockfile`;
+
+export const starterCliNote = 'The CLI requires nayan-ui 1.0.0-beta.6 on npm. Use the repository template if that release is unavailable. The generated workspace starts on the published beta.5 and can be upgraded when you need the beta.6 module APIs.';
+
 export const createProjectCode = `${starterSetupCode}
 bun run web        # browser
 bun run ios        # or: bun run android (development build)`;

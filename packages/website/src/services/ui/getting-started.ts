@@ -1,4 +1,4 @@
-import { starterSetupCode } from "../GamesCodeBlocks";
+import { starterCliCode, starterCliNote, starterSetupCode } from "../GamesCodeBlocks";
 import type { EngineGuide } from "./types";
 
 const sceneTs = `import type { Camera, World } from "nayan-ui";
@@ -15,6 +15,29 @@ export function tapScene(world: World, x: number, y: number) {
   const hit = world.pick(x, y);
   if (hit) world.impulse(hit.entity, [0, 5, 0]);
 }`;
+
+const starterSection = {
+  id: "start-from-the-template",
+  title: "Create a starter project",
+  paragraphs: [
+    "The starter is a standalone Bun workspace. Vite runs the web app, Expo runs the mobile app, and both use the landing page and theme in shared/src. Run bun run web, bun run ios, or bun run android from the project root.",
+    starterCliNote,
+  ],
+  examples: [
+    {
+      title: "Create a project with the CLI",
+      platform: "shell",
+      language: "bash",
+      code: `${starterCliCode}\nbun run web`,
+    },
+    {
+      title: "Use the repository template",
+      platform: "shell",
+      language: "bash",
+      code: `${starterSetupCode}\nbun run web`,
+    },
+  ],
+} satisfies EngineGuide["sections"][number];
 
 export const GettingStartedGuides: EngineGuide[] = [
   {
@@ -79,7 +102,7 @@ export function Counter() {
         id: "core-pieces",
         title: "The core pieces",
         paragraphs: [
-          "Everything is imported from nayan-ui, and each piece has its own guide.",
+          "Import games from nayan-ui/games, interface controls from nayan-ui/components, and device services from their own module entry points.",
         ],
         table: {
           headers: ["Piece", "What it does", "Guide"],
@@ -264,32 +287,7 @@ export function Board() {
     title: "Installation and platform setup",
     description: "Install the package and set up Expo, bare React Native or a browser host.",
     sections: [
-      {
-        id: "start-from-the-template",
-        title: "Create a starter project",
-        paragraphs: [
-          "The starter CLI ships with nayan-ui starting in 1.0.0-beta.6. Use Node.js with npm to run the CLI and Bun to install and run the generated workspace.",
-          "The project includes a Vite app, an Expo app, and a shared landing page and theme. With the platform SDK installed, run bun run ios or bun run android from the project root to make a native development build.",
-        ],
-        examples: [
-          {
-            title: "Create a project with the CLI",
-            platform: "shell",
-            language: "bash",
-            code: `npx nayan-ui@1.0.0-beta.6 new my-app
-cd my-app
-bun install --frozen-lockfile
-bun run web`,
-          },
-          {
-            title: "Use the template from GitHub",
-            platform: "shell",
-            language: "bash",
-            code: `${starterSetupCode}
-bun run web`,
-          },
-        ],
-      },
+      starterSection,
       {
         id: "install-the-package",
         title: "Install the package",
@@ -457,8 +455,37 @@ export function EngineGate({ children }: { children: ReactNode }) {
   {
     slug: "react",
     title: "React browser quickstart",
-    description: "Mount a scene in a React web app.",
+    description: "Set up Nayan UI in a React web app, use the shared theme and start a game scene.",
     sections: [
+      starterSection,
+      {
+        id: "web-theme",
+        title: "Set up a browser theme",
+        paragraphs: [
+          "Wrap the app in NTheme to share light and dark palettes, text defaults and tokens. The starter defines its theme in shared/src/theme.ts and uses web/scripts/styles.ts to compile utility classes with nayan-ui/styles.",
+          "For browser DOM layout, use NPlatformView inside NTheme with surface={false}. Import the generated CSS in your browser entry. The starter uses lowerCss: false, so it can compile its utilities without Tailwind or lightningcss.",
+        ],
+        examples: [
+          {
+            title: "App.tsx",
+            platform: "react",
+            language: "tsx",
+            code: `"use client";
+import { NButton, NPlatformView, NTheme } from "nayan-ui/components";
+
+export function App() {
+  return (
+    <NTheme defaultTheme="system" surface={false}>
+      <NPlatformView>
+        <NButton onPress={() => {}}>Continue</NButton>
+      </NPlatformView>
+    </NTheme>
+  );
+}`,
+          },
+        ],
+        note: "Camera requires a secure context. Contacts use an app-owned address book in IndexedDB. Storage encryption is available in native builds.",
+      },
       {
         id: "write-the-scene",
         title: "Write the scene",
@@ -528,8 +555,36 @@ export default function GamePage() {
   {
     slug: "react-native",
     title: "React Native quickstart",
-    description: "Mount a scene in a React Native development build.",
+    description: "Set up a shared Nayan UI theme, configure device modules and mount a scene in a native development build.",
     sections: [
+      starterSection,
+      {
+        id: "native-theme-and-permissions",
+        title: "Set up the native theme and modules",
+        paragraphs: [
+          "In the starter, mobile/src/main.tsx wraps the shared landing page in NTheme. The shared theme uses the same palette and utility classes on mobile and web. Expo’s systemTheme option aligns the native window appearance before the JavaScript screen starts.",
+          "Enable imagePicker for camera capture and set contactsPermission for device contacts. Include the module features you use if you build with a custom profile. Rebuild with bun run ios or bun run android after changing app.json.",
+        ],
+        examples: [
+          {
+            title: "mobile/app.json",
+            platform: "native",
+            language: "json",
+            code: `{
+  "expo": {
+    "userInterfaceStyle": "automatic",
+    "plugins": [["nayan-ui", {
+      "systemTheme": true,
+      "imagePicker": true,
+      "cameraPermission": "Take photos for your notes.",
+      "contactsPermission": "Choose and manage contacts."
+    }]]
+  }
+}`,
+          },
+        ],
+        note: "Add these options to your existing Expo configuration. The starter keeps its Android minimum SDK plugin and native app identifiers.",
+      },
       {
         id: "write-the-scene",
         title: "Write the scene",

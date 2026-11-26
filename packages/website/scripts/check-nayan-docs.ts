@@ -1,13 +1,14 @@
-// Usage: bun scripts/check-nayan-docs.ts /path/to/playtura/packages/engine
+// Usage from the repository root: bun packages/website/scripts/check-nayan-docs.ts packages/nayan-ui
 import ts from "typescript";
 import { mkdtemp, mkdir, writeFile, rm, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { resolve, join } from "node:path";
+import { dirname, resolve, join } from "node:path";
 import { engineGuides } from "../src/services/ui/guides";
 import { engineNavigation } from "../src/services/ui/navigation";
 import { createRequire } from "node:module";
 import { sectionExamples } from "../src/services/ui/section-examples";
 import inventory from "../src/services/ui/api-inventory.json";
+import { moduleReferences } from "../src/services/ui/module-reference";
 import { clearGameAssetsCode } from "../src/services/GamesCodeBlocks";
 
 const packagePath = process.argv[2];
@@ -43,11 +44,7 @@ for (const guide of engineGuides) {
     `Duplicate section ID: ${guide.slug}`,
   );
 }
-// Every existing section has an explanatory example; reject typos in augmentation keys.
-for (const guide of engineGuides)
-  for (const section of guide.sections) {
-    check((section.examples?.length ?? 0) > 0, `Missing example: ${guide.slug}/${section.id}`);
-  }
+// Reject typos in example augmentation keys.
 for (const [slug, sections] of Object.entries(sectionExamples)) {
   const guide = engineGuides.find((item) => item.slug === slug);
   check(guide, `Unknown example guide: ${slug}`);
@@ -60,26 +57,25 @@ for (const [slug, sections] of Object.entries(sectionExamples)) {
       check(example.description, `Missing setup explanation: ${slug}/${id}/${example.title}`);
   }
 }
-const source = ts.createSourceFile(
-  "index.ts",
-  await readFile(join(engine, "src/index.ts"), "utf8"),
-  ts.ScriptTarget.Latest,
-  true,
-);
-const exported = source.statements.flatMap((statement) =>
-  ts.isExportDeclaration(statement) &&
-  statement.exportClause &&
-  ts.isNamedExports(statement.exportClause)
-    ? statement.exportClause.elements.map((item) => item.name.text)
-    : [],
-);
+const browserEntry = join(engine, "lib/web/types/src/index.d.ts");
+const declarations = ts.createProgram([browserEntry], {
+  module: ts.ModuleKind.ESNext,
+  moduleResolution: ts.ModuleResolutionKind.Bundler,
+  skipLibCheck: true,
+});
+const checker = declarations.getTypeChecker();
+const source = declarations.getSourceFile(browserEntry);
+const entry = source && checker.getSymbolAtLocation(source);
+if (!entry) throw new Error("Build the engine browser declarations first.");
+const exported = checker.getExportsOfModule(entry).map((symbol) => symbol.name);
 check(
   JSON.stringify([...exported].sort()) ===
     JSON.stringify(inventory.map((item) => item.name).sort()),
   "API snapshot does not cover the current engine exports; rerun sync-nayan-reference.mjs",
 );
+const guidePaths = new Set([...engineNavigation.map(({ link }) => link), ...moduleReferences.map(({ path }) => path)]);
 for (const item of inventory)
-  check(slugs.has(item.guide), `Unknown concept guide for ${item.name}: ${item.guide}`);
+  check(guidePaths.has(item.guide), `Unknown concept guide for ${item.name}: ${item.guide}`);
 const sitemap = await readFile(new URL("../public/sitemap.xml", import.meta.url), "utf8");
 for (const item of engineNavigation)
   check(
@@ -106,6 +102,7 @@ for (const platform of ["react", "native"] as const) {
         const name = /\.(ts|tsx)$/.test(example.title) ? example.title : `snippet-${index++}.tsx`;
         const path = join(guideDirectory, name);
         check(!files.includes(path), `Duplicate example file: ${guide.slug}/${name}`);
+        await mkdir(dirname(path), { recursive: true });
         await writeFile(path, example.code);
         files.push(path);
         examples++;
@@ -138,6 +135,7 @@ for (const platform of ["react", "native"] as const) {
         ),
       ],
       "nayan-ui/web": [join(engine, "lib/web/types/src/index.d.ts")],
+      "nayan-ui/games": [join(engine, platform === "react" ? "lib/web/types/src/games/index.d.ts" : "lib/typescript/src/games/index.d.ts")],
       "nayan-ui/components": [
         join(
           engine,

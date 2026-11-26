@@ -48,10 +48,10 @@ export default function Banner() {
         </NView>
         <NView tag="nav" aria-label="Platform guides" className="home-platforms flex flex-wrap items-center [gap:0.5rem_clamp(1rem,_3vw,_2rem)] [padding-block:0.9rem] [border-top:1px_solid_var(--border)] text-muted [font-size:0.8rem] [&_>_span]:[font-family:var(--font-mono,_monospace)] [&_a]:inline-flex [&_a]:items-center [&_a]:[gap:0.35rem] [&_a]:[min-height:2rem] [&_a]:text-foreground [&_a]:[font-weight:650] [&_a:hover]:text-accent">
           <NText tag="span">Quickstarts</NText>
-          <Link href="/game-engine/react">
+          <Link href="/react/installation">
             React <ArrowRight aria-hidden size={15} />
           </Link>
-          <Link href="/game-engine/react-native">
+          <Link href="/react-native/installation">
             React Native <ArrowRight aria-hidden size={15} />
           </Link>
           <Link href={REPO_URL} target="_blank" rel="noopener noreferrer">

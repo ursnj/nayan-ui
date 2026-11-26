@@ -8,7 +8,7 @@ export const metadata = buildPageMetadata({
     "Browse React Native UI components from Nayan UI. Accordion, button, card, dialog, input, menu, sheet, tabs, toast, and more for iOS and Android.",
   path: "/react-native/components",
   keywords:
-    "react native components, mobile ui components, nayan ui react native, ios android components, heroui native",
+    "react native components, mobile ui components, nayan ui react native, ios android components",
 });
 
 const schemas = [
