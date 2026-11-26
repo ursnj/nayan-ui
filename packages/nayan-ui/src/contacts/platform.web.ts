@@ -34,7 +34,7 @@ export async function isAvailable(): Promise<boolean> {
   }
 }
 
-export async function access(): Promise<ContactsAccess> {
+export async function access(_request?: boolean, _write?: boolean): Promise<ContactsAccess> {
   const status = (await isAvailable()) ? 'granted' : 'unavailable';
   return { source: 'app', read: { status, canAskAgain: false }, write: { status, canAskAgain: false } };
 }
