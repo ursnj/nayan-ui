@@ -58,9 +58,10 @@ function setup() {
     async move(offset: number, notification: Partial<ComponentListPlan> = {}) {
       runtime.scrollList('list', { kind: 'offset', offset });
       const range = runtime.planList('list', nodes[0]!.props);
-      const handler = renderer.handlers.get('list')?.onChange;
-      if (typeof handler !== 'function') throw Error('Missing list handler');
-      handler({ ...range, ...notification });
+      const { onListLayout, onChange } = renderer.handlers.get('list') ?? {};
+      if (typeof onListLayout !== 'function' || typeof onChange !== 'function') throw Error('Missing list handlers');
+      onListLayout(range);
+      if (Object.keys(notification).length) onChange({ ...range, ...notification });
       await flush();
       return range;
     },

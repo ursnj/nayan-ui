@@ -5,6 +5,7 @@ export interface ComponentListPlan {
   configuration: string;
   start: number;
   end: number;
+  ranges?: ReadonlyArray<{ start: number; end: number; step: number }>;
   first: number;
   last: number;
   itemCount: number;

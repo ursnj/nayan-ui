@@ -7,6 +7,7 @@ import { ComponentHost, type ComponentHostStyle, inputEventValue, openLink, sele
 import { ContextBridge, useSurfaceContextValues } from './contextBridge';
 import { ComponentAttachmentContext } from './NPlatformView';
 import { createComponentRenderer } from './reconciler';
+import type { ComponentListPlan } from './runtime';
 import { ComponentFallbackContext, ComponentRenderContext, ComponentThemeContext, PlatformRenderContext } from './ThemeContext';
 import type { ComponentSnapshot } from './types';
 
@@ -135,6 +136,7 @@ function ComponentSurface({
   const presentedDocument = useRef<ComponentDocument | null>(null);
   const readyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const changeSequences = useRef(new Map<string, number>());
+  const listLayoutRevision = useRef(-1);
   const current = useRef({ children: content, onError, entrancesReady, settleInitialEntrances });
   current.current = { children: content, onError, entrancesReady, settleInitialEntrances };
 
@@ -142,6 +144,7 @@ function ComponentSurface({
     setDocument(null);
     setSnapshot({ revision: 0, nodes: [], events: [] });
     changeSequences.current.clear();
+    listLayoutRevision.current = -1;
     let alive = true;
     let owned: ComponentDocument | null = null;
     const fail = (cause: unknown) => {
@@ -254,6 +257,16 @@ function ComponentSurface({
         if (href.startsWith('#')) document?.request({ action: 'scrollToId', id: decodeURIComponent(href.slice(1)) });
         else (onNavigate ?? openLink)(href);
       };
+      // Native event coalescing can drop a range event while retaining a newer snapshot.
+      // The snapshot still carries the current list window, independently of callbacks.
+      if (!next.partial && next.revision > listLayoutRevision.current) {
+        listLayoutRevision.current = next.revision;
+        for (const node of next.nodes) {
+          if (node.kind !== 'NList') continue;
+          const onListLayout = renderer.current?.handlers.get(node.id)?.onListLayout;
+          if (typeof onListLayout === 'function') onListLayout(node.value as ComponentListPlan);
+        }
+      }
       for (const event of next.events) {
         const eventKey = `${event.id}:${event.type}`;
         if (event.sequence <= (changeSequences.current.get(eventKey) ?? -1)) continue;

@@ -24,6 +24,8 @@ export interface NListVisibleRange {
 export interface NListProps<T> extends Pick<ComponentProps, 'id' | 'className' | 'style' | 'width' | 'height' | 'accessibilityLabel' | 'isDisabled'> {
   data?: readonly T[];
   numColumns?: number;
+  /** Pack variable-height items independently in each column. Requires a masonry-capable engine build. */
+  masonry?: boolean;
   contentContainerClassName?: string;
   contentContainerStyle?: ComponentProps['style'];
   refreshControl?: import('react').ReactElement<{ refreshing?: boolean; onRefresh?: () => void; tintColor?: string }>;

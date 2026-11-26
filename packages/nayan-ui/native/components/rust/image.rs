@@ -6,7 +6,7 @@ use std::sync::{
     atomic::{AtomicU64, Ordering},
 };
 const CACHE_BYTES: usize = 32 * 1024 * 1024;
-const RETAINED_IMAGE_BYTES: usize = 16 * 1024 * 1024;
+const RETAINED_IMAGE_BYTES: usize = 24 * 1024 * 1024;
 const MAX_RETAINED_IMAGES: usize = 64;
 static NEXT_REQUEST: AtomicU64 = AtomicU64::new(1);
 struct CachedImage {

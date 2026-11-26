@@ -930,7 +930,9 @@ impl ComponentDocument {
         self.images.complete(request, image, error);
         self.drain_image_events();
         self.revision += 1;
-        self.snapshot()
+        // The loader only needs its next jobs. Image events and accessibility state
+        // still go out through the normal document notification on the render thread.
+        json!({"revision": self.revision, "imageRequests": self.images.requests()})
     }
 
     pub fn take_snapshot(&mut self) -> Value {
@@ -1793,11 +1795,13 @@ impl ComponentDocument {
                 let font = ui.style().override_font_id.clone().unwrap_or(egui::FontId::proportional(16.));
                 let measured = ui.painter().layout_no_wrap(label, font, ui.visuals().text_color()).size().x + ui.spacing().button_padding.x * 2.;
                 let width = resolved.width.unwrap_or(measured.max(44.)).min(ui.available_width());
+                let button = egui::Button::new(caption);
+                let button = if p["numberOfLines"].as_u64() == Some(1) { button.truncate() } else { button.wrap() };
                 let response = ui
                     .allocate_ui_with_layout(
                         Vec2::new(width, height),
                         egui::Layout::left_to_right(egui::Align::Center).with_main_align(egui::Align::Center),
-                        |ui| ui.add_sized(Vec2::new(width, height), egui::Button::new(caption).wrap()),
+                        |ui| ui.add_sized(Vec2::new(width, height), button),
                     )
                     .inner;
                 if response.clicked() {

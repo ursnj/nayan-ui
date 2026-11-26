@@ -177,6 +177,12 @@ void deliverFrame(int surface, double timeMs); // NayanEngineModule.cpp
   }
 }
 - (void)presentDrawing {
+  if (_uiDrawing) {
+    // React Native can keep inactive screens attached and hide an ancestor.
+    for (UIView *view = self; view != nil; view = view.superview) {
+      if (view.hidden) return;
+    }
+  }
   engine_drawing_present((int32_t)_drawingId, (int32_t)_surfaceId, self.bounds.size.width, self.bounds.size.height, (uint32_t)_drawingBackground);
   CFTimeInterval now = CACurrentMediaTime();
   if (_onDrawingChange != nil && now - _lastDrawingEvent >= (_uiDrawing ? 1.0 / 120.0 : 0.1)) {

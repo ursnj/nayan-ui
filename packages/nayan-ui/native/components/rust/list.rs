@@ -96,6 +96,70 @@ mod tests {
     }
 
     #[test]
+    fn native_lists_keep_their_rows_at_the_scroll_edges() {
+        for variable in [false, true] {
+            let mut doc = ComponentDocument::default();
+            doc.command(&json!({"action":"environment","native":true})).unwrap();
+            let children: Vec<_> = (0..8)
+                .map(|index| json!({"id":format!("row-{index}"),"kind":"NListItem","props":{"index":index,"height":40}}))
+                .collect();
+            doc.set_tree(&json!([{"id":"list","kind":"NList","props":{
+                "itemCount":8,"itemSize":40,"height":240,"variableSize":variable,"canRefresh":true
+            },"children":children}])).unwrap();
+            frame(&mut doc);
+            let scroll_id = doc.scroll_targets[0].scroll_id;
+            for (start, delta) in [(50., 45.), (190., -45.)] {
+                doc.touch(0, 200., start);
+                frame(&mut doc);
+                for step in 1..=3 {
+                    doc.touch(1, 200., start + delta * step as f32);
+                    frame(&mut doc);
+                    let state = egui::scroll_area::State::load(&doc.context, scroll_id).unwrap();
+                    assert_eq!(state.overscroll().y, 0., "scrolling pushed the mounted rows away; variable={variable}");
+                }
+                doc.touch(2, 200., start + delta * 3.);
+                for _ in 0..10 {
+                    frame(&mut doc);
+                    let state = egui::scroll_area::State::load(&doc.context, scroll_id).unwrap();
+                    assert_eq!(state.overscroll().y, 0., "coasting pushed the mounted rows away; variable={variable}");
+                }
+            }
+            if variable {
+                assert!(doc.events.iter().any(|event| event["value"]["refreshRequested"] == true));
+            }
+        }
+    }
+
+    #[test]
+    fn native_lists_draw_committed_rows_until_a_distant_window_arrives() {
+        for variable in [false, true] {
+            let mut doc = ComponentDocument::default();
+            doc.command(&json!({"action":"environment","native":true})).unwrap();
+            let mount = |doc: &mut ComponentDocument, start: usize| {
+                let children: Vec<_> = (start..start + 12).map(|index| {
+                    json!({"id":format!("row-{index}"),"kind":"NListItem","props":{"index":index},"children":[
+                        {"id":format!("cell-{index}"),"kind":"NButton","props":{"label":format!("Cell {index}"),"height":80,"width":300}}
+                    ]})
+                }).collect();
+                doc.set_tree(&json!([{"id":"list","kind":"NList","props":{
+                    "itemCount":600,"itemSize":80,"height":240,"variableSize":variable
+                },"children":children}])).unwrap();
+            };
+            mount(&mut doc, 0);
+            frame(&mut doc);
+            doc.command(&json!({"action":"listScroll","id":"list","offset":6000})).unwrap();
+            for _ in 0..10 {
+                frame(&mut doc);
+                assert_eq!(range(&doc)["first"], 75);
+                assert!(doc.semantics.iter().filter(|node| node.kind == "NButton").count() >= 3);
+            }
+            mount(&mut doc, 72);
+            frame(&mut doc);
+            assert!(doc.semantics.iter().any(|node| node.id == "cell-75"));
+        }
+    }
+
+    #[test]
     fn rendered_ranges_match_planning_and_materialize_every_home_row_through_the_end() {
         for padding in ["", "p-3"] {
             let mut doc = ComponentDocument::default();
@@ -283,7 +347,7 @@ mod tests {
         state.notification(&first).unwrap();
         for offset in [440., 480.] {
             let mut range = range_at(&props, offset, 200., false);
-            state.retain_window(&mut range, 4, 1);
+            state.prepare_window(&mut range, 4, 1, 0.);
             let update = state.notification(&range).unwrap();
             assert_eq!(update["start"], first["start"]);
             assert_eq!(update["end"], first["end"]);
@@ -293,10 +357,58 @@ mod tests {
         for offset in [520., 2400., 0.] {
             let expected = range_at(&props, offset, 200., false);
             let mut range = expected.clone();
-            state.retain_window(&mut range, 4, 1);
+            state.prepare_window(&mut range, 4, 1, 0.);
             assert_eq!(range, expected);
             state.notification(&range).unwrap();
         }
+    }
+
+    #[test]
+    fn a_fast_fling_buffers_rows_in_its_direction_without_changing_visibility() {
+        let props = json!({"itemCount":100,"itemSize":40,"overscan":4,"height":200});
+        let base = range_at(&props, 400., 200., false);
+        let mut state = ListState::default();
+        state.notification(&base).unwrap();
+        let mut forward = base.clone();
+        state.prepare_window(&mut forward, 4, 1, 6000.);
+        assert_eq!(forward["start"], base["start"]);
+        assert_eq!(forward["end"], base["end"].as_u64().unwrap() + 4);
+        assert_eq!(forward["last"], base["last"]);
+        state.notification(&forward).unwrap();
+        let mut reverse = base.clone();
+        state.prepare_window(&mut reverse, 4, 1, -6000.);
+        assert_eq!(reverse["start"], base["start"].as_u64().unwrap() - 4);
+        assert_eq!(reverse["end"], base["end"]);
+        assert_eq!(reverse["first"], base["first"]);
+        state.notification(&reverse).unwrap();
+        let mut stopped = base.clone();
+        state.prepare_window(&mut stopped, 4, 1, 0.);
+        assert_eq!(stopped, base);
+    }
+
+    #[test]
+    fn native_list_flings_travel_farther_without_accelerating_the_drag() {
+        let fling = |native| {
+            let mut doc = ComponentDocument::default();
+            doc.command(&json!({"action":"environment","native":native})).unwrap();
+            set(&mut doc, 1000, 0..20, 0., 0);
+            doc.touch(0, 200., 300.);
+            doc.frame(400., 600., 1.).drop_without_applying_deltas();
+            for step in 1..=10 {
+                doc.touch(1, 200., 300. - step as f32 * 24.);
+                doc.frame(400., 600., 1.).drop_without_applying_deltas();
+            }
+            let dragged = range(&doc)["offset"].as_f64().unwrap();
+            doc.touch(2, 200., 60.);
+            for _ in 0..240 {
+                doc.frame(400., 600., 1.).drop_without_applying_deltas();
+            }
+            (dragged, range(&doc)["offset"].as_f64().unwrap() - dragged)
+        };
+        let (baseline_drag, baseline_coast) = fling(false);
+        let (native_drag, native_coast) = fling(true);
+        assert_eq!(native_drag, baseline_drag);
+        assert!(native_coast > baseline_coast * 1.25, "native coast: {native_coast}; baseline: {baseline_coast}");
     }
 
     #[test]
@@ -794,13 +906,21 @@ impl ListState {
             return None;
         }
         self.window_checked_at = now;
-        let first = range["first"].as_u64()?;
-        let last = range["last"].as_u64()?;
-        let expected = last.checked_sub(first)? + 1;
-        let mounted = children
-            .iter()
-            .filter(|node| node.kind == "NListItem" && node.props["index"].as_u64().is_some_and(|index| (first..=last).contains(&index)))
-            .count() as u64;
+        let indices = children.iter().filter(|node| node.kind == "NListItem").filter_map(|node| node.props["index"].as_u64());
+        let (mounted, expected) = if let Some(visible) = range["visibleRanges"].as_array() {
+            let spans: Vec<_> = visible.iter().map(|entry| {
+                (entry["start"].as_u64().unwrap(), entry["end"].as_u64().unwrap(), entry["step"].as_u64().unwrap())
+            }).collect();
+            let expected = spans.iter().map(|&(start, end, step)| (end - start).div_ceil(step)).sum();
+            let mounted = indices.filter(|&index| spans.iter().any(|&(start, end, step)| {
+                (start..end).contains(&index) && (index - start).is_multiple_of(step)
+            })).count() as u64;
+            (mounted, expected)
+        } else {
+            let first = range["first"].as_u64()?;
+            let last = range["last"].as_u64()?;
+            (indices.filter(|index| (first..=last).contains(index)).count() as u64, last.checked_sub(first)? + 1)
+        };
         if mounted >= expected {
             return None;
         }
@@ -809,27 +929,35 @@ impl ListState {
         Some(range.clone())
     }
 
-    pub(super) fn retain_window(&self, range: &mut Value, overscan: usize, columns: usize) {
-        let (Some(previous), Some(first), Some(last)) = (
-            self.range.as_ref(),
-            range["first"].as_u64(),
-            range["last"].as_u64(),
-        ) else {
+    pub(super) fn prepare_window(&self, range: &mut Value, overscan: usize, columns: usize, velocity: f32) {
+        let (Some(first), Some(last)) = (range["first"].as_u64(), range["last"].as_u64()) else {
             return;
         };
+        let count = range["itemCount"].as_u64().unwrap_or(0);
+        // Give React time to mount rows in the direction of travel. At rest the
+        // ordinary window returns, and the extra work never exceeds the configured buffer.
+        let distance = (velocity.abs() as f64 * 0.12).min(range["viewportHeight"].as_f64().unwrap_or(0.));
+        let extra = (distance / range["itemSize"].as_f64().unwrap_or(1.)).floor() as usize;
+        let extra = (extra.min(overscan) * columns) as u64;
+        let behind = if velocity < 0. { extra } else { 0 };
+        let ahead = if velocity > 0. { extra } else { 0 };
+        let next_start = range["start"].as_u64().unwrap_or(0).saturating_sub(behind);
+        let next_end = (range["end"].as_u64().unwrap_or(0) + ahead).min(count);
+        if extra > 0 {
+            range["start"] = json!(next_start);
+            range["end"] = json!(next_end);
+        }
+        let Some(previous) = self.range.as_ref() else { return };
         if overscan < 2 || previous["configuration"] != range["configuration"] {
             return;
         }
         let start = previous["start"].as_u64().unwrap_or(0);
         let end = previous["end"].as_u64().unwrap_or(0);
-        let next_start = range["start"].as_u64().unwrap_or(0);
-        let next_end = range["end"].as_u64().unwrap_or(0);
-        let count = range["itemCount"].as_u64().unwrap_or(0);
         // Move the window in batches while a buffer still surrounds the visible rows.
         // Never let the larger startup window become permanent.
         let buffer = (overscan / 2 * columns) as u64;
-        if start <= first.saturating_sub(buffer)
-            && end >= (last + 1 + buffer).min(count)
+        if start <= first.saturating_sub(buffer + behind)
+            && end >= (last + 1 + buffer + ahead).min(count)
             && end.saturating_sub(start) <= next_end.saturating_sub(next_start)
         {
             range["start"] = json!(start);
@@ -862,6 +990,59 @@ impl ListState {
         event["headerPinnedChanged"] = json!(pinned_changed);
         Some(event)
     }
+}
+
+pub(super) fn show_list_viewport<R>(
+    native: bool,
+    area: egui::ScrollArea,
+    ui: &mut egui::Ui,
+    contents: impl FnOnce(&mut egui::Ui, Rect) -> R,
+) -> egui::scroll_area::ScrollAreaOutput<R> {
+    if !native {
+        return area.show_viewport(ui, contents);
+    }
+    // Keep native list rows in the viewport during fast flings at either end.
+    // Nested controls keep their own scrolling behavior.
+    let style = ui.style().clone();
+    let kinetic = &mut ui.spacing_mut().scroll.kinetic;
+    kinetic.rubber_band = false;
+    kinetic.decay_time *= 1.3;
+    let output = area.show_viewport(ui, |child, viewport| {
+        child.set_style(style.clone());
+        contents(child, viewport)
+    });
+    ui.set_style(style);
+    output
+}
+
+pub(super) fn scroll_velocity(ui: &egui::Ui, output: &egui::scroll_area::ScrollAreaOutput<impl Sized>) -> f32 {
+    if ui.ctx().is_being_dragged(output.id.with("area")) {
+        -ui.input(|input| input.pointer.velocity().y)
+    } else {
+        output.state.velocity().y
+    }
+}
+
+pub(super) fn mounted_window(children: &[Node], count: usize) -> Option<(usize, usize)> {
+    let mut indices = children.iter().filter_map(|node| {
+        (node.kind == "NListItem").then(|| node.props["index"].as_u64()).flatten()
+            .and_then(|index| usize::try_from(index).ok()).filter(|index| *index < count)
+    });
+    let first = indices.next()?;
+    Some((first, indices.next_back().unwrap_or(first) + 1))
+}
+
+pub(super) fn covered_offset(desired: f32, lower: Option<f32>, upper: Option<f32>) -> f32 {
+    desired.min(upper.unwrap_or(f32::INFINITY)).max(lower.unwrap_or(0.))
+}
+
+pub(super) fn mounted_offset(desired: f32, viewport: f32, sticky: f32, start: f32, end: f32, before: bool, after: bool) -> f32 {
+    // A partial window can already show everything it has. Avoid moving a pinned
+    // header away just to expose an earlier portion of the same mounted rows.
+    if end - start < viewport - sticky && start < desired + viewport && end > desired + sticky {
+        return desired;
+    }
+    covered_offset(desired, before.then_some(start - sticky), after.then_some((end - viewport).max(start - sticky)))
 }
 
 impl ComponentDocument {
@@ -1004,14 +1185,25 @@ impl ComponentDocument {
             area = area.vertical_scroll_offset(offset.min((head + sticky + count as f32 * size + padding.top + padding.bottom - height).max(0.)));
         }
         let mut range = Value::Null;
-        let output = area.show_viewport(ui, |ui, viewport| {
+        let mounted = if self.native { mounted_window(&node.children, count) } else { None };
+        let output = show_list_viewport(self.native, area, ui, |ui, viewport| {
             content.frame(false).show(ui, |ui| {
                 ui.spacing_mut().item_spacing.y = 0.;
                 let total = head + sticky + count as f32 * size;
                 ui.set_height(total);
-                let origin = ui.max_rect().min;
+                // Keep the last committed rows paintable while JS catches up to the requested window.
+                let offset = mounted.map_or(viewport.min.y, |(start, end)| mounted_offset(
+                    viewport.min.y,
+                    viewport.height(),
+                    sticky,
+                    head + padding.top + sticky + start as f32 * size,
+                    head + padding.top + sticky + end as f32 * size,
+                    start > 0,
+                    end < count,
+                ));
+                let origin = ui.max_rect().min + Vec2::new(0., viewport.min.y - offset);
                 let width = ui.available_width();
-                let sticky_y = origin.y + head.max(viewport.min.y - padding.top);
+                let sticky_y = origin.y + head.max(offset - padding.top);
                 if let Some(header) = node.children.iter().find(|n| n.kind == "NListHeader") {
                     let rect = Rect::from_min_size(origin, Vec2::new(width, head));
                     self.list_part(ui, header, rect, ui.clip_rect());
@@ -1030,7 +1222,7 @@ impl ComponentDocument {
                 }
                 // Backdrop filters need body pixels behind the pinned header. Keep hit testing,
                 // accessibility and platform attachments clipped below it.
-                let backdrop = viewport.min.y >= head + padding.top
+                let backdrop = offset >= head + padding.top
                     && node
                         .children
                         .iter()
@@ -1090,7 +1282,7 @@ impl ComponentDocument {
         state.offset = range["offset"].as_f64().unwrap_or(0.) as f32;
         state.viewport = range["viewportHeight"].as_f64().map(|v| v as f32);
         if !commanded {
-            state.retain_window(&mut range, props["overscan"].as_u64().unwrap_or(6) as usize, 1);
+            state.prepare_window(&mut range, props["overscan"].as_u64().unwrap_or(6) as usize, 1, scroll_velocity(ui, &output));
         }
         if let Some(event) = state.window_notification(&range, &node.children, self.elapsed) {
             self.change(&node.id, event);

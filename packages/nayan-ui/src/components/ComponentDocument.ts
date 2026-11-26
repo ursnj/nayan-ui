@@ -6,6 +6,7 @@ import type { ComponentNode, ComponentSnapshot } from './types';
 
 /** Internal lifetime/transport. Rust owns widget data; platform editors own the live text buffer. */
 type ComponentSurfaceChange = { ui?: ComponentSnapshot };
+type ImageQueueSnapshot = Pick<ComponentSnapshot, 'revision' | 'imageRequests' | 'partial'>;
 
 export class ComponentDocument implements DocumentSurface<ComponentSurfaceChange> {
   readonly id: number;
@@ -177,7 +178,7 @@ export class ComponentDocument implements DocumentSurface<ComponentSurfaceChange
   }
 
   /** I/O tokens only; Rust owns loading, caching, stale-result checks and callbacks. */
-  readResources(snapshot: ComponentSnapshot) {
+  readResources(snapshot: ImageQueueSnapshot) {
     if (snapshot.partial) return;
     if (snapshot.revision < this.imageRevision) return;
     this.imageRevision = snapshot.revision;
@@ -218,7 +219,7 @@ export class ComponentDocument implements DocumentSurface<ComponentSurfaceChange
     // before checking document lifetime, so background decoding cannot leak it.
     const response = JSON.parse(NativeEngine!.drawingCommand(this.id, JSON.stringify({ op: 'componentImage', request, texture, error }))) as {
       ok: boolean;
-      value?: ComponentSnapshot;
+      value?: ImageQueueSnapshot;
     };
     if (!this.disposed && response.ok && response.value) this.readResources(response.value);
   }

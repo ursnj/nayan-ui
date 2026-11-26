@@ -18,7 +18,12 @@ import { type ComponentListPlan, type ComponentListScroll, ComponentRuntimeConte
 import { PageContentInsetsContext } from './theme/contexts';
 import type { ComponentProps, ComponentStyle } from './types';
 
-const Host = /* @__PURE__ */ component<Omit<ComponentProps, 'onChange'> & { onChange: (range: ComponentListPlan) => void }>('NList');
+const Host = /* @__PURE__ */ component<
+  Omit<ComponentProps, 'onChange'> & {
+    onChange: (range: ComponentListPlan) => void;
+    onListLayout: (range: ComponentListPlan) => void;
+  }
+>('NList');
 const Item = /* @__PURE__ */ component<ComponentProps & { index: number }>('NListItem');
 const Header = /* @__PURE__ */ component<ComponentProps>('NListHeader');
 const StickyHeader = /* @__PURE__ */ component<ComponentProps>('NListStickyHeader');
@@ -71,6 +76,7 @@ function flatStyle(value: ComponentProps['style']): ComponentStyle {
 export function ListBridge<T>({
   data = [],
   numColumns = 1,
+  masonry = false,
   contentContainerClassName,
   contentContainerStyle,
   refreshControl,
@@ -111,9 +117,11 @@ export function ListBridge<T>({
   onRefresh = onRefresh ?? refresh?.onRefresh;
   refreshing = refreshing ?? refresh?.refreshing;
   const itemSize = fixedItemSize ?? estimatedItemSize;
-  const variableSize = measured || fixedItemSize == null || numColumns > 1;
+  const variableSize = masonry || measured || fixedItemSize == null || numColumns > 1;
   const canRefresh = onRefresh != null;
   const itemCount = data.length;
+  // Keep short lists mounted within the existing startup budget. Rust still culls offscreen rows.
+  const keepAllRows = itemCount <= Math.min(24, initialNumToRender + overscan);
   const hasSeparator = ItemSeparatorComponent != null;
   const hasHeader = ListHeaderComponent != null;
   const hasSticky = StickyHeaderComponent != null;
@@ -125,6 +133,7 @@ export function ListBridge<T>({
       itemCount,
       itemSize,
       numColumns,
+      masonry,
       variableSize,
       fillViewport,
       contentKey,
@@ -148,6 +157,7 @@ export function ListBridge<T>({
       itemCount,
       itemSize,
       numColumns,
+      masonry,
       variableSize,
       fillViewport,
       contentKey,
@@ -172,7 +182,11 @@ export function ListBridge<T>({
   );
 
   const props = { ...container, ...geometry, id, style: container.style };
-  const baseline = useMemo(() => runtime.planList(id, geometry), [runtime, id, geometry]);
+  const baseline = useMemo(() => {
+    const plan = runtime.planList(id, geometry);
+    if (masonry && !plan.ranges) throw new Error('NList masonry requires an engine build with masonry support.');
+    return plan;
+  }, [runtime, id, geometry, masonry]);
   const [snapshot, setSnapshot] = useState({ baseline, value: baseline });
   const window = snapshot.baseline === baseline ? snapshot.value : baseline;
   const footer = useMemo(() => accessory(ListFooterComponent), [ListFooterComponent]);
@@ -184,7 +198,7 @@ export function ListBridge<T>({
   useImperativeHandle(ref, () => {
     const send = (command: ComponentListScroll) => {
       runtime.scrollList(id, command);
-      setSnapshot({ baseline, value: runtime.planList(id, geometry) });
+      if (!keepAllRows) setSnapshot({ baseline, value: runtime.planList(id, geometry) });
     };
     return {
       scrollToOffset: ({ offset }) => send({ kind: 'offset', offset }),
@@ -193,19 +207,43 @@ export function ListBridge<T>({
     };
   });
 
-  const onRange = (next: ComponentListPlan) => {
-    if (next.configuration !== baseline.configuration) return;
+  const onListLayout = (next: ComponentListPlan) => {
+    if (keepAllRows || next.configuration !== baseline.configuration) return;
     setSnapshot((previous) => {
       const mounted = previous.baseline === baseline ? previous.value : baseline;
-      return mounted.start === next.start && mounted.end === next.end ? previous : { baseline, value: next };
+      const ranges = next.ranges;
+      const mountedRanges = mounted.ranges;
+      const sameWindow = ranges
+        ? mountedRanges?.length === ranges.length &&
+          ranges.every((range, index) => {
+            const prior = mountedRanges[index];
+            return prior?.start === range.start && prior.end === range.end && prior.step === range.step;
+          })
+        : mounted.start === next.start && mounted.end === next.end;
+      return sameWindow ? previous : { baseline, value: next };
     });
+  };
+  const onRange = (next: ComponentListPlan) => {
+    if (next.configuration !== baseline.configuration) return;
     if (next.headerPinnedChanged) onStickyHeaderChange?.(next.headerPinned ?? false);
     if (next.refreshRequested) onRefresh?.();
     if (next.visibleChanged) onVisibleRangeChange?.({ first: next.first, last: next.last });
     if (next.endReached) onEndReached?.({ distanceFromEnd: next.distanceFromEnd });
   };
   const rows: ReactNode[] = [];
-  for (let index = window.start; index < window.end; index++) {
+  const start = keepAllRows ? 0 : window.start;
+  const end = keepAllRows ? itemCount : window.end;
+  const ranges = keepAllRows ? undefined : window.ranges;
+  const indices: number[] | undefined = ranges ? [] : undefined;
+  if (indices && ranges) {
+    for (const range of ranges) {
+      for (let index = range.start; index < range.end; index += range.step) indices.push(index);
+    }
+    indices.sort((a, b) => a - b);
+  }
+  const count = indices?.length ?? end - start;
+  for (let row = 0; row < count; row++) {
+    const index = indices?.[row] ?? start + row;
     const item = data[index]!;
     const separator = index < data.length - 1 ? separatorElement : null;
     rows.push(
@@ -225,7 +263,7 @@ export function ListBridge<T>({
 
   return (
     <PageContentInsetsContext.Provider value={null}>
-      <Host {...props} accessibilityLabel={container.accessibilityLabel ?? 'List'} onChange={onRange}>
+      <Host {...props} accessibilityLabel={container.accessibilityLabel ?? 'List'} onChange={onRange} onListLayout={onListLayout}>
         {header != null && <Header>{header}</Header>}
         {data.length ? rows : <Empty>{empty}</Empty>}
         {footer != null && <Footer>{footer}</Footer>}
