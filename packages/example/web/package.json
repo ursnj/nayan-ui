@@ -1,5 +1,5 @@
 {
-  "name": "@nayan-example/web",
+  "name": "@nayan-ui/web",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -10,7 +10,7 @@
     "typecheck": "bun check"
   },
   "dependencies": {
-    "@nayan-example/shared": "workspace:*",
+    "@nayan-ui/shared": "workspace:*",
     "nayan-ui": "workspace:*",
     "react": "19.3.0",
     "react-dom": "19.3.0",

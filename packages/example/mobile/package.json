@@ -1,5 +1,5 @@
 {
-  "name": "@nayan-example/mobile",
+  "name": "@nayan-ui/mobile",
   "version": "1.0.0",
   "private": true,
   "main": "expo-router/entry",
@@ -11,7 +11,7 @@
     "typecheck": "bun check"
   },
   "dependencies": {
-    "@nayan-example/shared": "workspace:*",
+    "@nayan-ui/shared": "workspace:*",
     "nayan-ui": "workspace:*",
     "expo": "^58.0.0",
     "expo-constants": "~58.0.14",

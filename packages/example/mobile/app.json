@@ -6,10 +6,10 @@
     "orientation": "portrait",
     "scheme": "nayan-ui-starter",
     "ios": {
-      "bundleIdentifier": "com.nayanui.engine.examples"
+      "bundleIdentifier": "com.nayanui.example"
     },
     "android": {
-      "package": "com.nayanui.engine.examples"
+      "package": "com.nayanui.example"
     },
     "plugins": [
       "expo-router",

@@ -14,10 +14,10 @@
       },
     },
     "packages/example/mobile": {
-      "name": "@nayan-example/mobile",
+      "name": "@nayan-ui/mobile",
       "version": "1.0.0",
       "dependencies": {
-        "@nayan-example/shared": "workspace:*",
+        "@nayan-ui/shared": "workspace:*",
         "expo": "^58.0.0",
         "expo-constants": "~58.0.14",
         "expo-dev-client": "~58.0.6",
@@ -35,7 +35,7 @@
       },
     },
     "packages/example/shared": {
-      "name": "@nayan-example/shared",
+      "name": "@nayan-ui/shared",
       "version": "1.0.0",
       "peerDependencies": {
         "nayan-ui": "*",
@@ -43,10 +43,10 @@
       },
     },
     "packages/example/web": {
-      "name": "@nayan-example/web",
+      "name": "@nayan-ui/web",
       "version": "1.0.0",
       "dependencies": {
-        "@nayan-example/shared": "workspace:*",
+        "@nayan-ui/shared": "workspace:*",
         "nayan-ui": "workspace:*",
         "react": "19.3.0",
         "react-dom": "19.3.0",
@@ -503,13 +503,13 @@
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.2.6", "", { "dependencies": { "@tybys/wasm-util": "^0.10.3" }, "peerDependencies": { "@emnapi/core": "^1.7.1 || 2.0.0-beta.2", "@emnapi/runtime": "^1.7.1 || 2.0.0-beta.2" } }, "sha512-mRyDmEw9/fCDXCGfL1sbgIw/GUK0PVxRW4YwgPN61F3LQ+fSyoBFarJVzgGyhF6kRzEQZ0FejDqm4WLXSeqQmw=="],
 
-    "@nayan-example/mobile": ["@nayan-example/mobile@workspace:packages/example/mobile"],
-
-    "@nayan-example/shared": ["@nayan-example/shared@workspace:packages/example/shared"],
-
-    "@nayan-example/web": ["@nayan-example/web@workspace:packages/example/web"],
-
     "@nayan-ui/example": ["@nayan-ui/example@workspace:packages/example"],
+
+    "@nayan-ui/mobile": ["@nayan-ui/mobile@workspace:packages/example/mobile"],
+
+    "@nayan-ui/shared": ["@nayan-ui/shared@workspace:packages/example/shared"],
+
+    "@nayan-ui/web": ["@nayan-ui/web@workspace:packages/example/web"],
 
     "@nayan-ui/website": ["@nayan-ui/website@workspace:packages/website"],
 
