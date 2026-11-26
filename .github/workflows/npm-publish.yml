@@ -1,6 +1,10 @@
 name: Build and publish nayan-ui
+run-name: >-
+  ${{ github.event_name == 'issue_comment' && format('Verify nayan-ui for PR #{0}', github.event.issue.number) || 'Build and publish nayan-ui' }}
 
 on:
+  issue_comment:
+    types: [created]
   workflow_dispatch:
     inputs:
       command:
@@ -25,9 +29,44 @@ env:
   NPM_DIST_TAG: ${{ inputs.beta && 'beta' || 'latest' }}
 
 jobs:
+  resolve-test:
+    name: Resolve PR test request
+    if: >-
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request &&
+      github.event.issue.state == 'open' &&
+      github.event.comment.body == 'test'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    permissions:
+      pull-requests: read
+    outputs:
+      sha: ${{ steps.request.outputs.sha }}
+      repository: ${{ steps.request.outputs.repository }}
+    steps:
+      - name: Check access and resolve the PR head
+        id: request
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { comment } = context.payload;
+            if (comment.body !== 'test') return;
+            const username = comment.user.login;
+            const access = await github.rest.repos.getCollaboratorPermissionLevel({ ...context.repo, username }).catch(error => {
+              if (error.status === 404) return null;
+              throw error;
+            });
+            if (!['admin', 'write'].includes(access?.data.permission)) return;
+
+            const { data: pr } = await github.rest.pulls.get({ ...context.repo, pull_number: context.issue.number });
+            if (pr.state !== 'open' || !pr.head.repo) return;
+            core.setOutput('sha', pr.head.sha);
+            core.setOutput('repository', pr.head.repo.full_name);
+
   check-publish:
     name: Check npm package
     if: >-
+      github.event_name == 'workflow_dispatch' &&
       toJSON(github.event.repository.private) == 'false' &&
       github.repository == 'ursnj/nayan-ui' &&
       inputs.command == 'publish'
@@ -53,14 +92,16 @@ jobs:
 
   build-core:
     name: Build core (${{ matrix.platform }})
-    needs: check-publish
+    needs: [check-publish, resolve-test]
     if: >-
       !cancelled() &&
-      toJSON(github.event.repository.private) == 'false' &&
-      (inputs.command == 'validate' || needs.check-publish.result == 'success')
+      (needs.resolve-test.outputs.sha != '' ||
+      (toJSON(github.event.repository.private) == 'false' &&
+      (inputs.command == 'validate' || needs.check-publish.result == 'success')))
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
     strategy:
+      fail-fast: ${{ github.event_name != 'issue_comment' }}
       matrix:
         include:
           - platform: ios
@@ -88,9 +129,12 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
+          repository: ${{ needs.resolve-test.outputs.repository || github.repository }}
+          ref: ${{ needs.resolve-test.outputs.sha || github.sha }}
           persist-credentials: false
 
       - name: Restore compiled platform binaries
+        if: github.event_name != 'issue_comment'
         id: core-cache
         uses: actions/cache@v4
         with:
@@ -105,7 +149,7 @@ jobs:
           rustup default "$RUST_VERSION"
 
       - name: Cache Cargo dependencies
-        if: steps.core-cache.outputs.cache-hit != 'true'
+        if: github.event_name != 'issue_comment' && steps.core-cache.outputs.cache-hit != 'true'
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: packages/nayan-ui/native/core -> target
@@ -170,11 +214,12 @@ jobs:
 
   test-core:
     name: Test Rust core
-    needs: check-publish
+    needs: [check-publish, resolve-test]
     if: >-
       !cancelled() &&
-      toJSON(github.event.repository.private) == 'false' &&
-      (inputs.command == 'validate' || needs.check-publish.result == 'success')
+      (needs.resolve-test.outputs.sha != '' ||
+      (toJSON(github.event.repository.private) == 'false' &&
+      (inputs.command == 'validate' || needs.check-publish.result == 'success')))
     runs-on: macos-15
     timeout-minutes: 30
     env:
@@ -182,23 +227,26 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
+          repository: ${{ needs.resolve-test.outputs.repository || github.repository }}
+          ref: ${{ needs.resolve-test.outputs.sha || github.sha }}
           persist-credentials: false
       - name: Set up Rust toolchain
         run: |
           rustup toolchain install "$RUST_VERSION" --profile minimal
           rustup default "$RUST_VERSION"
       - uses: Swatinem/rust-cache@v2
+        if: github.event_name != 'issue_comment'
         with:
           workspaces: packages/nayan-ui/native/core -> target
           cache-bin: 'false'
       - run: cargo test --locked --manifest-path packages/nayan-ui/native/core/Cargo.toml
 
   package:
-    needs: [build-core, test-core]
+    needs: [build-core, test-core, resolve-test]
     if: >-
       !cancelled() &&
       needs.build-core.result == 'success' &&
-      needs.test-core.result == 'success'
+      (needs.test-core.result == 'success' || needs.resolve-test.outputs.sha != '')
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     outputs:
@@ -206,6 +254,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
+          repository: ${{ needs.resolve-test.outputs.repository || github.repository }}
+          ref: ${{ needs.resolve-test.outputs.sha || github.sha }}
           persist-credentials: false
 
       - uses: actions/download-artifact@v4
@@ -218,12 +268,13 @@ jobs:
         id: package
 
       - name: Dry-run npm publishing (${{ env.NPM_DIST_TAG }})
-        if: inputs.command == 'validate'
+        if: github.event_name == 'workflow_dispatch' && inputs.command == 'validate'
         env:
           TARBALL: ${{ steps.package.outputs.tarball }}
         run: npm publish "$TARBALL" --access public --tag "$NPM_DIST_TAG" --ignore-scripts --dry-run --loglevel=warn
 
       - uses: actions/upload-artifact@v4
+        if: github.event_name == 'workflow_dispatch'
         with:
           name: nayan-ui
           path: ${{ steps.package.outputs.tarball }}
@@ -234,6 +285,7 @@ jobs:
 
   publish:
     if: >-
+      github.event_name == 'workflow_dispatch' &&
       toJSON(github.event.repository.private) == 'false' &&
       github.repository == 'ursnj/nayan-ui' &&
       inputs.command == 'publish'
@@ -262,3 +314,36 @@ jobs:
         env:
           PACKAGED_TARBALL: ${{ needs.package.outputs.tarball }}
         run: npm publish "$RUNNER_TEMP/npm-package/${PACKAGED_TARBALL##*/}" --access public --tag "$NPM_DIST_TAG" --ignore-scripts --loglevel=warn
+
+  report-test:
+    name: Report verification on pull request
+    needs: [resolve-test, build-core, test-core, package]
+    if: always() && github.event_name == 'issue_comment' && needs.resolve-test.outputs.sha != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/github-script@v8
+        env:
+          HEAD_SHA: ${{ needs.resolve-test.outputs.sha }}
+          BUILD_RESULT: ${{ needs.build-core.result }}
+          RUST_RESULT: ${{ needs.test-core.result }}
+          PACKAGE_RESULT: ${{ needs.package.result }}
+        with:
+          script: |
+            const checks = [
+              ['iOS, Android, and WebAssembly builds', process.env.BUILD_RESULT],
+              ['Rust core tests', process.env.RUST_RESULT],
+              ['JavaScript build, type checks, tests, and npm package validation', process.env.PACKAGE_RESULT],
+            ];
+            const passed = checks.every(([, status]) => status === 'success');
+            const run = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${context.runId}`;
+            const body = [
+              `**Nayan UI verification ${passed ? 'passed' : 'did not pass'}** for \`${process.env.HEAD_SHA}\`.`,
+              '',
+              ...checks.map(([name, status]) => `- ${name}: ${status}`),
+              '',
+              `[View workflow logs](${run})`,
+            ].join('\n');
+            await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body });

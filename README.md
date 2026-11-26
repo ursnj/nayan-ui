@@ -135,6 +135,8 @@ bun run engine:build
 | `bun run test`              | Run the engine and website Bun tests     |
 | `bun run clean`             | Remove `node_modules` and build outputs  |
 
+On an open pull request, a collaborator with write access can post `test` as a standalone comment. GitHub Actions verifies the current PR commit with the same library builds and checks used for npm releases and posts the results with a link to the logs.
+
 ## Publishing
 
 - **Engine package** — manually run **Build and publish nayan-ui**. Choose **validate** for a dry run and a verified tarball, or **publish** to release to npm. Leave **Publish as beta** unchecked for `latest`, or check it for `beta`. The package version comes from `packages/nayan-ui/package.json`.

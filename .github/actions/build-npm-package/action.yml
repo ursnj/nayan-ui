@@ -19,6 +19,7 @@ runs:
         package-manager-cache: false
 
     - uses: actions/cache@v4
+      if: github.event_name != 'issue_comment'
       with:
         path: ~/.bun/install/cache
         key: npm-bun-${{ runner.os }}-${{ hashFiles('.bun-version', 'bun.lock', 'bunfig.toml') }}
