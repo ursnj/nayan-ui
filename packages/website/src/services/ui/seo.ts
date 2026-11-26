@@ -68,7 +68,7 @@ export function engineGuideSchemas(guide: EngineGuide, url = guideUrl(guide)) {
       name: "Nayan UI starter",
       description:
         "A Bun workspace with a landing page shared by Expo and Vite apps.",
-      codeRepository: `${REPO_URL}/tree/main/packages/example`,
+      codeRepository: `${REPO_URL}/tree/main/templates/nayan-ui`,
       programmingLanguage: ["TypeScript", "React", "React Native"],
       runtimePlatform: ["iOS", "Android", "Web"],
       targetProduct: engineAbout,

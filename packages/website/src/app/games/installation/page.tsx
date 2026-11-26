@@ -47,10 +47,10 @@ const schemas = [
       "Run the Nayan UI starter landing page on the web or in an Expo development build.",
     tools: ["Git", "Bun"],
     steps: [
-      { name: "Get the example", text: "Clone https://github.com/ursnj/nayan-ui.git." },
+      { name: "Get the starter", text: "Clone https://github.com/ursnj/nayan-ui.git." },
       {
         name: "Install",
-        text: "From the repository root, install the filtered Bun workspaces, run bun run engine:build, then open packages/example.",
+        text: "Open templates/nayan-ui and run bun install --frozen-lockfile.",
       },
       { name: "Run in the browser", text: "Run bun run web." },
       {

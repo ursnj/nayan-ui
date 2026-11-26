@@ -1,7 +1,12 @@
 {
-  "name": "@nayan-ui/example",
+  "name": "nayan-ui-starter",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "mobile",
+    "shared",
+    "web"
+  ],
   "scripts": {
     "web": "bun run --cwd web dev",
     "web:build": "bun run --cwd web build",
@@ -10,6 +15,9 @@
     "ios": "bun run --cwd mobile ios",
     "android": "bun run --cwd mobile android",
     "typecheck": "bun run --cwd web typecheck && bun run --cwd mobile typecheck"
+  },
+  "dependencies": {
+    "react-reconciler": "^0.34.0"
   },
   "devDependencies": {
     "@types/react": "~19.3.0",

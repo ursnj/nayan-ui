@@ -1,3 +1,6 @@
+node_modules/
+dist/
+.expo/
 mobile/ios/
 mobile/android/
 mobile/expo-env.d.ts

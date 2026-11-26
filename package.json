@@ -6,10 +6,6 @@
   "license": "ISC",
   "workspaces": [
     "packages/nayan-ui",
-    "packages/example",
-    "packages/example/mobile",
-    "packages/example/shared",
-    "packages/example/web",
     "packages/website"
   ],
   "scripts": {
@@ -17,12 +13,10 @@
     "format:check": "bun fmt --check .",
     "lint": "bun lint --no-script .",
     "lint:fix": "bun lint --no-script --fix .",
-    "typecheck": "bun run --parallel engine:typecheck example:typecheck website:typecheck",
+    "typecheck": "bun run --parallel engine:typecheck website:typecheck",
     "test": "bun run --sequential engine:test engine:test:integration website:test",
     "quality": "bun run --parallel --no-exit-on-error format:check lint typecheck test",
-    "clean": "rm -rf node_modules packages/*/node_modules packages/*/lib packages/*/dist packages/example/*/node_modules packages/example/*/dist",
-    "example": "bun run --filter @nayan-ui/example",
-    "example:typecheck": "bun run example typecheck",
+    "clean": "rm -rf node_modules packages/*/node_modules packages/*/lib packages/*/dist",
     "website:dev": "bun run --filter @nayan-ui/website dev",
     "website:build": "bun run --filter @nayan-ui/website build",
     "website:start": "bun run --filter @nayan-ui/website start",

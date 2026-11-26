@@ -22,7 +22,7 @@ export const PracticalGuides: EngineGuide[] = [
 bun run web`,
           },
         ],
-        note: "For iOS and Android, follow the native build instructions in packages/example/README.md.",
+        note: "For iOS and Android, follow the native build instructions in templates/nayan-ui/README.md.",
       },
       {
         id: "project-layout",
@@ -75,7 +75,7 @@ export function Landing() {
         id: "try-it",
         title: "Run the scene",
         paragraphs: [
-          "Reload the starter. The blue sphere falls and bounces on the green plane. Run bun run example:typecheck from the repository root to check both hosts.",
+          "Reload the starter. The blue sphere falls and bounces on the green plane. Run bun run typecheck from the template directory to check both hosts.",
         ],
       },
     ],

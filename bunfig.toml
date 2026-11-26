@@ -1,5 +1,4 @@
 [install]
-# Expo and Metro use the same hoisted workspace layout as Playtura.
 linker = "hoisted"
 
 [fmt]
@@ -15,8 +14,8 @@ ignorePatterns = [
   "**/build/",
   "**/target/",
   "**/coverage/",
-  "packages/example/mobile/ios/",
-  "packages/example/mobile/android/",
+  "templates/nayan-ui/mobile/ios/",
+  "templates/nayan-ui/mobile/android/",
   "packages/nayan-ui/lib/",
   "**/shared/cpp/generated/",
   "**/expo-env.d.ts",
@@ -34,7 +33,7 @@ ignorePatterns = [
   "packages/nayan-ui/lib/**",
   "packages/nayan-ui/native/core/build/**",
   "**/shared/cpp/generated/**",
-  "packages/example/mobile/ios/**",
-  "packages/example/mobile/android/**",
+  "templates/nayan-ui/mobile/ios/**",
+  "templates/nayan-ui/mobile/android/**",
   "packages/website/src/app/nayan-ui-styles.ts"
 ]

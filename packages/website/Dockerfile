@@ -21,10 +21,6 @@ COPY package.json bun.lock bunfig.toml ./
 
 # Copy all workspace package.json files
 COPY packages/nayan-ui/package.json ./packages/nayan-ui/package.json
-COPY packages/example/package.json ./packages/example/package.json
-COPY packages/example/mobile/package.json ./packages/example/mobile/package.json
-COPY packages/example/shared/package.json ./packages/example/shared/package.json
-COPY packages/example/web/package.json ./packages/example/web/package.json
 COPY packages/website/package.json ./packages/website/package.json
 # The checked-in games tarball is pinned by bun.lock.
 COPY packages/website/scripts/nayan-games.tgz ./packages/website/scripts/nayan-games.tgz

@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@nayan-ui/shared": "workspace:*",
-    "nayan-ui": "workspace:*",
+    "nayan-ui": "1.0.0-beta.5",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },

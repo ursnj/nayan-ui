@@ -85,20 +85,17 @@ bun update --cwd=packages/website --ignore-scripts nayan-games
 
 Commit the archive and the updated `bun.lock` together. Local and CI Docker builds install that exact archive with Bun’s frozen lockfile. The games license is included in the archive.
 
-## Examples
+## Starter template
 
-| Example | Description |
-| --- | --- |
-| [packages/example](./packages/example) | Starter app for the local engine on web, iOS, and Android |
+The [Nayan UI starter](./templates/nayan-ui) is a standalone Bun project for web, iOS, and Android. It uses `nayan-ui@1.0.0-beta.5` from npm.
 
 ## Quick Start
 
 ```bash
 git clone --depth 1 https://github.com/ursnj/nayan-ui.git
-cd nayan-ui
-bun install --frozen-lockfile --filter nayan-ui --filter @nayan-ui/example --filter '@nayan-example/*'
-bun run engine:build
-bun run example web
+cd nayan-ui/templates/nayan-ui
+bun install --frozen-lockfile
+bun run web
 ```
 
 ## Repository Structure
@@ -107,14 +104,15 @@ bun run example web
 packages/
   nayan-ui/  nayan-ui  — Game engine and components
   website/   @nayan-ui/website — nayanui.com (Next.js)
-  example/   @nayan-ui/example — Starter app for Expo and Vite
+templates/
+  nayan-ui/  Standalone starter for Expo and Vite
 .github/     engine CI and website image publishing
 scripts/     local publish scripts (Docker)
 ```
 
 ## Development
 
-This monorepo uses the Bun channel in `.bun-version` and a hoisted workspace layout for Expo and Metro. The full checks need the checked-in games archive and the generated engine package. For engine-only work, use the filtered install above.
+This monorepo uses the Bun channel in `.bun-version`. The full checks need the checked-in games archive and the generated engine package. For engine-only work, use the filtered install above.
 
 ```bash
 bun install --frozen-lockfile
@@ -132,7 +130,7 @@ bun run engine:build
 | `bun run format`            | Format the codebase with Bun            |
 | `bun run format:check`      | Check formatting without writing files   |
 | `bun run lint`              | Run Bun lint across the monorepo          |
-| `bun run typecheck`         | Check the engine, examples, and website   |
+| `bun run typecheck`         | Check the engine and website             |
 | `bun run test`              | Run the engine and website Bun tests     |
 | `bun run clean`             | Remove `node_modules` and build outputs  |
 

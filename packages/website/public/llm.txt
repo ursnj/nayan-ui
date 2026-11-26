@@ -12,7 +12,7 @@ The `nayan-ui` package provides cross-platform interfaces, application services,
 - Nayan Video Editor: https://www.nayanui.com/video-editor
 - React quickstart: https://www.nayanui.com/game-engine/react
 - React Native quickstart: https://www.nayanui.com/game-engine/react-native
-- Interactive repository examples: https://github.com/ursnj/nayan-ui/tree/main/packages/example
+- Nayan UI starter template: https://github.com/ursnj/nayan-ui/tree/main/templates/nayan-ui
 
 ## Nayan Components
 
@@ -223,13 +223,13 @@ on entities, input()/strokes()/sample()/coverage() for games.
 nayan-games ships its own browser build (lib/web), so its games run in React websites too.
 
 ## Practical engine examples
-- Complete game (the repo's packages/example: Car Racing on iOS, Android and the web): https://www.nayanui.com/game-engine/first-game
+- Build a bouncing ball scene from the Nayan UI starter: https://www.nayanui.com/game-engine/first-game
 - Live playground (TypeScript editor with the engine's types, runs in the browser): https://www.nayanui.com/playground
 - Common recipes: https://www.nayanui.com/game-engine/recipes
 - AI agent instructions (file structure, one API per task, never-do list, game template): https://www.nayanui.com/game-engine/agent-guide
 - Structured API usage summary: https://www.nayanui.com/nayan-game-engine.json
 
-Start from packages/example in the GitHub repository (walkthrough at /game-engine/first-game), then the recipes. Load assets with
+Start from templates/nayan-ui in the GitHub repository (walkthrough at /game-engine/first-game), then the recipes. Load assets with
 loadModel, loadTexture, loadFont, audio.load, createShape and createSolid during setup; the engine caches
 and persists them (native app-private files, web IndexedDB, no eviction). No app-side asset caches.
 clearAssetCache() only from a user action. nayan-games loads each game behind its own loading screen

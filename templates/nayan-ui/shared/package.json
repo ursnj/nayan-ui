@@ -8,7 +8,7 @@
     "./theme": "./src/theme.ts"
   },
   "peerDependencies": {
-    "nayan-ui": "*",
+    "nayan-ui": "1.0.0-beta.5",
     "react": "*"
   }
 }
