@@ -36,7 +36,12 @@
     "url": "git+https://github.com/ursnj/nayan-ui.git",
     "directory": "packages/nayan-ui"
   },
+  "bin": {
+    "nayan-ui": "./cli/index.mjs"
+  },
   "files": [
+    "cli/index.mjs",
+    "cli/template.json",
     "src/**/*.{ts,tsx,js}",
     "src/components/icons/LICENSE.lucide",
     "lib/module/**/*.{js,d.ts}",
@@ -707,7 +712,7 @@
     "core:build:web": "native/core/scripts/build-web.sh",
     "build:web": "bun run core:build:web && bun scripts/build-web.mjs",
     "test:web": "bun test native/tests/web.test.ts",
-    "prepack": "bun scripts/check-package.mjs"
+    "prepack": "bun scripts/build-cli-template.mjs && bun scripts/check-package.mjs"
   },
   "optionalDependencies": {
     "react-reconciler": "^0.34.0"

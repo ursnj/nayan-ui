@@ -2807,7 +2807,7 @@ app or generated WASM for the selected profile. [Compiled Rust features](#select
 
 The package ships public entries, declarations, React Native codegen and
 autolinking files, Rust and native build inputs, the WASM and its worker assets,
-prebuilt native libraries, this README and licenses. Native profiles compile
+prebuilt native libraries, the starter CLI, this README and licenses. Native profiles compile
 from the shipped build sources. The package allowlist keeps tests, benchmarks,
 source maps, build caches and repository release tools in the source checkout.
 
@@ -2815,6 +2815,7 @@ The repository's publish checks verify the actual npm inventory. Run the same
 check from `packages/nayan-ui` after building the distribution.
 
 ```sh
+bun scripts/build-cli-template.mjs
 npm pack --ignore-scripts --dry-run --json | bun scripts/check-package.mjs --pack-json
 ```
 

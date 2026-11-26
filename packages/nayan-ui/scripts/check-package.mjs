@@ -8,6 +8,7 @@ const required = new Set([
   'LICENSE',
   'README.md',
   'package.json',
+  'cli/template.json',
   'NayanEngine.podspec',
   'react-native.config.js',
   'scripts/expo-plugin.cjs',
@@ -100,7 +101,7 @@ async function exportedFiles(value) {
   }
 }
 await exportedFiles(metadata.exports);
-for (const path of [metadata.main, metadata.browser, metadata.types]) required.add(path);
+for (const path of [metadata.main, metadata.browser, metadata.types, ...Object.values(metadata.bin)]) required.add(path);
 
 const packed = process.argv.includes('--pack-json');
 let manifest;

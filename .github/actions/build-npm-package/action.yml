@@ -46,6 +46,7 @@ runs:
       shell: bash
       working-directory: packages/nayan-ui
       run: |
+        bun scripts/build-cli-template.mjs
         npm pack --ignore-scripts --json --pack-destination "$RUNNER_TEMP" | bun scripts/check-package.mjs --pack-json
 
         version="$(node -p "require('./package.json').version")"
