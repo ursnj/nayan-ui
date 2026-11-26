@@ -3,7 +3,7 @@
 import { useState, type ComponentType, type ReactNode } from 'react';
 import * as Engine from 'nayan-ui/components';
 import SubHeader from '@/components/helpers/SubHeader';
-import { componentSource } from '@/services/nayan-ui/component-examples';
+import { componentSource } from '@/services/ui/component-examples';
 import { carouselOverview } from './previews/CarouselExamples';
 import { familiarExample } from './previews/FamiliarExamples';
 import { hostExample } from './previews/HostExamples';

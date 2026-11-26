@@ -1,6 +1,6 @@
 import { createElement, type ComponentType, type ReactNode } from 'react';
 import * as Engine from 'nayan-ui/components';
-import { componentSource } from '@/services/nayan-ui/component-examples';
+import { componentSource } from '@/services/ui/component-examples';
 import { scenario } from './scenario';
 import type { NamedComponentPreview } from './types';
 

@@ -27,7 +27,7 @@ import {
   useNTheme,
   NDrawer
 } from 'nayan-ui/components';
-import { standaloneExamples } from '@/services/nayan-ui/component-examples';
+import { standaloneExamples } from '@/services/ui/component-examples';
 import type { ComponentPreview } from './types';
 
 function Blur() {

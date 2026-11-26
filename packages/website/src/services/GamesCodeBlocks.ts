@@ -3,13 +3,13 @@
 
 // ── Installation ──────────────────────────────────────────────────────
 
-export const gamesExampleSetupCode = `git clone --depth 1 https://github.com/ursnj/nayan-ui.git
+export const starterSetupCode = `git clone --depth 1 https://github.com/ursnj/nayan-ui.git
 cd nayan-ui
 bun install --frozen-lockfile --filter nayan-ui --filter @nayan-ui/example --filter '@nayan-example/*'
 bun run engine:build
 cd packages/example`;
 
-export const createProjectCode = `${gamesExampleSetupCode}
+export const createProjectCode = `${starterSetupCode}
 bun run web        # browser
 bun run ios        # or: bun run android (development build)`;
 

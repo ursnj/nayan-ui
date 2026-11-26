@@ -1,8 +1,8 @@
 import type { GAME_IDS } from "nayan-games/services";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import GameDetail from "@/components/nayan-games/GameDetail";
-import GameExperience from "@/components/nayan-games/GameExperience";
+import GameDetail from "@/components/games/GameDetail";
+import GameExperience from "@/components/games/GameExperience";
 import JsonLd from "@/components/helpers/JsonLd";
 import { gamesData } from "@/services/GamesData";
 import {

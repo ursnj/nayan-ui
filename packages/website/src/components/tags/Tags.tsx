@@ -6,7 +6,7 @@ import { ACCENT_SOFT, CARD, H4_CARD } from '@/design/system';
 import Sidebar from '@/components/helpers/Sidebar';
 import SubHeader from '@/components/helpers/SubHeader';
 import TagsList from '@/components/helpers/TagsList';
-import { referenceTopics, taggedComponents, taggedModules, type TaggedReference } from '@/services/nayan-ui/reference-tags';
+import { referenceTopics, taggedComponents, taggedModules, type TaggedReference } from '@/services/ui/reference-tags';
 
 const tagNavigation = {
   title: 'Tags',

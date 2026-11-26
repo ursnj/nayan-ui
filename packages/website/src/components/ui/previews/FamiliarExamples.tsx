@@ -22,7 +22,7 @@ import {
   NText,
   NView
 } from 'nayan-ui/components';
-import { componentSource } from '@/services/nayan-ui/component-examples';
+import { componentSource } from '@/services/ui/component-examples';
 import { AccordionRows, accordionSource } from './AccordionExamples';
 import { RadioOption, RadioOptions, radioGroupSource, radioSource } from './RadioExamples';
 import SwitchRows, { switchSource } from './SwitchRows';

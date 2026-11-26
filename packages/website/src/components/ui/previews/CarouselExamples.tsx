@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { NButton, NCarousel, NImage, NText, NView } from 'nayan-ui/components';
-import { componentSource } from '@/services/nayan-ui/component-examples';
+import { componentSource } from '@/services/ui/component-examples';
 import { scenario } from './scenario';
 
 const slides = [

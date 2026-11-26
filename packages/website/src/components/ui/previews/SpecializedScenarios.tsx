@@ -1,7 +1,7 @@
 import { PREVIEW_STACK } from '@/design/system';
 import { NText } from 'nayan-ui/components';
 import dynamic from 'next/dynamic';
-import { standaloneExamples } from '@/services/nayan-ui/component-examples';
+import { standaloneExamples } from '@/services/ui/component-examples';
 import type { SpecializedSlug } from './SpecializedExamples';
 import type { ComponentPreview, NamedComponentPreview } from './types';
 

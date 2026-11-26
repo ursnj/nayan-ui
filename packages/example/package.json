@@ -9,8 +9,7 @@
     "prebuild": "bun run --cwd mobile prebuild",
     "ios": "bun run --cwd mobile ios",
     "android": "bun run --cwd mobile android",
-    "typecheck": "bun run --cwd web typecheck && bun run --cwd mobile typecheck && bun run styles",
-    "styles": "bun shared/src/concepts/styles.ts"
+    "typecheck": "bun run --cwd web typecheck && bun run --cwd mobile typecheck"
   },
   "devDependencies": {
     "@types/react": "~19.3.0",

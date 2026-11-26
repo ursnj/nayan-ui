@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { NView, NText, NCode, NImage } from 'nayan-ui/components';
 import { Section } from '@/design/Primitives';
 import { BODY, BUTTON_SECONDARY, CARD, EYEBROW, H2, H3, LEAD } from '@/design/system';
-import { gamesExampleSetupCode } from '@/services/GamesCodeBlocks';
+import { starterSetupCode } from '@/services/GamesCodeBlocks';
 import { GAMES_LIST } from '@/services/GamesData';
 
 const SPOTLIGHT = ['car-racing', 'treasure-hunt', 'block-blast'];
@@ -56,7 +56,7 @@ export default function GamesSpotlight() {
               <Box aria-hidden size={20} className="shrink-0 text-accent" />
               <NText tag="h3" className={H3}>Build your first game</NText>
             </NView>
-            <NText tag="p" className={`mt-2 ${BODY}`}>Run the Car Racing example with Expo and Vite, then build on it.</NText>
+            <NText tag="p" className={`mt-2 ${BODY}`}>Start with the Nayan UI boilerplate for Expo and Vite, then add your first scene.</NText>
             <Link href="/game-engine/first-game" className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-accent hover:underline">
               Follow the tutorial <ArrowRight aria-hidden size={15} />
             </Link>
@@ -64,9 +64,9 @@ export default function GamesSpotlight() {
           <NView tag="pre"
             className="min-w-0 overflow-x-auto rounded-lg border border-border bg-background px-4 py-3 font-mono text-xs leading-relaxed text-foreground"
             tabIndex={0}
-            aria-label="Car Racing setup commands"
+            aria-label="Nayan UI starter setup commands"
           >
-            <NCode tag="code">{`${gamesExampleSetupCode}\nbun run web`}</NCode>
+            <NCode tag="code">{`${starterSetupCode}\nbun run web`}</NCode>
           </NView>
         </NView>
       </Section>

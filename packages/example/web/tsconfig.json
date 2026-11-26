@@ -8,8 +8,7 @@
     "strict": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "types": ["vite/client"],
-    "moduleSuffixes": [".web", ""]
+    "types": ["vite/client"]
   },
   "include": ["src"]
 }

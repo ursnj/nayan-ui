@@ -2,10 +2,10 @@ import { readdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { gamesData } from "../src/services/GamesData";
-import { componentReferences } from "../src/services/nayan-ui/component-reference";
-import { moduleReferences } from "../src/services/nayan-ui/module-reference";
-import { engineNavigation } from "../src/services/nayan-ui/navigation";
-import { referenceTags } from "../src/services/nayan-ui/reference-tags";
+import { componentReferences } from "../src/services/ui/component-reference";
+import { moduleReferences } from "../src/services/ui/module-reference";
+import { engineNavigation } from "../src/services/ui/navigation";
+import { referenceTags } from "../src/services/ui/reference-tags";
 import { SITE_URL } from "../src/services/seo";
 import {
   getMenuItemByTag,

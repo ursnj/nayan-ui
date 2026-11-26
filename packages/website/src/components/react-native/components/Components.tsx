@@ -6,9 +6,9 @@ import Link from "next/link";
 import { DocsIntro } from "@/design/Primitives";
 import { CARD_INTERACTIVE, H4_CARD } from "@/design/system";
 import Sidebar from "@/components/helpers/Sidebar";
-import PlatformPills from "@/components/nayan-reference/PlatformPills";
+import PlatformPills from "@/components/reference/PlatformPills";
 import { reactNativeSidebarItems } from "@/services/Utils";
-import { legacyComponentPlatforms } from "@/services/nayan-ui/component-reference";
+import { legacyComponentPlatforms } from "@/services/ui/component-reference";
 
 const Components = () => {
   const items = reactNativeSidebarItems.filter((item: any) => item.isComponent);

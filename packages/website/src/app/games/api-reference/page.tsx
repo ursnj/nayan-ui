@@ -1,4 +1,4 @@
-import ApiReference from "@/components/nayan-games/ApiReference";
+import ApiReference from "@/components/games/ApiReference";
 import JsonLd from "@/components/helpers/JsonLd";
 import {
   SITE_URL,

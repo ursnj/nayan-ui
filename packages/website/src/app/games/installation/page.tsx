@@ -1,4 +1,4 @@
-import GamesInstallation from "@/components/nayan-games/Installation";
+import GamesInstallation from "@/components/games/Installation";
 import JsonLd from "@/components/helpers/JsonLd";
 import {
   SITE_URL,
@@ -30,7 +30,7 @@ const schemas = [
     url: `${SITE_URL}/games/installation`,
     about: gamesAbout,
     sections: [
-      "Start with the games example",
+      "Start with the Nayan UI starter",
       "Requirements",
       "React Native (Expo)",
       "React in the browser (Next.js, Vite)",
@@ -42,9 +42,9 @@ const schemas = [
     isPartOf: { name: "Nayan Games documentation", url: `${SITE_URL}/games` },
   }),
   buildHowToSchema({
-    name: "Run the Nayan UI games example",
+    name: "Run the Nayan UI starter",
     description:
-      "Run the Car Racing game shared by the Expo and Vite apps in the games example.",
+      "Run the Nayan UI starter landing page on the web or in an Expo development build.",
     tools: ["Git", "Bun"],
     steps: [
       { name: "Get the example", text: "Clone https://github.com/ursnj/nayan-ui.git." },
@@ -52,9 +52,9 @@ const schemas = [
         name: "Install",
         text: "From the repository root, install the filtered Bun workspaces, run bun run engine:build, then open packages/example.",
       },
-      { name: "Play in the browser", text: "Run bun run web." },
+      { name: "Run in the browser", text: "Run bun run web." },
       {
-        name: "Play on a phone",
+        name: "Run on a phone",
         text: "Run bun run ios or bun run android, in a development build (not Expo Go).",
       },
     ],

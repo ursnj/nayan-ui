@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
-import NayanGameEngineDocumentation from "@/components/nayan-game-engine/NayanGameEngineDocumentation";
+import NayanGameEngineDocumentation from "@/components/game-engine/NayanGameEngineDocumentation";
 import JsonLd from "@/components/helpers/JsonLd";
-import { engineGuides } from "@/services/nayan-ui/guides";
-import { engineGuideMetadata, engineGuideSchemas } from "@/services/nayan-ui/seo";
+import { engineGuides } from "@/services/ui/guides";
+import { engineGuideMetadata, engineGuideSchemas } from "@/services/ui/seo";
 
 const findGuide = (slug: string) =>
   engineGuides.find((item) => item.slug === slug && item.slug !== "overview");

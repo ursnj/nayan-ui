@@ -3,11 +3,11 @@ import ts from "typescript";
 import { mkdtemp, mkdir, writeFile, rm, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve, join } from "node:path";
-import { engineGuides } from "../src/services/nayan-ui/guides";
-import { engineNavigation } from "../src/services/nayan-ui/navigation";
+import { engineGuides } from "../src/services/ui/guides";
+import { engineNavigation } from "../src/services/ui/navigation";
 import { createRequire } from "node:module";
-import { sectionExamples } from "../src/services/nayan-ui/section-examples";
-import inventory from "../src/services/nayan-ui/api-inventory.json";
+import { sectionExamples } from "../src/services/ui/section-examples";
+import inventory from "../src/services/ui/api-inventory.json";
 import { clearGameAssetsCode } from "../src/services/GamesCodeBlocks";
 
 const packagePath = process.argv[2];

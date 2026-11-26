@@ -1,5 +1,4 @@
-// Expo config plugin: raises Android's minSdkVersion. The engine (AAudio) and react-native-webgpu
-// (AHardwareBuffer) both need Android 8.0 / API 26.
+// Set Android's minimum SDK to API 26 for Nayan UI.
 const { withGradleProperties } = require('expo/config-plugins');
 
 module.exports = function withAndroidMinSdk(config, minSdk = 26) {

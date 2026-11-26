@@ -7,9 +7,9 @@ import { usePathname } from "next/navigation";
 import { DocsIntro } from "@/design/Primitives";
 import { CARD_INTERACTIVE, H4_CARD } from "@/design/system";
 import Sidebar from "@/components/helpers/Sidebar";
-import PlatformPills from "@/components/nayan-reference/PlatformPills";
+import PlatformPills from "@/components/reference/PlatformPills";
 import { getMenuItem, getSidebarItems } from "@/services/Utils";
-import { legacyComponentPlatforms } from "@/services/nayan-ui/component-reference";
+import { legacyComponentPlatforms } from "@/services/ui/component-reference";
 
 const Components = () => {
   const pathname = usePathname();

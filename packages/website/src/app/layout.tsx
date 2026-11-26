@@ -6,7 +6,7 @@ import Header from '@/components/helpers/Header';
 import JsonLd from '@/components/helpers/JsonLd';
 import ThemeProvider from '@/components/helpers/ThemeProvider';
 import './globals.css';
-import { moduleReferences } from '@/services/nayan-ui/module-reference';
+import { moduleReferences } from '@/services/ui/module-reference';
 import {
   BANNER_HEIGHT,
   BANNER_WIDTH,

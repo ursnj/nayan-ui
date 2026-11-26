@@ -1,4 +1,4 @@
-import PlaygroundPage, { playgroundMetadata } from "@/components/nayan-playground/PlaygroundPage";
+import PlaygroundPage, { playgroundMetadata } from "@/components/playground/PlaygroundPage";
 
 const path = "/playground";
 

@@ -4,10 +4,10 @@ import { useEffect, useRef, useState, type ComponentType, type ReactNode } from 
 import { NPress, NText, NView } from 'nayan-ui/components';
 import { clipboard } from 'nayan-ui/clipboard';
 import { Play, RotateCcw, Copy, Check } from '@/design/Icons';
-import CodeEditor from '@/components/nayan-playground/CodeEditor';
-import { createCompiler } from '@/components/nayan-playground/compiler';
-import { evaluateExample } from '@/components/nayan-playground/evaluate';
-import PreviewBoundary from '@/components/nayan-playground/PreviewBoundary';
+import CodeEditor from '@/components/playground/CodeEditor';
+import { createCompiler } from '@/components/playground/compiler';
+import { evaluateExample } from '@/components/playground/evaluate';
+import PreviewBoundary from '@/components/playground/PreviewBoundary';
 import PreviewSurface from '@/components/ui/previews/PreviewSurface';
 import { BrowserFrame } from '@/design/Primitives';
 import { exampleModules } from '@/components/ui/previews/exampleModules';

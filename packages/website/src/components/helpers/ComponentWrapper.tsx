@@ -8,7 +8,7 @@ import { PhoneFrame } from "@/design/Primitives";
 import { CARD, LEAD } from "@/design/system";
 import TagsList from "@/components/helpers/TagsList";
 import { getMenuItem, getSidebarItems } from "@/services/Utils";
-import { tagsForReference } from "@/services/nayan-ui/reference-tags";
+import { tagsForReference } from "@/services/ui/reference-tags";
 import { REPO_URL } from "@/services/seo";
 import Attributes from "./Attributes";
 import Code from "./Code";

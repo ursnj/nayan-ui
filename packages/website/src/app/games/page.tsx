@@ -1,5 +1,5 @@
-import Games from "@/components/nayan-games/NayanGames";
-import { FAQS, FEATURES, STEPS } from "@/components/nayan-games/content";
+import Games from "@/components/games/NayanGames";
+import { FAQS, FEATURES, STEPS } from "@/components/games/content";
 import JsonLd from "@/components/helpers/JsonLd";
 import { GAMES_LIST } from "@/services/GamesData";
 import {

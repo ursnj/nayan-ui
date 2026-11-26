@@ -1,4 +1,4 @@
-import GamesLicensing from "@/components/nayan-games/Licensing";
+import GamesLicensing from "@/components/games/Licensing";
 import JsonLd from "@/components/helpers/JsonLd";
 import {
   SITE_URL,

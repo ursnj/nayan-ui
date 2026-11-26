@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
-import { ReferencePage } from '@/components/nayan-reference/ReferencePage';
-import { componentReferences } from '@/services/nayan-ui/component-reference';
-import { referenceEntryMetadata } from '@/services/nayan-ui/reference-entry';
+import { ReferencePage } from '@/components/reference/ReferencePage';
+import { componentReferences } from '@/services/ui/component-reference';
+import { referenceEntryMetadata } from '@/services/ui/reference-entry';
 
 export const dynamicParams = false;
 

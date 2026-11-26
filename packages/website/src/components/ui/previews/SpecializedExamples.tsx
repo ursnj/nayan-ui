@@ -148,7 +148,7 @@ function MarkdownDemo({ alternate }: DemoProps) {
 function VideoDemo({ alternate }: DemoProps) {
   return (
     <VideoPlayer
-      source="/nayan-ui/reference-orbit.mp4"
+      source="/ui/reference-orbit.mp4"
       controls
       muted
       accessibilityLabel="Orbit sample clip"

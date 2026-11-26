@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import JsonLd from '@/components/helpers/JsonLd';
 import { TagResults } from '@/components/tags/Tags';
-import { findReferenceTag } from '@/services/nayan-ui/reference-tags';
+import { findReferenceTag } from '@/services/ui/reference-tags';
 import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from '@/services/seo';
 
 type Props = { params: Promise<{ tag: string }> };

@@ -3,11 +3,11 @@ import Sidebar from '@/components/helpers/Sidebar';
 import SubHeader from '@/components/helpers/SubHeader';
 import TagsList from '@/components/helpers/TagsList';
 import { DocsIntro } from '@/design/Primitives';
-import ComponentAttributes from '@/components/nayan-reference/ComponentAttributes';
-import PlatformPills from '@/components/nayan-reference/PlatformPills';
+import ComponentAttributes from '@/components/reference/ComponentAttributes';
+import PlatformPills from '@/components/reference/PlatformPills';
 import { getMenuItem } from '@/services/Utils';
-import { findComponentReference, legacyComponentAlternatives, legacyComponentPlatforms } from '@/services/nayan-ui/component-reference';
-import { tagsForReference } from '@/services/nayan-ui/reference-tags';
+import { findComponentReference, legacyComponentAlternatives, legacyComponentPlatforms } from '@/services/ui/component-reference';
+import { tagsForReference } from '@/services/ui/reference-tags';
 import { EngineComponentExample } from './ComponentExamples';
 
 export default function NayanComponentDoc({ path }: { path: string }) {

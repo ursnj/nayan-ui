@@ -1,7 +1,7 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import NayanGameEngineDocumentation from "@/components/nayan-game-engine/NayanGameEngineDocumentation";
-import { engineGuides } from "@/services/nayan-ui/guides";
-import { engineGuideMetadata, engineGuideSchemas } from "@/services/nayan-ui/seo";
+import NayanGameEngineDocumentation from "@/components/game-engine/NayanGameEngineDocumentation";
+import { engineGuides } from "@/services/ui/guides";
+import { engineGuideMetadata, engineGuideSchemas } from "@/services/ui/seo";
 import { SITE_URL } from "@/services/seo";
 
 const path = "/react-native/installation";

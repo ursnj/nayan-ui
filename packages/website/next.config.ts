@@ -20,14 +20,15 @@ const nextConfig: NextConfig = {
     return [
       { source: '/game-engine/playground/:path+', destination: '/playground/:path*' },
       ...pageRewrites,
-      { source: '/engine-ui/:path*', destination: '/nayan-ui/:path*' },
+      { source: '/engine-ui/:path*', destination: '/ui/:path*' },
+      { source: '/nayan-ui/:path*', destination: '/ui/:path*' },
       { source: '/engine.json', destination: '/nayan-game-engine.json' },
       { source: '/seo/game-engine/playground.png', destination: '/seo/nayan-playground.png' },
       { source: '/seo/artwork/pages/game-engine/playground.jpg', destination: '/seo/artwork/pages/nayan-playground.jpg' },
       { source: '/seo/artwork/games.jpg', destination: '/seo/artwork/nayan-games.jpg' },
       { source: '/seo/:product(game-engine|games|video-editor).png', destination: '/seo/nayan-:product.png' },
-      { source: '/seo/:product(game-engine|games|video-editor)/:path*', destination: '/seo/nayan-:product/:path*' },
-      { source: '/seo/artwork/pages/:product(game-engine|games|video-editor)/:path*', destination: '/seo/artwork/pages/nayan-:product/:path*' }
+      { source: '/seo/nayan-:product(game-engine|games)/:path*', destination: '/seo/:product/:path*' },
+      { source: '/seo/artwork/pages/nayan-:product(game-engine|games|video-editor)/:path*', destination: '/seo/artwork/pages/:product/:path*' }
     ];
   }
 };

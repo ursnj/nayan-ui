@@ -1,7 +1,7 @@
 import JsonLd from "@/components/helpers/JsonLd";
 import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/seo";
-import VideoEditor from "@/components/nayan-video-editor/NayanVideoEditor";
-import { FAQS, STEPS } from "@/components/nayan-video-editor/content";
+import VideoEditor from "@/components/video-editor/NayanVideoEditor";
+import { FAQS, STEPS } from "@/components/video-editor/content";
 export const metadata = buildPageMetadata({
   title: "Free Online Nayan Video Editor — No Upload, No Watermark",
   description:

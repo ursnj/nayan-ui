@@ -1,5 +1,5 @@
 import type { SiteIcon } from "@/design/Icons";
-import { engineNavigation } from "./nayan-ui/navigation";
+import { engineNavigation } from "./ui/navigation";
 import { resolvePagePath } from "./site-routes";
 import {
   AppWindow,

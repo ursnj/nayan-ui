@@ -21,7 +21,7 @@ ignorePatterns = [
   "**/shared/cpp/generated/",
   "**/expo-env.d.ts",
   "**/next-env.d.ts",
-  "packages/website/public/nayan-ui/site-styles.json",
+  "packages/website/public/ui/site-styles.json",
   "packages/website/src/app/nayan-ui-styles.ts",
   "packages/website/src/app/nayan-ui.css",
   "**/*.lock"

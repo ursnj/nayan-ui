@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Code from '@/components/helpers/Code';
 import { ArrowRight, Github, Layers3, Play } from '@/design/Icons';
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, CONTAINER } from '@/design/system';
-import { moduleReferences } from '@/services/nayan-ui/module-reference';
+import { moduleReferences } from '@/services/ui/module-reference';
 import { REPO_URL } from '@/services/seo';
 import InstallCommand from './InstallCommand';
 

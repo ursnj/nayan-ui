@@ -1,6 +1,6 @@
-import { ReferencePage } from '@/components/nayan-reference/ReferencePage';
-import { moduleReferences } from '@/services/nayan-ui/module-reference';
-import { tagsForReference } from '@/services/nayan-ui/reference-tags';
+import { ReferencePage } from '@/components/reference/ReferencePage';
+import { moduleReferences } from '@/services/ui/module-reference';
+import { tagsForReference } from '@/services/ui/reference-tags';
 import { buildPageMetadata } from '@/services/seo';
 
 const entry = moduleReferences.find(({ slug }) => slug === 'games')!;

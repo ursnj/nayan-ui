@@ -3,8 +3,8 @@ import { Atom, Boxes, Clapperboard, Gamepad2, LayoutGrid, Wrench, ArrowUpRight }
 import Link from 'next/link';
 import { Section } from '@/design/Primitives';
 import { H2 } from '@/design/system';
-import { componentReferences } from '@/services/nayan-ui/component-reference';
-import { moduleReferences } from '@/services/nayan-ui/module-reference';
+import { componentReferences } from '@/services/ui/component-reference';
+import { moduleReferences } from '@/services/ui/module-reference';
 import { TOOL_COUNT } from '@/services/Counts';
 
 /** Shared with the homepage's structured data. */

@@ -89,7 +89,7 @@ Commit the archive and the updated `bun.lock` together. Local and CI Docker buil
 
 | Example | Description |
 | --- | --- |
-| [packages/example](./packages/example) | Interactive web and mobile examples for the local engine |
+| [packages/example](./packages/example) | Starter app for the local engine on web, iOS, and Android |
 
 ## Quick Start
 
@@ -107,7 +107,7 @@ bun run example web
 packages/
   nayan-ui/  nayan-ui  — Game engine and components
   website/   @nayan-ui/website — nayanui.com (Next.js)
-  example/   @nayan-ui/example — Engine demos for Expo and web
+  example/   @nayan-ui/example — Starter app for Expo and Vite
 .github/     engine CI and website image publishing
 scripts/     local publish scripts (Docker)
 ```

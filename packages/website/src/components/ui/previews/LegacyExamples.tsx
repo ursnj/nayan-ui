@@ -3,7 +3,7 @@
 import { PREVIEW_STACK, PREVIEW_BUTTON, PREVIEW_FIELD } from '@/design/system';
 import { useEffect, useId, useRef, useState } from 'react';
 import { NBadge, NButton, NCard, NCheck, NChip, NDatePicker, NInput, NLink, NList, NMenuItem, NPress, NText, NView } from 'nayan-ui/components';
-import { componentSource } from '@/services/nayan-ui/component-examples';
+import { componentSource } from '@/services/ui/component-examples';
 import { avatarInitialsClass, breadcrumbOverview, element, sample } from './ControlScenarios';
 import SwitchRows, { switchSource } from './SwitchRows';
 import type { ComponentPreview } from './types';

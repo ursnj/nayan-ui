@@ -1,34 +1,6 @@
-import { fileURLToPath } from 'node:url';
-import { defineConfig, type Plugin } from 'vite';
-
-const SHARED = fileURLToPath(new URL('../shared/src/', import.meta.url));
-
-function metroRequires(): Plugin {
-  return {
-    name: 'metro-requires',
-    enforce: 'pre',
-    transform(code, id) {
-      if (!id.startsWith(SHARED) || !/\.[jt]sx?$/.test(id)) return;
-      let out = code.replace(
-        /require\((['"])([^'"]+\.(?:wav|png|ttf|glb|mp4))\1\)/g,
-        (_, _quote, path) => `new URL(${JSON.stringify(path)}, import.meta.url).href`
-      );
-      if (out.includes("require('nayan-ui')"))
-        out = `import * as __engine from 'nayan-ui';\n` + out.replaceAll("require('nayan-ui')", '__engine');
-      return out === code ? undefined : { code: out, map: null };
-    }
-  };
-}
+import { defineConfig } from 'vite';
 
 export default defineConfig({
-  plugins: [metroRequires()],
-  resolve: {
-    extensions: ['.web.tsx', '.web.ts', '.tsx', '.ts', '.mjs', '.js', '.json'],
-    dedupe: ['react', 'react-dom', 'nayan-ui']
-  },
-  define: {
-    '__DEV__': JSON.stringify(process.env.NODE_ENV !== 'production'),
-    'process.env.EXPO_PUBLIC_AUTOPLAY': JSON.stringify(process.env.EXPO_PUBLIC_AUTOPLAY ?? '0')
-  },
+  resolve: { dedupe: ['react', 'react-dom', 'nayan-ui'] },
   build: { rolldownOptions: { onwarn: (warning, warn) => warning.code !== 'MODULE_LEVEL_DIRECTIVE' && warn(warning) } }
 });

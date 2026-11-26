@@ -1,37 +1,24 @@
 {
   "expo": {
-    "name": "Nayan Engine Examples",
-    "slug": "nayan-engine-concept-examples",
+    "name": "Nayan UI Starter",
+    "slug": "nayan-ui-starter",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "nayan-engine-concept-examples",
+    "scheme": "nayan-ui-starter",
     "ios": {
-      "bundleIdentifier": "com.nayanui.engine.examples",
-      "infoPlist": {
-        "NSMicrophoneUsageDescription": "Record a short local audio take in the microphone example."
-      }
+      "bundleIdentifier": "com.nayanui.engine.examples"
     },
     "android": {
-      "package": "com.nayanui.engine.examples",
-      "permissions": [
-        "android.permission.VIBRATE",
-        "android.permission.RECORD_AUDIO"
-      ]
+      "package": "com.nayanui.engine.examples"
     },
     "plugins": [
       "expo-router",
       "expo-dev-client",
-      [
-        "./plugins/withAndroidMinSdk",
-        26
-      ],
+      ["./plugins/withAndroidMinSdk", 26],
       [
         "nayan-ui",
         {
-          "imagePicker": true,
-          "systemTheme": true,
-          "cameraPermission": "Take a photo in the camera example.",
-          "locationPermission": "Read a foreground location fix in the location example."
+          "systemTheme": true
         }
       ]
     ],

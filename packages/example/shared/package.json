@@ -4,26 +4,10 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./index.ts",
-    "./catalog": "./src/catalog.ts",
-    "./concepts": "./src/concepts/index.tsx",
-    "./settings": "./src/services/UtilsService.ts"
-  },
-  "devDependencies": {
-    "@types/react-dom": "^19.2.0"
+    ".": "./src/Landing.tsx"
   },
   "peerDependencies": {
     "nayan-ui": "*",
-    "react": "*",
-    "react-dom": "*",
-    "react-native": "*"
-  },
-  "peerDependenciesMeta": {
-    "react-native": {
-      "optional": true
-    },
-    "react-dom": {
-      "optional": true
-    }
+    "react": "*"
   }
 }

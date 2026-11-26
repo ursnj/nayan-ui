@@ -2,15 +2,15 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 import enginePackage from 'nayan-ui/package.json';
-import { componentAttributeNames, componentAttributeNotes } from '../src/services/nayan-ui/component-attribute-names';
-import { componentReferences } from '../src/services/nayan-ui/component-reference';
+import { componentAttributeNames, componentAttributeNotes } from '../src/services/ui/component-attribute-names';
+import { componentReferences } from '../src/services/ui/component-reference';
 
 type ReferenceModule = (typeof componentReferences)[number]['module'];
 type Platform = 'web' | 'native';
 type ExportTypes = { browser?: { types?: string }; 'react-native'?: { types?: string }; types?: string };
 
 const engine = new URL('../../nayan-ui/', import.meta.url);
-const output = new URL('../src/services/nayan-ui/component-attributes.json', import.meta.url);
+const output = new URL('../src/services/ui/component-attributes.json', import.meta.url);
 const packageExports = enginePackage.exports as Record<string, ExportTypes>;
 const flags = ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.UseAliasDefinedOutsideCurrentScope;
 const declarationsRoot = fileURLToPath(new URL('lib/', engine));
