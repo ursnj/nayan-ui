@@ -2536,7 +2536,7 @@ real Rust/native bridge, including stopping before playback begins and speaking 
 import { camera } from 'nayan-ui/camera';
 
 // Call from a user action.
-const photo = await camera.takePhoto({ quality: 0.85, maxDimension: 2048 });
+const photo = await camera.takePhoto({ allowEditing: true, aspect: [1, 1], quality: 0.85, maxDimension: 2048 });
 if (photo) {
   try {
     await uploadPhoto(photo.uri);
@@ -2549,8 +2549,11 @@ if (photo) {
 `getPermission()` and `requestPermission()` use the shared permissions API.
 Native hosts enable the image picker and declare camera access as described in
 [App utilities](#app-utilities). `takePhoto()` opens the system camera on native
-and a live camera preview in secure browser contexts. It returns `null` on
-cancellation and releases the browser media stream when the preview closes.
+and a live camera preview in secure browser contexts. Set `allowEditing: true` to open
+the image picker editor after capture. The editor can crop, rotate, flip, apply filters
+and adjust brightness. The crop defaults to square. Pass `aspect` to set a different ratio.
+The existing `allowsEditing` option takes precedence when both are supplied.
+Canceling capture or editing returns `null`. The browser media stream stops when the preview closes.
 Photo results are temporary and should be released after use.
 
 ### Video

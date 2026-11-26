@@ -1,6 +1,5 @@
-import { image_filter_rgba } from '../../native/core/build/web/engine_core.js';
+import colorMatrices from '../../native/image-picker/rust/color-matrices.json';
 import { stopMediaStream } from '../native/mediaStream.web';
-import { prepareWasm } from '../native/wasm.web';
 import { imageOptions } from './options';
 import type { CameraPermission, ImagePickerOptions, ImagePickerResult, PickedImage } from './types';
 const owned = new Set<string>();
@@ -10,12 +9,21 @@ const colorPresets = ['Original', 'Black and white', 'Sepia', 'Vivid'] as const;
 
 function applyColor(drawing: CanvasRenderingContext2D, preset: number, brightness: number) {
   if (preset === 0 && brightness === 1) return;
+  const matrix = colorMatrices[preset]!;
   const { width, height } = drawing.canvas;
   // A large export only needs one strip of pixels in JavaScript at a time.
   for (let top = 0; top < height; top += 64) {
     const pixels = drawing.getImageData(0, top, width, Math.min(64, height - top));
     const { data } = pixels;
-    image_filter_rgba(new Uint8Array(data.buffer, data.byteOffset, data.byteLength), preset, brightness);
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i]!,
+        g = data[i + 1]!,
+        b = data[i + 2]!;
+      for (let channel = 0; channel < 3; channel++) {
+        const offset = channel * 3;
+        data[i + channel] = (matrix[offset]! * r + matrix[offset + 1]! * g + matrix[offset + 2]! * b) * brightness;
+      }
+    }
     drawing.putImageData(pixels, 0, top);
   }
 }
@@ -37,7 +45,6 @@ function encode(canvas: HTMLCanvasElement, type: string, quality: number): Promi
   );
 }
 async function editPhoto(image: PhotoSource, options: ReturnType<typeof imageOptions>): Promise<HTMLCanvasElement | null> {
-  await prepareWasm();
   return new Promise((resolve, reject) => {
     const previous = document.activeElement as HTMLElement | null;
     const dialog = document.createElement('dialog');

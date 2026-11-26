@@ -59,6 +59,7 @@
     "shared/android/codegen/CMakeLists.txt",
     "shared/android/src/main/**/*.{java,xml}",
     "native/*/rust/**/*.{rs,wgsl}",
+    "native/image-picker/rust/color-matrices.json",
     "native/*/cpp/**/*.{h,cpp}",
     "native/*/ios/**/*.{h,m,mm}",
     "native/*/android/**/*.{java,xml}",

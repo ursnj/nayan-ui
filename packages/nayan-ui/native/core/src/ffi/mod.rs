@@ -28,6 +28,7 @@ pub mod safe_area;
 pub mod auth;
 #[path = "../../../contacts/rust/ffi.rs"]
 pub mod contacts;
+#[cfg(not(target_arch = "wasm32"))]
 #[path = "../../../image-picker/rust/color.rs"]
 mod image_color;
 #[cfg(not(target_arch = "wasm32"))]

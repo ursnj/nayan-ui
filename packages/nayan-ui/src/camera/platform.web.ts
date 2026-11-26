@@ -1,6 +1,7 @@
 import { stopMediaStream } from '../native/mediaStream.web';
 import { imagePicker, preparePhoto } from '../image-picker/imagePicker.web';
 import { imageOptions } from '../image-picker/options';
+import { cameraOptions } from './options';
 import type { CameraPhoto, CameraPhotoOptions } from './types';
 
 export const { release } = imagePicker;
@@ -94,7 +95,7 @@ function preview(): Promise<HTMLCanvasElement | null> {
 export async function takePhoto(supplied: CameraPhotoOptions = {}): Promise<CameraPhoto | null> {
   if (!isAvailable()) throw new Error('Camera capture requires a secure browser context with camera and dialog support');
   if (busy) throw new Error('The camera is already open');
-  const options = imageOptions(supplied);
+  const options = imageOptions(cameraOptions(supplied));
   busy = true;
   try {
     const frame = await preview();

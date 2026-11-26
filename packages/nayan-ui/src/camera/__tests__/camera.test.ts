@@ -23,3 +23,13 @@ test('camera uses shared permission and photo ownership APIs', async () => {
   launchCamera.mockResolvedValueOnce({ canceled: true, assets: null });
   expect(await camera.takePhoto()).toBeNull();
 });
+
+test('camera forwards either spelling of the editing option to the image picker', async () => {
+  const aspect = [4, 3] as const;
+  expect(await camera.takePhoto({ allowEditing: true, aspect })).toEqual(photo);
+  expect(launchCamera).toHaveBeenLastCalledWith({ allowsEditing: true, aspect });
+  await camera.takePhoto({ allowsEditing: true });
+  expect(launchCamera).toHaveBeenLastCalledWith({ allowsEditing: true });
+  await camera.takePhoto({ allowEditing: true, allowsEditing: false });
+  expect(launchCamera).toHaveBeenLastCalledWith({ allowsEditing: false });
+});

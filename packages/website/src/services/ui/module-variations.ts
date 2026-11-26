@@ -133,7 +133,7 @@ export async function captureSquare() {
   const access = current.status === 'granted' ? current : await camera.requestPermission();
   if (access.status !== 'granted') return null;
   const photo = await camera.takePhoto({
-    allowsEditing: true, aspect: [1, 1], format: 'jpeg', quality: 0.85, maxDimension: 1024
+    allowEditing: true, aspect: [1, 1], format: 'jpeg', quality: 0.85, maxDimension: 1024
   });
   if (!photo) return null;
   return { photo, dispose: () => camera.release(photo.uri) };

@@ -1,5 +1,4 @@
-import { afterEach, beforeAll, beforeEach, expect, mock, spyOn, test } from 'bun:test';
-import { initSync } from '../../../native/core/build/web/engine_core.js';
+import { afterEach, beforeEach, expect, mock, spyOn, test } from 'bun:test';
 import { installDom } from '../../__tests__/dom';
 import * as camera from '../../camera/platform.web';
 import { imagePicker } from '../imagePicker.web';
@@ -8,11 +7,6 @@ import type { ImagePickerOptions } from '../types';
 const globals = ['HTMLInputElement', 'HTMLDialogElement', 'createImageBitmap'] as const;
 let dom: ReturnType<typeof installDom>;
 let original: (PropertyDescriptor | undefined)[];
-
-beforeAll(async () => {
-  const module = await Bun.file(new URL('../../../native/core/build/web/engine_core_bg.wasm', import.meta.url)).arrayBuffer();
-  initSync({ module });
-});
 
 beforeEach(() => {
   dom = installDom();
@@ -206,5 +200,58 @@ test('canceling camera preview before permission resolves stops the late media s
 
   getUserMedia.mockRejectedValueOnce(new Error('camera denied'));
   await expect(camera.takePhoto()).rejects.toThrow('camera denied');
+  expect(document.querySelector('dialog')).toBeNull();
+});
+
+test('camera opens the shared editor after capture when allowEditing is enabled', async () => {
+  const stop = mock(() => {});
+  const getUserMedia = async () => {
+    const stream = dom.window.document.createElement('canvas').captureStream();
+    const tracks = stream.getVideoTracks();
+    tracks[0]!.stop = stop;
+    return Object.assign(stream, { getTracks: () => tracks });
+  };
+  Object.defineProperty(navigator, 'mediaDevices', { configurable: true, value: { getUserMedia } });
+  Object.defineProperties(dom.window.HTMLVideoElement.prototype, {
+    play: { configurable: true, value: async () => {} },
+    videoWidth: { configurable: true, value: 400 },
+    videoHeight: { configurable: true, value: 200 }
+  });
+  Object.defineProperties(dom.window.HTMLCanvasElement.prototype, {
+    getContext: {
+      configurable: true,
+      value: () => ({ drawImage() {}, save() {}, restore() {}, translate() {}, scale() {}, rotate() {}, clearRect() {} })
+    },
+    toBlob: {
+      configurable: true,
+      value: (callback: (blob: Blob) => void, mime: string) => callback(new Blob(['image'], { type: mime }))
+    }
+  });
+
+  const openEditor = async () => {
+    const photo = camera.takePhoto({ allowEditing: true, aspect: [1, 1], format: 'png' });
+    await dom.window.happyDOM.waitUntilComplete();
+    const shutter = document.querySelector<HTMLButtonElement>('dialog[aria-label="Camera"] button:last-child')!;
+    expect(shutter.disabled).toBe(false);
+    shutter.click();
+    await dom.window.happyDOM.waitUntilComplete();
+    const editor = document.querySelector<HTMLDialogElement>('dialog[aria-label="Edit image"]')!;
+    expect(editor).not.toBeNull();
+    expect(document.querySelector('dialog[aria-label="Camera"]')).toBeNull();
+    return { photo, editor };
+  };
+
+  const saved = await openEditor();
+  expect(stop).toHaveBeenCalledTimes(1);
+  await expect(camera.takePhoto()).rejects.toThrow('already open');
+  [...saved.editor.querySelectorAll('button')].find((button) => button.textContent === 'Use image')!.click();
+  const photo = await saved.photo;
+  expect(photo).toMatchObject({ width: 200, height: 200, fileName: 'camera.png', mimeType: 'image/png' });
+  await camera.release(photo!.uri);
+
+  const canceled = await openEditor();
+  [...canceled.editor.querySelectorAll('button')].find((button) => button.textContent === 'Cancel')!.click();
+  expect(await canceled.photo).toBeNull();
+  expect(stop).toHaveBeenCalledTimes(2);
   expect(document.querySelector('dialog')).toBeNull();
 });

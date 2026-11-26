@@ -51,6 +51,7 @@ const required = new Set([
   'native/image-picker/ios/ImagePicker.h',
   'native/image-picker/ios/ImagePicker.mm',
   'native/image-picker/rust/color.rs',
+  'native/image-picker/rust/color-matrices.json',
   'src/storage/persister.ts',
   'src/components/PlatformHost.tsx',
   'src/components/PlatformHost.web.tsx',
