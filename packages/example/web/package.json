@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1",
-    "build": "bun run typecheck && vite build",
+    "dev": "bun scripts/styles.ts --dev",
+    "build": "bun run typecheck && bun scripts/styles.ts && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "typecheck": "bun check"
   },

@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/Landing.tsx"
+    ".": "./src/Landing.tsx",
+    "./theme": "./src/theme.ts"
   },
   "peerDependencies": {
     "nayan-ui": "*",
