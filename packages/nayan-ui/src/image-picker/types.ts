@@ -1,4 +1,5 @@
 export interface ImagePickerOptions {
+  /** Open the editor to crop, rotate, flip, apply a filter or adjust brightness. */
   allowsEditing?: boolean;
   /** Crop ratio; defaults to square. Editing supports a single image. */
   aspect?: readonly [number, number];

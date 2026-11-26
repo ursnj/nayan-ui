@@ -57,7 +57,7 @@ Pod::Spec.new do |s|
     (video ? ["AVKit"] : []) +
     (review ? ["StoreKit"] : []) +
     (permissions ? %w(AppTrackingTransparency Contacts CoreBluetooth CoreLocation CoreMotion EventKit HomeKit Intents MediaPlayer Speech UserNotifications) : []) +
-    ((image_picker || permissions) ? ["Photos"] : []) + (image_picker ? ["PhotosUI"] : [])
+    ((image_picker || permissions) ? ["Photos"] : []) + (image_picker ? %w(CoreImage PhotosUI) : [])
 
   target_settings = {
     "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/native/core/include\" \"$(PODS_TARGET_SRCROOT)/shared/cpp\" \"$(PODS_TARGET_SRCROOT)/native\"",

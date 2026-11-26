@@ -4,6 +4,32 @@ import type { CameraPermission, ImagePickerOptions, ImagePickerResult, PickedIma
 const owned = new Set<string>();
 let busy = false;
 type PhotoSource = ImageBitmap | HTMLImageElement | HTMLCanvasElement;
+const colorPresets = [
+  { label: 'Original', matrix: [1, 0, 0, 0, 1, 0, 0, 0, 1] },
+  { label: 'Black and white', matrix: [0.213, 0.715, 0.072, 0.213, 0.715, 0.072, 0.213, 0.715, 0.072] },
+  { label: 'Sepia', matrix: [0.393, 0.769, 0.189, 0.349, 0.686, 0.168, 0.272, 0.534, 0.131] },
+  { label: 'Vivid', matrix: [1.3148, -0.286, -0.0288, -0.0852, 1.114, -0.0288, -0.0852, -0.286, 1.3712] }
+] as const;
+
+function applyColor(drawing: CanvasRenderingContext2D, preset: number, brightness: number) {
+  if (preset === 0 && brightness === 1) return;
+  const [rr, rg, rb, gr, gg, gb, br, bg, bb] = colorPresets[preset]!.matrix;
+  const { width, height } = drawing.canvas;
+  // A large export only needs one strip of pixels in JavaScript at a time.
+  for (let top = 0; top < height; top += 64) {
+    const pixels = drawing.getImageData(0, top, width, Math.min(64, height - top));
+    const { data } = pixels;
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i]!,
+        g = data[i + 1]!,
+        b = data[i + 2]!;
+      data[i] = (rr * r + rg * g + rb * b) * brightness;
+      data[i + 1] = (gr * r + gg * g + gb * b) * brightness;
+      data[i + 2] = (br * r + bg * g + bb * b) * brightness;
+    }
+    drawing.putImageData(pixels, 0, top);
+  }
+}
 async function decode(file: File): Promise<ImageBitmap | HTMLImageElement> {
   if (typeof createImageBitmap === 'function') return createImageBitmap(file);
   const uri = URL.createObjectURL(file),
@@ -21,39 +47,54 @@ function encode(canvas: HTMLCanvasElement, type: string, quality: number): Promi
     canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('Could not encode selected image'))), type, quality)
   );
 }
-async function crop(image: PhotoSource, options: ReturnType<typeof imageOptions>): Promise<HTMLCanvasElement | null> {
+async function editPhoto(image: PhotoSource, options: ReturnType<typeof imageOptions>): Promise<HTMLCanvasElement | null> {
   return new Promise((resolve, reject) => {
     const previous = document.activeElement as HTMLElement | null;
     const dialog = document.createElement('dialog');
-    dialog.setAttribute('aria-label', 'Crop image');
-    dialog.style.cssText = 'padding:16px;border:1px solid #888;border-radius:16px;background:Canvas;color:CanvasText;max-width:calc(100vw - 32px)';
+    dialog.setAttribute('aria-label', 'Edit image');
+    dialog.style.cssText =
+      'padding:16px;border:1px solid #888;border-radius:16px;background:Canvas;color:CanvasText;max-width:calc(100vw - 32px);box-sizing:border-box';
     const title = document.createElement('p');
     title.textContent = 'Drag to position. Use the slider to zoom.';
     const canvas = document.createElement('canvas');
     canvas.tabIndex = 0;
     canvas.setAttribute('aria-label', 'Crop preview; arrow keys move the image');
-    canvas.style.cssText = 'display:block;touch-action:none;max-width:100%';
+    canvas.style.cssText = 'display:block;touch-action:none;max-width:100%;height:auto;margin:auto';
     const ratio = options.aspect ? options.aspect[0] / options.aspect[1] : 1;
-    const w = Math.min(480, window.innerWidth - 64, Math.max(120, window.innerHeight - 230) * ratio),
-      h = w / ratio;
-    canvas.width = Math.round(w);
-    canvas.height = Math.round(h);
-    const context = canvas.getContext('2d');
+    const availableHeight = Math.min(480, Math.max(120, window.innerHeight - 320));
+    canvas.width = Math.max(1, Math.round(Math.min(480, window.innerWidth - 64, availableHeight * ratio)));
+    canvas.height = Math.max(1, Math.round(Math.min(availableHeight, canvas.width / ratio)));
+    const { width: w, height: h } = canvas;
+    const context = canvas.getContext('2d', { willReadFrequently: true });
     if (!context || typeof dialog.showModal !== 'function') {
       reject(new Error('Image cropping requires canvas and dialog support'));
       return;
     }
-    const drawing: CanvasRenderingContext2D = context;
-    const base = Math.max(w / image.width, h / image.height);
-    let scale = base,
-      x = (w - image.width * scale) / 2,
-      y = (h - image.height * scale) / 2,
-      point: { x: number; y: number } | undefined;
+    let turns = 0;
+    let flipped = false;
+    let preset = 0;
+    let brightness = 1;
+    let imageWidth = image.width;
+    let imageHeight = image.height;
+    let base = 1;
+    let scale = 1;
+    let x = 0;
+    let y = 0;
+    let point: { x: number; y: number } | undefined;
+    const paint = (drawing: CanvasRenderingContext2D) => {
+      drawing.save();
+      drawing.translate(x + (imageWidth * scale) / 2, y + (imageHeight * scale) / 2);
+      drawing.scale(flipped ? -1 : 1, 1);
+      drawing.rotate((turns * Math.PI) / 2);
+      drawing.drawImage(image, (-image.width * scale) / 2, (-image.height * scale) / 2, image.width * scale, image.height * scale);
+      drawing.restore();
+    };
     const draw = () => {
-      x = Math.min(0, Math.max(w - image.width * scale, x));
-      y = Math.min(0, Math.max(h - image.height * scale, y));
-      drawing.clearRect(0, 0, w, h);
-      drawing.drawImage(image, x, y, image.width * scale, image.height * scale);
+      x = Math.min(0, Math.max(w - imageWidth * scale, x));
+      y = Math.min(0, Math.max(h - imageHeight * scale, y));
+      context.clearRect(0, 0, w, h);
+      paint(context);
+      applyColor(context, preset, brightness);
     };
     canvas.onpointerdown = (event) => {
       point = { x: event.clientX, y: event.clientY };
@@ -61,8 +102,9 @@ async function crop(image: PhotoSource, options: ReturnType<typeof imageOptions>
     };
     canvas.onpointermove = (event) => {
       if (!point) return;
-      x += event.clientX - point.x;
-      y += event.clientY - point.y;
+      const bounds = canvas.getBoundingClientRect();
+      x += ((event.clientX - point.x) * w) / bounds.width;
+      y += ((event.clientY - point.y) * h) / bounds.height;
       point = { x: event.clientX, y: event.clientY };
       draw();
     };
@@ -94,38 +136,120 @@ async function crop(image: PhotoSource, options: ReturnType<typeof imageOptions>
       scale = next;
       draw();
     };
+    const resetCrop = () => {
+      imageWidth = turns % 2 ? image.height : image.width;
+      imageHeight = turns % 2 ? image.width : image.height;
+      base = Math.max(w / imageWidth, h / imageHeight);
+      scale = base;
+      x = (w - imageWidth * scale) / 2;
+      y = (h - imageHeight * scale) / 2;
+      zoom.value = '1';
+      draw();
+    };
+    const button = (label: string, action: () => void) => {
+      const element = document.createElement('button');
+      element.type = 'button';
+      element.textContent = label;
+      element.onclick = action;
+      return element;
+    };
+    const tools = document.createElement('div');
+    tools.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 16px';
+    tools.append(
+      button('Rotate right', () => {
+        turns = (turns + (flipped ? 3 : 1)) % 4;
+        resetCrop();
+      }),
+      button('Flip horizontally', () => {
+        flipped = !flipped;
+        x = w - x - imageWidth * scale;
+        draw();
+      }),
+      button('Reset', () => {
+        turns = 0;
+        flipped = false;
+        preset = filter.selectedIndex = 0;
+        brightness = 1;
+        brightnessSlider.value = '1';
+        resetCrop();
+      })
+    );
+    const adjustmentRow = document.createElement('div');
+    adjustmentRow.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:0 0 16px';
+    const filter = document.createElement('select');
+    for (const { label } of colorPresets) {
+      const option = document.createElement('option');
+      option.textContent = label;
+      filter.append(option);
+    }
+    filter.onchange = () => {
+      preset = filter.selectedIndex;
+      draw();
+    };
+    const filterLabel = document.createElement('label');
+    filterLabel.append('Filter ', filter);
+    const brightnessSlider = document.createElement('input');
+    brightnessSlider.type = 'range';
+    brightnessSlider.min = '0.5';
+    brightnessSlider.max = '1.5';
+    brightnessSlider.step = '0.01';
+    brightnessSlider.value = '1';
+    brightnessSlider.style.cssText = 'max-width:110px;vertical-align:middle';
+    brightnessSlider.oninput = () => {
+      brightness = Number(brightnessSlider.value);
+      draw();
+    };
+    const brightnessLabel = document.createElement('label');
+    brightnessLabel.append('Brightness ', brightnessSlider);
+    adjustmentRow.append(filterLabel, brightnessLabel);
     let finished = false;
-    function finish(value: HTMLCanvasElement | null) {
+    function finish(value: HTMLCanvasElement | null, error?: Error) {
       if (finished) return;
       finished = true;
       dialog.close();
       dialog.remove();
       previous?.focus();
-      resolve(value);
+      if (error) reject(error);
+      else resolve(value);
     }
-    const cancel = document.createElement('button');
-    cancel.textContent = 'Cancel';
-    cancel.onclick = () => finish(null);
-    const use = document.createElement('button');
-    use.textContent = 'Use image';
-    use.style.marginLeft = '16px';
-    use.onclick = () => {
+    const actions = document.createElement('div');
+    actions.style.cssText = 'display:flex;justify-content:flex-end;gap:8px';
+    const use = button('Use image', () => {
       const output = document.createElement('canvas');
       const factor = Math.min(1, options.maxDimension / Math.max(w / scale, h / scale));
       output.width = Math.max(1, Math.round((w / scale) * factor));
       output.height = Math.max(1, Math.round((h / scale) * factor));
-      output.getContext('2d')!.drawImage(image, -x / scale, -y / scale, w / scale, h / scale, 0, 0, output.width, output.height);
-      finish(output);
-    };
+      const drawing = output.getContext('2d', { willReadFrequently: preset !== 0 || brightness !== 1 });
+      if (!drawing) {
+        finish(null, new Error('Could not render edited image'));
+        return;
+      }
+      try {
+        drawing.scale(output.width / w, output.height / h);
+        paint(drawing);
+        applyColor(drawing, preset, brightness);
+        finish(output);
+      } catch (error) {
+        finish(null, error instanceof Error ? error : new Error(String(error)));
+      }
+    });
+    actions.append(
+      button('Cancel', () => finish(null)),
+      use
+    );
     dialog.oncancel = (event) => {
       event.preventDefault();
       finish(null);
     };
-    dialog.append(title, canvas, zoom, cancel, use);
+    dialog.append(title, canvas, zoom, tools, adjustmentRow, actions);
     document.body.append(dialog);
-    dialog.showModal();
-    draw();
-    canvas.focus();
+    try {
+      dialog.showModal();
+      resetCrop();
+      canvas.focus();
+    } catch (error) {
+      finish(null, error instanceof Error ? error : new Error(String(error)));
+    }
   });
 }
 
@@ -134,7 +258,7 @@ export async function preparePhoto(image: PhotoSource, name: string, options: Re
   if (!(image.width > 0 && image.height > 0)) throw new Error('Selected image has invalid dimensions');
   let canvas: HTMLCanvasElement | null;
   if (options.allowsEditing) {
-    canvas = await crop(image, options);
+    canvas = await editPhoto(image, options);
   } else {
     canvas = document.createElement('canvas');
     const scale = Math.min(1, options.maxDimension / Math.max(image.width, image.height));

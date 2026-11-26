@@ -95,6 +95,92 @@ test('selected images resize and own their blob URL, and a failed batch rolls ba
   }
 });
 
+test('the editor saves the preview transform and color adjustments and can reset or cancel', async () => {
+  const close = mock(() => {});
+  Object.defineProperty(globalThis, 'createImageBitmap', {
+    configurable: true,
+    value: async () => ({ width: 400, height: 200, close })
+  });
+  const contexts = new Map<HTMLCanvasElement, ReturnType<typeof makeContext>>();
+  function makeContext(canvas: HTMLCanvasElement) {
+    return {
+      canvas,
+      save() {},
+      restore() {},
+      translate() {},
+      clearRect() {},
+      scale: mock((_x: number, _y: number) => {}),
+      rotate: mock((_radians: number) => {}),
+      drawImage() {},
+      getImageData: () => ({ data: new Uint8ClampedArray([180, 60, 20, 128]) }),
+      putImageData: mock((_pixels: { data: Uint8ClampedArray }) => {})
+    };
+  }
+  Object.defineProperty(dom.window.HTMLCanvasElement.prototype, 'getContext', {
+    configurable: true,
+    value(this: HTMLCanvasElement) {
+      let context = contexts.get(this);
+      if (!context) {
+        context = makeContext(this);
+        contexts.set(this, context);
+      }
+      return context;
+    }
+  });
+  Object.defineProperty(dom.window.HTMLCanvasElement.prototype, 'toBlob', {
+    configurable: true,
+    value: (callback: (blob: Blob) => void, mime: string) => callback(new Blob(['image'], { type: mime }))
+  });
+  const file = new File(['bitmap'], 'photo.png', { type: 'image/png' });
+  const openEditor = async () => {
+    const result = imagePicker.pickFromLibrary({ allowsEditing: true, format: 'png', aspect: [2, 1] });
+    choose(file);
+    await dom.window.happyDOM.waitUntilComplete();
+    return { result, dialog: document.querySelector<HTMLDialogElement>('dialog')! };
+  };
+  const press = (dialog: HTMLDialogElement, label: string) => {
+    [...dialog.querySelectorAll('button')].find((button) => button.textContent === label)!.click();
+  };
+  const { result, dialog } = await openEditor();
+  const select = dialog.querySelector('select')!;
+  const brightness = dialog.querySelector<HTMLInputElement>('label input[type="range"]')!;
+  const preview = contexts.get(dialog.querySelector('canvas')!)!;
+  press(dialog, 'Rotate right');
+  press(dialog, 'Flip horizontally');
+  select.selectedIndex = 2;
+  select.dispatchEvent(new Event('change'));
+  brightness.value = '1.25';
+  brightness.dispatchEvent(new Event('input'));
+  expect(preview.putImageData.mock.lastCall?.[0].data).toEqual(new Uint8ClampedArray([151, 134, 105, 128]));
+  press(dialog, 'Reset');
+  expect(select.selectedIndex).toBe(0);
+  expect(brightness.value).toBe('1');
+  expect(preview.rotate.mock.lastCall).toEqual([0]);
+  press(dialog, 'Rotate right');
+  press(dialog, 'Flip horizontally');
+  select.selectedIndex = 2;
+  select.dispatchEvent(new Event('change'));
+  brightness.value = '1.25';
+  brightness.dispatchEvent(new Event('input'));
+  press(dialog, 'Use image');
+  const saved = await result;
+  expect(saved.canceled).toBe(false);
+  if (saved.canceled) throw Error('Expected an edited image');
+  const [asset] = saved.assets;
+  expect(asset).toMatchObject({ width: 200, height: 100, mimeType: 'image/png' });
+  const output = [...contexts.values()].at(-1)!;
+  expect(output.rotate).toHaveBeenCalledWith(Math.PI / 2);
+  expect(output.scale).toHaveBeenCalledWith(-1, 1);
+  expect(output.putImageData.mock.lastCall?.[0].data).toEqual(new Uint8ClampedArray([151, 134, 105, 128]));
+  await imagePicker.release(asset!.uri);
+
+  const second = await openEditor();
+  press(second.dialog, 'Cancel');
+  expect(await second.result).toEqual({ canceled: true, assets: null });
+  expect(close).toHaveBeenCalledTimes(2);
+  expect(document.querySelector('dialog')).toBeNull();
+});
+
 test('canceling camera preview before permission resolves stops the late media stream', async () => {
   const open = Promise.withResolvers<MediaStream>();
   const getUserMedia = mock((_constraints: MediaStreamConstraints) => open.promise);

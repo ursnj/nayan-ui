@@ -1969,7 +1969,7 @@ requests and `/network` for connection status and optional endpoint checks.
 | [`/haptics`](#sound-and-haptics) | Impacts, selection, notification presets and custom sequences | Hardware support varies. |
 | [`/camera`](#camera) | Permission, native system capture, web preview, image output and release | Native uses the image-picker feature. Web access requires a secure context. |
 | [`/video`](#video) | Inline playback, controls, seek, loop, mute, volume, speed, status and progress | Foreground playback. Codecs and controls vary by platform. |
-| [`/image-picker`](#image-picker) | Photo library, camera, crop, JPEG and PNG, multi-selection and release | Image outputs are temporary. Browser camera selection is a hint. |
+| [`/image-picker`](#image-picker) | Photo library, camera, image editing, JPEG and PNG, multi-selection and release | Image outputs are temporary. Browser camera selection is a hint. |
 | [`/clipboard`](#clipboard) | Read and write text, write HTML with a text alternative, check and clear | Platform clipboard permissions apply. |
 | [`/sharing`](#sharing) | Share text, URL or one file, with titles and an optional iPad anchor | Outbound system sheet. Dismissal resolves normally. |
 | [`/capture`](#screen-capture) | Capture engine surfaces in a native screenshot or a picked browser display | PNG output. Browser capture requires user permission. |
@@ -2747,14 +2747,16 @@ export async function chooseAvatar(save: (uri: string) => Promise<void>) {
 }
 ```
 
-Image picking supports the system library picker and native camera, optional pan/pinch
-cropping with an aspect ratio, multiple library images (explicit `selectionLimit`, up
-to 20), JPEG/PNG output, quality, dimensions and optional base64. Editing requires one
-image. `getCameraPermission` and `requestCameraPermission` report status/canAskAgain.
+Image picking supports the system library picker and native camera, multiple library
+images (explicit `selectionLimit`, up to 20), JPEG/PNG output, quality, dimensions and
+optional base64. Set `allowsEditing: true` to open the editor for one image. The editor
+supports aspect-ratio cropping, zoom, clockwise rotation, horizontal flip, brightness,
+and black-and-white, sepia and vivid filters. Reset restores the original settings.
+`getCameraPermission` and `requestCameraPermission` report status/canAskAgain.
 The system library picker grants access to selected images without requesting broad
 photo-library access. Browser camera capture is a file-input hint that the browser may
-handle differently; browser cropping uses an accessible dialog/canvas with drag,
-keyboard positioning and zoom controls. It requires no renderer, audio or WASM warm-up.
+handle differently. The browser editor uses a dialog with drag, keyboard positioning
+and zoom controls. It requires no renderer, audio or WASM warm-up.
 
 The default maximum output dimension is 4096 (configurable 64..8192); native inputs are
 limited to 64 MiB each. Native images are copied into an engine-owned temporary cache
