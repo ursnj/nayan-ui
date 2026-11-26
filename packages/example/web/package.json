@@ -13,8 +13,7 @@
     "@nayan-ui/shared": "workspace:*",
     "nayan-ui": "workspace:*",
     "react": "19.3.0",
-    "react-dom": "19.3.0",
-    "react-reconciler": "^0.34.0"
+    "react-dom": "19.3.0"
   },
   "devDependencies": {
     "@types/react-dom": "^19.2.0",

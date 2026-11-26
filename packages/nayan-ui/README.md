@@ -53,10 +53,10 @@ npm install nayan-ui
 When a preview is published under the `beta` tag, install it with `bun add nayan-ui@beta`
 or `npm install nayan-ui@beta`. You can also install a specific published version by number.
 
-Peer dependencies: `react`, plus `react-native` for native apps. Rust UI surfaces also
-need `react-reconciler@^0.34.0` with a compatible React version (the current UI build uses
-React 19.3). Install `lightningcss` as a development dependency when using the default CSS lowering in `/styles`.
-The latter two peers are optional for consumers that do not use those features.
+The peer dependencies are `react` and, for native apps, `react-native`. Nayan UI installs
+`react-reconciler` as an optional dependency for its custom UI renderer. The current
+renderer uses React 19.3. Install `lightningcss` as a development dependency when using
+the default CSS lowering in `/styles`.
 Bundled files load through the engine; no Expo asset or font peer is required.
 
 ### React Native (Expo)
@@ -686,8 +686,8 @@ and manages state for its widgets. Text fields use the native/browser editor for
 selection and IME composition, with their labels and chrome drawn by Rust.
 Charts and data tables are outside this implementation.
 
-Install `react-reconciler@^0.34.0` alongside React 19.3 when rendering a screen with `NTheme`.
-Game-only applications do not need this optional peer.
+When rendering an `NTheme` screen, use React 19.3 and keep Nayan UI’s optional
+dependencies enabled so the renderer is installed. Game-only applications can omit it.
 
 ```tsx
 import { NCard, NCheck, NInput, NSlider, NTheme } from 'nayan-ui/components';
