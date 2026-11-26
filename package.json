@@ -33,7 +33,6 @@
     "engine:core:build:web": "bun run --filter nayan-ui core:build:web",
     "engine:build:web": "bun run --filter nayan-ui build:web",
     "engine:codegen": "bun run --filter nayan-ui codegen",
-    "docker:publish": "scripts/docker-publish.sh",
     "website:typecheck": "bun run --filter @nayan-ui/website typecheck",
     "website:test": "bun run --filter @nayan-ui/website test"
   }

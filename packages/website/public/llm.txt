@@ -177,7 +177,7 @@ A free, open source (MIT) video editor that runs entirely in the browser. There 
 - **Expo**: SDK 53+
 
 ## Contributing
-The project follows standard open-source contribution guidelines with Prettier formatting, Husky pre-commit hooks, and comprehensive TypeScript typing. All components include extensive examples and documentation.
+Run `bun run format:check`, `bun run lint`, and `bun run typecheck` from the repository root.
 
 ## SEO & Performance
 - Next.js server-side rendering and static generation

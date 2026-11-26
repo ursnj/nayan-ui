@@ -83,7 +83,7 @@ cp /path/to/nayan-games-version.tgz packages/website/scripts/nayan-games.tgz
 bun update --cwd=packages/website --ignore-scripts nayan-games
 ```
 
-Commit the archive and the updated `bun.lock` together. Local and CI Docker builds install that exact archive with Bun’s frozen lockfile. The games license is included in the archive.
+Commit the archive and the updated `bun.lock` together. The website publishing workflow installs that exact archive with Bun’s frozen lockfile. The games license is included in the archive.
 
 ## Starter template
 
@@ -109,7 +109,6 @@ packages/
 templates/
   nayan-ui/  Standalone starter for Expo and Vite
 .github/     engine CI and website image publishing
-scripts/     local publish scripts (Docker)
 ```
 
 ## Development
@@ -136,14 +135,10 @@ bun run engine:build
 | `bun run test`              | Run the engine and website Bun tests     |
 | `bun run clean`             | Remove `node_modules` and build outputs  |
 
-Install the Git hooks from the repository root with `bunx lefthook install`.
-Pre-commit checks formatting and lint on staged files. When the games archive or lockfile changes, it checks that their staged versions match.
-
 ## Publishing
 
 - **Engine package** — manually run **Build and publish nayan-ui**. Choose **validate** for a dry run and a verified tarball, or **publish** to release to npm. Leave **Publish as beta** unchecked for `latest`, or check it for `beta`. The package version comes from `packages/nayan-ui/package.json`.
 - **Website** — run the **Publish website docker images** workflow to build and push `ursnj/nayanui:latest`. Requires the `DOCKER_HUB_TOKEN` repository secret.
-  Or publish it from your machine with `bun run docker:publish` (needs Docker and `docker login` as ursnj; `--dry-run` builds and checks without pushing, `--help` lists the options).
 
 ## Documentation
 
