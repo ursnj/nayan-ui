@@ -43,7 +43,7 @@ const ComponentWrapper = (props: Props) => {
   const sourceUrl = REPO_URL;
 
   /*
-   * `screenshot` names the light and dark captures for the native example app.
+   * `screenshot` names the light and dark captures for the native component preview.
    */
   const slug = pathname.split("/").pop() ?? "";
   const screenshot: string | undefined =
@@ -57,7 +57,7 @@ const ComponentWrapper = (props: Props) => {
         title="Demo"
         description={
           type === "react-native"
-            ? "React Native components render to native views, so this is the component running in the example app, in the theme you are reading in."
+            ? "This screenshot shows the React Native component in the current theme."
             : "Rendered live, with the same build of the library you install."
         }
       >
@@ -65,7 +65,7 @@ const ComponentWrapper = (props: Props) => {
           <PhoneFrame
             light={`/react-native/${screenshot}-light.png`}
             dark={`/react-native/${screenshot}-dark.png`}
-            alt={`${component.title} running in the Nayan UI example app`}
+            alt={`${component.title} rendered on React Native`}
           />
         ) : (
           <NView tag="div" className="space-y-4 [&>*]:max-w-full">{children}</NView>

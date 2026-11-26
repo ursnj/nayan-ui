@@ -12,7 +12,7 @@ import {
 export const metadata = buildPageMetadata({
   title: "Games Installation",
   description:
-    "Run the games example, or install nayan-games in Expo or a React website and render games, settings, results and themes.",
+    "Start with the Nayan UI boilerplate or install nayan-games in a React or Expo app.",
   path: "/games/installation",
   keywords:
     "react native games installation, expo games setup, next.js games, vite games, nayan game engine setup, nayan ui cli, create game project",
