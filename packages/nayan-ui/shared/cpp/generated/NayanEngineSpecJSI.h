@@ -26,6 +26,7 @@ protected:
     methodMap_["sqliteRequest"] = MethodMetadata {.argCount = 1, .invoker = __sqliteRequest};
     methodMap_["hasImagePicker"] = MethodMetadata {.argCount = 0, .invoker = __hasImagePicker};
     methodMap_["uuid"] = MethodMetadata {.argCount = 0, .invoker = __uuid};
+    methodMap_["authRequest"] = MethodMetadata {.argCount = 1, .invoker = __authRequest};
     methodMap_["deviceEnvironment"] = MethodMetadata {.argCount = 0, .invoker = __deviceEnvironment};
     methodMap_["safeAreaRequest"] = MethodMetadata {.argCount = 1, .invoker = __safeAreaRequest};
     methodMap_["assetRead"] = MethodMetadata {.argCount = 1, .invoker = __assetRead};
@@ -212,6 +213,14 @@ private:
       bridging::getParameterCount(&T::uuid) == 1,
       "Expected uuid(...) to have 1 parameters");
     return bridging::callFromJs<jsi::String>(rt, &T::uuid,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule));
+  }
+
+  static jsi::Value __authRequest(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::authRequest) == 2,
+      "Expected authRequest(...) to have 2 parameters");
+    return bridging::callFromJs<jsi::String>(rt, &T::authRequest,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asString(rt));
   }
 
   static jsi::Value __deviceEnvironment(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* /*args*/, size_t /*count*/) {

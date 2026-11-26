@@ -481,6 +481,18 @@ export async function reviewAction(openStorePage: () => void) {
       note: 'Invoke this from an explicit review action. A supported platform may still decline to show its prompt.'
     }
   ],
+  auth: [
+    {
+      title: 'Read a Google or Apple callback',
+      code: `import { auth, type SignInTransaction } from 'nayan-ui/auth';
+
+export async function readProviderCallback(pending: SignInTransaction, url: string, body?: string) {
+  const result = await auth.readCallback(pending, { url, body });
+  return result.status === 'success' ? { code: result.code } : { status: result.status };
+}`,
+      note: 'Use the saved transaction. Google sends the code in the URL query. Apple sends a form-encoded POST body to your backend. The backend consumes the transaction once and exchanges the code.'
+    }
+  ],
   sharing: [
     {
       title: 'Share a browser File',

@@ -33,6 +33,7 @@ type BinarySpec = Omit<
   | 'audioControl'
   | 'deviceEnvironment'
   | 'safeAreaRequest'
+  | 'authRequest'
   | 'assetRead'
   | 'iconRequest'
   | 'speechRequest'
@@ -65,6 +66,7 @@ export type EngineBridge = {
   audioControl?: Spec['audioControl'];
   deviceEnvironment?: Spec['deviceEnvironment'];
   safeAreaRequest?: Spec['safeAreaRequest'];
+  authRequest?: Spec['authRequest'];
   assetRead?(uri: string): Promise<ArrayBuffer>;
   iconRequest?(data: ArrayBufferLike, command: string): Promise<string>;
   speechRequest?: Spec['speechRequest'];

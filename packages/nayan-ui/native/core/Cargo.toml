@@ -12,7 +12,7 @@ crate-type = ["staticlib", "rlib", "cdylib"]
 [features]
 default = [
     "games", "components", "markdown", "drawing", "storage", "uuid", "image-picker",
-    "audio", "microphone", "haptics", "tts", "keep-awake", "review", "permissions", "sqlite", "video", "location",
+    "audio", "microphone", "haptics", "tts", "keep-awake", "review", "permissions", "sqlite", "video", "location", "auth",
 ]
 audio = ["dep:cpal", "dep:hound", "dep:rtrb", "dep:objc2-avf-audio", "dep:ndk-context"]
 microphone = ["audio", "dep:block2"]
@@ -21,6 +21,7 @@ tts = ["dep:block2", "dep:dispatch2", "dep:objc2-foundation", "web-sys/SpeechSyn
 keep-awake = []
 review = []
 permissions = []
+auth = ["dep:base64", "dep:getrandom", "dep:sha2", "dep:subtle", "dep:url"]
 location = ["permissions"]
 sqlite = ["dep:rusqlite", "dep:sha2", "dep:sqlite-wasm-rs", "dep:sqlite-wasm-vfs"]
 video = []
@@ -40,6 +41,9 @@ egui-wgpu = { version = "0.37.0", default-features = false, features = ["fragile
 image-webp = { version = "0.2.4", optional = true }
 unicode-segmentation = { version = "1.13", optional = true }
 base64 = { version = "0.23.1", optional = true }
+getrandom = { version = "0.4", features = ["wasm_js"], optional = true }
+subtle = { version = "2.6", optional = true }
+url = { version = "2.5", optional = true }
 earcutr = { version = "0.5.0", optional = true }
 gltf = { version = "1.4.1", default-features = false, features = ["utils", "names", "extensions"], optional = true }
 serde_json = "1.0"

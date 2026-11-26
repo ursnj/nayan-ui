@@ -24,6 +24,9 @@ pub mod drawing;
 #[path = "support/easing.rs"]
 mod easing;
 pub mod ffi;
+#[cfg(feature = "auth")]
+#[path = "../../auth/rust/oauth.rs"]
+mod auth;
 #[cfg(any(feature = "games", feature = "sqlite"))]
 #[path = "support/fingerprint.rs"]
 mod fingerprint;

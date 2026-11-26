@@ -862,6 +862,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.nayanui.com/modules/auth</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.nayanui.com/modules/camera</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -7633,6 +7638,11 @@
   </url>
   <url>
     <loc>https://www.nayanui.com/tags/audio</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.nayanui.com/tags/auth</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

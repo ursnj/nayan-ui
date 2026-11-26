@@ -64,6 +64,8 @@ const required = new Set([
   'native/core/Cargo.toml',
   'native/core/Cargo.lock',
   'native/core/src/lib.rs',
+  'native/auth/rust/oauth.rs',
+  'native/auth/rust/ffi.rs',
   'native/games/rust/render/shader.wgsl',
   'native/drawing/THIRD_PARTY_LICENSES.txt',
   'native/core/scripts/features.sh',

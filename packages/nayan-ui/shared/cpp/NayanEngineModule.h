@@ -21,6 +21,7 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   jsi::Value sqliteRequest(jsi::Runtime &rt, jsi::String command);
   bool hasImagePicker(jsi::Runtime &rt);
   jsi::String uuid(jsi::Runtime &rt);
+  jsi::String authRequest(jsi::Runtime &rt, jsi::String command);
   jsi::String deviceEnvironment(jsi::Runtime &rt);
   jsi::String safeAreaRequest(jsi::Runtime &rt, jsi::String command);
   jsi::Value fileRequest(jsi::Runtime &rt, jsi::String action, jsi::String value, jsi::String fileName);

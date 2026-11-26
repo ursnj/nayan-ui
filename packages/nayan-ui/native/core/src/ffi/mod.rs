@@ -24,6 +24,8 @@ mod no_games;
 pub mod render;
 #[path = "../../../components/rust/ffi/safe_area.rs"]
 pub mod safe_area;
+#[path = "../../../auth/rust/ffi.rs"]
+pub mod auth;
 #[cfg(not(target_arch = "wasm32"))]
 #[path = "../../../sqlite/rust/ffi/sqlite.rs"]
 pub mod sqlite;

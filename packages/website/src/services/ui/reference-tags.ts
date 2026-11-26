@@ -154,6 +154,7 @@ const topics = [
       'keyboard',
       'package-metadata',
       'platform-view',
+      'auth',
       'safe-area',
       'styles',
       'theme',

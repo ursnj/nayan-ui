@@ -42,6 +42,8 @@ int32_t engine_system_bars_remove(const uint8_t *id, size_t len, EngineSystemBar
 // Stateless utilities: lowercase UUID v4, exactly 36 ASCII bytes (no NUL).
 // out must be writable for len bytes. Returns 0 for null/undersized output, 1 on success.
 uint8_t engine_uuid(uint8_t *out, size_t len);
+// OAuth authorization and callback parsing. Free JSON results with engine_drawing_result_free.
+char *engine_auth_request(const uint8_t *data, size_t len);
 
 // Native application storage, independent of asset-cache clearing. Owned results must be freed.
 // Each input pointer is readable for its stated length; result pointers remain valid until freed.

@@ -312,6 +312,26 @@ export async function askForReview() {
     note: 'Availability and whether the prompt appears are controlled by the platform.'
   },
   {
+    slug: 'auth',
+    title: 'Auth',
+    entry: './auth',
+    description: 'Start Google or Apple sign-in in the browser from Android, iOS, or web. The Rust core generates and validates OAuth transactions.',
+    code: `import { auth, type SignInOptions, type SignInProvider, type SignInRequest } from 'nayan-ui/auth';
+
+export async function startSignIn(
+  provider: SignInProvider,
+  options: SignInOptions,
+  registerPending: (request: SignInRequest) => Promise<void>,
+  openBrowser: (url: string) => void | Promise<void>
+) {
+  const request = await auth.createRequest(provider, options);
+  await registerPending(request);
+  await openBrowser(request.authorizationUrl);
+}`,
+    note: 'Use a Google Web application client ID or Apple Services ID and an HTTPS return URL registered with the provider. The backend binds the pending request to the initiating session, verifies the callback, exchanges the code, and verifies the ID token before creating a session.',
+    guide: 'https://github.com/ursnj/nayan-ui/blob/main/packages/nayan-ui/README.md#auth'
+  },
+  {
     slug: 'sharing',
     title: 'Sharing',
     entry: './sharing',

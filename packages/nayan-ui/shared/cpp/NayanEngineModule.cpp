@@ -354,6 +354,13 @@ jsi::String NayanEngineModule::safeAreaRequest(jsi::Runtime &rt, jsi::String com
   return value;
 }
 
+jsi::String NayanEngineModule::authRequest(jsi::Runtime &rt, jsi::String command) {
+  const auto json = command.utf8(rt);
+  std::unique_ptr<char, decltype(&engine_drawing_result_free)> result(
+      engine_auth_request(reinterpret_cast<const uint8_t *>(json.data()), json.size()), engine_drawing_result_free);
+  return jsi::String::createFromUtf8(rt, result.get());
+}
+
 jsi::Value NayanEngineModule::fileRequest(jsi::Runtime &rt, jsi::String action, jsi::String value, jsi::String fileName) {
   auto promise = std::make_shared<AsyncPromise<std::string>>(rt, jsInvoker_);
   jsi::Value result(rt, promise->get(rt));

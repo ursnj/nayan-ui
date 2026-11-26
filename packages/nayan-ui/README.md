@@ -197,6 +197,7 @@ uses. Each entry has platform-specific JavaScript and TypeScript declarations.
 | Audio and feedback | `/audio`, `/microphone`, `/tts`, `/haptics` |
 | Media and sharing | `/video`, `/camera`, `/image-picker`, `/capture`, `/sharing`, `/clipboard` |
 | App lifecycle | `/keep-awake`, `/review` |
+| Identity | [`/auth`](#auth) |
 
 Each service path starts with `nayan-ui`. The root, `/web` and
 `/modules` are compatibility entries. Find usage examples and platform
@@ -291,7 +292,7 @@ the same alias in the worker build.
 
 The supported feature names are `games`, `drawing`, `components`, `markdown`, `storage`, `uuid`,
 `image-picker`, `audio`, `microphone`, `haptics`, `tts`, `keep-awake`,
-`review`, `permissions`, `sqlite`, `video` and `location`.
+`review`, `permissions`, `sqlite`, `video`, `location` and `auth`.
 `games` owns 3D rendering, glTF loading, meshes, glyphs and procedural worlds.
 The native build links the shared bridge and small platform adapters. Browser
 storage, UUIDs, image picking and video use browser facilities, and named icons
@@ -1990,6 +1991,7 @@ requests and `/network` for connection status and optional endpoint checks.
 | [`/capture`](#screen-capture) | Capture engine surfaces in a native screenshot or a picked browser display | PNG output. Browser capture requires user permission. |
 | [`/keep-awake`](#keep-awake) | Tagged leases, foreground ownership and a React hook | The browser requires support and a visible document. |
 | [`/review`](#store-review) | Request a native store review | The store decides whether to show a prompt. |
+| [`/auth`](#auth) | Google and Apple OAuth requests and callback validation | Android, iOS, and web use the same Rust flow. The app's backend exchanges codes and creates sessions. |
 | [`/components` safe areas](#safe-areas) | Providers, measurements, listeners, edge modes and spacing | Native uses numeric insets. Web supports CSS environment values. |
 
 ### Asset loading
@@ -2730,6 +2732,34 @@ secure/visible document, and reacquire when it becomes visible again. Availabili
 checks do not grant permission. The `useKeepAwake(active, onError?)` hook from the
 same entry owns a unique tag and releases it on cleanup. Pass the navigation
 screen's focus state when a retained screen should keep the display awake.
+
+#### Auth
+
+Use `nayan-ui/auth` to start Google or Apple authorization on Android, iOS, and web. The Rust core generates fresh state and nonce values and uses S256 PKCE for Google. The default engine ships this module. Include `auth` when selecting a custom Rust feature profile.
+
+Register a Google **Web application** client and an Apple **Services ID** with separate HTTPS return URLs on your backend. Google returns the code in a query string. Apple sends an `application/x-www-form-urlencoded` POST to its return URL. [Google setup](https://developers.google.com/identity/protocols/oauth2/web-server) · [Apple authorization setup](https://developer.apple.com/documentation/signinwithapplerestapi/request-an-authorization-to-the-sign-in-with-apple-server)
+
+```ts
+import { auth, type SignInRequest } from 'nayan-ui/auth';
+
+export async function startSignIn(
+  provider: 'google' | 'apple',
+  clientId: string,
+  redirectUri: string,
+  registerPending: (request: SignInRequest) => Promise<void>,
+  openBrowser: (url: string) => void | Promise<void>
+) {
+  const request = await auth.createRequest(provider, { clientId, redirectUri });
+  await registerPending(request);
+  await openBrowser(request.authorizationUrl);
+}
+```
+
+Call `startSignIn` from a sign-in button. Use React Native's `Linking.openURL` to open the system browser or `window.location.assign` on the web. Have `registerPending` bind the transaction to the initiating session on your backend over HTTPS before opening the browser. Configure the allowed OAuth clients and return URLs on the backend.
+
+When the provider calls back, look up the saved transaction and consume it once. `auth.readCallback(transaction, { url, body })` validates the return URL, state, and response format where the Rust engine is available. Supply the full URL including its query for Google and the raw form body for Apple. It returns `success` with an authorization code, `cancelled`, or `denied`. Invalid callbacks reject. Your backend must perform these checks before exchanging the code, even if the app validates a callback too.
+
+Exchange codes on your backend using the registered client and exact return URL, with the saved PKCE verifier for Google. Keep the Google client secret and Apple signing key on the server. Verify each ID token's signature, issuer, audience, expiry, and nonce before creating an app session. Use the verified issuer and subject to identify the account. Return control to the native app through a verified app link with a short-lived, single-use handoff. [Google OpenID Connect](https://developers.google.com/identity/openid-connect/openid-connect) · [Apple token validation](https://developer.apple.com/documentation/signinwithapplerestapi/generate-and-validate-tokens)
 
 #### Store review
 

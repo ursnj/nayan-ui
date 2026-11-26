@@ -14,6 +14,7 @@ const supported = new Set([
   'keep-awake',
   'review',
   'permissions',
+  'auth',
   'sqlite',
   'video',
   'location'
