@@ -60,14 +60,14 @@ export function engineGuideSchemas(guide: EngineGuide, url = guideUrl(guide)) {
       }),
     );
 
-  // The first game is the repo's games example: link its source.
+  // Link the starter used by the first game guide.
   if (guide.slug === "first-game")
     schemas.push({
       "@context": "https://schema.org",
       "@type": "SoftwareSourceCode",
-      name: "Nayan Game Engine games example (Car Racing)",
+      name: "Nayan UI starter",
       description:
-        "A Bun workspace with Car Racing for iOS, Android and the web: shared game code, an Expo app and a Vite app.",
+        "A Bun workspace with a landing page shared by Expo and Vite apps.",
       codeRepository: `${REPO_URL}/tree/main/packages/example`,
       programmingLanguage: ["TypeScript", "React", "React Native"],
       runtimePlatform: ["iOS", "Android", "Web"],

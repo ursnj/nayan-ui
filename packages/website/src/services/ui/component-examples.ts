@@ -390,7 +390,7 @@ export default function Example() {
 
 export default function Example() {
   return (
-    <VideoPlayer source="/nayan-ui/reference-orbit.mp4" controls muted contentFit="contain"
+    <VideoPlayer source="/ui/reference-orbit.mp4" controls muted contentFit="contain"
       accessibilityLabel="Orbit sample clip" style={{ width: '100%', height: '100%', backgroundColor: '#171e31' }} />
   );
 }`

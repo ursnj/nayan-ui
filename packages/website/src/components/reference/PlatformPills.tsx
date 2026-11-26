@@ -1,5 +1,5 @@
 import { NText, NView } from 'nayan-ui/components';
-import type { ReferencePlatform } from '@/services/nayan-ui/reference-platforms';
+import type { ReferencePlatform } from '@/services/ui/reference-platforms';
 
 const platformPills = {
   android: {

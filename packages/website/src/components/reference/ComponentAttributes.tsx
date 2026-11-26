@@ -1,6 +1,6 @@
 import { NText, NView } from 'nayan-ui/components';
 import SubHeader from '@/components/helpers/SubHeader';
-import reference from '@/services/nayan-ui/component-attributes.json';
+import reference from '@/services/ui/component-attributes.json';
 
 interface Attribute {
   name: string;

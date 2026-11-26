@@ -6,8 +6,8 @@ import Code from "@/components/helpers/Code";
 import Sidebar from "@/components/helpers/Sidebar";
 import SubHeader from "@/components/helpers/SubHeader";
 import { ACCENT_TEXT, CARD, H3_DOC } from "@/design/system";
-import { engineNavigation } from "@/services/nayan-ui/navigation";
-import type { EngineGuide } from "@/services/nayan-ui/types";
+import { engineNavigation } from "@/services/ui/navigation";
+import type { EngineGuide } from "@/services/ui/types";
 
 const referenceLinks = [
   { href: "/components", label: "Components", tone: "lime", icon: Blocks },

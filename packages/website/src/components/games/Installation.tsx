@@ -69,11 +69,9 @@ const GamesInstallation = () => {
       </NText>
 
       <NView tag="div" className="mb-8">
-        <NText tag="h2" className={H2_DOC}>Start with the games example</NText>
+        <NText tag="h2" className={H2_DOC}>Start with the Nayan UI starter</NText>
         <NText tag="p" className={P}>
-          The example includes an Expo app for iOS and Android, a Vite app for the browser, and a
-          Car Racing game in <NText tag="code">shared/</NText>. Both apps are ready to run from the same Bun
-          workspace.
+          The Nayan UI starter includes an Expo app for iOS and Android, a Vite app for the browser, and a shared landing page. Run either app from the same Bun workspace, then follow the installation steps below to add games.
         </NText>
         <Code language="bash" code={createProjectCode} />
         <NText tag="p" className={P}>

@@ -1,4 +1,4 @@
-import NayanPlaygroundLoader from "@/components/nayan-playground/NayanPlaygroundLoader";
+import NayanPlaygroundLoader from "@/components/playground/NayanPlaygroundLoader";
 import JsonLd from "@/components/helpers/JsonLd";
 import {
   ENGINE_URL,

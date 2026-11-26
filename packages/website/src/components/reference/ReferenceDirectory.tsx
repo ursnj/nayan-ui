@@ -6,7 +6,7 @@ import Link from 'next/link';
 import CatalogSearch from '@/components/helpers/CatalogSearch';
 import { ArrowUpRight } from '@/design/Icons';
 import { CARD_INTERACTIVE, H3 } from '@/design/system';
-import type { ReferencePlatform } from '@/services/nayan-ui/reference-platforms';
+import type { ReferencePlatform } from '@/services/ui/reference-platforms';
 import PlatformPills from './PlatformPills';
 
 interface Props {

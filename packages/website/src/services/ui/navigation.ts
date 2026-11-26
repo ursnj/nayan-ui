@@ -15,7 +15,7 @@ export const engineNavigation = [
   {
     slug: "first-game",
     title: "Build your first game",
-    description: "Start from the repo's games example and see how its Car Racing is built.",
+    description: "Use the Nayan UI starter to render a scene with a bouncing ball.",
     link: "/game-engine/first-game",
   },
   {
