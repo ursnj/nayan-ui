@@ -31,7 +31,7 @@ After installing the development build, you can start Metro with `bun run exampl
 ## Customize the landing page
 
 - The shared landing page uses Nayan UI’s built-in utilities. Nayan UI compiles them to CSS for the browser and resolves them at runtime on mobile. [Landing.tsx](shared/src/Landing.tsx)
-- Both apps pass the same light and dark palettes to `NTheme`. It follows the system on first launch and saves the selected mode through `nayan-ui/storage`. The web stylesheet uses those same palette values. [theme.ts](shared/src/theme.ts)
+- Edit the light and dark palettes to theme surfaces, controls, fields, links, focus states, and status colors on all platforms. Both apps pass these palettes to `NTheme`, and the web build generates CSS variables from them for utilities like `bg-surface` and `text-accent-foreground`. The theme follows the system on first launch and saves the selected mode through `nayan-ui/storage`. [theme.ts](shared/src/theme.ts)
 - [web/src/main.tsx](web/src/main.tsx) uses `NTheme` and `NPlatformView` to render the landing page as browser HTML.
 - The mobile entry registers the landing page directly with Expo. `NTheme` provides the root theme and safe-area handling. [mobile/src/main.tsx](mobile/src/main.tsx)
 
