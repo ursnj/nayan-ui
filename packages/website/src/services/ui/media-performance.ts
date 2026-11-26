@@ -250,7 +250,7 @@ export function scheduleWave(world: World) {
         id: "sound-banks",
         title: "Load a sound bank",
         paragraphs: [
-          "audio.load({ name: source }) returns a SoundBank at once; await bank.ready before relying on it, since plays before then are ignored and failed files are logged and skipped. Sounds are WAV (PCM or float, mono or stereo): URLs on the web, require(...) in React Native.",
+          "audio.load({ name: source }) returns a SoundBank. Await bank.ready before using it. Sounds can be mono or stereo WAV, MP3, AAC-LC in M4A, FLAC or Ogg Vorbis. Use URLs on the web or bundled require(...) sources in React Native.",
         ],
         examples: [
           {

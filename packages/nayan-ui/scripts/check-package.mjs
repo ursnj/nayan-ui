@@ -74,6 +74,7 @@ const required = new Set([
   'native/core/src/lib.rs',
   'native/auth/rust/oauth.rs',
   'native/auth/rust/ffi.rs',
+  'native/audio/rust/codec.rs',
   'native/contacts/rust/contacts.rs',
   'native/contacts/rust/ffi.rs',
   'native/contacts/ios/Contacts.h',

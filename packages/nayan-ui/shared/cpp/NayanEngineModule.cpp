@@ -1201,9 +1201,28 @@ void NayanEngineModule::audioStop(jsi::Runtime &, double voice) {
 }
 
 bool NayanEngineModule::audioControl(jsi::Runtime &, double voice, double action, double value, double pan) {
-  if (!(voice >= 0 && voice <= 9007199254740991.0) || !(action >= 0 && action <= 4)) return false;
+  if (!(voice >= 0 && voice <= 9007199254740991.0) || !(action >= 0 && action <= 7)) return false;
   if (std::floor(voice) != voice || std::floor(action) != action) return false;
   return engine_audio_control(static_cast<uint64_t>(voice), static_cast<uint32_t>(action), value, pan) != 0;
+}
+
+jsi::Object NayanEngineModule::audioVoiceStatus(jsi::Runtime &rt, double voice) {
+  float status[3];
+  const bool valid = voice > 0 && voice <= 9007199254740991.0 && std::floor(voice) == voice;
+  const bool found = valid && engine_audio_voice_status(static_cast<uint64_t>(voice), status);
+  auto buffer = std::make_shared<OwnedBuffer>(found ? sizeof(status) : 0);
+  if (found) std::memcpy(buffer->data(), status, sizeof(status));
+  return jsi::ArrayBuffer(rt, buffer);
+}
+
+jsi::Object NayanEngineModule::audioEncodeWav(jsi::Runtime &rt, double sound) {
+  const auto key = id(sound);
+  const size_t size = engine_audio_encode_wav(key, nullptr, 0);
+  auto buffer = std::make_shared<OwnedBuffer>(size);
+  if (size && engine_audio_encode_wav(key, buffer->data(), size) != size) {
+    throw jsi::JSError(rt, "Could not export the audio sound as WAV");
+  }
+  return jsi::ArrayBuffer(rt, buffer);
 }
 
 void NayanEngineModule::audioSetVolume(jsi::Runtime &, double volume) {
@@ -1300,6 +1319,10 @@ bool NayanEngineModule::micStart(jsi::Runtime &, double maxSeconds) {
 
 void NayanEngineModule::micStop(jsi::Runtime &) {
   engine_audio_mic_stop();
+}
+
+bool NayanEngineModule::micPause(jsi::Runtime &, bool paused) {
+  return engine_audio_mic_pause(paused ? 1 : 0) != 0;
 }
 
 double NayanEngineModule::micState(jsi::Runtime &) {

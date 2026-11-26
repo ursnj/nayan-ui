@@ -31,6 +31,9 @@ type BinarySpec = Omit<
   | 'hasImagePicker'
   | 'fileRequest'
   | 'audioControl'
+  | 'audioVoiceStatus'
+  | 'audioEncodeWav'
+  | 'micPause'
   | 'deviceEnvironment'
   | 'safeAreaRequest'
   | 'authRequest'
@@ -64,6 +67,9 @@ export type EngineBridge = {
   hasImagePicker?: Spec['hasImagePicker'];
   fileRequest?: Spec['fileRequest'];
   audioControl?: Spec['audioControl'];
+  audioVoiceStatus?(voice: number): ArrayBuffer;
+  audioEncodeWav?(sound: number): ArrayBuffer;
+  micPause?: Spec['micPause'];
   deviceEnvironment?: Spec['deviceEnvironment'];
   safeAreaRequest?: Spec['safeAreaRequest'];
   authRequest?: Spec['authRequest'];

@@ -1,4 +1,4 @@
-//! Sound: a small realtime mixer (voices, pitch, pan, looping) fed by WAV files and played through
+//! Sound: a realtime mixer fed by decoded audio and played through
 //! cpal (CoreAudio on iOS, AAudio on Android).
 //!
 //! The game thread never touches audio memory directly: it sends commands through a lock-free
@@ -14,6 +14,7 @@
 #[cfg(feature = "microphone")]
 #[path = "../../microphone/rust/capture.rs"]
 mod capture;
+mod codec;
 #[cfg(all(feature = "microphone", not(test), not(target_arch = "wasm32")))]
 #[path = "../../microphone/rust/input.rs"]
 mod input;
@@ -26,16 +27,19 @@ mod shift;
 pub use capture::Capture;
 pub use mixer::{MAX_VOICES, Mixer, Sound};
 
-use mixer::{Command, VoiceChange, pan_gains};
+use mixer::{Command, VoiceChange, VoiceStatus, pan_gains};
+use std::collections::VecDeque;
 use std::sync::atomic::{AtomicBool, AtomicU32, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, OnceLock};
 
 const COMMAND_QUEUE: usize = 256;
+const VOICE_HISTORY: usize = COMMAND_QUEUE + MAX_VOICES + 128;
 
 struct System {
     producer: Mutex<rtrb::Producer<Command>>,
     sounds: Mutex<Vec<Arc<Sound>>>,
     next_voice: AtomicU64,
+    voices: Mutex<VecDeque<(u64, Arc<VoiceStatus>)>>,
     volume: Arc<AtomicU32>,
     muted: Arc<AtomicBool>,
     running: Arc<AtomicBool>,
@@ -55,6 +59,7 @@ fn system() -> &'static System {
             producer: Mutex::new(producer),
             sounds: Mutex::new(Vec::new()),
             next_voice: AtomicU64::new(1),
+            voices: Mutex::new(VecDeque::new()),
             volume,
             muted,
             running,
@@ -62,9 +67,9 @@ fn system() -> &'static System {
     })
 }
 
-/// Decodes and registers a WAV file. Returns its sound id.
-pub fn load_wav(bytes: &[u8]) -> Option<u32> {
-    register(Sound::from_wav(bytes)?)
+/// Decodes and registers a supported audio file. Returns its sound id.
+pub fn load(bytes: &[u8]) -> Option<u32> {
+    register(codec::decode(bytes)?)
 }
 
 fn register(sound: Sound) -> Option<u32> {
@@ -91,6 +96,23 @@ pub fn duration(sound: u32) -> f32 {
         .unwrap_or(0.0)
 }
 
+pub fn wav(sound: u32, bytes: Option<&mut [u8]>) -> Option<usize> {
+    let sound = SYSTEM.get()?.sounds.lock().ok()?.get(sound as usize)?.clone();
+    let size = sound.wav_size();
+    if size == 0 {
+        return None;
+    }
+    if let Some(bytes) = bytes {
+        sound.write_wav(bytes)?;
+    }
+    Some(size)
+}
+
+pub fn voice_status(id: u64) -> Option<[f32; 3]> {
+    let voices = SYSTEM.get()?.voices.lock().ok()?;
+    voices.iter().find(|(voice, _)| *voice == id).map(|(_, status)| status.snapshot())
+}
+
 /// A new sound: `sound` `pitch` times higher and `tempo` times faster; `clean` turns rumble and the
 /// room between words down, and `loudness` > 0 levels the speech to that RMS (see `shift.rs`). Runs
 /// on the calling thread (a few milliseconds a second of audio). Free it with `release` once
@@ -109,7 +131,7 @@ pub fn levels(sound: u32, per_second: f32) -> Vec<f32> {
 /// Starts a sound. `volume` 0..2, `pan` -1 (left) ..1 (right), `pitch` playback speed.
 /// Returns a voice id for `stop`, or None if the sound id is unknown or the queue is full.
 pub fn play(sound: u32, volume: f32, pan: f32, pitch: f32, looping: bool) -> Option<u64> {
-    if !(volume.is_finite() && pan.is_finite() && pitch.is_finite()) || volume <= 0.0 {
+    if !(volume.is_finite() && pan.is_finite() && pitch.is_finite()) || volume < 0.0 {
         return None;
     }
     let system = system();
@@ -118,17 +140,28 @@ pub fn play(sound: u32, volume: f32, pan: f32, pitch: f32, looping: bool) -> Opt
         return None;
     }
     let id = system.next_voice.fetch_add(1, Ordering::Relaxed);
+    let status = Arc::new(VoiceStatus::new(sound.duration()));
     let command = Command::Play {
         id,
         sound,
         gain: pan_gains(volume.min(2.0), pan),
         pitch: pitch.clamp(0.1, 4.0),
         looping,
+        status: status.clone(),
     };
-    let queued = system.producer.lock().ok()?.push(command).is_ok();
+    {
+        let mut voices = system.voices.lock().ok()?;
+        system.producer.lock().ok()?.push(command).ok()?;
+        if voices.len() >= VOICE_HISTORY
+            && let Some(index) = voices.iter().position(|(_, status)| status.terminal())
+        {
+            voices.remove(index);
+        }
+        voices.push_back((id, status));
+    }
     #[cfg(all(target_os = "ios", not(test)))]
     output::retry_failed_open();
-    queued.then_some(id)
+    Some(id)
 }
 
 pub fn stop(voice: u64) {
@@ -146,6 +179,9 @@ pub fn control(voice: u64, action: u32, value: f64, pan: f32) -> bool {
         }
         3 => Command::StopAll,
         4 => return true, // capability query, also available before initialization
+        5 if voice > 0 && (0.1..=4.).contains(&value) => Command::Update(voice, VoiceChange::Rate(value as f32)),
+        6 if voice > 0 && (value == 0. || value == 1.) => Command::Update(voice, VoiceChange::Loop(value == 1.)),
+        7 if voice > 0 && (value == 0. || value == 1.) => Command::Update(voice, VoiceChange::Muted(value == 1.)),
         _ => return false,
     };
     SYSTEM.get().map_or(action == 3, |system| {
@@ -193,6 +229,7 @@ mod mic {
     pub const MIC_STARTING: i32 = 1;
     /// Capturing.
     pub const MIC_LISTENING: i32 = 2;
+    pub const MIC_PAUSED: i32 = 3;
     /// No input device, no permission, or the input failed to open.
     pub const MIC_FAILED: i32 = -1;
 
@@ -201,6 +238,7 @@ mod mic {
         capture: Mutex<Option<Capture>>,
         level: AtomicU32,
         state: AtomicI32,
+        paused: AtomicBool,
         /// How much input to keep (f32 seconds).
         seconds: AtomicU32,
     }
@@ -209,6 +247,7 @@ mod mic {
         capture: Mutex::new(None),
         level: AtomicU32::new(0),
         state: AtomicI32::new(MIC_OFF),
+        paused: AtomicBool::new(false),
         seconds: AtomicU32::new(0x4120_0000), // 10.0
     };
 
@@ -218,6 +257,7 @@ mod mic {
     pub fn mic_start(max_seconds: f32) -> bool {
         let seconds = if max_seconds.is_finite() { max_seconds.clamp(0.5, 30.0) } else { 10.0 };
         MIC.seconds.store(seconds.to_bits(), Ordering::Relaxed);
+        MIC.paused.store(false, Ordering::Relaxed);
         if let Ok(mut capture) = MIC.capture.lock() {
             *capture = None; // opened at the input's rate by its first block
         }
@@ -248,11 +288,31 @@ mod mic {
         }
         MIC.level.store(0, Ordering::Relaxed);
         MIC.state.store(MIC_OFF, Ordering::Relaxed);
+        MIC.paused.store(false, Ordering::Relaxed);
+    }
+
+    pub fn mic_pause(paused: bool) -> bool {
+        let Ok(_capture) = MIC.capture.lock() else {
+            return false;
+        };
+        if MIC.state.load(Ordering::Relaxed) != MIC_LISTENING {
+            return false;
+        }
+        MIC.paused.store(paused, Ordering::Relaxed);
+        if paused {
+            MIC.level.store(0, Ordering::Relaxed);
+        }
+        true
     }
 
     /// MIC_OFF, MIC_STARTING, MIC_LISTENING or MIC_FAILED.
     pub fn mic_state() -> i32 {
-        MIC.state.load(Ordering::Relaxed)
+        let state = MIC.state.load(Ordering::Relaxed);
+        if state == MIC_LISTENING && MIC.paused.load(Ordering::Relaxed) {
+            MIC_PAUSED
+        } else {
+            state
+        }
     }
 
     /// How loud the input is now, 0..1 (see `Capture::level`); 0 when not listening.
@@ -282,10 +342,13 @@ mod mic {
 
     /// Input from the device or the page: mono samples at `rate` (the buffer follows a new rate).
     pub fn mic_push(samples: &[f32], rate: u32) {
-        if MIC.state.load(Ordering::Relaxed) != MIC_LISTENING || rate == 0 {
+        if mic_state() != MIC_LISTENING || !(1..=codec::MAX_RATE).contains(&rate) {
             return;
         }
         let Ok(mut guard) = MIC.capture.lock() else { return };
+        if mic_state() != MIC_LISTENING {
+            return;
+        }
         if guard.as_ref().is_none_or(|c| c.rate() != rate) {
             *guard = Some(Capture::new(rate, f32::from_bits(MIC.seconds.load(Ordering::Relaxed))));
         }
@@ -363,6 +426,12 @@ mod tests {
         let tone: Vec<f32> = (0..8000).map(|i| (i as f32 * 0.2).sin() * 0.3).collect();
         mic_push(&tone, 16_000);
         assert!(mic_level() > 0.6);
+        assert!(mic_pause(true));
+        assert_eq!(mic_state(), MIC_PAUSED);
+        assert_eq!(mic_level(), 0.0);
+        mic_push(&[1.0; 1600], 16_000);
+        assert!((mic_held() - 0.5).abs() < 1e-3);
+        assert!(mic_pause(false));
         mic_push(&[0.0; 4800], 16_000);
         assert!((mic_held() - 0.8).abs() < 1e-3);
         // The speech without its trailing silence
@@ -373,6 +442,9 @@ mod tests {
         assert!(loudness[1..9].iter().all(|&l| l > 0.15), "{loudness:?}");
         // Faded in, so it starts without a click
         assert!(loudness[0] < loudness[1]);
+        let mut exported = vec![0; wav(sound, None).unwrap()];
+        assert_eq!(wav(sound, Some(&mut exported)), Some(32_044));
+        assert_eq!(Sound::from_wav(&exported).unwrap().duration(), 0.5);
         // Taking forgets what was heard
         assert_eq!(mic_held(), 0.0);
         assert!(mic_take(1.0, 0.0).is_none());

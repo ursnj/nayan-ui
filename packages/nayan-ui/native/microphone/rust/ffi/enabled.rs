@@ -26,7 +26,12 @@ pub extern "C" fn engine_audio_mic_stop() {
     audio::mic_stop();
 }
 
-/// 0 off, 1 opening, 2 listening, -1 failed (no device or permission).
+#[unsafe(no_mangle)]
+pub extern "C" fn engine_audio_mic_pause(paused: i32) -> i32 {
+    audio::mic_pause(paused != 0) as i32
+}
+
+/// 0 off, 1 opening, 2 listening, 3 paused, -1 failed (no device or permission).
 #[unsafe(no_mangle)]
 pub extern "C" fn engine_audio_mic_state() -> i32 {
     audio::mic_state()

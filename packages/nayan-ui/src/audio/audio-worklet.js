@@ -35,17 +35,24 @@ class NayanMicrophone extends AudioWorkletProcessor {
     super();
     this.batch = new Float32Array(2048);
     this.filled = 0;
+    this.segment = 0;
+    this.paused = false;
+    this.port.onmessage = ({ data }) => {
+      this.segment = data.segment;
+      this.paused = data.paused;
+      this.filled = 0;
+    };
   }
   process(inputs) {
     const channels = inputs[0];
-    if (!channels || !channels.length) return true;
+    if (this.paused || !channels || !channels.length) return true;
     const frames = channels[0].length;
     for (let i = 0; i < frames; i++) {
       let sum = 0;
       for (let c = 0; c < channels.length; c++) sum += channels[c][i];
       this.batch[this.filled++] = sum / channels.length;
       if (this.filled === this.batch.length) {
-        this.port.postMessage(this.batch, [this.batch.buffer]);
+        this.port.postMessage({ samples: this.batch, segment: this.segment }, [this.batch.buffer]);
         this.batch = new Float32Array(2048);
         this.filled = 0;
       }

@@ -1,5 +1,7 @@
 import { expect, mock, test } from 'bun:test';
 import type { EngineBridge } from '../../native/EngineBridge';
+import { installMicrophoneInput } from '../input.web';
+import type { WasmCore } from '../../native/BrowserEngine';
 
 let state = 0;
 const native = {
@@ -11,6 +13,10 @@ const native = {
   }),
   micStop: mock(() => {
     state = 0;
+  }),
+  micPause: mock((paused: boolean) => {
+    state = paused ? 3 : 2;
+    return true;
   }),
   micState: () => state,
   micLevel: () => 0.62,
@@ -41,6 +47,10 @@ test('the microphone asks once, listens, and turns a take into a releasable soun
   expect(microphone.state).toBe('listening');
   expect(microphone.level).toBe(0.62);
   expect(microphone.held).toBe(1.4);
+  expect(microphone.pause()).toBe(true);
+  expect(microphone.state).toBe('paused');
+  expect(microphone.resume()).toBe(true);
+  expect(microphone.state).toBe('listening');
 
   const take = microphone.take(1.2, { skipEnd: 0.6, levelsPerSecond: 20 })!;
   expect(native.micTake.mock.calls.at(-1)).toEqual([1.2, 0.6]);
@@ -61,6 +71,37 @@ test('the microphone asks once, listens, and turns a take into a releasable soun
   expect(audio.duration(take.sound)).toBe(0.8);
   expect(audio.levels(take.sound, 20).length).toBe(3);
 
-  microphone.stop();
+  expect(microphone.finish()).toBeNull();
   expect(microphone.state).toBe('off');
+});
+
+test('browser permission probes and streams opened after stop are released', async () => {
+  const originalNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+  const originalNode = Object.getOwnPropertyDescriptor(globalThis, 'AudioWorkletNode');
+  const probeStopped = mock(() => {});
+  const lateStopped = mock(() => {});
+  const lateStream = Promise.withResolvers<unknown>();
+  const getUserMedia = mock(() => lateStream.promise).mockResolvedValueOnce({ getTracks: () => [{ stop: probeStopped }] });
+  Object.defineProperties(globalThis, {
+    navigator: { configurable: true, value: { mediaDevices: { getUserMedia } } },
+    AudioWorkletNode: { configurable: true, value: class {} }
+  });
+  try {
+    const bridge = { micStart: () => true, micStop: () => {}, micState: () => 0 } as unknown as EngineBridge;
+    installMicrophoneInput({} as WasmCore, bridge);
+    expect(await bridge.micRequestPermission()).toBe(true);
+    expect(probeStopped).toHaveBeenCalledTimes(1);
+    expect(bridge.micStart(10)).toBe(true);
+    expect(bridge.micState()).toBe(1);
+    bridge.micStop();
+    lateStream.resolve({ getTracks: () => [{ stop: lateStopped }] });
+    await lateStream.promise;
+    expect(lateStopped).toHaveBeenCalledTimes(1);
+    expect(bridge.micState()).toBe(0);
+  } finally {
+    for (const [key, descriptor] of [['navigator', originalNavigator], ['AudioWorkletNode', originalNode]] as const) {
+      if (descriptor) Object.defineProperty(globalThis, key, descriptor);
+      else Reflect.deleteProperty(globalThis, key);
+    }
+  }
 });

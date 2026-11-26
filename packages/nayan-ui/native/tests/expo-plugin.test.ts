@@ -6,6 +6,7 @@ const withEngine: ConfigPlugin<{
   features?: string[];
   locationPermission?: string;
   contactsPermission?: string;
+  microphonePermission?: string;
 } | void> = require('../../app.plugin.js');
 
 test('image picker selection is persisted to both native build configurations', async () => {
@@ -94,6 +95,22 @@ test('contacts permissions are opt-in and require the contacts feature in a cust
   expect(plist.modResults.NSContactsUsageDescription).toBe(contactsPermission);
   expect(withEngine(host).android?.permissions).toBeUndefined();
   expect(() => withEngine(host, { features: ['permissions'], contactsPermission })).toThrow('requires the contacts feature');
+});
+
+test('microphone permissions are opt-in and require the microphone feature in a custom profile', async () => {
+  const host = { name: 'Host', slug: 'host' };
+  const microphonePermission = 'Allow Host to record a voice note.';
+  const configured = withEngine({ ...host }, { features: ['audio', 'microphone'], microphonePermission }) as ExportedConfig;
+  expect(configured.android?.permissions).toEqual(['android.permission.RECORD_AUDIO']);
+  const plist = await configured.mods!.ios!.infoPlist!({
+    ...configured,
+    modRawConfig: configured,
+    modResults: {},
+    modRequest: { projectRoot: '/tmp/host', platformProjectRoot: '/tmp/host/ios', platform: 'ios', modName: 'infoPlist', introspect: true }
+  });
+  expect(plist.modResults.NSMicrophoneUsageDescription).toBe(microphonePermission);
+  expect(withEngine(host).android?.permissions).toBeUndefined();
+  expect(() => withEngine(host, { features: ['audio'], microphonePermission })).toThrow('requires the microphone feature');
 });
 
 test('engine Expo plugin configures iOS app-level status bars while preserving other plist entries', async () => {

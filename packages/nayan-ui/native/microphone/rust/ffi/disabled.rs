@@ -13,6 +13,10 @@ pub extern "C" fn engine_audio_mic_start(_: f32) -> i32 {
 #[unsafe(no_mangle)]
 pub extern "C" fn engine_audio_mic_stop() {}
 #[unsafe(no_mangle)]
+pub extern "C" fn engine_audio_mic_pause(_: i32) -> i32 {
+    0
+}
+#[unsafe(no_mangle)]
 pub extern "C" fn engine_audio_mic_state() -> i32 {
     -1
 }

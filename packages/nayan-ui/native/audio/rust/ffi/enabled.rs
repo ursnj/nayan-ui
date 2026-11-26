@@ -1,6 +1,6 @@
 use crate::audio;
 
-/// Decodes a WAV file (copied). Returns its sound id, or -1 if it can't be decoded.
+/// Decodes a supported audio file. The name is retained for compatibility with existing bridges.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_audio_load_wav(data: *const u8, len: usize) -> i32 {
     if data.is_null() || len == 0 {
@@ -8,7 +8,7 @@ pub unsafe extern "C" fn engine_audio_load_wav(data: *const u8, len: usize) -> i
     }
     // SAFETY: caller passes a readable buffer of `len` bytes, used only during this call.
     let bytes = unsafe { std::slice::from_raw_parts(data, len) };
-    audio::load_wav(bytes).map_or(-1, |id| id as i32)
+    audio::load(bytes).map_or(-1, |id| id as i32)
 }
 
 /// Returns a voice id (> 0) for `engine_audio_stop`, or 0 if nothing was played.
@@ -25,6 +25,29 @@ pub extern "C" fn engine_audio_stop(voice: u64) {
 #[unsafe(no_mangle)]
 pub extern "C" fn engine_audio_control(voice: u64, action: u32, value: f64, pan: f32) -> i32 {
     audio::control(voice, action, value, pan) as i32
+}
+
+/// Writes [state, position in seconds, duration in seconds] when the voice is known.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_audio_voice_status(voice: u64, out: *mut f32) -> i32 {
+    let Some(status) = audio::voice_status(voice).filter(|_| !out.is_null()) else {
+        return 0;
+    };
+    // SAFETY: the caller provides space for three writable floats.
+    unsafe { std::ptr::copy_nonoverlapping(status.as_ptr(), out, status.len()) };
+    1
+}
+
+/// Returns the WAV size with a null output, or writes the WAV to a caller-owned buffer.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn engine_audio_encode_wav(sound: u32, out: *mut u8, capacity: usize) -> usize {
+    let bytes = if out.is_null() {
+        None
+    } else {
+        // SAFETY: the caller provides a writable buffer of `capacity` bytes.
+        Some(unsafe { std::slice::from_raw_parts_mut(out, capacity) })
+    };
+    audio::wav(sound, bytes).unwrap_or(0)
 }
 
 #[unsafe(no_mangle)]

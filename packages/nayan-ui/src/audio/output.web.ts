@@ -1,8 +1,9 @@
 import type { WasmCore } from '../native/BrowserEngine';
+import type { EngineBridge } from '../native/EngineBridge';
 import { audioWorkletUrl } from './worklet.web';
 
 /** The Rust mixer remains the source of all audio, including native collision feedback. */
-export function installAudioOutput(core: WasmCore) {
+export function installAudioOutput(core: WasmCore, bridge?: Pick<EngineBridge, 'audioPlay'>) {
   if (typeof window === 'undefined') return () => false;
   let context: AudioContext | undefined;
   let pending: Promise<void> | undefined;
@@ -14,6 +15,10 @@ export function installAudioOutput(core: WasmCore) {
     let release: (() => void) | undefined;
     pending = (async () => {
       context = new AudioContext({ sampleRate: 48000 });
+      const resumed = context.resume().then(
+        () => true,
+        () => false
+      );
       await context.audioWorklet.addModule(audioWorkletUrl());
       const output = new AudioWorkletNode(context, 'nayan-mixer', {
         numberOfInputs: 0,
@@ -49,7 +54,7 @@ export function installAudioOutput(core: WasmCore) {
       send();
       output.connect(context.destination);
       document.addEventListener('visibilitychange', visibility);
-      await context.resume();
+      if (!(await resumed)) throw new Error('Browser audio could not start');
     })().catch(() => {
       release?.();
       void context?.close().catch(() => {});
@@ -59,5 +64,13 @@ export function installAudioOutput(core: WasmCore) {
   };
   window.addEventListener('pointerdown', start, { capture: true });
   window.addEventListener('keydown', start, { capture: true });
+  if (bridge) {
+    const play = bridge.audioPlay;
+    bridge.audioPlay = (...options) => {
+      const voice = play(...options);
+      if (voice > 0) start();
+      return voice;
+    };
+  }
   return () => context?.state === 'running';
 }

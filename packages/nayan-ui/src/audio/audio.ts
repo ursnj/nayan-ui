@@ -15,7 +15,7 @@ export type AudioPlayOptions = {
   volume?: number;
   /** -1 left .. 1 right. Default 0. */
   pan?: number;
-  /** Playback speed (also shifts pitch). Default 1. */
+  /** Playback speed (0.1..4, also shifts pitch). Default 1. */
   pitch?: number;
   /** Repeat until stopped (music, engines, ambience). */
   loop?: boolean;
@@ -33,14 +33,24 @@ export type AudioShiftOptions = {
   clean?: boolean;
 };
 
-/** A `require("./file.wav")` asset, or a URI. WAV, PCM or float, mono or stereo. */
+/** A bundled audio asset or URI. Supports mono and stereo WAV, MP3, AAC-LC in M4A, FLAC, and Ogg Vorbis. */
 export type SoundSource = AssetSource;
+
+const playbackStates = ['pending', 'playing', 'paused', 'ended', 'stopped'] as const;
+export type AudioPlaybackState = (typeof playbackStates)[number];
+export interface AudioPlaybackStatus {
+  state: AudioPlaybackState;
+  /** Playback position in seconds at the sound's original speed. */
+  currentTime: number;
+  /** Sound length in seconds. */
+  duration: number;
+}
 
 const loader = /* @__PURE__ */ new AssetLoader<Sound>('audio');
 
 async function decodeSound(native: EngineBridge, bytes: ArrayBuffer): Promise<Sound> {
   const id = typeof native.audioLoadAsync === 'function' ? await native.audioLoadAsync(bytes) : native.audioLoad(bytes);
-  if (id < 0) throw new Error('Could not decode WAV with this engine build');
+  if (id < 0) throw new Error('Could not decode audio with this engine build');
   return id as Sound;
 }
 
@@ -91,22 +101,31 @@ function updateVoice(voice: Voice, action: number, value: number, pan = 0): bool
 }
 
 export const audio = {
+  /** Initialize audio bindings without creating a game or render surface. */
+  async prepare(): Promise<void> {
+    await prepareEngine();
+  },
   /** Initializes the engine and loads named sounds into its mixer. Each asset decodes once per session. */
   load<K extends string>(sources: Record<K, SoundSource>): SoundBank<K> {
     return new SoundBank(sources);
   },
 
-  /** Loads one session-cached WAV asset. Rejects when loading or decoding fails. */
+  /** Loads one session-cached audio asset. Rejects when loading or decoding fails. */
   loadSound,
 
+  /** Decodes owned audio bytes. Call release when finished with the returned sound. */
+  decode: decodeBytes,
   /** Decodes owned WAV bytes. Call release when finished with the returned sound. */
-  async decodeWav(data: ArrayBuffer | ArrayBufferView): Promise<Sound> {
-    if (!(data instanceof ArrayBuffer) && !ArrayBuffer.isView(data)) throw new TypeError('Expected WAV bytes');
-    if (!data.byteLength || data.byteLength > 64 * 1024 * 1024) throw new RangeError('Expected a WAV payload up to 64 MiB');
-    const bytes = data instanceof ArrayBuffer ? data : new Uint8Array(data.buffer, data.byteOffset, data.byteLength).slice().buffer;
-    await prepareEngine();
-    if (!NativeEngine) throw new Error('Audio is unavailable on this engine build');
-    return decodeSound(NativeEngine, bytes);
+  decodeWav(data: ArrayBuffer | ArrayBufferView): Promise<Sound> {
+    return decodeBytes(data, true);
+  },
+
+  /** Exports a loaded sound or microphone take as 16-bit stereo PCM WAV bytes. */
+  encodeWav(sound: Sound): ArrayBuffer {
+    if (!NativeEngine?.audioEncodeWav) throw new Error('WAV export requires an engine build with audio export support');
+    const bytes = NativeEngine.audioEncodeWav(sound);
+    if (!bytes.byteLength) throw new Error('Unknown or released audio sound');
+    return bytes;
   },
 
   /** Plays a sound (low latency: mixed in Rust on the audio thread). Returns null if it couldn't play. */
@@ -140,6 +159,26 @@ export const audio = {
     if (!Number.isFinite(volume) || volume < 0 || volume > 2 || !Number.isFinite(pan) || pan < -1 || pan > 1)
       throw new RangeError('Voice volume must be 0..2 and pan must be -1..1');
     return updateVoice(voice, 2, volume, pan);
+  },
+  /** Changes playback speed without restarting the voice. Like pitch, this changes speed and pitch together. */
+  setVoiceRate(voice: Voice, rate: number): boolean {
+    if (!Number.isFinite(rate) || rate < 0.1 || rate > 4) throw new RangeError('Voice rate must be 0.1..4');
+    return updateVoice(voice, 5, rate);
+  },
+  setVoiceLoop(voice: Voice, loop: boolean): boolean {
+    return updateVoice(voice, 6, Number(loop));
+  },
+  setVoiceMuted(voice: Voice, muted: boolean): boolean {
+    return updateVoice(voice, 7, Number(muted));
+  },
+  /** Returns the latest mixer snapshot. Old completed voices are removed from the bounded history. */
+  getStatus(voice: Voice): AudioPlaybackStatus | null {
+    if (!Number.isSafeInteger(voice) || voice <= 0) return null;
+    const buffer = NativeEngine?.audioVoiceStatus?.(voice);
+    if (buffer?.byteLength !== 3 * Float32Array.BYTES_PER_ELEMENT) return null;
+    const [index, currentTime, duration] = new Float32Array(buffer);
+    const state = playbackStates[index!];
+    return state ? { state, currentTime: currentTime!, duration: duration! } : null;
   },
   /** Stops every voice in the engine mixer, including loops and paused voices. */
   stopAll(): boolean {
@@ -217,3 +256,16 @@ export const audio = {
     return NativeEngine?.audioIsRunning() ?? false;
   }
 };
+
+async function decodeBytes(data: ArrayBuffer | ArrayBufferView, wavOnly = false): Promise<Sound> {
+  if (!(data instanceof ArrayBuffer) && !ArrayBuffer.isView(data)) throw new TypeError('Expected audio bytes');
+  if (!data.byteLength || data.byteLength > 64 * 1024 * 1024) throw new RangeError('Expected an audio payload up to 64 MiB');
+  const source = new Uint8Array(data instanceof ArrayBuffer ? data : data.buffer, ArrayBuffer.isView(data) ? data.byteOffset : 0, data.byteLength);
+  if (wavOnly && (source.length < 12 || String.fromCharCode(...source.subarray(0, 4), ...source.subarray(8, 12)) !== 'RIFFWAVE')) {
+    throw new TypeError('Expected WAV bytes');
+  }
+  const bytes = source.slice().buffer;
+  await prepareEngine();
+  if (!NativeEngine) throw new Error('Audio is unavailable on this engine build');
+  return decodeSound(NativeEngine, bytes);
+}

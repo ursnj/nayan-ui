@@ -304,10 +304,12 @@ size_t engine_load_error(char *out, size_t cap);
 
 // ── Audio (global) ───────────────────────────────────────────────────────
 // The output stream starts on first use. WAV (PCM int or float, mono/stereo).
-int32_t engine_audio_load_wav(const uint8_t *data, size_t len); // sound id, or -1
+int32_t engine_audio_load_wav(const uint8_t *data, size_t len); // supported audio bytes, sound id or -1
 uint64_t engine_audio_play(uint32_t sound, float volume, float pan, float pitch, int32_t looping); // voice id, 0 = none
 void engine_audio_stop(uint64_t voice);
 int32_t engine_audio_control(uint64_t voice, uint32_t action, double value, float pan);
+int32_t engine_audio_voice_status(uint64_t voice, float *out); // state, position seconds, duration seconds
+size_t engine_audio_encode_wav(uint32_t sound, uint8_t *out, size_t capacity); // null out returns size
 void engine_audio_set_volume(float volume);
 // Frees a sound's samples (a played recording); its id then plays nothing.
 void engine_audio_release(uint32_t sound);
@@ -331,6 +333,7 @@ void engine_audio_mic_request(void (*done)(void *context, int32_t granted), void
 // Starts listening, keeping the last `max_seconds` of input. 1 if it's opening.
 int32_t engine_audio_mic_start(float max_seconds);
 void engine_audio_mic_stop(void);
+int32_t engine_audio_mic_pause(int32_t paused);
 // 0 off, 1 opening, 2 listening, -1 failed (no device or permission).
 int32_t engine_audio_mic_state(void);
 // How loud the input is now: 0 (-60 dBFS or quieter) .. 1 (full scale).

@@ -7,6 +7,8 @@ const native = {
   audioPlay: mock<EngineBridge['audioPlay']>(() => 7),
   audioStop: mock<EngineBridge['audioStop']>(() => {}),
   audioControl: mock<NonNullable<EngineBridge['audioControl']>>(() => true),
+  audioVoiceStatus: mock(() => new Float32Array([2, 0.5, 2]).buffer),
+  audioEncodeWav: mock(() => Uint8Array.of(82, 73, 70, 70).buffer),
   audioSetMuted: mock<EngineBridge['audioSetMuted']>(() => {}),
   audioSetVolume: mock<EngineBridge['audioSetVolume']>(() => {}),
   audioIsRunning: () => true,
@@ -54,7 +56,7 @@ test('a failed optional sound logs its cause, resolves ready and can be retried'
     await failed.ready;
     expect(failed.get('broken')).toBeUndefined();
     expect(failed.play('broken')).toBeNull();
-    expect(warning.mock.calls[0]![0]).toMatch(/retry\.wav: .*WAV/i);
+    expect(warning.mock.calls[0]![0]).toMatch(/retry\.wav: .*decode audio/i);
     const retry = audio.load({ fixed: 'retry.wav' });
     await retry.ready;
     expect(retry.get('fixed')).toBeDefined();
@@ -80,7 +82,8 @@ test('master preferences forward current values and report output state', () => 
 });
 
 test('audio decodes explicit byte ranges and forwards validated voice controls', async () => {
-  const sound = await audio.decodeWav(Uint8Array.of(1, 2, 3).subarray(1));
+  const sound = await audio.decode(Uint8Array.of(1, 2, 3).subarray(1));
+  await expect(audio.decodeWav(Uint8Array.of(1, 2, 3))).rejects.toThrow('Expected WAV bytes');
   const voice = audio.play(sound)!;
   expect(audio.canControlVoices).toBe(true);
   expect(audio.pause(voice)).toBe(true);
@@ -91,6 +94,14 @@ test('audio decodes explicit byte ranges and forwards validated voice controls',
   expect(native.audioControl).toHaveBeenLastCalledWith(voice, 2, 0.3, -0.75);
   expect(audio.resume(voice)).toBe(true);
   expect(native.audioControl).toHaveBeenLastCalledWith(voice, 0, 0, 0);
+  expect(audio.setVoiceRate(voice, 0.75)).toBe(true);
+  expect(native.audioControl).toHaveBeenLastCalledWith(voice, 5, 0.75, 0);
+  expect(audio.setVoiceLoop(voice, true)).toBe(true);
+  expect(native.audioControl).toHaveBeenLastCalledWith(voice, 6, 1, 0);
+  expect(audio.setVoiceMuted(voice, true)).toBe(true);
+  expect(native.audioControl).toHaveBeenLastCalledWith(voice, 7, 1, 0);
+  expect(audio.getStatus(voice)).toEqual({ state: 'paused', currentTime: 0.5, duration: 2 });
+  expect(audio.encodeWav(sound)).toEqual(Uint8Array.of(82, 73, 70, 70).buffer);
   expect(audio.stopAll()).toBe(true);
   expect(native.audioControl).toHaveBeenLastCalledWith(0, 3, 0, 0);
   expect(() => audio.setVoiceMix(voice, 1, 2)).toThrow(RangeError);

@@ -694,6 +694,19 @@ export function createBrowserEngine(core: WasmCore): EngineBridge {
       const control = core.engine_audio_control as ((voice: bigint, action: number, value: number, pan: number) => number) | undefined;
       return control?.(BigInt(voice), action, value, pan) === 1;
     },
+    audioVoiceStatus(voice) {
+      const status = core.engine_audio_voice_status as ((voice: bigint, out: number) => number) | undefined;
+      if (!status) return new ArrayBuffer(0);
+      const pointer = zeroed(0, 3 * Float32Array.BYTES_PER_ELEMENT);
+      return status(BigInt(voice), pointer) === 1 ? copy(pointer, 3 * Float32Array.BYTES_PER_ELEMENT) : new ArrayBuffer(0);
+    },
+    audioEncodeWav(sound) {
+      if (typeof core.engine_audio_encode_wav !== 'function') return new ArrayBuffer(0);
+      const size = fn('audio_encode_wav', sound, 0, 0);
+      if (!size) return new ArrayBuffer(0);
+      const pointer = zeroed(0, size);
+      return fn('audio_encode_wav', sound, pointer, size) === size ? copy(pointer, size) : new ArrayBuffer(0);
+    },
     audioSetVolume(volume) {
       fn('audio_set_volume', volume);
     },
@@ -724,6 +737,7 @@ export function createBrowserEngine(core: WasmCore): EngineBridge {
     micStop() {
       fn('audio_mic_stop');
     },
+    micPause: (paused) => typeof core.engine_audio_mic_pause === 'function' && fn('audio_mic_pause', +paused) === 1,
     micState: () => fn('audio_mic_state'),
     micLevel: () => fn('audio_mic_level'),
     micHeld: () => fn('audio_mic_held'),

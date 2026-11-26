@@ -1062,6 +1062,18 @@
     "guide": "/modules/audio"
   },
   {
+    "name": "AudioPlaybackState",
+    "module": "audio/index",
+    "typeOnly": true,
+    "guide": "/modules/audio"
+  },
+  {
+    "name": "AudioPlaybackStatus",
+    "module": "audio/index",
+    "typeOnly": true,
+    "guide": "/modules/audio"
+  },
+  {
     "name": "AudioPlayOptions",
     "module": "audio/index",
     "typeOnly": true,

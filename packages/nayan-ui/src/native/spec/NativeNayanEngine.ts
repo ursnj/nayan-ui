@@ -304,7 +304,7 @@ export interface Spec extends TurboModule {
   drawingDestroy(document: number): void;
 
   // Audio (global)
-  /** Decodes a WAV ArrayBuffer. Returns a sound id, or -1. */
+  /** Decodes supported audio bytes. Returns a sound id, or -1. */
   audioLoad(data: Object): number;
   /** `audioLoad` on a background native thread: resolves to the sound id, or -1. */
   audioLoadAsync(data: Object): Promise<number>;
@@ -312,6 +312,8 @@ export interface Spec extends TurboModule {
   audioPlay(sound: number, volume: number, pan: number, pitch: number, loop: boolean): number;
   audioStop(voice: number): void;
   audioControl(voice: number, action: number, value: number, pan: number): boolean;
+  audioVoiceStatus(voice: number): Object;
+  audioEncodeWav(sound: number): Object;
   audioSetVolume(volume: number): void;
   audioSetMuted(muted: boolean): void;
   audioIsRunning(): boolean;
@@ -332,6 +334,7 @@ export interface Spec extends TurboModule {
   /** Starts listening, keeping the last `maxSeconds` of input; true if it's opening. */
   micStart(maxSeconds: number): boolean;
   micStop(): void;
+  micPause(paused: boolean): boolean;
   /** 0 off, 1 opening, 2 listening, -1 failed. */
   micState(): number;
   /** Input loudness now, 0..1. */

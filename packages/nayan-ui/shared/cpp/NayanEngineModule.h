@@ -178,6 +178,8 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   double audioPlay(jsi::Runtime &rt, double sound, double volume, double pan, double pitch, bool loop);
   void audioStop(jsi::Runtime &rt, double voice);
   bool audioControl(jsi::Runtime &rt, double voice, double action, double value, double pan);
+  jsi::Object audioVoiceStatus(jsi::Runtime &rt, double voice);
+  jsi::Object audioEncodeWav(jsi::Runtime &rt, double sound);
   void audioSetVolume(jsi::Runtime &rt, double volume);
   void audioSetMuted(jsi::Runtime &rt, bool muted);
   bool audioIsRunning(jsi::Runtime &rt);
@@ -189,6 +191,7 @@ class NayanEngineModule : public NativeNayanEngineCxxSpec<NayanEngineModule> {
   jsi::Value micRequestPermission(jsi::Runtime &rt);
   bool micStart(jsi::Runtime &rt, double maxSeconds);
   void micStop(jsi::Runtime &rt);
+  bool micPause(jsi::Runtime &rt, bool paused);
   double micState(jsi::Runtime &rt);
   double micLevel(jsi::Runtime &rt);
   double micHeld(jsi::Runtime &rt);

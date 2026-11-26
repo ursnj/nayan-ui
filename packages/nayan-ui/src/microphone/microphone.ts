@@ -13,9 +13,10 @@
 // android.permission.RECORD_AUDIO; `requestPermission` asks through the current activity. Web: the
 // page must be served over HTTPS (or localhost) and allowed to use the microphone.
 import NativeEngine from '../native/NativeNayanEngine';
+import { prepareEngine } from '../native/prepare';
 import type { Sound } from '../audio/audio';
 
-export type MicrophoneState = 'off' | 'starting' | 'listening' | 'failed';
+export type MicrophoneState = 'off' | 'starting' | 'listening' | 'paused' | 'failed';
 export type MicrophonePermission = 'granted' | 'undetermined' | 'denied';
 
 /** What `microphone.take` returns: a sound to play, how long it lasts and its loudness over time. */
@@ -40,12 +41,16 @@ export type TakeOptions = {
   levelsPerSecond?: number;
 };
 
-const STATES: Record<number, MicrophoneState> = { 0: 'off', 1: 'starting', 2: 'listening', [-1]: 'failed' };
+const STATES: Record<number, MicrophoneState> = { 0: 'off', 1: 'starting', 2: 'listening', 3: 'paused', [-1]: 'failed' };
 
 export const microphone = {
+  /** Initialize the audio bridge before requesting browser microphone access. */
+  async prepare(): Promise<void> {
+    await prepareEngine();
+  },
   /** Whether this engine build can record (false on older app builds and without a native module). */
   get supported(): boolean {
-    return typeof NativeEngine?.micStart === 'function';
+    return typeof NativeEngine?.micStart === 'function' && NativeEngine.micPermission() !== -2;
   },
 
   /** Whether the app may record. On Android, 'undetermined' also covers a denial (it can't tell). */
@@ -62,6 +67,15 @@ export const microphone = {
   /** Starts listening (asynchronously: see `state`). Ask for the permission first. */
   start({ maxSeconds = 10 }: MicrophoneOptions = {}): boolean {
     return microphone.supported && NativeEngine!.micStart(maxSeconds);
+  },
+
+  /** Pause sampling without releasing the microphone or clearing captured audio. */
+  pause(): boolean {
+    return NativeEngine?.micPause?.(true) ?? false;
+  },
+
+  resume(): boolean {
+    return NativeEngine?.micPause?.(false) ?? false;
   },
 
   /** Stops listening and releases the microphone (its system indicator turns off); forgets what was heard. */
@@ -100,5 +114,14 @@ export const microphone = {
     const sound = id as Sound;
     const buffer = NativeEngine!.audioLevels(sound, levelsPerSecond);
     return { sound, duration: NativeEngine!.audioDuration(sound), levels: new Float32Array(buffer), levelsPerSecond };
+  },
+
+  /** Return the buffered take and release the microphone, even when there were no samples. */
+  finish(options?: TakeOptions): Recording | null {
+    try {
+      return microphone.take(Infinity, options);
+    } finally {
+      microphone.stop();
+    }
   }
 };

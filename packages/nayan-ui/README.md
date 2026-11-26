@@ -513,7 +513,7 @@ haptics.enabled = settings.haptics;
 `SoundBank.ready` resolves after its named loads finish; unavailable sounds are logged
 and skipped. The bank caches sounds for reuse. `audio.play(sound, { volume, pan, pitch,
 loop })` returns a voice handle for `audio.stop(voice)`; `audio.volume` and `audio.muted`
-control the mixer. WAV decoding supports PCM/float mono/stereo sources. Native audio
+control the mixer. The shared decoder supports WAV, MP3, AAC-LC in M4A, FLAC and Ogg Vorbis. Native audio
 decodes on background threads; browsers keep their normal user-activation rules.
 This is a decoded-sound mixer, with no streaming media-player API.
 
@@ -1980,8 +1980,8 @@ requests and `/network` for connection status and optional endpoint checks.
 | [`/permissions`](#permissions) | Individual and batched checks and requests, Android manifest names and settings navigation | Host declarations and platform prompt rules apply. |
 | [`/location`](#location) | Foreground fixes, watches, cancellation and permission helpers | Native watches end in the background. Web access requires a secure context. |
 | [`/device`](#device-environment) | Identify a physical device, emulator, simulator or browser | Browser reports its own environment. |
-| [`/audio`](#audio-playback) | Decode WAV, cache sound banks, play concurrent voices, seek and mix, analyze and shift sounds | Decoded WAV mixer. |
-| [`/microphone`](#microphone-and-audio-processing) | Permission, status, level and bounded takes with loudness samples | Mono in-memory takes. Host declarations and platform permission apply. |
+| [`/audio`](#audio-playback) | Decode common formats, mix concurrent voices, read playback status, control speed, analyze and export WAV | In-memory Rust mixer. |
+| [`/microphone`](#microphone-and-audio-processing) | Permission, pause and resume, level metering, bounded takes and WAV export | Records a rolling mono buffer. |
 | [`/tts`](#system-speech) | System voices, language, queue, rate, pitch, volume and stop | Android lacks the system pause and resume operations. |
 | [`/haptics`](#sound-and-haptics) | Impacts, selection, notification presets and custom sequences | Hardware support varies. |
 | [`/camera`](#camera) | Permission, native system capture, web preview, image output and release | Native uses the image-picker feature. Web access requires a secure context. |
@@ -2430,55 +2430,76 @@ Reinstall pods and rebuild native hosts after upgrading this bridge.
 
 ### Audio playback
 
-`audio.loadSound(source)` loads a session-cached WAV from an asset or URL.
-`audio.decodeWav(bytes)` loads caller-owned WAV bytes from a file or other
-source. Release sounds created by `decodeWav` when finished.
+`audio.loadSound(source)` loads a session-cached sound from a bundled asset or URL.
+`audio.decode(bytes)` makes an owned sound from encoded data. Both use the shared
+Rust decoder for mono or stereo PCM/float WAV, MP3, AAC-LC in M4A, FLAC and Ogg Vorbis.
+The mixer loads clips in memory, with a 64 MiB input limit and a decoded frame limit
+of about 5 minutes 49 seconds at 48 kHz. Release sounds created by `decode`,
+`decodeWav`, `shift`, or the microphone when finished. Leave cached sounds from
+`loadSound` and `SoundBank` available for reuse.
+Compressed formats use [Symphonia 0.5.5 source](https://crates.io/crates/symphonia/0.5.5)
+under the [Mozilla Public License 2.0](https://www.mozilla.org/MPL/2.0/).
 
 ```ts
 import { audio } from 'nayan-ui/audio';
 
-const sound = await audio.loadSound('/sounds/ambience.wav');
+const sound = await audio.loadSound('/sounds/ambience.mp3');
+// Call play from a user gesture on web after loading the sound.
 const voice = audio.play(sound, { loop: true, volume: 0.5 });
 if (voice && audio.canControlVoices) {
   audio.pause(voice);
   audio.seek(voice, 2);
   audio.setVoiceMix(voice, 0.25, -0.2);
+  audio.setVoiceRate(voice, 1.25);
+  audio.setVoiceMuted(voice, false);
   audio.resume(voice);
 }
 ```
 
 Live controls queue changes on the mixer and return whether it accepted the
-command. They require the audio feature and a native build with the new bridge.
-`audio.stopAll()` stops the entire mixer, including paused voices and loops.
+command. Use `setVoiceLoop` to toggle repeating and `stopAll()` to stop every voice.
+`getStatus(voice)` reports `pending`, `playing`, `paused`, `ended`, or `stopped`,
+plus position and duration in seconds. Status is a mixer snapshot and retains recent
+completed voices. Call `audio.prepare()` if you need to initialize the browser bridge
+before loading audio. Rebuild native apps to use the updated bridge.
 
 ### Microphone and audio processing
 
-Recording, levels, takes and sound processing share the Rust audio core on native
-and web. Prepare the browser bridge before direct calls, then request permission:
+Recording, levels, takes, WAV export and sound processing share the Rust audio core
+on native and web. Prepare the browser bridge before recording, then request
+permission from a user action:
 
 ```ts
-import { warmUpEngine } from 'nayan-ui/games';
 import { audio } from 'nayan-ui/audio';
 import { microphone } from 'nayan-ui/microphone';
+import { files } from 'nayan-ui/files';
 
 async function startListening() {
-  await warmUpEngine(); // Reuses an existing game/UI initialization when present.
+  await microphone.prepare();
   if (!microphone.supported || !(await microphone.requestPermission())) return false;
-  return microphone.start({ maxSeconds: 10 });
+  return microphone.start({ maxSeconds: 30 });
 }
 
-function finishRecording() {
-  const recording = microphone.take(3, { skipEnd: 0.2, levelsPerSecond: 30 });
-  microphone.stop();
-  return recording;
+async function finishRecording() {
+  const recording = microphone.finish();
+  if (!recording) return;
+  try {
+    const directory = await files.openDirectory('recordings');
+    await directory.write('latest.wav', audio.encodeWav(recording.sound));
+  } finally {
+    audio.release(recording.sound);
+  }
 }
 ```
 
-`state` is `off`, `starting`, `listening` or `failed`; `level` is current normalized
-loudness and `held` is buffered seconds. `maxSeconds` bounds the retained input
-(0.5..30, default 10). A take returns a mixer `sound`, duration and level samples,
-or `null` if nothing is available, and clears the captured input. Stop recording on
-background/navigation/unmount when the feature no longer owns the microphone.
+`state` is `off`, `starting`, `listening`, `paused`, or `failed`. `level` reports
+normalized loudness and `held` reports the buffered seconds. `pause()` stops
+sampling while retaining the input device and buffered samples. `resume()` continues
+the same recording. `take()` keeps listening and clears the buffer, `finish()` returns
+the take and stops, and `stop()` discards it. `maxSeconds` limits the rolling buffer
+to 0.5–30 seconds, with 10 seconds by default. Stop on background, navigation, or
+unmount when the feature no longer owns the microphone. Playback and recording have
+no background-service or network-streaming API.
 
 `audio.duration(sound)` and `audio.levels(sound, perSecond)` support analysis.
 `audio.shift(sound, { pitch, tempo, clean, loudness })` creates a new sound with
@@ -2489,11 +2510,12 @@ processed sounds, and release runtime sounds with `audio.release` after use.
 Already-playing voices retain their samples; bank-owned cached sounds should stay
 with the bank.
 
-Hosts declare `NSMicrophoneUsageDescription` on iOS and `RECORD_AUDIO` on Android.
+Expo hosts can set `microphonePermission` in the `nayan-ui` plugin and rebuild.
+Bare hosts declare `NSMicrophoneUsageDescription` on iOS and `RECORD_AUDIO` on Android.
 The browser requires HTTPS/localhost, microphone permission and an allowing
 Permissions-Policy. iOS switches to play-and-record while listening, restores its
-ambient session after stop and handles route changes. Takes remain local mono
-samples in memory; an encoded recording-file/streaming API is not exposed.
+ambient session after stop and handles route changes. The microphone captures mono
+input and `audio.encodeWav()` exports 16-bit stereo PCM (the same signal on both channels).
 
 ### System speech
 

@@ -180,7 +180,10 @@ test('audio worklet preserves stereo order across blocks, signals demand and sil
 });
 
 test('the microphone worklet mixes input to mono and posts it in 2048-sample batches', async () => {
-  type Microphone = new () => { port: { postMessage: ReturnType<typeof mock> }; process: (inputs: Float32Array[][]) => boolean };
+  type Microphone = new () => {
+    port: { postMessage: ReturnType<typeof mock>; onmessage(event: { data: { segment: number; paused: boolean } }): void };
+    process: (inputs: Float32Array[][]) => boolean;
+  };
   const processors: Record<string, Microphone> = {};
   class Processor {
     port = { postMessage: mock(() => {}), onmessage: null };
@@ -200,8 +203,20 @@ test('the microphone worklet mixes input to mono and posts it in 2048-sample bat
   expect(microphone.port.postMessage).not.toHaveBeenCalled();
   microphone.process([[left, right]]); // the 16th block fills 2048 samples
   expect(microphone.port.postMessage).toHaveBeenCalledTimes(1);
-  const [batch] = microphone.port.postMessage.mock.calls[0] as unknown as [Float32Array];
-  expect(batch.length).toBe(2048);
-  expect(batch[0]).toBeCloseTo(0.2, 6);
-  expect(batch[2047]).toBeCloseTo(0.2, 6);
+  const [batch] = microphone.port.postMessage.mock.calls[0] as unknown as [{ samples: Float32Array; segment: number }];
+  expect(batch.segment).toBe(0);
+  expect(batch.samples.length).toBe(2048);
+  expect(batch.samples[0]).toBeCloseTo(0.2, 6);
+  expect(batch.samples[2047]).toBeCloseTo(0.2, 6);
+
+  microphone.process([[left, right]]);
+  microphone.port.onmessage({ data: { segment: 1, paused: true } });
+  for (let block = 0; block < 16; block++) microphone.process([[left, right]]);
+  expect(microphone.port.postMessage).toHaveBeenCalledTimes(1);
+  microphone.port.onmessage({ data: { segment: 2, paused: false } });
+  for (let block = 0; block < 15; block++) microphone.process([[left, right]]);
+  expect(microphone.port.postMessage).toHaveBeenCalledTimes(1);
+  microphone.process([[left, right]]);
+  const [resumed] = microphone.port.postMessage.mock.calls[1] as unknown as [{ segment: number }];
+  expect(resumed.segment).toBe(2);
 });

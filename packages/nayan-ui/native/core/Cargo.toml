@@ -14,7 +14,7 @@ default = [
     "games", "components", "markdown", "drawing", "storage", "uuid", "image-picker", "document-picker",
     "audio", "microphone", "haptics", "tts", "keep-awake", "review", "permissions", "sqlite", "video", "location", "auth", "contacts",
 ]
-audio = ["dep:cpal", "dep:hound", "dep:rtrb", "dep:objc2-avf-audio", "dep:ndk-context"]
+audio = ["dep:cpal", "dep:hound", "dep:rtrb", "dep:symphonia", "dep:objc2-avf-audio", "dep:ndk-context"]
 microphone = ["audio", "dep:block2"]
 haptics = ["dep:objc2-core-haptics", "dep:objc2-foundation", "dep:jni", "dep:ndk-context"]
 tts = ["dep:block2", "dep:dispatch2", "dep:objc2-foundation", "web-sys/SpeechSynthesis", "web-sys/SpeechSynthesisUtterance", "web-sys/SpeechSynthesisVoice", "dep:jni", "dep:ndk-context"]
@@ -52,6 +52,7 @@ serde_json = "1.0"
 sha2 = { version = "0.10", optional = true }
 uuid = { version = "1.29.3", features = ["v4", "js"], optional = true }
 hound = { version = "3.5.1", optional = true }
+symphonia = { version = "0.5.5", default-features = false, features = ["mp3", "aac", "isomp4", "flac", "ogg", "vorbis"], optional = true }
 # Pure-Rust fdlibm: deterministic exp/pow for seeded generation on every platform.
 libm = { version = "0.2.16", default-features = false, optional = true }
 i_overlay = { version = "9.0.1", optional = true }

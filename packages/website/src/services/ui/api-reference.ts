@@ -3,7 +3,7 @@ import type { EngineGuide } from "./types";
 export const apiReferenceGuide: EngineGuide = {
   "slug": "api-reference",
   "title": "Public API reference",
-  "description": "278 named exports from the nayan-ui compatibility entry, with links to game engine guides and focused module references.",
+  "description": "280 named exports from the nayan-ui compatibility entry, with links to game engine guides and focused module references.",
   "sections": [
     {
       "id": "reading-the-reference",
@@ -4045,6 +4045,16 @@ export type DeviceEnvironment = 'physical' | 'emulator' | 'simulator' | 'browser
             "/modules/audio"
           ],
           [
+            "AudioPlaybackState",
+            "TypeScript type",
+            "/modules/audio"
+          ],
+          [
+            "AudioPlaybackStatus",
+            "TypeScript type",
+            "/modules/audio"
+          ],
+          [
             "AudioPlayOptions",
             "TypeScript type",
             "/modules/audio"
@@ -4077,12 +4087,18 @@ export type DeviceEnvironment = 'physical' | 'emulator' | 'simulator' | 'browser
           "platform": "shared",
           "language": "typescript",
           "code": `export declare const audio: {
+    /** Initialize audio bindings without creating a game or render surface. */
+    prepare(): Promise<void>;
     /** Initializes the engine and loads named sounds into its mixer. Each asset decodes once per session. */
     load<K extends string>(sources: Record<K, SoundSource>): SoundBank<K>;
-    /** Loads one session-cached WAV asset. Rejects when loading or decoding fails. */
+    /** Loads one session-cached audio asset. Rejects when loading or decoding fails. */
     loadSound: typeof loadSound;
+    /** Decodes owned audio bytes. Call release when finished with the returned sound. */
+    decode: typeof decodeBytes;
     /** Decodes owned WAV bytes. Call release when finished with the returned sound. */
     decodeWav(data: ArrayBuffer | ArrayBufferView): Promise<Sound>;
+    /** Exports a loaded sound or microphone take as 16-bit stereo PCM WAV bytes. */
+    encodeWav(sound: Sound): ArrayBuffer;
     /** Plays a sound (low latency: mixed in Rust on the audio thread). Returns null if it couldn't play. */
     play(sound: Sound, { volume: v, pan, pitch, loop }?: AudioPlayOptions): Voice | null;
     stop(voice: Voice | null | undefined): void;
@@ -4094,6 +4110,12 @@ export type DeviceEnvironment = 'physical' | 'emulator' | 'simulator' | 'browser
     /** Seek in seconds at the sound's original speed. */
     seek(voice: Voice, seconds: number): boolean;
     setVoiceMix(voice: Voice, volume: number, pan?: number): boolean;
+    /** Changes playback speed without restarting the voice. Like pitch, this changes speed and pitch together. */
+    setVoiceRate(voice: Voice, rate: number): boolean;
+    setVoiceLoop(voice: Voice, loop: boolean): boolean;
+    setVoiceMuted(voice: Voice, muted: boolean): boolean;
+    /** Returns the latest mixer snapshot. Old completed voices are removed from the bounded history. */
+    getStatus(voice: Voice): AudioPlaybackStatus | null;
     /** Stops every voice in the engine mixer, including loops and paused voices. */
     stopAll(): boolean;
     /**
@@ -4140,12 +4162,22 @@ export declare class SoundBank<K extends string> {
     play(name: K, options?: AudioPlayOptions): Voice | null;
 }
 
+export type AudioPlaybackState = (typeof playbackStates)[number];
+
+export interface AudioPlaybackStatus {
+    state: AudioPlaybackState;
+    /** Playback position in seconds at the sound's original speed. */
+    currentTime: number;
+    /** Sound length in seconds. */
+    duration: number;
+}
+
 export type AudioPlayOptions = {
     /** 0..2. Default 1. */
     volume?: number;
     /** -1 left .. 1 right. Default 0. */
     pan?: number;
-    /** Playback speed (also shifts pitch). Default 1. */
+    /** Playback speed (0.1..4, also shifts pitch). Default 1. */
     pitch?: number;
     /** Repeat until stopped (music, engines, ambience). */
     loop?: boolean;
@@ -4168,7 +4200,7 @@ export type Sound = number & {
     readonly __sound: unique symbol;
 };
 
-/** A \`require("./file.wav")\` asset, or a URI. WAV, PCM or float, mono or stereo. */
+/** A bundled audio asset or URI. Supports mono and stereo WAV, MP3, AAC-LC in M4A, FLAC, and Ogg Vorbis. */
 export type SoundSource = AssetSource;
 
 /** A playing instance of a sound (for \`audio.stop\`). */
@@ -4861,6 +4893,8 @@ export type SQLiteValue = null | string | number | bigint | Uint8Array;`
           "platform": "shared",
           "language": "typescript",
           "code": `export declare const microphone: {
+    /** Initialize the audio bridge before requesting browser microphone access. */
+    prepare(): Promise<void>;
     /** Whether this engine build can record (false on older app builds and without a native module). */
     readonly supported: boolean;
     /** Whether the app may record. On Android, 'undetermined' also covers a denial (it can't tell). */
@@ -4869,6 +4903,9 @@ export type SQLiteValue = null | string | number | bigint | Uint8Array;`
     requestPermission(): Promise<boolean>;
     /** Starts listening (asynchronously: see \`state\`). Ask for the permission first. */
     start({ maxSeconds }?: MicrophoneOptions): boolean;
+    /** Pause sampling without releasing the microphone or clearing captured audio. */
+    pause(): boolean;
+    resume(): boolean;
     /** Stops listening and releases the microphone (its system indicator turns off); forgets what was heard. */
     stop(): void;
     /** 'failed' when there's no microphone, no permission or the input couldn't open. */
@@ -4887,6 +4924,8 @@ export type SQLiteValue = null | string | number | bigint | Uint8Array;`
      * sound with \`audio.release\` once it has played: each take holds its samples until then.
      */
     take(seconds?: number, { skipEnd, levelsPerSecond }?: TakeOptions): Recording | null;
+    /** Return the buffered take and release the microphone, even when there were no samples. */
+    finish(options?: TakeOptions): Recording | null;
 };
 
 export type MicrophoneOptions = {
@@ -4896,7 +4935,7 @@ export type MicrophoneOptions = {
 
 export type MicrophonePermission = 'granted' | 'undetermined' | 'denied';
 
-export type MicrophoneState = 'off' | 'starting' | 'listening' | 'failed';
+export type MicrophoneState = 'off' | 'starting' | 'listening' | 'paused' | 'failed';
 
 /** What \`microphone.take\` returns: a sound to play, how long it lasts and its loudness over time. */
 export type Recording = {

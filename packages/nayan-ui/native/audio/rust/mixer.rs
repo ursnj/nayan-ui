@@ -1,8 +1,9 @@
 //! The realtime mixer and decoded sounds. Runs on the audio thread; tested without a device.
 
+use super::codec::{MAX_FRAMES, MAX_RATE};
 use std::io::Cursor;
 use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU32, AtomicU64, Ordering};
 
 /// Simultaneous voices. When full, a new sound replaces the oldest non-looping one.
 pub const MAX_VOICES: usize = 32;
@@ -14,6 +15,10 @@ pub struct Sound {
 }
 
 impl Sound {
+    pub(super) fn from_frames(frames: Vec<[f32; 2]>, rate: u32) -> Option<Self> {
+        (!frames.is_empty() && frames.len() <= MAX_FRAMES && (1..=MAX_RATE).contains(&rate)).then_some(Self { frames, rate })
+    }
+
     /// Decodes a PCM (8/16/24/32-bit int or 32-bit float) WAV file, mono or stereo.
     pub fn from_wav(bytes: &[u8]) -> Option<Sound> {
         let mut reader = hound::WavReader::new(Cursor::new(bytes)).ok()?;
@@ -21,7 +26,7 @@ impl Sound {
         let channels = spec.channels as usize;
         // WAVE_FORMAT_EXTENSIBLE headers can claim any bit depth.
         let int_bits_ok = spec.sample_format == hound::SampleFormat::Float || (1..=32).contains(&spec.bits_per_sample);
-        if channels == 0 || channels > 2 || spec.sample_rate == 0 || !int_bits_ok {
+        if channels == 0 || channels > 2 || !(1..=MAX_RATE).contains(&spec.sample_rate) || !int_bits_ok || reader.duration() as usize > MAX_FRAMES {
             return None;
         }
         let samples: Vec<f32> = match spec.sample_format {
@@ -44,10 +49,7 @@ impl Sound {
             .chunks_exact(channels)
             .map(|f| if channels == 2 { [f[0], f[1]] } else { [f[0], f[0]] })
             .collect::<Vec<_>>();
-        (!frames.is_empty()).then_some(Sound {
-            frames,
-            rate: spec.sample_rate,
-        })
+        Self::from_frames(frames, spec.sample_rate)
     }
 
     /// A recording: mono samples at `rate`, faded in and out over 5 ms so it starts and stops without
@@ -68,13 +70,13 @@ impl Sound {
                 [v, v]
             })
             .collect();
-        Some(Sound { frames, rate })
+        Self::from_frames(frames, rate)
     }
 
     /// This sound `pitch` times higher and `tempo` times faster (see `shift.rs` for `loudness` and `clean`).
     pub fn shifted(&self, pitch: f32, tempo: f32, loudness: f32, clean: bool) -> Option<Sound> {
         let frames = super::shift::shift(&self.frames, self.rate, pitch, tempo, loudness, clean)?;
-        Some(Sound { frames, rate: self.rate })
+        Self::from_frames(frames, self.rate)
     }
 
     /// A released sound: plays nothing.
@@ -84,6 +86,28 @@ impl Sound {
 
     pub fn duration(&self) -> f32 {
         self.frames.len() as f32 / self.rate as f32
+    }
+
+    pub(super) fn wav_size(&self) -> usize {
+        if self.frames.is_empty() { 0 } else { 44 + self.frames.len() * 4 }
+    }
+
+    pub(super) fn write_wav(&self, bytes: &mut [u8]) -> Option<()> {
+        if self.frames.is_empty() || bytes.len() < self.wav_size() {
+            return None;
+        }
+        let spec = hound::WavSpec {
+            channels: 2,
+            sample_rate: self.rate,
+            bits_per_sample: 16,
+            sample_format: hound::SampleFormat::Int,
+        };
+        let mut writer = hound::WavWriter::new(Cursor::new(bytes), spec).ok()?;
+        for sample in self.frames.iter().flatten() {
+            let pcm = (sample.clamp(-1.0, 1.0) * 32768.0).round() as i16;
+            writer.write_sample(pcm).ok()?;
+        }
+        writer.finalize().ok()
     }
 
     /// Loudness (RMS of both channels) per window of `1 / per_second` seconds, from the start: for
@@ -103,6 +127,43 @@ impl Sound {
     }
 }
 
+#[derive(Clone, Copy)]
+pub(super) enum PlaybackState {
+    Pending = 0,
+    Playing = 1,
+    Paused = 2,
+    Ended = 3,
+    Stopped = 4,
+}
+
+pub(super) struct VoiceStatus {
+    duration: f32,
+    snapshot: AtomicU64,
+}
+
+impl VoiceStatus {
+    pub fn new(duration: f32) -> Self {
+        Self {
+            duration,
+            snapshot: AtomicU64::new((PlaybackState::Pending as u64) << 32),
+        }
+    }
+
+    fn update(&self, state: PlaybackState, position: f32) {
+        self.snapshot
+            .store((state as u64) << 32 | u64::from(position.to_bits()), Ordering::Relaxed);
+    }
+
+    pub fn terminal(&self) -> bool {
+        self.snapshot.load(Ordering::Relaxed) >> 32 >= PlaybackState::Ended as u64
+    }
+
+    pub fn snapshot(&self) -> [f32; 3] {
+        let snapshot = self.snapshot.load(Ordering::Relaxed);
+        [(snapshot >> 32) as f32, f32::from_bits(snapshot as u32), self.duration]
+    }
+}
+
 pub(super) enum Command {
     Play {
         id: u64,
@@ -110,6 +171,7 @@ pub(super) enum Command {
         gain: [f32; 2],
         pitch: f32,
         looping: bool,
+        status: Arc<VoiceStatus>,
     },
     Stop(u64),
     StopAll,
@@ -120,16 +182,30 @@ pub(super) enum VoiceChange {
     Paused(bool),
     Seek(f64),
     Mix([f32; 2]),
+    Rate(f32),
+    Loop(bool),
+    Muted(bool),
 }
 
 struct Voice {
     id: u64,
     sound: Arc<Sound>,
     position: f64,
-    step: f64,
+    pitch: f32,
     gain: [f32; 2],
     looping: bool,
     paused: bool,
+    muted: bool,
+    status: Arc<VoiceStatus>,
+}
+
+impl Voice {
+    fn publish(&self, state: PlaybackState) {
+        self.status.update(
+            state,
+            (self.position / f64::from(self.sound.rate)).min(f64::from(self.status.duration)) as f32,
+        );
+    }
 }
 
 /// Mixes voices into an output buffer. Runs on the audio thread; testable without a device.
@@ -162,28 +238,41 @@ impl Mixer {
                     gain,
                     pitch,
                     looping,
+                    status,
                 } => {
                     if self.voices.len() == MAX_VOICES {
                         match self.voices.iter().position(|v| !v.looping) {
                             Some(oldest) => {
-                                self.voices.remove(oldest);
+                                self.voices.remove(oldest).publish(PlaybackState::Stopped);
                             }
-                            None => continue, // all voices are music loops: drop the effect
+                            None => {
+                                status.update(PlaybackState::Stopped, 0.0);
+                                continue; // all voices are music loops: drop the effect
+                            }
                         }
                     }
-                    let step = sound.rate as f64 / self.output_rate as f64 * pitch as f64;
                     self.voices.push(Voice {
                         id,
                         sound,
                         position: 0.0,
-                        step,
+                        pitch,
                         gain,
                         looping,
                         paused: false,
+                        muted: false,
+                        status,
                     });
                 }
-                Command::Stop(id) => self.voices.retain(|v| v.id != id),
-                Command::StopAll => self.voices.clear(),
+                Command::Stop(id) => {
+                    if let Some(index) = self.voices.iter().position(|voice| voice.id == id) {
+                        self.voices.remove(index).publish(PlaybackState::Stopped);
+                    }
+                }
+                Command::StopAll => {
+                    for voice in self.voices.drain(..) {
+                        voice.publish(PlaybackState::Stopped);
+                    }
+                }
                 Command::Update(id, change) => {
                     if let Some(voice) = self.voices.iter_mut().find(|voice| voice.id == id) {
                         match change {
@@ -192,6 +281,9 @@ impl Mixer {
                                 voice.position = (seconds * f64::from(voice.sound.rate)).min(voice.sound.frames.len() as f64);
                             }
                             VoiceChange::Mix(gain) => voice.gain = gain,
+                            VoiceChange::Rate(rate) => voice.pitch = rate,
+                            VoiceChange::Loop(looping) => voice.looping = looping,
+                            VoiceChange::Muted(muted) => voice.muted = muted,
                         }
                     }
                 }
@@ -202,10 +294,13 @@ impl Mixer {
         let channels = channels.max(1);
         for voice in &mut self.voices {
             if voice.paused {
+                voice.publish(PlaybackState::Paused);
                 continue;
             }
             let frames = &voice.sound.frames;
             let len = frames.len();
+            let step = f64::from(voice.sound.rate) / f64::from(self.output_rate) * f64::from(voice.pitch);
+            let gain = if voice.muted { [0.0; 2] } else { voice.gain };
             for frame in out.chunks_exact_mut(channels) {
                 if voice.position >= len as f64 {
                     if !voice.looping {
@@ -225,15 +320,23 @@ impl Mixer {
                 let l = frames[i][0] + (frames[next][0] - frames[i][0]) * t;
                 let r = frames[i][1] + (frames[next][1] - frames[i][1]) * t;
                 if channels == 1 {
-                    frame[0] += (l * voice.gain[0] + r * voice.gain[1]) * 0.5;
+                    frame[0] += (l * gain[0] + r * gain[1]) * 0.5;
                 } else {
-                    frame[0] += l * voice.gain[0];
-                    frame[1] += r * voice.gain[1];
+                    frame[0] += l * gain[0];
+                    frame[1] += r * gain[1];
                 }
-                voice.position += voice.step;
+                voice.position += step;
             }
+            if voice.looping && voice.position >= len as f64 {
+                voice.position %= len as f64;
+            }
+            voice.publish(if voice.position >= len as f64 {
+                PlaybackState::Ended
+            } else {
+                PlaybackState::Playing
+            });
         }
-        self.voices.retain(|v| v.looping || v.position < v.sound.frames.len() as f64);
+        self.voices.retain(|v| !v.status.terminal());
 
         let volume = if self.muted.load(Ordering::Relaxed) {
             0.0
@@ -249,8 +352,7 @@ impl Mixer {
         self.voices.len()
     }
 
-    /// The device's rate after the output stream was opened again (a new route); voices started
-    /// from here on step at it.
+    /// The device's rate after the output stream was opened again, for example after a route change.
     #[cfg_attr(any(test, target_arch = "wasm32"), allow(dead_code))]
     pub(super) fn set_output_rate(&mut self, rate: u32) {
         if rate > 0 {
@@ -305,17 +407,20 @@ mod tests {
         (p, m)
     }
 
-    fn play(p: &mut rtrb::Producer<Command>, id: u64, sound: &Arc<Sound>, pitch: f32, looping: bool) {
+    fn play(p: &mut rtrb::Producer<Command>, id: u64, sound: &Arc<Sound>, pitch: f32, looping: bool) -> Arc<VoiceStatus> {
         let gain = pan_gains(1.0, 0.0);
+        let status = Arc::new(VoiceStatus::new(sound.duration()));
         p.push(Command::Play {
             id,
             sound: sound.clone(),
             gain,
             pitch,
             looping,
+            status: status.clone(),
         })
         .ok()
         .unwrap();
+        status
     }
 
     #[test]
@@ -336,12 +441,14 @@ mod tests {
             frames: vec![[0.5, 0.5]; 4],
             rate: 48_000,
         });
-        play(&mut p, 1, &sound, 1.0, false);
+        let status = play(&mut p, 1, &sound, 1.0, false);
+        assert_eq!(status.snapshot(), [PlaybackState::Pending as u8 as f32, 0.0, sound.duration()]);
         let mut out = [0.0f32; 12]; // 6 stereo frames
         m.render(&mut out, 2);
         assert!(out[..8].iter().all(|&s| s > 0.3), "4 frames of sound: {out:?}");
         assert!(out[8..].iter().all(|&s| s == 0.0), "then silence: {out:?}");
         assert_eq!(m.active_voices(), 0);
+        assert_eq!(status.snapshot(), [PlaybackState::Ended as u8 as f32, sound.duration(), sound.duration()]);
     }
 
     #[test]

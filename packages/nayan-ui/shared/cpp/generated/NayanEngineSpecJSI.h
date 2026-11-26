@@ -141,6 +141,8 @@ protected:
     methodMap_["audioPlay"] = MethodMetadata {.argCount = 5, .invoker = __audioPlay};
     methodMap_["audioStop"] = MethodMetadata {.argCount = 1, .invoker = __audioStop};
     methodMap_["audioControl"] = MethodMetadata {.argCount = 4, .invoker = __audioControl};
+    methodMap_["audioVoiceStatus"] = MethodMetadata {.argCount = 1, .invoker = __audioVoiceStatus};
+    methodMap_["audioEncodeWav"] = MethodMetadata {.argCount = 1, .invoker = __audioEncodeWav};
     methodMap_["audioSetVolume"] = MethodMetadata {.argCount = 1, .invoker = __audioSetVolume};
     methodMap_["audioSetMuted"] = MethodMetadata {.argCount = 1, .invoker = __audioSetMuted};
     methodMap_["audioIsRunning"] = MethodMetadata {.argCount = 0, .invoker = __audioIsRunning};
@@ -152,6 +154,7 @@ protected:
     methodMap_["micRequestPermission"] = MethodMetadata {.argCount = 0, .invoker = __micRequestPermission};
     methodMap_["micStart"] = MethodMetadata {.argCount = 1, .invoker = __micStart};
     methodMap_["micStop"] = MethodMetadata {.argCount = 0, .invoker = __micStop};
+    methodMap_["micPause"] = MethodMetadata {.argCount = 1, .invoker = __micPause};
     methodMap_["micState"] = MethodMetadata {.argCount = 0, .invoker = __micState};
     methodMap_["micLevel"] = MethodMetadata {.argCount = 0, .invoker = __micLevel};
     methodMap_["micHeld"] = MethodMetadata {.argCount = 0, .invoker = __micHeld};
@@ -1288,6 +1291,22 @@ private:
       count <= 3 ? throw jsi::JSError(rt, "Expected argument in position 3 to be passed") : args[3].asNumber());
   }
 
+  static jsi::Value __audioVoiceStatus(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::audioVoiceStatus) == 2,
+      "Expected audioVoiceStatus(...) to have 2 parameters");
+    return bridging::callFromJs<jsi::Object>(rt, &T::audioVoiceStatus,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
+  static jsi::Value __audioEncodeWav(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::audioEncodeWav) == 2,
+      "Expected audioEncodeWav(...) to have 2 parameters");
+    return bridging::callFromJs<jsi::Object>(rt, &T::audioEncodeWav,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());
+  }
+
   static jsi::Value __audioSetVolume(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
     static_assert(
       bridging::getParameterCount(&T::audioSetVolume) == 2,
@@ -1375,6 +1394,14 @@ private:
       bridging::getParameterCount(&T::micStop) == 1,
       "Expected micStop(...) to have 1 parameters");
     bridging::callFromJs<void>(rt, &T::micStop,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule));return jsi::Value::undefined();
+  }
+
+  static jsi::Value __micPause(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+    static_assert(
+      bridging::getParameterCount(&T::micPause) == 2,
+      "Expected micPause(...) to have 2 parameters");
+    return bridging::callFromJs<bool>(rt, &T::micPause,  static_cast<NativeNayanEngineCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
+      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asBool());
   }
 
   static jsi::Value __micState(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* /*args*/, size_t /*count*/) {

@@ -78,6 +78,17 @@ export async function refreshBytes(uri: string) {
   ],
   audio: [
     {
+      title: 'Read a voice position and change playback speed',
+      code: `import { audio, type Voice } from 'nayan-ui/audio';
+
+export function speedUp(voice: Voice) {
+  const status = audio.getStatus(voice);
+  if (!status || status.state === 'ended' || status.state === 'stopped') return null;
+  audio.setVoiceRate(voice, 1.25);
+  return { currentTime: status.currentTime, duration: status.duration };
+}`
+    },
+    {
       title: 'Loop, seek, and mix a sound',
       code: `import { audio } from 'nayan-ui/audio';
 
@@ -439,6 +450,24 @@ export async function tryLocation(signal: AbortSignal) {
     }
   ],
   microphone: [
+    {
+      title: 'Save the finished recording to a WAV file',
+      code: `import { microphone } from 'nayan-ui/microphone';
+import { audio } from 'nayan-ui/audio';
+import { files } from 'nayan-ui/files';
+
+export async function saveRecording() {
+  const take = microphone.finish();
+  if (!take) return false;
+  try {
+    const directory = await files.openDirectory('recordings');
+    await directory.write('voice-note.wav', audio.encodeWav(take.sound));
+    return true;
+  } finally {
+    audio.release(take.sound);
+  }
+}`
+    },
     {
       title: 'Play back a recorded take and release its audio',
       code: `import { microphone } from 'nayan-ui/microphone';
@@ -864,7 +893,7 @@ export function BrowserScene() {
   ],
   'expo-plugin': [
     {
-      title: 'Enable photo capture, contacts, and system theme',
+      title: 'Enable photo capture, microphone, contacts, and system theme',
       filename: 'app.config.js',
       code: `export default {
   expo: {
@@ -875,6 +904,7 @@ export function BrowserScene() {
       systemTheme: true,
       imagePicker: true,
       cameraPermission: 'Take photos for your notes.',
+      microphonePermission: 'Record voice notes.',
       contactsPermission: 'Choose and manage contacts.'
     }]]
   }

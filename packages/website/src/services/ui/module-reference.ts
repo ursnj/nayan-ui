@@ -52,19 +52,22 @@ export async function loadLogo(uri: string) {
     slug: 'audio',
     title: 'Audio',
     entry: './audio',
-    description: 'Load sounds and play them with volume, playback rate and spatial controls.',
+    description: 'Play common audio formats, monitor progress, and control volume, looping and speed with the Rust mixer.',
     code: `import { audio } from 'nayan-ui/audio';
 
-export async function playSound(uri: string) {
+export async function loadPlayback(uri: string) {
   const sound = await audio.loadSound(uri);
-  const voice = audio.play(sound, { volume: 0.6 });
-  return () => {
-    audio.stop(voice);
-    audio.release(sound);
-  };
+  // Invoke this returned function from a play button.
+  return () => audio.play(sound, { volume: 0.6 });
 }`,
-    note: 'On the web, start playback in response to a user gesture.',
-    guide: '/game-engine/audio-haptics'
+    note: 'Start playback in response to a user gesture on the web. loadSound caches the decoded audio for reuse.',
+    details: [
+      'Load mono or stereo WAV, MP3, AAC-LC in M4A, FLAC or Ogg Vorbis. Clips decode into memory. Use audio.decode() for encoded bytes that your app owns.',
+      'Use getStatus() for the playback state, position and duration. You can pause, resume, seek, stop, mute, change speed or toggle looping on an existing voice.',
+      'Use encodeWav() to export a loaded sound or microphone take as 16-bit PCM WAV. Release sounds created by decode(), decodeWav(), shift() or the microphone when done.'
+    ],
+    guide: '/game-engine/audio-haptics',
+    related: [{ label: 'Record and export a voice note', href: '/modules/microphone' }]
   },
   {
     slug: 'camera',
@@ -88,7 +91,10 @@ export async function captureSize() {
       'Set allowEditing: true to open the photo editor after capture. Crop defaults to square. Use aspect to choose another ratio. The existing allowsEditing option takes precedence when both spellings are provided.',
       'Canceling either capture or editing returns null. Release the temporary URI after use. The browser stops its media stream when the camera preview closes.'
     ],
-    related: [{ label: 'Image picker and filters', href: '/modules/image-picker' }, { label: 'Expo configuration', href: '/modules/expo-plugin' }]
+    related: [
+      { label: 'Image picker and filters', href: '/modules/image-picker' },
+      { label: 'Expo configuration', href: '/modules/expo-plugin' }
+    ]
   },
   {
     slug: 'document-picker',
@@ -114,7 +120,10 @@ export async function getPdfName() {
       'Native builds copy into app cache by default. With copyToCacheDirectory: false, Android returns the provider content URI and iOS returns the system-imported file URL. Release app-owned cache copies when finished.',
       'Browser results include File objects and a FileList. Use base64: true when you need a data URL and release the owned blob URIs after use.'
     ],
-    related: [{ label: 'Save documents in app-private files', href: '/modules/files' }, { label: 'Read bytes from a URI', href: '/modules/assets' }]
+    related: [
+      { label: 'Save documents in app-private files', href: '/modules/files' },
+      { label: 'Read bytes from a URI', href: '/modules/assets' }
+    ]
   },
   {
     slug: 'contacts',
@@ -238,7 +247,10 @@ export async function saveNote(text: string) {
       'For a shareable URI, writeTemporary() accepts padded Base64 up to 64 MiB and returns a native file URI or an owned browser Blob URL. Remove it after the consumer finishes.',
       'The API is focused on app-owned files. Nested paths, copy and move, seekable handles, file streams and transfer tasks are outside its current scope.'
     ],
-    related: [{ label: 'Pick documents', href: '/modules/document-picker' }, { label: 'Share a temporary URI', href: '/modules/sharing' }]
+    related: [
+      { label: 'Pick documents', href: '/modules/document-picker' },
+      { label: 'Share a temporary URI', href: '/modules/sharing' }
+    ]
   },
   {
     slug: 'games',
@@ -289,7 +301,10 @@ export async function selectImage() {
       'Pick several images with multiple and selectionLimit. For output, choose JPEG or PNG and set maxDimension to bound the image size.',
       'Treat returned assets as temporary and call release() once you have uploaded, copied or finished displaying them. On web, camera capture through the picker is a device hint. Use the Camera module for a live preview.'
     ],
-    related: [{ label: 'Live camera capture', href: '/modules/camera' }, { label: 'Expo configuration', href: '/modules/expo-plugin' }]
+    related: [
+      { label: 'Live camera capture', href: '/modules/camera' },
+      { label: 'Expo configuration', href: '/modules/expo-plugin' }
+    ]
   },
   {
     slug: 'keep-awake',
@@ -322,22 +337,28 @@ export async function readPosition(signal: AbortSignal) {
     slug: 'microphone',
     title: 'Microphone',
     entry: './microphone',
-    description: 'Request microphone access and record audio under user control.',
+    description: 'Request microphone access, pause or resume capture, meter input and export a recording as WAV.',
     code: `import { microphone } from 'nayan-ui/microphone';
-import { warmUpEngine } from 'nayan-ui/games';
 
 export async function startRecording() {
-  await warmUpEngine();
+  await microphone.prepare();
   if (!microphone.supported || !(await microphone.requestPermission())) return false;
   return microphone.start({ maxSeconds: 10 });
 }
 
 export function finishRecording() {
-  const take = microphone.take(10);
-  microphone.stop();
-  return take;
+  return microphone.finish();
 }`,
-    note: 'Bind recording to explicit controls and release any returned sound with audio.release when done. The browser requires a secure context.'
+    note: 'Bind recording to explicit controls. The browser requires a secure context. Expo apps can set microphonePermission in the nayan-ui plugin and rebuild.',
+    details: [
+      'State reports off, starting, listening, paused or failed. Read level for normalized input loudness and held for buffered seconds.',
+      'Pause keeps the microphone and buffered audio. Resume continues the same recording. Finish stops and returns the take. Stop discards it.',
+      'The microphone keeps a rolling window of 0.5–30 seconds. Release the returned mixer sound after playing or exporting it.'
+    ],
+    related: [
+      { label: 'Audio playback and WAV export', href: '/modules/audio' },
+      { label: 'Expo microphone permissions', href: '/modules/expo-plugin' }
+    ]
   },
   {
     slug: 'network',
@@ -457,7 +478,10 @@ export function SoundSetting() {
       'The application generates and protects the key. Browser storage uses localStorage and rejects encryption requests.'
     ],
     guide: 'https://github.com/ursnj/nayan-ui/blob/main/packages/nayan-ui/README.md#encrypted-storage',
-    related: [{ label: 'Store larger binary files', href: '/modules/files' }, { label: 'Query a SQLite database', href: '/modules/sqlite' }]
+    related: [
+      { label: 'Store larger binary files', href: '/modules/files' },
+      { label: 'Query a SQLite database', href: '/modules/sqlite' }
+    ]
   },
   {
     slug: 'tts',
@@ -635,11 +659,15 @@ export async function preload() {
 };`,
     filename: 'app.config.js',
     details: [
-      'Set imagePicker: true and supply cameraPermission to customize the camera usage text. Set contactsPermission and locationPermission to configure the corresponding Android permissions and iOS usage descriptions.',
+      'Set imagePicker: true and supply cameraPermission for camera usage text. Use microphonePermission, contactsPermission and locationPermission to configure the corresponding Android permissions and iOS usage descriptions.',
       'Set systemTheme: true to match the app’s startup appearance to its Expo configuration. Custom profiles must include the features your options enable. Rebuild after applying native configuration.'
     ],
     guide: '/react-native/installation',
-    related: [{ label: 'Contacts', href: '/modules/contacts' }, { label: 'Camera', href: '/modules/camera' }, { label: 'Theme', href: '/components/theme' }]
+    related: [
+      { label: 'Contacts', href: '/modules/contacts' },
+      { label: 'Camera', href: '/modules/camera' },
+      { label: 'Theme', href: '/components/theme' }
+    ]
   },
   {
     slug: 'package-metadata',

@@ -27,7 +27,7 @@ export function prepareEngine(): Promise<void> {
       /* IndexedDB denial is a cache miss, not a failed engine initialization. */
     }
     const ready = createBrowserEngine(core);
-    ready.audioIsRunning = typeof core.engine_web_audio_render === 'function' ? installAudioOutput(core) : () => false;
+    ready.audioIsRunning = typeof core.engine_web_audio_render === 'function' ? installAudioOutput(core, ready) : () => false;
     if (ready.micPermission() !== -2) installMicrophoneInput(core, ready);
     Object.assign(browser, ready);
   })().catch((error) => {
@@ -74,6 +74,10 @@ function createUnpreparedEngine(): EngineBridge {
   // createBrowserEngine touches nothing at creation: its keys list every bridge method.
   for (const key of Object.keys(createBrowserEngine({} as WasmCore))) (bridge as unknown as Record<string, unknown>)[key] = unready;
   bridge.audioControl = () => false;
+  bridge.audioVoiceStatus = () => new ArrayBuffer(0);
+  bridge.audioIsRunning = () => false;
+  bridge.micPermission = () => -2;
+  bridge.micPause = () => false;
   return bridge;
 }
 export default browser;

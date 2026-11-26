@@ -31,6 +31,7 @@ module.exports = function withNayanEngine(
     features,
     imagePicker = false,
     cameraPermission = 'Allow this app to take photos.',
+    microphonePermission,
     locationPermission,
     contactsPermission
   } = {}
@@ -39,6 +40,12 @@ module.exports = function withNayanEngine(
   const featuresKey = 'nayanEngine.features';
   const profile = features === undefined ? undefined : selectFeatures(features);
   const usesPicker = profile === undefined ? imagePicker : profile.split(',').includes('image-picker');
+  if (microphonePermission !== undefined && (typeof microphonePermission !== 'string' || !microphonePermission.trim())) {
+    throw new Error('Nayan Engine microphonePermission must be a non-empty usage description.');
+  }
+  if (microphonePermission && profile !== undefined && !profile.split(',').includes('microphone')) {
+    throw new Error('Nayan Engine microphonePermission requires the microphone feature.');
+  }
   if (locationPermission !== undefined && (typeof locationPermission !== 'string' || !locationPermission.trim())) {
     throw new Error('Nayan Engine locationPermission must be a non-empty usage description.');
   }
@@ -69,6 +76,7 @@ module.exports = function withNayanEngine(
   config = withInfoPlist(config, (mod) => {
     mod.modResults.UIViewControllerBasedStatusBarAppearance = false;
     if (usesPicker) mod.modResults.NSCameraUsageDescription = cameraPermission;
+    if (microphonePermission) mod.modResults.NSMicrophoneUsageDescription = microphonePermission;
     if (locationPermission) mod.modResults.NSLocationWhenInUseUsageDescription = locationPermission;
     if (contactsPermission) mod.modResults.NSContactsUsageDescription = contactsPermission;
     if (systemTheme) {
@@ -80,6 +88,7 @@ module.exports = function withNayanEngine(
     return mod;
   });
   if (usesPicker) config = AndroidConfig.Permissions.withPermissions(config, ['android.permission.CAMERA']);
+  if (microphonePermission) config = AndroidConfig.Permissions.withPermissions(config, ['android.permission.RECORD_AUDIO']);
   if (contactsPermission)
     config = AndroidConfig.Permissions.withPermissions(config, ['android.permission.READ_CONTACTS', 'android.permission.WRITE_CONTACTS']);
   if (locationPermission)

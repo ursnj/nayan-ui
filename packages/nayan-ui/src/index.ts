@@ -10,7 +10,7 @@ export { assets } from './assets/index';
 export type { AssetSource, AssetInfo, LoadedAsset, AssetLoadOptions } from './assets/index';
 export { audio, SoundBank } from './audio/index';
 export { clipboard } from './clipboard/index';
-export type { AudioPlayOptions, AudioShiftOptions, Sound, SoundSource, Voice } from './audio/index';
+export type { AudioPlaybackState, AudioPlaybackStatus, AudioPlayOptions, AudioShiftOptions, Sound, SoundSource, Voice } from './audio/index';
 export { haptics } from './haptics/index';
 export type { HapticTap } from './haptics/index';
 export { permissions, permissionNames } from './permissions/index';
