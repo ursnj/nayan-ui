@@ -7,6 +7,7 @@ const supported = new Set([
   'storage',
   'uuid',
   'image-picker',
+  'document-picker',
   'audio',
   'microphone',
   'haptics',

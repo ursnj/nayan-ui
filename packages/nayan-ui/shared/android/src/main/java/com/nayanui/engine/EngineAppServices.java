@@ -10,18 +10,26 @@ public final class EngineAppServices implements LifecycleEventListener {
   private final EnginePermissions permissions;
   private final EngineLocation location;
   private final EngineKeepAwake keepAwake;
+  private final EngineDocumentPicker documentPicker;
 
   private EngineAppServices(ReactApplicationContext context) {
     this.context = context;
     permissions = new EnginePermissions(context);
     location = new EngineLocation(context);
     keepAwake = new EngineKeepAwake(context);
+    documentPicker = new EngineDocumentPicker(context);
     context.addLifecycleEventListener(this);
     ImagePickerBinding.remember(context);
   }
   static void remember(ReactApplicationContext context) {
     if (current != null && current.context == context) return;
-    if (current != null) { current.keepAwake.restore(); current.permissions.cancel(); current.location.cleanup(null); current.context.removeLifecycleEventListener(current); }
+    if (current != null) {
+      current.keepAwake.restore();
+      current.permissions.cancel();
+      current.location.cleanup(null);
+      current.documentPicker.dispose();
+      current.context.removeLifecycleEventListener(current);
+    }
     current = new EngineAppServices(context);
   }
   public static boolean hasImagePicker() { return ImagePickerBinding.isAvailable(); }
@@ -69,11 +77,16 @@ public final class EngineAppServices implements LifecycleEventListener {
           return;
         }
         if (action.startsWith("image.")) { ImagePickerBinding.request(value, (result,error) -> nativeCompleted(token,result,error)); return; }
+        if (action.startsWith("document.")) {
+          current.documentPicker.request(value, (result, error) -> nativeCompleted(token, result, error));
+          return;
+        }
         if (action.startsWith("awake.") || action.equals("cleanup")) {
           if (!action.equals("awake.available")) current.keepAwake.setActive(value.optBoolean("active"));
           if (action.equals("cleanup")) {
             ImagePickerBinding.cleanup(value.optString("owner"));
             current.location.cleanup(value.optString("owner"));
+            current.documentPicker.cancel(value.optString("owner"));
           }
           nativeCompleted(token, action.equals("awake.available") ? "true" : "null", ""); return;
         }
@@ -91,7 +104,13 @@ public final class EngineAppServices implements LifecycleEventListener {
   }
   @Override public void onHostResume() { keepAwake.refresh(); }
   @Override public void onHostPause() { keepAwake.restore(); location.cleanup(null); }
-  @Override public void onHostDestroy() { keepAwake.restore(); permissions.cancel(); location.cleanup(null); ImagePickerBinding.cleanup(null); }
+  @Override public void onHostDestroy() {
+    keepAwake.restore();
+    permissions.cancel();
+    location.cleanup(null);
+    ImagePickerBinding.cleanup(null);
+    documentPicker.cancel(null);
+  }
   private static void completeLocation(long token, JSONObject sample, String error) {
     if (sample != null) nativeLocationCompleted(token, sample.toString());
     else nativeCompleted(token, "{\"error\":" + JSONObject.quote(error) + "}", "");

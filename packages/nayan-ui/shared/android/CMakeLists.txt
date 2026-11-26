@@ -71,6 +71,9 @@ add_library(NayanEngine STATIC
   "${NATIVE_ROOT}/capture/cpp/Capture.android.cpp")
 target_include_directories(NayanEngine PUBLIC "${NATIVE_ROOT}" "${SHARED_ROOT}/cpp" "${CORE_ROOT}/include")
 target_compile_features(NayanEngine PUBLIC cxx_std_20)
+if(NOT FEATURE_LINES OR profile MATCHES "(^|,)document-picker(,|$)")
+  target_compile_definitions(NayanEngine PRIVATE NAYAN_ENGINE_DOCUMENT_PICKER=1)
+endif()
 target_link_libraries(NayanEngine
   react_codegen_NayanEngineSpec
   engine_core

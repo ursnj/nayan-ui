@@ -8,6 +8,7 @@ if features && (!features.is_a?(String) || !features.match?(/\A(?:[a-z-]+(?:,[a-
   raise "Nayan Engine: nayanEngine.features must be a comma-separated feature list"
 end
 image_picker = features ? features.split(",").include?("image-picker") : ENV.fetch("NAYAN_ENGINE_IMAGE_PICKER", properties.fetch("nayanEngine.imagePicker", "false")) == "true"
+document_picker = features.nil? || features.split(",").include?("document-picker")
 location = features.nil? || features.split(",").include?("location")
 contacts = features.nil? || features.split(",").include?("contacts")
 permissions = location || contacts || features.split(",").include?("permissions")
@@ -29,6 +30,7 @@ Pod::Spec.new do |s|
                    "native/*/cpp/**/*.{h,cpp}", "native/*/ios/**/*.{h,m,mm}"
   excluded = []
   excluded << "native/image-picker/ios/ImagePicker.{h,mm}" unless image_picker
+  excluded << "native/document-picker/ios/DocumentPicker.{h,mm}" unless document_picker
   excluded << "native/permissions/ios/Permissions.{h,mm}" unless permissions
   excluded << "native/location/ios/Location.{h,mm}" unless location
   excluded << "native/contacts/ios/Contacts.{h,mm}" unless contacts
@@ -63,7 +65,7 @@ Pod::Spec.new do |s|
 
   target_settings = {
     "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/native/core/include\" \"$(PODS_TARGET_SRCROOT)/shared/cpp\" \"$(PODS_TARGET_SRCROOT)/native\"",
-    "GCC_PREPROCESSOR_DEFINITIONS" => "$(inherited) NAYAN_ENGINE_IMAGE_PICKER=#{image_picker ? 1 : 0} NAYAN_ENGINE_PERMISSIONS=#{permissions ? 1 : 0} NAYAN_ENGINE_LOCATION=#{location ? 1 : 0} NAYAN_ENGINE_REVIEW=#{review ? 1 : 0} NAYAN_ENGINE_CONTACTS=#{contacts ? 1 : 0}",
+    "GCC_PREPROCESSOR_DEFINITIONS" => "$(inherited) NAYAN_ENGINE_IMAGE_PICKER=#{image_picker ? 1 : 0} NAYAN_ENGINE_DOCUMENT_PICKER=#{document_picker ? 1 : 0} NAYAN_ENGINE_PERMISSIONS=#{permissions ? 1 : 0} NAYAN_ENGINE_LOCATION=#{location ? 1 : 0} NAYAN_ENGINE_REVIEW=#{review ? 1 : 0} NAYAN_ENGINE_CONTACTS=#{contacts ? 1 : 0}",
     "CLANG_CXX_LANGUAGE_STANDARD" => "c++20"
   }
 

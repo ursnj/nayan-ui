@@ -10,6 +10,9 @@
 
 #[cfg(not(target_arch = "wasm32"))]
 pub mod app_services;
+#[cfg(all(unix, feature = "document-picker"))]
+#[path = "../../../document-picker/rust/cache.rs"]
+pub mod document_picker;
 
 #[cfg(target_os = "android")]
 pub mod android;

@@ -9,6 +9,7 @@ const hasImagePicker = mock(() => false);
 const bridge: { appRequest?: typeof request; hasImagePicker?: typeof hasImagePicker } = { appRequest: request, hasImagePicker };
 mock.module('../native/NativeNayanEngine', () => ({ default: bridge }));
 const { imagePicker } = await import('../image-picker');
+const { documentPicker, getDocumentAsync } = await import('../document-picker');
 const { review } = await import('../review');
 const { useKeepAwake } = await import('../keep-awake');
 const compat = await import('../keep-awake/compat');
@@ -44,6 +45,30 @@ test('image picker honors native availability and forwards permissions, selectio
     { action: 'image.library', options: { maxDimension: 320 } },
     { action: 'image.camera', options: {} },
     { action: 'image.release', uri: 'file:///cache/picked.jpg' }
+  ]);
+});
+
+test('document picker delegates options and file ownership to the native service', async () => {
+  request.mockClear();
+  const options = { type: ['application/pdf', 'text/plain'], multiple: true, copyToCacheDirectory: false };
+  const asset = { uri: 'content://documents/1', name: 'report.pdf', mimeType: 'application/pdf', lastModified: 1234 };
+  request
+    .mockResolvedValueOnce('true')
+    .mockResolvedValueOnce(JSON.stringify({ canceled: false, assets: [asset] }))
+    .mockResolvedValueOnce('{"canceled":true,"assets":null}')
+    .mockResolvedValueOnce('null')
+    .mockRejectedValueOnce(new Error('Document picker was disabled in this engine build'));
+  expect(await documentPicker.isAvailable()).toBe(true);
+  expect(await getDocumentAsync(options)).toEqual({ canceled: false, assets: [asset] });
+  expect(await documentPicker.getDocumentAsync()).toEqual({ canceled: true, assets: null });
+  await documentPicker.release('file:///cache/copy.pdf');
+  expect(await documentPicker.isAvailable()).toBe(false);
+  expect(request.mock.calls.map(([value]) => JSON.parse(value))).toEqual([
+    { action: 'document.available' },
+    { action: 'document.pick', options },
+    { action: 'document.pick', options: {} },
+    { action: 'document.release', uri: 'file:///cache/copy.pdf' },
+    { action: 'document.available' }
   ]);
 });
 

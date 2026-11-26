@@ -11,7 +11,7 @@ crate-type = ["staticlib", "rlib", "cdylib"]
 
 [features]
 default = [
-    "games", "components", "markdown", "drawing", "storage", "uuid", "image-picker",
+    "games", "components", "markdown", "drawing", "storage", "uuid", "image-picker", "document-picker",
     "audio", "microphone", "haptics", "tts", "keep-awake", "review", "permissions", "sqlite", "video", "location", "auth", "contacts",
 ]
 audio = ["dep:cpal", "dep:hound", "dep:rtrb", "dep:objc2-avf-audio", "dep:ndk-context"]
@@ -31,9 +31,10 @@ games = ["dep:libm", "dep:rapier3d", "dep:earcutr", "dep:fast-surface-nets", "de
 drawing = ["svg", "dep:base64", "dep:i_overlay", "dep:png"]
 svg = ["dep:raqote", "dep:svgtypes"]
 image-codecs = ["dep:png", "dep:jpeg-decoder"]
-storage = ["dep:memmap2", "dep:crc32fast", "dep:uuid"]
+storage = ["dep:memmap2", "dep:crc32fast", "dep:uuid", "dep:aes-gcm", "dep:hkdf", "dep:hmac", "dep:getrandom", "dep:sha2", "dep:zeroize"]
 uuid = ["dep:uuid"]
 image-picker = []
+document-picker = ["dep:uuid"]
 markdown = ["components", "dep:pulldown-cmark"]
 
 [dependencies]
@@ -134,6 +135,10 @@ cpal = { version = "0.18.2", optional = true }
 # Application storage is native-only; browsers use synchronous localStorage.
 memmap2 = { version = "0.9.12", optional = true }
 crc32fast = { version = "1.5", optional = true }
+aes-gcm = { version = "0.10.3", default-features = false, features = ["aes", "alloc", "zeroize"], optional = true }
+hkdf = { version = "0.12", optional = true }
+hmac = { version = "0.12", optional = true }
+zeroize = { version = "1", optional = true }
 pollster = "1.0.1"
 wgpu = { version = "30.0.1", default-features = false, features = ["vulkan", "gles", "metal"] }
 

@@ -11,6 +11,9 @@ extern "C" {
 // App utility policy/ownership. Free JSON results with engine_drawing_result_free.
 char *engine_app_services_prepare(uint64_t owner, const uint8_t *json, size_t length);
 char *engine_app_services_release(uint64_t owner);
+// Owned document cache. The caller keeps source_fd open while the copy runs.
+char *engine_document_cache_copy(const char *root, const char *name, int source_fd);
+char *engine_document_cache_release(const char *root, const char *path);
 
 // Asynchronous SQLite worker. Copies the command and invokes reply once on success.
 uint8_t engine_sqlite_submit(uintptr_t owner, const uint8_t *data, size_t length, void *context, void (*reply)(void *, const uint8_t *, size_t));

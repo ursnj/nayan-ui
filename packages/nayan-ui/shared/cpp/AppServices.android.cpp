@@ -2,6 +2,7 @@
 #include "AppServices.h"
 #include <fbjni/fbjni.h>
 #include <atomic>
+#include <memory>
 #include <mutex>
 #include <unordered_map>
 
@@ -75,4 +76,24 @@ extern "C" JNIEXPORT jfloatArray JNICALL Java_com_nayanui_engine_EngineImageCrop
   if (output) env->SetFloatArrayRegion(output, 0, 9, values);
   return output;
 }
+
+#if NAYAN_ENGINE_DOCUMENT_PICKER
+extern "C" JNIEXPORT jstring JNICALL Java_com_nayanui_engine_EngineDocumentPicker_nativeCopy(
+    JNIEnv *, jclass, jstring root, jstring name, jint descriptor) {
+  std::unique_ptr<char, decltype(&engine_drawing_result_free)> result(
+      engine_document_cache_copy(facebook::jni::wrap_alias(root)->toStdString().c_str(),
+          facebook::jni::wrap_alias(name)->toStdString().c_str(), descriptor),
+      engine_drawing_result_free);
+  return facebook::jni::make_jstring(result.get()).release();
+}
+
+extern "C" JNIEXPORT jstring JNICALL Java_com_nayanui_engine_EngineDocumentPicker_nativeRelease(
+    JNIEnv *, jclass, jstring root, jstring path) {
+  std::unique_ptr<char, decltype(&engine_drawing_result_free)> result(
+      engine_document_cache_release(facebook::jni::wrap_alias(root)->toStdString().c_str(),
+          facebook::jni::wrap_alias(path)->toStdString().c_str()),
+      engine_drawing_result_free);
+  return facebook::jni::make_jstring(result.get()).release();
+}
+#endif
 #endif

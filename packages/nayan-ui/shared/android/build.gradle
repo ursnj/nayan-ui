@@ -32,7 +32,7 @@ android {
   }
 
   sourceSets.main {
-    ["assets", "capture", "clipboard", "files", "keep-awake", "microphone", "network", "sharing", "components"].each { feature ->
+    ["assets", "capture", "clipboard", "document-picker", "files", "keep-awake", "microphone", "network", "sharing", "components"].each { feature ->
       java.srcDir("../../native/${feature}/android/java")
     }
     ["image-picker": imagePicker, video: video, location: location, contacts: contacts, permissions: permissions, review: review].each { feature, included ->

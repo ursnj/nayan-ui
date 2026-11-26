@@ -1,9 +1,14 @@
 import { openBackend } from './storageBackend';
-import type { StorageBackend, StorageConfiguration, StorageJSON, StorageValue } from './types';
+import type { StorageBackend, StorageConfiguration, StorageEncryptionType, StorageJSON, StorageValue } from './types';
 
 /** Synchronous namespaced storage, independent of the engine's asset cache. */
 export interface Storage {
   readonly id: string;
+  readonly isEncrypted: boolean;
+  /** Encrypt or rotate this native store's key. Defaults to AES-128. */
+  encrypt(key: string, type?: StorageEncryptionType): void;
+  /** Rewrite this native store as plaintext. */
+  decrypt(): void;
   set(key: string, value: StorageValue | ArrayBufferView): void;
   getBuffer(key: string): ArrayBuffer | undefined;
   setJSON(key: string, value: unknown): void;
@@ -53,9 +58,9 @@ function subscribe(id: string, backend: StorageBackend, changed: (key: string) =
 }
 
 /** Native uses a Rust memory-mapped store; browsers use localStorage synchronously without engine warm-up. */
-export function createStorage({ id = 'default' }: StorageConfiguration = {}): Storage {
+export function createStorage({ id = 'default', encryptionKey, encryptionType }: StorageConfiguration = {}): Storage {
   if (typeof id !== 'string' || !id.length) throw new Error('Engine storage: id must be a nonempty string');
-  const backend = openBackend(id);
+  const backend = openBackend(id, encryptionKey, encryptionType);
   const read = (key: string) => backend.read(key);
   const set: Storage['set'] = (key, value) => {
     if (!key.length) throw new Error('Engine storage: cannot set an empty key');
@@ -67,6 +72,15 @@ export function createStorage({ id = 'default' }: StorageConfiguration = {}): St
   };
   return {
     id,
+    get isEncrypted() {
+      return backend.command<boolean>('isEncrypted');
+    },
+    encrypt(key, type) {
+      backend.command('encrypt', { encryptionKey: key, encryptionType: type });
+    },
+    decrypt() {
+      backend.command('decrypt');
+    },
     set,
     getBuffer(key) {
       const value = read(key);

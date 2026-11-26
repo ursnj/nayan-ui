@@ -83,6 +83,26 @@ export async function captureSize() {
     note: 'Call from a user action. Capture requires a supported camera, camera permission, and a secure context on the web.'
   },
   {
+    slug: 'document-picker',
+    title: 'Document picker',
+    entry: './document-picker',
+    description: 'Choose documents from the system picker with MIME filters and optional multiple selection.',
+    code: `import { documentPicker } from 'nayan-ui/document-picker';
+
+export async function getPdfName() {
+  const result = await documentPicker.getDocumentAsync({ type: 'application/pdf' });
+  if (result.canceled) return null;
+  const [pdf] = result.assets;
+  if (!pdf) return null;
+  try {
+    return pdf.name;
+  } finally {
+    await documentPicker.release(pdf.uri);
+  }
+}`,
+    note: 'Call from a user action on the web. Native feature profiles must include document-picker.'
+  },
+  {
     slug: 'contacts',
     title: 'Contacts',
     entry: './contacts',
@@ -391,7 +411,9 @@ const preferences = createStorage({ id: 'preferences' });
 export function SoundSetting() {
   const [enabled, setEnabled] = useStorage('sound', true, preferences);
   return <NSwitch label="Sound" value={enabled} onValueChange={setEnabled} />;
-}`
+}`,
+    note: 'On iOS and Android, supply an app-managed encryptionKey for encrypted storage. Browsers support ordinary storage only.',
+    guide: 'https://github.com/ursnj/nayan-ui/blob/main/packages/nayan-ui/README.md#encrypted-storage'
   },
   {
     slug: 'tts',

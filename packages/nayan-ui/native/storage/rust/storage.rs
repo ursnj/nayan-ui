@@ -1,9 +1,11 @@
 //! Memory-cached preferences with a checksummed, append-only memory-mapped file.
 //! One process owns the file. Buffered sets avoid per-write fsync; flush, remove and clear are durable.
+mod encryption;
 mod log;
 #[cfg(test)]
 mod tests;
-use log::{CLEAR, HEADER, Log, REMOVE, SET, record_size};
+use encryption::{Algorithm, Metadata, Protection};
+use log::{CLEAR, HEADER, Log, PROTECT, REMOVE, SET, record_size};
 use serde_json::{Value, json};
 use std::{
     collections::HashMap,
@@ -18,56 +20,76 @@ struct Entry {
     order: u64,
 }
 #[derive(Default)]
-struct Cache {
-    stores: HashMap<String, HashMap<String, Entry>>,
+struct Namespace {
+    entries: HashMap<String, Entry>,
+    encryption: Option<Metadata>,
     bytes: usize,
     next_order: u64,
 }
-impl Cache {
-    fn apply(&mut self, op: u8, id: &str, key: &str, value: &[u8], _sequence: u64) {
-        let entries = self.stores.entry(id.to_owned()).or_default();
+impl Namespace {
+    fn set(&mut self, id: &str, key: String, value: Vec<u8>) {
+        let order = if let Some(old) = self.entries.get(&key) {
+            self.bytes -= record_size(id, &key, &old.value);
+            old.order
+        } else {
+            self.next_order += 1;
+            self.next_order
+        };
+        self.bytes += record_size(id, &key, &value);
+        self.entries.insert(key, Entry { value, order });
+    }
+
+    fn apply(&mut self, op: u8, id: &str, key: &str, value: &[u8]) {
         match op {
-            SET => {
-                let order = if let Some(old) = entries.get(key) {
-                    self.bytes -= record_size(id, key, &old.value);
-                    old.order
-                } else {
-                    self.next_order += 1;
-                    self.next_order
-                };
-                self.bytes += record_size(id, key, value);
-                entries.insert(
-                    key.to_owned(),
-                    Entry {
-                        value: value.to_vec(),
-                        order,
-                    },
-                );
-            }
+            SET => self.set(id, key.to_owned(), value.to_vec()),
             REMOVE => {
-                if let Some(old) = entries.remove(key) {
+                if let Some(old) = self.entries.remove(key) {
                     self.bytes -= record_size(id, key, &old.value);
                 }
             }
             CLEAR => {
-                for (key, old) in entries.drain() {
-                    self.bytes -= record_size(id, &key, &old.value);
-                }
+                self.entries.clear();
+                self.bytes = 0;
             }
             _ => unreachable!(),
         }
     }
-    fn read(&self, id: &str, key: &str) -> Option<&[u8]> {
-        self.stores.get(id)?.get(key).map(|entry| entry.value.as_slice())
+    fn ordered(&self) -> Vec<(&String, &Entry)> {
+        let mut entries: Vec<_> = self.entries.iter().collect();
+        entries.sort_unstable_by_key(|(_, entry)| entry.order);
+        entries
     }
-    fn keys(&self, id: &str) -> Vec<String> {
-        let mut keys: Vec<_> = self.stores.get(id).into_iter().flatten().collect();
-        keys.sort_unstable_by_key(|(_, e)| e.order);
-        keys.into_iter().map(|(k, _)| k.clone()).collect()
+
+    fn size(&self, id: &str) -> usize {
+        self.bytes + self.encryption.as_ref().map_or(0, |metadata| record_size(id, "", metadata.bytes()))
     }
 }
+
+#[derive(Default)]
+struct Cache {
+    stores: HashMap<String, Namespace>,
+    bytes: usize,
+}
+impl Cache {
+    fn apply(&mut self, op: u8, id: &str, key: &str, value: &[u8]) {
+        let namespace = self.stores.entry(id.to_owned()).or_default();
+        let previous_size = namespace.size(id);
+        if op == PROTECT {
+            namespace.encryption = Metadata::parse(value);
+        } else {
+            namespace.apply(op, id, key, value);
+        }
+        self.bytes = self.bytes - previous_size + namespace.size(id);
+    }
+}
+
+const MAX_NAME: usize = 1_000_000;
+const MAX_VALUE: usize = 512 * 1024 * 1024;
+fn valid_name(name: &str) -> bool {
+    !name.is_empty() && name.len() <= MAX_NAME
+}
 fn valid_value(value: &[u8]) -> bool {
-    value.len() <= 512 * 1024 * 1024
+    value.len() <= MAX_VALUE
         && match value.first() {
             Some(1) => std::str::from_utf8(&value[1..]).is_ok(),
             Some(2) => value.len() == 9,
@@ -91,6 +113,7 @@ fn sync_directory(root: &Path) -> Result<()> {
 struct Database {
     log: Log,
     cache: Cache,
+    unlocked: HashMap<String, Protection>,
     directory: PathBuf,
     _owner: File,
 }
@@ -108,6 +131,15 @@ impl Database {
         owner
             .try_lock()
             .map_err(|e| format!("storage is already owned by another process: {e}"))?;
+        // A process can exit during a rewrite. Only the renamed snapshot is authoritative.
+        for file in io(std::fs::read_dir(directory))? {
+            let file = io(file)?;
+            let name = file.file_name();
+            let snapshot_id = name.to_str().and_then(|name| name.strip_prefix(".preferences-")?.strip_suffix(".tmp"));
+            if snapshot_id.is_some_and(|id| uuid::Uuid::parse_str(id).is_ok()) && io(file.file_type())?.is_file() {
+                io(std::fs::remove_file(file.path()))?;
+            }
+        }
         let path = directory.join("preferences.kv");
         let (log, cache) = if path.exists() {
             Log::open(&path)?
@@ -125,6 +157,7 @@ impl Database {
         Ok(Self {
             log,
             cache,
+            unlocked: HashMap::new(),
             directory: directory.into(),
             _owner: owner,
         })
@@ -133,14 +166,13 @@ impl Database {
         let temporary = directory.join(format!(".preferences-{}.tmp", uuid::Uuid::new_v4()));
         let result = (|| {
             let mut log = Log::create(&temporary)?;
-            let mut records: Vec<_> = cache
-                .stores
-                .iter()
-                .flat_map(|(id, entries)| entries.iter().map(move |(key, entry)| (id, key, entry)))
-                .collect();
-            records.sort_unstable_by_key(|(_, _, entry)| entry.order);
-            for (id, key, entry) in records {
-                log.append(SET, id, key, &entry.value)?;
+            for (id, namespace) in &cache.stores {
+                if let Some(encryption) = &namespace.encryption {
+                    log.append(PROTECT, id, "", encryption.bytes())?;
+                }
+                for (key, entry) in namespace.ordered() {
+                    log.append(SET, id, key, &entry.value)?;
+                }
             }
             log.flush()?;
             Ok(log)
@@ -153,26 +185,94 @@ impl Database {
             }
         }
     }
-    fn compact_if_needed(&mut self) -> Result<()> {
-        if self.log.end > 1024 * 1024 && self.log.end.saturating_sub(HEADER) > self.cache.bytes.saturating_mul(3).saturating_add(1024 * 1024) {
-            let (log, temporary) = Self::snapshot(&self.directory, &self.cache)?;
-            if let Err(error) = std::fs::rename(&temporary, self.directory.join("preferences.kv")) {
-                drop(log);
-                let _ = std::fs::remove_file(temporary);
-                return Err(error.to_string());
-            }
-            // Rename is the commit point. Adopt the new map before directory syncing, so even if
-            // that sync fails, later operations cannot accidentally write to the replaced inode.
-            self.log = log;
-            sync_directory(&self.directory)?;
+    fn replace_log(&mut self) -> Result<()> {
+        let (log, temporary) = Self::snapshot(&self.directory, &self.cache)?;
+        if let Err(error) = std::fs::rename(&temporary, self.directory.join("preferences.kv")) {
+            drop(log);
+            let _ = std::fs::remove_file(temporary);
+            return Err(error.to_string());
         }
+        // Rename commits the new map. Callers adopt matching in-memory state before directory sync.
+        self.log = log;
         Ok(())
     }
     fn append(&mut self, op: u8, id: &str, key: &str, value: &[u8]) -> Result<()> {
-        self.compact_if_needed()?;
-        let sequence = self.log.append(op, id, key, value)?;
-        self.cache.apply(op, id, key, value, sequence);
+        if self.log.end > 1024 * 1024 && self.log.end.saturating_sub(HEADER) > self.cache.bytes.saturating_mul(3).saturating_add(1024 * 1024) {
+            self.replace_log()?;
+            sync_directory(&self.directory)?;
+        }
+        self.log.append(op, id, key, value)?;
+        self.cache.apply(op, id, key, value);
         Ok(())
+    }
+
+    fn metadata(&self, id: &str) -> Option<&Metadata> {
+        self.cache.stores.get(id)?.encryption.as_ref()
+    }
+
+    fn change_encryption(&mut self, id: &str, encryption: Option<(Metadata, Protection)>) -> Result<()> {
+        let mut updated = Namespace::default();
+        if let Some(current) = self.cache.stores.get(id) {
+            let active = self.unlocked.get(id);
+            for (index, entry) in current.ordered() {
+                let transform = |key: &str, value: &[u8]| match &encryption {
+                    Some((_, protection)) => protection.seal(key, value),
+                    None => Ok((key.to_owned(), value.to_vec())),
+                };
+                let (key, value) = match active {
+                    Some(active) => active.unseal(index, &entry.value, transform)?,
+                    None => transform(index, &entry.value),
+                }?;
+                updated.set(id, key, value);
+            }
+        }
+        let protection = encryption.map(|(metadata, protection)| {
+            updated.encryption = Some(metadata);
+            protection
+        });
+        let updated_size = updated.size(id);
+        let previous = self.cache.stores.insert(id.to_owned(), updated);
+        if let Err(error) = self.replace_log() {
+            if let Some(previous) = previous {
+                self.cache.stores.insert(id.to_owned(), previous);
+            } else {
+                self.cache.stores.remove(id);
+            }
+            return Err(error);
+        }
+        self.cache.bytes = self.cache.bytes - previous.as_ref().map_or(0, |ns| ns.size(id)) + updated_size;
+        if let Some(protection) = protection {
+            self.unlocked.insert(id.to_owned(), protection);
+        } else {
+            self.unlocked.remove(id);
+        }
+        sync_directory(&self.directory)
+    }
+
+    fn index<'a>(&self, id: &str, key: &'a str) -> std::borrow::Cow<'a, str> {
+        match self.unlocked.get(id) {
+            Some(protection) => protection.index(key).into(),
+            None => key.into(),
+        }
+    }
+
+    fn entry(&self, id: &str, index: &str) -> Option<&Entry> {
+        self.cache.stores.get(id)?.entries.get(index)
+    }
+
+    fn keys(&self, id: &str) -> Result<Vec<String>> {
+        let Some(namespace) = self.cache.stores.get(id) else {
+            return Ok(Vec::new());
+        };
+        let protection = self.unlocked.get(id);
+        namespace
+            .ordered()
+            .into_iter()
+            .map(|(index, entry)| match protection {
+                Some(protection) => protection.unseal(index, &entry.value, |key, _| key.to_owned()),
+                None => Ok(index.clone()),
+            })
+            .collect()
     }
 }
 impl Drop for Database {
@@ -201,11 +301,25 @@ impl Stores {
         }
         Ok(self.database.as_mut().unwrap())
     }
-    fn open(&mut self, id: &str) -> Result<u32> {
-        if id.is_empty() || id.len() > 1_000_000 {
+    fn open(&mut self, id: &str, key: Option<&str>, algorithm: Option<Algorithm>) -> Result<u32> {
+        if !valid_name(id) {
             return Err("invalid store id".into());
         }
-        self.database()?;
+        let database = self.database()?;
+        match (database.metadata(id), key) {
+            (Some(metadata), Some(key)) => {
+                if algorithm.is_some_and(|algorithm| algorithm != metadata.algorithm()) {
+                    return Err("storage encryption type does not match the encrypted store".into());
+                }
+                let protection = metadata.unlock(id, key)?;
+                database.unlocked.insert(id.to_owned(), protection);
+            }
+            (Some(_), None) => {
+                return Err("an encryption key is required to open this store".into());
+            }
+            (None, Some(key)) => database.change_encryption(id, Some(Protection::create(id, key, algorithm.unwrap_or(Algorithm::Aes128))?))?,
+            (None, None) => {}
+        }
         if let Some(handle) = self.ids.get(id) {
             return Ok(*handle);
         }
@@ -222,27 +336,45 @@ impl Stores {
     }
     fn read(&self, handle: u32, key: &str) -> Result<Vec<u8>> {
         let id = self.id(handle)?;
-        Ok(self
-            .database
-            .as_ref()
-            .ok_or("storage has not been opened")?
-            .cache
-            .read(id, key)
-            .unwrap_or_default()
-            .to_vec())
+        let database = self.database.as_ref().ok_or("storage has not been opened")?;
+        let index = database.index(id, key);
+        let Some(entry) = database.entry(id, &index) else {
+            return Ok(Vec::new());
+        };
+        match database.unlocked.get(id) {
+            Some(protection) => protection.unseal(&index, &entry.value, |_, value| value.to_vec()),
+            None => Ok(entry.value.clone()),
+        }
     }
     fn write(&mut self, handle: u32, key: &str, value: &[u8]) -> Result<()> {
-        if key.is_empty() || key.len() > 1_000_000 || !valid_value(value) {
+        if !valid_name(key) || !valid_value(value) {
             return Err("invalid storage key or value".into());
         }
         let id = self.id(handle)?.to_owned();
-        self.database()?.append(SET, &id, key, value)
+        let database = self.database()?;
+        if let Some(protection) = database.unlocked.get(&id) {
+            let (index, encrypted) = protection.seal(key, value)?;
+            return database.append(SET, &id, &index, &encrypted);
+        }
+        database.append(SET, &id, key, value)
     }
     fn command(&mut self, command: &str) -> Result<Value> {
         let c: Value = serde_json::from_str(command).map_err(|e| e.to_string())?;
         let op = c["op"].as_str().ok_or("missing storage operation")?;
-        if op == "open" {
-            return Ok(json!(self.open(c["id"].as_str().ok_or("missing id")?)?));
+        let encryption_key = || c["encryptionKey"].as_str().ok_or("storage encryption key must be a string");
+        let encryption_type = || {
+            c.get("encryptionType")
+                .map(|value| Algorithm::parse(value.as_str().ok_or("storage encryption type must be a string")?))
+                .transpose()
+        };
+        if matches!(op, "open" | "openEncrypted") {
+            let id = c["id"].as_str().ok_or("missing id")?;
+            let (key, algorithm) = if op == "openEncrypted" {
+                (Some(encryption_key()?), encryption_type()?)
+            } else {
+                (None, None)
+            };
+            return Ok(json!(self.open(id, key, algorithm)?));
         }
         // A lifecycle flush can run before any namespace is opened, and flushes the shared file.
         if op == "flush" {
@@ -256,18 +388,31 @@ impl Stores {
         let key = c["key"].as_str().unwrap_or_default();
         let database = self.database()?;
         match op {
-            "contains" => Ok(json!(database.cache.read(&id, key).is_some())),
-            "keys" => Ok(json!(database.cache.keys(&id))),
+            "isEncrypted" => Ok(json!(database.metadata(&id).is_some())),
+            "encrypt" => {
+                let algorithm = encryption_type()?.unwrap_or(Algorithm::Aes128);
+                database.change_encryption(&id, Some(Protection::create(&id, encryption_key()?, algorithm)?))?;
+                Ok(Value::Null)
+            }
+            "decrypt" => {
+                if database.metadata(&id).is_some() {
+                    database.change_encryption(&id, None)?;
+                }
+                Ok(Value::Null)
+            }
+            "contains" => Ok(json!(database.entry(&id, &database.index(&id, key)).is_some())),
+            "keys" => Ok(json!(database.keys(&id)?)),
             "remove" => {
-                let exists = database.cache.read(&id, key).is_some();
+                let index = database.index(&id, key);
+                let exists = database.entry(&id, &index).is_some();
                 if exists {
-                    database.append(REMOVE, &id, key, &[])?;
+                    database.append(REMOVE, &id, &index, &[])?;
                 }
                 database.log.flush()?;
                 Ok(json!(exists))
             }
             "clear" => {
-                let keys = database.cache.keys(&id);
+                let keys = database.keys(&id)?;
                 if !keys.is_empty() {
                     database.append(CLEAR, &id, "", &[])?;
                 }

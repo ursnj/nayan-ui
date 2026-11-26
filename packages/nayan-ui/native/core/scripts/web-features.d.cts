@@ -6,6 +6,7 @@ export type NayanFeature =
   | 'storage'
   | 'uuid'
   | 'image-picker'
+  | 'document-picker'
   | 'audio'
   | 'microphone'
   | 'haptics'

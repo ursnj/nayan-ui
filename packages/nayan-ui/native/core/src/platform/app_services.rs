@@ -6,6 +6,9 @@ mod keep_awake;
 #[cfg(feature = "image-picker")]
 #[path = "../../../image-picker/rust/options.rs"]
 mod image_picker;
+#[cfg(feature = "document-picker")]
+#[path = "../../../document-picker/rust/options.rs"]
+mod document_picker;
 
 pub fn prepare(owner: u64, #[allow(unused_mut)] mut value: Value) -> Result<Value, String> {
     let action = value["action"].as_str().ok_or("Missing app service action")?.to_owned();
@@ -47,6 +50,22 @@ pub fn prepare(owner: u64, #[allow(unused_mut)] mut value: Value) -> Result<Valu
         "image.permission" | "image.requestPermission" => Ok(()),
         #[cfg(not(feature = "image-picker"))]
         action if action.starts_with("image.") => Err("Image picker was disabled in this engine build"),
+        #[cfg(feature = "document-picker")]
+        "document.available" => Ok(()),
+        #[cfg(feature = "document-picker")]
+        "document.pick" => {
+            value["options"] = document_picker::options(value.get("options").unwrap_or(&json!({})))?;
+            Ok(())
+        }
+        #[cfg(feature = "document-picker")]
+        "document.release" => {
+            if !value["uri"].as_str().is_some_and(|uri| uri.starts_with("file://") && !uri.contains('\0')) {
+                return Err("A cached document file URI is required".into());
+            }
+            Ok(())
+        }
+        #[cfg(not(feature = "document-picker"))]
+        action if action.starts_with("document.") => Err("Document picker was disabled in this engine build"),
         #[cfg(feature = "permissions")]
         "permissions.check" | "permissions.request" | "permissions.openSettings" => {
             if (action != "permissions.openSettings" || value.get("permission").is_some())

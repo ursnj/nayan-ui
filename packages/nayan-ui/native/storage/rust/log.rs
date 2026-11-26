@@ -1,7 +1,7 @@
 //! Append-only mapped records. A process-wide owner lock is held for every map's lifetime.
 //! Two commit slots publish buffered appends; two separate checkpoints identify fully flushed data.
 //! Recovery may discard a torn buffered tail, but never silently discards a durable record.
-use super::{Cache, Result, valid_value};
+use super::{Cache, Result, encryption, valid_name, valid_value};
 use memmap2::MmapMut;
 use std::{
     fs::{File, OpenOptions},
@@ -16,6 +16,7 @@ const RECORD: usize = 20;
 pub(super) const SET: u8 = 1;
 pub(super) const REMOVE: u8 = 2;
 pub(super) const CLEAR: u8 = 3;
+pub(super) const PROTECT: u8 = 4;
 #[derive(Clone, Copy, Debug)]
 struct Commit {
     generation: u64,
@@ -86,20 +87,27 @@ fn replay(map: &[u8], from: usize, to: usize, mut sequence: u64, cache: &mut Cac
         };
         let op = bytes[8];
         let value = &bytes[key_end..];
-        if id.is_empty() || id.len() > 1_000_000 || key.len() > 1_000_000 || bytes[9..12] != [0, 0, 0] {
+        if !valid_name(id) || bytes[9..12] != [0, 0, 0] {
             break;
         }
+        let namespace = cache.stores.get(id);
+        let encrypted = namespace.is_some_and(|namespace| namespace.encryption.is_some());
         if !match op {
-            SET => !key.is_empty() && valid_value(value),
-            REMOVE => !key.is_empty() && value.is_empty(),
+            SET if encrypted => encryption::valid_record(key, value),
+            SET => valid_name(key) && valid_value(value),
+            REMOVE if encrypted => encryption::valid_index(key) && value.is_empty(),
+            REMOVE => valid_name(key) && value.is_empty(),
             CLEAR => key.is_empty() && value.is_empty(),
+            PROTECT => namespace.is_none() && key.is_empty() && encryption::Metadata::parse(value).is_some(),
             _ => false,
         } {
             break;
         }
-        let Some(next) = sequence.checked_add(1) else { break };
+        let Some(next) = sequence.checked_add(1) else {
+            break;
+        };
         sequence = next;
-        cache.apply(op, id, key, value, sequence);
+        cache.apply(op, id, key, value);
         at += size;
     }
     (at, sequence)

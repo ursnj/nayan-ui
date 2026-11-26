@@ -9,6 +9,8 @@ const lifecycle = mock((_name: string, callback: (state: string) => void) => {
 });
 mock.module('react-native', () => ({ AppState: { addEventListener: lifecycle } }));
 const values = new Map<string, StorageValue>();
+let encrypted = false;
+const encryptionCommands: Record<string, unknown>[] = [];
 mock.module('../../native/NativeNayanEngine', () => ({
   default: {
     storageRequest: (raw: string) => {
@@ -16,6 +18,11 @@ mock.module('../../native/NativeNayanEngine', () => ({
       events.push(command.op);
       let value: unknown;
       if (command.op === 'open') value = 1;
+      else if (command.op === 'openEncrypted' || command.op === 'encrypt' || command.op === 'decrypt') {
+        encrypted = command.op !== 'decrypt';
+        encryptionCommands.push(command);
+        value = command.op === 'openEncrypted' ? 2 : null;
+      } else if (command.op === 'isEncrypted') value = encrypted;
       else if (command.op === 'contains') value = values.has(command.key);
       else if (command.op === 'remove') value = values.delete(command.key);
       else if (command.op === 'keys') value = [...values.keys()];
@@ -73,4 +80,20 @@ test('native storage flushes once per background transition with one shared AppS
   first.flush();
   second.flush();
   expect(count()).toBe(before + 3);
+});
+
+test('encrypted opens and key rotation use explicit native commands', async () => {
+  const { createStorage } = await import('../store');
+  const encryptionKey = 'test-only-key-material-for-storage';
+  const nextKey = 'replacement-test-key-material-for-storage';
+  const storage = createStorage({ id: 'session', encryptionKey, encryptionType: 'AES-256' });
+  expect(storage.isEncrypted).toBe(true);
+  storage.encrypt(nextKey, 'AES-256');
+  storage.decrypt();
+  expect(storage.isEncrypted).toBe(false);
+  expect(encryptionCommands).toEqual([
+    { op: 'openEncrypted', id: 'session', encryptionKey, encryptionType: 'AES-256' },
+    { op: 'encrypt', handle: 2, encryptionKey: nextKey, encryptionType: 'AES-256' },
+    { op: 'decrypt', handle: 2 }
+  ]);
 });

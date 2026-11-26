@@ -70,6 +70,17 @@ test('direct games and drawing entries exclude the picker without tree shaking',
   }
 });
 
+test('the document picker has a standalone browser and native entry', async () => {
+  const source = 'export {documentPicker, getDocumentAsync} from "nayan-ui/document-picker";';
+  const web = await bundle(source, false, false);
+  const native = await bundle(source, true, false);
+  expect(web).toContain('createObjectURL');
+  expect(native).toContain('document.pick');
+  for (const entry of [web, native]) {
+    for (const marker of ['.wasm', 'pickFromLibrary', 'image.camera', 'DrawingCanvas']) expect(entry).not.toContain(marker);
+  }
+});
+
 test('the animations entry bundles without initializing a world or renderer', async () => {
   for (const native of [false, true]) {
     const js = await bundle('export {animations} from "nayan-ui/animations";', native, false);

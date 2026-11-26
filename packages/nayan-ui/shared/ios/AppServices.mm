@@ -25,6 +25,12 @@
 #if NAYAN_ENGINE_IMAGE_PICKER
 #include "image-picker/ios/ImagePicker.h"
 #endif
+#ifndef NAYAN_ENGINE_DOCUMENT_PICKER
+#define NAYAN_ENGINE_DOCUMENT_PICKER 1
+#endif
+#if NAYAN_ENGINE_DOCUMENT_PICKER
+#include "document-picker/ios/DocumentPicker.h"
+#endif
 #ifndef NAYAN_ENGINE_CONTACTS
 #define NAYAN_ENGINE_CONTACTS 1
 #endif
@@ -33,7 +39,7 @@
 #endif
 
 namespace {
-#if NAYAN_ENGINE_IMAGE_PICKER || NAYAN_ENGINE_REVIEW
+#if NAYAN_ENGINE_IMAGE_PICKER || NAYAN_ENGINE_REVIEW || NAYAN_ENGINE_DOCUMENT_PICKER
 UIWindowScene *scene(){for(UIScene *scene in UIApplication.sharedApplication.connectedScenes)if(scene.activationState==UISceneActivationStateForegroundActive&&[scene isKindOfClass:UIWindowScene.class])return (UIWindowScene*)scene;return nil;}
 #endif
 std::string string(NSString *value){NSData *data=[value dataUsingEncoding:NSUTF8StringEncoding];return data.length?std::string((const char*)data.bytes,data.length):std::string{};}
@@ -56,6 +62,9 @@ void requestAppServices(std::string raw,AppCompletion completed){dispatch_async(
 #endif
 #if NAYAN_ENGINE_LOCATION
  if([action isEqual:@"cleanup"]) releaseLocation(value[@"owner"]);
+#endif
+#if NAYAN_ENGINE_DOCUMENT_PICKER
+ if([action isEqual:@"cleanup"]) cancelDocumentPicker(value[@"owner"]);
 #endif
  completed([action isEqual:@"awake.available"]?"true":"null",{});return;}
 #if NAYAN_ENGINE_REVIEW
@@ -90,6 +99,12 @@ void requestAppServices(std::string raw,AppCompletion completed){dispatch_async(
 #endif
    return;
  }
+#if NAYAN_ENGINE_DOCUMENT_PICKER
+ if ([action hasPrefix:@"document."]) {
+   requestDocumentPicker(scene(), value, completed);
+   return;
+ }
+#endif
  completed({},"Unknown app service action");
  }@catch(NSException *error){completed({},string(error.reason?:@"App service request failed"));}});}
 }

@@ -1,18 +1,18 @@
-#[cfg(any(feature = "image-picker", feature = "keep-awake", feature = "review", feature = "permissions"))]
+#[cfg(any(feature = "image-picker", feature = "document-picker", feature = "keep-awake", feature = "review", feature = "permissions"))]
 use std::ffi::CString;
 use std::ffi::c_char;
 /// # Safety
 /// data is readable for length bytes. Free result with engine_drawing_result_free.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_app_services_prepare(owner: u64, data: *const u8, length: usize) -> *mut c_char {
-    #[cfg(not(any(feature = "image-picker", feature = "keep-awake", feature = "review", feature = "permissions")))]
+    #[cfg(not(any(feature = "image-picker", feature = "document-picker", feature = "keep-awake", feature = "review", feature = "permissions")))]
     {
         let _ = (owner, data, length);
         c"{\"ok\":false,\"error\":\"App services were disabled in this engine build\"}"
             .to_owned()
             .into_raw()
     }
-    #[cfg(any(feature = "image-picker", feature = "keep-awake", feature = "review", feature = "permissions"))]
+    #[cfg(any(feature = "image-picker", feature = "document-picker", feature = "keep-awake", feature = "review", feature = "permissions"))]
     {
         let result = if data.is_null() || length > 65536 {
             Err("Invalid app service command".into())
@@ -30,12 +30,12 @@ pub unsafe extern "C" fn engine_app_services_prepare(owner: u64, data: *const u8
 }
 #[unsafe(no_mangle)]
 pub extern "C" fn engine_app_services_release(owner: u64) -> *mut c_char {
-    #[cfg(not(any(feature = "image-picker", feature = "keep-awake", feature = "review", feature = "permissions")))]
+    #[cfg(not(any(feature = "image-picker", feature = "document-picker", feature = "keep-awake", feature = "review", feature = "permissions")))]
     {
         let _ = owner;
         c"{}".to_owned().into_raw()
     }
-    #[cfg(any(feature = "image-picker", feature = "keep-awake", feature = "review", feature = "permissions"))]
+    #[cfg(any(feature = "image-picker", feature = "document-picker", feature = "keep-awake", feature = "review", feature = "permissions"))]
     {
         CString::new(crate::app_services::release(owner).to_string()).unwrap().into_raw()
     }

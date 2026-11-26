@@ -1,6 +1,6 @@
 import { AppState } from 'react-native';
 import NativeEngine from '../native/NativeNayanEngine';
-import type { StorageBackend } from './types';
+import type { StorageBackend, StorageEncryptionType } from './types';
 
 function request<T>(command: Record<string, unknown>): T {
   if (!NativeEngine?.storageRequest) throw new Error('Engine storage: rebuild the native app with storage support');
@@ -21,8 +21,9 @@ function listenForBackground() {
     }
   });
 }
-export function openBackend(id: string): StorageBackend {
-  const handle = request<number>({ op: 'open', id });
+export function openBackend(id: string, encryptionKey?: string, encryptionType?: StorageEncryptionType): StorageBackend {
+  const encrypted = encryptionKey !== undefined || encryptionType !== undefined;
+  const handle = request<number>(encrypted ? { op: 'openEncrypted', id, encryptionKey, encryptionType } : { op: 'open', id });
   listenForBackground();
   return {
     read: (key) => NativeEngine!.storageRead(handle, key).value,

@@ -195,7 +195,7 @@ uses. Each entry has platform-specific JavaScript and TypeScript declarations.
 | Assets and local data | `/assets`, `/files`, `/storage`, `/sqlite`, `/uuid` |
 | Connectivity and platform access | `/network`, `/permissions`, `/location`, `/device` |
 | Audio and feedback | `/audio`, `/microphone`, `/tts`, `/haptics` |
-| Media and sharing | `/video`, `/camera`, `/image-picker`, `/capture`, `/sharing`, `/clipboard` |
+| Media and sharing | `/video`, `/camera`, `/image-picker`, `/document-picker`, `/capture`, `/sharing`, `/clipboard` |
 | App lifecycle | `/keep-awake`, `/review` |
 | Identity | [`/auth`](#auth) |
 | Address book | [`/contacts`](#contacts) |
@@ -292,7 +292,7 @@ Keep the JavaScript binding and its WASM asset together. If you use SQLite, appl
 the same alias in the worker build.
 
 The supported feature names are `games`, `drawing`, `components`, `markdown`, `storage`, `uuid`,
-`image-picker`, `audio`, `microphone`, `haptics`, `tts`, `keep-awake`,
+`image-picker`, `document-picker`, `audio`, `microphone`, `haptics`, `tts`, `keep-awake`,
 `review`, `permissions`, `sqlite`, `video`, `location`, `auth` and `contacts`.
 `games` owns 3D rendering, glTF loading, meshes, glyphs and procedural worlds.
 The native build links the shared bridge and small platform adapters. Browser
@@ -1987,6 +1987,7 @@ requests and `/network` for connection status and optional endpoint checks.
 | [`/camera`](#camera) | Permission, native system capture, web preview, image output and release | Native uses the image-picker feature. Web access requires a secure context. |
 | [`/video`](#video) | Inline playback, controls, seek, loop, mute, volume, speed, status and progress | Foreground playback. Codecs and controls vary by platform. |
 | [`/image-picker`](#image-picker) | Photo library, camera, image editing, JPEG and PNG, multi-selection and release | Image outputs are temporary. Browser camera selection is a hint. |
+| [`/document-picker`](#document-picker) | System document selection, MIME filters, multiple files and cache copies | Available on iOS, Android and web. |
 | [`/clipboard`](#clipboard) | Read and write text, write HTML with a text alternative, check and clear | Platform clipboard permissions apply. |
 | [`/sharing`](#sharing) | Share text, URL or one file, with titles and an optional iPad anchor | Outbound system sheet. Dismissal resolves normally. |
 | [`/capture`](#screen-capture) | Capture engine surfaces in a native screenshot or a picked browser display | PNG output. Browser capture requires user permission. |
@@ -2120,7 +2121,7 @@ Native storage uses a Rust in-memory index and a checksummed, append-only memory
 file in the app's durable private directory, separate from the asset cache. It grows
 as needed and compacts obsolete records automatically. Sets are buffered: recent
 writes can be lost on power failure until `flush()` completes. The engine flushes on
-app background and inactive transitions. Removal, clearing and MMKV import flush
+app background and inactive transitions. Removal and clearing flush
 before returning. Call `flush()` explicitly at other durability boundaries. Corruption
 inside flushed data is reported rather than silently resetting or restoring deleted
 sessions; an interrupted buffered tail can be discarded during recovery. Each file
@@ -2131,22 +2132,26 @@ Browsers use synchronous localStorage; `flush()` needs no extra operation. Stora
 access/quota errors propagate to callers. Direct reads during server rendering are
 unsupported. Native applications must be rebuilt after updating the Rust core.
 
-The store is plaintext. Use the optional one-time, read-only importer for an
-existing unencrypted MMKV string store.
+#### Encrypted storage
+
+On iOS and Android, pass `encryptionKey` to encrypt a namespace at rest with Rust AES-GCM.
+`AES-128` is the default for new encrypted stores. Select `AES-256` when configuring a store or rotating its key.
+Supply a cryptographically random, app-managed secret using a string encoding such as Base64.
+AES-128 requires at least 16 UTF-8 bytes and AES-256 requires at least 32. Both accept up to 1,024 bytes.
 
 ```ts
-const migrated = createStorage({ id: 'my-app', importMMKVStrings: 'mmkv.default' });
-const previousSettings = migrated.getJSON('settings');
+import { createStorage } from 'nayan-ui/storage';
+
+export function openSessionStore(encryptionKey: string) {
+  return createStorage({ id: 'session', encryptionKey, encryptionType: 'AES-256' });
+}
 ```
 
-The source ID identifies a legacy store in the application's default MMKV location;
-web imports its legacy localStorage prefix. Existing engine values win. The source
-is retained, and a completion marker outside the destination namespace prevents
-`clearAll()` from importing deleted values again. Native import verifies checksums
-and parses the complete source before applying records. Encrypted, expiring,
-unsupported-version and non-string native records are rejected. This is not a
-full MMKV API or custom-path migration; validate decoded JSON and own application
-schema/session recovery in the host. Rebuild native storage support before opting in.
+Opening an existing plaintext namespace with a key encrypts its current values. An encrypted store requires its matching key on every open, even if another instance already opened it. When `encryptionType` is omitted on reopen, the store uses its recorded type.
+
+Use `store.isEncrypted` to inspect the active mode. `store.encrypt(newKey, 'AES-256')` rotates the key and rewrites the namespace. `store.decrypt()` rewrites it as plaintext. These changes commit atomically and apply to existing instances of that namespace. Keep both keys available until a rotation succeeds. Existing backups from before encryption can still contain plaintext.
+
+The app is responsible for generating and protecting the encryption key, for example with iOS Keychain or by wrapping it with an Android Keystore key. Never hardcode it or store it with the encrypted database. Browser storage uses `localStorage` and throws when encryption is requested. Rebuild native apps before using the encryption API. [Apple Keychain](https://developer.apple.com/documentation/security/keychain-services) · [Android Keystore](https://developer.android.com/privacy-and-security/keystore) · [MMKV encryption API](https://github.com/margelo/react-native-mmkv?tab=readme-ov-file#encryption)
 
 #### Query persistence
 
@@ -2555,6 +2560,40 @@ and adjust brightness. The crop defaults to square. Pass `aspect` to set a diffe
 The existing `allowsEditing` option takes precedence when both are supplied.
 Canceling capture or editing returns `null`. The browser media stream stops when the preview closes.
 Photo results are temporary and should be released after use.
+
+### Document picker
+
+```ts
+import { documentPicker } from 'nayan-ui/document-picker';
+
+const result = await documentPicker.getDocumentAsync({
+  type: ['application/pdf', 'text/plain'],
+  multiple: true
+});
+if (!result.canceled) {
+  try {
+    await Promise.all(result.assets.map((asset) => uploadDocument(asset)));
+  } finally {
+    await Promise.all(result.assets.map((asset) => documentPicker.release(asset.uri)));
+  }
+}
+```
+
+`getDocumentAsync()` defaults to all MIME types and single selection. It returns
+`{ canceled: true, assets: null }` on cancellation. Each selected asset has a URI,
+name and modification time, plus size and MIME type when available. The entry
+also exports `getDocumentAsync` directly.
+
+Native builds stream selected files into the app cache by default. With
+`copyToCacheDirectory: false`, Android returns a provider `content:` URI and iOS
+returns the system-imported file URL. Only app-owned cache copies are eligible
+for `release()`. Include `document-picker` when using a custom native feature
+profile, then rebuild the app. The system picker grants access to selected files.
+
+On web, call from a user action. The result includes browser `File` objects and
+the original `FileList`. `base64: true` adds a data URL to each asset, and
+`release()` revokes the blob URI. Cancellation uses the browser's file input
+`cancel` event.
 
 ### Video
 

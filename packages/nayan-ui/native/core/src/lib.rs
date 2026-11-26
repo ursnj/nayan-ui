@@ -8,7 +8,7 @@
 pub mod android;
 #[cfg(all(
     not(target_arch = "wasm32"),
-    any(feature = "image-picker", feature = "keep-awake", feature = "review", feature = "permissions")
+    any(feature = "image-picker", feature = "document-picker", feature = "keep-awake", feature = "review", feature = "permissions")
 ))]
 #[path = "platform/app_services.rs"]
 pub mod app_services;

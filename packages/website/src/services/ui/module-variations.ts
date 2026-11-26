@@ -331,6 +331,22 @@ export function doubleTap() {
 }`
     }
   ],
+  'document-picker': [
+    {
+      title: 'Choose several documents',
+      code: `import { getDocumentAsync, documentPicker } from 'nayan-ui/document-picker';
+
+export async function selectAttachments() {
+  const result = await getDocumentAsync({ type: ['application/pdf', 'image/*'], multiple: true });
+  if (result.canceled) return null;
+  return {
+    attachments: result.assets,
+    dispose: () => Promise.all(result.assets.map((asset) => documentPicker.release(asset.uri)))
+  };
+}`,
+      note: 'Release the cached files or blob URLs after the attachments are uploaded or removed.'
+    }
+  ],
   'image-picker': [
     {
       title: 'Select multiple photos with bounded size',

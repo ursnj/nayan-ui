@@ -19,6 +19,14 @@ export { location, LocationError } from './location/index';
 export type { LocationErrorCode, LocationOptions, LocationPosition, LocationWatchOptions } from './location/index';
 export { camera } from './camera/index';
 export type { CameraPhoto, CameraPhotoOptions } from './camera/index';
+export { documentPicker } from './document-picker/index';
+export type {
+  DocumentPickerAsset,
+  DocumentPickerCanceledResult,
+  DocumentPickerOptions,
+  DocumentPickerResult,
+  DocumentPickerSuccessResult
+} from './document-picker/index';
 export { VideoPlayer } from './video/index';
 export type { VideoContentFit, VideoPlayerHandle, VideoPlayerProps, VideoProgress, VideoSource, VideoStatus } from './video/index';
 export { sqlite } from './sqlite/index';
@@ -31,6 +39,7 @@ export type {
   StoragePersister,
   StoragePersisterOptions,
   StorageConfiguration,
+  StorageEncryptionType,
   StorageValue,
   StoragePrimitive,
   StorageJSON,

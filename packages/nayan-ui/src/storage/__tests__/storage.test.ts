@@ -20,6 +20,16 @@ mock.module('../storageBackend', () => ({ openBackend }));
 const { createStorage } = await import('../store');
 beforeEach(() => disk.clear());
 
+test('encrypted storage options and commands fail without writing browser data', () => {
+  expect(() => createStorage({ id: 'session', encryptionKey: 'test-only-key-material' })).toThrow('only available on native');
+  expect(() => createStorage({ id: 'session', encryptionType: 'AES-256' })).toThrow('only available on native');
+  const store = createStorage({ id: 'session' });
+  expect(store.isEncrypted).toBe(false);
+  expect(() => store.encrypt('test-only-key-material')).toThrow('only available on native');
+  expect(() => store.decrypt()).toThrow('only available on native');
+  expect(disk.size).toBe(0);
+});
+
 test('typed values survive new adapters, including falsy values, Unicode and special numbers', () => {
   const store = createStorage();
   const values = { empty: '', unicode: 'hello 🌏\0', zero: 0, negative: -1.25, nan: NaN, infinity: Infinity, off: false, on: true };

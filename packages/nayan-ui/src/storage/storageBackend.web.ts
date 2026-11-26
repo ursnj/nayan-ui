@@ -1,5 +1,5 @@
 import { decode, encode } from './codec';
-import type { StorageBackend } from './types';
+import type { StorageBackend, StorageEncryptionType } from './types';
 
 const PREFIX = 'nayan-engine-store-v1:';
 function storage(): globalThis.Storage {
@@ -21,7 +21,8 @@ function base64(value: ArrayBuffer): string {
   for (let i = 0; i < bytes.length; i += 8192) result += String.fromCharCode(...bytes.subarray(i, i + 8192));
   return btoa(result);
 }
-export function openBackend(id: string): StorageBackend {
+export function openBackend(id: string, encryptionKey?: string, encryptionType?: StorageEncryptionType): StorageBackend {
+  if (encryptionKey !== undefined || encryptionType !== undefined) throw new Error('Engine storage: encryption is only available on native');
   const name = `${PREFIX}${encodeURIComponent(id)}`;
   const save = (data: Record<string, string>) => storage().setItem(name, JSON.stringify(data));
   return {
@@ -55,6 +56,8 @@ export function openBackend(id: string): StorageBackend {
     },
     command<T>(op: string, options: Record<string, unknown> = {}): T {
       if (op === 'flush') return undefined as T;
+      if (op === 'isEncrypted') return false as T;
+      if (op === 'encrypt' || op === 'decrypt') throw new Error('Engine storage: encryption is only available on native');
       const data = load(name),
         key = options.key as string;
       let result: unknown;

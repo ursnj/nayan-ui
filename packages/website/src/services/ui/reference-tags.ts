@@ -133,6 +133,7 @@ const topics = [
       'capture',
       'clipboard',
       'device',
+      'document-picker',
       'haptics',
       'image-picker',
       'keep-awake',

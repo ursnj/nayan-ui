@@ -386,6 +386,24 @@
       "types": "./lib/web/types/src/image-picker/index.d.ts",
       "default": "./lib/web/image-picker/index.js"
     },
+    "./document-picker": {
+      "react-native": {
+        "source": "./src/document-picker/index.ts",
+        "types": "./lib/typescript/src/document-picker/index.d.ts",
+        "default": "./lib/module/document-picker/index.js"
+      },
+      "react-native-strict-api": {
+        "source": "./src/document-picker/index.ts",
+        "types": "./lib/typescript/src/document-picker/index.d.ts",
+        "default": "./lib/module/document-picker/index.js"
+      },
+      "browser": {
+        "types": "./lib/web/types/src/document-picker/index.d.ts",
+        "default": "./lib/web/document-picker/index.js"
+      },
+      "types": "./lib/web/types/src/document-picker/index.d.ts",
+      "default": "./lib/web/document-picker/index.js"
+    },
     "./keep-awake": {
       "react-native": {
         "source": "./src/keep-awake/index.ts",
