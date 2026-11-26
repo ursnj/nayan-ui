@@ -7,7 +7,10 @@
     },
     "packages/nayan-ui": {
       "name": "nayan-ui",
-      "version": "1.0.0-beta.5",
+      "version": "1.0.0-beta.6",
+      "bin": {
+        "nayan-ui": "./cli/index.mjs",
+      },
       "devDependencies": {
         "@types/node": "^24.0.0",
         "@types/react": "~19.3.0",
