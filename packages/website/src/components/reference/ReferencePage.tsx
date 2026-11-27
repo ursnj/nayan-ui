@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { DocsIntro } from '@/design/Primitives';
 import { BUTTON_SMALL } from '@/design/system';
 import Code from '@/components/helpers/Code';
+import JsonLd from '@/components/helpers/JsonLd';
 import Sidebar from '@/components/helpers/Sidebar';
 import SubHeader from '@/components/helpers/SubHeader';
 import TagsList from '@/components/helpers/TagsList';
@@ -11,6 +12,7 @@ import { EngineComponentExample } from '@/components/ui/ComponentExamples';
 import { componentReferences } from '@/services/ui/component-reference';
 import { moduleReferences } from '@/services/ui/module-reference';
 import { tagsForReference } from '@/services/ui/reference-tags';
+import { referenceEntrySchemas } from '@/services/ui/reference-entry';
 import { REPO_URL } from '@/services/seo';
 import ReferenceDirectory from './ReferenceDirectory';
 import ComponentAttributes from './ComponentAttributes';
@@ -106,6 +108,7 @@ export function ReferencePage({ entry }: { entry: ReferenceEntry }) {
 
   return (
     <Sidebar title={entry.title} beforeTitle={<PlatformPills platforms={entry.platforms} />} reference={referenceNavigation(group, entry.path)}>
+      <JsonLd data={referenceEntrySchemas(entry)} />
       <DocsIntro lead={entry.description} />
       {'symbol' in entry ? (
         <>

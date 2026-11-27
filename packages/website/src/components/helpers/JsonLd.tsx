@@ -1,5 +1,5 @@
 interface Props {
-  data: Record<string, any> | Record<string, any>[];
+  data: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const JsonLd = ({ data }: Props) => {
@@ -7,11 +7,7 @@ const JsonLd = ({ data }: Props) => {
   return (
     <>
       {schemas.map((schema, index) => (
-        <script
-          key={index}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-        />
+        <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }} />
       ))}
     </>
   );

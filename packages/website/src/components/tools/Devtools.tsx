@@ -75,6 +75,7 @@ import Code from '@/components/helpers/Code';
 import Sidebar from '@/components/helpers/Sidebar';
 import SubHeader from '@/components/helpers/SubHeader';
 import { REPO_URL } from '@/services/seo';
+import { findToolTopic } from '@/services/tool-topics';
 
 const SEO_TOOLS = [
   {
@@ -786,7 +787,13 @@ const DevtoolsMain = () => {
       </NView>
 
       {TOOL_GROUPS.map(({ id, label, description, tone, tools }) => (
-        <SubHeader key={id} id={id} title={`${label} Tools`} description={description}>
+        <SubHeader
+          key={id}
+          id={id}
+          title={`${label} Tools`}
+          description={description}
+          action={<Link href={findToolTopic(id)!.path} className="text-sm text-accent hover:underline">Browse {label} guides</Link>}
+        >
           <NView tag="div" className={`grid sm:grid-cols-2 xl:grid-cols-3 ${GRID_GAP}`}>
             {tools.map(({ href, icon: Icon, title, body }) => (
               <Link key={href} href={href} data-tone={tone} className={`${CARD_INTERACTIVE} catalog-entry [background:linear-gradient(140deg,_color-mix(in_srgb,_var(--tone-paper,_var(--surface-secondary))_34%,_var(--surface)),_var(--surface)_74%)] group block p-4 sm:p-5`}>

@@ -30,7 +30,6 @@ export const metadata: Metadata = {
   keywords:
     'React Component Library, React Native Components, React Reusable Components, React UI Library, Tailwind CSS Components, TypeScript UI Library, Accessibility, Dark Mode, Open Source, Nayan UI',
   metadataBase: new URL(SITE_URL),
-  alternates: { canonical: SITE_URL },
   openGraph: {
     type: 'website',
     siteName: SITE_NAME,

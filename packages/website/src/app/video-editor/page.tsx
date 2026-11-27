@@ -36,7 +36,6 @@ const schemas = [
     installUrl: `${SITE_URL}/video-editor/start`,
     softwareVersion: "1.0",
     datePublished: "2025-09-01",
-    dateModified: new Date().toISOString().split("T")[0],
     isAccessibleForFree: true,
     license: "https://opensource.org/licenses/MIT",
     permissions: "None. No network access, no account and no file upload.",

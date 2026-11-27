@@ -6,7 +6,7 @@ import { ACCENT_SOFT, CARD, H4_CARD } from '@/design/system';
 import Sidebar from '@/components/helpers/Sidebar';
 import SubHeader from '@/components/helpers/SubHeader';
 import TagsList from '@/components/helpers/TagsList';
-import { referenceTopics, taggedComponents, taggedModules, type TaggedReference } from '@/services/ui/reference-tags';
+import { referenceTopics, taggedComponents, taggedModules, tagsForReference, type TaggedReference } from '@/services/ui/reference-tags';
 
 const tagNavigation = {
   title: 'Tags',
@@ -21,7 +21,7 @@ const tagNavigation = {
 function TagEntries({ entries, showTags = false }: { entries: readonly TaggedReference[]; showTags?: boolean }) {
   return (
     <NView tag="ul" className={showTags ? 'space-y-3' : 'grid gap-3 sm:grid-cols-2 lg:grid-cols-3'}>
-      {entries.map(({ path, title, description, kind, tags, nativePath }) => {
+      {entries.map(({ path, title, description, kind, nativePath }) => {
         const Icon = kind === 'component' ? Code2 : Boxes;
         return (
           <NView tag="li" key={path} className={`${CARD} p-4`}>
@@ -29,17 +29,23 @@ function TagEntries({ entries, showTags = false }: { entries: readonly TaggedRef
               <NText tag="span" className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${ACCENT_SOFT}`}>
                 <Icon aria-hidden size={16} />
               </NText>
-              <NText tag="span" className={`${H4_CARD} group-hover:text-accent`}>{title}</NText>
+              <NText tag="span" className={`${H4_CARD} group-hover:text-accent`}>
+                {title}
+              </NText>
               <ArrowRight aria-hidden className="ml-auto shrink-0 text-muted group-hover:text-accent" size={16} />
             </Link>
             {showTags ? (
               <NView tag="div" className="mt-3">
-                <TagsList tags={tags} />
+                <TagsList tags={tagsForReference(path)} />
               </NView>
             ) : (
               <>
-                <NText tag="p" className="mt-2 text-sm text-muted">{description}</NText>
-                <NText tag="p" className="mt-3 text-xs font-medium text-muted">{kind === 'component' ? 'Component' : 'Module'}</NText>
+                <NText tag="p" className="mt-2 text-sm text-muted">
+                  {description}
+                </NText>
+                <NText tag="p" className="mt-3 text-xs font-medium text-muted">
+                  {kind === 'component' ? 'Component' : 'Module'}
+                </NText>
               </>
             )}
             {nativePath && (
@@ -54,9 +60,25 @@ function TagEntries({ entries, showTags = false }: { entries: readonly TaggedRef
   );
 }
 
-export function TagResults({ title, entries }: { title: string; entries: readonly TaggedReference[] }) {
+export function TagResults({
+  title,
+  description,
+  guide,
+  entries
+}: {
+  title: string;
+  description: string;
+  guide?: string;
+  entries: readonly TaggedReference[];
+}) {
   return (
     <Sidebar title={title} reference={tagNavigation}>
+      <DocsIntro lead={description} />
+      {guide && (
+        <NText tag="p" className="mb-6 max-w-3xl leading-relaxed text-muted">
+          {guide}
+        </NText>
+      )}
       <TagEntries entries={entries} />
     </Sidebar>
   );

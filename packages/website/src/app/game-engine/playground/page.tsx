@@ -1,6 +1,8 @@
 import PlaygroundPage, { playgroundMetadata } from "@/components/playground/PlaygroundPage";
 
-const path = "/game-engine/playground";
+import { canonicalPageAliases } from "@/services/site-routes";
+
+const path = canonicalPageAliases["/game-engine/playground"];
 
 export const metadata = playgroundMetadata(path);
 

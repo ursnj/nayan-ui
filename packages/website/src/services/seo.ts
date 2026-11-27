@@ -55,8 +55,6 @@ export const softwareApplicationSchema = {
   url: SITE_URL,
   downloadUrl: 'https://www.npmjs.com/package/nayan-ui',
   version: enginePackage.version,
-  datePublished: '2024-01-01',
-  dateModified: new Date().toISOString().split('T')[0],
   author: { '@type': 'Organization', name: SITE_NAME },
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   programmingLanguage: ['TypeScript', 'JavaScript', 'React', 'React Native'],
@@ -111,6 +109,31 @@ export function buildBreadcrumbSchema(items: { name: string; url: string }[]) {
   };
 }
 
+export function buildCollectionSchema(opts: {
+  title: string;
+  description: string;
+  path: string;
+  entries: readonly { title: string; path: string }[];
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: opts.title,
+    description: opts.description,
+    url: SITE_URL + opts.path,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: opts.entries.length,
+      itemListElement: opts.entries.map(({ title, path }, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: title,
+        url: SITE_URL + path
+      }))
+    }
+  };
+}
+
 export function buildTechArticleSchema(opts: {
   title: string;
   description: string;
@@ -130,8 +153,6 @@ export function buildTechArticleSchema(opts: {
     headline: `${SITE_NAME} - ${opts.title}`,
     description: opts.description,
     url: opts.url,
-    datePublished: '2024-01-01',
-    dateModified: new Date().toISOString().split('T')[0],
     author: { '@type': 'Organization', name: SITE_NAME },
     publisher: {
       '@type': 'Organization',
@@ -159,6 +180,7 @@ export function buildPageMetadata(opts: {
   path: string;
   keywords?: string;
   ogType?: string;
+  indexable?: boolean;
   /**
    * Whose social banner to show, when the page has none of its own: a tag page shows its
    * component's. Default: the page's own banner (see seoBannerUrl).
@@ -177,6 +199,7 @@ export function buildPageMetadata(opts: {
     description: opts.description,
     keywords: opts.keywords || 'React Component Library, React Native, UI Library, Nayan UI, TypeScript, utility classes, accessibility',
     alternates: { canonical: url },
+    ...(opts.indexable === false && { robots: { index: false, follow: true } }),
     openGraph: {
       title: `${SITE_NAME} - ${opts.title}`,
       description: opts.description,

@@ -1,3 +1,9 @@
+export const canonicalPageAliases = {
+  '/game-engine/playground': '/playground',
+  '/react/tags': '/tags',
+  '/react-native/tags': '/tags'
+} as const;
+
 const pageAliases = [
   ...['/disclosure', '/components/disclosure'].map((source) => ({ source, destination: '/react/disclosure' })),
   ...['/blur-target', '/components/blur-target'].map((source) => ({ source, destination: '/blur' })),

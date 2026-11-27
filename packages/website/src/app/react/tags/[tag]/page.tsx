@@ -1,11 +1,9 @@
-import { PlatformTag, platformTagMetadata } from "@/components/tags/PlatformTags";
+import { notFound, permanentRedirect } from 'next/navigation';
+import { getMenuItemByTag } from '@/services/Utils';
 
-type Props = { params: Promise<{ tag: string }> };
-
-export async function generateMetadata({ params }: Props) {
-  return platformTagMetadata("react", (await params).tag);
-}
-
-export default async function TagPage({ params }: Props) {
-  return <PlatformTag platform="react" sku={(await params).tag} />;
+export default async function TagAlias({ params }: { params: Promise<{ tag: string }> }) {
+  const { tag } = await params;
+  const item = getMenuItemByTag(tag, '/react');
+  if (!item) notFound();
+  permanentRedirect(item.link);
 }
