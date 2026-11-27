@@ -99,7 +99,10 @@ test('browser permission probes and streams opened after stop are released', asy
     expect(lateStopped).toHaveBeenCalledTimes(1);
     expect(bridge.micState()).toBe(0);
   } finally {
-    for (const [key, descriptor] of [['navigator', originalNavigator], ['AudioWorkletNode', originalNode]] as const) {
+    for (const [key, descriptor] of [
+      ['navigator', originalNavigator],
+      ['AudioWorkletNode', originalNode]
+    ] as const) {
       if (descriptor) Object.defineProperty(globalThis, key, descriptor);
       else Reflect.deleteProperty(globalThis, key);
     }
