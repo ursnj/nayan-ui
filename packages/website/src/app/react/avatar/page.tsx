@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Avatar from "@/components/react/components/Avatar";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/avatar", "react");
@@ -9,7 +9,7 @@ export default function AvatarPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Avatar />
+      <NayanComponentDoc path="/react/avatar" />
     </>
   );
 }

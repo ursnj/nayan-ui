@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import Link from "next/link";
+import { NImage, NText, NView } from "nayan-ui/components";
 import {
   ACCENT_SOFT,
   BODY,
@@ -8,7 +9,7 @@ import {
   CARD_PAD,
   CONTAINER,
   EYEBROW,
-  GRADIENT_TEXT,
+  ACCENT_TEXT,
   H1,
   H2,
   H3,
@@ -18,15 +19,6 @@ import {
   SCROLL_MT,
   SECTION_Y,
 } from "./system";
-
-/*
- * The shapes the system is made of.
- *
- * Server components, all of them — nothing here holds state, so pages built
- * from these ship no JavaScript for their layout. A page that needs
- * interactivity marks its own component `'use client'` and still composes
- * these inside it.
- */
 
 interface SectionProps {
   /** Anchor id. Given one, the section also gets scroll offset for the header. */
@@ -39,13 +31,14 @@ interface SectionProps {
 
 /** A landing-page section: the standard gutter and the standard vertical rhythm. */
 export const Section = ({ id, labelledBy, className = "", children }: SectionProps) => (
-  <section
+  <NView
+    tag="section"
     id={id}
     aria-labelledby={labelledBy}
     className={`${CONTAINER} ${SECTION_Y} ${id ? SCROLL_MT : ""} ${className}`}
   >
     {children}
-  </section>
+  </NView>
 );
 
 interface SectionHeaderProps {
@@ -62,23 +55,33 @@ export const SectionHeader = ({
   title,
   id,
   lead,
-  align = "center",
+  align = "left",
 }: SectionHeaderProps) => (
-  <header
+  <NView
+    tag="header"
     className={`${HEADER_GAP} ${align === "center" ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}`}
   >
-    {eyebrow ? <p className={`mb-3 ${EYEBROW}`}>{eyebrow}</p> : null}
-    <h2 id={id} className={H2}>
+    {eyebrow ? (
+      <NText tag="p" className={`mb-3 ${EYEBROW}`}>
+        {eyebrow}
+      </NText>
+    ) : null}
+    <NText tag="h2" id={id} className={H2}>
       {title}
-    </h2>
-    {lead ? <p className={`mt-4 ${LEAD}`}>{lead}</p> : null}
-  </header>
+    </NText>
+    {lead ? (
+      <NText tag="p" className={`mt-4 ${LEAD}`}>
+        {lead}
+      </NText>
+    ) : null}
+  </NView>
 );
 
 interface PageHeroProps {
+  tone?: "violet" | "peach" | "pink" | "mint";
   eyebrow?: string;
   title: string;
-  /** Rendered in the headline gradient, on its own line. */
+  /** Supporting line beneath the title. */
   titleAccent?: string;
   lead?: ReactNode;
   /** Buttons. */
@@ -94,6 +97,7 @@ interface PageHeroProps {
 }
 
 export const PageHero = ({
+  tone,
   eyebrow,
   title,
   titleAccent,
@@ -105,58 +109,34 @@ export const PageHero = ({
   media,
   children,
 }: PageHeroProps) => (
-  <section className="relative overflow-hidden">
-    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-      <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/[0.07] to-transparent" />
-      <div className="absolute -top-28 left-1/2 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-indigo-500/10 blur-3xl" />
-    </div>
-
-    <div className={`${CONTAINER} pb-10 pt-10 sm:pt-14`}>
+  <NView tag="section" className="site-page-hero [border-bottom:1px_solid_var(--border)] [background:radial-gradient(ellipse_at_79%_0%,_var(--tone-paper,_var(--surface-tertiary)),_transparent_72%),_var(--background)]" data-tone={tone}>
+    <NView tag="div" className={`${CONTAINER} py-8 sm:pb-14 sm:pt-9`}>
       {breadcrumb ? <Breadcrumb items={breadcrumb} /> : null}
-
-      <div className={media ? "grid items-center gap-10 lg:grid-cols-2 lg:gap-14" : ""}>
-        <div className={media ? "text-center lg:text-left" : "mx-auto max-w-3xl text-center"}>
-          {eyebrow ? <p className={`mb-3 ${EYEBROW}`}>{eyebrow}</p> : null}
-          <h1 className={H1}>
-            {title}
-            {titleAccent ? (
-              <span className={`mt-1 block ${GRADIENT_TEXT}`}>{titleAccent}</span>
-            ) : null}
-          </h1>
-          {lead ? (
-            <p
-              className={`mt-5 max-w-2xl text-base ${LEAD} ${media ? "mx-auto lg:mx-0" : "mx-auto"}`}
-            >
-              {lead}
-            </p>
+      <NView tag="div" className={media ? "grid min-w-0 items-center gap-8 md:grid-cols-2 lg:gap-14" : ""}>
+        <NView tag="div" className="min-w-0 max-w-2xl">
+          {eyebrow ? <NText tag="p" className={`mb-3 ${EYEBROW}`}>{eyebrow}</NText> : null}
+          <NText tag="h1" className={H1}>{title}</NText>
+          {titleAccent ? (
+            <NText tag="p" className="site-page-subtitle [color:var(--tone-ink,_var(--accent))] mt-3 text-lg font-semibold leading-snug tracking-tight sm:text-2xl">
+              {titleAccent}
+            </NText>
           ) : null}
-          {actions ? (
-            <div
-              className={`mt-7 flex flex-col gap-3 sm:flex-row ${media ? "justify-center lg:justify-start" : "justify-center"}`}
-            >
-              {actions}
-            </div>
-          ) : null}
+          {lead ? <NText tag="p" className={`mt-4 max-w-xl ${LEAD}`}>{lead}</NText> : null}
+          {actions ? <NView tag="div" className="mt-6 flex flex-wrap gap-2.5 sm:gap-3">{actions}</NView> : null}
           {pills?.length ? (
-            <ul
-              className={`mt-5 flex flex-wrap gap-2 ${media ? "justify-center lg:justify-start" : "justify-center"}`}
-            >
+            <NView tag="ul" className="mt-5 flex flex-wrap gap-2">
               {pills.map((pill) => (
-                <li key={pill} className={`text-xs font-semibold ${PILL}`}>
-                  {pill}
-                </li>
+                <NView tag="li" key={pill} className={PILL}>{pill}</NView>
               ))}
-            </ul>
+            </NView>
           ) : null}
-          {note ? <p className="mt-5 text-xs text-muted">{note}</p> : null}
-        </div>
-
+          {note ? <NText tag="p" className="mt-4 text-xs text-muted">{note}</NText> : null}
+        </NView>
         {media}
-      </div>
-
+      </NView>
       {children}
-    </div>
-  </section>
+    </NView>
+  </NView>
 );
 
 interface DocsIntroProps {
@@ -169,53 +149,65 @@ interface DocsIntroProps {
 }
 
 export const DocsIntro = ({ lead, actions, facts }: DocsIntroProps) => (
-  <div className="mb-10">
-    <p className={`max-w-3xl text-base ${LEAD}`}>{lead}</p>
-    {actions ? <div className="mt-6 flex flex-wrap gap-3">{actions}</div> : null}
-    {facts?.length ? (
-      <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3 border-t border-default pt-5">
-        {facts.map((fact) => (
-          <div key={fact.label}>
-            <dd className="text-xl font-bold text-foreground">{fact.value}</dd>
-            <dt className="text-xs text-muted">{fact.label}</dt>
-          </div>
-        ))}
-      </dl>
+  <NView tag="div" className="mb-3 grid gap-3">
+    <NText tag="p" className={`max-w-3xl text-base ${LEAD}`}>
+      {lead}
+    </NText>
+    {actions ? (
+      <NView tag="div" className="flex flex-wrap gap-3">
+        {actions}
+      </NView>
     ) : null}
-  </div>
+    {facts?.length ? (
+      <NView tag="dl" className="flex flex-wrap gap-3 border-t border-default pt-3">
+        {facts.map((fact) => (
+          <NView tag="div" key={fact.label}>
+            <NText tag="dd" className="text-xl font-bold text-foreground">{fact.value}</NText>
+            <NText tag="dt" className="text-xs text-muted">{fact.label}</NText>
+          </NView>
+        ))}
+      </NView>
+    ) : null}
+  </NView>
 );
 
 /** The trail above a page title. Mirrors the BreadcrumbList in structured data. */
-export const Breadcrumb = ({ items }: { items: { label: string; href?: string }[] }) => (
-  <nav aria-label="Breadcrumb" className="mb-8 text-xs text-muted">
-    <ol className="flex flex-wrap items-center gap-2">
+export const Breadcrumb = ({
+  items,
+  className = "mb-5 sm:mb-6",
+}: {
+  items: { label: string; href?: string }[];
+  className?: string;
+}) => (
+  <NView tag="nav" aria-label="Breadcrumb" className={`text-xs text-muted ${className}`}>
+    <NView tag="ol" className="flex flex-wrap items-center gap-2">
       {items.map((item, index) => {
         const last = index === items.length - 1;
         return (
-          <li key={item.label} className="flex items-center gap-2">
+          <NView tag="li" key={item.label} className="flex items-center gap-2">
             {item.href && !last ? (
               <Link href={item.href} className="transition-colors hover:text-foreground">
                 {item.label}
               </Link>
             ) : (
-              <span
+              <NText tag="span"
                 className={last ? "font-medium text-foreground" : ""}
                 aria-current={last ? "page" : undefined}
               >
                 {item.label}
-              </span>
+              </NText>
             )}
-            {last ? null : <span aria-hidden>/</span>}
-          </li>
+            {last ? null : <NText tag="span" aria-hidden>/</NText>}
+          </NView>
         );
       })}
-    </ol>
-  </nav>
+    </NView>
+  </NView>
 );
 
 interface CardProps {
   className?: string;
-  /** Adds hover lift and an accent border. For cards that are links. */
+  /** Adds hover styles for cards that act as links. */
   interactive?: boolean;
   /** Set false to lay out the padding yourself. */
   padded?: boolean;
@@ -228,11 +220,12 @@ export const Card = ({
   padded = true,
   children,
 }: CardProps) => (
-  <div
+  <NView
+    tag="div"
     className={`${interactive ? CARD_INTERACTIVE : CARD} ${padded ? CARD_PAD : ""} ${className}`}
   >
     {children}
-  </div>
+  </NView>
 );
 
 interface BrowserFrameProps {
@@ -240,6 +233,8 @@ interface BrowserFrameProps {
   label?: string;
   /** Set false to lay out the body padding yourself. */
   padded?: boolean;
+  /** Size the viewport to its content. */
+  compact?: boolean;
   className?: string;
   children: ReactNode;
 }
@@ -247,34 +242,37 @@ interface BrowserFrameProps {
 export const BrowserFrame = ({
   label,
   padded = true,
+  compact = false,
   className = "",
   children,
 }: BrowserFrameProps) => (
-  <div className={`${CARD} overflow-hidden ${className}`}>
-    <div
+  <NView tag="div" className={`${CARD} flex flex-col overflow-hidden ${className}`}>
+    <NView
+      tag="div"
       aria-hidden
-      className="flex items-center gap-3 border-b border-default bg-surface px-3 py-2.5"
+      className="browser-frame-toolbar [background:linear-gradient(180deg,_var(--surface),_var(--surface-secondary))] flex shrink-0 items-center gap-3 border-b border-default px-3 py-2.5"
     >
-      <span className="flex shrink-0 items-center gap-1.5">
-        <span className="h-2.5 w-2.5 rounded-full bg-default" />
-        <span className="h-2.5 w-2.5 rounded-full bg-default" />
-        <span className="h-2.5 w-2.5 rounded-full bg-default" />
-      </span>
+      <NText tag="span" className="browser-frame-dots [&_>_span]:[width:0.55rem] [&_>_span]:[height:0.55rem] [&_>_span]:[border-radius:50%] [&_>_span]:[background:#e96e7b] [&_>_span:nth-child(2)]:[background:#e8aa52] [&_>_span:nth-child(3)]:[background:#55b985] flex shrink-0 items-center gap-1.5">
+        <NText tag="span" />
+        <NText tag="span" />
+        <NText tag="span" />
+      </NText>
       {label ? (
-        <span className="min-w-0 flex-1 truncate rounded-md border border-default bg-background px-2.5 py-1 text-center font-mono text-[11px] text-muted">
+        <NText tag="span" className="min-w-0 flex-1 truncate rounded-md border border-default bg-background px-2.5 py-1 text-center font-mono text-[11px] text-muted">
           {label}
-        </span>
+        </NText>
       ) : null}
-    </div>
+    </NView>
 
-    <div className="bg-surface p-2 sm:p-3">
-      <div
-        className={`min-h-[20rem] overflow-hidden rounded-xl border border-default bg-background ${padded ? "p-6 sm:p-8" : ""}`}
+    <NView tag="div" className="flex min-h-0 flex-1 flex-col bg-surface p-2 sm:p-3">
+      <NView
+        tag="div"
+        className={`flex flex-1 flex-col overflow-hidden rounded-xl border border-default bg-background ${compact ? "min-h-0" : "min-h-[20rem]"} ${padded ? "p-6 sm:p-8" : ""}`}
       >
         {children}
-      </div>
-    </div>
-  </div>
+      </NView>
+    </NView>
+  </NView>
 );
 
 interface PhoneFrameProps {
@@ -289,25 +287,25 @@ interface PhoneFrameProps {
 /**
  * A phone around a screenshot, for components that cannot run in a browser.
  *
- * The two images are swapped by CSS rather than JavaScript, the same way the
- * video editor's hero works: HeroUI defines Tailwind's `dark:` variant against
- * the class `NTheme` puts on `<html>`, so the screenshot follows the site's
- * theme with no client component and no flash of the wrong one. Only the
- * matching image is displayed, and `display: none` keeps the other out of the
- * accessibility tree, so a screen reader is read one description.
+ * CSS shows the screenshot that matches the root theme class. The hidden
+ * image stays out of the accessibility tree.
  *
  * The screen's aspect ratio is the capture's own, 520x1000, so nothing is
  * cropped or stretched: the app's header and its left-hand padding survive,
  * which a phone-shaped 9:19.5 box would have trimmed off the sides.
  */
 export const PhoneFrame = ({ light, dark, alt, className = "" }: PhoneFrameProps) => (
-  <div
-    className={`w-[260px] rounded-[2.25rem] border border-default bg-surface p-2.5 shadow-xl shadow-indigo-500/5 ${className}`}
+  <NView
+    tag="div"
+    className={`w-[260px] rounded-[2.25rem] border border-default bg-surface p-2.5 shadow-xl shadow-accent/5 ${className}`}
   >
-    <div className="overflow-hidden rounded-[1.75rem] border border-default bg-surface">
-      <div className="flex items-center justify-between px-5 py-1.5 text-[10px] font-semibold text-foreground/70">
-        <span>9:41</span>
-        <div className="flex items-center gap-1">
+    <NView tag="div" className="overflow-hidden rounded-[1.75rem] border border-default bg-surface">
+      <NView
+        tag="div"
+        className="flex items-center justify-between px-5 py-1.5 text-[10px] font-semibold text-foreground/70"
+      >
+        <NText tag="span">9:41</NText>
+        <NView tag="div" className="flex items-center gap-1">
           <svg width="14" height="10" viewBox="0 0 14 10" fill="currentColor">
             <rect x="0" y="6" width="2.5" height="4" rx="0.5" />
             <rect x="3.5" y="4" width="2.5" height="6" rx="0.5" />
@@ -331,24 +329,24 @@ export const PhoneFrame = ({ light, dark, alt, className = "" }: PhoneFrameProps
             <rect x="18.5" y="3" width="1.5" height="4" rx="0.5" />
             <rect x="1.5" y="2.5" width="12" height="5" rx="0.8" />
           </svg>
-        </div>
-      </div>
-      <img
+        </NView>
+      </NView>
+      <NImage
         src={light}
         alt={alt}
         width={520}
         height={1000}
         className="block aspect-[520/1000] w-full dark:hidden"
       />
-      <img
+      <NImage
         src={dark}
         alt={alt}
         width={520}
         height={1000}
         className="hidden aspect-[520/1000] w-full dark:block"
       />
-    </div>
-  </div>
+    </NView>
+  </NView>
 );
 
 interface FeatureCardProps {
@@ -368,46 +366,51 @@ export const FeatureCard = ({
   chips,
   className = "",
 }: FeatureCardProps) => (
-  <article
-    className={`${CARD} ${CARD_PAD} transition-colors duration-200 hover:border-indigo-500/30 ${className}`}
+  <NView
+    tag="article"
+    className={`${CARD} ${CARD_PAD} transition-colors duration-200 hover:border-accent/30 ${className}`}
   >
     {Icon ? (
-      <span
+      <NText tag="span"
         className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl border ${ACCENT_SOFT}`}
       >
         <Icon className="h-5 w-5" />
-      </span>
+      </NText>
     ) : null}
-    <h3 className={`mb-2 ${H3}`}>{title}</h3>
-    <p className={BODY}>{body}</p>
+    <NText tag="h3" className={`mb-2 ${H3}`}>
+      {title}
+    </NText>
+    <NText tag="p" className={BODY}>
+      {body}
+    </NText>
     {chips?.length ? (
-      <ul className="mt-4 flex flex-wrap gap-1.5">
+      <NView tag="ul" className="mt-4 flex flex-wrap gap-1.5">
         {chips.map((chip) => (
-          <li
+          <NView tag="li"
             key={chip}
             className="rounded-md border border-default bg-background px-2 py-0.5 text-[11px] font-medium text-muted"
           >
             {chip}
-          </li>
+          </NView>
         ))}
-      </ul>
+      </NView>
     ) : null}
-  </article>
+  </NView>
 );
 
 /** A checked list. The accent dot is the only colour, so the text stays readable. */
 export const CheckList = ({ items, className = "" }: { items: string[]; className?: string }) => (
-  <ul className={`space-y-2 ${className}`}>
+  <NView tag="ul" className={`space-y-2 ${className}`}>
     {items.map((item) => (
-      <li key={item} className="flex items-start gap-2.5 text-sm text-muted">
-        <span
+      <NView tag="li" key={item} className="flex items-start gap-2.5 text-sm text-muted">
+        <NText tag="span"
           aria-hidden
-          className="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500"
+          className="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
         />
-        <span>{item}</span>
-      </li>
+        <NText tag="span">{item}</NText>
+      </NView>
     ))}
-  </ul>
+  </NView>
 );
 
 interface StatGridProps {
@@ -417,24 +420,24 @@ interface StatGridProps {
 
 /** Numbers, as a definition list — the label defines the value it sits under. */
 export const StatGrid = ({ stats, className = "" }: StatGridProps) => (
-  <dl
+  <NView tag="dl"
     className={`grid grid-cols-2 gap-3 sm:gap-4 ${stats.length % 3 === 0 ? "md:grid-cols-3" : "md:grid-cols-4"} ${className}`}
   >
     {stats.map((stat) => (
-      <div key={stat.label} className={`${CARD} p-4 text-center`}>
-        <dt className="sr-only">{stat.label}</dt>
-        <dd>
-          <span className={`block text-2xl font-bold sm:text-3xl ${GRADIENT_TEXT}`}>
+      <NView tag="div" key={stat.label} className={`${CARD} p-4 text-center`}>
+        <NText tag="dt" className="sr-only">{stat.label}</NText>
+        <NText tag="dd">
+          <NText tag="span" className={`block text-2xl font-bold sm:text-3xl ${ACCENT_TEXT}`}>
             {stat.value}
-          </span>
-          <span className="mt-1 block text-sm font-semibold text-foreground">{stat.label}</span>
+          </NText>
+          <NText tag="span" className="mt-1 block text-sm font-semibold text-foreground">{stat.label}</NText>
           {stat.detail ? (
-            <span className="mt-0.5 block text-xs text-muted">{stat.detail}</span>
+            <NText tag="span" className="mt-0.5 block text-xs text-muted">{stat.detail}</NText>
           ) : null}
-        </dd>
-      </div>
+        </NText>
+      </NView>
     ))}
-  </dl>
+  </NView>
 );
 
 /** A badge for the top of a hero — one fact, stated small. */
@@ -445,12 +448,12 @@ export const Badge = ({
   icon?: React.ComponentType<{ className?: string }>;
   children: ReactNode;
 }) => (
-  <span
+  <NText tag="span"
     className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${ACCENT_SOFT}`}
   >
     {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
     {children}
-  </span>
+  </NText>
 );
 
 export const FactList = ({
@@ -460,16 +463,16 @@ export const FactList = ({
   facts: { label: string; value: string }[];
   className?: string;
 }) => (
-  <dl className={`${CARD} divide-y divide-default ${className}`}>
+  <NView tag="dl" className={`${CARD} divide-y divide-default ${className}`}>
     {facts.map((fact) => (
-      <div key={fact.label} className="flex flex-col gap-1 p-4 sm:flex-row sm:gap-6">
-        <dt className="w-20 shrink-0 text-xs font-semibold uppercase tracking-wider text-muted">
+      <NView tag="div" key={fact.label} className="flex flex-col gap-1 p-4 sm:flex-row sm:gap-6">
+        <NText tag="dt" className="w-20 shrink-0 text-xs font-semibold uppercase tracking-wider text-muted">
           {fact.label}
-        </dt>
-        <dd className="text-sm text-foreground">{fact.value}</dd>
-      </div>
+        </NText>
+        <NText tag="dd" className="text-sm text-foreground">{fact.value}</NText>
+      </NView>
     ))}
-  </dl>
+  </NView>
 );
 
 export const FaqList = ({
@@ -479,20 +482,24 @@ export const FaqList = ({
   faqs: { q: string; a: string }[];
   className?: string;
 }) => (
-  <div className={`mx-auto grid max-w-4xl gap-3 md:grid-cols-2 ${className}`}>
+  <NView tag="div" className={`mx-auto grid max-w-4xl gap-3 md:grid-cols-2 ${className}`}>
     {faqs.map((faq) => (
-      <details key={faq.q} className={`group ${CARD} transition-colors open:border-indigo-500/30`}>
-        <summary className="flex cursor-pointer list-none items-start justify-between gap-3 p-5 [&::-webkit-details-marker]:hidden">
-          <h3 className="text-sm font-semibold leading-snug text-foreground">{faq.q}</h3>
-          <span
+      <NView tag="details" key={faq.q} className={`group ${CARD} transition-colors open:border-accent/30`}>
+        <NView tag="summary" className="flex cursor-pointer list-none items-start justify-between gap-3 p-5 [&::-webkit-details-marker]:hidden">
+          <NText tag="h3" className="text-sm font-semibold leading-snug text-foreground">
+            {faq.q}
+          </NText>
+          <NText tag="span"
             aria-hidden
             className="mt-1 h-2 w-2 shrink-0 rotate-45 border-b-2 border-r-2 border-muted transition-transform duration-200 group-open:-rotate-[135deg]"
           />
-        </summary>
-        <p className={`px-5 pb-5 ${BODY}`}>{faq.a}</p>
-      </details>
+        </NView>
+        <NText tag="p" className={`px-5 pb-5 ${BODY}`}>
+          {faq.a}
+        </NText>
+      </NView>
     ))}
-  </div>
+  </NView>
 );
 
 interface CtaPanelProps {
@@ -502,28 +509,13 @@ interface CtaPanelProps {
 }
 
 export const CtaPanel = ({ title, lead, children }: CtaPanelProps) => (
-  <div className={`${CONTAINER} pb-16`}>
-    <div className="relative overflow-hidden rounded-3xl border border-indigo-500/20">
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-gradient-to-br from-indigo-600/15 via-violet-600/10 to-fuchsia-600/15"
-      />
-      <div
-        aria-hidden
-        className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-fuchsia-500/20 blur-3xl"
-      />
-      <div
-        aria-hidden
-        className="absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-indigo-500/20 blur-3xl"
-      />
-
-      <div className="relative px-6 py-14 text-center sm:px-10 sm:py-16">
-        <h2 className={H2}>
-          <span className={GRADIENT_TEXT}>{title}</span>
-        </h2>
-        <p className="mx-auto mt-4 max-w-xl text-muted">{lead}</p>
-        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">{children}</div>
-      </div>
-    </div>
-  </div>
+  <NView tag="div" className={`${CONTAINER} pb-12 sm:pb-16`}>
+    <NView tag="section" className="site-cta [padding:clamp(1.5rem,_5vw,_3.5rem)] [border:1px_solid_var(--border)] [border-radius:1.5rem] [background:linear-gradient(125deg,_var(--surface),_var(--surface-tertiary))] grid items-end gap-6 lg:grid-cols-[minmax(0,1fr)_auto]">
+      <NView tag="div">
+        <NText tag="h2" className={H2}>{title}</NText>
+        <NText tag="p" className={`mt-3 max-w-xl ${LEAD}`}>{lead}</NText>
+      </NView>
+      <NView tag="div" className="flex flex-wrap gap-2.5">{children}</NView>
+    </NView>
+  </NView>
 );

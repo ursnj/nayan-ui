@@ -3,7 +3,7 @@ import {
   type GameThemeMode,
   type GameThemeOverrides,
   resolveGameTheme,
-} from "@nayan-ui/games/services";
+} from "nayan-games/services";
 
 type Rgb = readonly [number, number, number];
 

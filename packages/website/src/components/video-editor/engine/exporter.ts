@@ -155,7 +155,7 @@ const AUDIO_SLICE_SECONDS = 1;
 export const END_CREDIT_SECONDS = 2;
 /** The card's two lines, under the logo. */
 export const END_CREDIT_TITLE = "Nayan UI";
-export const END_CREDIT_SUBTITLE = "Free Online Video Editor";
+export const END_CREDIT_SUBTITLE = "Free Online Nayan Video Editor";
 export const END_CREDIT_URL = "www.nayanui.com/video-editor";
 const CREDIT_MOTION = {
   logo: { from: 0, to: 0.4 },
@@ -201,13 +201,12 @@ const CREDIT_LAYOUT = {
   urlBottom: 0.07,
 };
 
-// Served from public/ through BASE_URL so it resolves under /video-editor/start/ in production as well as dev.
 let logoPromise: Promise<ImageBitmap | null> | null = null;
 
 const loadCreditLogo = (): Promise<ImageBitmap | null> => {
   logoPromise ??= (async () => {
     try {
-      const response = await fetch(`${import.meta.env.BASE_URL}logo.webp`);
+      const response = await fetch('/logo.webp');
       if (!response.ok) return null;
       return await createImageBitmap(await response.blob());
     } catch {

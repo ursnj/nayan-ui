@@ -1,0 +1,39 @@
+[install]
+linker = "hoisted"
+
+[fmt]
+printWidth = 150
+singleQuote = true
+trailingComma = "none"
+ignorePatterns = [
+  "**/node_modules/",
+  "**/.git/",
+  "**/.expo/",
+  "**/.next/",
+  "**/dist/",
+  "**/build/",
+  "**/target/",
+  "**/coverage/",
+  "templates/nayan-ui/mobile/ios/",
+  "templates/nayan-ui/mobile/android/",
+  "packages/nayan-ui/lib/",
+  "**/shared/cpp/generated/",
+  "**/expo-env.d.ts",
+  "**/next-env.d.ts",
+  "packages/website/public/ui/site-styles.json",
+  "packages/website/src/app/nayan-ui-styles.ts",
+  "packages/website/src/app/nayan-ui.css",
+  "**/*.lock"
+]
+
+[lint]
+ignorePatterns = [
+  "**/.next/**",
+  "**/dist/**",
+  "packages/nayan-ui/lib/**",
+  "packages/nayan-ui/native/core/build/**",
+  "**/shared/cpp/generated/**",
+  "templates/nayan-ui/mobile/ios/**",
+  "templates/nayan-ui/mobile/android/**",
+  "packages/website/src/app/nayan-ui-styles.ts"
+]

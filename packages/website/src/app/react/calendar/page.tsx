@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Calendar from "@/components/react/components/Calendar";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/calendar", "react");
@@ -9,7 +9,7 @@ export default function CalendarPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Calendar />
+      <NayanComponentDoc path="/react/calendar" />
     </>
   );
 }

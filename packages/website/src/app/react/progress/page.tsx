@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Progress from "@/components/react/components/Progress";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/progress", "react");
@@ -9,7 +9,7 @@ export default function ProgressPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Progress />
+      <NayanComponentDoc path="/react/progress" />
     </>
   );
 }

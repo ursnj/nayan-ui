@@ -1,5 +1,6 @@
-import { NButton, cn, showToast } from "@nayan-ui/react";
-import { Sparkles } from "lucide-react";
+import { NImage, NView, NText } from 'nayan-ui/components';
+import { NButton, cn, showToast } from "@/components/ui";
+import { Sparkles } from "@/design/Icons";
 import { TRANSITION_PREVIEW_GRADIENT } from "../../engine/transitions";
 import { TEXT_PRESETS } from "../../lib/factories";
 import { useEditor } from "../../store/editor";
@@ -21,15 +22,15 @@ export const BackgroundPanel = () => {
   const gradient = background.kind === "linear-gradient" || background.kind === "radial-gradient";
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto p-3">
-      <p className="mb-2 text-[11px] text-muted">
+    <NView tag="div" className="min-h-0 flex-1 overflow-y-auto p-3">
+      <NText tag="p" className="mb-2 text-[11px] text-muted">
         Fills the frame behind every clip — most visible where your footage does not match the
         output shape.
-      </p>
+      </NText>
 
-      <div className="mb-3 grid grid-cols-3 gap-1.5">
+      <NView tag="div" className="mb-3 grid grid-cols-3 gap-1.5">
         {BACKGROUND_KINDS.map((kind) => (
-          <button
+          <NView tag="button"
             key={kind}
             type="button"
             onClick={() => set({ kind })}
@@ -43,9 +44,9 @@ export const BackgroundPanel = () => {
             )}
           >
             {BACKGROUND_LABELS[kind]}
-          </button>
+          </NView>
         ))}
-      </div>
+      </NView>
 
       {background.kind === "solid" && (
         <ColorField label="Colour" value={background.color} onChange={(color) => set({ color })} />
@@ -53,9 +54,9 @@ export const BackgroundPanel = () => {
 
       {gradient && (
         <>
-          <div className="mb-2 grid grid-cols-4 gap-1.5">
+          <NView tag="div" className="mb-2 grid grid-cols-4 gap-1.5">
             {GRADIENT_PRESETS.map((preset) => (
-              <button
+              <NView tag="button"
                 key={preset.name}
                 type="button"
                 title={preset.name}
@@ -72,11 +73,11 @@ export const BackgroundPanel = () => {
                 }}
               />
             ))}
-          </div>
-          <div className="grid grid-cols-2 gap-2">
+          </NView>
+          <NView tag="div" className="grid grid-cols-2 gap-2">
             <ColorField label="From" value={background.from} onChange={(from) => set({ from })} />
             <ColorField label="To" value={background.to} onChange={(to) => set({ to })} />
-          </div>
+          </NView>
           {background.kind === "linear-gradient" && (
             <SliderField
               label="Angle"
@@ -93,13 +94,13 @@ export const BackgroundPanel = () => {
 
       {background.kind === "image" &&
         (images.length === 0 ? (
-          <p className="rounded-md border border-dashed border-border px-3 py-4 text-center text-[11px] text-muted">
+          <NText tag="p" className="rounded-md border border-dashed border-border px-3 py-4 text-center text-[11px] text-muted">
             Import an image in the Media panel to use it here.
-          </p>
+          </NText>
         ) : (
-          <div className="mb-2 grid grid-cols-3 gap-1.5">
+          <NView tag="div" className="mb-2 grid grid-cols-3 gap-1.5">
             {images.map((asset) => (
-              <button
+              <NView tag="button"
                 key={asset.id}
                 type="button"
                 title={asset.name}
@@ -113,25 +114,25 @@ export const BackgroundPanel = () => {
                 )}
               >
                 {asset.thumbnail ? (
-                  <img
+                  <NImage
                     src={asset.thumbnail}
                     alt={asset.name}
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <span className="flex h-full items-center justify-center text-[9px] text-muted">
+                  <NText tag="span" className="flex h-full items-center justify-center text-[9px] text-muted">
                     {asset.name}
-                  </span>
+                  </NText>
                 )}
-              </button>
+              </NView>
             ))}
-          </div>
+          </NView>
         ))}
 
       {background.kind === "blur" && (
-        <p className="mb-2 text-[11px] text-muted">
+        <NText tag="p" className="mb-2 text-[11px] text-muted">
           Uses the frontmost clip at the playhead, scaled to fill and defocused.
-        </p>
+        </NText>
       )}
 
       {(background.kind === "blur" || background.kind === "image") && (
@@ -170,7 +171,7 @@ export const BackgroundPanel = () => {
           />
         </>
       )}
-    </div>
+    </NView>
   );
 };
 
@@ -178,19 +179,19 @@ export const TextPanel = () => {
   const addTextClip = useEditor((state) => state.addTextClip);
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto p-3">
-      <p className="mb-2 text-[11px] text-muted">
+    <NView tag="div" className="min-h-0 flex-1 overflow-y-auto p-3">
+      <NText tag="p" className="mb-2 text-[11px] text-muted">
         Click a style to drop it on the timeline at the playhead.
-      </p>
-      <div className="grid grid-cols-2 gap-2">
+      </NText>
+      <NView tag="div" className="grid grid-cols-2 gap-2">
         {TEXT_PRESETS.map((preset) => (
-          <button
+          <NView tag="button"
             key={preset.name}
             type="button"
             onClick={() => addTextClip(preset.preset)}
-            className="group flex aspect-video flex-col items-center justify-center gap-1 rounded-lg border border-border bg-surface-secondary transition-all hover:border-accent hover:elevate"
+            className="group flex aspect-video flex-col items-center justify-center gap-1 rounded-lg border border-border bg-surface-secondary transition-all hover:border-accent hover:[box-shadow:var(--elevation)]"
           >
-            <span
+            <NText tag="span"
               className="text-foreground transition-transform group-hover:scale-110"
               style={{
                 fontWeight: preset.preset.fontWeight ?? 700,
@@ -208,12 +209,12 @@ export const TextPanel = () => {
               }}
             >
               Aa
-            </span>
-            <span className="text-[10px] text-muted">{preset.name}</span>
-          </button>
+            </NText>
+            <NText tag="span" className="text-[10px] text-muted">{preset.name}</NText>
+          </NView>
         ))}
-      </div>
-    </div>
+      </NView>
+    </NView>
   );
 };
 
@@ -233,47 +234,47 @@ export const TransitionsPanel = () => {
   };
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto p-3">
+    <NView tag="div" className="min-h-0 flex-1 overflow-y-auto p-3">
       {target ? (
-        <p className="mb-2 text-[11px] text-muted">
-          Applies to the start of <span className="text-foreground">{target.name}</span>, blending
+        <NText tag="p" className="mb-2 text-[11px] text-muted">
+          Applies to the start of <NText tag="span" className="text-foreground">{target.name}</NText>, blending
           from the clip before it.
-        </p>
+        </NText>
       ) : (
-        <p className="mb-2 text-[11px] text-muted">
+        <NText tag="p" className="mb-2 text-[11px] text-muted">
           Select a clip first — a transition opens the clip you apply it to.
-        </p>
+        </NText>
       )}
 
-      <div className="grid grid-cols-2 gap-2">
+      <NView tag="div" className="grid grid-cols-2 gap-2">
         {(Object.keys(TRANSITION_LABELS) as TransitionKind[]).map((kind) => {
           const active = target?.transitionIn?.kind === kind;
           return (
-            <button
+            <NView tag="button"
               key={kind}
               type="button"
               onClick={() => apply(kind)}
               aria-pressed={active}
               className={cn(
-                "overflow-hidden rounded-lg border transition-all hover:elevate",
+                "overflow-hidden rounded-lg border transition-all hover:[box-shadow:var(--elevation)]",
                 active ? "border-accent ring-1 ring-accent" : "border-border hover:border-accent",
               )}
             >
-              <span
+              <NText tag="span"
                 className="block h-10 w-full"
                 style={{ background: TRANSITION_PREVIEW_GRADIENT[kind] }}
                 aria-hidden
               />
-              <span
+              <NText tag="span"
                 title={TRANSITION_LABELS[kind]}
                 className="block truncate px-1.5 py-1 text-[10px] text-foreground"
               >
                 {TRANSITION_LABELS[kind]}
-              </span>
-            </button>
+              </NText>
+            </NView>
           );
         })}
-      </div>
+      </NView>
 
       {target?.transitionIn && (
         <NButton
@@ -284,7 +285,7 @@ export const TransitionsPanel = () => {
           Remove transition
         </NButton>
       )}
-    </div>
+    </NView>
   );
 };
 
@@ -306,16 +307,16 @@ export const EffectsPanel = () => {
   }
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto p-3">
-      <p className="mb-2 text-[11px] text-muted">
+    <NView tag="div" className="min-h-0 flex-1 overflow-y-auto p-3">
+      <NText tag="p" className="mb-2 text-[11px] text-muted">
         Applying to {selected.length} clip{selected.length > 1 ? "s" : ""}. Fine-tune in the Colour
         section of the inspector.
-      </p>
-      <div className="grid grid-cols-3 gap-2">
+      </NText>
+      <NView tag="div" className="grid grid-cols-3 gap-2">
         {COLOR_PRESETS.map((preset) => {
           const none = preset.name === "None";
           return (
-            <button
+            <NView tag="button"
               key={preset.name}
               type="button"
               onClick={() =>
@@ -325,22 +326,22 @@ export const EffectsPanel = () => {
                 })
               }
               title={preset.name}
-              className="group overflow-hidden rounded-lg border border-border transition-all hover:border-accent hover:elevate"
+              className="group overflow-hidden rounded-lg border border-border transition-all hover:border-accent hover:[box-shadow:var(--elevation)]"
             >
-              <span
+              <NText tag="span"
                 className="block h-12 w-full"
                 style={{
                   background: `linear-gradient(135deg, ${preset.swatch[0]}, ${preset.swatch[1]})`,
                 }}
                 aria-hidden
               />
-              <span className="block truncate px-1.5 py-1 text-[10px] text-foreground">
+              <NText tag="span" className="block truncate px-1.5 py-1 text-[10px] text-foreground">
                 {preset.name}
-              </span>
-            </button>
+              </NText>
+            </NView>
           );
         })}
-      </div>
-    </div>
+      </NView>
+    </NView>
   );
 };

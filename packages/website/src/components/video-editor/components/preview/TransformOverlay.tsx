@@ -1,3 +1,4 @@
+import { NView, NText } from 'nayan-ui/components';
 import { useCallback, useRef } from "react";
 import { fitRect } from "../../engine/compositor";
 import { useHeldInteraction } from "../../lib/shortcuts";
@@ -139,8 +140,8 @@ export const TransformOverlay = ({
   const handleClass = "absolute h-2.5 w-2.5 rounded-sm border border-white bg-accent shadow-md";
 
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div
+    <NView tag="div" className="pointer-events-none absolute inset-0 overflow-hidden">
+      <NView tag="div"
         ref={boxRef}
         role="button"
         tabIndex={0}
@@ -152,35 +153,35 @@ export const TransformOverlay = ({
         style={{ left, top, width, height, transform: `rotate(${box.rotation}deg)` }}
         onPointerDown={beginDrag("move")}
       >
-        <span
+        <NView tag="span"
           className={`${handleClass} -left-1.5 -top-1.5 cursor-nwse-resize`}
           onPointerDown={beginDrag("nw")}
           role="presentation"
         />
-        <span
+        <NView tag="span"
           className={`${handleClass} -right-1.5 -top-1.5 cursor-nesw-resize`}
           onPointerDown={beginDrag("ne")}
           role="presentation"
         />
-        <span
+        <NView tag="span"
           className={`${handleClass} -bottom-1.5 -left-1.5 cursor-nesw-resize`}
           onPointerDown={beginDrag("sw")}
           role="presentation"
         />
-        <span
+        <NView tag="span"
           className={`${handleClass} -bottom-1.5 -right-1.5 cursor-nwse-resize`}
           onPointerDown={beginDrag("se")}
           role="presentation"
         />
 
-        <span className="absolute -top-3 left-1/2 h-3 w-px -translate-x-1/2 bg-accent" />
-        <span
+        <NText tag="span" className="absolute -top-3 left-1/2 h-3 w-px -translate-x-1/2 bg-accent" />
+        <NView tag="span"
           className="absolute -top-[26px] left-1/2 h-3.5 w-3.5 -translate-x-1/2 cursor-grab rounded-full border border-white bg-accent shadow-md"
           onPointerDown={beginDrag("rotate")}
           role="presentation"
         />
-      </div>
-    </div>
+      </NView>
+    </NView>
   );
 };
 

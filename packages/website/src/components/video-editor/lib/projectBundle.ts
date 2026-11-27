@@ -1,4 +1,4 @@
-import JSZip from "jszip";
+import { openZip, writeZip } from "./zip";
 import { getAssetFile, loadAsset } from "../media/library";
 import type { MediaAsset } from "../types";
 import type { ProjectFile } from "../store/editor";
@@ -17,17 +17,16 @@ export class BundleError extends Error {
 
 /** Bundles a project and every asset it references into one downloadable zip. */
 export const writeBundle = async (data: ProjectFile): Promise<Blob> => {
-  const zip = new JSZip();
-  zip.file(PROJECT_ENTRY, JSON.stringify(data));
+  const entries = new Map([[PROJECT_ENTRY, new Blob([JSON.stringify(data)])]]);
 
   for (const ref of data.assetRefs) {
     const file = getAssetFile(ref.id);
     if (!file) continue; // Reconstructed on open as a "missing" asset — see readBundle.
-    zip.file(ref.entry, file);
+    entries.set(ref.entry, file);
   }
 
   try {
-    return await zip.generateAsync({ type: "blob", compression: "DEFLATE" });
+    return await writeZip(entries);
   } catch (error) {
     throw new BundleError("The project could not be bundled.", { cause: error });
   }
@@ -42,25 +41,22 @@ export interface ReadBundleResult {
 
 /** The reverse of `writeBundle`: unpacks a project and re-registers its media. */
 export const readBundle = async (file: File): Promise<ReadBundleResult> => {
-  let zip: JSZip;
+  let readEntry: Awaited<ReturnType<typeof openZip>>;
   try {
-    zip = await JSZip.loadAsync(file);
+    readEntry = await openZip(file);
   } catch (error) {
     throw new BundleError("That file isn't a valid project bundle.", { cause: error });
   }
 
-  const projectEntry = zip.file(PROJECT_ENTRY);
-  if (!projectEntry) {
-    throw new BundleError("That file doesn't contain a project.");
-  }
-
-  let data: ProjectFile;
+  let projectEntry: Blob | undefined;
+  let data: ProjectFile | undefined;
   try {
-    const text = await projectEntry.async("string");
-    data = JSON.parse(text) as ProjectFile;
+    projectEntry = await readEntry(PROJECT_ENTRY);
+    if (projectEntry) data = JSON.parse(await projectEntry.text()) as ProjectFile;
   } catch (error) {
     throw new BundleError("The project inside that file is corrupted.", { cause: error });
   }
+  if (!data) throw new BundleError("That file doesn't contain a project.");
 
   if (data.version !== 1) {
     throw new BundleError("That project was saved by a newer, incompatible version of the editor.");
@@ -70,13 +66,12 @@ export const readBundle = async (file: File): Promise<ReadBundleResult> => {
   const missing: string[] = [];
 
   for (const ref of data.assetRefs ?? []) {
-    const entry = zip.file(ref.entry);
-    if (!entry) {
-      missing.push(ref.name);
-      continue;
-    }
     try {
-      const blob = await entry.async("blob");
+      const blob = await readEntry(ref.entry);
+      if (!blob) {
+        missing.push(ref.name);
+        continue;
+      }
       const restored = new File([blob], ref.name, { type: ref.type });
       // Reuses the original id so clips referencing it by assetId still resolve.
       assets.push(await loadAsset(restored, ref.id));

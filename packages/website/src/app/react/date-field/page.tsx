@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import DateField from "@/components/react/components/DateField";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/date-field", "react");
@@ -9,7 +9,7 @@ export default function DateFieldPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <DateField />
+      <NayanComponentDoc path="/react/date-field" />
     </>
   );
 }

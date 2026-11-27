@@ -1,3 +1,5 @@
+import { EDITOR_PANEL } from '@/design/system';
+import { NView, NText } from 'nayan-ui/components';
 import { useCallback } from "react";
 import {
   AlignCenter,
@@ -13,8 +15,8 @@ import {
   Type as TypeIcon,
   Volume2,
   Wand2,
-} from "lucide-react";
-import { NBadge, NChip, cn } from "@nayan-ui/react";
+} from "@/design/Icons";
+import { NBadge, NChip, cn } from "@/components/ui";
 import { formatTimecode } from "../../lib/utils";
 import { primarySelectedClip, useEditor } from "../../store/editor";
 import {
@@ -125,17 +127,17 @@ export const Inspector = () => {
   );
 
   return (
-    <aside className="island flex h-full min-h-0 flex-col">
-      <header className="flex items-center gap-2 border-b border-border px-3 py-2.5">
-        <h2 className="flex-1 text-[11px] font-semibold uppercase tracking-wider text-muted">
+    <NView tag="aside" className={`${EDITOR_PANEL} flex h-full min-h-0 flex-col`}>
+      <NView tag="header" className="flex items-center gap-2 border-b border-border px-3 py-2.5">
+        <NText tag="h2" className="flex-1 text-[11px] font-semibold uppercase tracking-wider text-muted">
           Properties
-        </h2>
+        </NText>
         {selectionCount > 1 && (
           <NBadge color="accent" variant="soft" size="sm" className="text-[10px]">
             {selectionCount} selected
           </NBadge>
         )}
-      </header>
+      </NView>
 
       {!clip ? (
         <EmptyState
@@ -144,7 +146,7 @@ export const Inspector = () => {
           hint="Pick a clip on the timeline to edit it."
         />
       ) : (
-        <div className="min-h-0 flex-1 overflow-y-auto">
+        <NView tag="div" className="min-h-0 flex-1 overflow-y-auto">
           <ClipHeader clip={clip} />
           <BasicsSection clip={clip} patch={patch} />
           {isTextClip(clip) && <TextSection clip={clip} patch={patch} />}
@@ -161,34 +163,34 @@ export const Inspector = () => {
             <ChromaSection clip={clip} patch={patch} />
           )}
           <TransitionSection clip={clip} />
-        </div>
+        </NView>
       )}
-    </aside>
+    </NView>
   );
 };
 
 type Patch = (changes: Partial<Clip>) => void;
 
 const ClipHeader = ({ clip }: { clip: Clip }) => (
-  <div className="border-b border-border px-3 py-2.5">
-    <div className="flex items-center gap-2">
-      <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: clip.color }} />
-      <p
+  <NView tag="div" className="border-b border-border px-3 py-2.5">
+    <NView tag="div" className="flex items-center gap-2">
+      <NText tag="span" className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: clip.color }} />
+      <NText tag="p"
         data-clarity-mask="true"
         className="min-w-0 flex-1 truncate text-xs font-medium text-foreground"
         title={clip.name}
       >
         {clip.name}
-      </p>
+      </NText>
       <NChip size="sm" variant="secondary" className="shrink-0 capitalize text-[10px]">
         {clip.kind}
       </NChip>
-    </div>
-    <p className="mt-1 font-mono text-[10px] tabular-nums text-muted">
+    </NView>
+    <NText tag="p" className="mt-1 font-mono text-[10px] tabular-nums text-muted">
       {formatTimecode(clip.startUs)} → {formatTimecode(clipEndUs(clip))} ·{" "}
       {(clip.durationUs / US).toFixed(2)}s
-    </p>
-  </div>
+    </NText>
+  </NView>
 );
 
 /** Opacity, fades and speed — reached for on almost every clip. */
@@ -343,11 +345,11 @@ const FilterSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
 
   return (
     <Section title="Filters" icon={<Sparkles className="h-3.5 w-3.5 text-muted" />}>
-      <div className="mb-2 grid grid-cols-4 gap-1.5">
+      <NView tag="div" className="mb-2 grid grid-cols-4 gap-1.5">
         {COLOR_PRESETS.map((preset) => {
           const selected = preset.name === "None" ? active === null : active?.name === preset.name;
           return (
-            <button
+            <NView tag="button"
               key={preset.name}
               type="button"
               onClick={() => applyPreset(preset)}
@@ -358,25 +360,25 @@ const FilterSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
                 selected ? "border-accent" : "border-border hover:border-separator",
               )}
             >
-              <span
+              <NText tag="span"
                 className="block h-7 w-full"
                 style={{
                   background: `linear-gradient(135deg, ${preset.swatch[0]}, ${preset.swatch[1]})`,
                 }}
                 aria-hidden
               />
-              <span
+              <NText tag="span"
                 className={cn(
                   "block truncate px-1 py-0.5 text-[9px] leading-tight transition-colors",
                   selected ? "text-accent" : "text-muted group-hover:text-foreground",
                 )}
               >
                 {preset.name}
-              </span>
-            </button>
+              </NText>
+            </NView>
           );
         })}
-      </div>
+      </NView>
 
       {active && (
         <SliderField
@@ -535,7 +537,7 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
           resetTo={0}
         />
         {color.splitTone > 0 && (
-          <div className="grid grid-cols-2 gap-2">
+          <NView tag="div" className="grid grid-cols-2 gap-2">
             <ColorField
               label="Shadows"
               value={color.shadowTint}
@@ -546,7 +548,7 @@ const ColorSection = ({ clip, patch }: { clip: Clip; patch: Patch }) => {
               value={color.highlightTint}
               onChange={(highlightTint) => set({ highlightTint })}
             />
-          </div>
+          </NView>
         )}
       </Section>
 
@@ -749,7 +751,7 @@ const TextSection = ({ clip, patch }: { clip: TextClip; patch: Patch }) => {
         resetTo={80}
       />
 
-      <div className="mb-2 flex gap-1.5">
+      <NView tag="div" className="mb-2 flex gap-1.5">
         <ToggleChip
           active={clip.fontWeight >= 700}
           onClick={() => patch({ fontWeight: clip.fontWeight >= 700 ? 400 : 700 } as Partial<Clip>)}
@@ -766,7 +768,7 @@ const TextSection = ({ clip, patch }: { clip: TextClip; patch: Patch }) => {
         >
           Italic
         </ToggleChip>
-      </div>
+      </NView>
 
       <ColorField
         label="Text colour"

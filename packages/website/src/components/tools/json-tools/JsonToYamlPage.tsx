@@ -1,22 +1,12 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-import Sidebar from "@/components/helpers/Sidebar";
-import SubHeader from "@/components/helpers/SubHeader";
-import TagsList from "@/components/helpers/TagsList";
-import { jsonToYamlTags } from "@/services/Tags";
-import { getMenuItem } from "@/services/Utils";
-import { JsonToYaml } from "@/components/tools";
-import { JsonToYamlContent } from "./JsonToolsContent";
+import Sidebar from '@/components/helpers/Sidebar';
+import SubHeader from '@/components/helpers/SubHeader';
+import TagsList from '@/components/helpers/TagsList';
+import { jsonToYamlTags } from '@/services/Tags';
+import { JsonToYamlContent } from './JsonToolsContent';
 
 const JsonToYamlPage = () => {
-  const pathname = usePathname();
-  const component: any = getMenuItem(pathname);
-
   return (
-    <Sidebar title={component?.title || "JSON to YAML"}>
-      <JsonToYaml />
-
+    <Sidebar title="JSON to YAML">
       <JsonToYamlContent />
 
       <SubHeader title="Tags">

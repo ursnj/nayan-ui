@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNDivider from "@/components/react-native/components/Divider";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNDividerPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNDivider />
+      <NayanComponentDoc path="/react-native/divider" />
     </>
   );
 }

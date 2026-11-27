@@ -1,5 +1,6 @@
+import { NView, NText } from 'nayan-ui/components';
 import { useCallback } from "react";
-import { NInput, NSlider, cn } from "@nayan-ui/react";
+import { NInput, NSlider, cn } from "@/components/ui";
 import {
   ChevronDown,
   ChevronUp,
@@ -12,7 +13,7 @@ import {
   Trash2,
   Volume2,
   VolumeX,
-} from "lucide-react";
+} from "@/design/Icons";
 import { useHeldInteraction } from "../../lib/shortcuts";
 import { clamp } from "../../lib/utils";
 import { useEditor } from "../../store/editor";
@@ -58,11 +59,11 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
   );
 
   return (
-    <div
+    <NView tag="div"
       style={{ width: HEADER_WIDTH, height: track.height }}
       className="group/header sticky left-0 z-40 flex shrink-0 flex-col justify-center gap-1 overflow-hidden border-b border-r border-border bg-editor-panel px-2 py-1"
     >
-      <div className="flex h-5 items-center gap-1">
+      <NView tag="div" className="flex h-5 items-center gap-1">
         <Icon
           className={cn("h-3.5 w-3.5 shrink-0", track.hidden ? "text-muted/50" : "text-muted")}
         />
@@ -73,7 +74,7 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
           inputClassName="h-5 px-1 py-0 text-[11px] font-medium"
           aria-label={`${track.name} name`}
         />
-        <div className="flex shrink-0 items-center opacity-0 transition-opacity group-hover/header:opacity-100 focus-within:opacity-100">
+        <NView tag="div" className="flex shrink-0 items-center opacity-0 transition-opacity group-hover/header:opacity-100 focus-within:opacity-100">
           <IconButton
             label="Move track up"
             onClick={() => reorderTrack(track.id, -1)}
@@ -97,10 +98,10 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
           >
             <Trash2 className="h-3.5 w-3.5" />
           </IconButton>
-        </div>
-      </div>
+        </NView>
+      </NView>
 
-      <div className="flex h-5 items-center gap-0.5">
+      <NView tag="div" className="flex h-5 items-center gap-0.5">
         <IconButton
           label={track.muted ? "Unmute track" : "Mute track"}
           onClick={() => onUpdate({ muted: !track.muted })}
@@ -140,9 +141,9 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
           className={cn("mb-0 ml-1 min-w-0 flex-1", track.muted && "opacity-40")}
           aria-label={`${track.name} level`}
         />
-      </div>
+      </NView>
 
-      <div
+      <NView tag="div"
         role="separator"
         aria-label="Resize track height"
         aria-orientation="horizontal"
@@ -166,8 +167,8 @@ export const TrackHeader = ({ track, canRemove, onUpdate, onRemove }: TrackHeade
         onBlur={held.end}
         className="absolute inset-x-0 bottom-0 flex h-1.5 cursor-row-resize items-end justify-center outline-none focus-visible:bg-accent/40"
       >
-        <span className="h-0.5 w-6 rounded-full bg-transparent transition-colors group-hover/header:bg-separator" />
-      </div>
-    </div>
+        <NText tag="span" className="h-0.5 w-6 rounded-full bg-transparent transition-colors group-hover/header:bg-separator" />
+      </NView>
+    </NView>
   );
 };

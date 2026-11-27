@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNTooltip from "@/components/react-native/components/Tooltip";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNTooltipPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNTooltip />
+      <NayanComponentDoc path="/react-native/tooltip" />
     </>
   );
 }

@@ -1,39 +1,19 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Installation from "@/components/react-native/installation/Installation";
-import {
-  SITE_URL,
-  buildBreadcrumbSchema,
-  buildPageMetadata,
-  buildTechArticleSchema,
-} from "@/services/seo";
+import NayanGameEngineDocumentation from "@/components/game-engine/NayanGameEngineDocumentation";
+import { engineGuides } from "@/services/ui/guides";
+import { engineGuideMetadata, engineGuideSchemas } from "@/services/ui/seo";
+import { SITE_URL } from "@/services/seo";
 
-export const metadata = buildPageMetadata({
-  title: "Installation - React Native Components",
-  description:
-    "Install and configure @nayan-ui/native in your project. Setup guide for HeroUI Native, Uniwind, and theme configuration for iOS and Android.",
-  path: "/react-native/installation",
-  keywords:
-    "nayan ui react native installation, react native component setup, heroui native setup, uniwind configuration",
-});
+const path = "/react-native/installation";
+const guide = engineGuides.find((guide) => guide.slug === "react-native")!;
 
-const schemas = [
-  buildBreadcrumbSchema([
-    { name: "Home", url: SITE_URL },
-    { name: "React Native", url: `${SITE_URL}/react-native/components` },
-    { name: "Installation", url: `${SITE_URL}/react-native/installation` },
-  ]),
-  buildTechArticleSchema({
-    title: "Installation - React Native Components",
-    description: "Install and configure @nayan-ui/native in your project.",
-    url: `${SITE_URL}/react-native/installation`,
-  }),
-];
+export const metadata = engineGuideMetadata(guide, path);
 
-export default function RNInstallationPage() {
+export default function InstallationPage() {
   return (
     <>
-      <JsonLd data={schemas} />
-      <Installation />
+      <JsonLd data={engineGuideSchemas(guide, SITE_URL + path)} />
+      <NayanGameEngineDocumentation guide={guide} />
     </>
   );
 }

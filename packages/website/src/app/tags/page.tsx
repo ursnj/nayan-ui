@@ -2,12 +2,10 @@ import JsonLd from "@/components/helpers/JsonLd";
 import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/seo";
 import Tags from "@/components/tags/Tags";
 export const metadata = buildPageMetadata({
-  title: "Tags - Browse Components by Category",
-  description:
-    "Browse Nayan UI components by tags and categories. Find React and React Native components organized by functionality, design patterns, and use cases.",
+  title: "Component and Module Tags",
+  description: "Browse React and React Native components and Nayan UI modules by topic.",
   path: "/tags",
-  keywords:
-    "nayan ui tags, component categories, react component tags, ui component search, component filter",
+  keywords: "nayan ui tags, react components, react native components, engine modules, component topics",
 });
 
 const schemas = [

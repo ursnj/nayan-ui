@@ -1,39 +1,19 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Installation from "@/components/react/installation/Installation";
-import {
-  SITE_URL,
-  buildBreadcrumbSchema,
-  buildPageMetadata,
-  buildTechArticleSchema,
-} from "@/services/seo";
+import NayanGameEngineDocumentation from "@/components/game-engine/NayanGameEngineDocumentation";
+import { engineGuides } from "@/services/ui/guides";
+import { engineGuideMetadata, engineGuideSchemas } from "@/services/ui/seo";
+import { SITE_URL } from "@/services/seo";
 
-export const metadata = buildPageMetadata({
-  title: "Installation - React Components",
-  description:
-    "Install and configure @nayan-ui/react in your project. Setup guide for Tailwind CSS integration, theme configuration, and usage examples.",
-  path: "/react/installation",
-  keywords:
-    "nayan ui installation, react component setup, tailwind css configuration, heroui setup, npm install nayan-ui",
-});
+const path = "/react/installation";
+const guide = engineGuides.find((guide) => guide.slug === "react")!;
 
-const schemas = [
-  buildBreadcrumbSchema([
-    { name: "Home", url: SITE_URL },
-    { name: "React", url: `${SITE_URL}/react/components` },
-    { name: "Installation", url: `${SITE_URL}/react/installation` },
-  ]),
-  buildTechArticleSchema({
-    title: "Installation - React Components",
-    description: "Install and configure @nayan-ui/react in your project.",
-    url: `${SITE_URL}/react/installation`,
-  }),
-];
+export const metadata = engineGuideMetadata(guide, path);
 
 export default function InstallationPage() {
   return (
     <>
-      <JsonLd data={schemas} />
-      <Installation />
+      <JsonLd data={engineGuideSchemas(guide, SITE_URL + path)} />
+      <NayanGameEngineDocumentation guide={guide} />
     </>
   );
 }

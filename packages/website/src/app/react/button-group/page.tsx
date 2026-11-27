@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import ButtonGroup from "@/components/react/components/ButtonGroup";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/button-group", "react");
@@ -9,7 +9,7 @@ export default function ButtonGroupPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <ButtonGroup />
+      <NayanComponentDoc path="/react/button-group" />
     </>
   );
 }

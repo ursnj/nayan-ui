@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { NConfirmAlert } from "@nayan-ui/react";
+import { NConfirmAlert } from "@/components/ui";
 import { readEditorState, useEditor } from "../../store/editor";
 
 const GUARD_ENTRY = { nayanEditorLeaveGuard: true };

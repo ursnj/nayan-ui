@@ -1,8 +1,8 @@
 # Nayan UI
 
-Reusable component libraries for React and React Native, a game engine with free games, developer CLIs, and 70+ free online tools — all in one monorepo.
+Game engine and components for React and React Native, with playable games and developer guides.
 
-[![License](https://img.shields.io/npm/l/@nayan-ui/react.svg)](https://github.com/ursnj/nayan-ui/blob/main/LICENSE)
+[![License](https://img.shields.io/npm/l/nayan-ui.svg)](./packages/nayan-ui)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 [![Website](https://img.shields.io/badge/docs-nayanui.com-black.svg)](https://www.nayanui.com)
 
@@ -10,132 +10,137 @@ Reusable component libraries for React and React Native, a game engine with free
 
 ## Highlights
 
-- **React components** — accessible, themeable components built on HeroUI + Tailwind CSS v4
-- **React Native components** — matching API built on HeroUI Native + Uniwind
-- **Game engine & games** — `@nayan-ui/engine` for Expo and web, plus private `@nayan-ui/games` playable on [nayanui.com/games](https://www.nayanui.com/games)
-- **CLI** — scaffold Vite / Expo / games projects, generate sitemaps and robots.txt
-- **AI code reviewer** — PR reviews, vulnerability scans and auto-fixes with Codex or Claude Code
-- **Online tools** — PDF, image, JSON, XML, text, SEO and developer tools plus a browser video editor at [nayanui.com](https://www.nayanui.com)
+- [Nayan Components](https://www.nayanui.com/components) and [Nayan Modules](https://www.nayanui.com/modules) provide cross-platform UI and services.
+- [Nayan Game Engine](https://www.nayanui.com/game-engine) provides 3D rendering and physics. Try it in [Nayan Playground](https://www.nayanui.com/playground).
+- [Nayan Games](https://www.nayanui.com/games) offers playable games from `nayan-games`.
+- [Nayan Video Editor](https://www.nayanui.com/video-editor) edits and exports video in the browser.
 
 ---
 
 ## Packages
 
-| Package                                                          | Version                                                                                                   | Description                                                     |
-| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| [@nayan-ui/react](./packages/react)                              | [![npm](https://badge.fury.io/js/@nayan-ui%2Freact.svg)](https://www.npmjs.com/package/@nayan-ui/react)   | React component library built on HeroUI + Tailwind CSS v4       |
-| [@nayan-ui/native](./packages/native)                            | [![npm](https://badge.fury.io/js/@nayan-ui%2Fnative.svg)](https://www.npmjs.com/package/@nayan-ui/native) | React Native component library built on HeroUI Native + Uniwind |
-| [@nayan-ui/engine](https://www.npmjs.com/package/@nayan-ui/engine) | [![npm](https://badge.fury.io/js/@nayan-ui%2Fengine.svg)](https://www.npmjs.com/package/@nayan-ui/engine) | Game engine for React Native and web                          |
-| @nayan-ui/games                                                  | Private                                                                                                   | Games built on the Nayan engine (private, not published to npm) |
-| [@nayan-ui/cli](./packages/cli)                                  | [![npm](https://badge.fury.io/js/@nayan-ui%2Fcli.svg)](https://www.npmjs.com/package/@nayan-ui/cli)       | CLI for project scaffolding, sitemap & robots.txt generation    |
-| [@nayan-ui/ai](./packages/ai)                                    | [![npm](https://badge.fury.io/js/@nayan-ui%2Fai.svg)](https://www.npmjs.com/package/@nayan-ui/ai)         | AI-powered code reviewer using Codex & Claude Code agents       |
+| Package | Version | Description |
+| --- | --- | --- |
+| [nayan-ui](./packages/nayan-ui) | [![npm](https://badge.fury.io/js/nayan-ui.svg)](https://www.npmjs.com/package/nayan-ui) | Game engine for React Native and web |
+| [@nayan-ui/website](./packages/website) | Private | Nayan UI website and documentation |
+| nayan-games | Local archive | Nayan Games |
 
-> `@nayan-ui/engine` and `@nayan-ui/games` are developed in a separate repository. `@nayan-ui/games` is a **private package**: it is not published to npm and is bundled into the website as a tarball (`packages/website/scripts/nayan-ui-games.tgz`) by the Docker publish workflow.
+The engine source and SDK documentation live in [packages/nayan-ui](./packages/nayan-ui).
+The website installs `nayan-games` from a [checked-in tarball](./packages/website/scripts/nayan-games.tgz) and uses the engine from this workspace.
+
+## Engine development
+
+Install just the engine dependencies from a clean checkout:
+
+```sh
+bun install --frozen-lockfile --filter nayan-ui
+```
+
+Run the [engine workflow](./.github/workflows/npm-publish.yml) from **Actions → Run workflow**.
+Select the branch and choose an operation.
+
+- `validate` builds iOS, Android and WebAssembly, runs the tests, and performs an npm dry run.
+- `publish` builds, tests, and publishes the version in `packages/nayan-ui/package.json`
+  through npm Trusted Publishing.
+
+Both commands run the platform builds in parallel and reuse cached binaries when the Rust inputs match.
+Download the tested `nayan-ui` artifact from a successful run. See the
+[engine README](./packages/nayan-ui/README.md#development-and-verification) for local builds.
+
+### First npm release
+
+Publish the tested tarball once from an npm account with two-factor authentication.
+Download and unzip the workflow's `nayan-ui` artifact, then run the following from that directory.
+
+```sh
+npm login --registry=https://registry.npmjs.org
+npm publish ./nayan-ui-1.0.0-beta.1.tgz --access public --tag beta --ignore-scripts
+```
+
+In the new package's npm settings, add a GitHub Actions trusted publisher with owner `ursnj`,
+repository `nayan-ui`, and workflow `npm-publish.yml`. Leave the environment blank and enable
+`npm publish`. Use a new package version for the first GitHub Actions release.
+[npm Trusted Publishing settings](https://docs.npmjs.com/trusted-publishers/#step-1-add-a-first-trusted-publisher-on-npmjscom)
 
 ## Website
 
-[packages/website](./packages/website) (`@nayan-ui/website`) is the Next.js app behind [www.nayanui.com](https://www.nayanui.com). It hosts the component docs, games, devtools docs, the online tools and the video editor. It ships as the Docker image `ursnj/nayanui` (port `7100`).
+[packages/website](./packages/website) (`@nayan-ui/website`) is the Next.js app behind [www.nayanui.com](https://www.nayanui.com). It hosts the component docs, games, developer tool guides and the video editor. It ships as the Docker image `ursnj/nayanui` (port `7100`). Site components, demos, and tooling use the workspace engine.
 
-## Examples
+With the website dependencies installed and the Rust/WASM prerequisites from the engine README available, run:
 
-| Example                              | Description                               |
-| ------------------------------------ | ----------------------------------------- |
-| [examples/vite](./examples/vite)     | React + Vite + Tailwind CSS v4 + Nayan UI |
-| [examples/nextjs](./examples/nextjs) | Next.js + Tailwind CSS v4 + Nayan UI      |
-| [examples/expo](./examples/expo)     | Expo + Uniwind + Nayan UI native          |
-| [examples/games](./examples/games)   | Nayan Game Engine games for Expo and Vite |
+```sh
+bun run website:dev
+```
+
+The website dev and production commands build the browser engine when needed. Next.js compiles the website's Tailwind utilities. Run `bun run engine:build:web` after changing the engine source.
+
+### Updating the games archive
+
+Obtain a built `nayan-games` package archive that declares `nayan-ui` as its engine peer dependency, then run these commands from the repository root.
+
+```sh
+cp /path/to/nayan-games-version.tgz packages/website/scripts/nayan-games.tgz
+bun update --cwd=packages/website --ignore-scripts nayan-games
+```
+
+Commit the archive and the updated `bun.lock` together. The website publishing workflow installs that exact archive with Bun’s frozen lockfile. The games license is included in the archive.
+
+## Starter template
+
+The [Nayan UI starter](./templates/nayan-ui) is a standalone Bun project for web, iOS, and Android. It uses `nayan-ui@1.0.0-beta.5` from npm.
+
+The [starter CLI instructions](./packages/nayan-ui/README.md#create-a-starter-project) cover creating a new project from npm and running it on web, iOS, or Android.
 
 ## Quick Start
 
-### React (Vite)
-
 ```bash
-npx @nayan-ui/cli new my-app -t vite
-cd my-app
-npm install
-npm run dev
-```
-
-### React (Next.js)
-
-```bash
-npx create-next-app@latest my-app
-cd my-app
-npm install @nayan-ui/react
-npm install -D @tailwindcss/postcss tailwindcss
-npm run dev
-```
-
-See [examples/nextjs](./examples/nextjs) for full setup with `transpilePackages` and `@tailwindcss/postcss`.
-
-### React Native (Expo)
-
-```bash
-npx @nayan-ui/cli new my-app -t expo
-cd my-app
-npm install
-npx expo start
-```
-
-### Game engine (Expo + Vite)
-
-```bash
-npx @nayan-ui/cli new my-game -t games
-cd my-game
-bun install
+git clone --depth 1 https://github.com/ursnj/nayan-ui.git
+cd nayan-ui/templates/nayan-ui
+bun install --frozen-lockfile
 bun run web
-```
-
-### AI code reviewer
-
-```bash
-npm install -g @nayan-ui/ai
-nayan-ai review   # review a pull request
-nayan-ai scan     # scan dependencies for vulnerabilities
 ```
 
 ## Repository Structure
 
 ```
 packages/
-  react/     @nayan-ui/react   — React component library
-  native/    @nayan-ui/native  — React Native component library (+ example app)
-  cli/       @nayan-ui/cli     — scaffolding & SEO CLI
-  ai/        @nayan-ui/ai      — AI code reviewer CLI
+  nayan-ui/  nayan-ui  — Game engine and components
   website/   @nayan-ui/website — nayanui.com (Next.js)
-examples/    vite, nextjs, expo, games starter projects
-.github/     publish workflows (npm + Docker)
-scripts/     local publish scripts (Docker)
+templates/
+  nayan-ui/  Standalone starter for Expo and Vite
+.github/     engine CI and website image publishing
 ```
 
 ## Development
 
-This is a [Bun](https://bun.sh) workspace monorepo.
+This monorepo uses the Bun channel in `.bun-version`. The full checks need the checked-in games archive and the generated engine package. For engine-only work, use the filtered install above.
 
 ```bash
-bun install
+bun install --frozen-lockfile
+bun run engine:build
 ```
 
 | Command                     | Description                              |
 | --------------------------- | ---------------------------------------- |
-| `bun run react:dev`         | Watch-build the React package            |
-| `bun run react:build`       | Build the React package                  |
-| `bun run native:build`      | Build the Native package                 |
-| `bun run native:typecheck`  | Type-check the Native package            |
-| `bun run native:example`    | Run the Native example app               |
-| `bun run cli:build`         | Build the CLI                            |
-| `bun run ai:build`          | Build the AI reviewer                    |
+| `bun run engine:build`      | Build the engine package                 |
+| `bun run engine:typecheck`  | Type-check the engine                     |
+| `bun run engine:test`       | Run the engine unit tests                 |
 | `bun run website:dev`       | Run the website in development           |
 | `bun run website:build`     | Production build of the website          |
 | `bun run website:start`     | Serve the production build on port 7100  |
-| `bun run format`            | Format the codebase with oxfmt           |
+| `bun run format`            | Format the codebase with Bun            |
+| `bun run format:check`      | Check formatting without writing files   |
+| `bun run lint`              | Run Bun lint across the monorepo          |
+| `bun run typecheck`         | Check the engine and website             |
+| `bun run test`              | Run the engine and website Bun tests     |
 | `bun run clean`             | Remove `node_modules` and build outputs  |
+
+On an open pull request, a collaborator with write access can post `test` as a standalone comment. GitHub Actions verifies the current PR commit with the same library builds and checks used for npm releases and posts the results with a link to the logs. Use `merge` to also merge the verified commit after @ursnj approves it and GitHub's merge requirements are met.
 
 ## Publishing
 
-- **npm packages** — run the **Publish npm packages** workflow and select the packages to release (supports dry run). Uses npm trusted publishing, no token required.
-- **Website** — run the **Publish website docker images** workflow to build and push `ursnj/nayanui:latest`. Requires the `PLAYTURA_TOKEN` and `DOCKER_HUB_TOKEN` repository secrets.
-  Or publish it from your machine with `bun run docker:publish` (needs Docker, a playtura checkout at `../playtura` or `--playtura <dir>`, and `docker login` as ursnj; `--dry-run` builds and checks without pushing, `--help` lists the options).
+- **Engine package** — manually run **Build and publish nayan-ui**. Choose **validate** for a dry run and a verified tarball, or **publish** to release to npm. Leave **Publish as beta** unchecked for `latest`, or check it for `beta`. The package version comes from `packages/nayan-ui/package.json`.
+- **Website** — run the **Publish website docker images** workflow to build and push `ursnj/nayanui:latest`. Requires the `DOCKER_HUB_TOKEN` repository secret.
 
 ## Documentation
 

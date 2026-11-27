@@ -1,6 +1,7 @@
+import { NImage, NView, NText } from 'nayan-ui/components';
 import { useCallback, useMemo, useRef, useState } from "react";
-import { NButton, NButtonGroup, NLoading, NSearchField, showToast } from "@nayan-ui/react";
-import { Film, Image as ImageIcon, Music, Plus, Trash2, Upload } from "lucide-react";
+import { NButton, NButtonGroup, NLoading, NSearchField, showToast } from "@/components/ui";
+import { Film, Image as ImageIcon, Music, Plus, Trash2, Upload } from "@/design/Icons";
 import { formatBytes, formatDuration } from "../../lib/utils";
 import {
   MEDIA_ACCEPT,
@@ -67,7 +68,7 @@ export const MediaPanel = () => {
   }, [assets, filter, query]);
 
   return (
-    <div
+    <NView tag="div"
       className="flex h-full flex-col"
       onDragOver={(event) => {
         if (!event.dataTransfer.types.includes("Files")) return;
@@ -85,7 +86,7 @@ export const MediaPanel = () => {
         void importFiles(event.dataTransfer.files);
       }}
     >
-      <div className="flex items-center gap-1.5 px-3 pb-2 pt-3">
+      <NView tag="div" className="flex items-center gap-1.5 px-3 pb-2 pt-3">
         <NSearchField
           value={query}
           onChange={setQuery}
@@ -98,9 +99,9 @@ export const MediaPanel = () => {
         <IconButton label="Import files" onClick={() => inputRef.current?.click()}>
           <Upload className="h-4 w-4" />
         </IconButton>
-      </div>
+      </NView>
 
-      <div className="px-3 pb-2">
+      <NView tag="div" className="px-3 pb-2">
         <NButtonGroup<Filter>
           items={["all", "video", "audio", "image"]}
           selected={filter}
@@ -109,9 +110,9 @@ export const MediaPanel = () => {
           buttonClassName="capitalize text-[11px]"
           ariaLabel="Filter media by kind"
         />
-      </div>
+      </NView>
 
-      <input
+      <NView<'input'> tag="input"
         ref={inputRef}
         type="file"
         multiple
@@ -124,13 +125,13 @@ export const MediaPanel = () => {
       />
 
       {importing > 0 && (
-        <div className="flex items-center gap-1 px-3 pb-2 text-[11px] text-muted">
+        <NView tag="div" className="flex items-center gap-1 px-3 pb-2 text-[11px] text-muted">
           <NLoading size="sm" className="p-0" />
           Importing {importing} file{importing > 1 ? "s" : ""}…
-        </div>
+        </NView>
       )}
 
-      <div className="relative min-h-0 flex-1 overflow-y-auto px-3 pb-3">
+      <NView tag="div" className="relative min-h-0 flex-1 overflow-y-auto px-3 pb-3">
         {visible.length === 0 && importing === 0 ? (
           <EmptyState
             icon={<Film className="h-8 w-8" />}
@@ -142,7 +143,7 @@ export const MediaPanel = () => {
             }
           />
         ) : (
-          <ul className="grid grid-cols-2 gap-2">
+          <NView tag="ul" className="grid grid-cols-2 gap-2">
             {visible.map((asset) => (
               <AssetCard
                 key={asset.id}
@@ -151,16 +152,16 @@ export const MediaPanel = () => {
                 onRemove={() => removeAsset(asset.id)}
               />
             ))}
-          </ul>
+          </NView>
         )}
 
         {dragging && (
-          <div className="pointer-events-none absolute inset-2 flex items-center justify-center rounded-lg border-2 border-dashed border-accent bg-accent/10">
-            <p className="text-xs font-medium text-accent">Drop to import</p>
-          </div>
+          <NView tag="div" className="pointer-events-none absolute inset-2 flex items-center justify-center rounded-lg border-2 border-dashed border-accent bg-accent/10">
+            <NText tag="p" className="text-xs font-medium text-accent">Drop to import</NText>
+          </NView>
         )}
-      </div>
-    </div>
+      </NView>
+    </NView>
   );
 };
 
@@ -176,8 +177,8 @@ const AssetCard = ({
   const Icon = KIND_ICON[asset.kind];
 
   return (
-    <li>
-      <div
+    <NView tag="li">
+      <NView tag="div"
         role="button"
         tabIndex={0}
         draggable
@@ -192,27 +193,27 @@ const AssetCard = ({
         }}
         title={asset.name}
         data-clarity-mask="true"
-        className="group relative cursor-grab overflow-hidden rounded-lg border border-border bg-surface-secondary transition-all hover:border-accent hover:elevate active:cursor-grabbing"
+        className="group relative cursor-grab overflow-hidden rounded-lg border border-border bg-surface-secondary transition-all hover:border-accent hover:[box-shadow:var(--elevation)] active:cursor-grabbing"
       >
-        <div className="checkerboard relative aspect-video w-full overflow-hidden bg-surface-tertiary">
+        <NView tag="div" className="checkerboard [background-image:linear-gradient(45deg,_hsl(0_0%_50%_/_0.18)_25%,_transparent_25%),_linear-gradient(-45deg,_hsl(0_0%_50%_/_0.18)_25%,_transparent_25%),_linear-gradient(45deg,_transparent_75%,_hsl(0_0%_50%_/_0.18)_75%),_linear-gradient(-45deg,_transparent_75%,_hsl(0_0%_50%_/_0.18)_75%)] [background-size:16px_16px] [background-position:0_0,_0_8px,_8px_-8px,_-8px_0] relative aspect-video w-full overflow-hidden bg-surface-tertiary">
           {asset.thumbnail ? (
-            <img
+            <NImage
               src={asset.thumbnail}
               alt=""
               loading="lazy"
               className="h-full w-full object-cover"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center">
+            <NView tag="div" className="flex h-full w-full items-center justify-center">
               <Icon className="h-5 w-5 text-muted" />
-            </div>
+            </NView>
           )}
 
-          <span className="absolute bottom-1 right-1 rounded bg-black/70 px-1 py-0.5 font-mono text-[9px] text-white">
+          <NText tag="span" className="absolute bottom-1 right-1 rounded bg-black/70 px-1 py-0.5 font-mono text-[9px] text-white">
             {formatDuration(asset.durationUs)}
-          </span>
+          </NText>
 
-          <div className="absolute inset-0 flex items-center justify-center gap-1 bg-black/55 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+          <NView tag="div" className="absolute inset-0 flex items-center justify-center gap-1 bg-black/55 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
             <NButton
               onClick={onAdd}
               aria-label={`Add ${asset.name} to timeline`}
@@ -228,17 +229,17 @@ const AssetCard = ({
             >
               <Trash2 className="h-4 w-4" />
             </NButton>
-          </div>
-        </div>
+          </NView>
+        </NView>
 
-        <div className="px-1.5 py-1">
-          <p className="truncate text-[11px] font-medium text-foreground">{asset.name}</p>
-          <p className="truncate text-[10px] text-muted">
+        <NView tag="div" className="px-1.5 py-1">
+          <NText tag="p" className="truncate text-[11px] font-medium text-foreground">{asset.name}</NText>
+          <NText tag="p" className="truncate text-[10px] text-muted">
             {asset.kind === "audio" ? "Audio" : `${asset.width}×${asset.height}`} ·{" "}
             {formatBytes(asset.size)}
-          </p>
-        </div>
-      </div>
-    </li>
+          </NText>
+        </NView>
+      </NView>
+    </NView>
   );
 };

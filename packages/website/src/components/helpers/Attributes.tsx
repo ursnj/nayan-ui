@@ -1,11 +1,11 @@
 "use client";
 
-import { NTable } from "@nayan-ui/react";
+import { NText, NView } from 'nayan-ui/components';
 import SubHeader from "./SubHeader";
 
 interface Props {
   title?: string;
-  data: any[];
+  data: Array<Partial<Record<"name" | "type" | "default" | "details", React.ReactNode>>>;
   /** Column titles for tables that aren't props, e.g. methods ({ type: "Returns" }). */
   headers?: { name?: string; type?: string; default?: string };
   /** What a row is, for the count badge. Default "prop". */
@@ -29,17 +29,20 @@ const Attributes = (props: Props) => {
       title={title}
       action={
         count ? (
-          <span className="text-xs text-muted">
+          <NText tag="span" className="text-xs text-muted">
             {count === 1 ? `1 ${unit}` : `${count} ${unit}s`}
-          </span>
+          </NText>
         ) : null
       }
     >
-      <div className="overflow-hidden rounded-xl border border-default bg-surface">
-        <div className="overflow-x-auto">
-          <NTable columns={columns} data={data} />
-        </div>
-      </div>
+      <NView tag="div" className="overflow-hidden rounded-xl border border-default bg-surface">
+        <NView tag="div" className="overflow-x-auto">
+          <NView tag="table" className="w-full text-left text-sm">
+            <NView tag="thead" className="bg-surface-secondary"><NView tag="tr">{columns.map((column) => <NView tag="th" scope="col" key={column.name} className={`${column.className} p-3`}>{column.title}</NView>)}</NView></NView>
+            <NView tag="tbody">{data.map((row, index) => <NView tag="tr" key={index} className="border-t border-default">{columns.map((column) => <NView tag="td" key={column.name} className="p-3 align-top">{row[column.name as keyof typeof row]}</NView>)}</NView>)}</NView>
+          </NView>
+        </NView>
+      </NView>
     </SubHeader>
   );
 };

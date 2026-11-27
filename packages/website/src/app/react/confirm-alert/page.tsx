@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import ConfirmAlert from "@/components/react/components/ConfirmAlert";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/confirm-alert", "react");
@@ -9,7 +9,7 @@ export default function ConfirmAlertPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <ConfirmAlert />
+      <NayanComponentDoc path="/react/confirm-alert" />
     </>
   );
 }

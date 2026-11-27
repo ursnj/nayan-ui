@@ -1,5 +1,7 @@
+import { EDITOR_PANEL } from '@/design/system';
+import { NView, NText } from 'nayan-ui/components';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { NButton, NSlider, NTooltip } from "@nayan-ui/react";
+import { NButton, NSlider, NTooltip } from "@/components/ui";
 import {
   Camera,
   ChevronLeft,
@@ -16,7 +18,7 @@ import {
   Square,
   Volume2,
   VolumeX,
-} from "lucide-react";
+} from "@/design/Icons";
 import { player, seekTo, stepFrames, togglePlayback } from "../../engine/playerInstance";
 import { clamp, download, formatTimecode } from "../../lib/utils";
 import { primarySelectedClip, timelineDurationUs, useEditor } from "../../store/editor";
@@ -101,8 +103,8 @@ export const PreviewPanel = () => {
     showOverlay && selected !== null && selected.kind !== "audio" && displaySize.width > 0;
 
   return (
-    <section className="island @container flex min-h-0 min-w-0 flex-1 flex-col">
-      <div className="flex items-center gap-1 border-b border-border bg-editor-panel px-2 py-1">
+    <NView tag="section" className={`${EDITOR_PANEL} @container flex min-h-0 min-w-0 flex-1 flex-col`}>
+      <NView tag="div" className="flex items-center gap-1 border-b border-border bg-editor-panel px-2 py-1">
         <IconButton
           label="Transform handles"
           onClick={() => setShowOverlay((value) => !value)}
@@ -121,27 +123,27 @@ export const PreviewPanel = () => {
           <Grid3x3 className="h-4 w-4" />
         </IconButton>
 
-        <span className="mx-1 h-4 w-px bg-separator" />
+        <NText tag="span" className="mx-1 h-4 w-px bg-separator" />
 
         <IconButton label="Save current frame as PNG" onClick={snapshot}>
           <Camera className="h-4 w-4" />
         </IconButton>
 
-        <span className="ml-auto hidden whitespace-nowrap font-mono text-[10px] tabular-nums text-muted @[420px]:inline">
+        <NText tag="span" className="ml-auto hidden whitespace-nowrap font-mono text-[10px] tabular-nums text-muted @[420px]:inline">
           {project.width} × {project.height} · {project.fps}fps
-        </span>
-      </div>
+        </NText>
+      </NView>
 
-      <div
+      <NView tag="div"
         ref={stageRef}
         className="flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-editor-canvas"
       >
-        <div
+        <NView tag="div"
           ref={frameRef}
-          className="checkerboard relative max-h-full max-w-full overflow-hidden"
+          className="checkerboard [background-image:linear-gradient(45deg,_hsl(0_0%_50%_/_0.18)_25%,_transparent_25%),_linear-gradient(-45deg,_hsl(0_0%_50%_/_0.18)_25%,_transparent_25%),_linear-gradient(45deg,_transparent_75%,_hsl(0_0%_50%_/_0.18)_75%),_linear-gradient(-45deg,_transparent_75%,_hsl(0_0%_50%_/_0.18)_75%)] [background-size:16px_16px] [background-position:0_0,_0_8px,_8px_-8px,_-8px_0] relative max-h-full max-w-full overflow-hidden"
           style={{ aspectRatio: `${project.width} / ${project.height}` }}
         >
-          <canvas
+          <NView tag="canvas"
             ref={canvasRef}
             width={project.width}
             height={project.height}
@@ -150,19 +152,19 @@ export const PreviewPanel = () => {
           />
 
           {showSafeZones && (
-            <div className="pointer-events-none absolute inset-0">
-              <div className="absolute inset-[5%] border border-white/40" />
-              <div className="absolute inset-[10%] border border-dashed border-white/30" />
-            </div>
+            <NView tag="div" className="pointer-events-none absolute inset-0">
+              <NView tag="div" className="absolute inset-[5%] border border-white/40" />
+              <NView tag="div" className="absolute inset-[10%] border border-dashed border-white/30" />
+            </NView>
           )}
 
           {showGrid && (
-            <div className="pointer-events-none absolute inset-0">
-              <div className="absolute inset-y-0 left-1/3 w-px bg-white/20" />
-              <div className="absolute inset-y-0 left-2/3 w-px bg-white/20" />
-              <div className="absolute inset-x-0 top-1/3 h-px bg-white/20" />
-              <div className="absolute inset-x-0 top-2/3 h-px bg-white/20" />
-            </div>
+            <NView tag="div" className="pointer-events-none absolute inset-0">
+              <NView tag="div" className="absolute inset-y-0 left-1/3 w-px bg-white/20" />
+              <NView tag="div" className="absolute inset-y-0 left-2/3 w-px bg-white/20" />
+              <NView tag="div" className="absolute inset-x-0 top-1/3 h-px bg-white/20" />
+              <NView tag="div" className="absolute inset-x-0 top-2/3 h-px bg-white/20" />
+            </NView>
           )}
 
           {overlayVisible && (
@@ -175,21 +177,21 @@ export const PreviewPanel = () => {
           )}
 
           {durationUs === 0 && (
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40">
-              <p className="px-4 text-center text-sm text-white/60">
+            <NView tag="div" className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40">
+              <NText tag="p" className="px-4 text-center text-sm text-white/60">
                 Add media to the timeline to start editing
-              </p>
-            </div>
+              </NText>
+            </NView>
           )}
-        </div>
-      </div>
+        </NView>
+      </NView>
 
-      <div className="flex items-center gap-1 border-t border-border bg-editor-panel px-3 py-1.5">
-        <span className="hidden @[470px]:contents">
+      <NView tag="div" className="flex items-center gap-1 border-t border-border bg-editor-panel px-3 py-1.5">
+        <NText tag="span" className="hidden @[470px]:contents">
           <IconButton label="Jump to start (Home)" onClick={() => seekTo(0)}>
             <SkipBack className="h-4 w-4" />
           </IconButton>
-        </span>
+        </NText>
         <IconButton label="Previous frame (←)" onClick={() => stepFrames(-1)}>
           <ChevronLeft className="h-4 w-4" />
         </IconButton>
@@ -208,12 +210,12 @@ export const PreviewPanel = () => {
         <IconButton label="Next frame (→)" onClick={() => stepFrames(1)}>
           <ChevronRight className="h-4 w-4" />
         </IconButton>
-        <span className="hidden @[470px]:contents">
+        <NText tag="span" className="hidden @[470px]:contents">
           <IconButton label="Jump to end (End)" onClick={() => seekTo(durationUs)}>
             <SkipForward className="h-4 w-4" />
           </IconButton>
-        </span>
-        <span className="hidden @[400px]:contents">
+        </NText>
+        <NText tag="span" className="hidden @[400px]:contents">
           <IconButton
             label="Loop playback"
             onClick={() => setLoop((value) => !value)}
@@ -221,11 +223,11 @@ export const PreviewPanel = () => {
           >
             <Repeat className="h-4 w-4" />
           </IconButton>
-        </span>
+        </NText>
 
         <TimeReadout durationUs={durationUs} fps={project.fps} />
 
-        <div className="ml-auto flex min-w-0 items-center gap-2">
+        <NView tag="div" className="ml-auto flex min-w-0 items-center gap-2">
           <NSlider
             value={volume}
             min={0}
@@ -253,9 +255,9 @@ export const PreviewPanel = () => {
           >
             {fullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
           </IconButton>
-        </div>
-      </div>
-    </section>
+        </NView>
+      </NView>
+    </NView>
   );
 };
 
@@ -273,7 +275,7 @@ const TimeReadout = ({ durationUs, fps }: { durationUs: number; fps: number }) =
 
   if (draft !== null) {
     return (
-      <input
+      <NView<'input'> tag="input"
         value={draft}
         autoFocus
         onFocus={(event) => event.target.select()}
@@ -296,16 +298,16 @@ const TimeReadout = ({ durationUs, fps }: { durationUs: number; fps: number }) =
   }
 
   return (
-    <button
+    <NView tag="button"
       type="button"
       onClick={() => setDraft(formatTimecode(playheadUs, true, fps))}
       title="Click to jump to a time — mm:ss:ff, mm:ss, or plain seconds"
       className="ml-3 shrink-0 whitespace-nowrap rounded px-1 font-mono text-xs tabular-nums text-muted transition-colors hover:bg-default"
     >
-      <span className="text-foreground">{formatTimecode(playheadUs, true, fps)}</span>
-      <span className="mx-1 hidden opacity-50 @[560px]:inline">/</span>
-      <span className="hidden @[560px]:inline">{formatTimecode(durationUs, true, fps)}</span>
-    </button>
+      <NText tag="span" className="text-foreground">{formatTimecode(playheadUs, true, fps)}</NText>
+      <NText tag="span" className="mx-1 hidden opacity-50 @[560px]:inline">/</NText>
+      <NText tag="span" className="hidden @[560px]:inline">{formatTimecode(durationUs, true, fps)}</NText>
+    </NView>
   );
 };
 

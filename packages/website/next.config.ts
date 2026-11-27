@@ -1,62 +1,36 @@
-import type { NextConfig } from "next";
+import path from 'node:path';
+import type { NextConfig } from 'next';
+import { pageRewrites } from './src/services/site-routes';
 
 const nextConfig: NextConfig = {
   // No in-memory copy of rendered pages: the server reads its prerendered pages from disk, which
   // the OS caches anyway. Browsing every page took the server to 344 MB with the default 50 MB
   // cache and 231 MB without it, with no slower pages, which matters in a 512 MB container.
   cacheMaxMemorySize: 0,
-  transpilePackages: ["@nayan-ui/react", "@nayan-ui/tools"],
   images: {
-    unoptimized: true,
+    unoptimized: true
   },
+  outputFileTracingRoot: path.resolve(__dirname, '../..'),
   turbopack: {
-    resolveAlias: {
-      // The games bundle imports its engine peer; resolve it from this website so the
-      // games and the page share one engine instance (one WASM core, one audio context).
-      // The engine locates engine_core_bg.wasm and audio-worklet.js, and the games their
-      // sounds/textures/models, with `new URL(..., import.meta.url)`, which Turbopack
-      // emits as static assets — no extra copying or public/ files are needed.
-      // Point at the browser build itself: aliasing the package folder makes Turbopack follow its
-      // "main" field (the React Native build, which imports react-native and expo-modules-core).
-      "@nayan-ui/engine": "./node_modules/@nayan-ui/engine/lib/web/index.js",
-    },
+    root: path.resolve(__dirname, '../..')
   },
-  output: "standalone",
-  // The engine docs moved from /engine to /game-engine; keep old links (npm README, search results) working.
-  async redirects() {
+  output: 'standalone',
+  skipTrailingSlashRedirect: true,
+  async rewrites() {
     return [
-      { source: "/examples", destination: "/game-engine/examples", permanent: true },
-      { source: "/examples/:path+", destination: "/game-engine/examples/:path+", permanent: true },
-      { source: "/engine", destination: "/game-engine", permanent: true },
-      { source: "/engine/:slug", destination: "/game-engine/:slug", permanent: true },
-      // Play With Tua was renamed Talking Tua.
-      { source: "/games/play-with-tua", destination: "/games/talking-tua", permanent: true },
+      { source: '/game-engine/playground/:path+', destination: '/playground/:path*' },
+      ...pageRewrites,
+      { source: '/engine-ui/:path*', destination: '/ui/:path*' },
+      { source: '/nayan-ui/:path*', destination: '/ui/:path*' },
+      { source: '/engine.json', destination: '/nayan-game-engine.json' },
+      { source: '/seo/game-engine/playground.png', destination: '/seo/nayan-playground.png' },
+      { source: '/seo/artwork/pages/game-engine/playground.jpg', destination: '/seo/artwork/pages/nayan-playground.jpg' },
+      { source: '/seo/artwork/games.jpg', destination: '/seo/artwork/nayan-games.jpg' },
+      { source: '/seo/:product(game-engine|games|video-editor).png', destination: '/seo/nayan-:product.png' },
+      { source: '/seo/nayan-:product(game-engine|games)/:path*', destination: '/seo/:product/:path*' },
+      { source: '/seo/artwork/pages/nayan-:product(game-engine|games|video-editor)/:path*', destination: '/seo/artwork/pages/:product/:path*' }
     ];
-  },
-  serverExternalPackages: [
-    "docx",
-    "exceljs",
-    "pptxgenjs",
-    "jszip",
-    "sharp",
-    "pdf-lib",
-    "pdf-lib-encrypt",
-    "pdfjs-dist",
-    "@napi-rs/canvas",
-  ],
-  // pdfjs-dist loads its worker script (pdf.worker.mjs) and standard font
-  // data dynamically at runtime, not via a statically-visible import/require
-  // — Next's standalone-output file tracer only follows static references,
-  // so without this, those files are silently missing from
-  // `.next/standalone/node_modules/...` in production (confirmed by an
-  // actual standalone-server run: "Cannot find module
-  // '.../pdf.worker.mjs'"), even though the build itself succeeds.
-  outputFileTracingIncludes: {
-    "/api/pdf-tools/**/*": [
-      "../../node_modules/pdfjs-dist/**/*",
-      "../../node_modules/.bun/pdfjs-dist@*/node_modules/pdfjs-dist/**/*",
-    ],
-  },
+  }
 };
 
 export default nextConfig;

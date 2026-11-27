@@ -1,22 +1,12 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-import Sidebar from "@/components/helpers/Sidebar";
-import SubHeader from "@/components/helpers/SubHeader";
-import TagsList from "@/components/helpers/TagsList";
-import { qrCodeGeneratorTags } from "@/services/Tags";
-import { getMenuItem } from "@/services/Utils";
-import { QrCodeGenerator } from "@/components/tools";
-import { QrCodeGeneratorContent } from "./DevToolsContent";
+import Sidebar from '@/components/helpers/Sidebar';
+import SubHeader from '@/components/helpers/SubHeader';
+import TagsList from '@/components/helpers/TagsList';
+import { qrCodeGeneratorTags } from '@/services/Tags';
+import { QrCodeGeneratorContent } from './DevToolsContent';
 
 const QrCodeGeneratorPage = () => {
-  const pathname = usePathname();
-  const component: any = getMenuItem(pathname);
-
   return (
-    <Sidebar title={component?.title || "QR Code Generator"}>
-      <QrCodeGenerator />
-
+    <Sidebar title="QR Code Generator">
       <QrCodeGeneratorContent />
 
       <SubHeader title="Tags">

@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNCheckbox from "@/components/react-native/components/Checkbox";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNCheckboxPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNCheckbox />
+      <NayanComponentDoc path="/react-native/checkbox" />
     </>
   );
 }

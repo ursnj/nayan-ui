@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNButtonGroup from "@/components/react-native/components/ButtonGroup";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNButtonGroupPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNButtonGroup />
+      <NayanComponentDoc path="/react-native/button-group" />
     </>
   );
 }

@@ -1,4 +1,5 @@
-import { ArrowRight, Award, Check, Lightbulb } from "lucide-react";
+import { NImage, NText, NView } from 'nayan-ui/components';
+import { ArrowRight, Award, Check, Lightbulb } from "@/design/Icons";
 import Link from "next/link";
 import { ACCENT_SOFT, ACCENT_TEXT, BODY, CARD, H2_DOC, PILL, WELL } from "@/design/system";
 import { gamesData } from "@/services/GamesData";
@@ -13,12 +14,12 @@ interface Props {
  */
 const GameDetail = ({ slug }: Props) => {
   const game = gamesData[slug];
-  if (!game) return <p className="text-muted">The requested game could not be found.</p>;
+  if (!game) return <NText tag="p" className="text-muted">The requested game could not be found.</NText>;
 
   return (
-    <article className="pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-      <div className="flex items-start gap-4">
-        <img
+    <NView tag="article" className="pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+      <NView tag="div" className="flex items-start gap-4">
+        <NImage
           src={`/games/${game.id}.png`}
           alt={`${game.name} - ${game.category} Game`}
           width={80}
@@ -26,91 +27,91 @@ const GameDetail = ({ slug }: Props) => {
           loading="lazy"
           className="size-20 shrink-0 rounded-2xl border border-default object-cover shadow-md"
         />
-        <div className="min-w-0">
-          <div className="mb-2 flex flex-wrap gap-1.5">
-            <span
+        <NView tag="div" className="min-w-0">
+          <NView tag="div" className="mb-2 flex flex-wrap gap-1.5">
+            <NText tag="span"
               className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${ACCENT_SOFT}`}
             >
               {game.category}
-            </span>
-            <span className={PILL}>{game.difficulty}</span>
-            <span className={PILL}>{game.ageRating}</span>
-          </div>
-          <p className={BODY}>{game.description}</p>
-        </div>
-      </div>
+            </NText>
+            <NText tag="span" className={PILL}>{game.difficulty}</NText>
+            <NText tag="span" className={PILL}>{game.ageRating}</NText>
+          </NView>
+          <NText tag="p" className={BODY}>{game.description}</NText>
+        </NView>
+      </NView>
 
-      <section>
-        <h3 className={H2_DOC}>About {game.name}</h3>
-        <p className={BODY}>{game.longDescription}</p>
-      </section>
+      <NView tag="section">
+        <NText tag="h3" className={H2_DOC}>About {game.name}</NText>
+        <NText tag="p" className={BODY}>{game.longDescription}</NText>
+      </NView>
 
-      <section>
-        <h3 className={H2_DOC}>How to play</h3>
-        <ol className={`${CARD} space-y-3 p-4`}>
+      <NView tag="section">
+        <NText tag="h3" className={H2_DOC}>How to play</NText>
+        <NView tag="ol" className={`${CARD} space-y-3 p-4`}>
           {game.howToPlay.map((step, index) => (
-            <li key={index} className="flex gap-3">
-              <span
+            <NView tag="li" key={index} className="flex gap-3">
+              <NText tag="span"
                 className={`flex size-6 shrink-0 items-center justify-center rounded-full border text-xs font-bold ${ACCENT_SOFT}`}
               >
                 {index + 1}
-              </span>
-              <span className={`pt-0.5 ${BODY}`}>{step}</span>
-            </li>
+              </NText>
+              <NText tag="span" className={`pt-0.5 ${BODY}`}>{step}</NText>
+            </NView>
           ))}
-        </ol>
-      </section>
+        </NView>
+      </NView>
 
-      <section>
-        <h3 className={H2_DOC}>Tips & strategies</h3>
-        <ul className="space-y-2">
+      <NView tag="section">
+        <NText tag="h3" className={H2_DOC}>Tips & strategies</NText>
+        <NView tag="ul" className="space-y-2">
           {game.tips.map((tip, index) => (
-            <li key={index} className={`${WELL} flex items-start gap-3 p-3`}>
+            <NView tag="li" key={index} className={`${WELL} flex items-start gap-3 p-3`}>
               <Lightbulb aria-hidden className="mt-0.5 size-4 shrink-0 text-amber-500" />
-              <span className={BODY}>{tip}</span>
-            </li>
+              <NText tag="span" className={BODY}>{tip}</NText>
+            </NView>
           ))}
-        </ul>
-      </section>
+        </NView>
+      </NView>
 
-      <section>
-        <h3 className={H2_DOC}>Features</h3>
-        <ul className="space-y-2">
+      <NView tag="section">
+        <NText tag="h3" className={H2_DOC}>Features</NText>
+        <NView tag="ul" className="space-y-2">
           {game.features.map((feature, index) => (
-            <li key={index} className="flex items-start gap-3">
+            <NView tag="li" key={index} className="flex items-start gap-3">
               <Check aria-hidden className="mt-0.5 size-4 shrink-0 text-emerald-500" />
-              <span className={BODY}>{feature}</span>
-            </li>
+              <NText tag="span" className={BODY}>{feature}</NText>
+            </NView>
           ))}
-        </ul>
-      </section>
+        </NView>
+      </NView>
 
       {game.benefits.length > 0 && (
-        <section>
-          <h3 className={H2_DOC}>Why play {game.name}?</h3>
-          <ul className="space-y-2">
+        <NView tag="section">
+          <NText tag="h3" className={H2_DOC}>Why play {game.name}?</NText>
+          <NView tag="ul" className="space-y-2">
             {game.benefits.map((benefit, index) => (
-              <li key={index} className="flex items-start gap-3">
+              <NView tag="li" key={index} className="flex items-start gap-3">
                 <Award aria-hidden className={`mt-0.5 size-4 shrink-0 ${ACCENT_TEXT}`} />
-                <span className={BODY}>{benefit}</span>
-              </li>
+                <NText tag="span" className={BODY}>{benefit}</NText>
+              </NView>
             ))}
-          </ul>
-        </section>
+          </NView>
+        </NView>
       )}
 
-      <div className="mt-6 flex flex-wrap gap-1.5">
+      <NView tag="div" className="mt-6 flex flex-wrap gap-1.5">
         {game.tags.map((tag) => (
-          <span key={tag} className={PILL}>
+          <NText tag="span" key={tag} className={PILL}>
             #{tag}
-          </span>
+          </NText>
         ))}
-      </div>
+      </NView>
 
       {game.relatedGames.length > 0 && (
-        <section>
-          <h3 className={H2_DOC}>You might also like</h3>
-          <div className="grid grid-cols-2 gap-3">
+        <NView tag="section">
+          <NText tag="h3" className={H2_DOC}>You might also like</NText>
+          <NView tag="div" className="grid grid-cols-2 gap-3">
             {game.relatedGames.slice(0, 4).map((relatedId) => {
               const related = gamesData[relatedId];
               if (!related) return null;
@@ -120,7 +121,7 @@ const GameDetail = ({ slug }: Props) => {
                   href={`/games/${relatedId}`}
                   className={`${CARD} group flex items-center gap-2.5 p-2 transition-colors hover:border-indigo-500/40`}
                 >
-                  <img
+                  <NImage
                     src={`/games/${relatedId}.png`}
                     alt=""
                     width={40}
@@ -128,34 +129,34 @@ const GameDetail = ({ slug }: Props) => {
                     loading="lazy"
                     className="size-10 shrink-0 rounded-lg object-cover"
                   />
-                  <span className="min-w-0">
-                    <span className="block truncate text-sm font-semibold text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                  <NText tag="span" className="min-w-0">
+                    <NText tag="span" className="block truncate text-sm font-semibold text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
                       {related.name}
-                    </span>
-                    <span className="block text-xs text-muted">{related.category}</span>
-                  </span>
+                    </NText>
+                    <NText tag="span" className="block text-xs text-muted">{related.category}</NText>
+                  </NText>
                 </Link>
               );
             })}
-          </div>
-        </section>
+          </NView>
+        </NView>
       )}
 
       <Link
         href="/games/installation"
         className={`${CARD} group mt-8 flex items-center justify-between gap-3 p-4 transition-colors hover:border-indigo-500/40`}
       >
-        <span>
-          <span className="block text-sm font-semibold text-foreground">
+        <NText tag="span">
+          <NText tag="span" className="block text-sm font-semibold text-foreground">
             Add {game.name} to your app
-          </span>
-          <span className="block text-xs text-muted">
-            Install @nayan-ui/games for React and React Native
-          </span>
-        </span>
+          </NText>
+          <NText tag="span" className="block text-xs text-muted">
+            Install nayan-games for React and React Native
+          </NText>
+        </NText>
         <ArrowRight aria-hidden className={`size-4 shrink-0 ${ACCENT_TEXT}`} />
       </Link>
-    </article>
+    </NView>
   );
 };
 

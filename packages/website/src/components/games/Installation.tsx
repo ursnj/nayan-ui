@@ -1,6 +1,7 @@
 "use client";
 
-import { NLink } from "@nayan-ui/react";
+import { NText, NView } from 'nayan-ui/components';
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CheckList } from "@/design/Primitives";
 import { H2_DOC, H3_DOC, KBD } from "@/design/system";
@@ -20,6 +21,8 @@ import {
   pauseCode,
   peerDepsCode,
   simpleUsageCode,
+  starterCliCode,
+  starterCliNote,
   themeCode,
   warmUpCode,
   webDirectImportCode,
@@ -59,42 +62,37 @@ const GamesInstallation = () => {
 
   return (
     <Sidebar title={component?.title || "Installation"}>
-      <p className={P}>
-        @nayan-ui/games 1.20.0+ renders 53 games with{" "}
-        <NLink href="/game-engine" className={LINK}>
-          @nayan-ui/engine
-        </NLink>{" "}
+      <NText tag="p" className={P}>
+        nayan-games 1.20.0+ renders 53 games with{" "}
+        <Link href="/game-engine" className={LINK}>
+          nayan-ui
+        </Link>{" "}
         1.0.0-beta.2+ on iOS, Android and the web (1.19.0 and earlier are the Skia build).
-      </p>
+      </NText>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>Create a project with the CLI</h2>
-        <p className={P}>
-          The{" "}
-          <NLink href="/tools" className={LINK}>
-            Nayan UI CLI
-          </NLink>{" "}
-          creates a games project in one command: a Bun workspace with an Expo app for iOS and
-          Android, a Vite app for the browser, and a Car Racing game in <code>shared/</code> that
-          both run unchanged. The engine, Metro and Vite are already set up, so add your own games
-          next to Car Racing, or install @nayan-ui/games below to bring in the ready-made ones.
-        </p>
-        <Code language="bash" code={createProjectCode} />
-        <p className={P}>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>Start with the Nayan UI starter</NText>
+        <NText tag="p" className={P}>
+          The Nayan UI starter includes an Expo app for iOS and Android, a Vite app for the browser, and a shared landing page and theme. Run either app from the same Bun workspace, then install nayan-games to add the game library.
+        </NText>
+        <Code language="bash" code={`${starterCliCode}\nbun run web`} filename="Starter CLI" />
+        <NText tag="p" className={P}>{starterCliNote}</NText>
+        <Code language="bash" code={createProjectCode} filename="Repository template" />
+        <NText tag="p" className={P}>
           Needs{" "}
-          <a href="https://bun.sh" target="_blank" rel="noopener noreferrer" className={LINK}>
+          <NView tag="a" href="https://bun.sh" target="_blank" rel="noopener noreferrer" className={LINK}>
             Bun
-          </a>
+          </NView>
           . The mobile app runs in a development build, not Expo Go; see{" "}
-          <NLink href="/games/build-a-game" className={LINK}>
+          <Link href="/games/build-a-game" className={LINK}>
             build a game
-          </NLink>{" "}
+          </Link>{" "}
           for how a game is put together.
-        </p>
-      </div>
+        </NText>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>Requirements</h2>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>Requirements</NText>
         <CheckList
           items={[
             "React Native: a development build with the New Architecture (not Expo Go), Android minSdkVersion 26, arm64 iOS devices or Apple silicon simulators.",
@@ -103,148 +101,148 @@ const GamesInstallation = () => {
           ]}
         />
         <Code language="json" code={peerDepsCode} filename="package.json" />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>React Native (Expo)</h2>
-        <h3 className={H3_DOC}>Install</h3>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>React Native (Expo)</NText>
+        <NText tag="h3" className={H3_DOC}>Install</NText>
         <Code language="bash" code={installNativeCode} />
-        <h3 className={H3_DOC}>app.json</h3>
-        <p className={P}>Haptics need VIBRATE; the engine needs Android API 26.</p>
+        <NText tag="h3" className={H3_DOC}>app.json</NText>
+        <NText tag="p" className={P}>Haptics need VIBRATE; the engine needs Android API 26.</NText>
         <Code language="json" code={appJsonCode} filename="app.json" />
-        <h3 className={H3_DOC}>Metro</h3>
+        <NText tag="h3" className={H3_DOC}>Metro</NText>
         <Code language="js" code={metroConfigCode} filename="metro.config.js" />
-        <h3 className={H3_DOC}>Development build</h3>
-        <p className={P}>
+        <NText tag="h3" className={H3_DOC}>Development build</NText>
+        <NText tag="p" className={P}>
           Rebuild after upgrading the engine. For bare apps, see the{" "}
-          <NLink href="/game-engine/installation" className={LINK}>
+          <Link href="/game-engine/installation" className={LINK}>
             engine installation guide
-          </NLink>
+          </Link>
           .
-        </p>
+        </NText>
         <Code language="bash" code={devBuildCode} />
-        <h3 className={H3_DOC}>Render one game</h3>
-        <p className={P}>
+        <NText tag="h3" className={H3_DOC}>Render one game</NText>
+        <NText tag="p" className={P}>
           Each game is a component taking GameProps; pass onSettingsChange so its settings modal can
           close and save.
-        </p>
+        </NText>
         <Code code={simpleUsageCode} filename="BlockBlastScreen.tsx" />
-        <h3 className={H3_DOC}>One screen for every game</h3>
-        <p className={P}>
+        <NText tag="h3" className={H3_DOC}>One screen for every game</NText>
+        <NText tag="p" className={P}>
           loadGameComponent loads only the selected game&apos;s module, behind its loading screen.
-        </p>
+        </NText>
         <Code code={nativeScreenCode} filename="app/games/[id].tsx" />
-        <h3 className={H3_DOC}>Catalog</h3>
-        <p className={P}>Metadata from @nayan-ui/games/services loads no game modules.</p>
+        <NText tag="h3" className={H3_DOC}>Catalog</NText>
+        <NText tag="p" className={P}>Metadata from nayan-games/services loads no game modules.</NText>
         <Code code={catalogCode} filename="GameCatalog.tsx" />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>React in the browser (Next.js, Vite)</h2>
-        <h3 className={H3_DOC}>Install</h3>
-        <p className={P}>
-          Bundlers pick the browser build (<code>lib/web</code>) automatically. Serve the
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>React in the browser (Next.js, Vite)</NText>
+        <NText tag="h3" className={H3_DOC}>Install</NText>
+        <NText tag="p" className={P}>
+          Bundlers pick the browser build (<NText tag="code">lib/web</NText>) automatically. Serve the
           engine&apos;s WASM and audio worklet files with your build; Vite copies them.
-        </p>
+        </NText>
         <Code language="bash" code={installWebCode} />
-        <h3 className={H3_DOC}>Client-only player (Next.js)</h3>
+        <NText tag="h3" className={H3_DOC}>Client-only player (Next.js)</NText>
         <Code code={webNextPlayerCode} filename="components/GamePlayer.tsx" />
-        <h3 className={H3_DOC}>Session with keyboard controls</h3>
-        <p className={P}>
+        <NText tag="h3" className={H3_DOC}>Session with keyboard controls</NText>
+        <NText tag="p" className={P}>
           createKeyboardInput maps keys to the same gestures as touch, and Enter presses
           Start/Stop/Play Again. Audio starts after the first input.
-        </p>
+        </NText>
         <Code code={webSessionCode} filename="components/GameSession.tsx" />
-        <div className="overflow-x-auto mb-4">
-          <table className="w-full text-sm text-left">
-            <tbody className="text-muted">
+        <NView tag="div" className="overflow-x-auto mb-4">
+          <NView tag="table" className="w-full text-sm text-left">
+            <NView tag="tbody" className="text-muted">
               {KEYBOARD_ROWS.map(([mode, keys]) => (
-                <tr key={mode} className="border-b border-default align-top">
-                  <td className="py-2 pr-4">
-                    <span className={KBD}>{mode}</span>
-                  </td>
-                  <td className="py-2">{keys}</td>
-                </tr>
+                <NView tag="tr" key={mode} className="border-b border-default align-top">
+                  <NView tag="td" className="py-2 pr-4">
+                    <NText tag="span" className={KBD}>{mode}</NText>
+                  </NView>
+                  <NView tag="td" className="py-2">{keys}</NView>
+                </NView>
               ))}
-            </tbody>
-          </table>
-        </div>
-        <h3 className={H3_DOC}>Import one game directly</h3>
+            </NView>
+          </NView>
+        </NView>
+        <NText tag="h3" className={H3_DOC}>Import one game directly</NText>
         <Code code={webDirectImportCode} filename="SudokuPage.tsx" />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>Settings</h2>
-        <p className={P}>Start from DEFAULT_GAME_SETTINGS and override what you need.</p>
-        <div className="overflow-x-auto mb-4">
-          <table className="w-full text-sm text-left">
-            <tbody className="text-muted">
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>Settings</NText>
+        <NText tag="p" className={P}>Start from DEFAULT_GAME_SETTINGS and override what you need.</NText>
+        <NView tag="div" className="overflow-x-auto mb-4">
+          <NView tag="table" className="w-full text-sm text-left">
+            <NView tag="tbody" className="text-muted">
               {SETTINGS_ROWS.map(([field, effect]) => (
-                <tr key={field} className="border-b border-default align-top">
-                  <td className="py-2 pr-4 font-mono text-xs text-foreground">{field}</td>
-                  <td className="py-2">{effect}</td>
-                </tr>
+                <NView tag="tr" key={field} className="border-b border-default align-top">
+                  <NView tag="td" className="py-2 pr-4 font-mono text-xs text-foreground">{field}</NView>
+                  <NView tag="td" className="py-2">{effect}</NView>
+                </NView>
               ))}
-            </tbody>
-          </table>
-        </div>
-        <h3 className={H3_DOC}>Pause</h3>
-        <p className={P}>Games also pause in the background and resume the same run.</p>
+            </NView>
+          </NView>
+        </NView>
+        <NText tag="h3" className={H3_DOC}>Pause</NText>
+        <NText tag="p" className={P}>Games also pause in the background and resume the same run.</NText>
         <Code code={pauseCode} />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>Results</h2>
-        <p className={P}>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>Results</NText>
+        <NText tag="p" className={P}>
           onEndGame fires once per run. Play Again calls onReplayGame, and the next run reports
           again.
-        </p>
+        </NText>
         <Code code={endGameCode} />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>Theme</h2>
-        <p className={P}>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>Theme</NText>
+        <NText tag="p" className={P}>
           The modal&apos;s Dark Mode switch changes settings.theme through onSettingsChange; sync
           your app theme there.
-        </p>
+        </NText>
         <Code code={themeCode} />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>Assets</h2>
-        <h3 className={H3_DOC}>Warm up at app start</h3>
-        <p className={P}>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>Assets</NText>
+        <NText tag="h3" className={H3_DOC}>Warm up at app start</NText>
+        <NText tag="p" className={P}>
           Each game loads its own assets on its screen. Warm-up prepares the GPU and fonts once,
           after the splash, so the first game opens faster.
-        </p>
+        </NText>
         <Code code={warmUpCode} filename="app/_layout.tsx" />
-        <h3 className={H3_DOC}>Clear saved assets</h3>
-        <p className={P}>
+        <NText tag="h3" className={H3_DOC}>Clear saved assets</NText>
+        <NText tag="p" className={P}>
           Prepared geometry is saved on disk (IndexedDB on the web) and rebuilds after clearing. See{" "}
-          <NLink href="/game-engine/cache-performance" className={LINK}>
+          <Link href="/game-engine/cache-performance" className={LINK}>
             engine caching
-          </NLink>
+          </Link>
           .
-        </p>
+        </NText>
         <Code code={clearGameAssetsCode} />
-      </div>
+      </NView>
 
-      <p className={P}>
+      <NText tag="p" className={P}>
         Next:{" "}
-        <NLink href="/games/api-reference" className={LINK}>
+        <Link href="/games/api-reference" className={LINK}>
           API reference
-        </NLink>
+        </Link>
         ,{" "}
-        <NLink href="/games/build-a-game" className={LINK}>
+        <Link href="/games/build-a-game" className={LINK}>
           build an engine game
-        </NLink>
+        </Link>
         , or a game page such as{" "}
-        <NLink href="/games/treasure-hunt" className={LINK}>
+        <Link href="/games/treasure-hunt" className={LINK}>
           Treasure Hunt
-        </NLink>
+        </Link>
         .
-      </p>
+      </NText>
     </Sidebar>
   );
 };

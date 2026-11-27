@@ -1,6 +1,8 @@
+import { EDITOR_PANEL } from '@/design/system';
+import { NView, NText } from 'nayan-ui/components';
 import { useCallback, useRef, useState } from "react";
-import { NButton, NConfirmAlert, NDialog, NInput, showToast } from "@nayan-ui/react";
-import { DialogSize } from "@nayan-ui/react";
+import { NButton, NConfirmAlert, NDialog, NInput, showToast } from "@/components/ui";
+import { DialogSize } from "@/components/ui";
 import {
   Clapperboard,
   Download,
@@ -14,7 +16,7 @@ import {
   Settings,
   Sun,
   Undo2,
-} from "lucide-react";
+} from "@/design/Icons";
 import { BUNDLE_EXTENSION, BundleError, readBundle, writeBundle } from "../../lib/projectBundle";
 import { MOD_LABEL, useCommand } from "../../lib/shortcuts";
 import { download } from "../../lib/utils";
@@ -138,7 +140,7 @@ export const TopBar = ({
       showToast(
         error instanceof BundleError
           ? error.message
-          : "That file is not a Nayan UI Video Editor project.",
+          : "That file is not a Nayan Video Editor project.",
         "Could not open",
       );
     } finally {
@@ -147,17 +149,17 @@ export const TopBar = ({
   };
 
   return (
-    <header className="island flex shrink-0 items-center gap-2 px-3 py-2">
-      <a href="/" className="flex shrink-0 items-center gap-2">
+    <NView tag="header" className={`${EDITOR_PANEL} flex shrink-0 items-center gap-2 px-3 py-2`}>
+      <NView tag="a" href="/" className="flex shrink-0 items-center gap-2">
         <Clapperboard className="h-5 w-5 text-accent" />
-        <span className="hidden whitespace-nowrap text-sm font-semibold tracking-tight text-foreground xl:inline">
-          Nayan UI Video Editor
-        </span>
-      </a>
+        <NText tag="span" className="hidden whitespace-nowrap text-sm font-semibold tracking-tight text-foreground xl:inline">
+          Nayan Video Editor
+        </NText>
+      </NView>
 
-      <span className="mx-1 h-5 w-px shrink-0 bg-separator" />
+      <NText tag="span" className="mx-1 h-5 w-px shrink-0 bg-separator" />
 
-      <div data-clarity-mask="true" className="w-56 min-w-24 shrink">
+      <NView tag="div" data-clarity-mask="true" className="w-56 min-w-24 shrink">
         <NInput
           value={project.name}
           onChange={(event) => updateProject({ name: event.target.value })}
@@ -165,9 +167,9 @@ export const TopBar = ({
           inputClassName="h-8 text-sm"
           aria-label="Project name"
         />
-      </div>
+      </NView>
 
-      <div className="ml-2 flex shrink-0 items-center gap-0.5">
+      <NView tag="div" className="ml-2 flex shrink-0 items-center gap-0.5">
         <IconButton label="New project" onClick={startNewProject}>
           <FilePlus2 className="h-4 w-4" />
         </IconButton>
@@ -185,7 +187,7 @@ export const TopBar = ({
         >
           <FileDown className="h-4 w-4" />
         </IconButton>
-        <input
+        <NView<'input'> tag="input"
           ref={fileRef}
           type="file"
           accept={`.${BUNDLE_EXTENSION},application/zip`}
@@ -196,9 +198,9 @@ export const TopBar = ({
             event.target.value = "";
           }}
         />
-      </div>
+      </NView>
 
-      <div className="ml-auto flex shrink-0 items-center gap-1">
+      <NView tag="div" className="ml-auto flex shrink-0 items-center gap-1">
         <IconButton label={`Undo (${MOD_LABEL}Z)`} onClick={undo} disabled={!canUndo}>
           <Undo2 className="h-4 w-4" />
         </IconButton>
@@ -206,7 +208,7 @@ export const TopBar = ({
           <Redo2 className="h-4 w-4" />
         </IconButton>
 
-        <span className="mx-1 h-5 w-px bg-separator" />
+        <NText tag="span" className="mx-1 h-5 w-px bg-separator" />
 
         <NButton
           isOutline
@@ -215,9 +217,9 @@ export const TopBar = ({
           className="h-7 whitespace-nowrap px-2 text-[11px]"
         >
           <Settings className="h-3.5 w-3.5 xl:mr-1.5" />
-          <span className="hidden xl:inline">
+          <NText tag="span" className="hidden xl:inline">
             {project.width} × {project.height} · {project.fps}fps
-          </span>
+          </NText>
         </NButton>
 
         <IconButton label="Keyboard shortcuts (?)" onClick={onShowShortcuts}>
@@ -237,7 +239,7 @@ export const TopBar = ({
           <Download className="mr-1.5 h-4 w-4" />
           Export
         </NButton>
-      </div>
+      </NView>
 
       <NConfirmAlert
         isOpen={confirmNew}
@@ -257,7 +259,7 @@ export const TopBar = ({
         size={DialogSize.SM}
         onClose={() => setSettingsOpen(false)}
       >
-        <div className="space-y-1">
+        <NView tag="div" className="space-y-1">
           <SelectField
             label="Resolution"
             value={`${project.width}x${project.height}`}
@@ -287,7 +289,7 @@ export const TopBar = ({
             }
             onChange={(value) => updateProject({ fps: Number(value) })}
           />
-          <div className="grid grid-cols-2 gap-2">
+          <NView tag="div" className="grid grid-cols-2 gap-2">
             <NumberField
               label="Width"
               value={project.width}
@@ -304,26 +306,26 @@ export const TopBar = ({
               step={2}
               onChange={(height) => updateProject({ height })}
             />
-          </div>
-          <p className="pt-1 text-[11px] text-muted">
+          </NView>
+          <NText tag="p" className="pt-1 text-[11px] text-muted">
             Background is set in the Background panel, on the left.
-          </p>
+          </NText>
 
-          <div className="mt-3 border-t border-border pt-3">
-            <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted">
+          <NView tag="div" className="mt-3 border-t border-border pt-3">
+            <NText tag="p" className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted">
               Editor
-            </p>
-            <p className="mb-2 text-[11px] leading-relaxed text-muted">
+            </NText>
+            <NText tag="p" className="mb-2 text-[11px] leading-relaxed text-muted">
               Panel sizes and the light/dark choice are remembered in this browser, not in the
               project. Resetting them leaves your timeline and media untouched.
-            </p>
+            </NText>
             <NButton isOutline onClick={onResetPreferences} className="h-7 px-2 text-[11px]">
               <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
               Reset layout and theme
             </NButton>
-          </div>
-        </div>
+          </NView>
+        </NView>
       </NDialog>
-    </header>
+    </NView>
   );
 };

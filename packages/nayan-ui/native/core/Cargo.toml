@@ -1,0 +1,155 @@
+[package]
+name = "engine-core"
+version = "0.1.0"
+edition = "2024"
+description = "Simulation core for nayan-ui"
+license = "MIT"
+
+[lib]
+name = "engine_core"
+crate-type = ["staticlib", "rlib", "cdylib"]
+
+[features]
+default = [
+    "games", "components", "markdown", "drawing", "storage", "uuid", "image-picker", "document-picker",
+    "audio", "microphone", "haptics", "tts", "keep-awake", "review", "permissions", "sqlite", "video", "location", "auth", "contacts",
+]
+audio = ["dep:cpal", "dep:hound", "dep:rtrb", "dep:symphonia", "dep:objc2-avf-audio", "dep:ndk-context"]
+microphone = ["audio", "dep:block2"]
+haptics = ["dep:objc2-core-haptics", "dep:objc2-foundation", "dep:jni", "dep:ndk-context"]
+tts = ["dep:block2", "dep:dispatch2", "dep:objc2-foundation", "web-sys/SpeechSynthesis", "web-sys/SpeechSynthesisUtterance", "web-sys/SpeechSynthesisVoice", "dep:jni", "dep:ndk-context"]
+keep-awake = []
+review = []
+permissions = []
+auth = ["dep:base64", "dep:getrandom", "dep:sha2", "dep:subtle", "dep:url"]
+contacts = ["permissions", "dep:uuid"]
+location = ["permissions"]
+sqlite = ["dep:rusqlite", "dep:sha2", "dep:sqlite-wasm-rs", "dep:sqlite-wasm-vfs"]
+video = []
+components = ["dep:egui", "dep:egui-wgpu", "dep:image-webp", "dep:taffy", "dep:unicode-segmentation", "svg", "dep:base64", "dep:earcutr", "dep:i_overlay", "dep:skrifa", "image-codecs", "dep:jni", "dep:ndk-context"]
+games = ["dep:libm", "dep:rapier3d", "dep:earcutr", "dep:fast-surface-nets", "dep:glamx", "dep:gltf", "dep:i_overlay", "dep:meshopt", "dep:sha2", "dep:ttf-parser", "image-codecs", "dep:base64"]
+drawing = ["svg", "dep:base64", "dep:i_overlay", "dep:png"]
+svg = ["dep:raqote", "dep:svgtypes"]
+image-codecs = ["dep:png", "dep:jpeg-decoder"]
+storage = ["dep:memmap2", "dep:crc32fast", "dep:uuid", "dep:aes-gcm", "dep:hkdf", "dep:hmac", "dep:getrandom", "dep:sha2", "dep:zeroize"]
+uuid = ["dep:uuid"]
+image-picker = []
+document-picker = ["dep:uuid"]
+markdown = ["components", "dep:pulldown-cmark"]
+
+[dependencies]
+egui = { version = "0.37.0", default-features = false, optional = true }
+egui-wgpu = { version = "0.37.0", default-features = false, features = ["fragile-send-sync-non-atomic-wasm"], optional = true }
+image-webp = { version = "0.2.4", optional = true }
+unicode-segmentation = { version = "1.13", optional = true }
+base64 = { version = "0.23.1", optional = true }
+getrandom = { version = "0.4", features = ["wasm_js"], optional = true }
+subtle = { version = "2.6", optional = true }
+url = { version = "2.5", optional = true }
+earcutr = { version = "0.5.0", optional = true }
+gltf = { version = "1.4.1", default-features = false, features = ["utils", "names", "extensions"], optional = true }
+serde_json = "1.0"
+sha2 = { version = "0.10", optional = true }
+uuid = { version = "1.29.3", features = ["v4", "js"], optional = true }
+hound = { version = "3.5.1", optional = true }
+symphonia = { version = "0.5.5", default-features = false, features = ["mp3", "aac", "isomp4", "flac", "ogg", "vorbis"], optional = true }
+# Pure-Rust fdlibm: deterministic exp/pow for seeded generation on every platform.
+libm = { version = "0.2.16", default-features = false, optional = true }
+i_overlay = { version = "9.0.1", optional = true }
+jpeg-decoder = { version = "0.3.2", default-features = false, optional = true }
+png = { version = "0.18.1", optional = true }
+rapier3d = { version = "0.36.1", optional = true }
+glamx = { version = "0.3.1", default-features = false, features = ["std", "u32"], optional = true }
+raw-window-handle = "0.6.2"
+rtrb = { version = "0.4.0", optional = true }
+skrifa = { version = "0.44", default-features = false, optional = true }
+ttf-parser = { version = "0.25.1", optional = true }
+# Backend features are selected per target below.
+wgpu = { version = "30.0.1", default-features = false, features = ["wgsl", "std"] }
+fast-surface-nets = { version = "0.2.1", optional = true }
+meshopt = { version = "0.7.0", optional = true }
+serde = { version = "1", features = ["derive"] }
+raqote = { version = "0.8.5", default-features = false, optional = true }
+svgtypes = { version = "0.16.1", optional = true }
+pulldown-cmark = { version = "0.13", default-features = false, optional = true }
+
+[[example]]
+name = "bench"
+path = "examples/bench.rs"
+required-features = ["games", "drawing"]
+
+[[example]]
+name = "storage_bench"
+path = "../storage/examples/storage_bench.rs"
+required-features = ["storage"]
+
+[[example]]
+name = "compress-model"
+path = "../games/examples/compress-model.rs"
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+lto = "fat"
+panic = "abort"
+strip = true
+
+# Size: dependencies are built for size, except the physics engine (hot every step) and the 2D
+# rasterizer (below). The engine's own crate stays at opt-level 3. Saves ~5% of the linked library
+# at no measured speed cost.
+[profile.release.package."*"]
+opt-level = "s"
+
+[profile.release.package.rapier3d]
+opt-level = 3
+
+[profile.release.package.parry3d]
+opt-level = 3
+
+# The CPU drawing rasterizer: opt-level 3 replays strokes ~40% faster than "s" for ~33 KB.
+[profile.release.package.raqote]
+opt-level = 3
+
+[profile.release.package.sw-composite]
+opt-level = 3
+
+[target.'cfg(target_os = "ios")'.dependencies]
+objc2 = "0.6.5"
+block2 = { version = "0.6.2", optional = true }
+dispatch2 = { version = "0.3.1", optional = true }
+objc2-avf-audio = { version = "0.3.2", optional = true }
+objc2-core-haptics = { version = "0.3.2", optional = true }
+objc2-foundation = { version = "0.3.2", optional = true }
+
+[target.'cfg(target_os = "android")'.dependencies]
+jni = { version = "0.22", optional = true }
+ndk-context = { version = "0.1", optional = true }
+
+[dev-dependencies]
+uuid = { version = "1.29.3", features = ["v4"] }
+taffy = { version = "0.11", default-features = false, features = ["std", "taffy_tree", "flexbox", "grid", "block_layout", "content_size"] }
+naga = { version = "30.0.1", features = ["wgsl-in", "glsl-out", "msl-out", "spv-out"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+rusqlite = { version = "0.43", default-features = false, features = ["bundled", "extra_check", "hooks"], optional = true }
+cpal = { version = "0.18.2", optional = true }
+# Application storage is native-only; browsers use synchronous localStorage.
+memmap2 = { version = "0.9.12", optional = true }
+crc32fast = { version = "1.5", optional = true }
+aes-gcm = { version = "0.10.3", default-features = false, features = ["aes", "alloc", "zeroize"], optional = true }
+hkdf = { version = "0.12", optional = true }
+hmac = { version = "0.12", optional = true }
+zeroize = { version = "1", optional = true }
+pollster = "1.0.1"
+wgpu = { version = "30.0.1", default-features = false, features = ["vulkan", "gles", "metal"] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+rusqlite = { version = "0.43", default-features = false, features = ["ffi-sqlite-wasm-rs", "extra_check", "hooks"], optional = true }
+sqlite-wasm-rs = { version = "0.6", features = ["wasm-bindgen"], optional = true }
+sqlite-wasm-vfs = { version = "0.3", features = ["sahpool"], optional = true }
+wasm-bindgen = "=0.2.129"
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"
+web-sys = { version = "0.3", features = ["HtmlCanvasElement", "CanvasRenderingContext2d", "Document", "TextMetrics", "ImageData", "Window", "Performance", "Navigator"] }
+wgpu = { version = "30.0.1", default-features = false, features = ["webgpu", "webgl", "fragile-send-sync-non-atomic-wasm"] }
+taffy = { version = "0.11", default-features = false, features = ["std", "taffy_tree", "flexbox", "grid", "block_layout", "content_size"], optional = true }

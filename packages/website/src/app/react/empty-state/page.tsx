@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import EmptyState from "@/components/react/components/EmptyState";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/empty-state", "react");
@@ -9,7 +9,7 @@ export default function EmptyStatePage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <EmptyState />
+      <NayanComponentDoc path="/react/empty-state" />
     </>
   );
 }

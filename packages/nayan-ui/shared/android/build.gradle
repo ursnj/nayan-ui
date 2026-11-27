@@ -1,0 +1,66 @@
+// Java side of the engine: the EngineSurface view the renderer draws into. The native module itself is
+// pure C++ (CMakeLists.txt, built into the app by autolinking).
+apply plugin: "com.android.library"
+
+def safeExtGet(prop, fallback) {
+  rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
+def hostProperties = new Properties()
+def hostPropertiesFile = rootProject.file("gradle.properties")
+if (hostPropertiesFile.isFile()) {
+  hostPropertiesFile.withInputStream { hostProperties.load(it) }
+}
+def features = hostProperties.getProperty("nayanEngine.features")?.trim()?.split(",")
+def enabled = { feature -> features == null || features.contains(feature) }
+def imagePicker = features == null
+  ? providers.gradleProperty("nayanEngine.imagePicker").orElse("false").get() == "true"
+  : features.contains("image-picker")
+def video = enabled("video")
+def review = enabled("review")
+def location = enabled("location")
+def contacts = enabled("contacts")
+def permissions = location || contacts || enabled("permissions")
+
+android {
+  namespace "com.nayanui.engine"
+  compileSdkVersion safeExtGet("compileSdkVersion", 35)
+
+  defaultConfig {
+    minSdkVersion safeExtGet("minSdkVersion", 24)
+    consumerProguardFiles "proguard-rules.pro"
+  }
+
+  sourceSets.main {
+    ["assets", "capture", "clipboard", "document-picker", "files", "keep-awake", "microphone", "network", "sharing", "components"].each { feature ->
+      java.srcDir("../../native/${feature}/android/java")
+    }
+    ["image-picker": imagePicker, video: video, location: location, contacts: contacts, permissions: permissions, review: review].each { feature, included ->
+      java.srcDir("../../native/${feature}/android/${included ? 'enabled' : 'disabled'}/java")
+    }
+    if (enabled("tts")) java.srcDir("../../native/tts/android/java")
+    res.srcDir("../../native/sharing/android/res")
+  }
+  if (imagePicker) {
+    buildTypes.configureEach {
+      sourceSets.maybeCreate(name).manifest.srcFile("../../native/image-picker/android/enabled/AndroidManifest.xml")
+    }
+  }
+}
+
+repositories {
+  google()
+  mavenCentral()
+}
+
+dependencies {
+  implementation "com.facebook.react:react-android"
+  if (review) implementation "com.google.android.play:review:2.0.1"
+  if (video) {
+    // This release supports the engine's compileSdk 35 fallback.
+    def media3 = "1.8.1"
+    implementation "androidx.media3:media3-exoplayer:${media3}"
+    implementation "androidx.media3:media3-exoplayer-hls:${media3}"
+    implementation "androidx.media3:media3-ui:${media3}"
+  }
+}

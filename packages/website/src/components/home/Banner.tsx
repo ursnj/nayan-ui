@@ -1,456 +1,64 @@
-"use client";
+import { NImage, NText, NView } from 'nayan-ui/components';
+import Link from 'next/link';
+import Code from '@/components/helpers/Code';
+import { ArrowRight, Github, Layers3, Play } from '@/design/Icons';
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, CONTAINER } from '@/design/system';
+import { moduleReferences } from '@/services/ui/module-reference';
+import { REPO_URL } from '@/services/seo';
+import InstallCommand from './InstallCommand';
 
-import { useEffect, useState } from "react";
-import {
-  AlertTypes,
-  NAccordion,
-  NAlert,
-  NAvatar,
-  NBadge,
-  NButton,
-  NButtonGroup,
-  NCheck,
-  NChip,
-  NInput,
-  NKbd,
-  NMeter,
-  NNumberField,
-  NProgress,
-  NRadioGroup,
-  NSearchField,
-  NSelect,
-  NSlider,
-  NSwitch,
-  NTagGroup,
-  NToggleButton,
-  NTooltip,
-  useNToast,
-} from "@nayan-ui/react";
-import {
-  ArrowRight,
-  Bell,
-  Bold,
-  Check,
-  Copy,
-  Download,
-  Github,
-  Italic,
-  Package,
-  Terminal,
-  Underline,
-} from "lucide-react";
-import Link from "next/link";
-import { Badge } from "@/design/Primitives";
-import { CARD, CONTAINER, GRADIENT_TEXT, H1_HERO, LEAD, WELL } from "@/design/system";
-import { TOOL_COUNT, TOTAL_COMPONENT_COUNT } from "@/services/Counts";
-import { REPO_URL } from "@/services/seo";
-import { installCode, rnInstallCode } from "@/services/ReactCodeBlocks";
+const scene = moduleReferences.find(({ slug }) => slug === 'games')!;
 
-const INSTALLS = [
-  { platform: "React", command: installCode },
-  { platform: "React Native", command: rnInstallCode },
-  { platform: "Game engine", command: "npm install @nayan-ui/engine" },
-  { platform: "Games", command: "npx @nayan-ui/cli new my-game -t games" },
-];
-
-const TABS = ["Buttons", "Forms", "Feedback", "Elements"] as const;
-
-const RANGES = ["Day", "Week", "Month"];
-
-const FRAMEWORKS = [
-  { value: "next", label: "Next.js" },
-  { value: "vite", label: "Vite" },
-  { value: "remix", label: "Remix" },
-  { value: "expo", label: "Expo" },
-];
-
-const PLANS = [
-  { label: "Free", value: "free" },
-  { label: "Pro", value: "pro" },
-];
-
-const TAGS = [
-  { id: "react", label: "React" },
-  { id: "native", label: "React Native" },
-  { id: "a11y", label: "Accessible" },
-];
-
-const FAQ = [
-  { title: "Is it free?", message: "Yes — MIT licensed, and it stays that way." },
-  { title: "Does it theme?", message: "Light and dark out of the box, plus your own tokens." },
-];
-
-const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
-  <div>
-    <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-muted">{label}</p>
-    {children}
-  </div>
-);
-
-const Banner = () => {
-  const [tab, setTab] = useState(0);
-
-  /* Which command was last copied, so each row ticks independently. */
-  const [copied, setCopied] = useState<string | null>(null);
-
-  /* Live state for the demo controls, so they actually respond. */
-  const [email, setEmail] = useState("");
-  const [query, setQuery] = useState("");
-  const [seats, setSeats] = useState(3);
-  const [framework, setFramework] = useState<{ value: string; label: string } | null>(
-    FRAMEWORKS[0],
-  );
-  const [plan, setPlan] = useState("pro");
-  const [notify, setNotify] = useState(true);
-  const [dark, setDark] = useState(false);
-  const [volume, setVolume] = useState(60);
-  const [range, setRange] = useState(RANGES[1]);
-  const [bold, setBold] = useState(true);
-  const [italic, setItalic] = useState(false);
-  const [underline, setUnderline] = useState(false);
-  const [tags, setTags] = useState<any>(new Set(["react"]));
-
-  const toast = useNToast();
-
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
-  useEffect(() => {
-    if (!copied) return;
-    const timer = setTimeout(() => setCopied(null), 2000);
-    return () => clearTimeout(timer);
-  }, [copied]);
-
-  const copyInstall = async (command: string) => {
-    try {
-      await navigator.clipboard.writeText(command);
-      setCopied(command);
-    } catch {
-      // Clipboard permission can be denied; the command is visible regardless.
-    }
-  };
-
+export default function Banner() {
   return (
-    <section className="relative overflow-hidden">
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/[0.07] via-transparent to-transparent" />
-        <div className="absolute -top-32 left-1/4 h-72 w-72 rounded-full bg-indigo-500/15 blur-3xl" />
-        <div className="absolute -top-20 right-1/4 h-64 w-64 rounded-full bg-fuchsia-500/10 blur-3xl" />
-      </div>
-
-      <div className={`${CONTAINER} py-14 sm:py-20`}>
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <div className="text-center lg:text-left">
-            <Badge icon={Package}>Open source · Free to use</Badge>
-
-            <h1 className={`mt-6 ${H1_HERO}`}>
-              Apps and games for
-              <span className={`block ${GRADIENT_TEXT}`}>React &amp; React Native</span>
-            </h1>
-
-            <p className={`mx-auto mt-6 max-w-xl text-lg ${LEAD} lg:mx-0`}>
-              {TOTAL_COMPONENT_COUNT} accessible components, a 3D game engine, 50+ ready-made games,
-              a video editor in your browser and {TOOL_COUNT} free developer tools, for the web and
-              mobile.
-            </p>
-
-            <div className="mx-auto mt-7 max-w-md divide-y divide-default overflow-hidden rounded-xl border border-default bg-surface lg:mx-0">
-              {INSTALLS.map(({ platform, command }) => (
-                <div key={command} className="flex items-center gap-3 px-3.5 py-2.5">
-                  <Terminal aria-hidden className="h-4 w-4 shrink-0 text-muted" />
-                  <code className="min-w-0 flex-1 truncate font-mono text-sm text-foreground">
-                    {command}
-                  </code>
-                  <span className="shrink-0 text-[11px] font-medium text-muted">{platform}</span>
-                  <button
-                    type="button"
-                    onClick={() => copyInstall(command)}
-                    aria-label={`Copy ${platform} install command`}
-                    aria-live="polite"
-                    className="shrink-0 rounded-md p-1 text-muted transition-colors hover:text-foreground"
-                  >
-                    {copied === command ? (
-                      <Check className="h-4 w-4 text-emerald-500" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
-              <Link href="/react/installation" className="sm:w-auto">
-                <NButton className="w-full bg-gradient-to-r from-indigo-500 to-violet-500 px-6 font-semibold text-white shadow-lg shadow-indigo-500/25 hover:from-indigo-600 hover:to-violet-600 sm:w-auto">
-                  Get started
-                  <ArrowRight aria-hidden className="h-4 w-4" />
-                </NButton>
+    <NView tag="section" className="home-hero [border-bottom:1px_solid_var(--border)] [background:radial-gradient(ellipse_at_81%_10%,_color-mix(in_srgb,_#b298f6_24%,_transparent),_transparent_64%),_var(--background)] dark:[background:radial-gradient(ellipse_at_81%_10%,_color-mix(in_srgb,_#9653fd_21%,_transparent),_transparent_67%),_var(--background)]">
+      <NView tag="div" className={CONTAINER}>
+        <NView tag="div" className="home-hero-layout grid [grid-template-columns:minmax(0,_1fr)] items-center [gap:clamp(2rem,_5vw,_4rem)] [padding-block:clamp(2.8rem,_5.7vw,_5.1rem)_clamp(1.6rem,_3.4vw,_3rem)] min-[900px]:[grid-template-columns:minmax(0,_0.88fr)_minmax(0,_1.12fr)]">
+          <NView tag="div" className="home-hero-copy min-w-0">
+            <NText tag="p" className="home-engine-label flex items-center [gap:0.45rem] [margin-bottom:1.15rem] text-accent font-bold [font-size:0.88rem]">
+              <Layers3 aria-hidden size={17} />
+              Nayan UI
+            </NText>
+            <NText tag="h1" className="home-title text-foreground [font-size:clamp(3.05rem,_5.65vw,_6rem)] [line-height:0.98] [letter-spacing:-0.073em] font-bold [&_span]:block [&_span]:text-accent">
+              Build apps.
+              <NText tag="span">Make games.</NText>
+            </NText>
+            <NText tag="p" className="home-intro [max-width:34rem] [margin-top:1.3rem] text-muted [font-size:clamp(1rem,_1.5vw,_1.15rem)] [line-height:1.58]">
+              Build interfaces and 3D games for the web, iOS and Android. Use one TypeScript API for React and React Native, with rendering powered by
+              Rust.
+            </NText>
+            <NView tag="div" className="home-actions flex flex-wrap [gap:0.7rem] [margin-top:1.45rem] max-[420px]:[gap:0.45rem] max-[420px]:[&_>_a]:[padding-inline:0.9rem]">
+              <Link href="/game-engine/installation" className={BUTTON_PRIMARY}>
+                Start building <ArrowRight aria-hidden size={17} />
               </Link>
-              <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="sm:w-auto">
-                <NButton isOutline={true} className="w-full px-6 font-semibold sm:w-auto">
-                  <Github aria-hidden className="h-4 w-4" />
-                  View on GitHub
-                </NButton>
-              </a>
-            </div>
-          </div>
-
-          <div className={`${CARD} overflow-hidden shadow-xl shadow-indigo-500/5`}>
-            <div className="flex items-center justify-between gap-3 border-b border-default bg-surface px-4 py-2.5">
-              <span className="font-mono text-xs text-muted">@nayan-ui/react</span>
-              <span className="text-[11px] text-muted">Live, not a screenshot</span>
-            </div>
-
-            <div className="p-4 sm:p-5">
-              <div
-                role="tablist"
-                aria-label="Component examples"
-                className="mb-5 flex gap-1 rounded-lg bg-background p-1"
-              >
-                {TABS.map((label, index) => (
-                  <button
-                    key={label}
-                    role="tab"
-                    id={`home-tab-${index}`}
-                    aria-selected={tab === index}
-                    aria-controls={`home-panel-${index}`}
-                    onClick={() => setTab(index)}
-                    className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                      tab === index
-                        ? "bg-surface text-foreground shadow-sm"
-                        : "text-muted hover:text-foreground"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-
-              <div className={`${WELL} min-h-[19rem] p-4`}>
-                {tab === 0 && (
-                  <div
-                    role="tabpanel"
-                    id="home-panel-0"
-                    aria-labelledby="home-tab-0"
-                    className="space-y-4"
-                  >
-                    <Row label="Buttons">
-                      <div className="flex flex-wrap gap-2">
-                        <NButton>Primary</NButton>
-                        <NButton isOutline={true}>Outline</NButton>
-                        <NButton isLoading={true}>Loading</NButton>
-                        <NButton disabled>Disabled</NButton>
-                        <NButton isOutline={true} aria-label="Download">
-                          <Download className="h-4 w-4" />
-                        </NButton>
-                      </div>
-                    </Row>
-                    <Row label="Button group">
-                      <NButtonGroup
-                        items={RANGES}
-                        selected={range}
-                        onChange={setRange}
-                        size="sm"
-                        ariaLabel="Date range"
-                      />
-                    </Row>
-                    <Row label="Toggle buttons">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <NToggleButton
-                          isIconOnly
-                          aria-label="Bold"
-                          size="sm"
-                          isSelected={bold}
-                          onChange={setBold}
-                        >
-                          <Bold className="h-4 w-4" />
-                        </NToggleButton>
-                        <NToggleButton
-                          isIconOnly
-                          aria-label="Italic"
-                          size="sm"
-                          isSelected={italic}
-                          onChange={setItalic}
-                        >
-                          <Italic className="h-4 w-4" />
-                        </NToggleButton>
-                        <NToggleButton
-                          isIconOnly
-                          aria-label="Underline"
-                          size="sm"
-                          isSelected={underline}
-                          onChange={setUnderline}
-                        >
-                          <Underline className="h-4 w-4" />
-                        </NToggleButton>
-                        <NTooltip message="Tooltips too">
-                          <NButton isOutline={true}>Hover me</NButton>
-                        </NTooltip>
-                      </div>
-                    </Row>
-                    <Row label="Badges">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <NBadge color="default">Default</NBadge>
-                        <NBadge color="accent">Accent</NBadge>
-                        <NBadge color="success">Success</NBadge>
-                        <NBadge color="warning">Warning</NBadge>
-                        <NBadge color="danger">Danger</NBadge>
-                      </div>
-                    </Row>
-                    <Row label="Chips">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <NChip color="accent" variant="primary" size="sm">
-                          New
-                        </NChip>
-                        <NChip color="success" variant="soft" size="sm">
-                          Stable
-                        </NChip>
-                        <NChip color="default" variant="secondary" size="sm">
-                          v2.1
-                        </NChip>
-                        <NChip color="danger" variant="soft" size="sm">
-                          Beta
-                        </NChip>
-                      </div>
-                    </Row>
-                  </div>
-                )}
-
-                {tab === 1 && (
-                  <div
-                    role="tabpanel"
-                    id="home-panel-1"
-                    aria-labelledby="home-tab-1"
-                    className="space-y-4"
-                  >
-                    <NInput
-                      id="home-email"
-                      type="email"
-                      label="Email"
-                      placeholder="you@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <NSearchField
-                      value={query}
-                      onChange={setQuery}
-                      placeholder="Search components..."
-                      fullWidth
-                    />
-                    {/* Client-only: react-select reads a null emotion cache during SSR and takes the page to a 500. */}
-                    {mounted ? (
-                      <NSelect
-                        label="Framework"
-                        placeholder="Pick a framework"
-                        options={FRAMEWORKS}
-                        value={framework}
-                        onChange={(value) => setFramework(value)}
-                        className="mb-3"
-                      />
-                    ) : (
-                      <div
-                        className="h-[68px] animate-pulse rounded-lg border border-default bg-background"
-                        aria-hidden
-                      />
-                    )}
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <Row label="Seats">
-                        <NNumberField
-                          value={seats}
-                          onChange={setSeats}
-                          minValue={1}
-                          maxValue={99}
-                          aria-label="Seats"
-                        />
-                      </Row>
-                      <NRadioGroup label="Plan" items={PLANS} value={plan} onChange={setPlan} />
-                    </div>
-                    <NCheck checked={notify} onChange={setNotify}>
-                      Email me about releases
-                    </NCheck>
-                    <NSwitch label="Dark mode" enabled={dark} onChange={setDark} />
-                  </div>
-                )}
-
-                {tab === 2 && (
-                  <div
-                    role="tabpanel"
-                    id="home-panel-2"
-                    aria-labelledby="home-tab-2"
-                    className="space-y-5"
-                  >
-                    <Row label="Upload progress">
-                      <NProgress value={72} />
-                    </Row>
-                    <Row label="Storage used">
-                      <NMeter value={82} color="warning" label="Storage" output="82% of 10 GB" />
-                    </Row>
-                    <Row label={`Volume — ${volume}`}>
-                      <NSlider
-                        defaultValue={volume}
-                        max={100}
-                        step={1}
-                        onChange={(value: any) =>
-                          setVolume(Array.isArray(value) ? value[0] : value)
-                        }
-                      />
-                    </Row>
-                    <NAlert
-                      type={AlertTypes.SUCCESS}
-                      title="Build passed"
-                      message={`${TOTAL_COMPONENT_COUNT} components, no regressions.`}
-                    />
-                    <NButton
-                      isOutline={true}
-                      onClick={() => toast("Rendered by the real NToast.", "Hello from Nayan UI")}
-                    >
-                      <Bell className="mr-2 h-4 w-4" />
-                      Show a toast
-                    </NButton>
-                  </div>
-                )}
-
-                {tab === 3 && (
-                  <div
-                    role="tabpanel"
-                    id="home-panel-3"
-                    aria-labelledby="home-tab-3"
-                    className="space-y-5"
-                  >
-                    <Row label="Avatars">
-                      <div className="flex items-center gap-2">
-                        <NAvatar size="sm" color="accent" variant="soft" fallback="ND" />
-                        <NAvatar size="sm" color="success" variant="soft" fallback="AK" />
-                        <NAvatar size="sm" color="warning" variant="soft" fallback="RS" />
-                        <NAvatar size="sm" fallback="+9" />
-                      </div>
-                    </Row>
-                    <Row label="Tags">
-                      <NTagGroup
-                        items={TAGS}
-                        selectionMode="multiple"
-                        selectedKeys={tags}
-                        onSelectionChange={setTags}
-                        size="sm"
-                      />
-                    </Row>
-                    <Row label="Keyboard shortcut">
-                      <div className="flex items-center gap-1.5 text-sm text-muted">
-                        <NKbd>⌘</NKbd>
-                        <NKbd>K</NKbd>
-                        <span>to search the docs</span>
-                      </div>
-                    </Row>
-                    <NAccordion items={FAQ} />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+              <Link href="/playground" className={BUTTON_SECONDARY}>
+                <Play aria-hidden size={16} /> Try the playground
+              </Link>
+            </NView>
+            <InstallCommand />
+          </NView>
+          <NView tag="div" className="home-hero-media min-w-0 relative isolate">
+            <NView tag="div" className="home-hero-artwork overflow-hidden [aspect-ratio:4_/_3] [border-radius:clamp(1.3rem,_2.35vw,_2.4rem)] [background:#d7b9fb] [box-shadow:0_18px_52px_color-mix(in_srgb,_var(--accent)_12%,_transparent)] [&_img]:block [&_img]:w-full [&_img]:h-full [&_img]:object-cover">
+              <NImage src="/home/engine-shapes.webp" alt="" width={1448} height={1086} priority />
+            </NView>
+            <NView tag="div" className="home-hero-code relative [max-width:26rem] min-w-0 [margin:-2.25rem_0.65rem_0] [&_.site-code-block]:[box-shadow:0_18px_42px_rgb(38_12_63_/_0.25)] [&_.site-code-scroll_pre]:min-w-0 [&_.site-code-scroll_pre]:[padding-block:0.75rem_0.85rem] [&_.site-code-scroll_pre]:whitespace-pre-wrap [&_.site-code-scroll_pre]:[overflow-wrap:anywhere] [&_.site-code-scroll_pre]:[font-size:clamp(0.63rem,_0.82vw,_0.74rem)] [&_.site-code-scroll_pre]:[line-height:1.5] min-[900px]:absolute min-[900px]:[inset:auto_auto_1rem_1rem] min-[900px]:[width:min(74%,_28.5rem)] min-[900px]:m-0">
+              <Code code={scene.code} filename="Scene.tsx" tone="ink" />
+            </NView>
+          </NView>
+        </NView>
+        <NView tag="nav" aria-label="Platform guides" className="home-platforms flex flex-wrap items-center [gap:0.5rem_clamp(1rem,_3vw,_2rem)] [padding-block:0.9rem] [border-top:1px_solid_var(--border)] text-muted [font-size:0.8rem] [&_>_span]:[font-family:var(--font-mono,_monospace)] [&_a]:inline-flex [&_a]:items-center [&_a]:[gap:0.35rem] [&_a]:[min-height:2rem] [&_a]:text-foreground [&_a]:[font-weight:650] [&_a:hover]:text-accent">
+          <NText tag="span">Quickstarts</NText>
+          <Link href="/react/installation">
+            React <ArrowRight aria-hidden size={15} />
+          </Link>
+          <Link href="/react-native/installation">
+            React Native <ArrowRight aria-hidden size={15} />
+          </Link>
+          <Link href={REPO_URL} target="_blank" rel="noopener noreferrer">
+            <Github aria-hidden size={16} /> GitHub
+          </Link>
+        </NView>
+      </NView>
+    </NView>
   );
-};
-
-export default Banner;
+}

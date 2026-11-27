@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import ListBox from "@/components/react/components/ListBox";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/list-box", "react");
@@ -9,7 +9,7 @@ export default function ListBoxPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <ListBox />
+      <NayanComponentDoc path="/react/list-box" />
     </>
   );
 }

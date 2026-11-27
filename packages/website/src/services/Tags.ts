@@ -1858,7 +1858,6 @@ export const htmlToImageTags = [
   { sku: "website-to-image", text: "Website to Image" },
   { sku: "html-to-jpg", text: "HTML to JPG" },
   { sku: "html-to-png", text: "HTML to PNG" },
-  { sku: "html-to-svg", text: "HTML to SVG" },
   { sku: "webpage-capture", text: "Webpage Capture" },
   { sku: "website-screenshot-tool", text: "Website Screenshot Tool" },
   { sku: "free-screenshot-tool", text: "Free Screenshot Tool" },

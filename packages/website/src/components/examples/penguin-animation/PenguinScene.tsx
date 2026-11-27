@@ -1,5 +1,6 @@
 "use client";
 
+import { NView } from 'nayan-ui/components';
 import { useEffect, useRef, useState } from "react";
 import {
   type Color,
@@ -22,7 +23,7 @@ import {
   useWorld,
   createShape,
   type Camera,
-} from "@nayan-ui/engine";
+} from "nayan-ui";
 
 // Geometry and all ten native keyframe clips are copied from ../playtura's Penguin Run.
 // Only the game-specific mesh cache wrapper is replaced by the original module-level caches.
@@ -1386,7 +1387,7 @@ export default function PenguinScene({
   }, []);
 
   return (
-    <div
+    <NView tag="div"
       ref={surface}
       role="group"
       aria-label="Rotate penguin: drag or use arrow keys; Home resets the view"
@@ -1479,7 +1480,7 @@ export default function PenguinScene({
         />
       ) : null}
       {error || !ready ? (
-        <div
+        <NView tag="div"
           role={error ? "alert" : "status"}
           style={{
             position: "absolute",
@@ -1494,8 +1495,8 @@ export default function PenguinScene({
           }}
         >
           {error || "Loading the penguin…"}
-        </div>
+        </NView>
       ) : null}
-    </div>
+    </NView>
   );
 }

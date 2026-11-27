@@ -1,5 +1,6 @@
 "use client";
 
+import { NView } from 'nayan-ui/components';
 import { useRef, useState } from "react";
 import {
   GameView,
@@ -15,7 +16,7 @@ import {
   type Camera,
   type Model,
   type Geometry,
-} from "@nayan-ui/engine";
+} from "nayan-ui";
 
 export type Piece = {
   mesh: Model;
@@ -396,16 +397,12 @@ export default function SpotifyLogoScene({
   speed = 1,
   replay = 0,
   onReady,
-  captureTime,
-  onFrame,
 }: {
   playing?: boolean;
   rendering?: boolean;
   speed?: number;
   replay?: number;
   onReady?: () => void;
-  captureTime?: number;
-  onFrame?: (time: number) => void;
 } = {}) {
   const [error, setError] = useState(false);
   const group = useRef<{ entities: Entity[]; pieces: Piece[] }>({ entities: [], pieces: [] });
@@ -442,22 +439,22 @@ export default function SpotifyLogoScene({
 
   if (error)
     return (
-      <div
+      <NView tag="div"
         role="alert"
         className="flex h-full items-center justify-center px-6 text-center text-sm text-slate-300"
       >
         The 3D preview could not start. Try a browser with WebGPU or WebGL2 enabled.
-      </div>
+      </NView>
     );
   if (!world)
     return (
-      <div role="status" className="flex h-full items-center justify-center text-sm text-slate-300">
+      <NView tag="div" role="status" className="flex h-full items-center justify-center text-sm text-slate-300">
         Loading Nayan Game Engine…
-      </div>
+      </NView>
     );
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
+    <NView tag="div" className="w-full h-full">
       <GameView
         source={world}
         paused={!rendering}
@@ -486,17 +483,13 @@ export default function SpotifyLogoScene({
             displayTime.current = 0;
             lastReplay.current = replay;
           }
-          if (captureTime === undefined && playing) {
+          if (playing) {
             elapsed.current += dt * speed;
             displayTime.current = elapsed.current;
           }
-          drawLogo(world, entities, pieces, captureTime ?? displayTime.current);
-          if (captureTime !== undefined) {
-            const renderedTime = captureTime;
-            queueMicrotask(() => onFrame?.(renderedTime));
-          }
+          drawLogo(world, entities, pieces, displayTime.current);
         }}
       />
-    </div>
+    </NView>
   );
 }

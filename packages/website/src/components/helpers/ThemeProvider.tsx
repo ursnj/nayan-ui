@@ -1,46 +1,56 @@
 "use client";
 
-import { ReactNode, createContext, useContext, useMemo } from "react";
-import { NTheme, THEMES, useLocalStorage } from "@nayan-ui/react";
+import { type ReactNode, useEffect, useState } from "react";
+import { NPlatformView, NTheme, type NThemeMode, useNTheme } from 'nayan-ui/components';
+import { siteThemes } from '@/design/palettes';
 
-interface Props {
-  children: ReactNode;
+const STORAGE_KEY = "THEME";
+
+function SiteAppearance() {
+  const { resolvedTheme } = useNTheme();
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.dataset.theme = resolvedTheme;
+    root.classList.toggle("dark", resolvedTheme === "dark");
+    root.classList.toggle("light", resolvedTheme === "light");
+  }, [resolvedTheme]);
+
+  return null;
 }
 
-interface ThemeContextValue {
-  theme: THEMES;
-  setTheme: (theme: THEMES) => void;
-  toggleTheme: () => void;
+export function useTheme() {
+  const { resolvedTheme: theme, setTheme, toggleTheme } = useNTheme();
+  return { theme, setTheme, toggleTheme };
 }
 
-const ThemeContext = createContext<ThemeContextValue | null>(null);
+export default function ThemeProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<NThemeMode>('system');
+  const [ready, setReady] = useState(false);
 
-/** The current theme and the two ways to change it. Must be used under `ThemeProvider`. */
-export const useTheme = (): ThemeContextValue => {
-  const value = useContext(ThemeContext);
-  if (!value) throw new Error("useTheme must be called inside ThemeProvider.");
-  return value;
-};
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null');
+      if (saved === 'light' || saved === 'dark') setTheme(saved);
+    } catch {
+      // Use the browser preference when the saved value is unavailable.
+    }
+    setReady(true);
+  }, []);
 
-const ThemeProvider = ({ children }: Props) => {
-  const [stored, setStored] = useLocalStorage("THEME", THEMES.LIGHT);
-
-  const theme = stored === THEMES.DARK ? THEMES.DARK : THEMES.LIGHT;
-
-  const value = useMemo<ThemeContextValue>(
-    () => ({
-      theme,
-      setTheme: (next: THEMES) => setStored(next),
-      toggleTheme: () => setStored(theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK),
-    }),
-    [theme, setStored],
-  );
+  function changeTheme(value: NThemeMode) {
+    setTheme(value);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
+    } catch {
+      // The preference still applies for this session.
+    }
+  }
 
   return (
-    <ThemeContext.Provider value={value}>
-      <NTheme theme={theme}>{children}</NTheme>
-    </ThemeContext.Provider>
+    <NTheme surface={false} theme={theme} themes={siteThemes} onThemeChange={changeTheme}>
+      {ready && <SiteAppearance />}
+      <NPlatformView>{children}</NPlatformView>
+    </NTheme>
   );
-};
-
-export default ThemeProvider;
+}

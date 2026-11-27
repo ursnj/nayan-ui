@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Card from "@/components/react/components/Card";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/card", "react");
@@ -9,7 +9,7 @@ export default function CardPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Card />
+      <NayanComponentDoc path="/react/card" />
     </>
   );
 }

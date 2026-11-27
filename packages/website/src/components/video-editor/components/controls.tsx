@@ -1,3 +1,4 @@
+import { NView, NText } from 'nayan-ui/components';
 import { useCallback, useState } from "react";
 import {
   NEmptyState,
@@ -9,8 +10,8 @@ import {
   NToggleButton,
   NTooltip,
   cn,
-} from "@nayan-ui/react";
-import { ChevronDown, RotateCcw } from "lucide-react";
+} from "@/components/ui";
+import { ChevronDown, RotateCcw } from "@/design/Icons";
 import { useEditor } from "../store/editor";
 
 interface SectionProps {
@@ -24,9 +25,9 @@ export const Section = ({ title, icon, onReset, children }: SectionProps) => {
   const [open, setOpen] = useState(true);
 
   return (
-    <section className="border-b border-border/60 last:border-b-0">
-      <div className="flex items-center gap-1.5 px-3 py-2">
-        <button
+    <NView tag="section" className="border-b border-border/60 last:border-b-0">
+      <NView tag="div" className="flex items-center gap-1.5 px-3 py-2">
+        <NView tag="button"
           type="button"
           onClick={() => setOpen((value) => !value)}
           aria-expanded={open}
@@ -36,26 +37,26 @@ export const Section = ({ title, icon, onReset, children }: SectionProps) => {
             className={cn("h-3.5 w-3.5 text-muted transition-transform", !open && "-rotate-90")}
           />
           {icon}
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+          <NText tag="span" className="text-[11px] font-semibold uppercase tracking-wider text-muted">
             {title}
-          </span>
-        </button>
+          </NText>
+        </NView>
         {onReset && (
           <IconButton label={`Reset ${title.toLowerCase()}`} onClick={onReset}>
             <RotateCcw className="h-3 w-3" />
           </IconButton>
         )}
-      </div>
-      {open && <div className="px-3 pb-3">{children}</div>}
-    </section>
+      </NView>
+      {open && <NView tag="div" className="px-3 pb-3">{children}</NView>}
+    </NView>
   );
 };
 
 export const FieldRow = ({ label, children }: { label: string; children: React.ReactNode }) => (
-  <div className="mb-2 flex items-center justify-between gap-2">
-    <span className="shrink-0 text-[11px] text-muted">{label}</span>
-    <div className="min-w-0 flex-1">{children}</div>
-  </div>
+  <NView tag="div" className="mb-2 flex items-center justify-between gap-2">
+    <NText tag="span" className="shrink-0 text-[11px] text-muted">{label}</NText>
+    <NView tag="div" className="min-w-0 flex-1">{children}</NView>
+  </NView>
 );
 
 export const EmptyState = ({
@@ -159,7 +160,7 @@ export const SegmentedControl = <T extends string>({
   framed?: boolean;
   className?: string;
 }) => (
-  <div
+  <NView tag="div"
     className={cn("flex gap-0.5 rounded-md", framed && "bg-surface-secondary p-0.5", className)}
     role="group"
   >
@@ -179,7 +180,7 @@ export const SegmentedControl = <T extends string>({
         </NToggleButton>
       </NTooltip>
     ))}
-  </div>
+  </NView>
 );
 
 interface SliderFieldProps {
@@ -221,18 +222,18 @@ export const SliderField = ({
   const display = format ? format(value) : String(Math.round(value * 100) / 100);
 
   return (
-    <div className="mb-2" onPointerDown={onPointerDown}>
-      <div className="mb-1 flex items-center gap-1.5">
-        <span className="flex-1 truncate text-[11px] text-muted">{label}</span>
-        <button
+    <NView tag="div" className="mb-2" onPointerDown={onPointerDown}>
+      <NView tag="div" className="mb-1 flex items-center gap-1.5">
+        <NText tag="span" className="flex-1 truncate text-[11px] text-muted">{label}</NText>
+        <NView tag="button"
           type="button"
           onDoubleClick={() => resetTo !== undefined && onChange(resetTo)}
           title={resetTo !== undefined ? "Double-click to reset" : undefined}
           className="font-mono text-[11px] tabular-nums text-foreground"
         >
           {display}
-        </button>
-      </div>
+        </NView>
+      </NView>
       <NSlider
         value={value}
         min={min}
@@ -243,7 +244,7 @@ export const SliderField = ({
         className="mb-0"
         aria-label={label}
       />
-    </div>
+    </NView>
   );
 };
 
@@ -289,7 +290,7 @@ export const TextField = ({
   multiline?: boolean;
 }) =>
   multiline ? (
-    <div data-clarity-mask="true">
+    <NView tag="div" data-clarity-mask="true">
       <NTextarea
         label={label}
         value={value}
@@ -298,7 +299,7 @@ export const TextField = ({
         className="mb-2"
         textareaClassName="min-h-20 text-xs"
       />
-    </div>
+    </NView>
   ) : (
     <NInput
       label={label}
@@ -347,10 +348,10 @@ export const ColorField = ({
 }) => {
   const swatch = value.startsWith("rgba") || value === "transparent" ? "#000000" : value;
   return (
-    <div className="mb-2">
-      <span className="mb-1 block text-[11px] text-muted">{label}</span>
-      <div className="flex items-center gap-1.5">
-        <input
+    <NView tag="div" className="mb-2">
+      <NText tag="span" className="mb-1 block text-[11px] text-muted">{label}</NText>
+      <NView tag="div" className="flex items-center gap-1.5">
+        <NView<'input'> tag="input"
           type="color"
           value={swatch}
           onChange={(event) => onChange(event.target.value)}
@@ -366,18 +367,18 @@ export const ColorField = ({
         />
         {allowAlpha && (
           <NTooltip message="Transparent">
-            <button
+            <NView tag="button"
               type="button"
               onClick={() => onChange("transparent")}
               aria-label="Set transparent"
               className={cn(
-                "checkerboard h-[var(--field-height)] w-8 shrink-0 rounded border transition-colors",
+                "checkerboard [background-image:linear-gradient(45deg,_hsl(0_0%_50%_/_0.18)_25%,_transparent_25%),_linear-gradient(-45deg,_hsl(0_0%_50%_/_0.18)_25%,_transparent_25%),_linear-gradient(45deg,_transparent_75%,_hsl(0_0%_50%_/_0.18)_75%),_linear-gradient(-45deg,_transparent_75%,_hsl(0_0%_50%_/_0.18)_75%)] [background-size:16px_16px] [background-position:0_0,_0_8px,_8px_-8px,_-8px_0] h-[var(--field-height)] w-8 shrink-0 rounded border transition-colors",
                 value === "transparent" ? "border-accent" : "border-border",
               )}
             />
           </NTooltip>
         )}
-      </div>
-    </div>
+      </NView>
+    </NView>
   );
 };

@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNSlider from "@/components/react-native/components/Slider";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNSliderPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNSlider />
+      <NayanComponentDoc path="/react-native/slider" />
     </>
   );
 }

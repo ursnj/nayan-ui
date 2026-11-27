@@ -1,6 +1,6 @@
 // Shared with the structured data in app/games/page.tsx: an FAQPage or HowTo that disagrees with the
 // visible copy is a violation, so both read these.
-import { Code2, Settings2, Smartphone, Sparkles, Volume2, Zap } from "lucide-react";
+import { Code2, Settings2, Smartphone, Sparkles, Volume2, Zap } from "@/design/Icons";
 
 export const FEATURES = [
   {
@@ -38,7 +38,7 @@ export const FEATURES = [
 export const STEPS = [
   {
     title: "Install",
-    body: "Add @nayan-ui/games and @nayan-ui/engine to an Expo development build or a React website.",
+    body: "Add nayan-games and nayan-ui to an Expo development build or a React website.",
   },
   {
     title: "Render a game",

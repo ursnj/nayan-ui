@@ -1,69 +1,33 @@
-import { Accessibility, Blocks, Paintbrush, Smartphone, Sparkles } from "lucide-react";
-import { Section, SectionHeader } from "@/design/Primitives";
-import { ACCENT_SOFT, BODY, CARD, CARD_PAD, GRID_GAP, H3 } from "@/design/system";
-import { TOTAL_COMPONENT_COUNT } from "@/services/Counts";
+import { NView, NText } from 'nayan-ui/components';
+import { ArrowRight, Braces, Smartphone } from '@/design/Icons';
+import { Section } from '@/design/Primitives';
+import { BUTTON_SECONDARY, H2 } from '@/design/system';
+import Link from 'next/link';
+import NayanComponentsPreview from './NayanComponentsPreview';
 
-const FEATURES = [
-  {
-    icon: Blocks,
-    span: "lg:col-span-2",
-    title: `${TOTAL_COMPONENT_COUNT} components, ready to ship`,
-    body: "Buttons, forms, tables, dialogs, sheets, menus, date pickers — enough to build a real application rather than a demo. Every one arrives styled, accessible and documented, so the first thing you write is your feature, not a dropdown.",
-  },
-  {
-    icon: Smartphone,
-    title: "Web and mobile, one API",
-    body: "The same prop names and the same design language on React and React Native, so moving between them costs you nothing.",
-  },
-  {
-    icon: Accessibility,
-    title: "Accessible out of the box",
-    body: "Keyboard navigation, focus management and screen-reader labels are already handled — not left as an exercise for later.",
-  },
-  {
-    icon: Paintbrush,
-    title: "Looks like your product",
-    body: "Restyle everything from one set of colour tokens — including a dark theme that was designed, not inverted. Or override a single instance with a utility class.",
-  },
-  {
-    icon: Sparkles,
-    title: "Free, and staying free",
-    body: "MIT licensed with no paid tier, no seat count and nothing held back. Use it in client work without asking anyone.",
-  },
-];
-
-const Features = () => (
-  <Section id="why" labelledBy="why-heading">
-    <SectionHeader
-      eyebrow="Why the components"
-      id="why-heading"
-      title="Everything you need, nothing you don't"
-      lead="Two packages, @nayan-ui/react and @nayan-ui/native, one design language, and no licence to buy."
-    />
-    <div className={`grid sm:grid-cols-2 lg:grid-cols-3 ${GRID_GAP}`}>
-      {FEATURES.map((feature) => {
-        const Icon = feature.icon;
-        return (
-          <article
-            key={feature.title}
-            className={`group ${CARD} ${CARD_PAD} relative overflow-hidden transition-colors duration-200 hover:border-indigo-500/30 ${feature.span ?? ""}`}
-          >
-            <span
-              aria-hidden
-              className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-500/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-            />
-            <span
-              className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl border ${ACCENT_SOFT}`}
-            >
-              <Icon className="h-5 w-5" />
-            </span>
-            <h3 className={`mb-2 ${H3}`}>{feature.title}</h3>
-            <p className={BODY}>{feature.body}</p>
-          </article>
-        );
-      })}
-    </div>
-  </Section>
-);
-
-export default Features;
+export default function Features() {
+  return (
+    <NView tag="div" className="home-demo-section [border-block:1px_solid_var(--border)] [background:radial-gradient(ellipse_at_8%_0%,_color-mix(in_srgb,_#caaaee_29%,_transparent),_transparent_68%),_var(--surface-secondary)] dark:[background:radial-gradient(ellipse_at_8%_0%,_color-mix(in_srgb,_#8d50cf_22%,_transparent),_transparent_68%),_var(--surface-secondary)]">
+      <Section id="why" labelledBy="why-heading" className="home-demo-layout grid [grid-template-columns:minmax(0,_1fr)] items-center [gap:clamp(2rem,_5vw,_4rem)] min-[900px]:[grid-template-columns:minmax(0,_0.8fr)_minmax(0,_1.2fr)]">
+        <NView tag="div" className="home-demo-copy min-w-0 [&_>_p]:[max-width:33rem] [&_>_p]:[margin-top:1rem] [&_>_p]:text-muted [&_>_p]:[line-height:1.65]">
+          <NText tag="h2" id="why-heading" className={H2}>
+            Try the components
+          </NText>
+          <NText tag="p">Use the live preview to try buttons, forms, feedback and labels. Open the reference to copy a complete example.</NText>
+          <NView tag="ul" className="home-demo-details grid [gap:0.65rem] [margin-block:1.35rem] text-foreground [font-size:0.88rem] [&_li]:flex [&_li]:items-center [&_li]:[gap:0.6rem] [&_svg]:shrink-0 [&_svg]:text-accent">
+            <NView tag="li">
+              <Smartphone aria-hidden size={19} /> Shared controls for React and React Native
+            </NView>
+            <NView tag="li">
+              <Braces aria-hidden size={19} /> Theme tokens for light and dark mode
+            </NView>
+          </NView>
+          <Link href="/components" className={BUTTON_SECONDARY}>
+            Browse components <ArrowRight aria-hidden size={17} />
+          </Link>
+        </NView>
+        <NayanComponentsPreview />
+      </Section>
+    </NView>
+  );
+}

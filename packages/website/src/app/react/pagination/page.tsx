@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Pagination from "@/components/react/components/Pagination";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/pagination", "react");
@@ -9,7 +9,7 @@ export default function PaginationPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Pagination />
+      <NayanComponentDoc path="/react/pagination" />
     </>
   );
 }

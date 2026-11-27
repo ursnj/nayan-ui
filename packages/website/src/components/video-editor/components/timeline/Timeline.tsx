@@ -1,5 +1,7 @@
+import { EDITOR_PANEL } from '@/design/system';
+import { NView, NText } from 'nayan-ui/components';
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { NButton, cn } from "@nayan-ui/react";
+import { NButton, cn } from "@/components/ui";
 import {
   Copy,
   Expand,
@@ -20,7 +22,7 @@ import {
   Ungroup,
   ZoomIn,
   ZoomOut,
-} from "lucide-react";
+} from "@/design/Icons";
 import { player, seekTo } from "../../engine/playerInstance";
 import { MOD_LABEL, useCommand } from "../../lib/shortcuts";
 import { clamp } from "../../lib/utils";
@@ -580,7 +582,7 @@ export const Timeline = () => {
   }, [clips, selectedIds]);
 
   return (
-    <section className="island isolate flex h-full min-h-0 flex-col">
+    <NView tag="section" className={`${EDITOR_PANEL} isolate flex h-full min-h-0 flex-col`}>
       <TimelineToolbar
         snapEnabled={snapEnabled}
         rippleEnabled={rippleEnabled}
@@ -604,7 +606,7 @@ export const Timeline = () => {
         onZoomFit={zoomToFit}
       />
 
-      <div
+      <NView<'div'> tag="div"
         ref={scrollRef}
         className="relative min-h-0 flex-1 overflow-auto"
         onPointerDown={(event) => {
@@ -625,7 +627,7 @@ export const Timeline = () => {
           );
         }}
       >
-        <div className="relative [overflow-x:clip]" style={{ width: HEADER_WIDTH + contentWidth }}>
+        <NView tag="div" className="relative [overflow-x:clip]" style={{ width: HEADER_WIDTH + contentWidth }}>
           <Playhead
             scrollRef={scrollRef}
             height={HEAD_HEIGHT + tracksHeight}
@@ -634,16 +636,16 @@ export const Timeline = () => {
             onGrab={(event) => beginDrag({ kind: "scrub" }, event)}
           />
 
-          <div className="sticky left-0 top-0 z-50 h-0" style={{ width: HEADER_WIDTH }}>
-            <div
+          <NView tag="div" className="sticky left-0 top-0 z-50 h-0" style={{ width: HEADER_WIDTH }}>
+            <NView tag="div"
               aria-hidden="true"
               style={{ width: HEADER_WIDTH, height: HEAD_HEIGHT }}
               className="absolute left-0 top-0 border-b border-r border-border bg-editor-chrome"
             />
-          </div>
+          </NView>
 
-          <div className="sticky top-0 z-30 flex">
-            <div
+          <NView tag="div" className="sticky top-0 z-30 flex">
+            <NView tag="div"
               aria-hidden="true"
               style={{ width: HEADER_WIDTH, height: HEAD_HEIGHT }}
               className="shrink-0"
@@ -655,7 +657,7 @@ export const Timeline = () => {
               viewportWidth={viewport.width}
               onScrub={beginRulerScrub}
             />
-          </div>
+          </NView>
 
           {tracks.map((track, index) => (
             <TrackRow
@@ -681,7 +683,7 @@ export const Timeline = () => {
           ))}
 
           {clips.length === 0 && (
-            <div
+            <NView tag="div"
               className="pointer-events-none absolute z-10 flex items-center justify-center"
               style={{
                 left: HEADER_WIDTH,
@@ -690,14 +692,14 @@ export const Timeline = () => {
                 height: tracksHeight,
               }}
             >
-              <p className="rounded-lg border border-dashed border-separator px-4 py-3 text-xs text-muted">
+              <NText tag="p" className="rounded-lg border border-dashed border-separator px-4 py-3 text-xs text-muted">
                 Drag media here from the panel on the left
-              </p>
-            </div>
+              </NText>
+            </NView>
           )}
 
           {marquee && (
-            <div
+            <NView tag="div"
               className="pointer-events-none absolute z-[25] rounded-sm border border-accent bg-accent/15"
               style={{
                 left: marquee.left,
@@ -708,19 +710,19 @@ export const Timeline = () => {
             />
           )}
 
-          <div
+          <NView tag="div"
             ref={snapGuideRef}
             aria-hidden="true"
             className="pointer-events-none absolute left-0 top-0 z-[26] w-px bg-accent opacity-0"
             style={{ height: HEAD_HEIGHT + tracksHeight }}
           />
-        </div>
-      </div>
+        </NView>
+      </NView>
 
       {menu && (
         <ContextMenu x={menu.x} y={menu.y} items={menu.items} onClose={() => setMenu(null)} />
       )}
-    </section>
+    </NView>
   );
 };
 
@@ -771,7 +773,7 @@ const SplitButton = ({ onSplit }: { onSplit: () => void }) => {
 };
 
 const TimelineToolbar = (props: ToolbarProps) => (
-  <div className="flex shrink-0 items-center gap-1.5 border-b border-border bg-editor-panel px-2 py-1.5">
+  <NView tag="div" className="flex shrink-0 items-center gap-1.5 border-b border-border bg-editor-panel px-2 py-1.5">
     <SegmentedControl
       value="select"
       onChange={() => undefined}
@@ -781,7 +783,7 @@ const TimelineToolbar = (props: ToolbarProps) => (
       ]}
     />
 
-    <span className="mx-0.5 h-4 w-px bg-separator" />
+    <NText tag="span" className="mx-0.5 h-4 w-px bg-separator" />
 
     <SegmentedControl<MediaFit>
       value={props.fit}
@@ -791,7 +793,7 @@ const TimelineToolbar = (props: ToolbarProps) => (
       className="w-24"
     />
 
-    <span className="mx-0.5 h-4 w-px bg-separator" />
+    <NText tag="span" className="mx-0.5 h-4 w-px bg-separator" />
 
     <IconButton
       label="Flip horizontally"
@@ -810,7 +812,7 @@ const TimelineToolbar = (props: ToolbarProps) => (
       <FlipVertical className="h-4 w-4" />
     </IconButton>
 
-    <span className="mx-0.5 h-4 w-px bg-separator" />
+    <NText tag="span" className="mx-0.5 h-4 w-px bg-separator" />
 
     <SplitButton onSplit={props.onSplit} />
     <IconButton
@@ -824,19 +826,19 @@ const TimelineToolbar = (props: ToolbarProps) => (
       <Trash2 className="h-4 w-4" />
     </IconButton>
 
-    <span className="mx-0.5 h-4 w-px bg-separator" />
+    <NText tag="span" className="mx-0.5 h-4 w-px bg-separator" />
 
     <IconButton label="Add video track" onClick={props.onAddVideoTrack}>
-      <span className="relative">
+      <NText tag="span" className="relative">
         <Film className="h-4 w-4" />
         <Plus className="absolute -right-1 -top-1 h-2.5 w-2.5" />
-      </span>
+      </NText>
     </IconButton>
     <IconButton label="Add audio track" onClick={props.onAddAudioTrack}>
-      <span className="relative">
+      <NText tag="span" className="relative">
         <Music className="h-4 w-4" />
         <Plus className="absolute -right-1 -top-1 h-2.5 w-2.5" />
-      </span>
+      </NText>
     </IconButton>
 
     <IconButton
@@ -856,7 +858,7 @@ const TimelineToolbar = (props: ToolbarProps) => (
       <Link2 className="h-4 w-4" />
     </IconButton>
 
-    <div className="ml-auto flex items-center gap-1">
+    <NView tag="div" className="ml-auto flex items-center gap-1">
       <NButton
         isOutline
         onClick={props.onZoomFit}
@@ -871,8 +873,8 @@ const TimelineToolbar = (props: ToolbarProps) => (
       <IconButton label="Zoom in (+)" onClick={props.onZoomIn}>
         <ZoomIn className="h-4 w-4" />
       </IconButton>
-    </div>
-  </div>
+    </NView>
+  </NView>
 );
 
 interface TrackRowProps {
@@ -922,14 +924,14 @@ const TrackRow = memo(
     );
 
     return (
-      <div className="flex">
+      <NView tag="div" className="flex">
         <TrackHeader
           track={track}
           canRemove={canRemove}
           onUpdate={(patch) => onUpdateTrack(track.id, patch)}
           onRemove={() => onRemoveTrack(track.id)}
         />
-        <div
+        <NView tag="div"
           style={{ width: contentWidth, height: track.height }}
           className={cn(
             "relative border-b border-border",
@@ -967,8 +969,8 @@ const TrackRow = memo(
               onContextMenu={onClipContextMenu}
             />
           ))}
-        </div>
-      </div>
+        </NView>
+      </NView>
     );
   },
 );
@@ -1015,7 +1017,7 @@ const Playhead = ({
 
   return (
     <>
-      <div
+      <NView tag="div"
         aria-hidden="true"
         className={cn(
           "pointer-events-none absolute top-0 z-[35] bg-playhead transition-[width]",
@@ -1025,8 +1027,8 @@ const Playhead = ({
       />
 
       {showHandle && (
-        <div className="pointer-events-none sticky top-0 z-[55] h-0">
-          <button
+        <NView tag="div" className="pointer-events-none sticky top-0 z-[55] h-0">
+          <NView tag="button"
             type="button"
             aria-label="Drag to move the playhead"
             onPointerDown={onGrab}
@@ -1035,14 +1037,14 @@ const Playhead = ({
             style={moving}
             className="pointer-events-auto absolute -left-[11px] -top-1 flex h-6 w-6 cursor-grab touch-none items-start justify-center active:cursor-grabbing"
           >
-            <span
+            <NText tag="span"
               className={cn(
                 "mt-1 h-3 w-2.5 rounded-b-sm bg-playhead transition-transform",
                 emphasised && "scale-125",
               )}
             />
-          </button>
-        </div>
+          </NView>
+        </NView>
       )}
     </>
   );

@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Link from "@/components/react/components/Link";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/link", "react");
@@ -9,7 +9,7 @@ export default function LinkPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Link />
+      <NayanComponentDoc path="/react/link" />
     </>
   );
 }

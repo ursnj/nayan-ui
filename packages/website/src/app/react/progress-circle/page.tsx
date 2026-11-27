@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import ProgressCircle from "@/components/react/components/ProgressCircle";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function ProgressCirclePage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <ProgressCircle />
+      <NayanComponentDoc path="/react/progress-circle" />
     </>
   );
 }

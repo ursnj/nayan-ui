@@ -1,15 +1,20 @@
 "use client";
 
 import { ReactNode, useMemo, useState } from "react";
-import { Menu, Search, X } from "lucide-react";
+import { Menu, Search, X } from "@/design/Icons";
+import { NInput, NPress, NText, NView } from "nayan-ui/components";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Breadcrumb } from "@/design/Primitives";
-import { CONTAINER, H1 } from "@/design/system";
-import { getSidebarItems } from "@/services/Utils";
+import { H1 } from "@/design/system";
+import { getSidebarItems, type SidebarItem } from "@/services/Utils";
+import { resolvePagePath } from "@/services/site-routes";
 
 interface Props {
   title?: string;
+  beforeTitle?: ReactNode;
+  componentDocumentation?: boolean;
+  reference?: { title: string; href: string; items: SidebarItem[]; currentPath?: string };
   children: ReactNode;
 }
 
@@ -17,13 +22,13 @@ interface Props {
 const SECTION_LABELS: Record<string, string> = {
   react: "React",
   "react-native": "React Native",
-  games: "Games",
-  "game-engine": "Game Engine",
+  games: "Nayan Games",
+  "game-engine": "Nayan Game Engine",
   tools: "Tools",
 };
 
 /** Counts the non-heading items that belong to a heading (until the next heading). */
-const countChildren = (items: any[], headingIndex: number) => {
+const countChildren = (items: SidebarItem[], headingIndex: number) => {
   let count = 0;
   for (let i = headingIndex + 1; i < items.length; i++) {
     if (items[i].isHeading) break;
@@ -40,66 +45,68 @@ const SidebarNav = ({
   setQuery,
   onNavigate,
 }: {
-  items: any[];
-  allItems: any[];
+  items: SidebarItem[];
+  allItems: SidebarItem[];
   pathname: string;
   query: string;
   setQuery: (q: string) => void;
   onNavigate?: () => void;
 }) => (
   <>
-    <div className="border-b border-default p-3">
-      <label className="relative block">
-        <span className="sr-only">Filter pages</span>
+    <NView tag="div" className="border-b border-border p-3">
+      <NView tag="label" className="relative block">
         <Search
           aria-hidden
           className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted"
         />
-        <input
+        <NInput
           type="search"
+          accessibilityLabel="Filter pages"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Filter..."
-          className="w-full rounded-lg border border-default bg-background py-1.5 pl-8 pr-8 text-sm text-foreground outline-none transition-colors placeholder:text-muted focus:border-indigo-500/50"
+          onChangeText={setQuery}
+          placeholder="Filter pages…"
+          className="site-docs-filter [&::-webkit-search-cancel-button]:[appearance:none] w-full rounded-lg border border-default bg-background py-1.5 pl-8 pr-8 text-sm text-foreground outline-none transition-colors placeholder:text-muted focus:border-accent/60"
         />
         {query ? (
-          <button
-            type="button"
-            onClick={() => setQuery("")}
+          <NPress
+            onPress={() => setQuery("")}
             aria-label="Clear filter"
             className="absolute right-2 top-1/2 -translate-y-1/2 text-muted transition-colors hover:text-foreground"
           >
             <X className="h-3.5 w-3.5" />
-          </button>
+          </NPress>
         ) : null}
-      </label>
-    </div>
+      </NView>
+    </NView>
 
-    <div className="max-h-[calc(100vh-11rem)] overflow-y-auto p-2">
+    <NView
+      tag="div"
+      className="site-docs-list overflow-y-auto p-3 [overscroll-behavior-y:contain] [scrollbar-width:thin] max-h-[calc(100dvh_-_var(--site-header-height)_-_5.25rem)]"
+    >
       {items.length === 0 ? (
-        <p className="px-2 py-6 text-center text-xs text-muted">
+        <NText tag="p" className="px-2 py-6 text-center text-xs text-muted">
           Nothing matches &ldquo;{query}&rdquo;.
-        </p>
+        </NText>
       ) : (
-        items.map((item: any, index: number) => {
-          const Icon = item.icon as any;
+        items.map((item, index) => {
+          const Icon = item.icon;
 
           if (item.isHeading) {
             const childCount = countChildren(allItems, allItems.indexOf(item));
             return (
-              <div
+              <NView tag="div"
                 key={item.link || `heading-${index}`}
-                className="flex items-center justify-between px-2.5 pb-1 pt-5 first:pt-2"
+                className="flex items-center justify-between px-2.5 pb-1 pt-3 first:pt-0"
               >
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
-                  {item.title}
-                </span>
+                <NText tag="span" className="font-mono text-[11px] font-semibold uppercase tracking-wider text-muted">
+                  {item.navTitle ?? item.title}
+                </NText>
                 {childCount > 0 ? (
-                  <span className="rounded-full bg-default/60 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-muted">
+                  <NText tag="span" className="rounded-full bg-default/60 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-muted">
                     {childCount}
-                  </span>
+                  </NText>
                 ) : null}
-              </div>
+              </NView>
             );
           }
 
@@ -112,7 +119,7 @@ const SidebarNav = ({
               aria-current={active ? "page" : undefined}
               className={`group flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] transition-colors ${
                 active
-                  ? "bg-indigo-500/10 font-medium text-indigo-600 dark:text-indigo-400"
+                  ? "bg-accent/10 font-semibold text-accent"
                   : "text-muted hover:bg-default/50 hover:text-foreground"
               }`}
             >
@@ -120,23 +127,24 @@ const SidebarNav = ({
                 <Icon
                   className={`h-4 w-4 shrink-0 transition-colors ${
                     active
-                      ? "text-indigo-500 dark:text-indigo-400"
+                      ? "text-accent"
                       : "text-muted/60 group-hover:text-foreground"
                   }`}
                 />
               ) : null}
-              <span className="truncate">{item.title}</span>
+              <NText tag="span" className="truncate">{item.title}</NText>
             </Link>
           );
         })
       )}
-    </div>
+    </NView>
   </>
 );
 
 const Sidebar = (props: Props) => {
-  const pathname = usePathname();
-  const sidebarItems = getSidebarItems(pathname);
+  const routePath = usePathname();
+  const pathname = props.reference?.currentPath ?? resolvePagePath(routePath);
+  const sidebarItems = props.reference?.items ?? getSidebarItems(pathname);
   const [query, setQuery] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -159,20 +167,23 @@ const Sidebar = (props: Props) => {
   }, [query, sidebarItems]);
 
   const section = pathname.split("/")[1];
-  const sectionLabel = SECTION_LABELS[section];
+  const sectionLabel = props.reference?.title ?? SECTION_LABELS[section];
 
   const breadcrumb: { label: string; href?: string }[] = [{ label: "Home", href: "/" }];
-  // A section's own landing page (e.g. "Game Engine" at /game-engine) shows its title once.
+  // A section's own landing page (e.g. "Nayan Game Engine" at /game-engine) shows its title once.
   if (sectionLabel && sectionLabel !== props.title)
-    breadcrumb.push({ label: sectionLabel, href: `/${section}` });
+    breadcrumb.push({ label: sectionLabel, href: props.reference?.href ?? `/${section}` });
   if (props.title) breadcrumb.push({ label: props.title });
 
   return (
-    <div className={`${CONTAINER} py-6 sm:py-8`}>
-      <div className="grid grid-cols-12 gap-6 lg:gap-8">
+    <NView tag="div" className={`mx-auto w-full max-w-[82rem] p-3${props.componentDocumentation ? " component-documentation [max-width:78rem] [padding:1.5rem_1rem] [&_.browser-frame-dots_>_span]:[background:var(--default)] [&_.site-docs-heading_h1]:[font-size:clamp(1.875rem,_3vw,_2.25rem)] [&_.site-docs-heading_h1]:[letter-spacing:-0.045em] lg:[&_>_div]:[grid-template-columns:17.5rem_minmax(0,_1fr)] lg:[&_>_div]:[gap:2rem]" : ""}`}>
+      <NView tag="div" className="grid grid-cols-1 gap-3 md:grid-cols-[13rem_minmax(0,1fr)] lg:grid-cols-[15rem_minmax(0,1fr)]">
         {/* Desktop sidebar */}
-        <nav aria-label="Documentation" className="col-span-12 hidden md:block md:col-span-3">
-          <div className="sticky top-[76px] rounded-2xl border border-default bg-surface">
+        <NView tag="nav" aria-label="Documentation" className="hidden md:block">
+          <NView
+            tag="div"
+            className="site-docs-navigation sticky rounded-xl border border-border bg-surface top-[calc(var(--site-header-height)_+_0.75rem)]"
+          >
             <SidebarNav
               items={items}
               allItems={sidebarItems}
@@ -180,27 +191,27 @@ const Sidebar = (props: Props) => {
               query={query}
               setQuery={setQuery}
             />
-          </div>
-        </nav>
+          </NView>
+        </NView>
 
-        <div className="content col-span-12 min-w-0 md:col-span-9">
+        <NView tag="div" className="content grid min-w-0 grid-cols-1 content-start gap-3">
           {/* Mobile sidebar toggle */}
-          <div className="mb-4 md:hidden">
-            <button
-              type="button"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="inline-flex items-center gap-2 rounded-lg border border-default bg-surface px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-default/50"
+          <NView tag="div" className="md:hidden">
+            <NPress
+              onPress={() => setMobileOpen((open) => !open)}
+              aria-expanded={mobileOpen}
+              className="inline-flex flex-row items-center gap-2 rounded-lg border border-default bg-surface px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-default/50"
             >
               <Menu className="h-4 w-4" />
-              Navigation
-            </button>
-          </div>
+              Browse pages
+            </NPress>
+          </NView>
 
           {/* Mobile sidebar drawer */}
           {mobileOpen ? (
-            <nav
+            <NView tag="nav"
               aria-label="Documentation"
-              className="mb-6 rounded-2xl border border-default bg-surface md:hidden"
+              className="rounded-xl border border-border bg-surface md:hidden"
             >
               <SidebarNav
                 items={items}
@@ -210,15 +221,18 @@ const Sidebar = (props: Props) => {
                 setQuery={setQuery}
                 onNavigate={() => setMobileOpen(false)}
               />
-            </nav>
+            </NView>
           ) : null}
 
-          <Breadcrumb items={breadcrumb} />
-          {props.title && <h1 className={`mb-4 ${H1}`}>{props.title}</h1>}
-          <div>{props.children}</div>
-        </div>
-      </div>
-    </div>
+          <NView tag="header" className="site-docs-heading grid gap-3">
+            <Breadcrumb items={breadcrumb} className="" />
+            {props.beforeTitle}
+            {props.title && <NText tag="h1" className={H1}>{props.title}</NText>}
+          </NView>
+          <NView tag="div">{props.children}</NView>
+        </NView>
+      </NView>
+    </NView>
   );
 };
 

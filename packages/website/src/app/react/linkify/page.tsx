@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Linkify from "@/components/react/components/Linkify";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/linkify", "react");
@@ -9,7 +9,7 @@ export default function LinkifyPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Linkify />
+      <NayanComponentDoc path="/react/linkify" />
     </>
   );
 }

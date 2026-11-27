@@ -1,5 +1,6 @@
+import { NView, NText } from 'nayan-ui/components';
 import { memo } from "react";
-import { cn } from "@nayan-ui/react";
+import { cn } from "@/components/ui";
 import { pickTickInterval } from "../../lib/utils";
 import { useEditor } from "../../store/editor";
 import { US } from "../../types";
@@ -50,15 +51,15 @@ export const TimeRuler = memo(
     const hasRange = inPointUs !== null || outPointUs !== null;
 
     return (
-      <div style={{ width }} className="relative">
-        <div
+      <NView tag="div" style={{ width }} className="relative">
+        <NView tag="div"
           role="presentation"
           onPointerDown={onScrub}
           style={{ height: RULER_HEIGHT }}
           className="relative cursor-ew-resize overflow-hidden border-b border-border bg-editor-ruler"
         >
           {hasRange && (
-            <div
+            <NView tag="div"
               className="absolute inset-y-0 border-x-2 border-accent bg-accent/15"
               style={{ left: rangeLeft, width: Math.max(0, rangeRight - rangeLeft) }}
             />
@@ -71,17 +72,17 @@ export const TimeRuler = memo(
             const centred = index > 0;
             if (centred && left + labelWidth / 2 > width) return null;
             return (
-              <div key={index} className="pointer-events-none absolute inset-y-0" style={{ left }}>
-                <div className="absolute top-0 h-2.5 w-px bg-separator" />
-                <span
+              <NView tag="div" key={index} className="pointer-events-none absolute inset-y-0" style={{ left }}>
+                <NView tag="div" className="absolute top-0 h-2.5 w-px bg-separator" />
+                <NText tag="span"
                   className={cn(
                     "absolute bottom-[3px] left-0 whitespace-nowrap font-mono text-[10px] leading-none tabular-nums text-muted",
                     centred && "-translate-x-1/2",
                   )}
                 >
                   {rulerLabel(seconds, interval)}
-                </span>
-              </div>
+                </NText>
+              </NView>
             );
           })}
 
@@ -91,14 +92,14 @@ export const TimeRuler = memo(
           )
             .filter((left) => left <= width)
             .map((left) => (
-              <div
+              <NView tag="div"
                 key={`minor-${left}`}
                 className="pointer-events-none absolute top-0 h-1.5 w-px bg-separator/50"
                 style={{ left }}
               />
             ))}
-        </div>
-      </div>
+        </NView>
+      </NView>
     );
   },
 );

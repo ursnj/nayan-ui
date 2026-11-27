@@ -1,0 +1,30 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "moduleSuffixes": [".web", ""],
+    "types": ["react"],
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "outDir": "lib/web/types"
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "src/**/__tests__",
+    "src/games/render/host.tsx",
+    "src/games/input/Joystick.tsx",
+    "src/assets/source.ts",
+    "src/assets/assetPlatform.ts",
+    "src/assets/storage.ts",
+    "src/drawing/DrawingCanvas.tsx",
+    "src/native/surface/DocumentSurface.tsx",
+    "src/native/surface/EngineSurface.tsx",
+    "src/components/ComponentHost.tsx",
+    "src/components/BlurHost.tsx",
+    "src/components/IconHost.tsx",
+    "src/components/KeyboardHost.tsx",
+    "src/components/NInput.ts",
+    "src/components/NTextarea.ts",
+    "src/components/NSelect.ts"
+  ]
+}

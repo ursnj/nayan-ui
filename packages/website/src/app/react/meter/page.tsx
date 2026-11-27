@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Meter from "@/components/react/components/Meter";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/meter", "react");
@@ -9,7 +9,7 @@ export default function MeterPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Meter />
+      <NayanComponentDoc path="/react/meter" />
     </>
   );
 }

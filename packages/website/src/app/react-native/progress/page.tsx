@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNProgress from "@/components/react-native/components/Progress";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNProgressPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNProgress />
+      <NayanComponentDoc path="/react-native/progress" />
     </>
   );
 }

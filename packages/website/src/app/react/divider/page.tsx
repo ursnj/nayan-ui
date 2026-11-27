@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Divider from "@/components/react/components/Divider";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/divider", "react");
@@ -9,7 +9,7 @@ export default function DividerPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Divider />
+      <NayanComponentDoc path="/react/divider" />
     </>
   );
 }

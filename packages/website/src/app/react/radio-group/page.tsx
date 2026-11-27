@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RadioGroup from "@/components/react/components/RadioGroup";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/radio-group", "react");
@@ -9,7 +9,7 @@ export default function RadioGroupPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RadioGroup />
+      <NayanComponentDoc path="/react/radio-group" />
     </>
   );
 }

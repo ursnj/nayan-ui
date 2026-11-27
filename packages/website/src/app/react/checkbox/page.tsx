@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Checkbox from "@/components/react/components/Checkbox";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/checkbox", "react");
@@ -9,7 +9,7 @@ export default function CheckboxPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Checkbox />
+      <NayanComponentDoc path="/react/checkbox" />
     </>
   );
 }

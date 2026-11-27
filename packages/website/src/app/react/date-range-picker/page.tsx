@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import DateRangePicker from "@/components/react/components/DateRangePicker";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function DateRangePickerPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <DateRangePicker />
+      <NayanComponentDoc path="/react/date-range-picker" />
     </>
   );
 }

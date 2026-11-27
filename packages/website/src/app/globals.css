@@ -1,309 +1,151 @@
-@import "@nayan-ui/react/styles.css";
+@import 'tailwindcss' source(none);
+@source "..";
+@source "../../../nayan-ui/src/components";
 
-@source '../../../react/src';
+@custom-variant dark (&:where(.dark, .dark *));
 
-:root,
-[data-theme="light"] {
+@theme {
+  --font-sans: Inter, "Avenir Next", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --animate-game-boot: game-boot-pulse 1.2s ease-in-out infinite;
+  --animate-game-panel: game-panel-in 0.2s ease-out;
+  --animate-editor-in: editor-fade-in 140ms ease-out;
+
+  @keyframes game-boot-pulse {
+    0%,
+    80%,
+    100% {
+      opacity: 0.35;
+      transform: translateY(0);
+    }
+    40% {
+      opacity: 1;
+      transform: translateY(-5px);
+    }
+  }
+
+  @keyframes game-panel-in {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+  }
+
+  @keyframes editor-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-surface-secondary-foreground: var(--surface-secondary-foreground);
+  --color-surface-tertiary: var(--surface-tertiary);
+  --color-surface-tertiary-foreground: var(--surface-tertiary-foreground);
+  --color-overlay: var(--overlay);
+  --color-overlay-foreground: var(--overlay-foreground);
+  --color-muted: var(--muted);
+  --color-default: var(--default);
+  --color-default-foreground: var(--default-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-field-background: var(--field-background);
+  --color-field-foreground: var(--field-foreground);
+  --color-field-placeholder: var(--field-placeholder);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-border: var(--border);
+  --color-separator: var(--separator);
+  --color-focus: var(--focus);
+  --color-link: var(--link);
+  --color-segment: var(--segment);
+  --color-segment-foreground: var(--segment-foreground);
+  --color-editor-canvas: var(--editor-canvas);
+  --color-editor-chrome: var(--editor-chrome);
+  --color-editor-panel: var(--editor-panel);
+  --color-editor-ruler: var(--editor-ruler);
+  --color-editor-track: var(--editor-track);
+  --color-editor-track-alt: var(--editor-track-alt);
+  --color-playhead: var(--playhead);
+}
+
+@utility site-light {
   color-scheme: light;
-
-  --background: hsl(214 45% 95%);
-  --foreground: hsl(222 47% 11%);
-
+  --background: hsl(264 56% 98%);
+  --foreground: hsl(268 40% 13%);
   --surface: hsl(0 0% 100%);
-  --surface-foreground: hsl(222 47% 11%);
-  --surface-secondary: hsl(214 40% 96%);
-  --surface-secondary-foreground: hsl(222 47% 11%);
-  --surface-tertiary: hsl(214 35% 93%);
-  --surface-tertiary-foreground: hsl(222 47% 11%);
-
+  --surface-foreground: hsl(268 40% 13%);
+  --surface-secondary: hsl(264 54% 95%);
+  --surface-secondary-foreground: hsl(268 40% 13%);
+  --surface-tertiary: hsl(267 48% 91%);
+  --surface-tertiary-foreground: hsl(268 40% 13%);
   --overlay: hsl(0 0% 100%);
-  --overlay-foreground: hsl(222 47% 11%);
-
-  --muted: hsl(215 16% 47%);
-
-  --default: hsl(214 35% 90%);
-  --default-foreground: hsl(222 47% 11%);
-
-  --accent: hsl(217 91% 50%);
+  --overlay-foreground: hsl(268 40% 13%);
+  --muted: hsl(265 15% 39%);
+  --default: hsl(263 37% 90%);
+  --default-foreground: hsl(268 40% 13%);
+  --accent: hsl(265 77% 49%);
   --accent-foreground: hsl(0 0% 100%);
-
   --field-background: hsl(0 0% 100%);
-  --field-foreground: hsl(222 47% 11%);
-  --field-placeholder: hsl(215 16% 47%);
-
+  --field-foreground: hsl(268 40% 13%);
+  --field-placeholder: hsl(265 15% 39%);
   --success: hsl(142 71% 45%);
-  --success-foreground: hsl(222 47% 11%);
-
+  --success-foreground: hsl(268 40% 13%);
   --warning: hsl(38 92% 50%);
-  --warning-foreground: hsl(222 47% 11%);
-
+  --warning-foreground: hsl(268 40% 13%);
   --danger: hsl(0 84% 60%);
   --danger-foreground: hsl(0 0% 100%);
-
-  --border: hsl(214 35% 86%);
-  --separator: hsl(214 25% 76%);
-  --focus: hsl(217 91% 50%);
-  --link: hsl(222 47% 11%);
-
+  --border: hsl(264 32% 86%);
+  --separator: hsl(264 26% 75%);
+  --focus: hsl(265 77% 49%);
+  --link: var(--accent);
   --segment: hsl(0 0% 100%);
-  --segment-foreground: hsl(222 47% 11%);
+  --segment-foreground: hsl(268 40% 13%);
 }
 
-.dark,
-[data-theme="dark"] {
+@utility site-dark {
   color-scheme: dark;
-
-  --background: hsl(222 47% 11%);
-  --foreground: hsl(210 40% 98%);
-
-  --surface: hsl(217 33% 22%);
-  --surface-foreground: hsl(210 40% 98%);
-  --surface-secondary: hsl(217 30% 26%);
-  --surface-secondary-foreground: hsl(210 40% 98%);
-  --surface-tertiary: hsl(217 28% 30%);
-  --surface-tertiary-foreground: hsl(210 40% 98%);
-
-  --overlay: hsl(217 33% 22%);
-  --overlay-foreground: hsl(210 40% 98%);
-
-  --muted: hsl(215 20% 65%);
-
-  --default: hsl(217 33% 26%);
-  --default-foreground: hsl(210 40% 98%);
-
-  --accent: hsl(217 91% 60%);
-  --accent-foreground: hsl(210 40% 98%);
-
-  --field-background: hsl(217 33% 22%);
-  --field-foreground: hsl(210 40% 98%);
-  --field-placeholder: hsl(215 20% 65%);
-
+  --background: hsl(266 39% 9%);
+  --foreground: hsl(265 48% 96%);
+  --surface: hsl(266 30% 14%);
+  --surface-foreground: hsl(265 48% 96%);
+  --surface-secondary: hsl(266 28% 18%);
+  --surface-secondary-foreground: hsl(265 48% 96%);
+  --surface-tertiary: hsl(266 26% 23%);
+  --surface-tertiary-foreground: hsl(265 48% 96%);
+  --overlay: hsl(266 30% 14%);
+  --overlay-foreground: hsl(265 48% 96%);
+  --muted: hsl(266 19% 72%);
+  --default: hsl(266 22% 25%);
+  --default-foreground: hsl(265 48% 96%);
+  --accent: hsl(263 100% 80%);
+  --accent-foreground: hsl(268 40% 13%);
+  --field-background: hsl(266 30% 14%);
+  --field-foreground: hsl(265 48% 96%);
+  --field-placeholder: hsl(266 19% 72%);
   --success: hsl(142 71% 45%);
-  --success-foreground: hsl(222 47% 11%);
-
+  --success-foreground: hsl(268 40% 13%);
   --warning: hsl(38 92% 55%);
-  --warning-foreground: hsl(222 47% 11%);
-
+  --warning-foreground: hsl(268 40% 13%);
   --danger: hsl(0 72% 51%);
-  --danger-foreground: hsl(210 40% 98%);
-
-  --border: hsl(217 33% 28%);
-  --separator: hsl(217 25% 38%);
-  --focus: hsl(217 91% 60%);
-  --link: hsl(210 40% 98%);
-
-  --segment: hsl(217 28% 34%);
-  --segment-foreground: hsl(210 40% 98%);
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-size: 1rem;
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    sans-serif;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a.active {
-  color: var(--accent) !important;
-}
-
-/*
- * Anchored headings land below the fixed header rather than under it.
- * `scroll-margin` on each target would work too, but this way a heading only
- * needs an `id` to behave correctly.
- */
-html {
-  scroll-padding-top: 5rem;
-}
-
-/*
- * Un-break syntax highlighting.
- *
- * `prism-react-renderer` labels a JSX tag's tokens `class="token tag"`, and
- * HeroUI ships a global `.tag` class — its Tag component's — which sets
- * `display: inline-flex` among other things. Every JSX tag in every code
- * sample therefore became a flex container, and a flex container discards
- * whitespace-only children: `<div className=` rendered as `<divclassName=`,
- * on all 76 component pages.
- *
- * Scoped to `.nyn-code` so it corrects the code blocks without touching real
- * Tag components elsewhere on the page. The tokens want to be plain inline
- * spans and nothing else, so everything the collision brought with it is
- * reverted, not just the display.
- */
-.nyn-code .token {
-  display: inline;
-  align-items: initial;
-  gap: initial;
-  border-radius: initial;
-  padding: initial;
-  cursor: inherit;
-  white-space: inherit;
-}
-
-@keyframes accordion-down {
-  from {
-    height: 0;
-  }
-  to {
-    height: var(--radix-accordion-content-height);
-  }
-}
-
-@keyframes accordion-up {
-  from {
-    height: var(--radix-accordion-content-height);
-  }
-  to {
-    height: 0;
-  }
-}
-
-@utility animate-accordion-down {
-  animation: accordion-down 0.2s ease-out;
-}
-
-@utility animate-accordion-up {
-  animation: accordion-up 0.2s ease-out;
-}
-
-/*
- * Live game pages (`/games/[slug]`).
- *
- * The play area is fixed under the site header, so the document itself must not
- * scroll — otherwise wheel and touch gestures over the game would move the hidden
- * footer instead of reaching the game.
- */
-html:has(.nyn-game-page),
-html:has(.nyn-game-page) body {
-  overflow: hidden;
-  overscroll-behavior: none;
-}
-
-/* The engine's keyboard cursor is an input aid, not something to show. */
-.nyn-game-surface [data-engine-keyboard-cursor] {
-  visibility: hidden;
-}
-
-.nyn-game-surface {
-  touch-action: none;
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.nyn-game-boot-dots {
-  display: flex;
-  gap: 8px;
-  margin: 24px 0 14px;
-}
-
-.nyn-game-boot-dots span {
-  width: 8px;
-  height: 8px;
-  border-radius: 9999px;
-  background: var(--color-indigo-500, #6366f1);
-  animation: nyn-game-boot-pulse 1.2s ease-in-out infinite;
-}
-
-.nyn-game-boot-dots span:nth-child(2) {
-  animation-delay: 0.15s;
-}
-
-.nyn-game-boot-dots span:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-@keyframes nyn-game-boot-pulse {
-  0%,
-  80%,
-  100% {
-    opacity: 0.35;
-    transform: translateY(0);
-  }
-  40% {
-    opacity: 1;
-    transform: translateY(-5px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nyn-game-boot-dots span {
-    animation: none;
-  }
-}
-
-/* The guide drawer: full height on the right, full width on phones. */
-.nyn-game-panel {
-  position: fixed;
-  inset: 0 0 0 auto;
-  margin: 0;
-  width: min(100%, 460px);
-  height: 100dvh;
-  max-width: none;
-  max-height: none;
-  padding: 0;
-  overflow: hidden;
-  border-width: 0 0 0 1px;
-  border-style: solid;
-  box-shadow: -16px 0 56px rgb(0 0 0 / 0.2);
-}
-
-.nyn-game-panel[open] {
-  display: flex;
-  flex-direction: column;
-  animation: nyn-game-panel-in 0.2s ease-out;
-}
-
-.nyn-game-panel::backdrop {
-  background: rgb(15 23 42 / 0.45);
-  -webkit-backdrop-filter: blur(2px);
-  backdrop-filter: blur(2px);
-}
-
-.nyn-game-panel-header {
-  padding-top: max(1.25rem, env(safe-area-inset-top));
-}
-
-@keyframes nyn-game-panel-in {
-  from {
-    transform: translateX(24px);
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nyn-game-panel[open] {
-    animation: none;
-  }
-}
-
-/* Keyboard controls popover, anchored under its toolbar button. */
-.nyn-game-popover {
-  position: fixed;
-  inset: auto;
-  margin: 0;
-  width: min(360px, calc(100vw - 32px));
-  max-height: calc(100dvh - 96px);
-  overflow: hidden;
-}
-
-.nyn-game-popover:popover-open {
-  display: flex;
-  flex-direction: column;
-}
-
-/* The games' own settings popover: frost what is behind it, like the site's other overlays. */
-[data-testid="game-settings-popover"] {
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  --danger-foreground: hsl(265 48% 96%);
+  --border: hsl(266 23% 27%);
+  --separator: hsl(266 19% 42%);
+  --focus: hsl(263 100% 80%);
+  --link: var(--accent);
+  --segment: hsl(266 22% 22%);
+  --segment-foreground: hsl(265 48% 96%);
 }

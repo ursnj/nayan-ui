@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Badge from "@/components/react/components/Badge";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/badge", "react");
@@ -9,7 +9,7 @@ export default function BadgePage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Badge />
+      <NayanComponentDoc path="/react/badge" />
     </>
   );
 }

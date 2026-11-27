@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Sheet from "@/components/react/components/Sheet";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/sheet", "react");
@@ -9,7 +9,7 @@ export default function SheetPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Sheet />
+      <NayanComponentDoc path="/react/sheet" />
     </>
   );
 }

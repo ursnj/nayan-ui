@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNMenu from "@/components/react-native/components/Menu";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNMenuPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNMenu />
+      <NayanComponentDoc path="/react-native/menu" />
     </>
   );
 }

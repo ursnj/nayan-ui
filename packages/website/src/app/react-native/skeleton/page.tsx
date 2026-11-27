@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNSkeleton from "@/components/react-native/components/Skeleton";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNSkeletonPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNSkeleton />
+      <NayanComponentDoc path="/react-native/skeleton" />
     </>
   );
 }

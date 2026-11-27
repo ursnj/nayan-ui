@@ -5,6 +5,12 @@ node_modules
 # Build output is produced inside the image; copying a local one in risks
 # baking a stale bundle.
 **/dist
+packages/nayan-ui/lib
+packages/nayan-ui/native/core/build
+packages/nayan-ui/native/core/target
+packages/website/public/nayan-ui/site-styles.json
+packages/website/src/app/nayan-ui.css
+packages/website/src/app/nayan-ui-styles.ts
 .git
 .gitignore
 README.md
@@ -30,6 +36,3 @@ examples/expo-app/dist
 
 # Regenerated inside the image by the editor build
 packages/website/public/editor
-
-# playtura checkout used by the docker-publish workflow to build @nayan-ui/games
-.playtura

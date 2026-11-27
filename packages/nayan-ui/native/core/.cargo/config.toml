@@ -1,0 +1,4 @@
+# Panics abort (Cargo.toml), so Android builds don't need unwind tables: ~45 KB less per ABI. Crash
+# reports still unwind through Rust frames with frame pointers, which aarch64 Android always keeps.
+[target.'cfg(target_os = "android")']
+rustflags = ["-C", "force-unwind-tables=no"]

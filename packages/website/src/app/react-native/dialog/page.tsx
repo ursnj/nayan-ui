@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNDialog from "@/components/react-native/components/Dialog";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNDialogPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNDialog />
+      <NayanComponentDoc path="/react-native/dialog" />
     </>
   );
 }

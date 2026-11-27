@@ -1,6 +1,7 @@
+import { NView, NText } from 'nayan-ui/components';
 import { memo, useEffect, useRef } from "react";
-import { cn } from "@nayan-ui/react";
-import { Link2, Lock, Music, Type, VolumeX } from "lucide-react";
+import { cn } from "@/components/ui";
+import { Link2, Lock, Music, Type, VolumeX } from "@/design/Icons";
 import { useHeldInteraction } from "../../lib/shortcuts";
 import { readEditorState } from "../../store/editor";
 import { TRANSITION_LABELS, US, isMediaClip, isTextClip } from "../../types";
@@ -51,7 +52,7 @@ export const ClipView = memo(
     const held = useHeldInteraction();
 
     return (
-      <div
+      <NView<'div'> tag="div"
         role="button"
         tabIndex={0}
         aria-label={`${clip.name} clip — arrow keys move it, shift for a second`}
@@ -101,50 +102,50 @@ export const ClipView = memo(
         className={cn(
           "group absolute top-1 select-none overflow-hidden rounded-md border text-left transition-shadow",
           locked ? "cursor-not-allowed" : "cursor-grab active:cursor-grabbing",
-          selected ? "z-20 border-accent ring-2 ring-accent/70 elevate" : "z-10 hover:elevate",
+          selected ? "z-20 border-accent ring-2 ring-accent/70 elevate [box-shadow:var(--elevation)]" : "z-10 hover:[box-shadow:var(--elevation)]",
         )}
       >
-        <div style={{ height: rowHeight - 8 }} className="relative w-full">
+        <NView tag="div" style={{ height: rowHeight - 8 }} className="relative w-full">
           <ClipBody clip={clip} width={width} height={rowHeight - 8} preview={preview} />
 
-          <span className="absolute inset-x-0 bottom-0 h-0.5" style={{ background: clip.color }} />
+          <NText tag="span" className="absolute inset-x-0 bottom-0 h-0.5" style={{ background: clip.color }} />
 
           <FadeOverlay clip={clip} width={width} pxPerSec={pxPerSec} />
 
           {clip.transitionIn && width > 30 && (
-            <div
+            <NView tag="div"
               title={TRANSITION_LABELS[clip.transitionIn.kind]}
               style={{ width: Math.min(width, (clip.transitionIn.durationUs / US) * pxPerSec) }}
               className="pointer-events-none absolute inset-y-0 left-0 border-r border-white/40 bg-gradient-to-r from-white/35 to-transparent"
             />
           )}
 
-          <div
+          <NView tag="div"
             className={cn(
               "pointer-events-none absolute inset-x-0 top-0 flex items-center gap-1 truncate bg-gradient-to-b from-black/60 to-transparent px-1.5 py-0.5",
               width < 44 && "hidden",
             )}
           >
             <ClipIcon clip={clip} />
-            <span
+            <NText tag="span"
               data-clarity-mask="true"
               className="truncate text-[10px] font-medium text-white drop-shadow"
             >
               {clip.name}
-            </span>
+            </NText>
             {clip.groupId && <Link2 className="h-3 w-3 shrink-0 text-white/70" />}
             {clip.locked && <Lock className="h-3 w-3 shrink-0 text-white/70" />}
             {isMediaClip(clip) && clip.kind !== "image" && (clip.muted || clip.volume === 0) && (
               <VolumeX className="h-3 w-3 shrink-0 text-white/70" />
             )}
             {isMediaClip(clip) && clip.speed !== 1 && (
-              <span className="shrink-0 text-[9px] text-white/80">{clip.speed}×</span>
+              <NText tag="span" className="shrink-0 text-[9px] text-white/80">{clip.speed}×</NText>
             )}
             {isMediaClip(clip) && clip.reversed && (
-              <span className="shrink-0 text-[9px] text-white/80">REV</span>
+              <NText tag="span" className="shrink-0 text-[9px] text-white/80">REV</NText>
             )}
-          </div>
-        </div>
+          </NView>
+        </NView>
 
         {!locked && (
           <>
@@ -152,7 +153,7 @@ export const ClipView = memo(
             <TrimHandle side="end" onPointerDown={(event) => onTrimStart(clip, event, "end")} />
           </>
         )}
-      </div>
+      </NView>
     );
   },
 );
@@ -173,7 +174,7 @@ const TrimHandle = ({
   side: TrimEdge;
   onPointerDown: (event: React.PointerEvent) => void;
 }) => (
-  <div
+  <NView<'div'> tag="div"
     role="separator"
     aria-label={`Trim clip ${side}`}
     onPointerDown={(event) => {
@@ -188,13 +189,13 @@ const TrimHandle = ({
       side === "start" ? "left-0" : "right-0",
     )}
   >
-    <span
+    <NText tag="span"
       className={cn(
         "absolute top-1/2 h-4 w-0.5 -translate-y-1/2 rounded bg-white/0 group-hover:bg-white/70",
         side === "start" ? "left-1" : "right-1",
       )}
     />
-  </div>
+  </NView>
 );
 
 const ClipBody = ({
@@ -210,9 +211,9 @@ const ClipBody = ({
 }) => {
   if (isTextClip(clip)) {
     return (
-      <div className="flex h-full items-center px-2 pt-3" style={{ background: `${clip.color}33` }}>
-        <span className="truncate text-[11px] text-foreground/80">{clip.text.split("\n")[0]}</span>
-      </div>
+      <NView tag="div" className="flex h-full items-center px-2 pt-3" style={{ background: `${clip.color}33` }}>
+        <NText tag="span" className="truncate text-[11px] text-foreground/80">{clip.text.split("\n")[0]}</NText>
+      </NView>
     );
   }
   if (clip.kind === "audio") return <Waveform clip={clip} width={width} />;
@@ -235,7 +236,7 @@ const Filmstrip = ({
   const { frames, tileWidth, tileCount } = useFilmstrip(clip, width, height, aspect);
 
   return (
-    <div className="flex h-full w-full overflow-hidden bg-surface-tertiary">
+    <NView tag="div" className="flex h-full w-full overflow-hidden bg-surface-tertiary">
       {Array.from({ length: tileCount }, (_, index) => {
         // More tiles than frames past the decode budget: repeat the nearest.
         const decoded =
@@ -244,7 +245,7 @@ const Filmstrip = ({
             : "";
         const tile = decoded || poster;
         return (
-          <div
+          <NView tag="div"
             key={index}
             style={{
               width: tileWidth,
@@ -257,7 +258,7 @@ const Filmstrip = ({
           />
         );
       })}
-    </div>
+    </NView>
   );
 };
 
@@ -304,7 +305,7 @@ const Waveform = ({ clip, width }: { clip: MediaClip; width: number }) => {
   }, [peaks, width, clip.inUs, clip.durationUs, clip.speed, clip.color]);
 
   return (
-    <canvas ref={canvasRef} className="h-full w-full" style={{ background: `${clip.color}22` }} />
+    <NView tag="canvas" ref={canvasRef} className="h-full w-full" style={{ background: `${clip.color}22` }} />
   );
 };
 

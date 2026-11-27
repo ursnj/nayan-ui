@@ -1,6 +1,8 @@
+import { EDITOR_PANEL } from '@/design/system';
+import { NView, NText } from 'nayan-ui/components';
 import { useState } from "react";
-import { cn } from "@nayan-ui/react";
-import { Blend, FolderOpen, Image as ImageIcon, Sparkles, Type } from "lucide-react";
+import { cn } from "@/components/ui";
+import { Blend, FolderOpen, Image as ImageIcon, Sparkles, Type } from "@/design/Icons";
 import { BackgroundPanel, EffectsPanel, TextPanel, TransitionsPanel } from "./LibraryPanels";
 import { MediaPanel } from "./MediaPanel";
 
@@ -18,13 +20,13 @@ export const LeftRail = () => {
   const [active, setActive] = useState<PanelId>("media");
 
   return (
-    <div className="island flex h-full min-h-0">
-      <nav
+    <NView tag="div" className={`${EDITOR_PANEL} flex h-full min-h-0`}>
+      <NView tag="nav"
         aria-label="Editor panels"
         className="flex w-14 shrink-0 flex-col gap-1 border-r border-border bg-editor-chrome py-2"
       >
         {TABS.map((tab) => (
-          <button
+          <NView tag="button"
             key={tab.id}
             type="button"
             onClick={() => setActive(tab.id)}
@@ -37,21 +39,21 @@ export const LeftRail = () => {
             )}
           >
             {active === tab.id && (
-              <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r bg-accent" />
+              <NText tag="span" className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r bg-accent" />
             )}
             {tab.icon}
-            <span className="text-[9px] leading-none">{tab.label}</span>
-          </button>
+            <NText tag="span" className="text-[9px] leading-none">{tab.label}</NText>
+          </NView>
         ))}
-      </nav>
+      </NView>
 
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-editor-panel">
+      <NView tag="div" className="flex min-h-0 min-w-0 flex-1 flex-col bg-editor-panel">
         {active === "media" && <MediaPanel />}
         {active === "text" && <TextPanel />}
         {active === "effects" && <EffectsPanel />}
         {active === "transitions" && <TransitionsPanel />}
         {active === "background" && <BackgroundPanel />}
-      </div>
-    </div>
+      </NView>
+    </NView>
   );
 };

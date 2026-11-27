@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Slider from "@/components/react/components/Slider";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/slider", "react");
@@ -9,7 +9,7 @@ export default function SliderPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Slider />
+      <NayanComponentDoc path="/react/slider" />
     </>
   );
 }

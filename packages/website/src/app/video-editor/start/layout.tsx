@@ -1,38 +1,16 @@
-import "@/components/video-editor/index.css";
+import { NView } from 'nayan-ui/components';
 import { buildPageMetadata } from "@/services/seo";
 
 // The page is a client component, so its metadata lives here.
 export const metadata = buildPageMetadata({
-  title: "Free Online Video Editor",
+  title: "Free Online Nayan Video Editor",
   description:
     "Edit video free in your browser. Multi-track timeline, green screen, colour grading, transitions and titles. Nothing is uploaded — no account, no watermark.",
   path: "/video-editor/start",
   ogType: "website",
 });
 
-/**
- * The video editor renders fullscreen — it manages its own chrome (TopBar,
- * panels, timeline). The root layout's Header, Footer and the `mt-[60px]`
- * on `<main>` are hidden with a global style injected from here.
- *
- * Its stylesheet is imported here rather than from App.tsx: Tailwind's
- * custom `@utility`/`@theme inline` directives in that CSS file only get
- * compiled when the file is reached from a standard, eagerly-processed
- * layout/page import (the same path globals.css uses) — a JS import deep
- * inside a client-only, next/dynamic-loaded component does not run through
- * the same Tailwind build pass, silently dropping every `@utility` class
- * (`.island`, `.panel`, `.elevate`, `.checkerboard`, `.gpu-layer`,
- * `.animate-in`) used throughout the editor's components.
- */
+/** The fullscreen editor provides its own toolbar, panels and timeline. */
 export default function VideoEditorStartLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <style>{`
-        header.fixed { display: none !important; }
-        main.mt-\\[60px\\] { margin-top: 0 !important; }
-        footer { display: none !important; }
-      `}</style>
-      {children}
-    </>
-  );
+  return <NView tag="div" className="fullscreen-workspace video-editor-workspace">{children}</NView>;
 }

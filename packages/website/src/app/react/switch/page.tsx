@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Switch from "@/components/react/components/Switch";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/switch", "react");
@@ -9,7 +9,7 @@ export default function SwitchPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Switch />
+      <NayanComponentDoc path="/react/switch" />
     </>
   );
 }

@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import AvatarGroup from "@/components/react/components/AvatarGroup";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/avatar-group", "react");
@@ -9,7 +9,7 @@ export default function AvatarGroupPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <AvatarGroup />
+      <NayanComponentDoc path="/react/avatar-group" />
     </>
   );
 }

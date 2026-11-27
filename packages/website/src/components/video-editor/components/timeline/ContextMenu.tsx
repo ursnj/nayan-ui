@@ -1,4 +1,5 @@
-import { cn } from "@nayan-ui/react";
+import { NView, NText } from 'nayan-ui/components';
+import { cn } from "@/components/ui";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -55,16 +56,16 @@ export const ContextMenu = ({ x, y, items, onClose }: ContextMenuProps) => {
   if (typeof document === "undefined") return null;
 
   return createPortal(
-    <div
+    <NView tag="div"
       ref={ref}
       role="menu"
       style={{ left: position.left, top: position.top }}
-      className="animate-in fixed z-[100] min-w-52 rounded-lg border border-border bg-overlay p-1 elevate-lg"
+      className="animate-in animate-editor-in fixed z-[100] min-w-52 rounded-lg border border-border bg-overlay p-1 elevate-lg [box-shadow:var(--elevation-lg)]"
     >
       {items.map((item, index) => (
-        <div key={`${item.label}-${index}`}>
-          {item.separatorBefore && <div className="my-1 h-px bg-border" />}
-          <button
+        <NView tag="div" key={`${item.label}-${index}`}>
+          {item.separatorBefore && <NView tag="div" className="my-1 h-px bg-border" />}
+          <NView tag="button"
             type="button"
             role="menuitem"
             disabled={item.disabled}
@@ -81,12 +82,12 @@ export const ContextMenu = ({ x, y, items, onClose }: ContextMenuProps) => {
               !item.disabled && !item.danger && "text-foreground hover:bg-default",
             )}
           >
-            {item.icon && <span className="shrink-0 opacity-70">{item.icon}</span>}
-            <span className="flex-1">{item.label}</span>
-          </button>
-        </div>
+            {item.icon && <NText tag="span" className="shrink-0 opacity-70">{item.icon}</NText>}
+            <NText tag="span" className="flex-1">{item.label}</NText>
+          </NView>
+        </NView>
       ))}
-    </div>,
+    </NView>,
     document.body,
   );
 };

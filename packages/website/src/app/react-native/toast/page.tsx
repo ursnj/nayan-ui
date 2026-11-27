@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNToast from "@/components/react-native/components/Toast";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNToastPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNToast />
+      <NayanComponentDoc path="/react-native/toast" />
     </>
   );
 }

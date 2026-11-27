@@ -1,6 +1,7 @@
 "use client";
 
-import { NLink } from "@nayan-ui/react";
+import { NView, NText } from 'nayan-ui/components';
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { H2_DOC, H3_DOC } from "@/design/system";
 import Code from "@/components/helpers/Code";
@@ -26,35 +27,35 @@ const LINK = "text-accent hover:underline";
 type Row = [string, string];
 
 const Table = ({ head, rows }: { head: Row; rows: Row[] }) => (
-  <div className="overflow-x-auto mb-4">
-    <table className="w-full text-sm text-left">
-      <thead>
-        <tr className="border-b border-default text-foreground">
-          <th className="py-2 pr-4">{head[0]}</th>
-          <th className="py-2">{head[1]}</th>
-        </tr>
-      </thead>
-      <tbody className="text-muted">
+  <NView tag="div" className="overflow-x-auto mb-4">
+    <NView tag="table" className="w-full text-sm text-left">
+      <NView tag="thead">
+        <NView tag="tr" className="border-b border-default text-foreground">
+          <NView tag="th" className="py-2 pr-4">{head[0]}</NView>
+          <NView tag="th" className="py-2">{head[1]}</NView>
+        </NView>
+      </NView>
+      <NView tag="tbody" className="text-muted">
         {rows.map(([name, detail]) => (
-          <tr key={name} className="border-b border-default align-top">
-            <td className="py-2 pr-4 font-mono text-xs text-foreground whitespace-nowrap">
+          <NView tag="tr" key={name} className="border-b border-default align-top">
+            <NView tag="td" className="py-2 pr-4 font-mono text-xs text-foreground whitespace-nowrap">
               {name}
-            </td>
-            <td className="py-2">{detail}</td>
-          </tr>
+            </NView>
+            <NView tag="td" className="py-2">{detail}</NView>
+          </NView>
         ))}
-      </tbody>
-    </table>
-  </div>
+      </NView>
+    </NView>
+  </NView>
 );
 
 const ENTRY_ROWS: Row[] = [
   [
-    "@nayan-ui/games",
+    "nayan-games",
     "Game components, GAMES / GAMES_LIST / GAMES_MAPPING (import every game), metadata, sounds, types.",
   ],
   [
-    "@nayan-ui/games/services",
+    "nayan-games/services",
     "No components: loadGameComponent, warm-up, theme helpers, metadata, sounds, GAME_IDS, types.",
   ],
 ];
@@ -81,84 +82,84 @@ const GamesApiReference = () => {
 
   return (
     <Sidebar title={component?.title || "API Reference"}>
-      <p className={P}>
-        Every export of @nayan-ui/games 1.22.0; each entry resolves to <code>lib/module</code> in
-        React Native and <code>lib/web</code> in browsers.
-      </p>
+      <NText tag="p" className={P}>
+        Every export of nayan-games 1.22.0; each entry resolves to <NText tag="code">lib/module</NText> in
+        React Native and <NText tag="code">lib/web</NText> in browsers.
+      </NText>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>Entry points</h2>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>Entry points</NText>
         <Table head={["Import", "Contains"]} rows={ENTRY_ROWS} />
-        <h3 className={H3_DOC}>@nayan-ui/games</h3>
+        <NText tag="h3" className={H3_DOC}>nayan-games</NText>
         <Code code={rootExportsCode} />
-        <h3 className={H3_DOC}>@nayan-ui/games/services</h3>
+        <NText tag="h3" className={H3_DOC}>nayan-games/services</NText>
         <Code code={servicesExportsCode} />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>Game components</h2>
-        <p className={P}>
-          Each is a <code>React.FC&lt;GameProps&gt;</code> with its own loading screen, scoreboard,
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>Game components</NText>
+        <NText tag="p" className={P}>
+          Each is a <NText tag="code">React.FC&lt;GameProps&gt;</NText> with its own loading screen, scoreboard,
           Start/Stop, results card and settings modal.
-        </p>
+        </NText>
         <Code code={gameComponentCode} />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>Types</h2>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>Types</NText>
         <Code code={typescriptTypesCode} />
-        <h3 className={H3_DOC}>Callbacks</h3>
+        <NText tag="h3" className={H3_DOC}>Callbacks</NText>
         <Table head={["Prop", "Fires"]} rows={CALLBACK_ROWS} />
-        <h3 className={H3_DOC}>DEFAULT_GAME_SETTINGS</h3>
+        <NText tag="h3" className={H3_DOC}>DEFAULT_GAME_SETTINGS</NText>
         <Code code={defaultGameSettingsCode} />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>GAME_IDS</h2>
-        <p className={P}>Each value is also the game&apos;s page slug on this site.</p>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>GAME_IDS</NText>
+        <NText tag="p" className={P}>Each value is also the game&apos;s page slug on this site.</NText>
         <Code code={gameIdsEnumCode} />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>Loading</h2>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>Loading</NText>
         <Code code={loadersCode} />
-        <h3 className={H3_DOC}>Collections and metadata</h3>
+        <NText tag="h3" className={H3_DOC}>Collections and metadata</NText>
         <Code code={gamesCollectionsCode} />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>Theme</h2>
-        <p className={P}>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>Theme</NText>
+        <NText tag="p" className={P}>
           Services entry only; usage in{" "}
-          <NLink href="/games/installation" className={LINK}>
+          <Link href="/games/installation" className={LINK}>
             Installation → Theme
-          </NLink>
+          </Link>
           .
-        </p>
+        </NText>
         <Code code={themeApiCode} />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>Sounds</h2>
-        <p className={P}>Games play their own sounds; hosts rarely need more than stopAllSounds.</p>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>Sounds</NText>
+        <NText tag="p" className={P}>Games play their own sounds; hosts rarely need more than stopAllSounds.</NText>
         <Code code={soundsApiCode} />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>Utilities</h2>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>Utilities</NText>
         <Code code={utilsApiCode} />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>Not exported</h2>
-        <p className={P}>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>Not exported</NText>
+        <NText tag="p" className={P}>
           engineGame, useEngineGame, EngineGameScreen, EngineHud and src/games/shared are internal;{" "}
-          <NLink href="/games/build-a-game" className={LINK}>
+          <Link href="/games/build-a-game" className={LINK}>
             Build an engine game
-          </NLink>{" "}
+          </Link>{" "}
           covers them.
-        </p>
-      </div>
+        </NText>
+      </NView>
     </Sidebar>
   );
 };

@@ -1,0 +1,54 @@
+name: Build and test the npm package
+description: Package the platform binaries with the tested JavaScript build.
+
+outputs:
+  tarball:
+    description: Path to the validated npm tarball.
+    value: ${{ steps.pack.outputs.tarball }}
+
+runs:
+  using: composite
+  steps:
+    - uses: oven-sh/setup-bun@v2
+      with:
+        bun-version-file: .bun-version
+
+    - uses: actions/setup-node@v5
+      with:
+        node-version: 24
+        package-manager-cache: false
+
+    - uses: actions/cache@v4
+      if: github.event_name != 'issue_comment'
+      with:
+        path: ~/.bun/install/cache
+        key: npm-bun-${{ runner.os }}-${{ hashFiles('.bun-version', 'bun.lock', 'bunfig.toml') }}
+
+    - name: Install engine dependencies
+      shell: bash
+      run: bun install --frozen-lockfile --filter nayan-ui
+
+    - name: Build the JavaScript package
+      shell: bash
+      working-directory: packages/nayan-ui
+      run: |
+        bun scripts/build-web.mjs
+        bun x bob build
+
+    - name: Check types and run engine tests
+      shell: bash
+      run: |
+        bun run engine:typecheck
+        bun run engine:test
+        bun run engine:test:integration
+
+    - name: Validate and pack the npm package
+      id: pack
+      shell: bash
+      working-directory: packages/nayan-ui
+      run: |
+        bun scripts/build-cli-template.mjs
+        npm pack --ignore-scripts --json --pack-destination "$RUNNER_TEMP" | bun scripts/check-package.mjs --pack-json
+
+        version="$(node -p "require('./package.json').version")"
+        echo "tarball=$RUNNER_TEMP/nayan-ui-$version.tgz" >> "$GITHUB_OUTPUT"

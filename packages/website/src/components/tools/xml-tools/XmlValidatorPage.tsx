@@ -1,22 +1,12 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-import Sidebar from "@/components/helpers/Sidebar";
-import SubHeader from "@/components/helpers/SubHeader";
-import TagsList from "@/components/helpers/TagsList";
-import { xmlValidatorTags } from "@/services/Tags";
-import { getMenuItem } from "@/services/Utils";
-import { XmlValidator } from "@/components/tools";
-import { XmlValidatorContent } from "./XmlToolsContent";
+import Sidebar from '@/components/helpers/Sidebar';
+import SubHeader from '@/components/helpers/SubHeader';
+import TagsList from '@/components/helpers/TagsList';
+import { xmlValidatorTags } from '@/services/Tags';
+import { XmlValidatorContent } from './XmlToolsContent';
 
 const XmlValidatorPage = () => {
-  const pathname = usePathname();
-  const component: any = getMenuItem(pathname);
-
   return (
-    <Sidebar title={component?.title || "XML Validator"}>
-      <XmlValidator />
-
+    <Sidebar title="XML Validator">
       <XmlValidatorContent />
 
       <SubHeader title="Tags">

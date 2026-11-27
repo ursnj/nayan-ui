@@ -1,0 +1,23 @@
+{
+  "name": "@nayan-ui/mobile",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./src/main.tsx",
+  "scripts": {
+    "start": "expo start",
+    "prebuild": "expo prebuild",
+    "ios": "expo run:ios",
+    "android": "expo run:android",
+    "typecheck": "bun check"
+  },
+  "dependencies": {
+    "@nayan-ui/shared": "workspace:*",
+    "nayan-ui": "1.0.0-beta.5",
+    "expo": "^58.0.0",
+    "react": "19.3.0",
+    "react-native": "0.88.0"
+  },
+  "devDependencies": {
+    "babel-preset-expo": "~58.0.10"
+  }
+}

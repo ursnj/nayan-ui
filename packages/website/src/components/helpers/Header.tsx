@@ -1,58 +1,57 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { NSheet, THEMES } from "@nayan-ui/react";
-import { AlignJustify, Github, MoonStar, Package, Sun } from "lucide-react";
+import { NImage, NPress, NText, NView } from "nayan-ui/components";
+import { AlignJustify, Github, MoonStar, Package, Sun, X } from "@/design/Icons";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { CONTAINER } from "@/design/system";
 import { REPO_URL } from "@/services/seo";
+import { resolvePagePath } from "@/services/site-routes";
 import { useTheme } from "@/components/helpers/ThemeProvider";
 
 const NAV = [
-  { label: "Home", href: "/", match: "/" },
-  { label: "React", href: "/react/installation", match: "/react" },
-  { label: "React Native", href: "/react-native/installation", match: "/react-native" },
-  { label: "Game Engine", href: "/game-engine", match: "/game-engine" },
-  { label: "Games", href: "/games", match: "/games" },
-  { label: "Video Editor", href: "/video-editor", match: "/video-editor" },
-  { label: "Tools", href: "/tools", match: "/tools" },
+  { label: "Home", href: "/" },
+  { label: "Components", href: "/components" },
+  { label: "Modules", href: "/modules" },
+  { label: "Game Engine", href: "/game-engine" },
+  { label: "Games", href: "/games" },
+  { label: "Playground", href: "/playground" },
+  { label: "Video Editor", href: "/video-editor" },
 ];
 
-const isActive = (pathname: string, match: string | string[]) => {
-  if (match === "/") return pathname === "/";
-  return (Array.isArray(match) ? match : [match]).some(
-    (m) => pathname === m || pathname.startsWith(`${m}/`),
+const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) => {
+  const sectionPath = /^\/react(?:-native)?(?:\/|$)/.test(pathname) ? "/components" : pathname;
+  return (
+    <NView tag="ul" className="site-nav-list flex flex-col [gap:0.25rem]">
+      {NAV.map(({ label, href }) => {
+        const active = sectionPath === href || sectionPath.startsWith(`${href}/`);
+        return (
+          <NView tag="li" key={href} className="site-nav-item w-full">
+            <Link
+              href={href}
+              onClick={onNavigate}
+              aria-current={pathname === href ? "page" : active ? "location" : undefined}
+              className={`site-nav-link [padding:0.48rem_0.7rem] [border-radius:0.55rem] block text-sm font-medium whitespace-nowrap transition-colors ${
+                active ? "bg-accent/10 text-accent" : "text-muted hover:bg-default/60 hover:text-foreground"
+              }`}
+            >
+              {label}
+            </Link>
+          </NView>
+        );
+      })}
+    </NView>
   );
 };
 
-const NavLinks = ({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) => (
-  <ul className="flex flex-col gap-1 md:flex-row md:items-center">
-    {NAV.map((item) => {
-      const active = isActive(pathname, item.match);
-      return (
-        <li key={item.href} className="w-full md:w-auto">
-          <Link
-            href={item.href}
-            onClick={onNavigate}
-            aria-current={active ? "page" : undefined}
-            className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              active
-                ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
-                : "text-muted hover:bg-default/60 hover:text-foreground"
-            }`}
-          >
-            {item.label}
-          </Link>
-        </li>
-      );
-    })}
-  </ul>
-);
-
-const Header = () => {
+const Header = ({ moduleSlugs }: { moduleSlugs: readonly string[] }) => {
   const pathname = usePathname();
-  const [menu, setMenu] = useState(false);
+  const { entry } = useParams<{ entry?: string }>();
+  // A reference and its original URL have the same route parameter.
+  const navPath = entry ? `/${moduleSlugs.includes(entry) ? "modules" : "components"}/${entry}` : resolvePagePath(pathname);
+  const menu = useRef<HTMLDialogElement>(null);
+  const closeMenu = () => menu.current?.close();
   const { theme, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -71,48 +70,68 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    setMenu(false);
+    menu.current?.close();
     if (historyNavigation.current) {
       historyNavigation.current = false;
       return;
     }
-    window.scrollTo(0, 0);
+    if (!window.location.hash) window.scrollTo(0, 0);
   }, [pathname]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-default bg-surface/80 backdrop-blur-md">
-      <div className={CONTAINER}>
-        <NSheet isOpen={menu} title="Nayan UI" onCloseSheet={() => setMenu(false)}>
-          <NavLinks pathname={pathname} onNavigate={() => setMenu(false)} />
-        </NSheet>
+    <NView
+      tag="header"
+      className="site-header [background:color-mix(in_srgb,_var(--surface)_92%,_transparent)] fixed inset-x-0 top-0 z-40 border-b border-border backdrop-blur-xl"
+    >
+      <NView tag="div" className={CONTAINER}>
+        <NView tag="dialog"
+          id="site-menu"
+          ref={menu}
+          aria-labelledby="site-menu-title"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) closeMenu();
+          }}
+          className="fixed inset-x-0 top-auto bottom-0 m-0 max-h-[85dvh] w-full max-w-none rounded-t-2xl border border-border bg-surface p-0 text-foreground backdrop:bg-black/50"
+        >
+          <NView tag="div" className="p-4">
+            <NView tag="div" className="mb-3 flex items-center justify-between">
+              <NText tag="h2" id="site-menu-title" className="font-bold">
+                Nayan UI
+              </NText>
+              <NPress
+                onPress={closeMenu}
+                aria-label="Close menu"
+                className="rounded-lg p-2 hover:bg-default/60"
+              >
+                <X className="h-5 w-5" />
+              </NPress>
+            </NView>
+            <NView tag="nav" aria-label="Mobile">
+              <NavLinks pathname={navPath} onNavigate={closeMenu} />
+            </NView>
+          </NView>
+        </NView>
 
-        <nav aria-label="Main" className="flex h-[59px] items-center justify-between gap-6">
-          <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <img
-              src="/logo.webp"
-              fetchPriority="high"
-              alt=""
-              width={32}
-              height={32}
-              className="h-8 w-8"
-            />
-            <span className="hidden whitespace-nowrap text-base font-bold text-foreground sm:inline">
+        <NView tag="div" className="site-header-row [height:calc(var(--site-header-height)_-_1px)] flex items-center justify-between gap-3 lg:gap-6">
+          <Link href="/" aria-label="Nayan UI home" className="flex shrink-0 items-center gap-2.5">
+            <NImage src="/logo.webp" priority alt="" width={32} height={32} className="h-8 w-8 object-contain" />
+            <NText tag="span" className="whitespace-nowrap text-lg font-bold tracking-[-0.045em] text-foreground">
               Nayan UI
-            </span>
+            </NText>
           </Link>
 
-          <div className="hidden md:block">
-            <NavLinks pathname={pathname} />
-          </div>
+          <NView tag="nav" aria-label="Main" className="site-desktop-nav hidden min-[1150px]:block min-[1150px]:[&_.site-nav-list]:flex-row min-[1150px]:[&_.site-nav-list]:items-center min-[1150px]:[&_.site-nav-item]:w-auto">
+            <NavLinks pathname={navPath} />
+          </NView>
 
-          <div className="flex items-center gap-1">
+          <NView tag="div" className="site-header-actions flex items-center [gap:0.15rem]">
             <Link
-              href="https://www.npmjs.com/~ursnj"
+              href="https://www.npmjs.com/package/nayan-ui"
               target="_blank"
               rel="noopener noreferrer"
-              title="Nayan UI packages on npm"
-              aria-label="Nayan UI packages on npm"
-              className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground"
+              title="Nayan UI on npm"
+              aria-label="Nayan UI on npm"
+              className="inline-grid site-header-action inline-grid [flex:none] [place-items:center] [width:2.4rem] [height:2.4rem] [border-radius:0.5rem] text-muted [transition:color_150ms,_background-color_150ms] hover:text-foreground hover:bg-surface-tertiary"
             >
               <Package className="h-[18px] w-[18px]" />
             </Link>
@@ -122,37 +141,37 @@ const Header = () => {
               rel="noopener noreferrer"
               title="Nayan UI on GitHub"
               aria-label="Nayan UI on GitHub"
-              className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground"
+              className="inline-grid site-header-action inline-grid [flex:none] [place-items:center] [width:2.4rem] [height:2.4rem] [border-radius:0.5rem] text-muted [transition:color_150ms,_background-color_150ms] hover:text-foreground hover:bg-surface-tertiary"
             >
               <Github className="h-[18px] w-[18px]" />
             </Link>
-            <button
-              type="button"
-              onClick={toggleTheme}
+            <NPress
+              onPress={toggleTheme}
               title="Switch theme"
               aria-label="Switch theme"
-              className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground"
+              className="inline-grid site-header-action inline-grid [flex:none] [place-items:center] [width:2.4rem] [height:2.4rem] [border-radius:0.5rem] text-muted [transition:color_150ms,_background-color_150ms] hover:text-foreground hover:bg-surface-tertiary"
             >
               {!mounted ? (
-                <span className="block h-[18px] w-[18px]" />
-              ) : theme === THEMES.DARK ? (
+                <NText tag="span" className="block h-[18px] w-[18px]" />
+              ) : theme === "dark" ? (
                 <Sun className="h-[18px] w-[18px]" />
               ) : (
                 <MoonStar className="h-[18px] w-[18px]" />
               )}
-            </button>
-            <button
-              type="button"
-              onClick={() => setMenu(true)}
+            </NPress>
+            <NPress
+              onPress={() => menu.current?.showModal()}
+              aria-haspopup="dialog"
+              aria-controls="site-menu"
               aria-label="Open menu"
-              className="rounded-lg p-2 text-muted transition-colors hover:bg-default/60 hover:text-foreground md:hidden"
+              className="inline-grid site-header-action inline-grid [flex:none] [place-items:center] [width:2.4rem] [height:2.4rem] [border-radius:0.5rem] text-muted [transition:color_150ms,_background-color_150ms] hover:text-foreground hover:bg-surface-tertiary site-mobile-toggle min-[1150px]:hidden"
             >
               <AlignJustify className="h-5 w-5" />
-            </button>
-          </div>
-        </nav>
-      </div>
-    </header>
+            </NPress>
+          </NView>
+        </NView>
+      </NView>
+    </NView>
   );
 };
 

@@ -1,6 +1,7 @@
 "use client";
 
-import { NLink } from "@nayan-ui/react";
+import { NView, NText } from 'nayan-ui/components';
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CheckList } from "@/design/Primitives";
 import { H2_DOC, H3_DOC } from "@/design/system";
@@ -22,26 +23,26 @@ const LINK = "text-accent hover:underline";
 type Row = [string, string];
 
 const Table = ({ head, rows }: { head: Row; rows: Row[] }) => (
-  <div className="overflow-x-auto mb-4">
-    <table className="w-full text-sm text-left">
-      <thead>
-        <tr className="border-b border-default text-foreground">
-          <th className="py-2 pr-4">{head[0]}</th>
-          <th className="py-2">{head[1]}</th>
-        </tr>
-      </thead>
-      <tbody className="text-muted">
+  <NView tag="div" className="overflow-x-auto mb-4">
+    <NView tag="table" className="w-full text-sm text-left">
+      <NView tag="thead">
+        <NView tag="tr" className="border-b border-default text-foreground">
+          <NView tag="th" className="py-2 pr-4">{head[0]}</NView>
+          <NView tag="th" className="py-2">{head[1]}</NView>
+        </NView>
+      </NView>
+      <NView tag="tbody" className="text-muted">
         {rows.map(([name, detail]) => (
-          <tr key={name} className="border-b border-default align-top">
-            <td className="py-2 pr-4 font-mono text-xs text-foreground whitespace-nowrap">
+          <NView tag="tr" key={name} className="border-b border-default align-top">
+            <NView tag="td" className="py-2 pr-4 font-mono text-xs text-foreground whitespace-nowrap">
               {name}
-            </td>
-            <td className="py-2">{detail}</td>
-          </tr>
+            </NView>
+            <NView tag="td" className="py-2">{detail}</NView>
+          </NView>
         ))}
-      </tbody>
-    </table>
-  </div>
+      </NView>
+    </NView>
+  </NView>
 );
 
 const MODEL_ROWS: Row[] = [
@@ -132,72 +133,72 @@ const BuildAGame = () => {
 
   return (
     <Sidebar title={component?.title || "Build an engine game"}>
-      <p className={P}>
+      <NText tag="p" className={P}>
         Library games pair plain TypeScript rules on a{" "}
-        <NLink href="/game-engine" className={LINK}>
-          @nayan-ui/engine
-        </NLink>{" "}
+        <Link href="/game-engine" className={LINK}>
+          nayan-ui
+        </Link>{" "}
         world with a small screen on the shared HUD. These modules are internal, so use this pattern
         in the library or a fork; for your own app, follow the{" "}
-        <NLink href="/game-engine/first-game" className={LINK}>
+        <Link href="/game-engine/first-game" className={LINK}>
           engine game guide
-        </NLink>{" "}
+        </Link>{" "}
         and the lifecycle rules below.
-      </p>
+      </NText>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>1. Files</h2>
-        <p className={P}>
-          One folder per game under <code>src/games/&lt;game-id&gt;/</code>; Stack Tower is the
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>1. Files</NText>
+        <NText tag="p" className={P}>
+          One folder per game under <NText tag="code">src/games/&lt;game-id&gt;/</NText>; Stack Tower is the
           smallest example.
-        </p>
+        </NText>
         <Code language="bash" code={gameFolderCode} />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>2. The game module</h2>
-        <p className={P}>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>2. The game module</NText>
+        <NText tag="p" className={P}>
           createGame returns an EngineGameModel; one world serves the whole visit and is reset in
           place.
-        </p>
+        </NText>
         <Table head={["Field", "Meaning"]} rows={MODEL_ROWS} />
         <Code code={gameModuleCode} filename="MyGameGame.ts" />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>3. The screen</h2>
-        <p className={P}>
-          <strong>engineGame(id, Component)</strong> returns the exported game: memoised, with
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>3. The screen</NText>
+        <NText tag="p" className={P}>
+          <NText tag="strong">engineGame(id, Component)</NText> returns the exported game: memoised, with
           default settings, theme and the engine loading screen.
-        </p>
-        <h3 className={H3_DOC}>useEngineGame(props, spec)</h3>
-        <p className={P}>
+        </NText>
+        <NText tag="h3" className={H3_DOC}>useEngineGame(props, spec)</NText>
+        <NText tag="p" className={P}>
           Creates the game, steps and disposes its world, and reports each run once. Import
           GamePhase from shared/useEngineGame rather than redeclaring it.
-        </p>
+        </NText>
         <Table head={["Spec field", "When it runs"]} rows={SPEC_ROWS} />
         <Table head={["Returns", "Value"]} rows={RETURN_ROWS} />
-        <h3 className={H3_DOC}>EngineGameScreen</h3>
-        <p className={P}>
+        <NText tag="h3" className={H3_DOC}>EngineGameScreen</NText>
+        <NText tag="p" className={P}>
           Renders GameView with the HUD, results card, banner and settings modal, and handles pause,
           mute and the back gesture while playing.
-        </p>
+        </NText>
         <Table head={["Prop", "Purpose"]} rows={SCREEN_ROWS} />
         <Code code={gameScreenCode} filename="MyGame.tsx" />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>4. The scene and helpers</h2>
-        <p className={P}>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>4. The scene and helpers</NText>
+        <NText tag="p" className={P}>
           Build models in code (lathe, tube, extrude, merge, loft, block, ellipsoid) once per app;
           mesh ids are never freed. Tint a white body per entity and keep coloured parts separate.
-        </p>
+        </NText>
         <Table head={["Helper", "Use"]} rows={HELPER_ROWS} />
         <Code code={sceneCode} filename="MyGameScene.ts" />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>5. Lifecycle rules</h2>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>5. Lifecycle rules</NText>
         <CheckList
           items={[
             "ready → playing → over, always through g.onPhase; start only from 'ready'.",
@@ -211,17 +212,17 @@ const BuildAGame = () => {
             "Cache meshes, textures and fonts at module scope; spawn new entities per run.",
           ]}
         />
-      </div>
+      </NView>
 
-      <div className="mb-8">
-        <h2 className={H2_DOC}>6. Register and verify</h2>
-        <p className={P}>
+      <NView tag="div" className="mb-8">
+        <NText tag="h2" className={H2_DOC}>6. Register and verify</NText>
+        <NText tag="p" className={P}>
           Add the game to each registry, and to tests/lifecycle.test.ts; expensive models can add a
           stage in services/GameAssets.ts.
-        </p>
+        </NText>
         <Code code={registerCode} />
         <Code language="bash" code={verifyCode} />
-      </div>
+      </NView>
     </Sidebar>
   );
 };

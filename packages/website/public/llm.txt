@@ -1,250 +1,41 @@
-# Nayan UI - Component Library & Developer Tools
+# Nayan UI
 
 ## Project Overview
-Nayan UI is a comprehensive, enterprise-grade UI component library for React and React Native applications, plus a full suite of 50+ free online developer tools. It provides 58 documented components — 35 for React and 23 for React Native — with TypeScript-first development, CSS-variable theming, and cross-platform compatibility.
 
-**Website**: https://www.nayanui.com
-**Repository**: https://github.com/ursnj/nayan-ui
-**License**: ISC
+The `nayan-ui` package provides cross-platform interfaces, application services, and 3D games for React and React Native.
 
-## Architecture
-- **Monorepo Structure**: Yarn workspaces
-- **Packages**:
-  - `@nayan-ui/react` — React components built on HeroUI + Tailwind CSS
-  - `@nayan-ui/native` — React Native components with NativeWind
-  - `@nayan-ui/engine` — shared Rust/wgpu game engine for React browsers and React Native
-  - `@nayan-ui/cli` — CLI tools for SEO (sitemap, robots.txt generation)
-  - `@nayan-ui/ai` — AI-powered code reviewer & vulnerability scanner CLI
-  - `@nayan-ui/tools` — Tools library (video editor, PDF tools, image tools, JSON tools, XML tools, text tools)
-  - `@nayan-ui/website` — Next.js documentation website (this site)
+- Nayan Components: https://www.nayanui.com/components
+- Nayan Modules: https://www.nayanui.com/modules
+- Nayan Game Engine: https://www.nayanui.com/game-engine
+- Nayan Games: https://www.nayanui.com/games
+- Nayan Playground: https://www.nayanui.com/playground
+- Nayan Video Editor: https://www.nayanui.com/video-editor
+- React quickstart: https://www.nayanui.com/game-engine/react
+- React Native quickstart: https://www.nayanui.com/game-engine/react-native
+- Nayan UI starter template: https://github.com/ursnj/nayan-ui/tree/main/templates/nayan-ui
 
-## Technology Stack
-- **Website**: Next.js 15, React 19, TypeScript, Tailwind CSS v4, HeroUI
-- **React Package**: React 19, TypeScript, HeroUI, Tailwind CSS, Vite
-- **React Native**: React Native 0.80+, NativeWind, Expo SDK 53+
-- **Build Tools**: Vite, Next.js, react-native-builder-bob, TypeScript
-- **Styling**: Tailwind CSS, HeroUI design tokens, CSS variables for theming
-- **Icons**: Lucide React (React), Lucide React Native (React Native)
-- **Development**: Yarn workspaces, Husky, Prettier
+## Nayan Components
 
-## Component Categories
+Install the engine with `bun add nayan-ui`. Import controls from `nayan-ui/components` and render them inside `NTheme`. Native apps need a development build.
 
-### Form Controls
-- **NButton**: Multiple variants (default, destructive, outline, secondary, ghost, link), sizes, loading states, icons
-- **NInput**: Text inputs with validation states, icons, helper text, various input types
-- **NTextarea**: Multi-line text input with character limits, auto-resize, validation
-- **NCheckbox**: Single and group checkboxes with custom styling
-- **NRadioGroup**: Radio button groups with horizontal/vertical layouts
-- **NSwitch**: Toggle switches with sizes and custom styling
-- **NSelect**: Single/multi-select dropdowns with search, creation, loading states
-- **NSlider**: Range sliders with marks, vertical orientation, custom styling
-- **NDatePicker**: Date/time/datetime picker with custom icons (React Native only)
-- **NColorPicker**: Color selection component (React Native only)
-
-### Layout & Navigation
-- **NCard**: Content containers with headers, footers, custom styling
-- **NAccordion**: Collapsible content sections with single/multiple expansion
-- **NDivider**: Horizontal/vertical separators with custom styling
-- **NTabs**: Tabbed interfaces with icons, vertical layout, full-width options
-- **NSheet**: Bottom sheets and side panels with different sizes
-- **NDialog**: Modal dialogs with various sizes and content types
-- **NMenu**: Context menus and dropdown menus with nested items, separators
-
-### Feedback & Display
-- **NAlert**: Notification alerts with types (success, error, warning, info), actions, dismissible
-- **NToast**: Toast notifications with different types, actions, positioning
-- **NProgress**: Progress bars with labels, animations, custom styling
-- **NBadge**: Status badges with colors, sizes, notification dots
-- **NLoading**: Loading spinners with sizes, colors, contextual usage
-- **NSkeleton**: Loading placeholders for content (lines, avatars, cards)
-- **NTooltip**: Hover tooltips with positioning and custom content
-
-### Data Display
-- **NTable**: Data tables with sorting, pagination, custom cell renderers
-- **NInfiniteScroll**: Infinite scrolling lists with pull-to-refresh
-
-### Utility & Navigation
-- **NLink**: Navigation links with external/internal routing, accessibility
-- **NLinkify**: Automatic URL/email detection and linking in text
-- **NPopover**: Floating content containers with positioning
-- **NConfirmAlert**: Confirmation dialogs for destructive actions
-
-### Theming & Customization
-- **NTheme**: Theme provider with light/dark mode support
-- **NThemeToggle**: Theme switching component (React Native only)
-
-## Key Features
-
-### Design System
-- **Enterprise-class UI**: Professional design with consistent spacing, typography, colors
-- **TypeScript-first**: Full type safety with comprehensive interfaces
-- **Accessibility**: WCAG compliance with proper ARIA labels, keyboard navigation
-- **Responsive**: Mobile-first design with responsive breakpoints
-- **Dark Mode**: Built-in dark mode support with smooth transitions
-
-### Customization
-- **Tailwind CSS Integration**: Full utility class support for styling
-- **CSS Variables**: Theme customization through CSS custom properties
-- **Component Variants**: Multiple style variants for different use cases
-- **Custom Icons**: Support for Lucide, Expo, and custom icon components
-- **Flexible Styling**: className props on all components for custom styling
-
-### Performance
-- **60fps Performance**: Optimized for smooth animations and interactions
-- **Tree Shaking**: Only import components you use
-- **Bundle Size**: Minimal bundle impact with efficient code splitting
-- **React.memo**: Performance optimization to prevent unnecessary re-renders
-
-## Installation & Setup
-
-### React Package
-```bash
-npm install @nayan-ui/react
-# or
-yarn add @nayan-ui/react
-```
-
-**Peer Dependencies**: react, react-dom, tailwindcss
-
-### React Native Package
-```bash
-npm install @nayan-ui/native
-# or
-yarn add @nayan-ui/native
-```
-
-**Peer Dependencies**: react, react-native, nativewind, tailwindcss
-
-### CLI Tools
-```bash
-npm install -g @nayan-ui/cli
-# Usage: nayan create sitemap, nayan validate robots
-```
-
-## Theme Configuration
-
-### React Theme Setup
-```typescript
-import { NTheme, THEMES } from '@nayan-ui/react';
-
-const themeColors = {
-  light: {
-    primary: '#3b82f6',
-    background: '#ffffff',
-    foreground: '#0f172a'
-  },
-  dark: {
-    primary: '#60a5fa',
-    background: '#0f172a',
-    foreground: '#f8fafc'
-  }
-};
-
-function App() {
-  return (
-    <NTheme theme={THEMES.light} themeColors={themeColors}>
-      {/* Your app content */}
-    </NTheme>
-  );
-}
-```
-
-### React Native Theme Setup
-```typescript
-import { NTheme, THEMES, useNTheme } from '@nayan-ui/native';
+```tsx
+import { NButton, NText, NTheme } from 'nayan-ui/components';
 
 export default function App() {
-  const { theme } = useNTheme();
-  
   return (
-    <NTheme theme={theme || THEMES.light} themeColors={themeColors}>
-      {/* Your app content */}
+    <NTheme defaultTheme="system" className="gap-3 p-4" surface={{ style: { height: 300 } }}>
+      <NText>Welcome</NText>
+      <NButton onPress={() => console.log('Continue')}>Continue</NButton>
     </NTheme>
   );
 }
 ```
 
-## Development Workflow
+Use `useNTheme` for appearance, `NToast` for feedback, and feature-specific imports for storage, media, permissions, and rendering.
 
-### Local Development
-```bash
-# Start website with hot reload
-yarn start:website:watch
+## Developer Tool Guides
 
-# Build packages
-yarn build:react
-yarn build:react-native
-
-# Clean all dependencies
-yarn clean
-```
-
-### Website Structure
-- **src/react/components/**: React component examples and documentation
-- **src/react-native/components/**: React Native component examples
-- **src/home/**: Homepage content and navigation
-- **src/services/**: Utility functions and helpers
-- **public/**: Static assets and sitemap
-
-## Component Usage Patterns
-
-### Basic Component Usage
-```typescript
-import { NButton, NInput, NCard } from '@nayan-ui/react';
-
-function MyComponent() {
-  return (
-    <NCard>
-      <NInput placeholder="Enter text" />
-      <NButton variant="default" size="md">
-        Submit
-      </NButton>
-    </NCard>
-  );
-}
-```
-
-### Advanced Theming
-```typescript
-import { NButton } from '@nayan-ui/react';
-
-function CustomButton() {
-  return (
-    <NButton 
-      variant="outline"
-      className="bg-gradient-to-r from-blue-500 to-purple-600 text-white border-none"
-    >
-      Custom Styled Button
-    </NButton>
-  );
-}
-```
-
-### Form Integration
-```typescript
-import { useForm } from 'react-hook-form';
-import { NFormInput, NButton } from '@nayan-ui/react';
-
-function ContactForm() {
-  const { control, handleSubmit } = useForm();
-  
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <NFormInput
-        control={control}
-        name="email"
-        label="Email"
-        rules={{ required: 'Email is required' }}
-      />
-      <NButton type="submit">Submit</NButton>
-    </form>
-  );
-}
-```
-
-## Free Online Developer Tools
-
-Nayan UI provides 50+ free online tools at https://www.nayanui.com/tools — all tools run in the browser or via server-side processing with no signup required.
+The documentation at https://www.nayanui.com/tools covers PDF and image workflows, structured data, text processing, SEO, and command-line tools.
 
 ### PDF Tools (20 tools)
 - **Merge PDF** — Combine multiple PDF files into one document
@@ -324,7 +115,7 @@ Nayan UI provides 50+ free online tools at https://www.nayanui.com/tools — all
 - LLM providers: Codex (default) and Claude Code
 - Supports: npm, Python, Go, Rust, Ruby, PHP, Java, .NET, Scala
 
-## Video Editor
+## Nayan Video Editor
 
 **Page**: https://www.nayanui.com/video-editor
 **App**: https://www.nayanui.com/video-editor/start
@@ -386,7 +177,7 @@ A free, open source (MIT) video editor that runs entirely in the browser. There 
 - **Expo**: SDK 53+
 
 ## Contributing
-The project follows standard open-source contribution guidelines with Prettier formatting, Husky pre-commit hooks, and comprehensive TypeScript typing. All components include extensive examples and documentation.
+Run `bun run format:check`, `bun run lint`, and `bun run typecheck` from the repository root.
 
 ## SEO & Performance
 - Next.js server-side rendering and static generation
@@ -429,19 +220,19 @@ sparks/explosion/dust/flash, await effects.pop(world, piece) then despawn. Setti
 haptics.enabled. Mesh ids are never freed: build meshes once. afterNextFrame slices long setup work;
 ProceduralCache.peek restores saved results. Drawing: DrawingDocument + DrawingCanvas; document.texture()
 on entities, input()/strokes()/sample()/coverage() for games.
-@nayan-ui/games ships its own browser build (lib/web), so its games run in React websites too.
+nayan-games ships its own browser build (lib/web), so its games run in React websites too.
 
 ## Practical engine examples
-- Complete game (the repo's examples/games: Car Racing on iOS, Android and the web): https://www.nayanui.com/game-engine/first-game
-- Live playground (Monaco editor with the engine's types, runs in the browser): https://www.nayanui.com/game-engine/playground
+- Build a bouncing ball scene from the Nayan UI starter: https://www.nayanui.com/game-engine/first-game
+- Live playground (TypeScript editor with the engine's types, runs in the browser): https://www.nayanui.com/playground
 - Common recipes: https://www.nayanui.com/game-engine/recipes
 - AI agent instructions (file structure, one API per task, never-do list, game template): https://www.nayanui.com/game-engine/agent-guide
-- Structured API usage summary: https://www.nayanui.com/engine.json
+- Structured API usage summary: https://www.nayanui.com/nayan-game-engine.json
 
-Start from the games example (npx @nayan-ui/cli new my-game -t games; walkthrough at /game-engine/first-game), then the recipes. Load assets with
+Start from templates/nayan-ui in the GitHub repository (walkthrough at /game-engine/first-game), then the recipes. Load assets with
 loadModel, loadTexture, loadFont, audio.load, createShape and createSolid during setup; the engine caches
 and persists them (native app-private files, web IndexedDB, no eviction). No app-side asset caches.
-clearAssetCache() only from a user action. @nayan-ui/games loads each game behind its own loading screen
+clearAssetCache() only from a user action. nayan-games loads each game behind its own loading screen
 and runs on the web through its bundled React Native Web adapters; see /games/installation.
 
 Public naming: use GameViewStats for rendering measurements, AudioPlayOptions for sound settings,
@@ -453,7 +244,7 @@ build detail levels with createGeometryLods. getMeshIdLimit returns an exclusive
 Sample animated vertices with World.sampleSkinnedVertices. Path exposes addPolygon,
 addRoundedRect, quadraticTo and toContours. Use these names in new examples and applications.
 
-## Nayan games documentation (@nayan-ui/games)
+## Nayan Games documentation (nayan-games)
 - Overview and all 53 games: https://www.nayanui.com/games
 - Installation (Expo dev build and React/Next.js/Vite): https://www.nayanui.com/games/installation
 - API reference: https://www.nayanui.com/games/api-reference
@@ -461,20 +252,20 @@ addRoundedRect, quadraticTo and toContours. Use these names in new examples and 
 - Per-game controls and rules: https://www.nayanui.com/games/<game-id> (GAME_IDS values, e.g. /games/treasure-hunt)
 - Licensing (dual: free non-commercial, paid commercial): https://www.nayanui.com/games/licensing
 
-These docs describe @nayan-ui/games 1.20.0, the engine-based release (requires @nayan-ui/engine ^1.0.0-beta.2; 1.19.0 and earlier are the older Skia/Reanimated build).
-Peers: @nayan-ui/engine and react; react-native + expo-asset + expo-modules-core for native; react-dom for web.
+These docs describe the bundled nayan-games 1.22.0 build, which uses nayan-ui ^1.0.0-beta.2.
+Peers: nayan-ui and react; react-native + expo-asset + expo-modules-core for native; react-dom for web.
 Native: development build (not Expo Go), New Architecture, Android minSdkVersion 26, VIBRATE permission,
 Metro assetExts include glb and gltf. Web: client-only rendering (Next.js dynamic import with ssr:false), HTTPS or localhost.
-Every game is React.FC<GameProps> from '@nayan-ui/games' (e.g. BlockBlast, TreasureHunt). For one screen that
+Every game is React.FC<GameProps> from 'nayan-games' (e.g. BlockBlast, TreasureHunt). For one screen that
 renders any game, import loadGameComponent, GAME_IDS, GAMES_METADATA and DEFAULT_GAME_SETTINGS from
-'@nayan-ui/games/services' (no game modules load until selected); theme helpers configureGameThemes and
-resolveGameTheme are exported only from '@nayan-ui/games/services'.
+'nayan-games/services' (no game modules load until selected); theme helpers configureGameThemes and
+resolveGameTheme are exported only from 'nayan-games/services'.
 GameSettings: isVisible opens the built-in settings modal (it closes via onSettingsChange({...settings, isVisible:false})),
 paused pauses for host overlays, enableSounds, enableHaptics, theme 'light' | 'dark' (unset = classic palette),
 offset = host header height, anchor = web popover position, enableMusic is unused.
 onEndGame({ status, score, additionalData }) fires once per run: 'win' / 'lose' at the end, 'cancel' on Stop,
 unmount mid-run, or a draw; score is a string. onPlayingChange(playing) lets hosts block back gestures during a run.
-Web keyboard: createKeyboardInput(surface, { mode }) from @nayan-ui/engine; 'drag' for racing/steering games,
+Web keyboard: createKeyboardInput(surface, { mode }) from nayan-ui; 'drag' for racing/steering games,
 'swipe' for 2048, Snake 3D, Pac-Man, Maze Runner and Crossy Road, 'pointer' for the rest; Enter presses Start/Stop/Play Again.
 Building games inside the library: <Name>.tsx (engineGame + useEngineGame + EngineGameScreen), <Name>Constants.ts,
 <Name>Game.ts (rules, owns world.update(dt)), <Name>Scene.ts; these helpers are internal, not package exports.

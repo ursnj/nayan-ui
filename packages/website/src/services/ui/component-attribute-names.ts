@@ -1,0 +1,207 @@
+import type { componentReferences } from './component-reference';
+
+type ComponentSymbol = (typeof componentReferences)[number]['symbol'];
+
+// Use the order and level of detail of the former @nayan-ui/react tables.
+// Controls with a dedicated props type can use their own declared fields by default.
+export const componentAttributeNames: Partial<Record<ComponentSymbol, readonly string[]>> = {
+  AnimationView: ['children', 'animatedStyle', 'initial', 'style', 'ref', 'accessibilityLabel'],
+  NAccordion: [
+    'items', 'type', 'defaultExpanded', 'expanded', 'onExpandedChange', 'variant',
+    'className', 'itemClassName', 'triggerClassName', 'contentClassName', 'indicatorClassName'
+  ],
+  NActionItem: [
+    'name', 'description', 'icon', 'showArrow', 'onPress', 'disabled',
+    'className', 'titleClassName'
+  ],
+  NAlert: [
+    'type', 'message', 'title', 'icon', 'actions', 'className', 'titleClassName',
+    'messageClassName', 'closeClassName', 'onClose', 'role', 'children', 'description'
+  ],
+  NBadge: ['children', 'color', 'variant', 'size', 'className', 'role'],
+  NButton: ['disabled', 'className', 'isOutline', 'isLoading', 'loadingText', 'leftIcon', 'rightIcon', 'children', 'onPress'],
+  NButtonGroup: [
+    'className', 'buttonClassName', 'items', 'selected', 'disabled', 'onChange', 'keyExtractor', 'renderButton', 'ariaLabel',
+    'value', 'defaultValue', 'onValueChange', 'getKey', 'renderItem', 'size'
+  ],
+  NCard: ['className', 'children', 'onClick'],
+  NCarousel: [
+    'children', 'value', 'defaultValue', 'onValueChange', 'orientation', 'autoPlay',
+    'interval', 'showIndicators', 'indicatorPlacement', 'className'
+  ],
+  NCheck: [
+    'id', 'className', 'labelClassName', 'disabled', 'checked', 'defaultChecked',
+    'onChange', 'children', 'required', 'label'
+  ],
+  NChip: ['children', 'size', 'color', 'variant', 'className'],
+  NCode: ['code', 'children', 'className'],
+  NConfirm: [
+    'isOpen', 'description', 'title', 'className', 'titleClassName', 'descriptionClassName',
+    'cancelClassName', 'confirmClassName', 'confirmText', 'cancelText', 'onResult', 'onOpenChange',
+    'children'
+  ],
+  NDatePicker: [
+    'value', 'defaultValue', 'onChange', 'label', 'disabled', 'isInvalid',
+    'minimumDate', 'maximumDate', 'className', 'error', 'helperText'
+  ],
+  NDialog: [
+    'isOpen', 'title', 'maxWidth', 'className', 'titleClassName', 'contentClassName',
+    'children', 'onOpenChange', 'trigger', 'showCloseButton'
+  ],
+  NDivider: ['className', 'orientation', 'children'],
+  NEmptyState: ['title', 'description', 'message', 'icon', 'actions', 'className', 'iconClassName', 'titleClassName', 'messageClassName', 'children'],
+  NIcon: ['name', 'size', 'color', 'strokeWidth', 'accessibilityLabel', 'className', 'onPress'],
+  NImage: [
+    'src', 'alt', 'fallbackSource', 'width', 'height', 'className',
+    'loading', 'source', 'contentFit', 'onLoad', 'onError'
+  ],
+  NInput: [
+    'id', 'label', 'labelClassName', 'className', 'containerClassName', 'error',
+    'helperText', 'onChange', 'onChangeText', 'value', 'defaultValue', 'placeholder',
+    'disabled', 'type'
+  ],
+  NInputOtp: [
+    'maxLength', 'value', 'defaultValue', 'onChange', 'disabled', 'pattern', 'separatorIndices',
+    'className', 'accessibilityLabel'
+  ],
+  NKbd: ['children', 'className'],
+  NLink: ['href', 'children', 'className', 'target', 'rel'],
+  NLinkify: ['children', 'className', 'linkStyle', 'onPress', 'text'],
+  NList: [
+    'data', 'renderItem', 'keyExtractor', 'height', 'itemSize', 'estimatedItemSize',
+    'numColumns', 'onEndReached', 'onEndReachedThreshold', 'ListEmptyComponent', 'onRefresh', 'refreshing',
+    'className'
+  ],
+  NLoading: ['className', 'accessibilityLabel', 'size', 'color', 'label', 'animating'],
+  NMarkdown: ['source', 'children', 'document', 'blockSpacing', 'styles', 'classNames', 'className'],
+  NMenuItem: ['title', 'children', 'separator', 'className', 'disabled', 'id', 'onAction'],
+  NNumberField: [
+    'value', 'defaultValue', 'onChange', 'minValue', 'maxValue', 'step',
+    'disabled', 'isInvalid', 'className', 'label'
+  ],
+  NPattern: ['recipe', 'style', 'className', 'onError'],
+  NPlatformView: ['children', 'className', 'style', 'accessibilityLabel'],
+  NPress: [
+    'children', 'onPress', 'isDisabled', 'isSelected', 'type', 'className',
+    'style', 'accessibilityLabel', 'ref'
+  ],
+  NProgress: ['value', 'className', 'label', 'showLabel', 'color', 'size'],
+  NRadio: ['children', 'label', 'value', 'disabled', 'className'],
+  NRadioGroup: [
+    'orientation', 'items', 'className', 'id', 'label', 'labelClassName',
+    'disabled', 'value', 'defaultValue', 'onChange', 'showLabel', 'children'
+  ],
+  NRequired: ['children', 'className', 'accessibilityLabel'],
+  NSafeArea: ['children', 'edges', 'mode', 'className', 'style', 'ref'],
+  NSafeAreaListener: ['onChange', 'children', 'style'],
+  NSafeAreaProvider: ['children', 'initialMetrics', 'initialSafeAreaInsets', 'style', 'ref'],
+  NScrollShadow: ['children', 'orientation', 'showsScrollIndicator', 'className'],
+  NScrollView: [
+    'children', 'horizontal', 'contentContainerClassName', 'contentContainerStyle', 'refreshControl', 'showsHorizontalScrollIndicator',
+    'showsVerticalScrollIndicator', 'className', 'style'
+  ],
+  NSearchField: [
+    'value', 'defaultValue', 'onChange', 'onSubmit', 'placeholder', 'disabled',
+    'isInvalid', 'className', 'label'
+  ],
+  NSelect: [
+    'isMulti', 'label', 'placeholder', 'isLoading', 'isClearable', 'isSearchable',
+    'disabled', 'className', 'selectClassName', 'value', 'defaultValue', 'options',
+    'onChangeOptions', 'name'
+  ],
+  NSheet: [
+    'isOpen', 'title', 'maxWidth', 'className', 'titleClassName', 'contentClassName',
+    'children', 'onOpenChange', 'snapPoints', 'isSwipeable', 'trigger'
+  ],
+  NSkeleton: ['className', 'width', 'height', 'role', 'accessibilityLabel'],
+  NSkeletonGroup: ['children', 'className', 'style', 'accessibilityLabel'],
+  NSlider: [
+    'label', 'className', 'id', 'value', 'defaultValue', 'min',
+    'max', 'step', 'disabled', 'orientation', 'onChange', 'showOutput',
+    'accessibilityLabel'
+  ],
+  NSwitch: [
+    'enabled', 'defaultChecked', 'label', 'className', 'labelClassName', 'onChange',
+    'id', 'checked', 'disabled', 'value'
+  ],
+  NTabs: [
+    'items', 'children', 'value', 'selected', 'defaultValue', 'onValueChange', 'onChange',
+    'variant', 'orientation', 'isFull', 'className', 'listClassName', 'tabClassName', 'itemClassName',
+    'triggerClassName', 'activeItemClassName', 'contentClassName', 'ariaLabel', 'id'
+  ],
+  NTabsContent: ['item', 'children', 'className'],
+  NText: [
+    'children', 'text', 'tag', 'className', 'style', 'numberOfLines',
+    'selectable', 'accessibilityLabel', 'ref'
+  ],
+  NTextarea: [
+    'id', 'label', 'labelClassName', 'className', 'error', 'helperText',
+    'onChange', 'value', 'defaultValue', 'placeholder', 'rows', 'maxLength'
+  ],
+  NTheme: [
+    'children', 'className', 'style', 'surface', 'safeArea', 'defaultTheme', 'themes', 'colors', 'components', 'radius',
+    'stylesheet', 'fonts', 'persistence', 'onThemeChange', 'systemBars', 'navigation'
+  ],
+  NPage: [
+    'children', 'className', 'style', 'fillViewport', 'viewportStyle', 'surface', 'active', 'keyboard',
+    'safeArea', 'showsVerticalScrollIndicator', 'background', 'onContentSizeChange', 'onError'
+  ],
+  useNSystemBars: ['options', 'navigation'],
+  NToggleButton: [
+    'children', 'isSelected', 'defaultSelected', 'disabled', 'variant', 'size',
+    'onChange', 'className', 'accessibilityLabel'
+  ],
+  NTooltip: ['message', 'className', 'children', 'id', 'accessibilityLabel'],
+  NView: ['children', 'tag', 'className', 'style', 'id', 'role', 'accessibilityLabel', 'ref'],
+  VideoPlayer: [
+    'source', 'controls', 'autoPlay', 'loop', 'muted', 'volume',
+    'contentFit', 'style', 'ref', 'onStatusChange', 'onProgress', 'onError'
+  ]
+};
+
+export const componentAttributeNotes: Partial<Record<ComponentSymbol, Record<string, { details?: string; defaultValue?: string }>>> = {
+  useNSystemBars: {
+    options: { details: 'Set the system bar appearance or pass false to restore the surrounding theme settings.' },
+    navigation: { details: 'Limit the override to the focused screen using a React Navigation-compatible focus source.' }
+  },
+  NButton: {
+    disabled: { details: 'Prevents interaction.', defaultValue: 'false' },
+    isOutline: { details: 'Uses a transparent background with an outline.', defaultValue: 'false' },
+    isLoading: { details: 'Shows the loading label and disables the button.', defaultValue: 'false' },
+    loadingText: { details: 'Label shown while the button is loading.', defaultValue: 'Loading…' },
+    children: { details: 'The button label or content.' },
+    onPress: { details: 'Called when the user activates the button.' }
+  },
+  NAlert: {
+    type: { details: 'Sets the indicator and title color. Use default, info, success, warning, or error.', defaultValue: 'default' },
+    message: { details: 'Detail text below the title.' },
+    title: { details: 'A short heading for the alert.' },
+    actions: { details: 'Additional controls beside the message.' },
+    titleClassName: { details: 'Classes applied to the title.' },
+    messageClassName: { details: 'Classes applied to the message.' },
+    closeClassName: { details: 'Classes applied to the close button.' },
+    onClose: { details: 'Adds a close button and runs when it is pressed.' }
+  },
+  NBadge: {
+    color: { details: 'Use default, accent, success, warning, or danger.', defaultValue: 'default' },
+    variant: { details: 'Use primary, secondary, or soft.', defaultValue: 'soft' },
+    size: { details: 'Use sm, md, or lg.', defaultValue: 'md' }
+  },
+  NChip: {
+    color: { details: 'Use default, accent, success, warning, or danger.', defaultValue: 'default' },
+    variant: { details: 'Use primary, secondary, tertiary, or soft.', defaultValue: 'secondary' },
+    size: { details: 'Use sm, md, or lg.', defaultValue: 'md' }
+  },
+  NInput: {
+    label: { details: 'Visible label above the input.' },
+    containerClassName: { details: 'Classes for the field container.' },
+    helperText: { details: 'A hint shown below the field.' },
+    error: { details: 'An error message shown below the field.' }
+  },
+  NProgress: {
+    value: { details: 'Progress from 0 to 100.', defaultValue: '0' },
+    showLabel: { details: 'Displays the label and percentage above the track.', defaultValue: 'false' },
+    color: { details: 'The fill color. Accepts a theme token or a CSS color.', defaultValue: 'accent' },
+    size: { details: 'Use sm, md, or lg for the height of the track.', defaultValue: 'md' }
+  }
+};

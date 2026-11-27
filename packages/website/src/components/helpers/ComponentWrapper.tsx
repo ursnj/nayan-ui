@@ -1,13 +1,15 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Github } from "lucide-react";
+import { NText, NView } from 'nayan-ui/components';
+import { ArrowLeft, ArrowRight, Github } from "@/design/Icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BrowserFrame, PhoneFrame } from "@/design/Primitives";
+import { PhoneFrame } from "@/design/Primitives";
 import { CARD, LEAD } from "@/design/system";
 import TagsList from "@/components/helpers/TagsList";
 import { getMenuItem, getSidebarItems } from "@/services/Utils";
-import { REPO_URL, SITE_HOST } from "@/services/seo";
+import { tagsForReference } from "@/services/ui/reference-tags";
+import { REPO_URL } from "@/services/seo";
 import Attributes from "./Attributes";
 import Code from "./Code";
 import Sidebar from "./Sidebar";
@@ -41,10 +43,7 @@ const ComponentWrapper = (props: Props) => {
   const sourceUrl = REPO_URL;
 
   /*
-   * React Native pages show a screenshot of the example app in a phone rather
-   * than a browser window: the components render to native views, so there is
-   * nothing to run here. `screenshot` names the pair captured for this page;
-   * pages without one keep the written explanation.
+   * `screenshot` names the light and dark captures for the native component preview.
    */
   const slug = pathname.split("/").pop() ?? "";
   const screenshot: string | undefined =
@@ -52,13 +51,13 @@ const ComponentWrapper = (props: Props) => {
 
   return (
     <Sidebar title={component.title}>
-      <p className={`mb-8 max-w-3xl ${LEAD}`}>{component.description}</p>
+      <NText tag="p" className={`mb-8 max-w-3xl ${LEAD}`}>{component.description}</NText>
 
       <SubHeader
         title="Demo"
         description={
           type === "react-native"
-            ? "React Native components render to native views, so this is the component running in the example app, in the theme you are reading in."
+            ? "This screenshot shows the React Native component in the current theme."
             : "Rendered live, with the same build of the library you install."
         }
       >
@@ -66,12 +65,10 @@ const ComponentWrapper = (props: Props) => {
           <PhoneFrame
             light={`/react-native/${screenshot}-light.png`}
             dark={`/react-native/${screenshot}-dark.png`}
-            alt={`${component.title} running in the Nayan UI example app`}
+            alt={`${component.title} rendered on React Native`}
           />
         ) : (
-          <BrowserFrame label={`${SITE_HOST}${pathname}`} padded={false}>
-            <div className="space-y-4 p-6 [&>*]:max-w-full sm:p-8">{children}</div>
-          </BrowserFrame>
+          <NView tag="div" className="space-y-4 [&>*]:max-w-full">{children}</NView>
         )}
       </SubHeader>
 
@@ -102,47 +99,47 @@ const ComponentWrapper = (props: Props) => {
       ))}
 
       <SubHeader title="Tags" description="Other components solving nearby problems.">
-        <TagsList type={type} tags={component.tags} />
+        <TagsList tags={tagsForReference(pathname)} />
       </SubHeader>
 
       {previous || next ? (
-        <nav
+        <NView tag="nav"
           aria-label="Component navigation"
           className="mt-12 grid gap-3 border-t border-default pt-6 sm:grid-cols-2"
         >
           {previous ? (
             <Link
               href={previous.link}
-              className={`${CARD} group flex flex-col p-4 transition-colors hover:border-indigo-500/30`}
+              className={`${CARD} group flex flex-col p-4 transition-colors hover:border-accent/30`}
             >
-              <span className="flex items-center gap-1.5 text-xs text-muted">
+              <NText tag="span" className="flex items-center gap-1.5 text-xs text-muted">
                 <ArrowLeft
                   aria-hidden
                   className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5"
                 />
                 Previous
-              </span>
-              <span className="mt-1 text-sm font-semibold text-foreground">{previous.title}</span>
+              </NText>
+              <NText tag="span" className="mt-1 text-sm font-semibold text-foreground">{previous.title}</NText>
             </Link>
           ) : (
-            <span aria-hidden />
+            <NText tag="span" aria-hidden />
           )}
           {next ? (
             <Link
               href={next.link}
-              className={`${CARD} group flex flex-col items-end p-4 text-right transition-colors hover:border-indigo-500/30 sm:col-start-2`}
+              className={`${CARD} group flex flex-col items-end p-4 text-right transition-colors hover:border-accent/30 sm:col-start-2`}
             >
-              <span className="flex items-center gap-1.5 text-xs text-muted">
+              <NText tag="span" className="flex items-center gap-1.5 text-xs text-muted">
                 Next
                 <ArrowRight
                   aria-hidden
                   className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
                 />
-              </span>
-              <span className="mt-1 text-sm font-semibold text-foreground">{next.title}</span>
+              </NText>
+              <NText tag="span" className="mt-1 text-sm font-semibold text-foreground">{next.title}</NText>
             </Link>
           ) : null}
-        </nav>
+        </NView>
       ) : null}
     </Sidebar>
   );

@@ -1,0 +1,4 @@
+lib/
+cli/template.json
+native/core/build/
+shared/android/build/

@@ -12,7 +12,7 @@ import {
 export const metadata = buildPageMetadata({
   title: "Games Installation",
   description:
-    "Create a games project with the Nayan UI CLI, or install @nayan-ui/games in Expo or a React website and render games, settings, results and themes.",
+    "Create a Nayan UI starter project from the CLI or repository template, then install nayan-games in React or Expo.",
   path: "/games/installation",
   keywords:
     "react native games installation, expo games setup, next.js games, vite games, nayan game engine setup, nayan ui cli, create game project",
@@ -21,16 +21,16 @@ export const metadata = buildPageMetadata({
 const schemas = [
   buildBreadcrumbSchema([
     { name: "Home", url: SITE_URL },
-    { name: "Games", url: `${SITE_URL}/games` },
+    { name: "Nayan Games", url: `${SITE_URL}/games` },
     { name: "Installation", url: `${SITE_URL}/games/installation` },
   ]),
   buildTechArticleSchema({
     title: "Games Installation",
-    description: "Installation guide and setup instructions for @nayan-ui/games.",
+    description: "Installation guide and setup instructions for nayan-games.",
     url: `${SITE_URL}/games/installation`,
     about: gamesAbout,
     sections: [
-      "Create a project with the CLI",
+      "Start with the Nayan UI starter",
       "Requirements",
       "React Native (Expo)",
       "React in the browser (Next.js, Vite)",
@@ -39,23 +39,22 @@ const schemas = [
       "Theme",
       "Assets",
     ],
-    isPartOf: { name: "Nayan UI games documentation", url: `${SITE_URL}/games` },
+    isPartOf: { name: "Nayan Games documentation", url: `${SITE_URL}/games` },
   }),
-  // The "Create a project with the CLI" section's commands.
   buildHowToSchema({
-    name: "Create a games project with the Nayan UI CLI",
+    name: "Run the Nayan UI starter",
     description:
-      "Create a Bun workspace with an Expo app, a Vite app and the Car Racing game they share, then run it.",
-    tools: ["Node.js (npx)", "Bun"],
+      "Run the Nayan UI starter landing page on the web or in an Expo development build.",
+    tools: ["Git", "Bun"],
     steps: [
-      { name: "Create the project", text: "Run npx @nayan-ui/cli new my-game -t games." },
+      { name: "Get the starter", text: "Clone https://github.com/ursnj/nayan-ui.git." },
       {
         name: "Install",
-        text: "In my-game, run bun install to install the apps and @nayan-ui/engine.",
+        text: "Open templates/nayan-ui and run bun install --frozen-lockfile.",
       },
-      { name: "Play in the browser", text: "Run bun run web." },
+      { name: "Run in the browser", text: "Run bun run web." },
       {
-        name: "Play on a phone",
+        name: "Run on a phone",
         text: "Run bun run ios or bun run android, in a development build (not Expo Go).",
       },
     ],

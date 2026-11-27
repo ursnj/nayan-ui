@@ -1,16 +1,16 @@
 "use client";
 
+import { NText, NView } from 'nayan-ui/components';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
-import { createKeyboardInput, type KeyboardInputMode } from "@nayan-ui/engine";
+import { createKeyboardInput, type KeyboardInputMode } from "nayan-ui";
 import {
   DEFAULT_GAME_SETTINGS,
   type GAME_IDS,
   type GameSettings,
   loadGameComponent,
-} from "@nayan-ui/games/services";
-import { THEMES } from "@nayan-ui/react";
-import { ArrowLeft, BookOpen, Keyboard, Settings } from "lucide-react";
+} from "nayan-games/services";
+import { ArrowLeft, BookOpen, Keyboard, Settings } from "@/design/Icons";
 import Link from "next/link";
 import { useTheme } from "@/components/helpers/ThemeProvider";
 import { KBD } from "@/design/system";
@@ -43,7 +43,7 @@ const SWIPE_GAMES = new Set(["game-2048", "snake-3d", "pac-man", "maze-runner", 
 /** Below this width the toolbar sits above the scoreboard; above it, beside it. */
 const WIDE_LAYOUT = 900;
 
-const Key = ({ children }: { children: string }) => <kbd className={KBD}>{children}</kbd>;
+const Key = ({ children }: { children: string }) => <NText tag="kbd" className={KBD}>{children}</NText>;
 
 const GameSession = memo(function GameSession({
   gameId,
@@ -53,7 +53,7 @@ const GameSession = memo(function GameSession({
 }: GameSessionProps) {
   const Game = useMemo(() => loadGameComponent(gameId), [gameId]);
   const { theme, setTheme } = useTheme();
-  const siteTheme = theme === THEMES.DARK ? "dark" : "light";
+  const siteTheme = theme;
   const [settings, setSettings] = useState<GameSettings>(() => ({
     ...DEFAULT_GAME_SETTINGS,
     theme: siteTheme,
@@ -170,7 +170,7 @@ const GameSession = memo(function GameSession({
     (next: GameSettings) => {
       flushSync(() => {
         setSettings(next);
-        if (next.theme) setTheme(next.theme === "dark" ? THEMES.DARK : THEMES.LIGHT);
+        if (next.theme) setTheme(next.theme);
       });
       if (!next.isVisible) focusSurface();
     },
@@ -178,11 +178,11 @@ const GameSession = memo(function GameSession({
   );
 
   return (
-    <div className="relative flex h-full w-full overflow-hidden">
-      <div
+    <NView tag="div" className="relative flex h-full w-full overflow-hidden">
+      <NView tag="div"
         ref={surface}
         tabIndex={0}
-        className="nyn-game-surface relative flex h-full w-full overflow-hidden outline-none"
+        className="nyn-game-surface [&_[data-engine-keyboard-cursor]]:invisible [touch-action:none] [-webkit-user-select:none] [user-select:none] [-webkit-tap-highlight-color:transparent] relative flex h-full w-full overflow-hidden outline-none"
         aria-label={`${title} game`}
       >
         {Game ? (
@@ -198,13 +198,13 @@ const GameSession = memo(function GameSession({
             onShareScreenshot={shareGame}
           />
         ) : (
-          <p role="alert" className="m-auto text-muted">
+          <NText tag="p" role="alert" className="m-auto text-muted">
             This game is unavailable.
-          </p>
+          </NText>
         )}
-      </div>
+      </NView>
 
-      <div
+      <NView tag="div"
         ref={toolbar}
         className="pointer-events-none absolute inset-x-0 z-10 flex h-11 items-center justify-between min-[900px]:h-[68px]"
         style={{
@@ -221,8 +221,8 @@ const GameSession = memo(function GameSession({
         >
           <ArrowLeft size={20} aria-hidden="true" />
         </Link>
-        <div className="flex items-center gap-2">
-          <button
+        <NView tag="div" className="flex items-center gap-2">
+          <NView tag="button"
             type="button"
             onClick={onShowInfo}
             aria-haspopup="dialog"
@@ -232,42 +232,42 @@ const GameSession = memo(function GameSession({
             className={GAME_TOOLBAR_BUTTON}
           >
             <BookOpen size={20} aria-hidden="true" />
-          </button>
+          </NView>
           <GamePopover
             title="Keyboard controls"
             icon={<Keyboard size={20} aria-hidden="true" />}
             onOpenChange={setShowKeys}
           >
-            <ul className="space-y-2.5">
-              <li>
+            <NView tag="ul" className="space-y-2.5">
+              <NView tag="li">
                 <Key>←</Key> <Key>↑</Key> <Key>→</Key> <Key>↓</Key> or <Key>W</Key> <Key>A</Key>{" "}
                 <Key>S</Key> <Key>D</Key>
-                <span className="mt-1 block">
+                <NText tag="span" className="mt-1 block">
                   {keyboardMode === "pointer"
                     ? "Move the cursor."
                     : keyboardMode === "swipe"
                       ? "Move."
                       : "Move or steer."}
-                </span>
-              </li>
+                </NText>
+              </NView>
               {keyboardMode !== "swipe" && (
-                <li>
+                <NView tag="li">
                   <Key>Space</Key>
-                  <span className="mt-1 block">
+                  <NText tag="span" className="mt-1 block">
                     {keyboardMode === "pointer"
                       ? "Select. Hold Space while moving to drag."
                       : "Tap."}
-                  </span>
-                </li>
+                  </NText>
+                </NView>
               )}
-              <li>
+              <NView tag="li">
                 <Key>Enter</Key>
-                <span className="mt-1 block">Start, stop or play again.</span>
-              </li>
-            </ul>
-            <p className="mt-4 border-t border-default pt-3 text-xs">Mouse and touch work too.</p>
+                <NText tag="span" className="mt-1 block">Start, stop or play again.</NText>
+              </NView>
+            </NView>
+            <NText tag="p" className="mt-4 border-t border-default pt-3 text-xs">Mouse and touch work too.</NText>
           </GamePopover>
-          <button
+          <NView tag="button"
             ref={settingsTrigger}
             type="button"
             className={GAME_TOOLBAR_BUTTON}
@@ -278,19 +278,19 @@ const GameSession = memo(function GameSession({
             onClick={() => setSettings((current) => ({ ...current, isVisible: true }))}
           >
             <Settings size={20} aria-hidden="true" />
-          </button>
-        </div>
-      </div>
+          </NView>
+        </NView>
+      </NView>
 
       {shareStatus && (
-        <p
+        <NText tag="p"
           role="status"
           className="pointer-events-none absolute bottom-24 left-1/2 z-20 w-max max-w-[calc(100%-32px)] -translate-x-1/2 rounded-xl border border-default bg-surface px-4 py-3 text-center text-sm text-foreground shadow-lg"
         >
           {shareStatus}
-        </p>
+        </NText>
       )}
-    </div>
+    </NView>
   );
 });
 

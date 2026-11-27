@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNCard from "@/components/react-native/components/Card";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNCardPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNCard />
+      <NayanComponentDoc path="/react-native/card" />
     </>
   );
 }

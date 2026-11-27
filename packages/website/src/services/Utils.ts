@@ -1,5 +1,6 @@
-import type { LucideIcon } from "lucide-react";
-import { engineNavigation } from "./engine/navigation";
+import type { SiteIcon } from "@/design/Icons";
+import { engineNavigation } from "./ui/navigation";
+import { resolvePagePath } from "./site-routes";
 import {
   AppWindow,
   Badge,
@@ -117,7 +118,7 @@ import {
   Info,
   ImagePlus,
   Boxes,
-} from "lucide-react";
+} from "@/design/Icons";
 import {
   accordionTags,
   aiReviewTags,
@@ -210,6 +211,7 @@ import {
   convertImageTags,
   watermarkImageTags,
   rotateImageTags,
+  htmlToImageTags,
   mergePdfTags,
   splitPdfTags,
   compressPdfTags,
@@ -309,9 +311,10 @@ export const isWindowDefined = () => {
 
 export interface SidebarItem {
   title: string;
+  navTitle?: string;
   description: string;
   link: string;
-  icon?: LucideIcon;
+  icon?: SiteIcon;
   isHeading?: boolean;
   tags?: { sku: string; text: string }[];
 }
@@ -335,8 +338,8 @@ export const getSidebarItems = (path: string): SidebarItem[] => {
 
 // Updated getMenuItem to work with both React and React Native
 export const getMenuItem = (path: string) => {
-  const sidebarItems = getSidebarItems(path);
-  return sidebarItems.find((item) => item.link === path);
+  const resolved = resolvePagePath(path);
+  return getSidebarItems(resolved).find((item) => item.link === resolved);
 };
 
 // Updated getMenuItemByTag to work with both React and React Native
@@ -351,7 +354,8 @@ export const reactSidebarItems = [
   { title: "Get Started", description: "", link: "", isHeading: true },
   { title: "Installation", description: "", link: "/react/installation", icon: Settings },
   {
-    title: "Components",
+    title: "Nayan Components",
+    navTitle: "Components",
     description:
       "Components are reusable building blocks of a user interface that encapsulate a specific piece of functionality or UI design. Each component can represent a distinct part of the application, such as buttons, forms, modals, or navigation bars. Components help organize and structure code, making it easier to manage, maintain, and scale applications by allowing developers to reuse consistent elements across different parts of the project.",
     link: "/react/components",
@@ -486,7 +490,7 @@ export const reactSidebarItems = [
   {
     title: "Date Field",
     description:
-      "A Date Field takes a date typed in segments — day, month, year — with no calendar attached. Each segment validates on its own and can be stepped with the arrow keys, which makes it faster than a picker for a date somebody already knows.",
+      "A date field lets users enter a known date in day, month, and year segments. The browser supplies the input format and may offer a calendar. The field value uses YYYY-MM-DD.",
     link: "/react/date-field",
     tags: dateFieldTags,
     icon: CalendarCheck,
@@ -495,7 +499,7 @@ export const reactSidebarItems = [
   {
     title: "Date Picker",
     description:
-      "A Date Picker component is a UI element that allows users to select a date from a calendar popup. It provides an intuitive interface for choosing dates with support for date ranges, min/max constraints, and various granularity levels.",
+      "Choose a date from a calendar with month and year navigation. Set a minimum or maximum date to limit the available options.",
     link: "/react/date-picker",
     tags: datePickerTags,
     icon: CalendarDays,
@@ -849,7 +853,8 @@ export const reactNativeSidebarItems = [
   { title: "Get Started", description: "", link: "", isHeading: true },
   { title: "Installation", description: "", link: "/react-native/installation", icon: Settings },
   {
-    title: "Components",
+    title: "Nayan Components",
+    navTitle: "Components",
     description:
       "Components are reusable building blocks of a user interface that encapsulate a specific piece of functionality or UI design. Each component can represent a distinct part of the application, such as buttons, forms, modals, or navigation bars. Components help organize and structure code, making it easier to manage, maintain, and scale applications by allowing developers to reuse consistent elements across different parts of the project.",
     link: "/react-native/components",
@@ -857,8 +862,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Accordion",
-    description:
-      "An Accordion component allows users to expand and collapse sections of content, organizing information compactly. Built on top of heroui-native Accordion.",
+    description: "Expand and collapse related sections within a single view.",
     link: "/react-native/accordion",
     tags: rnAccordionTags,
     icon: ListCollapse,
@@ -866,8 +870,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Alert",
-    description:
-      "An Alert component displays important messages or notifications to users with different severity levels. Built on top of heroui-native.",
+    description: "Display a status or message with a title, supporting text, and optional actions.",
     link: "/react-native/alert",
     tags: rnAlertTags,
     icon: CircleAlert,
@@ -875,8 +878,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Button",
-    description:
-      "A Button component triggers actions or events. Built on top of heroui-native Button with support for variants, sizes, colors, and loading states.",
+    description: "Trigger an action with a label or icons, and show a loading state while it runs.",
     link: "/react-native/button",
     tags: rnButtonTags,
     icon: Square,
@@ -893,8 +895,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Card",
-    description:
-      "A Card component displays content in a structured container. Built on top of heroui-native Card.",
+    description: "Group related content and actions in a themed container.",
     link: "/react-native/card",
     tags: rnCardTags,
     icon: CreditCard,
@@ -902,8 +903,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Checkbox",
-    description:
-      "A Checkbox component allows users to select or deselect options. Built on top of heroui-native Checkbox with isSelected/onSelectedChange API.",
+    description: "Toggle a single option or include it in a checkbox group.",
     link: "/react-native/checkbox",
     tags: rnCheckboxTags,
     icon: SquareCheck,
@@ -911,8 +911,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Dialog",
-    description:
-      "A Dialog component displays a pop-up window for capturing user attention or input. Built on top of heroui-native Dialog.",
+    description: "Present modal content or collect input without leaving the current screen.",
     link: "/react-native/dialog",
     tags: rnDialogTags,
     icon: MessageSquare,
@@ -920,8 +919,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Divider",
-    description:
-      "A Divider component separates content within a layout. Built on top of heroui-native Separator.",
+    description: "Separate sections of a layout with a visual rule.",
     link: "/react-native/divider",
     tags: rnDividerTags,
     icon: Slash,
@@ -929,8 +927,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Input",
-    description:
-      "An Input component allows users to enter text data. Built on top of heroui-native Input.",
+    description: "Collect text with a label, placeholder, and validation feedback.",
     link: "/react-native/input",
     tags: rnInputTags,
     icon: TextCursorInput,
@@ -938,8 +935,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Loading",
-    description:
-      "A Loading component displays a spinner indicator while content is being loaded. Built on top of heroui-native Spinner.",
+    description: "Show that work is in progress with a loading indicator.",
     link: "/react-native/loading",
     tags: rnAccordionTags,
     icon: Loader,
@@ -947,8 +943,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Dropdown Menu",
-    description:
-      "A Dropdown Menu component displays a list of options when triggered. Built on top of heroui-native Menu.",
+    description: "Open a menu of actions from a trigger.",
     link: "/react-native/menu",
     tags: rnMenuTags,
     icon: EllipsisVertical,
@@ -956,8 +951,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Popover",
-    description:
-      "A Popover component displays additional information in a floating overlay. Built on top of heroui-native Popover.",
+    description: "Show contextual content in an overlay anchored to its trigger.",
     link: "/react-native/popover",
     tags: rnPopoverTags,
     icon: PictureInPicture2,
@@ -965,8 +959,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Progress",
-    description:
-      "A Progress component visually indicates the completion status of a task. Built on top of heroui-native Progress.",
+    description: "Show how much of a task is complete.",
     link: "/react-native/progress",
     tags: rnProgressTags,
     icon: RectangleEllipsis,
@@ -974,8 +967,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Radio Group",
-    description:
-      "A Radio Group component allows users to select one option from a set of mutually exclusive choices. Built on top of heroui-native RadioGroup.",
+    description: "Let users choose one value from a group of options.",
     link: "/react-native/radio-group",
     tags: rnRadioTags,
     icon: CircleDot,
@@ -983,8 +975,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Select",
-    description:
-      "A Select component allows users to choose from a dropdown list. Built on top of heroui-native Select.",
+    description: "Choose from a list of options in a compact control.",
     link: "/react-native/select",
     tags: rnSelectTags,
     icon: SquareMousePointer,
@@ -992,8 +983,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Sheet",
-    description:
-      "A Sheet component presents content in a sliding bottom panel. Built on top of heroui-native Sheet.",
+    description: "Present content in a panel that slides into view.",
     link: "/react-native/sheet",
     tags: rnSheetTags,
     icon: StickyNote,
@@ -1001,8 +991,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Skeleton",
-    description:
-      "A Skeleton component is a placeholder UI element that represents the layout of content before it loads. Built on top of heroui-native Skeleton.",
+    description: "Reserve space for content while it loads.",
     link: "/react-native/skeleton",
     tags: rnSkeletonTags,
     icon: TextSelect,
@@ -1010,8 +999,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Slider",
-    description:
-      "A Slider component allows users to select a value from a range by dragging a thumb along a track. Built on top of heroui-native Slider.",
+    description: "Select a numeric value within a range.",
     link: "/react-native/slider",
     tags: rnAccordionTags,
     icon: SlidersHorizontal,
@@ -1019,8 +1007,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Switch",
-    description:
-      "A Switch component allows users to toggle between two states. Built on top of heroui-native Switch.",
+    description: "Toggle a setting between on and off.",
     link: "/react-native/switch",
     tags: rnSwitchTags,
     icon: ToggleRight,
@@ -1028,8 +1015,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Tabs",
-    description:
-      "A Tabs component allows users to switch between different views or sections. Built on top of heroui-native Tabs with items-based API.",
+    description: "Switch between views in the same screen.",
     link: "/react-native/tabs",
     tags: rnAccordionTags,
     icon: AppWindow,
@@ -1037,8 +1023,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Textarea",
-    description:
-      "A Textarea component allows users to enter multi-line text. Built on top of heroui-native.",
+    description: "Collect and edit multiline text.",
     link: "/react-native/textarea",
     tags: rnTextareaTags,
     icon: TextCursorInput,
@@ -1046,8 +1031,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Toast",
-    description:
-      "A Toast component displays transient notifications. Uses heroui-native useToast hook for showing toast messages.",
+    description: "Show a brief status message after an action.",
     link: "/react-native/toast",
     tags: rnToastTags,
     icon: MessageSquareText,
@@ -1055,8 +1039,7 @@ export const reactNativeSidebarItems = [
   },
   {
     title: "Tooltip",
-    description:
-      "A Tooltip component displays informative pop-ups when hovering or focusing on an element. Built on top of heroui-native Tooltip.",
+    description: "Provide a short label or explanation for a control.",
     link: "/react-native/tooltip",
     tags: rnTooltipTags,
     icon: MessageSquareDot,
@@ -1139,6 +1122,13 @@ export const toolsSidebarItems = [
     link: "/tools/rotate-image",
     tags: rotateImageTags,
     icon: RotateCw,
+  },
+  {
+    title: "HTML to Image",
+    description: "Capture a webpage as a PNG and convert the screenshot to JPEG when needed.",
+    link: "/tools/html-to-image",
+    tags: htmlToImageTags,
+    icon: Image,
   },
   {
     title: "Image to Base64",
@@ -1865,7 +1855,7 @@ export const toolsSidebarItems = [
   },
 ];
 
-const engineSidebarItem = (slug: string, title: string, icon: LucideIcon): SidebarItem => {
+const engineSidebarItem = (slug: string, title: string, icon: SiteIcon): SidebarItem => {
   const guide = engineNavigation.find((item) => item.slug === slug);
   if (!guide) throw new Error(`Missing engine guide: ${slug}`);
   return { title, description: guide.description, link: guide.link, icon };
@@ -1874,10 +1864,12 @@ const engineSidebarItem = (slug: string, title: string, icon: LucideIcon): Sideb
 export const engineSidebarItems: SidebarItem[] = [
   { title: "Get Started", description: "", link: "", isHeading: true },
   engineSidebarItem("overview", "Overview", Gamepad2),
+  { title: "Components", description: "Engine UI controls and hooks", link: "/components", icon: Grid3x3 },
+  { title: "Modules", description: "Engine module entry points", link: "/modules", icon: FileCode },
   {
     title: "Playground",
     description: "Write engine code and run it live in the browser",
-    link: "/game-engine/playground",
+    link: "/playground",
     icon: Code2,
   },
   engineSidebarItem("installation", "Installation", Settings),
@@ -1941,7 +1933,7 @@ export const gamesSidebarItems = [
   },
   {
     title: "Installation",
-    description: "Installation guide and setup instructions for @nayan-ui/games",
+    description: "Installation guide and setup instructions for nayan-games",
     link: "/games/installation",
     icon: Download,
   },

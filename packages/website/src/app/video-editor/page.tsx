@@ -1,9 +1,9 @@
 import JsonLd from "@/components/helpers/JsonLd";
 import { SITE_URL, buildBreadcrumbSchema, buildPageMetadata } from "@/services/seo";
-import VideoEditor from "@/components/video-editor/VideoEditor";
+import VideoEditor from "@/components/video-editor/NayanVideoEditor";
 import { FAQS, STEPS } from "@/components/video-editor/content";
 export const metadata = buildPageMetadata({
-  title: "Free Online Video Editor — No Upload, No Watermark",
+  title: "Free Online Nayan Video Editor — No Upload, No Watermark",
   description:
     "Edit video free in your browser. Multi-track timeline, green screen, colour grading, transitions and titles. Exports MP4 up to 4K. Nothing is uploaded — no account, no watermark.",
   path: "/video-editor",
@@ -17,16 +17,16 @@ const PAGE_URL = `${SITE_URL}/video-editor`;
 const schemas = [
   buildBreadcrumbSchema([
     { name: "Home", url: SITE_URL },
-    { name: "Video Editor", url: PAGE_URL },
+    { name: "Nayan Video Editor", url: PAGE_URL },
   ]),
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: "Nayan UI Video Editor",
+    name: "Nayan Video Editor",
     // The name it shipped under, kept so searches for it still land here.
-    alternateName: ["Nayan Editor", "Nayan UI Free Online Video Editor"],
+    alternateName: ["Nayan Editor", "Nayan UI Free Online Nayan Video Editor"],
     applicationCategory: "MultimediaApplication",
-    applicationSubCategory: "Video Editor",
+    applicationSubCategory: "Nayan Video Editor",
     operatingSystem: "Web Browser",
     browserRequirements:
       "Requires WebCodecs and a window at least 1024px wide. Chrome/Edge 94+, Safari 16.4+.",
@@ -36,7 +36,6 @@ const schemas = [
     installUrl: `${SITE_URL}/video-editor/start`,
     softwareVersion: "1.0",
     datePublished: "2025-09-01",
-    dateModified: new Date().toISOString().split("T")[0],
     isAccessibleForFree: true,
     license: "https://opensource.org/licenses/MIT",
     permissions: "None. No network access, no account and no file upload.",

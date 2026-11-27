@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import InfiniteScroll from "@/components/react/components/InfiniteScroll";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function InfiniteScrollPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <InfiniteScroll />
+      <NayanComponentDoc path="/react/infinite-scroll" />
     </>
   );
 }

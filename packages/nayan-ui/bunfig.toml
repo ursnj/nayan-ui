@@ -1,0 +1,5 @@
+[test]
+coverageReporter = ["text", "lcov"]
+coverageDir = "../../coverage/engine"
+# Measure source once when source and published bundles run in the same suite.
+coveragePathIgnorePatterns = ["**/lib/**", "**/native/core/build/**", "**/native/tests/**", "**/scripts/**", "**/__tests__/**", "**/app.plugin.js"]

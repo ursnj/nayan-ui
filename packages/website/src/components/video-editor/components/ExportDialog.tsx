@@ -1,7 +1,8 @@
+import { NView, NText } from 'nayan-ui/components';
 import { useEffect, useRef, useState } from "react";
-import { AlertTypes, NAlert, NButton, NDialog, NLink, NProgress, showToast } from "@nayan-ui/react";
-import { DialogSize } from "@nayan-ui/react";
-import { Download, X } from "lucide-react";
+import { AlertTypes, NAlert, NButton, NDialog, NLink, NProgress, showToast } from "@/components/ui";
+import { DialogSize } from "@/components/ui";
+import { Download, X } from "@/design/Icons";
 import {
   END_CREDIT_SECONDS,
   END_CREDIT_TITLE,
@@ -220,8 +221,8 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div className="space-y-3">
-      <div className="grid grid-cols-2 gap-2">
+    <NView tag="div" className="space-y-3">
+      <NView tag="div" className="grid grid-cols-2 gap-2">
         <SelectField
           label="Quality"
           value={quality}
@@ -240,9 +241,9 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
           disabled={running}
           onChange={setFormatId}
         />
-      </div>
+      </NView>
 
-      <div className="flex gap-1.5">
+      <NView tag="div" className="flex gap-1.5">
         {!audioOnly && (
           <ToggleChip
             active={includeAudio}
@@ -271,9 +272,9 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
         >
           {useRange ? "In/out range" : "Whole timeline"}
         </ToggleChip>
-      </div>
+      </NView>
 
-      <dl className="rounded-lg bg-surface-secondary px-3 py-2 text-xs">
+      <NView tag="dl" className="rounded-lg bg-surface-secondary px-3 py-2 text-xs">
         <Row
           label="Output"
           value={
@@ -301,35 +302,35 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
                 : formatBytes(ceilingBytes)
           }
         />
-      </dl>
+      </NView>
       {!exactSize && (
-        <p className="-mt-1 px-3 text-[10px] leading-relaxed text-muted">
+        <NText tag="p" className="-mt-1 px-3 text-[10px] leading-relaxed text-muted">
           {measuredBytes !== null
             ? "Measured by encoding three short windows of this timeline at these settings — within a few percent unless the footage changes character partway through."
             : showRange
               ? "Variable bitrate, so the file lands somewhere in that range — stills and titles near the low end, motion and grain near the high one."
               : "Variable bitrate, so the file can finish under this figure."}
-        </p>
+        </NText>
       )}
 
       {progress && (
-        <div>
-          <div className="mb-1 flex items-center justify-between text-xs">
-            <span className="truncate text-muted">{progress.message}</span>
-            <span className="shrink-0 font-mono tabular-nums text-foreground">
+        <NView tag="div">
+          <NView tag="div" className="mb-1 flex items-center justify-between text-xs">
+            <NText tag="span" className="truncate text-muted">{progress.message}</NText>
+            <NText tag="span" className="shrink-0 font-mono tabular-nums text-foreground">
               {Math.round(progress.progress * 100)}%
-            </span>
-          </div>
+            </NText>
+          </NView>
           <NProgress value={progress.progress * 100} label="Export progress" showLabel />
           {progress.fps !== undefined && (
-            <p className="mt-1 text-[10px] tabular-nums text-muted">
+            <NText tag="p" className="mt-1 text-[10px] tabular-nums text-muted">
               {progress.fps.toFixed(1)} fps
               {progress.etaSeconds !== undefined &&
                 progress.etaSeconds > 1 &&
                 ` · about ${formatEta(progress.etaSeconds)} left`}
-            </p>
+            </NText>
           )}
-        </div>
+        </NView>
       )}
 
       {result && (
@@ -350,7 +351,7 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
         />
       )}
 
-      <div className="flex justify-end gap-2 pt-1">
+      <NView tag="div" className="flex justify-end gap-2 pt-1">
         {running ? (
           <NButton isOutline onClick={() => abortRef.current?.abort()}>
             <X className="mr-1.5 h-4 w-4" />
@@ -367,8 +368,8 @@ const ExportForm = ({ onClose }: { onClose: () => void }) => {
             </NButton>
           </>
         )}
-      </div>
-    </div>
+      </NView>
+    </NView>
   );
 };
 
@@ -378,8 +379,8 @@ const formatEta = (seconds: number) =>
     : `${Math.floor(seconds / 60)}m ${Math.ceil(seconds % 60)}s`;
 
 const Row = ({ label, value }: { label: string; value: string }) => (
-  <div className="flex justify-between py-0.5">
-    <dt className="text-muted">{label}</dt>
-    <dd className="font-mono tabular-nums text-foreground">{value}</dd>
-  </div>
+  <NView tag="div" className="flex justify-between py-0.5">
+    <NText tag="dt" className="text-muted">{label}</NText>
+    <NText tag="dd" className="font-mono tabular-nums text-foreground">{value}</NText>
+  </NView>
 );

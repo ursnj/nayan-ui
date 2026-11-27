@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Popover from "@/components/react/components/Popover";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/popover", "react");
@@ -9,7 +9,7 @@ export default function PopoverPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Popover />
+      <NayanComponentDoc path="/react/popover" />
     </>
   );
 }

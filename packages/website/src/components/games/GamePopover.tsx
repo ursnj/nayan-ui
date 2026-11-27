@@ -1,8 +1,9 @@
 "use client";
 
+import { NView, NText } from 'nayan-ui/components';
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { X } from "lucide-react";
+import { X } from "@/design/Icons";
 import { GAME_TOOLBAR_BUTTON } from "./GameToolbar";
 
 interface GamePopoverProps {
@@ -38,7 +39,7 @@ export default function GamePopover({ title, icon, onOpenChange, children }: Gam
 
   return (
     <>
-      <button
+      <NView tag="button"
         ref={trigger}
         type="button"
         aria-label={title}
@@ -50,13 +51,13 @@ export default function GamePopover({ title, icon, onOpenChange, children }: Gam
         className={GAME_TOOLBAR_BUTTON}
       >
         {icon}
-      </button>
-      <div
+      </NView>
+      <NView tag="div"
         id={id}
         popover="auto"
         role="dialog"
         aria-labelledby={`${id}-title`}
-        className="nyn-game-popover rounded-2xl border border-default bg-surface/90 p-5 text-foreground shadow-2xl shadow-black/20 backdrop-blur-xl"
+        className="nyn-game-popover fixed [inset:auto] m-0 [width:min(360px,_calc(100vw_-_32px))] [max-height:calc(100dvh_-_96px)] overflow-hidden [&:popover-open]:flex [&:popover-open]:flex-col rounded-2xl border border-default bg-surface/90 p-5 text-foreground shadow-2xl shadow-black/20 backdrop-blur-xl"
         style={anchor}
         onBeforeToggle={(event) => {
           if (event.newState !== "open") return;
@@ -70,11 +71,11 @@ export default function GamePopover({ title, icon, onOpenChange, children }: Gam
           onOpenChange(visible);
         }}
       >
-        <div className="mb-3 flex shrink-0 items-center justify-between gap-4">
-          <h2 id={`${id}-title`} className="text-base font-semibold text-foreground">
+        <NView tag="div" className="mb-3 flex shrink-0 items-center justify-between gap-4">
+          <NText tag="h2" id={`${id}-title`} className="text-base font-semibold text-foreground">
             {title}
-          </h2>
-          <button
+          </NText>
+          <NView tag="button"
             type="button"
             className="flex size-8 items-center justify-center rounded-lg text-muted transition-colors hover:bg-default/60 hover:text-foreground"
             aria-label={`Close ${title.toLowerCase()}`}
@@ -82,12 +83,12 @@ export default function GamePopover({ title, icon, onOpenChange, children }: Gam
             popoverTargetAction="hide"
           >
             <X size={18} aria-hidden="true" />
-          </button>
-        </div>
-        <div className="min-h-0 overflow-y-auto overscroll-contain text-sm leading-relaxed text-muted">
+          </NView>
+        </NView>
+        <NView tag="div" className="min-h-0 overflow-y-auto overscroll-contain text-sm leading-relaxed text-muted">
           {children}
-        </div>
-      </div>
+        </NView>
+      </NView>
     </>
   );
 }

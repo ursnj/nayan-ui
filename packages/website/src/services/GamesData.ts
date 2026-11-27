@@ -15,7 +15,7 @@ export interface GameData {
   relatedGames: string[];
 }
 
-// One entry per GAME_IDS value in @nayan-ui/games, in the library's catalog order. Rules, controls and
+// One entry per GAME_IDS value in nayan-games, in the library's catalog order. Rules, controls and
 // numbers are taken from each game's source (src/games/<id>/).
 export const gamesData: Record<string, GameData> = {
   "block-blast": {
@@ -2403,7 +2403,7 @@ export const gamesData: Record<string, GameData> = {
   },
 };
 
-/** The order the Playtura app lists its games in (@nayan-ui/games GAMES_METADATA). */
+/** The order the Playtura app lists its games in (nayan-games GAMES_METADATA). */
 export const GAME_ORDER: readonly string[] = [
   "block-blast",
   "connect-em-all",

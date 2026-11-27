@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "Nayan UI Starter",
+    "slug": "nayan-ui-starter",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "nayan-ui-starter",
+    "ios": {
+      "bundleIdentifier": "com.nayanui.example"
+    },
+    "android": {
+      "package": "com.nayanui.example"
+    },
+    "plugins": [
+      ["./plugins/withAndroidMinSdk", 26],
+      [
+        "nayan-ui",
+        {
+          "systemTheme": true
+        }
+      ]
+    ],
+    "userInterfaceStyle": "automatic"
+  }
+}

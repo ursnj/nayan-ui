@@ -1,5 +1,6 @@
+import { NView, NText } from 'nayan-ui/components';
 import { useCallback, useEffect, useRef, useState } from "react";
-import { cn } from "@nayan-ui/react";
+import { cn } from "@/components/ui";
 import { clamp } from "../../lib/utils";
 
 /** Width of the divider strip, in px — `w-2` / `h-2` below. */
@@ -98,11 +99,11 @@ export const SplitPane = ({
   }, [effective, dragging, measuredRef]);
 
   return (
-    <div
+    <NView tag="div"
       ref={containerRef}
       className={cn("flex min-h-0 min-w-0", horizontal ? "flex-row" : "flex-col", className)}
     >
-      <div
+      <NView tag="div"
         ref={firstRef}
         className="flex min-h-0 min-w-0 flex-col"
         style={
@@ -112,9 +113,9 @@ export const SplitPane = ({
         }
       >
         {children[0]}
-      </div>
+      </NView>
 
-      <div
+      <NView tag="div"
         role="separator"
         aria-orientation={horizontal ? "vertical" : "horizontal"}
         aria-label="Resize panel"
@@ -134,7 +135,7 @@ export const SplitPane = ({
           horizontal ? "w-2 cursor-col-resize" : "h-2 cursor-row-resize",
         )}
       >
-        <span
+        <NText tag="span"
           className={cn(
             "rounded-full transition-colors",
             horizontal ? "h-10 w-1" : "h-1 w-10",
@@ -143,9 +144,9 @@ export const SplitPane = ({
               : "bg-transparent group-hover:bg-separator group-focus-visible:bg-accent",
           )}
         />
-      </div>
+      </NView>
 
-      <div
+      <NView tag="div"
         ref={secondRef}
         className="flex min-h-0 min-w-0 flex-col"
         style={
@@ -155,7 +156,7 @@ export const SplitPane = ({
         }
       >
         {children[1]}
-      </div>
-    </div>
+      </NView>
+    </NView>
   );
 };

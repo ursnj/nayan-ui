@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNSwitch from "@/components/react-native/components/Switch";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNSwitchPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNSwitch />
+      <NayanComponentDoc path="/react-native/switch" />
     </>
   );
 }

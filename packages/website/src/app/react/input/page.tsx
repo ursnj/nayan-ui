@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Input from "@/components/react/components/Input";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/input", "react");
@@ -9,7 +9,7 @@ export default function InputPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Input />
+      <NayanComponentDoc path="/react/input" />
     </>
   );
 }

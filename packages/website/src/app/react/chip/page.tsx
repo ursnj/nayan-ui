@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Chip from "@/components/react/components/Chip";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/chip", "react");
@@ -9,7 +9,7 @@ export default function ChipPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Chip />
+      <NayanComponentDoc path="/react/chip" />
     </>
   );
 }

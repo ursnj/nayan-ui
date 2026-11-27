@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import InputOTP from "@/components/react/components/InputOTP";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/input-otp", "react");
@@ -9,7 +9,7 @@ export default function InputOTPPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <InputOTP />
+      <NayanComponentDoc path="/react/input-otp" />
     </>
   );
 }

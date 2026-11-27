@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import RNPopover from "@/components/react-native/components/Popover";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo(
@@ -12,7 +12,7 @@ export default function RNPopoverPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <RNPopover />
+      <NayanComponentDoc path="/react-native/popover" />
     </>
   );
 }

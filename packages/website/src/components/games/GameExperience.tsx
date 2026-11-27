@@ -1,8 +1,9 @@
 "use client";
 
+import { NView, NText } from 'nayan-ui/components';
 import { useCallback, useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import type { GAME_IDS } from "@nayan-ui/games/services";
+import type { GAME_IDS } from "nayan-games/services";
 import GamePanel from "./GamePanel";
 import GamePlayer from "./GamePlayer";
 
@@ -17,7 +18,7 @@ interface GameExperienceProps {
 }
 
 /**
- * The full-height play area under the site header, with the game's guide in a side panel.
+ * The fullscreen play area, with the game's guide in a side panel.
  * `/games/<id>#game-guide` opens the guide directly.
  */
 export default function GameExperience({
@@ -48,9 +49,9 @@ export default function GameExperience({
   }, []);
 
   return (
-    <div className="nyn-game-page fixed inset-x-0 bottom-0 top-0 z-30 bg-background">
-      <h1 className="sr-only">Play {title}</h1>
-      <p className="sr-only">{description}</p>
+    <NView tag="div" className="nyn-game-page fixed inset-x-0 bottom-0 top-0 z-30 bg-background">
+      <NText tag="h1" className="sr-only">Play {title}</NText>
+      <NText tag="p" className="sr-only">{description}</NText>
       <GamePlayer
         key={gameId}
         gameId={gameId}
@@ -61,6 +62,6 @@ export default function GameExperience({
       <GamePanel title={title} label="How to play" open={infoOpen} onClose={closeInfo}>
         {children}
       </GamePanel>
-    </div>
+    </NView>
   );
 }

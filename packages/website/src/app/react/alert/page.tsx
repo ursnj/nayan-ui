@@ -1,5 +1,5 @@
 import JsonLd from "@/components/helpers/JsonLd";
-import Alert from "@/components/react/components/Alert";
+import NayanComponentDoc from "@/components/ui/NayanComponentDoc";
 import { buildComponentPageSeo } from "@/services/seoHelpers";
 
 const { metadata: pageMetadata, schemas } = buildComponentPageSeo("/react/alert", "react");
@@ -9,7 +9,7 @@ export default function AlertPage() {
   return (
     <>
       <JsonLd data={schemas} />
-      <Alert />
+      <NayanComponentDoc path="/react/alert" />
     </>
   );
 }

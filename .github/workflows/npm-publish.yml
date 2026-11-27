@@ -1,93 +1,431 @@
-name: Publish npm packages
+name: Build and publish nayan-ui
+run-name: >-
+  ${{ github.event_name == 'issue_comment' && format('Verify nayan-ui for PR #{0}', github.event.issue.number) || 'Build and publish nayan-ui' }}
+
 on:
+  issue_comment:
+    types: [created]
   workflow_dispatch:
     inputs:
-      ai:
-        description: "@nayan-ui/ai"
-        type: boolean
-        default: false
-      cli:
-        description: "@nayan-ui/cli"
-        type: boolean
-        default: false
-      react:
-        description: "@nayan-ui/react"
-        type: boolean
-        default: false
-      native:
-        description: "@nayan-ui/native"
-        type: boolean
-        default: false
-      dry_run:
-        description: "Dry run (build and pack, don't publish)"
+      command:
+        description: Package operation
+        type: choice
+        required: true
+        default: validate
+        options:
+          - validate
+          - publish
+      beta:
+        description: Publish as beta
         type: boolean
         default: false
 
-# npm trusted publishing: each job exchanges a GitHub OIDC token for a short-lived npm token,
-# so no NPM token secret is stored. @nayan-ui/engine is published from the playtura repo.
 permissions:
   contents: read
-  id-token: write
+
+env:
+  RUST_VERSION: '1.99.0'
+  ANDROID_NDK_VERSION: '27.1.12297006'
+  NPM_DIST_TAG: ${{ inputs.beta && 'beta' || 'latest' }}
 
 jobs:
-  plan:
-    runs-on: ubuntu-latest
+  resolve-pr:
+    name: Resolve PR command
+    if: >-
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request &&
+      github.event.issue.state == 'open' &&
+      (github.event.comment.body == 'test' || github.event.comment.body == 'merge')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    permissions:
+      pull-requests: read
     outputs:
-      packages: ${{ steps.pick.outputs.packages }}
+      command: ${{ steps.request.outputs.command }}
+      sha: ${{ steps.request.outputs.sha }}
+      repository: ${{ steps.request.outputs.repository }}
+      base-ref: ${{ steps.request.outputs.base-ref }}
     steps:
-      - id: pick
-        env:
-          AI: ${{ inputs.ai }}
-          CLI: ${{ inputs.cli }}
-          REACT: ${{ inputs.react }}
-          NATIVE: ${{ inputs.native }}
-        run: |
-          picked=()
-          if [ "$AI" = "true" ]; then picked+=('{"dir":"ai","build":"ai:build"}'); fi
-          if [ "$CLI" = "true" ]; then picked+=('{"dir":"cli","build":"cli:build"}'); fi
-          if [ "$REACT" = "true" ]; then picked+=('{"dir":"react","build":"react:build"}'); fi
-          if [ "$NATIVE" = "true" ]; then picked+=('{"dir":"native","build":"native:build"}'); fi
-          echo "packages=[$(IFS=,; echo "${picked[*]}")]" >> "$GITHUB_OUTPUT"
+      - name: Check access and resolve the PR head
+        id: request
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { comment } = context.payload;
+            if (!['test', 'merge'].includes(comment.body)) return;
+            const username = comment.user.login;
+            const access = await github.rest.repos.getCollaboratorPermissionLevel({ ...context.repo, username }).catch(error => {
+              if (error.status === 404) return null;
+              throw error;
+            });
+            if (!['admin', 'write'].includes(access?.data.permission)) return;
 
-  publish:
-    needs: plan
-    if: needs.plan.outputs.packages != '[]'
-    runs-on: ubuntu-latest
+            const { data: pr } = await github.rest.pulls.get({ ...context.repo, pull_number: context.issue.number });
+            if (pr.state !== 'open' || !pr.head.repo) return;
+            core.setOutput('command', comment.body);
+            core.setOutput('sha', pr.head.sha);
+            core.setOutput('repository', pr.head.repo.full_name);
+            core.setOutput('base-ref', pr.base.ref);
+
+  check-publish:
+    name: Check npm package
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      toJSON(github.event.repository.private) == 'false' &&
+      github.repository == 'ursnj/nayan-ui' &&
+      inputs.command == 'publish'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Check that the package exists for Trusted Publishing
+        run: |
+          status="$(curl --head --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            --header 'Cache-Control: no-cache' \
+            --connect-timeout 5 --max-time 15 --retry 2 https://registry.npmjs.org/nayan-ui)"
+          case "$status" in
+            200) ;;
+            404)
+              echo '::error::npm has no public package record for nayan-ui. Publish the first tested tarball from an authenticated npm account, then configure Trusted Publishing for npm-publish.yml.'
+              exit 1
+              ;;
+            *)
+              echo "::error::Could not verify nayan-ui on npm (HTTP $status)."
+              exit 1
+              ;;
+          esac
+
+  build-core:
+    name: Build core (${{ matrix.platform }})
+    needs: [check-publish, resolve-pr]
+    if: >-
+      !cancelled() &&
+      (needs.resolve-pr.outputs.sha != '' ||
+      (toJSON(github.event.repository.private) == 'false' &&
+      (inputs.command == 'validate' || needs.check-publish.result == 'success')))
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
     strategy:
-      fail-fast: false
+      fail-fast: ${{ github.event_name != 'issue_comment' }}
       matrix:
-        package: ${{ fromJSON(needs.plan.outputs.packages) }}
-    name: publish (${{ matrix.package.dir }})
+        include:
+          - platform: ios
+            runner: macos-15
+            output: EngineCore.xcframework
+          - platform: android-arm64
+            runner: ubuntu-24.04
+            abi: arm64-v8a
+            output: android/arm64-v8a
+          - platform: android-armv7
+            runner: ubuntu-24.04
+            abi: armeabi-v7a
+            output: android/armeabi-v7a
+          - platform: android-x64
+            runner: ubuntu-24.04
+            abi: x86_64
+            output: android/x86_64
+          - platform: android-x86
+            runner: ubuntu-24.04
+            abi: x86
+            output: android/x86
+          - platform: web
+            runner: ubuntu-24.04
+            output: web
     steps:
       - uses: actions/checkout@v5
-
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v5
         with:
-          node-version: 24
-          package-manager-cache: false
+          repository: ${{ needs.resolve-pr.outputs.repository || github.repository }}
+          ref: ${{ needs.resolve-pr.outputs.sha || github.sha }}
+          persist-credentials: false
 
-      - name: Update npm for trusted publishing
-        run: npm install -g npm@latest
-
-      - name: Cache Bun packages
+      - name: Restore compiled platform binaries
+        if: github.event_name != 'issue_comment'
+        id: core-cache
         uses: actions/cache@v4
         with:
-          path: ~/.bun/install/cache
-          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-          restore-keys: bun-${{ runner.os }}-
+          path: packages/nayan-ui/native/core/build/${{ matrix.output }}
+          key: >-
+            npm-core-${{ matrix.runner }}-${{ runner.arch }}-${{ matrix.platform }}-rust${{ env.RUST_VERSION }}-${{ hashFiles('packages/nayan-ui/native/core/**', 'packages/nayan-ui/native/core/.cargo/config.toml', 'packages/nayan-ui/native/*/rust/**', '.github/workflows/npm-publish.yml') }}
 
-      - name: Install dependencies
-        run: bun install
+      - name: Set up Rust toolchain
+        if: steps.core-cache.outputs.cache-hit != 'true'
+        run: |
+          rustup toolchain install "$RUST_VERSION" --profile minimal
+          rustup default "$RUST_VERSION"
 
-      - name: Build
-        run: bun run ${{ matrix.package.build }}
+      - name: Cache Cargo dependencies
+        if: github.event_name != 'issue_comment' && steps.core-cache.outputs.cache-hit != 'true'
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: packages/nayan-ui/native/core -> target
+          key: ${{ matrix.platform }}
+          cache-bin: 'false'
 
-      - name: Publish to npm
-        working-directory: ./packages/${{ matrix.package.dir }}
+      - name: Set up Android SDK
+        if: steps.core-cache.outputs.cache-hit != 'true' && matrix.abi
+        uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+
+      - name: Install Android NDK
+        if: steps.core-cache.outputs.cache-hit != 'true' && matrix.abi
+        run: |
+          ndk="$ANDROID_HOME/ndk/$ANDROID_NDK_VERSION"
+          if [[ ! -d "$ndk/toolchains/llvm" ]]; then
+            sdkmanager "ndk;$ANDROID_NDK_VERSION"
+          fi
+          echo "ANDROID_NDK_HOME=$ndk" >> "$GITHUB_ENV"
+
+      - name: Install the locked WebAssembly toolchain
+        if: steps.core-cache.outputs.cache-hit != 'true' && matrix.platform == 'web'
+        run: |
+          rustup target add wasm32-unknown-unknown
+          version="$(awk '/^name = "wasm-bindgen"$/ { getline; gsub(/"/, "", $3); print $3; exit }' packages/nayan-ui/native/core/Cargo.lock)"
+          archive="wasm-bindgen-$version-x86_64-unknown-linux-musl.tar.gz"
+          release="https://github.com/wasm-bindgen/wasm-bindgen/releases/download/$version"
+          tools="$(mktemp -d "$RUNNER_TEMP/wasm-bindgen.XXXXXX")"
+          cd "$tools"
+          curl --fail --silent --show-error --location --retry 3 --connect-timeout 15 --max-time 120 \
+            -O "$release/$archive" -O "$release/$archive.sha256sum"
+          digest="$(awk 'NR == 1 { print $1 }' "$archive.sha256sum")"
+          printf '%s  %s\n' "$digest" "$archive" > checksums
+          sha256sum -c checksums
+          tar -xzf "$archive"
+          echo "$tools/${archive%.tar.gz}" >> "$GITHUB_PATH"
+
+      - name: Build iOS libraries
+        if: steps.core-cache.outputs.cache-hit != 'true' && matrix.platform == 'ios'
+        run: packages/nayan-ui/native/core/scripts/build-ios.sh
+
+      - name: Build Android library
+        if: steps.core-cache.outputs.cache-hit != 'true' && matrix.abi
         env:
-          DRY_RUN: ${{ inputs.dry_run }}
-        run: ../../.github/scripts/npm-publish.sh
+          ABI: ${{ matrix.abi }}
+        run: packages/nayan-ui/native/core/scripts/build-android.sh "$ABI"
+
+      - name: Build WebAssembly library
+        if: steps.core-cache.outputs.cache-hit != 'true' && matrix.platform == 'web'
+        env:
+          CC_wasm32_unknown_unknown: clang-18
+        run: packages/nayan-ui/native/core/scripts/build-web.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: engine-core-${{ matrix.platform }}
+          path: packages/nayan-ui/native/core/build
+          if-no-files-found: error
+          retention-days: 1
+          overwrite: true
+
+  test-core:
+    name: Test Rust core
+    needs: [check-publish, resolve-pr]
+    if: >-
+      !cancelled() &&
+      (needs.resolve-pr.outputs.sha != '' ||
+      (toJSON(github.event.repository.private) == 'false' &&
+      (inputs.command == 'validate' || needs.check-publish.result == 'success')))
+    runs-on: macos-15
+    timeout-minutes: 30
+    env:
+      CARGO_PROFILE_TEST_DEBUG: '0'
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          repository: ${{ needs.resolve-pr.outputs.repository || github.repository }}
+          ref: ${{ needs.resolve-pr.outputs.sha || github.sha }}
+          persist-credentials: false
+      - name: Set up Rust toolchain
+        run: |
+          rustup toolchain install "$RUST_VERSION" --profile minimal
+          rustup default "$RUST_VERSION"
+      - uses: Swatinem/rust-cache@v2
+        if: github.event_name != 'issue_comment'
+        with:
+          workspaces: packages/nayan-ui/native/core -> target
+          cache-bin: 'false'
+      - run: cargo test --locked --manifest-path packages/nayan-ui/native/core/Cargo.toml
+
+  package:
+    needs: [build-core, test-core, resolve-pr]
+    if: >-
+      !cancelled() &&
+      needs.build-core.result == 'success' &&
+      (needs.test-core.result == 'success' || needs.resolve-pr.outputs.sha != '')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      tarball: ${{ steps.package.outputs.tarball }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          repository: ${{ needs.resolve-pr.outputs.repository || github.repository }}
+          ref: ${{ needs.resolve-pr.outputs.sha || github.sha }}
+          persist-credentials: false
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: engine-core-*
+          merge-multiple: true
+          path: packages/nayan-ui/native/core/build
+
+      - uses: ./.github/actions/build-npm-package
+        id: package
+
+      - name: Dry-run npm publishing (${{ env.NPM_DIST_TAG }})
+        if: github.event_name == 'workflow_dispatch' && inputs.command == 'validate'
+        env:
+          TARBALL: ${{ steps.package.outputs.tarball }}
+        run: npm publish "$TARBALL" --access public --tag "$NPM_DIST_TAG" --ignore-scripts --dry-run --loglevel=warn
+
+      - uses: actions/upload-artifact@v4
+        if: github.event_name == 'workflow_dispatch'
+        with:
+          name: nayan-ui
+          path: ${{ steps.package.outputs.tarball }}
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+          overwrite: true
+
+  publish:
+    if: >-
+      !cancelled() &&
+      needs.package.result == 'success' &&
+      github.event_name == 'workflow_dispatch' &&
+      toJSON(github.event.repository.private) == 'false' &&
+      github.repository == 'ursnj/nayan-ui' &&
+      inputs.command == 'publish'
+    needs: package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    concurrency:
+      group: nayan-ui-npm-publish
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: nayan-ui
+          path: ${{ runner.temp }}/npm-package
+
+      - name: Publish the tested tarball to npm (${{ env.NPM_DIST_TAG }})
+        env:
+          PACKAGED_TARBALL: ${{ needs.package.outputs.tarball }}
+        run: npm publish "$RUNNER_TEMP/npm-package/${PACKAGED_TARBALL##*/}" --access public --tag "$NPM_DIST_TAG" --ignore-scripts --loglevel=warn
+
+  merge-pr:
+    name: Merge the verified pull request
+    needs: [resolve-pr, build-core, test-core, package]
+    if: >-
+      !cancelled() &&
+      github.event_name == 'issue_comment' &&
+      needs.resolve-pr.outputs.command == 'merge' &&
+      needs.build-core.result == 'success' &&
+      needs.test-core.result == 'success' &&
+      needs.package.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    permissions:
+      contents: write
+      pull-requests: read
+    outputs:
+      message: ${{ steps.merge.outputs.message }}
+    steps:
+      - id: merge
+        uses: actions/github-script@v8
+        env:
+          HEAD_SHA: ${{ needs.resolve-pr.outputs.sha }}
+          BASE_REF: ${{ needs.resolve-pr.outputs.base-ref }}
+        with:
+          script: |
+            function blockMerge(message) {
+              core.setOutput('message', message);
+              core.setFailed(message);
+            }
+
+            const request = { ...context.repo, pull_number: context.issue.number };
+            const sha = process.env.HEAD_SHA;
+            const { data: pr } = await github.rest.pulls.get(request);
+            if (pr.merged) {
+              core.setOutput('message', 'This pull request was already merged.');
+              return;
+            }
+            if (pr.state !== 'open' || pr.draft) {
+              return blockMerge('The pull request must be open and ready for review.');
+            }
+            if (pr.head.sha !== sha || pr.base.ref !== process.env.BASE_REF) {
+              return blockMerge('The head commit or target branch changed. Comment `merge` again to revalidate.');
+            }
+            if (pr.user?.login.toLowerCase() === 'ursnj') {
+              return blockMerge('GitHub requires a reviewer other than the author. @ursnj can merge this pull request directly on GitHub.');
+            }
+
+            const reviews = await github.paginate(github.rest.pulls.listReviews, { ...request, per_page: 100 });
+            const ownerReview = reviews.findLast(review =>
+              review.user?.login.toLowerCase() === 'ursnj' &&
+              ['APPROVED', 'CHANGES_REQUESTED', 'DISMISSED'].includes(review.state)
+            );
+            if (ownerReview?.state !== 'APPROVED' || ownerReview.commit_id !== sha) {
+              return blockMerge('The verified commit needs an approving review from @ursnj.');
+            }
+
+            try {
+              const { data: result } = await github.rest.pulls.merge({ ...request, sha });
+              if (!result.merged) return blockMerge('GitHub could not merge this pull request. Check the merge requirements on the pull request.');
+              core.setOutput('message', `Merged as \`${result.sha}\`.`);
+            } catch (error) {
+              if (error.status === 409) {
+                return blockMerge('The head commit changed. Comment `merge` again to revalidate.');
+              }
+              if ([403, 405, 422].includes(error.status)) {
+                core.info(error.message);
+                return blockMerge('GitHub declined the merge. Check the merge requirements on the pull request.');
+              }
+              throw error;
+            }
+
+  report-pr:
+    name: Report verification on pull request
+    needs: [resolve-pr, build-core, test-core, package, merge-pr]
+    if: always() && github.event_name == 'issue_comment' && needs.resolve-pr.outputs.sha != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/github-script@v8
+        env:
+          HEAD_SHA: ${{ needs.resolve-pr.outputs.sha }}
+          COMMAND: ${{ needs.resolve-pr.outputs.command }}
+          BUILD_RESULT: ${{ needs.build-core.result }}
+          RUST_RESULT: ${{ needs.test-core.result }}
+          PACKAGE_RESULT: ${{ needs.package.result }}
+          MERGE_MESSAGE: ${{ needs.merge-pr.outputs.message }}
+        with:
+          script: |
+            const checks = [
+              ['iOS, Android, and WebAssembly builds', process.env.BUILD_RESULT],
+              ['Rust core tests', process.env.RUST_RESULT],
+              ['JavaScript build, type checks, tests, and npm package validation', process.env.PACKAGE_RESULT],
+            ];
+            const passed = checks.every(([, status]) => status === 'success');
+            const run = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${context.runId}`;
+            const body = [
+              `**Nayan UI verification ${passed ? 'passed' : 'did not pass'}** for \`${process.env.HEAD_SHA}\`.`,
+              '',
+              ...checks.map(([name, status]) => `- ${name}: ${status}`),
+            ];
+            if (process.env.COMMAND === 'merge') {
+              const message = process.env.MERGE_MESSAGE || (passed ? 'The merge could not complete. See the workflow logs.' : 'Merge skipped because verification failed.');
+              body.push('', message);
+            }
+            body.push('', `[View workflow logs](${run})`);
+            await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body: body.join('\n') });
